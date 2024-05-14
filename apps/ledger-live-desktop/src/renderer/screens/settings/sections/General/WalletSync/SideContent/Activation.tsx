@@ -1,21 +1,17 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
-import React, { PropsWithChildren, useState } from "react";
-import Button from "~/renderer/components/Button";
+import React, { PropsWithChildren } from "react";
+import { useTranslation } from "react-i18next";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { SideDrawer } from "~/renderer/components/SideDrawer";
 import useTheme from "~/renderer/hooks/useTheme";
 
-const LogoWrapper = ({ children }: PropsWithChildren) => (
+const LogoWrapper = ({ children, opacity = "70%" }: PropsWithChildren & { opacity?: string }) => (
   <Box>
-    <Flex padding="7px" borderRadius="13px">
+    <Flex padding="7px" borderRadius="13px" border="1px solid hsla(0, 0%, 100%, 0.05)">
       <Flex
-        style={{
-          borderRadius: "9px",
-          backgroundColor: "hsla(248, 100%, 85%, 0.08)",
-          padding: "5px",
-          opacity: "70%",
-        }}
+        borderRadius="9px"
+        backgroundColor="hsla(248, 100%, 85%, 0.08)"
+        padding="5px"
+        opacity={opacity}
       >
         {children}
       </Flex>
@@ -23,8 +19,9 @@ const LogoWrapper = ({ children }: PropsWithChildren) => (
   </Box>
 );
 
-const SideContentActivateWalletSync = () => {
+const WalletSyncActivation = () => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <Flex
@@ -41,7 +38,7 @@ const SideContentActivateWalletSync = () => {
             <Icons.Mobile color={colors.constant.purple} />
           </LogoWrapper>
 
-          <LogoWrapper>
+          <LogoWrapper opacity="100%">
             <Icons.Refresh size="L" color={colors.constant.purple} />
           </LogoWrapper>
 
@@ -51,14 +48,13 @@ const SideContentActivateWalletSync = () => {
         </Flex>
 
         <Text fontSize={24} variant="h4Inter" textAlign="center">
-          Activate sallet sync
+          {t("walletSync.activate.title")}
         </Text>
         <Text fontSize={14} variant="body" color="hsla(0, 0%, 58%, 1)" textAlign="center">
-          Create a secure backup of your Ledger Live and synchronize multiple instances of Ledger
-          Live, both on mobile and desktop.
+          {t("walletSync.activate.description")}
         </Text>
         <Flex justifyContent="center">
-          <ButtonV3 variant="main">Create a backup</ButtonV3>
+          <ButtonV3 variant="main"> {t("walletSync.activate.cta")}</ButtonV3>
         </Flex>
       </Flex>
 
@@ -71,10 +67,10 @@ const SideContentActivateWalletSync = () => {
           justifyContent="space-between"
         >
           <Text variant="body" fontSize={14} flexShrink={1}>
-            Already created a back-up on another Device ?
+            {t("walletSync.alreadySync.title")}
           </Text>
           <Box>
-            <ButtonV3 variant="shade">Synchronize</ButtonV3>
+            <ButtonV3 variant="shade">{t("walletSync.alreadySync.cta")}</ButtonV3>
           </Box>
         </Flex>
       </Box>
@@ -82,24 +78,4 @@ const SideContentActivateWalletSync = () => {
   );
 };
 
-const SideContentWalletSync = () => {
-  return <div>Wallet Sync</div>;
-};
-
-const WalletSyncRow = () => {
-  const lldWalletSync = useFeature("lldWalletSync");
-  const [open, setOpen] = useState(false);
-
-  return (
-    <>
-      <SideDrawer isOpen={open} onRequestClose={() => setOpen(false)} direction="left">
-        {lldWalletSync?.enabled ? <SideContentWalletSync /> : <SideContentActivateWalletSync />}
-      </SideDrawer>
-
-      <Button small event="Manage WalletSync" primary onClick={() => setOpen(true)}>
-        Manage
-      </Button>
-    </>
-  );
-};
-export default WalletSyncRow;
+export default WalletSyncActivation;
