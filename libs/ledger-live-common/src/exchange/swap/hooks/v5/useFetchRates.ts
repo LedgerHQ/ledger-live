@@ -7,6 +7,7 @@ import { fetchRates } from "../../api/v5/fetchRates";
 import { useAPI } from "../../../../hooks/useAPI";
 import { ExchangeRate } from "../../types";
 import { useFeature } from "../../../../featureFlags";
+import { useEffect, useState } from "react";
 
 type Props = {
   fromCurrencyAccount: AccountLike | undefined;
@@ -27,18 +28,18 @@ export function useFetchRates({
     : undefined;
   const unitTo = toCurrency?.units[0];
   const moonpayFF = useFeature("ptxSwapMoonpayProvider");
+  const removeProviders: string[] = [];
   const formattedCurrencyAmount =
     (unitFrom && `${fromCurrencyAmount.shiftedBy(-unitFrom.magnitude)}`) ?? "0";
-  const providers = getAvailableProviders();
 
   if (!moonpayFF?.enabled) {
-    providers.splice(providers.indexOf("moonpay"), 1);
+    removeProviders.push("moonpay");
   }
   const toCurrencyId = toCurrency?.id;
   return useAPI({
     queryFn: fetchRates,
     queryProps: {
-      providers: providers,
+      removeProviders: [],
       unitTo: unitTo!,
       unitFrom: unitFrom!,
       currencyFrom,

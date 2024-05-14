@@ -22,7 +22,7 @@ const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEve
         if (provider) {
           switch (exchangeType) {
             case ExchangeTypes.Swap: {
-              const providerConfig = getSwapProvider(provider);
+              const providerConfig = await getSwapProvider(provider);
               if (providerConfig.type !== "CEX") {
                 throw new Error(`Unsupported provider type ${providerConfig.type}`);
               }
