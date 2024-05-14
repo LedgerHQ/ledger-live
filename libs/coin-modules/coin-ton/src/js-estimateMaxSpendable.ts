@@ -1,4 +1,8 @@
-import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import {
+  findSubAccountById,
+  getMainAccount,
+  isTokenAccount,
+} from "@ledgerhq/coin-framework/account/index";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
@@ -20,14 +24,15 @@ const estimateMaxSpendable = async ({
   if (balance.eq(0)) return balance;
 
   const accountInfo = await fetchAccountInfo(getAddress(a).address);
+  const isTokenType = isTokenAccount(account);
 
   if (transaction && !transaction.subAccountId) {
-    transaction.subAccountId = account.type === "Account" ? null : account.id;
+    transaction.subAccountId = isTokenType ? account.id : null;
   }
 
   let tokenAccountTxn: boolean = false;
   let subAccount: TokenAccount | undefined | null;
-  if (account.type === "TokenAccount") {
+  if (isTokenType) {
     tokenAccountTxn = true;
     subAccount = account;
   }
