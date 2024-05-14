@@ -64,9 +64,9 @@ describe("makeTransferPayload", () => {
     expect(feeOp.operation_identifier.index).toBe(0);
     expect(feeOp.type).toBe("fee_payment");
     expect(feeOp.account.address).toBe(fromAddr);
-    expect(feeOp.amount.value).toBe("-" + feeNano.toString());
-    expect(feeOp.amount.currency.symbol).toBe(MINA_SYMBOL);
-    expect(feeOp.amount.currency.decimals).toBe(MINA_DECIMALS);
+    expect(feeOp.amount?.value).toBe("-" + feeNano.toString());
+    expect(feeOp.amount?.currency.symbol).toBe(MINA_SYMBOL);
+    expect(feeOp.amount?.currency.decimals).toBe(MINA_DECIMALS);
   });
 
   it("should correctly create payment source operation", () => {
@@ -76,7 +76,7 @@ describe("makeTransferPayload", () => {
     expect(sourceOp.operation_identifier.index).toBe(1);
     expect(sourceOp.type).toBe("payment_source_dec");
     expect(sourceOp.account.address).toBe(fromAddr);
-    expect(sourceOp.amount.value).toBe("-" + valueNano.toString());
+    expect(sourceOp.amount?.value).toBe("-" + valueNano.toString());
   });
 
   it("should correctly create payment receiver operation with related operation", () => {
@@ -86,15 +86,15 @@ describe("makeTransferPayload", () => {
     expect(receiverOp.operation_identifier.index).toBe(2);
     expect(receiverOp.type).toBe("payment_receiver_inc");
     expect(receiverOp.account.address).toBe(toAddr);
-    expect(receiverOp.amount.value).toBe(valueNano.toString());
-    expect(receiverOp.relatedOps.related_operations).toEqual([{ index: 1 }]);
+    expect(receiverOp.amount?.value).toBe(valueNano.toString());
+    expect(receiverOp.related_operations).toEqual([{ index: 1 }]);
   });
 
   it("should handle zero values correctly", () => {
     const result = makeTransferPayload(fromAddr, toAddr, 0, 0);
 
-    expect(result.operations[0].amount.value).toBe("-0");
-    expect(result.operations[1].amount.value).toBe("-0");
-    expect(result.operations[2].amount.value).toBe("0");
+    expect(result.operations[0].amount?.value).toBe("-0");
+    expect(result.operations[1].amount?.value).toBe("-0");
+    expect(result.operations[2].amount?.value).toBe("0");
   });
 });
