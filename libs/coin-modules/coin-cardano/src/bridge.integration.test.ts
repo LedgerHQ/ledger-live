@@ -1,4 +1,3 @@
-import "../../__tests__/test-helpers/setup";
 import BigNumber from "bignumber.js";
 import { cardanoRawAccount1 } from "./datasets/rawAccount.1";
 import { cardanoScanAccounts } from "./datasets/scanAccounts";

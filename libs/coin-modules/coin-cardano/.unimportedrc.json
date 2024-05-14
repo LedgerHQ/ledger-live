@@ -1,6 +1,16 @@
 {
   "entry": [
-    "src/bridge/js.ts"
+    "src/account.ts",
+    "src/api/getPools.ts",
+    "src/bridge/js.ts",
+    "src/cli-transaction.ts",
+    "src/datasets/rawAccount.1.ts",
+    "src/datasets/scanAccounts.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/specs.ts",
+    "src/speculos-deviceActions.ts",
+    "src/transaction.ts",
+    "src/utils.ts"
   ],
   "ignoreUnimported": []
 }
