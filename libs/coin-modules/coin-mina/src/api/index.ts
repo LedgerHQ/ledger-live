@@ -2,7 +2,7 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { isValidAddress } from "../common-logic";
 import { MINA_TOKEN_ID } from "../consts";
-import { MinaAPIAccount, MinaSignedTransaction, Transaction } from "../types/common";
+import { MinaAPIAccount, MinaSignedTransaction, Transaction, TxType } from "../types/common";
 import {
   fetchAccountBalance,
   fetchAccountTransactions,
@@ -12,6 +12,7 @@ import {
   rosettaSubmitTransaction,
 } from "./rosetta";
 import { RosettaBlockInfoResponse, RosettaTransaction } from "./rosetta/types";
+import { getDelegateAccount } from "./graphql";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   const networkStatus = await fetchNetworkStatus();
@@ -52,22 +53,31 @@ export const getTransactions = async (
 
 export const broadcastTransaction = async (txn: MinaSignedTransaction): Promise<string> => {
   const { nonce, receiverAddress, amount, fee, memo, senderAddress } = txn.transaction;
+  const payment = {
+    to: receiverAddress,
+    from: senderAddress,
+    fee: fee.toFixed(),
+    token: MINA_TOKEN_ID,
+    nonce: nonce.toFixed(),
+    memo: memo ?? null,
+    amount: amount.toFixed(),
+    valid_until: null,
+  };
+  const delegation = {
+    delegator: senderAddress,
+    new_delegate: receiverAddress,
+    fee: fee.toFixed(),
+    nonce: nonce.toFixed(),
+    memo: memo ?? null,
+    valid_until: null,
+  };
   const blob = {
     signature: txn.signature,
-    payment: {
-      to: receiverAddress,
-      from: senderAddress,
-      fee: fee.toFixed(),
-      token: MINA_TOKEN_ID,
-      nonce: nonce.toFixed(),
-      memo: memo ?? null,
-      amount: amount.toFixed(),
-      valid_until: null,
-    },
-    stake_delegation: null,
+    payment: txn.transaction.txType === TxType.DELEGATION ? null : payment,
+    stake_delegation: txn.transaction.txType === TxType.DELEGATION ? delegation : null,
   };
 
-  const { data } = await rosettaSubmitTransaction(JSON.stringify(blob));
+  const data = await rosettaSubmitTransaction(JSON.stringify(blob));
 
   return data.transaction_identifier.hash;
 };
@@ -83,7 +93,7 @@ export const getFees = async (
     return { fee: txn.fees.fee, accountCreationFee: new BigNumber(0) };
   }
 
-  const { data } = await fetchTransactionMetadata(
+  const data = await fetchTransactionMetadata(
     address,
     txn.recipient,
     txn.fees.fee.toNumber(),
@@ -109,7 +119,7 @@ export const getNonce = async (txn: Transaction, address: string): Promise<numbe
     return txn.nonce;
   }
 
-  const { data } = await fetchTransactionMetadata(
+  const data = await fetchTransactionMetadata(
     address,
     txn.recipient,
     txn.fees.fee.toNumber(),
@@ -117,4 +127,9 @@ export const getNonce = async (txn: Transaction, address: string): Promise<numbe
   );
 
   return parseInt(data.metadata.nonce);
+};
+
+export const getDelegateAddress = async (address: string): Promise<string | undefined> => {
+  const data = await getDelegateAccount(address);
+  return data.data.account?.delegateAccount?.publicKey;
 };

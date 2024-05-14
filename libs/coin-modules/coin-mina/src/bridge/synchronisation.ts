@@ -1,13 +1,16 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { getAccount, getBlockInfo, getDelegateAddress, getTransactions } from "../api";
+import { getEpochInfo } from "../api/graphql";
+import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { getAccount, getBlockInfo, getTransactions } from "../api";
 import { RosettaTransaction } from "../api/rosetta/types";
-import { MinaAccount, MinaOperation } from "../types/common";
+import { fetchValidators } from "../api/fetchValidators";
 
 export const mapRosettaTxnToOperation = async (
   accountId: string,
@@ -100,13 +103,13 @@ export const mapRosettaTxnToOperation = async (
       const type = "OUT";
       ops.push({
         ...op,
-        value: value.minus(accountCreationFee).plus(fee),
+        value: value.minus(accountCreationFee),
         type,
         id: encodeOperationId(accountId, hash, type),
       });
     } else if (redelegateTransaction) {
       // delegate change
-      const type = "REDELEGATE";
+      const type = "DELEGATE";
       ops.push({
         ...op,
         value: new BigNumber(0),
@@ -147,12 +150,15 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
 
   const { blockHeight, balance, spendableBalance } = await getAccount(address);
 
-  const rosettaTxns = await getTransactions(address, initialAccount?.operations.length);
+  const rosettaTxns = await getTransactions(address);
   const newOperations = await Promise.all(
     rosettaTxns.flatMap(t => mapRosettaTxnToOperation(accountId, address, t)),
   );
 
   const operations = mergeOps(oldOperations, newOperations.flat());
+  const delegateAddress = (await getDelegateAddress(address)) || address;
+  const epochInfo = await getEpochInfo();
+  const validators = await fetchValidators();
 
   const shape: Partial<MinaAccount> = {
     id: accountId,
@@ -160,9 +166,28 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
+    resources: {
+      blockProducers: validators,
+      delegateInfo: validators.find(v => v.address === delegateAddress) ?? undefined,
+      stakingActive: address !== delegateAddress,
+      epochInfo: epochInfo.data.daemonStatus.consensusTimeNow,
+    },
   };
 
   return { ...shape, operations };
 };
+
+export function assignToAccountRaw(account: MinaAccount, accountRaw: MinaAccountRaw): void {
+  if (account.resources) {
+    accountRaw.resources = account.resources;
+  }
+}
+
+export function assignFromAccountRaw(accountRaw: MinaAccountRaw, account: MinaAccount): void {
+  const resourcesRaw = accountRaw.resources;
+  if (resourcesRaw) {
+    account.resources = resourcesRaw;
+  }
+}
 
 export const sync = makeSync({ getAccountShape });
