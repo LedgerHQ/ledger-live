@@ -3,14 +3,14 @@ import { StacksNetwork } from "./bridge/utils/api.types";
 import type { Account } from "@ledgerhq/types-live";
 
 import type { Transaction, TransactionRaw } from "./types";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
-import { getAccountUnit } from "../../account";
+} from "@ledgerhq/coin-framework/serialization";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 
 export const formatTransaction = (
@@ -23,7 +23,7 @@ SEND ${
     : amount.isZero()
     ? ""
     : " " +
-      formatCurrencyUnit(getAccountUnit(account), amount, {
+      formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
         showCode: true,
         disableRounding: true,
       })

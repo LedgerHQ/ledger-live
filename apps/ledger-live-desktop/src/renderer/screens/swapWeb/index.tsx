@@ -5,12 +5,12 @@ import { counterValueCurrencySelector, languageSelector } from "~/renderer/reduc
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useHistory, useLocation } from "react-router-dom";
 import { WebviewProps } from "~/renderer/components/Web3AppWebview/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { captureException } from "~/sentry/internal";
 import { UnableToLoadSwapLiveError } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 const DEFAULT_SWAP_APP_ID = "swapWeb";
 

@@ -52,6 +52,7 @@ import {
   hasCompletedOnboardingSelector,
   hasSeenAnalyticsOptInPromptSelector,
 } from "~/renderer/reducers/settings";
+import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
@@ -194,6 +195,7 @@ export default function Default() {
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useRecoverRestoreOnboarding();
+  useAutoDismissPostOnboardingEntryPoint();
 
   const listAppsV2 = useFeature("listAppsV2minor1");
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");

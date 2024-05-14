@@ -1,14 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
+} from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 export const formatTransaction = (
   {
@@ -31,16 +31,18 @@ export const formatTransaction = (
 ${mode.toUpperCase()} ${
     useAllAmount
       ? "MAX"
-      : formatCurrencyUnit(getAccountUnit(account), amount, {
+      : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
           showCode: true,
           disableRounding: true,
         })
   }
 TO ${recipient}
-with fees=${!fees ? "?" : formatCurrencyUnit(mainAccount.unit, fees)}
+with fees=${!fees ? "?" : formatCurrencyUnit(mainAccount.currency.units[0], fees)}
 with gasLimit=${!gasLimit ? "?" : gasLimit.toString()}
 with storageLimit=${!storageLimit ? "?" : storageLimit.toString()}
-(estimatedFees ${!estimatedFees ? "?" : formatCurrencyUnit(mainAccount.unit, estimatedFees)})`;
+(estimatedFees ${
+    !estimatedFees ? "?" : formatCurrencyUnit(mainAccount.currency.units[0], estimatedFees)
+  })`;
 };
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);

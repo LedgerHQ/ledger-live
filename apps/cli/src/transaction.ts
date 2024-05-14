@@ -10,7 +10,7 @@ import type {
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import perFamily from "@ledgerhq/live-common/generated/cli-transaction";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 

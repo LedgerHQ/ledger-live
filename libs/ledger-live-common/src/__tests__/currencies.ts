@@ -5,7 +5,6 @@ import {
   getFiatCurrencyByTicker,
   formatCurrencyUnit,
   parseCurrencyUnit,
-  chopCurrencyUnitDecimals,
   formatShort,
   decodeURIScheme,
   encodeURIScheme,
@@ -254,19 +253,6 @@ test("formatShort", () => {
   );
   expect(formatShort(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(123456))).toBe("1.2k");
   expect(formatShort(getCryptoCurrencyById("ethereum").units[0], new BigNumber(600000))).toBe("0");
-});
-test("chopCurrencyUnitDecimals", () => {
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1")).toBe("1");
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234")).toBe("1234");
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.56")).toBe(
-    "1234.56",
-  );
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.5678")).toBe(
-    "1234.56",
-  );
-  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.5678 EUR")).toBe(
-    "1234.56 EUR",
-  );
 });
 test("encodeURIScheme", () => {
   expect(

@@ -10,6 +10,8 @@ import swap, { SwapStateType } from "./swap";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import market, { MarketState } from "./market";
+import wallet from "./wallet";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 export type State = {
   accounts: AccountsState;
@@ -22,6 +24,7 @@ export type State = {
   swap: SwapStateType;
   postOnboarding: PostOnboardingState;
   market: MarketState;
+  wallet: WalletState;
 };
 
 export default combineReducers({
@@ -35,4 +38,5 @@ export default combineReducers({
   postOnboarding,
   swap,
   market,
+  wallet,
 });

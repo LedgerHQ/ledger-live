@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { prefixFormat, suffixFormat } from "./localeUtility";
 import { toLocaleString } from "./BigNumberToLocaleString";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+
 const nonBreakableSpace = " ";
 const defaultFormatOptions = {
   locale: "en-EN",
@@ -50,7 +51,7 @@ type FormatFragment =
       value: string;
     };
 type FormatFragmentTypes = "value" | "sign" | "code" | "separator";
-export function formatCurrencyUnitFragment(
+function formatCurrencyUnitFragment(
   unit: Unit,
   value: BigNumber,
   _options?: formatCurrencyUnitOptions,
@@ -143,6 +144,7 @@ export function formatCurrencyUnitFragment(
 
   return frags;
 }
+
 // simplification of formatCurrencyUnitFragment if no fragmented styles is needed
 export function formatCurrencyUnit(
   unit: Unit,

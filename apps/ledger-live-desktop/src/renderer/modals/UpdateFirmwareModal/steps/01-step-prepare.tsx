@@ -161,7 +161,7 @@ const StepPrepare = ({
     }
     // This whole flow is still not a device action. The step originally would only send
     // the firmware update payload to the device whereas now we are backing up the CLS too
-    // but only for stax.
+    // but only for stax or europa.
     const deviceId = device?.deviceId ?? "";
     const maybeCLSBackup =
       deviceInfo.onboarded && isCustomLockScreenSupported(deviceModelId)

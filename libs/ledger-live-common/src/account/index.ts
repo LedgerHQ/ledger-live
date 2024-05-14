@@ -1,12 +1,18 @@
-export * from "./helpers";
-export * from "./addAccounts";
-export * from "./support";
-export * from "./importAccounts";
-export * from "./serialization";
-export * from "@ledgerhq/coin-framework/account/accountId";
-export * from "@ledgerhq/coin-framework/account/accountName";
-export * from "@ledgerhq/coin-framework/account/ordering";
-export * from "@ledgerhq/coin-framework/account/groupOperations";
-export * from "@ledgerhq/coin-framework/account/pending";
+export {
+  encodeAccountId,
+  decodeAccountId,
+  encodeTokenAccountId,
+  decodeTokenAccountId,
+  isUpToDateAccount,
+  makeEmptyTokenAccount,
+  findSubAccountById,
+  type FlattenAccountsOptions,
+  groupAccountOperationsByDay,
+  groupAccountsOperationsByDay,
+  addPendingOperation,
+  emptyHistoryCache,
+} from "@ledgerhq/coin-framework/account/index";
 export * from "./formatters";
-export * from "@ledgerhq/coin-framework/account/balanceHistoryCache";
+export * from "./helpers";
+export * from "./serialization";
+export * from "./support";

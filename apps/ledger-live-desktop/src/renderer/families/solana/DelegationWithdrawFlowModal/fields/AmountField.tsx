@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   SolanaAccount,
   Transaction,
@@ -9,6 +8,7 @@ import React from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 type Props = {
   account: SolanaAccount;
   transaction: Transaction;
@@ -23,7 +23,7 @@ const InputRight = styled(Box).attrs(() => ({
 }))``;
 export default function AmountField({ account, transaction, status }: Props) {
   invariant(transaction.family === "solana", "AmountField: solana family expected");
-  const defaultUnit = getAccountUnit(account);
+  const defaultUnit = useAccountUnit(account);
   return (
     <InputCurrency
       disabled

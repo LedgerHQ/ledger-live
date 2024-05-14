@@ -35,7 +35,15 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
   const flow = trackingKeysByFlow?.[entryPoint];
 
+  const variant = getVariant(lldAnalyticsOptInPromptFlag?.params?.variant);
+
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
+  const trackingPolicyUrl = useLocalizedUrl(urls.trackingPolicy);
+
+  const urlByVariant = {
+    [ABTestingVariants.variantA]: trackingPolicyUrl,
+    [ABTestingVariants.variantB]: privacyPolicyUrl,
+  };
 
   const openAnalitycsOptInPrompt = useCallback(
     (routePath: string, callBack: () => void) => {
@@ -75,17 +83,17 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     onClose: () => setIsAnalitycsOptInPromptOpened(false),
     isOpened: isAnalitycsOptInPromptOpened,
     entryPoint: entryPoint,
-    variant: getVariant(lldAnalyticsOptInPromptFlag?.params?.variant),
+    variant,
   };
 
   const handleOpenPrivacyPolicy = (page?: string) => {
-    openURL(privacyPolicyUrl);
+    openURL(urlByVariant[variant]);
     track(
       "button_clicked",
       {
         button: "Learn more link",
         flow,
-        variant: getVariant(lldAnalyticsOptInPromptFlag?.params?.variant),
+        variant,
         page,
       },
       shouldWeTrack,

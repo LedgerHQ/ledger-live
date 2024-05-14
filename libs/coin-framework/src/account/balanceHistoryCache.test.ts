@@ -1,4 +1,4 @@
-import { startOfHour, startOfDay, startOfWeek } from ".";
+import { startOfHour, startOfDay, startOfWeek } from "./balanceHistoryCache";
 
 describe("date utils", () => {
   describe("Timezones", () => {

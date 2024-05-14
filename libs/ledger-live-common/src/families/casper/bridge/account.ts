@@ -33,7 +33,7 @@ import {
 } from "@ledgerhq/errors";
 import { CasperInvalidTransferId } from "../errors";
 import { broadcastTx } from "../api";
-import { getMainAccount } from "../../../account/helpers";
+import { getMainAccount } from "../../../account";
 import { createNewDeploy } from "./bridgeHelpers/txn";
 import { getAccountShape } from "./bridgeHelpers/accountShape";
 import { getEstimatedFees } from "./bridgeHelpers/fee";

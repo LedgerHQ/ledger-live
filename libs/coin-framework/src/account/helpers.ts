@@ -56,32 +56,6 @@ export const getAccountCurrency = (account?: AccountLike): TokenCurrency | Crypt
   }
 };
 
-export const getAccountUnit = (account: AccountLike): Unit => {
-  switch (account.type) {
-    case "Account":
-      return account.unit;
-
-    case "TokenAccount":
-      return account.token.units[0];
-
-    default:
-      throw new Error("invalid account.type=" + (account as AccountLike).type);
-  }
-};
-
-export const getAccountName = (account: AccountLike): string => {
-  switch (account.type) {
-    case "Account":
-      return account.name;
-
-    case "TokenAccount":
-      return account.token.name;
-
-    default:
-      throw new Error("invalid account.type=" + (account as AccountLike).type);
-  }
-};
-
 export const getAccountSpendableBalance = (account: AccountLike): BigNumber =>
   account.spendableBalance;
 
@@ -104,20 +78,6 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
   const hasSubAccounts = a.type === "Account" && a.subAccounts && a.subAccounts.length;
   return a.operationsCount === 0 && a.balance.isZero() && !hasSubAccounts;
 };
-
-export function areAllOperationsLoaded(account: AccountLike): boolean {
-  if (account.operationsCount !== account.operations.length) {
-    return false;
-  }
-
-  if (account.type === "Account" && account.subAccounts) {
-    return account.subAccounts.every(areAllOperationsLoaded);
-  }
-
-  return true;
-}
-
-export const isAccountBalanceSignificant = (a: AccountLike): boolean => a.balance.gt(100);
 
 // in future, could be a per currency thing
 // clear account to a bare minimal version that can be restored via sync
@@ -229,7 +189,6 @@ export const makeEmptyTokenAccount = (account: Account, token: TokenCurrency): T
   creationDate: new Date(),
   operations: [],
   pendingOperations: [],
-  starred: false,
   swapHistory: [],
   balanceHistoryCache: emptyHistoryCache,
 });
@@ -261,26 +220,11 @@ export const accountWithMandatoryTokens = (
       creationDate: new Date(),
       operations: [],
       pendingOperations: [],
-      starred: false,
       swapHistory: [],
       balanceHistoryCache: emptyHistoryCache,
     }));
   if (addition.length === 0) return account;
   return { ...account, subAccounts: subAccounts.concat(addition) };
-};
-
-/**
- * Patch account to enforce the removal of a blacklisted token
- */
-export const withoutToken = (account: Account, tokenId: string): Account => {
-  const { subAccounts } = account;
-  if (!subAccounts) return account;
-  const tokenAccount = subAccounts.find(a => a.type === "TokenAccount" && a.token.id === tokenId);
-  if (!tokenAccount) return account;
-  return {
-    ...account,
-    subAccounts: subAccounts.filter(sa => sa.id !== tokenAccount.id),
-  };
 };
 
 /**
@@ -333,13 +277,6 @@ export function isAccount(account?: AccountLike): account is Account {
 
 export function isTokenAccount(account?: AccountLike): account is TokenAccount {
   return account?.type === "TokenAccount";
-}
-
-/**
- * @deprecated use isTokenAccount instead
- */
-export function isSubAccount(account?: AccountLike): account is SubAccount {
-  return isTokenAccount(account);
 }
 
 export function getParentAccount(account: AccountLike, accounts: AccountLike[]): Account {

@@ -33,6 +33,9 @@ export const commands = (
     const command = comment.body.match(matcher);
     const login = payload.sender.login;
 
+    if (!isPR(issue)) return;
+    if (!command || (command && command[1] !== name)) return;
+
     try {
       const res = await octokit.orgs.checkMembershipForUser({
         org: "LedgerHQ",
@@ -65,9 +68,6 @@ export const commands = (
       });
       return;
     }
-
-    if (!isPR(issue)) return;
-    if (!command || (command && command[1] !== name)) return;
 
     await octokit.rest.reactions.createForIssueComment({
       ...context.repo(),

@@ -6,6 +6,7 @@ import * as RPC_API from "../../api/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
   attachOperations,
+  createSwapHistoryMap,
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
   getDefaultFeeUnit,
@@ -446,6 +447,79 @@ describe("EVM Family", () => {
       });
     });
 
+    describe("createSwapHistoryMap", () => {
+      it("returns an empty map if initialAccount is undefined", () => {
+        const swapHistory = createSwapHistoryMap(undefined);
+        expect(swapHistory.size).toBe(0);
+      });
+      it("returns an empty map if there are no subAccounts", () => {
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), []);
+        const swapHistory = createSwapHistoryMap(account);
+        expect(swapHistory.size).toBe(0);
+      });
+
+      it("maps TokenAccounts to their swapHistory", () => {
+        const tokenAccount1 = {
+          ...makeTokenAccount("0xCrema1", getTokenById("ethereum/erc20/usd__coin")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin-OUT",
+              swapId: "swap1",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+        const tokenAccount2 = {
+          ...makeTokenAccount("0xCrema2", getTokenById("ethereum/erc20/weth")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fweth-OUT",
+              swapId: "swap2",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [
+          tokenAccount1,
+          tokenAccount2,
+        ]);
+        const swapHistory = createSwapHistoryMap(account);
+
+        expect(swapHistory.size).toBe(2);
+        expect(swapHistory.get(tokenAccount1.token)).toEqual(tokenAccount1.swapHistory);
+        expect(swapHistory.get(tokenAccount2.token)).toEqual(tokenAccount2.swapHistory);
+      });
+      it("should include correct swapHistory for a token account", () => {
+        const tokenAccount = {
+          ...makeTokenAccount("0xCrema", getTokenById("ethereum/erc20/usd__coin")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin-OUT",
+              swapId: "6342cd15-5aa9-4c8c-9fb3-0b67e9b0714a",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              tokenId: "ethereum/erc20/usd__coin",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [tokenAccount]);
+
+        const swapHistoryMap = createSwapHistoryMap(account);
+        expect(swapHistoryMap.get(tokenAccount.token)).toEqual(tokenAccount.swapHistory);
+      });
+    });
     describe("getSyncHash", () => {
       const currency = getCryptoCurrencyById("ethereum");
 

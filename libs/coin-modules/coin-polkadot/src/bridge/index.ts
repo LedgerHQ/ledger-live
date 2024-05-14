@@ -7,9 +7,13 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { PolkadotSigner, type Transaction } from "../types";
 import signerGetAddress from "../signer";
+import broadcast from "./broadcast";
 import createTransaction from "./createTransaction";
-import { estimateMaxSpendable, getTransactionStatus, getAccountShape, broadcast } from "../logic";
+import estimateMaxSpendable from "./estimateMaxSpendable";
+import getTransactionStatus from "./getTransactionStatus";
+import getAccountShape from "./getAccountShape";
 import prepareTransaction from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
 import {
@@ -19,12 +23,8 @@ import {
   toOperationExtraRaw,
 } from "./serialization";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
-import type { PolkadotAddress, PolkadotSignature, Transaction } from "../types";
-import { PolkadotSigner } from "../types";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
-): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<PolkadotSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -40,8 +40,8 @@ export function buildCurrencyBridge(
   };
 }
 
-export function buildAccountBridge(
-  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
+function buildAccountBridge(
+  signerContext: SignerContext<PolkadotSigner>,
 ): AccountBridge<Transaction> {
   const getAddress = signerGetAddress(signerContext);
 
@@ -66,9 +66,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
-) {
+export function createBridges(signerContext: SignerContext<PolkadotSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

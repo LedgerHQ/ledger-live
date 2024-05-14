@@ -11,14 +11,14 @@ import { ManifestList } from "./ManifestList";
 import { RecentlyUsed } from "./RecentlyUsed";
 import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
+import { LocalLiveApp } from "./LocalLiveApp";
 
 const AnimatedView = Animatable.View;
 
 export function Catalog() {
   const { t } = useTranslation();
   const title = t("browseWeb3.catalog.title");
-  const { categories, recentlyUsed, search, disclaimer } = useCatalog();
-
+  const { categories, recentlyUsed, search, disclaimer, localLiveApps } = useCatalog();
   return (
     <TabBarSafeAreaView edges={["top", "bottom", "left", "right"]}>
       {/* TODO: put under the animation header and style  */}
@@ -43,7 +43,10 @@ export function Catalog() {
             }
             disableStyleBottomHeader
             bottomHeaderContent={
-              <RecentlyUsed recentlyUsed={recentlyUsed} disclaimer={disclaimer} />
+              <>
+                {localLiveApps.length !== 0 && <LocalLiveApp localLiveApps={localLiveApps} />}
+                <RecentlyUsed recentlyUsed={recentlyUsed} disclaimer={disclaimer} />
+              </>
             }
             disableStyleSubBottomHeader
             subBottomHeaderContent={<CatalogSection categories={categories} />}

@@ -12,7 +12,7 @@ import invariant from "invariant";
 import { Observable, firstValueFrom, from } from "rxjs";
 import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
-import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
+import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import {
@@ -29,6 +29,7 @@ import type { InitSwapInput, SwapRequestEvent } from "./types";
 import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -62,7 +63,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const { fromParentAccount, fromAccount, toParentAccount, toAccount } = exchange;
         const { amount } = transaction;
         const refundCurrency = getAccountCurrency(fromAccount);
-        const unitFrom = getAccountUnit(exchange.fromAccount);
+        const unitFrom = getAccountCurrency(exchange.fromAccount).units[0];
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
@@ -207,7 +208,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccountPayout(undefined, {
-              accountName: payoutAccount.name,
+              accountName: getDefaultAccountName(payoutAccount),
             });
           }
 
@@ -259,7 +260,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccountRefund(undefined, {
-              accountName: refundAccount.name,
+              accountName: getDefaultAccountName(refundAccount),
             });
           }
 

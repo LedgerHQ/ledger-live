@@ -1,9 +1,12 @@
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { BigNumber } from "bignumber.js";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
-import { encodeAccountId, encodeTokenAccountId } from "../../account";
 import eip55 from "eip55";
-import { emptyHistoryCache } from "../../account";
+import {
+  emptyHistoryCache,
+  encodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/coin-framework/account/index";
 
 import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "./api";
 import { findTokenById, getTokenById } from "@ledgerhq/cryptoassets/tokens";
@@ -70,7 +73,6 @@ const getAccountShape: GetAccountShape = async info => {
         blockHeight,
         pendingOperations:
           (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.pendingOperations) || [],
-        starred: (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.starred) || false,
         balanceHistoryCache:
           (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.balanceHistoryCache) ||
           emptyHistoryCache,

@@ -84,6 +84,7 @@ import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTra
 import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
+import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -163,6 +164,14 @@ export default function BaseNavigator() {
             headerRight: () => null,
           })}
           {...noNanoBuyNanoWallScreenOptions}
+        />
+
+        <Stack.Screen
+          name={ScreenName.EditCurrencyUnits}
+          component={EditCurrencyUnits}
+          options={{
+            title: t("account.settings.accountUnits.title"),
+          }}
         />
         <Stack.Screen
           name={NavigatorName.ReceiveFunds}

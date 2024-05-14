@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import invariant from "invariant";
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -17,6 +16,7 @@ import {
   CeloAccount,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/celo/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 type Props = {
   account: CeloAccount;
   status: TransactionStatus;
@@ -32,7 +32,7 @@ const ValidatorGroupsField = ({
   invariant(account && account.celoResources, "celo account and resources required");
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const validatorGroups = useValidatorGroups(search);
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),

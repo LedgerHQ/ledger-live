@@ -13,6 +13,9 @@ export type NodeApi = {
     blockHeight: number | undefined;
     blockHash: string | undefined;
     nonce: number;
+    gasUsed: string;
+    gasPrice: string;
+    value: string;
   }>;
   getCoinBalance: (currency: CryptoCurrency, address: string) => Promise<BigNumber>;
   getTokenBalance: (

@@ -1,107 +1,105 @@
-import React, { PureComponent } from "react";
-import { Trans, withTranslation } from "react-i18next";
-import { TFunction } from "i18next";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import React from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import Track from "~/renderer/analytics/Track";
-import { saveSettings } from "~/renderer/actions/settings";
+import { setCurrencySettings } from "~/renderer/actions/settings";
 import {
-  currencySettingsSelector,
-  storeSelector,
   currencySettingsDefaults,
-  SettingsState,
   CurrencySettings,
+  currencySettingsLocaleSelector,
 } from "~/renderer/reducers/settings";
 import StepperNumber from "~/renderer/components/StepperNumber";
-import {
-  SettingsSectionRow as Row,
-  SettingsSectionRowContainer,
-  SettingsSectionBody as Body,
-} from "../../SettingsSection";
+import { SettingsSectionRow as Row, SettingsSectionRowContainer } from "../../SettingsSection";
 import Box from "~/renderer/components/Box";
+import Select from "~/renderer/components/Select";
+import { State } from "~/renderer/reducers";
+
 type Props = {
-  t: TFunction;
   currency: CryptoCurrency;
-  currencySettings: CurrencySettings;
-  // FIXME: the stuff bellow to be to be gone!
-  settings: SettingsState;
-  saveSettings: (a: Partial<SettingsState>) => void;
 };
-class CurrencyRows extends PureComponent<Props> {
-  handleChangeConfirmationsNb = (nb: number) => this.updateCurrencySettings("confirmationsNb", nb);
-  updateCurrencySettings = (key: string, val: number) => {
-    // FIXME this really should be a dedicated action
-    const { settings, saveSettings, currency } = this.props;
-    const currencySettings = settings.currenciesSettings[currency.ticker];
-    let newCurrenciesSettings: {
-      [currencyId: string]: CurrencySettings;
-    } = {};
-    if (!currencySettings) {
-      newCurrenciesSettings = {
-        ...settings.currenciesSettings,
-        [currency.ticker]: {
-          [key as keyof CurrencySettings]: val,
-        },
-      };
-    } else {
-      newCurrenciesSettings = {
-        ...settings.currenciesSettings,
-        [currency.ticker]: {
-          ...currencySettings,
-          [key as keyof CurrencySettings]: val,
-        },
-      };
-    }
-    saveSettings({
-      currenciesSettings: newCurrenciesSettings,
-    });
+
+type Key = keyof CurrencySettings;
+
+function CurrencyRows({ currency }: Props) {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  const currencySettings = useSelector((state: State) =>
+    currencySettingsLocaleSelector(state.settings, currency),
+  );
+
+  const handleChangeConfirmationsNb = (nb: number) => updateCurrencySettings("confirmationsNb", nb);
+  const handleChangeUnit = (value?: Unit | null) => updateCurrencySettings("unit", value);
+  const updateCurrencySettings = (key: Key, val?: number | Unit | null) => {
+    const newCurrencySettings = {
+      ...currencySettings,
+      [key as keyof CurrencySettings]: val,
+    };
+
+    dispatch(
+      setCurrencySettings({
+        key: currency.ticker,
+        value: newCurrencySettings,
+      }),
+    );
   };
 
-  render() {
-    const { currency, t, currencySettings } = this.props;
-    const { confirmationsNb } = currencySettings;
-    const defaults = currencySettingsDefaults(currency);
-    // NB ideally we would have a dynamic list of settings
+  const { confirmationsNb, unit } = currencySettings;
+  const defaults = currencySettingsDefaults(currency);
+  // NB ideally we would have a dynamic list of settings
 
-    return (
-      <Body>
-        {defaults.confirmationsNb ? (
-          <Row
-            title={t("settings.currencies.confirmationsNb")}
-            desc={t("settings.currencies.confirmationsNbDesc")}
-            inset
-          >
-            <Track onUpdate event="ConfirmationsNb" confirmationsNb={confirmationsNb} />
-            {defaults.confirmationsNb ? (
-              <StepperNumber
-                min={defaults.confirmationsNb.min}
-                max={defaults.confirmationsNb.max}
-                step={1}
-                onChange={this.handleChangeConfirmationsNb}
-                value={confirmationsNb}
-              />
-            ) : null}
-          </Row>
-        ) : (
-          <SettingsSectionRowContainer>
-            <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
-              <Trans i18nKey="settings.currencies.placeholder" />
-            </Box>
-          </SettingsSectionRowContainer>
-        )}
-      </Body>
-    );
-  }
+  const unitGetOptionValue = (unit: Unit) => unit.magnitude + "";
+  const renderUnitItemCode = (item: { data: Unit }) => item.data.code;
+
+  return (
+    <>
+      {defaults.confirmationsNb ? (
+        <Row
+          title={t("settings.currencies.confirmationsNb")}
+          desc={t("settings.currencies.confirmationsNbDesc")}
+          inset
+        >
+          <Track onUpdate event="ConfirmationsNb" confirmationsNb={confirmationsNb} />
+          {defaults.confirmationsNb ? (
+            <StepperNumber
+              min={defaults.confirmationsNb.min}
+              max={defaults.confirmationsNb.max}
+              step={1}
+              onChange={handleChangeConfirmationsNb}
+              value={confirmationsNb}
+            />
+          ) : null}
+        </Row>
+      ) : (
+        <SettingsSectionRowContainer>
+          <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
+            <Trans i18nKey="settings.currencies.placeholder" />
+          </Box>
+        </SettingsSectionRowContainer>
+      )}
+
+      <Row title={t("account.settings.unit.title")} desc={t("account.settings.unit.desc")} inset>
+        <Track onUpdate event="unit" unit={unit} />
+
+        <Box
+          style={{
+            width: 150,
+          }}
+        >
+          <Select
+            isSearchable={false}
+            onChange={handleChangeUnit}
+            getOptionValue={unitGetOptionValue}
+            renderValue={renderUnitItemCode}
+            renderOption={renderUnitItemCode}
+            value={unit}
+            options={currency.units}
+          />
+        </Box>
+      </Row>
+    </>
+  );
 }
-export default withTranslation()(
-  connect(
-    createStructuredSelector({
-      currencySettings: currencySettingsSelector,
-      settings: storeSelector,
-    }),
-    {
-      saveSettings,
-    },
-  )(CurrencyRows),
-);
+
+export default React.memo(CurrencyRows);

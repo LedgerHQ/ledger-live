@@ -46,13 +46,6 @@ const algorand: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
         freshAddressPath: "44'/283'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
-            derivationPath: "44'/283'/0'/0/0",
-          },
-        ],
-        unitMagnitude: 6,
         blockHeight: 8518049,
         operations: [],
         pendingOperations: [],
@@ -220,13 +213,6 @@ const algorand: CurrenciesData<Transaction> = {
         index: 3,
         freshAddress: "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
         freshAddressPath: "44'/283'/3'/0/0",
-        freshAddresses: [
-          {
-            address: "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
-            derivationPath: "44'/283'/3'/0/0",
-          },
-        ],
-        unitMagnitude: 6,
         blockHeight: 8518189,
         balance: "0",
         spendableBalance: "0",

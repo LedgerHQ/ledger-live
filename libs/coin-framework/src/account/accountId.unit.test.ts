@@ -1,10 +1,10 @@
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import {
   decodeTokenAccountId,
   encodeTokenAccountId,
   safeDecodeTokenId,
   safeEncodeTokenId,
 } from "./accountId";
-import { getTokenById } from "../currencies";
 
 describe("coin-framework", () => {
   describe("accountId", () => {

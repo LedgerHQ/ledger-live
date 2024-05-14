@@ -10,6 +10,7 @@ import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
 import { BigNumber } from "bignumber.js";
 import { formattedAmount } from "../../models/common";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 let portfolioPage: PortfolioPage;
 let stakePage: StakePage;
@@ -58,8 +59,12 @@ describe("Cosmos delegate flow", () => {
 
     const [assestsDelagated, assestsRemaining] = await stakePage.setAmount(delegatedPercent);
     expect(await stakePage.cosmosDelegationSummaryValidator()).toEqual("Ledger");
-    expect(assestsRemaining).toEqual(formattedAmount(testedAccount.unit, remainingAmount));
-    expect(assestsDelagated).toEqual(formattedAmount(testedAccount.unit, delegatedAmount, true));
+    expect(assestsRemaining).toEqual(
+      formattedAmount(getAccountCurrency(testedAccount).units[0], remainingAmount),
+    );
+    expect(assestsDelagated).toEqual(
+      formattedAmount(getAccountCurrency(testedAccount).units[0], delegatedAmount, true),
+    );
 
     await stakePage.summaryContinue();
     await deviceAction.selectMockDevice();

@@ -170,6 +170,8 @@ export default {
             })),
           ),
           autofillGaps: !opts.disableAutofillGaps,
+          refreshRate: 60000,
+          marketCapBatchingAfterRank: 20,
         });
         // eslint-disable-next-line no-console
         if (opts.verbose) console.log(cvs);

@@ -15,7 +15,7 @@ import {
   parseSatStackConfig,
   SatStackConfig,
 } from "@ledgerhq/live-common/families/bitcoin/satstack";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { Account, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
 import { DataModel } from "@ledgerhq/live-common/DataModel";
 import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/types";
@@ -82,7 +82,7 @@ type Transform<R, M> = {
 
 // A map of transformers.
 type Transforms = {
-  accounts: Transform<AccountRaw, Account>;
+  accounts: Transform<AccountRaw, [Account, AccountUserData]>;
 };
 
 const transforms: Transforms = {
@@ -90,11 +90,11 @@ const transforms: Transforms = {
     get: raws => {
       // NB to prevent parsing encrypted string as JSON
       if (typeof raws === "string") return null;
-      const accounts = [];
+      const accounts: Array<[Account, AccountUserData]> = [];
       if (raws) {
-        for (const row of raws) {
+        for (const raw of raws) {
           try {
-            accounts.push(accountModel.decode(row));
+            accounts.push(accountModel.decode(raw));
           } catch (e) {
             logger.critical(e);
           }

@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
@@ -20,6 +19,9 @@ import ToolTip from "~/renderer/components/Tooltip";
 import useTheme from "~/renderer/hooks/useTheme";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { IconsLegacy } from "@ledgerhq/react-ui";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountName, useMaybeAccountName } from "~/renderer/reducers/wallet";
+
 export type AccountDistributionItem = {
   account: AccountLike;
   distribution: number;
@@ -35,6 +37,7 @@ export default function Row({
   item: { currency, amount, distribution, account },
   isVisible,
 }: Props) {
+  const unit = useAccountUnit(account);
   const accounts = useSelector(accountsSelector);
   const theme = useTheme();
   const history = useHistory();
@@ -53,18 +56,22 @@ export default function Row({
   const parentAccount =
     account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;
   const color = useCurrencyColor(currency, theme.colors.palette.background.paper);
-  const displayName = getAccountName(account);
+  const displayName = useAccountName(account);
+  const parentDisplayName = useMaybeAccountName(parentAccount);
   const percentage = Math.floor(distribution * 10000) / 100;
   const icon = <ParentCryptoCurrencyIcon currency={currency} />;
   return (
     <AccountContextMenu account={account} parentAccount={parentAccount} withStar>
-      <Wrapper onClick={() => onAccountClick(account)}>
+      <Wrapper
+        onClick={() => onAccountClick(account)}
+        data-test-id={`account-row-${currency.name.toLowerCase()}`}
+      >
         <AccountWrapper>
           {icon}
           <Box>
             {parentAccount ? (
               <Ellipsis fontSize={10} color="palette.text.shade80">
-                <Text ff="Inter|SemiBold">{parentAccount.name}</Text>
+                <Text ff="Inter|SemiBold">{parentDisplayName}</Text>
               </Ellipsis>
             ) : null}
             <ToolTip content={displayName} delay={1200}>
@@ -88,7 +95,7 @@ export default function Row({
           <Ellipsis>
             <FormattedVal
               color={"palette.text.shade80"}
-              unit={currency.units[0]}
+              unit={unit}
               val={amount}
               fontSize={3}
               showCode

@@ -1,12 +1,12 @@
 import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
+import { log } from "@ledgerhq/logs";
+import type { OperationType } from "@ledgerhq/types-live";
+import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getEnv } from "@ledgerhq/live-env";
-import { getOperationType } from "./common";
-import type { OperationType } from "@ledgerhq/types-live";
 import { isValidAddress } from "../common";
-import { PolkadotOperation, PolkadotOperationExtra } from "../types";
+import type { PalletMethod, PolkadotOperation, PolkadotOperationExtra } from "../types";
 
 const LIMIT = 200;
 
@@ -45,6 +45,51 @@ const getWithdrawUnbondedAmount = (extrinsic: any) => {
       return curr.method === "Withdrawn" ? new BigNumber(acc).plus(curr.value) : new BigNumber(0);
     }, new BigNumber(0)) || new BigNumber(0)
   );
+};
+
+/**
+ * Returns the operation type by using his palletMethod
+ * the method case depends from which indexer you are using
+ *
+ * @param {*} pallet
+ * @param {*} palletMethod
+ *
+ * @returns {string} - OperationType
+ */
+const getOperationType = (pallet: string, palletMethod: PalletMethod | unknown): OperationType => {
+  switch (palletMethod) {
+    case "transfer":
+    case "transferAllowDeath":
+    case "transferKeepAlive":
+      return "OUT";
+
+    case "bond":
+    case "bondExtra":
+    case "rebond":
+      return "BOND";
+
+    case "unbond":
+      return "UNBOND";
+
+    case "nominate":
+      return "NOMINATE";
+
+    case "chill":
+      return "CHILL";
+
+    case "withdrawUnbonded":
+      return "WITHDRAW_UNBONDED";
+
+    case "setController":
+      return "SET_CONTROLLER";
+
+    case "payoutStakers":
+      return "FEES";
+
+    default:
+      log("polkadot/api", `Unknown operation type ${pallet}.${palletMethod} - fallback to FEES`);
+      return "FEES";
+  }
 };
 
 /**

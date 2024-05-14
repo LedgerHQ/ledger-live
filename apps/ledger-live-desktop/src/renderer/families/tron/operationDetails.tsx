@@ -24,6 +24,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { OperationDetailsExtraProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
 function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined {
@@ -106,6 +107,7 @@ const OperationDetailsExtra = ({
   type,
   account,
 }: OperationDetailsExtraProps<TronAccount, TronOperation>) => {
+  const unit = useAccountUnit(account);
   const frozenAmount = operation.extra?.frozenAmount
     ? (operation.extra.frozenAmount as BigNumber)
     : new BigNumber(0);
@@ -144,7 +146,7 @@ const OperationDetailsExtra = ({
             <Box>
               <FormattedVal
                 val={frozenAmount}
-                unit={account.unit}
+                unit={unit}
                 showCode
                 fontSize={4}
                 color="palette.text.shade60"
@@ -163,7 +165,7 @@ const OperationDetailsExtra = ({
             <Box>
               <FormattedVal
                 val={unfreezeAmount}
-                unit={account.unit}
+                unit={unit}
                 showCode
                 fontSize={4}
                 color="palette.text.shade60"
@@ -183,7 +185,7 @@ const OperationDetailsExtra = ({
               <Box>
                 <FormattedVal
                   val={unDelegatedAmount}
-                  unit={account.unit}
+                  unit={unit}
                   showCode
                   fontSize={4}
                   color="palette.text.shade60"
@@ -215,7 +217,7 @@ const OperationDetailsExtra = ({
             <Box>
               <FormattedVal
                 val={unfreezeAmount}
-                unit={account.unit}
+                unit={unit}
                 showCode
                 fontSize={4}
                 color="palette.text.shade60"
