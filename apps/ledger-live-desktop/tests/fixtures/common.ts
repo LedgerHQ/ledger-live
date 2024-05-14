@@ -12,7 +12,7 @@ import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { responseLogfilePath } from "../utils/networkResponseLogger";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { Device, startSpeculos, stopSpeculos } from "../utils/speculos";
+import { startSpeculos, stopSpeculos } from "../utils/speculos";
 import { Spec } from "../utils/speculos";
 
 export function generateUUID(): string {
@@ -27,6 +27,7 @@ type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosCurrency: Spec;
+  testName: string;
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
@@ -54,6 +55,7 @@ export const test = base.extend<TestFixtures>({
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosCurrency: undefined,
+  testName: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -75,6 +77,7 @@ export const test = base.extend<TestFixtures>({
       featureFlags,
       simulateCamera,
       speculosCurrency,
+      testName,
     },
     use,
   ) => {
@@ -85,13 +88,15 @@ export const test = base.extend<TestFixtures>({
       await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
     }
 
-    let device: Device | undefined;
+    let device: any | undefined;
     if (IS_MOCK) {
       console.log("Avant spéculos");
       if (speculosCurrency) {
-        device = await startSpeculos("Bitcoin Receive", speculosCurrency);
+        console.log(speculosCurrency);
+        device = await startSpeculos(testName, speculosCurrency);
         console.log("speculos crée");
         console.log(device);
+        console.log("post log device");
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
       }
       //setEnv("SPECULOS_API_PORT", 30001 + getEnv("SPECULOS_PID_OFFSET"));
@@ -116,7 +121,7 @@ export const test = base.extend<TestFixtures>({
         },
         env,
       );
-      console.log(env);
+      //console.log(env);
 
       // launch app
       const windowSize = { width: 1024, height: 768 };

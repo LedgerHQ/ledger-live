@@ -30,7 +30,11 @@ type Specs = {
   [key: string]: Spec;
 };
 
-export type Device = { transport: SpeculosTransport; id: string; appPath: string };
+export type Device = {
+  transport: SpeculosTransport;
+  id: string;
+  appPath: string;
+};
 
 export const specs: Specs = {
   Bitcoin: {
