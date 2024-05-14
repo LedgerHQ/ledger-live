@@ -4,7 +4,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
@@ -18,6 +18,7 @@ import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigato
 import { ScreenName } from "~/const";
 import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -36,7 +37,7 @@ export default function CosmosFeeRow({ account, transaction }: Props) {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
   const fees = (transaction as CosmosTransaction).fees;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   return (
     <SummaryRow

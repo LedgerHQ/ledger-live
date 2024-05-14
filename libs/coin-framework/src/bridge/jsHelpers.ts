@@ -13,17 +13,13 @@ import {
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
 } from "../derivation";
+import { isAccountEmpty, clearAccount, emptyHistoryCache, encodeAccountId } from "../account";
 import {
-  getAccountPlaceholderName,
-  shouldRetainPendingOperation,
-  isAccountEmpty,
-  shouldShowNewAccount,
-  clearAccount,
-  emptyHistoryCache,
   generateHistoryFromOperations,
   recalculateAccountBalanceHistories,
-  encodeAccountId,
-} from "../account";
+} from "../account/balanceHistoryCache";
+import { shouldRetainPendingOperation } from "../account/pending";
+import { shouldShowNewAccount } from "../account/support";
 import { UnsupportedDerivation } from "../errors";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
 import type { Result } from "../derivation";
@@ -359,8 +355,6 @@ export const makeScanAccounts =
           freshAddress,
           freshAddressPath,
           derivationMode,
-          name: "",
-          starred: false,
           used: false,
           index,
           currency,
@@ -368,7 +362,6 @@ export const makeScanAccounts =
           operations: [],
           swapHistory: [],
           pendingOperations: [],
-          unit: currency.units[0],
           lastSyncDate: new Date(),
           creationDate,
           // overrides
@@ -404,12 +397,6 @@ export const makeScanAccounts =
         );
 
         if (!account) return;
-
-        account.name = getAccountPlaceholderName({
-          currency,
-          index,
-          derivationMode,
-        });
 
         const showNewAccount = shouldShowNewAccount(currency, derivationMode);
 
@@ -550,9 +537,7 @@ export function makeAccountBridgeReceive(
         const accountAddress = account.freshAddress;
 
         if (r.address !== accountAddress) {
-          throw new WrongDeviceForAccount(`WrongDeviceForAccount ${account.name}`, {
-            accountName: account.name,
-          });
+          throw new WrongDeviceForAccount();
         }
 
         return r;

@@ -7,7 +7,7 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { EvmAddress, EvmSignature, EvmSigner } from "../types/signer";
+import type { EvmSigner } from "../types/signer";
 import type { Transaction as EvmTransaction } from "../types/index";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
@@ -21,9 +21,7 @@ import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
 import { setCoinConfig, type CoinConfig } from "../config";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
-): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -43,7 +41,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+  signerContext: SignerContext<EvmSigner>,
 ): AccountBridge<EvmTransaction> {
   const getAddress = resolver(signerContext);
 
@@ -64,7 +62,7 @@ export function buildAccountBridge(
 }
 
 export function createBridges(
-  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+  signerContext: SignerContext<EvmSigner>,
   coinConfig: CoinConfig,
 ): Bridge<EvmTransaction> {
   setCoinConfig(coinConfig);

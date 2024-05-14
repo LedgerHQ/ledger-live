@@ -1,8 +1,9 @@
-import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { addPendingOperation } from "./pending";
 import BigNumber from "bignumber.js";
+import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { addPendingOperation } from "./pending";
+import { emptyHistoryCache } from "./balanceHistoryCache";
 
 describe("addPendingOperation", () => {
   it("add the operation to the matching account Id", () => {
@@ -63,21 +64,6 @@ describe("addPendingOperation", () => {
   });
 });
 
-const emptyHistoryCache = {
-  HOUR: {
-    latestDate: null,
-    balances: [],
-  },
-  DAY: {
-    latestDate: null,
-    balances: [],
-  },
-  WEEK: {
-    latestDate: null,
-    balances: [],
-  },
-};
-
 function createAccount(id: string): Account {
   const currency = listCryptoCurrencies(true)[0];
 
@@ -89,15 +75,12 @@ function createAccount(id: string): Account {
     index: 0,
     freshAddress: "",
     freshAddressPath: "",
-    name: "",
-    starred: false,
     used: true,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
     creationDate: new Date(),
     blockHeight: 0,
     currency,
-    unit: currency.units[0],
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
@@ -120,7 +103,6 @@ function createTokenAccount(id: string): TokenAccount {
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    starred: false,
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
   };

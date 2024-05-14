@@ -89,11 +89,31 @@ describe("EVM Family", () => {
               blockNumber: 69,
               confirmations: 100,
               from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+              to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
               nonce: 123,
               gasLimit: ethers.BigNumber.from(123),
               data: "0x",
               value: ethers.BigNumber.from(456),
               chainId: mockedNetwork.chainId,
+            };
+          case "getTransactionReceipt":
+            return {
+              blockHash: "0x8a179bc6cb299f936c4fd614995e62d597ec6108b579c23034fb220967ceaa94",
+              blockNumber: 69,
+              byzantium: true,
+              confirmations: 100,
+              contractAddress: null,
+              cumulativeGasUsed: ethers.BigNumber.from(121),
+              effectiveGasPrice: ethers.BigNumber.from(789),
+              from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+              gasUsed: ethers.BigNumber.from(122),
+              logs: [],
+              logsBloom: "0x",
+              status: 1,
+              to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
+              transactionHash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+              transactionIndex: 123,
+              type: 0,
             };
           case "call":
             return "0x00000000000000000000000000000000000000000000000000000000000001A4"; // 420 as uint256 hex
@@ -211,6 +231,9 @@ describe("EVM Family", () => {
           blockHeight: 69,
           hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           nonce: 123,
+          gasPrice: "789",
+          gasUsed: "122",
+          value: "456",
         });
       });
     });

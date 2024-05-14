@@ -1,5 +1,5 @@
 import * as nearAPI from "near-api-js";
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
@@ -23,7 +23,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction, account }) => {
         if (transaction.mode === "stake") {
-          return formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+          return formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
             disableRounding: true,
           });
         }
@@ -35,7 +35,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Amount",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction, account }) =>
-        formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+        formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
           disableRounding: true,
         }),
     },
@@ -59,7 +59,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
 
         return JSON.stringify({
           amount: nearAPI.utils.format.parseNearAmount(
-            formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+            formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
               disableRounding: true,
             }),
           ),

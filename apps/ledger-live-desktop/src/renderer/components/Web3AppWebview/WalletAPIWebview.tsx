@@ -43,6 +43,7 @@ import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { NoAccountOverlay } from "./NoAccountOverlay";
 import { ipcRenderer } from "electron";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -178,11 +179,11 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
           openExchangeDrawer({
             type: "EXCHANGE_START",
             exchangeType: ExchangeType[exchangeType],
-            onResult: (nonce: string) => {
-              onSuccess(nonce);
+            onResult: result => {
+              onSuccess(result.nonce);
             },
-            onCancel: (error: Error) => {
-              onCancel(error);
+            onCancel: cancelResult => {
+              onCancel(cancelResult.error);
             },
           }),
         );
@@ -259,7 +260,10 @@ function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const walletState = useSelector(walletSelector);
+
   const { widgetLoaded, onLoad, onReload, onMessage, server } = useWalletAPIServer({
+    walletState,
     manifest,
     accounts,
     tracking,

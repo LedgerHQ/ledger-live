@@ -1,4 +1,3 @@
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { Flex, Icon, Tag as TagCore, Text } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo } from "react";
@@ -7,6 +6,7 @@ import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import { StakeOnClickProps } from "../EthStakingModalBody";
 import { StakingIcon } from "../StakingIcon";
 import { ListProvider } from "../types";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 export const Container: StyledComponent<
   "div",

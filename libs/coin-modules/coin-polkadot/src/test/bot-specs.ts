@@ -2,10 +2,8 @@ import expect from "expect";
 import invariant from "invariant";
 import sampleSize from "lodash/sampleSize";
 import { BigNumber } from "bignumber.js";
-import {
-  getCryptoCurrencyById,
-  parseCurrencyUnit,
-} from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
@@ -13,7 +11,7 @@ import {
   pickSiblings,
 } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { toOperationRaw } from "@ledgerhq/coin-framework/serialization/index";
+import { toOperationRaw } from "@ledgerhq/coin-framework/serialization";
 import { getCurrentPolkadotPreloadData } from "../bridge/state";
 import type { PolkadotAccount, PolkadotResources, Transaction } from "../types";
 import {

@@ -1,4 +1,4 @@
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
@@ -6,8 +6,10 @@ import {
   Transaction as SolanaTransaction,
   TransactionModel,
 } from "@ledgerhq/live-common/families/solana/types";
-import { assertUnreachable } from "@ledgerhq/live-common/families/solana/utils";
-import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
+import {
+  assertUnreachable,
+  ValidatorsAppValidator,
+} from "@ledgerhq/live-common/families/solana/staking";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -34,6 +36,7 @@ import ValidatorImage from "../shared/ValidatorImage";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { DelegationAction, SolanaDelegationFlowParamList } from "./types";
 import TranslatedError from "../../../components/TranslatedError";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSummary>;
 
@@ -440,7 +443,7 @@ function SummaryWords({
   const i18nActionKey =
     delegationAction.kind === "new" ? "iDelegate" : `i${capitalize(delegationAction.stakeAction)}`;
 
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formattedAmount = formatCurrencyUnit(unit, new BigNumber(amount), {
     disableRounding: true,
     alwaysShowSign: false,
@@ -481,7 +484,7 @@ function SummaryWords({
 }
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { colors } = useTheme();
   return (
     <View style={[styles.accountBalanceTag, { backgroundColor: colors.lightFog }]}>

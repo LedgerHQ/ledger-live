@@ -6140,6 +6140,7 @@
       "subtitle": "Explore Web3 fully integrated with Ledger",
       "section": {
         "recentlyUsed": "Recently Used",
+        "locallyLoaded": "Locally Loaded",
         "categories": "Categories",
         "clearAll": "Clear All"
       },

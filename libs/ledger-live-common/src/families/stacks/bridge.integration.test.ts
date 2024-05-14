@@ -54,7 +54,6 @@ const stacks: CurrenciesData<Transaction> = {
         xpub: SEED_IDENTIFIER_PUBKEY,
         pendingOperations: [],
         currencyId: "stacks",
-        unitMagnitude: 6,
         lastSyncDate: "",
         balance: "1000",
       },

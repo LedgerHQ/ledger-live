@@ -1,11 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { getAccountUnit, shortAddressPreview } from "@ledgerhq/live-common/account/index";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { CardanoAccount, CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import ContextMenu from "./ContextMenu";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   delegation: CardanoDelegation;
@@ -41,7 +42,7 @@ const Value = styled.div`
 `;
 
 const Row = ({ account, delegation }: Props) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   let name = "";
   if (delegation && delegation.poolId) {
     name = delegation.ticker

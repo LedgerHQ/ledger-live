@@ -16,7 +16,6 @@ export const vechain1: AccountRaw = {
   pendingOperations: [],
   currencyId: "vechain",
   feesCurrencyId: "vechain/vip180/vtho",
-  unitMagnitude: 18,
   lastSyncDate: "2023-04-21T14:22:48.395Z",
   balance: "10000000000000000000",
   subAccounts: [
@@ -46,7 +45,6 @@ export const vechain2: AccountRaw = {
   pendingOperations: [],
   currencyId: "vechain",
   feesCurrencyId: "vechain/vip180/vtho",
-  unitMagnitude: 18,
   lastSyncDate: "2023-04-21T14:22:48.395Z",
   balance: "10000000000000000000",
   subAccounts: [
@@ -77,7 +75,6 @@ export const vechain3: AccountRaw = {
   pendingOperations: [],
   currencyId: "vechain",
   feesCurrencyId: "vechain/vip180/vtho",
-  unitMagnitude: 18,
   lastSyncDate: "2023-11-13T13:55:32.004Z",
   balance: "0",
   subAccounts: [

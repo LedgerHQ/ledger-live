@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { urls } from "~/config/urls";
 import DeviceAction from "~/renderer/components/DeviceAction";
@@ -26,6 +26,7 @@ import Alert from "~/renderer/components/Alert";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { firstValueFrom } from "rxjs";
+import { useAccountName } from "~/renderer/reducers/wallet";
 
 export const Separator = styled.div`
   &::after {
@@ -76,7 +77,7 @@ const VerifyOnDevice = ({
   device,
   skipDevice,
 }: VerifyOnDeviceProps) => {
-  const name = getAccountName(mainAccount);
+  const name = useAccountName(mainAccount);
   const address = mainAccount.freshAddress;
   const confirmAddress = useCallback(async () => {
     if (!device || skipDevice) return null;

@@ -31,6 +31,7 @@ export const shouldShowNewAccount = (
     return true;
   return false;
 };
+
 export const getReceiveFlowError = (
   account: AccountLike,
   parentAccount: Account | null | undefined,

@@ -18,6 +18,7 @@ import QueuedDrawer from "./QueuedDrawer";
 import Button from "./Button";
 import { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: Account;
@@ -44,7 +45,9 @@ export default function EditFreeUnit({ account, field }: Props) {
   const [transaction, setTransaction] = useState<Transaction>(
     (route.params as { transaction: Transaction })?.transaction,
   );
-  const feeCustomUnit = (transaction as { feeCustomUnit?: Unit }).feeCustomUnit || account.unit;
+
+  const unit = useAccountUnit(account);
+  const feeCustomUnit = (transaction as { feeCustomUnit?: Unit }).feeCustomUnit || unit;
   const editTxFeeByFamily = useEditTxFeeByFamily();
 
   function onRequestClose() {
@@ -147,7 +150,7 @@ export default function EditFreeUnit({ account, field }: Props) {
             </Touchable>
           )}
         >
-          {account.unit.code}
+          {unit.code}
         </FlatList>
       </QueuedDrawer>
     </>

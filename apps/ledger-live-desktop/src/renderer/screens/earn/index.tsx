@@ -9,9 +9,9 @@ import {
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 const DEFAULT_EARN_APP_ID = "earn";
 

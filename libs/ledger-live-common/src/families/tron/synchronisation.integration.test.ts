@@ -20,8 +20,6 @@ const dummyAccount: Account = {
   id: "",
   derivationMode: "",
   seedIdentifier: "",
-  name: "Tron",
-  starred: false,
   used: false,
   currency: tron,
   index: 0,
@@ -34,7 +32,6 @@ const dummyAccount: Account = {
   operationsCount: 0,
   operations: [],
   pendingOperations: [],
-  unit: tron.units[0],
   lastSyncDate: new Date(0),
   creationDate: new Date(),
   balanceHistoryCache: {

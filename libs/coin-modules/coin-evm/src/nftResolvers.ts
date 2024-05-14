@@ -4,7 +4,7 @@ import {
   NFTMetadataResponse,
 } from "@ledgerhq/types-live";
 import { isNFTActive, metadataCallBatcher } from "@ledgerhq/coin-framework/nft/support";
-import { getCryptoCurrencyById } from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import NftApi from "./api/nft";
 
 type NftResolvers = NonNullable<CurrencyBridge["nftResolvers"]>;

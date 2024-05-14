@@ -11,7 +11,6 @@ export const elrond1: AccountRaw = {
   pendingOperations: [],
   operations: [],
   currencyId: "elrond",
-  unitMagnitude: 18,
   balance: "",
   blockHeight: 0,
   lastSyncDate: "",

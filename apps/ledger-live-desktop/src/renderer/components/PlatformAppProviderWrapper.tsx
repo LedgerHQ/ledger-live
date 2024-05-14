@@ -7,8 +7,13 @@ import {
 } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { LocalLiveAppProvider } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { useDB } from "../storage";
+import {
+  DISCOVER_STORE_KEY,
+  INITIAL_PLATFORM_STATE,
+} from "@ledgerhq/live-common/wallet-api/constants";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -21,6 +26,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
   const allowExperimentalApps = useSelector(allowExperimentalAppsSelector);
   const provider = useSelector(catalogProviderSelector);
   const locale = useSelector(languageSelector);
+  const localLiveAppDB = useLocalLiveAppDB();
 
   return (
     <RemoteLiveAppProvider
@@ -33,11 +39,15 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
       }}
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >
-      <LocalLiveAppProvider>
+      <LocalLiveAppProvider db={localLiveAppDB}>
         <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>
       </LocalLiveAppProvider>
     </RemoteLiveAppProvider>
   );
+}
+
+function useLocalLiveAppDB() {
+  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, state => state.localLiveApp);
 }

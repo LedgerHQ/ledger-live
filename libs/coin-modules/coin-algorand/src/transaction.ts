@@ -1,4 +1,4 @@
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
@@ -21,7 +21,7 @@ export const formatTransaction = (
     ${mode === "claimReward" ? "CLAIM REWARD" : mode === "optIn" ? "OPT_IN" : "SEND"} ${
       useAllAmount
         ? "MAX"
-        : formatCurrencyUnit(getAccountUnit(account), amount, {
+        : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
             showCode: true,
             disableRounding: false,
           })
@@ -30,7 +30,7 @@ export const formatTransaction = (
     with fees=${
       !fees
         ? "?"
-        : formatCurrencyUnit(getAccountUnit(mainAccount), fees, {
+        : formatCurrencyUnit(mainAccount.currency.units[0], fees, {
             showCode: true,
             disableRounding: false,
           })

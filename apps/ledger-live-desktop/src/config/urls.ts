@@ -75,6 +75,8 @@ export const urls = {
   managerAppLearnMore: "https://support.ledger.com/hc/categories/4404376139409?docs=true",
   privacyPolicy:
     "https://www.ledger.com/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+  trackingPolicy:
+    "https://shop.ledger.com/pages/ledger-live-tracking-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   troubleshootingUSB:
     "https://support.ledger.com/hc/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
   troubleshootingCrash:

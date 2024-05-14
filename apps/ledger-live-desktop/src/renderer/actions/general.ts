@@ -4,11 +4,7 @@ import { createSelector } from "reselect";
 // TODO make a generic way to implement this for each family
 // eslint-disable-next-line no-restricted-imports
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
-import {
-  flattenSortAccounts,
-  sortAccountsComparatorFromOrder,
-  FlattenAccountsOptions,
-} from "@ledgerhq/live-common/account/index";
+import { flattenSortAccounts } from "@ledgerhq/live-wallet/ordering";
 import { reorderAccounts } from "~/renderer/actions/accounts";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
@@ -26,6 +22,10 @@ import {
 import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
 import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
 import { useMarketPerformanceTrackingPairs } from "./marketperformance";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { walletSelector } from "../reducers/wallet";
+import { sortAccountsComparatorFromOrder } from "@ledgerhq/live-wallet/ordering";
+import { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 
 // provide redux states via custom hook wrapper
 
@@ -47,9 +47,10 @@ export function useCalculateCountervalueCallback() {
   });
 }
 export function useSortAccountsComparator() {
-  const accounts = useSelector(getOrderAccounts);
+  const orderAccounts = useSelector(getOrderAccounts);
   const calc = useCalculateCountervalueCallback();
-  return sortAccountsComparatorFromOrder(accounts, calc);
+  const walletState = useSelector(walletSelector);
+  return sortAccountsComparatorFromOrder(orderAccounts, walletState, calc);
 }
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
   const accounts = useSelector(accountsSelector);
@@ -130,6 +131,10 @@ export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
     () => ({
       trackingPairs,
       autofillGaps: true,
+      refreshRate: LiveConfig.getValueByKey("countervalues_refreshRate"),
+      marketCapBatchingAfterRank: LiveConfig.getValueByKey(
+        "countervalues_marketCapBatchingAfterRank",
+      ),
     }),
     [trackingPairs],
   );

@@ -3,8 +3,9 @@ import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 
 import { Flex, Icon, Text, Tag } from "@ledgerhq/native-ui";
-import { useManifest } from "@ledgerhq/live-common/platform/hooks/useManifest";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 import { EvmStakingDrawerProviderIcon } from "./EvmStakingDrawerProviderIcon";
 import { ListProvider } from "./types";
@@ -32,8 +33,11 @@ export function EvmStakingDrawerProvider({
   onProviderPress,
   redirectIfOneProvider,
 }: Props) {
+  const localManifest = useLocalLiveAppManifest(provider.liveAppId);
+  const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId);
+  const manifest = remoteManifest || localManifest;
+
   const { t, i18n } = useTranslation();
-  const manifest = useManifest(provider.liveAppId);
   const hasTag: boolean =
     !!provider?.min && i18n.exists(`stake.ethereum.providers.${provider.id}.tag`);
 

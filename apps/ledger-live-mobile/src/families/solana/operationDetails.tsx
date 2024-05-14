@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSolanaPreloadData } from "@ledgerhq/live-common/families/solana/react";
@@ -13,6 +12,7 @@ import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/s
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 export const openAddressUrl = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
@@ -45,7 +45,7 @@ type WithdrawExtraFieldsProps = {
 
 const WithdrawExtraFields = ({ account, fromAddress, amount }: WithdrawExtraFieldsProps) => {
   const { t } = useTranslation();
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatAmount = useFormatAmount();
 
   return (
@@ -67,7 +67,7 @@ type DelegateExtraFieldsProps = {
 
 const DelegateExtraFields = ({ account, voteAddress, amount }: DelegateExtraFieldsProps) => {
   const { t } = useTranslation();
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatAmount = useFormatAmount();
   const preloadData = useSolanaPreloadData(account.currency);
   const validator = preloadData?.validators.find(v => v.voteAccount === voteAddress);

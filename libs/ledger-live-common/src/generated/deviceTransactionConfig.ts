@@ -8,7 +8,6 @@ import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
 import ripple from "../families/ripple/deviceTransactionConfig";
-import solana from "../families/solana/deviceTransactionConfig";
 import stacks from "../families/stacks/deviceTransactionConfig";
 import stellar from "../families/stellar/deviceTransactionConfig";
 import tezos from "../families/tezos/deviceTransactionConfig";
@@ -18,6 +17,7 @@ import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
+import solana from "@ledgerhq/coin-solana/deviceTransactionConfig";
 
 export default {
   cardano,
@@ -30,7 +30,6 @@ export default {
   hedera,
   internet_computer,
   ripple,
-  solana,
   stacks,
   stellar,
   tezos,
@@ -40,6 +39,7 @@ export default {
   evm,
   near,
   polkadot,
+  solana,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";

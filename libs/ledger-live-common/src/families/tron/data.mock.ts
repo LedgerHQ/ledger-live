@@ -7,7 +7,6 @@ export const __LAST_VOTING_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
 export const mockAccount = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
-  starred: true,
   seedIdentifier: "TRON_ID",
   derivationMode: "",
   index: 0,
@@ -230,7 +229,6 @@ export const mockAccount = fromAccountRaw({
   operationsCount: 12,
   pendingOperations: [],
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
   // @ts-expect-error wat
@@ -276,7 +274,6 @@ export const mockAccount = fromAccountRaw({
 }) as TronAccount;
 export const mockAccountNoReward = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
-  starred: true,
   seedIdentifier: "TRON_ID",
   derivationMode: "",
   index: 0,
@@ -454,7 +451,6 @@ export const mockAccountNoReward = fromAccountRaw({
   operationsCount: 12,
   pendingOperations: [],
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
   // @ts-expect-error wat
@@ -501,7 +497,6 @@ export const mockAccountNoReward = fromAccountRaw({
 }) as TronAccount;
 export const mockAccountNoVote = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
-  starred: true,
   seedIdentifier: "TRON_ID",
   derivationMode: "",
   index: 0,
@@ -627,7 +622,6 @@ export const mockAccountNoVote = fromAccountRaw({
   operationsCount: 12,
   pendingOperations: [],
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
   // @ts-expect-error wat
@@ -709,7 +703,6 @@ export const mockAccountV2 = fromAccountRaw({
     cacheTransactionInfoById: {},
   },
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2023-12-21T09:22:46.747Z",
   blockHeight: 57506253,
   operationsCount: 96,

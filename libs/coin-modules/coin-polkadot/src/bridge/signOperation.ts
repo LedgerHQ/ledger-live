@@ -3,10 +3,8 @@ import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type {
   PolkadotAccount,
-  PolkadotAddress,
   PolkadotOperation,
   PolkadotOperationExtra,
-  PolkadotSignature,
   PolkadotSigner,
   Transaction,
 } from "../types";
@@ -118,9 +116,7 @@ const buildOptimisticOperation = (
  * Sign Transaction with Ledger hardware
  */
 const buildSignOperation =
-  (
-    signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
-  ): SignOperationFnSignature<Transaction> =>
+  (signerContext: SignerContext<PolkadotSigner>): SignOperationFnSignature<Transaction> =>
   ({
     account,
     deviceId,
@@ -162,9 +158,10 @@ const buildSignOperation =
           });
         const payloadString = Buffer.from(payload).toString("hex");
         const metadata = await polkadotAPI.shortenMetadata(payloadString);
-        const r = (await signerContext(deviceId, signer =>
+        const r = await signerContext(deviceId, signer =>
+          // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
           signer.sign(account.freshAddressPath, payload, metadata),
-        )) as PolkadotSignature;
+        );
 
         const signed = await signExtrinsic(unsigned, r.signature, registry);
         o.next({

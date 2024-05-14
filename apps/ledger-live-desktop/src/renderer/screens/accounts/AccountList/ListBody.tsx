@@ -11,7 +11,6 @@ type Props = {
   range: PortfolioRange;
   showNewAccount: boolean;
   horizontal: boolean;
-  blacklistedTokenIds: string[];
   search?: string;
 };
 const ListBody = ({
@@ -22,7 +21,6 @@ const ListBody = ({
   onAccountClick,
   lookupParentAccount,
   search,
-  blacklistedTokenIds,
 }: Props) => (
   <Box id="accounts-list">
     {[...visibleAccounts, ...(showNewAccount ? [null] : []), ...hiddenAccounts].map((account, i) =>
@@ -37,7 +35,6 @@ const ListBody = ({
           parentAccount={account.type !== "Account" ? lookupParentAccount(account.parentId) : null}
           range={range}
           onClick={onAccountClick}
-          blacklistedTokenIds={blacklistedTokenIds}
         />
       ),
     )}
