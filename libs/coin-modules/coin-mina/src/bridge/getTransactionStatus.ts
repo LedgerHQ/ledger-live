@@ -23,8 +23,10 @@ const getTransactionStatus: AccountBridge<
   const warnings: StatusErrorMap = {};
   const useAllAmount = !!t.useAllAmount;
 
-  if (t.fees.fee.lte(0)) {
-    errors.fees = new FeeNotLoaded();
+  if (t.txType !== "stake") {
+    if (t.fees.fee.lte(0)) {
+      errors.fees = new FeeNotLoaded();
+    }
   }
 
   if (!t.recipient) {
@@ -68,8 +70,10 @@ const getTransactionStatus: AccountBridge<
   const totalSpent = getTotalSpent(a, t, estimatedFees);
   const amount = useAllAmount ? maxAmountWithFees : new BigNumber(t.amount);
 
-  if (amount.lte(0) && !t.useAllAmount) {
-    errors.amount = new AmountRequired();
+  if (t.txType !== "stake") {
+    if (amount.lte(0) && !t.useAllAmount) {
+      errors.amount = new AmountRequired();
+    }
   }
 
   if (amount.gt(maxAmountWithFees)) {
