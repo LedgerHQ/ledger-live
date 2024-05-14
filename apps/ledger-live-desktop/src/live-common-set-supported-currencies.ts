@@ -102,4 +102,5 @@ setSupportedCurrencies([
   "mantra",
   "xion",
   "zenrock",
+  "mina",
 ]);
