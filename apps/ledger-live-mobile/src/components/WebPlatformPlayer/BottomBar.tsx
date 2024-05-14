@@ -9,9 +9,9 @@ import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wal
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Button from "../Button";
 import { Trans } from "react-i18next";
-import { getAccountName } from "@ledgerhq/live-common/account/index";
 import CircleCurrencyIcon from "../CircleCurrencyIcon";
 import { useSelectAccount } from "../Web3AppWebview/helpers";
+import { useMaybeAccountName } from "~/reducers/wallet";
 
 type BottomBarProps = {
   manifest: AppManifest;
@@ -71,6 +71,8 @@ export function BottomBar({
 
   const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
 
+  const currentAccountName = useMaybeAccountName(currentAccount);
+
   return (
     <Flex flexDirection="row" paddingY={4} paddingX={4} alignItems="center">
       <Flex flexDirection="row" flex={1}>
@@ -106,7 +108,7 @@ export function BottomBar({
                 }
               />
               <Text color={"neutral.c20"} ml={4}>
-                {getAccountName(currentAccount)}
+                {currentAccountName}
               </Text>
             </Flex>
           )}

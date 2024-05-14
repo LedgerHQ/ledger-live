@@ -40,6 +40,8 @@ describe("API sanity", () => {
         },
       ],
       autofillGaps: false,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
 
@@ -64,6 +66,8 @@ describe("API sanity", () => {
         },
       ],
       autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
     const currentValue = calculate(state, {
@@ -105,6 +109,8 @@ describe("extreme cases", () => {
         startDate: new Date(),
       })),
       autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
 
@@ -130,6 +136,8 @@ describe("extreme cases", () => {
         startDate: new Date(),
       })),
       autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
 
@@ -161,6 +169,8 @@ describe("WETH rules", () => {
         },
       ],
       autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
     const value = calculate(state, {
@@ -193,6 +203,8 @@ test("export and import it back", async () => {
       },
     ],
     autofillGaps: true,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
     disableAutoRecoverErrors: true,
   };
   const state = await loadCountervalues(initialState, settings);

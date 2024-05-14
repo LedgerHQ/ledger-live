@@ -77,6 +77,9 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
     blockHeight: ledgerTransaction.block.height,
     blockHash: ledgerTransaction.block.hash,
     nonce: ledgerTransaction.nonce_value,
+    gasPrice: ledgerTransaction.gas_price,
+    gasUsed: ledgerTransaction.gas_used,
+    value: ledgerTransaction.value,
   };
 };
 

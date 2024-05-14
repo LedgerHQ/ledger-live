@@ -1,11 +1,8 @@
-import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
+import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import type { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import {
-  findTokenById,
-  listTokensForCryptoCurrency,
-} from "@ledgerhq/coin-framework/currencies/index";
+import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { BigNumber } from "bignumber.js";
@@ -320,7 +317,6 @@ async function buildSubAccount({
     type: "TokenAccount",
     id: tokenAccountId,
     parentId: parentAccountId,
-    starred: false,
     token,
     operationsCount: operations.length,
     operations,

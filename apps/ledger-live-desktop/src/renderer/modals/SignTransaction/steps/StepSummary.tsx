@@ -4,9 +4,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
-  getAccountName,
   getAccountCurrency,
-  getAccountUnit,
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
@@ -28,6 +26,8 @@ import Alert from "~/renderer/components/Alert";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -57,12 +57,10 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 const StepSummary = (props: StepProps) => {
   const { account, parentAccount, transaction, status } = props;
+  const accountName = useMaybeAccountName(account);
 
-  if (!account) {
-    return null;
-  }
-
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = account && getMainAccount(account, parentAccount);
+  const unit = useMaybeAccountUnit(mainAccount);
 
   if (!mainAccount || !transaction) {
     return null;
@@ -74,7 +72,7 @@ const StepSummary = (props: StepProps) => {
   const currency = getAccountCurrency(account);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
-  const unit = getAccountUnit(account);
+
   const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
   const hasNonEmptySubAccounts =
     account.type === "Account" &&
@@ -136,7 +134,7 @@ const StepSummary = (props: StepProps) => {
                     flex: 1,
                   }}
                 >
-                  {getAccountName(account)}
+                  {accountName}
                 </Text>
                 <AccountTagDerivationMode account={account} />
               </Box>

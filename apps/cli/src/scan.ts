@@ -3,24 +3,30 @@ import { Observable, from, defer, of, throwError, concat } from "rxjs";
 import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
 import type { Account, DerivationMode, SyncConfig } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { encodeAccountId, decodeAccountId } from "@ledgerhq/live-common/account/index";
-import { emptyHistoryCache } from "@ledgerhq/live-common/account/index";
-import { fromAccountRaw } from "@ledgerhq/live-common/account/serialization";
-import { asDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import {
+  encodeAccountId,
+  decodeAccountId,
+  emptyHistoryCache,
+  fromAccountRaw,
+} from "@ledgerhq/live-common/account/index";
+import {
+  asDerivationMode,
+  runDerivationScheme,
+  getDerivationScheme,
+} from "@ledgerhq/coin-framework/derivation";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   findCryptoCurrencyByKeyword,
   findCryptoCurrencyById,
   getCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
-import { runDerivationScheme, getDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { delay } from "@ledgerhq/live-common/promise";
 import { jsonFromFile } from "./stream";
-import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 import fs from "fs";
+
 export const deviceOpt = {
   name: "device",
   alias: "d",
@@ -317,25 +323,16 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
             });
             const account: Account = {
               type: "Account",
-              name:
-                currency.name +
-                " " +
-                (derivationMode || "legacy") +
-                " " +
-                shortAddressPreview(xpubOrAddress),
               xpub: xpubOrAddress,
               seedIdentifier: xpubOrAddress,
-              starred: true,
               used: true,
               swapHistory: [],
               id,
               derivationMode,
               currency,
-              unit: currency.units[0],
               index,
               freshAddress: xpubOrAddress,
               freshAddressPath,
-              freshAddresses: [],
               creationDate: new Date(),
               lastSyncDate: new Date(0),
               blockHeight: 0,

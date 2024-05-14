@@ -42,8 +42,14 @@ import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportA
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Transaction } from "../generated/types";
-import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
+import {
+  DISCOVER_INITIAL_CATEGORY,
+  INITIAL_PLATFORM_STATE,
+  MAX_RECENTLY_USED_LENGTH,
+} from "./constants";
 import { DiscoverDB } from "./types";
+import { LiveAppManifest } from "../platform/types";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -52,14 +58,17 @@ export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   return ref.current;
 }
 
-export function useWalletAPIAccounts(accounts: AccountLike[]): WalletAPIAccount[] {
+export function useWalletAPIAccounts(
+  walletState: WalletState,
+  accounts: AccountLike[],
+): WalletAPIAccount[] {
   return useMemo(() => {
     return accounts.map(account => {
       const parentAccount = getParentAccount(account, accounts);
 
-      return accountToWalletAPIAccount(account, parentAccount);
+      return accountToWalletAPIAccount(walletState, account, parentAccount);
     });
-  }, [accounts]);
+  }, [walletState, accounts]);
 }
 
 const allCurrenciesAndTokens = listCurrencies(true);
@@ -270,6 +279,7 @@ function useDeviceTransport({ manifest, tracking }) {
 }
 
 export type useWalletAPIServerOptions = {
+  walletState: WalletState;
   manifest: AppManifest;
   accounts: AccountLike[];
   tracking: TrackingAPI;
@@ -283,6 +293,7 @@ export type useWalletAPIServerOptions = {
 };
 
 export function useWalletAPIServer({
+  walletState,
   manifest,
   accounts,
   tracking,
@@ -314,7 +325,7 @@ export function useWalletAPIServer({
   const transport = useTransport(webviewHook.postMessage);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
 
-  const walletAPIAccounts = useWalletAPIAccounts(accounts);
+  const walletAPIAccounts = useWalletAPIAccounts(walletState, accounts);
   const walletAPICurrencies = useWalletAPICurrencies();
 
   const { server, onMessage } = useWalletAPIServerRaw({
@@ -363,7 +374,7 @@ export function useWalletAPIServer({
           currencies: currencyList,
           onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
             tracking.requestAccountSuccess(manifest);
-            resolve(accountToWalletAPIAccount(account, parentAccount));
+            resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
           },
           onCancel: () => {
             tracking.requestAccountFail(manifest);
@@ -372,13 +383,14 @@ export function useWalletAPIServer({
         });
       });
     });
-  }, [manifest, server, tracking, uiAccountRequest]);
+  }, [walletState, manifest, server, tracking, uiAccountRequest]);
 
   useEffect(() => {
     if (!uiAccountReceive) return;
 
     server.setHandler("account.receive", ({ account, tokenCurrency }) =>
       receiveOnAccountLogic(
+        walletState,
         { manifest, accounts, tracking },
         account.id,
         (account, parentAccount, accountAddress) =>
@@ -404,7 +416,7 @@ export function useWalletAPIServer({
         tokenCurrency,
       ),
     );
-  }, [accounts, manifest, server, tracking, uiAccountReceive]);
+  }, [walletState, accounts, manifest, server, tracking, uiAccountReceive]);
 
   useEffect(() => {
     if (!uiMessageSign) return;
@@ -839,7 +851,66 @@ export function useCategories(manifests): Categories {
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
+export type LocalLiveAppDB = StateDB<DiscoverDB, DiscoverDB["localLiveApp"]>;
 export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
+
+export interface LocalLiveApp {
+  state: LiveAppManifest[];
+  addLocalManifest: (LiveAppManifest) => void;
+  removeLocalManifestById: (string) => void;
+  getLocalLiveAppManifestById: (string) => LiveAppManifest | undefined;
+}
+
+export function useLocalLiveApp([LocalLiveAppDb, setState]: LocalLiveAppDB): LocalLiveApp {
+  useEffect(() => {
+    if (LocalLiveAppDb === undefined) {
+      setState(discoverDB => {
+        return { ...discoverDB, localLiveApp: INITIAL_PLATFORM_STATE.localLiveApp };
+      });
+    }
+  }, [LocalLiveAppDb, setState]);
+
+  const addLocalManifest = useCallback(
+    (newLocalManifest: LiveAppManifest) => {
+      setState(discoverDB => {
+        const newLocalLiveAppList = discoverDB.localLiveApp?.filter(
+          manifest => manifest.id !== newLocalManifest.id,
+        );
+
+        newLocalLiveAppList.push(newLocalManifest);
+        return { ...discoverDB, localLiveApp: newLocalLiveAppList };
+      });
+    },
+    [setState],
+  );
+
+  const removeLocalManifestById = useCallback(
+    (manifestId: string) => {
+      setState(discoverDB => {
+        const newLocalLiveAppList = discoverDB.localLiveApp.filter(
+          manifest => manifest.id !== manifestId,
+        );
+
+        return { ...discoverDB, localLiveApp: newLocalLiveAppList };
+      });
+    },
+    [setState],
+  );
+
+  const getLocalLiveAppManifestById = useCallback(
+    (manifestId: string): LiveAppManifest | undefined => {
+      return LocalLiveAppDb.find(manifest => manifest.id === manifestId);
+    },
+    [LocalLiveAppDb],
+  );
+
+  return {
+    state: LocalLiveAppDb,
+    addLocalManifest,
+    removeLocalManifestById,
+    getLocalLiveAppManifestById,
+  };
+}
 
 export interface RecentlyUsed {
   data: RecentlyUsedManifest[];

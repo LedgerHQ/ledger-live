@@ -430,7 +430,6 @@ Usage: ledger-live receive    # Receive crypto-assets (verify on device)
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
      --qr                     : also display a QR Code
-     --freshAddressIndex <Number>: Change fresh address index
 
 Usage: ledger-live repl       # Low level exchange with the device. Send APDUs from stdin.
  -d, --device <String>        : provide a specific HID path of a device

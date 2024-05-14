@@ -62,8 +62,10 @@
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
     "coin:evm": "pnpm --filter coin-evm",
     "coin:framework": "pnpm --filter coin-framework",
+    "coin:tester": "pnpm --filter coin-tester",
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
+    "coin:solana": "pnpm --filter coin-solana",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",
@@ -73,6 +75,7 @@
     "device-react": "pnpm --filter device-react",
     "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
+    "wallet": "pnpm --filter live-wallet",
     "portfolio": "pnpm --filter live-portfolio",
     "promise": "pnpm --filter live-promise",
     "network": "pnpm --filter live-network",
@@ -176,7 +179,7 @@
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.18.4": "patches/detox@20.18.4.patch",
+      "detox@20.20.2": "patches/detox@20.20.2.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch"
     },
     "packageExtensions": {

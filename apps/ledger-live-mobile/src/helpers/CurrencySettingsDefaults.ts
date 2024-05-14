@@ -1,7 +1,7 @@
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import type { ConfirmationDefaults } from "../types/common";
+import type { ConfirmationDefaults, UnitDefaults } from "../types/common";
 
-export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
+export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults & UnitDefaults => {
   let confirmationsNb;
 
   if (c.type === "CryptoCurrency") {
@@ -20,5 +20,6 @@ export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
 
   return {
     confirmationsNb,
+    unit: c.units[0],
   };
 };

@@ -57,10 +57,10 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
       }}
     />
   ) : null;
-  switch (error?.cause?.message) {
-    case "User refused":
-      titleKey = "errors.TransactionRefusedOnDevice.title";
-      descriptionKey = "errors.TransactionRefusedOnDevice.description";
+  switch (error?.cause?.response?.data?.error?.messageKey) {
+    case "WRONG_OR_EXPIRED_RATE_ID":
+      titleKey = "errors.SwapRateExpiredError.title";
+      descriptionKey = "errors.SwapRateExpiredError.description";
       errorCodeSection = null;
       break;
   }

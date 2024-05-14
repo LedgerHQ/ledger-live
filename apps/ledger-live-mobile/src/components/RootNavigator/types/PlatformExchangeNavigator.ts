@@ -5,8 +5,8 @@ import type { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 
 export type ResultStart = {
-  startExchangeResult?: string;
-  startExchangeError?: Error;
+  startExchangeResult?: { nonce: string; device: Device };
+  startExchangeError?: { error: Error; device?: Device };
   device?: Device;
 };
 

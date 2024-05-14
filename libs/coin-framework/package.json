@@ -20,60 +20,64 @@
   },
   "typesVersions": {
     "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "*": [
-        "lib/*"
-      ],
       "lib/*": [
         "lib/*"
       ],
       "lib-es/*": [
         "lib-es/*"
+      ],
+      "account": [
+        "lib/account/index"
+      ],
+      "currencies": [
+        "lib/currencies/index"
+      ],
+      "serialization": [
+        "lib/serialization/index"
+      ],
+      "*": [
+        "lib/*"
       ]
     }
   },
   "exports": {
     "./lib/*": "./lib/*.js",
-    "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./lib-es/*.js": "./lib-es/*.js",
-    "./*": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./*.js": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./account/*": {
-      "require": "./lib/account/*.js",
-      "default": "./lib-es/account/*.js"
+    "./account": {
+      "require": "./lib/account/index.js",
+      "default": "./lib-es/account/index.js"
     },
     "./batcher/*": {
       "require": "./lib/batcher/*.js",
       "default": "./lib-es/batcher/*.js"
     },
-    "./bot/*": {
-      "require": "./lib/bot/*.js",
-      "default": "./lib-es/bot/*.js"
+    "./bot": {
+      "require": "./lib/bot/index.js",
+      "default": "./lib-es/bot/index.js"
     },
-    "./bridge/*": {
-      "require": "./lib/bridge/*.js",
-      "default": "./lib-es/bridge/*.js"
+    "./bridge": {
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
     },
-    "./currencies/*": {
-      "require": "./lib/currencies/*.js",
-      "default": "./lib-es/currencies/*.js"
+    "./currencies": {
+      "require": "./lib/currencies/index.js",
+      "default": "./lib-es/currencies/index.js"
     },
     "./nft/*": {
       "require": "./lib/nft/*.js",
       "default": "./lib-es/nft/*.js"
     },
+    "./serialization": {
+      "require": "./lib/serialization/index.js",
+      "default": "./lib-es/serialization/index.js"
+    },
     "./transaction/*": {
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },
@@ -92,7 +96,6 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "lru-cache": "^7.14.1",
-    "numeral": "^2.0.6",
     "prando": "^6.0.1",
     "rxjs": "^7.8.1"
   },

@@ -1,6 +1,6 @@
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { DerivationMode } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "./currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import {
   getPreferredNewAccountScheme,
   getDefaultPreferredNewAccountScheme,

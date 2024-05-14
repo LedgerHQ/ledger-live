@@ -13,8 +13,9 @@ import {
   Feature,
   PortfolioRange,
   FirmwareUpdateContext,
+  AccountLike,
 } from "@ledgerhq/types-live";
-import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   LanguageIds,
@@ -149,8 +150,8 @@ const INITIAL_STATE: SettingsState = {
   pairExchanges: {},
   developerMode: !!process.env.__DEV__,
   loaded: false,
-  shareAnalytics: false,
-  sharePersonalizedRecommandations: false,
+  shareAnalytics: true,
+  sharePersonalizedRecommandations: true,
   hasSeenAnalyticsOptInPrompt: false,
   sentryLogs: true,
   lastUsedVersion: __APP_VERSION__,
@@ -229,7 +230,6 @@ type HandlersPayloads = {
   SET_SWAP_SELECTABLE_CURRENCIES: string[];
   SET_SWAP_ACCEPTED_IP_SHARING: boolean;
   ACCEPT_SWAP_PROVIDER: string;
-  DEBUG_TICK: never;
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
@@ -256,6 +256,7 @@ type HandlersPayloads = {
   SET_ANONYMOUS_BRAZE_ID: string;
   ADD_STARRED_MARKET_COINS: string;
   REMOVE_STARRED_MARKET_COINS: string;
+  SET_CURRENCY_SETTINGS: { key: string; value: CurrencySettings };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -371,15 +372,18 @@ const handlers: SettingsHandlers = {
       acceptedProviders: [...new Set([...(state.swap?.acceptedProviders || []), payload])],
     },
   }),
-  // used to debug performance of redux updates
-  DEBUG_TICK: state => ({
-    ...state,
-  }),
   SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
     ...state,
     lastSeenCustomImage: {
       size: payload.imageSize,
       hash: payload.imageHash,
+    },
+  }),
+  SET_CURRENCY_SETTINGS: (state: SettingsState, { payload }) => ({
+    ...state,
+    currenciesSettings: {
+      ...state.currenciesSettings,
+      [payload.key]: payload.value,
     },
   }),
   SET_OVERRIDDEN_FEATURE_FLAG: (state: SettingsState, { payload }) => ({
@@ -461,6 +465,7 @@ const pairHash = (from: Currency, to: Currency) => `${from.ticker}_${to.ticker}`
 
 export type CurrencySettings = {
   confirmationsNb: number;
+  unit: Unit;
 };
 
 type ConfirmationDefaults = {
@@ -474,7 +479,11 @@ type ConfirmationDefaults = {
     | null;
 };
 
-export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
+type UnitDefaults = {
+  unit: Unit;
+};
+
+export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults & UnitDefaults => {
   let confirmationsNb;
   if (c.type === "CryptoCurrency") {
     const { blockAvgTime } = c;
@@ -487,8 +496,10 @@ export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
       };
     }
   }
+
   return {
     confirmationsNb,
+    unit: c.units[0],
   };
 };
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -510,6 +521,7 @@ const defaultsForCurrency: (a: Currency) => CurrencySettings = crypto => {
   const defaults = currencySettingsDefaults(crypto);
   return {
     confirmationsNb: defaults.confirmationsNb ? defaults.confirmationsNb.def : 0,
+    unit: defaults.unit,
   };
 };
 
@@ -619,12 +631,14 @@ export const currencySettingsLocaleSelector = (
   settings: SettingsState,
   currency: Currency,
 ): CurrencySettings => {
-  const currencySettings = settings.currenciesSettings[currency.ticker];
-  const val = {
+  const currencySettings = Object.keys(settings.currenciesSettings)?.includes(currency.ticker)
+    ? settings.currenciesSettings[currency.ticker]
+    : {};
+
+  return {
     ...defaultsForCurrency(currency),
     ...currencySettings,
   };
-  return val;
 };
 
 export const currencyPropExtractor = (_: State, { currency }: { currency: CryptoCurrency }) =>
@@ -659,6 +673,29 @@ export const confirmationsNbForCurrencySelector = (
   const defs = currencySettingsDefaults(currency);
   return defs.confirmationsNb ? defs.confirmationsNb.def : 0;
 };
+
+export const unitForCurrencySelector = (
+  state: State,
+  {
+    currency,
+  }: {
+    currency: CryptoCurrency;
+  },
+): Unit => {
+  const obj = state.settings.currenciesSettings[currency.ticker];
+  if (obj?.unit) return obj.unit;
+  const defs = currencySettingsDefaults(currency);
+  return defs.unit;
+};
+
+export const accountUnitSelector = (state: State, account: AccountLike): Unit => {
+  if (account.type === "Account") {
+    return unitForCurrencySelector(state, account);
+  } else {
+    return account.token.units[0];
+  }
+};
+
 export const preferredDeviceModelSelector = (state: State) => state.settings.preferredDeviceModel;
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
@@ -757,6 +794,7 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;
 
-//MARKET
+export const currenciesSettingsSelector = (state: State) => state.settings.currenciesSettings;
 
+//MARKET
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

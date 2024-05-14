@@ -1,4 +1,4 @@
-import { ImportItem } from "@ledgerhq/live-common/account/importAccounts";
+import { ImportItem } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Account } from "@ledgerhq/types-live";
 import React from "react";
@@ -26,9 +26,17 @@ type Props = {
   checked: boolean;
   importing: boolean;
   onSwitch: (checked: boolean, account: Account) => void;
+  accountNames: Map<string, string>;
 };
 
-const DisplayResultItem = ({ account, mode, checked, importing, onSwitch }: Props) => {
+const DisplayResultItem = ({
+  account,
+  mode,
+  checked,
+  importing,
+  onSwitch,
+  accountNames,
+}: Props) => {
   const handleSwitch = () => {
     track(checked ? "AccountSwitchOff" : "AccountSwitchOn");
     onSwitch(!checked, account);
@@ -42,7 +50,11 @@ const DisplayResultItem = ({ account, mode, checked, importing, onSwitch }: Prop
       style={[styles.root, { opacity: selectable ? 1 : 0.5 }]}
     >
       <Flex flex={1}>
-        <AccountCard account={account} style={styles.card} />
+        <AccountCard
+          account={account}
+          overridesName={accountNames.get(account.id)}
+          style={styles.card}
+        />
       </Flex>
       {!selectable ? null : (
         <Flex ml={8}>

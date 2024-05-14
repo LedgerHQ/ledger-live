@@ -47,6 +47,7 @@ export default function MarketStats({
     atlDate: _atlDate,
     price,
     priceChangePercentage,
+    ticker,
   } = currency || {};
 
   const athDate = _athDate ? new Date(_athDate) : null;
@@ -158,6 +159,7 @@ export default function MarketStats({
           {counterValueFormatter({
             value: circulatingSupply,
             locale,
+            ticker,
             t,
           })}
         </StyledTextLabel>
@@ -167,6 +169,7 @@ export default function MarketStats({
           {counterValueFormatter({
             value: totalSupply,
             locale,
+            ticker,
             t,
           })}
         </StyledTextLabel>
@@ -176,6 +179,7 @@ export default function MarketStats({
           {counterValueFormatter({
             value: maxSupply,
             locale,
+            ticker,
             t,
           })}
         </StyledTextLabel>

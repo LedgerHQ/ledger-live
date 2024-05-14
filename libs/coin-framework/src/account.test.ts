@@ -1,17 +1,16 @@
 import "./test-helpers/staticTime";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import { getCryptoCurrencyById, getTokenById, setSupportedCurrencies } from "./currencies";
+import { setSupportedCurrencies } from "./currencies";
 import {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
   shortAddressPreview,
   accountWithMandatoryTokens,
-  withoutToken,
 } from "./account";
 import { genAccount } from "./mocks/account";
 import { Operation } from "@ledgerhq/types-live";
-import { SubAccount } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets/index";
 
 setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);
 
@@ -162,70 +161,4 @@ test("accountWithMandatoryTokens ethereum", () => {
     subAccounts: [],
   });
   expect((enhance.subAccounts || []).map(a => a.id)).toMatchSnapshot();
-});
-test("withoutToken ethereum", () => {
-  const isTokenAccount = (account: SubAccount, tokenId: string) =>
-    account.type === "TokenAccount" && account.token.id === tokenId;
-
-  const tokenIds = [
-    "ethereum/erc20/0x_project",
-    "ethereum/erc20/leo_token",
-    "ethereum/erc20/cro",
-    "ethereum/erc20/huobitoken",
-  ];
-  const currency = getCryptoCurrencyById("ethereum");
-  const account = genAccount("", {
-    currency,
-    subAccountsCount: 0,
-  });
-  //Enhance the account with some tokens
-  const enhance = accountWithMandatoryTokens(account, tokenIds.map(getTokenById));
-  //Get a version of that account without all the tokens
-  let demote = enhance;
-
-  for (const tokenId of tokenIds) {
-    demote = withoutToken(demote, tokenId);
-  }
-
-  const saTokens = enhance.subAccounts || [];
-  const saNoTokens = demote.subAccounts || [];
-
-  //See if we have added/removed them correctly
-  for (const tokenId of tokenIds) {
-    expect(saTokens.find(a => isTokenAccount(a, tokenId))).toBeTruthy();
-    expect(saNoTokens.find(a => isTokenAccount(a, tokenId))).toBeFalsy();
-  }
-});
-test("withoutToken tron", () => {
-  const isTokenAccount = (account: SubAccount, tokenId: string) =>
-    account.type === "TokenAccount" && account.token.id === tokenId;
-
-  const tokenIds = [
-    "tron/trc10/1002000",
-    "tron/trc10/1002398",
-    "tron/trc10/1000226",
-    "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7",
-  ];
-  const currency = getCryptoCurrencyById("tron");
-  const account = genAccount("", {
-    currency,
-    subAccountsCount: 0,
-  });
-  //Enhance the account with some tokens
-  const enhance = accountWithMandatoryTokens(account, tokenIds.map(getTokenById));
-  //Get a version of that account without all the tokens
-  let demote = enhance;
-
-  for (const tokenId of tokenIds) {
-    demote = withoutToken(demote, tokenId);
-  }
-
-  const saTokens = enhance.subAccounts || [];
-  const saNoTokens = demote.subAccounts || [];
-
-  //See if we have added/removed them correctly
-  for (const tokenId of tokenIds) {
-    expect(saTokens.find(a => isTokenAccount(a, tokenId))).toBeTruthy();
-    expect(saNoTokens.find(a => isTokenAccount(a, tokenId))).toBeFalsy();
-  }
 });
