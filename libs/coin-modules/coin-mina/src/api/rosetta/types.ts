@@ -101,6 +101,20 @@ export type FetchAccountTransactionsResponse = {
   next_offset?: number;
 };
 
+export type RosettaBlockInfoResponse = {
+  block: {
+    block_identifier: {
+      index: number;
+      hash: string;
+    };
+    parent_block_identifier: {
+      index: number;
+      hash: string;
+    };
+    timestamp: number;
+  };
+};
+
 export type RosettaPreprocessResponse = {
   options: {
     sender: string;
@@ -138,19 +152,5 @@ export type RosettaMetadataResponse = {
 export type RosettaSubmitResponse = {
   transaction_identifier: {
     hash: string;
-  };
-};
-
-export type RosettaBlockInfoResponse = {
-  block: {
-    block_identifier: {
-      index: number;
-      hash: string;
-    };
-    parent_block_identifier: {
-      index: number;
-      hash: string;
-    };
-    timestamp: number;
   };
 };
