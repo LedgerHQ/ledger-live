@@ -3475,6 +3475,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  mina: {
+    type: "CryptoCurrency",
+    id: "mina",
+    coinType: CoinType.MINA,
+    name: "Mina",
+    managerAppName: "Mina",
+    ticker: "MINA",
+    scheme: "mina",
+    color: "#e1effa",
+    family: "mina",
+    units: [
+      {
+        name: "MINA",
+        code: "MINA",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://devnet.minaexplorer.com/transaction/$hash",
+        address: "https://devnet.minaexplorer.com/wallet/$address",
+      },
+    ],
+  },
   injective: {
     type: "CryptoCurrency",
     id: "injective",
