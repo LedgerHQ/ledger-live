@@ -19370,6 +19370,7 @@ var package_default = {
     "coin:tezos": "pnpm --filter coin-tezos",
     "coin:tron": "pnpm --filter coin-tron",
     "coin:xrp": "pnpm --filter coin-xrp",
+    "coin:ton": "pnpm --filter coin-ton",
     "evm-tools": "pnpm --filter evm-tools",
     domain: "pnpm --filter domain-service",
     doc: "pnpm --filter docs",

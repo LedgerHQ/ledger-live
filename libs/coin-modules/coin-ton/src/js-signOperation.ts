@@ -86,11 +86,11 @@ const buildOptimisticOperation = (
   const tokenTransfer = Boolean(subAccount && isTokenAccount(subAccount));
 
   const value = tokenTransfer ? fees : amount.plus(fees);
-  const type = subAccountId ? "FEES" : "OUT";
+
   const op: TonOperation = {
     id: "",
     hash: "",
-    type,
+    type: "OUT",
     senders: [address],
     recipients: [recipient],
     accountId,
@@ -107,7 +107,6 @@ const buildOptimisticOperation = (
     },
   };
   if (tokenTransfer && subAccount) {
-    console.log('subAccount.id ', subAccount.id)
     op.subOperations = [
       {
         id: "",
