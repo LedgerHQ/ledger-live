@@ -16,17 +16,13 @@ const accounts: Account[] = [
   Account.DOT_1,
   Account.XRP_1,*/
 ];
-
-test.describe("Receive @smoke", async () => {
-  for (const account of accounts) {
-    const speculosCurrency = specs[account.currency.deviceLabel.replace(/ /g, "_")];
-
-    console.log(speculosCurrency);
-
+for (const [i, account] of accounts.entries()) {
+  test.describe.parallel("Receive @smoke", () => {
     test.use({
       userdata: "speculos",
       testName: `receiveSpeculos_${account.currency.uiName}`,
-      speculosCurrency,
+      speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
+      speculosOffset: i,
     });
 
     test(`[${account.currency.uiName}] Receive`, async ({ page }) => {
@@ -61,5 +57,5 @@ test.describe("Receive @smoke", async () => {
         await expect(receiveModal.approve).toBeVisible();
       });
     });
-  }
-});
+  });
+}

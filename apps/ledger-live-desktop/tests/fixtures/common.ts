@@ -27,6 +27,7 @@ type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosCurrency: Spec;
+  speculosOffset: number;
   testName: string;
   userdata: string;
   userdataDestinationPath: string;
@@ -42,10 +43,7 @@ type TestFixtures = {
 
 const IS_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
-if (IS_MOCK) {
-  setEnv("SPECULOS_PID_OFFSET", Math.floor(Math.random() * 1000));
-  setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-}
+if (IS_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -55,6 +53,7 @@ export const test = base.extend<TestFixtures>({
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosCurrency: undefined,
+  speculosOffset: undefined,
   testName: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
@@ -77,6 +76,7 @@ export const test = base.extend<TestFixtures>({
       featureFlags,
       simulateCamera,
       speculosCurrency,
+      speculosOffset,
       testName,
     },
     use,
@@ -92,14 +92,10 @@ export const test = base.extend<TestFixtures>({
     if (IS_MOCK) {
       console.log("Avant spéculos");
       if (speculosCurrency) {
-        console.log(speculosCurrency);
-        device = await startSpeculos(testName, speculosCurrency);
-        console.log("speculos crée");
-        console.log(device);
-        console.log("post log device");
+        setEnv("SPECULOS_PID_OFFSET", 100 * speculosOffset);
+        device = await startSpeculos("Bitcoin Receive", speculosCurrency);
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
       }
-      //setEnv("SPECULOS_API_PORT", 30001 + getEnv("SPECULOS_PID_OFFSET"));
     }
 
     try {
@@ -121,7 +117,6 @@ export const test = base.extend<TestFixtures>({
         },
         env,
       );
-      //console.log(env);
 
       // launch app
       const windowSize = { width: 1024, height: 768 };
@@ -161,7 +156,6 @@ export const test = base.extend<TestFixtures>({
     } finally {
       if (device) {
         await stopSpeculos(device);
-        console.log("speculos kill");
       }
     }
   },
