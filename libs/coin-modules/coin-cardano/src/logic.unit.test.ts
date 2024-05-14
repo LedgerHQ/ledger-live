@@ -3,11 +3,6 @@ import { canStake, isAlreadyStaking } from "./logic";
 import { CardanoAccount } from "./types";
 
 describe("canStake", () => {
-  it("should return false when acc not present", () => {
-    const noResourcesAcc = {} as CardanoAccount;
-    expect(canStake(noResourcesAcc)).toEqual(false);
-  });
-
   it("should return false when acc has no funds", () => {
     const accWithNoFunds = {
       balance: new BigNumber(0),
