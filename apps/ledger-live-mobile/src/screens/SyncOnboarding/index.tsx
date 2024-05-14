@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { StackScreenProps } from "@react-navigation/stack";
-import { CompositeScreenProps } from "@react-navigation/native";
 import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -9,14 +7,8 @@ import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/h
 import { log } from "@ledgerhq/logs";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
-import { ScreenName } from "~/const";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
-import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
-import {
-  SyncOnboardingCompanion,
-  NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
-} from "./SyncOnboardingCompanion";
+import { NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS } from "./SyncOnboardingCompanion";
+import { SyncOnboardingCompanion } from "./SyncOnboardingCompanion";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
@@ -25,14 +17,7 @@ import { track } from "~/analytics";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
-
-export type SyncOnboardingScreenProps = CompositeScreenProps<
-  StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompanion>,
-  CompositeScreenProps<
-    StackScreenProps<BaseNavigatorStackParamList>,
-    StackScreenProps<RootStackParamList>
-  >
->;
+import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -285,6 +270,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   if (currentStep === "early-security-check") {
     stepContent = (
       <EarlySecurityCheck
+        navigation={navigation}
+        route={route}
         device={device}
         isAlreadyGenuine={isAlreadyGenuine}
         isPreviousUpdateCancelled={isPreviousUpdateCancelled}

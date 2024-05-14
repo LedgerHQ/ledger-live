@@ -12,10 +12,7 @@ export const Base = styled(BaseButton)<{ big?: boolean }>`
   line-height: 40px;
   padding: 0 24px;
 
-  ${p =>
-    p.variant === "shade"
-      ? `background-color: transparent!important;border-color: currentColor;`
-      : ``}
+  ${p => (p.variant === "shade" ? `background-color: transparent!important;` : ``)}
 `;
 
 export type Props = BaseButtonProps & {

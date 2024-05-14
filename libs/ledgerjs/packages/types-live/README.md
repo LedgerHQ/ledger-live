@@ -150,6 +150,8 @@ Ledger Live main types.
     *   [description](#description)
     *   [tagLabel](#taglabel)
     *   [actionCompletedPopupLabel](#actioncompletedpopuplabel)
+    *   [getIsAlreadyCompleted](#getisalreadycompleted)
+    *   [shouldCompleteOnStart](#shouldcompleteonstart)
     *   [buttonLabelForAnalyticsEvent](#buttonlabelforanalyticsevent)
 *   [PostOnboardingActionState](#postonboardingactionstate)
     *   [Properties](#properties-40)
@@ -441,17 +443,17 @@ Type: function (account: [Account](#account)): void
 
 ### CurrenciesData
 
-Type: {FIXME\_ignoreAccountFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, FIXME\_ignoreOperationFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, FIXME\_ignorePreloadFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, IgnorePrepareTransactionFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, mockDeviceOptions: any?, scanAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), apdus: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unstableAccounts: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, test: function (expect: ExpectFn, scanned: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Account](#account)>, bridge: [CurrencyBridge](#currencybridge)): any?}>?, accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{implementations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, raw: [AccountRaw](#accountraw), FIXME\_tests: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [RegExp](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp))>?, transactions: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CurrencyTransaction\<T>>?, test: function (arg0: ExpectFn, arg1: [Account](#account), arg2: [AccountBridge](#accountbridge)\<T>): any?}>?, test: function (arg0: ExpectFn, arg1: [CurrencyBridge](#currencybridge)): any?}
+Type: {FIXME\_ignoreAccountFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, FIXME\_ignoreOperationFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, FIXME\_ignorePreloadFields: ([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)> | `true`)?, IgnorePrepareTransactionFields: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, mockDeviceOptions: any?, scanAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), apdus: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unstableAccounts: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, test: function (expect: ExpectFn, scanned: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Account](#account)>, bridge: [CurrencyBridge](#currencybridge)): any?}>?, accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<AccountTestData\<T>>?, test: function (arg0: ExpectFn, arg1: [CurrencyBridge](#currencybridge)): any?}
 
 #### Properties
 
 *   `FIXME_ignoreAccountFields` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?**&#x20;
 *   `FIXME_ignoreOperationFields` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?**&#x20;
-*   `FIXME_ignorePreloadFields` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?**&#x20;
+*   `FIXME_ignorePreloadFields` **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)> | `true`)?**&#x20;
 *   `IgnorePrepareTransactionFields` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?**&#x20;
 *   `mockDeviceOptions` **any?**&#x20;
 *   `scanAccounts` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), apdus: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unstableAccounts: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, test: function (expect: ExpectFn, scanned: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Account](#account)>, bridge: [CurrencyBridge](#currencybridge)): any?}>?**&#x20;
-*   `accounts` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{implementations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, raw: [AccountRaw](#accountraw), FIXME\_tests: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [RegExp](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp))>?, transactions: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CurrencyTransaction\<T>>?, test: function (arg0: ExpectFn, arg1: [Account](#account), arg2: [AccountBridge](#accountbridge)\<T>): any?}>?**&#x20;
+*   `accounts` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<AccountTestData\<T>>?**&#x20;
 *   `test` **function (arg0: ExpectFn, arg1: [CurrencyBridge](#currencybridge)): any?**&#x20;
 
 ### DatasetTest
@@ -563,14 +565,14 @@ Type: [Feature](#feature)\<any>
 
 Currency Features type.
 
-Type: {currencyAvalancheCChain: [DefaultFeature](#defaultfeature), currencyStacks: [DefaultFeature](#defaultfeature), currencyOptimism: [DefaultFeature](#defaultfeature), currencyOptimismGoerli: [DefaultFeature](#defaultfeature), currencyArbitrum: [DefaultFeature](#defaultfeature), currencyArbitrumSepolia: [DefaultFeature](#defaultfeature), currencyRsk: [DefaultFeature](#defaultfeature), currencyBittorrent: [DefaultFeature](#defaultfeature), currencyEnergyWeb: [DefaultFeature](#defaultfeature), currencyAstar: [DefaultFeature](#defaultfeature), currencyMetis: [DefaultFeature](#defaultfeature), currencyBoba: [DefaultFeature](#defaultfeature), currencyMoonriver: [DefaultFeature](#defaultfeature), currencyVelasEvm: [DefaultFeature](#defaultfeature), currencySyscoin: [DefaultFeature](#defaultfeature), currencyAxelar: [DefaultFeature](#defaultfeature), currencySecretNetwork: [DefaultFeature](#defaultfeature), currencySeiNetwork: [DefaultFeature](#defaultfeature), currencyDesmos: [DefaultFeature](#defaultfeature), currencyDydx: [DefaultFeature](#defaultfeature), currencyUmee: [DefaultFeature](#defaultfeature), currencyStargaze: [DefaultFeature](#defaultfeature), currencyOnomy: [DefaultFeature](#defaultfeature), currencyPersistence: [DefaultFeature](#defaultfeature), currencyQuicksilver: [DefaultFeature](#defaultfeature), currencyInternetComputer: [DefaultFeature](#defaultfeature), currencyInjective: [DefaultFeature](#defaultfeature), currencyTelosEvm: [DefaultFeature](#defaultfeature), currencyCoreum: [DefaultFeature](#defaultfeature), currencyPolygonZkEvm: [DefaultFeature](#defaultfeature), currencyPolygonZkEvmTestnet: [DefaultFeature](#defaultfeature), currencyBase: [DefaultFeature](#defaultfeature), currencyBaseSepolia: [DefaultFeature](#defaultfeature), currencyKlaytn: [DefaultFeature](#defaultfeature), currencyVechain: [DefaultFeature](#defaultfeature), currencyCasper: [DefaultFeature](#defaultfeature), currencyNeonEvm: [DefaultFeature](#defaultfeature), currencyLukso: [DefaultFeature](#defaultfeature), currencyLinea: [DefaultFeature](#defaultfeature), currencyLineaGoerli: [DefaultFeature](#defaultfeature)}
+Type: {currencyAvalancheCChain: [DefaultFeature](#defaultfeature), currencyStacks: [DefaultFeature](#defaultfeature), currencyOptimism: [DefaultFeature](#defaultfeature), currencyOptimismSepolia: [DefaultFeature](#defaultfeature), currencyArbitrum: [DefaultFeature](#defaultfeature), currencyArbitrumSepolia: [DefaultFeature](#defaultfeature), currencyRsk: [DefaultFeature](#defaultfeature), currencyBittorrent: [DefaultFeature](#defaultfeature), currencyEnergyWeb: [DefaultFeature](#defaultfeature), currencyAstar: [DefaultFeature](#defaultfeature), currencyMetis: [DefaultFeature](#defaultfeature), currencyBoba: [DefaultFeature](#defaultfeature), currencyMoonriver: [DefaultFeature](#defaultfeature), currencyVelasEvm: [DefaultFeature](#defaultfeature), currencySyscoin: [DefaultFeature](#defaultfeature), currencyAxelar: [DefaultFeature](#defaultfeature), currencySecretNetwork: [DefaultFeature](#defaultfeature), currencySeiNetwork: [DefaultFeature](#defaultfeature), currencyDesmos: [DefaultFeature](#defaultfeature), currencyDydx: [DefaultFeature](#defaultfeature), currencyUmee: [DefaultFeature](#defaultfeature), currencyStargaze: [DefaultFeature](#defaultfeature), currencyOnomy: [DefaultFeature](#defaultfeature), currencyPersistence: [DefaultFeature](#defaultfeature), currencyQuicksilver: [DefaultFeature](#defaultfeature), currencyInternetComputer: [DefaultFeature](#defaultfeature), currencyInjective: [DefaultFeature](#defaultfeature), currencyTelosEvm: [DefaultFeature](#defaultfeature), currencyCoreum: [DefaultFeature](#defaultfeature), currencyPolygonZkEvm: [DefaultFeature](#defaultfeature), currencyPolygonZkEvmTestnet: [DefaultFeature](#defaultfeature), currencyBase: [DefaultFeature](#defaultfeature), currencyBaseSepolia: [DefaultFeature](#defaultfeature), currencyKlaytn: [DefaultFeature](#defaultfeature), currencyVechain: [DefaultFeature](#defaultfeature), currencyCasper: [DefaultFeature](#defaultfeature), currencyNeonEvm: [DefaultFeature](#defaultfeature), currencyLukso: [DefaultFeature](#defaultfeature), currencyLinea: [DefaultFeature](#defaultfeature), currencyLineaTesnet: [DefaultFeature](#defaultfeature)}
 
 #### Properties
 
 *   `currencyAvalancheCChain` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyStacks` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyOptimism` **[DefaultFeature](#defaultfeature)**&#x20;
-*   `currencyOptimismGoerli` **[DefaultFeature](#defaultfeature)**&#x20;
+*   `currencyOptimismSepolia` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyArbitrum` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyArbitrumSepolia` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyRsk` **[DefaultFeature](#defaultfeature)**&#x20;
@@ -606,7 +608,7 @@ Type: {currencyAvalancheCChain: [DefaultFeature](#defaultfeature), currencyStack
 *   `currencyNeonEvm` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyLukso` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyLinea` **[DefaultFeature](#defaultfeature)**&#x20;
-*   `currencyLineaGoerli` **[DefaultFeature](#defaultfeature)**&#x20;
+*   `currencyLineaTesnet` **[DefaultFeature](#defaultfeature)**&#x20;
 
 ### Features
 
@@ -1122,13 +1124,13 @@ Navigation params when the user presses the button for this action
 *   In LLM, this will be used like this:
     `navigation.navigate(...getNavigationParams)`
 
-Type: function (options: {deviceModelId: DeviceModelId}): (\[any] | \[any, any])
+Type: function (options: {deviceModelId: DeviceModelId, protectId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): (\[any] | \[any, any])
 
 ### startAction
 
 The function to call when the user presses the button for this action
 
-Type: function (args: {openModalCallback: function (modalName: any): void, navigationCallback: function (route: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void, deviceModelId: DeviceModelId}): void
+Type: function (args: {openModalCallback: function (modalName: any): void, navigationCallback: function (location: (Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any> | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))): void, deviceModelId: DeviceModelId, protectId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): void
 
 ###
 
@@ -1191,6 +1193,21 @@ Will appear in an success alert at the bottom of the post-onboarding hub
 after completing this action.
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### getIsAlreadyCompleted
+
+Async function that returns true if the action has already been completed prior to entering
+the post-onboarding and false otherwise
+
+Type: function (args: {protectId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>
+
+#### shouldCompleteOnStart
+
+Used to set the action as complete when clicking on it.
+Especially useful when the action opens a live app and we can't know
+when the action as been successfully finished
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
 
 #### buttonLabelForAnalyticsEvent
 

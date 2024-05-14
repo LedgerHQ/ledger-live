@@ -54,8 +54,6 @@ export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {
   exchangeType: "SWAP";
   toAccountId: string;
   swapId: string;
-  amountExpectedTo: bigint;
-  magnitudeAwareRate: bigint;
 };
 
 export type ExchangeCompleteParams =
@@ -65,4 +63,12 @@ export type ExchangeCompleteParams =
 
 export type ExchangeCompleteResult = {
   transactionHash: string;
+};
+
+export type SwapLiveError = {
+  type?: string;
+  cause: {
+    message?: string;
+    swapCode?: string;
+  };
 };

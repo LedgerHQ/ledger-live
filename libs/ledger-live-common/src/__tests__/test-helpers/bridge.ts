@@ -153,28 +153,30 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         expect(typeof bridge.preload).toBe("function");
         expect(typeof bridge.hydrate).toBe("function");
       });
-      test("preload and rehydrate", async () => {
-        const data1 = await bridge.preload(currency);
-        const data1filtered = omit(data1, FIXME_ignorePreloadFields || []);
+      if (FIXME_ignorePreloadFields !== true) {
+        test("preload and rehydrate", async () => {
+          const data1 = (await bridge.preload(currency)) || {};
+          const data1filtered = omit(data1, FIXME_ignorePreloadFields || []);
 
-        bridge.hydrate(data1filtered, currency);
+          bridge.hydrate(data1filtered, currency);
 
-        if (data1filtered) {
-          const serialized1 = JSON.parse(JSON.stringify(data1filtered));
-          bridge.hydrate(serialized1, currency);
-          expect(serialized1).toBeDefined();
-          const data2 = await bridge.preload(currency);
-          const data2filtered = omit(data2, FIXME_ignorePreloadFields || []);
+          if (data1filtered) {
+            const serialized1 = JSON.parse(JSON.stringify(data1filtered));
+            bridge.hydrate(serialized1, currency);
+            expect(serialized1).toBeDefined();
+            const data2 = (await bridge.preload(currency)) || {};
+            const data2filtered = omit(data2, FIXME_ignorePreloadFields || []);
 
-          if (data2filtered) {
-            bridge.hydrate(data2filtered, currency);
-            expect(data1filtered).toMatchObject(data2filtered);
-            const serialized2 = JSON.parse(JSON.stringify(data2filtered));
-            expect(serialized1).toMatchObject(serialized2);
-            bridge.hydrate(serialized2, currency);
+            if (data2filtered) {
+              bridge.hydrate(data2filtered, currency);
+              expect(data1filtered).toMatchObject(data2filtered);
+              const serialized2 = JSON.parse(JSON.stringify(data2filtered));
+              expect(serialized1).toMatchObject(serialized2);
+              bridge.hydrate(serialized2, currency);
+            }
           }
-        }
-      });
+        });
+      }
 
       if (scanAccounts) {
         if (FIXME_ignoreOperationFields && FIXME_ignoreOperationFields.length) {

@@ -96,11 +96,11 @@ export const preload = async (): Promise<NearPreloadedData> => {
   ]);
 
   const validators = await Promise.all(
-    rawValidators.map(async ({ account_id, stake }) => {
-      const commission = await getCommission(account_id);
+    rawValidators.map(async ({ account_id: validatorAddress, stake }) => {
+      const commission = await getCommission(validatorAddress);
 
       return {
-        validatorAddress: account_id,
+        validatorAddress,
         tokens: stake,
         commission,
       };

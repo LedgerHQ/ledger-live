@@ -5,4 +5,3 @@ export const updateProtectData = createAction<ProtectDataPayload>(ProtectActionT
 export const updateProtectStatus = createAction<ProtectStatusPayload>(
   ProtectActionTypes.UPDATE_PROTECT_STATUS,
 );
-export const resetProtectState = createAction(ProtectActionTypes.RESET_STATE);

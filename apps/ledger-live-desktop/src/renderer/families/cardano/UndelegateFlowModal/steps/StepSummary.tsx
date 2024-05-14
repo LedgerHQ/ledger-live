@@ -8,8 +8,10 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import { StepProps } from "../types";
 import BigNumber from "bignumber.js";
+import Alert from "~/renderer/components/Alert";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -22,12 +24,13 @@ const Separator = styled.div`
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
     const { account, transaction, status, error } = this.props;
-    const { estimatedFees } = status;
+    const { estimatedFees, errors } = status;
     if (!account) return null;
     if (!transaction) return null;
     const accountUnit = getAccountUnit(account);
     const feesCurrency = getAccountCurrency(account);
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
+    const displayError = errors.amount?.message ? errors.amount : "";
     return (
       <Box flow={4} mx={40}>
         {error && <ErrorBanner error={error} />}
@@ -90,16 +93,32 @@ export default class StepSummary extends PureComponent<StepProps> {
             </Box>
           </Box>
         </FromToWrapper>
+        {displayError ? (
+          <Box grow>
+            <Alert type="error">
+              <TranslatedError error={displayError} field="title" />
+            </Alert>
+          </Box>
+        ) : null}
       </Box>
     );
   }
 }
-export function StepSummaryFooter({ transitionTo, status, bridgePending, transaction }: StepProps) {
+export function StepSummaryFooter({
+  transitionTo,
+  status,
+  bridgePending,
+  transaction,
+  onClose,
+}: StepProps) {
   const { errors } = status;
-  const canNext = !bridgePending && !errors.validators && transaction;
+  const canNext = !errors.amount && !bridgePending && !errors.validators && transaction;
   return (
     <>
-      <Box horizontal>
+      <Box horizontal justifyContent="flex-end" flow={2} grow>
+        <Button mr={1} secondary onClick={onClose}>
+          <Trans i18nKey="common.cancel" />
+        </Button>
         <Button
           id="undelegate-continue-button"
           disabled={!canNext}

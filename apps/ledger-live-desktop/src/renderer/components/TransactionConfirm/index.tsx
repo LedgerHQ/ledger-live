@@ -130,6 +130,10 @@ const TransactionConfirm = ({
     status,
   });
 
+  const displayedFields = useMemo(() => {
+    return fields.filter(field => field.label !== "Address");
+  }, [fields]);
+
   const typeTransaction: string | undefined = useMemo(() => {
     const typeField = fields.find(field => field.label && field.label === "Type");
 
@@ -177,7 +181,7 @@ const TransactionConfirm = ({
           }}
           mb={20}
         >
-          {fields.map((field, i) => {
+          {displayedFields.map((field, i) => {
             const MaybeComponent = fieldComponents[field.type];
             if (!MaybeComponent) {
               console.warn(

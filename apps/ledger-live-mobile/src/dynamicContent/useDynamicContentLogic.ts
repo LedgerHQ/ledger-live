@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setDynamicContentWalletCards,
   setDynamicContentAssetsCards,
@@ -12,6 +12,7 @@ import { useBrazeContentCard } from "./brazeContentCard";
 import {
   filterByPage,
   filterByType,
+  filterCardsThatHaveBeenDismissed,
   mapAsWalletContentCard,
   mapAsAssetContentCard,
   mapAsNotificationContentCard,
@@ -21,15 +22,24 @@ import {
   compareCards,
 } from "./utils";
 import { ContentCardLocation, ContentCardsType, BrazeContentCard } from "./types";
+import { dismissedContentCardsSelector } from "~/reducers/settings";
+import { getOldCampaignIds } from "@ledgerhq/live-common/braze/anonymousUsers";
+import { clearDismissedContentCards } from "~/actions/settings";
 
 export const useDynamicContentLogic = () => {
   const dispatch = useDispatch();
   const { Braze, refreshDynamicContent } = useBrazeContentCard();
+  const dismissedContentCards = useSelector(dismissedContentCardsSelector) || {};
+  const dismissedContentCardsIds = Object.keys(dismissedContentCards);
 
   const fetchData = useCallback(async () => {
     // Fetch data from Braze
     const contentCards: BrazeContentCard[] = await Braze.getContentCards();
-    const mobileContentCards = getMobileContentCards(contentCards);
+    const filteredContentCards = filterCardsThatHaveBeenDismissed(
+      contentCards,
+      dismissedContentCardsIds,
+    );
+    const mobileContentCards = getMobileContentCards(filteredContentCards);
     // Filtering v0
     const walletCards = filterByPage(mobileContentCards, ContentCardLocation.Wallet)
       .map(card => mapAsWalletContentCard(card))
@@ -60,10 +70,18 @@ export const useDynamicContentLogic = () => {
     dispatch(setDynamicContentAssetsCards(assetCards));
     dispatch(setDynamicContentNotificationCards(notificationCards));
     dispatch(setDynamicContentLearnCards(learnCards));
-  }, [Braze, dispatch]);
+  }, [Braze, dismissedContentCardsIds, dispatch]);
+
+  const clearOldDismissedContentCards = () => {
+    const oldCampaignIds = getOldCampaignIds(dismissedContentCards || {});
+    if (oldCampaignIds.length > 0) {
+      dispatch(clearDismissedContentCards(oldCampaignIds));
+    }
+  };
 
   return {
     refreshDynamicContent,
     fetchData,
+    clearOldDismissedContentCards,
   };
 };

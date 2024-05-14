@@ -89,6 +89,7 @@ export type SettingsState = {
   fullNodeEnabled: boolean;
   // developer settings
   allowDebugApps: boolean;
+  allowReactQueryDebug: boolean;
   allowExperimentalApps: boolean;
   enablePlatformDevTools: boolean;
   catalogProvider: string;
@@ -99,7 +100,6 @@ export type SettingsState = {
     selectableCurrencies: string[];
     acceptedProviders: string[];
   };
-  starredMarketCoins: string[];
   overriddenFeatureFlags: {
     [key in FeatureId]: Feature;
   };
@@ -107,6 +107,9 @@ export type SettingsState = {
   vaultSigner: VaultSigner;
   supportedCounterValues: SupportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
+  dismissedContentCards: { [key: string]: number };
+  anonymousBrazeId: string | null;
+  starredMarketCoins: string[];
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -146,8 +149,8 @@ const INITIAL_STATE: SettingsState = {
   pairExchanges: {},
   developerMode: !!process.env.__DEV__,
   loaded: false,
-  shareAnalytics: false,
-  sharePersonalizedRecommandations: false,
+  shareAnalytics: true,
+  sharePersonalizedRecommandations: true,
   hasSeenAnalyticsOptInPrompt: false,
   sentryLogs: true,
   lastUsedVersion: __APP_VERSION__,
@@ -176,6 +179,7 @@ const INITIAL_STATE: SettingsState = {
   fullNodeEnabled: false,
   // developer settings
   allowDebugApps: false,
+  allowReactQueryDebug: false,
   allowExperimentalApps: false,
   enablePlatformDevTools: false,
   catalogProvider: "production",
@@ -186,13 +190,17 @@ const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  starredMarketCoins: [],
   overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
 
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
+  dismissedContentCards: {} as Record<string, number>,
+  anonymousBrazeId: null,
+
+  //MARKET
+  starredMarketCoins: [],
 };
 
 /* Handlers */
@@ -222,8 +230,6 @@ type HandlersPayloads = {
   SET_SWAP_ACCEPTED_IP_SHARING: boolean;
   ACCEPT_SWAP_PROVIDER: string;
   DEBUG_TICK: never;
-  ADD_STARRED_MARKET_COINS: string;
-  REMOVE_STARRED_MARKET_COINS: string;
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
@@ -243,6 +249,13 @@ type HandlersPayloads = {
   SET_VAULT_SIGNER: VaultSigner;
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
+  SET_DISMISSED_CONTENT_CARDS: {
+    [key: string]: number;
+  };
+  CLEAR_DISMISSED_CONTENT_CARDS: never;
+  SET_ANONYMOUS_BRAZE_ID: string;
+  ADD_STARRED_MARKET_COINS: string;
+  REMOVE_STARRED_MARKET_COINS: string;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -362,14 +375,6 @@ const handlers: SettingsHandlers = {
   DEBUG_TICK: state => ({
     ...state,
   }),
-  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: [...state.starredMarketCoins, payload],
-  }),
-  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
-  }),
   SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
     ...state,
     lastSeenCustomImage: {
@@ -414,7 +419,37 @@ const handlers: SettingsHandlers = {
     ...state,
     hasSeenAnalyticsOptInPrompt: payload,
   }),
+  SET_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload }) => ({
+    ...state,
+    dismissedContentCards: {
+      ...state.dismissedContentCards,
+      [payload.id]: payload.timestamp,
+    },
+  }),
+
+  CLEAR_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload }: { payload?: string[] }) => {
+    const newState = { ...state };
+    if (payload) {
+      payload.forEach(id => {
+        delete newState.dismissedContentCards[id];
+      });
+    }
+    return newState;
+  },
+  SET_ANONYMOUS_BRAZE_ID: (state: SettingsState, { payload }) => ({
+    ...state,
+    anonymousBrazeId: payload,
+  }),
+  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+    ...state,
+    starredMarketCoins: [...state.starredMarketCoins, payload],
+  }),
+  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+    ...state,
+    starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
+  }),
 };
+
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as SettingsHandlers<false>,
   INITIAL_STATE,
@@ -642,6 +677,7 @@ export const hasInstalledAppsSelector = (state: State) => state.settings.hasInst
 export const USBTroubleshootingIndexSelector = (state: State) =>
   state.settings.USBTroubleshootingIndex;
 export const allowDebugAppsSelector = (state: State) => state.settings.allowDebugApps;
+export const allowDebugReactQuerySelector = (state: State) => state.settings.allowReactQueryDebug;
 export const allowExperimentalAppsSelector = (state: State) => state.settings.allowExperimentalApps;
 export const enablePlatformDevToolsSelector = (state: State) =>
   state.settings.enablePlatformDevTools;
@@ -709,7 +745,6 @@ export const exportSettingsSelector = createSelector(
     blacklistedTokenIds,
   }),
 );
-export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsButtonVisibleSelector = (state: State) =>
@@ -719,3 +754,9 @@ export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
+export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
+export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;
+
+//MARKET
+
+export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

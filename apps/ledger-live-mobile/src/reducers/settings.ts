@@ -79,6 +79,8 @@ import type {
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
+  SettingsSetDismissedContentCardsPayload,
+  SettingsClearDismissedContentCardsPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -99,8 +101,8 @@ export const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
-  analyticsEnabled: false,
-  personalizedRecommendationsEnabled: false,
+  analyticsEnabled: true,
+  personalizedRecommendationsEnabled: true,
   currenciesSettings: {},
   pairExchanges: {},
   selectedTimeRange: "month",
@@ -182,6 +184,7 @@ export const INITIAL_STATE: SettingsState = {
   userNps: null,
   supportedCounterValues: [],
   hasSeenAnalyticsOptInPrompt: false,
+  dismissedContentCards: {},
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -653,6 +656,28 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     hasSeenAnalyticsOptInPrompt: (action as Action<SettingsSetHasSeenAnalyticsOptInPrompt>).payload,
   }),
+  [SettingsActionTypes.SET_DISMISSED_CONTENT_CARD]: (state, action) => ({
+    ...state,
+    dismissedContentCards: {
+      ...state.dismissedContentCards,
+      ...(action as Action<SettingsSetDismissedContentCardsPayload>).payload,
+    },
+  }),
+  [SettingsActionTypes.CLEAR_DISMISSED_CONTENT_CARDS]: (state, action) => {
+    const { payload } = action as Action<SettingsClearDismissedContentCardsPayload>;
+    const currentDismissedContentCards = state.dismissedContentCards || {};
+    const entries = Object.entries(currentDismissedContentCards);
+    const filteredEntries = entries.filter(([key]) => !payload?.includes(key));
+    const dismissedContentCards = filteredEntries.reduce(
+      (obj, [key, value]) => ({ ...obj, [key]: value }),
+      {},
+    );
+
+    return {
+      ...state,
+      dismissedContentCards,
+    };
+  },
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -855,3 +880,4 @@ export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
+export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;

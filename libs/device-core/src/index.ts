@@ -31,3 +31,5 @@ export { isSyncOnboardingSupported } from "./capabilities/isSyncOnboardingSuppor
 export { supportedDeviceModelIds } from "./capabilities/isCustomLockScreenSupported";
 // src/customLockScreen/
 export * from "./customLockScreen/screenSpecs";
+// src/firmwareUpdate/
+export { shouldForceFirmwareUpdate } from "./firmwareUpdate/shouldForceFirmwareUpdate";

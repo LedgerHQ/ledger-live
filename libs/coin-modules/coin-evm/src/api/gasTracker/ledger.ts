@@ -23,8 +23,6 @@ const explorerIdGasTrackerMap = new Map<LedgerExplorerId, GasTracker>([
   ["eth", { compatibilty: { eip1559: true } }],
   ["etc", { compatibilty: { eip1559: false } }],
   ["matic", { compatibilty: { eip1559: true } }],
-  ["eth_ropsten", { compatibilty: { eip1559: true } }],
-  ["eth_goerli", { compatibilty: { eip1559: true } }],
   ["eth_sepolia", { compatibilty: { eip1559: true } }],
   ["eth_holesky", { compatibilty: { eip1559: true } }],
 ]);

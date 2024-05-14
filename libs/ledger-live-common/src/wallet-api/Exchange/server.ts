@@ -21,6 +21,7 @@ import {
   ExchangeStartResult,
   ExchangeType,
   ExchangeStartSellParams,
+  SwapLiveError,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { TrackingAPI } from "./tracking";
@@ -48,6 +49,7 @@ type Handlers = {
     ExchangeStartParams | ExchangeStartSwapParams | ExchangeStartSellParams
   >;
   "custom.exchange.complete": RPCHandler<ExchangeCompleteResult, ExchangeCompleteParams>;
+  "custom.exchange.error": RPCHandler<void, SwapLiveError>;
 };
 
 export type CompleteExchangeUiRequest = {
@@ -88,6 +90,11 @@ type ExchangeUiHooks = {
     onSuccess: (hash: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
+  "custom.exchange.error": (params: {
+    error: SwapLiveError | undefined;
+    onSuccess: () => void;
+    onCancel: () => void;
+  }) => void;
 };
 
 export const handlers = ({
@@ -97,6 +104,7 @@ export const handlers = ({
   uiHooks: {
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
+    "custom.exchange.error": uiError,
   },
 }: {
   accounts: AccountLike[];
@@ -288,6 +296,19 @@ export const handlers = ({
         );
       },
     ),
+    "custom.exchange.error": customWrapper<SwapLiveError, void>(async params => {
+      return new Promise((resolve, reject) =>
+        uiError({
+          error: params,
+          onSuccess: () => {
+            resolve();
+          },
+          onCancel: () => {
+            reject();
+          },
+        }),
+      );
+    }),
   }) as const satisfies Handlers;
 
 function extractSwapStartParam(

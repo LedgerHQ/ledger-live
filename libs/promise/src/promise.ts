@@ -5,9 +5,10 @@ const defaults = {
   interval: 300,
   intervalMultiplicator: 1.5,
   context: "",
+  retryCondition: _ => true,
 };
 export function retry<A>(f: () => Promise<A>, options?: Partial<typeof defaults>): Promise<A> {
-  const { maxRetry, interval, intervalMultiplicator, context } = {
+  const { maxRetry, interval, intervalMultiplicator, context, retryCondition } = {
     ...defaults,
     ...options,
   };
@@ -21,6 +22,9 @@ export function retry<A>(f: () => Promise<A>, options?: Partial<typeof defaults>
 
     // In case of failure, wait the interval, retry the action
     return result.catch(e => {
+      if (!retryCondition(e)) {
+        throw e;
+      }
       log("promise-retry", context + " failed. " + remainingTry + " retry remain. " + String(e));
       return delay(i).then(() => rec(remainingTry - 1, i * intervalMultiplicator));
     });
