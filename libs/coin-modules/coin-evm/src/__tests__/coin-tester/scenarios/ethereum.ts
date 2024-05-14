@@ -1,11 +1,19 @@
 import Eth from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
+<<<<<<< HEAD
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
+=======
+import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
+import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
+import { makeAccount } from "../../fixtures/common.fixtures";
+>>>>>>> 646be7ca05 (polkadot coin-tester scenario skeleton)
 import { EvmNftTransaction, Transaction as EvmTransaction } from "../../../types";
 import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
 import { getCoinConfig, setCoinConfig } from "../../../config";
@@ -20,6 +28,12 @@ import {
   ERC1155Interface,
   impersonnateAccount,
 } from "../helpers";
+<<<<<<< HEAD
+=======
+import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
+import { killAnvil, spawnAnvil } from "../anvil";
+import { defaultNanoApp } from "../scenarios.test";
+>>>>>>> 646be7ca05 (polkadot coin-tester scenario skeleton)
 
 const makeScenarioTransactions = ({
   address,
@@ -127,8 +141,6 @@ const makeScenarioTransactions = ({
   ];
 };
 
-const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
-
 export const scenarioEthereum: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic Ethereum Transactions",
   setup: async () => {
@@ -170,7 +182,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
-      currency: getCryptoCurrencyById("ethereum"),
+      currency: ethereum,
       derivationMode: "",
     });
 

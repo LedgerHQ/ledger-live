@@ -4,6 +4,10 @@ module.exports = {
     es6: true,
   },
   ignorePatterns: ["lib", "lib-es", ".turbo"],
+  rules: {
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+  },
   overrides: [
     {
       files: ["src/**/*.test.{ts,tsx}"],
@@ -12,9 +16,14 @@ module.exports = {
       },
       plugins: ["jest"],
     },
+    {
+      // allow, as warning, only any in tests
+      files: ["*/__tests__/**/*.{ts,tsx}"],
+      rules: {
+        "no-console": "off",
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
+      },
+    },
   ],
-  rules: {
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-explicit-any": "warn",
-  },
 };

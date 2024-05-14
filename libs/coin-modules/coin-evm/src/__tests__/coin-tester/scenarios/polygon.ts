@@ -20,6 +20,7 @@ import {
   impersonnateAccount,
   polygon,
 } from "../helpers";
+import { defaultNanoApp } from "../scenarios.test";
 
 const makeScenarioTransactions = ({ address }: { address: string }) => {
   const send1MaticTransaction: ScenarioTransaction<EvmTransaction> = {
@@ -123,8 +124,6 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
     sendERC1155Transaction,
   ];
 };
-
-const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
 export const scenarioPolygon: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic Polygon Transactions",

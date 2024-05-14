@@ -1,4 +1,4 @@
-import { killSpeculos } from "@ledgerhq/coin-tester/lib/signers/speculos";
+import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killAnvil } from "./anvil";
 import { scenarioEthereum } from "./scenarios/ethereum";
@@ -6,6 +6,8 @@ import { scenarioPolygon } from "./scenarios/polygon";
 
 global.console = require("console");
 jest.setTimeout(100_000);
+
+export const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
 describe("EVM Deterministic Tester", () => {
   it("scenario Ethereum", async () => {
