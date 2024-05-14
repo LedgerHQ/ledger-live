@@ -171,6 +171,9 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   internet_computer: {
     overridesDerivation: "44'/223'/0'/0/<account>",
   },
+  mina: {
+    overridesDerivation: "44'/12586'/0'/0/<account>",
+  },
   stacks_wallet: {
     overridesDerivation: "44'/5757'/0'/0/<account>",
     startsAt: 1,
