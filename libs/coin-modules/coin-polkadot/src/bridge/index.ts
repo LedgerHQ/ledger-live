@@ -7,12 +7,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import {
-  PolkadotSigner,
-  type PolkadotAddress,
-  type PolkadotSignature,
-  type Transaction,
-} from "../types";
+import { PolkadotSigner, type Transaction } from "../types";
 import signerGetAddress from "../signer";
 import broadcast from "./broadcast";
 import createTransaction from "./createTransaction";
@@ -29,9 +24,7 @@ import {
 } from "./serialization";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
 
-function buildCurrencyBridge(
-  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
-): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<PolkadotSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -48,7 +41,7 @@ function buildCurrencyBridge(
 }
 
 function buildAccountBridge(
-  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
+  signerContext: SignerContext<PolkadotSigner>,
 ): AccountBridge<Transaction> {
   const getAddress = signerGetAddress(signerContext);
 
@@ -73,9 +66,7 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
-) {
+export function createBridges(signerContext: SignerContext<PolkadotSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

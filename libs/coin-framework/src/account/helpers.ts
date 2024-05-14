@@ -79,20 +79,6 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
   return a.operationsCount === 0 && a.balance.isZero() && !hasSubAccounts;
 };
 
-export function areAllOperationsLoaded(account: AccountLike): boolean {
-  if (account.operationsCount !== account.operations.length) {
-    return false;
-  }
-
-  if (account.type === "Account" && account.subAccounts) {
-    return account.subAccounts.every(areAllOperationsLoaded);
-  }
-
-  return true;
-}
-
-export const isAccountBalanceSignificant = (a: AccountLike): boolean => a.balance.gt(100);
-
 // in future, could be a per currency thing
 // clear account to a bare minimal version that can be restored via sync
 // will preserve the balance to avoid user panic
@@ -242,20 +228,6 @@ export const accountWithMandatoryTokens = (
 };
 
 /**
- * Patch account to enforce the removal of a blacklisted token
- */
-export const withoutToken = (account: Account, tokenId: string): Account => {
-  const { subAccounts } = account;
-  if (!subAccounts) return account;
-  const tokenAccount = subAccounts.find(a => a.type === "TokenAccount" && a.token.id === tokenId);
-  if (!tokenAccount) return account;
-  return {
-    ...account,
-    subAccounts: subAccounts.filter(sa => sa.id !== tokenAccount.id),
-  };
-};
-
-/**
  * Find matching pair of subAccount/parentAccount for a given token curency
  * if no subAccount found will return parentAccount or null if no matches found
  */
@@ -305,13 +277,6 @@ export function isAccount(account?: AccountLike): account is Account {
 
 export function isTokenAccount(account?: AccountLike): account is TokenAccount {
   return account?.type === "TokenAccount";
-}
-
-/**
- * @deprecated use isTokenAccount instead
- */
-export function isSubAccount(account?: AccountLike): account is SubAccount {
-  return isTokenAccount(account);
 }
 
 export function getParentAccount(account: AccountLike, accounts: AccountLike[]): Account {
