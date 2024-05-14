@@ -9,7 +9,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { Transaction } from "../types/common";
 import resolver from "../signer/getAddress";
-import { sync, getAccountShape } from "./synchronisation";
+import { sync, getAccountShape, assignToAccountRaw, assignFromAccountRaw } from "./synchronisation";
 import { MinaSigner } from "../types/signer";
 import { MinaCoinConfig, setCoinConfig } from "../config";
 import broadcast from "./broadcast";
@@ -49,6 +49,8 @@ export function buildAccountBridge(
     estimateMaxSpendable,
     createTransaction,
     updateTransaction,
+    assignToAccountRaw,
+    assignFromAccountRaw,
     getTransactionStatus,
     prepareTransaction,
     sync,
