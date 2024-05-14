@@ -146,6 +146,7 @@
     "@ledgerhq/coin-ton": "workspace:^",
     "@ledgerhq/coin-tron": "workspace:^",
     "@ledgerhq/coin-xrp": "workspace:^",
+    "@ledgerhq/coin-mina": "workspace:^",
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
