@@ -100,6 +100,7 @@ setSupportedCurrencies([
   "scroll",
   "scroll_sepolia",
   "ton",
+  "mina",
 ]);
 LiveConfig.setConfig(liveConfig);
 
