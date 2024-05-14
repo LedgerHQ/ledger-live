@@ -12,7 +12,7 @@
     "bundle:ios:prod": "react-native bundle --entry-file index.js --dev false --bundle-output main.ios.jsbundle",
     "bundle:android": "react-native bundle --platform android --entry-file index.js --bundle-output main.jsbundle",
     "bundle:android:prod": "react-native bundle --platform android --entry-file index.js --dev false --bundle-output main.android.jsbundle",
-    "ios": "react-native run-ios",
+    "ios": "react-native run-ios --target ledgerlivemobile",
     "android": "react-native run-android --appIdSuffix=debug --active-arch-only",
     "android:gradleClean": "cd android && ./gradlew clean",
     "android:bundleInDebug": "ANDROID_BUNDLE_IN_DEBUG=true pnpm android",
