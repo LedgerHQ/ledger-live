@@ -17,7 +17,6 @@ describe("fetchCurrencyFrom", () => {
     });
 
     const result = await fetchCurrencyTo({
-      providers: ["changelly", "cic", "oneinch"],
       currencyFromId: "bitcoin",
     });
 
@@ -34,7 +33,6 @@ describe("fetchCurrencyFrom", () => {
 
     try {
       await fetchCurrencyTo({
-        providers: ["changelly", "cic", "oneinch"],
         currencyFromId: "bitcoin",
       });
     } catch (e) {

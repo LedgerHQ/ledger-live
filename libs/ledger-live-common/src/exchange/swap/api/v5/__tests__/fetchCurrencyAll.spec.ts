@@ -12,9 +12,7 @@ describe("fetchCurrencyAll", () => {
       data: fetchCurrencyAllMock,
     }));
 
-    const result = await fetchCurrencyAll({
-      providers: ["oneinch"],
-    });
+    const result = await fetchCurrencyAll({});
 
     expect(result).toStrictEqual(flattenV5CurrenciesAll(fetchCurrencyAllMock));
     expect(network as jest.Mock).toHaveBeenCalledWith({
