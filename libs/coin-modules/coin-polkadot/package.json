@@ -132,6 +132,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "coverage": "jest --coverage=true --coverageDirectory=\"coverage\" && mv coverage/coverage-final.json coverage/coverage-polakdot.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",

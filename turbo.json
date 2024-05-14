@@ -57,6 +57,9 @@
       "cache": false,
       "dependsOn": ["^build"]
     },
+    "coverage": {
+      "cache": false
+    },
     "clean": {
       "cache": false
     },
