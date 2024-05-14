@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.14.18
+
+### Patch Changes
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`31388be`](https://github.com/LedgerHQ/ledger-live/commit/31388bea3577680ab1070baefb47997535160bf3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Tag component: add "tiny" size, fix paddings that were too big.
+
 ## 0.14.18-next.0
 
 ### Patch Changes

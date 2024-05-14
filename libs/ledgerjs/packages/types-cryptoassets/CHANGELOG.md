@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.12.0
+
+### Minor Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Upading test snapshots & adding types for new testnet currencies and their feature flags
+
 ## 7.12.0-next.0
 
 ### Minor Changes
