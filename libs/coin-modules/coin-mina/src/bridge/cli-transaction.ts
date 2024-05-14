@@ -7,7 +7,12 @@ const options = [
   {
     name: "memo",
     type: String,
-    desc: "set a memo",
+    desc: "mina: set a memo",
+  },
+  {
+    name: "delegateAddress",
+    type: String,
+    desc: "mina: delegate to a validator",
   },
 ];
 
@@ -25,6 +30,15 @@ function inferTransactions(
 ): Transaction[] {
   return flatMap(transactions, ({ transaction }) => {
     invariant(transaction.family === "mina", "mina family");
+
+    if (opts.delegateAddress) {
+      return {
+        ...transaction,
+        family: "mina",
+        txType: "stake",
+        recipient: opts.delegateAddress,
+      };
+    }
 
     return {
       ...transaction,

@@ -3,6 +3,7 @@ import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 export type MinaCoinConfig = () => CurrencyConfig & {
   infra: {
     API_MINA_ROSETTA_NODE: string;
+    API_MINA_GRAPHQL_NODE: string;
   };
 };
 
