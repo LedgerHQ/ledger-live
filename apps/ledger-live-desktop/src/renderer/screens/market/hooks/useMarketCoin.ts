@@ -37,8 +37,8 @@ export const useMarketCoin = () => {
   const { data: currency, isLoading } = useCurrencyData({
     counterCurrency,
     id: currencyId,
-    range,
   });
+
   const { id, internalCurrency } = currency || {};
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnStake, availableOnSwap } =

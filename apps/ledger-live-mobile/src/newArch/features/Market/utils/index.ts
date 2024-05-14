@@ -1,4 +1,5 @@
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import { getSortParam } from "@ledgerhq/live-common/market/utils/index";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { TFunction } from "i18next";
 
@@ -117,7 +118,8 @@ export function getAnalyticsProperties<P extends object>(
   return {
     ...otherProperties,
     access: false,
-    sort: `${requestParams.orderBy}_${requestParams.order}`,
+    ...(requestParams.order &&
+      requestParams.range && { sort: getSortParam(requestParams.order, requestParams.range) }),
     "%change": requestParams.range,
     countervalue: requestParams.counterCurrency,
     view: requestParams.liveCompatible ? "Only Live Supported" : "All coins",

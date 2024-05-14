@@ -20,6 +20,11 @@ function useBottomSectionViewModel() {
 
   const { range, order, counterCurrency } = marketParams;
 
+  const resetMarketPage = useCallback(() => {
+    dispatch(setMarketCurrentPage(1));
+    dispatch(setMarketRequestParams({ ...marketParams, page: 1 }));
+  }, [dispatch, marketParams]);
+
   const toggleFilterByStarredCurrencies = useCallback(() => {
     if (!filterByStarredCurrencies) {
       track(
@@ -31,9 +36,8 @@ function useBottomSectionViewModel() {
     }
 
     dispatch(setMarketFilterByStarredCurrencies(!filterByStarredCurrencies));
-    dispatch(setMarketCurrentPage(1));
-    dispatch(setMarketRequestParams({ ...marketParams, page: 1 }));
-  }, [dispatch, filterByStarredCurrencies, marketParams, starredMarketCoins]);
+    resetMarketPage();
+  }, [dispatch, filterByStarredCurrencies, marketParams, resetMarketPage, starredMarketCoins]);
 
   const onFilterChange = useCallback(
     (value: MarketListRequestParams) => {
@@ -44,11 +48,11 @@ function useBottomSectionViewModel() {
           ...value,
         }),
       );
-      dispatch(setMarketCurrentPage(1));
-      dispatch(setMarketRequestParams({ ...marketParams, page: 1 }));
+
       dispatch(setMarketRequestParams(value));
+      resetMarketPage();
     },
-    [dispatch, marketParams],
+    [dispatch, marketParams, resetMarketPage],
   );
 
   return {

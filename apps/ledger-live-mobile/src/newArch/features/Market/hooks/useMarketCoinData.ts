@@ -24,7 +24,6 @@ export const useMarketCoinData = ({ currencyId }: HookProps) => {
   const { data: currency, isLoading } = useCurrencyData({
     counterCurrency,
     id: currencyId,
-    range,
   });
 
   return {

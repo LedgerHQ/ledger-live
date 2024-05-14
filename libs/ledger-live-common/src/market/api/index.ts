@@ -12,7 +12,7 @@ import {
 } from "../utils/types";
 import { rangeDataTable } from "../utils/rangeDataTable";
 import URL from "url";
-import { getRange } from "../utils/rangeFormatter";
+import { getRange, getSortParam } from "../utils";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 const ROOT_PATH = getEnv("MARKET_API_URL");
@@ -34,26 +34,13 @@ export async function fetchList({
   starred = [],
   range = "24",
 }: MarketListRequestParams): Promise<MarketItemResponse[]> {
-  const getSortParam = (order: Order) => {
-    switch (order) {
-      default:
-      case Order.MarketCapDesc:
-        return "market-cap-rank";
-      case Order.MarketCapAsc:
-        return "market-cap-rank-desc";
-      case Order.topLosers:
-        return `negative-price-change-${getRange(range)}`;
-      case Order.topGainers:
-        return `positive-price-change-${getRange(range)}`;
-    }
-  };
   const url = URL.format({
     pathname: `${baseURL()}/v3/markets`,
     query: {
       page: page,
       pageSize: limit,
       to: counterCurrency,
-      sort: getSortParam(order),
+      sort: getSortParam(order, range),
       ...(search.length > 1 && { filter: search }),
       ...(starred.length > 1 && { ids: starred.join(",") }),
       ...(liveCoinsList.length > 1 && { ids: liveCoinsList.join(",") }),
