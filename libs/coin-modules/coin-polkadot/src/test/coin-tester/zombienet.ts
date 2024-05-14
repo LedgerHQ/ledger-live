@@ -40,7 +40,7 @@ export async function spawnZombienet() {
     }
 
     console.log("Checking if zombienet is ready...");
-    await delay(10 * 1000);
+    await delay(5 * 1000);
     return await checkZombienetLogs();
   }
 
@@ -49,11 +49,12 @@ export async function spawnZombienet() {
 
 export async function killZombienet() {
   const containers = await docker.listContainers();
-  containers.forEach(async container => {
+
+  for (const container of containers) {
     if (container.Names.includes(`/${containerName}`)) {
       const zombienetContainer = docker.getContainer(container.Id);
       await zombienetContainer.stop();
       await zombienetContainer.remove();
     }
-  });
+  }
 }

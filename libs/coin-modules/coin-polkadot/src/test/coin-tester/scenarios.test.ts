@@ -14,7 +14,7 @@ describe("Polkadot Deterministic Tester", () => {
       await executeScenario(basicScenario);
     } catch (e) {
       if (e != "done") {
-        await Promise.all([killSpeculos()]);
+        await Promise.all([killSpeculos(), killZombienet()]);
         throw e;
       }
     }

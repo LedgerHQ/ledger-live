@@ -3,7 +3,6 @@ import { Transaction as PolkadotTransaction } from "../../../types/bridge";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/lib/signers/speculos";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
 import resolver from "../../../signer/getAddress";
-
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { createBridges } from "../../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -32,7 +31,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     const getAddress = resolver(signerContext);
     console.log("getAddress created");
     const { address } = await getAddress("", {
-      path: "44'/354'/0'/0/0",
+      path: "44'/354'/0'/0'/0'",
       currency: polkadot,
       derivationMode: "",
     });
