@@ -23,11 +23,11 @@ import { vechainConfig } from "../families/vechain/config";
 import { appConfig } from "../apps/config";
 
 const countervaluesConfig: ConfigSchema = {
-  countervalues_refreshRate: {
+  config_countervalues_refreshRate: {
     type: "number",
     default: 60 * 1000,
   },
-  countervalues_marketCapBatchingAfterRank: {
+  config_countervalues_marketCapBatchingAfterRank: {
     type: "number",
     default: 20,
   },
