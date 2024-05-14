@@ -15,8 +15,8 @@ notifyManager.setScheduler(cb => cb());
 
 // TODO better way to make ProtoNFT[] collection
 const nftsOwned = NFTs.map(nft => ({
-  id: encodeNftId("foo", nft.collection.contract, nft.tokenId, "ethereum"),
-  tokenId: nft.tokenId,
+  id: encodeNftId("foo", nft.collection.contract, "1", "ethereum"),
+  tokenId: "1",
   amount: new BigNumber(0),
   contract: nft.collection.contract,
   standard: "ERC721" as const,
