@@ -23,7 +23,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "xpub": "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
   },
   {
-    "approvals": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
     "operationsCount": 11,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -33,7 +32,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+438828",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -43,7 +41,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+438837",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -53,7 +50,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+2757561",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -63,7 +59,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+27165954",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -73,7 +68,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+137594422",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -143,7 +137,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "xpub": "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
   },
   {
-    "approvals": undefined,
     "id": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
     "operationsCount": 8,
     "parentId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
