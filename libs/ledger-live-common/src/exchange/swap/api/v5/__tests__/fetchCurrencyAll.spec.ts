@@ -18,7 +18,7 @@ describe("fetchCurrencyAll", () => {
     expect(network as jest.Mock).toHaveBeenCalledWith({
       method: "GET",
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
-      url: "https://swap.ledger.com/v5/currencies/to?providers-whitelist=changelly%2Ccic%2Cmoonpay%2Coneinch%2Cparaswap&additional-coins-flag=false&currency-from=bitcoin",
+      url: "https://swap.ledger.com/v5/currencies/all?providers-whitelist=changelly%2Ccic%2Cmoonpay%2Coneinch%2Cparaswap&additional-coins-flag=false",
     });
   });
 });
