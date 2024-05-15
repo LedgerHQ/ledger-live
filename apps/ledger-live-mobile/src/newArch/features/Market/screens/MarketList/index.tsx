@@ -16,6 +16,7 @@ import BottomSection from "./components/BottomSection";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketListViewModel from "./useMarketListViewModel";
+import { LIMIT } from "~/reducers/market";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
   CollapsibleHeaderFlatList<CurrencyData>,
@@ -72,7 +73,7 @@ function View({
         search: "",
         starred: [],
         liveCompatible: false,
-        limit: 20,
+        limit: LIMIT,
       }),
     [refresh],
   );

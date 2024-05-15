@@ -10,10 +10,12 @@ import {
 } from "~/actions/types";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 
+export const LIMIT = 20;
+
 export const INITIAL_STATE: MarketState = {
   marketParams: {
     range: "24h",
-    limit: 25,
+    limit: LIMIT,
     starred: [],
     order: Order.MarketCapDesc,
     search: "",

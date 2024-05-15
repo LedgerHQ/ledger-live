@@ -10,6 +10,7 @@ import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/uti
 import TrackScreen from "~/analytics/TrackScreen";
 import useBottomSectionViewModel from "./useBottomSectionViewModel";
 import { RANGES } from "~/newArch/features/Market/utils";
+import { LIMIT } from "~/reducers/market";
 
 const SORT_OPTIONS = {
   top100G: {
@@ -33,14 +34,14 @@ const SORT_OPTIONS = {
   market_cap_asc: {
     requestParam: {
       order: Order.MarketCapAsc,
-      limit: 20,
+      limit: LIMIT,
     },
     value: "market_cap_asc",
   },
   market_cap_desc: {
     requestParam: {
       order: Order.MarketCapDesc,
-      limit: 20,
+      limit: LIMIT,
     },
     value: "market_cap_desc",
   },
