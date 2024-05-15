@@ -16,14 +16,6 @@ on:
       test_filter:
         description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
         required: false
-      invert_filter:
-        description: Ignore test having name pattern (entered in the previous field)
-        type: boolean
-        default: false
-      speculos_tests:
-        description: Run the speculos tests (if false, mocked tests will be run instead)
-        type: boolean
-        default: true
       report_path:
         description: Path where you want to store this execution's results
         required: false
@@ -75,32 +67,12 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - name: Retrieving coin apps
-        uses: actions/checkout@v4
-        with:
-          ref: generated/ledger-live-bot
-          repository: LedgerHQ/coin-apps
-          token: ${{ steps.generate-token.outputs.token }}
-          path: coin-apps
-      - name: pull docker image
-        run: docker pull ghcr.io/ledgerhq/speculos:sha-e262a0c
-        shell: bash
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
-          export COINAPPS=$PWD/coin-apps
-          if [ "${{ inputs.speculos_tests }}" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi
-          if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright ${INPUTS_TEST_FILTER:+--grep} "${{ inputs.test_filter }}"
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
-          SEED: ${{ secrets.SEED_QAA_B2C }}
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
@@ -178,10 +150,10 @@ jobs:
         shell: bash
         run: >
           if ${{ steps.tests.outcome == 'success' }};
-          then echo "STATUS_COLOR=good" >> $GITHUB_ENV;
+          then echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
           elif ${{ steps.tests.outcome == 'failure' }};
-          then echo "STATUS_COLOR=danger" >> $GITHUB_ENV;
-          else echo "STATUS_COLOR=warning" >> $GITHUB_ENV;
+          then echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
+          else echo "STATUS_COLOR=#F3FF33" >> $GITHUB_ENV;
           fi
 
       - uses: actions/github-script@v6
@@ -215,8 +187,8 @@ jobs:
 
             const report = {
               linux: {
-                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-linux.outputs.status }}",
+                pass: ${{ steps.tests.outcome == 'success' }},
+                status: "${{ steps.tests.outcome }}",
               }
             };
 
@@ -268,13 +240,14 @@ jobs:
                 description: "Run the full e2e test suite for LLD",
               }],
             };
-
+            
             if (${{ !inputs.slack_notif }}) return;
 
             const slackPayload = {
               "text": "Ledger Live Desktop tests results on ${{github.ref_name}}",
               "attachments": [
                 {
+                  "color": "${{ env.STATUS_COLOR }}",
                   "blocks": [
                     {
                       "type": "header",
@@ -311,20 +284,18 @@ jobs:
                         "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n${{ steps.allure-server.outputs.report-url }}"
                       }
                     }
-                  ],
-                  "mrkdwn_in": ["text"],
-                  "color": "${{ env.STATUS_COLOR }}"
+                  ]
                 }
               ]
             };
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
       - name: Print Slack Payload Content
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && inputs.slack_notif }}
         run: cat ${{ github.workspace }}/payload-slack-content.json
       - name: post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && inputs.slack_notif }}
         with:
           channel-id: "C05FKJ7DFAP"
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
