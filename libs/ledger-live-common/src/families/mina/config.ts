@@ -6,9 +6,7 @@ const minaConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: { type: "active" },
       infra: {
-        API_NEAR_PRIVATE_NODE: "https://mina.coin.ledger.com/node",
-        API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.mina.org",
-        API_NEAR_INDEXER: "https://mina.coin.ledger.com/indexer",
+        API_MINA_ROSETTA_NODE: "https://rosetta-devnet.minaprotocol.network",
       },
     },
   },

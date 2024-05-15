@@ -126,6 +126,7 @@ setSupportedCurrencies([
   "scroll_sepolia",
   "ton",
   "etherlink",
+  "mina",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
