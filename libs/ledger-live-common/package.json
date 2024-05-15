@@ -83,13 +83,13 @@
     "reactNative.js"
   ],
   "peerDependencies": {
+    "@tanstack/react-query": ">=5",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
     "react-native-svg": ">=12.1.1",
     "react-redux": "^7.2.9",
-    "redux-actions": "2.6.5",
-    "@tanstack/react-query": ">=5"
+    "redux-actions": "2.6.5"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -140,10 +140,11 @@
     "@ledgerhq/coin-near": "workspace:^",
     "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
+    "@ledgerhq/coin-xrp": "workspace:^",
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
+    "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
@@ -231,8 +232,6 @@
     "prando": "^6.0.1",
     "qs": "^6.10.1",
     "reselect": "^4.1.5",
-    "ripple-binary-codec": "^1.3.0",
-    "ripple-bs58check": "^2.0.2",
     "rlp": "^3.0.0",
     "rxjs": "^7.8.1",
     "secp256k1": "^4.0.3",
@@ -251,10 +250,10 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@ledgerhq/device-react": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@ledgerhq/device-react": "workspace:^",
     "@solana/web3.js": "1.77.3",
     "@svgr/core": "^5.5.0",
     "@tanstack/react-query": "^5.28.9",

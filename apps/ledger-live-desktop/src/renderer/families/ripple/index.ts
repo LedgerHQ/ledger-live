@@ -1,4 +1,4 @@
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ripple/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
 import { LLDCoinFamily } from "../types";
 import sendAmountFields from "./SendAmountFields";
 import sendRecipientFields from "./SendRecipientFields";
