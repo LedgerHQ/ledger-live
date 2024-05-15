@@ -39,3 +39,15 @@ export type StatusErrorMap = {
   amount?: Error;
   fees?: Error;
 };
+
+export type SignTransaction = {
+  txType: string;
+  senderAccount: number;
+  senderAddress: string;
+  receiverAddress: string;
+  amount: number;
+  fee: number;
+  nonce: number;
+  memo: string;
+  networkId: string;
+};

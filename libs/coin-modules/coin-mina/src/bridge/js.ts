@@ -14,12 +14,10 @@ import getTransactionStatus from "../js-getTransactionStatus";
 import { buildSignOperation } from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import { MinaAddress, MinaSignature, MinaSigner } from "../signer";
+import { MinaSigner } from "../signer";
 import { MinaCoinConfig, setCoinConfig } from "../config";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<MinaSigner, MinaAddress | MinaSignature>,
-): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<MinaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -35,7 +33,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<MinaSigner, MinaAddress | MinaSignature>,
+  signerContext: SignerContext<MinaSigner>,
 ): AccountBridge<Transaction> {
   const getAddress = resolver(signerContext);
 
@@ -56,7 +54,7 @@ export function buildAccountBridge(
 }
 
 export function createBridges(
-  signerContext: SignerContext<MinaSigner, MinaAddress | MinaSignature>,
+  signerContext: SignerContext<MinaSigner>,
   coinConfig: MinaCoinConfig,
 ) {
   setCoinConfig(coinConfig);

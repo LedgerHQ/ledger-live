@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 // import { MinaLedgerJS } from "mina-ledger-js";
 import { Transaction, MinaAccount } from "./types";
+import { CoinType } from "@ledgerhq/types-cryptoassets";
 // import {} from "./constants";
 
 export const isValidAddress = (address: string): boolean => {
@@ -16,6 +17,29 @@ export const isValidAddress = (address: string): boolean => {
 
 export const isImplicitAccount = (address: string): boolean => {
   return !address.includes(".");
+};
+
+// Get the account number from the path
+export const getAccountNumFromPath = (path: string): number | undefined => {
+  const parts = path.split("'/");
+
+  if (parts.length === 3) {
+    return;
+  }
+
+  if (parts[1] !== `${CoinType.MINA}`) {
+    return;
+  }
+
+  try {
+    const acc = parseInt(parts[2], 10);
+    if (acc >= 0) {
+      return acc;
+    }
+    return;
+  } catch (e) {
+    return;
+  }
 };
 
 /*
