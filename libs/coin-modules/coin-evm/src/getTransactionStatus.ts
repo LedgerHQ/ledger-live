@@ -19,7 +19,12 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
-import { Account, AccountBridge, SubAccount, TransactionStatusCommon } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  TokenAccount,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import { getMinEip1559Fees, getMinLegacyFees } from "./editTransaction/getMinEditTransactionFees";
 import { eip1559TransactionHasFees, getEstimatedFees, legacyTransactionHasFees } from "./logic";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
@@ -87,7 +92,7 @@ export const validateRecipient = (
  * Validate the amount of a transaction for an account
  */
 const validateAmount = (
-  account: Account | SubAccount,
+  account: Account | TokenAccount,
   transaction: EvmTransaction,
   totalSpent: BigNumber,
 ): Array<ValidationIssues> => {
@@ -227,7 +232,7 @@ const validateNft = (account: Account, tx: EvmTransaction): Array<ValidationIssu
  * - if sending ETH, warn if fees are more than 10% of the amount
  */
 const validateFeeRatio = (
-  account: Account | SubAccount,
+  account: Account | TokenAccount,
   tx: EvmTransaction,
   estimatedFees: BigNumber,
 ): Array<ValidationIssues> => {

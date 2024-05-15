@@ -1,6 +1,6 @@
 import eip55 from "eip55";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { EvmAddress, EvmSignature, EvmSigner } from "../../types/signer";
+import type { EvmSigner } from "../../types/signer";
 import resolver from "../../hw-getAddress";
 
 const address = "0xc3f95102D5c8F2c83e49Ce3Acfb905eDfb7f37dE";
@@ -10,10 +10,7 @@ const spy = jest.fn().mockImplementation(async () =>
     address: address.toLowerCase(),
   }),
 );
-const mockSignerFactory = (
-  _: string,
-  fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>,
-): Promise<EvmAddress | EvmSignature> =>
+const mockSignerFactory = <T>(_: string, fn: (signer: EvmSigner) => Promise<T>): Promise<T> =>
   fn({
     getAddress: spy,
   } as any);

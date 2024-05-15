@@ -16,12 +16,10 @@ import broadcast from "../js-broadcast";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import { preload, hydrate, getPreloadStrategy } from "../preload";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
-import { NearAddress, NearSignature, NearSigner } from "../signer";
+import { NearSigner } from "../signer";
 import { NearCoinConfig, setCoinConfig } from "../config";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<NearSigner, NearAddress | NearSignature>,
-): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -38,7 +36,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<NearSigner, NearAddress | NearSignature>,
+  signerContext: SignerContext<NearSigner>,
 ): AccountBridge<Transaction> {
   const getAddress = resolver(signerContext);
 
@@ -61,7 +59,7 @@ export function buildAccountBridge(
 }
 
 export function createBridges(
-  signerContext: SignerContext<NearSigner, NearAddress | NearSignature>,
+  signerContext: SignerContext<NearSigner>,
   coinConfig: NearCoinConfig,
 ) {
   setCoinConfig(coinConfig);

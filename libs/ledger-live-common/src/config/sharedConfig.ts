@@ -13,7 +13,7 @@ import { hederaConfig } from "../families/hedera/config";
 import { internetComputerConfig } from "../families/internet_computer/config";
 import { nearConfig } from "../families/near/config";
 import { polkadotConfig } from "../families/polkadot/config";
-import { rippleConfig } from "../families/ripple/config";
+import { xrpConfig } from "../families/xrp/config";
 import { solanaConfig } from "../families/solana/config";
 import { stacksConfig } from "../families/stacks/config";
 import { stellarConfig } from "../families/stellar/config";
@@ -23,11 +23,11 @@ import { vechainConfig } from "../families/vechain/config";
 import { appConfig } from "../apps/config";
 
 const countervaluesConfig: ConfigSchema = {
-  countervalues_refreshRate: {
+  config_countervalues_refreshRate: {
     type: "number",
     default: 60 * 1000,
   },
-  countervalues_marketCapBatchingAfterRank: {
+  config_countervalues_marketCapBatchingAfterRank: {
     type: "number",
     default: 20,
   },
@@ -54,7 +54,7 @@ export const liveConfig: ConfigSchema = {
   ...internetComputerConfig,
   ...nearConfig,
   ...polkadotConfig,
-  ...rippleConfig,
+  ...xrpConfig,
   ...solanaConfig,
   ...stacksConfig,
   ...stellarConfig,

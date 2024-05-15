@@ -9,6 +9,7 @@ import { patchOperationWithHash } from "../../../operation";
 import cryptoFactory from "../chain/chain";
 import cosmosBase from "../chain/cosmosBase";
 import * as CosmosSDKTypes from "./types";
+import semver from "semver";
 import {
   CosmosDelegation,
   CosmosDelegationStatus,
@@ -23,6 +24,13 @@ export class CosmosAPI {
   protected defaultEndpoint: string;
   private version: string;
   private chainInstance: cosmosBase;
+  private _cosmosSDKVersion: Promise<string> | null = null;
+  private get cosmosSDKVersion(): Promise<string> {
+    if (!this._cosmosSDKVersion) {
+      this._cosmosSDKVersion = this.getCosmosSDKVersion();
+    }
+    return this._cosmosSDKVersion;
+  }
 
   constructor(currencyId: string) {
     const crypto = cryptoFactory(currencyId);
@@ -85,6 +93,12 @@ export class CosmosAPI {
     }
   };
 
+  private getCosmosSDKVersion = async (): Promise<string> => {
+    const { application_version } = await this.getNodeInfo();
+    const cosmosSDKVersion = application_version.cosmos_sdk_version;
+    return cosmosSDKVersion;
+  };
+
   /**
    * @sdk https://docs.cosmos.network/api#tag/Query/operation/Account
    * @warning return is technically "any" based on documentation and may differ depending on the chain
@@ -138,15 +152,14 @@ export class CosmosAPI {
    * @sdk https://docs.cosmos.network/api#tag/Service/operation/GetNodeInfo
    * @notice returns { application_versoin: { ..., cosmos_sdk_version } } (Since: cosmos-sdk 0.43)
    */
-  getChainId = async (): Promise<string> => {
-    const {
-      data: { default_node_info: defaultNodeInfo },
-    } = await network<CosmosSDKTypes.GetNodeInfosSDK>({
-      method: "GET",
-      url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/node_info`,
-    });
-
-    return defaultNodeInfo.network;
+  getNodeInfo = async (): Promise<CosmosSDKTypes.GetNodeInfosSDK> => {
+    const data = (
+      await network<CosmosSDKTypes.GetNodeInfosSDK>({
+        method: "GET",
+        url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/node_info`,
+      })
+    ).data;
+    return data;
   };
 
   /**
@@ -403,6 +416,12 @@ export class CosmosAPI {
     txs: CosmosTx[];
     total: number;
   }> {
+    let cosmosSDKVersion = await this.cosmosSDKVersion;
+    cosmosSDKVersion = semver.coerce(cosmosSDKVersion).version;
+    let queryparam = "events";
+    if (semver.gte(cosmosSDKVersion, "0.50.0")) {
+      queryparam = "query";
+    }
     let serializedOptions = "";
     for (const key of Object.keys(options)) {
       serializedOptions += options[key] != null ? `&${key}=${options[key]}` : "";
@@ -410,7 +429,7 @@ export class CosmosAPI {
     const { data } = await network<CosmosSDKTypes.GetTxsEvents>({
       method: "GET",
       url:
-        `${nodeUrl}/cosmos/tx/${this.version}/txs?events=` +
+        `${nodeUrl}/cosmos/tx/${this.version}/txs?${queryparam}=` +
         encodeURI(`${filterOn}='${address}'`) +
         serializedOptions,
     });
@@ -423,7 +442,7 @@ export class CosmosAPI {
 
   /**
    * @sdk https://docs.cosmos.network/api#tag/Service/operation/BroadcastTx
-   * @depreacted body {..., mode } -> BROADCAST_MODE_BLOCK (Deprecated: post v0.47 use BROADCAST_MODE_SYNC instead)
+   * @deprecated body {..., mode } -> BROADCAST_MODE_BLOCK (Deprecated: post v0.47 use BROADCAST_MODE_SYNC instead)
    * @notice returns {..., events } (Since: cosmos-sdk 0.42.11, 0.44.5, 0.45)
    */
   broadcast = async ({ signedOperation: { operation, signature } }): Promise<Operation> => {

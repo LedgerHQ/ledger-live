@@ -105,9 +105,9 @@ export function useUserSettings() {
     () => ({
       trackingPairs,
       autofillGaps: true,
-      refreshRate: LiveConfig.getValueByKey("countervalues_refreshRate"),
+      refreshRate: LiveConfig.getValueByKey("config_countervalues_refreshRate"),
       marketCapBatchingAfterRank: LiveConfig.getValueByKey(
-        "countervalues_marketCapBatchingAfterRank",
+        "config_countervalues_marketCapBatchingAfterRank",
       ),
     }),
     [trackingPairs],

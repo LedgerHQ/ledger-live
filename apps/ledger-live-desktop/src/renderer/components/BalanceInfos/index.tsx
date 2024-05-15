@@ -55,17 +55,21 @@ export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Pro
             withIcon
           />
         )}
-        <FormattedVal
-          unit={unit}
-          val={valueChange.value}
-          prefix={valueChange.percentage ? " (" : undefined}
-          suffix={valueChange.percentage ? ")" : undefined}
-          withIcon={!valueChange.percentage}
-          alwaysShowSign={!!valueChange.percentage}
-          showCode
-          animateTicker
-          inline
-        />
+        {valueChange.value === 0 ? (
+          <Text color={"palette.text.shade100"}>{"-"}</Text>
+        ) : (
+          <FormattedVal
+            unit={unit}
+            val={valueChange.value}
+            prefix={valueChange.percentage ? " (" : undefined}
+            suffix={valueChange.percentage ? ")" : undefined}
+            withIcon={!valueChange.percentage}
+            alwaysShowSign={!!valueChange.percentage}
+            showCode
+            animateTicker
+            inline
+          />
+        )}
       </Box>
     </Box>
   );

@@ -3,20 +3,14 @@ import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeTokenAccountId } from "./accountId";
 import { emptyHistoryCache } from "./balanceHistoryCache";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-  SubAccount,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 // By convention, a main account is the top level account
 // - in case of an Account is the account itself
-// - in case of a SubAccount it's the parentAccount
+// - in case of a TokenAccount it's the parentAccount
 export const getMainAccount = <A extends Account>(
-  account: A | SubAccount,
+  account: A | TokenAccount,
   parentAccount?: A | null | undefined,
 ): A => {
   const mainAccount = account.type === "Account" ? account : parentAccount;
@@ -113,12 +107,12 @@ export function clearAccount<T extends AccountLike>(
   return copy as T;
 }
 
-export function findSubAccountById(account: Account, id: string): SubAccount | null | undefined {
+export function findSubAccountById(account: Account, id: string): TokenAccount | null | undefined {
   return (account.subAccounts || []).find(a => a.id === id);
 }
 
 // get the token accounts of an account, ignoring those that are zero IF user don't want them
-export function listSubAccounts(account: Account): SubAccount[] {
+export function listSubAccounts(account: Account): TokenAccount[] {
   const accounts = account.subAccounts || [];
 
   if (getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS")) {
@@ -236,7 +230,7 @@ export const findTokenAccountByCurrency = (
   accounts: Account[],
 ):
   | {
-      account?: SubAccount;
+      account?: TokenAccount;
       parentAccount: Account;
     }
   | null

@@ -1,6 +1,5 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Transport from "@ledgerhq/hw-transport";
-import ripple from "./ripple";
 import tron from "./tron";
 // TODO deprecate this approach
 type Resolver = (
@@ -10,7 +9,6 @@ type Resolver = (
   transaction: any,
 ) => Promise<string>;
 const all = {
-  ripple,
   tron,
 };
 

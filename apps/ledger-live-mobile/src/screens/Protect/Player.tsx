@@ -86,6 +86,7 @@ export function RecoverPlayer({ navigation, route }: Props) {
           lang: locale,
           currency,
           deviceId: device?.deviceId,
+          deviceModelId: device?.modelId,
           ...params,
         }}
       />
