@@ -1,4 +1,3 @@
-import { getAvailableProviders } from "../..";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -7,7 +6,6 @@ import { fetchRates } from "../../api/v5/fetchRates";
 import { useAPI } from "../../../../hooks/useAPI";
 import { ExchangeRate } from "../../types";
 import { useFeature } from "../../../../featureFlags";
-import { useEffect, useState } from "react";
 
 type Props = {
   fromCurrencyAccount: AccountLike | undefined;
