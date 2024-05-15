@@ -19,9 +19,9 @@ patchedDependencies:
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
-  detox@20.18.4:
+  detox@20.20.2:
     hash: yanhspfjw3apvvf4gev5ovygia
-    path: patches/detox@20.18.4.patch
+    path: patches/detox@20.20.2.patch
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
@@ -1297,8 +1297,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@babel/core@7.23.2)
       detox:
-        specifier: 20.18.4
-        version: 20.18.4(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0)
+        specifier: 20.20.2
+        version: 20.20.2(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0)
       eslint-import-resolver-typescript:
         specifier: ^3.6.1
         version: 3.6.1(@typescript-eslint/parser@6.2.0)(eslint-plugin-import@2.28.1)(eslint@8.51.0)
@@ -34095,9 +34095,9 @@ packages:
       minimist: 1.2.8
     dev: true
 
-  /detox@20.18.4(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0):
-    resolution: {integrity: sha512-KWHiaDrc2aRES+gyEzKCSyT/2dI2olAqtsfNHWg1Y3aWyGCW3MVN0js2Ls68lJam/hkFITHJRy58sY9tU4V3TQ==}
-    engines: {node: '>=16'}
+  /detox@20.20.2(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0):
+    resolution: {integrity: sha512-X0FWsj8Bry965fEy7N87bKecIIkcAg3AyaCDXFa0yO+kAIajFbSV7LMtNTQP/c1D0eD4+U5sn9zUJWWhQhucWg==}
+    engines: {node: '>=14'}
     hasBin: true
     requiresBuild: true
     peerDependencies:
