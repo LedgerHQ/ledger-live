@@ -81,7 +81,7 @@ export type Operation<Extra = OperationExtra> = {
   // the hash of the block the operation is in
   blockHash: string | null | undefined;
   // if available, this is the sequence number of the transaction in blockchains (aka "nonce" in Ethereum)
-  transactionSequenceNumber?: number;
+  transactionSequenceNumber?: number | undefined;
   // the account id. available for convenient reason
   accountId: string;
   // --------------------------------------------- properties related to NFTs
