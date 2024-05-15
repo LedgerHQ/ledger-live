@@ -4409,6 +4409,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      mina-ledger-js:
+        specifier: ^1.0.6
+        version: 1.0.6
       minimatch:
         specifier: ^5.1.0
         version: 5.1.6
