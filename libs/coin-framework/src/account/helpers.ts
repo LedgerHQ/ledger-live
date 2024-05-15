@@ -96,9 +96,7 @@ export function clearAccount<T extends AccountLike>(
     lastSyncDate: new Date(0),
     operations: [],
     pendingOperations: [],
-    subAccounts:
-      (account as Account).subAccounts &&
-      (account as Account).subAccounts?.map(acc => clearAccount(acc, familyClean)),
+    subAccounts: account.subAccounts?.map(acc => clearAccount(acc, familyClean)) || [],
   };
 
   familyClean?.(copy);
@@ -107,8 +105,8 @@ export function clearAccount<T extends AccountLike>(
   return copy as T;
 }
 
-export function findSubAccountById(account: Account, id: string): TokenAccount | null | undefined {
-  return (account.subAccounts || []).find(a => a.id === id);
+export function findSubAccountById(account: Account, id: string): TokenAccount | undefined {
+  return account.subAccounts?.find(a => a.id === id);
 }
 
 // get the token accounts of an account, ignoring those that are zero IF user don't want them
