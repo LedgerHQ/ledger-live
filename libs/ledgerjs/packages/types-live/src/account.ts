@@ -41,10 +41,6 @@ export type TokenAccount = {
   balanceHistoryCache: BalanceHistoryCache;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
-  approvals?: Array<{
-    sender: string;
-    value: string;
-  }>;
 };
 
 /** */
@@ -173,10 +169,6 @@ export type TokenAccountRaw = {
   spendableBalance?: string;
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
-  approvals?: Array<{
-    sender: string;
-    value: string;
-  }>;
 };
 
 /** */

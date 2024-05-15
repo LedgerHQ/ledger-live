@@ -20,7 +20,6 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
     "used": true,
   },
   {
-    "approvals": undefined,
     "id": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvip180%2Fvtho",
     "operationsCount": 1,
     "parentId": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain",
@@ -47,7 +46,6 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
     "used": true,
   },
   {
-    "approvals": undefined,
     "id": "js:2:vechain:0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86:vechain+vechain%2Fvip180%2Fvtho",
     "operationsCount": 0,
     "parentId": "js:2:vechain:0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86:vechain",
@@ -74,7 +72,6 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
     "used": false,
   },
   {
-    "approvals": undefined,
     "id": "js:2:vechain:0xFbC8653C0b842dd33361CE8938B24e407dd4838C:vechain+vechain%2Fvip180%2Fvtho",
     "operationsCount": 0,
     "parentId": "js:2:vechain:0xFbC8653C0b842dd33361CE8938B24e407dd4838C:vechain",
