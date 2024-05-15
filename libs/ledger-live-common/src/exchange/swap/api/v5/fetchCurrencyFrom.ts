@@ -22,7 +22,7 @@ export async function fetchCurrencyFrom({ currencyTo, additionalCoinsFlag = fals
     return flattenV5CurrenciesToAndFrom(fetchCurrencyFromMock);
 
   const url = new URL(`${getSwapAPIBaseURL()}/currencies/from`);
-  const providers = await getAvailableProviders();
+  const providers = getAvailableProviders();
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());
 

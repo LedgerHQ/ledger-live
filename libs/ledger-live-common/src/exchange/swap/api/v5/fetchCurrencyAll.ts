@@ -22,7 +22,7 @@ export async function fetchCurrencyAll({ additionalCoinsFlag = false }: Props) {
   if (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN"))
     return Promise.resolve(flattenV5CurrenciesAll(fetchCurrencyAllMock));
 
-  const providers = await getAvailableProviders();
+  const providers = getAvailableProviders();
   const url = new URL(`${getSwapAPIBaseURL()}/currencies/all`);
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());

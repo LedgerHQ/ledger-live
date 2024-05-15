@@ -140,19 +140,12 @@ function transformData(inputArray) {
 
 export const getProvidersData = async () => {
   try {
-    const cacheKey = "availableProviders";
-    const cachedData = localStorage.getItem(cacheKey);
-
-    if (cachedData) {
-      return transformData(JSON.parse(cachedData));
-    }
-    const test = await (
+    const providersData = await (
       await fetch(
         "https://crypto-assets-service.api.aws.prd.ldg-tech.com/v1/partners?output=name,payload_signature_computed_format,signature,public_key,public_key_curve",
       )
     ).json();
-    localStorage.setItem(cacheKey, JSON.stringify(test));
-    return transformData(test);
+    return transformData(providersData);
   } catch {
     return swapProviders;
   }
@@ -168,9 +161,9 @@ export const getProvidersAdditionalData = (providerName: string): AdditionalProv
   return res;
 };
 
-export const getAvailableProviders = async (): Promise<string[]> => {
+export const getAvailableProviders = (): string[] => {
   if (isIntegrationTestEnv()) {
-    return Object.keys(await getProvidersData()).filter(p => p !== "changelly");
+    return Object.keys(swapProviders).filter(p => p !== "changelly");
   }
-  return Object.keys(await getProvidersData());
+  return Object.keys(swapProviders);
 };

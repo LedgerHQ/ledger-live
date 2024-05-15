@@ -26,7 +26,7 @@ export async function fetchCurrencyTo({ currencyFromId, additionalCoinsFlag = fa
 
   const url = new URL(`${getSwapAPIBaseURL()}/currencies/to`);
 
-  const providers = await getAvailableProviders();
+  const providers = getAvailableProviders();
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());
   url.searchParams.append("currency-from", currencyFromId!);
