@@ -1,9 +1,10 @@
+import BigNumber from "bignumber.js";
+import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/index";
 import { signMessage } from "./hw-signMessage";
 import { BitcoinSigner } from "./signer";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/index";
 import { BitcoinAccount, BitcoinResources } from "./types";
-import BigNumber from "bignumber.js";
 
 describe("signMessage", () => {
   it("returns a base64 format string", async () => {
@@ -79,18 +80,3 @@ function createFixtureAccount(account?: Partial<BitcoinAccount>): BitcoinAccount
     bitcoinResources,
   };
 }
-
-const emptyHistoryCache = {
-  HOUR: {
-    latestDate: null,
-    balances: [],
-  },
-  DAY: {
-    latestDate: null,
-    balances: [],
-  },
-  WEEK: {
-    latestDate: null,
-    balances: [],
-  },
-};

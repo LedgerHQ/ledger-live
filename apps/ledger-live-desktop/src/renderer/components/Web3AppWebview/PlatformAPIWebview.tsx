@@ -193,13 +193,13 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           dispatch(
             openModal("MODAL_PLATFORM_EXCHANGE_START", {
               exchangeType,
-              onResult: (nonce: string) => {
+              onResult: result => {
                 tracking.platformStartExchangeSuccess(manifest);
-                resolve(nonce);
+                resolve(result.nonce);
               },
-              onCancel: (error: Error) => {
+              onCancel: cancelResult => {
                 tracking.platformStartExchangeFail(manifest);
-                reject(error);
+                reject(cancelResult.error);
               },
             }),
           ),

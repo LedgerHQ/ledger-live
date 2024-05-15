@@ -230,7 +230,6 @@ type HandlersPayloads = {
   SET_SWAP_SELECTABLE_CURRENCIES: string[];
   SET_SWAP_ACCEPTED_IP_SHARING: boolean;
   ACCEPT_SWAP_PROVIDER: string;
-  DEBUG_TICK: never;
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
@@ -372,10 +371,6 @@ const handlers: SettingsHandlers = {
       ...state.swap,
       acceptedProviders: [...new Set([...(state.swap?.acceptedProviders || []), payload])],
     },
-  }),
-  // used to debug performance of redux updates
-  DEBUG_TICK: state => ({
-    ...state,
   }),
   SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
     ...state,

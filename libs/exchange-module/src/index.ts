@@ -72,7 +72,10 @@ export class ExchangeModule extends CustomModule {
       },
     );
 
-    return result.transactionId;
+    return {
+      transactionId: result.transactionId,
+      device: result.device,
+    };
   }
 
   /**

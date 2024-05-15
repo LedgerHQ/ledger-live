@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/coin-solana/api/index";
 import { Functions } from "@ledgerhq/coin-solana/utils";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
-import { SolanaAddress, SolanaSignature, SolanaSigner } from "@ledgerhq/coin-solana/signer";
+import { SolanaSigner } from "@ledgerhq/coin-solana/signer";
 import { getMockedMethods } from "./mock-data";
 
 function mockChainAPI(config: Config): ChainAPI {
@@ -91,12 +91,10 @@ function getMockedAPIs() {
     signTransaction: (_path: string, _txBuffer: Buffer) =>
       Promise.resolve({ signature: Buffer.from("") }),
   };
-  const signerContext = (
+  const signerContext = <T>(
     deviceId: string,
-    fn: (signer: SolanaSigner) => Promise<SolanaAddress | SolanaSignature>,
-  ): Promise<SolanaAddress | SolanaSignature> => {
-    return fn(signer);
-  };
+    fn: (signer: SolanaSigner) => Promise<T>,
+  ): Promise<T> => fn(signer);
   const mockedAPI = mockChainAPI({ cluster: "mock" } as any);
   return {
     getAPI: (_: Config) => Promise.resolve(mockedAPI),

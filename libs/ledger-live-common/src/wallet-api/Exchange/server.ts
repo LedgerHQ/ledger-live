@@ -82,8 +82,8 @@ type ExchangeStartParamsUiRequest =
 type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
     exchangeParams: ExchangeStartParamsUiRequest;
-    onSuccess: (nonce: string) => void;
-    onCancel: (error: Error) => void;
+    onSuccess: (nonce: string, device?: ExchangeStartResult["device"]) => void;
+    onCancel: (error: Error, device?: ExchangeStartResult["device"]) => void;
   }) => void;
   "custom.exchange.complete": (params: {
     exchangeParams: CompleteExchangeUiRequest;

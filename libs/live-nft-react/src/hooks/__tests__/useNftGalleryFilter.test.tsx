@@ -13,17 +13,37 @@ jest.setTimeout(30000);
 // invoke callback instantly
 notifyManager.setScheduler(cb => cb());
 
-// TODO better way to make ProtoNFT[] collection
-const nftsOwned = NFTs.map(nft => ({
-  id: encodeNftId("foo", nft.collection.contract, nft.tokenId, "ethereum"),
-  tokenId: nft.tokenId,
-  amount: new BigNumber(0),
-  contract: nft.collection.contract,
-  standard: "ERC721" as const,
-  currencyId: "ethereum",
-  metadata: undefined,
-}));
+type FakeNFTRaw = {
+  id: string;
+  tokenId: string;
+  amount: BigNumber;
+  contract: string;
+  standard: "ERC721";
+  currencyId: string;
+  metadata: undefined;
+};
+const generateNftsOwned = () => {
+  const nfts: FakeNFTRaw[] = [];
 
+  NFTs.forEach(nft => {
+    for (let i = 1; i <= 20; i++) {
+      nfts.push({
+        id: encodeNftId("foo", nft.collection.contract, String(i), "ethereum"),
+        tokenId: String(i),
+        amount: new BigNumber(0),
+        contract: nft.collection.contract,
+        standard: "ERC721" as const,
+        currencyId: "ethereum",
+        metadata: undefined,
+      });
+    }
+  });
+
+  return nfts;
+};
+
+// TODO better way to make ProtoNFT[] collection
+const nftsOwned = generateNftsOwned();
 let expected = [...new Set(nftsOwned)];
 expected.sort(() => Math.random() - 0.5);
 expected = expected.slice(3);
@@ -86,25 +106,22 @@ describe("useNftGalleryFilter", () => {
 
     await waitFor(() => result.current.data);
 
-    await act(() => expect(callCount).toBe(1));
-    await act(() => expect(result.current.nfts).toEqual(expected.slice(0, pagedBy)));
+    expect(callCount).toBe(1);
+    expect(result.current.nfts).toEqual(expected.slice(0, pagedBy));
 
-    result.current.fetchNextPage();
-
-    await act(() => expect(callCount).toBe(2));
-    await act(() => expect(result.current.nfts).toEqual(expected.slice(0, pagedBy * 2)));
+    await act(() => result.current.fetchNextPage());
+    expect(callCount).toBe(2);
+    expect(result.current.nfts).toEqual(expected.slice(0, pagedBy * 2));
 
     // FIXME something not working here
-    /*
-    let n = 2;
-    while (result.current.hasNextPage) {
-      console.warn("fetching next page", n);
-      await act(() => result.current.fetchNextPage());
-      await act(() => expect(callCount).toBe(++n));
-      await act(() => expect(result.current.nfts).toBe(expected.slice(0, pagedBy * n)));
-    }
-    await act(() => expect(result.current.nfts).toEqual(expected));
-    */
+
+    // let n = 2;
+    // while (result.current.hasNextPage) {
+    //   await act(() => result.current.fetchNextPage());
+    //   expect(callCount).toBe(++n);
+    //   expect(result.current.nfts).toBe(expected.slice(0, pagedBy * n));
+    // }
+    // expect(result.current.nfts).toEqual(expected);
   });
 
   test("Threshold validity", async () => {

@@ -19,9 +19,9 @@ patchedDependencies:
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
-  detox@20.18.4:
+  detox@20.20.2:
     hash: yanhspfjw3apvvf4gev5ovygia
-    path: patches/detox@20.18.4.patch
+    path: patches/detox@20.20.2.patch
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
@@ -1297,8 +1297,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@babel/core@7.23.2)
       detox:
-        specifier: 20.18.4
-        version: 20.18.4(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0)
+        specifier: 20.20.2
+        version: 20.20.2(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0)
       eslint-import-resolver-typescript:
         specifier: ^3.6.1
         version: 3.6.1(@typescript-eslint/parser@6.2.0)(eslint-plugin-import@2.28.1)(eslint@8.51.0)
@@ -2471,11 +2471,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.7
-        version: 1.5.7
+        specifier: ^1.5.9
+        version: 1.5.9
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.9.0
-        version: 1.9.0
+        specifier: ^1.10.1
+        version: 1.10.1
     devDependencies:
       '@types/node':
         specifier: ^20.2.5
@@ -2658,17 +2658,17 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.7
-        version: 1.5.7
+        specifier: ^1.5.9
+        version: 1.5.9
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.9.0
-        version: 1.9.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.5.8
-        version: 1.5.8(react@18.2.0)(rxjs@7.8.1)
+        specifier: ^1.5.10
+        version: 1.5.10(react@18.2.0)(rxjs@7.8.1)
       '@stacks/network':
         specifier: 6.10.0
         version: 6.10.0
@@ -5781,14 +5781,14 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.7
-        version: 1.5.7
+        specifier: ^1.5.9
+        version: 1.5.9
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.3.7
-        version: 1.3.7(react@18.2.0)
+        specifier: ^1.3.9
+        version: 1.3.9(react@18.2.0)
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.1.13
-        version: 1.1.13(react@18.2.0)
+        specifier: ^1.1.15
+        version: 1.1.15(react@18.2.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -17414,25 +17414,25 @@ packages:
     resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
-  /@ledgerhq/wallet-api-client-react@1.3.7(react@18.2.0):
-    resolution: {integrity: sha512-GbbCj7MdDE3UF1rTZcAXC159QdnvluKw/keHGwPyheXSpjc6/WRawHgrTvtp9ykOr2OIL0OdJ7t1oG1ensQKwA==}
+  /@ledgerhq/wallet-api-client-react@1.3.9(react@18.2.0):
+    resolution: {integrity: sha512-9U+D1AxLjv5XfLvyqs1cGRW7iCYrDBvbvPnA3gkn/8v+NPe3HkQUO1zdvFsjoTqcaIsI1BiA8UB0x0vwmQ+uDQ==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.5.7
+      '@ledgerhq/wallet-api-client': 1.5.9
       react: 18.2.0
     dev: false
 
-  /@ledgerhq/wallet-api-client@1.5.7:
-    resolution: {integrity: sha512-REY0NO/T+PxY0v8DXWuT0TFsPq01vuvgBmapzlgRN0PM/ZOS4grawZN1q/j/p1jnwqn5RGwB0po/EoDoY42RdA==}
+  /@ledgerhq/wallet-api-client@1.5.9:
+    resolution: {integrity: sha512-q95okG1R2mDIJc1n7lw06GDWpJmQIDdTrBUxxeeRzzcdEp1ZaVitS8O6tuHfE/Rva88iKhaT7ZMpkaZ3VELKBQ==}
     dependencies:
       '@ledgerhq/hw-transport': 6.30.5
-      '@ledgerhq/wallet-api-core': 1.9.0
+      '@ledgerhq/wallet-api-core': 1.10.1
       bignumber.js: 9.1.2
     dev: false
 
-  /@ledgerhq/wallet-api-core@1.9.0:
-    resolution: {integrity: sha512-fhE+9mbf+AyNIgZVToUwfBUZvh5IYFrWvyMxGoLr9J6p0KmFjLBkYC+j+mHlfqWB57wCwAP5jBfXJxhsTYiPfg==}
+  /@ledgerhq/wallet-api-core@1.10.1:
+    resolution: {integrity: sha512-T4B092Q5Z7DS4Vl68xqqKDde8cCRsPZOx6ODSkAfMbNIt3ipcS+WiFA3PccCzm7u0H/W0QM+3MgXF38+vBDOnQ==}
     dependencies:
       '@ledgerhq/errors': 6.16.3
       bignumber.js: 9.1.2
@@ -17440,8 +17440,8 @@ packages:
       zod: 3.22.4
     dev: false
 
-  /@ledgerhq/wallet-api-server@1.5.8(react@18.2.0)(rxjs@7.8.1):
-    resolution: {integrity: sha512-o/Y/GiosAfA3t70arX6sdUWCfz33Chvh+WfWk2Vxr/27jbvuZKqYTi2Q7wNYRK/Czq+5XREXSKD9atL8vsCmZQ==}
+  /@ledgerhq/wallet-api-server@1.5.10(react@18.2.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-dGorU7R6xr2Jp0M84sO+SMI1dA6DvsU/vloaY7HI/iMfjEU3H1gH3D7EdZMKv9vH/X5Knrw5EtuX7iyXFBRIQw==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -17449,20 +17449,20 @@ packages:
       react:
         optional: true
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.9.0
+      '@ledgerhq/wallet-api-core': 1.10.1
       bignumber.js: 9.1.2
       picomatch: 4.0.1
       react: 18.2.0
       rxjs: 7.8.1
     dev: false
 
-  /@ledgerhq/wallet-api-simulator@1.1.13(react@18.2.0):
-    resolution: {integrity: sha512-a+Fyb0YRiHuIp+AVZBeUD0lzCuQ/8dn3WVaGs093oVZHk81rb70nNOCzn0/SHly4gn+I0WHD83MPjjB/NZVlyA==}
+  /@ledgerhq/wallet-api-simulator@1.1.15(react@18.2.0):
+    resolution: {integrity: sha512-y2gSC7X7RuRlA397SxP40xtlRb4Dpv5TeiKHtAw/zGswIC//6JIA7ZW8zzri7B44ZA3dLtaCn8HBsCKIJrwLSQ==}
     dependencies:
       '@ledgerhq/hw-transport': 6.30.5
-      '@ledgerhq/wallet-api-client': 1.5.7
-      '@ledgerhq/wallet-api-core': 1.9.0
-      '@ledgerhq/wallet-api-server': 1.5.8(react@18.2.0)(rxjs@7.8.1)
+      '@ledgerhq/wallet-api-client': 1.5.9
+      '@ledgerhq/wallet-api-core': 1.10.1
+      '@ledgerhq/wallet-api-server': 1.5.10(react@18.2.0)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.16.0
     transitivePeerDependencies:
@@ -34095,9 +34095,9 @@ packages:
       minimist: 1.2.8
     dev: true
 
-  /detox@20.18.4(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0):
-    resolution: {integrity: sha512-KWHiaDrc2aRES+gyEzKCSyT/2dI2olAqtsfNHWg1Y3aWyGCW3MVN0js2Ls68lJam/hkFITHJRy58sY9tU4V3TQ==}
-    engines: {node: '>=16'}
+  /detox@20.20.2(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0):
+    resolution: {integrity: sha512-X0FWsj8Bry965fEy7N87bKecIIkcAg3AyaCDXFa0yO+kAIajFbSV7LMtNTQP/c1D0eD4+U5sn9zUJWWhQhucWg==}
+    engines: {node: '>=14'}
     hasBin: true
     requiresBuild: true
     peerDependencies:
@@ -41801,7 +41801,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -41968,7 +41968,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro

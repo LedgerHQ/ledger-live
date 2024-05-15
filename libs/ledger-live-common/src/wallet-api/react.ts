@@ -42,8 +42,13 @@ import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportA
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Transaction } from "../generated/types";
-import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
+import {
+  DISCOVER_INITIAL_CATEGORY,
+  INITIAL_PLATFORM_STATE,
+  MAX_RECENTLY_USED_LENGTH,
+} from "./constants";
 import { DiscoverDB } from "./types";
+import { LiveAppManifest } from "../platform/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
@@ -846,7 +851,66 @@ export function useCategories(manifests): Categories {
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
+export type LocalLiveAppDB = StateDB<DiscoverDB, DiscoverDB["localLiveApp"]>;
 export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
+
+export interface LocalLiveApp {
+  state: LiveAppManifest[];
+  addLocalManifest: (LiveAppManifest) => void;
+  removeLocalManifestById: (string) => void;
+  getLocalLiveAppManifestById: (string) => LiveAppManifest | undefined;
+}
+
+export function useLocalLiveApp([LocalLiveAppDb, setState]: LocalLiveAppDB): LocalLiveApp {
+  useEffect(() => {
+    if (LocalLiveAppDb === undefined) {
+      setState(discoverDB => {
+        return { ...discoverDB, localLiveApp: INITIAL_PLATFORM_STATE.localLiveApp };
+      });
+    }
+  }, [LocalLiveAppDb, setState]);
+
+  const addLocalManifest = useCallback(
+    (newLocalManifest: LiveAppManifest) => {
+      setState(discoverDB => {
+        const newLocalLiveAppList = discoverDB.localLiveApp?.filter(
+          manifest => manifest.id !== newLocalManifest.id,
+        );
+
+        newLocalLiveAppList.push(newLocalManifest);
+        return { ...discoverDB, localLiveApp: newLocalLiveAppList };
+      });
+    },
+    [setState],
+  );
+
+  const removeLocalManifestById = useCallback(
+    (manifestId: string) => {
+      setState(discoverDB => {
+        const newLocalLiveAppList = discoverDB.localLiveApp.filter(
+          manifest => manifest.id !== manifestId,
+        );
+
+        return { ...discoverDB, localLiveApp: newLocalLiveAppList };
+      });
+    },
+    [setState],
+  );
+
+  const getLocalLiveAppManifestById = useCallback(
+    (manifestId: string): LiveAppManifest | undefined => {
+      return LocalLiveAppDb.find(manifest => manifest.id === manifestId);
+    },
+    [LocalLiveAppDb],
+  );
+
+  return {
+    state: LocalLiveAppDb,
+    addLocalManifest,
+    removeLocalManifestById,
+    getLocalLiveAppManifestById,
+  };
+}
 
 export interface RecentlyUsed {
   data: RecentlyUsedManifest[];

@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import {
   PolkadotAccount,
   PolkadotOperation,
@@ -8,7 +10,6 @@ import {
   PolkadotResources,
   Transaction,
 } from "../types";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 
 export function createFixtureAccount(account?: Partial<PolkadotAccount>): PolkadotAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "polkadot")!;
@@ -60,21 +61,6 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     polkadotResources,
   };
 }
-
-const emptyHistoryCache = {
-  HOUR: {
-    latestDate: null,
-    balances: [],
-  },
-  DAY: {
-    latestDate: null,
-    balances: [],
-  },
-  WEEK: {
-    latestDate: null,
-    balances: [],
-  },
-};
 
 export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction {
   return {

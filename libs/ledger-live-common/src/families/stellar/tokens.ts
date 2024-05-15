@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { emptyHistoryCache } from "../../account";
+import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { listTokensForCryptoCurrency, findTokenById, parseCurrencyUnit } from "../../currencies";
 import type { BalanceAsset, StellarOperation } from "./types";
 import { encodeOperationId } from "../../operation";
