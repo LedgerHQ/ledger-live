@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.80.0-nightly.12
+
+### Patch Changes
+
+- [#6858](https://github.com/LedgerHQ/ledger-live/pull/6858) [`50473ce`](https://github.com/LedgerHQ/ledger-live/commit/50473ce0fbce9bc518ca86c4ade27704939f7dcc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove 0 (currency) when balance hasn't change in the selected time range
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.13.0-nightly.8
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.8
+  - @ledgerhq/coin-evm@1.1.1-nightly.8
+  - @ledgerhq/live-common@34.2.0-nightly.12
+  - @ledgerhq/live-countervalues@0.1.5-nightly.9
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.9
+  - @ledgerhq/live-nft@0.3.2-nightly.8
+  - @ledgerhq/live-nft-react@0.3.2-nightly.8
+  - @ledgerhq/live-wallet@0.1.1-nightly.2
+
 ## 2.80.0-nightly.11
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 12.1.1-nightly.2
+
+### Patch Changes
+
+- [#6778](https://github.com/LedgerHQ/ledger-live/pull/6778) [`4499990`](https://github.com/LedgerHQ/ledger-live/commit/449999066c58ae5df371dfb92a7230f9b5e90a60) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(10131): update token signatures
+
 ## 12.1.1-nightly.1
 
 ### Patch Changes

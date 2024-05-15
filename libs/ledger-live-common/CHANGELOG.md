@@ -1,5 +1,25 @@
 # @ledgerhq/live-common
 
+## 34.2.0-nightly.12
+
+### Patch Changes
+
+- Updated dependencies [[`4499990`](https://github.com/LedgerHQ/ledger-live/commit/449999066c58ae5df371dfb92a7230f9b5e90a60)]:
+  - @ledgerhq/cryptoassets@12.1.1-nightly.2
+  - @ledgerhq/coin-framework@0.13.0-nightly.8
+  - @ledgerhq/coin-algorand@0.4.2-nightly.8
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.8
+  - @ledgerhq/coin-evm@1.1.1-nightly.8
+  - @ledgerhq/coin-near@0.3.13-nightly.8
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.9
+  - @ledgerhq/coin-solana@0.7.0-nightly.4
+  - @ledgerhq/hw-app-eth@6.36.1-nightly.7
+  - @ledgerhq/hw-app-vet@0.1.8-nightly.2
+  - @ledgerhq/live-countervalues@0.1.5-nightly.9
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.9
+  - @ledgerhq/live-nft@0.3.2-nightly.8
+  - @ledgerhq/live-wallet@0.1.1-nightly.2
+
 ## 34.2.0-nightly.11
 
 ### Minor Changes

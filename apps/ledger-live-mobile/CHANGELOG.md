@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.44.0-nightly.12
+
+### Patch Changes
+
+- [#6855](https://github.com/LedgerHQ/ledger-live/pull/6855) [`f441cdb`](https://github.com/LedgerHQ/ledger-live/commit/f441cdbd33f3b5b3bc280b97f48c10ccb02a7829) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add unicode so E Ink Screen will remain on the same line
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.13.0-nightly.8
+  - @ledgerhq/coin-evm@1.1.1-nightly.8
+  - @ledgerhq/live-common@34.2.0-nightly.12
+  - @ledgerhq/live-countervalues@0.1.5-nightly.9
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.9
+  - @ledgerhq/live-nft@0.3.2-nightly.8
+  - @ledgerhq/live-nft-react@0.3.2-nightly.8
+  - @ledgerhq/live-wallet@0.1.1-nightly.2
+
 ## 3.44.0-nightly.11
 
 ### Minor Changes
