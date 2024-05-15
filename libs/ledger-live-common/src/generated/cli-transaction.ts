@@ -5,7 +5,6 @@ import crypto_org from "../families/crypto_org/cli-transaction";
 import elrond from "../families/elrond/cli-transaction";
 import filecoin from "../families/filecoin/cli-transaction";
 import hedera from "../families/hedera/cli-transaction";
-import ripple from "../families/ripple/cli-transaction";
 import stacks from "../families/stacks/cli-transaction";
 import stellar from "../families/stellar/cli-transaction";
 import tezos from "../families/tezos/cli-transaction";
@@ -17,6 +16,7 @@ import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
 import { cliTools as solana } from "../families/solana/setup";
+import { cliTools as xrp } from "../families/xrp/setup";
 
 export default {
   cardano,
@@ -26,7 +26,6 @@ export default {
   elrond,
   filecoin,
   hedera,
-  ripple,
   stacks,
   stellar,
   tezos,
@@ -38,4 +37,5 @@ export default {
   near,
   polkadot,
   solana,
+  xrp,
 };

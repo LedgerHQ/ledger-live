@@ -117,22 +117,24 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "contract": undefined,
       "extra": {
         "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "cosmosvaloper1crqm3598z6qmyn2kkcl9dz7uqs4qdqnr6s8jdn",
+            "amount": "234590",
+          },
+        ],
       },
       "fee": "2500",
       "hasFailed": true,
       "hash": "04CA428FE20A51E9C0F0D18818AC24DF5BD2ED5056B7485071620E6CC1D6C13B",
-      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-04CA428FE20A51E9C0F0D18818AC24DF5BD2ED5056B7485071620E6CC1D6C13B-OUT",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-04CA428FE20A51E9C0F0D18818AC24DF5BD2ED5056B7485071620E6CC1D6C13B-UNDELEGATE",
       "operator": undefined,
-      "recipients": [
-        "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-      ],
-      "senders": [
-        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
-      ],
+      "recipients": [],
+      "senders": [],
       "standard": undefined,
       "tokenId": undefined,
       "transactionSequenceNumber": 121,
-      "type": "OUT",
+      "type": "UNDELEGATE",
       "value": "2500",
     },
     {
@@ -696,19 +698,15 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "fee": "3500",
       "hasFailed": true,
       "hash": "3A2EFD293BADC0E880F2C6466C4762F89D370919123C3560F51F49C94877B4FC",
-      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-3A2EFD293BADC0E880F2C6466C4762F89D370919123C3560F51F49C94877B4FC-OUT",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-3A2EFD293BADC0E880F2C6466C4762F89D370919123C3560F51F49C94877B4FC-REWARD",
       "operator": undefined,
-      "recipients": [
-        "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-      ],
-      "senders": [
-        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
-      ],
+      "recipients": [],
+      "senders": [],
       "standard": undefined,
       "tokenId": undefined,
       "transactionSequenceNumber": 114,
-      "type": "OUT",
-      "value": "3500",
+      "type": "REWARD",
+      "value": "0",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
@@ -788,22 +786,25 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "contract": undefined,
       "extra": {
         "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpfdn6m9d",
+        "validators": [
+          {
+            "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+            "amount": "16833",
+          },
+        ],
       },
       "fee": "7500",
       "hasFailed": true,
       "hash": "4309BEE6A8F72579012AA2800696078B3C3F488F2346E4738D57C7E1932D653C",
-      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-4309BEE6A8F72579012AA2800696078B3C3F488F2346E4738D57C7E1932D653C-OUT",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-4309BEE6A8F72579012AA2800696078B3C3F488F2346E4738D57C7E1932D653C-REDELEGATE",
       "operator": undefined,
-      "recipients": [
-        "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-      ],
-      "senders": [
-        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
-      ],
+      "recipients": [],
+      "senders": [],
       "standard": undefined,
       "tokenId": undefined,
       "transactionSequenceNumber": 116,
-      "type": "OUT",
+      "type": "REDELEGATE",
       "value": "7500",
     },
     {
@@ -969,7 +970,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-6FCA6C291F87DFB1480B01EF2886BB87C39F52CB6872B409B0CE64B63E74DFB7-OUT",
       "operator": undefined,
       "recipients": [
-        "cosmos1aqas7uqu6wazrlwc9ng4rzfax2nnmc8qhngtjs",
+        "neutron1g84934jpu3v5de5yqukkkhxmcvsw3u2ake9rhc",
       ],
       "senders": [
         "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -992,7 +993,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-7048A7DE774CBF591BF3556639C0177908F334C665C0BB2861E89ADEE1363BF2-OUT",
       "operator": undefined,
       "recipients": [
-        "cosmos1aqas7uqu6wazrlwc9ng4rzfax2nnmc8qhngtjs",
+        "neutron1g84934jpu3v5de5yqukkkhxmcvsw3u2ake9rhc",
       ],
       "senders": [
         "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -1634,7 +1635,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-AA20D046757A926C7A86B977FAE27FCC9B09CA9FAAD79C8D737D1D833C444293-OUT",
       "operator": undefined,
       "recipients": [
-        "cosmos1aqas7uqu6wazrlwc9ng4rzfax2nnmc8qhngtjs",
+        "neutron1g84934jpu3v5de5yqukkkhxmcvsw3u2ake9rhc",
       ],
       "senders": [
         "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -1905,7 +1906,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-C165D8AF57713C105C5D3839A7943D21C5CC42750FA21F5887F5E466F489D6BE-OUT",
       "operator": undefined,
       "recipients": [
-        "cosmos1x54ltnyg88k0ejmk8ytwrhd3ltm84xehrnlslf",
+        "osmo1g84934jpu3v5de5yqukkkhxmcvsw3u2a6al3md",
       ],
       "senders": [
         "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -1951,7 +1952,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-C36D5FCAC54DA5B1362A30884F14D7ADC61BD3E3B679588CA6A5AD95F289E033-OUT",
       "operator": undefined,
       "recipients": [
-        "cosmos1aqas7uqu6wazrlwc9ng4rzfax2nnmc8qhngtjs",
+        "neutron1g84934jpu3v5de5yqukkkhxmcvsw3u2ake9rhc",
       ],
       "senders": [
         "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -2052,7 +2053,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
         "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
       ],
       "senders": [
-        "cosmos1aqas7uqu6wazrlwc9ng4rzfax2nnmc8qhngtjs",
+        "neutron1g84934jpu3v5de5yqukkkhxmcvsw3u2ake9rhc",
       ],
       "standard": undefined,
       "tokenId": undefined,
@@ -2525,22 +2526,25 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "contract": undefined,
       "extra": {
         "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
+        "validators": [
+          {
+            "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+            "amount": "50000",
+          },
+        ],
       },
       "fee": "6250",
       "hasFailed": true,
       "hash": "700A6749B7AE4E4D853096BD2E7BFF77942CCA8E4670FC4CEFB044369FE14A54",
-      "id": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:-700A6749B7AE4E4D853096BD2E7BFF77942CCA8E4670FC4CEFB044369FE14A54-OUT",
+      "id": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:-700A6749B7AE4E4D853096BD2E7BFF77942CCA8E4670FC4CEFB044369FE14A54-REDELEGATE",
       "operator": undefined,
-      "recipients": [
-        "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-      ],
-      "senders": [
-        "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-      ],
+      "recipients": [],
+      "senders": [],
       "standard": undefined,
       "tokenId": undefined,
       "transactionSequenceNumber": 13,
-      "type": "OUT",
+      "type": "REDELEGATE",
       "value": "6250",
     },
     {

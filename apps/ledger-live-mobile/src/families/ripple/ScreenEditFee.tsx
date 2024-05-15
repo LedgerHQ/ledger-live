@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
+import type { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { useTheme } from "@react-navigation/native";
 import { i18n } from "~/context/Locale";
 import { accountScreenSelector } from "~/reducers/accounts";

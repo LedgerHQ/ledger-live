@@ -10,12 +10,12 @@ import type {
   AccountBridge,
   AccountLike,
   AccountRawLike,
-  SubAccount,
   SyncConfig,
   CurrenciesData,
   TransactionCommon,
   TransactionStatusCommon,
   CurrencyBridge,
+  TokenAccount,
   TransactionCommonRaw,
   TransactionStatusCommonRaw,
   CryptoCurrencyIds,
@@ -696,7 +696,7 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
 
                   const inferSubAccount = () => {
                     invariant(subAccounts, "sub accounts available");
-                    const a = (subAccounts as SubAccount[]).find(a => a.id === subAccountId);
+                    const a = (subAccounts as TokenAccount[]).find(a => a.id === subAccountId);
                     invariant(a, "sub account not found");
                     return a;
                   };
