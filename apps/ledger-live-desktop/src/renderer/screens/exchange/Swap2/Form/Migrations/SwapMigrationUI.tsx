@@ -44,7 +44,7 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
 
   const nativeLoadingUI = pageState === "loading" ? <LoadingState /> : null;
   const nativeNetworkFeesUI =
-    pageState === "loading" ? (
+    pageState === "loaded" ? (
       <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
     ) : null;
 
