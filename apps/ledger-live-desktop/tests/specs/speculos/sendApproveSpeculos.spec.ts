@@ -10,23 +10,15 @@ import { Currency } from "../../enum/Currency";
 import { DeviceLabels } from "tests/enum/DeviceLabels";
 import { Transaction } from "../../models/Transaction";
 import {
-  Device,
   specs,
-  startSpeculos,
-  stopSpeculos,
   pressRightUntil,
   pressBoth,
   verifyAddress,
   verifyAmount,
+  waitFor,
 } from "../../utils/speculos";
 
 test.use({ userdata: "speculos" });
-
-let device: Device | undefined;
-
-test.afterEach(async () => {
-  await stopSpeculos(device);
-});
 
 // ONLY TESTNET (SEND WILL BE APPROVED ON DEVICE)
 const transactions = [
@@ -34,18 +26,20 @@ const transactions = [
   new Transaction(Account.tETH_1, Account.tETH_2, "0.00001", "medium"),
 ];
 
-test.describe.parallel("Send Approve @smoke", () => {
-  for (const transaction of transactions) {
+for (const [i, transaction] of transactions.entries()) {
+  test.describe.parallel("Send Approve @smoke", () => {
+    test.use({
+      userdata: "speculos",
+      testName: `receiveSpeculos_${transaction.accountToDebit.currency.uiName}`,
+      speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
+      speculosOffset: i,
+    });
     test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
       const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
       const accountPage = new AccountPage(page);
       const sendModal = new SendModal(page);
       const modal = new Modal(page);
-      device = await startSpeculos(
-        test.name,
-        specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-      );
       const receiveAddress = transaction.accountToCredit.address;
 
       await test.step(`Navigate to account`, async () => {
@@ -84,10 +78,7 @@ test.describe.parallel("Send Approve @smoke", () => {
         await pressBoth();
         switch (transaction.accountToDebit.currency.uiName) {
           case Currency.tBTC.uiName:
-            await pressRightUntil(DeviceLabels.CONTINUE);
-            await pressBoth();
-            await pressRightUntil(DeviceLabels.CONTINUE);
-            await pressBoth();
+            await waitFor("Fees");
             await pressRightUntil(DeviceLabels.SIGN);
             await pressBoth();
             break;
@@ -97,5 +88,5 @@ test.describe.parallel("Send Approve @smoke", () => {
         await expect(sendModal.checkTransactionbroadcast).toBeVisible();
       });
     });
-  }
-});
+  });
+}

@@ -60,8 +60,8 @@ export class Currency {
     "Polkadot",
     "DOT",
     "Polkadot",
-    [DeviceLabels.DEST, DeviceLabels.AMOUT, DeviceLabels.APPROVE, DeviceLabels.REJECT],
-    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+    [DeviceLabels.DEST, DeviceLabels.AMOUT, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
   );
   static readonly TRX = new Currency(
     "Tron",
