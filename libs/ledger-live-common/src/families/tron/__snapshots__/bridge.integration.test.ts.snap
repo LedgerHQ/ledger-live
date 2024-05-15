@@ -59,7 +59,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "used": true,
   },
   {
-    "approvals": undefined,
     "balance": "5000000",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+tron%2Ftrc10%2F1002775",
     "operationsCount": 2,
@@ -71,7 +70,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "10000000",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+tron%2Ftrc10%2F1002830",
     "operationsCount": 1,
@@ -83,7 +81,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "5000000",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+tron%2Ftrc10%2F1002398",
     "operationsCount": 2,
@@ -95,7 +92,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "5000000",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+tron%2Ftrc10%2F1002573",
     "operationsCount": 2,
@@ -107,7 +103,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "5000000",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+tron%2Ftrc10%2F1002736",
     "operationsCount": 2,
@@ -119,7 +114,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "10000000",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+tron%2Ftrc10%2F1002814",
     "operationsCount": 1,
@@ -131,7 +125,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "26888000",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+tron%2Ftrc10%2F1002000",
     "operationsCount": 11,
@@ -143,7 +136,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "46825830",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+tron%2Ftrc20%2Ftla2f6vpqdgre67v1736s7bj8ray5wyju7",
     "operationsCount": 17,
@@ -155,7 +147,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "376",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
     "operationsCount": 1,
@@ -213,7 +204,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "used": true,
   },
   {
-    "approvals": undefined,
     "balance": "1000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002578",
     "operationsCount": 1,
@@ -225,7 +215,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "20000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002798",
     "operationsCount": 2,
@@ -237,7 +226,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "5000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002544",
     "operationsCount": 2,
@@ -249,7 +237,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "15000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002775",
     "operationsCount": 2,
@@ -261,7 +248,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "14",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1000226",
     "operationsCount": 2,
@@ -273,7 +259,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "5000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002398",
     "operationsCount": 1,
@@ -285,7 +270,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "15000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002573",
     "operationsCount": 2,
@@ -297,7 +281,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "10000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002672",
     "operationsCount": 1,
@@ -309,7 +292,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "20000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002597",
     "operationsCount": 2,
@@ -321,7 +303,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "5000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002736",
     "operationsCount": 1,
@@ -333,7 +314,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "10000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002517",
     "operationsCount": 1,
@@ -345,7 +325,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "10000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002814",
     "operationsCount": 1,
@@ -357,7 +336,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "9012000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc10%2F1002000",
     "operationsCount": 4,
@@ -369,7 +347,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "1000000",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc20%2Ftla2f6vpqdgre67v1736s7bj8ray5wyju7",
     "operationsCount": 1,
@@ -381,7 +358,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "2013400",
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
     "operationsCount": 2,
@@ -433,7 +409,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "used": true,
   },
   {
-    "approvals": undefined,
     "balance": "2000000",
     "id": "js:2:tron:TWepUnyBzHx2aoEgNGotZHCybZJZe1AHdW:+tron%2Ftrc10%2F1002000",
     "operationsCount": 1,
@@ -445,7 +420,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "10000000",
     "id": "js:2:tron:TWepUnyBzHx2aoEgNGotZHCybZJZe1AHdW:+tron%2Ftrc20%2Ftla2f6vpqdgre67v1736s7bj8ray5wyju7",
     "operationsCount": 1,
@@ -497,7 +471,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "used": true,
   },
   {
-    "approvals": undefined,
     "balance": "183",
     "id": "js:2:tron:TTBPBK1n8nX1VkYPh7fsM56KL6G9HRM7Vc:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
     "operationsCount": 1,
@@ -549,7 +522,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "used": true,
   },
   {
-    "approvals": undefined,
     "balance": "5000000",
     "id": "js:2:tron:TRzAd8k78ob5wTWHepeDpQruUuKYffh48x:+tron%2Ftrc10%2F1002544",
     "operationsCount": 1,
@@ -561,7 +533,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "approvals": undefined,
     "balance": "756",
     "id": "js:2:tron:TRzAd8k78ob5wTWHepeDpQruUuKYffh48x:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
     "operationsCount": 1,
@@ -613,7 +584,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "used": true,
   },
   {
-    "approvals": undefined,
     "balance": "100000",
     "id": "js:2:tron:TCKFUfFr8EU9CVfKzq8vLPxkZVG4vAewTd:+tron%2Ftrc10%2F1002000",
     "operationsCount": 1,
@@ -665,7 +635,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "used": true,
   },
   {
-    "approvals": undefined,
     "balance": "623",
     "id": "js:2:tron:TReR4zdFE78NaKgUUUeHiVGXSGcCD4cNyj:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
     "operationsCount": 1,
