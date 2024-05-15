@@ -78,6 +78,7 @@
     "coin:tester": "pnpm --filter coin-tester",
     "coin:multiversx": "pnpm --filter coin-multiversx",
     "coin:near": "pnpm --filter coin-near",
+    "coin:mina": "pnpm --filter coin-mina",
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "coin:ton": "pnpm --filter coin-ton",
     "coin:solana": "pnpm --filter coin-solana",
