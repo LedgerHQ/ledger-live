@@ -4,7 +4,7 @@ import type {
   BalanceHistoryDataCache,
   AccountLike,
   Account,
-  SubAccount,
+  TokenAccount,
 } from "@ledgerhq/types-live";
 import { getOperationAmountNumberWithInternals } from "../operation";
 
@@ -141,7 +141,7 @@ export function recalculateAccountBalanceHistories(res: Account, prev: Account):
 
   if (nextSubAccounts && prevSubAccounts && prevSubAccounts !== nextSubAccounts) {
     // when sub accounts changes, we need to recalculate
-    res.subAccounts = nextSubAccounts.map((subAccount: SubAccount): SubAccount => {
+    res.subAccounts = nextSubAccounts.map((subAccount: TokenAccount): TokenAccount => {
       const old = prevSubAccounts.find(a => a.id === subAccount.id);
 
       if (!old || old.balanceHistoryCache === subAccount.balanceHistoryCache) {

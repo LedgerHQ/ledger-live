@@ -5,7 +5,6 @@ import type {
   AccountRaw,
   Operation,
   OperationRaw,
-  SubAccount,
   TokenAccount,
   TokenAccountRaw,
   TransactionCommon,
@@ -59,7 +58,7 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   } = rawAccount;
 
   const convertOperation = (op: OperationRaw) =>
-    fromOperationRaw(op, id, subAccounts as SubAccount[], fromRaw?.fromOperationExtraRaw);
+    fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
 
   const subAccounts =
     subAccountsRaw &&
@@ -116,7 +115,7 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   }
 
   if (subAccounts) {
-    res.subAccounts = subAccounts as SubAccount[];
+    res.subAccounts = subAccounts as TokenAccount[];
   }
 
   if (fromRaw?.assignFromAccountRaw) {
