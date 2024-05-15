@@ -5,29 +5,28 @@ import { AddAccountModal } from "../../models/AddAccountModal";
 import { Layout } from "../../models/Layout";
 import { AccountPage } from "../../models/AccountPage";
 import { AccountsPage } from "../../models/AccountsPage";
-import { Device, specs, startSpeculos, stopSpeculos } from "../../utils/speculos";
+import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
 
-test.use({ userdata: "skip-onboarding" });
 const currencies: Currency[] = [
   Currency.BTC,
   Currency.tBTC,
   Currency.ETH,
   Currency.tETH,
+  Currency.XRP,
   Currency.SOL,
   Currency.DOT,
   Currency.TRX,
-  Currency.XRP,
 ];
 
-let device: Device | undefined;
-
-test.afterEach(async () => {
-  await stopSpeculos(device);
-});
-
-test.describe.parallel("Accounts @smoke", () => {
-  for (const currency of currencies) {
+for (const [i, currency] of currencies.entries()) {
+  test.describe.parallel("Accounts @smoke", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      testName: `receiveSpeculos_${currency.uiName}`,
+      speculosCurrency: specs[currency.deviceLabel.replace(/ /g, "_")],
+      speculosOffset: i,
+    });
     let firstAccountName = "NO ACCOUNT NAME YET";
     let accountsListBeforeRemove: (string | null)[];
     test(`[${currency.uiName}] Add account`, async ({ page }) => {
@@ -36,7 +35,6 @@ test.describe.parallel("Accounts @smoke", () => {
       const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
       const accountPage = new AccountPage(page);
-      device = await startSpeculos(test.name, specs[currency.deviceLabel.replace(/ /g, "_")]);
 
       await test.step(`[${currency.uiName}] Open modal`, async () => {
         await portfolioPage.openAddAccountModal();
@@ -87,5 +85,5 @@ test.describe.parallel("Accounts @smoke", () => {
         expect(accountsListAfterRemove).not.toContain(accountsListBeforeRemove[0]);
       });
     });
-  }
-});
+  });
+}

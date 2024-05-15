@@ -90,10 +90,9 @@ export const test = base.extend<TestFixtures>({
 
     let device: any | undefined;
     if (IS_MOCK) {
-      console.log("Avant spéculos");
       if (speculosCurrency) {
         setEnv("SPECULOS_PID_OFFSET", 100 * speculosOffset);
-        device = await startSpeculos("Bitcoin Receive", speculosCurrency);
+        device = await startSpeculos(testName, speculosCurrency);
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
       }
     }

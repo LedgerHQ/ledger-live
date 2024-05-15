@@ -9,6 +9,7 @@ test.use({
   userdata: "speculos",
   testName: "tokenERC20",
   speculosCurrency: specs["Ethereum".replace(/ /g, "_")],
+  speculosOffset: 0,
 });
 const token = "Tether USD";
 

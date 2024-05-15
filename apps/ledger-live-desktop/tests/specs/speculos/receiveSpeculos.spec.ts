@@ -10,12 +10,15 @@ import { specs, pressRightUntil, pressBoth, verifyAddress, waitFor } from "../..
 
 const accounts: Account[] = [
   Account.BTC_1,
+  Account.tBTC_1,
   Account.ETH_1,
+  Account.tETH_1,
   Account.SOL_1,
-  /*Account.TRX_1,
+  Account.TRX_1,
   Account.DOT_1,
-  Account.XRP_1,*/
+  Account.XRP_1,
 ];
+
 for (const [i, account] of accounts.entries()) {
   test.describe.parallel("Receive @smoke", () => {
     test.use({
