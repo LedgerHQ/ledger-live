@@ -50,7 +50,7 @@ export function encodeTokenAccountId(accountId: string, token: TokenCurrency): s
 
 export function decodeTokenAccountId(id: string): {
   accountId: string;
-  token: TokenCurrency | null | undefined;
+  token: TokenCurrency | undefined;
 } {
   const [accountId, tokenId] = id.split("+");
   const decodedTokenId = safeDecodeTokenId(tokenId);

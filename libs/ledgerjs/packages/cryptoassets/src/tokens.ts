@@ -115,19 +115,19 @@ export function listTokenTypesForCryptoCurrency(currency: CryptoCurrency): strin
 /**
  *
  */
-export function findTokenByTicker(ticker: string): TokenCurrency | null | undefined {
+export function findTokenByTicker(ticker: string): TokenCurrency | undefined {
   return tokensByTicker[ticker];
 }
 
 /**
  *
  */
-export function findTokenById(id: string): TokenCurrency | null | undefined {
+export function findTokenById(id: string): TokenCurrency | undefined {
   return tokensById[id];
 }
 
 let deprecatedDisplayed = false;
-export function findTokenByAddress(address: string): TokenCurrency | null | undefined {
+export function findTokenByAddress(address: string): TokenCurrency | undefined {
   if (!deprecatedDisplayed) {
     deprecatedDisplayed = true;
     console.warn("findTokenByAddress is deprecated. use findTokenByAddressInCurrency");
@@ -138,7 +138,7 @@ export function findTokenByAddress(address: string): TokenCurrency | null | unde
 export function findTokenByAddressInCurrency(
   address: string,
   currencyId: string,
-): TokenCurrency | null | undefined {
+): TokenCurrency | undefined {
   return tokensByCurrencyAddress[currencyId + ":" + address.toLowerCase()];
 }
 

@@ -50,15 +50,17 @@ const defaultSyncConfig = {
   paginationConfig: {},
   blacklistedTokenIds: ["ethereum/erc20/ampleforth", "ethereum/erc20/steth"],
 };
-export function syncAccount<T extends TransactionCommon>(
-  bridge: AccountBridge<T>,
-  account: Account,
+export function syncAccount<
+  T extends TransactionCommon,
+  A extends Account = Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+>(
+  bridge: AccountBridge<T, U, A>,
+  account: A,
   syncConfig: SyncConfig = defaultSyncConfig,
-): Promise<Account> {
+): Promise<A> {
   return firstValueFrom(
-    bridge
-      .sync(account, syncConfig)
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+    bridge.sync(account, syncConfig).pipe(reduce((a, f: (arg0: A) => A) => f(a), account)),
   );
 }
 

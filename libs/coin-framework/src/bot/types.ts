@@ -121,7 +121,7 @@ export type AppSpec<T extends TransactionCommon> = {
   // if define, will run the mutations {multipleRuns} times in order to cover 2 txs in the same run and detect possible issues at the "second tx time"
   multipleRuns?: number;
   // if the nano app depends on an app, name of this app
-  dependency?: string;
+  dependency?: string | undefined;
   // a query to select one nano app. the most up to date version is selected when fields aren't set.
   appQuery: {
     model?: DeviceModelId;

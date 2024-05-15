@@ -27,6 +27,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountBridge,
+  AccountRaw,
   CurrencyBridge,
   DerivationMode,
   Operation,
@@ -34,6 +35,7 @@ import type {
   ScanAccountEvent,
   SyncConfig,
   TransactionCommon,
+  TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 
 // Customize the way to iterate on the keychain derivation
@@ -63,22 +65,22 @@ export type IterateResultBuilder = ({
   derivationScheme: string;
 }) => Promise<IterateResult>;
 
-export type AccountShapeInfo = {
+export type AccountShapeInfo<A extends Account = Account> = {
   currency: CryptoCurrency;
   address: string;
   index: number;
-  initialAccount?: Account;
+  initialAccount?: A | undefined;
   derivationPath: string;
   derivationMode: DerivationMode;
   rest?: any;
   deviceId?: string;
 };
 
-export type GetAccountShape = (
-  accountShape: AccountShapeInfo,
+export type GetAccountShape<A extends Account = Account> = (
+  accountShape: AccountShapeInfo<A>,
   config: SyncConfig,
-) => Promise<Partial<Account>>;
-type AccountUpdater = (account: Account) => Account;
+) => Promise<Partial<A>>;
+type AccountUpdater<A extends Account = Account> = (account: A) => A;
 
 // compare that two dates are roughly the same date in order to update the case it would have drastically changed
 const sameDate = (a: Date, b: Date) => Math.abs(a.getTime() - b.getTime()) < 1000 * 60 * 30;
@@ -173,17 +175,22 @@ export const mergeNfts = (oldNfts: ProtoNFT[], newNfts: ProtoNFT[]): ProtoNFT[] 
 };
 
 export const makeSync =
-  ({
+  <
+    T extends TransactionCommon = TransactionCommon,
+    U extends TransactionStatusCommon = TransactionStatusCommon,
+    A extends Account = Account,
+    R extends AccountRaw = AccountRaw,
+  >({
     getAccountShape,
     postSync = (_, a) => a,
     shouldMergeOps = true,
   }: {
-    getAccountShape: GetAccountShape;
-    postSync?: (initial: Account, synced: Account) => Account;
+    getAccountShape: GetAccountShape<A>;
+    postSync?: (initial: A, synced: A) => A;
     shouldMergeOps?: boolean;
-  }): AccountBridge<any>["sync"] =>
-  (initial, syncConfig): Observable<AccountUpdater> =>
-    new Observable((o: Observer<(acc: Account) => Account>) => {
+  }): AccountBridge<T, U, A, R>["sync"] =>
+  (initial, syncConfig): Observable<AccountUpdater<A>> =>
+    new Observable((o: Observer<(acc: A) => A>) => {
       async function main() {
         const accountId = encodeAccountId({
           type: "js",
@@ -212,7 +219,7 @@ export const makeSync =
             syncConfig,
           );
 
-          const updater = (acc: Account): Account => {
+          const updater = (acc: A): A => {
             let a = acc; // a is a immutable version of Account, based on acc
 
             if (needClear) {
@@ -292,12 +299,12 @@ const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
   );
 
 export const makeScanAccounts =
-  ({
+  <A extends Account = Account>({
     getAccountShape,
     buildIterateResult,
     getAddressFn,
   }: {
-    getAccountShape: GetAccountShape;
+    getAccountShape: GetAccountShape<A>;
     buildIterateResult?: IterateResultBuilder;
     getAddressFn: GetAddressFn;
   }): CurrencyBridge["scanAccounts"] =>
@@ -506,15 +513,15 @@ export const makeScanAccounts =
       return unsubscribe;
     });
 
-export function makeAccountBridgeReceive(
+export function makeAccountBridgeReceive<A extends Account = Account>(
   getAddressFn: GetAddressFn,
   {
     injectGetAddressParams,
   }: {
-    injectGetAddressParams?: (account: Account) => any;
+    injectGetAddressParams?: (account: A) => any;
   } = {},
 ): (
-  account: Account,
+  account: A,
   option: {
     verify?: boolean;
     deviceId: string;
