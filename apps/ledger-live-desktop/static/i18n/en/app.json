@@ -6288,6 +6288,20 @@
     "alreadySync": {
       "title": "Already created a back-up on another Device?",
       "cta": "Synchronize"
+    },
+    "manage": {
+      "synchronize": {
+        "label": "Synchronize",
+        "description": "Synchronize your app data with another Ledger Live app for a seemless experience."
+      },
+      "backup": {
+        "label": "Manage your backup",
+        "description": "Secure your backup with another Ledger or delete it."
+      },
+      "instance": {
+        "label": "{{ nbInstances }} synchronized instances",
+        "cta": "Manage"
+      }
     }
   }
 }
