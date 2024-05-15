@@ -48,6 +48,13 @@ export class Currency {
     [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
+  static readonly sepETH = new Currency(
+    "Ethereum Sepolia",
+    "𝚝ETH",
+    "Ethereum Sepolia",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
   static readonly SOL = new Currency(
     "Solana",
     "SOL",

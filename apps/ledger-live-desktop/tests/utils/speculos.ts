@@ -64,6 +64,15 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Ethereum_Sepolia: {
+    currency: getCryptoCurrencyById("ethereum_sepolia"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Ethereum",
+      appVersion: "1.10.4",
+    },
+    dependency: "",
+  },
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
     appQuery: {

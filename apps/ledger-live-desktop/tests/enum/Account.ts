@@ -55,6 +55,18 @@ export class Account {
     "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
   );
 
+  static readonly sep_ETH_1 = new Account(
+    Currency.sepETH,
+    "Ethereum Sepolia 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly sep_ETH_2 = new Account(
+    Currency.sepETH,
+    "Ethereum Sepolia 2",
+    "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
+  );
+
   static readonly DOT_1 = new Account(
     Currency.DOT,
     "Polkadot 1",

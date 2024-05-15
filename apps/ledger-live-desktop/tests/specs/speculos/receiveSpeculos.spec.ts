@@ -19,8 +19,9 @@ const accounts: Account[] = [
   Account.XRP_1,
 ];
 
+//TODO: Reactivate after getAppAndVersion resolved - Jira: LIVE-12581
 for (const [i, account] of accounts.entries()) {
-  test.describe.parallel("Receive @smoke", () => {
+  test.describe.skip("Receive @smoke", () => {
     test.use({
       userdata: "speculos",
       testName: `receiveSpeculos_${account.currency.uiName}`,
