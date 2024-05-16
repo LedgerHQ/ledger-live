@@ -5,7 +5,7 @@ import { XrpAddress, XrpSigner } from "./signer";
 
 const resolver = (signerContext: SignerContext<XrpSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
-    const { address, publicKey, chainCode } = (await signerContext(deviceId, signer =>
+    const { address, publicKey } = (await signerContext(deviceId, signer =>
       signer.getAddress(path, verify, false),
     )) as XrpAddress;
 
@@ -13,7 +13,6 @@ const resolver = (signerContext: SignerContext<XrpSigner>): GetAddressFn => {
       path,
       address,
       publicKey,
-      chainCode,
     };
   };
 };
