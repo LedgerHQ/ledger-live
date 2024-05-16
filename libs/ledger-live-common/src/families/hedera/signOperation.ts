@@ -1,14 +1,17 @@
 import { Observable } from "rxjs";
 import { PublicKey } from "@hashgraph/sdk";
-import { Account, Operation, SignOperationFnSignature } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { Transaction } from "./types";
 import { buildUnsignedTransaction } from "./api/network";
-import { getEstimatedFees } from "./utils";
 import Hedera from "./hw-app-hedera";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
-const signOperation: SignOperationFnSignature<Transaction> = ({ account, transaction, deviceId }) =>
+export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
+  account,
+  transaction,
+  deviceId,
+}) =>
   withDevice(deviceId)(transport => {
     return new Observable(o => {
       void (async function () {
@@ -53,30 +56,5 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
       })();
     });
   });
-
-async function buildOptimisticOperation({
-  account,
-  transaction,
-}: {
-  account: Account;
-  transaction: Transaction;
-}): Promise<Operation> {
-  const operation: Operation = {
-    id: encodeOperationId(account.id, "", "OUT"),
-    hash: "",
-    type: "OUT",
-    value: transaction.amount,
-    fee: await getEstimatedFees(account),
-    blockHash: null,
-    blockHeight: null,
-    senders: [account.freshAddress.toString()],
-    recipients: [transaction.recipient],
-    accountId: account.id,
-    date: new Date(),
-    extra: {},
-  };
-
-  return operation;
-}
 
 export default signOperation;
