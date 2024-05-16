@@ -1,22 +1,36 @@
 # @ledgerhq/cryptoassets
 
-## 12.1.1-nightly.2
+## 13.0.0
+
+### Major Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Goerli & Ropsten networks and their Layer 2 variants (Linea Goerli & Optimism Goerli) and replace them by Linea Sepolia & Optimism Sepolia
+
+### Minor Changes
+
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update importers to include hash files in order to detect changes while requesting CDN with `If-None-Match` header
+
+- [#6676](https://github.com/LedgerHQ/ledger-live/pull/6676) [`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for TRC20 exchange importing
 
 ### Patch Changes
 
-- [#6778](https://github.com/LedgerHQ/ledger-live/pull/6778) [`4499990`](https://github.com/LedgerHQ/ledger-live/commit/449999066c58ae5df371dfb92a7230f9b5e90a60) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(10131): update token signatures
+- [#6734](https://github.com/LedgerHQ/ledger-live/pull/6734) [`45a53bc`](https://github.com/LedgerHQ/ledger-live/commit/45a53bc227ab2f42b1e839aacbb8c251d0a4a5d2) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update TRC20 exchange importer not compatible with the new `fetchTokens` return
 
-## 12.1.1-nightly.1
+## 13.0.0-next.0
+
+### Major Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Goerli & Ropsten networks and their Layer 2 variants (Linea Goerli & Optimism Goerli) and replace them by Linea Sepolia & Optimism Sepolia
+
+### Minor Changes
+
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update importers to include hash files in order to detect changes while requesting CDN with `If-None-Match` header
+
+- [#6676](https://github.com/LedgerHQ/ledger-live/pull/6676) [`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for TRC20 exchange importing
 
 ### Patch Changes
 
-- [#6771](https://github.com/LedgerHQ/ledger-live/pull/6771) [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584) Thanks [@gre](https://github.com/gre)! - LL's preferred countervalues will now have all the possible fiats that our CVS api supports.
-
-## 12.1.1-nightly.0
-
-### Patch Changes
-
-- [`fda6a81`](https://github.com/LedgerHQ/ledger-live/commit/fda6a814544b3a1debceab22f69485911e76cadc) Thanks [@valpinkman](https://github.com/valpinkman)! - Update TRC20 exchange importer not compatible with the new `fetchTokens` return
+- [#6734](https://github.com/LedgerHQ/ledger-live/pull/6734) [`45a53bc`](https://github.com/LedgerHQ/ledger-live/commit/45a53bc227ab2f42b1e839aacbb8c251d0a4a5d2) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update TRC20 exchange importer not compatible with the new `fetchTokens` return
 
 ## 12.1.0
 

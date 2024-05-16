@@ -1,80 +1,47 @@
 # @ledgerhq/coin-near
 
-## 0.3.13-nightly.8
+## 0.4.0
+
+### Minor Changes
+
+- [#6712](https://github.com/LedgerHQ/ledger-live/pull/6712) [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix everything broken in the Near coin-module. Upgrade to the new broadcast endpoint because the old was deprecated, introduce 2 types of nodes used in different conditions (based on data sensitivity) and fix transaction building using Numbers for BigNumbers.
 
 ### Patch Changes
 
-- Updated dependencies [[`4499990`](https://github.com/LedgerHQ/ledger-live/commit/449999066c58ae5df371dfb92a7230f9b5e90a60)]:
-  - @ledgerhq/cryptoassets@12.1.1-nightly.2
-  - @ledgerhq/coin-framework@0.13.0-nightly.8
+- [#6810](https://github.com/LedgerHQ/ledger-live/pull/6810) [`2b326c8`](https://github.com/LedgerHQ/ledger-live/commit/2b326c855f17009a6b4142c64e7ab41174c3faa1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix commission request being incorrectly cached
 
-## 0.3.13-nightly.7
+- Updated dependencies [[`b0ebe3a`](https://github.com/LedgerHQ/ledger-live/commit/b0ebe3acea586afbdeddb5877c15bcfc28f43016), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9), [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1), [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
+  - @ledgerhq/types-live@6.47.0
+  - @ledgerhq/types-cryptoassets@7.12.0
+  - @ledgerhq/coin-framework@0.13.0
+  - @ledgerhq/live-network@1.2.2
 
-### Patch Changes
-
-- [#6844](https://github.com/LedgerHQ/ledger-live/pull/6844) [`f19960f`](https://github.com/LedgerHQ/ledger-live/commit/f19960f2e7104e5bdf332269fa92fda47455e17d) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Simplify SignerContext generic signature
-
-- Updated dependencies [[`a18c28e`](https://github.com/LedgerHQ/ledger-live/commit/a18c28e3f6a6132bd5e53d5b61721084b3aa19e8), [`f19960f`](https://github.com/LedgerHQ/ledger-live/commit/f19960f2e7104e5bdf332269fa92fda47455e17d)]:
-  - @ledgerhq/coin-framework@0.13.0-nightly.7
-
-## 0.3.13-nightly.6
+## 0.4.0-next.2
 
 ### Patch Changes
 
-- [#6816](https://github.com/LedgerHQ/ledger-live/pull/6816) [`60cd799`](https://github.com/LedgerHQ/ledger-live/commit/60cd799e693e3ae0712a5a9e88206b5304bbc214) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Split currencies utils between CoinFmk and LLC
+- [#6810](https://github.com/LedgerHQ/ledger-live/pull/6810) [`2b326c8`](https://github.com/LedgerHQ/ledger-live/commit/2b326c855f17009a6b4142c64e7ab41174c3faa1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix commission request being incorrectly cached
 
-- Updated dependencies [[`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c), [`60cd799`](https://github.com/LedgerHQ/ledger-live/commit/60cd799e693e3ae0712a5a9e88206b5304bbc214)]:
-  - @ledgerhq/types-live@6.47.0-nightly.4
-  - @ledgerhq/coin-framework@0.13.0-nightly.6
-  - @ledgerhq/live-network@1.2.2-nightly.0
-
-## 0.3.13-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584), [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584)]:
-  - @ledgerhq/coin-framework@0.12.1-nightly.5
-
-## 0.3.13-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`a115d6c`](https://github.com/LedgerHQ/ledger-live/commit/a115d6cd5dcbcc753d02dedb80f5eb1693d1a249)]:
-  - @ledgerhq/types-live@6.47.0-nightly.3
-  - @ledgerhq/coin-framework@0.12.1-nightly.4
-
-## 0.3.13-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`f17a3cb`](https://github.com/LedgerHQ/ledger-live/commit/f17a3cbc16abf7fadf686025a5ca56ec1a1e7bb6)]:
-  - @ledgerhq/types-live@6.46.1-nightly.2
-  - @ledgerhq/coin-framework@0.12.1-nightly.3
-
-## 0.3.13-nightly.2
-
-### Patch Changes
-
-- [#6663](https://github.com/LedgerHQ/ledger-live/pull/6663) [`de5de2d`](https://github.com/LedgerHQ/ledger-live/commit/de5de2d273ed6966c82bde2c3a95b98ba594204f) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Reorganize coin serializaiton code
-
-- Updated dependencies [[`de5de2d`](https://github.com/LedgerHQ/ledger-live/commit/de5de2d273ed6966c82bde2c3a95b98ba594204f), [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7)]:
-  - @ledgerhq/coin-framework@0.12.1-nightly.2
-  - @ledgerhq/types-live@6.46.1-nightly.1
-
-## 0.3.13-nightly.1
+## 0.4.0-next.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/coin-framework@0.12.1-nightly.1
+  - @ledgerhq/live-network@1.2.2-next.1
 
-## 0.3.13-nightly.0
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#6712](https://github.com/LedgerHQ/ledger-live/pull/6712) [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix everything broken in the Near coin-module. Upgrade to the new broadcast endpoint because the old was deprecated, introduce 2 types of nodes used in different conditions (based on data sensitivity) and fix transaction building using Numbers for BigNumbers.
 
 ### Patch Changes
 
-- Updated dependencies [[`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13)]:
-  - @ledgerhq/types-live@6.46.1-nightly.0
-  - @ledgerhq/coin-framework@0.12.1-nightly.0
+- Updated dependencies [[`b0ebe3a`](https://github.com/LedgerHQ/ledger-live/commit/b0ebe3acea586afbdeddb5877c15bcfc28f43016), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9), [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1), [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
+  - @ledgerhq/types-live@6.47.0-next.0
+  - @ledgerhq/types-cryptoassets@7.12.0-next.0
+  - @ledgerhq/coin-framework@0.13.0-next.0
+  - @ledgerhq/live-network@1.2.2-next.0
 
 ## 0.3.12
 

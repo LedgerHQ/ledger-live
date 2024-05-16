@@ -1,10 +1,16 @@
 # @ledgerhq/live-env
 
-## 2.0.2-nightly.0
+## 2.0.2
 
 ### Patch Changes
 
-- [#6796](https://github.com/LedgerHQ/ledger-live/pull/6796) [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c) Thanks [@gre](https://github.com/gre)! - Drop technical Account#name and Account#starred fields and replace it with a new architecture: a wallet store that contains all user's data.
+- [#6603](https://github.com/LedgerHQ/ledger-live/pull/6603) [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `COSMOS_GAS_AMPLIFIER` from 1.5 to 1.3 to match what Keplr is doing
+
+## 2.0.2-next.0
+
+### Patch Changes
+
+- [#6603](https://github.com/LedgerHQ/ledger-live/pull/6603) [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `COSMOS_GAS_AMPLIFIER` from 1.5 to 1.3 to match what Keplr is doing
 
 ## 2.0.1
 

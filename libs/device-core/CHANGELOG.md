@@ -1,52 +1,31 @@
 # @ledgerhq/device-core
 
-## 0.1.2-nightly.6
+## 0.1.2
 
 ### Patch Changes
 
-- Updated dependencies [[`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c)]:
-  - @ledgerhq/types-live@6.47.0-nightly.4
-  - @ledgerhq/live-network@1.2.2-nightly.0
+- [#6662](https://github.com/LedgerHQ/ledger-live/pull/6662) [`1bc09ce`](https://github.com/LedgerHQ/ledger-live/commit/1bc09ce84d1d579a253d0239747ad969e9613b52) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - feat(earlysecuritychecks): make stax update from <=1.3.0 unskippable
 
-## 0.1.2-nightly.5
+- Updated dependencies [[`b0ebe3a`](https://github.com/LedgerHQ/ledger-live/commit/b0ebe3acea586afbdeddb5877c15bcfc28f43016), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9), [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1), [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d), [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
+  - @ledgerhq/types-live@6.47.0
+  - @ledgerhq/live-network@1.2.2
 
-### Patch Changes
-
-- Updated dependencies [[`a115d6c`](https://github.com/LedgerHQ/ledger-live/commit/a115d6cd5dcbcc753d02dedb80f5eb1693d1a249)]:
-  - @ledgerhq/types-live@6.47.0-nightly.3
-
-## 0.1.2-nightly.4
+## 0.1.2-next.1
 
 ### Patch Changes
 
-- [#6775](https://github.com/LedgerHQ/ledger-live/pull/6775) [`aa312f9`](https://github.com/LedgerHQ/ledger-live/commit/aa312f9e43740106893602c9edbaeca1d20e1c4e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix getVersion parsing for Europa
+- Updated dependencies []:
+  - @ledgerhq/live-network@1.2.2-next.1
 
-## 0.1.2-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`f17a3cb`](https://github.com/LedgerHQ/ledger-live/commit/f17a3cbc16abf7fadf686025a5ca56ec1a1e7bb6)]:
-  - @ledgerhq/types-live@6.46.1-nightly.2
-
-## 0.1.2-nightly.2
+## 0.1.2-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7)]:
-  - @ledgerhq/types-live@6.46.1-nightly.1
+- [#6662](https://github.com/LedgerHQ/ledger-live/pull/6662) [`1bc09ce`](https://github.com/LedgerHQ/ledger-live/commit/1bc09ce84d1d579a253d0239747ad969e9613b52) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - feat(earlysecuritychecks): make stax update from <=1.3.0 unskippable
 
-## 0.1.2-nightly.1
-
-### Patch Changes
-
-- [#6733](https://github.com/LedgerHQ/ledger-live/pull/6733) [`bfca25b`](https://github.com/LedgerHQ/ledger-live/commit/bfca25b975e00c057da3a7ec82a9b05a0e5d5cf7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Device renaming: add Nano S Plus compatibility
-
-## 0.1.2-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1)]:
-  - @ledgerhq/types-live@6.46.1-nightly.0
+- Updated dependencies [[`b0ebe3a`](https://github.com/LedgerHQ/ledger-live/commit/b0ebe3acea586afbdeddb5877c15bcfc28f43016), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9), [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1), [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d), [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
+  - @ledgerhq/types-live@6.47.0-next.0
+  - @ledgerhq/live-network@1.2.2-next.0
 
 ## 0.1.1
 

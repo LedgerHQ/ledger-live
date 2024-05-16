@@ -11,3 +11,4 @@ node_modules
 tsconfig.tsbuildinfo
 rce
 .env
+coverage

@@ -5,7 +5,6 @@ import {
   AnyMessage,
   MessageProperties,
   Operation,
-  SubAccount,
   TokenAccount,
 } from "@ledgerhq/types-live";
 import murmurhash from "imurmurhash";
@@ -100,16 +99,16 @@ const updatableSubAccountProperties: { name: string; isOps: boolean }[] = [
  */
 export const mergeSubAccounts = (
   initialAccount: Account | undefined,
-  newSubAccounts: Partial<SubAccount>[],
-): Array<Partial<SubAccount> | SubAccount> => {
-  const oldSubAccounts: Array<Partial<SubAccount> | SubAccount> | undefined =
+  newSubAccounts: Partial<TokenAccount>[],
+): Array<Partial<TokenAccount> | TokenAccount> => {
+  const oldSubAccounts: Array<Partial<TokenAccount> | TokenAccount> | undefined =
     initialAccount?.subAccounts;
   if (!oldSubAccounts) {
     return newSubAccounts;
   }
 
   // Creating a map of already existing sub accounts by id
-  const oldSubAccountsById: { [key: string]: Partial<SubAccount> } = {};
+  const oldSubAccountsById: { [key: string]: Partial<TokenAccount> } = {};
   for (const oldSubAccount of oldSubAccounts) {
     oldSubAccountsById[oldSubAccount.id!] = oldSubAccount;
   }
@@ -117,9 +116,9 @@ export const mergeSubAccounts = (
   // Looping on new sub accounts to compare them with already existing ones
   // Already existing will be updated if necessary (see `updatableSubAccountProperties`)
   // Fresh new sub accounts will be added/pushed after already existing
-  const newSubAccountsToAdd: Partial<SubAccount>[] = [];
+  const newSubAccountsToAdd: Partial<TokenAccount>[] = [];
   for (const newSubAccount of newSubAccounts) {
-    const duplicatedAccount: Partial<SubAccount> | undefined =
+    const duplicatedAccount: Partial<TokenAccount> | undefined =
       oldSubAccountsById[newSubAccount.id!];
 
     // If this sub account was not already in the initialAccount
@@ -129,7 +128,7 @@ export const mergeSubAccounts = (
       continue;
     }
 
-    const updates: Partial<SubAccount> = {};
+    const updates: Partial<TokenAccount> = {};
     for (const { name, isOps } of updatableSubAccountProperties) {
       if (!isOps) {
         // @ts-expect-error FIXME: fix typings

@@ -1,95 +1,58 @@
 # @ledgerhq/coin-evm
 
-## 1.1.1-nightly.8
+## 2.0.0
+
+### Major Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Goerli & Ropsten networks and their Layer 2 variants (Linea Goerli & Optimism Goerli) and replace them by Linea Sepolia & Optimism Sepolia
+
+### Minor Changes
+
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `getSyncHash` method to use new hash files provided by token importers instead of manually serializing each token. This greatly improve performances of that method.
 
 ### Patch Changes
 
-- Updated dependencies [[`4499990`](https://github.com/LedgerHQ/ledger-live/commit/449999066c58ae5df371dfb92a7230f9b5e90a60)]:
-  - @ledgerhq/cryptoassets@12.1.1-nightly.2
-  - @ledgerhq/coin-framework@0.13.0-nightly.8
-  - @ledgerhq/evm-tools@1.0.19-nightly.3
+- [#6684](https://github.com/LedgerHQ/ledger-live/pull/6684) [`96029e1`](https://github.com/LedgerHQ/ledger-live/commit/96029e1396be2f283f0345a59e08009b0a6a96db) Thanks [@CremaFR](https://github.com/CremaFR)! - Allow additional fees when using maxButton
 
-## 1.1.1-nightly.7
+- Updated dependencies [[`5552ca0`](https://github.com/LedgerHQ/ledger-live/commit/5552ca0542d5734b845ed23dae2f02c6d1b8ba2d), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`45a53bc`](https://github.com/LedgerHQ/ledger-live/commit/45a53bc227ab2f42b1e839aacbb8c251d0a4a5d2), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a), [`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945)]:
+  - @ledgerhq/live-promise@0.0.4
+  - @ledgerhq/coin-framework@0.13.0
+  - @ledgerhq/live-env@2.0.2
+  - @ledgerhq/cryptoassets@13.0.0
+  - @ledgerhq/live-network@1.2.2
+  - @ledgerhq/domain-service@1.1.21
+  - @ledgerhq/evm-tools@1.0.19
 
-### Patch Changes
-
-- [#6844](https://github.com/LedgerHQ/ledger-live/pull/6844) [`f19960f`](https://github.com/LedgerHQ/ledger-live/commit/f19960f2e7104e5bdf332269fa92fda47455e17d) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Simplify SignerContext generic signature
-
-- Updated dependencies [[`a18c28e`](https://github.com/LedgerHQ/ledger-live/commit/a18c28e3f6a6132bd5e53d5b61721084b3aa19e8), [`f19960f`](https://github.com/LedgerHQ/ledger-live/commit/f19960f2e7104e5bdf332269fa92fda47455e17d)]:
-  - @ledgerhq/coin-framework@0.13.0-nightly.7
-
-## 1.1.1-nightly.6
+## 2.0.0-next.1
 
 ### Patch Changes
 
-- [#6796](https://github.com/LedgerHQ/ledger-live/pull/6796) [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c) Thanks [@gre](https://github.com/gre)! - Drop technical Account#name and Account#starred fields and replace it with a new architecture: a wallet store that contains all user's data.
+- Updated dependencies [[`5552ca0`](https://github.com/LedgerHQ/ledger-live/commit/5552ca0542d5734b845ed23dae2f02c6d1b8ba2d)]:
+  - @ledgerhq/live-promise@0.0.4-next.1
+  - @ledgerhq/live-network@1.2.2-next.1
 
-- [#6816](https://github.com/LedgerHQ/ledger-live/pull/6816) [`60cd799`](https://github.com/LedgerHQ/ledger-live/commit/60cd799e693e3ae0712a5a9e88206b5304bbc214) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Split currencies utils between CoinFmk and LLC
+## 2.0.0-next.0
 
-- Updated dependencies [[`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c), [`60cd799`](https://github.com/LedgerHQ/ledger-live/commit/60cd799e693e3ae0712a5a9e88206b5304bbc214)]:
-  - @ledgerhq/coin-framework@0.13.0-nightly.6
-  - @ledgerhq/live-env@2.0.2-nightly.0
-  - @ledgerhq/domain-service@1.1.21-nightly.4
-  - @ledgerhq/evm-tools@1.0.19-nightly.2
-  - @ledgerhq/live-network@1.2.2-nightly.0
+### Major Changes
 
-## 1.1.1-nightly.5
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Goerli & Ropsten networks and their Layer 2 variants (Linea Goerli & Optimism Goerli) and replace them by Linea Sepolia & Optimism Sepolia
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584), [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584)]:
-  - @ledgerhq/cryptoassets@12.1.1-nightly.1
-  - @ledgerhq/coin-framework@0.12.1-nightly.5
-  - @ledgerhq/evm-tools@1.0.19-nightly.1
-
-## 1.1.1-nightly.4
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `getSyncHash` method to use new hash files provided by token importers instead of manually serializing each token. This greatly improve performances of that method.
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.12.1-nightly.4
-  - @ledgerhq/domain-service@1.1.21-nightly.3
-  - @ledgerhq/evm-tools@1.0.19-nightly.0
+- [#6684](https://github.com/LedgerHQ/ledger-live/pull/6684) [`96029e1`](https://github.com/LedgerHQ/ledger-live/commit/96029e1396be2f283f0345a59e08009b0a6a96db) Thanks [@CremaFR](https://github.com/CremaFR)! - Allow additional fees when using maxButton
 
-## 1.1.1-nightly.3
-
-### Patch Changes
-
-- [#6752](https://github.com/LedgerHQ/ledger-live/pull/6752) [`434262d`](https://github.com/LedgerHQ/ledger-live/commit/434262db4560f62113002fbb607bd1a8da0712b4) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix, keep swap history for token when deep cleaning
-
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.12.1-nightly.3
-  - @ledgerhq/domain-service@1.1.21-nightly.2
-  - @ledgerhq/evm-tools@1.0.19-nightly.0
-
-## 1.1.1-nightly.2
-
-### Patch Changes
-
-- [#6663](https://github.com/LedgerHQ/ledger-live/pull/6663) [`de5de2d`](https://github.com/LedgerHQ/ledger-live/commit/de5de2d273ed6966c82bde2c3a95b98ba594204f) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Reorganize coin serializaiton code
-
-- Updated dependencies [[`de5de2d`](https://github.com/LedgerHQ/ledger-live/commit/de5de2d273ed6966c82bde2c3a95b98ba594204f), [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7)]:
-  - @ledgerhq/coin-framework@0.12.1-nightly.2
-  - @ledgerhq/domain-service@1.1.21-nightly.1
-  - @ledgerhq/evm-tools@1.0.19-nightly.0
-
-## 1.1.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`fda6a81`](https://github.com/LedgerHQ/ledger-live/commit/fda6a814544b3a1debceab22f69485911e76cadc)]:
-  - @ledgerhq/cryptoassets@12.1.1-nightly.0
-  - @ledgerhq/coin-framework@0.12.1-nightly.1
-  - @ledgerhq/evm-tools@1.0.19-nightly.0
-
-## 1.1.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13)]:
-  - @ledgerhq/coin-framework@0.12.1-nightly.0
-  - @ledgerhq/domain-service@1.1.21-nightly.0
-  - @ledgerhq/evm-tools@1.0.18
+- Updated dependencies [[`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`45a53bc`](https://github.com/LedgerHQ/ledger-live/commit/45a53bc227ab2f42b1e839aacbb8c251d0a4a5d2), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a), [`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945)]:
+  - @ledgerhq/coin-framework@0.13.0-next.0
+  - @ledgerhq/live-env@2.0.2-next.0
+  - @ledgerhq/cryptoassets@13.0.0-next.0
+  - @ledgerhq/live-network@1.2.2-next.0
+  - @ledgerhq/live-promise@0.0.4-next.0
+  - @ledgerhq/domain-service@1.1.21-next.0
+  - @ledgerhq/evm-tools@1.0.19-next.0
 
 ## 1.1.0
 

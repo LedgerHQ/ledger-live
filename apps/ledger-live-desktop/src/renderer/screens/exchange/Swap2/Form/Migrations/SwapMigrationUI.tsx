@@ -8,6 +8,8 @@ import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import ButtonBase from "~/renderer/components/Button";
 import SwapFormRates from "../FormRates";
 import { SwapWebManifestIDs } from "../SwapWebView";
+import LoadingState from "../Rates/LoadingState";
+import SwapFormSummary from "../FormSummary";
 
 const Button = styled(ButtonBase)`
   width: 100%;
@@ -40,6 +42,12 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
   } = props;
   const { t } = useTranslation();
 
+  const nativeLoadingUI = pageState === "loading" ? <LoadingState /> : null;
+  const nativeNetworkFeesUI =
+    pageState === "loaded" ? (
+      <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
+    ) : null;
+
   const nativeQuotesUI =
     pageState === "loaded" ? (
       <SwapFormRates
@@ -62,6 +70,8 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
    */
   const allNativeUI = (
     <>
+      {nativeLoadingUI}
+      {nativeNetworkFeesUI}
       {nativeQuotesUI}
       {nativeExchangeButtonUI}
     </>
@@ -82,6 +92,8 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
        */
       return (
         <>
+          {nativeLoadingUI}
+          {nativeNetworkFeesUI}
           {nativeQuotesUI}
           {liveApp}
         </>
@@ -93,7 +105,12 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
        *  - Exchange Button
        *  - Quotes UI
        */
-      return <>{liveApp}</>;
+      return (
+        <>
+          {nativeNetworkFeesUI}
+          {liveApp}
+        </>
+      );
 
     /**
      * Fall back to show all native UI

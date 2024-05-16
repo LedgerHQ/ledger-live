@@ -1,34 +1,44 @@
 # @ledgerhq/types-live
 
-## 6.47.0-nightly.4
+## 6.47.0
 
 ### Minor Changes
 
-- [#6796](https://github.com/LedgerHQ/ledger-live/pull/6796) [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c) Thanks [@gre](https://github.com/gre)! - Drop technical Account#name and Account#starred fields and replace it with a new architecture: a wallet store that contains all user's data.
+- [#6646](https://github.com/LedgerHQ/ledger-live/pull/6646) [`b0ebe3a`](https://github.com/LedgerHQ/ledger-live/commit/b0ebe3acea586afbdeddb5877c15bcfc28f43016) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added europa support to post onboarding
 
-## 6.47.0-nightly.3
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Upading test snapshots & adding types for new testnet currencies and their feature flags
 
-### Minor Changes
-
-- [#6741](https://github.com/LedgerHQ/ledger-live/pull/6741) [`a115d6c`](https://github.com/LedgerHQ/ledger-live/commit/a115d6cd5dcbcc753d02dedb80f5eb1693d1a249) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - Automatically dismiss the PostOnboarding EntryPoint after seven days
-
-## 6.46.1-nightly.2
+- [#6646](https://github.com/LedgerHQ/ledger-live/pull/6646) [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - postonboarding - added europa support, updated copy, added recover entry point
 
 ### Patch Changes
 
-- [#6757](https://github.com/LedgerHQ/ledger-live/pull/6757) [`f17a3cb`](https://github.com/LedgerHQ/ledger-live/commit/f17a3cbc16abf7fadf686025a5ca56ec1a1e7bb6) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy sell shortcut feature flag to toggle intro screen flow on buy sell ui live app.
-
-## 6.46.1-nightly.1
-
-### Patch Changes
-
-- [#6583](https://github.com/LedgerHQ/ledger-live/pull/6583) [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Expose Polkadot crafting functions to external components
-
-## 6.46.1-nightly.0
-
-### Patch Changes
+- [#6686](https://github.com/LedgerHQ/ledger-live/pull/6686) [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy-sell-ui feature flag to enable progressive roll out of new manifest ID.
 
 - [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new storyly instance id
+
+- [#6517](https://github.com/LedgerHQ/ledger-live/pull/6517) [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update MarketPerformers Endpoint
+
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Account Bridge `preload` signature which was wrong
+
+## 6.47.0-next.0
+
+### Minor Changes
+
+- [#6646](https://github.com/LedgerHQ/ledger-live/pull/6646) [`b0ebe3a`](https://github.com/LedgerHQ/ledger-live/commit/b0ebe3acea586afbdeddb5877c15bcfc28f43016) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added europa support to post onboarding
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Upading test snapshots & adding types for new testnet currencies and their feature flags
+
+- [#6646](https://github.com/LedgerHQ/ledger-live/pull/6646) [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - postonboarding - added europa support, updated copy, added recover entry point
+
+### Patch Changes
+
+- [#6686](https://github.com/LedgerHQ/ledger-live/pull/6686) [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy-sell-ui feature flag to enable progressive roll out of new manifest ID.
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new storyly instance id
+
+- [#6517](https://github.com/LedgerHQ/ledger-live/pull/6517) [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update MarketPerformers Endpoint
+
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Account Bridge `preload` signature which was wrong
 
 ## 6.46.0
 

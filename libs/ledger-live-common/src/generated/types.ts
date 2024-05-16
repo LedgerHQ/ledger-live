@@ -54,10 +54,6 @@ import { Transaction as polkadotTransaction } from "@ledgerhq/coin-polkadot/type
 import { TransactionRaw as polkadotTransactionRaw } from "@ledgerhq/coin-polkadot/types/index";
 import { TransactionStatus as polkadotTransactionStatus } from "@ledgerhq/coin-polkadot/types/index";
 import { TransactionStatusRaw as polkadotTransactionStatusRaw } from "@ledgerhq/coin-polkadot/types/index";
-import { Transaction as rippleTransaction } from "../families/ripple/types";
-import { TransactionRaw as rippleTransactionRaw } from "../families/ripple/types";
-import { TransactionStatus as rippleTransactionStatus } from "../families/ripple/types";
-import { TransactionStatusRaw as rippleTransactionStatusRaw } from "../families/ripple/types";
 import { Transaction as solanaTransaction } from "@ledgerhq/coin-solana/types";
 import { TransactionRaw as solanaTransactionRaw } from "@ledgerhq/coin-solana/types";
 import { TransactionStatus as solanaTransactionStatus } from "@ledgerhq/coin-solana/types";
@@ -82,6 +78,10 @@ import { Transaction as vechainTransaction } from "../families/vechain/types";
 import { TransactionRaw as vechainTransactionRaw } from "../families/vechain/types";
 import { TransactionStatus as vechainTransactionStatus } from "../families/vechain/types";
 import { TransactionStatusRaw as vechainTransactionStatusRaw } from "../families/vechain/types";
+import { Transaction as xrpTransaction } from "@ledgerhq/coin-xrp/types";
+import { TransactionRaw as xrpTransactionRaw } from "@ledgerhq/coin-xrp/types";
+import { TransactionStatus as xrpTransactionStatus } from "@ledgerhq/coin-xrp/types";
+import { TransactionStatusRaw as xrpTransactionStatusRaw } from "@ledgerhq/coin-xrp/types";
 
 export type Transaction =
   | algorandTransaction
@@ -98,13 +98,13 @@ export type Transaction =
   | internet_computerTransaction
   | nearTransaction
   | polkadotTransaction
-  | rippleTransaction
   | solanaTransaction
   | stacksTransaction
   | stellarTransaction
   | tezosTransaction
   | tronTransaction
-  | vechainTransaction;
+  | vechainTransaction
+  | xrpTransaction;
 
 export type TransactionRaw =
   | algorandTransactionRaw
@@ -121,13 +121,13 @@ export type TransactionRaw =
   | internet_computerTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
-  | rippleTransactionRaw
   | solanaTransactionRaw
   | stacksTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
   | tronTransactionRaw
-  | vechainTransactionRaw;
+  | vechainTransactionRaw
+  | xrpTransactionRaw;
 
 export type TransactionStatus =
   | algorandTransactionStatus
@@ -144,13 +144,13 @@ export type TransactionStatus =
   | internet_computerTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
-  | rippleTransactionStatus
   | solanaTransactionStatus
   | stacksTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
   | tronTransactionStatus
-  | vechainTransactionStatus;
+  | vechainTransactionStatus
+  | xrpTransactionStatus;
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
@@ -167,10 +167,10 @@ export type TransactionStatusRaw =
   | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
-  | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
   | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
   | tronTransactionStatusRaw
-  | vechainTransactionStatusRaw;
+  | vechainTransactionStatusRaw
+  | xrpTransactionStatusRaw;

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "0.4.1-nightly.8",
+  "version": "0.5.0",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",
@@ -97,6 +97,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "coverage": "jest --coverage=true && mv coverage/coverage-final.json coverage/coverage-bitcoin.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",

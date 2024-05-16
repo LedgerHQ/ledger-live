@@ -1,25 +1,18 @@
 # @ledgerhq/hw-app-vet
 
-## 0.1.8-nightly.2
+## 0.1.8
 
 ### Patch Changes
 
-- Updated dependencies [[`4499990`](https://github.com/LedgerHQ/ledger-live/commit/449999066c58ae5df371dfb92a7230f9b5e90a60)]:
-  - @ledgerhq/cryptoassets@12.1.1-nightly.2
+- Updated dependencies [[`45a53bc`](https://github.com/LedgerHQ/ledger-live/commit/45a53bc227ab2f42b1e839aacbb8c251d0a4a5d2), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945)]:
+  - @ledgerhq/cryptoassets@13.0.0
 
-## 0.1.8-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584)]:
-  - @ledgerhq/cryptoassets@12.1.1-nightly.1
-
-## 0.1.8-nightly.0
+## 0.1.8-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`fda6a81`](https://github.com/LedgerHQ/ledger-live/commit/fda6a814544b3a1debceab22f69485911e76cadc)]:
-  - @ledgerhq/cryptoassets@12.1.1-nightly.0
+- Updated dependencies [[`45a53bc`](https://github.com/LedgerHQ/ledger-live/commit/45a53bc227ab2f42b1e839aacbb8c251d0a4a5d2), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945)]:
+  - @ledgerhq/cryptoassets@13.0.0-next.0
 
 ## 0.1.7
 
