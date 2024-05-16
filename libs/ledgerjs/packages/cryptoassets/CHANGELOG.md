@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.1.0-nightly.0
+
+### Minor Changes
+
+- [#6822](https://github.com/LedgerHQ/ledger-live/pull/6822) [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `ripple` currency's family to `xrp`
+
 ## 13.0.0
 
 ### Major Changes

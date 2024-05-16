@@ -1,5 +1,14 @@
 # @ledgerhq/coin-framework
 
+## 0.13.1-nightly.0
+
+### Patch Changes
+
+- [#6851](https://github.com/LedgerHQ/ledger-live/pull/6851) [`b9f1f71`](https://github.com/LedgerHQ/ledger-live/commit/b9f1f715355752d8c57c24ecd6a6d166b80f689d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix generate Accounts+NFTs in Debug
+
+- Updated dependencies [[`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52)]:
+  - @ledgerhq/cryptoassets@13.1.0-nightly.0
+
 ## 0.13.0
 
 ### Minor Changes

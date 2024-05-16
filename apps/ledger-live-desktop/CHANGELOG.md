@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.81.0-nightly.0
+
+### Minor Changes
+
+- [#6831](https://github.com/LedgerHQ/ledger-live/pull/6831) [`5fe062e`](https://github.com/LedgerHQ/ledger-live/commit/5fe062e79014634e3ed46321ffbe1100d56fae96) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9328): migrate more native swap UI including loading state and form summary (target account and network fee)
+
+- [#6822](https://github.com/LedgerHQ/ledger-live/pull/6822) [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Changing "ripple" file paths to "xrp"
+
+### Patch Changes
+
+- Updated dependencies [[`b9f1f71`](https://github.com/LedgerHQ/ledger-live/commit/b9f1f715355752d8c57c24ecd6a6d166b80f689d), [`bbb1e8d`](https://github.com/LedgerHQ/ledger-live/commit/bbb1e8d0cadfa627b4a955a86bbf66e3b4b4957a), [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52)]:
+  - @ledgerhq/coin-framework@0.13.1-nightly.0
+  - @ledgerhq/live-common@34.3.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.5.1-nightly.0
+  - @ledgerhq/coin-evm@2.0.1-nightly.0
+  - @ledgerhq/live-countervalues@0.1.6-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.6-nightly.0
+  - @ledgerhq/live-nft@0.3.3-nightly.0
+  - @ledgerhq/live-nft-react@0.3.3-nightly.0
+  - @ledgerhq/live-wallet@0.1.1-nightly.3
+
 ## 2.80.0
 
 ### Minor Changes

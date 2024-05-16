@@ -1,5 +1,32 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.0
+
+### Minor Changes
+
+- [#6822](https://github.com/LedgerHQ/ledger-live/pull/6822) [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove ripple coin logic and make use of `coin-xrp` instead
+
+### Patch Changes
+
+- [#6735](https://github.com/LedgerHQ/ledger-live/pull/6735) [`bbb1e8d`](https://github.com/LedgerHQ/ledger-live/commit/bbb1e8d0cadfa627b4a955a86bbf66e3b4b4957a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos code to avoid using deprecated endpoints
+
+- Updated dependencies [[`b9f1f71`](https://github.com/LedgerHQ/ledger-live/commit/b9f1f715355752d8c57c24ecd6a6d166b80f689d), [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52), [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52)]:
+  - @ledgerhq/coin-framework@0.13.1-nightly.0
+  - @ledgerhq/cryptoassets@13.1.0-nightly.0
+  - @ledgerhq/coin-xrp@0.2.0-nightly.0
+  - @ledgerhq/coin-algorand@0.4.3-nightly.0
+  - @ledgerhq/coin-bitcoin@0.5.1-nightly.0
+  - @ledgerhq/coin-evm@2.0.1-nightly.0
+  - @ledgerhq/coin-near@0.4.1-nightly.0
+  - @ledgerhq/coin-polkadot@0.6.3-nightly.0
+  - @ledgerhq/coin-solana@0.7.0-nightly.5
+  - @ledgerhq/live-countervalues@0.1.6-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.6-nightly.0
+  - @ledgerhq/live-nft@0.3.3-nightly.0
+  - @ledgerhq/live-wallet@0.1.1-nightly.3
+  - @ledgerhq/hw-app-eth@6.36.2-nightly.0
+  - @ledgerhq/hw-app-vet@0.1.9-nightly.0
+
 ## 34.2.0
 
 ### Minor Changes
