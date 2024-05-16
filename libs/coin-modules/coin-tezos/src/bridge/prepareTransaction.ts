@@ -7,7 +7,8 @@ import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { TezosAccount, Transaction } from "../types";
+import { TezosAccount, Transaction, TransactionStatus } from "../types";
+import { AccountBridge } from "@ledgerhq/types-live";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
@@ -26,10 +27,11 @@ export const validateRecipient = (currency: CryptoCurrency, recipient: string) =
   return Promise.resolve({ recipientError, recipientWarning });
 };
 
-const prepareTransaction = async (
-  account: TezosAccount,
-  transaction: Transaction,
-): Promise<Transaction> => {
+export const prepareTransaction: AccountBridge<
+  Transaction,
+  TransactionStatus,
+  TezosAccount
+>["prepareTransaction"] = async (account, transaction) => {
   const { tezosResources } = account;
   if (!tezosResources) throw new Error("tezosResources is missing");
 

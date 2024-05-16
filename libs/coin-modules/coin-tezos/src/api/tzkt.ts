@@ -1,7 +1,8 @@
 // @flow
-import network from "@ledgerhq/live-network/network";
 import URL from "url";
+import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
+import network from "@ledgerhq/live-network/network";
 
 type APIAccount =
   | {
@@ -107,6 +108,27 @@ const api = {
     });
     return data;
   },
+};
+
+export const fetchAllTransactions = async (
+  address: string,
+  lastId?: number,
+): Promise<APIOperation[]> => {
+  let ops: APIOperation[] = [];
+  let maxIteration = getEnv("TEZOS_MAX_TX_QUERIES");
+  do {
+    const newOps = await api.getAccountOperations(address, { lastId, sort: 0 });
+    if (newOps.length === 0) return ops;
+    ops = ops.concat(newOps);
+    const last = ops[ops.length - 1];
+    if (!last) return ops;
+    lastId = last.id;
+    if (!lastId) {
+      log("tezos", "id missing!");
+      return ops;
+    }
+  } while (--maxIteration);
+  return ops;
 };
 
 export default api;
