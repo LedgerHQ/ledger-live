@@ -1385,7 +1385,7 @@
         "label" : "30分"
       },
       "devicePairing" : {
-        "title" : "秘密のリカバリーフレーズを入手しましたか？",
+        "title" : "シークレットリカバリーフレーズを入手しましたか？",
         "label" : "デバイスのペアリング",
         "subTitle" : "Nanoを接続する",
         "desc" : "デバイスをセットアップ済みですか？アプリと接続しましょう！"
@@ -1403,7 +1403,7 @@
       },
       "restoreDevice" : {
         "label" : "デバイスの復元",
-        "title" : "秘密のリカバリーフレーズで復元する",
+        "title" : "シークレットリカバリーフレーズで復元する",
         "subTitle" : "秘密のリカバリフレーズにアクセスする必要があります。",
         "desc" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
       },
@@ -1772,7 +1772,7 @@
           },
           "2" : {
             "label" : "Bluetoothのペアリングに問題がある場合は、以下の記事を参照してください。",
-            "link" : "接続の問題を解決します。"
+            "link" : "接続の問題を解決する。"
           }
         }
       },
@@ -1882,7 +1882,7 @@
         "title" : "Ledgerユーザーの暗号資産が保管される場所は？",
         "answers" : {
           "correct" : "ブロックチェーン",
-          "wrong" : "Ledger Nanoについて"
+          "wrong" : "Ledger Nano本体"
         },
         "modal" : {
           "text" : "あなたの暗号資産は、常にブロックチェーンに保存されています。ハードウェアウォレットに保存されているのは、暗号資産へのアクセスを可能にする秘密鍵だけです。",
@@ -2128,8 +2128,8 @@
       "continueOnDevice" : "{{productName}}にPINを設定します。"
     },
     "seedStep" : {
-      "title" : "秘密のリカバリーフレーズ",
-      "doneTitle" : "秘密のリカバリーフレーズ確認済み",
+      "title" : "シークレットリカバリーフレーズ",
+      "doneTitle" : "シークレットリカバリーフレーズ確認済み",
       "description" : "リカバリーフレーズは、秘密鍵をバックアップする24単語からなる秘密のリストです。{{productName}}は唯一無二のリカバリフレーズを生成します。Ledgerはそのコピーを保持しません",
       "choiceRestoreDirectOrRecover" : "Placeholder－直接復元、またはRecoverの使用を選択",
       "recoverSeed" : "Placeholder：Recover",
@@ -2148,7 +2148,7 @@
       "newSeedContinueOnDevice" : "{{productName}}でこれを行う",
       "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
       "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択します。",
-      "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
+      "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズを使用して復元する",
       "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。 ",
       "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
       "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をされている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップ復元プロセスを開始します。"
@@ -3130,9 +3130,6 @@
         "title" : "スワップへようこそ",
         "whatIsSwap" : "スワップとは？",
         "disclaimer" : "Ledgerデバイスから暗号資産を直接取引できます。このサービスは、米国を含む一部の国ではご利用いただけません。"
-      },
-      "main" : {
-        "header" : "スワップ"
       },
       "notAvailable" : {
         "title" : "サービスが一時的に利用できない状態であるか、お住まいの国では利用できません。"
@@ -6134,6 +6131,7 @@
       "subtitle" : "Ledgerと完全に統合されたWeb3を探索する",
       "section" : {
         "recentlyUsed" : "最近使用されたもの",
+        "locallyLoaded" : "ローカルに読み込み",
         "categories" : "カテゴリー",
         "clearAll" : "全てクリア"
       },
@@ -6303,7 +6301,7 @@
     "designedForStax" : {
       "title" : "<1>Ledger</1><2> Stax</2><0>用に設計</0>",
       "drawer" : {
-        "description" : "このNFTには、Ledger Staxの E Ink Screen用に特別に設計されたNFTの追加の画像が含まれています。\n\nこの画像は、このNFTをロック画面として設定するときに使用されます。",
+        "description" : "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E Ink Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
         "cta" : "了解"
       }
     },
@@ -6499,7 +6497,7 @@
       "status" : {
         "new" : {
           "title" : "新商品",
-          "desc" : "秘密のリカバリーフレーズなしでウォレットへのアクセスを復元します。",
+          "desc" : "シークレットリカバリーフレーズなしでウォレットへのアクセスを復元します。",
           "actions" : {
             "learnMore" : "Ledger Recoverの詳細を確認",
             "alreadySubscribed" : "すでにご登録済みですか？<LinkAccount>サブスクリプションを見る</LinkAccount>"
