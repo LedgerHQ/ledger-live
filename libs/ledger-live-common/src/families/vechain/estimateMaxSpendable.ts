@@ -1,14 +1,12 @@
 import BigNumber from "bignumber.js";
-import { calculateGasFees } from "../utils/transaction-utils";
-import type { Transaction } from "../types";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
+import { calculateGasFees } from "./utils/transaction-utils";
+import type { Transaction } from "./types";
 
-export const estimateMaxSpendable = async (inputs: {
-  account: AccountLike;
-  transaction: Transaction;
+export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
+  account,
+  transaction,
 }): Promise<BigNumber> => {
-  const { account, transaction } = inputs;
-
   if (account.type === "Account" || !transaction) {
     return account.balance;
   }

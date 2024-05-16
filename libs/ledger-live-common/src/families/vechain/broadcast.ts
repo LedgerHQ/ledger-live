@@ -1,18 +1,18 @@
-import type { Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Transaction as VeChainThorTransaction } from "thor-devkit";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "../../operation";
-import { Transaction } from "thor-devkit";
+import { Transaction } from "./types";
 import { submit } from "./api";
 
 /**
  * Broadcast the signed transaction
- * @param {signature: string, operation: string} signedOperation
  */
-const broadcast = async ({
+export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation: { signature, operation, rawData },
-}: {
-  signedOperation: SignedOperation;
-}): Promise<Operation> => {
-  const transaction = new Transaction((rawData as unknown as Transaction).body);
+}) => {
+  const transaction = new VeChainThorTransaction(
+    (rawData as unknown as VeChainThorTransaction).body,
+  );
   transaction.signature = Buffer.from(signature, "hex");
   const hash = await submit(transaction);
 
