@@ -7,6 +7,7 @@ import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Transaction, StatusErrorMap, NearAccount, TransactionStatus } from "./types";
@@ -31,38 +32,46 @@ import {
 } from "./errors";
 import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 
-const getTransactionStatus = async (a: NearAccount, t: Transaction): Promise<TransactionStatus> => {
-  if (t.mode === "send") {
-    return await getSendTransactionStatus(a, t);
+const getTransactionStatus: AccountBridge<
+  Transaction,
+  TransactionStatus,
+  NearAccount
+>["getTransactionStatus"] = async (account, transaction) => {
+  if (transaction.mode === "send") {
+    return await getSendTransactionStatus(account, transaction);
   }
 
   const errors: StatusErrorMap = {};
   const warnings: StatusErrorMap = {};
-  const useAllAmount = !!t.useAllAmount;
+  const useAllAmount = !!transaction.useAllAmount;
 
-  if (!t.fees) {
+  if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
   }
 
-  const estimatedFees = t.fees || new BigNumber(0);
+  const estimatedFees = transaction.fees || new BigNumber(0);
 
-  const maxAmount = getMaxAmount(a, t, estimatedFees);
-  const maxAmountWithFees = getMaxAmount(a, t);
-  const spendableBalanceWithFees = getMaxAmount(a, { ...t, mode: "stake" });
+  const maxAmount = getMaxAmount(account, transaction, estimatedFees);
+  const maxAmountWithFees = getMaxAmount(account, transaction);
+  const spendableBalanceWithFees = getMaxAmount(account, { ...transaction, mode: "stake" });
   const stakingThreshold = getYoctoThreshold();
 
-  const totalSpent = getTotalSpent(a, t, estimatedFees);
-  const amount = useAllAmount ? maxAmount : new BigNumber(t.amount);
+  const totalSpent = getTotalSpent(account, transaction, estimatedFees);
+  const amount = useAllAmount ? maxAmount : new BigNumber(transaction.amount);
 
   const isStakeAndNotEnoughBalance =
-    t.mode === "stake" && (totalSpent.gt(maxAmountWithFees) || maxAmountWithFees.lt(estimatedFees));
+    transaction.mode === "stake" &&
+    (totalSpent.gt(maxAmountWithFees) || maxAmountWithFees.lt(estimatedFees));
   const isUnstakeOrWithdrawAndNotEnoughBalance =
-    ["unstake", "withdraw"].includes(t.mode) &&
+    ["unstake", "withdraw"].includes(transaction.mode) &&
     (totalSpent.gt(spendableBalanceWithFees) || spendableBalanceWithFees.lt(estimatedFees));
 
   if (isStakeAndNotEnoughBalance || isUnstakeOrWithdrawAndNotEnoughBalance) {
     errors.amount = new NotEnoughBalance();
-  } else if (["stake", "unstake", "withdraw"].includes(t.mode) && amount.lt(stakingThreshold)) {
+  } else if (
+    ["stake", "unstake", "withdraw"].includes(transaction.mode) &&
+    amount.lt(stakingThreshold)
+  ) {
     const currency = getCryptoCurrencyById("near");
     const formattedStakingThreshold = formatCurrencyUnit(
       currency.units[0],
@@ -74,34 +83,34 @@ const getTransactionStatus = async (a: NearAccount, t: Transaction): Promise<Tra
     errors.amount = new NearStakingThresholdNotMet(undefined, {
       threshold: formattedStakingThreshold,
     });
-  } else if (t.mode === "unstake" && amount.gt(maxAmount)) {
+  } else if (transaction.mode === "unstake" && amount.gt(maxAmount)) {
     errors.amount = new NearNotEnoughStaked();
-  } else if (t.mode === "withdraw" && amount.gt(maxAmount)) {
+  } else if (transaction.mode === "withdraw" && amount.gt(maxAmount)) {
     errors.amount = new NearNotEnoughAvailable();
-  } else if (amount.lte(0) && !t.useAllAmount) {
+  } else if (amount.lte(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
   }
 
-  if (t.mode === "stake" && !errors.amount && t.useAllAmount) {
+  if (transaction.mode === "stake" && !errors.amount && transaction.useAllAmount) {
     warnings.amount = new NearUseAllAmountStakeWarning();
   }
 
-  return Promise.resolve({
+  return {
     errors,
     warnings,
     estimatedFees,
     amount,
     totalSpent,
-  });
+  };
 };
 
 const getSendTransactionStatus = async (
-  a: NearAccount,
-  t: Transaction,
+  account: NearAccount,
+  transaction: Transaction,
 ): Promise<TransactionStatus> => {
   const errors: StatusErrorMap = {};
   const warnings: StatusErrorMap = {};
-  const useAllAmount = !!t.useAllAmount;
+  const useAllAmount = !!transaction.useAllAmount;
 
   const { storageCost } = getCurrentNearPreloadData();
 
@@ -116,19 +125,19 @@ const getSendTransactionStatus = async (
   );
 
   let recipientIsNewAccount;
-  if (!t.recipient) {
+  if (!transaction.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (!isValidAddress(t.recipient)) {
+  } else if (!isValidAddress(transaction.recipient)) {
     errors.recipient = new InvalidAddress("", {
-      currencyName: a.currency.name,
+      currencyName: account.currency.name,
     });
   } else {
-    const accountDetails = await fetchAccountDetails(t.recipient);
+    const accountDetails = await fetchAccountDetails(transaction.recipient);
 
     if (!accountDetails) {
       recipientIsNewAccount = true;
 
-      if (isImplicitAccount(t.recipient)) {
+      if (isImplicitAccount(transaction.recipient)) {
         warnings.recipient = new NearNewAccountWarning(undefined, {
           formattedNewAccountStorageCost,
         });
@@ -138,25 +147,25 @@ const getSendTransactionStatus = async (
     }
   }
 
-  if (a.freshAddress === t.recipient) {
+  if (account.freshAddress === transaction.recipient) {
     warnings.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
-  if (!t.fees) {
+  if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
   }
 
-  const estimatedFees = t.fees || new BigNumber(0);
+  const estimatedFees = transaction.fees || new BigNumber(0);
 
-  const totalSpent = getTotalSpent(a, t, estimatedFees);
-  const maxAmount = getMaxAmount(a, t, estimatedFees);
-  const maxAmountWithFees = getMaxAmount(a, t);
+  const totalSpent = getTotalSpent(account, transaction, estimatedFees);
+  const maxAmount = getMaxAmount(account, transaction, estimatedFees);
+  const maxAmountWithFees = getMaxAmount(account, transaction);
 
-  const amount = useAllAmount ? maxAmount : new BigNumber(t.amount);
+  const amount = useAllAmount ? maxAmount : new BigNumber(transaction.amount);
 
   if (totalSpent.gt(maxAmountWithFees) || maxAmountWithFees.lt(estimatedFees)) {
     errors.amount = new NotEnoughBalance();
-  } else if (amount.lte(0) && !t.useAllAmount) {
+  } else if (amount.lte(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
   } else if (recipientIsNewAccount && amount.lt(newAccountStorageCost)) {
     errors.amount = new NearActivationFeeNotCovered(undefined, {
@@ -164,21 +173,17 @@ const getSendTransactionStatus = async (
     });
   }
 
-  if (
-    a.nearResources?.stakingPositions &&
-    a.nearResources.stakingPositions.length > 0 &&
-    useAllAmount
-  ) {
+  if (account.nearResources?.stakingPositions.length > 0 && useAllAmount) {
     warnings.amount = new NearRecommendUnstake();
   }
 
-  return Promise.resolve({
+  return {
     errors,
     warnings,
     estimatedFees,
     amount,
     totalSpent,
-  });
+  };
 };
 
 export default getTransactionStatus;

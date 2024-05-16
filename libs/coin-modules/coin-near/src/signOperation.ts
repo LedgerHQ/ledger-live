@@ -2,66 +2,18 @@ import * as nearAPI from "near-api-js";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Transaction } from "./types";
-import type {
-  Operation,
-  Account,
-  SignOperationFnSignature,
-  DeviceId,
-  SignOperationEvent,
-  OperationType,
-} from "@ledgerhq/types-live";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { buildTransaction } from "./js-buildTransaction";
-import { NearSigner } from "./signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-
-const buildOptimisticOperation = (
-  account: Account,
-  transaction: Transaction,
-  fee: BigNumber,
-): Operation => {
-  let type: OperationType;
-  let value = new BigNumber(transaction.amount);
-
-  switch (transaction.mode) {
-    case "stake":
-      type = "STAKE";
-      break;
-    case "unstake":
-      type = "UNSTAKE";
-      break;
-    case "withdraw":
-      type = "WITHDRAW_UNSTAKED";
-      break;
-    default:
-      value = value.plus(fee);
-      type = "OUT";
-  }
-
-  const operation: Operation = {
-    id: encodeOperationId(account.id, "", type),
-    hash: "",
-    type,
-    value,
-    fee,
-    blockHash: null,
-    blockHeight: null,
-    senders: [account.freshAddress],
-    recipients: [transaction.recipient].filter(Boolean),
-    accountId: account.id,
-    date: new Date(),
-    extra: {},
-  };
-
-  return operation;
-};
+import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { buildTransaction } from "./buildTransaction";
+import type { Transaction } from "./types";
+import { NearSigner } from "./signer";
 
 /**
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (signerContext: SignerContext<NearSigner>): SignOperationFnSignature<Transaction> =>
+  (signerContext: SignerContext<NearSigner>): AccountBridge<Transaction>["signOperation"] =>
   ({
     account,
     transaction,

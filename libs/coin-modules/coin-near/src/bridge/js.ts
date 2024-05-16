@@ -6,14 +6,15 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { Transaction } from "../types";
+import type { NearAccount, Transaction, TransactionStatus } from "../types";
 import resolver from "../hw-getAddress";
-import { sync, getAccountShape } from "../js-synchronisation";
-import { createTransaction, prepareTransaction } from "../js-transaction";
-import getTransactionStatus from "../js-getTransactionStatus";
-import { buildSignOperation } from "../js-signOperation";
-import broadcast from "../js-broadcast";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
+import { sync, getAccountShape } from "../synchronisation";
+import { prepareTransaction } from "../prepareTransaction";
+import { createTransaction } from "../createTransaction";
+import getTransactionStatus from "../getTransactionStatus";
+import { buildSignOperation } from "../signOperation";
+import { broadcast } from "../broadcast";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { preload, hydrate, getPreloadStrategy } from "../preload";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import { NearSigner } from "../signer";
@@ -37,7 +38,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): C
 
 export function buildAccountBridge(
   signerContext: SignerContext<NearSigner>,
-): AccountBridge<Transaction> {
+): AccountBridge<Transaction, TransactionStatus, NearAccount> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
