@@ -39,13 +39,12 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
 
     const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Polkadot(transport));
     const getAddress = resolver(signerContext);
-    console.log("getAddress created");
+
     const { address } = await getAddress("", {
       path: "44'/354'/0'/0'/0'",
       currency: polkadot,
       derivationMode: "polkadotbip44",
     });
-    console.log("address created");
 
     const { accountBridge, currencyBridge } = createBridges(signerContext);
 

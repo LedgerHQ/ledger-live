@@ -6,7 +6,7 @@ import { killZombienet } from "./zombienet";
 global.console = require("console");
 jest.setTimeout(100_000);
 
-export const defaultNanoApp = { firmware: "2.2.3" as const, version: "26.0.0" as const };
+export const defaultNanoApp = { firmware: "2.2.3" as const, version: "25.10100.0" as const };
 
 describe("Polkadot Deterministic Tester", () => {
   it("Basic scenario", async () => {

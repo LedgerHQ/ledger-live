@@ -256,14 +256,6 @@ export default class Transport {
     statusList: Array<number> = [StatusCodes.OK],
     { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> => {
-    console.log({
-      cla,
-      ins,
-      p1,
-      p2,
-      data: data.toString(),
-      statusList: JSON.stringify(statusList, null, 3),
-    });
     const tracer = this.tracer.withUpdatedContext({ function: "send" });
 
     if (data.length >= 256) {

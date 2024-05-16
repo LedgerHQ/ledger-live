@@ -10,7 +10,7 @@ export const makeAccount = (
   currency: CryptoCurrency,
   subAccounts: SubAccount[] = [],
 ): PolkadotAccount => {
-  const id = `js:2:${currency.id}:${address}`;
+  const id = `js:2:${currency.id}:${address}:polkadotbip44`;
   const { derivationMode, xpubOrAddress } = decodeAccountId(id);
   const scheme = getDerivationScheme({
     derivationMode,
