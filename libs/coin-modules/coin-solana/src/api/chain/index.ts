@@ -92,9 +92,9 @@ export function getChainAPI(
 
   const connection = () => {
     return new Connection(config.endpoint, {
+      ...(fetchMiddleware ? { fetchMiddleware } : {}),
       commitment: "finalized",
-      fetchMiddleware,
-      confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT"),
+      confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
     });
   };
 

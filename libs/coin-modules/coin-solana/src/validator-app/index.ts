@@ -21,9 +21,9 @@ export type ValidatorsAppValidator = {
   commission: number;
   totalScore: number;
   voteAccount: string;
-  name?: string;
-  avatarUrl?: string;
-  wwwUrl?: string;
+  name?: string | undefined;
+  avatarUrl?: string | undefined;
+  wwwUrl?: string | undefined;
 };
 
 const URLS = {

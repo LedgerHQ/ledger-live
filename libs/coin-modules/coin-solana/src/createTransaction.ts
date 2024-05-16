@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import type { Transaction /* TransactionMode */ } from "./types";
-import { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "./types";
+import { AccountBridge } from "@ledgerhq/types-live";
 
-const createTransaction = (_: Account): Transaction => {
+export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => {
   return {
     family: "solana",
     amount: new BigNumber(0),
@@ -10,9 +10,7 @@ const createTransaction = (_: Account): Transaction => {
     recipient: "",
     model: {
       kind: "transfer",
-      uiState: {
-        memo: undefined,
-      },
+      uiState: {},
     },
   };
 };
