@@ -20,33 +20,35 @@ import {
   ElrondDelegationBelowMinimumError,
   NotEnoughEGLDForFees,
 } from "./errors";
+import { AccountBridge } from "@ledgerhq/types-live";
 
-const getTransactionStatus = async (
-  a: ElrondAccount,
-  t: Transaction,
-): Promise<TransactionStatus> => {
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  TransactionStatus,
+  ElrondAccount
+>["getTransactionStatus"] = async (account, transaction) => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  if (!t.recipient) {
+  if (!transaction.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (isSelfTransaction(a, t)) {
+  } else if (isSelfTransaction(account, transaction)) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  } else if (!isValidAddress(t.recipient)) {
+  } else if (!isValidAddress(transaction.recipient)) {
     errors.recipient = new InvalidAddress("", {
-      currencyName: a.currency.name,
+      currencyName: account.currency.name,
     });
   }
 
-  if (!t.fees) {
+  if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
   }
 
   if (
     !errors.amount &&
-    t.amount.eq(0) &&
-    !t.useAllAmount &&
-    !["unDelegate", "withdraw", "reDelegateRewards", "claimRewards"].includes(t.mode)
+    transaction.amount.eq(0) &&
+    !transaction.useAllAmount &&
+    !["unDelegate", "withdraw", "reDelegateRewards", "claimRewards"].includes(transaction.mode)
   ) {
     errors.amount = new AmountRequired();
   }
@@ -55,13 +57,16 @@ const getTransactionStatus = async (
   let totalSpentEgld = new BigNumber(0); // Amount spent in main currency (EGLD)
 
   const tokenAccount =
-    (t.subAccountId && a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId)) || null;
+    (transaction.subAccountId &&
+      account.subAccounts &&
+      account.subAccounts.find(ta => ta.id === transaction.subAccountId)) ||
+    null;
 
   if (tokenAccount) {
-    totalSpent = t.amount;
-    totalSpentEgld = t.fees || new BigNumber(0);
+    totalSpent = transaction.amount;
+    totalSpentEgld = transaction.fees || new BigNumber(0);
 
-    if (!errors.amount && t.amount.gt(tokenAccount.balance)) {
+    if (!errors.amount && transaction.amount.gt(tokenAccount.balance)) {
       errors.amount = new NotEnoughBalance();
     }
 
@@ -69,28 +74,32 @@ const getTransactionStatus = async (
       errors.amount = new ElrondDecimalsLimitReached();
     }
   } else {
-    totalSpent = totalSpentEgld = isAmountSpentFromBalance(t.mode)
-      ? t.fees?.plus(t.amount) || t.amount
-      : t.fees || new BigNumber(0);
+    totalSpent = totalSpentEgld = isAmountSpentFromBalance(transaction.mode)
+      ? transaction.fees?.plus(transaction.amount) || transaction.amount
+      : transaction.fees || new BigNumber(0);
 
-    if (t.mode === "send" && t.fees && t.amount.div(10).lt(t.fees)) {
+    if (
+      transaction.mode === "send" &&
+      transaction.fees &&
+      transaction.amount.div(10).lt(transaction.fees)
+    ) {
       warnings.feeTooHigh = new FeeTooHigh();
     }
 
     // All delegate and undelegate transactions must have an amount >= 1 EGLD
-    if (!errors.amount && t.amount.lt(MIN_DELEGATION_AMOUNT)) {
+    if (!errors.amount && transaction.amount.lt(MIN_DELEGATION_AMOUNT)) {
       const formattedAmount = formatCurrencyUnit(
-        getAccountCurrency(a).units[0],
+        getAccountCurrency(account).units[0],
         MIN_DELEGATION_AMOUNT,
         {
           showCode: true,
         },
       );
-      if (t.mode === "delegate") {
+      if (transaction.mode === "delegate") {
         errors.amount = new ElrondMinDelegatedAmountError("", {
           formattedAmount,
         });
-      } else if (t.mode === "unDelegate") {
+      } else if (transaction.mode === "unDelegate") {
         errors.amount = new ElrondMinUndelegatedAmountError("", {
           formattedAmount,
         });
@@ -98,18 +107,20 @@ const getTransactionStatus = async (
     }
 
     // When undelegating, unless undelegating all, the delegation must remain >= 1 EGLD
-    const delegationBalance = a.elrondResources.delegations.find(
-      d => d.contract === t.recipient,
+    const delegationBalance = account.elrondResources.delegations.find(
+      d => d.contract === transaction.recipient,
     )?.userActiveStake;
 
-    const delegationRemainingBalance = new BigNumber(delegationBalance || 0).minus(t.amount);
+    const delegationRemainingBalance = new BigNumber(delegationBalance || 0).minus(
+      transaction.amount,
+    );
 
     const delegationBalanceForbidden =
       delegationRemainingBalance.gt(0) && delegationRemainingBalance.lt(MIN_DELEGATION_AMOUNT);
 
-    if (!errors.amount && t.mode === "unDelegate" && delegationBalanceForbidden) {
+    if (!errors.amount && transaction.mode === "unDelegate" && delegationBalanceForbidden) {
       const formattedAmount = formatCurrencyUnit(
-        getAccountCurrency(a).units[0],
+        getAccountCurrency(account).units[0],
         MIN_DELEGATION_AMOUNT,
         {
           showCode: true,
@@ -121,20 +132,20 @@ const getTransactionStatus = async (
     }
   }
 
-  if (!errors.amount && totalSpentEgld.gt(a.spendableBalance)) {
+  if (!errors.amount && totalSpentEgld.gt(account.spendableBalance)) {
     errors.amount =
-      tokenAccount || !["delegate", "send"].includes(t.mode)
+      tokenAccount || !["delegate", "send"].includes(transaction.mode)
         ? new NotEnoughEGLDForFees()
         : new NotEnoughBalance();
   }
 
-  return Promise.resolve({
+  return {
     errors,
     warnings,
-    estimatedFees: t.fees || new BigNumber(0),
-    amount: t.amount,
+    estimatedFees: transaction.fees || new BigNumber(0),
+    amount: transaction.amount,
     totalSpent,
-  });
+  };
 };
 
 export default getTransactionStatus;

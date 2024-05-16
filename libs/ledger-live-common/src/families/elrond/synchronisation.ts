@@ -1,14 +1,15 @@
 import { TokenAccount } from "@ledgerhq/types-live";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { getAccount, getAccountDelegations, getEGLDOperations, hasESDTTokens } from "./api";
-import elrondBuildESDTTokenAccounts from "./js-buildSubAccounts";
-import { reconciliateSubAccounts } from "./js-reconciliation";
+import elrondBuildESDTTokenAccounts from "./buildSubAccounts";
+import { reconciliateSubAccounts } from "./reconciliation";
 import { computeDelegationBalance } from "./logic";
+import { ElrondAccount } from "./types";
 
-const getAccountShape: GetAccountShape = async (info, syncConfig) => {
+const getAccountShape: GetAccountShape<ElrondAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
