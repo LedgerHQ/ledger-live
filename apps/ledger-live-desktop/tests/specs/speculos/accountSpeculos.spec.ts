@@ -19,13 +19,13 @@ const currencies: Currency[] = [
   Currency.TRX,
 ];
 
-for (const [i, currency] of currencies.entries()) {
+for (const currency of currencies) {
   test.describe.parallel("Accounts @smoke", () => {
     test.use({
       userdata: "skip-onboarding",
       testName: `receiveSpeculos_${currency.uiName}`,
       speculosCurrency: specs[currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosOffset: Math.floor(Math.random() * 10000),
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
     let accountsListBeforeRemove: (string | null)[];

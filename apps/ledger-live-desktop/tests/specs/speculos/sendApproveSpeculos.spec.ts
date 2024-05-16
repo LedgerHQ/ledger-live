@@ -27,13 +27,13 @@ const transactions = [
   new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", "medium"),
 ];
 
-for (const [i, transaction] of transactions.entries()) {
+for (const transaction of transactions) {
   test.describe.parallel("Send Approve @smoke", () => {
     test.use({
       userdata: "speculos",
       testName: `receiveSpeculos_${transaction.accountToDebit.currency.uiName}`,
       speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosOffset: Math.floor(Math.random() * 10000),
     });
     test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
       const layout = new Layout(page);

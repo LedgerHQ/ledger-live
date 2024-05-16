@@ -20,13 +20,13 @@ const accounts: Account[] = [
 ];
 
 //TODO: Reactivate after getAppAndVersion resolved - Jira: LIVE-12581
-for (const [i, account] of accounts.entries()) {
+for (const account of accounts) {
   test.describe.skip("Receive @smoke", () => {
     test.use({
       userdata: "speculos",
       testName: `receiveSpeculos_${account.currency.uiName}`,
       speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosOffset: Math.floor(Math.random() * 10000),
     });
 
     test(`[${account.currency.uiName}] Receive`, async ({ page }) => {
