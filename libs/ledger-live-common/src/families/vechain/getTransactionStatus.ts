@@ -6,18 +6,17 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import type { TransactionStatus } from "./types";
-import type { Transaction } from "./types";
-import { Account } from "@ledgerhq/types-live";
-import { isValid } from "./utils/address-utils";
 import BigNumber from "bignumber.js";
-import { NotEnoughVTHO } from "./errors";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { calculateTransactionInfo } from "./utils/transaction-utils";
+import { isValid } from "./utils/address-utils";
+import type { Transaction } from "./types";
+import { NotEnoughVTHO } from "./errors";
 
-const getTransactionStatus = async (
-  account: Account,
-  transaction: Transaction,
-): Promise<TransactionStatus> => {
+export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
+  account,
+  transaction,
+) => {
   const { freshAddress, currency, subAccounts } = account;
   const { body, recipient, amount } = transaction;
   const errors: Record<string, Error> = {};
