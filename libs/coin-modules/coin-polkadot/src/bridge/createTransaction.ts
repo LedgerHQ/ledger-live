@@ -1,12 +1,13 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../types";
+import { AccountBridge } from "@ledgerhq/types-live";
 
 /**
  * Create an empty transaction
  *
  * @returns {Transaction}
  */
-export default function createTransaction(): Transaction {
+export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => {
   return {
     family: "polkadot",
     mode: "send",
@@ -19,4 +20,6 @@ export default function createTransaction(): Transaction {
     rewardDestination: null,
     numSlashingSpans: Number(0),
   };
-}
+};
+
+export default createTransaction;
