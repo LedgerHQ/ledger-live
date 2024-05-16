@@ -8,6 +8,7 @@ const containerName = "zombienet";
 
 export async function spawnZombienet() {
   console.log("Starting Zombienet...");
+
   const container = await docker.createContainer({
     Image: "coin-tester-zombienet",
     Tty: false,
@@ -39,9 +40,9 @@ export async function spawnZombienet() {
       return;
     }
 
-    console.log("Checking if zombienet is ready...");
-    await delay(5 * 1000);
-    return await checkZombienetLogs();
+    console.log("Waiting for zombienet to start...");
+    await delay(3 * 1000);
+    return checkZombienetLogs();
   }
 
   await checkZombienetLogs();
@@ -51,7 +52,7 @@ export async function killZombienet() {
   const containers = await docker.listContainers();
 
   for (const container of containers) {
-    if (container.Names.includes(`/${containerName}`)) {
+    if (container.Names.some(name => name.includes(containerName))) {
       const zombienetContainer = docker.getContainer(container.Id);
       await zombienetContainer.stop();
       await zombienetContainer.remove();

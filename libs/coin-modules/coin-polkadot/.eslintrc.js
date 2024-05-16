@@ -10,7 +10,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["src/test/**/*.tsx?"],
+      files: ["src/test/**/*.{ts,tsx}"],
       env: {
         "jest/globals": true,
       },
