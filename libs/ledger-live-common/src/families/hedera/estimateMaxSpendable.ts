@@ -1,19 +1,13 @@
 import BigNumber from "bignumber.js";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account/index";
 import type { Transaction } from "./types";
 import { getEstimatedFees } from "./utils";
 
-export default async function estimateMaxSpendable({
+export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
   parentAccount,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  transaction,
-}: {
-  account: AccountLike;
-  parentAccount?: Account | null | undefined;
-  transaction?: Transaction | null | undefined;
-}): Promise<BigNumber> {
+}) => {
   const balance = account.balance;
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -28,4 +22,4 @@ export default async function estimateMaxSpendable({
   }
 
   return Promise.resolve(maxSpendable);
-}
+};
