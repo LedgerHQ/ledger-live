@@ -4,8 +4,7 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { syncAccount } from "../../__tests__/test-helpers/bridge";
 import { defaultTronResources } from "./utils";
 import bridge from "./bridge/js";
-import { Account } from "@ledgerhq/types-live";
-import { TronAccount } from "./types";
+import { Transaction, TronAccount } from "./types";
 
 jest.setTimeout(30000);
 
@@ -15,7 +14,7 @@ const defaultSyncConfig = {
   blacklistedTokenIds: [],
 };
 
-const dummyAccount: Account = {
+const dummyAccount: TronAccount = {
   type: "Account",
   id: "",
   derivationMode: "",
@@ -48,12 +47,17 @@ const dummyAccount: Account = {
       latestDate: undefined,
     },
   },
+  tronResources: {} as any,
 };
 
 describe("Tron Accounts", () => {
   test("should always have tronResources", async () => {
-    const account = await syncAccount(bridge.accountBridge, dummyAccount, defaultSyncConfig);
+    const account = await syncAccount<Transaction, TronAccount>(
+      bridge.accountBridge,
+      dummyAccount,
+      defaultSyncConfig,
+    );
 
-    expect((account as TronAccount).tronResources).toEqual(defaultTronResources);
+    expect(account.tronResources).toEqual(defaultTronResources);
   });
 });
