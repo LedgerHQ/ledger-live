@@ -1,9 +1,10 @@
 import { TezosToolkit } from "@taquito/taquito";
 import { getEnv } from "@ledgerhq/live-env";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { SignedOperation } from "@ledgerhq/types-live";
+import { AccountBridge, SignedOperation } from "@ledgerhq/types-live";
+import { Transaction } from "../types";
 
-const broadcast = async ({
+export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation: { operation, signature },
 }: {
   signedOperation: SignedOperation;
@@ -14,5 +15,3 @@ const broadcast = async ({
 
   return patchOperationWithHash(operation, hash);
 };
-
-export default broadcast;

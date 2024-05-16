@@ -1,23 +1,22 @@
-import type { CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
-  makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { TezosSigner, Transaction } from "../types";
-import signerGetAddress from "../signer";
-import { getAccountShape } from "./getAccountShape";
-import buildSignOperation from "./signOperation";
+import type { CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import type { TezosAccount, TezosSigner, Transaction, TransactionStatus } from "../types";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
-import { getTransactionStatus } from "./transactionStatus";
-import prepareTransaction from "./prepareTransaction";
-import estimateMaxSpendable from "./estimateMaxSpendable";
-import createTransaction from "./createTransaction";
-import broadcast from "./broadcast";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
+import { getAccountShape, sync } from "./synchronization";
+import { createTransaction } from "./createTransaction";
+import { buildSignOperation } from "./signOperation";
+import signerGetAddress from "../signer";
+import { broadcast } from "./broadcast";
 
 function buildCurrencyBridge(signerContext: SignerContext<TezosSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
@@ -35,12 +34,13 @@ function buildCurrencyBridge(signerContext: SignerContext<TezosSigner>): Currenc
   };
 }
 
-function buildAccountBridge(signerContext: SignerContext<TezosSigner>): AccountBridge<Transaction> {
+function buildAccountBridge(
+  signerContext: SignerContext<TezosSigner>,
+): AccountBridge<Transaction, TezosAccount, TransactionStatus> {
   const getAddress = signerGetAddress(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext);
-  const sync = makeSync({ getAccountShape });
 
   return {
     estimateMaxSpendable,
