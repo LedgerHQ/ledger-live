@@ -6,14 +6,14 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { AccountId } from "@hashgraph/sdk";
-import type { Transaction, TransactionStatus } from "./types";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import { calculateAmount, getEstimatedFees } from "./utils";
+import type { Transaction } from "./types";
 
-export default async function getTransactionStatus(
-  account: Account,
-  transaction: Transaction,
-): Promise<TransactionStatus> {
+export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
+  account,
+  transaction,
+) => {
   const errors: Record<string, Error> = {};
 
   if (!transaction.recipient || transaction.recipient.length === 0) {
@@ -52,4 +52,4 @@ export default async function getTransactionStatus(
     totalSpent,
     warnings: {},
   };
-}
+};
