@@ -48,7 +48,7 @@ describe("EVM Family", () => {
           expect(
             fromTransactionRaw({
               ...rawLegacyTx,
-              type: undefined,
+              type: undefined as any,
             }),
           ).toEqual(legacyTx);
         });
@@ -80,7 +80,7 @@ describe("EVM Family", () => {
           expect(
             fromTransactionRaw({
               ...rawLegacyTx,
-              type: undefined,
+              type: undefined as any,
               customGasLimit: "22000",
             }),
           ).toEqual({
@@ -392,7 +392,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: undefined,
                 gasPrice: new BigNumber(0),
                 type: 0,
-              }),
+              } as any),
             },
             {
               description: "only contains `maxPriorityFeePerGas`",
@@ -408,7 +408,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: undefined,
                 gasPrice: new BigNumber(0),
                 type: 0,
-              }),
+              } as any),
             },
             {
               description: "only contains `gasPrice`",
@@ -424,7 +424,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: undefined,
                 gasPrice: new BigNumber(20000),
                 type: 0,
-              }),
+              } as any),
             },
           ];
 
@@ -458,7 +458,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: new BigNumber(10),
                 gasPrice: undefined,
                 type: 2,
-              }),
+              } as any),
             },
             {
               description: "contains `maxFeePerGas`, `maxPriorityFeePerGas` and `gasPrice`",
@@ -474,7 +474,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: new BigNumber(10),
                 gasPrice: undefined,
                 type: 2,
-              }),
+              } as any),
             },
           ];
 

@@ -174,7 +174,7 @@ describe("EVM Family", () => {
       it("should return the gasLimit when no customGasLimit provided", () => {
         const tx: Partial<EvmTransaction> = {
           gasLimit: new BigNumber(100),
-          customGasLimit: undefined,
+          customGasLimit: undefined as any,
         };
 
         expect(getGasLimit(tx as any)).toEqual(new BigNumber(100));
