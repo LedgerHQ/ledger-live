@@ -1,25 +1,21 @@
-import { getMainAccount } from "../../account";
-import createTransaction from "./js-createTransaction";
-import prepareTransaction from "./js-prepareTransaction";
-import getTransactionStatus from "./js-getTransactionStatus";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
+import { createTransaction } from "./createTransaction";
+import { getMainAccount } from "../../account";
+import type { Transaction } from "./types";
 
 const notCreatedStellarMockAddress = "GAW46JE3SHIAYLNNNQCAZFQ437WB5ZH7LDRDWR5LVDWHCTHCKYB6RCCH";
 
-const estimateMaxSpendable = async ({
+export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
   parentAccount,
   transaction,
-}: {
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
-  transaction: Transaction | null | undefined;
-}): Promise<BigNumber> => {
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
-    ...createTransaction(),
+    ...createTransaction(account),
     ...transaction,
     recipient: transaction?.recipient || notCreatedStellarMockAddress,
     // not used address
