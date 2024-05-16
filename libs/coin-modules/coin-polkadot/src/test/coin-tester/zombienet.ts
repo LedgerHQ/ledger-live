@@ -10,7 +10,7 @@ export async function spawnZombienet() {
   console.log("Starting Zombienet...");
 
   const container = await docker.createContainer({
-    Image: "coin-tester-zombienet",
+    Image: "coin-tester-zombienet:latest",
     Tty: false,
     AttachStdin: true,
     AttachStdout: true,
@@ -32,7 +32,11 @@ export async function spawnZombienet() {
 
   await container.start();
 
-  async function checkZombienetLogs() {
+  async function checkZombienetLogs(has_started_max_retry = 5) {
+    if (has_started_max_retry === 0) {
+      throw new Error("Zombienet failed to start. Check possible logs");
+    }
+
     const logs = (await container.logs({ stdout: true })).toString();
 
     if (logs.includes("Network launched")) {
@@ -41,8 +45,9 @@ export async function spawnZombienet() {
     }
 
     console.log("Waiting for zombienet to start...");
-    await delay(3 * 1000);
-    return checkZombienetLogs();
+    await delay(3 * 1000); // 3 seconds
+
+    return checkZombienetLogs(has_started_max_retry - 1);
   }
 
   await checkZombienetLogs();
@@ -52,7 +57,9 @@ export async function killZombienet() {
   const containers = await docker.listContainers();
 
   for (const container of containers) {
+    console.log(container.Names);
     if (container.Names.some(name => name.includes(containerName))) {
+      console.log("Killing zombienet...");
       const zombienetContainer = docker.getContainer(container.Id);
       await zombienetContainer.stop();
       await zombienetContainer.remove();

@@ -20,4 +20,4 @@ EXPOSE 31323
 EXPOSE 3003
 EXPOSE 1998
 
-CMD ["./zombienet-linux-x64", "spawn", "--provider", "native", "coin-tester.toml"]
+CMD ["./zombienet-linux-x64", "spawn", "--provider", "native", "coin-tester-zombienet.toml"]

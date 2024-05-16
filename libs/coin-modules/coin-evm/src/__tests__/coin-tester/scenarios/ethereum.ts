@@ -1,19 +1,11 @@
 import Eth from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
-<<<<<<< HEAD
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
-=======
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
-import { makeAccount } from "../../fixtures/common.fixtures";
->>>>>>> 646be7ca05 (polkadot coin-tester scenario skeleton)
 import { EvmNftTransaction, Transaction as EvmTransaction } from "../../../types";
 import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
 import { getCoinConfig, setCoinConfig } from "../../../config";
@@ -28,12 +20,6 @@ import {
   ERC1155Interface,
   impersonnateAccount,
 } from "../helpers";
-<<<<<<< HEAD
-=======
-import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
-import { killAnvil, spawnAnvil } from "../anvil";
-import { defaultNanoApp } from "../scenarios.test";
->>>>>>> 646be7ca05 (polkadot coin-tester scenario skeleton)
 
 const makeScenarioTransactions = ({
   address,
@@ -149,12 +135,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
       spawnAnvil("https://rpc.ankr.com/eth"),
     ]);
 
-    const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
     const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
-
-    const lastBlockNumber = await provider.getBlockNumber();
-    // start indexing at next block
-    await setBlock(lastBlockNumber + 1);
 
     setCoinConfig(() => ({
       info: {
@@ -187,6 +168,12 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
     });
 
     const scenarioAccount = makeAccount(address, ethereum);
+
+    const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
+
+    const lastBlockNumber = await provider.getBlockNumber();
+    // start indexing at next block
+    await setBlock(lastBlockNumber + 1);
 
     // Binance account
     await impersonnateAccount({

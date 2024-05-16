@@ -51,15 +51,18 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     const account = makeAccount(address, polkadot);
     console.log("bridges created");
 
-    // port comes is defined as `ws_port` in coin-tester.toml
+    // 1998 port comes from coin-config.toml config
     const wsProvider = new WsProvider("ws://127.0.0.1:1998");
-
     const api = await ApiPromise.create({ provider: wsProvider });
+
+    const { data: balance } = (await api.query.system.account(address)) as any;
+    console.log({ balance: balance.toString(10) });
 
     return { accountBridge, currencyBridge, address, account, onSignerConfirmation };
   },
   getTransactions,
   teardown: async () => {
+    // wsProvider.disconnect();
     await Promise.all([killSpeculos(), killZombienet()]);
   },
 };
