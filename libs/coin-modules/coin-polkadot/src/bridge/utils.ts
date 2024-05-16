@@ -213,32 +213,38 @@ const calculateMaxSend = (a: Account, t: Transaction): BigNumber => {
  *
  * @param {*} param
  */
-export const calculateAmount = ({ a, t }: { a: PolkadotAccount; t: Transaction }): BigNumber => {
-  let amount = t.amount;
+export const calculateAmount = ({
+  account,
+  transaction,
+}: {
+  account: PolkadotAccount;
+  transaction: Transaction;
+}): BigNumber => {
+  let amount = transaction.amount;
 
-  if (t.useAllAmount) {
-    switch (t.mode) {
+  if (transaction.useAllAmount) {
+    switch (transaction.mode) {
       case "send":
-        amount = calculateMaxSend(a, t);
+        amount = calculateMaxSend(account, transaction);
         break;
 
       case "bond":
-        amount = calculateMaxBond(a, t);
+        amount = calculateMaxBond(account, transaction);
         break;
 
       case "unbond":
-        amount = calculateMaxUnbond(a);
+        amount = calculateMaxUnbond(account);
         break;
 
       case "rebond":
-        amount = calculateMaxRebond(a);
+        amount = calculateMaxRebond(account);
         break;
 
       default:
-        amount = a.spendableBalance.minus(t.fees || 0);
+        amount = account.spendableBalance.minus(transaction.fees || 0);
         break;
     }
-  } else if (t.amount.gt(MAX_AMOUNT_INPUT)) {
+  } else if (transaction.amount.gt(MAX_AMOUNT_INPUT)) {
     return new BigNumber(MAX_AMOUNT_INPUT);
   }
 
