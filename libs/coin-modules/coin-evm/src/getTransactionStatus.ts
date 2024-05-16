@@ -44,7 +44,8 @@ type ValidatedTransactionFields =
   | "amount"
   | "maxPriorityFee"
   | "maxFee"
-  | "feeTooHigh";
+  | "feeTooHigh"
+  | "replacementTransactionUnderpriced";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
@@ -254,10 +255,10 @@ const validateFeeRatio = (
 /**
  * Validate a transaction and get all possibles errors and warnings about it
  */
-export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransactionStatus"] = async (
-  account,
-  tx,
-) => {
+export const getTransactionStatus: AccountBridge<
+  EvmTransaction,
+  TransactionStatus
+>["getTransactionStatus"] = async (account, tx) => {
   const subAccount = findSubAccountById(account, tx.subAccountId || "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
   const { gasLimit, customGasLimit, additionalFees, amount } = tx;
@@ -300,11 +301,6 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
   };
 };
 
-type EditTransactionValidatedTransactionFields = "replacementTransactionUnderpriced";
-type EditTransactionValidationIssues = Partial<
-  Record<EditTransactionValidatedTransactionFields, Error>
->;
-
 /**
  * Validate an edited transaction and returns related errors and warnings
  * Makes sure the updated fees are at least 10% higher than the original fees
@@ -320,13 +316,13 @@ export const validateEditTransaction = ({
 }: {
   transaction: EvmTransaction;
   transactionToUpdate: EvmTransaction;
-  editType?: EditType;
+  editType?: EditType | undefined;
 }): {
   errors: TransactionStatusCommon["errors"];
   warnings: TransactionStatusCommon["warnings"];
 } => {
-  const errors: EditTransactionValidationIssues = {};
-  const warnings: EditTransactionValidationIssues = {};
+  const errors: ValidationIssues = {};
+  const warnings: ValidationIssues = {};
 
   if (!editType) {
     return {

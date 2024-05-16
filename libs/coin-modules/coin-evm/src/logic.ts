@@ -240,7 +240,7 @@ export const attachOperations = (
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
   _internalOperations: Operation[],
-  filters: { blacklistedTokenIds?: string[] } = { blacklistedTokenIds: [] },
+  filters: { blacklistedTokenIds: string[] | undefined } = { blacklistedTokenIds: [] },
 ): Operation[] => {
   const { blacklistedTokenIds } = filters;
 

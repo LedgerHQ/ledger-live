@@ -122,8 +122,8 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
 
       try {
         const gasEstimation = await api.estimateGas({
-          from: account.freshAddress, // should be necessary for some estimations
-          to,
+          ...(to ? { to } : {}),
+          from: account.freshAddress, // Necessary as no signature to infer the sender
           value,
           data,
         });
