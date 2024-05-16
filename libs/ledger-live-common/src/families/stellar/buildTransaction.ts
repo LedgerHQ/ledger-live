@@ -14,8 +14,8 @@ import { getRecipientAccount, getAmountValue } from "./logic";
 import { StellarAssetRequired, StellarMuxedAccountNotExist } from "../../errors";
 
 /**
- * @param {Account} a
- * @param {Transaction} t
+ * @param {Account} account
+ * @param {Transaction} transaction
  */
 export const buildTransaction = async (account: Account, transaction: Transaction) => {
   const { recipient, networkInfo, fees, memoType, memoValue, mode, assetCode, assetIssuer } =
