@@ -2,18 +2,18 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import type { AccountBridge, DerivationMode, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
-import { buildTransaction } from "./js-buildTransaction";
+import { buildTransaction } from "./buildTransaction";
 import { calculateFees } from "./cache";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { perCoinLogic } from "./logic";
-import type { DerivationMode, Operation, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { SignerContext } from "./signer";
 
-const buildSignOperation =
-  (signerContext: SignerContext): SignOperationFnSignature<Transaction> =>
+export const buildSignOperation =
+  (signerContext: SignerContext): AccountBridge<Transaction>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
     new Observable(o => {
       async function main() {

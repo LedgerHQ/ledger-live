@@ -1,29 +1,29 @@
-import { Account, BroadcastArg } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import {
-  defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { Transaction } from "../types";
-import { StartSpan, makeGetAccountShape, postSync } from "../js-synchronisation";
-import createTransaction from "../js-createTransaction";
-import prepareTransaction from "../js-prepareTransaction";
-import getTransactionStatus from "../js-getTransactionStatus";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import buildSignOperation from "../js-signOperation";
-import broadcast from "../js-broadcast";
-import { calculateFees } from "./../cache";
-import { perCoinLogic } from "../logic";
+import { StartSpan, makeGetAccountShape, postSync } from "../synchronisation";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
-import resolver from "../hw-getAddress";
-import { SignerContext } from "../signer";
+import { BitcoinAccount, Transaction, TransactionStatus } from "../types";
+import { getTransactionStatus } from "../getTransactionStatus";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { prepareTransaction } from "../prepareTransaction";
+import { updateTransaction } from "../updateTransaction";
+import { createTransaction } from "../createTransaction";
+import { buildSignOperation } from "../signOperation";
 import { CoinConfig, setCoinConfig } from "../config";
+import { calculateFees } from "./../cache";
+import { SignerContext } from "../signer";
+import { broadcast } from "../broadcast";
+import { perCoinLogic } from "../logic";
+import resolver from "../hw-getAddress";
 
 function buildCurrencyBridge(signerContext: SignerContext, perfLogger: PerfLogger) {
   const getAddress = resolver(signerContext);
-  const scanAccounts = makeScanAccounts({
+  const scanAccounts = makeScanAccounts<BitcoinAccount>({
     getAccountShape: makeGetAccountShape(signerContext, perfLogger.startSpan),
     getAddressFn: getAddressWrapper(getAddress),
   });
@@ -36,33 +36,33 @@ function buildCurrencyBridge(signerContext: SignerContext, perfLogger: PerfLogge
 }
 
 function buildAccountBridge(signerContext: SignerContext, perfLogger: PerfLogger) {
-  const sync = makeSync({
+  const sync = makeSync<Transaction, TransactionStatus, BitcoinAccount>({
     getAccountShape: makeGetAccountShape(signerContext, perfLogger.startSpan),
     postSync,
   });
 
   const getAddress = resolver(signerContext);
-  const injectGetAddressParams = (account: Account): any => {
+  const injectGetAddressParams = (account: BitcoinAccount): any => {
     const perCoin = perCoinLogic[account.currency.id];
 
     if (perCoin && perCoin.injectGetAddressParams) {
       return perCoin.injectGetAddressParams(account);
     }
   };
-  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), {
+  const receive = makeAccountBridgeReceive<BitcoinAccount>(getAddressWrapper(getAddress), {
     injectGetAddressParams,
   });
 
-  const updateTransaction = (tx: Transaction, patch: Partial<Transaction>): any => {
-    const updatedT = defaultUpdateTransaction(tx, patch);
-
-    // We accept case-insensitive addresses as input from user,
-    // but segwit addresses need to be converted to lowercase to be valid
-    if (updatedT.recipient.toLowerCase().indexOf("bc1") === 0) {
-      updatedT.recipient = updatedT.recipient.toLowerCase();
-    }
-
-    return updatedT;
+  const wrappedBroadcast: AccountBridge<
+    Transaction,
+    TransactionStatus,
+    BitcoinAccount
+  >["broadcast"] = async ({ account, signedOperation }) => {
+    calculateFees.reset();
+    return broadcast({
+      account,
+      signedOperation,
+    });
   };
 
   return {
@@ -74,13 +74,7 @@ function buildAccountBridge(signerContext: SignerContext, perfLogger: PerfLogger
     receive,
     sync,
     signOperation: buildSignOperation(signerContext),
-    broadcast: async ({ account, signedOperation }: BroadcastArg) => {
-      calculateFees.reset();
-      return broadcast({
-        account,
-        signedOperation,
-      });
-    },
+    broadcast: wrappedBroadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
   };

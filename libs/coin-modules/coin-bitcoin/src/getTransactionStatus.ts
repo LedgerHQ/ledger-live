@@ -9,7 +9,7 @@ import {
   FeeRequired,
   OpReturnDataSizeLimit,
 } from "@ledgerhq/errors";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 
 import type { BitcoinInput, BitcoinOutput, Transaction, TransactionStatus } from "./types";
 import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
@@ -19,11 +19,17 @@ import { Currency } from "./wallet-btc";
 import cryptoFactory from "./wallet-btc/crypto/factory";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 
-const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  TransactionStatus
+>["getTransactionStatus"] = async (account, transaction) => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const useAllAmount = !!t.useAllAmount;
-  const { recipientError, recipientWarning } = await validateRecipient(a.currency, t.recipient);
+  const useAllAmount = !!transaction.useAllAmount;
+  const { recipientError, recipientWarning } = await validateRecipient(
+    account.currency,
+    transaction.recipient,
+  );
 
   if (recipientError) {
     errors.recipient = recipientError;
@@ -34,8 +40,13 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   }
 
   // Safeguard before Taproot activation
-  if (t.recipient && !errors.recipient && a.currency.id === "bitcoin" && a.blockHeight <= 709632) {
-    const isTaproot = await isTaprootRecipient(a.currency, t.recipient);
+  if (
+    transaction.recipient &&
+    !errors.recipient &&
+    account.currency.id === "bitcoin" &&
+    account.blockHeight <= 709632
+  ) {
+    const isTaproot = await isTaprootRecipient(account.currency, transaction.recipient);
     if (isTaproot) {
       errors.recipient = new TaprootNotActivated();
     }
@@ -44,16 +55,16 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   let txInputs: BitcoinInput[] = [];
   let txOutputs: BitcoinOutput[] = [];
   let estimatedFees = new BigNumber(0);
-  const { opReturnData } = t;
+  const { opReturnData } = transaction;
 
-  if (!t.feePerByte) {
+  if (!transaction.feePerByte) {
     errors.feePerByte = new FeeNotLoaded();
-  } else if (t.feePerByte.eq(0)) {
+  } else if (transaction.feePerByte.eq(0)) {
     errors.feePerByte = new FeeRequired();
-  } else if (t.recipient && !errors.recipient) {
+  } else if (transaction.recipient && !errors.recipient) {
     await calculateFees({
-      account: a,
-      transaction: t,
+      account: account,
+      transaction: transaction,
     }).then(
       res => {
         txInputs = res.txInputs;
@@ -87,7 +98,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   }
 
   const totalSpent = sumOfInputs.minus(sumOfChanges);
-  const amount = useAllAmount ? totalSpent.minus(estimatedFees) : t.amount;
+  const amount = useAllAmount ? totalSpent.minus(estimatedFees) : transaction.amount;
   log("bitcoin", `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`);
 
   if (!errors.amount && !amount.gt(0)) {
@@ -98,9 +109,9 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (t.feePerByte) {
-    const txSize = Math.ceil(estimatedFees.toNumber() / t.feePerByte.toNumber());
-    const crypto = cryptoFactory(a.currency.id as Currency);
+  if (transaction.feePerByte) {
+    const txSize = Math.ceil(estimatedFees.toNumber() / transaction.feePerByte.toNumber());
+    const crypto = cryptoFactory(account.currency.id as Currency);
     const dustAmount = computeDustAmount(crypto, txSize);
 
     if (amount.gt(0) && amount.lt(dustAmount)) {
