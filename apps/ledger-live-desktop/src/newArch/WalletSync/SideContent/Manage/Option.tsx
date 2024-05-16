@@ -1,6 +1,6 @@
 import { Flex, Box, Icons, Text } from "@ledgerhq/react-ui";
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 export type OptionProps = {
   label: string;
@@ -13,14 +13,10 @@ export const OptionContainer = styled.div`
   }
 `;
 
-export const Separator = styled.div`
-  &::after {
-    content: "";
-    font-size: 13px;
-    color: ${p => p.theme.colors.palette.divider};
-    padding: 0 15px;
-  }
-`;
+export const Separator = () => {
+  const { colors } = useTheme();
+  return <Box height="1px" width="100%" backgroundColor={colors.opacityDefault.c05} />;
+};
 
 export const Option = ({ label, description }: OptionProps) => (
   <OptionContainer>
