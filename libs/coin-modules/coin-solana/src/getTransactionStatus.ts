@@ -1,12 +1,12 @@
 import { BigNumber } from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Command, CommandDescriptor, Transaction, TransactionStatus } from "./types";
 import { assertUnreachable } from "./utils";
 
-const getTransactionStatus = async (
-  _account: Account,
-  tx: Transaction,
-): Promise<TransactionStatus> => {
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  TransactionStatus
+>["getTransactionStatus"] = async (_account, tx) => {
   const { commandDescriptor } = tx.model;
 
   if (commandDescriptor === undefined) {

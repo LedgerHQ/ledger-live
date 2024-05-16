@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { hydrate } from "./js-preload";
+import { hydrate } from "./preload";
 import { SolanaPreloadData } from "./types";
 
 describe("hydrate", () => {
