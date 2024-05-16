@@ -18,7 +18,7 @@ import {
   acceptTransferTransaction,
 } from "./speculos-deviceActions";
 import { assertUnreachable } from "./utils";
-import { getCurrentSolanaPreloadData } from "./js-preload-data";
+import { getCurrentSolanaPreloadData } from "./preload-data";
 import { sample } from "lodash/fp";
 import BigNumber from "bignumber.js";
 

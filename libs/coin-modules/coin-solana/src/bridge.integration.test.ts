@@ -28,7 +28,7 @@ import {
   SolanaValidatorRequired,
 } from "./errors";
 import { encodeAccountIdWithTokenAccountAddress, MAX_MEMO_LENGTH } from "./logic";
-import createTransaction from "./js-createTransaction";
+import createTransaction from "./createTransaction";
 import { compact } from "lodash/fp";
 import { assertUnreachable } from "./utils";
 import { getEnv } from "@ledgerhq/live-env";
@@ -37,8 +37,8 @@ import {
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountValidatorIsUnchangeable,
 } from "./errors";
-import getTransactionStatus from "./js-getTransactionStatus";
-import { prepareTransaction } from "./js-prepareTransaction";
+import getTransactionStatus from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
 import type { Account, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { LATEST_BLOCKHASH_MOCK } from "./api/chain";

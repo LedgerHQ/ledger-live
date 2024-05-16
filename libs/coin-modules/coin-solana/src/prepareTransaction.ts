@@ -59,7 +59,7 @@ import type {
 } from "./types";
 import { assertUnreachable } from "./utils";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { estimateFeeAndSpendable } from "./js-estimateMaxSpendable";
+import { estimateFeeAndSpendable } from "./estimateMaxSpendable";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,

@@ -1,4 +1,4 @@
-import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/js-preload-data";
+import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";
 import { stakeActions } from "@ledgerhq/coin-solana/logic";
 import { LEDGER_VALIDATOR } from "@ledgerhq/coin-solana/utils";
 import type { SolanaAccount } from "@ledgerhq/coin-solana/types";

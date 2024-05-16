@@ -49,7 +49,7 @@ export const estimateFeeAndSpendable = async (
   }
 };
 
-const estimateMaxSpendableWithAPI = async (
+export const estimateMaxSpendableWithAPI = async (
   {
     account,
     parentAccount,
