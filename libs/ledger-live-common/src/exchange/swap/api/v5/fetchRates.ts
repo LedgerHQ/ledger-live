@@ -91,9 +91,9 @@ export async function fetchRates({
 
   const url = new URL(`${getSwapAPIBaseURL()}/rate`);
   const providers = await getAvailableProviders();
-  if (removeProviders["moonpay"]) {
-    providers.splice(providers.indexOf("moonpay"), 1);
-  }
+  removeProviders.forEach(provider => {
+    providers.splice(providers.indexOf(provider), 1);
+  });
   const requestBody = {
     from: currencyFrom,
     to: toCurrencyId,
