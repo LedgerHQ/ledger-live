@@ -12,14 +12,14 @@ const resolver = (signerContext: SignerContext): GetAddressFn => {
     deviceId: string,
     { currency, path, verify, derivationMode, forceFormat }: GetAddressOptions,
   ) => {
-    const format = forceFormat || getAddressFormatDerivationMode(derivationMode);
+    const format = (forceFormat as AddressFormat) || getAddressFormatDerivationMode(derivationMode);
 
     let result;
     try {
       result = (await signerContext(deviceId, currency, signer =>
         signer.getWalletPublicKey(path, {
-          verify,
-          format: format as AddressFormat,
+          verify: verify || false,
+          format,
         }),
       )) as BitcoinAddress;
     } catch (e: any) {
