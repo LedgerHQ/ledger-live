@@ -27,24 +27,28 @@ ${mode.toUpperCase()} ${
         })
 }${recipient ? `\nTO ${recipient}` : ""}`;
 
-export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
-  const common = fromTransactionCommonRaw(tr);
+export const fromTransactionRaw = (transactionRaw: TransactionRaw): Transaction => {
+  const common = fromTransactionCommonRaw(transactionRaw);
   return {
     ...common,
-    family: tr.family,
-    mode: tr.mode,
-    fees: new BigNumber(tr?.fees || 0),
+    family: transactionRaw.family,
+    mode: transactionRaw.mode,
+    fees: new BigNumber(transactionRaw?.fees || 0),
   };
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
-  const common = toTransactionCommonRaw(t);
-  return {
+export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
+  const common = toTransactionCommonRaw(transaction);
+  const transactionRaw: TransactionRaw = {
     ...common,
-    family: t.family,
-    mode: t.mode,
-    fees: t.fees?.toString(),
+    family: transaction.family,
+    mode: transaction.mode,
   };
+  if (transaction.fees) {
+    transactionRaw.fees = transaction.fees.toString();
+  }
+
+  return transactionRaw;
 };
 
 export default {

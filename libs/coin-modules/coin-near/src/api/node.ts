@@ -37,7 +37,9 @@ export const fetchAccountDetails = async (address: string): Promise<NearAccountD
   return data.result;
 };
 
-export const getAccount = async (address: string): Promise<Partial<NearAccount>> => {
+export const getAccount = async (
+  address: string,
+): Promise<Pick<NearAccount, "blockHeight" | "balance" | "spendableBalance" | "nearResources">> => {
   let accountDetails: NearAccountDetails;
 
   accountDetails = await fetchAccountDetails(address);
