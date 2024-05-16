@@ -4,7 +4,7 @@ import { getTronSuperRepresentatives } from "./api";
 import { BigNumber } from "bignumber.js";
 import type { SuperRepresentative, TronAccount, Vote } from "./types";
 import { useBridgeSync } from "../../bridge/react";
-import { oneTrx } from "./constants";
+import { ONE_TRX } from "./constants";
 
 export type Action = {
   type: "updateVote" | "resetVotes" | "clearVotes";
@@ -26,7 +26,7 @@ export type State = {
   initialVotes: Record<string, number>; // initial Map of votes
 };
 
-export const MIN_TRANSACTION_AMOUNT = oneTrx;
+export const MIN_TRANSACTION_AMOUNT = ONE_TRX;
 export const SR_THRESHOLD = 27;
 export const SR_MAX_VOTES = 5;
 
