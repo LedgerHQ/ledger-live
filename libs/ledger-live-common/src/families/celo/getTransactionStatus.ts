@@ -1,4 +1,3 @@
-import { CeloAccount, Transaction, TransactionStatus } from "./types";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -8,9 +7,11 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { isValidAddress } from "@celo/utils/lib/address";
-import { CeloAllFundsWarning } from "./errors";
 import { getPendingStakingOperationAmounts, getVote } from "./logic";
+import { CeloAccount, Transaction, TransactionStatus } from "./types";
+import { CeloAllFundsWarning } from "./errors";
 import { celoKit } from "./api/sdk";
 
 const kit = celoKit();
@@ -18,12 +19,13 @@ const kit = celoKit();
 // Arbitrary buffer for paying fees of next transactions. 0.05 Celo for ~100 transactions
 const FEES_SAFETY_BUFFER = new BigNumber(5000000000000000);
 
-const getTransactionStatus = async (
-  account: CeloAccount,
-  transaction: Transaction,
-): Promise<TransactionStatus> => {
-  const errors: any = {};
-  const warnings: any = {};
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  TransactionStatus,
+  CeloAccount
+>["getTransactionStatus"] = async (account, transaction) => {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;
 
   if (account.freshAddress === transaction.recipient) {
@@ -106,13 +108,13 @@ const getTransactionStatus = async (
     }
   }
 
-  return Promise.resolve({
+  return {
     errors,
     warnings,
     estimatedFees,
     amount,
     totalSpent,
-  });
+  };
 };
 
 export default getTransactionStatus;

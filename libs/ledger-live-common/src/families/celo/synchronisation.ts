@@ -1,13 +1,14 @@
-import { encodeAccountId } from "../../account";
-import type { GetAccountShape } from "../../bridge/jsHelpers";
-import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
-import { getAccountDetails } from "./api";
-import { celoKit } from "./api/sdk";
 import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "./api/sdk";
+import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
+import type { GetAccountShape } from "../../bridge/jsHelpers";
+import { encodeAccountId } from "../../account";
+import { getAccountDetails } from "./api";
+import { CeloAccount } from "./types";
+import { celoKit } from "./api/sdk";
 
 const kit = celoKit();
 
-const getAccountShape: GetAccountShape = async info => {
+const getAccountShape: GetAccountShape<CeloAccount> = async info => {
   const { address, currency, initialAccount, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
   const election = await kit.contracts.getElection();
