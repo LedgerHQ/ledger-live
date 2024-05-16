@@ -1,3 +1,4 @@
 import { BigNumber } from "bignumber.js";
-export const oneTrx = new BigNumber(1000000);
-export const activationFees = new BigNumber(1000000);
+
+export const ONE_TRX = new BigNumber(1000000);
+export const ACTIVATION_FEES = new BigNumber(1000000);
