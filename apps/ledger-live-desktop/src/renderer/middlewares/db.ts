@@ -8,6 +8,7 @@ import { settingsExportSelector, areSettingsLoaded } from "./../reducers/setting
 import { State } from "../reducers";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { accountUserDataExportSelector } from "@ledgerhq/live-wallet/store";
+import { isLocked } from "../reducers/application";
 let DB_MIDDLEWARE_ENABLED = true;
 
 // ability to temporary disable the db middleware from outside
@@ -28,13 +29,13 @@ function accountsExportSelector(state: State) {
 }
 
 const DBMiddleware: Middleware<{}, State> = store => next => action => {
-  if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("DB:")) {
+  const state = store.getState();
+  if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("DB:") && !isLocked(state)) {
     const [, type] = action.type.split(":");
     store.dispatch({
       type,
       payload: action.payload,
     });
-    const state = store.getState();
     setKey("app", "accounts", accountsExportSelector(state));
     // ^ TODO ultimately we'll do same for accounts to drop DB: pattern
   } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith(postOnboardingActionTypePrefix)) {
