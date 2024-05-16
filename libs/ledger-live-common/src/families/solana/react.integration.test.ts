@@ -6,7 +6,7 @@ import { renderHook } from "@testing-library/react";
 import { setEnv } from "@ledgerhq/live-env";
 import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/coin-solana/types";
-import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/js-preload-data";
+import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";
 import { LEDGER_VALIDATOR } from "@ledgerhq/coin-solana/utils";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";

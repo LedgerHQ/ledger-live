@@ -50,7 +50,7 @@ import {
 import { drainSeq } from "./utils";
 import { estimateTxFee } from "./tx-fees";
 import { SolanaAccount, SolanaOperationExtra, SolanaStake } from "./types";
-import { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { DelegateInfo, WithdrawInfo } from "./api/chain/instruction/stake/types";
 
 type OnChainTokenAccount = Awaited<ReturnType<typeof getAccount>>["tokenAccounts"][number];
@@ -58,7 +58,7 @@ type OnChainTokenAccount = Awaited<ReturnType<typeof getAccount>>["tokenAccounts
 export const getAccountShapeWithAPI = async (
   info: AccountShapeInfo,
   api: ChainAPI,
-): Promise<Partial<Account>> => {
+): Promise<Partial<SolanaAccount>> => {
   const {
     address: mainAccAddress,
     initialAccount: mainInitialAcc,
@@ -152,6 +152,7 @@ export const getAccountShapeWithAPI = async (
         custodianAddress: mainAccAddress,
         epoch,
       });
+
     return {
       stakeAccAddr: account.onChainAcc.pubkey.toBase58(),
       stakeAccBalance,
