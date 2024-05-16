@@ -3131,9 +3131,6 @@
         "whatIsSwap" : "Что такое Обмен или Swap?",
         "disclaimer" : "Криптовалюту можно менять непосредственно на устройстве Ledger. Эта услуга недоступна в США и некоторых других странах."
       },
-      "main" : {
-        "header" : "Обмен"
-      },
       "notAvailable" : {
         "title" : "Услуга временно недоступна или не предоставляется в вашей стране"
       },
@@ -6134,6 +6131,7 @@
       "subtitle" : "Познакомьтесь с миром Web3, интегрированным в Ledger",
       "section" : {
         "recentlyUsed" : "Недавние",
+        "locallyLoaded" : "Локально загруженные",
         "categories" : "Категории",
         "clearAll" : "Очистить все"
       },
@@ -6303,7 +6301,7 @@
     "designedForStax" : {
       "title" : "<0>Разработано для</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "В этом NFT есть дополнительная картинка, созданная специально для экрана E Ink® в Ledger Stax.\n\nОна будет использоваться при установке этого NFT в качестве экрана блокировки.",
+        "description" : "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E Ink Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
         "cta" : "Понятно"
       }
     },
@@ -6391,7 +6389,7 @@
       "title" : "Предпросмотр",
       "loading" : "Загрузка предпросмотра",
       "setPicture" : "Установить на экран блокировки",
-      "editPicture" : "Изменить изображение",
+      "editPicture" : "Изменить картинку",
       "pickDeviceModel" : "Выберите устройство"
     },
     "nftGallery" : {
