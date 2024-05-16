@@ -53,9 +53,9 @@ export type AlgorandOperation = Operation<AlgorandOperationExtra>;
 export type AlgorandOperationRaw = OperationRaw<AlgorandOperationExtraRaw>;
 
 export type AlgorandOperationExtra = {
-  rewards?: BigNumber;
-  memo?: string;
-  assetId?: string;
+  rewards?: BigNumber | undefined;
+  memo?: string | undefined;
+  assetId?: string | undefined;
 };
 export function isAlgorandOperationExtra(op: OperationExtra): op is AlgorandOperationExtra {
   return (
@@ -64,9 +64,9 @@ export function isAlgorandOperationExtra(op: OperationExtra): op is AlgorandOper
 }
 
 export type AlgorandOperationExtraRaw = {
-  rewards?: string;
-  memo?: string;
-  assetId?: string;
+  rewards?: string | undefined;
+  memo?: string | undefined;
+  assetId?: string | undefined;
 };
 export function isAlgorandOperationExtraRaw(
   op: OperationExtraRaw,

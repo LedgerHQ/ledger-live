@@ -1,18 +1,19 @@
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
-import { estimateMaxSpendable } from "./js-estimateMaxSpendable";
-import { getEstimatedFees } from "./js-getFeesForTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getEstimatedFees } from "./getFeesForTransaction";
 import type { AlgorandAccount, Transaction } from "./types";
+import { AccountBridge } from "@ledgerhq/types-live";
 
 /**
  * Calculate fees for the current transaction
- * @param {PolkadotAccount} a
- * @param {Transaction} t
+ * @param {AlgorandAccount} account
+ * @param {Transaction} transaction
  */
-const prepareTransaction = async (
-  account: AlgorandAccount,
-  transaction: Transaction,
-): Promise<Transaction> => {
+export const prepareTransaction: AccountBridge<
+  Transaction,
+  AlgorandAccount
+>["prepareTransaction"] = async (account, transaction) => {
   let recipient: string;
   let amount: BigNumber;
   if (transaction.mode === "send") {
