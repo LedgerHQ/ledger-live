@@ -1,47 +1,35 @@
 import { BigNumber } from "bignumber.js";
-import type { ElrondAccount, Transaction } from "./types";
+import type { Transaction } from "./types";
 import { getFees } from "./api";
-import { GAS, MIN_GAS_LIMIT } from "./constants";
+import { GAS } from "./constants";
 import { ElrondEncodeTransaction } from "./encode";
 import { isAmountSpentFromBalance } from "./logic";
-
-/**
- * Create an empty t
- *
- * @returns {Transaction}
- */
-export const createTransaction = (): Transaction => {
-  return {
-    family: "elrond",
-    mode: "send",
-    amount: new BigNumber(0),
-    recipient: "",
-    useAllAmount: false,
-    fees: new BigNumber(50000),
-    gasLimit: MIN_GAS_LIMIT,
-  };
-};
+import { AccountBridge } from "@ledgerhq/types-live";
 
 /**
  * Prepare t before checking status
  *
- * @param {ElrondAccount} a
- * @param {Transaction} t
+ * @param {ElrondAccount} account
+ * @param {Transaction} transactoin
  */
-export const prepareTransaction = async (
-  a: ElrondAccount,
-  t: Transaction,
-): Promise<Transaction> => {
-  const preparedTx: Transaction = t;
+export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
+  account,
+  transaction,
+) => {
+  // What's the point of this extra variable ?
+  const preparedTx = transaction;
 
   const tokenAccount =
-    (t.subAccountId && a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId)) || null;
+    (transaction.subAccountId &&
+      account.subAccounts &&
+      account.subAccounts.find(ta => ta.id === transaction.subAccountId)) ||
+    null;
 
   if (tokenAccount) {
-    preparedTx.data = ElrondEncodeTransaction.ESDTTransfer(t, tokenAccount);
+    preparedTx.data = ElrondEncodeTransaction.ESDTTransfer(transaction, tokenAccount);
     preparedTx.gasLimit = GAS.ESDT_TRANSFER;
   } else {
-    switch (t.mode) {
+    switch (transaction.mode) {
       case "delegate":
         preparedTx.gasLimit = GAS.DELEGATE;
         preparedTx.data = ElrondEncodeTransaction.delegate();
@@ -60,24 +48,24 @@ export const prepareTransaction = async (
         break;
       case "unDelegate":
         preparedTx.gasLimit = GAS.DELEGATE;
-        preparedTx.data = ElrondEncodeTransaction.unDelegate(t);
+        preparedTx.data = ElrondEncodeTransaction.unDelegate(transaction);
         break;
       case "send":
         break;
       default:
-        throw new Error("Unsupported transaction mode: " + t.mode);
+        throw new Error("Unsupported transaction mode: " + transaction.mode);
     }
   }
 
-  if (t.useAllAmount) {
+  if (transaction.useAllAmount) {
     // Set the max amount
-    preparedTx.amount = tokenAccount ? tokenAccount.balance : a.spendableBalance;
+    preparedTx.amount = tokenAccount ? tokenAccount.balance : account.spendableBalance;
 
     // Compute estimated fees for that amount
     preparedTx.fees = await getFees(preparedTx);
 
     // Adjust max amount according to computed fees
-    if (!tokenAccount && isAmountSpentFromBalance(t.mode)) {
+    if (!tokenAccount && isAmountSpentFromBalance(transaction.mode)) {
       preparedTx.amount = preparedTx.amount.gt(preparedTx.fees)
         ? preparedTx.amount.minus(preparedTx.fees)
         : new BigNumber(0);
