@@ -1,24 +1,8 @@
-import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
-import getEstimatedFees from "./js-getFeesForTransaction";
+import getEstimatedFees from "./getFeesForTransaction";
 
 const sameFees = (a, b) => (!a || !b ? a === b : a.eq(b));
-
-/**
- * Create an empty transaction
- *
- * @returns {Transaction}
- */
-export const createTransaction = (): Transaction => ({
-  family: "crypto_org",
-  mode: "send",
-  amount: new BigNumber(0),
-  recipient: "",
-  useAllAmount: false,
-  fees: new BigNumber(0),
-  memo: null,
-});
 
 /**
  * Prepare transaction before checking status
