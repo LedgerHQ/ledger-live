@@ -1,16 +1,13 @@
+import type { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import type { Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Transaction } from "./types";
 import algorandAPI from "./api";
 
 /**
  * Broadcast a signed transaction
  * @param {signature: string, operation: string} signedOperation
  */
-export const broadcast = async ({
-  signedOperation,
-}: {
-  signedOperation: SignedOperation;
-}): Promise<Operation> => {
+export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
   const { signature, operation } = signedOperation;
   const hash = await algorandAPI.broadcastTransaction(Buffer.from(signature, "hex"));
   return patchOperationWithHash(operation, hash);
