@@ -13,7 +13,7 @@ import {
   NotEnoughBalanceInParentAccount,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 
 import { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
 import { AlgorandASANotOptInInRecipient } from "./errors";
@@ -25,7 +25,7 @@ import {
   recipientHasAsset,
 } from "./logic";
 import { extractTokenId } from "./tokens";
-import type { AlgorandAccount, Transaction } from "./types";
+import type { AlgorandAccount, Transaction, TransactionStatus } from "./types";
 
 /*
  * Here are the list of the differents things we check
@@ -37,43 +37,46 @@ import type { AlgorandAccount, Transaction } from "./types";
  * - Check if Token is already optin at the recipient
  * - Check if memo is too long
  */
-export const getTransactionStatus = async (a: Account, t: Transaction) => {
-  const errors: any = {};
-  const warnings: any = {};
-  const tokenAccount = !t.subAccountId
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  TransactionStatus
+>["getTransactionStatus"] = async (account, transaction) => {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+  const tokenAccount = !transaction.subAccountId
     ? null
-    : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
+    : account.subAccounts && account.subAccounts.find(ta => ta.id === transaction.subAccountId);
 
-  if (!t.recipient) {
+  if (!transaction.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (!(await isValidAddress(t.recipient))) {
+  } else if (!(await isValidAddress(transaction.recipient))) {
     errors.recipient = new InvalidAddress("", {
-      currencyName: a.currency.name,
+      currencyName: account.currency.name,
     });
-  } else if (t.mode === "send" && a.freshAddress === t.recipient) {
+  } else if (transaction.mode === "send" && account.freshAddress === transaction.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
-  const estimatedFees = t.fees || new BigNumber(0);
-  let amount = t.amount;
+  const estimatedFees = transaction.fees || new BigNumber(0);
+  let amount = transaction.amount;
   let totalSpent = estimatedFees;
 
-  invariant((a as AlgorandAccount).algorandResources, "Algorand family expected");
-  const algorandResources = (a as AlgorandAccount).algorandResources;
+  invariant((account as AlgorandAccount).algorandResources, "Algorand family expected");
+  const algorandResources = (account as AlgorandAccount).algorandResources;
 
   const algoSpendableBalance = computeAlgoMaxSpendable({
-    accountBalance: a.balance,
+    accountBalance: account.balance,
     nbAccountAssets: algorandResources.nbAssets,
-    mode: t.mode,
+    mode: transaction.mode,
   });
 
-  switch (t.mode) {
+  switch (transaction.mode) {
     case "send": {
-      if (amount.lte(0) && !t.useAllAmount) {
+      if (amount.lte(0) && !transaction.useAllAmount) {
         errors.amount = new AmountRequired();
       }
 
-      if (!t.fees || !t.fees.gt(0)) {
+      if (!transaction.fees || !transaction.fees.gt(0)) {
         errors.fees = new FeeNotLoaded();
       }
 
@@ -81,12 +84,12 @@ export const getTransactionStatus = async (a: Account, t: Transaction) => {
         tokenAccount &&
         tokenAccount.type === "TokenAccount" &&
         !errors.recipient &&
-        !(await recipientHasAsset(t.recipient, extractTokenId(tokenAccount.token.id)))
+        !(await recipientHasAsset(transaction.recipient, extractTokenId(tokenAccount.token.id)))
       ) {
         errors.recipient = new AlgorandASANotOptInInRecipient();
       }
 
-      amount = t.useAllAmount
+      amount = transaction.useAllAmount
         ? tokenAccount
           ? tokenAccount.balance
           : algoSpendableBalance.minus(estimatedFees)
@@ -98,7 +101,7 @@ export const getTransactionStatus = async (a: Account, t: Transaction) => {
 
       totalSpent = tokenAccount ? amount : amount.plus(estimatedFees);
 
-      if (!errors.recipient && !(await isAmountValid(t.recipient, amount))) {
+      if (!errors.recipient && !(await isAmountValid(transaction.recipient, amount))) {
         errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
           minimalAmount: "0.1 ALGO",
         });
@@ -109,7 +112,7 @@ export const getTransactionStatus = async (a: Account, t: Transaction) => {
       }
 
       if (
-        (amount.lte(0) && t.useAllAmount) || // if use all Amount sets an amount at 0
+        (amount.lte(0) && transaction.useAllAmount) || // if use all Amount sets an amount at 0
         (!errors.recipient && !errors.amount && tokenAccount
           ? totalSpent.gt(tokenAccount.balance)
           : totalSpent.gt(algoSpendableBalance)) // if spendable balance lower than total
@@ -126,13 +129,13 @@ export const getTransactionStatus = async (a: Account, t: Transaction) => {
     }
 
     case "optIn": {
-      if (!t.fees || !t.fees.gt(0)) {
+      if (!transaction.fees || !transaction.fees.gt(0)) {
         errors.fees = new FeeNotLoaded();
       }
 
       // This error doesn't need to be translate,
       // it will use to block until the user choose an assetId
-      if (!t.assetId) {
+      if (!transaction.assetId) {
         errors.assetId = new Error("Asset Id is not set");
       }
 
@@ -156,15 +159,15 @@ export const getTransactionStatus = async (a: Account, t: Transaction) => {
     }
   }
 
-  if (t.memo && t.memo.length > ALGORAND_MAX_MEMO_SIZE) {
+  if (transaction.memo && transaction.memo.length > ALGORAND_MAX_MEMO_SIZE) {
     throw new Error("Memo is too long");
   }
 
-  return Promise.resolve({
+  return {
     errors,
     warnings,
     estimatedFees,
     amount,
     totalSpent,
-  });
+  };
 };
