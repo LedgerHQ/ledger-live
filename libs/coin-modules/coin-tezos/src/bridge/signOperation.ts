@@ -1,16 +1,12 @@
 import { Observable } from "rxjs";
-import { DEFAULT_FEE, OpKind, TezosToolkit } from "@taquito/taquito";
-import { type OperationContents } from "@taquito/rpc";
-import type {
-  OperationType,
-  SignOperationEvent,
-  SignOperationFnSignature,
-} from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type { TezosAccount, TezosOperation, TezosSigner, Transaction } from "../types";
+import { type OperationContents } from "@taquito/rpc";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { DEFAULT_FEE, OpKind, TezosToolkit } from "@taquito/taquito";
+import type { OperationType, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
+import type { TezosAccount, TezosSigner, Transaction, TransactionStatus } from "../types";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
 export async function getOperationContents({
   account,
@@ -101,8 +97,10 @@ export async function getOperationContents({
   return { type, contents };
 }
 
-const buildSignOperation =
-  (signerContext: SignerContext<TezosSigner>): SignOperationFnSignature<Transaction> =>
+export const buildSignOperation =
+  (
+    signerContext: SignerContext<TezosSigner>,
+  ): AccountBridge<Transaction, TezosAccount, TransactionStatus>["signOperation"] =>
   ({ account, deviceId, transaction }): Observable<SignOperationEvent> =>
     new Observable(o => {
       let cancelled = false;
@@ -134,7 +132,7 @@ const buildSignOperation =
           }
 
           const { type, contents } = await getOperationContents({
-            account: account as TezosAccount,
+            account,
             transaction,
             tezos,
             counter: Number(sourceData.counter),
@@ -163,31 +161,11 @@ const buildSignOperation =
         if (!signedInfo) {
           return;
         }
-        const { type, signature } = signedInfo;
 
         o.next({ type: "device-signature-granted" });
 
-        // build optimistic operation
-        const txHash = ""; // resolved at broadcast time
-        const senders = [freshAddress];
-        const recipients = [transaction.recipient];
-        const accountId = account.id;
-
-        // currently, all mode are always at least one OUT tx on ETH parent
-        const operation: TezosOperation = {
-          id: encodeOperationId(accountId, txHash, type),
-          hash: txHash,
-          type,
-          value: transaction.amount,
-          fee: fees,
-          extra: {},
-          blockHash: null,
-          blockHeight: null,
-          senders,
-          recipients,
-          accountId,
-          date: new Date(),
-        };
+        const { type, signature } = signedInfo;
+        const operation = buildOptimisticOperation(account, transaction, type);
 
         o.next({
           type: "signed",

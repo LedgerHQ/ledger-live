@@ -1,5 +1,5 @@
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { fetchAllTransactions } from "./getAccountShape";
+import { fetchAllTransactions } from "../api/tzkt";
 
 jest.setTimeout(2 * 60 * 1000);
 
