@@ -51,11 +51,11 @@ export const getTxToBroadcast = async (
 export const getUnit = () => getCryptoCurrencyById("stacks").units[0];
 
 export const getAddress = (
-  a: Account,
+  account: Account,
 ): {
   address: string;
   derivationPath: string;
-} => ({ address: a.freshAddress, derivationPath: a.freshAddressPath });
+} => ({ address: account.freshAddress, derivationPath: account.freshAddressPath });
 
 export const mapTxToOps =
   (accountID: string) =>
