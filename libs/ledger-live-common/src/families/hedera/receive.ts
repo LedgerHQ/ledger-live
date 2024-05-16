@@ -3,19 +3,10 @@ import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import getAddress from "../../hw/getAddress";
-import type { Account, DerivationMode } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, DerivationMode } from "@ledgerhq/types-live";
+import { Transaction } from "./types";
 
-const receive = (
-  account: Account,
-  {
-    deviceId,
-  }: {
-    deviceId: string;
-  },
-): Observable<{
-  address: string;
-  path: string;
-}> =>
+export const receive: AccountBridge<Transaction>["receive"] = (account: Account, { deviceId }) =>
   withDevice(deviceId)(transport => {
     return new Observable(o => {
       void (async function () {
