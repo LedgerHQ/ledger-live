@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import getTransactionStatus from "./js-getTransactionStatus";
+import getTransactionStatus from "./getTransactionStatus";
 import { CardanoAccount, Transaction } from "./types";
 
 describe("getTransactionStatus", () => {

@@ -1,33 +1,28 @@
-import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
-import type { AccountLike, Account } from "@ledgerhq/types-live";
-import { getMainAccount } from "../../account";
-import type { CardanoAccount, Transaction } from "./types";
-import { createTransaction } from "./js-transaction";
 import {
   address as TyphonAddress,
   types as TyphonTypes,
   Transaction as TyphonTransaction,
 } from "@stricahq/typhonjs";
-import { buildTransaction } from "./js-buildTransaction";
+import { log } from "@ledgerhq/logs";
+import { BigNumber } from "bignumber.js";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { CardanoAccount, Transaction } from "./types";
+import { createTransaction } from "./createTransaction";
+import { buildTransaction } from "./buildTransaction";
+import { getMainAccount } from "../../account";
 
 /**
  * Returns the maximum possible amount for transaction
  *
  * @param {Object} param - the account, parentAccount and transaction
  */
-const estimateMaxSpendable = async ({
-  account,
-  parentAccount,
-  transaction,
-}: {
-  account: AccountLike;
-  parentAccount?: Account;
-  transaction?: Transaction;
-}): Promise<BigNumber> => {
+const estimateMaxSpendable: AccountBridge<
+  Transaction,
+  CardanoAccount
+>["estimateMaxSpendable"] = async ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
 
-  if ((mainAccount as CardanoAccount).cardanoResources.utxos.length === 0) {
+  if (mainAccount.cardanoResources.utxos.length === 0) {
     return new BigNumber(0);
   }
 
@@ -38,7 +33,7 @@ const estimateMaxSpendable = async ({
   const dummyRecipient =
     "addr1qyqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqv2t5am";
   const t: Transaction = {
-    ...createTransaction(),
+    ...createTransaction(account),
     ...transaction,
     recipient: dummyRecipient,
     // amount field will not be used to build a transaction when useAllAmount is true
@@ -47,7 +42,7 @@ const estimateMaxSpendable = async ({
   };
   let typhonTransaction: TyphonTransaction;
   try {
-    typhonTransaction = await buildTransaction(mainAccount as CardanoAccount, t);
+    typhonTransaction = await buildTransaction(mainAccount, t);
   } catch (error) {
     log("cardano-error", "Failed to estimate max spendable: " + String(error));
     return new BigNumber(0);
