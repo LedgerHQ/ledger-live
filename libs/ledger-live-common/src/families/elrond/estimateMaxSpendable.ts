@@ -1,36 +1,31 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { getMainAccount } from "../../account";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import { findSubAccountById, getMainAccount } from "../../account";
 import type { Transaction } from "./types";
 import { getFees } from "./api";
-import { createTransaction } from "./js-transaction";
+import { createTransaction } from "./createTransaction";
 
 /**
  * Returns the maximum possible amount for transaction
  *
  * @param {Object} param - the account, parentAccount and transaction
  */
-const estimateMaxSpendable = async ({
+export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
   parentAccount,
   transaction,
-}: {
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
-  transaction: Transaction | null | undefined;
-}): Promise<BigNumber> => {
+}) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const tx: Transaction = {
-    ...createTransaction(),
+    ...createTransaction(account),
     subAccountId: account.type === "Account" ? null : account.id,
     ...transaction,
     useAllAmount: true,
   };
 
-  const tokenAccount =
-    tx.subAccountId &&
-    mainAccount.subAccounts &&
-    mainAccount.subAccounts.find(ta => ta.id === tx.subAccountId);
+  const tokenAccount = tx.subAccountId
+    ? findSubAccountById(mainAccount, tx.subAccountId)
+    : undefined;
 
   if (tokenAccount) {
     return tokenAccount.balance;
