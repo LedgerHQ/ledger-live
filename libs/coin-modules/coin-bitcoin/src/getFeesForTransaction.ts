@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { BitcoinInput, BitcoinOutput, Transaction } from "./types";
-import { buildTransaction } from "./js-buildTransaction";
+import { buildTransaction } from "./buildTransaction";
 import { perCoinLogic } from "./logic";
 import type { Account } from "@ledgerhq/types-live";
 
