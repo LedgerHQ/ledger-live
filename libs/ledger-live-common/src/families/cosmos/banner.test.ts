@@ -8,7 +8,7 @@ import { BigNumber } from "bignumber.js";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "../../config/sharedConfig";
 
-jest.mock("./js-prepareTransaction", () => ({
+jest.mock("./prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
 }));
 
