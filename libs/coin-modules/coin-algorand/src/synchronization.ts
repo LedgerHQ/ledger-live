@@ -1,7 +1,7 @@
 import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
-import type { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
@@ -18,7 +18,7 @@ import { AlgoTransactionType } from "./api";
 
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq/types-live";
-import { AlgorandOperation } from "./types";
+import { AlgorandAccount, AlgorandOperation } from "./types";
 import { computeAlgoMaxSpendable } from "./logic";
 import { addPrefixToken, extractTokenId } from "./tokens";
 
@@ -165,7 +165,7 @@ const mapTransactionToOperation = (
   const type = getOperationType(tx, accountAddress);
   const assetId = getOperationAssetId(tx);
 
-  const subOperations = subAccounts ? inferSubOperations(tx.id, subAccounts) : undefined;
+  const subOperations = subAccounts ? inferSubOperations(tx.id, subAccounts) : [];
 
   return {
     id: encodeOperationId(accountId, hash, type),
@@ -218,10 +218,7 @@ const mapTransactionToASAOperation = (
   };
 };
 
-export async function getAccountShape(
-  info: AccountShapeInfo,
-  syncConfig: SyncConfig,
-): Promise<Partial<Account>> {
+export const getAccountShape: GetAccountShape<AlgorandAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
@@ -265,7 +262,7 @@ export async function getAccountShape(
 
   const operations = mergeOps(oldOperations, newOperations);
 
-  const shape = {
+  return {
     id: accountId,
     xpub: address,
     blockHeight: round,
@@ -273,14 +270,13 @@ export async function getAccountShape(
     spendableBalance,
     operations,
     operationsCount: operations.length,
-    subAccounts,
+    subAccounts: subAccounts || [],
     algorandResources: {
       rewards: pendingRewards,
       nbAssets,
     },
   };
-  return shape;
-}
+};
 
 async function buildSubAccount({
   parentAccountId,
@@ -394,3 +390,5 @@ async function buildSubAccounts({
   });
   return tokenAccounts;
 }
+
+export const sync = makeSync({ getAccountShape });

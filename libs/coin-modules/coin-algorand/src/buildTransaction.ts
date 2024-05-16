@@ -9,13 +9,12 @@ import {
   makePaymentTxnWithSuggestedParams,
 } from "algosdk";
 
-import type { Account } from "@ledgerhq/types-live";
 import algorandAPI from "./api";
 import { extractTokenId } from "./tokens";
-import type { Transaction } from "./types";
+import type { AlgorandAccount, Transaction } from "./types";
 
 export const buildTransactionPayload = async (
-  account: Account,
+  account: AlgorandAccount,
   transaction: Transaction,
 ): Promise<AlgoTransactionPayload> => {
   const { amount, recipient, mode, memo, assetId, subAccountId } = transaction;
