@@ -14,7 +14,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const newTransaction = await prepareTransaction(mainAccount, {
-    ...createTransaction(),
+    ...createTransaction(account),
     ...transaction,
     recipient: transaction?.recipient || getAbandonSeedAddress("ripple"),
     // public testing seed abandonx11,about
