@@ -1,10 +1,8 @@
 import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
 import { setCoinConfig } from "../config";
-import { getAccount, getRegistry } from "./sidecar";
+import { getAccount, getRegistry, getStakingProgress } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
-
-jest.setTimeout(60000);
 
 describe("getAccount", () => {
   let balanceResponseStub = {};
@@ -119,5 +117,18 @@ describe("getRegistry", () => {
     const { registry, extrinsics } = await getRegistry();
     expect(registry).not.toBeNull();
     expect(extrinsics).not.toBeNull();
+  });
+});
+
+describe.only("getStakingProgress", () => {
+  it("returns expected result", async () => {
+    const result = await getStakingProgress();
+
+    expect(result).toEqual({
+      activeEra: 1443,
+      bondingDuration: 28,
+      electionClosed: true,
+      maxNominatorRewardedPerValidator: 128,
+    });
   });
 });
