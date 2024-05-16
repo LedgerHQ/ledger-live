@@ -1,26 +1,26 @@
-import createTransaction from "../js-createTransaction";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import getTransactionStatus from "../js-getTransactionStatus";
-import prepareTransaction from "../js-prepareTransaction";
-import signOperation from "../js-signOperation";
-import { sync, scanAccounts } from "../js-synchronisation";
-import updateTransaction from "../js-updateTransaction";
-import type { CosmosCurrencyConfig, CosmosValidatorItem, Transaction } from "../types";
-import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { CosmosAPI } from "../api/Cosmos";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CosmosCurrencyConfig, CosmosValidatorItem, Transaction } from "../types";
+import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
+import getTransactionStatus from "../getTransactionStatus";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { getCurrencyConfiguration } from "../../../config";
+import { prepareTransaction } from "../prepareTransaction";
+import { updateTransaction } from "../updateTransaction";
+import { createTransaction } from "../createTransaction";
+import { sync, scanAccounts } from "../synchronisation";
+import { signOperation } from "../signOperation";
+import cryptoFactory from "../chain/chain";
+import { CosmosAPI } from "../api/Cosmos";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "../serialization";
-import { getCurrencyConfiguration } from "../../../config";
-import cryptoFactory from "../chain/chain";
 
 const receive = makeAccountBridgeReceive();
 

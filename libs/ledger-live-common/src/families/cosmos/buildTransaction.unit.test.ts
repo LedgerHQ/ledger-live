@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { buildTransaction, txToMessages } from "./js-buildTransaction";
+import { buildTransaction, txToMessages } from "./buildTransaction";
 import { CosmosAccount, CosmosDelegationInfo, Transaction } from "./types";
 import {
   MsgDelegate,

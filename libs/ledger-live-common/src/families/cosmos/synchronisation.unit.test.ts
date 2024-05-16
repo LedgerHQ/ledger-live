@@ -3,7 +3,7 @@ import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AccountShapeInfo } from "../../bridge/jsHelpers";
 import { CosmosAPI } from "./api/Cosmos";
-import { getAccountShape } from "./js-synchronisation";
+import { getAccountShape } from "./synchronisation";
 import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 import * as jsHelpers from "../../bridge/jsHelpers";
 
