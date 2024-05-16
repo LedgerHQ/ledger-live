@@ -82,6 +82,8 @@
     "src/families/bitcoin/wallet-btc/crypto/secp256k1.ts",
     "src/families/cardano/api/api-types.ts",
     "src/families/cardano/api/getPools.ts",
+    "src/families/cardano/getTransactionStatus.unit.test.ts",
+    "src/families/cardano/synchronisation.unit.test.ts",
     "src/families/cardano/react.ts",
     "src/families/cardano/types.ts",
     "src/families/cardano/utils.ts",

@@ -1,18 +1,34 @@
+import type {
+  AccountBridge,
+  CurrencyBridge,
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "@ledgerhq/types-live";
+import uniqBy from "lodash/uniqBy";
+import BigNumber from "bignumber.js";
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
+import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
+import { formatCurrencyUnit, listTokensForCryptoCurrency } from "../../currencies";
+import { getDelegationInfo } from "./api/getDelegationInfo";
+import { APITransaction, HashType } from "./api/api-types";
+import { getTransactions } from "./api/getTransactions";
+import { buildSubAccounts } from "./buildSubAccounts";
+import { getNetworkInfo } from "./api/getNetworkInfo";
+import { encodeOperationId } from "../../operation";
+import { getNetworkParameters } from "./networks";
+import { makeSync } from "../../bridge/jsHelpers";
+import postSyncPatch from "./postSyncPatch";
 import {
   AccountShapeInfo,
   GetAccountShape,
   makeScanAccounts,
   mergeOps,
 } from "../../bridge/jsHelpers";
-import { makeSync } from "../../bridge/jsHelpers";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
-
-import BigNumber from "bignumber.js";
-import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
-import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { APITransaction, HashType } from "./api/api-types";
 import {
   CardanoAccount,
   CardanoOperation,
@@ -33,23 +49,6 @@ import {
   isHexString,
   mergeTokens,
 } from "./logic";
-import { encodeOperationId } from "../../operation";
-import { getNetworkParameters } from "./networks";
-import { getNetworkInfo } from "./api/getNetworkInfo";
-import uniqBy from "lodash/uniqBy";
-import postSyncPatch from "./postSyncPatch";
-import { getTransactions } from "./api/getTransactions";
-import type {
-  AccountBridge,
-  CurrencyBridge,
-  Operation,
-  OperationType,
-  TokenAccount,
-} from "@ledgerhq/types-live";
-import { buildSubAccounts } from "./buildSubAccounts";
-import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
-import { formatCurrencyUnit, listTokensForCryptoCurrency } from "../../currencies";
-import { getDelegationInfo } from "./api/getDelegationInfo";
 
 function mapTxToAccountOperation(
   tx: APITransaction,
@@ -207,7 +206,7 @@ export type SignerContext = (
 ) => Promise<ExtendedPublicKey>;
 
 export const makeGetAccountShape =
-  (signerContext: SignerContext): GetAccountShape =>
+  (signerContext: SignerContext): GetAccountShape<CardanoAccount> =>
   async (info, { blacklistedTokenIds }) => {
     const {
       currency,
@@ -319,7 +318,7 @@ export const makeGetAccountShape =
           stakeCred: stakeCredential,
         }).getBech32(),
       }));
-    const cardanoNetworkInfo = await getNetworkInfo(initialAccount as CardanoAccount, currency);
+    const cardanoNetworkInfo = await getNetworkInfo(initialAccount, currency);
     const delegationInfo = await getDelegationInfo(currency, stakeCredential.key);
 
     const totalBalance = delegationInfo?.rewards ? utxosSum.plus(delegationInfo.rewards) : utxosSum;
@@ -370,8 +369,10 @@ export const makeGetAccountShape =
 export const scanAccounts = (signerContext: SignerContext): CurrencyBridge["scanAccounts"] =>
   makeScanAccounts({ getAccountShape: makeGetAccountShape(signerContext) });
 
-export const sync = (signerContext: SignerContext): AccountBridge<Transaction>["sync"] =>
-  makeSync({
+export const sync = (
+  signerContext: SignerContext,
+): AccountBridge<Transaction, CardanoAccount>["sync"] =>
+  makeSync<Transaction, CardanoAccount>({
     getAccountShape: makeGetAccountShape(signerContext),
     postSync: postSyncPatch,
   });
