@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
 import { PolkadotOperation } from "../types";
-import getAccountShape from "./getAccountShape";
+import getAccountShape from "./synchronization";
 
 const mockGetAccount = jest.fn();
 const mockGetOperations = jest.fn();
@@ -26,14 +26,17 @@ describe("getAccountShape", () => {
     mockGetOperations.mockResolvedValue([]);
 
     // WHEN
-    await getAccountShape({
-      index: -1, // not used but mandatory
-      derivationPath: "not used",
-      currency: getCryptoCurrencyById("polkadot"),
-      address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
-      initialAccount,
-      derivationMode: "polkadotbip44",
-    });
+    await getAccountShape(
+      {
+        index: -1, // not used but mandatory
+        derivationPath: "not used",
+        currency: getCryptoCurrencyById("polkadot"),
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
 
     // THEN
     expect(mockGetAccount).toHaveBeenCalledTimes(1);
@@ -48,14 +51,17 @@ describe("getAccountShape", () => {
     mockGetOperations.mockResolvedValue([]);
 
     // WHEN
-    const shape = await getAccountShape({
-      index: -1, // not used but mandatory
-      derivationPath: "not used",
-      currency: getCryptoCurrencyById("polkadot"),
-      address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
-      initialAccount,
-      derivationMode: "polkadotbip44",
-    });
+    const shape = await getAccountShape(
+      {
+        index: -1, // not used but mandatory
+        derivationPath: "not used",
+        currency: getCryptoCurrencyById("polkadot"),
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
 
     // THEN
     expect(shape).toEqual(
@@ -87,14 +93,17 @@ describe("getAccountShape", () => {
     mockGetOperations.mockResolvedValue([]);
 
     // WHEN
-    const shape = await getAccountShape({
-      index: -1, // not used but mandatory
-      derivationPath: "not used",
-      currency: getCryptoCurrencyById("polkadot"),
-      address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
-      initialAccount,
-      derivationMode: "polkadotbip44",
-    });
+    const shape = await getAccountShape(
+      {
+        index: -1, // not used but mandatory
+        derivationPath: "not used",
+        currency: getCryptoCurrencyById("polkadot"),
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
 
     // THEN
     expect(shape.operationsCount).toEqual(1);
@@ -113,14 +122,17 @@ describe("getAccountShape", () => {
     mockGetOperations.mockResolvedValue(apiOperations);
 
     // WHEN
-    const shape = await getAccountShape({
-      index: -1, // not used but mandatory
-      derivationPath: "not used",
-      currency: getCryptoCurrencyById("polkadot"),
-      address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
-      initialAccount,
-      derivationMode: "polkadotbip44",
-    });
+    const shape = await getAccountShape(
+      {
+        index: -1, // not used but mandatory
+        derivationPath: "not used",
+        currency: getCryptoCurrencyById("polkadot"),
+        address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+        initialAccount,
+        derivationMode: "polkadotbip44",
+      },
+      { paginationConfig: {} },
+    );
 
     // THEN
     expect(shape.operationsCount).toEqual(2);

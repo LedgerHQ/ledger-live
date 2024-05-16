@@ -1,10 +1,11 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import type { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import polkadotAPI from "../network";
+import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
+import { PolkadotAccount } from "../types";
+import polkadotAPI from "../network";
 
-export default async function getAccountShape(info: AccountShapeInfo) {
+export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
   await loadPolkadotCrypto();
   const { address, initialAccount, currency, derivationMode } = info;
 
@@ -56,4 +57,8 @@ export default async function getAccountShape(info: AccountShapeInfo) {
       numSlashingSpans,
     },
   };
-}
+};
+
+export const sync = makeSync({ getAccountShape });
+
+export default getAccountShape;
