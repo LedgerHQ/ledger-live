@@ -15,7 +15,7 @@ import { BitcoinAccount, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
-import { Account, DerivationMode, Operation } from "@ledgerhq/types-live";
+import { DerivationMode, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BitcoinXPub, SignerContext } from "./signer";
@@ -85,7 +85,7 @@ export type StartSpan = (
 export function makeGetAccountShape(
   signerContext: SignerContext,
   startSpan: StartSpan,
-): GetAccountShape {
+): GetAccountShape<BitcoinAccount> {
   return async info => {
     let span;
     const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
@@ -113,11 +113,11 @@ export function makeGetAccountShape(
     });
 
     const walletNetwork = toWalletNetwork(currency.id);
-    const walletDerivationMode = toWalletDerivationMode(derivationMode as DerivationMode);
+    const walletDerivationMode = toWalletDerivationMode(derivationMode);
 
     span = startSpan("sync", "generateAccount");
     const walletAccount =
-      (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
+      initialAccount?.bitcoinResources?.walletAccount ||
       (await wallet.generateAccount(
         {
           xpub,
@@ -134,7 +134,7 @@ export function makeGetAccountShape(
     const oldOperations = initialAccount?.operations || [];
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
 
-    const blockHeight = currentBlock?.height;
+    const blockHeight = currentBlock?.height || 0;
     await wallet.syncAccount(walletAccount, blockHeight);
 
     const balance = await wallet.getAccountBalance(walletAccount);
@@ -191,7 +191,7 @@ export function makeGetAccountShape(
 }
 
 type XpubGenerateParameter = {
-  deviceId?: string;
+  deviceId: string | undefined;
   currency: CryptoCurrency;
   signerContext: SignerContext;
   accountPath: string;
@@ -225,10 +225,10 @@ async function generateXpubIfNeeded(
   );
 }
 
-export const postSync = (initial: Account, synced: Account) => {
+export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
   log("bitcoin/postSync", "bitcoinResources");
   const perCoin = perCoinLogic[synced.currency.id];
-  const syncedBtc = synced as BitcoinAccount;
+  const syncedBtc = synced;
   if (perCoin) {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 

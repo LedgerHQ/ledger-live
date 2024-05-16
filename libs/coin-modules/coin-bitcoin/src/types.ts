@@ -45,12 +45,12 @@ export type BitcoinOutputRaw = [
 
 export type BitcoinResources = {
   utxos: BitcoinOutput[];
-  walletAccount?: WalletAccount;
+  walletAccount?: WalletAccount | undefined;
 };
 
 export type BitcoinResourcesRaw = {
   utxos: BitcoinOutputRaw[];
-  walletAccount?: WalletAccountRaw;
+  walletAccount?: WalletAccountRaw | undefined;
 };
 
 export const initialBitcoinResourcesValue = {
@@ -143,7 +143,7 @@ export type Transaction = TransactionCommon & {
   rbf: boolean;
   feePerByte: BigNumber | null | undefined;
   networkInfo: NetworkInfo | null | undefined;
-  opReturnData?: Buffer;
+  opReturnData?: Buffer | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -152,19 +152,19 @@ export type TransactionRaw = TransactionCommonRaw & {
   rbf: boolean;
   feePerByte: string | null | undefined;
   networkInfo: NetworkInfoRaw | null | undefined;
-  opReturnData?: Buffer;
+  opReturnData?: Buffer | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon & {
-  txInputs?: BitcoinInput[];
-  txOutputs?: BitcoinOutput[];
-  opReturnData?: string;
+  txInputs: BitcoinInput[] | undefined;
+  txOutputs: BitcoinOutput[] | undefined;
+  opReturnData: string | undefined;
 };
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  txInputs?: BitcoinInputRaw[];
-  txOutputs?: BitcoinOutputRaw[];
-  opReturnData?: string;
+  txInputs: BitcoinInputRaw[] | undefined;
+  txOutputs: BitcoinOutputRaw[] | undefined;
+  opReturnData: string | undefined;
 };
 
 export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources };
