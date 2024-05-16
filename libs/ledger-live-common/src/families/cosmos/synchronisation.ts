@@ -9,10 +9,86 @@ import {
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosOperation, CosmosTx } from "./types";
+import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 import type { OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
+
+export const getAccountShape: GetAccountShape<CosmosAccount> = async info => {
+  const { address, currency, derivationMode, initialAccount } = info;
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
+
+  const {
+    accountInfo,
+    balances,
+    blockHeight,
+    txs,
+    delegations,
+    redelegations,
+    unbondings,
+    withdrawAddress,
+  } = await new CosmosAPI(currency.id).getAccountInfo(address, currency);
+
+  const oldOperations = initialAccount?.operations || [];
+  const newOperations = txToOps(info, accountId, txs);
+  const operations = mergeOps(oldOperations, newOperations);
+  let balance = balances;
+  let delegatedBalance = new BigNumber(0);
+  let pendingRewardsBalance = new BigNumber(0);
+  let unbondingBalance = new BigNumber(0);
+
+  for (const delegation of delegations) {
+    delegatedBalance = delegatedBalance.plus(delegation.amount);
+    balance = balance.plus(delegation.amount);
+
+    pendingRewardsBalance = pendingRewardsBalance.plus(delegation.pendingRewards);
+  }
+
+  for (const unbonding of unbondings) {
+    unbondingBalance = unbondingBalance.plus(unbonding.amount);
+    balance = balance.plus(unbonding.amount);
+  }
+
+  let spendableBalance = balance.minus(unbondingBalance.plus(delegatedBalance));
+
+  if (spendableBalance.lt(0)) {
+    spendableBalance = new BigNumber(0);
+  }
+
+  const shape = {
+    id: accountId,
+    xpub: address,
+    balance: balance,
+    spendableBalance,
+    operationsCount: operations.length,
+    blockHeight,
+    cosmosResources: {
+      delegations,
+      redelegations,
+      unbondings,
+      delegatedBalance,
+      pendingRewardsBalance,
+      unbondingBalance,
+      withdrawAddress,
+      sequence: accountInfo.sequence,
+    },
+  };
+
+  if (shape.spendableBalance && shape.spendableBalance.lt(0)) {
+    shape.spendableBalance = new BigNumber(0);
+  }
+
+  return { ...shape, operations };
+};
+
+export const scanAccounts = makeScanAccounts({ getAccountShape });
+export const sync = makeSync({ getAccountShape });
 
 const getBlankOperation = (tx: CosmosTx, fees: BigNumber, accountId: string): CosmosOperation => {
   return {
@@ -218,79 +294,3 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
 
   return ops;
 };
-
-export const getAccountShape: GetAccountShape = async info => {
-  const { address, currency, derivationMode, initialAccount } = info;
-  const accountId = encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: address,
-    derivationMode,
-  });
-
-  const {
-    accountInfo,
-    balances,
-    blockHeight,
-    txs,
-    delegations,
-    redelegations,
-    unbondings,
-    withdrawAddress,
-  } = await new CosmosAPI(currency.id).getAccountInfo(address, currency);
-
-  const oldOperations = initialAccount?.operations || [];
-  const newOperations = txToOps(info, accountId, txs);
-  const operations = mergeOps(oldOperations, newOperations);
-  let balance = balances;
-  let delegatedBalance = new BigNumber(0);
-  let pendingRewardsBalance = new BigNumber(0);
-  let unbondingBalance = new BigNumber(0);
-
-  for (const delegation of delegations) {
-    delegatedBalance = delegatedBalance.plus(delegation.amount);
-    balance = balance.plus(delegation.amount);
-
-    pendingRewardsBalance = pendingRewardsBalance.plus(delegation.pendingRewards);
-  }
-
-  for (const unbonding of unbondings) {
-    unbondingBalance = unbondingBalance.plus(unbonding.amount);
-    balance = balance.plus(unbonding.amount);
-  }
-
-  let spendableBalance = balance.minus(unbondingBalance.plus(delegatedBalance));
-
-  if (spendableBalance.lt(0)) {
-    spendableBalance = new BigNumber(0);
-  }
-
-  const shape = {
-    id: accountId,
-    xpub: address,
-    balance: balance,
-    spendableBalance,
-    operationsCount: operations.length,
-    blockHeight,
-    cosmosResources: {
-      delegations,
-      redelegations,
-      unbondings,
-      delegatedBalance,
-      pendingRewardsBalance,
-      unbondingBalance,
-      withdrawAddress,
-      sequence: accountInfo.sequence,
-    },
-  };
-
-  if (shape.spendableBalance && shape.spendableBalance.lt(0)) {
-    shape.spendableBalance = new BigNumber(0);
-  }
-
-  return { ...shape, operations };
-};
-
-export const scanAccounts = makeScanAccounts({ getAccountShape });
-export const sync = makeSync({ getAccountShape });
