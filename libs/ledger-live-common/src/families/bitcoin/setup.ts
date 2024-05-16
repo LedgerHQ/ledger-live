@@ -29,9 +29,7 @@ const signerContext: SignerContext = <T>(
   fn: (signer: Btc) => Promise<T>,
 ): Promise<T> =>
   firstValueFrom(
-    withDevice(deviceId)((transport: Transport) =>
-      from(fn(createSigner(transport, crypto))),
-    ),
+    withDevice(deviceId)((transport: Transport) => from(fn(createSigner(transport, crypto)))),
   );
 
 const getCurrencyConfig = (currency: CryptoCurrency) => {
