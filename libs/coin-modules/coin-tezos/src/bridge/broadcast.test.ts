@@ -1,6 +1,6 @@
 import { SignedOperation } from "@ledgerhq/types-live";
 import { createFixtureOperation } from "../types/model.fixture";
-import broadcast from "./broadcast";
+import { broadcast } from "./broadcast";
 
 const mockInjectOperation = jest.fn();
 jest.mock("@taquito/taquito", () => ({
@@ -21,7 +21,7 @@ describe("broadcast", () => {
     mockInjectOperation.mockResolvedValue("SIGN_HASH");
 
     // WHEN
-    const op = await broadcast({ signedOperation });
+    const op = await broadcast({ signedOperation, account: {} as any });
 
     // THEN
     expect(mockInjectOperation).toHaveBeenCalledTimes(1);
