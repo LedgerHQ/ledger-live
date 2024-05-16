@@ -1,11 +1,5 @@
 import { Observable } from "rxjs";
-import type {
-  Account,
-  DeviceId,
-  OperationType,
-  SignOperationEvent,
-  SignOperationFnSignature,
-} from "@ledgerhq/types-live";
+import type { Account, AccountBridge, OperationType } from "@ledgerhq/types-live";
 import type {
   Command,
   CommandDescriptor,
@@ -20,7 +14,7 @@ import type {
   Transaction,
   TransferCommand,
 } from "./types";
-import { buildTransactionWithAPI } from "./js-buildTransaction";
+import { buildTransactionWithAPI } from "./buildTransaction";
 import type { SolanaSigner } from "./signer";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -55,16 +49,8 @@ export const buildSignOperation =
   (
     signerContext: SignerContext<SolanaSigner>,
     api: () => Promise<ChainAPI>,
-  ): SignOperationFnSignature<Transaction> =>
-  ({
-    account,
-    deviceId,
-    transaction,
-  }: {
-    account: Account;
-    deviceId: DeviceId;
-    transaction: Transaction;
-  }): Observable<SignOperationEvent> =>
+  ): AccountBridge<Transaction>["signOperation"] =>
+  ({ account, deviceId, transaction }) =>
     new Observable(subscriber => {
       const main = async () => {
         const [tx, signOnChainTransaction] = await buildTransactionWithAPI(

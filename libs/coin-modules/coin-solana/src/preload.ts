@@ -1,7 +1,7 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { flow } from "lodash/fp";
 import { ChainAPI } from "./api";
-import { setSolanaPreloadData as setPreloadData } from "./js-preload-data";
+import { setSolanaPreloadData as setPreloadData } from "./preload-data";
 import { SolanaPreloadData, SolanaPreloadDataV1 } from "./types";
 import {
   assertUnreachable,

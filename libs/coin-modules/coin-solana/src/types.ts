@@ -15,7 +15,7 @@ export type TransferCommand = {
   sender: string;
   recipient: string;
   amount: number;
-  memo?: string;
+  memo?: string | undefined;
 };
 
 export type TokenCreateATACommand = {
@@ -81,7 +81,7 @@ export type TokenTransferCommand = {
   amount: number;
   mintAddress: string;
   mintDecimals: number;
-  memo?: string;
+  memo?: string | undefined;
 };
 
 export type Command =
@@ -104,7 +104,7 @@ export type CommandDescriptor = {
 export type TransferTransaction = {
   kind: "transfer";
   uiState: {
-    memo?: string;
+    memo?: string | undefined;
   };
 };
 
@@ -112,7 +112,7 @@ export type TokenTransferTransaction = {
   kind: "token.transfer";
   uiState: {
     subAccountId: string;
-    memo?: string;
+    memo?: string | undefined;
   };
 };
 
@@ -186,10 +186,12 @@ export type SolanaStake = {
   stakeAccAddr: string;
   hasStakeAuth: boolean;
   hasWithdrawAuth: boolean;
-  delegation?: {
-    stake: number;
-    voteAccAddr: string;
-  };
+  delegation:
+    | {
+        stake: number;
+        voteAccAddr: string;
+      }
+    | undefined;
   stakeAccBalance: number;
   rentExemptReserve: number;
   withdrawable: number;
@@ -198,6 +200,11 @@ export type SolanaStake = {
     active: number;
     inactive: number;
   };
+  reward?:
+    | {
+        amount: number;
+      }
+    | undefined;
 };
 
 export type SolanaStakeWithMeta = {
@@ -274,11 +281,11 @@ export type ExtraStakeInfoRaw = {
 };
 
 export type SolanaOperationExtra = {
-  memo?: string;
+  memo?: string | undefined;
   stake?: ExtraStakeInfo;
 };
 
 export type SolanaOperationExtraRaw = {
-  memo?: string;
+  memo?: string | undefined;
   stake?: ExtraStakeInfoRaw;
 };
