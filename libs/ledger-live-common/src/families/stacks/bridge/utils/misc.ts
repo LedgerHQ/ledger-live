@@ -1,27 +1,17 @@
 import { BigNumber } from "bignumber.js";
-import flatMap from "lodash/flatMap";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
   createMessageSignature,
-  getAddressFromPublicKey,
 } from "@stacks/transactions";
 
-import { GetAccountShape } from "../../../../bridge/jsHelpers";
-import { decodeAccountId, encodeAccountId } from "../../../../account";
-import {
-  fetchBalances,
-  fetchBlockHeight,
-  fetchFullMempoolTxs,
-  fetchFullTxs,
-  fetchNonce,
-} from "../../bridge/utils/api";
+import { decodeAccountId } from "../../../../account";
+import { fetchFullMempoolTxs, fetchNonce } from "../../bridge/utils/api";
 import { StacksNetwork, TransactionResponse } from "./api.types";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import { encodeOperationId, encodeSubOperationId } from "../../../../operation";
 import { StacksOperation } from "../../types";
-import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 
 export const getTxToBroadcast = async (
@@ -169,50 +159,7 @@ export const mapTxToOps =
     }
   };
 
-export const getAccountShape: GetAccountShape = async info => {
-  const { initialAccount, currency, rest = {}, derivationMode } = info;
-  // for bridge tests specifically the `rest` object is empty and therefore the publicKey is undefined
-  // reconciliatePublicKey tries to get pubKey from rest object and then from accountId
-  const pubKey = reconciliatePublicKey(rest.publicKey, initialAccount);
-  invariant(pubKey, "publicKey is required");
-
-  const accountId: string = encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: pubKey,
-    derivationMode,
-  });
-
-  const address = getAddressFromPublicKey(pubKey);
-
-  const blockHeight = await fetchBlockHeight();
-  const balanceResp = await fetchBalances(address);
-  const rawTxs = await fetchFullTxs(address);
-  const mempoolTxs = await fetchFullMempoolTxs(address);
-
-  const balance = new BigNumber(balanceResp.balance);
-  let spendableBalance = new BigNumber(balanceResp.balance);
-  for (const tx of mempoolTxs) {
-    spendableBalance = spendableBalance
-      .minus(new BigNumber(tx.fee_rate))
-      .minus(new BigNumber(tx.token_transfer.amount));
-  }
-
-  const result: Partial<Account> = {
-    id: accountId,
-    xpub: pubKey,
-    freshAddress: address,
-    balance,
-    spendableBalance,
-    operations: flatMap(rawTxs, mapTxToOps(accountId)),
-    blockHeight: blockHeight.chain_tip.block_height,
-  };
-
-  return result;
-};
-
-function reconciliatePublicKey(
+export function reconciliatePublicKey(
   publicKey: string | undefined,
   initialAccount: Account | undefined,
 ): string {
