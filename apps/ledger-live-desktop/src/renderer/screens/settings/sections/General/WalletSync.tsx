@@ -15,7 +15,7 @@ const WalletSyncRow = () => {
   return (
     <>
       <SideDrawer isOpen={open} onRequestClose={() => setOpen(false)} direction="left">
-        {walletSync.activated ? <WalletSyncManage /> : <WalletSyncActivation />}
+        {!walletSync.activated ? <WalletSyncManage /> : <WalletSyncActivation />}
       </SideDrawer>
 
       <Button small event="Manage WalletSync" primary onClick={() => setOpen(true)}>
