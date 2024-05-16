@@ -23,9 +23,9 @@ import {
 } from "./errors";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import "../../__tests__/test-helpers/setup";
-import { activationFees } from "./constants";
+import { ACTIVATION_FEES } from "./constants";
 import { fromTransactionRaw } from "./transaction";
-import type { Transaction } from "./types";
+import type { Transaction, TronAccountRaw } from "./types";
 
 const unactivatedAddress = "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD";
 const activatedAddress1 = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
@@ -413,7 +413,7 @@ const tron: CurrenciesData<Transaction> = {
             recipient: unactivatedAddress,
           }),
           expectedStatus: () => ({
-            estimatedFees: activationFees,
+            estimatedFees: ACTIVATION_FEES,
           }),
         },
         {
@@ -421,7 +421,7 @@ const tron: CurrenciesData<Transaction> = {
           transaction: (t, account) => ({
             ...t,
             recipient: unactivatedAddress,
-            amount: account.spendableBalance.minus(activationFees).minus(1),
+            amount: account.spendableBalance.minus(ACTIVATION_FEES).minus(1),
           }),
           expectedStatus: () => ({
             errors: {},
@@ -432,7 +432,7 @@ const tron: CurrenciesData<Transaction> = {
           transaction: (t, account) => ({
             ...t,
             recipient: unactivatedAddress,
-            amount: account.spendableBalance.minus(activationFees),
+            amount: account.spendableBalance.minus(ACTIVATION_FEES),
           }),
           expectedStatus: () => ({
             errors: {},
@@ -757,7 +757,29 @@ const tron: CurrenciesData<Transaction> = {
         operations: [],
         lastSyncDate: "",
         blockHeight: 0,
-      },
+        tronResources: {
+          frozen: { bandwidth: undefined, energy: undefined },
+          delegatedFrozen: { bandwidth: undefined, energy: undefined },
+          unFrozen: { bandwidth: [], energy: [] },
+          legacyFrozen: {
+            bandwidth: { amount: "2000000", expiredAt: "2022-05-23T08:20:39.000Z" },
+            energy: { amount: "1000000", expiredAt: "2022-05-22T12:51:12.000Z" },
+          },
+          votes: [],
+          tronPower: 3,
+          energy: "12",
+          bandwidth: {
+            freeUsed: "0",
+            freeLimit: "600",
+            gainedUsed: "0",
+            gainedLimit: "2",
+          },
+          unwithdrawnReward: "0",
+          lastWithdrawnRewardDate: undefined,
+          lastVotedDate: undefined,
+          cacheTransactionInfoById: {},
+        },
+      } as TronAccountRaw,
     },
     {
       transactions: [
@@ -835,7 +857,33 @@ const tron: CurrenciesData<Transaction> = {
         operations: [],
         lastSyncDate: "",
         blockHeight: 0,
-      },
+        tronResources: {
+          frozen: { bandwidth: undefined, energy: undefined },
+          delegatedFrozen: { bandwidth: undefined, energy: undefined },
+          unFrozen: { bandwidth: [], energy: [] },
+          legacyFrozen: {
+            bandwidth: undefined,
+            energy: { amount: "26000000", expiredAt: "2020-02-01T16:04:51.000Z" },
+          },
+          votes: [
+            { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", voteCount: 15 },
+            { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 1 },
+            { address: "TCZvvbn4SCVyNhCAt1L8Kp1qk5rtMiKdBB", voteCount: 2 },
+          ],
+          tronPower: 26,
+          energy: "326",
+          bandwidth: {
+            freeUsed: "0",
+            freeLimit: "600",
+            gainedUsed: "0",
+            gainedLimit: "0",
+          },
+          unwithdrawnReward: "1336847",
+          lastWithdrawnRewardDate: "2022-05-19T12:45:36.000Z",
+          lastVotedDate: "2022-05-19T12:43:42.000Z",
+          cacheTransactionInfoById: {},
+        },
+      } as TronAccountRaw,
     },
     {
       transactions: [
