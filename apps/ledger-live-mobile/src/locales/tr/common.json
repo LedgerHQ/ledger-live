@@ -3031,7 +3031,7 @@
         "title" : "Seçilen kripto için ağ seçin",
         "account" : "{{count}} hesap",
         "account_plural" : "{{count}} hesapları",
-        "subtitle" : "Kriptoyu aktaran cüzdan veya borsada seçilen ağ ile aynı olmalıdır.",
+        "subtitle" : "Seçeceğiniz ağ, kriptoyu aktaran cüzdan veya borsada seçilmiş ağ ile aynı olmalıdır.",
         "bannerTitle" : "Doğru ağı seçtiğinizden emin olun. Bunu nasıl yapacağınızı öğrenin.",
         "depositFromCexBannerTitle" : "Coinbase hesabınızdan kripto yatırın"
       },
@@ -3130,9 +3130,6 @@
         "title" : "Takas İşlemlerine Hoş Geldiniz",
         "whatIsSwap" : "Takas (Swap) nedir?",
         "disclaimer" : "Kripto takas işlemlerinizi doğrudan Ledger cihazınızdan yapın. Bu hizmet ABD de dahil olmak üzere bazı ülkelerde kullanılamaz."
-      },
-      "main" : {
-        "header" : "Takas edin"
       },
       "notAvailable" : {
         "title" : "Hizmet geçici olarak kullanılamıyor veya ülkenize açık değil"
@@ -6134,6 +6131,7 @@
       "subtitle" : "Ledger'la tamamen entegre olan Web 3.0'ı keşfedin",
       "section" : {
         "recentlyUsed" : "Son Kullanılanlar",
+        "locallyLoaded" : "Yerel Olarak Yüklenen",
         "categories" : "Kategoriler",
         "clearAll" : "Tümünü temizle"
       },
@@ -6303,7 +6301,7 @@
     "designedForStax" : {
       "title" : "<1>Ledger</1><2>Stax</2><0>için tasarlandı</0>",
       "drawer" : {
-        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
+        "description" : "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E Ink Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
         "cta" : "Anladım"
       }
     },
