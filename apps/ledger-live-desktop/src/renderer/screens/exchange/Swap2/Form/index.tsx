@@ -25,7 +25,6 @@ import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -34,8 +33,7 @@ import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
-import SwapFormSummary from "./FormSummary";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -454,13 +452,6 @@ const SwapForm = () => {
         updateSelectedRate={swapTransaction.swap.updateSelectedRate}
       />
       {pageState === "empty" && <EmptyState />}
-      {pageState === "loading" && <LoadingState />}
-
-      {pageState === "loaded" && (
-        <>
-          <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
-        </>
-      )}
       <SwapMigrationUI
         manifestID={swapLiveAppManifestID}
         liveAppEnabled={isSwapLiveAppEnabled.enabled}

@@ -27,6 +27,7 @@
       "title": "Discover",
       "section": {
         "recentlyUsed": "Recently used",
+        "locallyLoaded": "Locally Loaded Live Apps",
         "browse": "Browse"
       },
       "filter": {
@@ -4007,6 +4008,11 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
+      "exchangeDeveloperMode": {
+        "title": "Exchange Dev Mode",
+        "desc": "Add exchange provider's info",
+        "placeholder": "Exchange provider's info in CAL format"
+      },
       "debugSpamNft": {
         "debugNFTSpamReport": "Allow NFT Spam Report (Beta)",
         "debugNFTSpamReportDesc": "Display a form to report an NFT as spam or to stop it being displayed as spam",
@@ -4299,7 +4305,7 @@
     "downloadInProgress": "Downloading update...",
     "downloadProgress": "{{progress}}% completed",
     "checking": "Checking update...",
-    "checkSuccess": "New Ledger Live update available, it will install automatically when you close the app",
+    "checkSuccess": "New update available, it will install and relaunch Ledger Live automatically when you close the app",
     "quitAndInstall": "Install now and relaunch",
     "updateAvailable": "Update to Ledger Live version {{version}} is available",
     "error": "Error during update. Please download again",

@@ -43,7 +43,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
           // Note:
           // Cosmos Nano App sign data in Amino way only, not Protobuf.
           // This is a legacy outdated standard and a long-term blocking point.
-          const chainId = await cosmosAPI.getChainId();
+          const chainId = (await cosmosAPI.getNodeInfo()).default_node_info.network;
           const signDoc = makeSignDoc(
             aminoMsgs,
             feeToEncode,

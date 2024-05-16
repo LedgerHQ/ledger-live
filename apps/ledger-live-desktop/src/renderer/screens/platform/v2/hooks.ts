@@ -21,12 +21,14 @@ import { useCallback, useMemo } from "react";
 import { useHistory } from "react-router";
 import { closePlatformAppDrawer, openPlatformAppDisclaimerDrawer } from "~/renderer/actions/UI";
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
-export function useCatalog(db: RecentlyUsedDB) {
+export function useCatalog(recentlyUsedDB: RecentlyUsedDB) {
   const completeManifests = useManifests({ visibility: ["complete"] });
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
   const categories = useCategories(completeManifests);
-  const recentlyUsed = useRecentlyUsed(combinedManifests, db);
+  const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
+  const { state: localLiveApps } = useLocalLiveAppContext();
 
   const search = useSearch({
     list: combinedManifests,
@@ -50,11 +52,11 @@ export function useCatalog(db: RecentlyUsedDB) {
     recentlyUsed,
     disclaimer,
     search,
+    localLiveApps,
   };
 }
 
-// TODO: rename to useRecentlyUsedDB
-export function useDiscoverDB() {
+export function useRecentlyUsedDB() {
   return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, state => state.recentlyUsed);
 }
 

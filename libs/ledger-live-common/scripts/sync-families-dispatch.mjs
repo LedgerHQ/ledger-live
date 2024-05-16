@@ -21,7 +21,7 @@ const targets = [
 ];
 
 // Coins using coin-framework
-const familiesWPackage = ["algorand", "bitcoin", "evm", "near", "polkadot", "solana"];
+const familiesWPackage = ["algorand", "bitcoin", "evm", "near", "polkadot", "solana", "xrp"];
 
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
@@ -174,7 +174,8 @@ async function genTypesFile(families) {
         return "";
       }
 
-      if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/types/index.ts`))) return "/index";
+      if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/types/index.ts`)))
+        return "/index";
 
       return "";
     })();

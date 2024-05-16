@@ -213,7 +213,7 @@ dependencies {
         implementation jscFlavor
     }
 
-    androidTestImplementation('com.wix:detox:+')
+    androidTestImplementation('com.wix:detox-legacy:+')
     // Needed for Detox getAttributes on Android :  https://github.com/wix/Detox/issues/3147
     implementation 'com.google.android.material:material:1.6.0'
     implementation 'com.facebook.soloader:soloader:0.10.4+'

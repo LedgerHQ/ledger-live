@@ -3,7 +3,7 @@ import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getCryptoCurrencyById, listCryptoCurrencies } from "@ledgerhq/cryptoassets";
-import type { EvmAddress, EvmSignature, EvmSigner } from "../../types/signer";
+import type { EvmSigner } from "../../types/signer";
 import { buildSignOperation, applyEIP155 } from "../../signOperation";
 import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount } from "../fixtures/common.fixtures";
@@ -44,9 +44,9 @@ const transactionEIP1559: EvmTransaction = {
 
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
-const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
+const mockSignerContext: SignerContext<EvmSigner> = <T>(
   _: string,
-  fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>,
+  fn: (signer: EvmSigner) => Promise<T>,
 ) => {
   return fn({
     setLoadConfig: jest.fn(),
