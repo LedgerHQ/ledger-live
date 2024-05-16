@@ -22,6 +22,7 @@ import {
   ProtocolParams,
   Transaction,
   StakeCredential,
+  TransactionStatus,
 } from "./types";
 import {
   getAccountChange,
@@ -207,7 +208,7 @@ export type SignerContext = (
 ) => Promise<ExtendedPublicKey>;
 
 export const makeGetAccountShape =
-  (signerContext: SignerContext): GetAccountShape =>
+  (signerContext: SignerContext): GetAccountShape<CardanoAccount> =>
   async (info, { blacklistedTokenIds }) => {
     const {
       currency,
@@ -319,7 +320,7 @@ export const makeGetAccountShape =
           stakeCred: stakeCredential,
         }).getBech32(),
       }));
-    const cardanoNetworkInfo = await getNetworkInfo(initialAccount as CardanoAccount, currency);
+    const cardanoNetworkInfo = await getNetworkInfo(initialAccount, currency);
     const delegationInfo = await getDelegationInfo(currency, stakeCredential.key);
 
     const totalBalance = delegationInfo?.rewards ? utxosSum.plus(delegationInfo.rewards) : utxosSum;
@@ -370,8 +371,10 @@ export const makeGetAccountShape =
 export const scanAccounts = (signerContext: SignerContext): CurrencyBridge["scanAccounts"] =>
   makeScanAccounts({ getAccountShape: makeGetAccountShape(signerContext) });
 
-export const sync = (signerContext: SignerContext): AccountBridge<Transaction>["sync"] =>
-  makeSync({
+export const sync = (
+  signerContext: SignerContext,
+): AccountBridge<Transaction, TransactionStatus, CardanoAccount>["sync"] =>
+  makeSync<Transaction, TransactionStatus, CardanoAccount>({
     getAccountShape: makeGetAccountShape(signerContext),
     postSync: postSyncPatch,
   });

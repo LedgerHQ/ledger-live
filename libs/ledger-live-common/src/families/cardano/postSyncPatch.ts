@@ -2,7 +2,8 @@
  *  Code reference taken from src/families/ethereum/postSyncPatch.ts
  */
 
-import type { AccountLike, Account, Operation } from "@ledgerhq/types-live";
+import type { AccountLike, Operation } from "@ledgerhq/types-live";
+import { CardanoAccount } from "./types";
 
 // we need to preserve ADA pendingOperations because there is no mempool to do this
 // we assume we need to preserve until:
@@ -24,7 +25,7 @@ const postSyncPatchGen = <T extends AccountLike>(
   return synced;
 };
 
-const postSyncPatch = (initial: Account, synced: Account): Account => {
+const postSyncPatch = (initial: CardanoAccount, synced: CardanoAccount): CardanoAccount => {
   const acc = postSyncPatchGen(initial, synced);
   const { subAccounts, pendingOperations } = acc;
   const initialSubAccounts = initial.subAccounts;

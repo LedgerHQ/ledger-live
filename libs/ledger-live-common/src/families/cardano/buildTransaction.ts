@@ -33,50 +33,50 @@ function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
   };
 }
 
-function getRewardWithdrawalCertificate(a: CardanoAccount): TyphonTypes.Withdrawal | null {
-  if (!a.cardanoResources.delegation?.rewards.gt(0)) {
+function getRewardWithdrawalCertificate(account: CardanoAccount): TyphonTypes.Withdrawal | null {
+  if (!account.cardanoResources.delegation?.rewards.gt(0)) {
     return null;
   }
 
-  const stakeCredential = getAccountStakeCredential(a.xpub as string, a.index);
+  const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
   const stakeKeyHashCredential: TyphonTypes.HashCredential = {
     hash: stakeCredential.key,
     type: TyphonTypes.HashType.ADDRESS,
     bipPath: stakeCredential.path,
   };
 
-  const networkId = isTestnet(a.currency)
+  const networkId = isTestnet(account.currency)
     ? TyphonTypes.NetworkId.TESTNET
     : TyphonTypes.NetworkId.MAINNET;
   const rewardAddress = new RewardAddress(networkId, stakeKeyHashCredential);
   const rewardsWithdrawalCertificate: TyphonTypes.Withdrawal = {
     rewardAccount: rewardAddress,
-    amount: a.cardanoResources.delegation.rewards,
+    amount: account.cardanoResources.delegation.rewards,
   };
 
   return rewardsWithdrawalCertificate;
 }
 
 const buildSendTokenTransaction = async ({
-  a,
-  t,
+  account,
+  transaction,
   tokenAccount,
   typhonTx,
   receiverAddress,
   changeAddress,
 }: {
-  a: CardanoAccount;
-  t: Transaction;
+  account: CardanoAccount;
+  transaction: Transaction;
   tokenAccount: TokenAccount;
   typhonTx: TyphonTransaction;
   receiverAddress: TyphonTypes.CardanoAddress;
   changeAddress: TyphonTypes.CardanoAddress;
 }): Promise<TyphonTransaction> => {
-  const cardanoResources = a.cardanoResources as CardanoResources;
+  const { cardanoResources } = account;
 
   const { assetId } = decodeTokenCurrencyId(tokenAccount.token.id);
   const { policyId, assetName } = decodeTokenAssetId(assetId);
-  const transactionAmount = t.useAllAmount ? tokenAccount.balance : t.amount;
+  const transactionAmount = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
 
   const tokensToSend = [
     {
@@ -130,7 +130,7 @@ const buildSendTokenTransaction = async ({
     typhonTx.addInput(getTyphonInputFromUtxo(u));
   }
 
-  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
   if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   typhonTx.addOutput({
@@ -146,22 +146,22 @@ const buildSendTokenTransaction = async ({
 };
 
 const buildSendAdaTransaction = async ({
-  a,
-  t,
+  account,
+  transaction,
   typhonTx,
   receiverAddress,
   changeAddress,
 }: {
-  a: CardanoAccount;
-  t: Transaction;
+  account: CardanoAccount;
+  transaction: Transaction;
   typhonTx: TyphonTransaction;
   receiverAddress: TyphonTypes.CardanoAddress;
   changeAddress: TyphonTypes.CardanoAddress;
 }): Promise<TyphonTransaction> => {
-  const cardanoResources = a.cardanoResources as CardanoResources;
+  const cardanoResources = account.cardanoResources as CardanoResources;
   const protocolParams = cardanoResources.protocolParams;
 
-  if (t.useAllAmount) {
+  if (transaction.useAllAmount) {
     // add all utxo as input
     cardanoResources.utxos.forEach(u => typhonTx.addInput(getTyphonInputFromUtxo(u)));
 
@@ -182,7 +182,7 @@ const buildSendAdaTransaction = async ({
       });
     }
 
-    const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+    const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
     if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
     return typhonTx.prepareTransaction({
@@ -201,7 +201,7 @@ const buildSendAdaTransaction = async ({
   const transactionInputs: Array<TyphonTypes.Input> = [];
   const usedUtxoAdaAmount = new BigNumber(0);
   // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
-  const requiredInputAmount = t.amount.plus(10e6);
+  const requiredInputAmount = transaction.amount.plus(10e6);
   for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
     const utxo = sortedUtxos[i];
     const transactionInput = getTyphonInputFromUtxo(utxo);
@@ -209,12 +209,12 @@ const buildSendAdaTransaction = async ({
     usedUtxoAdaAmount.plus(transactionInput.amount);
   }
 
-  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
   if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   typhonTx.addOutput({
     address: receiverAddress,
-    amount: t.amount,
+    amount: transaction.amount,
     tokens: [],
   });
 
@@ -225,19 +225,19 @@ const buildSendAdaTransaction = async ({
 };
 
 const buildDelegateTransaction = async ({
-  a,
-  t,
+  account,
+  transaction,
   typhonTx,
   changeAddress,
 }: {
-  a: CardanoAccount;
-  t: Transaction;
+  account: CardanoAccount;
+  transaction: Transaction;
   typhonTx: TyphonTransaction;
   changeAddress: TyphonTypes.CardanoAddress;
 }): Promise<TyphonTransaction> => {
-  const cardanoResources = a.cardanoResources as CardanoResources;
+  const { cardanoResources } = account;
 
-  const stakeCredential = getAccountStakeCredential(a.xpub as string, a.index);
+  const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
   const stakeKeyHashCredential: TyphonTypes.HashCredential = {
     hash: stakeCredential.key,
     type: TyphonTypes.HashType.ADDRESS,
@@ -255,7 +255,7 @@ const buildDelegateTransaction = async ({
   const delegationCert: TyphonTypes.StakeDelegationCertificate = {
     certType: TyphonTypes.CertificateType.STAKE_DELEGATION,
     stakeCredential: stakeKeyHashCredential,
-    poolHash: t.poolId as string,
+    poolHash: transaction.poolId as string,
   };
   typhonTx.addCertificate(delegationCert);
 
@@ -269,7 +269,7 @@ const buildDelegateTransaction = async ({
   const transactionInputs: Array<TyphonTypes.Input> = [];
   const usedUtxoAdaAmount = new BigNumber(0);
   // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
-  const requiredInputAmount = t.amount.plus(10e6);
+  const requiredInputAmount = transaction.amount.plus(10e6);
   for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
     const utxo = sortedUtxos[i];
     const transactionInput = getTyphonInputFromUtxo(utxo);
@@ -277,7 +277,7 @@ const buildDelegateTransaction = async ({
     usedUtxoAdaAmount.plus(transactionInput.amount);
   }
 
-  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
   if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   return typhonTx.prepareTransaction({
@@ -287,19 +287,19 @@ const buildDelegateTransaction = async ({
 };
 
 const buildUndelegateTransaction = async ({
-  a,
-  t,
+  account,
+  transaction,
   typhonTx,
   changeAddress,
 }: {
-  a: CardanoAccount;
-  t: Transaction;
+  account: CardanoAccount;
+  transaction: Transaction;
   typhonTx: TyphonTransaction;
   changeAddress: TyphonTypes.CardanoAddress;
 }): Promise<TyphonTransaction> => {
-  const cardanoResources = a.cardanoResources as CardanoResources;
+  const { cardanoResources } = account;
 
-  const stakeCredential = getAccountStakeCredential(a.xpub as string, a.index);
+  const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
   const stakeKeyHashCredential: TyphonTypes.HashCredential = {
     hash: stakeCredential.key,
     type: TyphonTypes.HashType.ADDRESS,
@@ -310,7 +310,7 @@ const buildUndelegateTransaction = async ({
     throw new Error("StakeKey is not registered");
   }
 
-  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
   if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   const stakeKeyDeRegistrationCertificate: TyphonTypes.StakeDeRegistrationCertificate = {
@@ -329,7 +329,7 @@ const buildUndelegateTransaction = async ({
   const transactionInputs: Array<TyphonTypes.Input> = [];
   const usedUtxoAdaAmount = new BigNumber(0);
   // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
-  const requiredInputAmount = t.amount.plus(10e6);
+  const requiredInputAmount = transaction.amount.plus(10e6);
   for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
     const utxo = sortedUtxos[i];
     const transactionInput = getTyphonInputFromUtxo(utxo);
@@ -345,16 +345,16 @@ const buildUndelegateTransaction = async ({
 
 /**
  *
- * @param {CardanoAccount} a
- * @param {Transaction} t
+ * @param {CardanoAccount} account
+ * @param {Transaction} transaction
  *
  * @returns {TyphonTransaction}
  */
 export const buildTransaction = async (
-  a: CardanoAccount,
-  t: Transaction,
+  account: CardanoAccount,
+  transaction: Transaction,
 ): Promise<TyphonTransaction> => {
-  const cardanoResources = a.cardanoResources as CardanoResources;
+  const { cardanoResources } = account;
   const protocolParams = cardanoResources.protocolParams;
 
   const typhonTx = new TyphonTransaction({
@@ -369,21 +369,21 @@ export const buildTransaction = async (
       languageView: protocolParams.languageView,
     },
   });
-  const ttl = getTTL(a.currency.id);
+  const ttl = getTTL(account.currency.id);
   typhonTx.setTTL(ttl);
 
   const metadata: Array<TyphonTypes.Metadata> = [];
-  if (t.memo) {
+  if (transaction.memo) {
     metadata.push({
       label: 674,
-      data: new Map([["msg", [t.memo]]]),
+      data: new Map([["msg", [transaction.memo]]]),
     });
   }
   if (metadata.length) {
     typhonTx.setAuxiliaryData({ metadata });
   }
 
-  const networkParams = getNetworkParameters(a.currency.id);
+  const networkParams = getNetworkParameters(account.currency.id);
   const unusedInternalCred = cardanoResources.internalCredentials.find(
     cred => !cred.isUsed,
   ) as PaymentCredential;
@@ -391,16 +391,16 @@ export const buildTransaction = async (
   const changeAddress = getBaseAddress({
     networkId: networkParams.networkId,
     paymentCred: unusedInternalCred,
-    stakeCred: getAccountStakeCredential(a.xpub as string, a.index),
+    stakeCred: getAccountStakeCredential(account.xpub as string, account.index),
   });
 
-  if (t.mode === "send") {
-    const receiverAddress = TyphonUtils.getAddressFromBech32(t.recipient);
-    if (t.subAccountId) {
+  if (transaction.mode === "send") {
+    const receiverAddress = TyphonUtils.getAddressFromBech32(transaction.recipient);
+    if (transaction.subAccountId) {
       // Token Transaction
-      const tokenAccount = a.subAccounts
-        ? a.subAccounts.find(a => {
-            return a.id === t.subAccountId;
+      const tokenAccount = account.subAccounts
+        ? account.subAccounts.find(a => {
+            return a.id === transaction.subAccountId;
           })
         : undefined;
 
@@ -409,8 +409,8 @@ export const buildTransaction = async (
       }
 
       return buildSendTokenTransaction({
-        a,
-        t,
+        account,
+        transaction,
         tokenAccount,
         typhonTx,
         receiverAddress,
@@ -419,16 +419,16 @@ export const buildTransaction = async (
     }
     // Normal ADA Transaction
     return buildSendAdaTransaction({
-      a,
-      t,
+      account,
+      transaction,
       typhonTx,
       receiverAddress,
       changeAddress,
     });
-  } else if (t.mode === "delegate") {
-    return buildDelegateTransaction({ a, t, typhonTx, changeAddress });
-  } else if (t.mode === "undelegate") {
-    return buildUndelegateTransaction({ a, t, typhonTx, changeAddress });
+  } else if (transaction.mode === "delegate") {
+    return buildDelegateTransaction({ account, transaction, typhonTx, changeAddress });
+  } else if (transaction.mode === "undelegate") {
+    return buildUndelegateTransaction({ account, transaction, typhonTx, changeAddress });
   } else {
     throw new Error("Invalid transaction mode");
   }

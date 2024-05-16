@@ -1,17 +1,18 @@
-import type { Transaction } from "../types";
-import { SignerContext, scanAccounts, sync } from "../js-synchronisation";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import { createTransaction, prepareTransaction } from "../js-transaction";
-import getTransactionStatus from "../js-getTransactionStatus";
-import signOperation from "../js-signOperation";
-import broadcast from "../js-broadcast";
-import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
-import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { withDevice } from "../../../hw/deviceAccess";
 import { firstValueFrom, from } from "rxjs";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
+import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
+import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
+import { SignerContext, scanAccounts, sync } from "../synchronisation";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { getTransactionStatus } from "../getTransactionStatus";
+import estimateMaxSpendable from "../estimateMaxSpendable";
+import { prepareTransaction } from "../prepareTransaction";
+import { createTransaction } from "../createTransaction";
+import { withDevice } from "../../../hw/deviceAccess";
+import { signOperation } from "../signOperation";
+import { broadcast } from "../broadcast";
 
 const receive = makeAccountBridgeReceive();
 
@@ -22,7 +23,7 @@ const signerContext: SignerContext = (
   return firstValueFrom(withDevice(deviceId)(transport => from(fn(new Ada(transport)))));
 };
 
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge: AccountBridge<Transaction, TransactionStatus, CardanoAccount> = {
   estimateMaxSpendable,
   createTransaction,
   updateTransaction: defaultUpdateTransaction,

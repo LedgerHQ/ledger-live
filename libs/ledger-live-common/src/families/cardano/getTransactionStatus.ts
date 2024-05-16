@@ -6,6 +6,8 @@ import {
   AmountRequired,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
+import { AccountBridge } from "@ledgerhq/types-live";
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import type {
   CardanoAccount,
   CardanoResources,
@@ -14,7 +16,6 @@ import type {
   TransactionStatus,
 } from "./types";
 import { isHexString, isValidAddress } from "./logic";
-import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import {
   CardanoInvalidPoolId,
   CardanoStakeKeyDepositError,
@@ -24,40 +25,70 @@ import {
 import { AccountAwaitingSendPendingOperations } from "../../errors";
 import { getNetworkParameters } from "./networks";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
-import estimateMaxSpendable from "./js-estimateMaxSpendable";
-import { buildTransaction } from "./js-buildTransaction";
+import estimateMaxSpendable from "./estimateMaxSpendable";
+import { buildTransaction } from "./buildTransaction";
 
-async function getSendTransactionStatus(
-  a: CardanoAccount,
-  t: Transaction,
-): Promise<TransactionStatus> {
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  TransactionStatus,
+  CardanoAccount
+>["getTransactionStatus"] = async (account, transaction) => {
+  if (account.pendingOperations.length > 0) {
+    throw new AccountAwaitingSendPendingOperations();
+  }
+
+  if (account.cardanoResources.utxos.length === 0) {
+    const errors = {
+      amount: new CardanoNotEnoughFunds(),
+    };
+    return Promise.resolve({
+      errors,
+      warnings: {},
+      estimatedFees: new BigNumber(0),
+      amount: new BigNumber(transaction.amount),
+      totalSpent: new BigNumber(transaction.amount),
+    });
+  }
+
+  if (transaction.mode === "send") {
+    return getSendTransactionStatus(account, transaction);
+  } else if (transaction.mode === "delegate") {
+    return getDelegateTransactionStatus(account, transaction);
+  } else if (transaction.mode === "undelegate") {
+    return getUndelegateTransactionStatus(account, transaction);
+  } else {
+    throw new Error("Invalid transaction mode");
+  }
+};
+
+async function getSendTransactionStatus(account: CardanoAccount, transaction: Transaction) {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const useAllAmount = !!t.useAllAmount;
+  const useAllAmount = !!transaction.useAllAmount;
 
-  const cardanoResources = a.cardanoResources;
-  const networkParams = getNetworkParameters(a.currency.id);
+  const cardanoResources = account.cardanoResources;
+  const networkParams = getNetworkParameters(account.currency.id);
 
-  const estimatedFees = t.fees || new BigNumber(0);
-  let amount = t.amount;
+  const estimatedFees = transaction.fees || new BigNumber(0);
+  let amount = transaction.amount;
   let totalSpent = estimatedFees;
 
   const tokenAccount =
-    t.subAccountId && a.subAccounts
-      ? a.subAccounts.find(a => {
-          return a.id === t.subAccountId;
+    transaction.subAccountId && account.subAccounts
+      ? account.subAccounts.find(a => {
+          return a.id === transaction.subAccountId;
         })
       : undefined;
 
   let tokensToSend: Array<Token> = [];
-  if (t.subAccountId) {
+  if (transaction.subAccountId) {
     // Token transaction
     if (!tokenAccount || tokenAccount.type !== "TokenAccount") {
       throw new Error("TokenAccount not found");
     }
     const { assetId } = decodeTokenCurrencyId(tokenAccount.token.id);
     const { policyId, assetName } = decodeTokenAssetId(assetId);
-    amount = t.useAllAmount ? tokenAccount.balance : t.amount;
+    amount = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
     totalSpent = amount;
     tokensToSend = [
       {
@@ -68,7 +99,9 @@ async function getSendTransactionStatus(
     ];
   } else {
     // ADA transaction
-    amount = t.useAllAmount ? await estimateMaxSpendable({ account: a, transaction: t }) : amount;
+    amount = transaction.useAllAmount
+      ? await estimateMaxSpendable({ account: account, transaction: transaction })
+      : amount;
     totalSpent = amount.plus(estimatedFees);
   }
 
@@ -78,29 +111,29 @@ async function getSendTransactionStatus(
     false,
   );
 
-  if (!t.fees) {
+  if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
   }
 
-  if (!t.recipient) {
+  if (!transaction.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (!isValidAddress(t.recipient, networkParams.networkId)) {
+  } else if (!isValidAddress(transaction.recipient, networkParams.networkId)) {
     errors.recipient = new InvalidAddress("", {
-      currencyName: a.currency.name,
+      currencyName: account.currency.name,
     });
   }
 
   if (!amount.gt(0)) {
     errors.amount = useAllAmount ? new CardanoNotEnoughFunds() : new AmountRequired();
-  } else if (!t.subAccountId && amount.lt(minTransactionAmount)) {
+  } else if (!transaction.subAccountId && amount.lt(minTransactionAmount)) {
     errors.amount = new CardanoMinAmountError("", {
       amount: minTransactionAmount.div(1e6).toString(),
     });
-  } else if (tokenAccount ? totalSpent.gt(tokenAccount.balance) : totalSpent.gt(a.balance)) {
+  } else if (tokenAccount ? totalSpent.gt(tokenAccount.balance) : totalSpent.gt(account.balance)) {
     errors.amount = new NotEnoughBalance();
   } else {
     try {
-      await buildTransaction(a, t);
+      await buildTransaction(account, transaction);
     } catch (e: any) {
       if (
         e.message.toLowerCase() === "not enough ada" ||
@@ -123,23 +156,23 @@ async function getSendTransactionStatus(
 }
 
 async function getDelegateTransactionStatus(
-  a: CardanoAccount,
-  t: Transaction,
+  account: CardanoAccount,
+  transaction: Transaction,
 ): Promise<TransactionStatus> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  if (!t.fees) {
+  if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
   }
 
-  const estimatedFees = t.fees || new BigNumber(0);
+  const estimatedFees = transaction.fees || new BigNumber(0);
 
-  if (!t.poolId || !isHexString(t.poolId) || t.poolId.length !== 56) {
+  if (!transaction.poolId || !isHexString(transaction.poolId) || transaction.poolId.length !== 56) {
     errors.poolId = new CardanoInvalidPoolId();
   } else {
     try {
-      await buildTransaction(a, t);
+      await buildTransaction(account, transaction);
     } catch (e: any) {
       if (
         e.message.toLowerCase() === "not enough ada" ||
@@ -152,10 +185,12 @@ async function getDelegateTransactionStatus(
     }
   }
 
-  const stakeKeyRegisterDeposit = new BigNumber(a.cardanoResources.protocolParams.stakeKeyDeposit);
+  const stakeKeyRegisterDeposit = new BigNumber(
+    account.cardanoResources.protocolParams.stakeKeyDeposit,
+  );
   if (
-    !a.cardanoResources.delegation?.status &&
-    a.spendableBalance.isLessThan(stakeKeyRegisterDeposit)
+    !account.cardanoResources.delegation?.status &&
+    account.spendableBalance.isLessThan(stakeKeyRegisterDeposit)
   ) {
     errors.amount = new CardanoStakeKeyDepositError("", {
       depositAmount: stakeKeyRegisterDeposit.div(1e6).toString(),
@@ -172,26 +207,26 @@ async function getDelegateTransactionStatus(
 }
 
 async function getUndelegateTransactionStatus(
-  a: CardanoAccount,
-  t: Transaction,
+  account: CardanoAccount,
+  transaction: Transaction,
 ): Promise<TransactionStatus> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  const cardanoResources = a.cardanoResources as CardanoResources;
+  const cardanoResources = account.cardanoResources as CardanoResources;
 
-  const estimatedFees = t.fees || new BigNumber(0);
+  const estimatedFees = transaction.fees || new BigNumber(0);
 
   if (!cardanoResources.delegation?.status) {
     throw new Error("StakeKey is not registered");
   }
 
-  if (a.balance.eq(0)) {
+  if (account.balance.eq(0)) {
     throw new CardanoNotEnoughFunds();
   }
 
   try {
-    await buildTransaction(a, t);
+    await buildTransaction(account, transaction);
   } catch (e: any) {
     if (
       e.message.toLowerCase() === "not enough ada" ||
@@ -211,37 +246,5 @@ async function getUndelegateTransactionStatus(
     totalSpent: estimatedFees,
   });
 }
-
-const getTransactionStatus = async (
-  a: CardanoAccount,
-  t: Transaction,
-): Promise<TransactionStatus> => {
-  if (a.pendingOperations.length > 0) {
-    throw new AccountAwaitingSendPendingOperations();
-  }
-
-  if (a.cardanoResources.utxos.length === 0) {
-    const errors = {
-      amount: new CardanoNotEnoughFunds(),
-    };
-    return Promise.resolve({
-      errors,
-      warnings: {},
-      estimatedFees: new BigNumber(0),
-      amount: new BigNumber(t.amount),
-      totalSpent: new BigNumber(t.amount),
-    });
-  }
-
-  if (t.mode === "send") {
-    return getSendTransactionStatus(a, t);
-  } else if (t.mode === "delegate") {
-    return getDelegateTransactionStatus(a, t);
-  } else if (t.mode === "undelegate") {
-    return getUndelegateTransactionStatus(a, t);
-  } else {
-    throw new Error("Invalid transaction mode");
-  }
-};
 
 export default getTransactionStatus;
