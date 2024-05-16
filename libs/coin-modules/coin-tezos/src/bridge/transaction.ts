@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "./types";
+import type { Transaction, TransactionRaw } from "../types";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -8,8 +8,9 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+
 export const formatTransaction = (
   {
     mode,
@@ -44,6 +45,7 @@ with storageLimit=${!storageLimit ? "?" : storageLimit.toString()}
     !estimatedFees ? "?" : formatCurrencyUnit(mainAccount.currency.units[0], estimatedFees)
   })`;
 };
+
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
@@ -62,6 +64,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     taquitoError: tr.taquitoError,
   };
 };
+
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const { networkInfo } = t;

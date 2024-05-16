@@ -4,9 +4,9 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import type { Account, AccountLike, AccountLikeArray, SubAccount } from "@ledgerhq/types-live";
-import type { Transaction, Baker } from "./types";
-import { listBakers, fetchAllBakers } from "./bakers";
-import defaultList from "./bakers.whitelist-default";
+import type { Transaction, Baker } from "../types";
+import { listBakers, fetchAllBakers } from "../api/bakers";
+import defaultList from "../api/bakers.whitelist-default";
 
 const options = [
   {
@@ -47,7 +47,7 @@ function inferAccounts(account: Account, opts: Record<string, any>): AccountLike
 
   const { subAccounts } = account;
   invariant(subAccounts, "no sub accounts");
-  return opts.subAccount.map(i => {
+  return opts.subAccount.map((i: number) => {
     const acc = (subAccounts as SubAccount[])[i];
     invariant(acc, "sub account not found (index %s)", i);
     return acc;
@@ -78,8 +78,8 @@ function inferTransactions(
 }
 
 const bakersFormatters = {
-  json: list => JSON.stringify(list),
-  default: list =>
+  json: (list: Baker[]) => JSON.stringify(list),
+  default: (list: Baker[]) =>
     list
       .map(b => `${b.address} "${b.name}" ${b.nominalYield} ${b.capacityStatus} ${b.logoURL}`)
       .join("\n"),
@@ -102,7 +102,7 @@ const tezosListBakers = {
     format,
   }: Partial<{
     whitelist: boolean;
-    format: string;
+    format: "json" | "default";
   }>): Observable<string> =>
     from(whitelist ? listBakers(defaultList) : fetchAllBakers()).pipe(
       map((list: Baker[]) => {
@@ -111,11 +111,27 @@ const tezosListBakers = {
       }),
     ),
 };
-export default {
-  options,
-  inferAccounts,
-  inferTransactions,
-  commands: {
-    tezosListBakers,
-  },
+
+export type CliTools = {
+  options: typeof options;
+  inferTransactions: (
+    transactions: Array<{
+      account: AccountLike;
+      transaction: Transaction;
+    }>,
+    opts: Record<string, any>,
+    { inferAmount }: any,
+  ) => Transaction[];
+  commands: { tezosListBakers: typeof tezosListBakers };
 };
+
+export default function makeCliTools() {
+  return {
+    options,
+    inferAccounts,
+    inferTransactions,
+    commands: {
+      tezosListBakers,
+    },
+  };
+}

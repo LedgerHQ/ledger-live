@@ -1,13 +1,16 @@
 import { Observable } from "rxjs";
-import { LedgerSigner, DerivationType } from "@taquito/ledger-signer";
 import { DEFAULT_FEE, OpKind, TezosToolkit } from "@taquito/taquito";
 import { type OperationContents } from "@taquito/rpc";
-import type { TezosAccount, TezosOperation, Transaction } from "./types";
-import type { OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
-import { withDevice } from "../../hw/deviceAccess";
+import type {
+  OperationType,
+  SignOperationEvent,
+  SignOperationFnSignature,
+} from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import type { TezosAccount, TezosOperation, TezosSigner, Transaction } from "../types";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 export async function getOperationContents({
   account,
@@ -35,7 +38,7 @@ export async function getOperationContents({
 
   const contents: OperationContents[] = [];
 
-  if (!(account as TezosAccount).tezosResources.revealed) {
+  if (!account.tezosResources.revealed) {
     const revealFees = await tezos.estimate.reveal();
 
     contents.push({
@@ -98,30 +101,22 @@ export async function getOperationContents({
   return { type, contents };
 }
 
-export const signOperation: SignOperationFnSignature<Transaction> = ({
-  account,
-  deviceId,
-  transaction,
-}) =>
-  withDevice(deviceId)(
-    transport =>
-      new Observable(o => {
-        let cancelled = false;
+const buildSignOperation =
+  (signerContext: SignerContext<TezosSigner>): SignOperationFnSignature<Transaction> =>
+  ({ account, deviceId, transaction }): Observable<SignOperationEvent> =>
+    new Observable(o => {
+      let cancelled = false;
 
-        async function main() {
-          const { fees } = transaction;
-          if (!fees) throw new FeeNotLoaded();
+      async function main() {
+        const { fees } = transaction;
+        if (!fees) throw new FeeNotLoaded();
 
-          const { freshAddressPath, freshAddress } = account;
+        const { freshAddressPath, freshAddress } = account;
 
-          const tezos = new TezosToolkit(getEnv("API_TEZOS_NODE"));
+        const tezos = new TezosToolkit(getEnv("API_TEZOS_NODE"));
 
-          const ledgerSigner = new LedgerSigner(
-            transport,
-            freshAddressPath,
-            false,
-            DerivationType.ED25519,
-          );
+        const signedInfo = await signerContext(deviceId, async signer => {
+          const ledgerSigner = signer.createLedgerSigner(freshAddressPath, false, 0);
 
           tezos.setProvider({ signer: ledgerSigner });
 
@@ -159,48 +154,60 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             ),
           );
 
-          o.next({ type: "device-signature-granted" });
-
-          // build optimistic operation
-          const txHash = ""; // resolved at broadcast time
-          const senders = [freshAddress];
-          const recipients = [transaction.recipient];
-          const accountId = account.id;
-
-          // currently, all mode are always at least one OUT tx on ETH parent
-          const operation: TezosOperation = {
-            id: encodeOperationId(accountId, txHash, type),
-            hash: txHash,
+          return {
             type,
-            value: transaction.amount,
-            fee: fees,
-            extra: {},
-            blockHash: null,
-            blockHeight: null,
-            senders,
-            recipients,
-            accountId,
-            date: new Date(),
+            signature,
           };
+        });
 
-          o.next({
-            type: "signed",
-            signedOperation: {
-              operation,
-              // we slice the signature to remove the `03` prefix
-              // which souldn't be included in the signature
-              signature: signature.sbytes.slice(2),
-            },
-          });
+        if (!signedInfo) {
+          return;
         }
+        const { type, signature } = signedInfo;
 
-        main().then(
-          () => o.complete(),
-          e => o.error(e),
-        );
+        o.next({ type: "device-signature-granted" });
 
-        return () => {
-          cancelled = true;
+        // build optimistic operation
+        const txHash = ""; // resolved at broadcast time
+        const senders = [freshAddress];
+        const recipients = [transaction.recipient];
+        const accountId = account.id;
+
+        // currently, all mode are always at least one OUT tx on ETH parent
+        const operation: TezosOperation = {
+          id: encodeOperationId(accountId, txHash, type),
+          hash: txHash,
+          type,
+          value: transaction.amount,
+          fee: fees,
+          extra: {},
+          blockHash: null,
+          blockHeight: null,
+          senders,
+          recipients,
+          accountId,
+          date: new Date(),
         };
-      }),
-  );
+
+        o.next({
+          type: "signed",
+          signedOperation: {
+            operation,
+            // we slice the signature to remove the `03` prefix
+            // which souldn't be included in the signature
+            signature: signature.sbytes.slice(2),
+          },
+        });
+      }
+
+      main().then(
+        () => o.complete(),
+        e => o.error(e),
+      );
+
+      return () => {
+        cancelled = true;
+      };
+    });
+
+export default buildSignOperation;

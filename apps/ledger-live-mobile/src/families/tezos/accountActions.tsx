@@ -4,7 +4,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountDelegationSync,
   isAccountDelegating,
-} from "@ledgerhq/live-common/families/tezos/bakers";
+} from "@ledgerhq/live-common/families/tezos/staking";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";

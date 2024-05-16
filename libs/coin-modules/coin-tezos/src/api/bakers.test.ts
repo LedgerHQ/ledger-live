@@ -1,6 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { AxiosResponse } from "axios";
-import { API_BAKER } from "./types";
+import { API_BAKER } from "../types";
 import { asBaker, cache } from "./bakers";
 
 jest.mock("@ledgerhq/live-network/network");
@@ -104,7 +103,7 @@ describe("Tezos Baker", () => {
 
   describe("Get bakers from cache", () => {
     beforeEach(() => {
-      const response: AxiosResponse<API_BAKER[]> = {
+      const response = {
         data,
         status: 200,
         headers: {},

@@ -9,7 +9,6 @@ import hedera from "../families/hedera/hw-getAddress";
 import internet_computer from "../families/internet_computer/hw-getAddress";
 import stacks from "../families/stacks/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
-import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
 import vechain from "../families/vechain/hw-getAddress";
 import { resolver as algorand } from "../families/algorand/setup";
@@ -18,6 +17,7 @@ import { resolver as evm } from "../families/evm/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
 import { resolver as solana } from "../families/solana/setup";
+import { resolver as tezos } from "../families/tezos/setup";
 import { resolver as xrp } from "../families/xrp/setup";
 
 export default {
@@ -32,7 +32,6 @@ export default {
   internet_computer,
   stacks,
   stellar,
-  tezos,
   tron,
   vechain,
   algorand,
@@ -41,5 +40,6 @@ export default {
   near,
   polkadot,
   solana,
+  tezos,
   xrp,
 };

@@ -2,10 +2,9 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useEffect, useMemo, useState } from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { ledgerValidatorAddress } from "./bakers.whitelist-default";
-import { API_BAKER, Baker, Delegation } from "./types";
+import { API_BAKER, Baker, Delegation } from "../types";
 
 export const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
@@ -48,20 +47,14 @@ export const fetchAllBakers = async (): Promise<Baker[]> => {
 function whitelist(all: Baker[], addresses: string[]) {
   return all.filter(baker => addresses.includes(baker.address));
 }
+export const listBakersWithDefault = (whitelistAddresses: string[]): Baker[] => {
+  return whitelist(_lastBakers, whitelistAddresses);
+};
 
 export const listBakers = async (whitelistAddresses: string[]): Promise<Baker[]> => {
   _lastBakers = await cache();
   return whitelist(_lastBakers, whitelistAddresses);
 };
-
-export function useBakers(whitelistAddresses: string[]): Baker[] {
-  const [bakers, setBakers] = useState<Baker[]>(() => whitelist(_lastBakers, whitelistAddresses));
-  useEffect(() => {
-    listBakers(whitelistAddresses).then(setBakers);
-  }, [whitelistAddresses]);
-
-  return bakers;
-}
 
 export function getBakerSync(addr: string): Baker | undefined {
   return _lastBakers.find(baker => baker.address === addr);
@@ -115,48 +108,6 @@ export async function loadAccountDelegation(
   if (!delegation) return null;
   const baker = await loadBaker(delegation.address);
   return { ...delegation, baker };
-}
-
-export function useDelegation(account: AccountLike): Delegation | null | undefined {
-  const [delegation, setDelegation] = useState(() => getAccountDelegationSync(account));
-  useEffect(() => {
-    let cancelled = false;
-    loadAccountDelegation(account).then(delegation => {
-      if (cancelled) return;
-      setDelegation(delegation);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [account]);
-
-  return delegation;
-}
-
-export function useBaker(addr: string): Baker | undefined {
-  const [baker, setBaker] = useState(() => getBakerSync(addr));
-
-  loadBaker(addr).then(setBaker);
-
-  return baker;
-}
-
-//  select a random baker for the mount time (assuming bakers length don't change)
-export function useRandomBaker(bakers: Baker[]): Baker {
-  const randomBakerIndex = useMemo(() => {
-    const nonFullBakers = bakers.filter(b => b.capacityStatus !== "full");
-
-    if (nonFullBakers.length > 0) {
-      // if there are non full bakers, we pick one
-      const i = Math.floor(Math.random() * nonFullBakers.length);
-      return bakers.indexOf(nonFullBakers[i]);
-    }
-
-    // fallback on random between only full bakers
-    return Math.floor(Math.random() * bakers.length); // for perf, we only want to re-calc on bakers.length changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bakers.length]);
-  return bakers[randomBakerIndex];
 }
 
 export const asBaker = (data: API_BAKER): Baker | undefined => {
