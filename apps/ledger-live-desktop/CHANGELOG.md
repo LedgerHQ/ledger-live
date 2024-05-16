@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.81.0
+
+### Minor Changes
+
+- [#6865](https://github.com/LedgerHQ/ledger-live/pull/6865) [`ac32e49`](https://github.com/LedgerHQ/ledger-live/commit/ac32e499cb1c1f9951a204ff5544e308415bf928) Thanks [@cksanders](https://github.com/cksanders)! - Fix LIVE-12571 where some users can't unlock LLD when they have set up a password
+
 ## 2.81.0-hotfix.0
 
 ### Minor Changes
