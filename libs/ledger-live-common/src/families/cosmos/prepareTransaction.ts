@@ -1,11 +1,11 @@
 import { CacheRes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { CosmosAPI } from "./api/Cosmos";
 import cryptoFactory from "./chain/chain";
-import { txToMessages, buildTransaction } from "./js-buildTransaction";
+import { txToMessages, buildTransaction } from "./buildTransaction";
 import { getMaxEstimatedBalance } from "./logic";
 import { CosmosAccount, Transaction } from "./types";
 
@@ -94,12 +94,11 @@ export const getEstimatedFees = async (
   return { gasWanted, gasWantedFees };
 };
 
-export const prepareTransaction = async (
-  account: Account,
-  transaction: Transaction,
-): Promise<Transaction> => {
-  let memo = transaction.memo;
-  let amount = transaction.amount;
+export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
+  account,
+  transaction,
+) => {
+  let { memo, amount } = transaction;
 
   if (transaction.mode !== "send" && !transaction.memo) {
     memo = "Ledger Live";
