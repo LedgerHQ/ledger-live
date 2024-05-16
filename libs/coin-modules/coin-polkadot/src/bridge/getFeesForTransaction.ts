@@ -13,25 +13,25 @@ import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
  * @param {Transaction} t
  */
 export default async function getEstimatedFees({
-  a,
-  t,
+  account,
+  transaction,
 }: {
-  a: PolkadotAccount;
-  t: Transaction;
+  account: PolkadotAccount;
+  transaction: Transaction;
 }): Promise<BigNumber> {
   await loadPolkadotCrypto();
 
-  const transaction = {
-    ...t,
-    recipient: getAbandonSeedAddress(a.currency.id),
+  const t = {
+    ...transaction,
+    recipient: getAbandonSeedAddress(account.currency.id),
     // Always use a fake recipient to estimate fees
     amount: calculateAmount({
-      a,
-      t: { ...t, fees: new BigNumber(0) },
+      account,
+      transaction: { ...transaction, fees: new BigNumber(0) },
     }), // Remove fees if present since we are fetching fees
   };
 
-  const tx = await buildTransaction(a, transaction);
+  const tx = await buildTransaction(account, t);
   const fees = await estimateFees(tx);
   return new BigNumber(fees.toString());
 }

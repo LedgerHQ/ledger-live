@@ -46,7 +46,7 @@ export type PolkadotResources = {
   unlockingBalance: BigNumber;
   unlockings: PolkadotUnlocking[] | null | undefined;
   nominations: PolkadotNomination[] | null | undefined;
-  numSlashingSpans: number;
+  numSlashingSpans: number | undefined;
 };
 export type PolkadotResourcesRaw = {
   controller: string | null | undefined;
@@ -57,7 +57,7 @@ export type PolkadotResourcesRaw = {
   unlockingBalance: string;
   unlockings: PolkadotUnlockingRaw[] | null | undefined;
   nominations: PolkadotNominationRaw[] | null | undefined;
-  numSlashingSpans: number;
+  numSlashingSpans: number | undefined;
 };
 export type Transaction = TransactionCommon & {
   mode: PolkadotOperationMode;
@@ -121,8 +121,8 @@ export type PolkadotOperationExtra = {
   bondedAmount?: BigNumber;
   unbondedAmount?: BigNumber;
   withdrawUnbondedAmount?: BigNumber;
-  validatorStash?: string;
-  validators?: string[];
+  validatorStash?: string | undefined;
+  validators?: string[] | undefined;
 };
 export function isPolkadotOperationExtra(op: OperationExtra): op is PolkadotOperationExtra {
   return op !== null && typeof op === "object" && "palletMethod" in op;
@@ -133,8 +133,8 @@ export type PolkadotOperationExtraRaw = {
   bondedAmount?: string;
   unbondedAmount?: string;
   withdrawUnbondedAmount?: string;
-  validatorStash?: string;
-  validators?: string[];
+  validatorStash?: string | undefined;
+  validators?: string[] | undefined;
 };
 export function isPolkadotOperationExtraRaw(
   op: OperationExtraRaw,
