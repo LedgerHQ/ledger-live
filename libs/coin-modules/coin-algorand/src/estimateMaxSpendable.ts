@@ -1,39 +1,33 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import createTransaction from "./js-createTransaction";
-import { getEstimatedFees } from "./js-getFeesForTransaction";
-import { computeAlgoMaxSpendable } from "./logic";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
+import { getEstimatedFees } from "./getFeesForTransaction";
+import createTransaction from "./createTransaction";
+import { computeAlgoMaxSpendable } from "./logic";
 
-export const estimateMaxSpendable = async ({
-  account,
-  parentAccount,
-  transaction,
-}: {
-  account: AccountLike;
-  parentAccount?: Account | null | undefined;
-  transaction?: AlgorandTransaction | null | undefined;
-}): Promise<BigNumber> => {
+export const estimateMaxSpendable: AccountBridge<
+  AlgorandTransaction,
+  AlgorandAccount
+>["estimateMaxSpendable"] = async ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const { algorandResources } = mainAccount as AlgorandAccount;
+  const { algorandResources } = mainAccount;
   if (!algorandResources) {
     throw new Error("Algorand account expected");
   }
 
   const tx = {
-    ...createTransaction(),
+    ...createTransaction(account),
     subAccountId: account.type === "Account" ? null : account.id,
     ...transaction,
     recipient: transaction?.recipient || getAbandonSeedAddress(mainAccount.currency.id),
     useAllAmount: true,
   };
 
-  const tokenAccount =
-    tx.subAccountId &&
-    mainAccount.subAccounts &&
-    mainAccount.subAccounts.find(ta => ta.id === tx.subAccountId);
+  const tokenAccount = tx.subAccountId
+    ? findSubAccountById(mainAccount, tx.subAccountId)
+    : undefined;
 
   if (tokenAccount) {
     return tokenAccount.balance;
