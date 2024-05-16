@@ -1,12 +1,13 @@
-import { patchOperationWithHash } from "../../operation";
-import type { Operation, SignedOperation } from "@ledgerhq/types-live";
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import type { AccountBridge, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { broadcastTransaction as apiBroadcast } from "./api";
+import { Transaction } from "./types";
 
 /**
  * Broadcast a signed transaction
  * @param {signature: string, operation: string} signedOperation
  */
-const broadcast = async ({
+export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation,
 }: {
   signedOperation: SignedOperation;
