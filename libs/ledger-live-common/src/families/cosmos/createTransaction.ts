@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { AccountBridge } from "@ledgerhq/types-live";
 import type { CosmosDelegationInfo, Transaction } from "./types";
 
 /**
@@ -6,7 +7,7 @@ import type { CosmosDelegationInfo, Transaction } from "./types";
  *
  * @returns {Transaction}
  */
-const createTransaction = (): Transaction => ({
+export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => ({
   family: "cosmos",
   mode: "send",
   amount: new BigNumber(0),

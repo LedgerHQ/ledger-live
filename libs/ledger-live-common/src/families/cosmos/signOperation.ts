@@ -6,14 +6,18 @@ import { CosmosApp } from "@zondax/ledger-cosmos-js";
 import { serializeSignDoc, makeSignDoc } from "@cosmjs/amino";
 import { UserRefusedOnDevice, ExpertModeRequired } from "@ledgerhq/errors";
 import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
-import type { Operation, OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
+import type { AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
-import { txToMessages, buildTransaction } from "./js-buildTransaction";
+import { txToMessages, buildTransaction } from "./buildTransaction";
 import { CosmosAPI } from "./api/Cosmos";
 import cryptoFactory from "./chain/chain";
 
-const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
+export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
+  account,
+  deviceId,
+  transaction,
+}) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
