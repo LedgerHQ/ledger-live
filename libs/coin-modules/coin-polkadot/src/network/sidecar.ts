@@ -50,7 +50,7 @@ const VALIDATOR_COMISSION_RATIO = 1000000000;
 
 async function callSidecar<T>(route: string, method: "GET" | "POST" = "GET", data?: unknown) {
   const credentials = getCoinConfig().sidecar.credentials;
-  const headers = credentials ? { Authorization: "Basic " + credentials } : undefined;
+  const headers = credentials ? { Authorization: "Basic " + credentials } : {};
 
   return network<T>({
     headers,

@@ -17,17 +17,19 @@ export type CreateExtrinsicArg = {
   amount: BigNumber;
   recipient: string;
   isFirstBond: boolean;
-  validators?: string[];
-  useAllAmount?: boolean;
-  rewardDestination?: string | null;
-  numSlashingSpans?: number;
-  era?: string | null;
+  validators?: string[] | undefined;
+  useAllAmount?: boolean | undefined;
+  rewardDestination?: string | null | undefined;
+  numSlashingSpans?: number | undefined;
+  era?: string | null | undefined;
 };
+
 type ExtrinsicParams = {
   name: PalletMethod;
   pallet: "staking" | "balances";
   args: Record<string, string | string[] | number | null | undefined>;
 };
+
 const getExtrinsicParams = ({
   mode,
   amount,
