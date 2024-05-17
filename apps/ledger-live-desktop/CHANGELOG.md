@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.81.1
+
+### Patch Changes
+
+- [#6871](https://github.com/LedgerHQ/ledger-live/pull/6871) [`7857c4e`](https://github.com/LedgerHQ/ledger-live/commit/7857c4e41bbcfe4e421ed3b18d50090c253e319e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix analytics that were overriding app.json
+
+## 2.81.1-hotfix.0
+
+### Patch Changes
+
+- [#6871](https://github.com/LedgerHQ/ledger-live/pull/6871) [`7857c4e`](https://github.com/LedgerHQ/ledger-live/commit/7857c4e41bbcfe4e421ed3b18d50090c253e319e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix analytics that were overriding app.json
+
 ## 2.81.0
 
 ### Minor Changes

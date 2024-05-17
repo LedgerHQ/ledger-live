@@ -52,6 +52,7 @@ import {
   hasCompletedOnboardingSelector,
   hasSeenAnalyticsOptInPromptSelector,
 } from "~/renderer/reducers/settings";
+import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
@@ -198,13 +199,16 @@ export default function Default() {
   const listAppsV2 = useFeature("listAppsV2minor1");
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!analyticsFF?.enabled || hasSeenAnalyticsOptInPrompt) return;
-    dispatch(setShareAnalytics(false));
-    dispatch(setSharePersonalizedRecommendations(false));
-  });
+    if (!isLocked && analyticsFF?.enabled && !hasSeenAnalyticsOptInPrompt) {
+      dispatch(setShareAnalytics(false));
+      dispatch(setSharePersonalizedRecommendations(false));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLocked]);
 
   useEffect(() => {
     if (!listAppsV2) return;
