@@ -15,6 +15,7 @@ import {
 } from "@ton/ton";
 import BigNumber from "bignumber.js";
 import { estimateFee } from "./bridge/bridgeHelpers/api";
+import { maxFeeTokenTransfer } from "./constants";
 import { TonComment, TonHwParams, Transaction } from "./types";
 
 export const getAddress = (a: Account): Address => ({
@@ -22,13 +23,28 @@ export const getAddress = (a: Account): Address => ({
   derivationPath: a.freshAddressPath,
 });
 
-export const isAddressValid = (recipient: string) =>
-  TonAddress.isRaw(recipient) || TonAddress.isFriendly(recipient);
+export const isAddressValid = (recipient: string) => {
+  try {
+    return (
+      (TonAddress.isRaw(recipient) || TonAddress.isFriendly(recipient)) &&
+      TonAddress.parse(recipient)
+    );
+  } catch {
+    return false;
+  }
+};
 
-export const addressesAreEqual = (addr1: string, addr2: string) =>
-  isAddressValid(addr1) &&
-  isAddressValid(addr2) &&
-  TonAddress.parse(addr1).equals(TonAddress.parse(addr2));
+export const addressesAreEqual = (addr1: string, addr2: string) => {
+  try {
+    return (
+      isAddressValid(addr1) &&
+      isAddressValid(addr2) &&
+      TonAddress.parse(addr1).equals(TonAddress.parse(addr2))
+    );
+  } catch {
+    return false;
+  }
+};
 
 export const transactionToHwParams = (t: Transaction, seqno: number, a: Account): TonHwParams => {
   let recipient = t.recipient;
@@ -43,10 +59,8 @@ export const transactionToHwParams = (t: Transaction, seqno: number, a: Account)
   // if there is a sub account, the transaction is a token transfer
   const subAccount = findSubAccountById(a, t.subAccountId ?? "");
 
-  const maxComissionFee = "0.05";
-
   const amount = subAccount
-    ? toNano(maxComissionFee) // for commission fees, excess will be returned
+    ? toNano(maxFeeTokenTransfer) // for commission fees, excess will be returned
     : t.useAllAmount
     ? BigInt(0)
     : BigInt(t.amount.toFixed());
