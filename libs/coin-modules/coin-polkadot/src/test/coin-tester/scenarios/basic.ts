@@ -30,7 +30,7 @@ function getTransactions() {
 }
 
 // 1998 port comes from coin-config.toml config
-const wsProvider = new WsProvider("ws://127.0.0.1:1998");
+const wsProvider = new WsProvider("ws://127.0.0.1:1998", false);
 
 export const basicScenario: Scenario<PolkadotTransaction> = {
   name: "Polkadot Basic transactions",
@@ -53,6 +53,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
 
     const account = makeAccount(address, polkadot);
 
+    await wsProvider.connect();
     const api = await ApiPromise.create({ provider: wsProvider });
 
     // Retrieve the chain & node information via rpc calls
