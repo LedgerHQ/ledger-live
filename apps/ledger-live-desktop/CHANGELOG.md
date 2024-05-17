@@ -1,5 +1,32 @@
 # ledger-live-desktop
 
+## 2.81.0-nightly.1
+
+### Minor Changes
+
+- [#6863](https://github.com/LedgerHQ/ledger-live/pull/6863) [`cf435fd`](https://github.com/LedgerHQ/ledger-live/commit/cf435fd32b81391579311fcdf4de4439e37cdd00) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix LIVE-12571 where some users can't unlock LLD when they have set up a password
+
+### Patch Changes
+
+- [#6754](https://github.com/LedgerHQ/ledger-live/pull/6754) [`4c01029`](https://github.com/LedgerHQ/ledger-live/commit/4c01029b4d4feb32dab2f9e77da1126050d8c1bc) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Move Tezos in its own package
+
+- [#6875](https://github.com/LedgerHQ/ledger-live/pull/6875) [`6b060c8`](https://github.com/LedgerHQ/ledger-live/commit/6b060c823985f2e7fed8656db9b3da49f4967367) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix analytics that were overriding app.json
+
+- [#6860](https://github.com/LedgerHQ/ledger-live/pull/6860) [`1364fe0`](https://github.com/LedgerHQ/ledger-live/commit/1364fe0b8a134673091d01c9e9bdd2b0780fd984) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix automatic scroll that was triggered on accounts page when mounted
+
+- [#6848](https://github.com/LedgerHQ/ledger-live/pull/6848) [`e48b5d7`](https://github.com/LedgerHQ/ledger-live/commit/e48b5d782ebd15d4e25e522e2fbc1331afdfb5c1) Thanks [@gre](https://github.com/gre)! - prevent app to crash during the unlock phase
+
+- Updated dependencies [[`4c01029`](https://github.com/LedgerHQ/ledger-live/commit/4c01029b4d4feb32dab2f9e77da1126050d8c1bc)]:
+  - @ledgerhq/coin-evm@2.0.1-nightly.1
+  - @ledgerhq/live-common@34.3.0-nightly.1
+  - @ledgerhq/coin-framework@0.13.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.5.1-nightly.1
+  - @ledgerhq/live-countervalues@0.1.6-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.6-nightly.1
+  - @ledgerhq/live-nft@0.3.3-nightly.1
+  - @ledgerhq/live-nft-react@0.3.3-nightly.1
+  - @ledgerhq/live-wallet@0.1.1-nightly.4
+
 ## 2.81.0-nightly.0
 
 ### Minor Changes

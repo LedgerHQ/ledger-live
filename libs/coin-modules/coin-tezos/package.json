@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tezos",
-  "version": "0.3.12",
+  "version": "0.4.0-nightly.0",
   "description": "Tezos Coin integration",
   "keywords": [
     "Ledger",
@@ -38,7 +38,6 @@
         "lib/test/*",
         "lib/types/*"
       ]
-
     }
   },
   "exports": {
