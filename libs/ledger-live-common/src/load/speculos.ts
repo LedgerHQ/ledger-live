@@ -21,6 +21,7 @@ import { mustUpgrade, shouldUpgrade } from "../apps";
 
 export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
 
+let idCounter: number;
 const isSpeculosWebsocket = getEnv("SPECULOS_USE_WEBSOCKET");
 
 const data = {};
@@ -113,7 +114,7 @@ export async function createSpeculosDevice(
   ports: ReturnType<typeof getPorts>;
 }> {
   const { model, firmware, appName, appVersion, seed, coinapps, dependency } = arg;
-  let idCounter = getEnv("SPECULOS_PID_OFFSET");
+  idCounter = idCounter ?? getEnv("SPECULOS_PID_OFFSET");
   const speculosID = `speculosID-${++idCounter}`;
   const ports = getPorts(idCounter, isSpeculosWebsocket);
 

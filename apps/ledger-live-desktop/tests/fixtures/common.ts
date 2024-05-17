@@ -91,7 +91,10 @@ export const test = base.extend<TestFixtures>({
     let device: any | undefined;
     if (IS_MOCK) {
       if (speculosCurrency) {
-        setEnv("SPECULOS_PID_OFFSET", 100 * speculosOffset);
+        setEnv(
+          "SPECULOS_PID_OFFSET",
+          speculosOffset * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+        );
         device = await startSpeculos(testName, speculosCurrency);
         setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
       }
