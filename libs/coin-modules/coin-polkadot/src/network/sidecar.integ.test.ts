@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getAccount, getStakingInfo, getStakingProgress, getValidators } from "./sidecar";
-import { setCoinConfig } from "../bridge/config";
+import { setCoinConfig } from "../config";
 
 describe("sidecar integration test", () => {
   beforeAll(() => {
@@ -10,6 +10,9 @@ describe("sidecar integration test", () => {
       },
       node: {
         url: "https://polkadot-rpc.publicnode.com",
+      },
+      sidecar: {
+        url: "https://polkadot-sidecar.coin.ledger.com",
       },
     }));
   });

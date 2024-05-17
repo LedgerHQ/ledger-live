@@ -1,5 +1,5 @@
 import { ApiPromise, HttpProvider } from "@polkadot/api";
-import { getCoinConfig } from "../../bridge/config";
+import { getCoinConfig } from "../../config";
 
 let api: ApiPromise | undefined;
 export default async function () {

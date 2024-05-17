@@ -12,6 +12,9 @@ describe("getAccount", () => {
       status: {
         type: "active",
       },
+      node: {
+        url: "https://httpbin.org",
+      },
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
       },
@@ -30,7 +33,7 @@ describe("getAccount", () => {
   beforeEach(() => {
     mockServer.resetHandlers();
     mockServer.use(
-      http.get("https://polkadot-sidecar.coin.ledger.com/accounts/:addr/balance-info", () => {
+      http.get(`${SIDECAR_BASE_URL_TEST}/accounts/:addr/balance-info`, () => {
         return HttpResponse.json(balanceResponseStub);
       }),
     );
@@ -89,6 +92,9 @@ describe("getRegistry", () => {
     setCoinConfig(() => ({
       status: {
         type: "active",
+      },
+      node: {
+        url: "https://httpbin.org",
       },
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,

@@ -99,7 +99,6 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
       const tx = bitcoin.Transaction.fromHex(input.txHex);
 
       psbt.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: tx.getId(),
         index: input.output_index,
         nonWitnessUtxo,

@@ -90,7 +90,7 @@ const extractIdentity = (
     twitter: dataAsString(info.twitter),
     web: dataAsString(info.web),
   };
-}
+};
 
 /**
  * @source https://github.com/polkadot-js/api/blob/master/packages/api-derive/src/accounts/info.ts

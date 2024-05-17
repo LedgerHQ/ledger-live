@@ -105,7 +105,6 @@ describe.skip("testing xpub legacy transactions", () => {
       const tx = bitcoin.Transaction.fromHex(i.txHex);
 
       psbt.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
@@ -209,7 +208,6 @@ describe.skip("testing xpub legacy transactions", () => {
       const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
       const tx = bitcoin.Transaction.fromHex(i.txHex);
       psbt.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
@@ -328,7 +326,6 @@ describe.skip("Build transactions", () => {
       const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
       const tx = bitcoin.Transaction.fromHex(i.txHex);
       psbt.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
