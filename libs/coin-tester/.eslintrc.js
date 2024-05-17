@@ -17,7 +17,7 @@ module.exports = {
       plugins: ["jest"],
     },
     {
-      // allow, as warning, only any in tests
+      // allow, as warning, only in tests
       files: ["*/__tests__/**/*.{ts,tsx}"],
       rules: {
         "no-console": "off",

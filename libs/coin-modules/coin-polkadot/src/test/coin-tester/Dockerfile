@@ -8,9 +8,9 @@ RUN apt-get install -y wget
 RUN rm -rf /var/lib/apt/lists/*
 
 # Download ./zombinet-linux-x64
-RUN wget https://github.com/paritytech/zombienet/releases/download/v1.3.100/zombienet-linux-x64
+RUN wget https://github.com/paritytech/zombienet/releases/download/v1.3.103/zombienet-linux-x64
 RUN chmod +x ./zombienet-linux-x64
-RUN ./zombienet-linux-x64 --provider native --yes setup polkadot; exit 0
+RUN yes | ./zombienet-linux-x64 --provider native setup all; exit 0
 
 ENV RUST_BACKTRACE=1
 ENV PATH="${PATH}:/coin-tester"

@@ -3,7 +3,7 @@ import { Transaction as PolkadotTransaction } from "../../../types/bridge";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/lib/signers/speculos";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
 import resolver from "../../../signer";
-import { ApiPromise, WsProvider } from "@polkadot/api";
+import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { createBridges } from "../../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { makeAccount } from "../../fixtures";
@@ -29,6 +29,9 @@ function getTransactions() {
   return [send1DotTransaction, send100DotTransaction];
 }
 
+// 1998 port comes from coin-config.toml config
+const wsProvider = new WsProvider("ws://127.0.0.1:1998");
+
 export const basicScenario: Scenario<PolkadotTransaction> = {
   name: "Polkadot Basic transactions",
   setup: async () => {
@@ -49,20 +52,39 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     const { accountBridge, currencyBridge } = createBridges(signerContext);
 
     const account = makeAccount(address, polkadot);
-    console.log("bridges created");
 
-    // 1998 port comes from coin-config.toml config
-    const wsProvider = new WsProvider("ws://127.0.0.1:1998");
     const api = await ApiPromise.create({ provider: wsProvider });
 
-    const { data: balance } = (await api.query.system.account(address)) as any;
-    console.log({ balance: balance.toString(10) });
+    const keyring = new Keyring();
 
-    return { accountBridge, currencyBridge, address, account, onSignerConfirmation };
+    const scenarioAccountPair = keyring.addFromUri(process.env.SEED!, {
+      name: "basicScenarioPair",
+      address,
+    });
+
+    console.log(keyring.pairs);
+    console.log(scenarioAccountPair.meta.name, scenarioAccountPair.address);
+
+    const { data: balance } = (await api.query.system.account(scenarioAccountPair.address)) as any;
+    console.log({ balance: balance.toString() });
+
+    const alice = keyring.addFromUri("//Alice");
+    const { data: Alicebalance } = (await api.query.system.account(alice.address)) as any;
+    console.log({ aliceBalance: Alicebalance.toString() });
+
+    await api.isReady;
+
+    return {
+      accountBridge,
+      currencyBridge,
+      address: scenarioAccountPair.address,
+      account,
+      onSignerConfirmation,
+    };
   },
   getTransactions,
   teardown: async () => {
-    // wsProvider.disconnect();
+    await wsProvider.disconnect();
     await Promise.all([killSpeculos(), killZombienet()]);
   },
 };

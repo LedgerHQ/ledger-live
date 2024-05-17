@@ -6,7 +6,18 @@ import chalk from "chalk";
 const docker = new Docker();
 const containerName = "zombienet";
 
+const ensureEnv = () => {
+  const mandatory_env_variables = ["SEED"];
+
+  if (!mandatory_env_variables.every(variable => !!process.env[variable])) {
+    throw new Error(
+      `Missing env variables. Make sure that ${mandatory_env_variables.join(",")} are in your .env`,
+    );
+  }
+};
+
 export async function spawnZombienet() {
+  ensureEnv();
   console.log("Starting Zombienet...");
 
   const container = await docker.createContainer({
@@ -32,9 +43,9 @@ export async function spawnZombienet() {
 
   await container.start();
 
-  async function checkZombienetLogs(has_started_max_retry = 5) {
+  async function checkZombienetLogs(has_started_max_retry = 10) {
     if (has_started_max_retry === 0) {
-      throw new Error("Zombienet failed to start. Check possible logs");
+      throw new Error("Failed to start Zombienet container. Check possible logs.");
     }
 
     const logs = (await container.logs({ stdout: true })).toString();
@@ -45,7 +56,7 @@ export async function spawnZombienet() {
     }
 
     console.log("Waiting for zombienet to start...");
-    await delay(3 * 1000); // 3 seconds
+    await delay(2 * 1000); // 3 seconds
 
     return checkZombienetLogs(has_started_max_retry - 1);
   }
@@ -57,7 +68,6 @@ export async function killZombienet() {
   const containers = await docker.listContainers();
 
   for (const container of containers) {
-    console.log(container.Names);
     if (container.Names.some(name => name.includes(containerName))) {
       console.log("Killing zombienet...");
       const zombienetContainer = docker.getContainer(container.Id);

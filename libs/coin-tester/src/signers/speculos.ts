@@ -12,12 +12,23 @@ const cwd = path.join(__dirname);
 
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
 
+const ensureEnv = () => {
+  const mandatory_env_variables = ["SEED", "API_PORT", "GH_TOKEN"];
+
+  if (!mandatory_env_variables.every(variable => !!process.env[variable])) {
+    throw new Error(
+      `Missing env variables. Make sure that ${mandatory_env_variables.join(",")} are in your .env`,
+    );
+  }
+};
+
 export const spawnSpeculos = async (
   nanoAppEndpoint: `/${string}`,
 ): Promise<{
   transport: SpeculosTransportHttp;
   onSignerConfirmation: (e?: SignOperationEvent) => Promise<void>;
 }> => {
+  ensureEnv();
   console.log(`Starting speculos...`);
 
   const { data: blob } = await axios({
