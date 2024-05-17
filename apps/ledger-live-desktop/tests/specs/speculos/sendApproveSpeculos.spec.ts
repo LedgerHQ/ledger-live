@@ -27,13 +27,13 @@ const transactions = [
   new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", "medium"),
 ];
 
-for (const transaction of transactions) {
+for (const [i, transaction] of transactions.entries()) {
   test.describe.parallel("Send Approve @smoke", () => {
     test.use({
       userdata: "speculos",
       testName: `receiveSpeculos_${transaction.accountToDebit.currency.uiName}`,
       speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: Math.floor(Math.random() * 10000),
+      speculosOffset: i,
     });
 
     //@TmsLink("B2CQA-479")
