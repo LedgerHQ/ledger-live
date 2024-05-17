@@ -4,18 +4,7 @@ export type SolanaAddress = {
 export type SolanaSignature = {
   signature: Buffer;
 };
-// enum PubKeyDisplayMode {
-//   LONG,
-//   SHORT,
-// }
-// type AppConfig = {
-//   blindSigningEnabled: boolean;
-//   pubKeyDisplayMode: PubKeyDisplayMode;
-//   version: string;
-// };
 export interface SolanaSigner {
   getAddress(path: string, display?: boolean): Promise<SolanaAddress>;
   signTransaction(path: string, txBuffer: Buffer): Promise<SolanaSignature>;
-  // signOffchainMessage(path: string, msgBuffer: Buffer): Promise<SolanaSignature>;
-  // getAppConfiguration(): Promise<AppConfig>;
 }

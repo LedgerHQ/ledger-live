@@ -287,3 +287,15 @@ export function getParentAccount(account: AccountLike, accounts: AccountLike[]):
     }
   }
 }
+
+export function areAllOperationsLoaded(account: AccountLike): boolean {
+  if (account.operationsCount !== account.operations.length) {
+    return false;
+  }
+
+  if (account.type === "Account" && account.subAccounts) {
+    return account.subAccounts.every(areAllOperationsLoaded);
+  }
+
+  return true;
+}

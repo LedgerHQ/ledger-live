@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { u8aConcat } from "@polkadot/util";
+import type { SignOperationEvent } from "@ledgerhq/types-live";
 import type { PolkadotOperationMode, PolkadotSigner, PolkadotOperationExtra } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import buildSignOperation from "./signOperation";
-import { SignOperationEvent } from "@ledgerhq/types-live";
 import { createRegistryAndExtrinsics } from "../network/common";
 import {
   fixtureChainSpec,

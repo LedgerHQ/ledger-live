@@ -24,12 +24,7 @@ import {
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import {
-  // fetchAllBakers,
-  // hydrateBakers,
-  // asBaker,
-  isAccountDelegating,
-} from "../bakers";
+import { isAccountDelegating } from "../staking";
 
 const isAccountBalanceSignificant = (a: AccountLike): boolean => a.balance.gt(100);
 

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import {
   emptyHistoryCache,
@@ -8,7 +8,7 @@ import {
   getAccountSpendableBalance,
   getFeesCurrency,
 } from ".";
-import { isAccountEmpty, clearAccount } from "./helpers";
+import { isAccountEmpty, clearAccount, areAllOperationsLoaded } from "./helpers";
 
 const mockAccount = {} as Account;
 const tokenAccount = {
@@ -216,6 +216,40 @@ describe(clearAccount.name, () => {
       withSubAccounts.nfts = [];
       const clearedAccount = clearAccount(withSubAccounts);
       expect(Object.keys(clearedAccount).indexOf("nfts")).toEqual(-1);
+    });
+  });
+});
+
+describe(areAllOperationsLoaded.name, () => {
+  describe("given an account with subAccounts", () => {
+    beforeEach(() => {
+      mockAccount.type = "Account";
+      mockAccount.operations = [];
+      mockAccount.operationsCount = 0;
+      mockAccount.subAccounts = [
+        {
+          operations: [],
+          operationsCount: 0,
+        },
+        {
+          operations: [{} as Operation],
+          operationsCount: 1,
+        },
+      ] as TokenAccount[];
+    });
+    describe("when sub account operation aren't loaded", () => {
+      beforeEach(() => {
+        (mockAccount.subAccounts as TokenAccount[])[1].operations = [];
+      });
+      it("should return false", () => {
+        expect(areAllOperationsLoaded(mockAccount)).toEqual(false);
+      });
+    });
+
+    describe("when sub account operation are loaded", () => {
+      it("should return true", () => {
+        expect(areAllOperationsLoaded(mockAccount)).toEqual(true);
+      });
     });
   });
 });

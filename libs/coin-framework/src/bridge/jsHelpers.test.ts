@@ -43,7 +43,11 @@ describe("jsHelpers", () => {
   describe("makeSync", () => {
     it("returns a function to update account that give a new instance of account", async () => {
       // Given
-      const account = createAccount("12");
+      const account = createAccount({
+        id: "12",
+        creationDate: new Date("2024-05-12T17:04:12"),
+        lastSyncDate: new Date("2024-05-12T17:04:12"),
+      });
 
       // When
       const accountUpdater = makeSync({
@@ -68,7 +72,11 @@ describe("jsHelpers", () => {
 
     it("returns a account with a corrected formatted id", async () => {
       // Given
-      const account = createAccount("12");
+      const account = createAccount({
+        id: "12",
+        creationDate: new Date("2024-05-12T17:04:12"),
+        lastSyncDate: new Date("2024-05-12T17:04:12"),
+      });
 
       // When
       const accountUpdater = makeSync({
@@ -105,12 +113,12 @@ const emptyHistoryCache = {
 
 // Call once for all tests the currencies. Relies on real implementation to check also consistency.
 const bitcoinCurrency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
-function createAccount(id: string): Account {
+function createAccount(init: Partial<Account>): Account {
   const currency = bitcoinCurrency;
 
   return {
     type: "Account",
-    id,
+    id: init.id ?? "12",
     seedIdentifier: "",
     derivationMode: "",
     index: 0,
@@ -119,7 +127,7 @@ function createAccount(id: string): Account {
     used: true,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
-    creationDate: new Date(),
+    creationDate: init.creationDate ?? new Date(),
     blockHeight: 0,
     currency,
     operationsCount: 0,
