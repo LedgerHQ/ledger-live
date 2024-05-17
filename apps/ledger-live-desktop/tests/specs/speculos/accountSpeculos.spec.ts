@@ -29,6 +29,9 @@ for (const currency of currencies) {
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
     let accountsListBeforeRemove: (string | null)[];
+
+    //@TmsLink("B2CQA-101")
+
     test(`[${currency.uiName}] Add account`, async ({ page }) => {
       const portfolioPage = new PortfolioPage(page);
       const addAccountModal = new AddAccountModal(page);
@@ -50,14 +53,12 @@ for (const currency of currencies) {
 
       await test.step(`[${currency.uiName}] Open device app`, async () => {
         await addAccountModal.waitForSync();
-        const name = await addAccountModal.getFirstAccountName();
-        firstAccountName = name;
-        await expect(addAccountModal.addNewAccount).toBeVisible();
+        firstAccountName = await addAccountModal.getFirstAccountName();
       });
 
       await test.step(`[${currency.uiName}] Scan and add accounts`, async () => {
         await addAccountModal.addAccounts();
-        await expect(addAccountModal.successAdd).toBeVisible();
+        await expect(addAccountModal.successAddLabel).toBeVisible();
       });
 
       await test.step(`[${currency.uiName}] Done`, async () => {
@@ -80,7 +81,7 @@ for (const currency of currencies) {
 
       await test.step(`Delete current account`, async () => {
         await accountPage.deleteAccount();
-        await expect(accountsPage.firstAccount).not.toBe(firstAccountName);
+        expect(accountsPage.firstAccount).not.toBe(firstAccountName);
         const accountsListAfterRemove = await accountsPage.getAccountsName();
         expect(accountsListAfterRemove).not.toContain(accountsListBeforeRemove[0]);
       });

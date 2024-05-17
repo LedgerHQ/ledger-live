@@ -255,16 +255,10 @@ export async function pressRightUntil(text: string, maxAttempts: number = 10): P
 
 export function verifyAddress(address: string, text: string[]): boolean {
   const textConcat = text.slice(1).join("");
-  if (textConcat.includes(address)) {
-    return true;
-  }
-  return false;
+  return textConcat.includes(address);
 }
 
 export function verifyAmount(amount: string, text: string[]): boolean {
   const amountDevice = text[1];
-  if (amountDevice.includes(amount)) {
-    return true;
-  }
-  return false;
+  return amountDevice.includes(amount);
 }

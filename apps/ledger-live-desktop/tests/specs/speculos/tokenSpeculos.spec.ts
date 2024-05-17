@@ -14,6 +14,8 @@ test.use({
 const token = "Tether USD";
 
 test.describe.parallel("ERC20 token", () => {
+  //@TmsLink("B2CQA-1079")
+
   test(`Ckeck ERC20 token`, async ({ page }) => {
     const portfolioPage = new PortfolioPage(page);
     const layout = new Layout(page);
@@ -25,9 +27,9 @@ test.describe.parallel("ERC20 token", () => {
     });
 
     await test.step(`account allocation`, async () => {
-      await expect(accountPage.token(token)).toBeVisible();
+      await expect(accountPage.tokenValue(token)).toBeVisible();
       await accountPage.navigateToToken(token);
-      await expect(accountPage.scrollToOperations).not.toBeNull();
+      expect(accountPage.scrollToOperations).not.toBeNull();
     });
   });
 });

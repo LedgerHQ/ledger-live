@@ -7,14 +7,14 @@ export class SendModal extends Modal {
   readonly drowdownAccount: Locator;
   readonly recipientInput: Locator;
   readonly continueButton: Locator;
-  readonly verifyTotalDebit: Locator;
-  readonly checkDevice: Locator;
-  readonly checkTransactionbroadcast: Locator;
+  readonly totalDebitValue: Locator;
+  readonly checkDeviceLabel: Locator;
+  readonly checkTransactionbroadcastLabel: Locator;
   readonly retryButton: Locator;
-  readonly checkAddress: (address: string) => Locator;
-  readonly checkAmount: (currency: string) => Locator;
-  readonly recipientAddressDisplayed: Locator;
-  readonly amountDisplayed: Locator;
+  readonly addressValue: (address: string) => Locator;
+  readonly amountValue: (amount: string, currency: string) => Locator;
+  readonly recipientAddressDisplayedValue: Locator;
+  readonly amountDisplayedValue: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -22,17 +22,17 @@ export class SendModal extends Modal {
     this.drowdownAccount = this.page.locator('[data-test-id="modal-content"] svg').nth(1);
     this.recipientInput = this.page.getByPlaceholder("Enter");
     this.continueButton = page.getByRole("button", { name: "continue" });
-    this.verifyTotalDebit = page.locator("text=Total to debit");
-    this.checkDevice = page.locator(
+    this.totalDebitValue = page.locator("text=Total to debit");
+    this.checkDeviceLabel = page.locator(
       "text=Double-check the transaction details on your Ledger device before signing.",
     );
-    this.checkTransactionbroadcast = page.locator("text=Transaction sent");
+    this.checkTransactionbroadcastLabel = page.locator("text=Transaction sent");
     this.retryButton = page.getByRole("button", { name: "Retry" });
-    this.checkAddress = address =>
+    this.addressValue = address =>
       page.locator('[data-test-id="modal-content"]').locator(`text=${address}`);
-    this.checkAmount = currency => page.locator(`text=0.00001 ${currency}`).first();
-    this.recipientAddressDisplayed = page.locator("data-test-id=recipient-address");
-    this.amountDisplayed = page.locator("data-test-id=transaction-amount");
+    this.amountValue = (amount, currency) => page.locator(`text=${amount} ${currency}`).first();
+    this.recipientAddressDisplayedValue = page.locator("data-test-id=recipient-address");
+    this.amountDisplayedValue = page.locator("data-test-id=transaction-amount");
   }
 
   async selectAccount(name: string) {

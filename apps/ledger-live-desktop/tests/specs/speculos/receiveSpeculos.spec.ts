@@ -29,6 +29,8 @@ for (const account of accounts) {
       speculosOffset: Math.floor(Math.random() * 10000),
     });
 
+    //@TmsLink("B2CQA-249")
+
     test(`[${account.currency.uiName}] Receive`, async ({ page }) => {
       const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
@@ -45,10 +47,10 @@ for (const account of accounts) {
       await test.step(`goToReceive and verify on LL`, async () => {
         await accountPage.receiveButton.click();
         await modal.continueButton.click();
-        await expect(receiveModal.verifyAddressOnDevice).toBeVisible();
+        await expect(receiveModal.verifyAddressOnDeviceLabel).toBeVisible();
         await expect(receiveModal.receiveAddress(account.address)).toBeVisible();
 
-        const displayedAddress = await receiveModal.addressDisplayed.innerText();
+        const displayedAddress = await receiveModal.addressDisplayedValue.innerText();
         expect(displayedAddress).toEqual(account.address);
       });
 

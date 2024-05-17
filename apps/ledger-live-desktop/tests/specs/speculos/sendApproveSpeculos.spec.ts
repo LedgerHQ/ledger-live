@@ -35,6 +35,10 @@ for (const transaction of transactions) {
       speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: Math.floor(Math.random() * 10000),
     });
+
+    //@TmsLink("B2CQA-479")
+    //@TmsLink("B2CQA-1904")
+
     test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
       const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
@@ -54,23 +58,23 @@ for (const transaction of transactions) {
         await sendModal.continueButton.click();
         await modal.cryptoAmountField.fill(transaction.amount);
         await sendModal.countinueSendAmount();
-        await expect(sendModal.verifyTotalDebit).toBeVisible();
+        await expect(sendModal.totalDebitValue).toBeVisible();
 
-        await expect(sendModal.checkAddress(receiveAddress)).toBeVisible();
-        const displayedReceiveAddress = await sendModal.recipientAddressDisplayed.innerText();
+        await expect(sendModal.addressValue(receiveAddress)).toBeVisible();
+        const displayedReceiveAddress = await sendModal.recipientAddressDisplayedValue.innerText();
         expect(displayedReceiveAddress).toEqual(transaction.accountToCredit.address);
 
         await expect(
-          sendModal.checkAmount(transaction.accountToCredit.currency.uiLabel),
+          sendModal.amountValue(transaction.amount, transaction.accountToCredit.currency.uiLabel),
         ).toBeVisible();
-        const displayedAmount = await sendModal.amountDisplayed.innerText();
+        const displayedAmount = await sendModal.amountDisplayedValue.innerText();
         expect(displayedAmount).toEqual(expect.stringContaining(transaction.amount));
 
         await sendModal.continueButton.click();
       });
 
       await test.step(`[${transaction.accountToDebit.accountName}] Validate message on device`, async () => {
-        await expect(sendModal.checkDevice).toBeVisible();
+        await expect(sendModal.checkDeviceLabel).toBeVisible();
         const amountScreen = await pressRightUntil(DeviceLabels.AMOUT);
         expect(verifyAmount(transaction.amount, amountScreen)).toBe(true);
         const addressScreen = await pressRightUntil(DeviceLabels.ADDRESS);
@@ -86,7 +90,7 @@ for (const transaction of transactions) {
           default:
             break;
         }
-        await expect(sendModal.checkTransactionbroadcast).toBeVisible();
+        await expect(sendModal.checkTransactionbroadcastLabel).toBeVisible();
       });
     });
   });

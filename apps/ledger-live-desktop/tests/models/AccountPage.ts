@@ -17,7 +17,7 @@ export class AccountPage {
   readonly sendButton: Locator;
   readonly accountName: (name: string) => Locator;
   readonly lastOperation: Locator;
-  readonly token: (tokenName: string) => Locator;
+  readonly tokenValue: (tokenName: string) => Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -38,11 +38,12 @@ export class AccountPage {
     this.sendButton = page.getByRole("button", { name: "Send" });
     this.accountName = name => page.locator(`text=${name}`);
     this.lastOperation = page.locator("text=Latest operations");
-    this.token = tokenName => page.locator(`data-test-id=account-row-${tokenName.toLowerCase()}`);
+    this.tokenValue = tokenName =>
+      page.locator(`data-test-id=account-row-${tokenName.toLowerCase()}`);
   }
 
   async navigateToToken(token: string) {
-    await this.token(token).click();
+    await this.tokenValue(token).click();
   }
 
   async navigateToSwap() {
