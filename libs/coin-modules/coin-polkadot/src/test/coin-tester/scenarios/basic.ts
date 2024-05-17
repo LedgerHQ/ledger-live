@@ -55,6 +55,14 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
 
     const api = await ApiPromise.create({ provider: wsProvider });
 
+    // Retrieve the chain & node information via rpc calls
+    const [chain, nodeName, nodeVersion] = await Promise.all([
+      api.rpc.system.chain(),
+      api.rpc.system.name(),
+      api.rpc.system.version(),
+    ]);
+    console.log(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
+
     const keyring = new Keyring();
 
     const scenarioAccountPair = keyring.addFromUri(process.env.SEED!, {
@@ -62,17 +70,11 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
       address,
     });
 
-    console.log(keyring.pairs);
-    console.log(scenarioAccountPair.meta.name, scenarioAccountPair.address);
-
-    const { data: balance } = (await api.query.system.account(scenarioAccountPair.address)) as any;
-    console.log({ balance: balance.toString() });
-
     const alice = keyring.addFromUri("//Alice");
-    const { data: Alicebalance } = (await api.query.system.account(alice.address)) as any;
-    console.log({ aliceBalance: Alicebalance.toString() });
+    const bob = keyring.addFromUri("//Bob");
 
-    await api.isReady;
+    console.log(alice.address);
+    console.log(bob.address);
 
     return {
       accountBridge,
