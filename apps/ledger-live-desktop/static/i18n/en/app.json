@@ -6276,6 +6276,7 @@
     }
   },
   "walletSync": {
+    "manage": "Manage",
     "activate": {
       "title": "Activate wallet sync",
       "description": "Create a secure backup of your Ledger Live and synchronize multiple instances of Ledger Live, both on mobile and desktop.",

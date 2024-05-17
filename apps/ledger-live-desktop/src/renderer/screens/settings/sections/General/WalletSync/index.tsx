@@ -5,10 +5,12 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { walletSyncSelector } from "~/renderer/reducers/walletSync";
 import WalletSyncActivation from "./SideContent/Activation";
 import WalletSyncManage from "./SideContent/Manage";
+import { useTranslation } from "react-i18next";
 
 const WalletSyncRow = () => {
   const walletSync = useSelector(walletSyncSelector);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -17,7 +19,7 @@ const WalletSyncRow = () => {
       </SideDrawer>
 
       <Button small event="Manage WalletSync" primary onClick={() => setOpen(true)}>
-        Manage
+        {t("walletSync.manage")}
       </Button>
     </>
   );
