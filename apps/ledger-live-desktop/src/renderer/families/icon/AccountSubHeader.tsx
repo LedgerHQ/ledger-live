@@ -2,5 +2,5 @@ import React from "react";
 import AccountSubHeader from "../../components/AccountSubHeader";
 
 export default function IconAccountSubHeader() {
-  return <AccountSubHeader family="ICON" team="Techiast" />;
+  return <AccountSubHeader family="Icon" team="Techiast" />;
 }
