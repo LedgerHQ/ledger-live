@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.45.0-nightly.2
+
+### Patch Changes
+
+- [#6832](https://github.com/LedgerHQ/ledger-live/pull/6832) [`dd592ce`](https://github.com/LedgerHQ/ledger-live/commit/dd592ce9686b0829bb3697e7090abaef9a5421fb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix error message for cosmos staking. It was showing minimum amount : 0000 when we wanted to stake more than the current balance
+
+- Updated dependencies [[`6c5106b`](https://github.com/LedgerHQ/ledger-live/commit/6c5106ba14ad91eeb9d78840f7bc3cd3db3c7059)]:
+  - @ledgerhq/live-common@34.3.0-nightly.2
+
 ## 3.45.0-nightly.1
 
 ### Patch Changes

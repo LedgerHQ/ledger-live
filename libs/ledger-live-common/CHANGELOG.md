@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.2
+
+### Patch Changes
+
+- [#6870](https://github.com/LedgerHQ/ledger-live/pull/6870) [`6c5106b`](https://github.com/LedgerHQ/ledger-live/commit/6c5106ba14ad91eeb9d78840f7bc3cd3db3c7059) Thanks [@Justkant](https://github.com/Justkant)! - fix: btc signMessage
+
 ## 34.3.0-nightly.1
 
 ### Patch Changes
