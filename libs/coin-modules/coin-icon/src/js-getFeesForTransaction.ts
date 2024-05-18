@@ -18,7 +18,7 @@ const getEstimatedFees = async ({
 }: {
   a: IconAccount;
   t: Transaction;
-}): Promise<BigNumber | null> => {
+}): Promise<BigNumber> => {
   const transaction = {
     ...t,
     recipient: getAbandonSeedAddress(a.currency.id),
@@ -38,6 +38,7 @@ const getEstimatedFees = async ({
     const stepPrice = await getStepPrice(a);
     return stepLimit.multipliedBy(stepPrice);
   } catch (_error) {
+    // Fix ME, Icon api throw an error when get the fee with maximum balance
     return FEES_SAFETY_BUFFER;
   }
 };
