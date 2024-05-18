@@ -9,6 +9,6 @@ export type IconSignature = {
 };
 
 export interface IconSigner {
-  getAddress(path: string, boolDisplay?: boolean): Promise<IconAddress>;
+  getAddress(path: string, shouldDisplay?: boolean): Promise<IconAddress>;
   signTransaction(path: string, rawTxAscii: string): Promise<IconSignature>;
 }
