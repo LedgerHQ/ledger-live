@@ -8,18 +8,18 @@ import { RPC_VERSION } from "./constants";
 const { IconBuilder, IconConverter } = IconService;
 
 const buildTransferTransaction = (
-  a: IconAccount,
-  t: Transaction,
+  account: IconAccount,
+  transaction: Transaction,
   stepLimit?: BigNumber | undefined,
 ): IcxTransaction => {
-  const address = a.freshAddress;
+  const address = account.freshAddress;
   const icxTransactionBuilder = new IconBuilder.IcxTransactionBuilder();
   const icxTransferData = icxTransactionBuilder
     .from(address)
-    .to(t.recipient)
-    .value(IconConverter.toHexNumber(t.amount))
-    .nid(IconConverter.toHexNumber(getNid(a.currency)))
-    .nonce(IconConverter.toHexNumber(getNonce(a)))
+    .to(transaction.recipient)
+    .value(IconConverter.toHexNumber(transaction.amount))
+    .nid(IconConverter.toHexNumber(getNid(account.currency)))
+    .nonce(IconConverter.toHexNumber(getNonce(account)))
     .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
     .version(IconConverter.toHexNumber(RPC_VERSION));
   if (stepLimit) {
@@ -31,21 +31,21 @@ const buildTransferTransaction = (
 
 /**
  *
- * @param {Account} a
- * @param {Transaction} t
+ * @param {Account} account
+ * @param {Transaction} transaction
  */
 export const buildTransaction = async (
-  a: IconAccount,
-  t: Transaction,
+  account: IconAccount,
+  transaction: Transaction,
   stepLimit?: BigNumber | undefined,
 ) => {
   let unsigned: IcxTransaction | undefined;
-  switch (t.mode) {
+  switch (transaction.mode) {
     case "send":
-      unsigned = buildTransferTransaction(a, t, stepLimit);
+      unsigned = buildTransferTransaction(account, transaction, stepLimit);
       break;
     default:
-      throw new Error(`Unsupported transaction mode: ${t.mode}`);
+      throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
   }
   return {
     unsigned,
