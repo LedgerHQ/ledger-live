@@ -38,7 +38,7 @@ const getEstimatedFees = async ({
     const stepPrice = await getStepPrice(a);
     return stepLimit.multipliedBy(stepPrice);
   } catch (_error) {
-    // Fix ME, Icon api throw an error when get the fee with maximum balance
+    // Fix ME, the API of Icon throws an error when getting the fee with maximum balance
     return FEES_SAFETY_BUFFER;
   }
 };
