@@ -48,7 +48,7 @@ export const getAccount = async (addr: string, currency: CryptoCurrency): Promis
   return data;
 };
 
-export const getCurrentBlockHeight = async (currency: CryptoCurrency): Promise<number> => {
+export const getCurrentBlockHeight = async (currency: CryptoCurrency): Promise<number | undefined> => {
   const data = await fetch(`${getApiUrl(currency)}/blocks`);
   return data?.[0].number;
 };
