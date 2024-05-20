@@ -1,11 +1,9 @@
-FROM --platform=linux/amd64 ubuntu:24.04
+FROM ubuntu:24.04
 WORKDIR /coin-tester
 COPY . .
 
 # download wget
-RUN  apt-get update
-RUN apt-get install -y wget
-RUN rm -rf /var/lib/apt/lists/*
+RUN  apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
 # Download ./zombinet-linux-x64
 RUN wget https://github.com/paritytech/zombienet/releases/download/v1.3.103/zombienet-linux-x64
