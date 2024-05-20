@@ -2,7 +2,7 @@ import dts from "rollup-plugin-dts";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import esbuild from "rollup-plugin-esbuild";
-import pkg from "./package.json" assert { type: "json" };
+import pkg from "./package.json";
 
 /**
  * @param {import('rollup').RollupOptions} config
