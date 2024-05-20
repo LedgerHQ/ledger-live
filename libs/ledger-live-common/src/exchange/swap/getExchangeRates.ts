@@ -12,7 +12,7 @@ import { getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
-import { getProvidersAdditionalData } from "../providers/swap";
+import { getSwapProvider } from "../providers/swap";
 
 const getExchangeRates: GetExchangeRates = async ({
   exchange,
@@ -52,7 +52,7 @@ const getExchangeRates: GetExchangeRates = async ({
     data: request,
   });
 
-  const rates = res.data.map(responseData => {
+  const rates = res.data.map(async responseData => {
     const {
       rate: maybeRate,
       payoutNetworkFees: maybePayoutNetworkFees,
@@ -66,7 +66,7 @@ const getExchangeRates: GetExchangeRates = async ({
       expirationTime,
     } = responseData;
 
-    const error = inferError(apiAmount, unitFrom, responseData);
+    const error = await inferError(apiAmount, unitFrom, responseData);
     if (error) {
       return {
         provider,
@@ -123,7 +123,7 @@ const getExchangeRates: GetExchangeRates = async ({
   return rates;
 };
 
-const inferError = (
+const inferError = async (
   apiAmount: BigNumber,
   unitFrom: Unit,
   responseData: {
@@ -135,11 +135,11 @@ const inferError = (
     status?: string;
     provider: string;
   },
-): Error | CustomMinOrMaxError | undefined => {
+): Promise<Error | CustomMinOrMaxError | undefined> => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage, provider, status } =
     responseData;
-  const isDex = getProvidersAdditionalData(provider).type === "DEX";
+  const isDex = (await getSwapProvider(provider)).type === "DEX";
 
   // DEX quotes are out of limits error. We do not know if it is a low or high limit, neither the amount.
   if ((!minAmountFrom || !maxAmountFrom) && status === "error" && errorCode !== 300 && isDex) {

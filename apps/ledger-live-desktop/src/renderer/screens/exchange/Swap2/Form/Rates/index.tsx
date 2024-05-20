@@ -23,6 +23,7 @@ import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
 import { getFeesUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { isRegistrationRequired } from "@ledgerhq/live-common/exchange/swap/utils/index";
 
 type Props = {
   fromCurrency: SwapSelectorStateType["currency"];
@@ -59,6 +60,8 @@ export default function ProviderRate({
   const dispatch = useDispatch();
   const [filter, setFilter] = useState<string[]>([]);
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
+  const [isRegistrationNeeded, setIsRegistrationNeeded] = useState<boolean | null>(null);
+
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
   const providers = useMemo(() => [...new Set(rates?.map(rate => rate.provider) ?? [])], [rates]);
@@ -67,6 +70,17 @@ export default function ProviderRate({
       ? rates.map(({ toAmount }) => formatCurrencyUnit(getFeesUnit(toCurrency), toAmount))
       : [];
   }, [toCurrency, rates]);
+
+  useEffect(() => {
+    if (provider) {
+      isRegistrationRequired(provider)
+        .then(setIsRegistrationNeeded)
+        .catch(error => {
+          console.error("Error checking registration requirement:", error);
+          setIsRegistrationNeeded(false); // Assuming no registration needed if there's an error
+        });
+    }
+  }, [provider]);
   const updateRate = useCallback(
     (rate: ExchangeRate) => {
       const value = rate.rate ?? rate.provider;
@@ -242,6 +256,7 @@ export default function ProviderRate({
               onSelect={updateRate}
               fromCurrency={fromCurrency}
               toCurrency={toCurrency}
+              isRegistrationRequired={isRegistrationNeeded}
             />
           );
         })}
