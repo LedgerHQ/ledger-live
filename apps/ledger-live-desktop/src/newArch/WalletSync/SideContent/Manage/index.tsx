@@ -11,6 +11,7 @@ const Separator = () => {
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
+  const nbInstances = 1;
 
   const Options: OptionProps[] = [
     {
@@ -38,7 +39,9 @@ const WalletSyncManage = () => {
       ))}
 
       <Flex paddingY={24} justifyContent="space-between">
-        <Text fontSize={13.44}>{t("walletSync.manage.instance.label", { nbInstances: 0 })}</Text>
+        <Text fontSize={13.44}>
+          {t("walletSync.manage.instance.label", { count: nbInstances })}
+        </Text>
 
         <OptionContainer>
           <Flex columnGap={"8px"} alignItems={"center"}>
