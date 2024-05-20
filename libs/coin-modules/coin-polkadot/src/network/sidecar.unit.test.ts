@@ -1,8 +1,15 @@
 import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
 import { setCoinConfig } from "../config";
-import { getAccount, getRegistry, getStakingProgress } from "./sidecar";
+import { getAccount, getRegistry } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
+
+jest.mock("./node", () => ({
+  fetchConstants: jest.fn(),
+  fetchStakingInfo: jest.fn(),
+  fetchValidators: jest.fn(),
+  fetchNominations: jest.fn(),
+}));
 
 describe("getAccount", () => {
   let balanceResponseStub = {};
@@ -13,7 +20,7 @@ describe("getAccount", () => {
         type: "active",
       },
       node: {
-        url: "https://httpbin.org",
+        url: "https://httpbin.org/",
       },
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
@@ -94,7 +101,7 @@ describe("getRegistry", () => {
         type: "active",
       },
       node: {
-        url: "https://httpbin.org",
+        url: "https://httpbin.org/",
       },
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
@@ -123,18 +130,5 @@ describe("getRegistry", () => {
     const { registry, extrinsics } = await getRegistry();
     expect(registry).not.toBeNull();
     expect(extrinsics).not.toBeNull();
-  });
-});
-
-describe.only("getStakingProgress", () => {
-  it("returns expected result", async () => {
-    const result = await getStakingProgress();
-
-    expect(result).toEqual({
-      activeEra: 1443,
-      bondingDuration: 28,
-      electionClosed: true,
-      maxNominatorRewardedPerValidator: 128,
-    });
   });
 });

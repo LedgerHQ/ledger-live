@@ -5,7 +5,6 @@ import {
   fixtureStakingProgress,
   fixtureTxMaterialWithMetadata,
 } from "./sidecar.fixture";
-import { fixtureConstants } from "./sidecar-fork.fixture";
 
 export const SIDECAR_BASE_URL_TEST = "https://polkadot-sidecar.coin.ledger.com";
 
@@ -35,7 +34,6 @@ const handlers = [
   ),
   http.get(`${SIDECAR_BASE_URL_TEST}/runtime/spec`, () => HttpResponse.json(fixtureChainSpec)),
   http.post(`${SIDECAR_BASE_URL_TEST}/transaction/fee-estimate`, () => HttpResponse.json({})),
-  http.get(`${SIDECAR_BASE_URL_TEST}/runtime/constants`, () => HttpResponse.json(fixtureConstants)),
   http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/progress`, () =>
     HttpResponse.json(fixtureStakingProgress),
   ),
