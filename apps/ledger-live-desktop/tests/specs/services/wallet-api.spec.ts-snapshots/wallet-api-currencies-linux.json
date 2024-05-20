@@ -145,6 +145,24 @@
   },
   {
     "type": "CryptoCurrency",
+    "id": "solana_testnet",
+    "ticker": "SOL",
+    "name": "Solana testnet",
+    "family": "solana",
+    "color": "#000",
+    "decimals": 9
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "solana_devnet",
+    "ticker": "SOL",
+    "name": "Solana devnet",
+    "family": "solana",
+    "color": "#000",
+    "decimals": 9
+  },
+  {
+    "type": "CryptoCurrency",
     "id": "ripple",
     "ticker": "XRP",
     "name": "XRP",

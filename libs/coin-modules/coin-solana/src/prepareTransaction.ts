@@ -17,6 +17,7 @@ import {
 } from "./api/chain/web3";
 import {
   SolanaAccountNotFunded,
+  SolanaTokenAccountFrozen,
   SolanaAddressOffEd25519,
   SolanaInvalidValidator,
   SolanaMemoIsTooLong,
@@ -44,6 +45,7 @@ import type {
   CommandDescriptor,
   SolanaAccount,
   SolanaStake,
+  SolanaTokenAccount,
   StakeCreateAccountTransaction,
   StakeDelegateTransaction,
   StakeSplitTransaction,
@@ -126,6 +128,10 @@ const deriveTokenTransferCommandDescriptor = async (
     throw new Error("subaccount not found");
   }
 
+  if ((subAccount as SolanaTokenAccount)?.state === "frozen") {
+    errors.amount = new SolanaTokenAccountFrozen();
+  }
+
   await validateRecipientCommon(mainAccount, tx, errors, warnings, api);
 
   const memo = model.uiState.memo;
@@ -134,8 +140,7 @@ const deriveTokenTransferCommandDescriptor = async (
     validateMemoCommon(memo, errors);
   }
 
-  const tokenIdParts = subAccount.token.id.split("/");
-  const mintAddress = tokenIdParts[tokenIdParts.length - 1];
+  const mintAddress = subAccount.token.contractAddress;
   const mintDecimals = subAccount.token.units[0].magnitude;
 
   const senderAssociatedTokenAccountAddress = decodeAccountIdWithTokenAccountAddress(
@@ -232,6 +237,17 @@ async function getTokenRecipient(
       api,
     ));
 
+    if (!shouldCreateAsAssociatedTokenAccount) {
+      const associatedTokenAccount = await getMaybeTokenAccount(
+        recipientAssociatedTokenAccountAddress,
+        api,
+      );
+      if (associatedTokenAccount instanceof Error) throw recipientTokenAccount;
+      if (associatedTokenAccount?.state === "frozen") {
+        return new SolanaTokenAccountFrozen();
+      }
+    }
+
     return {
       walletAddress: recipientAddress,
       shouldCreateAsAssociatedTokenAccount,
@@ -240,6 +256,9 @@ async function getTokenRecipient(
   } else {
     if (recipientTokenAccount.mint.toBase58() !== mintAddress) {
       return new SolanaTokenAccountHoldsAnotherToken();
+    }
+    if (recipientTokenAccount.state === "frozen") {
+      return new SolanaTokenAccountFrozen();
     }
     if (recipientTokenAccount.state !== "initialized") {
       return new SolanaTokenAccounNotInitialized();
@@ -262,8 +281,7 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
   const errors: Record<string, Error> = {};
 
   const token = getTokenById(model.uiState.tokenId);
-  const tokenIdParts = token.id.split("/");
-  const mint = tokenIdParts[tokenIdParts.length - 1];
+  const mint = token.contractAddress;
 
   const associatedTokenAccountAddress = await api.findAssocTokenAccAddress(
     mainAccount.freshAddress,
