@@ -1,29 +1,25 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import Button from "~/renderer/components/Button";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
-
-const SideContentActivateWalletSync = () => {
-  return <div>Activate Wallet Sync</div>;
-};
-
-const SideContentWalletSync = () => {
-  return <div>Wallet Sync</div>;
-};
+import { walletSyncSelector } from "~/renderer/reducers/walletSync";
+import WalletSyncActivation from "./SideContent/Activation";
+import WalletSyncManage from "./SideContent/Manage";
+import { useTranslation } from "react-i18next";
 
 const WalletSyncRow = () => {
-  const lldWalletSync = useFeature("lldWalletSync");
-
+  const walletSync = useSelector(walletSyncSelector);
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <>
       <SideDrawer isOpen={open} onRequestClose={() => setOpen(false)} direction="left">
-        {lldWalletSync?.enabled ? <SideContentWalletSync /> : <SideContentActivateWalletSync />}
+        {walletSync.activated ? <WalletSyncManage /> : <WalletSyncActivation />}
       </SideDrawer>
 
       <Button small event="Manage WalletSync" primary onClick={() => setOpen(true)}>
-        Manage
+        {t("walletSync.manage")}
       </Button>
     </>
   );

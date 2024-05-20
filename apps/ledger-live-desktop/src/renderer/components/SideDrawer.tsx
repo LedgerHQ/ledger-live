@@ -103,7 +103,6 @@ export type DrawerProps = {
   style?: React.CSSProperties;
   withPaddingTop?: boolean;
 };
-const domNode = document.getElementById("modals");
 
 export function SideDrawer({
   children,
@@ -116,6 +115,7 @@ export function SideDrawer({
   forceDisableFocusTrap = false,
   ...props
 }: DrawerProps) {
+  const domNode = document.getElementById("modals");
   const deviceBlocked = useDeviceBlocked();
 
   const onKeyPress = useCallback(
