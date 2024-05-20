@@ -274,9 +274,7 @@ describe("RecipientField", () => {
             recipientDomain: undefined,
           });
         });
-        expect(
-          screen.getByText("send.steps.recipient.domainService.noResolution.title"),
-        ).toBeTruthy();
+        expect(screen.getByText("No address found for this domain")).toBeTruthy();
 
         expect(screen.getByTestId("domain-error-no-resolution")).toBeTruthy();
       });
