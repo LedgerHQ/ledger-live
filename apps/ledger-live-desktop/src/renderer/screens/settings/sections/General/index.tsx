@@ -7,7 +7,7 @@ import CounterValueSelect from "./CounterValueSelect";
 import LanguageSelect from "./LanguageSelect";
 import RegionSelect from "./RegionSelect";
 import ThemeSelect from "./ThemeSelect";
-import WalletSync from "./WalletSyncRow";
+import WalletSync from "./WalletSync";
 import PasswordButton from "./PasswordButton";
 import PasswordAutoLockSelect from "./PasswordAutoLockSelect";
 import SentryLogsButton from "./SentryLogsButton";

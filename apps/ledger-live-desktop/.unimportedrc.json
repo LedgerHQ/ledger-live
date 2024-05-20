@@ -17,7 +17,8 @@
     "**/types.js",
     "**/types.*",
     "src/generate-cryptoassets-md.ts",
-    "src/newArch/Collectibles/**"
+    "src/newArch/Collectibles/**",
+    "src/renderer/screens/settings/sections/General/WalletSync/setupTests/shared.tsx"
   ],
   "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types"],
   "aliases": {
