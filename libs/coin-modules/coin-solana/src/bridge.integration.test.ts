@@ -2,6 +2,9 @@ import BigNumber from "bignumber.js";
 import {
   SolanaAccount,
   SolanaStake,
+  SolanaTokenAccount,
+  SolanaTokenAccountRaw,
+  TokenTransferTransaction,
   Transaction,
   TransactionModel,
   TransactionStatus,
@@ -14,34 +17,34 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import {
   SolanaAccountNotFunded,
   SolanaAddressOffEd25519,
   SolanaInvalidValidator,
   SolanaMemoIsTooLong,
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   SolanaRecipientAssociatedTokenAccountWillBeFunded,
   SolanaStakeAccountNotFound,
   SolanaStakeAccountRequired,
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  SolanaTokenAccountFrozen,
   SolanaTokenAccountHoldsAnotherToken,
   SolanaValidatorRequired,
 } from "./errors";
 import { encodeAccountIdWithTokenAccountAddress, MAX_MEMO_LENGTH } from "./logic";
 import createTransaction from "./createTransaction";
 import { compact } from "lodash/fp";
-import { assertUnreachable } from "./utils";
+import { SYSTEM_ACCOUNT_RENT_EXEMPT, assertUnreachable } from "./utils";
 import { getEnv } from "@ledgerhq/live-env";
-import { ChainAPI } from "./api";
+import { ChainAPI, LATEST_BLOCKHASH_MOCK } from "./api";
 import {
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountValidatorIsUnchangeable,
 } from "./errors";
 import getTransactionStatus from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
-import type { Account, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { LATEST_BLOCKHASH_MOCK } from "./api/chain";
+import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 
 // do not change real properties or the test will break
 const testOnChainData = {
@@ -61,7 +64,7 @@ const testOnChainData = {
   validatorAddress: "9QU2QSxhb24FUX3Tu2FpczXjpK3VYrvRudywSZaM29mF",
   fees: {
     stakeAccountRentExempt: 2282880,
-    systemAccountRentExempt: 890880,
+    systemAccountRentExempt: SYSTEM_ACCOUNT_RENT_EXEMPT,
     lamportsPerSignature: 5000,
   },
   // ---  maybe outdated or not real, fine for tests ---
@@ -77,11 +80,15 @@ const mainAccId = encodeAccountId({
   derivationMode: "solanaMain",
 });
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 const wSolSubAccId = encodeAccountIdWithTokenAccountAddress(
   mainAccId,
   testOnChainData.wSolSenderAssocTokenAccAddress,
 );
+
+const wSolToken = findTokenByAddressInCurrency(
+  "So11111111111111111111111111111111111111112",
+  "solana",
+) as TokenCurrency;
 
 const fees = (signatureCount: number) =>
   new BigNumber(signatureCount * testOnChainData.fees.lamportsPerSignature);
@@ -128,7 +135,7 @@ const solana: CurrenciesData<Transaction> = {
         },
         ...transferTests(),
         ...stakingTests(),
-        //...tokenTests()
+        ...tokenTests(),
       ],
     },
   ],
@@ -141,7 +148,7 @@ export const dataset: DatasetTest<Transaction> = {
   },
 };
 
-function makeAccount(freshAddress: string) {
+function makeAccount(freshAddress: string): AccountRaw {
   return {
     id: mainAccId,
     seedIdentifier: "",
@@ -155,6 +162,19 @@ function makeAccount(freshAddress: string) {
     currencyId: "solana",
     lastSyncDate: "",
     balance: "0",
+    subAccounts: [makeSubTokenAccount()],
+  };
+}
+
+function makeSubTokenAccount(): SolanaTokenAccountRaw {
+  return {
+    type: "TokenAccountRaw",
+    id: wSolSubAccId,
+    parentId: mainAccId,
+    tokenId: wSolToken.id,
+    balance: "0",
+    operations: [],
+    pendingOperations: [],
   };
 }
 
@@ -168,15 +188,12 @@ type TransactionTestSpec = Exclude<
 
 function recipientRequired(): TransactionTestSpec[] {
   const models: TransactionModel[] = [
-    // uncomment when tokens are supported
-    /*
     {
       kind: "token.transfer",
       uiState: {
-        subAccountId: "",
+        subAccountId: wSolSubAccId,
       },
     },
-    */
     {
       kind: "transfer",
       uiState: {},
@@ -429,8 +446,6 @@ function transferTests(): TransactionTestSpec[] {
   ];
 }
 
-// uncomment when tokens are supported
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function tokenTests(): TransactionTestSpec[] {
   return [
     {
@@ -495,7 +510,7 @@ function tokenTests(): TransactionTestSpec[] {
         warnings: {},
         estimatedFees: fees(1),
         amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-        totalSpent: zero,
+        totalSpent: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
       },
     },
     {
@@ -518,7 +533,7 @@ function tokenTests(): TransactionTestSpec[] {
         warnings: {},
         estimatedFees: fees(1),
         amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-        totalSpent: zero,
+        totalSpent: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
       },
     },
     {
@@ -537,8 +552,7 @@ function tokenTests(): TransactionTestSpec[] {
       expectedStatus: {
         errors: {},
         warnings: {
-          recipient: new SolanaAccountNotFunded(),
-          recipientAssociatedTokenAccount: new SolanaRecipientAssociatedTokenAccountWillBeFunded(),
+          recipient: new SolanaRecipientAssociatedTokenAccountWillBeFunded(),
         },
         // this fee is dynamic, skip
         //estimatedFees: new BigNumber(2044280),
@@ -1109,6 +1123,150 @@ const mockedVoteAccount = {
   program: "vote",
   space: 3731,
 };
+
+describe("solana tokens", () => {
+  const baseAtaMock = {
+    parsed: {
+      info: {
+        isNative: false,
+        mint: wSolToken.contractAddress,
+        owner: testOnChainData.fundedSenderAddress,
+        state: "initialized",
+        tokenAmount: {
+          amount: "10000000",
+          decimals: wSolToken.units[0].magnitude,
+          uiAmount: 10.0,
+          uiAmountString: "10",
+        },
+      },
+      type: "account",
+    },
+    program: "spl-token",
+    space: 165,
+  };
+  const frozenAtaMock = {
+    ...baseAtaMock,
+    parsed: {
+      ...baseAtaMock.parsed,
+      info: {
+        ...baseAtaMock.parsed.info,
+        state: "frozen",
+      },
+    },
+  };
+
+  const mockedTokenAcc: SolanaTokenAccount = {
+    type: "TokenAccount",
+    id: wSolSubAccId,
+    parentId: mainAccId,
+    token: wSolToken,
+    balance: new BigNumber(100),
+    operations: [],
+    pendingOperations: [],
+    spendableBalance: new BigNumber(100),
+    state: "initialized",
+    creationDate: new Date(),
+    operationsCount: 0,
+    balanceHistoryCache: {
+      HOUR: { balances: [], latestDate: null },
+      DAY: { balances: [], latestDate: null },
+      WEEK: { balances: [], latestDate: null },
+    },
+    swapHistory: [],
+  };
+  test("token.transfer :: status is error: sender ATA is frozen", async () => {
+    const txModel: TokenTransferTransaction = {
+      kind: "token.transfer",
+      uiState: {
+        subAccountId: wSolSubAccId,
+      },
+    };
+
+    const api = {
+      ...baseAPI,
+      getAccountInfo: () => Promise.resolve({ data: baseAtaMock } as any),
+      getBalance: () => Promise.resolve(10),
+    } as ChainAPI;
+
+    const tokenAcc: SolanaTokenAccount = {
+      ...mockedTokenAcc,
+      state: "frozen",
+    };
+    const account: SolanaAccount = {
+      ...baseAccount,
+      freshAddress: testOnChainData.fundedSenderAddress,
+      subAccounts: [tokenAcc],
+      solanaResources: { stakes: [], unstakeReserve: BigNumber(0) },
+    };
+
+    const tx: Transaction = {
+      model: txModel,
+      amount: new BigNumber(10),
+      recipient: testOnChainData.fundedAddress,
+      family: "solana",
+    };
+
+    const preparedTx = await prepareTransaction(account, tx, api);
+    const receivedTxStatus = await getTransactionStatus(account, preparedTx);
+    const expectedTxStatus: TransactionStatus = {
+      amount: new BigNumber(10),
+      estimatedFees: new BigNumber(testOnChainData.fees.lamportsPerSignature),
+      totalSpent: new BigNumber(10),
+      errors: {
+        amount: new SolanaTokenAccountFrozen(),
+      },
+      warnings: {},
+    };
+
+    expect(receivedTxStatus).toEqual(expectedTxStatus);
+  });
+
+  test("token.transfer :: status is error: recipient ATA is frozen", async () => {
+    const txModel: TokenTransferTransaction = {
+      kind: "token.transfer",
+      uiState: {
+        subAccountId: wSolSubAccId,
+      },
+    };
+
+    const api = {
+      ...baseAPI,
+      getAccountInfo: () => Promise.resolve({ data: frozenAtaMock } as any),
+      getBalance: () => Promise.resolve(10),
+    } as ChainAPI;
+
+    const tokenAcc: SolanaTokenAccount = {
+      ...mockedTokenAcc,
+    };
+    const account: SolanaAccount = {
+      ...baseAccount,
+      freshAddress: testOnChainData.fundedSenderAddress,
+      subAccounts: [tokenAcc],
+      solanaResources: { stakes: [], unstakeReserve: BigNumber(0) },
+    };
+
+    const tx: Transaction = {
+      model: txModel,
+      amount: new BigNumber(10),
+      recipient: testOnChainData.fundedAddress,
+      family: "solana",
+    };
+
+    const preparedTx = await prepareTransaction(account, tx, api);
+    const receivedTxStatus = await getTransactionStatus(account, preparedTx);
+    const expectedTxStatus: TransactionStatus = {
+      amount: new BigNumber(10),
+      estimatedFees: new BigNumber(testOnChainData.fees.lamportsPerSignature),
+      totalSpent: new BigNumber(10),
+      errors: {
+        recipient: new SolanaTokenAccountFrozen(),
+      },
+      warnings: {},
+    };
+
+    expect(receivedTxStatus).toEqual(expectedTxStatus);
+  });
+});
 
 describe("Solana bridge", () => {
   test.todo(
