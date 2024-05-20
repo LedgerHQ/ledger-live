@@ -27,6 +27,7 @@
       "title" : "اكتشف",
       "section" : {
         "recentlyUsed" : "مُستخدَم مؤخراً",
+        "locallyLoaded" : "التطبيقات الحية المُحمّلة محلياً",
         "browse" : "تصفح"
       },
       "filter" : {
@@ -3967,7 +3968,9 @@
       "region" : "المنطقة",
       "regionDesc" : "اختر منطقتك لتحديث صِيغ التواريخ والوقت والعملات.",
       "stock" : "مؤشر السوق الإقليمي",
-      "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر."
+      "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر.",
+      "walletSync" : "مزامنة المحفظة",
+      "walletSyncDesc" : "نسخ بيانات التطبيق لديك ومزامنة العديد من حالات Ledger Live."
     },
     "developer" : {
       "search" : "بحث",
@@ -3985,6 +3988,11 @@
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "debugReactQuery" : "السماح بتصحيح أخطاء ReactQuery",
       "debugReactQueryDesc" : "عرض والسماح بفتح وحدة تحكم تصحيح أخطاء ReactQuery.",
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange Dev Mode",
+        "desc" : "Add exchange provider's info",
+        "placeholder" : "Exchange provider's info in CAL format"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "السماح بالإبلاغ عن الرموز غير القابلة للاستبدال العشوائية (بيتا)",
         "debugNFTSpamReportDesc" : "عرض نموذج للإبلاغ عن رمز غير قابل للاستبدال كرمز عشوائي أو لإلغاء عرضه كرمز عشوائي",
@@ -4037,6 +4045,17 @@
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
       "addLocalAppButton" : "تصفح",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "إنشاء تطبيق محلي",
+          "modify" : "تعديل تطبيق محلي"
+        },
+        "addNetwork" : "إضافة شبكة جديدة",
+        "removeNetwork" : "إزالة آخر شبكة",
+        "export" : "تصدير",
+        "modify" : "تعديل",
+        "create" : "إنشاء"
+      },
       "runLocalAppDeleteButton" : "حذف",
       "runLocalAppOpenButton" : "فتح",
       "enableLearnStagingUrl" : "الرابط المرحلي (staging URL) للصفحة التعليمية",
@@ -4266,7 +4285,7 @@
     "downloadInProgress" : "جاري تنزيل التحديث...",
     "downloadProgress" : "اكتمل {{progress}}%",
     "checking" : "جاري التحقق من التحديث...",
-    "checkSuccess" : "متاح تحديث Ledger Live جديد، سيتم تثبيته تلقائياً عندما تغلق التطبيق",
+    "checkSuccess" : "New update available, it will install and relaunch Ledger Live automatically when you close the app",
     "quitAndInstall" : "تثبيت الآن وإعادة الإطلاق",
     "updateAvailable" : "التحديث إلى إصدار {{version}} من Ledger Live متاح",
     "error" : "حدث خطأ أثناء التحديث. يرجى التنزيل مرة أخرى",
@@ -6231,6 +6250,18 @@
       "analytics" : "التحليلات",
       "personalizedExpDesc" : "تلقى توصيات مخصصة تطابق تفضيلاتك.",
       "analyticsDesc" : "قم بتمكين التحليلات لمساعدة Ledger على تحسين تجربة المستخدم."
+    }
+  },
+  "walletSync" : {
+    "manage" : "Manage",
+    "activate" : {
+      "title" : "Activate wallet sync",
+      "description" : "Create a secure backup of your Ledger Live and synchronize multiple instances of Ledger Live, both on mobile and desktop.",
+      "cta" : "Create a backup"
+    },
+    "alreadySync" : {
+      "title" : "Already created a back-up on another Device?",
+      "cta" : "Synchronize"
     }
   }
 }
