@@ -173,6 +173,8 @@ export const buildTokenTransferInstructions = async (
 
   const destinationPubkey = new PublicKey(recipientDescriptor.tokenAccAddress);
 
+  const destinationOwnerPubkey = new PublicKey(recipientDescriptor.walletAddress);
+
   const instructions: TransactionInstruction[] = [];
 
   const mintPubkey = new PublicKey(mintAddress);
@@ -182,7 +184,7 @@ export const buildTokenTransferInstructions = async (
       createAssociatedTokenAccountInstruction(
         ownerPubkey,
         destinationPubkey,
-        ownerPubkey,
+        destinationOwnerPubkey,
         mintPubkey,
       ),
     );

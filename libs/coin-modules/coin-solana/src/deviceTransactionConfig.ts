@@ -99,6 +99,12 @@ function fieldsForTokenTransfer(command: TokenTransferCommand): DeviceTransactio
 
   fields.push({
     type: "address",
+    address: command.mintAddress,
+    label: "Mint",
+  });
+
+  fields.push({
+    type: "address",
     address: command.ownerAssociatedTokenAccountAddress,
     label: "From",
   });
