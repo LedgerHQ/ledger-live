@@ -68,6 +68,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
 
   return commonFromAccountRaw(rawAccount, {
     assignFromAccountRaw: bridge.assignFromAccountRaw,
+    assignFromTokenAccountRaw: bridge.assignFromTokenAccountRaw,
     fromOperationExtraRaw: bridge.fromOperationExtraRaw,
   });
 }
@@ -77,6 +78,7 @@ export function toAccountRaw(account: Account, userData?: AccountUserData): Acco
 
   const commonAccountRaw = commonToAccountRaw(account, {
     assignToAccountRaw: bridge.assignToAccountRaw,
+    assignToTokenAccountRaw: bridge.assignToTokenAccountRaw,
     toOperationExtraRaw: bridge.toOperationExtraRaw,
   });
 
