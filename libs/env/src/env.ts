@@ -583,6 +583,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Swap API base",
   },
+  SWAP_USER_IP: {
+    def: "",
+    parser: stringParser,
+    desc: "Swap IP",
+  },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,
     parser: intParser,
