@@ -130,8 +130,8 @@ function DelegationAmount({ navigation, route }: Props) {
     isNotEnoughBalance || isAmountOutOfRange
       ? "errors.NotEnoughBalance.title"
       : value.gte(min)
-      ? "cosmos.delegation.flow.steps.amount.minAmount"
-      : "cosmos.delegation.flow.steps.amount.incorrectAmount";
+        ? "cosmos.delegation.flow.steps.amount.minAmount"
+        : "cosmos.delegation.flow.steps.amount.incorrectAmount";
 
   return (
     <View

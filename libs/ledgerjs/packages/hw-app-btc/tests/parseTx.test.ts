@@ -1,7 +1,4 @@
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Btc from "../src/Btc";
 
 test("transaction on btc – nano s 1.3.1 – native segwit", async () => {
@@ -33,7 +30,7 @@ test("transaction on btc – nano s 1.3.1 – native segwit", async () => {
     <= 9000
     => e04800001b05800000548000000080000000000000010000001b000000000001
     <= 3045022100e4acf0eb3803a62399f53825d86aa30743fe999eefb01522d5f7ecd9eeec663d022063b90c512e207c2ac47d8759e1c73c6abeff58daec31c48905193470bc87f2d3019000
-        `)
+        `),
   );
   const btc = new Btc({ transport, currency: "zcash" });
   const tx1 = btc.splitTransaction(
@@ -41,7 +38,7 @@ test("transaction on btc – nano s 1.3.1 – native segwit", async () => {
     true,
     false,
     false,
-    ["zencash"]
+    ["zencash"],
   );
   expect(tx1.outputs?.length).toEqual(40); // 40 outputs in the above transaction. refer to https://explorer.zen-solutions.io/tx/1af7f8e4c77b35f558ee11defe7590c30e85723c0d846787729ecd4fbd45a533
 });
