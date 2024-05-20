@@ -5,8 +5,17 @@ import {
   SolanaOperationExtraRaw,
   SolanaResources,
   SolanaResourcesRaw,
+  SolanaTokenAccount,
+  SolanaTokenAccountRaw,
 } from "./types";
-import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountRaw,
+  OperationExtra,
+  OperationExtraRaw,
+  TokenAccount,
+  TokenAccountRaw,
+} from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 export function toSolanaResourcesRaw(resources: SolanaResources): SolanaResourcesRaw {
@@ -78,4 +87,24 @@ export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
 
 function isExtraValid(extra: OperationExtra | OperationExtraRaw): boolean {
   return !!extra && typeof extra === "object";
+}
+
+export function assignToTokenAccountRaw(
+  tokenAccount: TokenAccount,
+  tokenAccountRaw: TokenAccountRaw,
+) {
+  const solanaTokenAccount = tokenAccount as SolanaTokenAccount;
+  if (solanaTokenAccount.state) {
+    (tokenAccountRaw as SolanaTokenAccountRaw).state = solanaTokenAccount.state;
+  }
+}
+
+export function assignFromTokenAccountRaw(
+  tokenAccountRaw: TokenAccountRaw,
+  tokenAccount: TokenAccount,
+) {
+  const stateRaw = (tokenAccountRaw as SolanaTokenAccountRaw).state;
+  if (stateRaw) {
+    (tokenAccount as SolanaTokenAccount).state = stateRaw;
+  }
 }
