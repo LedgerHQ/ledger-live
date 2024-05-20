@@ -6289,7 +6289,7 @@
       "cta": "Synchronize"
     },
     "manage": {
-      "cta": "Manage"
+      "cta": "Manage",
       "synchronize": {
         "label": "Synchronize",
         "description": "Synchronize your app data with another Ledger Live app for a seemless experience."
