@@ -1,8 +1,8 @@
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { PublicKey } from "@solana/web3.js";
-import { TokenAccount } from "@ledgerhq/types-live";
+import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { StakeMeta } from "./api/chain/account/stake";
-import { SolanaStake, StakeAction } from "./types";
+import { SolanaStake, SolanaTokenAccount, StakeAction } from "./types";
 import { assertUnreachable } from "./utils";
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
@@ -120,4 +120,8 @@ export function stakeActivePercent(stake: SolanaStake) {
     return 0;
   }
   return (stake.activation.active / amount) * 100;
+}
+
+export function isTokenAccountFrozen(account: AccountLike) {
+  return account.type === "TokenAccount" && (account as SolanaTokenAccount)?.state === "frozen";
 }

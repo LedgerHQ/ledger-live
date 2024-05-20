@@ -39,6 +39,7 @@ export const LEDGER_VALIDATOR_LIST: ValidatorsAppValidator[] = [
 export const LEDGER_VALIDATORS_VOTE_ACCOUNTS = LEDGER_VALIDATOR_LIST.map(v => v.voteAccount);
 
 export const SOLANA_DELEGATION_RESERVE = 0.01;
+export const SYSTEM_ACCOUNT_RENT_EXEMPT = 890880;
 
 export const assertUnreachable = (_: never): never => {
   throw new Error("unreachable assertion failed");
