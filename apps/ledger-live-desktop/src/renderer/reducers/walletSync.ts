@@ -1,5 +1,11 @@
 import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
+export enum Flow {
+  Activation = "Activation",
+  Sync = "Sync",
+  ManageInstances = "ManageInstances",
+  ManageBackup = "ManageBackup",
+}
 
 export enum Flow {
   Activation = "Activation",

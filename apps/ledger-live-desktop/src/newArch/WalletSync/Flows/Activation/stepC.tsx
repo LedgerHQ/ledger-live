@@ -1,15 +1,18 @@
 import React from "react";
-//import { Error } from "../../components/Error";
-import { Success } from "../../components/Success";
-import { useTranslation } from "react-i18next";
+import { Text, Flex } from "@ledgerhq/react-ui";
+import ButtonV3 from "~/renderer/components/ButtonV3";
 
 type Props = {
-  hasBackup: boolean;
+  goNext: () => void;
 };
 
-export default function ActivationFinalStep({ hasBackup }: Props) {
-  const { t } = useTranslation();
-  const title = !hasBackup ? "walletSync.success.backup.title" : "walletSync.success.synch.title";
-  const desc = !hasBackup ? "walletSync.success.backup.desc" : "walletSync.success.synch.desc";
-  return <Success title={t(title)} description={t(desc)} withCta={!hasBackup} />;
+export function StepThree({ goNext }: Props) {
+  return (
+    <Flex flexDirection={"column"}>
+      <Text>{"Step Three"}</Text>
+      <ButtonV3 variant="main" onClick={goNext}>
+        {"What's next?"}
+      </ButtonV3>
+    </Flex>
+  );
 }
