@@ -64,12 +64,12 @@ ${t.mode.toUpperCase()}${t.resource ? " " + t.resource : ""} ${
     t.useAllAmount
       ? "MAX"
       : t.amount.isZero()
-      ? ""
-      : " " +
-        formatCurrencyUnit(getAccountCurrency(account).units[0], t.amount, {
-          showCode: true,
-          disableRounding: true,
-        })
+        ? ""
+        : " " +
+          formatCurrencyUnit(getAccountCurrency(account).units[0], t.amount, {
+            showCode: true,
+            disableRounding: true,
+          })
   }${!t.votes ? "" : " " + t.votes.map(v => v.voteCount + "->" + v.address).join(" ")}
 TO ${t.recipient}`;
 };

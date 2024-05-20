@@ -40,15 +40,15 @@ const buttonStyles: Record<string, Record<string, ButtonStyle>> = {
         p.disabled
           ? `${p.theme.colors.palette.action.disabled} !important`
           : p.inverted
-          ? p.theme.colors.palette.primary.contrastText
-          : p.theme.colors.palette.primary.main
+            ? p.theme.colors.palette.primary.contrastText
+            : p.theme.colors.palette.primary.main
       };
       color: ${
         p.disabled
           ? p.theme.colors.palette.text.shade20
           : p.inverted
-          ? p.theme.colors.palette.primary.main
-          : p.theme.colors.palette.primary.contrastText
+            ? p.theme.colors.palette.primary.main
+            : p.theme.colors.palette.primary.contrastText
       };
       box-shadow: ${
         p.isFocused

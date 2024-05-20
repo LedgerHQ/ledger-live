@@ -356,8 +356,8 @@ export function getOperationType({
       ? "FEES"
       : "OUT"
     : valueChange.isPositive()
-    ? "IN"
-    : "NONE";
+      ? "IN"
+      : "NONE";
 }
 
 export function isTestnet(currency: CryptoCurrency): boolean {

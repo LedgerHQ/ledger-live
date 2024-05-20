@@ -54,10 +54,10 @@ const mapResult = ({
         completeExchangeResult,
       }
     : completeExchangeError
-    ? {
-        completeExchangeError,
-      }
-    : null;
+      ? {
+          completeExchangeError,
+        }
+      : null;
 
 const initialState: State = {
   completeExchangeResult: null,

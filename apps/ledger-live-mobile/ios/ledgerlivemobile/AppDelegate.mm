@@ -3,14 +3,13 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
-#import "ReactNativeConfig.h"
+#import "RNCConfig.h"
 #import "RNSplashScreen.h"  // here
 #import <BrazeKit/BrazeKit-Swift.h>
 #import "BrazeReactUtils.h"
 #import "BrazeReactBridge.h"
 
 #import <Firebase.h>
-
 #if DEBUG
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -23,6 +22,7 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #endif
 #endif
+
 
 @implementation AppDelegate
 
@@ -42,7 +42,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
 
 
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
-  NSString *googleServiceInfoEnvName = [ReactNativeConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
+  NSString *googleServiceInfoEnvName = [RNCConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
   NSString *googleServiceInfoName = googleServiceInfoEnvName;
   
   if ([googleServiceInfoName length] == 0) {
@@ -55,8 +55,8 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   [FIRApp configureWithOptions:options];
   
   // Setup Braze
-  NSString *brazeApiKeyFromEnv = [ReactNativeConfig envFor:@"BRAZE_IOS_API_KEY"];
-  NSString *brazeCustomEndpointFromEnv = [ReactNativeConfig envFor:@"BRAZE_CUSTOM_ENDPOINT"];
+  NSString *brazeApiKeyFromEnv = [RNCConfig envFor:@"BRAZE_IOS_API_KEY"];
+  NSString *brazeCustomEndpointFromEnv = [RNCConfig envFor:@"BRAZE_CUSTOM_ENDPOINT"];
 
   BRZConfiguration *configuration = [[BRZConfiguration alloc] initWithApiKey:brazeApiKeyFromEnv endpoint:brazeCustomEndpointFromEnv];
   configuration.triggerMinimumTimeInterval = 1;
@@ -195,6 +195,10 @@ static Braze *_braze;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+  return [self getBundleURL];
+}
+- (NSURL *)getBundleURL
 {
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];

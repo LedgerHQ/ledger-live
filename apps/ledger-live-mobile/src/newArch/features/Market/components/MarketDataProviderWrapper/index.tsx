@@ -28,11 +28,11 @@ export default function MarketDataProviderWrapper({ children }: Props): ReactEle
   const counterCurrency = !isConnected
     ? undefined // without coutervalues service is not initialized with cg data, this forces it to fetch it at least once the network is on
     : marketCounterCurrency // If there is a stored market counter currency we use it, otherwise we use the setting countervalue currency
-    ? { ticker: marketCounterCurrency }
-    : counterValueCurrency
-    ? // @TODO move this toLowercase check on live-common
-      { ticker: counterValueCurrency.ticker?.toLowerCase() }
-    : counterValueCurrency;
+      ? { ticker: marketCounterCurrency }
+      : counterValueCurrency
+        ? // @TODO move this toLowercase check on live-common
+          { ticker: counterValueCurrency.ticker?.toLowerCase() }
+        : counterValueCurrency;
 
   return (
     <MarketDataProvider
