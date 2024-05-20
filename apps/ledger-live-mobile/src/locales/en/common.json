@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded": {
+      "title": "Account will be funded"
+    },
+    "SolanaTokenAccountFrozen": {
+      "title": "Token account assets are frozen"
+    },
     "SolanaAddressOfEd25519": {
       "title": "Address off ed25519 curve"
     },
@@ -5906,6 +5912,9 @@
         "description": "You may earn rewards by delegating your SOL assets to a validator."
       },
       "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
+    },
+    "token": {
+      "frozenStateWarning": "Account assets are frozen!"
     }
   },
   "near": {
