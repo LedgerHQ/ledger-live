@@ -1,5 +1,11 @@
 # @ledgerhq/ethereum-provider
 
+## 0.2.1-hotfix.0
+
+### Patch Changes
+
+- [#6886](https://github.com/LedgerHQ/ledger-live/pull/6886) [`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix json import in .mjs script file
+
 ## 0.2.0
 
 ### Minor Changes
