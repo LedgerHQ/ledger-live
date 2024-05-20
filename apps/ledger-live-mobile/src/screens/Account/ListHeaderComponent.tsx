@@ -161,7 +161,7 @@ export function getListHeaderComponents({
       <Header key="Header" />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main} key="AccountSubHeader">
-          <AccountSubHeader />
+          <AccountSubHeader account={account} parentAccount={parentAccount} />
         </Box>
       ),
       oldestEditableOperation ? (
