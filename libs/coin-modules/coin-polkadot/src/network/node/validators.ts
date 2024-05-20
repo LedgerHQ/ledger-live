@@ -98,7 +98,7 @@ const fetchRewardsPoints =
     );
 
     return rewards;
-}
+  };
 
 const formatValidator =
   (api: ApiPromise) =>
@@ -127,4 +127,4 @@ const formatValidator =
         ? validator.exposureEraStakers.others.length > Number(maxNominatorRewardedPerValidator)
         : false,
     };
-}
+  };

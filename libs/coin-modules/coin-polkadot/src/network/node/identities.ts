@@ -43,7 +43,7 @@ const fetchParentIdentityMap =
     );
 
     return map;
-}
+  };
 
 const extractIdentity = (
   identityOfOpt: Option<ITuple<[Registration, Option<Bytes>]>>,

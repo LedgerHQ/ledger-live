@@ -7,5 +7,5 @@ export default {
   fetchConstants,
   fetchStakingInfo,
   fetchValidators,
-  fetchNominations
+  fetchNominations,
 };
