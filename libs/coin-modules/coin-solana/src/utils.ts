@@ -18,6 +18,7 @@ export const LEDGER_VALIDATOR: ValidatorsAppValidator = {
 };
 
 export const SOLANA_DELEGATION_RESERVE = 0.01;
+export const SYSTEM_ACCOUNT_RENT_EXEMPT = 890880;
 
 export const assertUnreachable = (_: never): never => {
   throw new Error("unreachable assertion failed");
