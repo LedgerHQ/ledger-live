@@ -195,7 +195,8 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
-      "SENDING": "Sending"
+      "SENDING": "Sending",
+      "BURN": "Burned"
     },
     "edit": {
       "title": "Speed up or Cancel",
