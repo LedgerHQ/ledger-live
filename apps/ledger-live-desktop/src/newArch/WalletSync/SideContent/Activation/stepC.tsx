@@ -6,6 +6,6 @@ type Props = {
   goNext: () => void;
 };
 
-export function StepThree({ goNext }: Props) {
+export default function StepThree({ goNext }: Props) {
   return <Error title={"Title"} description={"Error description"} />;
 }
