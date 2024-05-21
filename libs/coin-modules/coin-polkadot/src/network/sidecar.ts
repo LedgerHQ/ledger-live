@@ -27,13 +27,7 @@ import type {
   SidecarRuntimeSpec,
 } from "./sidecar.types";
 import { createRegistryAndExtrinsics } from "./common";
-
-/**
- * Get indexer base url.
- *
- * @returns {string}
- */
-const getBaseSidecarUrl = (): string => getEnv("API_POLKADOT_SIDECAR");
+import { getCoinConfig } from "../config";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -42,7 +36,10 @@ const getBaseSidecarUrl = (): string => getEnv("API_POLKADOT_SIDECAR");
  *
  * @returns {string}
  */
-const getSidecarUrl = (route: string): string => `${getBaseSidecarUrl()}${route || ""}`;
+const getSidecarUrl = (route: string): string => {
+  const sidecarUrl = getCoinConfig().sidecar.url;
+  return `${sidecarUrl}${route || ""}`;
+};
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
 const ELECTION_STATUS_OPTIMISTIC_THRESHOLD = getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD") || 25;

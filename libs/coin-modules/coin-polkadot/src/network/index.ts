@@ -17,6 +17,7 @@ import {
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
 import network from "@ledgerhq/live-network/network";
+import { getCoinConfig } from "../config";
 
 type PolkadotAPIAccount = {
   blockHeight: number;
@@ -71,7 +72,7 @@ const isNewAccount = makeLRUCache(sidecarIsNewAccount, address => address, minut
 const shortenMetadata = async (transaction: string): Promise<string> => {
   const res: any = await network({
     method: "POST",
-    url: "https://api.zondax.ch/polkadot/transaction/metadata",
+    url: getCoinConfig().metadataShortener.url,
     data: {
       chain: {
         id: "dot",
