@@ -22,7 +22,7 @@ export class Account {
   static readonly tBTC_1 = new Account(
     Currency.tBTC,
     "Bitcoin Testnet 1",
-    "tb1qjnl3f0lahssa62qvn6vm2fruejfc6e9x2r8c5z",
+    "tb1qxmwe6n93fls8r69837cmyt6ua406xaen9hy24d",
   );
 
   static readonly tBTC_2 = new Account(

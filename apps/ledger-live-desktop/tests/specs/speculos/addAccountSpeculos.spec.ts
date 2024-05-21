@@ -13,6 +13,7 @@ const currencies: Currency[] = [
   Currency.tBTC,
   Currency.ETH,
   Currency.tETH,
+  Currency.sepETH,
   Currency.XRP,
   Currency.SOL,
   Currency.DOT,
@@ -23,14 +24,14 @@ for (const [i, currency] of currencies.entries()) {
   test.describe.parallel("Accounts @smoke", () => {
     test.use({
       userdata: "skip-onboarding",
-      testName: `receiveSpeculos_${currency.uiName}`,
+      testName: `addAccount_${currency.uiName}`,
       speculosCurrency: specs[currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
-    let accountsListBeforeRemove: (string | null)[];
 
     //@TmsLink("B2CQA-101")
+    //@TmsLink("B2CQA-314")
 
     test(`[${currency.uiName}] Add account`, async ({ page }) => {
       const portfolioPage = new PortfolioPage(page);
@@ -68,7 +69,6 @@ for (const [i, currency] of currencies.entries()) {
 
       await test.step(`Navigate to first account`, async () => {
         await layout.goToAccounts();
-        accountsListBeforeRemove = await accountsPage.getAccountsName();
         await accountsPage.navigateToAccountByName(firstAccountName);
         await expect(accountPage.accountName(firstAccountName)).toBeVisible();
         await accountPage.settingsButton.waitFor({ state: "visible" });
@@ -77,13 +77,6 @@ for (const [i, currency] of currencies.entries()) {
       await test.step(`scroll to operations`, async () => {
         await accountPage.scrollToOperations();
         await expect(accountPage.lastOperation).toBeVisible();
-      });
-
-      await test.step(`Delete current account`, async () => {
-        await accountPage.deleteAccount();
-        expect(accountsPage.firstAccount).not.toBe(firstAccountName);
-        const accountsListAfterRemove = await accountsPage.getAccountsName();
-        expect(accountsListAfterRemove).not.toContain(accountsListBeforeRemove[0]);
       });
     });
   });

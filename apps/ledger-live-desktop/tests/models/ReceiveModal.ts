@@ -20,7 +20,7 @@ export class ReceiveModal extends Modal {
     );
     this.approve = page.locator("text=Address shared securely");
     this.receiveAddress = address => page.locator(`text=${address}`);
-    this.addressDisplayedValue = page.locator("data-test-id=address-field");
+    this.addressDisplayedValue = page.locator("#address-field");
   }
 
   async skipDevice() {

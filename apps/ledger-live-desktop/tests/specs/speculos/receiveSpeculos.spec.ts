@@ -9,10 +9,12 @@ import { Account } from "../../enum/Account";
 import { specs, pressRightUntil, pressBoth, verifyAddress, waitFor } from "../../utils/speculos";
 
 const accounts: Account[] = [
+  // Derivation path is updated when account (BTC and tBTC) receive money
   Account.BTC_1,
   Account.tBTC_1,
   Account.ETH_1,
   Account.tETH_1,
+  Account.sep_ETH_1,
   Account.SOL_1,
   Account.TRX_1,
   Account.DOT_1,

@@ -32,9 +32,7 @@ export class AccountPage {
     this.stakeButtonCosmos = page.locator("data-test-id=stake-button-cosmos");
     this.stakeBanner = page.locator("data-test-id=account-stake-banner");
     this.stakeBannerButton = page.locator("data-test-id=account-stake-banner-button");
-    this.receiveButton = page
-      .locator("data-test-id=account-buttons-group")
-      .getByRole("button", { name: "Receive" });
+    this.receiveButton = page.locator("data-test-id=receive-account-action-button");
     this.sendButton = page.getByRole("button", { name: "Send" });
     this.accountName = name => page.locator(`text=${name}`);
     this.lastOperation = page.locator("text=Latest operations");
