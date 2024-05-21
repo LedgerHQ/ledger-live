@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Flow, walletSyncFlowSelector, walletSyncSelector } from "~/renderer/reducers/walletSync";
 import WalletSyncActivation from "LLD/WalletSync/SideContent/Activation";
 import WalletSyncManage from "LLD/WalletSync/SideContent/Manage";
+import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import Synch from "./Synch";
 
 export const WalletSyncRouter = () => {
@@ -16,9 +17,13 @@ export const WalletSyncRouter = () => {
       } else {
         return <WalletSyncActivation />;
       }
-    case Flow.Sync:
+    case Flow.Synchronize:
       return <Synch />;
     default:
-      return null;
+      return (
+        <Flex flex={1} alignItems="center" justifyContent="center">
+          <InfiniteLoader size={50} />
+        </Flex>
+      );
   }
 };

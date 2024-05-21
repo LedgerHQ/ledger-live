@@ -2,7 +2,7 @@ import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
 export enum Flow {
   Activation = "Activation",
-  Sync = "Sync",
+  Synchronize = "Synchronize",
   ManageInstances = "ManageInstances",
   ManageBackup = "ManageBackup",
 }
