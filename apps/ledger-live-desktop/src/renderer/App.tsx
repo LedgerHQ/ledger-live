@@ -62,6 +62,14 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
     return () => window.removeEventListener("keydown", reload);
   }, [reloadEnabled]);
 
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      const devTools = document.createElement("script");
+      devTools.src = "http://localhost:8097";
+      document.head.append(devTools);
+    }
+  }, []);
+
   const selectedPalette = useSelector(themeSelector) || "light";
 
   return (
