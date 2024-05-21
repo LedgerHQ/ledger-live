@@ -6305,6 +6305,16 @@
         "label_zero": "No synchronized instance",
         "cta": "Manage"
       }
+    },
+    "loading": {
+      "title": "Hang tight...",
+      "activation": "Your data is being end-to-end encrypted... ",
+      "synch": "We are updating the synched instances..."
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "Please try again later.",
+      "cta": "Try again"
     }
   }
 }
