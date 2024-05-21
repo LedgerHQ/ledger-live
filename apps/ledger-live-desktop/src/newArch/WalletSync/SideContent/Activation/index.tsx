@@ -1,7 +1,7 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
-import { Flow, walletSyncStateSelector } from "~/renderer/reducers/walletSync";
+import { Flow } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { useFlows } from "LLD/WalletSync/hooks/useFlows";
 import StepOne from "./stepA";
@@ -27,7 +27,7 @@ const WalletSyncActivation = () => {
       case 1:
         return <StepOne goToCreateBackup={goToNextScene} goToSync={goToSync} />;
       case 2:
-      //return <StepTwo goNext={goToNextScene} />;
+        return <StepTwo goNext={goToNextScene} />;
       case 3:
         return <StepThree hasBackup={HAS_BACKUP} />;
       default:
