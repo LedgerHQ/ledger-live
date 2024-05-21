@@ -144,8 +144,8 @@ export default class Polkadot {
           j === 0
             ? PAYLOAD_TYPE_INIT
             : j + 1 === chunks.length
-            ? PAYLOAD_TYPE_LAST
-            : PAYLOAD_TYPE_ADD,
+              ? PAYLOAD_TYPE_LAST
+              : PAYLOAD_TYPE_ADD,
           0,
           data,
           [SW_OK, SW_CANCEL, SW_ERROR_DATA_INVALID, SW_ERROR_BAD_KEY_HANDLE],

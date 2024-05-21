@@ -33,8 +33,8 @@ const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
   const contractAddress = account
     ? account.token.contractAddress
     : token
-    ? token.contractAddress
-    : "";
+      ? token.contractAddress
+      : "";
 
   return (
     <SafeAreaView style={styles.root}>

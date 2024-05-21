@@ -66,10 +66,10 @@ export default function Price({
       withActivityColor
         ? colors[withActivityColor]
         : !withActivityCurrencyColor
-        ? textColor
           ? textColor
-          : undefined
-        : getCurrencyColor(from, bgColor),
+            ? textColor
+            : undefined
+          : getCurrencyColor(from, bgColor),
     [bgColor, textColor, from, withActivityColor, withActivityCurrencyColor],
   );
   if (!counterValue || counterValue.isZero())

@@ -58,17 +58,17 @@ export default {
           format === "raw"
             ? r
             : format === "json"
-            ? JSON.stringify(r)
-            : r.appsListNames
-                .map(name => {
-                  const item = r.appByName[name];
-                  const ins = r.installed.find(i => i.name === item.name);
-                  return (
-                    `- ${item.name} ${item.version}` +
-                    (ins ? (ins.updated ? " (installed)" : " (outdated!)") : "")
-                  );
-                })
-                .join("\n"),
+              ? JSON.stringify(r)
+              : r.appsListNames
+                  .map(name => {
+                    const item = r.appByName[name];
+                    const ins = r.installed.find(i => i.name === item.name);
+                    return (
+                      `- ${item.name} ${item.version}` +
+                      (ins ? (ins.updated ? " (installed)" : " (outdated!)") : "")
+                    );
+                  })
+                  .join("\n"),
         ),
       ),
     );

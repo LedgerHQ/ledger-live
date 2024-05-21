@@ -192,6 +192,22 @@ function AccountSettingRenderBody(props: Props) {
 
 export default React.memo(AccountSettingRenderBody);
 
+export const OptionRowDesc = styled(Box).attrs(() => ({
+  ff: "Inter|Regular",
+  fontSize: 3,
+  textAlign: "left",
+  lineHeight: 1.69,
+  color: "palette.text.shade60",
+}))``;
+
+export const OptionRowTitle = styled(Box).attrs(() => ({
+  ff: "Inter|SemiBold",
+  color: "palette.text.shade100",
+  fontSize: 4,
+  textAlign: "left",
+  lineHeight: 1.69,
+}))``;
+
 const AdvancedLogsContainer = styled.div`
   border: 1px dashed ${p => p.theme.colors.palette.background.default};
   background-color: ${p => p.theme.colors.palette.background.default};
@@ -216,21 +232,7 @@ export const Container = styled(Box).attrs(() => ({
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   justify-content: space-between;
 `;
-export const OptionRowDesc = styled(Box).attrs(() => ({
-  ff: "Inter|Regular",
-  fontSize: 3,
-  textAlign: "left",
-  lineHeight: 1.69,
-  color: "palette.text.shade60",
-  shrink: 1,
-}))``;
-export const OptionRowTitle = styled(Box).attrs(() => ({
-  ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
-  fontSize: 4,
-  textAlign: "left",
-  lineHeight: 1.69,
-}))``;
+
 const Tips = memo(function Tips({ tag }: { tag: string }) {
   return (
     <Alert type="primary" learnMoreUrl={urls.xpubLearnMore}>

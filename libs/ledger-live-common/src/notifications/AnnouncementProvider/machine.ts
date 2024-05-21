@@ -16,7 +16,6 @@ export const announcementMachine = createMachine(
     context: initialState,
     states: {
       initializing: {
-        // @ts-expect-error xstate bindings updates caused this error
         invoke: {
           src: "loadData",
           onDone: {
@@ -44,7 +43,6 @@ export const announcementMachine = createMachine(
             target: "updating",
           },
         },
-        // @ts-expect-error xstate bindings updates caused this error
         on: {
           UPDATE_DATA: {
             target: "updating",
@@ -56,7 +54,6 @@ export const announcementMachine = createMachine(
         },
       },
       updating: {
-        // @ts-expect-error xstate bindings updates caused this error
         invoke: {
           src: "fetchData",
           onDone: {

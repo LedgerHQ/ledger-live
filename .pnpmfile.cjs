@@ -48,6 +48,7 @@ function readPackage(pkg, context) {
       removeDependencies("react-redux", ["react-native"], {
         kind: "peerDependencies",
       }),
+
       /* Storybook packages */
       addDependencies("@storybook/webpack-config", { "resolve-from": "*" }),
       addDependencies("@storybook/addon-knobs", {
@@ -199,6 +200,7 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
+
       // addPeerDependencies("styled-components", { "react-native": "*" }),
       addPeerDependencies("use-latest-callback", { react: "*" }),
       addPeerDependencies("rn-range-slider", {
@@ -210,6 +212,8 @@ function readPackage(pkg, context) {
         react: "*",
         "react-native": "*",
       }),
+
+      addDependencies("@react-native/dev-middleware", { ws: "*" }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
       // I'm not adding it as a dependency because if I did,
@@ -218,6 +222,10 @@ function readPackage(pkg, context) {
       addPeerDependencies("app-builder-lib", {
         "dmg-builder": "*",
         lodash: "*",
+      }),
+
+      addPeerDependencies("react-native-config", {
+        "react-native": "*",
       }),
       // Try to prevent pnpm-lock.yaml flakiness
       removeDependencies("follow-redirects", ["debug"], {
@@ -247,11 +255,20 @@ function readPackage(pkg, context) {
       addDependencies("@dfinity/agent", {
         buffer: "*",
       }),
+      addDependencies("@react-native-community/cli-tools", {
+        execa: "5.0.0",
+      }),
+      addDependencies("@react-native-community/cli-platform-ios", {
+        execa: "5.0.0",
+      }),
       // TODO:
       // Tron missing deps
       // They are also added to live-common dependencies
       // Is there another way without adding them explicitly ?
       addDependencies("tronweb", {
+        "aes-js": "*",
+        "@noble/hashes": "*",
+        "@noble/secp256k1": "*",
         "@ethersproject/bytes": "*",
         "@ethersproject/bignumber": "*",
         "@ethersproject/keccak256": "*",
