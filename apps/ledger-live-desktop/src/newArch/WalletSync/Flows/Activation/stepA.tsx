@@ -3,11 +3,13 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { LogoWrapper } from "../../components/LogoWrapper";
+import { LogoWrapper } from "LLD/WalletSync/components/LogoWrapper";
+
 type Props = {
   goToCreateBackup: () => void;
   goToSync: () => void;
 };
+
 export function StepOne({ goToCreateBackup, goToSync }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
