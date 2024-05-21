@@ -1,7 +1,7 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
-import { Flow } from "~/renderer/reducers/walletSync";
+import { Flow, walletSyncStateSelector } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { useFlows } from "LLD/WalletSync/hooks/useFlows";
 import StepOne from "./stepA";
@@ -10,13 +10,15 @@ import StepThree from "./stepC";
 
 const WalletSyncActivation = () => {
   const dispatch = useDispatch();
+  const HAS_BACKUP = false;
+
   const { currentStep, goToNextScene, setCurrentStep } = useFlows({ flow: Flow.Activation });
 
   const goToSync = () => {
     dispatch(setFlow(Flow.Sync));
   };
 
-  const goBeginnning = () => {
+  const goToBeginnning = () => {
     setCurrentStep(1);
   };
 
@@ -25,9 +27,9 @@ const WalletSyncActivation = () => {
       case 1:
         return <StepOne goToCreateBackup={goToNextScene} goToSync={goToSync} />;
       case 2:
-        return <StepTwo goNext={goToNextScene} />;
+      //return <StepTwo goNext={goToNextScene} />;
       case 3:
-        return <StepThree goNext={goBeginnning} />;
+        return <StepThree hasBackup={HAS_BACKUP} />;
       default:
         return null;
     }
