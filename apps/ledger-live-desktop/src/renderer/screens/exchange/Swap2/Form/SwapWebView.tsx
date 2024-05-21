@@ -16,7 +16,11 @@ import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helper
 import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/Web3AppWebview/types";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import useTheme from "~/renderer/hooks/useTheme";
-import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  enablePlatformDevToolsSelector,
+  languageSelector,
+} from "~/renderer/reducers/settings";
 import { useRedirectToSwapHistory } from "../utils/index";
 
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
@@ -24,8 +28,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { captureException } from "~/sentry/internal";
-
-const isDevelopment = process.env.NODE_ENV === "development";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -99,6 +101,7 @@ const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) 
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
   const redirectToHistory = useRedirectToSwapHistory();
+  const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
 
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
@@ -252,7 +255,7 @@ const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) 
 
   return (
     <>
-      {isDevelopment && (
+      {enablePlatformDevTools && (
         <TopBar
           manifest={{ ...manifest, url: `${manifest.url}#${hashString}` }}
           webviewAPIRef={webviewAPIRef}
