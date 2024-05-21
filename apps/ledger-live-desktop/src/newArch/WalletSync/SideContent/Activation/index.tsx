@@ -12,15 +12,15 @@ const WalletSyncActivation = () => {
   const dispatch = useDispatch();
   const HAS_BACKUP = false;
 
-  const { currentStep, goToNextScene, setCurrentStep } = useFlows({ flow: Flow.Activation });
+  const { currentStep, goToNextScene } = useFlows({ flow: Flow.Activation });
 
   const goToSync = () => {
-    dispatch(setFlow(Flow.Sync));
+    dispatch(setFlow(Flow.Synchronize));
   };
 
-  const goToBeginnning = () => {
-    setCurrentStep(1);
-  };
+  // const goToBeginnning = () => {
+  //   setCurrentStep(1);
+  // };
 
   const getStep = () => {
     switch (currentStep) {
