@@ -11,6 +11,6 @@ type Props = {
   goNext: () => void;
 };
 
-export function StepTwo({ goNext }: Props) {
+export default function StepTwo({ goNext }: Props) {
   return <DeviceAction action={action} request={null} onResult={() => goNext()} />;
 }

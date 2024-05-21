@@ -1,12 +1,12 @@
 import React from "react";
-import { useFlows } from "../Flows/useFlows";
-import { StepOne } from "./stepA";
-import { Flow } from "~/renderer/reducers/walletSync";
 import { useDispatch } from "react-redux";
-import { setFlow } from "~/renderer/actions/walletSync";
-import { StepTwo } from "./stepB";
 import { Flex } from "@ledgerhq/react-ui";
-import { StepThree } from "./stepC";
+import { Flow } from "~/renderer/reducers/walletSync";
+import { setFlow } from "~/renderer/actions/walletSync";
+import { useFlows } from "LLD/WalletSync/hooks/useFlows";
+import StepOne from "./stepA";
+import StepTwo from "./stepB";
+import StepThree from "./stepC";
 
 const WalletSyncActivation = () => {
   const dispatch = useDispatch();
