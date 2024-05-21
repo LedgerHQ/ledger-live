@@ -1,9 +1,9 @@
-import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { IconAccount } from "./types";
+import { IconAccount } from "./types";
+import { Account } from "@ledgerhq/types-live";
 
-export function initAccount(r: Account): void {
-  (r as IconAccount).iconResources = {
+export function initAccount(account: Account): void {
+  (account as IconAccount).iconResources = {
     nonce: 0,
     votingPower: BigNumber(0),
     totalDelegated: BigNumber(0),

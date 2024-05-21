@@ -40,23 +40,23 @@ export const isValidAddress = (address: string): boolean => {
 /**
  * Returns true if transaction is a self transaction
  *
- * @param {Account} a
- * @param {Transaction} t
+ * @param {Account} account
+ * @param {Transaction} transaction
  */
-export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
-  return t.recipient === a.freshAddress;
+export const isSelfTransaction = (account: Account, transaction: Transaction): boolean => {
+  return transaction.recipient === account.freshAddress;
 };
 
 /**
  * Returns nonce for an account
  *
- * @param {Account} a
+ * @param {Account} account
  */
-export const getNonce = (a: IconAccount): number => {
-  const lastPendingOp = a.pendingOperations[0];
+export const getNonce = (account: IconAccount): number => {
+  const lastPendingOp = account.pendingOperations[0];
 
   const nonce = Math.max(
-    a.iconResources?.nonce || 0,
+    account.iconResources?.nonce || 0,
     lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
       ? lastPendingOp.transactionSequenceNumber + 1
       : 0,
@@ -85,11 +85,11 @@ export function getNid(currency: CryptoCurrency): number {
 /**
  * Calculate the real spendable
  *
- * @param {*} a
- * @param {*} t
+ * @param {*} account
+ * @param {*} transaction
  */
-const calculateMaxSend = (a: Account, t: Transaction): BigNumber => {
-  const amount = a.spendableBalance.minus(t.fees || 0);
+const calculateMaxSend = (account: Account, transaction: Transaction): BigNumber => {
+  const amount = account.spendableBalance.minus(transaction.fees || 0);
   return amount.lt(0) ? new BigNumber(0) : BigNumber(amount.toFixed(5));
 };
 
@@ -98,28 +98,34 @@ const calculateMaxSend = (a: Account, t: Transaction): BigNumber => {
  *
  * @param {*} param
  */
-export const calculateAmount = ({ a, t }: { a: IconAccount; t: Transaction }): BigNumber => {
-  let amount = t.amount;
+export const calculateAmount = ({
+  account,
+  transaction,
+}: {
+  account: IconAccount;
+  transaction: Transaction;
+}): BigNumber => {
+  let amount = transaction.amount;
 
-  if (t.useAllAmount) {
-    switch (t.mode) {
+  if (transaction.useAllAmount) {
+    switch (transaction.mode) {
       case "send":
-        amount = calculateMaxSend(a, t);
+        amount = calculateMaxSend(account, transaction);
         break;
 
       default:
-        amount = a.spendableBalance.minus(t.fees || 0);
+        amount = account.spendableBalance.minus(transaction.fees || 0);
         break;
     }
-  } else if (t.amount.gt(MAX_AMOUNT_INPUT)) {
+  } else if (transaction.amount.gt(MAX_AMOUNT_INPUT)) {
     return new BigNumber(MAX_AMOUNT_INPUT);
   }
 
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
 
-export const getMinimumBalance = (a: Account): BigNumber => {
-  const lockedBalance = a.balance.minus(a.spendableBalance);
+export const getMinimumBalance = (account: Account): BigNumber => {
+  const lockedBalance = account.balance.minus(account.spendableBalance);
   return lockedBalance.lte(EXISTENTIAL_DEPOSIT)
     ? EXISTENTIAL_DEPOSIT.minus(lockedBalance)
     : new BigNumber(0);

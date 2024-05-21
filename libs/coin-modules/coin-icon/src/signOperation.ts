@@ -12,7 +12,7 @@ import type {
 
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
-import { buildTransaction } from "./js-buildTransaction";
+import { buildTransaction } from "./buildTransaction";
 import { calculateAmount, getNonce } from "./logic";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import IconService, { IcxTransaction } from "icon-sdk-js";
@@ -85,8 +85,8 @@ export const buildSignOperation =
         const transactionToSign = {
           ...transaction,
           amount: calculateAmount({
-            a: account as IconAccount,
-            t: transaction,
+            account: account as IconAccount,
+            transaction: transaction,
           }),
         };
         const { unsigned } = await buildTransaction(

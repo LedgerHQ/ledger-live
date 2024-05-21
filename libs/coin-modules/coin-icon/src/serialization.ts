@@ -2,8 +2,8 @@ import { BigNumber } from "bignumber.js";
 import type { IconResourcesRaw, IconResources, IconAccount, IconAccountRaw } from "./types";
 import { AccountRaw, Account } from "@ledgerhq/types-live";
 
-export function toIconResourcesRaw(r: IconResources): IconResourcesRaw {
-  const { nonce, votingPower, totalDelegated } = r;
+export function toIconResourcesRaw(resources: IconResources): IconResourcesRaw {
+  const { nonce, votingPower, totalDelegated } = resources;
   return {
     nonce,
     votingPower: votingPower.toString(),
@@ -11,8 +11,8 @@ export function toIconResourcesRaw(r: IconResources): IconResourcesRaw {
   };
 }
 
-export function fromIconResourcesRaw(r: IconResourcesRaw): IconResources {
-  const { nonce, votingPower, totalDelegated } = r;
+export function fromIconResourcesRaw(rawResources: IconResourcesRaw): IconResources {
+  const { nonce, votingPower, totalDelegated } = rawResources;
   return {
     nonce,
     votingPower: new BigNumber(votingPower || 0),

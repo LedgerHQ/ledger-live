@@ -2,8 +2,8 @@ import { BigNumber } from "bignumber.js";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { IconAccount, Transaction } from "./types";
-import { createTransaction } from "./js-createTransaction";
-import getEstimatedFees from "./js-getFeesForTransaction";
+import { createTransaction } from "./createTransaction";
+import getEstimatedFees from "./getFeesForTransaction";
 import { calculateAmount } from "./logic";
 
 /**
@@ -20,15 +20,15 @@ export const estimateMaxSpendable = async ({
   parentAccount: Account | null | undefined;
   transaction: Transaction | null | undefined;
 }): Promise<BigNumber> => {
-  const a = getMainAccount(account, parentAccount) as IconAccount;
-  const t = { ...createTransaction(), ...transaction, useAllAmount: true };
+  const acc = getMainAccount(account, parentAccount) as IconAccount;
+  const tx = { ...createTransaction(), ...transaction, useAllAmount: true };
   const fees = await getEstimatedFees({
-    a,
-    t,
+    account: acc,
+    transaction: tx,
   });
 
   return calculateAmount({
-    a,
-    t: { ...t, fees },
+    account: acc,
+    transaction: { ...tx, fees },
   });
 };
