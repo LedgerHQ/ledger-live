@@ -61,7 +61,7 @@ export class AccountsPage {
   async countAccounts(): Promise<number> {
     return await this.page.locator(".accounts-account-row-item-content").count();
   }
-  
+
   async getAccountsName() {
     const accountElements = await this.accountListNumber.all();
     const accountNames = [];

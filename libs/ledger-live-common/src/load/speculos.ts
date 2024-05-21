@@ -145,7 +145,7 @@ export async function createSpeculosDevice(
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
     `${speculosID}`,
-    process.env.CI ? "ghcr.io/ledgerhq/speculos:sha-e262a0c" : "speculos",
+    process.env.SPECULOS_IMAGE_TAG ?? "ghcr.io/ledgerhq/speculos:sha-e262a0c",
     "--model",
     model.toLowerCase(),
     appPath,

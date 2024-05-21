@@ -41,9 +41,9 @@ type TestFixtures = {
   simulateCamera: string;
 };
 
-const IS_MOCK = process.env.MOCK == "0";
+const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
-if (IS_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -89,7 +89,7 @@ export const test = base.extend<TestFixtures>({
     }
 
     let device: any | undefined;
-    if (IS_MOCK) {
+    if (IS_NOT_MOCK) {
       if (speculosCurrency) {
         setEnv(
           "SPECULOS_PID_OFFSET",
@@ -106,7 +106,7 @@ export const test = base.extend<TestFixtures>({
         {
           ...process.env,
           VERBOSE: true,
-          MOCK: IS_MOCK ? undefined : true,
+          MOCK: IS_NOT_MOCK ? undefined : true,
           MOCK_COUNTERVALUES: true,
           HIDE_DEBUG_MOCK: true,
           CI: process.env.CI || undefined,
@@ -114,8 +114,10 @@ export const test = base.extend<TestFixtures>({
           CRASH_ON_INTERNAL_CRASH: true,
           LEDGER_MIN_HEIGHT: 768,
           FEATURE_FLAGS: JSON.stringify(featureFlags),
-          MANAGER_DEV_MODE: IS_MOCK ? true : undefined,
-          SPECULOS_API_PORT: IS_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
+          MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
+          SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
+          DISABLE_TRANSACTION_BROADCAST:
+            process.env.ENABLE_TRANSACTION_BROADCAST == "1" || !IS_NOT_MOCK ? undefined : 1,
         },
         env,
       );

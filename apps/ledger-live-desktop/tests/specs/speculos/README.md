@@ -64,6 +64,7 @@ Before executing tests for the first time, use the following commands:
 export MOCK=0
 export COINAPPS="/Users/firstname.lastname/coin-apps"
 export SEED="secret"
+export SPECULOS_IMAGE_TAG=speculos
 ```
 
 The command `export COINAPPS="/Users/firstname.lastname/coin-apps` should be adjusted according to the location where the repository is cloned."

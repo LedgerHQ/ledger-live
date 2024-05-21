@@ -24,10 +24,10 @@ on:
         description: Run the speculos tests (if false, mocked tests will be run instead)
         type: boolean
         default: true
-      disable_broadcast:
-        description: Disable Broadcast transaction
+      enable_broadcast:
+        description: Enable transaction broadcast
         type: boolean
-        default: true
+        default: false
 
       report_path:
         description: Path where you want to store this execution's results
@@ -100,7 +100,7 @@ jobs:
         id: tests
         run: |
           export COINAPPS=$PWD/coin-apps
-          if [ "${{ inputs.disable_broadcast }}" = true ]; then export DISABLE_TRANSACTION_BROADCAST=1; fi
+          if [ "${{ inputs.enable_broadcast }}" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi
           if [ "${{ inputs.speculos_tests }}" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi
           if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"
