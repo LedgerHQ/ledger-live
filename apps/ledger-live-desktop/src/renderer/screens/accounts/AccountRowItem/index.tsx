@@ -145,7 +145,13 @@ const AccountRowItem = (props: Props) => {
 
   const scrollTopFocusRef = useRef<HTMLSpanElement>(null);
 
+  const mountedRef = useRef(true);
+
   useEffect(() => {
+    if (mountedRef.current) {
+      mountedRef.current = false;
+      return;
+    }
     if (scrollTopFocusRef.current && !expanded) {
       scrollTopFocusRef.current.scrollIntoView({
         block: "nearest",
@@ -160,9 +166,7 @@ const AccountRowItem = (props: Props) => {
     setExpanded(expandedStates[account.id]);
   };
 
-  const onClickHandler = () => {
-    onClick(account, parentAccount);
-  };
+  const onClickHandler = () => onClick(account, parentAccount);
 
   const unit = useAccountUnit(account);
 

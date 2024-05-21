@@ -19,6 +19,7 @@ import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLat
 import { getProviderIdUseCase } from "../../device/use-cases/getProviderIdUseCase";
 import { mapApplicationV2ToApp } from "../polyfill";
 import { ManagerApiRepository } from "../../device/factories/HttpManagerApiRepositoryFactory";
+import { isCustomLockScreenSupported } from "../../device/use-cases/isCustomLockScreenSupported";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.
@@ -271,14 +272,14 @@ export const listApps = ({
 
       /**
        * Obtain remaining metadata:
-       * - Ledger Stax custom picture: number of blocks taken in storage
+       * - Ledger Stax/Europa custom picture: number of blocks taken in storage
        * - Installed language pack
        * - Device name
        * */
 
-      // Stax specific, account for the size of the CLS for the storage bar.
+      // Stax/Europa specific, account for the size of the CLS for the storage bar.
       let customImageBlocks = 0;
-      if (deviceModelId === DeviceModelId.stax && !deviceInfo.isRecoveryMode) {
+      if (isCustomLockScreenSupported(deviceModelId) && !deviceInfo.isRecoveryMode) {
         const customImageSize = await customLockScreenFetchSize(transport);
         if (customImageSize) {
           customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);

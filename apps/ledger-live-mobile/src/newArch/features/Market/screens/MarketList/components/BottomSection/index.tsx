@@ -55,8 +55,8 @@ const getIcon = (top100?: boolean, order?: string) =>
   top100
     ? IconsLegacy.GraphGrowMedium
     : order === "asc"
-    ? IconsLegacy.ArrowTopMedium
-    : IconsLegacy.ArrowBottomMedium;
+      ? IconsLegacy.ArrowTopMedium
+      : IconsLegacy.ArrowBottomMedium;
 
 const TIME_RANGES = RANGES.map(value => ({
   requestParam: { range: value },

@@ -4,7 +4,7 @@ import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

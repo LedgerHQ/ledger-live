@@ -1,11 +1,12 @@
 {
   "entry": ["src/react/index.ts", "src/native/index.ts"],
   "ignoreUnimported": [],
+  "ignorePatterns": ["**/node_modules/**"],
   "ignoreUnresolved": [
-    "@styled-system/border",
     "@styled-system/background",
-    "@styled-system/core",
+    "@styled-system/border",
     "@styled-system/color",
+    "@styled-system/core",
     "@styled-system/flexbox",
     "@styled-system/grid",
     "@styled-system/layout",
@@ -14,11 +15,14 @@
     "@styled-system/space",
     "@styled-system/typography",
     "@styled-system/variant",
-    "styled-components",
-    "styled-components/native",
-    "react-native",
     "css-select",
     "css-tree",
-    "regenerator-runtime"
-  ]
+    "react-native",
+    "react-native-svg",
+    "react-native/Libraries/Utilities/codegenNativeComponent",
+    "regenerator-runtime",
+    "styled-components",
+    "styled-components/native"
+  ],
+  "ignoreUnused": []
 }

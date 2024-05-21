@@ -72,7 +72,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         // NB Added the try/catch because of the API stability issues.
         let res;
 
-        const swapProviderConfig = getSwapProvider(provider);
+        const swapProviderConfig = await getSwapProvider(provider);
 
         const headers = {
           EquipmentId: getEnv("USER_ID"),

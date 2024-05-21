@@ -12,15 +12,13 @@ describe("fetchCurrencyAll", () => {
       data: fetchCurrencyAllMock,
     }));
 
-    const result = await fetchCurrencyAll({
-      providers: ["oneinch"],
-    });
+    const result = await fetchCurrencyAll({});
 
     expect(result).toStrictEqual(flattenV5CurrenciesAll(fetchCurrencyAllMock));
     expect(network as jest.Mock).toHaveBeenCalledWith({
       method: "GET",
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
-      url: "https://swap.ledger.com/v5/currencies/all?providers-whitelist=oneinch&additional-coins-flag=false",
+      url: "https://swap.ledger.com/v5/currencies/all?providers-whitelist=changelly%2Ccic%2Cmoonpay%2Coneinch%2Cparaswap&additional-coins-flag=false",
     });
   });
 });

@@ -161,8 +161,8 @@ export const mapApplicationV2ToApp = ({
     name === "Exchange"
       ? AppType.swap
       : Object.values(AppType).includes(type)
-      ? type
-      : AppType.currency,
+        ? type
+        : AppType.currency,
   ...rest,
   currencyId: findCryptoCurrencyById(currencyId) ? currencyId : getCurrencyIdFromAppName(name),
 });

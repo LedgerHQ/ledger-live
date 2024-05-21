@@ -59,8 +59,8 @@ export default class ManagerPage {
       const status = installedDesc.includes(app)
         ? "installed"
         : installedDesc.some(installedElement => installedElement.includes(app + " (outdated)"))
-        ? "canUpdate"
-        : "notInstalled";
+          ? "canUpdate"
+          : "notInstalled";
 
       await scrollToId(this.appRow(app), this.deviceInfoScrollView);
       await expect(

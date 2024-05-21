@@ -1,4 +1,4 @@
-import { isAccountDelegating } from "../families/tezos/bakers";
+import { isAccountDelegating } from "../families/tezos/staking";
 import { BitcoinAccount, initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { TronAccount } from "../families/tron/types";
@@ -83,15 +83,3 @@ export const getVotesCount = (
       return 0;
   }
 };
-
-export function areAllOperationsLoaded(account: AccountLike): boolean {
-  if (account.operationsCount !== account.operations.length) {
-    return false;
-  }
-
-  if (account.type === "Account" && account.subAccounts) {
-    return account.subAccounts.every(areAllOperationsLoaded);
-  }
-
-  return true;
-}

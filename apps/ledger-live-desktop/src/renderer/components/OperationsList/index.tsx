@@ -107,12 +107,12 @@ export class OperationsList extends PureComponent<Props, State> {
           filterOperation,
         })
       : accounts
-      ? groupAccountsOperationsByDay(accounts, {
-          count: nbToShow,
-          withSubAccounts,
-          filterOperation,
-        })
-      : undefined;
+        ? groupAccountsOperationsByDay(accounts, {
+            count: nbToShow,
+            withSubAccounts,
+            filterOperation,
+          })
+        : undefined;
 
     const all = flattenAccounts(accounts || []).concat(
       [account as AccountLike, parentAccount as AccountLike].filter(Boolean),

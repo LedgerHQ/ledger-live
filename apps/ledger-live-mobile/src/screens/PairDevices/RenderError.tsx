@@ -48,8 +48,8 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const url = isBrokenPairing
     ? urls.errors.PeerRemovedPairing
     : isPairingStatus
-    ? urls.errors.PairingFailed
-    : undefined;
+      ? urls.errors.PairingFailed
+      : undefined;
 
   const onOpenHelp = useCallback(() => {
     if (!url) return;
@@ -79,8 +79,8 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
     isPairingStatus && !isBrokenPairing
       ? new PairingFailed()
       : isGenuineCheckSkippableError
-      ? new GenuineCheckFailed()
-      : null;
+        ? new GenuineCheckFailed()
+        : null;
 
   trace({
     type: "hw",
