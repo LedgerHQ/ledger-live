@@ -106,13 +106,13 @@ const swapProviders: Record<string, ProviderConfig> = {
 };
 
 export const getSwapProvider = async (providerName: string): Promise<ProviderConfig> => {
-  const res = getProvidersData()[providerName.toLowerCase()];
+  const res = await getProvidersData();
 
-  if (!res) {
+  if (!res[providerName.toLowerCase()]) {
     throw new Error(`Unknown partner ${providerName}`);
   }
 
-  return res;
+  return res[providerName.toLowerCase()];
 };
 
 function transformData(inputArray) {
@@ -126,7 +126,7 @@ function transformData(inputArray) {
         curve: item.public_key_curve,
         data: Buffer.from(item.public_key, "hex"),
       },
-      signature: item.signature,
+      signature: Buffer.from(item.signature, "hex"),
       ...(swapProviders[key] && {
         needsKYC: swapProviders[key].needsKYC,
         needsBearerToken: swapProviders[key].needsBearerToken,
