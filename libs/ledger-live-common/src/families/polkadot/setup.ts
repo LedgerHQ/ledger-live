@@ -9,24 +9,16 @@ import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
-import { getEnv } from "@ledgerhq/live-env";
+import { getCurrencyConfiguration } from "../../config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
   return new Polkadot(transport);
 };
 
 const getCurrencyConfig = (): PolkadotCoinConfig => {
-  return {
-    status: {
-      type: "active",
-    },
-    sidecar: {
-      url: getEnv("API_POLKADOT_SIDECAR"),
-    },
-    metadataShortener: {
-      url: "https://api.zondax.ch/polkadot/transaction/metadata",
-    },
-  };
+  const polkadot = getCryptoCurrencyById("polkadot");
+  return getCurrencyConfiguration(polkadot);
 };
 
 const bridge: Bridge<Transaction> = createBridges(

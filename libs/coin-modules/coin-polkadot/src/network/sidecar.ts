@@ -36,9 +36,9 @@ import { getCoinConfig } from "../config";
  *
  * @returns {string}
  */
-const getSidecarUrl = (route: string): string => {
+const getSidecarUrl = (route: `/${string}`): string => {
   const sidecarUrl = getCoinConfig().sidecar.url;
-  return `${sidecarUrl}${route || ""}`;
+  return `${sidecarUrl}${route}`;
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;

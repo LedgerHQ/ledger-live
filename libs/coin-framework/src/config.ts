@@ -1,3 +1,5 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 type ConfigStatus =
   | {
       type: "active";
@@ -19,4 +21,4 @@ export type CurrencyConfig = {
   [key: string]: unknown;
 };
 
-export type CoinConfig<T extends CurrencyConfig> = () => T;
+export type CoinConfig<T extends CurrencyConfig> = (currency?: CryptoCurrency) => T;
