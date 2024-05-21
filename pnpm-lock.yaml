@@ -822,9 +822,6 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
-      '@ledgerhq/react-native-passcode-auth':
-        specifier: ^2.1.0
-        version: 2.1.0
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
@@ -14472,10 +14469,6 @@ packages:
 
   /@ledgerhq/logs@6.12.0:
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
-    dev: false
-
-  /@ledgerhq/react-native-passcode-auth@2.1.0:
-    resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
   /@ledgerhq/wallet-api-client-react@1.3.9(react@18.2.0):
