@@ -1,4 +1,3 @@
-import { getAvailableProviders } from "../..";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -27,18 +26,18 @@ export function useFetchRates({
     : undefined;
   const unitTo = toCurrency?.units[0];
   const moonpayFF = useFeature("ptxSwapMoonpayProvider");
+  const removeProviders: string[] = [];
   const formattedCurrencyAmount =
     (unitFrom && `${fromCurrencyAmount.shiftedBy(-unitFrom.magnitude)}`) ?? "0";
-  const providers = getAvailableProviders();
 
   if (!moonpayFF?.enabled) {
-    providers.splice(providers.indexOf("moonpay"), 1);
+    removeProviders.push("moonpay");
   }
   const toCurrencyId = toCurrency?.id;
   return useAPI({
     queryFn: fetchRates,
     queryProps: {
-      providers: providers,
+      removeProviders: [],
       unitTo: unitTo!,
       unitFrom: unitFrom!,
       currencyFrom,

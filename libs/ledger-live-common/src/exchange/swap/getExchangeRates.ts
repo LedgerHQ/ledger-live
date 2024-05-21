@@ -12,7 +12,7 @@ import { getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
-import { getSwapProvider } from "../providers";
+import { getProvidersAdditionalData } from "../providers/swap";
 
 const getExchangeRates: GetExchangeRates = async ({
   exchange,
@@ -139,7 +139,7 @@ const inferError = (
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage, provider, status } =
     responseData;
-  const isDex = getSwapProvider(provider).type === "DEX";
+  const isDex = getProvidersAdditionalData(provider).type === "DEX";
 
   // DEX quotes are out of limits error. We do not know if it is a low or high limit, neither the amount.
   if ((!minAmountFrom || !maxAmountFrom) && status === "error" && errorCode !== 300 && isDex) {

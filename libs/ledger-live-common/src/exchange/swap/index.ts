@@ -19,7 +19,6 @@ import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
 import getExchangeRates from "./getExchangeRates";
-import getProviders from "./getProviders";
 
 export { getAvailableProviders } from "../providers";
 
@@ -131,7 +130,6 @@ export {
   getCompleteSwapHistory,
   postSwapAccepted,
   getExchangeRates,
-  getProviders,
   postSwapCancelled,
   initSwap,
   USStates,
