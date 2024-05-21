@@ -50,7 +50,7 @@ for (const [i, account] of accounts.entries()) {
         await accountPage.receiveButton.click();
         await modal.continueButton.click();
         await expect(receiveModal.verifyAddressOnDeviceLabel).toBeVisible();
-        await expect(receiveModal.receiveAddress(account.address)).toBeVisible();
+        await expect(receiveModal.receiveAddressValue(account.address)).toBeVisible();
 
         const displayedAddress = await receiveModal.addressDisplayedValue.innerText();
         expect(displayedAddress).toEqual(account.address);
@@ -62,7 +62,7 @@ for (const [i, account] of accounts.entries()) {
         expect(verifyAddress(account.address, addressScreen)).toBe(true);
         await pressRightUntil(account.currency.receivePattern[1]);
         await pressBoth();
-        await expect(receiveModal.approve).toBeVisible();
+        await expect(receiveModal.approveLabel).toBeVisible();
       });
     });
   });

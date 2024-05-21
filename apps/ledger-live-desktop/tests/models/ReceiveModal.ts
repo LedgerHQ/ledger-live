@@ -6,8 +6,8 @@ export class ReceiveModal extends Modal {
   readonly skipDeviceButton: Locator;
   readonly verifyMyAddressButton: Locator;
   readonly verifyAddressOnDeviceLabel: Locator;
-  readonly approve: Locator;
-  readonly receiveAddress: (address: string) => Locator;
+  readonly approveLabel: Locator;
+  readonly receiveAddressValue: (address: string) => Locator;
   readonly addressDisplayedValue: Locator;
 
   constructor(page: Page) {
@@ -18,8 +18,8 @@ export class ReceiveModal extends Modal {
     this.verifyAddressOnDeviceLabel = page.locator(
       "text=Verify that the shared address exactly matches the one on your device",
     );
-    this.approve = page.locator("text=Address shared securely");
-    this.receiveAddress = address => page.locator(`text=${address}`);
+    this.approveLabel = page.locator("text=Address shared securely");
+    this.receiveAddressValue = address => page.locator(`text=${address}`);
     this.addressDisplayedValue = page.locator("#address-field");
   }
 
