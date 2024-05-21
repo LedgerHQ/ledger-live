@@ -1,5 +1,24 @@
 # @ledgerhq/coin-evm
 
+## 2.1.0-nightly.2
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11)]:
+  - @ledgerhq/cryptoassets@13.1.0-nightly.1
+  - @ledgerhq/devices@8.4.0-nightly.0
+  - @ledgerhq/errors@6.17.0-nightly.0
+  - @ledgerhq/coin-framework@0.14.0-nightly.2
+  - @ledgerhq/domain-service@1.2.0-nightly.0
+  - @ledgerhq/live-network@1.3.0-nightly.0
+  - @ledgerhq/evm-tools@1.1.0-nightly.1
+  - @ledgerhq/live-promise@0.1.0-nightly.0
+  - @ledgerhq/live-env@2.1.0-nightly.0
+
 ## 2.0.1-nightly.1
 
 ### Patch Changes

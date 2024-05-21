@@ -142,6 +142,7 @@
     "@ledgerhq/context-module": "0.0.1"
   },
   "changesets": [
+    "beige-coins-wave",
     "beige-starfishes-guess",
     "blue-vans-try",
     "breezy-coins-talk",
@@ -149,6 +150,7 @@
     "cyan-points-obey",
     "dry-kangaroos-brush",
     "eight-cameras-tease",
+    "eleven-houses-hunt",
     "fair-onions-visit",
     "fair-spiders-admire",
     "fifty-forks-add",
@@ -175,6 +177,7 @@
     "metal-garlics-hang",
     "mighty-teachers-brake",
     "modern-apes-switch",
+    "moody-hotels-arrive",
     "neat-ads-brake",
     "nice-guests-wave",
     "nice-trains-dream",
@@ -195,6 +198,7 @@
     "smart-deers-travel",
     "sour-actors-exist",
     "strong-spoons-thank",
+    "swift-peaches-occur",
     "swift-penguins-act",
     "swift-pigs-kneel",
     "tame-queens-sniff",

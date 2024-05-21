@@ -1,5 +1,31 @@
 # @ledgerhq/live-cli
 
+## 24.3.0-nightly.3
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`f8980de`](https://github.com/LedgerHQ/ledger-live/commit/f8980de0a317a99b8eaea4b629c8d9bdd2c2a136)]:
+  - @ledgerhq/hw-transport-node-speculos@6.29.0-nightly.0
+  - @ledgerhq/hw-transport-node-hid@6.29.0-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.29.0-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.0-nightly.0
+  - @ledgerhq/types-devices@6.25.0-nightly.0
+  - @ledgerhq/cryptoassets@13.1.0-nightly.1
+  - @ledgerhq/hw-transport@6.31.0-nightly.0
+  - @ledgerhq/hw-app-btc@10.3.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.2
+  - @ledgerhq/errors@6.17.0-nightly.0
+  - @ledgerhq/live-common@34.3.0-nightly.3
+  - @ledgerhq/live-countervalues@0.2.0-nightly.2
+  - @ledgerhq/coin-framework@0.14.0-nightly.2
+  - @ledgerhq/live-network@1.3.0-nightly.0
+  - @ledgerhq/live-env@2.1.0-nightly.0
+  - @ledgerhq/live-wallet@0.1.1-nightly.5
+
 ## 24.2.1-nightly.2
 
 ### Patch Changes

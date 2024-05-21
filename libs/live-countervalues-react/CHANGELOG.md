@@ -1,5 +1,20 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.2.0-nightly.2
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11)]:
+  - @ledgerhq/types-cryptoassets@7.13.0-nightly.0
+  - @ledgerhq/cryptoassets@13.1.0-nightly.1
+  - @ledgerhq/types-live@6.48.0-nightly.0
+  - @ledgerhq/live-countervalues@0.2.0-nightly.2
+  - @ledgerhq/coin-framework@0.14.0-nightly.2
+
 ## 0.1.6-nightly.1
 
 ### Patch Changes

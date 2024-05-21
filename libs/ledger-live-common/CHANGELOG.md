@@ -1,5 +1,56 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.3
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#6856](https://github.com/LedgerHQ/ledger-live/pull/6856) [`f8980de`](https://github.com/LedgerHQ/ledger-live/commit/f8980de0a317a99b8eaea4b629c8d9bdd2c2a136) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix device available storage computation for all devices supporting custom lock screens.
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.0-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.29.0-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.29.0-nightly.0
+  - @ledgerhq/hw-app-algorand@6.29.0-nightly.0
+  - @ledgerhq/hw-app-exchange@0.5.0-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.29.0-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.30.0-nightly.0
+  - @ledgerhq/hw-app-solana@7.2.0-nightly.0
+  - @ledgerhq/cryptoassets@13.1.0-nightly.1
+  - @ledgerhq/hw-app-tezos@6.29.0-nightly.0
+  - @ledgerhq/hw-transport@6.31.0-nightly.0
+  - @ledgerhq/hw-app-near@6.29.0-nightly.0
+  - @ledgerhq/hw-app-btc@10.3.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.37.0-nightly.1
+  - @ledgerhq/hw-app-str@6.29.0-nightly.0
+  - @ledgerhq/hw-app-trx@6.29.0-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.0-nightly.1
+  - @ledgerhq/hw-app-xrp@6.29.0-nightly.0
+  - @ledgerhq/coin-algorand@0.5.0-nightly.2
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.2
+  - @ledgerhq/devices@8.4.0-nightly.0
+  - @ledgerhq/errors@6.17.0-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.2
+  - @ledgerhq/crypto-icons-ui@1.2.0-nightly.0
+  - @ledgerhq/coin-near@0.5.0-nightly.2
+  - @ledgerhq/coin-evm@2.1.0-nightly.2
+  - @ledgerhq/live-countervalues@0.2.0-nightly.2
+  - @ledgerhq/wallet-api-exchange-module@0.7.0-nightly.0
+  - @ledgerhq/coin-framework@0.14.0-nightly.2
+  - @ledgerhq/live-network@1.3.0-nightly.0
+  - @ledgerhq/device-core@0.2.0-nightly.0
+  - @ledgerhq/live-nft@0.4.0-nightly.2
+  - @ledgerhq/live-promise@0.1.0-nightly.0
+  - @ledgerhq/live-env@2.1.0-nightly.0
+  - @ledgerhq/coin-solana@0.7.0-nightly.7
+  - @ledgerhq/coin-tezos@0.4.0-nightly.1
+  - @ledgerhq/coin-xrp@0.2.0-nightly.2
+  - @ledgerhq/live-wallet@0.1.1-nightly.5
+
 ## 34.3.0-nightly.2
 
 ### Patch Changes

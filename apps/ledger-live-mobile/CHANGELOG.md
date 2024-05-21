@@ -1,5 +1,39 @@
 # live-mobile
 
+## 3.45.0-nightly.3
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#6867](https://github.com/LedgerHQ/ledger-live/pull/6867) [`8b497d3`](https://github.com/LedgerHQ/ledger-live/commit/8b497d34d41e86ffb4ee5e6c05aa3b964558efe1) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Fix swap main header translation value in Turkish on LLM
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`f8980de`](https://github.com/LedgerHQ/ledger-live/commit/f8980de0a317a99b8eaea4b629c8d9bdd2c2a136)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.33.0-nightly.0
+  - @ledgerhq/types-cryptoassets@7.13.0-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.0-nightly.0
+  - @ledgerhq/react-native-hid@6.32.0-nightly.0
+  - @ledgerhq/types-devices@6.25.0-nightly.0
+  - @ledgerhq/hw-transport@6.31.0-nightly.0
+  - @ledgerhq/types-live@6.48.0-nightly.0
+  - @ledgerhq/devices@8.4.0-nightly.0
+  - @ledgerhq/errors@6.17.0-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.2
+  - @ledgerhq/coin-evm@2.1.0-nightly.2
+  - @ledgerhq/live-common@34.3.0-nightly.3
+  - @ledgerhq/live-countervalues@0.2.0-nightly.2
+  - @ledgerhq/native-ui@0.23.0-nightly.0
+  - @ledgerhq/ethereum-provider@0.3.0-nightly.1
+  - @ledgerhq/icons-ui@0.7.0-nightly.0
+  - @ledgerhq/coin-framework@0.14.0-nightly.2
+  - @ledgerhq/domain-service@1.2.0-nightly.0
+  - @ledgerhq/live-nft-react@0.4.0-nightly.2
+  - @ledgerhq/live-nft@0.4.0-nightly.2
+  - @ledgerhq/live-env@2.1.0-nightly.0
+  - @ledgerhq/live-wallet@0.1.1-nightly.5
+
 ## 3.45.0-nightly.2
 
 ### Patch Changes
