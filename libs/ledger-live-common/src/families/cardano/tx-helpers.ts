@@ -1,6 +1,6 @@
 import {
   CertificateType,
-  StakeCredentialParamsType,
+  CredentialParamsType,
   StakeDelegationParams,
   StakeRegistrationParams,
   StakeDeregistrationParams,
@@ -136,7 +136,7 @@ export function prepareStakeRegistrationCertificate(
       type: CertificateType.STAKE_REGISTRATION,
       params: {
         stakeCredential: {
-          type: StakeCredentialParamsType.KEY_PATH,
+          type: CredentialParamsType.KEY_PATH,
           keyPath: str_to_path(
             getBipPathString({
               account: certificate.stakeCredential.bipPath.account,
@@ -166,7 +166,7 @@ export function prepareStakeDelegationCertificate(
       type: CertificateType.STAKE_DELEGATION,
       params: {
         stakeCredential: {
-          type: StakeCredentialParamsType.KEY_PATH,
+          type: CredentialParamsType.KEY_PATH,
           keyPath: str_to_path(
             getBipPathString({
               account: certificate.stakeCredential.bipPath.account,
@@ -195,7 +195,7 @@ export function prepareStakeDeRegistrationCertificate(certificate: TyphonTypes.C
       type: CertificateType.STAKE_DEREGISTRATION,
       params: {
         stakeCredential: {
-          type: StakeCredentialParamsType.KEY_PATH,
+          type: CredentialParamsType.KEY_PATH,
           keyPath: str_to_path(
             getBipPathString({
               account: certificate.stakeCredential.bipPath.account,
@@ -218,7 +218,7 @@ export function prepareWithdrawal(withdrawal: TyphonTypes.Withdrawal): Withdrawa
   ) {
     return {
       stakeCredential: {
-        type: StakeCredentialParamsType.KEY_PATH,
+        type: CredentialParamsType.KEY_PATH,
         keyPath: str_to_path(
           getBipPathString({
             account: withdrawal.rewardAccount.stakeCredential.bipPath.account,
