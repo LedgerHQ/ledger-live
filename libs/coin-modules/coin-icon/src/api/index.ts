@@ -12,13 +12,13 @@ import { IconOperation } from "../types";
 import querystring from "querystring";
 
 /**
- * Returns Testnet API URL if the current currency is testnet
+ * Returns Testnet API URL if the current network is testnet
  *
- * @param {currency} currency
+ * @param {network} network
  */
-function getApiUrl(currency: CryptoCurrency): string {
+function getApiUrl(network: CryptoCurrency): string {
   let apiUrl = getEnv("ICON_INDEXER_ENDPOINT");
-  if (isTestnet(currency)) {
+  if (isTestnet(network)) {
     apiUrl = getEnv("ICON_TESTNET_INDEXER_ENDPOINT");
   }
   return apiUrl;
@@ -40,16 +40,18 @@ async function fetch(url: string) {
   return data;
 }
 
-export const getAccount = async (addr: string, currency: CryptoCurrency): Promise<AccountType> => {
+export const getAccount = async (addr: string, network: CryptoCurrency): Promise<AccountType> => {
   const query = querystring.stringify({
     address: addr,
   });
-  const data = await fetch(`${getApiUrl(currency)}/addresses/details/${addr}?${query}`);
+  const data = await fetch(`${getApiUrl(network)}/addresses/details/${addr}?${query}`);
   return data;
 };
 
-export const getCurrentBlockHeight = async (currency: CryptoCurrency): Promise<number | undefined> => {
-  const data = await fetch(`${getApiUrl(currency)}/blocks`);
+export const getCurrentBlockHeight = async (
+  network: CryptoCurrency,
+): Promise<number | undefined> => {
+  const data = await fetch(`${getApiUrl(network)}/blocks`);
   return data?.[0].number;
 };
 
@@ -114,21 +116,21 @@ export const getOperations = async (
   accountId: string,
   addr: string,
   skip: number,
-  currency: CryptoCurrency,
+  network: CryptoCurrency,
   maxLength: number,
 ): Promise<Operation[]> => {
-  return await fetchOperationList(accountId, addr, skip, currency, maxLength);
+  return await fetchOperationList(accountId, addr, skip, network, maxLength);
 };
 
 export const fetchOperationList = async (
   accountId: string,
   addr: string,
   skip: number,
-  currency: CryptoCurrency,
+  network: CryptoCurrency,
   maxLength: number,
   prevOperations: IconOperation[] = [],
 ): Promise<IconOperation[]> => {
-  const data = await getTxHistory(addr, skip, currency);
+  const data = await getTxHistory(addr, skip, network);
   const operations = data.map((transaction: IconTransactionType) =>
     txToOperation(accountId, addr, transaction),
   );
@@ -137,13 +139,13 @@ export const fetchOperationList = async (
   if (operations.length < LIMIT || operations.length >= maxLength) {
     return mergedOp;
   }
-  return await fetchOperationList(accountId, addr, skip + LIMIT, currency, maxLength, mergedOp);
+  return await fetchOperationList(accountId, addr, skip + LIMIT, network, maxLength, mergedOp);
 };
 
 export const getTxHistory = async (
   addr: string,
   skip: number,
-  currency: CryptoCurrency,
+  network: CryptoCurrency,
   limit: number = LIMIT,
 ): Promise<IconTransactionType[]> => {
   const query = querystring.stringify({
@@ -152,6 +154,6 @@ export const getTxHistory = async (
     limit: limit,
   });
 
-  const data = await fetch(`${getApiUrl(currency)}/transactions/address/${addr}?${query}`);
+  const data = await fetch(`${getApiUrl(network)}/transactions/address/${addr}?${query}`);
   return data;
 };

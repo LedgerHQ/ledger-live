@@ -25,59 +25,61 @@ import { IconAllFundsWarning, IconDoMaxSendInstead } from "./errors";
 import { getAccount } from "./api";
 
 export const getSendTransactionStatus = async (
-  a: IconAccount,
-  t: Transaction,
+  account: IconAccount,
+  transaction: Transaction,
 ): Promise<TransactionStatus> => {
   const errors: any = {};
   const warnings: any = {};
 
-  if (!t.fees) {
+  if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
   }
 
-  if (!t.recipient) {
+  if (!transaction.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (isSelfTransaction(a, t)) {
+  } else if (isSelfTransaction(account, transaction)) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  } else if (!isValidAddress(t.recipient)) {
+  } else if (!isValidAddress(transaction.recipient)) {
     errors.recipient = new InvalidAddress("", {
-      currencyName: a.currency.name,
+      currencyName: account.currency.name,
     });
   }
 
-  const estimatedFees = t.fees || new BigNumber(0);
+  const estimatedFees = transaction.fees || new BigNumber(0);
   const amount = calculateAmount({
-    a,
-    t,
+    account,
+    transaction,
   });
 
   const totalSpent = amount.plus(estimatedFees);
-  if (amount.lte(0) && !t.useAllAmount) {
+  if (amount.lte(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
   }
 
-  const minimumBalanceExistential = getMinimumBalance(a);
-  const leftover = a.spendableBalance.minus(totalSpent);
+  const minimumBalanceExistential = getMinimumBalance(account);
+  const leftover = account.spendableBalance.minus(totalSpent);
   if (minimumBalanceExistential.gt(0) && leftover.lt(minimumBalanceExistential) && leftover.gt(0)) {
     errors.amount = new IconDoMaxSendInstead("", {
-      minimumBalance: formatCurrencyUnit(a.currency.units[0], EXISTENTIAL_DEPOSIT, {
+      minimumBalance: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
         showCode: true,
       }),
     });
   } else if (
     !errors.amount &&
-    !t.useAllAmount &&
-    a.spendableBalance.lte(EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN))
+    !transaction.useAllAmount &&
+    account.spendableBalance.lte(EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN))
   ) {
     errors.amount = new NotEnoughBalance();
-  } else if (totalSpent.gt(a.spendableBalance)) {
+  } else if (totalSpent.gt(account.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
   }
 
   if (
     !errors.amount &&
-    new BigNumber(a.iconResources?.totalDelegated).plus(a.iconResources?.votingPower).gt(0) &&
-    (t.useAllAmount || a.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
+    new BigNumber(account.iconResources?.totalDelegated)
+      .plus(account.iconResources?.votingPower)
+      .gt(0) &&
+    (transaction.useAllAmount || account.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
   ) {
     warnings.amount = new IconAllFundsWarning();
   }
@@ -85,16 +87,16 @@ export const getSendTransactionStatus = async (
   if (
     !errors.recipient &&
     amount.lt(EXISTENTIAL_DEPOSIT) &&
-    (await getAccount(t.recipient, a.currency)) === null
+    (await getAccount(transaction.recipient, account.currency)) === null
   ) {
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-      minimalAmount: formatCurrencyUnit(a.currency.units[0], EXISTENTIAL_DEPOSIT, {
+      minimalAmount: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
         showCode: true,
       }),
     });
   }
 
-  if (totalSpent.gt(a.spendableBalance)) {
+  if (totalSpent.gt(account.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
   }
 
@@ -108,8 +110,8 @@ export const getSendTransactionStatus = async (
 };
 
 export const getTransactionStatus = async (
-  a: IconAccount,
-  t: Transaction,
+  account: IconAccount,
+  transaction: Transaction,
 ): Promise<TransactionStatus> => {
   const errors: {
     staking?: Error;
@@ -121,9 +123,9 @@ export const getTransactionStatus = async (
     amount?: Error;
   } = {};
 
-  switch (t.mode) {
+  switch (transaction.mode) {
     case "send": {
-      return await getSendTransactionStatus(a, t);
+      return await getSendTransactionStatus(account, transaction);
     }
     default: {
       break;
@@ -131,12 +133,12 @@ export const getTransactionStatus = async (
   }
 
   const amount = calculateAmount({
-    a,
-    t,
+    account,
+    transaction,
   });
-  const estimatedFees = t.fees || new BigNumber(0);
+  const estimatedFees = transaction.fees || new BigNumber(0);
   const totalSpent = amount.plus(estimatedFees);
-  if (totalSpent.gt(a.spendableBalance)) {
+  if (totalSpent.gt(account.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
   }
   return Promise.resolve({

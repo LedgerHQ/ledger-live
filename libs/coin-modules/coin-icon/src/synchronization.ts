@@ -18,10 +18,9 @@ export const getAccountShape: GetAccountShape = async (info: AccountShapeInfo) =
     xpubOrAddress: address,
     derivationMode,
   });
-  const blockHeight = 0;
   try {
-    const oldOperations = initialAccount?.operations || [];
 
+    const oldOperations = initialAccount?.operations || [];
     const blockHeight = await getCurrentBlockHeight(currency);
     const iconAccount = await getAccount(info.address, currency);
 
@@ -29,7 +28,7 @@ export const getAccountShape: GetAccountShape = async (info: AccountShapeInfo) =
     const newOperations = await getOperations(
       accountId,
       address,
-      0,
+      0, // skip === 0 is the lastest transaction
       currency,
       iconAccount?.contract_updated_block - oldOperations.length,
     );
@@ -58,7 +57,7 @@ export const getAccountShape: GetAccountShape = async (info: AccountShapeInfo) =
   } catch (error) {
     return {
       id: accountId,
-      blockHeight,
+      blockHeight: 0,
       balance: new BigNumber(0),
       iconResources: {
         nonce: 0,
