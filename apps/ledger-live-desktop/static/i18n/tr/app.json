@@ -27,6 +27,7 @@
       "title" : "Keşfedin",
       "section" : {
         "recentlyUsed" : "Son kullanılanlar",
+        "locallyLoaded" : "Yerel Olarak Yüklenen Live Uygulamaları",
         "browse" : "Göz atın"
       },
       "filter" : {
@@ -3967,7 +3968,9 @@
       "region" : "Bölge",
       "regionDesc" : "Tarih, saat ve para birimi görüntüleme biçimlerini güncellemek için bölgenizi seçin.",
       "stock" : "Bölgesel piyasa göstergesi",
-      "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin."
+      "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin.",
+      "walletSync" : "Cüzdan Senkronizasyonu",
+      "walletSyncDesc" : "Uygulama verilerinizi yedekleyin ve birden çok Ledger Live oturumunu senkronize edin."
     },
     "developer" : {
       "search" : "Ara",
@@ -3985,6 +3988,11 @@
       "debugAppsDesc" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "debugReactQuery" : "ReactQuery hata ayıklamasına izin ver",
       "debugReactQueryDesc" : "ReactQuery hata ayıklaması konsolunu görüntüleme ve açmaya izin ver",
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange Geliştirici Modu",
+        "desc" : "Exchange sağlayıcısı bilgilerini ekleyin",
+        "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "NFT Spam İhbarı (Beta) özelliğine izin verin",
         "debugNFTSpamReportDesc" : "Bir NFT'yi spam olarak ihbar etmek veya artık spam olarak görüntülenmemesi için bir forma erişin",
@@ -4037,6 +4045,17 @@
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
       "addLocalAppButton" : "Göz Atın",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "Yerel bir uygulama oluşturun",
+          "modify" : "Yerel bir uygulamada değişiklik yapın"
+        },
+        "addNetwork" : "Yeni bir ağ ekleyin",
+        "removeNetwork" : "Son ağı kaldırın",
+        "export" : "Dışa aktar",
+        "modify" : "Değiştir",
+        "create" : "Oluştur"
+      },
       "runLocalAppDeleteButton" : "Sil",
       "runLocalAppOpenButton" : "Aç",
       "enableLearnStagingUrl" : "Öğren sayfası staging URL'si",
@@ -4266,7 +4285,7 @@
     "downloadInProgress" : "Güncelleme indiriliyor...",
     "downloadProgress" : "%{{progress}} tamamlandı",
     "checking" : "Güncelleme kontrol ediliyor...",
-    "checkSuccess" : "Yeni Ledger Live güncellemesi mevcut. Güncelleme, uygulamayı kapattığınızda otomatik olarak yüklenecek.",
+    "checkSuccess" : "Yeni güncelleme mevcut. Güncelleme, uygulamayı kapattığınızda Ledger Live'ı otomatik olarak yükleyecek ve yeniden başlatacaktır.",
     "quitAndInstall" : "Hemen yükle ve yeniden başlat",
     "updateAvailable" : "Ledger Live {{version}} sürüm güncellemesi mevcut",
     "error" : "Güncelleme sırasında bir hata oluştu. Lütfen tekrar indirin",
@@ -6231,6 +6250,18 @@
       "analytics" : "Analiz",
       "personalizedExpDesc" : "Tercihlerinizle uyumlu kişiselleştirilmiş öneriler alın.",
       "analyticsDesc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin."
+    }
+  },
+  "walletSync" : {
+    "manage" : "Yönet",
+    "activate" : {
+      "title" : "Cüzdan senkronizasyonunu etkinleştirin",
+      "description" : "Ledger Live uygulamanız için güvenli bir yedek oluşturun ve hem mobil cihazınızda hem de masaüstü bilgisayarınızdaki Ledger Live kopyalarını senkronize edin.",
+      "cta" : "Yedek oluştur"
+    },
+    "alreadySync" : {
+      "title" : "Başka bir cihazda zaten yedek oluşturdunuz mu?",
+      "cta" : "Senkronize et"
     }
   }
 }
