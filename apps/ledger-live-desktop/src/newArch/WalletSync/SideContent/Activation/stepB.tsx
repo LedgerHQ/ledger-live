@@ -4,6 +4,7 @@ import React from "react";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
+
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 
 type Props = {

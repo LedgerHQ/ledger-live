@@ -1,9 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Flow, walletSyncFlowSelector, walletSyncSelector } from "~/renderer/reducers/walletSync";
-import WalletSyncActivation from "~/renderer/screens/settings/sections/General/WalletSync/SideContent/Activation";
-import WalletSyncManage from "~/renderer/screens/settings/sections/General/WalletSync/SideContent/Manage";
-import { Synch } from "./Synch";
+import WalletSyncActivation from "LLD/WalletSync/SideContent/Activation";
+import WalletSyncManage from "LLD/WalletSync/SideContent/Manage";
+import Synch from "./Synch";
 
 export const WalletSyncRouter = () => {
   const walletSync = useSelector(walletSyncSelector);
