@@ -15,8 +15,8 @@ export const Label = styled(Text)<ElementState>`
     p.disabled
       ? p.theme.colors.neutral.c50
       : p.checked
-      ? p.theme.colors.primary.c90
-      : p.theme.colors.neutral.c100};
+        ? p.theme.colors.primary.c90
+        : p.theme.colors.neutral.c100};
 `;
 
 const Container = styled(Flex)<ElementState>`

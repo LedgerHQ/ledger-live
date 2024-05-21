@@ -85,10 +85,10 @@ libs/ledger-live-common/src/platform/                    @ledgerhq/wallet-api
 libs/ledger-live-common/src/wallet-api/                  @ledgerhq/wallet-api
 **/platformAdapter.ts                                    @ledgerhq/wallet-api
 **/walletApiAdapter.ts                                   @ledgerhq/wallet-api
-**/liveapp-sdk.spec.ts                                   @ledgerhq/wallet-api @ledgerhq/live-qa
-**/confirmTransaction.spec.ts                            @ledgerhq/wallet-api @ledgerhq/live-qa
-**/wallet-api.spec.ts                                    @ledgerhq/wallet-api @ledgerhq/live-qa
-libs/test-utils/                                         @ledgerhq/wallet-api @ledgerhq/live-qa
+**/liveapp-sdk.spec.ts                                   @ledgerhq/wallet-api
+**/confirmTransaction.spec.ts                            @ledgerhq/wallet-api
+**/wallet-api.spec.ts                                    @ledgerhq/wallet-api
+libs/test-utils/                                         @ledgerhq/wallet-api
 
 # Devices team
 apps/cli/src/commands/devices                            			@ledgerhq/live-devices
@@ -111,6 +111,8 @@ libs/ledger-live-common/src/manager/                     			@ledgerhq/live-devic
 libs/ledger-live-common/src/device/                      			@ledgerhq/live-devices
 libs/ledger-live-common/src/device-react/                			@ledgerhq/live-devices
 libs/ledger-live-common/src/device-core/                 			@ledgerhq/live-devices
+libs/device-core/                                                   @ledgerhq/live-devices
+libs/device-react/                                                  @ledgerhq/live-devices
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software
@@ -125,8 +127,8 @@ apps/ledger-live-mobile/src/screens/Protect/                            @ledgerh
 libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerhq/recover-software
 
 # UI tests
-apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/live-qa
-apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/live-qa
+apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub
+apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/

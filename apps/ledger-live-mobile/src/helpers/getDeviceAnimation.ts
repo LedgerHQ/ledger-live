@@ -1,6 +1,6 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { LottieViewProps } from "lottie-react-native/lib/typescript/LottieView.types";
+import type { LottieViewProps } from "lottie-react-native";
 import Config from "react-native-config";
 
 type AnimationSource = LottieViewProps["source"];

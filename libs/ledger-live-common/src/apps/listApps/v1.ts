@@ -19,6 +19,7 @@ import { calculateDependencies, polyfillApp, polyfillApplication } from "../poly
 import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { ManagerApiRepository } from "../../device/factories/HttpManagerApiRepositoryFactory";
+import { isCustomLockScreenSupported } from "../../device/use-cases/isCustomLockScreenSupported";
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
@@ -258,7 +259,7 @@ export const listApps = (
         .filter(Boolean);
 
       let customImageBlocks = 0;
-      if (deviceModelId === DeviceModelId.stax && !deviceInfo.isRecoveryMode) {
+      if (isCustomLockScreenSupported(deviceModelId) && !deviceInfo.isRecoveryMode) {
         const customImageSize = await customLockScreenFetchSize(transport);
         if (customImageSize) {
           customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);

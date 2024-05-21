@@ -6274,5 +6274,17 @@
       "personalizedExpDesc": "Receive personalised recommendations that match your preferences.",
       "analyticsDesc": "Enable analytics to help Ledger improve the user experience."
     }
+  },
+  "walletSync": {
+    "manage": "Manage",
+    "activate": {
+      "title": "Activate wallet sync",
+      "description": "Create a secure backup of your Ledger Live and synchronize multiple instances of Ledger Live, both on mobile and desktop.",
+      "cta": "Create a backup"
+    },
+    "alreadySync": {
+      "title": "Already created a back-up on another Device?",
+      "cta": "Synchronize"
+    }
   }
 }

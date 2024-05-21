@@ -56,34 +56,42 @@ function mockAccountInfo(
 
 function mockCosmosTx(tx: Partial<CosmosTx>) {
   return {
-    logs: [
+    events: [
       {
         type: "withdraw_rewards",
-        events: [
+        attributes: [
           {
-            type: "withdraw_rewards",
-            attributes: [
-              {
-                key: "amount",
-                value: "10uatom",
-              },
-              {
-                key: "validator",
-                value: "validatorAddressHehe",
-              },
-            ],
+            key: "amount",
+            value: "10uatom",
+          },
+          {
+            key: "validator",
+            value: "validatorAddressHehe",
           },
         ],
-        attributes: [],
       },
     ],
+    logs: [],
     txhash: "2",
     tx: {
+      "@type": "/cosmos.tx.v1beta1.Tx",
+      body: {
+        messages: [
+          {
+            "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+            delegator_address: "address",
+            validator_address: "validatorAddressHehe",
+          },
+        ],
+        memo: "Ledger Live",
+        timeout_height: "0",
+        extension_options: [],
+        non_critical_extension_options: [],
+      },
       auth_info: {
         signer_infos: [{ sequence: "seq" }],
         fee: { amount: [{ denom: "uatom", amount: new BigNumber(0) }] },
       },
-      body: {},
     },
     code: 0,
     ...tx,
@@ -218,47 +226,53 @@ describe("getAccountShape", () => {
     expect(mergeOpsSpy.mock.calls[0][1]).toBeTruthy();
   });
 
-  it("should assign memo correctly", async () => {
-    const memo = "i am a memo :)";
-    mockAccountInfo({
-      txs: [
-        mockCosmosTx({
-          tx: {
-            body: { memo },
-            auth_info: baseTxMock.tx.auth_info,
-          },
-        } as Partial<CosmosTx>),
-      ],
-    });
+  it("should get the memo correctly", async () => {
+    mockAccountInfo({ txs: [mockCosmosTx({})] });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as CosmosOperation[])[0].extra.memo).toEqual(memo);
+    expect((account.operations as CosmosOperation[])[0].extra.memo).toEqual("Ledger Live");
   });
 
   it("should list claim reward operations correctly with one delegation", async () => {
     mockAccountInfo({
       txs: [
         mockCosmosTx({
-          logs: [
+          events: [
             {
               type: "withdraw_rewards",
-              events: [
+              attributes: [
                 {
-                  type: "withdraw_rewards",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "3uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "validatorAddressNumeroUno",
-                    },
-                  ],
+                  key: "amount",
+                  value: "3uatom",
+                },
+                {
+                  key: "validator",
+                  value: "validatorAddressNumeroUno",
                 },
               ],
-              attributes: [],
             },
           ],
+          logs: [],
+          tx: {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            body: {
+              messages: [
+                {
+                  "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                  delegator_address: "address",
+                  validator_address: "cosmosvaloper1crqm3598z6qmyn2kkcl9dz7uqs4qdqnr6s8jdn",
+                },
+              ],
+              memo: "Ledger Live",
+              timeout_height: "0",
+              extension_options: [],
+              non_critical_extension_options: [],
+            },
+            auth_info: {
+              signer_infos: [{ sequence: "seq" }],
+              fee: { amount: [{ denom: "uatom", amount: new BigNumber(0) }] },
+            },
+            signatures: [],
+          },
         } as Partial<CosmosTx>),
       ],
     });
@@ -277,54 +291,79 @@ describe("getAccountShape", () => {
     mockAccountInfo({
       txs: [
         mockCosmosTx({
-          logs: [
+          events: [
             {
               type: "withdraw_rewards",
-              events: [
+              attributes: [
                 {
-                  type: "withdraw_rewards",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "10uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "validatorAddressHehe",
-                    },
-                  ],
+                  key: "amount",
+                  value: "10uatom",
                 },
                 {
-                  type: "withdraw_rewards",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "5uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "validatorAddressTwo",
-                    },
-                  ],
-                },
-                {
-                  type: "withdraw_rewards",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value:
-                        "56ibc/0025F8A87464A471E66B234C4F93AEC5B4DA3D42D7986451A059273426290DD5,512ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89,7uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "validatorAddressThree",
-                    },
-                  ],
+                  key: "validator",
+                  value: "validatorAddressHehe",
                 },
               ],
-              attributes: [],
+            },
+            {
+              type: "withdraw_rewards",
+              attributes: [
+                {
+                  key: "amount",
+                  value: "5uatom",
+                },
+                {
+                  key: "validator",
+                  value: "validatorAddressTwo",
+                },
+              ],
+            },
+            {
+              type: "withdraw_rewards",
+              attributes: [
+                {
+                  key: "amount",
+                  value:
+                    "56ibc/0025F8A87464A471E66B234C4F93AEC5B4DA3D42D7986451A059273426290DD5,512ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89,7uatom",
+                },
+                {
+                  key: "validator",
+                  value: "validatorAddressThree",
+                },
+              ],
             },
           ],
+          tx: {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            body: {
+              messages: [
+                {
+                  "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                  delegator_address: "address",
+                  validator_address: "validatorAddressHehe",
+                },
+                {
+                  "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                  delegator_address: "address",
+                  validator_address: "validatorAddressTwo",
+                },
+                {
+                  "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                  delegator_address: "address",
+                  validator_address: "validatorAddressThree",
+                },
+              ],
+              memo: "Ledger Live",
+              timeout_height: "0",
+              extension_options: [],
+              non_critical_extension_options: [],
+            },
+            auth_info: {
+              signer_infos: [{ sequence: "seq" }],
+              fee: { amount: [{ denom: "uatom", amount: new BigNumber(0) }] },
+            },
+            signatures: [],
+          },
         } as Partial<CosmosTx>),
       ],
     });
@@ -350,106 +389,28 @@ describe("getAccountShape", () => {
   it("should parse an operation correctly when the operation failed)", async () => {
     const failedOperation = mockCosmosTx({
       tx: {
-        body: { memo: "memo" },
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        body: {
+          messages: [
+            {
+              "@type": "/cosmos.bank.v1beta1.MsgSend",
+              from_address: "address",
+              to_address: "cosmos1lptvx486j7630632q3ah0dwq20ghdrpxgl8xzg",
+              amount: [
+                {
+                  denom: "uatom",
+                  amount: "10000",
+                },
+              ],
+            },
+          ],
+          memo: "",
+          timeout_height: "0",
+          extension_options: [],
+          non_critical_extension_options: [],
+        },
         auth_info: baseTxMock.tx.auth_info,
       },
-      events: [
-        {
-          type: "coin_spent",
-          attributes: [
-            {
-              key: "spender",
-              value: "spenderAddress",
-              index: true,
-            },
-            {
-              key: "amount",
-              value: "10uatom",
-              index: true,
-            },
-          ],
-        },
-        {
-          type: "coin_received",
-          attributes: [
-            {
-              key: "receiver",
-              value: "receiverAddress",
-              index: true,
-            },
-            {
-              key: "amount",
-              value: "10uatom",
-              index: true,
-            },
-          ],
-        },
-        {
-          type: "transfer",
-          attributes: [
-            {
-              key: "recipient",
-              value: "receiverAddress",
-              index: true,
-            },
-            {
-              key: "sender",
-              value: "address",
-              index: true,
-            },
-            {
-              key: "amount",
-              value: "10uatom",
-              index: true,
-            },
-          ],
-        },
-        {
-          type: "message",
-          attributes: [
-            {
-              key: "sender",
-              value: "address",
-              index: true,
-            },
-          ],
-        },
-        {
-          type: "tx",
-          attributes: [
-            {
-              key: "fee",
-              value: "10uatom",
-              index: true,
-            },
-            {
-              key: "fee_payer",
-              value: "address",
-              index: true,
-            },
-          ],
-        },
-        {
-          type: "tx",
-          attributes: [
-            {
-              key: "acc_seq",
-              value: "address/18",
-              index: true,
-            },
-          ],
-        },
-        {
-          type: "tx",
-          attributes: [
-            {
-              key: "signature",
-              value: "base64Sig",
-              index: true,
-            },
-          ],
-        },
-      ],
       code: 11,
     } as Partial<CosmosTx>);
 
@@ -458,7 +419,7 @@ describe("getAccountShape", () => {
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(1));
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(10001)); // 10000(amount) + 1(fees)
     expect((account.operations as CosmosOperation[])[0].type).toEqual("OUT");
     expect((account.operations as CosmosOperation[])[0].hasFailed).toEqual(true);
   });
@@ -467,54 +428,46 @@ describe("getAccountShape", () => {
     mockAccountInfo({
       txs: [
         mockCosmosTx({
-          logs: [
-            {
-              type: "transfer",
-              events: [
+          tx: {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            body: {
+              messages: [
                 {
-                  type: "transfer",
-                  attributes: [
+                  "@type": "/cosmos.bank.v1beta1.MsgSend",
+                  from_address: "cosmos1lptvx486j7630632q3ah0dwq20ghdrpxgl8xzg",
+                  to_address: "address",
+                  amount: [
                     {
-                      key: "amount",
-                      value: "5uatom",
-                    },
-                    {
-                      key: "sender",
-                      value: "senderAddress",
-                    },
-                    {
-                      key: "recipient",
-                      value: "address",
+                      denom: "uatom",
+                      amount: "5",
                     },
                   ],
                 },
                 {
-                  type: "transfer",
-                  attributes: [
+                  "@type": "/cosmos.bank.v1beta1.MsgSend",
+                  from_address: "cosmos1lptvx486j7630632q3ah0dwq20ghdrpxgl8xzg",
+                  to_address: "address",
+                  amount: [
                     {
-                      key: "amount",
-                      value: "6uatom",
-                    },
-                    {
-                      key: "sender",
-                      value: "senderAddress",
-                    },
-                    {
-                      key: "recipient",
-                      value: "address",
+                      denom: "uatom",
+                      amount: "6",
                     },
                   ],
                 },
               ],
-              attributes: [],
+              memo: "",
+              timeout_height: "0",
+              extension_options: [],
+              non_critical_extension_options: [],
             },
-          ],
+            auth_info: baseTxMock.tx.auth_info,
+          },
         } as Partial<CosmosTx>),
       ],
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(11));
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(11)); // 5 + 6
     expect((account.operations as CosmosOperation[])[0].type).toEqual("IN");
   });
 
@@ -523,57 +476,45 @@ describe("getAccountShape", () => {
       txs: [
         mockCosmosTx({
           tx: {
-            body: { memo: "memo" },
-            auth_info: baseTxMock.tx.auth_info,
-          },
-          logs: [
-            {
-              type: "transfer",
-              events: [
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            body: {
+              messages: [
                 {
-                  type: "transfer",
-                  attributes: [
+                  "@type": "/cosmos.bank.v1beta1.MsgSend",
+                  from_address: "address",
+                  to_address: "cosmos1lptvx486j7630632q3ah0dwq20ghdrpxgl8xzg",
+                  amount: [
                     {
-                      key: "amount",
-                      value: "5uatom",
-                    },
-                    {
-                      key: "recipient",
-                      value: "senderAddress",
-                    },
-                    {
-                      key: "sender",
-                      value: "address",
+                      denom: "uatom",
+                      amount: "5",
                     },
                   ],
                 },
                 {
-                  type: "transfer",
-                  attributes: [
+                  "@type": "/cosmos.bank.v1beta1.MsgSend",
+                  from_address: "address",
+                  to_address: "cosmos1lptvx486j7630632q3ah0dwq20ghdrpxgl8xzg",
+                  amount: [
                     {
-                      key: "amount",
-                      value: "6uatom",
-                    },
-                    {
-                      key: "recipient",
-                      value: "senderAddress",
-                    },
-                    {
-                      key: "sender",
-                      value: "address",
+                      denom: "uatom",
+                      amount: "6",
                     },
                   ],
                 },
               ],
-              attributes: [],
+              memo: "",
+              timeout_height: "0",
+              extension_options: [],
+              non_critical_extension_options: [],
             },
-          ],
+            auth_info: baseTxMock.tx.auth_info,
+          },
         } as Partial<CosmosTx>),
       ],
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(12)); // 1+ 5 + 6
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(12)); // 5 + 6 + 1(fees)
     expect((account.operations as CosmosOperation[])[0].type).toEqual("OUT");
   });
 
@@ -582,43 +523,31 @@ describe("getAccountShape", () => {
       txs: [
         mockCosmosTx({
           tx: {
-            body: { memo: "memo" },
-            auth_info: baseTxMock.tx.auth_info,
-          },
-          logs: [
-            {
-              type: "delegate",
-              events: [
+            body: {
+              memo: "memo",
+              messages: [
                 {
-                  type: "delegate",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "5uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "address",
-                    },
-                  ],
+                  "@type": "/cosmos.staking.v1beta1.MsgDelegate",
+                  delegator_address: "address",
+                  validator_address: "address1",
+                  amount: {
+                    denom: "uatom",
+                    amount: "5",
+                  },
                 },
                 {
-                  type: "delegate",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "6uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "address",
-                    },
-                  ],
+                  "@type": "/cosmos.staking.v1beta1.MsgDelegate",
+                  delegator_address: "address",
+                  validator_address: "address2",
+                  amount: {
+                    denom: "uatom",
+                    amount: "6",
+                  },
                 },
               ],
-              attributes: [],
             },
-          ],
+            auth_info: baseTxMock.tx.auth_info,
+          },
         } as Partial<CosmosTx>),
       ],
     });
@@ -627,11 +556,11 @@ describe("getAccountShape", () => {
     expect((account.operations as CosmosOperation[])[0].type).toEqual("DELEGATE");
     expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
       {
-        address: "address",
+        address: "address1",
         amount: new BigNumber(5),
       },
       {
-        address: "address",
+        address: "address2",
         amount: new BigNumber(6),
       },
     ]);
@@ -642,51 +571,33 @@ describe("getAccountShape", () => {
       txs: [
         mockCosmosTx({
           tx: {
-            body: { memo: "memo" },
-            auth_info: baseTxMock.tx.auth_info,
-          },
-          logs: [
-            {
-              type: "redelegate",
-              events: [
+            body: {
+              memo: "memo",
+              messages: [
                 {
-                  type: "redelegate",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "5uatom",
-                    },
-                    {
-                      key: "source_validator",
-                      value: "address_src",
-                    },
-                    {
-                      key: "destination_validator",
-                      value: "address1",
-                    },
-                  ],
+                  "@type": "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+                  delegator_address: "address",
+                  validator_src_address: "address_src",
+                  validator_dst_address: "address1",
+                  amount: {
+                    denom: "uatom",
+                    amount: "5",
+                  },
                 },
                 {
-                  type: "redelegate",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "6uatom",
-                    },
-                    {
-                      key: "source_validator",
-                      value: "address_src",
-                    },
-                    {
-                      key: "destination_validator",
-                      value: "address2",
-                    },
-                  ],
+                  "@type": "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+                  delegator_address: "address",
+                  validator_src_address: "address_src",
+                  validator_dst_address: "address2",
+                  amount: {
+                    denom: "uatom",
+                    amount: "6",
+                  },
                 },
               ],
-              attributes: [],
             },
-          ],
+            auth_info: baseTxMock.tx.auth_info,
+          },
         } as Partial<CosmosTx>),
       ],
     });
@@ -713,43 +624,31 @@ describe("getAccountShape", () => {
       txs: [
         mockCosmosTx({
           tx: {
-            body: { memo: "memo" },
-            auth_info: baseTxMock.tx.auth_info,
-          },
-          logs: [
-            {
-              type: "unbond",
-              events: [
+            body: {
+              memo: "memo",
+              messages: [
                 {
-                  type: "unbond",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "5uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "address1",
-                    },
-                  ],
+                  "@type": "/cosmos.staking.v1beta1.MsgUndelegate",
+                  delegator_address: "address",
+                  validator_address: "address1",
+                  amount: {
+                    denom: "uatom",
+                    amount: "5",
+                  },
                 },
                 {
-                  type: "unbond",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "6uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "address2",
-                    },
-                  ],
+                  "@type": "/cosmos.staking.v1beta1.MsgUndelegate",
+                  delegator_address: "address",
+                  validator_address: "address2",
+                  amount: {
+                    denom: "uatom",
+                    amount: "6",
+                  },
                 },
               ],
-              attributes: [],
             },
-          ],
+            auth_info: baseTxMock.tx.auth_info,
+          },
         } as Partial<CosmosTx>),
       ],
     });
@@ -773,33 +672,23 @@ describe("getAccountShape", () => {
       txs: [
         mockCosmosTx({
           tx: {
-            body: { memo: "memo" },
-          },
-          logs: [
-            {
-              type: "transfer",
-              events: [
+            body: {
+              memo: "memo",
+              messages: [
                 {
-                  type: "transfer",
-                  attributes: [
+                  "@type": "/cosmos.bank.v1beta1.MsgSend",
+                  from_address: "address",
+                  to_address: "cosmos1lptvx486j7630632q3ah0dwq20ghdrpxgl8xzg",
+                  amount: [
                     {
-                      key: "amount",
-                      value: "5uatom",
-                    },
-                    {
-                      key: "recipient",
-                      value: "senderAddress",
-                    },
-                    {
-                      key: "sender",
-                      value: "address",
+                      denom: "uatom",
+                      amount: "5",
                     },
                   ],
                 },
               ],
-              attributes: [],
             },
-          ],
+          },
         } as Partial<CosmosTx>),
       ],
     });

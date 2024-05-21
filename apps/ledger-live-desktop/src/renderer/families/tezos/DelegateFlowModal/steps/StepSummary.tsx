@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useBaker, useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useBaker, useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";

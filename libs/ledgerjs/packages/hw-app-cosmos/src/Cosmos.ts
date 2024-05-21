@@ -167,8 +167,8 @@ export default class Cosmos {
           j === 0
             ? PAYLOAD_TYPE_INIT
             : j + 1 === chunks.length
-            ? PAYLOAD_TYPE_LAST
-            : PAYLOAD_TYPE_ADD,
+              ? PAYLOAD_TYPE_LAST
+              : PAYLOAD_TYPE_ADD,
           0,
           data,
           [SW_OK, SW_CANCEL],

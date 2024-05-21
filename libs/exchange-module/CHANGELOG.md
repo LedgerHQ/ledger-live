@@ -1,5 +1,29 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.6.0
+
+### Minor Changes
+
+- [#6605](https://github.com/LedgerHQ/ledger-live/pull/6605) [`d766a94`](https://github.com/LedgerHQ/ledger-live/commit/d766a94232dab571f01f4622679f65d651faef3c) Thanks [@CremaFR](https://github.com/CremaFR)! - removed unused params that prevent the module from being used
+
+- [#6654](https://github.com/LedgerHQ/ledger-live/pull/6654) [`d9d8902`](https://github.com/LedgerHQ/ledger-live/commit/d9d890272167aec86db19f028b64314f65a9bf14) Thanks [@CremaFR](https://github.com/CremaFR)! - added error management
+
+### Patch Changes
+
+- [#6610](https://github.com/LedgerHQ/ledger-live/pull/6610) [`06f4606`](https://github.com/LedgerHQ/ledger-live/commit/06f4606f354496bc322be34932260eb9a1cdac42) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: bump wallet-api packages
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#6605](https://github.com/LedgerHQ/ledger-live/pull/6605) [`d766a94`](https://github.com/LedgerHQ/ledger-live/commit/d766a94232dab571f01f4622679f65d651faef3c) Thanks [@CremaFR](https://github.com/CremaFR)! - removed unused params that prevent the module from being used
+
+- [#6654](https://github.com/LedgerHQ/ledger-live/pull/6654) [`d9d8902`](https://github.com/LedgerHQ/ledger-live/commit/d9d890272167aec86db19f028b64314f65a9bf14) Thanks [@CremaFR](https://github.com/CremaFR)! - added error management
+
+### Patch Changes
+
+- [#6610](https://github.com/LedgerHQ/ledger-live/pull/6610) [`06f4606`](https://github.com/LedgerHQ/ledger-live/commit/06f4606f354496bc322be34932260eb9a1cdac42) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: bump wallet-api packages
+
 ## 0.5.0
 
 ### Minor Changes

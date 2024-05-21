@@ -10,8 +10,8 @@ import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/a
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { useDelegation, useBaker, useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
-import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
+import { useDelegation, useBaker, useBakers } from "@ledgerhq/live-common/families/tezos/react";
+import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Alert } from "@ledgerhq/native-ui";

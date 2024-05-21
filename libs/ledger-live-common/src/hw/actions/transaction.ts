@@ -62,10 +62,10 @@ const mapResult = ({
         device,
       }
     : transactionSignError
-    ? {
-        transactionSignError,
-      }
-    : null;
+      ? {
+          transactionSignError,
+        }
+      : null;
 
 type Event =
   | SignOperationEvent

@@ -7,10 +7,8 @@ import elrond from "../families/elrond/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import internet_computer from "../families/internet_computer/specs";
-import ripple from "../families/ripple/specs";
 import stacks from "../families/stacks/specs";
 import stellar from "../families/stellar/specs";
-import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
 import vechain from "../families/vechain/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
@@ -19,6 +17,8 @@ import evm from "@ledgerhq/coin-evm/specs";
 import near from "@ledgerhq/coin-near/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
 import solana from "@ledgerhq/coin-solana/specs";
+import tezos from "@ledgerhq/coin-tezos/specs";
+import xrp from "@ledgerhq/coin-xrp/specs";
 
 export default {
   cardano,
@@ -30,10 +30,8 @@ export default {
   filecoin,
   hedera,
   internet_computer,
-  ripple,
   stacks,
   stellar,
-  tezos,
   tron,
   vechain,
   algorand,
@@ -42,4 +40,6 @@ export default {
   near,
   polkadot,
   solana,
+  tezos,
+  xrp,
 };

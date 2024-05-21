@@ -9,7 +9,7 @@ import {
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosOperation, CosmosMessage, CosmosTx } from "./types";
+import { CosmosOperation, CosmosTx } from "./types";
 import type { OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
@@ -52,13 +52,14 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
 
     op.hasFailed = tx.code !== 0;
 
-    const messages: CosmosMessage[] = op.hasFailed
-      ? tx.events
-      : tx.logs.map(log => log.events).flat(1);
-
+    // simplify the message types
+    const messages = tx.tx.body.messages.map(message => ({
+      ...message,
+      type: message["@type"].substring(message["@type"].lastIndexOf(".") + 1),
+    }));
     const mainMessage = getMainMessage(messages);
 
-    if (mainMessage === undefined) {
+    if (!mainMessage) {
       // happens when we don't know this message type in our implementation, example : proposal_vote
       continue;
     }
@@ -66,33 +67,74 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
     const correspondingMessages = messages.filter(m => m.type === mainMessage.type);
 
     switch (mainMessage.type) {
-      case "transfer":
-        // TODO: handle IBC transfers here
+      case "MsgTransfer": {
+        //IBC send
         for (const message of correspondingMessages) {
-          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
-          const sender = message.attributes.find(attr => attr.key === "sender")?.value;
-          const recipient = message.attributes.find(attr => attr.key === "recipient")?.value;
-          if (amount && sender && recipient && amount.endsWith(unitCode)) {
+          const amount = message["token"].amount;
+          const denom = message["token"].denom;
+          const sender = message["sender"];
+          const recipient = message["receiver"];
+          if (!amount || !sender || !recipient || !denom || denom !== unitCode) {
+            continue;
+          }
+          if (sender === address) {
             if (op.senders.indexOf(sender) === -1) op.senders.push(sender);
             if (op.recipients.indexOf(recipient) === -1) op.recipients.push(recipient);
-            op.value = op.value.plus(parseAmountStringToNumber(amount, unitCode));
-            if (sender === address) {
-              op.type = "OUT";
-            } else if (recipient === address) {
-              op.type = "IN";
-            }
+            op.value = op.value.plus(new BigNumber(amount));
+            op.type = "OUT";
           }
         }
         if (op.type === "OUT") {
           op.value = op.value.plus(fees);
         }
         break;
-
-      case "withdraw_rewards": {
+      }
+      case "MsgRecvPacket": {
+        //IBC receive
+        for (const message of tx.events) {
+          if (message.type === "fungible_token_packet") {
+            const sender = message.attributes.find(attr => attr.key === "sender")?.value;
+            const receiver = message.attributes.find(attr => attr.key === "receiver")?.value;
+            const amount = message.attributes.find(attr => attr.key === "amount")?.value;
+            const denom = message.attributes.find(attr => attr.key === "denom")?.value;
+            if (sender && receiver === address && amount && denom && denom.endsWith(unitCode)) {
+              if (op.senders.indexOf(sender) === -1) op.senders.push(sender);
+              if (op.recipients.indexOf(receiver) === -1) op.recipients.push(receiver);
+              const amountString = parseAmountStringToNumber(amount, unitCode);
+              op.value = op.value.plus(new BigNumber(amountString));
+              op.type = "IN";
+            }
+          }
+        }
+        break;
+      }
+      case "MsgSend": {
+        for (const message of correspondingMessages) {
+          const amount = message["amount"].find(amount => amount.denom === unitCode);
+          const sender = message["from_address"];
+          const recipient = message["to_address"];
+          if (!amount || !sender || !recipient) {
+            continue;
+          }
+          if (op.senders.indexOf(sender) === -1) op.senders.push(sender);
+          if (op.recipients.indexOf(recipient) === -1) op.recipients.push(recipient);
+          op.value = op.value.plus(amount.amount);
+          if (sender === address) {
+            op.type = "OUT";
+          } else if (recipient === address) {
+            op.type = "IN";
+          }
+        }
+        if (op.type === "OUT") {
+          op.value = op.value.plus(fees);
+        }
+        break;
+      }
+      case "MsgWithdrawDelegatorReward": {
         op.type = "REWARD";
         const rewardShards: { amount: BigNumber; address: string }[] = [];
         let txRewardValue = new BigNumber(0);
-        for (const message of correspondingMessages) {
+        for (const message of tx.events) {
           const validator = message.attributes.find(attr => attr.key === "validator")?.value;
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
           if (validator && amount && amount.endsWith(unitCode)) {
@@ -108,16 +150,17 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
         op.extra.validators = rewardShards;
         break;
       }
-      case "delegate": {
+      case "MsgDelegate": {
         op.type = "DELEGATE";
         op.value = new BigNumber(fees);
         const delegateShards: { amount: BigNumber; address: string }[] = [];
         for (const message of correspondingMessages) {
-          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
-          const validator = message.attributes.find(attr => attr.key === "validator")?.value;
-          if (amount && validator && amount.endsWith(unitCode)) {
+          const amount = message.amount;
+          const validator = message["validator_address"];
+          const delegator = message["delegator_address"];
+          if (amount && validator && amount.denom === unitCode && delegator === address) {
             delegateShards.push({
-              amount: new BigNumber(parseAmountStringToNumber(amount, unitCode)),
+              amount: new BigNumber(amount.amount),
               address: validator,
             });
           }
@@ -125,20 +168,18 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
         op.extra.validators = delegateShards;
         break;
       }
-      case "redelegate": {
+      case "MsgBeginRedelegate": {
         op.type = "REDELEGATE";
         op.value = new BigNumber(fees);
         const redelegateShards: { amount: BigNumber; address: string }[] = [];
         for (const message of correspondingMessages) {
-          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
-          const validatorDst = message.attributes.find(attr => attr.key === "destination_validator")
-            ?.value;
-          const validatorSrc = message.attributes.find(attr => attr.key === "source_validator")
-            ?.value;
-          if (amount && validatorDst && validatorSrc && amount.endsWith(unitCode)) {
+          const amount = message["amount"];
+          const validatorDst = message["validator_dst_address"];
+          const validatorSrc = message["validator_src_address"];
+          if (amount && validatorDst && validatorSrc && amount.denom === unitCode) {
             op.extra.sourceValidator = validatorSrc;
             redelegateShards.push({
-              amount: new BigNumber(parseAmountStringToNumber(amount, unitCode)),
+              amount: new BigNumber(amount.amount),
               address: validatorDst,
             });
           }
@@ -146,16 +187,16 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
         op.extra.validators = redelegateShards;
         break;
       }
-      case "unbond": {
+      case "MsgUndelegate": {
         op.type = "UNDELEGATE";
         op.value = new BigNumber(fees);
         const unbondShards: { amount: BigNumber; address: string }[] = [];
         for (const message of correspondingMessages) {
-          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
-          const validator = message.attributes.find(attr => attr.key === "validator")?.value;
-          if (amount && validator && amount.endsWith(unitCode)) {
+          const amount = message["amount"];
+          const validator = message["validator_address"];
+          if (amount && validator && amount.denom === unitCode) {
             unbondShards.push({
-              amount: new BigNumber(parseAmountStringToNumber(amount, unitCode)),
+              amount: new BigNumber(amount.amount),
               address: validator,
             });
           }
@@ -163,10 +204,6 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
         op.extra.validators = unbondShards;
         break;
       }
-    }
-
-    if (op.hasFailed) {
-      op.value = fees;
     }
 
     if (tx.tx.body.memo != null) {
