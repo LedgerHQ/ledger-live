@@ -27,6 +27,7 @@
       "title" : "探索",
       "section" : {
         "recentlyUsed" : "最近使用",
+        "locallyLoaded" : "本地加载的 Live 应用程序",
         "browse" : "浏览"
       },
       "filter" : {
@@ -3967,7 +3968,9 @@
       "region" : "地区",
       "regionDesc" : "选择您所在的地区来更新日期、时间和货币的格式。",
       "stock" : "区域性市场指标",
-      "stockDesc" : "选择西方以蓝色来显示市场增长；或选择东方以红色来显示市场增长。"
+      "stockDesc" : "选择西方以蓝色来显示市场增长；或选择东方以红色来显示市场增长。",
+      "walletSync" : "Wallet Sync",
+      "walletSyncDesc" : "备份您的应用程序数据并同步多个 Ledger Live 实例。"
     },
     "developer" : {
       "search" : "搜索",
@@ -3985,6 +3988,11 @@
       "debugAppsDesc" : "显示并允许打开调试标记的平台应用程序。",
       "debugReactQuery" : "允许调试 ReactQuery",
       "debugReactQueryDesc" : "显示并允许打开调试 ReactQuery 控制台。",
+      "exchangeDeveloperMode" : {
+        "title" : "兑换开发模式",
+        "desc" : "添加兑换提供商的信息",
+        "placeholder" : "CAL 格式的兑换提供商信息"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "允许报告垃圾 NFT（测试版）",
         "debugNFTSpamReportDesc" : "显示一个表单以将某一 NFT 报告为垃圾，或停止将其显示为垃圾",
@@ -4037,6 +4045,17 @@
       "addLocalApp" : "添加一个本地应用程序",
       "addLocalAppDesc" : "浏览本地文件并使用本地清单添加本地应用程序",
       "addLocalAppButton" : "浏览",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "创建本地应用程序",
+          "modify" : "修改本地应用程序"
+        },
+        "addNetwork" : "添加新网络",
+        "removeNetwork" : "移除上次使用的网络",
+        "export" : "导出",
+        "modify" : "修改",
+        "create" : "创建"
+      },
       "runLocalAppDeleteButton" : "删除",
       "runLocalAppOpenButton" : "打开",
       "enableLearnStagingUrl" : "学习页面的模拟环境 URL 网页地址",
@@ -4266,7 +4285,7 @@
     "downloadInProgress" : "正在下载更新...",
     "downloadProgress" : "已完成 {{progress}}%",
     "checking" : "正在检查更新...",
-    "checkSuccess" : "Ledger Live 有新的更新，当您关闭应用程序时会自动安装更新。",
+    "checkSuccess" : "有新的更新，当您关闭应用程序时会自动安装更新并重新启动 Ledger Live",
     "quitAndInstall" : "立即安装并重新启动",
     "updateAvailable" : "Ledger Live 有新版本 {{version}} 可更新",
     "error" : "更新时出错。请重新下载",
@@ -6231,6 +6250,18 @@
       "analytics" : "数据分析",
       "personalizedExpDesc" : "接收符合您偏好的个性化推荐。",
       "analyticsDesc" : "允许进行数据分析，帮助 Ledger 改善用户体验。"
+    }
+  },
+  "walletSync" : {
+    "manage" : "管理",
+    "activate" : {
+      "title" : "激活钱包同步",
+      "description" : "创建 Ledger Live 的安全备份，并在移动设备和桌面设备上同步多个 Ledger Live 实例。",
+      "cta" : "创建备份"
+    },
+    "alreadySync" : {
+      "title" : "已在另一台设备上创建备份？",
+      "cta" : "同步"
     }
   }
 }
