@@ -165,6 +165,7 @@ const extractErrorMessage = (raw: string): string | undefined => {
 export type LiveNetworkRequest<T> = {
   url?: string;
   method?: "GET" | "POST" | "PUT" | "DELETE";
+  headers?: Record<string, string | number | boolean>;
   baseURL?: string;
   params?: unknown;
   data?: T;
@@ -174,6 +175,11 @@ export type LiveNetworkResponse<T> = {
   data: T;
   status: number;
 };
+/**
+ * Network call
+ * @param request
+ * @returns
+ */
 export const newImplementation = async <T = unknown, U = unknown>(
   request: LiveNetworkRequest<U>,
 ): Promise<LiveNetworkResponse<T>> => {
@@ -207,6 +213,12 @@ export const newImplementation = async <T = unknown, U = unknown>(
   return { data, status };
 };
 
+/**
+ * Network call
+ * @deprecated Use new method by updating your import: `@ledgerhq/live-network`
+ * @param arg Axios request type
+ * @returns Axios response type
+ */
 const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
   let promise: AxiosPromise;
 
