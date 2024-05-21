@@ -1,5 +1,5 @@
 import React from "react";
-import { Error } from "../../components/Error";
+//import { Error } from "../../components/Error";
 import { Success } from "../../components/Success";
 import { useTranslation } from "react-i18next";
 
