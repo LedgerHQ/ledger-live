@@ -27,6 +27,7 @@
       "title" : "Discover",
       "section" : {
         "recentlyUsed" : "Usadas recientemente",
+        "locallyLoaded" : "Aplicaciones de Live cargadas localmente",
         "browse" : "Explorar"
       },
       "filter" : {
@@ -3967,7 +3968,9 @@
       "region" : "Región",
       "regionDesc" : "Elige tu región para actualizar el formato de fecha, hora y moneda.",
       "stock" : "Indicador de mercado regional",
-      "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo."
+      "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo.",
+      "walletSync" : "Sincronización de billeteras",
+      "walletSyncDesc" : "Haz una copia de respaldo de tus datos de la aplicación y sincroniza varias instancias de Ledger Live."
     },
     "developer" : {
       "search" : "Buscar",
@@ -3985,6 +3988,11 @@
       "debugAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración.",
       "debugReactQuery" : "Permitir ReactQuery de depuración",
       "debugReactQueryDesc" : "Mostrar y permitir abrir la consola ReactQuery de depuración.",
+      "exchangeDeveloperMode" : {
+        "title" : "Modo de desarrollador del exchange",
+        "desc" : "Añadir información del proveedor del exchange",
+        "placeholder" : "Información del proveedor del exchange en formato CAL"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "Permitir denunciar un NFT como spam (Beta)",
         "debugNFTSpamReportDesc" : "Mostrar un formulario para denunciar un NFT como spam o para impedir que se muestre como spam",
@@ -4037,6 +4045,17 @@
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
       "addLocalAppButton" : "Explorar",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "Crear una aplicación local",
+          "modify" : "Modificar una aplicación local"
+        },
+        "addNetwork" : "Agregar una nueva red",
+        "removeNetwork" : "Eliminar la última red",
+        "export" : "Exportar",
+        "modify" : "Modificar",
+        "create" : "Crear"
+      },
       "runLocalAppDeleteButton" : "Borrar",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "URL de ensayo de la página Learn",
@@ -4266,7 +4285,7 @@
     "downloadInProgress" : "Descargando actualización...",
     "downloadProgress" : "{{progress}}% completado",
     "checking" : "Comprobando actualización...",
-    "checkSuccess" : "Nueva actualización de Ledger Live disponible, se instalará automáticamente cuando cierres la aplicación.",
+    "checkSuccess" : "Nueva actualización disponible. Cuando cierres la aplicación, la actualización se instalará y Ledger Live se reiniciará automáticamente.",
     "quitAndInstall" : "Instalar ahora y reiniciar",
     "updateAvailable" : "Se encuentra disponible la actualización a la versión {{version}} de Ledger Live",
     "error" : "Error durante la actualización. Descárgala de nuevo",
@@ -6231,6 +6250,18 @@
       "analytics" : "Análisis",
       "personalizedExpDesc" : "Recibe recomendaciones personalizadas adaptadas a tus preferencias.",
       "analyticsDesc" : "Habilita los análisis para ayudar a Ledger a mejorar la experiencia de usuario."
+    }
+  },
+  "walletSync" : {
+    "manage" : "Administrar",
+    "activate" : {
+      "title" : "Activar sincronización de billeteras",
+      "description" : "Crea una copia de respaldo protegida de tu Ledger Live y sincroniza varias instancias de Ledger Live, tanto en Mobile como en Desktop.",
+      "cta" : "Crear una copia de respaldo"
+    },
+    "alreadySync" : {
+      "title" : "¿Ya has creado una copia de respaldo en otro dispositivo?",
+      "cta" : "Sincronizar"
     }
   }
 }
