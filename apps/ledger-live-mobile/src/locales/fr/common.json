@@ -1166,15 +1166,15 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "Prenez le contrôle de votre argent.",
+      "title" : "Prenez le contrôle de votre argent",
       "desc" : "Profitez de la liberté de posséder vos cryptos."
     },
     "1" : {
       "title" : "Accédez à la DeFi et aux NFT",
-      "desc" : "Interagissez en toute sécurité avec des applications DeFi de confiance directement depuis Ledger Live."
+      "desc" : "Utilisez en toute sécurité des applications DeFi de confiance directement depuis Ledger Live."
     },
     "2" : {
-      "title" : "Vos accès au Web3",
+      "title" : "Votre porte d’entrée vers le Web3",
       "desc" : "Achetez, vendez et échangez les cryptos leaders, via nos prestataires tiers et en toute sécurité avec votre wallet Ledger."
     },
     "3" : {
@@ -1309,11 +1309,11 @@
       },
       "setupLedger" : {
         "title" : "Configurer votre wallet",
-        "subtitle" : "Si votre Ledger est nouveau ou a été réinitialisé."
+        "subtitle" : "Si votre appareil Ledger est nouveau ou a été réinitialisé."
       },
       "accessWallet" : {
         "title" : "Accéder à votre wallet",
-        "subtitle" : "Si votre Ledger est déjà configuré."
+        "subtitle" : "Si votre appareil Ledger est déjà configuré."
       },
       "buyNano" : {
         "title" : "Acheter un Ledger Nano X",
@@ -1331,7 +1331,7 @@
     "welcomeBackStep" : {
       "title" : "Bienvenue",
       "subtitle" : "Choisissez comment accéder à votre wallet :",
-      "connect" : "Connecter votre Ledger",
+      "connect" : "Connecter votre appareil Ledger",
       "sync" : "Synchroniser avec l’ordinateur"
     },
     "discoverLive" : {
@@ -3131,9 +3131,6 @@
         "whatIsSwap" : "Qu’est-ce que le Swap ?",
         "disclaimer" : "Échangez des cryptos directement via votre wallet Ledger. Ce service n’est pas disponible dans certains pays, y compris aux États-Unis."
       },
-      "main" : {
-        "header" : "Swap"
-      },
       "notAvailable" : {
         "title" : "Service temporairement indisponible ou non disponible dans votre région"
       },
@@ -4078,10 +4075,10 @@
       "showLessCTA" : "Afficher moins",
       "otgBanner" : "Pour utiliser un Ledger Nano S ou un Ledger Nano S Plus, connectez-les avec un câble USB.",
       "connectExistingLedger" : "Connecter un Ledger existant",
-      "connectExistingLedgerDescription" : "Si votre Ledger est déjà configuré.",
+      "connectExistingLedgerDescription" : "Si votre appareil Ledger est déjà configuré.",
       "setUpNewLedger" : "Configurer un nouveau wallet",
       "setUpNewLedgerDescription" : "Si votre Ledger n’est pas encore configuré.",
-      "buyDeviceCTA" : "<0>Besoin d’un nouveau Ledger ? </0><1>Acheter maintenant</1>",
+      "buyDeviceCTA" : "<0>Besoin d’un nouveau wallet ? </0><1>Achetez-le ici</1>",
       "item" : {
         "usb" : "Connecté via USB",
         "available" : "Disponible Appuyez pour vous connecter",
@@ -6134,6 +6131,7 @@
       "subtitle" : "Parcourez l’écosystème Web3 intégré à Ledger.",
       "section" : {
         "recentlyUsed" : "Récemment utilisé",
+        "locallyLoaded" : "Chargées localement",
         "categories" : "Catégories",
         "clearAll" : "Tout effacer"
       },
@@ -6303,7 +6301,7 @@
     "designedForStax" : {
       "title" : "<0>Conçu pour le</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous définissez ce NFT comme fond d’écran.",
+        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous définissez ce NFT comme fond d’écran.",
         "cta" : "Compris"
       }
     },
