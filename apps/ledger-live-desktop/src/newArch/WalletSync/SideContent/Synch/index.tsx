@@ -5,7 +5,7 @@ import { setFlow } from "~/renderer/actions/walletSync";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { Flow } from "~/renderer/reducers/walletSync";
 
-export const Synch = () => {
+const Synch = () => {
   const dispatch = useDispatch();
 
   const goToActivation = () => {
@@ -31,3 +31,5 @@ export const Synch = () => {
     </Box>
   );
 };
+
+export default Synch;
