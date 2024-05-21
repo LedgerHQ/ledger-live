@@ -2,11 +2,7 @@ import { Box, Flex, Text, Icons } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
-import {
-  Option,
-  OptionContainer,
-  OptionProps,
-} from "~/renderer/screens/settings/sections/General/WalletSync/SideContent/Manage/Option";
+import { Option, OptionContainer, OptionProps } from "LLD/WalletSync/SideContent/Manage/Option";
 
 const Separator = () => {
   const { colors } = useTheme();
