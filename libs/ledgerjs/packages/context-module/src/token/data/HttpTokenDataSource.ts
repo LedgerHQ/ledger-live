@@ -1,5 +1,6 @@
 import axios from "axios";
 import { GetTokenInfosParams, TokenDataSource } from "./TokenDataSource";
+import PACKAGE from "../../../package.json";
 
 export class HttpTokenDataSource implements TokenDataSource {
   public async getTokenInfosPayload({
@@ -10,6 +11,7 @@ export class HttpTokenDataSource implements TokenDataSource {
       method: "GET",
       url: `https://crypto-assets-service.api.ledger.com/v1/tokens`,
       params: { contract_address: address, chain_id: chainId, output: "live_signature" },
+      headers: { "X-Ledger-Client-Version": `context-module/${PACKAGE.version}` },
     });
 
     if (!response.data?.[0]?.live_signature) {
