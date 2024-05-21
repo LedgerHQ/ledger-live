@@ -6315,6 +6315,17 @@
       "title": "Something went wrong",
       "description": "Please try again later.",
       "cta": "Try again"
+    },
+    "success": {
+      "backup": {
+        "title": "Backup successful",
+        "desc": "Your Ledger has securely backed up and encrypted your data.",
+        "synchAnother": "Sync with another Ledger Live app"
+      },
+      "synch": {
+        "title": "Synchronization active",
+        "desc": "Changes will now reflect automatically on both apps."
+      }
     }
   }
 }
