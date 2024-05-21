@@ -27,6 +27,7 @@
       "title" : "アプリ一覧",
       "section" : {
         "recentlyUsed" : "最近使用した項目",
+        "locallyLoaded" : "ローカルに読み込まれたライブアプリ",
         "browse" : "チェックする"
       },
       "filter" : {
@@ -1188,7 +1189,7 @@
         "continueOnDevice" : "{{productName}}にPINを設定"
       },
       "seedContent" : {
-        "title" : "秘密のリカバリーフレーズ",
+        "title" : "シークレットリカバリーフレーズ",
         "titleCompleted" : "シークレットリカバリーフレーズ確認済み",
         "recoverSeed" : "Placeholder：Recover",
         "restoreSeed" : "資産のセキュリティを最大限に高めるため、必ずLedgerデバイスで生成したシークレットリカバリーフレーズを使用してください。\n\nシークレットリカバリーフレーズを持っていませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
@@ -1203,7 +1204,7 @@
         "newSeedDescription5" : "第三者と共有しないでください。紛失しないでください。",
         "newSeedContinueOnDevice" : "{{productName}}で生成されたシークレットリカバリーフレーズを表示して書き留める",
         "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
-        "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
+        "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズを使用して復元する",
         "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
         "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
         "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をしている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップを復元します。",
@@ -3967,7 +3968,9 @@
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "stock" : "マーケットインジケーターの色分け",
-      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。"
+      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
+      "walletSync" : "ウォレット同期",
+      "walletSyncDesc" : "アプリデータをバックアップし、複数のLedger Liveインスタンスを同期します。"
     },
     "developer" : {
       "search" : "検索",
@@ -3985,6 +3988,11 @@
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "debugReactQuery" : "ReactQueryのデバッグを許可する",
       "debugReactQueryDesc" : "ReactQueryデバッグコンソールを表示し、開くことを許可します。",
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange開発者モード",
+        "desc" : "Exchangeプロバイダーの情報を追加する",
+        "placeholder" : "CAL形式のExchangeプロバイダー情報"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "NFTスパム報告を許可する（ベータ版）",
         "debugNFTSpamReportDesc" : "NFTをスパムとして報告する、またはスパムとして表示を停止するためのフォームを表示します",
@@ -4037,6 +4045,17 @@
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
       "addLocalAppButton" : "画面をチェックする",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "ローカルアプリを作成",
+          "modify" : "ローカルアプリを変更"
+        },
+        "addNetwork" : "新しいネットワークを追加",
+        "removeNetwork" : "最後のネットワークを削除",
+        "export" : "エクスポート",
+        "modify" : "変更",
+        "create" : "作成"
+      },
       "runLocalAppDeleteButton" : "削除",
       "runLocalAppOpenButton" : "開く",
       "enableLearnStagingUrl" : "学習ページのステージングURL",
@@ -4266,7 +4285,7 @@
     "downloadInProgress" : "アップデートをダウンロード中...",
     "downloadProgress" : "{{progress}}%完了",
     "checking" : "アップデートの確認中...",
-    "checkSuccess" : "新しいLedger Liveアップデートをご利用いただけます。アプリを終了すると自動的にインストールされます。",
+    "checkSuccess" : "新しいアップデートをご利用いただけます。アプリを閉じると、Ledger Liveが自動的にインストールされ、再起動されます。",
     "quitAndInstall" : "今すぐインストールして再起動する",
     "updateAvailable" : "Ledger Liveバージョン {{version}} へのアップデートが利用可能です。",
     "error" : "更新中にエラーが発生再度ダウンロードしてください",
@@ -4826,7 +4845,7 @@
         "1" : {
           "text" : "Ledgerユーザーの暗号資産が保管される場所は？",
           "answers" : {
-            "1" : "Ledger Nanoについて",
+            "1" : "Ledger Nano本体",
             "2" : "ブロックチェーン"
           },
           "results" : {
@@ -6155,7 +6174,7 @@
   },
   "discoverProtect" : {
     "title" : "お客様のIDで\n鍵を復元",
-    "description" : "秘密のリカバリーフレーズは、安全に保管されなければなりません。\nLedger Nano X限定のソフトローンチ。2023年6月30日まで登録無料。",
+    "description" : "シークレットリカバリーフレーズは、安全に保管されなければなりません。\nLedger Nano X限定のソフトローンチ。2023年6月30日まで登録無料。",
     "cta" : "サブスクリプション契約のメリットとは？",
     "downloadLLM" : "Ledger Live Mobileアプリを使用して<purple>Ledger Recover</purple>のサブスクリプション契約をする"
   },
@@ -6231,6 +6250,18 @@
       "analytics" : "アナリティクス",
       "personalizedExpDesc" : "自分好みにパーソナライズされたおすすめ情報を受け取りましょう。",
       "analyticsDesc" : "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する。"
+    }
+  },
+  "walletSync" : {
+    "manage" : "管理",
+    "activate" : {
+      "title" : "ウォレット同期の有効化",
+      "description" : "Ledger Liveの安全なバックアップを作成し、モバイルとデスクトップの両方でLedger Liveの複数のインスタンスを同期します。",
+      "cta" : "バックアップを作成する"
+    },
+    "alreadySync" : {
+      "title" : "すでに別のデバイスでバックアップを作成済みですか？",
+      "cta" : "同期する"
     }
   }
 }
