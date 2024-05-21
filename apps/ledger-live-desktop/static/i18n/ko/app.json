@@ -27,6 +27,7 @@
       "title" : "탐색",
       "section" : {
         "recentlyUsed" : "최근 사용된 항목",
+        "locallyLoaded" : "로컬에서 로드된 라이브 앱",
         "browse" : "둘러보기"
       },
       "filter" : {
@@ -3967,7 +3968,9 @@
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "stock" : "지역 시장 지표",
-      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다."
+      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
+      "walletSync" : "지갑 동기화",
+      "walletSyncDesc" : "앱 데이터를 백업하고 복수의 Ledger Live 인스턴스를 동기화하세요."
     },
     "developer" : {
       "search" : "검색",
@@ -3985,6 +3988,11 @@
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "debugReactQuery" : "디버그 ReactQuery 허용",
       "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
+      "exchangeDeveloperMode" : {
+        "title" : "거래소 개발 모드",
+        "desc" : "거래소 공급자 정보 추가",
+        "placeholder" : "CAL 형식의 거래소 공급자 정보"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "NFT 스팸 신고 허용(베타)",
         "debugNFTSpamReportDesc" : "NFT를 스팸 신고 양식 또는 스팸 표시 중단 양식(스팸으로 표시되지 않게)을 표시하세요.",
@@ -4037,6 +4045,17 @@
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "로컬 앱 생성하기",
+          "modify" : "로컬 앱 수정하기"
+        },
+        "addNetwork" : "신규 네트워크 추가하기",
+        "removeNetwork" : "마지막 네트워크 삭제하기",
+        "export" : "내보내기",
+        "modify" : "수정하기",
+        "create" : "생성하기"
+      },
       "runLocalAppDeleteButton" : "삭제",
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
@@ -4266,7 +4285,7 @@
     "downloadInProgress" : "업데이트 다운로드 중...",
     "downloadProgress" : "{{progress}}% 완료됨",
     "checking" : "업데이트 확인 중...",
-    "checkSuccess" : "새로운 Ledger Live 업데이트가 있습니다. 앱을 닫으면 자동으로 설치됩니다.",
+    "checkSuccess" : "새로운 업데이트가 있습니다. 앱을 닫으면 Ledger Live가 자동으로 설치되고 다시 시작됩니다",
     "quitAndInstall" : "지금 설치하고 다시 시작하기",
     "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
@@ -6231,6 +6250,18 @@
       "analytics" : "애널리틱스",
       "personalizedExpDesc" : "내가 설정해 둔 환경 설정에 맞는 맞춤형 추천을 받아보세요.",
       "analyticsDesc" : "Ledger가 사용자 경험을 개선할 수 있도록 애널리틱스 기능을 활성화하세요."
+    }
+  },
+  "walletSync" : {
+    "manage" : "관리",
+    "activate" : {
+      "title" : "지갑 동기화 활성화",
+      "description" : "Ledger Live의 안전한 백업을 생성하고 모바일과 데스크탑 모두에서 Ledger Live의 여러 인스턴스를 동기화하세요.",
+      "cta" : "백업 생성"
+    },
+    "alreadySync" : {
+      "title" : "이미 다른 장치에 백업이 생성되었나요?",
+      "cta" : "동기화"
     }
   }
 }
