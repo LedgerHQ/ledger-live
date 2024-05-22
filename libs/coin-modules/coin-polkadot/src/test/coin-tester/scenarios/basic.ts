@@ -64,30 +64,33 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     ]);
     console.log(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
 
-    const keyring = new Keyring();
+    const keyring = new Keyring({ type: "sr25519" });
+
+    const DEV_SEED = "bottom drive obey lake curtain smoke basket hold race lonely fit walk";
+    const alice = keyring.addFromUri(`//Alice"`);
+    const bob = keyring.addFromUri(`${DEV_SEED}//Bob"`);
 
     const scenarioAccountPair = keyring.addFromUri(process.env.SEED!, {
       name: "basicScenarioPair",
       address,
     });
 
-    const alice = keyring.addFromUri("//Alice");
-    const bob = keyring.addFromUri("//Bob");
+    const { data: balance } = (await api.query.system.account(alice.address)) as any;
 
-    console.log(alice.address);
+    console.log(alice.address, balance.toString());
     console.log(bob.address);
 
     return {
       accountBridge,
       currencyBridge,
-      address: scenarioAccountPair.address,
+      address,
       account,
       onSignerConfirmation,
     };
   },
   getTransactions,
   teardown: async () => {
-    await wsProvider.disconnect();
-    await Promise.all([killSpeculos(), killZombienet()]);
+    // await wsProvider.disconnect();
+    // await Promise.all([killSpeculos(), killZombienet()]);
   },
 };
