@@ -139,7 +139,9 @@
     "@ledgerhq/live-wallet": "0.1.0",
     "@ledgerhq/coin-xrp": "0.1.0",
     "@ledgerhq/coin-tezos": "0.3.12",
-    "@ledgerhq/context-module": "0.0.1"
+    "@ledgerhq/context-module": "0.0.1",
+    "@ledgerhq/hw-trustchain": "0.1.0",
+    "@ledgerhq/trustchain": "0.1.0"
   },
   "changesets": [
     "beige-coins-wave",
@@ -147,6 +149,7 @@
     "blue-vans-try",
     "breezy-coins-talk",
     "cold-bugs-breathe",
+    "cool-pots-film",
     "cyan-points-obey",
     "dry-kangaroos-brush",
     "eight-cameras-tease",
@@ -168,6 +171,7 @@
     "hot-pumas-obey",
     "hot-zebras-ring",
     "itchy-cows-march",
+    "kind-bikes-pretend",
     "kind-dryers-build",
     "late-vans-lick",
     "loud-jokes-rest",
@@ -182,6 +186,7 @@
     "nice-guests-wave",
     "nice-trains-dream",
     "odd-pumas-grab",
+    "old-carrots-complain",
     "old-snakes-hide",
     "olive-ties-press",
     "perfect-fishes-develop",
@@ -193,6 +198,7 @@
     "rude-tables-share",
     "selfish-keys-juggle",
     "sharp-clocks-fetch",
+    "shiny-baboons-jog",
     "shy-poets-eat",
     "silly-geese-hide",
     "smart-deers-travel",

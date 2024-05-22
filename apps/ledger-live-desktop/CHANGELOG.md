@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.81.0-nightly.4
+
+### Minor Changes
+
+- [#6899](https://github.com/LedgerHQ/ledger-live/pull/6899) [`19a4509`](https://github.com/LedgerHQ/ledger-live/commit/19a450995a200aa326fe25a2c84ad22b23c00718) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix border-radius in our react DS for the Button
+
+### Patch Changes
+
+- [#6853](https://github.com/LedgerHQ/ledger-live/pull/6853) [`2fc0865`](https://github.com/LedgerHQ/ledger-live/commit/2fc08657eb8acc4a42b21e4266a0bac86dec4c79) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Replace static provider info to API
+
+- [#6825](https://github.com/LedgerHQ/ledger-live/pull/6825) [`d9f97d3`](https://github.com/LedgerHQ/ledger-live/commit/d9f97d386c9207dc635fb9a8b60a6232406ffc07) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Send swap data as hash params
+
+- Updated dependencies [[`2fc0865`](https://github.com/LedgerHQ/ledger-live/commit/2fc08657eb8acc4a42b21e4266a0bac86dec4c79), [`19a4509`](https://github.com/LedgerHQ/ledger-live/commit/19a450995a200aa326fe25a2c84ad22b23c00718), [`7bbad43`](https://github.com/LedgerHQ/ledger-live/commit/7bbad43beab706a98b03ff9147cc67f289220c44)]:
+  - @ledgerhq/live-common@34.3.0-nightly.4
+  - @ledgerhq/react-ui@0.15.0-nightly.1
+
 ## 2.81.0-nightly.3
 
 ### Minor Changes

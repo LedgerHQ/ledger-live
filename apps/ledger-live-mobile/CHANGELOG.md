@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.45.0-nightly.4
+
+### Patch Changes
+
+- [#6853](https://github.com/LedgerHQ/ledger-live/pull/6853) [`2fc0865`](https://github.com/LedgerHQ/ledger-live/commit/2fc08657eb8acc4a42b21e4266a0bac86dec4c79) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Replace static provider info to API
+
+- [#6887](https://github.com/LedgerHQ/ledger-live/pull/6887) [`7bbad43`](https://github.com/LedgerHQ/ledger-live/commit/7bbad43beab706a98b03ff9147cc67f289220c44) Thanks [@lvndry](https://github.com/lvndry)! - try/catch coin config + fix configuration name typo
+
+- Updated dependencies [[`2fc0865`](https://github.com/LedgerHQ/ledger-live/commit/2fc08657eb8acc4a42b21e4266a0bac86dec4c79), [`7bbad43`](https://github.com/LedgerHQ/ledger-live/commit/7bbad43beab706a98b03ff9147cc67f289220c44)]:
+  - @ledgerhq/live-common@34.3.0-nightly.4
+
 ## 3.45.0-nightly.3
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.15.0-nightly.1
+
+### Minor Changes
+
+- [#6899](https://github.com/LedgerHQ/ledger-live/pull/6899) [`19a4509`](https://github.com/LedgerHQ/ledger-live/commit/19a450995a200aa326fe25a2c84ad22b23c00718) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix border-radius in our react DS for the Button
+
 ## 0.15.0-nightly.0
 
 ### Minor Changes
