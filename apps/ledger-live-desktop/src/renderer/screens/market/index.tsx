@@ -24,8 +24,6 @@ const SearchContainer = styled(Flex).attrs({ flexShrink: "1" })`
 `;
 
 export const Button = styled(BaseButton)<{ big?: boolean }>`
-  border-radius: 44px;
-
   ${p =>
     p.Icon
       ? `

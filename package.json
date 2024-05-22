@@ -86,6 +86,8 @@
     "config": "pnpm --filter live-config",
     "utils": "pnpm --filter live-utils",
     "hooks": "pnpm --filter live-hooks",
+    "trustchain": "pnpm --filter trustchain",
+    "hw-trustchain": "pnpm --filter hw-trustchain",
     "countervalues": "pnpm --filter live-countervalues",
     "countervalues-react": "pnpm --filter live-countervalues-react",
     "nft": "pnpm --filter live-nft",

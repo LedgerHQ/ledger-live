@@ -8,10 +8,10 @@ import { SwapGenericAPIError } from "../../../../errors";
 import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { fetchRatesMock } from "./__mocks__/fetchRates.mocks";
-import { getSwapAPIBaseURL } from "../..";
+import { getAvailableProviders, getSwapAPIBaseURL } from "../..";
 
 type Props = {
-  providers: Array<string>;
+  removeProviders: Array<string>;
   currencyFrom?: string;
   toCurrencyId?: string;
   fromCurrencyAmount: string;
@@ -76,7 +76,7 @@ export const throwRateError = (response: ExchangeRate[]) => {
 };
 
 export async function fetchRates({
-  providers,
+  removeProviders,
   currencyFrom,
   toCurrencyId,
   unitTo,
@@ -90,11 +90,15 @@ export async function fetchRates({
   }
 
   const url = new URL(`${getSwapAPIBaseURL()}/rate`);
+  const providers = await getAvailableProviders();
+  removeProviders.forEach(provider => {
+    providers.splice(providers.indexOf(provider), 1);
+  });
   const requestBody = {
     from: currencyFrom,
     to: toCurrencyId,
     amountFrom: fromCurrencyAmount, // not sure why amountFrom thinks it can be undefined here
-    providers,
+    providers: providers,
   };
 
   try {

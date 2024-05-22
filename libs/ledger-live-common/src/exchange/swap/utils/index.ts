@@ -1,7 +1,7 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
-import { getSwapProvider } from "../../providers";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
+import { getProvidersAdditionalData } from "../../providers/swap";
 
 export const FILTER = {
   centralised: "centralised",
@@ -62,7 +62,7 @@ export const getAvailableAccountsById = (
     .sort((a, b) => b.balance.minus(a.balance).toNumber());
 
 export const isRegistrationRequired = (provider: string): boolean => {
-  const { needsBearerToken, needsKYC } = getSwapProvider(provider);
+  const { needsBearerToken, needsKYC } = getProvidersAdditionalData(provider);
   return needsBearerToken || needsKYC;
 };
 
