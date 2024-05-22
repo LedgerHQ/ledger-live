@@ -1,14 +1,14 @@
 import axios from "axios";
 import { HttpExternalPluginDataSource } from "./HttpExternalPluginDataSource";
-import { Abis, B2c, B2cSignatures, DappDTO } from "./DappDTO";
+import { Abis, B2c, B2cSignatures, DAppDto } from "./DAppDto";
 import ABI from "../__tests__/abi.json";
 import { ExternalPluginDataSource } from "./ExternalPluginDataSource";
 import PACKAGE from "../../../package.json";
 
 jest.mock("axios");
 
-const axiosResponseBuilder = (dappDTO: Partial<DappDTO>[]) => {
-  return { data: dappDTO };
+const axiosResponseBuilder = (dto: Partial<DAppDto>[]) => {
+  return { data: dto };
 };
 
 describe("HttpExternalPuginDataSource", () => {
