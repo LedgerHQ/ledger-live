@@ -112,13 +112,13 @@ const swapProviders: Record<string, ProviderConfig & AdditionalProviderConfig> =
 export const getSwapProvider = async (
   providerName: string,
 ): Promise<ProviderConfig & AdditionalProviderConfig> => {
-  const res = await fetchAndMergeProviderData()[providerName.toLowerCase()];
+  const res = await fetchAndMergeProviderData();
 
-  if (!res) {
+  if (!res[providerName.toLowerCase()]) {
     throw new Error(`Unknown partner ${providerName}`);
   }
 
-  return res;
+  return res[providerName.toLowerCase()];
 };
 
 export const getProvidersData = async () => {
