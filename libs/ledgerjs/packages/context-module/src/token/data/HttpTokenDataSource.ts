@@ -15,10 +15,6 @@ export class HttpTokenDataSource implements TokenDataSource {
       headers: { "X-Ledger-Client-Version": `context-module/${PACKAGE.version}` },
     });
 
-    if (!response.data?.[0]?.live_signature) {
-      return;
-    }
-
-    return response.data[0].live_signature;
+    return response.data?.[0]?.live_signature;
   }
 }
