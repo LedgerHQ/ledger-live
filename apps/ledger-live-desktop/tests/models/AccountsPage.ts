@@ -16,6 +16,7 @@ export class AccountsPage {
   readonly contextMenuHideStar: Locator;
   readonly settingsDeleteButton: Locator;
   readonly settingsConfirmButton: Locator;
+  readonly accountListNumber: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -34,9 +35,9 @@ export class AccountsPage {
     this.contextMenuEdit = page.locator("data-test-id=accounts-context-menu-edit");
     this.contextMenuHideToken = page.locator("data-test-id=accounts-context-menu-hideToken");
     this.contextMenuHideStar = page.locator("data-test-id=accounts-context-menu-star");
-
     this.settingsDeleteButton = page.locator("data-test-id=account-settings-delete-button");
     this.settingsConfirmButton = page.locator("data-test-id=modal-confirm-button");
+    this.accountListNumber = page.locator(`[data-test-id^="account-component-"]`);
   }
 
   async openAddAccountModal() {
@@ -59,5 +60,15 @@ export class AccountsPage {
 
   async countAccounts(): Promise<number> {
     return await this.page.locator(".accounts-account-row-item-content").count();
+  }
+
+  async getAccountsName() {
+    const accountElements = await this.accountListNumber.all();
+    const accountNames = [];
+    for (const element of accountElements) {
+      const accountName = await element.getAttribute("data-test-id");
+      accountNames.push(accountName);
+    }
+    return accountNames;
   }
 }
