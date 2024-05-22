@@ -10,6 +10,7 @@ import { makeAccount } from "../../fixtures";
 import { killZombienet, spawnZombienet } from "../zombienet";
 import { defaultNanoApp } from "../scenarios.test";
 import BigNumber from "bignumber.js";
+import { cryptoWaitReady, decodeAddress, encodeAddress } from "@polkadot/util-crypto";
 
 const polkadot = getCryptoCurrencyById("polkadot");
 
@@ -53,6 +54,8 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
 
     const account = makeAccount(address, polkadot);
 
+    await cryptoWaitReady();
+
     await wsProvider.connect();
     const api = await ApiPromise.create({ provider: wsProvider });
 
@@ -66,31 +69,38 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
 
     const keyring = new Keyring({ type: "sr25519" });
 
-    const DEV_SEED = "bottom drive obey lake curtain smoke basket hold race lonely fit walk";
-    const alice = keyring.addFromUri(`//Alice"`);
-    const bob = keyring.addFromUri(`${DEV_SEED}//Bob"`);
+    // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
+    const alice = keyring.createFromUri("//Alice");
 
     const scenarioAccountPair = keyring.addFromUri(process.env.SEED!, {
       name: "basicScenarioPair",
       address,
     });
 
-    const { data: balance } = (await api.query.system.account(alice.address)) as any;
+    const unsub = await api.tx.balances
+      .transfer(scenarioAccountPair.address, 5000)
+      .signAndSend(alice, result => {
+        console.log(`Current status is ${result.status}`);
 
-    console.log(alice.address, balance.toString());
-    console.log(bob.address);
+        if (result.status.isInBlock) {
+          console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+        } else if (result.status.isFinalized) {
+          console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+          unsub();
+        }
+      });
 
     return {
       accountBridge,
       currencyBridge,
-      address,
+      address: scenarioAccountPair.address,
       account,
       onSignerConfirmation,
     };
   },
   getTransactions,
   teardown: async () => {
-    // await wsProvider.disconnect();
-    // await Promise.all([killSpeculos(), killZombienet()]);
+    await wsProvider.disconnect();
+    await Promise.all([killSpeculos(), killZombienet()]);
   },
 };
