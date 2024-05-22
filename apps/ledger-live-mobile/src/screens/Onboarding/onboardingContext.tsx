@@ -142,7 +142,7 @@ export function useNavigationInterceptor() {
   const onboardingContext = useContext(OnboardingContext);
   const isFocused = useIsFocused();
   const { name: routeName } = useRoute();
-  const navigation = useNavigation();
+  const navigation = useNavigation() as NavigationProp<{ [key: string]: unknown }>;
 
   function next() {
     onboardingContext.nextWithNavigation(navigation, routeName);

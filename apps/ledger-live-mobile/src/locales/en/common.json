@@ -3131,9 +3131,6 @@
         "whatIsSwap": "What is Swap?",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
       },
-      "main": {
-        "header": "Swap"
-      },
       "notAvailable": {
         "title": "Service temporarily unavailable, or not available in your country"
       },

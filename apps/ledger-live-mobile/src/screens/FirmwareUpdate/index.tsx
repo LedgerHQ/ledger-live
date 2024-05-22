@@ -309,9 +309,9 @@ export const FirmwareUpdate = ({
             !restoreAppsState.listedApps
               ? 0
               : restoreAppsState.installQueue !== undefined &&
-                restoreAppsState.installQueue.length > 0
-              ? noOfAppsToReinstall - (restoreAppsState.installQueue.length - 1)
-              : noOfAppsToReinstall
+                  restoreAppsState.installQueue.length > 0
+                ? noOfAppsToReinstall - (restoreAppsState.installQueue.length - 1)
+                : noOfAppsToReinstall
           }/${noOfAppsToReinstall}` +
           (restoreAppsState.installQueue !== undefined && restoreAppsState.installQueue.length > 0
             ? ` - ${restoreAppsState.installQueue[0]}`

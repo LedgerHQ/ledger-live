@@ -77,8 +77,8 @@ export const counterValueFormatter = ({
   const formatter = currency
     ? formatters[locale][currency]
     : ticker
-    ? new Intl.NumberFormat(locale)
-    : undefined;
+      ? new Intl.NumberFormat(locale)
+      : undefined;
 
   if (shorten && t && formatter) {
     const sign = value > 0 ? "" : "-";

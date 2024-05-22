@@ -211,8 +211,8 @@ export const DeviceActionError = ({
         contextSpecificErrorDescription !== contextSpecificErrorDescriptionId
           ? contextSpecificErrorDescription
           : genericErrorDescription !== genericErrorDescriptionId
-          ? genericErrorDescription
-          : null,
+            ? genericErrorDescription
+            : null,
     };
   }, [translationContext, device.modelId, errorName, t]);
 

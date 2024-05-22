@@ -36,14 +36,14 @@ const AmountButton = styled.button.attrs(() => ({
     p.error
       ? p.theme.colors.lightRed
       : p.active
-      ? p.theme.colors.palette.primary.main
-      : p.theme.colors.palette.action.hover};
+        ? p.theme.colors.palette.primary.main
+        : p.theme.colors.palette.action.hover};
   color: ${p =>
     p.error
       ? p.theme.colors.alertRed
       : p.active
-      ? p.theme.colors.palette.primary.contrastText
-      : p.theme.colors.palette.primary.main}!important;
+        ? p.theme.colors.palette.primary.contrastText
+        : p.theme.colors.palette.primary.main}!important;
   border: none;
   border-radius: 4px;
   padding: 0px ${p => p.theme.space[2]}px;

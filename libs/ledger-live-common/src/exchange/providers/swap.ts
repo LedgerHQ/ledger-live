@@ -8,7 +8,37 @@ export type SwapProviderConfig = {
 
 type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
 type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
+type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & { version?: number };
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
+
+const swapAdditionData: Record<string, AdditionalProviderConfig> = {
+  changelly: {
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+  },
+  cic: {
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+  },
+  moonpay: {
+    needsKYC: true,
+    needsBearerToken: false,
+    type: "CEX",
+    version: 2,
+  },
+  oneinch: {
+    type: "DEX",
+    needsKYC: false,
+    needsBearerToken: false,
+  },
+  paraswap: {
+    type: "DEX",
+    needsKYC: false,
+    needsBearerToken: false,
+  },
+};
 
 const swapProviders: Record<string, ProviderConfig> = {
   changelly: {
@@ -75,8 +105,54 @@ const swapProviders: Record<string, ProviderConfig> = {
   },
 };
 
-export const getSwapProvider = (providerName: string): ProviderConfig => {
-  const res = swapProviders[providerName.toLowerCase()];
+export const getSwapProvider = async (providerName: string): Promise<ProviderConfig> => {
+  const res = await getProvidersData();
+
+  if (!res[providerName.toLowerCase()]) {
+    throw new Error(`Unknown partner ${providerName}`);
+  }
+
+  return res[providerName.toLowerCase()];
+};
+
+function transformData(inputArray) {
+  const transformedObject = {};
+
+  inputArray.forEach(item => {
+    const key = item.name.toLowerCase();
+    transformedObject[key] = {
+      name: item.name,
+      publicKey: {
+        curve: item.public_key_curve,
+        data: Buffer.from(item.public_key, "hex"),
+      },
+      signature: Buffer.from(item.signature, "hex"),
+      ...(swapProviders[key] && {
+        needsKYC: swapProviders[key].needsKYC,
+        needsBearerToken: swapProviders[key].needsBearerToken,
+        type: swapProviders[key].type,
+      }),
+    };
+  });
+
+  return transformedObject;
+}
+
+export const getProvidersData = async () => {
+  try {
+    const providersData = await (
+      await fetch(
+        "https://crypto-assets-service.api.aws.prd.ldg-tech.com/v1/partners?output=name,payload_signature_computed_format,signature,public_key,public_key_curve",
+      )
+    ).json();
+    return transformData(providersData);
+  } catch {
+    return swapProviders;
+  }
+};
+
+export const getProvidersAdditionalData = (providerName: string): AdditionalProviderConfig => {
+  const res = swapAdditionData[providerName.toLowerCase()];
 
   if (!res) {
     throw new Error(`Unknown partner ${providerName}`);

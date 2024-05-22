@@ -21,7 +21,7 @@ import { mustUpgrade, shouldUpgrade } from "../apps";
 
 export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
 
-let idCounter = getEnv("SPECULOS_PID_OFFSET");
+let idCounter: number;
 const isSpeculosWebsocket = getEnv("SPECULOS_USE_WEBSOCKET");
 
 const data = {};
@@ -111,8 +111,10 @@ export async function createSpeculosDevice(
   transport: SpeculosTransport;
   id: string;
   appPath: string;
+  ports: ReturnType<typeof getPorts>;
 }> {
   const { model, firmware, appName, appVersion, seed, coinapps, dependency } = arg;
+  idCounter = idCounter ?? getEnv("SPECULOS_PID_OFFSET");
   const speculosID = `speculosID-${++idCounter}`;
   const ports = getPorts(idCounter, isSpeculosWebsocket);
 
@@ -143,7 +145,7 @@ export async function createSpeculosDevice(
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
     `${speculosID}`,
-    "ghcr.io/ledgerhq/speculos:sha-e262a0c",
+    process.env.SPECULOS_IMAGE_TAG ?? "ghcr.io/ledgerhq/speculos:sha-e262a0c",
     "--model",
     model.toLowerCase(),
     appPath,
@@ -159,20 +161,10 @@ export async function createSpeculosDevice(
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
-    "--vnc-password",
-    "live",
+    ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
-      ? [
-          "--apdu-port",
-          "40000",
-          "--vnc-port",
-          "41000",
-          "--button-port",
-          "42000",
-          "--automation-port",
-          "43000",
-        ]
-      : ["--api-port", "40000", "--vnc-port", "41000"]),
+      ? ["--apdu-port", "40000", "--button-port", "42000", "--automation-port", "43000"]
+      : ["--api-port", "40000"]),
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
@@ -219,7 +211,7 @@ export async function createSpeculosDevice(
       log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
     }
 
-    if (data.includes("using SDK")) {
+    if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
       setTimeout(() => resolveReady(true), 500);
     } else if (data.includes("is already in use by container")) {
       rejectReady(
@@ -281,6 +273,7 @@ export async function createSpeculosDevice(
     id: speculosID,
     transport,
     appPath,
+    ports,
   };
 
   if (arg.onSpeculosDeviceCreated != null) {

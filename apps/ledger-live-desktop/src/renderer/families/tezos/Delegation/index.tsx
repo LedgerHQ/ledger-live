@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { SubAccount } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";

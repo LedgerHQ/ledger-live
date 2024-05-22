@@ -7,15 +7,10 @@ import type {
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { CollectionMetadataInput, NftMetadataInput, NftRequestsBatcher } from "./types";
-import { makeBatcher } from "../batcher";
+import { makeBatcher } from "@ledgerhq/live-network/batcher";
 
 export function isNFTActive(currency: CryptoCurrency | undefined | null): boolean {
-  return (
-    !!currency &&
-    getEnv("NFT_CURRENCIES")
-      .split(",")
-      .includes(currency?.id)
-  );
+  return !!currency && getEnv("NFT_CURRENCIES").split(",").includes(currency?.id);
 }
 
 const nftCapabilities: Record<string, NFTStandard[]> = {

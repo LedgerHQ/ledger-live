@@ -213,8 +213,8 @@ export default function Content({
                 backgroundColor: hasFailed
                   ? colors.alert
                   : isConfirmed
-                  ? colors.green
-                  : colors.grey,
+                    ? colors.green
+                    : colors.grey,
               },
             ]}
           />
