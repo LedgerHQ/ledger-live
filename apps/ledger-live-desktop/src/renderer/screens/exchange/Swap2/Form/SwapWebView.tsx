@@ -180,7 +180,7 @@ const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) 
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [swapState?.cacheKey]);
+  }, [JSON.stringify(swapState)]);
 
   useEffect(() => {
     if (webviewState.url.includes("/unknown-error")) {
