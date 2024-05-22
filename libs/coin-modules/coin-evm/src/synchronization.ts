@@ -14,7 +14,7 @@ import {
   mergeOps,
   mergeNfts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -146,7 +146,7 @@ export const getSubAccounts = async (
   lastTokenOperations: Operation[],
   blacklistedTokenIds: string[] = [],
   swapHistoryMap: Map<TokenCurrency, TokenAccount["swapHistory"]>,
-): Promise<Partial<SubAccount>[]> => {
+): Promise<Partial<TokenAccount>[]> => {
   const { currency } = infos;
 
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
@@ -167,7 +167,7 @@ export const getSubAccounts = async (
   );
 
   // Fetching all TokenAccounts possible and providing already filtered operations
-  const subAccountsPromises: Promise<Partial<SubAccount>>[] = [];
+  const subAccountsPromises: Promise<Partial<TokenAccount>>[] = [];
   for (const [token, ops] of erc20OperationsByToken.entries()) {
     const swapHistory = swapHistoryMap.get(token) || [];
     subAccountsPromises.push(getSubAccountShape(currency, accountId, token, ops, swapHistory));
@@ -185,7 +185,7 @@ export const getSubAccountShape = async (
   token: TokenCurrency,
   operations: Operation[],
   swapHistory: TokenAccount["swapHistory"],
-): Promise<Partial<SubAccount>> => {
+): Promise<Partial<TokenAccount>> => {
   const nodeApi = getNodeApi(currency);
   const { xpubOrAddress: address } = decodeAccountId(parentId);
   const tokenAccountId = encodeTokenAccountId(parentId, token);

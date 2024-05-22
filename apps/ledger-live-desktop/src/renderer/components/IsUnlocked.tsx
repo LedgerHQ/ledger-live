@@ -28,21 +28,25 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
   const [isHardResetting, setIsHardResetting] = useState(false);
   const [isHardResetModalOpened, setIsHardResetModalOpened] = useState(false);
   const isLocked = useSelector(isLockedSelector);
+  const [submitting, setSubmitting] = useState(false);
   const handleChangeInput = useCallback(
     (key: keyof InputValue) => (value: InputValue[keyof InputValue]) => {
+      if (submitting) return;
       setInputValue({
         ...inputValue,
         [key]: value,
       });
       setIncorrectPassword(null);
     },
-    [inputValue],
+    [inputValue, submitting],
   );
   const handleSubmit = useCallback(
     async (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const isAccountDecrypted = await hasBeenDecrypted("app", "accounts");
+      if (submitting) return;
+      setSubmitting(true);
       try {
+        const isAccountDecrypted = await hasBeenDecrypted("app", "accounts");
         if (!isAccountDecrypted) {
           await setEncryptionKey("app", "accounts", inputValue.password);
           await dispatch(fetchAccounts());
@@ -52,12 +56,14 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
         dispatch(unlock());
       } catch (error) {
         setIncorrectPassword(new PasswordIncorrectError());
+      } finally {
+        setInputValue({
+          password: "",
+        });
+        setSubmitting(false);
       }
-      setInputValue({
-        password: "",
-      });
     },
-    [inputValue, dispatch],
+    [inputValue, dispatch, submitting],
   );
   const handleOpenHardResetModal = useCallback(
     () => setIsHardResetModalOpened(true),
@@ -115,6 +121,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
               >
                 <InputPassword
                   autoFocus
+                  disabled={submitting}
                   placeholder={t("common.lockScreen.inputPlaceholder")}
                   type="password"
                   onChange={handleChangeInput("password")}

@@ -121,6 +121,29 @@ export const getSwapProvider = async (
   return res;
 };
 
+export const getProvidersData = async () => {
+  try {
+    const providersData = await (
+      await fetch(
+        "https://crypto-assets-service.api.aws.prd.ldg-tech.com/v1/partners?output=name,payload_signature_computed_format,signature,public_key,public_key_curve",
+      )
+    ).json();
+    return transformData(providersData);
+  } catch {
+    return swapProviders;
+  }
+};
+
+export const getProvidersAdditionalData = (providerName: string): AdditionalProviderConfig => {
+  const res = swapAdditionData[providerName.toLowerCase()];
+
+  if (!res) {
+    throw new Error(`Unknown partner ${providerName}`);
+  }
+
+  return res;
+};
+
 // function transformData(inputArray) {
 //   const transformedObject = {};
 

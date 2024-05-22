@@ -669,8 +669,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           step.key > companionStepKey
             ? "inactive"
             : step.key < companionStepKey
-            ? "completed"
-            : "active",
+              ? "completed"
+              : "active",
       })),
     [
       t,

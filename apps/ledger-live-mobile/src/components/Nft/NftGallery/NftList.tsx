@@ -21,6 +21,7 @@ import FiltersIcon from "~/icons/Filters";
 import { ScreenName } from "~/const";
 import WalletTabSafeAreaView from "../../WalletTab/WalletTabSafeAreaView";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import Config from "react-native-config";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
@@ -81,6 +82,9 @@ const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
     ],
   };
 
+  const Fade_In_Down = Config.MOCK ? undefined : FadeInDown;
+  const Fade_Out_Down = Config.MOCK ? undefined : FadeOutDown;
+
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (
       <Flex
@@ -127,7 +131,7 @@ const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
           <WalletTabSafeAreaView edges={["left", "right"]}>
             <Animated.View>
               {!multiSelectModeEnabled && (
-                <Animated.View entering={FadeInDown}>
+                <Animated.View entering={Fade_In_Down}>
                   <StyledFilterBar
                     width="100%"
                     flexDirection="row"
@@ -205,7 +209,7 @@ const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
       {data.length > 12 ? <ScrollToTopButton /> : null}
       <Animated.View>
         {multiSelectModeEnabled && (
-          <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+          <Animated.View entering={Fade_In_Down} exiting={Fade_Out_Down}>
             <BackgroundGradient {...gradient} />
 
             <ButtonsContainer width="100%" justifyContent={"space-between"}>

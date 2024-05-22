@@ -48,14 +48,14 @@ module.exports = {
     "android.debug": {
       type: "android.apk",
       build:
-        "cd android && ENVFILE=.env.mock ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
+        "cd android && ENVFILE=.env.mock ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug && cd ..",
       binaryPath: `android/app/build/outputs/apk/debug/app-${androidArch}-debug.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
     },
     "android.release": {
       type: "android.apk",
       build:
-        "cd android && ENVFILE=.env.mock ./gradlew assembleStagingRelease assembleAndroidTest -DtestBuildType=stagingRelease && cd ..",
+        "cd android && ENVFILE=.env.mock ./gradlew app:assembleStagingRelease app:assembleAndroidTest -DtestBuildType=stagingRelease && cd ..",
       binaryPath: `android/app/build/outputs/apk/stagingRelease/app-${androidArch}-stagingRelease.apk`,
       testBinaryPath:
         "android/app/build/outputs/apk/androidTest/stagingRelease/app-stagingRelease-androidTest.apk",

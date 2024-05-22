@@ -150,8 +150,8 @@ function AddAccountsAccounts({
               ? selectedIds
               : [latestScannedAccount.id]
             : !hasAlreadyBeenImported && !isNewAccount
-            ? uniq([...selectedIds, latestScannedAccount.id])
-            : selectedIds,
+              ? uniq([...selectedIds, latestScannedAccount.id])
+              : selectedIds,
         );
       }
     }

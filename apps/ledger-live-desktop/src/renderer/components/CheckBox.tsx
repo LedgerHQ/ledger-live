@@ -45,8 +45,8 @@ const Base = styled(Tabbable).attrs(() => ({
       p.isChecked
         ? p.theme.colors.palette.primary.main
         : p.inverted
-        ? p.theme.colors.palette.primary.contrastText
-        : p.theme.colors.palette.text.shade60};
+          ? p.theme.colors.palette.primary.contrastText
+          : p.theme.colors.palette.text.shade60};
   color: ${p =>
     p.isChecked
       ? p.inverted

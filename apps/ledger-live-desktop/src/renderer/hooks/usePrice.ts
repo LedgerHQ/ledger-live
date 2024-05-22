@@ -18,8 +18,8 @@ export const usePrice = (from: Currency, to?: Currency, unit?: Unit, rate?: BigN
   const counterValue = rate
     ? rate.times(valueNum) // NB Allow to override the rate for swap
     : typeof rawCounterValue === "number"
-    ? BigNumber(rawCounterValue)
-    : rawCounterValue;
+      ? BigNumber(rawCounterValue)
+      : rawCounterValue;
 
   return {
     counterValue,

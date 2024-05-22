@@ -27,12 +27,12 @@ const border = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) =>
   p.hasFailed
     ? `1px solid ${p.theme.colors.alertRed}`
     : p.isConfirmed
-    ? 0
-    : `1px solid ${
-        p.type === "IN" || p.type === "NFT_IN"
-          ? p.theme.colors.warning
-          : rgba(p.theme.colors.palette.text.shade60, 0.2)
-      }`;
+      ? 0
+      : `1px solid ${
+          p.type === "IN" || p.type === "NFT_IN"
+            ? p.theme.colors.warning
+            : rgba(p.theme.colors.palette.text.shade60, 0.2)
+        }`;
 function inferColor(p: ThemedStyledProps<ContainerProps, DefaultTheme>) {
   switch (p.type) {
     case "IN":
@@ -58,8 +58,8 @@ export const Container = styled(Box).attrs<ContainerProps>(p => ({
   bg: p.hasFailed
     ? mix(p.theme.colors.alertRed, p.theme.colors.palette.background.paper, 0.95)
     : p.isConfirmed
-    ? mix(inferColor(p) as string, p.theme.colors.palette.background.paper, 0.8)
-    : p.theme.colors.palette.background.paper,
+      ? mix(inferColor(p) as string, p.theme.colors.palette.background.paper, 0.8)
+      : p.theme.colors.palette.background.paper,
   color: p.hasFailed ? p.theme.colors.alertRed : inferColor(p),
   alignItems: "center",
   justifyContent: "center",
@@ -164,8 +164,8 @@ class ConfirmationCheck extends PureComponent<{
           hasFailed
             ? "operationDetails.failed"
             : isConfirmed
-            ? "operationDetails.confirmed"
-            : "operationDetails.notConfirmed",
+              ? "operationDetails.confirmed"
+              : "operationDetails.notConfirmed",
         )}
       >
         {content}

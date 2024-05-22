@@ -850,8 +850,8 @@ export function renderConnectYourDevice({
           isLocked || unresponsive
             ? "DeviceAction.unlockDevice"
             : device.wired
-            ? "DeviceAction.connectAndUnlockDevice"
-            : "DeviceAction.turnOnAndUnlockDevice",
+              ? "DeviceAction.connectAndUnlockDevice"
+              : "DeviceAction.turnOnAndUnlockDevice",
         )}
       </TitleText>
       {onSelectDeviceLink ? (

@@ -74,8 +74,7 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened }) => {
 
   const servicesConfig = useFeature("protectServicesDesktop");
 
-  const recoverActivatePath =
-    useCustomPath(servicesConfig, "activate", "lld-stax-onboarding") || "";
+  const recoverActivatePath = useCustomPath(servicesConfig, "activate", "lld-onboarding-24") || "";
 
   const navigateToRecover = useCallback(() => {
     console.log("recoverActivatePath", recoverActivatePath);

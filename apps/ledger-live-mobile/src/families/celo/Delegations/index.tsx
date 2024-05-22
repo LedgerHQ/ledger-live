@@ -459,7 +459,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyItems: "center",
   },
   expandedInfoText: {
     textAlign: "justify",

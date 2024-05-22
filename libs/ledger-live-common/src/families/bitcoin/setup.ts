@@ -17,6 +17,11 @@ import { startSpan } from "../../performance";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { getCurrencyConfiguration } from "../../config";
 import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/lib/config";
+import { SignMessage } from "../../hw/signMessage/types";
+
+const createSigner = (transport: Transport, currency: CryptoCurrency) => {
+  return new Btc({ transport, currency: currency.id });
+};
 
 const signerContext: SignerContext = <T>(
   deviceId: string,
@@ -24,14 +29,8 @@ const signerContext: SignerContext = <T>(
   fn: (signer: Btc) => Promise<T>,
 ): Promise<T> =>
   firstValueFrom(
-    withDevice(deviceId)((transport: Transport) =>
-      from(fn(new Btc({ transport, currency: crypto.id }))),
-    ),
+    withDevice(deviceId)((transport: Transport) => from(fn(createSigner(transport, crypto)))),
   );
-
-const createSigner = (transport: Transport, currency: CryptoCurrency) => {
-  return new Btc({ transport, currency: currency.id });
-};
 
 const getCurrencyConfig = (currency: CryptoCurrency) => {
   return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currency) };
@@ -43,8 +42,15 @@ const perfLogger = {
 
 const bridge: Bridge<Transaction> = createBridges(signerContext, perfLogger, getCurrencyConfig);
 
+export function createMessageSigner(): SignMessage {
+  return (transport, account, messageData) => {
+    const signerContext: SignerContext = (_, crypto, fn) => fn(createSigner(transport, crypto));
+    return signMessage(signerContext)("", account, messageData);
+  };
+}
+
 const messageSigner = {
-  signMessage: signMessage(signerContext),
+  signMessage: createMessageSigner(),
 };
 
 const resolver: Resolver = (
