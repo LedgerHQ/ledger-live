@@ -3,7 +3,7 @@ import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import type {
   PolkadotValidator,
@@ -58,12 +58,7 @@ const ELECTION_STATUS_OPTIMISTIC_THRESHOLD = getEnv("POLKADOT_ELECTION_STATUS_TH
  * @returns {SidecarAccountBalanceInfo}
  */
 const fetchBalanceInfo = async (addr: string): Promise<SidecarAccountBalanceInfo> => {
-  const {
-    data,
-  }: {
-    data: SidecarAccountBalanceInfo;
-  } = await network({
-    method: "GET",
+  const { data } = await network<SidecarAccountBalanceInfo>({
     url: getSidecarUrl(`/accounts/${addr}/balance-info`),
   });
   return data;
