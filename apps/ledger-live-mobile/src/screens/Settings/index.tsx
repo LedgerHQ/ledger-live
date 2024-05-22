@@ -68,6 +68,7 @@ export default function Settings({
           Icon={IconsLegacy.WalletMedium}
           onClick={() => navigation.navigate(ScreenName.AccountsSettings)}
           arrowRight
+          settingsCardTestId="accounts-settings-card"
         />
       )}
       <SettingsCard
@@ -76,6 +77,7 @@ export default function Settings({
         Icon={IconsLegacy.BracketsMedium}
         onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         arrowRight
+        settingsCardTestId="about-settings-card"
       />
       <FeatureToggle featureId="brazePushNotifications">
         <SettingsCard
@@ -92,6 +94,7 @@ export default function Settings({
         Icon={IconsLegacy.LifeRingMedium}
         onClick={() => navigation.navigate(ScreenName.HelpSettings)}
         arrowRight
+        settingsCardTestId="help-settings-card"
       />
       <SettingsCard
         title={t("settings.experimental.title")}
