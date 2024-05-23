@@ -2959,9 +2959,6 @@ importers:
       '@stellar/stellar-sdk':
         specifier: ^11.3.0
         version: 11.3.0
-      '@stricahq/bip32ed25519':
-        specifier: ^1.0.3
-        version: 1.0.4
       '@stricahq/typhonjs':
         specifier: ^1.2.6
         version: 1.2.8
@@ -12200,9 +12197,15 @@ packages:
       metro: '*'
       metro-core: '*'
     peerDependenciesMeta:
+      '@expo/metro-config':
+        optional: true
+      glob:
+        optional: true
       metro:
         optional: true
       metro-core:
+        optional: true
+      minimatch:
         optional: true
     dependencies:
       '@babel/runtime': 7.24.1
@@ -17361,6 +17364,9 @@ packages:
 
   /@react-native-community/cli-tools@12.3.6:
     resolution: {integrity: sha512-FPEvZn19UTMMXUp/piwKZSh8cMEfO8G3KDtOwo53O347GTcwNrKjgZGtLSPELBX2gr+YlzEft3CoRv2Qmo83fQ==}
+    peerDependenciesMeta:
+      find-up:
+        optional: true
     dependencies:
       appdirsjs: 1.2.7
       chalk: 4.1.2
@@ -22120,7 +22126,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.4.3)
       tslib: 2.6.2
       typescript: 5.4.3
-      webpack: 5.89.0(esbuild@0.19.12)
+      webpack: 5.89.0(metro@0.80.8)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -25293,6 +25299,9 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependenciesMeta:
+      ajv:
+        optional: true
     dependencies:
       ajv: 8.11.2
 
@@ -26149,7 +26158,7 @@ packages:
       '@babel/core': 7.24.3
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)
+      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -32152,6 +32161,7 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
+    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -32388,6 +32398,8 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
+      expo-file-system:
+        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -32419,6 +32431,8 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
+      expo-file-system:
+        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -32448,6 +32462,8 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
+      expo-constants:
+        optional: true
       expo-file-system:
         optional: true
       expo-modules-core:
@@ -33068,6 +33084,8 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
+      expo-modules-autolinking:
+        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -33859,7 +33877,7 @@ packages:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.4.3
-      webpack: 5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)
+      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
     dev: true
 
   /form-data@2.3.3:
@@ -36979,7 +36997,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
+      ts-node: 10.9.2(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -37020,7 +37038,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
+      ts-node: 10.9.2(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -40931,6 +40949,9 @@ packages:
   /metro-transform-worker@0.80.8:
     resolution: {integrity: sha512-+4FG3TQk3BTbNqGkFb2uCaxYTfsbuFOCKMMURbwu0ehCP8ZJuTUramkaNZoATS49NSAkRgUltgmBa4YaKZ5mqw==}
     engines: {node: '>=18'}
+    peerDependenciesMeta:
+      metro-minify-terser:
+        optional: true
     dependencies:
       '@babel/core': 7.24.3
       '@babel/generator': 7.24.1
@@ -49481,7 +49502,7 @@ packages:
     dependencies:
       '@swc/core': 1.4.11
       '@swc/counter': 0.1.3
-      webpack: 5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)
+      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
     dev: true
 
   /swiper@7.4.1:
@@ -52930,7 +52951,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)
+      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
     dev: true
 
   /webpack-dev-server@4.15.2(webpack-cli@4.10.0)(webpack@5.91.0):
