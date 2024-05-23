@@ -1,6 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-icon/bridge/js";
+import { createBridges } from "@ledgerhq/coin-icon/bridge/index";
 import makeCliTools from "@ledgerhq/coin-icon/cli-transaction";
 import iconResolver from "@ledgerhq/coin-icon/hw-getAddress";
 import { Transaction } from "@ledgerhq/coin-icon/types";
