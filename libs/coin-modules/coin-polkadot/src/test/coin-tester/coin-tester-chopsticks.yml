@@ -1,0 +1,20 @@
+endpoint:
+  - wss://rpc.ibp.network/polkadot
+  - wss://polkadot-rpc.dwellir.com
+mock-signature-host: true
+block: ${env.POLKADOT_BLOCK_NUMBER}
+db: ./db.sqlite
+runtime-log-level: 5
+# wasm-override: polkadot_runtime.compact.compressed.wasm
+
+import-storage:
+  System:
+    Account:
+      -
+        -
+          - 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
+        - providers: 1
+          data:
+            free: '10000000000000000000'
+  ParasDisputes:
+    $removePrefix: ['disputes']

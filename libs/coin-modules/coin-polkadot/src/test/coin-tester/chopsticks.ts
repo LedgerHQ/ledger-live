@@ -4,9 +4,10 @@ const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, tim
 import chalk from "chalk";
 
 const docker = new Docker();
-const containerName = "zombienet";
+const containerName = "chopsticks";
 
 const ensureEnv = () => {
+  // SEED passed in scenarios
   const mandatory_env_variables = ["SEED"];
 
   if (!mandatory_env_variables.every(variable => !!process.env[variable])) {
@@ -16,63 +17,60 @@ const ensureEnv = () => {
   }
 };
 
-export async function spawnZombienet() {
+// https://github.com/AcalaNetwork/chopsticks
+export async function spawnChopsticks() {
   ensureEnv();
-  console.log("Starting Zombienet...");
+  console.log("Starting chopsticks...");
 
   const container = await docker.createContainer({
-    Image: "coin-tester-zombienet:latest",
+    Image: "coin-tester-chopsticks:latest",
     Tty: false,
     AttachStdin: true,
     AttachStdout: true,
     AttachStderr: true,
     name: containerName,
     ExposedPorts: {
-      "31323": {},
-      "3003": {},
-      "1998": {},
+      "8000": {},
     },
     HostConfig: {
       PortBindings: {
-        "31323": [{ HostPort: "31323" }],
-        "3003": [{ HostPort: "3003" }],
-        "1998": [{ HostPort: "1998" }],
+        "8000": [{ HostPort: "8000" }],
       },
     },
   });
 
   await container.start();
 
-  async function checkZombienetLogs(has_started_max_retry = 10) {
+  async function checkChopsticksLogs(has_started_max_retry = 20) {
     if (has_started_max_retry === 0) {
-      throw new Error("Failed to start Zombienet container. Check possible logs.");
+      throw new Error("Failed to start chopsticks container. Check possible logs.");
     }
 
     const logs = (await container.logs({ stdout: true })).toString();
 
-    if (logs.includes("Network launched")) {
-      console.log(chalk.bgBlueBright(" -  ZOMBIENET READY ✅  - "));
+    if (logs.includes("listening on port 8000")) {
+      console.log(chalk.bgBlueBright(" -  Chopsticks READY ✅  - "));
       return;
     }
 
-    console.log("Waiting for zombienet to start...");
-    await delay(2 * 1000); // 3 seconds
+    console.log("Waiting for chopsticks to start...");
+    await delay(3 * 1000); // 3 seconds
 
-    return checkZombienetLogs(has_started_max_retry - 1);
+    return checkChopsticksLogs(has_started_max_retry - 1);
   }
 
-  await checkZombienetLogs();
+  await checkChopsticksLogs();
 }
 
-export async function killZombienet() {
+export async function killChopsticks() {
   const containers = await docker.listContainers();
 
   for (const container of containers) {
     if (container.Names.some(name => name.includes(containerName))) {
-      console.log("Killing zombienet...");
-      const zombienetContainer = docker.getContainer(container.Id);
-      await zombienetContainer.stop();
-      await zombienetContainer.remove();
+      console.log("Killing chopsticks...");
+      const chopsticksContainer = docker.getContainer(container.Id);
+      await chopsticksContainer.stop();
+      await chopsticksContainer.remove();
     }
   }
 }

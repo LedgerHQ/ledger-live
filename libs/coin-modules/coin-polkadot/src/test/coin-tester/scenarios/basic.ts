@@ -7,7 +7,7 @@ import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { createBridges } from "../../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { makeAccount } from "../../fixtures";
-import { killZombienet, spawnZombienet } from "../zombienet";
+import { killChopsticks, spawnChopsticks } from "../chopsticks";
 import { defaultNanoApp } from "../scenarios.test";
 import BigNumber from "bignumber.js";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
@@ -17,28 +17,27 @@ const polkadot = getCryptoCurrencyById("polkadot");
 function getTransactions() {
   const send1DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
     name: "send 1 DOT",
-    recipient: "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw",
+    recipient: "14Gjs1TD93gnwEBfDMHoCgsuf1s2TVKUP6Z1qKmAZnZ8cW5q",
     amount: new BigNumber(1),
   };
 
   const send100DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
     name: "send 100 DOT",
-    recipient: "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw",
+    recipient: "14Gjs1TD93gnwEBfDMHoCgsuf1s2TVKUP6Z1qKmAZnZ8cW5q",
     amount: new BigNumber(100),
   };
 
   return [send1DotTransaction, send100DotTransaction];
 }
 
-// 1998 port comes from coin-config.toml config
-const wsProvider = new WsProvider("ws://127.0.0.1:1998", false);
+const wsProvider = new WsProvider("ws://127.0.0.1:8000", false);
 
 export const basicScenario: Scenario<PolkadotTransaction> = {
   name: "Polkadot Basic transactions",
   setup: async () => {
     const [{ transport, onSignerConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Polkadot/app_${defaultNanoApp.version}.elf`),
-      spawnZombienet(),
+      spawnChopsticks(),
     ]);
 
     await cryptoWaitReady();
@@ -57,9 +56,21 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
     const alice = keyring.createFromUri("//Alice");
 
-    const scenarioAccountPair = keyring.addFromUri(process.env.SEED!, {
-      name: "basicScenarioPair",
+    const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Polkadot(transport));
+
+    const getAddress = resolver(signerContext);
+    const { address } = await getAddress("", {
+      path: "44'/354'/0'/0'/0'",
+      currency: polkadot,
+      derivationMode: "polkadotbip44",
     });
+
+    const scenarioAccountPair = keyring.addFromUri(process.env.SEED!, {
+      name: "SCENARIO_ACCOUNT",
+      address,
+    });
+
+    console.log({ address, scenarioAccountPair: scenarioAccountPair.address });
 
     const unsub = await api.tx.balances
       .transferKeepAlive(scenarioAccountPair.address, 5000)
@@ -71,21 +82,10 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
         } else if (result.status.isFinalized) {
           console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
           const { data } = (await api.query.system.account(scenarioAccountPair.address)) as any;
-          console.log({ data });
+          console.log({ data: data.toString() });
           unsub();
         }
       });
-
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Polkadot(transport));
-
-    /*
-    const getAddress = resolver(signerContext);
-    const { address } = await getAddress("", {
-      path: "44'/354'/0'/0'/0'",
-      currency: polkadot,
-      derivationMode: "polkadotbip44",
-    });
-    */
 
     const { accountBridge, currencyBridge } = createBridges(signerContext);
 
@@ -101,7 +101,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
   },
   getTransactions,
   teardown: async () => {
-    await wsProvider.disconnect();
-    await Promise.all([killSpeculos(), killZombienet()]);
+    // await wsProvider.disconnect();
+    // await Promise.all([killSpeculos(), killChopsticks()]);
   },
 };
