@@ -25,6 +25,10 @@ import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import { State } from "~/renderer/reducers";
+import { DesignedForStaxText } from "~/renderer/components/Nft/DesignedForStax";
+import { Flex } from "@ledgerhq/react-ui";
+import { devicesModelListSelector } from "~/renderer/reducers/settings";
+import { DeviceModelId } from "@ledgerhq/devices";
 const NFTViewerDrawerContainer = styled.div`
   flex: 1;
   overflow-y: hidden;
@@ -157,6 +161,8 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const knownDeviceModelIds = useSelector(devicesModelListSelector);
+
   // FIXME Need some memoized selector here
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const protoNft =
@@ -269,6 +275,11 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
                 square={false}
                 maxHeight={700}
               />
+              {knownDeviceModelIds.includes(DeviceModelId.stax) && !!metadata?.staxImage ? (
+                <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
+                  <DesignedForStaxText size="medium" />
+                </Flex>
+              ) : null}
               {contentType === "image" ? (
                 <NFTImageOverlay>
                   <ZoomInIcon color="white" />

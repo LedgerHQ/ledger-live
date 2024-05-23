@@ -14,7 +14,15 @@ import NFTContextMenu from "~/renderer/components/ContextMenu/NFTContextMenu";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { State } from "~/renderer/reducers";
-import { IconsLegacy } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
+import { DesignedForStaxText } from "~/renderer/components/Nft/DesignedForStax";
+import { devicesModelListSelector } from "~/renderer/reducers/settings";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+
+const NFTImageContainer = styled.div`
+  position: relative;
+`;
+
 const Wrapper = styled(Card)`
   &.disabled {
     pointer-events: none;
@@ -62,6 +70,8 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
       nftId: id,
     }),
   );
+
+  const knownDeviceModelIds = useSelector(devicesModelListSelector);
   const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
   const { nftName } = (metadata as NFTMetadata) || {};
   const show = useMemo(() => status === "loading", [status]);
@@ -96,13 +106,21 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
         onClick={onItemClick}
       >
         <Skeleton width={40} minHeight={40} full={isGrid} show={show}>
-          <Media
-            metadata={metadata as NFTMetadata}
-            tokenId={nft?.tokenId}
-            size={40}
-            full={isGrid}
-            mediaFormat="preview"
-          />
+          <NFTImageContainer>
+            <Media
+              metadata={metadata as NFTMetadata}
+              tokenId={nft?.tokenId}
+              size={40}
+              full={isGrid}
+              mediaFormat="preview"
+            />
+
+            {isGrid && knownDeviceModelIds.includes(DeviceModelId.stax) && !!metadata?.staxImage ? (
+              <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
+                <DesignedForStaxText size="small" />
+              </Flex>
+            ) : null}
+          </NFTImageContainer>
         </Skeleton>
         <Box ml={isGrid ? 0 : 3} flex={1} mt={isGrid ? 2 : 0}>
           <Skeleton width={142} minHeight={24} barHeight={10} show={show}>

@@ -10,6 +10,13 @@ import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { State } from "~/renderer/reducers";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DesignedForStaxText } from "../Nft/DesignedForStax";
+import { devicesModelListSelector } from "~/renderer/reducers/settings";
+
+const NFTImageContainer = styled.div`
+  position: relative;
+`;
 
 const Wrapper = styled(Flex).attrs({
   backgroundColor: "neutral.c30",
@@ -61,6 +68,7 @@ type Props = {
 
 const NftItem = ({ id, onItemClick, selected, testId, index }: Props) => {
   const nft = useSelector((state: State) => getNFTById(state, { nftId: id }));
+  const knownDeviceModelIds = useSelector(devicesModelListSelector);
   const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
   const nftName = (metadata as NFTMetadata)?.nftName;
   const show = status === "loading";
@@ -86,13 +94,21 @@ const NftItem = ({ id, onItemClick, selected, testId, index }: Props) => {
     >
       <Flex flex={1} width="100%" data-test-id={`custom-image-nft-card-media-${index}`}>
         <Skeleton width={40} minHeight={40} full={isGrid} show={show}>
-          <Media
-            metadata={metadata as NFTMetadata}
-            tokenId={nft.tokenId}
-            full
-            objectFit="cover"
-            mediaFormat="preview"
-          />
+          <NFTImageContainer>
+            <Media
+              metadata={metadata as NFTMetadata}
+              tokenId={nft.tokenId}
+              full
+              objectFit="cover"
+              mediaFormat="preview"
+            />
+
+            {knownDeviceModelIds.includes(DeviceModelId.stax) && !!metadata?.staxImage ? (
+              <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
+                <DesignedForStaxText size="small" />
+              </Flex>
+            ) : null}
+          </NFTImageContainer>
         </Skeleton>
       </Flex>
       <Flex mt={2} flexDirection="column" width={"100%"}>

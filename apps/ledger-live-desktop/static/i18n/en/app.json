@@ -1669,7 +1669,8 @@
           "tokenId": "ID: {{tokenId}}"
         }
       }
-    }
+    },
+    "designedForStax": "<0>Designed for</0><1>Ledger</1><2>Stax</2>"
   },
   "tokensList": {
     "title": "Tokens",
