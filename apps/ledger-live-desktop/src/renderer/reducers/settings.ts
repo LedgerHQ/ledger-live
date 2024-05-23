@@ -724,7 +724,7 @@ export const enableLearnPageStagingUrlSelector = (state: State) =>
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
 export const hasCompletedOnboardingSelector = (state: State) =>
-  state.settings.hasCompletedOnboarding;
+  state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners || [];
 export const dismissedBannerSelector = (
   state: State,
