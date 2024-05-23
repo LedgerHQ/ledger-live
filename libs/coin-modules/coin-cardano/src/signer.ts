@@ -1,10 +1,7 @@
-import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import { Transaction as TyphonTransaction } from "@stricahq/typhonjs";
 import { CardanoLikeNetworkParameters } from "./types";
 
 export type CardanoAddress = {
-  address: string;
-  publicKey: string;
+  addressHex: string;
 };
 // Coming from @cardano-foundation/ledgerjs-hw-app-cardano code (type SignedTransactionData)
 type BIP32Path = Array<number>;

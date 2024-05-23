@@ -2,23 +2,57 @@ import {
   AddressType,
   CertificateType,
   StakeCredentialParamsType,
-  StakeDelegationParams,
-  StakeRegistrationParams,
-  StakeDeregistrationParams,
   TxInput,
   TxOutput,
   TxOutputDestination,
   TxOutputDestinationType,
   Withdrawal,
   StakeCredentialParams,
+  Certificate,
+  TransactionSigningMode,
+  Network,
+  SignTransactionRequest,
+  TxAuxiliaryDataType,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import {
+  SignerTransaction,
   SignerTxCertificate,
   SignerTxInput,
   SignerTxOutput,
   SignerTxWithdrawal,
 } from "@ledgerhq/coin-cardano/signer";
+
+/**
+ * Convert a CoinModule transaction format into a transaction to sign with Cardano Foundation signer.
+ * @param network
+ * @param transaction coming form CoinModule and will be converted to `SignTransactionRequest`
+ * @returns
+ */
+export default function (network: Network, transaction: SignerTransaction): SignTransactionRequest {
+  return {
+    signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
+    tx: {
+      network,
+      inputs: transaction.inputs.map(prepareLedgerInput),
+      outputs: transaction.outputs.map(prepareLedgerOutput),
+      certificates: transaction.certificates.map(prepareCertificate),
+      withdrawals: transaction.withdrawals.map(prepareWithdrawal),
+      fee: transaction.fee,
+      ttl: transaction.ttl,
+      validityIntervalStart: null,
+      auxiliaryData: transaction.auxiliaryData
+        ? {
+            type: TxAuxiliaryDataType.ARBITRARY_HASH,
+            params: {
+              hashHex: transaction.auxiliaryData,
+            },
+          }
+        : null,
+    },
+    additionalWitnessPaths: [],
+  };
+}
 
 /**
  * returns the formatted transactionInput for ledger cardano app
@@ -27,7 +61,7 @@ import {
  * @param {number} accountIndex
  * @returns {TxInput}
  */
-export function prepareLedgerInput({ txHashHex, outputIndex, path }: SignerTxInput): TxInput {
+function prepareLedgerInput({ txHashHex, outputIndex, path }: SignerTxInput): TxInput {
   return {
     txHashHex,
     outputIndex,
@@ -42,7 +76,7 @@ export function prepareLedgerInput({ txHashHex, outputIndex, path }: SignerTxInp
  * @param accountIndex
  * @returns {TxOutput}
  */
-export function prepareLedgerOutput(output: SignerTxOutput): TxOutput {
+function prepareLedgerOutput(output: SignerTxOutput): TxOutput {
   const { amount, tokenBundle } = output;
 
   const destination = convertDestination(output);
@@ -76,19 +110,7 @@ function convertDestination({ destination }: SignerTxOutput): TxOutputDestinatio
   }
 }
 
-export function prepareCertificate(cert: SignerTxCertificate):
-  | {
-      type: CertificateType.STAKE_REGISTRATION;
-      params: StakeRegistrationParams;
-    }
-  | {
-      type: CertificateType.STAKE_DELEGATION;
-      params: StakeDelegationParams;
-    }
-  | {
-      type: CertificateType.STAKE_DEREGISTRATION;
-      params: StakeDeregistrationParams;
-    } {
+function prepareCertificate(cert: SignerTxCertificate): Certificate {
   const stakeCredential: StakeCredentialParams = {
     type: StakeCredentialParamsType.KEY_PATH,
     keyPath: str_to_path(cert.params.stakeCredential.keyPath),
@@ -122,7 +144,7 @@ export function prepareCertificate(cert: SignerTxCertificate):
   }
 }
 
-export function prepareWithdrawal({ stakeCredential, amount }: SignerTxWithdrawal): Withdrawal {
+function prepareWithdrawal({ stakeCredential, amount }: SignerTxWithdrawal): Withdrawal {
   return {
     stakeCredential: {
       type: StakeCredentialParamsType.KEY_PATH,

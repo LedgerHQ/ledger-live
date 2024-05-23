@@ -1,3 +1,5 @@
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import { address as TyphonAddress } from "@stricahq/typhonjs";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
@@ -20,9 +22,13 @@ const resolver = (signerContext: SignerContext<CardanoSigner>): GetAddressFn => 
     const r = await signerContext(deviceId, signer =>
       signer.getAddress({ path, stakingPathString, networkParams, verify }),
     );
+
+    const address = TyphonUtils.getAddressFromHex(r.addressHex) as TyphonAddress.BaseAddress;
+
     return {
-      address: r.address,
-      publicKey: r.publicKey,
+      address: address.getBech32(),
+      // Here, we use publicKey hash, as cardano app doesn't export the public key
+      publicKey: address.paymentCredential.hash,
       path,
     };
   };

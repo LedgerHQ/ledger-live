@@ -1,21 +1,13 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import Ada, {
-  Networks,
-  AddressType,
-  SignTransactionRequest,
-  TransactionSigningMode,
-  TxAuxiliaryDataType,
-} from "@cardano-foundation/ledgerjs-hw-app-cardano";
+import Ada, { Networks, AddressType } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
-import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { address as TyphonAddress } from "@stricahq/typhonjs";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { createBridges } from "@ledgerhq/coin-cardano/bridge";
 import makeCliTools from "@ledgerhq/coin-cardano/cli-transaction";
 import cardanoResolver from "@ledgerhq/coin-cardano/hw-getAddress";
-import type { Transaction } from "@ledgerhq/coin-cardano/types";
+import type { CardanoLikeNetworkParameters, Transaction } from "@ledgerhq/coin-cardano/types";
 import type {
   CardanoAddress,
   CardanoExtendedPublicKey,
@@ -26,12 +18,13 @@ import type {
 } from "@ledgerhq/coin-cardano/signer";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
-import {
-  prepareCertificate,
-  prepareLedgerInput,
-  prepareLedgerOutput,
-  prepareWithdrawal,
-} from "./tx-helpers";
+import signerSerializer from "./signerSerializer";
+
+function findNetwork(networkParams: CardanoLikeNetworkParameters) {
+  return networkParams.networkId === Networks.Mainnet.networkId
+    ? Networks.Mainnet
+    : Networks.Testnet;
+}
 
 const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
   const ada = new Ada(transport);
@@ -42,12 +35,9 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
       networkParams,
       verify,
     }: GetAddressRequest): Promise<CardanoAddress> => {
-      const network =
-        networkParams.networkId === Networks.Mainnet.networkId
-          ? Networks.Mainnet
-          : Networks.Testnet;
+      const network = findNetwork(networkParams);
 
-      const r = await ada.deriveAddress({
+      const addr = await ada.deriveAddress({
         network,
         address: {
           type: AddressType.BASE_PAYMENT_KEY_STAKE_KEY,
@@ -69,12 +59,8 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
           },
         });
       }
-      const address = TyphonUtils.getAddressFromHex(r.addressHex) as TyphonAddress.BaseAddress;
-      return {
-        address: address.getBech32(),
-        // Here, we use publicKey hash, as cardano app doesn't export the public key
-        publicKey: address.paymentCredential.hash,
-      };
+
+      return addr;
     },
     getPublicKey: async (accountPath: string): Promise<CardanoExtendedPublicKey> => {
       return ada.getExtendedPublicKey({
@@ -82,33 +68,8 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
       });
     },
     sign: async ({ transaction, networkParams }: CardanoSignRequest): Promise<CardanoSignature> => {
-      const network =
-        networkParams.networkId === Networks.Mainnet.networkId
-          ? Networks.Mainnet
-          : Networks.Testnet;
-
-      const trxOptions: SignTransactionRequest = {
-        signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
-        tx: {
-          network,
-          inputs: transaction.inputs.map(prepareLedgerInput),
-          outputs: transaction.outputs.map(prepareLedgerOutput),
-          certificates: transaction.certificates.map(prepareCertificate),
-          withdrawals: transaction.withdrawals.map(prepareWithdrawal),
-          fee: transaction.fee,
-          ttl: transaction.ttl,
-          validityIntervalStart: null,
-          auxiliaryData: transaction.auxiliaryData
-            ? {
-                type: TxAuxiliaryDataType.ARBITRARY_HASH,
-                params: {
-                  hashHex: transaction.auxiliaryData,
-                },
-              }
-            : null,
-        },
-        additionalWitnessPaths: [],
-      };
+      const network = findNetwork(networkParams);
+      const trxOptions = signerSerializer(network, transaction);
 
       return ada.signTransaction(trxOptions);
     },

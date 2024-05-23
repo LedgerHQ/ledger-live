@@ -1,13 +1,35 @@
-import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
+import {
+  types as TyphonTypes,
+  address as TyphonAddress,
+  Transaction as TyphonTransaction,
+} from "@stricahq/typhonjs";
 import groupBy from "lodash/groupBy";
 import { getBipPathString } from "./logic";
 import { CertificateType } from "@stricahq/typhonjs/dist/types";
 import { SignerTxCertificate, SignerTxInput, SignerTxOutput, SignerTxWithdrawal } from "./signer";
 
 /**
- * List of functions used to convert into simple types StricaTypes.
+ * Convert StricaTypes Transaction into a simpler types.
  * We are keeping the minimal necessary for a signer.
  */
+export default function (transaction: TyphonTransaction, accountIndex: number) {
+  const ledgerAppInputs = transaction.getInputs().map(prepareLedgerInput(accountIndex));
+  const ledgerAppOutputs = transaction.getOutputs().map(prepareLedgerOutput(accountIndex));
+  const ledgerCertificates = transaction.getCertificates().map(prepareCertificate);
+  const ledgerWithdrawals = transaction.getWithdrawals().map(prepareWithdrawal);
+  const auxiliaryDataHashHex = transaction.getAuxiliaryDataHashHex();
+
+  return {
+    inputs: ledgerAppInputs,
+    outputs: ledgerAppOutputs,
+    certificates: ledgerCertificates,
+    withdrawals: ledgerWithdrawals,
+    fee: transaction.getFee().toString(),
+    ttl: transaction.getTTL()?.toString(),
+    validityIntervalStart: null,
+    auxiliaryData: auxiliaryDataHashHex ?? null,
+  };
+}
 
 /**
  * returns the formatted transactionInput for ledger cardano app
@@ -16,23 +38,25 @@ import { SignerTxCertificate, SignerTxInput, SignerTxOutput, SignerTxWithdrawal 
  * @param {number} accountIndex
  * @returns {TxInput}
  */
-export function prepareLedgerInput(input: TyphonTypes.Input, accountIndex: number): SignerTxInput {
-  const paymentKeyPath =
-    input.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS
-      ? input.address.paymentCredential.bipPath
-      : undefined;
-  return {
-    txHashHex: input.txId,
-    outputIndex: input.index,
-    path: paymentKeyPath
-      ? getBipPathString({
-          account: accountIndex,
-          chain: paymentKeyPath.chain,
-          index: paymentKeyPath.index,
-        })
-      : null,
+const prepareLedgerInput =
+  (accountIndex: number) =>
+  (input: TyphonTypes.Input): SignerTxInput => {
+    const paymentKeyPath =
+      input.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS
+        ? input.address.paymentCredential.bipPath
+        : undefined;
+    return {
+      txHashHex: input.txId,
+      outputIndex: input.index,
+      path: paymentKeyPath
+        ? getBipPathString({
+            account: accountIndex,
+            chain: paymentKeyPath.chain,
+            index: paymentKeyPath.index,
+          })
+        : null,
+    };
   };
-}
 
 /**
  * returns the formatted transactionOutput for ledger cardano app
@@ -41,76 +65,75 @@ export function prepareLedgerInput(input: TyphonTypes.Input, accountIndex: numbe
  * @param accountIndex
  * @returns {TxOutput}
  */
-export function prepareLedgerOutput(
-  output: TyphonTypes.Output,
-  accountIndex: number,
-): SignerTxOutput {
-  const isByronAddress = output.address instanceof TyphonAddress.ByronAddress;
-  let isDeviceOwnedAddress = false;
+const prepareLedgerOutput =
+  (accountIndex: number) =>
+  (output: TyphonTypes.Output): SignerTxOutput => {
+    const isByronAddress = output.address instanceof TyphonAddress.ByronAddress;
+    let isDeviceOwnedAddress = false;
 
-  if (!isByronAddress) {
-    const address = output.address as TyphonTypes.ShelleyAddress;
-    isDeviceOwnedAddress =
-      address.paymentCredential &&
-      address.paymentCredential.type === TyphonTypes.HashType.ADDRESS &&
-      address.paymentCredential.bipPath !== undefined;
-  }
+    if (!isByronAddress) {
+      const address = output.address as TyphonTypes.ShelleyAddress;
+      isDeviceOwnedAddress =
+        address.paymentCredential &&
+        address.paymentCredential.type === TyphonTypes.HashType.ADDRESS &&
+        address.paymentCredential.bipPath !== undefined;
+    }
 
-  let destination;
-  if (isDeviceOwnedAddress) {
-    const address = output.address as TyphonAddress.BaseAddress;
+    let destination;
+    if (isDeviceOwnedAddress) {
+      const address = output.address as TyphonAddress.BaseAddress;
 
-    const paymentKeyPath = (address.paymentCredential as TyphonTypes.HashCredential)
-      .bipPath as TyphonTypes.BipPath;
-    const stakingKeyPath = (address.stakeCredential as TyphonTypes.HashCredential)
-      .bipPath as TyphonTypes.BipPath;
+      const paymentKeyPath = (address.paymentCredential as TyphonTypes.HashCredential)
+        .bipPath as TyphonTypes.BipPath;
+      const stakingKeyPath = (address.stakeCredential as TyphonTypes.HashCredential)
+        .bipPath as TyphonTypes.BipPath;
 
-    const paymentKeyPathString = getBipPathString({
-      account: accountIndex,
-      chain: paymentKeyPath.chain,
-      index: paymentKeyPath.index,
-    });
-    const stakingKeyPathString = getBipPathString({
-      account: accountIndex,
-      chain: stakingKeyPath.chain,
-      index: stakingKeyPath.index,
-    });
+      const paymentKeyPathString = getBipPathString({
+        account: accountIndex,
+        chain: paymentKeyPath.chain,
+        index: paymentKeyPath.index,
+      });
+      const stakingKeyPathString = getBipPathString({
+        account: accountIndex,
+        chain: stakingKeyPath.chain,
+        index: stakingKeyPath.index,
+      });
 
-    destination = {
-      isDeviceOwnedAddress,
-      params: {
-        spendingPath: paymentKeyPathString,
-        stakingPath: stakingKeyPathString,
-      },
+      destination = {
+        isDeviceOwnedAddress,
+        params: {
+          spendingPath: paymentKeyPathString,
+          stakingPath: stakingKeyPathString,
+        },
+      };
+    } else {
+      const address = output.address;
+      destination = {
+        isDeviceOwnedAddress,
+        params: {
+          addressHex: address.getHex(),
+        },
+      };
+    }
+
+    const tokenBundle = Object.values(groupBy(output.tokens, ({ policyId }) => policyId)).map(
+      tokens => ({
+        policyIdHex: tokens[0].policyId,
+        tokens: tokens.map(token => ({
+          assetNameHex: token.assetName,
+          amount: token.amount.toString(),
+        })),
+      }),
+    );
+
+    return {
+      amount: output.amount.toString(),
+      destination,
+      tokenBundle,
     };
-  } else {
-    const address = output.address;
-    destination = {
-      isDeviceOwnedAddress,
-      params: {
-        addressHex: address.getHex(),
-      },
-    };
-  }
-
-  const tokenBundle = Object.values(groupBy(output.tokens, ({ policyId }) => policyId)).map(
-    tokens => ({
-      policyIdHex: tokens[0].policyId,
-      tokens: tokens.map(token => ({
-        assetNameHex: token.assetName,
-        amount: token.amount.toString(),
-      })),
-    }),
-  );
-
-  return {
-    amount: output.amount.toString(),
-    destination,
-    tokenBundle,
   };
-}
 
-export function prepareCertificate(cert: TyphonTypes.Certificate): SignerTxCertificate {
+function prepareCertificate(cert: TyphonTypes.Certificate): SignerTxCertificate {
   if (cert.certType === CertificateType.STAKE_REGISTRATION) {
     return prepareStakeRegistrationCertificate(cert as TyphonTypes.StakeRegistrationCertificate);
   } else if (cert.certType === CertificateType.STAKE_DELEGATION) {
@@ -215,7 +238,7 @@ function prepareStakeDeRegistrationCertificate(certificate: TyphonTypes.Certific
   }
 }
 
-export function prepareWithdrawal(withdrawal: TyphonTypes.Withdrawal): SignerTxWithdrawal {
+function prepareWithdrawal(withdrawal: TyphonTypes.Withdrawal): SignerTxWithdrawal {
   if (
     withdrawal.rewardAccount.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
     withdrawal.rewardAccount.stakeCredential.bipPath

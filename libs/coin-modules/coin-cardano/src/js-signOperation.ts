@@ -1,8 +1,19 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
+import { Transaction as TyphonTransaction, types as TyphonTypes } from "@stricahq/typhonjs";
+import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import { HashType } from "@stricahq/typhonjs/dist/types";
+import { OperationType, SignOperationEvent, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { MEMO_LABEL } from "./constants";
+import { buildTransaction } from "./js-buildTransaction";
+import { getAccountStakeCredential, getExtendedPublicKeyFromHex, getOperationType } from "./logic";
+import { getNetworkParameters } from "./networks";
+import { CardanoSigner, Witness } from "./signer";
 import type {
   CardanoAccount,
   CardanoOperation,
@@ -10,23 +21,7 @@ import type {
   CardanoResources,
   Transaction,
 } from "./types";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { buildTransaction } from "./js-buildTransaction";
-import { types as TyphonTypes, Transaction as TyphonTransaction } from "@stricahq/typhonjs";
-import { getAccountStakeCredential, getExtendedPublicKeyFromHex, getOperationType } from "./logic";
-import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
-import { getNetworkParameters } from "./networks";
-import { MEMO_LABEL } from "./constants";
-import { OperationType, SignOperationEvent, SignOperationFnSignature } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { CardanoSigner, Witness } from "./signer";
-import {
-  prepareCertificate,
-  prepareLedgerInput,
-  prepareLedgerOutput,
-  prepareWithdrawal,
-} from "./stricaTypeSerializer";
+import typhonSerializer from "./typhonSerializer";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,
@@ -208,41 +203,17 @@ const buildSignOperation =
         }
 
         const unsignedTransaction = await buildTransaction(account as CardanoAccount, transaction);
+        const signerTransaction = typhonSerializer(unsignedTransaction, account.index);
 
-        const ledgerAppInputs = unsignedTransaction
-          .getInputs()
-          .map(i => prepareLedgerInput(i, account.index));
-
-        const ledgerAppOutputs = unsignedTransaction
-          .getOutputs()
-          .map(o => prepareLedgerOutput(o, account.index));
-
-        const ledgerCertificates = unsignedTransaction.getCertificates().map(prepareCertificate);
-
-        const ledgerWithdrawals = unsignedTransaction.getWithdrawals().map(prepareWithdrawal);
-
-        const auxiliaryDataHashHex = unsignedTransaction.getAuxiliaryDataHashHex();
-
-        const accountPubKey = getExtendedPublicKeyFromHex(account.xpub as string);
         const networkParams = getNetworkParameters(account.currency.id);
-
-        const signerTransaction = {
-          inputs: ledgerAppInputs,
-          outputs: ledgerAppOutputs,
-          certificates: ledgerCertificates,
-          withdrawals: ledgerWithdrawals,
-          fee: unsignedTransaction.getFee().toString(),
-          ttl: unsignedTransaction.getTTL()?.toString(),
-          validityIntervalStart: null,
-          auxiliaryData: auxiliaryDataHashHex ?? null,
-        };
-
         const signedData = await signerContext(deviceId, signer =>
           signer.sign({
             transaction: signerTransaction,
             networkParams,
           }),
         );
+
+        const accountPubKey = getExtendedPublicKeyFromHex(account.xpub as string);
         const signed = signTx(unsignedTransaction, accountPubKey, signedData.witnesses);
 
         o.next({ type: "device-signature-granted" });
@@ -270,7 +241,7 @@ const buildSignOperation =
 /**
  * Adds signatures to unsigned transaction
  */
-export const signTx = (
+const signTx = (
   unsignedTransaction: TyphonTransaction,
   accountKey: Bip32PublicKey,
   witnesses: Array<Witness>,
