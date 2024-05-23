@@ -41,11 +41,13 @@ describe("Cosmos delegate flow", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
+  $TmsLink("B2CQA-384");
   it("open account stake flow", async () => {
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToStakeFromTransferMenu();
   });
 
+  $TmsLink("B2CQA-387");
   it("goes through the delegate flow", async () => {
     const delegatedPercent = 50;
     const usableAmount = testedAccount.spendableBalance

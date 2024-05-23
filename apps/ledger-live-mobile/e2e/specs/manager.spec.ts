@@ -24,6 +24,7 @@ describe("Bitcoin Account", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
+  $TmsLink("B2CQA-657");
   it("open manager", async () => {
     await portfolioPage.openMyLedger();
     await deviceAction.selectMockDevice();
@@ -31,6 +32,7 @@ describe("Bitcoin Account", () => {
     await managerPage.waitForManagerPageToLoad();
   });
 
+  $TmsLink("B2CQA-658");
   it("displays device informations", async () => {
     await managerPage.checkDeviceName(knownDevice.name);
     await managerPage.checkDeviceVersion(deviceInfo.version);
