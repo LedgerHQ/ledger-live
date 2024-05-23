@@ -1,17 +1,19 @@
 import axios from "axios";
 import { ExternalPluginDataSource, GetDappInfos } from "./ExternalPluginDataSource";
-import { DappDTO } from "./DappDTO";
+import { DAppDto } from "./DAppDto";
 import { DappInfos } from "../model/DappInfos";
 import { SelectorDetails } from "../model/SelectorDetails";
+import PACKAGE from "../../../package.json";
 
 export class HttpExternalPluginDataSource implements ExternalPluginDataSource {
   constructor() {}
 
   async getDappInfos({ chainId, address, selector }: GetDappInfos): Promise<DappInfos | undefined> {
-    const dappInfos = await axios.request<DappDTO[]>({
+    const dappInfos = await axios.request<DAppDto[]>({
       method: "GET",
       url: "https://crypto-assets-service.api.ledger.com/v1/dapps",
       params: { output: "b2c,b2c_signatures,abis", chain_id: chainId, contracts: address },
+      headers: { "X-Ledger-Client-Version": `context-module/${PACKAGE.version}` },
     });
 
     const { erc20OfInterest, method, plugin } =

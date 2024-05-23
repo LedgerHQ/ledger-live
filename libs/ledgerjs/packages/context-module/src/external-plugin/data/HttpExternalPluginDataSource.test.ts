@@ -1,15 +1,18 @@
 import axios from "axios";
 import { HttpExternalPluginDataSource } from "./HttpExternalPluginDataSource";
-import { Abis, B2c, B2cSignatures, DappDTO } from "./DappDTO";
+import { Abis, B2c, B2cSignatures, DAppDto } from "./DAppDto";
 import ABI from "../__tests__/abi.json";
+import { ExternalPluginDataSource } from "./ExternalPluginDataSource";
+import PACKAGE from "../../../package.json";
 
 jest.mock("axios");
 
-const axiosResponseBuilder = (dappDTO: Partial<DappDTO>[]) => {
-  return { data: dappDTO };
+const axiosResponseBuilder = (dto: Partial<DAppDto>[]) => {
+  return { data: dto };
 };
 
 describe("HttpExternalPuginDataSource", () => {
+  let datasource: ExternalPluginDataSource;
   const exampleB2c: B2c = {
     blockchainName: "ethereum",
     chainId: 1,
@@ -28,25 +31,27 @@ describe("HttpExternalPuginDataSource", () => {
   };
 
   beforeAll(() => {
+    datasource = new HttpExternalPluginDataSource();
     jest.clearAllMocks();
   });
 
-  it("should return undefined when no b2c data", async () => {
+  it("should call axios with the ledger client version header", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
-    const response = axiosResponseBuilder([]);
-    jest.spyOn(axios, "request").mockResolvedValue(response);
+    const version = `context-module/${PACKAGE.version}`;
+    const requestSpy = jest.fn(() => Promise.resolve({ data: [] }));
+    jest.spyOn(axios, "request").mockImplementation(requestSpy);
 
     // WHEN
-    const result = await datasource.getDappInfos({ chainId: 1, address: "0x0", selector: "0x01" });
+    await datasource.getDappInfos({ chainId: 1, address: "0x0", selector: "0x01" });
 
     // THEN
-    expect(result).toEqual(undefined);
+    expect(requestSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ headers: { "X-Ledger-Client-Version": version } }),
+    );
   });
 
   it("should return undefined when no abis is undefined", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const response = axiosResponseBuilder([
       { b2c: exampleB2c, b2c_signatures: exampleB2cSignatures },
     ]);
@@ -61,7 +66,20 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return undefined when no abis data", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
+    const response = axiosResponseBuilder([
+      { abis: {}, b2c: exampleB2c, b2c_signatures: exampleB2cSignatures },
+    ]);
+    jest.spyOn(axios, "request").mockResolvedValue(response);
+
+    // WHEN
+    const result = await datasource.getDappInfos({ chainId: 1, address: "0x0", selector: "0x01" });
+
+    // THEN
+    expect(result).toEqual(undefined);
+  });
+
+  it("should return undefined when no abis data", async () => {
+    // GIVEN
     const response = axiosResponseBuilder([
       { abis: {}, b2c: exampleB2c, b2c_signatures: exampleB2cSignatures },
     ]);
@@ -76,7 +94,6 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return undefined when no abis data for the contract address", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const abis: Abis = { "0x1": ABI };
     const response = axiosResponseBuilder([
       { abis, b2c: exampleB2c, b2c_signatures: exampleB2cSignatures },
@@ -92,7 +109,6 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return undefined when no b2c signature", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const response = axiosResponseBuilder([{ b2c: exampleB2c, abis: exampleAbis }]);
     jest.spyOn(axios, "request").mockResolvedValue(response);
 
@@ -105,7 +121,6 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return undefined when no ecc20OfInterest", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const b2c = {
       blockchainName: "ethereum",
       chainId: 1,
@@ -134,7 +149,6 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return undefined when no method", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const b2c = {
       blockchainName: "ethereum",
       chainId: 1,
@@ -163,7 +177,6 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return undefined when no plugin", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const b2c = {
       blockchainName: "ethereum",
       chainId: 1,
@@ -192,7 +205,6 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return undefined when no method", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const b2c = {
       blockchainName: "ethereum",
       chainId: 1,
@@ -221,7 +233,6 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return undefined when no signature", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const B2CSignature = {
       "0x0": { "0x01": { plugin: "plugin", serialized_data: "0x001" } },
     } as unknown as B2cSignatures;
@@ -241,7 +252,6 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return undefined when no serialized data", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const B2CSignature = {
       "0x0": { "0x01": { plugin: "plugin", signature: "0x002" } },
     } as unknown as B2cSignatures;
@@ -261,7 +271,6 @@ describe("HttpExternalPuginDataSource", () => {
 
   it("should return a correct response", async () => {
     // GIVEN
-    const datasource = new HttpExternalPluginDataSource();
     const response = axiosResponseBuilder([
       { b2c: exampleB2c, abis: exampleAbis, b2c_signatures: exampleB2cSignatures },
     ]);
