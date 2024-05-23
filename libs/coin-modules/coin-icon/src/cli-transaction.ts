@@ -19,7 +19,7 @@ function inferTransactions(
   opts: Record<string, any>,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
-    invariant(transaction.family === "icon", "icon family");
+    invariant(transaction.family === "icon", "[cli-transaction] inferTransactions expects icon family transaction");
 
     if (account.type === "Account") {
       invariant((account as IconAccount).iconResources, "unactivated account");
