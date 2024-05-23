@@ -173,15 +173,16 @@ export default function SelectDevice({
       if (e.type === "add") {
         const { name, deviceModel, id, wired } = e;
 
+        if (!deviceModel) return;
+
         setDevice((maybeDevice: Device | undefined) => {
           return (
-            maybeDevice ||
-            ({
+            maybeDevice || {
               deviceName: name,
               modelId: deviceModel?.id,
               deviceId: id,
               wired,
-            } as Device)
+            }
           );
         });
       }
@@ -202,8 +203,7 @@ export default function SelectDevice({
           deviceId: device.id,
           deviceName: equivalentScannedDevice?.deviceName ?? device.name,
           available: Boolean(equivalentScannedDevice),
-          // TODO add rsi strength from the BIM pr.
-        } as Device & { available: boolean };
+        };
       })
       .sort((a, b) => Number(b.available) - Number(a.available));
 
