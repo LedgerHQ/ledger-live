@@ -1,5 +1,11 @@
 # @ledgerhq/hw-transport-node-speculos-http
 
+## 6.29.0-nightly.1
+
+### Minor Changes
+
+- [#6680](https://github.com/LedgerHQ/ledger-live/pull/6680) [`f363430`](https://github.com/LedgerHQ/ledger-live/commit/f363430fe1a261f8adb79d3bf30e457cba839783) Thanks [@valber-ledger](https://github.com/valber-ledger)! - fetching speculos transport hardware layer
+
 ## 6.29.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/live-network
 
+## 1.3.0-nightly.1
+
+### Minor Changes
+
+- [#6819](https://github.com/LedgerHQ/ledger-live/pull/6819) [`326cae0`](https://github.com/LedgerHQ/ledger-live/commit/326cae088cc33795536deb1d868c86e8dbeb6a13) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add Batcher to live-network and partition Axios types
+
+### Patch Changes
+
+- Updated dependencies [[`6d44f25`](https://github.com/LedgerHQ/ledger-live/commit/6d44f255c5b2f453c61d0b754807db1f76d7174e)]:
+  - @ledgerhq/live-env@2.1.0-nightly.1
+
 ## 1.3.0-nightly.0
 
 ### Minor Changes

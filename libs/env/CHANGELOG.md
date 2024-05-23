@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.1.0-nightly.1
+
+### Minor Changes
+
+- [#6902](https://github.com/LedgerHQ/ledger-live/pull/6902) [`6d44f25`](https://github.com/LedgerHQ/ledger-live/commit/6d44f255c5b2f453c61d0b754807db1f76d7174e) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add coin config to Polkadot and possibility to basic auth to Sidecar
+
 ## 2.1.0-nightly.0
 
 ### Minor Changes

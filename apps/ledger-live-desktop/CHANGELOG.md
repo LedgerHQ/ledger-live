@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.81.0-nightly.5
+
+### Patch Changes
+
+- [#6906](https://github.com/LedgerHQ/ledger-live/pull/6906) [`7f75013`](https://github.com/LedgerHQ/ledger-live/commit/7f75013900b8e52cdff990e27b12a2aa130d9e29) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - update the useMemo hook dependency to relod the correct swapState
+
+- Updated dependencies [[`326cae0`](https://github.com/LedgerHQ/ledger-live/commit/326cae088cc33795536deb1d868c86e8dbeb6a13), [`6d44f25`](https://github.com/LedgerHQ/ledger-live/commit/6d44f255c5b2f453c61d0b754807db1f76d7174e), [`dbe40aa`](https://github.com/LedgerHQ/ledger-live/commit/dbe40aa31d3ce84f3a2638429981892eb61196a7), [`f363430`](https://github.com/LedgerHQ/ledger-live/commit/f363430fe1a261f8adb79d3bf30e457cba839783)]:
+  - @ledgerhq/live-network@1.3.0-nightly.1
+  - @ledgerhq/coin-framework@0.14.0-nightly.3
+  - @ledgerhq/live-common@34.3.0-nightly.5
+  - @ledgerhq/live-env@2.1.0-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.3
+  - @ledgerhq/coin-evm@2.1.0-nightly.3
+  - @ledgerhq/live-countervalues@0.2.0-nightly.3
+  - @ledgerhq/live-nft@0.4.0-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.3
+  - @ledgerhq/live-nft-react@0.4.0-nightly.3
+  - @ledgerhq/live-wallet@0.1.1-nightly.6
+
 ## 2.81.0-nightly.4
 
 ### Minor Changes

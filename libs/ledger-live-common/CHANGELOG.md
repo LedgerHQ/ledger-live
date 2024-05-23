@@ -1,5 +1,36 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.5
+
+### Minor Changes
+
+- [#6902](https://github.com/LedgerHQ/ledger-live/pull/6902) [`6d44f25`](https://github.com/LedgerHQ/ledger-live/commit/6d44f255c5b2f453c61d0b754807db1f76d7174e) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add coin config to Polkadot and possibility to basic auth to Sidecar
+
+### Patch Changes
+
+- [#6900](https://github.com/LedgerHQ/ledger-live/pull/6900) [`dbe40aa`](https://github.com/LedgerHQ/ledger-live/commit/dbe40aa31d3ce84f3a2638429981892eb61196a7) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix crashes when incorrect payload from partner
+
+- Updated dependencies [[`326cae0`](https://github.com/LedgerHQ/ledger-live/commit/326cae088cc33795536deb1d868c86e8dbeb6a13), [`6d44f25`](https://github.com/LedgerHQ/ledger-live/commit/6d44f255c5b2f453c61d0b754807db1f76d7174e), [`f363430`](https://github.com/LedgerHQ/ledger-live/commit/f363430fe1a261f8adb79d3bf30e457cba839783)]:
+  - @ledgerhq/live-network@1.3.0-nightly.1
+  - @ledgerhq/coin-framework@0.14.0-nightly.3
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.3
+  - @ledgerhq/live-env@2.1.0-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.0-nightly.1
+  - @ledgerhq/coin-algorand@0.5.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.3
+  - @ledgerhq/coin-evm@2.1.0-nightly.3
+  - @ledgerhq/coin-near@0.5.0-nightly.3
+  - @ledgerhq/coin-solana@0.7.0-nightly.8
+  - @ledgerhq/coin-tezos@0.4.0-nightly.2
+  - @ledgerhq/coin-xrp@0.2.0-nightly.3
+  - @ledgerhq/device-core@0.2.0-nightly.1
+  - @ledgerhq/live-countervalues@0.2.0-nightly.3
+  - @ledgerhq/live-nft@0.4.0-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.3
+  - @ledgerhq/live-wallet@0.1.1-nightly.6
+  - @ledgerhq/hw-app-exchange@0.5.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.37.0-nightly.2
+
 ## 34.3.0-nightly.4
 
 ### Patch Changes
