@@ -1,3 +1,4 @@
+import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 export enum Methods {
@@ -44,8 +45,16 @@ export const getBufferFromString = (message: string): Buffer =>
   isValidHex(message)
     ? Buffer.from(message, "hex")
     : isValidBase64(message)
-      ? Buffer.from(message, "base64")
-      : Buffer.from(message);
+    ? Buffer.from(message, "base64")
+    : Buffer.from(message);
 
 export const calculateEstimatedFees = (gasFeeCap: BigNumber, gasLimit: BigNumber): BigNumber =>
   gasFeeCap.multipliedBy(gasLimit);
+
+export function getAccountUnit(account: AccountLike) {
+  if (account.type === "TokenAccount") {
+    return account.token.units[0];
+  }
+
+  return account.currency.units[0];
+}

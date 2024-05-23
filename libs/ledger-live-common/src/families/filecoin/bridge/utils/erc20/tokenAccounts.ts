@@ -14,7 +14,7 @@ import { base64 } from "rfc4648";
 import contractABI from "./ERC20.json";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { valueFromUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { valueFromUnit } from "../../../../../currencies/valueFromUnit";
 
 export const erc20TxnToOperation = (
   tx: ERC20Transfer,
@@ -127,7 +127,6 @@ export async function buildTokenAccounts(
       const sub: TokenAccount = {
         type: "TokenAccount",
         id: tokenAccountId,
-        starred: false,
         parentId: parentAccountId,
         token,
         balance: bnBalance,

@@ -1,18 +1,6 @@
 [
   [
     "filecoin",
-    "staked_fil",
-    "stFIL",
-    18,
-    "Staked FIL",
-    "",
-    "0x3C3501E6C353DbaEDDFA90376975Ce7aCe4Ac7a8",
-    false,
-    false,
-    null
-  ],
-  [
-    "filecoin",
     "wrapped_fil",
     "WFIL",
     18,
@@ -31,18 +19,6 @@
     "Infinity Pool Staked FIL",
     "",
     "0x690908f7fa93afC040CFbD9fE1dDd2C2668Aa0e0",
-    false,
-    false,
-    null
-  ],
-  [
-    "filecoin",
-    "wrapped_staked_fil",
-    "wstFIL",
-    18,
-    "Wrapped Staked FIL",
-    "",
-    "0x6A3F21d2A92a15752912974BbBD5b1469A72B261",
     false,
     false,
     null

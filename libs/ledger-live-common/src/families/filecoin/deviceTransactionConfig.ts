@@ -2,9 +2,9 @@ import type { DeviceTransactionField } from "../../transaction";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
-import { methodToString } from "./utils";
-import { getAccountUnit } from "../../account/helpers";
+import { getAccountUnit, methodToString } from "./utils";
 import { validateAddress } from "./bridge/utils/addresses";
+import BigNumber from "bignumber.js";
 
 export type ExtraDeviceTransactionField =
   | {
@@ -48,7 +48,9 @@ function getDeviceTransactionConfig(input: {
   const subAccount = tokenTransfer ? (input.account as TokenAccount) : null;
 
   const fields: Array<DeviceTransactionField> = [];
-  const unit = input.parentAccount ? input.parentAccount.unit : getAccountUnit(input.account);
+  const unit = input.parentAccount
+    ? input.parentAccount.currency.units[0]
+    : getAccountUnit(input.account);
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -67,7 +69,9 @@ function getDeviceTransactionConfig(input: {
 
   fields.push({
     type: "filecoin.amount",
-    value: tokenTransfer ? "0" : formatCurrencyUnit(unit, input.transaction.amount, formatConfig),
+    value: tokenTransfer
+      ? formatCurrencyUnit(unit, BigNumber(0), formatConfig)
+      : formatCurrencyUnit(unit, input.transaction.amount, formatConfig),
     label: "Value",
   });
 
