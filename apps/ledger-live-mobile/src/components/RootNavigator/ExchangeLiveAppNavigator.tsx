@@ -77,6 +77,7 @@ export default function ExchangeLiveAppNavigator(_props?: Record<string, unknown
         name={ScreenName.ExchangeBuy}
         options={{
           headerStyle: styles.headerNoShadow,
+          headerShown: false,
         }}
       >
         {props => <ExchangeBuy {...props} />}
