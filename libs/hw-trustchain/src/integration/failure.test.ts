@@ -13,7 +13,7 @@ listen(log => {
   console.log(log.type + ": " + log.message);
 });
 */
-setEnv("SPECULOS_PID_OFFSET", 10); // since two tests are running in parallel, we need to increase the counter
+setEnv("SPECULOS_PID_OFFSET", 20); // since two tests are running in parallel, we need to increase the counter
 
 const DEFAULT_TOPIC = "c96d450545ff2836204c29af291428a5bf740304978f5dfb0b4a261474192851";
 
