@@ -690,7 +690,7 @@ export class ApduDevice implements Device {
     const sw = response.readUInt16BE(response.length - 2);
     if (sw !== 0x9000) return false;
     const appName = response.subarray(0, response.length - 2).toString();
-    return appName === "Boilerplate"; // TODO change app name
+    return appName === "Trustchain"; // TODO change app name
   }
 
   async close(): Promise<void> {
