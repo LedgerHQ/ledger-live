@@ -1,26 +1,24 @@
 import {
+  AddressType,
   CertificateType,
   StakeCredentialParamsType,
   StakeDelegationParams,
   StakeRegistrationParams,
   StakeDeregistrationParams,
-  Withdrawal,
-  Witness,
-} from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
-import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
-import groupBy from "lodash/groupBy";
-import {
-  AddressType,
-  AssetGroup,
   TxInput,
   TxOutput,
   TxOutputDestination,
   TxOutputDestinationType,
+  Withdrawal,
+  StakeCredentialParams,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import { Transaction as TyphonTransaction } from "@stricahq/typhonjs";
-import { getBipPathString } from "@ledgerhq/coin-cardano/logic";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
+import {
+  SignerTxCertificate,
+  SignerTxInput,
+  SignerTxOutput,
+  SignerTxWithdrawal,
+} from "@ledgerhq/coin-cardano/signer";
 
 /**
  * returns the formatted transactionInput for ledger cardano app
@@ -29,23 +27,11 @@ import { getBipPathString } from "@ledgerhq/coin-cardano/logic";
  * @param {number} accountIndex
  * @returns {TxInput}
  */
-export function prepareLedgerInput(input: TyphonTypes.Input, accountIndex: number): TxInput {
-  const paymentKeyPath =
-    input.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS
-      ? input.address.paymentCredential.bipPath
-      : undefined;
+export function prepareLedgerInput({ txHashHex, outputIndex, path }: SignerTxInput): TxInput {
   return {
-    txHashHex: input.txId,
-    outputIndex: input.index,
-    path: paymentKeyPath
-      ? str_to_path(
-          getBipPathString({
-            account: accountIndex,
-            chain: paymentKeyPath.chain,
-            index: paymentKeyPath.index,
-          }),
-        )
-      : null,
+    txHashHex,
+    outputIndex,
+    path: path ? str_to_path(path) : null,
   };
 }
 
@@ -56,218 +42,92 @@ export function prepareLedgerInput(input: TyphonTypes.Input, accountIndex: numbe
  * @param accountIndex
  * @returns {TxOutput}
  */
-export function prepareLedgerOutput(output: TyphonTypes.Output, accountIndex: number): TxOutput {
-  const isByronAddress = output.address instanceof TyphonAddress.ByronAddress;
-  let isDeviceOwnedAddress = false;
-  let destination: TxOutputDestination;
+export function prepareLedgerOutput(output: SignerTxOutput): TxOutput {
+  const { amount, tokenBundle } = output;
 
-  if (!isByronAddress) {
-    const address = output.address as TyphonTypes.ShelleyAddress;
-    isDeviceOwnedAddress =
-      address.paymentCredential &&
-      address.paymentCredential.type === TyphonTypes.HashType.ADDRESS &&
-      address.paymentCredential.bipPath !== undefined;
-  }
-
-  if (isDeviceOwnedAddress) {
-    const address = output.address as TyphonAddress.BaseAddress;
-
-    const paymentKeyPath = (address.paymentCredential as TyphonTypes.HashCredential)
-      .bipPath as TyphonTypes.BipPath;
-    const stakingKeyPath = (address.stakeCredential as TyphonTypes.HashCredential)
-      .bipPath as TyphonTypes.BipPath;
-
-    const paymentKeyPathString = getBipPathString({
-      account: accountIndex,
-      chain: paymentKeyPath.chain,
-      index: paymentKeyPath.index,
-    });
-    const stakingKeyPathString = getBipPathString({
-      account: accountIndex,
-      chain: stakingKeyPath.chain,
-      index: stakingKeyPath.index,
-    });
-
-    destination = {
-      type: TxOutputDestinationType.DEVICE_OWNED,
-      params: {
-        type: AddressType.BASE_PAYMENT_KEY_STAKE_KEY,
-        params: {
-          spendingPath: str_to_path(paymentKeyPathString),
-          stakingPath: str_to_path(stakingKeyPathString),
-        },
-      },
-    };
-  } else {
-    const address = output.address;
-    destination = {
-      type: TxOutputDestinationType.THIRD_PARTY,
-      params: {
-        addressHex: address.getHex(),
-      },
-    };
-  }
-
-  const tokenBundle: Array<AssetGroup> = Object.values(
-    groupBy(output.tokens, ({ policyId }) => policyId),
-  ).map(tokens => ({
-    policyIdHex: tokens[0].policyId,
-    tokens: tokens.map(token => ({
-      assetNameHex: token.assetName,
-      amount: token.amount.toString(),
-    })),
-  }));
+  const destination = convertDestination(output);
 
   return {
-    amount: output.amount.toString(),
+    amount,
     destination,
     tokenBundle,
   };
 }
 
-export function prepareCertificate(cert: TyphonTypes.Certificate) {
-  if (cert.certType === (CertificateType.STAKE_REGISTRATION as number)) {
-    return prepareStakeRegistrationCertificate(cert as TyphonTypes.StakeRegistrationCertificate);
-  } else if (cert.certType === (CertificateType.STAKE_DELEGATION as number)) {
-    return prepareStakeDelegationCertificate(cert as TyphonTypes.StakeDelegationCertificate);
-  } else if (cert.certType === (CertificateType.STAKE_DEREGISTRATION as number)) {
-    return prepareStakeDeRegistrationCertificate(
-      cert as TyphonTypes.StakeDeRegistrationCertificate,
-    );
-  } else {
-    throw new Error("Invalid Certificate type");
-  }
-}
-
-export function prepareStakeRegistrationCertificate(
-  certificate: TyphonTypes.StakeRegistrationCertificate,
-): {
-  type: CertificateType.STAKE_REGISTRATION;
-  params: StakeRegistrationParams;
-} {
-  if (
-    certificate.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
-    certificate.stakeCredential.bipPath
-  ) {
+function convertDestination({ destination }: SignerTxOutput): TxOutputDestination {
+  if (destination.isDeviceOwnedAddress) {
     return {
-      type: CertificateType.STAKE_REGISTRATION,
+      type: TxOutputDestinationType.DEVICE_OWNED,
       params: {
-        stakeCredential: {
-          type: StakeCredentialParamsType.KEY_PATH,
-          keyPath: str_to_path(
-            getBipPathString({
-              account: certificate.stakeCredential.bipPath.account,
-              chain: certificate.stakeCredential.bipPath.chain,
-              index: certificate.stakeCredential.bipPath.index,
-            }),
-          ),
+        type: AddressType.BASE_PAYMENT_KEY_STAKE_KEY,
+        params: {
+          spendingPath: str_to_path(destination.params.spendingPath),
+          stakingPath: str_to_path(destination.params.stakingPath),
         },
       },
     };
   } else {
-    throw new Error("Invalid stakeKey type");
-  }
-}
-
-export function prepareStakeDelegationCertificate(
-  certificate: TyphonTypes.StakeDelegationCertificate,
-): {
-  type: CertificateType.STAKE_DELEGATION;
-  params: StakeDelegationParams;
-} {
-  if (
-    certificate.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
-    certificate.stakeCredential.bipPath
-  ) {
     return {
-      type: CertificateType.STAKE_DELEGATION,
+      type: TxOutputDestinationType.THIRD_PARTY,
       params: {
-        stakeCredential: {
-          type: StakeCredentialParamsType.KEY_PATH,
-          keyPath: str_to_path(
-            getBipPathString({
-              account: certificate.stakeCredential.bipPath.account,
-              chain: certificate.stakeCredential.bipPath.chain,
-              index: certificate.stakeCredential.bipPath.index,
-            }),
-          ),
+        addressHex: destination.params.addressHex,
+      },
+    };
+  }
+}
+
+export function prepareCertificate(cert: SignerTxCertificate):
+  | {
+      type: CertificateType.STAKE_REGISTRATION;
+      params: StakeRegistrationParams;
+    }
+  | {
+      type: CertificateType.STAKE_DELEGATION;
+      params: StakeDelegationParams;
+    }
+  | {
+      type: CertificateType.STAKE_DEREGISTRATION;
+      params: StakeDeregistrationParams;
+    } {
+  const stakeCredential: StakeCredentialParams = {
+    type: StakeCredentialParamsType.KEY_PATH,
+    keyPath: str_to_path(cert.params.stakeCredential.keyPath),
+  };
+
+  switch (cert.type) {
+    case "REGISTRATION":
+      return {
+        type: CertificateType.STAKE_REGISTRATION,
+        params: {
+          stakeCredential,
         },
-        poolKeyHashHex: certificate.poolHash,
-      },
-    };
-  } else {
-    throw new Error("Invalid stakeKey type");
-  }
-}
-
-export function prepareStakeDeRegistrationCertificate(certificate: TyphonTypes.Certificate): {
-  type: CertificateType.STAKE_DEREGISTRATION;
-  params: StakeDeregistrationParams;
-} {
-  if (
-    certificate.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
-    certificate.stakeCredential.bipPath
-  ) {
-    return {
-      type: CertificateType.STAKE_DEREGISTRATION,
-      params: {
-        stakeCredential: {
-          type: StakeCredentialParamsType.KEY_PATH,
-          keyPath: str_to_path(
-            getBipPathString({
-              account: certificate.stakeCredential.bipPath.account,
-              chain: certificate.stakeCredential.bipPath.chain,
-              index: certificate.stakeCredential.bipPath.index,
-            }),
-          ),
+      };
+    case "DELEGATION":
+      return {
+        type: CertificateType.STAKE_DELEGATION,
+        params: {
+          stakeCredential,
+          poolKeyHashHex: cert.params.poolKeyHashHex,
         },
-      },
-    };
-  } else {
-    throw new Error("Invalid stakeKey type");
+      };
+    case "DEREGISTRATION":
+      return {
+        type: CertificateType.STAKE_DEREGISTRATION,
+        params: {
+          stakeCredential,
+        },
+      };
+    default:
+      throw new Error("Invalid Certificate type");
   }
 }
 
-export function prepareWithdrawal(withdrawal: TyphonTypes.Withdrawal): Withdrawal {
-  if (
-    withdrawal.rewardAccount.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
-    withdrawal.rewardAccount.stakeCredential.bipPath
-  ) {
-    return {
-      stakeCredential: {
-        type: StakeCredentialParamsType.KEY_PATH,
-        keyPath: str_to_path(
-          getBipPathString({
-            account: withdrawal.rewardAccount.stakeCredential.bipPath.account,
-            chain: withdrawal.rewardAccount.stakeCredential.bipPath.chain,
-            index: withdrawal.rewardAccount.stakeCredential.bipPath.index,
-          }),
-        ),
-      },
-      amount: withdrawal.amount.toString(),
-    };
-  } else {
-    throw new Error("Invalid stakeKey type");
-  }
+export function prepareWithdrawal({ stakeCredential, amount }: SignerTxWithdrawal): Withdrawal {
+  return {
+    stakeCredential: {
+      type: StakeCredentialParamsType.KEY_PATH,
+      keyPath: str_to_path(stakeCredential.keyPath),
+    },
+    amount,
+  };
 }
-
-/**
- * Adds signatures to unsigned transaction
- */
-export const signTx = (
-  unsignedTransaction: TyphonTransaction,
-  accountKey: Bip32PublicKey,
-  witnesses: Array<Witness>,
-) => {
-  witnesses.forEach(witness => {
-    const [, , , chainType, index] = witness.path;
-    const publicKey = accountKey.derive(chainType).derive(index).toPublicKey().toBytes();
-    const vKeyWitness: TyphonTypes.VKeyWitness = {
-      signature: Buffer.from(witness.witnessSignatureHex, "hex"),
-      publicKey: Buffer.from(publicKey),
-    };
-    unsignedTransaction.addWitness(vKeyWitness);
-  });
-
-  return unsignedTransaction.buildTransaction();
-};

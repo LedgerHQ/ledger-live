@@ -1,5 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
+import { Bip32PublicKey } from "@stricahq/bip32ed25519";
+import { HashType } from "@stricahq/typhonjs/dist/types";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type {
   CardanoAccount,
@@ -17,9 +19,14 @@ import { getNetworkParameters } from "./networks";
 import { MEMO_LABEL } from "./constants";
 import { OperationType, SignOperationEvent, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { HashType } from "@stricahq/typhonjs/dist/types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { CardanoSigner } from "./signer";
+import { CardanoSigner, Witness } from "./signer";
+import {
+  prepareCertificate,
+  prepareLedgerInput,
+  prepareLedgerOutput,
+  prepareWithdrawal,
+} from "./stricaTypeSerializer";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,
@@ -202,17 +209,41 @@ const buildSignOperation =
 
         const unsignedTransaction = await buildTransaction(account as CardanoAccount, transaction);
 
+        const ledgerAppInputs = unsignedTransaction
+          .getInputs()
+          .map(i => prepareLedgerInput(i, account.index));
+
+        const ledgerAppOutputs = unsignedTransaction
+          .getOutputs()
+          .map(o => prepareLedgerOutput(o, account.index));
+
+        const ledgerCertificates = unsignedTransaction.getCertificates().map(prepareCertificate);
+
+        const ledgerWithdrawals = unsignedTransaction.getWithdrawals().map(prepareWithdrawal);
+
+        const auxiliaryDataHashHex = unsignedTransaction.getAuxiliaryDataHashHex();
+
         const accountPubKey = getExtendedPublicKeyFromHex(account.xpub as string);
         const networkParams = getNetworkParameters(account.currency.id);
 
-        const signed = await signerContext(deviceId, signer =>
+        const signerTransaction = {
+          inputs: ledgerAppInputs,
+          outputs: ledgerAppOutputs,
+          certificates: ledgerCertificates,
+          withdrawals: ledgerWithdrawals,
+          fee: unsignedTransaction.getFee().toString(),
+          ttl: unsignedTransaction.getTTL()?.toString(),
+          validityIntervalStart: null,
+          auxiliaryData: auxiliaryDataHashHex ?? null,
+        };
+
+        const signedData = await signerContext(deviceId, signer =>
           signer.sign({
-            unsignedTransaction,
-            accountPubKey,
-            accountIndex: account.index,
+            transaction: signerTransaction,
             networkParams,
           }),
         );
+        const signed = signTx(unsignedTransaction, accountPubKey, signedData.witnesses);
 
         o.next({ type: "device-signature-granted" });
 
@@ -235,5 +266,26 @@ const buildSignOperation =
         e => o.error(e),
       );
     });
+
+/**
+ * Adds signatures to unsigned transaction
+ */
+export const signTx = (
+  unsignedTransaction: TyphonTransaction,
+  accountKey: Bip32PublicKey,
+  witnesses: Array<Witness>,
+) => {
+  witnesses.forEach(witness => {
+    const [, , , chainType, index] = witness.path;
+    const publicKey = accountKey.derive(chainType).derive(index).toPublicKey().toBytes();
+    const vKeyWitness: TyphonTypes.VKeyWitness = {
+      signature: Buffer.from(witness.witnessSignatureHex, "hex"),
+      publicKey: Buffer.from(publicKey),
+    };
+    unsignedTransaction.addWitness(vKeyWitness);
+  });
+
+  return unsignedTransaction.buildTransaction();
+};
 
 export default buildSignOperation;

@@ -31,7 +31,6 @@ import {
   prepareLedgerInput,
   prepareLedgerOutput,
   prepareWithdrawal,
-  signTx,
 } from "./tx-helpers";
 
 const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
@@ -82,26 +81,7 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
         path: str_to_path(accountPath),
       });
     },
-    sign: async ({
-      unsignedTransaction,
-      accountPubKey,
-      accountIndex,
-      networkParams,
-    }: CardanoSignRequest): Promise<CardanoSignature> => {
-      const rawInputs = unsignedTransaction.getInputs();
-      const ledgerAppInputs = rawInputs.map(i => prepareLedgerInput(i, accountIndex));
-
-      const rawOutptus = unsignedTransaction.getOutputs();
-      const ledgerAppOutputs = rawOutptus.map(o => prepareLedgerOutput(o, accountIndex));
-
-      const rawCertificates = unsignedTransaction.getCertificates();
-      const ledgerCertificates = rawCertificates.map(prepareCertificate);
-
-      const rawWithdrawals = unsignedTransaction.getWithdrawals();
-      const ledgerWithdrawals = rawWithdrawals.map(prepareWithdrawal);
-
-      const auxiliaryDataHashHex = unsignedTransaction.getAuxiliaryDataHashHex();
-
+    sign: async ({ transaction, networkParams }: CardanoSignRequest): Promise<CardanoSignature> => {
       const network =
         networkParams.networkId === Networks.Mainnet.networkId
           ? Networks.Mainnet
@@ -111,18 +91,18 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
         signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
         tx: {
           network,
-          inputs: ledgerAppInputs,
-          outputs: ledgerAppOutputs,
-          certificates: ledgerCertificates,
-          withdrawals: ledgerWithdrawals,
-          fee: unsignedTransaction.getFee().toString(),
-          ttl: unsignedTransaction.getTTL()?.toString(),
+          inputs: transaction.inputs.map(prepareLedgerInput),
+          outputs: transaction.outputs.map(prepareLedgerOutput),
+          certificates: transaction.certificates.map(prepareCertificate),
+          withdrawals: transaction.withdrawals.map(prepareWithdrawal),
+          fee: transaction.fee,
+          ttl: transaction.ttl,
           validityIntervalStart: null,
-          auxiliaryData: auxiliaryDataHashHex
+          auxiliaryData: transaction.auxiliaryData
             ? {
                 type: TxAuxiliaryDataType.ARBITRARY_HASH,
                 params: {
-                  hashHex: auxiliaryDataHashHex,
+                  hashHex: transaction.auxiliaryData,
                 },
               }
             : null,
@@ -130,8 +110,7 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
         additionalWitnessPaths: [],
       };
 
-      const r = await ada.signTransaction(trxOptions);
-      return signTx(unsignedTransaction, accountPubKey, r.witnesses);
+      return ada.signTransaction(trxOptions);
     },
   };
 };
