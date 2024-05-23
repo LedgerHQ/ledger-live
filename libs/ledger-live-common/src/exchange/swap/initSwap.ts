@@ -245,6 +245,14 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           magnitudeAwareRate = transaction.amount && amountExpectedTo.dividedBy(transaction.amount);
         }
 
+        let amountExpectedFrom;
+        if (swapResult.binaryPayload) {
+          const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
+          amountExpectedFrom = new BigNumber(decodePayload.amountToProvider.toString());
+          if (data.amountFromInSmallestDenomination !== amountExpectedFrom.toNumber())
+            throw new Error("AmountFrom received from partner's payload mismatch user input");
+        }
+
         o.next({
           type: "init-swap-requested",
           amountExpectedTo,

@@ -5,8 +5,10 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { PolkadotCoinConfig, setCoinConfig } from "../config";
 import { PolkadotSigner, type Transaction } from "../types";
 import signerGetAddress from "../signer";
 import broadcast from "./broadcast";
@@ -66,7 +68,12 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<PolkadotSigner>) {
+export function createBridges(
+  signerContext: SignerContext<PolkadotSigner>,
+  coinConfig: CoinConfig<PolkadotCoinConfig>,
+) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

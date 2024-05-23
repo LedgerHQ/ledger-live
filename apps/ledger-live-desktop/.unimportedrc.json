@@ -20,7 +20,7 @@
     "src/newArch/Collectibles/**",
     "src/renderer/screens/settings/sections/General/WalletSync/setupTests/shared.tsx"
   ],
-  "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types"],
+  "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types", "allure-commandline"],
   "aliases": {
     "~/*": ["./src/*"]
   }

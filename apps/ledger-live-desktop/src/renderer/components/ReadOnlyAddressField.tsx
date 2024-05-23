@@ -110,7 +110,7 @@ function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
         </ClipboardSuspicious>
       ) : null}
       <Box horizontal alignItems="stretch">
-        <Address allowCopy={allowCopy}>
+        <Address allowCopy={allowCopy} id="address-field">
           {!copyFeedback ? null : (
             <CopyFeedback>
               <Trans i18nKey="common.addressCopied" />

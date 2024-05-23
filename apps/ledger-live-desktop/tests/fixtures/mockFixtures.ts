@@ -14,7 +14,7 @@ export const test = base.extend<TestFixtures>({
   mockProviderSvgs: async ({ page }, use) => {
     await page.route("https://cdn.live.ledger.com/icons/providers/boxed/**.svg", async route => {
       console.log("Mocking Provider icons");
-      route.fulfill({
+      await route.fulfill({
         headers: { teststatus: "mocked" },
         path: "tests/mocks/dummy-provider-icon.svg",
       });
@@ -28,7 +28,7 @@ export const test = base.extend<TestFixtures>({
       "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
       async route => {
         console.log("Mocking Fees endpoint");
-        route.fulfill({
+        await route.fulfill({
           headers: { teststatus: "mocked" },
           body: JSON.stringify({ "2": 15067, "4": 15067, "6": 15067, last_updated: Date.now() }),
         });
@@ -43,7 +43,7 @@ export const test = base.extend<TestFixtures>({
   mockSwapCancelledEndpoint: async ({ page }, use) => {
     await page.route("https://swap.ledger.com/v5/swap/cancelled", async route => {
       console.log("Mocking swap cancelled HTTP response");
-      route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
     });
     await use(page);
   },
@@ -51,7 +51,7 @@ export const test = base.extend<TestFixtures>({
   mockSwapAcceptedEndpoint: async ({ page }, use) => {
     await page.route("https://swap.ledger.com/v5/swap/accepted", async route => {
       console.log("Mocking swap accepted HTTP response");
-      route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
     });
     await use(page);
   },
@@ -60,7 +60,7 @@ export const test = base.extend<TestFixtures>({
     await page.route("https://swap.ledger.com/v5/swap/status", async route => {
       console.log("Mocking swap status HTTP response");
       const mockStatusResponse = getStatusMock();
-      route.fulfill({ headers: { teststatus: "mocked" }, body: mockStatusResponse });
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockStatusResponse });
     });
     await use(page);
   },

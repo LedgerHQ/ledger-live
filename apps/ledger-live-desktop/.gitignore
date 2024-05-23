@@ -139,3 +139,6 @@ release-notes.json
 
 metafile.*.json
 lint.json
+
+# tests execution results
+allure-results

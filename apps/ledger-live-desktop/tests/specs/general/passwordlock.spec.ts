@@ -33,7 +33,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
 
   await test.step("User data should be encrypted", async () => {
     // NOTE: this test might fail if other tests are running at the same time.
-    expect.poll(async () => typeof (await getUserdata()).data.accounts).toBe("string");
+    await expect.poll(async () => typeof (await getUserdata()).data.accounts).toBe("string");
   });
 
   await test.step("Open change password modal", async () => {

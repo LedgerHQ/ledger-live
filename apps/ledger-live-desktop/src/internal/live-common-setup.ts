@@ -10,6 +10,9 @@ import { DisconnectedDevice } from "@ledgerhq/errors";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { ForwardToMainLogger } from "./logger";
 import { LOG_TYPE_INTERNAL } from "./logger";
+import SpeculosHttpTransport, {
+  SpeculosHttpTransportOpts,
+} from "@ledgerhq/hw-transport-node-speculos-http";
 
 /* eslint-disable guard-for-in */
 for (const k in process.env) {
@@ -32,7 +35,17 @@ setErrorRemapping(e => {
   return throwError(() => e);
 });
 
-if (getEnv("DEVICE_PROXY_URL")) {
+if (getEnv("SPECULOS_API_PORT")) {
+  const req: Record<string, number> = {
+    apiPort: getEnv("SPECULOS_API_PORT"),
+  };
+
+  registerTransportModule({
+    id: "speculos-http",
+    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+    disconnect: () => Promise.resolve(),
+  });
+} else if (getEnv("DEVICE_PROXY_URL")) {
   const Tr = TransportHttp(getEnv("DEVICE_PROXY_URL").split("|"));
   registerTransportModule({
     id: "proxy",

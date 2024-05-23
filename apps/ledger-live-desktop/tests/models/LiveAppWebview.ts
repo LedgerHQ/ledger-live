@@ -1,5 +1,5 @@
-import { Page, Locator } from "@playwright/test";
-import { WebviewTag } from "../../src/renderer/components/Web3AppWebview/types";
+import { Locator, Page } from "@playwright/test";
+import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
 import { waitFor } from "../utils/waitFor";
 import { getLiveAppManifest, startDummyServer, stopDummyServer } from "@ledgerhq/test-utils";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
@@ -32,8 +32,9 @@ export class LiveAppWebview {
         // eslint-disable-next-line no-console
         console.info(`========> Live app successfully running on port ${port}! <=========`);
 
-        const localManifests = JSON.stringify(getLiveAppManifest({ ...liveAppManifest, url: url }));
-        process.env.MOCK_REMOTE_LIVE_MANIFEST = localManifests;
+        process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
+          getLiveAppManifest({ ...liveAppManifest, url: url }),
+        );
         return true;
       } else {
         throw new Error("Ping response != 200, got: " + response.status);
@@ -113,13 +114,10 @@ export class LiveAppWebview {
   }
 
   async textIsPresent(textToCheck: string) {
-    const result: boolean = await this.page.evaluate(textToCheck => {
+    const result: boolean = await this.page.evaluate(async textToCheck => {
       const webview = document.querySelector("webview");
-      return (webview as WebviewTag)
-        .executeJavaScript("document.body.innerHTML")
-        .then((text: string) => {
-          return text.includes(textToCheck);
-        });
+      const text = await (webview as WebviewTag).executeJavaScript("document.body.innerHTML");
+      return text.includes(textToCheck);
     }, textToCheck);
 
     return result;
