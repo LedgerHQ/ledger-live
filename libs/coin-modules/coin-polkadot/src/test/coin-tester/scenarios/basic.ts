@@ -10,20 +10,20 @@ import { makeAccount } from "../../fixtures";
 import { killZombienet, spawnZombienet } from "../zombienet";
 import { defaultNanoApp } from "../scenarios.test";
 import BigNumber from "bignumber.js";
-import { cryptoWaitReady, decodeAddress, encodeAddress } from "@polkadot/util-crypto";
+import { cryptoWaitReady } from "@polkadot/util-crypto";
 
 const polkadot = getCryptoCurrencyById("polkadot");
 
 function getTransactions() {
   const send1DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
     name: "send 1 DOT",
-    recipient: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+    recipient: "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw",
     amount: new BigNumber(1),
   };
 
   const send100DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
     name: "send 100 DOT",
-    recipient: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
+    recipient: "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw",
     amount: new BigNumber(100),
   };
 
@@ -41,25 +41,10 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
       spawnZombienet(),
     ]);
 
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Polkadot(transport));
-    const getAddress = resolver(signerContext);
-
-    const { address } = await getAddress("", {
-      path: "44'/354'/0'/0'/0'",
-      currency: polkadot,
-      derivationMode: "polkadotbip44",
-    });
-
-    const { accountBridge, currencyBridge } = createBridges(signerContext);
-
-    const account = makeAccount(address, polkadot);
-
     await cryptoWaitReady();
-
     await wsProvider.connect();
     const api = await ApiPromise.create({ provider: wsProvider });
 
-    // Retrieve the chain & node information via rpc calls
     const [chain, nodeName, nodeVersion] = await Promise.all([
       api.rpc.system.chain(),
       api.rpc.system.name(),
@@ -74,21 +59,37 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
 
     const scenarioAccountPair = keyring.addFromUri(process.env.SEED!, {
       name: "basicScenarioPair",
-      address,
     });
 
     const unsub = await api.tx.balances
-      .transfer(scenarioAccountPair.address, 5000)
-      .signAndSend(alice, result => {
+      .transferKeepAlive(scenarioAccountPair.address, 5000)
+      .signAndSend(alice, async result => {
         console.log(`Current status is ${result.status}`);
 
         if (result.status.isInBlock) {
           console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
         } else if (result.status.isFinalized) {
           console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+          const { data } = (await api.query.system.account(scenarioAccountPair.address)) as any;
+          console.log({ data });
           unsub();
         }
       });
+
+    const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Polkadot(transport));
+
+    /*
+    const getAddress = resolver(signerContext);
+    const { address } = await getAddress("", {
+      path: "44'/354'/0'/0'/0'",
+      currency: polkadot,
+      derivationMode: "polkadotbip44",
+    });
+    */
+
+    const { accountBridge, currencyBridge } = createBridges(signerContext);
+
+    const account = makeAccount(scenarioAccountPair.address, polkadot);
 
     return {
       accountBridge,
