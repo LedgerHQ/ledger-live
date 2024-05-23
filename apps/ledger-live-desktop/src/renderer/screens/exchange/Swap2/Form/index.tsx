@@ -458,6 +458,8 @@ const SwapForm = () => {
         liveApp={
           swapLiveAppManifestID && manifest ? (
             <SwapWebView
+              sourceCurrencyId={sourceCurrency?.id}
+              targetCurrencyId={targetCurrency?.id}
               manifest={manifest}
               swapState={swapWebProps}
               // When live app crash, it should disable live app and fall back to native UI

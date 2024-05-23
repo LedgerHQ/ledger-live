@@ -63,6 +63,8 @@ export type SwapWebProps = {
   manifest: LiveAppManifest;
   swapState?: Partial<SwapProps>;
   liveAppUnavailable(): void;
+  sourceCurrencyId?: string;
+  targetCurrencyId?: string;
 };
 
 export const SwapWebManifestIDs = {
@@ -88,7 +90,13 @@ const SwapWebAppWrapper = styled.div`
   flex: 1;
 `;
 
-const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) => {
+const SwapWebView = ({
+  manifest,
+  swapState,
+  liveAppUnavailable,
+  sourceCurrencyId,
+  targetCurrencyId,
+}: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -197,8 +205,8 @@ const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) 
     const searchParams = new URLSearchParams();
 
     const swapParams = {
-      from: fromCurrency,
-      to: toCurrency,
+      from: sourceCurrencyId,
+      to: targetCurrencyId,
       amountFrom: swapState?.fromAmount,
       addressFrom: addressFrom,
       addressTo: addressTo,
@@ -220,7 +228,8 @@ const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) 
     fromCurrency,
     swapState?.estimatedFees,
     swapState?.fromAmount,
-    toCurrency,
+    targetCurrencyId,
+    sourceCurrencyId,
   ]);
 
   // return loader???
