@@ -52,9 +52,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     console.log(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
 
     const keyring = new Keyring({ type: "sr25519" });
-
-    // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
-    const alice = keyring.createFromUri("//Alice");
+    keyring.setSS58Format(0);
 
     const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Polkadot(transport));
 
@@ -65,15 +63,22 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
       derivationMode: "polkadotbip44",
     });
 
-    const scenarioAccountPair = keyring.addFromUri(process.env.SEED!, {
-      name: "SCENARIO_ACCOUNT",
-      address,
+    const basicScenarioAccountPair = keyring.addFromAddress(address, {
+      name: "BASIC_SCENARIO_ACCOUNT",
     });
 
-    console.log({ address, scenarioAccountPair: scenarioAccountPair.address });
+    // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
+    const alice = keyring.addFromUri("//Alice");
+
+    await api.query.system.account(basicScenarioAccountPair.address),
+      ({ nonce, data: balance }: any) => {
+        console.log(
+          `free balance is ${balance.free} with ${balance.reserved} reserved and a nonce of ${nonce}`,
+        );
+      };
 
     const unsub = await api.tx.balances
-      .transferKeepAlive(scenarioAccountPair.address, 5000)
+      .transferKeepAlive(basicScenarioAccountPair.address, 500)
       .signAndSend(alice, async result => {
         console.log(`Current status is ${result.status}`);
 
@@ -81,27 +86,25 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
           console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
         } else if (result.status.isFinalized) {
           console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-          const { data } = (await api.query.system.account(scenarioAccountPair.address)) as any;
-          console.log({ data: data.toString() });
           unsub();
         }
       });
 
     const { accountBridge, currencyBridge } = createBridges(signerContext);
 
-    const account = makeAccount(scenarioAccountPair.address, polkadot);
+    const account = makeAccount(basicScenarioAccountPair.address, polkadot);
 
     return {
       accountBridge,
       currencyBridge,
-      address: scenarioAccountPair.address,
+      address: basicScenarioAccountPair.address,
       account,
       onSignerConfirmation,
     };
   },
   getTransactions,
   teardown: async () => {
-    // await wsProvider.disconnect();
-    // await Promise.all([killSpeculos(), killChopsticks()]);
+    await wsProvider.disconnect();
+    await Promise.all([killSpeculos(), killChopsticks()]);
   },
 };
