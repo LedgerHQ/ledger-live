@@ -88,6 +88,105 @@ type CommandResponse =
   | PublishKeyCommandResponse
   | EmptyCommandResponse;
 
+export class PubKeyCredential {
+  version: number;
+  curveId: number;
+  signAlgorithm: number;
+  publicKey: Uint8Array;
+
+  constructor(version: number, curveId: number, signAlgorithm: number, publicKey: Uint8Array) {
+    this.version = version;
+    this.curveId = curveId;
+    this.signAlgorithm = signAlgorithm;
+    this.publicKey = publicKey;
+  }
+
+  static fromBytes(data, offset = 0): [PubKeyCredential, number] {
+    const view = new DataView(data.buffer, data.byteOffset + offset);
+    const version = view.getUint8(0);
+    const curveId = view.getUint8(1);
+    const signAlgorithm = view.getUint8(2);
+    const publicKeyLength = view.getUint8(3);
+    const publicKey = new Uint8Array(data.buffer, data.byteOffset + offset + 4, publicKeyLength);
+
+    return [new PubKeyCredential(version, curveId, signAlgorithm, publicKey), 4 + publicKeyLength];
+  }
+
+  toJSON() {
+    return {
+      version: this.version,
+      curveId: this.curveId,
+      signAlgorithm: this.signAlgorithm,
+      publicKey: crypto.to_hex(this.publicKey),
+    };
+  }
+
+  assertValidity() {
+    if (this.version !== 0x00) {
+      throw new Error(`PubKeyCredential: Wrong version: ${this.version}`);
+    }
+    if (this.curveId !== 0x21) {
+      throw new Error(`PubKeyCredential: Wrong curve id: ${this.curveId}`);
+    }
+    if (this.signAlgorithm !== 0x01) {
+      throw new Error(`PubKeyCredential: Wrong sign algorithm: ${this.signAlgorithm}`);
+    }
+    if (this.publicKey.length !== 0x21) {
+      throw new Error(`PubKeyCredential: Wrong pubkey len: ${this.publicKey.length}`);
+    }
+  }
+}
+
+interface SeedIdResult {
+  pubkeyCredential: PubKeyCredential;
+  signature: Uint8Array;
+  attestationType: number;
+  attestationPubkeyCredential: PubKeyCredential;
+  attestation: Uint8Array;
+  attestationResult: Uint8Array;
+}
+
+function parseSeedIdResult(result: Uint8Array): SeedIdResult {
+  let offset = 0;
+  const [pubkeyCredential, pubkeyCredentialLength] = PubKeyCredential.fromBytes(result, offset);
+  pubkeyCredential.assertValidity();
+
+  offset += pubkeyCredentialLength;
+
+  const signatureLen = result[offset];
+  offset += 1;
+
+  const signature = new Uint8Array(result.buffer, result.byteOffset + offset, signatureLen);
+
+  offset += signatureLen;
+
+  const attestationResult = new Uint8Array(result.slice(offset));
+
+  const attestationType = result[offset];
+  offset += 1;
+
+  const [attestationPubkeyCredential, attestationPubkeyCredentialLength] =
+    PubKeyCredential.fromBytes(result, offset);
+
+  attestationPubkeyCredential.assertValidity();
+
+  offset += attestationPubkeyCredentialLength;
+
+  const attestationLen = result[offset];
+  offset += 1;
+
+  const attestation = new Uint8Array(result.buffer, result.byteOffset + offset, attestationLen);
+
+  return {
+    pubkeyCredential,
+    signature,
+    attestationType,
+    attestationPubkeyCredential,
+    attestation,
+    attestationResult,
+  };
+}
+
 /**
  *
  */
@@ -235,6 +334,21 @@ export class APDU {
       Buffer.alloc(0),
     );
     return APDU.getResponseData(response);
+  }
+
+  /**
+   * allows to sign a challenge and get the seed id
+   */
+  static async getSeedId(transport: Transport, challenge: Uint8Array): Promise<SeedIdResult> {
+    const response = await transport.send(
+      APDU.CLA,
+      APDU.INS_GET_PUBLIC_KEY,
+      0x00,
+      0x00,
+      Buffer.from(challenge),
+    );
+    const result = parseSeedIdResult(APDU.getResponseData(response));
+    return result;
   }
 
   static getResponseData(response: Buffer): Uint8Array {
@@ -481,6 +595,10 @@ export class ApduDevice implements Device {
   async getPublicKey(): Promise<PublicKey> {
     const publicKey = await APDU.getPublicKey(this.transport);
     return new PublicKey(publicKey);
+  }
+
+  async getSeedId(data: Uint8Array): Promise<SeedIdResult> {
+    return APDU.getSeedId(this.transport, data);
   }
 
   private assertStreamIsValid(stream: CommandBlock[]) {

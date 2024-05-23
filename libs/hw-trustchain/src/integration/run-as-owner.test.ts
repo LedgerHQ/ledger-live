@@ -9,12 +9,11 @@ import { StreamTree } from "../StreamTree";
 import { DerivationPath } from "../Crypto";
 
 // uncomment to see logs if you need to investigate issues
-/*
 import { listen } from "@ledgerhq/logs";
 listen(log => {
-  console.warn(log.type + ": " + log.message);
+  // eslint-disable-next-line no-console
+  console.log(log.type + ": " + log.message);
 });
-*/
 
 const DEFAULT_TOPIC = "c96d450545ff2836204c29af291428a5bf740304978f5dfb0b4a261474192851";
 const ROOT_DERIVATION_PATH = "16'/0'";
@@ -53,6 +52,50 @@ describe("Chain is owned by a device", () => {
   it("should be connected to a device", async () => {
     const alice = device.apdu(speculos.transport);
     expect(await alice.isConnected()).toBe(true);
+  });
+
+  it("can sign some data", async () => {
+    const alice = device.apdu(speculos.transport);
+    const challenge =
+      "0101070201001210cd2babbeeae850d3143215de16b82609140101154630440220717f1f6ca7c518178bdaebee46a6ab478e82f52970a5e5d89f016b0f08dd101a022049b6fbb56c87afbad519b929af6b47b5cec24cbc59c2a52c34e03aae87b41df71604664f6ddb20096c6f63616c686f7374320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000";
+
+    sub.unsubscribe();
+    sub = speculos.transport.automationEvents.subscribe(event => {
+      if (event.text === "localhost") {
+        speculos.transport.button("right");
+      } else if (event.text === "Approve") {
+        speculos.transport.button("both");
+      }
+    });
+    const out = await alice.getSeedId(crypto.from_hex(challenge));
+    expect(out).toEqual({
+      attestationResult: crypto.from_hex(
+        "000021012103f157320331ea2a70bb3075e8a8e6f9d696816143e9b3d6eb5c1aab5e6c7d0b6946304402204cce0879349be375e0c527c565a9f416d1da0f48f0836c944d201dcdcd553b0402204c25019341c5fb04869fb2b1e65a6ec9ac5b086675161ada5a106e420160e492",
+      ),
+      attestation: crypto.from_hex(
+        "304402204cce0879349be375e0c527c565a9f416d1da0f48f0836c944d201dcdcd553b0402204c25019341c5fb04869fb2b1e65a6ec9ac5b086675161ada5a106e420160e492",
+      ),
+      attestationPubkeyCredential: {
+        curveId: 33,
+        publicKey: crypto.from_hex(
+          "03f157320331ea2a70bb3075e8a8e6f9d696816143e9b3d6eb5c1aab5e6c7d0b69",
+        ),
+        signAlgorithm: 1,
+        version: 0,
+      },
+      attestationType: 0,
+      pubkeyCredential: {
+        curveId: 33,
+        publicKey: crypto.from_hex(
+          "02b2c29ab36022219967cc21a306599ecaf51ce9f2998da6982388d52c8c69a6a5",
+        ),
+        signAlgorithm: 1,
+        version: 0,
+      },
+      signature: crypto.from_hex(
+        "3045022100ad7aa50c21451e3f38142cdeddb9878d84347b31e7171fb7bafaefb1a1b7b6a9022014d8ac74ee99f916c946ddd0dcb115a8e78edad6c33b9be3a99c09f61218edc3",
+      ),
+    });
   });
 
   it("should seed a new tree", async () => {
