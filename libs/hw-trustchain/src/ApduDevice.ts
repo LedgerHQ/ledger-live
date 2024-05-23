@@ -14,7 +14,8 @@ import Transport from "@ledgerhq/hw-transport";
 import { CommandStreamEncoder } from "./CommandStreamEncoder";
 import { KeyPair, crypto } from "./Crypto";
 import { StreamTree } from "./StreamTree";
-import { TLV, TLVField } from "./CommandStreamDecoder";
+import { TLV, TLVField } from "./tlv";
+import { SeedIdResult, parseSeedIdResult } from "./SeedId";
 
 enum ParseStreamMode {
   BlockHeader = 0x00,
@@ -235,6 +236,21 @@ export class APDU {
       Buffer.alloc(0),
     );
     return APDU.getResponseData(response);
+  }
+
+  /**
+   * allows to sign a challenge and get the seed id
+   */
+  static async getSeedId(transport: Transport, challenge: Uint8Array): Promise<SeedIdResult> {
+    const response = await transport.send(
+      APDU.CLA,
+      APDU.INS_GET_PUBLIC_KEY,
+      0x00,
+      0x00,
+      Buffer.from(challenge),
+    );
+    const result = parseSeedIdResult(APDU.getResponseData(response));
+    return result;
   }
 
   static getResponseData(response: Buffer): Uint8Array {
@@ -481,6 +497,10 @@ export class ApduDevice implements Device {
   async getPublicKey(): Promise<PublicKey> {
     const publicKey = await APDU.getPublicKey(this.transport);
     return new PublicKey(publicKey);
+  }
+
+  async getSeedId(data: Uint8Array): Promise<SeedIdResult> {
+    return APDU.getSeedId(this.transport, data);
   }
 
   private assertStreamIsValid(stream: CommandBlock[]) {
