@@ -1,18 +1,18 @@
 import {
   AddressType,
+  Certificate,
   CertificateType,
+  Network,
+  SignTransactionRequest,
+  StakeCredentialParams,
   StakeCredentialParamsType,
+  TransactionSigningMode,
+  TxAuxiliaryDataType,
   TxInput,
   TxOutput,
   TxOutputDestination,
   TxOutputDestinationType,
   Withdrawal,
-  StakeCredentialParams,
-  Certificate,
-  TransactionSigningMode,
-  Network,
-  SignTransactionRequest,
-  TxAuxiliaryDataType,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import {
@@ -78,7 +78,6 @@ function prepareLedgerInput({ txHashHex, outputIndex, path }: SignerTxInput): Tx
  */
 function prepareLedgerOutput(output: SignerTxOutput): TxOutput {
   const { amount, tokenBundle } = output;
-
   const destination = convertDestination(output);
 
   return {
