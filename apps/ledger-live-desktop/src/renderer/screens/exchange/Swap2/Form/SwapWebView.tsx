@@ -26,6 +26,8 @@ import { useRedirectToSwapHistory } from "../utils/index";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { Box, Button } from "@ledgerhq/react-ui";
+import { t } from "i18next";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { captureException } from "~/sentry/internal";
 
@@ -255,12 +257,21 @@ const SwapWebView = ({
     }
   };
 
+  // Keep the previous UI
+  // Display only the disabled swap button
   if (
     swapState.error ||
     swapState.fromAmount === "0" ||
     !(fromCurrency && addressFrom && toCurrency && addressTo)
-  )
-    return null;
+  ) {
+    return (
+      <Box width="100%">
+        <Button width="100%" disabled>
+          {t("sidebar.swap")}
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <>
