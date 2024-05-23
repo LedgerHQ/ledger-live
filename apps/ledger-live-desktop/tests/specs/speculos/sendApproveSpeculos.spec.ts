@@ -38,6 +38,9 @@ for (const [i, transaction] of transactions.entries()) {
 
     //@TmsLink("B2CQA-479")
     //@TmsLink("B2CQA-1904")
+    //@TmsLink("B2CQA-473")
+    //@TmsLink("B2CQA-472")
+    //@TmsLink("B2CQA-475")
 
     test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
       const layout = new Layout(page);
