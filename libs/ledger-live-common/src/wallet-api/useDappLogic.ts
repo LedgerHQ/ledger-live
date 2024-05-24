@@ -388,7 +388,7 @@ export function useDappLogic({
             await new Promise<void>((resolve, reject) =>
               uiHook["account.request"]({
                 currencies: [getCryptoCurrencyById(requestedCurrency.currency)],
-                onSuccess: (account, parentAccount) => {
+                onSuccess: (account) => {
                   setCurrentAccountHist(manifest.id, account);
                   resolve();
                 },
