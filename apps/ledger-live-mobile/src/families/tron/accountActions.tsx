@@ -1,11 +1,9 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/types-live";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import invariant from "invariant";
 import { TRX } from "../../../../../libs/ui/packages/crypto-icons/native";
 
 const getMainActions = ({
