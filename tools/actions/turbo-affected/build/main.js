@@ -19359,7 +19359,6 @@ var package_default = {
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
     "coin:evm": "pnpm --filter coin-evm",
     "coin:framework": "pnpm --filter coin-framework",
-    "coin:tester": "pnpm --filter coin-tester",
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "coin:ton": "pnpm --filter coin-ton",
