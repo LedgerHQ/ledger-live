@@ -1,8 +1,7 @@
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import { getAccountCurrency } from "../../account";
-import { TokenAccount } from "@ledgerhq/coin-solana/api/chain/account/token";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { CardanoAccount, Transaction } from "./types";
 
 const options = [
@@ -31,7 +30,7 @@ function inferAccounts(account: Account, opts: Record<string, any>): Account[] |
     return accounts;
   }
 
-  return opts.token.map(token => {
+  return opts.token.map((token: any) => {
     const subAccounts = account.subAccounts || [];
 
     const subAccount = subAccounts.find(a => {
@@ -74,8 +73,10 @@ function inferTransactions(
   });
 }
 
-export default {
-  options,
-  inferAccounts,
-  inferTransactions,
-};
+export default function makeCliTools() {
+  return {
+    options,
+    inferAccounts,
+    inferTransactions,
+  };
+}

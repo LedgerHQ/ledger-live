@@ -1,30 +1,37 @@
 import BigNumber from "bignumber.js";
-import { AccountShapeInfo, GetAccountShape } from "../../bridge/jsHelpers";
+import { AccountShapeInfo, GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { APINetworkInfo } from "./api/api-types";
 import { getDelegationInfo } from "./api/getDelegationInfo";
 import { getNetworkInfo } from "./api/getNetworkInfo";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
-import { makeGetAccountShape, SignerContext } from "./js-synchronisation";
-import { BipPath, CardanoAccount, CardanoDelegation } from "./types";
+import { makeGetAccountShape } from "./js-synchronisation";
+import { BipPath, CardanoAccount, CardanoDelegation, PaymentCredential } from "./types";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { CardanoSigner } from "./signer";
+
 jest.mock("./buildSubAccounts");
 jest.mock("./api/getTransactions");
 jest.mock("./api/getNetworkInfo");
 jest.mock("./api/getDelegationInfo");
 
 describe("makeGetAccountShape", () => {
-  let signerContext: SignerContext;
+  let signerContext: SignerContext<CardanoSigner>;
   let shape: GetAccountShape;
   let accountShapeInfo: AccountShapeInfo;
-  let getTransactionsMock;
+  let getTransactionsMock: jest.MaybeMockedDeep<typeof getTransactions>;
 
   beforeEach(() => {
     const pubKeyMock = {
-      extendedPubKeyHex: "extendedPubKeyHex",
       chainCodeHex: "chainCodeHex",
       publicKeyHex: "publicKeyHex",
     };
-    signerContext = () => Promise.resolve(pubKeyMock);
+    const fakeSigner: CardanoSigner = {
+      getAddress: jest.fn(),
+      sign: jest.fn(),
+      getPublicKey: jest.fn().mockResolvedValue(pubKeyMock),
+    };
+    signerContext = <T>(_: string, fn: (signer: CardanoSigner) => Promise<T>) => fn(fakeSigner);
     shape = makeGetAccountShape(signerContext);
     accountShapeInfo = {
       currency: { id: "cardano" } as any,
@@ -93,7 +100,12 @@ describe("makeGetAccountShape", () => {
           externalCredentials: [
             { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "" },
           ],
-          internalCredentials: ["cred"],
+          internalCredentials: [
+            {
+              isUsed: true,
+              key: "cred",
+            } as PaymentCredential,
+          ],
           blockHeight: 0,
         }),
       );

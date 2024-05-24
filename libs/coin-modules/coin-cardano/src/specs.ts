@@ -1,14 +1,14 @@
 import expect from "expect";
-import type { AppSpec } from "../../bot/types";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import type { CardanoAccount, CardanoOperationExtra, CardanoResources, Transaction } from "./types";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
-import { formatCurrencyUnit, parseCurrencyUnit } from "../../currencies";
+import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { SubAccount } from "@ledgerhq/types-live";
 import { acceptTransaction } from "./speculos-deviceActions";
 

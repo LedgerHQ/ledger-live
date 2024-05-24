@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { getAccountCurrency, getMainAccount } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
-import { DeviceTransactionField } from "../../transaction";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
 import { CardanoAccount, Transaction, TransactionStatus } from "./types";
