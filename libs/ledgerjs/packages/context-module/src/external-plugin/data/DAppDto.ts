@@ -1,4 +1,4 @@
-export interface DappDTO {
+export interface DAppDto {
   b2c: B2c;
   abis: Abis;
   b2c_signatures: B2cSignatures;

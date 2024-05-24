@@ -2,6 +2,8 @@ name: "@Desktop • UI e2e • Test App"
 run-name: "@Desktop • UI e2e • Test App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
+  schedule:
+    - cron: "0 5 * * 1-5"
   workflow_dispatch:
     inputs:
       ref:

@@ -158,6 +158,7 @@
     "@ledgerhq/native-modules-tools": "workspace:*",
     "@ledgerhq/react-devtools": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
+    "@ledgerhq/speculos-transport": "workspace:^",
     "@octokit/rest": "^18.12.0",
     "@playwright/test": "^1.41.2",
     "@sentry/cli": "2.31.0",
