@@ -179,7 +179,7 @@ export default function SelectDevice({
           return (
             maybeDevice || {
               deviceName: name,
-              modelId: deviceModel?.id,
+              modelId: deviceModel.id,
               deviceId: id,
               wired,
             }
