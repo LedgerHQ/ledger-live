@@ -11,7 +11,7 @@ import { selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 const primary = "primary.c80";
 const neutral = "neutral.c70";
 
-const RESPONSIVE_WIDTH = 275;
+const RESPONSIVE_WIDTH = 330;
 
 export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderProps) {
   const { t } = useTranslation();
