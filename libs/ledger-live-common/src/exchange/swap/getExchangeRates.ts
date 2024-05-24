@@ -8,7 +8,7 @@ import {
   SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooLowOrTooHigh,
 } from "../../errors";
-import { getSwapAPIBaseURL, getSwapAPIError } from "./";
+import { getSwapAPIBaseURL, getSwapAPIError, getSwapUserIP } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
@@ -44,12 +44,14 @@ const getExchangeRates: GetExchangeRates = async ({
     providers: providerList,
   };
 
+  const headers = getSwapUserIP();
   const res = await network({
     method: "POST",
     url: `${getSwapAPIBaseURL()}/rate`,
     ...(timeout ? { timeout } : {}),
     ...(timeoutErrorMessage ? { timeoutErrorMessage } : {}),
     data: request,
+    ...(headers !== undefined ? headers : {}),
   });
 
   const rates = res.data.map(async responseData => {
