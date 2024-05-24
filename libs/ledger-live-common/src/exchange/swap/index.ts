@@ -19,6 +19,7 @@ import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
 import getExchangeRates from "./getExchangeRates";
+import { maybeTezosAccountUnrevealedAccount } from "./maybeTezosAccountUnrevealedAccount";
 
 export { getAvailableProviders } from "../providers";
 
@@ -130,6 +131,7 @@ export {
   getCompleteSwapHistory,
   postSwapAccepted,
   getExchangeRates,
+  maybeTezosAccountUnrevealedAccount,
   postSwapCancelled,
   initSwap,
   USStates,
