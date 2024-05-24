@@ -142,7 +142,7 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
   const { width } = useResize(ref);
 
   return (
-    <Box flow={4} ref={ref}>
+    <Box flow={5} ref={ref}>
       <Box horizontal alignItems="center" justifyContent="space-between">
         <Text variant="h3Inter" fontWeight="semiBold">
           {t("dashboard.header")}
