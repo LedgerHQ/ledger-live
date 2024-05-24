@@ -13,11 +13,8 @@ const getMainActions = ({
   parentAccount,
 }: {
   account: TronAccount;
-  parentAccount: Account;
+  parentAccount: TronAccount;
 }): ActionButtonEvent[] => {
-  const { tronResources } = account;
-  invariant(tronResources, "tron resources not parsed");
-
   const navigationParams: NavigationParamsType = isAccountEmpty(account)
     ? [
         NavigatorName.NoFundsFlow,
@@ -40,6 +37,7 @@ const getMainActions = ({
           },
         },
       ];
+
   return [
     {
       id: "stake",
