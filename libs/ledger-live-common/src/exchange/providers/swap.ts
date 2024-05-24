@@ -121,6 +121,22 @@ export const getSwapProvider = async (
   return res[providerName.toLowerCase()];
 };
 
+function transformData(providersData) {
+  const transformed = {};
+  providersData.forEach(provider => {
+    const key = provider.name.toLowerCase();
+    transformed[key] = {
+      name: provider.name,
+      publicKey: {
+        curve: provider.public_key_curve,
+        data: Buffer.from(provider.public_key, "hex"),
+      },
+      signature: Buffer.from(provider.signature, "hex"),
+    };
+  });
+  return transformed;
+}
+
 export const getProvidersData = async () => {
   try {
     const providersData = await (
@@ -164,22 +180,6 @@ export const fetchAndMergeProviderData = async () => {
     return finalProvidersData;
   }
 };
-
-function transformData(providersData) {
-  const transformed = {};
-  providersData.forEach(provider => {
-    const key = provider.name.toLowerCase();
-    transformed[key] = {
-      name: provider.name,
-      publicKey: {
-        curve: provider.public_key_curve,
-        data: Buffer.from(provider.public_key, "hex"),
-      },
-      signature: Buffer.from(provider.signature, "hex"),
-    };
-  });
-  return transformed;
-}
 
 function mergeProviderData(baseData, additionalData) {
   const mergedData = { ...baseData };
