@@ -112,6 +112,11 @@ const envDefinitions = {
     def: "https://polkadot-sidecar.coin.ledger.com",
     desc: "Polkadot Sidecar API url",
   },
+  API_POLKADOT_SIDECAR_CREDENTIALS: {
+    parser: stringParser,
+    def: "",
+    desc: "Polkadot Sidecar API credentials",
+  },
   ELROND_API_ENDPOINT: {
     parser: stringParser,
     def: "https://elrond.coin.ledger.com",
@@ -209,11 +214,9 @@ const envDefinitions = {
   },
   BUY_API_BASE: {
     def: "https://buy.api.live.ledger.com/buy/v1",
-
     parser: stringParser,
     desc: "Buy crypto API base url - version 1",
   },
-
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
     parser: stringParser,
@@ -552,6 +555,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "dev flag to skip onboarding flow",
+  },
+  SPECULOS_API_PORT: {
+    def: 0,
+    parser: intParser,
+    desc: "API port for speculos",
   },
   SPECULOS_PID_OFFSET: {
     def: 0,

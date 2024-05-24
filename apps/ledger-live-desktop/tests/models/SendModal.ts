@@ -6,12 +6,33 @@ export class SendModal extends Modal {
 
   readonly drowdownAccount: Locator;
   readonly recipientInput: Locator;
+  readonly continueButton: Locator;
+  readonly totalDebitValue: Locator;
+  readonly checkDeviceLabel: Locator;
+  readonly checkTransactionbroadcastLabel: Locator;
+  readonly retryButton: Locator;
+  readonly addressValue: (address: string) => Locator;
+  readonly amountValue: (amount: string, currency: string) => Locator;
+  readonly recipientAddressDisplayedValue: Locator;
+  readonly amountDisplayedValue: Locator;
 
   constructor(page: Page) {
     super(page);
     this.page = page;
     this.drowdownAccount = this.page.locator('[data-test-id="modal-content"] svg').nth(1);
     this.recipientInput = this.page.getByPlaceholder("Enter");
+    this.continueButton = page.getByRole("button", { name: "continue" });
+    this.totalDebitValue = page.locator("text=Total to debit");
+    this.checkDeviceLabel = page.locator(
+      "text=Double-check the transaction details on your Ledger device before signing.",
+    );
+    this.checkTransactionbroadcastLabel = page.locator("text=Transaction sent");
+    this.retryButton = page.getByRole("button", { name: "Retry" });
+    this.addressValue = address =>
+      page.locator('[data-test-id="modal-content"]').locator(`text=${address}`);
+    this.amountValue = (amount, currency) => page.locator(`text=${amount} ${currency}`).first();
+    this.recipientAddressDisplayedValue = page.locator("data-test-id=recipient-address");
+    this.amountDisplayedValue = page.locator("data-test-id=transaction-amount");
   }
 
   async selectAccount(name: string) {

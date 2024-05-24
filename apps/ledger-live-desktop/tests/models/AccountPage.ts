@@ -13,6 +13,11 @@ export class AccountPage {
   readonly stakeBanner: Locator;
   readonly stakeBannerButton: Locator;
   readonly stakeButtonCosmos: Locator;
+  readonly receiveButton: Locator;
+  readonly sendButton: Locator;
+  readonly accountName: (name: string) => Locator;
+  readonly lastOperation: Locator;
+  readonly tokenValue: (tokenName: string) => Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -27,6 +32,16 @@ export class AccountPage {
     this.stakeButtonCosmos = page.locator("data-test-id=stake-button-cosmos");
     this.stakeBanner = page.locator("data-test-id=account-stake-banner");
     this.stakeBannerButton = page.locator("data-test-id=account-stake-banner-button");
+    this.receiveButton = page.locator("data-test-id=receive-account-action-button");
+    this.sendButton = page.getByRole("button", { name: "Send" });
+    this.accountName = name => page.locator(`text=${name}`);
+    this.lastOperation = page.locator("text=Latest operations");
+    this.tokenValue = tokenName =>
+      page.locator(`data-test-id=account-row-${tokenName.toLowerCase()}`);
+  }
+
+  async navigateToToken(token: string) {
+    await this.tokenValue(token).click();
   }
 
   async navigateToSwap() {

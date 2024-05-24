@@ -20,12 +20,15 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/logs": "workspace:*",
+    "@ledgerhq/live-env": "workspace:*",
     "@noble/secp256k1": "^1.7.1",
     "bip32": "^4.0.0",
     "create-hmac": "^1.1.7",
     "tiny-secp256k1": "2"
   },
   "devDependencies": {
+    "@ledgerhq/speculos-transport": "workspace:*",
     "@types/lodash": "4",
     "@types/jest": "^29.5.10",
     "jest": "^29.7.0",

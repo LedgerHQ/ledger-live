@@ -42,11 +42,11 @@ test.describe.parallel("Swap", () => {
 
     await page.route("https://swap.ledger.com/v5/rate**", async route => {
       const mockRatesResponse = getBitcoinToDogecoinRatesMock();
-      route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
     });
 
     await page.route("https://swap.ledger.com/v5/currencies/to**", async route => {
-      route.fulfill({
+      await route.fulfill({
         headers: { teststatus: "mocked" },
         body: JSON.stringify({
           currencyGroups: [
@@ -107,7 +107,7 @@ test.describe.parallel("Swap", () => {
 
     await page.route("https://swap.ledger.com/v5/rate**", async route => {
       const mockRatesResponse = getEthereumToTetherRatesMock();
-      route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
     });
 
     await test.step("Generate ETH to USDT quotes", async () => {
@@ -163,11 +163,11 @@ test.describe.parallel("Swap", () => {
 
     await page.route("https://swap.ledger.com/v5/rate**", async route => {
       const mockRatesResponse = getBitcoinToEthereumRatesMock();
-      route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
     });
 
     await page.route("https://swap.ledger.com/v5/currencies/to**", async route => {
-      route.fulfill({
+      await route.fulfill({
         headers: { teststatus: "mocked" },
         body: JSON.stringify({
           currencyGroups: [
