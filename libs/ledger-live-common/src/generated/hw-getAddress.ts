@@ -17,9 +17,9 @@ import { resolver as evm } from "../families/evm/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
 import { resolver as solana } from "../families/solana/setup";
-import { resolver as icon } from "../families/icon/setup";
 import { resolver as tezos } from "../families/tezos/setup";
 import { resolver as xrp } from "../families/xrp/setup";
+import { resolver as icon } from "../families/icon/setup";
 
 export default {
   cardano,
@@ -41,7 +41,7 @@ export default {
   near,
   polkadot,
   solana,
-  icon,
   tezos,
   xrp,
+  icon,
 };

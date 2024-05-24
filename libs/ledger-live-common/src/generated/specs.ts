@@ -17,9 +17,9 @@ import evm from "@ledgerhq/coin-evm/specs";
 import near from "@ledgerhq/coin-near/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
 import solana from "@ledgerhq/coin-solana/specs";
-import icon from "@ledgerhq/coin-icon/specs";
 import tezos from "@ledgerhq/coin-tezos/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
+import icon from "@ledgerhq/coin-icon/specs";
 
 export default {
   cardano,
@@ -41,7 +41,7 @@ export default {
   near,
   polkadot,
   solana,
-  icon,
   tezos,
   xrp,
+  icon,
 };

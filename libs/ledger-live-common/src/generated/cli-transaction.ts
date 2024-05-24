@@ -15,9 +15,9 @@ import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
 import { cliTools as solana } from "../families/solana/setup";
-import { cliTools as icon } from "../families/icon/setup";
 import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
+import { cliTools as icon } from "../families/icon/setup";
 
 export default {
   cardano,
@@ -37,7 +37,7 @@ export default {
   near,
   polkadot,
   solana,
-  icon,
   tezos,
   xrp,
+  icon,
 };

@@ -19,11 +19,9 @@ import { buildSignOperation } from "../signOperation";
 import { getAccountShape } from "../synchronization";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import type { Transaction } from "../types";
-import { IconAddress, IconSignature, IconSigner } from "../signer";
+import { IconSigner } from "../signer";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<IconSigner, IconAddress | IconSignature>,
-): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<IconSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -39,7 +37,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<IconSigner, IconAddress | IconSignature>,
+  signerContext: SignerContext<IconSigner>,
 ): AccountBridge<Transaction> {
   const getAddress = resolver(signerContext);
 
@@ -63,9 +61,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<IconSigner, IconAddress | IconSignature>,
-) {
+export function createBridges(signerContext: SignerContext<IconSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

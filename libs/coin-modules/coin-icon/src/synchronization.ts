@@ -19,7 +19,6 @@ export const getAccountShape: GetAccountShape = async (info: AccountShapeInfo) =
     derivationMode,
   });
   try {
-
     const oldOperations = initialAccount?.operations || [];
     const blockHeight = await getCurrentBlockHeight(currency);
     const iconAccount = await getAccount(info.address, currency);

@@ -10,7 +10,10 @@ const sameFees = (a: BigNumber, b?: BigNumber | null) => (!a || !b ? a === b : a
  * @param {IconAccount} account
  * @param {Transaction} transaction
  */
-export const prepareTransaction = async (account: IconAccount, transaction: Transaction): Promise<Transaction> => {
+export const prepareTransaction = async (
+  account: IconAccount,
+  transaction: Transaction,
+): Promise<Transaction> => {
   let fees = transaction.fees;
   fees = await getEstimatedFees({ account, transaction });
 
