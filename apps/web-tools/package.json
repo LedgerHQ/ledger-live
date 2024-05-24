@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "private": true,
   "browser": {
     "fs": false,
@@ -31,6 +31,8 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/trustchain": "workspace:^",
+    "@ledgerhq/hw-trustchain": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bufferutil": "^4.0.7",
     "encoding": "^0.1.13",

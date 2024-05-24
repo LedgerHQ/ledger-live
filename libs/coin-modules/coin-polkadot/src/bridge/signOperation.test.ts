@@ -1,15 +1,9 @@
 import BigNumber from "bignumber.js";
 import { u8aConcat } from "@polkadot/util";
-import type {
-  PolkadotAddress,
-  PolkadotSignature,
-  PolkadotOperationMode,
-  PolkadotSigner,
-  PolkadotOperationExtra,
-} from "../types";
+import type { SignOperationEvent } from "@ledgerhq/types-live";
+import type { PolkadotOperationMode, PolkadotSigner, PolkadotOperationExtra } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import buildSignOperation from "./signOperation";
-import { SignOperationEvent } from "@ledgerhq/types-live";
 import { createRegistryAndExtrinsics } from "../network/common";
 import {
   fixtureChainSpec,
@@ -43,10 +37,8 @@ describe("signOperation", () => {
       return_code: -1,
     }),
   };
-  const signerContext = (
-    _deviceId: string,
-    fn: (signer: PolkadotSigner) => Promise<PolkadotSignature | PolkadotAddress>,
-  ) => fn(fakeSigner);
+  const signerContext = <T>(_deviceId: string, fn: (signer: PolkadotSigner) => Promise<T>) =>
+    fn(fakeSigner);
   const signOperation = buildSignOperation(signerContext);
   const deviceId = "dummyDeviceId";
 

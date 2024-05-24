@@ -1,9 +1,9 @@
-import * as React from "react";
+import React from "react";
 import ReactNative from "react-native";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import UpdateBanner from "./index";
+import UpdateBanner from ".";
 import { makeOverrideInitialState } from "./__mocks__/makeOverrideInitialState";
 
 // Mock react-navigation's useRoute and useNavigation
@@ -85,7 +85,9 @@ describe("<UpdateBanner />", () => {
   let PlatformSpy: jest.SpyInstance;
   beforeEach(() => {
     jest.restoreAllMocks();
-    jest.resetAllMocks();
+    //Can't reset all mocks https://github.com/facebook/react-native/issues/42904
+    navigateToOldUpdateFlow.mockClear();
+    navigateToNewUpdateFlow.mockClear();
     PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
   });
 

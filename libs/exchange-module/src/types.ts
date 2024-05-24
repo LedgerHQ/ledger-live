@@ -30,6 +30,7 @@ export type ExchangeStartSwapParams = {
 
 export type ExchangeStartResult = {
   transactionId: string;
+  device?: { deviceId?: string; modelId?: string };
 };
 
 export type ExchangeCompleteBaseParams = {

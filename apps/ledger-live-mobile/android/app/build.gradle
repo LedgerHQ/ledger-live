@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 apply plugin: 'com.google.gms.google-services'
@@ -114,9 +115,9 @@ def reactNativeArchitectures() {
 
 android {
     ndkVersion rootProject.ext.ndkVersion
-    compileSdkVersion rootProject.ext.compileSdkVersion
 
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.ledger.live"
 
@@ -202,18 +203,15 @@ dependencies {
     // this should not be needed with expo autolinking, but somehow expo autolinking is partially broken
     implementation project(path: ':expo')
 
-    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
-    }
-   debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
+    implementation("com.facebook.react:flipper-integration")
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
     }
 
-    androidTestImplementation('com.wix:detox:+')
+    androidTestImplementation('com.wix:detox-legacy:+')
     // Needed for Detox getAttributes on Android :  https://github.com/wix/Detox/issues/3147
     implementation 'com.google.android.material:material:1.6.0'
     implementation 'com.facebook.soloader:soloader:0.10.4+'

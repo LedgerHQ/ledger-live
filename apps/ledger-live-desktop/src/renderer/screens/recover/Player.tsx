@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps, useHistory } from "react-router-dom";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
@@ -12,6 +11,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import styled from "styled-components";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StaticContext } from "react-router";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 const pollingPeriodMs = 1000;
 
@@ -80,11 +80,18 @@ export default function RecoverPlayer({
       lang: locale,
       availableOnDesktop,
       deviceId: state?.deviceId,
+      deviceModelId: device?.modelId,
       currency,
       ...params,
       ...queryParams,
     }),
-    [availableOnDesktop, locale, params, queryParams, state?.deviceId, currency, theme],
+    /**
+     * deviceModelId is purposely ignored from dependencies.
+     *
+     * This is to ensure the WebRecoverPlayer is not reloaded given the user disconnects their cable.
+     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [theme, locale, availableOnDesktop, state?.deviceId, currency, params, queryParams],
   );
 
   return manifest ? (

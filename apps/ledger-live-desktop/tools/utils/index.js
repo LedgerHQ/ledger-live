@@ -27,10 +27,10 @@ if (parsed) {
 const DOTENV_FILE = process.env.TESTING
   ? ".env.testing"
   : process.env.STAGING
-  ? ".env.staging"
-  : process.env.NODE_ENV === "production"
-  ? ".env.production"
-  : ".env";
+    ? ".env.staging"
+    : process.env.NODE_ENV === "production"
+      ? ".env.production"
+      : ".env";
 
 // TODO: ADD BUNDLE ANALYZER
 

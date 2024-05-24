@@ -9,13 +9,13 @@ export default class GetDevicePage {
   }
 
   async expectBuyNanoWebPage() {
-    if (isAndroid()) {
+    // Webview testing is flaky on Android
+    if (!isAndroid()) {
       const url = await web.element(by.web.id("__next")).getCurrentUrl();
       const expectedUrl = "https://shop.ledger.com/";
-
       expect(url).toContain(expectedUrl);
     } else {
-      console.warn("Skipping webview check on iOS");
+      console.warn("Skipping webview check on Android");
     }
   }
 }

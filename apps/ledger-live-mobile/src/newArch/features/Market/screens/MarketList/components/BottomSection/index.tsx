@@ -55,8 +55,8 @@ const getIcon = (top100?: boolean, order?: string) =>
   top100
     ? IconsLegacy.GraphGrowMedium
     : order === "asc"
-    ? IconsLegacy.ArrowTopMedium
-    : IconsLegacy.ArrowBottomMedium;
+      ? IconsLegacy.ArrowTopMedium
+      : IconsLegacy.ArrowBottomMedium;
 
 const TIME_RANGES = Object.keys(rangeDataTable)
   .filter(key => key !== "1h")

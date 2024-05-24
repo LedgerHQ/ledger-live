@@ -1,21 +1,20 @@
-import { v4 } from "uuid";
-import { useEffect, useMemo, useRef } from "react";
-import isEqual from "lodash/isEqual";
-import { useSelector } from "react-redux";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { getFeesCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { getEnv } from "@ledgerhq/live-env";
+import BigNumber from "bignumber.js";
+import isEqual from "lodash/isEqual";
+import { useEffect, useMemo, useRef } from "react";
+import { useSelector } from "react-redux";
+import { rateSelector } from "~/renderer/actions/swap";
+import { walletSelector } from "~/renderer/reducers/wallet";
 import {
   SwapProps,
   SwapWebManifestIDs,
   SwapWebProps,
 } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
-import { rateSelector } from "~/renderer/actions/swap";
-import { getEnv } from "@ledgerhq/live-env";
-import { getFeesCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import BigNumber from "bignumber.js";
-import { walletSelector } from "~/renderer/reducers/wallet";
 import { useMaybeAccountUnit } from "../useAccountUnit";
 
 export type UseSwapLiveAppHookProps = {
@@ -81,13 +80,13 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
         loading,
         providerRedirectURL,
         swapApiBase: SWAP_API_BASE,
-        estimatedFees,
+        estimatedFees: estimatedFees?.toString(),
         estimatedFeesUnit: estimatedFeesUnit?.id,
       };
 
       if (!isEqual(newSwapWebProps, swapWebPropsRef.current)) {
         swapWebPropsRef.current = newSwapWebProps;
-        updateSwapWebProps({ ...newSwapWebProps, cacheKey: v4() });
+        updateSwapWebProps(newSwapWebProps);
       }
     }
   }, [

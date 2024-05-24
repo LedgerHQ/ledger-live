@@ -58,6 +58,7 @@ export function SwapForm({
   const exchangeRate = useSelector(rateSelector);
   // mobile specific
   const [confirmed, setConfirmed] = useState(false);
+  const [swapAcceptedProviders, setSwapAcceptedProviders] = useState<string[]>([]);
 
   const setExchangeRate = useCallback(
     (rate?: ExchangeRate) => {
@@ -314,7 +315,13 @@ export function SwapForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
-  const swapAcceptedProviders = getAvailableProviders();
+  useEffect(() => {
+    const fetchProviders = async () => {
+      setSwapAcceptedProviders(await getAvailableProviders());
+    };
+    fetchProviders();
+  }, []);
+
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
   const [deviceMeta, setDeviceMeta] = useState<DeviceMeta>();
 
@@ -323,7 +330,7 @@ export function SwapForm({
     return <Connect provider={provider} setResult={setDeviceMeta} />;
   }
 
-  if (getAvailableProviders().length) {
+  if (swapAcceptedProviders.length) {
     return (
       <KeyboardAwareScrollView testID="exchange-scrollView">
         <Flex flex={1} justifyContent="space-between" padding={6}>

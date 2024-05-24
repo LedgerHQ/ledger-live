@@ -26,12 +26,12 @@ We also share core business logic with Ledger Live mobile through [@ledgerhq/liv
 ### iOS
 
 - XCode
-- Ruby 2.6.8 or above. The macOS built-in Ruby [does not work properly for installing dependencies of the iOS app](https://jeffreymorgan.io/articles/ruby-on-macos-with-rvm/), you have to install Ruby with for instance [Homebrew](https://brew.sh/) or [rvm](https://rvm.io/rvm/install) and make sure that `which ruby` points to that newly installed Ruby.
+- Ruby 3.3.0 or above. The macOS built-in Ruby [does not work properly for installing dependencies of the iOS app](https://jeffreymorgan.io/articles/ruby-on-macos-with-rvm/), you have to install Ruby with for instance [Homebrew](https://brew.sh/) or [rvm](https://rvm.io/rvm/install) and make sure that `which ruby` points to that newly installed Ruby.
 
 ### Android
 
 - Android Studio
-- JDK 11
+- JDK 17
 - Required SDK tools: (go to Android Studio > Tools > SDK Manager > SDK Tools > check "Show Package Details" at the bottom right)
   - Android NDK 21.4.7075529 (in case this doc is outdated, check the version specified as `ndkVersion` in `android/build.gradle`)
   - CMake 3.10.2
@@ -171,7 +171,7 @@ It is possible to run Ledger Live Mobile on an emulator and connect to a Nano th
   - Then, build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
   - OR
   - First, build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
-  - Then, go to the settings tab, then *debug* > *connectivity* > *http transport* and paste the IP (ex: 192.168.1.14)
+  - Then, go to the settings tab, then _debug_ > _connectivity_ > _http transport_ and paste the IP (ex: 192.168.1.14)
 - When prompted to choose a Nano device in Ledger Live Mobile, you will see your Nano available with the adress from above, just select it and it should work normally.
 
 ### Extra Docs 📄

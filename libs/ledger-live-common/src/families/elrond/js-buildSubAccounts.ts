@@ -2,7 +2,7 @@ import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoasse
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { emptyHistoryCache, encodeTokenAccountId } from "../../account";
+import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { mergeOps } from "../../bridge/jsHelpers";
 import { getESDTOperations, getAccountESDTTokens } from "./api";
 import { addPrefixToken, extractTokenId } from "./logic";

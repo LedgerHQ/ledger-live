@@ -59,14 +59,10 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Ledger Live needs to connect to your Ledger device to manage your crypto assets</string>

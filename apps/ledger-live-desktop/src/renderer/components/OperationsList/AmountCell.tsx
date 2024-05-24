@@ -67,8 +67,8 @@ class AmountCell extends PureComponent<Props> {
                     !isConfirmed && operation.type === "IN"
                       ? colors.warning
                       : amount.isNegative()
-                      ? "palette.text.shade80"
-                      : undefined
+                        ? "palette.text.shade80"
+                        : undefined
                   }
                 />
 

@@ -19,12 +19,12 @@ SEND ${
   useAllAmount
     ? "MAX"
     : amount.isZero()
-    ? ""
-    : " " +
-      formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
-        showCode: true,
-        disableRounding: true,
-      })
+      ? ""
+      : " " +
+        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+          showCode: true,
+          disableRounding: true,
+        })
 }
 TO ${recipient}`;
 

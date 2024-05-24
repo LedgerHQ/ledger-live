@@ -1,44 +1,42 @@
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import {
-  useSwapTransaction,
-  usePageState,
-  useIsSwapLiveApp,
   SetExchangeRateCallback,
+  useIsSwapLiveApp,
+  usePageState,
+  useSwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   convertToNonAtomicUnit,
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { rateSelector, updateRateAction, updateTransactionAction } from "~/renderer/actions/swap";
-import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import { context } from "~/renderer/drawers/Provider";
+import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { languageSelector } from "~/renderer/reducers/settings";
+import { walletSelector } from "~/renderer/reducers/wallet";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import LoadingState from "./Rates/LoadingState";
-import EmptyState from "./Rates/EmptyState";
-import { AccountLike } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
-import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
-import SwapFormSummary from "./FormSummary";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { languageSelector } from "~/renderer/reducers/settings";
-import { walletSelector } from "~/renderer/reducers/wallet";
+import EmptyState from "./Rates/EmptyState";
+import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -454,13 +452,6 @@ const SwapForm = () => {
         updateSelectedRate={swapTransaction.swap.updateSelectedRate}
       />
       {pageState === "empty" && <EmptyState />}
-      {pageState === "loading" && <LoadingState />}
-
-      {pageState === "loaded" && (
-        <>
-          <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
-        </>
-      )}
       <SwapMigrationUI
         manifestID={swapLiveAppManifestID}
         liveAppEnabled={isSwapLiveAppEnabled.enabled}

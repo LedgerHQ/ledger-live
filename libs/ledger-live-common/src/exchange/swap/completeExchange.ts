@@ -47,7 +47,7 @@ const completeExchange = (
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
-        const providerConfig = getSwapProvider(provider);
+        const providerConfig = await getSwapProvider(provider);
         if (providerConfig.type !== "CEX") {
           throw new Error(`Unsupported provider type ${providerConfig.type}`);
         }

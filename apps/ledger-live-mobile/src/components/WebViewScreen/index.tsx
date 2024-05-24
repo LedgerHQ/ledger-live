@@ -98,7 +98,7 @@ const WebViewScreen = ({
               startInLoadingState
               javaScriptCanOpenWindowsAutomatically
               allowsBackForwardNavigationGestures
-              onNavigationStateChange={navState => {
+              onNavigationStateChange={(navState: { canGoBack: boolean }) => {
                 setCanGoBack(!navState.canGoBack);
               }}
             />

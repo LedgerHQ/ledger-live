@@ -5,19 +5,18 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { saveSettings } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
 const ONBOARDED_VIA_RECOVER_RESTORE_USER_PREFIX = "ONBOARDED_VIA_RECOVER_RESTORE_USER_";
 
 export const useRecoverRestoreOnboarding = (seedPathStatus?: string) => {
   const { pathname } = useLocation();
   const dispatch = useDispatch();
+  const isLocked = useSelector(isLockedSelector);
   const recoverServices = useFeature("protectServicesDesktop");
   const recoverStoreId = recoverServices?.params?.protectId ?? "";
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const recoverRestoreStaxPath = useCustomPath(recoverServices, "restore", "lld-onboarding-24");
-
   const [onboardedViaRecoverRestore, setOnboardedViaRecoverRestore] = useState<boolean>();
 
   const confirmRecoverOnboardingStatus = useCallback(async () => {
@@ -29,20 +28,20 @@ export const useRecoverRestoreOnboarding = (seedPathStatus?: string) => {
     const hasCompletedOnboardingViaRestore = status === "true";
 
     setOnboardedViaRecoverRestore(hasCompletedOnboardingViaRestore);
-
-    dispatch(
-      saveSettings({
-        hasCompletedOnboarding: onboardedViaRecoverRestore,
-      }),
-    );
-  }, [dispatch, onboardedViaRecoverRestore, recoverStoreId]);
+    if (!isLocked) {
+      dispatch(
+        saveSettings({
+          hasCompletedOnboarding: onboardedViaRecoverRestore,
+        }),
+      );
+    }
+  }, [dispatch, isLocked, onboardedViaRecoverRestore, recoverStoreId]);
 
   useEffect(() => {
     const userIsOnboardingOrSettingUp =
       pathname.includes("onboarding") || pathname.includes("settings");
 
-    const syncOnboardingFromRestoreStax =
-      seedPathStatus === "recover_seed" && recoverRestoreStaxPath;
+    const syncOnboardingFromRestoreStax = seedPathStatus === "recover_seed";
 
     if (
       (!userIsOnboardingOrSettingUp || syncOnboardingFromRestoreStax) &&

@@ -7,6 +7,8 @@ import { render as rtlRender } from "@testing-library/react";
 import { type State } from "~/renderer/reducers";
 import createStore from "../src/renderer/createStore";
 import dbMiddleware from "../src/renderer/middlewares/db";
+import { I18nextProvider } from "react-i18next";
+import i18n from "~/renderer/i18n/init";
 
 interface ChildrenProps {
   children: JSX.Element;
@@ -36,19 +38,22 @@ function render(
     ...renderOptions
   }: ExtraOptions = {},
 ): RenderReturn {
-  function Wrapper({ children }: ChildrenProps) {
+  function Wrapper({ children }: ChildrenProps): JSX.Element {
     return (
-      <Provider store={store}>
-        <StyleProvider selectedPalette="dark">
-          <Router>{children}</Router>
-        </StyleProvider>
-      </Provider>
+      <I18nextProvider i18n={i18n}>
+        <Provider store={store}>
+          <StyleProvider selectedPalette="dark">
+            <Router>{children}</Router>
+          </StyleProvider>
+        </Provider>
+      </I18nextProvider>
     );
   }
+
   return {
     store,
     user: userEvent.setup(userEventOptions),
-    ...rtlRender(ui, { wrapper: Wrapper, ...renderOptions }),
+    ...rtlRender(ui, { wrapper: Wrapper as React.ComponentType, ...renderOptions }),
   };
 }
 export * from "@testing-library/react";

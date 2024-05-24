@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import semver from "semver";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,

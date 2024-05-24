@@ -1,5 +1,5 @@
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
-import * as hedera from "@hashgraph/sdk";
+import { Transaction } from "@hashgraph/sdk";
 import { broadcastTransaction } from "./api/network";
 import { patchOperationWithHash } from "../../operation";
 import { base64ToUrlSafeBase64 } from "./utils";
@@ -15,7 +15,7 @@ export default async function broadcast({
   const { signature, operation } = signedOperation;
 
   // NOTE: expecting a serialized transaction to be signedOperation.signature (in hex)
-  const hederaTransaction = hedera.Transaction.fromBytes(Buffer.from(signature, "base64"));
+  const hederaTransaction = Transaction.fromBytes(Buffer.from(signature, "base64"));
 
   const response = await broadcastTransaction(hederaTransaction);
 

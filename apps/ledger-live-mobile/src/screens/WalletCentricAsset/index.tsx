@@ -105,7 +105,11 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   let currencyConfig: CurrencyConfig | undefined = undefined;
   if (isCryptoCurrency(currency)) {
-    currencyConfig = getCurrencyConfiguration(currency);
+    try {
+      currencyConfig = getCurrencyConfiguration(currency);
+    } catch (e) {
+      console.warn(e);
+    }
   }
 
   const data = useMemo(

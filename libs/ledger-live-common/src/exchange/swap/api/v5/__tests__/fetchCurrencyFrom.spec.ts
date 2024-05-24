@@ -13,7 +13,6 @@ describe("fetchCurrencyFrom", () => {
     }));
 
     const result = await fetchCurrencyFrom({
-      providers: ["changelly", "cic", "oneinch"],
       currencyTo: "bitcoin",
     });
 
@@ -21,7 +20,7 @@ describe("fetchCurrencyFrom", () => {
     expect(network as jest.Mock).toHaveBeenCalledWith({
       method: "GET",
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
-      url: "https://swap.ledger.com/v5/currencies/from?providers-whitelist=changelly%2Ccic%2Coneinch&additional-coins-flag=false&currency-to=bitcoin",
+      url: "https://swap.ledger.com/v5/currencies/from?providers-whitelist=changelly%2Ccic%2Cmoonpay%2Coneinch%2Cparaswap&additional-coins-flag=false&currency-to=bitcoin",
     });
   });
 });

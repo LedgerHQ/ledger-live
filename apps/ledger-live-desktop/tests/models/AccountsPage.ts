@@ -56,4 +56,8 @@ export class AccountsPage {
     await this.settingsDeleteButton.click();
     await this.settingsConfirmButton.click();
   }
+
+  async countAccounts(): Promise<number> {
+    return await this.page.locator(".accounts-account-row-item-content").count();
+  }
 }

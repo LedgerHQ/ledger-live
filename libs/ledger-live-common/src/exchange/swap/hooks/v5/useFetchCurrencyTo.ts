@@ -2,7 +2,6 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 
 import { fetchCurrencyTo } from "../../api/v5";
-import { getAvailableProviders } from "../..";
 import { useAPI } from "../../../../hooks/useAPI";
 import { useFeature } from "../../../../featureFlags";
 
@@ -13,13 +12,14 @@ type Props = {
 
 export function useFetchCurrencyTo({ fromCurrencyAccount }: Props) {
   const fetchAdditionalCoins = useFeature("fetchAdditionalCoins");
+
   const currencyFromId = fromCurrencyAccount
     ? getAccountCurrency(fromCurrencyAccount).id
     : undefined;
+
   return useAPI({
     queryFn: fetchCurrencyTo,
     queryProps: {
-      providers: getAvailableProviders(),
       currencyFromId,
       additionalCoinsFlag: fetchAdditionalCoins?.enabled,
     },

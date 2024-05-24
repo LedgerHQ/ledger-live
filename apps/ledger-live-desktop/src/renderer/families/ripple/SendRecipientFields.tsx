@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/ripple/types";
+import { Transaction } from "@ledgerhq/live-common/families/xrp/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
@@ -28,8 +28,8 @@ const TagField = ({ onChange, account, transaction }: Props) => {
           tag.lt(uint32maxPlus1)
             ? tag.toNumber()
             : str === ""
-            ? undefined
-            : transaction.tag,
+              ? undefined
+              : transaction.tag,
       };
       onChange(bridge.updateTransaction(transaction, patch));
     },

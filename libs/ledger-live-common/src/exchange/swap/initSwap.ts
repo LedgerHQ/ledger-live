@@ -72,7 +72,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         // NB Added the try/catch because of the API stability issues.
         let res;
 
-        const swapProviderConfig = getSwapProvider(provider);
+        const swapProviderConfig = await getSwapProvider(provider);
 
         const headers = {
           EquipmentId: getEnv("USER_ID"),
@@ -243,6 +243,14 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
           amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
           magnitudeAwareRate = transaction.amount && amountExpectedTo.dividedBy(transaction.amount);
+        }
+
+        let amountExpectedFrom;
+        if (swapResult.binaryPayload) {
+          const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
+          amountExpectedFrom = new BigNumber(decodePayload.amountToProvider.toString());
+          if (data.amountFromInSmallestDenomination !== amountExpectedFrom.toNumber())
+            throw new Error("AmountFrom received from partner's payload mismatch user input");
         }
 
         o.next({

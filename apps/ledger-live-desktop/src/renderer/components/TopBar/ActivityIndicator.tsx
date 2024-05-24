@@ -54,10 +54,10 @@ export default function ActivityIndicatorInner() {
           isError
             ? "alertRed"
             : isRotating
-            ? "palette.text.shade60"
-            : isUpToDate
-            ? "positiveGreen"
-            : "palette.text.shade60"
+              ? "palette.text.shade60"
+              : isUpToDate
+                ? "positiveGreen"
+                : "palette.text.shade60"
         }
       >
         {isError ? (

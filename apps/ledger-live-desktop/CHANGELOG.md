@@ -1,5 +1,281 @@
 # ledger-live-desktop
 
+## 2.80.0
+
+### Minor Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Ropsten & Goerli networks and adding Sepolia variants
+
+- [#6682](https://github.com/LedgerHQ/ledger-live/pull/6682) [`10df676`](https://github.com/LedgerHQ/ledger-live/commit/10df67625e4affedd143d0e3c574677d6bf1a6e5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixed bug regarding invalid data supplied to ledger and added error message for mobile and desktop
+
+- [#6613](https://github.com/LedgerHQ/ledger-live/pull/6613) [`f1bc716`](https://github.com/LedgerHQ/ledger-live/commit/f1bc7169aa83d05d2cb57ddcf2e41c2dcca8b145) Thanks [@Philippoes](https://github.com/Philippoes)! - Feat: Enable Tron 2.0 staking via Stakekit
+
+- [#6646](https://github.com/LedgerHQ/ledger-live/pull/6646) [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - postonboarding - added europa support, updated copy, added recover entry point
+
+### Patch Changes
+
+- [#6801](https://github.com/LedgerHQ/ledger-live/pull/6801) [`d4b897f`](https://github.com/LedgerHQ/ledger-live/commit/d4b897f33fac802731f22f6439489bf2163ea3db) Thanks [@cksanders](https://github.com/cksanders)! - Ensure user remains on Recover without reload given device is disconnected
+
+- [#6718](https://github.com/LedgerHQ/ledger-live/pull/6718) [`438e7f5`](https://github.com/LedgerHQ/ledger-live/commit/438e7f536b6c44acbc00cc1489a31d47f3e652e3) Thanks [@Wozacosta](https://github.com/Wozacosta)! - filter which fields to display when confirming a transaction
+
+- [#6576](https://github.com/LedgerHQ/ledger-live/pull/6576) [`0dd3f34`](https://github.com/LedgerHQ/ledger-live/commit/0dd3f34964e242871c47063984b74998b21048e5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix unworking links in TranslatedError
+
+- [#6709](https://github.com/LedgerHQ/ledger-live/pull/6709) [`7f5fb20`](https://github.com/LedgerHQ/ledger-live/commit/7f5fb208f7361ac916952ef09ed6c4a8918cf148) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Backup companion refinements
+
+- [#6686](https://github.com/LedgerHQ/ledger-live/pull/6686) [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy-sell-ui feature flag to enable progressive roll out of new manifest ID.
+
+- [#6813](https://github.com/LedgerHQ/ledger-live/pull/6813) [`9ce66ff`](https://github.com/LedgerHQ/ledger-live/commit/9ce66ffc48695fd0add96d48091a7d533b2ff091) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix an error that made all analytics disabled on LLD and LLM
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`3cf92aa`](https://github.com/LedgerHQ/ledger-live/commit/3cf92aa96e6e704037b684d453730103c1f5c9ed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sync onboarding: add a "Backup SRP with Recover" step
+
+- [#6492](https://github.com/LedgerHQ/ledger-live/pull/6492) [`2b8ab19`](https://github.com/LedgerHQ/ledger-live/commit/2b8ab19eea465ce8b62a8fa29b96cd569535fb3b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix duplicated learn more link on infra error inside errorbanner
+
+- [#6658](https://github.com/LedgerHQ/ledger-live/pull/6658) [`be3748b`](https://github.com/LedgerHQ/ledger-live/commit/be3748b35eea0b0a68de6825feed7ba2925f057e) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap history status translations
+
+- [#6692](https://github.com/LedgerHQ/ledger-live/pull/6692) [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13) Thanks [@lvndry](https://github.com/lvndry)! - Add banner to warn users a coin will be deprecated
+
+- [#6701](https://github.com/LedgerHQ/ledger-live/pull/6701) [`7ed0dd3`](https://github.com/LedgerHQ/ledger-live/commit/7ed0dd323c91b522694a8ca1126dcaf573db99f1) Thanks [@Justkant](https://github.com/Justkant)! - chore(LLD): add deeplink support in dev mode
+
+- [#6517](https://github.com/LedgerHQ/ledger-live/pull/6517) [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update MarketPerformers Endpoint
+
+- [#6592](https://github.com/LedgerHQ/ledger-live/pull/6592) [`21f9d07`](https://github.com/LedgerHQ/ledger-live/commit/21f9d07785dc3f162626f37a42ebe692037c9b2a) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add expired message error
+
+- [#6340](https://github.com/LedgerHQ/ledger-live/pull/6340) [`433bfec`](https://github.com/LedgerHQ/ledger-live/commit/433bfecf77f85601c4974984fa8342b5e2513469) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use new Hook for Market and Remove MarketDataProvider
+
+- [#6700](https://github.com/LedgerHQ/ledger-live/pull/6700) [`ac986be`](https://github.com/LedgerHQ/ledger-live/commit/ac986be3bafb3b63a54abf285a0b64a98e691d8e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix color of ExplorerButton in NftViewer
+
+- [#6654](https://github.com/LedgerHQ/ledger-live/pull/6654) [`d9d8902`](https://github.com/LedgerHQ/ledger-live/commit/d9d890272167aec86db19f028b64314f65a9bf14) Thanks [@CremaFR](https://github.com/CremaFR)! - support new error management
+
+- [#6622](https://github.com/LedgerHQ/ledger-live/pull/6622) [`6b41b3a`](https://github.com/LedgerHQ/ledger-live/commit/6b41b3adfcd3e19ef17ebe6fdd0d1e95cec5a13f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix E2E market test
+
+- [#6667](https://github.com/LedgerHQ/ledger-live/pull/6667) [`9f90797`](https://github.com/LedgerHQ/ledger-live/commit/9f90797d00a96674025ca8d1c7d9c5df9f435e24) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Nft Spam report in LLD in Developer Tab
+
+- [#6637](https://github.com/LedgerHQ/ledger-live/pull/6637) [`5bd34c5`](https://github.com/LedgerHQ/ledger-live/commit/5bd34c542ccc7ef36a6236b2e9ff0859ecc36487) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Remove the spams NFT in custom lock screen on LLD
+
+- [#6698](https://github.com/LedgerHQ/ledger-live/pull/6698) [`78443f7`](https://github.com/LedgerHQ/ledger-live/commit/78443f72c96de18c931aa697c079f82684dbe6e3) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Prevent the screen from locking for firmware update and app installation/update
+
+- [#6632](https://github.com/LedgerHQ/ledger-live/pull/6632) [`2f23141`](https://github.com/LedgerHQ/ledger-live/commit/2f23141cec8d29fb4ba1e187f6e19d893b5b0b37) Thanks [@RamyEB](https://github.com/RamyEB)! - Focus on Ledger Live when modal opens
+
+- [#6713](https://github.com/LedgerHQ/ledger-live/pull/6713) [`cc8c36d`](https://github.com/LedgerHQ/ledger-live/commit/cc8c36d65aad93f6090a696d9b9b2273cd193be2) Thanks [@CremaFR](https://github.com/CremaFR)! - added step to userRefused error
+
+- [#6601](https://github.com/LedgerHQ/ledger-live/pull/6601) [`6066acb`](https://github.com/LedgerHQ/ledger-live/commit/6066acb2fd824739ec0a38f056e6a59392bb7075) Thanks [@CremaFR](https://github.com/CremaFR)! - stop closing drawer after start exchange
+
+- [#6664](https://github.com/LedgerHQ/ledger-live/pull/6664) [`0534fc3`](https://github.com/LedgerHQ/ledger-live/commit/0534fc3b78a01075b62300ffb4f3c6674656aa15) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: close exchangeComplete for card sell
+
+- [#6657](https://github.com/LedgerHQ/ledger-live/pull/6657) [`b129df5`](https://github.com/LedgerHQ/ledger-live/commit/b129df5f9e601b05ded2c756f3b1764afbc796e0) Thanks [@sarneijim](https://github.com/sarneijim)! - Update error literal
+
+- [#6608](https://github.com/LedgerHQ/ledger-live/pull/6608) [`1197168`](https://github.com/LedgerHQ/ledger-live/commit/1197168817b37ae5432df3e6c2668e8694497787) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Disable storyly feature flag + protect testing in settings with feature flag enabler
+
+- [#6612](https://github.com/LedgerHQ/ledger-live/pull/6612) [`12daa05`](https://github.com/LedgerHQ/ledger-live/commit/12daa05e5f924a483d305417540ce9c83034b977) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add additional properties to the accepted and cancelled swap api calls
+
+- [#6665](https://github.com/LedgerHQ/ledger-live/pull/6665) [`07d85e8`](https://github.com/LedgerHQ/ledger-live/commit/07d85e8bf154899a7d4b279a612ebb7f84d398c7) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Correct translations for user refused from swap-live-app
+
+- [#6668](https://github.com/LedgerHQ/ledger-live/pull/6668) [`a1d0668`](https://github.com/LedgerHQ/ledger-live/commit/a1d0668c304f7831a6bb3689488edae6109fe3f0) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add isFromPostOnboardingEntryPoint param to open modal data. Use this to disable the Grow Your ETH staking modal advert when the user first receives ETH during the Stax onboarding flow.
+
+- [#6425](https://github.com/LedgerHQ/ledger-live/pull/6425) [`58c6936`](https://github.com/LedgerHQ/ledger-live/commit/58c69362a21c2f50ef5a12811ebffdf54b53c03b) Thanks [@gre](https://github.com/gre)! - Unify rendering of Recover Banner.
+
+- [#6695](https://github.com/LedgerHQ/ledger-live/pull/6695) [`601f493`](https://github.com/LedgerHQ/ledger-live/commit/601f493d9e94bd17c8c2ea33cc7bdc5de1d496ad) Thanks [@cksanders](https://github.com/cksanders)! - Fix the Recover Restore Onboarding source & enable stax.
+
+- [#6726](https://github.com/LedgerHQ/ledger-live/pull/6726) [`9593f88`](https://github.com/LedgerHQ/ledger-live/commit/9593f8852532502e193e849364057cccb6a4b636) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix starred coins in market
+
+- [#6638](https://github.com/LedgerHQ/ledger-live/pull/6638) [`7bbc032`](https://github.com/LedgerHQ/ledger-live/commit/7bbc032cfac046f9cfdf051a6ec7882013381689) Thanks [@cksanders](https://github.com/cksanders)! - Fix the Recover Restore Onboarding status to ensure no false positives.
+
+- [#6710](https://github.com/LedgerHQ/ledger-live/pull/6710) [`a45eb0d`](https://github.com/LedgerHQ/ledger-live/commit/a45eb0d374d9967e4b5847ffa771ab22f9b6a24d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix unnecessary backup step bug
+
+- [#6685](https://github.com/LedgerHQ/ledger-live/pull/6685) [`68e2e47`](https://github.com/LedgerHQ/ledger-live/commit/68e2e47f96a93b454106ac5162012631727531b1) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - send addition data to swap live app
+
+- [#6671](https://github.com/LedgerHQ/ledger-live/pull/6671) [`66a4172`](https://github.com/LedgerHQ/ledger-live/commit/66a4172f5b52b479400500b5d0d78c6ba6b18757) Thanks [@RamyEB](https://github.com/RamyEB)! - Fix ui cta card on discover
+
+- [#6809](https://github.com/LedgerHQ/ledger-live/pull/6809) [`d52c84b`](https://github.com/LedgerHQ/ledger-live/commit/d52c84b9ea51578694663bc83f18738c1400f68e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add analytics for MArketPerformanceWidget
+
+- [#6679](https://github.com/LedgerHQ/ledger-live/pull/6679) [`db95e1a`](https://github.com/LedgerHQ/ledger-live/commit/db95e1aa71d2032199f5ee0b59a7586222cd66c2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix e2e tests for Market
+
+- [#6683](https://github.com/LedgerHQ/ledger-live/pull/6683) [`d26bd9e`](https://github.com/LedgerHQ/ledger-live/commit/d26bd9e9352d664af7c2acb3170f2a2afe8b0972) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MarketPerf Widget wasn't updated well when Top 5 crypto is the same for multiples minutes
+
+- [#6662](https://github.com/LedgerHQ/ledger-live/pull/6662) [`1bc09ce`](https://github.com/LedgerHQ/ledger-live/commit/1bc09ce84d1d579a253d0239747ad969e9613b52) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - feat(earlysecuritychecks): make stax update from <=1.3.0 unskippable
+
+- [#6629](https://github.com/LedgerHQ/ledger-live/pull/6629) [`75015c8`](https://github.com/LedgerHQ/ledger-live/commit/75015c88d272ee746cea2675282d55ae97ab0ff0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Privacy enhancement: users won't be tracked with braze if both analytics and personalization are false. Each one of them will have a random id for braze to still receive CC
+
+- [#6681](https://github.com/LedgerHQ/ledger-live/pull/6681) [`6c60a22`](https://github.com/LedgerHQ/ledger-live/commit/6c60a225c67dc477ed3973a67a1cf1af9888fd45) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix wording errors
+
+- [#6760](https://github.com/LedgerHQ/ledger-live/pull/6760) [`987feb2`](https://github.com/LedgerHQ/ledger-live/commit/987feb297af96ff159d7456399914d35f771093b) Thanks [@cksanders](https://github.com/cksanders)! - Ensure we send the device model id to recover webview
+
+- Updated dependencies [[`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`b0ebe3a`](https://github.com/LedgerHQ/ledger-live/commit/b0ebe3acea586afbdeddb5877c15bcfc28f43016), [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`433bfec`](https://github.com/LedgerHQ/ledger-live/commit/433bfecf77f85601c4974984fa8342b5e2513469), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9), [`10df676`](https://github.com/LedgerHQ/ledger-live/commit/10df67625e4affedd143d0e3c574677d6bf1a6e5), [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1), [`31388be`](https://github.com/LedgerHQ/ledger-live/commit/31388bea3577680ab1070baefb47997535160bf3), [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e), [`be3748b`](https://github.com/LedgerHQ/ledger-live/commit/be3748b35eea0b0a68de6825feed7ba2925f057e), [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`21f9d07`](https://github.com/LedgerHQ/ledger-live/commit/21f9d07785dc3f162626f37a42ebe692037c9b2a), [`0db1bf8`](https://github.com/LedgerHQ/ledger-live/commit/0db1bf8cd57d6a38e1f2b3fe56183fb1fc59a9ca), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`9f90797`](https://github.com/LedgerHQ/ledger-live/commit/9f90797d00a96674025ca8d1c7d9c5df9f435e24), [`06f4606`](https://github.com/LedgerHQ/ledger-live/commit/06f4606f354496bc322be34932260eb9a1cdac42), [`cc8c36d`](https://github.com/LedgerHQ/ledger-live/commit/cc8c36d65aad93f6090a696d9b9b2273cd193be2), [`417c180`](https://github.com/LedgerHQ/ledger-live/commit/417c180bf2c82dddd5a217139bdb90aaf54ec116), [`1197168`](https://github.com/LedgerHQ/ledger-live/commit/1197168817b37ae5432df3e6c2668e8694497787), [`12daa05`](https://github.com/LedgerHQ/ledger-live/commit/12daa05e5f924a483d305417540ce9c83034b977), [`96029e1`](https://github.com/LedgerHQ/ledger-live/commit/96029e1396be2f283f0345a59e08009b0a6a96db), [`b6b5d5c`](https://github.com/LedgerHQ/ledger-live/commit/b6b5d5c9664ff6840689b401176a62beff1079c9), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a), [`f87990f`](https://github.com/LedgerHQ/ledger-live/commit/f87990ff29e0a7db6f9ff34e10bce1ff99289b35), [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa), [`d26bd9e`](https://github.com/LedgerHQ/ledger-live/commit/d26bd9e9352d664af7c2acb3170f2a2afe8b0972), [`1bc09ce`](https://github.com/LedgerHQ/ledger-live/commit/1bc09ce84d1d579a253d0239747ad969e9613b52), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`c47f372`](https://github.com/LedgerHQ/ledger-live/commit/c47f372705cd251e17bea08589d5cfe9930108e9)]:
+  - @ledgerhq/live-common@34.2.0
+  - @ledgerhq/types-live@6.47.0
+  - @ledgerhq/types-cryptoassets@7.12.0
+  - @ledgerhq/coin-framework@0.13.0
+  - @ledgerhq/coin-evm@2.0.0
+  - @ledgerhq/react-ui@0.14.18
+  - @ledgerhq/live-env@2.0.2
+  - @ledgerhq/coin-bitcoin@0.5.0
+  - @ledgerhq/live-nft-react@0.3.2
+  - @ledgerhq/live-nft@0.3.2
+  - @ledgerhq/live-network@1.2.2
+  - @ledgerhq/domain-service@1.1.21
+  - @ledgerhq/live-countervalues@0.1.5
+  - @ledgerhq/live-countervalues-react@0.1.5
+
+## 2.80.0-next.7
+
+### Patch Changes
+
+- [#6813](https://github.com/LedgerHQ/ledger-live/pull/6813) [`9ce66ff`](https://github.com/LedgerHQ/ledger-live/commit/9ce66ffc48695fd0add96d48091a7d533b2ff091) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix an error that made all analytics disabled on LLD and LLM
+
+## 2.80.0-next.6
+
+### Patch Changes
+
+- [#6801](https://github.com/LedgerHQ/ledger-live/pull/6801) [`d4b897f`](https://github.com/LedgerHQ/ledger-live/commit/d4b897f33fac802731f22f6439489bf2163ea3db) Thanks [@cksanders](https://github.com/cksanders)! - Ensure user remains on Recover without reload given device is disconnected
+
+## 2.80.0-next.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.2.0-next.3
+
+## 2.80.0-next.4
+
+### Patch Changes
+
+- [#6809](https://github.com/LedgerHQ/ledger-live/pull/6809) [`d52c84b`](https://github.com/LedgerHQ/ledger-live/commit/d52c84b9ea51578694663bc83f18738c1400f68e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add analytics for MArketPerformanceWidget
+
+## 2.80.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`b6b5d5c`](https://github.com/LedgerHQ/ledger-live/commit/b6b5d5c9664ff6840689b401176a62beff1079c9)]:
+  - @ledgerhq/live-common@34.2.0-next.2
+
+## 2.80.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.0.0-next.1
+  - @ledgerhq/live-common@34.2.0-next.1
+  - @ledgerhq/live-countervalues@0.1.5-next.1
+  - @ledgerhq/live-network@1.2.2-next.1
+  - @ledgerhq/live-countervalues-react@0.1.5-next.1
+  - @ledgerhq/coin-bitcoin@0.5.0-next.1
+  - @ledgerhq/live-nft@0.3.2-next.1
+  - @ledgerhq/live-nft-react@0.3.2-next.1
+
+## 2.80.0-next.1
+
+### Patch Changes
+
+- [#6760](https://github.com/LedgerHQ/ledger-live/pull/6760) [`987feb2`](https://github.com/LedgerHQ/ledger-live/commit/987feb297af96ff159d7456399914d35f771093b) Thanks [@cksanders](https://github.com/cksanders)! - Ensure we send the device model id to recover webview
+
+## 2.80.0-next.0
+
+### Minor Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Ropsten & Goerli networks and adding Sepolia variants
+
+- [#6682](https://github.com/LedgerHQ/ledger-live/pull/6682) [`10df676`](https://github.com/LedgerHQ/ledger-live/commit/10df67625e4affedd143d0e3c574677d6bf1a6e5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixed bug regarding invalid data supplied to ledger and added error message for mobile and desktop
+
+- [#6613](https://github.com/LedgerHQ/ledger-live/pull/6613) [`f1bc716`](https://github.com/LedgerHQ/ledger-live/commit/f1bc7169aa83d05d2cb57ddcf2e41c2dcca8b145) Thanks [@Philippoes](https://github.com/Philippoes)! - Feat: Enable Tron 2.0 staking via Stakekit
+
+- [#6646](https://github.com/LedgerHQ/ledger-live/pull/6646) [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - postonboarding - added europa support, updated copy, added recover entry point
+
+### Patch Changes
+
+- [#6718](https://github.com/LedgerHQ/ledger-live/pull/6718) [`438e7f5`](https://github.com/LedgerHQ/ledger-live/commit/438e7f536b6c44acbc00cc1489a31d47f3e652e3) Thanks [@Wozacosta](https://github.com/Wozacosta)! - filter which fields to display when confirming a transaction
+
+- [#6576](https://github.com/LedgerHQ/ledger-live/pull/6576) [`0dd3f34`](https://github.com/LedgerHQ/ledger-live/commit/0dd3f34964e242871c47063984b74998b21048e5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix unworking links in TranslatedError
+
+- [#6709](https://github.com/LedgerHQ/ledger-live/pull/6709) [`7f5fb20`](https://github.com/LedgerHQ/ledger-live/commit/7f5fb208f7361ac916952ef09ed6c4a8918cf148) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Backup companion refinements
+
+- [#6686](https://github.com/LedgerHQ/ledger-live/pull/6686) [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy-sell-ui feature flag to enable progressive roll out of new manifest ID.
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`3cf92aa`](https://github.com/LedgerHQ/ledger-live/commit/3cf92aa96e6e704037b684d453730103c1f5c9ed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sync onboarding: add a "Backup SRP with Recover" step
+
+- [#6492](https://github.com/LedgerHQ/ledger-live/pull/6492) [`2b8ab19`](https://github.com/LedgerHQ/ledger-live/commit/2b8ab19eea465ce8b62a8fa29b96cd569535fb3b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix duplicated learn more link on infra error inside errorbanner
+
+- [#6658](https://github.com/LedgerHQ/ledger-live/pull/6658) [`be3748b`](https://github.com/LedgerHQ/ledger-live/commit/be3748b35eea0b0a68de6825feed7ba2925f057e) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap history status translations
+
+- [#6692](https://github.com/LedgerHQ/ledger-live/pull/6692) [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13) Thanks [@lvndry](https://github.com/lvndry)! - Add banner to warn users a coin will be deprecated
+
+- [#6701](https://github.com/LedgerHQ/ledger-live/pull/6701) [`7ed0dd3`](https://github.com/LedgerHQ/ledger-live/commit/7ed0dd323c91b522694a8ca1126dcaf573db99f1) Thanks [@Justkant](https://github.com/Justkant)! - chore(LLD): add deeplink support in dev mode
+
+- [#6517](https://github.com/LedgerHQ/ledger-live/pull/6517) [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update MarketPerformers Endpoint
+
+- [#6592](https://github.com/LedgerHQ/ledger-live/pull/6592) [`21f9d07`](https://github.com/LedgerHQ/ledger-live/commit/21f9d07785dc3f162626f37a42ebe692037c9b2a) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add expired message error
+
+- [#6340](https://github.com/LedgerHQ/ledger-live/pull/6340) [`433bfec`](https://github.com/LedgerHQ/ledger-live/commit/433bfecf77f85601c4974984fa8342b5e2513469) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use new Hook for Market and Remove MarketDataProvider
+
+- [#6700](https://github.com/LedgerHQ/ledger-live/pull/6700) [`ac986be`](https://github.com/LedgerHQ/ledger-live/commit/ac986be3bafb3b63a54abf285a0b64a98e691d8e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix color of ExplorerButton in NftViewer
+
+- [#6654](https://github.com/LedgerHQ/ledger-live/pull/6654) [`d9d8902`](https://github.com/LedgerHQ/ledger-live/commit/d9d890272167aec86db19f028b64314f65a9bf14) Thanks [@CremaFR](https://github.com/CremaFR)! - support new error management
+
+- [#6622](https://github.com/LedgerHQ/ledger-live/pull/6622) [`6b41b3a`](https://github.com/LedgerHQ/ledger-live/commit/6b41b3adfcd3e19ef17ebe6fdd0d1e95cec5a13f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix E2E market test
+
+- [#6667](https://github.com/LedgerHQ/ledger-live/pull/6667) [`9f90797`](https://github.com/LedgerHQ/ledger-live/commit/9f90797d00a96674025ca8d1c7d9c5df9f435e24) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Nft Spam report in LLD in Developer Tab
+
+- [#6637](https://github.com/LedgerHQ/ledger-live/pull/6637) [`5bd34c5`](https://github.com/LedgerHQ/ledger-live/commit/5bd34c542ccc7ef36a6236b2e9ff0859ecc36487) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Remove the spams NFT in custom lock screen on LLD
+
+- [#6698](https://github.com/LedgerHQ/ledger-live/pull/6698) [`78443f7`](https://github.com/LedgerHQ/ledger-live/commit/78443f72c96de18c931aa697c079f82684dbe6e3) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Prevent the screen from locking for firmware update and app installation/update
+
+- [#6632](https://github.com/LedgerHQ/ledger-live/pull/6632) [`2f23141`](https://github.com/LedgerHQ/ledger-live/commit/2f23141cec8d29fb4ba1e187f6e19d893b5b0b37) Thanks [@RamyEB](https://github.com/RamyEB)! - Focus on Ledger Live when modal opens
+
+- [#6713](https://github.com/LedgerHQ/ledger-live/pull/6713) [`cc8c36d`](https://github.com/LedgerHQ/ledger-live/commit/cc8c36d65aad93f6090a696d9b9b2273cd193be2) Thanks [@CremaFR](https://github.com/CremaFR)! - added step to userRefused error
+
+- [#6601](https://github.com/LedgerHQ/ledger-live/pull/6601) [`6066acb`](https://github.com/LedgerHQ/ledger-live/commit/6066acb2fd824739ec0a38f056e6a59392bb7075) Thanks [@CremaFR](https://github.com/CremaFR)! - stop closing drawer after start exchange
+
+- [#6664](https://github.com/LedgerHQ/ledger-live/pull/6664) [`0534fc3`](https://github.com/LedgerHQ/ledger-live/commit/0534fc3b78a01075b62300ffb4f3c6674656aa15) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: close exchangeComplete for card sell
+
+- [#6657](https://github.com/LedgerHQ/ledger-live/pull/6657) [`b129df5`](https://github.com/LedgerHQ/ledger-live/commit/b129df5f9e601b05ded2c756f3b1764afbc796e0) Thanks [@sarneijim](https://github.com/sarneijim)! - Update error literal
+
+- [#6608](https://github.com/LedgerHQ/ledger-live/pull/6608) [`1197168`](https://github.com/LedgerHQ/ledger-live/commit/1197168817b37ae5432df3e6c2668e8694497787) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Disable storyly feature flag + protect testing in settings with feature flag enabler
+
+- [#6612](https://github.com/LedgerHQ/ledger-live/pull/6612) [`12daa05`](https://github.com/LedgerHQ/ledger-live/commit/12daa05e5f924a483d305417540ce9c83034b977) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add additional properties to the accepted and cancelled swap api calls
+
+- [#6665](https://github.com/LedgerHQ/ledger-live/pull/6665) [`07d85e8`](https://github.com/LedgerHQ/ledger-live/commit/07d85e8bf154899a7d4b279a612ebb7f84d398c7) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Correct translations for user refused from swap-live-app
+
+- [#6668](https://github.com/LedgerHQ/ledger-live/pull/6668) [`a1d0668`](https://github.com/LedgerHQ/ledger-live/commit/a1d0668c304f7831a6bb3689488edae6109fe3f0) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add isFromPostOnboardingEntryPoint param to open modal data. Use this to disable the Grow Your ETH staking modal advert when the user first receives ETH during the Stax onboarding flow.
+
+- [#6425](https://github.com/LedgerHQ/ledger-live/pull/6425) [`58c6936`](https://github.com/LedgerHQ/ledger-live/commit/58c69362a21c2f50ef5a12811ebffdf54b53c03b) Thanks [@gre](https://github.com/gre)! - Unify rendering of Recover Banner.
+
+- [#6695](https://github.com/LedgerHQ/ledger-live/pull/6695) [`601f493`](https://github.com/LedgerHQ/ledger-live/commit/601f493d9e94bd17c8c2ea33cc7bdc5de1d496ad) Thanks [@cksanders](https://github.com/cksanders)! - Fix the Recover Restore Onboarding source & enable stax.
+
+- [#6726](https://github.com/LedgerHQ/ledger-live/pull/6726) [`9593f88`](https://github.com/LedgerHQ/ledger-live/commit/9593f8852532502e193e849364057cccb6a4b636) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix starred coins in market
+
+- [#6638](https://github.com/LedgerHQ/ledger-live/pull/6638) [`7bbc032`](https://github.com/LedgerHQ/ledger-live/commit/7bbc032cfac046f9cfdf051a6ec7882013381689) Thanks [@cksanders](https://github.com/cksanders)! - Fix the Recover Restore Onboarding status to ensure no false positives.
+
+- [#6710](https://github.com/LedgerHQ/ledger-live/pull/6710) [`a45eb0d`](https://github.com/LedgerHQ/ledger-live/commit/a45eb0d374d9967e4b5847ffa771ab22f9b6a24d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix unnecessary backup step bug
+
+- [#6685](https://github.com/LedgerHQ/ledger-live/pull/6685) [`68e2e47`](https://github.com/LedgerHQ/ledger-live/commit/68e2e47f96a93b454106ac5162012631727531b1) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - send addition data to swap live app
+
+- [#6671](https://github.com/LedgerHQ/ledger-live/pull/6671) [`66a4172`](https://github.com/LedgerHQ/ledger-live/commit/66a4172f5b52b479400500b5d0d78c6ba6b18757) Thanks [@RamyEB](https://github.com/RamyEB)! - Fix ui cta card on discover
+
+- [#6679](https://github.com/LedgerHQ/ledger-live/pull/6679) [`db95e1a`](https://github.com/LedgerHQ/ledger-live/commit/db95e1aa71d2032199f5ee0b59a7586222cd66c2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix e2e tests for Market
+
+- [#6683](https://github.com/LedgerHQ/ledger-live/pull/6683) [`d26bd9e`](https://github.com/LedgerHQ/ledger-live/commit/d26bd9e9352d664af7c2acb3170f2a2afe8b0972) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MarketPerf Widget wasn't updated well when Top 5 crypto is the same for multiples minutes
+
+- [#6662](https://github.com/LedgerHQ/ledger-live/pull/6662) [`1bc09ce`](https://github.com/LedgerHQ/ledger-live/commit/1bc09ce84d1d579a253d0239747ad969e9613b52) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - feat(earlysecuritychecks): make stax update from <=1.3.0 unskippable
+
+- [#6629](https://github.com/LedgerHQ/ledger-live/pull/6629) [`75015c8`](https://github.com/LedgerHQ/ledger-live/commit/75015c88d272ee746cea2675282d55ae97ab0ff0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Privacy enhancement: users won't be tracked with braze if both analytics and personalization are false. Each one of them will have a random id for braze to still receive CC
+
+- [#6681](https://github.com/LedgerHQ/ledger-live/pull/6681) [`6c60a22`](https://github.com/LedgerHQ/ledger-live/commit/6c60a225c67dc477ed3973a67a1cf1af9888fd45) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix wording errors
+
+- Updated dependencies [[`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`b0ebe3a`](https://github.com/LedgerHQ/ledger-live/commit/b0ebe3acea586afbdeddb5877c15bcfc28f43016), [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`433bfec`](https://github.com/LedgerHQ/ledger-live/commit/433bfecf77f85601c4974984fa8342b5e2513469), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9), [`10df676`](https://github.com/LedgerHQ/ledger-live/commit/10df67625e4affedd143d0e3c574677d6bf1a6e5), [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1), [`31388be`](https://github.com/LedgerHQ/ledger-live/commit/31388bea3577680ab1070baefb47997535160bf3), [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e), [`be3748b`](https://github.com/LedgerHQ/ledger-live/commit/be3748b35eea0b0a68de6825feed7ba2925f057e), [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`21f9d07`](https://github.com/LedgerHQ/ledger-live/commit/21f9d07785dc3f162626f37a42ebe692037c9b2a), [`0db1bf8`](https://github.com/LedgerHQ/ledger-live/commit/0db1bf8cd57d6a38e1f2b3fe56183fb1fc59a9ca), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`9f90797`](https://github.com/LedgerHQ/ledger-live/commit/9f90797d00a96674025ca8d1c7d9c5df9f435e24), [`06f4606`](https://github.com/LedgerHQ/ledger-live/commit/06f4606f354496bc322be34932260eb9a1cdac42), [`cc8c36d`](https://github.com/LedgerHQ/ledger-live/commit/cc8c36d65aad93f6090a696d9b9b2273cd193be2), [`417c180`](https://github.com/LedgerHQ/ledger-live/commit/417c180bf2c82dddd5a217139bdb90aaf54ec116), [`1197168`](https://github.com/LedgerHQ/ledger-live/commit/1197168817b37ae5432df3e6c2668e8694497787), [`12daa05`](https://github.com/LedgerHQ/ledger-live/commit/12daa05e5f924a483d305417540ce9c83034b977), [`96029e1`](https://github.com/LedgerHQ/ledger-live/commit/96029e1396be2f283f0345a59e08009b0a6a96db), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a), [`f87990f`](https://github.com/LedgerHQ/ledger-live/commit/f87990ff29e0a7db6f9ff34e10bce1ff99289b35), [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa), [`d26bd9e`](https://github.com/LedgerHQ/ledger-live/commit/d26bd9e9352d664af7c2acb3170f2a2afe8b0972), [`1bc09ce`](https://github.com/LedgerHQ/ledger-live/commit/1bc09ce84d1d579a253d0239747ad969e9613b52), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`c47f372`](https://github.com/LedgerHQ/ledger-live/commit/c47f372705cd251e17bea08589d5cfe9930108e9)]:
+  - @ledgerhq/live-common@34.2.0-next.0
+  - @ledgerhq/types-live@6.47.0-next.0
+  - @ledgerhq/types-cryptoassets@7.12.0-next.0
+  - @ledgerhq/coin-framework@0.13.0-next.0
+  - @ledgerhq/coin-evm@2.0.0-next.0
+  - @ledgerhq/react-ui@0.14.18-next.0
+  - @ledgerhq/live-env@2.0.2-next.0
+  - @ledgerhq/coin-bitcoin@0.5.0-next.0
+  - @ledgerhq/live-nft-react@0.3.2-next.0
+  - @ledgerhq/live-nft@0.3.2-next.0
+  - @ledgerhq/live-network@1.2.2-next.0
+  - @ledgerhq/domain-service@1.1.21-next.0
+  - @ledgerhq/live-countervalues@0.1.5-next.0
+  - @ledgerhq/live-countervalues-react@0.1.5-next.0
+
 ## 2.79.1
 
 ### Patch Changes

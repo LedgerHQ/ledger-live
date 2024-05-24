@@ -56,11 +56,11 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
                 type: "EXCHANGE_START",
                 ...exchangeParams,
                 exchangeType: ExchangeType[exchangeParams.exchangeType],
-                onResult: (nonce: string) => {
-                  onSuccess(nonce);
+                onResult: result => {
+                  onSuccess(result.nonce, result.device);
                 },
-                onCancel: (error: Error) => {
-                  onCancel(error);
+                onCancel: cancelResult => {
+                  onCancel(cancelResult.error, cancelResult.device);
                 },
               }),
             );
@@ -88,5 +88,5 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
         },
       }),
     };
-  }, [accounts, dispatch, manifest, tracking, setDrawer]);
+  }, [accounts, tracking, manifest, dispatch, setDrawer]);
 }

@@ -130,8 +130,8 @@ const Body = ({
           {onTransferStep
             ? t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })
             : step === "CLS"
-            ? t("manager.modal.steps.preparingUpdate")
-            : t("manager.modal.steps.prepare")}
+              ? t("manager.modal.steps.preparingUpdate")
+              : t("manager.modal.steps.prepare")}
         </Title>
       </Box>
     );

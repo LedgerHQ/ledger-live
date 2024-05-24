@@ -202,8 +202,8 @@ export const formatTrongridTxResponse = (
       type === "TransferAssetContract"
         ? asset_name
         : type === "TriggerSmartContract" && contract_address
-        ? encode58Check(contract_address)
-        : undefined;
+          ? encode58Check(contract_address)
+          : undefined;
     const from = encode58Check(owner_address);
     const to = to_address ? encode58Check(to_address) : undefined;
 

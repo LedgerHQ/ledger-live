@@ -92,11 +92,6 @@ const envDefinitions = {
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
-  API_RIPPLE_RPC: {
-    parser: stringParser,
-    def: "https://xrplcluster.com/ledgerlive",
-    desc: "XRP Ledger full history open JSON-RPC endpoint",
-  },
   API_FILECOIN_ENDPOINT: {
     parser: stringParser,
     def: "https://filecoin.coin.ledger.com",

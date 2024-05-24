@@ -38,7 +38,6 @@ type HandlersPayloads = {
   REMOVE_ACCOUNT: Account;
   CLEAN_FULLNODE_DISCONNECT: never;
   CLEAN_ACCOUNTS_CACHE: never;
-  DEBUG_TICK: never;
 };
 
 type AccountsHandlers<PreciseKey = true> = Handlers<AccountsState, HandlersPayloads, PreciseKey>;
@@ -57,8 +56,6 @@ const handlers: AccountsHandlers = {
   REMOVE_ACCOUNT: (state, { payload: account }) => state.filter(acc => acc.id !== account.id),
   CLEAN_FULLNODE_DISCONNECT: state => state.filter(acc => acc.currency.id !== "bitcoin"),
   CLEAN_ACCOUNTS_CACHE: state => state.map(clearAccount),
-  // used to debug performance of redux updates
-  DEBUG_TICK: state => state.slice(0),
 };
 
 export default handleActions<AccountsState, HandlersPayloads[keyof HandlersPayloads]>(
@@ -108,8 +105,8 @@ export const subAccountByCurrencyOrderedSelector = createSelector(
             a.account.balance.gt(b.account.balance)
               ? -1
               : a.account.balance.eq(b.account.balance)
-              ? 0
-              : 1,
+                ? 0
+                : 1,
           )
       : [];
   },

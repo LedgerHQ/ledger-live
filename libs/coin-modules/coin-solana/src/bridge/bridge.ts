@@ -34,7 +34,7 @@ import {
 import type { SolanaAccount, SolanaPreloadDataV1, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { SolanaAddress, SolanaSignature, SolanaSigner } from "../signer";
+import { SolanaSigner } from "../signer";
 import resolver from "../hw-getAddress";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
@@ -118,7 +118,7 @@ function makeBroadcast(getChainAPI: (config: Config) => Promise<ChainAPI>): Broa
 
 function makeSign(
   getChainAPI: (config: Config) => Promise<ChainAPI>,
-  signerContext: SignerContext<SolanaSigner, SolanaAddress | SolanaSignature>,
+  signerContext: SignerContext<SolanaSigner>,
 ): SignOperationFnSignature<Transaction> {
   return info => {
     const config: Config = {
@@ -157,7 +157,7 @@ export function makeBridges({
   getAPI: (config: Config) => Promise<ChainAPI>;
   getQueuedAPI: (config: Config) => Promise<ChainAPI>;
   getQueuedAndCachedAPI: (config: Config) => Promise<ChainAPI>;
-  signerContext: SignerContext<SolanaSigner, SolanaAddress | SolanaSignature>;
+  signerContext: SignerContext<SolanaSigner>;
 }): {
   currencyBridge: CurrencyBridge;
   accountBridge: AccountBridge<Transaction>;

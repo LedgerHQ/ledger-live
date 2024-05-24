@@ -7,10 +7,8 @@ import elrond from "../families/elrond/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
-import ripple from "../families/ripple/deviceTransactionConfig";
 import stacks from "../families/stacks/deviceTransactionConfig";
 import stellar from "../families/stellar/deviceTransactionConfig";
-import tezos from "../families/tezos/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
@@ -19,6 +17,8 @@ import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 import solana from "@ledgerhq/coin-solana/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
+import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";
+import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 
 export default {
   cardano,
@@ -30,10 +30,8 @@ export default {
   filecoin,
   hedera,
   internet_computer,
-  ripple,
   stacks,
   stellar,
-  tezos,
   tron,
   algorand,
   bitcoin,
@@ -42,13 +40,14 @@ export default {
   polkadot,
   solana,
   icon,
+  tezos,
+  xrp,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "../families/stacks/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tezos } from "../families/tezos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "../families/tron/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/bridge/deviceTransactionConfig";
 
@@ -58,6 +57,5 @@ export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_filecoin
   | ExtraDeviceTransactionField_stacks
   | ExtraDeviceTransactionField_stellar
-  | ExtraDeviceTransactionField_tezos
   | ExtraDeviceTransactionField_tron
   | ExtraDeviceTransactionField_polkadot;
