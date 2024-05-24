@@ -4,13 +4,14 @@ import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { TRX } from "../../../../../libs/ui/packages/crypto-icons/native";
+import { TRX } from "@ledgerhq/native-ui/assets/cryptoIcons";
+import { TokenAccount } from "@ledgerhq/types-live";
 
 const getMainActions = ({
   account,
   parentAccount,
 }: {
-  account: TronAccount;
+  account: TronAccount | TokenAccount;
   parentAccount: TronAccount;
 }): ActionButtonEvent[] => {
   const navigationParams: NavigationParamsType = isAccountEmpty(account)
