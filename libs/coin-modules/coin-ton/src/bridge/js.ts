@@ -7,6 +7,7 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { TonCoinConfig, setCoinConfig } from "../config";
 import resolver from "../hw-getAddress";
 import broadcast from "../js-broadcast";
 import createTransaction from "../js-createTransaction";
@@ -56,7 +57,12 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<TonSigner, TonAddress | TonSignature>) {
+export function createBridges(
+  signerContext: SignerContext<TonSigner, TonAddress | TonSignature>,
+  coinConfig: TonCoinConfig,
+) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

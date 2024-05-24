@@ -1,6 +1,6 @@
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { Address } from "@ton/ton";
+import { getCoinConfig } from "../../config";
 import {
   TonAccountInfo,
   TonFee,
@@ -17,32 +17,33 @@ import {
 } from "./api.types";
 
 const getTonUrl = (path?: string): string => {
-  const baseUrl = getEnv("API_TON_ENDPOINT");
-  if (!baseUrl) throw new Error("API base URL not available");
+  const currencyConfig = getCoinConfig();
 
-  return `${baseUrl}${path ?? ""}`;
+  return `${currencyConfig.infra.API_TON_ENDPOINT}${path ?? ""}`;
 };
 
 const fetch = async <T>(path: string): Promise<T> => {
+  const currencyConfig = getCoinConfig();
   const url = getTonUrl(path);
 
   const { data } = await network<T>({
     method: "GET",
     url,
-    headers: { "X-API-Key": getEnv("API_TON_KEY") },
+    headers: { "X-API-Key": currencyConfig.infra.API_TON_KEY },
   });
 
   return data;
 };
 
 const send = async <T>(path: string, data: Record<string, unknown>) => {
+  const currencyConfig = getCoinConfig();
   const url = getTonUrl(path);
 
   const { data: dataResponse } = await network<T>({
     method: "POST",
     url,
     data: JSON.stringify(data),
-    headers: { "X-API-Key": getEnv("API_TON_KEY"), "Content-Type": "application/json" },
+    headers: { "X-API-Key": currencyConfig.infra.API_TON_KEY, "Content-Type": "application/json" },
   });
 
   return dataResponse;

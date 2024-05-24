@@ -19363,7 +19363,6 @@ var package_default = {
     "coin:cardano": "pnpm --filter coin-cardano",
     "coin:evm": "pnpm --filter coin-evm",
     "coin:framework": "pnpm --filter coin-framework",
-    "coin:tester": "pnpm --filter coin-tester",
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "coin:solana": "pnpm --filter coin-solana",
