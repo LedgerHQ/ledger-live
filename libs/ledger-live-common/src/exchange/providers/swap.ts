@@ -128,71 +128,34 @@ export const getProvidersData = async () => {
         "https://crypto-assets-service.api.aws.prd.ldg-tech.com/v1/partners?output=name,payload_signature_computed_format,signature,public_key,public_key_curve",
       )
     ).json();
-    return transformData(providersData);
+    return providersData;
   } catch {
     return swapProviders;
   }
 };
 
-export const getProvidersAdditionalData = (providerName: string): AdditionalProviderConfig => {
-  const res = swapAdditionData[providerName.toLowerCase()];
-
-  if (!res) {
-    throw new Error(`Unknown partner ${providerName}`);
+export const getProvidersCDNData = async () => {
+  try {
+    const providersData = await (
+      await fetch("https://cdn.live.ledger.com/swap-providers/data.json")
+    ).json();
+    return providersData;
+  } catch {
+    return swapAdditionData;
   }
-
-  return res;
 };
 
-// function transformData(inputArray) {
-//   const transformedObject = {};
-
-//   inputArray.forEach(item => {
-//     const key = item.name.toLowerCase();
-//     transformedObject[key] = {
-//       name: item.name,
-//       publicKey: {
-//         curve: item.public_key_curve,
-//         data: Buffer.from(item.public_key, "hex"),
-//       },
-//       signature: item.signature,
-//       ...(swapProviders[key] && {
-//         needsKYC: swapProviders[key].needsKYC,
-//         needsBearerToken: swapProviders[key].needsBearerToken,
-//         type: swapProviders[key].type,
-//       }),
-//     };
-//   });
-
-//   return transformedObject;
-// }
-
 export const fetchAndMergeProviderData = async () => {
-  const urls = [
-    "https://crypto-assets-service.api.aws.prd.ldg-tech.com/v1/partners?output=name,payload_signature_computed_format,signature,public_key,public_key_curve",
-    "https://cdn.live.ledger.com/swap-providers/data.json",
-  ];
-
   try {
-    // Fetch both datasets concurrently
-    const responses = await Promise.all(urls.map(url => fetch(url)));
-    const [providersData, providersExtraData] = await Promise.all(responses.map(res => res.json()));
-
-    console.log(
-      "%clibs/ledger-live-common/src/exchange/providers/swap.ts:152 providersData, providersExtraData",
-      "color: #007acc;",
-      providersData,
-      providersExtraData,
-    );
+    const [providersData, providersExtraData] = await Promise.all([
+      getProvidersData(),
+      getProvidersCDNData(),
+    ]);
 
     // Transform and merge fetched data
     const transformedProvidersData = transformData(providersData);
     const finalProvidersData = mergeProviderData(transformedProvidersData, providersExtraData);
-    console.log(
-      "%clibs/ledger-live-common/src/exchange/providers/swap.ts:174 finalProvidersData",
-      "color: #007acc;",
-      finalProvidersData,
-    );
+
     return finalProvidersData;
   } catch (error) {
     console.error("Error fetching or processing provider data:", error);
@@ -207,6 +170,7 @@ function transformData(providersData) {
   providersData.forEach(provider => {
     const key = provider.name.toLowerCase();
     transformed[key] = {
+      name: provider.name,
       publicKey: {
         curve: provider.public_key_curve,
         data: Buffer.from(provider.public_key, "hex"),

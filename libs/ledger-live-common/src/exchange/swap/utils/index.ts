@@ -63,13 +63,6 @@ export const getAvailableAccountsById = (
 
 export const isRegistrationRequired = async (provider: string): Promise<boolean> => {
   const { needsBearerToken, needsKYC } = await getSwapProvider(provider);
-  console.log(
-    "%clibs/ledger-live-common/src/exchange/swap/utils/index.ts:66 isRegistrationRequired",
-    "color: #007acc;",
-    provider,
-    needsBearerToken,
-    needsKYC,
-  );
   return needsBearerToken || needsKYC;
 };
 
