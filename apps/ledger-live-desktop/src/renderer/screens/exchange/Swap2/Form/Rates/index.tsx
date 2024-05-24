@@ -60,8 +60,9 @@ export default function ProviderRate({
   const dispatch = useDispatch();
   const [filter, setFilter] = useState<string[]>([]);
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
-  const [isRegistrationNeeded, setIsRegistrationNeeded] = useState<boolean | null>(null);
-
+  const [isRegistrationRequiredMap, setIsRegistrationRequiredMap] = useState<{
+    [x: string]: boolean;
+  }>({});
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
   const providers = useMemo(() => [...new Set(rates?.map(rate => rate.provider) ?? [])], [rates]);
@@ -70,17 +71,22 @@ export default function ProviderRate({
       ? rates.map(({ toAmount }) => formatCurrencyUnit(getFeesUnit(toCurrency), toAmount))
       : [];
   }, [toCurrency, rates]);
-
   useEffect(() => {
-    if (provider) {
-      isRegistrationRequired(provider)
-        .then(setIsRegistrationNeeded)
-        .catch(error => {
-          console.error("Error checking registration requirement:", error);
-          setIsRegistrationNeeded(false); // Assuming no registration needed if there's an error
-        });
+    if (providers) {
+      const fetchlol = async () => {
+        const results = await Promise.all(
+          providers.map(async provider => {
+            const isRequired = await isRegistrationRequired(provider);
+            return { [provider]: isRequired };
+          }),
+        );
+
+        const resultsMap = results.reduce((acc, result) => ({ ...acc, ...result }), {});
+        setIsRegistrationRequiredMap(resultsMap);
+      };
+      fetchlol();
     }
-  }, [provider]);
+  }, [providers]);
   const updateRate = useCallback(
     (rate: ExchangeRate) => {
       const value = rate.rate ?? rate.provider;
@@ -256,7 +262,7 @@ export default function ProviderRate({
               onSelect={updateRate}
               fromCurrency={fromCurrency}
               toCurrency={toCurrency}
-              isRegistrationRequired={isRegistrationNeeded}
+              isRegistrationRequired={isRegistrationRequiredMap[rate.provider]}
             />
           );
         })}

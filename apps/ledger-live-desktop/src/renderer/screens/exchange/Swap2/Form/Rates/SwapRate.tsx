@@ -17,7 +17,7 @@ export type Props = {
   selected?: boolean | null;
   fromCurrency?: SwapSelectorStateType["currency"];
   toCurrency?: SwapSelectorStateType["currency"];
-  isRegistrationRequired: boolean | null;
+  isRegistrationRequired: boolean;
 };
 
 const SecondaryText = styled(Text)`
