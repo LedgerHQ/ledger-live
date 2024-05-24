@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.45.0-nightly.6
+
+### Patch Changes
+
+- [#6922](https://github.com/LedgerHQ/ledger-live/pull/6922) [`3114b6a`](https://github.com/LedgerHQ/ledger-live/commit/3114b6a6742fb2deaed415569e9748c6e9e7955a) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Hides title
+
 ## 3.45.0-nightly.5
 
 ### Patch Changes

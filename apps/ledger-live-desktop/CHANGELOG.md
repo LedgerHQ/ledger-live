@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.81.0-nightly.6
+
+### Minor Changes
+
+- [#6908](https://github.com/LedgerHQ/ledger-live/pull/6908) [`49f61fb`](https://github.com/LedgerHQ/ledger-live/commit/49f61fb39d5077ebe36d2136cfc09f9f875025cf) Thanks [@valber-ledger](https://github.com/valber-ledger)! - Activate Nightly on speculos tests
+
+### Patch Changes
+
+- [#6914](https://github.com/LedgerHQ/ledger-live/pull/6914) [`65821db`](https://github.com/LedgerHQ/ledger-live/commit/65821db981bedc83d48aa2043ef93582662ec193) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Pass correct target and source currency to swap-live-app
+
+- [#6897](https://github.com/LedgerHQ/ledger-live/pull/6897) [`7d97769`](https://github.com/LedgerHQ/ledger-live/commit/7d97769ab9db79a0b80e55a6abcbd4753043b32f) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - display the swap-live-app devtools based on the "Enable platform dev tools" flag
+
 ## 2.81.0-nightly.5
 
 ### Patch Changes
