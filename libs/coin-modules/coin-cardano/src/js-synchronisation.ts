@@ -1,17 +1,19 @@
+import BigNumber from "bignumber.js";
+import uniqBy from "lodash/uniqBy";
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
+import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import {
   AccountShapeInfo,
   GetAccountShape,
-  makeScanAccounts,
   mergeOps,
-} from "../../bridge/jsHelpers";
-import { makeSync } from "../../bridge/jsHelpers";
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
-
-import BigNumber from "bignumber.js";
-import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
-import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { APITransaction, HashType } from "./api/api-types";
 import {
   CardanoAccount,
@@ -20,7 +22,6 @@ import {
   CardanoOutput,
   PaymentCredential,
   ProtocolParams,
-  Transaction,
   StakeCredential,
 } from "./types";
 import {
@@ -33,23 +34,12 @@ import {
   isHexString,
   mergeTokens,
 } from "./logic";
-import { encodeOperationId } from "../../operation";
 import { getNetworkParameters } from "./networks";
 import { getNetworkInfo } from "./api/getNetworkInfo";
-import uniqBy from "lodash/uniqBy";
-import postSyncPatch from "./postSyncPatch";
 import { getTransactions } from "./api/getTransactions";
-import type {
-  AccountBridge,
-  CurrencyBridge,
-  Operation,
-  OperationType,
-  TokenAccount,
-} from "@ledgerhq/types-live";
 import { buildSubAccounts } from "./buildSubAccounts";
-import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
-import { formatCurrencyUnit, listTokensForCryptoCurrency } from "../../currencies";
 import { getDelegationInfo } from "./api/getDelegationInfo";
+import { CardanoSigner } from "./signer";
 
 function mapTxToAccountOperation(
   tx: APITransaction,
@@ -201,13 +191,8 @@ function prepareUtxos(
   return utxos;
 }
 
-export type SignerContext = (
-  deviceId: string,
-  fn: (signer: Ada) => Promise<ExtendedPublicKey>,
-) => Promise<ExtendedPublicKey>;
-
 export const makeGetAccountShape =
-  (signerContext: SignerContext): GetAccountShape =>
+  (signerContext: SignerContext<CardanoSigner>): GetAccountShape =>
   async (info, { blacklistedTokenIds }) => {
     const {
       currency,
@@ -222,19 +207,19 @@ export const makeGetAccountShape =
     const accountPath = `${rootPath}/${accountIndex}'`;
 
     const paramXpub = initialAccount?.xpub;
-    let extendedPubKeyRes;
+    let xpub;
     if (!paramXpub) {
       if (deviceId === undefined || deviceId === null) {
         // deviceId not provided
         throw new Error("deviceId required to generate the xpub");
       }
-      extendedPubKeyRes = await signerContext(deviceId, signer =>
-        signer.getExtendedPublicKey({
-          path: str_to_path(accountPath),
-        }),
+      const extendedPubKeyRes = await signerContext(deviceId, signer =>
+        signer.getPublicKey(accountPath),
       );
+      xpub = `${extendedPubKeyRes.publicKeyHex}${extendedPubKeyRes.chainCodeHex}`;
+    } else {
+      xpub = paramXpub;
     }
-    const xpub = paramXpub || `${extendedPubKeyRes.publicKeyHex}${extendedPubKeyRes.chainCodeHex}`;
     const accountId = encodeAccountId({
       type: "js",
       version: "2",
@@ -366,12 +351,3 @@ export const makeGetAccountShape =
       },
     };
   };
-
-export const scanAccounts = (signerContext: SignerContext): CurrencyBridge["scanAccounts"] =>
-  makeScanAccounts({ getAccountShape: makeGetAccountShape(signerContext) });
-
-export const sync = (signerContext: SignerContext): AccountBridge<Transaction>["sync"] =>
-  makeSync({
-    getAccountShape: makeGetAccountShape(signerContext),
-    postSync: postSyncPatch,
-  });

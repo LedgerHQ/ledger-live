@@ -23,6 +23,7 @@ import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
 import { getFeesUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { isRegistrationRequired } from "@ledgerhq/live-common/exchange/swap/utils/index";
 
 type Props = {
   fromCurrency: SwapSelectorStateType["currency"];
@@ -59,6 +60,9 @@ export default function ProviderRate({
   const dispatch = useDispatch();
   const [filter, setFilter] = useState<string[]>([]);
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
+  const [isRegistrationRequiredMap, setIsRegistrationRequiredMap] = useState<{
+    [x: string]: boolean;
+  }>({});
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
   const providers = useMemo(() => [...new Set(rates?.map(rate => rate.provider) ?? [])], [rates]);
@@ -67,6 +71,22 @@ export default function ProviderRate({
       ? rates.map(({ toAmount }) => formatCurrencyUnit(getFeesUnit(toCurrency), toAmount))
       : [];
   }, [toCurrency, rates]);
+  useEffect(() => {
+    if (providers) {
+      const fetchlol = async () => {
+        const results = await Promise.all(
+          providers.map(async provider => {
+            const isRequired = await isRegistrationRequired(provider);
+            return { [provider]: isRequired };
+          }),
+        );
+
+        const resultsMap = results.reduce((acc, result) => ({ ...acc, ...result }), {});
+        setIsRegistrationRequiredMap(resultsMap);
+      };
+      fetchlol();
+    }
+  }, [providers]);
   const updateRate = useCallback(
     (rate: ExchangeRate) => {
       const value = rate.rate ?? rate.provider;
@@ -242,6 +262,7 @@ export default function ProviderRate({
               onSelect={updateRate}
               fromCurrency={fromCurrency}
               toCurrency={toCurrency}
+              isRegistrationRequired={isRegistrationRequiredMap[rate.provider]}
             />
           );
         })}

@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import {
+  AccountAwaitingSendPendingOperations,
   RecipientRequired,
   FeeNotLoaded,
   InvalidAddress,
@@ -21,7 +22,6 @@ import {
   CardanoMinAmountError,
   CardanoNotEnoughFunds,
 } from "./errors";
-import { AccountAwaitingSendPendingOperations } from "../../errors";
 import { getNetworkParameters } from "./networks";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";

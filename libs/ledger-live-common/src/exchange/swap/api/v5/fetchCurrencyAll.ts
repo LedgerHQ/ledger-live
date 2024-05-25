@@ -6,7 +6,7 @@ import { fetchCurrencyAllMock } from "./__mocks__/fetchCurrencyAll.mocks";
 import { ResponseData as ResponseDataTo } from "./fetchCurrencyTo";
 import { ResponseData as ResponseDataFrom } from "./fetchCurrencyFrom";
 import { flattenV5CurrenciesAll } from "../../utils/flattenV5CurrenciesAll";
-import { getAvailableProviders, getSwapAPIBaseURL } from "../..";
+import { getSwapAPIBaseURL, getSwapUserIP, getAvailableProviders } from "../..";
 import { getEnv } from "@ledgerhq/live-env";
 
 type Props = {
@@ -26,12 +26,14 @@ export async function fetchCurrencyAll({ additionalCoinsFlag = false }: Props) {
   const url = new URL(`${getSwapAPIBaseURL()}/currencies/all`);
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());
+  const headers = getSwapUserIP();
 
   try {
     const { data } = await network<ResponseDataAll>({
       method: "GET",
       url: url.toString(),
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
+      ...(headers !== undefined ? { headers } : {}),
     });
     return flattenV5CurrenciesAll(data);
   } catch (e: unknown) {

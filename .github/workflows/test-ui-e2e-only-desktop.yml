@@ -277,7 +277,7 @@ jobs:
               }],
             };
             
-            if (${{ !inputs.slack_notif }}) return;
+            if (${{ !inputs.slack_notif && github.event_name == 'workflow_dispatch' }}) return;
 
             const slackPayload = {
               "text": "Ledger Live Desktop tests results on ${{github.ref_name}}",
@@ -326,12 +326,12 @@ jobs:
             };
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
       - name: Print Slack Payload Content
-        if: ${{ !cancelled() && inputs.slack_notif }}
+        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         run: cat ${{ github.workspace }}/payload-slack-content.json
       - name: post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
-        if: ${{ !cancelled() && inputs.slack_notif }}
+        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         with:
           channel-id: "C05FKJ7DFAP"
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
