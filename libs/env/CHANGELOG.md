@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.1.0-nightly.2
+
+### Patch Changes
+
+- [#6883](https://github.com/LedgerHQ/ledger-live/pull/6883) [`6623cd1`](https://github.com/LedgerHQ/ledger-live/commit/6623cd13102bd8340bd7d4dfdd469934527985c3) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add user IP
+
 ## 2.1.0-nightly.1
 
 ### Minor Changes

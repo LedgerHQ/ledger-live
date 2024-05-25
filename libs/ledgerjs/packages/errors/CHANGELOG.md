@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.17.0-nightly.1
+
+### Minor Changes
+
+- [#6812](https://github.com/LedgerHQ/ledger-live/pull/6812) [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Modularize Cardano
+
 ## 6.17.0-nightly.0
 
 ### Minor Changes
