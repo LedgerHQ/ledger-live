@@ -124,11 +124,12 @@ import type {
   TransactionStatus as xrpTransactionStatus,
   TransactionStatusRaw as xrpTransactionStatusRaw,
 } from "@ledgerhq/coin-xrp/types";
-
-import type { Transaction as iconTransaction } from "@ledgerhq/coin-icon/types";
-import type { TransactionRaw as iconTransactionRaw } from "@ledgerhq/coin-icon/types";
-import type { TransactionStatus as iconTransactionStatus } from "@ledgerhq/coin-icon/types";
-import type { TransactionStatusRaw as iconTransactionStatusRaw } from "@ledgerhq/coin-icon/types";
+import type {
+  Transaction as iconTransaction,
+  TransactionRaw as iconTransactionRaw,
+  TransactionStatus as iconTransactionStatus,
+  TransactionStatusRaw as iconTransactionStatusRaw,
+} from "@ledgerhq/coin-icon/types";
 
 export type Transaction =
   | algorandTransaction
