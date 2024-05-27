@@ -17,32 +17,37 @@ const ROOT_DERIVATION_PATH = "16'/0'";
 let speculos: SpeculosDevice;
 let sub;
 let logSub;
-beforeEach(async () => {
-  logSub = listen(log => {
-    // eslint-disable-next-line no-console
-    console.log(log.type + ": " + log.message);
-  });
-  speculos = await createSpeculosDevice({
-    model: DeviceModelId.nanoS,
-    firmware: "2.0.0",
-    appName: "Trustchain",
-    appVersion: "0.0.1",
-    seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
-    coinapps: __dirname,
-    overridesAppPath: "app.elf",
-  });
+beforeEach(
+  async () => {
+    logSub = listen(log => {
+      // eslint-disable-next-line no-console
+      console.log(log.type + ": " + log.message);
+    });
+    speculos = await createSpeculosDevice({
+      model: DeviceModelId.nanoS,
+      firmware: "2.0.0",
+      appName: "Trustchain",
+      appVersion: "0.0.1",
+      seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+      coinapps: __dirname,
+      overridesAppPath: "app.elf",
+    });
 
-  // passthrough all success cases
-  sub = speculos.transport.automationEvents.subscribe(event => {
-    if (event.text === "sync group") {
-      speculos.transport.button("right");
-    } else if (event.text === "Activate Wallet sync") {
-      speculos.transport.button("right");
-    } else if (event.text === "Approve") {
-      speculos.transport.button("both");
-    }
-  });
-}, 60000);
+    // passthrough all success cases
+    sub = speculos.transport.automationEvents.subscribe(event => {
+      if (event.text === "localhost") {
+        speculos.transport.button("right");
+      } else if (event.text === "sync group") {
+        speculos.transport.button("right");
+      } else if (event.text === "Activate Wallet sync") {
+        speculos.transport.button("right");
+      } else if (event.text === "Approve") {
+        speculos.transport.button("both");
+      }
+    });
+  },
+  5 * 60 * 1000, // speculos pull instance can be long
+);
 
 afterEach(async () => {
   sub.unsubscribe();
@@ -58,21 +63,10 @@ describe("Chain is owned by a device", () => {
 
   it.skip("can sign some data", async () => {
     const alice = device.apdu(speculos.transport);
-
     const challengeBytes = crypto.from_hex(
       "010107020100121043fd685a10636af2f5a98f942ae7640014010115473045022100d42b1ed6e13f5fe4f96e84172e9f5f8c53d9fa36d312f927252721a55fab1be302200aa06c4d9526ee4fc246bdad61a0f9e0517d7c6a24abb1a68368452b11e253fd160466559eaf20096c6f63616c686f7374320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000",
     );
-
     const [challenge] = Challenge.fromBytes(challengeBytes);
-
-    sub.unsubscribe();
-    sub = speculos.transport.automationEvents.subscribe(event => {
-      if (event.text === "localhost") {
-        speculos.transport.button("right");
-      } else if (event.text === "Approve") {
-        speculos.transport.button("both");
-      }
-    });
     const out = await alice.getSeedId(challenge.toBytes());
     const unsignedTlv = challenge.getUnsignedTLV();
     const result = await checkSignature(out.pubkeyCredential.publicKey, unsignedTlv, out.signature);

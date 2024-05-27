@@ -658,6 +658,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
+  TRUSTCHAIN_API: {
+    def: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+    parser: stringParser,
+    desc: "Trustchain API",
+  },
   PLATFORM_DEBUG: {
     def: false,
     parser: boolParser,

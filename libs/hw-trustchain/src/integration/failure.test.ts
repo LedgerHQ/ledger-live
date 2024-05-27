@@ -19,17 +19,20 @@ const DEFAULT_TOPIC = "c96d450545ff2836204c29af291428a5bf740304978f5dfb0b4a26147
 
 let speculos: SpeculosDevice;
 
-beforeAll(async () => {
-  speculos = await createSpeculosDevice({
-    model: DeviceModelId.nanoS,
-    firmware: "2.0.0",
-    appName: "Trustchain",
-    appVersion: "0.0.1",
-    seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
-    coinapps: __dirname,
-    overridesAppPath: "app.elf",
-  });
-}, 60000);
+beforeAll(
+  async () => {
+    speculos = await createSpeculosDevice({
+      model: DeviceModelId.nanoS,
+      firmware: "2.0.0",
+      appName: "Trustchain",
+      appVersion: "0.0.1",
+      seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+      coinapps: __dirname,
+      overridesAppPath: "app.elf",
+    });
+  },
+  5 * 60 * 1000, // speculos pull instance can be long
+);
 
 afterAll(async () => {
   releaseSpeculosDevice(speculos.id);

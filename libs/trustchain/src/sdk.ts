@@ -1,12 +1,9 @@
 import { JWT, LiveCredentials, Trustchain, TrustchainMember, TrustchainSDK } from "./types";
-import * as HwTrustchain from "@ledgerhq/hw-trustchain";
+import { crypto, device } from "@ledgerhq/hw-trustchain";
 import Transport from "@ledgerhq/hw-transport";
+import api from "./api";
 
-// FIXME (temporary) remove these lines after we uses them
-import "./api";
-void HwTrustchain;
-
-export class SDK implements TrustchainSDK {
+class SDK implements TrustchainSDK {
   initLiveCredentials(): LiveCredentials {
     throw new Error("initLiveCredentials not implemented.");
   }
@@ -17,8 +14,20 @@ export class SDK implements TrustchainSDK {
    * - post challenge, and get an JWT
    */
   async seedIdAuthenticate(transport: Transport): Promise<string> {
-    void transport;
-    throw new Error("seedIdAuthenticate not implemented.");
+    const hw = device.apdu(transport);
+    const challenge = await api.getAuthenticationChallenge();
+    const data = crypto.from_hex(challenge.tlv);
+    const seedId = await hw.getSeedId(data);
+    const signature = crypto.to_hex(seedId.signature);
+    const response = await api.postChallengeResponse({
+      challenge: challenge.json,
+      signature: {
+        credential: seedId.attestationPubkeyCredential.toJSON(),
+        signature,
+        attestation: crypto.to_hex(seedId.attestationResult),
+      },
+    });
+    return response.access_token;
   }
 
   async liveAuthenticate(
@@ -84,3 +93,5 @@ export class SDK implements TrustchainSDK {
     throw new Error("destroyTrustchain not implemented.");
   }
 }
+
+export const sdk = new SDK();
