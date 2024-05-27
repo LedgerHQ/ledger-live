@@ -141,6 +141,9 @@ export default function DeviceAction<R, H extends Status, P>({
   const status = action?.useHook(selectedDevice, request);
   const payload = action?.mapResult(status);
 
+  // eslint-disable-next-line no-console
+  console.log({ DeviceAction: { status, payload } });
+
   return (
     <DeviceActionDefaultRendering
       device={selectedDevice}

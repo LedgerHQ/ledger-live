@@ -43,6 +43,8 @@ export default function installLanguage({
   deviceId,
   request,
 }: Input): Observable<InstallLanguageEvent> {
+  // eslint-disable-next-line no-console
+  console.log("installLanguage", { deviceId, request });
   const { language } = request;
 
   const sub = withDevice(deviceId)(
@@ -59,6 +61,9 @@ export default function installLanguage({
             mergeMap(async deviceInfo => {
               timeoutSub.unsubscribe();
 
+              // eslint-disable-next-line no-console
+              console.log({ installLangue: { deviceInfo, language } });
+
               if (language === "english") {
                 await uninstallAllLanguages(transport);
 
@@ -71,6 +76,9 @@ export default function installLanguage({
               }
 
               const languages = await ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
+
+              // eslint-disable-next-line no-console
+              console.log({ installLangue: { languages } });
 
               const packs: LanguagePackage[] = languages.filter(
                 (l: any) => l.language === language,
@@ -87,6 +95,9 @@ export default function installLanguage({
                 url,
               });
 
+              // eslint-disable-next-line no-console
+              console.log({ installLangue: { rawApdus, url } });
+
               const apdus = rawApdus.split(/\r?\n/).filter(Boolean);
 
               await uninstallAllLanguages(transport);
@@ -102,6 +113,8 @@ export default function installLanguage({
                 const status = response.readUInt16BE(response.length - 2);
                 const statusStr = status.toString(16);
 
+                // eslint-disable-next-line no-console
+                console.log({ installLangue: { status } });
                 // Some error handling
                 if (status === StatusCodes.USER_REFUSED_ON_DEVICE) {
                   return subscriber.error(new LanguageInstallRefusedOnDevice(statusStr));
