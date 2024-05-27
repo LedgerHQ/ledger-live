@@ -11,6 +11,7 @@ import { killChopsticks, spawnChopsticks } from "../chopsticks";
 import { defaultNanoApp } from "../scenarios.test";
 import BigNumber from "bignumber.js";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
+import { PolkadotCoinConfig } from "../../../config";
 
 const polkadot = getCryptoCurrencyById("polkadot");
 
@@ -31,6 +32,15 @@ function getTransactions() {
 }
 
 const wsProvider = new WsProvider("ws://127.0.0.1:8000", false);
+
+const coinConfig: PolkadotCoinConfig = {
+  status: {
+    type: "active",
+  },
+  sidecar: {
+    url: "",
+  },
+};
 
 export const basicScenario: Scenario<PolkadotTransaction> = {
   name: "Polkadot Basic transactions",
@@ -90,7 +100,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
         }
       });
 
-    const { accountBridge, currencyBridge } = createBridges(signerContext);
+    const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
 
     const account = makeAccount(basicScenarioAccountPair.address, polkadot);
 
