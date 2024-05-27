@@ -20,6 +20,7 @@ module.exports = async () => ({
     [
       "jest-allure2-reporter",
       {
+        resultsDir: "artifacts",
         testCase: {
           links: {
             issue: "https://ledgerhq.atlassian.net/browse/{{name}}",
