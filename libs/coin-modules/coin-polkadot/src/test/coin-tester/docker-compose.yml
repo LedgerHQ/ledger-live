@@ -18,8 +18,7 @@ services:
       chopsticks:
         condition: service_healthy
     environment:
-      - SAS_EXPRESS_BIND_HOST=127.0.0.1
-      - SAS_SUBSTRATE_URL=ws://127.0.0.1:${CHOPSTICKS_NODE_PORT-8000}
+      - SAS_SUBSTRATE_URL=ws://chopsticks:${CHOPSTICKS_NODE_PORT-8000}
       - SAS_EXPRESS_KEEP_ALIVE_TIMEOUT=${SIDECAR_KEEP_ALIVE_TIMEOUT-60000}
       - SAS_EXPRESS_PORT=${SIDECAR_PORT-8080}
     ports:
