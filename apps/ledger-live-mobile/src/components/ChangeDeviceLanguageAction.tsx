@@ -25,6 +25,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
   onResult,
   onError,
 }) => {
+  console.log("ChangeDeviceLanguageAction", { device, language });
   const action = useInstallLanguageDeviceAction();
   const showAlert = !device?.wired;
   const { t } = useTranslation();

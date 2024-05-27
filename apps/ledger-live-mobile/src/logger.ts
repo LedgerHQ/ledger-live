@@ -38,7 +38,8 @@ export class ConsoleLogger {
    */
   private constructor() {
     // Makes sure the `VERBOSE` env has been set before the logger is created
-    setEnvUnsafe("VERBOSE", Config.VERBOSE);
+    // setEnvUnsafe("VERBOSE", Config.VERBOSE);
+    setEnvUnsafe("VERBOSE", 1);
 
     this.refreshSetup();
   }

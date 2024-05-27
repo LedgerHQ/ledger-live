@@ -36,6 +36,7 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
   canSkip,
   onSkip,
 }) => {
+  console.log("ChangeDeviceLanguagePrompt", { deviceModel, language });
   const { t } = useTranslation();
   const illustration = images[deviceModel.id];
 

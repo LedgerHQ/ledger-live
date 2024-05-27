@@ -76,7 +76,7 @@ export default function FirmwareUpdate({
       state: FwUpdateState,
       event: FwUpdateBackgroundEvent | FwUpdateForegroundEvent,
     ): FwUpdateState => {
-      console.log("fwUpdateStateReducer", {event, state});
+      console.log("fwUpdateStateReducer", { event, state });
       switch (event.type) {
         case "confirmPin":
           return { step: "confirmPin" };
@@ -221,6 +221,8 @@ export default function FirmwareUpdate({
     lastSeenDeviceInfo,
     updatedDeviceInfo,
   ]);
+
+  console.log("FirmwareUpdate", { step });
 
   return (
     <QueuedDrawer
