@@ -8,7 +8,7 @@ import { FAMILIES } from "@ledgerhq/wallet-api-core";
  * This is not robust, we should have an explicit adapter between the wallet API currencies (families) and live currencies (families)
  * For example here, the `ethereum` family on `wallet-api` should be mapped to the `evm` family on LL
  */
-export const WALLET_API_FAMILIES = [...FAMILIES, "evm"];
+export const WALLET_API_FAMILIES = [...FAMILIES, "evm", "xrp"];
 
 export const WALLET_API_VERSION = "2.0.0";
 
