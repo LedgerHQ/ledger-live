@@ -22,11 +22,18 @@ export type TrustchainMember = {
 };
 
 /**
+ * The main interface for the UI to interact with the trustchain protocol.
  *
+ * @example
+ *
+ * import { sdk } from "@ledgerhq/trustchain";
+ *
+ * sdk.seedIdAuthenticate(transport).then(jwt => console.log(jwt));
  */
 export interface TrustchainSDK {
   /**
-   * initialize the live credentials that represents one Live instance, member of the trustchain
+   * Generate the live credentials that represents a Live instance, member of the trustchain.
+   * This method is expected to be used the first time Ledger Live is opened (if Live never generated them before) and then persisted over the future user sessions of Ledger Live in order for the member to be able to authenticate and manage the trustchain.
    */
   initLiveCredentials(): LiveCredentials;
 
