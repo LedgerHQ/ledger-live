@@ -105,7 +105,7 @@ jobs:
           if [ "${{ inputs.enable_broadcast }}" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi || ENABLE_TRANSACTION_BROADCAST=0
           if [ "${{ inputs.speculos_tests }}" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi || export MOCK=0 && speculos_tests=":speculos"
           if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi || invert_filter=""
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"env:
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter || '' }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
