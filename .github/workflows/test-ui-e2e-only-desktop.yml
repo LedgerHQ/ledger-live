@@ -40,7 +40,7 @@ on:
         required: false
         type: boolean
         default: false
-
+        
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
@@ -102,13 +102,17 @@ jobs:
         id: tests
         run: |
           export COINAPPS=$PWD/coin-apps
-          if [ "${{ inputs.enable_broadcast }}" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi || ENABLE_TRANSACTION_BROADCAST=0
-          if [ "${{ inputs.speculos_tests }}" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi || export MOCK=0 && speculos_tests=":speculos"
-          if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi || invert_filter=""
+          if [ "${{ inputs.enable_broadcast }}" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi
+          if [ "${{ inputs.speculos_tests }}" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi
+          if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"
         env:
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter || '' }}
+          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          ENABLE_TRANSACTION_BROADCAST: 1
+          MOCK: 0
+          speculos_tests: ":speculos"
+
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
