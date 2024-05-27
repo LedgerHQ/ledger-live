@@ -1,7 +1,6 @@
 import { Flex, Box, Icons, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import styled from "styled-components";
-import { Separator } from "~/renderer/modals/ExchangeDeviceConfirm";
 
 export type OptionProps = {
   label: string;
@@ -11,6 +10,15 @@ export type OptionProps = {
 export const OptionContainer = styled.div`
   &:hover {
     cursor: pointer;
+  }
+`;
+
+export const Separator = styled.div`
+  &::after {
+    content: "";
+    font-size: 13px;
+    color: ${p => p.theme.colors.palette.divider};
+    padding: 0 15px;
   }
 `;
 
