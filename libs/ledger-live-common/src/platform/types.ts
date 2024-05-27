@@ -15,7 +15,7 @@ import { z } from "zod";
  * "ethereum" family, following the "ethereum" / "evm" families merge
  * (and removal of the "ethereum" family)
  */
-export const PLATFORM_FAMILIES = [...Object.values(FAMILIES), "evm"];
+export const PLATFORM_FAMILIES = [...Object.values(FAMILIES), "evm", "xrp"];
 
 export { FAMILIES as PLATFORM_FAMILIES_ENUM };
 
