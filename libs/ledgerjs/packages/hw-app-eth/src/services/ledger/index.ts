@@ -10,6 +10,7 @@ import { byContractAddressAndChainId, findERC20SignaturesInfo } from "./erc20";
 import { loadInfosForContractMethod } from "./contracts";
 import { getNFTInfo, loadNftPlugin } from "./nfts";
 import { decodeTxInfo, tokenSelectors, nftSelectors, mergeResolutions } from "../../utils";
+import { loadInfosForUniswap } from "../../modules/Uniswap";
 
 type PotentialResolutions = {
   token: boolean | undefined;
@@ -86,7 +87,7 @@ const loadNanoAppPlugins = async (
   loadConfig: LoadConfig,
   shouldResolve: PotentialResolutions,
 ): Promise<LedgerEthTransactionResolution> => {
-  let resolution: LedgerEthTransactionResolution = {
+  const resolution: LedgerEthTransactionResolution = {
     externalPlugin: [],
     plugin: [],
     nfts: [],
@@ -113,51 +114,57 @@ const loadNanoAppPlugins = async (
   }
 
   if (shouldResolve.externalPlugins) {
-    const contractMethodInfos = await loadInfosForContractMethod(
-      contractAddress,
-      selector,
-      chainIdTruncated,
-      loadConfig,
-    );
+    // const contractMethodInfos = await loadInfosForContractMethod(
+    //   contractAddress,
+    //   selector,
+    //   chainIdTruncated,
+    //   loadConfig,
+    // );
+    // if (contractMethodInfos) {
+    //   const { plugin, payload, signature, erc20OfInterest, abi } = contractMethodInfos;
+    //   if (plugin) {
+    //     log("ethereum", `found plugin (${plugin}) for selector: ${selector}`);
+    //     resolution.externalPlugin.push({ payload, signature });
+    //   }
+    //   if (erc20OfInterest && erc20OfInterest.length && abi) {
+    //     const contract = new Interface(abi);
+    //     const args = contract.parseTransaction(decodedTx).args;
+    //     for (const path of erc20OfInterest) {
+    //       const erc20ContractAddress = path.split(".").reduce((value, seg) => {
+    //         if (seg === "-1" && Array.isArray(value)) {
+    //           return value[value.length - 1];
+    //         }
+    //         return value[seg];
+    //       }, args) as unknown as string; // impossible(?) to type correctly as the initializer is different from the returned type
+    //       const externalPluginResolution = await getAdditionalDataForContract(
+    //         erc20ContractAddress,
+    //         chainIdTruncated,
+    //         loadConfig,
+    //         {
+    //           nft: false,
+    //           externalPlugins: false,
+    //           token: true, // enforcing resolution of tokens for external plugins that need info on assets (e.g. for a swap)
+    //         },
+    //       );
+    //       resolution = mergeResolutions([resolution, externalPluginResolution]);
+    //     }
+    //   }
+    // } else {
+    //   log("ethereum", "no infos for selector " + selector);
+    // }
 
-    if (contractMethodInfos) {
-      const { plugin, payload, signature, erc20OfInterest, abi } = contractMethodInfos;
+    const { pluginData, tokenDescriptors } = await loadInfosForUniswap(decodedTx, chainIdTruncated);
 
-      if (plugin) {
-        log("ethereum", `found plugin (${plugin}) for selector: ${selector}`);
-        resolution.externalPlugin.push({ payload, signature });
-      }
-
-      if (erc20OfInterest && erc20OfInterest.length && abi) {
-        const contract = new Interface(abi);
-        const args = contract.parseTransaction(decodedTx).args;
-
-        for (const path of erc20OfInterest) {
-          const erc20ContractAddress = path.split(".").reduce((value, seg) => {
-            if (seg === "-1" && Array.isArray(value)) {
-              return value[value.length - 1];
-            }
-            return value[seg];
-          }, args) as unknown as string; // impossible(?) to type correctly as the initializer is different from the returned type
-
-          const externalPluginResolution = await getAdditionalDataForContract(
-            erc20ContractAddress,
-            chainIdTruncated,
-            loadConfig,
-            {
-              nft: false,
-              externalPlugins: false,
-              token: true, // enforcing resolution of tokens for external plugins that need info on assets (e.g. for a swap)
-            },
-          );
-          resolution = mergeResolutions([resolution, externalPluginResolution]);
-        }
-      }
-    } else {
-      log("ethereum", "no infos for selector " + selector);
+    if (pluginData && tokenDescriptors) {
+      resolution.externalPlugin.push({
+        payload: pluginData.toString("hex"),
+        signature: "",
+      });
+      resolution.erc20Tokens.push(...tokenDescriptors.map(d => d.toString("hex")));
     }
-  }
 
+    console.log({ resolution });
+  }
   return resolution;
 };
 
