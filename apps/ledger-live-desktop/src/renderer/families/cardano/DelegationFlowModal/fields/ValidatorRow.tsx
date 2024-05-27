@@ -11,7 +11,7 @@ import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import LedgerPoolIcon from "../LedgerPoolIcon";
-import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 
 type Props = {
   currency: CryptoCurrency;

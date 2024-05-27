@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 import { Modal } from "./Modal";
 
 export class AddAccountModal extends Modal {
@@ -11,6 +11,7 @@ export class AddAccountModal extends Modal {
   readonly addMoreButton: Locator;
   readonly doneButton: Locator;
   readonly accountsList: Locator;
+  readonly successAddLabel: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -23,11 +24,12 @@ export class AddAccountModal extends Modal {
     this.stopButton = page.locator("data-test-id=add-accounts-import-stop-button");
     this.addMoreButton = page.locator("data-test-id=add-accounts-finish-add-more-button");
     this.doneButton = page.locator("data-test-id=add-accounts-finish-close-button");
+    this.successAddLabel = page.locator("text=Account added successfully");
   }
 
   async select(currency: string) {
     await this.selectAccount.click();
-    await this.selectAccountInput.type(currency);
+    await this.selectAccountInput.fill(currency);
     await this.selectAccountInput.press("Enter");
   }
 
@@ -37,8 +39,7 @@ export class AddAccountModal extends Modal {
 
   async getFirstAccountName() {
     await this.page.waitForTimeout(500);
-    const firstAccountName = await this.accountsList.locator("input").first().inputValue();
-    return firstAccountName;
+    return await this.accountsList.locator("input").first().inputValue();
   }
 
   async done() {

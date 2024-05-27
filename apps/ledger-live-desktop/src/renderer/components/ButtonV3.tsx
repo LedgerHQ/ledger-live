@@ -5,8 +5,6 @@ import { useTrack } from "~/renderer/analytics/segment";
 import styled from "styled-components";
 
 export const Base = styled(BaseButton)<{ big?: boolean }>`
-  border-radius: 44px;
-
   font-size: ${p => (p.big ? "14px" : "12px")};
   height: 40px;
   line-height: 40px;

@@ -162,7 +162,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
 }))<BaseProps>`
   background-color: transparent;
   border-color: transparent;
-  border-radius: ${p => p.theme.space[13]}px;
+  border-radius: 44px;
   border-style: solid;
   border-width: ${p => (p.outline || p.variant === "shade" ? 1 : 0)}px;
   font-weight: 600;

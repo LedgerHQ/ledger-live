@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { mockPostSwapAccepted, mockPostSwapCancelled } from "./mock";
 import type { PostSwapAccepted, PostSwapCancelled } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
-import { getSwapAPIBaseURL } from ".";
+import { getSwapAPIBaseURL, getSwapUserIP } from ".";
 
 export const postSwapAccepted: PostSwapAccepted = async ({
   provider,
@@ -21,10 +21,12 @@ export const postSwapAccepted: PostSwapAccepted = async ({
     return null;
   }
   try {
+    const headers = getSwapUserIP();
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/accepted`,
       data: { provider, swapId, transactionId, ...rest },
+      ...(headers !== undefined ? { headers } : {}),
     });
   } catch (error) {
     console.error(error);
