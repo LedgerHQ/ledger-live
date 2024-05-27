@@ -3,39 +3,25 @@ import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhon
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 import { CardanoAccount, Transaction } from "./types";
-import { buildTransaction } from "./js-buildTransaction";
-
-/**
- * Create an empty transaction
- *
- * @returns {Transaction}
- */
-export const createTransaction = (): Transaction => ({
-  family: "cardano",
-  mode: "send",
-  amount: new BigNumber(0),
-  recipient: "",
-  useAllAmount: false,
-  fees: new BigNumber(0),
-  poolId: undefined,
-});
+import { buildTransaction } from "./buildTransaction";
+import { AccountBridge } from "@ledgerhq/types-live";
 
 /**
  * Prepare transaction before checking status
  *
- * @param {Account} a
- * @param {Transaction} t
+ * @param {Account} account
+ * @param {Transaction} transaction
  */
-export const prepareTransaction = async (
-  a: CardanoAccount,
-  t: Transaction,
-): Promise<Transaction> => {
+export const prepareTransaction: AccountBridge<
+  Transaction,
+  CardanoAccount
+>["prepareTransaction"] = async (account, transaction) => {
   let patch = {};
   try {
-    const cardanoTransaction = await buildTransaction(a, t);
+    const cardanoTransaction = await buildTransaction(account, transaction);
     const transactionFees = cardanoTransaction.getFee();
-    const transactionAmount = t.subAccountId
-      ? t.amount
+    const transactionAmount = transaction.subAccountId
+      ? transaction.amount
       : cardanoTransaction
           .getOutputs()
           .filter(
@@ -48,8 +34,8 @@ export const prepareTransaction = async (
 
     patch = { fees: transactionFees, amount: transactionAmount };
   } catch (error) {
-    patch = { fees: new BigNumber(0), amount: t.amount };
+    patch = { fees: new BigNumber(0), amount: transaction.amount };
   }
 
-  return defaultUpdateTransaction(t, patch);
+  return defaultUpdateTransaction(transaction, patch);
 };

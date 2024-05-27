@@ -1,32 +1,24 @@
-import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
-import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import { Transaction as TyphonTransaction, types as TyphonTypes } from "@stricahq/typhonjs";
-import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
+import BigNumber from "bignumber.js";
+import { OperationType } from "@ledgerhq/types-live";
 import { HashType } from "@stricahq/typhonjs/dist/types";
-import { OperationType, SignOperationEvent, SignOperationFnSignature } from "@ledgerhq/types-live";
-import { FeeNotLoaded } from "@ledgerhq/errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
+import { types as TyphonTypes, Transaction as TyphonTransaction } from "@stricahq/typhonjs";
+import { getAccountStakeCredential, getOperationType } from "./logic";
 import { MEMO_LABEL } from "./constants";
-import { buildTransaction } from "./js-buildTransaction";
-import { getAccountStakeCredential, getExtendedPublicKeyFromHex, getOperationType } from "./logic";
-import { getNetworkParameters } from "./networks";
-import { CardanoSigner, Witness } from "./signer";
-import type {
+import {
   CardanoAccount,
   CardanoOperation,
   CardanoOperationExtra,
   CardanoResources,
   Transaction,
 } from "./types";
-import typhonSerializer from "./typhonSerializer";
 
-const buildOptimisticOperation = (
+export const buildOptimisticOperation = (
   account: CardanoAccount,
-  transaction: TyphonTransaction,
-  t: Transaction,
+  unsignedTransaction: TyphonTransaction,
+  transaction: Transaction,
 ): CardanoOperation => {
   const cardanoResources = account.cardanoResources as CardanoResources;
   const accountCreds = new Set(
@@ -37,7 +29,7 @@ const buildOptimisticOperation = (
   const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
   const protocolParams = account.cardanoResources.protocolParams;
 
-  const accountInput = transaction
+  const accountInput = unsignedTransaction
     .getInputs()
     .reduce(
       (total, i) =>
@@ -45,7 +37,7 @@ const buildOptimisticOperation = (
       new BigNumber(0),
     );
 
-  const accountOutput = transaction
+  const accountOutput = unsignedTransaction
     .getOutputs()
     .reduce(
       (total, o) =>
@@ -56,17 +48,17 @@ const buildOptimisticOperation = (
       new BigNumber(0),
     );
 
-  const txCertificates = transaction.getCertificates();
+  const txCertificates = unsignedTransaction.getCertificates();
   const stakeRegistrationCertificates = txCertificates.filter(
     c => c.certType === TyphonTypes.CertificateType.STAKE_REGISTRATION,
   );
   const stakeDeRegistrationCertificates = txCertificates.filter(
     c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
   );
-  const txWithdrawals = transaction.getWithdrawals();
+  const txWithdrawals = unsignedTransaction.getWithdrawals();
 
-  const transactionHash = transaction.getTransactionHash().toString("hex");
-  const auxiliaryData = transaction.getAuxiliaryData();
+  const transactionHash = unsignedTransaction.getTransactionHash().toString("hex");
+  const auxiliaryData = unsignedTransaction.getAuxiliaryData();
   const extra: CardanoOperationExtra = {};
   if (auxiliaryData) {
     const memoMetadata = auxiliaryData.metadata.find(m => m.label === MEMO_LABEL);
@@ -144,7 +136,7 @@ const buildOptimisticOperation = (
       ? "UNDELEGATE"
       : getOperationType({
           valueChange: operationValue,
-          fees: transaction.getFee(),
+          fees: unsignedTransaction.getFee(),
         });
 
   const op: CardanoOperation = {
@@ -152,18 +144,18 @@ const buildOptimisticOperation = (
     hash: transactionHash,
     type: opType,
     value: operationValue.absoluteValue(),
-    fee: transaction.getFee(),
+    fee: unsignedTransaction.getFee(),
     blockHash: undefined,
     blockHeight: null,
-    senders: transaction.getInputs().map(i => i.address.getBech32()),
-    recipients: transaction.getOutputs().map(o => o.address.getBech32()),
+    senders: unsignedTransaction.getInputs().map(i => i.address.getBech32()),
+    recipients: unsignedTransaction.getOutputs().map(o => o.address.getBech32()),
     accountId: account.id,
     date: new Date(),
     extra,
   };
 
-  const tokenAccount = t.subAccountId
-    ? account.subAccounts?.find(ta => ta.id === t.subAccountId)
+  const tokenAccount = transaction.subAccountId
+    ? account.subAccounts?.find(ta => ta.id === transaction.subAccountId)
     : null;
 
   if (tokenAccount && opType === "OUT") {
@@ -172,12 +164,12 @@ const buildOptimisticOperation = (
         id: encodeOperationId(tokenAccount.id, transactionHash, opType),
         hash: transactionHash,
         type: opType,
-        value: t.useAllAmount ? tokenAccount.balance : t.amount,
-        fee: t.fees as BigNumber,
+        value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
+        fee: transaction.fees as BigNumber,
         blockHash: undefined,
         blockHeight: null,
-        senders: transaction.getInputs().map(i => i.address.getBech32()),
-        recipients: transaction.getOutputs().map(o => o.address.getBech32()),
+        senders: unsignedTransaction.getInputs().map(i => i.address.getBech32()),
+        recipients: unsignedTransaction.getOutputs().map(o => o.address.getBech32()),
         accountId: tokenAccount.id,
         date: new Date(),
         extra: {},
@@ -187,76 +179,3 @@ const buildOptimisticOperation = (
 
   return op;
 };
-
-/**
- * Sign Transaction with Ledger hardware
- */
-const buildSignOperation =
-  (signerContext: SignerContext<CardanoSigner>): SignOperationFnSignature<Transaction> =>
-  ({ account, deviceId, transaction }): Observable<SignOperationEvent> =>
-    new Observable(o => {
-      async function main() {
-        o.next({ type: "device-signature-requested" });
-
-        if (!transaction.fees) {
-          throw new FeeNotLoaded();
-        }
-
-        const unsignedTransaction = await buildTransaction(account as CardanoAccount, transaction);
-        const signerTransaction = typhonSerializer(unsignedTransaction, account.index);
-
-        const networkParams = getNetworkParameters(account.currency.id);
-        const signedData = await signerContext(deviceId, signer =>
-          signer.sign({
-            transaction: signerTransaction,
-            networkParams,
-          }),
-        );
-
-        const accountPubKey = getExtendedPublicKeyFromHex(account.xpub as string);
-        const signed = signTx(unsignedTransaction, accountPubKey, signedData.witnesses);
-
-        o.next({ type: "device-signature-granted" });
-
-        const operation = buildOptimisticOperation(
-          account as CardanoAccount,
-          unsignedTransaction,
-          transaction,
-        );
-
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature: signed.payload,
-          },
-        });
-      }
-      main().then(
-        () => o.complete(),
-        e => o.error(e),
-      );
-    });
-
-/**
- * Adds signatures to unsigned transaction
- */
-const signTx = (
-  unsignedTransaction: TyphonTransaction,
-  accountKey: Bip32PublicKey,
-  witnesses: Array<Witness>,
-) => {
-  witnesses.forEach(witness => {
-    const [, , , chainType, index] = witness.path;
-    const publicKey = accountKey.derive(chainType).derive(index).toPublicKey().toBytes();
-    const vKeyWitness: TyphonTypes.VKeyWitness = {
-      signature: Buffer.from(witness.witnessSignatureHex, "hex"),
-      publicKey: Buffer.from(publicKey),
-    };
-    unsignedTransaction.addWitness(vKeyWitness);
-  });
-
-  return unsignedTransaction.buildTransaction();
-};
-
-export default buildSignOperation;
