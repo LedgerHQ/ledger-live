@@ -37,7 +37,6 @@ import {
   TronVoteRequired,
 } from "../types/errors";
 import getEstimatedFees from "./getEstimateFees";
-import get from "lodash/get";
 
 const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};

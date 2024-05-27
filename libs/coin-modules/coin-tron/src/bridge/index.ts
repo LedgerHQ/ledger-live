@@ -21,8 +21,8 @@ import {
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "./serialization";
-import buildSignOperation from "./signOperation";
-import getAccountShape, { sync } from "./synchronization";
+import { buildSignOperation } from "./signOperation";
+import { getAccountShape, sync } from "./synchronization";
 import { setCoinConfig, TronCoinConfig } from "../config";
 
 function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): CurrencyBridge {

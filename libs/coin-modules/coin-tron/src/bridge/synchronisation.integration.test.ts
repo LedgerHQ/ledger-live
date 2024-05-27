@@ -1,12 +1,11 @@
 import BigNumber from "bignumber.js";
-
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { defaultTronResources } from "./logic/utils";
-import { createBridges } from "./bridge/index";
-import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
-import { Transaction, TronAccount } from "./types";
 import { firstValueFrom, reduce } from "rxjs";
-import { TronCoinConfig } from "./config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
+import { TronCoinConfig } from "../config";
+import { defaultTronResources } from "../logic/utils";
+import { Transaction, TronAccount } from "../types";
+import { createBridges } from "./index";
 
 jest.setTimeout(30000);
 
@@ -70,7 +69,7 @@ describe("Tron Accounts", () => {
           type: "active",
         },
         explorer: {
-          url: "",
+          url: "https://tron.coin.ledger.com",
         },
       }) as TronCoinConfig;
     const bridge = createBridges(signer, coinConfig);

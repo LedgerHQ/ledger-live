@@ -18,7 +18,7 @@ import { Transaction, TronAccount, TronSendTrc20ToNewAccountForbidden, TronSigne
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import getEstimatedFees from "./getEstimateFees";
 
-const buildSignOperation =
+export const buildSignOperation =
   (signerContext: SignerContext<TronSigner>): SignOperationFnSignature<Transaction, TronAccount> =>
   ({ account, transaction, deviceId }): Observable<SignOperationEvent> =>
     new Observable(o => {
@@ -122,5 +122,3 @@ const prepareTransactionForSignature = (
       return createTronTransaction(account, transaction, subAccount);
   }
 };
-    
-export default buildSignOperation;

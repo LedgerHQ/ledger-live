@@ -30,7 +30,7 @@ type TronToken = {
 // the balance does not update straightaway so we should ignore recent operations if they are in pending for a bit
 const PREFER_PENDING_OPERATIONS_UNTIL_BLOCK_VALIDATION = 35;
 
-const getAccountShape: GetAccountShape<TronAccount> = async (
+export const getAccountShape: GetAccountShape<TronAccount> = async (
   { initialAccount, currency, address, derivationMode },
   syncConfig,
 ) => {
@@ -278,6 +278,7 @@ const mergeSubAccounts = (subAccounts1: TokenAccount[], subAccounts2: TokenAccou
   return subAccounts1.concat(filteredSubAccounts2);
 };
 
-export const sync = makeSync({ getAccountShape, postSync });
-
-export default getAccountShape;
+export const sync = makeSync({
+  getAccountShape,
+  postSync,
+});
