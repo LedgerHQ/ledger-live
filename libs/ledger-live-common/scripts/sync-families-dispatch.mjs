@@ -156,11 +156,12 @@ async function getDeviceTransactionConfig(families) {
   }
 
   const libsDir = path.join(__dirname, "../..");
-  const family = "polkadot";
   const target = "deviceTransactionConfig.ts";
-  if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, target))) {
-    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/bridge/deviceTransactionConfig";\n`;
-    exprts += `\n  | ExtraDeviceTransactionField_${family}`;
+  for (const family of ["polkadot", "tron"]) {
+    if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, target))) {
+      imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/bridge/deviceTransactionConfig";\n`;
+      exprts += `\n  | ExtraDeviceTransactionField_${family}`;
+    }
   }
 
   const str = `${imports}
