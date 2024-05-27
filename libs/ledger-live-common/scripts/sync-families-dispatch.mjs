@@ -24,6 +24,7 @@ const targets = [
 const familiesWPackage = [
   "algorand",
   "bitcoin",
+  "cardano",
   "evm",
   "near",
   "polkadot",
@@ -189,10 +190,12 @@ async function genTypesFile(families) {
 
       return "";
     })();
-    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types${typesAsFolder}";
-import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types${typesAsFolder}";
-import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types${typesAsFolder}";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types${typesAsFolder}";
+    imprts += `import type {
+  Transaction as ${family}Transaction,
+  TransactionRaw as ${family}TransactionRaw,
+  TransactionStatus as ${family}TransactionStatus,
+  TransactionStatusRaw as ${family}TransactionStatusRaw,
+} from "${importPath}${family}/types${typesAsFolder}";
 `;
     exprtsT += `
   | ${family}Transaction`;

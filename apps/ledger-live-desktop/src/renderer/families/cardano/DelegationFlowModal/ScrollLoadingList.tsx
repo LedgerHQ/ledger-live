@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef, memo, useEffect } from "react";
 import debounce from "lodash/debounce";
-import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import BigSpinner from "~/renderer/components/BigSpinner";

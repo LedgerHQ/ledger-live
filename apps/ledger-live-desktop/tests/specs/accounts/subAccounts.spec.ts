@@ -29,7 +29,7 @@ test.fixme("subAccounts @smoke", async ({ page }) => {
     await addAccountModal.continue();
     await deviceAction.openApp();
     await addAccountModal.waitForSync();
-    expect(await addAccountModal.addAccountsButton).toBeVisible();
+    await expect(addAccountModal.addAccountsButton).toBeVisible();
   });
 
   await test.step("should add parent", async () => {

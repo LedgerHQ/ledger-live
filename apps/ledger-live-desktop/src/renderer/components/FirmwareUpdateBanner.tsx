@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useLocation, useHistory } from "react-router-dom";
 import { getEnv } from "@ledgerhq/live-env";
@@ -8,9 +8,10 @@ import TopBanner, { FakeLink } from "~/renderer/components/TopBanner";
 import getCleanVersion from "~/renderer/screens/manager/FirmwareUpdate/getCleanVersion";
 import { UpdaterContext } from "~/renderer/components/Updater/UpdaterContext";
 import { VISIBLE_STATUS } from "./Updater/Banner";
-import { IconsLegacy } from "@ledgerhq/react-ui";
+import { IconsLegacy, Text } from "@ledgerhq/react-ui";
 const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
   const history = useHistory();
+  const { t } = useTranslation();
   const location = useLocation();
   const latestFirmware = useSelector(latestFirmwareSelector);
   const visibleFirmwareVersion =
@@ -43,20 +44,13 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
       content={{
         Icon: IconsLegacy.NanoFoldedMedium,
         message: (
-          <Trans
-            i18nKey={
-              old ? "manager.firmware.banner.old.warning" : "manager.firmware.banner.warning"
-            }
-            values={{
+          <Text color="neutral.c00">
+            {t(old ? "manager.firmware.banner.old.warning" : "manager.firmware.banner.warning", {
               latestFirmware: visibleFirmwareVersion,
-            }}
-          />
+            })}
+          </Text>
         ),
-        right: right || (
-          <FakeLink onClick={onClick}>
-            <Trans i18nKey={"manager.firmware.banner.cta"} />
-          </FakeLink>
-        ),
+        right: right || <FakeLink onClick={onClick}>{t("manager.firmware.banner.cta")}</FakeLink>,
       }}
       status={"warning"}
     />

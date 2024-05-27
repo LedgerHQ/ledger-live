@@ -1,4 +1,3 @@
-import cardano from "../families/cardano/hw-getAddress";
 import casper from "../families/casper/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
 import cosmos from "../families/cosmos/hw-getAddress";
@@ -13,6 +12,7 @@ import tron from "../families/tron/hw-getAddress";
 import vechain from "../families/vechain/hw-getAddress";
 import { resolver as algorand } from "../families/algorand/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
+import { resolver as cardano } from "../families/cardano/setup";
 import { resolver as evm } from "../families/evm/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
@@ -22,7 +22,6 @@ import { resolver as xrp } from "../families/xrp/setup";
 import { resolver as icon } from "../families/icon/setup";
 
 export default {
-  cardano,
   casper,
   celo,
   cosmos,
@@ -37,6 +36,7 @@ export default {
   vechain,
   algorand,
   bitcoin,
+  cardano,
   evm,
   near,
   polkadot,

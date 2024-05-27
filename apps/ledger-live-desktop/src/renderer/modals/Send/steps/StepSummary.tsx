@@ -156,6 +156,7 @@ const StepSummary = (props: StepProps) => {
                     transaction.recipientDomain ? "palette.text.shade70" : "palette.text.shade100"
                   }
                   fontSize={4}
+                  data-test-id="recipient-address"
                 >
                   {transaction.recipient}
                 </Text>
@@ -190,6 +191,7 @@ const StepSummary = (props: StepProps) => {
                 fontSize={4}
                 inline
                 showCode
+                data-test-id="transaction-amount"
               />
               <Box textAlign="right">
                 <CounterValue

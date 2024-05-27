@@ -15,7 +15,7 @@ import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
 import { TezosAccount } from "../families/tezos/types";
 import { TronAccount } from "../families/tron/types";
-import { CardanoAccount, PaymentChain } from "../families/cardano/types";
+import { CardanoAccount, PaymentChain } from "@ledgerhq/coin-cardano/types";
 import { types } from "@stricahq/typhonjs";
 
 /**

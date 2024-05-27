@@ -1,4 +1,3 @@
-import cardano from "../../families/cardano/bridge/js";
 import casper from "../../families/casper/bridge/js";
 import celo from "../../families/celo/bridge/js";
 import cosmos from "../../families/cosmos/bridge/js";
@@ -13,6 +12,7 @@ import tron from "../../families/tron/bridge/js";
 import vechain from "../../families/vechain/bridge/js";
 import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as bitcoin } from "../../families/bitcoin/setup";
+import { bridge as cardano } from "../../families/cardano/setup";
 import { bridge as evm } from "../../families/evm/setup";
 import { bridge as near } from "../../families/near/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
@@ -22,7 +22,6 @@ import { bridge as xrp } from "../../families/xrp/setup";
 import { bridge as icon } from "../../families/icon/setup";
 
 export default {
-  cardano,
   casper,
   celo,
   cosmos,
@@ -37,6 +36,7 @@ export default {
   vechain,
   algorand,
   bitcoin,
+  cardano,
   evm,
   near,
   polkadot,

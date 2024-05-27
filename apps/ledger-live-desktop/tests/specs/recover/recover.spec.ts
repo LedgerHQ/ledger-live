@@ -11,7 +11,7 @@ test.use({
 test.describe.parallel("Recover @smoke", () => {
   test("Restore page with no device", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
-    recoverPage.useDeepLink();
+    await recoverPage.useDeepLink();
 
     await test.step("Text is visible", async () => {
       await expect(recoverPage.connectText).toBeVisible();
@@ -20,7 +20,7 @@ test.describe.parallel("Recover @smoke", () => {
 
   test("Restore page with nanoX", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
-    recoverPage.useDeepLink();
+    await recoverPage.useDeepLink();
 
     await test.step("Text is visible", async () => {
       await expect(recoverPage.connectText).toBeVisible();
@@ -43,7 +43,7 @@ test.describe.parallel("Recover @smoke", () => {
 
   test("Restore page with nanoSP", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
-    recoverPage.useDeepLink();
+    await recoverPage.useDeepLink();
 
     await test.step("Text is visible", async () => {
       await expect(recoverPage.connectText).toBeVisible();
@@ -66,7 +66,7 @@ test.describe.parallel("Recover @smoke", () => {
 
   test("Restore page with stax", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
-    recoverPage.useDeepLink();
+    await recoverPage.useDeepLink();
 
     await test.step("Text is visible", async () => {
       await expect(recoverPage.connectText).toBeVisible();

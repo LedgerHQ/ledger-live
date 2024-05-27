@@ -1,4 +1,3 @@
-import cardano from "../families/cardano/deviceTransactionConfig";
 import casper from "../families/casper/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
 import cosmos from "../families/cosmos/deviceTransactionConfig";
@@ -12,6 +11,7 @@ import stellar from "../families/stellar/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
+import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
@@ -21,7 +21,6 @@ import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
 
 export default {
-  cardano,
   casper,
   celo,
   cosmos,
@@ -35,6 +34,7 @@ export default {
   tron,
   algorand,
   bitcoin,
+  cardano,
   evm,
   near,
   polkadot,
