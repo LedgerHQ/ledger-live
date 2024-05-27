@@ -1,0 +1,6 @@
+{
+  "entry": [
+    "src/bridge/js.ts"
+  ],
+  "ignoreUnimported": []
+}

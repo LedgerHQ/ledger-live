@@ -30,6 +30,7 @@ const familiesWPackage = [
   "polkadot",
   "solana",
   "tezos",
+  "tron",
   "xrp",
 ];
 

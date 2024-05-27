@@ -21,7 +21,7 @@ import {
   mockAccountNoVote,
   mockAccountV2,
 } from "./data.mock";
-import superRepresentatives from "./api/superRepresentativesData.mock";
+import superRepresentatives from "@ledgerhq/coin-tron/network/superRepresentativesData.mock";
 
 jest.mock("./api", () => {
   return {
