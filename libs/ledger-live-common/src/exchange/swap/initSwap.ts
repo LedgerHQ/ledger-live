@@ -23,7 +23,7 @@ import {
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import { getSwapAPIBaseURL } from "./";
+import { getSwapAPIBaseURL, getSwapUserIP } from "./";
 import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";
 import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
@@ -76,6 +76,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
         const headers = {
           EquipmentId: getEnv("USER_ID"),
+
+          ...(getSwapUserIP() !== undefined ? getSwapUserIP() : {}),
         };
 
         const data = {
@@ -243,6 +245,14 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
           amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
           magnitudeAwareRate = transaction.amount && amountExpectedTo.dividedBy(transaction.amount);
+        }
+
+        let amountExpectedFrom;
+        if (swapResult.binaryPayload) {
+          const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
+          amountExpectedFrom = new BigNumber(decodePayload.amountToProvider.toString());
+          if (data.amountFromInSmallestDenomination !== amountExpectedFrom.toNumber())
+            throw new Error("AmountFrom received from partner's payload mismatch user input");
         }
 
         o.next({

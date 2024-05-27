@@ -8,7 +8,7 @@ import { SwapGenericAPIError } from "../../../../errors";
 import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { fetchRatesMock } from "./__mocks__/fetchRates.mocks";
-import { getAvailableProviders, getSwapAPIBaseURL } from "../..";
+import { getAvailableProviders, getSwapAPIBaseURL, getSwapUserIP } from "../..";
 
 type Props = {
   removeProviders: Array<string>;
@@ -100,13 +100,14 @@ export async function fetchRates({
     amountFrom: fromCurrencyAmount, // not sure why amountFrom thinks it can be undefined here
     providers: providers,
   };
-
+  const headers = getSwapUserIP();
   try {
     const { data } = await network<ExchangeRateResponseRaw[]>({
       method: "POST",
       url: url.toString(),
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
       data: requestBody,
+      ...(headers !== undefined ? { headers } : {}),
     });
     const filteredData = data.filter(
       response => ![300, 304, 306, 308].includes((response as ExchangeRateErrorDefault)?.errorCode),

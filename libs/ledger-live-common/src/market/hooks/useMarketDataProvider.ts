@@ -7,21 +7,22 @@ import {
   getSupportedCoinsList,
   supportedCounterCurrencies,
 } from "../api";
-
-import { QUERY_KEY } from "../utils/queryKeys";
-import { listCryptoCurrencies, listSupportedCurrencies, listTokens } from "../../currencies";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import { listTokens } from "@ledgerhq/cryptoassets/tokens";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useMemo } from "react";
 
+import { useMemo } from "react";
+import { listSupportedCurrencies } from "../../currencies";
 import { currencyFormatter, format } from "../utils/currencyFormatter";
-import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
+import { QUERY_KEY } from "../utils/queryKeys";
+import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers";
 import {
-  CurrencyData,
-  HashMapBody,
   MarketCurrencyRequestParams,
+  RawCurrencyData,
   MarketListRequestParams,
   MarketListRequestResult,
-  RawCurrencyData,
+  CurrencyData,
+  HashMapBody,
 } from "../utils/types";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
@@ -37,7 +38,9 @@ export function useMarketDataProvider() {
 
   const liveCoinsList = useMemo(
     () =>
-      supportedCurrencies?.filter(({ id }) => liveCompatibleIds.includes(id)).map(({ id }) => id),
+      (supportedCurrencies || [])
+        ?.filter(({ id }) => liveCompatibleIds.includes(id))
+        .map(({ id }) => id),
     [liveCompatibleIds, supportedCurrencies],
   );
 
@@ -80,12 +83,16 @@ export const useSupportedCounterCurrencies = () =>
   useQuery({
     queryKey: [QUERY_KEY.SupportedCounterCurrencies],
     queryFn: () => supportedCounterCurrencies(),
+    refetchOnWindowFocus: true,
+    staleTime: ONE_DAY,
   });
 
 export const useSupportedCurrencies = () =>
   useQuery({
     queryKey: [QUERY_KEY.SupportedCurrencies],
     queryFn: () => getSupportedCoinsList(),
+    refetchOnWindowFocus: true,
+    staleTime: ONE_DAY,
   });
 
 export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {

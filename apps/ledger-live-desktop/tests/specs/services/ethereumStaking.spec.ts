@@ -195,6 +195,6 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
     expect(dappURL).toContain("?focus=pooled");
-    await expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
+    expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
   });
 });

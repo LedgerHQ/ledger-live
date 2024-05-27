@@ -2,9 +2,9 @@ import { BigNumber } from "bignumber.js";
 import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
-import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
+import { getCoinConfig } from "../config";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -29,25 +29,36 @@ import type {
 import { createRegistryAndExtrinsics } from "./common";
 
 /**
- * Get indexer base url.
- *
- * @returns {string}
- */
-const getBaseSidecarUrl = (): string => getEnv("API_POLKADOT_SIDECAR");
-
-/**
  * Returns the full indexer url for en route endpoint.
  *
  * @param {*} route
  *
  * @returns {string}
  */
-const getSidecarUrl = (route: string): string => `${getBaseSidecarUrl()}${route || ""}`;
+const getSidecarUrl = (route: string): string => {
+  const sidecarUrl = getCoinConfig().sidecar.url;
+  return `${sidecarUrl}${route || ""}`;
+};
+
+const getElectionOptimisticThreshold = (): number => {
+  return getCoinConfig().staking?.electionStatusThreshold || 25;
+};
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
-const ELECTION_STATUS_OPTIMISTIC_THRESHOLD = getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD") || 25;
 
 // blocks = 2 minutes 30
+
+async function callSidecar<T>(route: string, method: "GET" | "POST" = "GET", data?: unknown) {
+  const credentials = getCoinConfig().sidecar.credentials;
+  const headers = credentials ? { Authorization: "Basic " + credentials } : undefined;
+
+  return network<T>({
+    headers,
+    method,
+    url: getSidecarUrl(route),
+    data,
+  });
+}
 
 /**
  * Fetch Balance from the api.
@@ -58,14 +69,7 @@ const ELECTION_STATUS_OPTIMISTIC_THRESHOLD = getEnv("POLKADOT_ELECTION_STATUS_TH
  * @returns {SidecarAccountBalanceInfo}
  */
 const fetchBalanceInfo = async (addr: string): Promise<SidecarAccountBalanceInfo> => {
-  const {
-    data,
-  }: {
-    data: SidecarAccountBalanceInfo;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl(`/accounts/${addr}/balance-info`),
-  });
+  const { data } = await callSidecar<SidecarAccountBalanceInfo>(`/accounts/${addr}/balance-info`);
   return data;
 };
 
@@ -82,10 +86,7 @@ const fetchStashAddr = async (addr: string): Promise<string | null> => {
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl(`/pallets/staking/storage/ledger?keys[]=${addr}&key1=${addr}`),
-  });
+  } = await callSidecar(`/pallets/staking/storage/ledger?keys[]=${addr}&key1=${addr}`);
   return data.value?.stash ?? null;
 };
 
@@ -102,10 +103,7 @@ const fetchControllerAddr = async (addr: string): Promise<string | null> => {
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl(`/pallets/staking/storage/bonded?keys[]=${addr}&key1=${addr}`),
-  });
+  } = await callSidecar(`/pallets/staking/storage/bonded?keys[]=${addr}&key1=${addr}`);
   return data.value ?? null;
 };
 
@@ -122,10 +120,7 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
     data,
   }: {
     data: SidecarStakingInfo;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl(`/accounts/${addr}/staking-info`),
-  });
+  } = await callSidecar(`/accounts/${addr}/staking-info`);
   return data;
 };
 
@@ -142,10 +137,7 @@ const fetchNominations = async (addr: string): Promise<SidecarNominations> => {
     data,
   }: {
     data: SidecarNominations;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl(`/accounts/${addr}/nominations`),
-  });
+  } = await callSidecar(`/accounts/${addr}/nominations`);
   return data;
 };
 
@@ -162,10 +154,7 @@ const fetchConstants = async (): Promise<Record<string, any>> => {
     data,
   }: {
     data: SidecarConstants;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl(`/runtime/constants`),
-  });
+  } = await callSidecar(`/runtime/constants`);
   return data.consts;
 };
 
@@ -181,10 +170,7 @@ const fetchActiveEra = async (): Promise<SidecarPalletStorageItem> => {
     data,
   }: {
     data: SidecarPalletStorageItem;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl("/pallets/staking/storage/activeEra"),
-  });
+  } = await callSidecar("/pallets/staking/storage/activeEra");
   return data;
 };
 
@@ -197,10 +183,9 @@ const fetchActiveEra = async (): Promise<SidecarPalletStorageItem> => {
  * @returns {string}
  */
 export const getMinimumBondBalance = async (): Promise<BigNumber> => {
-  const { data }: { data: SidecarPalletStorageItem } = await network({
-    method: "GET",
-    url: getSidecarUrl(`/pallets/staking/storage/minNominatorBond`),
-  });
+  const { data }: { data: SidecarPalletStorageItem } = await callSidecar(
+    `/pallets/staking/storage/minNominatorBond`,
+  );
 
   return (data.value && new BigNumber(data.value)) || new BigNumber(0);
 };
@@ -234,10 +219,7 @@ const fetchValidators = async (
     data,
   }: {
     data: SidecarValidators;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl(`/validators?${querystring.stringify(params)}`),
-  });
+  } = await callSidecar(`/validators?${querystring.stringify(params)}`);
   return data;
 };
 
@@ -253,10 +235,7 @@ const fetchStakingProgress = async (): Promise<SidecarPalletStakingProgress> => 
     data,
   }: {
     data: SidecarPalletStakingProgress;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl("/pallets/staking/progress"),
-  });
+  } = await callSidecar("/pallets/staking/progress");
   return data;
 };
 
@@ -276,10 +255,7 @@ const fetchTransactionMaterial = async (
     data,
   }: {
     data: SidecarTransactionMaterial;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl(`/transaction/material${params}`),
-  });
+  } = await callSidecar(`/transaction/material${params}`);
   return data;
 };
 
@@ -295,10 +271,7 @@ export const fetchChainSpec = async () => {
     data,
   }: {
     data: SidecarRuntimeSpec;
-  } = await network({
-    method: "GET",
-    url: getSidecarUrl("/runtime/spec"),
-  });
+  } = await callSidecar("/runtime/spec");
   return data;
 };
 
@@ -505,12 +478,8 @@ export const submitExtrinsic = async (extrinsic: string): Promise<string> => {
     data,
   }: {
     data: SidecarTransactionBroadcast;
-  } = await network({
-    method: "POST",
-    url: getSidecarUrl("/transaction"),
-    data: {
-      tx: extrinsic,
-    },
+  } = await callSidecar("/transaction", "POST", {
+    tx: extrinsic,
   });
   return data.hash;
 };
@@ -529,12 +498,8 @@ export const paymentInfo = async (extrinsic: string): Promise<SidecarPaymentInfo
     data,
   }: {
     data: SidecarPaymentInfo;
-  } = await network({
-    method: "POST",
-    url: getSidecarUrl("/transaction/fee-estimate"),
-    data: {
-      tx: extrinsic,
-    },
+  } = await callSidecar("/transaction/fee-estimate", "POST", {
+    tx: extrinsic,
   });
   return data;
 };
@@ -594,7 +559,7 @@ export const getStakingProgress = async (): Promise<PolkadotStakingProgress> => 
     activeEra &&
     currentBlock &&
     toggleEstimate &&
-    currentBlock >= toggleEstimate - ELECTION_STATUS_OPTIMISTIC_THRESHOLD
+    currentBlock >= toggleEstimate - getElectionOptimisticThreshold()
       ? false
       : electionClosed;
   return {

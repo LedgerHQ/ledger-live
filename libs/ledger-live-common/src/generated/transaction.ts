@@ -1,4 +1,3 @@
-import cardano from "../families/cardano/transaction";
 import casper from "../families/casper/transaction";
 import celo from "../families/celo/transaction";
 import cosmos from "../families/cosmos/transaction";
@@ -13,6 +12,7 @@ import tron from "../families/tron/transaction";
 import vechain from "../families/vechain/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
+import cardano from "@ledgerhq/coin-cardano/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
@@ -21,7 +21,6 @@ import tezos from "@ledgerhq/coin-tezos/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
 
 export default {
-  cardano,
   casper,
   celo,
   cosmos,
@@ -36,6 +35,7 @@ export default {
   vechain,
   algorand,
   bitcoin,
+  cardano,
   evm,
   near,
   polkadot,

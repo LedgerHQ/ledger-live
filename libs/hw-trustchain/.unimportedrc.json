@@ -1,4 +1,4 @@
 {
   "entry": ["src/index.ts"],
-  "ignoreUnused": ["@types/libsodium-wrappers"]
+  "ignoreUnused": ["@ledgerhq/logs", "@ledgerhq/live-env"]
 }
