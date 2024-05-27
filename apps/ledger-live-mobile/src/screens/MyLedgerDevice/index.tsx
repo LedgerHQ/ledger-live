@@ -48,6 +48,8 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const { deviceId, deviceName, modelId } = device;
   const [state, dispatch] = useApps(result, deviceId, appsToRestore);
+
+  console.log("MyLedger", {appsToRestore});
   const reduxDispatch = useDispatch();
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
@@ -160,6 +162,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         }));
         return CommonActions.reset({ ...state, routes });
       });
+      console.log("onCloseFirmwareUpdate", restoreApps, installedApps)
       if (restoreApps) {
         // we renavigate to the manager to force redetection of the apps and restore apps if needed
         navigation.replace(ScreenName.MyLedgerChooseDevice, {

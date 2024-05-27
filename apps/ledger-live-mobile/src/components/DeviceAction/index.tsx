@@ -142,7 +142,7 @@ export default function DeviceAction<R, H extends Status, P>({
   const payload = action?.mapResult(status);
 
   // eslint-disable-next-line no-console
-  console.log({ DeviceAction: { status, payload } });
+  console.log({ DeviceAction: JSON.stringify({ status, payload }) });
 
   return (
     <DeviceActionDefaultRendering

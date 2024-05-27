@@ -45,7 +45,7 @@ const DeviceLanguageStep = ({ oldDeviceInfo, updatedDeviceInfo, dispatchEvent, d
   );
 
   // eslint-disable-next-line no-console
-  console.log("DeviceLanguageStep", { oldDeviceInfo, updatedDeviceInfo });
+  console.log("DeviceLanguageStep", JSON.stringify({ oldDeviceInfo, updatedDeviceInfo }));
 
   useEffect(() => {
     if (newLanguagesLoaded && oldLanguagesLoaded) {

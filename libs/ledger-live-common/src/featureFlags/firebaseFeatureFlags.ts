@@ -109,7 +109,7 @@ export const getFeature = (args: {
 
     return checkFeatureFlagVersion(feature);
   } catch (error) {
-    console.error(`Failed to retrieve feature "${key}"`);
+    // console.error(`Failed to retrieve feature "${key}"`);
     return null;
   }
 };

@@ -62,7 +62,7 @@ export default function installLanguage({
               timeoutSub.unsubscribe();
 
               // eslint-disable-next-line no-console
-              console.log({ installLangue: { deviceInfo, language } });
+              console.log({ installLangue: JSON.stringify({ deviceInfo, language }) });
 
               if (language === "english") {
                 await uninstallAllLanguages(transport);
@@ -78,7 +78,7 @@ export default function installLanguage({
               const languages = await ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
 
               // eslint-disable-next-line no-console
-              console.log({ installLangue: { languages } });
+              console.log({ installLangue: JSON.stringify({ languages }) });
 
               const packs: LanguagePackage[] = languages.filter(
                 (l: any) => l.language === language,

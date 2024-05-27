@@ -76,6 +76,7 @@ export default function FirmwareUpdate({
       state: FwUpdateState,
       event: FwUpdateBackgroundEvent | FwUpdateForegroundEvent,
     ): FwUpdateState => {
+      console.log("fwUpdateStateReducer", {event, state});
       switch (event.type) {
         case "confirmPin":
           return { step: "confirmPin" };
