@@ -102,12 +102,13 @@ jobs:
         id: tests
         run: |
           export COINAPPS=$PWD/coin-apps
-          if [ "${{ inputs.enable_broadcast }}" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi
-          if [ "${{ inputs.speculos_tests }}" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi
-          if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"
+          export ENABLE_TRANSACTION_BROADCAST=${{ inputs.enable_broadcast || false }}
+          export MOCK=${{ inputs.speculos_tests == 'true' ? 0 : 1 || 0 }}
+          speculos_tests=${{ inputs.speculos_tests == 'true' ? ":speculos" : "" || ":speculos" }}
+          invert_filter=${{ inputs.invert_filter == 'true' ? "-invert" : "" || "" }}
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${inputs.test_filter && "--grep$invert_filter"} "${{ inputs.test_filter || '' }}"
         env:
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          INPUTS_TEST_FILTER: ${{ inputs.test_filter || '' }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
