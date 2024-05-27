@@ -1,5 +1,4 @@
 import { Transaction } from "ethers";
-import Transport from "@ledgerhq/hw-transport";
 import AppBinding from "@ledgerhq/hw-app-eth";
 import {
   EcdsaSignature,
@@ -10,12 +9,15 @@ import {
   SignTransactionOptions,
   GetAddressResult,
 } from "./KeyringEth";
+import { ContextModule } from "@ledgerhq/context-module/lib/ContextModule";
 
 export class DefaultKeyringEth implements KeyringEth {
   private _appBinding: AppBinding;
+  private _contextModule: ContextModule;
 
-  constructor(transport: Transport) {
-    this._appBinding = new AppBinding(transport);
+  constructor(appBinding: AppBinding, contextModule: ContextModule) {
+    this._appBinding = appBinding;
+    this._contextModule = contextModule;
   }
 
   public async signTransaction(
