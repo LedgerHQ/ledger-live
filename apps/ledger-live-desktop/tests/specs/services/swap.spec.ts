@@ -12,6 +12,7 @@ import {
   getBitcoinToDogecoinRatesMock,
   getBitcoinToEthereumRatesMock,
   getEthereumToTetherRatesMock,
+  getProvidersCDNDataMock,
 } from "./services-api-mocks/getRates.mock";
 
 test.use({
@@ -63,6 +64,11 @@ test.describe.parallel("Swap", () => {
       });
     });
 
+    await page.route("https://cdn.live.ledger.com/swap-providers/data.json", async route => {
+      const mockProvidersResponse = getProvidersCDNDataMock();
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
+    });
+
     await test.step("Navigate to swap via account page", async () => {
       await layout.goToAccounts();
       await accountsPage.navigateToAccountByName(ethereumAccountName);
@@ -108,6 +114,11 @@ test.describe.parallel("Swap", () => {
     await page.route("https://swap.ledger.com/v5/rate**", async route => {
       const mockRatesResponse = getEthereumToTetherRatesMock();
       await route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
+    });
+
+    await page.route("https://cdn.live.ledger.com/swap-providers/data.json", async route => {
+      const mockProvidersResponse = getProvidersCDNDataMock();
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
     });
 
     await test.step("Generate ETH to USDT quotes", async () => {
@@ -182,6 +193,11 @@ test.describe.parallel("Swap", () => {
           ],
         }),
       });
+    });
+
+    await page.route("https://cdn.live.ledger.com/swap-providers/data.json", async route => {
+      const mockProvidersResponse = getProvidersCDNDataMock();
+      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
     });
 
     await test.step("Open Swap Page", async () => {

@@ -9,11 +9,13 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "./ValidatorRow";
 import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import {
+  LEDGER_POOL_IDS,
+  StakePool,
+  fetchPoolDetails,
+} from "@ledgerhq/live-common/families/cardano/staking";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
-import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
-import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";

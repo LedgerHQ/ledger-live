@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import type { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import { Text } from "@ledgerhq/native-ui";
 import Touchable from "~/components/Touchable";
 import PoolImage from "./PoolImage";

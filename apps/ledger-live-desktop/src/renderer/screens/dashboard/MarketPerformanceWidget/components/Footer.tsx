@@ -20,7 +20,7 @@ export function MarketPerformanceWidgetFooter() {
         width={"48%"}
         onClick={() => onClickButton("swap")}
         event="button_clicked"
-        eventProperties={{ button: "swap", page: "portfolio" }}
+        eventProperties={{ button: "swap market widget", page: "portfolio" }}
       >
         {t("dashboard.marketPerformanceWidget.swap")}
       </ButtonV3>
@@ -31,7 +31,7 @@ export function MarketPerformanceWidgetFooter() {
         width={"48%"}
         onClick={() => onClickButton("exchange")}
         event="button_clicked"
-        eventProperties={{ button: "buy", page: "portfolio" }}
+        eventProperties={{ button: "buy market widget", page: "portfolio" }}
       >
         {t("dashboard.marketPerformanceWidget.buy")}
       </ButtonV3>

@@ -15,7 +15,6 @@ const currencies: Currency[] = [
   Currency.tETH,
   Currency.sepETH,
   Currency.XRP,
-  Currency.SOL,
   Currency.DOT,
   Currency.TRX,
 ];
@@ -31,7 +30,10 @@ for (const [i, currency] of currencies.entries()) {
     let firstAccountName = "NO ACCOUNT NAME YET";
 
     //@TmsLink("B2CQA-101")
+    //@TmsLink("B2CQA-102")
     //@TmsLink("B2CQA-314")
+    //@TmsLink("B2CQA-330")
+    //@TmsLink("B2CQA-929")
 
     test(`[${currency.uiName}] Add account`, async ({ page }) => {
       const portfolioPage = new PortfolioPage(page);

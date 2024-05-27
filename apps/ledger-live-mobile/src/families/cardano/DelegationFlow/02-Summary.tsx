@@ -10,19 +10,19 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import type {
-  APIGetPoolsDetail,
-  StakePool,
-} from "@ledgerhq/live-common/families/cardano/api/api-types";
+import {
+  LEDGER_POOL_IDS,
+  fetchPoolDetails,
+  type APIGetPoolsDetail,
+  type StakePool,
+} from "@ledgerhq/live-common/families/cardano/staking";
 import type {
   CardanoAccount,
   CardanoDelegation,
+  TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
-import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/families/cardano/types";
 import Button from "~/components/Button";
 import Skeleton from "~/components/Skeleton";
 import Circle from "~/components/Circle";

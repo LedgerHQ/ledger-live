@@ -8,18 +8,8 @@ export type { StreamTreeCipherMode } from "./StreamTreeCipher";
 export { StreamTreeCipher } from "./StreamTreeCipher";
 export { crypto } from "./Crypto";
 export { PublicKey } from "./PublicKey";
-
-export type {
-  Command,
-  CommandBlock,
-  AddMember,
-  CloseStream,
-  Derive,
-  EditMember,
-  PublishKey,
-  Seed,
-} from "./CommandBlock";
-
+export type { CommandType, Command, CommandBlock } from "./CommandBlock";
+export { AddMember, CloseStream, Derive, EditMember, PublishKey, Seed } from "./CommandBlock";
 export { APDU } from "./ApduDevice";
 export { CommandStreamEncoder } from "./CommandStreamEncoder";
 

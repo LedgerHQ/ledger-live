@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import {
+  AccountAwaitingSendPendingOperations,
   AmountRequired,
   NotEnoughBalance,
   FeeNotLoaded,
@@ -11,7 +12,6 @@ import {
 } from "@ledgerhq/errors";
 import {
   StellarWrongMemoFormat,
-  AccountAwaitingSendPendingOperations,
   StellarAssetRequired,
   StellarAssetNotAccepted,
   StellarAssetNotFound,

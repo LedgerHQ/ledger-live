@@ -7,6 +7,7 @@ import {
   findAppCandidate,
   SpeculosTransport,
 } from "@ledgerhq/live-common/load/speculos";
+import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -129,7 +130,10 @@ export const specs: Specs = {
   },
 };
 
-export async function startSpeculos(testName: string, spec: Specs[keyof Specs]) {
+export async function startSpeculos(
+  testName: string,
+  spec: Specs[keyof Specs],
+): Promise<SpeculosDevice | undefined> {
   log("engine", `test ${testName}`);
 
   const { SEED, COINAPPS } = process.env;

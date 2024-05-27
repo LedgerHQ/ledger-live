@@ -8,7 +8,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
-import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import ValidatorField from "../fields/ValidatorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
