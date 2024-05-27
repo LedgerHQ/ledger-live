@@ -14,12 +14,19 @@ const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, tim
 
 const ensureEnv = () => {
   const mandatory_env_variables = ["SEED", "API_PORT", "GH_TOKEN"];
+  const optional_env_variables = ["SPECULOS_IMAGE"];
 
   if (!mandatory_env_variables.every(variable => !!process.env[variable])) {
     throw new Error(
       `Missing env variables. Make sure that ${mandatory_env_variables.join(",")} are in your .env`,
     );
   }
+
+  optional_env_variables.forEach(envVariable => {
+    if (!process.env[envVariable]) {
+      console.warn(`Variable ${envVariable} missing from .env. Using default value.`);
+    }
+  });
 };
 
 export const spawnSpeculos = async (

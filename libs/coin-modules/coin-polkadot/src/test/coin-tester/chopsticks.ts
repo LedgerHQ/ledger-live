@@ -7,8 +7,7 @@ const docker = new Docker();
 const containerName = "chopsticks";
 
 const ensureEnv = () => {
-  // SEED passed in scenarios
-  const mandatory_env_variables = ["SEED"];
+  const mandatory_env_variables: string[] = [];
 
   if (!mandatory_env_variables.every(variable => !!process.env[variable])) {
     throw new Error(

@@ -2196,6 +2196,9 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      docker-compose:
+        specifier: ^0.24.2
+        version: 0.24.8
       expect:
         specifier: ^27.4.6
         version: 27.5.1

@@ -7,24 +7,24 @@ import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { createBridges } from "../../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { makeAccount } from "../../fixtures";
-import { killChopsticks, spawnChopsticks } from "../chopsticks";
 import { defaultNanoApp } from "../scenarios.test";
 import BigNumber from "bignumber.js";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { PolkadotCoinConfig } from "../../../config";
+import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 
 const polkadot = getCryptoCurrencyById("polkadot");
 
 function getTransactions() {
   const send1DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
     name: "send 1 DOT",
-    recipient: "14Gjs1TD93gnwEBfDMHoCgsuf1s2TVKUP6Z1qKmAZnZ8cW5q",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: new BigNumber(1),
   };
 
   const send100DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
     name: "send 100 DOT",
-    recipient: "14Gjs1TD93gnwEBfDMHoCgsuf1s2TVKUP6Z1qKmAZnZ8cW5q",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: new BigNumber(100),
   };
 
@@ -38,7 +38,7 @@ const coinConfig: PolkadotCoinConfig = {
     type: "active",
   },
   sidecar: {
-    url: "https://polkadot-sidecar.coin.ledger.com",
+    url: "http://127.0.0.1:8080",
   },
 };
 
@@ -47,7 +47,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
   setup: async () => {
     const [{ transport, onSignerConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Polkadot/app_${defaultNanoApp.version}.elf`),
-      spawnChopsticks(),
+      spawnChopsticksAndSidecar(),
     ]);
 
     await cryptoWaitReady();
@@ -88,7 +88,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
       };
 
     const unsub = await api.tx.balances
-      .transferKeepAlive(basicScenarioAccountPair.address, 500)
+      .transferAll(basicScenarioAccountPair.address, false)
       .signAndSend(alice, async result => {
         console.log(`Current status is ${result.status}`);
 
@@ -115,6 +115,6 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
   getTransactions,
   teardown: async () => {
     await wsProvider.disconnect();
-    await Promise.all([killSpeculos(), killChopsticks()]);
+    await Promise.all([killSpeculos(), killChopsticksAndSidecar()]);
   },
 };
