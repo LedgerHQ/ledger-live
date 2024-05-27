@@ -441,7 +441,7 @@
       "title" : "Ihre maximale Gebühr ist zu niedrig. Ihre Transaktion kann eine Weile ausstehend bleiben"
     },
     "MaxPriorityFeeLowerThanInitial" : {
-      "title" : "Prioritätsgebühr zu niedrig, bitte geben Sie einen Betrag ein, der höher ist als der Wert der Prioritätsgebühr bei der ersten Transaktion"
+      "title" : "Prioritätsgebühr zu niedrig; bitte gib einen Betrag ein, der höher ist als der Wert der Prioritätsgebühr bei der ersten Transaktion"
     },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Fehler in der Sequenznummer",
       "description" : "Bitte schließe das Fenster und versuche es später noch einmal"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Umtauschen nicht möglich: Erfordert initiales Senden/Delegieren bei Tezos-Konto oder Austausch des Paares."
     }
   },
   "crash" : {
@@ -3131,9 +3134,6 @@
         "whatIsSwap" : "Was ist Swap?",
         "disclaimer" : "Tauschen Sie Krypto direkt von Ihrem Ledger-Gerät aus. Dieser Service ist in einigen Ländern, einschließlich den USA, nicht verfügbar."
       },
-      "main" : {
-        "header" : "Umtauschen"
-      },
       "notAvailable" : {
         "title" : "Service vorübergehend oder in Ihrem Land nicht verfügbar"
       },
@@ -3654,8 +3654,8 @@
     "header" : "Transaktion bearbeiten",
     "learnMore" : "Ich möchte mehr erfahren",
     "panel" : {
-      "stuckMessage" : "Ihre älteste „Senden“-Transaktion hängt. Sie können die Transaktion über eine höhere Netzwerkgebühr beschleunigen oder aber sie abbrechen.",
-      "speedupMessage" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen."
+      "stuckMessage" : "Deine älteste Versandtransaktion reagiert zurzeit nicht. Du kannst sie mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen.",
+      "speedupMessage" : "Deine Transaktion ist noch nicht abgeschlossen. Du kannst sie entweder mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen."
     },
     "previousFeesInfo" : {
       "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren: ",
@@ -3666,16 +3666,16 @@
     },
     "speedUp" : {
       "title" : "Beschleunigen",
-      "description" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+      "description" : "Reiche die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
     },
     "cancel" : {
       "title" : "Abbrechen",
       "description" : "Sendet 0 {{ticker}} an deine eigene Adresse."
     },
     "error" : {
-      "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
-      "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
-      "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Ihre Transaktion ist ausstehend, da eine vorherige Transaktion stecken geblieben ist. Sie können auf die Bestätigung der Transaktion warten, die Transaktion beschleunigen oder sie stornieren.",
+      "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da dein Konto nicht genügend Guthaben aufweist.",
+      "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da dein Konto nicht genügend Guthaben aufweist.",
+      "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Deine Transaktion ist ausstehend, da eine vorherige Transaktion zurzeit nicht reagiert. Du kannst auf die Bestätigung der Transaktion warten, sie beschleunigen oder sie stornieren.",
       "TransactionHasBeenValidatedError" : {
         "title" : "Beschleunigung oder Stornierung nicht möglich",
         "description" : "Diese Transaktion wurde bereits validiert"
@@ -4541,20 +4541,20 @@
       },
       "delegationUnavailable" : {
         "title" : "Übertragung nicht verfügbar",
-        "description" : "Nicht genügend verfügbares Guthaben auf Ihrem Konto, um eine neue Delegierung zu starten."
+        "description" : "Nicht genügend verfügbares Guthaben auf deinem Konto, um eine neue Delegierung zu starten."
       }
     },
     "undelegation" : {
       "undelegate" : "Delegierung aufheben",
-      "undelegationMessage" : "Wenn Sie die Delegierung aufheben, erhalten Sie keine Prämien für laufende und kommende Epochen",
-      "verificationSuccessTitle" : "Sie haben die Delegierung Ihrer Vermögenswerte erfolgreich aufgehoben."
+      "undelegationMessage" : "Wenn du die Delegierung aufhebst, erhältst du keine Prämien für laufende und kommende Epochen",
+      "verificationSuccessTitle" : "Du hast die Delegierung deiner Vermögenswerte erfolgreich aufgehoben."
     },
     "delegation" : {
       "pool" : "Pool",
       "poolId" : "Pool-ID",
       "selectPool" : "Pool auswählen",
       "pools" : "Pools",
-      "delegationEarn" : "Sie können durch Delegieren Ihrer Vermögenswerte ADA-Prämien verdienen.",
+      "delegationEarn" : "Du kannst durch Delegieren deiner Vermögenswerte ADA-Prämien verdienen.",
       "delegatingFrom" : "Delegiert von",
       "delegatingTo" : "Delegiert an",
       "info" : "So funktioniert Delegierung",
@@ -4571,7 +4571,7 @@
       "stakeKeyRegistrationDeposit" : "Kaution für Registrierung des Staking-Schlüssels",
       "stakeKeyRegistrationDepositRefund" : "Erstattung der Kaution für Registrierung des Staking-Schlüssels",
       "stepperHeader" : {
-        "starter" : "Verdienen Sie Belohnungen",
+        "starter" : "Belohnungen verdienen",
         "validator" : "Delegierte Vermögenswerte",
         "summary" : "Zusammenfassung",
         "verification" : "Verifizierung",
@@ -4582,11 +4582,11 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "Sie können Prämien verdienen, indem Sie Ihre ADA an einen Pool delegieren.",
+            "description" : "Du kannst Prämien verdienen, indem du deine ADA an einen Pool delegierst.",
             "steps" : {
-              "0" : "Sie behalten das Eigentum an delegierten Vermögenswerten",
-              "1" : "Delegieren Sie mit Ihrem Ledger-Gerät",
-              "2" : "Vermögenswerte können an einen anderen Pool umdelegiert werden. Sie können die Delegierung auch jederzeit aufheben."
+              "0" : "Du behältst das Eigentum an delegierten Vermögenswerten",
+              "1" : "Delegiere mit deinem Ledger-Gerät",
+              "2" : "Vermögenswerte können an einen anderen Pool umdelegiert werden. Du kannst die Delegierung auch jederzeit aufheben."
             },
             "cta" : "Weiter"
           },
@@ -4601,8 +4601,8 @@
           },
           "verification" : {
             "success" : {
-              "title" : "Sie haben Ihre Vermögenswerte erfolgreich delegiert",
-              "text" : "Ihr Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "title" : "Du hast deine Vermögenswerte erfolgreich delegiert",
+              "text" : "Dein Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
               "cta" : "Details anzeigen"
             },
             "pending" : {
@@ -6134,6 +6134,7 @@
       "subtitle" : "Web 3.0 erforschen, vollständig integriert mit Ledger",
       "section" : {
         "recentlyUsed" : "Kürzlich verwendet",
+        "locallyLoaded" : "Lokal geladen",
         "categories" : "Kategorien",
         "clearAll" : "Alle löschen"
       },
@@ -6303,7 +6304,7 @@
     "designedForStax" : {
       "title" : "<0>Entwickelt für</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "Dieses NFT enthält ein zusätzliches NFT-Bild, das speziell für das E-Ink-Display des Ledger Stax entwickelt wurde.\n\nDieses Bild wird verwendet, wenn du dieses NFT als Sperrbildschirm festlegst.",
+        "description" : "Dieses NFT enthält ein zusätzliches Bild des NFT, das speziell für das E Ink-Display der Ledger Stax gestaltet wurde.\n\nDieses Bild wird verwendet, wenn du dieses NFT als Sperrbildschirm festlegst.",
         "cta" : "Verstanden"
       }
     },
