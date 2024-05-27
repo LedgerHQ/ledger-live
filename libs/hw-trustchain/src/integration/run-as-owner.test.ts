@@ -10,17 +10,18 @@ import { DerivationPath } from "../Crypto";
 
 // uncomment to see logs if you need to investigate issues
 import { listen } from "@ledgerhq/logs";
-listen(log => {
-  // eslint-disable-next-line no-console
-  console.log(log.type + ": " + log.message);
-});
 
 const DEFAULT_TOPIC = "c96d450545ff2836204c29af291428a5bf740304978f5dfb0b4a261474192851";
 const ROOT_DERIVATION_PATH = "16'/0'";
 
 let speculos: SpeculosDevice;
 let sub;
+let logSub;
 beforeEach(async () => {
+  logSub = listen(log => {
+    // eslint-disable-next-line no-console
+    console.log(log.type + ": " + log.message);
+  });
   speculos = await createSpeculosDevice({
     model: DeviceModelId.nanoS,
     firmware: "2.0.0",
@@ -45,7 +46,8 @@ beforeEach(async () => {
 
 afterEach(async () => {
   sub.unsubscribe();
-  releaseSpeculosDevice(speculos.id);
+  await releaseSpeculosDevice(speculos.id);
+  logSub();
 });
 
 describe("Chain is owned by a device", () => {
