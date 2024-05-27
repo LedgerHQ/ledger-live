@@ -16,7 +16,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { CardanoMinAmountError, CardanoNotEnoughFunds } from "@ledgerhq/coin-cardano/errors";
-import { buildTransaction } from "@ledgerhq/coin-cardano/js-buildTransaction";
+import { buildTransaction } from "@ledgerhq/coin-cardano/buildTransaction";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   scanAccounts,
