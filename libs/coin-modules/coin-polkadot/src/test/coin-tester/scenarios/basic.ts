@@ -38,7 +38,7 @@ const coinConfig: PolkadotCoinConfig = {
     type: "active",
   },
   sidecar: {
-    url: "",
+    url: "https://polkadot-sidecar.coin.ledger.com",
   },
 };
 
