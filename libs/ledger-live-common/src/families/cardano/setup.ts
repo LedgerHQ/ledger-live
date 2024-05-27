@@ -7,7 +7,12 @@ import type { Bridge } from "@ledgerhq/types-live";
 import { createBridges } from "@ledgerhq/coin-cardano/bridge";
 import makeCliTools from "@ledgerhq/coin-cardano/cli-transaction";
 import cardanoResolver from "@ledgerhq/coin-cardano/hw-getAddress";
-import type { CardanoLikeNetworkParameters, Transaction } from "@ledgerhq/coin-cardano/types";
+import type {
+  CardanoAccount,
+  CardanoLikeNetworkParameters,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/coin-cardano/types";
 import type {
   CardanoAddress,
   CardanoExtendedPublicKey,
@@ -76,7 +81,9 @@ const createSigner: CreateSigner<CardanoSigner> = (transport: Transport) => {
   };
 };
 
-const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
+const bridge: Bridge<Transaction, CardanoAccount, TransactionStatus> = createBridges(
+  executeWithSigner(createSigner),
+);
 
 const resolver: Resolver = createResolver(createSigner, cardanoResolver);
 

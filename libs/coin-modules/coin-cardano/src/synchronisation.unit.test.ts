@@ -1,13 +1,13 @@
 import BigNumber from "bignumber.js";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AccountShapeInfo, GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { APINetworkInfo } from "./api/api-types";
+import { BipPath, CardanoAccount, CardanoDelegation, PaymentCredential } from "./types";
 import { getDelegationInfo } from "./api/getDelegationInfo";
-import { getNetworkInfo } from "./api/getNetworkInfo";
+import { makeGetAccountShape } from "./synchronisation";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
-import { makeGetAccountShape } from "./js-synchronisation";
-import { BipPath, CardanoAccount, CardanoDelegation, PaymentCredential } from "./types";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { getNetworkInfo } from "./api/getNetworkInfo";
+import { APINetworkInfo } from "./api/api-types";
 import { CardanoSigner } from "./signer";
 
 jest.mock("./buildSubAccounts");
@@ -17,8 +17,8 @@ jest.mock("./api/getDelegationInfo");
 
 describe("makeGetAccountShape", () => {
   let signerContext: SignerContext<CardanoSigner>;
-  let shape: GetAccountShape;
-  let accountShapeInfo: AccountShapeInfo;
+  let shape: GetAccountShape<CardanoAccount>;
+  let accountShapeInfo: AccountShapeInfo<CardanoAccount>;
   let getTransactionsMock: jest.MaybeMockedDeep<typeof getTransactions>;
 
   beforeEach(() => {
