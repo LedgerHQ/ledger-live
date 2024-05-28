@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.81.0-nightly.8
+
+### Minor Changes
+
+- [#6939](https://github.com/LedgerHQ/ledger-live/pull/6939) [`2d9d362`](https://github.com/LedgerHQ/ledger-live/commit/2d9d3625ccb7efa11d589f7d96b117b2aa7e414f) Thanks [@valber-ledger](https://github.com/valber-ledger)! - updating workflow: adding default value to variables
+
+### Patch Changes
+
+- [#6932](https://github.com/LedgerHQ/ledger-live/pull/6932) [`03ecd46`](https://github.com/LedgerHQ/ledger-live/commit/03ecd46734668af64d3499cb6877630dd3db2061) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - There was a Layout issue with new Gainers/Losers trend widget if LLD is in French or German
+
+- [#6921](https://github.com/LedgerHQ/ledger-live/pull/6921) [`3b56610`](https://github.com/LedgerHQ/ledger-live/commit/3b566101b2fe37c08f1067fc99af162ea09cc42c) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - disaply the disabled swap button when the swap form is not valid
+
+- [#6866](https://github.com/LedgerHQ/ledger-live/pull/6866) [`82566b4`](https://github.com/LedgerHQ/ledger-live/commit/82566b4568b0a8ffb80ecfed897e46d8177e9ffd) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add Wallet Sync manage screen
+
+- Updated dependencies [[`024ffae`](https://github.com/LedgerHQ/ledger-live/commit/024ffae05c0fa4ec7e42965cdcb3a3b4a516339c)]:
+  - @ledgerhq/live-common@34.3.0-nightly.7
+  - @ledgerhq/coin-framework@0.14.0-nightly.5
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.5
+  - @ledgerhq/coin-evm@2.1.0-nightly.5
+  - @ledgerhq/live-countervalues@0.2.0-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.5
+  - @ledgerhq/live-nft@0.4.0-nightly.5
+  - @ledgerhq/live-nft-react@0.4.0-nightly.5
+  - @ledgerhq/live-wallet@0.1.1-nightly.8
+
 ## 2.81.0-nightly.7
 
 ### Minor Changes

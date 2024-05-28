@@ -143,7 +143,8 @@
     "@ledgerhq/hw-trustchain": "0.1.0",
     "@ledgerhq/trustchain": "0.1.0",
     "@ledgerhq/speculos-transport": "0.1.0",
-    "@ledgerhq/coin-cardano": "0.0.1"
+    "@ledgerhq/coin-cardano": "0.0.1",
+    "@ledgerhq/keyring-eth": "0.0.1"
   },
   "changesets": [
     "beige-coins-wave",
@@ -154,6 +155,7 @@
     "brave-spiders-tickle",
     "brave-waves-smile",
     "breezy-coins-talk",
+    "clever-gorillas-fix",
     "cold-bugs-breathe",
     "cool-clocks-divide",
     "cool-pots-film",
@@ -164,6 +166,7 @@
     "eight-cameras-tease",
     "eight-coins-listen",
     "eleven-houses-hunt",
+    "empty-elephants-end",
     "fair-onions-visit",
     "fair-spiders-admire",
     "fast-squids-eat",
@@ -200,6 +203,7 @@
     "neat-ads-brake",
     "nice-guests-wave",
     "nice-trains-dream",
+    "nine-jeans-tickle",
     "odd-pumas-grab",
     "old-carrots-complain",
     "old-snakes-hide",
@@ -220,9 +224,11 @@
     "shiny-baboons-jog",
     "shy-poets-eat",
     "silly-geese-hide",
+    "small-worms-flash",
     "smart-deers-travel",
     "smooth-queens-relax",
     "sour-actors-exist",
+    "strange-monkeys-return",
     "strong-spoons-thank",
     "swift-peaches-occur",
     "swift-penguins-act",
@@ -235,6 +241,7 @@
     "weak-cows-design",
     "wet-apes-rest",
     "wicked-feet-fly",
-    "wild-geese-tap"
+    "wild-geese-tap",
+    "wise-chairs-ring"
   ]
 }

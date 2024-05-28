@@ -1,5 +1,30 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.7
+
+### Patch Changes
+
+- [#6936](https://github.com/LedgerHQ/ledger-live/pull/6936) [`024ffae`](https://github.com/LedgerHQ/ledger-live/commit/024ffae05c0fa4ec7e42965cdcb3a3b4a516339c) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): xrp family not present
+
+- Updated dependencies [[`84274a6`](https://github.com/LedgerHQ/ledger-live/commit/84274a6e764a385f707bc811ead7a7e92a02ed6a)]:
+  - @ledgerhq/cryptoassets@13.1.0-nightly.2
+  - @ledgerhq/coin-framework@0.14.0-nightly.5
+  - @ledgerhq/coin-algorand@0.5.0-nightly.5
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.5
+  - @ledgerhq/coin-cardano@0.1.0-nightly.1
+  - @ledgerhq/coin-evm@2.1.0-nightly.5
+  - @ledgerhq/coin-near@0.5.0-nightly.5
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.5
+  - @ledgerhq/coin-solana@0.7.0-nightly.10
+  - @ledgerhq/coin-tezos@0.4.0-nightly.4
+  - @ledgerhq/coin-xrp@0.2.0-nightly.5
+  - @ledgerhq/hw-app-eth@6.37.0-nightly.4
+  - @ledgerhq/hw-app-vet@0.2.0-nightly.3
+  - @ledgerhq/live-countervalues@0.2.0-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.5
+  - @ledgerhq/live-nft@0.4.0-nightly.5
+  - @ledgerhq/live-wallet@0.1.1-nightly.8
+
 ## 34.3.0-nightly.6
 
 ### Minor Changes

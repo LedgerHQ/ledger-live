@@ -1,5 +1,13 @@
 # @ledgerhq/live-nft-react
 
+## 0.4.0-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`84274a6`](https://github.com/LedgerHQ/ledger-live/commit/84274a6e764a385f707bc811ead7a7e92a02ed6a)]:
+  - @ledgerhq/cryptoassets@13.1.0-nightly.2
+  - @ledgerhq/live-nft@0.4.0-nightly.5
+
 ## 0.4.0-nightly.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.1.0-nightly.2
+
+### Minor Changes
+
+- [#6861](https://github.com/LedgerHQ/ledger-live/pull/6861) [`84274a6`](https://github.com/LedgerHQ/ledger-live/commit/84274a6e764a385f707bc811ead7a7e92a02ed6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change Polygon, BSC and Ethereum Classic manager app to Ethereum & import new Exchange CAL files
+
 ## 13.1.0-nightly.1
 
 ### Minor Changes
