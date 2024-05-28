@@ -136,6 +136,9 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     };
   },
   getTransactions,
+  beforeAll: async account => {
+    expect(account.balance.toFixed()).toBe("90000000000");
+  },
   afterEach: async () => {
     // delay needed between transactions to avoid nonce collision
     await new Promise(resolve => setTimeout(resolve, 3000));

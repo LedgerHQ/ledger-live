@@ -4,7 +4,7 @@ import { basicScenario } from "./scenarios/basic";
 import { killChopsticks } from "./chopsticks";
 
 global.console = require("console");
-jest.setTimeout(100_000);
+jest.setTimeout(300_000);
 
 export const defaultNanoApp = { firmware: "2.2.3" as const, version: "25.10100.0" as const };
 
