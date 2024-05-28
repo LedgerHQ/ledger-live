@@ -13,7 +13,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
       },
       node: {
-        url: "https://polkadot-rpc.publicnode.com",
+        url: getEnv("API_POLKADOT_NODE"),
       },
       staking: {
         electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),

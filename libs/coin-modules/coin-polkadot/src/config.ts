@@ -4,7 +4,7 @@ import { MissingCoinConfig } from "@ledgerhq/coin-framework/errors";
 export type PolkadotConfig = {
   node: {
     url: string;
-    credential?: string;
+    credentials?: string;
   };
   sidecar: {
     url: string;

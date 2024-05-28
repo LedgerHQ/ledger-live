@@ -20,8 +20,8 @@ import { getCurrencyConfiguration } from "../../config";
 const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
   return new Polkadot(transport);
 };
-const polkadot = getCryptoCurrencyById("polkadot");
 
+const polkadot = getCryptoCurrencyById("polkadot");
 const getCurrencyConfig = (): PolkadotCoinConfig => {
   return getCurrencyConfiguration(polkadot);
 };

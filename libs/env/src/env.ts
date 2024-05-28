@@ -117,6 +117,11 @@ const envDefinitions = {
     def: "",
     desc: "Polkadot Sidecar API credentials",
   },
+  API_POLKADOT_NODE: {
+    parser: stringParser,
+    def: "https://polkadot-rpc.publicnode.com",
+    desc: "Polkadot Node",
+  },
   ELROND_API_ENDPOINT: {
     parser: stringParser,
     def: "https://elrond.coin.ledger.com",

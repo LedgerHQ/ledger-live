@@ -1,14 +1,18 @@
 import { ApiPromise, HttpProvider } from "@polkadot/api";
-import { getCoinConfig } from "../../config";
+import { getCoinConfig, PolkadotCoinConfig } from "../../config";
 
+let coinConfig: PolkadotCoinConfig | undefined;
 let api: ApiPromise | undefined;
 export default async function () {
-  if (!api) {
-    const headers = getCoinConfig().node.credential
-      ? { Authorization: "Basic " + getCoinConfig().node.credential }
+  const config = getCoinConfig();
+  // Need to constantly check if a new config is setted
+  if (!api || coinConfig !== config) {
+    coinConfig = config;
+    const headers = coinConfig.node.credentials
+      ? { Authorization: "Basic " + coinConfig.node.credentials }
       : undefined;
     api = await ApiPromise.create({
-      provider: new HttpProvider(getCoinConfig().node.url, headers),
+      provider: new HttpProvider(coinConfig.node.url, headers),
       noInitWarn: true, //to avoid undesired warning (ex: "API/INIT: polkadot/1002000: Not decorating unknown runtime apis")
     });
   }
