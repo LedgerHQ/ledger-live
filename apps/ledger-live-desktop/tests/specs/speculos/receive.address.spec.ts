@@ -16,7 +16,7 @@ const accounts: Account[] = [
   Account.XRP_1,
 ];
 
-//TODO: Reactivate after getAppAndVersion resolved - Jira: LIVE-12581
+//This test might sporadically fail due to getAppAndVersion issue - Jira: LIVE-12581
 for (const [i, account] of accounts.entries()) {
   test.describe.parallel("Receive @smoke", () => {
     test.use({

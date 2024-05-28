@@ -13,6 +13,7 @@ const transactions = [
   new Transaction(Account.sep_ETH_1, Account.sep_ETH_2.address, "0.00001", "medium"),
 ];
 
+//This test might sporadically fail due to getAppAndVersion issue - Jira: LIVE-12581
 for (const [i, transaction] of transactions.entries()) {
   test.describe.parallel("Send Approve @smoke", () => {
     test.use({
