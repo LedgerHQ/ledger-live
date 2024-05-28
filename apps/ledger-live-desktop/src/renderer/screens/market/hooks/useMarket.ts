@@ -150,7 +150,8 @@ export function useMarket() {
 
   const refetchData = useCallback(
     (pageToRefetch: number) => {
-      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch - 1 ?? 0));
+      const page = pageToRefetch - 1 || 0;
+      const elem = marketResult.cachedMetadataMap.get(String(page));
       if (elem && isDataStale(elem.updatedAt, REFRESH_RATE)) {
         elem.refetch();
       }
