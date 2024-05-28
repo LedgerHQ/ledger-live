@@ -357,6 +357,22 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
   });
 
+  await test.step("currency.list should stay stable for CryptoCurrency", async () => {
+    const id = randomUUID();
+    const response = await liveAppWebview.send({
+      jsonrpc: "2.0",
+      id,
+      method: "currency.list",
+    });
+
+    // We remove TokenCurrency because they might change a lot more frequently and we really care if a family disappear
+    const currencies = response.result.currencies.filter(
+      (currency: { type: string }) => currency.type === "CryptoCurrency",
+    );
+
+    expect(JSON.stringify(currencies, null, 2)).toMatchSnapshot("wallet-api-currencies.json");
+  });
+
   await test.step("storage", async () => {
     const id = randomUUID();
     const value = randomUUID();

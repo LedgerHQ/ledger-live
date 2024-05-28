@@ -13,7 +13,7 @@ export type DeviceEvent = {
   id: string;
   name: string;
   deviceModel?: DeviceModel | null;
-  wired?: boolean;
+  wired: boolean;
 };
 
 export type Discovery = Observable<DeviceEvent>;
