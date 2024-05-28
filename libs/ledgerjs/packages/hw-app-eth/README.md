@@ -488,7 +488,7 @@ provides the name of a trusted binding of a plugin with a contract address and a
 ##### Parameters
 
 *   `payload` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** external plugin data
-*   `signature` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** signature for the plugin
+*   `signature` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** a boolean
 
