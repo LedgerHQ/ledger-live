@@ -143,9 +143,6 @@ export type Transaction =
   | hederaTransaction
   | internet_computerTransaction
   | nearTransaction
-  | iconTransaction
-  | neoTransaction
-  | osmosisTransaction
   | polkadotTransaction
   | solanaTransaction
   | stacksTransaction
@@ -153,7 +150,8 @@ export type Transaction =
   | tezosTransaction
   | tronTransaction
   | vechainTransaction
-  | xrpTransaction;
+  | xrpTransaction
+  | iconTransaction;
 
 export type TransactionRaw =
   | algorandTransactionRaw
@@ -169,9 +167,6 @@ export type TransactionRaw =
   | hederaTransactionRaw
   | internet_computerTransactionRaw
   | nearTransactionRaw
-  | iconTransactionRaw
-  | neoTransactionRaw
-  | osmosisTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
   | stacksTransactionRaw
@@ -179,7 +174,8 @@ export type TransactionRaw =
   | tezosTransactionRaw
   | tronTransactionRaw
   | vechainTransactionRaw
-  | xrpTransactionRaw;
+  | xrpTransactionRaw
+  | iconTransactionRaw;
 
 export type TransactionStatus =
   | algorandTransactionStatus
@@ -195,14 +191,6 @@ export type TransactionStatus =
   | hederaTransactionStatus
   | internet_computerTransactionStatus
   | nearTransactionStatus
-  | iconTransactionStatus
-  | iconTransactionStatus
-  | nearTransactionStatus
-  | neoTransactionStatus
-  | osmosisTransactionStatus
-  | iconTransactionStatus
-  | internet_computerTransactionStatus
-  | nearTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
   | stacksTransactionStatus
@@ -210,7 +198,8 @@ export type TransactionStatus =
   | tezosTransactionStatus
   | tronTransactionStatus
   | vechainTransactionStatus
-  | xrpTransactionStatus;
+  | xrpTransactionStatus
+  | iconTransactionStatus;
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
@@ -226,10 +215,6 @@ export type TransactionStatusRaw =
   | hederaTransactionStatusRaw
   | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
-  | iconTransactionStatusRaw
-  | nearTransactionStatusRaw
-  | internet_computerTransactionStatusRaw
-  | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
   | stacksTransactionStatusRaw
@@ -237,4 +222,5 @@ export type TransactionStatusRaw =
   | tezosTransactionStatusRaw
   | tronTransactionStatusRaw
   | vechainTransactionStatusRaw
-  | xrpTransactionStatusRaw;
+  | xrpTransactionStatusRaw
+  | iconTransactionStatusRaw;

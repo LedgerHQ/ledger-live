@@ -14,11 +14,11 @@ import algorand from "@ledgerhq/coin-algorand/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
 import cardano from "@ledgerhq/coin-cardano/specs";
 import evm from "@ledgerhq/coin-evm/specs";
+import near from "@ledgerhq/coin-near/specs";
+import polkadot from "@ledgerhq/coin-polkadot/specs";
 import solana from "@ledgerhq/coin-solana/specs";
 import tezos from "@ledgerhq/coin-tezos/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
-import near from "@ledgerhq/coin-near/specs";
-import polkadot from "@ledgerhq/coin-polkadot/specs";
 import icon from "@ledgerhq/coin-icon/specs";
 
 export default {
@@ -31,8 +31,6 @@ export default {
   hedera,
   internet_computer,
   stacks,
-  icon,
-  near,
   stellar,
   tron,
   vechain,
@@ -40,8 +38,10 @@ export default {
   bitcoin,
   cardano,
   evm,
+  near,
   polkadot,
   solana,
   tezos,
   xrp,
+  icon,
 };
