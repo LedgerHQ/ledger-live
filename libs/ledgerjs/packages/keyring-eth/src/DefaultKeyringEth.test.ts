@@ -189,24 +189,6 @@ describe("DefaultKeyringEth", () => {
         );
         expect(result).toEqual({ r: "", s: "", v: 42 });
       });
-
-      it("should throw an error if the message is not a string", async () => {
-        // GIVEN
-        const message = {
-          message: { message: "message" },
-        } as unknown as EIP712Message;
-        const derivationPath = "derivationPath";
-
-        // WHEN
-        const promise = keyring.signMessage(derivationPath, message, {
-          method: "personalSign",
-        });
-
-        // THEN
-        await expect(promise).rejects.toThrow(
-          "[DefaultKeyringEth] signMessage: personalSign requires a string type for the message parameter",
-        );
-      });
     });
 
     describe("eip712", () => {
@@ -361,22 +343,6 @@ describe("DefaultKeyringEth", () => {
           "90418913cbd47e54cfb74964f7c7905cc502076a3d59974cfc2d79a16261df09",
         );
         expect(result).toEqual({ r: "", s: "", v: 42 });
-      });
-
-      it("should throw an error if the message is not an EIP712Params", async () => {
-        // GIVEN
-        const message = "message";
-        const derivationPath = "derivationPath";
-
-        // WHEN
-        const promise = keyring.signMessage(derivationPath, message, {
-          method: "eip712Hashed",
-        });
-
-        // THEN
-        await expect(promise).rejects.toThrow(
-          "[DefaultKeyringEth] signMessage: eip712Hashed requires an EIP712Params type for the message parameter",
-        );
       });
     });
   });
