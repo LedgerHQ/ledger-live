@@ -338,6 +338,7 @@ export const getAccount = async (addr: string) => {
   const balances = await getBalances(addr);
   const stakingInfo = await getStakingInfo(addr);
   const nominations = await getNominations(addr);
+
   return { ...balances, ...stakingInfo, nominations };
 };
 

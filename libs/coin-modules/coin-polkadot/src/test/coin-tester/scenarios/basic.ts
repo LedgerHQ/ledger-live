@@ -20,12 +20,32 @@ function getTransactions() {
     name: "send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: new BigNumber(1),
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      console.log({ latestOperation, operations: currentAccount.operations.toString() });
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1).toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
   };
 
   const send100DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
     name: "send 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: new BigNumber(100),
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      console.log({ latestOperation });
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(2);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(100).toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
   };
 
   return [send1DotTransaction, send100DotTransaction];
