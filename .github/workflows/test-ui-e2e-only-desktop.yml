@@ -195,14 +195,13 @@ jobs:
           else echo "STATUS_COLOR=#F3FF33" >> $GITHUB_ENV;
           fi
 
-            - uses: actions/github-script@v6
+      - uses: actions/github-script@v6
         if: ${{ !cancelled() }}
         name: prepare status
         id: status
         with:
           script: |
             const fs = require("fs");
-            const path = require("path");
 
             const [ owner, repo ] = "${{ github.repository }}".split("/");
 
@@ -321,11 +320,11 @@ jobs:
                       "fields": [
                         {
                           "type": "mrkdwn",
-                          "text": "*Allure Report*\n<${{ steps.allure-server.outputs.report-url }} | ${{ inputs.report_path }}>"
+                          "text": "*Allure Report*\n<${{ steps.allure-server.outputs.report-url }}|${{ inputs.report_path }}>"
                         },
                         {
                           "type": "mrkdwn",
-                          "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} | Workflow Run>"
+                          "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
                         }
                       ]
                     }
@@ -338,6 +337,7 @@ jobs:
       - name: Print Slack Payload Content
         if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         run: cat ${{ github.workspace }}/payload-slack-content.json
+
       - name: post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
