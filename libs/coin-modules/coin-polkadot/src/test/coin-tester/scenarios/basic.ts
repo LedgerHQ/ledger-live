@@ -116,6 +116,10 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     };
   },
   getTransactions,
+  afterEach: async () => {
+    // delay needed between transactions to avoid nonce collision
+    await new Promise(resolve => setTimeout(resolve, 3000));
+  },
   teardown: async () => {
     await wsProvider.disconnect();
     await Promise.all([killSpeculos(), killChopsticksAndSidecar()]);

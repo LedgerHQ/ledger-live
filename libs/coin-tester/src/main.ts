@@ -93,7 +93,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       console.log("\n");
       console.log(chalk.cyan("Transaction:", chalk.bold(testTransaction.name), "◌"));
 
-      scenario.beforeEach?.(scenarioAccount);
+      await scenario.beforeEach?.(scenarioAccount);
       console.log("Before each ✔️");
 
       if (scenarioTransactions.indexOf(testTransaction) > 0) {
@@ -200,7 +200,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
       await expectHandler(retry_limit);
 
-      scenario.afterEach?.(scenarioAccount);
+      await scenario.afterEach?.(scenarioAccount);
       console.log("After each ✔️");
       console.log(chalk.green("Transaction:", chalk.bold(testTransaction.name), "completed  ✓"));
     }
