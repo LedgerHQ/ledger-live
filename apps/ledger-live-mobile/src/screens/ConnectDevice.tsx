@@ -101,7 +101,6 @@ type Props =
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionConnectDevice>
-  | StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>
   | StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
