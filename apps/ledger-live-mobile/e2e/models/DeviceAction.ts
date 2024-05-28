@@ -34,7 +34,7 @@ export default class DeviceAction {
     if ("id" in input) {
       this.device = this.deviceLikeToDevice(input as DeviceLike);
     } else {
-      this.device = input as Device;
+      this.device = input;
     }
   }
 
