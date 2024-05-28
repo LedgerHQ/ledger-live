@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import Button from "~/renderer/components/Button";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { walletSyncSelector } from "~/renderer/reducers/walletSync";
-import WalletSyncActivation from "./SideContent/Activation";
-import WalletSyncManage from "./SideContent/Manage";
+import WalletSyncActivation from "LLD/WalletSync/SideContent/Activation";
+import WalletSyncManage from "LLD/WalletSync/SideContent/Manage";
 import { useTranslation } from "react-i18next";
 
 const WalletSyncRow = () => {
@@ -19,7 +19,7 @@ const WalletSyncRow = () => {
       </SideDrawer>
 
       <Button small event="Manage WalletSync" primary onClick={() => setOpen(true)}>
-        {t("walletSync.manage")}
+        {t("walletSync.manage.cta")}
       </Button>
     </>
   );
