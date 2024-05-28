@@ -446,13 +446,7 @@ const OperationD = (props: Props) => {
                       />
                     </Box>
                   ) : null}
-                  <FormattedVal
-                    unit={mainAccount.unit}
-                    showCode
-                    val={fee}
-                    color="palette.text.shade80"
-                    subMagnitude={5}
-                  />
+                  <FormattedVal unit={feesUnit} showCode val={fee} color="palette.text.shade80" />
                 </Box>
                 <Box horizontal justifyContent="flex-end">
                   <CounterValue
