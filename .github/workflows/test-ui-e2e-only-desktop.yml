@@ -202,6 +202,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
+            const path = require("path");
 
             const [ owner, repo ] = "${{ github.repository }}".split("/");
 
