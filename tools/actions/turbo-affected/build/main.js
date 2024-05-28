@@ -19346,7 +19346,7 @@ var package_default = {
     "pre:lld": "pnpm turbo pre-build --no-daemon --filter=ledger-live-desktop",
     nightly: "pnpm turbo nightly --no-daemon",
     "nightly:lld": "pnpm turbo nightly --no-daemon --filter=ledger-live-desktop",
-    test: "pnpm turbo test --no-daemon --concurrency=100%",
+    test: "pnpm turbo test --no-daemon --concurrency=50%",
     "run:cli": "./apps/cli/bin/index.js",
     lint: "pnpm turbo lint --no-daemon",
     "lint:fix": "pnpm turbo lint:fix --no-daemon",
@@ -19355,12 +19355,19 @@ var package_default = {
     desktop: "pnpm --filter ledger-live-desktop",
     cli: "pnpm --filter live-cli",
     coin: "pnpm --filter coin-framework",
+    "coin:coverage": 'pnpm turbo coverage --filter="@ledgerhq/coin-*" --concurrency=2 && mkdir -p coverage && mv libs/coin-modules/**/coverage/*.json coverage && pnpm exec nyc merge coverage coverage/coverage-final.json && pnpm exec nyc report -t coverage --report-dir coverage --reporter=html-spa',
+    "coin:coverage:clean": "rm -rf coverage && rm -rf libs/coin-modules/**/coverage",
     "coin:algorand": "pnpm --filter coin-algorand",
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
+    "coin:cardano": "pnpm --filter coin-cardano",
     "coin:evm": "pnpm --filter coin-evm",
     "coin:framework": "pnpm --filter coin-framework",
+    "coin:tester": "pnpm --filter coin-tester",
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
+    "coin:solana": "pnpm --filter coin-solana",
+    "coin:tezos": "pnpm --filter coin-tezos",
+    "coin:xrp": "pnpm --filter coin-xrp",
     "evm-tools": "pnpm --filter evm-tools",
     domain: "pnpm --filter domain-service",
     doc: "pnpm --filter docs",
@@ -19370,12 +19377,15 @@ var package_default = {
     "device-react": "pnpm --filter device-react",
     "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
+    wallet: "pnpm --filter live-wallet",
     portfolio: "pnpm --filter live-portfolio",
     promise: "pnpm --filter live-promise",
     network: "pnpm --filter live-network",
     config: "pnpm --filter live-config",
     utils: "pnpm --filter live-utils",
     hooks: "pnpm --filter live-hooks",
+    trustchain: "pnpm --filter trustchain",
+    "hw-trustchain": "pnpm --filter hw-trustchain",
     countervalues: "pnpm --filter live-countervalues",
     "countervalues-react": "pnpm --filter live-countervalues-react",
     nft: "pnpm --filter live-nft",
@@ -19418,6 +19428,7 @@ var package_default = {
     "ljs:types-cryptoassets": "pnpm --filter types-cryptoassets",
     "ljs:types-devices": "pnpm --filter types-devices",
     "ljs:types-live": "pnpm --filter types-live",
+    "speculos-transport": "pnpm --filter speculos-transport",
     "test-utils": "pnpm --filter test-utils",
     "dummy-live-app": "pnpm --filter dummy-live-app",
     "dummy-wallet-app": "pnpm --filter dummy-wallet-app",
@@ -19451,6 +19462,7 @@ var package_default = {
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^5.0.1",
     prettier: "^3.0.3",
+    nyc: "^15.1.0",
     rimraf: "^4.4.1",
     turbo: "1.10.1",
     typescript: "^5.4.3",
@@ -19462,9 +19474,6 @@ var package_default = {
       "blake2"
     ],
     overrides: {
-      "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
-      "tronweb>axios": "0.26.1",
-      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
@@ -19475,8 +19484,9 @@ var package_default = {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
+      "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.18.4": "patches/detox@20.18.4.patch",
+      "detox@20.20.2": "patches/detox@20.20.2.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
       "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch"
     },
@@ -19531,6 +19541,11 @@ function main() {
         core.info(`Affected packages since ${ref} (${packages.length}):
 ${affected}`);
         core.setOutput("affected", affected);
+        core.setOutput("packages", JSON.stringify(Object.keys(affectedPackages)));
+        core.setOutput(
+          "paths",
+          JSON.stringify(Object.keys(affectedPackages || {}).map((p) => affectedPackages[p].path))
+        );
         core.setOutput("is-package-affected", isPackageAffected);
         core.summary.addHeading("Affected Packages");
         core.summary.addRaw(`There are ${packages.length} affected packages since ${ref}`);
@@ -19541,6 +19556,8 @@ ${affected}`);
       } else {
         core.info(`No packages affected since ${ref}`);
         core.setOutput("affected", JSON.stringify({}));
+        core.setOutput("paths", []);
+        core.setOutput("packages", []);
         core.setOutput("is-package-affected", false);
         core.summary.addHeading("Affected Packages");
         core.summary.addRaw(`No affected packages since ${ref}`);

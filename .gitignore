@@ -12,3 +12,5 @@ tsconfig.tsbuildinfo
 rce
 .env
 coverage
+.secrets
+event.json

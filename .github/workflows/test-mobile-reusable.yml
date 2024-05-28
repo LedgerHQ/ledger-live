@@ -1,0 +1,66 @@
+name: "Test Mobile"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
+        type: string
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        type: string
+        required: false
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
+        type: string
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  codecheck:
+    name: "Ledger Live Mobile CodeCheck"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup the toolchain
+        id: toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+        with:
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+      - name: Install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - name: Run linter
+        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --format="json" -o="lint.json"
+      - name: check for dead code
+        run: pnpm mobile unimported
+        shell: bash
+      - name: Run code checkers
+        run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+      - name: Run unit tests
+        run: pnpm mobile test
+      - uses: actions/upload-artifact@v4
+        name: upload eslint json output
+        if: ${{ !cancelled() }}
+        with:
+          name: lint
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json

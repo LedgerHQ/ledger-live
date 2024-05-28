@@ -45,6 +45,11 @@ async function main() {
       const affected = JSON.stringify(affectedPackages);
       core.info(`Affected packages since ${ref} (${packages.length}):\n${affected}`);
       core.setOutput("affected", affected);
+      core.setOutput("packages", JSON.stringify(Object.keys(affectedPackages)));
+      core.setOutput(
+        "paths",
+        JSON.stringify(Object.keys(affectedPackages || {}).map(p => affectedPackages[p].path)),
+      );
       core.setOutput("is-package-affected", isPackageAffected);
       core.summary.addHeading("Affected Packages");
       core.summary.addRaw(`There are ${packages.length} affected packages since ${ref}`);
@@ -55,6 +60,8 @@ async function main() {
     } else {
       core.info(`No packages affected since ${ref}`);
       core.setOutput("affected", JSON.stringify({}));
+      core.setOutput("paths", []);
+      core.setOutput("packages", []);
       core.setOutput("is-package-affected", false);
       core.summary.addHeading("Affected Packages");
       core.summary.addRaw(`No affected packages since ${ref}`);

@@ -1,0 +1,167 @@
+name: "@Desktop • Build App"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
+        type: string
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        type: string
+        required: false
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
+        type: string
+        required: false
+      prNumber:
+        description: PR number
+        type: string
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build-desktop-app:
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          [
+            { name: "linux", os: "ledger-live-4xlarge", image: "linux-x86_64.AppImage" },
+            { name: "win", os: "windows-latest", dotnet: true, image: "win-x64.exe" },
+            { name: "mac", os: "macos-latest", image: "mac.dmg" },
+          ]
+    name: "Build Ledger Live Desktop | ${{ matrix.config.name }}"
+    runs-on: ${{ matrix.config.os }}
+    outputs:
+      linux: ${{ steps.status.outputs.linux }}
+      win: ${{ steps.status.outputs.win }}
+      mac: ${{ steps.status.outputs.mac }}
+
+    continue-on-error: true
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Setup git user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+
+      - name: Setup the toolchain
+        id: toolchain
+        if: ${{ matrix.config.name != 'linux' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+        with:
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          install-dotnet: ${{ matrix.config.dotnet }}
+          skip-turbo-cache: "false"
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Setup the caches
+        id: caches
+        if: ${{ matrix.config.name == 'linux' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          skip-turbo-cache: "false"
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Build desktop
+        id: build-desktop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
+        with:
+          os: ${{ matrix.config.name }}
+
+      - name: Build the app
+        id: build-app
+        run: pnpm build:lld --api="http://127.0.0.1:${{ matrix.config.os == 'linux' && steps.caches.outputs.port || steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        env:
+          GENERATE_METAFILES: 1
+
+      - name: Upload ${{ matrix.config.name }} app
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
+
+      - name: Upload bundle metafiles
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: ${{ matrix.config.name }}-js-bundle-metafiles
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
+
+      - name: Push status
+        id: status
+        shell: bash
+        if: ${{ !cancelled() }}
+        run: echo "${{ matrix.config.name }}=${{ steps.build-app.outcome }}" >> $GITHUB_OUTPUT
+
+  report:
+    needs: build-desktop-app
+    runs-on: ubuntu-latest
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call')}}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-js-bundle-metafiles
+          path: linux-js-bundle-metafiles
+      - uses: actions/download-artifact@v4
+        with:
+          name: win-js-bundle-metafiles
+          path: win-js-bundle-metafiles
+      - uses: actions/download-artifact@v4
+        with:
+          name: mac-js-bundle-metafiles
+          path: mac-js-bundle-metafiles
+
+      - uses: actions/github-script@v6
+        name: Produce statuses of builds
+        id: statuses
+        with:
+          result-encoding: string
+          script: |
+            const obj = {
+              linux: "${{ needs.build-desktop-app.outputs.linux }}",
+              win: "${{ needs.build-desktop-app.outputs.win }}",
+              mac: "${{ needs.build-desktop-app.outputs.mac }}"
+            }
+            return JSON.stringify(obj);
+
+      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
+        name: Report summary
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          statuses: ${{ steps.statuses.outputs.result }}
+          attempt: ${{ github.run_attempt }}
+
+      - uses: actions/upload-artifact@v4
+        name: Upload output
+        with:
+          path: ${{ github.workspace }}/summary.json
+          name: summary.json

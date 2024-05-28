@@ -1,0 +1,58 @@
+name: Turbo Affected
+
+on:
+  workflow_call:
+    inputs:
+      base_branch:
+        description: "Base branch"
+        type: string
+        required: true
+      head_branch:
+        description: "Head branch"
+        type: string
+        required: true
+    outputs:
+      affected:
+        description: "JSON of affected packages"
+        value: ${{ jobs.turbo-affected.outputs.affected }}
+      packages:
+        description: "Array of affected packages"
+        value: ${{ jobs.turbo-affected.outputs.packages }}
+      paths:
+        description: "Array of affected paths"
+        value: ${{ jobs.turbo-affected.outputs.paths }}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  turbo-affected:
+    name: "Run Turbo Affected"
+    runs-on: ubuntu-22.04
+    outputs:
+      affected: ${{ steps.affected.outputs.affected }}
+      packages: ${{ steps.affected.outputs.packages }}
+      paths: ${{ steps.affected.outputs.paths }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/github-script@v6
+        id: clean-refs
+        with:
+          script: |
+            const head_branch = "${{ inputs.head_branch }}";
+            const base_branch = "${{ inputs.base_branch }}";
+
+            const newHeadBranch = head_branch.replace("refs/heads/", "");
+            const newBaseBranch = base_branch.replace("refs/heads/", "");
+
+            core.exportVariable("head_branch", newHeadBranch);
+            core.exportVariable("base_branch", newBaseBranch);
+
+      - uses: ./tools/actions/turbo-affected
+        id: affected
+        with:
+          ref: ${{ format('origin/{0}', inputs.base_branch) }}
