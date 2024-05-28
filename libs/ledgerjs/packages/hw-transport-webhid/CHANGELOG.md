@@ -1,5 +1,18 @@
 # @ledgerhq/hw-transport-webhid
 
+## 6.29.0-windows-certificate.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f)]:
+  - @ledgerhq/hw-transport@6.31.0-windows-certificate.0
+  - @ledgerhq/devices@8.4.0-windows-certificate.0
+  - @ledgerhq/errors@6.17.0-windows-certificate.0
+
 ## 6.28.6
 
 ### Patch Changes
