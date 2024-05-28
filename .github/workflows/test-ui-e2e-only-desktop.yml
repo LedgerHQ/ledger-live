@@ -318,10 +318,18 @@ jobs:
                     },
                     {
                       "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n${{ steps.allure-server.outputs.report-url }}"
-                      }
+                      "fields": [
+                        {
+                          "title": "Allure Report",
+                          "value": "<${{ steps.allure-server.outputs.report-url }} | ${{ inputs.report_path }}>",
+                          "short": true
+                        },
+                        {
+                          "title": "Workflow",
+                          "value": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} | Workflow Run>",
+                          "short": true
+                        }
+                      ]
                     }
                   ]
                 }
