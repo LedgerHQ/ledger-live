@@ -1,15 +1,15 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { ManagerPage } from "../../models/ManagerPage";
+import { ManagerPage } from "../../page/manager.page";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Layout } from "../../models/Layout";
+import { LayoutComponent } from "../../component/layout.component";
 
 test.use({ userdata: "skip-onboarding" });
 
 test("Manager @smoke", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const deviceAction = new DeviceAction(page);
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
 
   await test.step("can access manager", async () => {
     await layout.goToManager();

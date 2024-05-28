@@ -1,6 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
+import { LayoutComponent } from "../../component/layout.component";
 import { AppUpdater } from "../../models/AppUpdater";
 
 test.use({
@@ -9,7 +9,7 @@ test.use({
 });
 
 test("Updater", async ({ page }) => {
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const appUpdater = new AppUpdater(page);
 
   await test.step("[idle] state should not be visible", async () => {

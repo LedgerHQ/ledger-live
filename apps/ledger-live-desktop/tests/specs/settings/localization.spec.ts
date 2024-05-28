@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { SettingsPage } from "../../models/SettingsPage";
-import { Layout } from "../../models/Layout";
+import { SettingsPage } from "../../page/settings.page";
+import { LayoutComponent } from "../../component/layout.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { LanguageInstallation } from "../../models/LanguageInstallation";
 import { languagePacksData } from "./data";
@@ -13,7 +13,7 @@ test("Settings", async ({ page }) => {
   const deviceAction = new DeviceAction(page);
   const languageInstallation = new LanguageInstallation(page);
   const settingsPage = new SettingsPage(page);
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
 
   await test.step("go to settings -> change language to french with no device", async () => {
     await layout.goToSettings();

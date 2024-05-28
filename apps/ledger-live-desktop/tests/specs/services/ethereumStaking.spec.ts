@@ -2,15 +2,15 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Analytics } from "../../models/Analytics";
 import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
-import { PortfolioPage } from "../../models/PortfolioPage";
+import { Modal } from "../../component/modal.component";
+import { PortfolioPage } from "../../page/portfolio.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
-import { MarketPage } from "../../models/MarketPage";
-import { Layout } from "../../models/Layout";
-import { MarketCoinPage } from "../../models/MarketCoinPage";
-import { AssetPage } from "../../models/AssetPage";
-import { AccountsPage } from "../../models/AccountsPage";
-import { AccountPage } from "../../models/AccountPage";
+import { MarketPage } from "../../page/market.page";
+import { LayoutComponent } from "../../component/layout.component";
+import { MarketCoinPage } from "../../page/market.coin.page";
+import { AssetPage } from "../../page/asset.page";
+import { AccountsPage } from "../../page/accounts.page";
+import { AccountPage } from "../../page/account.page";
 
 test.use({
   env: {
@@ -74,7 +74,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   const assetPage = new AssetPage(page);
   const accountsPage = new AccountsPage(page);
   const accountPage = new AccountPage(page);
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
   const analytics = new Analytics(page);

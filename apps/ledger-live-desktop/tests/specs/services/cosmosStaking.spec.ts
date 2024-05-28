@@ -1,10 +1,10 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
-import { PortfolioPage } from "../../models/PortfolioPage";
-import { Layout } from "../../models/Layout";
-import { AccountPage } from "../../models/AccountPage";
+import { Modal } from "../../component/modal.component";
+import { PortfolioPage } from "../../page/portfolio.page";
+import { LayoutComponent } from "../../component/layout.component";
+import { AccountPage } from "../../page/account.page";
 
 test.use({
   userdata: "cosmosStakingAccounts",
@@ -37,7 +37,7 @@ test.skip("Cosmos staking flows via portfolio. Check stake flow modals and stake
   const drawer = new Drawer(page);
   const modal = new Modal(page);
   const accountPage = new AccountPage(page);
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
 
   await test.step("access stake cosmos from portfolio page with an account that isn't staking", async () => {
     await portfolioPage.startStakeFlow();

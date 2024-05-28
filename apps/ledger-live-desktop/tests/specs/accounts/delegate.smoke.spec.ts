@@ -1,15 +1,15 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { AccountsPage } from "../../models/AccountsPage";
-import { Layout } from "../../models/Layout";
-import { AccountPage } from "../../models/AccountPage";
-import { Modal } from "../../models/Modal";
+import { AccountsPage } from "../../page/accounts.page";
+import { LayoutComponent } from "../../component/layout.component";
+import { AccountPage } from "../../page/account.page";
+import { Modal } from "../../component/modal.component";
 
 test.use({ userdata: "accountCosmos" });
 let modalPage: Modal;
 
 test.beforeEach(async ({ page }) => {
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const accountPage = new AccountPage(page);
   await layout.goToAccounts();
   modalPage = new Modal(page);

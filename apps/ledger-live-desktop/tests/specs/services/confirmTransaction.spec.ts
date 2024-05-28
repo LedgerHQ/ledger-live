@@ -1,8 +1,8 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Modal } from "../../models/Modal";
-import { DiscoverPage } from "../../models/DiscoverPage";
-import { Layout } from "../../models/Layout";
+import { Modal } from "../../component/modal.component";
+import { DiscoverPage } from "../../page/discover.page";
+import { LayoutComponent } from "../../component/layout.component";
 import { Drawer } from "../../models/Drawer";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
@@ -69,7 +69,7 @@ test.afterAll(async () => {
 test("Confirm Transaction modals @smoke", async ({ page }) => {
   const discoverPage = new DiscoverPage(page);
   const drawer = new Drawer(page);
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
 
   if (!testServerIsRunning) {
     console.warn("Test server not running - Cancelling confirm transaction E2E test");

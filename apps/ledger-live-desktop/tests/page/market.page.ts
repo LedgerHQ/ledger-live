@@ -1,42 +1,24 @@
-import { Page, Locator } from "@playwright/test";
+import { AppPage } from "tests/page/abstractClasses";
 
-export class MarketPage {
-  readonly page: Page;
-  readonly searchInput: Locator;
-  readonly counterValueSelect: Locator;
-  readonly marketRangeSelect: Locator;
-  readonly filterDrawerButton: Locator;
-  readonly starFilterButton: Locator;
-  readonly loadingPlaceholder: Locator;
-  readonly coinRow: (ticker: string) => Locator;
-  readonly coinPageContainer: Locator;
-  readonly starButton: (ticker: string) => Locator;
-  readonly buyButton: (ticker: string) => Locator;
-  readonly swapButton: (ticker: string) => Locator;
-  readonly stakeButton: (ticker: string) => Locator;
-
-  constructor(page: Page) {
-    this.page = page;
-    this.searchInput = page.locator("data-test-id=market-search-input");
-    this.counterValueSelect = page.locator("data-test-id=market-countervalue-select");
-    this.marketRangeSelect = page.locator("data-test-id=market-range-select");
-    this.filterDrawerButton = page.locator("data-test-id=market-filter-drawer-button");
-    this.starFilterButton = page.locator("data-test-id=market-star-button");
-    this.loadingPlaceholder = page.locator("data-test-id=loading-placeholder");
-    this.coinRow = ticker => page.locator(`data-test-id=market-${ticker}-row`);
-    this.coinPageContainer = page.locator(`data-test-id=market-coin-page-container`);
-    this.starButton = ticker => page.locator(`data-test-id=market-${ticker}-star-button`);
-    this.buyButton = ticker => page.locator(`data-test-id=market-${ticker}-buy-button`);
-    this.swapButton = ticker => page.locator(`data-test-id=market-${ticker}-swap-button`);
-    this.stakeButton = ticker => page.locator(`data-test-id=market-${ticker}-stake-button`);
-  }
+export class MarketPage extends AppPage {
+  private searchInput = this.page.locator("data-test-id=market-search-input");
+  private counterValueSelect = this.page.locator("data-test-id=market-countervalue-select");
+  private marketRangeSelect = this.page.locator("data-test-id=market-range-select");
+  private starFilterButton = this.page.locator("data-test-id=market-star-button");
+  private loadingPlaceholder = this.page.locator("data-test-id=loading-placeholder");
+  private coinRow = (ticker: string) => this.page.locator(`data-test-id=market-${ticker}-row`);
+  private coinPageContainer = this.page.locator(`data-test-id=market-coin-page-container`);
+  private starButton = (ticker: string) =>
+    this.page.locator(`data-test-id=market-${ticker}-star-button`);
+  private buyButton = (ticker: string) =>
+    this.page.locator(`data-test-id=market-${ticker}-buy-button`);
+  readonly swapButton = (ticker: string) =>
+    this.page.locator(`data-test-id=market-${ticker}-swap-button`);
+  private stakeButton = (ticker: string) =>
+    this.page.locator(`data-test-id=market-${ticker}-stake-button`);
 
   async search(query: string) {
     await this.searchInput.fill(query);
-  }
-
-  async openFilterDrawer() {
-    await this.filterDrawerButton.click();
   }
 
   async switchCountervalue(_ticker: string) {
@@ -69,10 +51,6 @@ export class MarketPage {
     await this.buyButton(ticker).click();
     // FIXME windows seems to be choking on the transition taking longer.
     await new Promise(resolve => setTimeout(resolve, 1000));
-  }
-
-  async openSwapPage(ticker: string) {
-    await this.swapButton(ticker).click();
   }
 
   async waitForLoading() {

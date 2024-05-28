@@ -1,12 +1,12 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { PortfolioPage } from "../../models/PortfolioPage";
-import { AssetPage } from "../../models/AssetPage";
-import { AccountsPage } from "../../models/AccountsPage";
-import { AccountPage } from "../../models/AccountPage";
-import { SettingsPage } from "../../models/SettingsPage";
-import { MarketPage } from "../../models/MarketPage";
+import { LayoutComponent } from "../../component/layout.component";
+import { PortfolioPage } from "../../page/portfolio.page";
+import { AssetPage } from "../../page/asset.page";
+import { AccountsPage } from "../../page/accounts.page";
+import { AccountPage } from "../../page/account.page";
+import { SettingsPage } from "../../page/settings.page";
+import { MarketPage } from "../../page/market.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({
@@ -44,7 +44,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
     return;
   }
 
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const portfolioPage = new PortfolioPage(page);
   const liveAppWebview = new LiveAppWebview(page);
   const assetPage = new AssetPage(page);

@@ -1,15 +1,15 @@
 import os from "os";
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { AddAccountModal } from "../../models/AddAccountModal";
-import { PortfolioPage } from "../../models/PortfolioPage";
+import { LayoutComponent } from "../../component/layout.component";
+import { AddAccountModal } from "../../page/modal/add.account.modal";
+import { PortfolioPage } from "../../page/portfolio.page";
 
 test.use({ userdata: "skip-onboarding" });
 
 // eslint-disable-next-line jest/expect-expect
 test("Keyboard shortcuts", async ({ page }) => {
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const portfolioPage = new PortfolioPage(page);
   const addAccountModal = new AddAccountModal(page);
 

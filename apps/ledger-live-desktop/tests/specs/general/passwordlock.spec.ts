@@ -1,15 +1,15 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { Modal } from "../../models/Modal";
-import { PasswordlockModal } from "../../models/PasswordlockModal";
-import { LockscreenPage } from "../../models/LockscreenPage";
+import { LayoutComponent } from "../../component/layout.component";
+import { Modal } from "../../component/modal.component";
+import { PasswordlockModal } from "../../page/modal/passwordlock.modal";
+import { LockscreenPage } from "../../page/lockscreen.page";
 import fsPromises from "fs/promises";
 
 test.use({ userdata: "skip-onboarding" });
 
 test("Enable password lock", async ({ page, userdataFile }) => {
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const modal = new Modal(page);
   const passwordlockModal = new PasswordlockModal(page);
   const lockscreenPage = new LockscreenPage(page);

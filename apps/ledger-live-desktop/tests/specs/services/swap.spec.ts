@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import test from "../../fixtures/mockFixtures";
 import { expect } from "@playwright/test";
-import { SwapPage } from "../../models/SwapPage";
+import { SwapPage } from "../../page/swap.page";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Drawer } from "../../models/Drawer";
-import { AccountsPage } from "../../models/AccountsPage";
-import { AccountPage } from "../../models/AccountPage";
-import { Layout } from "../../models/Layout";
-import { Modal } from "../../models/Modal";
+import { AccountsPage } from "../../page/accounts.page";
+import { AccountPage } from "../../page/account.page";
+import { LayoutComponent } from "../../component/layout.component";
+import { Modal } from "../../component/modal.component";
 import {
   getBitcoinToDogecoinRatesMock,
   getBitcoinToEthereumRatesMock,
@@ -33,7 +33,7 @@ test.describe.parallel("Swap", () => {
     mockProviderSvgs,
     mockFeesEndpoint,
   }) => {
-    const layout = new Layout(page);
+    const layout = new LayoutComponent(page);
     const accountsPage = new AccountsPage(page);
     const accountPage = new AccountPage(page);
     const swapPage = new SwapPage(page);
@@ -109,7 +109,7 @@ test.describe.parallel("Swap", () => {
 
   test("Filter Rates @smoke", async ({ page, mockProviderSvgs, mockFeesEndpoint }) => {
     const swapPage = new SwapPage(page);
-    const layout = new Layout(page);
+    const layout = new LayoutComponent(page);
 
     await page.route("https://swap.ledger.com/v5/rate**", async route => {
       const mockRatesResponse = getEthereumToTetherRatesMock();
@@ -170,7 +170,7 @@ test.describe.parallel("Swap", () => {
     const swapPage = new SwapPage(page);
     const deviceAction = new DeviceAction(page);
     const drawer = new Drawer(page);
-    const layout = new Layout(page);
+    const layout = new LayoutComponent(page);
 
     await page.route("https://swap.ledger.com/v5/rate**", async route => {
       const mockRatesResponse = getBitcoinToEthereumRatesMock();

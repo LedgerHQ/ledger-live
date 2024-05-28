@@ -1,6 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
+import { LayoutComponent } from "../../component/layout.component";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({
@@ -36,7 +36,7 @@ test("Earn @smoke", async ({ page }) => {
     return;
   }
 
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const liveAppWebview = new LiveAppWebview(page);
 
   await test.step("Navigate to Buy app from portfolio banner", async () => {

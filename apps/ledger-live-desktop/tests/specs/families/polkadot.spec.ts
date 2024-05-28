@@ -1,11 +1,11 @@
 import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
-import { Layout } from "../../models/Layout";
+import { LayoutComponent } from "../../component/layout.component";
 
 test.use({ userdata: "1AccountDOT" });
 
 test("Nomination flow", async ({ page }) => {
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
 
   await test.step("Check if nominations icon is still here", async () => {
     await layout.goToAccounts();

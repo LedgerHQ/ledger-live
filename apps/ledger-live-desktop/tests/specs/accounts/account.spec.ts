@@ -1,16 +1,21 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { PortfolioPage } from "../../models/PortfolioPage";
-import { AddAccountModal } from "../../models/AddAccountModal";
+import { PortfolioPage } from "../../page/portfolio.page";
+import { AddAccountModal } from "../../page/modal/add.account.modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Layout } from "../../models/Layout";
-import { AccountPage } from "../../models/AccountPage";
-import { AccountsPage } from "../../models/AccountsPage";
+import { LayoutComponent } from "../../component/layout.component";
+import { AccountPage } from "../../page/account.page";
+import { AccountsPage } from "../../page/accounts.page";
 
 test.use({ userdata: "skip-onboarding" });
 
 const currencies = ["BTC", "LTC", "ETH", "ATOM", "XTZ", "XRP", "Tron", "ADA", "DOT"];
 
+//@TmsLink("B2CQA-101")
+//@TmsLink("B2CQA-102")
+//@TmsLink("B2CQA-314")
+//@TmsLink("B2CQA-330")
+//@TmsLink("B2CQA-929")
 test.describe.parallel("Accounts @smoke", () => {
   for (const currency of currencies) {
     let firstAccountName = "NO ACCOUNT NAME YET";
@@ -19,7 +24,7 @@ test.describe.parallel("Accounts @smoke", () => {
       const portfolioPage = new PortfolioPage(page);
       const addAccountModal = new AddAccountModal(page);
       const deviceAction = new DeviceAction(page);
-      const layout = new Layout(page);
+      const layout = new LayoutComponent(page);
       const accountsPage = new AccountsPage(page);
       const accountPage = new AccountPage(page);
 

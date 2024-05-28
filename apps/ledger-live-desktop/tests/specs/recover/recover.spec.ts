@@ -1,6 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { RecoverRestorePage } from "../../models/RecoverRestorePage";
+import { RecoverRestorePage } from "../../page/recover.restore.page";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 test.use({

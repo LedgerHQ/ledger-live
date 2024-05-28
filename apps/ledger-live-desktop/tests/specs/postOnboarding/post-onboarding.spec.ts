@@ -1,8 +1,8 @@
 /* eslint-disable jest/expect-expect */
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { SettingsPage } from "../../models/SettingsPage";
-import { Layout } from "../../models/Layout";
+import { SettingsPage } from "../../page/settings.page";
+import { LayoutComponent } from "../../component/layout.component";
 import { PostOnboarding } from "../../models/PostOnboarding";
 import padStart from "lodash/padStart";
 
@@ -15,7 +15,7 @@ let screenshotIndex = 0;
 
 test("PostOnboarding state logic", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const postOnboarding = new PostOnboarding(page);
 
   /**

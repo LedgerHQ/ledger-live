@@ -1,9 +1,9 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { DiscoverPage } from "../../models/DiscoverPage";
-import { Layout } from "../../models/Layout";
+import { DiscoverPage } from "../../page/discover.page";
+import { LayoutComponent } from "../../component/layout.component";
 import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
+import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
@@ -71,7 +71,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   const discoverPage = new DiscoverPage(page);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const deviceAction = new DeviceAction(page);
 
   await layout.goToDiscover();

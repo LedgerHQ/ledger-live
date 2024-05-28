@@ -1,9 +1,9 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { DiscoverPage } from "../../models/DiscoverPage";
-import { Layout } from "../../models/Layout";
+import { DiscoverPage } from "../../page/discover.page";
+import { LayoutComponent } from "../../component/layout.component";
 import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
+import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
@@ -41,7 +41,7 @@ test("Live App SDK methods @smoke", async ({ page }) => {
   const liveAppWebview = new LiveAppWebview(page);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
-  const layout = new Layout(page);
+  const layout = new LayoutComponent(page);
   const deviceAction = new DeviceAction(page);
 
   await test.step("Navigate to dummy live app", async () => {
