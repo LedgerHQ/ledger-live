@@ -1,6 +1,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { JWT, LiveCredentials, Trustchain, TrustchainMember, TrustchainSDK } from "./types";
 import Transport from "@ledgerhq/hw-transport";
+import { Permissions } from "@ledgerhq/hw-trustchain";
 
 const mockedTrustchain: Trustchain = {
   rootId: "mock-root-id",
@@ -60,7 +61,11 @@ class MockSDK implements TrustchainSDK {
     transport: Transport,
     seedIdToken: JWT,
     liveInstanceCredentials: LiveCredentials,
-  ): Promise<Trustchain> {
+    _topic?: Uint8Array,
+  ): Promise<{
+    jwt: JWT;
+    trustchain: Trustchain;
+  }> {
     void transport;
     assertSeedIdToken(seedIdToken);
     assertLiveCredentials(liveInstanceCredentials);
@@ -68,32 +73,33 @@ class MockSDK implements TrustchainSDK {
       this._members.push({
         id: liveInstanceCredentials.pubkey,
         name: "Mock-" + getEnv("MOCK"),
+        permissions: Permissions.OWNER,
       });
     }
-    return Promise.resolve(mockedTrustchain);
+    return Promise.resolve({
+      jwt: seedIdToken,
+      trustchain: mockedTrustchain,
+    });
   }
 
   async restoreTrustchain(
     liveJWT: JWT,
-    trustchain: Trustchain,
+    trustchainId: string,
     liveInstanceCredentials: LiveCredentials,
   ): Promise<Trustchain> {
     assertLiveJWT(liveJWT);
-    assertTrustchain(trustchain);
+    if (typeof trustchainId !== "string") {
+      throw new Error("trustchainId must be a string");
+    }
     assertLiveCredentials(liveInstanceCredentials);
     return Promise.resolve(mockedTrustchain);
   }
 
   private _members: TrustchainMember[] = [];
 
-  async getMembers(
-    liveJWT: JWT,
-    trustchain: Trustchain,
-    liveInstanceCredentials: LiveCredentials,
-  ): Promise<TrustchainMember[]> {
+  async getMembers(liveJWT: JWT, trustchain: Trustchain): Promise<TrustchainMember[]> {
     assertLiveJWT(liveJWT);
     assertTrustchain(trustchain);
-    assertLiveCredentials(liveInstanceCredentials);
     return Promise.resolve([...this._members]);
   }
 
@@ -103,13 +109,19 @@ class MockSDK implements TrustchainSDK {
     trustchain: Trustchain,
     liveInstanceCredentials: LiveCredentials,
     member: TrustchainMember,
-  ): Promise<Trustchain> {
+  ): Promise<{
+    jwt: JWT;
+    trustchain: Trustchain;
+  }> {
     void transport;
     assertSeedIdToken(seedIdToken);
     assertTrustchain(trustchain);
     assertLiveCredentials(liveInstanceCredentials);
     this._members = this._members.filter(m => m.id !== member.id);
-    return Promise.resolve(mockedTrustchain);
+    return Promise.resolve({
+      jwt: mockedSeedIdAccessToken,
+      trustchain: mockedTrustchain,
+    });
   }
 
   async destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void> {
@@ -124,7 +136,7 @@ class MockSDK implements TrustchainSDK {
     trustchain: Trustchain,
     liveInstanceCredentials: LiveCredentials,
     member: TrustchainMember,
-  ): Promise<Trustchain> {
+  ): Promise<void> {
     assertLiveJWT(liveJWT);
     assertTrustchain(trustchain);
     assertLiveCredentials(liveInstanceCredentials);
@@ -134,7 +146,7 @@ class MockSDK implements TrustchainSDK {
       );
     }
     this._members.push(member);
-    return Promise.resolve(mockedTrustchain);
+    return Promise.resolve();
   }
 
   encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {

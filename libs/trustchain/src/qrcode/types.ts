@@ -1,3 +1,5 @@
+import { Trustchain } from "../types";
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type Encrypted<T> = {
   encrypted: string;
@@ -48,7 +50,9 @@ export type Message =
       version: number;
       publisher: string;
       message: "TrustchainAddedMember";
-      payload: Encrypted<Record<string, never>>;
+      payload: Encrypted<{
+        trustchain: Trustchain;
+      }>;
     };
 
 export type DecryptedPayload<M> = M extends { payload: Encrypted<infer T> }
