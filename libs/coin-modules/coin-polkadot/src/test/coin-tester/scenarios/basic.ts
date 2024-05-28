@@ -88,7 +88,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
       };
 
     const unsub = await api.tx.balances
-      .transferAll(basicScenarioAccountPair.address, false)
+      .transferAllowDeath(basicScenarioAccountPair.address, 90_000_000_000)
       .signAndSend(alice, async result => {
         console.log(`Current status is ${result.status}`);
 
