@@ -45,11 +45,12 @@ const coinConfig: PolkadotCoinConfig = {
 export const basicScenario: Scenario<PolkadotTransaction> = {
   name: "Polkadot Basic transactions",
   setup: async () => {
-    const [{ transport, onSignerConfirmation }] = await Promise.all([
+    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Polkadot/app_${defaultNanoApp.version}.elf`),
       spawnChopsticksAndSidecar(),
     ]);
 
+    const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");
     await cryptoWaitReady();
     await wsProvider.connect();
     const api = await ApiPromise.create({ provider: wsProvider });

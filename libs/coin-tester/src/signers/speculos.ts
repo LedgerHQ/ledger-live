@@ -33,7 +33,7 @@ export const spawnSpeculos = async (
   nanoAppEndpoint: `/${string}`,
 ): Promise<{
   transport: SpeculosTransportHttp;
-  onSignerConfirmation: (e?: SignOperationEvent) => Promise<void>;
+  getOnSpeculosConfirmation: (approvalText?: string) => () => Promise<void>;
 }> => {
   ensureEnv();
   console.log(`Starting speculos...`);
@@ -70,29 +70,37 @@ export const spawnSpeculos = async (
     return checkSpeculosLogs();
   };
 
-  const onSpeculosConfirmation = async (e?: SignOperationEvent): Promise<void> => {
-    if (e?.type === "device-signature-requested") {
-      const { data } = await axios.get(
-        `http://localhost:${process.env.API_PORT}/events?currentscreenonly=true`,
-      );
+  const getOnSpeculosConfirmation = (approvalText = "Accept") => {
+    const onSpeculosConfirmation = async (e?: SignOperationEvent): Promise<void> => {
+      console.log(e);
+      if (e?.type === "device-signature-requested") {
+        const { data } = await axios.get(
+          `http://localhost:${process.env.API_PORT}/events?currentscreenonly=true`,
+        );
 
-      if (data.events[0].text !== "Accept") {
-        await axios.post(`http://localhost:${process.env.API_PORT}/button/right`, {
-          action: "press-and-release",
-        });
-        onSpeculosConfirmation(e);
-      } else {
-        await axios.post(`http://localhost:${process.env.API_PORT}/button/both`, {
-          action: "press-and-release",
-        });
+        console.log(data);
+
+        if (data.events[0].text !== approvalText) {
+          await axios.post(`http://localhost:${process.env.API_PORT}/button/right`, {
+            action: "press-and-release",
+          });
+
+          onSpeculosConfirmation(e);
+        } else {
+          await axios.post(`http://localhost:${process.env.API_PORT}/button/both`, {
+            action: "press-and-release",
+          });
+        }
       }
-    }
+    };
+
+    return onSpeculosConfirmation;
   };
 
   return checkSpeculosLogs().then(transport => {
     return {
       transport,
-      onSignerConfirmation: onSpeculosConfirmation,
+      getOnSpeculosConfirmation,
     };
   });
 };

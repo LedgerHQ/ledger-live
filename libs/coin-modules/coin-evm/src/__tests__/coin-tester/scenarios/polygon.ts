@@ -128,7 +128,7 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
 export const scenarioPolygon: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
-    const [{ transport, onSignerConfirmation }] = await Promise.all([
+    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://rpc.ankr.com/polygon"),
     ]);
@@ -161,6 +161,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
     }));
     initMswHandlers(getCoinConfig(polygon).info);
 
+    const onSignerConfirmation = getOnSpeculosConfirmation();
     const currencyBridge = buildCurrencyBridge(signerContext);
     const accountBridge = buildAccountBridge(signerContext);
     const getAddress = resolver(signerContext);
