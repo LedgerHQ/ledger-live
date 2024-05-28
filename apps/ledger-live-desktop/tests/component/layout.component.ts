@@ -1,7 +1,7 @@
 import { step } from "../misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 
-export class LayoutComponent extends Component {
+export class Layout extends Component {
   readonly renderError = this.page.locator("data-test-id=render-error");
   readonly appVersion = this.page.locator("data-test-id=app-version");
 
@@ -10,7 +10,7 @@ export class LayoutComponent extends Component {
 
   // drawer
   readonly drawerCollapseButton = this.page.locator("data-test-id=drawer-collapse-button");
-  private drawerPortfolioButton = this.page.locator("data-test-id=drawer-dashboard-button");
+  readonly drawerPortfolioButton = this.page.locator("data-test-id=drawer-dashboard-button");
   private drawerMarketButton = this.page.locator("data-test-id=drawer-market-button");
   private drawerAccountsButton = this.page.locator("data-test-id=drawer-accounts-button");
   private drawerDiscoverButton = this.page.locator("data-test-id=drawer-catalog-button");

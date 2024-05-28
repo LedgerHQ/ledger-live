@@ -7,7 +7,7 @@ export class OnboardingPage extends AppPage {
   private selectDeviceButton = (deviceId: string) =>
     this.page.locator(`data-test-id=v3-device-${deviceId}`);
   private checkMyNanoButton = this.page.locator('button:has-text("Check my Nano")');
-  private continueButton = this.page.locator('button:has-text("Continue")');
+  readonly continueButton = this.page.locator('button:has-text("Continue")');
   private newDeviceButton = this.page.locator("data-test-id=v3-onboarding-new-device");
   private connectDeviceButton = this.page.locator("data-test-id=v3-onboarding-initialized-device");
   private restoreDeviceButton = this.page.locator("data-test-id=v3-onboarding-restore-device");

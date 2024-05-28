@@ -5,8 +5,8 @@ export class Modal extends Component {
   readonly container = this.page.locator(
     '[data-test-id=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
   );
-  protected title = this.page.locator("data-test-id=modal-title");
-  protected content = this.page.locator("data-test-id=modal-content");
+  readonly title = this.page.locator("data-test-id=modal-title");
+  readonly content = this.page.locator("data-test-id=modal-content");
   protected backdrop = this.page.locator("data-test-id=modal-backdrop");
   protected continueButton = this.page.locator("data-test-id=modal-continue-button");
   protected saveButton = this.page.locator("data-test-id=modal-save-button");

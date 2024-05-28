@@ -1,13 +1,13 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { SettingsPage } from "../../page/settings.page";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 
 test.use({ userdata: "skip-onboarding" });
 
 test("Settings", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
 
   await test.step("go to settings", async () => {
     await layout.goToSettings();

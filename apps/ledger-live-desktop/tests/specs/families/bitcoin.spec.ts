@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import path from "path";
 import test from "../../fixtures/common";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 import { SendModal } from "../../page/modal/send.modal";
 
 test.use({
@@ -14,7 +14,7 @@ test.use({
 });
 
 test("Send flow", async ({ page }) => {
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const sendModal = new SendModal(page);
 
   await test.step("can open send modal and use a qr code from camera", async () => {

@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { getEnv } from "@ledgerhq/live-env";
 import test from "../../fixtures/common";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
@@ -13,7 +13,7 @@ test.use({
 });
 
 test("Countervalues: at least one call is made and successful to the API", async ({ page }) => {
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
 
   await test.step("has used countervalues api in HTTP and at least one HTTP 200 happened", async () => {
     const firstSuccessfulQuery = new Promise(resolve => {

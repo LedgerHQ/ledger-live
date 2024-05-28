@@ -4,7 +4,7 @@ import { step } from "tests/misc/reporters/step";
 
 export class AddAccountModal extends Modal {
   private selectAccount = this.page.locator("text=Choose a crypto asset"); // FIXME: I need an id
-  private selectAccountInput = this.page.locator('[placeholder="Search"]'); // FIXME: I need an id
+  readonly selectAccountInput = this.page.locator('[placeholder="Search"]'); // FIXME: I need an id
   readonly addAccountsButton = this.page.locator("data-test-id=add-accounts-import-add-button");
   private accountsList = this.page.locator("data-test-id=add-accounts-step-import-accounts-list");
   private stopButton = this.page.locator("data-test-id=add-accounts-import-stop-button");

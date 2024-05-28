@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { ManagerPage } from "../../page/manager.page";
 import { FirmwareUpdateModal } from "../../page/modal/firmware.update.modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 
 test.use({ userdata: "skip-onboarding" });
 
@@ -13,7 +13,7 @@ test("Firmware Update @smoke", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const firmwareUpdateModal = new FirmwareUpdateModal(page);
   const deviceAction = new DeviceAction(page);
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
 
   await test.step("Access manager", async () => {
     await layout.goToManager();

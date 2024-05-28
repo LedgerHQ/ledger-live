@@ -1,8 +1,8 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../page/discover.page";
-import { LayoutComponent } from "../../component/layout.component";
-import { Drawer } from "../../models/Drawer";
+import { Layout } from "../../component/layout.component";
+import { Drawer } from "../../page/drawer/drawer";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
@@ -205,7 +205,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
   const liveAppWebview = new LiveAppWebview(page);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const deviceAction = new DeviceAction(page);
 
   await test.step("account.request", async () => {

@@ -1,12 +1,12 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 import { PortfolioPage } from "../../page/portfolio.page";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
 test("Portfolio @smoke", async ({ page }) => {
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const portfolioPage = new PortfolioPage(page);
 
   await test.step("load portfolio", async () => {

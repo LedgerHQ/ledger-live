@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { getEnv } from "@ledgerhq/live-env";
 import test from "../../fixtures/common";
 import { MarketPage } from "../../page/market.page";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 import { MarketCoinPage } from "../../page/market.coin.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
@@ -33,7 +33,7 @@ test.afterAll(async () => {
 test("Market", async ({ page }) => {
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const liveAppWebview = new LiveAppWebview(page);
 
   const maskItems = {

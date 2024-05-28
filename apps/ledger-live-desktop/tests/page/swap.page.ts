@@ -1,87 +1,55 @@
-import { Page, Locator } from "@playwright/test";
 import { waitFor } from "../utils/waitFor";
+import { AppPage } from "tests/page/abstractClasses";
 
-export class SwapPage {
-  readonly page: Page;
-  readonly swapMenuButton: Locator;
-  readonly maxSpendableToggle: Locator;
-  readonly destinationCurrencyDropdown: Locator;
-  readonly currencyByName: (accountName: string) => Locator;
-  readonly fromCurrencyDropdownAddAccountButton: Locator;
-  readonly reverseSwapPairButton: Locator;
-  readonly addDestinationAccountButton: Locator;
-  readonly exchangeButton: Locator;
-  readonly swapId: Locator;
-  readonly seeDetailsButton: Locator;
-  readonly detailsSwapId: Locator;
-  readonly historyRow: Locator;
-  readonly quoteContainer: (providerName: string, exchangeType: string) => Locator;
-  readonly changeTargetAccountButton: Locator;
-  readonly changeNetworkFeesButton: Locator;
-  readonly standardFeesSelector: Locator;
-  readonly advancedFeesSelector: Locator;
-  readonly customFeeTextbox: Locator;
-  readonly targetAccountContainer: (accountName: string) => Locator;
-  readonly centralisedQuoteFilterButton: Locator;
-  readonly decentralisedQuoteFilterButton: Locator;
-  readonly floatQuoteFilterButton: Locator;
-  readonly fixedQuoteFilterButton: Locator;
-  readonly swapProviderRates: Locator;
+export class SwapPage extends AppPage {
+  private swapMenuButton = this.page.locator("data-test-id=drawer-swap-button"); // TODO: Should this be here?
+  private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
 
-  constructor(page: Page) {
-    // Misc Swap Components
-    this.page = page;
-    this.swapMenuButton = page.locator("data-test-id=drawer-swap-button"); // TODO: Should this be here?
-    this.currencyByName = accountName => page.getByText(accountName); // TODO: this is rubbish. Changed this
+  // Swap Amount and Currency components
+  private maxSpendableToggle = this.page.locator("data-test-id=swap-max-spendable-toggle");
+  private destinationCurrencyDropdown = this.page.locator(
+    "data-test-id=destination-currency-dropdown",
+  );
+  private fromCurrencyDropdownAddAccountButton = this.page.getByText("Add account");
+  private reverseSwapPairButton = this.page.locator("data-test-id=swap-reverse-pair-button");
+  private addDestinationAccountButton = this.page.locator(
+    "data-test-id=add-destination-account-button",
+  );
+  private changeTargetAccountButton = this.page
+    .locator("data-test-id=change-exchange-details-button")
+    .first();
+  private targetAccountContainer = (accountName: string) =>
+    this.page.locator(`data-test-id=target-account-container-${accountName}`).first();
 
-    // Swap Amount and Currency components
-    this.maxSpendableToggle = page.locator("data-test-id=swap-max-spendable-toggle");
-    this.destinationCurrencyDropdown = page.locator("data-test-id=destination-currency-dropdown");
-    this.fromCurrencyDropdownAddAccountButton = page.getByText("Add account");
-    this.reverseSwapPairButton = page.locator("data-test-id=swap-reverse-pair-button");
-    this.addDestinationAccountButton = page.locator("data-test-id=add-destination-account-button");
-    this.changeTargetAccountButton = page
-      .locator("data-test-id=change-exchange-details-button")
-      .first();
-    this.targetAccountContainer = accountName =>
-      page.locator(`data-test-id=target-account-container-${accountName}`).first();
+  // Network Fee Components
+  private changeNetworkFeesButton = this.page
+    .locator("data-test-id=change-exchange-details-button")
+    .last();
+  private standardFeesSelector = this.page.locator("data-test-id=standard-fee-mode-selector");
+  private advancedFeesSelector = this.page.locator("data-test-id=advanced-fee-mode-selector");
+  private customFeeTextbox = this.page.locator("data-test-id=currency-textbox");
 
-    // Network Fee Components
-    this.changeNetworkFeesButton = page
-      .locator("data-test-id=change-exchange-details-button")
-      .last();
-    this.standardFeesSelector = page.locator("data-test-id=standard-fee-mode-selector");
-    this.advancedFeesSelector = page.locator("data-test-id=advanced-fee-mode-selector");
-    this.customFeeTextbox = page.locator("data-test-id=currency-textbox");
+  // Quote Filter Components
+  private centralisedQuoteFilterButton = this.page.locator(
+    "data-test-id=centralised-quote-filter-button",
+  );
+  private decentralisedQuoteFilterButton = this.page.locator(
+    "data-test-id=decentralised-quote-filter-button",
+  );
+  private floatQuoteFilterButton = this.page.locator("data-test-id=float-quote-filter-button");
+  private fixedQuoteFilterButton = this.page.locator("data-test-id=fixed-quote-filter-button");
 
-    // Quote Filter Components
-    this.centralisedQuoteFilterButton = page.locator(
-      "data-test-id=centralised-quote-filter-button",
-    );
-    this.decentralisedQuoteFilterButton = page.locator(
-      "data-test-id=decentralised-quote-filter-button",
-    );
-    this.floatQuoteFilterButton = page.locator("data-test-id=float-quote-filter-button");
-    this.fixedQuoteFilterButton = page.locator("data-test-id=fixed-quote-filter-button");
+  // Quote Components
+  private quoteContainer = (providerName: string, exchangeType: string) =>
+    this.page.locator(`data-test-id=quote-container-${providerName}-${exchangeType}`);
 
-    // Quote Components
-    this.quoteContainer = (providerName, exchangeType) =>
-      page.locator(`data-test-id=quote-container-${providerName}-${exchangeType}`);
+  // Exchange Button Component
+  private exchangeButton = this.page.locator("data-test-id=exchange-button");
 
-    // Exchange Button Component
-    this.exchangeButton = page.locator("data-test-id=exchange-button");
-
-    // Exchange Drawer Components
-    this.swapId = page.locator("data-test-id=swap-id");
-    this.seeDetailsButton = page.locator('button:has-text("See details")');
-    this.detailsSwapId = page.locator("data-test-id=details-swap-id").first();
-
-    // Swap History Components
-    this.historyRow = page.locator(".swap-history-row").first();
-
-    // Swap Provider Rates
-    this.swapProviderRates = page.locator("data-test-id='swap2.provider-rates'");
-  }
+  // Exchange Drawer Components
+  readonly swapId = this.page.locator("data-test-id=swap-id");
+  private seeDetailsButton = this.page.locator('button:has-text("See details")');
+  readonly detailsSwapId = this.page.locator("data-test-id=details-swap-id").first();
 
   async navigate() {
     await this.swapMenuButton.click();
@@ -95,12 +63,8 @@ export class SwapPage {
     await this.maxSpendableToggle.click();
   }
 
-  async openDestinationCurrencyDropdown() {
-    await this.destinationCurrencyDropdown.click();
-  }
-
   async waitForCurrenciesToExist() {
-    await this.page.getByRole("option");
+    this.page.getByRole("option");
   }
 
   async filterDestinationCurrencyDropdown(filter: string) {

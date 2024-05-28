@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { LayoutComponent } from "../../component/layout.component";
-import { Drawer } from "../../models/Drawer";
+import { Layout } from "../../component/layout.component";
+import { Drawer } from "../../page/drawer/drawer";
 import { SendModal } from "../../page/modal/send.modal";
 import { ReceiveModal } from "../../page/modal/receive.modal";
 import { SettingsPage } from "../../page/settings.page";
@@ -9,7 +9,7 @@ import { SettingsPage } from "../../page/settings.page";
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
 test("Layout @smoke", async ({ page }) => {
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const drawer = new Drawer(page);
   const sendModal = new SendModal(page);
   const receiveModal = new ReceiveModal(page);

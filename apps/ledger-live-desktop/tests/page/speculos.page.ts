@@ -23,6 +23,7 @@ export class SpeculosPage extends AppPage {
     await pressBoth();
   }
 
+  @step("Verify transaction info on device")
   async expectValidTxInfo(tx: Transaction) {
     const amountScreen = await pressRightUntil(DeviceLabels.AMOUT);
     expect(verifyAmount(tx.amount, amountScreen)).toBe(true);

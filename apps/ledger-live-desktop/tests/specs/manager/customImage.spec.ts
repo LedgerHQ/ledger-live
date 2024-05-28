@@ -2,8 +2,8 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { ManagerPage } from "../../page/manager.page";
 import { DeviceAction } from "../../models/DeviceAction";
-import { LayoutComponent } from "../../component/layout.component";
-import { CustomImageDrawer } from "../../models/CustomImageDrawer";
+import { Layout } from "../../component/layout.component";
+import { CustomImageDrawer } from "../../page/drawer/custom.image.drawer";
 import { DeviceModelId } from "@ledgerhq/devices";
 import padStart from "lodash/padStart";
 
@@ -13,7 +13,7 @@ test("Custom image", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const deviceAction = new DeviceAction(page);
   const customImageDrawer = new CustomImageDrawer(page);
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
 
   const container = customImageDrawer.container;
 

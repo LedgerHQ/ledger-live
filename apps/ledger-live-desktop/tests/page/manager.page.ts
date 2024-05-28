@@ -1,8 +1,8 @@
 import { AppPage } from "tests/page/abstractClasses";
 
 export class ManagerPage extends AppPage {
-  private firmwareUpdateButton = this.page.locator("data-test-id=manager-update-firmware-button");
-  private changeDeviceLanguageButton = this.page.locator(
+  readonly firmwareUpdateButton = this.page.locator("data-test-id=manager-update-firmware-button");
+  readonly changeDeviceLanguageButton = this.page.locator(
     "data-test-id=manager-change-language-button",
   );
   private installedAppsTab = this.page.locator("data-test-id=manager-installed-apps-tab");
@@ -22,7 +22,7 @@ export class ManagerPage extends AppPage {
   );
   private confirmButton = this.page.locator("data-test-id=modal-confirm-button");
   private installedAppEmptyState = this.page.locator("data-test-id=manager-no-apps-empty-state");
-  private customImageButton = this.page.locator("data-test-id=manager-custom-image-button");
+  readonly customImageButton = this.page.locator("data-test-id=manager-custom-image-button");
 
   async goToInstalledAppTab() {
     await this.installedAppsTab.click();

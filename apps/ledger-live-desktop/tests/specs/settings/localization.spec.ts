@@ -1,9 +1,9 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { SettingsPage } from "../../page/settings.page";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import { LanguageInstallation } from "../../models/LanguageInstallation";
+import { LanguageInstallation } from "../../page/drawer/language.installation.drawer";
 import { languagePacksData } from "./data";
 
 test.use({ userdata: "skip-onboarding" });
@@ -13,7 +13,7 @@ test("Settings", async ({ page }) => {
   const deviceAction = new DeviceAction(page);
   const languageInstallation = new LanguageInstallation(page);
   const settingsPage = new SettingsPage(page);
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
 
   await test.step("go to settings -> change language to french with no device", async () => {
     await layout.goToSettings();

@@ -4,7 +4,7 @@ export class SettingsPage extends AppPage {
   private accountsTab = this.page.locator("data-test-id=settings-accounts-tab");
   private aboutTab = this.page.locator("data-test-id=settings-about-tab");
   private helpTab = this.page.locator("data-test-id=settings-help-tab");
-  private experimentalTab = this.page.locator("data-test-id=settings-experimental-tab");
+  readonly experimentalTab = this.page.locator("data-test-id=settings-experimental-tab");
   private developerTab = this.page.locator("data-test-id=settings-developer-tab");
   private experimentalDevModeToggle = this.page.locator("data-test-id=MANAGER_DEV_MODE-button");
   readonly counterValueSelector = this.page.locator(

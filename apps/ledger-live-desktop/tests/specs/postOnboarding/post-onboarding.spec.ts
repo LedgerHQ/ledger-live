@@ -2,8 +2,8 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { SettingsPage } from "../../page/settings.page";
-import { LayoutComponent } from "../../component/layout.component";
-import { PostOnboarding } from "../../models/PostOnboarding";
+import { Layout } from "../../component/layout.component";
+import { PostOnboarding } from "../../page/post.onboarding.page";
 import padStart from "lodash/padStart";
 
 test.use({
@@ -15,7 +15,7 @@ let screenshotIndex = 0;
 
 test("PostOnboarding state logic", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const postOnboarding = new PostOnboarding(page);
 
   /**

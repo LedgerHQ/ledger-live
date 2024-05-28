@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { LayoutComponent } from "../../component/layout.component";
-import { AppUpdater } from "../../models/AppUpdater";
+import { Layout } from "../../component/layout.component";
+import { AppUpdater } from "../../component/app.updater.component";
 
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel",
@@ -9,7 +9,7 @@ test.use({
 });
 
 test("Updater", async ({ page }) => {
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const appUpdater = new AppUpdater(page);
 
   await test.step("[idle] state should not be visible", async () => {

@@ -1,6 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 import { PortfolioPage } from "../../page/portfolio.page";
 import { AssetPage } from "../../page/asset.page";
 import { AccountsPage } from "../../page/accounts.page";
@@ -44,7 +44,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
     return;
   }
 
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const portfolioPage = new PortfolioPage(page);
   const liveAppWebview = new LiveAppWebview(page);
   const assetPage = new AssetPage(page);

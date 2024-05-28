@@ -1,10 +1,10 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { ManagerPage } from "../../page/manager.page";
-import { LanguageInstallation } from "../../models/LanguageInstallation";
+import { LanguageInstallation } from "../../page/drawer/language.installation.drawer";
 import { DeviceAction } from "../../models/DeviceAction";
-import { LayoutComponent } from "../../component/layout.component";
-import { Drawer } from "tests/models/Drawer";
+import { Layout } from "../../component/layout.component";
+import { Drawer } from "tests/page/drawer/drawer";
 
 test.use({ userdata: "skip-onboarding" });
 test.use({ env: { FORCE_PROVIDER: "12" } });
@@ -14,7 +14,7 @@ test("Manager", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const languageInstallation = new LanguageInstallation(page);
   const deviceAction = new DeviceAction(page);
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const drawer = new Drawer(page);
 
   await test.step("can access manager with l10n firmware", async () => {

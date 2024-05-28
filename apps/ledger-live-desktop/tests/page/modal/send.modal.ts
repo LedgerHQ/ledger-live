@@ -5,7 +5,7 @@ import { Transaction } from "../../models/Transaction";
 
 export class SendModal extends Modal {
   private drowdownAccount = this.page.locator('[data-test-id="modal-content"] svg').nth(1);
-  private recipientInput = this.page.getByPlaceholder("Enter");
+  readonly recipientInput = this.page.getByPlaceholder("Enter");
   private continueRecipientButton = this.page.getByRole("button", { name: "continue" });
   private totalDebitValue = this.page.locator("text=Total to debit");
   private checkDeviceLabel = this.page.locator(

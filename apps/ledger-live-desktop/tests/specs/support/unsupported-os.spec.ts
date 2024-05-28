@@ -1,6 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 
 test.use({ userdata: "skip-onboarding" });
 
@@ -11,7 +11,7 @@ test.use({
 });
 
 test("Unsupported OS", async ({ page }) => {
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   await test.step("displays the error page", async () => {
     await layout.renderError.waitFor({ state: "visible" });
     await expect(layout.renderError).toBeVisible();

@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { PortfolioPage } from "../../page/portfolio.page";
 import { AddAccountModal } from "../../page/modal/add.account.modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
 
@@ -24,7 +24,7 @@ test.describe.parallel("Accounts @smoke", () => {
       const portfolioPage = new PortfolioPage(page);
       const addAccountModal = new AddAccountModal(page);
       const deviceAction = new DeviceAction(page);
-      const layout = new LayoutComponent(page);
+      const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
       const accountPage = new AccountPage(page);
 

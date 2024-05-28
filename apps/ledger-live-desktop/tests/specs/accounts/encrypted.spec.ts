@@ -1,13 +1,13 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { AccountsPage } from "../../page/accounts.page";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 import { LockscreenPage } from "tests/page/lockscreen.page";
 
 test.use({ userdata: "1AccountBTC1AccountETH-encrypted" });
 
 test("accounts are restored on an encrypted app.json", async ({ page }) => {
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const lockscreenPage = new LockscreenPage(page);
   await lockscreenPage.login("bad password");
   await layout.inputError.waitFor({ state: "visible" });

@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { AccountsPage } from "../../page/accounts.page";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 import { AccountPage } from "../../page/account.page";
 import { Modal } from "../../component/modal.component";
 
@@ -9,7 +9,7 @@ test.use({ userdata: "accountCosmos" });
 let modalPage: Modal;
 
 test.beforeEach(async ({ page }) => {
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const accountPage = new AccountPage(page);
   await layout.goToAccounts();
   modalPage = new Modal(page);

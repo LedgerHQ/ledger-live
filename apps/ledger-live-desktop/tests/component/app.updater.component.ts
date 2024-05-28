@@ -1,12 +1,6 @@
-import { Page } from "@playwright/test";
+import { Component } from "tests/page/abstractClasses";
 
-export class AppUpdater {
-  readonly page: Page;
-
-  constructor(page: Page) {
-    this.page = page;
-  }
-
+export class AppUpdater extends Component {
   async setStatus(s: UpdateStatus) {
     await this.page.evaluate(
       args => {

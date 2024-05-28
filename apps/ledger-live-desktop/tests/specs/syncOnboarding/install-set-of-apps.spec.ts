@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
 import { InstallSetOfApps } from "../../page/install.page";
 import { SettingsPage } from "../../page/settings.page";
-import { LayoutComponent } from "../../component/layout.component";
+import { Layout } from "../../component/layout.component";
 import { DeviceAction } from "../../models/DeviceAction";
 
 test.use({
@@ -14,7 +14,7 @@ test.use({
 
 test("Install set of apps", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
-  const layout = new LayoutComponent(page);
+  const layout = new Layout(page);
   const deviceAction = new DeviceAction(page);
   const installSetOfAppsPage = new InstallSetOfApps(page);
 
