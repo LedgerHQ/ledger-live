@@ -42,7 +42,7 @@ const App = () => {
 
   const onSeedIdAuthenticate = useCallback(() => {
     withDevice("webhid")(transport => from(sdk.seedIdAuthenticate(transport))).subscribe({
-      next: setSeedIdAccessToken,
+      next: t => setSeedIdAccessToken(t.accessToken),
       error: error => {
         console.error(error);
         setSeedIdAccessToken("error: " + error);

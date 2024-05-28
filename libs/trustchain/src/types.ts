@@ -1,10 +1,8 @@
-import * as HwTrustchain from "@ledgerhq/hw-trustchain";
 import Transport from "@ledgerhq/hw-transport";
 
-// FIXME lib will eventually be used instead of this
-void HwTrustchain;
-
-export type JWT = string;
+export type JWT = {
+  accessToken: string;
+};
 
 export type Trustchain = {
   rootId: string;
@@ -12,8 +10,10 @@ export type Trustchain = {
 };
 
 export type LiveCredentials = {
-  privatekey: string;
-  pubkey: string;
+  keypair: {
+    publicKey: Uint8Array;
+    privateKey: Uint8Array;
+  };
 };
 
 export type TrustchainMember = {
