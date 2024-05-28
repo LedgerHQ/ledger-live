@@ -8,7 +8,6 @@ import { OperationType } from "@ledgerhq/types-live";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useRoute } from "@react-navigation/native";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
@@ -16,6 +15,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   operation: CeloOperation;
@@ -29,7 +29,7 @@ const OperationDetailsExtra = ({ operation, type, account }: Props) => {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const { locale } = useSettings();
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { validatorGroups: celoValidators } = useCeloPreloadData();
   const { extra } = operation;
   const optimisticOperation = useRoute<Navigation["route"]>().params?.operation ?? null;

@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { DisconnectedDevice } from "@ledgerhq/errors";
@@ -37,6 +37,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -170,7 +171,7 @@ const StepReceiveFunds = (props: StepProps) => {
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
-  const name = token ? token.name : getAccountName(account);
+  const name = token ? token.name : getDefaultAccountName(account);
   const initialDevice = useRef(device);
   const address = mainAccount.freshAddress;
   const [modalVisible, setModalVisible] = useState(false);

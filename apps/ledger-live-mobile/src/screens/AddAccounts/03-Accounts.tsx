@@ -2,10 +2,11 @@ import React, { useEffect, useCallback, useState, useRef, memo, useMemo } from "
 import { StyleSheet, View, Linking, SafeAreaView } from "react-native";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
-import { isAccountEmpty, groupAddAccounts } from "@ledgerhq/live-common/account/index";
-import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import type { AddAccountSupportLink } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
@@ -14,7 +15,6 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
-import { replaceAccounts } from "~/actions/accounts";
 import { accountsSelector } from "~/reducers/accounts";
 import logger from "../../logger";
 import { Theme, withTheme } from "../../colors";
@@ -48,6 +48,9 @@ import {
 import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import Config from "react-native-config";
+import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
+import { useMaybeAccountName } from "~/reducers/wallet";
+import { setAccountName } from "@ledgerhq/live-wallet/store";
 
 const SectionAccounts = ({
   defaultSelected,
@@ -67,15 +70,12 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsAccounts>
 >;
 type Props = {
-  replaceAccounts: (_: {
-    scannedAccounts: Account[];
-    selectedIds: string[];
-    renamings: Record<string, string>;
-  }) => void;
+  addAccountsAction: typeof addAccountsAction;
   existingAccounts: Account[];
   blacklistedTokenIds?: string[];
   colors: Theme["colors"];
 } & NavigationProps;
+
 const mapStateToProps = createStructuredSelector<
   State,
   { existingAccounts: Account[]; blacklistedTokenIds: string[] }
@@ -83,14 +83,15 @@ const mapStateToProps = createStructuredSelector<
   existingAccounts: accountsSelector,
   blacklistedTokenIds: blacklistedTokenIdsSelector,
 });
+
 const mapDispatchToProps = {
-  replaceAccounts,
+  addAccountsAction,
 };
 
 function AddAccountsAccounts({
   navigation,
   route,
-  replaceAccounts,
+  addAccountsAction,
   existingAccounts,
   blacklistedTokenIds,
 }: Props) {
@@ -149,8 +150,8 @@ function AddAccountsAccounts({
               ? selectedIds
               : [latestScannedAccount.id]
             : !hasAlreadyBeenImported && !isNewAccount
-            ? uniq([...selectedIds, latestScannedAccount.id])
-            : selectedIds,
+              ? uniq([...selectedIds, latestScannedAccount.id])
+              : selectedIds,
         );
       }
     }
@@ -227,7 +228,8 @@ function AddAccountsAccounts({
     [selectedIds],
   );
   const importAccount = useCallback(() => {
-    replaceAccounts({
+    addAccountsAction({
+      existingAccounts,
       scannedAccounts,
       selectedIds,
       renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
@@ -248,7 +250,17 @@ function AddAccountsAccounts({
           currency,
         });
     }
-  }, [currency, inline, navigation, replaceAccounts, route.params, scannedAccounts, selectedIds]);
+  }, [
+    currency,
+    inline,
+    navigation,
+    addAccountsAction,
+    existingAccounts,
+    route.params,
+    scannedAccounts,
+    selectedIds,
+  ]);
+
   const onCancel = useCallback(() => {
     setError(null);
     setCancelled(true);
@@ -259,15 +271,14 @@ function AddAccountsAccounts({
     }
   }, [cancelled, navigation]);
   const viewAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(true), []);
+
+  const dispatch = useDispatch();
+
   const onAccountNameChange = useCallback(
     (name: string, changedAccount: Account) => {
-      setScannedAccounts(
-        scannedAccounts.map(account =>
-          account.id === changedAccount.id ? { ...account, name } : account,
-        ),
-      );
+      dispatch(setAccountName(changedAccount.id, name));
     },
-    [scannedAccounts],
+    [dispatch],
   );
   const { sections, alreadyEmptyAccount } = useMemo(
     () =>
@@ -285,6 +296,7 @@ function AddAccountsAccounts({
       preferredNewAccountScheme,
     ],
   );
+  const alreadyEmptyAccountName = useMaybeAccountName(alreadyEmptyAccount);
   const cantCreateAccount = !sections.some(s => s.id === "creatable");
   const noImportableAccounts = !sections.some(
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
@@ -298,7 +310,7 @@ function AddAccountsAccounts({
       <LText style={styles.paddingHorizontal}>
         <Trans i18nKey="addAccounts.cantCreateAccount">
           {"PLACEHOLDER-1"}
-          <LText semiBold>{alreadyEmptyAccount.name}</LText>
+          <LText semiBold>{alreadyEmptyAccountName}</LText>
           {"PLACEHOLDER-2"}
         </Trans>
       </LText>

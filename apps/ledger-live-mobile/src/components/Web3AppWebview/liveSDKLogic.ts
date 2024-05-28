@@ -2,12 +2,11 @@ import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 
 export default function prepareSignTransaction(
   account: AccountLike,
   parentAccount: Account | undefined,
-  liveTx: Partial<Transaction & { gasLimit: BigNumber }>,
+  liveTx: Partial<Transaction>,
 ): TransactionCommon {
   const bridge = getAccountBridge(account, parentAccount);
   const t = bridge.createTransaction(account);
@@ -17,11 +16,5 @@ export default function prepareSignTransaction(
     subAccountId: isTokenAccount(account) ? account.id : undefined,
   });
 
-  return bridge.updateTransaction(t2, {
-    customGasLimit: txData.gasLimit,
-    type: 1,
-    maxFeePerGas: undefined,
-    maxPriorityFeePerGas: undefined,
-    ...txData,
-  });
+  return bridge.updateTransaction(t2, txData);
 }

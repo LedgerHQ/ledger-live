@@ -1,6 +1,5 @@
-import { getAvailableProviders } from "../..";
 import { AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { fetchRates } from "../../api/v5/fetchRates";
@@ -22,21 +21,23 @@ export function useFetchRates({
   onSuccess,
 }: Props) {
   const currencyFrom = fromCurrencyAccount ? getAccountCurrency(fromCurrencyAccount).id : undefined;
-  const unitFrom = fromCurrencyAccount ? getAccountUnit(fromCurrencyAccount) : undefined;
+  const unitFrom = fromCurrencyAccount
+    ? getAccountCurrency(fromCurrencyAccount).units[0]
+    : undefined;
   const unitTo = toCurrency?.units[0];
   const moonpayFF = useFeature("ptxSwapMoonpayProvider");
+  const removeProviders: string[] = [];
   const formattedCurrencyAmount =
     (unitFrom && `${fromCurrencyAmount.shiftedBy(-unitFrom.magnitude)}`) ?? "0";
-  const providers = getAvailableProviders();
 
   if (!moonpayFF?.enabled) {
-    providers.splice(providers.indexOf("moonpay"), 1);
+    removeProviders.push("moonpay");
   }
   const toCurrencyId = toCurrency?.id;
   return useAPI({
     queryFn: fetchRates,
     queryProps: {
-      providers: providers,
+      removeProviders: [],
       unitTo: unitTo!,
       unitFrom: unitFrom!,
       currencyFrom,

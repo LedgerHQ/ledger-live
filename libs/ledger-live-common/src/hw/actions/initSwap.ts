@@ -59,11 +59,11 @@ const mapResult = ({
         initSwapResult,
       }
     : initSwapError
-    ? {
-        initSwapError,
-        swapId,
-      }
-    : null;
+      ? {
+          initSwapError,
+          swapId,
+        }
+      : null;
 
 const initialState: State = {
   initSwapResult: null,

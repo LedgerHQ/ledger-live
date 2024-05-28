@@ -13,7 +13,7 @@ import type {
   CosmosAccount,
 } from "./types";
 import { mapDelegations, searchFilter as defaultSearchFilter } from "./logic";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import cryptoFactory from "./chain/chain";
 
@@ -44,7 +44,7 @@ export function useCosmosFamilyMappedDelegations(
 
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   return useMemo(() => {
     const mappedDelegations = mapDelegations(delegations || [], validators, unit);
     return mode === "claimReward"

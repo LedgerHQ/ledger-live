@@ -5,42 +5,42 @@ describe("getMainMessage", () => {
   it("should return delegate message with delegate and reward messages (claim rewards, compound)", () => {
     const exec = getMainMessage([
       {
-        type: "delegate",
+        type: "MsgDelegate",
         attributes: [],
       },
       {
-        type: "withdraw_rewards",
+        type: "MsgWithdrawDelegatorReward",
         attributes: [],
       },
     ]);
-    expect(exec.type).toEqual("delegate");
+    expect(exec.type).toEqual("MsgDelegate");
   });
 
   it("should return unbond message with unbound and transfer messages", () => {
     expect(
       getMainMessage([
         {
-          type: "unbond",
+          type: "MsgUndelegate",
           attributes: [],
         },
         {
-          type: "transfer",
+          type: "MsgSend",
           attributes: [],
         },
       ]).type,
-    ).toEqual("unbond");
+    ).toEqual("MsgUndelegate");
   });
 
   it("should return first transfer message with multiple transfer messages", () => {
     const firstTransfer = {
-      type: "transfer",
+      type: "MsgSend",
       attributes: [],
     };
     expect(
       getMainMessage([
         firstTransfer,
         {
-          type: "transfer",
+          type: "MsgSend",
           attributes: [],
         },
       ]),
@@ -51,15 +51,15 @@ describe("getMainMessage", () => {
     expect(
       getMainMessage([
         {
-          type: "delegate",
+          type: "MsgDelegate",
           attributes: [],
         },
         {
-          type: "redelegate",
+          type: "MsgBeginRedelegate",
           attributes: [],
         },
       ]).type,
-    ).toEqual("redelegate");
+    ).toEqual("MsgBeginRedelegate");
   });
 });
 

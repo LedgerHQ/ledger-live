@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/context/store";
 import { importSettings } from "~/actions/settings";
-import { importStore as importAccounts } from "~/actions/accounts";
+import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
 import { importBle } from "~/actions/ble";
@@ -71,7 +71,7 @@ function onMessage(event: WebSocketMessageEvent) {
         acceptGeneralTerms(store);
         break;
       case "importAccounts": {
-        store.dispatch(importAccounts({ active: msg.payload }));
+        store.dispatch(importAccountsRaw({ active: msg.payload }));
         break;
       }
       case "mockDeviceEvent": {

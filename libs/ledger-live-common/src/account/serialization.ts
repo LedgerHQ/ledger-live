@@ -1,10 +1,10 @@
+import memoize from "lodash/memoize";
 import { getCryptoCurrencyById } from "../currencies";
-import { inferFamilyFromAccountId } from "@ledgerhq/coin-framework/account/index";
-
 import type {
   Account,
   AccountBridge,
   AccountRaw,
+  AccountUserData,
   BalanceHistory,
   BalanceHistoryRaw,
   Operation,
@@ -12,6 +12,7 @@ import type {
   SubAccount,
   TransactionCommon,
 } from "@ledgerhq/types-live";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   fromAccountRaw as commonFromAccountRaw,
   toAccountRaw as commonToAccountRaw,
@@ -70,11 +71,34 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     fromOperationExtraRaw: bridge.fromOperationExtraRaw,
   });
 }
-export function toAccountRaw(account: Account): AccountRaw {
+
+export function toAccountRaw(account: Account, userData?: AccountUserData): AccountRaw {
   const bridge = getAccountBridge(account);
 
-  return commonToAccountRaw(account, {
+  const commonAccountRaw = commonToAccountRaw(account, {
     assignToAccountRaw: bridge.assignToAccountRaw,
     toOperationExtraRaw: bridge.toOperationExtraRaw,
   });
+
+  // extend with user data fields
+  if (userData) {
+    commonAccountRaw.name = userData.name;
+    commonAccountRaw.starred = userData.starredIds.includes(commonAccountRaw.id);
+    for (const tokenAccount of commonAccountRaw.subAccounts || []) {
+      tokenAccount.starred = userData.starredIds.includes(tokenAccount.id);
+    }
+  }
+
+  return commonAccountRaw;
 }
+
+const inferFamilyFromAccountId: (accountId: string) => string | null | undefined = memoize(
+  accountId => {
+    try {
+      const { currencyId } = decodeAccountId(accountId);
+      return getCryptoCurrencyById(currencyId).family;
+    } catch (e) {
+      return null;
+    }
+  },
+);

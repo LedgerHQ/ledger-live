@@ -29,13 +29,7 @@ export const LanguageInstallTimeout = createCustomErrorClass("LanguageInstallTim
 export const DeviceOnboarded = createCustomErrorClass("DeviceOnboarded");
 export const DeviceNotOnboarded = createCustomErrorClass("DeviceNotOnboarded");
 export const DeviceAlreadySetup = createCustomErrorClass("DeviceAlreadySetup");
-export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
-  "InvalidAddressBecauseAlreadyDelegated",
-);
 
-export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
-  "AccountAwaitingSendPendingOperations",
-);
 export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");
 export const CosmosRedelegationInProgress = createCustomErrorClass("CosmosRedelegationInProgress");
 export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
@@ -131,12 +125,13 @@ export const BluetoothNotSupportedError = createCustomErrorClass("FwUpdateBlueto
 export const EConnResetError = createCustomErrorClass("EConnReset");
 
 export { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
-export * from "@ledgerhq/coin-framework/errors";
-export * from "@ledgerhq/coin-polkadot/errors";
-export * from "@ledgerhq/coin-algorand/errors";
 export * from "./families/stellar/errors";
-export * from "./families/solana/errors";
-export * from "./families/cardano/errors";
-export * from "@ledgerhq/coin-near/errors";
-export * from "@ledgerhq/coin-evm/errors";
+export * from "@ledgerhq/coin-framework/errors";
+export * from "@ledgerhq/coin-algorand/errors";
 export * from "@ledgerhq/coin-bitcoin/errors";
+export * from "@ledgerhq/coin-cardano/errors";
+export * from "@ledgerhq/coin-evm/errors";
+export * from "@ledgerhq/coin-near/errors";
+export * from "@ledgerhq/coin-polkadot/errors";
+export * from "@ledgerhq/coin-solana/errors";
+export * from "@ledgerhq/coin-tezos/errors";

@@ -14,8 +14,8 @@ const Wrapper = styled(Box).attrs<{
   color: ["active", "valid"].includes(p.status)
     ? "palette.primary.main"
     : p.status === "error"
-    ? "alertRed"
-    : "palette.text.shade40",
+      ? "alertRed"
+      : "palette.text.shade40",
   grow: true,
   justifyContent: "center",
   relative: true,
@@ -37,8 +37,8 @@ const StepNumber = styled(Box).attrs<{
   bg: ["active", "valid"].includes(p.status)
     ? "palette.primary.main"
     : p.status === "error"
-    ? "alertRed"
-    : "palette.background.paper",
+      ? "alertRed"
+      : "palette.background.paper",
   ff: p.status === "active" ? "Inter|Bold" : "Inter|SemiBold",
 }))<{
   status: Status;
@@ -51,8 +51,8 @@ const StepNumber = styled(Box).attrs<{
       ["active", "valid"].includes(p.status)
         ? p.theme.colors.palette.primary.main
         : p.status === "error"
-        ? p.theme.colors.alertRed
-        : p.theme.colors.palette.text.shade30};
+          ? p.theme.colors.alertRed
+          : p.theme.colors.palette.text.shade30};
   font-size: 10px;
   height: ${RADIUS}px;
   line-height: ${RADIUS}px;

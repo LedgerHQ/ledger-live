@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { Linking } from "react-native";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
@@ -14,6 +13,8 @@ import LText from "~/components/LText";
 import Touchable from "~/components/Touchable";
 
 import styles from "../styles";
+import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the hook declaration.
@@ -23,7 +24,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
   const { type, validator, claimableRewards, seconds } = data;
   const { t } = useTranslation();
 
-  const unit = useMemo(() => getAccountUnit(account), [account]);
+  const unit = useAccountUnit(account);
   const [isDelegation, isUndelegation] = useMemo(
     () => [type === "delegation", type === "undelegation"],
     [type],
@@ -82,6 +83,8 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
     [isDelegation, claimableRewards],
   );
 
+  const accountName = useAccountName(account);
+
   /*
    * Compose the array of common items between the two types of drawers (validator name, validator address, account name and item status).
    */
@@ -128,7 +131,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
             style={styles.valueText}
             color="live"
           >
-            {account.name}
+            {accountName}
           </LText>
         ),
       },
@@ -147,7 +150,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
         ),
       },
     ],
-    [validator, name, t, account.name, type, status, onExplorer],
+    [validator, name, t, accountName, type, status, onExplorer],
   );
 
   /*
@@ -205,8 +208,8 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
       delegationItems.length
         ? commonItems.concat(delegationItems)
         : undelegationItems.length
-        ? commonItems.concat(undelegationItems)
-        : [],
+          ? commonItems.concat(undelegationItems)
+          : [],
     [commonItems, delegationItems, undelegationItems],
   );
 

@@ -101,8 +101,8 @@ export async function getTrustedInput(
     await (isDecred
       ? processWholeScriptBlock(Buffer.concat([input.script, input.sequence]))
       : isXSTV2
-      ? processWholeScriptBlock(input.sequence)
-      : processScriptBlocks(input.script, input.sequence));
+        ? processWholeScriptBlock(input.sequence)
+        : processScriptBlocks(input.script, input.sequence));
   }
 
   await getTrustedInputRaw(transport, createVarint(outputs.length));

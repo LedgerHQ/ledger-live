@@ -18,8 +18,10 @@
     "../Components/AccessibilityInfo/legacySendAccessibilityEvent",
     "../DevToolsSettings/DevToolsSettingsManager",
     "../ProgressBarAndroid/ProgressBarAndroid",
+    "../../Network/RCTNetworking",
     "../Utilities/BackHandler",
     "../Utilities/Platform",
+    "../../Network/RCTNetworking at node_modules/react-native/Libraries/Core/Devtools/loadBundleFromServer.js",
     "./BaseViewConfig",
     "./Image",
     "./Libraries/Components/DrawerAndroid/DrawerLayoutAndroid",
@@ -36,6 +38,7 @@
     "./RCTAlertManager",
     "./RCTNetworking",
     "./legacySendAccessibilityEvent",
+    "ansi-regex",
     "@emotion/is-prop-valid",
     "@emotion/stylis",
     "@emotion/unitless",
@@ -69,6 +72,8 @@
     "stacktrace-parser",
     "supports-color",
     "use-sync-external-store/shim",
+    "css-select",
+    "css-tree",
     "whatwg-fetch"
   ],
   "ignoreUnused": ["react", "react-dom", "react-native"]

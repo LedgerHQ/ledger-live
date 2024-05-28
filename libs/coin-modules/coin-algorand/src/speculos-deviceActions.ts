@@ -4,7 +4,7 @@ import {
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import { findTokenById } from "@ledgerhq/coin-framework/currencies/index";
+import { findTokenById } from "@ledgerhq/cryptoassets/index";
 import { displayTokenValue } from "./deviceTransactionConfig";
 import { addPrefixToken, extractTokenId } from "./tokens";
 import type { AlgorandTransaction } from "./types";
@@ -37,8 +37,8 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> = deviceA
         const id = transaction.assetId
           ? extractTokenId(transaction.assetId)
           : transaction.subAccountId
-          ? extractTokenId(transaction.subAccountId)
-          : "";
+            ? extractTokenId(transaction.subAccountId)
+            : "";
         const token = findTokenById(addPrefixToken(id));
         // 34 is max character displayable by nano.
         return token ? displayTokenValue(token).substring(0, 34) : `#${id}`;

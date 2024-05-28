@@ -10,6 +10,6 @@ test("Accounts resiliency works, the portfolio loads and evict 2 bad accounts fr
   const portfolioPage = new PortfolioPage(page);
 
   await test.step("portfolio is in empty mode", async () => {
-    await expect(await portfolioPage.emptyStateTitle).toBeVisible();
+    await expect(portfolioPage.emptyStateTitle).toBeVisible();
   });
 });

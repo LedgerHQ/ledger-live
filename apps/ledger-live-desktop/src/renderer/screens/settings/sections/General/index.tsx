@@ -7,6 +7,7 @@ import CounterValueSelect from "./CounterValueSelect";
 import LanguageSelect from "./LanguageSelect";
 import RegionSelect from "./RegionSelect";
 import ThemeSelect from "./ThemeSelect";
+import WalletSync from "./WalletSync";
 import PasswordButton from "./PasswordButton";
 import PasswordAutoLockSelect from "./PasswordAutoLockSelect";
 import SentryLogsButton from "./SentryLogsButton";
@@ -15,7 +16,7 @@ import SharePersonnalRecoButtonFF from "./SharePersonalRecoButtonFF";
 import ShareAnalyticsButtonFF from "./ShareAnalyticsButtonFF";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
@@ -54,6 +55,16 @@ const SectionGeneral = () => {
         >
           <ThemeSelect />
         </Row>
+
+        <FeatureToggle featureId="lldWalletSync">
+          <Row
+            title={t("settings.display.walletSync")}
+            desc={t("settings.display.walletSyncDesc")}
+            dataTestId="setting-walletSync-dropDown"
+          >
+            <WalletSync />
+          </Row>
+        </FeatureToggle>
 
         <Row title={t("settings.profile.password")} desc={t("settings.profile.passwordDesc")}>
           <PasswordButton />

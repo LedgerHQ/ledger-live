@@ -19,7 +19,7 @@ import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
 import getExchangeRates from "./getExchangeRates";
-import getProviders from "./getProviders";
+import { maybeTezosAccountUnrevealedAccount } from "./maybeTezosAccountUnrevealedAccount";
 
 export { getAvailableProviders } from "../providers";
 
@@ -34,6 +34,13 @@ export const isSwapOperationPending: (status: string) => boolean = status =>
   !operationStatusList.finishedKO.includes(status);
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
+const getSwapUserIP = () => {
+  const SWAP_USER_IP = getEnv("SWAP_USER_IP");
+  if (SWAP_USER_IP) {
+    return { "X-Forwarded-For": SWAP_USER_IP };
+  }
+  return undefined;
+};
 
 const SWAP_API_BASE_PATTERN = /.*\/v(?<version>\d+)\/*$/;
 const getSwapAPIVersion: () => number = () => {
@@ -127,11 +134,12 @@ export const getSwapAPIError = (errorCode: number, errorMessage?: string) => {
 
 export {
   getSwapAPIBaseURL,
+  getSwapUserIP,
   getSwapAPIVersion,
   getCompleteSwapHistory,
   postSwapAccepted,
   getExchangeRates,
-  getProviders,
+  maybeTezosAccountUnrevealedAccount,
   postSwapCancelled,
   initSwap,
   USStates,

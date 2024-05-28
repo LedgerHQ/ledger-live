@@ -148,6 +148,7 @@ export type BaseNavigatorStackParamList = {
     device: Device;
     deviceName: string;
     deviceInfo: DeviceInfo;
+    onNameChange(name: string): void;
   };
   [ScreenName.MarketCurrencySelect]: undefined;
   [ScreenName.PortfolioOperationHistory]: undefined;
@@ -179,6 +180,9 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.CurrencySettings]: {
     currencyId: string;
     headerTitle?: string | undefined;
+  };
+  [ScreenName.EditCurrencyUnits]: {
+    currency: CryptoCurrency;
   };
   [ScreenName.MarketDetail]: {
     currencyId: string;

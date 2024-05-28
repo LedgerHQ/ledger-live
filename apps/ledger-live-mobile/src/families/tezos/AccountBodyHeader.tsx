@@ -3,12 +3,8 @@ import { Trans } from "react-i18next";
 import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import {
-  shortAddressPreview,
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -16,6 +12,7 @@ import CounterValue from "~/components/CounterValue";
 import DelegationDetailsModal from "./DelegationDetailsModal";
 import BakerImage from "./BakerImage";
 import Button from "~/components/wrappedUi/Button";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const styles = StyleSheet.create({
   root: {
@@ -102,6 +99,8 @@ export default function TezosAccountBodyHeader({
 
   const delegation = useDelegation(account);
 
+  const unit = useAccountUnit(account);
+
   if (!delegation) {
     return null;
   }
@@ -109,7 +108,6 @@ export default function TezosAccountBodyHeader({
   const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);
   const amount = account.balance;
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
   const days = differenceInCalendarDays(Date.now(), delegation.operation.date);
 
   return (

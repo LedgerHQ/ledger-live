@@ -4,9 +4,9 @@ import { catchError, switchMap, concatMap, takeWhile, map } from "rxjs/operators
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "@ledgerhq/live-env";
 import { DerivationMode } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
@@ -290,10 +290,10 @@ export const getDerivationScheme = ({
   const coinType = splitFrom
     ? getCryptoCurrencyById(splitFrom).coinType
     : typeof overridesCoinType === "number"
-    ? overridesCoinType
-    : currencyForceCoinType
-    ? currency.coinType
-    : "<coin_type>";
+      ? overridesCoinType
+      : currencyForceCoinType
+        ? currency.coinType
+        : "<coin_type>";
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };

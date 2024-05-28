@@ -5,7 +5,6 @@ import type {
   AccountRaw,
   Operation,
   OperationRaw,
-  SubAccount,
   TokenAccount,
   TokenAccountRaw,
   TransactionCommon,
@@ -38,16 +37,12 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     derivationMode,
     index,
     xpub,
-    starred,
     used,
     freshAddress,
     freshAddressPath,
-    freshAddresses,
-    name,
     blockHeight,
     currencyId,
     feesCurrencyId,
-    unitMagnitude,
     operations,
     operationsCount,
     pendingOperations,
@@ -63,7 +58,7 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   } = rawAccount;
 
   const convertOperation = (op: OperationRaw) =>
-    fromOperationRaw(op, id, subAccounts as SubAccount[], fromRaw?.fromOperationExtraRaw);
+    fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
 
   const subAccounts =
     subAccountsRaw &&
@@ -80,12 +75,10 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   const feesCurrency =
     (feesCurrencyId && (findCryptoCurrencyById(feesCurrencyId) || findTokenById(feesCurrencyId))) ||
     undefined;
-  const unit = currency.units.find(u => u.magnitude === unitMagnitude) || currency.units[0];
 
   const res: Account = {
     type: "Account",
     id,
-    starred: starred || false,
     used: false,
     // filled again below
     seedIdentifier,
@@ -93,14 +86,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     index,
     freshAddress,
     freshAddressPath,
-    freshAddresses: freshAddresses || [
-      // in case user come from an old data that didn't support freshAddresses
-      {
-        derivationPath: freshAddressPath,
-        address: freshAddress,
-      },
-    ],
-    name,
     blockHeight,
     creationDate: new Date(creationDate || Date.now()),
     balance: new BigNumber(balance),
@@ -108,7 +93,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     operations: (operations || []).map(convertOperation),
     operationsCount: operationsCount || (operations && operations.length) || 0,
     pendingOperations: (pendingOperations || []).map(convertOperation),
-    unit,
     currency,
     feesCurrency,
     lastSyncDate: new Date(lastSyncDate || 0),
@@ -131,7 +115,7 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   }
 
   if (subAccounts) {
-    res.subAccounts = subAccounts as SubAccount[];
+    res.subAccounts = subAccounts as TokenAccount[];
   }
 
   if (fromRaw?.assignFromAccountRaw) {
@@ -155,14 +139,11 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     id,
     seedIdentifier,
     xpub,
-    name,
-    starred,
     used,
     derivationMode,
     index,
     freshAddress,
     freshAddressPath,
-    freshAddresses,
     blockHeight,
     currency,
     feesCurrency,
@@ -170,7 +151,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     operationsCount,
     operations,
     pendingOperations,
-    unit,
     lastSyncDate,
     balance,
     balanceHistoryCache,
@@ -187,14 +167,11 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
   const res: AccountRaw = {
     id,
     seedIdentifier,
-    name,
-    starred,
     used,
     derivationMode,
     index,
     freshAddress,
     freshAddressPath,
-    freshAddresses,
     blockHeight,
     syncHash,
     creationDate: creationDate.toISOString(),
@@ -202,7 +179,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
     currencyId: currency.id,
-    unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toFixed(),
     spendableBalance: spendableBalance.toFixed(),
@@ -288,7 +264,6 @@ function toTokenAccountRaw(
     id,
     parentId,
     token,
-    starred,
     operations,
     operationsCount,
     pendingOperations,
@@ -305,7 +280,6 @@ function toTokenAccountRaw(
     type: "TokenAccountRaw",
     id,
     parentId,
-    starred,
     tokenId: token.id,
     balance: balance.toString(),
     spendableBalance: spendableBalance.toString(),

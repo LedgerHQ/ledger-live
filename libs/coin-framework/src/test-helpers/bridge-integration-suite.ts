@@ -1,9 +1,28 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
+import { firstValueFrom } from "rxjs";
 import { reduce, filter, map, catchError } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
+import type {
+  Account,
+  AccountBridge,
+  AccountLike,
+  AccountRawLike,
+  SyncConfig,
+  CurrenciesData,
+  TransactionCommon,
+  TransactionStatusCommon,
+  CurrencyBridge,
+  TokenAccount,
+  TransactionCommonRaw,
+  TransactionStatusCommonRaw,
+  CryptoCurrencyIds,
+  AccountTestData,
+} from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import {
   decodeAccountId,
   encodeAccountId,
@@ -11,28 +30,7 @@ import {
   isAccountBalanceUnconfirmed,
 } from "../account";
 import { fromAccountRaw, toAccountRaw } from "../serialization";
-import { getCryptoCurrencyById } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
-// import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
-// import { implicitMigration } from "../../migrations/accounts";
-import type {
-  Account,
-  AccountBridge,
-  AccountLike,
-  AccountRawLike,
-  SubAccount,
-  SyncConfig,
-  CurrenciesData,
-  TransactionCommon,
-  TransactionStatusCommon,
-  CurrencyBridge,
-  TransactionCommonRaw,
-  TransactionStatusCommonRaw,
-  CryptoCurrencyIds,
-  AccountTestData,
-} from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { firstValueFrom } from "rxjs";
 
 const warnDev = process.env.CI ? (_args: string) => {} : (msg: string) => console.warn(msg);
 // FIXME move out into DatasetTest to be defined in
@@ -358,14 +356,14 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
 
       const testOrSkip = (name: string, fn: jest.ProvidesCallback) => {
         if (accountData.FIXME_tests && accountData.FIXME_tests.some(r => name.match(r))) {
-          warnDev("FIXME test was skipped. " + name + " for " + initialAccount.name);
+          warnDev("FIXME test was skipped. " + name + " for " + initialAccount.id);
           return;
         }
 
         test(name, fn);
       };
 
-      describe(impl + " bridge on account " + initialAccount.name, () => {
+      describe(impl + " bridge on account " + initialAccount.id, () => {
         describe("sync", () => {
           // FIXME: What is the point of this test?
           // testOrSkip("succeed", async () => {
@@ -698,7 +696,7 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
 
                   const inferSubAccount = () => {
                     invariant(subAccounts, "sub accounts available");
-                    const a = (subAccounts as SubAccount[]).find(a => a.id === subAccountId);
+                    const a = (subAccounts as TokenAccount[]).find(a => a.id === subAccountId);
                     invariant(a, "sub account not found");
                     return a;
                   };

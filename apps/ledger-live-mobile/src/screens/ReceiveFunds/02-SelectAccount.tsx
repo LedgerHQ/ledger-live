@@ -17,6 +17,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { useNavigation } from "@react-navigation/core";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
@@ -96,6 +98,8 @@ function ReceiveSelectAccount({
     [currency, navigation, route.params],
   );
 
+  const walletState = useSelector(walletSelector);
+
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AccountLike>) => (
       <Flex px={6}>
@@ -105,12 +109,11 @@ function ReceiveSelectAccount({
             (item as SubAccountEnhanced).parentAccount ||
             (item as TokenAccount).token?.parentCurrency ? (
               <Text color="neutral.c80">
-                {
-                  (
-                    ((item as SubAccountEnhanced).parentAccount as Account) ||
-                    (item as TokenAccount).token.parentCurrency
-                  ).name
-                }
+                {accountNameWithDefaultSelector(
+                  walletState,
+                  ((item as SubAccountEnhanced).parentAccount as Account) ||
+                    (item as TokenAccount).token.parentCurrency,
+                )}
               </Text>
             ) : null
           }
@@ -118,7 +121,7 @@ function ReceiveSelectAccount({
         />
       </Flex>
     ),
-    [selectAccount],
+    [walletState, selectAccount],
   );
 
   const createNewAccount = useCallback(() => {

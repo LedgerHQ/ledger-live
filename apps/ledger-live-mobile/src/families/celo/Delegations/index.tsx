@@ -37,6 +37,8 @@ import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 import { formatAmount } from "./utils";
 import CheckCircle from "~/icons/CheckCircle";
 import Loader from "~/icons/Loader";
+import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: Account;
@@ -130,6 +132,9 @@ function Delegations({ account }: Props) {
     [account.currency],
   );
 
+  const accountName = useAccountName(account);
+  const unit = useAccountUnit(account);
+
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     const v = vote;
     let status = null;
@@ -182,7 +187,7 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {account.name}{" "}
+                {accountName}{" "}
               </LText>
             ),
           },
@@ -227,7 +232,7 @@ function Delegations({ account }: Props) {
                   Component: (
                     <>
                       <LText numberOfLines={1} semiBold style={[styles.valueText]}>
-                        {formatAmount(account as CeloAccount, vote.amount ?? 0)}
+                        {formatAmount(vote.amount ?? 0, unit)}
                       </LText>
                     </>
                   ),
@@ -240,10 +245,11 @@ function Delegations({ account }: Props) {
     vote,
     t,
     getValidatorName,
-    account,
+    accountName,
     colors.green,
     colors.warning,
     colors.grey,
+    unit,
     onOpenExplorer,
   ]);
 
@@ -453,7 +459,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyItems: "center",
   },
   expandedInfoText: {
     textAlign: "justify",

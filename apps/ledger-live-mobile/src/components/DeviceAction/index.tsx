@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   DeviceNotOnboarded,
@@ -55,6 +55,8 @@ import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { PartialNullable } from "~/types/helpers";
 import ModalLock from "../ModalLock";
+import { walletSelector } from "~/reducers/wallet";
+import { settingsStoreSelector } from "~/reducers/settings";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -231,6 +233,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     }
   }, [error, onError]);
 
+  const walletState = useSelector(walletSelector);
+  const settingsState = useSelector(settingsStoreSelector);
+
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
       t,
@@ -399,6 +404,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       exchange: req?.exchange,
       amountExpectedTo: status.amountExpectedTo,
       estimatedFees: status.estimatedFees,
+      walletState,
+      settingsState,
     });
   }
 

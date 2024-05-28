@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { AccountLike, ValueChange } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
@@ -13,6 +13,8 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Text } from "@ledgerhq/react-ui";
+import PilldDaysSelect from "../PillsDaysSelect";
+import { useResize } from "~/renderer/hooks/useResize";
 
 type BalanceSinceProps = {
   valueChange: ValueChange;
@@ -55,17 +57,21 @@ export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Pro
             withIcon
           />
         )}
-        <FormattedVal
-          unit={unit}
-          val={valueChange.value}
-          prefix={valueChange.percentage ? " (" : undefined}
-          suffix={valueChange.percentage ? ")" : undefined}
-          withIcon={!valueChange.percentage}
-          alwaysShowSign={!!valueChange.percentage}
-          showCode
-          animateTicker
-          inline
-        />
+        {valueChange.value === 0 ? (
+          <Text color={"palette.text.shade100"}>{"-"}</Text>
+        ) : (
+          <FormattedVal
+            unit={unit}
+            val={valueChange.value}
+            prefix={valueChange.percentage ? " (" : undefined}
+            suffix={valueChange.percentage ? ")" : undefined}
+            withIcon={!valueChange.percentage}
+            alwaysShowSign={!!valueChange.percentage}
+            showCode
+            animateTicker
+            inline
+          />
+        )}
       </Box>
     </Box>
   );
@@ -131,13 +137,18 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
       pathname: "/swap",
     });
   }, [history]);
+
+  const ref = useRef<HTMLDivElement>(null);
+  const { width } = useResize(ref);
+
   return (
-    <Box flow={5}>
+    <Box flow={5} ref={ref}>
       <Box horizontal alignItems="center" justifyContent="space-between">
         <Text variant="h3Inter" fontWeight="semiBold">
           {t("dashboard.header")}
         </Text>
-        <PillsDaysCount />
+
+        {width <= 500 ? <PilldDaysSelect /> : <PillsDaysCount />}
       </Box>
       <Box horizontal>
         <BalanceTotal

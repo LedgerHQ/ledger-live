@@ -84,8 +84,8 @@ const CacheAPI = {
     return shouldSplit
       ? chunk(hash.split(""), splitLength).map(item => item.join(""))
       : hash.length > 8 && shouldEllipsis
-      ? [`${hash.slice(0, 4)}...${hash.substr(-4)}`]
-      : [hash];
+        ? [`${hash.slice(0, 4)}...${hash.substr(-4)}`]
+        : [hash];
   },
   canHandleInstall,
 

@@ -16,11 +16,12 @@ import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
 import { useSelectAccount } from "../Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
-import { getAccountName, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import Wallet from "~/renderer/icons/Wallet";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
 
 const Container = styled(Box).attrs(() => ({
@@ -249,7 +250,7 @@ export const TopBar = ({
                     currency={getAccountCurrency(currentAccount)}
                     size={16}
                   />
-                  <ItemContent>{getAccountName(currentAccount)}</ItemContent>
+                  <ItemContent>{getDefaultAccountName(currentAccount)}</ItemContent>
                 </>
               )}
             </ItemContainer>

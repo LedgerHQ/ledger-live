@@ -63,8 +63,8 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
         _hasExternalController
           ? "polkadot.nomination.externalControllerTooltip"
           : _hasExternalStash
-          ? "polkadot.nomination.externalStashTooltip"
-          : "polkadot.nomination.hasPendingBondOperation",
+            ? "polkadot.nomination.externalStashTooltip"
+            : "polkadot.nomination.hasPendingBondOperation",
       )}`;
 
   return [

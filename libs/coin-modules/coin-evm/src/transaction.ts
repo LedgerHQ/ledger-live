@@ -1,14 +1,14 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/coin-framework/serialization";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { transactionToEthersTransaction } from "./adapters";
 import ERC1155ABI from "./abis/erc1155.abi.json";
@@ -41,12 +41,12 @@ ${mode.toUpperCase()} ${
     useAllAmount
       ? "MAX"
       : amount.isZero()
-      ? ""
-      : " " +
-        formatCurrencyUnit(getAccountUnit(account), amount, {
-          showCode: true,
-          disableRounding: true,
-        })
+        ? ""
+        : " " +
+          formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+            showCode: true,
+            disableRounding: true,
+          })
   }${recipient ? `\nTO ${recipient}` : ""}`;
 
 const fromGasOptionsRaw = (gasOptions: GasOptionsRaw): GasOptions => {

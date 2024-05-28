@@ -46,8 +46,6 @@ export * as ScrollListContainerStory from "./Layout/ScrollListContainer.stories"
 export * as TableStory from "./Layout/Table.stories";
 export * as AccordionStory from "./Layout/Collapse/Accordion.stories";
 export * as SliderStory from "./Form/Slider/Slider.stories";
-export * as ChartStory from "./Chart/Chart.stories";
-export * as ChartCardStory from "./ChartCard/ChartCard.stories";
 export * as SelectableListStory from "./Form/SelectableList.stories";
 export * as CarouselStory from "./Carousel/Carousel.stories";
 export * as ProgressBarStory from "./ProgressBar/ProgressBar.stories";

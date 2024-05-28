@@ -5,8 +5,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import axios, { AxiosRequestConfig } from "axios";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Batcher } from "@ledgerhq/coin-framework/batcher/types";
-import { makeBatcher } from "@ledgerhq/coin-framework/batcher/index";
+import { Batcher } from "@ledgerhq/live-network/batcher/types";
+import { makeBatcher } from "@ledgerhq/live-network/batcher/index";
 import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import { getSerializedTransaction } from "../../transaction";
@@ -77,6 +77,9 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
     blockHeight: ledgerTransaction.block.height,
     blockHash: ledgerTransaction.block.hash,
     nonce: ledgerTransaction.nonce_value,
+    gasPrice: ledgerTransaction.gas_price,
+    gasUsed: ledgerTransaction.gas_used,
+    value: ledgerTransaction.value,
   };
 };
 

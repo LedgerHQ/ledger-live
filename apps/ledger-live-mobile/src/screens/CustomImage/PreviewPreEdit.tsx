@@ -159,8 +159,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const imageType = isStaxEnabledImage
     ? "staxEnabledImage"
     : isNftMetadata
-    ? "originalNFTImage"
-    : "customImage";
+      ? "originalNFTImage"
+      : "customImage";
 
   const nftImageUri = extractImageUrlFromNftMetadata(metadata);
 

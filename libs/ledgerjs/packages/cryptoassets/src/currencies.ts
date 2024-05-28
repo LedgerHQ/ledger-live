@@ -498,7 +498,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "bsc",
     coinType: CoinType.ETH,
     name: "Binance Smart Chain",
-    managerAppName: "Binance Smart Chain",
+    managerAppName: "Ethereum",
     ticker: "BNB",
     scheme: "bsc",
     color: "#F0B90A",
@@ -1109,7 +1109,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "ethereum_classic",
     coinType: CoinType.ETH_CLASSIC,
     name: "Ethereum Classic",
-    managerAppName: "Ethereum Classic",
+    managerAppName: "Ethereum",
     ticker: "ETC",
     scheme: "ethereumclassic",
     color: "#3ca569",
@@ -2195,7 +2195,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "polygon",
     coinType: CoinType.ETH,
     name: "Polygon",
-    managerAppName: "Polygon",
+    managerAppName: "Ethereum",
     ticker: "MATIC",
     scheme: "polygon",
     color: "#6d29de",
@@ -2381,7 +2381,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         magnitude: 0,
       },
     ],
-    family: "ripple",
+    family: "xrp",
     explorerViews: [
       {
         tx: "https://bithomp.com/explorer/$hash",
@@ -4358,8 +4358,8 @@ export function listCryptoCurrencies(
       ? cryptocurrenciesArray
       : prodCryptoArray
     : withDevCrypto
-    ? cryptocurrenciesArrayWithoutTerminated
-    : prodCryptoArrayWithoutTerminated;
+      ? cryptocurrenciesArrayWithoutTerminated
+      : prodCryptoArrayWithoutTerminated;
 }
 
 /**

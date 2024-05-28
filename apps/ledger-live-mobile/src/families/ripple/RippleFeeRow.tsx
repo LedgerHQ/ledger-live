@@ -9,7 +9,7 @@ import {
 } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
+import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -26,6 +26,7 @@ import type {
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 type Navigation = CompositeNavigationProp<
   StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>,
@@ -59,7 +60,9 @@ export default function RippleFeeRow({ account, transaction, parentAccount }: Pr
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
-  if (account.type !== "Account") return null;
+
+  const unit = useMaybeAccountUnit(account);
+  if (account.type !== "Account" || !unit) return null;
   const fee = (transaction as RippleTransaction).fee;
   const feeCustomUnit = (transaction as RippleTransaction).feeCustomUnit;
   return (
@@ -80,7 +83,7 @@ export default function RippleFeeRow({ account, transaction, parentAccount }: Pr
         <View style={styles.accountContainer}>
           {fee ? (
             <LText style={styles.valueText}>
-              <CurrencyUnitValue unit={feeCustomUnit || account.unit} value={fee} />
+              <CurrencyUnitValue unit={feeCustomUnit || unit} value={fee} />
             </LText>
           ) : null}
 

@@ -33,7 +33,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2
+          ruby-version: 3.3.0
           # Not needed with a .ruby-version file
           # runs 'bundle install' and caches installed gems automatically
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop

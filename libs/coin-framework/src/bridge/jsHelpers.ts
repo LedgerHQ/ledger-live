@@ -13,25 +13,20 @@ import {
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
 } from "../derivation";
+import { isAccountEmpty, clearAccount, emptyHistoryCache, encodeAccountId } from "../account";
 import {
-  getAccountPlaceholderName,
-  shouldRetainPendingOperation,
-  isAccountEmpty,
-  shouldShowNewAccount,
-  clearAccount,
-  emptyHistoryCache,
   generateHistoryFromOperations,
   recalculateAccountBalanceHistories,
-  encodeAccountId,
-} from "../account";
-import { FreshAddressIndexInvalid, UnsupportedDerivation } from "../errors";
+} from "../account/balanceHistoryCache";
+import { shouldRetainPendingOperation } from "../account/pending";
+import { shouldShowNewAccount } from "../account/support";
+import { UnsupportedDerivation } from "../errors";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
 import type { Result } from "../derivation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountBridge,
-  Address,
   CurrencyBridge,
   DerivationMode,
   Operation,
@@ -188,7 +183,7 @@ export const makeSync =
     shouldMergeOps?: boolean;
   }): AccountBridge<any>["sync"] =>
   (initial, syncConfig): Observable<AccountUpdater> =>
-    Observable.create((o: Observer<(acc: Account) => Account>) => {
+    new Observable((o: Observer<(acc: Account) => Account>) => {
       async function main() {
         const accountId = encodeAccountId({
           type: "js",
@@ -359,15 +354,7 @@ export const makeScanAccounts =
           seedIdentifier,
           freshAddress,
           freshAddressPath,
-          freshAddresses: [
-            {
-              address: freshAddress,
-              derivationPath: freshAddressPath,
-            },
-          ],
           derivationMode,
-          name: "",
-          starred: false,
           used: false,
           index,
           currency,
@@ -375,7 +362,6 @@ export const makeScanAccounts =
           operations: [],
           swapHistory: [],
           pendingOperations: [],
-          unit: currency.units[0],
           lastSyncDate: new Date(),
           creationDate,
           // overrides
@@ -411,12 +397,6 @@ export const makeScanAccounts =
         );
 
         if (!account) return;
-
-        account.name = getAccountPlaceholderName({
-          currency,
-          index,
-          derivationMode,
-        });
 
         const showNewAccount = shouldShowNewAccount(currency, derivationMode);
 
@@ -539,38 +519,25 @@ export function makeAccountBridgeReceive(
     verify?: boolean;
     deviceId: string;
     subAccountId?: string;
-    freshAddressIndex?: number;
   },
 ) => Observable<{
   address: string;
   path: string;
 }> {
-  return (account, { verify, deviceId, freshAddressIndex }) => {
-    let freshAddress: Address | undefined;
-
-    if (freshAddressIndex !== undefined && freshAddressIndex !== null) {
-      freshAddress = account.freshAddresses[freshAddressIndex];
-
-      if (freshAddress === undefined) {
-        throw new FreshAddressIndexInvalid();
-      }
-    }
-
+  return (account, { verify, deviceId }) => {
     const arg = {
       verify,
       currency: account.currency,
       derivationMode: account.derivationMode,
-      path: freshAddress ? freshAddress.derivationPath : account.freshAddressPath,
+      path: account.freshAddressPath,
       ...(injectGetAddressParams && injectGetAddressParams(account)),
     };
     return from(
       getAddressFn(deviceId, arg).then(r => {
-        const accountAddress = freshAddress ? freshAddress.address : account.freshAddress;
+        const accountAddress = account.freshAddress;
 
         if (r.address !== accountAddress) {
-          throw new WrongDeviceForAccount(`WrongDeviceForAccount ${account.name}`, {
-            accountName: account.name,
-          });
+          throw new WrongDeviceForAccount();
         }
 
         return r;

@@ -11,6 +11,7 @@ import {
   GetWalletAPITransactionSignFlowInfos,
 } from "./types";
 import { Families } from "@ledgerhq/wallet-api-core";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 // The namespace is a randomly generated uuid v4 from https://www.uuidgenerator.net/
 const NAMESPACE = "c3c78073-6844-409e-9e75-171ab4c7f9a2";
@@ -20,6 +21,7 @@ export const getAccountIdFromWalletAccountId = (walletAccountId: string): string
   uuidToAccountId.get(walletAccountId);
 
 export function accountToWalletAPIAccount(
+  walletState: WalletState,
   account: AccountLike,
   parentAccount?: Account,
 ): WalletAPIAccount {
@@ -34,6 +36,8 @@ export function accountToWalletAPIAccount(
     const parentWalletApiId = uuidv5(parentAccount.id, NAMESPACE);
     uuidToAccountId.set(parentWalletApiId, parentAccount.id);
 
+    const parentAccountName = accountNameWithDefaultSelector(walletState, parentAccount);
+
     return {
       id: walletApiId,
       parentAccountId: parentWalletApiId,
@@ -41,15 +45,16 @@ export function accountToWalletAPIAccount(
       address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,
       lastSyncDate: parentAccount.lastSyncDate,
-      name: `${parentAccount.name} (${account.token.ticker})`,
+      name: `${parentAccountName} (${account.token.ticker})`,
       currency: account.token.id,
       spendableBalance: account.spendableBalance,
     };
   }
+  const name = accountNameWithDefaultSelector(walletState, account);
 
   return {
     id: walletApiId,
-    name: account.name,
+    name,
     address: account.freshAddress,
     currency: account.currency.id,
     balance: account.balance,

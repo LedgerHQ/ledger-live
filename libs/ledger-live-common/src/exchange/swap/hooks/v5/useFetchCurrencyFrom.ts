@@ -1,4 +1,3 @@
-import { getAvailableProviders } from "../..";
 import { useFeature } from "../../../../featureFlags";
 import { useAPI } from "../../../../hooks/useAPI";
 import { fetchCurrencyFrom } from "../../api/v5/fetchCurrencyFrom";
@@ -11,10 +10,10 @@ type Props = {
 
 export function useFetchCurrencyFrom({ currencyTo, enabled }: Props = {}) {
   const fetchAdditionalCoins = useFeature("fetchAdditionalCoins");
+
   return useAPI({
     queryFn: fetchCurrencyFrom,
     queryProps: {
-      providers: getAvailableProviders(),
       currencyTo,
       additionalCoinsFlag: fetchAdditionalCoins?.enabled,
     },

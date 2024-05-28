@@ -1,10 +1,6 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { TokenAccount, AccountLike, DerivationMode } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
@@ -17,6 +13,8 @@ import { parentAccountSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { State } from "~/reducers/types";
+import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -47,8 +45,9 @@ const AccountRow = ({
   const currency = getAccountCurrency(account);
   const parentAccount = useSelector((state: State) => parentAccountSelector(state, { account }));
 
-  const name = getAccountName(account);
-  const unit = getAccountUnit(account);
+  const name = useAccountName(account);
+  const parentName = useMaybeAccountName(parentAccount);
+  const unit = useAccountUnit(account);
 
   const tag =
     account.type === "Account" &&
@@ -116,7 +115,7 @@ const AccountRow = ({
       topLink={topLink}
       bottomLink={bottomLink}
       hideDelta={hideDelta}
-      parentAccountName={parentAccount && getAccountName(parentAccount)}
+      parentAccountName={parentName}
       isLast={isLast}
     />
   );

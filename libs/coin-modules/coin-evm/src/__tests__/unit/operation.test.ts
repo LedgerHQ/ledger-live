@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets/index";
 import { genAccount, genOperation, genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

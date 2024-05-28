@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 
 export class Modal {
   readonly page: Page;
@@ -114,8 +114,7 @@ export class Modal {
 
   async getTitleProvider() {
     await this.titleProvider.waitFor();
-    const provider = await this.titleProvider.textContent();
-    return provider;
+    return await this.titleProvider.textContent();
   }
 
   async continueDelegate() {

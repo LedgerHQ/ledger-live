@@ -27,15 +27,12 @@ const cheapValidator: NearValidatorItem = {
 const account: NearAccount = {
   type: "Account",
   id: "js:2:near:d812a582d0b30c1a13041fd564e5f0c4325804b1dd2447d63ab6b9a424747363:nearbip44h",
-  starred: false,
   used: true,
   seedIdentifier: "ed25519:DewDMzsc2cnMYBrALESrf3vKWLp3zBB4HJnPoyvPL945",
   derivationMode: "nearbip44h",
   index: 1,
   freshAddress: "d812a582d0b30c1a13041fd564e5f0c4325804b1dd2447d63ab6b9a424747363",
   freshAddressPath: "44'/397'/0'/0'/1'",
-  freshAddresses: [],
-  name: "NEAR 2",
   blockHeight: 85373729,
   creationDate: new Date("2022-12-08T09:42:54.396Z"),
   balance: new BigNumber("3.10368633212077468946995e+23"),
@@ -43,7 +40,6 @@ const account: NearAccount = {
   operations: [],
   operationsCount: 3,
   pendingOperations: [],
-  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
   currency: {
     type: "CryptoCurrency",
     id: "near",

@@ -2,9 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
-  getAccountName,
   getAccountCurrency,
-  getAccountUnit,
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
@@ -27,6 +25,8 @@ import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -56,14 +56,11 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 const StepSummary = (props: StepProps) => {
   const { account, parentAccount, transaction, status, currencyName, isNFTSend } = props;
+  const mainAccount = account && getMainAccount(account, parentAccount);
+  const unit = useMaybeAccountUnit(mainAccount);
+  const accountName = useMaybeAccountName(account);
 
-  if (!account) {
-    return null;
-  }
-
-  const mainAccount = getMainAccount(account, parentAccount);
-
-  if (!mainAccount || !transaction) {
+  if (!account || !mainAccount || !transaction) {
     return null;
   }
 
@@ -73,7 +70,6 @@ const StepSummary = (props: StepProps) => {
   const currency = getAccountCurrency(account);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
-  const unit = getAccountUnit(account);
   const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
   const hasNonEmptySubAccounts =
     account.type === "Account" &&
@@ -133,7 +129,7 @@ const StepSummary = (props: StepProps) => {
                     flex: 1,
                   }}
                 >
-                  {getAccountName(account)}
+                  {accountName}
                 </Text>
                 <AccountTagDerivationMode account={account} />
               </Box>
@@ -160,6 +156,7 @@ const StepSummary = (props: StepProps) => {
                     transaction.recipientDomain ? "palette.text.shade70" : "palette.text.shade100"
                   }
                   fontSize={4}
+                  data-test-id="recipient-address"
                 >
                   {transaction.recipient}
                 </Text>
@@ -194,6 +191,7 @@ const StepSummary = (props: StepProps) => {
                 fontSize={4}
                 inline
                 showCode
+                data-test-id="transaction-amount"
               />
               <Box textAlign="right">
                 <CounterValue

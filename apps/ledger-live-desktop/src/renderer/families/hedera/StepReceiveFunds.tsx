@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import { getMainAccount, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -17,6 +17,7 @@ import QRCode from "~/renderer/components/QRCode";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { StepProps } from "~/renderer/modals/Receive/Body";
 import { AccountLike } from "@ledgerhq/types-live";
+import { useAccountName } from "~/renderer/reducers/wallet";
 const QRCodeWrapper = styled.div`
   border: 24px solid white;
   height: 208px;
@@ -74,13 +75,12 @@ const StepReceiveFunds = ({
   transitionTo,
   onResetSkip,
   verifyAddressError,
-  token,
   eventType,
   currencyName,
 }: StepProps) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
-  const name = token ? token.name : getAccountName(account);
+  const name = useAccountName(account);
   const initialDevice = useRef(device);
   const address = mainAccount.freshAddress;
   const [modalVisible, setModalVisible] = useState(false);

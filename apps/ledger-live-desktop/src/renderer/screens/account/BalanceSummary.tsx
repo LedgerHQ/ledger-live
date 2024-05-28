@@ -4,7 +4,6 @@ import { useBalanceHistoryWithCountervalue, usePortfolio } from "~/renderer/acti
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTimeRange } from "~/renderer/actions/settings";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/renderer/reducers/settings";
 import Chart from "~/renderer/components/Chart";
@@ -19,6 +18,7 @@ import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
 import { tokensWithUnsupportedGraph } from "~/helpers/tokensWithUnsupportedGraph";
 import { hourFormat, dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   chartColor: string;
@@ -48,10 +48,13 @@ export default function AccountBalanceSummary({
   const discreetMode = useSelector(discreetModeSelector);
   const dayFormatter = useDateFormatter(dayFormat);
   const hourFormatter = useDateFormatter(hourFormat);
+
+  const unit = useAccountUnit(account);
+
   const renderTooltip = useCallback(
     (d: Item) => {
       const displayCountervalue = countervalueFirst && countervalueAvailable;
-      const unit = getAccountUnit(account);
+
       const data = [
         {
           val: d.value,
@@ -79,20 +82,19 @@ export default function AccountBalanceSummary({
       );
     },
     [
-      account,
       counterValue.units,
       countervalueAvailable,
       countervalueFirst,
       dayFormatter,
       hourFormatter,
+      unit,
     ],
   );
   const renderTickYCryptoValue = useCallback(
     (val: number | string) => {
-      const unit = getAccountUnit(account);
       return formatShort(unit, BigNumber(val));
     },
-    [account],
+    [unit],
   );
   const renderTickYCounterValue = useCallback(
     (val: number | string) => formatShort(counterValue.units[0], BigNumber(val)),
@@ -102,9 +104,7 @@ export default function AccountBalanceSummary({
   const AccountBalanceSummaryFooter = mainAccount
     ? getLLDCoinFamily(mainAccount.currency.family).AccountBalanceSummaryFooter
     : null;
-  const chartMagnitude = displayCountervalue
-    ? counterValue.units[0].magnitude
-    : getAccountUnit(account).magnitude;
+  const chartMagnitude = displayCountervalue ? counterValue.units[0].magnitude : unit.magnitude;
   return (
     <Card p={0} py={5}>
       <Box px={6}>
@@ -146,8 +146,8 @@ export default function AccountBalanceSummary({
               discreetMode
                 ? () => ""
                 : displayCountervalue
-                ? renderTickYCounterValue
-                : renderTickYCryptoValue
+                  ? renderTickYCounterValue
+                  : renderTickYCryptoValue
             }
             renderTooltip={renderTooltip}
           />

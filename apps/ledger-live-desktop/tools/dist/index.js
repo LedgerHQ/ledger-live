@@ -76,8 +76,8 @@ const buildTasks = args => [
         env: args.release
           ? { SENTRY_URL: releaseSentryDSN }
           : args.pre
-          ? { SENTRY_URL: prereleaseSentryDSN }
-          : {},
+            ? { SENTRY_URL: prereleaseSentryDSN }
+            : {},
       });
     },
   },
@@ -89,8 +89,8 @@ const buildTasks = args => [
         args.release
           ? "sentry.release.properties"
           : args.pre
-          ? "sentry.prerelease.properties"
-          : null,
+            ? "sentry.prerelease.properties"
+            : null,
         {
           authToken: process.env.SENTRY_AUTH_TOKEN,
         },

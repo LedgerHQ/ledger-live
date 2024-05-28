@@ -27,6 +27,7 @@
       "title": "Discover",
       "section": {
         "recentlyUsed": "Recently used",
+        "locallyLoaded": "Locally Loaded Live Apps",
         "browse": "Browse"
       },
       "filter": {
@@ -3987,7 +3988,9 @@
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "stock": "Regional market indicator",
-      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red."
+      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
+      "walletSync": "Wallet Sync",
+      "walletSyncDesc": "Backup your app data and synchronize multiple Ledger Live instances."
     },
     "developer": {
       "search": "Search",
@@ -4005,6 +4008,11 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
+      "exchangeDeveloperMode": {
+        "title": "Exchange Dev Mode",
+        "desc": "Add exchange provider's info",
+        "placeholder": "Exchange provider's info in CAL format"
+      },
       "debugSpamNft": {
         "debugNFTSpamReport": "Allow NFT Spam Report (Beta)",
         "debugNFTSpamReportDesc": "Display a form to report an NFT as spam or to stop it being displayed as spam",
@@ -4057,6 +4065,17 @@
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
       "addLocalAppButton": "Browse",
+      "createLocalAppModal": {
+        "title": {
+          "create": "Create a local app",
+          "modify": "Modify a local app"
+        },
+        "addNetwork": "Add a new network",
+        "removeNetwork": "Remove last network",
+        "export": "Export",
+        "modify": "Modify",
+        "create": "Create"
+      },
       "runLocalAppDeleteButton": "Delete",
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
@@ -4286,7 +4305,7 @@
     "downloadInProgress": "Downloading update...",
     "downloadProgress": "{{progress}}% completed",
     "checking": "Checking update...",
-    "checkSuccess": "New Ledger Live update available, it will install automatically when you close the app",
+    "checkSuccess": "New update available, it will install and relaunch Ledger Live automatically when you close the app",
     "quitAndInstall": "Install now and relaunch",
     "updateAvailable": "Update to Ledger Live version {{version}} is available",
     "error": "Error during update. Please download again",
@@ -6063,6 +6082,9 @@
     "FailedToRetrieveFirmwareUpdateInfo": {
       "title": "OS update check failed",
       "description": "Something went wrong. Please try again or contact Ledger Support if in doubt."
+    },
+    "TezosUnrevealedAccount": {
+      "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     }
   },
   "cryptoOrg": {
@@ -6254,6 +6276,33 @@
       "analytics": "Analytics",
       "personalizedExpDesc": "Receive personalised recommendations that match your preferences.",
       "analyticsDesc": "Enable analytics to help Ledger improve the user experience."
+    }
+  },
+  "walletSync": {
+    "title": "Wallet Sync",
+    "activate": {
+      "title": "Activate wallet sync",
+      "description": "Create a secure backup of your Ledger Live and synchronize multiple instances of Ledger Live, both on mobile and desktop.",
+      "cta": "Create a backup"
+    },
+    "alreadySync": {
+      "title": "Already created a back-up on another Device?",
+      "cta": "Synchronize"
+    },
+    "manage": {
+      "cta": "Manage",
+      "synchronize": {
+        "label": "Synchronize",
+        "description": "Synchronize your app data with another Ledger Live app for a seemless experience."
+      },
+      "backup": {
+        "label": "Manage your backup",
+        "description": "Secure your backup with another Ledger or delete it."
+      },
+      "instance": {
+        "label": "{{ nbInstances }} synchronized instances",
+        "cta": "Manage"
+      }
     }
   }
 }

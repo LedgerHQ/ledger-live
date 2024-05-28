@@ -1,17 +1,14 @@
-import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import {
-  areAllOperationsLoaded,
   emptyHistoryCache,
   getAccountCurrency,
-  getAccountName,
   getAccountSpendableBalance,
-  getAccountUnit,
   getFeesCurrency,
 } from ".";
-import { isAccountEmpty, isAccountBalanceSignificant, clearAccount } from "./helpers";
-import { getTokenById } from "../currencies";
+import { isAccountEmpty, clearAccount, areAllOperationsLoaded } from "./helpers";
 
 const mockAccount = {} as Account;
 const tokenAccount = {
@@ -38,46 +35,6 @@ describe(getAccountCurrency.name, () => {
       const sampleToken = { id: "tokenId" } as TokenCurrency;
       tokenAccount.token = sampleToken;
       expect(getAccountCurrency(tokenAccount)).toEqual(sampleToken);
-    });
-  });
-});
-
-describe(getAccountUnit.name, () => {
-  describe("given an Account", () => {
-    beforeEach(() => {
-      mockAccount.type = "Account";
-    });
-    it("should return the unit", () => {
-      const sampleUnit = { name: "unit" } as Unit;
-      mockAccount.unit = sampleUnit;
-      expect(getAccountUnit(mockAccount)).toEqual(sampleUnit);
-    });
-  });
-
-  describe("given a TokenAccount", () => {
-    it("should return the token unit", () => {
-      const sampleUnit = { name: "unit" } as Unit;
-      tokenAccount.token = { units: [sampleUnit] } as TokenCurrency;
-      expect(getAccountUnit(tokenAccount)).toEqual(sampleUnit);
-    });
-  });
-
-  describe("given an unknown type Account", () => {
-    beforeEach(() => {
-      (mockAccount as any).type = "DefinitelyNotAStandardAccount";
-    });
-
-    it("should throw an error", () => {
-      expect(() => getAccountUnit(mockAccount)).toThrow(Error);
-    });
-
-    it("should display the account type in the error message", () => {
-      expect.assertions(1);
-      try {
-        getAccountUnit(mockAccount);
-      } catch (e: unknown) {
-        expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
-      }
     });
   });
 });
@@ -126,46 +83,6 @@ describe(getFeesCurrency.name, () => {
       expect.assertions(1);
       try {
         getFeesCurrency(mockAccount);
-      } catch (e: unknown) {
-        expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
-      }
-    });
-  });
-});
-
-describe(getAccountName.name, () => {
-  describe("given an Account", () => {
-    beforeEach(() => {
-      mockAccount.type = "Account";
-    });
-    it("should return the account name", () => {
-      const sampleAccountName = "SampleAccountName";
-      mockAccount.name = sampleAccountName;
-      expect(getAccountName(mockAccount)).toEqual(sampleAccountName);
-    });
-  });
-
-  describe("given a TokenAccount", () => {
-    it("should return the token account name", () => {
-      const sampleAccountName = "SampleAccountName";
-      tokenAccount.token = { name: sampleAccountName } as TokenCurrency;
-      expect(getAccountName(tokenAccount)).toEqual(sampleAccountName);
-    });
-  });
-
-  describe("given an unknown type Account", () => {
-    beforeEach(() => {
-      (mockAccount as any).type = "DefinitelyNotAStandardAccount";
-    });
-
-    it("should throw an error", () => {
-      expect(() => getAccountName(mockAccount)).toThrow(Error);
-    });
-
-    it("should display the account type in the error message", () => {
-      expect.assertions(1);
-      try {
-        getAccountName(mockAccount);
       } catch (e: unknown) {
         expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
       }
@@ -235,65 +152,12 @@ describe(isAccountEmpty.name, () => {
     });
     describe("when account has subaccounts", () => {
       beforeEach(() => {
-        mockAccount.subAccounts = [{} as SubAccount];
+        mockAccount.subAccounts = [{} as TokenAccount];
       });
 
       it("should return false", () => {
         expect(isAccountEmpty(mockAccount)).toEqual(false);
       });
-    });
-  });
-});
-
-describe(areAllOperationsLoaded.name, () => {
-  describe("given an account with subAccounts", () => {
-    beforeEach(() => {
-      mockAccount.type = "Account";
-      mockAccount.operations = [];
-      mockAccount.operationsCount = 0;
-      mockAccount.subAccounts = [
-        {
-          operations: [],
-          operationsCount: 0,
-        },
-        {
-          operations: [{} as Operation],
-          operationsCount: 1,
-        },
-      ] as SubAccount[];
-    });
-    describe("when sub account operation aren't loaded", () => {
-      beforeEach(() => {
-        (mockAccount.subAccounts as SubAccount[])[1].operations = [];
-      });
-      it("should return false", () => {
-        expect(areAllOperationsLoaded(mockAccount)).toEqual(false);
-      });
-    });
-
-    describe("when sub account operation are loaded", () => {
-      it("should return true", () => {
-        expect(areAllOperationsLoaded(mockAccount)).toEqual(true);
-      });
-    });
-  });
-});
-
-describe(isAccountBalanceSignificant.name, () => {
-  describe("when balance is low", () => {
-    beforeEach(() => {
-      mockAccount.balance = new BigNumber(10);
-    });
-    it("should return false", () => {
-      expect(isAccountBalanceSignificant(mockAccount)).toEqual(false);
-    });
-  });
-  describe("when balance is high", () => {
-    beforeEach(() => {
-      mockAccount.balance = new BigNumber(101);
-    });
-    it("should return true", () => {
-      expect(isAccountBalanceSignificant(mockAccount)).toEqual(true);
     });
   });
 });
@@ -328,7 +192,7 @@ describe(clearAccount.name, () => {
       subAccounts: [
         {
           token: getTokenById("ethereum/erc20/dao_maker"),
-        } as SubAccount,
+        } as TokenAccount,
       ],
       currency: ethereumCurrency,
     };
@@ -352,6 +216,40 @@ describe(clearAccount.name, () => {
       withSubAccounts.nfts = [];
       const clearedAccount = clearAccount(withSubAccounts);
       expect(Object.keys(clearedAccount).indexOf("nfts")).toEqual(-1);
+    });
+  });
+});
+
+describe(areAllOperationsLoaded.name, () => {
+  describe("given an account with subAccounts", () => {
+    beforeEach(() => {
+      mockAccount.type = "Account";
+      mockAccount.operations = [];
+      mockAccount.operationsCount = 0;
+      mockAccount.subAccounts = [
+        {
+          operations: [],
+          operationsCount: 0,
+        },
+        {
+          operations: [{} as Operation],
+          operationsCount: 1,
+        },
+      ] as TokenAccount[];
+    });
+    describe("when sub account operation aren't loaded", () => {
+      beforeEach(() => {
+        (mockAccount.subAccounts as TokenAccount[])[1].operations = [];
+      });
+      it("should return false", () => {
+        expect(areAllOperationsLoaded(mockAccount)).toEqual(false);
+      });
+    });
+
+    describe("when sub account operation are loaded", () => {
+      it("should return true", () => {
+        expect(areAllOperationsLoaded(mockAccount)).toEqual(true);
+      });
     });
   });
 });

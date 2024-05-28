@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useDispatch } from "react-redux";
 import Box from "~/renderer/components/Box/Box";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
@@ -19,6 +18,7 @@ import {
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import Discreet from "~/renderer/components/Discreet";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 // FIXME spreading UnbondingType is a bad pattern
 const Unbonding = (
@@ -75,6 +75,9 @@ const Unbonding = (
       }),
     );
   }, [account, contract, unbondings, amount, validator, dispatch]);
+
+  const unit = useAccountUnit(account);
+
   useEffect(handleCounter, [seconds]);
   return (
     <Wrapper>
@@ -103,7 +106,7 @@ const Unbonding = (
       </Column>
 
       <Column>
-        <Discreet>{balance}</Discreet> {getAccountUnit(account).code}
+        <Discreet>{balance}</Discreet> {unit.code}
       </Column>
 
       <Column>

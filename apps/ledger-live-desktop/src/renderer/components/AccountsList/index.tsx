@@ -1,6 +1,5 @@
-import React, { Component } from "react";
-import { TFunction } from "i18next";
-import { withTranslation } from "react-i18next";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -8,11 +7,14 @@ import FakeLink from "~/renderer/components/FakeLink";
 import { SpoilerIcon } from "~/renderer/components/Spoiler";
 import { openURL } from "~/renderer/linking";
 import AccountRow from "./AccountRow";
+import { useSelector } from "react-redux";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 export type AccountListProps = {
   accounts: Account[];
   checkedIds?: string[];
-  editedNames: {
+  editedNames?: {
     [accountId: string]: string;
   };
   setAccountName?: (b: Account, a: string) => void;
@@ -28,136 +30,114 @@ export type AccountListProps = {
     id: string;
     url: string;
   };
-  t: TFunction;
   ToggleAllComponent?: React.ReactNode;
 };
 
-class AccountsList extends Component<
-  AccountListProps,
-  {
-    collapsed: boolean;
-  }
-> {
-  static defaultProps = {
-    editedNames: {},
+function AccountsList({
+  accounts,
+  checkedIds,
+  editedNames = {},
+  setAccountName,
+  onToggleAccount,
+  onSelectAll,
+  onUnselectAll,
+  title,
+  emptyText,
+  autoFocusFirstInput,
+  collapsible,
+  hideAmount,
+  supportLink,
+  ToggleAllComponent,
+}: AccountListProps) {
+  const { t } = useTranslation();
+  const [collapsed, setCollapsed] = useState(!!collapsible);
+  const toggleCollapse = () => {
+    setCollapsed(!collapsed);
   };
-
-  state = {
-    collapsed: !!this.props.collapsible,
-  };
-
-  toggleCollapse = () => {
-    this.setState(({ collapsed }) => ({
-      collapsed: !collapsed,
-    }));
-  };
-
-  onSelectAll = () => {
-    const { accounts, onSelectAll } = this.props;
+  const onSelectAllCb = () => {
     if (onSelectAll) onSelectAll(accounts);
   };
-
-  onUnselectAll = () => {
-    const { accounts, onUnselectAll } = this.props;
+  const onUnselectAllCb = () => {
     if (onUnselectAll) onUnselectAll(accounts);
   };
-
-  render() {
-    const {
-      accounts,
-      checkedIds,
-      onToggleAccount,
-      editedNames,
-      setAccountName,
-      onSelectAll,
-      onUnselectAll,
-      title,
-      emptyText,
-      autoFocusFirstInput,
-      collapsible,
-      hideAmount,
-      supportLink,
-      t,
-      ToggleAllComponent,
-    } = this.props;
-    const { collapsed } = this.state;
-    const withToggleAll = !!onSelectAll && !!onUnselectAll && accounts.length > 1;
-    const isAllSelected =
-      !checkedIds || accounts.every(acc => !!checkedIds.find(id => acc.id === id));
-    return (
-      <Box flow={3} mt={4}>
-        {(title || withToggleAll) && (
-          <Box horizontal alignItems="center" flow={2}>
-            {title && (
-              <Box
-                horizontal
-                ff="Inter|Bold"
-                color="palette.text.shade100"
-                fontSize={2}
-                textTransform="uppercase"
-                cursor={collapsible ? "pointer" : undefined}
-                onClick={collapsible ? this.toggleCollapse : undefined}
+  const walletState = useSelector(walletSelector);
+  const withToggleAll = !!onSelectAll && !!onUnselectAll && accounts.length > 1;
+  const isAllSelected =
+    !checkedIds || accounts.every(acc => !!checkedIds.find(id => acc.id === id));
+  return (
+    <Box flow={3} mt={4}>
+      {(title || withToggleAll) && (
+        <Box horizontal alignItems="center" flow={2}>
+          {title && (
+            <Box
+              horizontal
+              ff="Inter|Bold"
+              color="palette.text.shade100"
+              fontSize={2}
+              textTransform="uppercase"
+              cursor={collapsible ? "pointer" : undefined}
+              onClick={collapsible ? toggleCollapse : undefined}
+            >
+              {collapsible ? <SpoilerIcon isOpened={!collapsed} mr={1} /> : null}
+              {title}
+            </Box>
+          )}
+          {supportLink ? (
+            <LinkWithExternalIcon
+              fontSize={2}
+              onClick={() => openURL(supportLink.url)}
+              label={t("addAccounts.supportLinks." + supportLink.id)}
+            />
+          ) : null}
+          {ToggleAllComponent ||
+            (withToggleAll && (
+              <FakeLink
+                ml="auto"
+                ff="Inter|Regular"
+                onClick={isAllSelected ? onUnselectAllCb : onSelectAllCb}
+                fontSize={3}
+                style={{
+                  lineHeight: "10px",
+                }}
               >
-                {collapsible ? <SpoilerIcon isOpened={!collapsed} mr={1} /> : null}
-                {title}
-              </Box>
-            )}
-            {supportLink ? (
-              <LinkWithExternalIcon
-                fontSize={2}
-                onClick={() => openURL(supportLink.url)}
-                label={t("addAccounts.supportLinks." + supportLink.id)}
-              />
-            ) : null}
-            {ToggleAllComponent ||
-              (withToggleAll && (
-                <FakeLink
-                  ml="auto"
-                  ff="Inter|Regular"
-                  onClick={isAllSelected ? this.onUnselectAll : this.onSelectAll}
-                  fontSize={3}
-                  style={{
-                    lineHeight: "10px",
-                  }}
-                >
-                  {isAllSelected
-                    ? t("addAccounts.unselectAll", {
-                        count: accounts.length,
-                      })
-                    : t("addAccounts.selectAll", {
-                        count: accounts.length,
-                      })}
-                </FakeLink>
-              ))}
-          </Box>
-        )}
-        {collapsed ? null : accounts.length ? (
-          <Box id="accounts-list-selectable" flow={2}>
-            {accounts.map((account, i) => (
-              <AccountRow
-                key={account.id}
-                account={account}
-                autoFocusInput={i === 0 && autoFocusFirstInput}
-                isDisabled={!onToggleAccount || !checkedIds}
-                isChecked={!checkedIds || checkedIds.find(id => id === account.id) !== undefined}
-                onToggleAccount={onToggleAccount}
-                onEditName={setAccountName}
-                hideAmount={hideAmount}
-                accountName={
-                  typeof editedNames[account.id] === "string"
-                    ? editedNames[account.id]
-                    : account.name
-                }
-              />
+                {isAllSelected
+                  ? t("addAccounts.unselectAll", {
+                      count: accounts.length,
+                    })
+                  : t("addAccounts.selectAll", {
+                      count: accounts.length,
+                    })}
+              </FakeLink>
             ))}
-          </Box>
-        ) : emptyText ? (
-          <Box ff="Inter|Regular" fontSize={3}>
-            {emptyText}
-          </Box>
-        ) : null}
-      </Box>
-    );
-  }
+        </Box>
+      )}
+      {collapsed ? null : accounts.length ? (
+        <Box id="accounts-list-selectable" flow={2}>
+          {accounts.map((account, i) => (
+            <AccountRow
+              key={account.id}
+              account={account}
+              autoFocusInput={i === 0 && autoFocusFirstInput}
+              isDisabled={!onToggleAccount || !checkedIds}
+              isChecked={!checkedIds || checkedIds.find(id => id === account.id) !== undefined}
+              onToggleAccount={onToggleAccount}
+              onEditName={setAccountName}
+              hideAmount={hideAmount}
+              accountName={
+                typeof editedNames[account.id] === "string"
+                  ? editedNames[account.id]
+                  : accountNameWithDefaultSelector(walletState, account)
+              }
+            />
+          ))}
+        </Box>
+      ) : emptyText ? (
+        <Box ff="Inter|Regular" fontSize={3}>
+          {emptyText}
+        </Box>
+      ) : null}
+    </Box>
+  );
 }
-export default withTranslation()(AccountsList);
+
+export default AccountsList;

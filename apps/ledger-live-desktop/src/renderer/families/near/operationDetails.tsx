@@ -11,6 +11,7 @@ import {
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { Operation } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const AmountCellExtra = ({ operation, currency, unit }: AmountCellExtraProps<Operation>) => {
   const amount = operation.value;
@@ -38,6 +39,7 @@ const OperationDetailsExtra = ({
   account,
 }: OperationDetailsExtraProps<NearAccount, Operation>) => {
   const amount = operation.value;
+  const unit = useAccountUnit(account);
   let i18nKey = "";
   if (type === "STAKE") {
     i18nKey = "near.operationDetails.extra.stakedAmount";
@@ -53,7 +55,7 @@ const OperationDetailsExtra = ({
       <OpDetailsData>
         <Box alignItems="flex-end">
           <Box horizontal alignItems="center">
-            <FormattedVal unit={account.unit} showCode val={amount} color="palette.text.shade80" />
+            <FormattedVal unit={unit} showCode val={amount} color="palette.text.shade80" />
           </Box>
           <Box horizontal justifyContent="flex-end">
             <CounterValue

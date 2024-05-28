@@ -24,8 +24,6 @@ const SearchContainer = styled(Flex).attrs({ flexShrink: "1" })`
 `;
 
 export const Button = styled(BaseButton)<{ big?: boolean }>`
-  border-radius: 44px;
-
   ${p =>
     p.Icon
       ? `
@@ -89,7 +87,7 @@ export default function Market() {
   useEffect(() => {
     const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), refreshRate);
 
-    return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId as unknown as number);
   }, [marketCurrentPage, refetchData, refreshRate]);
 
   const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
