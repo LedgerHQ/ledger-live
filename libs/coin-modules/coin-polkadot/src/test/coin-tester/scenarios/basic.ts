@@ -1,6 +1,6 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { Transaction as PolkadotTransaction } from "../../../types/bridge";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/lib/signers/speculos";
+import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
 import resolver from "../../../signer";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
