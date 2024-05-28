@@ -10,10 +10,10 @@ export type Trustchain = {
 };
 
 export type LiveCredentials = {
-  keypair: {
-    publicKey: Uint8Array;
-    privateKey: Uint8Array;
-  };
+  // in hex
+  pubkey: string;
+  // in hex
+  privatekey: string;
 };
 
 export type TrustchainMember = {
@@ -35,7 +35,7 @@ export interface TrustchainSDK {
    * Generate the live credentials that represents a Live instance, member of the trustchain.
    * This method is expected to be used the first time Ledger Live is opened (if Live never generated them before) and then persisted over the future user sessions of Ledger Live in order for the member to be able to authenticate and manage the trustchain.
    */
-  initLiveCredentials(): LiveCredentials;
+  initLiveCredentials(): Promise<LiveCredentials>;
 
   /**
    * Provide a token used to create/manage the trustchain at the root level, authenticated with the hardware wallet.

@@ -4,6 +4,7 @@ import { sdk } from "@ledgerhq/trustchain";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from } from "rxjs";
 import styled from "styled-components";
+import { LiveCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 
 const Container = styled.div`
   padding: 20px;
@@ -27,7 +28,9 @@ function uint8arrayToHex(uint8arr: Uint8Array) {
 
 const App = () => {
   const [pubkey, setPubkey] = useState<string | null>(null);
-  const [seedIdAccessToken, setSeedIdAccessToken] = useState<string | null>(null);
+  const [seedIdAccessToken, setSeedIdAccessToken] = useState<{ accessToken: string } | null>(null);
+  const [liveCredentials, setLiveCredentials] = useState<LiveCredentials | null>(null);
+  const [trustchain, setTrustchain] = useState<Trustchain | null>(null);
 
   const onRequestPublicKey = useCallback(() => {
     withDevice("webhid")(transport => {
@@ -42,13 +45,38 @@ const App = () => {
 
   const onSeedIdAuthenticate = useCallback(() => {
     withDevice("webhid")(transport => from(sdk.seedIdAuthenticate(transport))).subscribe({
-      next: t => setSeedIdAccessToken(t.accessToken),
+      next: t => setSeedIdAccessToken(t),
       error: error => {
         console.error(error);
-        setSeedIdAccessToken("error: " + error);
+        setSeedIdAccessToken(null);
       },
     });
   }, []);
+
+  const onInitLiveCredentials = useCallback(() => {
+    sdk.initLiveCredentials().then(
+      liveCredentials => {
+        setLiveCredentials(liveCredentials);
+      },
+      error => {
+        console.error(error);
+        setLiveCredentials(null);
+      },
+    );
+  }, []);
+
+  const onGetOrCreateTrustchain = useCallback(() => {
+    if (!seedIdAccessToken || !liveCredentials) return;
+    withDevice("webhid")(transport =>
+      from(sdk.getOrCreateTrustchain(transport, seedIdAccessToken, liveCredentials)),
+    ).subscribe({
+      next: t => setTrustchain(t),
+      error: error => {
+        console.error(error);
+        setTrustchain(null);
+      },
+    });
+  }, [seedIdAccessToken, liveCredentials]);
 
   return (
     <Container>
@@ -63,7 +91,23 @@ const App = () => {
       <Label>
         <button onClick={onSeedIdAuthenticate}>sdk.seedIdAuthenticate</button>
         <strong>
-          <code>{seedIdAccessToken ? seedIdAccessToken : ""}</code>
+          <code>{seedIdAccessToken ? seedIdAccessToken.accessToken : ""}</code>
+        </strong>
+      </Label>
+
+      <Label>
+        <button onClick={onInitLiveCredentials}>sdk.initLiveCredentials</button>
+        <strong>
+          <code>{liveCredentials ? liveCredentials.pubkey : ""}</code>
+        </strong>
+      </Label>
+
+      <Label>
+        <button disabled={!seedIdAccessToken || !liveCredentials} onClick={onGetOrCreateTrustchain}>
+          sdk.getOrCreateTrustchain
+        </button>
+        <strong>
+          <code>{trustchain ? trustchain.rootId : ""}</code>
         </strong>
       </Label>
     </Container>
