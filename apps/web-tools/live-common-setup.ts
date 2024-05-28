@@ -1,3 +1,4 @@
+import "./live-common-setup-network";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
@@ -71,5 +72,5 @@ setSupportedCurrencies([
   "optimism",
   "optimism_sepolia",
   "linea",
-  "linea_sepolia"
+  "linea_sepolia",
 ]);
