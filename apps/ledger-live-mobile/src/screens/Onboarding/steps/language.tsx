@@ -45,7 +45,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
 
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
 
-  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector) as Device | null;
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
   const onActionFinished = useCallback(() => {
     setPreventPromptBackdropClick(false);

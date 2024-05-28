@@ -1198,12 +1198,12 @@ export default class Eth {
    * provides the name of a trusted binding of a plugin with a contract address and a supported method selector. This plugin will be called to interpret contract data in the following transaction signing command.
    *
    * @param payload external plugin data
-   * @param signature signature for the plugin
+   * @option signature optionally signature for the plugin
    * @returns a boolean
    */
-  setExternalPlugin(payload: string, signature: string): Promise<boolean> {
+  setExternalPlugin(payload: string, signature?: string): Promise<boolean> {
     const payloadBuffer = Buffer.from(payload, "hex");
-    const signatureBuffer = Buffer.from(signature, "hex");
+    const signatureBuffer = Buffer.from(signature ?? "", "hex");
     const buffer = Buffer.concat([payloadBuffer, signatureBuffer]);
     return this.transport.send(0xe0, 0x12, 0x00, 0x00, buffer).then(
       () => true,

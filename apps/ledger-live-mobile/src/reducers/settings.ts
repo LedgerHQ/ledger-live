@@ -850,35 +850,26 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
-export const lastSeenDeviceSelector = (state: State) => {
-  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
-  // to be removed in a while.
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
-    return { ...state.settings.lastSeenDevice, modelId: DeviceModelId.stax };
-  }
-  return state.settings.lastSeenDevice;
-};
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
   state.settings.hasSeenStaxEnabledNftsPopup;
 export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
-export const lastConnectedDeviceSelector = (state: State) => {
-  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
-  // to be removed in a while.
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (state.settings.lastConnectedDevice?.modelId === "nanoFTS") {
-    return {
-      ...state.settings.lastConnectedDevice,
-      modelId: DeviceModelId.stax,
-    };
-  }
 
-  return state.settings.lastConnectedDevice;
+export const lastSeenDeviceSelector = (state: State) => {
+  const { lastSeenDevice } = state.settings;
+  if (!lastSeenDevice || !Object.values(DeviceModelId).includes(lastSeenDevice?.modelId))
+    return null;
+  return lastSeenDevice;
 };
+
+export const lastConnectedDeviceSelector = (state: State) => {
+  const { lastConnectedDevice } = state.settings;
+  if (!lastConnectedDevice || !Object.values(DeviceModelId).includes(lastConnectedDevice?.modelId))
+    return null;
+  return lastConnectedDevice;
+};
+
 export const hasOrderedNanoSelector = (state: State) => state.settings.hasOrderedNano;
 export const marketRequestParamsSelector = (state: State) => state.settings.marketRequestParams;
 export const marketCounterCurrencySelector = (state: State) => state.settings.marketCounterCurrency;
