@@ -144,8 +144,8 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       console.log(" → ", "🔏 ", chalk.bold("Signed the transaction"), "✓");
 
       const optimisticOperation = await accountBridge.broadcast({
-        account: scenarioAccount,
         signedOperation,
+        account: scenarioAccount,
       });
 
       console.log(" → ", "🛫 ", chalk.bold("Broadcasted the transaction"), "✓");

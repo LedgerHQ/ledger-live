@@ -72,13 +72,10 @@ export const spawnSpeculos = async (
 
   const getOnSpeculosConfirmation = (approvalText = "Accept") => {
     const onSpeculosConfirmation = async (e?: SignOperationEvent): Promise<void> => {
-      console.log(e);
       if (e?.type === "device-signature-requested") {
         const { data } = await axios.get(
           `http://localhost:${process.env.API_PORT}/events?currentscreenonly=true`,
         );
-
-        console.log(data);
 
         if (data.events[0].text !== approvalText) {
           await axios.post(`http://localhost:${process.env.API_PORT}/button/right`, {

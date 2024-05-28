@@ -81,12 +81,14 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
     const alice = keyring.addFromUri("//Alice");
 
-    await api.query.system.account(basicScenarioAccountPair.address),
+    await api.query.system.account(
+      basicScenarioAccountPair.address,
       ({ nonce, data: balance }: any) => {
         console.log(
-          `free balance is ${balance.free} with ${balance.reserved} reserved and a nonce of ${nonce}`,
+          `free balance for ${basicScenarioAccountPair.meta.name} account is ${balance.free} with ${balance.reserved} reserved and a nonce of ${nonce}`,
         );
-      };
+      },
+    );
 
     const unsub = await api.tx.balances
       .transferAllowDeath(basicScenarioAccountPair.address, 90_000_000_000)

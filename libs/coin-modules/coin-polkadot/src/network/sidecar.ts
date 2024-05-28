@@ -481,6 +481,7 @@ export const submitExtrinsic = async (extrinsic: string): Promise<string> => {
   } = await callSidecar("/transaction", "POST", {
     tx: extrinsic,
   });
+
   return data.hash;
 };
 
