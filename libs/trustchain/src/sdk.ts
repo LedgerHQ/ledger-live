@@ -2,10 +2,26 @@ import { JWT, LiveCredentials, Trustchain, TrustchainMember, TrustchainSDK } fro
 import { crypto, device, Challenge } from "@ledgerhq/hw-trustchain";
 import Transport from "@ledgerhq/hw-transport";
 import api from "./api";
+import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
+
+function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): LiveCredentials {
+  return {
+    pubkey: crypto.to_hex(keyPair.publicKey),
+    privatekey: crypto.to_hex(keyPair.privateKey),
+  };
+}
+
+function convertLiveCredentialsToKeyPair(liveInstanceCredentials: LiveCredentials): CryptoKeyPair {
+  return {
+    publicKey: crypto.from_hex(liveInstanceCredentials.pubkey),
+    privateKey: crypto.from_hex(liveInstanceCredentials.privatekey),
+  };
+}
 
 class SDK implements TrustchainSDK {
-  initLiveCredentials(): LiveCredentials {
-    throw new Error("initLiveCredentials not implemented.");
+  async initLiveCredentials(): Promise<LiveCredentials> {
+    const kp = await crypto.randomKeypair();
+    return convertKeyPairToLiveCredentials(kp);
   }
 
   /*
@@ -27,7 +43,7 @@ class SDK implements TrustchainSDK {
         attestation: crypto.to_hex(seedId.attestationResult),
       },
     });
-    return { accessToken: response.access_token };
+    return response;
   }
 
   async liveAuthenticate(
@@ -38,13 +54,14 @@ class SDK implements TrustchainSDK {
     const data = crypto.from_hex(challenge.tlv);
     const [parsed, _] = Challenge.fromBytes(data);
     const hash = await crypto.hash(parsed.getUnsignedTLV());
-    const sig = await crypto.sign(hash, liveInstanceCredentials.keypair);
+    const keypair = convertLiveCredentialsToKeyPair(liveInstanceCredentials);
+    const sig = await crypto.sign(hash, keypair);
     const signature = crypto.to_hex(sig);
     const credential = {
       version: 0,
       curveId: 33,
       signAlgorithm: 1,
-      publicKey: crypto.to_hex(liveInstanceCredentials.keypair.publicKey),
+      publicKey: liveInstanceCredentials.pubkey,
     };
     const trustchainId = crypto.from_hex(trustchain.rootId);
     const att = new Uint8Array(2 + trustchainId.length);
@@ -60,7 +77,7 @@ class SDK implements TrustchainSDK {
         attestation,
       },
     });
-    return { accessToken: response.access_token };
+    return response;
   }
 
   async getOrCreateTrustchain(
