@@ -1,3 +1,4 @@
+import "../live-common-setup-network";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 
