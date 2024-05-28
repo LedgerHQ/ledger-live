@@ -65,6 +65,12 @@ import type {
   TransactionStatusRaw as hederaTransactionStatusRaw,
 } from "../families/hedera/types";
 import type {
+  Transaction as iconTransaction,
+  TransactionRaw as iconTransactionRaw,
+  TransactionStatus as iconTransactionStatus,
+  TransactionStatusRaw as iconTransactionStatusRaw,
+} from "@ledgerhq/coin-icon/types";
+import type {
   Transaction as internet_computerTransaction,
   TransactionRaw as internet_computerTransactionRaw,
   TransactionStatus as internet_computerTransactionStatus,
@@ -124,10 +130,6 @@ import type {
   TransactionStatus as xrpTransactionStatus,
   TransactionStatusRaw as xrpTransactionStatusRaw,
 } from "@ledgerhq/coin-xrp/types";
-import { Transaction as iconTransaction } from "@ledgerhq/coin-icon/types";
-import { TransactionRaw as iconTransactionRaw } from "@ledgerhq/coin-icon/types";
-import { TransactionStatus as iconTransactionStatus } from "@ledgerhq/coin-icon/types";
-import { TransactionStatusRaw as iconTransactionStatusRaw } from "@ledgerhq/coin-icon/types";
 
 export type Transaction =
   | algorandTransaction
@@ -141,6 +143,7 @@ export type Transaction =
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
+  | iconTransaction
   | internet_computerTransaction
   | nearTransaction
   | polkadotTransaction
@@ -150,8 +153,7 @@ export type Transaction =
   | tezosTransaction
   | tronTransaction
   | vechainTransaction
-  | xrpTransaction
-  | iconTransaction;
+  | xrpTransaction;
 
 export type TransactionRaw =
   | algorandTransactionRaw
@@ -165,6 +167,7 @@ export type TransactionRaw =
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | iconTransactionRaw
   | internet_computerTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
@@ -174,8 +177,7 @@ export type TransactionRaw =
   | tezosTransactionRaw
   | tronTransactionRaw
   | vechainTransactionRaw
-  | xrpTransactionRaw
-  | iconTransactionRaw;
+  | xrpTransactionRaw;
 
 export type TransactionStatus =
   | algorandTransactionStatus
@@ -189,6 +191,7 @@ export type TransactionStatus =
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
+  | iconTransactionStatus
   | internet_computerTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
@@ -198,8 +201,7 @@ export type TransactionStatus =
   | tezosTransactionStatus
   | tronTransactionStatus
   | vechainTransactionStatus
-  | xrpTransactionStatus
-  | iconTransactionStatus;
+  | xrpTransactionStatus;
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
@@ -213,6 +215,7 @@ export type TransactionStatusRaw =
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
+  | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
@@ -222,5 +225,4 @@ export type TransactionStatusRaw =
   | tezosTransactionStatusRaw
   | tronTransactionStatusRaw
   | vechainTransactionStatusRaw
-  | xrpTransactionStatusRaw
-  | iconTransactionStatusRaw;
+  | xrpTransactionStatusRaw;

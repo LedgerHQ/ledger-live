@@ -17,7 +17,7 @@ import { calculateAmount, getNonce } from "./logic";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import IconService, { IcxTransaction } from "icon-sdk-js";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { IconAddress, IconSignature, IconSigner } from "./signer";
+import { IconSignature, IconSigner } from "./signer";
 const { IconUtil, IconConverter } = IconService;
 
 const buildOptimisticOperation = (
@@ -63,9 +63,7 @@ const addSignature = (rawTransaction: IcxTransaction, signature: string) => {
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (
-    signerContext: SignerContext<IconSigner, IconAddress | IconSignature>,
-  ): SignOperationFnSignature<Transaction> =>
+  (signerContext: SignerContext<IconSigner>): SignOperationFnSignature<Transaction> =>
   ({
     account,
     transaction,

@@ -1,37 +1,35 @@
-import casper from "../families/casper/deviceTransactionConfig";
-import celo from "../families/celo/deviceTransactionConfig";
-import cosmos from "../families/cosmos/deviceTransactionConfig";
-import crypto_org from "../families/crypto_org/deviceTransactionConfig";
-import elrond from "../families/elrond/deviceTransactionConfig";
-import filecoin from "../families/filecoin/deviceTransactionConfig";
-import hedera from "../families/hedera/deviceTransactionConfig";
-import internet_computer from "../families/internet_computer/deviceTransactionConfig";
-import stacks from "../families/stacks/deviceTransactionConfig";
-import stellar from "../families/stellar/deviceTransactionConfig";
-import tron from "../families/tron/deviceTransactionConfig";
-import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
-import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
-import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
-import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
-import near from "@ledgerhq/coin-near/deviceTransactionConfig";
-import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
-import solana from "@ledgerhq/coin-solana/deviceTransactionConfig";
-import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";
-import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
-import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
+import celo from "../families/celo/cli-transaction";
+import cosmos from "../families/cosmos/cli-transaction";
+import crypto_org from "../families/crypto_org/cli-transaction";
+import elrond from "../families/elrond/cli-transaction";
+import filecoin from "../families/filecoin/cli-transaction";
+import hedera from "../families/hedera/cli-transaction";
+import stacks from "../families/stacks/cli-transaction";
+import stellar from "../families/stellar/cli-transaction";
+import tron from "../families/tron/cli-transaction";
+import vechain from "../families/vechain/cli-transaction";
+import { cliTools as algorand } from "../families/algorand/setup";
+import { cliTools as bitcoin } from "../families/bitcoin/setup";
+import { cliTools as cardano } from "../families/cardano/setup";
+import { cliTools as evm } from "../families/evm/setup";
+import { cliTools as near } from "../families/near/setup";
+import { cliTools as polkadot } from "../families/polkadot/setup";
+import { cliTools as solana } from "../families/solana/setup";
+import { cliTools as tezos } from "../families/tezos/setup";
+import { cliTools as xrp } from "../families/xrp/setup";
+import { cliTools as icon } from "../families/icon/setup";
 
 export default {
-  casper,
   celo,
   cosmos,
   crypto_org,
   elrond,
   filecoin,
   hedera,
-  internet_computer,
   stacks,
   stellar,
   tron,
+  vechain,
   algorand,
   bitcoin,
   cardano,
@@ -43,22 +41,3 @@ export default {
   xrp,
   icon,
 };
-
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "../families/stacks/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "../families/tron/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/bridge/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_icon } from "@ledgerhq/coin-icon/bridge/deviceTransactionConfig";
-
-export type ExtraDeviceTransactionField =
-  | ExtraDeviceTransactionField_casper
-  | ExtraDeviceTransactionField_cosmos
-  | ExtraDeviceTransactionField_filecoin
-  | ExtraDeviceTransactionField_stacks
-  | ExtraDeviceTransactionField_stellar
-  | ExtraDeviceTransactionField_tron
-  | ExtraDeviceTransactionField_polkadot
-  | ExtraDeviceTransactionField_icon;
