@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { TRX } from "@ledgerhq/native-ui/assets/cryptoIcons";
 import { TokenAccount } from "@ledgerhq/types-live";
 
@@ -12,9 +12,10 @@ const getMainActions = ({
   parentAccount,
 }: {
   account: TronAccount | TokenAccount;
-  parentAccount: TronAccount;
+  parentAccount: TronAccount | null | undefined;
 }): ActionButtonEvent[] => {
-  const navigationParams: NavigationParamsType = isAccountEmpty(account)
+  const mainAccount = getMainAccount(account, parentAccount);
+  const navigationParams: NavigationParamsType = isAccountEmpty(mainAccount)
     ? [
         NavigatorName.NoFundsFlow,
         {
@@ -31,7 +32,7 @@ const getMainActions = ({
           params: {
             platform: "stakekit",
             name: "StakeKit",
-            accountId: account.id,
+            accountId: mainAccount.id,
             yieldId: "tron-trx-native-staking",
           },
         },
