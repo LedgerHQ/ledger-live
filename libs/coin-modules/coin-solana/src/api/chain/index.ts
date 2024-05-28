@@ -12,9 +12,10 @@ import {
   SignaturesForAddressOptions,
   StakeProgram,
 } from "@solana/web3.js";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
-import { Awaited } from "../../logic";
 import { NetworkError } from "@ledgerhq/errors";
+import { Awaited } from "../../logic";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 
@@ -124,7 +125,7 @@ export function getChainAPI(
         })
         .catch(remapErrors),
 
-    getStakeAccountsByStakeAuth: (authAddr: string) =>
+    getStakeAccountsByStakeAuth: makeLRUCache((authAddr: string) =>
       connection()
         .getParsedProgramAccounts(StakeProgram.programId, {
           filters: [
@@ -137,8 +138,11 @@ export function getChainAPI(
           ],
         })
         .catch(remapErrors),
+        (addr: string) => addr,
+        minutes(3),
+    ),
 
-    getStakeAccountsByWithdrawAuth: (authAddr: string) =>
+    getStakeAccountsByWithdrawAuth: makeLRUCache((authAddr: string) =>
       connection()
         .getParsedProgramAccounts(StakeProgram.programId, {
           filters: [
@@ -151,6 +155,9 @@ export function getChainAPI(
           ],
         })
         .catch(remapErrors),
+        (addr: string) => addr,
+        minutes(3),
+    ),
 
     getStakeActivation: (stakeAccAddr: string) =>
       connection().getStakeActivation(new PublicKey(stakeAccAddr)).catch(remapErrors),
