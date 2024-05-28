@@ -9,7 +9,7 @@ import { ScreenName } from "~/const";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 import { useSettings } from "~/hooks";
-import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useTimeRange } from "~/actions/settings";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
@@ -33,18 +33,8 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
   }, [currency, navigation]);
 
   const getPrice = (selectedCoinData: CurrencyData, range: PortfolioRange) => {
-    switch (range) {
-      case "all":
-      case "year":
-        return selectedCoinData.priceChangePercentage["1y"];
-      case "month":
-        return selectedCoinData.priceChangePercentage["30d"];
-      case "week":
-        return selectedCoinData.priceChangePercentage["7d"];
-      default:
-      case "day":
-        return selectedCoinData.priceChangePercentage["24h"];
-    }
+    const key: KeysPriceChange = range === "all" ? KeysPriceChange.year : KeysPriceChange[range];
+    return selectedCoinData.priceChangePercentage[key];
   };
 
   const priceChange = getPrice(selectedCoinData, range);
@@ -72,7 +62,7 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
           </Flex>
           <Flex flex={1} flexDirection="column" pl={7} alignItems={"flex-start"}>
             <Text variant="small" fontWeight="medium" lineHeight="20px" color="neutral.c70">
-              {t("portfolio.marketPriceSection.currencyPriceChange")}
+              {t(`portfolio.marketPriceSection.currencyPriceChange.${range}`)}
             </Text>
             <DeltaVariation percent value={priceChange || 0} />
           </Flex>

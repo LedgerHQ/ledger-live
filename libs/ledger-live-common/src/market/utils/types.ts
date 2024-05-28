@@ -73,7 +73,14 @@ export type SparklineSvgData = {
   isPositive: boolean;
 };
 
-export type KeysPriceChange = "1h" | "24h" | "7d" | "30d" | "1y";
+export enum KeysPriceChange {
+  hour = "1h",
+  day = "24h",
+  week = "7d",
+  month = "30d",
+  year = "1y",
+}
+
 export type CurrencyData = {
   id: string;
   name: string;

@@ -1,5 +1,11 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { CurrencyData, MarketItemPerformer, MarketItemResponse, SparklineSvgData } from "./types";
+import {
+  CurrencyData,
+  KeysPriceChange,
+  MarketItemPerformer,
+  MarketItemResponse,
+  SparklineSvgData,
+} from "./types";
 
 function distributedCopy(items: number[], n: number): number[] {
   if (!items) return [];
@@ -64,11 +70,11 @@ export const format = (
   ticker: currency.ticker,
   price: currency.price,
   priceChangePercentage: {
-    "1h": currency.priceChangePercentage1h,
-    "24h": currency.priceChangePercentage24h,
-    "30d": currency.priceChangePercentage30d,
-    "7d": currency.priceChangePercentage7d,
-    "1y": currency.priceChangePercentage1y,
+    [KeysPriceChange.hour]: currency.priceChangePercentage1h,
+    [KeysPriceChange.day]: currency.priceChangePercentage24h,
+    [KeysPriceChange.week]: currency.priceChangePercentage7d,
+    [KeysPriceChange.month]: currency.priceChangePercentage30d,
+    [KeysPriceChange.year]: currency.priceChangePercentage1y,
   },
   marketCapChangePercentage24h: currency.marketCapChangePercentage24h,
   circulatingSupply: currency.circulatingSupply,

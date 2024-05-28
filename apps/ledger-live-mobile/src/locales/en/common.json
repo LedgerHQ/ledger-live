@@ -2245,7 +2245,13 @@
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
-      "currencyPriceChange": "Last 24h change"
+      "currencyPriceChange": {
+        "day": "Last 24h change",
+        "week": "Last 7 days change",
+        "month": "Last 30 days change",
+        "year": "Last year change",
+        "all": "Last year change"
+      }
     },
     "quickActions": {
       "buy": "Buy",
