@@ -1,7 +1,6 @@
 import Eth from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -220,10 +219,6 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
       onSignerConfirmation,
     };
   },
-  getTransactions: address => makeScenarioTransactions({ address }),
-  beforeSync: async () => {
-    await indexBlocks();
-  },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
@@ -231,6 +226,11 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
       ethers.utils.parseUnits("100", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
     expect(account.nfts?.length).toBe(2);
+  },
+  getTransactions: address => makeScenarioTransactions({ address }),
+  mockIndexer: async () => {},
+  beforeSync: async () => {
+    await indexBlocks();
   },
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);

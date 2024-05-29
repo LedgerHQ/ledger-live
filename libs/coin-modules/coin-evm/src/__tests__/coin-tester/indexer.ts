@@ -100,10 +100,22 @@ export const resetIndexer = () => {
   }
 };
 
+<<<<<<< HEAD
 const handleLog = async (log: providers.Log, provider: ethers.providers.StaticJsonRpcProvider) => {
   const contractDecimals = await provider
     .call({ to: log.address, data: ERC20Interface.encodeFunctionData("decimals") })
     .then(res => (!res || res === "0x" ? false : true));
+=======
+/**
+ *
+ * @description This function is used to setup coin tester accounts. We corectly index the transactions and operations for each account.
+ * Notaably, we identiy operations by type (ERC20, ERC721, ERC1155) and store them in a map by address.
+ */
+export const getLogs = async (): Promise<providers.Log[]> => {
+  if (!fromBlock) {
+    await setBlock();
+  }
+>>>>>>> 7c52f642693 (mockIndexer)
 
   const isERC20 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC20 && contractDecimals;
   const isERC721 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC721 && !contractDecimals;

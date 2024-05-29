@@ -12,6 +12,7 @@ import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { PolkadotCoinConfig } from "../../../config";
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 import { polkadot } from "./utils";
+import { indexOperation } from "../indexer";
 
 function getTransactions() {
   const send1DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
@@ -134,6 +135,26 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     };
   },
   getTransactions,
+  mockIndexer: async (account, optimistic) => {
+    indexOperation(account.freshAddress, {
+      status: 0,
+      extrinsic: {
+        blockNumber: optimistic.blockHeight!,
+        timestamp: optimistic.date.getTime(),
+        nonce: 0,
+        hash: optimistic.hash,
+        signer: "",
+        affectedAddress1: account.freshAddress,
+        method: "transfer",
+        section: "balances",
+        index: 0,
+        isSuccess: true,
+        amount: optimistic.value.toNumber(),
+        partialFee: optimistic.fee.toNumber(),
+        isBatch: false,
+      },
+    });
+  },
   beforeAll: async account => {
     expect(account.balance.toFixed()).toBe("90000000000");
   },

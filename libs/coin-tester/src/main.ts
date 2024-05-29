@@ -4,6 +4,7 @@ import {
   TransactionCommon,
   SignOperationEvent,
   CurrencyBridge,
+  Operation,
 } from "@ledgerhq/types-live";
 import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
@@ -30,7 +31,11 @@ export type Scenario<T extends TransactionCommon> = {
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
   }>;
   getTransactions: (address: string) => ScenarioTransaction<T>[];
+<<<<<<< HEAD
   beforeSync?: () => Promise<void> | void;
+=======
+  mockIndexer: (account: Account, optimistic: Operation) => Promise<void>;
+>>>>>>> 7c52f642693 (mockIndexer)
   beforeAll?: (account: Account) => Promise<void> | void;
   afterAll?: (account: Account) => Promise<void> | void;
   beforeEach?: (account: Account) => Promise<void> | void;
@@ -198,6 +203,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
         }
       };
 
+      await scenario.mockIndexer?.(scenarioAccount, optimisticOperation);
       await expectHandler(retry_limit);
 
       await scenario.afterEach?.(scenarioAccount);

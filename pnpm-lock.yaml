@@ -2252,7 +2252,7 @@ importers:
         specifier: ^1.1.3
         version: 1.1.3
       msw:
-        specifier: ^2.0.11
+        specifier: ^2.2.13
         version: 2.2.13(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
@@ -37433,7 +37433,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
+      ts-node: 10.9.2(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -37474,7 +37474,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
+      ts-node: 10.9.2(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro

@@ -218,6 +218,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
   beforeSync: async () => {
     await indexBlocks();
   },
+  mockIndexer: async () => {},
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
