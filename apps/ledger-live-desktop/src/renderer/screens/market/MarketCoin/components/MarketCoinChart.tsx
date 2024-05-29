@@ -11,7 +11,7 @@ import ChartPlaceholder from "../../assets/ChartPlaceholder";
 import CountervalueSelect from "../../components/CountervalueSelect";
 import { useTranslation } from "react-i18next";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
-import { formatPrice } from "../../utils";
+import { formatPercentage, formatPrice } from "../../utils";
 
 const Title = styled(Text).attrs({ variant: "h3", color: "neutral.c100", mt: 1, mb: 5 })`
   font-size: 28px;
@@ -160,7 +160,7 @@ function MarkeCoinChartComponent({
               <FormattedVal
                 isPercent
                 isNegative
-                val={parseFloat(priceChangePercentage.toFixed(2))}
+                val={formatPercentage(priceChangePercentage)}
                 inline
                 withIcon
               />

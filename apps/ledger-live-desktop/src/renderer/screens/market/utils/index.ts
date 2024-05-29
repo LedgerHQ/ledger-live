@@ -20,3 +20,7 @@ export function getCurrentPage(scrollPosition: number, pageSize: number): number
 export function formatPrice(price: number): number {
   return parseFloat(price.toFixed(price >= 1 ? 2 : 6));
 }
+
+export function formatPercentage(percentage: number, decimals = 2): number {
+  return parseFloat(percentage.toFixed(decimals));
+}

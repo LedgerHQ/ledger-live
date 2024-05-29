@@ -532,5 +532,3 @@ export type MarketStatePayload =
   | MarketSetMarketFilterByStarredCurrenciesPayload
   | MarketSetMarketRequestParamsPayload
   | MarketSetCurrentPagePayload;
-
-export type MarketImportPayload = Partial<MarketState>;

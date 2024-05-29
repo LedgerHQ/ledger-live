@@ -12,7 +12,7 @@ import { Button } from "../..";
 import { useTranslation } from "react-i18next";
 import { TableRow, TableCell } from "../../components/Table";
 import { Page, useMarketActions } from "../../hooks/useMarketActions";
-import { formatPrice } from "../../utils";
+import { formatPercentage, formatPrice } from "../../utils";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 32px;
@@ -167,7 +167,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
           <TableCell data-test-id={"market-coin-price"}>
             <Text variant="body">
               {counterValueFormatter({
-                value: formatPrice(currency.price),
+                value: formatPrice(currency.price ?? 0),
                 currency: counterCurrency,
                 locale,
               })}
@@ -178,7 +178,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
               <FormattedVal
                 isPercent
                 isNegative
-                val={parseFloat(Number(currentPriceChangePercentage).toFixed(2))}
+                val={formatPercentage(currentPriceChangePercentage)}
                 inline
                 withIcon
               />

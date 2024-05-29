@@ -144,7 +144,7 @@ export default function MarketCoinScreen() {
       </Flex>
       <MarketCoinChart
         price={price}
-        priceChangePercentage={Number(currentPriceChangePercentage)}
+        priceChangePercentage={currentPriceChangePercentage}
         chartData={dataChart}
         range={range}
         counterCurrency={counterCurrency}
