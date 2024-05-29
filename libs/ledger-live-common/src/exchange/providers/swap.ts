@@ -1,5 +1,6 @@
 import { ExchangeProviderNameAndSignature } from ".";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
+import PACKAGE from "../../../package.json";
 
 export type SwapProviderConfig = {
   needsKYC: boolean;
@@ -141,7 +142,12 @@ export const getProvidersData = async () => {
   try {
     const providersData = await (
       await fetch(
-        "https://crypto-assets-service.api.aws.prd.ldg-tech.com/v1/partners?output=name,payload_signature_computed_format,signature,public_key,public_key_curve",
+        "https://crypto-assets-service.api.ledger.com/v1/partners?output=name,signature,public_key,public_key_curve&service_name=swap",
+        {
+          headers: {
+            "X-Ledger-Client-Version": `live-exchange/${PACKAGE.version}`,
+          },
+        },
       )
     ).json();
     return providersData;
