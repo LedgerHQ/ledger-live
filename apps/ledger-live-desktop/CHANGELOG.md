@@ -1,204 +1,46 @@
 # ledger-live-desktop
 
-## 2.81.0-nightly.8
+## 2.81.2
+
+### Patch Changes
+
+- [#6886](https://github.com/LedgerHQ/ledger-live/pull/6886) [`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix json import in .mjs script file
+
+- Updated dependencies [[`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1)]:
+  - @ledgerhq/ethereum-provider@0.2.1
+
+## 2.81.2-hotfix.0
+
+### Patch Changes
+
+- [#6886](https://github.com/LedgerHQ/ledger-live/pull/6886) [`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix json import in .mjs script file
+
+- Updated dependencies [[`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1)]:
+  - @ledgerhq/ethereum-provider@0.2.1-hotfix.0
+
+## 2.81.1
+
+### Patch Changes
+
+- [#6871](https://github.com/LedgerHQ/ledger-live/pull/6871) [`7857c4e`](https://github.com/LedgerHQ/ledger-live/commit/7857c4e41bbcfe4e421ed3b18d50090c253e319e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix analytics that were overriding app.json
+
+## 2.81.1-hotfix.0
+
+### Patch Changes
+
+- [#6871](https://github.com/LedgerHQ/ledger-live/pull/6871) [`7857c4e`](https://github.com/LedgerHQ/ledger-live/commit/7857c4e41bbcfe4e421ed3b18d50090c253e319e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix analytics that were overriding app.json
+
+## 2.81.0
 
 ### Minor Changes
 
-- [#6939](https://github.com/LedgerHQ/ledger-live/pull/6939) [`2d9d362`](https://github.com/LedgerHQ/ledger-live/commit/2d9d3625ccb7efa11d589f7d96b117b2aa7e414f) Thanks [@valber-ledger](https://github.com/valber-ledger)! - updating workflow: adding default value to variables
+- [#6865](https://github.com/LedgerHQ/ledger-live/pull/6865) [`ac32e49`](https://github.com/LedgerHQ/ledger-live/commit/ac32e499cb1c1f9951a204ff5544e308415bf928) Thanks [@cksanders](https://github.com/cksanders)! - Fix LIVE-12571 where some users can't unlock LLD when they have set up a password
 
-### Patch Changes
-
-- [#6932](https://github.com/LedgerHQ/ledger-live/pull/6932) [`03ecd46`](https://github.com/LedgerHQ/ledger-live/commit/03ecd46734668af64d3499cb6877630dd3db2061) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - There was a Layout issue with new Gainers/Losers trend widget if LLD is in French or German
-
-- [#6921](https://github.com/LedgerHQ/ledger-live/pull/6921) [`3b56610`](https://github.com/LedgerHQ/ledger-live/commit/3b566101b2fe37c08f1067fc99af162ea09cc42c) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - disaply the disabled swap button when the swap form is not valid
-
-- [#6866](https://github.com/LedgerHQ/ledger-live/pull/6866) [`82566b4`](https://github.com/LedgerHQ/ledger-live/commit/82566b4568b0a8ffb80ecfed897e46d8177e9ffd) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add Wallet Sync manage screen
-
-- Updated dependencies [[`024ffae`](https://github.com/LedgerHQ/ledger-live/commit/024ffae05c0fa4ec7e42965cdcb3a3b4a516339c)]:
-  - @ledgerhq/live-common@34.3.0-nightly.7
-  - @ledgerhq/coin-framework@0.14.0-nightly.5
-  - @ledgerhq/coin-bitcoin@0.6.0-nightly.5
-  - @ledgerhq/coin-evm@2.1.0-nightly.5
-  - @ledgerhq/live-countervalues@0.2.0-nightly.5
-  - @ledgerhq/live-countervalues-react@0.2.0-nightly.5
-  - @ledgerhq/live-nft@0.4.0-nightly.5
-  - @ledgerhq/live-nft-react@0.4.0-nightly.5
-  - @ledgerhq/live-wallet@0.1.1-nightly.8
-
-## 2.81.0-nightly.7
+## 2.81.0-hotfix.0
 
 ### Minor Changes
 
-- [#6812](https://github.com/LedgerHQ/ledger-live/pull/6812) [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Modularize Cardano
-
-### Patch Changes
-
-- [#6925](https://github.com/LedgerHQ/ledger-live/pull/6925) [`69a7d59`](https://github.com/LedgerHQ/ledger-live/commit/69a7d593c911ec6098059a1c8a11d24d6c1b8ceb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - update Market Widget Button clicks analytics
-
-- [#6933](https://github.com/LedgerHQ/ledger-live/pull/6933) [`636dd1e`](https://github.com/LedgerHQ/ledger-live/commit/636dd1e99961b5dc819fea2c4984d2a878a77636) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix trad of Update firmware banner when updating selected language
-
-- [#6915](https://github.com/LedgerHQ/ledger-live/pull/6915) [`8dabb3b`](https://github.com/LedgerHQ/ledger-live/commit/8dabb3ba31f9f7e14d172cc29636654fbe0288ee) Thanks [@CremaFR](https://github.com/CremaFR)! - desactivate tezos unrevealed account swap
-
-- [#6929](https://github.com/LedgerHQ/ledger-live/pull/6929) [`0bb6b76`](https://github.com/LedgerHQ/ledger-live/commit/0bb6b76733616d7ae392db2f2164139c63a59fc1) Thanks [@CremaFR](https://github.com/CremaFR)! - fetch CDN for swap providers data
-
-- Updated dependencies [[`6512191`](https://github.com/LedgerHQ/ledger-live/commit/65121919bc7c93adc56b0f07d784e8d4ff08283b), [`8dabb3b`](https://github.com/LedgerHQ/ledger-live/commit/8dabb3ba31f9f7e14d172cc29636654fbe0288ee), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f), [`6623cd1`](https://github.com/LedgerHQ/ledger-live/commit/6623cd13102bd8340bd7d4dfdd469934527985c3), [`0bb6b76`](https://github.com/LedgerHQ/ledger-live/commit/0bb6b76733616d7ae392db2f2164139c63a59fc1)]:
-  - @ledgerhq/live-common@34.3.0-nightly.6
-  - @ledgerhq/errors@6.17.0-nightly.1
-  - @ledgerhq/live-env@2.1.0-nightly.2
-  - @ledgerhq/coin-framework@0.14.0-nightly.4
-  - @ledgerhq/coin-bitcoin@0.6.0-nightly.4
-  - @ledgerhq/coin-evm@2.1.0-nightly.4
-  - @ledgerhq/domain-service@1.2.0-nightly.1
-  - @ledgerhq/devices@8.4.0-nightly.1
-  - @ledgerhq/hw-transport@6.31.0-nightly.1
-  - @ledgerhq/hw-transport-http@6.30.0-nightly.1
-  - @ledgerhq/hw-transport-node-hid-singleton@6.31.0-nightly.1
-  - @ledgerhq/hw-transport-node-speculos-http@6.29.0-nightly.2
-  - @ledgerhq/hw-transport-vault@1.3.0-nightly.1
-  - @ledgerhq/live-network@1.3.0-nightly.2
-  - @ledgerhq/live-countervalues@0.2.0-nightly.4
-  - @ledgerhq/live-nft@0.4.0-nightly.4
-  - @ledgerhq/live-wallet@0.1.1-nightly.7
-  - @ledgerhq/live-countervalues-react@0.2.0-nightly.4
-  - @ledgerhq/live-nft-react@0.4.0-nightly.4
-
-## 2.81.0-nightly.6
-
-### Minor Changes
-
-- [#6908](https://github.com/LedgerHQ/ledger-live/pull/6908) [`49f61fb`](https://github.com/LedgerHQ/ledger-live/commit/49f61fb39d5077ebe36d2136cfc09f9f875025cf) Thanks [@valber-ledger](https://github.com/valber-ledger)! - Activate Nightly on speculos tests
-
-### Patch Changes
-
-- [#6914](https://github.com/LedgerHQ/ledger-live/pull/6914) [`65821db`](https://github.com/LedgerHQ/ledger-live/commit/65821db981bedc83d48aa2043ef93582662ec193) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Pass correct target and source currency to swap-live-app
-
-- [#6897](https://github.com/LedgerHQ/ledger-live/pull/6897) [`7d97769`](https://github.com/LedgerHQ/ledger-live/commit/7d97769ab9db79a0b80e55a6abcbd4753043b32f) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - display the swap-live-app devtools based on the "Enable platform dev tools" flag
-
-## 2.81.0-nightly.5
-
-### Patch Changes
-
-- [#6906](https://github.com/LedgerHQ/ledger-live/pull/6906) [`7f75013`](https://github.com/LedgerHQ/ledger-live/commit/7f75013900b8e52cdff990e27b12a2aa130d9e29) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - update the useMemo hook dependency to relod the correct swapState
-
-- Updated dependencies [[`326cae0`](https://github.com/LedgerHQ/ledger-live/commit/326cae088cc33795536deb1d868c86e8dbeb6a13), [`6d44f25`](https://github.com/LedgerHQ/ledger-live/commit/6d44f255c5b2f453c61d0b754807db1f76d7174e), [`dbe40aa`](https://github.com/LedgerHQ/ledger-live/commit/dbe40aa31d3ce84f3a2638429981892eb61196a7), [`f363430`](https://github.com/LedgerHQ/ledger-live/commit/f363430fe1a261f8adb79d3bf30e457cba839783)]:
-  - @ledgerhq/live-network@1.3.0-nightly.1
-  - @ledgerhq/coin-framework@0.14.0-nightly.3
-  - @ledgerhq/live-common@34.3.0-nightly.5
-  - @ledgerhq/live-env@2.1.0-nightly.1
-  - @ledgerhq/hw-transport-node-speculos-http@6.29.0-nightly.1
-  - @ledgerhq/coin-bitcoin@0.6.0-nightly.3
-  - @ledgerhq/coin-evm@2.1.0-nightly.3
-  - @ledgerhq/live-countervalues@0.2.0-nightly.3
-  - @ledgerhq/live-nft@0.4.0-nightly.3
-  - @ledgerhq/live-countervalues-react@0.2.0-nightly.3
-  - @ledgerhq/live-nft-react@0.4.0-nightly.3
-  - @ledgerhq/live-wallet@0.1.1-nightly.6
-
-## 2.81.0-nightly.4
-
-### Minor Changes
-
-- [#6899](https://github.com/LedgerHQ/ledger-live/pull/6899) [`19a4509`](https://github.com/LedgerHQ/ledger-live/commit/19a450995a200aa326fe25a2c84ad22b23c00718) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix border-radius in our react DS for the Button
-
-### Patch Changes
-
-- [#6853](https://github.com/LedgerHQ/ledger-live/pull/6853) [`2fc0865`](https://github.com/LedgerHQ/ledger-live/commit/2fc08657eb8acc4a42b21e4266a0bac86dec4c79) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Replace static provider info to API
-
-- [#6825](https://github.com/LedgerHQ/ledger-live/pull/6825) [`d9f97d3`](https://github.com/LedgerHQ/ledger-live/commit/d9f97d386c9207dc635fb9a8b60a6232406ffc07) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Send swap data as hash params
-
-- Updated dependencies [[`2fc0865`](https://github.com/LedgerHQ/ledger-live/commit/2fc08657eb8acc4a42b21e4266a0bac86dec4c79), [`19a4509`](https://github.com/LedgerHQ/ledger-live/commit/19a450995a200aa326fe25a2c84ad22b23c00718), [`7bbad43`](https://github.com/LedgerHQ/ledger-live/commit/7bbad43beab706a98b03ff9147cc67f289220c44)]:
-  - @ledgerhq/live-common@34.3.0-nightly.4
-  - @ledgerhq/react-ui@0.15.0-nightly.1
-
-## 2.81.0-nightly.3
-
-### Minor Changes
-
-- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
-
-### Patch Changes
-
-- [#6782](https://github.com/LedgerHQ/ledger-live/pull/6782) [`879fda4`](https://github.com/LedgerHQ/ledger-live/commit/879fda43254324f8a9b5b8c113e3dcf6d5ad9698) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add Wallet Sync activation screen
-
-- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`f8980de`](https://github.com/LedgerHQ/ledger-live/commit/f8980de0a317a99b8eaea4b629c8d9bdd2c2a136)]:
-  - @ledgerhq/hw-transport-node-hid-singleton@6.31.0-nightly.0
-  - @ledgerhq/hw-transport-vault@1.3.0-nightly.0
-  - @ledgerhq/types-cryptoassets@7.13.0-nightly.0
-  - @ledgerhq/hw-transport-http@6.30.0-nightly.0
-  - @ledgerhq/types-devices@6.25.0-nightly.0
-  - @ledgerhq/hw-transport@6.31.0-nightly.0
-  - @ledgerhq/types-live@6.48.0-nightly.0
-  - @ledgerhq/coin-bitcoin@0.6.0-nightly.2
-  - @ledgerhq/devices@8.4.0-nightly.0
-  - @ledgerhq/errors@6.17.0-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.0-nightly.2
-  - @ledgerhq/coin-evm@2.1.0-nightly.2
-  - @ledgerhq/live-common@34.3.0-nightly.3
-  - @ledgerhq/live-countervalues@0.2.0-nightly.2
-  - @ledgerhq/ethereum-provider@0.3.0-nightly.1
-  - @ledgerhq/react-ui@0.15.0-nightly.0
-  - @ledgerhq/coin-framework@0.14.0-nightly.2
-  - @ledgerhq/domain-service@1.2.0-nightly.0
-  - @ledgerhq/live-nft-react@0.4.0-nightly.2
-  - @ledgerhq/live-network@1.3.0-nightly.0
-  - @ledgerhq/live-nft@0.4.0-nightly.2
-  - @ledgerhq/live-env@2.1.0-nightly.0
-  - @ledgerhq/live-wallet@0.1.1-nightly.5
-
-## 2.81.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`6c5106b`](https://github.com/LedgerHQ/ledger-live/commit/6c5106ba14ad91eeb9d78840f7bc3cd3db3c7059)]:
-  - @ledgerhq/live-common@34.3.0-nightly.2
-
-## 2.81.0-nightly.1
-
-### Minor Changes
-
-- [#6863](https://github.com/LedgerHQ/ledger-live/pull/6863) [`cf435fd`](https://github.com/LedgerHQ/ledger-live/commit/cf435fd32b81391579311fcdf4de4439e37cdd00) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix LIVE-12571 where some users can't unlock LLD when they have set up a password
-
-### Patch Changes
-
-- [#6754](https://github.com/LedgerHQ/ledger-live/pull/6754) [`4c01029`](https://github.com/LedgerHQ/ledger-live/commit/4c01029b4d4feb32dab2f9e77da1126050d8c1bc) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Move Tezos in its own package
-
-- [#6875](https://github.com/LedgerHQ/ledger-live/pull/6875) [`6b060c8`](https://github.com/LedgerHQ/ledger-live/commit/6b060c823985f2e7fed8656db9b3da49f4967367) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix analytics that were overriding app.json
-
-- [#6860](https://github.com/LedgerHQ/ledger-live/pull/6860) [`1364fe0`](https://github.com/LedgerHQ/ledger-live/commit/1364fe0b8a134673091d01c9e9bdd2b0780fd984) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix automatic scroll that was triggered on accounts page when mounted
-
-- [#6848](https://github.com/LedgerHQ/ledger-live/pull/6848) [`e48b5d7`](https://github.com/LedgerHQ/ledger-live/commit/e48b5d782ebd15d4e25e522e2fbc1331afdfb5c1) Thanks [@gre](https://github.com/gre)! - prevent app to crash during the unlock phase
-
-- Updated dependencies [[`4c01029`](https://github.com/LedgerHQ/ledger-live/commit/4c01029b4d4feb32dab2f9e77da1126050d8c1bc)]:
-  - @ledgerhq/coin-evm@2.0.1-nightly.1
-  - @ledgerhq/live-common@34.3.0-nightly.1
-  - @ledgerhq/coin-framework@0.13.1-nightly.1
-  - @ledgerhq/coin-bitcoin@0.5.1-nightly.1
-  - @ledgerhq/live-countervalues@0.1.6-nightly.1
-  - @ledgerhq/live-countervalues-react@0.1.6-nightly.1
-  - @ledgerhq/live-nft@0.3.3-nightly.1
-  - @ledgerhq/live-nft-react@0.3.3-nightly.1
-  - @ledgerhq/live-wallet@0.1.1-nightly.4
-
-## 2.81.0-nightly.0
-
-### Minor Changes
-
-- [#6831](https://github.com/LedgerHQ/ledger-live/pull/6831) [`5fe062e`](https://github.com/LedgerHQ/ledger-live/commit/5fe062e79014634e3ed46321ffbe1100d56fae96) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9328): migrate more native swap UI including loading state and form summary (target account and network fee)
-
-- [#6822](https://github.com/LedgerHQ/ledger-live/pull/6822) [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Changing "ripple" file paths to "xrp"
-
-### Patch Changes
-
-- Updated dependencies [[`b9f1f71`](https://github.com/LedgerHQ/ledger-live/commit/b9f1f715355752d8c57c24ecd6a6d166b80f689d), [`bbb1e8d`](https://github.com/LedgerHQ/ledger-live/commit/bbb1e8d0cadfa627b4a955a86bbf66e3b4b4957a), [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52)]:
-  - @ledgerhq/coin-framework@0.13.1-nightly.0
-  - @ledgerhq/live-common@34.3.0-nightly.0
-  - @ledgerhq/coin-bitcoin@0.5.1-nightly.0
-  - @ledgerhq/coin-evm@2.0.1-nightly.0
-  - @ledgerhq/live-countervalues@0.1.6-nightly.0
-  - @ledgerhq/live-countervalues-react@0.1.6-nightly.0
-  - @ledgerhq/live-nft@0.3.3-nightly.0
-  - @ledgerhq/live-nft-react@0.3.3-nightly.0
-  - @ledgerhq/live-wallet@0.1.1-nightly.3
+- [#6865](https://github.com/LedgerHQ/ledger-live/pull/6865) [`ac32e49`](https://github.com/LedgerHQ/ledger-live/commit/ac32e499cb1c1f9951a204ff5544e308415bf928) Thanks [@cksanders](https://github.com/cksanders)! - Fix LIVE-12571 where some users can't unlock LLD when they have set up a password
 
 ## 2.80.0
 

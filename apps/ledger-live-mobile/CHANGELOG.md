@@ -1,157 +1,18 @@
 # live-mobile
 
-## 3.45.0-nightly.8
+## 3.44.1
 
 ### Patch Changes
 
-- Updated dependencies [[`024ffae`](https://github.com/LedgerHQ/ledger-live/commit/024ffae05c0fa4ec7e42965cdcb3a3b4a516339c)]:
-  - @ledgerhq/live-common@34.3.0-nightly.7
-  - @ledgerhq/coin-framework@0.14.0-nightly.5
-  - @ledgerhq/coin-evm@2.1.0-nightly.5
-  - @ledgerhq/live-countervalues@0.2.0-nightly.5
-  - @ledgerhq/live-countervalues-react@0.2.0-nightly.5
-  - @ledgerhq/live-nft@0.4.0-nightly.5
-  - @ledgerhq/live-nft-react@0.4.0-nightly.5
-  - @ledgerhq/live-wallet@0.1.1-nightly.8
+- Updated dependencies [[`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1)]:
+  - @ledgerhq/ethereum-provider@0.2.1
 
-## 3.45.0-nightly.7
-
-### Minor Changes
-
-- [#6812](https://github.com/LedgerHQ/ledger-live/pull/6812) [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Modularize Cardano
+## 3.44.1-hotfix.0
 
 ### Patch Changes
 
-- [#6915](https://github.com/LedgerHQ/ledger-live/pull/6915) [`8dabb3b`](https://github.com/LedgerHQ/ledger-live/commit/8dabb3ba31f9f7e14d172cc29636654fbe0288ee) Thanks [@CremaFR](https://github.com/CremaFR)! - desactivate tezos unrevealed account swap
-
-- Updated dependencies [[`6512191`](https://github.com/LedgerHQ/ledger-live/commit/65121919bc7c93adc56b0f07d784e8d4ff08283b), [`8dabb3b`](https://github.com/LedgerHQ/ledger-live/commit/8dabb3ba31f9f7e14d172cc29636654fbe0288ee), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f), [`6623cd1`](https://github.com/LedgerHQ/ledger-live/commit/6623cd13102bd8340bd7d4dfdd469934527985c3), [`0bb6b76`](https://github.com/LedgerHQ/ledger-live/commit/0bb6b76733616d7ae392db2f2164139c63a59fc1)]:
-  - @ledgerhq/live-common@34.3.0-nightly.6
-  - @ledgerhq/errors@6.17.0-nightly.1
-  - @ledgerhq/live-env@2.1.0-nightly.2
-  - @ledgerhq/coin-framework@0.14.0-nightly.4
-  - @ledgerhq/coin-evm@2.1.0-nightly.4
-  - @ledgerhq/domain-service@1.2.0-nightly.1
-  - @ledgerhq/devices@8.4.0-nightly.1
-  - @ledgerhq/hw-transport@6.31.0-nightly.1
-  - @ledgerhq/hw-transport-http@6.30.0-nightly.1
-  - @ledgerhq/react-native-hid@6.32.0-nightly.1
-  - @ledgerhq/react-native-hw-transport-ble@6.33.0-nightly.1
-  - @ledgerhq/live-countervalues@0.2.0-nightly.4
-  - @ledgerhq/live-nft@0.4.0-nightly.4
-  - @ledgerhq/live-wallet@0.1.1-nightly.7
-  - @ledgerhq/live-countervalues-react@0.2.0-nightly.4
-  - @ledgerhq/live-nft-react@0.4.0-nightly.4
-
-## 3.45.0-nightly.6
-
-### Patch Changes
-
-- [#6922](https://github.com/LedgerHQ/ledger-live/pull/6922) [`3114b6a`](https://github.com/LedgerHQ/ledger-live/commit/3114b6a6742fb2deaed415569e9748c6e9e7955a) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Hides title
-
-## 3.45.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`326cae0`](https://github.com/LedgerHQ/ledger-live/commit/326cae088cc33795536deb1d868c86e8dbeb6a13), [`6d44f25`](https://github.com/LedgerHQ/ledger-live/commit/6d44f255c5b2f453c61d0b754807db1f76d7174e), [`dbe40aa`](https://github.com/LedgerHQ/ledger-live/commit/dbe40aa31d3ce84f3a2638429981892eb61196a7)]:
-  - @ledgerhq/coin-framework@0.14.0-nightly.3
-  - @ledgerhq/live-common@34.3.0-nightly.5
-  - @ledgerhq/live-env@2.1.0-nightly.1
-  - @ledgerhq/coin-evm@2.1.0-nightly.3
-  - @ledgerhq/live-countervalues@0.2.0-nightly.3
-  - @ledgerhq/live-nft@0.4.0-nightly.3
-  - @ledgerhq/live-countervalues-react@0.2.0-nightly.3
-  - @ledgerhq/live-nft-react@0.4.0-nightly.3
-  - @ledgerhq/live-wallet@0.1.1-nightly.6
-
-## 3.45.0-nightly.4
-
-### Patch Changes
-
-- [#6853](https://github.com/LedgerHQ/ledger-live/pull/6853) [`2fc0865`](https://github.com/LedgerHQ/ledger-live/commit/2fc08657eb8acc4a42b21e4266a0bac86dec4c79) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Replace static provider info to API
-
-- [#6887](https://github.com/LedgerHQ/ledger-live/pull/6887) [`7bbad43`](https://github.com/LedgerHQ/ledger-live/commit/7bbad43beab706a98b03ff9147cc67f289220c44) Thanks [@lvndry](https://github.com/lvndry)! - try/catch coin config + fix configuration name typo
-
-- Updated dependencies [[`2fc0865`](https://github.com/LedgerHQ/ledger-live/commit/2fc08657eb8acc4a42b21e4266a0bac86dec4c79), [`7bbad43`](https://github.com/LedgerHQ/ledger-live/commit/7bbad43beab706a98b03ff9147cc67f289220c44)]:
-  - @ledgerhq/live-common@34.3.0-nightly.4
-
-## 3.45.0-nightly.3
-
-### Minor Changes
-
-- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
-
-### Patch Changes
-
-- [#6867](https://github.com/LedgerHQ/ledger-live/pull/6867) [`8b497d3`](https://github.com/LedgerHQ/ledger-live/commit/8b497d34d41e86ffb4ee5e6c05aa3b964558efe1) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Fix swap main header translation value in Turkish on LLM
-
-- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`f8980de`](https://github.com/LedgerHQ/ledger-live/commit/f8980de0a317a99b8eaea4b629c8d9bdd2c2a136)]:
-  - @ledgerhq/react-native-hw-transport-ble@6.33.0-nightly.0
-  - @ledgerhq/types-cryptoassets@7.13.0-nightly.0
-  - @ledgerhq/hw-transport-http@6.30.0-nightly.0
-  - @ledgerhq/react-native-hid@6.32.0-nightly.0
-  - @ledgerhq/types-devices@6.25.0-nightly.0
-  - @ledgerhq/hw-transport@6.31.0-nightly.0
-  - @ledgerhq/types-live@6.48.0-nightly.0
-  - @ledgerhq/devices@8.4.0-nightly.0
-  - @ledgerhq/errors@6.17.0-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.0-nightly.2
-  - @ledgerhq/coin-evm@2.1.0-nightly.2
-  - @ledgerhq/live-common@34.3.0-nightly.3
-  - @ledgerhq/live-countervalues@0.2.0-nightly.2
-  - @ledgerhq/native-ui@0.23.0-nightly.0
-  - @ledgerhq/ethereum-provider@0.3.0-nightly.1
-  - @ledgerhq/icons-ui@0.7.0-nightly.0
-  - @ledgerhq/coin-framework@0.14.0-nightly.2
-  - @ledgerhq/domain-service@1.2.0-nightly.0
-  - @ledgerhq/live-nft-react@0.4.0-nightly.2
-  - @ledgerhq/live-nft@0.4.0-nightly.2
-  - @ledgerhq/live-env@2.1.0-nightly.0
-  - @ledgerhq/live-wallet@0.1.1-nightly.5
-
-## 3.45.0-nightly.2
-
-### Patch Changes
-
-- [#6832](https://github.com/LedgerHQ/ledger-live/pull/6832) [`dd592ce`](https://github.com/LedgerHQ/ledger-live/commit/dd592ce9686b0829bb3697e7090abaef9a5421fb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix error message for cosmos staking. It was showing minimum amount : 0000 when we wanted to stake more than the current balance
-
-- Updated dependencies [[`6c5106b`](https://github.com/LedgerHQ/ledger-live/commit/6c5106ba14ad91eeb9d78840f7bc3cd3db3c7059)]:
-  - @ledgerhq/live-common@34.3.0-nightly.2
-
-## 3.45.0-nightly.1
-
-### Patch Changes
-
-- [#6754](https://github.com/LedgerHQ/ledger-live/pull/6754) [`4c01029`](https://github.com/LedgerHQ/ledger-live/commit/4c01029b4d4feb32dab2f9e77da1126050d8c1bc) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Move Tezos in its own package
-
-- Updated dependencies [[`4c01029`](https://github.com/LedgerHQ/ledger-live/commit/4c01029b4d4feb32dab2f9e77da1126050d8c1bc)]:
-  - @ledgerhq/coin-evm@2.0.1-nightly.1
-  - @ledgerhq/live-common@34.3.0-nightly.1
-  - @ledgerhq/coin-framework@0.13.1-nightly.1
-  - @ledgerhq/live-countervalues@0.1.6-nightly.1
-  - @ledgerhq/live-countervalues-react@0.1.6-nightly.1
-  - @ledgerhq/live-nft@0.3.3-nightly.1
-  - @ledgerhq/live-nft-react@0.3.3-nightly.1
-  - @ledgerhq/live-wallet@0.1.1-nightly.4
-
-## 3.45.0-nightly.0
-
-### Minor Changes
-
-- [#6822](https://github.com/LedgerHQ/ledger-live/pull/6822) [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Changing "ripple" file paths to "xrp"
-
-### Patch Changes
-
-- [#6851](https://github.com/LedgerHQ/ledger-live/pull/6851) [`b9f1f71`](https://github.com/LedgerHQ/ledger-live/commit/b9f1f715355752d8c57c24ecd6a6d166b80f689d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix generate Accounts+NFTs in Debug
-
-- Updated dependencies [[`b9f1f71`](https://github.com/LedgerHQ/ledger-live/commit/b9f1f715355752d8c57c24ecd6a6d166b80f689d), [`bbb1e8d`](https://github.com/LedgerHQ/ledger-live/commit/bbb1e8d0cadfa627b4a955a86bbf66e3b4b4957a), [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52)]:
-  - @ledgerhq/coin-framework@0.13.1-nightly.0
-  - @ledgerhq/live-common@34.3.0-nightly.0
-  - @ledgerhq/coin-evm@2.0.1-nightly.0
-  - @ledgerhq/live-countervalues@0.1.6-nightly.0
-  - @ledgerhq/live-countervalues-react@0.1.6-nightly.0
-  - @ledgerhq/live-nft@0.3.3-nightly.0
-  - @ledgerhq/live-nft-react@0.3.3-nightly.0
-  - @ledgerhq/live-wallet@0.1.1-nightly.3
+- Updated dependencies [[`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1)]:
+  - @ledgerhq/ethereum-provider@0.2.1-hotfix.0
 
 ## 3.44.0
 

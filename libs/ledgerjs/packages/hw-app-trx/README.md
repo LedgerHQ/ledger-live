@@ -44,9 +44,12 @@ For a smooth and quick integration:
     *   [signPersonalMessage](#signpersonalmessage)
         *   [Parameters](#parameters-4)
         *   [Examples](#examples-5)
-    *   [getECDHPairKey](#getecdhpairkey)
+    *   [signTIP712HashedMessage](#signtip712hashedmessage)
         *   [Parameters](#parameters-5)
         *   [Examples](#examples-6)
+    *   [getECDHPairKey](#getecdhpairkey)
+        *   [Parameters](#parameters-6)
+        *   [Examples](#examples-7)
 
 ### Trx
 
@@ -154,6 +157,22 @@ const signature = await tron.signPersonalMessage("44'/195'/0'/0/0", "43727970746
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** a signature as hex string
+
+#### signTIP712HashedMessage
+
+Sign a typed data. The host computes the domain separator and hashStruct(message)
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `domainSeparatorHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `hashStructMessageHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+##### Examples
+
+```javascript
+const signature = await tronApp.signTIP712HashedMessage("44'/195'/0'/0/0",Buffer.from( "0101010101010101010101010101010101010101010101010101010101010101").toString("hex"), Buffer.from("0202020202020202020202020202020202020202020202020202020202020202").toString("hex"));
+```
 
 #### getECDHPairKey
 

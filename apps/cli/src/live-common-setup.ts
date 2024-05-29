@@ -115,6 +115,7 @@ async function init() {
         type: e.type,
         id: e.device.path,
         name: e.device.deviceName || "",
+        wired: true,
       })),
     ),
     disconnect: () => Promise.resolve(),

@@ -1,3 +1,9 @@
+# 2.81.2
+
+### 🐛 Fix
+
+We fixed a bug that caused the app to reject passwords.
+
 # 2.80.0
 
 ### 🐛 Fixes
