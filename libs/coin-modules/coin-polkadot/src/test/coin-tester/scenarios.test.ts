@@ -1,7 +1,7 @@
 import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { basicScenario } from "./scenarios/basic";
-import { killChopsticks } from "./chopsticks";
+import { killChopsticksAndSidecar } from "./chopsticks-sidecar";
 
 global.console = require("console");
 jest.setTimeout(300_000);
@@ -16,6 +16,6 @@ describe("Polkadot Deterministic Tester", () => {
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
   process.on(e, async () => {
-    await Promise.all([killSpeculos(), killChopsticks()]);
+    await Promise.all([killSpeculos(), killChopsticksAndSidecar()]);
   }),
 );

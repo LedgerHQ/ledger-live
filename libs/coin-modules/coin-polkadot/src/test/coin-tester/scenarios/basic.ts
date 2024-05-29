@@ -5,15 +5,13 @@ import Polkadot from "@ledgerhq/hw-app-polkadot";
 import resolver from "../../../signer";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { createBridges } from "../../../bridge";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { makeAccount } from "../../fixtures";
 import { defaultNanoApp } from "../scenarios.test";
 import BigNumber from "bignumber.js";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { PolkadotCoinConfig } from "../../../config";
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
-
-const polkadot = getCryptoCurrencyById("polkadot");
+import { polkadot } from "./utils";
 
 function getTransactions() {
   const send1DotTransaction: ScenarioTransaction<PolkadotTransaction> = {

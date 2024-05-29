@@ -4,6 +4,11 @@ services:
   chopsticks:
     image: coin-tester-chopsticks:latest
     container_name: chopsticks
+    build:
+      context: .
+      dockerfile: chopsticks.Dockerfile
+      tags:
+        - "coin-tester-chopsticks:latest"
     ports:
       - "8000:8000"
     healthcheck:
