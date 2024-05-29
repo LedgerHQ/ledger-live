@@ -15,8 +15,7 @@ export const e2eBridgeServer = new Subject<ServerData>();
 let wss: Server;
 let webSocket: WebSocket;
 const lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
-let appFlagsResolve: (flags: string) => void;
-let appEnvsResolve: (envs: string) => void;
+let clientReponse: (data: string) => void;
 
 function uniqueId(): string {
   const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
@@ -151,21 +150,48 @@ export async function open() {
   await postMessage({ type: "open", id: uniqueId() });
 }
 
-export async function getLogs(fileName: string) {
-  await postMessage({ type: "getLogs", id: uniqueId(), fileName: fileName });
+export async function getLogs() {
+  return new Promise<string>(resolve => {
+    postMessage({ type: "getLogs", id: uniqueId() });
+    const timeoutId = setTimeout(() => {
+      console.warn("Timeout while waiting for app logs");
+      resolve("");
+    }, 10000);
+
+    clientReponse = (data: string) => {
+      clearTimeout(timeoutId);
+      resolve(data);
+    };
+  });
 }
 
 export async function getFlags() {
   return new Promise<string>(resolve => {
     postMessage({ type: "getFlags", id: uniqueId() });
-    appFlagsResolve = resolve;
+    const timeoutId = setTimeout(() => {
+      console.warn("Timeout while waiting for flags");
+      resolve("");
+    }, 10000);
+
+    clientReponse = (data: string) => {
+      clearTimeout(timeoutId);
+      resolve(data);
+    };
   });
 }
 
 export async function getEnvs() {
   return new Promise<string>(resolve => {
     postMessage({ type: "getEnvs", id: uniqueId() });
-    appEnvsResolve = resolve;
+    const timeoutId = setTimeout(() => {
+      console.warn("Timeout while waiting for Envs");
+      resolve("");
+    }, 10000);
+
+    clientReponse = (data: string) => {
+      clearTimeout(timeoutId);
+      resolve(data);
+    };
   });
 }
 
@@ -182,20 +208,14 @@ function onMessage(messageStr: string) {
       e2eBridgeServer.next(msg);
       break;
     case "appLogs": {
-      const [date, time] = new Date().toISOString().split(".")[0].replace(/:/g, "-").split("T");
-      const fileName = `${date}_${time}-${msg.fileName}.json`;
-      const directoryPath = `artifacts/${date}_ledger_live_mobile`;
-      if (!fs.existsSync(directoryPath)) {
-        fs.mkdirSync(directoryPath, { recursive: true });
-      }
-      fs.writeFileSync(`${directoryPath}/${fileName}`, msg.payload, "utf-8");
+      clientReponse(msg.payload);
       break;
     }
     case "appFlags":
-      appFlagsResolve(msg.payload);
+      clientReponse(msg.payload);
       break;
     case "appEnvs":
-      appEnvsResolve(msg.payload);
+      clientReponse(msg.payload);
       break;
     default:
       break;

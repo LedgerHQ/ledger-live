@@ -23,7 +23,6 @@ export type ServerData =
     }
   | {
       type: "appLogs";
-      fileName: string;
       payload: string;
     }
   | {
@@ -46,7 +45,7 @@ export type MessageData =
   | { type: "mockDeviceEvent"; id: string; payload: MockDeviceEvent[] }
   | { type: "acceptTerms"; id: string }
   | { type: "addUSB"; id: string; payload: DeviceUSB }
-  | { type: "getLogs"; id: string; fileName: string }
+  | { type: "getLogs"; id: string }
   | { type: "getFlags"; id: string }
   | { type: "getEnvs"; id: string }
   | { type: "navigate"; id: string; payload: string }

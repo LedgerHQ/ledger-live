@@ -110,7 +110,6 @@ function onMessage(event: WebSocketMessageEvent) {
         const payload = JSON.stringify(logReport.getLogs());
         postMessage({
           type: "appLogs",
-          fileName: msg.fileName,
           payload,
         });
         break;
