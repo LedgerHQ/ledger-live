@@ -52,8 +52,8 @@ import {
   hasCompletedOnboardingSelector,
   hasSeenAnalyticsOptInPromptSelector,
 } from "~/renderer/reducers/settings";
-import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
+import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));

@@ -95,7 +95,8 @@ function useDappAccountLogic({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const { currencyIds } = usePermission(manifest);
-  const { currentAccount, setCurrentAccount } = useDappCurrentAccount(currentAccountHistDb);
+  const { currentAccount, setCurrentAccount, setCurrentAccountHist } =
+    useDappCurrentAccount(currentAccountHistDb);
   const currentParentAccount = useMemo(() => {
     if (currentAccount) {
       return getParentAccount(currentAccount, accounts);
@@ -156,6 +157,7 @@ function useDappAccountLogic({
     currentAccount,
     setCurrentAccount,
     currentParentAccount,
+    setCurrentAccountHist,
   };
 }
 
@@ -188,7 +190,7 @@ export function useDappLogic({
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
   const ws = useRef<SmartWebsocket>();
-  const { currentAccount, currentParentAccount } = useDappAccountLogic({
+  const { currentAccount, currentParentAccount, setCurrentAccountHist } = useDappAccountLogic({
     manifest,
     accounts,
     currentAccountHistDb,
@@ -386,7 +388,8 @@ export function useDappLogic({
             await new Promise<void>((resolve, reject) =>
               uiHook["account.request"]({
                 currencies: [getCryptoCurrencyById(requestedCurrency.currency)],
-                onSuccess: () => {
+                onSuccess: account => {
+                  setCurrentAccountHist(manifest.id, account);
                   resolve();
                 },
                 onCancel: () => {
