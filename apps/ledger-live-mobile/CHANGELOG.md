@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.44.2-nightly.0
+
+### Patch Changes
+
+- [#6912](https://github.com/LedgerHQ/ledger-live/pull/6912) [`8384e55`](https://github.com/LedgerHQ/ledger-live/commit/8384e55f70b5eee8484990283ad0c6097e426804) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove `as Device` to avoid saving incorrect data in the store
+
+- [#6912](https://github.com/LedgerHQ/ledger-live/pull/6912) [`8384e55`](https://github.com/LedgerHQ/ledger-live/commit/8384e55f70b5eee8484990283ad0c6097e426804) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Store selectors: sanitize bad DeviceModelId values that might be saved in the store
+
+- [#6931](https://github.com/LedgerHQ/ledger-live/pull/6931) [`73901ee`](https://github.com/LedgerHQ/ledger-live/commit/73901ee4d7da10e0ea53e5323955d30bf4635eeb) Thanks [@lvndry](https://github.com/lvndry)! - Remove unused invariant in tron accountActions
+
+- Updated dependencies [[`8384e55`](https://github.com/LedgerHQ/ledger-live/commit/8384e55f70b5eee8484990283ad0c6097e426804)]:
+  - @ledgerhq/live-common@34.3.0-nightly.8
+
 ## 3.44.1
 
 ### Patch Changes

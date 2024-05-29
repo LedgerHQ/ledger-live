@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.81.3-nightly.0
+
+### Patch Changes
+
+- [#6948](https://github.com/LedgerHQ/ledger-live/pull/6948) [`e1d2d65`](https://github.com/LedgerHQ/ledger-live/commit/e1d2d6579f1c4a2815e2c26b5be2798dd54e4948) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix color issues on Widget
+
+- [#6912](https://github.com/LedgerHQ/ledger-live/pull/6912) [`8384e55`](https://github.com/LedgerHQ/ledger-live/commit/8384e55f70b5eee8484990283ad0c6097e426804) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Store selectors: sanitize bad DeviceModelId values that might be saved in the store
+
+- [#6937](https://github.com/LedgerHQ/ledger-live/pull/6937) [`89fe72a`](https://github.com/LedgerHQ/ledger-live/commit/89fe72aee1793ed5f4978d0409cc7b9f60476d81) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - swap: remove network fees line when demo1 ff is enable
+
+- Updated dependencies [[`8384e55`](https://github.com/LedgerHQ/ledger-live/commit/8384e55f70b5eee8484990283ad0c6097e426804)]:
+  - @ledgerhq/live-common@34.3.0-nightly.8
+
 ## 2.81.2
 
 ### Patch Changes

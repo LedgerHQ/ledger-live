@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.8
+
+### Patch Changes
+
+- [#6912](https://github.com/LedgerHQ/ledger-live/pull/6912) [`8384e55`](https://github.com/LedgerHQ/ledger-live/commit/8384e55f70b5eee8484990283ad0c6097e426804) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - RegisterTransportModules: improve typing of discovery results
+
+- Updated dependencies [[`0c6c26c`](https://github.com/LedgerHQ/ledger-live/commit/0c6c26c852a36fb8567bd7eb19716c766f4c0a25)]:
+  - @ledgerhq/hw-app-trx@6.29.0-nightly.2
+
 ## 34.3.0-nightly.7
 
 ### Patch Changes

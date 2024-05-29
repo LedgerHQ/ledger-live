@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-trx
 
+## 6.29.0-nightly.2
+
+### Patch Changes
+
+- [#6934](https://github.com/LedgerHQ/ledger-live/pull/6934) [`0c6c26c`](https://github.com/LedgerHQ/ledger-live/commit/0c6c26c852a36fb8567bd7eb19716c766f4c0a25) Thanks [@zorro11639](https://github.com/zorro11639)! - Support #signTIP712HashedMessage() for Tron
+
 ## 6.29.0-nightly.1
 
 ### Patch Changes
