@@ -125,38 +125,40 @@ export function getChainAPI(
         })
         .catch(remapErrors),
 
-    getStakeAccountsByStakeAuth: makeLRUCache((authAddr: string) =>
-      connection()
-        .getParsedProgramAccounts(StakeProgram.programId, {
-          filters: [
-            {
-              memcmp: {
-                offset: 12,
-                bytes: authAddr,
+    getStakeAccountsByStakeAuth: makeLRUCache(
+      (authAddr: string) =>
+        connection()
+          .getParsedProgramAccounts(StakeProgram.programId, {
+            filters: [
+              {
+                memcmp: {
+                  offset: 12,
+                  bytes: authAddr,
+                },
               },
-            },
-          ],
-        })
-        .catch(remapErrors),
-        (addr: string) => addr,
-        minutes(3),
+            ],
+          })
+          .catch(remapErrors),
+      (addr: string) => addr,
+      minutes(3),
     ),
 
-    getStakeAccountsByWithdrawAuth: makeLRUCache((authAddr: string) =>
-      connection()
-        .getParsedProgramAccounts(StakeProgram.programId, {
-          filters: [
-            {
-              memcmp: {
-                offset: 44,
-                bytes: authAddr,
+    getStakeAccountsByWithdrawAuth: makeLRUCache(
+      (authAddr: string) =>
+        connection()
+          .getParsedProgramAccounts(StakeProgram.programId, {
+            filters: [
+              {
+                memcmp: {
+                  offset: 44,
+                  bytes: authAddr,
+                },
               },
-            },
-          ],
-        })
-        .catch(remapErrors),
-        (addr: string) => addr,
-        minutes(3),
+            ],
+          })
+          .catch(remapErrors),
+      (addr: string) => addr,
+      minutes(3),
     ),
 
     getStakeActivation: (stakeAccAddr: string) =>
