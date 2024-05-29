@@ -318,19 +318,27 @@ jobs:
                     },
                     {
                       "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n${{ steps.allure-server.outputs.report-url }}"
-                      }
+                      "fields": [
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Allure Report*\n<${{ steps.allure-server.outputs.report-url }}|allure-results-linux>"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
+                        }
+                      ]
                     }
                   ]
                 }
               ]
             };
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+
       - name: Print Slack Payload Content
         if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         run: cat ${{ github.workspace }}/payload-slack-content.json
+
       - name: post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
