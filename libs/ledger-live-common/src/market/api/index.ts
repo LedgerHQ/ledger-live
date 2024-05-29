@@ -1,19 +1,18 @@
 import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
 import {
-  MarketCoin,
   MarketCurrencyChartDataRequestParams,
   MarketListRequestParams,
-  RawCurrencyData,
   MarketPerformersParams,
   MarketItemResponse,
   SupportedCoins,
   MarketCurrencyRequestParams,
   MarketCoinDataChart,
+  Order,
 } from "../utils/types";
 import { rangeDataTable } from "../utils/rangeDataTable";
 import URL from "url";
-import { getRange } from "../utils/rangeFormatter";
+import { getRange, getSortParam } from "../utils";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 const ROOT_PATH = getEnv("MARKET_API_URL");
@@ -24,88 +23,35 @@ export async function getSupportedCoinsList(): Promise<SupportedCoins> {
   return data;
 }
 
-const matchSearch =
-  (search: string) =>
-  (currency: MarketCoin): boolean => {
-    if (!search) return false;
-    const match = `${currency.symbol}|${currency.name}`;
-    return match.toLowerCase().includes(search.toLowerCase());
-  };
-
 // fetches currencies data for selected currencies ids
 export async function fetchList({
   counterCurrency,
-  range = "24h",
   limit = 50,
   page = 1,
-  ids: _ids = [],
-  starred = [],
-  orderBy = "market_cap",
-  order = "desc",
+  order = Order.MarketCapDesc,
   search = "",
-  sparkline = true,
-  liveCompatible = false,
-  top100 = false,
-  supportedCoinsList = [],
   liveCoinsList = [],
-}: MarketListRequestParams): Promise<RawCurrencyData[]> {
-  let ids = _ids;
+  starred = [],
+  range = "24",
+}: MarketListRequestParams): Promise<MarketItemResponse[]> {
+  const url = URL.format({
+    pathname: `${baseURL()}/v3/markets`,
+    query: {
+      page: page,
+      pageSize: limit,
+      to: counterCurrency,
+      sort: getSortParam(order, range),
+      ...(search.length >= 1 && { filter: search }),
+      ...(starred.length > 0 && { ids: starred.join(",") }),
+      ...(liveCoinsList.length > 1 && { ids: liveCoinsList.join(",") }),
+      ...([Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
+    },
+  });
 
-  if (top100) {
-    limit = 100;
-  } else {
-    if (search) {
-      ids = supportedCoinsList.filter(matchSearch(search)).map(({ id }) => id);
-      if (!ids.length) {
-        return [];
-      }
-    }
-
-    if (liveCompatible) {
-      if (ids.length > 0) {
-        ids = liveCoinsList.filter(id => ids.includes(id));
-      } else {
-        ids = ids.concat(liveCoinsList);
-      }
-    }
-
-    if (starred.length > 0) {
-      if (ids.length > 0) {
-        ids = starred.filter(id => ids.includes(id));
-      } else {
-        ids = ids.concat(starred);
-      }
-    }
-  }
-
-  ids = ids.slice((page - 1) * limit, limit * page);
-
-  const url =
-    `${ROOT_PATH}/coins/markets?vs_currency=${counterCurrency}&order=${orderBy}_${order}&per_page=${limit}` +
-    `&sparkline=${sparkline ? "true" : "false"}&price_change_percentage=${range}` +
-    `${ids.length > 0 ? `&page=1&&ids=${ids.toString()}` : `&page=${page}`}`;
-
-  if ((starred.length > 0 || search.length > 0) && ids.length === 0) return [];
-
-  let { data } = await network({
+  const { data } = await network({
     method: "GET",
     url,
   });
-
-  if (top100) {
-    // Perform a search by the user's input and order the result by change in percentage
-    data = data
-      .filter(currency => {
-        if (!search) return true;
-        const match = `${currency.symbol}|${currency.name}`;
-        return match.toLowerCase().includes(search.toLowerCase());
-      })
-      .sort(
-        (a, b) =>
-          b[`price_change_percentage_${range}_in_currency`] -
-          a[`price_change_percentage_${range}_in_currency`],
-      );
-  }
 
   return data;
 }
@@ -129,7 +75,14 @@ export async function fetchCurrencyChartData({
 }: MarketCurrencyChartDataRequestParams): Promise<MarketCoinDataChart> {
   const { days, interval } = rangeDataTable[range];
 
-  const url = `${ROOT_PATH}/coins/${id}/market_chart?vs_currency=${counterCurrency}&days=${days}&interval=${interval}`;
+  const url = URL.format({
+    pathname: `${ROOT_PATH}/coins/${id}/market_chart`,
+    query: {
+      vs_currency: counterCurrency,
+      days,
+      interval,
+    },
+  });
 
   const { data } = await network({
     method: "GET",
@@ -139,39 +92,23 @@ export async function fetchCurrencyChartData({
   return { [range]: data.prices };
 }
 
-export async function fetchCurrencyData({
+export async function fetchCurrency({
   counterCurrency,
-  range = "24h",
   id,
-}: MarketCurrencyRequestParams): Promise<RawCurrencyData> {
+}: MarketCurrencyRequestParams): Promise<MarketItemResponse> {
   const url = URL.format({
-    pathname: `${ROOT_PATH}/coins/markets`,
+    pathname: `${baseURL()}/v3/markets`,
     query: {
-      vs_currency: counterCurrency,
-      sparkline: true,
-      price_change_percentage: range,
-      page: 1,
+      to: counterCurrency,
       ids: id,
+      pageSize: 1,
+      limit: 1,
     },
   });
 
-  const { data } = await network({
-    method: "GET",
-    url,
-  });
+  const { data } = await network({ method: "GET", url });
 
-  return data[0] as RawCurrencyData;
-}
-
-export async function fetchCurrency({ id }: MarketCurrencyRequestParams): Promise<RawCurrencyData> {
-  const url = `${ROOT_PATH}/coins/${id}`;
-
-  const { data } = await network({
-    method: "GET",
-    url,
-  });
-
-  return data;
+  return data[0];
 }
 
 export async function fetchMarketPerformers({

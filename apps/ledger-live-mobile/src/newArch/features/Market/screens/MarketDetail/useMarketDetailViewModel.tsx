@@ -20,10 +20,9 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { params } = route;
   const { currencyId, resetSearchOnUmount } = params;
 
-  const { marketParams, dataCurrency, dataChart, loadingChart, loading, currency } =
-    useMarketCoinData({
-      currencyId,
-    });
+  const { marketParams, dataChart, loadingChart, loading, currency } = useMarketCoinData({
+    currencyId,
+  });
 
   const dispatch = useDispatch();
   const { triggerMarketPushNotificationModal } = useNotifications();
@@ -90,7 +89,6 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     allAccounts,
     range,
     currency,
-    dataCurrency,
     dataChart,
     loadingChart,
     loading,

@@ -38,11 +38,11 @@ describe("Market integration test", () => {
     });
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
-    expect(await screen.findByText("$4.004 tn")).toBeOnTheScreen();
+    expect(await screen.findByText("$1.267 tn")).toBeOnTheScreen();
     await user.press(screen.getByText("Currency"));
 
     expect(await screen.findByText("Euro - EUR")).toBeOnTheScreen();
     await user.press(screen.getByText("Euro - EUR"));
-    expect(await screen.findByText("€4.004 tn")).toBeOnTheScreen();
+    expect(await screen.findByText("€1.267 tn")).toBeOnTheScreen();
   });
 });

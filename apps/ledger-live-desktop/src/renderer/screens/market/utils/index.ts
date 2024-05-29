@@ -16,3 +16,7 @@ export function getCurrentPage(scrollPosition: number, pageSize: number): number
   const size = listItemHeight * pageSize;
   return Math.floor(scrollPosition / size) + 1;
 }
+
+export function formatPrice(price: number): number {
+  return parseFloat(price.toFixed(price >= 1 ? 2 : 6));
+}

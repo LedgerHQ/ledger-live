@@ -1,12 +1,14 @@
 import React, { useMemo, useCallback, memo } from "react";
 import { useTheme } from "styled-components/native";
-import { Flex, GraphTabs, InfiniteLoader, Transitions } from "@ledgerhq/native-ui";
+import { Flex, GraphTabs, InfiniteLoader, Transitions, ensureContrast } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import Graph from "~/components/Graph";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Item } from "~/components/Graph/types";
 import { RANGES } from "LLM/features/Market/utils";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const { width } = getWindowDimensions();
 
@@ -16,12 +18,14 @@ function MarketGraph({
   refreshChart,
   chartData,
   range,
+  currency,
 }: {
   setHoverItem: (_: Item | null | undefined) => void;
   isLoading?: boolean;
   refreshChart: (_: { range: string }) => void;
   chartData?: MarketCoinDataChart;
   range: string;
+  currency?: CryptoOrTokenCurrency;
 }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -53,6 +57,14 @@ function MarketGraph({
 
   const mapGraphValue = useCallback((d: Item) => d?.value || 0, []);
 
+  const graphColor = useMemo(
+    () =>
+      !currency
+        ? colors.primary.c80
+        : ensureContrast(getCurrencyColor(currency), colors.background.main),
+    [colors.background.main, colors.primary.c80, currency],
+  );
+
   return (
     <Flex flexDirection="column" mt={20} borderRadius={8}>
       <Flex height={120} alignItems="center" justifyContent="center">
@@ -62,7 +74,7 @@ function MarketGraph({
               isInteractive
               height={100}
               width={width}
-              color={colors.primary.c80}
+              color={graphColor}
               data={data}
               mapValue={mapGraphValue}
               onItemHover={setHoverItem}

@@ -11,7 +11,7 @@ interface ListRowProps {
   counterCurrency?: string;
   range?: string;
 }
-function ListRow({ item, index, counterCurrency }: ListRowProps) {
+function ListRow({ item, index, counterCurrency, range }: ListRowProps) {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -21,7 +21,7 @@ function ListRow({ item, index, counterCurrency }: ListRowProps) {
         });
       }}
     >
-      <MarketRowItem item={item} index={index} counterCurrency={counterCurrency} />
+      <MarketRowItem item={item} index={index} counterCurrency={counterCurrency} range={range} />
     </TouchableOpacity>
   );
 }

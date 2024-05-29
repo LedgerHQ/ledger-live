@@ -10,7 +10,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useMarket } from "../../hooks/useMarket";
 import { getCurrentPage, isDataStale } from "../../utils";
 import { ViewToken } from "react-native";
-
+import { Order } from "@ledgerhq/live-common/market/utils/types";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
 >;
@@ -39,9 +39,7 @@ function useMarketListViewModel() {
   const {
     marketParams,
     starredMarketCoins,
-    supportedCurrencies,
     filterByStarredCurrencies,
-    liveCoinsList,
     marketCurrentPage,
     refresh,
   } = useMarket();
@@ -50,8 +48,6 @@ function useMarketListViewModel() {
 
   const marketResult = useMarketDataHook({
     ...marketParams,
-    liveCoinsList,
-    supportedCoinsList: supportedCurrencies,
     starred: filterByStarredCurrencies ? starredMarketCoins : [],
   });
 
@@ -63,14 +59,10 @@ function useMarketListViewModel() {
     if (initialTop100) {
       refresh({
         limit: 100,
-        ids: [],
         starred: [],
-        orderBy: "market_cap",
-        order: "desc",
+        order: Order.MarketCapDesc,
         search: "",
         liveCompatible: false,
-        sparkline: false,
-        top100: true,
       });
     }
   }, [initialTop100, refresh]);
@@ -86,8 +78,7 @@ function useMarketListViewModel() {
 
   const refetchData = useCallback(
     (pageToRefetch: number) => {
-      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch ?? 1));
-
+      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch - 1 ?? 0));
       if (elem && isDataStale(elem.updatedAt, REFRESH_RATE)) {
         elem.refetch();
       }
@@ -96,8 +87,8 @@ function useMarketListViewModel() {
   );
 
   const checkIfDataIsStaleAndRefetch = useCallback(
-    (scrollPosition: number) => {
-      const newCurrentPage = getCurrentPage(scrollPosition, marketParams.limit || 50);
+    (indexPosition: number) => {
+      const newCurrentPage = getCurrentPage(indexPosition, marketParams.limit || 50);
 
       if (marketCurrentPage !== newCurrentPage) {
         dispatch(setMarketCurrentPage(newCurrentPage));
@@ -111,10 +102,17 @@ function useMarketListViewModel() {
   const onViewableItemsChanged = ({ viewableItems }: { viewableItems: ViewToken[] }) => {
     const lastVisible = viewableItems.map((elem: ViewToken) => elem.index).at(-1);
     if (lastVisible) {
-      checkIfDataIsStaleAndRefetch(Number(lastVisible) + 1 ?? 0);
+      checkIfDataIsStaleAndRefetch(Number(lastVisible) + 2 ?? 0);
     }
   };
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged, viewabilityConfig }]);
+
+  const resetMarketPageToInital = (page: number) => {
+    if (page > 1) {
+      dispatch(setMarketRequestParams({ page: 1 }));
+      dispatch(setMarketCurrentPage(1));
+    }
+  };
 
   return {
     marketData: marketDataFiltered,
@@ -131,6 +129,8 @@ function useMarketListViewModel() {
     marketCurrentPage,
     checkIfDataIsStaleAndRefetch,
     viewabilityConfigCallbackPairs,
+    marketParams,
+    resetMarketPageToInital,
   };
 }
 

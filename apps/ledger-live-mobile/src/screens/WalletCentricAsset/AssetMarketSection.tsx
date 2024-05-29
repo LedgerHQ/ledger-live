@@ -16,7 +16,9 @@ const tokenIDToMarketID = {
 const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) => {
   const { t } = useTranslation();
   const [selectedCurrency, setSelectedCurrency] = useState<string>(currency.id);
-  const { dataCurrency, counterCurrency } = useMarketCoinData({ currencyId: selectedCurrency });
+  const { currency: fetchedCurrency, counterCurrency } = useMarketCoinData({
+    currencyId: selectedCurrency,
+  });
 
   useEffect(() => {
     setSelectedCurrency(
@@ -24,7 +26,8 @@ const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) =
     );
   }, [currency]);
 
-  if (!dataCurrency?.price) return null;
+  if (!fetchedCurrency?.price) return null;
+
   return (
     <SectionContainer px={6}>
       <SectionTitle
@@ -35,7 +38,7 @@ const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) =
       <Flex minHeight={65}>
         <MarketPriceSection
           currency={currency}
-          selectedCoinData={dataCurrency}
+          selectedCoinData={fetchedCurrency}
           counterCurrency={counterCurrency}
         />
       </Flex>

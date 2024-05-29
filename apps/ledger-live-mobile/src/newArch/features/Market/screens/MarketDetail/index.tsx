@@ -22,6 +22,7 @@ import { Item } from "~/components/Graph/types";
 import {
   CurrencyData,
   MarketCoinDataChart,
+  KeysPriceChange,
   MarketCurrencyChartDataRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
@@ -40,7 +41,6 @@ interface ViewProps {
   range: string;
   dataChart?: MarketCoinDataChart;
   currency?: CurrencyData;
-  dataCurrency?: CurrencyData;
 }
 
 function View({
@@ -50,7 +50,6 @@ function View({
   defaultAccount,
   toggleStar,
   currency,
-  dataCurrency,
   dataChart,
   isStarred,
   accounts,
@@ -58,8 +57,7 @@ function View({
   allAccounts,
   range,
 }: ViewProps) {
-  const { name, image, internalCurrency } = currency || {};
-  const { price, priceChangePercentage } = dataCurrency || {};
+  const { name, image, internalCurrency, price } = currency || {};
 
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
@@ -71,6 +69,8 @@ function View({
     () => getDateFormatter(locale, range as string),
     [locale, range],
   );
+
+  const priceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
   return (
     <SafeAreaView edges={["top", "left", "right"]} isFlex>
@@ -163,6 +163,7 @@ function View({
           refreshChart={refresh}
           chartData={dataChart}
           range={range}
+          currency={internalCurrency}
         />
 
         {accounts?.length > 0 ? (
@@ -190,7 +191,12 @@ function View({
             />
           </Flex>
         ) : null}
-        <MarketStats currency={dataCurrency} counterCurrency={counterCurrency} />
+
+        <MarketStats
+          currency={currency}
+          counterCurrency={counterCurrency}
+          priceChangePercentage={priceChangePercentage ?? 0}
+        />
       </ScrollContainerHeader>
     </SafeAreaView>
   );

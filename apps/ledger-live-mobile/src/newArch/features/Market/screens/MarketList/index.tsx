@@ -16,6 +16,7 @@ import BottomSection from "./components/BottomSection";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketListViewModel from "./useMarketListViewModel";
+import { LIMIT } from "~/reducers/market";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
   CollapsibleHeaderFlatList<CurrencyData>,
@@ -37,7 +38,9 @@ interface ViewProps {
   range?: string;
   onEndReached?: () => void;
   refetchData: (pageToRefetch: number) => void;
+  resetMarketPageToInital: (page: number) => void;
   refreshRate: number;
+  marketParams: MarketListRequestParams;
   marketCurrentPage: number;
   viewabilityConfigCallbackPairs: MutableRefObject<
     {
@@ -62,6 +65,8 @@ function View({
   marketCurrentPage,
   refetchData,
   viewabilityConfigCallbackPairs,
+  resetMarketPageToInital,
+  marketParams,
 }: ViewProps) {
   const { colors } = useTheme();
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
@@ -72,8 +77,7 @@ function View({
         search: "",
         starred: [],
         liveCompatible: false,
-        top100: false,
-        limit: 20,
+        limit: LIMIT,
       }),
     [refresh],
   );
@@ -89,6 +93,14 @@ function View({
       };
     }, [setScreen, setSource]),
   );
+
+  /**
+   * Reset the page to 1 when the component mounts to only refetch first page
+   * */
+  useEffect(() => {
+    resetMarketPageToInital(marketParams.page ?? 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /**
    * Try to Refetch data every REFRESH_RATE time

@@ -8,21 +8,20 @@ import {
   MarketStateActionTypes,
   MarketStatePayload,
 } from "~/actions/types";
+import { Order } from "@ledgerhq/live-common/market/utils/types";
+
+export const LIMIT = 20;
 
 export const INITIAL_STATE: MarketState = {
   marketParams: {
     range: "24h",
-    limit: 25,
-    ids: [],
+    limit: LIMIT,
     starred: [],
-    orderBy: "market_cap",
-    order: "desc",
+    order: Order.MarketCapDesc,
     search: "",
     liveCompatible: false,
     page: 1,
     counterCurrency: "usd",
-    sparkline: false,
-    top100: false,
   },
   marketFilterByStarredCurrencies: false,
   marketCurrentPage: 1,

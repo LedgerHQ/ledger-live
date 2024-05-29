@@ -25,9 +25,11 @@ const StatRow = ({ label, children }: { label: string; children?: React.ReactNod
 export default function MarketStats({
   currency,
   counterCurrency,
+  priceChangePercentage,
 }: {
   currency?: CurrencyData;
   counterCurrency?: string;
+  priceChangePercentage: number;
 }) {
   const { t } = useTranslation();
   const { locale } = useLocale();
@@ -46,7 +48,6 @@ export default function MarketStats({
     atl,
     atlDate: _atlDate,
     price,
-    priceChangePercentage,
     ticker,
   } = currency || {};
 
