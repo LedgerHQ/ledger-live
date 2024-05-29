@@ -1,7 +1,6 @@
 import { Action, ReducerMap, handleActions } from "redux-actions";
 import { MarketState, State } from "./types";
 import {
-  MarketImportPayload,
   MarketSetCurrentPagePayload,
   MarketSetMarketFilterByStarredCurrenciesPayload,
   MarketSetMarketRequestParamsPayload,
@@ -45,10 +44,6 @@ const handlers: ReducerMap<MarketState, MarketStatePayload> = {
   [MarketStateActionTypes.MARKET_SET_CURRENT_PAGE]: (state, action) => ({
     ...state,
     marketCurrentPage: (action as Action<MarketSetCurrentPagePayload>).payload,
-  }),
-  [MarketStateActionTypes.MARKET_IMPORT]: (state, action) => ({
-    ...state,
-    ...(action as Action<MarketImportPayload>).payload,
   }),
 };
 
