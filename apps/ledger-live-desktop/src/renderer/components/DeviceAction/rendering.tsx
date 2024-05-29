@@ -961,6 +961,9 @@ export const renderSwapDeviceConfirmation = ({
 }) => {
   const sourceAccountCurrency = getAccountCurrency(exchange.fromAccount);
   const targetAccountCurrency = getAccountCurrency(exchange.toAccount);
+  const parentAccountName =
+    exchange.toParentAccount &&
+    accountNameSelector(walletState, { accountId: exchange.toParentAccount.id });
   const sourceAccountName = accountNameSelector(walletState, {
     accountId: exchange.fromAccount.id,
   });
@@ -971,7 +974,9 @@ export const renderSwapDeviceConfirmation = ({
   const targetAccountName =
     accountNameSelector(walletState, {
       accountId: exchange.toAccount.id,
-    }) ?? targetAccountCurrency.name;
+    }) ?? targetAccountCurrency.type === "CryptoCurrency"
+      ? targetAccountCurrency.name
+      : `${parentAccountName} ${targetAccountCurrency.name}`;
 
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
