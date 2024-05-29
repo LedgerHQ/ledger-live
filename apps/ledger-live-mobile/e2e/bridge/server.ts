@@ -15,6 +15,8 @@ export const e2eBridgeServer = new Subject<ServerData>();
 let wss: Server;
 let webSocket: WebSocket;
 const lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
+let appFlagsResolve: (flags: string) => void;
+let appEnvsResolve: (envs: string) => void;
 
 function uniqueId(): string {
   const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
@@ -153,6 +155,20 @@ export async function getLogs(fileName: string) {
   await postMessage({ type: "getLogs", id: uniqueId(), fileName: fileName });
 }
 
+export async function getFlags() {
+  return new Promise<string>(resolve => {
+    postMessage({ type: "getFlags", id: uniqueId() });
+    appFlagsResolve = resolve;
+  });
+}
+
+export async function getEnvs() {
+  return new Promise<string>(resolve => {
+    postMessage({ type: "getEnvs", id: uniqueId() });
+    appEnvsResolve = resolve;
+  });
+}
+
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
   log(`Message received ${msg.type}`);
@@ -175,6 +191,12 @@ function onMessage(messageStr: string) {
       fs.writeFileSync(`${directoryPath}/${fileName}`, msg.payload, "utf-8");
       break;
     }
+    case "appFlags":
+      appFlagsResolve(msg.payload);
+      break;
+    case "appEnvs":
+      appEnvsResolve(msg.payload);
+      break;
     default:
       break;
   }

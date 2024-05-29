@@ -1,10 +1,53 @@
 import { device } from "detox";
 import * as serverBridge from "./bridge/server";
+import fs from "fs";
 import net from "net";
 import { getLogs } from "./bridge/server";
 import { getState } from "expect";
+import { getFlags } from "./bridge/server";
+import { Feature, FeatureId } from "@ledgerhq/types-live";
+import { getEnvs } from "./bridge/server";
+import { EnvName } from "@ledgerhq/live-env";
 
 let port: number;
+const environmentFilePath = "artifacts/environment.properties";
+
+const formatFlagsData = (data: { [key in FeatureId]: Feature }) => {
+  let allureData = "";
+  for (const [key, value] of Object.entries(data)) {
+    allureData += `FF.${key} = ${value.enabled}\n`;
+
+    const entries = {
+      desktop_version: value.desktop_version,
+      mobile_version: value.mobile_version,
+      enabledOverriddenForCurrentVersion: value.enabledOverriddenForCurrentVersion,
+      languages_whitelisted: value.languages_whitelisted?.join(", "),
+      languages_blacklisted: value.languages_blacklisted?.join(", "),
+      enabledOverriddenForCurrentLanguage: value.enabledOverriddenForCurrentLanguage,
+      overridesRemote: value.overridesRemote,
+      overriddenByEnv: value.overriddenByEnv,
+      params: value.params ? JSON.stringify(value.params) : undefined,
+    };
+
+    for (const [field, fieldValue] of Object.entries(entries)) {
+      if (fieldValue !== undefined) {
+        allureData += `FF.${key}.${field} = ${fieldValue
+          .toString()
+          .replace(/^\{|\}$/g, "")
+          .replace(/"/g, " ")}\n`;
+      }
+    }
+  }
+  return allureData;
+};
+
+const formatEnvData = (data: { [key in EnvName]: string }) => {
+  let allureData = "";
+  for (const [key, value] of Object.entries(data)) {
+    allureData += `ENV.${key} = ${value}\n`;
+  }
+  return allureData;
+};
 
 beforeAll(
   async () => {
@@ -45,6 +88,15 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
+  const featureFlags = await getFlags();
+  const appEnvs = await getEnvs();
+
+  const flagsData = formatFlagsData(JSON.parse(featureFlags));
+  const envsData = formatEnvData(JSON.parse(appEnvs));
+  fs.appendFile(environmentFilePath, flagsData + envsData, (err: NodeJS.ErrnoException | null) => {
+    if (err) throw err;
+  });
+
   serverBridge.close();
 });
 
