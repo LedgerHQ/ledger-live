@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { AppUpdater } from "../../models/AppUpdater";
+import { Layout } from "../../component/layout.component";
+import { AppUpdater } from "../../component/app.updater.component";
 
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel",

@@ -1,10 +1,10 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { Drawer } from "../../models/Drawer";
-import { SendModal } from "../../models/SendModal";
-import { ReceiveModal } from "../../models/ReceiveModal";
-import { SettingsPage } from "../../models/SettingsPage";
+import { Layout } from "../../component/layout.component";
+import { Drawer } from "../../page/drawer/drawer";
+import { SendModal } from "../../page/modal/send.modal";
+import { ReceiveModal } from "../../page/modal/receive.modal";
+import { SettingsPage } from "../../page/settings.page";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 

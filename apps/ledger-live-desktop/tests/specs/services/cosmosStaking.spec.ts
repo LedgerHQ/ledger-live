@@ -1,10 +1,10 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
-import { PortfolioPage } from "../../models/PortfolioPage";
-import { Layout } from "../../models/Layout";
-import { AccountPage } from "../../models/AccountPage";
+import { Drawer } from "../../page/drawer/drawer";
+import { Modal } from "../../component/modal.component";
+import { PortfolioPage } from "../../page/portfolio.page";
+import { Layout } from "../../component/layout.component";
+import { AccountPage } from "../../page/account.page";
 
 test.use({
   userdata: "cosmosStakingAccounts",

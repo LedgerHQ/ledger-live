@@ -1,9 +1,9 @@
 /* eslint-disable jest/expect-expect */
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { SettingsPage } from "../../models/SettingsPage";
-import { Layout } from "../../models/Layout";
-import { PostOnboarding } from "../../models/PostOnboarding";
+import { SettingsPage } from "../../page/settings.page";
+import { Layout } from "../../component/layout.component";
+import { PostOnboarding } from "../../page/post.onboarding.page";
 import padStart from "lodash/padStart";
 
 test.use({

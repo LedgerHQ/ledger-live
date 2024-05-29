@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
-import { Layout } from "../../models/Layout";
+import { Layout } from "../../component/layout.component";
 
 test.use({ userdata: "1AccountDOT" });
 

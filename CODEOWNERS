@@ -97,8 +97,8 @@ libs/test-utils/                                         @ledgerhq/wallet-api
 apps/cli/src/commands/devices                            			@ledgerhq/live-devices
 **/src/renderer/screens/manager/                         			@ledgerhq/live-devices
 **/screens/CustomImage																				@ledgerhq/live-devices
-**/components/CustomImage																	  	@ledgerhq/live-devices								
-**/SyncOnboarding/**																					@ledgerhq/live-devices					
+**/components/CustomImage																	  	@ledgerhq/live-devices
+**/SyncOnboarding/**																					@ledgerhq/live-devices
 apps/**/components/DeviceAction/                         			@ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             		@ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/	@ledgerhq/live-devices
@@ -131,8 +131,8 @@ apps/ledger-live-mobile/src/screens/Protect/                            @ledgerh
 libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerhq/recover-software
 
 # UI tests
-apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub
-apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub
+apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/qaa
+apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/
