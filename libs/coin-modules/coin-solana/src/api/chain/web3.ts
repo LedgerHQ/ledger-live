@@ -83,7 +83,7 @@ async function* getTransactionsBatched(
 ): AsyncGenerator<TransactionDescriptor[], void, unknown> {
   // as per Ledger team - last 100 operations is a sane limit to begin with
   const signatures = await api.getSignaturesForAddress(address, {
-    until: untilTxSignature,
+    ...(untilTxSignature ? { until: untilTxSignature } : {}),
     limit: 100,
   });
 

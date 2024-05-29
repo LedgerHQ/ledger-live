@@ -2,7 +2,12 @@
 
 import { DerivationType, LedgerSigner } from "@taquito/ledger-signer";
 import { createBridges } from "@ledgerhq/coin-tezos/bridge/index";
-import type { Transaction, TezosSigner } from "@ledgerhq/coin-tezos/types/index";
+import type {
+  Transaction,
+  TezosSigner,
+  TransactionStatus,
+  TezosAccount,
+} from "@ledgerhq/coin-tezos/types/index";
 import makeCliTools from "@ledgerhq/coin-tezos/test/cli";
 import type { CliTools } from "@ledgerhq/coin-tezos/test/cli";
 import tezosResolver from "@ledgerhq/coin-tezos/signer/index";
@@ -38,7 +43,9 @@ const createSigner: CreateSigner<TezosSigner> = (transport: Transport) => {
   };
 };
 
-const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
+const bridge: Bridge<Transaction, TezosAccount, TransactionStatus> = createBridges(
+  executeWithSigner(createSigner),
+);
 
 const resolver: Resolver = createResolver(createSigner, tezosResolver);
 

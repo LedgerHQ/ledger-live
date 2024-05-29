@@ -62,7 +62,7 @@ describe("jsHelpers", () => {
         id: expect.any(String),
         creationDate: expect.any(Date),
         lastSyncDate: expect.any(Date),
-        subAccounts: undefined,
+        subAccounts: [],
       };
       expect(newAccount).toEqual(nonUpdatedFields);
       expect(newAccount.id).not.toEqual(account.id);

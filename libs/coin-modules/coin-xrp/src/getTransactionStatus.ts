@@ -10,27 +10,24 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
-import { AccountBridge } from "@ledgerhq/types-live";
 import { isValidClassicAddress } from "ripple-address-codec";
+import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { Transaction, TransactionStatus } from "./types";
 import { getServerInfos, parseAPIValue } from "./api";
 import { cachedRecipientIsNew } from "./logic";
-import { Transaction } from "./types";
 
-export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
-  account,
-  transaction,
-) => {
-  const errors: {
-    fee?: Error;
-    amount?: Error;
-    recipient?: Error;
-  } = {};
-  const warnings: {
-    feeTooHigh?: Error;
-  } = {};
-  const r = await getServerInfos();
-  const reserveBaseXRP = parseAPIValue(r.info.validated_ledger.reserve_base_xrp.toString());
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  Account,
+  TransactionStatus
+>["getTransactionStatus"] = async (account, transaction) => {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+  const serverInfos = await getServerInfos();
+  const reserveBaseXRP = parseAPIValue(
+    serverInfos.info.validated_ledger.reserve_base_xrp.toString(),
+  );
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const totalSpent = new BigNumber(transaction.amount).plus(estimatedFees);
   const amount = new BigNumber(transaction.amount);
@@ -79,11 +76,11 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     errors.amount = new AmountRequired();
   }
 
-  return Promise.resolve({
+  return {
     errors,
     warnings,
     estimatedFees,
     amount,
     totalSpent,
-  });
+  };
 };

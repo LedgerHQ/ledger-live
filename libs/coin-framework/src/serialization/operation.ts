@@ -50,10 +50,6 @@ export const toOperationRaw = (
     date: date.toISOString(),
     value: value.toFixed(),
     fee: fee.toString(),
-    contract,
-    operator,
-    standard,
-    tokenId,
   };
 
   if (transactionSequenceNumber !== undefined) {
@@ -62,6 +58,22 @@ export const toOperationRaw = (
 
   if (hasFailed !== undefined) {
     copy.hasFailed = hasFailed;
+  }
+
+  if (standard) {
+    copy.standard = standard;
+  }
+
+  if (tokenId) {
+    copy.tokenId = tokenId;
+  }
+
+  if (contract) {
+    copy.contract = contract;
+  }
+
+  if (operator) {
+    copy.operator = operator;
   }
 
   if (subOperations && preserveSubOperation) {

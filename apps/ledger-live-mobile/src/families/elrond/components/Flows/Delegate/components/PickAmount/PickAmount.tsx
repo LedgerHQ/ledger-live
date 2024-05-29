@@ -7,7 +7,7 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
-import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
+import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/estimateMaxSpendable";
 
 import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import type { PickAmountPropsType, RatioType } from "./types";

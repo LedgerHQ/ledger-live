@@ -1,30 +1,28 @@
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
-  makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import resolver from "../hw-getAddress";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import type { AlgorandAccount, Transaction, TransactionStatus } from "../types";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { getTransactionStatus } from "../getTransactionStatus";
+import { getAccountShape, sync } from "../synchronization";
+import { prepareTransaction } from "../prepareTransaction";
+import { createTransaction } from "../createTransaction";
+import { buildSignOperation } from "../signOperation";
 import { initAccount } from "../initAccount";
-import { broadcast } from "../js-broadcast";
-import createTransaction from "../js-createTransaction";
-import { estimateMaxSpendable } from "../js-estimateMaxSpendable";
-import { getTransactionStatus } from "../js-getTransactionStatus";
-import prepareTransaction from "../js-prepareTransaction";
-import { buildSignOperation } from "../js-signOperation";
-import { getAccountShape } from "../js-synchronization";
+import { AlgorandSigner } from "../signer";
+import { broadcast } from "../broadcast";
+import resolver from "../hw-getAddress";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "../serialization";
-import type { Transaction } from "../types";
-import { AlgorandSigner } from "../signer";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -43,12 +41,11 @@ export function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>
 
 export function buildAccountBridge(
   signerContext: SignerContext<AlgorandSigner>,
-): AccountBridge<Transaction> {
+): AccountBridge<Transaction, AlgorandAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext);
-  const sync = makeSync({ getAccountShape });
 
   return {
     createTransaction,

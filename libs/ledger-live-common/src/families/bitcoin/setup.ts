@@ -10,7 +10,7 @@ import type { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";
 import bitcoinResolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { signMessage } from "@ledgerhq/coin-bitcoin/hw-signMessage";
-import { Transaction } from "@ledgerhq/coin-bitcoin/types";
+import { BitcoinAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
 import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { startSpan } from "../../performance";
@@ -40,7 +40,11 @@ const perfLogger = {
   startSpan,
 };
 
-const bridge: Bridge<Transaction> = createBridges(signerContext, perfLogger, getCurrencyConfig);
+const bridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = createBridges(
+  signerContext,
+  perfLogger,
+  getCurrencyConfig,
+);
 
 export function createMessageSigner(): SignMessage {
   return (transport, account, messageData) => {
