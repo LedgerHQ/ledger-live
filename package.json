@@ -71,6 +71,7 @@
     "coin:solana": "pnpm --filter coin-solana",
     "coin:tezos": "pnpm --filter coin-tezos",
     "coin:xrp": "pnpm --filter coin-xrp",
+    "coin:icon": "pnpm --filter coin-icon",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",

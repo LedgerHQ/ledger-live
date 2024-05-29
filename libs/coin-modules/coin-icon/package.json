@@ -2,6 +2,7 @@
   "name": "@ledgerhq/coin-icon",
   "version": "0.4.0",
   "description": "Ledger Icon Coin integration",
+  "license": "Apache-2.0",
   "keywords": [
     "Ledger",
     "LedgerWallet",
@@ -17,32 +18,17 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-icon",
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "unimported": "unimported"
   },
-  "typesVersions": {
-    "*": {
-      "lib/*": [
-        "lib/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ],
-      "*": [
-        "lib/*"
-      ]
-    }
-  },
-  "exports": {
-    "./lib/*": "./lib/*.js",
-    "./lib-es/*": "./lib-es/*.js",
-    "./*": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
@@ -69,15 +55,29 @@
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1"
   },
-  "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest",
-    "unimported": "unimported"
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*": [
+        "lib/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

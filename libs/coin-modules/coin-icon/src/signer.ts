@@ -3,6 +3,7 @@ export type IconAddress = {
   address: string;
   chainCode?: string;
 };
+
 export type IconSignature = {
   signedRawTxBase64: string;
   hashHex: string;
