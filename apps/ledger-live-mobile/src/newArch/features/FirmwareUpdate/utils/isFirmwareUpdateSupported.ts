@@ -4,7 +4,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-const NEW_UX_SUPPORTED_DEVICES = [DeviceModelId.stax, DeviceModelId.europa];
+const NEW_UX_SUPPORTED_DEVICES = [DeviceModelId.stax, DeviceModelId.europa, DeviceModelId.nanoX];
 
 export function isNewFirmwareUpdateUxSupported(deviceModelId?: DeviceModelId) {
   return deviceModelId ? NEW_UX_SUPPORTED_DEVICES.includes(deviceModelId) : false;
