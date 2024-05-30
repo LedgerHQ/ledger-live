@@ -24,15 +24,21 @@ beforeEach(async () => {
     // eslint-disable-next-line no-console
     console.log(log.type + ": " + log.message);
   });
-  speculos = await createSpeculosDevice({
-    model: DeviceModelId.nanoS,
-    firmware: "2.0.0",
-    appName: "Trustchain",
-    appVersion: "0.0.1",
-    seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
-    coinapps: __dirname,
-    overridesAppPath: "app.elf",
-  });
+
+  try {
+    speculos = await createSpeculosDevice({
+      model: DeviceModelId.nanoS,
+      firmware: "2.0.0",
+      appName: "Trustchain",
+      appVersion: "0.0.1",
+      seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+      coinapps: __dirname,
+      overridesAppPath: "app.elf",
+    });
+  } catch (e) {
+    console.error("Failed to create speculos device", e);
+    throw e;
+  }
 
   // passthrough all success cases
   sub = speculos.transport.automationEvents.subscribe(event => {
@@ -48,7 +54,12 @@ beforeEach(async () => {
 
 afterEach(async () => {
   sub.unsubscribe();
-  await releaseSpeculosDevice(speculos.id);
+  try {
+    await releaseSpeculosDevice(speculos.id);
+  } catch (e) {
+    console.error("Failed to release speculos device", e);
+    throw e;
+  }
   logSub();
 });
 
@@ -57,11 +68,6 @@ describe("Chain is owned by a device", () => {
     const alice = device.apdu(speculos.transport);
     expect(await alice.isConnected()).toBe(true);
   });
-
-  if (process.env.CI) {
-    // FIXME: due to flakyness on the CI. the rest of the tests are only run locally for now
-    return;
-  }
 
   it("can sign some data", async () => {
     const alice = device.apdu(speculos.transport);
