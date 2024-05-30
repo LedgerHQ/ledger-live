@@ -1,29 +1,32 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { Transaction as PolkadotTransaction } from "../../../types/bridge";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
-import resolver from "../../../signer";
+import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
+import { cryptoWaitReady } from "@polkadot/util-crypto";
+import resolver from "../../../signer";
+import { PolkadotOperationExtra, Transaction as PolkadotTransaction } from "../../../types/bridge";
 import { createBridges } from "../../../bridge";
 import { makeAccount } from "../../fixtures";
 import { defaultNanoApp } from "../scenarios.test";
-import BigNumber from "bignumber.js";
-import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { PolkadotCoinConfig } from "../../../config";
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 import { polkadot } from "./utils";
 import { indexOperation } from "../indexer";
+import BigNumber from "bignumber.js";
 
 function getTransactions() {
   const send1DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
     name: "send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: new BigNumber(1),
+    amount: parseCurrencyUnit(polkadot.units[0], "1"),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
-      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1).toFixed());
+      expect(latestOperation.value.toFixed()).toBe(
+        latestOperation.fee.plus(parseCurrencyUnit(polkadot.units[0], "1")).toFixed(),
+      );
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
@@ -33,19 +36,43 @@ function getTransactions() {
   const send100DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
     name: "send 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: new BigNumber(100),
+    amount: parseCurrencyUnit(polkadot.units[0], "100"),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
-      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(100).toFixed());
+      expect(latestOperation.value.toFixed()).toBe(
+        latestOperation.fee.plus(parseCurrencyUnit(polkadot.units[0], "100")).toFixed(),
+      );
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
     },
   };
 
-  return [send1DotTransaction, send100DotTransaction];
+  const bond250DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
+    name: "Bond 250 DOT",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    amount: parseCurrencyUnit(polkadot.units[0], "250"),
+    mode: "bond",
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("BOND");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.bond");
+      expect(
+        parseCurrencyUnit(
+          polkadot.units[0],
+          (latestOperation.extra as PolkadotOperationExtra).bondedAmount!.toFixed(),
+        ).toFixed(),
+      ).toBe("25000000000000000000000");
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
+
+  return [send1DotTransaction, send100DotTransaction, bond250DotTransaction];
 }
 
 const wsProvider = new WsProvider("ws://127.0.0.1:8000", false);
@@ -112,7 +139,10 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     );
 
     const unsub = await api.tx.balances
-      .transferAllowDeath(basicScenarioAccountPair.address, 90_000_000_000)
+      .transferAllowDeath(
+        basicScenarioAccountPair.address,
+        parseCurrencyUnit(polkadot.units[0], "500000").toNumber(),
+      )
       .signAndSend(alice, async (result: any) => {
         console.log(`Current status is ${result.status}`);
 
@@ -157,6 +187,22 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
 
       const { nonce } = (await api.query.system.account(account.freshAddress)) as any;
 
+      const polkadotExtra = optimistic.extra as PolkadotOperationExtra;
+      let amount = new BigNumber(0);
+
+      switch (polkadotExtra.palletMethod) {
+        case "balances.transfer":
+        case "balances.transferAllowDeath":
+        case "balances.transferKeepAlive":
+          amount = new BigNumber(polkadotExtra.transferAmount!);
+          break;
+        case "staking.bond":
+          amount = new BigNumber(polkadotExtra.bondedAmount!);
+          break;
+        default:
+          throw new Error(`Unsupported pallet method: ${polkadotExtra.palletMethod}`);
+      }
+
       indexOperation(account.freshAddress, {
         blockNumber: blockInfo.number,
         timestamp: optimistic.date.getTime(),
@@ -167,7 +213,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
         method: extrinsic.method.method,
         section: extrinsic.method.pallet,
         isSuccess: extrinsic.success,
-        amount: optimistic.value.minus(optimistic.fee).toNumber(),
+        amount: amount.toNumber(),
         partialFee: optimistic.fee.toNumber(),
         index: 2, // Not used by coin-module
         isBatch: false, // batch transactions are not supported yet
@@ -175,12 +221,14 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     });
   },
   beforeAll: async account => {
-    expect(account.balance.toFixed()).toBe("90000000000");
+    expect(formatCurrencyUnit(polkadot.units[0], account.balance, { useGrouping: false })).toBe(
+      "500000",
+    );
   },
   afterEach: async () => {
     unsubscribeNewBlockListener();
     // delay needed between transactions to avoid nonce collision
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 3 * 1000));
   },
   teardown: async () => {
     await wsProvider.disconnect();

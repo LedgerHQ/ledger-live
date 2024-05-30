@@ -13,11 +13,18 @@ export type ScenarioTransaction<T extends TransactionCommon> = Partial<T> & {
   name: string;
   /**
    *
+   * @description assert the account state after the transaction
    * @param previousAccount previousAccount returned by the latest sync before broadcasting this transaction
    * @param currentAccount currentAccount synced after broadcasting this transaction
    * @returns void
    */
   expect?: (previousAccount: Account, currentAccount: Account) => void;
+  /**
+   * FOR DEV ONLY
+   * if you want to temporarily disable the expect for a transaction
+   * You should push a transaction with a xexpect
+   */
+  xexpect?: (previousAccount: Account, currentAccount: Account) => void;
 };
 
 export type Scenario<T extends TransactionCommon> = {
@@ -119,7 +126,9 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
       const status = await accountBridge.getTransactionStatus(scenarioAccount, transaction);
       if (Object.entries(status.errors).length) {
-        throw new Error(`Error in transaction status: ${JSON.stringify(status.errors, null, 3)}`);
+        throw new Error(
+          `${testTransaction.name} transaction\nError in transaction status: ${JSON.stringify(status.errors, null, 3)}`,
+        );
       }
 
       console.log(" → ", "🪲  ", chalk.bold("No status errors detected"), "✓");
@@ -180,7 +189,6 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
         try {
           testTransaction.expect?.(previousAccount, scenarioAccount);
         } catch (err) {
-          console.log(JSON.stringify(err));
           if (!(err as { matcherResult?: { pass: boolean } })?.matcherResult?.pass) {
             if (retry === 0) {
               console.error(
