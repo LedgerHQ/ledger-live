@@ -4330,7 +4330,7 @@
         "titleInactive": "Install update",
         "titleActive": "Installing update",
         "description": "{{deviceName}} will restart multiple times.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished.",
-        "descriptionNanoXBle": "{{deviceName}} will restart multiple times.\n\nIt might be necessary to turn it back on manually.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
+        "descriptionNanoXBle": "{{deviceName}} will restart multiple times.\n\nIf the device powers off and does not automatically restart, you will need to power it on yourself.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
       },
       "restoreSettings": {
         "earlySecurityCheck": {
