@@ -5,7 +5,7 @@ import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { flattenV5CurrenciesToAndFrom } from "../../utils/flattenV5CurrenciesToAndFrom";
-import { getAvailableProviders, getSwapAPIBaseURL, getSwapUserIP } from "../..";
+import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
 
 type Props = {
   currencyFromId?: string;
