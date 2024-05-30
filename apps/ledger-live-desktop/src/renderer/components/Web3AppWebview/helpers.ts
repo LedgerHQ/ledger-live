@@ -232,7 +232,7 @@ export function useWebviewState(
     webview.addEventListener("did-stop-loading", handleDidStopLoading);
     webview.addEventListener("dom-ready", handleDomReady);
     webview.addEventListener("did-fail-load", handleFailLoad);
-    webview.addEventListener("crashed", handleCrashed);
+    webview.addEventListener("render-process-gone", handleCrashed);
 
     return () => {
       webview.removeEventListener("page-title-updated", handlePageTitleUpdated);
@@ -242,7 +242,7 @@ export function useWebviewState(
       webview.removeEventListener("did-stop-loading", handleDidStopLoading);
       webview.removeEventListener("dom-ready", handleDomReady);
       webview.removeEventListener("did-fail-load", handleFailLoad);
-      webview.removeEventListener("crashed", handleCrashed);
+      webview.removeEventListener("render-process-gone", handleCrashed);
     };
   }, [
     handleDidNavigate,
