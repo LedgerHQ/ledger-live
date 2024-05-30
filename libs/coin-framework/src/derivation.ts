@@ -1,10 +1,12 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { DerivationMode } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import invariant from "invariant";
+import { Observable, defer, empty, of, range } from "rxjs";
+import { catchError, concatMap, map, switchMap, takeWhile } from "rxjs/operators";
 
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;

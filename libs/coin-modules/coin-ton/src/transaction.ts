@@ -1,4 +1,4 @@
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
@@ -21,7 +21,7 @@ SEND ${
     : amount.isZero()
     ? ""
     : " " +
-      formatCurrencyUnit(getAccountUnit(account), amount, {
+      formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
         showCode: true,
         disableRounding: true,
       })

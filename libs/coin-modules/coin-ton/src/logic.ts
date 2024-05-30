@@ -1,4 +1,4 @@
-import { listTokensForCryptoCurrency } from "@ledgerhq/coin-framework/currencies/index";
+import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import murmurhash from "imurmurhash";
 

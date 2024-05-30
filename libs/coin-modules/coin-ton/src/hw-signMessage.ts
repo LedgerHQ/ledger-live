@@ -1,12 +1,12 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account } from "@ledgerhq/types-live";
 import { AnyMessage } from "@ledgerhq/types-live";
-import { TonAddress, TonSignature, TonSigner } from "./signer";
+import { TonSignature, TonSigner } from "./signer";
 import { TonHwParams } from "./types";
 import { getLedgerTonPath } from "./utils";
 
 export const signMessage =
-  (signerContext: SignerContext<TonSigner, TonAddress | TonSignature>) =>
+  (signerContext: SignerContext<TonSigner>) =>
   async (deviceId: string, account: Account, { message }: AnyMessage) => {
     if (typeof message !== "string") {
       throw new Error("Invalid message type");

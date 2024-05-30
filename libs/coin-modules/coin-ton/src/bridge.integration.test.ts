@@ -46,7 +46,6 @@ const ton: CurrenciesData<Transaction> = {
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
-        unitMagnitude: 9,
         lastSyncDate: "",
         balance: "5000000000",
         subAccounts: [],
