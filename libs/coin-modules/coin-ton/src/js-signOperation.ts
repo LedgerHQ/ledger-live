@@ -16,7 +16,7 @@ import { getAddress, getLedgerTonPath, packTransaction, transactionToHwParams } 
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (signerContext: SignerContext<TonSigner>): SignOperationFnSignature<Transaction> =>
+  (signerContext: SignerContext<TonSigner>): SignOperationFnSignature<Transaction, Account> =>
   ({
     account,
     transaction,
