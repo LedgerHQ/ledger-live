@@ -38,16 +38,15 @@ export class AccountsPage extends AppPage {
     await this.settingsConfirmButton.click();
   }
 
-  async countAccounts(): Promise<number> {
-    return await this.page.locator(".accounts-account-row-item-content").count();
-  }
-
   async getAccountsName() {
     const accountElements = await this.accountListNumber.all();
     const accountNames = [];
     for (const element of accountElements) {
-      const accountName = await element.getAttribute("data-test-id");
-      accountNames.push(accountName);
+      let accountName = await element.getAttribute("data-test-id");
+      if (accountName) {
+        accountName = accountName.replace("account-component-", "");
+        accountNames.push(accountName);
+      }
     }
     return accountNames;
   }

@@ -37,7 +37,7 @@ for (const [i, account] of accounts.entries()) {
 
       await app.account.clickReceive();
       await app.modal.continue();
-      await app.receive.expectValidReceiveAddress(account.address);
+      await app.receive.expectValidReceiveAddress(account.expectedAddress);
 
       await app.speculos.expectValidReceiveAddress(account);
       await app.receive.expectApproveLabel();
