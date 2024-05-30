@@ -1,4 +1,5 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { getEnv } from "@ledgerhq/live-env";
 
 export const tezosConfig: Record<string, ConfigInfo> = {
   config_currency_tezos: {
@@ -6,6 +7,12 @@ export const tezosConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+      },
+      explorer: {
+        url: getEnv("API_TEZOS_TZKT_API"),
+      },
+      node: {
+        url: getEnv("API_TEZOS_NODE"),
       },
     },
   },

@@ -1,8 +1,7 @@
-// @flow
 import URL from "url";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 
 type APIAccount =
   | {
@@ -79,15 +78,13 @@ export type APIOperation =
 
 const api = {
   async getBlockCount(): Promise<number> {
-    const { data } = await network({
-      method: "GET",
+    const { data } = await network<number>({
       url: `${getEnv("API_TEZOS_TZKT_API")}/v1/blocks/count`,
     });
     return data;
   },
   async getAccountByAddress(address: string): Promise<APIAccount> {
-    const { data } = await network({
-      method: "GET",
+    const { data } = await network<APIAccount>({
       url: `${getEnv("API_TEZOS_TZKT_API")}/v1/accounts/${address}`,
     });
     return data;
@@ -99,8 +96,7 @@ const api = {
       sort?: number;
     },
   ): Promise<APIOperation[]> {
-    const { data } = await network({
-      method: "GET",
+    const { data } = await network<APIOperation[]>({
       url: URL.format({
         pathname: `${getEnv("API_TEZOS_TZKT_API")}/v1/accounts/${address}/operations`,
         query,

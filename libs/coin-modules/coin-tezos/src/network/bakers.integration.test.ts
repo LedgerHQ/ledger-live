@@ -1,8 +1,8 @@
 import { DerivationMode } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization";
 import { TezosAccountRaw } from "../types";
-import { loadAccountDelegation, listBakers } from "../api/bakers";
-import whitelist from "../api/bakers.whitelist-default";
+import { loadAccountDelegation, listBakers } from "../network/bakers";
+import whitelist from "../network/bakers.whitelist-default";
 
 function makeAccountRaw(
   name: string,

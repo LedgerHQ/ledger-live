@@ -1,3 +1,5 @@
+import { MissingCoinConfig } from "./errors";
+
 type ConfigStatus =
   | {
       type: "active";
@@ -20,3 +22,26 @@ export type CurrencyConfig = {
 };
 
 export type CoinConfig<T extends CurrencyConfig> = () => T;
+
+function buildCoinConfig<T extends CurrencyConfig>() {
+  let coinConfig: CoinConfig<T> | undefined;
+
+  const setCoinConfig = (config: CoinConfig<T>): void => {
+    coinConfig = config;
+  };
+
+  const getCoinConfig = (): T => {
+    if (!coinConfig) {
+      throw new MissingCoinConfig();
+    }
+
+    return coinConfig();
+  };
+
+  return {
+    setCoinConfig,
+    getCoinConfig,
+  };
+}
+
+export default buildCoinConfig;
