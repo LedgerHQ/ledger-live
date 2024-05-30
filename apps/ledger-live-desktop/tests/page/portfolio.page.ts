@@ -32,7 +32,6 @@ export class PortfolioPage extends AppPage {
     if (!(await assetRowLocator.isVisible())) {
       await this.showAllButton.click();
     }
-    await assetRowLocator.waitFor({ state: "visible" });
     await assetRowLocator.click();
   }
 
