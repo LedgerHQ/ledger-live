@@ -58,7 +58,9 @@ beforeEach(async () => {
 afterEach(async () => {
   sub.unsubscribe();
   try {
+    console.log("before releaseSpeculosDevice");
     await releaseSpeculosDevice(speculos.id);
+    console.log("after releaseSpeculosDevice");
   } catch (e) {
     console.error("Failed to release speculos device", e);
     throw e;
@@ -117,7 +119,6 @@ describe("Chain is owned by a device", () => {
     expect(resolved.getMembers().length).toBe(1);
     expect(crypto.to_hex(resolved.getTopic()!)).toBe(crypto.to_hex(topic));
   });
-  return;
 
   it("should seed a new tree and add a bob", async () => {
     const alice = device.apdu(speculos.transport);
