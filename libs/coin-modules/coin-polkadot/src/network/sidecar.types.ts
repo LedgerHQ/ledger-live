@@ -26,17 +26,17 @@ interface ITarget {
   status: "active" | "inactive" | "waiting" | null;
 }
 export interface IIdentity {
-  display?: string;
-  displayParent?: string;
-  email?: string;
-  image?: string;
-  legal?: string;
+  display?: string | undefined;
+  displayParent?: string | undefined;
+  email?: string | undefined;
+  image?: string | undefined;
+  legal?: string | undefined;
   other?: Record<string, any>;
-  parent?: string;
-  pgp?: string;
-  riot?: string;
-  twitter?: string;
-  web?: string;
+  parent?: string | undefined;
+  pgp?: string | undefined;
+  riot?: string | undefined;
+  twitter?: string | undefined;
+  web?: string | undefined;
   judgements: Array<[string, Record<string, any>]>;
 }
 export interface IValidator {
