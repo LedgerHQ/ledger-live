@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import Text from "~/renderer/components/Text";
 import styled from "styled-components";
 import { Skeleton } from "LLD/Collectibles/components/index";
-import { tagProps } from "LLD/Collectibles/types/DetailDrawer";
+import { TagProps } from "LLD/Collectibles/types/DetailDrawer";
 
 const NFTPropertiesContainer = styled.div<{ isNewDesign?: boolean }>`
   display: flex;
@@ -28,7 +28,7 @@ const Separator = styled.div`
   margin: 24px 0px;
 `;
 
-const TagComponent: React.FC<tagProps> = ({ tags, sectionTitle, status, isNewDesign }) => {
+const TagComponent: React.FC<TagProps> = ({ tags, sectionTitle, status, isNewDesign }) => {
   const skeletonCount = 7;
   const showSkeleton = useMemo(() => status === "loading", [status]);
 

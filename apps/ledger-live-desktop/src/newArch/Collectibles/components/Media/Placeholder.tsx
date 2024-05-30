@@ -10,13 +10,13 @@ const StyledPlaceholder = styled.div<{
   collectibleName?: string | null | undefined;
 }>`
   background-image: url('${Fallback}');
-  background-size: cover;
   background-repeat: no-repeat;
+  background-position: center;
   border-radius: 4px;
   width: 100%;
   height: 100%;
   position: relative;
-  aspect-ratio: 1.3 ;
+  aspect-ratio: 1.4;
 
   &:after {
     display: ${p => (p.full ? "flex" : "none")}
@@ -35,8 +35,8 @@ const StyledPlaceholder = styled.div<{
   }
 `;
 
-const PlaceholderComponent: React.FC<PlaceholderProps> = ({ collectibleName, tokenId }) => (
-  <StyledPlaceholder collectibleName={collectibleName} tokenId={tokenId} />
+const PlaceholderComponent: React.FC<PlaceholderProps> = ({ collectibleName, tokenId, full }) => (
+  <StyledPlaceholder collectibleName={collectibleName} tokenId={tokenId} full={full} />
 );
 
 PlaceholderComponent.displayName = "Placeholder";

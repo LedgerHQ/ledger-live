@@ -1,5 +1,6 @@
 import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
-import { ReactElement, ReactNode } from "react";
+import { ReactNode } from "react";
+import { CollectibleType } from "./Collectibles";
 
 export type ExternalViewerButtonProps = {
   nft: ProtoNFT;
@@ -20,18 +21,10 @@ export type NftPanAndZoomProps = {
   contentType: string | undefined;
   mediaType: string | undefined;
   imageUri: string | undefined;
-  collectibleName: string;
+  collectibleName: string | null | undefined;
 };
 
-export type NftPanAndZoomBodyProps = {
-  tokenId: string;
-  useFallback: boolean;
-  setUseFallback: (useFallback: boolean) => void;
-  contentType: string | undefined;
-  mediaType: string | undefined;
-  imageUri: string | undefined;
-  collectibleName: string;
-};
+export type NftPanAndZoomBodyProps = NftPanAndZoomProps;
 
 export type HeaderTextProps = {
   isLoading: boolean;
@@ -62,8 +55,12 @@ type DetailFieldNoValueProps = {
 export type DetailFieldProps = BaseDetailFieldProps &
   (DetailFieldValueProps | DetailFieldNoValueProps);
 
-export type tagProps = {
-  tags: Record<"key" | "value", string>[] | undefined;
+export type Tag = {
+  key: string;
+  value: string;
+};
+export type TagProps = {
+  tags: Tag[] | undefined;
   sectionTitle: string;
   status: string;
   isNewDesign?: boolean; // added to prepare for the future migration to the new design
@@ -78,15 +75,12 @@ type Detail = {
 };
 export type DetailsArray = Detail[];
 
-type DetailDrawerBaseProps = {
-  children: ReactElement | ReactElement[];
-  collectionName: string;
-  title: string;
-  tags: Record<"key" | "value", string>[] | undefined;
+export type DetailDrawerBaseProps = {
+  collectionName: string | null | undefined;
+  tags: Tag[] | undefined;
   details: DetailsArray;
   isOpened: boolean;
   areFieldsLoading: boolean;
-  metadata: NFTMetadata;
   tokenId: string;
   contentType: string | undefined;
   isPanAndZoomOpen: boolean;
@@ -101,5 +95,6 @@ type DetailDrawerBaseProps = {
 };
 
 export type DetailDrawerProps = DetailDrawerBaseProps & {
-  children: ReactNode;
+  collectibleType: CollectibleType;
+  children?: ReactNode;
 };

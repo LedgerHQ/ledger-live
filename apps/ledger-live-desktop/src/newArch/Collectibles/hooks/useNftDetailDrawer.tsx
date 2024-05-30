@@ -15,8 +15,8 @@ import useCollectibles from "./useCollectibles";
 
 const useNftDetailDrawer = (account: Account, nftId: string) => {
   const dispatch = useDispatch();
-
   const state = useSelector((state: State) => state);
+
   const protoNft = useMemo(() => {
     return (
       getNFTById(state, {

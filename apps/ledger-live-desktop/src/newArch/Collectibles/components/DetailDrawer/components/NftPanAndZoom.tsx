@@ -82,7 +82,7 @@ const NftPanAndZoomComponent: React.FC<NftPanAndZoomProps> = ({ onClose, tokenId
       <CloseButton onClick={onClose} className="sidedrawer-close">
         <IconCross size={32} />
       </CloseButton>
-      <NftPanAndZoomBody {...props} tokenId={tokenId} />
+      <NftPanAndZoomBody {...props} tokenId={tokenId} onClose={onClose} />
     </Container>
   );
 

@@ -7,14 +7,15 @@ const Wrapper = styled.div<{
   full?: VideoProps["full"];
   size?: VideoProps["size"];
   loaded: boolean;
-  square: VideoProps["square"];
+  squareWithDefault: VideoProps["squareWithDefault"];
   maxHeight?: VideoProps["maxHeight"];
   objectFit?: VideoProps["objectFit"];
   error?: boolean;
 }>`
   width: ${({ full, size }) => (full ? "100%" : `${size}px`)};
   height: ${({ full }) => full && "100%"};
-  aspect-ratio: ${({ square, error }) => (square || error ? "1 / 1" : "initial")};
+  aspect-ratio: ${({ squareWithDefault, error }) =>
+    squareWithDefault || error ? "1 / 1" : "initial"};
   max-height: ${({ maxHeight }) => maxHeight && `${maxHeight}px`};
   border-radius: 4px;
   overflow: hidden;
@@ -49,7 +50,7 @@ const VideoComponent: React.FC<VideoProps> = ({
   full = false,
   size = 32,
   maxHeight,
-  square = true,
+  squareWithDefault = true,
   objectFit = "contain",
   setUseFallback,
 }) => {
@@ -60,7 +61,7 @@ const VideoComponent: React.FC<VideoProps> = ({
       full={full}
       size={size}
       loaded={loaded}
-      square={square}
+      squareWithDefault={squareWithDefault}
       maxHeight={maxHeight}
       objectFit={objectFit}
     >

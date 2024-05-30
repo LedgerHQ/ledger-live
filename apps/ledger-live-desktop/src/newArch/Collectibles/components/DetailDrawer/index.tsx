@@ -6,6 +6,7 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { PositionProps, LayoutProps, SpaceProps, position, layout, space } from "styled-system";
 import { DetailDrawerProps } from "LLD/Collectibles/types/DetailDrawer";
+import { createCollectibleObject } from "../../utils/createCollectibleObject";
 
 type ChildComponentProps = {
   children: ReactElement;
@@ -50,9 +51,9 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
   Subtitle: typeof Subtitle;
   Ctas: typeof Ctas;
 } = ({
+  collectibleType,
   children,
   collectionName,
-  title,
   tags,
   details,
   isOpened,
@@ -84,6 +85,20 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
     return { subtitle, ctas };
   }, [children]);
 
+  const data = createCollectibleObject(collectibleType, {
+    collectionName,
+    collectibleName,
+    contentType,
+    imageUri,
+    useFallback,
+    mediaType,
+    tokenId,
+    closeCollectiblesPanAndZoom,
+    setUseFallback,
+  });
+
+  console.log(data);
+
   const isPanAndZoomReady = isPanAndZoomOpen && tokenId && imageUri && mediaType && contentType;
 
   return (
@@ -94,23 +109,12 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
       onRequestClose={handleRequestClose}
       forceDisableFocusTrap
     >
-      {isPanAndZoomReady && (
-        <NftPanAndZoom
-          tokenId={tokenId}
-          onClose={closeCollectiblesPanAndZoom}
-          useFallback={useFallback}
-          setUseFallback={setUseFallback}
-          imageUri={imageUri}
-          mediaType={mediaType}
-          contentType={contentType}
-          collectibleName={collectibleName as string}
-        />
-      )}
+      {isPanAndZoomReady && <NftPanAndZoom {...data.panAndZoomProps} />}
       <NFTViewerDrawerContainer>
         <NFTViewerDrawerContent>
           <StickyWrapper top={0} pb={3} pt="24px">
             <CollectionName text={collectionName} isLoading={areFieldsLoading} />
-            <Title text={title} isLoading={areFieldsLoading} />
+            <Title text={collectibleName} isLoading={areFieldsLoading} />
           </StickyWrapper>
           {subtitle}
           <MediaContainer
@@ -118,19 +122,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
             openNftPanAndZoom={contentType === "image" ? openCollectiblesPanAndZoom : undefined}
             isMediaLoaded={areFieldsLoading}
           >
-            <Media
-              collectibleName={collectibleName}
-              tokenId={tokenId}
-              mediaFormat="big"
-              full
-              squareWithDefault={false}
-              maxHeight={700}
-              useFallback={useFallback}
-              setUseFallback={setUseFallback}
-              uri={imageUri}
-              mediaType={mediaType}
-              contentType={contentType}
-            />
+            <Media mediaFormat="big" full maxHeight={700} {...data.mediaProps} />
           </MediaContainer>
           {ctas}
           <Tag tags={tags} sectionTitle="Tag" status="" />

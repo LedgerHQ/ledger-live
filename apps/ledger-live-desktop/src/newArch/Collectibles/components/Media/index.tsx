@@ -15,7 +15,11 @@ const MediaComponent: React.FC<MediaProps> = props => {
       setUseFallback={props.setUseFallback}
     />
   ) : (
-    <Placeholder collectibleName={props.collectibleName} tokenId={props.tokenId} />
+    <Placeholder
+      collectibleName={props.collectibleName}
+      tokenId={props.tokenId}
+      full={props.full}
+    />
   );
 };
 

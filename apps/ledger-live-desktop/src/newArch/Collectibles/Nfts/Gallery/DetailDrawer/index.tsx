@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { DetailDrawer } from "LLD/Collectibles/components/DetailDrawer";
 import useNftDetailDrawer from "LLD/Collectibles/hooks/useNftDetailDrawer";
 import useCollectibles from "LLD/Collectibles/hooks/useCollectibles";
 import { NftsDetailDrawerProps } from "LLD/Collectibles/types/Nfts";
+import { CollectibleTypeEnum } from "LLD/Collectibles/types/Collectibles";
 import Ctas from "./Ctas";
 
 const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetailDrawerProps) => {
@@ -26,32 +27,33 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
   const { isPanAndZoomOpen, openCollectiblesPanAndZoom, closeCollectiblesPanAndZoom } =
     useCollectibles();
 
+  const handleRequestClose = useCallback(() => setIsOpened(false), [setIsOpened]);
+
   return (
     <DetailDrawer
-      collectionName={collectionName}
-      collectibleName={nftName}
-      title={nftName}
-      tags={tags}
-      details={details}
-      isOpened={isOpened}
+      collectibleType={CollectibleTypeEnum.NFT}
       areFieldsLoading={isLoading}
-      metadata={metadata as NFTMetadata}
-      tokenId={tokenId}
+      collectibleName={nftName}
       contentType={contentType}
-      isPanAndZoomOpen={isPanAndZoomOpen}
+      collectionName={collectionName}
+      details={details}
       imageUri={imageUri}
-      useFallback={useFallback}
+      isPanAndZoomOpen={isPanAndZoomOpen}
       mediaType={mediaType}
-      setUseFallback={setUseFallback}
-      openCollectiblesPanAndZoom={openCollectiblesPanAndZoom}
+      tags={tags}
+      useFallback={useFallback}
+      tokenId={tokenId}
+      isOpened={isOpened}
       closeCollectiblesPanAndZoom={closeCollectiblesPanAndZoom}
-      handleRequestClose={() => setIsOpened(false)}
+      handleRequestClose={handleRequestClose}
+      openCollectiblesPanAndZoom={openCollectiblesPanAndZoom}
+      setUseFallback={setUseFallback}
     >
       <DetailDrawer.Ctas>
         <Ctas
           protoNft={protoNft}
-          account={account}
           metadata={metadata as NFTMetadata}
+          account={account}
           onNFTSend={onNFTSend}
         />
       </DetailDrawer.Ctas>
