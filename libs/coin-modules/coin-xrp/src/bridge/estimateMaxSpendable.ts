@@ -5,7 +5,7 @@ import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
-import { Transaction } from "./types";
+import { Transaction } from "../types";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,

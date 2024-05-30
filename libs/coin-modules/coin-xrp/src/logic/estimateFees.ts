@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
 import { NetworkDown } from "@ledgerhq/errors";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { getServerInfos, parseAPIValue } from "./api";
-import { NetworkInfo, Transaction } from "./types";
+import { getServerInfos, parseAPIValue } from "../api";
+import { NetworkInfo } from "../types";
 
 // FIXME this could be cleaner
 const remapError = (error: Error) => {
@@ -15,12 +14,9 @@ const remapError = (error: Error) => {
   return error;
 };
 
-export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
-  account,
-  transaction,
-) => {
-  let networkInfo: NetworkInfo | null | undefined = transaction.networkInfo;
-
+export default async function estimateFees(
+  networkInfo?: NetworkInfo | null,
+): Promise<{ networkInfo: NetworkInfo; fee: BigNumber }> {
   if (!networkInfo) {
     try {
       const info = await getServerInfos();
@@ -38,11 +34,5 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     }
   }
 
-  const fee = transaction.fee || networkInfo.serverFee;
-
-  if (transaction.networkInfo !== networkInfo || transaction.fee !== fee) {
-    return { ...transaction, networkInfo, fee };
-  }
-
-  return transaction;
-};
+  return { networkInfo, fee: networkInfo.serverFee };
+}

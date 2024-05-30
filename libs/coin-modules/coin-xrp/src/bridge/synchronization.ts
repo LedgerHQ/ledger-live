@@ -2,8 +2,9 @@ import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAccountInfo, getServerInfos, getTransactions, parseAPIValue } from "./api";
-import { NEW_ACCOUNT_ERROR_MESSAGE, filterOperations } from "./logic";
+import { getAccountInfo, getServerInfos, getTransactions, parseAPIValue } from "../api";
+import { NEW_ACCOUNT_ERROR_MESSAGE } from "../logic";
+import { filterOperations } from "./logic";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;

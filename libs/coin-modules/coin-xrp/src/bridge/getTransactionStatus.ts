@@ -13,9 +13,9 @@ import BigNumber from "bignumber.js";
 import { isValidClassicAddress } from "ripple-address-codec";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { Transaction, TransactionStatus } from "./types";
-import { getServerInfos, parseAPIValue } from "./api";
-import { cachedRecipientIsNew } from "./logic";
+import { getServerInfos, parseAPIValue } from "../api";
+import { cachedRecipientIsNew } from "../logic";
+import { Transaction, TransactionStatus } from "../types";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

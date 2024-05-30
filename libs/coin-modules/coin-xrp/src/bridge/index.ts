@@ -1,24 +1,24 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
-  makeAccountBridgeReceive,
   defaultUpdateTransaction,
+  makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { getTransactionStatus } from "../getTransactionStatus";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { prepareTransaction } from "../prepareTransaction";
-import { createTransaction } from "../createTransaction";
-import { getAccountShape } from "../synchronization";
-import { buildSignOperation } from "../signOperation";
 import { XrpConfig, setCoinConfig } from "../config";
-import type { Transaction } from "../types";
-import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
 import { XrpSigner } from "../signer";
+import type { Transaction } from "../types";
+import { broadcast } from "./broadcast";
+import { createTransaction } from "./createTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
+import { buildSignOperation } from "./signOperation";
+import { getAccountShape } from "./synchronization";
 
 export function createBridges(
   signerContext: SignerContext<XrpSigner>,
