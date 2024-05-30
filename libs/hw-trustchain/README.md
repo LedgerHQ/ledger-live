@@ -9,45 +9,47 @@ Ledger Live trustchain hardware layer.
 #### Table of Contents
 
 *   [APDU](#apdu)
+    *   [getSeedId](#getseedid)
+        *   [Parameters](#parameters)
 *   [createApduDevice](#createapdudevice)
-    *   [Parameters](#parameters)
+    *   [Parameters](#parameters-1)
 *   [Command](#command)
 *   [CommandType](#commandtype)
 *   [Permissions](#permissions)
 *   [Seed](#seed)
-    *   [Parameters](#parameters-1)
-*   [Derive](#derive)
     *   [Parameters](#parameters-2)
-*   [AddMember](#addmember)
+*   [Derive](#derive)
     *   [Parameters](#parameters-3)
-*   [PublishKey](#publishkey)
+*   [AddMember](#addmember)
     *   [Parameters](#parameters-4)
-*   [EditMember](#editmember)
+*   [PublishKey](#publishkey)
     *   [Parameters](#parameters-5)
+*   [EditMember](#editmember)
+    *   [Parameters](#parameters-6)
 *   [CloseStream](#closestream)
 *   [CommandBlock](#commandblock)
 *   [createCommandBlock](#createcommandblock)
-    *   [Parameters](#parameters-6)
-*   [createCommandBlock](#createcommandblock-1)
     *   [Parameters](#parameters-7)
-*   [signCommandBlock](#signcommandblock)
+*   [createCommandBlock](#createcommandblock-1)
     *   [Parameters](#parameters-8)
-*   [hashCommandBlock](#hashcommandblock)
+*   [signCommandBlock](#signcommandblock)
     *   [Parameters](#parameters-9)
-*   [verifyCommandBlock](#verifycommandblock)
+*   [hashCommandBlock](#hashcommandblock)
     *   [Parameters](#parameters-10)
+*   [verifyCommandBlock](#verifycommandblock)
+    *   [Parameters](#parameters-11)
 *   [CommandIssuer](#commandissuer)
 *   [CommandStreamIssuer](#commandstreamissuer)
-    *   [Parameters](#parameters-11)
-*   [CommandStream](#commandstream)
     *   [Parameters](#parameters-12)
+*   [CommandStream](#commandstream)
+    *   [Parameters](#parameters-13)
 *   [CommandStream](#commandstream-1)
 *   [Crypto](#crypto)
 *   [crypto](#crypto-1)
 *   [Device](#device)
     *   [isPublicKeyAvailable](#ispublickeyavailable)
     *   [readKey](#readkey)
-        *   [Parameters](#parameters-13)
+        *   [Parameters](#parameters-14)
 *   [createDevice](#createdevice)
 *   [CommandStreamJsonifier](#commandstreamjsonifier)
 *   [device](#device-1)
@@ -55,18 +57,29 @@ Ledger Live trustchain hardware layer.
 *   [StreamTreeCreateOpts](#streamtreecreateopts)
 *   [PublishKeyEvent](#publishkeyevent)
 *   [StreamTree](#streamtree)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-15)
     *   [share](#share)
-        *   [Parameters](#parameters-15)
+        *   [Parameters](#parameters-16)
 *   [StreamTreeCipherMode](#streamtreeciphermode)
 *   [StreamTreeCipher](#streamtreecipher)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-17)
     *   [encrypt](#encrypt)
-        *   [Parameters](#parameters-17)
-    *   [decrypt](#decrypt)
         *   [Parameters](#parameters-18)
+    *   [decrypt](#decrypt)
+        *   [Parameters](#parameters-19)
 
 ### APDU
+
+#### getSeedId
+
+allows to sign a challenge and get the seed id
+
+##### Parameters
+
+*   `transport` **Transport**&#x20;
+*   `challenge` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<SeedIdResult>**&#x20;
 
 ### createApduDevice
 
@@ -205,8 +218,6 @@ Type: function (device: [Device](#device), tempStream: [CommandStream](#commands
 ### Crypto
 
 ### crypto
-
-Type: [Crypto](#crypto)
 
 ### Device
 

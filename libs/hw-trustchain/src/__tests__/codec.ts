@@ -6,48 +6,49 @@ import {
   Seed,
   signCommandBlock,
 } from "../CommandBlock";
-import { CommandStreamDecoder, TLV as TLVD } from "../CommandStreamDecoder";
-import { CommandStreamEncoder, TLV as TLVE } from "../CommandStreamEncoder";
+import { TLV } from "../tlv";
+import { CommandStreamDecoder } from "../CommandStreamDecoder";
+import { CommandStreamEncoder } from "../CommandStreamEncoder";
 import { crypto } from "../Crypto";
 
 describe("Encode/Decode command stream tester", () => {
   it("should encode and decode a byte", async () => {
     const byte = 42;
     let buffer = new Uint8Array();
-    buffer = TLVE.pushByte(buffer, 42);
-    const decoded = TLVD.readVarInt(TLVD.readTLV(buffer, 0));
+    buffer = TLV.pushByte(buffer, 42);
+    const decoded = TLV.readVarInt(TLV.readTLV(buffer, 0));
     expect(decoded.value).toBe(byte);
   });
 
   it("should encode and decode a Int32", async () => {
     const varint = 0xdeadbeef;
     let buffer = new Uint8Array();
-    buffer = TLVE.pushInt32(buffer, varint);
-    const decoded = TLVD.readVarInt(TLVD.readTLV(buffer, 0));
+    buffer = TLV.pushInt32(buffer, varint);
+    const decoded = TLV.readVarInt(TLV.readTLV(buffer, 0));
     expect(decoded.value).toBe(varint);
   });
 
   it("should encode and decode a string", async () => {
     const str = "Hello World";
     let buffer = new Uint8Array();
-    buffer = TLVE.pushString(buffer, str);
-    const decoded = TLVD.readString(TLVD.readTLV(buffer, 0));
+    buffer = TLV.pushString(buffer, str);
+    const decoded = TLV.readString(TLV.readTLV(buffer, 0));
     expect(decoded.value).toBe(str);
   });
 
   it("should encode and decode a hash", async () => {
     const hash = await crypto.hash(new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]));
     let buffer = new Uint8Array();
-    buffer = TLVE.pushHash(buffer, hash);
-    const decoded = TLVD.readHash(TLVD.readTLV(buffer, 0));
+    buffer = TLV.pushHash(buffer, hash);
+    const decoded = TLV.readHash(TLV.readTLV(buffer, 0));
     expect(decoded.value).toEqual(hash);
   });
 
   it("should encode and decode bytes", async () => {
     const bytes = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     let buffer = new Uint8Array();
-    buffer = TLVE.pushBytes(buffer, bytes);
-    const decoded = TLVD.readBytes(TLVD.readTLV(buffer, 0));
+    buffer = TLV.pushBytes(buffer, bytes);
+    const decoded = TLV.readBytes(TLV.readTLV(buffer, 0));
     expect(decoded.value).toEqual(bytes);
   });
 
@@ -59,16 +60,16 @@ describe("Encode/Decode command stream tester", () => {
       alice.privateKey,
     );
     let buffer = new Uint8Array();
-    buffer = TLVE.pushSignature(buffer, block.signature);
-    const decoded = TLVD.readSignature(TLVD.readTLV(buffer, 0));
+    buffer = TLV.pushSignature(buffer, block.signature);
+    const decoded = TLV.readSignature(TLV.readTLV(buffer, 0));
     expect(decoded.value).toEqual(block.signature);
   });
 
   it("should encode and decode a public key", async () => {
     const alice = await crypto.randomKeypair();
     let buffer = new Uint8Array();
-    buffer = TLVE.pushPublicKey(buffer, alice.publicKey);
-    const decoded = TLVD.readPublicKey(TLVD.readTLV(buffer, 0));
+    buffer = TLV.pushPublicKey(buffer, alice.publicKey);
+    const decoded = TLV.readPublicKey(TLV.readTLV(buffer, 0));
     expect(decoded.value).toEqual(alice.publicKey);
   });
 

@@ -5401,6 +5401,12 @@ importers:
       '@ledgerhq/hw-trustchain':
         specifier: workspace:*
         version: link:../hw-trustchain
+      '@ledgerhq/live-env':
+        specifier: workspace:*
+        version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:*
+        version: link:../live-network
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
