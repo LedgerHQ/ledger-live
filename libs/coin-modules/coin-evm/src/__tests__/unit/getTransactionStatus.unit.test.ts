@@ -888,15 +888,14 @@ describe("EVM Family", () => {
         it("should return the expected informations", async () => {
           const res = await getTransactionStatus(account, legacyTx);
 
-          expect(res).toEqual(
-            expect.objectContaining({
-              errors: expect.any(Object),
-              warnings: expect.any(Object),
-              estimatedFees: new BigNumber(2100000),
-              amount: legacyTx.amount,
-              totalSpent: new BigNumber(2100000).plus(legacyTx.amount),
-            }),
-          );
+          expect(res).toEqual({
+            errors: expect.any(Object),
+            warnings: expect.any(Object),
+            estimatedFees: new BigNumber(2100000),
+            totalFees: new BigNumber(2100000),
+            amount: legacyTx.amount,
+            totalSpent: new BigNumber(2100000).plus(legacyTx.amount),
+          });
         });
       });
     });
@@ -1179,6 +1178,7 @@ describe("EVM Family", () => {
         errors: {},
         warnings: {},
         estimatedFees: new BigNumber(2100000),
+        totalFees: new BigNumber(100),
         amount: eip1559Tx.amount,
         totalSpent: new BigNumber(2100000).plus(eip1559Tx.amount),
       };
