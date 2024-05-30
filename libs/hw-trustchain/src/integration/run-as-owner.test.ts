@@ -26,6 +26,7 @@ beforeEach(async () => {
   });
 
   try {
+    console.log("before createSpeculosDevice");
     speculos = await createSpeculosDevice({
       model: DeviceModelId.nanoS,
       firmware: "2.0.0",
@@ -39,6 +40,8 @@ beforeEach(async () => {
     console.error("Failed to create speculos device", e);
     throw e;
   }
+
+  console.log("after createSpeculosDevice");
 
   // passthrough all success cases
   sub = speculos.transport.automationEvents.subscribe(event => {
