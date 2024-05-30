@@ -236,7 +236,7 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 
 *   `ticker` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
+Returns **(TokenCurrency | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### findTokenById
 
@@ -244,7 +244,7 @@ Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs
 
 *   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
+Returns **(TokenCurrency | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### hasTokenId
 

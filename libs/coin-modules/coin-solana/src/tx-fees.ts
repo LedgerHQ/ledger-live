@@ -1,6 +1,6 @@
 import { ChainAPI } from "./api";
-import { buildTransactionWithAPI } from "./js-buildTransaction";
-import createTransaction from "./js-createTransaction";
+import { buildTransactionWithAPI } from "./buildTransaction";
+import createTransaction from "./createTransaction";
 import { Transaction, TransactionModel } from "./types";
 import { assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";

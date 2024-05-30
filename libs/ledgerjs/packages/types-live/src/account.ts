@@ -41,10 +41,6 @@ export type TokenAccount = {
   balanceHistoryCache: BalanceHistoryCache;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
-  approvals?: Array<{
-    sender: string;
-    value: string;
-  }>;
 };
 
 /** */
@@ -105,7 +101,7 @@ export type Account = {
   // currency of this account
   currency: CryptoCurrency;
   // Some blockchains may use a different currency than the main one to pay fees
-  feesCurrency?: CryptoCurrency | TokenCurrency;
+  feesCurrency?: CryptoCurrency | TokenCurrency | undefined;
   // The total number of operations (operations[] can be partial)
   operationsCount: number;
   // lazy list of operations that exists on the blockchain.
@@ -140,7 +136,7 @@ export type Account = {
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
   // Hash used to discard tx history on sync
-  syncHash?: string;
+  syncHash?: string | undefined;
   // Array of NFTs computed by diffing NFTOperations ordered from newest to oldest
   nfts?: ProtoNFT[];
 };
@@ -151,7 +147,7 @@ export type Account = {
 export type SubAccount = TokenAccount;
 
 /** One of the Account type */
-export type AccountLike = Account | TokenAccount;
+export type AccountLike<A extends Account = Account> = A | TokenAccount;
 
 /**
  * An array of AccountLikes
@@ -173,10 +169,6 @@ export type TokenAccountRaw = {
   spendableBalance?: string;
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
-  approvals?: Array<{
-    sender: string;
-    value: string;
-  }>;
 };
 
 /** */
@@ -206,7 +198,7 @@ export type AccountRaw = {
   subAccounts?: TokenAccountRaw[];
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
-  syncHash?: string;
+  syncHash?: string | undefined;
   nfts?: ProtoNFTRaw[];
 };
 

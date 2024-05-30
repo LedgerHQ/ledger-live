@@ -28,6 +28,8 @@
     "src/js-transaction.ts",
     "src/postSyncPatch.ts",
     "src/serialization.ts",
-    "src/signer.ts"
+    "src/signer.ts",
+    "src/getTransactionStatus.unit.test.ts",
+    "src/synchronisation.unit.test.ts"
   ]
 }

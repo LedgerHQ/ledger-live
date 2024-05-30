@@ -6,7 +6,8 @@
     "module": "commonjs",
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "exactOptionalPropertyTypes": true
   },
   "files": ["node_modules/jest-expect-message/types/index.d.ts"],
   "include": ["src/**/*"]

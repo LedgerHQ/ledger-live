@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
-import { OnboardingPage } from "../../models/OnboardingPage";
+import { OnboardingPage } from "../../page/onboarding.page";
 import { DeviceModelId } from "@ledgerhq/devices";
 test.use({
   featureFlags: { supportDeviceStax: { enabled: true } },

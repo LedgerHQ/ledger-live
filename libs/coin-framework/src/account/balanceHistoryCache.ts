@@ -129,7 +129,10 @@ export function getAccountHistoryBalances(account: AccountLike, g: GranularityId
 /**
  * utility used at the end of an account synchronisation to recalculate the balance history if necessary
  */
-export function recalculateAccountBalanceHistories(res: Account, prev: Account): Account {
+export function recalculateAccountBalanceHistories<A extends Account = Account>(
+  res: A,
+  prev: A,
+): A {
   // recalculate balance history cache
   if (prev.balanceHistoryCache === res.balanceHistoryCache) {
     // we only regenerate if it was not overriden by the implemenetation.

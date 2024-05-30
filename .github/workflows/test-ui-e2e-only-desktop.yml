@@ -321,7 +321,7 @@ jobs:
                       "fields": [
                         {
                           "type": "mrkdwn",
-                          "text": "*Allure Report*\n<${{ steps.allure-server.outputs.report-url }}|${{ inputs.report_path }}>"
+                          "text": "*Allure Report*\n<${{ steps.allure-server.outputs.report-url }}|allure-results-linux>"
                         },
                         {
                           "type": "mrkdwn",

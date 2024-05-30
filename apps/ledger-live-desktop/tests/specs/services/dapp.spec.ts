@@ -1,9 +1,9 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { DiscoverPage } from "../../models/DiscoverPage";
-import { Layout } from "../../models/Layout";
-import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
+import { DiscoverPage } from "../../page/discover.page";
+import { Layout } from "../../component/layout.component";
+import { Drawer } from "../../page/drawer/drawer";
+import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });

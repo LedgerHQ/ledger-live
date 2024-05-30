@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
-import { Layout } from "../../models/Layout";
-import { SendModal } from "../../models/SendModal";
+import { Layout } from "../../component/layout.component";
+import { SendModal } from "../../page/modal/send.modal";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 

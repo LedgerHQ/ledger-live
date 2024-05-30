@@ -51,16 +51,16 @@ export type PreloadStrategy = Partial<{
 /**
  *
  */
-export type BroadcastArg = {
-  account: Account;
+export type BroadcastArg<A extends Account> = {
+  account: A;
   signedOperation: SignedOperation;
 };
 
 /**
  *
  */
-export type SignOperationArg0<T> = {
-  account: Account;
+export type SignOperationArg0<T extends TransactionCommon, A extends Account> = {
+  account: A;
   transaction: T;
   deviceId: DeviceId;
 };
@@ -68,15 +68,22 @@ export type SignOperationArg0<T> = {
 /**
  *
  */
-export type SignOperationFnSignature<T> = (
-  arg0: SignOperationArg0<T>,
+export type SignOperationFnSignature<T extends TransactionCommon, A extends Account> = (
+  arg0: SignOperationArg0<T, A>,
 ) => Observable<SignOperationEvent>;
 
-export type BroadcastFnSignature = (arg0: BroadcastArg) => Promise<Operation>;
+export type BroadcastFnSignature<A extends Account = Account> = (
+  arg0: BroadcastArg<A>,
+) => Promise<Operation>;
 
-export type Bridge<T extends TransactionCommon> = {
+export type Bridge<
+  T extends TransactionCommon,
+  A extends Account = Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  R extends AccountRaw = AccountRaw,
+> = {
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<T>;
+  accountBridge: AccountBridge<T, A, U, R>;
 };
 
 export type ScanInfo = {
@@ -120,15 +127,20 @@ export interface CurrencyBridge {
 /**
  * Abstraction related to an account
  */
-export interface AccountBridge<T extends TransactionCommon> {
+export interface AccountBridge<
+  T extends TransactionCommon,
+  A extends Account = Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  R extends AccountRaw = AccountRaw,
+> {
   // synchronizes an account continuously to update with latest blochchains state.
   // The function emits updater functions each time there are data changes (e.g. blockchains updates)
   // an update function is just a Account => Account that perform the changes (to avoid race condition issues)
   // initialAccount parameter is used to point which account is the synchronization on, but it should not be used in the emitted values.
   // the sync can be stopped at any time using Observable's subscription.unsubscribe()
-  sync(initialAccount: Account, syncConfig: SyncConfig): Observable<(arg0: Account) => Account>;
+  sync(initialAccount: A, syncConfig: SyncConfig): Observable<(arg0: A) => A>;
   receive(
-    account: Account,
+    account: A,
     arg1: {
       verify?: boolean;
       deviceId: string;
@@ -142,7 +154,7 @@ export interface AccountBridge<T extends TransactionCommon> {
   // a Transaction object is created on UI side as a black box to put all temporary information to build the transaction at the end.
   // There are a bunch of edit and get functions to edit and extract information out ot this black box.
   // it needs to be a serializable JS object
-  createTransaction(account: AccountLike): T;
+  createTransaction(account: AccountLike<A>): T;
   // NOTE: because of a dependency to React at the moment, if updateTransaction doesn't modify the transaction
   // it must return the unmodified input transaction object (reference stability)
   updateTransaction(t: T, patch: Partial<T>): T;
@@ -151,9 +163,9 @@ export interface AccountBridge<T extends TransactionCommon> {
   // It can fails if the the network is down.
   // NOTE: because of a dependency to React at the moment, if prepareTransaction doesn't modify the transaction
   // it must return the unmodified input transaction object (reference stability)
-  prepareTransaction(account: Account, transaction: T): Promise<T>;
+  prepareTransaction(account: A, transaction: T): Promise<T>;
   // calculate derived state of the Transaction, useful to display summary / errors / warnings. tells if the transaction is ready.
-  getTransactionStatus(account: Account, transaction: T): Promise<TransactionStatusCommon>;
+  getTransactionStatus(account: A, transaction: T): Promise<U>;
   // heuristic that provides the estimated max amount that can be set to a send.
   // this is usually the balance minus the fees, but it really depends between coins (reserve, burn, frozen part of the balance,...).
   // it is a heuristic in that this is not necessarily correct and it can be +-delta (so the info can exceed the spendable or leave some dust).
@@ -162,8 +174,8 @@ export interface AccountBridge<T extends TransactionCommon> {
   // if a transaction is provided, it can be used to precise the information
   // if it not provided, you can assume to take the worst-case scenario (like sending all UTXOs to a legacy address has higher fees resulting in a lower max spendable)
   estimateMaxSpendable(arg0: {
-    account: AccountLike;
-    parentAccount?: Account | null | undefined;
+    account: AccountLike<A>;
+    parentAccount?: A | null | undefined;
     transaction?: T | null | undefined;
   }): Promise<BigNumber>;
   /**
@@ -173,7 +185,7 @@ export interface AccountBridge<T extends TransactionCommon> {
    * @param {Account} account - The original account object.
    * @param {AccountRaw} accountRaw - The account in its serialized form.
    */
-  assignToAccountRaw?: (account: Account, accountRaw: AccountRaw) => void;
+  assignToAccountRaw?: (account: A, accountRaw: R) => void;
   /**
    * This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
    * It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
@@ -181,21 +193,21 @@ export interface AccountBridge<T extends TransactionCommon> {
    * @param {AccountRaw} accountRaw - The account in its serialized form.
    * @param {Account} account - The original account object.
    */
-  assignFromAccountRaw?: (accountRaw: AccountRaw, account: Account) => void;
+  assignFromAccountRaw?: (accountRaw: R, account: A) => void;
   /**
    * This function mutates the 'account' object to extend it with any extra fields of the coin.
    * For instance bitcoinResources needs to be created.
    *
    * @param {Account} account - The original account object to mutates in-place.
    */
-  initAccount?: (account: Account) => void;
+  initAccount?: (account: A) => void;
   // finalizing a transaction by signing it with the ledger device
   // This results of a "signed" event with a signedOperation
   // than can be locally saved and later broadcasted
-  signOperation: SignOperationFnSignature<T>;
+  signOperation: SignOperationFnSignature<T, A>;
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
-  broadcast: BroadcastFnSignature;
+  broadcast: BroadcastFnSignature<A>;
   fromOperationExtraRaw?: (extraRaw: OperationExtraRaw) => OperationExtra;
   toOperationExtraRaw?: (extra: OperationExtra) => OperationExtraRaw;
 }

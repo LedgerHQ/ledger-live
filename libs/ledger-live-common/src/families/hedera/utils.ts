@@ -1,9 +1,9 @@
-import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import estimateMaxSpendable from "./js-estimateMaxSpendable";
-import type { Transaction } from "./types";
-import { getFiatCurrencyByTicker } from "../../currencies/index";
+import type { Account } from "@ledgerhq/types-live";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
+import { getFiatCurrencyByTicker } from "../../currencies/index";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import type { Transaction } from "./types";
 
 export const estimatedFeeSafetyRate = 2;
 

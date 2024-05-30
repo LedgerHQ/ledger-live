@@ -2,7 +2,6 @@ import bs58check from "bs58check";
 import { BigNumber } from "bignumber.js";
 import get from "lodash/get";
 import { log } from "@ledgerhq/logs";
-import { extractBandwidthInfo } from "./api";
 import type {
   Transaction,
   TronOperationMode,
@@ -10,6 +9,8 @@ import type {
   TrongridExtraTxInfo,
   TronResources,
   TronOperation,
+  BandwidthInfo,
+  NetworkInfo,
 } from "./types";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -326,6 +327,28 @@ export const txInfoToOperation = (
   }
 
   return undefined;
+};
+
+export const extractBandwidthInfo = (
+  networkInfo: NetworkInfo | null | undefined,
+): BandwidthInfo => {
+  // Calculate bandwidth info :
+  if (networkInfo) {
+    const { freeNetUsed, freeNetLimit, netUsed, netLimit } = networkInfo;
+    return {
+      freeUsed: freeNetUsed,
+      freeLimit: freeNetLimit,
+      gainedUsed: netUsed,
+      gainedLimit: netLimit,
+    };
+  }
+
+  return {
+    freeUsed: new BigNumber(0),
+    freeLimit: new BigNumber(0),
+    gainedUsed: new BigNumber(0),
+    gainedLimit: new BigNumber(0),
+  };
 };
 
 export const defaultTronResources: TronResources = {
