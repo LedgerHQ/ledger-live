@@ -8,6 +8,7 @@ export class PortfolioPage extends AppPage {
   );
   private buySellEntryButton = this.page.locator("data-test-id=buy-sell-entry-button");
   private stakeEntryButton = this.page.locator("data-test-id=stake-entry-button");
+  private showAllButton = this.page.locator("text=Show all");
   private assetRow = (currency: string) =>
     this.page.locator(`data-test-id=asset-row-${currency.toLowerCase()}`);
 
@@ -27,7 +28,11 @@ export class PortfolioPage extends AppPage {
 
   @step("Navigate to asset $0")
   async navigateToAsset(currency: string) {
-    await this.assetRow(currency).click();
+    const assetRowLocator = this.assetRow(currency);
+    if (!(await assetRowLocator.isVisible())) {
+      await this.showAllButton.click();
+    }
+    await assetRowLocator.click();
   }
 
   async scrollToOperations() {
