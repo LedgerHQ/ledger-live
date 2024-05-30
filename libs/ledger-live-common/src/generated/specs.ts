@@ -8,6 +8,7 @@ import hedera from "../families/hedera/specs";
 import internet_computer from "../families/internet_computer/specs";
 import stacks from "../families/stacks/specs";
 import ton from "../families/ton/specs";
+import tron from "../families/tron/specs";
 import vechain from "../families/vechain/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
@@ -20,6 +21,7 @@ import stellar from "@ledgerhq/coin-stellar/specs";
 import tezos from "@ledgerhq/coin-tezos/specs";
 import tron from "@ledgerhq/coin-tron/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
+import ton from "@ledgerhq/coin-ton/specs";
 
 export default {
   casper,
@@ -44,4 +46,5 @@ export default {
   tezos,
   tron,
   xrp,
+  ton,
 };

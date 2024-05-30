@@ -16,12 +16,10 @@ import getTransactionStatus from "../js-getTransactionStatus";
 import prepareTransaction from "../js-prepareTransaction";
 import { buildSignOperation } from "../js-signOperation";
 import { getAccountShape, sync } from "../js-synchronisation";
-import { TonAddress, TonSignature, TonSigner } from "../signer";
+import { TonSigner } from "../signer";
 import type { Transaction } from "../types";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<TonSigner, TonAddress | TonSignature>,
-): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -37,7 +35,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<TonSigner, TonAddress | TonSignature>,
+  signerContext: SignerContext<TonSigner>,
 ): AccountBridge<Transaction> {
   const getAddress = resolver(signerContext);
 
@@ -57,10 +55,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<TonSigner, TonAddress | TonSignature>,
-  coinConfig: TonCoinConfig,
-) {
+export function createBridges(signerContext: SignerContext<TonSigner>, coinConfig: TonCoinConfig) {
   setCoinConfig(coinConfig);
 
   return {

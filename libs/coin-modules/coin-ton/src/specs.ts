@@ -1,12 +1,12 @@
+import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec, TransactionDestinationTestInput } from "@ledgerhq/coin-framework/bot/types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
-import { botTest, pickSiblings } from "../../bot/specs";
-import type { AppSpec, TransactionDestinationTestInput } from "../../bot/types";
-import { getCryptoCurrencyById } from "../../currencies";
-import type { Transaction } from "../../families/ton/types";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { Transaction } from "./types";
 
 const MIN_SAFE = new BigNumber(1.5e7); // approx two txs' fees (0.015 TON)
 
