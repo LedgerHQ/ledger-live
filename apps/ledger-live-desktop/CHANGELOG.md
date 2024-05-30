@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.81.3-nightly.1
+
+### Patch Changes
+
+- [#6960](https://github.com/LedgerHQ/ledger-live/pull/6960) [`9a2ce48`](https://github.com/LedgerHQ/ledger-live/commit/9a2ce483a5da2cd4b34f9413588ebb26a1595d25) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use targetAccountCurrency name if accountNameSelector returns null or undefined.
+
+- [#6876](https://github.com/LedgerHQ/ledger-live/pull/6876) [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update tests & paths for coins
+
+- Updated dependencies [[`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4), [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4), [`f84fc59`](https://github.com/LedgerHQ/ledger-live/commit/f84fc590cf8838794324d12bfe9b3a37cf18c29b)]:
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.6
+  - @ledgerhq/coin-evm@2.1.0-nightly.6
+  - @ledgerhq/live-common@34.3.0-nightly.9
+  - @ledgerhq/types-live@6.48.0-nightly.1
+  - @ledgerhq/coin-framework@0.14.0-nightly.6
+  - @ledgerhq/domain-service@1.2.0-nightly.2
+  - @ledgerhq/live-countervalues@0.2.0-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.6
+  - @ledgerhq/live-nft@0.4.0-nightly.6
+  - @ledgerhq/live-nft-react@0.4.0-nightly.6
+  - @ledgerhq/live-wallet@0.1.1-nightly.9
+
 ## 2.81.3-nightly.0
 
 ### Patch Changes

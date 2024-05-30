@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.1.0-nightly.3
+
+### Minor Changes
+
+- [#6876](https://github.com/LedgerHQ/ledger-live/pull/6876) [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove from `find` method the ReturnType null which wasn't possible anyway
+
 ## 13.1.0-nightly.2
 
 ### Minor Changes

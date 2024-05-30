@@ -1,5 +1,35 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.9
+
+### Minor Changes
+
+- [#6876](https://github.com/LedgerHQ/ledger-live/pull/6876) [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update coin implementations to use new account bridge types & implement cleaner architecture
+
+### Patch Changes
+
+- [#6928](https://github.com/LedgerHQ/ledger-live/pull/6928) [`f84fc59`](https://github.com/LedgerHQ/ledger-live/commit/f84fc590cf8838794324d12bfe9b3a37cf18c29b) Thanks [@RamyEB](https://github.com/RamyEB)! - set account on dapp browser
+
+- Updated dependencies [[`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4), [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4), [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4)]:
+  - @ledgerhq/coin-algorand@0.5.0-nightly.6
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.6
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.6
+  - @ledgerhq/coin-solana@0.7.0-nightly.11
+  - @ledgerhq/coin-tezos@0.4.0-nightly.5
+  - @ledgerhq/coin-near@0.5.0-nightly.6
+  - @ledgerhq/coin-evm@2.1.0-nightly.6
+  - @ledgerhq/coin-xrp@0.2.0-nightly.6
+  - @ledgerhq/coin-framework@0.14.0-nightly.6
+  - @ledgerhq/cryptoassets@13.1.0-nightly.3
+  - @ledgerhq/coin-cardano@0.1.0-nightly.2
+  - @ledgerhq/device-core@0.2.0-nightly.3
+  - @ledgerhq/hw-app-eth@6.37.0-nightly.5
+  - @ledgerhq/live-countervalues@0.2.0-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.6
+  - @ledgerhq/live-nft@0.4.0-nightly.6
+  - @ledgerhq/live-wallet@0.1.1-nightly.9
+  - @ledgerhq/hw-app-vet@0.2.0-nightly.4
+
 ## 34.3.0-nightly.8
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.48.0-nightly.1
+
+### Minor Changes
+
+- [#6876](https://github.com/LedgerHQ/ledger-live/pull/6876) [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Account Bridge types
+
 ## 6.48.0-nightly.0
 
 ### Minor Changes

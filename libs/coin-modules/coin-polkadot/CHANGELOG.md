@@ -1,5 +1,18 @@
 # @ledgerhq/coin-polkadot
 
+## 0.7.0-nightly.6
+
+### Minor Changes
+
+- [#6876](https://github.com/LedgerHQ/ledger-live/pull/6876) [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update coin implementations to use new account bridge types & implement cleaner architecture
+
+### Patch Changes
+
+- Updated dependencies [[`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4), [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4)]:
+  - @ledgerhq/types-live@6.48.0-nightly.1
+  - @ledgerhq/coin-framework@0.14.0-nightly.6
+  - @ledgerhq/cryptoassets@13.1.0-nightly.3
+
 ## 0.7.0-nightly.5
 
 ### Patch Changes
