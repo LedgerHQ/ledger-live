@@ -15,7 +15,8 @@ export const e2eBridgeServer = new Subject<ServerData>();
 let wss: Server;
 let webSocket: WebSocket;
 const lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
-let clientReponse: (data: string) => void;
+let clientResponse: (data: string) => void;
+const RESPONSE_TIMEOUT = 10000;
 
 function uniqueId(): string {
   const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
@@ -151,44 +152,26 @@ export async function open() {
 }
 
 export async function getLogs() {
-  return new Promise<string>(resolve => {
-    postMessage({ type: "getLogs", id: uniqueId() });
-    const timeoutId = setTimeout(() => {
-      console.warn("Timeout while waiting for app logs");
-      resolve("");
-    }, 10000);
-
-    clientReponse = (data: string) => {
-      clearTimeout(timeoutId);
-      resolve(data);
-    };
-  });
+  return fetchData({ type: "getLogs", id: uniqueId() });
 }
 
 export async function getFlags() {
-  return new Promise<string>(resolve => {
-    postMessage({ type: "getFlags", id: uniqueId() });
-    const timeoutId = setTimeout(() => {
-      console.warn("Timeout while waiting for flags");
-      resolve("");
-    }, 10000);
-
-    clientReponse = (data: string) => {
-      clearTimeout(timeoutId);
-      resolve(data);
-    };
-  });
+  return fetchData({ type: "getFlags", id: uniqueId() });
 }
 
 export async function getEnvs() {
-  return new Promise<string>(resolve => {
-    postMessage({ type: "getEnvs", id: uniqueId() });
-    const timeoutId = setTimeout(() => {
-      console.warn("Timeout while waiting for Envs");
-      resolve("");
-    }, 10000);
+  return fetchData({ type: "getEnvs", id: uniqueId() });
+}
 
-    clientReponse = (data: string) => {
+function fetchData(message: MessageData): Promise<string> {
+  return new Promise<string>(resolve => {
+    postMessage(message);
+    const timeoutId = setTimeout(() => {
+      console.warn(`Timeout while waiting for ${message.type}`);
+      resolve("");
+    }, RESPONSE_TIMEOUT);
+
+    clientResponse = (data: string) => {
       clearTimeout(timeoutId);
       resolve(data);
     };
@@ -208,14 +191,14 @@ function onMessage(messageStr: string) {
       e2eBridgeServer.next(msg);
       break;
     case "appLogs": {
-      clientReponse(msg.payload);
+      clientResponse(msg.payload);
       break;
     }
     case "appFlags":
-      clientReponse(msg.payload);
+      clientResponse(msg.payload);
       break;
     case "appEnvs":
-      clientReponse(msg.payload);
+      clientResponse(msg.payload);
       break;
     default:
       break;

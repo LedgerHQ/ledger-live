@@ -2,12 +2,7 @@ import { device } from "detox";
 import * as serverBridge from "./bridge/server";
 import fs from "fs";
 import net from "net";
-import { getLogs } from "./bridge/server";
 import { getState } from "expect";
-import { getFlags } from "./bridge/server";
-import { Feature, FeatureId } from "@ledgerhq/types-live";
-import { getEnvs } from "./bridge/server";
-import { EnvName } from "@ledgerhq/live-env";
 import { MatcherState } from "expect/build/types";
 import { format } from "date-fns";
 
@@ -47,59 +42,12 @@ export async function launchApp() {
 }
 
 afterEach(async () => {
-  const logs = await getLogs();
-  if (process.env.CI) writeFile(getState(), "json", logs);
-  allure.attachment("Application Logs", logs, "application/json");
+  if (process.env.CI) writeFile(getState(), "json", await serverBridge.getLogs());
 });
 
 afterAll(async () => {
-  const featureFlags = await getFlags();
-  const appEnvs = await getEnvs();
-  const flagsData = featureFlags ? formatFlagsData(JSON.parse(featureFlags)) : "";
-  const envsData = appEnvs ? formatEnvData(JSON.parse(appEnvs)) : "";
-  if (process.env.CI) writeFile(getState(), "properties", flagsData + envsData);
-  allure.attachment("Feature Flags", featureFlags, "application/json");
-  allure.attachment("Environment Variables", appEnvs, "application/json");
-
   serverBridge.close();
 });
-
-const formatFlagsData = (data: { [key in FeatureId]: Feature }) => {
-  let allureData = "";
-  for (const [key, value] of Object.entries(data)) {
-    allureData += `FF.${key} = ${value.enabled}\n`;
-
-    const entries = {
-      desktop_version: value.desktop_version,
-      mobile_version: value.mobile_version,
-      enabledOverriddenForCurrentVersion: value.enabledOverriddenForCurrentVersion,
-      languages_whitelisted: value.languages_whitelisted?.join(", "),
-      languages_blacklisted: value.languages_blacklisted?.join(", "),
-      enabledOverriddenForCurrentLanguage: value.enabledOverriddenForCurrentLanguage,
-      overridesRemote: value.overridesRemote,
-      overriddenByEnv: value.overriddenByEnv,
-      params: value.params ? JSON.stringify(value.params) : undefined,
-    };
-
-    for (const [field, fieldValue] of Object.entries(entries)) {
-      if (fieldValue !== undefined) {
-        allureData += `FF.${key}.${field} = ${fieldValue
-          .toString()
-          .replace(/^\{|\}$/g, "")
-          .replace(/"/g, " ")}\n`;
-      }
-    }
-  }
-  return allureData;
-};
-
-const formatEnvData = (data: { [key in EnvName]: string }) => {
-  let allureData = "";
-  for (const [key, value] of Object.entries(data)) {
-    allureData += `ENV.${key} = ${value}\n`;
-  }
-  return allureData;
-};
 
 const writeFile = (state: MatcherState, extension: string, data: string) => {
   const time = format(currentDate, "HH-mm-ss");

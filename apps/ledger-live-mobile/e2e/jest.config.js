@@ -38,7 +38,7 @@ module.exports = async () => ({
   testMatch: ["<rootDir>/e2e/**/*.spec.ts"],
   reporters: ["detox/runners/jest/reporter", ["jest-allure2-reporter", jestAllure2ReporterOptions]],
   globalSetup: "detox/runners/jest/globalSetup",
-  globalTeardown: "detox/runners/jest/globalTeardown",
+  globalTeardown: "<rootDir>/e2e/jest.globalTeardown.ts",
   testEnvironment: "detox/runners/jest/testEnvironment",
   testEnvironmentOptions: {
     eventListeners: [
