@@ -82,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.post-version.outputs.version }}-release
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
     runs-on: macos-latest
