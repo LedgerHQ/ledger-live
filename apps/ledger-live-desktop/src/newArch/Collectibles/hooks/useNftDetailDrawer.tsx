@@ -12,6 +12,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { createDetails } from "LLD/Collectibles/utils/createNftDetailsArrays";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import useCollectibles from "./useCollectibles";
+import isEmpty from "lodash/isEmpty";
 
 const useNftDetailDrawer = (account: Account, nftId: string) => {
   const dispatch = useDispatch();
@@ -21,10 +22,12 @@ const useNftDetailDrawer = (account: Account, nftId: string) => {
     return (
       getNFTById(state, {
         nftId,
-      }) || ({} as ProtoNFT) // This seems really wrong to fallback to an empty object here…
+      }) || ({} as ProtoNFT)
     );
   }, [state, nftId]);
-  // if returns undefined don't open drawer
+
+  const doNotOpenDrawer = isEmpty(protoNft);
+
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
     protoNft.contract,
     protoNft.currencyId,
@@ -111,6 +114,7 @@ const useNftDetailDrawer = (account: Account, nftId: string) => {
     useFallback,
     imageUri: uri,
     mediaType,
+    doNotOpenDrawer,
     onNFTSend,
     setUseFallback,
   };

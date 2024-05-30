@@ -13,7 +13,7 @@ export type CopyableFieldProps = {
   children?: React.ReactNode;
 };
 
-export type NftPanAndZoomProps = {
+export type PanAndZoomProps = {
   onClose: () => void;
   tokenId: string;
   useFallback: boolean;
@@ -24,7 +24,7 @@ export type NftPanAndZoomProps = {
   collectibleName: string | null | undefined;
 };
 
-export type NftPanAndZoomBodyProps = NftPanAndZoomProps;
+export type PanAndZoomBodyProps = PanAndZoomProps;
 
 export type HeaderTextProps = {
   isLoading: boolean;

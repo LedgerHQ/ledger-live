@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { createPortal } from "react-dom";
-import { NftPanAndZoomProps, NftPanAndZoomBodyProps } from "LLD/Collectibles/types/DetailDrawer";
+import { PanAndZoomProps, PanAndZoomBodyProps } from "LLD/Collectibles/types/DetailDrawer";
 import { Media } from "LLD/Collectibles/components/index";
 import PrismaZoom from "react-prismazoom";
 import IconCross from "~/renderer/icons/Cross";
@@ -20,7 +20,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const NFTImageContainer = styled.div`
+const ImageContainer = styled.div`
   height: 100%;
   width: 100%;
   display: flex;
@@ -50,9 +50,9 @@ const prismaZoomStyle = {
   justifyContent: "center",
 };
 
-const NftPanAndZoomBody = memo<NftPanAndZoomBodyProps>(
+const PanAndZoomBody = memo<PanAndZoomBodyProps>(
   ({ tokenId, collectibleName, useFallback, setUseFallback, mediaType, contentType, imageUri }) => (
-    <NFTImageContainer>
+    <ImageContainer>
       <PrismaZoom style={prismaZoomStyle}>
         <Media
           collectibleName={collectibleName}
@@ -72,17 +72,17 @@ const NftPanAndZoomBody = memo<NftPanAndZoomBodyProps>(
           contentType={contentType}
         />
       </PrismaZoom>
-    </NFTImageContainer>
+    </ImageContainer>
   ),
 );
 
-const NftPanAndZoomComponent: React.FC<NftPanAndZoomProps> = ({ onClose, tokenId, ...props }) => {
+const PanAndZoomComponent: React.FC<PanAndZoomProps> = ({ onClose, tokenId, ...props }) => {
   const modal = (
     <Container onClick={onClose}>
       <CloseButton onClick={onClose} className="sidedrawer-close">
         <IconCross size={32} />
       </CloseButton>
-      <NftPanAndZoomBody {...props} tokenId={tokenId} onClose={onClose} />
+      <PanAndZoomBody {...props} tokenId={tokenId} onClose={onClose} />
     </Container>
   );
 
@@ -91,7 +91,7 @@ const NftPanAndZoomComponent: React.FC<NftPanAndZoomProps> = ({ onClose, tokenId
   return domNode ? createPortal(modal, domNode) : null;
 };
 
-NftPanAndZoomBody.displayName = "NftPanAndZoomBody";
-NftPanAndZoomComponent.displayName = "NftPanAndZoom";
+PanAndZoomBody.displayName = "PanAndZoomBody";
+PanAndZoomComponent.displayName = "PanAndZoom";
 
-export const NftPanAndZoom = memo<NftPanAndZoomProps>(NftPanAndZoomComponent);
+export const PanAndZoom = memo<PanAndZoomProps>(PanAndZoomComponent);

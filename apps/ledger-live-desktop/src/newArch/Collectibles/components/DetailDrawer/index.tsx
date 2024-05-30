@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { CollectionName, DetailField, Tag, Title, MediaContainer } from "./components";
-import { NftPanAndZoom } from "./components/NftPanAndZoom";
+import { PanAndZoom } from "./components/PanAndZoom";
 import { Media } from "LLD/Collectibles/components";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
@@ -12,7 +12,7 @@ type ChildComponentProps = {
   children: ReactElement;
 };
 
-const NFTViewerDrawerContainer = styled.div`
+const ViewerDrawerContainer = styled.div`
   flex: 1;
   overflow-y: hidden;
   position: absolute;
@@ -25,7 +25,7 @@ const NFTViewerDrawerContainer = styled.div`
     display: none;
   }
 `;
-const NFTViewerDrawerContent = styled.div`
+const ViewerDrawerContent = styled.div`
   padding: 40px 40px;
   padding-top: 53px;
   display: flex;
@@ -97,8 +97,6 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
     setUseFallback,
   });
 
-  console.log(data);
-
   const isPanAndZoomReady = isPanAndZoomOpen && tokenId && imageUri && mediaType && contentType;
 
   return (
@@ -109,9 +107,9 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
       onRequestClose={handleRequestClose}
       forceDisableFocusTrap
     >
-      {isPanAndZoomReady && <NftPanAndZoom {...data.panAndZoomProps} />}
-      <NFTViewerDrawerContainer>
-        <NFTViewerDrawerContent>
+      {isPanAndZoomReady && <PanAndZoom {...data.panAndZoomProps} />}
+      <ViewerDrawerContainer>
+        <ViewerDrawerContent>
           <StickyWrapper top={0} pb={3} pt="24px">
             <CollectionName text={collectionName} isLoading={areFieldsLoading} />
             <Title text={collectibleName} isLoading={areFieldsLoading} />
@@ -119,7 +117,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
           {subtitle}
           <MediaContainer
             contentType={contentType}
-            openNftPanAndZoom={contentType === "image" ? openCollectiblesPanAndZoom : undefined}
+            openPanAndZoom={contentType === "image" ? openCollectiblesPanAndZoom : undefined}
             isMediaLoaded={areFieldsLoading}
           >
             <Media mediaFormat="big" full maxHeight={700} {...data.mediaProps} />
@@ -137,8 +135,8 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
               isHash={isHash}
             />
           ))}
-        </NFTViewerDrawerContent>
-      </NFTViewerDrawerContainer>
+        </ViewerDrawerContent>
+      </ViewerDrawerContainer>
     </SideDrawer>
   );
 };

@@ -21,21 +21,17 @@ type CtasProps = {
   onNFTSend: () => void;
 };
 
+const buttonStyle = {
+  flex: 1,
+  justifyContent: "center",
+};
+
 const Ctas: React.FC<CtasProps> = ({ protoNft, account, metadata, onNFTSend }) => {
   const { t } = useTranslation();
 
   return (
     <NFTActions>
-      <Button
-        style={{
-          flex: 1,
-          justifyContent: "center",
-        }}
-        mr={4}
-        primary
-        onClick={onNFTSend}
-        center
-      >
+      <Button style={buttonStyle} mr={4} primary onClick={onNFTSend} center>
         <IconSend size={12} />
         <Text ml={1} fontSize={3} lineHeight="18px">
           {t("NFT.viewer.actions.send")}

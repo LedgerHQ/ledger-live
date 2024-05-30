@@ -24,11 +24,6 @@ export type ImageProps = BaseMediaProps & {
 
 export type VideoProps = BaseMediaProps;
 
-export type PlaceholderProps = Pick<BaseProps, "tokenId" | "full"> & {
-  collectibleName?: string | null | undefined;
-};
-// TODO Figure out if we really need this once we know who creates/processes the media.
-
 export type MediaProps = BaseMediaProps & {
   useFallback: boolean;
   contentType: string | undefined;

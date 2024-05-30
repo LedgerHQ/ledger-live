@@ -20,6 +20,7 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
     imageUri,
     useFallback,
     mediaType,
+    doNotOpenDrawer,
     setUseFallback,
     onNFTSend,
   } = useNftDetailDrawer(account, tokenId);
@@ -28,6 +29,8 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
     useCollectibles();
 
   const handleRequestClose = useCallback(() => setIsOpened(false), [setIsOpened]);
+
+  if (doNotOpenDrawer) return null;
 
   return (
     <DetailDrawer

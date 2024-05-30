@@ -3,13 +3,13 @@ import styled from "styled-components";
 import ZoomInIcon from "~/renderer/icons/ZoomIn";
 import { Skeleton } from "LLD/Collectibles/components";
 
-const NFTImageContainer = styled.div`
+const ImageContainer = styled.div`
   position: relative;
   cursor: ${({ contentType }: { contentType: string | undefined }) =>
     contentType === "image" ? "pointer" : "initial"};
 `;
 
-const NFTImageOverlay = styled.div`
+const ImageOverlay = styled.div`
   opacity: 0;
   position: absolute;
   display: flex;
@@ -29,29 +29,29 @@ type MediaContainerProps = {
   children: React.ReactNode;
   contentType: string | undefined;
   isMediaLoaded: boolean;
-  openNftPanAndZoom: React.MouseEventHandler<HTMLDivElement> | undefined;
+  openPanAndZoom: React.MouseEventHandler<HTMLDivElement> | undefined;
 };
 
 const MediaContainerComponent: React.FC<MediaContainerProps> = ({
   children,
   contentType,
   isMediaLoaded,
-  openNftPanAndZoom,
+  openPanAndZoom,
 }) => {
   return (
     <>
       <Skeleton show={isMediaLoaded} width={420} barHeight={200}>
-        <NFTImageContainer
+        <ImageContainer
           contentType={contentType}
-          onClick={contentType === "image" ? openNftPanAndZoom : undefined}
+          onClick={contentType === "image" ? openPanAndZoom : undefined}
         >
           {children}
           {contentType === "image" ? (
-            <NFTImageOverlay>
+            <ImageOverlay>
               <ZoomInIcon color="white" />
-            </NFTImageOverlay>
+            </ImageOverlay>
           ) : null}
-        </NFTImageContainer>
+        </ImageContainer>
       </Skeleton>
     </>
   );

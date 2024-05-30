@@ -1,5 +1,5 @@
 import { CollectibleTypeEnum, CollectibleType } from "LLD/Collectibles/types/Collectibles";
-import { NftPanAndZoomProps, DetailDrawerProps } from "LLD/Collectibles/types/DetailDrawer";
+import { PanAndZoomProps, DetailDrawerProps } from "LLD/Collectibles/types/DetailDrawer";
 import { MediaProps } from "LLD/Collectibles/types/Media";
 import { NftComponentData } from "LLD/Collectibles/types/Nfts";
 
@@ -22,7 +22,7 @@ export function createCollectibleObject(type: CollectibleType, data: unknown) {
           squareWithDefault: false,
           setUseFallback: data.setUseFallback,
         },
-        panAndZoomProps: <NftPanAndZoomProps>{
+        panAndZoomProps: <PanAndZoomProps>{
           collectibleName: data.nftName,
           contentType: data.contentType,
           imageUri: data.imageUri,
@@ -45,7 +45,7 @@ export function createCollectibleObject(type: CollectibleType, data: unknown) {
         isOpened: false,
       },
       mediaProps: <MediaProps>{},
-      panAndZoomProps: <NftPanAndZoomProps>{},
+      panAndZoomProps: <PanAndZoomProps>{},
     };
   }
 
@@ -54,6 +54,6 @@ export function createCollectibleObject(type: CollectibleType, data: unknown) {
       isOpened: false,
     },
     mediaProps: <MediaProps>{},
-    panAndZoomProps: <NftPanAndZoomProps>{},
+    panAndZoomProps: <PanAndZoomProps>{},
   };
 }

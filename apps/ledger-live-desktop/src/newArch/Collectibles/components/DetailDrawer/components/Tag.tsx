@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Skeleton } from "LLD/Collectibles/components/index";
 import { TagProps } from "LLD/Collectibles/types/DetailDrawer";
 
-const NFTPropertiesContainer = styled.div<{ isNewDesign?: boolean }>`
+const PropertiesContainer = styled.div<{ isNewDesign?: boolean }>`
   display: flex;
   flex-direction: row;
   flex-wrap: ${({ isNewDesign }) => (isNewDesign ? "nowrap" : "wrap")};
@@ -13,7 +13,7 @@ const NFTPropertiesContainer = styled.div<{ isNewDesign?: boolean }>`
   overflow-x: ${({ isNewDesign }) => (isNewDesign ? "auto" : "hidden")};
   white-space: ${({ isNewDesign }) => (isNewDesign ? "nowrap" : "normal")};
 `;
-const NFTProperty = styled.div<{ isNewDesign?: boolean }>`
+const Property = styled.div<{ isNewDesign?: boolean }>`
   display: inline-flex;
   flex-direction: column;
   padding: 8px 12px;
@@ -53,10 +53,10 @@ const TagComponent: React.FC<TagProps> = ({ tags, sectionTitle, status, isNewDes
       >
         {sectionTitle}
       </Text>
-      <NFTPropertiesContainer isNewDesign={isNewDesign}>
+      <PropertiesContainer isNewDesign={isNewDesign}>
         {tags
           ? tags.map(({ key, value }) => (
-              <NFTProperty key={key + value} isNewDesign={isNewDesign}>
+              <Property key={key + value} isNewDesign={isNewDesign}>
                 <Text
                   mb="2px"
                   lineHeight="12.1px"
@@ -76,10 +76,10 @@ const TagComponent: React.FC<TagProps> = ({ tags, sectionTitle, status, isNewDes
                 >
                   {value}
                 </Text>
-              </NFTProperty>
+              </Property>
             ))
           : skeletons}
-      </NFTPropertiesContainer>
+      </PropertiesContainer>
       {!isNewDesign ? <Separator /> : null}
     </>
   );

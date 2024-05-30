@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-import { PlaceholderProps } from "LLD/Collectibles/types/Media";
 import styled from "styled-components";
 import Fallback from "./Fallback.png";
 
@@ -14,8 +13,8 @@ const StyledPlaceholder = styled.div`
   aspect-ratio: 1.4;
 `;
 
-const PlaceholderComponent: React.FC<PlaceholderProps> = () => <StyledPlaceholder />;
+const PlaceholderComponent: React.FC = () => <StyledPlaceholder />;
 
 PlaceholderComponent.displayName = "Placeholder";
 
-export const Placeholder = memo<PlaceholderProps>(PlaceholderComponent);
+export const Placeholder = memo(PlaceholderComponent);
