@@ -1,6 +1,6 @@
 import { ExchangeProviderNameAndSignature } from ".";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
-import PACKAGE from "../../../package.json";
+import network from "@ledgerhq/live-network";
 
 export type SwapProviderConfig = {
   needsKYC: boolean;
@@ -140,17 +140,13 @@ function transformData(providersData) {
 
 export const getProvidersData = async () => {
   try {
-    const providersData = await (
-      await fetch(
-        "https://crypto-assets-service.api.ledger.com/v1/partners?output=name,signature,public_key,public_key_curve&service_name=swap",
-        {
-          headers: {
-            "X-Ledger-Client-Version": `live-exchange/${PACKAGE.version}`,
-          },
-        },
-      )
-    ).json();
-    return providersData;
+    const providersData = await network({
+      url:
+        "https://crypto-assets-service.api.ledger.com/v1/partners" +
+        "?output=name,signature,public_key,public_key_curve" +
+        "&service_name=swap",
+    });
+    return providersData.data;
   } catch {
     return swapProviders;
   }
@@ -158,10 +154,10 @@ export const getProvidersData = async () => {
 
 export const getProvidersCDNData = async () => {
   try {
-    const providersData = await (
-      await fetch("https://cdn.live.ledger.com/swap-providers/data.json")
-    ).json();
-    return providersData;
+    const providersData = await network({
+      url: "https://cdn.live.ledger.com/swap-providers/data.json",
+    });
+    return providersData.data;
   } catch {
     return swapAdditionData;
   }
