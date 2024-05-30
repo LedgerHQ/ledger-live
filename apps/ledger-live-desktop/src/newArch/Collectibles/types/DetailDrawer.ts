@@ -14,13 +14,23 @@ export type CopyableFieldProps = {
 
 export type NftPanAndZoomProps = {
   onClose: () => void;
-  metadata: NFTMetadata;
   tokenId: string;
+  useFallback: boolean;
+  setUseFallback: (useFallback: boolean) => void;
+  contentType: string | undefined;
+  mediaType: string | undefined;
+  imageUri: string | undefined;
+  collectibleName: string;
 };
 
 export type NftPanAndZoomBodyProps = {
-  metadata: NFTMetadata;
   tokenId: string;
+  useFallback: boolean;
+  setUseFallback: (useFallback: boolean) => void;
+  contentType: string | undefined;
+  mediaType: string | undefined;
+  imageUri: string | undefined;
+  collectibleName: string;
 };
 
 export type HeaderTextProps = {
@@ -77,9 +87,14 @@ type DetailDrawerBaseProps = {
   isOpened: boolean;
   areFieldsLoading: boolean;
   metadata: NFTMetadata;
-  protoNft: ProtoNFT;
+  tokenId: string;
   contentType: string | undefined;
   isPanAndZoomOpen: boolean;
+  imageUri: string | undefined;
+  useFallback: boolean;
+  mediaType: string | undefined;
+  collectibleName: string | null | undefined;
+  setUseFallback: (useFallback: boolean) => void;
   openCollectiblesPanAndZoom: React.MouseEventHandler<HTMLDivElement>;
   closeCollectiblesPanAndZoom: () => void;
   handleRequestClose: () => void;

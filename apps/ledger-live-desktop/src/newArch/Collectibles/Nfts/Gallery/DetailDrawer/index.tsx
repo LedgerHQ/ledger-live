@@ -14,8 +14,12 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
     isLoading,
     details,
     metadata,
-    protoNft,
     contentType,
+    protoNft,
+    imageUri,
+    useFallback,
+    mediaType,
+    setUseFallback,
     onNFTSend,
   } = useNftDetailDrawer(account, tokenId);
 
@@ -25,15 +29,20 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
   return (
     <DetailDrawer
       collectionName={collectionName}
+      collectibleName={nftName}
       title={nftName}
       tags={tags}
       details={details}
       isOpened={isOpened}
       areFieldsLoading={isLoading}
       metadata={metadata as NFTMetadata}
-      protoNft={protoNft}
+      tokenId={tokenId}
       contentType={contentType}
       isPanAndZoomOpen={isPanAndZoomOpen}
+      imageUri={imageUri}
+      useFallback={useFallback}
+      mediaType={mediaType}
+      setUseFallback={setUseFallback}
       openCollectiblesPanAndZoom={openCollectiblesPanAndZoom}
       closeCollectiblesPanAndZoom={closeCollectiblesPanAndZoom}
       handleRequestClose={() => setIsOpened(false)}

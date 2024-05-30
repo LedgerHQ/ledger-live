@@ -1,24 +1,21 @@
 import React from "react";
 import { MediaProps } from "LLD/Collectibles/types/Media";
-import useMedia from "LLD/Collectibles/hooks/useMedia";
 import { Placeholder, Image, Video } from "LLD/Collectibles/components";
 
 const MediaComponent: React.FC<MediaProps> = props => {
-  const { useFallback, contentType, uri, mediaType, squareWithDefault, setUseFallback } =
-    useMedia(props);
-  const Component = contentType === "video" && !useFallback ? Video : Image;
+  const Component = props.contentType === "video" && !props.useFallback ? Video : Image;
 
-  return uri ? (
+  return props.uri ? (
     <Component
       {...props}
-      uri={uri}
-      mediaType={mediaType}
-      square={squareWithDefault}
-      isFallback={useFallback}
-      setUseFallback={setUseFallback}
+      uri={props.uri}
+      mediaType={props.mediaType}
+      squareWithDefault={props.squareWithDefault}
+      isFallback={props.useFallback}
+      setUseFallback={props.setUseFallback}
     />
   ) : (
-    <Placeholder metadata={props.metadata} tokenId={props.tokenId} />
+    <Placeholder collectibleName={props.collectibleName} tokenId={props.tokenId} />
   );
 };
 

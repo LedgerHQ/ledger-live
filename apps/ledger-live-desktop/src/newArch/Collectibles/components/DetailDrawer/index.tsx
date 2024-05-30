@@ -5,7 +5,6 @@ import { Media } from "LLD/Collectibles/components";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { PositionProps, LayoutProps, SpaceProps, position, layout, space } from "styled-system";
-import { NFTMetadata } from "@ledgerhq/types-live";
 import { DetailDrawerProps } from "LLD/Collectibles/types/DetailDrawer";
 
 type ChildComponentProps = {
@@ -58,10 +57,14 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
   details,
   isOpened,
   areFieldsLoading,
-  metadata,
-  protoNft,
+  tokenId,
   contentType,
   isPanAndZoomOpen,
+  useFallback,
+  mediaType,
+  imageUri,
+  collectibleName,
+  setUseFallback,
   openCollectiblesPanAndZoom,
   closeCollectiblesPanAndZoom,
   handleRequestClose,
@@ -81,6 +84,8 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
     return { subtitle, ctas };
   }, [children]);
 
+  const isPanAndZoomReady = isPanAndZoomOpen && tokenId && imageUri && mediaType && contentType;
+
   return (
     <SideDrawer
       withPaddingTop
@@ -89,11 +94,16 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
       onRequestClose={handleRequestClose}
       forceDisableFocusTrap
     >
-      {isPanAndZoomOpen && metadata && (
+      {isPanAndZoomReady && (
         <NftPanAndZoom
-          metadata={metadata as NFTMetadata}
-          tokenId={protoNft.tokenId}
+          tokenId={tokenId}
           onClose={closeCollectiblesPanAndZoom}
+          useFallback={useFallback}
+          setUseFallback={setUseFallback}
+          imageUri={imageUri}
+          mediaType={mediaType}
+          contentType={contentType}
+          collectibleName={collectibleName as string}
         />
       )}
       <NFTViewerDrawerContainer>
@@ -109,12 +119,17 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
             isMediaLoaded={areFieldsLoading}
           >
             <Media
-              metadata={metadata as NFTMetadata}
-              tokenId={protoNft.tokenId}
+              collectibleName={collectibleName}
+              tokenId={tokenId}
               mediaFormat="big"
               full
-              square={false}
+              squareWithDefault={false}
               maxHeight={700}
+              useFallback={useFallback}
+              setUseFallback={setUseFallback}
+              uri={imageUri}
+              mediaType={mediaType}
+              contentType={contentType}
             />
           </MediaContainer>
           {ctas}

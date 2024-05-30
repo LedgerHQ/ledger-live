@@ -3,9 +3,12 @@ import { PlaceholderProps } from "LLD/Collectibles/types/Media";
 import styled from "styled-components";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import Fallback from "./Fallback.png";
-import { NFTMetadata } from "@ledgerhq/types-live";
 
-const StyledPlaceholder = styled.div<{ tokenId?: string; full?: boolean; metadata?: NFTMetadata }>`
+const StyledPlaceholder = styled.div<{
+  tokenId?: string;
+  full?: boolean;
+  collectibleName?: string | null | undefined;
+}>`
   background-image: url('${Fallback}');
   background-size: cover;
   background-repeat: no-repeat;
@@ -17,7 +20,7 @@ const StyledPlaceholder = styled.div<{ tokenId?: string; full?: boolean; metadat
 
   &:after {
     display: ${p => (p.full ? "flex" : "none")}
-    content: "${p => p?.metadata?.nftName || centerEllipsis(p?.tokenId || "-")}";
+    content: "${p => p?.collectibleName || centerEllipsis(p?.tokenId || "-")}";
     font-size: 16px;
     font-size: 1vw;
     color: #fff;
@@ -32,8 +35,8 @@ const StyledPlaceholder = styled.div<{ tokenId?: string; full?: boolean; metadat
   }
 `;
 
-const PlaceholderComponent: React.FC<PlaceholderProps> = ({ metadata, tokenId }) => (
-  <StyledPlaceholder metadata={metadata} tokenId={tokenId} />
+const PlaceholderComponent: React.FC<PlaceholderProps> = ({ collectibleName, tokenId }) => (
+  <StyledPlaceholder collectibleName={collectibleName} tokenId={tokenId} />
 );
 
 PlaceholderComponent.displayName = "Placeholder";

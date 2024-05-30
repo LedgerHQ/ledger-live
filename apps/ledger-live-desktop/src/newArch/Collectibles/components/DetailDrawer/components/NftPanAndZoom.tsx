@@ -50,41 +50,48 @@ const prismaZoomStyle = {
   justifyContent: "center",
 };
 
-const NftPanAndZoomBody = memo<NftPanAndZoomBodyProps>(({ metadata, tokenId }) => (
-  <NFTImageContainer>
-    <PrismaZoom style={prismaZoomStyle}>
-      <Media
-        metadata={metadata}
-        tokenId={tokenId}
-        mediaFormat="original"
-        full
-        square={false}
-        objectFit="scale-down"
-        onClick={(e: React.MouseEvent) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      />
-    </PrismaZoom>
-  </NFTImageContainer>
-));
+const NftPanAndZoomBody = memo<NftPanAndZoomBodyProps>(
+  ({ tokenId, collectibleName, useFallback, setUseFallback, mediaType, contentType, imageUri }) => (
+    <NFTImageContainer>
+      <PrismaZoom style={prismaZoomStyle}>
+        <Media
+          collectibleName={collectibleName}
+          tokenId={tokenId}
+          mediaFormat="original"
+          full
+          squareWithDefault={false}
+          objectFit="scale-down"
+          onClick={(e: React.MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          useFallback={useFallback}
+          setUseFallback={setUseFallback}
+          uri={imageUri}
+          mediaType={mediaType}
+          contentType={contentType}
+        />
+      </PrismaZoom>
+    </NFTImageContainer>
+  ),
+);
 
-const NftPanAndZoomComponent = memo<NftPanAndZoomProps>(({ onClose, metadata, tokenId }) => {
+const NftPanAndZoomComponent: React.FC<NftPanAndZoomProps> = ({ onClose, tokenId, ...props }) => {
   const modal = (
     <Container onClick={onClose}>
       <CloseButton onClick={onClose} className="sidedrawer-close">
         <IconCross size={32} />
       </CloseButton>
-      <NftPanAndZoomBody metadata={metadata} tokenId={tokenId} />
+      <NftPanAndZoomBody {...props} tokenId={tokenId} />
     </Container>
   );
 
   // we use the same portal as modals but don't use the modal component itself because we need
   // to handle the size of the model differently
   return domNode ? createPortal(modal, domNode) : null;
-});
+};
 
 NftPanAndZoomBody.displayName = "NftPanAndZoomBody";
 NftPanAndZoomComponent.displayName = "NftPanAndZoom";
 
-export const NftPanAndZoom = NftPanAndZoomComponent;
+export const NftPanAndZoom = memo<NftPanAndZoomProps>(NftPanAndZoomComponent);

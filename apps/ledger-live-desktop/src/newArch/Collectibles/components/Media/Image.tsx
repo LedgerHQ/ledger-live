@@ -15,14 +15,14 @@ const Wrapper = styled.div<{
   full?: ImageProps["full"];
   size?: ImageProps["size"];
   loaded: boolean;
-  square: ImageProps["square"];
+  squareWithDefault: ImageProps["squareWithDefault"];
   maxHeight?: ImageProps["maxHeight"];
   objectFit?: ImageProps["objectFit"];
   error?: boolean;
 }>`
   width: ${({ full, size }) => (full ? "100%" : `${size}px`)};
   height: ${({ full }) => full && "100%"};
-  aspect-ratio: ${({ square }) => (square ? "1 / 1" : "initial")};
+  aspect-ratio: ${({ squareWithDefault }) => (squareWithDefault ? "1 / 1" : "initial")};
   max-height: ${({ maxHeight }) => maxHeight && `${maxHeight}px`};
   border-radius: 4px;
   overflow: hidden;
@@ -51,13 +51,13 @@ const Wrapper = styled.div<{
 
 const ImageComponent: React.FC<ImageProps> = ({
   uri,
-  metadata,
   full = false,
   size = 32,
   tokenId,
   maxHeight,
+  collectibleName,
   onClick,
-  square = true,
+  squareWithDefault = true,
   objectFit = "cover",
   setUseFallback,
   isFallback,
@@ -72,7 +72,7 @@ const ImageComponent: React.FC<ImageProps> = ({
       size={size}
       loaded={loaded}
       error={error || !uri}
-      square={square}
+      squareWithDefault={squareWithDefault}
       maxHeight={maxHeight}
       objectFit={objectFit}
     >
@@ -88,7 +88,7 @@ const ImageComponent: React.FC<ImageProps> = ({
           src={uri}
         />
       ) : (
-        <Placeholder tokenId={tokenId} metadata={metadata} full={full} />
+        <Placeholder tokenId={tokenId} collectibleName={collectibleName} full={full} />
       )}
     </Wrapper>
   );
