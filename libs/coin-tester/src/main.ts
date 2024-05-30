@@ -197,9 +197,9 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
             console.warn(chalk.magenta("Test asssertion failed. Retrying..."));
             await new Promise(resolve => setTimeout(resolve, retryInterval ?? 3 * 1000));
             await expectHandler(retry - 1);
+          } else {
+            throw err;
           }
-
-          throw err;
         }
       }
 

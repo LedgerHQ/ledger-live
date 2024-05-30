@@ -21,12 +21,6 @@ function getTransactions() {
     amount: new BigNumber(1),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
-      console.log({
-        latestOperationValue: latestOperation?.value.toFixed(),
-        operations: currentAccount.operations,
-        previousAccountOperations: previousAccount.operations,
-        diffLength: currentAccount.operations.length - previousAccount.operations.length,
-      });
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1).toFixed());
@@ -42,8 +36,7 @@ function getTransactions() {
     amount: new BigNumber(100),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
-      console.log({ latestOperation });
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(2);
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(100).toFixed());
       expect(currentAccount.balance.toFixed()).toBe(
