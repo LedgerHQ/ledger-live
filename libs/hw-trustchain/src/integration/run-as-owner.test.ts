@@ -14,6 +14,8 @@ import { listen } from "@ledgerhq/logs";
 const DEFAULT_TOPIC = "c96d450545ff2836204c29af291428a5bf740304978f5dfb0b4a261474192851";
 const ROOT_DERIVATION_PATH = "16'/0'";
 
+const pullSpeculosTimeout = 5 * 60 * 1000;
+
 let speculos: SpeculosDevice;
 let sub;
 let logSub;
@@ -42,7 +44,7 @@ beforeEach(async () => {
       speculos.transport.button("both");
     }
   });
-}, 60000);
+}, pullSpeculosTimeout);
 
 afterEach(async () => {
   sub.unsubscribe();
