@@ -36,11 +36,13 @@ describe("NFT Gallery screen", () => {
     await expect(nftGalleryPage.root()).not.toBeVisible();
   });
 
+  $TmsLink("B2CQA-132");
   it("should navigate back to NFT gallery on tab press", async () => {
     await walletTabNavigatorPage.navigateToNftGallery();
     await expect(nftGalleryPage.root()).toBeVisible();
   });
 
+  $TmsLink("B2CQA-132");
   it("should have a list of NFTs", async () => {
     await waitForElementById(nftGalleryPage.nftListComponentId);
     await expect(nftGalleryPage.nftListComponent()).toBeVisible();

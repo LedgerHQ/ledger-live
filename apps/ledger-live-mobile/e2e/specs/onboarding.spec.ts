@@ -22,6 +22,7 @@ describe("Onboarding", () => {
     } else isFirstTest = false;
   });
 
+  $TmsLink("B2CQA-1803");
   it("does the Onboarding and choose to access wallet", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseToAccessYourWallet();
@@ -34,6 +35,7 @@ describe("Onboarding", () => {
     await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 
+  $TmsLink("B2CQA-1802");
   it("does the Onboarding and choose to restore a Nano X", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseSetupLedger();
@@ -47,6 +49,8 @@ describe("Onboarding", () => {
     await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 
+  $TmsLink("B2CQA-1800");
+  $TmsLink("B2CQA-1833");
   it("does the Onboarding and choose to restore a Nano SP", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseSetupLedger();
@@ -63,6 +67,7 @@ describe("Onboarding", () => {
     }
   });
 
+  $TmsLink("B2CQA-1799");
   it("does the Onboarding and choose to setup a new Nano X", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseSetupLedger();
@@ -74,6 +79,7 @@ describe("Onboarding", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
+  $TmsLink("B2CQA-1804");
   it("does the Onboarding and choose to synchronize with Ledger Live Desktop", async () => {
     await device.launchApp({ permissions: { camera: "YES" } }); // Make sure permission is given
     await onboardingSteps.startOnboarding();

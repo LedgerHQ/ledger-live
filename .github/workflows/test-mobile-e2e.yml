@@ -120,25 +120,19 @@ jobs:
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
       - name: Generate single file Allure report
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
+        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/artifacts --single-file
       - name: Upload Allure single file report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: 1-global-ios-report
+          name: ios-allure-report
           path: allure-report/index.html
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: 2-test-ios-artifacts
+          name: "ios-test-artifacts"
           path: apps/ledger-live-mobile/artifacts
-      - name: Upload Allure report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        with:
-          name: "allure-ios-reports"
-          path: apps/ledger-live-mobile/allure-results
 
   allure-report-ios:
     name: "Allure Reports Export on Server"
@@ -154,7 +148,7 @@ jobs:
           platform: ios
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-          path: allure-ios-reports
+          path: ios-test-artifacts
 
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
@@ -262,25 +256,19 @@ jobs:
           DETOX_INSTALL_TIMEOUT: 120000
       - name: Generate single file Allure report
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
+        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/artifacts --single-file
       - name: Upload Allure single file report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: 1-global-android-report
+          name: android-allure-report
           path: allure-report/index.html
       - name: Upload test artifacts
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: 2-test-android-artifacts
+          name: "android-test-artifacts"
           path: apps/ledger-live-mobile/artifacts/
-      - name: Upload Allure Report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        with:
-          name: "allure-android-reports"
-          path: apps/ledger-live-mobile/allure-results
 
   allure-report-android:
     name: "Allure Reports Export on Server"
@@ -297,7 +285,7 @@ jobs:
           platform: android
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-          path: allure-android-reports
+          path: android-test-artifacts
 
   report:
     needs: [detox-tests-android, detox-tests-ios]

@@ -23,6 +23,7 @@ describe("Password Lock Screen", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
+  $TmsLink("B2CQA-1763");
   it("should ask for the password when lock is toggled", async () => {
     await portfolioPage.navigateToSettings();
     await settingsPage.navigateToGeneralSettings();
@@ -34,12 +35,14 @@ describe("Password Lock Screen", () => {
     await expect(passwordEntryPage.getPasswordTextInput()).toBeVisible();
   });
 
+  $TmsLink("B2CQA-2343");
   it("should stay locked with incorrect password", async () => {
     await passwordEntryPage.enterPassword("INCORRECT_PASSWORD");
     await passwordEntryPage.login();
     await expect(passwordEntryPage.getPasswordTextInput()).toBeVisible();
   });
 
+  $TmsLink("B2CQA-1763");
   it("should unlock with correct password", async () => {
     await passwordEntryPage.enterPassword(CORRECT_PASSWORD);
     await passwordEntryPage.login();
