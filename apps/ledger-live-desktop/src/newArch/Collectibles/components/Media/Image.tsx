@@ -53,9 +53,7 @@ const ImageComponent: React.FC<ImageProps> = ({
   uri,
   full = false,
   size = 32,
-  tokenId,
   maxHeight,
-  collectibleName,
   onClick,
   squareWithDefault = true,
   objectFit = "cover",
@@ -88,7 +86,7 @@ const ImageComponent: React.FC<ImageProps> = ({
           src={uri}
         />
       ) : (
-        <Placeholder tokenId={tokenId} collectibleName={collectibleName} full={full} />
+        <Placeholder />
       )}
     </Wrapper>
   );
