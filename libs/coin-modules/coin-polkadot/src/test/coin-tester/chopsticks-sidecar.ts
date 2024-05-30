@@ -52,5 +52,6 @@ export const killChopsticksAndSidecar = async (): Promise<void> => {
     cwd,
     log: true,
     env: process.env,
+    // commandOptions: ["--remove-orphans"],
   });
 };

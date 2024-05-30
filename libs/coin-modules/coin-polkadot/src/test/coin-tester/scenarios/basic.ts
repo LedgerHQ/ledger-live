@@ -21,7 +21,12 @@ function getTransactions() {
     amount: new BigNumber(1),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
-      console.log({ latestOperation, operations: currentAccount.operations.toString() });
+      console.log({
+        latestOperationValue: latestOperation?.value.toFixed(),
+        operations: currentAccount.operations,
+        previousAccountOperations: previousAccount.operations,
+        diffLength: currentAccount.operations.length - previousAccount.operations.length,
+      });
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(1).toFixed());
@@ -51,13 +56,17 @@ function getTransactions() {
 }
 
 const wsProvider = new WsProvider("ws://127.0.0.1:8000", false);
+let api: ApiPromise;
+let unsubscribeNewBlockListener: () => void;
+
+const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
 
 const coinConfig: PolkadotCoinConfig = {
   status: {
     type: "active",
   },
   sidecar: {
-    url: "http://127.0.0.1:8080",
+    url: SIDECAR_BASE_URL,
   },
 };
 
@@ -72,7 +81,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
     const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");
     await cryptoWaitReady();
     await wsProvider.connect();
-    const api = await ApiPromise.create({ provider: wsProvider });
+    api = await ApiPromise.create({ provider: wsProvider });
 
     const [chain, nodeName, nodeVersion] = await Promise.all([
       api.rpc.system.chain(),
@@ -111,7 +120,7 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
 
     const unsub = await api.tx.balances
       .transferAllowDeath(basicScenarioAccountPair.address, 90_000_000_000)
-      .signAndSend(alice, async result => {
+      .signAndSend(alice, async (result: any) => {
         console.log(`Current status is ${result.status}`);
 
         if (result.status.isInBlock) {
@@ -136,29 +145,47 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
   },
   getTransactions,
   mockIndexer: async (account, optimistic) => {
-    indexOperation(account.freshAddress, {
-      status: 0,
-      extrinsic: {
-        blockNumber: optimistic.blockHeight!,
+    unsubscribeNewBlockListener = await api.rpc.chain.subscribeNewHeads(async (header: any) => {
+      console.log(`Chain is at block: #${header.number}`);
+
+      const blockHash = header.hash.toString("hex");
+
+      const res = await fetch(`${SIDECAR_BASE_URL}/blocks/${blockHash}`);
+      const blockInfo = await res.json();
+
+      const extrinsic = blockInfo.extrinsics.find((extrinsic: any) => {
+        return extrinsic.hash === optimistic.hash;
+      });
+
+      // we only need to index the transactions made by the account
+      if (!extrinsic) {
+        return;
+      }
+
+      const { nonce } = (await api.query.system.account(account.freshAddress)) as any;
+
+      indexOperation(account.freshAddress, {
+        blockNumber: blockInfo.number,
         timestamp: optimistic.date.getTime(),
-        nonce: 0,
+        nonce,
         hash: optimistic.hash,
-        signer: "",
-        affectedAddress1: account.freshAddress,
-        method: "transfer",
-        section: "balances",
-        index: 0,
-        isSuccess: true,
-        amount: optimistic.value.toNumber(),
+        signer: extrinsic.signature.signer.id,
+        affectedAddress1: optimistic.recipients[0],
+        method: extrinsic.method.method,
+        section: extrinsic.method.pallet,
+        isSuccess: extrinsic.success,
+        amount: optimistic.value.minus(optimistic.fee).toNumber(),
         partialFee: optimistic.fee.toNumber(),
-        isBatch: false,
-      },
+        index: 2, // Not used by coin-module
+        isBatch: false, // batch transactions are not supported yet
+      });
     });
   },
   beforeAll: async account => {
     expect(account.balance.toFixed()).toBe("90000000000");
   },
   afterEach: async () => {
+    unsubscribeNewBlockListener();
     // delay needed between transactions to avoid nonce collision
     await new Promise(resolve => setTimeout(resolve, 3000));
   },

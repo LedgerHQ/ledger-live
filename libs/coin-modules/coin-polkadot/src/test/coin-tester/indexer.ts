@@ -18,34 +18,28 @@ type ExplorerExtrinsic = {
   isBatch: boolean;
 };
 
-type ExplorerOperations = {
-  status: number;
-  extrinsics: ExplorerExtrinsic[];
-};
+const explorerAppendixByAddress = new Map<string, ExplorerExtrinsic[]>();
 
-const explorerAppendixByAddress = new Map<string, ExplorerOperations>();
-
-export function indexOperation(
-  address: string,
-  operation: { status: number; extrinsic: ExplorerExtrinsic },
-) {
+export function indexOperation(address: string, extrinsic: ExplorerExtrinsic) {
   const indexedOperations = explorerAppendixByAddress.get(address);
   if (indexedOperations) {
-    explorerAppendixByAddress.set(address, {
-      status: indexedOperations.status,
-      extrinsics: [...indexedOperations.extrinsics, operation.extrinsic],
-    });
+    explorerAppendixByAddress.set(address, [...indexedOperations, extrinsic]);
+  } else {
+    explorerAppendixByAddress.set(address, [extrinsic]);
   }
 }
 
 const handlers = [
-  http.get("*/blockchain/v4/*/address/*/txs", async ({ request, params }) => {
-    const address = params["2"] as string;
+  http.get("*/accounts/*/operations", async ({ request, params }) => {
+    const address = params["1"] as string;
     const response = await fetch(bypass(request)).then(res => res.json());
-    const opsMap = explorerAppendixByAddress.get(address || "");
-    console.log(response);
+    const opsMap = explorerAppendixByAddress.get(address);
 
-    return HttpResponse.json({ data: opsMap });
+    if (opsMap) {
+      response.extrinsics.push(...opsMap);
+    }
+
+    return HttpResponse.json(response);
   }),
 ];
 
