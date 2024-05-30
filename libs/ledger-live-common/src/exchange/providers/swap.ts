@@ -16,6 +16,11 @@ type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 const swapAdditionData: Record<string, AdditionalProviderConfig> = {
+  exodus: {
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+  },
   changelly: {
     needsKYC: false,
     needsBearerToken: false,

@@ -26,12 +26,17 @@ export function useFetchRates({
     : undefined;
   const unitTo = toCurrency?.units[0];
   const moonpayFF = useFeature("ptxSwapMoonpayProvider");
+  const ptxSwapExodusProviderFlag = useFeature("ptxSwapExodusProvider");
+
   const removeProviders: string[] = [];
   const formattedCurrencyAmount =
     (unitFrom && `${fromCurrencyAmount.shiftedBy(-unitFrom.magnitude)}`) ?? "0";
 
   if (!moonpayFF?.enabled) {
     removeProviders.push("moonpay");
+  }
+  if (!ptxSwapExodusProviderFlag?.enabled) {
+    removeProviders.push("exodus");
   }
   const toCurrencyId = toCurrency?.id;
   return useAPI({

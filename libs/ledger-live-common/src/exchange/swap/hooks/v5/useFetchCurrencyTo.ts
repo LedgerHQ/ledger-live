@@ -15,10 +15,17 @@ export function useFetchCurrencyTo({ fromCurrencyAccount }: Props) {
   const fetchAdditionalCoins = useFeature("fetchAdditionalCoins");
   const providers = getAvailableProviders();
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const ptxSwapExodusProviderFlag = useFeature("ptxSwapExodusProvider");
 
-  const providersFiltered = ptxSwapMoonpayProviderFlag?.enabled
-    ? providers
-    : providers.filter(provider => provider !== "moonpay");
+  let providersFiltered = providers;
+
+  if (!ptxSwapMoonpayProviderFlag?.enabled) {
+    providersFiltered = providersFiltered.filter(provider => provider !== "moonpay");
+  }
+
+  if (!ptxSwapExodusProviderFlag?.enabled) {
+    providersFiltered = providersFiltered.filter(provider => provider !== "exodus");
+  }
 
   const currencyFromId = fromCurrencyAccount
     ? getAccountCurrency(fromCurrencyAccount).id

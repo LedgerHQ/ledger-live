@@ -36,12 +36,21 @@ export function useProviderRates({
     countStop: 0,
   });
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  const filterMoonpay = useCallback(
+  const ptxSwapExodusProviderFlag = useFeature("ptxSwapExodusProvider");
+
+  const filterProviders = useCallback(
     rates => {
-      if (!rates || ptxSwapMoonpayProviderFlag?.enabled) return rates;
-      return rates.filter(r => r.provider !== "moonpay");
+      if (!rates) return rates;
+      let filteredRates = rates;
+      if (!ptxSwapMoonpayProviderFlag?.enabled) {
+        filteredRates = filteredRates.filter(r => r.provider !== "moonpay");
+      }
+      if (!ptxSwapExodusProviderFlag?.enabled) {
+        filteredRates = filteredRates.filter(r => r.provider !== "exodus");
+      }
+      return filteredRates;
     },
-    [ptxSwapMoonpayProviderFlag?.enabled],
+    [ptxSwapMoonpayProviderFlag?.enabled, ptxSwapExodusProviderFlag?.enabled],
   );
 
   const { data, isLoading, error, refetch } = useFetchRates({
@@ -50,7 +59,7 @@ export function useProviderRates({
     fromCurrencyAmount: fromState.amount ?? BigNumber(0),
     onSuccess(data) {
       resetCountdown();
-      const rates = filterMoonpay(data);
+      const rates = filterProviders(data);
       if (rates.length === 0) {
         stopCountdown();
         onNoRates?.({ fromState, toState });
@@ -112,7 +121,7 @@ export function useProviderRates({
     return {
       rates: {
         status: "success",
-        value: filterMoonpay(data),
+        value: filterProviders(data),
         error: undefined,
       },
       refetchRates: refetch,
