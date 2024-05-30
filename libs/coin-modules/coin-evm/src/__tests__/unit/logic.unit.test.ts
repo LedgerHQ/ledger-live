@@ -56,7 +56,14 @@ mockGetConfig.mockImplementation((currency: { id: string }): any => {
     case "optimism": {
       return {
         info: {
-          node: { type: "external", uri: "optimis_uri" },
+          node: { type: "external", uri: "optimism_uri" },
+        },
+      };
+    }
+    case "scroll": {
+      return {
+        info: {
+          node: { type: "external", uri: "scroll_uri" },
         },
       };
     }
@@ -303,6 +310,7 @@ describe("EVM Family", () => {
 
     describe("getAdditionalLayer2Fees", () => {
       const optimism = getCryptoCurrencyById("optimism");
+      const scroll = getCryptoCurrencyById("scroll");
       const ethereum = getCryptoCurrencyById("ethereum");
 
       beforeEach(() => {
@@ -310,17 +318,30 @@ describe("EVM Family", () => {
       });
 
       it("should try to get additionalFees for a valid layer 2", async () => {
-        const spy = jest.spyOn(RPC_API, "getOptimismAdditionalFees").mockImplementation(jest.fn());
+        const spyOptimism = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
+        const spyScroll = jest
+          .spyOn(RPC_API, "getScrollAdditionalFees")
+          .mockImplementation(jest.fn());
 
         await getAdditionalLayer2Fees(optimism, {} as any);
-        expect(spy).toBeCalled();
+        expect(spyOptimism).toHaveBeenCalled();
+        await getAdditionalLayer2Fees(scroll, {} as any);
+        expect(spyScroll).toHaveBeenCalled();
       });
 
       it("should not try to get additionalFees for an invalid layer 2", async () => {
-        const spy = jest.spyOn(RPC_API, "getOptimismAdditionalFees").mockImplementation(jest.fn());
+        const spyOptimism = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
+        const spyScroll = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
 
         await getAdditionalLayer2Fees(ethereum, {} as any);
-        expect(spy).not.toBeCalled();
+        expect(spyOptimism).not.toHaveBeenCalled();
+        expect(spyScroll).not.toHaveBeenCalled();
       });
     });
 

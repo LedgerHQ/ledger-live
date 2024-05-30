@@ -78,6 +78,12 @@ export const getAdditionalLayer2Fees = async (
       const additionalFees = await nodeApi.getOptimismAdditionalFees(currency, transaction);
       return additionalFees;
     }
+    case "scroll":
+    case "scroll_sepolia": {
+      const nodeApi = getNodeApi(currency);
+      const additionalFees = await nodeApi.getScrollAdditionalFees(currency, transaction);
+      return additionalFees;
+    }
     default:
       return;
   }
