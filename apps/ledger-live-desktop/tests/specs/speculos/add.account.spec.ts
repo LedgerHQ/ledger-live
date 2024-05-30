@@ -3,7 +3,6 @@ import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
 import { Application } from "tests/page";
 
-//TODO: add TONCOIN (TON) when app is available
 const currencies: Currency[] = [
   Currency.BTC,
   Currency.ETH,
@@ -11,7 +10,7 @@ const currencies: Currency[] = [
   Currency.DOT,
   Currency.TRX,
   Currency.ADA,
-  Currency.XLM, //fails due to "Date.parse is not a function" error
+  //Currency.XLM, //TODO: Reactivate when "Date.parse is not a function" error is fixed - Jira:
   Currency.BCH,
   Currency.ALGO,
   Currency.ATOM,
@@ -49,9 +48,8 @@ for (const [i, currency] of currencies.entries()) {
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(firstAccountName);
       await app.account.expectAccountVisibility(firstAccountName);
-      //Check that balance is not 0 - data-test-id="total-balance"
-      //get the balance et checker que ce n'est pas 0
-      await app.account.expectLastOperationsVisibility(); //to be not null
+      await app.account.expectAccountBalance();
+      await app.account.expectLastOperationsVisibility();
     });
   });
 }
