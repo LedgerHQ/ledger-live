@@ -1,5 +1,5 @@
-import { SpeculosButton, deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
-import type { DeviceAction, State } from "../../bot/types";
+import type { DeviceAction, State } from "@ledgerhq/coin-framework/bot/types";
+import { SpeculosButton, deviceActionFlow, formatDeviceAmount } from "@ledgerhq/coin-framework/lib-es/bot/specs";
 import type { Transaction } from "./types";
 
 export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = deviceActionFlow({

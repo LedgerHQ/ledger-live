@@ -107,6 +107,12 @@ import type {
   TransactionStatusRaw as tezosTransactionStatusRaw,
 } from "@ledgerhq/coin-tezos/types/index";
 import type {
+  Transaction as tonTransaction,
+  TransactionRaw as tonTransactionRaw,
+  TransactionStatus as tonTransactionStatus,
+  TransactionStatusRaw as tonTransactionStatusRaw,
+} from "@ledgerhq/coin-ton/types";
+import type {
   Transaction as tronTransaction,
   TransactionRaw as tronTransactionRaw,
   TransactionStatus as tronTransactionStatus,

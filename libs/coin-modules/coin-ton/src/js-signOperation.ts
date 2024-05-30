@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
-import type { TonAddress, TonSignature, TonSigner } from "./signer";
+import type { TonSignature, TonSigner } from "./signer";
 import type { TonOperation, Transaction } from "./types";
 import { getAddress, getLedgerTonPath, packTransaction, transactionToHwParams } from "./utils";
 
@@ -16,9 +16,7 @@ import { getAddress, getLedgerTonPath, packTransaction, transactionToHwParams } 
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (
-    signerContext: SignerContext<TonSigner, TonAddress | TonSignature>,
-  ): SignOperationFnSignature<Transaction> =>
+  (signerContext: SignerContext<TonSigner>): SignOperationFnSignature<Transaction> =>
   ({
     account,
     transaction,
