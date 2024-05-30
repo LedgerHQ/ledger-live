@@ -9,15 +9,16 @@ import { flattenV5CurrenciesToAndFrom } from "../../../utils/flattenV5Currencies
 jest.mock("@ledgerhq/live-network/network");
 
 const mockNetwork = network as jest.Mock;
+const providers = ["changelly", "cic", "moonpay", "oneinch", "paraswap"];
 
 describe("fetchCurrencyFrom", () => {
   it("success with 200", async () => {
     mockNetwork.mockReturnValueOnce({
       data: fetchCurrencyToMock,
     });
-
     const result = await fetchCurrencyTo({
       currencyFromId: "bitcoin",
+      providers,
     });
 
     expect(result).toStrictEqual(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
@@ -34,6 +35,7 @@ describe("fetchCurrencyFrom", () => {
     try {
       await fetchCurrencyTo({
         currencyFromId: "bitcoin",
+        providers,
       });
     } catch (e) {
       expect(e).toBeInstanceOf(LedgerAPI4xx);

@@ -9,6 +9,7 @@ import { getAvailableProviders, getSwapAPIBaseURL, getSwapUserIP } from "../..";
 
 type Props = {
   currencyFromId?: string;
+  providers: string[];
   additionalCoinsFlag?: boolean;
 };
 
@@ -20,13 +21,16 @@ type CurrencyGroup = {
   supportedCurrencies: string[];
 };
 
-export async function fetchCurrencyTo({ currencyFromId, additionalCoinsFlag = false }: Props) {
+export async function fetchCurrencyTo({
+  currencyFromId,
+  providers,
+  additionalCoinsFlag = false,
+}: Props) {
   if (isIntegrationTestEnv())
     return Promise.resolve(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
 
   const url = new URL(`${getSwapAPIBaseURL()}/currencies/to`);
 
-  const providers = getAvailableProviders();
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());
   url.searchParams.append("currency-from", currencyFromId!);
