@@ -1,13 +1,15 @@
 import { Observable } from "rxjs";
-import { getEnv } from "@ledgerhq/live-env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { type OperationContents } from "@taquito/rpc";
+import type { OperationContents } from "@taquito/rpc";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { DEFAULT_FEE, OpKind, TezosToolkit } from "@taquito/taquito";
-import type { OperationType, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
+import type { SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import type { TezosAccount, TezosSigner, Transaction, TransactionStatus } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import tezosToolkit from "../network/tezosToolkit";
+import { buildTransaction } from "./buildTransaction";
 
+// Exported for test purpose only
 export async function getOperationContents({
   account,
   transaction,
@@ -23,15 +25,6 @@ export async function getOperationContents({
   public_key: string;
   public_key_hash: string;
 }) {
-  let type: OperationType = "NONE";
-  const { freshAddress } = account;
-
-  const transactionFees = {
-    fee: (transaction.fees || 0).toString(),
-    gas_limit: (transaction.gasLimit || 0).toString(),
-    storage_limit: (transaction.storageLimit || 0).toString(),
-  };
-
   const contents: OperationContents[] = [];
 
   if (!account.tezosResources.revealed) {
@@ -48,51 +41,8 @@ export async function getOperationContents({
     });
   }
 
-  switch (transaction.mode) {
-    case "send": {
-      type = "OUT";
-
-      contents.push({
-        kind: OpKind.TRANSACTION,
-        amount: transaction.amount.toString(),
-        destination: transaction.recipient,
-        source: freshAddress,
-        counter: (counter + 1 + contents.length).toString(),
-        ...transactionFees,
-      });
-
-      break;
-    }
-    case "delegate": {
-      type = "DELEGATE";
-
-      contents.push({
-        kind: OpKind.DELEGATION,
-        source: freshAddress,
-        counter: (counter + 1 + contents.length).toString(),
-        delegate: transaction.recipient,
-        ...transactionFees,
-      });
-
-      break;
-    }
-    case "undelegate": {
-      type = "UNDELEGATE";
-
-      // we undelegate as there's no "delegate" field
-      // OpKind is still "DELEGATION"
-      contents.push({
-        kind: OpKind.DELEGATION,
-        source: freshAddress,
-        counter: (counter + 1 + contents.length).toString(),
-        ...transactionFees,
-      });
-
-      break;
-    }
-    default:
-      throw new Error("not supported");
-  }
+  const { type, content } = await buildTransaction(account, transaction, counter + contents.length);
+  contents.push(content);
 
   return { type, contents };
 }
@@ -111,19 +61,16 @@ export const buildSignOperation =
 
         const { freshAddressPath, freshAddress } = account;
 
-        const tezos = new TezosToolkit(getEnv("API_TEZOS_NODE"));
-
         const signedInfo = await signerContext(deviceId, async signer => {
           const ledgerSigner = signer.createLedgerSigner(freshAddressPath, false, 0);
 
-          tezos.setProvider({ signer: ledgerSigner });
+          tezosToolkit.setProvider({ signer: ledgerSigner });
 
           const publicKey = await ledgerSigner.publicKey();
           const publicKeyHash = await ledgerSigner.publicKeyHash();
 
-          const { rpc } = tezos;
-          const block = await rpc.getBlock();
-          const sourceData = await rpc.getContract(freshAddress);
+          const block = await tezosToolkit.rpc.getBlock();
+          const sourceData = await tezosToolkit.rpc.getContract(freshAddress);
 
           o.next({ type: "device-signature-requested" });
 
@@ -134,13 +81,13 @@ export const buildSignOperation =
           const { type, contents } = await getOperationContents({
             account,
             transaction,
-            tezos,
+            tezos: tezosToolkit,
             counter: Number(sourceData.counter),
             public_key: publicKey,
             public_key_hash: publicKeyHash,
           });
 
-          const forgedBytes = await rpc.forgeOperations({
+          const forgedBytes = await tezosToolkit.rpc.forgeOperations({
             branch: block.hash,
             contents,
           });

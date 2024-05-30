@@ -3,7 +3,7 @@ import { OpKind, TezosToolkit } from "@taquito/taquito";
 import { SignOperationEvent } from "@ledgerhq/types-live";
 import buildSignOperation, { getOperationContents } from "./signOperation";
 import { TezosSigner } from "../types";
-import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 
 const mockForgeOperations = jest.fn().mockResolvedValue("FORGED_OP");
 jest.mock("@taquito/taquito", () => ({

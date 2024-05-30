@@ -1,5 +1,5 @@
 import { SignedOperation } from "@ledgerhq/types-live";
-import { createFixtureOperation } from "../types/model.fixture";
+import { createFixtureOperation } from "../types/bridge.fixture";
 import { broadcast } from "./broadcast";
 
 const mockInjectOperation = jest.fn();
