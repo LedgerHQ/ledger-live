@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
 import * as RPC_API from "../../api/node/rpc.common";
@@ -12,6 +13,7 @@ import {
   getDefaultFeeUnit,
   getEstimatedFees,
   getGasLimit,
+  getMessageProperties,
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
@@ -889,6 +891,30 @@ describe("EVM Family", () => {
         const address = "0x00000";
         const encodedAddress = safeEncodeEIP55(address);
         expect(encodedAddress).toBe(address);
+      });
+    });
+
+    describe("getMessageProperties", () => {
+      it("should return null if the message isn't an EIP712", async () => {
+        expect(await getMessageProperties({ standard: "EIP191", message: "doot-doot" })).toBe(null);
+      });
+
+      it("should return the fields displayed on the nano", async () => {
+        jest.spyOn(EVM_TOOLS, "getEIP712FieldsDisplayedOnNano").mockResolvedValueOnce([
+          {
+            label: "key",
+            value: "value",
+          },
+        ]);
+
+        expect(
+          await getMessageProperties({
+            standard: "EIP712",
+            message: {} as any,
+            domainHash: "0xabc",
+            hashStruct: "0xdef",
+          }),
+        ).toEqual([{ label: "key", value: "value" }]);
       });
     });
   });
