@@ -93,15 +93,21 @@ describe("Chain is owned by a device", () => {
   });
 
   it("should seed a new tree", async () => {
+    console.log("before device.apdu");
     const alice = device.apdu(speculos.transport);
+    console.log("after device.apdu");
     const topic = crypto.from_hex(DEFAULT_TOPIC);
     let stream = new CommandStream([]);
+    console.log("before stream.edit().seed");
     stream = await stream.edit().seed(topic).issue(alice);
+    console.log("after stream.edit().seed");
     expect(stream.blocks.length).toBe(1);
 
     // console.dir(CommandStreamJsonifier.jsonify(stream.blocks), { depth: null });
 
+    console.log("before stream.resolve");
     const resolved = await stream.resolve();
+    console.log("after stream.resolve");
     expect(resolved.isCreated()).toBe(true);
     expect(resolved.getMembers().length).toBe(1);
     expect(crypto.to_hex(resolved.getTopic()!)).toBe(crypto.to_hex(topic));
