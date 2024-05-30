@@ -32,10 +32,10 @@ const StyledPlaceholder = styled.div<{ tokenId?: string; full?: boolean; metadat
   }
 `;
 
-const PlaceholderComponent = memo<PlaceholderProps>(({ metadata, tokenId }) => (
+const PlaceholderComponent: React.FC<PlaceholderProps> = ({ metadata, tokenId }) => (
   <StyledPlaceholder metadata={metadata} tokenId={tokenId} />
-));
+);
 
 PlaceholderComponent.displayName = "Placeholder";
 
-export const Placeholder = PlaceholderComponent;
+export const Placeholder = memo<PlaceholderProps>(PlaceholderComponent);

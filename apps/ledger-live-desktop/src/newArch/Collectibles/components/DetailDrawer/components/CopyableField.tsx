@@ -21,7 +21,7 @@ const CopyableFieldContainer = styled.div`
   }
 `;
 
-const CopyableFieldComponent = memo(({ value, children }: CopyableFieldProps) => {
+const CopyableFieldComponent: React.FC<CopyableFieldProps> = ({ value, children }) => {
   return (
     <CopyableFieldContainer>
       {children}
@@ -30,8 +30,8 @@ const CopyableFieldComponent = memo(({ value, children }: CopyableFieldProps) =>
       </GradientHover>
     </CopyableFieldContainer>
   );
-});
+};
 
 CopyableFieldComponent.displayName = "CopyableField";
 
-export const CopyableField = CopyableFieldComponent;
+export const CopyableField = memo<CopyableFieldProps>(CopyableFieldComponent);

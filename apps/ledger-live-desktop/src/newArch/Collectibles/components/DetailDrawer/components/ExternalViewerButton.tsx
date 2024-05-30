@@ -29,66 +29,66 @@ const Item = memo(styled(DropDownItem)`
 type Inner<A> = A extends Array<infer T> ? T : never;
 type Item = Inner<ReturnType<typeof useNftLinks>>;
 
-const ExternalViewerButtonComponent = memo(
-  ({ nft, account, metadata }: ExternalViewerButtonProps) => {
-    const history = useHistory();
+const ExternalViewerButtonComponent: React.FC<ExternalViewerButtonProps> = ({
+  nft,
+  account,
+  metadata,
+}: ExternalViewerButtonProps) => {
+  const history = useHistory();
 
-    const onHideCollection = useCallback(() => {
-      setDrawer();
-      history.replace(`/account/${account.id}/`);
-    }, [account.id, history]);
+  const onHideCollection = useCallback(() => {
+    setDrawer();
+    history.replace(`/account/${account.id}/`);
+  }, [account.id, history]);
 
-    const items = useNftLinks(account, nft, metadata, onHideCollection, true);
+  const items = useNftLinks(account, nft, metadata, onHideCollection, true);
 
-    const renderItem = ({ item }: { item: Item }): ReactElement => {
-      if (item.type === "separator") {
-        return <Separator />;
-      }
+  const renderItem = ({ item }: { item: Item }): ReactElement => {
+    if (item.type === "separator") {
+      return <Separator />;
+    }
 
-      const Icon = item.Icon
-        ? // TODO: the icons have incompatible props (size: string / number)
-          // eslint-disable-next-line
-          React.createElement(item.Icon as any, {
-            size: 16,
-          })
-        : null;
-
-      return (
-        <Item id={`external-popout-${item.id}`} horizontal flow={2} onClick={item.callback}>
-          <Box horizontal>
-            {Icon && <Box mr={2}>{Icon}</Box>}
-            {item.label}
-          </Box>
-          {item.type === "external" && (
-            <Box ml={4}>
-              <IconExternal size={16} />
-            </Box>
-          )}
-        </Item>
-      );
-    };
+    const Icon = item.Icon
+      ? // TODO: the icons have incompatible props (size: string / number)
+        // eslint-disable-next-line
+        React.createElement(item.Icon as any, {
+          size: 16,
+        })
+      : null;
 
     return (
-      <DropDownSelector buttonId="accounts-options-button" items={items} renderItem={renderItem}>
-        {() => (
-          <Box horizontal>
-            <Button
-              small
-              primary
-              flow={1}
-              style={{
-                height: 40,
-              }}
-            >
-              <Icons.MoreHorizontal size="S" />
-            </Button>
+      <Item id={`external-popout-${item.id}`} horizontal flow={2} onClick={item.callback}>
+        <Box horizontal>
+          {Icon && <Box mr={2}>{Icon}</Box>}
+          {item.label}
+        </Box>
+        {item.type === "external" && (
+          <Box ml={4}>
+            <IconExternal size={16} />
           </Box>
         )}
-      </DropDownSelector>
+      </Item>
     );
-  },
-);
+  };
 
-ExternalViewerButtonComponent.displayName = "ExternalViewerButton";
+  return (
+    <DropDownSelector buttonId="accounts-options-button" items={items} renderItem={renderItem}>
+      {() => (
+        <Box horizontal>
+          <Button
+            small
+            primary
+            flow={1}
+            style={{
+              height: 40,
+            }}
+          >
+            <Icons.MoreHorizontal size="S" />
+          </Button>
+        </Box>
+      )}
+    </DropDownSelector>
+  );
+};
 
-export const ExternalViewerButton = ExternalViewerButtonComponent;
+export const ExternalViewerButton = memo<ExternalViewerButtonProps>(ExternalViewerButtonComponent);

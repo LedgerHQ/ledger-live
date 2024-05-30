@@ -43,67 +43,63 @@ const HashContainer = styled.div`
   min-width: 100px;
 `;
 
-const DetailFieldComponent = memo(
-  ({
-    label,
-    value,
-    hasSeparatorTop,
-    hasSeparatorBottom,
-    isHorizontal,
-    isCopyable,
-    isLoading,
-    isHash,
-  }: DetailFieldProps) => {
-    const { t } = useTranslation();
+const DetailFieldComponent: React.FC<DetailFieldProps> = ({
+  label,
+  value,
+  hasSeparatorTop,
+  hasSeparatorBottom,
+  isHorizontal,
+  isCopyable,
+  isLoading,
+  isHash,
+}: DetailFieldProps) => {
+  const { t } = useTranslation();
 
-    if (!value) return null;
+  if (!value) return null;
 
-    return (
-      <>
-        {hasSeparatorTop && <Separator />}
-        <Container isHorizontal={isHorizontal}>
-          <Text
-            mb={1}
-            lineHeight="15.73px"
-            fontSize={4}
-            color="palette.text.shade60"
-            ff="Inter|SemiBold"
-          >
-            {t(label)}
-          </Text>
-          {value ? (
-            <Skeleton show={isLoading} width={100} barHeight={10} minHeight={24}>
-              <ValueBox isHorizontal={isHorizontal}>
-                <Text
-                  lineHeight="15.73px"
-                  fontSize={4}
-                  color="palette.text.shade100"
-                  ff="Inter|Regular"
-                >
-                  {isCopyable ? (
-                    <CopyableField value={value}>
-                      {!isHash ? (
-                        value
-                      ) : (
-                        <HashContainer>
-                          <SplitAddress value={value} ff="Inter|Regular" />
-                        </HashContainer>
-                      )}
-                    </CopyableField>
-                  ) : (
-                    <Pre>{value}</Pre>
-                  )}
-                </Text>
-              </ValueBox>
-            </Skeleton>
-          ) : null}
-        </Container>
-        {hasSeparatorBottom && <Separator />}
-      </>
-    );
-  },
-);
+  return (
+    <>
+      {hasSeparatorTop && <Separator />}
+      <Container isHorizontal={isHorizontal}>
+        <Text
+          mb={1}
+          lineHeight="15.73px"
+          fontSize={4}
+          color="palette.text.shade60"
+          ff="Inter|SemiBold"
+        >
+          {t(label)}
+        </Text>
+        {value ? (
+          <Skeleton show={isLoading} width={100} barHeight={10} minHeight={24}>
+            <ValueBox isHorizontal={isHorizontal}>
+              <Text
+                lineHeight="15.73px"
+                fontSize={4}
+                color="palette.text.shade100"
+                ff="Inter|Regular"
+              >
+                {isCopyable ? (
+                  <CopyableField value={value}>
+                    {!isHash ? (
+                      value
+                    ) : (
+                      <HashContainer>
+                        <SplitAddress value={value} ff="Inter|Regular" />
+                      </HashContainer>
+                    )}
+                  </CopyableField>
+                ) : (
+                  <Pre>{value}</Pre>
+                )}
+              </Text>
+            </ValueBox>
+          </Skeleton>
+        ) : null}
+      </Container>
+      {hasSeparatorBottom && <Separator />}
+    </>
+  );
+};
 
-DetailFieldComponent.displayName = "DetailField";
-
-export const DetailField = DetailFieldComponent;
+export const DetailField = memo<DetailFieldProps>(DetailFieldComponent);
