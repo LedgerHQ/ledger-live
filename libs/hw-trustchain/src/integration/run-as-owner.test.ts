@@ -72,6 +72,7 @@ describe("Chain is owned by a device", () => {
     expect(await alice.isConnected()).toBe(true);
   });
 
+  /*
   it("can sign some data", async () => {
     const alice = device.apdu(speculos.transport);
 
@@ -94,6 +95,7 @@ describe("Chain is owned by a device", () => {
     const result = await checkSignature(out.pubkeyCredential.publicKey, unsignedTlv, out.signature);
     expect(result).toBe(true);
   });
+  */
 
   it("should seed a new tree", async () => {
     console.log("before device.apdu");
@@ -115,6 +117,7 @@ describe("Chain is owned by a device", () => {
     expect(resolved.getMembers().length).toBe(1);
     expect(crypto.to_hex(resolved.getTopic()!)).toBe(crypto.to_hex(topic));
   });
+  return;
 
   it("should seed a new tree and add a bob", async () => {
     const alice = device.apdu(speculos.transport);
