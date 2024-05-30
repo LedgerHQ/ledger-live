@@ -84,4 +84,46 @@ export class Currency {
     [DeviceLabels.AMOUT, DeviceLabels.DESTINATION, DeviceLabels.SIGN, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
+  static readonly ADA = new Currency(
+    "Cardano",
+    "ADA",
+    "Cardano",
+    [DeviceLabels.AMOUT, DeviceLabels.DEST, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+  );
+  static readonly XLM = new Currency(
+    "Stellar",
+    "XLM",
+    "Stellar",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+  );
+  static readonly BCH = new Currency(
+    "Bitcoin Cash",
+    "BCH",
+    "Bitcoin Cash",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+  );
+  static readonly ALGO = new Currency(
+    "Algorand",
+    "ALGO",
+    "Algorand",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+  );
+  static readonly ATOM = new Currency(
+    "Cosmos",
+    "ATOM",
+    "Cosmos",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+  );
+  static readonly XTZ = new Currency(
+    "Tezos",
+    "XTZ",
+    "Tezos",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //TODO: check
+  );
 }

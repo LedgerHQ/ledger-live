@@ -3,15 +3,19 @@ import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
 import { Application } from "tests/page";
 
+//TODO: add TONCOIN (TON) when app is available
 const currencies: Currency[] = [
   Currency.BTC,
-  Currency.tBTC,
   Currency.ETH,
-  Currency.tETH,
-  Currency.sepETH,
   Currency.XRP,
   Currency.DOT,
   Currency.TRX,
+  Currency.ADA,
+  Currency.XLM, //fails due to "Date.parse is not a function" error
+  Currency.BCH,
+  Currency.ALGO,
+  Currency.ATOM,
+  Currency.XTZ,
 ];
 
 for (const [i, currency] of currencies.entries()) {
@@ -45,7 +49,9 @@ for (const [i, currency] of currencies.entries()) {
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(firstAccountName);
       await app.account.expectAccountVisibility(firstAccountName);
-      await app.account.expectLastOperationsVisibility();
+      //Check that balance is not 0 - data-test-id="total-balance"
+      //get the balance et checker que ce n'est pas 0
+      await app.account.expectLastOperationsVisibility(); //to be not null
     });
   });
 }

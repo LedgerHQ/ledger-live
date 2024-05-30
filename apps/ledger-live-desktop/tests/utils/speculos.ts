@@ -128,6 +128,51 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Stellar: {
+    currency: getCryptoCurrencyById("stellar"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Stellar",
+      appVersion: "5.0.3",
+    },
+    dependency: "",
+  },
+  Bitcoin_Cash: {
+    currency: getCryptoCurrencyById("bitcoin_cash"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Bitcoin Cash",
+      appVersion: "2.4.1",
+    },
+    dependency: "",
+  },
+  Algorand: {
+    currency: getCryptoCurrencyById("algorand"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Algorand",
+      appVersion: "2.1.11",
+    },
+    dependency: "",
+  },
+  Cosmos: {
+    currency: getCryptoCurrencyById("cosmos"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Cosmos",
+      appVersion: "2.35.22",
+    },
+    dependency: "",
+  },
+  Tezos: {
+    currency: getCryptoCurrencyById("tezos"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "TezosWallet",
+      appVersion: "2.4.5",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
