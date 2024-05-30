@@ -4313,6 +4313,53 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  scroll: {
+    type: "CryptoCurrency",
+    id: "scroll",
+    coinType: CoinType.ETH,
+    name: "Scroll",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "scroll",
+    color: "#ebc28e",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 534352,
+    },
+    explorerViews: [
+      {
+        tx: "https://scrollscan.com/tx/$hash",
+        address: "https://scrollscan.com/address/$address",
+        token: "https://scrollscan.com/token/$address",
+      },
+    ],
+  },
+  scroll_sepolia: {
+    type: "CryptoCurrency",
+    id: "scroll_sepolia",
+    coinType: CoinType.ETH,
+    name: "Scroll Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "scroll_sepolia",
+    color: "#ff0000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: false,
+    isTestnetFor: "scroll",
+    ethereumLikeInfo: {
+      chainId: 534351,
+    },
+    explorerViews: [
+      {
+        tx: "https://sepolia.scrollscan.dev/tx/$hash",
+        address: "https://sepolia.scrollscan.dev/address/$address",
+        token: "https://sepolia.scrollscan.dev/token/$address",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {
