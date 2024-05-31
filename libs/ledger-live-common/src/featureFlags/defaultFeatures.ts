@@ -412,6 +412,8 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+  ptxSwapExodusProvider: DEFAULT_FEATURE,
+  ptxSwapThorswapProvider: DEFAULT_FEATURE,
 
   llmAnalyticsOptInPrompt: {
     enabled: false,
