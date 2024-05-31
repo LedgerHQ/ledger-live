@@ -74,6 +74,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyLineaSepolia: DEFAULT_FEATURE,
   currencyBlast: DEFAULT_FEATURE,
   currencyBlastSepolia: DEFAULT_FEATURE,
+  currencyScroll: DEFAULT_FEATURE,
+  currencyScrollSepolia: DEFAULT_FEATURE,
 };
 
 /**
