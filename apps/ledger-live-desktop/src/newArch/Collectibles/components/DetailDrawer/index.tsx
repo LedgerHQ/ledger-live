@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { PositionProps, LayoutProps, SpaceProps, position, layout, space } from "styled-system";
 import { DetailDrawerProps } from "LLD/Collectibles/types/DetailDrawer";
 import { createCollectibleObject } from "../../utils/createCollectibleObject";
+import { useTranslation } from "react-i18next";
 
 type ChildComponentProps = {
   children: ReactElement;
@@ -96,7 +97,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
     closeCollectiblesPanAndZoom,
     setUseFallback,
   });
-
+  const { t } = useTranslation();
   const isPanAndZoomReady = isPanAndZoomOpen && tokenId && imageUri && mediaType && contentType;
 
   return (
@@ -123,7 +124,11 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
             <Media mediaFormat="big" full maxHeight={700} {...data.mediaProps} />
           </MediaContainer>
           {ctas}
-          <Tag tags={tags} sectionTitle="Tag" status="" />
+          <Tag
+            tags={tags}
+            sectionTitle={t("NFT.viewer.attributes.properties")}
+            status={areFieldsLoading ? "loading" : "loaded"}
+          />
           {details.map(({ key, value, title, isCopyable, isHash }, index) => (
             <DetailField
               key={key + value}

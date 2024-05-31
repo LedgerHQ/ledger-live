@@ -15,20 +15,20 @@ export type CopyableFieldProps = {
 
 export type PanAndZoomProps = {
   onClose: () => void;
-  tokenId: string;
+  tokenId: ProtoNFT["tokenId"];
   useFallback: boolean;
   setUseFallback: (useFallback: boolean) => void;
   contentType: string | undefined;
   mediaType: string | undefined;
   imageUri: string | undefined;
-  collectibleName: string | null | undefined;
+  collectibleName: string | null;
 };
 
 export type PanAndZoomBodyProps = PanAndZoomProps;
 
 export type HeaderTextProps = {
   isLoading: boolean;
-  text: string | null | undefined;
+  text: string | null;
 };
 
 type BaseDetailFieldProps = {
@@ -39,14 +39,14 @@ type BaseDetailFieldProps = {
 };
 
 type DetailFieldValueProps = {
-  value: string | null | undefined;
+  value: string | null;
   isCopyable?: boolean;
   isLoading: boolean;
   isHash?: boolean;
 };
 
 type DetailFieldNoValueProps = {
-  value?: string | null | undefined;
+  value?: string | null;
   isCopyable?: never;
   isLoading?: never;
   isHash?: boolean;
@@ -76,7 +76,8 @@ type Detail = {
 export type DetailsArray = Detail[];
 
 export type DetailDrawerBaseProps = {
-  collectionName: string | null | undefined;
+  collectionName: string | null;
+  collectibleName: string | null;
   tags: Tag[] | undefined;
   details: DetailsArray;
   isOpened: boolean;
@@ -87,7 +88,6 @@ export type DetailDrawerBaseProps = {
   imageUri: string | undefined;
   useFallback: boolean;
   mediaType: string | undefined;
-  collectibleName: string | null | undefined;
   setUseFallback: (useFallback: boolean) => void;
   openCollectiblesPanAndZoom: React.MouseEventHandler<HTMLDivElement>;
   closeCollectiblesPanAndZoom: () => void;

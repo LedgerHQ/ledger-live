@@ -82,4 +82,4 @@ const VideoComponent: React.FC<VideoProps> = ({
   );
 };
 
-export const Video = VideoComponent;
+export const Video: React.ComponentType<VideoProps> = VideoComponent;

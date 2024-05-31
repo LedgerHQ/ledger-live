@@ -1,6 +1,6 @@
-export type Chains = {
-  POLYGON: "POL";
-  ETHEREUM: "ETH";
-  BITCOIN: "BTC";
-  UTXO: "UTXO";
-};
+export enum Chains {
+  POLYGON = "POL",
+  ETHEREUM = "ETH",
+  BITCOIN = "BTC",
+  UTXO = "UTXO",
+}
