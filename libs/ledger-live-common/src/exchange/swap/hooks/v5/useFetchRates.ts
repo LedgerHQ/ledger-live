@@ -5,7 +5,6 @@ import BigNumber from "bignumber.js";
 import { fetchRates } from "../../api/v5/fetchRates";
 import { useAPI } from "../../../../hooks/useAPI";
 import { ExchangeRate } from "../../types";
-import { useFeature } from "../../../../featureFlags";
 import { useFilteredProviders } from "./useFilteredProviders";
 
 type Props = {
