@@ -9,3 +9,7 @@ export const setFlow = (payload: Flow) => ({
   type: "WALLET_SYNC_CHANGE_FLOW",
   payload,
 });
+export const setStep = (payload: number) => ({
+  type: "WALLET_SYNC_CHANGE_STEP",
+  payload,
+});

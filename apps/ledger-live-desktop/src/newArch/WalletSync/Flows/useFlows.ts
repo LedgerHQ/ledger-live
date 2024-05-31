@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setStep } from "~/renderer/actions/walletSync";
 import { Flow } from "~/renderer/reducers/walletSync";
 
 export type HookProps = {
@@ -16,12 +18,12 @@ export const FlowOptions: Record<
     steps: 3,
     hasGoBack: false,
   },
-  [Flow.Sync]: {
+  [Flow.Synchronize]: {
     steps: 2,
     hasGoBack: false,
   },
-  [Flow.ManageBackup]: {
-    steps: 2,
+  [Flow.ManageBackups]: {
+    steps: 3,
     hasGoBack: true,
   },
   [Flow.ManageInstances]: {
@@ -32,12 +34,16 @@ export const FlowOptions: Record<
 
 export const useFlows = ({ flow }: HookProps) => {
   const currentFlow = FlowOptions[flow];
+
+  const dispatch = useDispatch();
   const [currentStep, setCurrentStep] = useState(1);
   const goToNextScene = () => {
+    dispatch(setStep(currentStep < currentFlow.steps ? currentStep + 1 : currentStep));
     setCurrentStep(prev => (prev < currentFlow.steps ? prev + 1 : prev));
   };
 
   const goToPreviousScene = () => {
+    dispatch(setStep(currentStep > 1 ? currentStep - 1 : currentStep));
     setCurrentStep(prev => (prev > 1 ? prev - 1 : prev));
   };
 

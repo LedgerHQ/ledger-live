@@ -4,23 +4,26 @@ export enum Flow {
   Activation = "Activation",
   Synchronize = "Synchronize",
   ManageInstances = "ManageInstances",
-  ManageBackup = "ManageBackup",
+  ManageBackups = "ManageBackups",
 }
 
 export type WalletSyncState = {
   activated: boolean;
   flow: Flow;
+  step: number;
 };
 
 const initialState: WalletSyncState = {
-  activated: false,
+  activated: true,
   flow: Flow.Activation,
+  step: 1,
 };
 
 type HandlersPayloads = {
   WALLET_SYNC_ACTIVATE: boolean;
   WALLET_SYNC_DEACTIVATE: boolean;
   WALLET_SYNC_CHANGE_FLOW: Flow;
+  WALLET_SYNC_CHANGE_STEP: number;
 };
 
 type MarketHandlers<PreciseKey = true> = Handlers<WalletSyncState, HandlersPayloads, PreciseKey>;
@@ -38,6 +41,10 @@ const handlers: MarketHandlers = {
     ...state,
     flow: payload,
   }),
+  WALLET_SYNC_CHANGE_STEP: (state: WalletSyncState, { payload }: { payload: number }) => ({
+    ...state,
+    step: payload,
+  }),
 };
 
 // Selectors
@@ -45,6 +52,8 @@ export const walletSyncSelector = (state: { walletSync: WalletSyncState }) => st
 
 export const walletSyncFlowSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.flow;
+export const walletSyncStepSelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.step;
 export const walletSyncStateSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.activated;
 

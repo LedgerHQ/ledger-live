@@ -6328,6 +6328,24 @@
         "title": "Synchronization active",
         "desc": "Changes will now reflect automatically on both apps."
       }
+    },
+    "manageBackups": {
+      "title": "Manage your backup",
+      "options": {
+        "deleteBackup": {
+          "title": "Delete your data",
+          "description": "All synched data will be deleted."
+        }
+      },
+      "deleteBackup": {
+        "title": "Do you really want to delete your data?",
+        "description": "All synched data will be deleted, all synched devices will be unsynched. You will be able to reactive synchronization. Doing this doesn’t have any effect on your funds.",
+        "delete": "Delete",
+        "cancel": "Cancel"
+      },
+      "deleteBackupSuccess": {
+        "title": "All data successfully deleted"
+      }
     }
   }
 }
