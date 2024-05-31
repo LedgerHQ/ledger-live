@@ -18,7 +18,7 @@ export class SpeculosPage extends AppPage {
   async expectValidReceiveAddress(account: Account) {
     await waitFor(account.currency.receivePattern[0]);
     const actualAddress = await pressRightUntil(account.currency.receivePattern[0]);
-    expect(assertAddressesEquality(account.expectedAddress, actualAddress)).toBe(true);
+    expect(assertAddressesEquality(account.address, actualAddress)).toBe(true);
     await pressRightUntil(account.currency.receivePattern[1]);
     await pressBoth();
   }

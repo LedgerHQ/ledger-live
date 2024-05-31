@@ -8,8 +8,8 @@ import { Application } from "tests/page";
 const transactions = [
   //TODO: Reactivate when fees will be stable
   //new Transaction(Account.tBTC_1, Account.tBTC_2, "0.00001", "medium"),
-  new Transaction(Account.tETH_1, Account.tETH_2.expectedAddress, "0.00001", "medium"),
-  new Transaction(Account.sep_ETH_1, Account.sep_ETH_2.expectedAddress, "0.00001", "medium"),
+  new Transaction(Account.tETH_1, Account.tETH_2.address, "0.00001", "medium"),
+  new Transaction(Account.sep_ETH_1, Account.sep_ETH_2.address, "0.00001", "medium"),
 ];
 
 //This test might sporadically fail due to getAppAndVersion issue - Jira: LIVE-12581

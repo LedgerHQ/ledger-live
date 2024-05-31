@@ -4,7 +4,7 @@ export class Account {
   constructor(
     public readonly currency: Currency,
     public readonly accountName: string,
-    public readonly expectedAddress: string,
+    public readonly address: string,
   ) {}
 
   static readonly BTC_1 = new Account(
