@@ -5,5 +5,6 @@ module.exports = {
   collectCoverageFrom: ["src/**/*.ts"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  modulePathIgnorePatterns: ["src/test/coin-tester"],
   setupFilesAfterEnv: ["jest-expect-message", "dotenv/config"],
 };
