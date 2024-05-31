@@ -10,7 +10,7 @@ const currencies: Currency[] = [
   Currency.DOT,
   Currency.TRX,
   Currency.ADA,
-  //Currency.XLM, //TODO: Reactivate when "Date.parse is not a function" error is fixed - Jira:
+  Currency.XLM,
   Currency.BCH,
   Currency.ALGO,
   Currency.ATOM,
