@@ -2,8 +2,7 @@ import BigNumber from "bignumber.js";
 import { OnNoRatesCallback, RatesReducerState, SwapSelectorStateType } from "../../types";
 import { useFetchRates } from "./useFetchRates";
 import { SetExchangeRateCallback } from "../useSwapTransaction";
-import { useFeature } from "../../../../featureFlags";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useCountdown } from "usehooks-ts";
 import { DEFAULT_SWAP_RATES_INTERVAL_MS } from "../../const/timeout";
 
