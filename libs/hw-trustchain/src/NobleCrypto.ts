@@ -196,7 +196,11 @@ export class NobleCryptoSecp256k1 implements Crypto {
   }
 
   from_hex(hex: string): Uint8Array {
-    return Uint8Array.from(hex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < hex.length; i += 2) {
+      bytes[i / 2] = parseInt(hex[i] + hex[i + 1], 16);
+    }
+    return bytes;
   }
 
   to_hex(bytes?: Uint8Array | undefined | null): string {

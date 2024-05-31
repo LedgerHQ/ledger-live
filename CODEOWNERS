@@ -30,6 +30,7 @@ libs/live-nft/                                           @ledgerhq/live-hub
 libs/live-nft-react/                                     @ledgerhq/live-hub
 libs/live-wallet/                                        @ledgerhq/live-hub
 libs/trustchain/                                         @ledgerhq/live-hub
+apps/web-tools/trustchain/                               @ledgerhq/live-hub
 libs/hw-trustchain/                                      @ledgerhq/live-hub
 
 # Blockchain team

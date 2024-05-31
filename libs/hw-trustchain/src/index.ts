@@ -12,6 +12,8 @@ export type { CommandType, Command, CommandBlock } from "./CommandBlock";
 export { AddMember, CloseStream, Derive, EditMember, PublishKey, Seed } from "./CommandBlock";
 export { APDU } from "./ApduDevice";
 export { CommandStreamEncoder } from "./CommandStreamEncoder";
+export { CommandStreamDecoder } from "./CommandStreamDecoder";
+export { Challenge, PubKeyCredential } from "./SeedId";
 
 /**
  *

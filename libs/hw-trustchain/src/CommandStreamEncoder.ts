@@ -1,4 +1,4 @@
-import BigEndian from "./BigEndian";
+import { TLV } from "./tlv";
 import {
   CommandBlock,
   Command,
@@ -11,81 +11,7 @@ import {
   EditMember,
 } from "./CommandBlock";
 
-function push(a: Uint8Array, b: Uint8Array): Uint8Array {
-  const c = new Uint8Array(a.length + b.length);
-  c.set(a);
-  c.set(b, a.length);
-  return c;
-}
-
-function pushTLV(a: Uint8Array, t: number, l: number, v: Uint8Array): Uint8Array {
-  const c = new Uint8Array(a.length + 2 + l);
-  c.set(a);
-  c.set(new Uint8Array([t, l]), a.length);
-  c.set(v, a.length + 2);
-  return c;
-}
-
-export enum TLVTypes {
-  Null = 0,
-  VarInt = 1,
-  Hash = 2,
-  Signature = 3,
-  String = 4,
-  Bytes = 5,
-  PublicKey = 6,
-}
-
-export const TLV = {
-  pushString: function (a: Uint8Array, b: string): Uint8Array {
-    const encoded = new TextEncoder().encode(b);
-    return pushTLV(a, 0x04, encoded.length, encoded);
-  },
-
-  pushByte: function (a: Uint8Array, b: number): Uint8Array {
-    return pushTLV(a, 0x01, 1, new Uint8Array([b]));
-  },
-
-  pushInt16: function (a: Uint8Array, b: number): Uint8Array {
-    const bytes = BigEndian.shortToArray(b);
-    return pushTLV(a, 0x01, 2, bytes);
-  },
-
-  pushInt32: function (a: Uint8Array, b: number): Uint8Array {
-    const bytes = BigEndian.numberToArray(b);
-    return pushTLV(a, 0x01, 4, bytes);
-  },
-
-  pushHash: function (a: Uint8Array, b: Uint8Array): Uint8Array {
-    return pushTLV(a, 0x02, b.length, b);
-  },
-
-  pushSignature: function (a: Uint8Array, b: Uint8Array): Uint8Array {
-    return pushTLV(a, 0x03, b.length, b);
-  },
-
-  pushBytes: function (a: Uint8Array, b: Uint8Array): Uint8Array {
-    return pushTLV(a, 0x05, b.length, b);
-  },
-
-  pushNull: function (a: Uint8Array): Uint8Array {
-    return pushTLV(a, 0x00, 0, new Uint8Array(0));
-  },
-
-  pushPublicKey: function (a: Uint8Array, b: Uint8Array): Uint8Array {
-    return pushTLV(a, 0x06, b.length, b);
-  },
-
-  pushDerivationPath: function (a: Uint8Array, b: number[]): Uint8Array {
-    let bytes = new Uint8Array();
-    for (let i = 0; i < b.length; i++) {
-      bytes = push(bytes, BigEndian.numberToArray(b[i]));
-    }
-    return TLV.pushBytes(a, bytes);
-  },
-
-  // Push functions for commands
-
+export const TLVCommandStreamEncoder = {
   packSeed: function (b: Seed): Uint8Array {
     let object = new Uint8Array();
     if (b.topic) {
@@ -154,25 +80,25 @@ function packCommand(buffer: Uint8Array, command: Command): Uint8Array {
   let object = new Uint8Array();
   switch (command.getType()) {
     case CommandType.Seed:
-      object = TLV.packSeed(command as Seed);
+      object = TLVCommandStreamEncoder.packSeed(command as Seed);
       break;
     case CommandType.Derive:
-      object = TLV.packDerive(command as Derive);
+      object = TLVCommandStreamEncoder.packDerive(command as Derive);
       break;
     case CommandType.AddMember:
-      object = TLV.packAddMember(command as AddMember);
+      object = TLVCommandStreamEncoder.packAddMember(command as AddMember);
       break;
     case CommandType.PublishKey:
-      object = TLV.packPublishKey(command as PublishKey);
+      object = TLVCommandStreamEncoder.packPublishKey(command as PublishKey);
       break;
     case CommandType.CloseStream:
-      object = TLV.packCloseStream(command as CloseStream);
+      object = TLVCommandStreamEncoder.packCloseStream(command as CloseStream);
       break;
     case CommandType.EditMember:
-      object = TLV.packEditMember(command as EditMember);
+      object = TLVCommandStreamEncoder.packEditMember(command as EditMember);
       break;
   }
-  buffer = pushTLV(buffer, command.getType(), object.length, object);
+  buffer = TLV.pushTLV(buffer, command.getType(), object.length, object);
   return buffer;
 }
 
@@ -208,11 +134,11 @@ export class CommandStreamEncoder {
 function pack(stream: CommandBlock[]): Uint8Array {
   let buffer = new Uint8Array();
   for (const block of stream) {
-    buffer = push(buffer, CommandStreamEncoder.encodeBlockHeader(block));
+    buffer = TLV.push(buffer, CommandStreamEncoder.encodeBlockHeader(block));
     for (let index = 0; index < block.commands.length; index++) {
-      buffer = push(buffer, CommandStreamEncoder.encodeCommand(block, index));
+      buffer = TLV.push(buffer, CommandStreamEncoder.encodeCommand(block, index));
     }
-    buffer = push(buffer, CommandStreamEncoder.encodeSignature(block));
+    buffer = TLV.push(buffer, CommandStreamEncoder.encodeSignature(block));
   }
   return buffer;
 }

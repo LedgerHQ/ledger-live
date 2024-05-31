@@ -20,7 +20,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/hw-trustchain": "workspace:*"
+    "@ledgerhq/hw-trustchain": "workspace:*",
+    "@ledgerhq/live-network": "workspace:*",
+    "@ledgerhq/live-env": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",

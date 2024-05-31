@@ -109,6 +109,8 @@ const swapProviders: Record<string, ProviderConfig & AdditionalProviderConfig> =
   },
 };
 
+let providerDataCache: Record<string, ProviderConfig & AdditionalProviderConfig> | null = null;
+
 export const getSwapProvider = async (
   providerName: string,
 ): Promise<ProviderConfig & AdditionalProviderConfig> => {
@@ -161,22 +163,28 @@ export const getProvidersCDNData = async () => {
   }
 };
 
-export const fetchAndMergeProviderData = async () => {
+const fetchAndMergeProviderData = async () => {
+  if (providerDataCache) {
+    return providerDataCache;
+  }
+
   try {
     const [providersData, providersExtraData] = await Promise.all([
       getProvidersData(),
       getProvidersCDNData(),
     ]);
 
-    // Transform and merge fetched data
     const transformedProvidersData = transformData(providersData);
     const finalProvidersData = mergeProviderData(transformedProvidersData, providersExtraData);
+    providerDataCache = finalProvidersData;
 
     return finalProvidersData;
   } catch (error) {
     console.error("Error fetching or processing provider data:", error);
     const transformedProvidersData = transformData(swapProviders);
     const finalProvidersData = mergeProviderData(transformedProvidersData, swapAdditionData);
+    providerDataCache = finalProvidersData;
+
     return finalProvidersData;
   }
 };
