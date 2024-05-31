@@ -7,7 +7,7 @@ import { Message } from "iso-filecoin/message";
 import { encodeTxnParams } from "./erc20/tokenAccounts";
 import BigNumber from "bignumber.js";
 
-interface toCBORResponse {
+export interface toCBORResponse {
   txPayload: Buffer;
   recipientToBroadcast: string;
   parsedSender: string;

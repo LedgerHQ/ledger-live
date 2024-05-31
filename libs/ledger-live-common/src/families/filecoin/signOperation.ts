@@ -2,11 +2,11 @@ import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import Fil from "@zondax/ledger-filecoin";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
+import { AccountBridge, Operation, SignOperationEvent } from "@ledgerhq/types-live";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { withDevice } from "../../hw/deviceAccess";
 import { toCBOR } from "./bridge/utils/serializer";
-import { getAddress } from "./bridge/utils/utils";
+import { getAddress, getSubAccount } from "./bridge/utils/utils";
 import { getPath, isError } from "./utils";
 import { Transaction } from "./types";
 import { close } from "../../hw";
@@ -24,6 +24,8 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
 
           const { method, version, nonce, gasFeeCap, gasLimit, gasPremium } = transaction;
           const { derivationPath } = getAddress(account);
+          const subAccount = getSubAccount(account, transaction);
+          const tokenAccountTxn = subAccount?.type === "TokenAccount";
 
           if (!gasFeeCap.gt(0) || !gasLimit.gt(0)) {
             log(
@@ -41,7 +43,14 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
             });
 
             // Serialize tx
-            const { txPayload } = toCBOR(account, transaction);
+            const toCBORResponse = await toCBOR(account, transaction);
+            const {
+              txPayload,
+              parsedSender,
+              recipientToBroadcast,
+              encodedParams,
+              amountToBroadcast: finalAmount,
+            } = toCBORResponse;
 
             log("debug", `[signOperation] serialized CBOR tx: [${txPayload.toString("hex")}]`);
 
@@ -56,10 +65,17 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
             // build signature on the correct format
             const signature = `${result.signature_compact.toString("base64")}`;
 
-            const operation = buildOptimisticOperation(account, transaction);
+            const operation: Operation = await buildOptimisticOperation(
+              account,
+              transaction,
+              toCBORResponse,
+            );
 
             // Necessary for broadcast
             const additionalTxFields = {
+              sender: parsedSender,
+              recipient: recipientToBroadcast,
+              params: encodedParams,
               gasLimit,
               gasFeeCap,
               gasPremium,
@@ -67,6 +83,8 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
               version,
               nonce,
               signatureType: 1,
+              tokenTransfer: tokenAccountTxn,
+              value: finalAmount.toString(),
             };
 
             o.next({

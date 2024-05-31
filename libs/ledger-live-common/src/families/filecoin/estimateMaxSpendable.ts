@@ -1,7 +1,7 @@
-import { AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
 import { getMainAccount } from "../../account";
-import { getAddress } from "./bridge/utils/utils";
+import { getAddress, getSubAccount } from "./bridge/utils/utils";
 import { Methods, calculateEstimatedFees } from "./utils";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { isFilEthAddress, validateAddress } from "./bridge/utils/addresses";
@@ -15,15 +15,29 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   transaction,
 }) => {
   // log("debug", "[estimateMaxSpendable] start fn");
+  if (transaction && !transaction.subAccountId) {
+    transaction.subAccountId = account.type === "Account" ? null : account.id;
+  }
 
-  const mainAccount = getMainAccount(account, parentAccount);
-  let { address: sender } = getAddress(mainAccount);
+  let tokenAccountTxn: boolean = false;
+  let subAccount: TokenAccount | undefined | null;
+  const a = getMainAccount(account, parentAccount);
+  if (account.type === "TokenAccount") {
+    tokenAccountTxn = true;
+    subAccount = account;
+  }
+  if (transaction && transaction.subAccountId && !subAccount) {
+    tokenAccountTxn = true;
+    subAccount = getSubAccount(a, transaction) ?? null;
+  }
+
+  let { address: sender } = getAddress(a);
 
   let methodNum = Methods.Transfer;
   let recipient = transaction?.recipient;
 
   const invalidAddressErr = new InvalidAddress(undefined, {
-    currencyName: mainAccount.currency.name,
+    currencyName: subAccount ? subAccount.token.name : a.currency.name,
   });
   const senderValidation = validateAddress(sender);
   if (!senderValidation.isValid) throw invalidAddressErr;
@@ -36,20 +50,26 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     }
     recipient = recipientValidation.parsedAddress.toString();
 
-    methodNum = isFilEthAddress(recipientValidation.parsedAddress)
-      ? Methods.InvokeEVM
-      : Methods.Transfer;
+    methodNum =
+      isFilEthAddress(recipientValidation.parsedAddress) || tokenAccountTxn
+        ? Methods.InvokeEVM
+        : Methods.Transfer;
   }
 
-  const balances = await fetchBalances(sender);
-  let balance = new BigNumber(balances.spendable_balance);
+  let balance = new BigNumber((await fetchBalances(sender)).spendable_balance);
 
   if (balance.eq(0)) return balance;
 
   const amount = transaction?.amount;
 
+  const validatedContractAddress = validateAddress(subAccount?.token.contractAddress ?? "");
+  const finalRecipient =
+    tokenAccountTxn && validatedContractAddress.isValid
+      ? validatedContractAddress.parsedAddress.toString()
+      : recipient;
+
   const result = await fetchEstimatedFees({
-    to: recipient,
+    to: finalRecipient,
     from: sender,
     methodNum,
     blockIncl: BroadcastBlockIncl,
@@ -63,6 +83,9 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   balance = balance.minus(estimatedFees);
   if (amount) balance = balance.minus(amount);
 
+  if (tokenAccountTxn && subAccount) {
+    return subAccount.spendableBalance.minus(amount ?? 0);
+  }
   // log("debug", "[estimateMaxSpendable] finish fn");
 
   return balance;
