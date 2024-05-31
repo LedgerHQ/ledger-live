@@ -133,11 +133,26 @@ export class DefaultKeyringEth implements KeyringEth {
   }
 
   public async getAddress(
-    _derivationPath: string,
-    _options?: GetAddressOptions,
+    derivationPath: string,
+    options?: GetAddressOptions,
   ): Promise<GetAddressResult> {
-    // TODO: implement
-    return Promise.resolve({} as GetAddressResult);
+    const { address, publicKey } = await this._appBinding.getAddress(
+      derivationPath,
+      options?.displayOnDevice,
+      undefined,
+      options?.chainId,
+    );
+
+    if (!address.startsWith("0x") || !publicKey.startsWith("0x")) {
+      throw new Error("[DefaultKeyringEth] getAddress: Invalid address or public key");
+    }
+
+    const result: GetAddressResult = {
+      address: address as `0x${string}`,
+      publicKey: publicKey as `0x${string}`,
+    };
+
+    return result;
   }
 
   private isEIP712Params(message: unknown): message is EIP712Params {

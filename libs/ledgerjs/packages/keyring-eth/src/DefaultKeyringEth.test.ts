@@ -20,6 +20,7 @@ describe("DefaultKeyringEth", () => {
     signPersonalMessage: jest.fn(),
     signEIP712Message: jest.fn(),
     signEIP712HashedMessage: jest.fn(),
+    getAddress: jest.fn(),
   } as unknown as AppBinding;
   const mockContextModule = {
     getContexts: jest.fn(),
@@ -31,6 +32,9 @@ describe("DefaultKeyringEth", () => {
     jest.spyOn(mockAppBinding, "signTransaction").mockResolvedValue({ r: "", s: "", v: "42" });
     jest.spyOn(mockAppBinding, "signPersonalMessage").mockResolvedValue({ r: "", s: "", v: 42 });
     jest.spyOn(mockAppBinding, "signEIP712Message").mockResolvedValue({ r: "", s: "", v: 42 });
+    jest
+      .spyOn(mockAppBinding, "getAddress")
+      .mockResolvedValue({ publicKey: "0x000", address: "0x000" });
     jest
       .spyOn(mockAppBinding, "signEIP712HashedMessage")
       .mockResolvedValue({ r: "", s: "", v: 42 });
@@ -374,6 +378,73 @@ describe("DefaultKeyringEth", () => {
           "[DefaultKeyringEth] signMessage: eip712Hashed requires an EIP712Params type for the message parameter",
         );
       });
+    });
+  });
+
+  describe("getAddress calls", () => {
+    it("should call app binding getAddress", async () => {
+      // GIVEN
+      const derivationPath = "derivationPath";
+
+      // WHEN
+      const result = await keyring.getAddress(derivationPath);
+
+      // THEN
+      expect(mockAppBinding.getAddress).toHaveBeenCalledWith(
+        derivationPath,
+        undefined,
+        undefined,
+        undefined,
+      );
+      expect(result).toEqual({ publicKey: "0x000", address: "0x000" });
+    });
+
+    it("should call app binding getAddress with options", async () => {
+      // GIVEN
+      const derivationPath = "derivationPath";
+      const options = {
+        displayOnDevice: true,
+        chainId: "1",
+      };
+
+      // WHEN
+      const result = await keyring.getAddress(derivationPath, options);
+
+      // THEN
+      expect(mockAppBinding.getAddress).toHaveBeenCalledWith(derivationPath, true, undefined, "1");
+      expect(result).toEqual({ publicKey: "0x000", address: "0x000" });
+    });
+
+    it("should throw an error if the address is not valid", async () => {
+      // GIVEN
+      const derivationPath = "derivationPath";
+      jest
+        .spyOn(mockAppBinding, "getAddress")
+        .mockResolvedValue({ publicKey: "0x000", address: "000" });
+
+      // WHEN
+      const promise = keyring.getAddress(derivationPath);
+
+      // THEN
+      expect(promise).rejects.toThrow(
+        new Error("[DefaultKeyringEth] getAddress: Invalid address or public key"),
+      );
+    });
+
+    it("should throw an error if the public key is not valid", async () => {
+      // GIVEN
+      const derivationPath = "derivationPath";
+      jest
+        .spyOn(mockAppBinding, "getAddress")
+        .mockResolvedValue({ publicKey: "000", address: "0x000" });
+
+      // WHEN
+      const promise = keyring.getAddress(derivationPath);
+
+      // THEN
+      expect(promise).rejects.toThrow(
+        new Error("[DefaultKeyringEth] getAddress: Invalid address or public key"),
+      );
     });
   });
 });
