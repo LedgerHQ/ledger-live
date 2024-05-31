@@ -85,7 +85,8 @@ export type DetailDrawerBaseProps = {
   tokenId: string;
   contentType: string | undefined;
   isPanAndZoomOpen: boolean;
-  imageUri: string | undefined;
+  previewUri: string | undefined;
+  originalUri: string | undefined;
   useFallback: boolean;
   mediaType: string | undefined;
   setUseFallback: (useFallback: boolean) => void;

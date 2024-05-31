@@ -17,7 +17,8 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
     metadata,
     contentType,
     protoNft,
-    imageUri,
+    previewUri,
+    originalUri,
     useFallback,
     mediaType,
     doNotOpenDrawer,
@@ -40,7 +41,8 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
       contentType={contentType}
       collectionName={collectionName}
       details={details}
-      imageUri={imageUri}
+      previewUri={previewUri}
+      originalUri={originalUri}
       isPanAndZoomOpen={isPanAndZoomOpen}
       mediaType={mediaType}
       tags={tags}

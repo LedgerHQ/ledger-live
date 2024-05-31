@@ -11,7 +11,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { openModal } from "~/renderer/actions/modals";
 import { createDetails } from "LLD/Collectibles/utils/createNftDetailsArrays";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import useCollectibles from "./useCollectibles";
 import isEmpty from "lodash/isEmpty";
 
 const useNftDetailDrawer = (account: Account, nftId: string) => {
@@ -91,17 +90,11 @@ const useNftDetailDrawer = (account: Account, nftId: string) => {
     );
   }, [dispatch, nftId, account]);
 
-  const { isPanAndZoomOpen } = useCollectibles();
   const [useFallback, setUseFallback] = useState(false);
-  const { uri, mediaType } =
-    metadata?.medias[
-      useFallback
-        ? "preview"
-        : isPanAndZoomOpen
-          ? "original"
-          : ("big" as keyof (typeof metadata)["medias"])
-    ] || {};
-
+  const { uri: previewUri, mediaType } =
+    metadata?.medias[useFallback ? "preview" : ("big" as keyof (typeof metadata)["medias"])] || {};
+  const { uri: originalUri } =
+    metadata?.medias[useFallback ? "original" : ("big" as keyof (typeof metadata)["medias"])] || {};
   return {
     collectionName,
     nftName,
@@ -112,7 +105,8 @@ const useNftDetailDrawer = (account: Account, nftId: string) => {
     protoNft,
     contentType,
     useFallback,
-    imageUri: uri,
+    previewUri,
+    originalUri,
     mediaType,
     doNotOpenDrawer,
     onNFTSend,

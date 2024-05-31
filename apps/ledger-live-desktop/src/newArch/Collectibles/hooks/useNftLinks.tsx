@@ -15,10 +15,7 @@ import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { ContextMenuItemType } from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { devicesModelListSelector } from "~/renderer/reducers/settings";
-
-function safeList(items: (ContextMenuItemType | "" | undefined)[]): ContextMenuItemType[] {
-  return items.filter(Boolean) as ContextMenuItemType[];
-}
+import { safeList } from "LLD/Collectibles/utils/useSafeList";
 
 const linksPerCurrency: Record<
   string,

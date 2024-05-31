@@ -64,7 +64,8 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
   isPanAndZoomOpen,
   useFallback,
   mediaType,
-  imageUri,
+  previewUri,
+  originalUri,
   collectibleName,
   setUseFallback,
   openCollectiblesPanAndZoom,
@@ -90,7 +91,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
     collectionName,
     collectibleName,
     contentType,
-    imageUri,
+    imageUri: originalUri,
     useFallback,
     mediaType,
     tokenId,
@@ -98,7 +99,8 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
     setUseFallback,
   });
   const { t } = useTranslation();
-  const isPanAndZoomReady = isPanAndZoomOpen && tokenId && imageUri && mediaType && contentType;
+  const isPanAndZoomReady =
+    isPanAndZoomOpen && tokenId && (previewUri || originalUri) && mediaType && contentType;
 
   return (
     <SideDrawer
@@ -108,7 +110,9 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
       onRequestClose={handleRequestClose}
       forceDisableFocusTrap
     >
-      {isPanAndZoomReady && <PanAndZoom {...data.panAndZoomProps} />}
+      {isPanAndZoomReady && (
+        <PanAndZoom {...data.panAndZoomProps} imageUri={originalUri || previewUri} />
+      )}
       <ViewerDrawerContainer>
         <ViewerDrawerContent>
           <StickyWrapper top={0} pb={3} pt="24px">
@@ -121,7 +125,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
             openPanAndZoom={contentType === "image" ? openCollectiblesPanAndZoom : undefined}
             isMediaLoaded={areFieldsLoading}
           >
-            <Media mediaFormat="big" full maxHeight={700} {...data.mediaProps} />
+            <Media mediaFormat="big" full maxHeight={700} {...data.mediaProps} uri={previewUri} />
           </MediaContainer>
           {ctas}
           <Tag
