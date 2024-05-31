@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Flow, walletSyncFlowSelector, walletSyncSelector } from "~/renderer/reducers/walletSync";
-import WalletSyncActivation from "LLD/WalletSync/SideContent/Activation";
-import WalletSyncManage from "LLD/WalletSync/SideContent/Manage";
+import WalletSyncActivation from "~/newArch/WalletSync/Flows/Activation";
+import WalletSyncManage from "~/newArch/WalletSync/Flows/Manage";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import Synch from "./Synch";
 
