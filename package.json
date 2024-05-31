@@ -35,6 +35,7 @@
     "build:llm:ios": "pnpm turbo ios:local:ipa --no-daemon --filter=live-mobile",
     "build:llm:deps": "pnpm turbo build --no-daemon --filter=\"live-mobile^...\"",
     "build:ljs": "pnpm turbo build --no-daemon --filter=\"./libs/ledgerjs/**\"",
+    "build:web-tools": "pnpm turbo build --no-daemon --filter=web-tools",
     "build-ci:llm:ios": "pnpm turbo ios:ci:adhoc --no-daemon --filter=live-mobile",
     "build-ci:llm:android": "pnpm turbo android:apk --no-daemon --filter=live-mobile",
     "clean:ljs": "pnpm turbo clean --no-daemon --filter=\"./libs/ledgerjs/**\"",
