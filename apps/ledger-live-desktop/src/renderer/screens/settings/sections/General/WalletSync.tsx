@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Button from "~/renderer/components/Button";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTranslation } from "react-i18next";
-import { WalletSyncRouter } from "LLD/WalletSync/SideContent/router";
+import { WalletSyncRouter } from "~/newArch/WalletSync/Flows/router";
 
 const WalletSyncRow = () => {
   const [open, setOpen] = useState(false);
