@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-tezos
 
+## 6.29.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
+  - @ledgerhq/hw-transport@6.31.0-nightly.2
+
 ## 6.29.0-nightly.1
 
 ### Patch Changes

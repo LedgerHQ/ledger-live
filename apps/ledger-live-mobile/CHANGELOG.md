@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.44.2-nightly.2
+
+### Patch Changes
+
+- [#6963](https://github.com/LedgerHQ/ledger-live/pull/6963) [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f) Thanks [@aussedatlo](https://github.com/aussedatlo)! - restore TransportRaceCondition instead of TransportPendingOperation that caused a breaking change
+
+- Updated dependencies [[`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cb8b5a0`](https://github.com/LedgerHQ/ledger-live/commit/cb8b5a0f2d78203935bb6e1a687e2c96d4b191c4), [`55fdf88`](https://github.com/LedgerHQ/ledger-live/commit/55fdf885831d45bdee9e6a9d77cced79568f6817)]:
+  - @ledgerhq/hw-transport@6.31.0-nightly.2
+  - @ledgerhq/errors@6.17.0-nightly.2
+  - @ledgerhq/live-common@34.3.0-nightly.10
+  - @ledgerhq/hw-transport-http@6.30.0-nightly.2
+  - @ledgerhq/react-native-hid@6.32.0-nightly.2
+  - @ledgerhq/react-native-hw-transport-ble@6.33.0-nightly.2
+  - @ledgerhq/coin-framework@0.14.0-nightly.7
+  - @ledgerhq/coin-evm@2.1.0-nightly.7
+  - @ledgerhq/domain-service@1.2.0-nightly.3
+  - @ledgerhq/devices@8.4.0-nightly.2
+  - @ledgerhq/live-countervalues@0.2.0-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.7
+  - @ledgerhq/live-nft@0.4.0-nightly.7
+  - @ledgerhq/live-nft-react@0.4.0-nightly.7
+  - @ledgerhq/live-wallet@0.1.1-nightly.10
+
 ## 3.44.2-nightly.1
 
 ### Patch Changes

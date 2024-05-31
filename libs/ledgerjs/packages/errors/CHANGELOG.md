@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.17.0-nightly.2
+
+### Patch Changes
+
+- [#6963](https://github.com/LedgerHQ/ledger-live/pull/6963) [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f) Thanks [@aussedatlo](https://github.com/aussedatlo)! - restore TransportRaceCondition instead of TransportPendingOperation that caused a breaking change
+
 ## 6.17.0-nightly.1
 
 ### Minor Changes

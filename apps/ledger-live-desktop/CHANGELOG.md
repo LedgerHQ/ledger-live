@@ -1,5 +1,37 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.2
+
+### Minor Changes
+
+- [#6907](https://github.com/LedgerHQ/ledger-live/pull/6907) [`b19d31d`](https://github.com/LedgerHQ/ledger-live/commit/b19d31d934c63f27bb7f7b6bc3a34c265ce5403e) Thanks [@gre](https://github.com/gre)! - Update to Electron 30.
+
+### Patch Changes
+
+- [#6963](https://github.com/LedgerHQ/ledger-live/pull/6963) [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f) Thanks [@aussedatlo](https://github.com/aussedatlo)! - restore TransportRaceCondition instead of TransportPendingOperation that caused a breaking change
+
+- [#6976](https://github.com/LedgerHQ/ledger-live/pull/6976) [`378c5de`](https://github.com/LedgerHQ/ledger-live/commit/378c5dea2acb605d37775b0e91fb0bf9de996991) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-12813): update live app state with provider changes
+
+- Updated dependencies [[`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cb8b5a0`](https://github.com/LedgerHQ/ledger-live/commit/cb8b5a0f2d78203935bb6e1a687e2c96d4b191c4), [`55fdf88`](https://github.com/LedgerHQ/ledger-live/commit/55fdf885831d45bdee9e6a9d77cced79568f6817)]:
+  - @ledgerhq/hw-transport@6.31.0-nightly.2
+  - @ledgerhq/errors@6.17.0-nightly.2
+  - @ledgerhq/live-common@34.3.0-nightly.10
+  - @ledgerhq/hw-transport-http@6.30.0-nightly.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.0-nightly.2
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.0-nightly.3
+  - @ledgerhq/coin-framework@0.14.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.7
+  - @ledgerhq/coin-evm@2.1.0-nightly.7
+  - @ledgerhq/domain-service@1.2.0-nightly.3
+  - @ledgerhq/devices@8.4.0-nightly.2
+  - @ledgerhq/hw-transport-vault@1.3.0-nightly.2
+  - @ledgerhq/live-network@1.3.0-nightly.3
+  - @ledgerhq/live-countervalues@0.2.0-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.7
+  - @ledgerhq/live-nft@0.4.0-nightly.7
+  - @ledgerhq/live-nft-react@0.4.0-nightly.7
+  - @ledgerhq/live-wallet@0.1.1-nightly.10
+
 ## 2.81.3-nightly.1
 
 ### Patch Changes

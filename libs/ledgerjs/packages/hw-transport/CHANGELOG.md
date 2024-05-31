@@ -1,5 +1,15 @@
 # @ledgerhq/hw-transport
 
+## 6.31.0-nightly.2
+
+### Patch Changes
+
+- [#6963](https://github.com/LedgerHQ/ledger-live/pull/6963) [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f) Thanks [@aussedatlo](https://github.com/aussedatlo)! - restore TransportRaceCondition instead of TransportPendingOperation that caused a breaking change
+
+- Updated dependencies [[`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
+  - @ledgerhq/errors@6.17.0-nightly.2
+  - @ledgerhq/devices@8.4.0-nightly.2
+
 ## 6.31.0-nightly.1
 
 ### Patch Changes
