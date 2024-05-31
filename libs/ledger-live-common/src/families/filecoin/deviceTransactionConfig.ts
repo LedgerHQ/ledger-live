@@ -3,8 +3,7 @@ import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { getAccountUnit, methodToString } from "./utils";
-import { validateAddress } from "./bridge/utils/addresses";
-import BigNumber from "bignumber.js";
+import { convertAddressFilToEthSync } from "./bridge/utils/addresses";
 
 export type ExtraDeviceTransactionField =
   | {
@@ -31,11 +30,6 @@ export type ExtraDeviceTransactionField =
       type: "filecoin.recipient";
       label: string;
       value: string;
-    }
-  | {
-      type: "filecoin.amount";
-      label: string;
-      value: string;
     };
 
 function getDeviceTransactionConfig(input: {
@@ -58,46 +52,47 @@ function getDeviceTransactionConfig(input: {
   };
 
   if (subAccount) {
-    const validatedAddress = validateAddress(subAccount.token.contractAddress);
-    if (validatedAddress.isValid)
-      fields.push({
-        type: "filecoin.recipient",
-        label: "To",
-        value: `${subAccount.token.contractAddress}${validatedAddress.parsedAddress.toString()}`,
-      });
-  }
+    const { recipient } = input.transaction;
+    const addrProtocol = recipient.substring(0, 2);
+    const ethAddr = convertAddressFilToEthSync(recipient);
+    let value;
 
-  fields.push({
-    type: "filecoin.amount",
-    value: tokenTransfer
-      ? formatCurrencyUnit(unit, BigNumber(0), formatConfig)
-      : formatCurrencyUnit(unit, input.transaction.amount, formatConfig),
-    label: "Value",
-  });
+    if (addrProtocol === "f0") {
+      value = `${ethAddr} ${recipient}`;
+    } else {
+      value = ethAddr;
+    }
+    fields.push({
+      type: "filecoin.recipient",
+      label: "To",
+      value,
+    });
+  }
 
   fields.push({
     type: "filecoin.gasLimit",
     label: "Gas Limit",
-    value: input.transaction.gasLimit.toFixed(),
+    value: formatCurrencyUnit(unit, input.transaction.gasLimit, formatConfig),
   });
 
-  fields.push({
-    type: "filecoin.gasFeeCap",
-    label: "Gas Fee Cap",
-    value: formatCurrencyUnit(unit, input.transaction.gasFeeCap, formatConfig),
-  });
+  if (!subAccount) {
+    fields.push({
+      type: "filecoin.gasFeeCap",
+      label: "Gas Fee Cap",
+      value: formatCurrencyUnit(unit, input.transaction.gasFeeCap, formatConfig),
+    });
 
-  fields.push({
-    type: "filecoin.gasPremium",
-    label: "Gas Premium",
-    value: formatCurrencyUnit(unit, input.transaction.gasPremium, formatConfig),
-  });
-
-  fields.push({
-    type: "filecoin.method",
-    label: "Method",
-    value: methodToString(input.transaction.method),
-  });
+    fields.push({
+      type: "filecoin.gasPremium",
+      label: "Gas Premium",
+      value: formatCurrencyUnit(unit, input.transaction.gasPremium, formatConfig),
+    });
+    fields.push({
+      type: "filecoin.method",
+      label: "Method",
+      value: methodToString(input.transaction.method),
+    });
+  }
 
   return fields;
 }

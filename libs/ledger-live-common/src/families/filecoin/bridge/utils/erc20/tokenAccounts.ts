@@ -8,9 +8,8 @@ import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { convertAddressFilToEth } from "../addresses";
-import { Contract } from "web3";
-import { base64 } from "rfc4648";
+import { convertAddressFilToEthAsync } from "../addresses";
+import { ethers } from "ethers";
 import contractABI from "./ERC20.json";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { Unit } from "@ledgerhq/types-cryptoassets";
@@ -84,7 +83,7 @@ export async function buildTokenAccounts(
   initialAccount?: Account,
 ): Promise<TokenAccount[]> {
   try {
-    const nativeEthAddr = await convertAddressFilToEth(filAddr);
+    const nativeEthAddr = await convertAddressFilToEthAsync(filAddr);
     const transfers = await fetchERC20Transactions(nativeEthAddr);
     const transfersUntangled: { [addr: string]: ERC20Transfer[] } = transfers.reduce(
       (prev, curr) => {
@@ -150,6 +149,7 @@ export async function buildTokenAccounts(
 }
 
 export const encodeTxnParams = (abiEncodedParams: string) => {
+  log("debug", `filecoin/abiEncodedParams: ${abiEncodedParams}`);
   if (!abiEncodedParams) {
     throw new Error("Cannot encode empty abi encoded params");
   }
@@ -157,12 +157,12 @@ export const encodeTxnParams = (abiEncodedParams: string) => {
   const buffer = Buffer.from(abiEncodedParams.slice(2), "hex"); // buffer/byte array
   const dataEncoded = cbor.encode(buffer);
 
-  return base64.stringify(dataEncoded);
+  return dataEncoded.toString("base64");
 };
 
 export const abiEncodeTransferParams = (recipient: string, amount: string) => {
-  const contract = new Contract(contractABI);
-  const data = contract.methods.transfer(recipient, amount.toString()).encodeABI();
+  const contract = new ethers.utils.Interface(contractABI);
+  const data = contract.encodeFunctionData("transfer", [recipient, amount]);
   return data;
 };
 
@@ -173,7 +173,7 @@ export const generateTokenTxnParams = async (recipient: string, amount: BigNumbe
     throw new RecipientRequired();
   }
 
-  recipient = await convertAddressFilToEth(recipient);
+  recipient = await convertAddressFilToEthAsync(recipient);
 
   return abiEncodeTransferParams(recipient, amount.toString());
 };

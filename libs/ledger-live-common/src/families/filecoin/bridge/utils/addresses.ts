@@ -76,7 +76,22 @@ export const isRecipientValidForTokenTransfer = (addr: string): boolean => {
   return false;
 };
 
-export const convertAddressFilToEth = async (addr: string): Promise<string> => {
+export const convertAddressFilToEthSync = (addr: string): string => {
+  const recipientAddressProtocol = addr.slice(0, 2);
+
+  switch (recipientAddressProtocol) {
+    case "f0":
+      return convertF0toEthAddress(addr);
+    case "f4":
+      return convertF4ToEthAddress(addr);
+    case "0x":
+      return addr;
+    default:
+      throw new Error("supported address protocols are f0, f4");
+  }
+};
+
+export const convertAddressFilToEthAsync = async (addr: string): Promise<string> => {
   if (addr.length > 0 && addr.slice(0, 2) === "t1") {
     addr = `f${addr.slice(1)}`;
   }
@@ -90,17 +105,11 @@ export const convertAddressFilToEth = async (addr: string): Promise<string> => {
       }
       return res;
     }
-    case "f0": {
-      return convertF0toEthAddress(addr);
-    }
-    case "f4": {
-      return convertF4ToEthAddress(addr);
-    }
-    case "0x": {
-      return addr;
-    }
-    default: {
-      throw new Error("supported address protocols are f0, f1, f4");
-    }
+    case "f0":
+    case "f4":
+    case "0x":
+      return convertAddressFilToEthSync(addr);
+    default:
+      throw new Error("supported address protocols are f0, f1, f4, 0x");
   }
 };
