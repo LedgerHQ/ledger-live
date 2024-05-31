@@ -5,6 +5,9 @@ const nextConfig = {
     config.experiments = {
       asyncWebAssembly: true,
     };
+    config.resolve.fallback = {
+      fs: false,
+    };
     config.plugins.push(
       new webpack.IgnorePlugin({
         resourceRegExp: /^electron$/,
