@@ -1,17 +1,16 @@
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
-import { Flow } from "~/renderer/reducers/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useFlows } from "LLD/WalletSync/Flows/useFlows";
-import { useDispatch } from "react-redux";
-import { setFlow } from "~/renderer/actions/walletSync";
 import { BackProps, BackRef } from "../router";
 import ManageBackupStep from "./01-ManageBackupStep";
 import DeleteBackupStep from "./02-DeleteBackupStep";
 import BackupDeleted from "./03-FinalStep";
 
 const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => {
-  const dispatch = useDispatch();
-  const { currentStep, goToNextScene, goToPreviousScene } = useFlows({ flow: Flow.ManageBackups });
+  const { currentStep, goToNextScene, goToPreviousScene, FlowOptions, resetFlows } = useFlows({
+    flow: Flow.ManageBackups,
+  });
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
@@ -21,8 +20,8 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
   }));
 
   const goBack = () => {
-    if (currentStep === 1) {
-      dispatch(setFlow(Flow.Activation));
+    if (currentStep === FlowOptions[Flow.ManageBackups].steps[1]) {
+      resetFlows();
     } else {
       goToPreviousScene();
     }
@@ -33,7 +32,6 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
   };
 
   const deleteBackup = () => {
-    console.log("backup deleted");
     goToNextScene();
     setIsLoading(true);
     setTimeout(() => {
@@ -44,14 +42,13 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
 
   const getStep = () => {
     switch (currentStep) {
-      case 1:
-        return <ManageBackupStep goToDeleteBackup={goToDeleteData} />;
-      case 2:
-        return <DeleteBackupStep cancel={goBack} deleteBackup={deleteBackup} />;
-      case 3:
-        return <BackupDeleted isLoading={isLoading} isSuccessful={isSuccessful} />;
       default:
-        return null;
+      case Step.ManageBackupStep:
+        return <ManageBackupStep goToDeleteBackup={goToDeleteData} />;
+      case Step.DeleteBackupStep:
+        return <DeleteBackupStep cancel={goBack} deleteBackup={deleteBackup} />;
+      case Step.BackupDeleted:
+        return <BackupDeleted isLoading={isLoading} isSuccessful={isSuccessful} />;
     }
   };
 

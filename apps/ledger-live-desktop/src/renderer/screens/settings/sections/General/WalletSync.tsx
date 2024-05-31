@@ -3,13 +3,10 @@ import Button from "~/renderer/components/Button";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Flow,
-  walletSyncFlowSelector,
-  walletSyncStepSelector,
-} from "~/renderer/reducers/walletSync";
+import { Flow, Step, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
 import { setFlow, setStep } from "~/renderer/actions/walletSync";
-import { BackRef, STEPS_WITH_BACK, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
+import { BackRef, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
+import { STEPS_WITH_BACK } from "LLD/WalletSync/Flows/useFlows";
 
 /**
  *
@@ -27,12 +24,8 @@ const WalletSyncRow = () => {
   const dispatch = useDispatch();
 
   const currentStep = useSelector(walletSyncStepSelector);
-  const currentFlow = useSelector(walletSyncFlowSelector);
 
-  const hasBack = useMemo(
-    () => STEPS_WITH_BACK[currentFlow].includes(currentStep),
-    [currentFlow, currentStep],
-  );
+  const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
 
   const handleBack = () => {
     if (childRef.current) {
@@ -44,9 +37,10 @@ const WalletSyncRow = () => {
     setOpen(false);
     resetFlow();
   };
+
   const resetFlow = () => {
     dispatch(setFlow(Flow.Activation));
-    dispatch(setStep(1));
+    dispatch(setStep(Step.CreateOrSynchronizeStep));
   };
 
   return (

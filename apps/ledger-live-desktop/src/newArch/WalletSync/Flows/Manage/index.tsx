@@ -3,8 +3,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useDispatch } from "react-redux";
-import { setFlow } from "~/renderer/actions/walletSync";
-import { Flow } from "~/renderer/reducers/walletSync";
+import { setFlow, setStep } from "~/renderer/actions/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { OptionContainer, Option, OptionProps } from "./Option";
 
 const Separator = () => {
@@ -24,6 +24,7 @@ const WalletSyncManage = () => {
 
   const goToManageBackups = () => {
     dispatch(setFlow(Flow.ManageBackups));
+    dispatch(setStep(Step.ManageBackupStep));
   };
 
   const Options: OptionProps[] = [

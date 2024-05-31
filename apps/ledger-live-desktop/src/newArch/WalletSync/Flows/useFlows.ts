@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setStep } from "~/renderer/actions/walletSync";
-import { Flow } from "~/renderer/reducers/walletSync";
+import { setFlow, setStep } from "~/renderer/actions/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 
 export type HookProps = {
   flow: Flow;
@@ -10,47 +10,71 @@ export type HookProps = {
 export const FlowOptions: Record<
   Flow,
   {
-    steps: number;
-    hasGoBack: boolean;
+    steps: Record<number, Step>;
   }
 > = {
   [Flow.Activation]: {
-    steps: 3,
-    hasGoBack: false,
+    steps: {
+      1: Step.CreateOrSynchronizeStep,
+      2: Step.DeviceActionStep,
+      3: Step.ActivationFinalStep,
+    },
   },
   [Flow.Synchronize]: {
-    steps: 2,
-    hasGoBack: false,
+    steps: {},
   },
   [Flow.ManageBackups]: {
-    steps: 3,
-    hasGoBack: true,
+    steps: {
+      1: Step.ManageBackupStep,
+      2: Step.DeleteBackupStep,
+      3: Step.BackupDeleted,
+    },
   },
   [Flow.ManageInstances]: {
-    steps: 2,
-    hasGoBack: true,
+    steps: {},
   },
 };
+
+/**
+ *
+ * STEPS_WITH_BACK is used to determine whether a back button should be displayed in the WalletSyncRow  component,
+ * depending on the current step and the current flow.
+ *
+ */
+export const STEPS_WITH_BACK: Step[] = [Step.ManageBackupStep, Step.DeleteBackupStep];
 
 export const useFlows = ({ flow }: HookProps) => {
   const currentFlow = FlowOptions[flow];
 
+  const maxStep = Object.keys(currentFlow.steps).length;
+
   const dispatch = useDispatch();
   const [currentStep, setCurrentStep] = useState(1);
   const goToNextScene = () => {
-    dispatch(setStep(currentStep < currentFlow.steps ? currentStep + 1 : currentStep));
-    setCurrentStep(prev => (prev < currentFlow.steps ? prev + 1 : prev));
+    const newStep = currentStep < maxStep ? currentStep + 1 : currentStep;
+
+    dispatch(setStep(currentFlow.steps[newStep]));
+    setCurrentStep(newStep);
   };
 
   const goToPreviousScene = () => {
-    dispatch(setStep(currentStep > 1 ? currentStep - 1 : currentStep));
-    setCurrentStep(prev => (prev > 1 ? prev - 1 : prev));
+    const newStep = currentStep > 1 ? currentStep - 1 : currentStep;
+    dispatch(setStep(currentFlow.steps[newStep]));
+    setCurrentStep(newStep);
+  };
+
+  const resetFlows = () => {
+    dispatch(setFlow(Flow.Activation));
+    dispatch(setStep(Step.CreateOrSynchronizeStep));
   };
 
   return {
-    currentStep,
+    currentFlow,
+    currentStep: currentFlow.steps[currentStep],
     goToNextScene,
     goToPreviousScene,
     setCurrentStep,
+    FlowOptions,
+    resetFlows,
   };
 };

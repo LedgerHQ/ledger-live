@@ -7,23 +7,35 @@ export enum Flow {
   ManageBackups = "ManageBackups",
 }
 
+export enum Step {
+  //ManageBackup
+  ManageBackupStep = "ManageBackupStep",
+  DeleteBackupStep = "DeleteBackupStep",
+  BackupDeleted = "BackupDeleted",
+
+  //Activation
+  CreateOrSynchronizeStep = "CreateOrSynchronizeStep",
+  DeviceActionStep = "DeviceActionStep",
+  ActivationFinalStep = "ActivationFinalStep",
+}
+
 export type WalletSyncState = {
   activated: boolean;
   flow: Flow;
-  step: number;
+  step: Step;
 };
 
 const initialState: WalletSyncState = {
   activated: true,
   flow: Flow.Activation,
-  step: 1,
+  step: Step.CreateOrSynchronizeStep,
 };
 
 type HandlersPayloads = {
   WALLET_SYNC_ACTIVATE: boolean;
   WALLET_SYNC_DEACTIVATE: boolean;
   WALLET_SYNC_CHANGE_FLOW: Flow;
-  WALLET_SYNC_CHANGE_STEP: number;
+  WALLET_SYNC_CHANGE_STEP: Step;
 };
 
 type MarketHandlers<PreciseKey = true> = Handlers<WalletSyncState, HandlersPayloads, PreciseKey>;
@@ -41,7 +53,7 @@ const handlers: MarketHandlers = {
     ...state,
     flow: payload,
   }),
-  WALLET_SYNC_CHANGE_STEP: (state: WalletSyncState, { payload }: { payload: number }) => ({
+  WALLET_SYNC_CHANGE_STEP: (state: WalletSyncState, { payload }: { payload: Step }) => ({
     ...state,
     step: payload,
   }),

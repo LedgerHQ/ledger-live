@@ -1,13 +1,13 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
-import { Flow } from "~/renderer/reducers/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
 
 import { useFlows } from "../useFlows";
 import CreateOrSynchronizeStep from "./01-CreateOrSynchronizeStep";
 import DeviceActionStep from "./02-DeviceActionStep";
-import ActivationFinalStep from "./03-FinalStep";
+import ActivationFinalStep from "./03-ActivationFinalStep";
 
 const WalletSyncActivation = () => {
   const dispatch = useDispatch();
@@ -22,11 +22,11 @@ const WalletSyncActivation = () => {
   const getStep = () => {
     switch (currentStep) {
       default:
-      case 1:
+      case Step.CreateOrSynchronizeStep:
         return <CreateOrSynchronizeStep goToCreateBackup={goToNextScene} goToSync={goToSync} />;
-      case 2:
+      case Step.DeviceActionStep:
         return <DeviceActionStep goNext={goToNextScene} />;
-      case 3:
+      case Step.ActivationFinalStep:
         return <ActivationFinalStep hasBackup={HAS_BACKUP} />;
     }
   };

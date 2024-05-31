@@ -5,14 +5,8 @@ import WalletSyncActivation from "~/newArch/WalletSync/Flows/Activation";
 import WalletSyncManage from "~/newArch/WalletSync/Flows/Manage";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import Synch from "./Synch";
-import WalletSyncManageBackups from "../SideContent/ManageBackup";
+import WalletSyncManageBackups from "./ManageBackup";
 
-export const STEPS_WITH_BACK: Record<Flow, number[]> = {
-  [Flow.ManageBackups]: [1, 2],
-  [Flow.Activation]: [],
-  [Flow.Synchronize]: [],
-  [Flow.ManageInstances]: [],
-};
 export interface BackRef {
   goBack: () => void;
 }
