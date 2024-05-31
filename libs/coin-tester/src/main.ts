@@ -9,7 +9,7 @@ import {
 import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
 
-export type ScenarioTransaction<T extends TransactionCommon> = Partial<T> & {
+export type ScenarioTransaction<T extends TransactionCommon, A extends Account> = Partial<T> & {
   name: string;
   /**
    *
@@ -18,21 +18,21 @@ export type ScenarioTransaction<T extends TransactionCommon> = Partial<T> & {
    * @param currentAccount currentAccount synced after broadcasting this transaction
    * @returns void
    */
-  expect?: (previousAccount: Account, currentAccount: Account) => void;
+  expect?: (previousAccount: A, currentAccount: A) => void;
   /**
    * FOR DEV ONLY
    * if you want to temporarily disable the expect for a transaction
    * You should push a transaction with a xexpect
    */
-  xexpect?: (previousAccount: Account, currentAccount: Account) => void;
+  xexpect?: (previousAccount: A, currentAccount: A) => void;
 };
 
-export type Scenario<T extends TransactionCommon> = {
+export type Scenario<T extends TransactionCommon, A extends Account> = {
   name: string;
   setup: () => Promise<{
-    accountBridge: AccountBridge<T>;
+    accountBridge: AccountBridge<T, A>;
     currencyBridge: CurrencyBridge;
-    account: Account;
+    account: A;
     retryInterval?: number;
     retryLimit?: number;
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
@@ -47,7 +47,9 @@ export type Scenario<T extends TransactionCommon> = {
   teardown?: () => Promise<void> | void;
 };
 
-export async function executeScenario<T extends TransactionCommon>(scenario: Scenario<T>) {
+export async function executeScenario<T extends TransactionCommon, A extends Account>(
+  scenario: Scenario<T, A>,
+) {
   try {
     const {
       accountBridge,

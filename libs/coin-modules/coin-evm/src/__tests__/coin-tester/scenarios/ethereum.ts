@@ -4,6 +4,7 @@ import { ethers, providers } from "ethers";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
+import { Account } from "@ledgerhq/types-live";
 import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
 import { EvmNftTransaction, Transaction as EvmTransaction } from "../../../types";
 import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
@@ -20,12 +21,14 @@ import {
   impersonnateAccount,
 } from "../helpers";
 
+type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+
 const makeScenarioTransactions = ({
   address,
 }: {
   address: string;
-}): ScenarioTransaction<EvmTransaction>[] => {
-  const scenarioSendEthTransaction: ScenarioTransaction<EvmTransaction> = {
+}): EthereumScenarioTransaction[] => {
+  const scenarioSendEthTransaction: EthereumScenarioTransaction = {
     name: "Send ethereum",
     amount: new BigNumber(100),
     recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
@@ -40,7 +43,7 @@ const makeScenarioTransactions = ({
     },
   };
 
-  const scenarioSendUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
+  const scenarioSendUSDCTransaction: EthereumScenarioTransaction = {
     name: "Send USDC",
     amount: new BigNumber(
       ethers.utils.parseUnits("80", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
@@ -62,7 +65,10 @@ const makeScenarioTransactions = ({
     },
   };
 
-  const scenarioSendERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
+  const scenarioSendERC721Transaction: ScenarioTransaction<
+    EvmTransaction & EvmNftTransaction,
+    Account
+  > = {
     name: "Send ERC721",
     recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
     mode: "erc721",
@@ -90,7 +96,10 @@ const makeScenarioTransactions = ({
     },
   };
 
-  const scenarioSendERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
+  const scenarioSendERC1155Transaction: ScenarioTransaction<
+    EvmTransaction & EvmNftTransaction,
+    Account
+  > = {
     name: "Send ERC1155",
     recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
     mode: "erc1155",
@@ -126,8 +135,8 @@ const makeScenarioTransactions = ({
   ];
 };
 
-export const scenarioEthereum: Scenario<EvmTransaction> = {
-  name: "Ledger Live Basic Ethereum Transactions",
+export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
+  name: "Ledger Live Basic ETH Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),

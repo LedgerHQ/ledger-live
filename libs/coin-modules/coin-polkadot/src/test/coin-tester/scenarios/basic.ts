@@ -5,7 +5,11 @@ import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import resolver from "../../../signer";
-import { PolkadotOperationExtra, Transaction as PolkadotTransaction } from "../../../types/bridge";
+import {
+  PolkadotAccount,
+  PolkadotOperationExtra,
+  Transaction as PolkadotTransaction,
+} from "../../../types/bridge";
 import { createBridges } from "../../../bridge";
 import { makeAccount } from "../../fixtures";
 import { defaultNanoApp } from "../scenarios.test";
@@ -15,8 +19,10 @@ import { polkadot } from "./utils";
 import { indexOperation } from "../indexer";
 import BigNumber from "bignumber.js";
 
+type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, PolkadotAccount>;
+
 function getTransactions() {
-  const send1DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
+  const send1DotTransaction: PolkadotScenarioTransaction = {
     name: "send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "1"),
@@ -33,7 +39,7 @@ function getTransactions() {
     },
   };
 
-  const send100DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
+  const send100DotTransaction: PolkadotScenarioTransaction = {
     name: "send 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "100"),
@@ -50,7 +56,7 @@ function getTransactions() {
     },
   };
 
-  const bond250DotTransaction: ScenarioTransaction<PolkadotTransaction> = {
+  const bond250DotTransaction: PolkadotScenarioTransaction = {
     name: "Bond 250 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "250"),
@@ -72,7 +78,40 @@ function getTransactions() {
     },
   };
 
-  return [send1DotTransaction, send100DotTransaction, bond250DotTransaction];
+  const unbond250DotTransaction: PolkadotScenarioTransaction = {
+    name: "Unbond 250 DOT",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    amount: parseCurrencyUnit(polkadot.units[0], "250"),
+    mode: "unbond",
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("UNBOND");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.unbond");
+      expect(
+        parseCurrencyUnit(
+          polkadot.units[0],
+          (latestOperation.extra as PolkadotOperationExtra).unbondedAmount!.toFixed(),
+        ).toFixed(),
+      ).toBe("25000000000000000000000");
+      expect(
+        parseCurrencyUnit(
+          polkadot.units[0],
+          currentAccount.polkadotResources.unlockingBalance.toFixed(),
+        ).toFixed(),
+      ).toBe("25000000000000000000000");
+      // expect(currentAccount.balance.toFixed()).toBe(
+      //   previousAccount.balance.minus(latestOperation.fee).toFixed(),
+      // );
+    },
+  };
+
+  return [
+    send1DotTransaction,
+    send100DotTransaction,
+    bond250DotTransaction,
+    unbond250DotTransaction,
+  ];
 }
 
 const wsProvider = new WsProvider("ws://127.0.0.1:8000", false);
@@ -90,7 +129,7 @@ const coinConfig: PolkadotCoinConfig = {
   },
 };
 
-export const basicScenario: Scenario<PolkadotTransaction> = {
+export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
   name: "Polkadot Basic transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
@@ -198,6 +237,9 @@ export const basicScenario: Scenario<PolkadotTransaction> = {
           break;
         case "staking.bond":
           amount = new BigNumber(polkadotExtra.bondedAmount!);
+          break;
+        case "staking.unbond":
+          amount = new BigNumber(polkadotExtra.unbondedAmount!);
           break;
         default:
           throw new Error(`Unsupported pallet method: ${polkadotExtra.palletMethod}`);
