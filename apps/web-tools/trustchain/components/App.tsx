@@ -1,5 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { device as trustchainDevice } from "@ledgerhq/hw-trustchain";
+import {
+  createQRCodeHostInstance,
+  createQRCodeCandidateInstance,
+} from "@ledgerhq/trustchain/qrcode/index";
+import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
 import { sdk } from "@ledgerhq/trustchain";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from } from "rxjs";
@@ -110,8 +115,140 @@ const App = () => {
           <code>{trustchain ? trustchain.rootId : ""}</code>
         </strong>
       </Label>
+
+      <AppQRCodeHost trustchain={trustchain} liveCredentials={liveCredentials} />
+      <AppQRCodeCandidate liveCredentials={liveCredentials} />
     </Container>
   );
 };
+
+function AppQRCodeHost({
+  trustchain,
+  liveCredentials,
+}: {
+  trustchain: Trustchain | null;
+  liveCredentials: LiveCredentials | null;
+}) {
+  const [url, setUrl] = useState<string | null>(null);
+  const [digits, setDigits] = useState<string | null>(null);
+  const onStart = useCallback(() => {
+    if (!trustchain || !liveCredentials) return;
+    createQRCodeHostInstance({
+      onDisplayQRCode: url => {
+        setUrl(url);
+      },
+      onDisplayDigits: digits => {
+        setDigits(digits);
+      },
+      addMember: async member => {
+        const jwt = await sdk.liveAuthenticate(trustchain, liveCredentials);
+        await sdk.addMember(jwt, trustchain, liveCredentials, member);
+      },
+    })
+      .catch(e => {
+        if (e instanceof InvalidDigitsError) {
+          return;
+        }
+        alert("HOST: Failure: " + e);
+      })
+      .then(() => {
+        setUrl(null);
+        setDigits(null);
+      });
+  }, [trustchain, liveCredentials]);
+  return (
+    <details>
+      <summary>QR Code Host playground</summary>
+      <Label>
+        <button disabled={!trustchain || !liveCredentials} onClick={onStart}>
+          Create QR Code Host
+        </button>
+      </Label>
+      {url && (
+        <pre>
+          <code>{url}</code>
+        </pre>
+      )}
+      {digits && (
+        <strong>
+          Digits: <code>{digits}</code>
+        </strong>
+      )}
+    </details>
+  );
+}
+
+function AppQRCodeCandidate({ liveCredentials }: { liveCredentials: LiveCredentials | null }) {
+  const [scannedUrl, setScannedUrl] = useState<string | null>(null);
+  const [input, setInput] = useState<string | null>(null);
+  const [digits, setDigits] = useState<number | null>(null);
+  const [inputCallback, setInputCallback] = useState<((input: string) => void) | null>(null);
+
+  const onRequestQRCodeInput = useCallback(
+    (config: { digits: number }, callback: (input: string) => void) => {
+      setDigits(config.digits);
+      setInputCallback(() => callback);
+    },
+    [],
+  );
+
+  const handleStart = useCallback(() => {
+    if (scannedUrl && liveCredentials) {
+      createQRCodeCandidateInstance({
+        liveCredentials,
+        scannedUrl,
+        memberName: "test",
+        onRequestQRCodeInput,
+      })
+        .catch(e => {
+          if (e instanceof InvalidDigitsError) {
+            alert("Invalid digits");
+            return;
+          }
+          alert("CANDIDATE: Failure: " + e);
+        })
+        .then(() => {
+          setScannedUrl(null);
+          setInput(null);
+          setDigits(null);
+          setInputCallback(null);
+        });
+    }
+  }, [scannedUrl, liveCredentials, onRequestQRCodeInput]);
+
+  const handleSendDigits = useCallback(() => {
+    if (inputCallback && input !== null) {
+      inputCallback(input);
+    }
+  }, [inputCallback, input]);
+
+  return (
+    <details>
+      <summary>QR Code Candidate playground</summary>
+      <label>
+        Manually set the QR Code Host URL:
+        <input type="text" value={scannedUrl || ""} onChange={e => setScannedUrl(e.target.value)} />
+      </label>
+      <br />
+      <label>
+        <button disabled={!scannedUrl || !liveCredentials} onClick={handleStart}>
+          Start
+        </button>
+      </label>
+      <br />
+      {digits && (
+        <div>
+          <label>
+            Digits:
+            <input type="text" maxLength={digits} onChange={e => setInput(e.target.value)} />
+          </label>
+          <button disabled={!(input && digits === input.length)} onClick={handleSendDigits}>
+            Send Digits
+          </button>
+        </div>
+      )}
+    </details>
+  );
+}
 
 export default App;
