@@ -1,9 +1,10 @@
 import AppBinding from "@ledgerhq/hw-app-eth";
 import { DefaultKeyringEth } from "./DefaultKeyringEth";
-import { Transaction } from "ethers";
-import { KeyringEth } from "./KeyringEth";
+import { Transaction, ethers } from "ethers";
+import { EIP712Params, KeyringEth } from "./KeyringEth";
 import { ContextModule } from "@ledgerhq/context-module/lib/ContextModule";
 import { ContextResponse } from "@ledgerhq/context-module";
+import { EIP712Message } from "@ledgerhq/types-live";
 
 describe("DefaultKeyringEth", () => {
   let keyring: KeyringEth;
@@ -16,6 +17,9 @@ describe("DefaultKeyringEth", () => {
     setPlugin: jest.fn(),
     getChallenge: jest.fn(),
     signTransaction: jest.fn(),
+    signPersonalMessage: jest.fn(),
+    signEIP712Message: jest.fn(),
+    signEIP712HashedMessage: jest.fn(),
   } as unknown as AppBinding;
   const mockContextModule = {
     getContexts: jest.fn(),
@@ -25,6 +29,11 @@ describe("DefaultKeyringEth", () => {
     jest.clearAllMocks();
     keyring = new DefaultKeyringEth(mockAppBinding, mockContextModule);
     jest.spyOn(mockAppBinding, "signTransaction").mockResolvedValue({ r: "", s: "", v: "42" });
+    jest.spyOn(mockAppBinding, "signPersonalMessage").mockResolvedValue({ r: "", s: "", v: 42 });
+    jest.spyOn(mockAppBinding, "signEIP712Message").mockResolvedValue({ r: "", s: "", v: 42 });
+    jest
+      .spyOn(mockAppBinding, "signEIP712HashedMessage")
+      .mockResolvedValue({ r: "", s: "", v: 42 });
   });
 
   describe("signTransaction calls", () => {
@@ -154,6 +163,217 @@ describe("DefaultKeyringEth", () => {
         "c6808080808080",
         null,
       );
+    });
+  });
+
+  describe("signMessage calls", () => {
+    describe("personalSign", () => {
+      it("should sign a string message", async () => {
+        // GIVEN
+        const message = "message";
+        const derivationPath = "derivationPath";
+
+        // WHEN
+        const result = await keyring.signMessage(derivationPath, message, {
+          method: "personalSign",
+        });
+
+        // THEN
+        expect(mockAppBinding.signPersonalMessage).toHaveBeenCalledWith(
+          derivationPath,
+          Buffer.from(message).toString("hex"),
+        );
+        expect(result).toEqual({ r: "", s: "", v: 42 });
+      });
+
+      it("should throw an error if the message is not a string", async () => {
+        // GIVEN
+        const message = {
+          message: { message: "message" },
+        } as unknown as EIP712Message;
+        const derivationPath = "derivationPath";
+
+        // WHEN
+        const promise = keyring.signMessage(derivationPath, message, {
+          method: "personalSign",
+        });
+
+        // THEN
+        await expect(promise).rejects.toThrow(
+          "[DefaultKeyringEth] signMessage: personalSign requires a string type for the message parameter",
+        );
+      });
+    });
+
+    describe("eip712", () => {
+      it("should sign an EIP712 message", async () => {
+        // GIVEN
+        const message = {
+          domain: {
+            chainId: 1,
+            verifyingContract: "",
+          },
+          primaryType: "",
+          message: {},
+          types: {},
+        } as EIP712Message;
+        const derivationPath = "derivationPath";
+
+        // WHEN
+        const result = await keyring.signMessage(derivationPath, message, {
+          method: "eip712",
+        });
+
+        // THEN
+        expect(mockAppBinding.signEIP712Message).toHaveBeenCalledWith(derivationPath, message);
+        expect(result).toEqual({ r: "", s: "", v: 42 });
+      });
+
+      it("should fallback to eip712Hashed if signEIP712Message fails with an INS_NOT_SUPPORTED error", async () => {
+        // GIVEN
+        const message: EIP712Message = {
+          domain: {
+            chainId: 5,
+            name: "Ether Mail",
+            verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+            version: "1",
+          },
+          message: {
+            val: "0x973bb640",
+          },
+          primaryType: "Test",
+          types: {
+            EIP712Domain: [
+              { name: "name", type: "string" },
+              { name: "version", type: "string" },
+              { name: "chainId", type: "uint256" },
+              { name: "verifyingContract", type: "address" },
+            ],
+            Test: [{ name: "val", type: "bytes4" }],
+          },
+        };
+        const derivationPath = "derivationPath";
+        const error = new Error();
+        (error as any).statusText = "INS_NOT_SUPPORTED";
+        jest.spyOn(mockAppBinding, "signEIP712Message").mockRejectedValue(error);
+
+        // WHEN
+        const result = await keyring.signMessage(derivationPath, message, {
+          method: "eip712",
+        });
+
+        // THEN
+        expect(mockAppBinding.signEIP712HashedMessage).toHaveBeenCalledWith(
+          derivationPath,
+          "6137beb405d9ff777172aa879e33edb34a1460e701802746c5ef96e741710e59",
+          "90418913cbd47e54cfb74964f7c7905cc502076a3d59974cfc2d79a16261df09",
+        );
+        expect(result).toEqual({ r: "", s: "", v: 42 });
+      });
+
+      it("should throw an error if signEIP712Message fails with an error other than INS_NOT_SUPPORTED", async () => {
+        // GIVEN
+        const message: EIP712Message = {
+          domain: {
+            chainId: 5,
+            name: "Ether Mail",
+            verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+            version: "1",
+          },
+          message: {
+            val: "0x973bb640",
+          },
+          primaryType: "Test",
+          types: {
+            EIP712Domain: [
+              { name: "name", type: "string" },
+              { name: "version", type: "string" },
+              { name: "chainId", type: "uint256" },
+              { name: "verifyingContract", type: "address" },
+            ],
+            Test: [{ name: "val", type: "bytes4" }],
+          },
+        };
+        const derivationPath = "derivationPath";
+        const error = new Error();
+        jest.spyOn(mockAppBinding, "signEIP712Message").mockRejectedValue(error);
+
+        // WHEN
+        const promise = keyring.signMessage(derivationPath, message, { method: "eip712" });
+
+        // THEN
+        expect(promise).rejects.toEqual(error);
+        expect(mockAppBinding.signEIP712HashedMessage).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("eip712Hashed", () => {
+      it("should sign an EIP712 message", async () => {
+        // GIVEN
+
+        const message: EIP712Message = {
+          domain: {
+            chainId: 5,
+            name: "Ether Mail",
+            verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+            version: "1",
+          },
+          message: {
+            val: "0x973bb640",
+          },
+          primaryType: "Test",
+          types: {
+            EIP712Domain: [
+              { name: "name", type: "string" },
+              { name: "version", type: "string" },
+              { name: "chainId", type: "uint256" },
+              { name: "verifyingContract", type: "address" },
+            ],
+            Test: [{ name: "val", type: "bytes4" }],
+          },
+        };
+
+        const derivationPath = "derivationPath";
+        const { EIP712Domain, ...otherTypes } = message.types;
+
+        const messageStruct = {
+          domainSeparator: ethers.utils._TypedDataEncoder.hashDomain(message.domain),
+          hashStruct: ethers.utils._TypedDataEncoder.hashStruct(
+            message.primaryType,
+            otherTypes,
+            message.message,
+          ),
+        } as EIP712Params;
+
+        // WHEN
+        const result = await keyring.signMessage(derivationPath, messageStruct, {
+          method: "eip712Hashed",
+        });
+
+        // THEN
+        expect(mockAppBinding.signEIP712HashedMessage).toHaveBeenCalledWith(
+          derivationPath,
+          "6137beb405d9ff777172aa879e33edb34a1460e701802746c5ef96e741710e59",
+          "90418913cbd47e54cfb74964f7c7905cc502076a3d59974cfc2d79a16261df09",
+        );
+        expect(result).toEqual({ r: "", s: "", v: 42 });
+      });
+
+      it("should throw an error if the message is not an EIP712Params", async () => {
+        // GIVEN
+        const message = "message";
+        const derivationPath = "derivationPath";
+
+        // WHEN
+        const promise = keyring.signMessage(derivationPath, message, {
+          method: "eip712Hashed",
+        });
+
+        // THEN
+        await expect(promise).rejects.toThrow(
+          "[DefaultKeyringEth] signMessage: eip712Hashed requires an EIP712Params type for the message parameter",
+        );
+      });
     });
   });
 });
