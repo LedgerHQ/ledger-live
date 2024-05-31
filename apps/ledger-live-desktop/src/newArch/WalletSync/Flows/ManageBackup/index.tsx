@@ -38,9 +38,10 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      setIsSuccessful(false);
-    }, 1500);
+      setIsSuccessful(true);
+    }, 500);
   };
+
   const getStep = () => {
     switch (currentStep) {
       case 1:

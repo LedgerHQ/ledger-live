@@ -31,11 +31,13 @@ const WalletSyncManage = () => {
       label: t("walletSync.manage.synchronize.label"),
       description: t("walletSync.manage.synchronize.description"),
       onClick: goToSynch,
+      testId: "walletSync-synchronize",
     },
     {
       label: t("walletSync.manage.backup.label"),
       description: t("walletSync.manage.backup.description"),
       onClick: goToManageBackups,
+      testId: "walletSync-manage-backup",
     },
   ];
 

@@ -16,6 +16,7 @@ export default function ManageBackupStep({ goToDeleteBackup }: ManageBackupStepP
       </Text>
 
       <Card
+        testId="walletSync-manage-backup-delete"
         title="walletSync.manageBackups.options.deleteBackup.title"
         description="walletSync.manageBackups.options.deleteBackup.description"
         onClick={goToDeleteBackup}

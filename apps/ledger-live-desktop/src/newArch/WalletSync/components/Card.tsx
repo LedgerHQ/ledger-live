@@ -9,12 +9,20 @@ export type CardProps = {
   description: string;
   onClick: () => void;
   leftIcon: React.ReactNode;
+  testId: string;
 };
 
-export const Card = ({ title, description, onClick, leftIcon }: CardProps) => {
+export const Card = ({ title, description, onClick, leftIcon, testId }: CardProps) => {
   const { t } = useTranslation();
   return (
-    <CardContainer flexDirection="row" height={70} alignItems="center" px={3} onClick={onClick}>
+    <CardContainer
+      flexDirection="row"
+      height={70}
+      alignItems="center"
+      px={3}
+      onClick={onClick}
+      data-testid={testId}
+    >
       <LeftContainer alignItems="center" justifyContent="center">
         {leftIcon}
       </LeftContainer>
