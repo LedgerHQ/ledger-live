@@ -42,6 +42,7 @@ const WalletSyncRow = () => {
     resetFlow();
     setOpen(true);
   };
+
   const resetFlow = () => {
     dispatch(setFlow(Flow.Activation));
     dispatch(setStep(Step.CreateOrSynchronize));
