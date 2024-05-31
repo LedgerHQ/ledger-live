@@ -1,7 +1,5 @@
 import { DeviceLabels } from "./DeviceLabels";
 
-//TODO: address on 2 screens (ADA, XLM, ALGO)
-//TODO: Click Both on each screen (ADA)
 export class Currency {
   constructor(
     public readonly uiName: string,

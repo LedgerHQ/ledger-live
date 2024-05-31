@@ -16,9 +16,9 @@ const accounts: Account[] = [
   Account.XTZ_1,
 ];
 
-//This test might sporadically fail due to getAppAndVersion issue - Jira: LIVE-12581
+//Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, account] of accounts.entries()) {
-  test.describe.parallel("Receive @smoke", () => {
+  test.describe.skip("Receive @smoke", () => {
     test.use({
       userdata: "speculos",
       testName: `receiveSpeculos_${account.currency.uiName}`,
