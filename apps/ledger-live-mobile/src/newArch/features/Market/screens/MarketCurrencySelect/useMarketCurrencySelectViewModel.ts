@@ -1,18 +1,20 @@
-import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { supportedCounterValuesSelector } from "~/reducers/settings";
-import { setMarketCounterCurrency } from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
+import { useMarket } from "../../hooks/useMarket";
+import { setMarketRequestParams } from "~/actions/market";
 
 function useMarketCurrencySelectViewModel() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const supportedCountervalues = useSelector(supportedCounterValuesSelector);
-  const { counterCurrency, supportedCounterCurrencies, setCounterCurrency } = useMarketData();
+
+  const { supportedCounterCurrencies, marketParams } = useMarket();
+  const { counterCurrency } = marketParams;
 
   const items = supportedCountervalues
-    .filter(({ ticker }) => supportedCounterCurrencies.includes(ticker.toLowerCase()))
+    .filter(({ ticker }) => supportedCounterCurrencies?.includes(ticker.toLowerCase()))
     .map(cur => ({
       value: cur.ticker.toLowerCase(),
       label: cur.label,
@@ -20,12 +22,11 @@ function useMarketCurrencySelectViewModel() {
     .sort(a => (a.value === counterCurrency ? -1 : 0));
 
   const onSelectCurrency = useCallback(
-    (value: string) => {
-      dispatch(setMarketCounterCurrency(value));
-      setCounterCurrency(value);
+    (counterCurrency: string) => {
+      dispatch(setMarketRequestParams({ counterCurrency }));
       navigation.goBack();
     },
-    [dispatch, navigation, setCounterCurrency],
+    [dispatch, navigation],
   );
 
   return {

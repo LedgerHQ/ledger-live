@@ -5,22 +5,18 @@ import { TableCellBase } from "./Table";
 
 export const SortTableCell = ({
   onClick,
-  orderByKey,
-  orderBy,
   order,
   children,
   ...props
 }: {
   loading?: boolean;
-  onClick?: (key: string) => void;
-  orderByKey: string;
-  orderBy?: string;
+  onClick?: () => void;
   order?: string;
   children?: React.ReactNode;
 }) => (
-  <TableCellBase onClick={() => !!onClick && onClick(orderByKey)} {...props}>
+  <TableCellBase onClick={() => !!onClick && onClick()} {...props}>
     {children}
-    <ChevronContainer m={2} show={orderBy === orderByKey} orderDirection={order}>
+    <ChevronContainer m={2} show orderDirection={order}>
       <Icon name="ChevronBottom" size={10} />
     </ChevronContainer>
   </TableCellBase>

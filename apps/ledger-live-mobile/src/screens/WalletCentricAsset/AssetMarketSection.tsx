@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
+import { useMarketCoinData } from "~/newArch/features/Market/hooks/useMarketCoinData";
 
 // @FIXME workaround for main tokens
 const tokenIDToMarketID = {
@@ -15,18 +15,19 @@ const tokenIDToMarketID = {
 
 const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) => {
   const { t } = useTranslation();
-  const { selectedCoinData, selectCurrency, counterCurrency } = useSingleCoinMarketData();
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(currency.id);
+  const { currency: fetchedCurrency, counterCurrency } = useMarketCoinData({
+    currencyId: selectedCurrency,
+  });
 
   useEffect(() => {
-    selectCurrency(
+    setSelectedCurrency(
       tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] || currency.id,
-      undefined,
-      "24h",
     );
-    return () => selectCurrency();
-  }, [currency, selectCurrency]);
+  }, [currency]);
 
-  if (!selectedCoinData?.price) return null;
+  if (!fetchedCurrency?.price) return null;
+
   return (
     <SectionContainer px={6}>
       <SectionTitle
@@ -37,7 +38,7 @@ const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) =
       <Flex minHeight={65}>
         <MarketPriceSection
           currency={currency}
-          selectedCoinData={selectedCoinData}
+          selectedCoinData={fetchedCurrency}
           counterCurrency={counterCurrency}
         />
       </Flex>

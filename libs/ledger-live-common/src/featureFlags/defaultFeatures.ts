@@ -463,6 +463,12 @@ export const DEFAULT_FEATURES: Features = {
       refreshTime: 3, //nb minutes
     },
   },
+  llmRefreshMarketData: {
+    ...DEFAULT_FEATURE,
+    params: {
+      refreshTime: 3, //nb minutes
+    },
+  },
   spamReportNfts: DEFAULT_FEATURE,
   lldWalletSync: DEFAULT_FEATURE,
   lldNftsGalleryNewArch: DEFAULT_FEATURE,

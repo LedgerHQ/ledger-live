@@ -21,8 +21,10 @@ import BackButton from "./components/BackButton";
 import { Item } from "~/components/Graph/types";
 import {
   CurrencyData,
+  MarketCoinDataChart,
+  KeysPriceChange,
   MarketCurrencyChartDataRequestParams,
-} from "@ledgerhq/live-common/market/types";
+} from "@ledgerhq/live-common/market/utils/types";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketDetailViewModel from "./useMarketDetailViewModel";
 
@@ -32,12 +34,13 @@ interface ViewProps {
   refresh: (param?: MarketCurrencyChartDataRequestParams) => void;
   defaultAccount?: AccountLike;
   toggleStar: () => void;
-  currency?: CurrencyData;
   isStarred: boolean;
   accounts: AccountLike[];
   counterCurrency?: string;
-  chartRequestParams: MarketCurrencyChartDataRequestParams;
   allAccounts: AccountLike[];
+  range: string;
+  dataChart?: MarketCoinDataChart;
+  currency?: CurrencyData;
 }
 
 function View({
@@ -47,14 +50,15 @@ function View({
   defaultAccount,
   toggleStar,
   currency,
+  dataChart,
   isStarred,
   accounts,
   counterCurrency,
-  chartRequestParams,
   allAccounts,
+  range,
 }: ViewProps) {
-  const { range } = chartRequestParams;
-  const { name, image, price, priceChangePercentage, internalCurrency, chartData } = currency || {};
+  const { name, image, internalCurrency, price } = currency || {};
+
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
   const { t } = useTranslation();
@@ -65,6 +69,8 @@ function View({
     () => getDateFormatter(locale, range as string),
     [locale, range],
   );
+
+  const priceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
   return (
     <SafeAreaView edges={["top", "left", "right"]} isFlex>
@@ -114,6 +120,7 @@ function View({
                   t,
                 })}
               </Text>
+
               <Flex height={20}>
                 {hoveredItem && hoveredItem.date ? (
                   <Text variant="body" color="neutral.c70">
@@ -129,6 +136,7 @@ function View({
                 )}
               </Flex>
             </Flex>
+
             {internalCurrency ? (
               <Flex mb={6}>
                 <FabMarketActions
@@ -149,16 +157,14 @@ function View({
           />
         }
       >
-        {chartData ? (
-          <MarketGraph
-            setHoverItem={setHoverItem}
-            chartRequestParams={chartRequestParams}
-            loading={loading}
-            loadingChart={loadingChart}
-            refreshChart={refresh}
-            chartData={chartData}
-          />
-        ) : null}
+        <MarketGraph
+          setHoverItem={setHoverItem}
+          isLoading={loadingChart}
+          refreshChart={refresh}
+          chartData={dataChart}
+          range={range}
+          currency={internalCurrency}
+        />
 
         {accounts?.length > 0 ? (
           <Flex mx={6} mt={8}>
@@ -185,9 +191,12 @@ function View({
             />
           </Flex>
         ) : null}
-        {currency && counterCurrency && (
-          <MarketStats currency={currency} counterCurrency={counterCurrency} />
-        )}
+
+        <MarketStats
+          currency={currency}
+          counterCurrency={counterCurrency}
+          priceChangePercentage={priceChangePercentage ?? 0}
+        />
       </ScrollContainerHeader>
     </SafeAreaView>
   );
