@@ -5,7 +5,8 @@ const environmentTempFilePath = "artifacts/environment.properties.temp";
 const environmentFilePath = "artifacts/environment.properties";
 
 export default async () => {
-  fs.readFile(environmentTempFilePath, "utf8")
+  await fs
+    .readFile(environmentTempFilePath, "utf8")
     .then(data => {
       return fs.appendFile(environmentFilePath, data);
     })
