@@ -7,7 +7,7 @@ type Props = {
   hasBackup: boolean;
 };
 
-export default function StepThree({ hasBackup }: Props) {
+export default function ActivationFinalStep({ hasBackup }: Props) {
   const { t } = useTranslation();
   const title = !hasBackup ? "walletSync.success.backup.title" : "walletSync.success.synch.title";
   const desc = !hasBackup ? "walletSync.success.backup.desc" : "walletSync.success.synch.desc";

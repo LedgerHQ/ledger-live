@@ -10,7 +10,7 @@ type Props = {
   goToSync: () => void;
 };
 
-export default function StepOne({ goToCreateBackup, goToSync }: Props) {
+export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
