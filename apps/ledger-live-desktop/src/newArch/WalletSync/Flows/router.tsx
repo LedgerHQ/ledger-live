@@ -1,33 +1,24 @@
-import React, { forwardRef } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import { Flow, walletSyncFlowSelector } from "~/renderer/reducers/walletSync";
-import WalletSyncActivation from "LLD/WalletSync/Flows/Activation";
-import WalletSyncManage from "LLD/WalletSync/Flows/Manage";
+import { Flow, walletSyncFlowSelector, walletSyncSelector } from "~/renderer/reducers/walletSync";
+import WalletSyncActivation from "~/newArch/WalletSync/Flows/Activation";
+import WalletSyncManage from "~/newArch/WalletSync/Flows/Manage";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
-import WalletSyncManageBackups from "./ManageBackup";
-import SynchronizeWallet from "./Synchronize";
-import WalletSyncManageInstances from "./ManageInstances";
+import Synch from "./Synch";
 
-export interface BackRef {
-  goBack: () => void;
-}
-
-export interface BackProps {}
-
-export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => {
+export const WalletSyncRouter = () => {
+  const walletSync = useSelector(walletSyncSelector);
   const walletSyncFlow = useSelector(walletSyncFlowSelector);
 
   switch (walletSyncFlow) {
     case Flow.Activation:
-      return <WalletSyncActivation />;
-    case Flow.walletSyncActivated:
-      return <WalletSyncManage />;
+      if (walletSync.activated) {
+        return <WalletSyncManage />;
+      } else {
+        return <WalletSyncActivation />;
+      }
     case Flow.Synchronize:
-      return <SynchronizeWallet />;
-    case Flow.ManageBackups:
-      return <WalletSyncManageBackups ref={ref} />;
-    case Flow.ManageInstances:
-      return <WalletSyncManageInstances ref={ref} />;
+      return <Synch />;
     default:
       return (
         <Flex flex={1} alignItems="center" justifyContent="center">
@@ -35,6 +26,4 @@ export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => 
         </Flex>
       );
   }
-});
-
-WalletSyncRouter.displayName = "WalletSyncRouter";
+};

@@ -12,7 +12,7 @@ type Props = {
   goNext: () => void;
 };
 
-export default function StepTwo({ goNext }: Props) {
+export default function DeviceActionStep({ goNext }: Props) {
   //const request = { appName: "BOLOS" };
   const currency = getCryptoCurrencyById("bitcoin");
   const request = useMemo(() => ({ currency }), [currency]);
