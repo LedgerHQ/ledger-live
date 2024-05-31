@@ -43,5 +43,4 @@ export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => 
   }
 });
 
-// Ajout de la displayName
 WalletSyncRouter.displayName = "WalletSyncRouter";

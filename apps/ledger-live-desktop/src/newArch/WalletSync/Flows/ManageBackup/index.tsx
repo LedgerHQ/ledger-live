@@ -1,17 +1,20 @@
-import React, { forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow } from "~/renderer/reducers/walletSync";
-import { useFlows } from "LLD/WalletSync/hooks/useFlows";
+import { useFlows } from "LLD/WalletSync/Flows/useFlows";
 import { useDispatch } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { BackProps, BackRef } from "../router";
 import ManageBackupStep from "./01-ManageBackupStep";
 import DeleteBackupStep from "./02-DeleteBackupStep";
-import BackupDeleted from "./03-SuccessStep";
+import BackupDeleted from "./03-FinalStep";
 
 const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => {
   const dispatch = useDispatch();
   const { currentStep, goToNextScene, goToPreviousScene } = useFlows({ flow: Flow.ManageBackups });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccessful, setIsSuccessful] = useState(false);
 
   useImperativeHandle(ref, () => ({
     goBack,
@@ -32,6 +35,11 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
   const deleteBackup = () => {
     console.log("backup deleted");
     goToNextScene();
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsSuccessful(false);
+    }, 1500);
   };
   const getStep = () => {
     switch (currentStep) {
@@ -40,7 +48,7 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
       case 2:
         return <DeleteBackupStep cancel={goBack} deleteBackup={deleteBackup} />;
       case 3:
-        return <BackupDeleted />;
+        return <BackupDeleted isLoading={isLoading} isSuccessful={isSuccessful} />;
       default:
         return null;
     }
@@ -53,6 +61,5 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
   );
 });
 
-// Ajout de la displayName
 WalletSyncManageBackups.displayName = "WalletSyncManageBackups";
 export default WalletSyncManageBackups;

@@ -6345,6 +6345,9 @@
       },
       "deleteBackupSuccess": {
         "title": "All data successfully deleted"
+      },
+      "deleteBackupError": {
+        "title": "Something went wrong"
       }
     }
   }
