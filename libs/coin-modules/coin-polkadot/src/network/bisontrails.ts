@@ -6,7 +6,13 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { isValidAddress } from "../common";
-import type { PalletMethod, PolkadotOperation, PolkadotOperationExtra } from "../types";
+import type {
+  ExplorerExtrinsic,
+  PalletMethod,
+  PalletMethodName,
+  PolkadotOperation,
+  PolkadotOperationExtra,
+} from "../types";
 
 const LIMIT = 200;
 
@@ -56,7 +62,10 @@ const getWithdrawUnbondedAmount = (extrinsic: any) => {
  *
  * @returns {string} - OperationType
  */
-const getOperationType = (pallet: string, palletMethod: PalletMethod | unknown): OperationType => {
+const getOperationType = (
+  pallet: string,
+  palletMethod: PalletMethodName | unknown,
+): OperationType => {
   switch (palletMethod) {
     case "transfer":
     case "transferAllowDeath":
@@ -100,9 +109,9 @@ const getOperationType = (pallet: string, palletMethod: PalletMethod | unknown):
  *
  * @returns {Object}
  */
-const getExtra = (type: OperationType, extrinsic: any): PolkadotOperationExtra => {
+const getExtra = (type: OperationType, extrinsic: ExplorerExtrinsic): PolkadotOperationExtra => {
   const extra: PolkadotOperationExtra = {
-    palletMethod: `${extrinsic.section}.${extrinsic.method}`,
+    palletMethod: `${extrinsic.section}.${extrinsic.method}` as PalletMethod,
   };
 
   switch (type) {
@@ -136,9 +145,9 @@ const getExtra = (type: OperationType, extrinsic: any): PolkadotOperationExtra =
 
     case "NOMINATE":
       extra.validators =
-        extrinsic.staking?.validators?.reduce((acc: any, current: any) => {
+        extrinsic.staking?.validators?.reduce((acc, current) => {
           return [...acc, current.address];
-        }, []) ?? [];
+        }, [] as string[]) ?? [];
       break;
   }
 

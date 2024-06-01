@@ -1,22 +1,6 @@
 import { setupServer } from "msw/node";
 import { http, HttpResponse, bypass } from "msw";
-
-type ExplorerExtrinsic = {
-  blockNumber: number;
-  timestamp: number;
-  nonce: number;
-  hash: string;
-  signer: string;
-  affectedAddress1: string;
-  affectedAddress2?: string;
-  method: string;
-  section: string;
-  index: number;
-  isSuccess: boolean;
-  amount: number;
-  partialFee: number;
-  isBatch: boolean;
-};
+import { ExplorerExtrinsic } from "../../types";
 
 const explorerAppendixByAddress = new Map<string, ExplorerExtrinsic[]>();
 

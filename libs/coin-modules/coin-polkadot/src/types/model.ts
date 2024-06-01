@@ -11,7 +11,7 @@ export type PolkadotOperationMode =
   | "chill"
   | "claimReward";
 
-export type PalletMethod =
+export type PalletMethodName =
   | "transfer"
   | "transferAllowDeath"
   | "transferKeepAlive"
@@ -24,6 +24,27 @@ export type PalletMethod =
   | "withdrawUnbonded"
   | "setController"
   | "payoutStakers";
+
+export type ExplorerExtrinsic = {
+  blockNumber: number;
+  timestamp: number;
+  nonce: number;
+  hash: string;
+  signer: string;
+  affectedAddress1: string;
+  affectedAddress2?: string;
+  method: PalletMethodName;
+  section: string;
+  index: number;
+  isSuccess: boolean;
+  amount: number;
+  partialFee: number;
+  isBatch: boolean;
+  validatorStash?: string;
+  staking?: {
+    validators: { address: string }[];
+  };
+};
 
 /// cf. ExtrinsicPayloadValue
 export type CoreTransasctionInfo = {
