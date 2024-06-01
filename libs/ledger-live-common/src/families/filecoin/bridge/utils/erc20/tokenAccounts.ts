@@ -14,6 +14,7 @@ import contractABI from "./ERC20.json";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { valueFromUnit } from "../../../../../currencies/valueFromUnit";
+import { AccountType } from "../../../utils";
 
 export const erc20TxnToOperation = (
   tx: ERC20Transfer,
@@ -124,7 +125,7 @@ export async function buildTokenAccounts(
         initialAccount.subAccounts.find(a => a.id === tokenAccountId);
 
       const sub: TokenAccount = {
-        type: "TokenAccount",
+        type: AccountType.TokenAccount,
         id: tokenAccountId,
         parentId: parentAccountId,
         token,

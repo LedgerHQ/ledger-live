@@ -3,6 +3,7 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import type { Transaction } from "./types";
 import { getAccountCurrency } from "../../account";
+import { AccountType } from "./utils";
 
 const options = [
   {
@@ -57,7 +58,7 @@ function inferTransactions(
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "filecoin", "filecoin family");
 
-    if (account.type === "TokenAccount") {
+    if (account.type === AccountType.TokenAccount) {
       const isDelisted = account.token.delisted === true;
       invariant(!isDelisted, "token is delisted");
     }
@@ -65,7 +66,7 @@ function inferTransactions(
     return {
       ...transaction,
       family: "filecoin",
-      subAccountId: account.type === "TokenAccount" ? account.id : null,
+      subAccountId: account.type === AccountType.TokenAccount ? account.id : null,
     } as Transaction;
   });
 }

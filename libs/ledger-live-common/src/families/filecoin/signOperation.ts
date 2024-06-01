@@ -7,7 +7,7 @@ import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { withDevice } from "../../hw/deviceAccess";
 import { toCBOR } from "./bridge/utils/serializer";
 import { getAddress, getSubAccount } from "./bridge/utils/utils";
-import { getPath, isError } from "./utils";
+import { AccountType, getPath, isError } from "./utils";
 import { Transaction } from "./types";
 import { close } from "../../hw";
 
@@ -25,7 +25,7 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
           const { method, version, nonce, gasFeeCap, gasLimit, gasPremium } = transaction;
           const { derivationPath } = getAddress(account);
           const subAccount = getSubAccount(account, transaction);
-          const tokenAccountTxn = subAccount?.type === "TokenAccount";
+          const tokenAccountTxn = subAccount?.type === AccountType.TokenAccount;
 
           if (!gasFeeCap.gt(0) || !gasLimit.gt(0)) {
             log(

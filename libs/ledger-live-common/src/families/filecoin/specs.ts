@@ -7,7 +7,7 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { generateDeviceActionFlow } from "./speculos-deviceActions";
-import { BotScenario } from "./utils";
+import { AccountType, BotScenario } from "./utils";
 import { botTest, genericTestDestination } from "@ledgerhq/coin-framework/bot/specs";
 
 const F4_RECIPIENT = "f410fncojwmrseefktoco6rcnb3zv2eiqfli7muhvqma";
@@ -21,7 +21,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "Filecoin",
-    appVersion: "0.23.8",
+    appVersion: "0.24.3",
   },
   genericDeviceAction: generateDeviceActionFlow(BotScenario.DEFAULT),
   testTimeout: 6 * 60 * 1000,
@@ -115,7 +115,6 @@ const filecoinSpecs: AppSpec<Transaction> = {
         };
       },
     },
-
     {
       name: "Send ~50% WFIL",
       maxRun: 1,
@@ -123,9 +122,12 @@ const filecoinSpecs: AppSpec<Transaction> = {
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const subAccount = account.subAccounts?.find(
-          a => a.type === "TokenAccount" && a.spendableBalance.gt(0),
+          a => a.type === AccountType.TokenAccount && a.spendableBalance.gt(0),
         );
-        invariant(subAccount && subAccount.type === "TokenAccount", "no subAccount with WFIL");
+        invariant(
+          subAccount && subAccount.type === AccountType.TokenAccount,
+          "no subAccount with WFIL",
+        );
         const amount = subAccount.balance.div(1.9 + 0.2 * Math.random()).integerValue();
         return {
           transaction: bridge.createTransaction(account),

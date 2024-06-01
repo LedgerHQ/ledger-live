@@ -3070,6 +3070,9 @@ importers:
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1

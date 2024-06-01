@@ -6,6 +6,7 @@ import { validateAddress } from "./addresses";
 import { Message } from "iso-filecoin/message";
 import { encodeTxnParams } from "./erc20/tokenAccounts";
 import BigNumber from "bignumber.js";
+import { AccountType } from "../../utils";
 
 export interface toCBORResponse {
   txPayload: Buffer;
@@ -22,7 +23,7 @@ export const toCBOR = async (account: Account, tx: Transaction): Promise<toCBORR
   const fromValidation = validateAddress(from);
 
   const subAccount = getSubAccount(account, tx);
-  const tokenTransfer = subAccount && subAccount.type === "TokenAccount";
+  const tokenTransfer = subAccount && subAccount.type === AccountType.TokenAccount;
   const params = tokenTransfer ? encodeTxnParams(tx.params ?? "") : undefined;
 
   if (!recipientValidation.isValid || !fromValidation.isValid)

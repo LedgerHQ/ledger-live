@@ -2,7 +2,7 @@ import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
 import { getMainAccount } from "../../account";
 import { getAddress, getSubAccount } from "./bridge/utils/utils";
-import { Methods, calculateEstimatedFees } from "./utils";
+import { AccountType, Methods, calculateEstimatedFees } from "./utils";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { isFilEthAddress, validateAddress } from "./bridge/utils/addresses";
 import { fetchBalances, fetchEstimatedFees } from "./bridge/utils/api";
@@ -22,7 +22,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   let tokenAccountTxn: boolean = false;
   let subAccount: TokenAccount | undefined | null;
   const a = getMainAccount(account, parentAccount);
-  if (account.type === "TokenAccount") {
+  if (account.type === AccountType.TokenAccount) {
     tokenAccountTxn = true;
     subAccount = account;
   }

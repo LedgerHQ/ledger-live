@@ -2,8 +2,13 @@ import type { DeviceTransactionField } from "../../transaction";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
-import { getAccountUnit, methodToString } from "./utils";
-import { convertAddressFilToEthSync } from "./bridge/utils/addresses";
+import {
+  AccountType,
+  Methods,
+  expectedToFieldForTokenTransfer,
+  getAccountUnit,
+  methodToString,
+} from "./utils";
 
 export type ExtraDeviceTransactionField =
   | {
@@ -38,7 +43,7 @@ function getDeviceTransactionConfig(input: {
   transaction: Transaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
-  const tokenTransfer = input.account.type === "TokenAccount";
+  const tokenTransfer = input.account.type === AccountType.TokenAccount;
   const subAccount = tokenTransfer ? (input.account as TokenAccount) : null;
 
   const fields: Array<DeviceTransactionField> = [];
@@ -52,16 +57,7 @@ function getDeviceTransactionConfig(input: {
   };
 
   if (subAccount) {
-    const { recipient } = input.transaction;
-    const addrProtocol = recipient.substring(0, 2);
-    const ethAddr = convertAddressFilToEthSync(recipient);
-    let value;
-
-    if (addrProtocol === "f0") {
-      value = `${ethAddr} ${recipient}`;
-    } else {
-      value = ethAddr;
-    }
+    const value = expectedToFieldForTokenTransfer(input.transaction.recipient);
     fields.push({
       type: "filecoin.recipient",
       label: "To",
@@ -91,6 +87,14 @@ function getDeviceTransactionConfig(input: {
       type: "filecoin.method",
       label: "Method",
       value: methodToString(input.transaction.method),
+    });
+  }
+
+  if (subAccount) {
+    fields.push({
+      type: "filecoin.method",
+      label: "Method",
+      value: methodToString(Methods.ERC20Transfer),
     });
   }
 

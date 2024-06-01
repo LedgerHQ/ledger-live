@@ -1,9 +1,16 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { convertAddressFilToEthSync } from "./bridge/utils/addresses";
 
 export enum Methods {
   Transfer = 0,
+  ERC20Transfer = 1,
   InvokeEVM = 3844450837,
+}
+
+export enum AccountType {
+  Account = "Account",
+  TokenAccount = "TokenAccount",
 }
 
 export enum BotScenario {
@@ -36,6 +43,8 @@ export const methodToString = (method: number): string => {
       return "Transfer";
     case Methods.InvokeEVM:
       return "InvokeEVM (3844450837)";
+    case Methods.ERC20Transfer:
+      return "ERC20 Transfer";
     default:
       return "Unknown";
   }
@@ -52,9 +61,23 @@ export const calculateEstimatedFees = (gasFeeCap: BigNumber, gasLimit: BigNumber
   gasFeeCap.multipliedBy(gasLimit);
 
 export function getAccountUnit(account: AccountLike) {
-  if (account.type === "TokenAccount") {
+  if (account.type === AccountType.TokenAccount) {
     return account.token.units[0];
   }
 
   return account.currency.units[0];
 }
+
+export const expectedToFieldForTokenTransfer = (recipient: string) => {
+  const addrProtocol = recipient.substring(0, 2);
+  const ethAddr = convertAddressFilToEthSync(recipient);
+  let value;
+
+  if (addrProtocol === "f0") {
+    value = `${ethAddr} ${recipient}`;
+  } else {
+    value = ethAddr;
+  }
+
+  return value;
+};
