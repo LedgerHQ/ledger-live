@@ -1,9 +1,9 @@
-import { fetchMarketPerformers } from "../api/api";
-import { MarketItemPerformer, MarketItemResponse, MarketPerformersParams } from "../types";
-import { QUERY_KEY } from "./queryKeys";
+import { fetchMarketPerformers } from "../api";
+import { MarketItemPerformer, MarketItemResponse, MarketPerformersParams } from "../utils/types";
+import { QUERY_KEY } from "../utils/queryKeys";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { formatPerformer } from "../utils/currencyFormatter";
-import { REFETCH_TIME_ONE_MINUTE } from "./timers";
+import { REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
 
 export const useMarketPerformers = ({
   counterCurrency,

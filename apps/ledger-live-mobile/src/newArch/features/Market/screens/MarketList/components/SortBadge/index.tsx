@@ -1,9 +1,8 @@
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useState, useCallback, ReactNode } from "react";
 import { TouchableOpacity } from "react-native";
 import { Flex, Text, Icon as IconUI } from "@ledgerhq/native-ui";
-import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { StyledBadge, StyledCheckIconContainer } from "./SortBadge.styled";
 
 type Option = {
@@ -16,7 +15,7 @@ type Props = {
   label: string;
   valueLabel: string;
   value: unknown;
-  Icon?: IconType;
+  Icon?: ReactNode;
   options: Option[];
   disabled?: boolean;
   onChange: (_: MarketListRequestParams) => void;
@@ -39,11 +38,7 @@ function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange
           <Text fontWeight="semiBold" variant="body" color="primary.c80">
             {valueLabel}
           </Text>
-          {Icon ? (
-            <Flex ml={2}>
-              <Icon size={14} color="primary.c80" />
-            </Flex>
-          ) : null}
+          {Icon ? <Flex ml={2}>{Icon}</Flex> : null}
         </StyledBadge>
       </TouchableOpacity>
       <QueuedDrawer isRequestingToBeOpened={isDrawerOpen} onClose={closeDrawer} title={label}>

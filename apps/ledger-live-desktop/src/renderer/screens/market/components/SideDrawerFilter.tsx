@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { TFunction } from "i18next";
 import Dropdown from "./DropDown";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 
 export default function SideDrawerFilter({
   refresh,

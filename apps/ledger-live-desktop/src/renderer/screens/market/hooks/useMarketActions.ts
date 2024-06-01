@@ -1,4 +1,4 @@
-import { CurrencyData } from "@ledgerhq/live-common/market/types";
+import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";

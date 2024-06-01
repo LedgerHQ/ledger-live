@@ -2245,7 +2245,13 @@
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
-      "currencyPriceChange": "Last 24h change"
+      "currencyPriceChange": {
+        "day": "Last 24h change",
+        "week": "Last 7 days change",
+        "month": "Last 30 days change",
+        "year": "Last year change",
+        "all": "Last year change"
+      }
     },
     "quickActions": {
       "buy": "Buy",
@@ -6238,9 +6244,10 @@
       },
       "order": {
         "topGainers": "Top gainers",
-        "market_cap": "Rank",
-        "market_cap_asc": "Rank (Market cap) asc.",
-        "market_cap_desc": "Rank (Market cap) desc."
+        "topLosers": "Top losers",
+        "marketCap": "Rank",
+        "asc": "Rank (Market cap) asc.",
+        "desc": "Rank (Market cap) desc."
       },
       "currency": "Currency",
       "time": "Time",

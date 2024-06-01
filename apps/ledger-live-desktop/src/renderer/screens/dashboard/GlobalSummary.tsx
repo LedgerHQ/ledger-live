@@ -24,6 +24,11 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
     (val: number | string) => formatShort(counterValue.units[0], BigNumber(val)),
     [counterValue],
   );
+
+  const suggestedMin = Math.max(
+    portfolio.balanceHistory.reduce((a, b) => (b.value < a ? b.value : a), Infinity),
+    0,
+  );
   const dayFormatter = useDateFormatter(dayFormat);
   const hourFormatter = useDateFormatter(hourFormat);
   const renderTooltip = useCallback(
@@ -68,6 +73,7 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
             tickXScale={range}
             renderTickY={discreetMode ? () => "" : renderTickY}
             renderTooltip={renderTooltip}
+            suggestedMin={suggestedMin}
           />
         ) : (
           <PlaceholderChart

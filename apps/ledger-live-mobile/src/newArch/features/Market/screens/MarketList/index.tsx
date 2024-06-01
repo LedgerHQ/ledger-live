@@ -1,8 +1,8 @@
-import React, { useCallback, useContext } from "react";
+import React, { MutableRefObject, useCallback, useContext, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { Platform, RefreshControl } from "react-native";
+import { Platform, RefreshControl, ViewToken } from "react-native";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
-import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
@@ -16,6 +16,7 @@ import BottomSection from "./components/BottomSection";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketListViewModel from "./useMarketListViewModel";
+import { LIMIT } from "~/reducers/market";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
   CollapsibleHeaderFlatList<CurrencyData>,
@@ -28,29 +29,44 @@ const keyExtractor = (item: CurrencyData, index: number) => item.id + index;
 
 interface ViewProps {
   marketData?: CurrencyData[];
-  filterByStarredAccount: boolean;
+  filterByStarredCurrencies: boolean;
   starredMarketCoins: string[];
   search?: string;
   loading: boolean;
   refresh: (param?: MarketListRequestParams) => void;
   counterCurrency?: string;
   range?: string;
-  selectCurrency: (id?: string, data?: CurrencyData, range?: string) => void;
-  isLoading: boolean;
-  onEndReached: () => Promise<void> | undefined;
+  onEndReached?: () => void;
+  refetchData: (pageToRefetch: number) => void;
+  resetMarketPageToInital: (page: number) => void;
+  refreshRate: number;
+  marketParams: MarketListRequestParams;
+  marketCurrentPage: number;
+  viewabilityConfigCallbackPairs: MutableRefObject<
+    {
+      onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken[] }) => void;
+      viewabilityConfig: {
+        viewAreaCoveragePercentThreshold: number;
+      };
+    }[]
+  >;
 }
 function View({
   marketData,
-  filterByStarredAccount,
+  filterByStarredCurrencies,
   starredMarketCoins,
   search,
   loading,
   refresh,
   counterCurrency,
   range,
-  selectCurrency,
-  isLoading,
   onEndReached,
+  refreshRate,
+  marketCurrentPage,
+  refetchData,
+  viewabilityConfigCallbackPairs,
+  resetMarketPageToInital,
+  marketParams,
 }: ViewProps) {
   const { colors } = useTheme();
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
@@ -61,8 +77,7 @@ function View({
         search: "",
         starred: [],
         liveCompatible: false,
-        top100: false,
-        limit: 20,
+        limit: LIMIT,
       }),
     [refresh],
   );
@@ -79,6 +94,23 @@ function View({
     }, [setScreen, setSource]),
   );
 
+  /**
+   * Reset the page to 1 when the component mounts to only refetch first page
+   * */
+  useEffect(() => {
+    resetMarketPageToInital(marketParams.page ?? 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * Try to Refetch data every REFRESH_RATE time
+   */
+  useEffect(() => {
+    const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), refreshRate);
+
+    return () => clearInterval(intervalId);
+  }, [marketCurrentPage, refetchData, refreshRate]);
+
   const listProps = {
     contentContainerStyle: {
       paddingHorizontal: 16,
@@ -86,24 +118,20 @@ function View({
     },
     data: marketData,
     renderItem: ({ item, index }: { item: CurrencyData; index: number }) => (
-      <ListRow
-        item={item}
-        index={index}
-        counterCurrency={counterCurrency}
-        range={range}
-        selectCurrency={selectCurrency}
-      />
+      <ListRow item={item} index={index} counterCurrency={counterCurrency} range={range} />
     ),
     onEndReached,
+    maxToRenderPerBatch: 50,
     onEndReachedThreshold: 0.5,
     scrollEventThrottle: 50,
     initialNumToRender: 50,
     keyExtractor,
-    ListFooterComponent: <ListFooter isLoading={isLoading} />,
+    viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current,
+    ListFooterComponent: <ListFooter isLoading={loading} />,
     ListEmptyComponent: (
       <ListEmpty
         hasNoSearchResult={Boolean(marketData?.length === 0 && search && !loading)}
-        hasEmptyStarredCoins={filterByStarredAccount && starredMarketCoins.length <= 0}
+        hasEmptyStarredCoins={filterByStarredCurrencies && starredMarketCoins.length <= 0}
         search={search}
         resetSearch={resetSearch}
       />
