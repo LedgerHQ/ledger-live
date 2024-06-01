@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.11
+
+### Minor Changes
+
+- [#6428](https://github.com/LedgerHQ/ledger-live/pull/6428) [`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Usage of CVS v3 instead of V2 on Market part
+
+### Patch Changes
+
+- [#6428](https://github.com/LedgerHQ/ledger-live/pull/6428) [`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Reorg files
+
 ## 34.3.0-nightly.10
 
 ### Patch Changes

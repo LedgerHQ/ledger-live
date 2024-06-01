@@ -1,5 +1,16 @@
 # @ledgerhq/keyring-eth
 
+## 0.1.0-nightly.3
+
+### Minor Changes
+
+- [#6947](https://github.com/LedgerHQ/ledger-live/pull/6947) [`277cd01`](https://github.com/LedgerHQ/ledger-live/commit/277cd016c72b90a51dffad62b3660cbacc489c09) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add keyring-eth implementation
+
+### Patch Changes
+
+- Updated dependencies [[`9fddc34`](https://github.com/LedgerHQ/ledger-live/commit/9fddc34d9487e8647b3aed22d6f8c7bf905c50b8)]:
+  - @ledgerhq/context-module@0.0.2-nightly.1
+
 ## 0.0.2-nightly.2
 
 ### Patch Changes

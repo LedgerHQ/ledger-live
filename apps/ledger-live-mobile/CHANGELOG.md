@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.44.2-nightly.3
+
+### Patch Changes
+
+- [#6428](https://github.com/LedgerHQ/ledger-live/pull/6428) [`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Replace old MarketDataProvider with new implem and TanStackQuery
+
+- [#6428](https://github.com/LedgerHQ/ledger-live/pull/6428) [`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - New MArket Api usage
+
+- Updated dependencies [[`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de), [`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de)]:
+  - @ledgerhq/live-common@34.3.0-nightly.11
+
 ## 3.44.2-nightly.2
 
 ### Patch Changes

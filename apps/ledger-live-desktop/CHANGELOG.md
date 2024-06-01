@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.3
+
+### Patch Changes
+
+- [#6881](https://github.com/LedgerHQ/ledger-live/pull/6881) [`45710e2`](https://github.com/LedgerHQ/ledger-live/commit/45710e2990894810228a47958b6f40a86ff5eda1) Thanks [@dkaplan65](https://github.com/dkaplan65)! - Chart in global summary has scaled min
+
+- [#6428](https://github.com/LedgerHQ/ledger-live/pull/6428) [`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Replace old import with new paths
+
+- [#6428](https://github.com/LedgerHQ/ledger-live/pull/6428) [`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - New MArket API usage
+
+- Updated dependencies [[`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de), [`fa06306`](https://github.com/LedgerHQ/ledger-live/commit/fa0630606016cb93b28eca13d815af74c92b90de)]:
+  - @ledgerhq/live-common@34.3.0-nightly.11
+
 ## 2.82.0-nightly.2
 
 ### Minor Changes
