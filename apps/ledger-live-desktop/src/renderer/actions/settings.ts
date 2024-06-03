@@ -44,6 +44,10 @@ export const setNftsViewMode = (nftsViewMode: "list" | "grid" | undefined) =>
   saveSettings({
     nftsViewMode,
   });
+export const setCollectiblesViewMode = (collectiblesViewMode: "list" | "grid") =>
+  saveSettings({
+    collectiblesViewMode,
+  });
 export const setSelectedTimeRange = (selectedTimeRange: PortfolioRange) =>
   saveSettings({
     selectedTimeRange,
