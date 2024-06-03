@@ -7,7 +7,7 @@ import { describe, it, expect, jest } from "@jest/globals";
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { State } from "~/renderer/reducers";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 
 const WalletSyncTestApp = () => (
   <>
@@ -25,13 +25,13 @@ jest.mock(
 describe("ManageYourBackup", () => {
   it("should open drawer and display Wallet Sync Manage flow and delete your backup", async () => {
     const { user } = render(<WalletSyncTestApp />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
+      initialState: {
         walletSync: {
-          ...state.walletSync,
           activated: true,
+          flow: Flow.Activation,
+          step: Step.CreateOrSynchronizeStep,
         },
-      }),
+      },
     });
 
     //Open drawer
