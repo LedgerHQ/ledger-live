@@ -10,7 +10,7 @@ const currencies: Currency[] = [
   Currency.DOT,
   Currency.TRX,
   Currency.ADA,
-  Currency.XLM,
+  //Currency.XLM, //TODO: Reactivate when Date.Parse issue is fixed
   Currency.BCH,
   Currency.ALGO,
   Currency.ATOM,
