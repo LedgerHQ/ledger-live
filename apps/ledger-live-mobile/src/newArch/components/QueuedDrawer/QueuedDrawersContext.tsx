@@ -4,7 +4,7 @@ import React from "react";
  * A function to call when the drawer should be opened or closed.
  * @param opened Whether the drawer should be opened or closed.
  */
-export type SetDrawerOpenedCallback = (opened: boolean) => void;
+export type OnDrawerStateChangedCallback = (opened: boolean) => void;
 
 /**
  * An object that represents a drawer in the queue.
@@ -18,12 +18,12 @@ export type DrawerInQueue = {
 type QueuedDrawersContextType = {
   /**
    * Add a drawer to the queue.
-   * @param setDrawerOpenedCallback The callback to call when the drawer should be opened or closed.
+   * @param onDrawerStateChanged The callback to call when the drawer should be opened or closed.
    * @param force If true, the drawer will be opened immediately and all other drawers in the queue will be closed and removed from the queue.
    * @returns An object with methods to remove the drawer from the queue and get its position in the queue.
    */
   addDrawerToQueue: (
-    setDrawerOpenedCallback: SetDrawerOpenedCallback,
+    onDrawerStateChanged: OnDrawerStateChangedCallback,
     force: boolean,
   ) => DrawerInQueue;
 

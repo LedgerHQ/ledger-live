@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import {
-  SetDrawerOpenedCallback,
+  OnDrawerStateChangedCallback,
   QueuedDrawersContext,
   DrawerInQueue,
 } from "./QueuedDrawersContext";
@@ -9,7 +9,7 @@ import { logDrawer } from "./utils/logDrawer";
 
 type QueueItem = {
   id: string;
-  setDrawerOpenedCallback: SetDrawerOpenedCallback;
+  setDrawerOpenedCallback: OnDrawerStateChangedCallback;
   markedForClose?: boolean;
 };
 export type DrawersQueue = Array<QueueItem>;
@@ -22,7 +22,7 @@ const QueuedDrawersContextProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const addDrawerToQueue = useCallback(
-    (setDrawerOpenedCallback: SetDrawerOpenedCallback, force: boolean): DrawerInQueue => {
+    (setDrawerOpenedCallback: OnDrawerStateChangedCallback, force: boolean): DrawerInQueue => {
       logDrawer("addDrawerToQueue", { previousQueueLength: queueRef.current.length, force });
       const id = uuid();
       const newQueueItem: QueueItem = { id, setDrawerOpenedCallback };

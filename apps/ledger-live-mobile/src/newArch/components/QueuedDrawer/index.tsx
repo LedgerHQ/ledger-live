@@ -95,7 +95,7 @@ const QueuedDrawer = ({
       logDrawer("trigger close because not focused");
       triggerClose();
     } else if ((isRequestingToBeOpened || isForcingToBeOpened) && !drawerInQueueRef.current) {
-      const setDrawerOpenedCallback = (isOpen: boolean) => {
+      const onDrawerStateChanged = (isOpen: boolean) => {
         if (isOpen) {
           triggerOpen();
         } else {
@@ -103,7 +103,7 @@ const QueuedDrawer = ({
           triggerClose();
         }
       };
-      drawerInQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, isForcingToBeOpened);
+      drawerInQueueRef.current = addDrawerToQueue(onDrawerStateChanged, isForcingToBeOpened);
       return () => {
         logDrawer("trigger close in cleanup");
         triggerClose();
