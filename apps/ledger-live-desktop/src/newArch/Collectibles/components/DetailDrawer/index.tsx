@@ -6,8 +6,9 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { PositionProps, LayoutProps, SpaceProps, position, layout, space } from "styled-system";
 import { DetailDrawerProps } from "LLD/Collectibles/types/DetailDrawer";
-import { createCollectibleObject } from "../../utils/createCollectibleObject";
+import { createCollectibleObject } from "LLD/Collectibles/utils/createCollectibleObject";
 import { useTranslation } from "react-i18next";
+import { CollectibleTypeEnum } from "LLD/Collectibles/types/Collectibles";
 
 type ChildComponentProps = {
   children: ReactElement;
@@ -72,6 +73,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
   closeCollectiblesPanAndZoom,
   handleRequestClose,
 }) => {
+  const { t } = useTranslation();
   const { subtitle, ctas } = React.useMemo(() => {
     let subtitle, ctas;
 
@@ -98,7 +100,18 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
     closeCollectiblesPanAndZoom,
     setUseFallback,
   });
-  const { t } = useTranslation();
+
+  const tagTitle = () => {
+    switch (collectibleType) {
+      case CollectibleTypeEnum.NFT:
+        return t("NFT.viewer.attributes.properties");
+      case CollectibleTypeEnum.Ordinal:
+        return "To fill";
+      default:
+        return t("NFT.viewer.attributes.properties");
+    }
+  };
+
   const isPanAndZoomReady =
     isPanAndZoomOpen && tokenId && (previewUri || originalUri) && mediaType && contentType;
 
@@ -130,7 +143,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
           {ctas}
           <Tag
             tags={tags}
-            sectionTitle={t("NFT.viewer.attributes.properties")}
+            sectionTitle={tagTitle()}
             status={areFieldsLoading ? "loading" : "loaded"}
           />
           {details.map(({ key, value, title, isCopyable, isHash }, index) => (

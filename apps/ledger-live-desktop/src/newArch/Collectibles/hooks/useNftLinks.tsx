@@ -12,7 +12,6 @@ import { openURL } from "~/renderer/linking";
 import { getMetadataMediaTypes } from "~/helpers/nft";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import CustomImage from "~/renderer/screens/customImage";
-import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { ContextMenuItemType } from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { devicesModelListSelector } from "~/renderer/reducers/settings";
 import { safeList } from "LLD/Collectibles/utils/useSafeList";
@@ -98,7 +97,6 @@ export default (
   nft: ProtoNFT,
   metadata: NFTMetadata,
   onClose?: () => void,
-  isInsideDrawer?: boolean,
 ): ContextMenuItemType[] => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -147,31 +145,15 @@ export default (
       Icon: IconsLegacy.PhotographMedium,
       callback: () => {
         if (customImageUri)
-          setDrawer(
-            CustomImage,
-            {
-              imageUri: customImageUri,
-              deviceModelId: customImageDeviceModelId,
-              isFromNFTEntryPoint: true,
-              reopenPreviousDrawer: isInsideDrawer
-                ? () =>
-                    setDrawer(
-                      NFTViewerDrawer,
-                      {
-                        account,
-                        nftId: nft.id,
-                        isOpen: true,
-                      },
-                      { forceDisableFocusTrap: true },
-                    )
-                : undefined,
-            },
-            { forceDisableFocusTrap: true },
-          );
+          setDrawer(CustomImage, {
+            imageUri: customImageUri,
+            deviceModelId: customImageDeviceModelId,
+            isFromNFTEntryPoint: true,
+          });
       },
     };
     return img;
-  }, [account, customImageDeviceModelId, customImageUri, isInsideDrawer, nft.id, t]);
+  }, [customImageDeviceModelId, customImageUri, t]);
 
   const links = useMemo(() => {
     const metadataLinks = linksPerCurrency[account.currency.id]?.(t, metadata?.links) || [];

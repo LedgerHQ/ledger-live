@@ -41,7 +41,7 @@ const ExternalViewerButtonComponent: React.FC<ExternalViewerButtonProps> = ({
     history.replace(`/account/${account.id}/`);
   }, [account.id, history]);
 
-  const items = useNftLinks(account, nft, metadata, onHideCollection, true);
+  const items = useNftLinks(account, nft, metadata, onHideCollection);
 
   const renderItem = ({ item }: { item: Item }): ReactElement => {
     if (item.type === "separator") {
