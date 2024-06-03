@@ -10,7 +10,7 @@ const currencies: Currency[] = [
   Currency.DOT,
   Currency.TRX,
   Currency.ADA,
-  //Currency.XLM, //TODO: Reactivate when Date.Parse issue is fixed
+  //Currency.XLM, //TODO: Reactivate when Date.Parse issue is fixed - desactivate time machine for Speculos tests
   Currency.BCH,
   Currency.ALGO,
   Currency.ATOM,

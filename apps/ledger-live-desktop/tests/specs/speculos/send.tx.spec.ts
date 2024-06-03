@@ -16,7 +16,7 @@ const transactions = [
 for (const [i, transaction] of transactions.entries()) {
   test.describe.parallel("Send Approve @smoke", () => {
     test.use({
-      userdata: "speculos",
+      userdata: "speculos-tests-app",
       testName: `sendApprove_${transaction.accountToDebit.currency.uiName}`,
       speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,

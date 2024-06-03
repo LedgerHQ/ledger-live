@@ -20,7 +20,7 @@ const accounts: Account[] = [
 for (const [i, account] of accounts.entries()) {
   test.describe.skip("Receive @smoke", () => {
     test.use({
-      userdata: "speculos",
+      userdata: "speculos-tests-app",
       testName: `receiveSpeculos_${account.currency.uiName}`,
       speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,

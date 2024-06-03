@@ -3,7 +3,7 @@ import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
 
 test.use({
-  userdata: "speculos",
+  userdata: "speculos-tests-app",
   testName: "tokenERC20",
   speculosCurrency: specs["Ethereum".replace(/ /g, "_")],
   speculosOffset: 0,

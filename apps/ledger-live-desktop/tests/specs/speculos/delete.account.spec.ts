@@ -21,7 +21,7 @@ const accounts: Account[] = [
 for (const [i, account] of accounts.entries()) {
   test.describe.parallel("Accounts @smoke", () => {
     test.use({
-      userdata: "speculos",
+      userdata: "speculos-tests-app",
       testName: `deleteAccount_${account.currency.uiName}`,
       speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
