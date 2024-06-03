@@ -1,4 +1,7 @@
 import { PlaywrightTestConfig } from "@playwright/test";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const config: PlaywrightTestConfig = {
   projects: [
@@ -49,15 +52,15 @@ const config: PlaywrightTestConfig = {
         ["line"],
         ["allure-playwright"],
         [
-          "xray-playwright",
+          "./xrayPlaywright.ts",
           {
             jira: {
-              url: "https://your-jira-url", //Todo: find Ledger's Jira URL
+              url: "https://ledgerhq.atlassian.net/",
               type: "cloud",
               apiVersion: "1.0",
             },
             cloud: {
-              client_id: process.env.XRAY_CLIENT_ID, //Todo: Add Secrets on Github + ajout de l'env dans le workflow
+              client_id: process.env.XRAY_CLIENT_ID,
               client_secret: process.env.XRAY_CLIENT_SECRET,
             },
             projectKey: "B2CQA",
