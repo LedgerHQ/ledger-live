@@ -296,6 +296,7 @@ const SwapWebView = ({
           onStateChange={onStateChange}
           ref={webviewAPIRef}
           customHandlers={customHandlers as never}
+          hideLoader
         />
       </SwapWebAppWrapper>
     </>
