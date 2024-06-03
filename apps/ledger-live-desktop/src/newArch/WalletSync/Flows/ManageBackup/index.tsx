@@ -6,11 +6,14 @@ import { BackProps, BackRef } from "../router";
 import ManageBackupStep from "./01-ManageBackupStep";
 import DeleteBackupStep from "./02-DeleteBackupStep";
 import BackupDeleted from "./03-FinalStep";
+import { useBackup } from "./useBackup";
 
 const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => {
   const { currentStep, goToNextScene, goToPreviousScene, FlowOptions, resetFlows } = useFlows({
     flow: Flow.ManageBackups,
   });
+
+  const { deleteBackup } = useBackup();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
@@ -31,8 +34,9 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
     goToNextScene();
   };
 
-  const deleteBackup = () => {
+  const deleteBackupAction = () => {
     goToNextScene();
+    deleteBackup();
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -46,7 +50,7 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
       case Step.ManageBackupStep:
         return <ManageBackupStep goToDeleteBackup={goToDeleteData} />;
       case Step.DeleteBackupStep:
-        return <DeleteBackupStep cancel={goBack} deleteBackup={deleteBackup} />;
+        return <DeleteBackupStep cancel={goBack} deleteBackup={deleteBackupAction} />;
       case Step.BackupDeleted:
         return <BackupDeleted isLoading={isLoading} isSuccessful={isSuccessful} />;
     }

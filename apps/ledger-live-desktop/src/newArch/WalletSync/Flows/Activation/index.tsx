@@ -8,15 +8,21 @@ import { useFlows } from "../useFlows";
 import CreateOrSynchronizeStep from "./01-CreateOrSynchronizeStep";
 import DeviceActionStep from "./02-DeviceActionStep";
 import ActivationFinalStep from "./03-ActivationFinalStep";
+import { useBackup } from "../ManageBackup/useBackup";
 
 const WalletSyncActivation = () => {
   const dispatch = useDispatch();
-  const HAS_BACKUP = false;
+  const { hasBackup, createBackup } = useBackup();
 
   const { currentStep, goToNextScene } = useFlows({ flow: Flow.Activation });
 
   const goToSync = () => {
     dispatch(setFlow(Flow.Synchronize));
+  };
+
+  const createNewBackup = () => {
+    createBackup();
+    goToNextScene();
   };
 
   const getStep = () => {
@@ -25,9 +31,9 @@ const WalletSyncActivation = () => {
       case Step.CreateOrSynchronizeStep:
         return <CreateOrSynchronizeStep goToCreateBackup={goToNextScene} goToSync={goToSync} />;
       case Step.DeviceActionStep:
-        return <DeviceActionStep goNext={goToNextScene} />;
+        return <DeviceActionStep goNext={createNewBackup} />;
       case Step.ActivationFinalStep:
-        return <ActivationFinalStep hasBackup={HAS_BACKUP} />;
+        return <ActivationFinalStep hasBackup={hasBackup} />;
     }
   };
 
