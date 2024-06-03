@@ -360,7 +360,10 @@ const SwapForm = () => {
       redirectToProviderApp(provider);
     } else {
       // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
-      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
+      // FIX LIVE-11283, Do not do this for polkadot as it is required to have transferAllowDeath set checked
+      swapTransaction.transaction && swapTransaction.transaction.family !== "polkadot"
+        ? (swapTransaction.transaction.useAllAmount = false)
+        : null;
       // Fix LIVE-11660, remove the margin from thec fees
       swapTransaction.transaction && swapTransaction.transaction.family === "evm"
         ? (swapTransaction.transaction.additionalFees = undefined)
