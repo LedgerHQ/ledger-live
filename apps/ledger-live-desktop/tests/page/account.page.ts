@@ -87,7 +87,7 @@ export class AccountPage extends AppPage {
 
   @step("Expect account to be not null")
   async expectAccountBalance() {
-    await expect(this.accountBalance).toBeTruthy();
+    expect(this.accountBalance).toBeTruthy();
   }
 
   @step("Expect `Last operations` to be visible")
