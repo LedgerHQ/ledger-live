@@ -5,6 +5,7 @@ import {
   usePageState,
   useSwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
@@ -36,8 +37,11 @@ import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import EmptyState from "./Rates/EmptyState";
-import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
-import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
+import SwapWebView, {
+  SwapWebManifestIDs,
+  SwapWebProps,
+  useSwapLiveAppManifestID,
+} from "./SwapWebView";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -81,11 +85,13 @@ const SwapForm = () => {
     },
     [swapDefaultTrack],
   );
+  const swapLiveAppManifestID = useSwapLiveAppManifestID();
 
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
     onNoRates,
+    isEnabled: !swapLiveAppManifestID?.startsWith(SwapWebManifestIDs.Demo1),
     ...(locationState as object),
   });
 
@@ -165,6 +171,7 @@ const SwapForm = () => {
     swapTransaction.swap.from.account?.id,
     swapTransaction.swap.to.currency?.id,
     swapTransaction.swap.to.account?.id,
+    swapTransaction.swap.from.amount,
     exchangeRate?.providerType,
     exchangeRate?.tradeMethod,
     exchangeRate?.providerURL,
@@ -400,9 +407,12 @@ const SwapForm = () => {
     swapTransaction.setFromAccount(account);
   };
 
-  const setFromAmount = (amount: BigNumber) => {
-    swapTransaction.setFromAmount(amount);
-  };
+  const setFromAmount = useCallback(
+    (amount: BigNumber) => {
+      swapTransaction.setFromAmount(amount);
+    },
+    [swapTransaction],
+  );
 
   const setToCurrency = (currency: TokenCurrency | CryptoCurrency | undefined) => {
     swapTransaction.setToCurrency(currency);
@@ -417,7 +427,6 @@ const SwapForm = () => {
     swapTransaction.reverseSwap();
   };
 
-  const swapLiveAppManifestID = useSwapLiveAppManifestID();
   const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
   const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
 
