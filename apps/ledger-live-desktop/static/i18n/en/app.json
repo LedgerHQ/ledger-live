@@ -6318,6 +6318,13 @@
       "description": "Please try again later.",
       "cta": "Try again"
     },
+    "unsecuredError": {
+      "title": "The synchronization isn't secured by this Ledger",
+      "description": "Please connect the Ledger used to create the backup or a Ledger securing your backup to continue.",
+      "info": "If you lost your Ledger, don't worry! You can still delete your backup, this will both delete your data and unsync all currently synchronized instances.",
+      "cta": "Try Connecting another Ledger",
+      "ctaDelete": "Delete backup"
+    },
     "success": {
       "backup": {
         "title": "Backup successful",
