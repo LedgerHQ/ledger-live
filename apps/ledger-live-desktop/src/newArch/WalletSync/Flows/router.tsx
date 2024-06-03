@@ -6,8 +6,8 @@ import {
   walletSyncFlowSelector,
   walletSyncSelector,
 } from "~/renderer/reducers/walletSync";
-import WalletSyncActivation from "~/newArch/WalletSync/Flows/Activation";
-import WalletSyncManage from "~/newArch/WalletSync/Flows/Manage";
+import WalletSyncActivation from "LLD/WalletSync/Flows/Activation";
+import WalletSyncManage from "LLD/WalletSync/Flows/Manage";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import Synch from "./Synch";
 import WalletSyncManageBackups from "./ManageBackup";
