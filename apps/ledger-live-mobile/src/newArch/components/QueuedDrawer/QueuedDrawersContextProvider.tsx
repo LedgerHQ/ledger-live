@@ -1,12 +1,11 @@
 import React, { useCallback, useMemo, useRef } from "react";
 import { v4 as uuid } from "uuid";
-import { log } from "@ledgerhq/logs";
-import { getEnv } from "@ledgerhq/live-env";
 import {
   SetDrawerOpenedCallback,
   QueuedDrawersContext,
   DrawerInQueue,
 } from "./QueuedDrawersContext";
+import { logDrawer } from "./utils/logDrawer";
 
 type QueueItem = {
   id: string;
@@ -14,14 +13,6 @@ type QueueItem = {
   markedForClose?: boolean;
 };
 export type DrawersQueue = Array<QueueItem>;
-
-export function logDrawer(
-  message: string | number,
-  data?: Record<string, unknown> | number | string,
-) {
-  if (getEnv("LOG_DRAWERS"))
-    log("QueuedDrawer", typeof message === "number" ? message.toString() : message, data);
-}
 
 const QueuedDrawersContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queueRef = useRef<DrawersQueue>([]);
