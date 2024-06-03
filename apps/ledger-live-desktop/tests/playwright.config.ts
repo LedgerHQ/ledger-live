@@ -48,6 +48,23 @@ const config: PlaywrightTestConfig = {
         ["github"],
         ["line"],
         ["allure-playwright"],
+        [
+          "xray-playwright",
+          {
+            jira: {
+              url: "https://your-jira-url", //Todo: find Ledger's Jira URL
+              type: "cloud",
+              apiVersion: "1.0",
+            },
+            cloud: {
+              client_id: process.env.XRAY_CLIENT_ID, //Todo: Add Secrets on Github + ajout de l'env dans le workflow
+              client_secret: process.env.XRAY_CLIENT_SECRET,
+            },
+            projectKey: "B2CQA",
+            testPlan: "JIRA_CODEXXXXX",
+            debug: false,
+          },
+        ],
       ]
     : [["allure-playwright"]],
 };
