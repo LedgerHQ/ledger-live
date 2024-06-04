@@ -137,7 +137,10 @@ function AppSetTrustchainAPIEnv() {
 
 function AppMockEnv() {
   const mockEnv = useEnv("MOCK");
-  const action = useCallback((mockEnv: string) => (mockEnv ? "" : "1"), []);
+  const action = useCallback(
+    (mockEnv: string) => (mockEnv ? "" : Math.random().toString().slice(2)),
+    [],
+  );
   return (
     <Actionable
       buttonTitle="Toggle Mock Env"
@@ -145,7 +148,7 @@ function AppMockEnv() {
       action={action}
       value={mockEnv}
       setValue={v => setEnv("MOCK", v || "")}
-      valueDisplay={v => "MOCK ENV: " + Boolean(v)}
+      valueDisplay={v => "MOCK ENV: " + (v || "(unset)")}
     />
   );
 }
@@ -356,7 +359,7 @@ function AppMemberRow({
       value={member}
       valueDisplay={member => (
         <>
-          <code>member.id</code> <strong>{member.name}</strong>
+          <code>{member.id}</code> <strong>{member.name}</strong>
         </>
       )}
     />
@@ -466,7 +469,7 @@ function AppQRCodeCandidate({ liveCredentials }: { liveCredentials: LiveCredenti
       return createQRCodeCandidateInstance({
         liveCredentials,
         scannedUrl,
-        memberName: "web-tools",
+        memberName: "web-tools-" + liveCredentials.pubkey.slice(-5),
         onRequestQRCodeInput,
       })
         .then(() => true)

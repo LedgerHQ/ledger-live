@@ -85,6 +85,7 @@ export interface TrustchainSDK {
     seedIdToken: JWT,
     trustchain: Trustchain,
     liveInstanceCredentials: LiveCredentials,
+    // can we only take pubkey (member.id) here? (to confirm)
     member: TrustchainMember,
   ): Promise<Trustchain>;
 
@@ -95,6 +96,7 @@ export interface TrustchainSDK {
     liveJWT: JWT,
     trustchain: Trustchain,
     liveInstanceCredentials: LiveCredentials,
+    // TODO: can we simplify this to just a name if member.id == liveInstanctCredentials.pubkey ? (to confirm)
     member: TrustchainMember,
   ): Promise<Trustchain>;
 
