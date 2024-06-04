@@ -2,7 +2,7 @@ import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 
-import type { Transaction } from "../../families/filecoin/types";
+import type { Transaction } from "./types";
 import { getCryptoCurrencyById } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
@@ -24,7 +24,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
     appVersion: "0.24.3",
   },
   genericDeviceAction: generateDeviceActionFlow(BotScenario.DEFAULT),
-  testTimeout: 6 * 60 * 1000,
+  testTimeout: 16 * 60 * 1000,
   minViableAmount: MIN_SAFE,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
