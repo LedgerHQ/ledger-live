@@ -22,7 +22,7 @@ const Body = styled.div`
 `;
 
 const Title = styled.div`
-  color: white;
+  color: ${p => p.theme.colors.neutral.c100};
   font-weight: 600;
   font-size: 14px;
 
