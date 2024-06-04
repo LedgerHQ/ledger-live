@@ -2,10 +2,11 @@ import React, { memo, ReactNode } from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import useLayout from "LLD/Collectibles/hooks/useLayout";
+import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
 
 const Container = styled(Box).attrs<{
-  mode?: "grid" | "list";
-}>({})<{ mode: "grid" | "list" }>`
+  mode?: Layout;
+}>({})<{ mode: LayoutKey }>`
   display: ${p => (p.mode === "list" ? "flex" : "grid")};
   grid-gap: ${p => (p.mode === "list" ? 10 : 18)}px;
   grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));

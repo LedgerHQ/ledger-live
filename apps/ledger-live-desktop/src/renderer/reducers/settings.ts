@@ -29,6 +29,7 @@ import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
+import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
 
 /* Initial state */
 
@@ -72,7 +73,7 @@ export type SettingsState = {
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
   nftsViewMode: "grid" | "list";
-  collectiblesViewMode: "grid" | "list";
+  collectiblesViewMode: LayoutKey;
   showAccountsHelperBanner: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
@@ -159,7 +160,7 @@ export const INITIAL_STATE: SettingsState = {
   dismissedBanners: [],
   accountsViewMode: "list",
   nftsViewMode: "list",
-  collectiblesViewMode: "list",
+  collectiblesViewMode: Layout.LIST,
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),

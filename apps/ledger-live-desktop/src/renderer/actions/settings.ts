@@ -24,6 +24,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
+import { Layout } from "LLD/Collectibles/types/Layouts";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -44,7 +45,7 @@ export const setNftsViewMode = (nftsViewMode: "list" | "grid" | undefined) =>
   saveSettings({
     nftsViewMode,
   });
-export const setCollectiblesViewMode = (collectiblesViewMode: "list" | "grid") =>
+export const setCollectiblesViewMode = (collectiblesViewMode: Layout) =>
   saveSettings({
     collectiblesViewMode,
   });

@@ -5,7 +5,7 @@ import Button from "~/renderer/components/Button";
 import GridIcon from "~/renderer/icons/Grid";
 import ListIcon from "~/renderer/icons/List";
 import useLayout from "LLD/Collectibles/hooks/useLayout";
-import { LayoutsEnum, LayoutKey } from "LLD/Collectibles/types/Layouts";
+import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
 
 const ToggleButton = styled(Button).attrs<{
   active?: boolean;
@@ -25,17 +25,10 @@ const TableLayoutToggleComponent: React.FC = () => {
 
   return (
     <Card horizontal justifyContent="flex-end" p={3} mb={3}>
-      <ToggleButton
-        mr={1}
-        active={isActive(LayoutsEnum.LIST)}
-        onClick={() => setViewMode(LayoutsEnum.LIST)}
-      >
+      <ToggleButton mr={1} active={isActive(Layout.LIST)} onClick={() => setViewMode(Layout.LIST)}>
         <ListIcon />
       </ToggleButton>
-      <ToggleButton
-        active={isActive(LayoutsEnum.GRID)}
-        onClick={() => setViewMode(LayoutsEnum.GRID)}
-      >
+      <ToggleButton active={isActive(Layout.GRID)} onClick={() => setViewMode(Layout.GRID)}>
         <GridIcon />
       </ToggleButton>
     </Card>
