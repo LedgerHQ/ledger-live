@@ -92,6 +92,17 @@ class MockSDK implements TrustchainSDK {
     void member;
     return Promise.resolve(mockedTrustchain);
   }
+
+  encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
+    void trustchain;
+    void obj;
+    return Promise.resolve(new Uint8Array());
+  }
+  decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object> {
+    void trustchain;
+    void data;
+    return Promise.resolve({});
+  }
 }
 
 export const mockSdk = new MockSDK();
