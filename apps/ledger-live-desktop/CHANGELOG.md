@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.4
+
+### Patch Changes
+
+- [#6987](https://github.com/LedgerHQ/ledger-live/pull/6987) [`dc409f0`](https://github.com/LedgerHQ/ledger-live/commit/dc409f00cb3b4bfde1b659a2f5fabd6c7c8fee70) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [swap] disabled the call to /rates endpoint in LL when Demo1 FF is ON
+
+- Updated dependencies [[`dc409f0`](https://github.com/LedgerHQ/ledger-live/commit/dc409f00cb3b4bfde1b659a2f5fabd6c7c8fee70)]:
+  - @ledgerhq/live-common@34.3.0-nightly.12
+
 ## 2.82.0-nightly.3
 
 ### Patch Changes
