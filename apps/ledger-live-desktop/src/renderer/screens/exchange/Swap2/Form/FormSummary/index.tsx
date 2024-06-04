@@ -1,4 +1,5 @@
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import React from "react";
 import styled from "styled-components";
 import SectionFees from "./SectionFees";
@@ -51,6 +52,7 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
   const { currency: toCurrency, account: toAccount } = swapTransaction.swap.to;
   const ratesState = swapTransaction.swap.rates;
   const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0;
+  const demo1 = useFeature("ptxSwapLiveAppDemoOne");
 
   return (
     <Form ready={!!hasRates}>
@@ -61,17 +63,19 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
         targetAccounts={targetAccounts}
         hasRates={!!hasRates}
       />
-      <SectionFees
-        transaction={transaction}
-        account={fromAccount}
-        parentAccount={fromParentAccount}
-        currency={fromCurrency}
-        status={status}
-        updateTransaction={updateTransaction}
-        setTransaction={setTransaction}
-        provider={provider}
-        hasRates={!!hasRates}
-      />
+      {!demo1?.enabled && (
+        <SectionFees
+          transaction={transaction}
+          account={fromAccount}
+          parentAccount={fromParentAccount}
+          currency={fromCurrency}
+          status={status}
+          updateTransaction={updateTransaction}
+          setTransaction={setTransaction}
+          provider={provider}
+          hasRates={!!hasRates}
+        />
+      )}
     </Form>
   );
 };

@@ -1,6 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { TermsModal } from "../../models/TermsModal";
+import { TermsModal } from "../../page/modal/terms.modal";
 
 test.use({ userdata: "skip-onboarding-with-terms" });
 

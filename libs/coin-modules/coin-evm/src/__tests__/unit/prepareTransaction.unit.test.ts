@@ -577,7 +577,7 @@ describe("EVM Family", () => {
           it("should call getFeeData once", async () => {
             const tx = await prepareTransaction(account, {
               ...transaction,
-              gasOptions: undefined,
+              gasOptions: undefined as any,
             });
 
             expect(nodeApi.getFeeData).toBeCalledTimes(1);

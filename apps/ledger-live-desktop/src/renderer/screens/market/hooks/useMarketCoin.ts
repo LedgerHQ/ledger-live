@@ -1,25 +1,26 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
-import { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import {
   useCurrencyChartData,
   useCurrencyData,
   useMarketDataProvider,
-} from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { Page, useMarketActions } from "./useMarketActions";
+import { useCallback } from "react";
+import { useParams } from "react-router";
 import { setMarketOptions } from "~/renderer/actions/market";
-import { marketParamsSelector } from "~/renderer/reducers/market";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
+import { marketParamsSelector } from "~/renderer/reducers/market";
+import { starredMarketCoinsSelector, localeSelector } from "~/renderer/reducers/settings";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);
   const { colors } = useTheme();
   const dispatch = useDispatch();
   const { currencyId } = useParams<{ currencyId: string }>();
-
+  const { data: currenciesAll } = useFetchCurrencyAll();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
 
@@ -34,21 +35,18 @@ export const useMarketCoin = () => {
     range,
   });
 
-  const { currencyData, currencyInfo } = useCurrencyData({
+  const { data: currency, isLoading } = useCurrencyData({
     counterCurrency,
     id: currencyId,
-    range,
   });
-
-  const currency = useMemo(() => currencyInfo?.data, [currencyInfo]);
-  const isLoadingCurrency = useMemo(() => currencyInfo?.isLoading, [currencyInfo]);
 
   const { id, internalCurrency } = currency || {};
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnStake, availableOnSwap } =
     useMarketActions({
-      currency,
+      currency: currency,
       page: Page.MarketCoin,
+      currenciesAll,
     });
 
   const color = internalCurrency
@@ -94,11 +92,9 @@ export const useMarketCoin = () => {
     onSwap,
     toggleStar,
     color,
-    dataCurrency: currencyData.data,
     dataChart: resCurrencyChartData.data,
     isLoadingDataChart: resCurrencyChartData.isLoading,
-    isLoadingData: currencyData.isLoading,
-    isLoadingCurrency,
+    isLoadingCurrency: isLoading,
     changeRange,
     range,
     counterCurrency,

@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.44.1
+
+### Patch Changes
+
+- Updated dependencies [[`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1)]:
+  - @ledgerhq/ethereum-provider@0.2.1
+
+## 3.44.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1)]:
+  - @ledgerhq/ethereum-provider@0.2.1-hotfix.0
+
 ## 3.44.0
 
 ### Minor Changes

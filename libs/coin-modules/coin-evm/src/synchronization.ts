@@ -33,7 +33,7 @@ export const SAFE_REORG_THRESHOLD = 80;
  * Main synchronization process
  * Get the main Account and the potential TokenAccounts linked to it
  */
-export const getAccountShape: GetAccountShape = async (infos, { blacklistedTokenIds }) => {
+export const getAccountShape: GetAccountShape<Account> = async (infos, { blacklistedTokenIds }) => {
   const { initialAccount, address, derivationMode, currency } = infos;
   const nodeApi = getNodeApi(currency);
   const [latestBlock, balance] = await Promise.all([
@@ -141,7 +141,7 @@ export const getAccountShape: GetAccountShape = async (infos, { blacklistedToken
  * Getting all token related operations in order to provide TokenAccounts
  */
 export const getSubAccounts = async (
-  infos: AccountShapeInfo,
+  infos: AccountShapeInfo<Account>,
   accountId: string,
   lastTokenOperations: Operation[],
   blacklistedTokenIds: string[] = [],
@@ -281,27 +281,29 @@ export const postSync = (initial: Account, synced: Account): Account => {
   for (const op of pendingOperations) {
     coinPendingOperationsHashes.add(op.hash);
   }
+
   return {
     ...synced,
     pendingOperations,
-    subAccounts: synced.subAccounts?.map(subAccount => {
-      // If the subAccount is new, just return the freshly synced subAccount
-      if (!initialSubAccountsIds.has(subAccount.id)) return subAccount;
+    subAccounts:
+      synced.subAccounts?.map(subAccount => {
+        // If the subAccount is new, just return the freshly synced subAccount
+        if (!initialSubAccountsIds.has(subAccount.id)) return subAccount;
 
-      return {
-        ...subAccount,
-        pendingOperations: subAccount.pendingOperations.filter(
-          tokenPendingOperation =>
-            // if the pending operation got removed from the main account, remove it as well
-            coinPendingOperationsHashes.has(tokenPendingOperation.hash) &&
-            // if the transaction has been confirmed, remove it
-            !subAccount.operations.some(op => op.hash === tokenPendingOperation.hash) &&
-            // if the nonce is still lower than the last one in operations, keep it
-            tokenPendingOperation.transactionSequenceNumber !== undefined &&
-            tokenPendingOperation.transactionSequenceNumber > latestNonce,
-        ),
-      };
-    }),
+        return {
+          ...subAccount,
+          pendingOperations: subAccount.pendingOperations.filter(
+            tokenPendingOperation =>
+              // if the pending operation got removed from the main account, remove it as well
+              coinPendingOperationsHashes.has(tokenPendingOperation.hash) &&
+              // if the transaction has been confirmed, remove it
+              !subAccount.operations.some(op => op.hash === tokenPendingOperation.hash) &&
+              // if the nonce is still lower than the last one in operations, keep it
+              tokenPendingOperation.transactionSequenceNumber !== undefined &&
+              tokenPendingOperation.transactionSequenceNumber > latestNonce,
+          ),
+        };
+      }) || [],
   };
 };
 

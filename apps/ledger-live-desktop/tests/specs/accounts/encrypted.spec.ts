@@ -1,8 +1,8 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { AccountsPage } from "../../models/AccountsPage";
-import { Layout } from "../../models/Layout";
-import { LockscreenPage } from "tests/models/LockscreenPage";
+import { AccountsPage } from "../../page/accounts.page";
+import { Layout } from "../../component/layout.component";
+import { LockscreenPage } from "tests/page/lockscreen.page";
 
 test.use({ userdata: "1AccountBTC1AccountETH-encrypted" });
 

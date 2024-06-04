@@ -39849,13 +39849,7 @@
                 }
               ],
               "pendingOperations": [],
-              "swapHistory": [],
-              "approvals": [
-                {
-                  "sender": "0xf4684eb75659bec9c3c3b19f075a6fd5aba34b87",
-                  "value": "31000000000000000000"
-                }
-              ]
+              "swapHistory": []
             },
             {
               "type": "TokenAccountRaw",
@@ -44346,8 +44340,7 @@
                 }
               ],
               "pendingOperations": [],
-              "swapHistory": [],
-              "approvals": []
+              "swapHistory": []
             }
           ],
           "swapHistory": []

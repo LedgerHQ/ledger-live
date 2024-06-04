@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js";
-import { OnNoRatesCallback, RatesReducerState, SwapSelectorStateType } from "../../types";
-import { useFetchRates } from "./useFetchRates";
-import { SetExchangeRateCallback } from "../useSwapTransaction";
-import { useFeature } from "../../../../featureFlags";
 import { useCallback, useEffect } from "react";
 import { useCountdown } from "usehooks-ts";
+import { useFeature } from "../../../../featureFlags";
 import { DEFAULT_SWAP_RATES_INTERVAL_MS } from "../../const/timeout";
+import { OnNoRatesCallback, RatesReducerState, SwapSelectorStateType } from "../../types";
+import { SetExchangeRateCallback } from "../useSwapTransaction";
+import { useFetchRates } from "./useFetchRates";
 
 type Props = {
   fromState: SwapSelectorStateType;
@@ -14,6 +14,7 @@ type Props = {
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
   countdown?: number;
   allowRefresh?: boolean;
+  isEnabled?: boolean;
 };
 
 export type UseProviderRatesResponse = {
@@ -29,6 +30,7 @@ export function useProviderRates({
   onNoRates,
   setExchangeRate,
   allowRefresh = true,
+  isEnabled = true,
   ...props
 }: Props): UseProviderRatesResponse {
   const [countdown, { startCountdown, resetCountdown, stopCountdown }] = useCountdown({
@@ -59,6 +61,7 @@ export function useProviderRates({
         setExchangeRate?.(rates[0]);
       }
     },
+    isEnabled,
   });
 
   useEffect(() => {

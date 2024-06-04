@@ -87,7 +87,7 @@ describe("EVM Family", () => {
               ...getAccountShapeParameters,
               currency: {
                 ...currency,
-                ethereumLikeInfo: undefined,
+                ethereumLikeInfo: undefined as any,
               },
             },
             {} as any,

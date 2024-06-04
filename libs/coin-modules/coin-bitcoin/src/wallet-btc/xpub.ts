@@ -185,7 +185,7 @@ class Xpub {
     changeAddress: Address;
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
-    opReturnData?: Buffer;
+    opReturnData?: Buffer | undefined;
   }): Promise<TransactionInfo> {
     const outputs: OutputInfo[] = [];
 

@@ -1,6 +1,6 @@
-import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
+import type { Account } from "@ledgerhq/types-live";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getEstimatedFees } from "../utils";
 
 // Balance is 1 Hbar

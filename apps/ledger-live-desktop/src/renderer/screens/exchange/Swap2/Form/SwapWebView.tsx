@@ -207,6 +207,7 @@ const SwapWebView = ({
     const searchParams = new URLSearchParams();
 
     const swapParams = {
+      provider: swapState?.provider,
       from: sourceCurrencyId,
       to: targetCurrencyId,
       amountFrom: swapState?.fromAmount,
@@ -230,6 +231,7 @@ const SwapWebView = ({
     fromCurrency,
     swapState?.estimatedFees,
     swapState?.fromAmount,
+    swapState?.provider,
     targetCurrencyId,
     sourceCurrencyId,
   ]);
@@ -294,6 +296,7 @@ const SwapWebView = ({
           onStateChange={onStateChange}
           ref={webviewAPIRef}
           customHandlers={customHandlers as never}
+          hideLoader
         />
       </SwapWebAppWrapper>
     </>

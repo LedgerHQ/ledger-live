@@ -45,6 +45,7 @@ export async function getSettings(): Promise<Partial<SettingsState>> {
 export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
   await store.save("settings", obj);
 }
+
 export async function getWCSession(): Promise<unknown> {
   const wcsession = await store.get("wcsession");
   return wcsession;

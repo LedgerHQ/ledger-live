@@ -1,5 +1,5 @@
 import { Observable, of } from "rxjs";
-import { LockedDeviceError, TransportPendingOperation } from "@ledgerhq/errors";
+import { LockedDeviceError, TransportRaceCondition } from "@ledgerhq/errors";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 import { getDeviceInfoTask, internalGetDeviceInfoTask } from "../tasks/getDeviceInfo";
@@ -249,9 +249,9 @@ describe("getLatestAvailableFirmwareAction", () => {
         new Observable(o => {
           if (count < 1) {
             count++;
-            // Mocks the internal task, some shared error are thrown (like `TransportPendingOperation`)
+            // Mocks the internal task, some shared error are thrown (like `TransportRaceCondition`)
             // and caught by the `sharedLogicTaskWrapper`
-            o.error(new TransportPendingOperation());
+            o.error(new TransportRaceCondition());
           } else {
             o.next({ type: "data", deviceInfo: aDeviceInfo });
           }
@@ -291,7 +291,7 @@ describe("getLatestAvailableFirmwareAction", () => {
                 expect(error).toEqual(
                   expect.objectContaining({
                     type: "SharedError",
-                    name: "TransportPendingOperation",
+                    name: "TransportRaceCondition",
                     retrying: true,
                   }),
                 );

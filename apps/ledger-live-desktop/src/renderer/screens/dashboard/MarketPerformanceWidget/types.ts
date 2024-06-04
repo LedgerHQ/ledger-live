@@ -1,4 +1,4 @@
-import { MarketItemPerformer } from "@ledgerhq/live-common/market/types";
+import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { ABTestingVariants, PortfolioRange } from "@ledgerhq/types-live";
 import { Dispatch, SetStateAction } from "react";
 

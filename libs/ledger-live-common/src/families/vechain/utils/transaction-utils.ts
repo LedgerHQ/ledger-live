@@ -9,7 +9,7 @@ import { query } from "../api/sdk";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction, TransactionInfo } from "../types";
 import { isValid } from "./address-utils";
-import { calculateClausesVet, calculateClausesVtho } from "../js-transaction";
+import { calculateClausesVet, calculateClausesVtho } from "../logic";
 import { ImpossibleToCalculateAmountAndFees } from "../errors";
 
 const GAS_COEFFICIENT = 15000;

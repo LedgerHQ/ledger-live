@@ -1,6 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
+import { Layout } from "../../component/layout.component";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({

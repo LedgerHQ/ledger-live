@@ -1,9 +1,9 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { DiscoverPage } from "../../models/DiscoverPage";
-import { Layout } from "../../models/Layout";
-import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
+import { DiscoverPage } from "../../page/discover.page";
+import { Layout } from "../../component/layout.component";
+import { Drawer } from "../../page/drawer/drawer";
+import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
@@ -355,6 +355,22 @@ test("Wallet API methods @smoke", async ({ page }) => {
         ],
       },
     });
+  });
+
+  await test.step("currency.list should stay stable for CryptoCurrency", async () => {
+    const id = randomUUID();
+    const response = await liveAppWebview.send({
+      jsonrpc: "2.0",
+      id,
+      method: "currency.list",
+    });
+
+    // We remove TokenCurrency because they might change a lot more frequently and we really care if a family disappear
+    const currencies = response.result.currencies.filter(
+      (currency: { type: string }) => currency.type === "CryptoCurrency",
+    );
+
+    expect(JSON.stringify(currencies, null, 2)).toMatchSnapshot("wallet-api-currencies.json");
   });
 
   await test.step("storage", async () => {

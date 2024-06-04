@@ -1,11 +1,11 @@
 import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import {
   useMarketDataProvider,
   useMarketData as useMarketDataHook,
-} from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,7 @@ import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/redu
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 export function useMarket() {
   const lldRefreshMarketDataFeature = useFeature("lldRefreshMarketData");
@@ -25,27 +26,27 @@ export function useMarket() {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
 
-  useInitSupportedCounterValues();
-
-  const { data: fromCurrencies } = useFetchCurrencyFrom();
-
-  const { supportedCurrencies, liveCoinsList, supportedCounterCurrencies } =
-    useMarketDataProvider();
-
-  const marketResult = useMarketDataHook({
-    ...marketParams,
-    liveCoinsList,
-    supportedCoinsList: supportedCurrencies,
-  });
+  const { data: currenciesAll } = useFetchCurrencyAll();
 
   const REFRESH_RATE =
     Number(lldRefreshMarketDataFeature?.params?.refreshTime) > 0
       ? REFETCH_TIME_ONE_MINUTE * Number(lldRefreshMarketDataFeature?.params?.refreshTime)
       : REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH;
 
-  const { range, starred = [], liveCompatible, orderBy, order, search = "" } = marketParams;
+  const { range, starred = [], liveCompatible, order, search = "" } = marketParams;
 
   const starFilterOn = starred.length > 0;
+
+  useInitSupportedCounterValues();
+
+  const { data: fromCurrencies } = useFetchCurrencyFrom();
+
+  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
+
+  const marketResult = useMarketDataHook({
+    ...marketParams,
+    liveCoinsList: liveCompatible ? liveCoinsList : [],
+  });
 
   const timeRanges = useMemo(
     () =>
@@ -115,7 +116,7 @@ export function useMarket() {
   const toggleFilterByStarredAccounts = useCallback(() => {
     if (starredMarketCoins.length > 0 || starFilterOn) {
       const starred = starFilterOn ? [] : starredMarketCoins;
-      refresh({ starred, search: "" });
+      refresh({ starred, search: "", page: 1 });
     }
   }, [refresh, starFilterOn, starredMarketCoins]);
 
@@ -134,20 +135,11 @@ export function useMarket() {
     [dispatch],
   );
 
-  const toggleSortBy = useCallback(
-    (newOrderBy: string) => {
-      const isFreshSort = newOrderBy !== orderBy;
-      refresh(
-        isFreshSort
-          ? { orderBy: newOrderBy, order: "desc" }
-          : {
-              orderBy: newOrderBy,
-              order: order === "asc" ? "desc" : "asc",
-            },
-      );
-    },
-    [order, orderBy, refresh],
-  );
+  const toggleSortBy = useCallback(() => {
+    refresh({
+      order: order === Order.MarketCapAsc ? Order.MarketCapDesc : Order.MarketCapAsc,
+    });
+  }, [order, refresh]);
 
   const isItemLoaded = useCallback(
     (index: number) => !!marketResult.data[index],
@@ -161,8 +153,8 @@ export function useMarket() {
 
   const refetchData = useCallback(
     (pageToRefetch: number) => {
-      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch ?? 1));
-
+      const page = pageToRefetch - 1 || 0;
+      const elem = marketResult.cachedMetadataMap.get(String(page));
       if (elem && isDataStale(elem.updatedAt, REFRESH_RATE)) {
         elem.refetch();
       }
@@ -208,7 +200,7 @@ export function useMarket() {
     t,
     liveCompatible,
     starFilterOn,
-    marketResult,
+    marketData: marketResult.data,
     starredMarketCoins,
     timeRanges,
     marketParams,
@@ -220,5 +212,6 @@ export function useMarket() {
     loading,
     currenciesLength,
     refreshRate: REFRESH_RATE,
+    currenciesAll,
   };
 }

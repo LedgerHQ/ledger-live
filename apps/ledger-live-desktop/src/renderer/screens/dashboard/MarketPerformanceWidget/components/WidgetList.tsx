@@ -86,7 +86,7 @@ function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
           {!data.price
             ? "-"
             : counterValueFormatter({
-                value: Number(parseFloat(String(data.price)).toFixed(data.price > 1 ? 2 : 8)),
+                value: Number(parseFloat(String(data.price)).toFixed(data.price > 1 ? 2 : 6)),
                 currency: counterValueCurrency.ticker,
                 locale,
               })}

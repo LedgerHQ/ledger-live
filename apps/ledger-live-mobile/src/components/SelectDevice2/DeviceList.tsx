@@ -18,7 +18,7 @@ export function DeviceList({ deviceList, handleOnSelect }: Props) {
   return (
     <Flex>
       {deviceList.slice(0, showAll ? deviceList.length : MAX_LEDGERS_DISPLAYED).map(device => (
-        <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
+        <Item key={device.deviceId} device={device} onPress={handleOnSelect} />
       ))}
       {hasMoreOrLessButton && (
         <Button

@@ -16,9 +16,11 @@
     "**/*.d.ts",
     "**/types.js",
     "**/types.*",
+    "node_modules/**",
+    "src/generate-cryptoassets-md.test.ts",
     "src/generate-cryptoassets-md.ts",
     "src/newArch/Collectibles/**",
-    "src/renderer/screens/settings/sections/General/WalletSync/setupTests/shared.tsx"
+    "src/newArch/WalletSync/**"
   ],
   "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types", "allure-commandline"],
   "aliases": {

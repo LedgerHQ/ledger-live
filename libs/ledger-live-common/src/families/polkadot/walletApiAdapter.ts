@@ -14,10 +14,10 @@ const areFeesProvided: AreFeesProvided<WalletAPIPolkadotTransaction> = tx => !!t
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIPolkadotTransaction,
   Transaction
-> = ({ walletApiTransaction }) => {
+> = ({ account, walletApiTransaction }) => {
   const hasFeesProvided = areFeesProvided(walletApiTransaction);
 
-  const liveTx: Transaction = createTransaction();
+  const liveTx: Transaction = createTransaction(account);
 
   if (walletApiTransaction.amount) {
     liveTx.amount = walletApiTransaction.amount;

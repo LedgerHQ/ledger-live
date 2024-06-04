@@ -1,5 +1,47 @@
 # ledger-live-desktop
 
+## 2.81.2
+
+### Patch Changes
+
+- [#6886](https://github.com/LedgerHQ/ledger-live/pull/6886) [`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix json import in .mjs script file
+
+- Updated dependencies [[`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1)]:
+  - @ledgerhq/ethereum-provider@0.2.1
+
+## 2.81.2-hotfix.0
+
+### Patch Changes
+
+- [#6886](https://github.com/LedgerHQ/ledger-live/pull/6886) [`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix json import in .mjs script file
+
+- Updated dependencies [[`64cea6e`](https://github.com/LedgerHQ/ledger-live/commit/64cea6e92e52a8be304550a40155be0708323ff1)]:
+  - @ledgerhq/ethereum-provider@0.2.1-hotfix.0
+
+## 2.81.1
+
+### Patch Changes
+
+- [#6871](https://github.com/LedgerHQ/ledger-live/pull/6871) [`7857c4e`](https://github.com/LedgerHQ/ledger-live/commit/7857c4e41bbcfe4e421ed3b18d50090c253e319e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix analytics that were overriding app.json
+
+## 2.81.1-hotfix.0
+
+### Patch Changes
+
+- [#6871](https://github.com/LedgerHQ/ledger-live/pull/6871) [`7857c4e`](https://github.com/LedgerHQ/ledger-live/commit/7857c4e41bbcfe4e421ed3b18d50090c253e319e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix analytics that were overriding app.json
+
+## 2.81.0
+
+### Minor Changes
+
+- [#6865](https://github.com/LedgerHQ/ledger-live/pull/6865) [`ac32e49`](https://github.com/LedgerHQ/ledger-live/commit/ac32e499cb1c1f9951a204ff5544e308415bf928) Thanks [@cksanders](https://github.com/cksanders)! - Fix LIVE-12571 where some users can't unlock LLD when they have set up a password
+
+## 2.81.0-hotfix.0
+
+### Minor Changes
+
+- [#6865](https://github.com/LedgerHQ/ledger-live/pull/6865) [`ac32e49`](https://github.com/LedgerHQ/ledger-live/commit/ac32e499cb1c1f9951a204ff5544e308415bf928) Thanks [@cksanders](https://github.com/cksanders)! - Fix LIVE-12571 where some users can't unlock LLD when they have set up a password
+
 ## 2.80.0
 
 ### Minor Changes

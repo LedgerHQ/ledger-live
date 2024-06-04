@@ -1,6 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { PortfolioPage } from "../../models/PortfolioPage";
+import { PortfolioPage } from "../../page/portfolio.page";
 
 test.use({ userdata: "skip-onboarding-with-bad-account-data" });
 

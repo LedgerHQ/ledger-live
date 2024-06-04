@@ -27,11 +27,11 @@ function getAddr(deviceId: string, opts: GetAddressOptions): Promise<Result> {
   );
 }
 
-export const makeScanAccounts = ({
+export const makeScanAccounts = <A extends Account = Account>({
   getAccountShape,
   buildIterateResult,
 }: {
-  getAccountShape: GetAccountShape;
+  getAccountShape: GetAccountShape<A>;
   buildIterateResult?: IterateResultBuilder;
 }): CurrencyBridge["scanAccounts"] => {
   return commonMakeScanAccounts({

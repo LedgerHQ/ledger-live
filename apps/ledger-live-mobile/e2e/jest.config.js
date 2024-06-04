@@ -15,9 +15,31 @@ module.exports = async () => ({
   setupFilesAfterEnv: ["<rootDir>/e2e/setup.ts"],
   testTimeout: 150000,
   testMatch: ["<rootDir>/e2e/**/*.spec.ts"],
-  reporters: ["detox/runners/jest/reporter"],
+  reporters: [
+    "detox/runners/jest/reporter",
+    [
+      "jest-allure2-reporter",
+      {
+        resultsDir: "artifacts",
+        testCase: {
+          links: {
+            issue: "https://ledgerhq.atlassian.net/browse/{{name}}",
+            tms: "https://ledgerhq.atlassian.net/browse/{{name}}",
+          },
+        },
+        overwrite: false,
+      },
+    ],
+  ],
   globalSetup: "detox/runners/jest/globalSetup",
   globalTeardown: "detox/runners/jest/globalTeardown",
-  testEnvironment: "<rootDir>/e2e/environment.js",
+  testEnvironment: "detox/runners/jest/testEnvironment",
+  testEnvironmentOptions: {
+    eventListeners: [
+      "jest-metadata/environment-listener",
+      "jest-allure2-reporter/environment-listener",
+      "detox-allure2-adapter",
+    ],
+  },
   verbose: true,
 });

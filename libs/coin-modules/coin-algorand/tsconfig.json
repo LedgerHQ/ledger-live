@@ -6,7 +6,8 @@
     "module": "commonjs",
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "exactOptionalPropertyTypes": true
   },
   "include": ["src/**/*"],
   "exclude": ["src/api/subscan.ts", "src/api/websocket.ts"]
