@@ -137,14 +137,14 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
           "hash": "0x6a0a4b48b7f25954d4fa99a71da697c064e45064dd45d99ba341734d7fb9bf47",
           "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:-0x6a0a4b48b7f25954d4fa99a71da697c064e45064dd45d99ba341734d7fb9bf47-OUT-i0",
           "recipients": [
-            "SP1VM0XEFWBQ4ZT888FT34G30GGF52DY9YQWZCAQ0",
+            "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN",
           ],
           "senders": [
             "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
           ],
           "transactionSequenceNumber": 0,
           "type": "OUT",
-          "value": "3000",
+          "value": "1000",
         },
         {
           "accountId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:",
@@ -181,14 +181,14 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
           "hash": "0x6a0a4b48b7f25954d4fa99a71da697c064e45064dd45d99ba341734d7fb9bf47",
           "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:-0x6a0a4b48b7f25954d4fa99a71da697c064e45064dd45d99ba341734d7fb9bf47-OUT-i2",
           "recipients": [
-            "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN",
+            "SP1VM0XEFWBQ4ZT888FT34G30GGF52DY9YQWZCAQ0",
           ],
           "senders": [
             "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
           ],
           "transactionSequenceNumber": 0,
           "type": "OUT",
-          "value": "1000",
+          "value": "3000",
         },
       ],
       "recipients": [],

@@ -1,39 +1,43 @@
-import flatMap from "lodash/flatMap";
 import { mapTxToOps } from "./misc";
 import { encodeAccountId } from "../../../../account";
-import { StacksOperation } from "../../types";
 import { TransactionResponse } from "./api.types";
+import { fetchFullTxs } from "./api";
+import { Operation } from "@ledgerhq/types-live";
+
+const Address = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
 
 const sendManyTransfer = {
   tx: {
-    tx_id: "0x6a0a4b48b7f25954d4fa99a71da697c064e45064dd45d99ba341734d7fb9bf47",
-    nonce: 0,
-    fee_rate: "19031",
-    sender_address: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
+    tx_id: "0x68bdba90cdbd4e2e112fd008c8c396bd4ca365e482dc68fe25c7aeb5d8eb4c3f",
+    nonce: 18,
+    fee_rate: "500000",
+    sender_address: "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J",
     sponsored: false,
     post_condition_mode: "deny",
     post_conditions: [
       {
         type: "stx",
         condition_code: "sent_equal_to",
-        amount: "6000",
+        amount: "345000",
         principal: {
           type_id: "principal_standard",
-          address: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
+          address: "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J",
         },
       },
     ],
     anchor_mode: "any",
     is_unanchored: false,
-    block_hash: "0xb4f8f8f7de729a05bd4704cedf27d673aa29438b85eeea5dff0ff7122ed93836",
-    parent_block_hash: "0x41ea38da09d7f5b04eb00609a65436b0df13fa5e486b9d725162e160ef2c78b9",
-    block_height: 143263,
-    burn_block_time: 1710791858,
-    burn_block_time_iso: "2024-03-18T19:57:38.000Z",
-    parent_burn_block_time: 1710791468,
-    parent_burn_block_time_iso: "2024-03-18T19:51:08.000Z",
+    block_hash: "0xc8dd294972d86b09d4226fe99f8bfcdf2c55a7280ca87b7dc8b0fd119a7059f1",
+    parent_block_hash: "0xc8f2c105e37544ce27a3a470651d950c6e8fe5f6c072aef653e7ea1fbd97a429",
+    block_height: 137791,
+    block_time: 1706802438,
+    block_time_iso: "2024-02-01T15:47:18.000Z",
+    burn_block_time: 1706802438,
+    burn_block_time_iso: "2024-02-01T15:47:18.000Z",
+    parent_burn_block_time: 1706801557,
+    parent_burn_block_time_iso: "2024-02-01T15:32:37.000Z",
     canonical: true,
-    tx_index: 295,
+    tx_index: 121,
     tx_status: "success",
     tx_result: {
       hex: "0x0703",
@@ -53,68 +57,67 @@ const sendManyTransfer = {
     contract_call: {
       contract_id: "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.send-many-memo",
       function_name: "send-many",
-      function_signature:
-        "(define-public (send-many (recipients (list 200 (tuple (memo (buff 34)) (to principal) (ustx uint))))))",
+      function_signature: "",
       function_args: [
         {
-          hex: "0x0b000000030c00000003046d656d6f020000000331323302746f05169bb1637fb05464dcdb540b68bae6fc6f1fd99b41047573747801000000000000000000000000000003e80c00000003046d656d6f020000000334353602746f05162bfab183609b8d5b92922b9a469ce340f62b5e52047573747801000000000000000000000000000007d00c00000003046d656d6f020000000337383902746f0516774075cfe2ee4fe90843f4324060841e5137c9f504757374780100000000000000000000000000000bb8",
-          repr: "(list (tuple (memo 0x313233) (to 'SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN) (ustx u1000)) (tuple (memo 0x343536) (to 'SPNZNCC3C2DRTPWJJ8NSMHMWWD0FCATYA8CVZ84E) (ustx u2000)) (tuple (memo 0x373839) (to 'SP1VM0XEFWBQ4ZT888FT34G30GGF52DY9YQWZCAQ0) (ustx u3000)))",
-          name: "recipients",
-          type: "(list 200 (tuple (memo (buff 34)) (to principal) (ustx uint)))",
+          hex: "0x0b000000030c00000003046d656d6f020000000333333302746f05162bd4fbc3d1218275b9ae37c58a8dbed9a952c35c047573747801000000000000000000000000000027100c00000003046d656d6f020000000334343402746f051601a0369ffa2faa8fe74faada53e2e3d215b4d42a047573747801000000000000000000000000000088b80c00000003046d656d6f020000000335353502746f051660cc6b74d6d317918d0a7717069da56d775d817e047573747801000000000000000000000000000493e0",
+          repr: "(list (tuple (memo 0x333333) (to 'SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA) (ustx u10000)) (tuple (memo 0x343434) (to 'SPT0DMZZ8QTN3Z79YNDMMZ2WF91BD6M59S9Z10Y) (ustx u35000)) (tuple (memo 0x353535) (to 'SP1GCRTVMTV9HF4CD19VHE1MXMNPQEQC1FT6YWF5Y) (ustx u300000)))",
+          name: "",
+          type: "(list 3 (tuple (memo (buff 3)) (to principal) (ustx uint)))",
         },
       ],
     },
   },
-  stx_sent: "25031",
+  stx_sent: "845000",
   stx_received: "0",
-  stx_transfers: [
-    {
-      amount: "3000",
-      sender: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
-      recipient: "SP1VM0XEFWBQ4ZT888FT34G30GGF52DY9YQWZCAQ0",
+  events: {
+    stx: {
+      transfer: 3,
+      mint: 0,
+      burn: 0,
     },
-    {
-      amount: "2000",
-      sender: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
-      recipient: "SPNZNCC3C2DRTPWJJ8NSMHMWWD0FCATYA8CVZ84E",
+    ft: {
+      transfer: 0,
+      mint: 0,
+      burn: 0,
     },
-    {
-      amount: "1000",
-      sender: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
-      recipient: "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN",
+    nft: {
+      transfer: 0,
+      mint: 0,
+      burn: 0,
     },
-  ],
-  ft_transfers: [],
-  nft_transfers: [],
+  },
 };
 
 const basicTransfer = {
   tx: {
-    tx_id: "0x445e42f706602f2f10a956894a61d7f558cd6e5bc88cb4b708ea72e00419d7b0",
-    nonce: 346,
-    fee_rate: "72000",
-    sender_address: "SP17YZQB1228EK9MPHQXA8GC4G3HVWZ66X7VRPMAX",
+    tx_id: "0x84254bb1e50b9e4f1dd48161ba5e87dff4ba8718117e8c364769067614dfb99a",
+    nonce: 22,
+    fee_rate: "125250",
+    sender_address: "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J",
     sponsored: false,
     post_condition_mode: "deny",
     post_conditions: [],
     anchor_mode: "any",
     is_unanchored: false,
-    block_hash: "0x9586c2caf110f6c6a0ac298eb4d4b058f61805e3908a3388ceccfe265e1da046",
-    parent_block_hash: "0x19792b9920861006874e598b0d456f580d2f6153db97be09e801a90ab9aa3f70",
-    block_height: 76538,
-    burn_block_time: 1663698475,
-    burn_block_time_iso: "2022-09-20T18:27:55.000Z",
-    parent_burn_block_time: 1663697222,
-    parent_burn_block_time_iso: "2022-09-20T18:07:02.000Z",
+    block_hash: "0xd3272fbbc264eec8f8b7857541d7a5e6c043b54dd799274544a72d185dc34f1d",
+    parent_block_hash: "0x7bc3a3adae166f4a876697ad4c4f924d29dcea2c84607fc7765c0ed0855c3e90",
+    block_height: 151738,
+    block_time: 1716831904,
+    block_time_iso: "2024-05-27T17:45:04.000Z",
+    burn_block_time: 1716831849,
+    burn_block_time_iso: "2024-05-27T17:44:09.000Z",
+    parent_burn_block_time: 1716831377,
+    parent_burn_block_time_iso: "2024-05-27T17:36:17.000Z",
     canonical: true,
-    tx_index: 59,
+    tx_index: 29,
     tx_status: "success",
     tx_result: {
       hex: "0x0703",
       repr: "(ok true)",
     },
-    microblock_hash: "0x753f258af0a5e09785079d5b976a52556a2c53e2f16b150b46bfdcf6d347bf17",
-    microblock_sequence: 3,
+    microblock_hash: "0x",
+    microblock_sequence: 2147483647,
     microblock_canonical: true,
     event_count: 1,
     events: [],
@@ -125,22 +128,30 @@ const basicTransfer = {
     execution_cost_write_length: 0,
     tx_type: "token_transfer",
     token_transfer: {
-      recipient_address: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
-      amount: "2000000",
-      memo: "0x7a6f6e6461782d746573740000000000000000000000000000000000000000000000",
+      recipient_address: "SPNX9YY3T4GR4XDSNRVWB2MDQVCTJMP3BGT7VCZA",
+      amount: "827695",
+      memo: "0x31323333333334000000000000000000000000000000000000000000000000000000",
     },
   },
-  stx_sent: "0",
-  stx_received: "2000000",
-  stx_transfers: [
-    {
-      amount: "2000000",
-      sender: "SP17YZQB1228EK9MPHQXA8GC4G3HVWZ66X7VRPMAX",
-      recipient: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
+  stx_sent: "952945",
+  stx_received: "0",
+  events: {
+    stx: {
+      transfer: 1,
+      mint: 0,
+      burn: 0,
     },
-  ],
-  ft_transfers: [],
-  nft_transfers: [],
+    ft: {
+      transfer: 0,
+      mint: 0,
+      burn: 0,
+    },
+    nft: {
+      transfer: 0,
+      mint: 0,
+      burn: 0,
+    },
+  },
 };
 
 describe("operation building from raw", () => {
@@ -154,9 +165,8 @@ describe("operation building from raw", () => {
     });
 
     // Contains operations for txn of type token_transfer
-    const operations = flatMap<TransactionResponse, StacksOperation>(
-      [sendManyTransfer, basicTransfer],
-      mapTxToOps(accountId),
+    const operations = ([sendManyTransfer, basicTransfer] as any).flatMap(
+      mapTxToOps(accountId, Address),
     );
 
     expect(operations.length).toBe(2);
@@ -169,9 +179,17 @@ describe("operation building from raw", () => {
     expect(opSenMany.senders).toHaveLength(1);
     expect(opSenMany.recipients).toHaveLength(0);
 
-    expect(opBasic.type).toBe("IN");
+    expect(opBasic.type).toBe("OUT");
     expect(opBasic.internalOperations).toBeUndefined();
     expect(opBasic.senders).toHaveLength(1);
     expect(opBasic.recipients).toHaveLength(1);
   });
+});
+
+test("convert raw transactions to live operations", async () => {
+  const rawTxs: TransactionResponse[] = await fetchFullTxs(Address);
+  const operations: Operation[] = rawTxs.flatMap(mapTxToOps("dummyAccountID", Address));
+
+  expect(operations).toBeDefined();
+  expect(operations.length).toBeGreaterThan(0);
 });
