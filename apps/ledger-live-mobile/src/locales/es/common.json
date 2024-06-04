@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Error de número de secuencia",
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Permuta no disponible: es necesario un envío o delegación inicial con la cuenta de Tezos o el cambio de par."
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "Precio de mercado de {{currencyTicker}}",
       "currencyPrice" : "Precio de 1 {{currencyTicker}}",
-      "currencyPriceChange" : "Cambio en las últimas 24 horas"
+      "currencyPriceChange" : {
+        "day" : "Cambio en las últimas 24 horas",
+        "week" : "Cambio de los últimos 7 días",
+        "month" : "Cambio de los últimos 30 días",
+        "year" : "Cambio del último año",
+        "all" : "Cambio del último año"
+      }
     },
     "quickActions" : {
       "buy" : "Comprar",
@@ -3130,9 +3139,6 @@
         "title" : "Bienvenido a Permutar",
         "whatIsSwap" : "¿Qué es la permuta?",
         "disclaimer" : "Intercambia cripto directamente desde tu dispositivo Ledger. Este servicio no está disponible en algunos países, entre ellos, Estados Unidos."
-      },
-      "main" : {
-        "header" : "Permutar"
       },
       "notAvailable" : {
         "title" : "Servicio no disponible temporalmente, o no disponible en tu país"
@@ -6134,6 +6140,7 @@
       "subtitle" : "Explora la Web3 totalmente integrada con Ledger",
       "section" : {
         "recentlyUsed" : "Usadas recientemente",
+        "locallyLoaded" : "Cargado localmente",
         "categories" : "Categorías",
         "clearAll" : "Borrar todo"
       },
@@ -6231,9 +6238,10 @@
       },
       "order" : {
         "topGainers" : "Máximos Ganadores",
-        "market_cap" : "Puesto",
-        "market_cap_asc" : "Posición (capitalización) asc.",
-        "market_cap_desc" : "Posición (capitalización) desc."
+        "topLosers" : "Máximos perdedores",
+        "marketCap" : "Puesto",
+        "asc" : "Posición (capitalización) asc.",
+        "desc" : "Posición (capitalización) desc."
       },
       "currency" : "Divisa",
       "time" : "Tiempo",
@@ -6303,7 +6311,7 @@
     "designedForStax" : {
       "title" : "<0>Diseñado para</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "Este NFT contiene una imagen adicional del NFT, diseñada específicamente para la pantalla de E Ink del Ledger Stax.\n\nEsta imagen se utilizará cuando definas este NFT como tu pantalla de bloqueo.",
+        "description" : "Este NFT contiene una imagen adicional del NFT, diseñada específicamente para la pantalla E Ink del Ledger Stax.\n\nEsta imagen se utilizará cuando definas este NFT como tu pantalla de bloqueo.",
         "cta" : "Entendido"
       }
     },
@@ -6563,7 +6571,6 @@
         },
         "swap" : {
           "title" : "Permutar",
-          "label" : "Popular",
           "body" : "Convierte una cripto en otra de manera segura"
         },
         "receive" : {
