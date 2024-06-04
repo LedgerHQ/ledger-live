@@ -113,7 +113,7 @@ export interface DecodedSendManyFunctionArgsCV {
   value: Array<{
     type: string;
     value: {
-      memo: {
+      memo?: {
         type: string;
         value: string;
       };
