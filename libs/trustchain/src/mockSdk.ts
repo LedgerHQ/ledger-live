@@ -102,13 +102,11 @@ class MockSDK implements TrustchainSDK {
 
   encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
     void trustchain;
-    void obj;
-    return Promise.resolve(new Uint8Array());
+    return Promise.resolve(new TextEncoder().encode(JSON.stringify(obj)));
   }
   decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object> {
     void trustchain;
-    void data;
-    return Promise.resolve({});
+    return Promise.resolve(JSON.parse(new TextDecoder().decode(data)));
   }
 }
 
