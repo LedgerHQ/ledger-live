@@ -131,7 +131,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
           "contract": "send-many",
           "date": "2024-03-18T19:57:38.000Z",
           "extra": {
-            "memo": "",
+            "memo": "123",
           },
           "fee": "19031",
           "hash": "0x6a0a4b48b7f25954d4fa99a71da697c064e45064dd45d99ba341734d7fb9bf47",
@@ -153,7 +153,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
           "contract": "send-many",
           "date": "2024-03-18T19:57:38.000Z",
           "extra": {
-            "memo": "",
+            "memo": "456",
           },
           "fee": "19031",
           "hash": "0x6a0a4b48b7f25954d4fa99a71da697c064e45064dd45d99ba341734d7fb9bf47",
@@ -175,7 +175,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
           "contract": "send-many",
           "date": "2024-03-18T19:57:38.000Z",
           "extra": {
-            "memo": "",
+            "memo": "789",
           },
           "fee": "19031",
           "hash": "0x6a0a4b48b7f25954d4fa99a71da697c064e45064dd45d99ba341734d7fb9bf47",
