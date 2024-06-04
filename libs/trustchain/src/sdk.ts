@@ -148,6 +148,18 @@ class SDK implements TrustchainSDK {
     void liveJWT;
     throw new Error("destroyTrustchain not implemented.");
   }
+
+  async encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
+    void trustchain;
+    void obj;
+    throw new Error("encryptUserData not implemented.");
+  }
+
+  async decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object> {
+    void trustchain;
+    void data;
+    throw new Error("decryptUserData not implemented.");
+  }
 }
 
 export const sdk = new SDK();
