@@ -3,6 +3,7 @@ import { crypto, device, Challenge } from "@ledgerhq/hw-trustchain";
 import Transport from "@ledgerhq/hw-transport";
 import api from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
+import { makeCipher } from "./wallet-sync-cipher";
 
 export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): LiveCredentials {
   return {
@@ -150,15 +151,15 @@ class SDK implements TrustchainSDK {
   }
 
   async encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
-    void trustchain;
-    void obj;
-    throw new Error("encryptUserData not implemented.");
+    const cipher = makeCipher(crypto.from_hex(trustchain.walletSyncEncryptionKey));
+    const encrypted = await cipher.encrypt(obj);
+    return encrypted;
   }
 
   async decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object> {
-    void trustchain;
-    void data;
-    throw new Error("decryptUserData not implemented.");
+    const cipher = makeCipher(crypto.from_hex(trustchain.walletSyncEncryptionKey));
+    const decrypted = await cipher.decrypt(data);
+    return decrypted;
   }
 }
 
