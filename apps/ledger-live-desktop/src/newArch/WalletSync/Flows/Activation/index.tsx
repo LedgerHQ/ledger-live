@@ -7,7 +7,8 @@ import { setFlow } from "~/renderer/actions/walletSync";
 import { useFlows } from "../useFlows";
 import CreateOrSynchronizeStep from "./01-CreateOrSynchronizeStep";
 import DeviceActionStep from "./02-DeviceActionStep";
-import ActivationFinalStep from "./03-ActivationFinalStep";
+import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrustchain";
+import ActivationFinalStep from "./04-ActivationFinalStep";
 import { useBackup } from "../ManageBackup/useBackup";
 
 const WalletSyncActivation = () => {
@@ -20,9 +21,9 @@ const WalletSyncActivation = () => {
     dispatch(setFlow(Flow.Synchronize));
   };
 
-  const createNewBackup = () => {
-    createBackup();
+  const createNewBackupAction = () => {
     goToNextScene();
+    createBackup();
   };
 
   const getStep = () => {
@@ -31,7 +32,9 @@ const WalletSyncActivation = () => {
       case Step.CreateOrSynchronizeStep:
         return <CreateOrSynchronizeStep goToCreateBackup={goToNextScene} goToSync={goToSync} />;
       case Step.DeviceActionStep:
-        return <DeviceActionStep goNext={createNewBackup} />;
+        return <DeviceActionStep goNext={goToNextScene} />;
+      case Step.CreateOrSynchronizeTrustChainStep:
+        return <ActivationOrSynchroWithTrustchain goNext={createNewBackupAction} />;
       case Step.ActivationFinalStep:
         return <ActivationFinalStep hasBackup={hasBackup} />;
     }

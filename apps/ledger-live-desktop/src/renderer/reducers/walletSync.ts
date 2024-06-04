@@ -16,6 +16,7 @@ export enum Step {
   //Activation
   CreateOrSynchronizeStep = "CreateOrSynchronizeStep",
   DeviceActionStep = "DeviceActionStep",
+  CreateOrSynchronizeTrustChainStep = "CreateOrSynchronizeTrustChainStep",
   ActivationFinalStep = "ActivationFinalStep",
 }
 

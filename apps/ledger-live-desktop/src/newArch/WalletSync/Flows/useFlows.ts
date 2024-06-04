@@ -17,7 +17,8 @@ export const FlowOptions: Record<
     steps: {
       1: Step.CreateOrSynchronizeStep,
       2: Step.DeviceActionStep,
-      3: Step.ActivationFinalStep,
+      3: Step.CreateOrSynchronizeTrustChainStep,
+      4: Step.ActivationFinalStep,
     },
   },
   [Flow.Synchronize]: {

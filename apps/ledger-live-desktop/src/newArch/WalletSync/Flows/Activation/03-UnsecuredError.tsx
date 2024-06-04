@@ -1,8 +1,11 @@
 import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import styled, { useTheme } from "styled-components";
+import { setFlow, setStep } from "~/renderer/actions/walletSync";
 import ButtonV3 from "~/renderer/components/ButtonV3";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 
 const Container = styled(Box)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};
@@ -15,7 +18,12 @@ const Container = styled(Box)`
 `;
 
 export const UnsecuredError = () => {
+  const dispatch = useDispatch();
   const tryAgain = () => console.log("try again");
+  const goToDelete = () => {
+    dispatch(setFlow(Flow.ManageBackups));
+    dispatch(setStep(Step.ManageBackupStep));
+  };
   const { t } = useTranslation();
   const { colors } = useTheme();
   return (
@@ -46,7 +54,7 @@ export const UnsecuredError = () => {
       <ButtonV3 variant="shade" onClick={tryAgain}>
         {t("walletSync.unsecuredError.cta")}
       </ButtonV3>
-      <ButtonV3 onClick={tryAgain}>{t("walletSync.unsecuredError.ctaDelete")}</ButtonV3>
+      <ButtonV3 onClick={goToDelete}>{t("walletSync.unsecuredError.ctaDelete")}</ButtonV3>
     </Flex>
   );
 };
