@@ -25,13 +25,12 @@ const ValueDisplay = styled.code`
 
 const ErrorDisplay = styled.div`
   padding: 10px;
-  margin: 10px 0;
+  margin: 5px 0;
   color: red;
 `;
 
 const Button = styled.button<{ error?: boolean }>`
   padding: 10px;
-  margin: 10px 0;
 `;
 
 export function Actionable<I extends Array<unknown>, A>({

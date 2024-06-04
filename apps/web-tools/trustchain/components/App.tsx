@@ -46,6 +46,8 @@ const App = () => {
         <AppMockEnv setSdk={setSdk} />
       </Expand>
 
+      <h3>Trustchain SDK</h3>
+
       <AppInitLiveCredentials
         sdk={sdk}
         liveCredentials={liveCredentials}
