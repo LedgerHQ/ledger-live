@@ -5,7 +5,6 @@
  * client side and the trustchain returned by the backend.
  */
 import { LiveCredentials, Trustchain } from "./types";
-import { sdk } from ".";
 
 export type TrustchainStore = {
   trustchain: Trustchain | null;
