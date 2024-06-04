@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Label = styled.div`
   display: block;
-  padding: 10px 0;
+  padding: 0px 0;
   margin: 10px 0;
   button {
     margin-right: 10px;
