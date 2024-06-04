@@ -102,4 +102,14 @@ export interface TrustchainSDK {
    * completely remove a trustchain
    */
   destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void>;
+
+  /**
+   * encrypt data for a trustchain
+   */
+  encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array>;
+
+  /**
+   * decrypt data for a trustchain
+   */
+  decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object>;
 }
