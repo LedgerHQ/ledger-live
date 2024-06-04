@@ -10,6 +10,7 @@ const environmentFilePath = "artifacts/environment.properties.temp";
 const formatFlagsData = (data: { [key in FeatureId]: Feature }) => {
   let allureData = "";
   for (const [key, value] of Object.entries(data)) {
+    if (!value.enabled) continue;
     allureData += `FF.${key} = ${value.enabled}\n`;
 
     const entries = {
