@@ -168,13 +168,12 @@ function AppGetOrCreateTrustchain({
 }
 
 function AppQRCodeHost({
-  //trustchain,
+  trustchain,
   liveCredentials,
 }: {
   trustchain: Trustchain | null;
   liveCredentials: LiveCredentials | null;
 }) {
-  const trustchain = {};
   const [error, setError] = useState<Error | null>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [digits, setDigits] = useState<string | null>(null);
