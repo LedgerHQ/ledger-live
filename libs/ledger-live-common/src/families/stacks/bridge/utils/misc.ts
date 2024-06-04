@@ -121,8 +121,6 @@ export const mapTxToOps =
           const deserialized = deserializeCV(tx.tx.contract_call.function_args[0].hex);
           const decodedArgs: DecodedSendManyFunctionArgsCV = cvToJSON(deserialized);
           for (const [idx, t] of decodedArgs.value.entries()) {
-            // eslint-disable-next-line no-console
-            console.log(t, tx_id);
             internalOperations.push({
               ...operationCommons,
               id: encodeSubOperationId(accountID, tx_id, type, idx),
@@ -131,6 +129,9 @@ export const mapTxToOps =
               value: new BigNumber(t.value.ustx.value),
               senders: [sender_address],
               recipients: [t.value.to.value],
+              extra: {
+                memo: getMemo(t.value.memo?.value ?? ""),
+              },
             });
           }
         }
