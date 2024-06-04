@@ -60,6 +60,7 @@ export function Actionable<I extends Array<unknown>, A>({
       .then(
         value => {
           setValue(value);
+          setError(null);
         },
         error => {
           setValue(null);
