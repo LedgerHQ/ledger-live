@@ -5,7 +5,7 @@ import { Media } from "LLD/Collectibles/components";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { PositionProps, LayoutProps, SpaceProps, position, layout, space } from "styled-system";
-import { DetailDrawerProps } from "LLD/Collectibles/types/DetailDrawer";
+import { DetailDrawerProps, FieldStatus } from "LLD/Collectibles/types/DetailDrawer";
 import { createCollectibleObject } from "LLD/Collectibles/utils/createCollectibleObject";
 import { useTranslation } from "react-i18next";
 import { CollectibleTypeEnum } from "LLD/Collectibles/types/Collectibles";
@@ -143,7 +143,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
           <Tag
             tags={tags}
             sectionTitle={tagTitle()}
-            status={areFieldsLoading ? "loading" : "loaded"}
+            status={areFieldsLoading ? FieldStatus.Loading : FieldStatus.Loaded}
           />
           {details.map(({ key, value, title, isCopyable, isHash }, index) => (
             <DetailField

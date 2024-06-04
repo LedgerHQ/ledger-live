@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import Text from "~/renderer/components/Text";
 import styled from "styled-components";
 import { Skeleton } from "LLD/Collectibles/components/index";
-import { TagProps } from "LLD/Collectibles/types/DetailDrawer";
+import { FieldStatus, TagProps } from "LLD/Collectibles/types/DetailDrawer";
 
 const PropertiesContainer = styled.div<{ isNewDesign?: boolean }>`
   display: flex;
@@ -30,7 +30,7 @@ const Separator = styled.div`
 
 const TagComponent: React.FC<TagProps> = ({ tags, sectionTitle, status, isNewDesign }) => {
   const skeletonCount = 7;
-  const showSkeleton = useMemo(() => status === "loading", [status]);
+  const showSkeleton = useMemo(() => status === FieldStatus.Loading, [status]);
 
   const skeletons = useMemo(
     () =>

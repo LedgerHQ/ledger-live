@@ -2,6 +2,11 @@ import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import { ReactNode } from "react";
 import { CollectibleType } from "./Collectibles";
 
+export enum FieldStatus {
+  Loading = "loading",
+  Loaded = "loaded",
+}
+
 export type ExternalViewerButtonProps = {
   nft: ProtoNFT;
   account: Account;
