@@ -88,7 +88,7 @@ export const fetchEstimatedFees = async (
 };
 
 export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
-  const data = await fetch<NetworkStatusResponse>("/extended/v1/status");
+  const data = await fetch<NetworkStatusResponse>("/extended");
   return data as NetworkStatusResponse; // TODO Validate if the response fits this interface
 };
 
