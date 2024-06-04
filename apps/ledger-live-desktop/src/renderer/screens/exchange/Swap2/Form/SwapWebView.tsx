@@ -112,7 +112,7 @@ const SwapWebView = ({
   const locale = useSelector(languageSelector);
   const redirectToHistory = useRedirectToSwapHistory();
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
-
+  const demo1 = useFeature("ptxSwapLiveAppDemoOne");
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
 
@@ -262,9 +262,10 @@ const SwapWebView = ({
   // Keep the previous UI
   // Display only the disabled swap button
   if (
-    swapState.error ||
-    swapState.fromAmount === "0" ||
-    !(fromCurrency && addressFrom && toCurrency && addressTo)
+    demo1?.enabled &&
+    (swapState.error ||
+      swapState.fromAmount === "0" ||
+      !(fromCurrency && addressFrom && toCurrency && addressTo))
   ) {
     return (
       <Box width="100%">
