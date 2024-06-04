@@ -8,7 +8,7 @@ import { setEnv, getEnvDefault } from "@ledgerhq/live-env";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from, lastValueFrom } from "rxjs";
 import styled from "styled-components";
-import { JWT, LiveCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { JWT, LiveCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { Actionable, RenderActionable } from "./Actionable";
 import Transport from "@ledgerhq/hw-transport";
 import QRCode from "./QRCode";
@@ -30,9 +30,11 @@ const Input = styled.input`
 `;
 
 const App = () => {
-  const [seedIdAccessToken, setSeedIdAccessToken] = useState<{ accessToken: string } | null>(null);
+  const [seedIdAccessToken, setSeedIdAccessToken] = useState<JWT | null>(null);
   const [liveCredentials, setLiveCredentials] = useState<LiveCredentials | null>(null);
   const [trustchain, setTrustchain] = useState<Trustchain | null>(null);
+  const [liveAccessToken, setLiveAccessToken] = useState<JWT | null>(null);
+  const [members, setMembers] = useState<TrustchainMember[] | null>(null);
 
   return (
     <Container>
@@ -61,6 +63,44 @@ const App = () => {
         trustchain={trustchain}
         setTrustchain={setTrustchain}
       />
+
+      <AppLiveAuthenticate
+        liveAccessToken={liveAccessToken}
+        setLiveAccessToken={setLiveAccessToken}
+        liveCredentials={liveCredentials}
+        trustchain={trustchain}
+      />
+
+      <AppGetMembers
+        liveAccessToken={liveAccessToken}
+        liveCredentials={liveCredentials}
+        trustchain={trustchain}
+        members={members}
+        setMembers={setMembers}
+      />
+
+      {members?.map(member => (
+        <AppMemberRow
+          key={member.id}
+          seedIdAccessToken={seedIdAccessToken}
+          trustchain={trustchain}
+          liveInstanceCredentials={liveCredentials}
+          member={member}
+          setTrustchain={setTrustchain}
+        />
+      ))}
+
+      {/* // in future, to facilitate the test, we can do this. for now we can play with the qr code flow.
+      {members ? (
+        <AppMemberAddForm
+          liveAccessToken={liveAccessToken}
+          trustchain={trustchain}
+          liveCredentials={liveCredentials}
+        />
+      ) : null}
+    */}
+
+      <AppDestroyTrustchain trustchain={trustchain} liveAccessToken={liveAccessToken} />
 
       <Expand title="QR Code Host">
         <AppQRCodeHost trustchain={trustchain} liveCredentials={liveCredentials} />
@@ -199,6 +239,149 @@ function AppGetOrCreateTrustchain({
       valueDisplay={valueDisplay}
       value={trustchain}
       setValue={setTrustchain}
+    />
+  );
+}
+
+function AppLiveAuthenticate({
+  liveAccessToken,
+  setLiveAccessToken,
+  liveCredentials,
+  trustchain,
+}: {
+  liveAccessToken: JWT | null;
+  setLiveAccessToken: (liveAccessToken: JWT | null) => void;
+  liveCredentials: LiveCredentials | null;
+  trustchain: Trustchain | null;
+}) {
+  const sdk = useSDK();
+
+  const action = useCallback(
+    (trustchain: Trustchain, liveCredentials: LiveCredentials) =>
+      sdk.liveAuthenticate(trustchain, liveCredentials),
+    [sdk],
+  );
+
+  const valueDisplay = useCallback((liveAccessToken: JWT) => liveAccessToken.accessToken, []);
+
+  return (
+    <Actionable
+      buttonTitle="sdk.liveAuthenticate"
+      inputs={trustchain && liveCredentials ? [trustchain, liveCredentials] : null}
+      action={action}
+      valueDisplay={valueDisplay}
+      value={liveAccessToken}
+      setValue={setLiveAccessToken}
+    />
+  );
+}
+
+function AppGetMembers({
+  liveAccessToken,
+  liveCredentials,
+  trustchain,
+  members,
+  setMembers,
+}: {
+  liveAccessToken: JWT | null;
+  liveCredentials: LiveCredentials | null;
+  trustchain: Trustchain | null;
+  members: TrustchainMember[] | null;
+  setMembers: (members: TrustchainMember[] | null) => void;
+}) {
+  const sdk = useSDK();
+
+  const action = useCallback(
+    (liveAccessToken: JWT, trustchain: Trustchain, liveCredentials: LiveCredentials) =>
+      sdk.getMembers(liveAccessToken, trustchain, liveCredentials),
+    [sdk],
+  );
+
+  const valueDisplay = useCallback(
+    (members: TrustchainMember[]) => members.length + " members",
+    [],
+  );
+
+  return (
+    <Actionable
+      buttonTitle="sdk.getMembers"
+      inputs={
+        liveAccessToken && trustchain && liveCredentials
+          ? [liveAccessToken, trustchain, liveCredentials]
+          : null
+      }
+      action={action}
+      valueDisplay={valueDisplay}
+      value={members}
+      setValue={setMembers}
+    />
+  );
+}
+
+function AppMemberRow({
+  seedIdAccessToken,
+  trustchain,
+  liveInstanceCredentials,
+  member,
+  setTrustchain,
+}: {
+  seedIdAccessToken: JWT | null;
+  trustchain: Trustchain | null;
+  liveInstanceCredentials: LiveCredentials | null;
+  member: TrustchainMember;
+  setTrustchain: (trustchain: Trustchain | null) => void;
+}) {
+  const sdk = useSDK();
+
+  const action = useCallback(
+    (seedIdAccessToken: JWT, trustchain: Trustchain, liveInstanceCredentials: LiveCredentials) =>
+      runWithDevice(transport =>
+        sdk.removeMember(transport, seedIdAccessToken, trustchain, liveInstanceCredentials, member),
+      ).then(trustchain => {
+        setTrustchain(trustchain);
+        return member;
+      }),
+    [sdk, member, setTrustchain],
+  );
+
+  return (
+    <Actionable
+      buttonTitle="sdk.removeMember"
+      inputs={
+        seedIdAccessToken && trustchain && liveInstanceCredentials
+          ? [seedIdAccessToken, trustchain, liveInstanceCredentials]
+          : null
+      }
+      action={action}
+      value={member}
+      valueDisplay={member => (
+        <>
+          <code>member.id</code> <strong>{member.name}</strong>
+        </>
+      )}
+    />
+  );
+}
+
+function AppDestroyTrustchain({
+  trustchain,
+  liveAccessToken,
+}: {
+  trustchain: Trustchain | null;
+  liveAccessToken: JWT | null;
+}) {
+  const sdk = useSDK();
+  const action = useCallback(
+    (trustchain: Trustchain, liveAccessToken: JWT) =>
+      sdk.destroyTrustchain(trustchain, liveAccessToken),
+    [sdk],
+  );
+
+  return (
+    <Actionable
+      buttonTitle="sdk.destroyTrustchain"
+      inputs={trustchain && liveAccessToken ? [trustchain, liveAccessToken] : null}
+      action={action}
     />
   );
 }

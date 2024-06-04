@@ -47,9 +47,9 @@ export function Actionable<I extends Array<unknown>, A>({
   // if action fails, the error is going to be used for display
   action: (...inputs: I) => Promise<A> | A;
   // how to display the value
-  valueDisplay: (value: A) => React.ReactNode;
+  valueDisplay?: (value: A) => React.ReactNode;
   // in control style, we can provide a value and a setter
-  value: A | null;
+  value?: A | null;
   setValue?: (value: A | null) => void;
 }) {
   const enabled = !!inputs;
@@ -75,7 +75,8 @@ export function Actionable<I extends Array<unknown>, A>({
         setLoading(false);
       });
   }, [inputs, action, setValue]);
-  const display = value !== null && value !== undefined ? valueDisplay(value) : null;
+  const display =
+    value !== null && value !== undefined && valueDisplay ? valueDisplay(value) : null;
   return (
     <RenderActionable
       enabled={enabled}
