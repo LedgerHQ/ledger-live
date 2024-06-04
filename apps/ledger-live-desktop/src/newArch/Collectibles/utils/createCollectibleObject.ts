@@ -11,7 +11,7 @@ export function createCollectibleObject(type: CollectibleType, data: unknown) {
   if (type === CollectibleTypeEnum.NFT) {
     if (isNftData(data)) {
       return {
-        type: "NFT",
+        type: CollectibleTypeEnum.NFT,
         mediaProps: <MediaProps>{
           collectibleName: data.nftName,
           contentType: data.contentType,

@@ -1,7 +1,7 @@
 import React, { useCallback, memo, ReactElement } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import { ExternalViewerButtonProps } from "LLD/Collectibles/types/DetailDrawer";
+import { ExternalViewerButtonProps, ItemType } from "LLD/Collectibles/types/DetailDrawer";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
@@ -44,9 +44,11 @@ const ExternalViewerButtonComponent: React.FC<ExternalViewerButtonProps> = ({
   const items = useNftLinks(account, nft, metadata, onHideCollection);
 
   const renderItem = ({ item }: { item: Item }): ReactElement => {
-    if (item.type === "separator") {
+    if (item.type === ItemType.Separator) {
       return <Separator />;
     }
+
+    console.log("item", item);
 
     const Icon = item.Icon
       ? // TODO: the icons have incompatible props (size: string / number)
@@ -62,7 +64,7 @@ const ExternalViewerButtonComponent: React.FC<ExternalViewerButtonProps> = ({
           {Icon && <Box mr={2}>{Icon}</Box>}
           {item.label}
         </Box>
-        {item.type === "external" && (
+        {item.type === ItemType.ExternalLink && (
           <Box ml={4}>
             <IconExternal size={16} />
           </Box>

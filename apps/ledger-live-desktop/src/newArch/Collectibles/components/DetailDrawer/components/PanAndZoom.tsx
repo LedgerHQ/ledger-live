@@ -31,11 +31,11 @@ const ImageContainer = styled.div`
 
 const CloseButton = styled.button`
   border: none;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: ${({ theme }) => theme.colors.neutral.c00};
   position: absolute;
   top: 48px;
   right: 48px;
-  color: white;
+  color: ${({ theme }) => theme.colors.neutral.c100};
   cursor: pointer;
   z-index: 1;
 `;

@@ -103,10 +103,9 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
 
   const tagTitle = () => {
     switch (collectibleType) {
-      case CollectibleTypeEnum.NFT:
-        return t("NFT.viewer.attributes.properties");
       case CollectibleTypeEnum.Ordinal:
         return "To fill";
+      case CollectibleTypeEnum.NFT:
       default:
         return t("NFT.viewer.attributes.properties");
     }

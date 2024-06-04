@@ -5,7 +5,7 @@ import useNftDetailDrawer from "LLD/Collectibles/hooks/useNftDetailDrawer";
 import useCollectibles from "LLD/Collectibles/hooks/useCollectibles";
 import { NftsDetailDrawerProps } from "LLD/Collectibles/types/Nfts";
 import { CollectibleTypeEnum } from "LLD/Collectibles/types/Collectibles";
-import Ctas from "./Ctas";
+import Actions from "./Actions";
 
 const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetailDrawerProps) => {
   const {
@@ -55,7 +55,7 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
       setUseFallback={setUseFallback}
     >
       <DetailDrawer.Ctas>
-        <Ctas
+        <Actions
           protoNft={protoNft}
           metadata={metadata as NFTMetadata}
           account={account}

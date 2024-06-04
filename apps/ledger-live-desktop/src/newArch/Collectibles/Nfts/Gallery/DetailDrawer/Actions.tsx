@@ -14,7 +14,7 @@ const NFTActions = styled.div`
   justify-content: center;
 `;
 
-type CtasProps = {
+type ActionsProps = {
   protoNft: ProtoNFT;
   account: Account;
   metadata: NFTMetadata;
@@ -26,7 +26,7 @@ const buttonStyle = {
   justifyContent: "center",
 };
 
-const Ctas: React.FC<CtasProps> = ({ protoNft, account, metadata, onNFTSend }) => {
+const Actions: React.FC<ActionsProps> = ({ protoNft, account, metadata, onNFTSend }) => {
   const { t } = useTranslation();
 
   return (
@@ -43,4 +43,4 @@ const Ctas: React.FC<CtasProps> = ({ protoNft, account, metadata, onNFTSend }) =
   );
 };
 
-export default Ctas;
+export default Actions;

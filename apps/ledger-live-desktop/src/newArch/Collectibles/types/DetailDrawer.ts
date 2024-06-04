@@ -8,6 +8,11 @@ export type ExternalViewerButtonProps = {
   metadata: NFTMetadata;
 };
 
+export enum ItemType {
+  Separator = "separator",
+  ExternalLink = "externalLink",
+}
+
 export type CopyableFieldProps = {
   value: string;
   children?: React.ReactNode;

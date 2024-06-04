@@ -61,7 +61,7 @@ const TagComponent: React.FC<TagProps> = ({ tags, sectionTitle, status, isNewDes
                   mb="2px"
                   lineHeight="12.1px"
                   fontSize={2}
-                  color={isNewDesign ? "palette.text.shade50" : "pallette.neutral.c100"}
+                  color={isNewDesign ? "palette.text.shade50" : "neutral.c100"}
                   ff="Inter|SemiBold"
                   uppercase
                 >
@@ -71,7 +71,7 @@ const TagComponent: React.FC<TagProps> = ({ tags, sectionTitle, status, isNewDes
                   mb="2px"
                   lineHeight="16.94px"
                   fontSize={4}
-                  color={isNewDesign ? "pallette.neutral.c100" : "#8a80db"}
+                  color={isNewDesign ? "neutral.c100" : "#8a80db"}
                   ff="Inter|Regular"
                 >
                   {value}
