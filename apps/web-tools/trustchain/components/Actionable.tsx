@@ -12,8 +12,12 @@ const Label = styled.div`
 
 const ValueDisplay = styled.code`
   padding: 10px;
-  margin: 10px 0;
   background: #f0f0f0;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  overflow: hidden;
 `;
 
 const ErrorDisplay = styled.div`
@@ -68,6 +72,33 @@ export function Actionable<I extends Array<unknown>, A>({
       });
   }, [inputs, action, setValue]);
   const display = value ? valueDisplay(value) : null;
+  return (
+    <RenderActionable
+      enabled={enabled}
+      error={error}
+      loading={loading}
+      onClick={onClick}
+      display={display}
+      buttonTitle={buttonTitle}
+    />
+  );
+}
+
+export function RenderActionable({
+  enabled,
+  error,
+  loading,
+  onClick,
+  display,
+  buttonTitle,
+}: {
+  enabled: boolean;
+  error: Error | null;
+  loading: boolean;
+  onClick: () => void;
+  display: React.ReactNode | null;
+  buttonTitle: string;
+}) {
   return (
     <Label>
       <Button error={!!error} disabled={!enabled || loading} onClick={onClick}>

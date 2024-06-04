@@ -10,7 +10,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from, lastValueFrom } from "rxjs";
 import styled from "styled-components";
 import { JWT, LiveCredentials, Trustchain } from "@ledgerhq/trustchain/types";
-import { Actionable } from "./Actionable";
+import { Actionable, RenderActionable } from "./Actionable";
 import Transport from "@ledgerhq/hw-transport";
 
 const Container = styled.div`
@@ -168,16 +168,19 @@ function AppGetOrCreateTrustchain({
 }
 
 function AppQRCodeHost({
-  trustchain,
+  //trustchain,
   liveCredentials,
 }: {
   trustchain: Trustchain | null;
   liveCredentials: LiveCredentials | null;
 }) {
+  const trustchain = {};
+  const [error, setError] = useState<Error | null>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [digits, setDigits] = useState<string | null>(null);
   const onStart = useCallback(() => {
     if (!trustchain || !liveCredentials) return;
+    setError(null);
     createQRCodeHostInstance({
       onDisplayQRCode: url => {
         setUrl(url);
@@ -194,7 +197,7 @@ function AppQRCodeHost({
         if (e instanceof InvalidDigitsError) {
           return;
         }
-        alert("HOST: Failure: " + e);
+        setError(e);
       })
       .then(() => {
         setUrl(null);
@@ -204,16 +207,15 @@ function AppQRCodeHost({
   return (
     <details>
       <summary>QR Code Host playground</summary>
-      <div>
-        <button disabled={!trustchain || !liveCredentials} onClick={onStart}>
-          Create QR Code Host
-        </button>
-      </div>
-      {url && (
-        <pre>
-          <code>{url}</code>
-        </pre>
-      )}
+
+      <RenderActionable
+        enabled={!!trustchain && !!liveCredentials}
+        error={null}
+        loading={!!url}
+        onClick={onStart}
+        display={url}
+        buttonTitle="Create QR Code Host"
+      />
       {digits && (
         <strong>
           Digits: <code>{digits}</code>
