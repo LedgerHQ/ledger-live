@@ -89,6 +89,16 @@ export interface TrustchainSDK {
   ): Promise<Trustchain>;
 
   /**
+   * add a member to the trustchain
+   */
+  addMember(
+    liveJWT: JWT,
+    trustchain: Trustchain,
+    liveInstanceCredentials: LiveCredentials,
+    member: TrustchainMember,
+  ): Promise<Trustchain>;
+
+  /**
    * completely remove a trustchain
    */
   destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void>;
