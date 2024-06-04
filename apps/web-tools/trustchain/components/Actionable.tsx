@@ -29,7 +29,7 @@ const ErrorDisplay = styled.div`
   color: red;
 `;
 
-const Button = styled.button<{ error?: boolean }>`
+const Button = styled.button`
   padding: 10px;
 `;
 
@@ -105,7 +105,7 @@ export function RenderActionable({
 }) {
   return (
     <Label>
-      <Button error={!!error} disabled={!enabled || loading} onClick={onClick}>
+      <Button disabled={!enabled || loading} onClick={onClick}>
         {buttonTitle}
       </Button>
       {display ? <ValueDisplay>{display}</ValueDisplay> : null}

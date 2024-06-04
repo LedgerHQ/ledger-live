@@ -4,7 +4,6 @@ import {
   createQRCodeCandidateInstance,
 } from "@ledgerhq/trustchain/qrcode/index";
 import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
-import { getSdk } from "@ledgerhq/trustchain";
 import { setEnv, getEnvDefault } from "@ledgerhq/live-env";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from, lastValueFrom } from "rxjs";
@@ -12,7 +11,6 @@ import styled from "styled-components";
 import { JWT, LiveCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { Actionable, RenderActionable } from "./Actionable";
 import Transport from "@ledgerhq/hw-transport";
-import { TrustchainSDK } from "@ledgerhq/trustchain/lib-es/types";
 import QRCode from "./QRCode";
 import useEnv from "../useEnv";
 import Expand from "./Expand";
