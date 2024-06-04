@@ -16,6 +16,7 @@ import { TrustchainSDK } from "@ledgerhq/trustchain/lib-es/types";
 import QRCode from "./QRCode";
 import useEnv from "../useEnv";
 import Expand from "./Expand";
+import useSDK from "../useSDK";
 
 const Container = styled.div`
   padding: 20px;
@@ -35,33 +36,28 @@ const App = () => {
   const [liveCredentials, setLiveCredentials] = useState<LiveCredentials | null>(null);
   const [trustchain, setTrustchain] = useState<Trustchain | null>(null);
 
-  const [sdk, setSdk] = useState(getSdk());
-
   return (
     <Container>
       <h2>Wallet Sync Trustchain Playground</h2>
 
       <Expand title="Environment">
         <AppSetTrustchainAPIEnv />
-        <AppMockEnv setSdk={setSdk} />
+        <AppMockEnv />
       </Expand>
 
       <h3>Trustchain SDK</h3>
 
       <AppInitLiveCredentials
-        sdk={sdk}
         liveCredentials={liveCredentials}
         setLiveCredentials={setLiveCredentials}
       />
 
       <AppSeedIdAuthenticate
-        sdk={sdk}
         seedIdAccessToken={seedIdAccessToken}
         setSeedIdAccessToken={setSeedIdAccessToken}
       />
 
       <AppGetOrCreateTrustchain
-        sdk={sdk}
         seedIdAccessToken={seedIdAccessToken}
         liveCredentials={liveCredentials}
         trustchain={trustchain}
@@ -69,7 +65,7 @@ const App = () => {
       />
 
       <Expand title="QR Code Host">
-        <AppQRCodeHost sdk={sdk} trustchain={trustchain} liveCredentials={liveCredentials} />
+        <AppQRCodeHost trustchain={trustchain} liveCredentials={liveCredentials} />
       </Expand>
 
       <Expand title="QR Code Candidate">
@@ -101,10 +97,9 @@ function AppSetTrustchainAPIEnv() {
   );
 }
 
-function AppMockEnv({ setSdk }: { setSdk: React.Dispatch<React.SetStateAction<TrustchainSDK>> }) {
+function AppMockEnv() {
   const mockEnv = useEnv("MOCK");
   const action = useCallback((mockEnv: string) => (mockEnv ? "" : "1"), []);
-  useEffect(() => setSdk(getSdk()), [setSdk, mockEnv]);
   return (
     <Actionable
       buttonTitle="Toggle Mock Env"
@@ -118,14 +113,13 @@ function AppMockEnv({ setSdk }: { setSdk: React.Dispatch<React.SetStateAction<Tr
 }
 
 function AppInitLiveCredentials({
-  sdk,
   liveCredentials,
   setLiveCredentials,
 }: {
-  sdk: TrustchainSDK;
   liveCredentials: LiveCredentials | null;
   setLiveCredentials: (liveCredentials: LiveCredentials | null) => void;
 }) {
+  const sdk = useSDK();
   const action = useCallback(() => sdk.initLiveCredentials(), [sdk]);
 
   const valueDisplay = useCallback(
@@ -146,14 +140,14 @@ function AppInitLiveCredentials({
 }
 
 function AppSeedIdAuthenticate({
-  sdk,
   seedIdAccessToken,
   setSeedIdAccessToken,
 }: {
-  sdk: TrustchainSDK;
   seedIdAccessToken: { accessToken: string } | null;
   setSeedIdAccessToken: (seedIdAccessToken: { accessToken: string } | null) => void;
 }) {
+  const sdk = useSDK();
+
   const action = useCallback(
     () => runWithDevice(transport => sdk.seedIdAuthenticate(transport)),
     [sdk],
@@ -177,18 +171,18 @@ function AppSeedIdAuthenticate({
 }
 
 function AppGetOrCreateTrustchain({
-  sdk,
   seedIdAccessToken,
   liveCredentials,
   trustchain,
   setTrustchain,
 }: {
-  sdk: TrustchainSDK;
   seedIdAccessToken: JWT | null;
   liveCredentials: LiveCredentials | null;
   trustchain: Trustchain | null;
   setTrustchain: (trustchain: Trustchain | null) => void;
 }) {
+  const sdk = useSDK();
+
   const action = useCallback(
     (seedIdAccessToken: JWT, liveCredentials: LiveCredentials) =>
       runWithDevice(transport =>
@@ -212,14 +206,13 @@ function AppGetOrCreateTrustchain({
 }
 
 function AppQRCodeHost({
-  sdk,
   trustchain,
   liveCredentials,
 }: {
-  sdk: TrustchainSDK;
   trustchain: Trustchain | null;
   liveCredentials: LiveCredentials | null;
 }) {
+  const sdk = useSDK();
   const [error, setError] = useState<Error | null>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [digits, setDigits] = useState<string | null>(null);
