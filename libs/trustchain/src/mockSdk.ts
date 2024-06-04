@@ -58,10 +58,12 @@ class MockSDK implements TrustchainSDK {
     void liveJWT;
     void trustchain;
     void liveInstanceCredentials;
-    return Promise.resolve([{
-      id: "mock-member-id",
-      name: "mock-member-name",
-    }]);
+    return Promise.resolve([
+      {
+        id: "mock-member-id",
+        name: "mock-member-name",
+      },
+    ]);
   }
 
   async removeMember(
@@ -82,10 +84,15 @@ class MockSDK implements TrustchainSDK {
   async destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void> {
     void trustchain;
     void liveJWT;
-    return
+    return;
   }
 
-  addMember(liveJWT: JWT, trustchain: Trustchain, liveInstanceCredentials: LiveCredentials, member: TrustchainMember): Promise<Trustchain> {
+  addMember(
+    liveJWT: JWT,
+    trustchain: Trustchain,
+    liveInstanceCredentials: LiveCredentials,
+    member: TrustchainMember,
+  ): Promise<Trustchain> {
     void liveJWT;
     void trustchain;
     void liveInstanceCredentials;

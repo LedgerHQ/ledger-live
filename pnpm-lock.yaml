@@ -1495,6 +1495,9 @@ importers:
       prop-types:
         specifier: ^15.8.1
         version: 15.8.1
+      qrcode:
+        specifier: ^1.4.4
+        version: 1.5.3
       re-resizable:
         specifier: ^6.9.11
         version: 6.9.11(react-dom@18.2.0)(react@18.2.0)

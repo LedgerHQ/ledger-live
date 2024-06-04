@@ -52,7 +52,8 @@
     "semver": "^7.5.4",
     "styled-components": "^6.0.7",
     "typescript": "5.2.2",
-    "utf-8-validate": "^6.0.3"
+    "utf-8-validate": "^6.0.3",
+    "qrcode": "^1.4.4"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.35",
