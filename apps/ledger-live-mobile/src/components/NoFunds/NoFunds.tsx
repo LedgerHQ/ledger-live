@@ -123,7 +123,6 @@ export default function NoFunds({ route }: Props) {
     {
       title: t("stake.noFundsModal.options.swap.title"),
       description: t("stake.noFundsModal.options.swap.body"),
-      tag: t("stake.noFundsModal.options.swap.label"),
       Icon: IconsLegacy.BuyCryptoMedium,
       onPress: onSwap,
       disabled: !availableOnSwap,
