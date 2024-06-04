@@ -15,6 +15,7 @@ import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/redu
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 export function useMarket() {
   const lldRefreshMarketDataFeature = useFeature("lldRefreshMarketData");
@@ -24,6 +25,8 @@ export function useMarket() {
   const marketCurrentPage = useSelector(marketCurrentPageSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
+
+  const { data: currenciesAll } = useFetchCurrencyAll();
 
   const REFRESH_RATE =
     Number(lldRefreshMarketDataFeature?.params?.refreshTime) > 0
@@ -209,5 +212,6 @@ export function useMarket() {
     loading,
     currenciesLength,
     refreshRate: REFRESH_RATE,
+    currenciesAll,
   };
 }

@@ -41,6 +41,7 @@ type Props = {
   isStarred: boolean;
   toggleStar: () => void;
   range?: string;
+  currenciesAll?: string[];
 };
 
 export const MarketRow = memo<Props>(function MarketRowItem({
@@ -52,12 +53,13 @@ export const MarketRow = memo<Props>(function MarketRowItem({
   isStarred,
   toggleStar,
   range,
+  currenciesAll,
 }: Props) {
   const history = useHistory();
-
   const { t } = useTranslation();
+
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
-    useMarketActions({ currency, page: Page.Market });
+    useMarketActions({ currency, page: Page.Market, currenciesAll });
 
   const onCurrencyClick = useCallback(() => {
     if (currency) {
@@ -223,6 +225,7 @@ type CurrencyRowProps = {
   swapAvailableIds: string[];
   range?: string;
   style: React.CSSProperties;
+  currenciesAll: string[];
 };
 
 export const CurrencyRow = memo(function CurrencyRowItem({
@@ -235,6 +238,7 @@ export const CurrencyRow = memo(function CurrencyRowItem({
   locale,
   style,
   range,
+  currenciesAll,
 }: CurrencyRowProps) {
   const currency = data ? data[index] : null;
   const isStarred = currency && starredMarketCoins.includes(currency.id);
@@ -250,6 +254,7 @@ export const CurrencyRow = memo(function CurrencyRowItem({
       locale={locale}
       style={{ ...style }}
       range={range}
+      currenciesAll={currenciesAll}
     />
   );
 });
