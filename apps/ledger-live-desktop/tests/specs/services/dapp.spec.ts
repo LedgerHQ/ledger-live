@@ -6,7 +6,7 @@ import { Drawer } from "../../page/drawer/drawer";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH1AccountPOLYGON" });
 
 test.describe("Metamask Test Dapp", () => {
   test.beforeAll(async () => {
@@ -116,7 +116,7 @@ test.describe("Metamask Test Dapp", () => {
   });
 });
 
-test.describe.only("1inch dapp", () => {
+test.describe("1inch dapp", () => {
   test.beforeAll(async () => {
     process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify([
       {
@@ -188,12 +188,14 @@ test.describe.only("1inch dapp", () => {
     await drawer.waitForDrawerToDisappear();
 
     const [, webview] = electronApp.windows();
-
-    // Checks that we support EIP 6963
-    await webview.click("app-header-button > button");
-    webview.getByRole("button", {name: 'Polygon'}).click();
-
-
-    webview.getByText("Ethereum").click();
+    await webview.getByRole('button', { name: 'Connect wallet', exact: true }).click();
+    await webview.locator('.connect-wallet__box > button').click();
+    await webview.getByRole('button', { name: 'Connect wallet', exact: true }).click();
+    await webview.getByRole('button', { name: 'Ledger Live Ledger Live' }).click();
+    await page.getByText('Ethereum 110.1354 ETH').click();
+    await webview.getByRole('button', { name: 'Ethereum' }).click();
+    await webview.getByRole('button', { name: 'Polygon' }).click();
+    await page.getByText('Polygon').click();
+    await expect(page.locator('[data-test-id="web-platform-player-topbar-selected-account"]')).toHaveText("Polygon 1");
   });
 });
