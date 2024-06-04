@@ -30,7 +30,6 @@ libs/live-nft/                                           @ledgerhq/live-hub
 libs/live-nft-react/                                     @ledgerhq/live-hub
 libs/live-wallet/                                        @ledgerhq/live-hub
 libs/trustchain/                                         @ledgerhq/live-hub
-apps/web-tools/trustchain/                               @ledgerhq/live-hub
 libs/hw-trustchain/                                      @ledgerhq/live-hub
 
 # Blockchain team
@@ -130,6 +129,10 @@ apps/ledger-live-mobile/src/components/ServicesWidget/Protect/          @ledgerh
 apps/ledger-live-mobile/src/components/WebRecoverPlayer/                @ledgerhq/recover-software
 apps/ledger-live-mobile/src/screens/Protect/                            @ledgerhq/recover-software
 libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerhq/recover-software
+
+# Live hub overrides
+
+apps/web-tools/trustchain/                               @ledgerhq/live-hub
 
 # UI tests
 apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/qaa

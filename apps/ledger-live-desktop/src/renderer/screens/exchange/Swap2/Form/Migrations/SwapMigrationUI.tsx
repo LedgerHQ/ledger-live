@@ -1,15 +1,15 @@
 import React from "react";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 
-import { Box } from "@ledgerhq/react-ui";
 import { usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { Box } from "@ledgerhq/react-ui";
 import ButtonBase from "~/renderer/components/Button";
 import SwapFormRates from "../FormRates";
-import { SwapWebManifestIDs } from "../SwapWebView";
-import LoadingState from "../Rates/LoadingState";
 import SwapFormSummary from "../FormSummary";
+import LoadingState from "../Rates/LoadingState";
+import { SwapWebManifestIDs } from "../SwapWebView";
 
 const Button = styled(ButtonBase)`
   width: 100%;
@@ -49,7 +49,7 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
     ) : null;
 
   const nativeQuotesUI =
-    pageState === "loaded" ? (
+    pageState === "loaded" && !manifestID?.startsWith(SwapWebManifestIDs.Demo1) ? (
       <SwapFormRates
         swap={swapTransaction.swap}
         provider={provider}
