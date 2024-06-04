@@ -6,14 +6,19 @@ import {
 
 export type LedgerEthTransactionResolution = {
   // device serialized data that contains ERC20 data (hex format)
+  /** @deprecated */
   erc20Tokens: Array<string>;
   // device serialized data that contains NFT data (hex format)
+  /** @deprecated */
   nfts: Array<string>;
   // device serialized data that contains external plugin data (hex format)
+  /** @deprecated */
   externalPlugin: Array<{ payload: string; signature: string }>;
   // device serialized data that contains plugin data (hex format)
+  /** @deprecated */
   plugin: Array<string>;
   // device serialized data that contain trusted names data (hex format)
+  /** @deprecated */
   domains: DomainDescriptor[];
 };
 
@@ -36,12 +41,16 @@ export type LoadConfig = {
  */
 export type ResolutionConfig = {
   // NFT resolution service
+  /** @deprecated */
   nft?: boolean;
   // external plugins resolution service (e.G. LIDO)
+  /** @deprecated */
   externalPlugins?: boolean;
   // ERC20 resolution service (to clear sign erc20 transfers & other actions)
+  /** @deprecated */
   erc20?: boolean;
   // List of trusted names (ENS for now) to clear sign
+  /** @deprecated */
   domains?: DomainDescriptor[];
 };
 
@@ -50,7 +59,7 @@ export type LedgerEthTransactionService = {
     rawTxHex: string,
     loadConfig: LoadConfig,
     resolutionConfig: ResolutionConfig,
-  ) => Promise<LedgerEthTransactionResolution>;
+  ) => Promise<LedgerEthTransactionResolution | void>;
   signDomainResolution: typeof signDomainResolution;
   signAddressResolution: typeof signAddressResolution;
 };

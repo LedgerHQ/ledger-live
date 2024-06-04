@@ -29,7 +29,7 @@ export class ExternalPluginContextLoader implements ContextLoader {
     const selector = transaction.data.slice(0, 10) as `0x${string}`;
 
     const dappInfos = await this._externalPluginDataSource.getDappInfos({
-      address: transaction.to,
+      address: transaction.to.toLowerCase(),
       chainId: transaction.chainId,
       selector,
     });

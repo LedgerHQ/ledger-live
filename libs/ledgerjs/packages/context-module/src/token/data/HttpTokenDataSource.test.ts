@@ -31,7 +31,7 @@ describe("HttpTokenDataSource", () => {
 
   it("should return a string when axios response is correct", async () => {
     // GIVEN
-    const tokenDTO: TokenDto = { live_signature: "0x0" };
+    const tokenDTO: TokenDto = { live_signature: "0x0", ticker: "USDC", decimals: 6 };
     jest.spyOn(axios, "request").mockResolvedValue({ data: [tokenDTO] });
 
     // WHEN

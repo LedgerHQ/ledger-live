@@ -28,6 +28,7 @@
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
     "@ethersproject/rlp": "^5.5.0",
+    "@ledgerhq/context-module": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

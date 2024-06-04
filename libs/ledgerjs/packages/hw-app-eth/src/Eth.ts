@@ -18,9 +18,12 @@
 // FIXME drop:
 import type Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
-// NB: these are temporary import for the deprecated fallback mechanism
 import { LedgerEthTransactionResolution, LoadConfig, ResolutionConfig } from "./services/types";
+import { DefaultContextModule } from "@ledgerhq/context-module";
+import { LoaderOptions } from "@ledgerhq/context-module/lib/shared/model/LoaderOptions";
 import { log } from "@ledgerhq/logs";
+import { parseTransaction } from "ethers/lib/utils";
+import { EIP712Message } from "@ledgerhq/types-live";
 import {
   decodeTxInfo,
   hexBuffer,
@@ -29,11 +32,9 @@ import {
   padHexString,
   splitPath,
 } from "./utils";
-import { domainResolutionFlow } from "./modules/Domains";
 import ledgerService from "./services/ledger";
 import { EthAppNftNotSupported, EthAppPleaseEnableContractData } from "./errors";
 import { signEIP712HashedMessage, signEIP712Message } from "./modules/EIP712";
-import { EIP712Message } from "@ledgerhq/types-live";
 
 export { ledgerService };
 export * from "./utils";
@@ -176,7 +177,7 @@ export default class Eth {
    *
    * @param path: the BIP32 path to sign the transaction on
    * @param rawTxHex: the raw ethereum transaction in hexadecimal to sign
-   * @param resolution: resolution is an object with all "resolved" metadata necessary to allow the device to clear sign information. This includes: ERC20 token information, plugins, contracts, NFT signatures,... You must explicitly provide something to avoid having a warning. By default, you can use Ledger's service or your own resolution service. See services/types.js for the contract. Setting the value to "null" will fallback everything to blind signing but will still allow the device to sign the transaction.
+   * @param context: 
    * @example
    import { ledgerService } from "@ledgerhq/hw-app-eth"
    const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
@@ -187,61 +188,27 @@ export default class Eth {
   async signTransaction(
     path: string,
     rawTxHex: string,
-    resolution?: LedgerEthTransactionResolution | null,
+    loaderOptions?: (LedgerEthTransactionResolution & LoaderOptions["options"]) | undefined,
   ): Promise<{
     s: string;
     v: string;
     r: string;
   }> {
-    if (resolution === undefined) {
-      console.warn(
-        "hw-app-eth: signTransaction(path, rawTxHex, resolution): " +
-          "please provide the 'resolution' parameter. " +
-          "See https://github.com/LedgerHQ/ledgerjs/blob/master/packages/hw-app-eth/README.md " +
-          "– the previous signature is deprecated and providing the 3rd 'resolution' parameter explicitly will become mandatory so you have the control on the resolution and the fallback mecanism (e.g. fallback to blind signing or not)." +
-          "// Possible solution:\n" +
-          " + import { ledgerService } from '@ledgerhq/hw-app-eth';\n" +
-          " + const resolution = await ledgerService.resolveTransaction(rawTxHex);",
-      );
-      resolution = await ledgerService
-        .resolveTransaction(rawTxHex, this.loadConfig, {
-          externalPlugins: true,
-          erc20: true,
-        })
-        .catch(e => {
-          console.warn(
-            "an error occurred in resolveTransaction => fallback to blind signing: " + String(e),
-          );
-          return null;
-        });
-    }
+    const contextModule = new DefaultContextModule();
+    const challenge = await this.getChallenge();
+    const transaction = parseTransaction(`0x${rawTxHex}`);
+    const contexts = await contextModule.getContexts(transaction, {
+      options: loaderOptions,
+      challenge,
+    });
 
-    // provide to the device resolved information to make it clear sign the signature
-    if (resolution) {
-      for (const domainDescriptor of resolution.domains) {
-        await domainResolutionFlow(this, domainDescriptor).catch(e => {
-          // error during the domain flow shouldn't be blocking the signature in case of failure
-          log("error", "domainResolutionFlow failed", {
-            domainDescriptor,
-            error: e,
-          });
-        });
-      }
+    console.log({ contexts });
 
-      for (const plugin of resolution.plugin) {
-        await this.setPlugin(plugin);
-      }
-
-      for (const { payload, signature } of resolution.externalPlugin) {
-        await this.setExternalPlugin(payload, signature);
-      }
-
-      for (const nft of resolution.nfts) {
-        await this.provideNFTInformation(nft);
-      }
-
-      for (const data of resolution.erc20Tokens) {
-        await this.provideERC20TokenInformation(data);
+    for (const context of contexts) {
+      if (context.type === "error") {
+        console.error(context.error);
+      } else {
+        await this[context.type](context.payload);
       }
     }
 
@@ -312,37 +279,15 @@ export default class Eth {
   }
 
   /**
-   * Helper to get resolution and signature of a transaction in a single method
-   *
-   * @param path: the BIP32 path to sign the transaction on
-   * @param rawTxHex: the raw ethereum transaction in hexadecimal to sign
-   * @param resolutionConfig: configuration about what should be clear signed in the transaction
-   * @param throwOnError: optional parameter to determine if a failing resolution of the transaction should throw an error or not
-   * @example
-   const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
-   const result = eth.clearSignTransaction("44'/60'/0'/0/0", tx, { erc20: true, externalPlugins: true, nft: true});
-   console.log(result);
+   * @deprecated
    */
   async clearSignTransaction(
     path: string,
     rawTxHex: string,
-    resolutionConfig: ResolutionConfig,
-    throwOnError = false,
+    loaderOptions?: (ResolutionConfig & LoaderOptions["options"]) | undefined,
+    _throwOnError = false,
   ): Promise<{ r: string; s: string; v: string }> {
-    const resolution = await ledgerService
-      .resolveTransaction(rawTxHex, this.loadConfig, resolutionConfig)
-      .catch(e => {
-        console.warn(
-          "an error occurred in resolveTransaction => fallback to blind signing: " + String(e),
-        );
-
-        if (throwOnError) {
-          throw e;
-        }
-        return null;
-      });
-
-    return this.signTransaction(path, rawTxHex, resolution);
+    return this.signTransaction(path, rawTxHex, loaderOptions);
   }
 
   /**
