@@ -25,8 +25,13 @@ import blueDark from "./assets/blue_dark.png";
 import nanoXDark from "./assets/nanoX_dark.png";
 import nanoSPDark from "./assets/nanoSP_dark.png";
 import stax from "./assets/stax.png";
+import europa from "./assets/europa.png";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
-const illustrations = {
+const illustrations: Record<
+  DeviceModelId,
+  { light: string; dark: string; width: number; height: number }
+> = {
   nanoX: {
     light: nanoX,
     dark: nanoXDark,
@@ -51,6 +56,12 @@ const illustrations = {
     width: 141,
     height: 223,
   },
+  europa: {
+    light: europa,
+    dark: europa,
+    width: 141,
+    height: 223,
+  },
   blue: {
     light: blue,
     dark: blueDark,
@@ -58,6 +69,7 @@ const illustrations = {
     height: 64,
   },
 };
+
 const Illustration = styled.div<{
   modelId: string;
 }>`
