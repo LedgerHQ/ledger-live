@@ -2,70 +2,20 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
+import { WebviewLayout } from "../../component/webviewLayout.component";
+
 import { Drawer } from "../../page/drawer/drawer";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
+import dummyLiveApp from "./dapp.spec.ts-mocks/dummy-live-app"
+import dummy1inchLiveApp from "./dapp.spec.ts-mocks/1inch-live-app"
+
 
 test.use({ userdata: "1AccountBTC1AccountETH1AccountPOLYGON" });
 
 test.describe("Metamask Test Dapp", () => {
   test.beforeAll(async () => {
-    process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify([
-      {
-        id: "dummy-live-app",
-        name: "Metamask Test Dapp",
-        private: false,
-        url: "https://metamask.github.io/test-dapp/",
-        dapp: {
-          networks: [
-            {
-              currency: "ethereum",
-              chainID: 1,
-              nodeURL: "https://eth-dapps.api.live.ledger.com",
-            },
-            {
-              currency: "bsc",
-              chainID: 56,
-              nodeURL: "https://bsc-dataseed.binance.org/",
-            },
-            {
-              currency: "polygon",
-              chainID: 137,
-              nodeURL: "https://polygon-mainnet.g.alchemy.com/v2/oPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE",
-            },
-            {
-              currency: "arbitrum",
-              chainID: 42161,
-              nodeURL: "https://arb1.arbitrum.io/rpc",
-            },
-            {
-              currency: "optimism",
-              chainID: 10,
-              nodeURL: "https://mainnet.optimism.io",
-            },
-          ],
-        },
-        homepageUrl: "https://metamask.github.io/test-dapp/",
-        icon: "https://cdn.live.ledger.com/icons/platform/1inch.png",
-        platforms: ["android", "ios", "desktop"],
-        apiVersion: "^2.0.0",
-        manifestVersion: "1",
-        branch: "stable",
-        categories: ["tools"],
-        currencies: ["ethereum", "bsc", "polygon", "arbitrum", "optimism"],
-        content: {
-          shortDescription: {
-            en: "Metamask Test Dapp",
-          },
-          description: {
-            en: "Metamask Test Dapp",
-          },
-        },
-        permissions: [],
-        domains: ["http://", "https://"],
-        visibility: "complete",
-      },
-    ]);
+    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummyLiveApp
   });
 
   test("Wallet API methods @smoke", async ({ page, electronApp }) => {
@@ -118,69 +68,14 @@ test.describe("Metamask Test Dapp", () => {
 
 test.describe("1inch dapp", () => {
   test.beforeAll(async () => {
-    process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify([
-      {
-        id: "dummy-live-app",
-        name: "1inch",
-        private: false,
-        url: "https://app.1inch.io/",
-        dapp: {
-          nanoApp: "1inch",
-          networks: [
-            {
-              currency: "ethereum",
-              chainID: 1,
-              nodeURL: "https://eth-dapps.api.live.ledger.com",
-            },
-            {
-              currency: "bsc",
-              chainID: 56,
-              nodeURL: "https://bsc-dataseed.binance.org/",
-            },
-            {
-              currency: "polygon",
-              chainID: 137,
-              nodeURL: "https://polygon-mainnet.g.alchemy.com/v2/oPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE",
-            },
-            {
-              currency: "arbitrum",
-              chainID: 42161,
-              nodeURL: "https://arb1.arbitrum.io/rpc",
-            },
-            {
-              currency: "optimism",
-              chainID: 10,
-              nodeURL: "https://mainnet.optimism.io",
-            },
-          ],
-        },
-        homepageUrl: "https://1inch.io/",
-        icon: "https://cdn.live.ledger.com/icons/platform/1inch.png",
-        platforms: ["android", "desktop"],
-        apiVersion: "^2.0.0",
-        manifestVersion: "2",
-        branch: "stable",
-        categories: ["swap"],
-        currencies: ["ethereum", "bsc", "polygon", "arbitrum", "optimism"],
-        content: {
-          shortDescription: {
-            en: "Exchange crypto via a Defi/DEX aggregator on Ethereum mainnet, BSC or Polygon",
-          },
-          description: {
-            en: "Exchange crypto via a Defi/DEX aggregator on Ethereum mainnet, BSC or Polygon",
-          },
-        },
-        permissions: [],
-        domains: ["http://", "https://"],
-        visibility: "complete",
-      },
-    ]);
+    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummy1inchLiveApp
   });
 
   test("Dapp switch chain", async ({ page, electronApp }) => {
     const discoverPage = new DiscoverPage(page);
     const drawer = new Drawer(page);
     const layout = new Layout(page);
+    const webviewLayout = new WebviewLayout(page)
 
     await layout.goToDiscover();
     await discoverPage.openTestApp();
@@ -197,7 +92,7 @@ test.describe("1inch dapp", () => {
     await webview.getByRole("button", { name: "Polygon" }).click();
     await page.getByText("Polygon").click();
     await expect(
-      page.locator('[data-test-id="web-platform-player-topbar-selected-account"]'),
+      webviewLayout.selectedAccountButton
     ).toHaveText("Polygon 1");
   });
 });
