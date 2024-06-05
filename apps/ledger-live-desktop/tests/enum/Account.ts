@@ -98,4 +98,75 @@ export class Account {
   static readonly XRP_1 = new Account(Currency.XRP, "XRP 1", "rhQvt8XfAGn1hVVtMUmdGKBUdnKzi2oimV");
 
   static readonly XRP_2 = new Account(Currency.XRP, "XRP 2", "r36cgyrfC1xSQMvjuiSeFJEcBTq31imZS");
+
+  static readonly ADA_1 = new Account(
+    Currency.ADA,
+    "Cardano 1",
+    "  addr1q9q9q55zyew785z6c2lnrhnzghy038r6mepmqn6v28kupk5ug4c7v5lwwfjwgn4mnpzgmhrhp8xry804kuvfh6ru2ews8d5td8",
+  );
+  static readonly ADA_2 = new Account(
+    Currency.ADA,
+    "Cardano 2",
+    "addr1qyjd47qfktpza4ycjddjadaarzwdumwrqws0xage8gvsmrq5ghmxjmdj4eylq78wur2gmm7gtqfq49v6mtdkaqwqzy2qwzv6ac",
+  );
+
+  static readonly ALGO_1 = new Account(
+    Currency.ALGO,
+    "Algorand 1",
+    "HQ6YJWSVG3KVRE56V6UGWMUJLDVNPQUNXJBY7VJ56VMNMGIKVDTC7JEKOU",
+  );
+
+  static readonly ALGO_2 = new Account(
+    Currency.ALGO,
+    "Algorand 2",
+    "6TFDU3BYQ2FO32SOYQDTHDW5XKGEYH4FCT34ZQRHFPJRVMLEQWOO2OEUU4",
+  );
+
+  static readonly XLM_1 = new Account(
+    Currency.XLM,
+    "Stellar 1",
+    "GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX",
+  );
+
+  static readonly XLM_2 = new Account(
+    Currency.XLM,
+    "Stellar 2",
+    "GCTGRCFN7AT6NW4DZVI4QN55BRNQA64TXEZSMYPE7BNUZMLMVISXT652",
+  );
+
+  static readonly BCH_1 = new Account(
+    Currency.BCH,
+    "Bitcoin Cash 1",
+    "qz82kem69vdafku8xf4zpt9p5ytj8umwpujj7wjcv6",
+  );
+
+  static readonly BCH_2 = new Account(
+    Currency.BCH,
+    "Bitcoin Cash 2",
+    "qp2ka732e6h82djvr5ge4vtru0cl3g8lxqtyfmzzl9",
+  );
+
+  static readonly ATOM_1 = new Account(
+    Currency.ATOM,
+    "Cosmos 1",
+    "cosmos18sdl4lvyjtvpjkkt5smglux9sf4phdcpaddfae",
+  );
+
+  static readonly ATOM_2 = new Account(
+    Currency.ATOM,
+    "Cosmos 2",
+    "cosmos12d854g9mut943gu5ncyhalapukttkddnvlxaq6",
+  );
+
+  static readonly XTZ_1 = new Account(
+    Currency.XTZ,
+    "Tezos 1",
+    "tz1UD2zz5eFTW2Jy26kBnC3ZkdeazUgeFWST",
+  );
+
+  static readonly XTZ_2 = new Account(
+    Currency.XTZ,
+    "Tezos 2",
+    "tz1g3uEPZ9T3AhUZDTbGW9V43JRfizJmSnPv",
+  );
 }

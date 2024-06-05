@@ -8,8 +8,6 @@ import { Application } from "tests/page";
 const transactions = [
   //TODO: Reactivate when fees will be stable
   //new Transaction(Account.tBTC_1, Account.tBTC_2, "0.00001", "medium"),
-  //TODO: Reactivate after blobs limit in txpool is full (-32000) resolved - JIRA: BACK-7135
-  //new Transaction(Account.tETH_1, Account.tETH_2, "0.00001", "medium"),
   new Transaction(Account.sep_ETH_1, Account.sep_ETH_2.address, "0.00001", "medium"),
 ];
 
@@ -17,17 +15,13 @@ const transactions = [
 for (const [i, transaction] of transactions.entries()) {
   test.describe.parallel("Send Approve @smoke", () => {
     test.use({
-      userdata: "speculos",
+      userdata: "speculos-tests-app",
       testName: `sendApprove_${transaction.accountToDebit.currency.uiName}`,
       speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
     });
 
-    //@TmsLink("B2CQA-479")
-    //@TmsLink("B2CQA-1904")
-    //@TmsLink("B2CQA-473")
-    //@TmsLink("B2CQA-472")
-    //@TmsLink("B2CQA-475")
+    //@TmsLink("TODO")
 
     test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
       const app = new Application(page);

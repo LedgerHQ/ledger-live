@@ -4,14 +4,16 @@ import Transport from "@ledgerhq/hw-transport";
 import api from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
 
-function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): LiveCredentials {
+export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): LiveCredentials {
   return {
     pubkey: crypto.to_hex(keyPair.publicKey),
     privatekey: crypto.to_hex(keyPair.privateKey),
   };
 }
 
-function convertLiveCredentialsToKeyPair(liveInstanceCredentials: LiveCredentials): CryptoKeyPair {
+export function convertLiveCredentialsToKeyPair(
+  liveInstanceCredentials: LiveCredentials,
+): CryptoKeyPair {
   return {
     publicKey: crypto.from_hex(liveInstanceCredentials.pubkey),
     privateKey: crypto.from_hex(liveInstanceCredentials.privatekey),
@@ -128,10 +130,35 @@ class SDK implements TrustchainSDK {
     throw new Error("removeMember not implemented.");
   }
 
+  async addMember(
+    liveJWT: JWT,
+    trustchain: Trustchain,
+    liveInstanceCredentials: LiveCredentials,
+    memberPublicKey: TrustchainMember,
+  ): Promise<Trustchain> {
+    void liveJWT;
+    void trustchain;
+    void liveInstanceCredentials;
+    void memberPublicKey;
+    throw new Error("addMember not implemented.");
+  }
+
   async destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void> {
     void trustchain;
     void liveJWT;
     throw new Error("destroyTrustchain not implemented.");
+  }
+
+  async encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
+    void trustchain;
+    void obj;
+    throw new Error("encryptUserData not implemented.");
+  }
+
+  async decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object> {
+    void trustchain;
+    void data;
+    throw new Error("decryptUserData not implemented.");
   }
 }
 

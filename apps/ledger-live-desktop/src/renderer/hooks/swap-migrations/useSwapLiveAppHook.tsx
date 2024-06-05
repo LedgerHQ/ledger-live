@@ -97,6 +97,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     getExchangeSDKParams,
     getProviderRedirectURLSearch,
     swapTransaction.swap.from,
+    swapTransaction.swap.from.amount,
     swapError,
     swapTransaction.bridgePending,
     exchangeRatesState.status,

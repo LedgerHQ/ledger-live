@@ -215,8 +215,8 @@ export const createTronTransaction = async (
       owner_address: decode58Check(account.freshAddress),
     };
     const url = `${getBaseApiUrl()}/wallet/triggersmartcontract`;
-    const result = await post(url, txData);
-    return result.transaction;
+    const { transaction: preparedTransaction } = await post(url, txData);
+    return extendTronTxExpirationTimeBy10mn(preparedTransaction);
   } else {
     // trx/trc10
     const txData: SendTransactionData = {

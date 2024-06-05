@@ -4,10 +4,7 @@ import { TFunction } from "i18next";
 import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import AutoSizer from "react-virtualized-auto-sizer";
-import {
-  MarketListRequestParams,
-  MarketListRequestResult,
-} from "@ledgerhq/live-common/market/types";
+import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SortTableCell } from "../components/SortTableCell";
 import { TableCell, TableRow, listItemHeight } from "../components/Table";
@@ -23,15 +20,16 @@ type MarketListProps = {
   itemCount: number;
   locale: string;
   fromCurrencies?: string[];
-  marketResult: MarketListRequestResult;
+  marketData: CurrencyData[];
   resetSearch: () => void;
   toggleFilterByStarredAccounts: () => void;
-  toggleSortBy: (newOrderBy: string) => void;
+  toggleSortBy: () => void;
   toggleStar: (id: string, isStarred: boolean) => void;
   t: TFunction;
   isItemLoaded: (index: number) => boolean;
   onLoadNextPage: (startIndex: number, stopIndex: number) => void;
   checkIfDataIsStaleAndRefetch: (scrollOffset: number) => void;
+  currenciesAll: string[];
 };
 
 function MarketList({
@@ -43,7 +41,7 @@ function MarketList({
   currenciesLength,
   locale,
   fromCurrencies,
-  marketResult,
+  marketData,
   resetSearch,
   isItemLoaded,
   toggleFilterByStarredAccounts,
@@ -52,8 +50,9 @@ function MarketList({
   onLoadNextPage,
   checkIfDataIsStaleAndRefetch,
   t,
+  currenciesAll,
 }: MarketListProps) {
-  const { order, orderBy, search, starred, range, counterCurrency } = marketParams;
+  const { order, search, starred, range, counterCurrency } = marketParams;
 
   return (
     <Flex flex="1" flexDirection="column">
@@ -63,13 +62,7 @@ function MarketList({
         <>
           {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
           <TableRow header>
-            <SortTableCell
-              data-test-id="market-sort-button"
-              onClick={toggleSortBy}
-              orderByKey="market_cap"
-              orderBy={orderBy}
-              order={order}
-            >
+            <SortTableCell data-test-id="market-sort-button" onClick={toggleSortBy} order={order}>
               #
             </SortTableCell>
             <TableCell disabled>{t("market.marketList.crypto")}</TableCell>
@@ -109,6 +102,7 @@ function MarketList({
                         locale={locale}
                         swapAvailableIds={fromCurrencies ?? []}
                         range={range}
+                        currenciesAll={currenciesAll}
                       />
                     )}
                   </List>
@@ -132,7 +126,7 @@ function MarketList({
                         itemCount={itemCount}
                         onItemsRendered={onItemsRendered}
                         itemSize={listItemHeight}
-                        itemData={marketResult.data}
+                        itemData={marketData}
                         style={{ overflowX: "hidden" }}
                         ref={ref}
                         overscanCount={10}
@@ -150,6 +144,7 @@ function MarketList({
                             locale={locale}
                             swapAvailableIds={fromCurrencies ?? []}
                             range={range}
+                            currenciesAll={currenciesAll}
                           />
                         )}
                       </List>

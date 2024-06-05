@@ -9,10 +9,13 @@ export type EIP712Params = { domainSeparator: `0x${string}`; hashStruct: `0x${st
 
 export type SignTransactionOptions = LoaderOptions["options"];
 
-export type SignMessagePayload = string | EIP712Message | EIP712Params;
-
-// TODO: reinforce the type of the options
-export type SignMessageOptions = { method: "personalSign" | "eip712" | "eip712Hashed" };
+export type SignMessageMethod = "personalSign" | "eip712" | "eip712Hashed";
+export type SignMessageOptions<Method extends SignMessageMethod> = { method: Method };
+export type SignMessageType<Method extends SignMessageMethod> = Method extends "personalSign"
+  ? string
+  : Method extends "eip712"
+    ? EIP712Message
+    : EIP712Params;
 
 export type GetAddressResult = {
   publicKey: string;
@@ -33,9 +36,9 @@ export interface KeyringEth extends Keyring {
     options: SignTransactionOptions,
   ): Promise<EcdsaSignature>;
 
-  signMessage(
+  signMessage<Method extends SignMessageMethod>(
     derivationPath: string,
-    message: SignMessagePayload,
-    options: SignMessageOptions,
+    message: SignMessageType<Method>,
+    options: SignMessageOptions<Method>,
   ): Promise<EcdsaSignature>;
 }

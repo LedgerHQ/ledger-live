@@ -19,6 +19,12 @@ interface PublishedKey {
   initialiationVector: Uint8Array;
 }
 
+type MemberData = {
+  publicKey: Uint8Array;
+  name: string;
+  permission: number;
+};
+
 class ResolvedCommandStreamInternals {
   public isCreated: boolean = false;
   public members: Uint8Array[] = [];
@@ -48,7 +54,16 @@ export class ResolvedCommandStream {
     return this._internals.members;
   }
 
-  // TODO other getMembers() method to retrieve them with the names
+  public getMembersData(): MemberData[] {
+    return this._internals.members.map(publicKey => {
+      const hex = crypto.to_hex(publicKey);
+      return {
+        publicKey,
+        name: this._internals.names.get(hex)!,
+        permission: this._internals.permission.get(hex)!,
+      };
+    });
+  }
 
   public getTopic(): Uint8Array | null {
     return this._internals.topic;
@@ -206,19 +221,16 @@ export default class CommandStreamResolver {
         internals.groupPublicKey = (command as Derive).groupKey;
         internals.derivationPath = (command as Derive).path;
         break;
-      case CommandType.AddMember:
+      case CommandType.AddMember: {
         this.assertStreamIsCreated(internals);
         this.assertIssuerCanAddMember(block.issuer, internals);
-        internals.members.push((command as AddMember).publicKey);
-        internals.permission.set(
-          crypto.to_hex((command as AddMember).publicKey),
-          (command as AddMember).permissions,
-        );
-        internals.names.set(
-          crypto.to_hex((command as AddMember).publicKey),
-          (command as AddMember).name,
-        );
+        const publicKey = (command as AddMember).publicKey;
+        const hex = crypto.to_hex(publicKey);
+        internals.members.push(publicKey);
+        internals.permission.set(hex, (command as AddMember).permissions);
+        internals.names.set(hex, (command as AddMember).name);
         break;
+      }
       case CommandType.PublishKey:
         this.assertStreamIsCreated(internals);
         this.assertIssuerCanPublish(block.issuer, internals);

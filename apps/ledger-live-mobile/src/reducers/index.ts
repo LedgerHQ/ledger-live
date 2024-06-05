@@ -12,6 +12,7 @@ import dynamicContent from "./dynamicContent";
 import walletconnect from "./walletconnect";
 import protect from "./protect";
 import nft from "./nft";
+import market from "./market";
 import wallet from "./wallet";
 import { State } from "./types";
 import { ActionsPayload } from "../actions/types";
@@ -33,6 +34,7 @@ const appReducer = combineReducers({
   protect,
   nft,
   wallet,
+  market,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>

@@ -89,6 +89,7 @@ const buildViteConfig = argv =>
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
           "lib",
         ),
+        "styled-components": [require.resolve("styled-components/dist/styled-components")],
         electron: path.join(__dirname, "electronRendererStubs.js"),
       },
     },

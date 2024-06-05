@@ -1,3 +1,5 @@
+import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -5,22 +7,20 @@ import {
   NotEnoughGas,
   NotEnoughGasSwap,
 } from "@ledgerhq/errors";
-import { useMemo } from "react";
-import {
-  SwapSelectorStateType,
-  OnNoRatesCallback,
-  SwapTransactionType,
-  ExchangeRate,
-} from "../types";
-import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
-import { useFromState } from "./useFromState";
-import { useToState } from "./useToState";
-import { useReverseAccounts } from "./useReverseAccounts";
 import { Account } from "@ledgerhq/types-live";
-import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
+import { useMemo } from "react";
+import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
 import { Transaction } from "../../../generated/types";
-import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import {
+  ExchangeRate,
+  OnNoRatesCallback,
+  SwapSelectorStateType,
+  SwapTransactionType,
+} from "../types";
+import { useFromState } from "./useFromState";
+import { useReverseAccounts } from "./useReverseAccounts";
+import { useToState } from "./useToState";
+import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 import { useProviderRates } from "./v5/useProviderRates";
 
 export const selectorStateDefaultValues = {
@@ -98,6 +98,7 @@ type UseSwapTransactionProps = {
   excludeFixedRates?: boolean;
   refreshRate?: number;
   allowRefresh?: boolean;
+  isEnabled?: boolean;
 };
 
 export const useSwapTransaction = ({
@@ -110,7 +111,8 @@ export const useSwapTransaction = ({
   excludeFixedRates,
   refreshRate,
   allowRefresh,
-}: UseSwapTransactionProps = {}): SwapTransactionType => {
+  isEnabled,
+}: UseSwapTransactionProps): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
     parentAccount: defaultParentAccount,
@@ -165,6 +167,7 @@ export const useSwapTransaction = ({
     setExchangeRate,
     countdown: refreshRate,
     allowRefresh,
+    isEnabled,
   });
 
   return {

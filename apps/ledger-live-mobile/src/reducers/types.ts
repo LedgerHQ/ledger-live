@@ -9,7 +9,7 @@ import type {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { CryptoCurrencyId, Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -227,11 +227,8 @@ export type SettingsState = {
   lastSeenDevice: DeviceModelInfo | null;
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
   hasSeenStaxEnabledNftsPopup: boolean;
-  starredMarketCoins: string[];
   lastConnectedDevice: Device | null;
-  marketRequestParams: MarketListRequestParams;
   marketCounterCurrency: string | null | undefined;
-  marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
   onboardingType: OnboardingType | null;
@@ -263,6 +260,7 @@ export type SettingsState = {
   supportedCounterValues: supportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [id: string]: number };
+  starredMarketCoins: string[];
 };
 
 export type NotificationsSettings = {
@@ -333,6 +331,14 @@ export type NftGalleryChainFiltersState = Pick<
   "polygon" | "ethereum"
 >;
 
+// === MARKET STATE ===
+
+export type MarketState = {
+  marketParams: MarketListRequestParams;
+  marketFilterByStarredCurrencies: boolean;
+  marketCurrentPage: number;
+};
+
 // === ROOT STATE ===
 
 export type State = {
@@ -349,5 +355,6 @@ export type State = {
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
   nft: NftState;
+  market: MarketState;
   wallet: WalletState;
 };
