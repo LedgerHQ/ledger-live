@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { encode } from "ripple-binary-codec";
 import XrplDefinitions from "ripple-binary-codec/dist/enums/definitions.json";
 import { getLedgerIndex } from "../api";
-import { getNextValidSequence, UINT32_MAX, validateTag } from "./logic";
+import { UINT32_MAX, validateTag } from "./logic";
 
 const LEDGER_OFFSET = 20;
 
