@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.45.0-nightly.5
+
+### Minor Changes
+
+- [#6970](https://github.com/LedgerHQ/ledger-live/pull/6970) [`ab16901`](https://github.com/LedgerHQ/ledger-live/commit/ab169018857b43f9a0feed131e80e318b9e75f96) Thanks [@valpinkman](https://github.com/valpinkman)! - Enable Nano X BLE Fw update on LLM
+
+### Patch Changes
+
+- [#6997](https://github.com/LedgerHQ/ledger-live/pull/6997) [`9ebead5`](https://github.com/LedgerHQ/ledger-live/commit/9ebead54c039ee1f63862b555de8bda44c748153) Thanks [@CremaFR](https://github.com/CremaFR)! - fix polkadot max swap
+
+- Updated dependencies [[`48ac131`](https://github.com/LedgerHQ/ledger-live/commit/48ac1318f43e003ff8db807391cee79e4b010b3a)]:
+  - @ledgerhq/live-common@34.3.0-nightly.13
+
 ## 3.44.2-nightly.4
 
 ### Patch Changes

@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.5
+
+### Minor Changes
+
+- [#7012](https://github.com/LedgerHQ/ledger-live/pull/7012) [`35c5389`](https://github.com/LedgerHQ/ledger-live/commit/35c5389333249216d6565b7641c562907c4356f2) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Stax post onboarding text color with light mode
+
+- [#7010](https://github.com/LedgerHQ/ledger-live/pull/7010) [`de56818`](https://github.com/LedgerHQ/ledger-live/commit/de56818997f1b627397b90a341b6ad426dce2907) Thanks [@KVNLS](https://github.com/KVNLS)! - Enforce only one version of styled-components on dev mode
+
+### Patch Changes
+
+- [#7001](https://github.com/LedgerHQ/ledger-live/pull/7001) [`8736e68`](https://github.com/LedgerHQ/ledger-live/commit/8736e68acc063af1662b527628d5e99e679584ca) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - hide webview loader from swap module
+
+- [#6997](https://github.com/LedgerHQ/ledger-live/pull/6997) [`9ebead5`](https://github.com/LedgerHQ/ledger-live/commit/9ebead54c039ee1f63862b555de8bda44c748153) Thanks [@CremaFR](https://github.com/CremaFR)! - fix polkadot max swap
+
+- [#6852](https://github.com/LedgerHQ/ledger-live/pull/6852) [`48ac131`](https://github.com/LedgerHQ/ledger-live/commit/48ac1318f43e003ff8db807391cee79e4b010b3a) Thanks [@drakoFukayu](https://github.com/drakoFukayu)! - Add `SKIP_ONBOARDING` env to `hasCompletedOnboardingSelector` to make it possible to start the live without a device
+
+- [#7011](https://github.com/LedgerHQ/ledger-live/pull/7011) [`ae11ef2`](https://github.com/LedgerHQ/ledger-live/commit/ae11ef233fd0bf1fa0dfb5f1f3c6951ef93196a7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - FIx glitch when resizing window on Market + big space on clearable element in Search in Market
+
+- Updated dependencies [[`48ac131`](https://github.com/LedgerHQ/ledger-live/commit/48ac1318f43e003ff8db807391cee79e4b010b3a)]:
+  - @ledgerhq/live-common@34.3.0-nightly.13
+
 ## 2.82.0-nightly.4
 
 ### Patch Changes

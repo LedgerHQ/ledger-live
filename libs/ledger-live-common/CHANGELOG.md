@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.13
+
+### Patch Changes
+
+- [#6852](https://github.com/LedgerHQ/ledger-live/pull/6852) [`48ac131`](https://github.com/LedgerHQ/ledger-live/commit/48ac1318f43e003ff8db807391cee79e4b010b3a) Thanks [@drakoFukayu](https://github.com/drakoFukayu)! - increase tr20 expiry time to 10mn for Vault user
+
 ## 34.3.0-nightly.12
 
 ### Patch Changes
