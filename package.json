@@ -165,8 +165,8 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^5.0.1",
-    "prettier": "^3.0.3",
     "nyc": "^15.1.0",
+    "prettier": "^3.0.3",
     "rimraf": "^4.4.1",
     "turbo": "1.10.1",
     "typescript": "^5.4.3",
@@ -192,7 +192,8 @@
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
       "detox@20.20.2": "patches/detox@20.20.2.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
-      "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch"
+      "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
+      "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {
