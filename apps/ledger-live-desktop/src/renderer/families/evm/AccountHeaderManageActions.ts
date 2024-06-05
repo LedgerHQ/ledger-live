@@ -20,6 +20,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
   const isEthereumMaticTokenAccount =
     account.type === "TokenAccount" && account.token.id === "ethereum/erc20/matic";
+  const isAvalancheCAccount =
+    account.type === "Account" && account.currency.id === "avalanche_c_chain";
 
   const onClickStake = useCallback(() => {
     if (isAccountEmpty(account)) {
@@ -44,10 +46,29 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
           returnTo: `/account/${account.parentId}/${account.id}`,
         },
       });
+    } else if (isAvalancheCAccount) {
+      history.push({
+        pathname: "/platform/stakekit",
+        state: {
+          yieldId: "avalanche-avax-liquid-staking",
+          accountId: account.id,
+          returnTo: `/account/${account.id}`,
+        },
+      });
     }
-  }, [account, dispatch, parentAccount, isEthereumMaticTokenAccount, isEthereumAccount, history]);
+  }, [
+    account,
+    dispatch,
+    history,
+    isAvalancheCAccount,
+    isEthereumAccount,
+    isEthereumMaticTokenAccount,
+    parentAccount,
+  ]);
 
-  if (isEthereumAccount || isEthereumMaticTokenAccount) {
+  const canStake = isEthereumAccount || isEthereumMaticTokenAccount || isAvalancheCAccount;
+
+  if (canStake) {
     return [
       {
         key: "Stake",
@@ -61,8 +82,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
           currency: isEthereumAccount
             ? account?.currency?.name
             : isEthereumMaticTokenAccount
-            ? account?.token?.name
-            : undefined,
+              ? account?.token?.name
+              : undefined,
         }),
         accountActionsTestId: "stake-from-account-action-button",
       },

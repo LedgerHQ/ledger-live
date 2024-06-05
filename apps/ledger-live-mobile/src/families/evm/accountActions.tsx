@@ -21,7 +21,10 @@ type Props = {
 
 function getNavigatorParams(
   { parentRoute, account, parentAccount }: Props,
-  isEthereumMaticTokenAccount: boolean,
+  {
+    isAvalancheCAccount,
+    isEthereumMaticTokenAccount,
+  }: { isEthereumMaticTokenAccount: boolean; isAvalancheCAccount: boolean },
 ): NavigationParamsType {
   if (isAccountEmpty(account)) {
     return [
@@ -36,7 +39,14 @@ function getNavigatorParams(
     ];
   }
 
-  if (isEthereumMaticTokenAccount) {
+  if (isEthereumMaticTokenAccount || isAvalancheCAccount) {
+    const yieldId = (() => {
+      if (isEthereumMaticTokenAccount) {
+        return "ethereum-matic-native-staking";
+      }
+      return "avalanche-avax-liquid-staking";
+    })();
+
     return [
       ScreenName.PlatformApp,
       {
@@ -44,7 +54,7 @@ function getNavigatorParams(
           platform: "stakekit",
           name: "StakeKit",
           accountId: account.id,
-          yieldId: "ethereum-matic-native-staking",
+          yieldId,
         },
       },
     ];
@@ -83,16 +93,29 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
   const isEthereumMaticTokenAccount =
     account.type === "TokenAccount" && account.token.id === "ethereum/erc20/matic";
+  const isAvalancheCAccount =
+    account.type === "Account" && account.currency.id === "avalanche_c_chain";
 
-  if (isEthereumAccount || isEthereumMaticTokenAccount) {
+  const canStake = isEthereumAccount || isEthereumMaticTokenAccount || isAvalancheCAccount;
+
+  if (canStake) {
     const navigationParams = getNavigatorParams(
       {
         account,
         parentAccount,
         parentRoute,
       },
-      isEthereumMaticTokenAccount,
+      { isEthereumMaticTokenAccount, isAvalancheCAccount },
     );
+
+    const currency = (() => {
+      if (isEthereumMaticTokenAccount) {
+        return "MATIC";
+      } else if (isAvalancheCAccount) {
+        return "AVAX";
+      }
+      return "ETH";
+    })();
 
     return [
       {
@@ -100,9 +123,7 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         navigationParams,
         label: <Trans i18nKey="account.stake" />,
         Icon: IconsLegacy.CoinsMedium,
-        eventProperties: {
-          currency: isEthereumMaticTokenAccount ? "ETH" : "MATIC",
-        },
+        eventProperties: { currency },
       },
     ];
   }
