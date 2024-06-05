@@ -7,15 +7,14 @@ import { WebviewLayout } from "../../component/webviewLayout.component";
 import { Drawer } from "../../page/drawer/drawer";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import dummyLiveApp from "./dapp.spec.ts-mocks/dummy-live-app"
-import dummy1inchLiveApp from "./dapp.spec.ts-mocks/1inch-live-app"
-
+import dummyLiveApp from "./dapp.spec.ts-mocks/dummy-live-app";
+import dummy1inchLiveApp from "./dapp.spec.ts-mocks/1inch-live-app";
 
 test.use({ userdata: "1AccountBTC1AccountETH1AccountPOLYGON" });
 
 test.describe("Metamask Test Dapp", () => {
   test.beforeAll(async () => {
-    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummyLiveApp
+    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummyLiveApp;
   });
 
   test("Wallet API methods @smoke", async ({ page, electronApp }) => {
@@ -68,14 +67,14 @@ test.describe("Metamask Test Dapp", () => {
 
 test.describe("1inch dapp", () => {
   test.beforeAll(async () => {
-    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummy1inchLiveApp
+    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummy1inchLiveApp;
   });
 
   test("Dapp switch chain", async ({ page, electronApp }) => {
     const discoverPage = new DiscoverPage(page);
     const drawer = new Drawer(page);
     const layout = new Layout(page);
-    const webviewLayout = new WebviewLayout(page)
+    const webviewLayout = new WebviewLayout(page);
 
     await layout.goToDiscover();
     await discoverPage.openTestApp();
@@ -91,8 +90,6 @@ test.describe("1inch dapp", () => {
     await webview.getByRole("button", { name: "Ethereum" }).click();
     await webview.getByRole("button", { name: "Polygon" }).click();
     await page.getByText("Polygon").click();
-    await expect(
-      webviewLayout.selectedAccountButton
-    ).toHaveText("Polygon 1");
+    await expect(webviewLayout.selectedAccountButton).toHaveText("Polygon 1");
   });
 });
