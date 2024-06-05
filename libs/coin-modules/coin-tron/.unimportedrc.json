@@ -19,6 +19,7 @@
   "ignoreUnused": [
     "@ledgerhq/devices",
     "@ledgerhq/live-env",
-    "expect"
+    "expect",
+    "invariant"
   ]
 }

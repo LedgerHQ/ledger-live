@@ -2484,6 +2484,9 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
