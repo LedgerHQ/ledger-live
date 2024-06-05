@@ -235,8 +235,10 @@ export const TopBar = ({
         </ItemContainer>
         {shouldDisplaySelectAccount ? (
           <>
-            <ItemContainer isInteractive onClick={onSelectAccount} 
-            data-test-id="web-platform-player-topbar-selected-account"
+            <ItemContainer
+              isInteractive
+              onClick={onSelectAccount}
+              data-test-id="web-platform-player-topbar-selected-account"
             >
               {!currentAccount ? (
                 <>

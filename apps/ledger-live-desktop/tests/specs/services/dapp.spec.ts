@@ -188,14 +188,16 @@ test.describe("1inch dapp", () => {
     await drawer.waitForDrawerToDisappear();
 
     const [, webview] = electronApp.windows();
-    await webview.getByRole('button', { name: 'Connect wallet', exact: true }).click();
-    await webview.locator('.connect-wallet__box > button').click();
-    await webview.getByRole('button', { name: 'Connect wallet', exact: true }).click();
-    await webview.getByRole('button', { name: 'Ledger Live Ledger Live' }).click();
-    await page.getByText('Ethereum 110.1354 ETH').click();
-    await webview.getByRole('button', { name: 'Ethereum' }).click();
-    await webview.getByRole('button', { name: 'Polygon' }).click();
-    await page.getByText('Polygon').click();
-    await expect(page.locator('[data-test-id="web-platform-player-topbar-selected-account"]')).toHaveText("Polygon 1");
+    await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
+    await webview.locator(".connect-wallet__box > button").click();
+    await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
+    await webview.getByRole("button", { name: "Ledger Live Ledger Live" }).click();
+    await page.getByText("Ethereum 110.1354 ETH").click();
+    await webview.getByRole("button", { name: "Ethereum" }).click();
+    await webview.getByRole("button", { name: "Polygon" }).click();
+    await page.getByText("Polygon").click();
+    await expect(
+      page.locator('[data-test-id="web-platform-player-topbar-selected-account"]'),
+    ).toHaveText("Polygon 1");
   });
 });
