@@ -39,6 +39,8 @@ for (const [i, account] of accounts.entries()) {
 
       await app.account.deleteAccount();
       await app.accounts.expectAccountAbsence(account.accountName);
+
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-320" });
     });
   });
 }

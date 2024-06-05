@@ -41,6 +41,17 @@ on:
         type: boolean
         default: false
 
+      projectKey:
+        description: "Jira project key"
+        required: false
+        default: "B2CQA"
+        type: string
+      testPlanKey:
+        description: "Jira test plan key (eg. B2CQA-1234)"
+        required: false
+        default: ""
+        type: string
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true

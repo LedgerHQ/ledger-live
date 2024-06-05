@@ -1,7 +1,4 @@
 import { PlaywrightTestConfig } from "@playwright/test";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const config: PlaywrightTestConfig = {
   projects: [
@@ -52,22 +49,15 @@ const config: PlaywrightTestConfig = {
         ["line"],
         ["allure-playwright"],
         [
-          "./xrayPlaywright.ts",
+          "junit",
           {
-            jira: {
-              url: "https://ledgerhq.atlassian.net/",
-              type: "cloud",
-              apiVersion: "1.0",
-            },
-            cloud: {
-              client_id: process.env.XRAY_CLIENT_ID,
-              client_secret: process.env.XRAY_CLIENT_SECRET,
-            },
-            projectKey: "B2CQA",
-            testPlan: "JIRA_CODEXXXXX",
-            debug: false,
+            embedAnnotationsAsProperties: true,
+            textContentAnnotations: ["test_description"],
+            embedAttachmentsAsProperty: "testrun_evidence",
+            outputFile: "./xray-report.xml",
           },
-        ],
+        ], // Permet de trigger le Junit reporter
+        ["./utils/index.ts"], // todo: verifier si vraiment utile + changer le nom ? ==> Permet de trigger le Xray reporter
       ]
     : [["allure-playwright"]],
 };

@@ -23,7 +23,7 @@ for (const [i, transaction] of transactions.entries()) {
 
     //@TmsLink("TODO")
 
-    test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
+    test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }, testInfo) => {
       const app = new Application(page);
 
       await app.layout.goToAccounts();
@@ -36,6 +36,12 @@ for (const [i, transaction] of transactions.entries()) {
 
       await app.speculos.expectValidTxInfo(transaction);
       await app.send.expectTxSent();
+
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-479" });
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-1904" });
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-473" });
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-472" });
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-475" });
     });
   });
 }

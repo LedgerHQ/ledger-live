@@ -1,4 +1,5 @@
-import type { FullConfig, Reporter, Suite, TestCase, TestResult } from "@playwright/test/reporter";
+import { Reporter, TestCase, TestResult } from "@playwright/test/reporter";
+import { ReportingUtils } from "./xray-reporter";
 
 interface XrayTestResult {
   testKey: string;
@@ -8,12 +9,7 @@ interface XrayTestResult {
 class XrayReporter implements Reporter {
   private testResults: XrayTestResult[] = [];
 
-  onBegin(config: FullConfig, suite: Suite) {
-    console.log(`Starting the run with ${suite.allTests().length} tests`);
-  }
-
   onTestEnd(test: TestCase, result: TestResult) {
-    console.log(`Finished test ${test.title}: ${result.status}`);
     const tmsIds = this.getTmsIds(test);
     for (const tmsId of tmsIds) {
       let status: string;
@@ -36,9 +32,14 @@ class XrayReporter implements Reporter {
 
   async onEnd() {
     if (process.env.IS_XRAY) {
-      console.log("Publishing test results to Xray");
-      await publishToXray(this.testResults);
+      await ReportingUtils.publishToXray(this.testResults);
     }
+  }
+
+  private getTmsIds(test: TestCase): string[] {
+    return test.annotations
+      .filter(annotation => annotation.type === "TMS")
+      .map(annotation => annotation.description);
   }
 }
 
