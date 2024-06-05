@@ -1,7 +1,6 @@
 import { DeviceModelId } from ".";
 import { stringToDeviceModelId, isDeviceModelId } from "./helpers";
 
-
 const validDeviceModelsIds = ["nanoS", "nanoX", "blue", "nanoSP", "stax", "europa"];
 const invalidDeviceModelsIds = ["does-not-exist", "", null, undefined];
 
