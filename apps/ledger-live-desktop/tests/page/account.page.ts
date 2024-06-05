@@ -19,6 +19,8 @@ export class AccountPage extends AppPage {
   private lastOperation = this.page.locator("text=Latest operations");
   private tokenValue = (tokenName: string) =>
     this.page.locator(`data-test-id=account-row-${tokenName.toLowerCase()}`);
+  private accountBalance = this.page.locator("data-test-id=total-balance");
+  private operationList = this.page.locator("id=operation-list");
 
   @step("Navigate to token $0")
   async navigateToToken(token: string) {
@@ -83,9 +85,15 @@ export class AccountPage extends AppPage {
     await this.settingsButton.waitFor({ state: "visible" });
   }
 
+  @step("Expect account to be not null")
+  async expectAccountBalance() {
+    expect(this.accountBalance).toBeTruthy();
+  }
+
   @step("Expect `Last operations` to be visible")
   async expectLastOperationsVisibility() {
     await this.scrollToOperations();
     await expect(this.lastOperation).toBeVisible();
+    await expect(this.operationList).not.toBeEmpty();
   }
 }

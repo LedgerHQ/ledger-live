@@ -8,7 +8,7 @@ export class PortfolioPage extends AppPage {
   );
   private buySellEntryButton = this.page.locator("data-test-id=buy-sell-entry-button");
   private stakeEntryButton = this.page.locator("data-test-id=stake-entry-button");
-  private showAllButton = this.page.locator("text=Show all");
+  private showAllButton = this.page.getByText("Show all");
   private assetRow = (currency: string) =>
     this.page.locator(`data-test-id=asset-row-${currency.toLowerCase()}`);
 
