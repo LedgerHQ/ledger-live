@@ -18,7 +18,7 @@ import { prepareTransaction } from "../prepareTransaction";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape } from "../synchronization";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
-import type { Transaction } from "../types";
+import type {  Transaction } from "../types";
 import { IconSigner } from "../signer";
 
 export function buildCurrencyBridge(signerContext: SignerContext<IconSigner>): CurrencyBridge {

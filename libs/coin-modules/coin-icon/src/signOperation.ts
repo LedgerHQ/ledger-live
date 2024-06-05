@@ -4,10 +4,10 @@ import { Observable } from "rxjs";
 import type { IconAccount, Transaction } from "./types";
 import type {
   Account,
+  AccountBridge,
   DeviceId,
   Operation,
   SignOperationEvent,
-  SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -63,7 +63,7 @@ const addSignature = (rawTransaction: IcxTransaction, signature: string) => {
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (signerContext: SignerContext<IconSigner>): SignOperationFnSignature<Transaction> =>
+  (signerContext: SignerContext<IconSigner>): AccountBridge<Transaction>["signOperation"] =>
   ({
     account,
     transaction,
