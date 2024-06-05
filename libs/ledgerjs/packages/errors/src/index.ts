@@ -159,6 +159,7 @@ export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
 export const LedgerAPI4xx = createCustomErrorClass("LedgerAPI4xx");
 export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
 export const FirmwareOrAppUpdateRequired = createCustomErrorClass("FirmwareOrAppUpdateRequired");
+export const TransportRaceCondition = createCustomErrorClass("TransportPendingOperation");
 
 // SpeedUp / Cancel EVM tx
 export const ReplacementTransactionUnderpriced = createCustomErrorClass(
