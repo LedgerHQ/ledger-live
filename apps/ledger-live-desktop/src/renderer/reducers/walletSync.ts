@@ -18,6 +18,11 @@ export enum Step {
   DeviceAction = "DeviceAction",
   CreateOrSynchronizeTrustChain = "CreateOrSynchronizeTrustChain",
   ActivationFinal = "ActivationFinal",
+
+  //Synchronize
+  SynchronizeMode = "SynchronizeMode",
+  SynchronizeWithQRCode = "SynchronizeWithQRCode",
+  Synchronized = "Synchronized",
 }
 
 export type WalletSyncState = {

@@ -9,7 +9,7 @@ import {
 import WalletSyncActivation from "LLD/WalletSync/Flows/Activation";
 import WalletSyncManage from "LLD/WalletSync/Flows/Manage";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
-import Synch from "./Synch";
+import Synch from "./Synchronize";
 import WalletSyncManageBackups from "./ManageBackup";
 
 export interface BackRef {

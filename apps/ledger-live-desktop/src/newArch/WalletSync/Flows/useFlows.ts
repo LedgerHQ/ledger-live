@@ -22,7 +22,11 @@ export const FlowOptions: Record<
     },
   },
   [Flow.Synchronize]: {
-    steps: {},
+    steps: {
+      1: Step.SynchronizeModeStep,
+      2: Step.SynchronizeWithQRCodeStep,
+      3: Step.SynchronizedStep,
+    },
   },
   [Flow.ManageBackups]: {
     steps: {
