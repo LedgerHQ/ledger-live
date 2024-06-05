@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert } from "@ledgerhq/native-ui";
-import QueuedDrawer from "./QueuedDrawer";
+import QueuedDrawer from ".";
 import { setDebugAppLevelDrawerOpened } from "~/actions/settings";
 import { debugAppLevelDrawerOpenedSelector } from "~/reducers/settings";
 
@@ -19,7 +19,7 @@ const DebugAppLevelDrawer = () => {
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
-      <Alert type="info" title="This is a drawer at the App level ⛰" />
+      <Alert type="info" title="This is a drawer at the App level" />
     </QueuedDrawer>
   );
 };
