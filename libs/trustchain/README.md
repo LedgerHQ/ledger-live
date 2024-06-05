@@ -8,25 +8,102 @@ Ledger Live trustchain layer.
 
 #### Table of Contents
 
-*   [LiveCredentials](#livecredentials)
+*   [createQRCodeHostInstance](#createqrcodehostinstance)
+    *   [Parameters](#parameters)
+*   [onDisplayQRCode](#ondisplayqrcode)
+*   [onDisplayDigits](#ondisplaydigits)
+*   [addMember](#addmember)
+*   [createQRCodeCandidateInstance](#createqrcodecandidateinstance)
+    *   [Parameters](#parameters-1)
+*   [liveCredentials](#livecredentials)
+*   [scannedUrl](#scannedurl)
+*   [onRequestQRCodeInput](#onrequestqrcodeinput)
+*   [LiveCredentials](#livecredentials-1)
 *   [](#)
 *   [TrustchainSDK](#trustchainsdk)
     *   [Examples](#examples)
     *   [initLiveCredentials](#initlivecredentials)
     *   [seedIdAuthenticate](#seedidauthenticate)
-        *   [Parameters](#parameters)
-    *   [liveAuthenticate](#liveauthenticate)
-        *   [Parameters](#parameters-1)
-    *   [getOrCreateTrustchain](#getorcreatetrustchain)
         *   [Parameters](#parameters-2)
-    *   [restoreTrustchain](#restoretrustchain)
+    *   [liveAuthenticate](#liveauthenticate)
         *   [Parameters](#parameters-3)
-    *   [getMembers](#getmembers)
+    *   [getOrCreateTrustchain](#getorcreatetrustchain)
         *   [Parameters](#parameters-4)
-    *   [removeMember](#removemember)
+    *   [restoreTrustchain](#restoretrustchain)
         *   [Parameters](#parameters-5)
-    *   [destroyTrustchain](#destroytrustchain)
+    *   [getMembers](#getmembers)
         *   [Parameters](#parameters-6)
+    *   [removeMember](#removemember)
+        *   [Parameters](#parameters-7)
+    *   [addMember](#addmember-1)
+        *   [Parameters](#parameters-8)
+    *   [destroyTrustchain](#destroytrustchain)
+        *   [Parameters](#parameters-9)
+
+### createQRCodeHostInstance
+
+establish a channel to be able to add a member to the trustchain after displaying the QR Code
+
+#### Parameters
+
+*   `$0` **{onDisplayQRCode: function (url: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void, onDisplayDigits: function (digits: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void, addMember: function (publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>}**&#x20;
+
+    *   `$0.onDisplayQRCode` &#x20;
+    *   `$0.onDisplayDigits` &#x20;
+    *   `$0.addMember` &#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** a promise that resolves when this is done
+
+### onDisplayQRCode
+
+this function will need to display a UI to show the QR Code
+
+Type: function (url: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void
+
+### onDisplayDigits
+
+this function will need to display a UI to show the digits
+
+Type: function (digits: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void
+
+### addMember
+
+this function will need to using the TrustchainSDK (and use sdk.addMember)
+
+Type: function (publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>
+
+### createQRCodeCandidateInstance
+
+establish a channel to be able to add myself to the trustchain after scanning the QR Code
+
+#### Parameters
+
+*   `$0` **{liveCredentials: [LiveCredentials](#livecredentials), scannedUrl: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), onRequestQRCodeInput: function (config: {digits: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), connected: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}, callback: function (digits: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void): void}**&#x20;
+
+    *   `$0.liveCredentials` &#x20;
+    *   `$0.scannedUrl` &#x20;
+    *   `$0.onRequestQRCodeInput` &#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** a promise that resolves when this is done
+
+### liveCredentials
+
+the live credentials of the live instance (given by TrustchainSDK)
+
+Type: [LiveCredentials](#livecredentials)
+
+### scannedUrl
+
+the scanned URL that contains the host public key
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### onRequestQRCodeInput
+
+this function will need to display a UI to ask the user to input the digits
+and then call the callback with the digits
+
+Type: function (config: {digits: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), connected: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}, callback: function (digits: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void): void
 
 ### LiveCredentials
 
@@ -36,6 +113,7 @@ helpers to init and handle the trustchain store (what data are stored on instanc
 
 TODO reducers with:
 clean action (disable this instance locally)
+init live credentials action
 lenses to get the live credentials and trustchain
 
 ### TrustchainSDK
@@ -55,7 +133,7 @@ sdk.seedIdAuthenticate(transport).then(jwt => console.log(jwt));
 Generate the live credentials that represents a Live instance, member of the trustchain.
 This method is expected to be used the first time Ledger Live is opened (if Live never generated them before) and then persisted over the future user sessions of Ledger Live in order for the member to be able to authenticate and manage the trustchain.
 
-Returns **[LiveCredentials](#livecredentials)**&#x20;
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[LiveCredentials](#livecredentials)>**&#x20;
 
 #### seedIdAuthenticate
 
@@ -121,6 +199,20 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 #### removeMember
 
 used by the managing synchronized instances flow
+
+##### Parameters
+
+*   `transport` **Transport**&#x20;
+*   `seedIdToken` **JWT**&#x20;
+*   `trustchain` **Trustchain**&#x20;
+*   `liveInstanceCredentials` **[LiveCredentials](#livecredentials)**&#x20;
+*   `member` **TrustchainMember**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Trustchain>**&#x20;
+
+#### addMember
+
+add a member to the trustchain
 
 ##### Parameters
 

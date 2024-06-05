@@ -85,6 +85,18 @@ export interface TrustchainSDK {
     seedIdToken: JWT,
     trustchain: Trustchain,
     liveInstanceCredentials: LiveCredentials,
+    // can we only take pubkey (member.id) here? (to confirm)
+    member: TrustchainMember,
+  ): Promise<Trustchain>;
+
+  /**
+   * add a member to the trustchain
+   */
+  addMember(
+    liveJWT: JWT,
+    trustchain: Trustchain,
+    liveInstanceCredentials: LiveCredentials,
+    // TODO: can we simplify this to just a name if member.id == liveInstanctCredentials.pubkey ? (to confirm)
     member: TrustchainMember,
   ): Promise<Trustchain>;
 
@@ -92,4 +104,14 @@ export interface TrustchainSDK {
    * completely remove a trustchain
    */
   destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void>;
+
+  /**
+   * encrypt data for a trustchain
+   */
+  encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array>;
+
+  /**
+   * decrypt data for a trustchain
+   */
+  decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object>;
 }
