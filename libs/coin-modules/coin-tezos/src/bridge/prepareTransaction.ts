@@ -1,12 +1,13 @@
 import BigNumber from "bignumber.js";
-import { DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate, TezosToolkit } from "@taquito/taquito";
-import { DerivationType } from "@taquito/ledger-signer";
-import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
-import { b58cencode, prefix, Prefix, validateAddress, ValidationResult } from "@taquito/utils";
-import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
+import { AccountBridge } from "@ledgerhq/types-live";
+import { DerivationType } from "@taquito/ledger-signer";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
+import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
+import { b58cencode, prefix, Prefix, validateAddress, ValidationResult } from "@taquito/utils";
+import { DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate, TezosToolkit } from "@taquito/taquito";
 import { TezosAccount, Transaction } from "../types";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
@@ -26,10 +27,10 @@ export const validateRecipient = (currency: CryptoCurrency, recipient: string) =
   return Promise.resolve({ recipientError, recipientWarning });
 };
 
-const prepareTransaction = async (
-  account: TezosAccount,
-  transaction: Transaction,
-): Promise<Transaction> => {
+export const prepareTransaction: AccountBridge<
+  Transaction,
+  TezosAccount
+>["prepareTransaction"] = async (account, transaction) => {
   const { tezosResources } = account;
   if (!tezosResources) throw new Error("tezosResources is missing");
 

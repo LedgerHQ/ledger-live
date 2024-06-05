@@ -1,14 +1,29 @@
 import { JWT, LiveCredentials, Trustchain, TrustchainMember, TrustchainSDK } from "./types";
-import * as HwTrustchain from "@ledgerhq/hw-trustchain";
+import { crypto, device, Challenge } from "@ledgerhq/hw-trustchain";
 import Transport from "@ledgerhq/hw-transport";
+import api from "./api";
+import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
 
-// FIXME (temporary) remove these lines after we uses them
-import "./api";
-void HwTrustchain;
+export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): LiveCredentials {
+  return {
+    pubkey: crypto.to_hex(keyPair.publicKey),
+    privatekey: crypto.to_hex(keyPair.privateKey),
+  };
+}
 
-export class SDK implements TrustchainSDK {
-  initLiveCredentials(): LiveCredentials {
-    throw new Error("initLiveCredentials not implemented.");
+export function convertLiveCredentialsToKeyPair(
+  liveInstanceCredentials: LiveCredentials,
+): CryptoKeyPair {
+  return {
+    publicKey: crypto.from_hex(liveInstanceCredentials.pubkey),
+    privateKey: crypto.from_hex(liveInstanceCredentials.privatekey),
+  };
+}
+
+class SDK implements TrustchainSDK {
+  async initLiveCredentials(): Promise<LiveCredentials> {
+    const kp = await crypto.randomKeypair();
+    return convertKeyPairToLiveCredentials(kp);
   }
 
   /*
@@ -16,18 +31,55 @@ export class SDK implements TrustchainSDK {
    * - send to the device to sign it
    * - post challenge, and get an JWT
    */
-  async seedIdAuthenticate(transport: Transport): Promise<string> {
-    void transport;
-    throw new Error("seedIdAuthenticate not implemented.");
+  async seedIdAuthenticate(transport: Transport): Promise<JWT> {
+    const hw = device.apdu(transport);
+    const challenge = await api.getAuthenticationChallenge();
+    const data = crypto.from_hex(challenge.tlv);
+    const seedId = await hw.getSeedId(data);
+    const signature = crypto.to_hex(seedId.signature);
+    const response = await api.postChallengeResponse({
+      challenge: challenge.json,
+      signature: {
+        credential: seedId.pubkeyCredential.toJSON(),
+        signature,
+        attestation: crypto.to_hex(seedId.attestationResult),
+      },
+    });
+    return response;
   }
 
   async liveAuthenticate(
     trustchain: Trustchain,
     liveInstanceCredentials: LiveCredentials,
   ): Promise<JWT> {
-    void trustchain;
-    void liveInstanceCredentials;
-    throw new Error("liveAuthenticate not implemented.");
+    const challenge = await api.getAuthenticationChallenge();
+    const data = crypto.from_hex(challenge.tlv);
+    const [parsed, _] = Challenge.fromBytes(data);
+    const hash = await crypto.hash(parsed.getUnsignedTLV());
+    const keypair = convertLiveCredentialsToKeyPair(liveInstanceCredentials);
+    const sig = await crypto.sign(hash, keypair);
+    const signature = crypto.to_hex(sig);
+    const credential = {
+      version: 0,
+      curveId: 33,
+      signAlgorithm: 1,
+      publicKey: liveInstanceCredentials.pubkey,
+    };
+    const trustchainId = crypto.from_hex(trustchain.rootId);
+    const att = new Uint8Array(2 + trustchainId.length);
+    att[0] = 0x01;
+    att[1] = trustchainId.length;
+    att.set(trustchainId, 2);
+    const attestation = crypto.to_hex(data);
+    const response = await api.postChallengeResponse({
+      challenge: challenge.json,
+      signature: {
+        credential,
+        signature,
+        attestation,
+      },
+    });
+    return response;
   }
 
   async getOrCreateTrustchain(
@@ -78,9 +130,36 @@ export class SDK implements TrustchainSDK {
     throw new Error("removeMember not implemented.");
   }
 
+  async addMember(
+    liveJWT: JWT,
+    trustchain: Trustchain,
+    liveInstanceCredentials: LiveCredentials,
+    memberPublicKey: TrustchainMember,
+  ): Promise<Trustchain> {
+    void liveJWT;
+    void trustchain;
+    void liveInstanceCredentials;
+    void memberPublicKey;
+    throw new Error("addMember not implemented.");
+  }
+
   async destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void> {
     void trustchain;
     void liveJWT;
     throw new Error("destroyTrustchain not implemented.");
   }
+
+  async encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
+    void trustchain;
+    void obj;
+    throw new Error("encryptUserData not implemented.");
+  }
+
+  async decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object> {
+    void trustchain;
+    void data;
+    throw new Error("decryptUserData not implemented.");
+  }
 }
+
+export const sdk = new SDK();

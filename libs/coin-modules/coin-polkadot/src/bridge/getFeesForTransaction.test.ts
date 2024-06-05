@@ -38,8 +38,8 @@ describe("getEstimatedFees", () => {
 
     // When
     const result = await getEstimatedFees({
-      a: account,
-      t: transaction,
+      account,
+      transaction,
     });
 
     // Then

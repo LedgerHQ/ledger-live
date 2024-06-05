@@ -6,6 +6,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import LoadingPlaceholder from "~/renderer/components/LoadingPlaceholder";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
+import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 
 const Title = styled(Text).attrs({ variant: "h5", color: "neutral.c100", mb: 2 })`
   font-size: 20px;
@@ -82,7 +83,7 @@ type Props = {
   high24h?: number;
   low24h?: number;
   price?: number;
-  priceChangePercentage?: number;
+  priceChangePercentage?: Record<KeysPriceChange, number>;
   marketCapChangePercentage24h?: number;
   circulatingSupply?: number;
   totalSupply?: number;
@@ -94,6 +95,7 @@ type Props = {
   counterCurrency: string;
   loading: boolean;
   locale: string;
+  range: string;
 };
 
 function MarketInfo({
@@ -115,6 +117,7 @@ function MarketInfo({
   counterCurrency,
   loading,
   locale,
+  range,
 }: Props) {
   const { t } = useTranslation();
 
@@ -122,6 +125,8 @@ function MarketInfo({
   const atlDateD = useMemo(() => (atlDate ? new Date(atlDate) : undefined), [atlDate]);
   const athText = useDateFormatted(athDateD, dayAndHourFormat);
   const atlText = useDateFormatted(atlDateD, dayAndHourFormat);
+
+  const currentPriceChangePercentage = priceChangePercentage?.[range as KeysPriceChange];
 
   return (
     <Flex flexDirection="row" my={2} alignItems="flex-start" justifyContent="space-between">
@@ -134,11 +139,11 @@ function MarketInfo({
               {counterValueFormatter({ value: price, currency: counterCurrency, locale })}
             </LoadingLabel>
             <LoadingLabel loading={loading}>
-              {priceChangePercentage ? (
+              {currentPriceChangePercentage ? (
                 <FormattedVal
                   isPercent
                   isNegative
-                  val={parseFloat(priceChangePercentage.toFixed(2))}
+                  val={parseFloat(currentPriceChangePercentage.toFixed(2))}
                   inline
                   withIcon
                 />

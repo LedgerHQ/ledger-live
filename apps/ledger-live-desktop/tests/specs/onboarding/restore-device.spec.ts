@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
-import { OnboardingPage } from "../../models/OnboardingPage";
+import { OnboardingPage } from "../../page/onboarding.page";
 
 enum Nano {
   nanoX = "nanoX",
@@ -44,7 +44,7 @@ test.describe.parallel("Onboarding", () => {
         await expect
           .soft(page)
           .toHaveScreenshot(["v3-restore-tutorial", `get-started-2-${nano}.png`], {
-            mask: [onboardingPage.page.locator("[role=animation]")],
+            mask: [onboardingPage.roleAnimation],
           });
         await onboardingPage.continueTutorial();
 
@@ -57,12 +57,12 @@ test.describe.parallel("Onboarding", () => {
         await expect
           .soft(page)
           .toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-3.png`], {
-            mask: [onboardingPage.page.locator("[role=animation]")],
+            mask: [onboardingPage.roleAnimation],
           });
         await onboardingPage.continueTutorial();
 
         await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-4.png`], {
-          mask: [onboardingPage.page.locator("[role=animation]")],
+          mask: [onboardingPage.roleAnimation],
         });
         await onboardingPage.continuePinDrawer();
 

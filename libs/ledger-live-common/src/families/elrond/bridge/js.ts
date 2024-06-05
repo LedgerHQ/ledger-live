@@ -1,14 +1,15 @@
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
-import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { ElrondAccount, Transaction, TransactionStatus } from "../types";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { getPreloadStrategy, preload, hydrate } from "../preload";
-import { sync, scanAccounts } from "../js-synchronisation";
-import { createTransaction, prepareTransaction } from "../js-transaction";
-import getTransactionStatus from "../js-getTransactionStatus";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import signOperation from "../js-signOperation";
-import broadcast from "../js-broadcast";
+import { getTransactionStatus } from "../getTransactionStatus";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { prepareTransaction } from "../prepareTransaction";
+import { sync, scanAccounts } from "../synchronisation";
+import { createTransaction } from "../createTransaction";
+import { signOperation } from "../signOperation";
+import { broadcast } from "../broadcast";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
@@ -23,7 +24,7 @@ const currencyBridge: CurrencyBridge = {
   hydrate,
   scanAccounts,
 };
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge: AccountBridge<Transaction, ElrondAccount, TransactionStatus> = {
   estimateMaxSpendable,
   createTransaction,
   updateTransaction: defaultUpdateTransaction,

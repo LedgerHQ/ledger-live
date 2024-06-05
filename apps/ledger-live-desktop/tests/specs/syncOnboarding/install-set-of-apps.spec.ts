@@ -1,8 +1,8 @@
 import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
-import { InstallSetOfApps } from "../../models/InstallSetOfAppsPage";
-import { SettingsPage } from "../../models/SettingsPage";
-import { Layout } from "../../models/Layout";
+import { InstallSetOfApps } from "../../page/install.page";
+import { SettingsPage } from "../../page/settings.page";
+import { Layout } from "../../component/layout.component";
 import { DeviceAction } from "../../models/DeviceAction";
 
 test.use({

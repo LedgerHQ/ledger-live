@@ -1,9 +1,9 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { AccountsPage } from "../../models/AccountsPage";
-import { Layout } from "../../models/Layout";
-import { AccountPage } from "../../models/AccountPage";
-import { Modal } from "../../models/Modal";
+import { AccountsPage } from "../../page/accounts.page";
+import { Layout } from "../../component/layout.component";
+import { AccountPage } from "../../page/account.page";
+import { Modal } from "../../component/modal.component";
 
 test.use({ userdata: "accountCosmos" });
 let modalPage: Modal;

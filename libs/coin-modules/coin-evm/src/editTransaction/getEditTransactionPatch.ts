@@ -136,8 +136,6 @@ const getLegacyPatch = ({
         shouldUseFastStrategy,
         gasOptions,
       }) as Partial<EvmTransactionLegacy>),
-      maxFeePerGas: undefined,
-      maxPriorityFeePerGas: undefined,
       gasPrice,
     };
 
@@ -151,8 +149,6 @@ const getLegacyPatch = ({
       freshAddress: account.freshAddress,
       gasOptions,
     }) as Partial<EvmTransactionLegacy>),
-    maxFeePerGas: undefined,
-    maxPriorityFeePerGas: undefined,
     gasPrice,
   };
 
@@ -209,7 +205,6 @@ const getEip1559Patch = ({
       }) as Partial<EvmTransactionEIP1559>),
       maxFeePerGas,
       maxPriorityFeePerGas,
-      gasPrice: undefined,
     };
 
     return patch;
@@ -224,7 +219,6 @@ const getEip1559Patch = ({
     }) as Partial<EvmTransactionEIP1559>),
     maxFeePerGas,
     maxPriorityFeePerGas,
-    gasPrice: undefined,
   };
 
   return patch;

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { Text, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import EmptyState from "../EmptyState";
 import EmptyStarredCoins from "../EmptyStarredCoins";
@@ -60,9 +60,9 @@ function ListEmpty({
   } else if (hasEmptyStarredCoins) {
     // Empty starred coins
     return <EmptyStarredCoins />;
+  } else {
+    return null;
   }
-
-  return <InfiniteLoader size={30} />;
 }
 
 export default ListEmpty;

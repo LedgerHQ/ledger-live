@@ -1,4 +1,4 @@
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { TFunction } from "i18next";
 import React from "react";

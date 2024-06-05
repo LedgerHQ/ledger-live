@@ -1,10 +1,10 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { ManagerPage } from "../../models/ManagerPage";
-import { LanguageInstallation } from "../../models/LanguageInstallation";
+import { ManagerPage } from "../../page/manager.page";
+import { LanguageInstallation } from "../../page/drawer/language.installation.drawer";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Layout } from "../../models/Layout";
-import { Drawer } from "tests/models/Drawer";
+import { Layout } from "../../component/layout.component";
+import { Drawer } from "tests/page/drawer/drawer";
 
 test.use({ userdata: "skip-onboarding" });
 test.use({ env: { FORCE_PROVIDER: "12" } });

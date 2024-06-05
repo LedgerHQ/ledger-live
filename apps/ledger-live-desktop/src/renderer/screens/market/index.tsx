@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
-import { Flex, Button as BaseButton, Text, SearchInput, Dropdown } from "@ledgerhq/react-ui";
+import { Flex, Button as BaseButton, Text, Dropdown } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import CounterValueSelect from "./components/CountervalueSelect";
 import SideDrawerFilter from "./components/SideDrawerFilter";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import MarketList from "./MarketList";
 import { useMarket } from "./hooks/useMarket";
+import SearchInputComponent from "./components/SearchInputComponent";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -16,12 +17,6 @@ const Container = styled(Flex).attrs({
   px: 1,
   mx: -1,
 })``;
-
-const SearchContainer = styled(Flex).attrs({ flexShrink: "1" })`
-  > div {
-    width: 100%;
-  }
-`;
 
 export const Button = styled(BaseButton)<{ big?: boolean }>`
   ${p =>
@@ -102,15 +97,7 @@ export default function Market() {
       />
       <Title>{t("market.title")}</Title>
       <Flex flexDirection="row" pr="6px" my={2} alignItems="center" justifyContent="space-between">
-        <SearchContainer>
-          <SearchInput
-            data-test-id="market-search-input"
-            value={search}
-            onChange={updateSearch}
-            placeholder={t("common.search")}
-            clearable
-          />
-        </SearchContainer>
+        <SearchInputComponent search={search} updateSearch={updateSearch} />
         <SelectBarContainer flexDirection="row" alignItems="center" justifyContent="flex-end">
           <Flex data-test-id="market-countervalue-select" justifyContent="flex-end" mx={4}>
             <CounterValueSelect

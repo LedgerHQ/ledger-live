@@ -9,7 +9,7 @@ import {
   NearValidatorItem,
   NearAccount,
 } from "./types";
-import { createTransaction } from "./js-transaction";
+import { createTransaction } from "./createTransaction";
 import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCurrentNearPreloadData } from "./preload";
 import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";
@@ -42,17 +42,21 @@ export const getStakingGas = (t?: Transaction, multiplier = 5): BigNumber => {
 /*
  * Get the max amount that can be spent, taking into account tx type and pending operations.
  */
-export const getMaxAmount = (a: NearAccount, t: Transaction, fees?: BigNumber): BigNumber => {
+export const getMaxAmount = (
+  account: NearAccount,
+  transaction: Transaction,
+  fees?: BigNumber,
+): BigNumber => {
   let maxAmount;
-  const selectedValidator = a.nearResources?.stakingPositions.find(
-    ({ validatorId }) => validatorId === t.recipient,
+  const selectedValidator = account.nearResources?.stakingPositions.find(
+    ({ validatorId }) => validatorId === transaction.recipient,
   );
 
   let pendingUnstakingAmount = new BigNumber(0);
   let pendingWithdrawingAmount = new BigNumber(0);
   let pendingDefaultAmount = new BigNumber(0);
 
-  a.pendingOperations.forEach(({ type, value, recipients }) => {
+  account.pendingOperations.forEach(({ type, value, recipients }) => {
     const recipient = recipients[0];
 
     if (type === "UNSTAKE" && recipient === selectedValidator?.validatorId) {
@@ -64,7 +68,7 @@ export const getMaxAmount = (a: NearAccount, t: Transaction, fees?: BigNumber): 
     }
   });
 
-  switch (t.mode) {
+  switch (transaction.mode) {
     case "unstake":
       maxAmount = selectedValidator?.staked.minus(pendingUnstakingAmount);
       break;
@@ -72,7 +76,7 @@ export const getMaxAmount = (a: NearAccount, t: Transaction, fees?: BigNumber): 
       maxAmount = selectedValidator?.available.minus(pendingWithdrawingAmount);
       break;
     default:
-      maxAmount = a.spendableBalance.minus(pendingDefaultAmount);
+      maxAmount = account.spendableBalance.minus(pendingDefaultAmount);
 
       if (fees) {
         maxAmount = maxAmount.minus(fees);
@@ -127,8 +131,8 @@ export const mapStakingPositions = (
 /*
  * Make sure that an account has enough funds to stake, unstake, AND withdraw before staking.
  */
-export const canStake = (a: NearAccount): boolean => {
-  let transaction = createTransaction();
+export const canStake = (account: NearAccount): boolean => {
+  let transaction = createTransaction(account);
   transaction = updateTransaction(transaction, {
     mode: "stake",
   });
@@ -137,7 +141,7 @@ export const canStake = (a: NearAccount): boolean => {
 
   const fees = getStakingFees(transaction, gasPrice).multipliedBy(3);
 
-  return getMaxAmount(a, transaction, fees).gt(0);
+  return getMaxAmount(account, transaction, fees).gt(0);
 };
 
 export const canUnstake = (

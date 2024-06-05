@@ -25,6 +25,14 @@ import superRepresentatives from "./api/superRepresentativesData.mock";
 
 jest.mock("./api", () => {
   return {
+    getTronSuperRepresentatives: jest.fn().mockImplementation(() => {
+      return Promise.resolve(superRepresentatives);
+    }),
+  };
+});
+
+jest.mock("./utils", () => {
+  return {
     extractBandwidthInfo: jest.fn().mockImplementation(() => {
       return {
         freeUsed: 0,
@@ -32,9 +40,6 @@ jest.mock("./api", () => {
         gainedUsed: 0,
         gainedLimit: 0,
       };
-    }),
-    getTronSuperRepresentatives: jest.fn().mockImplementation(() => {
-      return Promise.resolve(superRepresentatives);
     }),
   };
 });

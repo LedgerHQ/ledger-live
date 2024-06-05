@@ -924,8 +924,8 @@ describe("EVM Family", () => {
           it("should throw error", () => {
             const originalTx: EvmTransactionLegacy = {
               ...legacyTx,
-              gasPrice: undefined,
-            } as any;
+              gasPrice: undefined as any,
+            };
 
             expect(() => {
               validateEditTransaction({
@@ -941,8 +941,8 @@ describe("EVM Family", () => {
           it("should not have error and warning", () => {
             const invalidUpdatedTx: EvmTransactionLegacy = {
               ...updatedLegacyTx,
-              gasPrice: undefined,
-            } as any;
+              gasPrice: undefined as any,
+            };
 
             const res = validateEditTransaction({
               transaction: invalidUpdatedTx,
@@ -1016,8 +1016,8 @@ describe("EVM Family", () => {
           it("should throw error", () => {
             const originalTx: EvmTransactionEIP1559 = {
               ...eip1559Tx,
-              maxFeePerGas: undefined,
-            } as any;
+              maxFeePerGas: undefined as any,
+            };
 
             expect(() => {
               validateEditTransaction({
@@ -1068,8 +1068,8 @@ describe("EVM Family", () => {
           it("should not have error and warning", () => {
             const invalidUpdatedTx: EvmTransactionEIP1559 = {
               ...eip1559Tx,
-              maxPriorityFeePerGas: undefined,
-            } as any;
+              maxPriorityFeePerGas: undefined as any,
+            };
 
             const res = validateEditTransaction({
               transaction: invalidUpdatedTx,

@@ -1,4 +1,4 @@
-import * as preloadedData from "@ledgerhq/coin-solana/js-preload-data";
+import * as preloadedData from "@ledgerhq/coin-solana/preload-data";
 import type { SolanaAccount, SolanaPreloadDataV1, SolanaStake } from "@ledgerhq/coin-solana/types";
 import { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
 import { getAccountBannerState } from "./banner";

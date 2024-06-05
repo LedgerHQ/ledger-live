@@ -2,8 +2,9 @@ import { SearchInput } from "@ledgerhq/native-ui";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import React, { memo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/analytics";
+import { LIMIT } from "~/reducers/market";
 
 type Props = {
   search?: string;
@@ -23,7 +24,7 @@ function SearchHeader({ search, refresh }: Props) {
       search: debouncedSearch ? debouncedSearch.trim() : "",
       starred: [],
       liveCompatible: false,
-      limit: 20,
+      limit: LIMIT,
     });
   }, [debouncedSearch, refresh]);
 

@@ -44,6 +44,7 @@ const testAccounts = testedCurrencies.map(currencyId =>
 );
 setSupportedCurrencies(testedCurrencies);
 
+$TmsLink("B2CQA-1823");
 describe("Send flow", () => {
   beforeAll(async () => {
     await loadConfig("onboardingcompleted", true);

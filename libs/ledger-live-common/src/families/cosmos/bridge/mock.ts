@@ -103,7 +103,7 @@ const prepareTransaction = async (a: CosmosAccount, t: Transaction): Promise<Tra
     return {
       ...t,
       gas: new BigNumber(1),
-      fees: new BigNumber(500),
+      fees: new BigNumber(375),
       networkInfo: {
         family: "cosmos",
         fees: new BigNumber(500),
