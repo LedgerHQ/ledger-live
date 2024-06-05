@@ -26,10 +26,8 @@ const getAllFeatureFlags = (appLanguage: string): Partial<{ [key in FeatureId]: 
   const res: Partial<{ [key in FeatureId]: boolean }> = {};
   Object.keys(DEFAULT_FEATURES).forEach(k => {
     const key = k as keyof typeof DEFAULT_FEATURES;
-    const value = getFeature({ key, appLanguage });
-    res[key] = value;
+    res[key] = getFeature({ key, appLanguage });
   });
-
   return res;
 };
 

@@ -57,8 +57,8 @@ describe("Get Feature Flags and Environment Variables", () => {
     const appEnvs = await getEnvs();
     const flagsData = featureFlags ? formatFlagsData(JSON.parse(featureFlags)) : "";
     const envsData = appEnvs ? formatEnvData(JSON.parse(appEnvs)) : "";
-    allure.attachment("Feature Flags", featureFlags, "application/json");
-    allure.attachment("Environment Variables", appEnvs, "application/json");
+    await allure.attachment("Feature Flags", featureFlags, "application/json");
+    await allure.attachment("Environment Variables", appEnvs, "application/json");
     fs.writeFileSync(environmentFilePath, flagsData + envsData);
   });
 });
