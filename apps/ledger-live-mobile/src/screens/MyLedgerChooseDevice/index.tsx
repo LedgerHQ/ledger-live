@@ -85,7 +85,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
   useEffect(() => {
     setDevice(params?.device);
-  }, [params]);
+  }, [params?.device]);
 
   const requestToSetHeaderOptions = useCallback(
     (request: SetHeaderOptionsRequest) => {

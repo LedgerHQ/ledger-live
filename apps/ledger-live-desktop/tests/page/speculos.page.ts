@@ -3,7 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import {
   pressBoth,
   pressRightUntil,
-  verifyAddress,
+  verifyAddress as assertAddressesEquality,
   verifyAmount,
   waitFor,
 } from "tests/utils/speculos";
@@ -17,8 +17,8 @@ export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness $0")
   async expectValidReceiveAddress(account: Account) {
     await waitFor(account.currency.receivePattern[0]);
-    const addressScreen = await pressRightUntil(account.currency.receivePattern[0]);
-    expect(verifyAddress(account.address, addressScreen)).toBe(true);
+    const actualAddress = await pressRightUntil(account.currency.receivePattern[0]);
+    expect(assertAddressesEquality(account.address, actualAddress)).toBe(true);
     await pressRightUntil(account.currency.receivePattern[1]);
     await pressBoth();
   }
@@ -28,7 +28,7 @@ export class SpeculosPage extends AppPage {
     const amountScreen = await pressRightUntil(DeviceLabels.AMOUT);
     expect(verifyAmount(tx.amount, amountScreen)).toBe(true);
     const addressScreen = await pressRightUntil(DeviceLabels.ADDRESS);
-    expect(verifyAddress(tx.recipient, addressScreen)).toBe(true);
+    expect(assertAddressesEquality(tx.recipient, addressScreen)).toBe(true);
     await pressRightUntil(tx.accountToDebit.currency.sendPattern[2]);
     await pressBoth();
     if (tx.accountToDebit.currency.uiName === Currency.tBTC.uiName) {
