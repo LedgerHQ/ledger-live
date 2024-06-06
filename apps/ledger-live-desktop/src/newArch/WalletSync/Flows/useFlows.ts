@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import {
+  Flow,
+  Step,
+  walletSyncHasBeenFaked,
+  walletSyncStepSelector,
+} from "~/renderer/reducers/walletSync";
 
 export type HookProps = {
   flow: Flow;
@@ -50,12 +55,20 @@ export const FlowOptions: Record<
 export const STEPS_WITH_BACK: Step[] = [Step.ManageBackup, Step.DeleteBackup];
 
 export const useFlows = ({ flow }: HookProps) => {
-  const currentFlow = FlowOptions[flow];
+  // Only for MOCK purpose for hasBeenfaked and storedStep
+  const hasBeenfaked = useSelector(walletSyncHasBeenFaked);
+  const storedStep = useSelector(walletSyncStepSelector);
+  //----
 
+  const currentFlow = FlowOptions[flow];
   const maxStep = Object.keys(currentFlow.steps).length;
 
   const dispatch = useDispatch();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(
+    hasBeenfaked
+      ? Object.entries(currentFlow.steps).findIndex(([, value]) => value === storedStep) + 1 //When Faked
+      : 1, //Logical value
+  );
   const goToNextScene = () => {
     const newStep = currentStep < maxStep ? currentStep + 1 : currentStep;
     dispatch(setFlow({ flow, step: currentFlow.steps[newStep] }));

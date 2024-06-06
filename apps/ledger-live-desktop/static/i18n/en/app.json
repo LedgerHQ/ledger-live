@@ -4203,6 +4203,17 @@
         "enableNetworkLogs": {
           "title": "Enable network logs",
           "description": "Enable network logs in the console (error logs are always enabled)"
+        },
+        "testWalletSync": {
+          "title": "Test Wallet Sync",
+          "description": "Allows you to launch a specific WalletSync flow",
+          "cta": "Test",
+          "modal": {
+            "flow": "Select a Flow",
+            "step": "Select a Step",
+            "activated": "Activate/deactivate to have a backup or not",
+            "cta": "Apply"
+          }
         }
       }
     },

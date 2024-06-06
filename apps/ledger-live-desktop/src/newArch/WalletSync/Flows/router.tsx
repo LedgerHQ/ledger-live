@@ -9,8 +9,8 @@ import {
 import WalletSyncActivation from "LLD/WalletSync/Flows/Activation";
 import WalletSyncManage from "LLD/WalletSync/Flows/Manage";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
-import Synch from "./Synchronize";
 import WalletSyncManageBackups from "./ManageBackup";
+import SynchronizeWallet from "./Synchronize";
 
 export interface BackRef {
   goBack: () => void;
@@ -33,7 +33,7 @@ export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => 
         return <WalletSyncActivation />;
       }
     case Flow.Synchronize:
-      return <Synch />;
+      return <SynchronizeWallet />;
     case Flow.ManageBackups:
       return <WalletSyncManageBackups ref={ref} />;
     default:

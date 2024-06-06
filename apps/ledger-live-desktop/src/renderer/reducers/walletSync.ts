@@ -30,18 +30,21 @@ export type WalletSyncState = {
   activated: boolean;
   flow: Flow;
   step: Step;
+  hasBeenfaked: boolean;
 };
 
 const initialState: WalletSyncState = {
   activated: true,
   flow: Flow.Activation,
   step: Step.CreateOrSynchronize,
+  hasBeenfaked: false,
 };
 
 type HandlersPayloads = {
   WALLET_SYNC_ACTIVATE: boolean;
   WALLET_SYNC_DEACTIVATE: boolean;
   WALLET_SYNC_CHANGE_FLOW: { flow: Flow; step: Step };
+  WALLET_SYNC_FAKED: boolean;
 };
 
 type WalletSyncHandlers<PreciseKey = true> = Handlers<
@@ -51,6 +54,10 @@ type WalletSyncHandlers<PreciseKey = true> = Handlers<
 >;
 
 const handlers: WalletSyncHandlers = {
+  WALLET_SYNC_FAKED: (state: WalletSyncState, { payload }: { payload: boolean }) => ({
+    ...state,
+    hasBeenfaked: payload,
+  }),
   WALLET_SYNC_ACTIVATE: (state: WalletSyncState) => ({
     ...state,
     activated: true,
@@ -78,6 +85,9 @@ export const walletSyncStepSelector = (state: { walletSync: WalletSyncState }) =
   state.walletSync.step;
 export const walletSyncStateSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.activated;
+
+export const walletSyncHasBeenFaked = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.hasBeenfaked;
 
 export default handleActions<WalletSyncState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as WalletSyncHandlers<false>,
