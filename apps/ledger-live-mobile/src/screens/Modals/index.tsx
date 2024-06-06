@@ -6,7 +6,7 @@ import RatingsModal from "../RatingsModal";
 import NpsRatingsModal from "../NpsRatingsModal";
 import useRatings from "~/logic/ratings";
 import useNotifications from "~/logic/notifications";
-import DebugAppLevelDrawer from "~/components/DebugAppLevelDrawer";
+import DebugAppLevelDrawer from "~/newArch/components/QueuedDrawer/DebugAppLevelDrawer";
 import useNpsRatings from "~/logic/npsRatings";
 
 const getCurrentRouteName = (
