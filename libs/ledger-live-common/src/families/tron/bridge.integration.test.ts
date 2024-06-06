@@ -17,7 +17,6 @@ import {
   TronNoReward,
   TronNoUnfrozenResource,
   TronNotEnoughTronPower,
-  TronSendTrc20ToNewAccountForbidden,
   TronUnexpectedFees,
   TronVoteRequired,
 } from "./errors";
@@ -481,27 +480,6 @@ const tron: CurrenciesData<Transaction> = {
             estimatedFees: new BigNumber("0"),
           },
         },
-        {
-          name: "tronSendTrc20ToNewAccountForbidden",
-          transaction: (t, account) => ({
-            ...t,
-            recipient: unactivatedAddress,
-            subAccountId: getTokenAccountId(
-              account,
-              "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7",
-            ),
-            amount: new BigNumber("1000000"),
-          }),
-          expectedStatus: {
-            amount: new BigNumber("1000000"),
-            errors: {
-              recipient: new TronSendTrc20ToNewAccountForbidden(),
-            },
-            warnings: {},
-            totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("0"),
-          },
-        }, // FIXME account have moved...
 
         /*
       {
