@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 import { typography, TypographyProps } from "styled-system";
 import React, { InputHTMLAttributes, useState, useMemo, useCallback } from "react";
 import CircledCrossSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCrossSolidMedium";
@@ -168,6 +168,7 @@ function Input<T = ValueType>(
   props: InputProps<T>,
   ref?: React.ForwardedRef<HTMLInputElement>,
 ): JSX.Element {
+  const { colors } = useTheme();
   const {
     value,
     disabled,
@@ -224,7 +225,7 @@ function Input<T = ValueType>(
       {clearable && inputValue && (
         <FlexBox alignItems={"center"} mr={7}>
           <ClearableButtonUnstyled onClick={handleClear}>
-            <CircledCrossSolidMedium size={18} color={"neutral.c50"} />
+            <CircledCrossSolidMedium size={18} color={colors.neutral.c50} />
           </ClearableButtonUnstyled>
         </FlexBox>
       )}
