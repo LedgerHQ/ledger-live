@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} piyasa fiyatı",
       "currencyPrice" : "1 {{currencyTicker}} fiyatı",
-      "currencyPriceChange" : "Son 24 saatlik değişim"
+      "currencyPriceChange" : {
+        "day" : "Son 24 saatlik değişim",
+        "week" : "Son 7 gündeki değişim",
+        "month" : "Son 30 gündeki değişim",
+        "year" : "Son bir yıldaki değişim",
+        "all" : "Son bir yıldaki değişim"
+      }
     },
     "quickActions" : {
       "buy" : "Satın Al",
@@ -3031,8 +3040,8 @@
         "title" : "Seçilen kripto için ağ seçin",
         "account" : "{{count}} hesap",
         "account_plural" : "{{count}} hesapları",
-        "subtitle" : "Kriptoyu aktaran cüzdan veya borsada seçilen ağ ile aynı olmalıdır.",
-        "bannerTitle" : "Doğru ağı seçtiğinizden emin olun. Bunu nasıl yapacağınızı öğrenin.",
+        "subtitle" : "Seçeceğiniz ağ, kriptoyu aktaran cüzdan veya borsada seçilmiş ağ ile aynı olmalıdır.",
+        "bannerTitle" : "Doğru ağı seçtiğinizden emin olun. Daha fazla bilgi.",
         "depositFromCexBannerTitle" : "Coinbase hesabınızdan kripto yatırın"
       },
       "stepperHeader" : {
@@ -3074,7 +3083,7 @@
       },
       "securityVerify" : {
         "title" : "Adres doğrulaması, bu işlemi güvenceye almak için çok önemlidir",
-        "subtitle1" : "Adresi Ledger Live'dan kopyalayıp hedefe yapıştırdıktan sonra, Ledger cihazınızın Güvenilir Ekranında gösterilen adresle eşleştiğini mutlaka doğrulayın. İki adres de aynı olmalıdır.",
+        "subtitle1" : "Ledger Live'dan kopyalayıp hedefe yapıştırdığınız adresin, Ledger cihazınızın Güvenilir Ekranında gösterilen adresle eşleştiğini mutlaka doğrulayın. İki adres de aynı olmalıdır.",
         "subtitle2" : "Bu doğrulama, adres değiştirme saldırılarının önlenmesine yardımcı olacaktır.",
         "verifyCta" : "Adresimi doğrula",
         "dontVerifyCta" : "Adresi doğrulamadan göster"
@@ -3130,9 +3139,6 @@
         "title" : "Takas İşlemlerine Hoş Geldiniz",
         "whatIsSwap" : "Takas (Swap) nedir?",
         "disclaimer" : "Kripto takas işlemlerinizi doğrudan Ledger cihazınızdan yapın. Bu hizmet ABD de dahil olmak üzere bazı ülkelerde kullanılamaz."
-      },
-      "main" : {
-        "header" : "Takas edin"
       },
       "notAvailable" : {
         "title" : "Hizmet geçici olarak kullanılamıyor veya ülkenize açık değil"
@@ -4325,7 +4331,8 @@
       "installUpdate" : {
         "titleInactive" : "Güncellemeyi yükle",
         "titleActive" : "Güncelleme yükleniyor",
-        "description" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nGüncellemeyi tamamlamak için, kurulum tamamlandıktan sonra {{deviceName}} cihazının kilidini PIN kodunuzla açın."
+        "description" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nGüncellemeyi tamamlamak için, kurulum tamamlandıktan sonra {{deviceName}} cihazının kilidini PIN kodunuzla açın.",
+        "descriptionNanoXBle" : "{{deviceName}} will restart multiple times.\n\nIf the device powers off and does not automatically restart, you will need to power it on yourself.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -6134,6 +6141,7 @@
       "subtitle" : "Ledger'la tamamen entegre olan Web 3.0'ı keşfedin",
       "section" : {
         "recentlyUsed" : "Son Kullanılanlar",
+        "locallyLoaded" : "Yerel Olarak Yüklenen",
         "categories" : "Kategoriler",
         "clearAll" : "Tümünü temizle"
       },
@@ -6231,9 +6239,10 @@
       },
       "order" : {
         "topGainers" : "En çok yükselenler",
-        "market_cap" : "Sıralama",
-        "market_cap_asc" : "Sıralama (Piyasa değeri) art.",
-        "market_cap_desc" : "Sıralama (Piyasa değeri) azal."
+        "topLosers" : "En çok düşenler",
+        "marketCap" : "Sıralama",
+        "asc" : "Sıralama (Piyasa değeri) art.",
+        "desc" : "Sıralama (Piyasa değeri) azal."
       },
       "currency" : "Para birimi",
       "time" : "Dönem",
@@ -6303,7 +6312,7 @@
     "designedForStax" : {
       "title" : "<1>Ledger</1><2>Stax</2><0>için tasarlandı</0>",
       "drawer" : {
-        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
+        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
         "cta" : "Anladım"
       }
     },
@@ -6563,7 +6572,6 @@
         },
         "swap" : {
           "title" : "Takas edin",
-          "label" : "Popüler",
           "body" : "Bir kriptoyu diğerine güvenle dönüştürün"
         },
         "receive" : {
