@@ -22,6 +22,7 @@ export enum Step {
   //Synchronize
   SynchronizeMode = "SynchronizeMode",
   SynchronizeWithQRCode = "SynchronizeWithQRCode",
+  PinCode = "PinCode",
   Synchronized = "Synchronized",
 }
 

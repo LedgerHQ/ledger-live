@@ -6,11 +6,12 @@ import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useFlows } from "../useFlows";
 import SynchronizeModeStep from "./01-SynchModeStep";
 import SynchWithQRCodeStep from "./02-QRCodeStep";
+import PinCodeStep from "./03-PinCodeStep";
 
 const SynchronizeWallet = () => {
   const dispatch = useDispatch();
 
-  const { currentStep, goToNextScene, goToPreviousScene, FlowOptions, resetFlows } = useFlows({
+  const { currentStep, goToNextScene } = useFlows({
     flow: Flow.Synchronize,
   });
 
@@ -26,7 +27,9 @@ const SynchronizeWallet = () => {
           <SynchronizeModeStep goToQRCode={goToNextScene} goToSynchWithDevice={goToActivation} />
         );
       case Step.SynchronizeWithQRCodeStep:
-        return <SynchWithQRCodeStep />;
+        return <SynchWithQRCodeStep displayPinCode={goToNextScene} />;
+      case Step.PinCodeStep:
+        return <PinCodeStep />;
     }
   };
 

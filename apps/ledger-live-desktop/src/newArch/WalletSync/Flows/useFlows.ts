@@ -25,7 +25,8 @@ export const FlowOptions: Record<
     steps: {
       1: Step.SynchronizeModeStep,
       2: Step.SynchronizeWithQRCodeStep,
-      3: Step.SynchronizedStep,
+      3: Step.PinCodeStep,
+      4: Step.SynchronizedStep,
     },
   },
   [Flow.ManageBackups]: {

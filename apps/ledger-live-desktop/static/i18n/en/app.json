@@ -6379,6 +6379,10 @@
           "step2": "Settings > General > Wallet Sync > Synchronize",
           "step3": "Scan QR code until loader hits 100%."
         }
+      },
+      "pinCode": {
+        "title": "Enter your code",
+        "description": "Type the code displayed on the Ledger Live you want to sync with."
       }
     }
   }
