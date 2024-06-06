@@ -168,6 +168,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     }),
   );
 
+  // keep old account with emptyBalance and a history not returned by the BE fixes LIVE-12797
   const mergedSubAccounts = mergeSubAccounts(subAccounts, initialAccount?.subAccounts || []);
 
   // get 'OUT' token operations with fee
