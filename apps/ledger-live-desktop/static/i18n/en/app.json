@@ -6318,6 +6318,13 @@
       "description": "Please try again later.",
       "cta": "Try again"
     },
+    "unsecuredError": {
+      "title": "The synchronization isn't secured by this Ledger",
+      "description": "Please connect the Ledger used to create the backup or a Ledger securing your backup to continue.",
+      "info": "If you lost your Ledger, don't worry! You can still delete your backup, this will both delete your data and unsync all currently synchronized instances.",
+      "cta": "Try Connecting another Ledger",
+      "ctaDelete": "Delete backup"
+    },
     "success": {
       "backup": {
         "title": "Backup successful",
@@ -6327,6 +6334,27 @@
       "synch": {
         "title": "Synchronization active",
         "desc": "Changes will now reflect automatically on both apps."
+      }
+    },
+    "manageBackups": {
+      "title": "Manage your backup",
+      "options": {
+        "deleteBackup": {
+          "title": "Delete your data",
+          "description": "All synched data will be deleted."
+        }
+      },
+      "deleteBackup": {
+        "title": "Do you really want to delete your data?",
+        "description": "All synched data will be deleted, all synched devices will be unsynched. You will be able to reactive synchronization. Doing this doesn’t have any effect on your funds.",
+        "delete": "Delete",
+        "cancel": "Cancel"
+      },
+      "deleteBackupSuccess": {
+        "title": "All data successfully deleted"
+      },
+      "deleteBackupError": {
+        "title": "Something went wrong"
       }
     }
   }

@@ -1,17 +1,19 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
-import { Flow } from "~/renderer/reducers/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
 
 import { useFlows } from "../useFlows";
 import CreateOrSynchronizeStep from "./01-CreateOrSynchronizeStep";
 import DeviceActionStep from "./02-DeviceActionStep";
-import ActivationFinalStep from "./03-FinalStep";
+import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrustchain";
+import ActivationFinalStep from "./04-ActivationFinalStep";
+import { useBackup } from "../ManageBackup/useBackup";
 
 const WalletSyncActivation = () => {
   const dispatch = useDispatch();
-  const HAS_BACKUP = false;
+  const { hasBackup, createBackup } = useBackup();
 
   const { currentStep, goToNextScene } = useFlows({ flow: Flow.Activation });
 
@@ -19,15 +21,22 @@ const WalletSyncActivation = () => {
     dispatch(setFlow(Flow.Synchronize));
   };
 
+  const createNewBackupAction = () => {
+    goToNextScene();
+    createBackup();
+  };
+
   const getStep = () => {
     switch (currentStep) {
       default:
-      case 1:
+      case Step.CreateOrSynchronizeStep:
         return <CreateOrSynchronizeStep goToCreateBackup={goToNextScene} goToSync={goToSync} />;
-      case 2:
+      case Step.DeviceActionStep:
         return <DeviceActionStep goNext={goToNextScene} />;
-      case 3:
-        return <ActivationFinalStep hasBackup={HAS_BACKUP} />;
+      case Step.CreateOrSynchronizeTrustChainStep:
+        return <ActivationOrSynchroWithTrustchain goNext={createNewBackupAction} />;
+      case Step.ActivationFinalStep:
+        return <ActivationFinalStep hasBackup={hasBackup} />;
     }
   };
 

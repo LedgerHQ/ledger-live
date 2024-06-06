@@ -5,8 +5,8 @@ import styled, { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 
 type Props = {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
 };
 
 const Container = styled(Box)`

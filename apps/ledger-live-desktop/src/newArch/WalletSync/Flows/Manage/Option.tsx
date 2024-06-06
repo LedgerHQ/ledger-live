@@ -5,6 +5,8 @@ import styled, { useTheme } from "styled-components";
 export type OptionProps = {
   label: string;
   description: string;
+  onClick?: () => void;
+  testId: string;
 };
 
 export const OptionContainer = styled.div`
@@ -18,8 +20,8 @@ export const Separator = () => {
   return <Box height="1px" width="100%" backgroundColor={colors.opacityDefault.c05} />;
 };
 
-export const Option = ({ label, description }: OptionProps) => (
-  <OptionContainer>
+export const Option = ({ label, description, onClick, testId }: OptionProps) => (
+  <OptionContainer onClick={onClick} data-testid={testId}>
     <Flex>
       <Box paddingY={24} width={304}>
         <Box>

@@ -4,23 +4,39 @@ export enum Flow {
   Activation = "Activation",
   Synchronize = "Synchronize",
   ManageInstances = "ManageInstances",
-  ManageBackup = "ManageBackup",
+  ManageBackups = "ManageBackups",
+}
+
+export enum Step {
+  //ManageBackup
+  ManageBackupStep = "ManageBackupStep",
+  DeleteBackupStep = "DeleteBackupStep",
+  BackupDeleted = "BackupDeleted",
+
+  //Activation
+  CreateOrSynchronizeStep = "CreateOrSynchronizeStep",
+  DeviceActionStep = "DeviceActionStep",
+  CreateOrSynchronizeTrustChainStep = "CreateOrSynchronizeTrustChainStep",
+  ActivationFinalStep = "ActivationFinalStep",
 }
 
 export type WalletSyncState = {
   activated: boolean;
   flow: Flow;
+  step: Step;
 };
 
 const initialState: WalletSyncState = {
-  activated: false,
+  activated: true,
   flow: Flow.Activation,
+  step: Step.CreateOrSynchronizeStep,
 };
 
 type HandlersPayloads = {
   WALLET_SYNC_ACTIVATE: boolean;
   WALLET_SYNC_DEACTIVATE: boolean;
   WALLET_SYNC_CHANGE_FLOW: Flow;
+  WALLET_SYNC_CHANGE_STEP: Step;
 };
 
 type MarketHandlers<PreciseKey = true> = Handlers<WalletSyncState, HandlersPayloads, PreciseKey>;
@@ -38,6 +54,10 @@ const handlers: MarketHandlers = {
     ...state,
     flow: payload,
   }),
+  WALLET_SYNC_CHANGE_STEP: (state: WalletSyncState, { payload }: { payload: Step }) => ({
+    ...state,
+    step: payload,
+  }),
 };
 
 // Selectors
@@ -45,6 +65,8 @@ export const walletSyncSelector = (state: { walletSync: WalletSyncState }) => st
 
 export const walletSyncFlowSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.flow;
+export const walletSyncStepSelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.step;
 export const walletSyncStateSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.activated;
 
