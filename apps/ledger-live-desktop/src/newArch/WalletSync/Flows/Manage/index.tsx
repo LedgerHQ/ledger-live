@@ -2,7 +2,10 @@ import { Box, Flex, Text, Icons } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
-import { Option, OptionContainer, OptionProps } from "~/newArch/WalletSync/Flows/Manage/Option";
+import { useDispatch } from "react-redux";
+import { setFlow, setStep } from "~/renderer/actions/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { OptionContainer, Option, OptionProps } from "./Option";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -13,14 +16,29 @@ const WalletSyncManage = () => {
   const { t } = useTranslation();
   const nbInstances = 1;
 
+  const dispatch = useDispatch();
+
+  const goToSynch = () => {
+    dispatch(setFlow(Flow.Synchronize));
+  };
+
+  const goToManageBackups = () => {
+    dispatch(setFlow(Flow.ManageBackups));
+    dispatch(setStep(Step.ManageBackupStep));
+  };
+
   const Options: OptionProps[] = [
     {
       label: t("walletSync.manage.synchronize.label"),
       description: t("walletSync.manage.synchronize.description"),
+      onClick: goToSynch,
+      testId: "walletSync-synchronize",
     },
     {
       label: t("walletSync.manage.backup.label"),
       description: t("walletSync.manage.backup.description"),
+      onClick: goToManageBackups,
+      testId: "walletSync-manage-backup",
     },
   ];
 
