@@ -46,17 +46,9 @@ const config: PlaywrightTestConfig = {
         ["html", { open: "never", outputFolder: "artifacts/html-report" }],
         ["github"],
         ["line"],
-        [
-          "allure-playwright",
-          {
-            outputFolder: "allure-results",
-            suiteTitle: true,
-            detail: true,
-            environmentInfo: {},
-          },
-        ],
+        ["allure-playwright"],
       ]
-    : [["allure-playwright"], ["junit", { outputFile: "results.xml" }]],
+    : [["allure-playwright"]],
 };
 
 export default config;

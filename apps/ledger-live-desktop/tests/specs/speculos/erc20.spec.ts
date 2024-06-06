@@ -21,6 +21,5 @@ test.describe.parallel("ERC20 token", () => {
     await app.portfolio.navigateToAsset(token);
     await app.account.navigateToToken(token);
     await app.account.expectLastOperationsVisibility();
-    await app.portfolio.navigateToAsset("dddddd");
   });
 });
