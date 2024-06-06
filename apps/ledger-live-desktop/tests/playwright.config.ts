@@ -32,7 +32,7 @@ const config: PlaywrightTestConfig = {
   globalTeardown: require.resolve("./utils/global-teardown"),
   use: {
     ignoreHTTPSErrors: true,
-    screenshot: process.env.CI ? "on" : "off",
+    screenshot: process.env.CI ? "only-on-failure" : "off",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
@@ -56,7 +56,7 @@ const config: PlaywrightTestConfig = {
           },
         ],
       ]
-    : "allure-playwright",
+    : [["allure-playwright"], ["junit", { outputFile: "results.xml" }]],
 };
 
 export default config;

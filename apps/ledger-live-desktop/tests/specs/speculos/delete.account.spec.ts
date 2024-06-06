@@ -2,7 +2,7 @@ import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Account } from "../../enum/Account";
 import { Application } from "tests/page";
-import { allure } from "allure-playwright";
+import { addTmsLink } from "tests/fixtures/common";
 
 const accounts: Account[] = [
   Account.BTC_1,
@@ -28,9 +28,9 @@ for (const [i, account] of accounts.entries()) {
       speculosOffset: i,
     });
 
-    //@TmsLink("B2CQA-320")
-
     test(`[${account.currency.uiName}] Delete Account`, async ({ page }) => {
+      addTmsLink(["B2CQA-320"]);
+
       const app = new Application(page);
 
       await app.layout.goToAccounts();
@@ -39,8 +39,6 @@ for (const [i, account] of accounts.entries()) {
 
       await app.account.deleteAccount();
       await app.accounts.expectAccountAbsence(account.accountName);
-
-      await allure.tms("B2CQA-320", "https://ledgerhq.atlassian.net/browse/B2CQA-320");
     });
   });
 }

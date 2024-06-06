@@ -2,7 +2,7 @@ import test from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
-import { allure } from "allure-playwright";
+import { addTmsLink } from "tests/fixtures/common";
 
 const accounts: Account[] = [
   // Derivation path is updated when account receive money
@@ -27,9 +27,9 @@ for (const [i, account] of accounts.entries()) {
       speculosOffset: i,
     });
 
-    //@TmsLink("B2CQA-249")
-
     test(`[${account.currency.uiName}] Receive`, async ({ page }) => {
+      addTmsLink(["B2CQA-249"]);
+
       const app = new Application(page);
 
       await app.layout.goToAccounts();
@@ -42,8 +42,6 @@ for (const [i, account] of accounts.entries()) {
 
       await app.speculos.expectValidReceiveAddress(account);
       await app.receive.expectApproveLabel();
-
-      await allure.tms("B2CQA-249", "https://ledgerhq.atlassian.net/browse/B2CQA-249");
     });
   });
 }
