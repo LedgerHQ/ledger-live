@@ -17,6 +17,9 @@ overrides:
 packageExtensionsChecksum: 8b44dc959ddf462fc160cbda4fe2b3bd
 
 patchedDependencies:
+  '@hashgraph/sdk@2.14.2':
+    hash: ftpe7kgiykw2quxzn7vgiqumd4
+    path: patches/@hashgraph__sdk@2.14.2.patch
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
@@ -2832,7 +2835,7 @@ importers:
         version: 1.2.0
       '@hashgraph/sdk':
         specifier: 2.14.2
-        version: 2.14.2(react-native@0.73.6)(react@18.2.0)
+        version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.73.6)(react@18.2.0)
       '@keplr-wallet/cosmos':
         specifier: ^0.9.16
         version: 0.9.16
@@ -13698,7 +13701,7 @@ packages:
       protobufjs: 6.11.4
     dev: false
 
-  /@hashgraph/sdk@2.14.2(react-native@0.73.6)(react@18.2.0):
+  /@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.73.6)(react@18.2.0):
     resolution: {integrity: sha512-58CGz+NZvuI7VxpmvFXo7IJc60kWRGIdQeYy1b5Y2j3aO5nwElX8IJGpscB+ZiFepwkHC6gvW3dX9tRV2lWGaQ==}
     engines: {node: '>=10.17.0'}
     peerDependencies:
@@ -13720,6 +13723,7 @@ packages:
       - react
       - react-native
     dev: false
+    patched: true
 
   /@headlessui/react@1.7.18(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-4i5DOrzwN4qSgNsL4Si61VMkUcWbcSKueUV7sFhpHzQcSShdlHENE5+QBntMSRvHt8NyoFO2AGG8si9lq+w4zQ==}
