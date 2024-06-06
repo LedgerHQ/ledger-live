@@ -19,6 +19,13 @@ jest.mock("src/sentry/install", () => ({
   setTags: jest.fn(),
 }));
 
+jest.mock("src/renderer/analytics/segment", () => ({
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  start: jest.fn(),
+  useTrack: jest.fn(),
+}));
+
 global.TextEncoder = TextEncoder;
 // @ts-expect-error weird compatibility
 global.TextDecoder = TextDecoder;
