@@ -33,6 +33,14 @@ const config: PlaywrightTestConfig = {
   use: {
     ignoreHTTPSErrors: true,
     screenshot: process.env.CI ? "on" : "off",
+    trace: "on",
+    contextOptions: {
+      recordVideo: {
+        dir: "artifacts/test-results/videos/",
+      },
+    },
+    headless: false,
+    video: "on",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
