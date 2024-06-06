@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Erreur dans le numéro de séquence",
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Swap indisponible : effectuez d’abord un envoi/délégation avec ce compte Tezos, ou changez la paire."
     }
   },
   "crash" : {
@@ -1166,15 +1169,15 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "Prenez le contrôle de votre argent.",
+      "title" : "Prenez le contrôle de votre argent",
       "desc" : "Profitez de la liberté de posséder vos cryptos."
     },
     "1" : {
       "title" : "Accédez à la DeFi et aux NFT",
-      "desc" : "Interagissez en toute sécurité avec des applications DeFi de confiance directement depuis Ledger Live."
+      "desc" : "Utilisez en toute sécurité des applications DeFi de confiance directement depuis Ledger Live."
     },
     "2" : {
-      "title" : "Vos accès au Web3",
+      "title" : "Votre porte d’entrée vers le Web3",
       "desc" : "Achetez, vendez et échangez les cryptos leaders, via nos prestataires tiers et en toute sécurité avec votre wallet Ledger."
     },
     "3" : {
@@ -1309,11 +1312,11 @@
       },
       "setupLedger" : {
         "title" : "Configurer votre wallet",
-        "subtitle" : "Si votre Ledger est nouveau ou a été réinitialisé."
+        "subtitle" : "Si votre appareil Ledger est nouveau ou a été réinitialisé."
       },
       "accessWallet" : {
         "title" : "Accéder à votre wallet",
-        "subtitle" : "Si votre Ledger est déjà configuré."
+        "subtitle" : "Si votre appareil Ledger est déjà configuré."
       },
       "buyNano" : {
         "title" : "Acheter un Ledger Nano X",
@@ -1331,7 +1334,7 @@
     "welcomeBackStep" : {
       "title" : "Bienvenue",
       "subtitle" : "Choisissez comment accéder à votre wallet :",
-      "connect" : "Connecter votre Ledger",
+      "connect" : "Connecter votre appareil Ledger",
       "sync" : "Synchroniser avec l’ordinateur"
     },
     "discoverLive" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "Cours du {{currencyTicker}}",
       "currencyPrice" : "Prix de 1 {{currencyTicker}}",
-      "currencyPriceChange" : "Variation (24h)"
+      "currencyPriceChange" : {
+        "day" : "Variation 24h",
+        "week" : "Variation 7 jours",
+        "month" : "Variation 30 jours",
+        "year" : "Variation 1 an",
+        "all" : "Variation 1 an"
+      }
     },
     "quickActions" : {
       "buy" : "Acheter",
@@ -3130,9 +3139,6 @@
         "title" : "Bienvenue dans le Swap",
         "whatIsSwap" : "Qu’est-ce que le Swap ?",
         "disclaimer" : "Échangez des cryptos directement via votre wallet Ledger. Ce service n’est pas disponible dans certains pays, y compris aux États-Unis."
-      },
-      "main" : {
-        "header" : "Swap"
       },
       "notAvailable" : {
         "title" : "Service temporairement indisponible ou non disponible dans votre région"
@@ -4078,10 +4084,10 @@
       "showLessCTA" : "Afficher moins",
       "otgBanner" : "Pour utiliser un Ledger Nano S ou un Ledger Nano S Plus, connectez-les avec un câble USB.",
       "connectExistingLedger" : "Connecter un Ledger existant",
-      "connectExistingLedgerDescription" : "Si votre Ledger est déjà configuré.",
+      "connectExistingLedgerDescription" : "Si votre appareil Ledger est déjà configuré.",
       "setUpNewLedger" : "Configurer un nouveau wallet",
       "setUpNewLedgerDescription" : "Si votre Ledger n’est pas encore configuré.",
-      "buyDeviceCTA" : "<0>Besoin d’un nouveau Ledger ? </0><1>Acheter maintenant</1>",
+      "buyDeviceCTA" : "<0>Besoin d’un nouveau wallet ? </0><1>Achetez-le ici</1>",
       "item" : {
         "usb" : "Connecté via USB",
         "available" : "Disponible Appuyez pour vous connecter",
@@ -4325,7 +4331,8 @@
       "installUpdate" : {
         "titleInactive" : "Installer la mise à jour",
         "titleActive" : "Installation de la mise à jour",
-        "description" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée."
+        "description" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée.",
+        "descriptionNanoXBle" : "{{deviceName}} will restart multiple times.\n\nIf the device powers off and does not automatically restart, you will need to power it on yourself.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -6134,6 +6141,7 @@
       "subtitle" : "Parcourez l’écosystème Web3 intégré à Ledger.",
       "section" : {
         "recentlyUsed" : "Récemment utilisé",
+        "locallyLoaded" : "Chargées localement",
         "categories" : "Catégories",
         "clearAll" : "Tout effacer"
       },
@@ -6231,9 +6239,10 @@
       },
       "order" : {
         "topGainers" : "Top perf.",
-        "market_cap" : "Rang",
-        "market_cap_asc" : "Rang (capitalisation) asc.",
-        "market_cap_desc" : "Rang (capitalisation) desc."
+        "topLosers" : "Top baisses",
+        "marketCap" : "Rang",
+        "asc" : "Rang (capitalisation) asc.",
+        "desc" : "Rang (capitalisation) desc."
       },
       "currency" : "Monnaie",
       "time" : "Période",
@@ -6303,7 +6312,7 @@
     "designedForStax" : {
       "title" : "<0>Conçu pour le</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous définissez ce NFT comme fond d’écran.",
+        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous définissez ce NFT comme fond d’écran.",
         "cta" : "Compris"
       }
     },
@@ -6563,7 +6572,6 @@
         },
         "swap" : {
           "title" : "Échanger",
-          "label" : "Populaire",
           "body" : "Échangez une crypto contre une autre en toute sécurité."
         },
         "receive" : {
