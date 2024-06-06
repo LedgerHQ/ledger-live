@@ -82,6 +82,9 @@ test.describe("1inch dapp", () => {
     await drawer.waitForDrawerToDisappear();
 
     const [, webview] = electronApp.windows();
+    const restricted_app = await webview.getByText("Restricted").isVisible();
+    test.skip(restricted_app, "1inch dapp is restricted");
+
     await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
     await webview.locator(".connect-wallet__box > button").click();
     await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
