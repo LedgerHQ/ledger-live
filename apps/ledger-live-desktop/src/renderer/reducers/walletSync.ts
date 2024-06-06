@@ -74,6 +74,10 @@ const handlers: WalletSyncHandlers = {
     flow,
     step,
   }),
+  WALLET_SYNC_CHANGE_STEP: (state: WalletSyncState, { payload }: { payload: Step }) => ({
+    ...state,
+    step: payload,
+  }),
 };
 
 // Selectors
