@@ -1,6 +1,7 @@
 import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
+import { allure } from "allure-playwright";
 
 test.use({
   userdata: "speculos-tests-app",
@@ -20,5 +21,8 @@ test.describe.parallel("ERC20 token", () => {
     await app.portfolio.navigateToAsset(token);
     await app.account.navigateToToken(token);
     await app.account.expectLastOperationsVisibility();
+    await allure.attachment("search-results.png", await page.screenshot(), {
+      contentType: "image/png",
+    });
   });
 });
