@@ -34,10 +34,14 @@ const WalletSyncRow = () => {
   };
 
   const closeDrawer = () => {
-    setOpen(false);
     resetFlow();
+    setOpen(false);
   };
 
+  const openDrawer = () => {
+    resetFlow();
+    setOpen(true);
+  };
   const resetFlow = () => {
     dispatch(setFlow(Flow.Activation));
     dispatch(setStep(Step.CreateOrSynchronizeStep));
@@ -54,7 +58,7 @@ const WalletSyncRow = () => {
         <WalletSyncRouter ref={childRef} />
       </SideDrawer>
 
-      <Button small event="Manage WalletSync" primary onClick={() => setOpen(true)}>
+      <Button small event="Manage WalletSync" primary onClick={openDrawer}>
         {t("walletSync.manage.cta")}
       </Button>
     </>
