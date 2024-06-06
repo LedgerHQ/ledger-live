@@ -24,7 +24,12 @@ function getNavigatorParams(
   {
     isAvalancheCAccount,
     isEthereumMaticTokenAccount,
-  }: { isEthereumMaticTokenAccount: boolean; isAvalancheCAccount: boolean },
+    isArbitrumGRTTokenAccount,
+  }: {
+    isEthereumMaticTokenAccount: boolean;
+    isAvalancheCAccount: boolean;
+    isArbitrumGRTTokenAccount: boolean;
+  },
 ): NavigationParamsType {
   if (isAccountEmpty(account)) {
     return [
@@ -39,12 +44,14 @@ function getNavigatorParams(
     ];
   }
 
-  if (isEthereumMaticTokenAccount || isAvalancheCAccount) {
+  if (isEthereumMaticTokenAccount || isAvalancheCAccount || isArbitrumGRTTokenAccount) {
     const yieldId = (() => {
       if (isEthereumMaticTokenAccount) {
         return "ethereum-matic-native-staking";
+      } else if (isAvalancheCAccount) {
+        return "avalanche-avax-liquid-staking";
       }
-      return "avalanche-avax-liquid-staking";
+      return "arbitrum-grt-native-staking";
     })();
 
     return [
@@ -95,8 +102,14 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
     account.type === "TokenAccount" && account.token.id === "ethereum/erc20/matic";
   const isAvalancheCAccount =
     account.type === "Account" && account.currency.id === "avalanche_c_chain";
+  const isArbitrumGRTTokenAccount =
+    account.type === "TokenAccount" && account.token.id === "arbitrum/erc20/graph_token";
 
-  const canStake = isEthereumAccount || isEthereumMaticTokenAccount || isAvalancheCAccount;
+  const canStake =
+    isEthereumAccount ||
+    isEthereumMaticTokenAccount ||
+    isAvalancheCAccount ||
+    isArbitrumGRTTokenAccount;
 
   if (canStake) {
     const navigationParams = getNavigatorParams(
@@ -105,17 +118,8 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         parentAccount,
         parentRoute,
       },
-      { isEthereumMaticTokenAccount, isAvalancheCAccount },
+      { isEthereumMaticTokenAccount, isAvalancheCAccount, isArbitrumGRTTokenAccount },
     );
-
-    const currency = (() => {
-      if (isEthereumMaticTokenAccount) {
-        return "MATIC";
-      } else if (isAvalancheCAccount) {
-        return "AVAX";
-      }
-      return "ETH";
-    })();
 
     return [
       {
@@ -123,7 +127,10 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         navigationParams,
         label: <Trans i18nKey="account.stake" />,
         Icon: IconsLegacy.CoinsMedium,
-        eventProperties: { currency },
+        eventProperties: {
+          currency:
+            account.type === "TokenAccount" ? account?.token?.name : account?.currency?.name,
+        },
       },
     ];
   }

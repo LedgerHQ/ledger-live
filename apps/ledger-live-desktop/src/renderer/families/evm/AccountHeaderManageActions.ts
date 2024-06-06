@@ -22,6 +22,14 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     account.type === "TokenAccount" && account.token.id === "ethereum/erc20/matic";
   const isAvalancheCAccount =
     account.type === "Account" && account.currency.id === "avalanche_c_chain";
+  const isArbitrumGRTTokenAccount =
+    account.type === "TokenAccount" && account.token.id === "arbitrum/erc20/graph_token";
+
+  const canStake =
+    isEthereumAccount ||
+    isEthereumMaticTokenAccount ||
+    isAvalancheCAccount ||
+    isArbitrumGRTTokenAccount;
 
   const onClickStake = useCallback(() => {
     if (isAccountEmpty(account)) {
@@ -37,22 +45,25 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
           account,
         }),
       );
-    } else if (isEthereumMaticTokenAccount) {
+    } else {
+      const yieldId = (() => {
+        if (isEthereumMaticTokenAccount) {
+          return "ethereum-matic-native-staking";
+        } else if (isAvalancheCAccount) {
+          return "avalanche-avax-liquid-staking";
+        }
+        return "arbitrum-grt-native-staking";
+      })();
+
       history.push({
         pathname: "/platform/stakekit",
         state: {
-          yieldId: "ethereum-matic-native-staking",
+          yieldId,
           accountId: account.id,
-          returnTo: `/account/${account.parentId}/${account.id}`,
-        },
-      });
-    } else if (isAvalancheCAccount) {
-      history.push({
-        pathname: "/platform/stakekit",
-        state: {
-          yieldId: "avalanche-avax-liquid-staking",
-          accountId: account.id,
-          returnTo: `/account/${account.id}`,
+          returnTo:
+            account.type === "TokenAccount"
+              ? `/account/${account.parentId}/${account.id}`
+              : `/account/${account.id}`,
         },
       });
     }
@@ -66,8 +77,6 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     parentAccount,
   ]);
 
-  const canStake = isEthereumAccount || isEthereumMaticTokenAccount || isAvalancheCAccount;
-
   if (canStake) {
     return [
       {
@@ -79,11 +88,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         },
         icon: IconCoins,
         label: t("account.stake", {
-          currency: isEthereumAccount
-            ? account?.currency?.name
-            : isEthereumMaticTokenAccount
-              ? account?.token?.name
-              : undefined,
+          currency:
+            account.type === "TokenAccount" ? account?.token?.name : account?.currency?.name,
         }),
         accountActionsTestId: "stake-from-account-action-button",
       },
