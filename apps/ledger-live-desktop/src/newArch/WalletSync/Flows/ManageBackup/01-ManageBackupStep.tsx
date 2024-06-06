@@ -5,12 +5,23 @@ import { Card } from "../../components/Card";
 import styled, { useTheme } from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import { ManageBackupStepProps } from "./types";
+import { AnalyticsPage, useWalletSyncAnalytics } from "../../useWalletSyncAnalytics";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 export default function ManageBackupStep({ goToDeleteBackup }: ManageBackupStepProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+
+  const { onClickTrack } = useWalletSyncAnalytics();
+
+  const handleGoDeleteBackup = () => {
+    onClickTrack({ button: "delete data", page: AnalyticsPage.ManageBackup });
+    goToDeleteBackup();
+  };
+
   return (
     <Flex flexDirection="column" rowGap="24px">
+      <TrackPage category={AnalyticsPage.ManageBackup} />
       <Text fontSize={23} variant="large">
         {t("walletSync.manageBackups.title")}
       </Text>
@@ -19,7 +30,7 @@ export default function ManageBackupStep({ goToDeleteBackup }: ManageBackupStepP
         testId="walletSync-manage-backup-delete"
         title="walletSync.manageBackups.options.deleteBackup.title"
         description="walletSync.manageBackups.options.deleteBackup.description"
-        onClick={goToDeleteBackup}
+        onClick={handleGoDeleteBackup}
         leftIcon={
           <IconContainer
             alignItems="center"
