@@ -2,7 +2,6 @@ import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { TronSendTrc20ToNewAccountForbidden } from "./errors";
 import signTransaction from "../../hw/signTransaction";
 import { Transaction, TronAccount } from "./types";
 import { withDevice } from "../../hw/deviceAccess";
@@ -10,7 +9,6 @@ import { getEstimatedFees } from "./logic";
 import {
   claimRewardTronTransaction,
   createTronTransaction,
-  fetchTronAccount,
   fetchTronContract,
   freezeTronTransaction,
   legacyUnfreezeTronTransaction,
