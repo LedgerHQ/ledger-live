@@ -13,6 +13,7 @@ type Props = {
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
   countdown?: number;
   allowRefresh?: boolean;
+  isEnabled?: boolean;
 };
 
 export type UseProviderRatesResponse = {
@@ -28,6 +29,7 @@ export function useProviderRates({
   onNoRates,
   setExchangeRate,
   allowRefresh = true,
+  isEnabled = true,
   ...props
 }: Props): UseProviderRatesResponse {
   const [countdown, { startCountdown, resetCountdown, stopCountdown }] = useCountdown({
@@ -49,6 +51,7 @@ export function useProviderRates({
         setExchangeRate?.(data[0]);
       }
     },
+    isEnabled,
   });
 
   useEffect(() => {

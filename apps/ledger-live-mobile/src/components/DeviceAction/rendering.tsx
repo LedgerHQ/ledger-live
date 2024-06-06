@@ -62,6 +62,7 @@ import ModalLock from "../ModalLock";
 import Config from "react-native-config";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { SettingsState } from "~/reducers/types";
+import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -621,7 +622,7 @@ export function renderError({
   device,
   hasExportLogButton,
 }: RawProps & {
-  navigation?: StackNavigationProp<ParamListBase>;
+  navigation?: StackNavigationProp<RootStackParamList>;
   error: Error;
   onRetry?: (() => void) | null;
   managerAppName?: string;
@@ -632,11 +633,18 @@ export function renderError({
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
-      navigation.navigate(NavigatorName.MyLedger, {
-        screen: ScreenName.MyLedgerChooseDevice,
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
         params: {
-          tab: MANAGER_TABS.INSTALLED_APPS,
-          updateModalOpened: true,
+          screen: NavigatorName.MyLedger,
+          params: {
+            screen: ScreenName.MyLedgerChooseDevice,
+            params: {
+              tab: MANAGER_TABS.INSTALLED_APPS,
+              updateModalOpened: true,
+              device,
+            },
+          },
         },
       });
     } else if (onRetry) {

@@ -261,7 +261,9 @@ export function SwapForm({
         customDappURL: providerURL,
       });
     } else {
-      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
+      swapTransaction.transaction && swapTransaction.transaction.family !== "polkadot"
+        ? (swapTransaction.transaction.useAllAmount = false)
+        : null;
       setConfirmed(true);
     }
   }, [

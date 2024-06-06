@@ -5,13 +5,16 @@ import { Application } from "tests/page";
 
 const currencies: Currency[] = [
   Currency.BTC,
-  Currency.tBTC,
   Currency.ETH,
-  Currency.tETH,
-  Currency.sepETH,
   Currency.XRP,
   Currency.DOT,
   Currency.TRX,
+  Currency.ADA,
+  //Currency.XLM, //TODO: Reactivate when Date.Parse issue is fixed - desactivate time machine for Speculos tests
+  Currency.BCH,
+  Currency.ALGO,
+  Currency.ATOM,
+  Currency.XTZ,
 ];
 
 for (const [i, currency] of currencies.entries()) {
@@ -45,6 +48,7 @@ for (const [i, currency] of currencies.entries()) {
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(firstAccountName);
       await app.account.expectAccountVisibility(firstAccountName);
+      await app.account.expectAccountBalance();
       await app.account.expectLastOperationsVisibility();
     });
   });

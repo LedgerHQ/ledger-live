@@ -1,7 +1,7 @@
+import { SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
 import React from "react";
 import styled from "styled-components";
 import SectionRate from "./SectionRate";
-import { SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
 
 const Form = styled.section`
   display: grid;

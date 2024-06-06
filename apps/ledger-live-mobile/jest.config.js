@@ -11,6 +11,7 @@ const transformIncludePatterns = [
   "react-native-modal",
   "react-native-animatable",
   "@sentry/react-native",
+  "@hashgraph/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",
   "uuid",

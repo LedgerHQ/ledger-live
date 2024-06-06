@@ -1,6 +1,6 @@
-import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fetchRates } from "../../api/v5/fetchRates";
 import { useAPI } from "../../../../hooks/useAPI";
@@ -12,6 +12,7 @@ type Props = {
   toCurrency: CryptoOrTokenCurrency | undefined;
   fromCurrencyAmount: BigNumber;
   onSuccess?(data: ExchangeRate[]): void;
+  isEnabled?: boolean;
 };
 
 export function useFetchRates({
@@ -19,6 +20,7 @@ export function useFetchRates({
   toCurrency,
   fromCurrencyAmount,
   onSuccess,
+  isEnabled = true,
 }: Props) {
   const currencyFrom = fromCurrencyAccount ? getAccountCurrency(fromCurrencyAccount).id : undefined;
   const unitFrom = fromCurrencyAccount
@@ -48,6 +50,7 @@ export function useFetchRates({
       !!unitFrom &&
       !!unitTo &&
       !loading &&
+      isEnabled &&
       !error,
     onSuccess,
   });

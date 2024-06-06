@@ -16,4 +16,11 @@ export enum DeviceLabels {
   CANCEL = "Cancel",
   ACCOUNT = "Account",
   DESTINATION = "Destination",
+  CONFIRM = "Confirm",
+  PUBLICKEY = "Public Key Hash",
+  SEND_TO_ADDRESS = "Send to address",
+  SEND = "Send",
+  TRANSACTION_FEE = "Transaction fee",
+  FINALIZE = "Finalize",
+  RECEIVER = "Receiver",
 }
