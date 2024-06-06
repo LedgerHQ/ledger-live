@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.6
+
+### Minor Changes
+
+- [#6984](https://github.com/LedgerHQ/ledger-live/pull/6984) [`652631c`](https://github.com/LedgerHQ/ledger-live/commit/652631c34d55fe905e46191055161e0a777393af) Thanks [@valber-ledger](https://github.com/valber-ledger)! - improving speculos tests: adding new checks + new currencies
+
 ## 2.82.0-nightly.5
 
 ### Minor Changes

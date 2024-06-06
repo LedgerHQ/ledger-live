@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.45.0-nightly.6
+
+### Patch Changes
+
+- [#6606](https://github.com/LedgerHQ/ledger-live/pull/6606) [`8d98543`](https://github.com/LedgerHQ/ledger-live/commit/8d985433af1b3d97a58e1e6c4bb8fe33493f8092) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix navigation when app update is needed
+
+- [#6606](https://github.com/LedgerHQ/ledger-live/pull/6606) [`8d98543`](https://github.com/LedgerHQ/ledger-live/commit/8d985433af1b3d97a58e1e6c4bb8fe33493f8092) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Reimplement & fix QueuedDrawer
+
+- Updated dependencies [[`972e3d1`](https://github.com/LedgerHQ/ledger-live/commit/972e3d193f3124cab56dda7a0fee5f718e954ff6)]:
+  - @ledgerhq/native-ui@0.23.0-nightly.1
+
 ## 3.45.0-nightly.5
 
 ### Minor Changes

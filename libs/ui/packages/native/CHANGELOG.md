@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.23.0-nightly.1
+
+### Patch Changes
+
+- [#6606](https://github.com/LedgerHQ/ledger-live/pull/6606) [`972e3d1`](https://github.com/LedgerHQ/ledger-live/commit/972e3d193f3124cab56dda7a0fee5f718e954ff6) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - (test): add testID="modal-close-button" in BaseModal
+
 ## 0.23.0-nightly.0
 
 ### Minor Changes
