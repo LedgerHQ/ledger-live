@@ -112,7 +112,9 @@ export type CurrencyFeatures = {
   currencyNeonEvm: DefaultFeature;
   currencyLukso: DefaultFeature;
   currencyLinea: DefaultFeature;
-  currencyLineaTesnet: DefaultFeature;
+  currencyLineaSepolia: DefaultFeature;
+  currencyBlast: DefaultFeature;
+  currencyBlastSepolia: DefaultFeature;
 };
 
 /**

@@ -89,4 +89,6 @@ setSupportedCurrencies([
   "lukso",
   "linea",
   "linea_sepolia",
+  "blast",
+  "blast_sepolia",
 ]);
