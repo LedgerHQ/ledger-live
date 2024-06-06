@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setFlow, setStep } from "~/renderer/actions/walletSync";
+import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 
 export type HookProps = {
@@ -23,10 +23,10 @@ export const FlowOptions: Record<
   },
   [Flow.Synchronize]: {
     steps: {
-      1: Step.SynchronizeModeStep,
-      2: Step.SynchronizeWithQRCodeStep,
-      3: Step.PinCodeStep,
-      4: Step.SynchronizedStep,
+      1: Step.SynchronizeMode,
+      2: Step.SynchronizeWithQRCode,
+      3: Step.PinCode,
+      4: Step.Synchronized,
     },
   },
   [Flow.ManageBackups]: {
@@ -58,20 +58,18 @@ export const useFlows = ({ flow }: HookProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const goToNextScene = () => {
     const newStep = currentStep < maxStep ? currentStep + 1 : currentStep;
-
-    dispatch(setStep(currentFlow.steps[newStep]));
+    dispatch(setFlow({ flow, step: currentFlow.steps[newStep] }));
     setCurrentStep(newStep);
   };
 
   const goToPreviousScene = () => {
     const newStep = currentStep > 1 ? currentStep - 1 : currentStep;
-    dispatch(setStep(currentFlow.steps[newStep]));
+    dispatch(setFlow({ flow, step: currentFlow.steps[newStep] }));
     setCurrentStep(newStep);
   };
 
   const resetFlows = () => {
-    dispatch(setFlow(Flow.Activation));
-    dispatch(setStep(Step.CreateOrSynchronize));
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
   };
 
   return {

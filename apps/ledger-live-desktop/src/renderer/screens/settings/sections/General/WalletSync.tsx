@@ -4,7 +4,7 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Flow, Step, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
-import { setFlow, setStep } from "~/renderer/actions/walletSync";
+import { setFlow } from "~/renderer/actions/walletSync";
 import { BackRef, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
 import { STEPS_WITH_BACK } from "LLD/WalletSync/Flows/useFlows";
 
@@ -44,8 +44,7 @@ const WalletSyncRow = () => {
   };
 
   const resetFlow = () => {
-    dispatch(setFlow(Flow.Activation));
-    dispatch(setStep(Step.CreateOrSynchronize));
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
   };
 
   return (

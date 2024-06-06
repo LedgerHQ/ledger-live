@@ -18,7 +18,7 @@ const WalletSyncActivation = () => {
   const { currentStep, goToNextScene } = useFlows({ flow: Flow.Activation });
 
   const goToSync = () => {
-    dispatch(setFlow(Flow.Synchronize));
+    dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
   };
 
   const createNewBackupAction = () => {

@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useFlows } from "../useFlows";
-import SynchronizeModeStep from "./01-SynchModeStep";
+import SynchronizeModeStep from "./01-SyncModeStep";
 import SynchWithQRCodeStep from "./02-QRCodeStep";
 import PinCodeStep from "./03-PinCodeStep";
 
@@ -16,7 +16,7 @@ const SynchronizeWallet = () => {
   });
 
   const goToActivation = () => {
-    dispatch(setFlow(Flow.Activation));
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronizeStep }));
   };
 
   const getStep = () => {
@@ -24,7 +24,7 @@ const SynchronizeWallet = () => {
       default:
       case Step.SynchronizeModeStep:
         return (
-          <SynchronizeModeStep goToQRCode={goToNextScene} goToSynchWithDevice={goToActivation} />
+          <SynchronizeModeStep goToQRCode={goToNextScene} goToSyncWithDevice={goToActivation} />
         );
       case Step.SynchronizeWithQRCodeStep:
         return <SynchWithQRCodeStep displayPinCode={goToNextScene} />;

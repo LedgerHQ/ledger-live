@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import styled, { useTheme } from "styled-components";
-import { setFlow, setStep } from "~/renderer/actions/walletSync";
+import { setFlow } from "~/renderer/actions/walletSync";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 
@@ -21,8 +21,7 @@ export const UnsecuredError = () => {
   const dispatch = useDispatch();
   const tryAgain = () => console.log("try again");
   const goToDelete = () => {
-    dispatch(setFlow(Flow.ManageBackups));
-    dispatch(setStep(Step.ManageBackup));
+    dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.ManageBackup }));
   };
   const { t } = useTranslation();
   const { colors } = useTheme();

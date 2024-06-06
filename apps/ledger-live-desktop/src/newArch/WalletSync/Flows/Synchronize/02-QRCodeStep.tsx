@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Box, Flex, Text } from "@ledgerhq/react-ui";
+import { Box, Flex, NumberedList, Text } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
-import NumberedList, { Item } from "@ledgerhq/react-ui/components/layout/List/NumberedList";
 
 type Props = {
   displayPinCode: () => void;
@@ -12,7 +11,7 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
 
   const { colors } = useTheme();
 
-  const steps: Item[] = [
+  const steps = [
     { element: t("walletSync.synchronize.qrCode.steps.step1") },
     { element: t("walletSync.synchronize.qrCode.steps.step2") },
     { element: t("walletSync.synchronize.qrCode.steps.step3") },

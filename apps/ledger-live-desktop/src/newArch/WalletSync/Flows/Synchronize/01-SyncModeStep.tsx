@@ -6,10 +6,10 @@ import styled, { useTheme } from "styled-components";
 
 type Props = {
   goToQRCode: () => void;
-  goToSynchWithDevice: () => void;
+  goToSyncWithDevice: () => void;
 };
 
-export default function SynchronizeModeStep({ goToQRCode, goToSynchWithDevice }: Props) {
+export default function SynchronizeModeStep({ goToQRCode, goToSyncWithDevice }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   return (
@@ -26,7 +26,7 @@ export default function SynchronizeModeStep({ goToQRCode, goToSynchWithDevice }:
         testId="walletSync-synchronize-connectDevice"
         title="walletSync.synchronize.chooseMethod.connectDevice.title"
         description="walletSync.synchronize.chooseMethod.connectDevice.description"
-        onClick={goToSynchWithDevice}
+        onClick={goToSyncWithDevice}
         leftIcon={
           <IconContainer alignItems="center" justifyContent="center">
             <Icons.LedgerDevices size="M" color={colors.primary.c80} />

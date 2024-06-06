@@ -2,7 +2,7 @@ import React from "react";
 import styled, { useTheme } from "styled-components";
 import Flex from "../../Flex";
 import Text from "../../../asorted/Text";
-import { rgba } from "src/styles/helpers";
+import { rgba } from "../../../../styles/helpers";
 
 export type Item = {
   element: React.ReactNode | string;

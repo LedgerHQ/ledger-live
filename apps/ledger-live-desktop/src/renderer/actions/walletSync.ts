@@ -5,11 +5,7 @@ export const setWalletSync = (payload: boolean) => ({
   payload,
 });
 
-export const setFlow = (payload: Flow) => ({
+export const setFlow = (payload: { flow: Flow; step: Step }) => ({
   type: "WALLET_SYNC_CHANGE_FLOW",
-  payload,
-});
-export const setStep = (payload: Step) => ({
-  type: "WALLET_SYNC_CHANGE_STEP",
   payload,
 });
