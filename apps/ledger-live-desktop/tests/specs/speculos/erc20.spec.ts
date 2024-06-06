@@ -23,6 +23,7 @@ test.describe.parallel("ERC20 token", () => {
     await app.account.expectLastOperationsVisibility();
 
     await allure.tms("B2CQA-1079", "https://ledgerhq.atlassian.net/browse/B2CQA-1079");
+
     await allure.attachment("search-results.png", await page.screenshot(), {
       contentType: "image/png",
     });

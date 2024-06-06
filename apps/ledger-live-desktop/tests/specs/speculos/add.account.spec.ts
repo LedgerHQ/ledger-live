@@ -2,6 +2,7 @@ import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
 import { Application } from "tests/page";
+import { allure } from "allure-playwright";
 
 const currencies: Currency[] = [
   Currency.BTC,
@@ -50,6 +51,12 @@ for (const [i, currency] of currencies.entries()) {
       await app.account.expectAccountVisibility(firstAccountName);
       await app.account.expectAccountBalance();
       await app.account.expectLastOperationsVisibility();
+
+      await allure.tms("B2CQA-101", "https://ledgerhq.atlassian.net/browse/B2CQA-101");
+      await allure.tms("B2CQA-102", "https://ledgerhq.atlassian.net/browse/B2CQA-102");
+      await allure.tms("B2CQA-314", "https://ledgerhq.atlassian.net/browse/B2CQA-314");
+      await allure.tms("B2CQA-330", "https://ledgerhq.atlassian.net/browse/B2CQA-330");
+      await allure.tms("B2CQA-929", "https://ledgerhq.atlassian.net/browse/B2CQA-929");
     });
   });
 }
