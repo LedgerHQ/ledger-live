@@ -4,7 +4,20 @@ export enum Flow {
   Activation = "Activation",
   Synchronize = "Synchronize",
   ManageInstances = "ManageInstances",
-  ManageBackup = "ManageBackup",
+  ManageBackups = "ManageBackups",
+}
+
+export enum Step {
+  //ManageBackup
+  ManageBackupStep = "ManageBackupStep",
+  DeleteBackupStep = "DeleteBackupStep",
+  BackupDeleted = "BackupDeleted",
+
+  //Activation
+  CreateOrSynchronizeStep = "CreateOrSynchronizeStep",
+  DeviceActionStep = "DeviceActionStep",
+  CreateOrSynchronizeTrustChainStep = "CreateOrSynchronizeTrustChainStep",
+  ActivationFinalStep = "ActivationFinalStep",
 }
 
 export enum Flow {
@@ -109,6 +122,10 @@ const handlers: WalletSyncHandlers = {
   WALLET_SYNC_FAKED: (state: WalletSyncState, { payload }: { payload: boolean }) => ({
     ...state,
     hasBeenfaked: payload,
+  }),
+  WALLET_SYNC_CHANGE_STEP: (state: WalletSyncState, { payload }: { payload: Step }) => ({
+    ...state,
+    step: payload,
   }),
 };
 
