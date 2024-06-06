@@ -184,7 +184,7 @@ export async function createSpeculosDevice(
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
-    ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
+    //...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
       ? [
           // websocket ports

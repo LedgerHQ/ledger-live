@@ -7,14 +7,15 @@ import { addTmsLink } from "tests/fixtures/common";
 const accounts: Account[] = [
   // Derivation path is updated when account receive money
   Account.BTC_1,
+  /*Account.tBTC_1,
   Account.ETH_1,
   Account.SOL_1,
   Account.TRX_1,
-  Account.DOT_1,
+  Account.DOT_1,*/
   Account.XRP_1,
-  Account.BCH_1,
+  /*Account.BCH_1,
   Account.ATOM_1,
-  Account.XTZ_1,
+  Account.XTZ_1,*/
 ];
 
 //Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581

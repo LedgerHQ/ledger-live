@@ -95,7 +95,8 @@ export class Account {
 
   static readonly TRX_2 = new Account(Currency.TRX, "Tron 2", "TMGGi8n7kDkB8ws9wgunKf2SGNP4PjEyLL");
 
-  static readonly XRP_1 = new Account(Currency.XRP, "XRP 1", "rhQvt8XfAGn1hVVtMUmdGKBUdnKzi2oimV");
+  //static readonly XRP_1 = new Account(Currency.XRP, "XRP 1", "rhQvt8XfAGn1hVVtMUmdGKBUdnKzi2oimV");
+  static readonly XRP_1 = new Account(Currency.XRP, "XRP 1", "Qvt8XfAGn1hVVtMUmdGKBUdnKzi2oimV");
 
   static readonly XRP_2 = new Account(Currency.XRP, "XRP 2", "r36cgyrfC1xSQMvjuiSeFJEcBTq31imZS");
 
