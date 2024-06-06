@@ -167,6 +167,9 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
       return sub;
     }),
   );
+
+  const mergedSubAccounts = mergeSubAccounts(subAccounts, initialAccount?.subAccounts || []);
+
   // get 'OUT' token operations with fee
   const subOutOperationsWithFee: TronOperation[] = subAccounts
     .flatMap(s => s.operations)
@@ -199,7 +202,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     spendableBalance,
     operationsCount: parentOpsAndSubOutOpsWithFee.length,
     operations: parentOpsAndSubOutOpsWithFee,
-    subAccounts,
+    subAccounts: mergedSubAccounts,
     tronResources,
     blockHeight,
   };
@@ -223,6 +226,37 @@ export const postSync = (initial: TronAccount, parent: TronAccount): TronAccount
   evictRecentOpsIfPending(parent);
   parent.subAccounts && parent.subAccounts.forEach(evictRecentOpsIfPending);
   return parent;
+};
+
+/**
+ * Merges two arrays of subAccounts according to specific rules:
+ * - The first array (subAccounts1) is up-to-date and should not be modified.
+ * - Old duplicates from the second array (subAccounts2) should be filtered out.
+ * - Only new subAccounts with a unique ID from the second array should be included.
+ * - The balance and spendableBalance fields of the second array's subAccounts should be set to 0.
+ *
+ * @param {Array} subAccounts1 - The first array of subAccounts, which is up-to-date and should not be modified.
+ * @param {Array} subAccounts2 - The second array of subAccounts, from which only new unique subAccounts should be included.
+ * @returns {Array} - The merged array of subAccounts.
+ */
+const mergeSubAccounts = (subAccounts1, subAccounts2) => {
+  const existingIds = new Set(subAccounts1.map(subAccount => subAccount.id));
+  const filteredSubAccounts2 = subAccounts2
+    .map(subAccount => {
+      if (existingIds.has(subAccount.id)) {
+        return null;
+      } else {
+        // Set balance and spendableBalance to 0 has if they are not here it means balance is 0
+        return {
+          ...subAccount,
+          balance: new BigNumber(0),
+          spendableBalance: new BigNumber(0),
+        };
+      }
+    })
+    .filter(subAccount => subAccount !== null);
+
+  return subAccounts1.concat(filteredSubAccounts2);
 };
 
 export const sync = makeSync({ getAccountShape, postSync });
