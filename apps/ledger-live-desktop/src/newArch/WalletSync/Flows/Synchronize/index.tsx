@@ -7,6 +7,7 @@ import { useFlows } from "../useFlows";
 import SynchronizeModeStep from "./01-SyncModeStep";
 import SynchWithQRCodeStep from "./02-QRCodeStep";
 import PinCodeStep from "./03-PinCodeStep";
+import SyncFinalStep from "./04-SyncFinalStep";
 
 const SynchronizeWallet = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,8 @@ const SynchronizeWallet = () => {
         return <SynchWithQRCodeStep displayPinCode={goToNextScene} />;
       case Step.PinCodeStep:
         return <PinCodeStep />;
+      case Step.SynchronizedStep:
+        return <SyncFinalStep />;
     }
   };
 
