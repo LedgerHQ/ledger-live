@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "序列号错误",
       "description" : "请关闭窗口，稍后再重试"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "无法互换：需使用 Tezos 账户发起发送/委托或更改交易对。"
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 市场价格",
       "currencyPrice" : "1 {{currencyTicker}} 价格",
-      "currencyPriceChange" : "最近 24 小时变化"
+      "currencyPriceChange" : {
+        "day" : "最近 24 小时变化",
+        "week" : "最近 7 天变化",
+        "month" : "最近 30 天变化",
+        "year" : "最近一年变化",
+        "all" : "最近一年变化"
+      }
     },
     "quickActions" : {
       "buy" : "买入",
@@ -3130,9 +3139,6 @@
         "title" : "欢迎使用互换（Swap）",
         "whatIsSwap" : "什么是互换（Swap）？",
         "disclaimer" : "通过您的 Ledger 设备直接兑换加密货币。该服务在一些国家（包括美国）不可用。"
-      },
-      "main" : {
-        "header" : "互换"
       },
       "notAvailable" : {
         "title" : "服务暂时不可用，或在您的国家不可用"
@@ -4325,7 +4331,8 @@
       "installUpdate" : {
         "titleInactive" : "安装更新",
         "titleActive" : "正在安装更新",
-        "description" : "{{deviceName}} 会重启多次。\n\n要完成更新，请在安装完成后使用您的识别码解锁 {{deviceName}}。"
+        "description" : "{{deviceName}} 会重启多次。\n\n要完成更新，请在安装完成后使用您的识别码解锁 {{deviceName}}。",
+        "descriptionNanoXBle" : "{{deviceName}} will restart multiple times.\n\nIf the device powers off and does not automatically restart, you will need to power it on yourself.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -6134,6 +6141,7 @@
       "subtitle" : "浏览与 Ledger 完全集成的 Web3",
       "section" : {
         "recentlyUsed" : "最近使用",
+        "locallyLoaded" : "本地加载",
         "categories" : "类别",
         "clearAll" : "清除所有"
       },
@@ -6231,9 +6239,10 @@
       },
       "order" : {
         "topGainers" : "顶尖获利者",
-        "market_cap" : "排名",
-        "market_cap_asc" : "排名（市值）升序",
-        "market_cap_desc" : "排名（市值）降序"
+        "topLosers" : "跌幅排名",
+        "marketCap" : "排名",
+        "asc" : "排名（市值）升序",
+        "desc" : "排名（市值）降序"
       },
       "currency" : "货币",
       "time" : "时间",
@@ -6303,7 +6312,7 @@
     "designedForStax" : {
       "title" : "<0>专为</0> <1>Ledger</1> <2>Stax</2> 设计",
       "drawer" : {
-        "description" : "此 NFT 包含 NFT 的附加图片，专为 Ledger Stax 的 E Ink 屏幕设计。\n\n当您将此 NFT 设置为锁屏时，将使用此图片。",
+        "description" : "此 NFT 包含 NFT 的附加图片，专为 Ledger Stax 的 E Ink 屏幕设计。\n\n当您将此 NFT 设置为锁屏时，将使用此图片。",
         "cta" : "知道了"
       }
     },
@@ -6563,7 +6572,6 @@
         },
         "swap" : {
           "title" : "互换",
-          "label" : "热门",
           "body" : "安全地转换加密货币"
         },
         "receive" : {
