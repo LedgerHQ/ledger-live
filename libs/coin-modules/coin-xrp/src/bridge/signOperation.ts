@@ -5,8 +5,7 @@ import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { craftTransaction, getNextValidSequence, removeCachedRecipientIsNew } from "../logic";
-import { XrpSignature, XrpSigner } from "../signer";
-import { Transaction } from "../types";
+import { Transaction, XrpSignature, XrpSigner } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<XrpSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -25,7 +24,7 @@ export const buildSignOperation =
 
           const nextSequenceNumber = await getNextValidSequence(account.freshAddress);
 
-          const signature = (await signerContext(deviceId, async signer => {
+          const signature = await signerContext(deviceId, async signer => {
             const { freshAddressPath: derivationPath } = account;
             const { publicKey } = await signer.getAddress(derivationPath);
 
@@ -52,8 +51,8 @@ export const buildSignOperation =
               ...xrplTransaction,
               SigningPubKey: publicKey,
               TxnSignature: transactionSignature,
-            }).toUpperCase();
-          })) as XrpSignature;
+            }).toUpperCase() as XrpSignature;
+          });
 
           o.next({
             type: "device-signature-granted",

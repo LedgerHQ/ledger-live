@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { NEW_ACCOUNT_ERROR_MESSAGE } from "../logic";

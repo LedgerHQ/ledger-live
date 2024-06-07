@@ -22,7 +22,7 @@ type XrplTransaction = {
   TxnSignature?: string;
 };
 
-export default async function craftTransaction(
+export async function craftTransaction(
   account: {
     address: string;
     nextSequenceNumber: number;

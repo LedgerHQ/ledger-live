@@ -28,7 +28,7 @@ const XrplOperationToLiveOperation =
     const op: Operation = {
       id: encodeOperationId(accountId, hash, type),
       hash: hash,
-      accountId: accountId,
+      accountId,
       type,
       value,
       fee: feeValue,

@@ -14,7 +14,7 @@ const remapError = (error: Error) => {
   return error;
 };
 
-export default async function estimateFees(
+export async function estimateFees(
   networkInfo?: NetworkInfo | null,
 ): Promise<{ networkInfo: NetworkInfo; fee: BigNumber }> {
   if (!networkInfo) {

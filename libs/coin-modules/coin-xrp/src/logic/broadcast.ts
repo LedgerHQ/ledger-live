@@ -1,6 +1,6 @@
 import { submit } from "../api";
 
-export default async function broadcast(signature: string): Promise<string> {
+export async function broadcast(signature: string): Promise<string> {
   const submittedPayment = await submit(signature);
 
   if (
