@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import URL from "url";
 import { getEnv } from "@ledgerhq/live-env";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
@@ -34,7 +34,7 @@ const api: CounterValuesAPI = {
         end,
       },
     });
-    const { data } = await network({ method: "GET", url });
+    const { data } = await network<Record<string, number>>({ method: "GET", url });
     return data;
   },
 
@@ -84,7 +84,7 @@ const api: CounterValuesAPI = {
         },
       });
 
-      const { data } = await network({ method: "GET", url });
+      const { data } = await network<Record<string, number>>({ method: "GET", url });
 
       // store all countervalues in a global map
       for (let i = 0; i < fromIds.length; i++) {
@@ -101,7 +101,7 @@ const api: CounterValuesAPI = {
   },
 
   fetchIdsSortedByMarketcap: async () => {
-    const { data } = await network({
+    const { data } = await network<string[]>({
       method: "GET",
       url: `${baseURL()}/v3/supported/crypto`,
     });
