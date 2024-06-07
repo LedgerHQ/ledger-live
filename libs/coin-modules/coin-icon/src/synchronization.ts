@@ -1,13 +1,12 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import { mergeOps, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 import { getAccount, getCurrentBlockHeight, getOperations } from "./api";
 import BigNumber from "bignumber.js";
 import { getDelegation } from "./api/node";
 import { IconResources } from "./types";
 import { convertICXtoLoop } from "./logic";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 export const getAccountShape: GetAccountShape = async (info: AccountShapeInfo) => {
   const { address, initialAccount, currency, derivationMode } = info;

@@ -118,20 +118,10 @@ export const getTransactionStatus = async (
   account: IconAccount,
   transaction: Transaction,
 ): Promise<TransactionStatus> => {
-  const errors: {
-    staking?: Error;
-    amount?: Error;
-    recipient?: Error;
-    unbondings?: Error;
-  } = {};
-  const warnings: {
-    amount?: Error;
-  } = {};
-
   switch (transaction.mode) {
     case "send":
       return await getSendTransactionStatus(account, transaction);
-    default:
+    default: {
       const errors: { amount?: Error; recipient?: Error } = {};
       const warnings: { amount?: Error } = {};
 
@@ -155,5 +145,6 @@ export const getTransactionStatus = async (
         amount: amount.lt(0) ? new BigNumber(0) : amount,
         totalSpent,
       };
+    }
   }
 };
