@@ -163,7 +163,9 @@ export type CryptoCurrencyId =
   | "linea"
   | "linea_sepolia"
   | "blast"
-  | "blast_sepolia";
+  | "blast_sepolia"
+  | "scroll"
+  | "scroll_sepolia";
 
 export type LedgerExplorerId =
   | "btc"

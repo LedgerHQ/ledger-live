@@ -297,6 +297,7 @@ export const getTransactionStatus: AccountBridge<
     errors,
     warnings,
     estimatedFees,
+    totalFees,
     amount,
     totalSpent,
   };

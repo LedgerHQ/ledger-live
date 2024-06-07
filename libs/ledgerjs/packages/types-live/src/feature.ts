@@ -115,6 +115,8 @@ export type CurrencyFeatures = {
   currencyLineaSepolia: DefaultFeature;
   currencyBlast: DefaultFeature;
   currencyBlastSepolia: DefaultFeature;
+  currencyScroll: DefaultFeature;
+  currencyScrollSepolia: DefaultFeature;
 };
 
 /**

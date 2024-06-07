@@ -781,5 +781,23 @@
     "family": "ethereum",
     "color": "#ff0000",
     "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "scroll",
+    "ticker": "ETH",
+    "name": "Scroll",
+    "family": "ethereum",
+    "color": "#ebc28e",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "scroll_sepolia",
+    "ticker": "ETH",
+    "name": "Scroll Sepolia",
+    "family": "ethereum",
+    "color": "#ff0000",
+    "decimals": 18
   }
 ]
