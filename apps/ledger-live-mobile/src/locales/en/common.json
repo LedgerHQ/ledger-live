@@ -3844,35 +3844,9 @@
     "tokens": {
       "title": "Add token",
       "createParentCurrencyAccount": "Add {{parrentCurrencyName}} account",
-      "erc20": {
-        "title": "Add token",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
-        "learnMore": "Learn more about ERC20"
-      },
-      "trc10": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
-        "learnMore": "Learn more about TRC10"
-      },
-      "trc20": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
-        "learnMore": "Learn more about TRC20"
-      },
-      "asa": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is an ASA Token.\nYou can receive tokens directly on an Algorand account.",
-        "learnMore": "Learn more"
-      },
-      "bep20": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
-      },
-      "vip180": {
-        "title": "Add token",
-        "disclaimer": "{{tokenName}} is a VIP180 Token.\nYou can receive tokens directly in a VET account.",
-        "learnMore": "Learn more about VIP180"
+      "generic": {
+        "disclaimer": "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on an {{currency}} account.",
+        "learnMore": "Learn more about {{tokenType}}"
       }
     },
     "showMoreChainType": "More address types",
@@ -6578,7 +6552,6 @@
         },
         "swap": {
           "title": "Swap",
-          "label": "Popular",
           "body": "Convert crypto to crypto securely"
         },
         "receive": {

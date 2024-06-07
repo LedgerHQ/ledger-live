@@ -71,7 +71,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyCasper: DEFAULT_FEATURE,
   currencyNeonEvm: DEFAULT_FEATURE,
   currencyLinea: DEFAULT_FEATURE,
-  currencyLineaTesnet: DEFAULT_FEATURE,
+  currencyLineaSepolia: DEFAULT_FEATURE,
+  currencyBlast: DEFAULT_FEATURE,
+  currencyBlastSepolia: DEFAULT_FEATURE,
 };
 
 /**
@@ -412,6 +414,8 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+  ptxSwapExodusProvider: DEFAULT_FEATURE,
+  ptxSwapThorswapProvider: DEFAULT_FEATURE,
 
   llmAnalyticsOptInPrompt: {
     enabled: false,

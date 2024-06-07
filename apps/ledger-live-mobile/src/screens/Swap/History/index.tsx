@@ -18,7 +18,7 @@ import Share from "react-native-share";
 import { useDispatch, useSelector } from "react-redux";
 import type { Account } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "~/actions/accounts";
-import { TrackScreen } from "~/analytics";
+import { track, TrackScreen } from "~/analytics";
 import Alert from "~/components/Alert";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
@@ -46,6 +46,11 @@ const History = () => {
   useEffect(() => {
     setSections(getCompleteSwapHistory(accounts));
   }, [accounts, setSections]);
+
+  const refreshSwapHistory = useCallback(() => {
+    setIsRefreshing(true);
+    track("buttonClicked", { button: "pull to refresh" });
+  }, [setIsRefreshing]);
 
   const updateSwapStatus = useCallback(() => {
     let cancelled = false;
@@ -139,9 +144,7 @@ const History = () => {
         style={styles.sectionList}
         contentContainerStyle={styles.contentContainer}
         ListEmptyComponent={_ => <EmptyState />}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={() => setIsRefreshing(true)} />
-        }
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={refreshSwapHistory} />}
         ListHeaderComponent={
           sections.length ? (
             <Button
