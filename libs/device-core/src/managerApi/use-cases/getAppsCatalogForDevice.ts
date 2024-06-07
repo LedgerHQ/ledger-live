@@ -2,7 +2,7 @@ import { ManagerApiRepository } from "../repositories/ManagerApiRepository";
 
 type Params = {
   firmwareVersion: string;
-  targetId: string;
+  targetId: string | number;
   provider: number;
 };
 
