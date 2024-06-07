@@ -66,12 +66,19 @@ const completeExchange = (
         if (mainRefundCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
 
-        transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
+        const ptxSwapTransaction = (t: CompleteExchangeInputSwap["transaction"]) => ({
+          ...t,
+          ptxOperation: "swap",
+        });
+        transaction = await accountBridge.prepareTransaction(
+          refundAccount,
+          ptxSwapTransaction(transaction),
+        );
         if (unsubscribed) return;
 
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
           refundAccount,
-          transaction,
+          ptxSwapTransaction(transaction),
         );
         if (unsubscribed) return;
 
