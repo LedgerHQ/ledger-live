@@ -30,6 +30,7 @@ export type Scenario<T extends TransactionCommon> = {
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
   }>;
   getTransactions: (address: string) => ScenarioTransaction<T>[];
+  beforeSync?: () => Promise<void> | void;
   beforeAll?: (account: Account) => Promise<void> | void;
   afterAll?: (account: Account) => Promise<void> | void;
   beforeEach?: (account: Account) => Promise<void> | void;
@@ -62,6 +63,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
     currencyBridge.hydrate(data, account.currency);
     console.log("Preload + hydrate completed ✓");
 
+    await scenario.beforeSync?.();
     console.log("Running a synchronization on the account...");
     let scenarioAccount = await firstValueFrom(
       accountBridge
@@ -95,6 +97,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       console.log("Before each ✔️");
 
       if (scenarioTransactions.indexOf(testTransaction) > 0) {
+        await scenario.beforeSync?.();
         scenarioAccount = await firstValueFrom(
           accountBridge
             .sync(scenarioAccount, { paginationConfig: {} })
@@ -150,6 +153,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       const retry_limit = retryLimit ?? 10;
 
       const expectHandler = async (retry: number) => {
+        await scenario.beforeSync?.();
         scenarioAccount = await firstValueFrom(
           accountBridge
             .sync(
@@ -176,7 +180,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
             if (retry === 0) {
               console.error(
                 chalk.red(
-                  `Retried 10 times and could not assert all expects for transaction ${chalk.bold(
+                  `Retried ${retryLimit} time(s) and could not assert all expects for transaction ${chalk.bold(
                     testTransaction.name,
                   )}`,
                 ),
