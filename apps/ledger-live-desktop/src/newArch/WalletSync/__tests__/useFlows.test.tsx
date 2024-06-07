@@ -60,7 +60,7 @@ describe("useFlows", () => {
     act(() => {
       result.current.resetFlows();
     });
-    expect(store.getState().walletSync.step).toBe(Step.CreateOrSynchronizeStep);
+    expect(store.getState().walletSync.step).toBe(Step.CreateOrSynchronize);
     expect(store.getState().walletSync.flow).toBe(Flow.Activation);
   });
 });

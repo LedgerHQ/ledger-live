@@ -9,15 +9,15 @@ export enum Flow {
 
 export enum Step {
   //ManageBackup
-  ManageBackupStep = "ManageBackupStep",
-  DeleteBackupStep = "DeleteBackupStep",
+  ManageBackup = "ManageBackup",
+  DeleteBackup = "DeleteBackup",
   BackupDeleted = "BackupDeleted",
 
   //Activation
-  CreateOrSynchronizeStep = "CreateOrSynchronizeStep",
-  DeviceActionStep = "DeviceActionStep",
-  CreateOrSynchronizeTrustChainStep = "CreateOrSynchronizeTrustChainStep",
-  ActivationFinalStep = "ActivationFinalStep",
+  CreateOrSynchronize = "CreateOrSynchronize",
+  DeviceAction = "DeviceAction",
+  CreateOrSynchronizeTrustChain = "CreateOrSynchronizeTrustChain",
+  ActivationFinal = "ActivationFinal",
 }
 
 export type WalletSyncState = {
@@ -29,7 +29,7 @@ export type WalletSyncState = {
 const initialState: WalletSyncState = {
   activated: true,
   flow: Flow.Activation,
-  step: Step.CreateOrSynchronizeStep,
+  step: Step.CreateOrSynchronize,
 };
 
 type HandlersPayloads = {

@@ -15,10 +15,10 @@ export const FlowOptions: Record<
 > = {
   [Flow.Activation]: {
     steps: {
-      1: Step.CreateOrSynchronizeStep,
-      2: Step.DeviceActionStep,
-      3: Step.CreateOrSynchronizeTrustChainStep,
-      4: Step.ActivationFinalStep,
+      1: Step.CreateOrSynchronize,
+      2: Step.DeviceAction,
+      3: Step.CreateOrSynchronizeTrustChain,
+      4: Step.ActivationFinal,
     },
   },
   [Flow.Synchronize]: {
@@ -26,8 +26,8 @@ export const FlowOptions: Record<
   },
   [Flow.ManageBackups]: {
     steps: {
-      1: Step.ManageBackupStep,
-      2: Step.DeleteBackupStep,
+      1: Step.ManageBackup,
+      2: Step.DeleteBackup,
       3: Step.BackupDeleted,
     },
   },
@@ -42,7 +42,7 @@ export const FlowOptions: Record<
  * depending on the current step and the current flow.
  *
  */
-export const STEPS_WITH_BACK: Step[] = [Step.ManageBackupStep, Step.DeleteBackupStep];
+export const STEPS_WITH_BACK: Step[] = [Step.ManageBackup, Step.DeleteBackup];
 
 export const useFlows = ({ flow }: HookProps) => {
   const currentFlow = FlowOptions[flow];
@@ -66,7 +66,7 @@ export const useFlows = ({ flow }: HookProps) => {
 
   const resetFlows = () => {
     dispatch(setFlow(Flow.Activation));
-    dispatch(setStep(Step.CreateOrSynchronizeStep));
+    dispatch(setStep(Step.CreateOrSynchronize));
   };
 
   return {

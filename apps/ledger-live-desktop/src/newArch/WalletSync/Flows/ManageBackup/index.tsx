@@ -47,9 +47,9 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
   const getStep = () => {
     switch (currentStep) {
       default:
-      case Step.ManageBackupStep:
+      case Step.ManageBackup:
         return <ManageBackupStep goToDeleteBackup={goToDeleteData} />;
-      case Step.DeleteBackupStep:
+      case Step.DeleteBackup:
         return <DeleteBackupStep cancel={goBack} deleteBackup={deleteBackupAction} />;
       case Step.BackupDeleted:
         return <BackupDeleted isLoading={isLoading} isSuccessful={isSuccessful} />;

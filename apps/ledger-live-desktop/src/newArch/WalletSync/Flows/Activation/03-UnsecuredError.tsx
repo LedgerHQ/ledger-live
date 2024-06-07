@@ -22,7 +22,7 @@ export const UnsecuredError = () => {
   const tryAgain = () => console.log("try again");
   const goToDelete = () => {
     dispatch(setFlow(Flow.ManageBackups));
-    dispatch(setStep(Step.ManageBackupStep));
+    dispatch(setStep(Step.ManageBackup));
   };
   const { t } = useTranslation();
   const { colors } = useTheme();

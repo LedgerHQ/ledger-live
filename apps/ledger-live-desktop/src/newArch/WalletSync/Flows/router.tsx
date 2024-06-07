@@ -26,7 +26,7 @@ export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => 
     case Flow.Activation:
       if (
         walletSync.activated &&
-        ![Step.ActivationFinalStep, Step.BackupDeleted].includes(walletSync.step)
+        ![Step.ActivationFinal, Step.BackupDeleted].includes(walletSync.step)
       ) {
         return <WalletSyncManage />;
       } else {
