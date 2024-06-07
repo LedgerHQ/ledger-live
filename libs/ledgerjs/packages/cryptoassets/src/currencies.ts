@@ -4266,6 +4266,53 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  blast: {
+    type: "CryptoCurrency",
+    id: "blast",
+    coinType: CoinType.ETH,
+    name: "Blast",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "blast",
+    color: "#FCFC06",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 81457,
+    },
+    explorerViews: [
+      {
+        tx: "https://blastscan.io/tx/$hash",
+        address: "https://blastscan.io/address/$address",
+        token: "https://blastscan.io/token/$address",
+      },
+    ],
+  },
+  blast_sepolia: {
+    type: "CryptoCurrency",
+    id: "blast_sepolia",
+    coinType: CoinType.ETH,
+    name: "Blast Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "blast_sepolia",
+    color: "#ff0000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: false,
+    isTestnetFor: "blast",
+    ethereumLikeInfo: {
+      chainId: 168587773,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.blastscan.io/tx/$hash",
+        address: "https://testnet.blastscan.io/address/$address",
+        token: "https://testnet.blastscan.io/token/$address",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {

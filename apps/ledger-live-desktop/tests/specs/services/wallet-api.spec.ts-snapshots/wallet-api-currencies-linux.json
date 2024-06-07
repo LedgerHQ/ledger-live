@@ -763,5 +763,23 @@
     "family": "ethereum",
     "color": "#ff0000",
     "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "blast",
+    "ticker": "ETH",
+    "name": "Blast",
+    "family": "ethereum",
+    "color": "#FCFC06",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "blast_sepolia",
+    "ticker": "ETH",
+    "name": "Blast Sepolia",
+    "family": "ethereum",
+    "color": "#ff0000",
+    "decimals": 18
   }
 ]
