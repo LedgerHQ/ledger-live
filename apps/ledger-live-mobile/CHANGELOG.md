@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.45.0-nightly.7
+
+### Minor Changes
+
+- [#7021](https://github.com/LedgerHQ/ledger-live/pull/7021) [`f66564f`](https://github.com/LedgerHQ/ledger-live/commit/f66564f5df67b3e0198afe6c957246e892bb5e28) Thanks [@KVNLS](https://github.com/KVNLS)! - Patch hashgraph-sdk to support Metro resolver exports
+
+### Patch Changes
+
+- [#7025](https://github.com/LedgerHQ/ledger-live/pull/7025) [`7c8b44a`](https://github.com/LedgerHQ/ledger-live/commit/7c8b44a4629aeee14f97b9a1e97f689da0ff6d40) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add track on pull to refresh where a sync is triggered or not so we can quantify the amount of Sync requested to the backend
+
 ## 3.45.0-nightly.6
 
 ### Patch Changes

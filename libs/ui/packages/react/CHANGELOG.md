@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.15.0-nightly.2
+
+### Patch Changes
+
+- [#7000](https://github.com/LedgerHQ/ledger-live/pull/7000) [`ae52133`](https://github.com/LedgerHQ/ledger-live/commit/ae521336bffb13be2d48c821593fa06813b39657) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix color of clearable element in Input"
+
 ## 0.15.0-nightly.1
 
 ### Minor Changes

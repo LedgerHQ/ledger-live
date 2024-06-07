@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.7
+
+### Patch Changes
+
+- [#7022](https://github.com/LedgerHQ/ledger-live/pull/7022) [`1953578`](https://github.com/LedgerHQ/ledger-live/commit/195357841c06765ef2cee34711de62eee4fac8bb) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - remove the swap webview conditional for demo0
+
+- [#7020](https://github.com/LedgerHQ/ledger-live/pull/7020) [`0c2ce70`](https://github.com/LedgerHQ/ledger-live/commit/0c2ce704559f8c283f7c94941508a5bc9b15f439) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add swith in Settings to enable/disable MArketPerformanceWidget"
+
+- [#6999](https://github.com/LedgerHQ/ledger-live/pull/6999) [`2e69d87`](https://github.com/LedgerHQ/ledger-live/commit/2e69d8782e28495116938383ab7be3dccd4d28b0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move tableLayout logic inside newArch for collectibles
+
+- Updated dependencies [[`ae52133`](https://github.com/LedgerHQ/ledger-live/commit/ae521336bffb13be2d48c821593fa06813b39657)]:
+  - @ledgerhq/react-ui@0.15.0-nightly.2
+
 ## 2.82.0-nightly.6
 
 ### Minor Changes
