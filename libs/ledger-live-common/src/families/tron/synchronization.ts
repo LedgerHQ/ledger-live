@@ -53,7 +53,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   const spendableBalance = acc.balance ? new BigNumber(acc.balance) : new BigNumber(0);
   const cacheTransactionInfoById = initialAccount
     ? {
-        ...(initialAccount.tronResources.cacheTransactionInfoById || {}),
+        ...(initialAccount?.tronResources?.cacheTransactionInfoById || {}),
       }
     : {};
   const operationsPageSize = Math.min(
