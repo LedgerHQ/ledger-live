@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Box, Flex, NumberedList, Text } from "@ledgerhq/react-ui";
+import { Flex, Icons, NumberedList, Text } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 
 type Props = {
@@ -42,7 +42,25 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
         alignItems="center"
         justifyContent="center"
       >
-        <Box height={200} width={200} bg="neutral.c100"></Box>
+        <Flex
+          height={200}
+          width={200}
+          borderRadius={24}
+          position="relative"
+          bg="neutral.c100"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            width={24}
+            height={24}
+            position="absolute"
+          >
+            <Icons.LedgerLogo size="L" color="neutral.c00" />
+          </Flex>
+        </Flex>
 
         <MiddleContainer
           rowGap="24px"
