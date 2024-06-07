@@ -1,6 +1,7 @@
 import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
+import { addTmsLink } from "tests/fixtures/common";
 
 test.use({
   userdata: "speculos-tests-app",
@@ -11,9 +12,9 @@ test.use({
 const token = "Tether USD";
 
 test.describe.parallel("ERC20 token", () => {
-  //@TmsLink("B2CQA-1079")
-
   test(`Check ERC20 token`, async ({ page }) => {
+    addTmsLink(["B2CQA-1079"]);
+
     const app = new Application(page);
 
     await app.layout.goToPortfolio();
