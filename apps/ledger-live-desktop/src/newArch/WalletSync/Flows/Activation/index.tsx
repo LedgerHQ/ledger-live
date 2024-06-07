@@ -29,13 +29,13 @@ const WalletSyncActivation = () => {
   const getStep = () => {
     switch (currentStep) {
       default:
-      case Step.CreateOrSynchronizeStep:
+      case Step.CreateOrSynchronize:
         return <CreateOrSynchronizeStep goToCreateBackup={goToNextScene} goToSync={goToSync} />;
-      case Step.DeviceActionStep:
+      case Step.DeviceAction:
         return <DeviceActionStep goNext={goToNextScene} />;
-      case Step.CreateOrSynchronizeTrustChainStep:
+      case Step.CreateOrSynchronizeTrustChain:
         return <ActivationOrSynchroWithTrustchain goNext={createNewBackupAction} />;
-      case Step.ActivationFinalStep:
+      case Step.ActivationFinal:
         return <ActivationFinalStep hasBackup={hasBackup} />;
     }
   };

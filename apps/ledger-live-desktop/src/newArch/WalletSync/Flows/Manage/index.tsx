@@ -24,7 +24,7 @@ const WalletSyncManage = () => {
 
   const goToManageBackups = () => {
     dispatch(setFlow(Flow.ManageBackups));
-    dispatch(setStep(Step.ManageBackupStep));
+    dispatch(setStep(Step.ManageBackup));
   };
 
   const Options: OptionProps[] = [
