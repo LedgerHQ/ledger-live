@@ -2,7 +2,6 @@ import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { TronSendTrc20ToNewAccountForbidden } from "./errors";
 import signTransaction from "../../hw/signTransaction";
 import { Transaction, TronAccount } from "./types";
 import { withDevice } from "../../hw/deviceAccess";
@@ -10,7 +9,6 @@ import { getEstimatedFees } from "./logic";
 import {
   claimRewardTronTransaction,
   createTronTransaction,
-  fetchTronAccount,
   fetchTronContract,
   freezeTronTransaction,
   legacyUnfreezeTronTransaction,
@@ -41,20 +39,6 @@ export const signOperation: AccountBridge<Transaction, TronAccount>["signOperati
           if (transaction.useAllAmount) {
             transaction = { ...transaction }; // transaction object must not be mutated
             transaction.amount = balance; // force the amount to be the max
-          }
-
-          // send trc20 to a new account is forbidden by us (because it will not activate the account)
-          if (
-            transaction.recipient &&
-            transaction.ptxOperation !== "swap" &&
-            transaction.mode === "send" &&
-            subAccount &&
-            subAccount.type === "TokenAccount" &&
-            subAccount.token.tokenType === "trc20" &&
-            !isContractAddressRecipient && // send trc20 to a smart contract is allowed
-            (await fetchTronAccount(transaction.recipient)).length === 0
-          ) {
-            throw new TronSendTrc20ToNewAccountForbidden();
           }
 
           const {

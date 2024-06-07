@@ -48,7 +48,6 @@ export type Transaction = TransactionCommon & {
   networkInfo: NetworkInfo | null | undefined;
   duration: number | null | undefined;
   votes: Vote[];
-  ptxOperation?: "swap";
 };
 export type TransactionRaw = TransactionCommonRaw & {
   mode: TronOperationMode;
