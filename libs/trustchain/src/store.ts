@@ -21,11 +21,13 @@ export const getInitialStore = (): TrustchainStore => {
 export enum WalletHandlerType {
   RESET_TRUSTCHAIN_STORE = "RESET_TRUSTCHAIN_STORE",
   SET_TRUSTCHAIN = "SET_TRUSTCHAIN",
+  SET_LIVE_CREDENTIALS = "SET_LIVE_CREDENTIALS",
 }
 
 export type HandlersPayloads = {
   RESET_TRUSTCHAIN_STORE: {};
   SET_TRUSTCHAIN: { trustchain: Trustchain };
+  SET_LIVE_CREDENTIALS: { liveCredentials: LiveCredentials };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -44,6 +46,9 @@ export const handlers: WalletHandlers = {
   SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
     return { ...state, trustchain };
   },
+  SET_LIVE_CREDENTIALS: (state, { payload: { liveCredentials } }) => {
+    return { ...state, liveCredentials };
+  },
 };
 
 // actions
@@ -55,6 +60,11 @@ export const resetTrustchainStore = () => ({
 export const setTrustchain = (trustchain: Trustchain) => ({
   type: "SET_TRUSTCHAIN",
   payload: { trustchain },
+});
+
+export const setLiveCredentials = (liveCredentials: LiveCredentials) => ({
+  type: "SET_LIVE_CREDENTIALS",
+  payload: { liveCredentials },
 });
 
 // Local Selectors
