@@ -5,7 +5,8 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { useDispatch } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { OptionContainer, Option, OptionProps } from "./Option";
+import { Option, OptionProps } from "./Option";
+import styled from "styled-components";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -24,6 +25,10 @@ const WalletSyncManage = () => {
 
   const goToManageBackups = () => {
     dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.ManageBackup }));
+  };
+
+  const goToManageInstances = () => {
+    dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances }));
   };
 
   const Options: OptionProps[] = [
@@ -55,20 +60,24 @@ const WalletSyncManage = () => {
         <Option {...props} key={index} />
       ))}
 
-      <Flex paddingY={24} justifyContent="space-between">
+      <InstancesRow paddingY={24} justifyContent="space-between" onClick={goToManageInstances}>
         <Text fontSize={13.44}>
           {t("walletSync.manage.instance.label", { count: nbInstances })}
         </Text>
 
-        <OptionContainer>
-          <Flex columnGap={"8px"} alignItems={"center"}>
-            <Text fontSize={13.44}>{t("walletSync.manage.instance.cta")}</Text>
-            <Icons.ChevronRight size="S" />
-          </Flex>
-        </OptionContainer>
-      </Flex>
+        <Flex columnGap={"8px"} alignItems={"center"}>
+          <Text fontSize={13.44}>{t("walletSync.manage.instance.cta")}</Text>
+          <Icons.ChevronRight size="S" />
+        </Flex>
+      </InstancesRow>
     </Box>
   );
 };
 
 export default WalletSyncManage;
+
+const InstancesRow = styled(Flex)`
+  &:hover {
+    cursor: pointer;
+  }
+`;

@@ -11,6 +11,7 @@ import WalletSyncManage from "LLD/WalletSync/Flows/Manage";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import WalletSyncManageBackups from "./ManageBackup";
 import SynchronizeWallet from "./Synchronize";
+import WalletSyncManageInstances from "./ManageInstances";
 
 export interface BackRef {
   goBack: () => void;
@@ -36,6 +37,8 @@ export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => 
       return <SynchronizeWallet />;
     case Flow.ManageBackups:
       return <WalletSyncManageBackups ref={ref} />;
+    case Flow.ManageInstances:
+      return <WalletSyncManageInstances ref={ref} />;
     default:
       return (
         <Flex flex={1} alignItems="center" justifyContent="center">

@@ -14,3 +14,17 @@ export const setFaked = (payload: boolean) => ({
   type: "WALLET_SYNC_FAKED",
   payload,
 });
+
+export const addInstance = (payload: { flow: Flow; step: Step }) => ({
+  type: "WALLET_SYNC_CHANGE_ADD_INSTANCE",
+  payload,
+});
+
+export const removeInstance = (payload: { flow: Flow; step: Step }) => ({
+  type: "WALLET_SYNC_CHANGE_REMOVE_INSTANCE",
+  payload,
+});
+
+export const removeAllInstance = () => ({
+  type: "WALLET_SYNC_CHANGE_CLEAN_INSTANCES",
+});
