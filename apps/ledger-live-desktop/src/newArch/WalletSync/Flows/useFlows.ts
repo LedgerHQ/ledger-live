@@ -52,7 +52,11 @@ export const FlowOptions: Record<
  * depending on the current step and the current flow.
  *
  */
-export const STEPS_WITH_BACK: Step[] = [Step.ManageBackup, Step.DeleteBackup];
+export const STEPS_WITH_BACK: Step[] = [
+  Step.ManageBackup,
+  Step.DeleteBackup,
+  Step.SynchronizedInstances,
+];
 
 export const useFlows = ({ flow }: HookProps) => {
   // Only for MOCK purpose for hasBeenfaked and storedStep

@@ -24,13 +24,23 @@ export enum Step {
   SynchronizeWithQRCode = "SynchronizeWithQRCode",
   PinCode = "PinCode",
   Synchronized = "Synchronized",
+
+  //ManageInstances
+  SynchronizedInstances = "SynchronizedInstances",
 }
+
+type Instance = {
+  name: string;
+  typeOfDevice: "mobile" | "desktop";
+  date: Date;
+};
 
 export type WalletSyncState = {
   activated: boolean;
   flow: Flow;
   step: Step;
   hasBeenfaked: boolean;
+  instances: Instance[];
 };
 
 const initialState: WalletSyncState = {
@@ -38,6 +48,7 @@ const initialState: WalletSyncState = {
   flow: Flow.Activation,
   step: Step.CreateOrSynchronize,
   hasBeenfaked: false,
+  instances: [],
 };
 
 type HandlersPayloads = {
@@ -45,6 +56,9 @@ type HandlersPayloads = {
   WALLET_SYNC_DEACTIVATE: boolean;
   WALLET_SYNC_CHANGE_FLOW: { flow: Flow; step: Step };
   WALLET_SYNC_FAKED: boolean;
+  WALLET_SYNC_CHANGE_ADD_INSTANCE: Instance;
+  WALLET_SYNC_CHANGE_REMOVE_INSTANCE: Instance;
+  WALLET_SYNC_CHANGE_CLEAN_INSTANCES: undefined;
 };
 
 type WalletSyncHandlers<PreciseKey = true> = Handlers<
@@ -74,6 +88,24 @@ const handlers: WalletSyncHandlers = {
     flow,
     step,
   }),
+  WALLET_SYNC_CHANGE_ADD_INSTANCE: (
+    state: WalletSyncState,
+    { payload }: { payload: Instance },
+  ) => ({
+    ...state,
+    instances: [...state.instances, payload],
+  }),
+  WALLET_SYNC_CHANGE_REMOVE_INSTANCE: (
+    state: WalletSyncState,
+    { payload }: { payload: Instance },
+  ) => ({
+    ...state,
+    instances: state.instances.filter(instance => instance !== payload),
+  }),
+  WALLET_SYNC_CHANGE_CLEAN_INSTANCES: (state: WalletSyncState) => ({
+    ...state,
+    instances: [],
+  }),
 };
 
 // Selectors
@@ -88,6 +120,9 @@ export const walletSyncStateSelector = (state: { walletSync: WalletSyncState }) 
 
 export const walletSyncHasBeenFaked = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.hasBeenfaked;
+
+export const walletSyncInstancesSelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.instances;
 
 export default handleActions<WalletSyncState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as WalletSyncHandlers<false>,
