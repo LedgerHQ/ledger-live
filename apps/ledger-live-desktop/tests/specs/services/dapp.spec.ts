@@ -85,7 +85,9 @@ test.describe("1inch dapp", () => {
     const restricted_app = await webview.getByText("Restricted").isVisible();
     test.skip(restricted_app, "1inch dapp is restricted");
 
+    const popup = webview.locator(".cross-icon");
     await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
+    if (await popup.isVisible()) await popup.click();
     await webview.locator(".connect-wallet__box > button").click();
     await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
     await webview.getByRole("button", { name: "Ledger Live Ledger Live" }).click();
