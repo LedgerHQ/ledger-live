@@ -46,6 +46,7 @@ export function useDeviceHasUpdatesAvailable(dmi: DeviceModelInfo | null | undef
         setDisplay(Boolean(fw || outdatedApp));
       })
       .catch(err => {
+        if (cancelled) return;
         console.error(err);
         setDisplay(false);
       });
