@@ -16,8 +16,6 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
     flow: Flow.ManageInstances,
   });
 
-  console.log("currentStep", currentStep);
-
   const { instances, selectedInstance, setSelectedInstance } = useInstances();
 
   useImperativeHandle(ref, () => ({
