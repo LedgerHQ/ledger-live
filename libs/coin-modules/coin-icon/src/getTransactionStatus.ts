@@ -31,10 +31,12 @@ export const getSendTransactionStatus = async (
   const errors: any = {};
   const warnings: any = {};
 
+  // Check if fees are loaded
   if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
   }
 
+  // Validate recipient
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired();
   } else if (isSelfTransaction(account, transaction)) {
@@ -46,58 +48,61 @@ export const getSendTransactionStatus = async (
   }
 
   const estimatedFees = transaction.fees || new BigNumber(0);
-  const amount = calculateAmount({
-    account,
-    transaction,
-  });
-
+  const amount = calculateAmount({ account, transaction });
   const totalSpent = amount.plus(estimatedFees);
+
+  // Check if amount is valid
   if (amount.lte(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
-  }
+  } else {
+    const minimumBalanceExistential = getMinimumBalance(account);
+    const leftover = account.spendableBalance.minus(totalSpent);
+    if (
+      minimumBalanceExistential.gt(0) &&
+      leftover.lt(minimumBalanceExistential) &&
+      leftover.gt(0)
+    ) {
+      errors.amount = new IconDoMaxSendInstead("", {
+        minimumBalance: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
+          showCode: true,
+        }),
+      });
+    } else if (
+      !errors.amount &&
+      !transaction.useAllAmount &&
+      account.spendableBalance.lte(EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN))
+    ) {
+      errors.amount = new NotEnoughBalance();
+    } else if (totalSpent.gt(account.spendableBalance)) {
+      errors.amount = new NotEnoughBalance();
+    }
 
-  const minimumBalanceExistential = getMinimumBalance(account);
-  const leftover = account.spendableBalance.minus(totalSpent);
-  if (minimumBalanceExistential.gt(0) && leftover.lt(minimumBalanceExistential) && leftover.gt(0)) {
-    errors.amount = new IconDoMaxSendInstead("", {
-      minimumBalance: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
-        showCode: true,
-      }),
-    });
-  } else if (
-    !errors.amount &&
-    !transaction.useAllAmount &&
-    account.spendableBalance.lte(EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN))
-  ) {
-    errors.amount = new NotEnoughBalance();
-  } else if (totalSpent.gt(account.spendableBalance)) {
-    errors.amount = new NotEnoughBalance();
-  }
+    if (
+      !errors.amount &&
+      new BigNumber(account.iconResources?.totalDelegated)
+        .plus(account.iconResources?.votingPower)
+        .gt(0) &&
+      (transaction.useAllAmount ||
+        account.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
+    ) {
+      warnings.amount = new IconAllFundsWarning();
+    }
 
-  if (
-    !errors.amount &&
-    new BigNumber(account.iconResources?.totalDelegated)
-      .plus(account.iconResources?.votingPower)
-      .gt(0) &&
-    (transaction.useAllAmount || account.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
-  ) {
-    warnings.amount = new IconAllFundsWarning();
-  }
+    if (
+      !errors.recipient &&
+      amount.lt(EXISTENTIAL_DEPOSIT) &&
+      (await getAccount(transaction.recipient, account.currency)) === null
+    ) {
+      errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
+        minimalAmount: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
+          showCode: true,
+        }),
+      });
+    }
 
-  if (
-    !errors.recipient &&
-    amount.lt(EXISTENTIAL_DEPOSIT) &&
-    (await getAccount(transaction.recipient, account.currency)) === null
-  ) {
-    errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-      minimalAmount: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
-        showCode: true,
-      }),
-    });
-  }
-
-  if (totalSpent.gt(account.spendableBalance)) {
-    errors.amount = new NotEnoughBalance();
+    if (totalSpent.gt(account.spendableBalance)) {
+      errors.amount = new NotEnoughBalance();
+    }
   }
 
   return Promise.resolve({
@@ -124,28 +129,31 @@ export const getTransactionStatus = async (
   } = {};
 
   switch (transaction.mode) {
-    case "send": {
+    case "send":
       return await getSendTransactionStatus(account, transaction);
-    }
-    default: {
-      break;
-    }
-  }
+    default:
+      const errors: { amount?: Error; recipient?: Error } = {};
+      const warnings: { amount?: Error } = {};
 
-  const amount = calculateAmount({
-    account,
-    transaction,
-  });
-  const estimatedFees = transaction.fees || new BigNumber(0);
-  const totalSpent = amount.plus(estimatedFees);
-  if (totalSpent.gt(account.spendableBalance)) {
-    errors.amount = new NotEnoughBalance();
+      const amount = calculateAmount({ account, transaction });
+      const estimatedFees = transaction.fees || new BigNumber(0);
+      const totalSpent = amount.plus(estimatedFees);
+
+      if (totalSpent.gt(account.spendableBalance)) {
+        errors.amount = new NotEnoughBalance();
+      }
+
+      // Validate amount
+      if (amount.lte(0) && !transaction.useAllAmount) {
+        errors.amount = new AmountRequired();
+      }
+
+      return {
+        errors,
+        warnings,
+        estimatedFees,
+        amount: amount.lt(0) ? new BigNumber(0) : amount,
+        totalSpent,
+      };
   }
-  return Promise.resolve({
-    errors,
-    warnings,
-    estimatedFees,
-    amount: amount.lt(0) ? new BigNumber(0) : amount,
-    totalSpent,
-  });
 };

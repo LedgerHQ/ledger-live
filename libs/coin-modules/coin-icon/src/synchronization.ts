@@ -56,13 +56,16 @@ export const getAccountShape: GetAccountShape = async (info: AccountShapeInfo) =
   } catch (error) {
     return {
       id: accountId,
-      blockHeight: 0,
       balance: new BigNumber(0),
+      spendableBalance: new BigNumber(0),
+      operationsCount: 0,
       iconResources: {
         nonce: 0,
         totalDelegated: new BigNumber(0),
         votingPower: new BigNumber(0),
       },
+      blockHeight: 0,
+      operations: [],
     };
   }
 };
