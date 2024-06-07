@@ -1,20 +1,24 @@
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { Flex } from "@ledgerhq/react-ui";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { Flow, Instance, Step } from "~/renderer/reducers/walletSync";
 import { useFlows } from "LLD/WalletSync/Flows/useFlows";
 import { BackProps, BackRef } from "../router";
-import { useBackup } from "./useBackup";
 import ManageInstancesStep from "./01-ManageInstancesStep";
+import DeviceActionInstanceStep from "./02-DeviceActionInstanceStep";
+import { useInstances } from "./useInstances";
+import DeleteInstanceWithTrustchain from "./03-DeleteInstanceWithTrustchain";
+import DeletionFinalStep from "./04-DeletionFinalStep";
+import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
+import { UnsecuredError } from "../Activation/03-UnsecuredError";
 
 const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) => {
   const { currentStep, goToNextScene, goToPreviousScene, FlowOptions, resetFlows } = useFlows({
     flow: Flow.ManageInstances,
   });
 
-  const { deleteBackup } = useBackup();
+  console.log("currentStep", currentStep);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccessful, setIsSuccessful] = useState(false);
+  const { instances, selectedInstance, setSelectedInstance } = useInstances();
 
   useImperativeHandle(ref, () => ({
     goBack,
@@ -28,30 +32,33 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
     }
   };
 
-  const goToDeleteInstance = () => {
+  const goToDeleteInstance = (instance: Instance) => {
+    setSelectedInstance(instance);
     goToNextScene();
   };
-
-  // const deleteBackupAction = () => {
-  //   goToNextScene();
-  //   deleteBackup();
-  //   setIsLoading(true);
-  //   setTimeout(() => {
-  //     setIsLoading(false);
-  //     setIsSuccessful(true);
-  //   }, 500);
-  // };
 
   const getStep = () => {
     switch (currentStep) {
       default:
       case Step.SynchronizedInstances:
-        return <ManageInstancesStep goToDeleteInstance={goToDeleteInstance} />;
+        return (
+          <ManageInstancesStep goToDeleteInstance={goToDeleteInstance} instances={instances} />
+        );
+      case Step.DeviceActionInstance:
+        return <DeviceActionInstanceStep goNext={goToNextScene} />;
+      case Step.DeleteInstanceWithTrustChain:
+        return <DeleteInstanceWithTrustchain instance={selectedInstance} />;
+      case Step.InstanceSuccesfullyDeleted:
+        return <DeletionFinalStep instance={selectedInstance} />;
+      case Step.InstanceErrorDeletion:
+        return <DeletionErrorFinalStep instance={selectedInstance} />;
+      case Step.UnsecuredLedger:
+        return <UnsecuredError />;
     }
   };
 
   return (
-    <Flex flexDirection="column" height="100%" paddingX="40px" rowGap="48px">
+    <Flex flexDirection="column" height="100%" rowGap="48px">
       {getStep()}
     </Flex>
   );
