@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import {
   Flow,
   Step,
-  walletSyncHasBeenFaked,
+  walletSyncFlowSelector,
   walletSyncStepSelector,
 } from "~/renderer/reducers/walletSync";
 
@@ -42,7 +42,14 @@ export const FlowOptions: Record<
     },
   },
   [Flow.ManageInstances]: {
-    steps: {},
+    steps: {
+      1: Step.SynchronizedInstances,
+      2: Step.DeviceActionInstance,
+      3: Step.DeleteInstanceWithTrustChain,
+      4: Step.InstanceSuccesfullyDeleted,
+      5: Step.InstanceErrorDeletion,
+      6: Step.UnsecuredLedger,
+    },
   },
 };
 
@@ -59,30 +66,32 @@ export const STEPS_WITH_BACK: Step[] = [
 ];
 
 export const useFlows = ({ flow }: HookProps) => {
-  // Only for MOCK purpose for hasBeenfaked and storedStep
-  const hasBeenfaked = useSelector(walletSyncHasBeenFaked);
-  const storedStep = useSelector(walletSyncStepSelector);
-  //----
-
-  const currentFlow = FlowOptions[flow];
-  const maxStep = Object.keys(currentFlow.steps).length;
-
   const dispatch = useDispatch();
-  const [currentStep, setCurrentStep] = useState(
-    hasBeenfaked
-      ? Object.entries(currentFlow.steps).findIndex(([, value]) => value === storedStep) + 1 //When Faked
-      : 1, //Logical value
-  );
+
+  useEffect(() => {
+    if (flow) {
+      dispatch(setFlow({ flow, step: FlowOptions[flow].steps[1] }));
+    }
+  }, [dispatch, flow]);
+
+  const currentFlow = useSelector(walletSyncFlowSelector);
+  const currentStep = useSelector(walletSyncStepSelector);
+
+  const steps = FlowOptions[currentFlow].steps;
+  const maxStep = Object.keys(steps).length;
+
   const goToNextScene = () => {
-    const newStep = currentStep < maxStep ? currentStep + 1 : currentStep;
-    dispatch(setFlow({ flow, step: currentFlow.steps[newStep] }));
-    setCurrentStep(newStep);
+    const currentIndex = Object.values(steps).findIndex(step => step === currentStep) + 1;
+    const newStep = currentIndex < maxStep ? currentIndex + 1 : currentIndex;
+    console.log("currentIndex", currentIndex);
+    console.log("newStep", newStep);
+    dispatch(setFlow({ flow, step: steps[newStep] }));
   };
 
   const goToPreviousScene = () => {
-    const newStep = currentStep > 1 ? currentStep - 1 : currentStep;
-    dispatch(setFlow({ flow, step: currentFlow.steps[newStep] }));
-    setCurrentStep(newStep);
+    const currentIndex = Object.values(steps).findIndex(step => step === currentStep) + 1;
+    const newStep = currentIndex > 1 ? currentIndex - 1 : currentIndex;
+    dispatch(setFlow({ flow, step: steps[newStep] }));
   };
 
   const resetFlows = () => {
@@ -91,10 +100,9 @@ export const useFlows = ({ flow }: HookProps) => {
 
   return {
     currentFlow,
-    currentStep: currentFlow.steps[currentStep],
+    currentStep,
     goToNextScene,
     goToPreviousScene,
-    setCurrentStep,
     FlowOptions,
     resetFlows,
   };

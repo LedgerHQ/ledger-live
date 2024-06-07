@@ -7,6 +7,7 @@ import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
+import { useInstances } from "../ManageInstances/useInstances";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -15,7 +16,7 @@ const Separator = () => {
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
-  const nbInstances = 1;
+  const { instances } = useInstances();
 
   const dispatch = useDispatch();
 
@@ -62,7 +63,7 @@ const WalletSyncManage = () => {
 
       <InstancesRow paddingY={24} justifyContent="space-between" onClick={goToManageInstances}>
         <Text fontSize={13.44}>
-          {t("walletSync.manage.instance.label", { count: nbInstances })}
+          {t("walletSync.manage.instance.label", { count: instances.length })}
         </Text>
 
         <Flex columnGap={"8px"} alignItems={"center"}>

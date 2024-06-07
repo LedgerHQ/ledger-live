@@ -4218,6 +4218,7 @@
             "flow": "Select a Flow",
             "step": "Select a Step",
             "activated": "Activate/deactivate to have a backup or not",
+            "instance": "Generate Instances",
             "cta": "Apply"
           }
         }
@@ -6406,9 +6407,7 @@
       "title": "Manage synchronized instances",
       "remove": "Remove",
       "deleteInstanceSuccess": "{{instanceName}} is not synched anymore",
-      "deleteBackupError": {
-        "title": "Something went wrong"
-      }
+      "deleteInstanceError": "Something went wrong with the desynchronization of {{instanceName}}"
     }
   }
 }
