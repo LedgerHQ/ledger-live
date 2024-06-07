@@ -29,7 +29,7 @@ describe("ManageYourBackup", () => {
         walletSync: {
           activated: true,
           flow: Flow.Activation,
-          step: Step.CreateOrSynchronizeStep,
+          step: Step.CreateOrSynchronize,
         },
       },
     });

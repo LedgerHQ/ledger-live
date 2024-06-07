@@ -28,7 +28,7 @@ describe("Rendering", () => {
         walletSync: {
           activated: false,
           flow: Flow.Activation,
-          step: Step.CreateOrSynchronizeStep,
+          step: Step.CreateOrSynchronize,
         },
       },
     });
