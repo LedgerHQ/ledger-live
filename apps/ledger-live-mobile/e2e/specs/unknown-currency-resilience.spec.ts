@@ -6,10 +6,10 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { loadConfig } from "../bridge/server";
-import PortfolioPage from "../models/wallet/portfolioPage";
 import { loadAccountsRaw } from "../bridge/server";
+import { Application } from "../page/index";
 
-let portfolioPage: PortfolioPage;
+let app: Application;
 
 setSupportedCurrencies(["bitcoin"]);
 
@@ -37,11 +37,11 @@ describe("Portfolio to load with unknown currency data in accounts", () => {
       { data: badAccount2, version: 0 },
     ]);
 
-    portfolioPage = new PortfolioPage();
+    app = new Application();
   });
 
   it("opens to empty state", async () => {
-    await portfolioPage.waitForPortfolioPageToLoad();
-    await expect(await portfolioPage.emptyPortfolioList()).toBeVisible();
+    await app.portfolio.waitForPortfolioPageToLoad();
+    await expect(app.portfolio.emptyPortfolioList()).toBeVisible();
   });
 });

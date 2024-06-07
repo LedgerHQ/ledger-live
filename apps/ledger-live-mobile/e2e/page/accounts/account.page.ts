@@ -2,15 +2,11 @@ import { currencyParam, openDeeplink, waitForElementById, getElementById } from 
 
 const baseLink = "account";
 
-export default class accountPage {
+export default class AccountPage {
   accountSettingsButton = () => getElementById("accounts-settings");
 
   async waitForAccountPageToLoad(coin: string) {
     await waitForElementById(`accounts-title-${coin}`);
-  }
-
-  async waitForAccountsPageToLoad() {
-    await waitForElementById("accounts-list-title");
   }
 
   async waitForAccountAssetsToLoad(currencyName: string) {

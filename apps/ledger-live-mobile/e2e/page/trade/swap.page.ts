@@ -9,7 +9,7 @@ import {
 
 const baseLink = "swap";
 
-export default class SwapFormPage {
+export default class SwapPage {
   swapFormTab = () => getElementById("swap-form-tab");
   swapHistoryTab = () => getElementById("swap-history-tab");
   swapSourceSelector = () => getElementById("swap-source-selector");

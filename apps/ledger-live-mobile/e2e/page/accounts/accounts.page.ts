@@ -2,7 +2,7 @@ import { getElementById, openDeeplink, waitForElementById, tapByElement } from "
 
 const baseLink = "accounts";
 
-export default class accountsPage {
+export default class AccountsPage {
   accountTitle = (coin: string) => getElementById(`accounts-title-${coin}`);
   addAccountButton = () => getElementById("add-account-button");
 

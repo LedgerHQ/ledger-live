@@ -4,16 +4,14 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
-import PortfolioPage from "../../models/wallet/portfolioPage";
-import StakePage from "../../models/trade/stakePage";
-import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
 import { BigNumber } from "bignumber.js";
-import { formattedAmount } from "../../models/common";
+import { formattedAmount } from "../../page/common.page";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { Application } from "../../page/index";
+import DeviceAction from "../../models/DeviceAction";
 
-let portfolioPage: PortfolioPage;
-let stakePage: StakePage;
+let app: Application;
 let deviceAction: DeviceAction;
 
 const testedCurrency = "cosmos";
@@ -30,21 +28,18 @@ const COSMOS_MIN_FEES = new BigNumber(6000);
 describe("Cosmos delegate flow", () => {
   beforeAll(async () => {
     await loadConfig("onboardingcompleted", true);
-
     await loadBleState({ knownDevices: [knownDevice] });
     await loadAccounts([testedAccount]);
-
-    portfolioPage = new PortfolioPage();
+    app = new Application();
     deviceAction = new DeviceAction(knownDevice);
-    stakePage = new StakePage();
 
-    await portfolioPage.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   $TmsLink("B2CQA-384");
   it("open account stake flow", async () => {
-    await portfolioPage.openTransferMenu();
-    await portfolioPage.navigateToStakeFromTransferMenu();
+    await app.portfolio.openTransferMenu();
+    await app.portfolio.navigateToStakeFromTransferMenu();
   });
 
   $TmsLink("B2CQA-387");
@@ -56,11 +51,11 @@ describe("Cosmos delegate flow", () => {
     const delegatedAmount = usableAmount.div(100 / delegatedPercent).integerValue();
     const remainingAmount = usableAmount.minus(delegatedAmount);
 
-    await stakePage.selectCurrency(testedCurrency);
-    await stakePage.selectAccount(testedAccount.id);
+    await app.stake.selectCurrency(testedCurrency);
+    await app.stake.selectAccount(testedAccount.id);
 
-    const [assestsDelagated, assestsRemaining] = await stakePage.setAmount(delegatedPercent);
-    expect(await stakePage.cosmosDelegationSummaryValidator()).toEqual("Ledger");
+    const [assestsDelagated, assestsRemaining] = await app.stake.setAmount(delegatedPercent);
+    expect(await app.stake.cosmosDelegationSummaryValidator()).toEqual("Ledger");
     expect(assestsRemaining).toEqual(
       formattedAmount(getAccountCurrency(testedAccount).units[0], remainingAmount),
     );
@@ -68,9 +63,9 @@ describe("Cosmos delegate flow", () => {
       formattedAmount(getAccountCurrency(testedAccount).units[0], delegatedAmount, true),
     );
 
-    await stakePage.summaryContinue();
+    await app.stake.summaryContinue();
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
-    await stakePage.successClose();
+    await app.stake.successClose();
   });
 });

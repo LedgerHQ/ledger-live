@@ -1,16 +1,12 @@
 import { loadBleState, loadConfig } from "../../bridge/server";
-import PortfolioPage from "../../models/wallet/portfolioPage";
-import ReceivePage from "../../models/trade/receivePage";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
-import Common from "../../models/common";
 import { waitForElementById } from "../../helpers";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { Application } from "../../page/index";
 
-let portfolioPage: PortfolioPage;
-let receivePage: ReceivePage;
+let app: Application;
 let deviceAction: DeviceAction;
-let common: Common;
 let first = true;
 
 $TmsLink("B2CQA-651");
@@ -19,13 +15,10 @@ describe("Receive different currency", () => {
   beforeAll(async () => {
     await loadConfig("onboardingcompleted", true);
     await loadBleState({ knownDevices: [knownDevice] });
-
-    portfolioPage = new PortfolioPage();
+    app = new Application();
     deviceAction = new DeviceAction(knownDevice);
-    receivePage = new ReceivePage();
-    common = new Common();
 
-    await portfolioPage.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   it.each([
@@ -45,20 +38,20 @@ describe("Receive different currency", () => {
     const currency = getCryptoCurrencyById(currencyId);
     const currencyName = getCryptoCurrencyById(currencyId).name;
 
-    await receivePage.openViaDeeplink();
-    await common.performSearch(currencyName);
-    await receivePage.selectCurrency(currencyName);
+    await app.receive.openViaDeeplink();
+    await app.common.performSearch(currencyName);
+    await app.receive.selectCurrency(currencyName);
     if (network) {
-      await receivePage.selectNetwork(network);
+      await app.receive.selectNetwork(network);
     }
     if (first) {
       await deviceAction.selectMockDevice();
       first = false;
     }
     await deviceAction.openApp();
-    await receivePage.selectAccount(`${currencyName} 2`);
-    await receivePage.doNotVerifyAddress();
-    await waitForElementById(receivePage.accountAddress);
-    await receivePage.expectReceivePageIsDisplayed(currency.ticker, `${currencyName} 2`);
+    await app.receive.selectAccount(`${currencyName} 2`);
+    await app.receive.doNotVerifyAddress();
+    await waitForElementById(app.receive.accountAddress);
+    await app.receive.expectReceivePageIsDisplayed(currency.ticker, `${currencyName} 2`);
   });
 });

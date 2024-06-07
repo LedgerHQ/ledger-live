@@ -7,7 +7,7 @@ import {
   typeTextByElement,
 } from "../../helpers";
 
-export default class GeneralSettingsPage {
+export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");
   preferredCurrencyButton = () => getElementByText("Preferred currency");

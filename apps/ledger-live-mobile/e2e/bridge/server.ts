@@ -53,7 +53,7 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
     await acceptTerms();
   }
 
-  const f = fs.readFileSync(path.resolve("e2e", "setups", `${fileName}.json`), "utf8");
+  const f = fs.readFileSync(path.resolve("e2e", "userdata", `${fileName}.json`), "utf8");
 
   const { data } = JSON.parse(f.toString());
 

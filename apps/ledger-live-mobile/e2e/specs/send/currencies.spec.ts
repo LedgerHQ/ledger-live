@@ -7,22 +7,18 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
-import PortfolioPage from "../../models/wallet/portfolioPage";
-import SendPage from "../../models/trade/sendPage";
-import OperationDetailsPage from "../../models/trade/operationDetailsPage";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
 import { tapByElement } from "../../helpers";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import Common, { formattedAmount } from "../../models/common";
+import { formattedAmount } from "../../page/common.page";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { Application } from "../../page/index";
 
-let portfolioPage: PortfolioPage;
-let sendPage: SendPage;
+let app: Application;
 let deviceAction: DeviceAction;
-let operationDetailsPage: OperationDetailsPage;
-let common: Common;
+
 let first = true;
 
 const testedCurrencies: CryptoCurrencyId[] = [
@@ -50,14 +46,10 @@ describe("Send flow", () => {
     await loadConfig("onboardingcompleted", true);
     await loadBleState({ knownDevices: [knownDevice] });
     await loadAccounts(testAccounts);
-
-    portfolioPage = new PortfolioPage();
+    app = new Application();
     deviceAction = new DeviceAction(knownDevice);
-    sendPage = new SendPage();
-    operationDetailsPage = new OperationDetailsPage();
-    common = new Common();
 
-    await portfolioPage.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   it.each(testAccounts.map(account => [account.currency.name, account]))(
@@ -72,17 +64,17 @@ describe("Send flow", () => {
 
       const amountWithCode = formattedAmount(getAccountCurrency(account).units[0], halfBalance);
 
-      await portfolioPage.openViaDeeplink();
-      await sendPage.openViaDeeplink();
-      await common.performSearch(getDefaultAccountName(account));
-      await sendPage.selectAccount(account.id);
-      await sendPage.setRecipient(account.freshAddress);
-      await sendPage.recipientContinue();
-      await sendPage.setAmount(amount);
-      await sendPage.amountContinue();
+      await app.portfolio.openViaDeeplink();
+      await app.send.openViaDeeplink();
+      await app.common.performSearch(getDefaultAccountName(account));
+      await app.send.selectAccount(account.id);
+      await app.send.setRecipient(account.freshAddress);
+      await app.send.recipientContinue();
+      await app.send.setAmount(amount);
+      await app.send.amountContinue();
 
-      await expect(sendPage.summaryAmount()).toHaveText(amountWithCode);
-      await sendPage.summaryContinue();
+      await expect(app.send.summaryAmount()).toHaveText(amountWithCode);
+      await app.send.summaryContinue();
 
       if (first) {
         await deviceAction.selectMockDevice();
@@ -90,14 +82,14 @@ describe("Send flow", () => {
       }
       await deviceAction.openApp();
 
-      await sendPage.successContinue();
-      await portfolioPage.scrollToTransactions();
-      const lastTransaction = portfolioPage.lastTransactionAmount();
+      await app.send.successContinue();
+      await app.portfolio.scrollToTransactions();
+      const lastTransaction = app.portfolio.lastTransactionAmount();
       await expect(lastTransaction).toHaveText(`-${amountWithCode}`);
       await tapByElement(lastTransaction);
-      await operationDetailsPage.isOpened();
-      await operationDetailsPage.checkAccount(getDefaultAccountName(account));
-      await operationDetailsPage.checkAmount(`-${amountWithCode}`);
+      await app.operationDetails.isOpened();
+      await app.operationDetails.checkAccount(getDefaultAccountName(account));
+      await app.operationDetails.checkAmount(`-${amountWithCode}`);
     },
   );
 });

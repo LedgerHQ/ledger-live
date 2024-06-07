@@ -1,42 +1,35 @@
 import * as detox from "detox";
 import { loadConfig } from "../../bridge/server";
-import PortfolioPage from "../../models/wallet/portfolioPage";
-import SwapFormPage from "../../models/trade/swapFormPage";
 import { isAndroid } from "../../helpers";
-import LiveAppWebview from "../../models/liveApps/liveAppWebview";
+import { Application } from "../../page";
 
-let portfolioPage: PortfolioPage;
-let swapPage: SwapFormPage;
-let liveAppWebview: LiveAppWebview;
+let app: Application;
 
 describe("DEX Swap", () => {
   beforeAll(async () => {
     await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    app = new Application();
 
-    portfolioPage = new PortfolioPage();
-    swapPage = new SwapFormPage();
-    liveAppWebview = new LiveAppWebview();
-
-    await portfolioPage.waitForPortfolioPageToLoad();
-    await swapPage.openViaDeeplink();
-    await detox.expect(swapPage.swapFormTab()).toBeVisible();
+    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.swap.openViaDeeplink();
+    await detox.expect(app.swap.swapFormTab()).toBeVisible();
   });
 
   it("should be able to generate a quote with DEX providers available", async () => {
-    await swapPage.openSourceAccountSelector();
-    await swapPage.selectAccount("Ethereum 2");
-    await swapPage.openDestinationAccountSelector();
-    await swapPage.selectAccount("Tether USD");
-    await swapPage.enterSourceAmount("1");
-    await swapPage.goToProviderSelection();
-    await swapPage.chooseProvider("1inch");
+    await app.swap.openSourceAccountSelector();
+    await app.swap.selectAccount("Ethereum 2");
+    await app.swap.openDestinationAccountSelector();
+    await app.swap.selectAccount("Tether USD");
+    await app.swap.enterSourceAmount("1");
+    await app.swap.goToProviderSelection();
+    await app.swap.chooseProvider("1inch");
   });
 
   // FIXME site unavailable on Android CI
   it.skip("should be able to navigate to a DEX with the correct params", async () => {
-    await swapPage.startExchange();
+    await app.swap.startExchange();
 
-    await detox.expect(liveAppWebview.appTitle()).toHaveText(" https://1inch.io/"); // for some reason there is a space before the URL so this is required
+    await detox.expect(app.liveAppWebview.appTitle()).toHaveText(" https://1inch.io/"); // for some reason there is a space before the URL so this is required
 
     if (isAndroid()) {
       const title = await detox.web.element(detox.by.web.id("__next")).getTitle();

@@ -1,7 +1,7 @@
 import { web, by } from "detox";
 import { getElementById, isAndroid, tapByElement } from "../../helpers";
 
-export default class GetDevicePage {
+export default class BuyDevicePage {
   buyNanoButton = () => getElementById("getDevice-buy-button");
 
   async buyNano() {

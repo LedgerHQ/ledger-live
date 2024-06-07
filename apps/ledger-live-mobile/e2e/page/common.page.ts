@@ -3,7 +3,7 @@ import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 
-export default class Common {
+export default class CommonPage {
   searchBarId = "common-search-field";
   searchBar = () => getElementById(this.searchBarId);
 
