@@ -11,8 +11,9 @@ describe("fetchCurrencyAll", () => {
     (network as jest.Mock).mockImplementation(() => ({
       data: fetchCurrencyAllMock,
     }));
+    const providers = ["changelly", "cic", "moonpay", "oneinch", "paraswap"];
 
-    const result = await fetchCurrencyAll({});
+    const result = await fetchCurrencyAll({ providers });
 
     expect(result).toStrictEqual(flattenV5CurrenciesAll(fetchCurrencyAllMock));
     expect(network as jest.Mock).toHaveBeenCalledWith({

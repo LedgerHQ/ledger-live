@@ -163,7 +163,7 @@ export const getProvidersCDNData = async () => {
   }
 };
 
-const fetchAndMergeProviderData = async () => {
+export const fetchAndMergeProviderData = async () => {
   if (providerDataCache) {
     return providerDataCache;
   }

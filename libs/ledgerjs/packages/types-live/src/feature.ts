@@ -165,6 +165,8 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
+  ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
+  ptxSwapThorswapProvider: Feature_PtxSwapThorswapProvider;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
@@ -488,6 +490,8 @@ export type Feature_Objkt = DefaultFeature;
 export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
+export type Feature_PtxSwapExodusProvider = DefaultFeature;
+export type Feature_PtxSwapThorswapProvider = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_SupportDeviceStax = DefaultFeature;
