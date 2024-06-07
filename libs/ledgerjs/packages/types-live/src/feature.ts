@@ -144,7 +144,6 @@ export type Features = CurrencyFeatures & {
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingProviders: Feature_EthStakingProviders;
   storyly: Feature_Storyly;
-  staxWelcomeScreen: Feature_StaxWelcomeScreen;
   postOnboardingAssetsTransfer: Feature_PostOnboardingAssetsTransfer;
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
@@ -482,7 +481,6 @@ export type Feature_MultibuyNavigation = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
-export type Feature_StaxWelcomeScreen = DefaultFeature;
 export type Feature_PostOnboardingAssetsTransfer = DefaultFeature;
 export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;

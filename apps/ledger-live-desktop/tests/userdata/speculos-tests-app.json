@@ -97,10 +97,6 @@
           "enabled": true,
           "overridesRemote": true
         },
-        "staxWelcomeScreen": {
-          "enabled": true,
-          "overridesRemote": true
-        },
         "syncOnboarding": {
           "enabled": true,
           "overridesRemote": true
