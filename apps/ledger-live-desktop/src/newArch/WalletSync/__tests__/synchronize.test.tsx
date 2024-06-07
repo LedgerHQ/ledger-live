@@ -28,7 +28,7 @@ const openDrawer = async () => {
       walletSync: {
         activated: true,
         flow: Flow.Activation,
-        step: Step.CreateOrSynchronizeStep,
+        step: Step.CreateOrSynchronize,
       },
     },
   });

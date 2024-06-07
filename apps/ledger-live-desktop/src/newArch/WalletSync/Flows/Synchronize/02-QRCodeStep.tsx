@@ -42,12 +42,12 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
         alignItems="center"
         justifyContent="center"
       >
-        <Flex
+        <QRContainer
           height={200}
           width={200}
           borderRadius={24}
           position="relative"
-          bg="neutral.c100"
+          bg="constant.white"
           alignItems="center"
           justifyContent="center"
         >
@@ -58,9 +58,9 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
             height={24}
             position="absolute"
           >
-            <Icons.LedgerLogo size="L" color="neutral.c00" />
+            <Icons.LedgerLogo size="L" color="constant.black" />
           </Flex>
-        </Flex>
+        </QRContainer>
 
         <MiddleContainer
           rowGap="24px"
@@ -86,4 +86,8 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
 
 const MiddleContainer = styled(Flex)`
   border-radius: 12px;
+`;
+
+const QRContainer = styled(Flex)`
+  border: 1px solid ${({ theme }) => theme.colors.opacityDefault.c10};
 `;

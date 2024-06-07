@@ -27,7 +27,7 @@ const WalletSyncDebugger = () => {
     activated: boolean;
   }>({
     flow: Flow.Activation,
-    step: Step.CreateOrSynchronizeStep,
+    step: Step.CreateOrSynchronize,
     activated: false,
   });
 
