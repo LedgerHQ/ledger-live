@@ -140,9 +140,10 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     return accumulator;
   }, []);
 
+  const { blacklistedTokenIds = [] } = syncConfig;
+
   const subAccounts: SubAccount[] = compact(
     trc10Tokens.concat(trc20Tokens).map(({ key, tokenId, balance }) => {
-      const { blacklistedTokenIds = [] } = syncConfig;
       const token = findTokenById(tokenId);
       if (!token || blacklistedTokenIds.includes(tokenId)) return;
       const id = encodeTokenAccountId(accountId, token);
@@ -168,8 +169,14 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     }),
   );
 
+  // Filter blacklisted tokens from the initial account's subAccounts
+  // Could be use to filter out tokens that got their CAL id changed
+  const filteredInitialSubAccounts = (initialAccount?.subAccounts || []).filter(
+    subAccount => !blacklistedTokenIds.includes(subAccount.token.id),
+  );
+
   // keep old account with emptyBalance and a history not returned by the BE fixes LIVE-12797
-  const mergedSubAccounts = mergeSubAccounts(subAccounts, initialAccount?.subAccounts || []);
+  const mergedSubAccounts = mergeSubAccounts(subAccounts, filteredInitialSubAccounts);
 
   // get 'OUT' token operations with fee
   const subOutOperationsWithFee: TronOperation[] = subAccounts
