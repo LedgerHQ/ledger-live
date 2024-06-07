@@ -48,8 +48,6 @@ const ExternalViewerButtonComponent: React.FC<ExternalViewerButtonProps> = ({
       return <Separator />;
     }
 
-    console.log("item", item);
-
     const Icon = item.Icon
       ? // TODO: the icons have incompatible props (size: string / number)
         // eslint-disable-next-line

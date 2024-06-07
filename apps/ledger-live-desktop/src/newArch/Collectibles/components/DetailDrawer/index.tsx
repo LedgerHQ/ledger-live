@@ -43,15 +43,15 @@ const StickyWrapper = styled.div<StickyWrapperProps>`
   ${position};
   ${layout};
   ${space}
-  z-index: 1;
+  z-index: 100;
 `;
 
 const Subtitle: React.FC<ChildComponentProps> = ({ children }) => children;
-const Ctas: React.FC<ChildComponentProps> = ({ children }) => children;
+const Actions: React.FC<ChildComponentProps> = ({ children }) => children;
 
 const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
   Subtitle: typeof Subtitle;
-  Ctas: typeof Ctas;
+  Actions: typeof Actions;
 } = ({
   collectibleType,
   children,
@@ -74,19 +74,19 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
   handleRequestClose,
 }) => {
   const { t } = useTranslation();
-  const { subtitle, ctas } = React.useMemo(() => {
-    let subtitle, ctas;
+  const { subtitle, actions } = React.useMemo(() => {
+    let subtitle, actions;
 
     React.Children.map(children, child => {
       if (React.isValidElement(child)) {
         if (child.type === Subtitle) {
           subtitle = child;
-        } else if (child.type === Ctas) {
-          ctas = child;
+        } else if (child.type === Actions) {
+          actions = child;
         }
       }
     });
-    return { subtitle, ctas };
+    return { subtitle, actions };
   }, [children]);
 
   const data = createCollectibleObject(collectibleType, {
@@ -139,7 +139,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
           >
             <Media mediaFormat="big" full maxHeight={700} {...data.mediaProps} uri={previewUri} />
           </MediaContainer>
-          {ctas}
+          {actions}
           <Tag
             tags={tags}
             sectionTitle={tagTitle()}
@@ -163,6 +163,6 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
 };
 
 DetailDrawerComponent.Subtitle = Subtitle;
-DetailDrawerComponent.Ctas = Ctas;
+DetailDrawerComponent.Actions = Actions;
 
 export const DetailDrawer = DetailDrawerComponent;

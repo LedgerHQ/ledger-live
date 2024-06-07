@@ -5,9 +5,10 @@ import { Media } from "LLD/Collectibles/components/index";
 import PrismaZoom from "react-prismazoom";
 import IconCross from "~/renderer/icons/Cross";
 import styled from "styled-components";
+import { rgba } from "~/renderer/styles/helpers";
 
 const Container = styled.div`
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: ${({ theme }) => rgba(theme.colors.neutral.c00, 0.2)};
   position: fixed;
   top: 0;
   left: 0;
@@ -31,7 +32,7 @@ const ImageContainer = styled.div`
 
 const CloseButton = styled.button`
   border: none;
-  background-color: ${({ theme }) => theme.colors.neutral.c00};
+  background-color: ${({ theme }) => rgba(theme.colors.neutral.c00, 0.2)};
   position: absolute;
   top: 48px;
   right: 48px;

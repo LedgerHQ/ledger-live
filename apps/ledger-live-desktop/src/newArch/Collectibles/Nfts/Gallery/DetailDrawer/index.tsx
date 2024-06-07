@@ -54,14 +54,14 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
       openCollectiblesPanAndZoom={openCollectiblesPanAndZoom}
       setUseFallback={setUseFallback}
     >
-      <DetailDrawer.Ctas>
+      <DetailDrawer.Actions>
         <Actions
           protoNft={protoNft}
           metadata={metadata as NFTMetadata}
           account={account}
           onNFTSend={onNFTSend}
         />
-      </DetailDrawer.Ctas>
+      </DetailDrawer.Actions>
     </DetailDrawer>
   );
 };

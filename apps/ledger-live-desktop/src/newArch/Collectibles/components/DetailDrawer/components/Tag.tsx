@@ -17,8 +17,8 @@ const Property = styled.div<{ isNewDesign?: boolean }>`
   display: inline-flex;
   flex-direction: column;
   padding: 8px 12px;
-  background: ${({ isNewDesign }) =>
-    isNewDesign ? "rgba(255, 255, 255, 0.05)" : "rgba(138, 128, 219, 0.1)"};
+  background: ${({ isNewDesign, theme }) =>
+    isNewDesign ? theme.colors.opacityDefault.c05 : "rgba(138, 128, 219, 0.1)"};
   border-radius: 4px;
 `;
 const Separator = styled.div`
@@ -61,7 +61,7 @@ const TagComponent: React.FC<TagProps> = ({ tags, sectionTitle, status, isNewDes
                   mb="2px"
                   lineHeight="12.1px"
                   fontSize={2}
-                  color={isNewDesign ? "palette.text.shade50" : "neutral.c100"}
+                  color={isNewDesign ? "palette.text.shade50" : "rgba(138, 128, 219, 0.5);"}
                   ff="Inter|SemiBold"
                   uppercase
                 >

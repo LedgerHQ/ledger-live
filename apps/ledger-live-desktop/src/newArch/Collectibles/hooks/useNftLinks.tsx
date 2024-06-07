@@ -15,6 +15,7 @@ import CustomImage from "~/renderer/screens/customImage";
 import { ContextMenuItemType } from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { devicesModelListSelector } from "~/renderer/reducers/settings";
 import { safeList } from "LLD/Collectibles/utils/useSafeList";
+import { ItemType } from "LLD/Collectibles/types/Links";
 
 const linksPerCurrency: Record<
   string,
@@ -28,7 +29,7 @@ const linksPerCurrency: Record<
           viewer: "Opensea.io",
         }),
         Icon: IconOpensea,
-        type: "external",
+        type: ItemType.EXTERNAL,
         callback: () => openURL(links.opensea),
       },
       links?.rarible && {
@@ -37,7 +38,7 @@ const linksPerCurrency: Record<
           viewer: "Rarible",
         }),
         Icon: IconRarible,
-        type: "external",
+        type: ItemType.EXTERNAL,
         callback: () => openURL(links.rarible),
       },
       {
@@ -51,7 +52,7 @@ const linksPerCurrency: Record<
           viewer: "Explorer",
         }),
         Icon: IconsLegacy.GlobeMedium,
-        type: "external",
+        type: ItemType.EXTERNAL,
         callback: () => openURL(links.explorer),
       },
     ]),
@@ -63,7 +64,7 @@ const linksPerCurrency: Record<
           viewer: "Opensea.io",
         }),
         Icon: IconOpensea,
-        type: "external",
+        type: ItemType.EXTERNAL,
         callback: () => openURL(links.opensea),
       },
       links?.rarible && {
@@ -72,7 +73,7 @@ const linksPerCurrency: Record<
           viewer: "Rarible",
         }),
         Icon: IconRarible,
-        type: "external",
+        type: ItemType.EXTERNAL,
         callback: () => openURL(links.rarible),
       },
       {
@@ -86,7 +87,7 @@ const linksPerCurrency: Record<
           viewer: "Explorer",
         }),
         Icon: IconsLegacy.GlobeMedium,
-        type: "external",
+        type: ItemType.EXTERNAL,
         callback: () => openURL(links.explorer),
       },
     ]),
