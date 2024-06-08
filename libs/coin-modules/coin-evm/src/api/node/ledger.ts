@@ -337,7 +337,6 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
  *
  * @see https://help.optimism.io/hc/en-us/articles/4411895794715-How-do-transaction-fees-on-Optimism-work-
  */
-//
 export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = async (
   currency,
   transaction,
@@ -395,6 +394,72 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
   return new BigNumber(result.response);
 };
 
+/**
+ * ⚠️ Blockchain specific
+ *
+ * For a layer 2 like Scroll, additional fees are needed in order to
+ * take into account layer 1 settlement estimated cost.
+ * This gas price is served through a smart contract oracle.
+ *
+ * @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/
+ */
+export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = async (
+  currency,
+  transaction,
+) => {
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
+  if (!isLedgerNodeConfig(node)) {
+    throw new LedgerNodeUsedIncorrectly();
+  }
+
+  if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
+    return new BigNumber(0);
+  }
+
+  // Fake signature is added to get the best approximation possible for the gas on L1
+  const serializedTransaction = ((): string | null => {
+    try {
+      return getSerializedTransaction(transaction, {
+        r: "0xffffffffffffffffffffffffffffffffffffffff",
+        s: "0xffffffffffffffffffffffffffffffffffffffff",
+        v: 0,
+      });
+    } catch (e) {
+      return null;
+    }
+  })();
+  if (!serializedTransaction) {
+    return new BigNumber(0);
+  }
+
+  const optimismGasOracle = new ethers.utils.Interface(OptimismGasPriceOracleAbi);
+  const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [serializedTransaction]);
+
+  const [result] = await fetchWithRetries<
+    Array<{
+      info: {
+        contract: string;
+        data: string;
+        blockNumber: number | null;
+      };
+      response: string;
+    }>
+  >({
+    method: "POST",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/contract/read`,
+    data: [
+      {
+        // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
+        contract: "0x5300000000000000000000000000000000000002",
+        data,
+      },
+    ],
+  });
+
+  return new BigNumber(result.response);
+};
+
 const node: NodeApi = {
   getBlockByHeight,
   getCoinBalance,
@@ -405,6 +470,7 @@ const node: NodeApi = {
   getFeeData,
   broadcastTransaction,
   getOptimismAdditionalFees,
+  getScrollAdditionalFees,
 };
 
 export default node;

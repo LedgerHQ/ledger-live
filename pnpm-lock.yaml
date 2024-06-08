@@ -2039,6 +2039,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@types/bluebird':
+        specifier: ^3.5.42
+        version: 3.5.42
       '@types/imurmurhash':
         specifier: ^0.1.4
         version: 0.1.4
@@ -2051,6 +2054,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.0
+      bluebird:
+        specifier: ^3.7.2
+        version: 3.7.2
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -23368,6 +23374,10 @@ packages:
 
   /@types/blake2b@2.1.3:
     resolution: {integrity: sha512-MFCdX0MNxFBP/xEILO5Td0kv6nI7+Q2iRWZbTL/yzH2/eDVZS5Wd1LHdsmXClvsCyzqaZfHFzZaN6BUeUCfSDA==}
+    dev: true
+
+  /@types/bluebird@3.5.42:
+    resolution: {integrity: sha512-Jhy+MWRlro6UjVi578V/4ZGNfeCOcNCp0YaFNIUGFKlImowqwb1O/22wDVk3FDGMLqxdpOV3qQHD5fPEH4hK6A==}
     dev: true
 
   /@types/bn.js@4.11.6:
@@ -51081,7 +51091,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(ts-node@10.9.2)
+      jest: 29.7.0
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2

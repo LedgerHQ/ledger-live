@@ -12,8 +12,11 @@ describe("fetchCurrencyFrom", () => {
       data: fetchCurrencyFromMock,
     }));
 
+    const providers = ["changelly", "cic", "moonpay", "oneinch", "paraswap"];
+
     const result = await fetchCurrencyFrom({
       currencyTo: "bitcoin",
+      providers,
     });
 
     expect(result).toStrictEqual(flattenV5CurrenciesToAndFrom(fetchCurrencyFromMock));

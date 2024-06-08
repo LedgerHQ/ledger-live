@@ -15,6 +15,8 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startSpeculos, stopSpeculos } from "../utils/speculos";
 import { Spec } from "../utils/speculos";
 
+import { allure } from "allure-playwright";
+
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
 }
@@ -238,5 +240,18 @@ export const test = base.extend<TestFixtures>({
     { auto: true },
   ],
 });
+
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status !== testInfo.expectedStatus) {
+    const screenshot = await page.screenshot();
+    await allure.attachment("Screenshot on Failure", screenshot, "image/png");
+  }
+});
+
+export async function addTmsLink(ids: string[]) {
+  for (const id of ids) {
+    await allure.tms(id, `https://ledgerhq.atlassian.net/browse/${id}`);
+  }
+}
 
 export default test;

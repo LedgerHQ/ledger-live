@@ -40,7 +40,9 @@ export const getGasOptions = async ({
   const config = getCoinConfig(currency).info;
 
   const gasTracker =
-    options?.overrideGasTracker || config.gasTracker || /* istanbul ignore next */ {};
+    options?.overrideGasTracker ||
+    config.gasTracker ||
+    /* istanbul ignore next */ ({} as EvmConfigInfo["gasTracker"]);
 
   if (!isLedgerGasTracker(gasTracker)) {
     throw new LedgerGasTrackerUsedIncorrectly();

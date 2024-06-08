@@ -74,6 +74,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyLineaSepolia: DEFAULT_FEATURE,
   currencyBlast: DEFAULT_FEATURE,
   currencyBlastSepolia: DEFAULT_FEATURE,
+  currencyScroll: DEFAULT_FEATURE,
+  currencyScrollSepolia: DEFAULT_FEATURE,
 };
 
 /**
@@ -414,6 +416,8 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+  ptxSwapExodusProvider: DEFAULT_FEATURE,
+  ptxSwapThorswapProvider: DEFAULT_FEATURE,
 
   llmAnalyticsOptInPrompt: {
     enabled: false,

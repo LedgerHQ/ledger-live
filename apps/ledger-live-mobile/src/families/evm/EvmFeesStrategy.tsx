@@ -1,5 +1,5 @@
 import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/logic";
-import type { Transaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
@@ -12,6 +12,15 @@ import { ScreenName } from "~/const";
 import { EvmNetworkFeeInfo } from "./EvmNetworkFeesInfo";
 import SelectFeesStrategy from "./SelectFeesStrategy";
 import { SendRowsFeeProps as Props, StrategyWithCustom } from "./types";
+import { StyleSheet, View } from "react-native";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import Info from "~/icons/Info";
+import { useTheme } from "styled-components/native";
+import { useTranslation } from "react-i18next";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const getCustomStrategyFees = (transaction: Transaction): BigNumber | null => {
   if (transaction.feesStrategy === "custom") {
@@ -41,6 +50,9 @@ export default function EvmFeesStrategy({
 }: Props<Transaction>) {
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const unit = useAccountUnit(account);
 
   const [gasOptions, error, loading] = useGasOptions({
     currency: mainAccount.currency,
@@ -205,7 +217,36 @@ export default function EvmFeesStrategy({
    * gasTracker. Hence, we do not display the fee fields.
    */
   if (!gasOptions) {
-    return null;
+    return (
+      <>
+        <SummaryRow
+          title={t("send.summary.maxEstimatedFee")}
+          additionalInfo={
+            <View>
+              <Info size={12} color={colors.neutral.c70} />
+            </View>
+          }
+        >
+          <View style={styles.feesAmountContainer}>
+            <LText semiBold style={styles.feesAmount}>
+              <CurrencyUnitValue
+                unit={unit}
+                value={(status as TransactionStatus)?.totalFees || 0}
+              />
+            </LText>
+
+            <LText color="grey" semiBold>
+              <CounterValue
+                before="≈ "
+                currency={mainAccount.currency}
+                showCode
+                value={(status as TransactionStatus)?.totalFees || 0}
+              />
+            </LText>
+          </View>
+        </SummaryRow>
+      </>
+    );
   }
 
   return (
@@ -226,3 +267,12 @@ export default function EvmFeesStrategy({
     />
   );
 }
+
+const styles = StyleSheet.create({
+  feesAmountContainer: {
+    alignItems: "flex-end",
+  },
+  feesAmount: {
+    fontSize: 15,
+  },
+});
