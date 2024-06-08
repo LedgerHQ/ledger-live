@@ -1,5 +1,27 @@
 # @ledgerhq/live-cli
 
+## 24.3.0-nightly.14
+
+### Minor Changes
+
+- [#6977](https://github.com/LedgerHQ/ledger-live/pull/6977) [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Scroll & Scroll Sepolia
+
+### Patch Changes
+
+- Updated dependencies [[`6eec3f9`](https://github.com/LedgerHQ/ledger-live/commit/6eec3f973ecea36bafc7ebc8b88526399048cdc4), [`4297d2c`](https://github.com/LedgerHQ/ledger-live/commit/4297d2c6e3988f602b3db65fe51d81bd5ca08135), [`d155ff9`](https://github.com/LedgerHQ/ledger-live/commit/d155ff95c26c0bfe85e8293a8ab0f79b7b4c59e9), [`49c527a`](https://github.com/LedgerHQ/ledger-live/commit/49c527a6d8717e7ae9ff7223a5fa91312167517b), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b), [`2a2de6d`](https://github.com/LedgerHQ/ledger-live/commit/2a2de6dc7b55c9ce688d5108502ad67881880883)]:
+  - @ledgerhq/live-common@34.3.0-nightly.14
+  - @ledgerhq/live-countervalues@0.2.0-nightly.8
+  - @ledgerhq/cryptoassets@13.1.0-nightly.4
+  - @ledgerhq/coin-framework@0.14.0-nightly.8
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.8
+  - @ledgerhq/live-wallet@0.1.1-nightly.11
+  - @ledgerhq/hw-transport@6.31.0-nightly.3
+  - @ledgerhq/hw-transport-node-hid@6.29.0-nightly.3
+  - @ledgerhq/hw-app-btc@10.3.0-nightly.3
+  - @ledgerhq/hw-transport-http@6.30.0-nightly.3
+  - @ledgerhq/hw-transport-mocker@6.29.0-nightly.3
+  - @ledgerhq/hw-transport-node-speculos@6.29.0-nightly.3
+
 ## 24.3.0-nightly.13
 
 ### Patch Changes

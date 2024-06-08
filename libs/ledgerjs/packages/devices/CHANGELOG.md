@@ -1,5 +1,11 @@
 # @ledgerhq/devices
 
+## 8.4.0-nightly.3
+
+### Patch Changes
+
+- [#7017](https://github.com/LedgerHQ/ledger-live/pull/7017) [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add type narrowing helper isDeviceModelId
+
 ## 8.4.0-nightly.2
 
 ### Patch Changes

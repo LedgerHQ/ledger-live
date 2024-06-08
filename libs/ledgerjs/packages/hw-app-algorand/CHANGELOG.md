@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-algorand
 
+## 6.29.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.0-nightly.3
+
 ## 6.29.0-nightly.2
 
 ### Patch Changes

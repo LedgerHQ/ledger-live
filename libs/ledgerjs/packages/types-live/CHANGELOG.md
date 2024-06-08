@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.48.0-nightly.2
+
+### Patch Changes
+
+- [#6991](https://github.com/LedgerHQ/ledger-live/pull/6991) [`6eec3f9`](https://github.com/LedgerHQ/ledger-live/commit/6eec3f973ecea36bafc7ebc8b88526399048cdc4) Thanks [@CremaFR](https://github.com/CremaFR)! - hooks to filter swap providers based on FF
+
 ## 6.48.0-nightly.1
 
 ### Minor Changes

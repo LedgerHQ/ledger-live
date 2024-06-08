@@ -1,5 +1,57 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.14
+
+### Minor Changes
+
+- [#6977](https://github.com/LedgerHQ/ledger-live/pull/6977) [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Scroll & Scroll Sepolia
+
+### Patch Changes
+
+- [#6991](https://github.com/LedgerHQ/ledger-live/pull/6991) [`6eec3f9`](https://github.com/LedgerHQ/ledger-live/commit/6eec3f973ecea36bafc7ebc8b88526399048cdc4) Thanks [@CremaFR](https://github.com/CremaFR)! - hooks to filter swap providers based on FF
+
+- [#7035](https://github.com/LedgerHQ/ledger-live/pull/7035) [`4297d2c`](https://github.com/LedgerHQ/ledger-live/commit/4297d2c6e3988f602b3db65fe51d81bd5ca08135) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add optional chaining to `tronResources.cacheTransactionInfoById` since resources are still unstable which prevents account migration
+
+- [#7027](https://github.com/LedgerHQ/ledger-live/pull/7027) [`d155ff9`](https://github.com/LedgerHQ/ledger-live/commit/d155ff95c26c0bfe85e8293a8ab0f79b7b4c59e9) Thanks [@CremaFR](https://github.com/CremaFR)! - keep empty tron subAccounts
+
+- [#6877](https://github.com/LedgerHQ/ledger-live/pull/6877) [`2a2de6d`](https://github.com/LedgerHQ/ledger-live/commit/2a2de6dc7b55c9ce688d5108502ad67881880883) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-10131): ignore TronSendTrc20ToNewAccountForbidden during swap
+  fix(LIVE-10131): stop throwing new trc20 account error TronSendTrc20ToNewAccountForbidden during sign operation
+- Updated dependencies [[`12a74b9`](https://github.com/LedgerHQ/ledger-live/commit/12a74b9f2f27285e44a5dca665422b3b8ecd4028), [`49c527a`](https://github.com/LedgerHQ/ledger-live/commit/49c527a6d8717e7ae9ff7223a5fa91312167517b), [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b), [`12a74b9`](https://github.com/LedgerHQ/ledger-live/commit/12a74b9f2f27285e44a5dca665422b3b8ecd4028)]:
+  - @ledgerhq/coin-evm@2.1.0-nightly.8
+  - @ledgerhq/live-countervalues@0.2.0-nightly.8
+  - @ledgerhq/devices@8.4.0-nightly.3
+  - @ledgerhq/cryptoassets@13.1.0-nightly.4
+  - @ledgerhq/crypto-icons-ui@1.2.0-nightly.1
+  - @ledgerhq/coin-framework@0.14.0-nightly.8
+  - @ledgerhq/coin-algorand@0.5.0-nightly.8
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.8
+  - @ledgerhq/coin-cardano@0.1.0-nightly.4
+  - @ledgerhq/coin-near@0.5.0-nightly.8
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.8
+  - @ledgerhq/coin-solana@0.7.0-nightly.13
+  - @ledgerhq/coin-tezos@0.4.0-nightly.7
+  - @ledgerhq/coin-xrp@0.2.0-nightly.8
+  - @ledgerhq/device-core@0.2.0-nightly.5
+  - @ledgerhq/hw-app-eth@6.37.0-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.8
+  - @ledgerhq/live-nft@0.4.0-nightly.8
+  - @ledgerhq/live-wallet@0.1.1-nightly.11
+  - @ledgerhq/hw-transport@6.31.0-nightly.3
+  - @ledgerhq/speculos-transport@0.1.1-nightly.2
+  - @ledgerhq/hw-app-vet@0.2.0-nightly.6
+  - @ledgerhq/hw-app-algorand@6.29.0-nightly.3
+  - @ledgerhq/hw-app-btc@10.3.0-nightly.3
+  - @ledgerhq/hw-app-cosmos@6.30.0-nightly.3
+  - @ledgerhq/hw-app-exchange@0.5.0-nightly.3
+  - @ledgerhq/hw-app-near@6.29.0-nightly.3
+  - @ledgerhq/hw-app-polkadot@6.29.0-nightly.3
+  - @ledgerhq/hw-app-solana@7.2.0-nightly.3
+  - @ledgerhq/hw-app-str@6.29.0-nightly.3
+  - @ledgerhq/hw-app-tezos@6.29.0-nightly.3
+  - @ledgerhq/hw-app-trx@6.29.0-nightly.4
+  - @ledgerhq/hw-app-xrp@6.29.0-nightly.3
+  - @ledgerhq/hw-transport-mocker@6.29.0-nightly.3
+
 ## 34.3.0-nightly.13
 
 ### Patch Changes

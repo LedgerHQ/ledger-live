@@ -1,5 +1,12 @@
 # @ledgerhq/hw-transport
 
+## 6.31.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0)]:
+  - @ledgerhq/devices@8.4.0-nightly.3
+
 ## 6.31.0-nightly.2
 
 ### Patch Changes

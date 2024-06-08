@@ -1,5 +1,38 @@
 # live-mobile
 
+## 3.45.0-nightly.8
+
+### Minor Changes
+
+- [#6977](https://github.com/LedgerHQ/ledger-live/pull/6977) [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Scroll & Scroll Sepolia
+
+### Patch Changes
+
+- [#7031](https://github.com/LedgerHQ/ledger-live/pull/7031) [`0cafb0f`](https://github.com/LedgerHQ/ledger-live/commit/0cafb0f23bbe3ab56dd2b2046fcb89b3348f0ac0) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Remove sourceCurrencyId and targetCurrencyId
+
+- [#7005](https://github.com/LedgerHQ/ledger-live/pull/7005) [`4a097ca`](https://github.com/LedgerHQ/ledger-live/commit/4a097ca0cadb6402479255df03c2596de9d47bd0) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove popular tag
+
+- [#7028](https://github.com/LedgerHQ/ledger-live/pull/7028) [`917b0e9`](https://github.com/LedgerHQ/ledger-live/commit/917b0e9eb7fc0b2a14c877daf0d563edc13a3cf0) Thanks [@gre](https://github.com/gre)! - Generalize the messages for tokens during the add accounts flow
+
+- Updated dependencies [[`6eec3f9`](https://github.com/LedgerHQ/ledger-live/commit/6eec3f973ecea36bafc7ebc8b88526399048cdc4), [`12a74b9`](https://github.com/LedgerHQ/ledger-live/commit/12a74b9f2f27285e44a5dca665422b3b8ecd4028), [`4297d2c`](https://github.com/LedgerHQ/ledger-live/commit/4297d2c6e3988f602b3db65fe51d81bd5ca08135), [`d155ff9`](https://github.com/LedgerHQ/ledger-live/commit/d155ff95c26c0bfe85e8293a8ab0f79b7b4c59e9), [`49c527a`](https://github.com/LedgerHQ/ledger-live/commit/49c527a6d8717e7ae9ff7223a5fa91312167517b), [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b), [`2a2de6d`](https://github.com/LedgerHQ/ledger-live/commit/2a2de6dc7b55c9ce688d5108502ad67881880883), [`12a74b9`](https://github.com/LedgerHQ/ledger-live/commit/12a74b9f2f27285e44a5dca665422b3b8ecd4028)]:
+  - @ledgerhq/types-live@6.48.0-nightly.2
+  - @ledgerhq/live-common@34.3.0-nightly.14
+  - @ledgerhq/coin-evm@2.1.0-nightly.8
+  - @ledgerhq/live-countervalues@0.2.0-nightly.8
+  - @ledgerhq/devices@8.4.0-nightly.3
+  - @ledgerhq/types-cryptoassets@7.13.0-nightly.1
+  - @ledgerhq/coin-framework@0.14.0-nightly.8
+  - @ledgerhq/domain-service@1.2.0-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.8
+  - @ledgerhq/live-nft@0.4.0-nightly.8
+  - @ledgerhq/live-nft-react@0.4.0-nightly.8
+  - @ledgerhq/live-wallet@0.1.1-nightly.11
+  - @ledgerhq/hw-transport@6.31.0-nightly.3
+  - @ledgerhq/react-native-hid@6.32.0-nightly.3
+  - @ledgerhq/react-native-hw-transport-ble@6.33.0-nightly.3
+  - @ledgerhq/native-ui@0.23.0-nightly.2
+  - @ledgerhq/hw-transport-http@6.30.0-nightly.3
+
 ## 3.45.0-nightly.7
 
 ### Minor Changes

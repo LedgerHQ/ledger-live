@@ -1,5 +1,19 @@
 # @ledgerhq/coin-framework
 
+## 0.14.0-nightly.8
+
+### Minor Changes
+
+- [#6977](https://github.com/LedgerHQ/ledger-live/pull/6977) [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Scroll & Scroll Sepolia
+
+### Patch Changes
+
+- Updated dependencies [[`6eec3f9`](https://github.com/LedgerHQ/ledger-live/commit/6eec3f973ecea36bafc7ebc8b88526399048cdc4), [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b)]:
+  - @ledgerhq/types-live@6.48.0-nightly.2
+  - @ledgerhq/devices@8.4.0-nightly.3
+  - @ledgerhq/types-cryptoassets@7.13.0-nightly.1
+  - @ledgerhq/cryptoassets@13.1.0-nightly.4
+
 ## 0.14.0-nightly.7
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @ledgerhq/coin-evm
 
+## 2.1.0-nightly.8
+
+### Minor Changes
+
+- [#7030](https://github.com/LedgerHQ/ledger-live/pull/7030) [`12a74b9`](https://github.com/LedgerHQ/ledger-live/commit/12a74b9f2f27285e44a5dca665422b3b8ecd4028) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update evm coin-tester indexer now supporting Ledger & Etherscan-like explorers
+
+- [#6977](https://github.com/LedgerHQ/ledger-live/pull/6977) [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Scroll & Scroll Sepolia
+
+### Patch Changes
+
+- [#7030](https://github.com/LedgerHQ/ledger-live/pull/7030) [`12a74b9`](https://github.com/LedgerHQ/ledger-live/commit/12a74b9f2f27285e44a5dca665422b3b8ecd4028) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Make `gasTracker` optional in `EvmConfig`
+
+- Updated dependencies [[`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b)]:
+  - @ledgerhq/devices@8.4.0-nightly.3
+  - @ledgerhq/cryptoassets@13.1.0-nightly.4
+  - @ledgerhq/coin-framework@0.14.0-nightly.8
+  - @ledgerhq/domain-service@1.2.0-nightly.4
+  - @ledgerhq/evm-tools@1.1.0-nightly.6
+
 ## 2.1.0-nightly.7
 
 ### Patch Changes

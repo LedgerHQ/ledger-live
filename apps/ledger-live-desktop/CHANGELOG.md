@@ -1,5 +1,36 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.8
+
+### Minor Changes
+
+- [#6977](https://github.com/LedgerHQ/ledger-live/pull/6977) [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Scroll & Scroll Sepolia
+
+### Patch Changes
+
+- [#7017](https://github.com/LedgerHQ/ledger-live/pull/7017) [`376cff7`](https://github.com/LedgerHQ/ledger-live/commit/376cff70b995840704efae0108b2163d7c4ca277) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix a crash with Europa in My Ledger when opening an app
+
+- Updated dependencies [[`6eec3f9`](https://github.com/LedgerHQ/ledger-live/commit/6eec3f973ecea36bafc7ebc8b88526399048cdc4), [`12a74b9`](https://github.com/LedgerHQ/ledger-live/commit/12a74b9f2f27285e44a5dca665422b3b8ecd4028), [`4297d2c`](https://github.com/LedgerHQ/ledger-live/commit/4297d2c6e3988f602b3db65fe51d81bd5ca08135), [`d155ff9`](https://github.com/LedgerHQ/ledger-live/commit/d155ff95c26c0bfe85e8293a8ab0f79b7b4c59e9), [`49c527a`](https://github.com/LedgerHQ/ledger-live/commit/49c527a6d8717e7ae9ff7223a5fa91312167517b), [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b), [`2a2de6d`](https://github.com/LedgerHQ/ledger-live/commit/2a2de6dc7b55c9ce688d5108502ad67881880883), [`12a74b9`](https://github.com/LedgerHQ/ledger-live/commit/12a74b9f2f27285e44a5dca665422b3b8ecd4028)]:
+  - @ledgerhq/types-live@6.48.0-nightly.2
+  - @ledgerhq/live-common@34.3.0-nightly.14
+  - @ledgerhq/coin-evm@2.1.0-nightly.8
+  - @ledgerhq/live-countervalues@0.2.0-nightly.8
+  - @ledgerhq/devices@8.4.0-nightly.3
+  - @ledgerhq/types-cryptoassets@7.13.0-nightly.1
+  - @ledgerhq/coin-framework@0.14.0-nightly.8
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.8
+  - @ledgerhq/domain-service@1.2.0-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.8
+  - @ledgerhq/live-nft@0.4.0-nightly.8
+  - @ledgerhq/live-nft-react@0.4.0-nightly.8
+  - @ledgerhq/live-wallet@0.1.1-nightly.11
+  - @ledgerhq/hw-transport@6.31.0-nightly.3
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.0-nightly.3
+  - @ledgerhq/react-ui@0.15.0-nightly.3
+  - @ledgerhq/hw-transport-http@6.30.0-nightly.3
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.0-nightly.4
+  - @ledgerhq/hw-transport-vault@1.3.0-nightly.3
+
 ## 2.82.0-nightly.7
 
 ### Patch Changes

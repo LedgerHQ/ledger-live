@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.13.0-nightly.1
+
+### Minor Changes
+
+- [#6977](https://github.com/LedgerHQ/ledger-live/pull/6977) [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Scroll & Scroll Sepolia
+
 ## 7.13.0-nightly.0
 
 ### Minor Changes

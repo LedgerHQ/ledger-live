@@ -1,5 +1,16 @@
 # @ledgerhq/coin-tester
 
+## 0.2.0-nightly.4
+
+### Minor Changes
+
+- [#7030](https://github.com/LedgerHQ/ledger-live/pull/7030) [`12a74b9`](https://github.com/LedgerHQ/ledger-live/commit/12a74b9f2f27285e44a5dca665422b3b8ecd4028) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add a `beforeSync` hook in Scenario
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.0-nightly.4
+
 ## 0.1.1-nightly.3
 
 ### Patch Changes
