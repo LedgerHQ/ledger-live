@@ -172,7 +172,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     overridesDerivation: "44'/223'/0'/0/<account>",
   },
   mina: {
-    overridesDerivation: "44'/12586'/0'/0/<account>",
+    overridesDerivation: "44'/12586'/<account>'/0/0",
   },
   stacks_wallet: {
     overridesDerivation: "44'/5757'/0'/0/<account>",
@@ -356,6 +356,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  mina: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
   vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   ton: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`,

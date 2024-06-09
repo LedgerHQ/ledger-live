@@ -6,7 +6,7 @@ const minaConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: { type: "active" },
       infra: {
-        API_MINA_ROSETTA_NODE: "https://rosetta-devnet.minaprotocol.network",
+        API_MINA_ROSETTA_NODE: "https://mina-rosetta-api.zondax.dev",
       },
     },
   },

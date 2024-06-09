@@ -1,0 +1,94 @@
+export type FetchNetworkStatusResponse = {
+  current_block_identifier: {
+    index: number;
+    hash: string;
+  };
+  current_block_timestamp: number;
+  genesis_block_identifier: {
+    index: number;
+    hash: string;
+  };
+  oldest_block_identifier: {
+    index: number;
+    hash: string;
+  };
+  sync_status: {
+    current_index: number;
+    stage: string;
+    synced: boolean;
+  };
+  peers: Array<{
+    peer_id: string;
+  }>;
+};
+
+export type FetchAccountBalanceResponse = {
+  block_identifier: {
+    index: number;
+    hash: string;
+  };
+  balances: Array<{
+    value: string;
+    currency: {
+      symbol: string;
+      decimals: number;
+    };
+    metadata: {
+      locked_balance: number;
+      liquid_balance: number;
+      total_balance: number;
+    };
+  }>;
+  metadata: {
+    created_via_historical_lookup: boolean;
+    nonce: string;
+  };
+};
+
+export type RosettaTransaction = {
+  block_identifier: {
+    index: number;
+    hash: string;
+  };
+  transaction: {
+    transaction_identifier: {
+      hash: string;
+    };
+    operations: Array<{
+      operation_identifier: {
+        index: number;
+      };
+      type:
+        | "fee_payment"
+        | "payment_source_dec"
+        | "payment_receiver_inc"
+        | "account_creation_fee_via_payment";
+      status: string;
+      account: {
+        address: string;
+        metadata: {
+          token_id: string;
+        };
+      };
+      amount: {
+        value: string;
+        currency: {
+          symbol: string;
+          decimals: number;
+        };
+      };
+      related_operations?: Array<{
+        index: number;
+      }>;
+    }>;
+    related_transactions: Array<any>;
+    metadata?: {
+      memo: string;
+    };
+  };
+};
+
+export type FetchAccountTransactionsResponse = {
+  transactions: RosettaTransaction[];
+  total_count: number;
+};
