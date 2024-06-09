@@ -1,5 +1,4 @@
 import { log } from "@ledgerhq/logs";
-// import * as minaAPI from "mina-ledger-js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 

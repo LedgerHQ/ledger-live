@@ -9,10 +9,15 @@ import {
 } from "@ledgerhq/errors";
 import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "./types";
 import { isValidAddress, getMaxAmount, getTotalSpent } from "./logic";
+import { AccountBridge } from "@ledgerhq/types-live";
 // import { fetchAccountBalance } from "./api";
 // import {} from "./constants";
 
-const getTransactionStatus = async (a: MinaAccount, t: Transaction): Promise<TransactionStatus> => {
+const getTransactionStatus: AccountBridge<
+  Transaction,
+  MinaAccount,
+  TransactionStatus
+>["getTransactionStatus"] = async (a: MinaAccount, t: Transaction): Promise<TransactionStatus> => {
   const errors: StatusErrorMap = {};
   const warnings: StatusErrorMap = {};
   const useAllAmount = !!t.useAllAmount;
