@@ -1,8 +1,104 @@
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAccount, getOperations } from "./api";
+import { getAccount, getTransactions } from "./api";
+import { MinaAccount } from "./types";
+import { RosettaTransaction } from "./api/rosetta/types";
+import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
+import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
+import invariant from "invariant";
+
+const mapRosettaTxnToOperation = (
+  accountId: string,
+  address: string,
+  txn: RosettaTransaction,
+): Operation[] => {
+  try {
+    const hash = txn.transaction.transaction_identifier.hash;
+    const blockHeight = txn.block_identifier.index;
+    const blockHash = txn.block_identifier.hash;
+    const date = new Date();
+    const memo = txn.transaction.metadata?.memo || "";
+
+    let value = new BigNumber(0);
+    let fee = new BigNumber(0);
+
+    let fromAccount: string = "";
+    let toAccount: string = "";
+    let isSending = false;
+
+    for (const op of txn.transaction.operations) {
+      const opValue = new BigNumber(op.amount.value);
+      switch (op.type) {
+        case "fee_payment": {
+          fee = fee.plus(opValue.times(-1));
+          value = value.plus(fee);
+          continue;
+        }
+        case "payment_receiver_inc": {
+          toAccount = op.account.address;
+          value = value.plus(opValue);
+          continue;
+        }
+        case "payment_source_dec": {
+          fromAccount = op.account.address;
+          if (fromAccount === address) {
+            isSending = true;
+          }
+          continue;
+        }
+        case "account_creation_fee_via_payment": {
+          value = value.plus(opValue.times(-1));
+          continue;
+        }
+      }
+    }
+
+    invariant(fromAccount, "mina: missing fromAccount");
+    invariant(toAccount, "mina: missing toAccount");
+
+    const op: Operation = {
+      id: "",
+      type: "NONE",
+      hash,
+      value,
+      fee,
+      blockHeight,
+      blockHash,
+      accountId,
+      senders: [fromAccount],
+      recipients: [toAccount],
+      date,
+      extra: {
+        memo,
+      },
+    };
+
+    const ops: Operation[] = [];
+    if (isSending) {
+      const type = "OUT";
+      ops.push({
+        ...op,
+        type,
+        id: encodeOperationId(accountId, hash, type),
+      });
+    } else {
+      const type = "IN";
+      ops.push({
+        ...op,
+        type,
+        id: encodeOperationId(accountId, hash, type),
+      });
+    }
+
+    return ops;
+  } catch (e) {
+    log("error", "mina: failed to convert txn to operation", e);
+    return [];
+  }
+};
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -18,10 +114,14 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const { blockHeight, balance, spendableBalance } = await getAccount(address);
 
-  const newOperations = await getOperations(address);
+  const rosettaTxns = await getTransactions(address);
+  const newOperations = rosettaTxns
+    .flatMap(t => mapRosettaTxnToOperation(accountId, address, t))
+    .flat();
+
   const operations = mergeOps(oldOperations, newOperations);
 
-  const shape = {
+  const shape: Partial<MinaAccount> = {
     id: accountId,
     balance,
     spendableBalance,
