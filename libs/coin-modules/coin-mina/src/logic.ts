@@ -1,8 +1,6 @@
 import { BigNumber } from "bignumber.js";
-// import { MinaLedgerJS } from "mina-ledger-js";
 import { Transaction, MinaAccount } from "./types";
 import { CoinType } from "@ledgerhq/types-cryptoassets";
-// import {} from "./constants";
 
 export const isValidAddress = (address: string): boolean => {
   const readableAddressRegex = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
