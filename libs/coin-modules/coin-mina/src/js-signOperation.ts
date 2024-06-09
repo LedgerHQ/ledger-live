@@ -6,10 +6,10 @@ import type { Transaction } from "./types";
 import type {
   Operation,
   Account,
-  SignOperationFnSignature,
   DeviceId,
   SignOperationEvent,
   OperationType,
+  AccountBridge,
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { MinaSigner } from "./signer";
@@ -48,7 +48,7 @@ const buildOptimisticOperation = (
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (_signerContext: SignerContext<MinaSigner>): SignOperationFnSignature<Transaction> =>
+  (_signerContext: SignerContext<MinaSigner>): AccountBridge<Transaction>["signOperation"] =>
   ({
     account,
     transaction,
