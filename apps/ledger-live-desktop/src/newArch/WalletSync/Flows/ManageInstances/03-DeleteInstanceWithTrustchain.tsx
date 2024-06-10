@@ -17,8 +17,6 @@ export default function DeleteInstanceWithTrustchain({ instance }: Props) {
 
   // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
   const stuffHandledByTrustchain = useCallback(() => {
-    console.log("stuffHandledByTrustchain-----", instance?.name);
-
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
     deleteInstance(instance as Instance);
 
