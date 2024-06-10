@@ -107,6 +107,7 @@ function getTransactions() {
     },
   };
 
+  /*
   const withdraw250DotTransaction: PolkadotScenarioTransaction = {
     name: "Withdraw 250 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
@@ -135,13 +136,14 @@ function getTransactions() {
       // );
     },
   };
+  */
 
   return [
     send1DotTransaction,
     send100DotTransaction,
     bond250DotTransaction,
     unbond250DotTransaction,
-    withdraw250DotTransaction,
+    // withdraw250DotTransaction,
   ];
 }
 
@@ -223,9 +225,6 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
           unsub();
         }
       });
-
-    api.tx.fastUnstake.registerFastUnstake();
-    console.log((api.consts.staking.bondingDuration as any).toNumber());
 
     const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
 
