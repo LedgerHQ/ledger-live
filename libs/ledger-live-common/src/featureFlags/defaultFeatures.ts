@@ -477,6 +477,7 @@ export const DEFAULT_FEATURES: Features = {
   },
   spamReportNfts: DEFAULT_FEATURE,
   lldWalletSync: DEFAULT_FEATURE,
+  llmWalletSync: DEFAULT_FEATURE,
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
 };
 
