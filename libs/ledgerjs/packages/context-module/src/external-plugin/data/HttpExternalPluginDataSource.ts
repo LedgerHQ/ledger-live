@@ -17,7 +17,7 @@ export class HttpExternalPluginDataSource implements ExternalPluginDataSource {
     });
 
     const { erc20OfInterest, method, plugin } =
-      dappInfos.data[0]?.b2c.contracts?.[0]?.selectors?.[selector] || {};
+      dappInfos.data[0]?.b2c?.contracts?.[0]?.selectors?.[selector] || {};
     const { signature, serialized_data: serializedData } =
       dappInfos.data[0]?.b2c_signatures?.[address]?.[selector] || {};
 
