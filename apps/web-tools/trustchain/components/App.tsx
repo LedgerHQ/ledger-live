@@ -3,6 +3,7 @@ import {
   createQRCodeHostInstance,
   createQRCodeCandidateInstance,
 } from "@ledgerhq/trustchain/qrcode/index";
+import { crypto } from "@ledgerhq/hw-trustchain";
 import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
 import { setEnv, getEnvDefault } from "@ledgerhq/live-env";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -101,6 +102,12 @@ const App = () => {
     */}
 
       <AppDestroyTrustchain trustchain={trustchain} liveAccessToken={liveAccessToken} />
+
+      <Expand title="Data Encryption">
+        <AppEncryptUserData trustchain={trustchain} />
+
+        <AppDecryptUserData trustchain={trustchain} />
+      </Expand>
 
       <Expand title="QR Code Host">
         <AppQRCodeHost trustchain={trustchain} liveCredentials={liveCredentials} />
@@ -386,6 +393,64 @@ function AppDestroyTrustchain({
       inputs={trustchain && liveAccessToken ? [trustchain, liveAccessToken] : null}
       action={action}
     />
+  );
+}
+
+function AppEncryptUserData({ trustchain }: { trustchain: Trustchain | null }) {
+  const [input, setInput] = useState<string | null>(null);
+  const [output, setOutput] = useState<Uint8Array | null>(null);
+  const sdk = useSDK();
+
+  const action = useCallback(
+    (trustchain: Trustchain, input: string) => sdk.encryptUserData(trustchain, { input }),
+    [sdk],
+  );
+
+  const valueDisplay = useCallback(
+    (output: Uint8Array) => <code>{crypto.to_hex(output)}</code>,
+    [],
+  );
+
+  return (
+    <>
+      <Actionable
+        buttonTitle="sdk.encryptUserData"
+        inputs={trustchain && input ? [trustchain, input] : null}
+        action={action}
+        valueDisplay={valueDisplay}
+        value={output}
+        setValue={setOutput}
+      />
+      <Input type="text" value={input || ""} onChange={e => setInput(e.target.value)} />
+    </>
+  );
+}
+
+function AppDecryptUserData({ trustchain }: { trustchain: Trustchain | null }) {
+  const [input, setInput] = useState<string | null>(null);
+  const [output, setOutput] = useState<{ input: string } | null>(null);
+  const sdk = useSDK();
+
+  const action = useCallback(
+    (trustchain: Trustchain, input: string) =>
+      sdk.decryptUserData(trustchain, crypto.from_hex(input)).then(obj => obj as { input: string }),
+    [sdk],
+  );
+
+  const valueDisplay = useCallback((output: { input: string }) => <code>{output.input}</code>, []);
+
+  return (
+    <>
+      <Actionable
+        buttonTitle="sdk.decryptUserData"
+        inputs={trustchain && input ? [trustchain, input] : null}
+        action={action}
+        valueDisplay={valueDisplay}
+        value={output}
+        setValue={setOutput}
+      />
+      <Input type="text" value={input || ""} onChange={e => setInput(e.target.value)} />
+    </>
   );
 }
 
