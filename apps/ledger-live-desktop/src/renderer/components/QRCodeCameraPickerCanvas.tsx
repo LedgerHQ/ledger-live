@@ -138,7 +138,10 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
         }),
       ])
         .then(stream => {
-          if (this.unmounted) return;
+          if (this.unmounted) {
+            stream.getTracks().forEach(track => track.stop());
+            return;
+          }
           this.setState({
             error: null,
           });
@@ -153,6 +156,7 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
               video.srcObject = null;
               video = null;
             }
+            stream.getTracks().forEach(track => track.stop());
           });
           video.onloadedmetadata = () => {
             if (this.unmounted || !video) return;
