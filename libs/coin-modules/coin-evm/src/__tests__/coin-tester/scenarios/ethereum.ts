@@ -20,6 +20,7 @@ import {
   ERC1155Interface,
   impersonnateAccount,
 } from "../helpers";
+import { defaultNanoApp } from "../scenarios.test";
 
 type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 

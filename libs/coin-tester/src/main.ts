@@ -37,7 +37,7 @@ export type Scenario<T extends TransactionCommon, A extends Account> = {
     retryLimit?: number;
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
   }>;
-  getTransactions: (address: string) => ScenarioTransaction<T>[];
+  getTransactions: (address: string) => ScenarioTransaction<T, A>[];
   beforeSync?: () => Promise<void> | void;
   mockIndexer: (account: Account, optimistic: Operation) => Promise<void>;
   beforeAll?: (account: Account) => Promise<void> | void;
