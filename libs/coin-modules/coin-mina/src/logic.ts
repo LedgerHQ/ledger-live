@@ -2,15 +2,9 @@ import { BigNumber } from "bignumber.js";
 import { Transaction, MinaAccount } from "./types";
 import { CoinType } from "@ledgerhq/types-cryptoassets";
 
-export const isValidAddress = (address: string): boolean => {
-  const readableAddressRegex = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
-  const hexAddressRegex = /^[a-f0-9]{64}$/;
-
-  if (isImplicitAccount(address)) {
-    return hexAddressRegex.test(address);
-  }
-
-  return readableAddressRegex.test(address);
+export const isValidAddress = (_address: string): boolean => {
+  // TODO add a proper address validation
+  return true;
 };
 
 export const isImplicitAccount = (address: string): boolean => {
@@ -43,7 +37,7 @@ export const getAccountNumFromPath = (path: string): number | undefined => {
 /*
  * Get the max amount that can be spent, taking into account tx type and pending operations.
  */
-export const getMaxAmount = (a: MinaAccount, t: Transaction, fees?: BigNumber): BigNumber => {
+export const getMaxAmount = (a: MinaAccount, _t: Transaction, fees?: BigNumber): BigNumber => {
   let maxAmount;
 
   let pendingDefaultAmount = new BigNumber(0);
@@ -70,3 +64,22 @@ export const getTotalSpent = (a: MinaAccount, t: Transaction, fees: BigNumber): 
 
   return new BigNumber(t.amount).plus(fees);
 };
+
+// reEncodeRawSignature takes a raw signature in the form of a 128-character hex string and returns a re-encoded version of it.
+export function reEncodeRawSignature(rawSignature: string) {
+  function shuffleBytes(hex: string) {
+    const bytes = hex.match(/.{2}/g);
+    if (!bytes) {
+      throw "Invalid hex input";
+    }
+    bytes.reverse();
+    return bytes.join("");
+  }
+
+  if (rawSignature.length !== 128) {
+    throw "Invalid raw signature input";
+  }
+  const field = rawSignature.substring(0, 64);
+  const scalar = rawSignature.substring(64);
+  return shuffleBytes(field) + shuffleBytes(scalar);
+}

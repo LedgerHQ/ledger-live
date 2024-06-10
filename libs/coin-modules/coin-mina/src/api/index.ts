@@ -1,7 +1,14 @@
 import BigNumber from "bignumber.js";
-import { MinaAPIAccount } from "../types";
-import { fetchAccountBalance, fetchAccountTransactions, fetchNetworkStatus } from "./rosetta";
+import { MinaAPIAccount, MinaSignedTransaction, Transaction } from "../types";
+import {
+  fetchAccountBalance,
+  fetchAccountTransactions,
+  fetchNetworkStatus,
+  fetchTransactionMetadata,
+  rosettaSubmitTransaction,
+} from "./rosetta";
 import { RosettaTransaction } from "./rosetta/types";
+import { MINA_TOKEN_ID } from "../consts";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   const networkStatus = await fetchNetworkStatus();
@@ -20,10 +27,46 @@ export const getTransactions = async (address: string): Promise<RosettaTransacti
   return res.transactions;
 };
 
-export const broadcastTransaction = (_sig: string): string => {
-  return "";
+export const broadcastTransaction = async (txn: MinaSignedTransaction): Promise<string> => {
+  const { nonce, receiverAddress, amount, fee, memo, senderAddress } = txn.transaction;
+  const blob = {
+    signature: txn.signature,
+    payment: {
+      to: receiverAddress,
+      from: senderAddress,
+      fee: fee.toFixed(),
+      token: MINA_TOKEN_ID,
+      nonce: nonce.toFixed(),
+      memo: memo ?? null,
+      amount: amount.toFixed(),
+      valid_until: null,
+    },
+    stake_delegation: null,
+  };
+
+  const { data } = await rosettaSubmitTransaction(JSON.stringify(blob));
+
+  return data.transaction_identifier.hash;
 };
 
-export const getFees = (): BigNumber => {
-  return new BigNumber(0);
+export const getFees = async (txn: Transaction, address: string): Promise<BigNumber> => {
+  const { data } = await fetchTransactionMetadata(
+    address,
+    txn.recipient,
+    txn.fees.toNumber(),
+    txn.amount.toNumber(),
+  );
+
+  return new BigNumber(data.suggested_fee[0].value);
+};
+
+export const getNonce = async (txn: Transaction, address: string): Promise<BigNumber> => {
+  const { data } = await fetchTransactionMetadata(
+    address,
+    txn.recipient,
+    txn.fees.toNumber(),
+    txn.amount.toNumber(),
+  );
+
+  return new BigNumber(data.metadata.nonce);
 };

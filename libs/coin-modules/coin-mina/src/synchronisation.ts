@@ -95,7 +95,10 @@ const mapRosettaTxnToOperation = (
 
     return ops;
   } catch (e) {
-    log("error", "mina: failed to convert txn to operation", e);
+    log("error", "mina: failed to convert txn to operation", {
+      error: e,
+      transaction: txn,
+    });
     return [];
   }
 };
