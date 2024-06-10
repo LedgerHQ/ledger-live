@@ -92,3 +92,42 @@ export type FetchAccountTransactionsResponse = {
   transactions: RosettaTransaction[];
   total_count: number;
 };
+
+export type RosettaPreprocessResponse = {
+  options: {
+    sender: string;
+    token_id: string;
+    receiver: string;
+  };
+};
+
+export type RosettaMetadataResponse = {
+  metadata: {
+    sender: string;
+    nonce: string;
+    token_id: string;
+    receiver: string;
+  };
+  suggested_fee: Array<{
+    value: string;
+    currency: {
+      symbol: string;
+      decimals: number;
+    };
+    metadata: {
+      minimum_fee: {
+        value: string;
+        currency: {
+          symbol: string;
+          decimals: number;
+        };
+      };
+    };
+  }>;
+};
+
+export type RosettaSubmitResponse = {
+  transaction_identifier: {
+    hash: string;
+  };
+};

@@ -8,7 +8,7 @@ export const prepareTransaction: AccountBridge<
   Transaction,
   MinaAccount
 >["prepareTransaction"] = async (a: Account, t: Transaction) => {
-  const fees = await getEstimatedFees(t);
+  const fees = await getEstimatedFees(t, a.freshAddress);
 
   const amount = t.useAllAmount
     ? await estimateMaxSpendable({
