@@ -6,11 +6,28 @@ import type {
   SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
+import { Address, beginCell, external, storeMessage } from "@ton/core";
+import { WalletContractV4 } from "@ton/ton";
 import { Observable } from "rxjs";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
-import type { TonSignature, TonSigner } from "./signer";
-import type { TonOperation, Transaction } from "./types";
-import { getAddress, getLedgerTonPath, packTransaction, transactionToHwParams } from "./utils";
+import type { TonSigner } from "./signer";
+import type { TonCell, TonOperation, Transaction } from "./types";
+import { buildTonTransaction, getLedgerTonPath } from "./utils";
+
+const packTransaction = (account: Account, needsInit: boolean, signature: TonCell): string => {
+  const { address } = Address.parseFriendly(account.freshAddress);
+  let init: { code: TonCell; data: TonCell } | null = null;
+  if (needsInit) {
+    if (account.xpub?.length !== 64) throw Error("[ton] xpub can't be found");
+    const wallet = WalletContractV4.create({
+      workchain: 0,
+      publicKey: Buffer.from(account.xpub, "hex"),
+    });
+    init = wallet.init;
+  }
+  const ext = external({ to: address, init, body: signature });
+  return beginCell().store(storeMessage(ext)).endCell().toBoc().toString("base64");
+};
 
 /**
  * Sign Transaction with Ledger hardware
@@ -29,17 +46,17 @@ export const buildSignOperation =
     new Observable(o => {
       let cancelled = false;
       async function main() {
-        const { address, derivationPath } = getAddress(account);
+        const address = account.freshAddress;
         const accountInfo = await fetchAccountInfo(address);
 
-        const tonTx = transactionToHwParams(transaction, accountInfo.seqno, account);
+        const tonTx = buildTonTransaction(transaction, accountInfo.seqno, account);
 
-        const ledgerPath = getLedgerTonPath(derivationPath);
+        const ledgerPath = getLedgerTonPath(account.freshAddressPath);
 
         o.next({ type: "device-signature-requested" });
-        const sig = (await signerContext(deviceId, signer =>
+        const sig = await signerContext(deviceId, signer =>
           signer.signTransaction(ledgerPath, tonTx),
-        )) as TonSignature;
+        );
 
         if (cancelled) return;
 

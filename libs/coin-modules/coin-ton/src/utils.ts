@@ -1,27 +1,17 @@
 import { decodeAccountId, findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { Account, Address } from "@ledgerhq/types-live";
-import { TonPayloadFormat } from "@ton-community/ton-ledger";
+import { Account } from "@ledgerhq/types-live";
 import {
-  Cell,
   SendMode,
   Address as TonAddress,
   WalletContractV4,
-  beginCell,
   comment,
-  external,
   internal,
-  storeMessage,
   toNano,
 } from "@ton/ton";
 import BigNumber from "bignumber.js";
 import { estimateFee } from "./bridge/bridgeHelpers/api";
-import { maxFeeTokenTransfer } from "./constants";
-import { TonComment, TonHwParams, Transaction } from "./types";
-
-export const getAddress = (a: Account): Address => ({
-  address: a.freshAddress,
-  derivationPath: a.freshAddressPath,
-});
+import { MAX_FEE_TOKEN_TRANSFER } from "./constants";
+import { TonComment, TonPayloadFormat, TonTransaction, Transaction } from "./types";
 
 export const isAddressValid = (recipient: string) => {
   try {
@@ -46,67 +36,57 @@ export const addressesAreEqual = (addr1: string, addr2: string) => {
   }
 };
 
-export const transactionToHwParams = (t: Transaction, seqno: number, a: Account): TonHwParams => {
-  let recipient = t.recipient;
+export const buildTonTransaction = (
+  transaction: Transaction,
+  seqno: number,
+  account: Account,
+): TonTransaction => {
+  const { subAccountId, useAllAmount, amount, comment, recipient } = transaction;
+  let recipientParsed = recipient;
   // if recipient is not valid calculate fees with empty address
   // we handle invalid addresses in account bridge
   try {
-    TonAddress.parse(recipient);
+    TonAddress.parse(recipientParsed);
   } catch {
-    recipient = new TonAddress(0, Buffer.alloc(32)).toRawString();
+    recipientParsed = new TonAddress(0, Buffer.alloc(32)).toRawString();
   }
 
   // if there is a sub account, the transaction is a token transfer
-  const subAccount = findSubAccountById(a, t.subAccountId ?? "");
+  const subAccount = findSubAccountById(account, subAccountId ?? "");
 
-  const amount = subAccount
-    ? toNano(maxFeeTokenTransfer) // for commission fees, excess will be returned
-    : t.useAllAmount
-    ? BigInt(0)
-    : BigInt(t.amount.toFixed());
-  const to = subAccount ? subAccount.token.contractAddress : recipient;
-  const tonHwParams: TonHwParams = {
+  const finalAmount = subAccount
+    ? toNano(MAX_FEE_TOKEN_TRANSFER) // for commission fees, excess will be returned
+    : useAllAmount
+      ? BigInt(0)
+      : BigInt(amount.toFixed());
+  const to = subAccount ? subAccount.token.contractAddress : recipientParsed;
+  const tonTransaction: TonTransaction = {
     to: TonAddress.parse(to),
     seqno,
-    amount,
+    amount: finalAmount,
     bounce: TonAddress.isFriendly(to) ? TonAddress.parseFriendly(to).isBounceable : true,
     timeout: getTransferExpirationTime(),
-    sendMode: t.useAllAmount
+    sendMode: useAllAmount
       ? SendMode.CARRY_ALL_REMAINING_BALANCE
       : SendMode.IGNORE_ERRORS + SendMode.PAY_GAS_SEPARATELY,
   };
 
-  if (t.comment.text.length) {
-    tonHwParams.payload = { type: "comment", text: t.comment.text };
+  if (comment.text.length) {
+    tonTransaction.payload = { type: "comment", text: comment.text };
   }
   if (subAccount) {
-    tonHwParams.payload = {
+    tonTransaction.payload = {
       type: "jetton-transfer",
       queryId: BigInt(1),
-      amount: t.useAllAmount ? BigInt(0) : BigInt(t.amount.toFixed()),
-      destination: TonAddress.parse(recipient),
-      responseDestination: TonAddress.parse(getAddress(a).address),
+      amount: useAllAmount ? BigInt(0) : BigInt(amount.toFixed()),
+      destination: TonAddress.parse(recipientParsed),
+      responseDestination: TonAddress.parse(account.freshAddress),
       customPayload: null,
       forwardAmount: BigInt(1),
       forwardPayload: null,
     };
   }
-  return tonHwParams;
-};
-
-export const packTransaction = (a: Account, needsInit: boolean, signature: Cell): string => {
-  const { address } = TonAddress.parseFriendly(getAddress(a).address);
-  let init: { code: Cell; data: Cell } | null = null;
-  if (needsInit) {
-    if (a.xpub?.length !== 64) throw Error("[ton] xpub can't be found");
-    const wallet = WalletContractV4.create({
-      workchain: 0,
-      publicKey: Buffer.from(a.xpub, "hex"),
-    });
-    init = wallet.init;
-  }
-  const ext = external({ to: address, init, body: signature });
-  return beginCell().store(storeMessage(ext)).endCell().toBoc().toString("base64");
+  return tonTransaction;
 };
 
 // max length is 120 and only ascii allowed
@@ -116,8 +96,12 @@ export const commentIsValid = (msg: TonComment) =>
 // 1 minute
 export const getTransferExpirationTime = () => Math.floor(Date.now() / 1000 + 60);
 
-export const getTonEstimatedFees = async (a: Account, needsInit: boolean, tx: TonHwParams) => {
-  const { xpubOrAddress: pubKey } = decodeAccountId(a.id);
+export const getTonEstimatedFees = async (
+  account: Account,
+  needsInit: boolean,
+  tx: TonTransaction,
+) => {
+  const { xpubOrAddress: pubKey } = decodeAccountId(account.id);
   if (pubKey.length !== 64) throw Error("[ton] pubKey can't be found");
   if (tx.payload && tx.payload?.type !== "comment") {
     throw Error("[ton] payload kind not expected");
@@ -139,7 +123,7 @@ export const getTonEstimatedFees = async (a: Account, needsInit: boolean, tx: To
   const initCode = needsInit ? contract.init.code.toBoc().toString("base64") : undefined;
   const initData = needsInit ? contract.init.data.toBoc().toString("base64") : undefined;
   const fee = await estimateFee(
-    getAddress(a).address,
+    account.freshAddress,
     transfer.toBoc().toString("base64"),
     initCode,
     initData,

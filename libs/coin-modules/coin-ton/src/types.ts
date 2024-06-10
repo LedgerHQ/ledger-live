@@ -5,8 +5,8 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { TonPayloadFormat } from "@ton-community/ton-ledger";
 import { Address, SendMode, StateInit } from "@ton/core";
+import { Cell } from "@ton/ton";
 import BigNumber from "bignumber.js";
 
 type FamilyType = "ton";
@@ -34,7 +34,32 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type TonOperation = Operation<{ comment: TonComment; lt: string; explorerHash: string }>;
 
-export interface TonHwParams {
+export type TonPayloadFormat =
+  | {
+      type: "comment";
+      text: string;
+    }
+  | {
+      type: "jetton-transfer";
+      queryId: bigint | null;
+      amount: bigint;
+      destination: Address;
+      responseDestination: Address;
+      customPayload: TonCell | null;
+      forwardAmount: bigint;
+      forwardPayload: TonCell | null;
+    }
+  | {
+      type: "nft-transfer";
+      queryId: bigint | null;
+      newOwner: Address;
+      responseDestination: Address;
+      customPayload: TonCell | null;
+      forwardAmount: bigint;
+      forwardPayload: TonCell | null;
+    };
+
+export interface TonTransaction {
   to: Address;
   sendMode: SendMode;
   seqno: number;
@@ -44,3 +69,5 @@ export interface TonHwParams {
   stateInit?: StateInit;
   payload?: TonPayloadFormat;
 }
+
+export interface TonCell extends Cell {}

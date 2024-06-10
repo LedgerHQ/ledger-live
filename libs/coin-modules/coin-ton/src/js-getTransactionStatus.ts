@@ -10,20 +10,19 @@ import { Account, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TonCommentInvalid, TonExcessFee } from "./errors";
 import { Transaction, TransactionStatus } from "./types";
-import { addressesAreEqual, commentIsValid, getAddress, isAddressValid } from "./utils";
+import { addressesAreEqual, commentIsValid, isAddressValid } from "./utils";
 
 type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "comment";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 /**
- * Validate an address for a transaction
+ * Validate an address for account transaction
  */
-export const validateRecipient = (account: Account, tx: Transaction): Array<ValidationIssues> => {
+const validateRecipient = (account: Account, tx: Transaction): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
-  const { address } = getAddress(account);
 
   if (tx.recipient) {
-    // Check if recipient is matching the format of a valid eth address or not
+    // Check if recipient is matching the format of account valid eth address or not
     const isRecipientValidate = isAddressValid(tx.recipient);
 
     if (!isRecipientValidate) {
@@ -31,7 +30,7 @@ export const validateRecipient = (account: Account, tx: Transaction): Array<Vali
         currencyName: account.currency.name,
       });
     }
-    if (addressesAreEqual(address, tx.recipient)) {
+    if (addressesAreEqual(account.freshAddress, tx.recipient)) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource("", {
         currencyName: account.currency.name,
       });
@@ -44,14 +43,13 @@ export const validateRecipient = (account: Account, tx: Transaction): Array<Vali
 };
 
 /**
- * Validate the sender address for a transaction
+ * Validate the sender address for account transaction
  */
-export const validateSender = (account: Account): Array<ValidationIssues> => {
+const validateSender = (account: Account): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
-  const { address } = getAddress(account);
 
-  // Check if sender is matching the format of a valid ton address or not
-  const isSenderValidate = isAddressValid(address);
+  // Check if sender is matching the format of account valid ton address or not
+  const isSenderValidate = isAddressValid(account.freshAddress);
 
   if (!isSenderValidate) {
     errors.sender = new InvalidAddress("", {
@@ -63,19 +61,21 @@ export const validateSender = (account: Account): Array<ValidationIssues> => {
 };
 
 const validateAmount = (
-  a: Account | SubAccount,
-  t: Transaction,
+  account: Account | SubAccount,
+  transaction: Transaction,
   totalSpent: BigNumber,
 ): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
 
-  const isTokenTransaction = Boolean(a && isTokenAccount(a));
+  const isTokenTransaction = Boolean(account && isTokenAccount(account));
 
   // if no amount or 0
-  if (!t.amount || t.amount.isZero()) {
+  if (!transaction.amount || transaction.amount.isZero()) {
     errors.amount = new AmountRequired(); // "Amount required"
-  } else if (totalSpent.isGreaterThan(isTokenTransaction ? a.spendableBalance : a.balance)) {
+  } else if (
+    totalSpent.isGreaterThan(isTokenTransaction ? account.spendableBalance : account.balance)
+  ) {
     // if not enough to make the transaction
     errors.amount = new NotEnoughBalance(); // "Sorry, insufficient funds"
   }
@@ -86,11 +86,11 @@ const validateAmount = (
   return [errors, warnings];
 };
 
-const validateComment = (t: Transaction): Array<ValidationIssues> => {
+const validateComment = (transaction: Transaction): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
 
-  // if the comment isn't encrypted, it should be valid
-  if (t.comment.isEncrypted || !commentIsValid(t.comment)) {
+  // if the comment isn'transaction encrypted, it should be valid
+  if (transaction.comment.isEncrypted || !commentIsValid(transaction.comment)) {
     errors.comment = new TonCommentInvalid();
   }
   return [errors];
