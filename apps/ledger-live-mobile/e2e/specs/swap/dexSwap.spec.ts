@@ -1,5 +1,4 @@
 import * as detox from "detox";
-import { loadConfig } from "../../bridge/server";
 import { isAndroid } from "../../helpers";
 import { Application } from "../../page";
 
@@ -7,8 +6,7 @@ let app: Application;
 
 describe("DEX Swap", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-    app = new Application();
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
 
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.swap.openViaDeeplink();

@@ -1,5 +1,4 @@
 import { device, expect } from "detox";
-import { loadConfig } from "../bridge/server";
 import { Application } from "../page/index";
 
 let app: Application;
@@ -8,8 +7,7 @@ const CORRECT_PASSWORD = "passWORD$123!";
 
 describe("Password Lock Screen", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-    app = new Application();
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
 
     await app.portfolio.waitForPortfolioPageToLoad();
   });

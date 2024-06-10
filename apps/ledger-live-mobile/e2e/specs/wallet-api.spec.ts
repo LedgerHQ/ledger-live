@@ -1,5 +1,4 @@
 import { by, web } from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
-import { loadConfig } from "../bridge/server";
 import { describeifAndroid } from "../helpers";
 import { stopDummyServer } from "@ledgerhq/test-utils";
 import { Application } from "../page/index";
@@ -10,13 +9,11 @@ let continueTest: boolean;
 
 describeifAndroid("Wallet API methods", () => {
   beforeAll(async () => {
-    app = new Application();
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
 
     // Check that dummy app in tests/dummy-app-build has been started successfully
     continueTest = await app.liveAppWebview.startLiveApp("dummy-wallet-app", 52619);
     expect(continueTest).toBeTruthy();
-
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     // start navigation
     await app.portfolio.waitForPortfolioPageToLoad();

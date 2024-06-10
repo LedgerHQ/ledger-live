@@ -1,18 +1,12 @@
 import { expect } from "detox";
-import { genAccount } from "@ledgerhq/live-common/mock/account";
-import {
-  formatCurrencyUnit,
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
 import { tapByElement } from "../../helpers";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { formattedAmount } from "../../page/common.page";
+import { formattedAmount, initTestAccounts } from "../../models/currencies";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { Application } from "../../page/index";
 
@@ -35,18 +29,12 @@ const testedCurrencies: CryptoCurrencyId[] = [
   "polkadot",
   "cosmos",
 ];
-const testAccounts = testedCurrencies.map(currencyId =>
-  genAccount("mock" + currencyId, { currency: getCryptoCurrencyById(currencyId) }),
-);
-setSupportedCurrencies(testedCurrencies);
+const testAccounts = initTestAccounts(testedCurrencies);
 
 $TmsLink("B2CQA-1823");
 describe("Send flow", () => {
   beforeAll(async () => {
-    await loadConfig("onboardingcompleted", true);
-    await loadBleState({ knownDevices: [knownDevice] });
-    await loadAccounts(testAccounts);
-    app = new Application();
+    app = await Application.init("onboardingcompleted", [knownDevice], testAccounts);
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

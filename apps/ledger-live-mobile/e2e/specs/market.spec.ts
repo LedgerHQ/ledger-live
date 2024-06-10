@@ -1,5 +1,4 @@
 import { expect } from "detox";
-import { loadConfig } from "../bridge/server";
 import { getElementByText } from "../helpers";
 import { Application } from "../page/index";
 
@@ -7,9 +6,7 @@ let app: Application;
 
 describe("Market page for user with no device", () => {
   beforeAll(async () => {
-    await loadConfig("1accountEth", true);
-    app = new Application();
-
+    app = await Application.init("1accountEth");
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

@@ -1,4 +1,3 @@
-import { loadBleState, loadConfig } from "../../bridge/server";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
 import { Application } from "../../page/index";
@@ -10,9 +9,7 @@ let first = true;
 
 describe("Receive Flow", () => {
   beforeAll(async () => {
-    await loadConfig("EthAccountXrpAccountReadOnlyFalse", true);
-    await loadBleState({ knownDevices: [knownDevice] });
-    app = new Application();
+    app = await Application.init("EthAccountXrpAccountReadOnlyFalse", [knownDevice]);
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

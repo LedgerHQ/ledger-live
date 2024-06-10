@@ -1,5 +1,5 @@
 import fs from "fs";
-import { getEnvs, getFlags, loadConfig } from "../bridge/server";
+import { getEnvs, getFlags } from "../bridge/server";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { EnvName } from "@ledgerhq/live-env";
 import { Application } from "../page/index";
@@ -48,9 +48,7 @@ const formatEnvData = (data: { [key in EnvName]: string }) => {
 
 describe("Get Feature Flags and Environment Variables", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-    app = new Application();
-
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

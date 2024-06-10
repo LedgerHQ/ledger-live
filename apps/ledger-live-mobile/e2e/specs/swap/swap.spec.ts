@@ -1,14 +1,11 @@
 import { expect } from "detox";
-import { loadConfig } from "../../bridge/server";
 import { Application } from "../../page";
 
 let app: Application;
 
 describe("Swap", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-    app = new Application();
-
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 

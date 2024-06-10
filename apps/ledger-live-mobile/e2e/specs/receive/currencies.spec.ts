@@ -1,4 +1,3 @@
-import { loadBleState, loadConfig } from "../../bridge/server";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
 import { waitForElementById } from "../../helpers";
@@ -13,9 +12,7 @@ $TmsLink("B2CQA-651");
 $TmsLink("B2CQA-1854");
 describe("Receive different currency", () => {
   beforeAll(async () => {
-    await loadConfig("onboardingcompleted", true);
-    await loadBleState({ knownDevices: [knownDevice] });
-    app = new Application();
+    app = await Application.init("onboardingcompleted", [knownDevice]);
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

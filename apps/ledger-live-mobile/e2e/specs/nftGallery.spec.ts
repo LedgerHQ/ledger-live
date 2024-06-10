@@ -1,14 +1,12 @@
 import { expect } from "detox";
 import { tapByElement, tapByText, waitForElementById } from "../helpers";
-import { loadConfig } from "../bridge/server";
 import { Application } from "../page/index";
 
 let app: Application;
 
 describe("NFT Gallery screen", () => {
   beforeAll(async () => {
-    await loadConfig("1Account1NFTNotSpam");
-    app = new Application();
+    app = await Application.init("1Account1NFTNotSpam");
 
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.nftGallery.openViaDeeplink();

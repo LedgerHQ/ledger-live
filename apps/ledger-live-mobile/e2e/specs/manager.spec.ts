@@ -1,4 +1,3 @@
-import { loadBleState, loadConfig } from "../bridge/server";
 import DeviceAction from "../models/DeviceAction";
 import { knownDevice } from "../models/devices";
 import { deviceInfo155 as deviceInfo } from "@ledgerhq/live-common/apps/mock";
@@ -12,9 +11,7 @@ const installedDesc = ["Bitcoin", "Litecoin", "Ethereum (outdated)"];
 
 describe("Bitcoin Account", () => {
   beforeAll(async () => {
-    await loadConfig("onboardingcompleted", true);
-    await loadBleState({ knownDevices: [knownDevice] });
-    app = new Application();
+    app = await Application.init("onboardingcompleted", [knownDevice]);
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

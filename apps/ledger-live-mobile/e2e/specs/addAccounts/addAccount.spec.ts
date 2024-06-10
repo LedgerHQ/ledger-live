@@ -1,6 +1,5 @@
 import { expect } from "detox";
 import { knownDevice } from "../../models/devices";
-import { loadBleState, loadConfig } from "../../bridge/server";
 import DeviceAction from "../../models/DeviceAction";
 import { getElementByText, waitForElementByText } from "../../helpers";
 import { Application } from "../../page/index";
@@ -10,9 +9,7 @@ let deviceAction: DeviceAction;
 
 describe("Add account from modal", () => {
   beforeAll(async () => {
-    await loadConfig("onboardingcompleted", true);
-    await loadBleState({ knownDevices: [knownDevice] });
-    app = new Application();
+    app = await Application.init("onboardingcompleted", [knownDevice]);
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();
