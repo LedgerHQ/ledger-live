@@ -2,10 +2,10 @@ import { BigNumber } from "bignumber.js";
 import { getFees } from "./api";
 import { Transaction } from "./types";
 
-const getEstimatedFees = async (_transaction: Transaction): Promise<BigNumber> => {
-  const gasPrice = await getFees();
+const getEstimatedFees = async (transaction: Transaction, address: string): Promise<BigNumber> => {
+  const fees = await getFees(transaction, address);
 
-  return gasPrice;
+  return fees;
 };
 
 export default getEstimatedFees;

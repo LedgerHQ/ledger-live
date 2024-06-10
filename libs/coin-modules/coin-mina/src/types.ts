@@ -2,6 +2,7 @@ import type { BigNumber } from "bignumber.js";
 import {
   Account,
   AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -40,8 +41,8 @@ export type StatusErrorMap = {
   fees?: Error;
 };
 
-export type SignTransaction = {
-  txType: string;
+export type MinaUnsignedTransaction = {
+  txType: number;
   senderAccount: number;
   senderAddress: string;
   receiverAddress: string;
@@ -49,5 +50,10 @@ export type SignTransaction = {
   fee: number;
   nonce: number;
   memo: string;
-  networkId: string;
+  networkId: number;
 };
+
+export interface MinaSignedTransaction {
+  signature: string;
+  transaction: MinaUnsignedTransaction;
+}

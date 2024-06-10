@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 // import * as minaAPI from "mina-ledger-js";
-import type { Transaction } from "./types";
+import type { MinaSignedTransaction, Transaction } from "./types";
 import type {
   Operation,
   Account,
@@ -12,8 +12,12 @@ import type {
   AccountBridge,
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { MinaSigner } from "./signer";
+import { MinaSignature, MinaSigner } from "./signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { buildTransaction } from "./buildTransaction";
+import { reEncodeRawSignature } from "./logic";
+import { log } from "@ledgerhq/logs";
+import invariant from "invariant";
 // import { buildTransaction } from "./js-buildTransaction";
 
 const buildOptimisticOperation = (
@@ -48,10 +52,11 @@ const buildOptimisticOperation = (
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (_signerContext: SignerContext<MinaSigner>): AccountBridge<Transaction>["signOperation"] =>
+  (signerContext: SignerContext<MinaSigner>): AccountBridge<Transaction>["signOperation"] =>
   ({
     account,
     transaction,
+    deviceId,
   }: {
     account: Account;
     transaction: Transaction;
@@ -65,22 +70,19 @@ export const buildSignOperation =
           throw new FeeNotLoaded();
         }
 
-        // const { publicKey } = (await signerContext(deviceId, signer =>
-        //   signer.getAddress(account.freshAddressPath),
-        // )) as MinaAddress;
-        // const unsigned = await buildTransaction(account, transaction, publicKey);
+        const unsigned = await buildTransaction(account, transaction);
 
-        // const response = (await signerContext(deviceId, signer =>
-        //   signer.signTransaction(unsigned.encode(), account.freshAddressPath),
-        // )) as MinaSignature;
+        const { signature } = (await signerContext(deviceId, signer =>
+          signer.signTransaction(unsigned),
+        )) as MinaSignature;
+        // log("debug", "requesting user signature", { signature, unsigned });
+        invariant(signature, "signature should be defined if user accepted");
+        const encodedSignature = reEncodeRawSignature(signature);
 
-        // const signedTransaction = new minaAPI.transactions.SignedTransaction({
-        //   transaction: unsigned,
-        //   signature: new minaAPI.transactions.Signature({
-        //     keyType: unsigned.publicKey.keyType,
-        //     data: response,
-        //   }),
-        // });
+        const signedTransaction: MinaSignedTransaction = {
+          transaction: unsigned,
+          signature: encodedSignature,
+        };
 
         o.next({ type: "device-signature-granted" });
 
@@ -89,14 +91,13 @@ export const buildSignOperation =
           transaction,
           transaction.fees ?? new BigNumber(0),
         );
-        // const signedSerializedTx = signedTransaction.encode();
+        const signedSerializedTx = JSON.stringify(signedTransaction);
 
         o.next({
           type: "signed",
           signedOperation: {
             operation,
-            // signature: Buffer.from(signedSerializedTx).toString("base64"),
-            signature: "",
+            signature: signedSerializedTx,
           },
         });
       }
