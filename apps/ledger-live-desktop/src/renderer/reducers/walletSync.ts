@@ -48,7 +48,7 @@ export type WalletSyncState = {
   instances: Instance[];
 };
 
-const initialState: WalletSyncState = {
+export const initialStateWalletSync: WalletSyncState = {
   activated: false,
   flow: Flow.Activation,
   step: Step.CreateOrSynchronize,
@@ -92,7 +92,7 @@ const handlers: WalletSyncHandlers = {
     ...state,
     step: payload,
   }),
-  WALLET_SYNC_RESET: () => initialState,
+  WALLET_SYNC_RESET: () => initialStateWalletSync,
 };
 
 // Selectors
@@ -110,5 +110,5 @@ export const walletSyncInstancesSelector = (state: { walletSync: WalletSyncState
 
 export default handleActions<WalletSyncState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as WalletSyncHandlers<false>,
-  initialState,
+  initialStateWalletSync,
 );

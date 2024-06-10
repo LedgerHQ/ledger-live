@@ -7,7 +7,7 @@ import { describe, it, expect, jest } from "@jest/globals";
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
 
 const WalletSyncTestApp = () => (
   <>
@@ -26,11 +26,7 @@ describe("ManageYourBackup", () => {
   it("should open drawer and display Wallet Sync Manage flow and delete your backup", async () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
-        walletSync: {
-          activated: true,
-          flow: Flow.Activation,
-          step: Step.CreateOrSynchronize,
-        },
+        walletSync: { ...initialStateWalletSync, activated: true },
       },
     });
 

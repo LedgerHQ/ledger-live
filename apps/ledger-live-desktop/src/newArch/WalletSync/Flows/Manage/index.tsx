@@ -61,7 +61,12 @@ const WalletSyncManage = () => {
         <Option {...props} key={index} />
       ))}
 
-      <InstancesRow paddingY={24} justifyContent="space-between" onClick={goToManageInstances}>
+      <InstancesRow
+        paddingY={24}
+        justifyContent="space-between"
+        onClick={goToManageInstances}
+        data-testid="walletSync-manage-instances"
+      >
         <Text fontSize={13.44}>
           {t("walletSync.manage.instance.label", { count: instances.length })}
         </Text>

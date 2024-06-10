@@ -7,7 +7,7 @@ import { describe, it, expect, jest } from "@jest/globals";
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
 
 const WalletSyncTestApp = () => (
   <>
@@ -27,9 +27,8 @@ describe("manageSynchronizedInstances", () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
         walletSync: {
+          ...initialStateWalletSync,
           activated: true,
-          flow: Flow.Activation,
-          step: Step.CreateOrSynchronize,
           instances: [
             {
               id: "1",
