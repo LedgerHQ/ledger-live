@@ -96,7 +96,6 @@ export const DEFAULT_FEATURES: Features = {
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
-  staxWelcomeScreen: DEFAULT_FEATURE,
   listAppsV2minor1: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
@@ -461,7 +460,6 @@ export const DEFAULT_FEATURES: Features = {
 
   lldChatbotSupport: DEFAULT_FEATURE,
   llmChatbotSupport: DEFAULT_FEATURE,
-  supportDeviceStax: DEFAULT_FEATURE,
   supportDeviceEuropa: DEFAULT_FEATURE,
   lldRefreshMarketData: {
     ...DEFAULT_FEATURE,

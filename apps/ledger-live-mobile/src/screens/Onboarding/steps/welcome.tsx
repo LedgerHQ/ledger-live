@@ -124,9 +124,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     };
   }, []);
 
-  const videoSource = useFeature("staxWelcomeScreen")?.enabled
-    ? videoSources.welcomeScreenStax
-    : videoSources.welcomeScreen;
+  const videoSource = videoSources.welcomeScreenStax;
 
   return (
     <ForceTheme selectedPalette={"dark"}>
