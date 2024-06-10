@@ -9,7 +9,13 @@ import BackupDeleted from "./03-FinalStep";
 import { useBackup } from "./useBackup";
 
 const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => {
-  const { currentStep, goToNextScene, goToPreviousScene, FlowOptions, resetFlows } = useFlows({
+  const {
+    currentStep,
+    goToNextScene,
+    goToPreviousScene,
+    FlowOptions,
+    goToWelcomeScreenWalletSync,
+  } = useFlows({
     flow: Flow.ManageBackups,
   });
 
@@ -24,7 +30,7 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
 
   const goBack = () => {
     if (currentStep === FlowOptions[Flow.ManageBackups].steps[1]) {
-      resetFlows();
+      goToWelcomeScreenWalletSync();
     } else {
       goToPreviousScene();
     }

@@ -11,7 +11,7 @@ import Switch from "~/renderer/components/Switch";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { FlowOptions } from "~/newArch/WalletSync/Flows/useFlows";
 import { useDispatch } from "react-redux";
-import { addInstance, setFlow, setWalletSync } from "~/renderer/actions/walletSync";
+import { addInstance, setFaked, setFlow, setWalletSync } from "~/renderer/actions/walletSync";
 import { useHistory } from "react-router";
 import { useTheme } from "styled-components";
 
@@ -52,6 +52,7 @@ const WalletSyncDebugger = () => {
     if (state.flow && state.step) {
       dispatch(setFlow({ flow: state.flow, step: state.step }));
       dispatch(setWalletSync(state.activated));
+      dispatch(setFaked(true));
 
       if (state.instances.length > 0)
         state.instances.forEach(instance => dispatch(addInstance(instance)));

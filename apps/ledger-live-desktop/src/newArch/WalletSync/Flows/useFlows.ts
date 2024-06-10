@@ -4,12 +4,14 @@ import { setFlow } from "~/renderer/actions/walletSync";
 import {
   Flow,
   Step,
+  walletSyncFakedSelector,
   walletSyncFlowSelector,
+  walletSyncStateSelector,
   walletSyncStepSelector,
 } from "~/renderer/reducers/walletSync";
 
 export type HookProps = {
-  flow: Flow;
+  flow?: Flow;
 };
 
 export const FlowOptions: Record<
@@ -51,6 +53,11 @@ export const FlowOptions: Record<
       6: Step.UnsecuredLedger,
     },
   },
+  [Flow.walletSyncActivated]: {
+    steps: {
+      1: Step.walletSyncActivated,
+    },
+  },
 };
 
 /**
@@ -68,12 +75,15 @@ export const STEPS_WITH_BACK: Step[] = [
 export const useFlows = ({ flow }: HookProps) => {
   const dispatch = useDispatch();
 
+  const hasBeenFaked = useSelector(walletSyncFakedSelector);
+
   useEffect(() => {
-    if (flow) {
+    if (flow && !hasBeenFaked) {
       dispatch(setFlow({ flow, step: FlowOptions[flow].steps[1] }));
     }
-  }, [dispatch, flow]);
+  }, [dispatch, flow, hasBeenFaked]);
 
+  const walletSyncActivated = useSelector(walletSyncStateSelector);
   const currentFlow = useSelector(walletSyncFlowSelector);
   const currentStep = useSelector(walletSyncStepSelector);
 
@@ -83,19 +93,21 @@ export const useFlows = ({ flow }: HookProps) => {
   const goToNextScene = () => {
     const currentIndex = Object.values(steps).findIndex(step => step === currentStep) + 1;
     const newStep = currentIndex < maxStep ? currentIndex + 1 : currentIndex;
-    console.log("currentIndex", currentIndex);
-    console.log("newStep", newStep);
-    dispatch(setFlow({ flow, step: steps[newStep] }));
+    dispatch(setFlow({ flow: currentFlow, step: steps[newStep] }));
   };
 
   const goToPreviousScene = () => {
     const currentIndex = Object.values(steps).findIndex(step => step === currentStep) + 1;
     const newStep = currentIndex > 1 ? currentIndex - 1 : currentIndex;
-    dispatch(setFlow({ flow, step: steps[newStep] }));
+    dispatch(setFlow({ flow: currentFlow, step: steps[newStep] }));
   };
 
-  const resetFlows = () => {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+  const goToWelcomeScreenWalletSync = () => {
+    if (walletSyncActivated) {
+      dispatch(setFlow({ flow: Flow.walletSyncActivated, step: Step.walletSyncActivated }));
+    } else {
+      dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+    }
   };
 
   return {
@@ -104,6 +116,6 @@ export const useFlows = ({ flow }: HookProps) => {
     goToNextScene,
     goToPreviousScene,
     FlowOptions,
-    resetFlows,
+    goToWelcomeScreenWalletSync,
   };
 };
