@@ -3,9 +3,12 @@ import {
   FetchAccountBalanceResponse,
   FetchAccountTransactionsResponse,
   FetchNetworkStatusResponse,
+  RosettaMetadataResponse,
+  RosettaPreprocessResponse,
+  RosettaSubmitResponse,
 } from "./types";
 import { getCoinConfig } from "../../config";
-import { addNetworkIdentifier, buildAccountIdentifier } from "./utils";
+import { addNetworkIdentifier, buildAccountIdentifier, makeTransferPayload } from "./utils";
 
 const getRosettaUrl = (route: string): string => {
   const currencyConfig = getCoinConfig();
@@ -40,4 +43,38 @@ export const fetchAccountTransactions = async (address: string) => {
   });
 
   return data;
+};
+
+const rosettaPreprocess = async (from: string, to: string, feeNano: number, valueNano: number) => {
+  const payload = makeTransferPayload(from, to, feeNano, valueNano);
+  const { data } = await network<RosettaPreprocessResponse>({
+    method: "POST",
+    url: getRosettaUrl("/construction/preprocess"),
+    data: addNetworkIdentifier(payload),
+  });
+
+  return data;
+};
+
+export const fetchTransactionMetadata = async (
+  srcAddress: string,
+  destAddress: string,
+  feeNano: number,
+  valueNano: number,
+) => {
+  const options = await rosettaPreprocess(srcAddress, destAddress, feeNano, valueNano);
+  const payload = makeTransferPayload(srcAddress, destAddress, feeNano, valueNano);
+  return await network<RosettaMetadataResponse>({
+    method: "POST",
+    url: getRosettaUrl("/construction/metadata"),
+    data: addNetworkIdentifier({ ...payload, ...options }),
+  });
+};
+
+export const rosettaSubmitTransaction = async (blob: string) => {
+  return await network<RosettaSubmitResponse>({
+    method: "POST",
+    url: getRosettaUrl("/construction/submit"),
+    data: addNetworkIdentifier({ signed_transaction: blob }),
+  });
 };
