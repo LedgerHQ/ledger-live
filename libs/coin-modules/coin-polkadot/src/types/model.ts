@@ -42,5 +42,5 @@ export type CoreTransasctionInfo = {
 };
 export type CoreTransaction = {
   registry: TypeRegistry;
-  unsigned: CoreTransasctionInfo;
+  unsigned: any;
 };

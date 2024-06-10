@@ -69,6 +69,17 @@ const isControllerAddress = makeLRUCache(
 const isElectionClosed = makeLRUCache(sidecarIsElectionClosed, () => "", minutes(1));
 const isNewAccount = makeLRUCache(sidecarIsNewAccount, address => address, minutes(1));
 
+const metadataHash = async (): Promise<string> => {
+  const res: any = await network({
+    method: "POST",
+    url: getCoinConfig().metadataHash.url,
+    data: {
+      id: "dot",
+    },
+  });
+  return res.data.metadataHash;
+};
+
 const shortenMetadata = async (transaction: string): Promise<string> => {
   const res: any = await network({
     method: "POST",
@@ -99,6 +110,7 @@ export default {
   isControllerAddress,
   isElectionClosed,
   isNewAccount,
+  metadataHash,
   shortenMetadata,
   submitExtrinsic: async (extrinsic: string) => sidecarSubmitExtrinsic(extrinsic),
   verifyValidatorAddresses: async (validators: string[]): Promise<string[]> =>

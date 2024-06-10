@@ -17,6 +17,8 @@
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
 import { UserRefusedOnDevice, UserRefusedAddress, TransportError } from "@ledgerhq/errors";
+import { PolkadotGenericApp } from "@zondax/ledger-substrate";
+
 const CHUNK_SIZE = 250;
 const CLA = 0x90;
 const INS = {
@@ -70,11 +72,13 @@ export default class Polkadot {
     path: string,
     ss58prefix: number = 0,
     showAddrInDevice = false,
+    runtimeUpgraded = false,
   ): Promise<{
     pubKey: string;
     address: string;
     return_code: number;
   }> {
+    const CLA = runtimeUpgraded ? 0xf9 : 0x90;
     const bipPath = BIPPath.fromString(path).toPathArray();
     const bip44Path = this.serializePath(bipPath, ss58prefix);
     return this.transport
@@ -120,25 +124,27 @@ export default class Polkadot {
     message: Uint8Array,
     metadata: string,
   ): Promise<{
-    signature: null | string;
+    signature: string | null;
     return_code: number;
   }> {
+    if (metadata.length > 0) {
+      // runtimeUpgraded
+      const app = new PolkadotGenericApp(this.transport);
+      const signatureRequest = await app.signWithMetadata(
+        "m/" + path,
+        Buffer.from(message),
+        Buffer.from(metadata.slice(2), "hex"),
+      );
+      return {
+        signature: signatureRequest.signature.toString("hex"),
+        return_code: SW_OK,
+      };
+    }
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
     const chunks: Buffer[] = [];
-    let buffer = Buffer.from(message);
-    const appMajorVersion = await this.getMajorAppVersion();
-    if (appMajorVersion >= 26) {
-      // metadata is required for app version >= 26 (new polkadot generic nano app)
-      const blobLen = Buffer.alloc(2);
-      blobLen.writeUInt16LE(buffer.length);
-      chunks.push(Buffer.concat([serializedPath, blobLen]));
-      const metadataBuffer = Buffer.from(metadata.slice(2), "hex"); // remove 0x prefix
-      buffer = Buffer.concat([buffer, metadataBuffer]);
-    } else {
-      chunks.push(serializedPath);
-    }
-
+    const buffer = Buffer.from(message);
+    chunks.push(serializedPath);
     for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
       let end = i + CHUNK_SIZE;
 
@@ -188,11 +194,5 @@ export default class Polkadot {
         return_code: returnCode,
       };
     });
-  }
-
-  private async getMajorAppVersion(): Promise<number> {
-    const response = await this.transport.send(CLA, INS.GET_VERSION, 0, 0);
-    const majorVersion = response[1] * 256 + response[2];
-    return majorVersion;
   }
 }

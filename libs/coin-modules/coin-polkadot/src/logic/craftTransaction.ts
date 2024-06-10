@@ -4,6 +4,7 @@ import type { CoreTransaction, PalletMethod, PolkadotOperationMode } from "../ty
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import polkadotAPI from "../network";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/index";
+import { hexToU8a } from "@polkadot/util";
 
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any
@@ -165,6 +166,7 @@ export async function craftTransaction(
   nonceToUse: number,
   extractExtrinsicArg: CreateExtrinsicArg,
   forceLatestParams: boolean = false,
+  runtimeUpgraded: boolean = false,
 ): Promise<CoreTransaction> {
   await loadPolkadotCrypto();
 
@@ -204,7 +206,7 @@ export async function craftTransaction(
   ).toHex();
 
   const { blockHash, genesisHash } = info;
-  const unsigned = {
+  let unsigned: any = {
     address,
     blockHash,
     blockNumber,
@@ -218,6 +220,22 @@ export async function craftTransaction(
     transactionVersion,
     version: EXTRINSIC_VERSION,
   };
+  if (runtimeUpgraded) {
+    const metadataHash = await polkadotAPI.metadataHash();
+    unsigned = {
+      method,
+      nonce: nonceToUse,
+      genesisHash,
+      era,
+      blockHash,
+      transactionVersion: info.transactionVersion,
+      specVersion: info.specVersion,
+      runtimeVersion: 26,
+      version: EXTRINSIC_VERSION,
+      mode: 1,
+      metadataHash: hexToU8a("01" + metadataHash),
+    };
+  }
 
   return {
     registry,

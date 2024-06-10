@@ -14,6 +14,10 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       metadataShortener: {
         url: "https://api.zondax.ch/polkadot/transaction/metadata",
       },
+      metadataHash: {
+        url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+      },
+      runtimeUpgraded: false,
     },
   },
 };
