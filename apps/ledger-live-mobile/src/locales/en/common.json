@@ -2723,6 +2723,8 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
+      "walletSync": "Ledger  Sync",
+      "walletSyncDesc": "Backup your app data and seamlessly synchronize multiple Ledger Live instances",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
