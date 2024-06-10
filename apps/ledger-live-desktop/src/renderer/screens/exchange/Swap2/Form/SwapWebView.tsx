@@ -279,8 +279,6 @@ const SwapWebView = ({
     );
   }
 
-  console.log("SLA hashString", hashString);
-
   return (
     <>
       {enablePlatformDevTools && (
