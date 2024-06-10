@@ -12,10 +12,11 @@ export default function ActivationOrSynchroWithTrustchain({ goNext }: Props) {
 
   const hasError = false;
 
+  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
   const stuffHandledByTrustchain = useCallback(() => {
     goNext();
   }, [goNext]);
-
+  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
   useEffect(() => {
     setTimeout(() => {
       !hasError && stuffHandledByTrustchain();

@@ -61,7 +61,8 @@ const SectionGeneral = () => {
           <Row
             title={t("settings.display.walletSync")}
             desc={t("settings.display.walletSyncDesc")}
-            dataTestId="setting-walletSync-dropDown"
+            dataTestId="setting-walletSync"
+            id="setting-walletSync"
           >
             <WalletSync />
           </Row>

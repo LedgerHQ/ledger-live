@@ -22,7 +22,7 @@ export default function ManageBackupStep({ goToDeleteBackup }: ManageBackupStepP
   return (
     <Flex flexDirection="column" rowGap="24px">
       <TrackPage category={AnalyticsPage.ManageBackup} />
-      <Text fontSize={23} variant="large">
+      <Text fontSize={23} variant="large" color="neutral.c100">
         {t("walletSync.manageBackups.title")}
       </Text>
 
