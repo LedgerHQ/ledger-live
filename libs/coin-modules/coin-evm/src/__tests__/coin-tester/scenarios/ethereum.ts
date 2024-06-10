@@ -238,7 +238,6 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
     expect(account.nfts?.length).toBe(2);
   },
   getTransactions: address => makeScenarioTransactions({ address }),
-  mockIndexer: async () => {},
   beforeSync: async () => {
     await indexBlocks();
   },

@@ -39,7 +39,7 @@ export type Scenario<T extends TransactionCommon, A extends Account> = {
   }>;
   getTransactions: (address: string) => ScenarioTransaction<T, A>[];
   beforeSync?: () => Promise<void> | void;
-  mockIndexer: (account: Account, optimistic: Operation) => Promise<void>;
+  mockIndexer?: (account: Account, optimistic: Operation) => Promise<void>;
   beforeAll?: (account: Account) => Promise<void> | void;
   afterAll?: (account: Account) => Promise<void> | void;
   beforeEach?: (account: Account) => Promise<void> | void;

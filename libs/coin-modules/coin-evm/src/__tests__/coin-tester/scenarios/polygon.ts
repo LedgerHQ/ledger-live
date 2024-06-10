@@ -221,7 +221,6 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
   beforeSync: async () => {
     await indexBlocks();
   },
-  mockIndexer: async () => {},
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
@@ -239,7 +238,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
     expect(account.operations.length).toBe(7);
   },
   teardown: async () => {
-    await Promise.all([killSpeculos(), killAnvil()]);
     resetIndexer();
+    await Promise.all([killSpeculos(), killAnvil()]);
   },
 };
