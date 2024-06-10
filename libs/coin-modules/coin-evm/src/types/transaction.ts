@@ -115,9 +115,13 @@ export type EvmTransactionEIP1559Raw = EvmTransactionUntypedRaw & {
 
 export type TransactionRaw = EvmTransactionLegacyRaw | EvmTransactionEIP1559Raw;
 
-export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatus = TransactionStatusCommon & {
+  totalFees: BigNumber;
+};
 
-export type TransactionStatusRaw = TransactionStatusCommonRaw;
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  totalFees: string;
+};
 
 export type FeeHistory = {
   baseFeePerGas: string[];

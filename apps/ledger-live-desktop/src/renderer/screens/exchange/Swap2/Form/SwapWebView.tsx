@@ -212,6 +212,7 @@ const SwapWebView = ({
       from: sourceCurrencyId,
       to: targetCurrencyId,
       amountFrom: swapState?.fromAmount,
+      loading: swapState?.loading,
       addressFrom: addressFrom,
       addressTo: addressTo,
       networkFees: swapState?.estimatedFees,
@@ -232,6 +233,7 @@ const SwapWebView = ({
     fromCurrency,
     swapState?.estimatedFees,
     swapState?.fromAmount,
+    swapState?.loading,
     swapState?.provider,
     targetCurrencyId,
     sourceCurrencyId,
@@ -262,7 +264,6 @@ const SwapWebView = ({
 
   // Keep the previous UI
   // Display only the disabled swap button
-
   if (
     isDemo1Enabled &&
     (swapState.error ||

@@ -59,6 +59,7 @@ const status = {
   errors: {},
   warnings: {},
   estimatedFees: new BigNumber(0),
+  totalFees: new BigNumber(0),
   amount: new BigNumber(0),
   totalSpent: new BigNumber(0),
 };

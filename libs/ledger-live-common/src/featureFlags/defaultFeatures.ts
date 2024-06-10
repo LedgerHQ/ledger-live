@@ -74,6 +74,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyLineaSepolia: DEFAULT_FEATURE,
   currencyBlast: DEFAULT_FEATURE,
   currencyBlastSepolia: DEFAULT_FEATURE,
+  currencyScroll: DEFAULT_FEATURE,
+  currencyScrollSepolia: DEFAULT_FEATURE,
 };
 
 /**
@@ -94,7 +96,6 @@ export const DEFAULT_FEATURES: Features = {
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
-  staxWelcomeScreen: DEFAULT_FEATURE,
   listAppsV2minor1: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
@@ -414,6 +415,8 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+  ptxSwapExodusProvider: DEFAULT_FEATURE,
+  ptxSwapThorswapProvider: DEFAULT_FEATURE,
 
   llmAnalyticsOptInPrompt: {
     enabled: false,
@@ -457,7 +460,6 @@ export const DEFAULT_FEATURES: Features = {
 
   lldChatbotSupport: DEFAULT_FEATURE,
   llmChatbotSupport: DEFAULT_FEATURE,
-  supportDeviceStax: DEFAULT_FEATURE,
   supportDeviceEuropa: DEFAULT_FEATURE,
   lldRefreshMarketData: {
     ...DEFAULT_FEATURE,
@@ -473,6 +475,7 @@ export const DEFAULT_FEATURES: Features = {
   },
   spamReportNfts: DEFAULT_FEATURE,
   lldWalletSync: DEFAULT_FEATURE,
+  llmWalletSync: DEFAULT_FEATURE,
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
 };
 

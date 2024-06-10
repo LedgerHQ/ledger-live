@@ -48,7 +48,7 @@ export const getAccountShape: GetAccountShape = async info => {
     freshAddress: address,
     balance,
     spendableBalance,
-    operations: rawTxs.flatMap(mapTxToOps(accountId)),
+    operations: rawTxs.flatMap(mapTxToOps(accountId, address)),
     blockHeight: blockHeight.chain_tip.block_height,
   };
 

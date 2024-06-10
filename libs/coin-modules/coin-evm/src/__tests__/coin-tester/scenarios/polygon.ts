@@ -1,15 +1,17 @@
 import Eth from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
+import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
 import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
-import { makeAccount } from "../../fixtures/common.fixtures";
 import { Transaction as EvmTransaction } from "../../../types";
+import { getCoinConfig, setCoinConfig } from "../../../config";
+import { makeAccount } from "../../fixtures/common.fixtures";
+import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "../../../hw-getAddress";
-import { setCoinConfig } from "../../../config";
 import {
   ERC1155Interface,
   ERC20Interface,
@@ -18,8 +20,6 @@ import {
   impersonnateAccount,
   polygon,
 } from "../helpers";
-import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
-import { killAnvil, spawnAnvil } from "../anvil";
 
 const makeScenarioTransactions = ({ address }: { address: string }) => {
   const send1MaticTransaction: ScenarioTransaction<EvmTransaction> = {
@@ -137,6 +137,10 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
     const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
 
+    const lastBlockNumber = await provider.getBlockNumber();
+    // start indexing at next block
+    await setBlock(lastBlockNumber + 1);
+
     setCoinConfig(() => ({
       info: {
         status: {
@@ -156,6 +160,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
         },
       },
     }));
+    initMswHandlers(getCoinConfig(polygon).info);
 
     const currencyBridge = buildCurrencyBridge(signerContext);
     const accountBridge = buildAccountBridge(signerContext);
@@ -167,8 +172,6 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
     });
 
     const scenarioAccount = makeAccount(address, polygon);
-
-    await setBlock();
 
     // Send 100 USDC to the scenario account
     await impersonnateAccount({
@@ -207,11 +210,12 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
       addressToImpersonnate: "0x85d2151147d8347aac0a8cd07bb6cc363fcf88e1",
     });
 
-    await getLogs();
-
     return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };
   },
   getTransactions: address => makeScenarioTransactions({ address }),
+  beforeSync: async () => {
+    await indexBlocks();
+  },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
@@ -230,6 +234,6 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
   },
   teardown: async () => {
     await Promise.all([killSpeculos(), killAnvil()]);
-    clearExplorerAppendix();
+    resetIndexer();
   },
 };
