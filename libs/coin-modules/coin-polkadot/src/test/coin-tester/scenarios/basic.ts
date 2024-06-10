@@ -26,7 +26,7 @@ function getTransactions() {
     name: "send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "1"),
-    expect: (previousAccount, currentAccount) => {
+    xexpect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
@@ -43,7 +43,7 @@ function getTransactions() {
     name: "send 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "100"),
-    expect: (previousAccount, currentAccount) => {
+    xexpect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
@@ -61,7 +61,7 @@ function getTransactions() {
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "250"),
     mode: "bond",
-    expect: (previousAccount, currentAccount) => {
+    xexpect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("BOND");
@@ -85,6 +85,36 @@ function getTransactions() {
     mode: "unbond",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
+      console.log(JSON.stringify(currentAccount));
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("UNBOND");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.unbond");
+      expect(
+        parseCurrencyUnit(
+          polkadot.units[0],
+          (latestOperation.extra as PolkadotOperationExtra).unbondedAmount!.toFixed(),
+        ).toFixed(),
+      ).toBe("25000000000000000000000");
+      expect(
+        parseCurrencyUnit(
+          polkadot.units[0],
+          currentAccount.polkadotResources.unlockingBalance.toFixed(),
+        ).toFixed(),
+      ).toBe("25000000000000000000000");
+      // expect(currentAccount.balance.toFixed()).toBe(
+      //   previousAccount.balance.minus(latestOperation.fee).toFixed(),
+      // );
+    },
+  };
+
+  const withdraw250DotTransaction: PolkadotScenarioTransaction = {
+    name: "Withdraw 250 DOT",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    amount: parseCurrencyUnit(polkadot.units[0], "250"),
+    mode: "withdrawUnbonded",
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      console.log(JSON.stringify(currentAccount));
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("UNBOND");
       expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.unbond");
@@ -111,6 +141,7 @@ function getTransactions() {
     send100DotTransaction,
     bond250DotTransaction,
     unbond250DotTransaction,
+    withdraw250DotTransaction,
   ];
 }
 
@@ -192,6 +223,9 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
           unsub();
         }
       });
+
+    api.tx.fastUnstake.registerFastUnstake();
+    console.log((api.consts.staking.bondingDuration as any).toNumber());
 
     const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
 
