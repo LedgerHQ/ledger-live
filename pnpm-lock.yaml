@@ -2802,9 +2802,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-transport
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -2820,9 +2817,6 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      '@ton-community/ton-ledger':
-        specifier: ^7.0.1
-        version: 7.0.1(@ton/core@0.56.3)
       '@ton/core':
         specifier: ^0.56.1
         version: 0.56.3(@ton/crypto@3.2.0)
@@ -3478,7 +3472,10 @@ importers:
         version: 7.0.1(@ton/core@0.56.3)
       '@ton/core':
         specifier: ^0.56.1
-        version: 0.56.3
+        version: 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto':
+        specifier: ^3.2.0
+        version: 3.2.0
       '@types/bchaddrjs':
         specifier: ^0.4.0
         version: 0.4.3

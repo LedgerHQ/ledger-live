@@ -20,12 +20,16 @@ export async function getTransactions(
   const txs = await fetchTransactions(addr, { startLt });
   if (txs.transactions.length === 0) return txs;
   let tmpTxs: TonTransactionsList;
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
+  let isUncompletedResult = true;
+
+  while (isUncompletedResult) {
     const { lt, hash } = txs.transactions[txs.transactions.length - 1];
     tmpTxs = await fetchTransactions(addr, { startLt, endLt: lt });
     // we found the last transaction
-    if (tmpTxs.transactions.length === 1) break;
+    if (tmpTxs.transactions.length === 1) {
+      isUncompletedResult = false;
+      break;
+    }
     // it should always match
     if (hash !== tmpTxs.transactions[0].hash) throw Error("[ton] transaction hash does not match");
     tmpTxs.transactions.shift(); // first element is repeated
@@ -42,12 +46,16 @@ export async function getJettonTransfers(
   const txs = await fetchJettonTransactions(addr, { startLt });
   if (txs.length === 0) return txs;
   let tmpTxs: TonJettonTransfer[];
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
+  let isUncompletedResult = true;
+
+  while (isUncompletedResult) {
     const { transaction_hash, transaction_lt } = txs[txs.length - 1];
     tmpTxs = await fetchJettonTransactions(addr, { startLt, endLt: transaction_lt });
     // we found the last transaction
-    if (tmpTxs.length === 1) break;
+    if (tmpTxs.length === 1) {
+      isUncompletedResult = false;
+      break;
+    }
     // it should always match
     if (transaction_hash !== tmpTxs[0].transaction_hash)
       throw Error("[ton] transaction hash does not match");

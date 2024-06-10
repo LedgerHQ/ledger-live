@@ -5,29 +5,32 @@ import { toNano } from "@ton/core";
 import BigNumber from "bignumber.js";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import type { Transaction } from "./types";
-import { getAddress, getTonEstimatedFees, isJettonTransfer, transactionToHwParams } from "./utils";
+import { buildTonTransaction, getTonEstimatedFees, isJettonTransfer } from "./utils";
 
-const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
-  const accountInfo = await fetchAccountInfo(getAddress(a).address);
-  const subAccount = findSubAccountById(a, t.subAccountId ?? "");
+const prepareTransaction = async (
+  account: Account,
+  transaction: Transaction,
+): Promise<Transaction> => {
+  const accountInfo = await fetchAccountInfo(account.freshAddress);
+  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
   const tokenTransfer = Boolean(subAccount && isTokenAccount(subAccount));
 
-  const simpleTx = transactionToHwParams(t, accountInfo.seqno, a);
+  const simpleTx = buildTonTransaction(transaction, accountInfo.seqno, account);
   if (tokenTransfer && simpleTx.payload && isJettonTransfer(simpleTx.payload)) {
     simpleTx.payload = undefined;
   }
   let fees = BigNumber(toNano(0.5).toString());
   if (!tokenTransfer) {
-    fees = await getTonEstimatedFees(a, accountInfo.status === "uninit", simpleTx);
+    fees = await getTonEstimatedFees(account, accountInfo.status === "uninit", simpleTx);
   }
   let amount;
-  if (t.useAllAmount) {
-    amount = subAccount ? subAccount.spendableBalance : a.spendableBalance.minus(fees);
+  if (transaction.useAllAmount) {
+    amount = subAccount ? subAccount.spendableBalance : account.spendableBalance.minus(fees);
   } else {
-    amount = t.amount;
+    amount = transaction.amount;
   }
 
-  return defaultUpdateTransaction(t, { fees, amount });
+  return defaultUpdateTransaction(transaction, { fees, amount });
 };
 
 export default prepareTransaction;

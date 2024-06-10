@@ -19,12 +19,12 @@ SEND ${
   useAllAmount
     ? "MAX"
     : amount.isZero()
-    ? ""
-    : " " +
-      formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
-        showCode: true,
-        disableRounding: true,
-      })
+      ? ""
+      : " " +
+        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+          showCode: true,
+          disableRounding: true,
+        })
 }
 TO ${recipient}`;
 
@@ -38,15 +38,15 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-const toTransactionRaw = (t: Transaction): TransactionRaw => {
-  const common = toTransactionCommonRaw(t);
+const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
+  const common = toTransactionCommonRaw(transaction);
 
   return {
     ...common,
-    family: t.family,
-    amount: t.amount.toFixed(),
-    fees: t.fees.toFixed(),
-    comment: t.comment,
+    family: transaction.family,
+    amount: transaction.amount.toFixed(),
+    fees: transaction.fees.toFixed(),
+    comment: transaction.comment,
   };
 };
 

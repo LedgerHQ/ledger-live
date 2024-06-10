@@ -10,13 +10,12 @@ import { Transaction } from "@ledgerhq/coin-ton/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
-import { TonTransport } from "@ton-community/ton-ledger";
+import { TonTransport as Ton } from "@ton-community/ton-ledger";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
 import type { Resolver } from "../../hw/getAddress/types";
 
-const createSigner: CreateSigner<TonSigner> = (transport: Transport) =>
-  new TonTransport(transport) as TonSigner;
+const createSigner: CreateSigner<TonSigner> = (transport: Transport) => new Ton(transport);
 
 const getCoinConfig: TonCoinConfig = () =>
   getCurrencyConfiguration<ReturnType<TonCoinConfig>>(getCryptoCurrencyById("ton"));
