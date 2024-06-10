@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { setFlow, setStep } from "~/renderer/actions/walletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { useDispatch, useSelector } from "react-redux";
+import { setFlow } from "~/renderer/actions/walletSync";
+import {
+  Flow,
+  Step,
+  walletSyncHasBeenFaked,
+  walletSyncStepSelector,
+} from "~/renderer/reducers/walletSync";
 
 export type HookProps = {
   flow: Flow;
@@ -22,7 +27,12 @@ export const FlowOptions: Record<
     },
   },
   [Flow.Synchronize]: {
-    steps: {},
+    steps: {
+      1: Step.SynchronizeMode,
+      2: Step.SynchronizeWithQRCode,
+      3: Step.PinCode,
+      4: Step.Synchronized,
+    },
   },
   [Flow.ManageBackups]: {
     steps: {
@@ -45,28 +55,34 @@ export const FlowOptions: Record<
 export const STEPS_WITH_BACK: Step[] = [Step.ManageBackup, Step.DeleteBackup];
 
 export const useFlows = ({ flow }: HookProps) => {
-  const currentFlow = FlowOptions[flow];
+  // Only for MOCK purpose for hasBeenfaked and storedStep
+  const hasBeenfaked = useSelector(walletSyncHasBeenFaked);
+  const storedStep = useSelector(walletSyncStepSelector);
+  //----
 
+  const currentFlow = FlowOptions[flow];
   const maxStep = Object.keys(currentFlow.steps).length;
 
   const dispatch = useDispatch();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(
+    hasBeenfaked
+      ? Object.entries(currentFlow.steps).findIndex(([, value]) => value === storedStep) + 1 //When Faked
+      : 1, //Logical value
+  );
   const goToNextScene = () => {
     const newStep = currentStep < maxStep ? currentStep + 1 : currentStep;
-
-    dispatch(setStep(currentFlow.steps[newStep]));
+    dispatch(setFlow({ flow, step: currentFlow.steps[newStep] }));
     setCurrentStep(newStep);
   };
 
   const goToPreviousScene = () => {
     const newStep = currentStep > 1 ? currentStep - 1 : currentStep;
-    dispatch(setStep(currentFlow.steps[newStep]));
+    dispatch(setFlow({ flow, step: currentFlow.steps[newStep] }));
     setCurrentStep(newStep);
   };
 
   const resetFlows = () => {
-    dispatch(setFlow(Flow.Activation));
-    dispatch(setStep(Step.CreateOrSynchronize));
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
   };
 
   return {
