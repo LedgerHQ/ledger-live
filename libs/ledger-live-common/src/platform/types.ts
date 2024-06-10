@@ -7,6 +7,14 @@ import {
   FAMILIES,
 } from "@ledgerhq/live-app-sdk";
 import { z } from "zod";
+import { reverseRecord } from "../helpers";
+
+export const FAMILIES_MAPPING_PLATFORM_TO_LL = {
+  ethereum: "evm",
+  ripple: "xrp",
+} as const;
+
+export const FAMILIES_MAPPING_LL_TO_PLATFORM = reverseRecord(FAMILIES_MAPPING_PLATFORM_TO_LL);
 
 /**
  * this is a hack to add the "evm" family to the list of supported families of
@@ -15,7 +23,10 @@ import { z } from "zod";
  * "ethereum" family, following the "ethereum" / "evm" families merge
  * (and removal of the "ethereum" family)
  */
-export const PLATFORM_FAMILIES = [...Object.values(FAMILIES), "evm", "xrp"];
+export const PLATFORM_FAMILIES = [
+  ...Object.values(FAMILIES),
+  ...Object.values(FAMILIES_MAPPING_PLATFORM_TO_LL),
+];
 
 export { FAMILIES as PLATFORM_FAMILIES_ENUM };
 
