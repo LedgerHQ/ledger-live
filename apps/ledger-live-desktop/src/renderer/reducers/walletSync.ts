@@ -18,6 +18,12 @@ export enum Step {
   DeviceAction = "DeviceAction",
   CreateOrSynchronizeTrustChain = "CreateOrSynchronizeTrustChain",
   ActivationFinal = "ActivationFinal",
+
+  //Synchronize
+  SynchronizeMode = "SynchronizeMode",
+  SynchronizeWithQRCode = "SynchronizeWithQRCode",
+  PinCode = "PinCode",
+  Synchronized = "Synchronized",
 }
 
 export enum Flow {

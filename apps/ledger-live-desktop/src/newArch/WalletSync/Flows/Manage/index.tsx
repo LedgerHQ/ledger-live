@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useDispatch } from "react-redux";
-import { setFlow, setStep } from "~/renderer/actions/walletSync";
+import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { OptionContainer, Option, OptionProps } from "./Option";
 
@@ -18,20 +18,19 @@ const WalletSyncManage = () => {
 
   const dispatch = useDispatch();
 
-  const goToSynch = () => {
-    dispatch(setFlow(Flow.Synchronize));
+  const goToSync = () => {
+    dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
   };
 
   const goToManageBackups = () => {
-    dispatch(setFlow(Flow.ManageBackups));
-    dispatch(setStep(Step.ManageBackup));
+    dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.ManageBackup }));
   };
 
   const Options: OptionProps[] = [
     {
       label: t("walletSync.manage.synchronize.label"),
       description: t("walletSync.manage.synchronize.description"),
-      onClick: goToSynch,
+      onClick: goToSync,
       testId: "walletSync-synchronize",
     },
     {
