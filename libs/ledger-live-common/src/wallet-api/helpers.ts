@@ -158,9 +158,3 @@ export const stripHexPrefix = (str: string): string => {
 
   return isHexPrefixed(str) ? str.slice(2) : str;
 };
-
-export function reverseRecord<T extends PropertyKey, U extends PropertyKey>(
-  input: Record<T, U>,
-): Record<U, T> {
-  return Object.fromEntries(Object.entries(input).map(([key, value]) => [value, key]));
-}

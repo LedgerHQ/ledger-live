@@ -7,14 +7,14 @@ import {
   FAMILIES,
 } from "@ledgerhq/live-app-sdk";
 import { z } from "zod";
-import { reverseRecord } from "../wallet-api/helpers";
+import { reverseRecord } from "../helpers";
 
-export const FAMILIES_MAPPING_WAPI_TO_LL = {
+export const FAMILIES_MAPPING_PLATFORM_TO_LL = {
   ethereum: "evm",
   ripple: "xrp",
 } as const;
 
-export const FAMILIES_MAPPING_LL_TO_WAPI = reverseRecord(FAMILIES_MAPPING_WAPI_TO_LL);
+export const FAMILIES_MAPPING_LL_TO_PLATFORM = reverseRecord(FAMILIES_MAPPING_PLATFORM_TO_LL);
 
 /**
  * this is a hack to add the "evm" family to the list of supported families of
@@ -25,7 +25,7 @@ export const FAMILIES_MAPPING_LL_TO_WAPI = reverseRecord(FAMILIES_MAPPING_WAPI_T
  */
 export const PLATFORM_FAMILIES = [
   ...Object.values(FAMILIES),
-  ...Object.values(FAMILIES_MAPPING_WAPI_TO_LL),
+  ...Object.values(FAMILIES_MAPPING_PLATFORM_TO_LL),
 ];
 
 export { FAMILIES as PLATFORM_FAMILIES_ENUM };

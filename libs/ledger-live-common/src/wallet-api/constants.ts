@@ -2,7 +2,7 @@ import Fuse from "fuse.js";
 import { AppManifest } from "../wallet-api/types";
 
 import { FAMILIES } from "@ledgerhq/wallet-api-core";
-import { reverseRecord } from "./helpers";
+import { reverseRecord } from "../helpers";
 
 export const FAMILIES_MAPPING_WAPI_TO_LL = {
   ethereum: "evm",

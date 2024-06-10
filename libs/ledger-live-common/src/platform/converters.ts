@@ -3,8 +3,8 @@ import { isTokenAccount } from "../account";
 import byFamily from "../generated/platformAdapter";
 import type { Transaction } from "../generated/types";
 import {
-  FAMILIES_MAPPING_LL_TO_WAPI,
-  FAMILIES_MAPPING_WAPI_TO_LL,
+  FAMILIES_MAPPING_LL_TO_PLATFORM,
+  FAMILIES_MAPPING_PLATFORM_TO_LL,
   PlatformAccount,
   PlatformCurrency,
   PlatformCurrencyType,
@@ -76,7 +76,7 @@ export function currencyToPlatformCurrency(currency: PlatformSupportedCurrency):
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: FAMILIES_MAPPING_LL_TO_WAPI[currency.family] ?? currency.family,
+    family: FAMILIES_MAPPING_LL_TO_PLATFORM[currency.family] ?? currency.family,
     color: currency.color,
     units: currency.units.map(unit => ({
       name: unit.name,
@@ -93,7 +93,7 @@ export const getPlatformTransactionSignFlowInfos = (
   hasFeesProvided: boolean;
   liveTx: Partial<Transaction>;
 } => {
-  const liveFamily = FAMILIES_MAPPING_WAPI_TO_LL[platformTx.family] ?? platformTx.family;
+  const liveFamily = FAMILIES_MAPPING_PLATFORM_TO_LL[platformTx.family] ?? platformTx.family;
 
   const familyModule = byFamily[liveFamily];
 
