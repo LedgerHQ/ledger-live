@@ -1,11 +1,6 @@
 import React, { forwardRef } from "react";
 import { useSelector } from "react-redux";
-import {
-  Flow,
-  Step,
-  walletSyncFlowSelector,
-  walletSyncSelector,
-} from "~/renderer/reducers/walletSync";
+import { Flow, walletSyncFlowSelector } from "~/renderer/reducers/walletSync";
 import WalletSyncActivation from "LLD/WalletSync/Flows/Activation";
 import WalletSyncManage from "LLD/WalletSync/Flows/Manage";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
@@ -20,19 +15,13 @@ export interface BackRef {
 export interface BackProps {}
 
 export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => {
-  const walletSync = useSelector(walletSyncSelector);
   const walletSyncFlow = useSelector(walletSyncFlowSelector);
 
   switch (walletSyncFlow) {
     case Flow.Activation:
-      if (
-        walletSync.activated &&
-        ![Step.ActivationFinal, Step.BackupDeleted].includes(walletSync.step)
-      ) {
-        return <WalletSyncManage />;
-      } else {
-        return <WalletSyncActivation />;
-      }
+      return <WalletSyncActivation />;
+    case Flow.walletSyncActivated:
+      return <WalletSyncManage />;
     case Flow.Synchronize:
       return <SynchronizeWallet />;
     case Flow.ManageBackups:

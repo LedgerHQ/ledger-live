@@ -6,6 +6,7 @@ export enum Flow {
   Synchronize = "Synchronize",
   ManageInstances = "ManageInstances",
   ManageBackups = "ManageBackups",
+  walletSyncActivated = "walletSyncActivated",
 }
 
 export enum Step {
@@ -33,6 +34,9 @@ export enum Step {
   InstanceSuccesfullyDeleted = "InstanceSuccesfullyDeleted",
   InstanceErrorDeletion = "InstanceErrorDeletion",
   UnsecuredLedger = "UnsecuredLedger",
+
+  //walletSyncActivated
+  walletSyncActivated = "walletSyncActivated",
 }
 
 export type Instance = {
@@ -46,6 +50,7 @@ export type WalletSyncState = {
   flow: Flow;
   step: Step;
   instances: Instance[];
+  hasBeenfaked: boolean;
 };
 
 export const initialStateWalletSync: WalletSyncState = {
@@ -53,6 +58,7 @@ export const initialStateWalletSync: WalletSyncState = {
   flow: Flow.Activation,
   step: Step.CreateOrSynchronize,
   instances: [],
+  hasBeenfaked: false,
 };
 
 type HandlersPayloads = {
@@ -63,6 +69,7 @@ type HandlersPayloads = {
   WALLET_SYNC_CHANGE_REMOVE_INSTANCE: Instance;
   WALLET_SYNC_CHANGE_CLEAN_INSTANCES: undefined;
   WALLET_SYNC_RESET: undefined;
+  WALLET_SYNC_FAKED: boolean;
 };
 
 type WalletSyncHandlers<PreciseKey = true> = Handlers<
@@ -107,6 +114,10 @@ const handlers: WalletSyncHandlers = {
     instances: [],
   }),
   WALLET_SYNC_RESET: () => initialStateWalletSync,
+  WALLET_SYNC_FAKED: (state: WalletSyncState, { payload }: { payload: boolean }) => ({
+    ...state,
+    hasBeenfaked: payload,
+  }),
 };
 
 // Selectors
@@ -121,6 +132,9 @@ export const walletSyncStateSelector = (state: { walletSync: WalletSyncState }) 
 
 export const walletSyncInstancesSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.instances;
+
+export const walletSyncFakedSelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.hasBeenfaked;
 
 export default handleActions<WalletSyncState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as WalletSyncHandlers<false>,

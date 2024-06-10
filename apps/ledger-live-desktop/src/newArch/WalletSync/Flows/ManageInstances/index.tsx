@@ -12,7 +12,13 @@ import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
 import { UnsecuredError } from "../Activation/03-UnsecuredError";
 
 const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) => {
-  const { currentStep, goToNextScene, goToPreviousScene, FlowOptions, resetFlows } = useFlows({
+  const {
+    currentStep,
+    goToNextScene,
+    goToPreviousScene,
+    FlowOptions,
+    goToWelcomeScreenWalletSync,
+  } = useFlows({
     flow: Flow.ManageInstances,
   });
 
@@ -24,7 +30,7 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
 
   const goBack = () => {
     if (currentStep === FlowOptions[Flow.ManageInstances].steps[1]) {
-      resetFlows();
+      goToWelcomeScreenWalletSync();
     } else {
       goToPreviousScene();
     }

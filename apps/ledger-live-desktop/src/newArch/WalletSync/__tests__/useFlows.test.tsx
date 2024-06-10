@@ -58,7 +58,7 @@ describe("useFlows", () => {
     expect(result.current.currentStep).toBe(Object.values(steps)[0]);
 
     act(() => {
-      result.current.resetFlows();
+      result.current.goToWelcomeScreenWalletSync();
     });
     expect(store.getState().walletSync.step).toBe(Step.CreateOrSynchronize);
     expect(store.getState().walletSync.flow).toBe(Flow.Activation);

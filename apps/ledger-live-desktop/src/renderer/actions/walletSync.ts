@@ -10,6 +10,11 @@ export const setFlow = (payload: { flow: Flow; step: Step }) => ({
   payload,
 });
 
+export const setFaked = (payload: boolean) => ({
+  type: "WALLET_SYNC_FAKED",
+  payload,
+});
+
 export const addInstance = (payload: Instance) => ({
   type: "WALLET_SYNC_CHANGE_ADD_INSTANCE",
   payload,
