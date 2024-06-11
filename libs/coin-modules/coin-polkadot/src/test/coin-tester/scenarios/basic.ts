@@ -107,24 +107,40 @@ function getTransactions() {
     },
   };
 
-  const nomminateTransaction: PolkadotScenarioTransaction = {
-    name: "Nomiate",
+  const rebond50DotTransaction: PolkadotScenarioTransaction = {
+    name: "Rebond 50 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    mode: "nominate",
-    // https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-rpc.publicnode.com#/staking
-    validators: [
-      "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
-      "13TrdLhMVLcwcEhMYLcqrkxAgq9M5gnK1LZKAF4VupVfQDUg",
-      "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
-    ],
+    amount: parseCurrencyUnit(polkadot.units[0], "50"),
+    mode: "rebond",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("NOMINATE");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe(
-        "staking.nominate",
-      );
-      expect((latestOperation.extra as PolkadotOperationExtra).validators?.length).toBe(3);
+      expect(latestOperation.type).toBe("BOND");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.rebond");
+      expect(
+        parseCurrencyUnit(
+          polkadot.units[0],
+          (latestOperation.extra as PolkadotOperationExtra).bondedAmount!.toFixed(),
+        ).toFixed(),
+      ).toBe("5000000000000000000000");
+      expect(
+        parseCurrencyUnit(
+          polkadot.units[0],
+          currentAccount.polkadotResources.unlockingBalance.toFixed(),
+        ).toFixed(),
+      ).toBe("20000000000000000000000");
+    },
+  };
+
+  const chillTransaction: PolkadotScenarioTransaction = {
+    name: "Chill",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    mode: "chill",
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("CHILL");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.chill");
     },
   };
 
@@ -159,11 +175,34 @@ function getTransactions() {
   };
   */
 
+  const nomminateTransaction: PolkadotScenarioTransaction = {
+    name: "Nomiate",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    mode: "nominate",
+    // https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-rpc.publicnode.com#/staking
+    validators: [
+      "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
+      "13TrdLhMVLcwcEhMYLcqrkxAgq9M5gnK1LZKAF4VupVfQDUg",
+      "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
+    ],
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("NOMINATE");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe(
+        "staking.nominate",
+      );
+      expect((latestOperation.extra as PolkadotOperationExtra).validators?.length).toBe(3);
+    },
+  };
+
   return [
     send1DotTransaction,
     send100DotTransaction,
     bond250DotTransaction,
     unbond250DotTransaction,
+    rebond50DotTransaction,
+    chillTransaction,
     // withdraw250DotTransaction,
     nomminateTransaction,
   ];
@@ -292,6 +331,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
           amount = new BigNumber(polkadotExtra.transferAmount!);
           break;
         case "staking.bond":
+        case "staking.rebond":
           amount = new BigNumber(polkadotExtra.bondedAmount!);
           break;
         case "staking.unbond":
@@ -308,6 +348,8 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
               },
             ],
           };
+          break;
+        case "staking.chill":
           break;
         default:
           throw new Error(`Unsupported pallet method: ${polkadotExtra.palletMethod}`);
