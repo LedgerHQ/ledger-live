@@ -2,12 +2,12 @@ import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
 import type { IcxTransaction, SignedTransaction } from "icon-sdk-js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-env";
 import { isTestnet } from "../logic";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
 import { IconAccount } from "../types";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { IconDelegationType } from "./api-type";
+import { getCoinConfig } from "../config";
 
 const { HttpProvider } = IconService;
 const { IconBuilder } = IconService;
@@ -17,17 +17,19 @@ const { IconBuilder } = IconService;
  * @param {currency} currency
  */
 export function getRpcUrl(currency: CryptoCurrency): string {
-  let rpcUrl = getEnv("ICON_NODE_ENDPOINT");
+  const currencyConfig = getCoinConfig();
+  let rpcUrl = currencyConfig.infra.node_endpoint;
   if (isTestnet(currency)) {
-    rpcUrl = getEnv("ICON_TESTNET_NODE_ENDPOINT");
+    rpcUrl = currencyConfig.infra.node_testnet_endpoint;
   }
   return rpcUrl;
 }
 
 export function getDebugRpcUrl(currency: CryptoCurrency): string {
-  let rpcUrl = getEnv("ICON_DEBUG_ENDPOINT");
+  const currencyConfig = getCoinConfig();
+  let rpcUrl = currencyConfig.infra.debug_endpoint;
   if (isTestnet(currency)) {
-    rpcUrl = getEnv("ICON_TESTNET_DEBUG_ENDPOINT");
+    rpcUrl = currencyConfig.infra.debug_testnet_endpoint;
   }
   return rpcUrl;
 }

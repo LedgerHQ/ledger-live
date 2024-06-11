@@ -1,7 +1,6 @@
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LIMIT } from "../constants";
@@ -10,6 +9,7 @@ import { AccountType, IconTransactionType } from "./api-type";
 import { log } from "@ledgerhq/logs";
 import { IconOperation } from "../types";
 import querystring from "querystring";
+import { getCoinConfig } from "../config";
 
 /**
  * Returns Testnet API URL if the current network is testnet
@@ -17,9 +17,10 @@ import querystring from "querystring";
  * @param {network} network
  */
 function getApiUrl(network: CryptoCurrency): string {
-  let apiUrl = getEnv("ICON_INDEXER_ENDPOINT");
+  const currencyConfig = getCoinConfig();
+  let apiUrl = currencyConfig.infra.indexer;
   if (isTestnet(network)) {
-    apiUrl = getEnv("ICON_TESTNET_INDEXER_ENDPOINT");
+    apiUrl = currencyConfig.infra.indexer_testnet;
   }
   return apiUrl;
 }
