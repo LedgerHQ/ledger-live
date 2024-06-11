@@ -181,7 +181,7 @@ export const MainTestScreen = () => {
   const [drawer3RequestingToBeOpened, setDrawer3RequestingToBeOpened] = useState(false);
   const [drawer4ForcingToBeOpened, setDrawer4ForcingToBeOpened] = useState(false);
 
-  const handleDrawer1Close = useCallback(() => setDrawer1RequestingToBeOpened(false), []);
+  const handleDrawer1Close = () => setDrawer1RequestingToBeOpened(false); // purposely not using useCallback to check if drawer behaves well when onClose prop changes
   const handleDrawer2Close = useCallback(() => setDrawer2RequestingToBeOpened(false), []);
   const handleDrawer3Close = useCallback(() => setDrawer3RequestingToBeOpened(false), []);
   const handleDrawer4Close = useCallback(() => setDrawer4ForcingToBeOpened(false), []);
