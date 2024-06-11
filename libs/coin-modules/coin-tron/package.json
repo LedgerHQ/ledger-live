@@ -113,6 +113,7 @@
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "jest": "^29.7.0",
+    "msw": "^2.0.11",
     "ts-jest": "^29.1.1"
   },
   "scripts": {
@@ -125,6 +126,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported"
   }
 }

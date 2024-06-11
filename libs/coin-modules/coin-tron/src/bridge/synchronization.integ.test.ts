@@ -63,15 +63,14 @@ const dummyAccount: TronAccount = {
 describe("Tron Accounts", () => {
   test("should always have tronResources", async () => {
     const signer = jest.fn();
-    const coinConfig = () =>
-      ({
-        status: {
-          type: "active",
-        },
-        explorer: {
-          url: "https://tron.coin.ledger.com",
-        },
-      }) as TronCoinConfig;
+    const coinConfig = (): TronCoinConfig => ({
+      status: {
+        type: "active",
+      },
+      explorer: {
+        url: "https://tron.coin.ledger.com",
+      },
+    });
     const bridge = createBridges(signer, coinConfig);
     const account = await syncAccount<Transaction, TronAccount>(
       bridge.accountBridge,

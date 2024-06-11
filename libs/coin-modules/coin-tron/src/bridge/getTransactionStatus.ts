@@ -38,14 +38,17 @@ import {
 } from "../types/errors";
 import getEstimatedFees from "./getEstimateFees";
 
-const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<TransactionStatus> => {
+const getTransactionStatus = async (
+  acc: TronAccount,
+  transaction: Transaction,
+): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const { family, mode, recipient, resource, votes, useAllAmount = false } = t;
-  const tokenAccount = !t.subAccountId
+  const { family, mode, recipient, resource, votes, useAllAmount = false } = transaction;
+  const tokenAccount = !transaction.subAccountId
     ? null
-    : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
-  const account = tokenAccount || a;
+    : acc.subAccounts && acc.subAccounts.find(ta => ta.id === transaction.subAccountId);
+  const account = tokenAccount || acc;
   const isContractAddressRecipient = (await fetchTronContract(recipient)) !== undefined;
 
   if (mode === "send" && !recipient) {
@@ -53,11 +56,11 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
   }
 
   if (["send", "unDelegateResource", "legacyUnfreeze"].includes(mode)) {
-    if (recipient === a.freshAddress) {
+    if (recipient === acc.freshAddress) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else if (recipient && !(await validateAddress(recipient))) {
       errors.recipient = new InvalidAddress(undefined, {
-        currencyName: a.currency.name,
+        currencyName: acc.currency.name,
       });
     } else if (
       recipient &&
@@ -73,10 +76,10 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
   }
 
   if (mode === "unfreeze") {
-    const { bandwidth, energy } = a.tronResources.frozen;
-    if (resource === "BANDWIDTH" && t.amount.gt(bandwidth?.amount || new BigNumber(0))) {
+    const { bandwidth, energy } = acc.tronResources.frozen;
+    if (resource === "BANDWIDTH" && transaction.amount.gt(bandwidth?.amount || new BigNumber(0))) {
       errors.resource = new TronNoFrozenForBandwidth();
-    } else if (resource === "ENERGY" && t.amount.gt(energy?.amount || new BigNumber(0))) {
+    } else if (resource === "ENERGY" && transaction.amount.gt(energy?.amount || new BigNumber(0))) {
       errors.resource = new TronNoFrozenForEnergy();
     }
   }
@@ -85,8 +88,8 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     const now = new Date();
     const expirationDate =
       resource === "ENERGY"
-        ? a.tronResources.legacyFrozen.energy?.expiredAt
-        : a.tronResources.legacyFrozen.bandwidth?.expiredAt;
+        ? acc.tronResources.legacyFrozen.energy?.expiredAt
+        : acc.tronResources.legacyFrozen.bandwidth?.expiredAt;
 
     if (!expirationDate) {
       if (resource === "BANDWIDTH") {
@@ -102,14 +105,14 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
   if (mode === "withdrawExpireUnfreeze") {
     const now = new Date();
     if (
-      (!a.tronResources.unFrozen.bandwidth || a.tronResources.unFrozen.bandwidth.length === 0) &&
-      (!a.tronResources.unFrozen.energy || a.tronResources.unFrozen.energy.length === 0)
+      (!acc.tronResources.unFrozen.bandwidth || acc.tronResources.unFrozen.bandwidth.length === 0) &&
+      (!acc.tronResources.unFrozen.energy || acc.tronResources.unFrozen.energy.length === 0)
     ) {
       errors.resource = new TronNoUnfrozenResource();
     } else {
       const unfreezingResources = [
-        ...(a.tronResources.unFrozen.bandwidth ?? []),
-        ...(a.tronResources.unFrozen.energy ?? []),
+        ...(acc.tronResources.unFrozen.bandwidth ?? []),
+        ...(acc.tronResources.unFrozen.energy ?? []),
       ];
 
       const hasNoExpiredResource = !unfreezingResources.some(
@@ -133,9 +136,9 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     }
   }
 
-  if (mode === "unDelegateResource" && resource && a.tronResources) {
-    const delegatedResourceAmount = await getDelegatedResource(a, t, resource);
-    if (delegatedResourceAmount.lt(t.amount)) {
+  if (mode === "unDelegateResource" && resource && acc.tronResources) {
+    const delegatedResourceAmount = await getDelegatedResource(acc, transaction, resource);
+    if (delegatedResourceAmount.lt(transaction.amount)) {
       errors.resource = new TronInvalidUnDelegateResourceAmount();
     }
   }
@@ -152,13 +155,13 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
 
       if (!isValidAddresses) {
         errors.vote = new InvalidAddress("", {
-          currencyName: a.currency.name,
+          currencyName: acc.currency.name,
         });
       } else if (!isValidVoteCounts) {
         errors.vote = new TronInvalidVoteCount();
       } else {
         const totalVoteCount = sumBy(votes, "voteCount");
-        const tronPower = (a.tronResources && a.tronResources.tronPower) || 0;
+        const tronPower = (acc.tronResources && acc.tronResources.tronPower) || 0;
 
         if (totalVoteCount > tronPower) {
           errors.vote = new TronNotEnoughTronPower();
@@ -173,7 +176,7 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       ? new Date(lastRewardOp.date.getTime() + 24 * 60 * 60 * 1000) // date + 24 hours
       : new Date();
 
-    if (a.tronResources && a.tronResources.unwithdrawnReward.eq(0)) {
+    if (acc.tronResources && acc.tronResources.unwithdrawnReward.eq(0)) {
       errors.reward = new TronNoReward();
     } else if (lastRewardOp && claimableRewardDate.valueOf() > new Date().valueOf()) {
       errors.reward = new TronRewardNotAvailable("Reward is not claimable", {
@@ -185,12 +188,12 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
   const estimatedFees =
     Object.entries(errors).length > 0
       ? new BigNumber(0)
-      : await getEstimatedFees(a, t, isContractAddressRecipient);
+      : await getEstimatedFees(acc, transaction, isContractAddressRecipient);
   const balance =
     account.type === "Account"
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
       : account.balance;
-  const amount = useAllAmount ? balance : t.amount;
+  const amount = useAllAmount ? balance : transaction.amount;
   const amountSpent = ["send", "freeze", "undelegateResource"].includes(mode)
     ? amount
     : new BigNumber(0);
@@ -210,11 +213,11 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       errors.amount = useAllAmount ? new NotEnoughBalance() : new AmountRequired();
     } else if (amount.gt(balance)) {
       errors.amount = new NotEnoughBalance();
-    } else if (account.type === "TokenAccount" && estimatedFees.gt(a.balance)) {
+    } else if (account.type === "TokenAccount" && estimatedFees.gt(acc.balance)) {
       errors.amount = new NotEnoughBalance();
     }
 
-    const energy = (a.tronResources && a.tronResources.energy) || new BigNumber(0);
+    const energy = (acc.tronResources && acc.tronResources.energy) || new BigNumber(0);
 
     // For the moment, we rely on this rule:
     // Add a 'TronNotEnoughEnergy' warning only if the account sastifies theses 3 conditions:
@@ -237,7 +240,7 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
   }
 
   if (!errors.recipient && estimatedFees.gt(0)) {
-    const fees = formatCurrencyUnit(getAccountCurrency(a).units[0], estimatedFees, {
+    const fees = formatCurrencyUnit(getAccountCurrency(acc).units[0], estimatedFees, {
       showCode: true,
       disableRounding: true,
     });
