@@ -196,6 +196,25 @@ function getTransactions() {
     },
   };
 
+  const claimRewardTransaction: PolkadotScenarioTransaction = {
+    name: "Claim reward",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    mode: "claimReward",
+    validators: [
+      "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
+      "13TrdLhMVLcwcEhMYLcqrkxAgq9M5gnK1LZKAF4VupVfQDUg",
+      "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
+    ],
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("FEES");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe(
+        "staking.payoutStakers",
+      );
+    },
+  };
+
   return [
     send1DotTransaction,
     send100DotTransaction,
@@ -205,6 +224,7 @@ function getTransactions() {
     chillTransaction,
     // withdraw250DotTransaction,
     nomminateTransaction,
+    claimRewardTransaction,
   ];
 }
 
@@ -323,6 +343,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
       const polkadotExtra = optimistic.extra as PolkadotOperationExtra;
       let amount = new BigNumber(0);
       let staking: ExplorerExtrinsic["staking"] = {} as ExplorerExtrinsic["staking"];
+      let validatorStash = "";
 
       switch (polkadotExtra.palletMethod) {
         case "balances.transfer":
@@ -351,6 +372,9 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
           break;
         case "staking.chill":
           break;
+        case "staking.payoutStakers":
+          validatorStash = extrinsic.args.validator_stash!;
+          break;
         default:
           throw new Error(`Unsupported pallet method: ${polkadotExtra.palletMethod}`);
       }
@@ -368,6 +392,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
         amount: amount.toNumber(),
         partialFee: optimistic.fee.toNumber(),
         staking: staking!,
+        validatorStash,
         index: 2, // Not used by coin-module
         isBatch: false, // batch transactions are not supported yet
       });

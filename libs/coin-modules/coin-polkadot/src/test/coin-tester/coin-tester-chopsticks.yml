@@ -9,8 +9,6 @@ runtime-log-level: 5
 
 import-storage:
   System:
-    Staking:
-      bondingDuration: 0
     Account:
       -
         -
