@@ -1339,7 +1339,7 @@
       "subtitle": "Select how you’d like to access your wallet:",
       "connect": "Connect your Ledger",
       "sync": "Sync with Ledger Live desktop",
-      "walletSync": "Sync with another Ledger Live"
+      "walletSync": "Sync with another Ledger Live app"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",

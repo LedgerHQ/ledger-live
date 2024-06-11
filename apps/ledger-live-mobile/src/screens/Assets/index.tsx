@@ -65,7 +65,7 @@ function Assets() {
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
 
-  const reoponAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
+  const reopenAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
 
   const renderItem = useCallback(
     ({ item }: { item: Asset }) => (
@@ -121,7 +121,7 @@ function Assets() {
         <AddAccountDrawer
           isOpened={isAddModalOpened}
           onClose={closeAddModal}
-          reopenDrawer={reoponAddModal}
+          reopenDrawer={reopenAddModal}
         />
       </SafeAreaView>
     </ReactNavigationPerformanceView>

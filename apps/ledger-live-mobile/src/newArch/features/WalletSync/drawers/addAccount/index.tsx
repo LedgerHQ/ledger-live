@@ -2,21 +2,14 @@
 import React from "react";
 import useAddAccountDrawer from "LLM/features/WalletSync/hooks/useAddAccountDrawer";
 import DummyDrawer from "../DummyDrawer";
-import AddAccountDrawerRow from "./AddAccountDrawerRow";
+import ActionRow from "../components/ActionRow";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { useTranslation } from "react-i18next";
 import { TrackScreen } from "~/analytics";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { AddAccountDrawerProps } from "LLM/features/WalletSync/types/addAccountDrawer";
 
-/** This drawer component should be only used in assets screen */
-
-type AddAccountDrawerProps = {
-  isOpened: boolean;
-  onClose: () => void;
-  reopenDrawer: () => void;
-};
-
-const AddAccountDrawer = ({ isOpened, onClose, reopenDrawer }: AddAccountDrawerProps) => {
+const AddAccountDrawer = ({ isOpened, currency, onClose, reopenDrawer }: AddAccountDrawerProps) => {
   const { t } = useTranslation();
   const rows = [];
 
@@ -30,7 +23,7 @@ const AddAccountDrawer = ({ isOpened, onClose, reopenDrawer }: AddAccountDrawerP
     onClickWalletSync,
     onCloseAddAccountDrawer,
     onCloseWalletSyncDrawer,
-  } = useAddAccountDrawer({ isOpened, onClose, reopenDrawer });
+  } = useAddAccountDrawer({ isOpened, currency, onClose, reopenDrawer });
 
   if (!isReadOnlyModeEnabled) {
     rows.push({
@@ -72,7 +65,7 @@ const AddAccountDrawer = ({ isOpened, onClose, reopenDrawer }: AddAccountDrawerP
         </Text>
         <Flex flexDirection="column" rowGap={16}>
           {rows.map((row, index) => (
-            <AddAccountDrawerRow
+            <ActionRow
               key={index}
               title={t(row.titleKey)}
               description={t(row.descriptionKey)}

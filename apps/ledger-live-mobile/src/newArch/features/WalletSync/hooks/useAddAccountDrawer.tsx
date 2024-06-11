@@ -3,24 +3,33 @@ import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName } from "~/const";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { track } from "~/analytics";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AddAccountDrawerProps } from "LLM/features/WalletSync/types/addAccountDrawer";
 
-type AddAccountDrawerProps = {
-  isOpened: boolean;
-  onClose: () => void;
-  reopenDrawer: () => void;
-};
-
-const useAddAccountDrawer = ({ isOpened, onClose, reopenDrawer }: AddAccountDrawerProps) => {
+const useAddAccountDrawer = ({
+  isOpened,
+  currency,
+  onClose,
+  reopenDrawer,
+}: AddAccountDrawerProps) => {
   const navigation = useNavigation<BaseNavigation>();
   const walletSyncFeatureFlag = useFeature("llmWalletSync");
 
   const isReadOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const isWalletSyncEnabled = walletSyncFeatureFlag?.enabled;
+  const hasCurrency = !!currency;
 
   const [isWalletSyncDrawerVisible, setWalletSyncDrawerVisible] = useState(false);
+
+  const navigationParams = useMemo(() => {
+    return hasCurrency
+      ? currency.type === "TokenCurrency"
+        ? { token: currency }
+        : { currency }
+      : {};
+  }, [hasCurrency, currency]);
 
   const trackButtonClick = useCallback((button: string) => {
     track("button_clicked", {
@@ -33,13 +42,13 @@ const useAddAccountDrawer = ({ isOpened, onClose, reopenDrawer }: AddAccountDraw
     trackButtonClick("Import from Desktop");
     onClose();
     navigation.navigate(NavigatorName.ImportAccounts);
-  }, [trackButtonClick, navigation, onClose]);
+  }, [navigation, onClose, trackButtonClick]);
 
   const onClickAdd = useCallback(() => {
     trackButtonClick("With your Ledger");
     onClose();
-    navigation.navigate(NavigatorName.AddAccounts);
-  }, [trackButtonClick, navigation, onClose]);
+    navigation.navigate(NavigatorName.AddAccounts, navigationParams);
+  }, [navigation, navigationParams, onClose, trackButtonClick]);
 
   const onClickWalletSync = useCallback(() => {
     trackButtonClick("With Wallet Sync");
