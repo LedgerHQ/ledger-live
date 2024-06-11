@@ -3,13 +3,13 @@ import {
   getMainAccount,
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
-import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import type { Transaction } from "./types";
 import { buildTonTransaction, getTonEstimatedFees } from "./utils";
 
-const estimateMaxSpendable = async ({
+const estimateMaxSpendable: AccountBridge<Transaction, Account>["estimateMaxSpendable"] = async ({
   account,
   parentAccount,
   transaction,
