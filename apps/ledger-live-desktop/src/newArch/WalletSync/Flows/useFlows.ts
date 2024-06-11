@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import {
   Flow,
   Step,
-  walletSyncHasBeenFaked,
+  walletSyncFakedSelector,
+  walletSyncFlowSelector,
+  walletSyncStateSelector,
   walletSyncStepSelector,
 } from "~/renderer/reducers/walletSync";
 
 export type HookProps = {
-  flow: Flow;
+  flow?: Flow;
 };
 
 export const FlowOptions: Record<
@@ -42,7 +44,19 @@ export const FlowOptions: Record<
     },
   },
   [Flow.ManageInstances]: {
-    steps: {},
+    steps: {
+      1: Step.SynchronizedInstances,
+      2: Step.DeviceActionInstance,
+      3: Step.DeleteInstanceWithTrustChain,
+      4: Step.InstanceSuccesfullyDeleted,
+      5: Step.InstanceErrorDeletion,
+      6: Step.UnsecuredLedger,
+    },
+  },
+  [Flow.walletSyncActivated]: {
+    steps: {
+      1: Step.walletSyncActivated,
+    },
   },
 };
 
@@ -52,46 +66,57 @@ export const FlowOptions: Record<
  * depending on the current step and the current flow.
  *
  */
-export const STEPS_WITH_BACK: Step[] = [Step.ManageBackup, Step.DeleteBackup];
+export const STEPS_WITH_BACK: Step[] = [
+  Step.ManageBackup,
+  Step.DeleteBackup,
+  Step.SynchronizedInstances,
+];
 
 export const useFlows = ({ flow }: HookProps) => {
-  // Only for MOCK purpose for hasBeenfaked and storedStep
-  const hasBeenfaked = useSelector(walletSyncHasBeenFaked);
-  const storedStep = useSelector(walletSyncStepSelector);
-  //----
-
-  const currentFlow = FlowOptions[flow];
-  const maxStep = Object.keys(currentFlow.steps).length;
-
   const dispatch = useDispatch();
-  const [currentStep, setCurrentStep] = useState(
-    hasBeenfaked
-      ? Object.entries(currentFlow.steps).findIndex(([, value]) => value === storedStep) + 1 //When Faked
-      : 1, //Logical value
-  );
+
+  const hasBeenFaked = useSelector(walletSyncFakedSelector);
+
+  useEffect(() => {
+    if (flow && !hasBeenFaked) {
+      dispatch(setFlow({ flow, step: FlowOptions[flow].steps[1] }));
+    }
+  }, [dispatch, flow, hasBeenFaked]);
+
+  const walletSyncActivated = useSelector(walletSyncStateSelector);
+  const currentFlow = useSelector(walletSyncFlowSelector);
+  const currentStep = useSelector(walletSyncStepSelector);
+
+  const stepsRecord = FlowOptions[currentFlow].steps;
+  const maxStep = Object.keys(stepsRecord).length;
+
+  const findIndex = (step: Step) => Object.values(stepsRecord).findIndex(s => s === step);
+
   const goToNextScene = () => {
-    const newStep = currentStep < maxStep ? currentStep + 1 : currentStep;
-    dispatch(setFlow({ flow, step: currentFlow.steps[newStep] }));
-    setCurrentStep(newStep);
+    const currentIndex = findIndex(currentStep) + 1;
+    const newStep = currentIndex < maxStep ? currentIndex + 1 : currentIndex;
+    dispatch(setFlow({ flow: currentFlow, step: stepsRecord[newStep] }));
   };
-
   const goToPreviousScene = () => {
-    const newStep = currentStep > 1 ? currentStep - 1 : currentStep;
-    dispatch(setFlow({ flow, step: currentFlow.steps[newStep] }));
-    setCurrentStep(newStep);
+    const currentIndex = findIndex(currentStep) + 1;
+    const newStep = currentIndex > 1 ? currentIndex - 1 : currentIndex;
+    dispatch(setFlow({ flow: currentFlow, step: stepsRecord[newStep] }));
   };
 
-  const resetFlows = () => {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+  const goToWelcomeScreenWalletSync = () => {
+    if (walletSyncActivated) {
+      dispatch(setFlow({ flow: Flow.walletSyncActivated, step: Step.walletSyncActivated }));
+    } else {
+      dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+    }
   };
 
   return {
     currentFlow,
-    currentStep: currentFlow.steps[currentStep],
+    currentStep,
     goToNextScene,
     goToPreviousScene,
-    setCurrentStep,
     FlowOptions,
-    resetFlows,
+    goToWelcomeScreenWalletSync,
   };
 };

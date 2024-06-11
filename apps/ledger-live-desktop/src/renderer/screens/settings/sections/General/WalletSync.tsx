@@ -3,10 +3,10 @@ import Button from "~/renderer/components/Button";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Flow, Step, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
-import { setFaked, setFlow } from "~/renderer/actions/walletSync";
+import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
+import { resetWalletSync } from "~/renderer/actions/walletSync";
 import { BackRef, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
-import { STEPS_WITH_BACK } from "LLD/WalletSync/Flows/useFlows";
+import { STEPS_WITH_BACK, useFlows } from "LLD/WalletSync/Flows/useFlows";
 
 /**
  *
@@ -18,13 +18,14 @@ import { STEPS_WITH_BACK } from "LLD/WalletSync/Flows/useFlows";
  */
 
 const WalletSyncRow = () => {
+  const { goToWelcomeScreenWalletSync } = useFlows({});
   const childRef = useRef<BackRef>(null);
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const currentStep = useSelector(walletSyncStepSelector);
-
+  const hasBeenFaked = useSelector(walletSyncFakedSelector);
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
 
   const handleBack = () => {
@@ -39,12 +40,14 @@ const WalletSyncRow = () => {
   };
 
   const openDrawer = () => {
+    if (!hasBeenFaked) {
+      goToWelcomeScreenWalletSync();
+    }
     setOpen(true);
   };
 
   const resetFlow = () => {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
-    dispatch(setFaked(false));
+    dispatch(resetWalletSync());
   };
 
   return (

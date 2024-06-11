@@ -10,10 +10,12 @@ import DeviceActionStep from "./02-DeviceActionStep";
 import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrustchain";
 import ActivationFinalStep from "./04-ActivationFinalStep";
 import { useBackup } from "../ManageBackup/useBackup";
+import { useInstances } from "../ManageInstances/useInstances";
 
 const WalletSyncActivation = () => {
   const dispatch = useDispatch();
   const { hasBackup, createBackup } = useBackup();
+  const { createInstance } = useInstances();
 
   const { currentStep, goToNextScene } = useFlows({ flow: Flow.Activation });
 
@@ -24,6 +26,11 @@ const WalletSyncActivation = () => {
   const createNewBackupAction = () => {
     goToNextScene();
     createBackup();
+    createInstance({
+      name: "Iphone 8",
+      id: "1",
+      typeOfDevice: "mobile",
+    });
   };
 
   const getStep = () => {
