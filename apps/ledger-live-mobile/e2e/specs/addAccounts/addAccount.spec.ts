@@ -1,11 +1,12 @@
-import { expect } from "detox";
 import { knownDevice } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
-import { getElementByText, waitForElementByText } from "../../helpers";
 import { Application } from "../../page/index";
 
 let app: Application;
 let deviceAction: DeviceAction;
+
+const testedCurrency = "bitcoin";
+const expectedBalance = "1.19576\u00a0BTC";
 
 describe("Add account from modal", () => {
   beforeAll(async () => {
@@ -23,18 +24,18 @@ describe("Add account from modal", () => {
 
   $TmsLink("B2CQA-101");
   it("add Bitcoin accounts", async () => {
-    await app.addAccount.selectCurrency("bitcoin");
+    await app.addAccount.selectCurrency(testedCurrency);
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
     await app.addAccount.startAccountsDiscovery();
-    await expect(getElementByText("Bitcoin 2")).toBeVisible();
+    await app.addAccount.expectAccountDiscovery(testedCurrency, 1);
     await app.addAccount.finishAccountsDiscovery();
     await app.addAccount.tapSuccessCta();
   });
 
   $TmsLink("B2CQA-101");
   it("displays Bitcoin accounts page summary", async () => {
-    await app.account.waitForAccountPageToLoad("Bitcoin");
-    await waitForElementByText("1.19576\u00a0BTC");
+    await app.account.waitForAccountPageToLoad(testedCurrency);
+    await app.account.expectAccountBalance(expectedBalance);
   });
 });

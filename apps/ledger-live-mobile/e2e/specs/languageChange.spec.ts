@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { Application } from "../page/index";
 
 let app: Application;
@@ -7,7 +6,7 @@ const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }
   it(`should change selected language to ${l10n.lang}`, async () => {
     await app.settingsGeneral.navigateToLanguageSelect();
     await app.settingsGeneral.selectLanguage(l10n.lang);
-    await expect(app.settingsGeneral.isLocalized(l10n.localization)).toBeVisible();
+    await app.settingsGeneral.expectLocalizedText(l10n.localization);
   });
 };
 

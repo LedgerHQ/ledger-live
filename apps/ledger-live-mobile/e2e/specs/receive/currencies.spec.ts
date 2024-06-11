@@ -1,6 +1,5 @@
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
-import { waitForElementById } from "../../helpers";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { Application } from "../../page/index";
 
@@ -20,7 +19,7 @@ describe("Receive different currency", () => {
 
   it.each([
     ["bitcoin"],
-    ["ethereum", "Ethereum"],
+    ["ethereum", "ethereum"],
     ["bsc"],
     ["ripple"],
     //["solana"], // TOFIX Error during flow
@@ -28,9 +27,9 @@ describe("Receive different currency", () => {
     ["dogecoin"],
     ["tron"],
     ["avalanche_c_chain"],
-    ["polygon", "Polygon"],
+    ["polygon", "polygon"],
     ["polkadot"],
-    ["cosmos", "Cosmos"],
+    ["cosmos", "cosmos"],
   ])("receive on %p (through scanning)", async (currencyId: string, network: string = "") => {
     const currency = getCryptoCurrencyById(currencyId);
     const currencyName = getCryptoCurrencyById(currencyId).name;
@@ -38,17 +37,11 @@ describe("Receive different currency", () => {
     await app.receive.openViaDeeplink();
     await app.common.performSearch(currencyName);
     await app.receive.selectCurrency(currencyName);
-    if (network) {
-      await app.receive.selectNetwork(network);
-    }
-    if (first) {
-      await deviceAction.selectMockDevice();
-      first = false;
-    }
+    if (network) await app.receive.selectNetwork(network);
+    first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
     await app.receive.selectAccount(`${currencyName} 2`);
     await app.receive.doNotVerifyAddress();
-    await waitForElementById(app.receive.accountAddress);
     await app.receive.expectReceivePageIsDisplayed(currency.ticker, `${currencyName} 2`);
   });
 });

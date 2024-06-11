@@ -9,7 +9,7 @@ let deviceAction: DeviceAction;
 const appDesc = ["Bitcoin", "Tron", "Litecoin", "Ethereum", "XRP", "Stellar"];
 const installedDesc = ["Bitcoin", "Litecoin", "Ethereum (outdated)"];
 
-describe("Bitcoin Account", () => {
+describe("Test My Ledger", () => {
   beforeAll(async () => {
     app = await Application.init("onboardingcompleted", [knownDevice]);
     deviceAction = new DeviceAction(knownDevice);
@@ -18,11 +18,12 @@ describe("Bitcoin Account", () => {
   });
 
   $TmsLink("B2CQA-657");
-  it("open manager", async () => {
+  it("open My Ledger", async () => {
     await app.portfolio.openMyLedger();
+    await app.manager.expectManagerPage();
     await deviceAction.selectMockDevice();
     await deviceAction.accessManager(appDesc.join(","), installedDesc.join(","));
-    await app.manager.waitForManagerPageToLoad();
+    await app.manager.waitForDeviceInfoToLoad();
   });
 
   $TmsLink("B2CQA-658");

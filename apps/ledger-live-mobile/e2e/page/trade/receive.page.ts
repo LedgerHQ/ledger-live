@@ -38,13 +38,25 @@ export default class ReceivePage {
   step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2Networks = () => getElementById("receive-header-step2-networks");
 
-  openViaDeeplink() {
-    return openDeeplink(baseLink);
+  async openViaDeeplink() {
+    await openDeeplink(baseLink);
   }
 
   async receiveViaDeeplink(currencyLong?: string) {
     const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
     await openDeeplink(link);
+  }
+
+  async expectFirstStep() {
+    await expect(this.step1HeaderTitle()).toBeVisible();
+  }
+
+  async expectSecondStep(networks: string[]) {
+    await expect(this.step2HeaderTitle()).toBeVisible();
+    await expect(this.step2Networks()).toBeVisible();
+    for (const network of networks) {
+      await expect(getElementById(this.currencyNameId(network))).toBeVisible();
+    }
   }
 
   async selectCurrencyRow(currencyId: string) {
@@ -53,7 +65,7 @@ export default class ReceivePage {
   }
 
   async selectCurrency(currencyName: string) {
-    const id = this.currencyNameId(currencyName);
+    const id = this.currencyNameId(currencyName.toLowerCase());
     await tapById(id);
   }
 
@@ -138,6 +150,7 @@ export default class ReceivePage {
   async expectReceivePageIsDisplayed(tickerName: string, accountName: string) {
     const receiveTitleTickerId = this.titleReceiveConfirmationPageId(tickerName);
     const accountNameId = this.accountNameReceiveId(accountName);
+    await waitForElementById(this.accountAddress);
     await waitForElementById(receiveTitleTickerId);
     await expect(getElementById(receiveTitleTickerId)).toBeVisible();
     await expect(getElementById(accountNameId)).toBeVisible();

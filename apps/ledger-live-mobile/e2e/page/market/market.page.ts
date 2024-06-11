@@ -1,33 +1,39 @@
 import { getElementById, typeTextByElement, tapByText, tapByElement } from "../../helpers";
+import { expect } from "detox";
 
 export default class MarketPage {
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
   assetCardBackBtn = () => getElementById("market-back-btn");
+  marketRowTitle = (index = 0) => getElementById("market-row-title", index);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
   buyAssetButton = () => getElementById("market-buy-btn");
 
-  searchAsset(asset: string) {
-    return typeTextByElement(this.searchBar(), asset);
+  async searchAsset(asset: string) {
+    await typeTextByElement(this.searchBar(), asset);
   }
 
-  openAssetPage(selectAsset: string) {
-    return tapByText(selectAsset);
+  async openAssetPage(selectAsset: string) {
+    await tapByText(selectAsset);
   }
 
-  starFavoriteCoin() {
-    return tapByElement(this.starButton());
+  async starFavoriteCoin() {
+    await tapByElement(this.starButton());
   }
 
-  backToAssetList() {
-    return tapByElement(this.assetCardBackBtn());
+  async backToAssetList() {
+    await tapByElement(this.assetCardBackBtn());
   }
 
-  filterStaredAsset() {
-    return tapByElement(this.starMarketListButton());
+  async filterStaredAsset() {
+    await tapByElement(this.starMarketListButton());
   }
 
-  buyAsset() {
-    return tapByElement(this.buyAssetButton());
+  async buyAsset() {
+    await tapByElement(this.buyAssetButton());
+  }
+
+  async expectMarketRowTitle(title: string) {
+    await expect(this.marketRowTitle()).toHaveText(title);
   }
 }

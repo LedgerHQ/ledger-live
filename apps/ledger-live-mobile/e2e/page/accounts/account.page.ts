@@ -1,17 +1,31 @@
-import { currencyParam, openDeeplink, waitForElementById, getElementById } from "../../helpers";
+import { expect } from "detox";
+import {
+  currencyParam,
+  openDeeplink,
+  waitForElementById,
+  getElementById,
+  tapByElement,
+} from "../../helpers";
 
 const baseLink = "account";
 
 export default class AccountPage {
   accountSettingsButton = () => getElementById("accounts-settings");
+  assetBalance = () => getElementById("asset-graph-balance");
+  accountTitleId = (assetName: string) => `accounts-title-${assetName}`;
+  accountAssetId = (assetName: string) => `account-assets-${assetName}`;
 
-  async waitForAccountPageToLoad(coin: string) {
-    await waitForElementById(`accounts-title-${coin}`);
+  async waitForAccountPageToLoad(assetName: string) {
+    await waitForElementById(this.accountTitleId(assetName));
   }
 
-  async waitForAccountAssetsToLoad(currencyName: string) {
-    await waitForElementById(`account-assets-${currencyName}`);
-    await waitForElementById(`accounts-title-${currencyName}`);
+  async expectAccountBalance(expectedBalance: string) {
+    await expect(this.assetBalance()).toHaveText(expectedBalance);
+  }
+
+  async waitForAccountAssetsToLoad(assetName: string) {
+    await waitForElementById(this.accountTitleId(assetName));
+    await waitForElementById(this.accountAssetId(assetName));
   }
 
   async openViaDeeplink(currencyLong?: string) {
@@ -20,6 +34,6 @@ export default class AccountPage {
   }
 
   async openAccountSettings() {
-    await this.accountSettingsButton().tap();
+    await tapByElement(this.accountSettingsButton());
   }
 }

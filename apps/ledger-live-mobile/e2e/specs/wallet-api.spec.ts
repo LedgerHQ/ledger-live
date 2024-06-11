@@ -1,4 +1,4 @@
-import { by, web } from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
+import { by, web } from "detox";
 import { describeifAndroid } from "../helpers";
 import { stopDummyServer } from "@ledgerhq/test-utils";
 import { Application } from "../page/index";

@@ -27,8 +27,7 @@ describe("Receive Flow", () => {
     await app.portfolio.navigateToReceiveFromTransferMenu();
     await app.common.performSearch("Bitcoin");
     await app.receive.selectAsset("BTC");
-    await deviceAction.selectMockDevice();
-    first = false;
+    first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
     await app.receive.selectAccount("Bitcoin 1");
     await app.receive.selectVerifyAddress();
@@ -43,8 +42,8 @@ describe("Receive Flow", () => {
   it("Should display the number of account existing per networks", async () => {
     await openReceive();
     await app.receive.selectAsset("ETH");
-    await app.receive.expectNumberOfAccountInListIsDisplayed("Ethereum", 3);
-    await app.receive.expectNumberOfAccountInListIsDisplayed("OP Mainnet", 1);
+    await app.receive.expectNumberOfAccountInListIsDisplayed("ethereum", 3);
+    await app.receive.expectNumberOfAccountInListIsDisplayed("op mainnet", 1);
   });
 
   $TmsLink("B2CQA-1856");
@@ -52,12 +51,9 @@ describe("Receive Flow", () => {
   it("Should create an account on a network", async () => {
     await openReceive();
     await app.receive.selectAsset("ETH");
-    await app.receive.selectNetwork("OP Mainnet");
+    await app.receive.selectNetwork("op mainnet");
     await app.receive.createAccount();
-    if (first) {
-      await deviceAction.selectMockDevice();
-      first = false;
-    }
+    first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
     await app.receive.selectAccount("OP Mainnet 1");
     await app.receive.selectAccount("OP Mainnet 2");
@@ -71,11 +67,8 @@ describe("Receive Flow", () => {
     await openReceive();
     await app.common.performSearch("Polygon");
     await app.receive.selectAsset("MATIC");
-    await app.receive.selectNetwork("Binance Smart Chain");
-    if (first) {
-      await deviceAction.selectMockDevice();
-      first = false;
-    }
+    await app.receive.selectNetwork("binance smart chain");
+    first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
     await app.receive.selectAccount("Binance Smart Chain 1");
     await app.receive.doNotVerifyAddress();

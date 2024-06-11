@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { Application } from "../../page";
 
 let app: Application;
@@ -11,7 +10,7 @@ describe("Swap", () => {
 
   it("should load the Swap page from the Transfer menu", async () => {
     await app.swap.openViaDeeplink();
-    await expect(app.swap.swapFormTab()).toBeVisible();
+    await app.swap.expectSwapPage();
   });
 
   it("should be able to select a different source account", async () => {
@@ -38,12 +37,11 @@ describe("Swap", () => {
   });
 
   it("should have the send max toggle switch removed", async () => {
-    await expect(app.swap.sendMaxToggle()).not.toExist();
+    await app.swap.expectNoMaxToggle();
     await app.swap.openSourceAccountSelector();
     await app.swap.selectAccount("Bitcoin 1 (legacy)");
     await app.swap.enterSourceAmount("0.1");
     await app.swap.startExchange();
-    await expect(app.swap.termsAcceptButton()).toBeVisible();
-    await expect(app.swap.termsCloseButton()).toBeVisible();
+    await app.swap.expectTerms();
   });
 });

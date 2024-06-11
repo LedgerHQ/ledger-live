@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { loadAccountsRaw } from "../bridge/server";
 import { Application } from "../page/index";
@@ -28,6 +27,6 @@ describe("Portfolio to load with unknown currency data in accounts", () => {
 
   it("opens to empty state", async () => {
     await app.portfolio.waitForPortfolioPageToLoad();
-    await expect(app.portfolio.emptyPortfolioList()).toBeVisible();
+    await app.portfolio.expectPortfolioEmpty();
   });
 });

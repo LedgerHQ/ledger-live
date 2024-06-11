@@ -1,4 +1,4 @@
-import { device, expect } from "detox";
+import { device } from "detox";
 import { isAndroid } from "../helpers";
 import { launchApp } from "../setup";
 import { Application } from "../page/index";
@@ -29,8 +29,7 @@ describe("Onboarding", () => {
     await app.onboarding.selectAddDevice();
     await app.onboarding.addDeviceViaBluetooth();
     await app.portfolio.waitForPortfolioPageToLoad();
-    await expect(app.portfolio.portfolioSettingsButton()).toBeVisible();
-    await expect(app.portfolio.emptyPortfolioList()).toBeVisible();
+    await app.portfolio.expectPortfolioEmpty();
   });
 
   $TmsLink("B2CQA-1802");
@@ -43,8 +42,7 @@ describe("Onboarding", () => {
     await app.onboarding.selectAddDevice();
     await app.onboarding.addDeviceViaBluetooth();
     await app.portfolio.waitForPortfolioPageToLoad();
-    await expect(app.portfolio.portfolioSettingsButton()).toBeVisible();
-    await expect(app.portfolio.emptyPortfolioList()).toBeVisible();
+    await app.portfolio.expectPortfolioEmpty();
   });
 
   $TmsLink("B2CQA-1800");

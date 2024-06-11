@@ -1,13 +1,13 @@
-import { expect } from "detox";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
-import { tapByElement } from "../../helpers";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { formattedAmount, initTestAccounts } from "../../models/currencies";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import {
+  formattedAmount,
+  getAccountName,
+  getAccountUnit,
+  initTestAccounts,
+} from "../../models/currencies";
 import { Application } from "../../page/index";
 
 let app: Application;
@@ -44,39 +44,31 @@ describe("Send flow", () => {
     "%s: open send flow, sends half balance and displays the new operation",
     async (_currency, account: Account) => {
       const halfBalance = account.balance.div(2);
-      const amount =
-        // half of the balance, formatted with the same unit as what the input should use
-        formatCurrencyUnit(getAccountCurrency(account).units[0], halfBalance, {
-          useGrouping: false,
-        });
-
-      const amountWithCode = formattedAmount(getAccountCurrency(account).units[0], halfBalance);
+      const accountName = getAccountName(account);
+      const unit = getAccountUnit(account);
+      const amountInput = formattedAmount(unit, halfBalance, { useGrouping: false });
+      const amountWithCode = formattedAmount(unit, halfBalance);
 
       await app.portfolio.openViaDeeplink();
       await app.send.openViaDeeplink();
-      await app.common.performSearch(getDefaultAccountName(account));
-      await app.send.selectAccount(account.id);
+      await app.common.performSearch(accountName);
+      await app.common.selectAccount(account.id);
       await app.send.setRecipient(account.freshAddress);
       await app.send.recipientContinue();
-      await app.send.setAmount(amount);
+      await app.send.setAmount(amountInput);
       await app.send.amountContinue();
-
-      await expect(app.send.summaryAmount()).toHaveText(amountWithCode);
+      await app.send.expectSummaryAmount(amountWithCode);
       await app.send.summaryContinue();
 
-      if (first) {
-        await deviceAction.selectMockDevice();
-        first = false;
-      }
+      first && (await deviceAction.selectMockDevice(), (first = false));
       await deviceAction.openApp();
 
-      await app.send.successContinue();
+      await app.common.successClose();
       await app.portfolio.scrollToTransactions();
-      const lastTransaction = app.portfolio.lastTransactionAmount();
-      await expect(lastTransaction).toHaveText(`-${amountWithCode}`);
-      await tapByElement(lastTransaction);
+      await app.portfolio.expectLastTransactionAmount(`-${amountWithCode}`);
+      await app.portfolio.openLastTransaction();
       await app.operationDetails.isOpened();
-      await app.operationDetails.checkAccount(getDefaultAccountName(account));
+      await app.operationDetails.checkAccount(accountName);
       await app.operationDetails.checkAmount(`-${amountWithCode}`);
     },
   );
