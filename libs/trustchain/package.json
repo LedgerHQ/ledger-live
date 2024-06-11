@@ -59,6 +59,7 @@
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/errors": "workspace:*",
+    "@ledgerhq/logs": "workspace:*",
     "isomorphic-ws": "5",
     "ws": "8",
     "base64-js": "1"

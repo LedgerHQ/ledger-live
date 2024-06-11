@@ -57,25 +57,28 @@ async function postChallengeResponse(request: {
     method: "POST",
     data: request,
   });
-  const jwt = {
+  return {
     accessToken: data.access_token,
   };
-  return jwt;
 }
 
 async function refreshAuth(jwt: JWT): Promise<JWT> {
-  const { data } = await network<JWT>({
+  const { data } = await network<APIJWT>({
     url: `${getEnv("TRUSTCHAIN_API")}/v1/refresh`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
     },
   });
-  return data;
+  return {
+    accessToken: data.access_token,
+  };
 }
 
 export type TrustchainsResponse = {
-  [key: string]: unknown;
+  [trustchainId: string]: {
+    [path: string]: string[]; // list of permissions
+  };
 };
 
 async function getTrustchains(jwt: JWT): Promise<TrustchainsResponse> {
@@ -95,7 +98,7 @@ export type TrustchainResponse = {
 
 async function getTrustchain(jwt: JWT, trustchain_id: string): Promise<TrustchainResponse> {
   const { data } = await network<TrustchainResponse>({
-    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${trustchain_id}`,
+    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${encodeURIComponent(trustchain_id)}`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -110,7 +113,7 @@ async function postDerivation(
   commandStream: string,
 ): Promise<void> {
   await network<void>({
-    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${trustchain_id}/derivation`,
+    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${encodeURIComponent(trustchain_id)}/derivation`,
     method: "POST",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -143,7 +146,7 @@ async function putCommands(
   request: PutCommandsRequest,
 ): Promise<void> {
   await network<void>({
-    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${trustchain_id}/commands`,
+    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${encodeURIComponent(trustchain_id)}/commands`,
     method: "PUT",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
