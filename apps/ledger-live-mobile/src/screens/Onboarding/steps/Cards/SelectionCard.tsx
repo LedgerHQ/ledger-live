@@ -51,6 +51,7 @@ export const SelectionCard = ({
     <Touchable onPress={pressAndTrack} testID={testID}>
       <Flex
         flexDirection="row"
+        alignItems={"center"}
         bg={colors.opacityDefault.c05}
         py={space[7]}
         pr={space[7]}
