@@ -17,6 +17,9 @@ overrides:
 packageExtensionsChecksum: 8b44dc959ddf462fc160cbda4fe2b3bd
 
 patchedDependencies:
+  '@changesets/get-github-info@0.6.0':
+    hash: 7jzpsqogb5i6art53pk3h33ix4
+    path: patches/@changesets__get-github-info@0.6.0.patch
   '@hashgraph/sdk@2.14.2':
     hash: ftpe7kgiykw2quxzn7vgiqumd4
     path: patches/@hashgraph__sdk@2.14.2.patch
@@ -9643,7 +9646,7 @@ packages:
   /@changesets/changelog-github@0.5.0:
     resolution: {integrity: sha512-zoeq2LJJVcPJcIotHRJEEA2qCqX0AQIeFE+L21L8sRLPVqDhSXY8ZWAt2sohtBpFZkBwu+LUwMSKRr2lMy3LJA==}
     dependencies:
-      '@changesets/get-github-info': 0.6.0
+      '@changesets/get-github-info': 0.6.0(patch_hash=7jzpsqogb5i6art53pk3h33ix4)
       '@changesets/types': 6.0.0
       dotenv: 8.6.0
     transitivePeerDependencies:
@@ -9717,7 +9720,7 @@ packages:
       semver: 7.6.2
     dev: true
 
-  /@changesets/get-github-info@0.6.0:
+  /@changesets/get-github-info@0.6.0(patch_hash=7jzpsqogb5i6art53pk3h33ix4):
     resolution: {integrity: sha512-v/TSnFVXI8vzX9/w3DU2Ol+UlTZcu3m0kXTjTT4KlAdwSvwutcByYwyYn9hwerPWfPkT2JfpoX0KgvCEi8Q/SA==}
     dependencies:
       dataloader: 1.4.0
@@ -9725,6 +9728,7 @@ packages:
     transitivePeerDependencies:
       - encoding
     dev: true
+    patched: true
 
   /@changesets/get-release-plan@4.0.2:
     resolution: {integrity: sha512-rOalz7nMuMV2vyeP7KBeAhqEB7FM2GFPO5RQSoOoUKKH9L6wW3QyPA2K+/rG9kBrWl2HckPVES73/AuwPvbH3w==}
