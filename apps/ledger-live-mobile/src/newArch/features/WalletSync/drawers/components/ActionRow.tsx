@@ -26,22 +26,22 @@ const CardDescription = styled(Text)`
 
 type AddAccountDrawerRowProps = {
   title: string;
-  description: string;
-  icon?: React.ReactNode;
-  onPress?: React.ComponentProps<typeof Touchable>["onPress"];
+  description?: string;
+  icon: React.ReactNode;
+  onPress: React.ComponentProps<typeof Touchable>["onPress"];
 };
 
-const AddAccountDrawerRow = ({ title, description, icon, onPress }: AddAccountDrawerRowProps) => {
+const ActionRow = ({ title, description, icon, onPress }: AddAccountDrawerRowProps) => {
   return (
     <Touchable onPress={onPress}>
       <Card>
         {icon}
         <Flex flexDirection={"column"} rowGap={4} flex={1}>
           <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          {description && <CardDescription>{description}</CardDescription>}
         </Flex>
       </Card>
     </Touchable>
   );
 };
-export default AddAccountDrawerRow;
+export default ActionRow;
