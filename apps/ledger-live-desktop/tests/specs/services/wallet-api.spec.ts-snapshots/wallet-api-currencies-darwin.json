@@ -148,7 +148,7 @@
     "id": "ripple",
     "ticker": "XRP",
     "name": "XRP",
-    "family": "xrp",
+    "family": "ripple",
     "color": "#27a2db",
     "decimals": 6
   },
