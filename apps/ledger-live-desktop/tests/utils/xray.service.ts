@@ -1,6 +1,5 @@
 import axios from "axios";
 import fs from "fs";
-import path from "path";
 
 class XrayService {
   private static baseUrl = "https://xray.cloud.getxray.app/api/v2";
@@ -15,15 +14,16 @@ class XrayService {
     }
 
     const auth: Auth = {
-      clientId,
-      clientSecret,
+      client_id: clientId,
+      client_secret: clientSecret,
     };
 
     try {
       const response = await axios.post(`${this.baseUrl}/authenticate`, auth, {
         headers: { "Content-Type": "application/json" },
       });
-      this.token = response.data["x-access-token"];
+      this.token = response.headers["x-access-token"];
+      console.log(`Authentication successful`);
       return this.token;
     } catch (error) {
       console.error(`Error during authentication: ${error}`);
@@ -32,18 +32,15 @@ class XrayService {
   }
 
   public static async importExecution(xmlFilePath: string): Promise<ImportRes> {
-    const projectKey = process.env.PROJECT_KEY;
-    const testPlanKey = process.env.TEST_PLAN_KEY;
     if (!this.token) {
       await this.authenticate();
     }
 
-    const xmlPayload = fs.readFileSync(path.resolve(xmlFilePath), "utf-8");
-
     try {
+      console.log(`Importing execution from XML file: ${xmlFilePath}`);
       const response = await axios.post(
-        `${this.baseUrl}/import/execution/junit?projectKey=${projectKey}&testPlanKey=${testPlanKey}`,
-        xmlPayload,
+        `${this.baseUrl}/import/execution/junit?projectKey=B2CQA&testPlanKey=B2CQA-2377`,
+        fs.readFileSync(xmlFilePath, "utf-8"),
         {
           headers: {
             "Content-Type": "text/xml",
@@ -54,18 +51,14 @@ class XrayService {
 
       if (response.status === 200) {
         const responseData = response.data;
-        console.info(`Test Results payload: ${xmlPayload}`);
-
+        console.log("Import successful, response data:", responseData);
         return {
           id: responseData.id,
           key: responseData.key,
           self: responseData.self,
         };
       } else {
-        console.error(
-          `Error during importExecution: Status: ${response.status}, Body: ${JSON.stringify(response.data)}, Payload: ${xmlPayload}`,
-        );
-        throw new Error(`Error during XrayService.importExecution()`);
+        throw new Error(`Error during XrayService.importExecution(): Status: ${response.status}`);
       }
     } catch (error) {
       console.error(`Error during importExecution: ${error}`);
@@ -75,8 +68,8 @@ class XrayService {
 }
 
 interface Auth {
-  clientId: string;
-  clientSecret: string;
+  client_id: string;
+  client_secret: string;
 }
 
 interface ImportRes {
@@ -86,5 +79,3 @@ interface ImportRes {
 }
 
 export default XrayService;
-
-//todo: Que besoin de ce file ? les autres pas utile avec playwright mais je dois trouver comment faire le lien avec ce file, le test et playwright;config

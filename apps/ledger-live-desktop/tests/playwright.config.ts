@@ -1,5 +1,12 @@
 import { PlaywrightTestConfig } from "@playwright/test";
 
+const xrayOptions = {
+  embedAnnotationsAsProperties: true,
+  textContentAnnotations: ["test_description"],
+  embedAttachmentsAsProperty: "testrun_evidence",
+  outputFile: "artifacts/xray/xml-report.xml",
+};
+
 const config: PlaywrightTestConfig = {
   projects: [
     {
@@ -48,18 +55,9 @@ const config: PlaywrightTestConfig = {
         ["github"],
         ["line"],
         ["allure-playwright"],
-        [
-          "junit",
-          {
-            embedAnnotationsAsProperties: true,
-            textContentAnnotations: ["test_description"],
-            embedAttachmentsAsProperty: "testrun_evidence",
-            outputFile: "./xray-report.xml",
-          },
-        ], // Permet de trigger le Junit reporter
-        ["./utils/index.ts"], // todo: verifier si vraiment utile + changer le nom ? ==> Permet de trigger le Xray reporter
+        ["junit", xrayOptions],
       ]
-    : [["allure-playwright"]],
+    : [["allure-playwright"], ["junit", xrayOptions]],
 };
 
 export default config;

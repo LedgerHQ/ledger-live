@@ -28,8 +28,13 @@ for (const [i, account] of accounts.entries()) {
       speculosOffset: i,
     });
 
-    test(`[${account.currency.uiName}] Delete Account`, async ({ page }) => {
+    test(`[${account.currency.uiName}] Delete Account`, async ({ page }, testInfo) => {
       addTmsLink(["B2CQA-320"]);
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-320" });
+      testInfo.annotations.push({
+        type: "test_summary",
+        description: `Delete Account test`,
+      });
 
       const app = new Application(page);
 

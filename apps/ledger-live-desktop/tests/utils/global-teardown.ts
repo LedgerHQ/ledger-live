@@ -1,7 +1,7 @@
+import XrayService from "./xray.service";
+
 export default async function globalTeardown() {
-  //if (process.env.CI && process.env.XRAY === 1) {
-    //Appeler l'export vers XRAY (publish to xray)
-    // XRAY-REPORTER
-    //CE Fichier = CustomTestExecutionListener.java du Vault
-  //}
+  if (process.env.CI && process.env.XRAY) {
+    await XrayService.importExecution("tests/artifacts/xray/xml-report.xml");
+  }
 }

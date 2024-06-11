@@ -12,8 +12,13 @@ test.use({
 const token = "Tether USD";
 
 test.describe.parallel("ERC20 token", () => {
-  test(`Check ERC20 token`, async ({ page }) => {
+  test(`Check ERC20 token`, async ({ page }, testInfo) => {
     addTmsLink(["B2CQA-1079"]);
+    testInfo.annotations.push({ type: "test_key", description: "B2CQA-1079" });
+    testInfo.annotations.push({
+      type: "test_summary",
+      description: `erc20 test`,
+    });
 
     const app = new Application(page);
 

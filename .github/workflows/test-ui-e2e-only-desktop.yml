@@ -41,16 +41,11 @@ on:
         type: boolean
         default: false
 
-      projectKey:
-        description: "Jira project key"
+      export_to_Xray:
+        description: Send the tests results to Xray
         required: false
-        default: "B2CQA"
-        type: string
-      testPlanKey:
-        description: "Jira test plan key (eg. B2CQA-1234)"
-        required: false
-        default: ""
-        type: string
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -117,6 +112,7 @@ jobs:
           if [ "$ENABLE_BROADCAST" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi
           if [ "$SPECULOS_TESTS" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi
           if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
+          if [ "$${ inputs.export_to_Xray }" = true ]; then XRAY=1; fi
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}

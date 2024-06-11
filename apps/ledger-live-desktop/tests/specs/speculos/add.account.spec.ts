@@ -29,8 +29,17 @@ for (const [i, currency] of currencies.entries()) {
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
 
-    test(`[${currency.uiName}] Add account`, async ({ page }) => {
+    test(`[${currency.uiName}] Add account`, async ({ page }, testInfo) => {
       addTmsLink(["B2CQA-101", "B2CQA-102", "B2CQA-314", "B2CQA-330", "B2CQA-929"]);
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-101" });
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-102" });
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-314" });
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-330" });
+      testInfo.annotations.push({ type: "test_key", description: "B2CQA-929" });
+      testInfo.annotations.push({
+        type: "test_summary",
+        description: `Add Account test`,
+      });
 
       const app = new Application(page);
 
