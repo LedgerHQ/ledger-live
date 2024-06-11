@@ -87,19 +87,20 @@ export const useFlows = ({ flow }: HookProps) => {
   const currentFlow = useSelector(walletSyncFlowSelector);
   const currentStep = useSelector(walletSyncStepSelector);
 
-  const steps = FlowOptions[currentFlow].steps;
-  const maxStep = Object.keys(steps).length;
+  const stepsRecord = FlowOptions[currentFlow].steps;
+  const maxStep = Object.keys(stepsRecord).length;
+
+  const findIndex = (step: Step) => Object.values(stepsRecord).findIndex(s => s === step);
 
   const goToNextScene = () => {
-    const currentIndex = Object.values(steps).findIndex(step => step === currentStep) + 1;
+    const currentIndex = findIndex(currentStep) + 1;
     const newStep = currentIndex < maxStep ? currentIndex + 1 : currentIndex;
-    dispatch(setFlow({ flow: currentFlow, step: steps[newStep] }));
+    dispatch(setFlow({ flow: currentFlow, step: stepsRecord[newStep] }));
   };
-
   const goToPreviousScene = () => {
-    const currentIndex = Object.values(steps).findIndex(step => step === currentStep) + 1;
+    const currentIndex = findIndex(currentStep) + 1;
     const newStep = currentIndex > 1 ? currentIndex - 1 : currentIndex;
-    dispatch(setFlow({ flow: currentFlow, step: steps[newStep] }));
+    dispatch(setFlow({ flow: currentFlow, step: stepsRecord[newStep] }));
   };
 
   const goToWelcomeScreenWalletSync = () => {
