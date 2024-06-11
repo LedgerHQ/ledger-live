@@ -1,8 +1,11 @@
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import type { BroadcastFnSignature } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import { broadcastTx } from "./bridge/bridgeHelpers/api";
+import { Transaction } from "./types";
 
-const broadcast: BroadcastFnSignature = async ({ signedOperation: { signature, operation } }) => {
+const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
+  signedOperation: { signature, operation },
+}) => {
   const hash = await broadcastTx(signature);
   return patchOperationWithHash(operation, hash);
 };

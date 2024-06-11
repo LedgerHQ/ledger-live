@@ -7,16 +7,16 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import broadcast from "../broadcast";
 import { TonCoinConfig, setCoinConfig } from "../config";
+import createTransaction from "../createTransaction";
+import estimateMaxSpendable from "../estimateMaxSpendable";
+import getTransactionStatus from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
-import broadcast from "../js-broadcast";
-import createTransaction from "../js-createTransaction";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import getTransactionStatus from "../js-getTransactionStatus";
-import prepareTransaction from "../js-prepareTransaction";
-import { buildSignOperation } from "../js-signOperation";
-import { getAccountShape, sync } from "../js-synchronisation";
+import prepareTransaction from "../prepareTransaction";
+import { buildSignOperation } from "../signOperation";
 import { TonSigner } from "../signer";
+import { getAccountShape, sync } from "../synchronisation";
 import type { Transaction } from "../types";
 
 export function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): CurrencyBridge {
