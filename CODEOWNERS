@@ -89,8 +89,10 @@ libs/ledger-live-common/src/wallet-api/                  @ledgerhq/wallet-api
 **/platformAdapter.ts                                    @ledgerhq/wallet-api
 **/walletApiAdapter.ts                                   @ledgerhq/wallet-api
 **/liveapp-sdk.spec.ts                                   @ledgerhq/wallet-api
-**/confirmTransaction.spec.ts                            @ledgerhq/wallet-api
+**/confirmTransaction.spec.ts                             @ledgerhq/wallet-api
 **/wallet-api.spec.ts                                    @ledgerhq/wallet-api
+**/wallet-api.spec.ts-snapshots/                         @ledgerhq/wallet-api
+**/dapp.spec.ts                                          @ledgerhq/wallet-api
 libs/test-utils/                                         @ledgerhq/wallet-api
 
 # Devices team

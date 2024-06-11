@@ -144,7 +144,6 @@ export type Features = CurrencyFeatures & {
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingProviders: Feature_EthStakingProviders;
   storyly: Feature_Storyly;
-  staxWelcomeScreen: Feature_StaxWelcomeScreen;
   postOnboardingAssetsTransfer: Feature_PostOnboardingAssetsTransfer;
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
@@ -178,12 +177,12 @@ export type Features = CurrencyFeatures & {
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldActionCarousel: Feature_lldActionCarousel;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
-  supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
   spamReportNfts: Feature_SpamReportNfts;
   lldWalletSync: Feature_LldWalletSync;
+  llmWalletSync: Feature_LlmWalletSync;
   lldNftsGalleryNewArch: DefaultFeature;
 };
 
@@ -483,7 +482,6 @@ export type Feature_MultibuyNavigation = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
-export type Feature_StaxWelcomeScreen = DefaultFeature;
 export type Feature_PostOnboardingAssetsTransfer = DefaultFeature;
 export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
@@ -496,11 +494,11 @@ export type Feature_PtxSwapExodusProvider = DefaultFeature;
 export type Feature_PtxSwapThorswapProvider = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
-export type Feature_SupportDeviceStax = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
 export type Feature_LldWalletSync = DefaultFeature;
+export type Feature_LlmWalletSync = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;
 
 /**

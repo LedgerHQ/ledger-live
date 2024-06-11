@@ -43,17 +43,9 @@ export function cached(api: ChainAPI): ChainAPI {
       minutes(1),
     ),
 
-    getStakeAccountsByStakeAuth: makeLRUCache(
-      api.getStakeAccountsByStakeAuth,
-      cacheKeyAddress,
-      minutes(1),
-    ),
-
-    getStakeAccountsByWithdrawAuth: makeLRUCache(
-      api.getStakeAccountsByWithdrawAuth,
-      cacheKeyAddress,
-      minutes(1),
-    ),
+    // cached by default in api
+    getStakeAccountsByStakeAuth: api.getStakeAccountsByStakeAuth,
+    getStakeAccountsByWithdrawAuth: api.getStakeAccountsByWithdrawAuth,
 
     getStakeActivation: makeLRUCache(api.getStakeActivation, cacheKeyAddress, minutes(1)),
 

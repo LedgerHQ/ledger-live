@@ -961,9 +961,10 @@ export const renderSwapDeviceConfirmation = ({
 }) => {
   const sourceAccountCurrency = getAccountCurrency(exchange.fromAccount);
   const targetAccountCurrency = getAccountCurrency(exchange.toAccount);
-  const sourceAccountName = accountNameSelector(walletState, {
-    accountId: exchange.fromAccount.id,
-  });
+  const sourceAccountName =
+    accountNameSelector(walletState, {
+      accountId: exchange.fromAccount.id,
+    }) ?? sourceAccountCurrency.name;
 
   // If account exists already then grab the name set.
   // However if account has not yet been set then use the

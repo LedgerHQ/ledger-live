@@ -183,7 +183,7 @@
     "@stacks/transactions": "6.11.0",
     "@stellar/stellar-sdk": "^11.3.0",
     "@stricahq/typhonjs": "^1.2.6",
-    "@taquito/ledger-signer": "^13.0.1",
+    "@taquito/ledger-signer": "^20.0.0",
     "@types/bchaddrjs": "^0.4.0",
     "@types/bs58check": "^2.1.0",
     "@types/pako": "^2.0.0",

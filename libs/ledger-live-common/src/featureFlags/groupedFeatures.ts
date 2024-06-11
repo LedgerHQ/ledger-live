@@ -7,9 +7,6 @@ export const groupedFeatures: Record<
     featureIds: FeatureId[];
   }
 > = {
-  stax: {
-    featureIds: ["supportDeviceStax", "deviceInitialApps", "staxWelcomeScreen"],
-  },
   europa: {
     featureIds: ["supportDeviceEuropa", "deviceInitialApps"],
   },
