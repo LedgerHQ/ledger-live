@@ -1,13 +1,13 @@
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { toNano } from "@ton/core";
 import BigNumber from "bignumber.js";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import type { Transaction } from "./types";
 import { buildTonTransaction, getTonEstimatedFees, isJettonTransfer } from "./utils";
 
-const prepareTransaction = async (
+const prepareTransaction: AccountBridge<Transaction, Account>["prepareTransaction"] = async (
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {

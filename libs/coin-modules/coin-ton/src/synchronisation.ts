@@ -32,7 +32,7 @@ import {
 import { getSyncHash } from "./logic";
 import { TonOperation } from "./types";
 
-export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenIds }) => {
+export const getAccountShape: GetAccountShape<Account> = async (info, { blacklistedTokenIds }) => {
   const { address, rest, currency, derivationMode, initialAccount } = info;
 
   const publicKey = reconciliatePubkey(rest?.publicKey, initialAccount);

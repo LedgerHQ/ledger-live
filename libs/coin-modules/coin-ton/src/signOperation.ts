@@ -1,11 +1,6 @@
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type {
-  Account,
-  DeviceId,
-  SignOperationEvent,
-  SignOperationFnSignature,
-} from "@ledgerhq/types-live";
+import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { Address, beginCell, external, storeMessage } from "@ton/core";
 import { WalletContractV4 } from "@ton/ton";
 import { Observable } from "rxjs";
@@ -33,7 +28,7 @@ const packTransaction = (account: Account, needsInit: boolean, signature: TonCel
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (signerContext: SignerContext<TonSigner>): SignOperationFnSignature<Transaction, Account> =>
+  (signerContext: SignerContext<TonSigner>): AccountBridge<Transaction>["signOperation"] =>
   ({
     account,
     transaction,

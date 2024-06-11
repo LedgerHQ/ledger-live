@@ -6,7 +6,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { Account, AccountBridge, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TonCommentInvalid, TonExcessFee } from "./errors";
 import { Transaction, TransactionStatus } from "./types";
@@ -96,23 +96,27 @@ const validateComment = (transaction: Transaction): Array<ValidationIssues> => {
   return [errors];
 };
 
-export const getTransactionStatus = async (
-  a: Account,
-  t: Transaction,
+export const getTransactionStatus: AccountBridge<
+  Transaction,
+  Account,
+  TransactionStatus
+>["getTransactionStatus"] = async (
+  account: Account,
+  transaction: Transaction,
 ): Promise<TransactionStatus> => {
-  const subAccount = findSubAccountById(a, t.subAccountId ?? "");
+  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
   const tokenTransfer = Boolean(subAccount && isTokenAccount(subAccount));
-  const totalSpent = tokenTransfer ? t.amount : t.amount.plus(t.fees);
+  const totalSpent = tokenTransfer ? transaction.amount : transaction.amount.plus(transaction.fees);
   // let amount = t.useAllAmount ? isTokenTransaction ? ;
 
   // Recipient related errors and warnings
-  const [recipientErr] = validateRecipient(a, t);
+  const [recipientErr] = validateRecipient(account, transaction);
   // Sender related errors and warnings
-  const [senderErr] = validateSender(a);
+  const [senderErr] = validateSender(account);
   // Amount related errors and warnings
-  const [amountErr, amountWarn] = validateAmount(subAccount || a, t, totalSpent);
+  const [amountErr, amountWarn] = validateAmount(subAccount || account, transaction, totalSpent);
   // Comment related errors and warnings
-  const [commentErr] = validateComment(t);
+  const [commentErr] = validateComment(transaction);
 
   const errors: ValidationIssues = {
     ...recipientErr,
@@ -126,10 +130,10 @@ export const getTransactionStatus = async (
   };
 
   return {
-    amount: t.amount,
+    amount: transaction.amount,
     errors,
     warnings,
-    estimatedFees: t.fees,
+    estimatedFees: transaction.fees,
     totalSpent,
   };
 };
