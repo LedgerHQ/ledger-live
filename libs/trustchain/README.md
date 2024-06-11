@@ -8,37 +8,54 @@ Ledger Live trustchain layer.
 
 #### Table of Contents
 
-*   [createQRCodeHostInstance](#createqrcodehostinstance)
+*   [getSdk](#getsdk)
     *   [Parameters](#parameters)
+*   [createQRCodeHostInstance](#createqrcodehostinstance)
+    *   [Parameters](#parameters-1)
 *   [onDisplayQRCode](#ondisplayqrcode)
 *   [onDisplayDigits](#ondisplaydigits)
 *   [addMember](#addmember)
 *   [createQRCodeCandidateInstance](#createqrcodecandidateinstance)
-    *   [Parameters](#parameters-1)
+    *   [Parameters](#parameters-2)
 *   [liveCredentials](#livecredentials)
+*   [memberName](#membername)
 *   [scannedUrl](#scannedurl)
 *   [onRequestQRCodeInput](#onrequestqrcodeinput)
 *   [LiveCredentials](#livecredentials-1)
-*   [](#)
 *   [TrustchainSDK](#trustchainsdk)
     *   [Examples](#examples)
     *   [initLiveCredentials](#initlivecredentials)
     *   [seedIdAuthenticate](#seedidauthenticate)
-        *   [Parameters](#parameters-2)
-    *   [liveAuthenticate](#liveauthenticate)
         *   [Parameters](#parameters-3)
-    *   [getOrCreateTrustchain](#getorcreatetrustchain)
+    *   [liveAuthenticate](#liveauthenticate)
         *   [Parameters](#parameters-4)
-    *   [restoreTrustchain](#restoretrustchain)
+    *   [getOrCreateTrustchain](#getorcreatetrustchain)
         *   [Parameters](#parameters-5)
-    *   [getMembers](#getmembers)
+    *   [restoreTrustchain](#restoretrustchain)
         *   [Parameters](#parameters-6)
-    *   [removeMember](#removemember)
+    *   [getMembers](#getmembers)
         *   [Parameters](#parameters-7)
-    *   [addMember](#addmember-1)
+    *   [removeMember](#removemember)
         *   [Parameters](#parameters-8)
-    *   [destroyTrustchain](#destroytrustchain)
+    *   [addMember](#addmember-1)
         *   [Parameters](#parameters-9)
+    *   [destroyTrustchain](#destroytrustchain)
+        *   [Parameters](#parameters-10)
+    *   [encryptUserData](#encryptuserdata)
+        *   [Parameters](#parameters-11)
+    *   [decryptUserData](#decryptuserdata)
+        *   [Parameters](#parameters-12)
+
+### getSdk
+
+Get an implementation of a TrustchainSDK
+
+#### Parameters
+
+*   `isMockEnv` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
+*   `context` **TrustchainSDKContext**&#x20;
+
+Returns **[TrustchainSDK](#trustchainsdk)**&#x20;
 
 ### createQRCodeHostInstance
 
@@ -46,7 +63,7 @@ establish a channel to be able to add a member to the trustchain after displayin
 
 #### Parameters
 
-*   `$0` **{onDisplayQRCode: function (url: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void, onDisplayDigits: function (digits: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void, addMember: function (publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>}**&#x20;
+*   `$0` **{onDisplayQRCode: function (url: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void, onDisplayDigits: function (digits: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void, addMember: function (member: TrustchainMember): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Trustchain>}**&#x20;
 
     *   `$0.onDisplayQRCode` &#x20;
     *   `$0.onDisplayDigits` &#x20;
@@ -70,7 +87,7 @@ Type: function (digits: [string](https://developer.mozilla.org/docs/Web/JavaScri
 
 this function will need to using the TrustchainSDK (and use sdk.addMember)
 
-Type: function (publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>
+Type: function (member: TrustchainMember): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Trustchain>
 
 ### createQRCodeCandidateInstance
 
@@ -78,19 +95,26 @@ establish a channel to be able to add myself to the trustchain after scanning th
 
 #### Parameters
 
-*   `$0` **{liveCredentials: [LiveCredentials](#livecredentials), scannedUrl: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), onRequestQRCodeInput: function (config: {digits: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), connected: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}, callback: function (digits: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void): void}**&#x20;
+*   `$0` **{liveCredentials: [LiveCredentials](#livecredentials), memberName: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), scannedUrl: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), onRequestQRCodeInput: function (config: {digits: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), connected: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}, callback: function (digits: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void): void}**&#x20;
 
     *   `$0.liveCredentials` &#x20;
+    *   `$0.memberName` &#x20;
     *   `$0.scannedUrl` &#x20;
     *   `$0.onRequestQRCodeInput` &#x20;
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** a promise that resolves when this is done
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Trustchain>** a promise that resolves a Trustchain when this is done
 
 ### liveCredentials
 
 the live credentials of the live instance (given by TrustchainSDK)
 
 Type: [LiveCredentials](#livecredentials)
+
+### memberName
+
+the name of the member
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
 ### scannedUrl
 
@@ -107,14 +131,10 @@ Type: function (config: {digits: [number](https://developer.mozilla.org/docs/Web
 
 ### LiveCredentials
 
-helpers to init and handle the trustchain store (what data are stored on instances)
-
-###
-
-TODO reducers with:
-clean action (disable this instance locally)
-init live credentials action
-lenses to get the live credentials and trustchain
+This exports all the logic related to the Trustchain store.
+The Trustchain store is a store that contains the data related to trustchain.
+It essentially is the ledger live's credentials that are only stored on the
+client side and the trustchain returned by the backend.
 
 ### TrustchainSDK
 
@@ -137,7 +157,8 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### seedIdAuthenticate
 
-Provide a token used to create/manage the trustchain at the root level, authenticated with the hardware wallet.
+Auth with a hardware wallet at the trustchain root level.
+The returned token will typically be used to create/manage the trustchain.
 
 ##### Parameters
 
@@ -147,7 +168,9 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### liveAuthenticate
 
-get a token that we can then use for Live credentials. (used for wallet sync)
+Auth with Live credentials.
+A trustchain must have been created and the Live instance must have been added as a member.
+The returned token will typically be used for regular operations like wallet sync.
 
 ##### Parameters
 
@@ -158,47 +181,46 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### getOrCreateTrustchain
 
-used by the trustchain setup flow
-
-*   create trustchain if not exists
-*   add yourself as member
-*   yield the trustchain
+This method will either create the required trustchains (root and application) or restore them.
+The returned trustchain will be initialized on the root level and also will have the branch derivation corresponding to the contextual applicationId.
+It will also have the wallet sync encryption key initialized.
+The latest jwt is also returned because it was potentially updated during the process.
 
 ##### Parameters
 
 *   `transport` **Transport**&#x20;
 *   `seedIdToken` **JWT**&#x20;
 *   `liveInstanceCredentials` **[LiveCredentials](#livecredentials)**&#x20;
+*   `topic` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)?**&#x20;
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Trustchain>**&#x20;
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{trustchain: Trustchain, jwt: JWT}>**&#x20;
 
 #### restoreTrustchain
 
-when the trustchain is not valid anymore, we will need to restore it (encryption key is no longer passing, typically during the live authenticate / wallet sync phases)
+Restore the current trustchain encryption key, typically due to a key rotation.
 
 ##### Parameters
 
 *   `liveJWT` **JWT**&#x20;
-*   `trustchain` **Trustchain**&#x20;
+*   `trustchainId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 *   `liveInstanceCredentials` **[LiveCredentials](#livecredentials)**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Trustchain>**&#x20;
 
 #### getMembers
 
-list the current members for a given trustchain.
+list the current members of the application trustchain
 
 ##### Parameters
 
 *   `liveJWT` **JWT**&#x20;
 *   `trustchain` **Trustchain**&#x20;
-*   `liveInstanceCredentials` **[LiveCredentials](#livecredentials)**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TrustchainMember>>**&#x20;
 
 #### removeMember
 
-used by the managing synchronized instances flow
+remove a member from the application trustchain
 
 ##### Parameters
 
@@ -212,21 +234,20 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### addMember
 
-add a member to the trustchain
+add a member to the application trustchain
 
 ##### Parameters
 
-*   `transport` **Transport**&#x20;
-*   `seedIdToken` **JWT**&#x20;
+*   `liveJWT` **JWT**&#x20;
 *   `trustchain` **Trustchain**&#x20;
 *   `liveInstanceCredentials` **[LiveCredentials](#livecredentials)**&#x20;
 *   `member` **TrustchainMember**&#x20;
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Trustchain>**&#x20;
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;
 
 #### destroyTrustchain
 
-completely remove a trustchain
+TBD
 
 ##### Parameters
 
@@ -234,3 +255,25 @@ completely remove a trustchain
 *   `liveJWT` **JWT**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;
+
+#### encryptUserData
+
+encrypt data with the trustchain encryption key
+
+##### Parameters
+
+*   `trustchain` **Trustchain**&#x20;
+*   `obj` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>**&#x20;
+
+#### decryptUserData
+
+decrypt data with the trustchain encryption key
+
+##### Parameters
+
+*   `trustchain` **Trustchain**&#x20;
+*   `data` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)>**&#x20;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import {
   createQRCodeHostInstance,
   createQRCodeCandidateInstance,
@@ -9,13 +9,21 @@ import { setEnv, getEnvDefault } from "@ledgerhq/live-env";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from, lastValueFrom } from "rxjs";
 import styled from "styled-components";
-import { JWT, LiveCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
+import {
+  JWT,
+  LiveCredentials,
+  Trustchain,
+  TrustchainMember,
+  TrustchainSDK,
+} from "@ledgerhq/trustchain/types";
+import { getInitialStore, setTrustchain } from "@ledgerhq/trustchain/store";
 import { Actionable, RenderActionable } from "./Actionable";
 import Transport from "@ledgerhq/hw-transport";
 import QRCode from "./QRCode";
 import useEnv from "../useEnv";
 import Expand from "./Expand";
-import useSDK from "../useSDK";
+import { getSdk } from "@ledgerhq/trustchain/lib-es/index";
+import { IdentityManager, memberNameForPubKey } from "./IdentityManager";
 
 const Container = styled.div`
   padding: 20px;
@@ -30,68 +38,100 @@ const Input = styled.input`
   width: 100%;
 `;
 
+const defaultContext = { applicationId: 16, name: "WebTools" };
+
+const SDKContext = React.createContext<TrustchainSDK>(getSdk(false, defaultContext));
+
+const useSDK = () => useContext(SDKContext);
+
 const App = () => {
+  const [context, setContext] = useState(defaultContext);
   const [seedIdAccessToken, setSeedIdAccessToken] = useState<JWT | null>(null);
-  const [liveCredentials, setLiveCredentials] = useState<LiveCredentials | null>(null);
-  const [trustchain, setTrustchain] = useState<Trustchain | null>(null);
+
+  // this is the state as it will be used by Ledger Live
+  const [state, setState] = useState(getInitialStore);
+  const { liveCredentials, trustchain } = state;
+  const setLiveCredentials = useCallback(
+    (liveCredentials: LiveCredentials | null) => setState(s => ({ ...s, liveCredentials })),
+    [],
+  );
+  const setTrustchain = useCallback(
+    (trustchain: Trustchain | null) => setState(s => ({ ...s, trustchain })),
+    [],
+  );
+
   const [liveAccessToken, setLiveAccessToken] = useState<JWT | null>(null);
   const [members, setMembers] = useState<TrustchainMember[] | null>(null);
 
+  const mockEnv = useEnv("MOCK");
+  const sdk = useMemo(() => getSdk(!!mockEnv, context), [mockEnv, context]);
+
   return (
-    <Container>
-      <h2>Wallet Sync Trustchain Playground</h2>
+    <SDKContext.Provider value={sdk}>
+      <Container>
+        <h2>Wallet Sync Trustchain Playground</h2>
 
-      <Expand title="Environment">
-        <AppSetTrustchainAPIEnv />
-        <AppMockEnv />
-      </Expand>
+        <Expand title="Identities">
+          <IdentityManager
+            state={state}
+            setState={setState}
+            defaultContext={defaultContext}
+            setContext={setContext}
+          />
+        </Expand>
 
-      <h3>Trustchain SDK</h3>
+        <Expand title="Environment">
+          <AppSetTrustchainAPIEnv />
+          <AppMockEnv />
+        </Expand>
 
-      <AppInitLiveCredentials
-        liveCredentials={liveCredentials}
-        setLiveCredentials={setLiveCredentials}
-      />
+        <Expand title="Trustchain SDK" expanded>
+          <AppInitLiveCredentials
+            liveCredentials={liveCredentials}
+            setLiveCredentials={setLiveCredentials}
+          />
 
-      <AppSeedIdAuthenticate
-        seedIdAccessToken={seedIdAccessToken}
-        setSeedIdAccessToken={setSeedIdAccessToken}
-      />
+          <AppSeedIdAuthenticate
+            seedIdAccessToken={seedIdAccessToken}
+            setSeedIdAccessToken={setSeedIdAccessToken}
+          />
 
-      <AppGetOrCreateTrustchain
-        seedIdAccessToken={seedIdAccessToken}
-        liveCredentials={liveCredentials}
-        trustchain={trustchain}
-        setTrustchain={setTrustchain}
-      />
+          <AppGetOrCreateTrustchain
+            seedIdAccessToken={seedIdAccessToken}
+            liveCredentials={liveCredentials}
+            trustchain={trustchain}
+            setTrustchain={setTrustchain}
+            setSeedIdAccessToken={setSeedIdAccessToken}
+          />
 
-      <AppLiveAuthenticate
-        liveAccessToken={liveAccessToken}
-        setLiveAccessToken={setLiveAccessToken}
-        liveCredentials={liveCredentials}
-        trustchain={trustchain}
-      />
+          <AppLiveAuthenticate
+            liveAccessToken={liveAccessToken}
+            setLiveAccessToken={setLiveAccessToken}
+            liveCredentials={liveCredentials}
+            trustchain={trustchain}
+            seedIdAccessToken={seedIdAccessToken}
+          />
 
-      <AppGetMembers
-        liveAccessToken={liveAccessToken}
-        liveCredentials={liveCredentials}
-        trustchain={trustchain}
-        members={members}
-        setMembers={setMembers}
-      />
+          <AppGetMembers
+            liveAccessToken={liveAccessToken}
+            trustchain={trustchain}
+            members={members}
+            setMembers={setMembers}
+          />
 
-      {members?.map(member => (
-        <AppMemberRow
-          key={member.id}
-          seedIdAccessToken={seedIdAccessToken}
-          trustchain={trustchain}
-          liveInstanceCredentials={liveCredentials}
-          member={member}
-          setTrustchain={setTrustchain}
-        />
-      ))}
+          {members?.map(member => (
+            <AppMemberRow
+              key={member.id}
+              seedIdAccessToken={seedIdAccessToken}
+              trustchain={trustchain}
+              liveInstanceCredentials={liveCredentials}
+              member={member}
+              setTrustchain={setTrustchain}
+              setSeedIdAccessToken={setSeedIdAccessToken}
+            />
+          ))}
 
-      {/* // in future, to facilitate the test, we can do this. for now we can play with the qr code flow.
+          {/* // in future, to facilitate the test, we can do this. for now we can play with the qr code flow.
       {members ? (
         <AppMemberAddForm
           liveAccessToken={liveAccessToken}
@@ -101,22 +141,29 @@ const App = () => {
       ) : null}
     */}
 
-      <AppDestroyTrustchain trustchain={trustchain} liveAccessToken={liveAccessToken} />
+          <AppDestroyTrustchain trustchain={trustchain} liveAccessToken={liveAccessToken} />
 
-      <Expand title="Data Encryption">
-        <AppEncryptUserData trustchain={trustchain} />
+          <AppRestoreTrustchain
+            liveAccessToken={liveAccessToken}
+            liveCredentials={liveCredentials}
+            trustchainId={trustchain?.rootId}
+            setTrustchain={setTrustchain}
+          />
 
-        <AppDecryptUserData trustchain={trustchain} />
-      </Expand>
+          <AppEncryptUserData trustchain={trustchain} />
 
-      <Expand title="QR Code Host">
-        <AppQRCodeHost trustchain={trustchain} liveCredentials={liveCredentials} />
-      </Expand>
+          <AppDecryptUserData trustchain={trustchain} />
+        </Expand>
 
-      <Expand title="QR Code Candidate">
-        <AppQRCodeCandidate liveCredentials={liveCredentials} />
-      </Expand>
-    </Container>
+        <Expand title="QR Code Host">
+          <AppQRCodeHost trustchain={trustchain} liveCredentials={liveCredentials} />
+        </Expand>
+
+        <Expand title="QR Code Candidate">
+          <AppQRCodeCandidate liveCredentials={liveCredentials} setTrustchain={setTrustchain} />
+        </Expand>
+      </Container>
+    </SDKContext.Provider>
   );
 };
 
@@ -223,20 +270,27 @@ function AppGetOrCreateTrustchain({
   liveCredentials,
   trustchain,
   setTrustchain,
+  setSeedIdAccessToken,
 }: {
   seedIdAccessToken: JWT | null;
   liveCredentials: LiveCredentials | null;
   trustchain: Trustchain | null;
   setTrustchain: (trustchain: Trustchain | null) => void;
+  setSeedIdAccessToken: (seedIdAccessToken: JWT | null) => void;
 }) {
   const sdk = useSDK();
 
   const action = useCallback(
     (seedIdAccessToken: JWT, liveCredentials: LiveCredentials) =>
       runWithDevice(transport =>
-        sdk.getOrCreateTrustchain(transport, seedIdAccessToken, liveCredentials),
+        sdk
+          .getOrCreateTrustchain(transport, seedIdAccessToken, liveCredentials)
+          .then(({ jwt, trustchain }) => {
+            setSeedIdAccessToken(jwt);
+            return trustchain;
+          }),
       ),
-    [sdk],
+    [sdk, setSeedIdAccessToken],
   );
 
   const valueDisplay = useCallback((trustchain: Trustchain) => trustchain.rootId, []);
@@ -258,11 +312,13 @@ function AppLiveAuthenticate({
   setLiveAccessToken,
   liveCredentials,
   trustchain,
+  seedIdAccessToken,
 }: {
   liveAccessToken: JWT | null;
   setLiveAccessToken: (liveAccessToken: JWT | null) => void;
   liveCredentials: LiveCredentials | null;
   trustchain: Trustchain | null;
+  seedIdAccessToken: JWT | null;
 }) {
   const sdk = useSDK();
 
@@ -282,19 +338,26 @@ function AppLiveAuthenticate({
       valueDisplay={valueDisplay}
       value={liveAccessToken}
       setValue={setLiveAccessToken}
-    />
+    >
+      {seedIdAccessToken && !liveAccessToken ? (
+        <button
+          style={{ opacity: 0.5, border: "none" }}
+          onClick={() => setLiveAccessToken(seedIdAccessToken)}
+        >
+          set liveAuthenticate from seedIdAuthenticate value
+        </button>
+      ) : null}
+    </Actionable>
   );
 }
 
 function AppGetMembers({
   liveAccessToken,
-  liveCredentials,
   trustchain,
   members,
   setMembers,
 }: {
   liveAccessToken: JWT | null;
-  liveCredentials: LiveCredentials | null;
   trustchain: Trustchain | null;
   members: TrustchainMember[] | null;
   setMembers: (members: TrustchainMember[] | null) => void;
@@ -302,8 +365,7 @@ function AppGetMembers({
   const sdk = useSDK();
 
   const action = useCallback(
-    (liveAccessToken: JWT, trustchain: Trustchain, liveCredentials: LiveCredentials) =>
-      sdk.getMembers(liveAccessToken, trustchain, liveCredentials),
+    (liveAccessToken: JWT, trustchain: Trustchain) => sdk.getMembers(liveAccessToken, trustchain),
     [sdk],
   );
 
@@ -315,11 +377,7 @@ function AppGetMembers({
   return (
     <Actionable
       buttonTitle="sdk.getMembers"
-      inputs={
-        liveAccessToken && trustchain && liveCredentials
-          ? [liveAccessToken, trustchain, liveCredentials]
-          : null
-      }
+      inputs={liveAccessToken && trustchain ? [liveAccessToken, trustchain] : null}
       action={action}
       valueDisplay={valueDisplay}
       value={members}
@@ -334,12 +392,14 @@ function AppMemberRow({
   liveInstanceCredentials,
   member,
   setTrustchain,
+  setSeedIdAccessToken,
 }: {
   seedIdAccessToken: JWT | null;
   trustchain: Trustchain | null;
   liveInstanceCredentials: LiveCredentials | null;
   member: TrustchainMember;
   setTrustchain: (trustchain: Trustchain | null) => void;
+  setSeedIdAccessToken: (seedIdAccessToken: JWT | null) => void;
 }) {
   const sdk = useSDK();
 
@@ -347,11 +407,12 @@ function AppMemberRow({
     (seedIdAccessToken: JWT, trustchain: Trustchain, liveInstanceCredentials: LiveCredentials) =>
       runWithDevice(transport =>
         sdk.removeMember(transport, seedIdAccessToken, trustchain, liveInstanceCredentials, member),
-      ).then(trustchain => {
+      ).then(({ jwt, trustchain }) => {
+        setSeedIdAccessToken(jwt);
         setTrustchain(trustchain);
         return member;
       }),
-    [sdk, member, setTrustchain],
+    [sdk, member, setTrustchain, setSeedIdAccessToken],
   );
 
   return (
@@ -392,6 +453,38 @@ function AppDestroyTrustchain({
       buttonTitle="sdk.destroyTrustchain"
       inputs={trustchain && liveAccessToken ? [trustchain, liveAccessToken] : null}
       action={action}
+    />
+  );
+}
+
+function AppRestoreTrustchain({
+  liveAccessToken,
+  liveCredentials,
+  trustchainId,
+  setTrustchain,
+}: {
+  liveAccessToken: JWT | null;
+  liveCredentials: LiveCredentials | null;
+  trustchainId: string | undefined | null;
+  setTrustchain: (trustchain: Trustchain | null) => void;
+}) {
+  const sdk = useSDK();
+  const action = useCallback(
+    (liveAccessToken: JWT, trustchainId: string, liveCredentials: LiveCredentials) =>
+      sdk.restoreTrustchain(liveAccessToken, trustchainId, liveCredentials),
+    [sdk],
+  );
+
+  return (
+    <Actionable
+      buttonTitle="sdk.restoreTrustchain"
+      inputs={
+        liveAccessToken && liveCredentials && trustchainId
+          ? [liveAccessToken, trustchainId, liveCredentials]
+          : null
+      }
+      action={action}
+      setValue={setTrustchain}
     />
   );
 }
@@ -478,6 +571,7 @@ function AppQRCodeHost({
       addMember: async member => {
         const jwt = await sdk.liveAuthenticate(trustchain, liveCredentials);
         await sdk.addMember(jwt, trustchain, liveCredentials, member);
+        return trustchain;
       },
     })
       .catch(e => {
@@ -515,7 +609,13 @@ function AppQRCodeHost({
   );
 }
 
-function AppQRCodeCandidate({ liveCredentials }: { liveCredentials: LiveCredentials | null }) {
+function AppQRCodeCandidate({
+  liveCredentials,
+  setTrustchain,
+}: {
+  liveCredentials: LiveCredentials | null;
+  setTrustchain: (trustchain: Trustchain | null) => void;
+}) {
   const [scannedUrl, setScannedUrl] = useState<string | null>(null);
   const [input, setInput] = useState<string | null>(null);
   const [digits, setDigits] = useState<number | null>(null);
@@ -534,10 +634,13 @@ function AppQRCodeCandidate({ liveCredentials }: { liveCredentials: LiveCredenti
       return createQRCodeCandidateInstance({
         liveCredentials,
         scannedUrl,
-        memberName: "web-tools-" + liveCredentials.pubkey.slice(-5),
+        memberName: memberNameForPubKey(liveCredentials.pubkey),
         onRequestQRCodeInput,
       })
-        .then(() => true)
+        .then(trustchain => {
+          setTrustchain(trustchain);
+          return true;
+        })
         .catch(e => {
           // there can be various errors, InvalidDigitsError is one of them that can be handled
           if (e instanceof InvalidDigitsError) {
@@ -554,7 +657,7 @@ function AppQRCodeCandidate({ liveCredentials }: { liveCredentials: LiveCredenti
           setInputCallback(null);
         });
     },
-    [onRequestQRCodeInput],
+    [onRequestQRCodeInput, setTrustchain],
   );
 
   const handleSendDigits = useCallback(

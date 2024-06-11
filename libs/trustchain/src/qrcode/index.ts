@@ -1,7 +1,7 @@
-import { crypto } from "@ledgerhq/hw-trustchain";
+import { Permissions, crypto } from "@ledgerhq/hw-trustchain";
 import { getEnv } from "@ledgerhq/live-env";
 import WebSocket from "isomorphic-ws";
-import { LiveCredentials, TrustchainMember } from "../types";
+import { LiveCredentials, Trustchain, TrustchainMember } from "../types";
 import { makeCipher, makeMessageCipher } from "./cipher";
 import { Message } from "./types";
 import { InvalidDigitsError } from "../errors";
@@ -28,7 +28,7 @@ export async function createQRCodeHostInstance({
   /**
    * this function will need to using the TrustchainSDK (and use sdk.addMember)
    */
-  addMember: (member: TrustchainMember) => Promise<void>;
+  addMember: (member: TrustchainMember) => Promise<Trustchain>;
 }): Promise<void> {
   const ephemeralKey = await crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
@@ -88,8 +88,8 @@ export async function createQRCodeHostInstance({
               throw new Error("sessionEncryptionKey not set");
             }
             const { id, name } = await cipher.decryptMessage(data);
-            await addMember({ id, name });
-            const payload = await cipher.encryptMessagePayload({});
+            const trustchain = await addMember({ id, name, permissions: Permissions.OWNER });
+            const payload = await cipher.encryptMessagePayload({ trustchain });
             send({ version, publisher, message: "TrustchainAddedMember", payload });
             resolve();
             break;
@@ -116,7 +116,7 @@ export async function createQRCodeHostInstance({
 
 /**
  * establish a channel to be able to add myself to the trustchain after scanning the QR Code
- * @returns a promise that resolves when this is done
+ * @returns a promise that resolves a Trustchain when this is done
  */
 export async function createQRCodeCandidateInstance({
   liveCredentials,
@@ -147,7 +147,7 @@ export async function createQRCodeCandidateInstance({
     },
     callback: (digits: string) => void,
   ) => void;
-}): Promise<void> {
+}): Promise<Trustchain> {
   const m = scannedUrl.match(/host=([0-9A-Fa-f]+)/);
   if (!m) {
     throw new Error("invalid scannedUrl");
@@ -185,8 +185,9 @@ export async function createQRCodeCandidateInstance({
             break;
           }
           case "TrustchainAddedMember": {
+            const { trustchain } = await cipher.decryptMessage(data);
+            resolve(trustchain);
             ws.close();
-            resolve();
             break;
           }
           case "Failure": {

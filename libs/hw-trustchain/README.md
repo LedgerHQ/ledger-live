@@ -27,46 +27,39 @@ Ledger Live trustchain hardware layer.
 *   [EditMember](#editmember)
     *   [Parameters](#parameters-6)
 *   [CloseStream](#closestream)
-*   [CommandBlock](#commandblock)
 *   [createCommandBlock](#createcommandblock)
     *   [Parameters](#parameters-7)
-*   [createCommandBlock](#createcommandblock-1)
-    *   [Parameters](#parameters-8)
-*   [signCommandBlock](#signcommandblock)
-    *   [Parameters](#parameters-9)
-*   [hashCommandBlock](#hashcommandblock)
-    *   [Parameters](#parameters-10)
-*   [verifyCommandBlock](#verifycommandblock)
-    *   [Parameters](#parameters-11)
 *   [CommandIssuer](#commandissuer)
 *   [CommandStreamIssuer](#commandstreamissuer)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-8)
 *   [CommandStream](#commandstream)
-    *   [Parameters](#parameters-13)
+    *   [Parameters](#parameters-9)
 *   [CommandStream](#commandstream-1)
 *   [Crypto](#crypto)
 *   [crypto](#crypto-1)
 *   [Device](#device)
     *   [isPublicKeyAvailable](#ispublickeyavailable)
     *   [readKey](#readkey)
-        *   [Parameters](#parameters-14)
+        *   [Parameters](#parameters-10)
 *   [createDevice](#createdevice)
 *   [CommandStreamJsonifier](#commandstreamjsonifier)
 *   [device](#device-1)
+*   [encryptUserData](#encryptuserdata)
+    *   [Parameters](#parameters-11)
 *   [ApplicationStreams](#applicationstreams)
 *   [StreamTreeCreateOpts](#streamtreecreateopts)
 *   [PublishKeyEvent](#publishkeyevent)
 *   [StreamTree](#streamtree)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-12)
     *   [share](#share)
-        *   [Parameters](#parameters-16)
+        *   [Parameters](#parameters-13)
 *   [StreamTreeCipherMode](#streamtreeciphermode)
 *   [StreamTreeCipher](#streamtreecipher)
-    *   [Parameters](#parameters-17)
+    *   [Parameters](#parameters-14)
     *   [encrypt](#encrypt)
-        *   [Parameters](#parameters-18)
+        *   [Parameters](#parameters-15)
     *   [decrypt](#decrypt)
-        *   [Parameters](#parameters-19)
+        *   [Parameters](#parameters-16)
 
 ### APDU
 
@@ -143,8 +136,6 @@ Returns **ApduDevice**&#x20;
 
 ### CloseStream
 
-### CommandBlock
-
 ### createCommandBlock
 
 Create a new command block.
@@ -156,44 +147,7 @@ Create a new command block.
 *   `signature` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** The signature of the command block (by default the block is not signed) (optional, default `new Uint8Array()`)
 *   `parent` **([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | null)** The parent command block hash (if null, the block is the first block and a parent will be generated) (optional, default `null`)
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[CommandBlock](#commandblock)>**&#x20;
-
-### createCommandBlock
-
-#### Parameters
-
-*   `issuer` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
-*   `commands` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Command](#command)>**&#x20;
-*   `signature` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**  (optional, default `new Uint8Array()`)
-*   `parent` **([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | null)**  (optional, default `null`)
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[CommandBlock](#commandblock)>**&#x20;
-
-### signCommandBlock
-
-#### Parameters
-
-*   `block` **[CommandBlock](#commandblock)**&#x20;
-*   `issuer` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
-*   `secretKey` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[CommandBlock](#commandblock)>**&#x20;
-
-### hashCommandBlock
-
-#### Parameters
-
-*   `block` **[CommandBlock](#commandblock)**&#x20;
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>**&#x20;
-
-### verifyCommandBlock
-
-#### Parameters
-
-*   `block` **[CommandBlock](#commandblock)**&#x20;
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**&#x20;
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<CommandBlock>**&#x20;
 
 ### CommandIssuer
 
@@ -209,7 +163,7 @@ Type: function (device: [Device](#device), tempStream: [CommandStream](#commands
 
 #### Parameters
 
-*   `blocks` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[CommandBlock](#commandblock)>**  (optional, default `[]`)
+*   `blocks` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CommandBlock>**  (optional, default `[]`)
 
 ### CommandStream
 
@@ -248,6 +202,26 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 **Extends Jsonifier**
 
 ### device
+
+### encryptUserData
+
+Ledger Live data are encrypted following pattern based on ECIES.
+For each encryption the Ledger Live instance generates a random keypair over secp256k1 (ephemeral public key)
+and a 16 bytes IV. Ledger Live then perform an ECDH between the command stream public key and
+the ephemeral private key to get the encryption key.
+The data is then encrypted using AES-256-GCM and serialized using the following format:
+1 byte : Version of the format (0x00)
+33 bytes : Compressed ephemeral public key
+16 bytes : Nonce/IV
+16 bytes : Tag/MAC (from AES-256-GCM)
+variable : Encrypted data
+
+#### Parameters
+
+*   `commandStreamPrivateKey` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+*   `data` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>**&#x20;
 
 ### ApplicationStreams
 
