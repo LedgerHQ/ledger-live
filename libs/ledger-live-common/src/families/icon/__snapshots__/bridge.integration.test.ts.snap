@@ -15,7 +15,7 @@ exports[`icon currency bridge scanAccounts icon seed 1 1`] = `
     },
     "id": "js:2:icon:hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d:icon",
     "index": 0,
-    "operationsCount": 15,
+    "operationsCount": 17,
     "pendingOperations": [],
     "seedIdentifier": "0426dd3cdd69f3604e9c1d8f3021b20e133524f12894b9ef8e35d3f1f5244516d18b7bb0d1fee7b7c2972d5cde08190d66cf932d0addd5ac87f53198d050940ccb",
     "spendableBalance": "0",
@@ -215,6 +215,24 @@ exports[`icon currency bridge scanAccounts icon seed 1 2`] = `
     {
       "accountId": "js:2:icon:hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d:icon",
       "blockHash": null,
+      "blockHeight": 82570455,
+      "extra": {},
+      "fee": "1250000000000000",
+      "hasFailed": false,
+      "hash": "0xaa0ed3f7d60e5c4635c5afc8e3bee597dfab8632328a503b270041744b3fce78",
+      "id": "js:2:icon:hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d:icon-0xaa0ed3f7d60e5c4635c5afc8e3bee597dfab8632328a503b270041744b3fce78-OUT",
+      "recipients": [
+        "hx2dbaef576c73cca274db0b602831c2c6a9fc4bba",
+      ],
+      "senders": [
+        "hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d",
+      ],
+      "type": "OUT",
+      "value": "1800000000000000000",
+    },
+    {
+      "accountId": "js:2:icon:hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d:icon",
+      "blockHash": null,
       "blockHeight": 81316314,
       "extra": {},
       "fee": "1250000000000000",
@@ -301,6 +319,24 @@ exports[`icon currency bridge scanAccounts icon seed 1 2`] = `
       ],
       "type": "IN",
       "value": "700000000000000000",
+    },
+    {
+      "accountId": "js:2:icon:hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d:icon",
+      "blockHash": null,
+      "blockHeight": 82570388,
+      "extra": {},
+      "fee": "1250000000000000",
+      "hasFailed": false,
+      "hash": "0xf6edc460f109a188bbbb7c0d539cf9153b348603e2281ff146a0f190e2140634",
+      "id": "js:2:icon:hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d:icon-0xf6edc460f109a188bbbb7c0d539cf9153b348603e2281ff146a0f190e2140634-IN",
+      "recipients": [
+        "hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d",
+      ],
+      "senders": [
+        "hx2dbaef576c73cca274db0b602831c2c6a9fc4bba",
+      ],
+      "type": "IN",
+      "value": "1800000000000000000",
     },
     {
       "accountId": "js:2:icon:hxcf4e2c94b52619f72aa4da13370aa6c1c3dad00d:icon",
