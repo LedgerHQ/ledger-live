@@ -27,6 +27,7 @@
       "title" : "اكتشف",
       "section" : {
         "recentlyUsed" : "مُستخدَم مؤخراً",
+        "locallyLoaded" : "التطبيقات الحية المُحمّلة محلياً",
         "browse" : "تصفح"
       },
       "filter" : {
@@ -3589,6 +3590,12 @@
         },
         "warning" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المفوضة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
       },
+      "states" : {
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "activating" : "جارٍ التنشيط",
+        "deactivating" : "جارٍ إلغاء التنشيط"
+      },
       "flow" : {
         "title" : "تفويض",
         "steps" : {
@@ -3967,7 +3974,11 @@
       "region" : "المنطقة",
       "regionDesc" : "اختر منطقتك لتحديث صِيغ التواريخ والوقت والعملات.",
       "stock" : "مؤشر السوق الإقليمي",
-      "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر."
+      "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر.",
+      "walletSync" : "مزامنة المحفظة",
+      "walletSyncDesc" : "نسخ بيانات التطبيق لديك ومزامنة العديد من حالات Ledger Live.",
+      "marketPerformanceWidget" : "Market Performance Widget",
+      "marketPerformanceWidgetDesc" : "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
     "developer" : {
       "search" : "بحث",
@@ -3985,6 +3996,11 @@
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "debugReactQuery" : "السماح بتصحيح أخطاء ReactQuery",
       "debugReactQueryDesc" : "عرض والسماح بفتح وحدة تحكم تصحيح أخطاء ReactQuery.",
+      "exchangeDeveloperMode" : {
+        "title" : "وضع المطور لمنصة التداول",
+        "desc" : "إضافة معلومات مُزوّد منصة التداول",
+        "placeholder" : "معلومات مُزوّد التداول بصيغة CAL"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "السماح بالإبلاغ عن الرموز غير القابلة للاستبدال العشوائية (بيتا)",
         "debugNFTSpamReportDesc" : "عرض نموذج للإبلاغ عن رمز غير قابل للاستبدال كرمز عشوائي أو لإلغاء عرضه كرمز عشوائي",
@@ -4037,6 +4053,17 @@
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
       "addLocalAppButton" : "تصفح",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "إنشاء تطبيق محلي",
+          "modify" : "تعديل تطبيق محلي"
+        },
+        "addNetwork" : "إضافة شبكة جديدة",
+        "removeNetwork" : "إزالة آخر شبكة",
+        "export" : "تصدير",
+        "modify" : "تعديل",
+        "create" : "إنشاء"
+      },
       "runLocalAppDeleteButton" : "حذف",
       "runLocalAppOpenButton" : "فتح",
       "enableLearnStagingUrl" : "الرابط المرحلي (staging URL) للصفحة التعليمية",
@@ -4266,7 +4293,7 @@
     "downloadInProgress" : "جاري تنزيل التحديث...",
     "downloadProgress" : "اكتمل {{progress}}%",
     "checking" : "جاري التحقق من التحديث...",
-    "checkSuccess" : "متاح تحديث Ledger Live جديد، سيتم تثبيته تلقائياً عندما تغلق التطبيق",
+    "checkSuccess" : "متاح تحديث جديد، سيقوم بتثبيت وإعادة تشغيل Ledger Live تلقائياً عندما تغلق التطبيق",
     "quitAndInstall" : "تثبيت الآن وإعادة الإطلاق",
     "updateAvailable" : "التحديث إلى إصدار {{version}} من Ledger Live متاح",
     "error" : "حدث خطأ أثناء التحديث. يرجى التنزيل مرة أخرى",
@@ -5529,7 +5556,7 @@
       "title" : "حدث خطأ ما. يُرجى إعادة توصيل جهارك",
       "description" : "{{message}}"
     },
-    "TransportPendingOperation" : {
+    "TransportRaceCondition" : {
       "title" : "حدث خطأ ما. يُرجى إعادة توصيل جهازك",
       "description" : "كان هناك إجراء مُعلَّق بالفعل على جهاز Ledger. يرجى الرفض أو إعادة الاتصال."
     },
@@ -6040,6 +6067,9 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "فشل التحقق من تحديث نظام التشغيل",
       "description" : "حدث خطأ ما. يرجى المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا كان لديك شك."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "المبادلة غير متوفرة: الإرسال/التفويض الأولي مطلوب مع حساب Tezos أو زوج الاستبدال."
     }
   },
   "cryptoOrg" : {
@@ -6231,6 +6261,33 @@
       "analytics" : "التحليلات",
       "personalizedExpDesc" : "تلقى توصيات مخصصة تطابق تفضيلاتك.",
       "analyticsDesc" : "قم بتمكين التحليلات لمساعدة Ledger على تحسين تجربة المستخدم."
+    }
+  },
+  "walletSync" : {
+    "title" : "مزامنة المحفظة",
+    "activate" : {
+      "title" : "تفعيل مزامنة المحفظة",
+      "description" : "قم بإنشاء نسخة احتياطية آمنة من Ledger Live الخاص بك وقم بمزامنة العديد من حالات Ledger Live، على كلٍ من الجوّال وجهاز سطح المكتب.",
+      "cta" : "إنشاء نسخة احتياطية"
+    },
+    "alreadySync" : {
+      "title" : "أنشأت نسخة احتياطية على جهاز آخر بالفعل؟",
+      "cta" : "مزامنة"
+    },
+    "manage" : {
+      "cta" : "إدارة",
+      "synchronize" : {
+        "label" : "مزامنة",
+        "description" : "قم بمزامنة بيانات التطبيق لديك مع تطبيق Ledger Live آخر من أجل تجربة سلسة."
+      },
+      "backup" : {
+        "label" : "قم بإدارة نسخك الاحتياطي",
+        "description" : "قم بتأمين نسخك الاحتياطي عن طريق جهاز Ledger آخر أو احذفه."
+      },
+      "instance" : {
+        "label" : "{{ nbInstances }} حالة تمت مزامنتها",
+        "cta" : "إدارة"
+      }
     }
   }
 }
