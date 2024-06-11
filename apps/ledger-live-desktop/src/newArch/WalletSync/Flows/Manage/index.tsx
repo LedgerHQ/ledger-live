@@ -2,7 +2,10 @@ import { Box, Flex, Text, Icons } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
-import { Option, OptionContainer, OptionProps } from "./Option";
+import { useDispatch } from "react-redux";
+import { setFlow } from "~/renderer/actions/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { OptionContainer, Option, OptionProps } from "./Option";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -11,15 +14,30 @@ const Separator = () => {
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
+  const nbInstances = 1;
+
+  const dispatch = useDispatch();
+
+  const goToSync = () => {
+    dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
+  };
+
+  const goToManageBackups = () => {
+    dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.ManageBackup }));
+  };
 
   const Options: OptionProps[] = [
     {
       label: t("walletSync.manage.synchronize.label"),
       description: t("walletSync.manage.synchronize.description"),
+      onClick: goToSync,
+      testId: "walletSync-synchronize",
     },
     {
       label: t("walletSync.manage.backup.label"),
       description: t("walletSync.manage.backup.description"),
+      onClick: goToManageBackups,
+      testId: "walletSync-manage-backup",
     },
   ];
 
@@ -38,7 +56,9 @@ const WalletSyncManage = () => {
       ))}
 
       <Flex paddingY={24} justifyContent="space-between">
-        <Text fontSize={13.44}>{t("walletSync.manage.instance.label", { nbInstances: 0 })}</Text>
+        <Text fontSize={13.44}>
+          {t("walletSync.manage.instance.label", { count: nbInstances })}
+        </Text>
 
         <OptionContainer>
           <Flex columnGap={"8px"} alignItems={"center"}>

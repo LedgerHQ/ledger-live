@@ -93,6 +93,7 @@ type SettingsSectionRowProps = {
   descContainerStyle?: React.CSSProperties;
   childrenContainerStyle?: React.CSSProperties;
   dataTestId?: string;
+  id?: string;
 };
 export const SettingsSectionRow = ({
   title,
@@ -104,12 +105,14 @@ export const SettingsSectionRow = ({
   descContainerStyle,
   childrenContainerStyle,
   dataTestId,
+  id,
 }: SettingsSectionRowProps) => (
   <SettingsSectionRowContainer
     onClick={onClick}
     tabIndex={-1}
     inset={inset}
     data-test-id={dataTestId}
+    id={id}
   >
     <Box
       grow
