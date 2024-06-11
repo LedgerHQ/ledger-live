@@ -1,37 +1,21 @@
-import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
-import React, { PropsWithChildren } from "react";
+import { Flex, Icons, Box, Text } from "@ledgerhq/react-ui";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import useTheme from "~/renderer/hooks/useTheme";
+import { LogoWrapper } from "LLD/WalletSync/components/LogoWrapper";
 
-const LogoWrapper = ({ children, opacity = "70%" }: PropsWithChildren & { opacity?: string }) => (
-  <Box>
-    <Flex padding="7px" borderRadius="13px" border="1px solid hsla(0, 0%, 100%, 0.05)">
-      <Flex
-        borderRadius="9px"
-        backgroundColor="hsla(248, 100%, 85%, 0.08)"
-        padding="5px"
-        opacity={opacity}
-      >
-        {children}
-      </Flex>
-    </Flex>
-  </Box>
-);
+type Props = {
+  goToCreateBackup: () => void;
+  goToSync: () => void;
+};
 
-const WalletSyncActivation = () => {
+export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   return (
-    <Flex
-      flexDirection="column"
-      height="100%"
-      paddingX="64px"
-      alignSelf="center"
-      justifyContent="center"
-      rowGap="48px"
-    >
+    <>
       <Flex flexDirection="column" alignSelf="center" justifyContent="center" rowGap="24px">
         <Flex justifyContent="center" alignItems="center">
           <LogoWrapper>
@@ -54,7 +38,9 @@ const WalletSyncActivation = () => {
           {t("walletSync.activate.description")}
         </Text>
         <Flex justifyContent="center">
-          <ButtonV3 variant="main"> {t("walletSync.activate.cta")}</ButtonV3>
+          <ButtonV3 variant="main" onClick={goToCreateBackup}>
+            {t("walletSync.activate.cta")}
+          </ButtonV3>
         </Flex>
       </Flex>
 
@@ -70,12 +56,12 @@ const WalletSyncActivation = () => {
             {t("walletSync.alreadySync.title")}
           </Text>
           <Box>
-            <ButtonV3 variant="shade">{t("walletSync.alreadySync.cta")}</ButtonV3>
+            <ButtonV3 variant="shade" onClick={goToSync}>
+              {t("walletSync.alreadySync.cta")}
+            </ButtonV3>
           </Box>
         </Flex>
       </Box>
-    </Flex>
+    </>
   );
-};
-
-export default WalletSyncActivation;
+}
