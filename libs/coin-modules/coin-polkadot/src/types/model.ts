@@ -43,6 +43,13 @@ export type ExplorerExtrinsic = {
   validatorStash?: string;
   staking?: {
     validators: { address: string }[];
+    eventStaking: [
+      {
+        section: "staking";
+        method: string;
+        value: number;
+      },
+    ];
   };
 };
 

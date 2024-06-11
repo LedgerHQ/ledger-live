@@ -18,6 +18,7 @@ import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopstic
 import { polkadot } from "./utils";
 import { indexOperation } from "../indexer";
 import BigNumber from "bignumber.js";
+import { ExplorerExtrinsic } from "../../../types";
 
 type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, PolkadotAccount>;
 
@@ -26,7 +27,7 @@ function getTransactions() {
     name: "send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "1"),
-    xexpect: (previousAccount, currentAccount) => {
+    expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
@@ -43,7 +44,7 @@ function getTransactions() {
     name: "send 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "100"),
-    xexpect: (previousAccount, currentAccount) => {
+    expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
@@ -61,7 +62,7 @@ function getTransactions() {
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "250"),
     mode: "bond",
-    xexpect: (previousAccount, currentAccount) => {
+    expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("BOND");
@@ -85,7 +86,6 @@ function getTransactions() {
     mode: "unbond",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
-      console.log(JSON.stringify(currentAccount));
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("UNBOND");
       expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.unbond");
@@ -104,6 +104,27 @@ function getTransactions() {
       // expect(currentAccount.balance.toFixed()).toBe(
       //   previousAccount.balance.minus(latestOperation.fee).toFixed(),
       // );
+    },
+  };
+
+  const nomminateTransaction: PolkadotScenarioTransaction = {
+    name: "Nomiate",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    mode: "nominate",
+    // https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-rpc.publicnode.com#/staking
+    validators: [
+      "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
+      "13TrdLhMVLcwcEhMYLcqrkxAgq9M5gnK1LZKAF4VupVfQDUg",
+      "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
+    ],
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("NOMINATE");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe(
+        "staking.nominate",
+      );
+      expect((latestOperation.extra as PolkadotOperationExtra).validators?.length).toBe(3);
     },
   };
 
@@ -144,6 +165,7 @@ function getTransactions() {
     bond250DotTransaction,
     unbond250DotTransaction,
     // withdraw250DotTransaction,
+    nomminateTransaction,
   ];
 }
 
@@ -252,7 +274,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
         return extrinsic.hash === optimistic.hash;
       });
 
-      // we only need to index the transactions made by the account
+      // we only need the transactions made during the test
       if (!extrinsic) {
         return;
       }
@@ -261,6 +283,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
 
       const polkadotExtra = optimistic.extra as PolkadotOperationExtra;
       let amount = new BigNumber(0);
+      let staking: ExplorerExtrinsic["staking"] = {} as ExplorerExtrinsic["staking"];
 
       switch (polkadotExtra.palletMethod) {
         case "balances.transfer":
@@ -273,6 +296,18 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
           break;
         case "staking.unbond":
           amount = new BigNumber(polkadotExtra.unbondedAmount!);
+          break;
+        case "staking.nominate":
+          staking = {
+            validators: polkadotExtra.validators?.map(address => ({ address })) ?? [],
+            eventStaking: [
+              {
+                section: "staking",
+                method: "nominate",
+                value: 0,
+              },
+            ],
+          };
           break;
         default:
           throw new Error(`Unsupported pallet method: ${polkadotExtra.palletMethod}`);
@@ -290,6 +325,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
         isSuccess: extrinsic.success,
         amount: amount.toNumber(),
         partialFee: optimistic.fee.toNumber(),
+        staking: staking!,
         index: 2, // Not used by coin-module
         isBatch: false, // batch transactions are not supported yet
       });
