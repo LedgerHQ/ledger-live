@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.48.0-nightly.3
+
+### Patch Changes
+
+- [#7006](https://github.com/LedgerHQ/ledger-live/pull/7006) [`1a5b277`](https://github.com/LedgerHQ/ledger-live/commit/1a5b2777b7b71aa4c4e353010eeb9e3dab432bca) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flags "supportDeviceStax" and "staxWelcomeScreen"
+
+- [#7048](https://github.com/LedgerHQ/ledger-live/pull/7048) [`a2505de`](https://github.com/LedgerHQ/ledger-live/commit/a2505deb93dd0722981a90e12082ff1dbefc29b1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Create Wallet sync arch inside LLM and add FF
+
 ## 6.48.0-nightly.2
 
 ### Patch Changes

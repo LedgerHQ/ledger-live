@@ -1,5 +1,15 @@
 # @ledgerhq/coin-solana
 
+## 0.7.0-nightly.14
+
+### Patch Changes
+
+- [#6946](https://github.com/LedgerHQ/ledger-live/pull/6946) [`056946e`](https://github.com/LedgerHQ/ledger-live/commit/056946e5a0a27c202e6153996a625ede07ca0833) Thanks [@mikhd](https://github.com/mikhd)! - Optimisations of solana delegations performance
+
+- Updated dependencies [[`1a5b277`](https://github.com/LedgerHQ/ledger-live/commit/1a5b2777b7b71aa4c4e353010eeb9e3dab432bca), [`a2505de`](https://github.com/LedgerHQ/ledger-live/commit/a2505deb93dd0722981a90e12082ff1dbefc29b1)]:
+  - @ledgerhq/types-live@6.48.0-nightly.3
+  - @ledgerhq/coin-framework@0.14.0-nightly.9
+
 ## 0.7.0-nightly.13
 
 ### Patch Changes

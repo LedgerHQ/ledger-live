@@ -1,5 +1,14 @@
 # @ledgerhq/coin-evm
 
+## 2.1.0-nightly.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.14.0-nightly.9
+  - @ledgerhq/domain-service@1.2.0-nightly.5
+  - @ledgerhq/evm-tools@1.1.0-nightly.6
+
 ## 2.1.0-nightly.8
 
 ### Minor Changes

@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.9
+
+### Patch Changes
+
+- [#7043](https://github.com/LedgerHQ/ledger-live/pull/7043) [`64ec9c2`](https://github.com/LedgerHQ/ledger-live/commit/64ec9c23c5740d6c00af7ca158965caf856b3072) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix Send: Camera does not shut off when not scanning QR code
+
+- [#7044](https://github.com/LedgerHQ/ledger-live/pull/7044) [`c1b405b`](https://github.com/LedgerHQ/ledger-live/commit/c1b405bb60be651fd87d80f4127f1895b30cae24) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - FIx fallback when no image on MArketWidget
+
+- [#7032](https://github.com/LedgerHQ/ledger-live/pull/7032) [`1417c65`](https://github.com/LedgerHQ/ledger-live/commit/1417c65d64a21237eb224dd4666ed0d0ce9c549c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Fix overriding the analytics opt in when the analyticsOptInPrompt is only enabled for the Onboarding
+
+- [#7047](https://github.com/LedgerHQ/ledger-live/pull/7047) [`a8f151b`](https://github.com/LedgerHQ/ledger-live/commit/a8f151b0b202320e8e227e70e61dc7d67cfb8ef8) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix: render swap live app after LLD quotes loading finish
+
+- [#7006](https://github.com/LedgerHQ/ledger-live/pull/7006) [`1a5b277`](https://github.com/LedgerHQ/ledger-live/commit/1a5b2777b7b71aa4c4e353010eeb9e3dab432bca) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flags "supportDeviceStax" and "staxWelcomeScreen"
+
+- [#7045](https://github.com/LedgerHQ/ledger-live/pull/7045) [`6e8a432`](https://github.com/LedgerHQ/ledger-live/commit/6e8a43278711e4d343e5d774d37d64be9c9a33d7) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - get source account name for token account
+
+- Updated dependencies [[`09d3577`](https://github.com/LedgerHQ/ledger-live/commit/09d35775d1b2b93594c9ea8eb393dcb3d30cd2fb), [`2a8d564`](https://github.com/LedgerHQ/ledger-live/commit/2a8d564b483a35045a957b430b4d7d252e2ddcfe), [`57fa89c`](https://github.com/LedgerHQ/ledger-live/commit/57fa89c6ef5e05cfdc5173e0f3b18ce696c55842), [`1a5b277`](https://github.com/LedgerHQ/ledger-live/commit/1a5b2777b7b71aa4c4e353010eeb9e3dab432bca), [`a2505de`](https://github.com/LedgerHQ/ledger-live/commit/a2505deb93dd0722981a90e12082ff1dbefc29b1)]:
+  - @ledgerhq/live-common@34.3.0-nightly.15
+  - @ledgerhq/types-live@6.48.0-nightly.3
+  - @ledgerhq/coin-framework@0.14.0-nightly.9
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.9
+  - @ledgerhq/coin-evm@2.1.0-nightly.9
+  - @ledgerhq/domain-service@1.2.0-nightly.5
+  - @ledgerhq/live-countervalues@0.2.0-nightly.9
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.9
+  - @ledgerhq/live-nft@0.4.0-nightly.9
+  - @ledgerhq/live-nft-react@0.4.0-nightly.9
+  - @ledgerhq/live-wallet@0.1.1-nightly.12
+
 ## 2.82.0-nightly.8
 
 ### Minor Changes

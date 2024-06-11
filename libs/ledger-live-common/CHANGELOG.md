@@ -1,5 +1,39 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.15
+
+### Minor Changes
+
+- [#7041](https://github.com/LedgerHQ/ledger-live/pull/7041) [`2a8d564`](https://github.com/LedgerHQ/ledger-live/commit/2a8d564b483a35045a957b430b4d7d252e2ddcfe) Thanks [@lvndry](https://github.com/lvndry)! - Updated Taquito dependency
+
+### Patch Changes
+
+- [#7049](https://github.com/LedgerHQ/ledger-live/pull/7049) [`09d3577`](https://github.com/LedgerHQ/ledger-live/commit/09d35775d1b2b93594c9ea8eb393dcb3d30cd2fb) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): ripple wrong family name
+
+- [#7042](https://github.com/LedgerHQ/ledger-live/pull/7042) [`57fa89c`](https://github.com/LedgerHQ/ledger-live/commit/57fa89c6ef5e05cfdc5173e0f3b18ce696c55842) Thanks [@lvndry](https://github.com/lvndry)! - Migrate deprecated api for stacks to current
+
+- [#7006](https://github.com/LedgerHQ/ledger-live/pull/7006) [`1a5b277`](https://github.com/LedgerHQ/ledger-live/commit/1a5b2777b7b71aa4c4e353010eeb9e3dab432bca) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flags "supportDeviceStax" and "staxWelcomeScreen"
+
+- [#7048](https://github.com/LedgerHQ/ledger-live/pull/7048) [`a2505de`](https://github.com/LedgerHQ/ledger-live/commit/a2505deb93dd0722981a90e12082ff1dbefc29b1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Create Wallet sync arch inside LLM and add FF
+
+- Updated dependencies [[`056946e`](https://github.com/LedgerHQ/ledger-live/commit/056946e5a0a27c202e6153996a625ede07ca0833), [`2a8d564`](https://github.com/LedgerHQ/ledger-live/commit/2a8d564b483a35045a957b430b4d7d252e2ddcfe)]:
+  - @ledgerhq/coin-solana@0.7.0-nightly.14
+  - @ledgerhq/coin-tezos@0.4.0-nightly.8
+  - @ledgerhq/coin-framework@0.14.0-nightly.9
+  - @ledgerhq/coin-algorand@0.5.0-nightly.9
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.9
+  - @ledgerhq/coin-cardano@0.1.0-nightly.5
+  - @ledgerhq/coin-evm@2.1.0-nightly.9
+  - @ledgerhq/coin-near@0.5.0-nightly.9
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.9
+  - @ledgerhq/coin-xrp@0.2.0-nightly.9
+  - @ledgerhq/device-core@0.2.0-nightly.6
+  - @ledgerhq/hw-app-eth@6.37.0-nightly.8
+  - @ledgerhq/live-countervalues@0.2.0-nightly.9
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.9
+  - @ledgerhq/live-nft@0.4.0-nightly.9
+  - @ledgerhq/live-wallet@0.1.1-nightly.12
+
 ## 34.3.0-nightly.14
 
 ### Minor Changes

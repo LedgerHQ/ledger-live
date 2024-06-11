@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tezos
 
+## 0.4.0-nightly.8
+
+### Minor Changes
+
+- [#7041](https://github.com/LedgerHQ/ledger-live/pull/7041) [`2a8d564`](https://github.com/LedgerHQ/ledger-live/commit/2a8d564b483a35045a957b430b4d7d252e2ddcfe) Thanks [@lvndry](https://github.com/lvndry)! - Updated Taquito and other dependencies for Tezos Coin Module
+
+### Patch Changes
+
+- Updated dependencies [[`1a5b277`](https://github.com/LedgerHQ/ledger-live/commit/1a5b2777b7b71aa4c4e353010eeb9e3dab432bca), [`a2505de`](https://github.com/LedgerHQ/ledger-live/commit/a2505deb93dd0722981a90e12082ff1dbefc29b1)]:
+  - @ledgerhq/types-live@6.48.0-nightly.3
+  - @ledgerhq/coin-framework@0.14.0-nightly.9
+
 ## 0.4.0-nightly.7
 
 ### Patch Changes
