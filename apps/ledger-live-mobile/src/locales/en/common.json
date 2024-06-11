@@ -2291,6 +2291,18 @@
     "import": {
       "title": "Import from desktop",
       "description": "Import asset from Ledger Live Desktop"
+    },
+    "assetsScreen": {
+      "drawerTitle": "Add another account",
+      "drawerSubTitle": "Add your assets using your Ledger, or import them directly from your Ledger Live Desktop app.",
+      "add": {
+        "title": "Add with your Ledger",
+        "description": "Create or import your assets using your Ledger device"
+      },
+      "walletSync": {
+        "title": "Import via another Ledger Live app",
+        "description": "Activate Ledger Sync"
+      }
     }
   },
   "byteSize": {

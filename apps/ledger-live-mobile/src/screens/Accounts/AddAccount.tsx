@@ -7,6 +7,7 @@ import Touchable from "~/components/Touchable";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { track } from "~/analytics";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
+import AddAccountDrawer from "LLM/features/WalletSync/drawers/addAccount";
 
 function AddAccount({ currencyId }: { currencyId?: string }) {
   const navigation = useNavigation<BaseNavigation>();
@@ -26,6 +27,10 @@ function AddAccount({ currencyId }: { currencyId?: string }) {
     setIsAddModalOpened(false);
   }
 
+  function reoponAddModal() {
+    setIsAddModalOpened(true);
+  }
+
   return (
     <Touchable event="OpenAddAccountModal" onPress={openAddModal} testID="OpenAddAccountModal">
       <Flex
@@ -39,12 +44,20 @@ function AddAccount({ currencyId }: { currencyId?: string }) {
       >
         <PlusMedium size={20} color={"neutral.c00"} />
       </Flex>
-      <AddAccountsModal
-        navigation={navigation}
-        isOpened={isAddModalOpened}
-        onClose={closeAddModal}
-        currency={currency}
-      />
+      {currency && isAddModalOpened ? (
+        <AddAccountsModal
+          navigation={navigation}
+          isOpened={isAddModalOpened}
+          onClose={closeAddModal}
+          currency={currency}
+        />
+      ) : (
+        <AddAccountDrawer
+          isOpened={isAddModalOpened}
+          onClose={closeAddModal}
+          reopenDrawer={reoponAddModal}
+        />
+      )}
     </Touchable>
   );
 }
