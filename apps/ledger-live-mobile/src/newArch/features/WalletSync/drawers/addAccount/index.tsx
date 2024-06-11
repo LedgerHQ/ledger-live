@@ -31,6 +31,7 @@ const AddAccountDrawer = ({ isOpened, currency, onClose, reopenDrawer }: AddAcco
       descriptionKey: "addAccountsModal.assetsScreen.add.description",
       onPress: onClickAdd,
       icon: <Icons.LedgerDevices color={"primary.c80"} />,
+      testID: "add-accounts-modal-add-button",
     });
   }
 
@@ -71,6 +72,7 @@ const AddAccountDrawer = ({ isOpened, currency, onClose, reopenDrawer }: AddAcco
               description={t(row.descriptionKey)}
               onPress={row.onPress}
               icon={row.icon}
+              testID={row.testID}
             />
           ))}
         </Flex>
