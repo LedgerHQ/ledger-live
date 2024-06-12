@@ -86,4 +86,15 @@ describe("HttpTokenDataSource", () => {
     // THEN
     expect(result).toEqual(undefined);
   });
+
+  it("should return undefined when axios throws an error", async () => {
+    // GIVEN
+    jest.spyOn(axios, "request").mockRejectedValue(new Error());
+
+    // WHEN
+    const result = await datasource.getTokenInfosPayload({ address: "0x00", chainId: 1 });
+
+    // THEN
+    expect(result).toEqual(undefined);
+  });
 });
