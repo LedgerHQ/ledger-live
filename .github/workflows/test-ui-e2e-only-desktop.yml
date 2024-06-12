@@ -30,10 +30,6 @@ on:
         description: Enable transaction broadcast
         type: boolean
         default: false
-      report_path:
-        description: Path where you want to store this execution's results
-        required: false
-        default: "allure-results-linux"
       slack_notif:
         description: "Send notification to Slack?"
         required: false
