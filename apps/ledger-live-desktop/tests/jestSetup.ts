@@ -13,8 +13,22 @@ jest.mock("@sentry/electron/renderer", () => ({
 
 jest.mock("src/sentry/install", () => ({
   init: jest.fn(),
+  setUser: jest.fn(),
+  captureException: jest.fn(),
+  addBreadcrumb: jest.fn(),
+  setTags: jest.fn(),
+}));
+
+jest.mock("src/renderer/analytics/segment", () => ({
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  start: jest.fn(),
+  useTrack: jest.fn(),
 }));
 
 global.TextEncoder = TextEncoder;
 // @ts-expect-error weird compatibility
 global.TextDecoder = TextDecoder;
+global.setImmediate =
+  global.setImmediate ||
+  ((fn: (...args: any[]) => void, ...args: any) => global.setTimeout(fn, 0, ...args));

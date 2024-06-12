@@ -3960,18 +3960,15 @@ importers:
 
   libs/ledgerjs/packages/hw-app-str:
     dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../hw-transport
-      base32.js:
-        specifier: ^0.1.0
-        version: 0.1.0
-      sha.js:
-        specifier: ^2.3.6
-        version: 2.4.11
-      tweetnacl:
-        specifier: ^1.0.3
-        version: 1.0.3
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -5425,6 +5422,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:*
         version: link:../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/logs
       base64-js:
         specifier: '1'
         version: 1.5.1
@@ -12375,15 +12375,9 @@ packages:
       metro: '*'
       metro-core: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
-      glob:
-        optional: true
       metro:
         optional: true
       metro-core:
-        optional: true
-      minimatch:
         optional: true
     dependencies:
       '@babel/runtime': 7.24.1
@@ -17458,9 +17452,6 @@ packages:
 
   /@react-native-community/cli-tools@12.3.6:
     resolution: {integrity: sha512-FPEvZn19UTMMXUp/piwKZSh8cMEfO8G3KDtOwo53O347GTcwNrKjgZGtLSPELBX2gr+YlzEft3CoRv2Qmo83fQ==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.7
       chalk: 4.1.2
@@ -25442,9 +25433,6 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependenciesMeta:
-      ajv:
-        optional: true
     dependencies:
       ajv: 8.11.2
 
@@ -32411,7 +32399,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -32648,8 +32635,6 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
-      expo-file-system:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -32681,8 +32666,6 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
-      expo-file-system:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -32712,8 +32695,6 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-constants:
-        optional: true
       expo-file-system:
         optional: true
       expo-modules-core:
@@ -33334,8 +33315,6 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-modules-autolinking:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -41486,9 +41465,6 @@ packages:
   /metro-transform-worker@0.80.8:
     resolution: {integrity: sha512-+4FG3TQk3BTbNqGkFb2uCaxYTfsbuFOCKMMURbwu0ehCP8ZJuTUramkaNZoATS49NSAkRgUltgmBa4YaKZ5mqw==}
     engines: {node: '>=18'}
-    peerDependenciesMeta:
-      metro-minify-terser:
-        optional: true
     dependencies:
       '@babel/core': 7.24.3
       '@babel/generator': 7.24.1
@@ -51130,7 +51106,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0
+      jest: 29.7.0(ts-node@10.9.2)
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2

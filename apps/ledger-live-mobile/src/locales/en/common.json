@@ -1335,7 +1335,8 @@
       "title": "Welcome back",
       "subtitle": "Select how you’d like to access your wallet:",
       "connect": "Connect your Ledger",
-      "sync": "Sync with Ledger Live desktop"
+      "sync": "Sync with Ledger Live desktop",
+      "walletSync": "Sync with another Ledger Live"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -2723,6 +2724,8 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
+      "walletSync": "Ledger  Sync",
+      "walletSyncDesc": "Backup your app data and seamlessly synchronize multiple Ledger Live instances",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -4335,6 +4338,14 @@
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       "pleaseConnectUsbTitle": "USB cable needed",
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+    },
+    "updateStatusErrors": {
+      "errors": {
+        "TimeoutError": {
+          "title": "Device disconnected",
+          "description": "The update was unable to continue because we lost connection to {{deviceName}}"
+        }
+      }
     },
     "batteryStatusErrors": {
       "errors": {

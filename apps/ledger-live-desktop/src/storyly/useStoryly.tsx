@@ -1,9 +1,13 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useContext } from "react";
 import { useSelector } from "react-redux";
+import { closeAllModal } from "~/renderer/actions/modals";
+import { context } from "~/renderer/drawers/Provider";
+import { useDispatch } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { StorylyStyleProps, useStorylyDefaultStyleProps } from "./style";
+import { openURL } from "~/renderer/linking";
 import { StorylyRef, StorylyData } from "storyly-web";
 
 /**
@@ -19,6 +23,8 @@ export const useStoryly = (
   instanceId: StorylyInstanceID,
   options?: { styleProps: StorylyStyleProps },
 ) => {
+  const dispatch = useDispatch();
+  const { setDrawer } = useContext(context);
   const ref = useRef<StorylyRef>();
   const dataRef = useRef<StorylyData>();
   const props = useStorylyDefaultStyleProps();
@@ -37,6 +43,14 @@ export const useStoryly = (
         isReady: data => {
           dataRef.current = data;
           // Triggered when story is ready.
+        },
+        actionClicked: story => {
+          if (story?.media?.actionUrl) {
+            openURL(story.media.actionUrl);
+            ref.current?.close?.();
+            dispatch(closeAllModal());
+            setDrawer();
+          }
         },
       },
       props: { ...props, ...options?.styleProps },

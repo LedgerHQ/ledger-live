@@ -181,9 +181,6 @@ export class CloseStream implements Command {
     ....
     Signature | SIG     | var   # Signature of the command block
 */
-/**
- *
- */
 export interface CommandBlock {
   // The version of the command block format
   version: number;
@@ -205,9 +202,6 @@ export interface CommandBlock {
  * @param parent The parent command block hash (if null, the block is the first block and a parent will be generated)
  * @returns
  */
-/**
- *
- */
 export async function createCommandBlock(
   issuer: Uint8Array,
   commands: Command[],
@@ -226,9 +220,6 @@ export async function createCommandBlock(
   };
 }
 
-/**
- *
- */
 export async function signCommandBlock(
   block: CommandBlock,
   issuer: Uint8Array,
@@ -244,16 +235,10 @@ export async function signCommandBlock(
   };
 }
 
-/**
- *
- */
 export async function hashCommandBlock(block: CommandBlock): Promise<Uint8Array> {
   return await crypto.hash(CommandStreamEncoder.encode([block]));
 }
 
-/**
- *
- */
 export async function verifyCommandBlock(block: CommandBlock): Promise<boolean> {
   const unsignedBlock = { ...block };
   unsignedBlock.signature = new Uint8Array();
