@@ -21,6 +21,7 @@ import {
   EtherscanOperation,
 } from "../../types";
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
+import { createCustomErrorClass } from "@ledgerhq/errors";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
@@ -342,40 +343,45 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = makeLRUCache<
   }
 >(
   async (currency, address, accountId, fromBlock, toBlock) => {
-    const lastCoinOperations = await getLastCoinOperations(
-      currency,
-      address,
-      accountId,
-      fromBlock,
-      toBlock,
-    );
+    try {
+      const lastCoinOperations = await getLastCoinOperations(
+        currency,
+        address,
+        accountId,
+        fromBlock,
+        toBlock,
+      );
 
-    const lastInternalOperations = await getLastInternalOperations(
-      currency,
-      address,
-      accountId,
-      fromBlock,
-      toBlock,
-    );
+      const lastInternalOperations = await getLastInternalOperations(
+        currency,
+        address,
+        accountId,
+        fromBlock,
+        toBlock,
+      );
 
-    const lastTokenOperations = await getLastTokenOperations(
-      currency,
-      address,
-      accountId,
-      fromBlock,
-      toBlock,
-    );
+      const lastTokenOperations = await getLastTokenOperations(
+        currency,
+        address,
+        accountId,
+        fromBlock,
+        toBlock,
+      );
 
-    const lastNftOperations = isNFTActive(currency)
-      ? await getLastNftOperations(currency, address, accountId, fromBlock, toBlock)
-      : [];
+      const lastNftOperations = isNFTActive(currency)
+        ? await getLastNftOperations(currency, address, accountId, fromBlock, toBlock)
+        : [];
 
-    return {
-      lastCoinOperations,
-      lastTokenOperations,
-      lastNftOperations,
-      lastInternalOperations,
-    };
+      return {
+        lastCoinOperations,
+        lastTokenOperations,
+        lastNftOperations,
+        lastInternalOperations,
+      };
+    } catch (err) {
+      const InvalidExplorerResponse = createCustomErrorClass("InvalidExplorerResponse");
+      throw new InvalidExplorerResponse("", { currencyName: currency.name });
+    }
   },
   (currency, address, accountId, fromBlock, toBlock) => accountId + fromBlock + toBlock,
   { ttl: ETHERSCAN_TIMEOUT },
