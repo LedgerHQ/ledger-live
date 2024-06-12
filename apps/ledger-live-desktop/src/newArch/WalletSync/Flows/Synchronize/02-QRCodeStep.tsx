@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Icons, Link, Text, NumberedList } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
-import { rgba } from "@ledgerhq/react-ui/styles";
+import { rgba } from "~/renderer/styles/helpers";
 
 type Props = {
   displayPinCode: () => void;
