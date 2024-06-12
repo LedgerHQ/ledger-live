@@ -9,7 +9,13 @@ import { TrackScreen } from "~/analytics";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { AddAccountDrawerProps } from "LLM/features/WalletSync/types/addAccountDrawer";
 
-const AddAccountDrawer = ({ isOpened, currency, onClose, reopenDrawer }: AddAccountDrawerProps) => {
+const AddAccountDrawer = ({
+  isOpened,
+  currency,
+  doesNotHaveAccount,
+  onClose,
+  reopenDrawer,
+}: AddAccountDrawerProps) => {
   const { t } = useTranslation();
   const rows = [];
 
@@ -27,8 +33,8 @@ const AddAccountDrawer = ({ isOpened, currency, onClose, reopenDrawer }: AddAcco
 
   if (!isReadOnlyModeEnabled) {
     rows.push({
-      titleKey: "addAccountsModal.assetsScreen.add.title",
-      descriptionKey: "addAccountsModal.assetsScreen.add.description",
+      titleKey: "addAccountsModal.drawer.add.title",
+      descriptionKey: "addAccountsModal.drawer.add.description",
       onPress: onClickAdd,
       icon: <Icons.LedgerDevices color={"primary.c80"} />,
       testID: "add-accounts-modal-add-button",
@@ -37,15 +43,15 @@ const AddAccountDrawer = ({ isOpened, currency, onClose, reopenDrawer }: AddAcco
 
   if (isWalletSyncEnabled) {
     rows.push({
-      titleKey: "addAccountsModal.assetsScreen.walletSync.title",
-      descriptionKey: "addAccountsModal.assetsScreen.walletSync.description",
+      titleKey: "addAccountsModal.drawer.walletSync.title",
+      descriptionKey: "addAccountsModal.drawer.walletSync.description",
       onPress: onClickWalletSync,
       icon: <Icons.QrCode color={"primary.c80"} />,
     });
   } else {
     rows.push({
-      titleKey: "addAccountsModal.import.title",
-      descriptionKey: "addAccountsModal.import.description",
+      titleKey: "addAccountsModal.drawer.import.title",
+      descriptionKey: "addAccountsModal.drawer.import.description",
       onPress: onClickImport,
       icon: <Icons.QrCode color={"primary.c80"} />,
     });
@@ -59,10 +65,12 @@ const AddAccountDrawer = ({ isOpened, currency, onClose, reopenDrawer }: AddAcco
       >
         <TrackScreen category="Add/Import accounts" type="drawer" />
         <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={16}>
-          {t("addAccountsModal.assetsScreen.drawerTitle")}
+          {doesNotHaveAccount
+            ? t("addAccountsModal.title")
+            : t("addAccountsModal.drawer.drawerTitleHasAccount")}
         </Text>
         <Text variant="large" fontWeight="medium" fontSize="14px" color="neutral.c70" mb="32px">
-          {t("addAccountsModal.assetsScreen.drawerSubTitle")}
+          {t("addAccountsModal.drawer.drawerSubTitle")}
         </Text>
         <Flex flexDirection="column" rowGap={16}>
           {rows.map((row, index) => (

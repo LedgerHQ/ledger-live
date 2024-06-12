@@ -4,6 +4,7 @@ import Touchable from "~/components/Touchable";
 export type AddAccountDrawerProps = {
   isOpened: boolean;
   currency?: CryptoCurrency | TokenCurrency | null;
+  doesNotHaveAccount?: boolean;
   onClose: () => void;
   reopenDrawer: () => void;
 };

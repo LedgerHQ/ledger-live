@@ -228,6 +228,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
         reopenDrawer={reopenAddModal}
+        doesNotHaveAccount={!showAssets}
       />
     </ReactNavigationPerformanceView>
   );
