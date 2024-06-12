@@ -41,12 +41,12 @@ on:
         default: false
       export_to_xray:
         description: Send tests results to Xray
-        required: false
+        required: true
         type: boolean
         default: false
       test_plan:
-        description: "Test plan identifier to be used in Xray - eg: B2CQA-2377"
-        required: false
+        description: "Test plan identifier to be used in Xray"
+        required: true
         type: string
         default: "B2CQA-2377"
 
@@ -71,8 +71,6 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-      TEST_PLAN: ${{ inputs.test_plan }}
-      XRAY: ${{ inputs.export_to_xray }}
     runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
@@ -110,6 +108,12 @@ jobs:
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos:sha-e262a0c
         shell: bash
+      - name: Set environment variables
+        run: |
+          if [ "${{ github.event.inputs.export-to-xray }}" = "true" ]; then
+            echo "XRAY=1" >> $GITHUB_ENV
+            echo "TEST_PLAN=${{ github.event.inputs.test_plan }}" >> $GITHUB_ENV
+          fi
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -125,7 +129,6 @@ jobs:
           XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
           ENABLE_BROADCAST: ${{ contains(inputs.enable_broadcast, 'true') }}
           SPECULOS_TESTS: ${{ !contains(inputs.speculos_tests, 'false') }}
-
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
