@@ -35,8 +35,8 @@ export const buildSignOperation =
               },
               {
                 recipient: transaction.recipient,
-                amount: transaction.amount,
-                fee,
+                amount: BigInt(transaction.amount.toString()),
+                fee: BigInt(fee.toString()),
                 tag: transaction.tag,
               },
               publicKey,

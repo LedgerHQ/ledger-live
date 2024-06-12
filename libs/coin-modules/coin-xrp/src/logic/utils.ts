@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { isValidClassicAddress } from "ripple-address-codec";
-import { getAccountInfo } from "../api";
+import { getAccountInfo } from "../network";
 
 export const NEW_ACCOUNT_ERROR_MESSAGE = "actNotFound";
 export const UINT32_MAX = new BigNumber(2).pow(32).minus(1);

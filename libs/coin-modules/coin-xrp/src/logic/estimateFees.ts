@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { NetworkDown } from "@ledgerhq/errors";
-import { getServerInfos, parseAPIValue } from "../api";
+import { getServerInfos, parseAPIValue } from "../network";
 import { NetworkInfo } from "../types";
 
 // FIXME this could be cleaner
@@ -16,7 +16,7 @@ const remapError = (error: Error) => {
 
 export async function estimateFees(
   networkInfo?: NetworkInfo | null,
-): Promise<{ networkInfo: NetworkInfo; fee: BigNumber }> {
+): Promise<{ networkInfo: NetworkInfo; fee: bigint }> {
   if (!networkInfo) {
     try {
       const info = await getServerInfos();
@@ -34,5 +34,5 @@ export async function estimateFees(
     }
   }
 
-  return { networkInfo, fee: networkInfo.serverFee };
+  return { networkInfo, fee: BigInt(networkInfo.serverFee.toString()) };
 }

@@ -2,8 +2,8 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { encode } from "ripple-binary-codec";
 import XrplDefinitions from "ripple-binary-codec/dist/enums/definitions.json";
-import { getLedgerIndex } from "../api";
-import { UINT32_MAX, validateTag } from "./logic";
+import { getLedgerIndex } from "../network";
+import { UINT32_MAX, validateTag } from "./utils";
 
 const LEDGER_OFFSET = 20;
 
@@ -29,11 +29,11 @@ export async function craftTransaction(
   },
   transaction: {
     recipient: string;
-    amount: BigNumber;
-    fee: BigNumber;
+    amount: bigint;
+    fee: bigint;
     tag?: number | null | undefined;
   },
-  publicKey: string,
+  publicKey?: string,
 ): Promise<{
   xrplTransaction: XrplTransaction;
   serializedTransaction: string;
@@ -42,10 +42,10 @@ export async function craftTransaction(
   const xrplTransaction: XrplTransaction = {
     TransactionType: "Payment",
     Account: account.address,
-    Amount: transaction.amount.toFixed(),
+    Amount: transaction.amount.toString(),
     Destination: transaction.recipient,
     DestinationTag: tag,
-    Fee: transaction.fee.toFixed(),
+    Fee: transaction.fee.toString(),
     Flags: 2147483648,
     Sequence: account.nextSequenceNumber,
     LastLedgerSequence: (await getLedgerIndex()) + LEDGER_OFFSET,
@@ -58,10 +58,14 @@ export async function craftTransaction(
     );
   }
 
-  const serializedTransaction = encode({
-    ...xrplTransaction,
-    SigningPubKey: publicKey,
-  });
+  const serializedTransaction = publicKey
+    ? encode({
+        ...xrplTransaction,
+        SigningPubKey: publicKey,
+      })
+    : encode({
+        ...xrplTransaction,
+      });
 
   return {
     xrplTransaction,

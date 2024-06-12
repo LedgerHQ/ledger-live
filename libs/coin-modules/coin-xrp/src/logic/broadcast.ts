@@ -1,4 +1,4 @@
-import { submit } from "../api";
+import { submit } from "../network";
 
 export async function broadcast(signature: string): Promise<string> {
   const submittedPayment = await submit(signature);

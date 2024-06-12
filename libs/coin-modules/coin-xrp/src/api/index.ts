@@ -1,138 +1,84 @@
-import { BigNumber } from "bignumber.js";
-import network from "@ledgerhq/live-network";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { NEW_ACCOUNT_ERROR_MESSAGE } from "../logic";
-import { getCoinConfig } from "../config";
+import XrplDefinitions from "ripple-binary-codec/dist/enums/definitions.json";
+import { setCoinConfig, XrpConfig } from "../config";
 import {
-  AccountInfoResponse,
-  AccountTxResponse,
-  LedgerResponse,
-  ServerInfoResponse,
-  SubmitReponse,
-} from "./types";
+  broadcast,
+  combine,
+  craftTransaction,
+  estimateFees,
+  getBalance,
+  getNextValidSequence,
+  listOperations,
+} from "../logic";
 
-const rippleUnit = getCryptoCurrencyById("ripple").units[0];
-
-export const parseAPIValue = (value: string): BigNumber => parseCurrencyUnit(rippleUnit, value);
-
-export const submit = async (signature: string): Promise<SubmitReponse> => {
-  const {
-    data: { result },
-  } = await network<{ result: SubmitReponse }>({
-    method: "POST",
-    url: getCoinConfig().node,
-    data: {
-      method: "submit",
-      params: [
-        {
-          tx_blob: signature,
-        },
-      ],
-    },
-  });
-  return result;
+export type Operation = {
+  hash: string;
+  address: string;
+  type: string;
+  value: bigint;
+  fee: bigint;
+  blockHeight: number;
+  senders: string[];
+  recipients: string[];
+  date: Date;
+  transactionSequenceNumber: number;
+};
+const { TRANSACTION_TYPES } = XrplDefinitions;
+export type XrplTransaction = {
+  TransactionType: keyof typeof TRANSACTION_TYPES;
+  Flags: number;
+  Account: string;
+  Amount: string;
+  Destination: string;
+  DestinationTag: number | undefined;
+  Fee: string;
+  Sequence: number;
+  LastLedgerSequence: number;
+  SigningPubKey?: string;
+  TxnSignature?: string;
 };
 
-export const getAccountInfo = async (
-  recipient: string,
-  current?: boolean,
-): Promise<AccountInfoResponse> => {
-  const {
-    data: { result },
-  } = await network<{ result: AccountInfoResponse }>({
-    method: "POST",
-    url: getCoinConfig().node,
-    data: {
-      method: "account_info",
-      params: [
-        {
-          account: recipient,
-          ledger_index: current ? "current" : "validated",
-        },
-      ],
+export type Api = {
+  broadcast: (tx: string) => Promise<string>;
+  combine: (tx: string, signature: string, pubkey: string) => string;
+  craftTransaction: (
+    address: string,
+    transaction: {
+      recipient: string;
+      amount: bigint;
+      fee: bigint;
     },
-  });
-
-  if (result.status !== "success" && result.error !== NEW_ACCOUNT_ERROR_MESSAGE) {
-    throw new Error(`couldn't fetch account info ${recipient}`);
-  }
-
-  return result;
+  ) => Promise<string>;
+  estimateFees: () => Promise<bigint>;
+  getBalance: (address: string) => Promise<bigint>;
+  listOperations: (address: string, blockHeight: number) => Promise<string>;
 };
+export function createApi(config: XrpConfig): Api {
+  setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
-export const getServerInfos = async (
-  endpointConfig?: string | null | undefined,
-): Promise<ServerInfoResponse> => {
-  const {
-    data: { result },
-  } = await network<{ result: ServerInfoResponse }>({
-    method: "POST",
-    url: endpointConfig ?? getCoinConfig().node,
-    data: {
-      method: "server_info",
-      params: [
-        {
-          ledger_index: "validated",
-        },
-      ],
-    },
-  });
+  return {
+    broadcast,
+    combine,
+    craftTransaction: craft,
+    estimateFees: estimate,
+    getBalance,
+    listOperations,
+  };
+}
 
-  if (result.status !== "success") {
-    throw new Error(`couldn't fetch server info`);
-  }
-
-  return result;
-};
-
-export const getTransactions = async (
+async function craft(
   address: string,
-  options: { ledger_index_min?: number; ledger_index_max?: number } | undefined,
-): Promise<AccountTxResponse["transactions"]> => {
-  const {
-    data: { result },
-  } = await network<{ result: AccountTxResponse }>({
-    method: "POST",
-    url: getCoinConfig().node,
-    data: {
-      method: "account_tx",
-      params: [
-        {
-          account: address,
-          ledger_index: "validated",
-          ...options,
-        },
-      ],
-    },
-  });
+  transaction: {
+    recipient: string;
+    amount: bigint;
+    fee: bigint;
+  },
+): Promise<string> {
+  const nextSequenceNumber = await getNextValidSequence(address);
+  const tx = await craftTransaction({ address, nextSequenceNumber }, transaction);
+  return tx.serializedTransaction;
+}
 
-  if (result.status !== "success") {
-    throw new Error(`couldn't getTransactions for ${address}`);
-  }
-
-  return result.transactions;
-};
-
-export async function getLedgerIndex(): Promise<number> {
-  const {
-    data: { result },
-  } = await network<{ result: LedgerResponse }>({
-    method: "POST",
-    url: getCoinConfig().node,
-    data: {
-      method: "ledger",
-      params: [
-        {
-          ledger_index: "validated",
-        },
-      ],
-    },
-  });
-
-  if (result.status !== "success") {
-    throw new Error(`couldn't fetch getLedgerIndex`);
-  }
-
-  return result.ledger_index;
+async function estimate(): Promise<bigint> {
+  const fees = await estimateFees();
+  return fees.fee;
 }

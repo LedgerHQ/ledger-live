@@ -310,7 +310,7 @@ export const getAccount = async (addr: string) => {
  * @async
  * @param {*} addr - the account address
  */
-const getBalances = async (addr: string) => {
+export const getBalances = async (addr: string) => {
   const balanceInfo = await fetchBalanceInfo(addr);
   // Locked is the highest value among locks
   const totalLocked = balanceInfo.locks.reduce((total, lock) => {

@@ -8,7 +8,7 @@ import {
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { XrpConfig, setCoinConfig } from "../config";
+import { XrpCoinConfig, setCoinConfig } from "../config";
 import resolver from "../signer";
 import { XrpSigner } from "../types";
 import type { Transaction } from "../types";
@@ -22,7 +22,7 @@ import { getAccountShape } from "./synchronization";
 
 export function createBridges(
   signerContext: SignerContext<XrpSigner>,
-  coinConfig: CoinConfig<XrpConfig>,
+  coinConfig: CoinConfig<XrpCoinConfig>,
 ) {
   setCoinConfig(coinConfig);
 

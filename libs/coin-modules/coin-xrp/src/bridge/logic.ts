@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Operation } from "@ledgerhq/types-live";
-import { XrplOperation } from "../api/types";
-import { RIPPLE_EPOCH } from "../logic/logic";
+import { XrplOperation } from "../network/types";
+import { RIPPLE_EPOCH } from "../logic";
 
 const XrplOperationToLiveOperation =
   (accountId: string, address: string) =>

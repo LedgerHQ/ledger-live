@@ -28,14 +28,33 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "api": [
+        "lib/api/index"
+      ],
+      "logic": [
+        "lib/logic/index"
+      ],
       "*": [
-        "lib/*"
+        "lib/*",
+        "lib/bridge/*",
+        "lib/logic/*",
+        "lib/signer/*",
+        "lib/test/*",
+        "lib/types/*"
       ]
     }
   },
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
+    "./logic": {
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"

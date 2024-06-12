@@ -1,6 +1,19 @@
-import { getServerInfos, getTransactions } from "../api";
-import { XrplOperation } from "../api/types";
-import { RIPPLE_EPOCH } from "./logic";
+import { getServerInfos, getTransactions } from "../network";
+import { XrplOperation } from "../network/types";
+import { RIPPLE_EPOCH } from "./utils";
+
+type Operation = {
+  hash: string;
+  address: string;
+  type: string;
+  value: bigint;
+  fee: bigint;
+  blockHeight: number;
+  senders: string[];
+  recipients: string[];
+  date: Date;
+  transactionSequenceNumber: number;
+};
 
 /**
  * Returns list of operations associated to an account.
@@ -8,7 +21,7 @@ import { RIPPLE_EPOCH } from "./logic";
  * @param blockHeight Height to start searching for operations
  * @returns
  */
-export async function listOperations(address: string, blockHeight: number) {
+export async function listOperations(address: string, blockHeight: number): Promise<string> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
@@ -22,7 +35,9 @@ export async function listOperations(address: string, blockHeight: number) {
     ledger_index_max: maxLedgerVersion,
   });
 
-  return transactions.map(convertToCoreOperation(address));
+  //FIXME: temp hack
+  // return transactions.map(convertToCoreOperation(address));
+  return transactions[0].tx.hash;
 }
 
 const convertToCoreOperation = (address: string) => (operation: XrplOperation) => {
