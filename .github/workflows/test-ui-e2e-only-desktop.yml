@@ -104,12 +104,6 @@ jobs:
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos:sha-e262a0c
         shell: bash
-      - name: Set environment variables
-        run: |
-          if [ "${{ github.event.inputs.export-to-xray }}" = "true" ]; then
-            echo "XRAY=1" >> $GITHUB_ENV
-            echo "TEST_PLAN=${{ github.event.inputs.test_plan }}" >> $GITHUB_ENV
-          fi
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -125,6 +119,8 @@ jobs:
           XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
           ENABLE_BROADCAST: ${{ contains(inputs.enable_broadcast, 'true') }}
           SPECULOS_TESTS: ${{ !contains(inputs.speculos_tests, 'false') }}
+          XRAY: ${{ contains(inputs.export_to_xray, 'true') }}
+          TEST_PLAN: ${{ inputs.test_plan }}
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
