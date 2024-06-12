@@ -10,6 +10,10 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       },
       sidecar: {
         url: getEnv("API_POLKADOT_SIDECAR"),
+        credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
+      },
+      staking: {
+        electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
       },
       metadataShortener: {
         url: "https://api.zondax.ch/polkadot/transaction/metadata",
