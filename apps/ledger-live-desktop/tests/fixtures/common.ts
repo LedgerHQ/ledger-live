@@ -4,6 +4,7 @@ import {
   ElectronApplication,
   _electron as electron,
   ChromiumBrowserContext,
+  TestInfo,
 } from "@playwright/test";
 import * as fs from "fs";
 import fsPromises from "fs/promises";
@@ -268,9 +269,22 @@ export async function launchApp({
 }
 
 export async function addTmsLink(ids: string[]) {
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status !== testInfo.expectedStatus) {
+    const screenshot = await page.screenshot();
+    await allure.attachment("Screenshot on Failure", screenshot, "image/png");
+  }
+});
+
+export async function addTestAnnotations(testInfo: TestInfo, ids: string[], name: string) {
   for (const id of ids) {
     await allure.tms(id, `https://ledgerhq.atlassian.net/browse/${id}`);
+    testInfo.annotations.push({ type: "test_key", description: `${id}` });
   }
+  testInfo.annotations.push({
+    type: "test_summary",
+    description: `${name}`,
+  });
 }
 
 export default test;

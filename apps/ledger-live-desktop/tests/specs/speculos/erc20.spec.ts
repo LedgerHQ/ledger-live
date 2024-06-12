@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTestAnnotations } from "tests/fixtures/common";
 
 test.use({
   userdata: "speculos-tests-app",
@@ -13,12 +13,7 @@ const token = "Tether USD";
 
 test.describe.parallel("ERC20 token", () => {
   test(`Check ERC20 token`, async ({ page }, testInfo) => {
-    addTmsLink(["B2CQA-1079"]);
-    testInfo.annotations.push({ type: "test_key", description: "B2CQA-1079" });
-    testInfo.annotations.push({
-      type: "test_summary",
-      description: `erc20 test`,
-    });
+    addTestAnnotations(testInfo, ["B2CQA-1079"], "ERC20 test");
 
     const app = new Application(page);
 

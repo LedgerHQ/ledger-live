@@ -2,7 +2,7 @@ import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Account } from "../../enum/Account";
 import { Application } from "tests/page";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTestAnnotations } from "tests/fixtures/common";
 
 const accounts: Account[] = [
   Account.BTC_1,
@@ -29,12 +29,7 @@ for (const [i, account] of accounts.entries()) {
     });
 
     test(`[${account.currency.uiName}] Delete Account`, async ({ page }, testInfo) => {
-      addTmsLink(["B2CQA-320"]);
-      testInfo.annotations.push({ type: "test_key", description: "B2CQA-320" });
-      testInfo.annotations.push({
-        type: "test_summary",
-        description: `Delete Account test`,
-      });
+      addTestAnnotations(testInfo, ["B2CQA-320"], "Delete Account Test");
 
       const app = new Application(page);
 

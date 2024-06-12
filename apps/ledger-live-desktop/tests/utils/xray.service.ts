@@ -39,7 +39,7 @@ class XrayService {
     try {
       console.log(`Importing execution from XML file: ${xmlFilePath}`);
       const response = await axios.post(
-        `${this.baseUrl}/import/execution/junit?projectKey=B2CQA&testPlanKey=B2CQA-2377`,
+        `${this.baseUrl}/import/execution/junit?projectKey=B2CQA&testPlanKey=${process.env.TEST_PLAN}`,
         fs.readFileSync(xmlFilePath, "utf-8"),
         {
           headers: {

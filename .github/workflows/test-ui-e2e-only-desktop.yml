@@ -30,7 +30,6 @@ on:
         description: Enable transaction broadcast
         type: boolean
         default: false
-
       report_path:
         description: Path where you want to store this execution's results
         required: false
@@ -40,12 +39,16 @@ on:
         required: false
         type: boolean
         default: false
-
-      export_to_Xray:
-        description: Send the tests results to Xray
+      export_to_xray:
+        description: Send tests results to Xray
         required: false
         type: boolean
         default: false
+      test_plan:
+        description: "Test plan identifier to be used in Xray - eg: B2CQA-2377"
+        required: false
+        type: string
+        default: "B2CQA-2377"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -68,6 +71,8 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
+      TEST_PLAN: ${{ inputs.test_plan }}
+      XRAY: ${{ inputs.export_to_xray }}
     runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
@@ -112,7 +117,6 @@ jobs:
           if [ "$ENABLE_BROADCAST" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi
           if [ "$SPECULOS_TESTS" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi
           if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          if [ "$${ inputs.export_to_Xray }" = true ]; then XRAY=1; fi
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}

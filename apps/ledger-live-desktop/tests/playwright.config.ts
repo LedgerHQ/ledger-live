@@ -56,8 +56,9 @@ const config: PlaywrightTestConfig = {
         ["line"],
         ["allure-playwright"],
         ["junit", xrayOptions],
+        ["./utils/xray-reporter.ts"],
       ]
-    : [["allure-playwright"], ["junit", xrayOptions]],
+    : [["allure-playwright"]],
 };
 
 export default config;
