@@ -22,6 +22,7 @@ import {
 } from "../../types";
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 import { createCustomErrorClass } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
@@ -379,6 +380,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = makeLRUCache<
         lastInternalOperations,
       };
     } catch (err) {
+      log("EVM getLastOperations", "Error while fetching data from Etherscan like API", err);
       const InvalidExplorerResponse = createCustomErrorClass("InvalidExplorerResponse");
       throw new InvalidExplorerResponse("", { currencyName: currency.name });
     }
