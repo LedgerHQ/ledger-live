@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.1.0-next.1
+
+### Patch Changes
+
+- [#7077](https://github.com/LedgerHQ/ledger-live/pull/7077) [`f7e7881`](https://github.com/LedgerHQ/ledger-live/commit/f7e7881a820880143c2b011d6a92b5a36156b2c1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - CAL update fixing the blast_testnet naming for blast_sepolia
+
 ## 13.1.0-next.0
 
 ### Minor Changes
