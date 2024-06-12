@@ -1,5 +1,6 @@
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex } from "@ledgerhq/native-ui";
+import { Linking } from "react-native";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
 import { Storyly } from "storyly-react-native";
@@ -61,6 +62,10 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
 
   const handleEvent = (e: Storyly.StoryEvent) => {
     if (e.event === "StoryGroupClosed" || e.event === "StoryGroupCompleted") clear();
+    if (e.event === "StoryCTAClicked" && e?.story?.media?.actionUrl) {
+      Linking.openURL(e.story.media.actionUrl);
+      storylyRef.current?.close?.();
+    }
   };
 
   return (
