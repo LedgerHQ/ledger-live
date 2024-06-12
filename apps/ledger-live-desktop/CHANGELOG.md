@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.10
+
+### Minor Changes
+
+- [#7061](https://github.com/LedgerHQ/ledger-live/pull/7061) [`60c9206`](https://github.com/LedgerHQ/ledger-live/commit/60c92060a4e3274e1afeb0f39c8be7e8c6796123) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Storyly cta behavior with deeplinks
+
+### Patch Changes
+
+- [#7038](https://github.com/LedgerHQ/ledger-live/pull/7038) [`6fdab18`](https://github.com/LedgerHQ/ledger-live/commit/6fdab1803ffeb735683b4c476cce9bbf905df7c2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add manage Synchronized instances in Debugger + WalletSync
+
+- [#6885](https://github.com/LedgerHQ/ledger-live/pull/6885) [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Manage your Backup for WalletSync
+
+- [#7057](https://github.com/LedgerHQ/ledger-live/pull/7057) [`cb6a975`](https://github.com/LedgerHQ/ledger-live/commit/cb6a9752c56b07f6347b77d7279b270eae89935d) Thanks [@lvndry](https://github.com/lvndry)! - Top Banner open url in browser
+
+- [#6823](https://github.com/LedgerHQ/ledger-live/pull/6823) [`ae8acfa`](https://github.com/LedgerHQ/ledger-live/commit/ae8acfa5f7100f39bbf0d486a8baebf563587d10) Thanks [@mikhd](https://github.com/mikhd)! - Solana minor delegations ui issues
+
+- [#6885](https://github.com/LedgerHQ/ledger-live/pull/6885) [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - WalletSync - Synchronize Flow
+
+- Updated dependencies [[`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737), [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f), [`c988a94`](https://github.com/LedgerHQ/ledger-live/commit/c988a946d86e7f874823ac96d66573281ba00b13), [`6692f5f`](https://github.com/LedgerHQ/ledger-live/commit/6692f5fe6701a4e47c626ea3cbb73a4641c9021d)]:
+  - @ledgerhq/live-common@34.3.0-nightly.16
+  - @ledgerhq/react-ui@0.15.0-nightly.4
+
 ## 2.82.0-nightly.9
 
 ### Patch Changes

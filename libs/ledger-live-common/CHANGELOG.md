@@ -1,5 +1,18 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.16
+
+### Patch Changes
+
+- [#6923](https://github.com/LedgerHQ/ledger-live/pull/6923) [`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737) Thanks [@overcat](https://github.com/overcat)! - Refactor `hw-app-str` and add `signSorobanAuthorization`. Please check the changelog and documentation of "@ledgerhq/hw-app-str" for more information.
+
+- [#6968](https://github.com/LedgerHQ/ledger-live/pull/6968) [`c988a94`](https://github.com/LedgerHQ/ledger-live/commit/c988a946d86e7f874823ac96d66573281ba00b13) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix crypto-assets-service integration using wrong URL
+
+- [#7058](https://github.com/LedgerHQ/ledger-live/pull/7058) [`6692f5f`](https://github.com/LedgerHQ/ledger-live/commit/6692f5fe6701a4e47c626ea3cbb73a4641c9021d) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Sends device value for swap accepted & cancelled operations
+
+- Updated dependencies [[`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737)]:
+  - @ledgerhq/hw-app-str@8.0.0-nightly.0
+
 ## 34.3.0-nightly.15
 
 ### Minor Changes

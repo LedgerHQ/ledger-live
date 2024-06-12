@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.15.0-nightly.4
+
+### Patch Changes
+
+- [#6885](https://github.com/LedgerHQ/ledger-live/pull/6885) [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new Numbered List component
+
 ## 0.15.0-nightly.3
 
 ### Patch Changes

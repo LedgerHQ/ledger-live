@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.45.0-nightly.10
+
+### Patch Changes
+
+- [#7050](https://github.com/LedgerHQ/ledger-live/pull/7050) [`fc3cba4`](https://github.com/LedgerHQ/ledger-live/commit/fc3cba42be73aeb3e92386fd7f2850dc06cb852a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix issue if Stax loses connection with LLM during firmware upgrade
+
+- [#7051](https://github.com/LedgerHQ/ledger-live/pull/7051) [`0d58a91`](https://github.com/LedgerHQ/ledger-live/commit/0d58a91b462c6b2c137743d3ec692f11a948eb17) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add setting row under feature flag for wallet sync
+
+- [#6823](https://github.com/LedgerHQ/ledger-live/pull/6823) [`ae8acfa`](https://github.com/LedgerHQ/ledger-live/commit/ae8acfa5f7100f39bbf0d486a8baebf563587d10) Thanks [@mikhd](https://github.com/mikhd)! - Solana minor delegations ui issues
+
+- [#7055](https://github.com/LedgerHQ/ledger-live/pull/7055) [`ee23bbb`](https://github.com/LedgerHQ/ledger-live/commit/ee23bbba7feb488bacf746270f895c6e25f0757d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add onboarding entry point for wallet sync
+
+- Updated dependencies [[`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737), [`c988a94`](https://github.com/LedgerHQ/ledger-live/commit/c988a946d86e7f874823ac96d66573281ba00b13), [`6692f5f`](https://github.com/LedgerHQ/ledger-live/commit/6692f5fe6701a4e47c626ea3cbb73a4641c9021d)]:
+  - @ledgerhq/live-common@34.3.0-nightly.16
+
 ## 3.45.0-nightly.9
 
 ### Patch Changes

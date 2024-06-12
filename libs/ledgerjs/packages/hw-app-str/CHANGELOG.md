@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-str
 
+## 8.0.0-nightly.0
+
+### Major Changes
+
+- [#6923](https://github.com/LedgerHQ/ledger-live/pull/6923) [`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737) Thanks [@overcat](https://github.com/overcat)! - Refactor `hw-app-str` and add `signSorobanAuthorization`. Please check the changelog and documentation of "@ledgerhq/hw-app-str" for more information.
+
 ## 7.0.0
 
 ### Major Changes
