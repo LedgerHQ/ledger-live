@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.45.0-next.1
+
+### Patch Changes
+
+- [#7068](https://github.com/LedgerHQ/ledger-live/pull/7068) [`852b109`](https://github.com/LedgerHQ/ledger-live/commit/852b1091c0e76f8fbe9334b11d4b0edd57ff995a) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix QueuedDrawer component so that onClose prop value can change without triggering an auto close of the drawer.
+
 ## 3.45.0-next.0
 
 ### Minor Changes
