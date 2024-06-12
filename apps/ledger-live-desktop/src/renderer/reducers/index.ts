@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import { handleActions } from "redux-actions";
 import accounts, { AccountsState } from "./accounts";
 import application, { ApplicationState } from "./application";
 import devices, { DevicesState } from "./devices";
@@ -13,6 +14,13 @@ import market, { MarketState } from "./market";
 import wallet from "./wallet";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import walletSync, { WalletSyncState } from "./walletSync";
+import {
+  getInitialStore,
+  TrustchainStore,
+  trustchainHandlers,
+  TrustchainHandlersPayloads,
+  TrustchainHandlers,
+} from "@ledgerhq/trustchain/store";
 
 export type State = {
   accounts: AccountsState;
@@ -27,6 +35,7 @@ export type State = {
   market: MarketState;
   wallet: WalletState;
   walletSync: WalletSyncState;
+  trustchainStore: TrustchainStore;
 };
 
 export default combineReducers({
@@ -42,4 +51,8 @@ export default combineReducers({
   market,
   wallet,
   walletSync,
+  trustchainStore: handleActions<
+    TrustchainStore,
+    TrustchainHandlersPayloads[keyof TrustchainHandlersPayloads]
+  >(trustchainHandlers as unknown as TrustchainHandlers<false>, getInitialStore()), // TODO : refacto the initialization of the trustchain store
 });

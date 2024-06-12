@@ -325,8 +325,7 @@ function AppGetOrCreateTrustchain({
           .then(({ jwt, trustchain }) => {
             setSeedIdAccessToken(jwt);
             return trustchain;
-          }),
-      ),
+          })),
     [sdk, setSeedIdAccessToken],
   );
 

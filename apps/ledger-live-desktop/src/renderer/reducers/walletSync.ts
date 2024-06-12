@@ -20,6 +20,7 @@ export enum Step {
   DeviceAction = "DeviceAction",
   CreateOrSynchronizeTrustChain = "CreateOrSynchronizeTrustChain",
   ActivationFinal = "ActivationFinal",
+  SynchronizationFinal = "SynchronizationFinal",
 
   //Synchronize
   SynchronizeMode = "SynchronizeMode",

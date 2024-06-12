@@ -30,7 +30,7 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
 
   const goBack = () => {
     if (currentStep === FlowOptions[Flow.ManageInstances].steps[1]) {
-      goToWelcomeScreenWalletSync();
+      goToWelcomeScreenWalletSync(true);
     } else {
       goToPreviousScene();
     }

@@ -108,6 +108,7 @@ export interface TrustchainSDK {
   ): Promise<{
     trustchain: Trustchain;
     jwt: JWT;
+    hasCreatedTrustchain: boolean;
   }>;
 
   /**

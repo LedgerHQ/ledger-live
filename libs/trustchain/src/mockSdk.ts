@@ -61,6 +61,7 @@ class MockSDK implements TrustchainSDK {
   ): Promise<{
     jwt: JWT;
     trustchain: Trustchain;
+    hasCreatedTrustchain: boolean;
   }> {
     void transport;
     assertSeedIdToken(deviceJWT);
@@ -75,6 +76,7 @@ class MockSDK implements TrustchainSDK {
     return Promise.resolve({
       jwt: deviceJWT,
       trustchain: mockedTrustchain,
+      hasCreatedTrustchain: true,
     });
   }
 

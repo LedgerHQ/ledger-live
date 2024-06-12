@@ -111,19 +111,23 @@ export class StreamTree {
       typeof path === "string" ? DerivationPath.toIndexArray(path) : (path as number[]);
     let stream = this.getChild(indexes) || new CommandStream();
     if (stream.blocks.length === 0 && indexes.length > 0) {
+      console.log("derive and add member");
       const root = await this.getRoot().getRootHash();
       stream = await stream
         .edit()
         .derive(indexes)
         .addMember(name, member, permission, true)
         .issue(owner, this, root);
+      console.log("stream", { stream, root });
       return this.update(stream);
     } else if (stream.blocks.length === 0) {
       throw new Error(
         "StreamTree.share cannot add a member if the root was not previously created",
       );
     } else {
+      console.log("just add member", { name, member, permission, owner });
       const newStream = await stream.edit().addMember(name, member, permission).issue(owner, this);
+      console.log("newStream", newStream);
       return this.update(newStream);
     }
   }
@@ -141,15 +145,20 @@ export class StreamTree {
 
   public update(stream: CommandStream): StreamTree {
     const path = stream.getStreamPath();
+    console.log("update path", path);
     if (path === null) throw new Error("Stream path cannot be null");
     const indexes = DerivationPath.toIndexArray(path);
     const newTree = this.tree.updateChild(indexes, stream);
+    console.log("newTree", newTree);
     return new StreamTree(newTree);
   }
 
   static async createNewTree(owner: Device, opts: StreamTreeCreateOpts = {}): Promise<StreamTree> {
     let stream = new CommandStream();
-    stream = await stream.edit().seed(opts.topic).issue(owner);
+    const streamToIssue = stream.edit().seed(opts.topic);
+    console.log("streamToIssue 1", { streamToIssue, owner, opts });
+    stream = await streamToIssue.issue(owner);
+    console.log("issued");
     const tree = new IndexedTree(stream);
     return new StreamTree(tree);
   }

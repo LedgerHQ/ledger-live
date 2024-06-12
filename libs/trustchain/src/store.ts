@@ -18,13 +18,13 @@ export const getInitialStore = (): TrustchainStore => {
   };
 };
 
-export enum WalletHandlerType {
+export enum TrustchainHandlerType {
   RESET_TRUSTCHAIN_STORE = "RESET_TRUSTCHAIN_STORE",
   SET_TRUSTCHAIN = "SET_TRUSTCHAIN",
   SET_MEMBER_CREDENTIALS = "SET_MEMBER_CREDENTIALS",
 }
 
-export type HandlersPayloads = {
+export type TrustchainHandlersPayloads = {
   RESET_TRUSTCHAIN_STORE: never;
   SET_TRUSTCHAIN: { trustchain: Trustchain };
   SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
@@ -37,13 +37,13 @@ type Handlers<State, Types, PreciseKey = true> = {
   ) => State;
 };
 
-export type WalletHandlers<PreciseKey = true> = Handlers<
+export type TrustchainHandlers<PreciseKey = true> = Handlers<
   TrustchainStore,
-  HandlersPayloads,
+  TrustchainHandlersPayloads,
   PreciseKey
 >;
 
-export const handlers: WalletHandlers = {
+export const trustchainHandlers: TrustchainHandlers = {
   RESET_TRUSTCHAIN_STORE: (): TrustchainStore => {
     return { ...getInitialStore() };
   },
@@ -73,7 +73,10 @@ export const setMemberCredentials = (memberCredentials: MemberCredentials) => ({
 
 // Local Selectors
 
-export const trustchainSelector = (state: TrustchainStore): Trustchain | null => state.trustchain;
+export const trustchainSelector = (state: {
+  trustchainStore: TrustchainStore;
+}): Trustchain | null => state.trustchainStore.trustchain;
 
-export const liveCredentialsSelector = (state: TrustchainStore): MemberCredentials | null =>
-  state.memberCredentials;
+export const liveCredentialsSelector = (state: {
+  trustchainStore: TrustchainStore;
+}): MemberCredentials | null => state.trustchainStore.memberCredentials;

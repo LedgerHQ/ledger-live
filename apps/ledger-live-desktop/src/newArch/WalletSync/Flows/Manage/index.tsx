@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Icons } from "@ledgerhq/react-ui";
+import { Box, Flex, Text, Icons, InfiniteLoader } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -16,7 +16,7 @@ const Separator = () => {
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
-  const { instances } = useInstances();
+  const { instances, isLoading } = useInstances();
 
   const dispatch = useDispatch();
 
@@ -64,12 +64,16 @@ const WalletSyncManage = () => {
       <InstancesRow
         paddingY={24}
         justifyContent="space-between"
-        onClick={goToManageInstances}
+        onClick={!isLoading && goToManageInstances}
         data-testid="walletSync-manage-instances"
       >
-        <Text fontSize={13.44}>
-          {t("walletSync.manage.instance.label", { count: instances.length })}
-        </Text>
+        {isLoading ? (
+          <InfiniteLoader size={16} />
+        ) : (
+          <Text fontSize={13.44}>
+            {t("walletSync.manage.instance.label", { count: instances?.length })}
+          </Text>
+        )}
 
         <Flex columnGap={"8px"} alignItems={"center"}>
           <Text fontSize={13.44}>{t("walletSync.manage.instance.cta")}</Text>

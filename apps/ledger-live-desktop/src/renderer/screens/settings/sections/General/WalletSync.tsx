@@ -4,9 +4,10 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
-import { resetWalletSync } from "~/renderer/actions/walletSync";
+import { resetWalletSync, setFaked } from "~/renderer/actions/walletSync";
 import { BackRef, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
 import { STEPS_WITH_BACK, useFlows } from "LLD/WalletSync/Flows/useFlows";
+import { trustchainSelector } from "@ledgerhq/trustchain/store";
 
 /**
  *
@@ -27,6 +28,7 @@ const WalletSyncRow = () => {
   const currentStep = useSelector(walletSyncStepSelector);
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
+  const trustchain = useSelector(trustchainSelector);
 
   const handleBack = () => {
     if (childRef.current) {
@@ -41,13 +43,13 @@ const WalletSyncRow = () => {
 
   const openDrawer = () => {
     if (!hasBeenFaked) {
-      goToWelcomeScreenWalletSync();
+      goToWelcomeScreenWalletSync(!!trustchain?.rootId);
     }
     setOpen(true);
   };
 
   const resetFlow = () => {
-    dispatch(resetWalletSync());
+    dispatch(setFaked(false));
   };
 
   return (
