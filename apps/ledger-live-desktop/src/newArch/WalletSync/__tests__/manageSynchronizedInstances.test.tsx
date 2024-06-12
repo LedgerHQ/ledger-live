@@ -53,7 +53,7 @@ describe("manageSynchronizedInstances", () => {
 
     await waitFor(() => expect(row).toBeDefined());
 
-    expect(screen.getByText("2 synchronized instances")).toBeDefined();
+    expect(screen.getByText("2 Synchronized instances")).toBeDefined();
 
     await user.click(row);
 

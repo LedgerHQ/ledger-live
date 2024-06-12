@@ -6,7 +6,7 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 
 export type CardProps = {
   title: string;
-  description: string;
+  description?: string;
   onClick: () => void;
   leftIcon: React.ReactNode;
   testId: string;
@@ -17,9 +17,9 @@ export const Card = ({ title, description, onClick, leftIcon, testId }: CardProp
   return (
     <CardContainer
       flexDirection="row"
-      height={70}
+      py={2}
       alignItems="center"
-      px={3}
+      px={2}
       onClick={onClick}
       data-testid={testId}
     >
@@ -32,11 +32,13 @@ export const Card = ({ title, description, onClick, leftIcon, testId }: CardProp
             {t(title)}
           </Text>
         </Ellipsis>
-        <Ellipsis>
-          <Text variant="small" color="neutral.c70">
-            {t(description)}
-          </Text>
-        </Ellipsis>
+        {description && (
+          <Ellipsis>
+            <Text variant="small" color="neutral.c70">
+              {t(description)}
+            </Text>
+          </Ellipsis>
+        )}
       </Flex>
     </CardContainer>
   );

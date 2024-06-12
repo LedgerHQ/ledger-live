@@ -32,9 +32,9 @@ describe("Rendering", () => {
 
     await user.click(button);
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: "Create a backup" })).toBeDefined(),
+      expect(screen.getByRole("button", { name: "Sync your accounts" })).toBeDefined(),
     );
 
-    expect(screen.getByRole("button", { name: "Synchronize" })).toBeDefined();
+    expect(screen.getByText("Already created a key?")).toBeDefined();
   });
 });

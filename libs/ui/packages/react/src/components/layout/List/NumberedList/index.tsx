@@ -34,6 +34,7 @@ export default function NumberedList({ steps, bgIndexColor, indexColor, textColo
               color={mainTextColor}
               ml="12px"
               fontWeight="500"
+              flex={1}
             >
               {step.element}
             </Text>
