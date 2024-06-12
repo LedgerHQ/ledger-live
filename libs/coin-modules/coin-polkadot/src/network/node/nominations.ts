@@ -47,8 +47,8 @@ export const fetchNominations = async (address: string): Promise<SidecarNominati
           ? "active"
           : "inactive"
         : allStashes.includes(target.toString())
-        ? "waiting"
-        : null;
+          ? "waiting"
+          : null;
 
       return {
         address: target.toString(),

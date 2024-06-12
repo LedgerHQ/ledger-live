@@ -119,7 +119,7 @@ const envDefinitions = {
   },
   API_POLKADOT_NODE: {
     parser: stringParser,
-    def: "https://polkadot-rpc.publicnode.com",
+    def: "https://polkadot-fullnodes.api.live.ledger.com",
     desc: "Polkadot Node",
   },
   ELROND_API_ENDPOINT: {

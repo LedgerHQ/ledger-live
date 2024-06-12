@@ -54,8 +54,8 @@ const extractIdentity = (
   const identity = identityOfOpt?.isSome
     ? identityOfOpt
     : superOf && parentIdentities
-    ? parentIdentities.get(superOf[0].toString())
-    : null;
+      ? parentIdentities.get(superOf[0].toString())
+      : null;
 
   if (!identity || identity.isNone) {
     return { judgements: [] };

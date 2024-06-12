@@ -14,6 +14,16 @@ describe("sidecar integration test", () => {
       sidecar: {
         url: "https://polkadot-sidecar.coin.ledger.com",
       },
+      staking: {
+        electionStatusThreshold: 25,
+      },
+      metadataShortener: {
+        url: "https://api.zondax.ch/polkadot/transaction/metadata",
+      },
+      metadataHash: {
+        url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+      },
+      runtimeUpgraded: false,
     }));
   });
 
