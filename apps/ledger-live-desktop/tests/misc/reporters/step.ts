@@ -1,4 +1,3 @@
-import { test } from "@playwright/test";
 import { allure } from "allure-playwright";
 
 /**
