@@ -477,6 +477,7 @@ export const DEFAULT_FEATURES: Features = {
   lldWalletSync: DEFAULT_FEATURE,
   llmWalletSync: DEFAULT_FEATURE,
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
+  enableAppsBackup: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
