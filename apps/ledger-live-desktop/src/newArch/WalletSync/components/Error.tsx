@@ -28,10 +28,10 @@ export const Error = ({ title, description }: Props) => {
       <Container>
         <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />
       </Container>
-      <Text fontSize={24} variant="h4Inter" color="neutral.c100">
+      <Text fontSize={24} variant="h4Inter" color="neutral.c100" textAlign="center">
         {title}
       </Text>
-      <Text variant="bodyLineHeight" color="neutral.c70">
+      <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
         {description}
       </Text>
 

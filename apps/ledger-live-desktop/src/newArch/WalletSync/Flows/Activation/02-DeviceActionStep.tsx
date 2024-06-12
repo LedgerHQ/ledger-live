@@ -1,20 +1,20 @@
 import { getEnv } from "@ledgerhq/live-env";
-import React, { useMemo } from "react";
+import React from "react";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 type Props = {
-  goNext: () => void;
+  goNext: (device: Device) => void;
 };
 
 export default function DeviceActionStep({ goNext }: Props) {
-  //const request = { appName: "BOLOS" };
-  const currency = getCryptoCurrencyById("bitcoin");
-  const request = useMemo(() => ({ currency }), [currency]);
-  return <DeviceAction action={action} request={request} onResult={() => goNext()} />;
+  const request = { appName: "Trustchain" };
+  return (
+    <DeviceAction action={action} request={request} onResult={({ device }) => goNext(device)} />
+  );
 }

@@ -6348,7 +6348,7 @@
     "success": {
       "backup": {
         "title": "Success",
-        "desc": "You successfully enabled Ledger Sync. ",
+        "desc": "You successfully enabled Ledger Sync.",
         "synchAnother": "Sync with another Ledger Live app"
       },
       "synch": {

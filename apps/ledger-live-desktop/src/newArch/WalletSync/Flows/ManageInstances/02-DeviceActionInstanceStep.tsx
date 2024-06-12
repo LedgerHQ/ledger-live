@@ -1,10 +1,12 @@
 import { getEnv } from "@ledgerhq/live-env";
-import React, { useMemo } from "react";
+import React from "react";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { useDispatch } from "react-redux";
+import { setFlow } from "~/renderer/actions/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
@@ -13,12 +15,14 @@ type Props = {
 };
 
 export default function DeviceActionInstanceStep({ goNext }: Props) {
-  //const request = { appName: "BOLOS" };
-  const currency = getCryptoCurrencyById("bitcoin");
-  const request = useMemo(() => ({ currency }), [currency]);
+  const dispatch = useDispatch();
+  const request = { appName: "Trustchain" };
 
-  //IF ERROR Device
-  // dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceErrorDeletion }));
+  const onError = () => {
+    dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceErrorDeletion }));
+  };
 
-  return <DeviceAction action={action} request={request} onResult={() => goNext()} />;
+  return (
+    <DeviceAction action={action} request={request} onResult={() => goNext()} onError={onError} />
+  );
 }

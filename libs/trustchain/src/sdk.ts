@@ -95,10 +95,12 @@ export class SDK implements TrustchainSDK {
   ): Promise<{
     jwt: JWT;
     trustchain: Trustchain;
+    hasCreatedTrustchain: boolean;
   }> {
     const hw = device.apdu(transport);
     let jwt = deviceJWT;
     let trustchains = await api.getTrustchains(jwt);
+    let hasCreatedTrustchain = false;
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
@@ -112,6 +114,7 @@ export class SDK implements TrustchainSDK {
       await api.postSeed(jwt, crypto.to_hex(commandStream));
       jwt = await api.refreshAuth(jwt);
       trustchains = await api.getTrustchains(jwt);
+      hasCreatedTrustchain = true;
     }
 
     // we find our trustchain root id
@@ -131,14 +134,18 @@ export class SDK implements TrustchainSDK {
     // make a stream tree from all the trustchains associated to this root id
     let { streamTree } = await fetchTrustchain(jwt, trustchainRootId);
 
+    console.log("streamTree", streamTree);
     const path = streamTree.getApplicationRootPath(this.context.applicationId);
+    console.log("path", path);
     const child = streamTree.getChild(path);
+    console.log("child", child);
     let shouldShare = true;
     if (child) {
       const resolved = await child.resolve();
       const members = resolved.getMembers();
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
+    console.log("shouldShare", shouldShare);
     if (shouldShare) {
       callbacks?.onStartRequestUserInteraction();
       streamTree = await pushMember(streamTree, path, trustchainRootId, jwt, hw, {
@@ -148,6 +155,7 @@ export class SDK implements TrustchainSDK {
       });
       callbacks?.onEndRequestUserInteraction();
     }
+    console.log("shared done");
 
     const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
 
@@ -157,7 +165,7 @@ export class SDK implements TrustchainSDK {
       applicationPath: path,
     };
 
-    return { jwt, trustchain };
+    return { jwt, trustchain, hasCreatedTrustchain };
   }
 
   async restoreTrustchain(
@@ -366,6 +374,7 @@ async function pushMember(
   member: TrustchainMember,
 ) {
   const isNewDerivation = !streamTree.getChild(path);
+  console.log("isNewDerivation", isNewDerivation);
   streamTree = await streamTree.share(
     path,
     hw,
@@ -373,6 +382,7 @@ async function pushMember(
     member.name,
     member.permissions,
   );
+  console.log("shared", streamTree);
   const child = streamTree.getChild(path);
   if (!child) {
     throw new Error("StreamTree.share failed to create the child stream.");

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -9,13 +9,11 @@ import CreateOrSynchronizeStep from "./01-CreateOrSynchronizeStep";
 import DeviceActionStep from "./02-DeviceActionStep";
 import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrustchain";
 import ActivationFinalStep from "./04-ActivationFinalStep";
-import { useBackup } from "../ManageBackup/useBackup";
-import { useInstances } from "../ManageInstances/useInstances";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 const WalletSyncActivation = () => {
   const dispatch = useDispatch();
-  const { hasBackup, createBackup } = useBackup();
-  const { createInstance } = useInstances();
+  const [device, setDevice] = useState<Device | null>(null);
 
   const { currentStep, goToNextScene } = useFlows({ flow: Flow.Activation });
 
@@ -23,14 +21,10 @@ const WalletSyncActivation = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
   };
 
-  const createNewBackupAction = () => {
-    goToNextScene();
-    createBackup();
-    createInstance({
-      name: "Iphone 8",
-      id: "1",
-      typeOfDevice: "mobile",
-    });
+  const goToActivationOrSynchroWithTrustchain = (device: Device) => {
+    console.log("DEVICE", device);
+    setDevice(device);
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronizeTrustChain }));
   };
 
   const getStep = () => {
@@ -39,11 +33,13 @@ const WalletSyncActivation = () => {
       case Step.CreateOrSynchronize:
         return <CreateOrSynchronizeStep goToCreateBackup={goToNextScene} goToSync={goToSync} />;
       case Step.DeviceAction:
-        return <DeviceActionStep goNext={goToNextScene} />;
+        return <DeviceActionStep goNext={goToActivationOrSynchroWithTrustchain} />;
       case Step.CreateOrSynchronizeTrustChain:
-        return <ActivationOrSynchroWithTrustchain goNext={createNewBackupAction} />;
+        return <ActivationOrSynchroWithTrustchain device={device} />;
       case Step.ActivationFinal:
-        return <ActivationFinalStep hasBackup={hasBackup} />;
+        return <ActivationFinalStep isNewBackup={true} />;
+      case Step.SynchronizationFinal:
+        return <ActivationFinalStep isNewBackup={false} />;
     }
   };
 
