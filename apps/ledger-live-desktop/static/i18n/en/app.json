@@ -1813,8 +1813,7 @@
       "withdrawUnbondedAmount": "Withdrawn Amount",
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
-      "validatorsCount": "Validators ({{number}})",
-      "comment": "Comment"
+      "validatorsCount": "Validators ({{number}})"
     }
   },
   "operationList": {
