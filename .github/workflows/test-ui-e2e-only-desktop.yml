@@ -119,7 +119,7 @@ jobs:
           XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
           ENABLE_BROADCAST: ${{ contains(inputs.enable_broadcast, 'true') }}
           SPECULOS_TESTS: ${{ !contains(inputs.speculos_tests, 'false') }}
-          XRAY: ${{ contains(inputs.export_to_xray, 'true') }}
+          XRAY: ${{ inputs.export_to_xray }}
           TEST_PLAN: ${{ inputs.test_plan }}
       - name: upload diffs to s3
         if: ${{ !cancelled() }}

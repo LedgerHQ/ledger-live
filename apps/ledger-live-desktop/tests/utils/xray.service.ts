@@ -58,6 +58,10 @@ class XrayService {
           self: responseData.self,
         };
       } else {
+        console.error("Error during XrayService.importExecution():", {
+          status: response.status,
+          data: response.data,
+        });
         throw new Error(`Error during XrayService.importExecution(): Status: ${response.status}`);
       }
     } catch (error) {
