@@ -23,11 +23,14 @@ import {
 } from "~/renderer/reducers/settings";
 import { useRedirectToSwapHistory } from "../utils/index";
 
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { captureException } from "~/sentry/internal";
+import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -66,7 +69,7 @@ export type SwapWebProps = {
   isMaxEnabled?: boolean;
   sourceCurrency?: TokenCurrency | CryptoCurrency;
   targetCurrency?: TokenCurrency | CryptoCurrency;
-  setAmountToLiveApp: React.Dispatch<React.SetStateAction<BigNumber | undefined>>;
+  setQuoteState: (next: CustomSwapQuotesState) => void;
 };
 
 export const SwapWebManifestIDs = {
@@ -86,7 +89,7 @@ const SwapWebView = ({
   isMaxEnabled,
   sourceCurrency,
   targetCurrency,
-  setAmountToLiveApp,
+  setQuoteState,
 }: SwapWebProps) => {
   const {
     colors: {
@@ -127,15 +130,66 @@ const SwapWebView = ({
       "custom.swapStateGet": () => {
         return Promise.resolve(swapState);
       },
-      "custom.setQuote": (_quotes: { params?: { amountTo: number } }) => {
-        if (!_quotes.params?.amountTo) {
-          setAmountToLiveApp(undefined);
+      "custom.setQuote": (quote: {
+        params?: {
+          amountTo?: number;
+          code?: string;
+          parameter: { minAmount: string; maxAmount: string };
+        };
+      }) => {
+        const toUnit = targetCurrency?.units[0];
+        const fromUnit = sourceCurrency?.units[0];
+
+        if (!quote.params) {
+          setQuoteState({
+            amountTo: undefined,
+            swapError: undefined,
+          });
+          return Promise.resolve();
         }
 
-        const toUnit = targetCurrency?.units[0];
-        if (toUnit && _quotes?.params?.amountTo) {
-          setAmountToLiveApp(BigNumber(_quotes?.params?.amountTo).times(10 ** toUnit.magnitude));
+        if (quote.params?.code && fromUnit) {
+          switch (quote.params.code) {
+            case "minAmountError":
+              setQuoteState({
+                amountTo: undefined,
+                swapError: new SwapExchangeRateAmountTooLow(undefined, {
+                  minAmountFromFormatted: formatCurrencyUnit(
+                    fromUnit,
+                    new BigNumber(quote.params.parameter.minAmount).times(10 ** fromUnit.magnitude),
+                    {
+                      alwaysShowSign: false,
+                      disableRounding: true,
+                      showCode: true,
+                    },
+                  ),
+                }),
+              });
+              return Promise.resolve();
+            case "maxAmountError":
+              setQuoteState({
+                amountTo: undefined,
+                swapError: new SwapExchangeRateAmountTooLow(undefined, {
+                  minAmountFromFormatted: formatCurrencyUnit(
+                    fromUnit,
+                    new BigNumber(quote.params.parameter.maxAmount).times(10 ** fromUnit.magnitude),
+                    {
+                      alwaysShowSign: false,
+                      disableRounding: true,
+                      showCode: true,
+                    },
+                  ),
+                }),
+              });
+              return Promise.resolve();
+          }
         }
+
+        if (toUnit && quote?.params?.amountTo) {
+          const amountTo = BigNumber(quote?.params?.amountTo).times(10 ** toUnit.magnitude);
+          setQuoteState({ amountTo, swapError: undefined });
+        }
+
         return Promise.resolve();
       },
       // TODO: when we need bidirectional communication
@@ -229,17 +283,17 @@ const SwapWebView = ({
 
     return searchParams.toString();
   }, [
-    swapState?.provider,
-    swapState?.fromAmount,
-    swapState?.loading,
-    swapState?.error,
-    swapState?.estimatedFees,
-    sourceCurrency?.id,
-    targetCurrency?.id,
     addressFrom,
     addressTo,
+    swapState?.fromAmount,
+    swapState?.error,
+    swapState?.loading,
+    swapState?.estimatedFees,
+    swapState?.provider,
+    sourceCurrency?.id,
     isMaxEnabled,
     fromCurrency,
+    targetCurrency?.id,
   ]);
 
   // return loader???

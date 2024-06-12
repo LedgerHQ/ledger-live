@@ -36,6 +36,7 @@ import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLive
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { useSwapLiveAppQuoteState } from "../hooks/useSwapLiveAppQuoteState";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
@@ -449,13 +450,12 @@ const SwapForm = () => {
     getExchangeSDKParams,
     getProviderRedirectURLSearch,
   });
-  const [amountToLiveApp, setAmountToLiveApp] = useState<BigNumber | undefined>(undefined);
-  const amountTo = useMemo(() => {
-    if (swapLiveAppManifestID?.startsWith(SwapWebManifestIDs.Demo1)) {
-      return amountToLiveApp;
-    }
-    return exchangeRate?.toAmount;
-  }, [swapLiveAppManifestID, exchangeRate?.toAmount, amountToLiveApp]);
+
+  // used to get the Quotes Status from Demo 1 swap live app
+  const [quoteState, setQuoteState] = useSwapLiveAppQuoteState({
+    amountTo: exchangeRate?.toAmount,
+    swapError,
+  });
 
   return (
     <Wrapper>
@@ -465,13 +465,13 @@ const SwapForm = () => {
         toAccount={swapTransaction.swap.to.account}
         fromAmount={swapTransaction.swap.from.amount}
         toCurrency={targetCurrency}
-        toAmount={amountTo}
+        toAmount={!isDemo1Enabled ? exchangeRate?.toAmount : quoteState.amountTo}
         setFromAccount={setFromAccount}
         setFromAmount={setFromAmount}
         setToCurrency={setToCurrency}
         isMaxEnabled={swapTransaction.swap.isMaxEnabled}
         toggleMax={toggleMax}
-        fromAmountError={swapError}
+        fromAmountError={!isDemo1Enabled ? swapError : quoteState.swapError}
         fromAmountWarning={swapWarning}
         isSwapReversable={swapTransaction.swap.isSwapReversable}
         reverseSwap={reverseSwap}
@@ -487,7 +487,7 @@ const SwapForm = () => {
         liveApp={
           swapLiveAppManifestID && manifest ? (
             <SwapWebView
-              setAmountToLiveApp={setAmountToLiveApp}
+              setQuoteState={setQuoteState}
               sourceCurrency={sourceCurrency}
               targetCurrency={targetCurrency}
               manifest={manifest}
