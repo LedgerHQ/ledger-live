@@ -33,6 +33,7 @@ describe("Swap", () => {
     await swapPage.startExchange();
   });
 
+  $TmsLink("B2CQA-545");
   it("should show an error for not enough funds", async () => {
     await swapPage.enterSourceAmount("10");
     await swapPage.startExchange();

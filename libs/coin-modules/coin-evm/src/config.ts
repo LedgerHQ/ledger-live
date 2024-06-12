@@ -20,7 +20,7 @@ type EvmConfig = {
         type: "ledger";
         explorerId: LedgerExplorerId;
       };
-  gasTracker: {
+  gasTracker?: {
     type: "ledger";
     explorerId: LedgerExplorerId;
   };

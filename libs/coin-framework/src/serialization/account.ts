@@ -5,7 +5,6 @@ import type {
   AccountRaw,
   Operation,
   OperationRaw,
-  SubAccount,
   TokenAccount,
   TokenAccountRaw,
   TransactionCommon,
@@ -59,7 +58,7 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   } = rawAccount;
 
   const convertOperation = (op: OperationRaw) =>
-    fromOperationRaw(op, id, subAccounts as SubAccount[], fromRaw?.fromOperationExtraRaw);
+    fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
 
   const subAccounts =
     subAccountsRaw &&
@@ -73,9 +72,9 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
       })
       .filter(Boolean);
   const currency = getCryptoCurrencyById(currencyId);
-  const feesCurrency =
-    (feesCurrencyId && (findCryptoCurrencyById(feesCurrencyId) || findTokenById(feesCurrencyId))) ||
-    undefined;
+  const feesCurrency = feesCurrencyId
+    ? findCryptoCurrencyById(feesCurrencyId) || findTokenById(feesCurrencyId)
+    : undefined;
 
   const res: Account = {
     type: "Account",
@@ -100,7 +99,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     swapHistory: [],
     syncHash,
     balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
-    nfts: nfts?.map(n => fromNFTRaw(n)),
   };
   res.balanceHistoryCache = generateHistoryFromOperations(res);
 
@@ -116,15 +114,19 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   }
 
   if (subAccounts) {
-    res.subAccounts = subAccounts as SubAccount[];
-  }
-
-  if (fromRaw?.assignFromAccountRaw) {
-    fromRaw.assignFromAccountRaw(rawAccount, res);
+    res.subAccounts = subAccounts as TokenAccount[];
   }
 
   if (swapHistory) {
     res.swapHistory = swapHistory.map(fromSwapOperationRaw);
+  }
+
+  if (nfts) {
+    res.nfts = nfts.map(n => fromNFTRaw(n));
+  }
+
+  if (fromRaw?.assignFromAccountRaw) {
+    fromRaw.assignFromAccountRaw(rawAccount, res);
   }
 
   return res;
@@ -177,13 +179,12 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     syncHash,
     creationDate: creationDate.toISOString(),
     operationsCount,
-    operations: (operations || []).map(convertOperation),
-    pendingOperations: (pendingOperations || []).map(convertOperation),
+    operations: operations.map(convertOperation),
+    pendingOperations: pendingOperations.map(convertOperation),
     currencyId: currency.id,
     lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toFixed(),
     spendableBalance: spendableBalance.toFixed(),
-    nfts: nfts?.map(n => toNFTRaw(n)),
   };
 
   if (feesCurrency) {
@@ -210,6 +211,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     res.swapHistory = swapHistory.map(toSwapOperationRaw);
   }
 
+  if (nfts) {
+    res.nfts = nfts.map(n => toNFTRaw(n));
+  }
+
   return res;
 }
 
@@ -223,7 +228,6 @@ function fromTokenAccountRaw(
     id,
     parentId,
     tokenId,
-    starred,
     operations,
     pendingOperations,
     creationDate,
@@ -231,31 +235,28 @@ function fromTokenAccountRaw(
     spendableBalance,
     balanceHistoryCache,
     swapHistory,
-    approvals,
   } = raw;
   const token = getTokenById(tokenId);
 
   const convertOperation = (op: OperationRaw) =>
     fromOperationRaw(op, id, null, fromOperationExtraRaw);
 
-  const res = {
+  const res: TokenAccount = {
     type: "TokenAccount",
     id,
     parentId,
     token,
-    starred: starred || false,
     balance: new BigNumber(balance),
     spendableBalance: spendableBalance ? new BigNumber(spendableBalance) : new BigNumber(balance),
     creationDate: new Date(creationDate || Date.now()),
     operationsCount: raw.operationsCount || (operations && operations.length) || 0,
-    operations: (operations || []).map(convertOperation),
+    operations: operations.map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
-    swapHistory: (swapHistory || []).map(fromSwapOperationRaw),
-    approvals,
+    swapHistory: swapHistory?.map(fromSwapOperationRaw) || [],
     balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
   };
   res.balanceHistoryCache = generateHistoryFromOperations(res as TokenAccount);
-  return res as TokenAccount;
+  return res;
 }
 function toTokenAccountRaw(
   ta: TokenAccount,
@@ -272,7 +273,6 @@ function toTokenAccountRaw(
     spendableBalance,
     balanceHistoryCache,
     swapHistory,
-    approvals,
   } = ta;
 
   const convertOperation = (op: Operation) => toOperationRaw(op, undefined, toOperationExtraRaw);
@@ -289,7 +289,6 @@ function toTokenAccountRaw(
     operationsCount,
     operations: operations.map(convertOperation),
     pendingOperations: pendingOperations.map(convertOperation),
-    swapHistory: (swapHistory || []).map(toSwapOperationRaw),
-    approvals,
+    swapHistory: swapHistory?.map(toSwapOperationRaw),
   };
 }

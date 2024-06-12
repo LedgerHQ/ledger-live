@@ -4,9 +4,14 @@ import supportedVsCurrenciesMock from "@mocks/api/market/supportedVsCurrencies.j
 import coinsListMock from "@mocks/api/market/coinsList.json";
 
 const handlers = [
-  http.get("https://proxycg.api.live.ledger.com/api/v3/coins/markets", ({ request }) => {
+  http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
     const searchParams = new URLSearchParams(request.url);
     // When we perform a search
+    if (searchParams.get("filter")) {
+      const coins = searchParams.get("filter")?.toLowerCase().split(",") || [];
+      return HttpResponse.json(marketsMock.filter(({ ticker }) => coins.includes(ticker)));
+    }
+    // When we perform starred
     if (searchParams.get("ids")) {
       const coins = searchParams.get("ids")?.split(",") || [];
       return HttpResponse.json(marketsMock.filter(({ id }) => coins.includes(id)));

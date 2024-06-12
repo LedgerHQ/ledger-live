@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { SubAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import {

@@ -3,34 +3,37 @@ import { craftTransaction, type CreateExtrinsicArg } from "../logic";
 import { isFirstBond, getNonce } from "./utils";
 import { getCoinConfig } from "../config";
 
-export const extractExtrinsicArg = (a: PolkadotAccount, t: Transaction): CreateExtrinsicArg => ({
-  mode: t.mode,
-  amount: t.amount,
-  recipient: t.recipient,
-  isFirstBond: isFirstBond(a),
-  validators: t.validators,
-  useAllAmount: t.useAllAmount,
-  rewardDestination: t.rewardDestination,
-  numSlashingSpans: a.polkadotResources?.numSlashingSpans,
-  era: t.era,
+export const extractExtrinsicArg = (
+  account: PolkadotAccount,
+  transaction: Transaction,
+): CreateExtrinsicArg => ({
+  mode: transaction.mode,
+  amount: transaction.amount,
+  recipient: transaction.recipient,
+  isFirstBond: isFirstBond(account),
+  validators: transaction.validators,
+  useAllAmount: transaction.useAllAmount,
+  rewardDestination: transaction.rewardDestination,
+  numSlashingSpans: account.polkadotResources?.numSlashingSpans,
+  era: transaction.era,
 });
 
 /**
  *
- * @param {Account} a
- * @param {Transaction} t
+ * @param {Account} account
+ * @param {Transaction} transaction
  * @param {boolean} forceLatestParams - forces the use of latest transaction params
  */
 export const buildTransaction = async (
-  a: PolkadotAccount,
-  t: Transaction,
+  account: PolkadotAccount,
+  transaction: Transaction,
   forceLatestParams = false,
 ) => {
   const runtimeUpgraded = getCoinConfig().runtimeUpgraded;
   return craftTransaction(
-    a.freshAddress,
-    getNonce(a),
-    extractExtrinsicArg(a, t),
+    account.freshAddress,
+    getNonce(account),
+    extractExtrinsicArg(account, transaction),
     forceLatestParams,
     runtimeUpgraded,
   );

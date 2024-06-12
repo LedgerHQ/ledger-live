@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
+import { setCoinConfig } from "../config";
 import { getAccount, getRegistry } from "./sidecar";
-import mockServer from "./sidecar.mock";
+import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
 
 jest.setTimeout(60000);
 
@@ -9,6 +10,22 @@ describe("getAccount", () => {
   let balanceResponseStub = {};
 
   beforeAll(() => {
+    setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      sidecar: {
+        url: SIDECAR_BASE_URL_TEST,
+      },
+      metadataShortener: {
+        url: "",
+      },
+      metadataHash: {
+        url: "",
+      },
+      runtimeUpgraded: false,
+    }));
+
     mockServer.listen();
   });
 
@@ -71,6 +88,22 @@ describe("getAccount", () => {
 
 describe("getRegistry", () => {
   beforeAll(() => {
+    setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      sidecar: {
+        url: SIDECAR_BASE_URL_TEST,
+      },
+      metadataShortener: {
+        url: "",
+      },
+      metadataHash: {
+        url: "",
+      },
+      runtimeUpgraded: false,
+    }));
+
     mockServer.listen();
   });
 

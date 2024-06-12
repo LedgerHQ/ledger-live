@@ -1,16 +1,16 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Analytics } from "../../models/Analytics";
-import { Drawer } from "../../models/Drawer";
-import { Modal } from "../../models/Modal";
-import { PortfolioPage } from "../../models/PortfolioPage";
+import { Drawer } from "../../page/drawer/drawer";
+import { Modal } from "../../component/modal.component";
+import { PortfolioPage } from "../../page/portfolio.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
-import { MarketPage } from "../../models/MarketPage";
-import { Layout } from "../../models/Layout";
-import { MarketCoinPage } from "../../models/MarketCoinPage";
-import { AssetPage } from "../../models/AssetPage";
-import { AccountsPage } from "../../models/AccountsPage";
-import { AccountPage } from "../../models/AccountPage";
+import { MarketPage } from "../../page/market.page";
+import { Layout } from "../../component/layout.component";
+import { MarketCoinPage } from "../../page/market.coin.page";
+import { AssetPage } from "../../page/asset.page";
+import { AccountsPage } from "../../page/accounts.page";
+import { AccountPage } from "../../page/account.page";
 
 test.use({
   env: {
@@ -195,6 +195,6 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
     expect(dappURL).toContain("?focus=pooled");
-    await expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
+    expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
   });
 });

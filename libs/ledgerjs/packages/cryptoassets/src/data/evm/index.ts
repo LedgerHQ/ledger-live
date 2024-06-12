@@ -20,6 +20,9 @@ import base_tokens from "./8453/erc20.json";
 import arbitrum_tokens from "./42161/erc20.json";
 import avalanche_c_chain_tokens from "./43114/erc20.json";
 import linea_tokens from "./59144/erc20.json";
+import blast_tokens from "./81457/erc20.json";
+import scroll_sepolia_tokens from "./534351/erc20.json";
+import scroll_tokens from "./534352/erc20.json";
 import ethereum_sepolia_tokens from "./11155111/erc20.json";
 import neon_evm_tokens from "./245022934/erc20.json";
 
@@ -45,6 +48,9 @@ import base_tokens_hash from "./8453/erc20-hash.json";
 import arbitrum_tokens_hash from "./42161/erc20-hash.json";
 import avalanche_c_chain_tokens_hash from "./43114/erc20-hash.json";
 import linea_tokens_hash from "./59144/erc20-hash.json";
+import blast_tokens_hash from "./81457/erc20-hash.json";
+import scroll_sepolia_tokens_hash from "./534351/erc20-hash.json";
+import scroll_tokens_hash from "./534352/erc20-hash.json";
 import ethereum_sepolia_tokens_hash from "./11155111/erc20-hash.json";
 import neon_evm_tokens_hash from "./245022934/erc20-hash.json";
 
@@ -70,6 +76,9 @@ import base_signatures from "./8453/erc20-signatures.json";
 import arbitrum_signatures from "./42161/erc20-signatures.json";
 import avalanche_c_chain_signatures from "./43114/erc20-signatures.json";
 import linea_signatures from "./59144/erc20-signatures.json";
+import blast_signatures from "./81457/erc20-signatures.json";
+import scroll_sepolia_signatures from "./534351/erc20-signatures.json";
+import scroll_signatures from "./534352/erc20-signatures.json";
 import ethereum_sepolia_signatures from "./11155111/erc20-signatures.json";
 import neon_evm_signatures from "./245022934/erc20-signatures.json";
 
@@ -95,6 +104,9 @@ import base_signatures_hash from "./8453/erc20-signatures-hash.json";
 import arbitrum_signatures_hash from "./42161/erc20-signatures-hash.json";
 import avalanche_c_chain_signatures_hash from "./43114/erc20-signatures-hash.json";
 import linea_signatures_hash from "./59144/erc20-signatures-hash.json";
+import blast_signatures_hash from "./81457/erc20-signatures-hash.json";
+import scroll_sepolia_signatures_hash from "./534351/erc20-signatures-hash.json";
+import scroll_signatures_hash from "./534352/erc20-signatures-hash.json";
 import ethereum_sepolia_signatures_hash from "./11155111/erc20-signatures-hash.json";
 import neon_evm_signatures_hash from "./245022934/erc20-signatures-hash.json";
 
@@ -121,6 +133,9 @@ export const tokens = {
   42161: arbitrum_tokens,
   43114: avalanche_c_chain_tokens,
   59144: linea_tokens,
+  81457: blast_tokens,
+  534351: scroll_sepolia_tokens,
+  534352: scroll_tokens,
   11155111: ethereum_sepolia_tokens,
   245022934: neon_evm_tokens,
 };
@@ -148,6 +163,9 @@ export const signatures = {
   42161: arbitrum_signatures,
   43114: avalanche_c_chain_signatures,
   59144: linea_signatures,
+  81457: blast_signatures,
+  534351: scroll_sepolia_signatures,
+  534352: scroll_signatures,
   11155111: ethereum_sepolia_signatures,
   245022934: neon_evm_signatures,
 };
@@ -175,6 +193,9 @@ export const hashes = {
   42161: arbitrum_tokens_hash,
   43114: avalanche_c_chain_tokens_hash,
   59144: linea_tokens_hash,
+  81457: blast_tokens_hash,
+  534351: scroll_sepolia_tokens_hash,
+  534352: scroll_tokens_hash,
   11155111: ethereum_sepolia_tokens_hash,
   245022934: neon_evm_tokens_hash,
 };
@@ -202,6 +223,9 @@ export const signatureHashes = {
   42161: arbitrum_signatures_hash,
   43114: avalanche_c_chain_signatures_hash,
   59144: linea_signatures_hash,
+  81457: blast_signatures_hash,
+  534351: scroll_sepolia_signatures_hash,
+  534352: scroll_signatures_hash,
   11155111: ethereum_sepolia_signatures_hash,
   245022934: neon_evm_signatures_hash,
 };

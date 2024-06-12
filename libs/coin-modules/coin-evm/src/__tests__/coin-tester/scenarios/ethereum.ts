@@ -1,15 +1,17 @@
 import Eth from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
-import { makeAccount } from "../../fixtures/common.fixtures";
+import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
+import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
 import { EvmNftTransaction, Transaction as EvmTransaction } from "../../../types";
+import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
+import { getCoinConfig, setCoinConfig } from "../../../config";
+import { makeAccount } from "../../fixtures/common.fixtures";
+import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "../../../hw-getAddress";
-import { setCoinConfig } from "../../../config";
 import {
   ethereum,
   ERC20Interface,
@@ -18,8 +20,6 @@ import {
   ERC1155Interface,
   impersonnateAccount,
 } from "../helpers";
-import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
-import { killAnvil, spawnAnvil } from "../anvil";
 
 const makeScenarioTransactions = ({
   address,
@@ -130,7 +130,7 @@ const makeScenarioTransactions = ({
 const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
 export const scenarioEthereum: Scenario<EvmTransaction> = {
-  name: "Ledger Live Basic ETH Transactions",
+  name: "Ledger Live Basic Ethereum Transactions",
   setup: async () => {
     const [{ transport, onSignerConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
@@ -139,6 +139,10 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
 
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
     const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
+
+    const lastBlockNumber = await provider.getBlockNumber();
+    // start indexing at next block
+    await setBlock(lastBlockNumber + 1);
 
     setCoinConfig(() => ({
       info: {
@@ -159,6 +163,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
         },
       },
     }));
+    initMswHandlers(getCoinConfig(ethereum).info);
 
     const currencyBridge = buildCurrencyBridge(signerContext);
     const accountBridge = buildAccountBridge(signerContext);
@@ -170,8 +175,6 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
     });
 
     const scenarioAccount = makeAccount(address, ethereum);
-
-    await setBlock();
 
     // Binance account
     await impersonnateAccount({
@@ -210,14 +213,16 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
       addressToImpersonnate: "0xa3cd1123f4860C0cC512C775Ab6DB6A3E3d1B1Ee",
     });
 
-    await getLogs();
-
     return {
       currencyBridge,
       accountBridge,
       account: scenarioAccount,
       onSignerConfirmation,
     };
+  },
+  getTransactions: address => makeScenarioTransactions({ address }),
+  beforeSync: async () => {
+    await indexBlocks();
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
@@ -227,7 +232,6 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
     );
     expect(account.nfts?.length).toBe(2);
   },
-  getTransactions: address => makeScenarioTransactions({ address }),
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
@@ -238,6 +242,6 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
   },
   teardown: async () => {
     await Promise.all([killSpeculos(), killAnvil()]);
-    clearExplorerAppendix();
+    resetIndexer();
   },
 };

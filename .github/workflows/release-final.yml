@@ -44,7 +44,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2
+          ruby-version: 3.3.0
       - name: Cache LLM pods
         uses: actions/cache@v3
         with:

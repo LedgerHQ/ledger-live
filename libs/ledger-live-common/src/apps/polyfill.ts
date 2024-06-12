@@ -41,6 +41,7 @@ export function declareDep(name: string, dep: string): void {
   ["ArtBlocks", "Ethereum"],
   ["ARTIS sigma1", "Ethereum"],
   ["Astar EVM", "Ethereum"],
+  ["Binance Smart Chain", "Ethereum"],
   ["cBridge", "Ethereum"],
   ["Cometh", "Ethereum"],
   ["Compound", "Ethereum"],
@@ -61,6 +62,7 @@ export function declareDep(name: string, dep: string): void {
   ["Opensea", "Ethereum"],
   ["Paraswap", "Ethereum"],
   ["POAP", "Ethereum"],
+  ["Polygon", "Ethereum"],
   ["Rarible", "Ethereum"],
   ["Ricochet", "Ethereum"],
   ["RocketPool", "Ethereum"],
@@ -101,12 +103,11 @@ export const getDependencies = (appName: string, appVersion?: string): string[] 
 export const getDependents = (appName: string): string[] => reverseDep[appName] || [];
 
 function matchAppNameAndCryptoCurrency(appName: string, crypto: CryptoCurrency) {
-  return (
-    appName.toLowerCase() === crypto.managerAppName.toLowerCase() &&
-    (crypto.managerAppName !== "Ethereum" ||
-      // if it's ethereum, we have a specific case that we must only allow the Ethereum app
-      appName === "Ethereum")
-  );
+  if (appName === "Ethereum") {
+    return crypto.id === "ethereum";
+  }
+
+  return appName.toLowerCase() === crypto.managerAppName.toLowerCase();
 }
 
 export const polyfillApplication = (app: Application): Application => {
@@ -161,8 +162,8 @@ export const mapApplicationV2ToApp = ({
     name === "Exchange"
       ? AppType.swap
       : Object.values(AppType).includes(type)
-      ? type
-      : AppType.currency,
+        ? type
+        : AppType.currency,
   ...rest,
   currencyId: findCryptoCurrencyById(currencyId) ? currencyId : getCurrencyIdFromAppName(name),
 });

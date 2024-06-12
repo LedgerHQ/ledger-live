@@ -1,27 +1,19 @@
 import { BigNumber } from "bignumber.js";
-import flatMap from "lodash/flatMap";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
   createMessageSignature,
-  getAddressFromPublicKey,
+  deserializeCV,
+  cvToJSON,
 } from "@stacks/transactions";
 
-import { GetAccountShape } from "../../../../bridge/jsHelpers";
-import { decodeAccountId, encodeAccountId } from "../../../../account";
-import {
-  fetchBalances,
-  fetchBlockHeight,
-  fetchFullMempoolTxs,
-  fetchFullTxs,
-  fetchNonce,
-} from "../../bridge/utils/api";
-import { StacksNetwork, TransactionResponse } from "./api.types";
+import { decodeAccountId } from "../../../../account";
+import { fetchFullMempoolTxs, fetchNonce } from "../../bridge/utils/api";
+import { DecodedSendManyFunctionArgsCV, StacksNetwork, TransactionResponse } from "./api.types";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import { encodeOperationId, encodeSubOperationId } from "../../../../operation";
 import { StacksOperation } from "../../types";
-import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 
 export const getTxToBroadcast = async (
@@ -61,14 +53,22 @@ export const getTxToBroadcast = async (
 export const getUnit = () => getCryptoCurrencyById("stacks").units[0];
 
 export const getAddress = (
-  a: Account,
+  account: Account,
 ): {
   address: string;
   derivationPath: string;
-} => ({ address: a.freshAddress, derivationPath: a.freshAddressPath });
+} => ({ address: account.freshAddress, derivationPath: account.freshAddressPath });
+
+const getMemo = (memoHex: string): string => {
+  if (memoHex?.substring(0, 2) === "0x") {
+    return Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
+  }
+
+  return "";
+};
 
 export const mapTxToOps =
-  (accountID: string) =>
+  (accountID: string, address: string) =>
   (tx: TransactionResponse): StacksOperation[] => {
     try {
       const {
@@ -80,16 +80,15 @@ export const mapTxToOps =
         sender_address,
         block_hash: blockHash,
       } = tx.tx;
-      const { stx_received: receivedValue, stx_sent: sentValue, stx_transfers } = tx;
+      const { stx_received: receivedValue, stx_sent: sentValue } = tx;
 
-      const allRecipients = stx_transfers.map(t => t.recipient);
-      const recipients = allRecipients.length === 1 ? [allRecipients[0]] : [];
+      let recipients: string[] = [];
+      if (tx.tx.tx_type === "token_transfer" && tx.tx.token_transfer) {
+        recipients = [tx.tx.token_transfer.recipient_address];
+      }
 
       const memoHex = tx.tx.token_transfer?.memo;
-      let memo: string = "";
-      if (memoHex?.substring(0, 2) === "0x") {
-        memo = Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
-      }
+      const memo: string = getMemo(memoHex ?? "");
 
       const ops: StacksOperation[] = [];
 
@@ -97,7 +96,7 @@ export const mapTxToOps =
       const feeToUse = new BigNumber(fee_rate || "0");
 
       const isSending = sentValue !== "0" && receivedValue === "0";
-      const isReceiving = receivedValue !== "0" && sentValue === "0";
+      const isReceiving = receivedValue !== "0";
 
       const operationCommons = {
         hash: tx_id,
@@ -115,26 +114,35 @@ export const mapTxToOps =
 
       if (isSending) {
         const type: OperationType = "OUT";
+        let internalOperations: StacksOperation[] | undefined = undefined;
+
+        if (tx.tx.tx_type === "contract_call" && tx.tx.contract_call) {
+          internalOperations = [];
+          const deserialized = deserializeCV(tx.tx.contract_call.function_args[0].hex);
+          const decodedArgs: DecodedSendManyFunctionArgsCV = cvToJSON(deserialized);
+          for (const [idx, t] of decodedArgs.value.entries()) {
+            internalOperations.push({
+              ...operationCommons,
+              id: encodeSubOperationId(accountID, tx_id, type, idx),
+              contract: "send-many",
+              type,
+              value: new BigNumber(t.value.ustx.value),
+              senders: [sender_address],
+              recipients: [t.value.to.value],
+              extra: {
+                memo: getMemo(t.value.memo?.value ?? ""),
+              },
+            });
+          }
+        }
+
         ops.push({
           ...operationCommons,
           id: encodeOperationId(accountID, tx_id, type),
           value: new BigNumber(sentValue),
           recipients,
           type,
-          internalOperations:
-            stx_transfers.length > 1
-              ? stx_transfers.map((t, idx) => {
-                  return {
-                    ...operationCommons,
-                    id: encodeSubOperationId(accountID, tx_id, type, idx),
-                    contract: "send-many",
-                    type,
-                    value: new BigNumber(t.amount),
-                    senders: [t.sender],
-                    recipients: [t.recipient],
-                  };
-                })
-              : undefined,
+          internalOperations,
         });
       }
 
@@ -144,21 +152,8 @@ export const mapTxToOps =
           ...operationCommons,
           id: encodeOperationId(accountID, tx_id, type),
           value: new BigNumber(receivedValue),
-          recipients,
+          recipients: recipients.length ? recipients : [address],
           type,
-          internalOperations:
-            stx_transfers.length > 1
-              ? stx_transfers.map((t, idx) => {
-                  return {
-                    ...operationCommons,
-                    id: encodeSubOperationId(accountID, tx_id, type, idx),
-                    type,
-                    value: new BigNumber(t.amount),
-                    senders: [t.sender],
-                    recipients: [t.recipient],
-                  };
-                })
-              : undefined,
         });
       }
 
@@ -169,50 +164,7 @@ export const mapTxToOps =
     }
   };
 
-export const getAccountShape: GetAccountShape = async info => {
-  const { initialAccount, currency, rest = {}, derivationMode } = info;
-  // for bridge tests specifically the `rest` object is empty and therefore the publicKey is undefined
-  // reconciliatePublicKey tries to get pubKey from rest object and then from accountId
-  const pubKey = reconciliatePublicKey(rest.publicKey, initialAccount);
-  invariant(pubKey, "publicKey is required");
-
-  const accountId: string = encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: pubKey,
-    derivationMode,
-  });
-
-  const address = getAddressFromPublicKey(pubKey);
-
-  const blockHeight = await fetchBlockHeight();
-  const balanceResp = await fetchBalances(address);
-  const rawTxs = await fetchFullTxs(address);
-  const mempoolTxs = await fetchFullMempoolTxs(address);
-
-  const balance = new BigNumber(balanceResp.balance);
-  let spendableBalance = new BigNumber(balanceResp.balance);
-  for (const tx of mempoolTxs) {
-    spendableBalance = spendableBalance
-      .minus(new BigNumber(tx.fee_rate))
-      .minus(new BigNumber(tx.token_transfer.amount));
-  }
-
-  const result: Partial<Account> = {
-    id: accountId,
-    xpub: pubKey,
-    freshAddress: address,
-    balance,
-    spendableBalance,
-    operations: flatMap(rawTxs, mapTxToOps(accountId)),
-    blockHeight: blockHeight.chain_tip.block_height,
-  };
-
-  return result;
-};
-
-function reconciliatePublicKey(
+export function reconciliatePublicKey(
   publicKey: string | undefined,
   initialAccount: Account | undefined,
 ): string {

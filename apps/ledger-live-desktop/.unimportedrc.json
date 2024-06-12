@@ -9,17 +9,20 @@
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": ["**/node_modules/**"],
-  "ignoreUnresolved": ["unzip-crx-3", "../../../../release-notes.json"],
+  "ignoreUnresolved": ["../../../../release-notes.json", "unzip-crx-3"],
   "ignoreUnimported": [
     "**/*.test.*",
     "**/*.spec.*",
     "**/*.d.ts",
     "**/types.js",
     "**/types.*",
+    "node_modules/**",
+    "src/generate-cryptoassets-md.test.ts",
     "src/generate-cryptoassets-md.ts",
-    "src/newArch/Collectibles/**"
+    "src/newArch/Collectibles/**",
+    "src/newArch/WalletSync/**"
   ],
-  "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types"],
+  "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types", "allure-commandline"],
   "aliases": {
     "~/*": ["./src/*"]
   }

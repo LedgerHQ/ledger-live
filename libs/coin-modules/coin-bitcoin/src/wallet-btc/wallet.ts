@@ -175,7 +175,7 @@ class BitcoinLikeWallet {
     feePerByte: number;
     utxoPickingStrategy: PickingStrategy;
     sequence: number;
-    opReturnData?: Buffer;
+    opReturnData?: Buffer | undefined;
   }): Promise<TransactionInfo> {
     const changeAddress = await params.fromAccount.xpub.getNewAddress(1, 1);
     const txInfo = await params.fromAccount.xpub.buildTx({
@@ -195,14 +195,14 @@ class BitcoinLikeWallet {
     btc: BitcoinSigner;
     fromAccount: Account;
     txInfo: TransactionInfo;
-    lockTime?: number;
-    sigHashType?: number;
-    segwit?: boolean;
-    hasTimestamp?: boolean;
-    initialTimestamp?: number;
-    additionals?: Array<string>;
-    expiryHeight?: Buffer;
-    hasExtraData?: boolean;
+    lockTime?: number | undefined;
+    sigHashType?: number | undefined;
+    segwit?: boolean | undefined;
+    hasTimestamp?: boolean | undefined;
+    initialTimestamp?: number | undefined;
+    additionals?: Array<string> | undefined;
+    expiryHeight?: Buffer | undefined;
+    hasExtraData?: boolean | undefined;
     onDeviceSignatureRequested?: () => void;
     onDeviceSignatureGranted?: () => void;
     onDeviceStreaming?: (arg0: { progress: number; total: number; index: number }) => void;

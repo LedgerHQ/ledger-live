@@ -212,7 +212,7 @@ export type TronResources = {
   unwithdrawnReward: BigNumber;
   lastWithdrawnRewardDate: Date | null | undefined;
   lastVotedDate: Date | null | undefined;
-  cacheTransactionInfoById: Record<string, TronTransactionInfo>;
+  cacheTransactionInfoById: Record<string, TronTransactionInfo> | undefined;
 };
 export type TronResourcesRaw = {
   frozen: {
@@ -238,7 +238,7 @@ export type TronResourcesRaw = {
   unwithdrawnReward: string;
   lastWithdrawnRewardDate: string | null | undefined;
   lastVotedDate: string | null | undefined;
-  cacheTransactionInfoById?: Record<string, TronTransactionInfoRaw>;
+  cacheTransactionInfoById: Record<string, TronTransactionInfoRaw> | undefined;
 };
 export type Vote = {
   address: string;

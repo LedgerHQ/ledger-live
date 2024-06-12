@@ -10,6 +10,9 @@ export { serializeError, deserializeError, createCustomErrorClass, addCustomErro
 
 export const AccountNameRequiredError = createCustomErrorClass("AccountNameRequired");
 export const AccountNotSupported = createCustomErrorClass("AccountNotSupported");
+export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
+  "AccountAwaitingSendPendingOperations",
+);
 export const AmountRequired = createCustomErrorClass("AmountRequired");
 export const BluetoothRequired = createCustomErrorClass("BluetoothRequired");
 export const BtcUnmatchedApp = createCustomErrorClass("BtcUnmatchedApp");
@@ -124,7 +127,7 @@ export const TransportOpenUserCancelled = createCustomErrorClass("TransportOpenU
 export const TransportInterfaceNotAvailable = createCustomErrorClass(
   "TransportInterfaceNotAvailable",
 );
-export const TransportPendingOperation = createCustomErrorClass("TransportPendingOperation");
+export const TransportRaceCondition = createCustomErrorClass("TransportRaceCondition");
 export const TransportWebUSBGestureRequired = createCustomErrorClass(
   "TransportWebUSBGestureRequired",
 );

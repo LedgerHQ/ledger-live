@@ -80,11 +80,18 @@ export default function RecoverPlayer({
       lang: locale,
       availableOnDesktop,
       deviceId: state?.deviceId,
+      deviceModelId: device?.modelId,
       currency,
       ...params,
       ...queryParams,
     }),
-    [availableOnDesktop, locale, params, queryParams, state?.deviceId, currency, theme],
+    /**
+     * deviceModelId is purposely ignored from dependencies.
+     *
+     * This is to ensure the WebRecoverPlayer is not reloaded given the user disconnects their cable.
+     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [theme, locale, availableOnDesktop, state?.deviceId, currency, params, queryParams],
   );
 
   return manifest ? (

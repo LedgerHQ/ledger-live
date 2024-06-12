@@ -18,16 +18,16 @@ export type EvmTransactionBase = TransactionCommon & {
   // maximum of gas (as unit of computation) used by the transaction
   gasLimit: BigNumber;
   // custom gas limit manually set by the user overriding the gasLimit
-  customGasLimit?: BigNumber;
+  customGasLimit?: BigNumber | undefined;
   // id of the blockchain to use (used at the signature level for EIP-155)
   chainId: number;
   // buffer of the calldata that will be used by the smart contract
-  data?: Buffer | null;
+  data?: Buffer | null | undefined;
   // type of the transaction (will determine if transaction is a legacy transaction or an EIP-1559 one)
   type?: number;
   // additional fees can be expected on some Layer 2 chains.
   // It's an additional cost to take into account while estimating the cost of the tx.
-  additionalFees?: BigNumber;
+  additionalFees?: BigNumber | undefined;
   // available gas options for the transaction, used to display sensible default fees choices to the user
   gasOptions?: GasOptions;
   // additional informations related to an NFT in order to craft the real evm transaction at `signOperation` level
@@ -78,11 +78,11 @@ type EvmTransactionBaseRaw = TransactionCommonRaw & {
   mode: EvmTransactionMode;
   nonce: number;
   gasLimit: string;
-  customGasLimit?: string;
+  customGasLimit?: string | undefined;
   chainId: number;
-  data?: string | null;
-  type?: number;
-  additionalFees?: string;
+  data?: string | null | undefined;
+  type?: number | undefined;
+  additionalFees?: string | undefined;
   gasOptions?: GasOptionsRaw;
   nft?: EvmTransactionNftParamRaw;
 };
@@ -100,7 +100,7 @@ export type EvmNftTransactionRaw = EvmTransactionBaseRaw & {
 type EvmTransactionUntypedRaw = EvmSendTransactionRaw | EvmNftTransactionRaw;
 
 export type EvmTransactionLegacyRaw = EvmTransactionUntypedRaw & {
-  type?: 0 | 1;
+  type?: 0 | 1 | undefined;
   gasPrice: string;
   maxPriorityFeePerGas?: never;
   maxFeePerGas?: never;
@@ -115,9 +115,13 @@ export type EvmTransactionEIP1559Raw = EvmTransactionUntypedRaw & {
 
 export type TransactionRaw = EvmTransactionLegacyRaw | EvmTransactionEIP1559Raw;
 
-export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatus = TransactionStatusCommon & {
+  totalFees: BigNumber;
+};
 
-export type TransactionStatusRaw = TransactionStatusCommonRaw;
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  totalFees: string;
+};
 
 export type FeeHistory = {
   baseFeePerGas: string[];

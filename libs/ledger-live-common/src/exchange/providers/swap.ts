@@ -1,5 +1,6 @@
 import { ExchangeProviderNameAndSignature } from ".";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
+import network from "@ledgerhq/live-network";
 
 export type SwapProviderConfig = {
   needsKYC: boolean;
@@ -8,9 +9,43 @@ export type SwapProviderConfig = {
 
 type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
 type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
+type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
+  version?: number;
+  needsBearerToken: boolean;
+  needsKYC: boolean;
+};
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
-const swapProviders: Record<string, ProviderConfig> = {
+const swapAdditionData: Record<string, AdditionalProviderConfig> = {
+  changelly: {
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+  },
+  cic: {
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+  },
+  moonpay: {
+    needsKYC: true,
+    needsBearerToken: false,
+    type: "CEX",
+    version: 2,
+  },
+  oneinch: {
+    type: "DEX",
+    needsKYC: false,
+    needsBearerToken: false,
+  },
+  paraswap: {
+    type: "DEX",
+    needsKYC: false,
+    needsBearerToken: false,
+  },
+};
+
+const swapProviders: Record<string, ProviderConfig & AdditionalProviderConfig> = {
   changelly: {
     name: "Changelly",
     publicKey: {
@@ -75,15 +110,97 @@ const swapProviders: Record<string, ProviderConfig> = {
   },
 };
 
-export const getSwapProvider = (providerName: string): ProviderConfig => {
-  const res = swapProviders[providerName.toLowerCase()];
+let providerDataCache: Record<string, ProviderConfig & AdditionalProviderConfig> | null = null;
 
-  if (!res) {
+export const getSwapProvider = async (
+  providerName: string,
+): Promise<ProviderConfig & AdditionalProviderConfig> => {
+  const res = await fetchAndMergeProviderData();
+
+  if (!res[providerName.toLowerCase()]) {
     throw new Error(`Unknown partner ${providerName}`);
   }
 
-  return res;
+  return res[providerName.toLowerCase()];
 };
+
+function transformData(providersData) {
+  const transformed = {};
+  providersData.forEach(provider => {
+    const key = provider.name.toLowerCase();
+    transformed[key] = {
+      name: provider.name,
+      publicKey: {
+        curve: provider.public_key_curve,
+        data: Buffer.from(provider.public_key, "hex"),
+      },
+      signature: Buffer.from(provider.signature, "hex"),
+    };
+  });
+  return transformed;
+}
+
+export const getProvidersData = async () => {
+  try {
+    const providersData = await network({
+      url:
+        "https://crypto-assets-service.api.ledger.com/v1/partners" +
+        "?output=name,signature,public_key,public_key_curve" +
+        "&service_name=swap",
+    });
+    return providersData.data;
+  } catch {
+    return swapProviders;
+  }
+};
+
+export const getProvidersCDNData = async () => {
+  try {
+    const providersData = await network({
+      url: "https://cdn.live.ledger.com/swap-providers/data.json",
+    });
+    return providersData.data;
+  } catch {
+    return swapAdditionData;
+  }
+};
+
+export const fetchAndMergeProviderData = async () => {
+  if (providerDataCache) {
+    return providerDataCache;
+  }
+
+  try {
+    const [providersData, providersExtraData] = await Promise.all([
+      getProvidersData(),
+      getProvidersCDNData(),
+    ]);
+
+    const transformedProvidersData = transformData(providersData);
+    const finalProvidersData = mergeProviderData(transformedProvidersData, providersExtraData);
+    providerDataCache = finalProvidersData;
+
+    return finalProvidersData;
+  } catch (error) {
+    console.error("Error fetching or processing provider data:", error);
+    const transformedProvidersData = transformData(swapProviders);
+    const finalProvidersData = mergeProviderData(transformedProvidersData, swapAdditionData);
+    providerDataCache = finalProvidersData;
+
+    return finalProvidersData;
+  }
+};
+
+function mergeProviderData(baseData, additionalData) {
+  const mergedData = { ...baseData };
+  Object.keys(additionalData).forEach(key => {
+    mergedData[key] = {
+      ...mergedData[key],
+      ...additionalData[key],
+    };
+  });
+  return mergedData;
+}
 
 export const getAvailableProviders = (): string[] => {
   if (isIntegrationTestEnv()) {

@@ -2,6 +2,7 @@ import { device, expect, waitFor } from "detox";
 import { loadConfig } from "../bridge/server";
 import { getElementByText, isAndroid } from "../helpers";
 
+import AddAccountDrawer from "../models/accounts/addAccountDrawer";
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
 import DiscoverPage from "../models/discover/discoverPage";
 import ManagerPage from "../models/manager/managerPage";
@@ -13,6 +14,7 @@ import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import AccountPage from "../models/accounts/accountPage";
 import Common from "../models/common";
 
+let addAccountDrawer: AddAccountDrawer;
 let accountPage: AccountPage;
 let onboardingSteps: OnboardingSteps;
 let customLockscreenPage: CustomLockscreenPage;
@@ -54,6 +56,7 @@ const openNCheckApp = (l10n: { name: string; url: string }) => {
   });
 };
 
+$TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
   beforeAll(async () => {
     await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
@@ -68,6 +71,7 @@ describe("DeepLinks Tests", () => {
     swapFormPage = new SwapFormPage();
     receivePage = new ReceivePage();
     common = new Common();
+    addAccountDrawer = new AddAccountDrawer();
 
     await portfolioPage.waitForPortfolioPageToLoad();
   });
@@ -84,6 +88,11 @@ describe("DeepLinks Tests", () => {
   it("should open Account page", async () => {
     await accountPage.openViaDeeplink();
     await accountPage.waitForAccountsPageToLoad();
+  });
+
+  it("should open Add Account drawer", async () => {
+    await addAccountDrawer.openViaDeeplink();
+    await addAccountDrawer.selectCurrency("bitcoin");
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {

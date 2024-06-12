@@ -29,6 +29,7 @@ import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
+import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
 
 /* Initial state */
 
@@ -72,6 +73,7 @@ export type SettingsState = {
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
   nftsViewMode: "grid" | "list";
+  collectiblesViewMode: LayoutKey;
   showAccountsHelperBanner: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
@@ -136,7 +138,7 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
   return { language: DEFAULT_LANGUAGE.id, locale: DEFAULT_LANGUAGE.locales.default };
 };
 
-const INITIAL_STATE: SettingsState = {
+export const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
   counterValue: "USD",
   ...getInitialLanguageAndLocale(),
@@ -158,6 +160,7 @@ const INITIAL_STATE: SettingsState = {
   dismissedBanners: [],
   accountsViewMode: "list",
   nftsViewMode: "list",
+  collectiblesViewMode: Layout.LIST,
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
@@ -700,6 +703,7 @@ export const preferredDeviceModelSelector = (state: State) => state.settings.pre
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
 export const nftsViewModeSelector = (state: State) => state.settings.nftsViewMode;
+export const collectiblesViewModeSelector = (state: State) => state.settings.collectiblesViewMode;
 export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
@@ -724,7 +728,7 @@ export const enableLearnPageStagingUrlSelector = (state: State) =>
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
 export const hasCompletedOnboardingSelector = (state: State) =>
-  state.settings.hasCompletedOnboarding;
+  state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners || [];
 export const dismissedBannerSelector = (
   state: State,
@@ -741,16 +745,10 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
 export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {
-  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
-  // to be removed in a while.
-  // @ts-expect-error TODO: time to remove this maybe?
-  if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
-    return {
-      ...state.settings.lastSeenDevice,
-      modelId: DeviceModelId.stax,
-    };
-  }
-  return state.settings.lastSeenDevice;
+  const { lastSeenDevice } = state.settings;
+  if (!lastSeenDevice || !Object.values(DeviceModelId).includes(lastSeenDevice.modelId))
+    return null;
+  return lastSeenDevice;
 };
 export const devicesModelListSelector = (state: State): DeviceModelId[] =>
   state.settings.devicesModelList;

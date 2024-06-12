@@ -1,10 +1,14 @@
+import axios, {
+  AxiosPromise,
+  AxiosResponse,
+  type AxiosError,
+  type AxiosRequestConfig,
+  type Method,
+} from "axios";
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import { changes, getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
-import type { AxiosError, AxiosRequestConfig, Method } from "axios";
-import axios, { AxiosPromise, AxiosResponse } from "axios";
-import invariant from "invariant";
 
 type Metadata = { startTime: number };
 type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
@@ -158,8 +162,64 @@ const extractErrorMessage = (raw: string): string | undefined => {
   return;
 };
 
+export type LiveNetworkRequest<T> = {
+  url?: string;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  headers?: Record<string, string | number | boolean>;
+  baseURL?: string;
+  params?: unknown;
+  data?: T;
+  timeout?: number;
+};
+export type LiveNetworkResponse<T> = {
+  data: T;
+  status: number;
+};
+/**
+ * Network call
+ * @param request
+ * @returns
+ */
+export const newImplementation = async <T = unknown, U = unknown>(
+  request: LiveNetworkRequest<U>,
+): Promise<LiveNetworkResponse<T>> => {
+  let response: AxiosResponse<T>;
+
+  if (!("method" in request)) {
+    request.method = "GET";
+  }
+
+  if (request.method === "GET") {
+    if (!("timeout" in request)) {
+      request.timeout = getEnv("GET_CALLS_TIMEOUT");
+    }
+
+    response = await retry(() => axios(request), {
+      maxRetry: getEnv("GET_CALLS_RETRY"),
+      retryCondition: error => {
+        if (error && error.status) {
+          // A 422 shouldn't be retried without change as explained in this documentation
+          // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422
+          return error.status !== 422;
+        }
+        return true;
+      },
+    });
+  } else {
+    response = await axios(request);
+  }
+
+  const { data, status } = response;
+  return { data, status };
+};
+
+/**
+ * Network call
+ * @deprecated Use new method by updating your import: `@ledgerhq/live-network`
+ * @param arg Axios request type
+ * @returns Axios response type
+ */
 const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
-  invariant(typeof arg === "object", "network takes an object as parameter");
   let promise: AxiosPromise;
 
   if (arg.method === "GET") {

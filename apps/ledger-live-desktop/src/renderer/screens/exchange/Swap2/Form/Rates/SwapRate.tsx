@@ -4,10 +4,7 @@ import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { ExchangeRate, SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  getProviderName,
-  isRegistrationRequired,
-} from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import Price from "~/renderer/components/Price";
 import CounterValue from "~/renderer/components/CounterValue";
 import { Trans } from "react-i18next";
@@ -20,6 +17,7 @@ export type Props = {
   selected?: boolean | null;
   fromCurrency?: SwapSelectorStateType["currency"];
   toCurrency?: SwapSelectorStateType["currency"];
+  isRegistrationRequired: boolean;
 };
 
 const SecondaryText = styled(Text)`
@@ -29,7 +27,14 @@ const StyledCounterValue = styled(CounterValue)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
 
-function SwapRate({ value, selected, onSelect, fromCurrency, toCurrency }: Props) {
+function SwapRate({
+  value,
+  selected,
+  onSelect,
+  fromCurrency,
+  toCurrency,
+  isRegistrationRequired,
+}: Props) {
   const { toAmount: amount, provider } = value;
   return (
     <Rate
@@ -41,7 +46,7 @@ function SwapRate({ value, selected, onSelect, fromCurrency, toCurrency }: Props
       subtitle={
         <Trans
           i18nKey={
-            isRegistrationRequired(value.provider)
+            isRegistrationRequired
               ? "swap2.form.rates.registration"
               : "swap2.form.rates.noRegistration"
           }

@@ -1,10 +1,8 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testPathIgnorePatterns: [
-    "lib/",
-    "lib-es/"
-  ]
+  collectCoverageFrom: ["src/**/*.ts"],
+  coverageDirectory: "coverage",
+  preset: "ts-jest",
+  testEnvironment: "node",
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
 };
-

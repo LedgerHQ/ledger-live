@@ -4,6 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { useBridgeSync, useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { SYNC_DELAY } from "~/utils/constants";
+import { track } from "~/analytics";
 
 export interface Props {
   accountId?: string;
@@ -24,6 +25,7 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
     const [refreshing, setRefreshing] = useState(false);
 
     function onPress() {
+      track("buttonClicked", { button: "pull to refresh" });
       if (!accountId) return;
       poll();
       setSyncBehavior({

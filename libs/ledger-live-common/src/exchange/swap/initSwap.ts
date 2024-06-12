@@ -23,13 +23,14 @@ import {
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import { getSwapAPIBaseURL } from "./";
+import { getSwapAPIBaseURL, getSwapUserIP } from "./";
 import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";
 import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { TronSendTrc20ToNewAccountForbidden } from "../../families/tron/errors";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -72,10 +73,12 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         // NB Added the try/catch because of the API stability issues.
         let res;
 
-        const swapProviderConfig = getSwapProvider(provider);
+        const swapProviderConfig = await getSwapProvider(provider);
 
         const headers = {
           EquipmentId: getEnv("USER_ID"),
+
+          ...(getSwapUserIP() !== undefined ? getSwapUserIP() : {}),
         };
 
         const data = {
@@ -158,7 +161,10 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           transaction,
         );
         if (unsubscribed) return;
-        const errorsKeys = Object.keys(errors);
+
+        const errorsKeys = Object.keys(errors).filter(item =>
+          [TronSendTrc20ToNewAccountForbidden.prototype.name].includes(item),
+        );
 
         if (errorsKeys.length > 0) {
           throw errors[errorsKeys[0]]; // throw the first error
@@ -243,6 +249,14 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
           amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
           magnitudeAwareRate = transaction.amount && amountExpectedTo.dividedBy(transaction.amount);
+        }
+
+        let amountExpectedFrom;
+        if (swapResult.binaryPayload) {
+          const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
+          amountExpectedFrom = new BigNumber(decodePayload.amountToProvider.toString());
+          if (data.amountFromInSmallestDenomination !== amountExpectedFrom.toNumber())
+            throw new Error("AmountFrom received from partner's payload mismatch user input");
         }
 
         o.next({

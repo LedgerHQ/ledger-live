@@ -1,8 +1,13 @@
 import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-framework/config";
+import { MissingCoinConfig } from "@ledgerhq/coin-framework/errors";
 
-type PolkadotConfig = {
+export type PolkadotConfig = {
   sidecar: {
     url: string;
+    credentials?: string;
+  };
+  staking?: {
+    electionStatusThreshold: number;
   };
   metadataShortener: {
     url: string;
@@ -23,7 +28,7 @@ export const setCoinConfig = (config: CoinConfig<PolkadotCoinConfig>): void => {
 
 export const getCoinConfig = (): PolkadotCoinConfig => {
   if (!coinConfig) {
-    throw new Error("Polkadot module config not set");
+    throw new MissingCoinConfig();
   }
 
   return coinConfig();

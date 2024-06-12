@@ -3606,6 +3606,12 @@
         },
         "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
       },
+      "states": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "activating": "Activating",
+        "deactivating": "Deactivating"
+      },
       "flow": {
         "title": "Delegate",
         "steps": {
@@ -3989,8 +3995,10 @@
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
-      "walletSync": "Wallet Sync",
-      "walletSyncDesc": "Backup your app data and synchronize multiple Ledger Live instances."
+      "walletSync": "Ledger Sync",
+      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "marketPerformanceWidget": "Market Performance Widget",
+      "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
     "developer": {
       "search": "Search",
@@ -4201,6 +4209,18 @@
         "enableNetworkLogs": {
           "title": "Enable network logs",
           "description": "Enable network logs in the console (error logs are always enabled)"
+        },
+        "testWalletSync": {
+          "title": "Test Ledger Sync",
+          "description": "Allows you to launch a specific LedgerSync flow",
+          "cta": "Test",
+          "modal": {
+            "flow": "Select a Flow",
+            "step": "Select a Step",
+            "activated": "Activate/deactivate to have a backup or not",
+            "instance": "Generate Instances",
+            "cta": "Apply"
+          }
         }
       }
     },
@@ -5571,7 +5591,7 @@
       "title": "Something went wrong. Please reconnect your device",
       "description": "{{message}}"
     },
-    "TransportPendingOperation": {
+    "TransportRaceCondition": {
       "title": "Something went wrong. Please reconnect your device",
       "description": "An action was already pending on the Ledger device. Please deny or reconnect."
     },
@@ -6082,6 +6102,9 @@
     "FailedToRetrieveFirmwareUpdateInfo": {
       "title": "OS update check failed",
       "description": "Something went wrong. Please try again or contact Ledger Support if in doubt."
+    },
+    "TezosUnrevealedAccount": {
+      "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     }
   },
   "cryptoOrg": {
@@ -6273,6 +6296,114 @@
       "analytics": "Analytics",
       "personalizedExpDesc": "Receive personalised recommendations that match your preferences.",
       "analyticsDesc": "Enable analytics to help Ledger improve the user experience."
+    }
+  },
+  "walletSync": {
+    "title": "Ledger Sync",
+    "activate": {
+      "title": "Sync your accounts across all platforms",
+      "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+      "cta": "Sync your accounts"
+    },
+    "alreadySync": "Already created a key?",
+    "manage": {
+      "cta": "Manage",
+      "synchronize": {
+        "label": "Synchronize",
+        "description": "Synchronize your app data with another Ledger Live app for a seemless experience."
+      },
+      "backup": {
+        "label": "Manage Key",
+        "description": "Secure or delete your encryption key via another Ledger."
+      },
+      "instance": {
+        "label_one": "1 Synchronized instance",
+        "label_other": "{{count}} Synchronized instances",
+        "cta": "Manage"
+      }
+    },
+    "loading": {
+      "title": "Hang tight...",
+      "activation": "Your data is being end-to-end encrypted... ",
+      "synch": "We are updating the synched instances..."
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "Please try again later.",
+      "cta": "Try again"
+    },
+    "unsecuredError": {
+      "title": "The synchronization isn't secured by this Ledger",
+      "description": "Please connect the Ledger device you used to create your encryption key.",
+      "info": "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+      "cta": "Connect another Ledger",
+      "ctaDelete": "Delete my encryption key"
+    },
+    "success": {
+      "backup": {
+        "title": "Success",
+        "desc": "You successfully enabled Ledger Sync. ",
+        "synchAnother": "Sync with another Ledger Live app"
+      },
+      "synch": {
+        "title": "Synchronization successful!",
+        "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
+      }
+    },
+    "manageBackups": {
+      "title": "Manage your key",
+      "options": {
+        "deleteBackup": {
+          "title": "Delete your data",
+          "description": "All synced data will be deleted."
+        }
+      },
+      "deleteBackup": {
+        "title": "Do you really want to delete your encryption key?",
+        "description": "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time.",
+        "delete": "Delete",
+        "cancel": "Cancel"
+      },
+      "deleteBackupSuccess": {
+        "title": "Your devices have been unsynchronized and your key has been deleted"
+      },
+      "deleteBackupError": {
+        "title": "Something went wrong"
+      }
+    },
+    "synchronize": {
+      "chooseMethod": {
+        "title": "Choose your sync method",
+        "description": "You can choose to sync directly with your Ledger, or by scanning a QR code on Ledger Live.",
+        "scan": {
+          "title": "Scan a QR code",
+          "description": "Synchronize by scanning a QR code"
+        },
+        "connectDevice": {
+          "title": "Use your Ledger",
+          "description": "Synchronize by signing with your Ledger"
+        }
+      },
+      "qrCode": {
+        "title": "Synchronize",
+        "hint": "Trying to sync two Ledger Live desktop apps? Click here.",
+        "description": "Scan and synchronize your accounts with another Ledger Live app",
+        "steps": {
+          "step1": "Open the Ledger Live app you want to sync",
+          "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+          "step3": "Scan QR code until loader hits 100%."
+        }
+      },
+      "pinCode": {
+        "title": "Enter the code",
+        "description": "Type the code displayed on the other Ledger Live you want to sync with."
+      }
+    },
+    "manageInstances": {
+      "title": "Manage synchronized instances",
+      "remove": "Remove",
+      "deleteInstanceSuccess": "Your {{instanceName}} is no longer synchronized",
+      "deleteInstanceError": "Something went wrong with the desynchronization of {{instanceName}}"
     }
   }
 }

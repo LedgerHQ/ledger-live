@@ -11,6 +11,7 @@ const transformIncludePatterns = [
   "react-native-modal",
   "react-native-animatable",
   "@sentry/react-native",
+  "@hashgraph/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",
   "uuid",
@@ -50,7 +51,6 @@ module.exports = {
     "^react/(.*)$": "<rootDir>/node_modules/react/$1",
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
-    "^victory-native$": "victory",
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
   },

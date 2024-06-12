@@ -116,8 +116,8 @@ const Logo = styled.div<{ warning?: boolean; info?: boolean }>`
     p.info
       ? p.theme.colors.palette.primary.main
       : p.warning
-      ? p.theme.colors.warning
-      : p.theme.colors.alertRed};
+        ? p.theme.colors.warning
+        : p.theme.colors.alertRed};
 `;
 
 export const Header = styled.div`
@@ -961,12 +961,18 @@ export const renderSwapDeviceConfirmation = ({
 }) => {
   const sourceAccountCurrency = getAccountCurrency(exchange.fromAccount);
   const targetAccountCurrency = getAccountCurrency(exchange.toAccount);
-  const sourceAccountName = accountNameSelector(walletState, {
-    accountId: exchange.fromAccount.id,
-  });
-  const targetAccountName = accountNameSelector(walletState, {
-    accountId: exchange.toAccount.id,
-  });
+  const sourceAccountName =
+    accountNameSelector(walletState, {
+      accountId: exchange.fromAccount.id,
+    }) ?? sourceAccountCurrency.name;
+
+  // If account exists already then grab the name set.
+  // However if account has not yet been set then use the
+  // crypto/token currency name as the target account.
+  const targetAccountName =
+    accountNameSelector(walletState, {
+      accountId: exchange.toAccount.id,
+    }) ?? targetAccountCurrency.name;
 
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);

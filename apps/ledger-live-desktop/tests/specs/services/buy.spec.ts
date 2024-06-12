@@ -1,12 +1,12 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { PortfolioPage } from "../../models/PortfolioPage";
-import { AssetPage } from "../../models/AssetPage";
-import { AccountsPage } from "../../models/AccountsPage";
-import { AccountPage } from "../../models/AccountPage";
-import { SettingsPage } from "../../models/SettingsPage";
-import { MarketPage } from "../../models/MarketPage";
+import { Layout } from "../../component/layout.component";
+import { PortfolioPage } from "../../page/portfolio.page";
+import { AssetPage } from "../../page/asset.page";
+import { AccountsPage } from "../../page/accounts.page";
+import { AccountPage } from "../../page/account.page";
+import { SettingsPage } from "../../page/settings.page";
+import { MarketPage } from "../../page/market.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({
@@ -56,8 +56,8 @@ test("Buy / Sell @smoke", async ({ page }) => {
   await test.step("Navigate to Buy app from portfolio banner", async () => {
     await portfolioPage.startBuyFlow();
     await liveAppWebview.waitForLoaded();
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
     await expect
       .soft(page)
       .toHaveScreenshot("buy-app-opened.png", { mask: [page.locator("webview")] });
@@ -66,14 +66,14 @@ test("Buy / Sell @smoke", async ({ page }) => {
   await test.step("Navigate to Buy app from market", async () => {
     await layout.goToMarket();
     await marketPage.openBuyPage("usdt");
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    expect(
       await liveAppWebview.waitForCorrectTextInWebview(
         "currency: ethereum/erc20/usd_tether__erc20_",
       ),
     ).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
   });
 
   await test.step("Navigate to Buy app from asset", async () => {
@@ -81,10 +81,10 @@ test("Buy / Sell @smoke", async ({ page }) => {
     await portfolioPage.navigateToAsset("ethereum");
     await assetPage.startBuyFlow();
 
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("currency: ethereum")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("currency: ethereum")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
   });
 
   await test.step("Navigate to Buy app from account", async () => {
@@ -92,13 +92,13 @@ test("Buy / Sell @smoke", async ({ page }) => {
     await accountsPage.navigateToAccountByName("Bitcoin 1 (legacy)");
     await accountPage.navigateToBuy();
 
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
-    await expect(
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
+    expect(
       await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
     ).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
   });
 
   await test.step("Navigate to Buy app from account", async () => {
@@ -106,22 +106,22 @@ test("Buy / Sell @smoke", async ({ page }) => {
     await accountsPage.navigateToAccountByName("Bitcoin 1 (legacy)");
     await accountPage.navigateToSell();
 
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
-    await expect(
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
+    expect(
       await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
     ).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: sell")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("mode: sell")).toBe(true);
   });
 
   await test.step("Navigate to Buy app from sidebar with light theme and French Language", async () => {
     await layout.goToSettings();
     await settingsPage.changeLanguage("English", "Français");
     await settingsPage.changeTheme();
-    await await layout.goToBuyCrypto();
+    await layout.goToBuyCrypto();
 
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: light")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: fr")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: light")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: fr")).toBe(true);
   });
 });

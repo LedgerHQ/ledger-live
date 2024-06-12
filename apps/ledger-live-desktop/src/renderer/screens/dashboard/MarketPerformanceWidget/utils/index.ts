@@ -1,4 +1,4 @@
-import { MarketItemPerformer } from "@ledgerhq/live-common/market/types";
+import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
 import { Order } from "~/renderer/screens/dashboard/MarketPerformanceWidget/types";

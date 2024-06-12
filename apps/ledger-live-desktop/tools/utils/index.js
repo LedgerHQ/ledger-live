@@ -27,10 +27,10 @@ if (parsed) {
 const DOTENV_FILE = process.env.TESTING
   ? ".env.testing"
   : process.env.STAGING
-  ? ".env.staging"
-  : process.env.NODE_ENV === "production"
-  ? ".env.production"
-  : ".env";
+    ? ".env.staging"
+    : process.env.NODE_ENV === "production"
+      ? ".env.production"
+      : ".env";
 
 // TODO: ADD BUNDLE ANALYZER
 
@@ -89,6 +89,7 @@ const buildViteConfig = argv =>
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
           "lib",
         ),
+        "styled-components": [require.resolve("styled-components/dist/styled-components")],
         electron: path.join(__dirname, "electronRendererStubs.js"),
       },
     },

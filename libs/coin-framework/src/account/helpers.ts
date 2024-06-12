@@ -3,20 +3,14 @@ import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeTokenAccountId } from "./accountId";
 import { emptyHistoryCache } from "./balanceHistoryCache";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-  SubAccount,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 // By convention, a main account is the top level account
 // - in case of an Account is the account itself
-// - in case of a SubAccount it's the parentAccount
+// - in case of a TokenAccount it's the parentAccount
 export const getMainAccount = <A extends Account>(
-  account: A | SubAccount,
+  account: A | TokenAccount,
   parentAccount?: A | null | undefined,
 ): A => {
   const mainAccount = account.type === "Account" ? account : parentAccount;
@@ -102,9 +96,7 @@ export function clearAccount<T extends AccountLike>(
     lastSyncDate: new Date(0),
     operations: [],
     pendingOperations: [],
-    subAccounts:
-      (account as Account).subAccounts &&
-      (account as Account).subAccounts?.map(acc => clearAccount(acc, familyClean)),
+    subAccounts: account.subAccounts?.map(acc => clearAccount(acc, familyClean)) || [],
   };
 
   familyClean?.(copy);
@@ -113,12 +105,12 @@ export function clearAccount<T extends AccountLike>(
   return copy as T;
 }
 
-export function findSubAccountById(account: Account, id: string): SubAccount | null | undefined {
-  return (account.subAccounts || []).find(a => a.id === id);
+export function findSubAccountById(account: Account, id: string): TokenAccount | undefined {
+  return account.subAccounts?.find(a => a.id === id);
 }
 
 // get the token accounts of an account, ignoring those that are zero IF user don't want them
-export function listSubAccounts(account: Account): SubAccount[] {
+export function listSubAccounts(account: Account): TokenAccount[] {
   const accounts = account.subAccounts || [];
 
   if (getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS")) {
@@ -236,7 +228,7 @@ export const findTokenAccountByCurrency = (
   accounts: Account[],
 ):
   | {
-      account?: SubAccount;
+      account?: TokenAccount;
       parentAccount: Account;
     }
   | null
@@ -292,4 +284,16 @@ export function getParentAccount(account: AccountLike, accounts: AccountLike[]):
       return parentAccount as Account;
     }
   }
+}
+
+export function areAllOperationsLoaded(account: AccountLike): boolean {
+  if (account.operationsCount !== account.operations.length) {
+    return false;
+  }
+
+  if (account.type === "Account" && account.subAccounts) {
+    return account.subAccounts.every(areAllOperationsLoaded);
+  }
+
+  return true;
 }

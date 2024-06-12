@@ -1,3 +1,17 @@
+# 2.81.2
+
+### 🐛 Fix
+
+We fixed a bug that caused the app to reject passwords.
+
+# 2.80.0
+
+### 🐛 Fixes
+
+Some users were unable to stake Polkadot (DOT) despite having enough balance. This has been fixed.
+
+We've fixed a bug that prevented some Near (NEAR) transactions from being broadcast immediately.
+
 # 2.79.1
 
 This release includes minor bug fixes and security improvements.

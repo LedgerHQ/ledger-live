@@ -9,13 +9,12 @@ import {
   makePaymentTxnWithSuggestedParams,
 } from "algosdk";
 
-import type { Account } from "@ledgerhq/types-live";
 import algorandAPI from "./api";
 import { extractTokenId } from "./tokens";
-import type { Transaction } from "./types";
+import type { AlgorandAccount, Transaction } from "./types";
 
 export const buildTransactionPayload = async (
-  account: Account,
+  account: AlgorandAccount,
   transaction: Transaction,
 ): Promise<AlgoTransactionPayload> => {
   const { amount, recipient, mode, memo, assetId, subAccountId } = transaction;
@@ -33,8 +32,8 @@ export const buildTransactionPayload = async (
       subAccount && subAccount.type === "TokenAccount"
         ? extractTokenId(subAccount.token.id)
         : assetId
-        ? extractTokenId(assetId)
-        : "";
+          ? extractTokenId(assetId)
+          : "";
 
     if (!targetAssetId) {
       throw new Error("Token Asset Id not found");

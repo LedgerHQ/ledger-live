@@ -1,7 +1,6 @@
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
-import { WebView } from "react-native-webview";
-import { WebViewErrorEvent, WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
+import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
 import { injectedCode } from "./injectedCode/imageHexToBase64Processing";
@@ -84,9 +83,8 @@ export default class ImageHexProcessor extends React.Component<Props> {
     this.webViewRef?.reload();
   };
 
-  handleWebViewError = ({ nativeEvent }: WebViewErrorEvent) => {
+  handleWebViewError = () => {
     const { onError } = this.props;
-    console.error(nativeEvent);
     onError(new ImageProcessingError());
   };
 

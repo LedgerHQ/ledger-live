@@ -19,7 +19,12 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
-import { Account, AccountBridge, SubAccount, TransactionStatusCommon } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  TokenAccount,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import { getMinEip1559Fees, getMinLegacyFees } from "./editTransaction/getMinEditTransactionFees";
 import { eip1559TransactionHasFees, getEstimatedFees, legacyTransactionHasFees } from "./logic";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
@@ -39,7 +44,8 @@ type ValidatedTransactionFields =
   | "amount"
   | "maxPriorityFee"
   | "maxFee"
-  | "feeTooHigh";
+  | "feeTooHigh"
+  | "replacementTransactionUnderpriced";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
@@ -87,7 +93,7 @@ export const validateRecipient = (
  * Validate the amount of a transaction for an account
  */
 const validateAmount = (
-  account: Account | SubAccount,
+  account: Account | TokenAccount,
   transaction: EvmTransaction,
   totalSpent: BigNumber,
 ): Array<ValidationIssues> => {
@@ -227,7 +233,7 @@ const validateNft = (account: Account, tx: EvmTransaction): Array<ValidationIssu
  * - if sending ETH, warn if fees are more than 10% of the amount
  */
 const validateFeeRatio = (
-  account: Account | SubAccount,
+  account: Account | TokenAccount,
   tx: EvmTransaction,
   estimatedFees: BigNumber,
 ): Array<ValidationIssues> => {
@@ -249,10 +255,11 @@ const validateFeeRatio = (
 /**
  * Validate a transaction and get all possibles errors and warnings about it
  */
-export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransactionStatus"] = async (
-  account,
-  tx,
-) => {
+export const getTransactionStatus: AccountBridge<
+  EvmTransaction,
+  Account,
+  TransactionStatus
+>["getTransactionStatus"] = async (account, tx) => {
   const subAccount = findSubAccountById(account, tx.subAccountId || "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
   const { gasLimit, customGasLimit, additionalFees, amount } = tx;
@@ -290,15 +297,11 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
     errors,
     warnings,
     estimatedFees,
+    totalFees,
     amount,
     totalSpent,
   };
 };
-
-type EditTransactionValidatedTransactionFields = "replacementTransactionUnderpriced";
-type EditTransactionValidationIssues = Partial<
-  Record<EditTransactionValidatedTransactionFields, Error>
->;
 
 /**
  * Validate an edited transaction and returns related errors and warnings
@@ -315,13 +318,13 @@ export const validateEditTransaction = ({
 }: {
   transaction: EvmTransaction;
   transactionToUpdate: EvmTransaction;
-  editType?: EditType;
+  editType?: EditType | undefined;
 }): {
   errors: TransactionStatusCommon["errors"];
   warnings: TransactionStatusCommon["warnings"];
 } => {
-  const errors: EditTransactionValidationIssues = {};
-  const warnings: EditTransactionValidationIssues = {};
+  const errors: ValidationIssues = {};
+  const warnings: ValidationIssues = {};
 
   if (!editType) {
     return {

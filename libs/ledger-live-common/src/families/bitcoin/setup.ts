@@ -10,13 +10,18 @@ import type { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";
 import bitcoinResolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { signMessage } from "@ledgerhq/coin-bitcoin/hw-signMessage";
-import { Transaction } from "@ledgerhq/coin-bitcoin/types";
+import { BitcoinAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
 import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { startSpan } from "../../performance";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { getCurrencyConfiguration } from "../../config";
 import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/lib/config";
+import { SignMessage } from "../../hw/signMessage/types";
+
+const createSigner = (transport: Transport, currency: CryptoCurrency) => {
+  return new Btc({ transport, currency: currency.id });
+};
 
 const signerContext: SignerContext = <T>(
   deviceId: string,
@@ -24,14 +29,8 @@ const signerContext: SignerContext = <T>(
   fn: (signer: Btc) => Promise<T>,
 ): Promise<T> =>
   firstValueFrom(
-    withDevice(deviceId)((transport: Transport) =>
-      from(fn(new Btc({ transport, currency: crypto.id }))),
-    ),
+    withDevice(deviceId)((transport: Transport) => from(fn(createSigner(transport, crypto)))),
   );
-
-const createSigner = (transport: Transport, currency: CryptoCurrency) => {
-  return new Btc({ transport, currency: currency.id });
-};
 
 const getCurrencyConfig = (currency: CryptoCurrency) => {
   return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currency) };
@@ -41,10 +40,21 @@ const perfLogger = {
   startSpan,
 };
 
-const bridge: Bridge<Transaction> = createBridges(signerContext, perfLogger, getCurrencyConfig);
+const bridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = createBridges(
+  signerContext,
+  perfLogger,
+  getCurrencyConfig,
+);
+
+export function createMessageSigner(): SignMessage {
+  return (transport, account, messageData) => {
+    const signerContext: SignerContext = (_, crypto, fn) => fn(createSigner(transport, crypto));
+    return signMessage(signerContext)("", account, messageData);
+  };
+}
 
 const messageSigner = {
-  signMessage: signMessage(signerContext),
+  signMessage: createMessageSigner(),
 };
 
 const resolver: Resolver = (

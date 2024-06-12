@@ -42,13 +42,13 @@ const getColorsForStatus = (status: string) => {
         dotColor: colors.alertRed,
       }
     : naiveMapping.ok.includes(status)
-    ? {
-        textColor: "palette.text.shade100",
-        dotColor: colors.positiveGreen,
-      }
-    : {
-        textColor: "wallet",
-      };
+      ? {
+          textColor: "palette.text.shade100",
+          dotColor: colors.positiveGreen,
+        }
+      : {
+          textColor: "wallet",
+        };
 };
 const FullNodeStatus = () => {
   const { t } = useTranslation();

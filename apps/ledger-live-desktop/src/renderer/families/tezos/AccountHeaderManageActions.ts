@@ -1,5 +1,5 @@
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";

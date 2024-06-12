@@ -1,12 +1,14 @@
 import React from "react";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 
-import { Box } from "@ledgerhq/react-ui";
 import { usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { Box } from "@ledgerhq/react-ui";
 import ButtonBase from "~/renderer/components/Button";
 import SwapFormRates from "../FormRates";
+import SwapFormSummary from "../FormSummary";
+import LoadingState from "../Rates/LoadingState";
 import { SwapWebManifestIDs } from "../SwapWebView";
 
 const Button = styled(ButtonBase)`
@@ -40,8 +42,14 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
   } = props;
   const { t } = useTranslation();
 
-  const nativeQuotesUI =
+  const nativeLoadingUI = pageState === "loading" ? <LoadingState /> : null;
+  const nativeNetworkFeesUI =
     pageState === "loaded" ? (
+      <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
+    ) : null;
+
+  const nativeQuotesUI =
+    pageState === "loaded" && !manifestID?.startsWith(SwapWebManifestIDs.Demo1) ? (
       <SwapFormRates
         swap={swapTransaction.swap}
         provider={provider}
@@ -62,6 +70,8 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
    */
   const allNativeUI = (
     <>
+      {nativeLoadingUI}
+      {nativeNetworkFeesUI}
       {nativeQuotesUI}
       {nativeExchangeButtonUI}
     </>
@@ -82,6 +92,8 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
        */
       return (
         <>
+          {nativeLoadingUI}
+          {nativeNetworkFeesUI}
           {nativeQuotesUI}
           {liveApp}
         </>
@@ -93,7 +105,12 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
        *  - Exchange Button
        *  - Quotes UI
        */
-      return <>{liveApp}</>;
+      return (
+        <>
+          {nativeNetworkFeesUI}
+          {liveApp}
+        </>
+      );
 
     /**
      * Fall back to show all native UI

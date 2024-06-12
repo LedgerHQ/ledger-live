@@ -26,11 +26,13 @@ describe("Add account from modal", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
+  $TmsLink("B2CQA-786");
   it("open add accounts from modal", async () => {
     await portfolioPage.addAccount();
     await addAccountDrawer.importWithYourLedger();
   });
 
+  $TmsLink("B2CQA-101");
   it("add Bitcoin accounts", async () => {
     await addAccountDrawer.selectCurrency("bitcoin");
     await deviceAction.selectMockDevice();
@@ -41,6 +43,7 @@ describe("Add account from modal", () => {
     await addAccountDrawer.tapSuccessCta();
   });
 
+  $TmsLink("B2CQA-101");
   it("displays Bitcoin accounts page summary", async () => {
     await accountPage.waitForAccountPageToLoad("Bitcoin");
     await waitForElementByText("1.19576\u00a0BTC");

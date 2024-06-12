@@ -4,7 +4,7 @@ import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
+import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";

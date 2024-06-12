@@ -2,8 +2,7 @@ import BigNumber from "bignumber.js";
 import { OnNoRatesCallback, RatesReducerState, SwapSelectorStateType } from "../../types";
 import { useFetchRates } from "./useFetchRates";
 import { SetExchangeRateCallback } from "../useSwapTransaction";
-import { useFeature } from "../../../../featureFlags";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useCountdown } from "usehooks-ts";
 import { DEFAULT_SWAP_RATES_INTERVAL_MS } from "../../const/timeout";
 
@@ -14,6 +13,7 @@ type Props = {
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
   countdown?: number;
   allowRefresh?: boolean;
+  isEnabled?: boolean;
 };
 
 export type UseProviderRatesResponse = {
@@ -29,20 +29,13 @@ export function useProviderRates({
   onNoRates,
   setExchangeRate,
   allowRefresh = true,
+  isEnabled = true,
   ...props
 }: Props): UseProviderRatesResponse {
   const [countdown, { startCountdown, resetCountdown, stopCountdown }] = useCountdown({
     countStart: props.countdown ?? DEFAULT_SWAP_RATES_INTERVAL_MS / 1000,
     countStop: 0,
   });
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  const filterMoonpay = useCallback(
-    rates => {
-      if (!rates || ptxSwapMoonpayProviderFlag?.enabled) return rates;
-      return rates.filter(r => r.provider !== "moonpay");
-    },
-    [ptxSwapMoonpayProviderFlag?.enabled],
-  );
 
   const { data, isLoading, error, refetch } = useFetchRates({
     fromCurrencyAccount: fromState.account,
@@ -50,15 +43,15 @@ export function useProviderRates({
     fromCurrencyAmount: fromState.amount ?? BigNumber(0),
     onSuccess(data) {
       resetCountdown();
-      const rates = filterMoonpay(data);
-      if (rates.length === 0) {
+      if (data.length === 0) {
         stopCountdown();
         onNoRates?.({ fromState, toState });
       } else {
         startCountdown();
-        setExchangeRate?.(rates[0]);
+        setExchangeRate?.(data[0]);
       }
     },
+    isEnabled,
   });
 
   useEffect(() => {
@@ -112,7 +105,7 @@ export function useProviderRates({
     return {
       rates: {
         status: "success",
-        value: filterMoonpay(data),
+        value: data,
         error: undefined,
       },
       refetchRates: refetch,
