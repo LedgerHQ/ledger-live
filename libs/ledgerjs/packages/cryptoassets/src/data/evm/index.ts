@@ -27,7 +27,7 @@ import scroll_sepolia_tokens from "./534351/erc20.json";
 import scroll_tokens from "./534352/erc20.json";
 import ethereum_sepolia_tokens from "./11155111/erc20.json";
 import optimism_sepolia_tokens from "./11155420/erc20.json";
-import blast_testnet_tokens from "./168587773/erc20.json";
+import blast_sepolia_tokens from "./168587773/erc20.json";
 import neon_evm_tokens from "./245022934/erc20.json";
 
 import ethereum_tokens_hash from "./1/erc20-hash.json";
@@ -59,7 +59,7 @@ import scroll_sepolia_tokens_hash from "./534351/erc20-hash.json";
 import scroll_tokens_hash from "./534352/erc20-hash.json";
 import ethereum_sepolia_tokens_hash from "./11155111/erc20-hash.json";
 import optimism_sepolia_tokens_hash from "./11155420/erc20-hash.json";
-import blast_testnet_tokens_hash from "./168587773/erc20-hash.json";
+import blast_sepolia_tokens_hash from "./168587773/erc20-hash.json";
 import neon_evm_tokens_hash from "./245022934/erc20-hash.json";
 
 import ethereum_signatures from "./1/erc20-signatures.json";
@@ -91,7 +91,7 @@ import scroll_sepolia_signatures from "./534351/erc20-signatures.json";
 import scroll_signatures from "./534352/erc20-signatures.json";
 import ethereum_sepolia_signatures from "./11155111/erc20-signatures.json";
 import optimism_sepolia_signatures from "./11155420/erc20-signatures.json";
-import blast_testnet_signatures from "./168587773/erc20-signatures.json";
+import blast_sepolia_signatures from "./168587773/erc20-signatures.json";
 import neon_evm_signatures from "./245022934/erc20-signatures.json";
 
 import ethereum_signatures_hash from "./1/erc20-signatures-hash.json";
@@ -123,7 +123,7 @@ import scroll_sepolia_signatures_hash from "./534351/erc20-signatures-hash.json"
 import scroll_signatures_hash from "./534352/erc20-signatures-hash.json";
 import ethereum_sepolia_signatures_hash from "./11155111/erc20-signatures-hash.json";
 import optimism_sepolia_signatures_hash from "./11155420/erc20-signatures-hash.json";
-import blast_testnet_signatures_hash from "./168587773/erc20-signatures-hash.json";
+import blast_sepolia_signatures_hash from "./168587773/erc20-signatures-hash.json";
 import neon_evm_signatures_hash from "./245022934/erc20-signatures-hash.json";
 
 export const tokens = {
@@ -156,7 +156,7 @@ export const tokens = {
   534352: scroll_tokens,
   11155111: ethereum_sepolia_tokens,
   11155420: optimism_sepolia_tokens,
-  168587773: blast_testnet_tokens,
+  168587773: blast_sepolia_tokens,
   245022934: neon_evm_tokens,
 };
 
@@ -190,7 +190,7 @@ export const signatures = {
   534352: scroll_signatures,
   11155111: ethereum_sepolia_signatures,
   11155420: optimism_sepolia_signatures,
-  168587773: blast_testnet_signatures,
+  168587773: blast_sepolia_signatures,
   245022934: neon_evm_signatures,
 };
 
@@ -224,7 +224,7 @@ export const hashes = {
   534352: scroll_tokens_hash,
   11155111: ethereum_sepolia_tokens_hash,
   11155420: optimism_sepolia_tokens_hash,
-  168587773: blast_testnet_tokens_hash,
+  168587773: blast_sepolia_tokens_hash,
   245022934: neon_evm_tokens_hash,
 };
 
@@ -258,7 +258,7 @@ export const signatureHashes = {
   534352: scroll_signatures_hash,
   11155111: ethereum_sepolia_signatures_hash,
   11155420: optimism_sepolia_signatures_hash,
-  168587773: blast_testnet_signatures_hash,
+  168587773: blast_sepolia_signatures_hash,
   245022934: neon_evm_signatures_hash,
 };
 
