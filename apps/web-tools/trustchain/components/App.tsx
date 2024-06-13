@@ -286,7 +286,7 @@ function AppSeedIdAuthenticate({
   );
 
   const valueDisplay = useCallback(
-    (seedIdAccessToken: { accessToken: string }) => "JWT: " + seedIdAccessToken.accessToken,
+    (seedIdAccessToken: { accessToken: string }) => seedIdAccessToken.accessToken,
     [],
   );
 
