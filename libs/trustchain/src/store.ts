@@ -1,33 +1,33 @@
 /**
  * This exports all the logic related to the Trustchain store.
  * The Trustchain store is a store that contains the data related to trustchain.
- * It essentially is the ledger live's credentials that are only stored on the
+ * It essentially is the client's credentials that are only stored on the
  * client side and the trustchain returned by the backend.
  */
-import { LiveCredentials, Trustchain } from "./types";
+import { MemberCredentials, Trustchain } from "./types";
 
 export type TrustchainStore = {
   trustchain: Trustchain | null;
-  liveCredentials: LiveCredentials | null;
+  memberCredentials: MemberCredentials | null;
 };
 
 export const getInitialStore = (): TrustchainStore => {
   return {
     trustchain: null,
-    liveCredentials: null,
+    memberCredentials: null,
   };
 };
 
 export enum WalletHandlerType {
   RESET_TRUSTCHAIN_STORE = "RESET_TRUSTCHAIN_STORE",
   SET_TRUSTCHAIN = "SET_TRUSTCHAIN",
-  SET_LIVE_CREDENTIALS = "SET_LIVE_CREDENTIALS",
+  SET_MEMBER_CREDENTIALS = "SET_MEMBER_CREDENTIALS",
 }
 
 export type HandlersPayloads = {
   RESET_TRUSTCHAIN_STORE: never;
   SET_TRUSTCHAIN: { trustchain: Trustchain };
-  SET_LIVE_CREDENTIALS: { liveCredentials: LiveCredentials };
+  SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -50,8 +50,8 @@ export const handlers: WalletHandlers = {
   SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
     return { ...state, trustchain };
   },
-  SET_LIVE_CREDENTIALS: (state, { payload: { liveCredentials } }) => {
-    return { ...state, liveCredentials };
+  SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
+    return { ...state, memberCredentials };
   },
 };
 
@@ -66,14 +66,14 @@ export const setTrustchain = (trustchain: Trustchain) => ({
   payload: { trustchain },
 });
 
-export const setLiveCredentials = (liveCredentials: LiveCredentials) => ({
-  type: "SET_LIVE_CREDENTIALS",
-  payload: { liveCredentials },
+export const setMemberCredentials = (memberCredentials: MemberCredentials) => ({
+  type: "SET_MEMBER_CREDENTIALS",
+  payload: { memberCredentials },
 });
 
 // Local Selectors
 
 export const trustchainSelector = (state: TrustchainStore): Trustchain | null => state.trustchain;
 
-export const liveCredentialsSelector = (state: TrustchainStore): LiveCredentials | null =>
-  state.liveCredentials;
+export const liveCredentialsSelector = (state: TrustchainStore): MemberCredentials | null =>
+  state.memberCredentials;
