@@ -18,14 +18,9 @@ export default function SynchronizeModeStep({ goToQRCode, goToSyncWithDevice }: 
         {t("walletSync.synchronize.chooseMethod.title")}
       </Text>
 
-      <Text fontSize={13} variant="body" color="neutral.c70">
-        {t("walletSync.synchronize.chooseMethod.description")}
-      </Text>
-
       <Card
         testId="walletSync-synchronize-connectDevice"
         title="walletSync.synchronize.chooseMethod.connectDevice.title"
-        description="walletSync.synchronize.chooseMethod.connectDevice.description"
         onClick={goToSyncWithDevice}
         leftIcon={
           <IconContainer alignItems="center" justifyContent="center">
@@ -37,7 +32,6 @@ export default function SynchronizeModeStep({ goToQRCode, goToSyncWithDevice }: 
       <Card
         testId="walletSync-synchronize-scan"
         title="walletSync.synchronize.chooseMethod.scan.title"
-        description="walletSync.synchronize.chooseMethod.scan.description"
         onClick={goToQRCode}
         leftIcon={
           <IconContainer alignItems="center" justifyContent="center">

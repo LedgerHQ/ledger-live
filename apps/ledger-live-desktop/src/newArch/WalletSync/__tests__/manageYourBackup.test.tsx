@@ -46,7 +46,7 @@ describe("ManageYourBackup", () => {
     await user.click(deleteCard);
 
     await waitFor(() =>
-      expect(screen.getByText("Do you really want to delete your data?")).toBeDefined(),
+      expect(screen.getByText("Do you really want to delete your encryption key?")).toBeDefined(),
     );
 
     // First we cancel the deletion
@@ -55,13 +55,13 @@ describe("ManageYourBackup", () => {
 
     await user.click(cancelButton);
 
-    await waitFor(() => expect(screen.getByText("Manage your backup")).toBeDefined());
+    await waitFor(() => expect(screen.getByText("Manage your key")).toBeDefined());
     expect(screen.getByTestId("walletSync-manage-backup-delete")).toBeDefined();
 
     // go back to confirmation screen
     await user.click(screen.getByTestId("walletSync-manage-backup-delete"));
     await waitFor(() =>
-      expect(screen.getByText("Do you really want to delete your data?")).toBeDefined(),
+      expect(screen.getByText("Do you really want to delete your encryption key?")).toBeDefined(),
     );
 
     // Then we do the deletion
@@ -70,6 +70,10 @@ describe("ManageYourBackup", () => {
     await user.click(deleteButton);
 
     //Success message
-    await waitFor(() => expect(screen.getByText("All data successfully deleted")).toBeDefined());
+    await waitFor(() =>
+      expect(
+        screen.getByText("Your devices have been unsynchronized and your key has been deleted"),
+      ).toBeDefined(),
+    );
   });
 });

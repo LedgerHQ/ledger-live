@@ -1,4 +1,4 @@
-import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
+import { Box, Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -53,7 +53,12 @@ export const UnsecuredError = () => {
       <ButtonV3 variant="shade" onClick={tryAgain}>
         {t("walletSync.unsecuredError.cta")}
       </ButtonV3>
-      <ButtonV3 onClick={goToDelete}>{t("walletSync.unsecuredError.ctaDelete")}</ButtonV3>
+
+      <Link color="neutral.c70" onClick={goToDelete}>
+        <Text fontSize={14} variant="paragraph" fontWeight="semiBold" color="neutral.c70">
+          {t("walletSync.unsecuredError.ctaDelete")}
+        </Text>
+      </Link>
     </Flex>
   );
 };
