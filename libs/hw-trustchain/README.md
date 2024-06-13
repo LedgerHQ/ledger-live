@@ -53,13 +53,15 @@ Ledger Live trustchain hardware layer.
     *   [Parameters](#parameters-12)
     *   [share](#share)
         *   [Parameters](#parameters-13)
+    *   [close](#close)
+        *   [Parameters](#parameters-14)
 *   [StreamTreeCipherMode](#streamtreeciphermode)
 *   [StreamTreeCipher](#streamtreecipher)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-15)
     *   [encrypt](#encrypt)
-        *   [Parameters](#parameters-15)
-    *   [decrypt](#decrypt)
         *   [Parameters](#parameters-16)
+    *   [decrypt](#decrypt)
+        *   [Parameters](#parameters-17)
 
 ### APDU
 
@@ -246,6 +248,17 @@ Share a private key with a member
 *   `member` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 *   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 *   `permission` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[StreamTree](#streamtree)>**&#x20;
+
+#### close
+
+Close a stream
+
+##### Parameters
+
+*   `path` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>)**&#x20;
+*   `owner` **[Device](#device)**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[StreamTree](#streamtree)>**&#x20;
 
