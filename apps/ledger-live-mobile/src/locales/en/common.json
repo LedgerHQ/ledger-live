@@ -2724,8 +2724,8 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
-      "walletSync": "Ledger  Sync",
-      "walletSyncDesc": "Backup your app data and seamlessly synchronize multiple Ledger Live instances",
+      "walletSync": "Ledger Sync",
+      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -6659,6 +6659,16 @@
           "info": "You can revoke your consent any time in the app settings.",
           "link": "Learn more about our Tracking Policy"
         }
+      }
+    }
+  },
+  "walletSync": {
+    "activation": {
+      "drawerAndSettings": {
+        "title": "Sync your accounts across all platforms",
+        "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+        "mainCta": "Sync your accounts",
+        "secondCta": "Already created a key?"
       }
     }
   }
