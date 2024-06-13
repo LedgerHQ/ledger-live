@@ -98,7 +98,7 @@ export type TrustchainResponse = {
 
 async function getTrustchain(jwt: JWT, trustchain_id: string): Promise<TrustchainResponse> {
   const { data } = await network<TrustchainResponse>({
-    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${encodeURIComponent(trustchain_id)}`,
+    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${trustchain_id}`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -113,7 +113,7 @@ async function postDerivation(
   commandStream: string,
 ): Promise<void> {
   await network<void>({
-    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${encodeURIComponent(trustchain_id)}/derivation`,
+    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${trustchain_id}/derivation`,
     method: "POST",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -146,7 +146,7 @@ async function putCommands(
   request: PutCommandsRequest,
 ): Promise<void> {
   await network<void>({
-    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${encodeURIComponent(trustchain_id)}/commands`,
+    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${trustchain_id}/commands`,
     method: "PUT",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -157,7 +157,7 @@ async function putCommands(
 
 async function deleteTrustchain(jwt: JWT, trustchain_id: string): Promise<void> {
   await network<void>({
-    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${encodeURIComponent(trustchain_id)}`,
+    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${trustchain_id}`,
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,

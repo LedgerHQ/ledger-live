@@ -174,6 +174,7 @@ export class SDK implements TrustchainSDK {
       applicationRootPath,
       liveInstanceCredentials,
     );
+
     return {
       rootId: trustchainId,
       walletSyncEncryptionKey,
@@ -376,18 +377,9 @@ async function pushMember(
   } else {
     const commandStream = CommandStreamEncoder.encode([child.blocks[child.blocks.length - 1]]);
     await api.putCommands(jwt, trustchainId, {
-      path: shortenPath(path), // FIXME temporary until backend make it explicit?
+      path,
       blocks: [crypto.to_hex(commandStream)],
     });
   }
   return streamTree;
-}
-
-function shortenPath(path: string): string {
-  // 0'/16'/1' -> 16'
-  const parts = path.split("/");
-  return parts
-    .map((v, i) => (i % 2 === 1 ? v : ""))
-    .filter(Boolean)
-    .join("/");
 }

@@ -155,6 +155,7 @@ const App = () => {
               member={member}
               setTrustchain={setTrustchain}
               setSeedIdAccessToken={setSeedIdAccessToken}
+              setMembers={setMembers}
             />
           ))}
 
@@ -328,10 +329,7 @@ function AppGetOrCreateTrustchain({
     [sdk, setSeedIdAccessToken],
   );
 
-  const valueDisplay = useCallback(
-    (trustchain: Trustchain) => trustchain.rootId + " at " + trustchain.applicationPath,
-    [],
-  );
+  const valueDisplay = useCallback((trustchain: Trustchain) => trustchain.rootId, []);
 
   return (
     <Actionable
@@ -408,8 +406,12 @@ function AppGetMembers({
   );
 
   const valueDisplay = useCallback(
-    (members: TrustchainMember[]) => members.length + " member" + (members.length > 1 ? "s" : ""),
-    [],
+    (members: TrustchainMember[]) =>
+      members.length +
+      " member" +
+      (members.length > 1 ? "s" : "") +
+      (trustchain ? " at " + trustchain.applicationPath : ""),
+    [trustchain],
   );
 
   return (
@@ -431,6 +433,7 @@ function AppMemberRow({
   member,
   setTrustchain,
   setSeedIdAccessToken,
+  setMembers,
 }: {
   seedIdAccessToken: JWT | null;
   trustchain: Trustchain | null;
@@ -438,6 +441,7 @@ function AppMemberRow({
   member: TrustchainMember;
   setTrustchain: (trustchain: Trustchain | null) => void;
   setSeedIdAccessToken: (seedIdAccessToken: JWT | null) => void;
+  setMembers: (members: TrustchainMember[] | null) => void;
 }) {
   const sdk = useSDK();
 
@@ -445,12 +449,13 @@ function AppMemberRow({
     (seedIdAccessToken: JWT, trustchain: Trustchain, liveInstanceCredentials: LiveCredentials) =>
       runWithDevice(transport =>
         sdk.removeMember(transport, seedIdAccessToken, trustchain, liveInstanceCredentials, member),
-      ).then(({ jwt, trustchain }) => {
+      ).then(async ({ jwt, trustchain }) => {
         setSeedIdAccessToken(jwt);
         setTrustchain(trustchain);
+        await sdk.getMembers(jwt, trustchain).then(setMembers);
         return member;
       }),
-    [sdk, member, setTrustchain, setSeedIdAccessToken],
+    [sdk, member, setTrustchain, setSeedIdAccessToken, setMembers],
   );
 
   return (
