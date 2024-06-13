@@ -18,7 +18,7 @@ export {
   Seed,
   Permissions,
 } from "./CommandBlock";
-export { APDU } from "./ApduDevice";
+export { APDU, TRUSTCHAIN_APP_NAME } from "./ApduDevice";
 export { CommandStreamEncoder } from "./CommandStreamEncoder";
 export { CommandStreamDecoder } from "./CommandStreamDecoder";
 export { Challenge, PubKeyCredential } from "./SeedId";

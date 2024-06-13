@@ -1,4 +1,4 @@
-import { CommandStream, Derive, crypto, device } from "..";
+import { CommandStream, Derive, TRUSTCHAIN_APP_NAME, crypto, device } from "..";
 import * as secp from "@noble/secp256k1";
 import {
   createSpeculosDevice,
@@ -26,7 +26,7 @@ beforeEach(
     speculos = await createSpeculosDevice({
       model: DeviceModelId.nanoS,
       firmware: "2.0.0",
-      appName: "Trustchain",
+      appName: TRUSTCHAIN_APP_NAME,
       appVersion: "0.0.1",
       seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
       coinapps: __dirname,
