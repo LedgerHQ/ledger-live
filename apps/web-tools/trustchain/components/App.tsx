@@ -37,6 +37,7 @@ const Container = styled.div`
 const Input = styled.input`
   padding: 0.8em;
   width: 100%;
+  flex: 1;
 `;
 
 const defaultContext = { applicationId: 16, name: "WebTools" };
@@ -557,17 +558,21 @@ function AppEncryptUserData({ trustchain }: { trustchain: Trustchain | null }) {
   );
 
   return (
-    <>
-      <Actionable
-        buttonTitle="sdk.encryptUserData"
-        inputs={trustchain && input ? [trustchain, input] : null}
-        action={action}
-        valueDisplay={valueDisplay}
-        value={output}
-        setValue={setOutput}
+    <Actionable
+      buttonTitle="sdk.encryptUserData"
+      inputs={trustchain && input ? [trustchain, input] : null}
+      action={action}
+      valueDisplay={valueDisplay}
+      value={output}
+      setValue={setOutput}
+    >
+      <Input
+        placeholder="message to encrypt"
+        type="text"
+        value={input || ""}
+        onChange={e => setInput(e.target.value)}
       />
-      <Input type="text" value={input || ""} onChange={e => setInput(e.target.value)} />
-    </>
+    </Actionable>
   );
 }
 
@@ -585,17 +590,21 @@ function AppDecryptUserData({ trustchain }: { trustchain: Trustchain | null }) {
   const valueDisplay = useCallback((output: { input: string }) => <code>{output.input}</code>, []);
 
   return (
-    <>
-      <Actionable
-        buttonTitle="sdk.decryptUserData"
-        inputs={trustchain && input ? [trustchain, input] : null}
-        action={action}
-        valueDisplay={valueDisplay}
-        value={output}
-        setValue={setOutput}
+    <Actionable
+      buttonTitle="sdk.decryptUserData"
+      inputs={trustchain && input ? [trustchain, input] : null}
+      action={action}
+      valueDisplay={valueDisplay}
+      value={output}
+      setValue={setOutput}
+    >
+      <Input
+        placeholder="hex message to decrypt"
+        type="text"
+        value={input || ""}
+        onChange={e => setInput(e.target.value)}
       />
-      <Input type="text" value={input || ""} onChange={e => setInput(e.target.value)} />
-    </>
+    </Actionable>
   );
 }
 
@@ -723,31 +732,23 @@ function AppQRCodeCandidate({
         buttonTitle="Set QR Code Host URL"
         inputs={scannedUrl && liveCredentials ? [scannedUrl, liveCredentials] : null}
         action={handleStart}
-        value
-        valueDisplay={() => (
-          <Input
-            type="text"
-            value={scannedUrl || ""}
-            onChange={e => setScannedUrl(e.target.value)}
-          />
-        )}
-      />
+      >
+        <Input type="text" value={scannedUrl || ""} onChange={e => setScannedUrl(e.target.value)} />
+      </Actionable>
 
       {digits ? (
         <Actionable
           buttonTitle="Send Digits"
           inputs={inputCallback && input && digits === input.length ? [inputCallback, input] : null}
           action={handleSendDigits}
-          value
-          valueDisplay={() => (
-            <Input
-              type="text"
-              maxLength={digits}
-              value={input || ""}
-              onChange={e => setInput(e.target.value)}
-            />
-          )}
-        />
+        >
+          <Input
+            type="text"
+            maxLength={digits}
+            value={input || ""}
+            onChange={e => setInput(e.target.value)}
+          />
+        </Actionable>
       ) : null}
     </div>
   );
