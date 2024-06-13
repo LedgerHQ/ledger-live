@@ -29,7 +29,7 @@ for (const [i, account] of accounts.entries()) {
     });
 
     test(`[${account.currency.uiName}] Delete Account`, async ({ page }, testInfo) => {
-      addTestAnnotations(testInfo, ["B2CQA-320"], "Delete Account Test");
+      await addTestAnnotations(testInfo, ["B2CQA-320"], "Delete Account Test");
 
       const app = new Application(page);
 

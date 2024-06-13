@@ -23,7 +23,6 @@ class XrayService {
         headers: { "Content-Type": "application/json" },
       });
       this.token = response.headers["x-access-token"];
-      console.log(`Authentication successful`);
       return this.token;
     } catch (error) {
       console.error(`Error during authentication: ${error}`);
@@ -39,7 +38,7 @@ class XrayService {
     try {
       console.log(`Importing execution from XML file: ${xmlFilePath}`);
       const response = await axios.post(
-        `${this.baseUrl}/import/execution/junit?projectKey=B2CQA&testPlanKey=${process.env.TEST_PLAN}`,
+        `${this.baseUrl}/import/execution/junit?projectKey=${process.env.PROJECT_KEY}&testPlanKey=${process.env.TEST_PLAN}`,
         fs.readFileSync(xmlFilePath, "utf-8"),
         {
           headers: {

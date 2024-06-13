@@ -29,7 +29,7 @@ for (const [i, account] of accounts.entries()) {
     });
 
     test(`[${account.currency.uiName}] Receive`, async ({ page }, testInfo) => {
-      addTestAnnotations(testInfo, ["B2CQA-249", "B2CQA-651"], "Receive Test");
+      await addTestAnnotations(testInfo, ["B2CQA-249", "B2CQA-651"], "Receive Test");
 
       const app = new Application(page);
 

@@ -42,7 +42,7 @@ on:
         default: false
       test_plan:
         description: "Test plan identifier to be used in Xray"
-        required: true
+        required: false
         type: string
         default: "B2CQA-2377"
 
@@ -121,6 +121,7 @@ jobs:
           SPECULOS_TESTS: ${{ !contains(inputs.speculos_tests, 'false') }}
           XRAY: ${{ inputs.export_to_xray }}
           TEST_PLAN: ${{ inputs.test_plan }}
+          PROJECT_KEY: B2CQA
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop

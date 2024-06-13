@@ -25,7 +25,7 @@ for (const [i, transaction] of transactions.entries()) {
     //@TmsLink("TODO")
 
     test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }, testInfo) => {
-      addTestAnnotations(testInfo, ["B2CQA-473"], "Send Test"); // todo: update the key
+      await addTestAnnotations(testInfo, ["B2CQA-473"], "Send Test"); // todo: update the key
 
       const app = new Application(page);
 
