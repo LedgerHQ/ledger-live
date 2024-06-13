@@ -109,7 +109,7 @@ describe.skip("testing xpub segwit transactions", () => {
         .toString("hex");
 
       psbt.addInput({
-        //TransactionInput interface is not declared correctly in bip174 lib
+        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: tx.getId(),
         index: input.output_index,
         witnessUtxo: {
