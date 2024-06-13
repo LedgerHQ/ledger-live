@@ -111,7 +111,7 @@ export interface TrustchainSDK {
   ): Promise<void>;
 
   /**
-   * TBD
+   * destroy the trustchain
    */
   destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void>;
 

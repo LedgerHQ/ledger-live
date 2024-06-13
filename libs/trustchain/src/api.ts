@@ -155,6 +155,16 @@ async function putCommands(
   });
 }
 
+async function deleteTrustchain(jwt: JWT, trustchain_id: string): Promise<void> {
+  await network<void>({
+    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${encodeURIComponent(trustchain_id)}`,
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${jwt.accessToken}`,
+    },
+  });
+}
+
 export default {
   getAuthenticationChallenge,
   postChallengeResponse,
@@ -164,4 +174,5 @@ export default {
   postDerivation,
   postSeed,
   putCommands,
+  deleteTrustchain,
 };
