@@ -16,7 +16,7 @@ import { urls } from "~/utils/urls";
 import Illustration from "~/images/illustration/Illustration";
 import { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
-import AddAccountDrawer from "LLM/features/WalletSync/drawers/addAccount";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 type Props = {
   showHelp?: boolean;

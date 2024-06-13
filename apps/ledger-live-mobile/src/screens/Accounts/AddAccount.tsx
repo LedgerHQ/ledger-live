@@ -4,7 +4,7 @@ import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/live-common/currencies/index";
 import Touchable from "~/components/Touchable";
 import { track } from "~/analytics";
-import AddAccountDrawer from "LLM/features/WalletSync/drawers/addAccount";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 function AddAccount({ currencyId }: { currencyId?: string }) {
   const currency = currencyId

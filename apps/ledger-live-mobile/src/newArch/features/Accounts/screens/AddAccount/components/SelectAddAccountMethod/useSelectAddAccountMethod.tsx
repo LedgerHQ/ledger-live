@@ -6,14 +6,14 @@ import { NavigatorName } from "~/const";
 import { useCallback, useMemo, useState } from "react";
 import { track } from "~/analytics";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { AddAccountDrawerProps } from "LLM/features/WalletSync/types/addAccountDrawer";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-const useAddAccountDrawer = ({
-  isOpened,
-  currency,
-  onClose,
-  reopenDrawer,
-}: AddAccountDrawerProps) => {
+type AddAccountScreenProps = {
+  currency?: CryptoCurrency | TokenCurrency | null;
+  onClose?: () => void;
+};
+
+const useSelectAddAccountMethodViewModel = ({ currency, onClose }: AddAccountScreenProps) => {
   const navigation = useNavigation<BaseNavigation>();
   const walletSyncFeatureFlag = useFeature("llmWalletSync");
 
@@ -40,43 +40,35 @@ const useAddAccountDrawer = ({
 
   const onClickImport = useCallback(() => {
     trackButtonClick("Import from Desktop");
-    onClose();
+    onClose?.();
     navigation.navigate(NavigatorName.ImportAccounts);
-  }, [navigation, onClose, trackButtonClick]);
+  }, [navigation, trackButtonClick, onClose]);
 
   const onClickAdd = useCallback(() => {
     trackButtonClick("With your Ledger");
-    onClose();
+    onClose?.();
     navigation.navigate(NavigatorName.AddAccounts, navigationParams);
-  }, [navigation, navigationParams, onClose, trackButtonClick]);
+  }, [navigation, navigationParams, trackButtonClick, onClose]);
 
   const onClickWalletSync = useCallback(() => {
     trackButtonClick("With Wallet Sync");
-    onClose();
+    onClose?.();
     setWalletSyncDrawerVisible(true);
-  }, [trackButtonClick, onClose]);
-
-  const onCloseAddAccountDrawer = useCallback(() => {
-    trackButtonClick("Close 'x'");
-    onClose();
-  }, [trackButtonClick, onClose]);
+  }, [trackButtonClick, setWalletSyncDrawerVisible, onClose]);
 
   const onCloseWalletSyncDrawer = useCallback(() => {
     setWalletSyncDrawerVisible(false);
-    reopenDrawer();
-  }, [setWalletSyncDrawerVisible, reopenDrawer]);
+  }, [setWalletSyncDrawerVisible]);
 
   return {
     isWalletSyncEnabled,
     isReadOnlyModeEnabled,
-    isAddAccountDrawerVisible: isOpened,
     isWalletSyncDrawerVisible,
     onClickAdd,
     onClickImport,
     onClickWalletSync,
-    onCloseAddAccountDrawer,
     onCloseWalletSyncDrawer,
   };
 };
 
-export default useAddAccountDrawer;
+export default useSelectAddAccountMethodViewModel;
