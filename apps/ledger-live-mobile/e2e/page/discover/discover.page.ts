@@ -9,9 +9,8 @@ import { expect } from "detox";
 const baseLink = "discover/";
 
 export default class DiscoverPage {
-  discoverBanner = () => getElementById("discover-banner");
   waitForSelectCrypto = () => waitForElementByText("Select crypto");
-  discoverPageHeader = () => getElementByText("Discover");
+  discoverPageHeader = () => getElementById("discover-banner");
 
   async openViaDeeplink(discoverApps = "") {
     await openDeeplink(baseLink + discoverApps);

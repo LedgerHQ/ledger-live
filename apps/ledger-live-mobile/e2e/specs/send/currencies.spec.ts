@@ -8,7 +8,7 @@ import {
   getAccountUnit,
   initTestAccounts,
 } from "../../models/currencies";
-import { Application } from "../../page/index";
+import { Application } from "../../page";
 
 let app: Application;
 let deviceAction: DeviceAction;

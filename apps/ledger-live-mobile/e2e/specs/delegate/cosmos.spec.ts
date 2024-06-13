@@ -6,7 +6,7 @@ import {
   getAccountUnit,
   initTestAccounts,
 } from "../../models/currencies";
-import { Application } from "../../page/index";
+import { Application } from "../../page";
 import DeviceAction from "../../models/DeviceAction";
 
 let app: Application;

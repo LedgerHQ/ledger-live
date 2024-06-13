@@ -32,10 +32,6 @@ export default class ManagerPage {
     await openDeeplink(baseLink);
   }
 
-  async waitForManagerPageToLoad() {
-    await waitForElementById(this.managerTitleId);
-  }
-
   async expectManagerPage() {
     await expect(getElementById(this.managerTitleId)).toBeVisible();
   }

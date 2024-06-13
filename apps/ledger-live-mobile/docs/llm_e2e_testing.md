@@ -37,10 +37,10 @@ Prerequisites for all Detox tests:
 
 ### Tips for iOS setup
 
-Most of the setup is taken care of in the React Native docs, but you will have to do some additional installations, such as the Detox CLI and `applesimutils` (MacOS only). After following the above React Native and Detox steps, you should have the following setup:
+Most of the setup is taken care of in the React Native docs, but you will have to do some additional installations, such as `applesimutils` (MacOS only). After following the above React Native and Detox steps, you should have the following setup:
 
 - XCode and XCode command line tools - run `xcode-select -v` and `xcrun --version` to make sure these are working
-- `rbenv` is installed and `which ruby` points to an `rbenv` shim, not `usr/bin/ruby`. Be sure to follow the steps to add `rbenv` to your shell profile.
+- Latest `ruby` is installed with brew, make sure `$PATH` is updated - `which ruby` points to `/opt/homebrew/opt/ruby/bin/ruby`, not `usr/bin/ruby`.
 - An iPhone simulator for iPhone 14 - open Xcode > Window > Devices and Simulators > Simulators > Add a new device from the '+' sign in the bottom right corner.
 - `applesimutils` is installed via npm.
 
@@ -205,7 +205,7 @@ Test files go in the `apps/ledger-live-mobile/e2e/specs` directory. Import the r
 
 ```js
 import { expect, waitFor /* ... */ } from "detox";
-import { Application } from "../page/index";
+import { Application } from "../page";
 
 let app: Application;
 

@@ -2,7 +2,7 @@ import fs from "fs";
 import { getEnvs, getFlags } from "../bridge/server";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { EnvName } from "@ledgerhq/live-env";
-import { Application } from "../page/index";
+import { Application } from "../page";
 
 let app: Application;
 

@@ -1,7 +1,7 @@
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { Application } from "../../page/index";
+import { Application } from "../../page";
 
 let app: Application;
 let deviceAction: DeviceAction;

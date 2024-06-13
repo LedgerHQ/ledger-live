@@ -1,6 +1,6 @@
 import { knownDevice } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
-import { Application } from "../../page/index";
+import { Application } from "../../page";
 
 let app: Application;
 let deviceAction: DeviceAction;

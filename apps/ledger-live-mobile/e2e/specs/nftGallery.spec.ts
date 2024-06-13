@@ -1,6 +1,6 @@
 import { expect } from "detox";
 import { tapByElement, tapByText, waitForElementById } from "../helpers";
-import { Application } from "../page/index";
+import { Application } from "../page";
 
 let app: Application;
 

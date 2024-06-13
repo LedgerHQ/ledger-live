@@ -1,6 +1,6 @@
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { loadAccountsRaw } from "../bridge/server";
-import { Application } from "../page/index";
+import { Application } from "../page";
 import { initTestAccounts } from "../models/currencies";
 
 let app: Application;

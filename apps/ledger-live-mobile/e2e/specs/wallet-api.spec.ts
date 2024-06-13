@@ -1,7 +1,7 @@
 import { by, web } from "detox";
 import { describeifAndroid } from "../helpers";
 import { stopDummyServer } from "@ledgerhq/test-utils";
-import { Application } from "../page/index";
+import { Application } from "../page";
 
 let app: Application;
 

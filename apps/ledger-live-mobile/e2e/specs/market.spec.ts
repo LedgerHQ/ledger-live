@@ -1,4 +1,4 @@
-import { Application } from "../page/index";
+import { Application } from "../page";
 
 let app: Application;
 const asset = "Ethereum (ETH)";

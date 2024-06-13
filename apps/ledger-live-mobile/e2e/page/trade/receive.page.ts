@@ -59,11 +59,6 @@ export default class ReceivePage {
     }
   }
 
-  async selectCurrencyRow(currencyId: string) {
-    const id = this.currencyRowId(currencyId);
-    await tapById(id);
-  }
-
   async selectCurrency(currencyName: string) {
     const id = this.currencyNameId(currencyName.toLowerCase());
     await tapById(id);

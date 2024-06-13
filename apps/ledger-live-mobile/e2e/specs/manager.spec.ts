@@ -1,7 +1,7 @@
 import DeviceAction from "../models/DeviceAction";
 import { knownDevice } from "../models/devices";
 import { deviceInfo155 as deviceInfo } from "@ledgerhq/live-common/apps/mock";
-import { Application } from "../page/index";
+import { Application } from "../page";
 
 let app: Application;
 let deviceAction: DeviceAction;

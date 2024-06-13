@@ -1,6 +1,6 @@
 import { device } from "detox";
 import { isAndroid } from "../helpers";
-import { Application } from "../page/index";
+import { Application } from "../page";
 
 let app: Application;
 

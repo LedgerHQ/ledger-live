@@ -1,5 +1,5 @@
 import { device } from "detox";
-import { Application } from "../page/index";
+import { Application } from "../page";
 
 let app: Application;
 
