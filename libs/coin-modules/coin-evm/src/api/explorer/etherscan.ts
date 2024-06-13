@@ -4,6 +4,8 @@ import axios, { AxiosRequestConfig } from "axios";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { createCustomErrorClass } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 import { EtherscanAPIError, EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
 import {
   etherscanOperationToOperations,
@@ -21,8 +23,6 @@ import {
   EtherscanOperation,
 } from "../../types";
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
-import { createCustomErrorClass } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
