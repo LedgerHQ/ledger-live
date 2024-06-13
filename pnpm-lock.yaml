@@ -2785,9 +2785,6 @@ importers:
       '@types/lodash':
         specifier: '4'
         version: 4.17.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -5441,9 +5438,6 @@ importers:
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.12
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0
