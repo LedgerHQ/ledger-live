@@ -141,7 +141,13 @@ const App = () => {
       ) : null}
     */}
 
-          <AppDestroyTrustchain trustchain={trustchain} liveAccessToken={liveAccessToken} />
+          <AppDestroyTrustchain
+            trustchain={trustchain}
+            setTrustchain={setTrustchain}
+            setLiveAccessToken={setLiveAccessToken}
+            setSeedIdAccessToken={setSeedIdAccessToken}
+            liveAccessToken={liveAccessToken}
+          />
 
           <AppRestoreTrustchain
             liveAccessToken={liveAccessToken}
@@ -437,15 +443,26 @@ function AppMemberRow({
 function AppDestroyTrustchain({
   trustchain,
   liveAccessToken,
+  setTrustchain,
+  setLiveAccessToken,
+  setSeedIdAccessToken,
 }: {
   trustchain: Trustchain | null;
   liveAccessToken: JWT | null;
+  setTrustchain: (trustchain: Trustchain | null) => void;
+  setLiveAccessToken: (liveAccessToken: JWT | null) => void;
+  setSeedIdAccessToken: (seedIdAccessToken: JWT | null) => void;
 }) {
   const sdk = useSDK();
   const action = useCallback(
     (trustchain: Trustchain, liveAccessToken: JWT) =>
-      sdk.destroyTrustchain(trustchain, liveAccessToken),
-    [sdk],
+      sdk.destroyTrustchain(trustchain, liveAccessToken).then(() => {
+        // all of these state should be reset
+        setTrustchain(null);
+        setLiveAccessToken(null);
+        setSeedIdAccessToken(null);
+      }),
+    [sdk, setTrustchain, setLiveAccessToken, setSeedIdAccessToken],
   );
 
   return (

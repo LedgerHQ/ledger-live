@@ -230,7 +230,7 @@ remove a member from the application trustchain
 *   `liveInstanceCredentials` **[LiveCredentials](#livecredentials)**&#x20;
 *   `member` **TrustchainMember**&#x20;
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Trustchain>**&#x20;
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{jwt: JWT, trustchain: Trustchain}>**&#x20;
 
 #### addMember
 
@@ -247,7 +247,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### destroyTrustchain
 
-TBD
+destroy the trustchain
 
 ##### Parameters
 
