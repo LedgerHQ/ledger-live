@@ -6664,7 +6664,7 @@
   },
   "walletSync": {
     "activation": {
-      "drawerAndSettings": {
+      "screen": {
         "title": "Sync your accounts across all platforms",
         "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
         "mainCta": "Sync your accounts",

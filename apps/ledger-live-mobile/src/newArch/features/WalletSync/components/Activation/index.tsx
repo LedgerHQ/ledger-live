@@ -4,16 +4,18 @@ import IconsHeader from "./IconsHeader";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import { TrackScreen } from "~/analytics";
 
 const Activation = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={24}>
+      <TrackScreen />
       <IconsHeader />
       <Flex justifyContent="center" alignItems="center" flexDirection="column" rowGap={16}>
         <Text variant="h4" textAlign="center" lineHeight="32.4px">
-          {t("walletSync.activation.drawerAndSettings.title")}
+          {t("walletSync.activation.screen.title")}
         </Text>
         <Text
           variant="bodyLineHeight"
@@ -23,7 +25,7 @@ const Activation = () => {
           maxWidth={330}
           numberOfLines={3}
         >
-          {t("walletSync.activation.drawerAndSettings.description")}
+          {t("walletSync.activation.screen.description")}
         </Text>
       </Flex>
       <Actions />
