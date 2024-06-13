@@ -4,9 +4,12 @@ import axios, { AxiosRequestConfig } from "axios";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { EtherscanAPIError, EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
+import {
+  EtherscanAPIError,
+  EtherscanLikeExplorerUsedIncorrectly,
+  InvalidExplorerResponse,
+} from "../../errors";
 import {
   etherscanOperationToOperations,
   etherscanERC20EventToOperations,
@@ -381,7 +384,6 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = makeLRUCache<
       };
     } catch (err) {
       log("EVM getLastOperations", "Error while fetching data from Etherscan like API", err);
-      const InvalidExplorerResponse = createCustomErrorClass("InvalidExplorerResponse");
       throw new InvalidExplorerResponse("", { currencyName: currency.name });
     }
   },
