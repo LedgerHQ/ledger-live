@@ -16,6 +16,7 @@ import {
   sharePersonalizedRecommendationsSelector,
   hasSeenAnalyticsOptInPromptSelector,
   trackingEnabledSelector,
+  developerModeSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
 import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
@@ -98,8 +99,10 @@ const getMandatoryProperties = (store: ReduxStore) => {
   const analyticsEnabled = shareAnalyticsSelector(state);
   const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
+  const devModeEnabled = developerModeSelector(state);
 
   return {
+    devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,
@@ -115,6 +118,7 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+
   const {
     isBatch1Enabled,
     isBatch2Enabled,
