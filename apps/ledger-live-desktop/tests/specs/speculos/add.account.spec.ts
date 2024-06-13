@@ -47,6 +47,7 @@ for (const [i, currency] of currencies.entries()) {
       await app.account.expectAccountVisibility(firstAccountName);
       await app.account.expectAccountBalance();
       await app.account.expectLastOperationsVisibility();
+      await app.account.expectAddressIndexToBe0();
     });
   });
 }
