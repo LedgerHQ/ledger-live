@@ -24,7 +24,7 @@ type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, Polk
 
 function getTransactions() {
   const send1DotTransaction: PolkadotScenarioTransaction = {
-    name: "send 1 DOT",
+    name: "Send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "1"),
     expect: (previousAccount, currentAccount) => {
@@ -41,7 +41,7 @@ function getTransactions() {
   };
 
   const send100DotTransaction: PolkadotScenarioTransaction = {
-    name: "send 100 DOT",
+    name: "Send 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "100"),
     expect: (previousAccount, currentAccount) => {
@@ -142,7 +142,7 @@ function getTransactions() {
   };
 
   const nomminateTransaction: PolkadotScenarioTransaction = {
-    name: "Nomiate",
+    name: "Nominate",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     mode: "nominate",
     // https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-rpc.publicnode.com#/staking
