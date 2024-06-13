@@ -12,9 +12,7 @@ import SyncFinalStep from "./04-SyncFinalStep";
 const SynchronizeWallet = () => {
   const dispatch = useDispatch();
 
-  const { currentStep, goToNextScene } = useFlows({
-    flow: Flow.Synchronize,
-  });
+  const { currentStep, goToNextScene } = useFlows();
 
   const goToActivation = () => {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));

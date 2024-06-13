@@ -15,9 +15,7 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
     goToPreviousScene,
     FlowOptions,
     goToWelcomeScreenWalletSync,
-  } = useFlows({
-    flow: Flow.ManageBackups,
-  });
+  } = useFlows();
 
   const { deleteBackup } = useBackup();
 

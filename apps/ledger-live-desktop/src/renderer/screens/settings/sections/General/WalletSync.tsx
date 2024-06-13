@@ -4,7 +4,7 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
-import { resetWalletSync, setFaked } from "~/renderer/actions/walletSync";
+import { setFaked } from "~/renderer/actions/walletSync";
 import { BackRef, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
 import { STEPS_WITH_BACK, useFlows } from "LLD/WalletSync/Flows/useFlows";
 import { trustchainSelector } from "@ledgerhq/trustchain/store";
@@ -19,7 +19,7 @@ import { trustchainSelector } from "@ledgerhq/trustchain/store";
  */
 
 const WalletSyncRow = () => {
-  const { goToWelcomeScreenWalletSync } = useFlows({});
+  const { goToWelcomeScreenWalletSync } = useFlows();
   const childRef = useRef<BackRef>(null);
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
