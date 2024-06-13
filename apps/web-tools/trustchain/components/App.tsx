@@ -71,10 +71,10 @@ const App = () => {
 
   const [members, setMembers] = useState<TrustchainMember[] | null>(null);
 
-  // on live auth change, we reset members
+  // on live auth or trustchain change, we reset members
   useEffect(() => {
     setMembers(null);
-  }, [liveAccessToken]);
+  }, [liveAccessToken, trustchain]);
 
   const mockEnv = useEnv("MOCK");
   const sdk = useMemo(() => getSdk(!!mockEnv, context), [mockEnv, context]);
