@@ -2,8 +2,14 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import Touchable from "~/components/Touchable";
 import styled from "styled-components/native";
-import { AddAccountDrawerRowProps } from "LLM/features/WalletSync/types/addAccountDrawer";
 
+type ActionRowProps = {
+  title: string;
+  description?: string;
+  icon: React.ReactNode;
+  testID?: string;
+  onPress?: () => void;
+};
 const TouchableCard = styled(Touchable)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};
   border-radius: 8px;
@@ -25,13 +31,13 @@ const CardDescription = styled(Text)`
   line-height: 18.2px;
 `;
 
-const ActionRow: React.FC<AddAccountDrawerRowProps> = ({
+const ActionRow: React.FC<ActionRowProps> = ({
   title,
   description,
   icon,
   testID,
   onPress,
-}: AddAccountDrawerRowProps) => {
+}: ActionRowProps) => {
   return (
     <TouchableCard onPress={onPress} testID={testID}>
       {icon}

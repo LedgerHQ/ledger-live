@@ -53,7 +53,7 @@ import { OnboardingType } from "~/reducers/types";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
-import AddAccountDrawer from "LLM/features/WalletSync/drawers/addAccount";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 

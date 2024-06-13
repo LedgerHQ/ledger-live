@@ -21,7 +21,7 @@ import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import { Asset } from "~/types/asset";
 import { ScreenName } from "~/const";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
-import AddAccountDrawer from "LLM/features/WalletSync/drawers/addAccount";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 const List = globalSyncRefreshControl<FlatListProps<Asset>>(FlatList);
 
