@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.17
+
+### Patch Changes
+
+- [#6793](https://github.com/LedgerHQ/ledger-live/pull/6793) [`2e5d5bd`](https://github.com/LedgerHQ/ledger-live/commit/2e5d5bdb988c73c91f1fe42c809b192ca5dbeb7a) Thanks [@lawRathod](https://github.com/lawRathod)! - Add pending operations to stacks account object
+
+- [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Create getAppsCatalogForDevice use case
+
+- [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor "app update available" logic to only rely on v2 manager apis
+
+- Updated dependencies [[`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917), [`9f33fc1`](https://github.com/LedgerHQ/ledger-live/commit/9f33fc14e0628a68d32957171aa879c30041f27e)]:
+  - @ledgerhq/device-core@0.2.0-nightly.7
+  - @ledgerhq/live-wallet@0.2.0-nightly.13
+
 ## 34.3.0-nightly.16
 
 ### Patch Changes

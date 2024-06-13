@@ -1,5 +1,11 @@
 # @ledgerhq/device-core
 
+## 0.2.0-nightly.7
+
+### Patch Changes
+
+- [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Create getAppsCatalogForDevice use case
+
 ## 0.2.0-nightly.6
 
 ### Patch Changes

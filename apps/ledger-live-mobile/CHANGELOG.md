@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.45.0-nightly.11
+
+### Minor Changes
+
+- [#7063](https://github.com/LedgerHQ/ledger-live/pull/7063) [`f813822`](https://github.com/LedgerHQ/ledger-live/commit/f81382250f639f554720596539162d20eaf78c54) Thanks [@KVNLS](https://github.com/KVNLS)! - Handle cta click on storyly
+
+### Patch Changes
+
+- [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor "app update available" logic to only rely on v2 manager apis
+
+- Updated dependencies [[`2e5d5bd`](https://github.com/LedgerHQ/ledger-live/commit/2e5d5bdb988c73c91f1fe42c809b192ca5dbeb7a), [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917), [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917), [`9f33fc1`](https://github.com/LedgerHQ/ledger-live/commit/9f33fc14e0628a68d32957171aa879c30041f27e)]:
+  - @ledgerhq/live-common@34.3.0-nightly.17
+  - @ledgerhq/live-wallet@0.2.0-nightly.13
+
 ## 3.45.0-nightly.10
 
 ### Patch Changes

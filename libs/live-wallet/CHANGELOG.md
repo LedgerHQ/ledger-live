@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.2.0-nightly.13
+
+### Minor Changes
+
+- [#7079](https://github.com/LedgerHQ/ledger-live/pull/7079) [`9f33fc1`](https://github.com/LedgerHQ/ledger-live/commit/9f33fc14e0628a68d32957171aa879c30041f27e) Thanks [@KVNLS](https://github.com/KVNLS)! - Keep previously renamed accounts alias
+
 ## 0.1.1-nightly.12
 
 ### Patch Changes
