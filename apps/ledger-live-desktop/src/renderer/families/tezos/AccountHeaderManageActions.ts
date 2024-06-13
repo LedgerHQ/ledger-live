@@ -50,7 +50,7 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
-      label: t("account.stake"),
+      label: t("delegation.delegate"),
       event: "button_clicked2",
       eventProperties: {
         button: "stake",
