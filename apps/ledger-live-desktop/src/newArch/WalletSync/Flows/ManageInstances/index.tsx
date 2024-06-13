@@ -1,17 +1,18 @@
-import React, { forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
-import { Flow, Instance, Step } from "~/renderer/reducers/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useFlows } from "LLD/WalletSync/Flows/useFlows";
 import { BackProps, BackRef } from "../router";
 import ManageInstancesStep from "./01-ManageInstancesStep";
 import DeviceActionInstanceStep from "./02-DeviceActionInstanceStep";
-import { useInstances } from "./useInstances";
 import DeleteInstanceWithTrustchain from "./03-DeleteInstanceWithTrustchain";
 import DeletionFinalStep from "./04-DeletionFinalStep";
 import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
 import { UnsecuredError } from "../Activation/03-UnsecuredError";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
 
 const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) => {
+  const [selectedInstance, setSelectedInstance] = useState<TrustchainMember | null>(null);
   const {
     currentStep,
     goToNextScene,
@@ -19,8 +20,6 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
     FlowOptions,
     goToWelcomeScreenWalletSync,
   } = useFlows();
-
-  const { instances, selectedInstance, setSelectedInstance } = useInstances();
 
   useImperativeHandle(ref, () => ({
     goBack,
@@ -34,7 +33,7 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
     }
   };
 
-  const goToDeleteInstance = (instance: Instance) => {
+  const goToDeleteInstance = (instance: TrustchainMember) => {
     setSelectedInstance(instance);
     goToNextScene();
   };
@@ -43,9 +42,7 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
     switch (currentStep) {
       default:
       case Step.SynchronizedInstances:
-        return (
-          <ManageInstancesStep goToDeleteInstance={goToDeleteInstance} instances={instances} />
-        );
+        return <ManageInstancesStep goToDeleteInstance={goToDeleteInstance} />;
       case Step.DeviceActionInstance:
         return <DeviceActionInstanceStep goNext={goToNextScene} />;
       case Step.DeleteInstanceWithTrustChain:

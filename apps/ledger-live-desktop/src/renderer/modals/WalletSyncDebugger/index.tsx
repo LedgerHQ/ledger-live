@@ -6,7 +6,7 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Select from "~/renderer/components/Select";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { Flow, Instance, Step } from "~/renderer/reducers/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 import Switch from "~/renderer/components/Switch";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { FlowOptions } from "~/newArch/WalletSync/Flows/useFlows";
@@ -14,12 +14,13 @@ import { useDispatch } from "react-redux";
 import { addInstance, setFaked, setFlow, setWalletSync } from "~/renderer/actions/walletSync";
 import { useHistory } from "react-router";
 import { useTheme } from "styled-components";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
 
 type State = {
   flow: Flow;
   step: Step | null;
   activated: boolean;
-  instances: Instance[];
+  instances: TrustchainMember[];
 };
 
 const WalletSyncDebugger = () => {
@@ -75,9 +76,9 @@ const WalletSyncDebugger = () => {
       (_, index) =>
         ({
           id: String(index),
-          typeOfDevice: index % 2 === 0 ? "mobile" : "desktop",
           name: index % 2 === 0 ? `Iphone ${index + 1}` : "macOS",
-        }) as Instance,
+          permissions: index % 2 === 0 ? 1 : 2,
+        }) as TrustchainMember,
     );
 
     setState({ ...state, instances });

@@ -1,5 +1,6 @@
 import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
 
 export enum Flow {
   Activation = "Activation",
@@ -14,6 +15,7 @@ export enum Step {
   ManageBackup = "ManageBackup",
   DeleteBackup = "DeleteBackup",
   BackupDeleted = "BackupDeleted",
+  BackupDeletionError = "BackupDeletionError",
 
   //Activation
   CreateOrSynchronize = "CreateOrSynchronize",
@@ -40,17 +42,11 @@ export enum Step {
   walletSyncActivated = "walletSyncActivated",
 }
 
-export type Instance = {
-  id: string;
-  name: string;
-  typeOfDevice: "mobile" | "desktop";
-};
-
 export type WalletSyncState = {
   activated: boolean;
   flow: Flow;
   step: Step;
-  instances: Instance[];
+  instances: TrustchainMember[];
   hasBeenfaked: boolean;
 };
 
@@ -66,8 +62,8 @@ type HandlersPayloads = {
   WALLET_SYNC_ACTIVATE: boolean;
   WALLET_SYNC_DEACTIVATE: boolean;
   WALLET_SYNC_CHANGE_FLOW: { flow: Flow; step: Step };
-  WALLET_SYNC_CHANGE_ADD_INSTANCE: Instance;
-  WALLET_SYNC_CHANGE_REMOVE_INSTANCE: Instance;
+  WALLET_SYNC_CHANGE_ADD_INSTANCE: TrustchainMember;
+  WALLET_SYNC_CHANGE_REMOVE_INSTANCE: TrustchainMember;
   WALLET_SYNC_CHANGE_CLEAN_INSTANCES: undefined;
   WALLET_SYNC_RESET: undefined;
   WALLET_SYNC_FAKED: boolean;
@@ -98,14 +94,14 @@ const handlers: WalletSyncHandlers = {
   }),
   WALLET_SYNC_CHANGE_ADD_INSTANCE: (
     state: WalletSyncState,
-    { payload }: { payload: Instance },
+    { payload }: { payload: TrustchainMember },
   ) => ({
     ...state,
     instances: [...state.instances, payload],
   }),
   WALLET_SYNC_CHANGE_REMOVE_INSTANCE: (
     state: WalletSyncState,
-    { payload }: { payload: Instance },
+    { payload }: { payload: TrustchainMember },
   ) => ({
     ...state,
     instances: state.instances.filter(instance => instance !== payload),

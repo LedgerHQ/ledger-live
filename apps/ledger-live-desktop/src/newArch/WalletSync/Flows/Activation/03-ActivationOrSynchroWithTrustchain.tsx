@@ -27,7 +27,8 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
     const seedIdToken = await runWithDevice(device?.deviceId, transport =>
       sdk.seedIdAuthenticate(transport),
     );
-
+    console.log("liveCredentials", liveCredentials);
+    console.log("seedIdToken", seedIdToken);
     const { trustchain, hasCreatedTrustchain } = await runWithDevice(
       device?.deviceId,
       transport => {
@@ -36,6 +37,7 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
     );
     dispatch(setTrustchain(trustchain));
 
+    console.log("trustchain", trustchain);
     dispatch(
       setFlow({
         flow: Flow.Activation,

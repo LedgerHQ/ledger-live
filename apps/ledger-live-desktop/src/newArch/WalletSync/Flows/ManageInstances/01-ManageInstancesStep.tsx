@@ -4,19 +4,21 @@ import { useTranslation } from "react-i18next";
 import { AnalyticsPage, useWalletSyncAnalytics } from "../../useWalletSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { TinyCard } from "../../components/TinyCard";
-import { Instance } from "~/renderer/reducers/walletSync";
+import { useInstances } from "./useInstances";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
 
 type Props = {
-  instances: Instance[];
-  goToDeleteInstance: (instance: Instance) => void;
+  goToDeleteInstance: (instance: TrustchainMember) => void;
 };
 
-export default function ManageInstancesStep({ goToDeleteInstance, instances }: Props) {
+export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
   const { t } = useTranslation();
+
+  const { instances } = useInstances();
 
   const { onClickTrack } = useWalletSyncAnalytics();
 
-  const handleGoDeleteInstance = (instance: Instance) => {
+  const handleGoDeleteInstance = (instance: TrustchainMember) => {
     onClickTrack({ button: "remove instance", page: AnalyticsPage.ManageInstances });
     goToDeleteInstance(instance);
   };
@@ -28,7 +30,7 @@ export default function ManageInstancesStep({ goToDeleteInstance, instances }: P
         {t("walletSync.manageInstances.title")}
       </Text>
 
-      {instances.map(instance => (
+      {instances?.map(instance => (
         <TinyCard
           key={instance.id}
           testId={`walletSync-manage-instance-${instance.id}`}

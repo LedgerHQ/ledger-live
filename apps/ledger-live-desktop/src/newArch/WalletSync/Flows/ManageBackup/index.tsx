@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useFlows } from "LLD/WalletSync/Flows/useFlows";
@@ -6,7 +6,6 @@ import { BackProps, BackRef } from "../router";
 import ManageBackupStep from "./01-ManageBackupStep";
 import DeleteBackupStep from "./02-DeleteBackupStep";
 import BackupDeleted from "./03-FinalStep";
-import { useBackup } from "./useBackup";
 
 const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => {
   const {
@@ -16,11 +15,6 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
     FlowOptions,
     goToWelcomeScreenWalletSync,
   } = useFlows();
-
-  const { deleteBackup } = useBackup();
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccessful, setIsSuccessful] = useState(false);
 
   useImperativeHandle(ref, () => ({
     goBack,
@@ -34,29 +28,17 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
     }
   };
 
-  const goToDeleteData = () => {
-    goToNextScene();
-  };
-
-  const deleteBackupAction = () => {
-    goToNextScene();
-    deleteBackup();
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccessful(true);
-    }, 500);
-  };
-
   const getStep = () => {
     switch (currentStep) {
       default:
       case Step.ManageBackup:
-        return <ManageBackupStep goToDeleteBackup={goToDeleteData} />;
+        return <ManageBackupStep goToDeleteBackup={goToNextScene} />;
       case Step.DeleteBackup:
-        return <DeleteBackupStep cancel={goBack} deleteBackup={deleteBackupAction} />;
+        return <DeleteBackupStep cancel={goBack} />;
       case Step.BackupDeleted:
-        return <BackupDeleted isLoading={isLoading} isSuccessful={isSuccessful} />;
+        return <BackupDeleted isSuccessful={true} />;
+      case Step.BackupDeletionError:
+        return <BackupDeleted isSuccessful={false} />;
     }
   };
 
