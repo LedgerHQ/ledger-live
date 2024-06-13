@@ -406,11 +406,15 @@ export const getStakingInfo = async (addr: string) => {
 
   const eraLength = sessionsPerEra.multipliedBy(epochDuration).multipliedBy(blockTime).toNumber();
   const unlockings = stakingInfo?.staking.unlocking
-    ? stakingInfo?.staking?.unlocking.map<PolkadotUnlocking>(lock => ({
-        amount: new BigNumber(lock.value),
-        // This is an estimation of the date of completion, since it depends on block validation speed
-        completionDate: new Date(activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength),
-      }))
+    ? stakingInfo?.staking?.unlocking.map<PolkadotUnlocking>(lock => {
+        return {
+          amount: new BigNumber(lock.value),
+          // This is an estimation of the date of completion, since it depends on block validation speed
+          completionDate: new Date(
+            activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength,
+          ),
+        };
+      })
     : [];
   const now = new Date();
   const unlocked = unlockings.filter(lock => lock.completionDate <= now);

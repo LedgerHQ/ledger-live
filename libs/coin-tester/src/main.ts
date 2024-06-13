@@ -195,7 +195,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
             if (retry === 0) {
               console.error(
                 chalk.red(
-                  `Retried ${retryLimit} time(s) and could not assert all expects for transaction ${chalk.bold(
+                  `Retried ${retry_limit} time(s) and could not assert all expects for transaction ${chalk.bold(
                     testTransaction.name,
                   )}`,
                 ),

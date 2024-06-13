@@ -86,8 +86,6 @@ function getTransactions() {
     mode: "unbond",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
-      // console.log(JSON.stringify(latestOperation, null, 2));
-      // console.log(JSON.stringify(currentAccount, null, 2));
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("UNBOND");
       expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.unbond");
@@ -103,9 +101,6 @@ function getTransactions() {
           currentAccount.polkadotResources.unlockingBalance.toFixed(),
         ).toFixed(),
       ).toBe("25000000000000000000000");
-      // expect(currentAccount.balance.toFixed()).toBe(
-      //   previousAccount.balance.minus(latestOperation.fee).toFixed(),
-      // );
     },
   };
 
@@ -167,7 +162,6 @@ function getTransactions() {
     },
   };
 
-  /*
   const withdraw250DotTransaction: PolkadotScenarioTransaction = {
     name: "Withdraw 250 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
@@ -175,29 +169,13 @@ function getTransactions() {
     mode: "withdrawUnbonded",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
-      // console.log(JSON.stringify(latestOperation, null, 2));
-      // console.log(JSON.stringify(currentAccount, null, 2));
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("UNBOND");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.unbond");
-      expect(
-        parseCurrencyUnit(
-          polkadot.units[0],
-          (latestOperation.extra as PolkadotOperationExtra).unbondedAmount!.toFixed(),
-        ).toFixed(),
-      ).toBe("25000000000000000000000");
-      expect(
-        parseCurrencyUnit(
-          polkadot.units[0],
-          currentAccount.polkadotResources.unlockingBalance.toFixed(),
-        ).toFixed(),
-      ).toBe("25000000000000000000000");
-      // expect(currentAccount.balance.toFixed()).toBe(
-      //   previousAccount.balance.minus(latestOperation.fee).toFixed(),
-      // );
+      expect(latestOperation.type).toBe("WITHDRAW_UNBONDED");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe(
+        "staking.withdrawUnbonded",
+      );
     },
   };
-  */
 
   const claimRewardTransaction: PolkadotScenarioTransaction = {
     name: "Claim reward",
@@ -226,7 +204,7 @@ function getTransactions() {
     rebond50DotTransaction,
     chillTransaction,
     nomminateTransaction,
-    // withdraw250DotTransaction,
+    withdraw250DotTransaction,
     claimRewardTransaction,
   ];
 }
@@ -362,6 +340,16 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
           amount = new BigNumber(polkadotExtra.unbondedAmount!);
           break;
         case "staking.withdrawUnbonded":
+          staking = {
+            validators: polkadotExtra.validators?.map(address => ({ address })) ?? [],
+            eventStaking: [
+              {
+                section: "staking",
+                method: "Withdraw",
+                value: polkadotExtra.withdrawUnbondedAmount!.toNumber(),
+              },
+            ],
+          };
           break;
         case "staking.nominate":
           staking = {
@@ -409,52 +397,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
     );
   },
   afterEach: async () => {
-    /*
-    if ((latestOperation.extra as PolkadotOperationExtra).palletMethod === "staking.unbond") {
-      const keyring = new Keyring({ type: "sr25519" });
-      const sudoPair = keyring.addFromUri("//Alice");
-
-      const forceNewEra = async () => {
-        console.log("Forcing new era...");
-        return new Promise<void>((resolve, reject) => {
-          const forceNewEraExtrinsic = api.tx.staking.forceNewEra();
-          const sudoExtrinsic = api.tx.sudo.sudo(forceNewEraExtrinsic);
-
-          sudoExtrinsic.signAndSend(sudoPair, (result: SubmittableResult) => {
-            if (result.status.isFinalized) {
-              console.log(`New era forced, finalized at blockHash ${result.status.asFinalized}`);
-              resolve();
-            } else if (result.isError) {
-              reject(new Error("Error during forcing new era"));
-            }
-          });
-        });
-      };
-      
-      // After 28 eras, the staking amount can be unlocked
-      for (let i = 0; i < 28; i++) {
-        await forceNewEra();
-        console.log(`Era ${i + 1} forced`);
-      }
-      
-      */
-    //const lastHeader = await api.rpc.chain.getHeader();
-    //console.log(lastHeader.number.toNumber());
-    //// https://wiki.polkadot.network/docs/maintain-polkadot-parameters#staking-validating-and-nominating
-    //const BONDING_DURATION = 403_200; // 28 days so ~ 403_200 blocks
-    //
-    //await wsProvider.send("dev_newBlock", [
-    //  {
-    //    unsafeBlockHeight: lastHeader.number.toNumber() + BONDING_DURATION,
-    //  },
-    //]);
-    //
-    //const newHeader = await api.rpc.chain.getHeader();
-    //console.log(newHeader.number.toNumber());
-
     unsubscribeNewBlockListener();
-    // delay needed between transactions to avoid nonce collision
-    await new Promise(resolve => setTimeout(resolve, 3 * 1000));
   },
   teardown: async () => {
     await wsProvider.disconnect();

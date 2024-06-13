@@ -25,6 +25,15 @@ const handlers = [
 
     return HttpResponse.json(response);
   }),
+  http.get("*/pallets/staking/storage/activeEra", async ({ request }) => {
+    const response = await fetch(bypass(request)).then(res => res.json());
+    const activaEraDate = new Date();
+    activaEraDate.setDate(activaEraDate.getDate()); // we update the active era to + 29 days so that we can withdraw unbonded funds
+    response.value.start = activaEraDate.getTime();
+    response.value.index = Number(response.value.index) + 29;
+
+    return HttpResponse.json(response);
+  }),
 ];
 
 const server = setupServer(...handlers);
