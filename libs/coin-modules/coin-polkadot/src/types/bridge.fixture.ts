@@ -58,7 +58,6 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     lastSyncDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
-
     polkadotResources,
   };
 }
