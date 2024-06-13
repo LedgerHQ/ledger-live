@@ -5,19 +5,22 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { useWalletSyncAnalytics, AnalyticsPage } from "../../useWalletSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { useDeleteData } from "./useDeleteData";
 
-export default function DeleteBackupStep({ cancel, deleteBackup }: DeleteBackupStepProps) {
+export default function DeleteBackupStep({ cancel }: DeleteBackupStepProps) {
   const { t } = useTranslation();
+
+  const { deleteMutation } = useDeleteData();
 
   const { onClickTrack } = useWalletSyncAnalytics();
 
   const handleDeleteBackup = () => {
     onClickTrack({ button: "delete", page: AnalyticsPage.ConfirmDeleteBackup });
-    deleteBackup();
+    deleteMutation.mutate();
   };
 
   const handleCancel = () => {
-    onClickTrack({ button: "dcancel", page: AnalyticsPage.ConfirmDeleteBackup });
+    onClickTrack({ button: "cancel", page: AnalyticsPage.ConfirmDeleteBackup });
     cancel();
   };
 

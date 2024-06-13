@@ -42,7 +42,7 @@ export function useLiveAuthenticate() {
     // select: data => format(data, cryptoCurrenciesList),
   });
 
-  return { isLiveJWTLoading, liveJWT };
+  return { isLiveJWTLoading, liveJWT, trustchain, liveCredentials };
 }
 
 export function useGetMembers() {

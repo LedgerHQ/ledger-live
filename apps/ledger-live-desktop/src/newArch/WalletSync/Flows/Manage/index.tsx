@@ -64,7 +64,7 @@ const WalletSyncManage = () => {
       <InstancesRow
         paddingY={24}
         justifyContent="space-between"
-        onClick={!isLoading && goToManageInstances}
+        onClick={!isLoading ? goToManageInstances : undefined}
         data-testid="walletSync-manage-instances"
       >
         {isLoading ? (

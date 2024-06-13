@@ -34,7 +34,8 @@ export async function createQRCodeHostInstance({
 }): Promise<void> {
   const ephemeralKey = await crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
-  const url = `${getEnv("TRUSTCHAIN_API").replace("http", "ws")}/v1/qr?host=${publisher}`;
+  const url = `${getEnv("TRUSTCHAIN_API")}/v1/qr?host=${publisher}`.replace(/^http/, "ws");
+  console.log("url", url);
   const ws = new WebSocket(url);
   console.log("ws", ws);
   function send(message: Message) {

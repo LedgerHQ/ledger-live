@@ -1,8 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Icons, Link, Text, NumberedList } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
+import { useLiveAuthenticate, useTrustchainSdk } from "../../useTrustchainSdk";
+import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
+import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
+import QRCode from "~/renderer/components/QRCode";
 
 type Props = {
   displayPinCode: () => void;
@@ -35,12 +39,49 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
     { element: t("walletSync.synchronize.qrCode.steps.step3") },
   ];
 
+  const sdk = useTrustchainSdk();
+
+  const { trustchain, liveCredentials } = useLiveAuthenticate();
+
+  const [url, setUrl] = useState<string | null>(null);
+  const [digits, setDigits] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+  console.log("SynchWithQRCodeStep", url);
+  console.log("error", error);
+  const onStart = useCallback(() => {
+    if (!trustchain || !liveCredentials) return;
+    setError(null);
+    createQRCodeHostInstance({
+      onDisplayQRCode: url => {
+        console.log("onDisplayQRCode", url);
+        setUrl(url);
+      },
+      onDisplayDigits: digits => {
+        setDigits(digits);
+      },
+      addMember: async member => {
+        const jwt = await sdk.liveAuthenticate(trustchain, liveCredentials);
+        await sdk.addMember(jwt, trustchain, liveCredentials, member);
+        return trustchain;
+      },
+    })
+      .catch(e => {
+        if (e instanceof InvalidDigitsError) {
+          return;
+        }
+        setError(e);
+      })
+      .then(() => {
+        setUrl(null);
+        setDigits(null);
+      });
+  }, [trustchain, liveCredentials, sdk]);
+
   // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
   useEffect(() => {
-    setTimeout(() => {
-      displayPinCode();
-    }, 3000);
-  }, [displayPinCode]);
+    onStart();
+  }, [onStart]);
 
   return (
     <Flex flexDirection="column" rowGap="24px" alignItems="center" flex={1}>
@@ -76,7 +117,13 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
             height={24}
             position="absolute"
           >
-            <Icons.LedgerLogo size="L" color="constant.black" />
+            {url && (
+              <QRCodeContainer bg={"constant.white"} p={4}>
+                <QRCode data={url} />
+              </QRCodeContainer>
+            )}
+
+            {/* <Icons.LedgerLogo size="L" color="constant.black" /> */}
           </Flex>
         </QRContainer>
 
@@ -107,6 +154,10 @@ const MiddleContainer = styled(Flex)`
 
 const QRContainer = styled(Flex)`
   border: 1px solid ${({ theme }) => theme.colors.opacityDefault.c10};
+`;
+
+const QRCodeContainer = styled(Flex)`
+  border-radius: 24px;
 `;
 
 const Italic = styled(Text)`
