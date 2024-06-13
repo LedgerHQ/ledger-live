@@ -153,6 +153,7 @@ export class SDK implements TrustchainSDK {
     const trustchain = {
       rootId: trustchainRootId,
       walletSyncEncryptionKey,
+      applicationPath: path,
     };
 
     return { jwt, trustchain };
@@ -176,6 +177,7 @@ export class SDK implements TrustchainSDK {
     return {
       rootId: trustchainId,
       walletSyncEncryptionKey,
+      applicationPath: applicationRootPath,
     };
   }
 
@@ -246,6 +248,7 @@ export class SDK implements TrustchainSDK {
       trustchain: {
         rootId: trustchainId,
         walletSyncEncryptionKey,
+        applicationPath: newPath,
       },
     };
   }

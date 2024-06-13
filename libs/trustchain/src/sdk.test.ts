@@ -11,6 +11,7 @@ test("encryptUserData + decryptUserData", async () => {
   const trustchain = {
     rootId: "",
     walletSyncEncryptionKey: crypto.to_hex(keypair.privateKey),
+    applicationPath: "0'/16'/0'",
   };
   const encrypted = await sdk.encryptUserData(trustchain, obj);
   const decrypted = await sdk.decryptUserData(trustchain, encrypted);

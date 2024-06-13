@@ -328,7 +328,10 @@ function AppGetOrCreateTrustchain({
     [sdk, setSeedIdAccessToken],
   );
 
-  const valueDisplay = useCallback((trustchain: Trustchain) => trustchain.rootId, []);
+  const valueDisplay = useCallback(
+    (trustchain: Trustchain) => trustchain.rootId + " at " + trustchain.applicationPath,
+    [],
+  );
 
   return (
     <Actionable
