@@ -21,7 +21,7 @@ export class AccountPage extends AppPage {
     this.page.locator(`data-test-id=account-row-${tokenName.toLowerCase()}`);
   private accountBalance = this.page.locator("data-test-id=total-balance");
   private operationList = this.page.locator("id=operation-list");
-  private showMoreButton = this.page.getByText("Show more ");
+  private showMoreButton = this.page.getByText("Show more");
   private AdvancedButton = this.page.getByText("Advanced");
   private accountAdvancedLogs = this.page.locator("data-test-id=Advanced_Logs");
 
