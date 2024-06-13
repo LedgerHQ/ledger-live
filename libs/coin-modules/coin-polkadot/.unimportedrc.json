@@ -17,7 +17,7 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [],
-  "ignoreUnImported": [
+  "ignoreUnimported": [
     "src/test/coin-tester/chopsticks-sidecar.ts",
     "src/test/coin-tester/indexer.ts",
     "src/test/coin-tester/scenarios/basic.ts",

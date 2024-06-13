@@ -165,6 +165,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
         },
       },
     }));
+
     initMswHandlers(getCoinConfig(ethereum).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
