@@ -7,6 +7,7 @@ export type JWT = {
 export type Trustchain = {
   rootId: string;
   walletSyncEncryptionKey: string;
+  applicationPath: string;
 };
 
 export type LiveCredentials = {
