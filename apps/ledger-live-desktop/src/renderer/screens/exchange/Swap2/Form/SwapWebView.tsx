@@ -304,6 +304,7 @@ const SwapWebView = ({
   }
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
+    console.log('%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:248 ', 'color: #007acc;');
     console.error("onSwapWebviewError", error);
     setDrawer(WebviewErrorDrawer, error);
   };
