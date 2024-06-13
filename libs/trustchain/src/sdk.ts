@@ -240,7 +240,14 @@ export class SDK implements TrustchainSDK {
       liveInstanceCredentials,
     );
 
-    // TODO close previous node
+    // close the previous stream
+    streamTree = await closeStream(
+      streamTree,
+      m.applicationRootPath,
+      trustchainId,
+      seedIdToken,
+      softwareDevice,
+    );
 
     const jwt = await api.refreshAuth(seedIdToken);
 
@@ -381,5 +388,26 @@ async function pushMember(
       blocks: [crypto.to_hex(commandStream)],
     });
   }
+  return streamTree;
+}
+
+async function closeStream(
+  streamTree: StreamTree,
+  path: string,
+  trustchainId: string,
+  jwt: JWT,
+  softwareDevice: Device,
+) {
+  streamTree = await streamTree.close(path, softwareDevice);
+  const child = streamTree.getChild(path);
+  if (!child) {
+    throw new Error("StreamTree.close failed to create the child stream.");
+  }
+  await child.resolve(); // double checks the signatures are correct before sending to the backend
+  const commandStream = CommandStreamEncoder.encode([child.blocks[child.blocks.length - 1]]);
+  await api.putCommands(jwt, trustchainId, {
+    path,
+    blocks: [crypto.to_hex(commandStream)],
+  });
   return streamTree;
 }

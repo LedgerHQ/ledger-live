@@ -128,6 +128,17 @@ export class StreamTree {
     }
   }
 
+  /**
+   * Close a stream
+   */
+  public async close(path: string | number[], owner: Device): Promise<StreamTree> {
+    const indexes =
+      typeof path === "string" ? DerivationPath.toIndexArray(path) : (path as number[]);
+    let stream = this.getChild(indexes) || new CommandStream();
+    stream = await stream.edit().close().issue(owner, this);
+    return this.update(stream);
+  }
+
   public update(stream: CommandStream): StreamTree {
     const path = stream.getStreamPath();
     if (path === null) throw new Error("Stream path cannot be null");
