@@ -14,7 +14,7 @@ export default function Expand({
   children,
   expanded,
 }: {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   expanded?: boolean;
 }) {
