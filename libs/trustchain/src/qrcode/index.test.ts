@@ -38,6 +38,7 @@ describe("Trustchain QR Code", () => {
     const trustchain = {
       rootId: "test-root-id",
       walletSyncEncryptionKey: "test-wallet-sync-encryption-key",
+      applicationPath: "0'/16'/0'",
     };
     const addMember = jest.fn(() => Promise.resolve(trustchain));
     const liveCredentials = convertKeyPairToLiveCredentials(await crypto.randomKeypair());

@@ -6,6 +6,7 @@ import { Permissions } from "@ledgerhq/hw-trustchain";
 const mockedTrustchain: Trustchain = {
   rootId: "mock-root-id",
   walletSyncEncryptionKey: "mock-wallet-sync-encryption-key",
+  applicationPath: "0'/16'/0'",
 };
 
 const mockedLiveCredentialsPrivateKey = "mock-private-key";
