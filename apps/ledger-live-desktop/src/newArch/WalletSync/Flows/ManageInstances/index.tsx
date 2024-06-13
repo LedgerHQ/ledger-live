@@ -18,9 +18,7 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
     goToPreviousScene,
     FlowOptions,
     goToWelcomeScreenWalletSync,
-  } = useFlows({
-    flow: Flow.ManageInstances,
-  });
+  } = useFlows();
 
   const { instances, selectedInstance, setSelectedInstance } = useInstances();
 

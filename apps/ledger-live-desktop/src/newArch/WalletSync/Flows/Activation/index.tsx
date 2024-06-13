@@ -15,7 +15,7 @@ const WalletSyncActivation = () => {
   const dispatch = useDispatch();
   const [device, setDevice] = useState<Device | null>(null);
 
-  const { currentStep, goToNextScene } = useFlows({ flow: Flow.Activation });
+  const { currentStep, goToNextScene } = useFlows();
 
   const goToSync = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));

@@ -72,7 +72,7 @@ export const STEPS_WITH_BACK: Step[] = [
   Step.SynchronizedInstances,
 ];
 
-export const useFlows = ({ flow }: HookProps) => {
+export const useFlows = () => {
   const dispatch = useDispatch();
 
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
