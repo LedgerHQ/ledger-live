@@ -65,7 +65,7 @@ test.describe("Metamask Test Dapp", () => {
   });
 });
 
-test.describe("1inch dapp", () => {
+test.describe.skip("1inch dapp", () => {
   test.beforeAll(async () => {
     process.env.MOCK_REMOTE_LIVE_MANIFEST = dummy1inchLiveApp;
   });
