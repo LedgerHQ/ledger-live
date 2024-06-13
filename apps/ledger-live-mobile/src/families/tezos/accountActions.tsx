@@ -77,7 +77,7 @@ const getMainActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="delegation.delegate" />,
+      label: <Trans i18nKey="tezos.delegation.cta" />,
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {
         currency: "XTZ",

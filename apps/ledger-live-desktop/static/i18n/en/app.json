@@ -2760,6 +2760,9 @@
         "description": "You can see you Tezos NFTs directly through Objkt inside Ledger Live.",
         "cta": "See my NFTs on Objkt"
       }
+    },
+    "delegation": {
+      "cta": "Delegate"
     }
   },
   "bitcoin": {
