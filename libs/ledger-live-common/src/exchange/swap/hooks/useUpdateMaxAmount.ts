@@ -41,7 +41,7 @@ export const useUpdateMaxAmount = ({
         }
         bridge.updateTransaction(tx => {
           let additionalFees;
-          if (tx.family === "evm" && next) {
+          if (tx.family === "evm" && !tx.subAccountId && next) {
             additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
           }
           return {
