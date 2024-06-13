@@ -25,6 +25,7 @@ const handlers = [
 
     return HttpResponse.json(response);
   }),
+  // Override the active era to be able to withdraw unbonded funds
   http.get("*/pallets/staking/storage/activeEra", async ({ request }) => {
     const response = await fetch(bypass(request)).then(res => res.json());
     const activaEraDate = new Date();
