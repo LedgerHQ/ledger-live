@@ -272,10 +272,8 @@ export class SDK implements TrustchainSDK {
     );
   }
 
-  async destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void> {
-    void trustchain;
-    void liveJWT;
-    throw new Error("destroyTrustchain not implemented.");
+  async destroyTrustchain(trustchain: Trustchain, jwt: JWT): Promise<void> {
+    await api.deleteTrustchain(jwt, trustchain.rootId);
   }
 
   async encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
