@@ -8,6 +8,8 @@ import { InvalidDigitsError } from "../errors";
 
 const version = 1;
 
+const CLOSE_TIMEOUT = 100; // just enough time for the onerror to appear before onclose
+
 /**
  * establish a channel to be able to add a member to the trustchain after displaying the QR Code
  * @returns a promise that resolves when this is done
@@ -41,10 +43,16 @@ export async function createQRCodeHostInstance({
   let sessionEncryptionKey: Uint8Array | undefined;
   let cipher: ReturnType<typeof makeMessageCipher> | undefined;
   let expectedDigits: string | undefined;
+  let finished = false;
 
   onDisplayQRCode(url);
   return new Promise((resolve, reject) => {
     ws.addEventListener("error", reject);
+    ws.addEventListener("close", () => {
+      if (finished) return;
+      // this error would reflect a protocol error. because otherwise, we would get the "error" event. it shouldn't be visible to user, but we use it to ensure the promise ends.
+      setTimeout(() => reject(new Error("qrcode websocket prematurely closed")), CLOSE_TIMEOUT);
+    });
     ws.addEventListener("message", async e => {
       try {
         const data = parseMessage(e.data);
@@ -84,6 +92,7 @@ export async function createQRCodeHostInstance({
             break;
           }
           case "TrustchainShareCredential": {
+            finished = true;
             if (!cipher) {
               throw new Error("sessionEncryptionKey not set");
             }
@@ -95,10 +104,11 @@ export async function createQRCodeHostInstance({
             break;
           }
           case "Failure": {
-            ws.close();
+            finished = true;
             console.error(data);
             const error = fromErrorMessage(data.payload);
             reject(error);
+            ws.close();
             break;
           }
           default: {
@@ -161,8 +171,15 @@ export async function createQRCodeCandidateInstance({
   function send(message: Message) {
     ws.send(JSON.stringify(message));
   }
+  let finished = false;
 
   return new Promise((resolve, reject) => {
+    ws.addEventListener("close", () => {
+      if (finished) return;
+      // this error would reflect a protocol error. because otherwise, we would get the "error" event. it shouldn't be visible to user, but we use it to ensure the promise ends.
+      setTimeout(() => reject(new Error("qrcode websocket prematurely closed")), CLOSE_TIMEOUT);
+    });
+
     ws.addEventListener("message", async e => {
       try {
         const data = parseMessage(e.data);
@@ -185,16 +202,18 @@ export async function createQRCodeCandidateInstance({
             break;
           }
           case "TrustchainAddedMember": {
+            finished = true;
             const { trustchain } = await cipher.decryptMessage(data);
             resolve(trustchain);
             ws.close();
             break;
           }
           case "Failure": {
-            ws.close();
+            finished = true;
             console.error(data);
             const error = fromErrorMessage(data.payload);
             reject(error);
+            ws.close();
             break;
           }
           default:
