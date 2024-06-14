@@ -2,6 +2,7 @@ import { TypeRegistry } from "@polkadot/types";
 import { buildTransaction } from "./buildTransaction";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { faker } from "@faker-js/faker";
+import { getCoinConfig } from "../config";
 
 const registry = new TypeRegistry();
 
@@ -25,8 +26,34 @@ jest.mock("../network", () => {
   };
 });
 
+jest.mock("../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
 describe("buildTransaction", () => {
   let spyRegistry: jest.SpyInstance | undefined;
+  beforeAll(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        status: {
+          type: "active",
+        },
+        sidecar: {
+          url: "https://polkadot-sidecar.coin.ledger.com",
+          credentials: "",
+        },
+        staking: {
+          electionStatusThreshold: 25,
+        },
+        metadataShortener: {
+          url: "https://api.zondax.ch/polkadot/transaction/metadata",
+        },
+        metadataHash: {
+          url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+        },
+        runtimeUpgraded: false,
+      };
+    });
+  });
 
   afterEach(() => {
     mockExtrinsics.mockClear();

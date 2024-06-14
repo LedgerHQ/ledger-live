@@ -1,7 +1,7 @@
 import { Permissions, crypto } from "@ledgerhq/hw-trustchain";
 import { getEnv } from "@ledgerhq/live-env";
 import WebSocket from "isomorphic-ws";
-import { LiveCredentials, Trustchain, TrustchainMember } from "../types";
+import { MemberCredentials, Trustchain, TrustchainMember } from "../types";
 import { makeCipher, makeMessageCipher } from "./cipher";
 import { Message } from "./types";
 import { InvalidDigitsError } from "../errors";
@@ -129,15 +129,15 @@ export async function createQRCodeHostInstance({
  * @returns a promise that resolves a Trustchain when this is done
  */
 export async function createQRCodeCandidateInstance({
-  liveCredentials,
+  memberCredentials,
   memberName,
   scannedUrl,
   onRequestQRCodeInput,
 }: {
   /**
-   * the live credentials of the live instance (given by TrustchainSDK)
+   * the client credentials of the instance (given by TrustchainSDK)
    */
-  liveCredentials: LiveCredentials;
+  memberCredentials: MemberCredentials;
   /**
    * the name of the member
    */
@@ -195,7 +195,7 @@ export async function createQRCodeCandidateInstance({
           }
           case "HandshakeCompletionSucceeded": {
             const payload = await cipher.encryptMessagePayload({
-              id: liveCredentials.pubkey,
+              id: memberCredentials.pubkey,
               name: memberName,
             });
             send({ version, publisher, message: "TrustchainShareCredential", payload });
