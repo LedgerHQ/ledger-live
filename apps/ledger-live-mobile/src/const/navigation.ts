@@ -506,6 +506,7 @@ export enum ScreenName {
 
   AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
+  MockedAddAssetButton = "MockedAddAssetButton",
 }
 
 export enum NavigatorName {
