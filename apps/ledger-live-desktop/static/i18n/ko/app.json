@@ -27,6 +27,7 @@
       "title" : "탐색",
       "section" : {
         "recentlyUsed" : "최근 사용된 항목",
+        "locallyLoaded" : "로컬에서 로드된 라이브 앱",
         "browse" : "둘러보기"
       },
       "filter" : {
@@ -3589,6 +3590,12 @@
         },
         "warning" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
       },
+      "states" : {
+        "active" : "활성",
+        "inactive" : "비활성",
+        "activating" : "활성화하기",
+        "deactivating" : "비활성화하기"
+      },
       "flow" : {
         "title" : "위임하기",
         "steps" : {
@@ -3967,7 +3974,11 @@
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "stock" : "지역 시장 지표",
-      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다."
+      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
+      "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
     },
     "developer" : {
       "search" : "검색",
@@ -3985,6 +3996,11 @@
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "debugReactQuery" : "디버그 ReactQuery 허용",
       "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
+      "exchangeDeveloperMode" : {
+        "title" : "거래소 개발 모드",
+        "desc" : "거래소 공급자 정보 추가",
+        "placeholder" : "CAL 형식의 거래소 공급자 정보"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "NFT 스팸 신고 허용(베타)",
         "debugNFTSpamReportDesc" : "NFT를 스팸 신고 양식 또는 스팸 표시 중단 양식(스팸으로 표시되지 않게)을 표시하세요.",
@@ -4037,6 +4053,17 @@
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "로컬 앱 생성하기",
+          "modify" : "로컬 앱 수정하기"
+        },
+        "addNetwork" : "신규 네트워크 추가하기",
+        "removeNetwork" : "마지막 네트워크 삭제하기",
+        "export" : "내보내기",
+        "modify" : "수정하기",
+        "create" : "생성하기"
+      },
       "runLocalAppDeleteButton" : "삭제",
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
@@ -4162,6 +4189,18 @@
         "enableNetworkLogs" : {
           "title" : "네트워크 로그 활성화",
           "description" : "콘솔에서 네트워크 로그 활성화(오류 로그는 항상 활성화됨)"
+        },
+        "testWalletSync" : {
+          "title" : "Test Ledger Sync",
+          "description" : "Allows you to launch a specific LedgerSync flow",
+          "cta" : "테스트",
+          "modal" : {
+            "flow" : "플로우 선택",
+            "step" : "단계 선택",
+            "activated" : "백업 여부 활성화/비활성화",
+            "instance" : "인스턴스 생성",
+            "cta" : "적용"
+          }
         }
       }
     },
@@ -4266,7 +4305,7 @@
     "downloadInProgress" : "업데이트 다운로드 중...",
     "downloadProgress" : "{{progress}}% 완료됨",
     "checking" : "업데이트 확인 중...",
-    "checkSuccess" : "새로운 Ledger Live 업데이트가 있습니다. 앱을 닫으면 자동으로 설치됩니다.",
+    "checkSuccess" : "새로운 업데이트가 있습니다. 앱을 닫으면 Ledger Live가 자동으로 설치되고 다시 시작됩니다",
     "quitAndInstall" : "지금 설치하고 다시 시작하기",
     "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
@@ -5529,7 +5568,7 @@
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "{{message}}"
     },
-    "TransportPendingOperation" : {
+    "TransportRaceCondition" : {
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "Ledger 장치에 이미 보류 중인 작업이 있습니다. 거부하거나 다시 연결하세요."
     },
@@ -6040,6 +6079,12 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "OS 업데이트 확인 실패",
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
+    },
+    "newAddressTRC20" : {
+      "title" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
     }
   },
   "cryptoOrg" : {
@@ -6231,6 +6276,114 @@
       "analytics" : "애널리틱스",
       "personalizedExpDesc" : "내가 설정해 둔 환경 설정에 맞는 맞춤형 추천을 받아보세요.",
       "analyticsDesc" : "Ledger가 사용자 경험을 개선할 수 있도록 애널리틱스 기능을 활성화하세요."
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger Sync",
+    "activate" : {
+      "title" : "Sync your accounts across all platforms",
+      "description" : "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+      "cta" : "Sync your accounts"
+    },
+    "alreadySync" : "Already created a key?",
+    "manage" : {
+      "cta" : "관리",
+      "synchronize" : {
+        "label" : "동기화",
+        "description" : "앱 데이터를 다른 Ledger Live 앱과 동기화하여 매끄러운 사용자 경험을 즐기세요."
+      },
+      "backup" : {
+        "label" : "Manage Key",
+        "description" : "Secure or delete your encryption key via another Ledger."
+      },
+      "instance" : {
+        "label_one" : "1 Synchronized instance",
+        "label_other" : "{{count}} Synchronized instances",
+        "cta" : "관리"
+      }
+    },
+    "loading" : {
+      "title" : "조금만 기다려 주세요...",
+      "activation" : "데이터가 전체적으로 암호화되고 있습니다... ",
+      "synch" : "동기화된 인스턴스를 업데이트하는 중입니다..."
+    },
+    "error" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "나중에 다시 시도해 주세요.",
+      "cta" : "다시 시도하세요"
+    },
+    "unsecuredError" : {
+      "title" : "이 Ledger 장치는 동기화를 보호하지 않습니다",
+      "description" : "Please connect the Ledger device you used to create your encryption key.",
+      "info" : "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+      "cta" : "Connect another Ledger",
+      "ctaDelete" : "Delete my encryption key"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "Success",
+        "desc" : "You successfully enabled Ledger Sync. ",
+        "synchAnother" : "다른 Ledger Live 앱과 동기화"
+      },
+      "synch" : {
+        "title" : "Synchronization successful!",
+        "desc" : "Changes in your accounts will now automatically appear across all apps and platforms."
+      }
+    },
+    "manageBackups" : {
+      "title" : "Manage your key",
+      "options" : {
+        "deleteBackup" : {
+          "title" : "데이터 삭제",
+          "description" : "All synced data will be deleted."
+        }
+      },
+      "deleteBackup" : {
+        "title" : "Do you really want to delete your encryption key?",
+        "description" : "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time.",
+        "delete" : "삭제",
+        "cancel" : "취소"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "Your devices have been unsynchronized and your key has been deleted"
+      },
+      "deleteBackupError" : {
+        "title" : "문제가 발생했습니다"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Choose your sync method",
+        "description" : "Ledger 장치로 직접 동기화하거나 Ledger Live에서 QR 코드를 스캔하여 동기화하도록 선택할 수 있습니다.",
+        "scan" : {
+          "title" : "QR 코드 스캔",
+          "description" : "QR 코드를 스캔하여 동기화합니다"
+        },
+        "connectDevice" : {
+          "title" : "Use your Ledger",
+          "description" : "Ledger 장치에 서명하여 동기화합니다"
+        }
+      },
+      "qrCode" : {
+        "title" : "동기화",
+        "hint" : "Trying to sync two Ledger Live desktop apps? Click here.",
+        "description" : "Scan and synchronize your accounts with another Ledger Live app",
+        "steps" : {
+          "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
+          "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+          "step3" : "100% 로딩될 때까지 QR 코드를 스캔하세요."
+        }
+      },
+      "pinCode" : {
+        "title" : "Enter the code",
+        "description" : "Type the code displayed on the other Ledger Live you want to sync with."
+      }
+    },
+    "manageInstances" : {
+      "title" : "동기화된 인스턴스 관리",
+      "remove" : "제거",
+      "deleteInstanceSuccess" : "Your {{instanceName}} is no longer synchronized",
+      "deleteInstanceError" : "{{instanceName}} 장치에 동기화 해제 관련 문제가 발생했습니다"
     }
   }
 }
