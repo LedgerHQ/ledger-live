@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 0.7.0-nightly.10
+
+### Minor Changes
+
+- [#6326](https://github.com/LedgerHQ/ledger-live/pull/6326) [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - polkadot generic nano app support
+
 ## 0.7.0-nightly.9
 
 ### Patch Changes

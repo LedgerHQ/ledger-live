@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.1.0-nightly.10
+
+### Patch Changes
+
+- [#7078](https://github.com/LedgerHQ/ledger-live/pull/7078) [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac) Thanks [@lvndry](https://github.com/lvndry)! - [evm] Improve error message if could not get list of operations
+
 ## 2.1.0-nightly.9
 
 ### Patch Changes

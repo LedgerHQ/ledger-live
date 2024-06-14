@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cardano
 
+## 0.1.0-nightly.6
+
+### Patch Changes
+
+- [#7102](https://github.com/LedgerHQ/ledger-live/pull/7102) [`bc8114c`](https://github.com/LedgerHQ/ledger-live/commit/bc8114c0a9a90bf95d57087710b405730b9a6a17) Thanks [@pavanvora](https://github.com/pavanvora)! - fix transaction config to show token tx fees in main currency
+
 ## 0.1.0-nightly.5
 
 ### Patch Changes

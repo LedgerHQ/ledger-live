@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.45.0-nightly.13
+
+### Patch Changes
+
+- [#7078](https://github.com/LedgerHQ/ledger-live/pull/7078) [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac) Thanks [@lvndry](https://github.com/lvndry)! - [evm] Improve error message if could not get list of operations
+
+- Updated dependencies [[`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac), [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e)]:
+  - @ledgerhq/coin-evm@2.1.0-nightly.10
+  - @ledgerhq/live-common@34.3.0-nightly.19
+
 ## 3.45.0-nightly.12
 
 ### Patch Changes

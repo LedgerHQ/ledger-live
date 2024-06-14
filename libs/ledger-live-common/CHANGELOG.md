@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.19
+
+### Minor Changes
+
+- [#6326](https://github.com/LedgerHQ/ledger-live/pull/6326) [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - polkadot generic nano app support
+
+### Patch Changes
+
+- Updated dependencies [[`bc8114c`](https://github.com/LedgerHQ/ledger-live/commit/bc8114c0a9a90bf95d57087710b405730b9a6a17), [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac), [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e)]:
+  - @ledgerhq/coin-cardano@0.1.0-nightly.6
+  - @ledgerhq/coin-evm@2.1.0-nightly.10
+  - @ledgerhq/hw-app-polkadot@6.29.0-nightly.4
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.10
+
 ## 34.3.0-nightly.18
 
 ### Minor Changes
