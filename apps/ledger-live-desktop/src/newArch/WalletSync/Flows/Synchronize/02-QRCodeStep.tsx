@@ -52,6 +52,11 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
 
   console.log("SynchWithQRCodeStep", url);
   console.log("error", error);
+
+  const goToActivation = useCallback(() => {
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
+  }, [dispatch]);
+
   const onStart = useCallback(() => {
     if (!trustchain || !memberCredentials) return;
     setError(null);
@@ -142,7 +147,7 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
           </Text>
           <NumberedList steps={steps} />
         </MiddleContainer>
-        <Link color="neutral.c70">
+        <Link color="neutral.c70" onClick={goToActivation}>
           <Text fontSize={14} variant="paragraph" fontWeight="semiBold" color="neutral.c70">
             {t("walletSync.synchronize.qrCode.hint")}
           </Text>
