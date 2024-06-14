@@ -27,6 +27,7 @@
       "title" : "Исследуйте",
       "section" : {
         "recentlyUsed" : "Недавние",
+        "locallyLoaded" : "Локально загруженные приложения",
         "browse" : "Просмотр"
       },
       "filter" : {
@@ -3589,6 +3590,12 @@
         },
         "warning" : "Выбирайте валидатора с умом. Часть делегированных активов может быть безвозвратно утеряна, если валидатор поведёт себя недобросовестно."
       },
+      "states" : {
+        "active" : "Активно",
+        "inactive" : "Неактивно",
+        "activating" : "Активируется",
+        "deactivating" : "Деактивируется"
+      },
       "flow" : {
         "title" : "Делегирование",
         "steps" : {
@@ -3967,7 +3974,11 @@
       "region" : "Регион",
       "regionDesc" : "Выберите регион, чтобы обновить форматы дат, времени и валют.",
       "stock" : "Индикатор регионального рынка",
-      "stockDesc" : "Выберите «Западный», чтобы рост рыночной стоимости отображался синим цветом, либо «Восточный», чтобы рост рыночной стоимости отображался красным цветом."
+      "stockDesc" : "Выберите «Западный», чтобы рост рыночной стоимости отображался синим цветом, либо «Восточный», чтобы рост рыночной стоимости отображался красным цветом.",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "marketPerformanceWidget" : "Виджет поведения рынка",
+      "marketPerformanceWidgetDesc" : "Данная функция показывает самые прибыльные и убыточные криптоактивы за разные промежутки времени на странице портфеля."
     },
     "developer" : {
       "search" : "Поиск",
@@ -3985,6 +3996,11 @@
       "debugAppsDesc" : "Показывать и открывать отладочные приложения на платформе.",
       "debugReactQuery" : "Разрешить отладку ReactQuery",
       "debugReactQueryDesc" : "Показывать и одобрять запуск консоли отладки ReactQuery.",
+      "exchangeDeveloperMode" : {
+        "title" : "Режим разработчика для приложения Exchange",
+        "desc" : "Добавить информацию о поставщике обмена",
+        "placeholder" : "Данные о поставщике обмена в формате CAL"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "Жалобы на NFT-спам (бета)",
         "debugNFTSpamReportDesc" : "Отображать форму для жалобы на спам с NFT или отмены соответствующей метки",
@@ -4037,6 +4053,17 @@
       "addLocalApp" : "Добавить локальное приложение",
       "addLocalAppDesc" : "Загрузка локального приложения в формате локального манифеста.",
       "addLocalAppButton" : "Добавить",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "Создать локальное приложение",
+          "modify" : "Изменить локальное приложение"
+        },
+        "addNetwork" : "Добавить новую сеть",
+        "removeNetwork" : "Удалить последнюю сеть",
+        "export" : "Экспортировать",
+        "modify" : "Изменить",
+        "create" : "Создать"
+      },
       "runLocalAppDeleteButton" : "Удалить",
       "runLocalAppOpenButton" : "Открыть",
       "enableLearnStagingUrl" : "Промежуточный URL страницы Образование",
@@ -4162,6 +4189,18 @@
         "enableNetworkLogs" : {
           "title" : "Активация логов сети",
           "description" : "Включить сетевые логи в консоли. Логи ошибок активированы всегда."
+        },
+        "testWalletSync" : {
+          "title" : "Test Ledger Sync",
+          "description" : "Allows you to launch a specific LedgerSync flow",
+          "cta" : "Протестировать",
+          "modal" : {
+            "flow" : "Выбрать поток",
+            "step" : "Выбрать шаг",
+            "activated" : "Активировать для резервного копирования или отключить",
+            "instance" : "Создать элементы",
+            "cta" : "Применить"
+          }
         }
       }
     },
@@ -4266,7 +4305,7 @@
     "downloadInProgress" : "Скачиваем обновления...",
     "downloadProgress" : "Уже {{progress}}%",
     "checking" : "Проверяем обновления...",
-    "checkSuccess" : "Доступно обновление Ledger Live. Оно установится автоматически после закрытия приложения",
+    "checkSuccess" : "Доступно обновление Ledger Live. Закройте приложение, и оно автоматически обновится и перезагрузится",
     "quitAndInstall" : "Обновить и перезапустить",
     "updateAvailable" : "Доступно обновление Ledger Live {{version}}",
     "error" : "Во время обновления произошла ошибка. Попробуйте ещё раз",
@@ -5529,7 +5568,7 @@
       "title" : "Что-то пошло не так. Подключите устройство заново",
       "description" : "{{message}}"
     },
-    "TransportPendingOperation" : {
+    "TransportRaceCondition" : {
       "title" : "Что-то пошло не так. Подключите устройство заново",
       "description" : "Действие уже запущено на устройстве Ledger. Отклоните его или повторно подключите устройство."
     },
@@ -6040,6 +6079,12 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Сбой проверки обновления ОС",
       "description" : "Что-то пошло не так. Повторите попытку или свяжитесь с Поддержкой, если возникнут дополнительные вопросы."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Обмен недоступен. Необходимо использовать счёт Tezos для первоначальной отправки/делегирования или изменить пару для обмена"
+    },
+    "newAddressTRC20" : {
+      "title" : "Для активации адреса на него сначала нужно отправить как минимум 0,1 TRX."
     }
   },
   "cryptoOrg" : {
@@ -6231,6 +6276,114 @@
       "analytics" : "Аналитика",
       "personalizedExpDesc" : "Получайте рекомендации в соответствии с вашими предпочтениями.",
       "analyticsDesc" : "Включите аналитику, чтобы помочь компании Ledger улучшить пользовательский интерфейс."
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger Sync",
+    "activate" : {
+      "title" : "Sync your accounts across all platforms",
+      "description" : "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+      "cta" : "Sync your accounts"
+    },
+    "alreadySync" : "Already created a key?",
+    "manage" : {
+      "cta" : "Настроить",
+      "synchronize" : {
+        "label" : "Синхронизировать",
+        "description" : "Синхронизируйте данные вашего приложения с другим Ledger Live для комфортного взаимодействия."
+      },
+      "backup" : {
+        "label" : "Manage Key",
+        "description" : "Secure or delete your encryption key via another Ledger."
+      },
+      "instance" : {
+        "label_one" : "Элементов синхронизировано: 1",
+        "label_other" : "Элементов синхронизировано: {{count}}",
+        "cta" : "Настроить"
+      }
+    },
+    "loading" : {
+      "title" : "Наберитесь терпения...",
+      "activation" : "Ваши данные проходят через сквозное шифрование... ",
+      "synch" : "Обновляем синхронизированные элементы..."
+    },
+    "error" : {
+      "title" : "Что-то пошло не так",
+      "description" : "Повторите попытку позже.",
+      "cta" : "Повторить"
+    },
+    "unsecuredError" : {
+      "title" : "Синхронизация не защищена этим устройством Ledger",
+      "description" : "Please connect the Ledger device you used to create your encryption key.",
+      "info" : "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+      "cta" : "Подключить другой Ledger",
+      "ctaDelete" : "Delete my encryption key"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "Success",
+        "desc" : "You successfully enabled Ledger Sync. ",
+        "synchAnother" : "Синхронизировать с другим приложением Ledger Live"
+      },
+      "synch" : {
+        "title" : "Synchronization successful!",
+        "desc" : "Changes in your accounts will now automatically appear across all apps and platforms."
+      }
+    },
+    "manageBackups" : {
+      "title" : "Manage your key",
+      "options" : {
+        "deleteBackup" : {
+          "title" : "Удалить данные",
+          "description" : "All synced data will be deleted."
+        }
+      },
+      "deleteBackup" : {
+        "title" : "Do you really want to delete your encryption key?",
+        "description" : "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time.",
+        "delete" : "Удалить",
+        "cancel" : "Отменить"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "Your devices have been unsynchronized and your key has been deleted"
+      },
+      "deleteBackupError" : {
+        "title" : "Что-то пошло не так"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Choose your sync method",
+        "description" : "Вы можете синхронизировать с помощью устройства Ledger или сканировать QR-код в Ledger Live",
+        "scan" : {
+          "title" : "Сканировать QR-код",
+          "description" : "Синхронизировать по QR-коду"
+        },
+        "connectDevice" : {
+          "title" : "Use your Ledger",
+          "description" : "Синхронизация через подпись устройством Ledger"
+        }
+      },
+      "qrCode" : {
+        "title" : "Синхронизировать",
+        "hint" : "Trying to sync two Ledger Live desktop apps? Click here.",
+        "description" : "Scan and synchronize your accounts with another Ledger Live app",
+        "steps" : {
+          "step1" : "Откройте приложение Ledger Live, которое хотите синхронизировать",
+          "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+          "step3" : "Cканируйте QR-код камерой смартфона до 100%."
+        }
+      },
+      "pinCode" : {
+        "title" : "Enter the code",
+        "description" : "Type the code displayed on the other Ledger Live you want to sync with."
+      }
+    },
+    "manageInstances" : {
+      "title" : "Управление синхронизированными элементами",
+      "remove" : "Удалить",
+      "deleteInstanceSuccess" : "Your {{instanceName}} is no longer synchronized",
+      "deleteInstanceError" : "Что-то пошло не так при удалении {{instanceName}}"
     }
   }
 }
