@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import useSelectAddAccountMethodViewModel from "./useSelectAddAccountMethod";
+import useSelectAddAccountMethodViewModel from "./useSelectAddAccountMethodViewModel";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import ActionRow from "LLM/components/ActionRow";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -47,6 +47,7 @@ function View({
       descriptionKey: "addAccountsModal.drawer.walletSync.description",
       onPress: setWalletSyncDrawerVisible,
       icon: <Icons.QrCode color={"primary.c80"} />,
+      testID: "add-accounts-modal-wallet-sync-button",
     });
   } else {
     rows.push({
@@ -54,6 +55,7 @@ function View({
       descriptionKey: "addAccountsModal.drawer.import.description",
       onPress: onClickImport,
       icon: <Icons.QrCode color={"primary.c80"} />,
+      testID: "add-accounts-modal-import-button",
     });
   }
 
