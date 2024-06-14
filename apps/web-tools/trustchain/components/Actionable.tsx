@@ -4,11 +4,10 @@ import styled, { keyframes } from "styled-components";
 const Label = styled.div`
   display: flex;
   align-items: center;
-  flex-direction: row;
   padding: 0px 0;
   margin: 5px 0;
   button {
-    margin-right: 10px;
+    margin: 2px 8px;
   }
 `;
 
@@ -58,6 +57,8 @@ export function Actionable<I extends Array<unknown>, A>({
   setValue,
   value,
   children,
+  reverseRow,
+  buttonProps,
 }: {
   buttonTitle: string;
   // inputs or null if not enabled
@@ -70,6 +71,8 @@ export function Actionable<I extends Array<unknown>, A>({
   value?: A | null;
   setValue?: (value: A | null) => void;
   children?: React.ReactNode;
+  reverseRow?: boolean;
+  buttonProps?: { [key: string]: any };
 }) {
   const enabled = !!inputs;
   const [error, setError] = useState<Error | null>(null);
@@ -112,6 +115,8 @@ export function Actionable<I extends Array<unknown>, A>({
       onClick={onClick}
       display={display}
       buttonTitle={buttonTitle}
+      reverseRow={reverseRow}
+      buttonProps={buttonProps}
     >
       {children}
     </RenderActionable>
@@ -126,6 +131,8 @@ export function RenderActionable({
   display,
   buttonTitle,
   children,
+  reverseRow,
+  buttonProps,
 }: {
   enabled: boolean;
   error: Error | null;
@@ -134,11 +141,17 @@ export function RenderActionable({
   display: React.ReactNode | null;
   buttonTitle: string;
   children?: React.ReactNode;
+  reverseRow?: boolean;
+  buttonProps?: { [key: string]: any };
 }) {
   return (
-    <Label>
+    <Label
+      style={{
+        flexDirection: reverseRow ? "row-reverse" : "row",
+      }}
+    >
       <span style={{ position: "relative" }}>
-        <Button disabled={!enabled || loading} onClick={onClick}>
+        <Button disabled={!enabled || loading} onClick={onClick} {...buttonProps}>
           {buttonTitle}
         </Button>
         {loading ? <Spinner /> : null}
