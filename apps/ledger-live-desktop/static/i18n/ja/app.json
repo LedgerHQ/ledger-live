@@ -27,6 +27,7 @@
       "title" : "アプリ一覧",
       "section" : {
         "recentlyUsed" : "最近使用した項目",
+        "locallyLoaded" : "ローカルに読み込まれたライブアプリ",
         "browse" : "チェックする"
       },
       "filter" : {
@@ -1188,7 +1189,7 @@
         "continueOnDevice" : "{{productName}}にPINを設定"
       },
       "seedContent" : {
-        "title" : "秘密のリカバリーフレーズ",
+        "title" : "シークレットリカバリーフレーズ",
         "titleCompleted" : "シークレットリカバリーフレーズ確認済み",
         "recoverSeed" : "Placeholder：Recover",
         "restoreSeed" : "資産のセキュリティを最大限に高めるため、必ずLedgerデバイスで生成したシークレットリカバリーフレーズを使用してください。\n\nシークレットリカバリーフレーズを持っていませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
@@ -1203,7 +1204,7 @@
         "newSeedDescription5" : "第三者と共有しないでください。紛失しないでください。",
         "newSeedContinueOnDevice" : "{{productName}}で生成されたシークレットリカバリーフレーズを表示して書き留める",
         "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
-        "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
+        "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズを使用して復元する",
         "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
         "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
         "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をしている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップを復元します。",
@@ -3589,6 +3590,12 @@
         },
         "warning" : "バリデータは慎重に選択してください。良くないバリデータに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
       },
+      "states" : {
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "activating" : "有効化中",
+        "deactivating" : "無効化中"
+      },
       "flow" : {
         "title" : "デリゲート",
         "steps" : {
@@ -3967,7 +3974,11 @@
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "stock" : "マーケットインジケーターの色分け",
-      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。"
+      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
+      "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },
     "developer" : {
       "search" : "検索",
@@ -3985,6 +3996,11 @@
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "debugReactQuery" : "ReactQueryのデバッグを許可する",
       "debugReactQueryDesc" : "ReactQueryデバッグコンソールを表示し、開くことを許可します。",
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange開発者モード",
+        "desc" : "Exchangeプロバイダーの情報を追加する",
+        "placeholder" : "CAL形式のExchangeプロバイダー情報"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "NFTスパム報告を許可する（ベータ版）",
         "debugNFTSpamReportDesc" : "NFTをスパムとして報告する、またはスパムとして表示を停止するためのフォームを表示します",
@@ -4037,6 +4053,17 @@
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
       "addLocalAppButton" : "画面をチェックする",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "ローカルアプリを作成",
+          "modify" : "ローカルアプリを変更"
+        },
+        "addNetwork" : "新しいネットワークを追加",
+        "removeNetwork" : "最後のネットワークを削除",
+        "export" : "エクスポート",
+        "modify" : "変更",
+        "create" : "作成"
+      },
       "runLocalAppDeleteButton" : "削除",
       "runLocalAppOpenButton" : "開く",
       "enableLearnStagingUrl" : "学習ページのステージングURL",
@@ -4162,6 +4189,18 @@
         "enableNetworkLogs" : {
           "title" : "ネットワークログを有効にする",
           "description" : "コンソールでネットワークログを有効にする（エラーログは常に有効になっています）。"
+        },
+        "testWalletSync" : {
+          "title" : "Test Ledger Sync",
+          "description" : "Allows you to launch a specific LedgerSync flow",
+          "cta" : "テスト",
+          "modal" : {
+            "flow" : "フローを選択",
+            "step" : "ステップを選択",
+            "activated" : "有効化/無効化してバックアップを取得/非取得",
+            "instance" : "インスタンスの生成",
+            "cta" : "適用"
+          }
         }
       }
     },
@@ -4266,7 +4305,7 @@
     "downloadInProgress" : "アップデートをダウンロード中...",
     "downloadProgress" : "{{progress}}%完了",
     "checking" : "アップデートの確認中...",
-    "checkSuccess" : "新しいLedger Liveアップデートをご利用いただけます。アプリを終了すると自動的にインストールされます。",
+    "checkSuccess" : "新しいアップデートをご利用いただけます。アプリを閉じると、Ledger Liveが自動的にインストールされ、再起動されます。",
     "quitAndInstall" : "今すぐインストールして再起動する",
     "updateAvailable" : "Ledger Liveバージョン {{version}} へのアップデートが利用可能です。",
     "error" : "更新中にエラーが発生再度ダウンロードしてください",
@@ -4826,7 +4865,7 @@
         "1" : {
           "text" : "Ledgerユーザーの暗号資産が保管される場所は？",
           "answers" : {
-            "1" : "Ledger Nanoについて",
+            "1" : "Ledger Nano本体",
             "2" : "ブロックチェーン"
           },
           "results" : {
@@ -5529,7 +5568,7 @@
       "title" : "問題が発生しました。デバイスを再接続してください。",
       "description" : "{{message}}"
     },
-    "TransportPendingOperation" : {
+    "TransportRaceCondition" : {
       "title" : "問題が発生しました。デバイスを再接続してください。",
       "description" : "Ledgerデバイスではアクションがすでに保留中です。拒否するか再接続してください。"
     },
@@ -6040,6 +6079,12 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "OSアップデートチェックに失敗しました",
       "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "スワップ利用不可：Tezosアカウントで最初の送付/デリゲートを行うか、ペアを変更する必要があります。"
+    },
+    "newAddressTRC20" : {
+      "title" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
     }
   },
   "cryptoOrg" : {
@@ -6155,7 +6200,7 @@
   },
   "discoverProtect" : {
     "title" : "お客様のIDで\n鍵を復元",
-    "description" : "秘密のリカバリーフレーズは、安全に保管されなければなりません。\nLedger Nano X限定のソフトローンチ。2023年6月30日まで登録無料。",
+    "description" : "シークレットリカバリーフレーズは、安全に保管されなければなりません。\nLedger Nano X限定のソフトローンチ。2023年6月30日まで登録無料。",
     "cta" : "サブスクリプション契約のメリットとは？",
     "downloadLLM" : "Ledger Live Mobileアプリを使用して<purple>Ledger Recover</purple>のサブスクリプション契約をする"
   },
@@ -6231,6 +6276,114 @@
       "analytics" : "アナリティクス",
       "personalizedExpDesc" : "自分好みにパーソナライズされたおすすめ情報を受け取りましょう。",
       "analyticsDesc" : "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する。"
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger Sync",
+    "activate" : {
+      "title" : "Sync your accounts across all platforms",
+      "description" : "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+      "cta" : "Sync your accounts"
+    },
+    "alreadySync" : "Already created a key?",
+    "manage" : {
+      "cta" : "管理",
+      "synchronize" : {
+        "label" : "同期する",
+        "description" : "アプリのデータを別のLedger Liveアプリと同期して、シームレスな体験を実現します。"
+      },
+      "backup" : {
+        "label" : "Manage Key",
+        "description" : "Secure or delete your encryption key via another Ledger."
+      },
+      "instance" : {
+        "label_one" : "1 Synchronized instance",
+        "label_other" : "{{count}} Synchronized instances",
+        "cta" : "管理"
+      }
+    },
+    "loading" : {
+      "title" : "お待ちください...",
+      "activation" : "データがエンドツーエンドで暗号化されています... ",
+      "synch" : "同期されたインスタンスを更新しています..."
+    },
+    "error" : {
+      "title" : "問題が発生しました。",
+      "description" : "後でもう一度お試しください。",
+      "cta" : "再試行"
+    },
+    "unsecuredError" : {
+      "title" : "同期はこのLedgerによって保護されていません",
+      "description" : "Please connect the Ledger device you used to create your encryption key.",
+      "info" : "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+      "cta" : "Connect another Ledger",
+      "ctaDelete" : "Delete my encryption key"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "Success",
+        "desc" : "You successfully enabled Ledger Sync. ",
+        "synchAnother" : "別のLedger Liveアプリと同期する"
+      },
+      "synch" : {
+        "title" : "Synchronization successful!",
+        "desc" : "Changes in your accounts will now automatically appear across all apps and platforms."
+      }
+    },
+    "manageBackups" : {
+      "title" : "Manage your key",
+      "options" : {
+        "deleteBackup" : {
+          "title" : "データの削除",
+          "description" : "All synced data will be deleted."
+        }
+      },
+      "deleteBackup" : {
+        "title" : "Do you really want to delete your encryption key?",
+        "description" : "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time.",
+        "delete" : "削除",
+        "cancel" : "キャンセル"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "Your devices have been unsynchronized and your key has been deleted"
+      },
+      "deleteBackupError" : {
+        "title" : "問題が発生しました。"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Choose your sync method",
+        "description" : "Ledgerデバイスと直接同期するか、Ledger LiveでQRコードをスキャンして同期するかを選択できます。",
+        "scan" : {
+          "title" : "QRコードをスキャン",
+          "description" : "QRコードをスキャンして同期する"
+        },
+        "connectDevice" : {
+          "title" : "Use your Ledger",
+          "description" : "Ledgerに署名して同期する"
+        }
+      },
+      "qrCode" : {
+        "title" : "同期する",
+        "hint" : "Trying to sync two Ledger Live desktop apps? Click here.",
+        "description" : "Scan and synchronize your accounts with another Ledger Live app",
+        "steps" : {
+          "step1" : "同期したいLedger Liveアプリを開く",
+          "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+          "step3" : "読み込みが100%に達するまでQRコードをスキャンする。"
+        }
+      },
+      "pinCode" : {
+        "title" : "Enter the code",
+        "description" : "Type the code displayed on the other Ledger Live you want to sync with."
+      }
+    },
+    "manageInstances" : {
+      "title" : "同期されたインスタンスの管理",
+      "remove" : "削除",
+      "deleteInstanceSuccess" : "Your {{instanceName}} is no longer synchronized",
+      "deleteInstanceError" : "{{instanceName}}の同期解除で問題が発生しました"
     }
   }
 }
