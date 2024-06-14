@@ -3,10 +3,7 @@ import { getSdk } from ".";
 
 test("encryptUserData + decryptUserData", async () => {
   const sdk = getSdk(false, { applicationId: 16, name: "test" });
-  const obj = {
-    foobar: 42,
-    toto: "tata",
-  };
+  const obj = new Uint8Array([1, 2, 3, 4, 5]);
   const keypair = await crypto.randomKeypair();
   const trustchain = {
     rootId: "",

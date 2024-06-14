@@ -161,5 +161,5 @@ export interface TrustchainSDK {
   /**
    * decrypt data with the trustchain encryption key
    */
-  decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object>;
+  decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array>;
 }
