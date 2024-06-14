@@ -49,6 +49,7 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
 
   console.log("SynchWithQRCodeStep", url);
   console.log("error", error);
+  console.log("digits", digits);
   const onStart = useCallback(() => {
     if (!trustchain || !liveCredentials) return;
     setError(null);
@@ -81,7 +82,8 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
   // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
   useEffect(() => {
     onStart();
-  }, [onStart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Flex flexDirection="column" rowGap="24px" alignItems="center" flex={1}>
