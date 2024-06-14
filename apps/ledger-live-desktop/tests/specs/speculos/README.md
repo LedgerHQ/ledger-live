@@ -82,9 +82,9 @@ pnpm desktop build:testing
 ## Run tests
 
 ```
-pnpm desktop test:playwright:speculos specs/speculos/<testName>
+pnpm desktop test:playwright:speculos <testFileName>
 ```
 or
 ```
-pnpm desktop test:playwright:speculos ./<testName> --config=tests/playwright.config.ts
+pnpm desktop test:playwright:speculos ./<testFileName> --config=tests/playwright.config.ts
 ```

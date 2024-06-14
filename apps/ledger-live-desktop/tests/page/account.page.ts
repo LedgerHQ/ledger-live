@@ -22,7 +22,7 @@ export class AccountPage extends AppPage {
   private accountBalance = this.page.locator("data-test-id=total-balance");
   private operationList = this.page.locator("id=operation-list");
   private showMoreButton = this.page.getByText("Show more");
-  private AdvancedButton = this.page.getByText("Advanced");
+  private advancedButton = this.page.getByText("Advanced");
   private accountAdvancedLogs = this.page.locator("data-test-id=Advanced_Logs");
 
   @step("Navigate to token $0")
@@ -101,16 +101,12 @@ export class AccountPage extends AppPage {
     if (await this.showMoreButton.isVisible()) await this.showMoreButton.click();
   }
 
-  @step("Expect `derivate address index to be 0` to be visible")
-  async expectAddressIndexToBe0() {
+  @step("Expect `derivate address index to be $0` to be visible")
+  async expectAddressIndex(indexNumber: number) {
     await this.settingsButton.click();
-    await this.AdvancedButton.click();
+    await this.advancedButton.click();
     const advancedLogsText = await this.accountAdvancedLogs.innerText();
-    if (advancedLogsText !== null) {
-      const advancedLogsJson = JSON.parse(advancedLogsText);
-      expect(advancedLogsJson).toHaveProperty("index", 0);
-    } else {
-      throw new Error("Advanced logs text is null");
-    }
+    const advancedLogsJson = advancedLogsText ? JSON.parse(advancedLogsText) : null;
+    expect(advancedLogsJson).toHaveProperty("index", indexNumber);
   }
 }
