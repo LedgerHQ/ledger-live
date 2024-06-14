@@ -6323,7 +6323,7 @@
         "description": "Secure or delete your encryption key via another Ledger."
       },
       "instance": {
-        "label_one": "1 Synchronized instance",
+        "label": "1 Synchronized instance",
         "label_other": "{{count}} Synchronized instances",
         "cta": "Manage"
       }

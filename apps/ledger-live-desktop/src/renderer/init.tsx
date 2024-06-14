@@ -47,6 +47,7 @@ import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/device
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
+import { importTrustchainStoreState } from "@ledgerhq/trustchain/store";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -171,6 +172,14 @@ async function init() {
     store.dispatch(
       importPostOnboardingState({
         newState: postOnboardingState,
+      }),
+    );
+  }
+  const trustchainStoreState = await getKey("app", "trustchainStore");
+  if (trustchainStoreState) {
+    store.dispatch(
+      importTrustchainStoreState({
+        trustchainStore: trustchainStoreState,
       }),
     );
   }

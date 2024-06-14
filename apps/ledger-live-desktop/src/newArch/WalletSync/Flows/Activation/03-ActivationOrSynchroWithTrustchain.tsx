@@ -27,8 +27,6 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
     const seedIdToken = await runWithDevice(device?.deviceId, transport =>
       sdk.authWithDevice(transport),
     );
-    console.log("memberCredentials", memberCredentials);
-    console.log("seedIdToken", seedIdToken);
     const { trustchain, hasCreatedTrustchain } = await runWithDevice(
       device?.deviceId,
       transport => {
