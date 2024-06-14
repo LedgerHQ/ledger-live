@@ -65,7 +65,7 @@ afterEach(async () => {
     console.error("Error during speculos teardown", e);
     throw e;
   }
-});
+}, 30 * 1000);
 
 describe("Chain is owned by a device", () => {
   it("should be connected to a device", async () => {
