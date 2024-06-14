@@ -222,6 +222,13 @@ const coinConfig: PolkadotCoinConfig = {
   sidecar: {
     url: SIDECAR_BASE_URL,
   },
+  metadataShortener: {
+    url: "https://api.zondax.ch/polkadot/transaction/metadata",
+  },
+  metadataHash: {
+    url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+  },
+  runtimeUpgraded: true,
 };
 
 export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
