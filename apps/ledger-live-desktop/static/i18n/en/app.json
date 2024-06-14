@@ -5859,6 +5859,9 @@
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"
     },
+    "InvalidExplorerResponse": {
+      "title": "Invalid response from {{currencyName}} explorer"
+    },
     "NotEnoughBalanceToDelegate": {
       "title": "Insufficient balance to delegate"
     },
