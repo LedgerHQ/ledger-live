@@ -17,6 +17,13 @@ describe("getAccount", () => {
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
       },
+      metadataShortener: {
+        url: "",
+      },
+      metadataHash: {
+        url: "",
+      },
+      runtimeUpgraded: false,
     }));
 
     mockServer.listen();
@@ -88,6 +95,13 @@ describe("getRegistry", () => {
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
       },
+      metadataShortener: {
+        url: "",
+      },
+      metadataHash: {
+        url: "",
+      },
+      runtimeUpgraded: false,
     }));
 
     mockServer.listen();

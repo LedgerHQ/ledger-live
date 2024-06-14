@@ -7,6 +7,7 @@ import {
 } from "../network/sidecar.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { createRegistryAndExtrinsics } from "../network/common";
+import { getCoinConfig } from "../config";
 
 const mockPaymentInfo = jest.fn();
 const mockRegistry = jest
@@ -19,8 +20,34 @@ jest.mock("../network/sidecar", () => ({
   getTransactionParams: () => mockTransactionParams(),
 }));
 
+jest.mock("../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
 describe("getEstimatedFees", () => {
   const transaction = createFixtureTransaction();
+  beforeAll(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        status: {
+          type: "active",
+        },
+        sidecar: {
+          url: "https://polkadot-sidecar.coin.ledger.com",
+          credentials: "",
+        },
+        staking: {
+          electionStatusThreshold: 25,
+        },
+        metadataShortener: {
+          url: "https://api.zondax.ch/polkadot/transaction/metadata",
+        },
+        metadataHash: {
+          url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+        },
+        runtimeUpgraded: false,
+      };
+    });
+  });
 
   beforeEach(() => {
     mockPaymentInfo.mockClear();
