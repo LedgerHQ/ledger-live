@@ -147,6 +147,11 @@ function getTransactions() {
       );
       expect((latestOperation.extra as PolkadotOperationExtra).validators?.length).toBe(3);
       expect(currentAccount.polkadotResources.nominations?.length).toBe(3);
+      expect(
+        currentAccount.polkadotResources.nominations?.every(
+          nominiation => nominiation.status === "waiting",
+        ),
+      ).toBe(true);
     },
   };
 
