@@ -77,7 +77,7 @@ export function useRemoveMembers() {
 
   const removeMember = async (member: TrustchainMember, liveJWT: JWT) => {
     runWithDevice("", transport =>
-      sdk.removeMember(transport, liveJWT, trustchain, liveCredentials, member),
+      sdk.removeMember(transport, liveJWT, trustchain, liveCredentials, member), // TODO : send seedIdToken instead of liveJWT
     ).then(({ jwt, trustchain }) => {
       dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
       if (member.id === liveCredentials?.pubkey) {
@@ -101,7 +101,7 @@ export function useRemoveMembers() {
 }
 
 export function useTrustchainSdk() {
-  const isMockEnv = !!getEnv("MOCK") || true;
+  const isMockEnv = !!getEnv("MOCK");
   const sdk = getSdk(isMockEnv, defaultContext);
 
   return sdk;
