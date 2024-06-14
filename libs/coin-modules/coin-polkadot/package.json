@@ -29,7 +29,7 @@
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported",
-    "coin-tester": "DOTENV_CONFIG_PATH=src/test/coin-tester/.env pnpm jest --runTestsByPath src/test/coin-tester/*.test.ts"
+    "coin-tester": "DOTENV_CONFIG_PATH=src/test/coin-tester/.env pnpm jest --runTestsByPath src/test/coin-tester/*.test.ts --forceExit"
   },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",

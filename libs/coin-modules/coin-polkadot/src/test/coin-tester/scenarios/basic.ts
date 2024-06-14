@@ -231,6 +231,8 @@ const coinConfig: PolkadotCoinConfig = {
   runtimeUpgraded: false,
 };
 
+const subscriptions: any[] = [];
+
 export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
   name: "Polkadot Basic transactions",
   setup: async () => {
@@ -272,7 +274,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
     // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
     const alice = keyring.addFromUri("//Alice");
 
-    await api.query.system.account(
+    const unsubGetBasicScenarioBalance = await api.query.system.account(
       basicScenarioAccountPair.address,
       ({ nonce, data: balance }: any) => {
         console.log(
@@ -281,21 +283,14 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
       },
     );
 
-    const unsub = await api.tx.balances
+    subscriptions.push(unsubGetBasicScenarioBalance);
+
+    await api.tx.balances
       .transferAllowDeath(
         basicScenarioAccountPair.address,
         parseCurrencyUnit(polkadot.units[0], "500000").toNumber(),
       )
-      .signAndSend(alice, async (result: any) => {
-        console.log(`Current status is ${result.status}`);
-
-        if (result.status.isInBlock) {
-          console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-        } else if (result.status.isFinalized) {
-          console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-          unsub();
-        }
-      });
+      .signAndSend(alice);
 
     const account = makeAccount(basicScenarioAccountPair.address, polkadot);
 
@@ -364,7 +359,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
             eventStaking: [
               {
                 section: "staking",
-                method: "nominate",
+                method: "Nominate",
                 value: 0,
               },
             ],
@@ -393,8 +388,8 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
         partialFee: optimistic.fee.toNumber(),
         staking: staking!,
         validatorStash,
-        index: 2, // Not used by coin-module
-        isBatch: false, // batch transactions are not supported yet
+        index: 2, // not used by coin-module
+        isBatch: false, // batch transactions are not supported in this coin module
       });
     });
   },
@@ -407,6 +402,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
     unsubscribeNewBlockListener();
   },
   teardown: async () => {
+    subscriptions.forEach(unsub => unsub());
     await wsProvider.disconnect();
     await Promise.all([killSpeculos(), killChopsticksAndSidecar()]);
   },

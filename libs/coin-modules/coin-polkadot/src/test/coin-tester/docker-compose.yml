@@ -1,3 +1,4 @@
+name: chopsticks-sidecar
 services:
   chopsticks:
     image: coin-tester-chopsticks:latest
