@@ -228,7 +228,7 @@ const coinConfig: PolkadotCoinConfig = {
   metadataHash: {
     url: "https://api.zondax.ch/polkadot/node/metadata/hash",
   },
-  runtimeUpgraded: true,
+  runtimeUpgraded: false,
 };
 
 export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
