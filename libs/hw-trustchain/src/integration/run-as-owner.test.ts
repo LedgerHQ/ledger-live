@@ -60,6 +60,7 @@ afterEach(async () => {
     if (sub) sub.unsubscribe();
     if (speculos) await releaseSpeculosDevice(speculos.id);
     if (logSub) logSub();
+    await new Promise(resolve => setTimeout(resolve, 5000)); // temporary attempt to wait for full redeem of docker resources
   } catch (e) {
     console.error("Error during speculos teardown", e);
     throw e;
