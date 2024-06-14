@@ -27,6 +27,7 @@
       "title" : "Explorar",
       "section" : {
         "recentlyUsed" : "Usado recentemente",
+        "locallyLoaded" : "Aplicativos Live carregados localmente",
         "browse" : "Navegar"
       },
       "filter" : {
@@ -1581,7 +1582,7 @@
     "detailsPage" : {
       "priceStatistics" : "Estatísticas de preço",
       "tradingVolume" : "Volume de negociação",
-      "24hLowHight" : "Mínimo em 24h / Máximo em 24h",
+      "24hLowHight" : "Min 24h / Max 24h",
       "7dLowHigh" : "Mínimo em 7d / Máximo em 7d",
       "allTimeHigh" : "Máxima Histórica",
       "allTimeLow" : "Mínima Histórica",
@@ -3589,6 +3590,12 @@
         },
         "warning" : "Escolha cuidadosamente seu validador: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
       },
+      "states" : {
+        "active" : "Ativo",
+        "inactive" : "Inativo",
+        "activating" : "Ativando",
+        "deactivating" : "Desativando"
+      },
       "flow" : {
         "title" : "Delegar",
         "steps" : {
@@ -3967,7 +3974,11 @@
       "region" : "Região",
       "regionDesc" : "Selecione sua região para atualizar formatos de datas, horário e moedas.",
       "stock" : "Indicador de mercado regional",
-      "stockDesc" : "Escolha Ocidental para exibir os aumentos de mercado em azul ou Oriental para exibi-los em vermelho."
+      "stockDesc" : "Escolha Ocidental para exibir os aumentos de mercado em azul ou Oriental para exibi-los em vermelho.",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "marketPerformanceWidget" : "Widget Desempenho do Mercado",
+      "marketPerformanceWidgetDesc" : "Ative esse recurso para visualizar as principais altas e baixas em períodos selecionados na página Portfólio."
     },
     "developer" : {
       "search" : "Buscar",
@@ -3985,6 +3996,11 @@
       "debugAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'debug'.",
       "debugReactQuery" : "Permitir debug do ReactQuery",
       "debugReactQueryDesc" : "Exibir e permitir a abertura do console de debug do ReactQuery.",
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange em Modo Desenvolvedor",
+        "desc" : "Informe o provedor de Exchange",
+        "placeholder" : "Info. do provedor de Exchange em formato CAL"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "Permitir Reportar NFTs Spam (Beta)",
         "debugNFTSpamReportDesc" : "Exibir um formulário para denunciar um NFT como spam ou para impedir que ele seja exibido como spam",
@@ -4037,6 +4053,17 @@
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
       "addLocalAppButton" : "Navegar",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "Criar um aplicativo local",
+          "modify" : "Modificar um aplicativo local"
+        },
+        "addNetwork" : "Adicionar uma nova rede",
+        "removeNetwork" : "Remover a última rede",
+        "export" : "Exportar",
+        "modify" : "Modificar",
+        "create" : "Criar"
+      },
       "runLocalAppDeleteButton" : "Excluir",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
@@ -4162,6 +4189,18 @@
         "enableNetworkLogs" : {
           "title" : "Habilitar registros de rede",
           "description" : "Habilite os registros de rede no console (os registros de erro estão sempre habilitados)"
+        },
+        "testWalletSync" : {
+          "title" : "Test Ledger Sync",
+          "description" : "Allows you to launch a specific LedgerSync flow",
+          "cta" : "Testar",
+          "modal" : {
+            "flow" : "Selecione um Fluxo",
+            "step" : "Selecione uma etapa",
+            "activated" : "Ativar/desativar para ter um backup ou não",
+            "instance" : "Gerar instâncias",
+            "cta" : "Aplicar"
+          }
         }
       }
     },
@@ -4266,7 +4305,7 @@
     "downloadInProgress" : "Baixando atualização...",
     "downloadProgress" : "{{progress}}% concluído",
     "checking" : "Verificando Atualização...",
-    "checkSuccess" : "Nova atualização do Ledger Live disponível, ela será instalada automaticamente quando você fechar o aplicativo",
+    "checkSuccess" : "Nova atualização disponível. Ela será instalada automaticamente quando você fechar o Ledger Live e executará o aplicativo.",
     "quitAndInstall" : "Instalar e reiniciar agora",
     "updateAvailable" : "Atualização para a versão {{version}} do Ledger Live disponível",
     "error" : "Erro durante a atualização. Baixe Novamente",
@@ -4686,7 +4725,7 @@
             "title" : "Sua Frase de Recuperação Secreta",
             "paragraph1" : "Sua Frase de Recuperação Secreta é uma lista de 24 palavras que respaldam as suas chaves privadas.",
             "paragraph2" : "Sua Ledger Nano gera uma Frase de Recuperação Secreta única. A Ledger não sabe qual é.",
-            "disclaimer" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos ficarão vulneráveis.",
+            "disclaimer" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos estarão vulneráveis.",
             "buttons" : {
               "next" : "Frase de recuperação",
               "prev" : "Passo Anterior",
@@ -4826,7 +4865,7 @@
         "1" : {
           "text" : "Como usuário Ledger, meus criptoativos estão armazenados:",
           "answers" : {
-            "1" : "Em minha Ledger Nano",
+            "1" : "Na minha Ledger Nano",
             "2" : "Na blockchain"
           },
           "results" : {
@@ -4860,7 +4899,7 @@
         "3" : {
           "text" : "Quando conecto minha Ledger Nano ao aplicativo Ledger Live, minha chave privada...",
           "answers" : {
-            "1" : "permanece desconectada",
+            "1" : "ainda está offline",
             "2" : "se conecta brevemente à internet"
           },
           "results" : {
@@ -5529,7 +5568,7 @@
       "title" : "Algo deu errado. Reconecte seu dispositivo",
       "description" : "{{message}}"
     },
-    "TransportPendingOperation" : {
+    "TransportRaceCondition" : {
       "title" : "Algo deu errado. Reconecte seu dispositivo",
       "description" : "Uma ação já estava pendente no dispositivo Ledger. Recuse ou reconecte."
     },
@@ -6040,6 +6079,12 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Falha em verificar a atualização do sistema operacional",
       "description" : "Algo deu errado. Tente novamente ou fale com o Suporte Ledger em caso de dúvida."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
+    },
+    "newAddressTRC20" : {
+      "title" : "Primeiro, você precisa enviar pelo menos 0,1 TRX a este endereço para ativá-lo."
     }
   },
   "cryptoOrg" : {
@@ -6231,6 +6276,114 @@
       "analytics" : "Métricas",
       "personalizedExpDesc" : "Receba recomendações personalizadas de acordo com as suas preferências.",
       "analyticsDesc" : "Habilitar as métricas ajuda a Ledger a melhorar a sua experiência de uso."
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger Sync",
+    "activate" : {
+      "title" : "Sync your accounts across all platforms",
+      "description" : "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+      "cta" : "Sync your accounts"
+    },
+    "alreadySync" : "Already created a key?",
+    "manage" : {
+      "cta" : "Gerenciar",
+      "synchronize" : {
+        "label" : "Sincronizar",
+        "description" : "Sincronize os dados do seu aplicativo com outro aplicativo Ledger Live para ter uma experiência perfeita."
+      },
+      "backup" : {
+        "label" : "Manage Key",
+        "description" : "Secure or delete your encryption key via another Ledger."
+      },
+      "instance" : {
+        "label_one" : "1 Synchronized instance",
+        "label_other" : "{{count}} Synchronized instances",
+        "cta" : "Gerenciar"
+      }
+    },
+    "loading" : {
+      "title" : "Aguente firme...",
+      "activation" : "Seus dados estão sendo criptografados de ponta a ponta... ",
+      "synch" : "Estamos atualizando as instâncias sincronizadas..."
+    },
+    "error" : {
+      "title" : "Algo deu errado",
+      "description" : "Tente novamente mais tarde.",
+      "cta" : "Tentar novamente"
+    },
+    "unsecuredError" : {
+      "title" : "A sincronização não é protegida por esta Ledger",
+      "description" : "Please connect the Ledger device you used to create your encryption key.",
+      "info" : "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+      "cta" : "Connect another Ledger",
+      "ctaDelete" : "Delete my encryption key"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "Success",
+        "desc" : "You successfully enabled Ledger Sync. ",
+        "synchAnother" : "Sincronizar com outro aplicativo Ledger Live"
+      },
+      "synch" : {
+        "title" : "Synchronization successful!",
+        "desc" : "Changes in your accounts will now automatically appear across all apps and platforms."
+      }
+    },
+    "manageBackups" : {
+      "title" : "Manage your key",
+      "options" : {
+        "deleteBackup" : {
+          "title" : "Exclua seus dados",
+          "description" : "All synced data will be deleted."
+        }
+      },
+      "deleteBackup" : {
+        "title" : "Do you really want to delete your encryption key?",
+        "description" : "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time.",
+        "delete" : "Excluir",
+        "cancel" : "Cancelar"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "Your devices have been unsynchronized and your key has been deleted"
+      },
+      "deleteBackupError" : {
+        "title" : "Algo deu errado"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Choose your sync method",
+        "description" : "Você pode optar por sincronizar diretamente com sua Ledger ou escaneando um QR code no Ledger Live.",
+        "scan" : {
+          "title" : "Escanear um QR code",
+          "description" : "Sincronizar escaneando um QR code"
+        },
+        "connectDevice" : {
+          "title" : "Use your Ledger",
+          "description" : "Sincronize assinando com sua Ledger"
+        }
+      },
+      "qrCode" : {
+        "title" : "Sincronizar",
+        "hint" : "Trying to sync two Ledger Live desktop apps? Click here.",
+        "description" : "Scan and synchronize your accounts with another Ledger Live app",
+        "steps" : {
+          "step1" : "Abra o aplicativo Ledger Live que você deseja sincronizar",
+          "step2" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+          "step3" : "Escaneie o QR code até a barra chegar a 100%."
+        }
+      },
+      "pinCode" : {
+        "title" : "Enter the code",
+        "description" : "Type the code displayed on the other Ledger Live you want to sync with."
+      }
+    },
+    "manageInstances" : {
+      "title" : "Gerenciar instâncias sincronizadas",
+      "remove" : "Remover",
+      "deleteInstanceSuccess" : "Your {{instanceName}} is no longer synchronized",
+      "deleteInstanceError" : "Algo deu errado com a dessincronização de {{instanceName}}"
     }
   }
 }
