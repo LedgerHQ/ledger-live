@@ -153,6 +153,7 @@ export class SDK implements TrustchainSDK {
     const trustchain = {
       rootId: trustchainRootId,
       walletSyncEncryptionKey,
+      applicationPath: path,
     };
 
     return { jwt, trustchain };
@@ -173,9 +174,11 @@ export class SDK implements TrustchainSDK {
       applicationRootPath,
       liveInstanceCredentials,
     );
+
     return {
       rootId: trustchainId,
       walletSyncEncryptionKey,
+      applicationPath: applicationRootPath,
     };
   }
 
@@ -237,7 +240,14 @@ export class SDK implements TrustchainSDK {
       liveInstanceCredentials,
     );
 
-    // TODO close previous node
+    // close the previous stream
+    streamTree = await closeStream(
+      streamTree,
+      m.applicationRootPath,
+      trustchainId,
+      seedIdToken,
+      softwareDevice,
+    );
 
     const jwt = await api.refreshAuth(seedIdToken);
 
@@ -246,6 +256,7 @@ export class SDK implements TrustchainSDK {
       trustchain: {
         rootId: trustchainId,
         walletSyncEncryptionKey,
+        applicationPath: newPath,
       },
     };
   }
@@ -272,10 +283,8 @@ export class SDK implements TrustchainSDK {
     );
   }
 
-  async destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void> {
-    void trustchain;
-    void liveJWT;
-    throw new Error("destroyTrustchain not implemented.");
+  async destroyTrustchain(trustchain: Trustchain, jwt: JWT): Promise<void> {
+    await api.deleteTrustchain(jwt, trustchain.rootId);
   }
 
   async encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
@@ -375,18 +384,30 @@ async function pushMember(
   } else {
     const commandStream = CommandStreamEncoder.encode([child.blocks[child.blocks.length - 1]]);
     await api.putCommands(jwt, trustchainId, {
-      path: shortenPath(path), // FIXME temporary until backend make it explicit?
+      path,
       blocks: [crypto.to_hex(commandStream)],
     });
   }
   return streamTree;
 }
 
-function shortenPath(path: string): string {
-  // 0'/16'/1' -> 16'
-  const parts = path.split("/");
-  return parts
-    .map((v, i) => (i % 2 === 1 ? v : ""))
-    .filter(Boolean)
-    .join("/");
+async function closeStream(
+  streamTree: StreamTree,
+  path: string,
+  trustchainId: string,
+  jwt: JWT,
+  softwareDevice: Device,
+) {
+  streamTree = await streamTree.close(path, softwareDevice);
+  const child = streamTree.getChild(path);
+  if (!child) {
+    throw new Error("StreamTree.close failed to create the child stream.");
+  }
+  await child.resolve(); // double checks the signatures are correct before sending to the backend
+  const commandStream = CommandStreamEncoder.encode([child.blocks[child.blocks.length - 1]]);
+  await api.putCommands(jwt, trustchainId, {
+    path,
+    blocks: [crypto.to_hex(commandStream)],
+  });
+  return streamTree;
 }

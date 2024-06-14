@@ -7,6 +7,7 @@ export type JWT = {
 export type Trustchain = {
   rootId: string;
   walletSyncEncryptionKey: string;
+  applicationPath: string;
 };
 
 export type LiveCredentials = {
@@ -111,7 +112,7 @@ export interface TrustchainSDK {
   ): Promise<void>;
 
   /**
-   * TBD
+   * destroy the trustchain
    */
   destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void>;
 

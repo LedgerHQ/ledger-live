@@ -1522,6 +1522,9 @@ importers:
       react-table:
         specifier: ^6.11.4
         version: 6.11.5(@types/react@18.2.73)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+      react-tooltip:
+        specifier: ^5.26.4
+        version: 5.26.4(react-dom@18.2.0)(react@18.2.0)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -2770,8 +2773,8 @@ importers:
         specifier: ^1.1.7
         version: 1.1.7
       tiny-secp256k1:
-        specifier: '2'
-        version: 2.2.3
+        specifier: '1'
+        version: 1.1.6
     devDependencies:
       '@ledgerhq/speculos-transport':
         specifier: workspace:*
@@ -2795,8 +2798,8 @@ importers:
   libs/ledger-live-common:
     dependencies:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
-        specifier: ^6.0.1
-        version: 6.0.1
+        specifier: ^7.1.2
+        version: 7.1.2
       '@celo/connect':
         specifier: ^3.0.1
         version: 3.2.0
@@ -9410,8 +9413,8 @@ packages:
       statuses: 2.0.1
     dev: true
 
-  /@cardano-foundation/ledgerjs-hw-app-cardano@6.0.1:
-    resolution: {integrity: sha512-35LU2482b6mGA8NVhCut5sEid0zqy82lXmgoenkQfDxDJtx7zV6U7/Dx9OjuDLpcedEUm/7s2WPjjHv/lsinIQ==}
+  /@cardano-foundation/ledgerjs-hw-app-cardano@7.1.2:
+    resolution: {integrity: sha512-bSR8MdKzotnf9WGO0BtDpTXsH4ObaQjCDSHA6MhJuAKoJEaLl7ASS4ctzqzGlKWoEvjdsgx+M8hJbWDLJ63TFw==}
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
       base-x: 3.0.9
@@ -46984,6 +46987,18 @@ packages:
       scheduler: 0.23.0
     dev: true
 
+  /react-tooltip@5.26.4(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-5WyDrsfw1+6qNVSr3IjqElqJ+cCwE8+44b+HpJ8qRLv7v0a3mcKf8wvv+NfgALFS6QpksGFqTLV2JQ60c+okZQ==}
+    peerDependencies:
+      react: '>=16.14.0'
+      react-dom: '>=16.14.0'
+    dependencies:
+      '@floating-ui/dom': 1.6.3
+      classnames: 2.5.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
   /react-transition-group@4.4.5(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
     peerDependencies:
@@ -50669,13 +50684,6 @@ packages:
       elliptic: 6.5.5
       nan: 2.19.0
 
-  /tiny-secp256k1@2.2.3:
-    resolution: {integrity: sha512-SGcL07SxcPN2nGKHTCvRMkQLYPSoeFcvArUSCYtjVARiFAWU44cCIqYS0mYAU6nY7XfvwURuTIGo2Omt3ZQr0Q==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      uint8array-tools: 0.0.7
-    dev: false
-
   /tiny-typed-emitter@2.1.0:
     resolution: {integrity: sha512-qVtvMxeXbVej0cQWKqVSSAHmKZEHAvxdF8HEUBFWts8h+xEo5m/lEiPakuyZ3BnCBjOD8i24kzNOiOLLgsSxhA==}
     dev: false
@@ -51866,11 +51874,6 @@ packages:
   /uint8array-extras@0.3.0:
     resolution: {integrity: sha512-erJsJwQ0tKdwuqI0359U8ijkFmfiTcq25JvvzRVc1VP+2son1NJRXhxcAKJmAW3ajM8JSGAfsAXye8g4s+znxA==}
     engines: {node: '>=18'}
-    dev: false
-
-  /uint8array-tools@0.0.7:
-    resolution: {integrity: sha512-vrrNZJiusLWoFWBqz5Y5KMCgP9W9hnjZHzZiZRT8oNAkq3d5Z5Oe76jAvVVSRh4U8GGR90N2X1dWtrhvx6L8UQ==}
-    engines: {node: '>=14.0.0'}
     dev: false
 
   /ultron@1.1.1:

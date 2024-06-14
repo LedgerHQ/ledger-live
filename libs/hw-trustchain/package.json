@@ -25,7 +25,7 @@
     "@noble/secp256k1": "^1.7.1",
     "bip32": "^4.0.0",
     "create-hmac": "^1.1.7",
-    "tiny-secp256k1": "2"
+    "tiny-secp256k1": "1"
   },
   "devDependencies": {
     "@ledgerhq/speculos-transport": "workspace:*",
