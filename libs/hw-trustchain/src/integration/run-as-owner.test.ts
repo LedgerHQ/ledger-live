@@ -9,50 +9,61 @@ import {
 import { StreamTree } from "../StreamTree";
 import { DerivationPath } from "../Crypto";
 import { Challenge } from "../SeedId";
-import { listen } from "@ledgerhq/logs";
+import { Unsubscribe, listen } from "@ledgerhq/logs";
+import { Subscription } from "@ledgerhq/hw-transport";
 
 const DEFAULT_TOPIC = "c96d450545ff2836204c29af291428a5bf740304978f5dfb0b4a261474192851";
 const ROOT_DERIVATION_PATH = "16'/0'";
 
 let speculos: SpeculosDevice;
-let sub;
-let logSub;
+let sub: Subscription | undefined;
+let logSub: Unsubscribe | undefined;
 beforeEach(
   async () => {
-    logSub = listen(log => {
-      // eslint-disable-next-line no-console
-      console.log(log.type + ": " + log.message);
-    });
-    speculos = await createSpeculosDevice({
-      model: DeviceModelId.nanoS,
-      firmware: "2.0.0",
-      appName: TRUSTCHAIN_APP_NAME,
-      appVersion: "0.0.1",
-      seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
-      coinapps: __dirname,
-      overridesAppPath: "app.elf",
-    });
+    try {
+      logSub = listen(log => {
+        // eslint-disable-next-line no-console
+        console.log(log.type + ": " + log.message);
+      });
+      speculos = await createSpeculosDevice({
+        model: DeviceModelId.nanoS,
+        firmware: "2.0.0",
+        appName: TRUSTCHAIN_APP_NAME,
+        appVersion: "0.0.1",
+        seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+        coinapps: __dirname,
+        overridesAppPath: "app.elf",
+      });
 
-    // passthrough all success cases
-    sub = speculos.transport.automationEvents.subscribe(event => {
-      if (event.text === "localhost") {
-        speculos.transport.button("right");
-      } else if (event.text === "sync group") {
-        speculos.transport.button("right");
-      } else if (event.text === "Activate Wallet sync") {
-        speculos.transport.button("right");
-      } else if (event.text === "Approve") {
-        speculos.transport.button("both");
-      }
-    });
+      // passthrough all success cases
+      sub = speculos.transport.automationEvents.subscribe(event => {
+        if (event.text === "localhost") {
+          speculos.transport.button("right");
+        } else if (event.text === "sync group") {
+          speculos.transport.button("right");
+        } else if (event.text === "Activate Wallet sync") {
+          speculos.transport.button("right");
+        } else if (event.text === "Approve") {
+          speculos.transport.button("both");
+        }
+      });
+    } catch (e) {
+      console.error("Error during speculos setup", e);
+      throw e;
+    }
   },
   5 * 60 * 1000, // speculos pull instance can be long
 );
 
 afterEach(async () => {
-  sub.unsubscribe();
-  await releaseSpeculosDevice(speculos.id);
-  logSub();
+  try {
+    if (sub) sub.unsubscribe();
+    if (speculos) await releaseSpeculosDevice(speculos.id);
+    if (logSub) logSub();
+  } catch (e) {
+    console.error("Error during speculos teardown", e);
+    throw e;
+  }
 });
 
 describe("Chain is owned by a device", () => {
@@ -61,7 +72,7 @@ describe("Chain is owned by a device", () => {
     expect(await alice.isConnected()).toBe(true);
   });
 
-  it.skip("can sign some data", async () => {
+  it("can sign some data", async () => {
     const alice = device.apdu(speculos.transport);
     const challengeBytes = crypto.from_hex(
       "010107020100121043fd685a10636af2f5a98f942ae7640014010115473045022100d42b1ed6e13f5fe4f96e84172e9f5f8c53d9fa36d312f927252721a55fab1be302200aa06c4d9526ee4fc246bdad61a0f9e0517d7c6a24abb1a68368452b11e253fd160466559eaf20096c6f63616c686f7374320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000",
@@ -187,7 +198,7 @@ describe("Chain is owned by a device", () => {
       .addMember("Charlie", charliePublicKey, 0xffffffff, true)
       .issue(alice, tree);
     tree = tree.update(stream);
-    ("");
+
     // Close the subtree
     stream = await stream.edit().close().issue(alice, tree);
     tree = tree.update(stream);
