@@ -7,7 +7,7 @@ import { describe, it, expect, jest } from "@jest/globals";
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
 
 const WalletSyncTestApp = () => (
   <>
@@ -26,9 +26,8 @@ const openDrawer = async () => {
   const { user } = render(<WalletSyncTestApp />, {
     initialState: {
       walletSync: {
+        ...initialStateWalletSync,
         activated: true,
-        flow: Flow.Activation,
-        step: Step.CreateOrSynchronize,
       },
     },
   });
@@ -56,12 +55,16 @@ describe("Synchronize flow", () => {
     await user.click(qrCodeCard);
 
     // QRCode Page
-    await waitFor(() => expect(screen.getByText(/Scan this QR code with/i)).toBeDefined());
+    await waitFor(() =>
+      expect(
+        screen.getByText(/Scan and synchronize your accounts with another Ledger Live app/i),
+      ).toBeDefined(),
+    );
 
     //PinCode Page after scanning QRCode
     // Need to wait 3 seconds to simulate the time taken to scan the QR code
     setTimeout(async () => {
-      await waitFor(() => expect(screen.getByText("Enter your code")).toBeDefined());
+      await waitFor(() => expect(screen.getByText("Enter the code")).toBeDefined());
     }, 3000);
   });
 });

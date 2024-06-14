@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
-import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
+import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { IconsLegacy, Tag as TagComponent } from "@ledgerhq/react-ui";
@@ -232,7 +232,7 @@ const MainSideBar = () => {
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const noAccounts = useSelector(accountsSelector).length === 0;
   const hasStarredAccounts = useSelector(starredAccountsSelector).length > 0;
-  const displayBlueDot = useManagerBlueDot(lastSeenDevice);
+  const displayBlueDot = useDeviceHasUpdatesAvailable(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const recoverFeature = useFeature("protectServicesDesktop");

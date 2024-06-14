@@ -3,6 +3,7 @@ import { track } from "~/renderer/analytics/segment";
 export enum AnalyticsPage {
   ManageBackup = "Manage Backup",
   ConfirmDeleteBackup = "Confirm Delete Backup",
+  ManageInstances = "Manage synchronized instances",
 }
 
 type OnClickTrack = {

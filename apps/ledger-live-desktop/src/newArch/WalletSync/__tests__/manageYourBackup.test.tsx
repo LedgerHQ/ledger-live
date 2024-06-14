@@ -7,7 +7,7 @@ import { describe, it, expect, jest } from "@jest/globals";
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
 
 const WalletSyncTestApp = () => (
   <>
@@ -26,11 +26,7 @@ describe("ManageYourBackup", () => {
   it("should open drawer and display Wallet Sync Manage flow and delete your backup", async () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
-        walletSync: {
-          activated: true,
-          flow: Flow.Activation,
-          step: Step.CreateOrSynchronize,
-        },
+        walletSync: { ...initialStateWalletSync, activated: true },
       },
     });
 
@@ -50,7 +46,7 @@ describe("ManageYourBackup", () => {
     await user.click(deleteCard);
 
     await waitFor(() =>
-      expect(screen.getByText("Do you really want to delete your data?")).toBeDefined(),
+      expect(screen.getByText("Do you really want to delete your encryption key?")).toBeDefined(),
     );
 
     // First we cancel the deletion
@@ -59,13 +55,13 @@ describe("ManageYourBackup", () => {
 
     await user.click(cancelButton);
 
-    await waitFor(() => expect(screen.getByText("Manage your backup")).toBeDefined());
+    await waitFor(() => expect(screen.getByText("Manage your key")).toBeDefined());
     expect(screen.getByTestId("walletSync-manage-backup-delete")).toBeDefined();
 
     // go back to confirmation screen
     await user.click(screen.getByTestId("walletSync-manage-backup-delete"));
     await waitFor(() =>
-      expect(screen.getByText("Do you really want to delete your data?")).toBeDefined(),
+      expect(screen.getByText("Do you really want to delete your encryption key?")).toBeDefined(),
     );
 
     // Then we do the deletion
@@ -74,6 +70,10 @@ describe("ManageYourBackup", () => {
     await user.click(deleteButton);
 
     //Success message
-    await waitFor(() => expect(screen.getByText("All data successfully deleted")).toBeDefined());
+    await waitFor(() =>
+      expect(
+        screen.getByText("Your devices have been unsynchronized and your key has been deleted"),
+      ).toBeDefined(),
+    );
   });
 });

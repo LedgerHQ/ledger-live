@@ -369,6 +369,9 @@
     "InvalidRecipient": {
       "title": "Invalid recipient"
     },
+    "InvalidExplorerResponse": {
+      "title": "Invalid response from {{currencyName}} explorer"
+    },
     "LanguageInstallRefusedOnDevice": {
       "title": "Language installation refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -1335,7 +1338,8 @@
       "title": "Welcome back",
       "subtitle": "Select how you’d like to access your wallet:",
       "connect": "Connect your Ledger",
-      "sync": "Sync with Ledger Live desktop"
+      "sync": "Sync with Ledger Live desktop",
+      "walletSync": "Sync with another Ledger Live"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",

@@ -9,9 +9,17 @@ const Summary = styled.summary`
   cursor: pointer;
   font-weight: bold;
 `;
-export default function Expand({ title, children }: { title: string; children: React.ReactNode }) {
+export default function Expand({
+  title,
+  children,
+  expanded,
+}: {
+  title: React.ReactNode;
+  children: React.ReactNode;
+  expanded?: boolean;
+}) {
   return (
-    <Details>
+    <Details open={expanded}>
       <Summary>{title}</Summary>
       {children}
     </Details>

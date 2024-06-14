@@ -1,12 +1,13 @@
 import { from, concat } from "rxjs";
 import { map, mergeMap, ignoreElements } from "rxjs/operators";
-import manager from "@ledgerhq/live-common/manager/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import openApp from "@ledgerhq/live-common/hw/openApp";
 import quitApp from "@ledgerhq/live-common/hw/quitApp";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
+import { getAppsCatalogForDevice } from "@ledgerhq/live-common/device/use-cases/getAppsCatalogForDevice";
+import { mapApplicationV2ToApp } from "@ledgerhq/live-common/apps/polyfill";
 import { deviceOpt, inferManagerApp } from "../../scan";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 export default {
@@ -74,10 +75,10 @@ export default {
       if (debug)
         return from(getDeviceInfo(t)).pipe(
           mergeMap((deviceInfo: DeviceInfo) =>
-            from(manager.getAppsList(deviceInfo, true)).pipe(
+            from(getAppsCatalogForDevice(deviceInfo)).pipe(
               mergeMap(list => {
                 const app = list.find(
-                  item => item.name.toLowerCase() === inferManagerApp(debug).toLowerCase(),
+                  item => item.versionName.toLowerCase() === inferManagerApp(debug).toLowerCase(),
                 );
 
                 if (!app) {
@@ -91,11 +92,12 @@ export default {
         );
       return from(getDeviceInfo(t)).pipe(
         mergeMap((deviceInfo: DeviceInfo) =>
-          from(manager.getAppsList(deviceInfo, true)).pipe(
-            mergeMap(list =>
+          from(getAppsCatalogForDevice(deviceInfo)).pipe(
+            mergeMap(v2List =>
               concat(
                 ...(uninstall || []).map(application => {
                   const { targetId } = deviceInfo;
+                  const list = v2List.map(mapApplicationV2ToApp);
                   const app = list.find(
                     item => item.name.toLowerCase() === inferManagerApp(application).toLowerCase(),
                   );
@@ -108,6 +110,7 @@ export default {
                 }),
                 ...(install || []).map(application => {
                   const { targetId } = deviceInfo;
+                  const list = v2List.map(mapApplicationV2ToApp);
                   const app = list.find(
                     item => item.name.toLowerCase() === inferManagerApp(application).toLowerCase(),
                   );

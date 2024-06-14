@@ -81,14 +81,17 @@ const QueuedDrawer = ({
     setIsDisplayed(true);
   }, []);
 
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   const triggerClose = useCallback(() => {
     setIsDisplayed(false);
     if (drawerInQueueRef.current?.getPositionInQueue() !== 0) {
       drawerInQueueRef.current?.removeDrawerFromQueue();
       drawerInQueueRef.current = undefined;
     }
-    onClose && onClose();
-  }, [onClose]);
+    onCloseRef.current && onCloseRef.current(); // hack to avoid triggering the useEffect below if the parent changes the onClose prop
+  }, []);
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {

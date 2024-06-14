@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { getCoinConfig } from "../config";
 import type {

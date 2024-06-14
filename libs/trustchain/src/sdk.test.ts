@@ -1,7 +1,8 @@
 import { crypto } from "@ledgerhq/hw-trustchain";
-import { sdk } from "./sdk";
+import { getSdk } from ".";
 
 test("encryptUserData + decryptUserData", async () => {
+  const sdk = getSdk(false, { applicationId: 16, name: "test" });
   const obj = {
     foobar: 42,
     toto: "tata",
@@ -10,6 +11,7 @@ test("encryptUserData + decryptUserData", async () => {
   const trustchain = {
     rootId: "",
     walletSyncEncryptionKey: crypto.to_hex(keypair.privateKey),
+    applicationPath: "0'/16'/0'",
   };
   const encrypted = await sdk.encryptUserData(trustchain, obj);
   const decrypted = await sdk.decryptUserData(trustchain, encrypted);
