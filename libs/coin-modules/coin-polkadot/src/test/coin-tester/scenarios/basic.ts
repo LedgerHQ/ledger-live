@@ -57,10 +57,10 @@ function getTransactions() {
     },
   };
 
-  const bond250DotTransaction: PolkadotScenarioTransaction = {
-    name: "Bond 250 DOT",
+  const bond500DotTransaction: PolkadotScenarioTransaction = {
+    name: "Bond 500 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(polkadot.units[0], "250"),
+    amount: parseCurrencyUnit(polkadot.units[0], "500"),
     mode: "bond",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
@@ -72,17 +72,17 @@ function getTransactions() {
           polkadot.units[0],
           (latestOperation.extra as PolkadotOperationExtra).bondedAmount!.toFixed(),
         ).toFixed(),
-      ).toBe("25000000000000000000000");
+      ).toBe("50000000000000000000000");
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
     },
   };
 
-  const unbond250DotTransaction: PolkadotScenarioTransaction = {
-    name: "Unbond 250 DOT",
+  const unbond100DotTransaction: PolkadotScenarioTransaction = {
+    name: "Unbond 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(polkadot.units[0], "250"),
+    amount: parseCurrencyUnit(polkadot.units[0], "100"),
     mode: "unbond",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
@@ -94,13 +94,13 @@ function getTransactions() {
           polkadot.units[0],
           (latestOperation.extra as PolkadotOperationExtra).unbondedAmount!.toFixed(),
         ).toFixed(),
-      ).toBe("25000000000000000000000");
+      ).toBe("10000000000000000000000");
       expect(
         parseCurrencyUnit(
           polkadot.units[0],
           currentAccount.polkadotResources.unlockingBalance.toFixed(),
         ).toFixed(),
-      ).toBe("25000000000000000000000");
+      ).toBe("10000000000000000000000");
     },
   };
 
@@ -119,31 +119,18 @@ function getTransactions() {
           polkadot.units[0],
           (latestOperation.extra as PolkadotOperationExtra).bondedAmount!.toFixed(),
         ).toFixed(),
-      ).toBe("5000000000000000000000");
+      ).toBe("5000000000000000000000"); // Should be 450 DOT no ?
       expect(
         parseCurrencyUnit(
           polkadot.units[0],
           currentAccount.polkadotResources.unlockingBalance.toFixed(),
         ).toFixed(),
-      ).toBe("20000000000000000000000");
-    },
-  };
-
-  const chillTransaction: PolkadotScenarioTransaction = {
-    name: "Chill",
-    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    mode: "chill",
-    expect: (previousAccount, currentAccount) => {
-      const [latestOperation] = currentAccount.operations;
-      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.type).toBe("CHILL");
-      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.chill");
+      ).toBe("5000000000000000000000");
     },
   };
 
   const nomminateTransaction: PolkadotScenarioTransaction = {
     name: "Nominate",
-    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     mode: "nominate",
     // https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-rpc.publicnode.com#/staking
     validators: [
@@ -159,6 +146,19 @@ function getTransactions() {
         "staking.nominate",
       );
       expect((latestOperation.extra as PolkadotOperationExtra).validators?.length).toBe(3);
+      expect(currentAccount.polkadotResources.nominations?.length).toBe(3);
+    },
+  };
+
+  const chillTransaction: PolkadotScenarioTransaction = {
+    name: "Chill",
+    recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
+    mode: "chill",
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.type).toBe("CHILL");
+      expect((latestOperation.extra as PolkadotOperationExtra).palletMethod).toBe("staking.chill");
     },
   };
 
@@ -199,11 +199,11 @@ function getTransactions() {
   return [
     send1DotTransaction,
     send100DotTransaction,
-    bond250DotTransaction,
-    unbond250DotTransaction,
+    bond500DotTransaction,
+    unbond100DotTransaction,
     rebond50DotTransaction,
-    chillTransaction,
     nomminateTransaction,
+    chillTransaction,
     withdraw250DotTransaction,
     claimRewardTransaction,
   ];

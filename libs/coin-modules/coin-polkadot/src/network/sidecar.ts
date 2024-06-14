@@ -444,7 +444,11 @@ export const getStakingInfo = async (addr: string) => {
  */
 export const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
   const nominations = await fetchNominations(addr);
-  if (!nominations) return [];
+
+  if (!nominations) {
+    return [];
+  }
+
   return nominations.targets.map<PolkadotNomination>(nomination => ({
     address: nomination.address,
     value: new BigNumber(nomination.value || 0),
