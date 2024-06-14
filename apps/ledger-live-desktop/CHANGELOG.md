@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.82.0-nightly.12
+
+### Patch Changes
+
+- [#7091](https://github.com/LedgerHQ/ledger-live/pull/7091) [`e0c89dc`](https://github.com/LedgerHQ/ledger-live/commit/e0c89dc38e4ee16743b706744d7b278ba964fd0d) Thanks [@cksanders](https://github.com/cksanders)! - Add Dev Mode as a property to all events & send to Recover Live App
+
+- Updated dependencies [[`fc6d09b`](https://github.com/LedgerHQ/ledger-live/commit/fc6d09be89a6e8775d77b98d5a0256b68346a14d), [`6b3c8ca`](https://github.com/LedgerHQ/ledger-live/commit/6b3c8cab371db8212e1b0a02f03bb0baa46ce95c), [`d9f586e`](https://github.com/LedgerHQ/ledger-live/commit/d9f586ea4bd45d15f3e42c9f733f30dceef3027d)]:
+  - @ledgerhq/live-common@34.3.0-nightly.18
+
 ## 2.82.0-nightly.11
 
 ### Patch Changes

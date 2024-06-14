@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.18
+
+### Minor Changes
+
+- [#6891](https://github.com/LedgerHQ/ledger-live/pull/6891) [`d9f586e`](https://github.com/LedgerHQ/ledger-live/commit/d9f586ea4bd45d15f3e42c9f733f30dceef3027d) Thanks [@pavanvora](https://github.com/pavanvora)! - update ledgerjs to 7.1.2 to support cardano app v7
+
+### Patch Changes
+
+- [#7090](https://github.com/LedgerHQ/ledger-live/pull/7090) [`fc6d09b`](https://github.com/LedgerHQ/ledger-live/commit/fc6d09be89a6e8775d77b98d5a0256b68346a14d) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: incorrect fee computation for erc20 when using max button
+
+- [#7087](https://github.com/LedgerHQ/ledger-live/pull/7087) [`6b3c8ca`](https://github.com/LedgerHQ/ledger-live/commit/6b3c8cab371db8212e1b0a02f03bb0baa46ce95c) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed tron activation fee
+
 ## 34.3.0-nightly.17
 
 ### Patch Changes
