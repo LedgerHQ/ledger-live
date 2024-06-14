@@ -71,6 +71,11 @@ const getPtxAttributes = () => {
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
+  const ptxDemo0Enabled = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
+  const ptxDemo1Enabled = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
+  const ptxThorswapEnabled = analyticsFeatureFlagMethod("ptxSwapThorswapProvider")?.enabled;
+  const ptxExodusEnabled = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
+
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
   const isBatch2Enabled: boolean =
@@ -90,6 +95,10 @@ const getPtxAttributes = () => {
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxSwapMoonpayProviderEnabled,
+    ptxDemo0Enabled,
+    ptxDemo1Enabled,
+    ptxThorswapEnabled,
+    ptxExodusEnabled,
   };
 };
 
@@ -115,13 +124,7 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
-  const {
-    isBatch1Enabled,
-    isBatch2Enabled,
-    isBatch3Enabled,
-    stakingProvidersEnabled,
-    ptxSwapMoonpayProviderEnabled,
-  } = getPtxAttributes();
+  const ptxAttributes = getPtxAttributes();
 
   const deviceInfo = device
     ? {
@@ -174,11 +177,7 @@ const extraProperties = (store: ReduxStore) => {
     hasInfinityPass,
     hasSeenMarketWidget: getMarketWidgetAnalytics(),
     modelIdList: devices,
-    stakingProvidersEnabled,
-    isBatch1Enabled,
-    isBatch2Enabled,
-    isBatch3Enabled,
-    ptxSwapMoonpayProviderEnabled,
+    ...ptxAttributes,
     ...deviceInfo,
   };
 };
