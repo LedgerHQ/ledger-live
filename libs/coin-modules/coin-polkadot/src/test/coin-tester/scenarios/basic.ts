@@ -256,6 +256,8 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
 
     const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Polkadot(transport));
 
+    const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
+
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
       path: "44'/354'/0'/0'/0'",
@@ -295,8 +297,6 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
         }
       });
 
-    const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
-
     const account = makeAccount(basicScenarioAccountPair.address, polkadot);
 
     return {
@@ -309,10 +309,10 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
   },
   getTransactions,
   mockIndexer: async (account, optimistic) => {
-    unsubscribeNewBlockListener = await api.rpc.chain.subscribeNewHeads(async (header: any) => {
+    unsubscribeNewBlockListener = await api.rpc.chain.subscribeNewHeads(async header => {
       console.log(`Chain is at block: #${header.number}`);
 
-      const blockHash = header.hash.toString("hex");
+      const blockHash = header.hash.toString();
 
       const res = await fetch(`${SIDECAR_BASE_URL}/blocks/${blockHash}`);
       const blockInfo = await res.json();
