@@ -1,6 +1,6 @@
 import { useLiveAuthenticate, useTrustchainSdk } from "../../useTrustchainSdk";
 import { useDispatch, useSelector } from "react-redux";
-import { trustchainSelector, liveCredentialsSelector } from "@ledgerhq/trustchain/store";
+import { trustchainSelector, memberCredentialsSelector } from "@ledgerhq/trustchain/store";
 import { useMutation } from "@tanstack/react-query";
 import { JWT } from "@ledgerhq/trustchain/types";
 import { setFlow } from "~/renderer/actions/walletSync";
@@ -10,10 +10,10 @@ export function useDeleteData() {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
-  const liveCredentials = useSelector(liveCredentialsSelector);
+  const memberCredentials = useSelector(memberCredentialsSelector);
 
-  if (!trustchain || !liveCredentials) {
-    throw new Error("trustchain or liveCredentials is missing");
+  if (!trustchain || !memberCredentials) {
+    throw new Error("trustchain or memberCredentials is missing");
   }
 
   const { liveJWT } = useLiveAuthenticate();

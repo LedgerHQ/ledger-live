@@ -9,15 +9,15 @@ const mockedTrustchain: Trustchain = {
   applicationPath: "0'/16'/0'",
 };
 
-const mockedLiveCredentialsPrivateKey = "mock-private-key";
+const mockedMemberCredentialsPrivateKey = "mock-private-key";
 
 function assertTrustchain(trustchain: Trustchain) {
   if (trustchain.rootId !== mockedTrustchain.rootId) {
     throw new Error("in mock context, trustchain must be the mocked trustchain");
   }
 }
-function assertLiveCredentials(memberCredentials: MemberCredentials) {
-  if (memberCredentials.privatekey !== mockedLiveCredentialsPrivateKey) {
+function assertMemberCredentials(memberCredentials: MemberCredentials) {
+  if (memberCredentials.privatekey !== mockedMemberCredentialsPrivateKey) {
     throw new Error("in mock context, memberCredentials must be the mocked memberCredentials");
   }
 }
@@ -49,7 +49,7 @@ class MockSDK implements TrustchainSDK {
 
   async auth(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<JWT> {
     assertTrustchain(trustchain);
-    assertLiveCredentials(memberCredentials);
+    assertMemberCredentials(memberCredentials);
     return Promise.resolve(mockedLiveJWT);
   }
 
@@ -64,7 +64,7 @@ class MockSDK implements TrustchainSDK {
   }> {
     void transport;
     assertSeedIdToken(deviceJWT);
-    assertLiveCredentials(memberCredentials);
+    assertMemberCredentials(memberCredentials);
     if (this._members.length === 0) {
       this._members.push({
         id: memberCredentials.pubkey,
@@ -88,7 +88,7 @@ class MockSDK implements TrustchainSDK {
     if (typeof trustchainId !== "string") {
       throw new Error("trustchainId must be a string");
     }
-    assertLiveCredentials(memberCredentials);
+    assertMemberCredentials(memberCredentials);
     return Promise.resolve(mockedTrustchain);
   }
 
@@ -113,7 +113,7 @@ class MockSDK implements TrustchainSDK {
     void transport;
     assertSeedIdToken(deviceJWT);
     assertTrustchain(trustchain);
-    assertLiveCredentials(memberCredentials);
+    assertMemberCredentials(memberCredentials);
     this._members = this._members.filter(m => m.id !== member.id);
     return Promise.resolve({
       jwt: mockedSeedIdAccessToken,
@@ -136,7 +136,7 @@ class MockSDK implements TrustchainSDK {
   ): Promise<void> {
     assertLiveJWT(jwt);
     assertTrustchain(trustchain);
-    assertLiveCredentials(memberCredentials);
+    assertMemberCredentials(memberCredentials);
     if (this._members.find(m => m.id === member.id)) {
       throw new Error(
         "member already exists. Please set a different MOCK env value for different instances.",

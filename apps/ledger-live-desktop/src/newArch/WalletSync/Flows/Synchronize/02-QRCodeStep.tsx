@@ -7,12 +7,16 @@ import { useLiveAuthenticate, useTrustchainSdk } from "../../useTrustchainSdk";
 import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
 import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
 import QRCode from "~/renderer/components/QRCode";
+import { useDispatch } from "react-redux";
+import { setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 
 type Props = {
   displayPinCode: () => void;
 };
 export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const { colors } = useTheme();
 
@@ -41,29 +45,27 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
 
   const sdk = useTrustchainSdk();
 
-  const { trustchain, liveCredentials } = useLiveAuthenticate();
+  const { trustchain, memberCredentials } = useLiveAuthenticate();
 
   const [url, setUrl] = useState<string | null>(null);
-  const [digits, setDigits] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   console.log("SynchWithQRCodeStep", url);
   console.log("error", error);
-  console.log("digits", digits);
   const onStart = useCallback(() => {
-    if (!trustchain || !liveCredentials) return;
+    if (!trustchain || !memberCredentials) return;
     setError(null);
     createQRCodeHostInstance({
       onDisplayQRCode: url => {
-        console.log("onDisplayQRCode", url);
         setUrl(url);
       },
       onDisplayDigits: digits => {
-        setDigits(digits);
+        dispatch(setQrCodePinCode(digits)); // Should we assert that it is a string of 3 digits ?
+        displayPinCode();
       },
       addMember: async member => {
-        const jwt = await sdk.liveAuthenticate(trustchain, liveCredentials);
-        await sdk.addMember(jwt, trustchain, liveCredentials, member);
+        const jwt = await sdk.auth(trustchain, memberCredentials);
+        await sdk.addMember(jwt, trustchain, memberCredentials, member);
         return trustchain;
       },
     })
@@ -75,11 +77,11 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
       })
       .then(() => {
         setUrl(null);
-        setDigits(null);
+        dispatch(setQrCodePinCode(null));
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
       });
-  }, [trustchain, liveCredentials, sdk]);
+  }, [trustchain, memberCredentials, dispatch, displayPinCode, sdk]);
 
-  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
   useEffect(() => {
     onStart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
