@@ -15,6 +15,7 @@ const transformIncludePatterns = [
   "react-native-startup-time",
   "@segment/analytics-react-native",
   "uuid",
+  "react-native-ble-plx",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
