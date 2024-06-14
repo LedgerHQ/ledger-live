@@ -52,7 +52,7 @@ export function IdentityManager({
   defaultContext: TrustchainSDKContext;
   setContext: (context: TrustchainSDKContext) => void;
 }) {
-  // any new state.liveCredentials?.pubkey will be considered a new identity to save
+  // any new state.memberCredentials?.pubkey will be considered a new identity to save
   // this is the way we identify what is the current member in this list
   // we save/update it by this key on the localStorage
   const [identities, setIdentities] = useState(initialObject);
@@ -82,7 +82,7 @@ export function IdentityManager({
     };
   }, []);
 
-  const currentIdentityKey = state.liveCredentials?.pubkey;
+  const currentIdentityKey = state.memberCredentials?.pubkey;
 
   // sync the current key to the uri query param with id=
   useEffect(() => {
