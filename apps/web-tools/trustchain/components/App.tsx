@@ -114,7 +114,7 @@ const App = () => {
         </Expand>
 
         <Expand title="Trustchain SDK" expanded>
-          <AppInitLiveCredentials
+          <AppInitMemberCredentials
             memberCredentials={memberCredentials}
             setMemberCredentials={setMemberCredentials}
           />
@@ -244,7 +244,7 @@ function AppMockEnv() {
   );
 }
 
-function AppInitLiveCredentials({
+function AppInitMemberCredentials({
   memberCredentials,
   setMemberCredentials,
 }: {

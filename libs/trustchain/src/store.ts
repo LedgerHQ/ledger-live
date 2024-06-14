@@ -77,6 +77,6 @@ export const trustchainSelector = (state: {
   trustchainStore: TrustchainStore;
 }): Trustchain | null => state.trustchainStore.trustchain;
 
-export const liveCredentialsSelector = (state: {
+export const memberCredentialsSelector = (state: {
   trustchainStore: TrustchainStore;
 }): MemberCredentials | null => state.trustchainStore.memberCredentials;

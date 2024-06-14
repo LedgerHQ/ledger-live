@@ -33,3 +33,13 @@ export const removeAllInstances = () => ({
 export const resetWalletSync = () => ({
   type: "WALLET_SYNC_RESET",
 });
+
+export const setQrCodeUrl = (payload: string | null) => ({
+  type: "WALLET_SYNC_CHANGE_QRCODE_URL",
+  payload,
+});
+
+export const setQrCodePinCode = (payload: string | null) => ({
+  type: "WALLET_SYNC_CHANGE_QRCODE_PINCODE",
+  payload,
+});

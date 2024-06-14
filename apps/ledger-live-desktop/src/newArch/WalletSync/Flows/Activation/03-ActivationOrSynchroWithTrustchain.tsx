@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import Loading from "../../components/LoadingStep";
 import { useTranslation } from "react-i18next";
 import { UnsecuredError } from "./03-UnsecuredError";
-import { setLiveCredentials, setTrustchain } from "@ledgerhq/trustchain/store";
+import { setMemberCredentials, setTrustchain } from "@ledgerhq/trustchain/store";
 import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -21,18 +21,18 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
   const hasError = false;
 
   const stuffHandledByTrustchain = useCallback(async () => {
-    const liveCredentials = await sdk.initLiveCredentials();
-    dispatch(setLiveCredentials(liveCredentials));
+    const memberCredentials = await sdk.initMemberCredentials();
+    dispatch(setMemberCredentials(memberCredentials));
 
     const seedIdToken = await runWithDevice(device?.deviceId, transport =>
-      sdk.seedIdAuthenticate(transport),
+      sdk.authWithDevice(transport),
     );
-    console.log("liveCredentials", liveCredentials);
+    console.log("memberCredentials", memberCredentials);
     console.log("seedIdToken", seedIdToken);
     const { trustchain, hasCreatedTrustchain } = await runWithDevice(
       device?.deviceId,
       transport => {
-        return sdk.getOrCreateTrustchain(transport, seedIdToken, liveCredentials);
+        return sdk.getOrCreateTrustchain(transport, seedIdToken, memberCredentials);
       },
     );
     dispatch(setTrustchain(trustchain));

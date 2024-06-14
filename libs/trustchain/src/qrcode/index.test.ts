@@ -1,7 +1,7 @@
 import { setEnv } from "@ledgerhq/live-env";
 import { createQRCodeHostInstance, createQRCodeCandidateInstance } from ".";
 import WebSocket from "ws";
-import { convertKeyPairToLiveCredentials } from "../sdk";
+import { convertKeyPairToMemberCredentials } from "../sdk";
 import { crypto } from "@ledgerhq/hw-trustchain";
 
 setEnv("TRUSTCHAIN_API", "ws://localhost:1234");
@@ -41,7 +41,7 @@ describe("Trustchain QR Code", () => {
       applicationPath: "0'/16'/0'",
     };
     const addMember = jest.fn(() => Promise.resolve(trustchain));
-    const memberCredentials = convertKeyPairToLiveCredentials(await crypto.randomKeypair());
+    const memberCredentials = convertKeyPairToMemberCredentials(await crypto.randomKeypair());
 
     let scannedUrlResolve: (url: string) => void;
     const scannedUrlPromise = new Promise<string>(resolve => {

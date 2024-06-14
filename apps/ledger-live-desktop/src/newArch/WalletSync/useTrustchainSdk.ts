@@ -1,7 +1,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { getSdk } from "@ledgerhq/trustchain/index";
 import {
-  liveCredentialsSelector,
+  memberCredentialsSelector,
   resetTrustchainStore,
   setTrustchain,
   trustchainSelector,
@@ -28,30 +28,30 @@ const defaultContext = { applicationId: 16, name: "Ledger Sync LLD" }; // TODO :
 export function useLiveAuthenticate() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
-  const liveCredentials = useSelector(liveCredentialsSelector);
+  const memberCredentials = useSelector(memberCredentialsSelector);
 
-  if (!trustchain || !liveCredentials) {
-    throw new Error("trustchain or liveCredentials is missing");
+  if (!trustchain || !memberCredentials) {
+    throw new Error("trustchain or memberCredentials is missing");
   }
 
   const { isLoading: isLiveJWTLoading, data: liveJWT } = useQuery({
-    queryKey: [trustchain, liveCredentials],
-    queryFn: () => sdk.liveAuthenticate(trustchain, liveCredentials),
+    queryKey: [trustchain, memberCredentials],
+    queryFn: () => sdk.auth(trustchain, memberCredentials),
     // refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     // staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     // select: data => format(data, cryptoCurrenciesList),
   });
 
-  return { isLiveJWTLoading, liveJWT, trustchain, liveCredentials };
+  return { isLiveJWTLoading, liveJWT, trustchain, memberCredentials };
 }
 
 export function useGetMembers() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
-  const liveCredentials = useSelector(liveCredentialsSelector);
+  const memberCredentials = useSelector(memberCredentialsSelector);
 
-  if (!trustchain || !liveCredentials) {
-    throw new Error("trustchain or liveCredentials is missing");
+  if (!trustchain || !memberCredentials) {
+    throw new Error("trustchain or memberCredentials is missing");
   }
 
   const { isLiveJWTLoading, liveJWT } = useLiveAuthenticate();
@@ -67,20 +67,21 @@ export function useRemoveMembers() {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
-  const liveCredentials = useSelector(liveCredentialsSelector);
+  const memberCredentials = useSelector(memberCredentialsSelector);
 
-  if (!trustchain || !liveCredentials) {
-    throw new Error("trustchain or liveCredentials is missing");
+  if (!trustchain || !memberCredentials) {
+    throw new Error("trustchain or memberCredentials is missing");
   }
 
   const { liveJWT } = useLiveAuthenticate();
 
   const removeMember = async (member: TrustchainMember, liveJWT: JWT) => {
-    runWithDevice("", transport =>
-      sdk.removeMember(transport, liveJWT, trustchain, liveCredentials, member), // TODO : send seedIdToken instead of liveJWT
+    runWithDevice(
+      "",
+      transport => sdk.removeMember(transport, liveJWT, trustchain, memberCredentials, member), // TODO : send seedIdToken instead of liveJWT
     ).then(({ jwt, trustchain }) => {
       dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
-      if (member.id === liveCredentials?.pubkey) {
+      if (member.id === memberCredentials?.pubkey) {
         dispatch(resetTrustchainStore());
       } else {
         dispatch(setTrustchain(trustchain));

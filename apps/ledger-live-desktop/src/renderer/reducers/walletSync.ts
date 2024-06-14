@@ -48,6 +48,8 @@ export type WalletSyncState = {
   step: Step;
   instances: TrustchainMember[];
   hasBeenfaked: boolean;
+  qrCodeUrl: string | null;
+  qrCodePinCode: string | null;
 };
 
 export const initialStateWalletSync: WalletSyncState = {
@@ -56,6 +58,8 @@ export const initialStateWalletSync: WalletSyncState = {
   step: Step.CreateOrSynchronize,
   instances: [],
   hasBeenfaked: false,
+  qrCodePinCode: null,
+  qrCodeUrl: null,
 };
 
 type HandlersPayloads = {
@@ -67,6 +71,8 @@ type HandlersPayloads = {
   WALLET_SYNC_CHANGE_CLEAN_INSTANCES: undefined;
   WALLET_SYNC_RESET: undefined;
   WALLET_SYNC_FAKED: boolean;
+  WALLET_SYNC_CHANGE_QRCODE_URL: string | null;
+  WALLET_SYNC_CHANGE_QRCODE_PINCODE: string | null;
 };
 
 type WalletSyncHandlers<PreciseKey = true> = Handlers<
@@ -115,6 +121,20 @@ const handlers: WalletSyncHandlers = {
     ...state,
     hasBeenfaked: payload,
   }),
+  WALLET_SYNC_CHANGE_QRCODE_URL: (
+    state: WalletSyncState,
+    { payload }: { payload: string | null },
+  ) => ({
+    ...state,
+    qrCodeUrl: payload,
+  }),
+  WALLET_SYNC_CHANGE_QRCODE_PINCODE: (
+    state: WalletSyncState,
+    { payload }: { payload: string | null },
+  ) => ({
+    ...state,
+    qrCodePinCode: payload,
+  }),
 };
 
 // Selectors
@@ -132,6 +152,12 @@ export const walletSyncInstancesSelector = (state: { walletSync: WalletSyncState
 
 export const walletSyncFakedSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.hasBeenfaked;
+
+export const walletSyncQrCodeUrlSelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.qrCodeUrl;
+
+export const walletSyncQrCodePinCodeSelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.qrCodePinCode;
 
 export default handleActions<WalletSyncState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as WalletSyncHandlers<false>,
