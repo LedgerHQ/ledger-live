@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from, lastValueFrom } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
-import { JWT, TrustchainMember } from "@ledgerhq/trustchain/types";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
 
@@ -73,12 +73,11 @@ export function useRemoveMembers() {
     throw new Error("trustchain or memberCredentials is missing");
   }
 
-  const { liveJWT } = useLiveAuthenticate();
-
-  const removeMember = async (member: TrustchainMember, liveJWT: JWT) => {
-    runWithDevice(
-      "",
-      transport => sdk.removeMember(transport, liveJWT, trustchain, memberCredentials, member), // TODO : send seedIdToken instead of liveJWT
+  const removeMember = async (member: TrustchainMember) => {
+    console.log("MEMBER TO REMOVE", member);
+    const seedIdToken = await runWithDevice("", transport => sdk.authWithDevice(transport));
+    runWithDevice("", transport =>
+      sdk.removeMember(transport, seedIdToken, trustchain, memberCredentials, member),
     ).then(({ jwt, trustchain }) => {
       dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
       if (member.id === memberCredentials?.pubkey) {
@@ -90,7 +89,7 @@ export function useRemoveMembers() {
   };
 
   const removeMemberMutation = useMutation({
-    mutationFn: (member: TrustchainMember) => removeMember(member, liveJWT as JWT),
+    mutationFn: (member: TrustchainMember) => removeMember(member),
     mutationKey: ["removeMember"],
     onSuccess: () =>
       dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted })),

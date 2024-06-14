@@ -18,16 +18,20 @@ export const getInitialStore = (): TrustchainStore => {
   };
 };
 
+export const trustchainStoreActionTypePrefix = "TRUSTCHAIN_STORE_";
+
 export enum TrustchainHandlerType {
-  RESET_TRUSTCHAIN_STORE = "RESET_TRUSTCHAIN_STORE",
-  SET_TRUSTCHAIN = "SET_TRUSTCHAIN",
-  SET_MEMBER_CREDENTIALS = "SET_MEMBER_CREDENTIALS",
+  TRUSTCHAIN_STORE_IMPORT_STATE = `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
+  TRUSTCHAIN_STORE_RESET = `${trustchainStoreActionTypePrefix}RESET`,
+  TRUSTCHAIN_STORE_SET_TRUSTCHAIN = `${trustchainStoreActionTypePrefix}SET_TRUSTCHAIN`,
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS = `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
 }
 
 export type TrustchainHandlersPayloads = {
-  RESET_TRUSTCHAIN_STORE: never;
-  SET_TRUSTCHAIN: { trustchain: Trustchain };
-  SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
+  TRUSTCHAIN_STORE_IMPORT_STATE: { trustchainStore: TrustchainStore };
+  TRUSTCHAIN_STORE_RESET: never;
+  TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -44,34 +48,50 @@ export type TrustchainHandlers<PreciseKey = true> = Handlers<
 >;
 
 export const trustchainHandlers: TrustchainHandlers = {
-  RESET_TRUSTCHAIN_STORE: (): TrustchainStore => {
+  TRUSTCHAIN_STORE_IMPORT_STATE: (_, { payload: { trustchainStore } }) => {
+    return trustchainStore;
+  },
+  TRUSTCHAIN_STORE_RESET: (): TrustchainStore => {
     return { ...getInitialStore() };
   },
-  SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
+  TRUSTCHAIN_STORE_SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
     return { ...state, trustchain };
   },
-  SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
     return { ...state, memberCredentials };
   },
 };
 
 // actions
 
+export const importTrustchainStoreState = ({
+  trustchainStore,
+}: {
+  trustchainStore: TrustchainStore;
+}) => ({
+  type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
+  payload: { trustchainStore },
+});
+
 export const resetTrustchainStore = () => ({
-  type: "RESET_TRUSTCHAIN_STORE",
+  type: `${trustchainStoreActionTypePrefix}RESET`,
 });
 
 export const setTrustchain = (trustchain: Trustchain) => ({
-  type: "SET_TRUSTCHAIN",
+  type: `${trustchainStoreActionTypePrefix}SET_TRUSTCHAIN`,
   payload: { trustchain },
 });
 
 export const setMemberCredentials = (memberCredentials: MemberCredentials) => ({
-  type: "SET_MEMBER_CREDENTIALS",
+  type: `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
   payload: { memberCredentials },
 });
 
 // Local Selectors
+
+export const trustchainStoreSelector = (state: {
+  trustchainStore: TrustchainStore;
+}): TrustchainStore => state.trustchainStore;
 
 export const trustchainSelector = (state: {
   trustchainStore: TrustchainStore;
