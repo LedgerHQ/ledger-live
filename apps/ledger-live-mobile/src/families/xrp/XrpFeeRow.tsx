@@ -45,12 +45,12 @@ type Props = {
   transaction: Transaction;
 };
 
-export default function RippleFeeRow({ account, transaction, parentAccount }: Props) {
+export default function XrpFeeRow({ account, transaction, parentAccount }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<Route>();
   const openFees = useCallback(() => {
-    navigation.navigate(ScreenName.RippleEditFee, {
+    navigation.navigate(ScreenName.XrpEditFee, {
       ...route.params,
       accountId: account.id,
       parentId: parentAccount?.id,
