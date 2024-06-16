@@ -84,7 +84,3 @@ pnpm desktop build:testing
 ```
 pnpm desktop test:playwright:speculos <testFileName>
 ```
-or
-```
-pnpm desktop test:playwright:speculos ./<testFileName> --config=tests/playwright.config.ts
-```
