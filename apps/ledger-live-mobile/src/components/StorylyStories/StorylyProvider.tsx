@@ -61,10 +61,12 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   };
 
   const handleEvent = (e: Storyly.StoryEvent) => {
-    if (e.event === "StoryGroupClosed" || e.event === "StoryGroupCompleted") clear();
+    if (["StoryGroupClosed", "StoryGroupCompleted", "StoryPaused"].includes(e.event)) {
+      clear();
+    }
     if (e.event === "StoryCTAClicked" && e?.story?.media?.actionUrl) {
       Linking.openURL(e.story.media.actionUrl);
-      storylyRef.current?.close?.();
+      clear();
     }
   };
 
