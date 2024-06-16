@@ -48,6 +48,7 @@ for (const [i, currency] of currencies.entries()) {
       await app.account.expectAccountBalance();
       await app.account.expectLastOperationsVisibility();
       await app.account.expectAddressIndex(0);
+      await app.account.expectShowMoreButton();
     });
   });
 }
