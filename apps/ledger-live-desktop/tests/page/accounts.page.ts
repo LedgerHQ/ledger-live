@@ -11,7 +11,7 @@ export class AccountsPage extends AppPage {
   private contextMenuEdit = this.page.locator("data-test-id=accounts-context-menu-edit");
   private settingsDeleteButton = this.page.locator("data-test-id=account-settings-delete-button");
   private settingsConfirmButton = this.page.locator("data-test-id=modal-confirm-button");
-  private accountListNumber = this.page.locator(`[data-test-id^="account-component-"]`);
+  private accountListNumber = this.page.locator(`[tabindex="-1"]`); //MArche pas
 
   async openAddAccountModal() {
     await this.addAccountButton.click();

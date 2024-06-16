@@ -131,4 +131,18 @@ export class Currency {
     [DeviceLabels.AMOUT, DeviceLabels.DESTINATION, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.PUBLICKEY, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
   );
+  static readonly MATIC = new Currency(
+    "Polygon",
+    "MATIC",
+    "Polygon",
+    [DeviceLabels.TODO, DeviceLabels.TODO, DeviceLabels.TODO, DeviceLabels.TODO],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly BNB = new Currency(
+    "Binance Smart Chain",
+    "BNB",
+    "Binance Smart Chain",
+    [DeviceLabels.TODO, DeviceLabels.TODO, DeviceLabels.TODO, DeviceLabels.TODO],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
 }
