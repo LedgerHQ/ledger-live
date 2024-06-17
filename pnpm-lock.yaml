@@ -218,8 +218,8 @@ importers:
         specifier: ^3.5.1
         version: 3.13.0
       ws:
-        specifier: ^8.6.0
-        version: 8.16.0
+        specifier: ^8.17.1
+        version: 8.17.1
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -12382,7 +12382,7 @@ packages:
       text-table: 0.2.0
       url-join: 4.0.0
       wrap-ansi: 7.0.0
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - bluebird
       - bufferutil
@@ -12399,15 +12399,9 @@ packages:
       metro: '*'
       metro-core: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
-      glob:
-        optional: true
       metro:
         optional: true
       metro-core:
-        optional: true
-      minimatch:
         optional: true
     dependencies:
       '@babel/runtime': 7.24.1
@@ -12485,7 +12479,7 @@ packages:
       text-table: 0.2.0
       url-join: 4.0.0
       wrap-ansi: 7.0.0
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - '@react-native/babel-preset'
       - bluebird
@@ -14867,7 +14861,7 @@ packages:
       '@ledgerhq/wallet-api-core': 1.10.1
       '@ledgerhq/wallet-api-server': 1.5.10(react@18.2.0)(rxjs@7.8.1)
       rxjs: 7.8.1
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - react
@@ -16512,7 +16506,7 @@ packages:
     dependencies:
       '@polkadot/x-global': 12.6.2
       tslib: 2.6.2
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -17655,9 +17649,6 @@ packages:
 
   /@react-native-community/cli-tools@12.3.6:
     resolution: {integrity: sha512-FPEvZn19UTMMXUp/piwKZSh8cMEfO8G3KDtOwo53O347GTcwNrKjgZGtLSPELBX2gr+YlzEft3CoRv2Qmo83fQ==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.7
       chalk: 4.1.2
@@ -18287,7 +18278,7 @@ packages:
       open: 7.4.2
       serve-static: 1.15.0
       temp-dir: 2.0.0
-      ws: 7.5.9
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -22104,7 +22095,7 @@ packages:
       util: 0.12.5
       util-deprecate: 1.0.2
       watchpack: 2.4.1
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -22882,6 +22873,7 @@ packages:
 
   /@substrate/connect@0.8.10:
     resolution: {integrity: sha512-DIyQ13DDlXqVFnLV+S6/JDgiGowVRRrh18kahieJxhgvzcWicw5eLc6jpfQ0moVVLBYkO7rctB5Wreldwpva8w==}
+    deprecated: versions below 1.x are no longer maintained
     requiresBuild: true
     dependencies:
       '@substrate/connect-extension-protocol': 2.0.0
@@ -25403,7 +25395,7 @@ packages:
     dependencies:
       '@noble/hashes': 1.4.0
       eventemitter3: 5.0.1
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -25696,9 +25688,6 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependenciesMeta:
-      ajv:
-        optional: true
     dependencies:
       ajv: 8.11.2
 
@@ -32673,7 +32662,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -32910,8 +32898,6 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
-      expo-file-system:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -32943,8 +32929,6 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
-      expo-file-system:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -32974,8 +32958,6 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-constants:
-        optional: true
       expo-file-system:
         optional: true
       expo-modules-core:
@@ -33551,8 +33533,6 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-modules-autolinking:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -39407,7 +39387,7 @@ packages:
       whatwg-encoding: 1.0.5
       whatwg-mimetype: 2.3.0
       whatwg-url: 9.1.0
-      ws: 8.16.0
+      ws: 8.17.1
       xml-name-validator: 3.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -39449,7 +39429,7 @@ packages:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 10.0.0
-      ws: 8.16.0
+      ws: 8.17.1
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -39490,7 +39470,7 @@ packages:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-      ws: 8.16.0
+      ws: 8.17.1
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -41701,9 +41681,6 @@ packages:
   /metro-transform-worker@0.80.8:
     resolution: {integrity: sha512-+4FG3TQk3BTbNqGkFb2uCaxYTfsbuFOCKMMURbwu0ehCP8ZJuTUramkaNZoATS49NSAkRgUltgmBa4YaKZ5mqw==}
     engines: {node: '>=18'}
-    peerDependenciesMeta:
-      metro-minify-terser:
-        optional: true
     dependencies:
       '@babel/core': 7.24.3
       '@babel/generator': 7.24.1
@@ -48298,7 +48275,7 @@ packages:
       '@babel/runtime': 7.24.1
       eventemitter3: 4.0.7
       uuid: 8.3.2
-      ws: 8.16.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     optionalDependencies:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
@@ -49022,7 +48999,7 @@ packages:
     resolution: {integrity: sha512-B50vRgTY6v3baYH6uCgL15tfaag5tcS2o/P5q1OiXcKGv1axZDfz2dzzMuIkVpyMR2ug11F6EAtQlmYBQd292g==}
     requiresBuild: true
     dependencies:
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -53898,7 +53875,7 @@ packages:
       webpack: 5.91.0(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.91.0)
       webpack-dev-middleware: 5.3.4(webpack@5.91.0)
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -53948,7 +53925,7 @@ packages:
       spdy: 4.0.2
       webpack: 5.89.0
       webpack-dev-middleware: 5.3.4(webpack@5.89.0)
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -53998,7 +53975,7 @@ packages:
       spdy: 4.0.2
       webpack: 5.91.0(metro@0.80.8)
       webpack-dev-middleware: 5.3.4(webpack@5.91.0)
-      ws: 8.16.0
+      ws: 8.17.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -54940,9 +54917,22 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+    dev: false
 
-  /ws@8.16.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
-    resolution: {integrity: sha512-HS0c//TP7Ina87TfiPUz1rQzMhHrl/SG2guqRcTOIUYD2q8uhUdNHZYJUaQ8aTGPzCh+c6oawMKW35nFl1dxyQ==}
+  /ws@8.17.1:
+    resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
+  /ws@8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+    resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
