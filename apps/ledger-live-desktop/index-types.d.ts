@@ -58,6 +58,8 @@ interface Window {
   // eslint-disable-next-line
   analytics: any;
 
+  getAllFeatureFlags: (appLanguage: string) => Partial<{ [key in FeatureId]: Feature }>;
+
   // for mocking purposes apparently?
   // eslint-disable-next-line
   mock: {

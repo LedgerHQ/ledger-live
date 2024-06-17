@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 
@@ -11,6 +12,10 @@ export class PortfolioPage extends AppPage {
   private showAllButton = this.page.getByText("Show all");
   private assetRow = (currency: string) =>
     this.page.locator(`data-test-id=asset-row-${currency.toLowerCase()}`);
+
+  async expectPortfolioEmpty() {
+    await expect(this.emptyStateTitle).toBeVisible();
+  }
 
   @step("Open `Add account` modal")
   async openAddAccountModal() {
