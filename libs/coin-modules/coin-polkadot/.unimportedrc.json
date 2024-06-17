@@ -10,6 +10,21 @@
     "src/types/errors.ts",
     "src/index.ts"
   ],
-  "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.{js,jsx,ts,tsx}"],
-  "ignoreUnresolved": []
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": [
+    "src/test/coin-tester/chopsticks-sidecar.ts",
+    "src/test/coin-tester/indexer.ts",
+    "src/test/coin-tester/scenarios/basic.ts",
+    "src/test/coin-tester/scenarios/utils.ts",
+    "src/test/fixtures.ts"
+  ],
+  "ignoreUnused": [
+    "@polkadot/api"
+  ]
 }

@@ -338,6 +338,7 @@ export const getAccount = async (addr: string) => {
   const balances = await getBalances(addr);
   const stakingInfo = await getStakingInfo(addr);
   const nominations = await getNominations(addr);
+
   return { ...balances, ...stakingInfo, nominations };
 };
 
@@ -405,11 +406,15 @@ export const getStakingInfo = async (addr: string) => {
 
   const eraLength = sessionsPerEra.multipliedBy(epochDuration).multipliedBy(blockTime).toNumber();
   const unlockings = stakingInfo?.staking.unlocking
-    ? stakingInfo?.staking?.unlocking.map<PolkadotUnlocking>(lock => ({
-        amount: new BigNumber(lock.value),
-        // This is an estimation of the date of completion, since it depends on block validation speed
-        completionDate: new Date(activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength),
-      }))
+    ? stakingInfo?.staking?.unlocking.map<PolkadotUnlocking>(lock => {
+        return {
+          amount: new BigNumber(lock.value),
+          // This is an estimation of the date of completion, since it depends on block validation speed
+          completionDate: new Date(
+            activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength,
+          ),
+        };
+      })
     : [];
   const now = new Date();
   const unlocked = unlockings.filter(lock => lock.completionDate <= now);
@@ -439,7 +444,11 @@ export const getStakingInfo = async (addr: string) => {
  */
 export const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
   const nominations = await fetchNominations(addr);
-  if (!nominations) return [];
+
+  if (!nominations) {
+    return [];
+  }
+
   return nominations.targets.map<PolkadotNomination>(nomination => ({
     address: nomination.address,
     value: new BigNumber(nomination.value || 0),
@@ -481,6 +490,7 @@ export const submitExtrinsic = async (extrinsic: string): Promise<string> => {
   } = await callSidecar("/transaction", "POST", {
     tx: extrinsic,
   });
+
   return data.hash;
 };
 
