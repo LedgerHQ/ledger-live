@@ -8,7 +8,13 @@ import { APDU } from "src/commands/entities/APDU";
  * ins: 0x6c
  * p1: 0x00
  * p2: 0x00
- * data: will filled at runtime
+ * data:
+ *  - LC: BACKUP_LEN_LEN (=0x04) + APP_NAME_LEN (1 byte)
+ *  - DATA: BACKUP_LEN + APP_NAME
+ *
+ * For example, the 'bitcoin' app with backup of length 0x00007000:
+ *    1. LC is 0x0b
+ *    2. DATA is 0x00007000 0x626974636f696e
  */
 const RESTORE_APP_STORAGE_INIT: APDU = [0xe0, 0x6c, 0x00, 0x00, undefined];
 
@@ -36,10 +42,15 @@ const RESPONSE_STATUS_SET: number[] = [
  *
  * @param transport - The transport object used for communication with the device.
  * @param appName - The name of the application to restore the storage for.
+ * @param backupSize - The size of the backup to restore.
  * @returns A promise that resolves to a string representing the parsed response.
  * @throws {TransportStatusError} If the response status is invalid.
  */
-export async function restoreAppStorageInit(transport: Transport, appName: string): Promise<void> {
+export async function restoreAppStorageInit(
+  transport: Transport,
+  appName: string,
+  backupSize: number,
+): Promise<void> {
   const tracer = new LocalTracer("hw", {
     transport: transport.getTraceContext(),
     function: "restoreAppStorageInit",
@@ -47,8 +58,9 @@ export async function restoreAppStorageInit(transport: Transport, appName: strin
   tracer.trace("Start");
 
   const params: Buffer = Buffer.concat([
-    Buffer.from([appName.length]),
-    Buffer.from(appName, "ascii"),
+    Buffer.from([appName.length + 4]), // LC
+    Buffer.from(backupSize.toString(16).padStart(8, "0"), "hex"), // BACKUP_LEN
+    Buffer.from(appName, "ascii"), // APP_NAME
   ]);
   RESTORE_APP_STORAGE_INIT[4] = params;
 

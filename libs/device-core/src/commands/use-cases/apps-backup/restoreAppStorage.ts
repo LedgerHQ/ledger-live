@@ -1,6 +1,5 @@
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
-import { check } from "prettier";
 import { APDU } from "src/commands/entities/APDU";
 
 /**
@@ -9,7 +8,7 @@ import { APDU } from "src/commands/entities/APDU";
  * ins: 0x6d
  * p1: 0x00
  * p2: 0x00
- * data: CHUNK_LEN
+ * data: CHUNK_LEN + CHUNK
  */
 const RESTORE_APP_STORAGE: APDU = [0xe0, 0x6d, 0x00, 0x00, undefined];
 
@@ -49,7 +48,7 @@ export async function restoreAppStorage(transport: Transport, chunk: string): Pr
   });
   tracer.trace("Start");
 
-  const params = Buffer.concat([Buffer.from([check.length]), Buffer.from(chunk, "hex")]);
+  const params = Buffer.concat([Buffer.from([chunk.length]), Buffer.from(chunk, "hex")]);
   RESTORE_APP_STORAGE[4] = params;
 
   const response = await transport.send(...RESTORE_APP_STORAGE, RESPONSE_STATUS_SET);
@@ -65,7 +64,9 @@ function parseResponse(data: Buffer): void {
     tracer.trace("Result status from 0xe06d0000", { status });
   }
 
-  if (status !== StatusCodes.OK) {
-    throw new TransportStatusError(status);
+  if (status === StatusCodes.OK) {
+    return;
   }
+
+  throw new TransportStatusError(status);
 }
