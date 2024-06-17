@@ -1,7 +1,4 @@
 import React, { useCallback, useEffect } from "react";
-import Loading from "../../components/LoadingStep";
-import { useTranslation } from "react-i18next";
-import { UnsecuredError } from "./03-UnsecuredError";
 import { setMemberCredentials, setTrustchain } from "@ledgerhq/trustchain/store";
 import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -9,16 +6,16 @@ import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { runWithDevice, useTrustchainSdk } from "../../useTrustchainSdk";
 
+import { DeviceModelId } from "@ledgerhq/devices";
+import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
+
 type Props = {
   device: Device | null;
 };
 
 export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
-  const { t } = useTranslation();
   const sdk = useTrustchainSdk();
   const dispatch = useDispatch();
-
-  const hasError = false;
 
   const stuffHandledByTrustchain = useCallback(async () => {
     const memberCredentials = await sdk.initMemberCredentials();
@@ -45,13 +42,17 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
   }, [sdk, dispatch, device?.deviceId]);
 
   useEffect(() => {
-    !hasError && stuffHandledByTrustchain();
+    stuffHandledByTrustchain();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return hasError ? (
-    <UnsecuredError />
-  ) : (
-    <Loading title={t("walletSync.loading.title")} subtitle={t("walletSync.loading.activation")} />
-  );
+  if (!device) return null;
+
+  return <FollowStepsOnDevice modelId={device.modelId as DeviceModelId} />;
+
+  //hasError ? (
+  //   <UnsecuredError />
+  // ) : (
+  //   <Loading title={t("walletSync.loading.title")} subtitle={t("walletSync.loading.activation")} />
+  // );
 }

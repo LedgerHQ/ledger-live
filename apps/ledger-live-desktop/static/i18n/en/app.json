@@ -6404,6 +6404,10 @@
       "remove": "Remove",
       "deleteInstanceSuccess": "Your {{instanceName}} is no longer synchronized",
       "deleteInstanceError": "Something went wrong with the desynchronization of {{instanceName}}"
+    },
+    "deviceAction": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instruction which appear on your Ledger’s Trusted Display"
     }
   }
 }

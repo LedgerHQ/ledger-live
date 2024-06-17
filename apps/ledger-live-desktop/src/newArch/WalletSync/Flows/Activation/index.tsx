@@ -47,7 +47,7 @@ const WalletSyncActivation = () => {
       flexDirection="column"
       height="100%"
       paddingX="64px"
-      alignSelf="center"
+      alignItems="center"
       justifyContent="center"
       rowGap="48px"
     >
