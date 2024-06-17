@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { Tooltip } from "react-tooltip";
@@ -25,6 +26,9 @@ import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
+import { Account } from "@ledgerhq/types-live";
+import { WalletState, initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
+import { Loading } from "./Loading";
 
 const Container = styled.div`
   padding: 0 10px 50px 0;
@@ -33,6 +37,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+const initialState = {
+  accounts: [],
+  walletState: walletInitialState,
+};
 
 const App = () => {
   const [context, setContext] = useState(defaultContext);
@@ -51,9 +60,27 @@ const App = () => {
     [],
   );
 
+  // this is the accounts and wallet state as it will be used by Ledger Live (here, without redux)
+
+  const [state, setState] = useState<State>(initialState);
+
+  const accountsSyncControl = useState<boolean>(false);
+  const [accountsSync, setAccountsSync] = accountsSyncControl;
+
+  const takeControl = useCallback(() => {
+    setAccountsSync(false);
+  }, [setAccountsSync]);
+
+  // turning accounts sync off will cascade to state reset
+  useEffect(() => {
+    if (!accountsSync) {
+      setState(initialState);
+    }
+  }, [accountsSync]);
+
   const [wssdkHandledVersion, setWssdkHandledVersion] = useState(0);
 
-  const version = wssdkHandledVersion;
+  const version = state.walletState.wsState.version || wssdkHandledVersion;
 
   const [members, setMembers] = useState<TrustchainMember[] | null>(null);
 
@@ -236,9 +263,26 @@ const App = () => {
               memberCredentials={memberCredentials}
               version={version}
               setVersion={setWssdkHandledVersion}
+              forceReadOnlyData={state.walletState.wsState.data}
+              readOnly={accountsSync}
+              takeControl={takeControl}
             />
           ) : (
             "Please create a trustchain first"
+          )}
+        </Expand>
+
+        <Expand title="Accounts Sync" dynamicControl={accountsSyncControl}>
+          {trustchain && memberCredentials ? (
+            <AppAccountsSync
+              deviceId={deviceId}
+              trustchain={trustchain}
+              memberCredentials={memberCredentials}
+              state={state}
+              setState={setState}
+            />
+          ) : (
+            "Prease create a trustchain first"
           )}
         </Expand>
 
@@ -247,5 +291,20 @@ const App = () => {
     </TrustchainSDKContext.Provider>
   );
 };
+
+type State = {
+  accounts: Account[];
+  walletState: WalletState;
+};
+
+const AppAccountsSync = dynamic<{
+  deviceId: string;
+  trustchain: Trustchain;
+  memberCredentials: MemberCredentials;
+  state: State;
+  setState: (_: (_: State) => State) => void;
+}>(() => import("./AppAccountsSync"), {
+  loading: () => <Loading />,
+});
 
 export default App;
