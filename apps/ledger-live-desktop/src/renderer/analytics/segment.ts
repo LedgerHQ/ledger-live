@@ -72,10 +72,10 @@ const getPtxAttributes = () => {
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
-  const ptxDemo0Enabled = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
-  const ptxDemo1Enabled = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
-  const ptxThorswapEnabled = analyticsFeatureFlagMethod("ptxSwapThorswapProvider")?.enabled;
-  const ptxExodusEnabled = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
+  const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
+  const ptxSwapLiveAppDemoOne = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
+  const ptxSwapThorswapProvider = analyticsFeatureFlagMethod("ptxSwapThorswapProvider")?.enabled;
+  const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -96,10 +96,10 @@ const getPtxAttributes = () => {
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxSwapMoonpayProviderEnabled,
-    ptxDemo0Enabled,
-    ptxDemo1Enabled,
-    ptxThorswapEnabled,
-    ptxExodusEnabled,
+    ptxSwapLiveAppDemoZero,
+    ptxSwapLiveAppDemoOne,
+    ptxSwapThorswapProvider,
+    ptxSwapExodusProvider,
   };
 };
 
