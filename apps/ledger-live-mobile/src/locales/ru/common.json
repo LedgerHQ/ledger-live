@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Ошибка порядкового номера",
       "description" : "Закройте окно и повторите попытку позже"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Обмен недоступен. Необходимо использовать счёт Tezos для первоначальной отправки/делегирования или изменить пару для обмена"
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "Рыночная цена {{currencyTicker}}",
       "currencyPrice" : "Цена {{currencyTicker}}",
-      "currencyPriceChange" : "Изменение 24ч"
+      "currencyPriceChange" : {
+        "day" : "Изменение 24ч",
+        "week" : "Изменение 7д",
+        "month" : "Изменение 30д",
+        "year" : "Изменение за год",
+        "all" : "Изменение за год"
+      }
     },
     "quickActions" : {
       "buy" : "Покупка",
@@ -2714,6 +2723,8 @@
       "languageDesc" : "Выберите язык интерфейса Ledger Live.",
       "dateFormat" : "Формат даты",
       "dateFormatDesc" : "Выберите формат даты для Ledger Live",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Создайте резервную копию данных и незаметно синхронизируйте несколько приложений Ledger Live",
       "region" : "Регион",
       "regionDesc" : "Выберите регион, чтобы обновить форматы дат, времени и валют.",
       "password" : "Блокировка приложения",
@@ -3130,9 +3141,6 @@
         "title" : "Добро пожаловать в Обмен криптоактивов",
         "whatIsSwap" : "Что такое Обмен или Swap?",
         "disclaimer" : "Криптовалюту можно менять непосредственно на устройстве Ledger. Эта услуга недоступна в США и некоторых других странах."
-      },
-      "main" : {
-        "header" : "Обмен"
       },
       "notAvailable" : {
         "title" : "Услуга временно недоступна или не предоставляется в вашей стране"
@@ -3840,35 +3848,9 @@
     "tokens" : {
       "title" : "Добавить токен",
       "createParentCurrencyAccount" : "Добавить счёт {{parrentCurrencyName}}",
-      "erc20" : {
-        "title" : "Добавить токен",
-        "disclaimer" : "{{tokenName}} – это ERC20-токен.\nПолучать токены можно непосредственно на счёт в сети Эфириума.",
-        "learnMore" : "Подробнее об ERC-20"
-      },
-      "trc10" : {
-        "title" : "Добавить токен",
-        "disclaimer" : "{{tokenName}} – это токен TRC-10.\nПолучать токены можно непосредственно на счёт в сети Tron.",
-        "learnMore" : "Подробнее о TRC-20"
-      },
-      "trc20" : {
-        "title" : "Добавить токен",
-        "disclaimer" : "{{tokenName}} – это токен TRC-20.\nПолучать токены можно непосредственно на счёт в сети Tron.",
-        "learnMore" : "Подробнее о TRC-20"
-      },
-      "asa" : {
-        "title" : "Добавить токен",
-        "disclaimer" : "{{tokenName}} – это ASA-токен.\nПолучать токены можно непосредственно на счёт в сети Algorand.",
-        "learnMore" : "Подробнее"
-      },
-      "bep20" : {
-        "title" : "Добавить токен",
-        "disclaimer" : "{{tokenName}} – это токен BEP-20.\nПолучать токены можно непосредственно на счёт BNB.",
-        "learnMore" : "Подробнее о BEP-20"
-      },
-      "vip180" : {
-        "title" : "Добавить токен",
-        "disclaimer" : "{{tokenName}} — это токен VIP-180.\nПолучать токены можно непосредственно на счёт VET.",
-        "learnMore" : "Подробнее о VIP-180"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) – это токен {{tokenType}}.\nВы можете получать их непосредственно на счёт {{currency}}.",
+        "learnMore" : "Подробнее о {{tokenType}}"
       }
     },
     "showMoreChainType" : "Другие типы адресов",
@@ -4325,7 +4307,8 @@
       "installUpdate" : {
         "titleInactive" : "Установка",
         "titleActive" : "Установка обновления",
-        "description" : "{{deviceName}} перезагрузится несколько раз.\n\nДля завершения процесса разблокируйте {{deviceName}} с помощью ПИН-кода после установки."
+        "description" : "{{deviceName}} перезагрузится несколько раз.\n\nДля завершения процесса разблокируйте {{deviceName}} с помощью ПИН-кода после установки.",
+        "descriptionNanoXBle" : "{{deviceName}} перезагрузится несколько раз.\n\nЕсли устройство выключится и не перезапустится автоматически, включите его самостоятельно.\n\nДля завершения процесса разблокируйте {{deviceName}} с помощью ПИН-кода после установки."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4339,14 @@
       "description" : "Обновите прошивку Nano, подключив кошелёк к настольному приложению Ledger Live",
       "pleaseConnectUsbTitle" : "Необходим USB-кабель",
       "pleaseConnectUsbDescription" : "Чтобы начать обновление прошивки, подключите {{deviceName}} к мобильному телефону с помощью USB-кабеля."
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "Устройство отключено",
+          "description" : "Не удалось продолжить обновление из-за потери подключения к {{deviceName}}"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -6134,6 +6125,7 @@
       "subtitle" : "Познакомьтесь с миром Web3, интегрированным в Ledger",
       "section" : {
         "recentlyUsed" : "Недавние",
+        "locallyLoaded" : "Локально загруженные",
         "categories" : "Категории",
         "clearAll" : "Очистить все"
       },
@@ -6231,9 +6223,10 @@
       },
       "order" : {
         "topGainers" : "Прибыльные",
-        "market_cap" : "Рейтинг",
-        "market_cap_asc" : "Капитализация возр.",
-        "market_cap_desc" : "Капитализация убыв."
+        "topLosers" : "Убыточные",
+        "marketCap" : "Капитализация",
+        "asc" : "Капитализация возр.",
+        "desc" : "Капитализация убыв."
       },
       "currency" : "Валюта",
       "time" : "Период",
@@ -6391,7 +6384,7 @@
       "title" : "Предпросмотр",
       "loading" : "Загрузка предпросмотра",
       "setPicture" : "Установить на экран блокировки",
-      "editPicture" : "Изменить изображение",
+      "editPicture" : "Изменить картинку",
       "pickDeviceModel" : "Выберите устройство"
     },
     "nftGallery" : {
@@ -6563,7 +6556,6 @@
         },
         "swap" : {
           "title" : "Обменять",
-          "label" : "Популярно",
           "body" : "Обменивайте криптовалюты безопасно"
         },
         "receive" : {
