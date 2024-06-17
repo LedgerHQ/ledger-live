@@ -928,7 +928,7 @@
       "description": "Please close the window and try again later"
     },
     "TonCommentInvalid": {
-      "title": "Comment must be up to 120 ascii chars"
+      "title": "Comment must not exceed 120 characters without special characters"
     },
     "TezosUnrevealedAccount": {
       "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."

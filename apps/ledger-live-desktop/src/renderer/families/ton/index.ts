@@ -6,13 +6,13 @@ import {
 import { Account } from "@ledgerhq/types-live";
 import { LLDCoinFamily } from "../types";
 import AccountSubHeader from "./AccountSubHeader";
-import sendAmountFields from "./SendAmountFields";
+import sendRecipientFields from "./SendRecipientFields";
 import operationDetails from "./operationDetails";
 
 const family: LLDCoinFamily<Account, Transaction, TransactionStatus, TonOperation> = {
   operationDetails,
   AccountSubHeader,
-  sendAmountFields,
+  sendRecipientFields,
   getTransactionExplorer: (explorerView, operation) =>
     explorerView &&
     explorerView.tx &&

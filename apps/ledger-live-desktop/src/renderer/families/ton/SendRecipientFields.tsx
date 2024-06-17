@@ -20,12 +20,7 @@ const Root = (props: {
 
   return !subAccount ? (
     <Box flow={1}>
-      <Box
-        horizontal
-        alignItems="center"
-        justifyContent="space-between"
-        style={{ width: "50%", paddingRight: 28 }}
-      >
+      <Box mb={10}>
         <Label>
           <LabelInfoTooltip text={<Trans i18nKey="families.ton.commentWarningText" />}>
             <span>
@@ -34,7 +29,7 @@ const Root = (props: {
           </LabelInfoTooltip>
         </Label>
       </Box>
-      <Box pr={2} pl={2} mb={15} horizontal alignItems="center" justifyContent="space-between">
+      <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
         <Box grow={1}>
           <CommentField {...props} />
         </Box>
@@ -42,9 +37,9 @@ const Root = (props: {
     </Box>
   ) : null;
 };
-
 export default {
   component: Root,
   // Transaction is used here to prevent user to forward
+  // If he format a comment incorrectly
   fields: ["comment", "transaction"],
 };
