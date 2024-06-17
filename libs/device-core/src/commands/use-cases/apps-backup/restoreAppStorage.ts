@@ -1,5 +1,6 @@
-import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
+import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
+import { check } from "prettier";
 import { APDU } from "src/commands/entities/APDU";
 
 /**
@@ -10,7 +11,7 @@ import { APDU } from "src/commands/entities/APDU";
  * p2: 0x00
  * data: CHUNK_LEN
  */
-const RESTORE_APP_STORAGE: APDU = [0xe0, 0x6d, 0x00, 0x00, Buffer.from([])];
+const RESTORE_APP_STORAGE: APDU = [0xe0, 0x6d, 0x00, 0x00, undefined];
 
 /**
  * 0x9000: Success.
@@ -37,19 +38,34 @@ const RESPONSE_STATUS_SET: number[] = [
  * Restores the application storage.
  *
  * @param transport - The transport object used for communication with the device.
+ * @param chunk - The chunk of data to restore.
  * @returns A promise that resolves to a string representing the parsed response.
+ * @throws {TransportStatusError} If the response status is invalid.
  */
-export async function restoreAppStorage(transport: Transport): Promise<string> {
+export async function restoreAppStorage(transport: Transport, chunk: string): Promise<void> {
   const tracer = new LocalTracer("hw", {
     transport: transport.getTraceContext(),
     function: "restoreAppStorage",
   });
   tracer.trace("Start");
 
+  const params = Buffer.concat([Buffer.from([check.length]), Buffer.from(chunk, "hex")]);
+  RESTORE_APP_STORAGE[4] = params;
+
   const response = await transport.send(...RESTORE_APP_STORAGE, RESPONSE_STATUS_SET);
-  return parseResponse(response);
+  parseResponse(response);
 }
 
-function parseResponse(data: Buffer): string {
-  return data.toString("utf-8");
+function parseResponse(data: Buffer): void {
+  const tracer = new LocalTracer("hw", {
+    function: "parseResponse@restoreAppStorage",
+  });
+  const status = data.readUInt16BE(data.length - 2);
+  if (tracer) {
+    tracer.trace("Result status from 0xe06d0000", { status });
+  }
+
+  if (status !== StatusCodes.OK) {
+    throw new TransportStatusError(status);
+  }
 }

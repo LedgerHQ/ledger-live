@@ -1,4 +1,4 @@
-import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
+import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
 import { APDU } from "src/commands/entities/APDU";
 
@@ -34,9 +34,10 @@ const RESPONSE_STATUS_SET: number[] = [
  *
  * @param transport - The transport object used for communication with the device.
  * @returns A promise that resolves to a string representing the parsed response.
+ * @throws {TransportStatusError} If the response status is invalid.
  */
 
-export async function restoreAppStorageCommit(transport: Transport): Promise<string> {
+export async function restoreAppStorageCommit(transport: Transport): Promise<void> {
   const tracer = new LocalTracer("hw", {
     transport: transport.getTraceContext(),
     function: "restoreAppStorageCommit",
@@ -44,9 +45,21 @@ export async function restoreAppStorageCommit(transport: Transport): Promise<str
   tracer.trace("Start");
 
   const response = await transport.send(...RESTORE_APP_STORAGE_COMMIT, RESPONSE_STATUS_SET);
-  return parseResponse(response);
+  parseResponse(response);
 }
 
-function parseResponse(data: Buffer): string {
-  return data.toString("utf-8");
+function parseResponse(data: Buffer): void {
+  const tracer = new LocalTracer("hw", {
+    function: "parseResponse@restoreAppStorageCommit",
+  });
+  const status = data.readUInt16BE(data.length - 2);
+  if (tracer) {
+    tracer.trace("Result status from 0xe06e0000", { status });
+  }
+
+  if (status === StatusCodes.OK) {
+    return;
+  }
+
+  throw new TransportStatusError(status);
 }

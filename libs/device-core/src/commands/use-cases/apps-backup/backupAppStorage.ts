@@ -1,4 +1,4 @@
-import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
+import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
 import { APDU } from "src/commands/entities/APDU";
 
@@ -38,11 +38,12 @@ const RESPONSE_STATUS_SET: number[] = [
  *
  * @param transport - The transport object used to communicate with the device.
  * @returns A promise that resolves to the app storage information as a string.
+ * @throws {TransportStatusError} If the response status is invalid.
  */
-export async function bakcupAppStorage(transport: Transport): Promise<string> {
+export async function backupAppStorage(transport: Transport): Promise<string> {
   const tracer = new LocalTracer("hw", {
     transport: transport.getTraceContext(),
-    function: "bakcupAppStorage",
+    function: "backupAppStorage",
   });
   tracer.trace("Start");
 
@@ -57,5 +58,17 @@ export async function bakcupAppStorage(transport: Transport): Promise<string> {
  * @returns The response data as a string.
  */
 function parseResponse(data: Buffer): string {
-  return data.toString("utf-8");
+  const tracer = new LocalTracer("hw", {
+    function: "parseResponse@backupAppStorage",
+  });
+  const status = data.readUInt16BE(data.length - 2);
+  if (tracer) {
+    tracer.trace("Result status from 0xe06b0000", { status });
+  }
+
+  if (status !== StatusCodes.OK) {
+    throw new TransportStatusError(status);
+  }
+
+  return data.readUIntBE(0, data.length - 2).toString();
 }

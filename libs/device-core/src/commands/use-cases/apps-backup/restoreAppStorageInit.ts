@@ -1,4 +1,4 @@
-import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
+import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
 import { APDU } from "src/commands/entities/APDU";
 
@@ -10,7 +10,7 @@ import { APDU } from "src/commands/entities/APDU";
  * p2: 0x00
  * data: will filled at runtime
  */
-const RESTORE_APP_STORAGE_INIT: APDU = [0xe0, 0x6c, 0x00, 0x00, Buffer.from([])];
+const RESTORE_APP_STORAGE_INIT: APDU = [0xe0, 0x6c, 0x00, 0x00, undefined];
 
 /**
  * 0x9000: Success.
@@ -35,19 +35,39 @@ const RESPONSE_STATUS_SET: number[] = [
  * Restores the application storage initialization.
  *
  * @param transport - The transport object used for communication with the device.
+ * @param appName - The name of the application to restore the storage for.
  * @returns A promise that resolves to a string representing the parsed response.
+ * @throws {TransportStatusError} If the response status is invalid.
  */
-export async function restoreAppStorageInit(transport: Transport): Promise<string> {
+export async function restoreAppStorageInit(transport: Transport, appName: string): Promise<void> {
   const tracer = new LocalTracer("hw", {
     transport: transport.getTraceContext(),
     function: "restoreAppStorageInit",
   });
   tracer.trace("Start");
 
+  const params: Buffer = Buffer.concat([
+    Buffer.from([appName.length]),
+    Buffer.from(appName, "ascii"),
+  ]);
+  RESTORE_APP_STORAGE_INIT[4] = params;
+
   const response = await transport.send(...RESTORE_APP_STORAGE_INIT, RESPONSE_STATUS_SET);
-  return parseResponse(response);
+  parseResponse(response);
 }
 
-function parseResponse(data: Buffer): string {
-  return data.toString("utf-8");
+function parseResponse(data: Buffer): void {
+  const tracer = new LocalTracer("hw", {
+    function: "parseResponse@restoreAppStorageInit",
+  });
+  const status = data.readUInt16BE(data.length - 2);
+  if (tracer) {
+    tracer.trace("Result status from 0xe06c0000", { status });
+  }
+
+  if (status === StatusCodes.OK) {
+    return;
+  }
+
+  throw new TransportStatusError(status);
 }

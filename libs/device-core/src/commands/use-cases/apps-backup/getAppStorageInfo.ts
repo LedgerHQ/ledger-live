@@ -1,6 +1,7 @@
-import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
+import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
 import { APDU } from "src/commands/entities/APDU";
+import { AppStorageInfo } from "src/commands/entities/AppStorageInfo";
 
 /**
  * Name in documentation: INS_APP_STORAGE_GET_INFO
@@ -10,7 +11,7 @@ import { APDU } from "src/commands/entities/APDU";
  * p2: 0x00
  * data: APP_NAME_LEN (1 byte) + APP_NAME (variable)
  */
-const GET_APP_STORAGE_INFO: APDU = [0xe0, 0x6a, 0x00, 0x00, Buffer.from([])];
+const GET_APP_STORAGE_INFO: APDU = [0xe0, 0x6a, 0x00, 0x00, undefined];
 
 /**
  * 0x9000: Success.
@@ -26,17 +27,28 @@ const RESPONSE_STATUS_SET: number[] = [
 ];
 
 /**
- * Retrieves the storage information of the app from the device.
+ * Retrieves the application storage information from the device.
  *
  * @param transport - The transport object used to communicate with the device.
- * @returns A promise that resolves to a string representing the app storage information.
+ * @param appName - The name of the application to retrieve the storage information for.
+ * @returns A promise that resolves to the application storage information.
+ * @throws {TransportStatusError} If the response status is invalid.
  */
-export async function getAppStorageInfo(transport: Transport): Promise<string> {
+export async function getAppStorageInfo(
+  transport: Transport,
+  appName: string,
+): Promise<AppStorageInfo> {
   const tracer = new LocalTracer("hw", {
     transport: transport.getTraceContext(),
     function: "getAppStorageInfo",
   });
   tracer.trace("Start");
+
+  const params: Buffer = Buffer.concat([
+    Buffer.from([appName.length]),
+    Buffer.from(appName, "ascii"),
+  ]);
+  GET_APP_STORAGE_INFO[4] = params;
 
   const response = await transport.send(...GET_APP_STORAGE_INFO, RESPONSE_STATUS_SET);
   return parseResponse(response);
@@ -48,6 +60,23 @@ export async function getAppStorageInfo(transport: Transport): Promise<string> {
  * @param data - The response data received from the device.
  * @returns A string representing the parsed response.
  */
-function parseResponse(data: Buffer): string {
-  return data.toString("utf-8");
+function parseResponse(data: Buffer): AppStorageInfo {
+  const tracer = new LocalTracer("hw", {
+    function: "parseResponse@getAppStorageInfo",
+  });
+  const status = data.readUInt16BE(data.length - 2);
+  if (tracer) {
+    tracer.trace("Result status from 0xe06a0000", { status });
+  }
+
+  if (status === StatusCodes.OK) {
+    const size = data.readUInt32BE(0); // Len = 4
+    const version = data.readUIntBE(4, 4).toString(); // Len = 4
+    const hasSettings = data.readUIntBE(8, 1) === 1; // Len = 1
+    const hasData = data.readUIntBE(9, 1) === 1; // Len = 1
+    const hash = data.subarray(12, 33).toString("hex"); // Len = 20
+    return { size, version, hasSettings, hasData, hash };
+  }
+
+  throw new TransportStatusError(status);
 }
