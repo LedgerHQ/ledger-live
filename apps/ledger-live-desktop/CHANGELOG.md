@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.82.0-next.7
+
+### Patch Changes
+
+- [#7123](https://github.com/LedgerHQ/ledger-live/pull/7123) [`84eb10c`](https://github.com/LedgerHQ/ledger-live/commit/84eb10c36bf6d2ab08cc300b0e208e1fca5fec1f) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Hotfix typing groupedFeatures
+
+- Updated dependencies [[`84eb10c`](https://github.com/LedgerHQ/ledger-live/commit/84eb10c36bf6d2ab08cc300b0e208e1fca5fec1f)]:
+  - @ledgerhq/live-common@34.3.0-next.6
+
 ## 2.82.0-next.6
 
 ### Patch Changes

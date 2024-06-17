@@ -1,5 +1,12 @@
 # web-tools
 
+## 0.6.0-next.6
+
+### Patch Changes
+
+- Updated dependencies [[`84eb10c`](https://github.com/LedgerHQ/ledger-live/commit/84eb10c36bf6d2ab08cc300b0e208e1fca5fec1f)]:
+  - @ledgerhq/live-common@34.3.0-next.6
+
 ## 0.6.0-next.5
 
 ### Patch Changes
