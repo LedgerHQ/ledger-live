@@ -1,6 +1,6 @@
 import { FeatureId } from "@ledgerhq/types-live";
 
-type GroupedFeature = "europa" | "disableNft";
+export type GroupedFeature = "europa" | "disableNft";
 
 /** Helper to group several feature flag ids under a common feature flag */
 export const groupedFeatures: Record<
