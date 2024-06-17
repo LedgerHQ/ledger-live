@@ -30,11 +30,14 @@ for (const [i, currency] of currencies.entries()) {
     let firstAccountName = "NO ACCOUNT NAME YET";
 
     test(`[${currency.uiName}] Add account`, async ({ page }, testInfo) => {
-      await addTestAnnotations(
-        testInfo,
-        ["B2CQA-101", "B2CQA-102", "B2CQA-314", "B2CQA-330", "B2CQA-929", "B2CQA-786"],
-        "Add Account test",
-      );
+      await addTestAnnotations(testInfo, [
+        "B2CQA-101",
+        "B2CQA-102",
+        "B2CQA-314",
+        "B2CQA-330",
+        "B2CQA-929",
+        "B2CQA-786",
+      ]);
 
       const app = new Application(page);
 

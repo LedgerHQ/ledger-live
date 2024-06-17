@@ -37,7 +37,7 @@ on:
         default: false
       export_to_xray:
         description: Send tests results to Xray
-        required: true
+        required: false
         type: boolean
         default: false
       test_plan:

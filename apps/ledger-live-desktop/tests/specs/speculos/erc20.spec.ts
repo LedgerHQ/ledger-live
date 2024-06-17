@@ -13,7 +13,7 @@ const token = "Tether USD";
 
 test.describe.parallel("ERC20 token", () => {
   test(`Check ERC20 token`, async ({ page }, testInfo) => {
-    await addTestAnnotations(testInfo, ["B2CQA-1079"], "ERC20 test");
+    await addTestAnnotations(testInfo, ["B2CQA-1079"]);
 
     const app = new Application(page);
 

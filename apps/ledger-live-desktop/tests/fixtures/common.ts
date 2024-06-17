@@ -13,8 +13,7 @@ import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { responseLogfilePath } from "../utils/networkResponseLogger";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos } from "../utils/speculos";
-import { Spec } from "../utils/speculos";
+import { startSpeculos, stopSpeculos, Spec } from "../utils/speculos";
 
 import { allure } from "allure-playwright";
 
@@ -277,14 +276,11 @@ test.afterEach(async ({ page }, testInfo) => {
 });
 
 export async function addTestAnnotations(testInfo: TestInfo, ids: string[], name: string) {
+export async function addTestAnnotations(testInfo: TestInfo, ids: string[]) {
   for (const id of ids) {
     await allure.tms(id, `https://ledgerhq.atlassian.net/browse/${id}`);
     testInfo.annotations.push({ type: "test_key", description: `${id}` });
   }
-  testInfo.annotations.push({
-    type: "test_summary",
-    description: `${name}`,
-  });
 }
 
 export default test;
