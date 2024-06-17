@@ -21,7 +21,6 @@ import {
   TronUnexpectedFees,
   TronVoteRequired,
 } from "../types/errors";
-import "../../__tests__/test-helpers/setup";
 import { ACTIVATION_FEES } from "../logic/constants";
 import { fromTransactionRaw } from "../bridge/transaction";
 import type { Transaction, TronAccountRaw } from "../types";
