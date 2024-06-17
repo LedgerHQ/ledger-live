@@ -26,7 +26,7 @@ export class AccountPage extends AppPage {
   private accountAdvancedLogs = this.page.locator("data-test-id=Advanced_Logs");
   private operationRows = this.page.locator("[data-test-id^='operation-row-']");
   private closeModal = this.page.locator("data-test-id=modal-close-button");
-  private tokenList = this.page.locator(`className="token-row"`);
+  private tokenList = this.page.locator(`[data-test-id^='token-row-']`);
 
   @step("Navigate to token $0")
   async navigateToToken(token: string) {
@@ -123,8 +123,12 @@ export class AccountPage extends AppPage {
     await this.closeModal.click();
   }
 
-  @step("Expect token to be visible")
-  async expectTokenToBeVisible() {
+  @step("Expect token to be present")
+  async expectTokenToBePresent(tokenName: string, tokenTicker: string) {
     await expect(this.tokenList).toBeVisible();
+    const tokenInfos = await this.tokenList.innerText();
+    console.log(tokenInfos);
+    expect(tokenInfos).toContain(tokenName); //Issue with TRON_WINK
+    expect(tokenInfos).toContain(tokenTicker);
   }
 }

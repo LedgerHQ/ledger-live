@@ -55,6 +55,13 @@ export class Currency {
     [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
+  static readonly ETC = new Currency(
+    "Ethereum Classic",
+    "ETC",
+    "Ethereum Classic",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
   static readonly SOL = new Currency(
     "Solana",
     "SOL",
@@ -135,14 +142,14 @@ export class Currency {
     "Polygon",
     "MATIC",
     "Polygon",
-    [DeviceLabels.TODO, DeviceLabels.TODO, DeviceLabels.TODO, DeviceLabels.TODO],
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
   static readonly BNB = new Currency(
     "Binance Smart Chain",
     "BNB",
     "Binance Smart Chain",
-    [DeviceLabels.TODO, DeviceLabels.TODO, DeviceLabels.TODO, DeviceLabels.TODO],
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
 }

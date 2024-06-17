@@ -1,5 +1,5 @@
-import test from "../../fixtures/common";
-import { specs } from "../../utils/speculos";
+import test from "../../../fixtures/common";
+import { specs } from "../../../utils/speculos";
 import { Application } from "tests/page";
 import { addTmsLink } from "tests/fixtures/common";
 

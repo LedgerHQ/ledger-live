@@ -180,4 +180,10 @@ export class Account {
     "Binance Smart Chain 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
+
+  static readonly EGLD_1 = new Account(
+    Currency.EGLD,
+    "MultiversX 1",
+    "erd1kp2psapk98pjtxr0n583qlq9zurwdwaqcvgh7l5hyj6hh839p5dq82cuw9",
+  );
 }

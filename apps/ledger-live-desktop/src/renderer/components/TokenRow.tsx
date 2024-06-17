@@ -43,7 +43,12 @@ function TokenRow(props: Props) {
   const currency = getAccountCurrency(account);
   const Row = nested ? NestedRow : TableRow;
   return (
-    <Row className="token-row" onClick={onClickRow} tabIndex={-1}>
+    <Row
+      data-test-id={`token-row-${currency.ticker}`}
+      className="token-row"
+      onClick={onClickRow}
+      tabIndex={-1}
+    >
       <Header nested={nested} account={account} />
       <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
       <Countervalue account={account} currency={currency} range={range} />
