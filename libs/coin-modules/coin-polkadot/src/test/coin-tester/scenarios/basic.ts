@@ -218,11 +218,15 @@ const wsProvider = new WsProvider("ws://127.0.0.1:8000", false);
 let api: ApiPromise;
 let unsubscribeNewBlockListener: () => void;
 
+const POLKADOT_NODE_URL = "ws://127.0.0.1:8000";
 const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
 
 const coinConfig: PolkadotCoinConfig = {
   status: {
     type: "active",
+  },
+  node: {
+    url: POLKADOT_NODE_URL,
   },
   sidecar: {
     url: SIDECAR_BASE_URL,
