@@ -1,5 +1,17 @@
 # @ledgerhq/live-cli
 
+## 24.3.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`d5a1300`](https://github.com/LedgerHQ/ledger-live/commit/d5a130034c18c7ac8b1fd3d4c5271423b4f7639d)]:
+  - @ledgerhq/cryptoassets@13.1.0-next.2
+  - @ledgerhq/coin-framework@0.14.0-next.2
+  - @ledgerhq/coin-bitcoin@0.6.0-next.2
+  - @ledgerhq/live-common@34.3.0-next.3
+  - @ledgerhq/live-countervalues@0.2.0-next.2
+  - @ledgerhq/live-wallet@0.2.0-next.3
+
 ## 24.3.0-next.2
 
 ### Patch Changes

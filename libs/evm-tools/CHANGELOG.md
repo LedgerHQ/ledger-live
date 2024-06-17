@@ -1,5 +1,12 @@
 # @ledgerhq/evm-tools
 
+## 1.1.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`d5a1300`](https://github.com/LedgerHQ/ledger-live/commit/d5a130034c18c7ac8b1fd3d4c5271423b4f7639d)]:
+  - @ledgerhq/cryptoassets@13.1.0-next.2
+
 ## 1.1.0-next.1
 
 ### Patch Changes

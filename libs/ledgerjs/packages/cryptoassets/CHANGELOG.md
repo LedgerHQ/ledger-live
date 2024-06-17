@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.1.0-next.2
+
+### Patch Changes
+
+- [#7114](https://github.com/LedgerHQ/ledger-live/pull/7114) [`d5a1300`](https://github.com/LedgerHQ/ledger-live/commit/d5a130034c18c7ac8b1fd3d4c5271423b4f7639d) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Rollback nano app used for Ethereum Classic from Ethereum to Ethereum Classic, due to Classic using a 61 coin type for its derivation, incompatible with the Ethereum app
+
 ## 13.1.0-next.1
 
 ### Patch Changes
