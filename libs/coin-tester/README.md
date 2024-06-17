@@ -20,8 +20,7 @@ pnpm build:libs
 You only have to build speculos locally if you are on a Mac M1. Otherwise you can uncomment the image provided in the docker-compose.yml
 
 1. Clone speculos: `git clone git@github.com:LedgerHQ/speculos.git`
-2. Patch Docker
-3. Patch Dockerfile:
+2. Patch Dockerfile:
 
 ```Dockerfile
 # before
@@ -30,7 +29,7 @@ FROM ghcr.io/ledgerhq/speculos-builder:latest AS builder
 FROM speculos-builder:latest AS builder
 ```
 
-4. Build image
+3. Build image
 ```sh
 cd speculos
 docker build -f build.Dockerfile -t speculos-builder:latest .
