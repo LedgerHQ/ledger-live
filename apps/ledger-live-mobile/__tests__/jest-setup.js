@@ -28,6 +28,16 @@ const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 
 jest.mock("@segment/analytics-react-native", () => mockAnalytics);
 
+jest.mock("react-native-launch-arguments", () => ({}));
+
+NativeModules.BluetoothHelperModule = {
+  E_BLE_CANCELLED: "BLE_UNKNOWN_STATE",
+};
+
+jest.mock("react-native-share", () => ({
+  default: jest.fn(),
+}));
+
 // Mock of Native Modules
 jest.mock("react-native-localize", () => ({
   getTimeZone: jest.fn(),

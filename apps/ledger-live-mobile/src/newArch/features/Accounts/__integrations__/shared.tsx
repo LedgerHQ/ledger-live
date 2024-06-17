@@ -9,7 +9,7 @@ import AddAccountsNavigator from "~/components/RootNavigator/AddAccountsNavigato
 
 const MockComponent = () => {
   const { t } = useTranslation();
-  const [isAddModalOpened, setAddModalOpened] = React.useState(false);
+  const [isAddModalOpened, setAddModalOpened] = React.useState<boolean>(false);
 
   const openAddModal = () => setAddModalOpened(true);
   const closeAddModal = () => setAddModalOpened(false);
