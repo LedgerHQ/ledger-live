@@ -35,7 +35,7 @@ export function RecoverPlayer({ navigation, route }: Props) {
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
-  const devModeEnabled = useEnv("MANAGER_DEV_MODE").toString();
+  const devModeEnabled = useEnv("MANAGER_DEV_MODE")?.toString();
 
   const currencySettings = useSelector(counterValueCurrencySelector);
   const currency = currencySettings.ticker;
