@@ -119,21 +119,27 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
           alignItems="center"
           justifyContent="center"
         >
-          <Flex
-            alignItems="center"
-            justifyContent="center"
-            width={24}
-            height={24}
-            position="absolute"
-          >
-            {url && (
-              <QRCodeContainer bg={"constant.white"} p={4}>
-                <QRCode data={url} />
-              </QRCodeContainer>
-            )}
-
-            {/* <Icons.LedgerLogo size="L" color="constant.black" /> */}
-          </Flex>
+          {url && (
+            <Flex
+              borderRadius={24}
+              position="relative"
+              bg="constant.white"
+              alignItems="center"
+              justifyContent="center"
+              p={4}
+            >
+              <QRCode data={url} />
+              <IconContainer
+                p={1}
+                alignItems="center"
+                justifyContent="center"
+                bg="constant.white"
+                position="absolute"
+              >
+                <Icons.LedgerLogo size="L" color="constant.black" />
+              </IconContainer>
+            </Flex>
+          )}
         </QRContainer>
 
         <MiddleContainer
@@ -165,10 +171,8 @@ const QRContainer = styled(Flex)`
   border: 1px solid ${({ theme }) => theme.colors.opacityDefault.c10};
 `;
 
-const QRCodeContainer = styled(Flex)`
-  border-radius: 24px;
-`;
-
 const Italic = styled(Text)`
   font-style: italic;
 `;
+
+const IconContainer = styled(Flex)``;
