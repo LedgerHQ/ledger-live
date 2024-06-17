@@ -20,7 +20,7 @@ export default function DebugSettings({
   const { getFeature, overrideFeature } = useFeatureFlags();
 
   const ruleThemAll = useCallback(() => {
-    groupedFeatures.stax.featureIds.forEach(featureId =>
+    groupedFeatures.europa.featureIds.forEach(featureId =>
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
     );
     Alert.alert("I can only show you the door, you're the one that has to walk through it.");
