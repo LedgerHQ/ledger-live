@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Erreur dans le numéro de séquence",
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Swap indisponible : effectuez d’abord un envoi/délégation avec ce compte Tezos, ou changez la paire."
     }
   },
   "crash" : {
@@ -1166,15 +1169,15 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "Prenez le contrôle de votre argent.",
+      "title" : "Prenez le contrôle de votre argent",
       "desc" : "Profitez de la liberté de posséder vos cryptos."
     },
     "1" : {
       "title" : "Accédez à la DeFi et aux NFT",
-      "desc" : "Interagissez en toute sécurité avec des applications DeFi de confiance directement depuis Ledger Live."
+      "desc" : "Utilisez en toute sécurité des applications DeFi de confiance directement depuis Ledger Live."
     },
     "2" : {
-      "title" : "Vos accès au Web3",
+      "title" : "Votre porte d’entrée vers le Web3",
       "desc" : "Achetez, vendez et échangez les cryptos leaders, via nos prestataires tiers et en toute sécurité avec votre wallet Ledger."
     },
     "3" : {
@@ -1309,11 +1312,11 @@
       },
       "setupLedger" : {
         "title" : "Configurer votre wallet",
-        "subtitle" : "Si votre Ledger est nouveau ou a été réinitialisé."
+        "subtitle" : "Si votre appareil Ledger est nouveau ou a été réinitialisé."
       },
       "accessWallet" : {
         "title" : "Accéder à votre wallet",
-        "subtitle" : "Si votre Ledger est déjà configuré."
+        "subtitle" : "Si votre appareil Ledger est déjà configuré."
       },
       "buyNano" : {
         "title" : "Acheter un Ledger Nano X",
@@ -1331,7 +1334,7 @@
     "welcomeBackStep" : {
       "title" : "Bienvenue",
       "subtitle" : "Choisissez comment accéder à votre wallet :",
-      "connect" : "Connecter votre Ledger",
+      "connect" : "Connecter votre appareil Ledger",
       "sync" : "Synchroniser avec l’ordinateur"
     },
     "discoverLive" : {
@@ -2003,7 +2006,7 @@
       "supportCta" : "Contacter l’Assistance Ledger"
     },
     "allowManagerDrawer" : {
-      "title" : "Touchez Autoriser pour lancer la vérification de l’authenticité"
+      "title" : "Touchez Autoriser pour lancer la vérification"
     },
     "genuineCheckStep" : {
       "learnMore" : "En savoir plus sur la vérification de l’authenticité",
@@ -2141,7 +2144,7 @@
       },
       "selectionRestore" : {
         "title" : "Restaurer",
-        "desc" : "Vous restaurez l’accès à vos actifs existants à l’aide de votre phrase de récupération secrète ou via Ledger Recover."
+        "desc" : "Vous restaurez l’accès à votre wallet à l’aide de votre phrase de récupération secrète ou via Ledger Recover."
       },
       "selectionContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}.",
       "newSeedDescription" : "Vous voulez en savoir plus sur la phrase de récupération secrète ? Jetez un œil à ces vidéos :",
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "Cours du {{currencyTicker}}",
       "currencyPrice" : "Prix de 1 {{currencyTicker}}",
-      "currencyPriceChange" : "Variation (24h)"
+      "currencyPriceChange" : {
+        "day" : "Variation 24h",
+        "week" : "Variation 7 jours",
+        "month" : "Variation 30 jours",
+        "year" : "Variation 1 an",
+        "all" : "Variation 1 an"
+      }
     },
     "quickActions" : {
       "buy" : "Acheter",
@@ -2714,6 +2723,8 @@
       "languageDesc" : "Choisissez la langue d’affichage de Ledger Live.",
       "dateFormat" : "Format de date",
       "dateFormatDesc" : "Définissez le format de date de Ledger Live.",
+      "walletSync" : "Synchronisation Ledger",
+      "walletSyncDesc" : "Créez une copie de vos données Ledger Live et synchronisez-les facilement avec plusieurs appareils.",
       "region" : "Région",
       "regionDesc" : "Choisissez votre région pour personnaliser les formats de date, d’heure et de nombre.",
       "password" : "Verrouillage",
@@ -3130,9 +3141,6 @@
         "title" : "Bienvenue dans le Swap",
         "whatIsSwap" : "Qu’est-ce que le Swap ?",
         "disclaimer" : "Échangez des cryptos directement via votre wallet Ledger. Ce service n’est pas disponible dans certains pays, y compris aux États-Unis."
-      },
-      "main" : {
-        "header" : "Swap"
       },
       "notAvailable" : {
         "title" : "Service temporairement indisponible ou non disponible dans votre région"
@@ -3840,35 +3848,9 @@
     "tokens" : {
       "title" : "Ajouter un token",
       "createParentCurrencyAccount" : "Ajouter un compte {{parrentCurrencyName}}",
-      "erc20" : {
-        "title" : "Ajouter un token",
-        "disclaimer" : "{{tokenName}} est un token ERC-20.\nVous pouvez recevoir ces tokens directement sur un compte Ethereum.",
-        "learnMore" : "En savoir plus sur les ERC-20"
-      },
-      "trc10" : {
-        "title" : "Ajouter un token",
-        "disclaimer" : "{{tokenName}} est un token TRC-10.\nVous pouvez recevoir ces tokens directement sur un compte TRON.",
-        "learnMore" : "En savoir plus sur les TRC-10"
-      },
-      "trc20" : {
-        "title" : "Ajouter un token",
-        "disclaimer" : "{{tokenName}} est un token TRC-20.\nVous pouvez recevoir ces tokens directement sur un compte TRON.",
-        "learnMore" : "En savoir plus sur les TRC-20"
-      },
-      "asa" : {
-        "title" : "Ajouter un token",
-        "disclaimer" : "{{tokenName}} est un token ASA.\nVous pouvez recevoir ces tokens directement sur un compte Algorand.",
-        "learnMore" : "En savoir plus"
-      },
-      "bep20" : {
-        "title" : "Ajouter un token",
-        "disclaimer" : "{{tokenName}} est un token BEP-20.\nVous pouvez recevoir ces tokens directement sur un compte BNB.",
-        "learnMore" : "En savoir plus sur les BEP-20"
-      },
-      "vip180" : {
-        "title" : "Ajouter un token",
-        "disclaimer" : "{{tokenName}} est un token VIP180.\nVous pouvez recevoir ces tokens directement sur un compte VET.",
-        "learnMore" : "En savoir plus sur les VIP180"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) est un token {{tokenType}}.\nVous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
+        "learnMore" : "En savoir plus sur {{tokenType}}"
       }
     },
     "showMoreChainType" : "Plus de types d’adresses",
@@ -4078,10 +4060,10 @@
       "showLessCTA" : "Afficher moins",
       "otgBanner" : "Pour utiliser un Ledger Nano S ou un Ledger Nano S Plus, connectez-les avec un câble USB.",
       "connectExistingLedger" : "Connecter un Ledger existant",
-      "connectExistingLedgerDescription" : "Si votre Ledger est déjà configuré.",
+      "connectExistingLedgerDescription" : "Si votre appareil Ledger est déjà configuré.",
       "setUpNewLedger" : "Configurer un nouveau wallet",
       "setUpNewLedgerDescription" : "Si votre Ledger n’est pas encore configuré.",
-      "buyDeviceCTA" : "<0>Besoin d’un nouveau Ledger ? </0><1>Acheter maintenant</1>",
+      "buyDeviceCTA" : "<0>Besoin d’un nouveau wallet ? </0><1>Achetez-le ici</1>",
       "item" : {
         "usb" : "Connecté via USB",
         "available" : "Disponible Appuyez pour vous connecter",
@@ -4325,7 +4307,8 @@
       "installUpdate" : {
         "titleInactive" : "Installer la mise à jour",
         "titleActive" : "Installation de la mise à jour",
-        "description" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée."
+        "description" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée.",
+        "descriptionNanoXBle" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nS’il s'éteint et ne redémarre pas automatiquement, veuillez le rallumer par vous-même.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4339,14 @@
       "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur",
       "pleaseConnectUsbTitle" : "Câble USB nécessaire",
       "pleaseConnectUsbDescription" : "Connectez votre {{deviceName}} à votre téléphone avec un câble USB pour lancer la mise à jour du micrologiciel."
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "Appareil déconnecté",
+          "description" : "La connexion avec votre {{deviceName}} a été perdue. La mise à jour n’a pas pu continuer."
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -4427,7 +4418,7 @@
     "changeLanguage" : "Changer la langue",
     "yesChangeLanguage" : "Oui, changer la langue",
     "allowLanguageInstallation" : "Confirmez l’ajout de la langue sur votre {{deviceName}}",
-    "languageInstalled" : "Votre Ledger est maintenant en {{language}}.",
+    "languageInstalled" : "Votre appareil Ledger est maintenant en {{language}}.",
     "languageInstalledDesc" : "Votre appareil est dans votre langue préférée.",
     "firmwareUpdatePrompt" : {
       "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
@@ -5951,7 +5942,7 @@
       "redelegate" : "Confirmez sur votre appareil pour terminer l’opération.",
       "undelegate" : "Confirmez sur votre appareil pour terminer l’opération."
     },
-    "warning" : "Vérifiez que l’adresse affichée sur votre Ledger est identique à celle du {{recipientWording}}.",
+    "warning" : "Vérifiez que l’adresse affichée sur votre appareil Ledger est identique à celle du {{recipientWording}}.",
     "recipientWording" : {
       "send" : "Vérifiez toujours que l’adresse affichée sur votre appareil est identique à celle donnée par le bénéficiaire.",
       "delegate" : "Vérifiez toujours que l’adresse affichée sur votre appareil est identique à celle donnée par le validateur.",
@@ -6134,6 +6125,7 @@
       "subtitle" : "Parcourez l’écosystème Web3 intégré à Ledger.",
       "section" : {
         "recentlyUsed" : "Récemment utilisé",
+        "locallyLoaded" : "Chargées localement",
         "categories" : "Catégories",
         "clearAll" : "Tout effacer"
       },
@@ -6231,9 +6223,10 @@
       },
       "order" : {
         "topGainers" : "Top perf.",
-        "market_cap" : "Rang",
-        "market_cap_asc" : "Rang (capitalisation) asc.",
-        "market_cap_desc" : "Rang (capitalisation) desc."
+        "topLosers" : "Top baisses",
+        "marketCap" : "Rang",
+        "asc" : "Rang (capitalisation) asc.",
+        "desc" : "Rang (capitalisation) desc."
       },
       "currency" : "Monnaie",
       "time" : "Période",
@@ -6303,7 +6296,7 @@
     "designedForStax" : {
       "title" : "<0>Conçu pour le</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous définissez ce NFT comme fond d’écran.",
+        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous définissez ce NFT comme fond d’écran.",
         "cta" : "Compris"
       }
     },
@@ -6563,7 +6556,6 @@
         },
         "swap" : {
           "title" : "Échanger",
-          "label" : "Populaire",
           "body" : "Échangez une crypto contre une autre en toute sécurité."
         },
         "receive" : {
