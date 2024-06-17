@@ -24,7 +24,7 @@ import {
 import "../../__tests__/test-helpers/setup";
 import { ACTIVATION_FEES } from "../logic/constants";
 import { fromTransactionRaw } from "../bridge/transaction";
-import type { Transaction } from "../types";
+import type { Transaction, TronAccountRaw } from "../types";
 
 const unactivatedAddress = "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD";
 const activatedAddress1 = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";

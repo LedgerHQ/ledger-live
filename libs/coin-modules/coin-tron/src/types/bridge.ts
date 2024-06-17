@@ -297,7 +297,7 @@ export type TronTransactionInfo = {
   withdraw_amount?: number;
   unfreeze_amount?: number;
 };
-export type TronTransactionInfoRaw = [number, number, number, number];
+export type TronTransactionInfoRaw = [number, number, number?, number?];
 export type TronAccount = Account & { tronResources: TronResources };
 export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
 export type TransactionStatus = TransactionStatusCommon;

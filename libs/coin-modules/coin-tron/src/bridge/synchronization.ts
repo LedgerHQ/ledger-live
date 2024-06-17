@@ -260,7 +260,7 @@ const postSync = (initial: TronAccount, parent: TronAccount): TronAccount => {
  */
 const mergeSubAccounts = (subAccounts1: TokenAccount[], subAccounts2: TokenAccount[]) => {
   const existingIds = new Set(subAccounts1.map(subAccount => subAccount.id));
-  const filteredSubAccounts2 = subAccounts2
+  const filteredSubAccounts2: TokenAccount[] = subAccounts2
     .map(subAccount => {
       if (existingIds.has(subAccount.id)) {
         return null;
@@ -273,7 +273,7 @@ const mergeSubAccounts = (subAccounts1: TokenAccount[], subAccounts2: TokenAccou
         };
       }
     })
-    .filter(subAccount => subAccount !== null);
+    .filter((elt): elt is NonNullable<typeof elt> => elt !== null);
 
   return subAccounts1.concat(filteredSubAccounts2);
 };

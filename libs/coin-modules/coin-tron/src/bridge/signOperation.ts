@@ -5,7 +5,6 @@ import { Observable } from "rxjs";
 import {
   claimRewardTronTransaction,
   createTronTransaction,
-  fetchTronAccount,
   fetchTronContract,
   freezeTronTransaction,
   legacyUnfreezeTronTransaction,
@@ -14,7 +13,7 @@ import {
   voteTronSuperRepresentatives,
   withdrawExpireUnfreezeTronTransaction,
 } from "../network";
-import { Transaction, TronAccount, TronSendTrc20ToNewAccountForbidden, TronSigner } from "../types";
+import { Transaction, TronAccount, TronSigner } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import getEstimatedFees from "./getEstimateFees";
 

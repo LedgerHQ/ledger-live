@@ -10,7 +10,9 @@ import { getEstimatedBlockSize, extractBandwidthInfo } from "../logic/utils";
 // 2. If not enough, will cost some TRX
 // 3. normal transfert cost around 0.002 TRX
 const getFeesFromBandwidth = (account: Account, transaction: Transaction): BigNumber => {
-  const { freeUsed, freeLimit, gainedUsed, gainedLimit } = extractBandwidthInfo(t.networkInfo);
+  const { freeUsed, freeLimit, gainedUsed, gainedLimit } = extractBandwidthInfo(
+    transaction.networkInfo,
+  );
   const available = freeLimit.minus(freeUsed).plus(gainedLimit).minus(gainedUsed);
   const estimatedBandwidthCost = getEstimatedBlockSize(account, transaction);
 
