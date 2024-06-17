@@ -2184,17 +2184,20 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@polkadot/api':
+        specifier: ^11.2.1
+        version: 11.2.1
       '@polkadot/types':
-        specifier: 11.2.1
+        specifier: ^11.2.1
         version: 11.2.1
       '@polkadot/types-known':
-        specifier: 11.2.1
+        specifier: ^11.2.1
         version: 11.2.1
       '@polkadot/util':
-        specifier: 12.6.2
+        specifier: ^12.6.2
         version: 12.6.2
       '@polkadot/util-crypto':
-        specifier: 12.6.2
+        specifier: ^12.6.2
         version: 12.6.2(@polkadot/util@12.6.2)
       bignumber.js:
         specifier: ^9.1.2
@@ -2215,6 +2218,12 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../../coin-tester
+      '@ledgerhq/hw-app-polkadot':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-polkadot
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -2224,11 +2233,26 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.0
+      chalk:
+        specifier: ^4.1.2
+        version: 4.1.2
+      docker-compose:
+        specifier: ^0.24.2
+        version: 0.24.8
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      eslint-plugin-jest:
+        specifier: ^27.4.2
+        version: 27.9.0(@typescript-eslint/eslint-plugin@6.21.0)(eslint@8.57.0)(jest@29.7.0)(typescript@5.4.3)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(ts-node@10.9.2)
+      jest-expect-message:
+        specifier: ^1.1.3
+        version: 1.1.3
       msw:
-        specifier: ^2.0.11
+        specifier: ^2.2.13
         version: 2.2.13(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
@@ -2844,7 +2868,7 @@ importers:
         version: 1.2.0
       '@hashgraph/sdk':
         specifier: 2.14.2
-        version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.73.6)(react@18.2.0)
+        version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)
       '@keplr-wallet/cosmos':
         specifier: ^0.9.16
         version: 0.9.16
@@ -7433,7 +7457,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/highlight': 7.24.6
-      picocolors: 1.0.0
+      picocolors: 1.0.1
 
   /@babel/compat-data@7.24.1:
     resolution: {integrity: sha512-Pc65opHDliVpRHuKfzI+gSA4zcgr65O4cl64fFJIWEEh8JoHIHh0Oez1Eo8Arz8zq/JhgKodQaxEwUPRtZylVA==}
@@ -7756,7 +7780,7 @@ packages:
       '@babel/helper-validator-identifier': 7.24.6
       chalk: 2.4.2
       js-tokens: 4.0.0
-      picocolors: 1.0.1
+      picocolors: 1.0.0
 
   /@babel/highlight@7.24.6:
     resolution: {integrity: sha512-2YnuOp4HAk2BsBrJJvYCbItHx0zWscI1C3zgWkz+wDyD9I7GIVrfnLyrR4Y1VR+7p+chAEcrgRQYZAGIKMV7vQ==}
@@ -7765,7 +7789,7 @@ packages:
       '@babel/helper-validator-identifier': 7.24.6
       chalk: 2.4.2
       js-tokens: 4.0.0
-      picocolors: 1.0.1
+      picocolors: 1.0.0
 
   /@babel/parser@7.24.1:
     resolution: {integrity: sha512-Zo9c7N3xdOIQrNip7Lc9wvRPzlRtovHVE4lkz8WEDr7uYh/GMQhSiIgFxGIArRHYdJE5kxtZjAf8rT0xhdLCzg==}
@@ -10798,7 +10822,7 @@ packages:
     resolution: {integrity: sha512-m4HEDZleaaCH+XgDDsPF15Ht6wTLsgDTeR3WYj9Q/k76JtWhrJjcP4+/XlG8LGT/Rol9qUfOIztXeA84ATpqPQ==}
     dependencies:
       '@babel/helper-module-imports': 7.24.3
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@emotion/hash': 0.9.1
       '@emotion/memoize': 0.8.1
       '@emotion/serialize': 1.1.3
@@ -13631,16 +13655,16 @@ packages:
     dependencies:
       graphql: 15.8.0
 
-  /@grpc/grpc-js@1.6.7:
-    resolution: {integrity: sha512-eBM03pu9hd3VqDQG+kHahiG1x80RGkkqqRb1Pchcwqej/KkAH95gAvKs6laqaHCycYaPK+TKuNQnOz9UXYA8qw==}
+  /@grpc/grpc-js@1.7.3:
+    resolution: {integrity: sha512-H9l79u4kJ2PVSxUNA08HMYAnUBLj9v6KjYQ7SQ71hOZcEXhShE/y5iQCesP8+6/Ik/7i2O0a10bPquIcYfufog==}
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
-      '@grpc/proto-loader': 0.6.13
+      '@grpc/proto-loader': 0.7.12
       '@types/node': 20.12.13
     dev: false
 
-  /@grpc/grpc-js@1.7.3:
-    resolution: {integrity: sha512-H9l79u4kJ2PVSxUNA08HMYAnUBLj9v6KjYQ7SQ71hOZcEXhShE/y5iQCesP8+6/Ik/7i2O0a10bPquIcYfufog==}
+  /@grpc/grpc-js@1.8.2:
+    resolution: {integrity: sha512-5cqCjUvDKJWHGeu1prlrFOUmjuML0NequZKJ38PsCkfwIqPnZq4Q9burPP3It7/+46wpl0KsqVN3s6Te3B9Qtw==}
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
       '@grpc/proto-loader': 0.7.12
@@ -13682,25 +13706,32 @@ packages:
     dependencies:
       '@hapi/hoek': 9.3.0
 
-  /@hashgraph/cryptography@1.1.2(react-native@0.73.6)(react@18.2.0):
-    resolution: {integrity: sha512-oSnDDs5foNq6Yni4kCwbA01NuVY2mewVr1jhkJG7yNDT6+xIBCztRWDeINb1JuShXe57Cuf88M1zmN5iFN7JgA==}
+  /@hashgraph/cryptography@1.4.7:
+    resolution: {integrity: sha512-DrwZxIw3AM01JINaINTBmFEJVn9lzTHHf343zYXzpu+MrUJbZzuGyzd5bW6DmGGvFqTF/xDo0S/XiO2StdhVgg==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
-      expo: ^44.0.5
+      expo: ^45.0.3
+      expo-crypto: ^10.1.2
+      expo-random: ^12.1.2
+    peerDependenciesMeta:
+      expo:
+        optional: true
+      expo-crypto:
+        optional: true
+      expo-random:
+        optional: true
     dependencies:
+      asn1js: 3.0.5
       bignumber.js: 9.1.2
+      bn.js: 5.2.1
+      buffer: 6.0.3
       crypto-js: 4.2.0
       elliptic: 6.5.5
-      expo-crypto: 10.2.0(react-native@0.73.6)(react@18.2.0)
-      expo-random: 12.3.0(react-native@0.73.6)(react@18.2.0)
       js-base64: 3.7.7
+      node-forge: 1.3.1
+      spark-md5: 3.0.2
       tweetnacl: 1.0.3
       utf8: 3.0.0
-    transitivePeerDependencies:
-      - expo-constants
-      - expo-modules-core
-      - react
-      - react-native
     dev: false
 
   /@hashgraph/proto@2.4.1:
@@ -13711,14 +13742,14 @@ packages:
       protobufjs: 6.11.4
     dev: false
 
-  /@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.73.6)(react@18.2.0):
+  /@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4):
     resolution: {integrity: sha512-58CGz+NZvuI7VxpmvFXo7IJc60kWRGIdQeYy1b5Y2j3aO5nwElX8IJGpscB+ZiFepwkHC6gvW3dX9tRV2lWGaQ==}
     engines: {node: '>=10.17.0'}
     peerDependencies:
       expo: ^45.0.3
     dependencies:
-      '@grpc/grpc-js': 1.6.7
-      '@hashgraph/cryptography': 1.1.2(react-native@0.73.6)(react@18.2.0)
+      '@grpc/grpc-js': 1.8.2
+      '@hashgraph/cryptography': 1.4.7
       '@hashgraph/proto': 2.4.1
       bignumber.js: 9.1.2
       crypto-js: 4.2.0
@@ -13728,10 +13759,8 @@ packages:
       protobufjs: 6.11.4
       utf8: 3.0.0
     transitivePeerDependencies:
-      - expo-constants
-      - expo-modules-core
-      - react
-      - react-native
+      - expo-crypto
+      - expo-random
     dev: false
     patched: true
 
@@ -15502,7 +15531,7 @@ packages:
       '@octokit/request-error': 5.1.0
       '@octokit/types': 13.5.0
       deprecation: 2.3.1
-      lru-cache: 10.2.2
+      lru-cache: 10.2.0
       universal-github-app-jwt: 1.1.2
       universal-user-agent: 6.0.1
     dev: false
@@ -16045,6 +16074,143 @@ packages:
       webpack: 5.89.0(esbuild@0.19.12)
     dev: true
 
+  /@polkadot-api/json-rpc-provider-proxy@0.0.1:
+    resolution: {integrity: sha512-gmVDUP8LpCH0BXewbzqXF2sdHddq1H1q+XrAW2of+KZj4woQkIGBRGTJHeBEVHe30EB+UejR1N2dT4PO/RvDdg==}
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@polkadot-api/json-rpc-provider@0.0.1:
+    resolution: {integrity: sha512-/SMC/l7foRjpykLTUTacIH05H3mr9ip8b5xxfwXlVezXrNVLp3Cv0GX6uItkKd+ZjzVPf3PFrDF2B2/HLSNESA==}
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@polkadot-api/metadata-builders@0.0.1:
+    resolution: {integrity: sha512-GCI78BHDzXAF/L2pZD6Aod/yl82adqQ7ftNmKg51ixRL02JpWUA+SpUKTJE5MY1p8kiJJIo09P2um24SiJHxNA==}
+    requiresBuild: true
+    dependencies:
+      '@polkadot-api/substrate-bindings': 0.0.1
+      '@polkadot-api/utils': 0.0.1
+    dev: false
+    optional: true
+
+  /@polkadot-api/observable-client@0.1.0(rxjs@7.8.1):
+    resolution: {integrity: sha512-GBCGDRztKorTLna/unjl/9SWZcRmvV58o9jwU2Y038VuPXZcr01jcw/1O3x+yeAuwyGzbucI/mLTDa1QoEml3A==}
+    requiresBuild: true
+    peerDependencies:
+      rxjs: '>=7.8.0'
+    dependencies:
+      '@polkadot-api/metadata-builders': 0.0.1
+      '@polkadot-api/substrate-bindings': 0.0.1
+      '@polkadot-api/substrate-client': 0.0.1
+      '@polkadot-api/utils': 0.0.1
+      rxjs: 7.8.1
+    dev: false
+    optional: true
+
+  /@polkadot-api/substrate-bindings@0.0.1:
+    resolution: {integrity: sha512-bAe7a5bOPnuFVmpv7y4BBMRpNTnMmE0jtTqRUw/+D8ZlEHNVEJQGr4wu3QQCl7k1GnSV1wfv3mzIbYjErEBocg==}
+    requiresBuild: true
+    dependencies:
+      '@noble/hashes': 1.4.0
+      '@polkadot-api/utils': 0.0.1
+      '@scure/base': 1.1.6
+      scale-ts: 1.6.0
+    dev: false
+    optional: true
+
+  /@polkadot-api/substrate-client@0.0.1:
+    resolution: {integrity: sha512-9Bg9SGc3AwE+wXONQoW8GC00N3v6lCZLW74HQzqB6ROdcm5VAHM4CB/xRzWSUF9CXL78ugiwtHx3wBcpx4H4Wg==}
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@polkadot-api/utils@0.0.1:
+    resolution: {integrity: sha512-3j+pRmlF9SgiYDabSdZsBSsN5XHbpXOAce1lWj56IEEaFZVjsiCaxDOA7C9nCcgfVXuvnbxqqEGQvnY+QfBAUw==}
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@polkadot/api-augment@11.2.1:
+    resolution: {integrity: sha512-Huo457lCqeavbrf1O/2qQYGNFWURLXndW4vNkj8AP+I757WIqebhc6K3+mz+KoV1aTsX/qwaiEgeoTjrrIwcqA==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/api-base': 11.2.1
+      '@polkadot/rpc-augment': 11.2.1
+      '@polkadot/types': 11.2.1
+      '@polkadot/types-augment': 11.2.1
+      '@polkadot/types-codec': 11.2.1
+      '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@polkadot/api-base@11.2.1:
+    resolution: {integrity: sha512-lVYTHQf8S4rpOJ9d1jvQjviHLE6zljl13vmgs+gXHGJwMAqhhNwKY3ZMQW/u/bRE2uKk0cAlahtsRtiFpjHAfw==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/rpc-core': 11.2.1
+      '@polkadot/types': 11.2.1
+      '@polkadot/util': 12.6.2
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@polkadot/api-derive@11.2.1:
+    resolution: {integrity: sha512-ts6D6tXmvhBpHDT7E03TStXfG6+/bXCvJ7HZUVNDXi4P9cToClzJVOX5uKsPI5/MUYDEq13scxPyQK63m8SsHg==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/api': 11.2.1
+      '@polkadot/api-augment': 11.2.1
+      '@polkadot/api-base': 11.2.1
+      '@polkadot/rpc-core': 11.2.1
+      '@polkadot/types': 11.2.1
+      '@polkadot/types-codec': 11.2.1
+      '@polkadot/util': 12.6.2
+      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@polkadot/api@11.2.1:
+    resolution: {integrity: sha512-NwcWadMt+mrJ3T7RuwpnaIYtH4x0eix+GiKRtLMtIO32uAfhwVyMnqvLtxDxa4XDJ/es2rtSMYG+t0b1BTM+xQ==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/api-augment': 11.2.1
+      '@polkadot/api-base': 11.2.1
+      '@polkadot/api-derive': 11.2.1
+      '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
+      '@polkadot/rpc-augment': 11.2.1
+      '@polkadot/rpc-core': 11.2.1
+      '@polkadot/rpc-provider': 11.2.1
+      '@polkadot/types': 11.2.1
+      '@polkadot/types-augment': 11.2.1
+      '@polkadot/types-codec': 11.2.1
+      '@polkadot/types-create': 11.2.1
+      '@polkadot/types-known': 11.2.1
+      '@polkadot/util': 12.6.2
+      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      eventemitter3: 5.0.1
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   /@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2):
     resolution: {integrity: sha512-O3Q7GVmRYm8q7HuB3S0+Yf/q/EB2egKRRU3fv9b3B7V+A52tKzA+vIwEmNVaD1g5FKW9oB97rmpggs0zaKFqHw==}
     engines: {node: '>=18'}
@@ -16064,6 +16230,61 @@ packages:
       '@polkadot/util': 12.6.2
       '@substrate/ss58-registry': 1.47.0
       tslib: 2.6.2
+    dev: false
+
+  /@polkadot/rpc-augment@11.2.1:
+    resolution: {integrity: sha512-AbkqWTnKCi71LdqFVbCyYelf5N/Wtj4jFnpRd8z7tIbbiAnNRW61dBgdF9jZ8jd9Z0JvfAmCmG17uCEdsqfNjA==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/rpc-core': 11.2.1
+      '@polkadot/types': 11.2.1
+      '@polkadot/types-codec': 11.2.1
+      '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@polkadot/rpc-core@11.2.1:
+    resolution: {integrity: sha512-GHNIHDvBts6HDvySfYksuLccaVnI+fc7ubY1uYcJMoyGv9pLhMtveH4Ft7NTxqkBqopbPXZHc8ca9CaIeBVr7w==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/rpc-augment': 11.2.1
+      '@polkadot/rpc-provider': 11.2.1
+      '@polkadot/types': 11.2.1
+      '@polkadot/util': 12.6.2
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@polkadot/rpc-provider@11.2.1:
+    resolution: {integrity: sha512-TO9pdxNmTweK1vi9JYUAoLr/JYJUwPJTTdrSJrmGmiNPaM7txbQVgtT4suQYflVZTgXUYR7OYQ201fH+Qb9J9w==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
+      '@polkadot/types': 11.2.1
+      '@polkadot/types-support': 11.2.1
+      '@polkadot/util': 12.6.2
+      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      '@polkadot/x-fetch': 12.6.2
+      '@polkadot/x-global': 12.6.2
+      '@polkadot/x-ws': 12.6.2
+      eventemitter3: 5.0.1
+      mock-socket: 9.3.1
+      nock: 13.5.4
+      tslib: 2.6.2
+    optionalDependencies:
+      '@substrate/connect': 0.8.10
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /@polkadot/types-augment@11.2.1:
@@ -16102,6 +16323,14 @@ packages:
       '@polkadot/types': 11.2.1
       '@polkadot/types-codec': 11.2.1
       '@polkadot/types-create': 11.2.1
+      '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+    dev: false
+
+  /@polkadot/types-support@11.2.1:
+    resolution: {integrity: sha512-VGSUDUEQjt8K3Bv8gHYAE/nD98qPPuZ2DcikM9z9isw04qj2amxZaS26+iknJ9KSCzWgrNBHjcr5Q0o76//2yA==}
+    engines: {node: '>=18'}
+    dependencies:
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
     dev: false
@@ -16236,6 +16465,15 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /@polkadot/x-fetch@12.6.2:
+    resolution: {integrity: sha512-8wM/Z9JJPWN1pzSpU7XxTI1ldj/AfC8hKioBlUahZ8gUiJaOF7K9XEFCrCDLis/A1BoOu7Ne6WMx/vsJJIbDWw==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/x-global': 12.6.2
+      node-fetch: 3.3.2
+      tslib: 2.6.2
+    dev: false
+
   /@polkadot/x-global@12.6.2:
     resolution: {integrity: sha512-a8d6m+PW98jmsYDtAWp88qS4dl8DyqUBsd0S+WgyfSMtpEXu6v9nXDgPZgwF5xdDvXhm+P0ZfVkVTnIGrScb5g==}
     engines: {node: '>=18'}
@@ -16270,6 +16508,18 @@ packages:
     dependencies:
       '@polkadot/x-global': 12.6.2
       tslib: 2.6.2
+    dev: false
+
+  /@polkadot/x-ws@12.6.2:
+    resolution: {integrity: sha512-cGZWo7K5eRRQCRl2LrcyCYsrc3lRbTlixZh3AzgU8uX4wASVGRlNWi/Hf4TtHNe1ExCDmxabJzdIsABIfrr7xw==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/x-global': 12.6.2
+      tslib: 2.6.2
+      ws: 8.16.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
   /@popperjs/core@2.11.8:
@@ -16349,13 +16599,13 @@ packages:
   /@radix-ui/number@1.0.1:
     resolution: {integrity: sha512-T5gIdVO2mmPW3NNhjNgEP3cqMXjXL9UbO0BzWcXfvdBs+BohbQxvd/K5hSVKmn9/lbTdsQVKbUcP5WLCwvUbBg==}
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
     dev: true
 
   /@radix-ui/primitive@1.0.1:
     resolution: {integrity: sha512-yQ8oGX2GVsEYMWGxcovu1uGWPCxV5BFfeeYxqPmuAzUyLT9qmaMXSAhXpb0WrspIeqYzdJpkh2vHModJPgRIaw==}
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
     dev: true
 
   /@radix-ui/react-arrow@1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0):
@@ -16371,7 +16621,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.73
       '@types/react-dom': 18.2.23(@types/react@18.2.73)
@@ -16392,7 +16642,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-primitive': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -16412,7 +16662,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-context': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
@@ -16436,7 +16686,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-context': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-primitive': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
@@ -16455,7 +16705,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@types/react': 18.2.73
       react: 18.2.0
     dev: true
@@ -16469,7 +16719,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@types/react': 18.2.73
       react: 18.2.0
     dev: true
@@ -16483,7 +16733,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@types/react': 18.2.73
       react: 18.2.0
     dev: true
@@ -16501,7 +16751,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
@@ -16526,7 +16776,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-primitive': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
@@ -16546,7 +16796,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@types/react': 18.2.73
       react: 18.2.0
     dev: true
@@ -16564,7 +16814,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -16587,7 +16837,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-primitive': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -16605,7 +16855,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-use-layout-effect': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -16624,7 +16874,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@floating-ui/react-dom': 2.0.8(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-arrow': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -16654,7 +16904,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@floating-ui/react-dom': 2.0.8(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-arrow': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -16683,7 +16933,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.73
       '@types/react-dom': 18.2.23(@types/react@18.2.73)
@@ -16704,7 +16954,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-primitive': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -16724,7 +16974,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-slot': 1.0.2(@types/react@18.2.73)(react@18.2.0)
       '@types/react': 18.2.73
       '@types/react-dom': 18.2.23(@types/react@18.2.73)
@@ -16745,7 +16995,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-slot': 1.0.2(@types/react@18.2.73)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -16765,7 +17015,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-collection': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -16794,7 +17044,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-collection': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -16822,7 +17072,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/number': 1.0.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-collection': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
@@ -16863,7 +17113,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/number': 1.0.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-collection': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
@@ -16903,7 +17153,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.73
       '@types/react-dom': 18.2.23(@types/react@18.2.73)
@@ -16924,7 +17174,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-primitive': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -16940,7 +17190,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -16959,7 +17209,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-context': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-direction': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -16986,7 +17236,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-context': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-direction': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -17012,7 +17262,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-use-controllable-state': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -17035,7 +17285,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-primitive': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@radix-ui/react-use-controllable-state': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -17057,7 +17307,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-context': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-direction': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -17084,7 +17334,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-context': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@radix-ui/react-direction': 1.0.1(@types/react@18.2.73)(react@18.2.0)
@@ -17106,7 +17356,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@types/react': 18.2.73
       react: 18.2.0
     dev: true
@@ -17120,7 +17370,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -17135,7 +17385,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -17150,7 +17400,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@types/react': 18.2.73
       react: 18.2.0
     dev: true
@@ -17164,7 +17414,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@types/react': 18.2.73
       react: 18.2.0
     dev: true
@@ -17178,7 +17428,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/rect': 1.0.1
       '@types/react': 18.2.73
       react: 18.2.0
@@ -17193,7 +17443,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-use-layout-effect': 1.0.1(@types/react@18.2.73)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -17212,7 +17462,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.73
       '@types/react-dom': 18.2.23(@types/react@18.2.73)
@@ -17233,7 +17483,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
       '@radix-ui/react-primitive': 1.0.3(@types/react@18.2.73)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.73
       react: 18.2.0
@@ -17243,7 +17493,7 @@ packages:
   /@radix-ui/rect@1.0.1:
     resolution: {integrity: sha512-fyrgCaedtvMg9NK3en0pnOYJdtfwxUcNolezkNPUsoX57X8oQk+NkqcvzHXD2uKNij6GXmWU9NDru2IWjrO4BQ==}
     dependencies:
-      '@babel/runtime': 7.24.6
+      '@babel/runtime': 7.24.1
     dev: true
 
   /@react-native-async-storage/async-storage@1.17.12(react-native@0.73.6):
@@ -22622,6 +22872,49 @@ packages:
       '@styled-system/core': 5.1.2
       '@styled-system/css': 5.1.5
 
+  /@substrate/connect-extension-protocol@2.0.0:
+    resolution: {integrity: sha512-nKu8pDrE3LNCEgJjZe1iGXzaD6OSIDD4Xzz/yo4KO9mQ6LBvf49BVrt4qxBFGL6++NneLiWUZGoh+VSd4PyVIg==}
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@substrate/connect-known-chains@1.1.5:
+    resolution: {integrity: sha512-GCdDMs5q9xDYyP/KEwrlWMdqv8OIPjuVMZvNowvUrvEFo5d+x+VqfRPzyl/RbV+snRQVWTTacRydE7GqyjCYPQ==}
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@substrate/connect@0.8.10:
+    resolution: {integrity: sha512-DIyQ13DDlXqVFnLV+S6/JDgiGowVRRrh18kahieJxhgvzcWicw5eLc6jpfQ0moVVLBYkO7rctB5Wreldwpva8w==}
+    requiresBuild: true
+    dependencies:
+      '@substrate/connect-extension-protocol': 2.0.0
+      '@substrate/connect-known-chains': 1.1.5
+      '@substrate/light-client-extension-helpers': 0.0.6(smoldot@2.0.22)
+      smoldot: 2.0.22
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+    optional: true
+
+  /@substrate/light-client-extension-helpers@0.0.6(smoldot@2.0.22):
+    resolution: {integrity: sha512-girltEuxQ1BvkJWmc8JJlk4ZxnlGXc/wkLcNguhY+UoDEMBK0LsdtfzQKIfrIehi4QdeSBlFEFBoI4RqPmsZzA==}
+    requiresBuild: true
+    peerDependencies:
+      smoldot: 2.x
+    dependencies:
+      '@polkadot-api/json-rpc-provider': 0.0.1
+      '@polkadot-api/json-rpc-provider-proxy': 0.0.1
+      '@polkadot-api/observable-client': 0.1.0(rxjs@7.8.1)
+      '@polkadot-api/substrate-client': 0.0.1
+      '@substrate/connect-extension-protocol': 2.0.0
+      '@substrate/connect-known-chains': 1.1.5
+      rxjs: 7.8.1
+      smoldot: 2.0.22
+    dev: false
+    optional: true
+
   /@substrate/ss58-registry@1.47.0:
     resolution: {integrity: sha512-6kuIJedRcisUJS2pgksEH2jZf3hfSIVzqtFzs/AyjTW3ETbMg5q1Bb7VWa0WYaT6dTrEXp/6UoXM5B9pSIUmcw==}
     dev: false
@@ -24315,7 +24608,7 @@ packages:
   /@types/sha.js@2.4.4:
     resolution: {integrity: sha512-Qukd+D6S2Hm0wLVt2Vh+/eWBIoUt+wF8jWjBsG4F8EFQRwKtYvtXCPcNl2OEUQ1R+eTr3xuSaBYUyM3WD1x/Qw==}
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.12.13
 
   /@types/sockjs@0.3.36:
     resolution: {integrity: sha512-MK9V6NzAS1+Ud7JV9lJLFqW85VbC9dq3LmwZCuBe4wBDgKC0Kj/jd8Xl+nSviU+Qc3+m7umHHyHg//2KSa0a0Q==}
@@ -25968,6 +26261,15 @@ packages:
     resolution: {integrity: sha512-ix/FxPn0MDjeyJ7i/yoHGFt/EX6LyNbxSEhPPXODPL+KB0VPk86UYfL0lMdy+KCnv+fmvIzySwaK5COwqVbWTQ==}
     dependencies:
       safer-buffer: 2.1.2
+    dev: false
+
+  /asn1js@3.0.5:
+    resolution: {integrity: sha512-FVnvrKJwpt9LP2lAMl8qZswRNm3T4q9CON+bxldk2iwk3FFpuwhx2FfinyitizWHsVYyaY+y5JzDR0rCMV5yTQ==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      pvtsutils: 1.3.5
+      pvutils: 1.1.3
+      tslib: 2.6.2
     dev: false
 
   /assert-plus@1.0.0:
@@ -29750,7 +30052,6 @@ packages:
   /data-uri-to-buffer@4.0.1:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
     engines: {node: '>= 12'}
-    dev: true
 
   /data-urls@2.0.0:
     resolution: {integrity: sha512-X5eWTSXO/BJmpdIKCRuKUgSCgAN0OwliVK3yPKbwIWU1Tdw5BRajxlzMidvh+gwko9AfQ9zIj52pzF91Q3YAvQ==}
@@ -32838,28 +33139,6 @@ packages:
       - supports-color
     dev: false
 
-  /expo-crypto@10.2.0(react-native@0.73.6)(react@18.2.0):
-    resolution: {integrity: sha512-YVFp+DJXBtt4t6oZXepnzb+xwpKzFbXn3B9Oma1Tfh6J0rIlm/I20UW/5apdvEdbj44fxJ5DsiZeyADI3bcZkQ==}
-    peerDependencies:
-      expo: '*'
-      expo-constants: '*'
-      expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      expo-constants:
-        optional: true
-      expo-modules-core:
-        optional: true
-      react:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      react: 18.2.0
-      react-native: 0.73.6(react@18.2.0)
-    dev: false
-
   /expo-file-system@15.4.5(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.73.6)(react@18.2.0):
     resolution: {integrity: sha512-xy61KaTaDgXhT/dllwYDHm3ch026EyO8j4eC6wSVr/yE12MMMxAC09yGwy4f7kkOs6ztGVQF5j7ldRzNLN4l0Q==}
     peerDependencies:
@@ -33268,29 +33547,6 @@ packages:
       - supports-color
     dev: true
 
-  /expo-random@12.3.0(react-native@0.73.6)(react@18.2.0):
-    resolution: {integrity: sha512-q+AsTfGNT+Q+fb2sRrYtRkI3g5tV4H0kuYXM186aueILGO/vLn/YYFa7xFZj1IZ8LJZg2h96JDPDpsqHfRG2mQ==}
-    peerDependencies:
-      expo: '*'
-      expo-constants: '*'
-      expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      expo-constants:
-        optional: true
-      expo-modules-core:
-        optional: true
-      react:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      base64-js: 1.5.1
-      react: 18.2.0
-      react-native: 0.73.6(react@18.2.0)
-    dev: false
-
   /expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6)(react@18.2.0):
     resolution: {integrity: sha512-mFdBpWisPXBuocRGywC14nDai5vSUmvEyQpwvKH/xUo+m5/TUvfqV6YIewFpW22zn5WFGFiuJPhzNrqhBBinIw==}
     hasBin: true
@@ -33656,7 +33912,6 @@ packages:
     dependencies:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.3.3
-    dev: true
 
   /fetch-retry@4.1.1:
     resolution: {integrity: sha512-e6eB7zN6UBSwGVwrbWVH+gdLnkW9WwHhmq2YDK1Sh30pzx1onRVGBvogTlUeWxwTa+L86NYdo4hFkh7O8ZjSnA==}
@@ -34138,7 +34393,6 @@ packages:
     engines: {node: '>=12.20.0'}
     dependencies:
       fetch-blob: 3.2.0
-    dev: true
 
   /formidable@1.2.6:
     resolution: {integrity: sha512-KcpbcpuLNOwrEjnbpMC0gS+X8ciDoZE1kkqzat4a8vrprf+s9pKNQ/QIwWfbfs4ltgmFl3MD177SNTkve3BwGQ==}
@@ -39714,7 +39968,7 @@ packages:
   /launch-editor@2.6.1:
     resolution: {integrity: sha512-eB/uXmFVpY4zezmGp5XtU21kwo7GBbKB+EQ+UZeWtGb9yAM5xt/Evk+lYH3eRNAtId+ej4u7TYPFZ07w4s7rRw==}
     dependencies:
-      picocolors: 1.0.1
+      picocolors: 1.0.0
       shell-quote: 1.8.1
 
   /layout-base@1.0.2:
@@ -42268,6 +42522,11 @@ packages:
     resolution: {integrity: sha512-qYvlv/exQ4+svI3UOvPUpLDF0OMX5euvUH0Ny4N5QyRyhNdgAgUrVH3iUINSzEPLvx0kbo/Bp28GJKIqvE7URw==}
     dev: false
 
+  /mock-socket@9.3.1:
+    resolution: {integrity: sha512-qxBgB7Qa2sEQgHFjj0dSigq7fX4k6Saisd5Nelwp2q8mlbAFh5dHV9JTTlF8viYJLSSWgMCZFUom8PJcMNBoJw==}
+    engines: {node: '>= 8'}
+    dev: false
+
   /modify-filename@1.1.0:
     resolution: {integrity: sha512-EickqnKq3kVVaZisYuCxhtKbZjInCuwgwZWyAmRIp1NTMhri7r3380/uqwrUHfaDiPzLVTuoNy4whX66bxPVog==}
     engines: {node: '>=0.10.0'}
@@ -42787,7 +43046,6 @@ packages:
       propagate: 2.0.1
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /node-abi@3.56.0:
     resolution: {integrity: sha512-fZjdhDOeRcaS+rcpve7XuwHBmktS1nS1gzgghwKUQQ8nTy2FdSDr6ZT8k6YhvlJeHmmQMYiT/IH9hfco5zeW2Q==}
@@ -42829,7 +43087,6 @@ packages:
   /node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
-    dev: true
 
   /node-fetch-native@1.6.4:
     resolution: {integrity: sha512-IhOigYzAKHd244OC0JIMIUrjzctirCmPkaIfhDeGcEETWof5zKYUW7e7MYvChGWh/4CJeXEgsRyGzuF334rOOQ==}
@@ -42886,7 +43143,6 @@ packages:
       data-uri-to-buffer: 4.0.1
       fetch-blob: 3.2.0
       formdata-polyfill: 4.0.10
-    dev: true
 
   /node-forge@1.3.1:
     resolution: {integrity: sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==}
@@ -45163,7 +45419,6 @@ packages:
   /propagate@2.0.1:
     resolution: {integrity: sha512-vGrhOavPSTz4QVNuBNdcNXePNdNMaO1xj9yBeH1ScQPjk/rhg9sSlCXPhMkFuaNNW/syTvYqsnbIJxMBfRbbag==}
     engines: {node: '>= 8'}
-    dev: true
 
   /proper-lockfile@3.2.0:
     resolution: {integrity: sha512-iMghHHXv2bsxl6NchhEaFck8tvX3F9cknEEh1SUpguUOBjN7PAAW9BLzmbc1g/mCD1gY3EE2EABBHPJfFdHFmA==}
@@ -45276,7 +45531,7 @@ packages:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.12.12
+      '@types/node': 20.12.13
       long: 5.2.3
     dev: false
 
@@ -45403,6 +45658,17 @@ packages:
     resolution: {integrity: sha512-hw7rcYTJRAl4olM8Owe8x0fBuJJ+WGbMhQuLWOXEMN3PxPCKQHRkhfL+XG0+iXUmSHjkMmb3Ba55Mt21cZc9kQ==}
     dependencies:
       bitcoin-ops: 1.4.1
+    dev: false
+
+  /pvtsutils@1.3.5:
+    resolution: {integrity: sha512-ARvb14YB9Nm2Xi6nBq1ZX6dAM0FsJnuk+31aUp4TrcZEdKUlSqOqsxJHUPJDNE3qiIp+iUPEIeR6Je/tgV7zsA==}
+    dependencies:
+      tslib: 2.6.2
+    dev: false
+
+  /pvutils@1.1.3:
+    resolution: {integrity: sha512-pMpnA0qRdFp32b1sJl1wOJNxZLQ2cbQx+k6tjNtZ8CpvVhNqEPRgivZ2WOUev2YMajecdH7ctUPDvEe87nariQ==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /q@1.5.1:
@@ -48159,6 +48425,12 @@ packages:
       xmlchars: 2.2.0
     dev: true
 
+  /scale-ts@1.6.0:
+    resolution: {integrity: sha512-Ja5VCjNZR8TGKhUumy9clVVxcDpM+YFjAnkMuwQy68Hixio3VRRvWdE3g8T/yC+HXA0ZDQl2TGyUmtmbcVl40Q==}
+    requiresBuild: true
+    dev: false
+    optional: true
+
   /scheduler@0.23.0:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
     dependencies:
@@ -48750,6 +49022,17 @@ packages:
       - supports-color
     dev: true
 
+  /smoldot@2.0.22:
+    resolution: {integrity: sha512-B50vRgTY6v3baYH6uCgL15tfaag5tcS2o/P5q1OiXcKGv1axZDfz2dzzMuIkVpyMR2ug11F6EAtQlmYBQd292g==}
+    requiresBuild: true
+    dependencies:
+      ws: 8.16.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+    optional: true
+
   /snakecase-keys@3.2.1:
     resolution: {integrity: sha512-CjU5pyRfwOtaOITYv5C8DzpZ8XA/ieRsDpr93HI2r6e3YInC6moZpSQbmUtg8cTk58tq2x3jcG2gv+p1IZGmMA==}
     engines: {node: '>=8'}
@@ -48897,6 +49180,10 @@ packages:
 
   /space-separated-tokens@2.0.2:
     resolution: {integrity: sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q==}
+
+  /spark-md5@3.0.2:
+    resolution: {integrity: sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==}
+    dev: false
 
   /spawn-command@0.0.2:
     resolution: {integrity: sha512-zC8zGoGkmc8J9ndvml8Xksr1Amk9qBujgbF0JAIWO7kXr43w0h/0GJNM/Vustixu+YE8N/MTrQ7N31FvHUACxQ==}
@@ -50138,7 +50425,7 @@ packages:
       micromatch: 4.0.7
       normalize-path: 3.0.0
       object-hash: 3.0.0
-      picocolors: 1.0.1
+      picocolors: 1.0.0
       postcss: 8.4.38
       postcss-import: 15.1.0(postcss@8.4.38)
       postcss-js: 4.0.1(postcss@8.4.38)
@@ -52935,7 +53222,6 @@ packages:
   /web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
-    dev: true
 
   /web-worker@1.3.0:
     resolution: {integrity: sha512-BSR9wyRsy/KOValMgd5kMyr3JzpdeoR9KVId8u5GVlTTAtNChlsE4yTxeY7zMdNSyOmoKBv8NH2qeRY9Tg+IaA==}
