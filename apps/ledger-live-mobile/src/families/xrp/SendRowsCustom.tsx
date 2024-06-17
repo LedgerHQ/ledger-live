@@ -18,7 +18,7 @@ type Props = {
   transaction: Transaction;
   account: Account;
 } & Navigation;
-export default function RippleSendRowsCustom(props: Props) {
+export default function XrpSendRowsCustom(props: Props) {
   const { transaction, ...rest } = props;
   return <SendRowTag {...rest} transaction={transaction} />;
 }

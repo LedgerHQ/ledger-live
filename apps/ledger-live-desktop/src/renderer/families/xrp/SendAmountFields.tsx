@@ -26,7 +26,7 @@ const InputRight = styled(Box).attrs(() => ({
   pr: 3,
 }))``;
 function FeesField({ account, transaction, onChange, status, trackProperties = {} }: Props) {
-  invariant(transaction.family === "xrp", "FeeField: ripple family expected");
+  invariant(transaction.family === "xrp", "FeeField: xrp family expected");
   const bridge = getAccountBridge(account);
   const onChangeFee = useCallback(
     (fee: BigNumber) => {

@@ -24,7 +24,7 @@ type RouteParams = {
   transaction: Transaction;
 };
 
-function RippleEditFee({ route }: Props) {
+function XrpEditFee({ route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   if (!account) return null;
@@ -47,7 +47,7 @@ function RippleEditFee({ route }: Props) {
   );
 }
 
-export { options, RippleEditFee as component };
+export { options, XrpEditFee as component };
 const styles = StyleSheet.create({
   root: {
     flex: 1,

@@ -24,13 +24,13 @@ type Props = {
   account: Account;
   transaction: Transaction;
 } & Navigation;
-export default function RippleTagRow({ account, transaction }: Props) {
+export default function XrpTagRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
   const { locale } = useSettings();
   const editTag = useCallback(() => {
-    navigation.navigate(ScreenName.RippleEditTag, {
+    navigation.navigate(ScreenName.XrpEditTag, {
       ...route.params,
       accountId: account.id,
       parentId: undefined,

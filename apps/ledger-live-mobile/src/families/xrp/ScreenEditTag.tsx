@@ -19,7 +19,7 @@ import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.RippleEditTag>
+  StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.XrpEditTag>
 >;
 
 const uint32maxPlus1 = BigNumber(2).pow(32);
@@ -28,7 +28,7 @@ const options = {
   headerLeft: undefined,
 };
 
-function RippleEditTag({ route, navigation }: NavigationProps) {
+function XrpEditTag({ route, navigation }: NavigationProps) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
@@ -111,7 +111,7 @@ function RippleEditTag({ route, navigation }: NavigationProps) {
   );
 }
 
-export { options, RippleEditTag as component };
+export { options, XrpEditTag as component };
 const styles = StyleSheet.create({
   root: {
     flex: 1,
