@@ -19,6 +19,7 @@ import { resolver as polkadot } from "../families/polkadot/setup";
 import { resolver as solana } from "../families/solana/setup";
 import { resolver as tezos } from "../families/tezos/setup";
 import { resolver as xrp } from "../families/xrp/setup";
+import { resolver as icon } from "../families/icon/setup";
 
 export default {
   casper,
@@ -42,4 +43,5 @@ export default {
   solana,
   tezos,
   xrp,
+  icon,
 };

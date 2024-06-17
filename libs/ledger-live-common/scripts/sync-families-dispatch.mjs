@@ -31,6 +31,7 @@ const familiesWPackage = [
   "solana",
   "tezos",
   "xrp",
+  "icon",
 ];
 
 cd(path.join(__dirname, "..", "src"));

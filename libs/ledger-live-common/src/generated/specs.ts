@@ -19,6 +19,7 @@ import polkadot from "@ledgerhq/coin-polkadot/specs";
 import solana from "@ledgerhq/coin-solana/specs";
 import tezos from "@ledgerhq/coin-tezos/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
+import icon from "@ledgerhq/coin-icon/specs";
 
 export default {
   casper,
@@ -42,4 +43,5 @@ export default {
   solana,
   tezos,
   xrp,
+  icon,
 };

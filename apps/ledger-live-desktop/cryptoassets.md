@@ -107,7 +107,7 @@
 | Helium | HNT | NO | helium |
 | High Performance Blockchain | HPB | NO | hpb |
 | Hycon | HYC | NO | hycon |
-| ICON | ICX | NO | icon |
+| ICON | ICX | YES | icon |
 | IOTA | MIOTA | NO | iota |
 | IOV | IOV | NO | iov |
 | Kin | KIN | NO | kin |
