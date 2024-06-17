@@ -16,7 +16,7 @@ import {
 } from "./sidecar";
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { getCoinConfig } from "../config";
 
 type PolkadotAPIAccount = {
