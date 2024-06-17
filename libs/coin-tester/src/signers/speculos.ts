@@ -12,7 +12,7 @@ const cwd = path.join(__dirname);
 
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
 
-const ensureEnv = () => {
+function ensureEnv() {
   const mandatory_env_variables = ["SEED", "API_PORT", "GH_TOKEN"];
   const optional_env_variables = ["SPECULOS_IMAGE"];
 
@@ -27,14 +27,12 @@ const ensureEnv = () => {
       console.warn(`Variable ${envVariable} missing from .env. Using default value.`);
     }
   });
-};
+}
 
-export const spawnSpeculos = async (
-  nanoAppEndpoint: `/${string}`,
-): Promise<{
+export async function spawnSpeculos(nanoAppEndpoint: `/${string}`): Promise<{
   transport: SpeculosTransportHttp;
   getOnSpeculosConfirmation: (approvalText?: string) => () => Promise<void>;
-}> => {
+}> {
   ensureEnv();
   console.log(`Starting speculos...`);
 
@@ -66,7 +64,7 @@ export const spawnSpeculos = async (
     env: process.env,
   });
 
-  const checkSpeculosLogs = async (): Promise<SpeculosTransportHttp> => {
+  async function checkSpeculosLogs(): Promise<SpeculosTransportHttp> {
     const { out } = await compose.logs("speculos", { cwd, env: process.env });
 
     if (out.includes("Running on all addresses (0.0.0.0)")) {
@@ -78,10 +76,10 @@ export const spawnSpeculos = async (
 
     await delay(200);
     return checkSpeculosLogs();
-  };
+  }
 
-  const getOnSpeculosConfirmation = (approvalText = "Accept") => {
-    const onSpeculosConfirmation = async (e?: SignOperationEvent): Promise<void> => {
+  function getOnSpeculosConfirmation(approvalText = "Accept") {
+    async function onSpeculosConfirmation(e?: SignOperationEvent): Promise<void> {
       if (e?.type === "device-signature-requested") {
         const { data } = await axios.get(
           `http://localhost:${process.env.API_PORT}/events?currentscreenonly=true`,
@@ -99,10 +97,10 @@ export const spawnSpeculos = async (
           });
         }
       }
-    };
+    }
 
     return onSpeculosConfirmation;
-  };
+  }
 
   return checkSpeculosLogs().then(transport => {
     return {
@@ -110,16 +108,16 @@ export const spawnSpeculos = async (
       getOnSpeculosConfirmation,
     };
   });
-};
+}
 
-export const killSpeculos = async () => {
+export async function killSpeculos() {
   console.log("Stopping speculos...");
   await compose.down({
     cwd,
     log: true,
     env: process.env,
   });
-};
+}
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
   process.on(e, async () => {
