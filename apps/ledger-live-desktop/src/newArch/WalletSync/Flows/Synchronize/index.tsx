@@ -35,7 +35,14 @@ const SynchronizeWallet = () => {
   };
 
   return (
-    <Flex flexDirection="column" height="100%" paddingX="40px" rowGap="48px">
+    <Flex
+      flexDirection="column"
+      height="100%"
+      paddingX="40px"
+      rowGap="48px"
+      alignItems={currentStep === Step.Synchronized ? "center" : undefined}
+      justifyContent={currentStep === Step.Synchronized ? "center" : undefined}
+    >
       {getStep()}
     </Flex>
   );

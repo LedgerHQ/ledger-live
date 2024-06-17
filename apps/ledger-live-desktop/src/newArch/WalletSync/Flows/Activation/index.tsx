@@ -22,7 +22,6 @@ const WalletSyncActivation = () => {
   };
 
   const goToActivationOrSynchroWithTrustchain = (device: Device) => {
-    console.log("DEVICE", device);
     setDevice(device);
     dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronizeTrustChain }));
   };

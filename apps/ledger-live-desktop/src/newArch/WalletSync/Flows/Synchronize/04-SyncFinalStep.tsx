@@ -8,9 +8,5 @@ export default function SyncFinalStep() {
   const { t } = useTranslation();
   const title = "walletSync.success.synch.title";
   const desc = "walletSync.success.synch.desc";
-  return (
-    <Flex flex={1}>
-      <Success title={t(title)} description={t(desc)} />
-    </Flex>
-  );
+  return <Success title={t(title)} description={t(desc)} />;
 }
