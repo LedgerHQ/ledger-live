@@ -46,8 +46,7 @@
     "test:playwright:clean": "git clean -fdX tests/artifacts",
     "typecheck": "node scripts/typecheck.js",
     "check": "pnpm lint; pnpm typecheck",
-    "unimported": "unimported",
-    "generate:cryptoassets-md": "ts-node --compilerOptions '{\"module\":\"commonjs\"}' ./src/generate-cryptoassets-md.ts"
+    "unimported": "unimported"
   },
   "dependencies": {
     "@braze/web-sdk": "^4.6.3",
