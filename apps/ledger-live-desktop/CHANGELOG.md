@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.82.0-next.3
+
+### Patch Changes
+
+- [#7109](https://github.com/LedgerHQ/ledger-live/pull/7109) [`9707d0d`](https://github.com/LedgerHQ/ledger-live/commit/9707d0d14f3a50df947640578504e1491210e3d2) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Brings back the Custom UIs of XRP family in LLM & LLD (dropped due to the renamming of the family from ripple to xrp)
+
 ## 2.82.0-next.2
 
 ### Patch Changes
