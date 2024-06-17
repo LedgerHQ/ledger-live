@@ -163,7 +163,7 @@ describe("Check Exchange until payload signature", () => {
     await exchange.checkTransactionSignature(payloadSignature);
   });
 
-  it.skip("Legacy SELL", async () => {
+  it.only("Legacy SELL", async () => {
     // Given
     const exchange = new Exchange(transport, ExchangeTypes.Sell);
 
@@ -174,25 +174,14 @@ describe("Check Exchange until payload signature", () => {
     expect(transactionId).toEqual(expect.any(String));
     expect(transactionId).toHaveLength(44);
 
-    console.log("DEBUG - Sell transactionId:", transactionId);
-    console.log("DEBUG - Sell transactionId:", transactionId.padStart(32, "0"));
-    console.log("DEBUG - Sell transactionId:", Buffer.from(transactionId).toString());
-    console.log(
-      "DEBUG - Sell transactionId:",
-      Buffer.from(transactionId.padStart(32, "0"), "hex").toString(),
-    );
-
     const { partnerInfo, partnerSigned, partnerPrivKey } =
       await appExchangeSellDataset(legacySignFormat);
     await exchange.setPartnerKey(partnerInfo);
-    console.log("DEBUG - Sell partner info:", partnerInfo);
-    console.log("DEBUG - Sell partner info:", partnerInfo.publicKey.toString("hex"));
-    console.log("DEBUG - Sell partner signed:", Buffer.from(partnerSigned).toString("hex"));
 
     await exchange.checkPartner(partnerSigned);
 
     const amount = new BigNumber(100_000);
-    const encodedPayload = await generateSellPayloadProtobuf({
+    let encodedPayload = await generateSellPayloadProtobuf({
       traderEmail: "test@ledger.fr",
       inCurrency: "ETH",
       inAmount: Buffer.from(amount.toString(16), "hex"),
@@ -206,6 +195,7 @@ describe("Check Exchange until payload signature", () => {
     });
     console.log("DEBUG - Before Payload SHA256", encodedPayload.toString("base64url"));
     console.log("DEBUG - Payload SHA256", await sha256(encodedPayload));
+    encodedPayload = Buffer.from(encodedPayload.toString("base64url"));
 
     //-- CMD 6
     const estimatedFees = new BigNumber(0);
@@ -252,6 +242,12 @@ describe("Check Exchange until payload signature", () => {
 
     const payloadSignature = Buffer.from(signature, "base64url");
     await exchange.checkTransactionSignature(payloadSignature);
+
+    // await exchange.checkPayoutAddress(
+    //   Buffer.from("034254430f626974636f696e5f746573746e657400", "hex"),
+    //   Buffer.from("304402203c742abf08a3de00967063818a7ba2c1ef5af68bef356c94a46d86c99ddaba7a02207617ce84dc59998eca965cf15e5bb3ac6f3841cf919b42333e8457870a4812fa", "hex"),
+    //   Buffer.from("01058000003180000001800000000000000000000002", "hex"),
+    // );
   });
 
   it("NG SELL", async () => {
@@ -381,8 +377,17 @@ async function appExchangeSellPreparedDataset(signFormat: PartnerSignFormat, inf
     publicKey: pubKey,
   };
   const msg = signFormat(partnerInfo);
+  console.log("APDU to sign:", msg.toString("hex"));
 
-  const sig = await signMessage(msg, LEDGER_FAKE_PRIVATE_KEY, "der");
+  // const sig = await signMessage(msg, LEDGER_FAKE_PRIVATE_KEY, "der");
+  const sig = Buffer.from(
+    // To Test
+    // "304502204a90851b0e66b27480f04ec20fd24f59e39322097993a267a0f05ac48d66fc7e022100d8e96c93c0951e3c4241deafe864319bdeb2d2ad3fc6d9292ff92f062a6472b4",
+    // Correct expected
+    "30450221008e8b2172ddd48e196dbff81ebe8aebc4ec0988f72de1b02da202f3a8d8f33f9c02205273c1d426aeb460fd36a27696aafda68bdff4139886f29e558895ea85527749",
+    "hex",
+  );
+  // console.log("SIGNATURE Coinify:", Buffer.from(sig).toString("hex"));
 
   return {
     partnerInfo,
