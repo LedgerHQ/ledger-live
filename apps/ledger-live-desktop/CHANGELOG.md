@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.82.0-next.6
+
+### Patch Changes
+
+- [#7116](https://github.com/LedgerHQ/ledger-live/pull/7116) [`769c6e8`](https://github.com/LedgerHQ/ledger-live/commit/769c6e8a4f01e05bb053bc85ca8517fdc62e1387) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Hidden press toggle europa grouped features instead of stax
+
+- Updated dependencies [[`769c6e8`](https://github.com/LedgerHQ/ledger-live/commit/769c6e8a4f01e05bb053bc85ca8517fdc62e1387)]:
+  - @ledgerhq/live-common@34.3.0-next.5
+
 ## 2.82.0-next.5
 
 ### Patch Changes
