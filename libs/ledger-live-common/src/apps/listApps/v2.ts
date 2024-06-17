@@ -31,10 +31,10 @@ const emptyHashData = "0".repeat(64);
 type ListAppsParams = {
   transport: Transport;
   deviceInfo: DeviceInfo;
-  deviceProxyModel?: DeviceModelId;
-  managerDevModeEnabled?: boolean;
+  managerDevModeEnabled: boolean;
   forceProvider: number;
   managerApiRepository: ManagerApiRepository;
+  deviceProxyModel?: DeviceModelId;
 };
 
 export const listApps = ({
