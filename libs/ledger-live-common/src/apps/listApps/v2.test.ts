@@ -13,6 +13,7 @@ import { DeviceModel } from "@ledgerhq/devices";
 import customLockScreenFetchSize from "../../hw/customLockScreenFetchSize";
 import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
 import { currenciesByMarketcap, listCryptoCurrencies } from "../../currencies";
+import { makeAppV2Mock } from "../mock";
 
 jest.useFakeTimers();
 jest.mock("../../hw/customLockScreenFetchSize");
@@ -316,5 +317,146 @@ describe("listApps v2", () => {
 
       jest.advanceTimersByTime(1);
     });
+  });
+
+  it("should keep apps with isDevTools if managerDevModeEnabled is true", done => {
+    const transport = aTransportBuilder();
+    const deviceInfo = aDeviceInfoBuilder({
+      isOSU: false,
+      isBootloader: false,
+      managerAllowed: true,
+      targetId: 0x33200000,
+    });
+
+    mockedManagerApiRepository = {
+      ...new StubManagerApiRepository(),
+      catalogForDevice: () =>
+        Promise.resolve([
+          makeAppV2Mock({ versionName: "Mocked dev app", isDevTools: true }),
+          makeAppV2Mock({ versionName: "Another non dev app", isDevTools: false }),
+        ]),
+    };
+
+    listApps({
+      managerDevModeEnabled: true,
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
+    }).subscribe({
+      next: listAppsEvent => {
+        if (listAppsEvent.type === "result") {
+          const {
+            result: { appsListNames },
+          } = listAppsEvent;
+          try {
+            expect(appsListNames).toEqual(["Mocked dev app", "Another non dev app"]);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        }
+      },
+    });
+
+    jest.advanceTimersByTime(1);
+  });
+
+  it("should not keep apps with isDevTools if managerDevModeEnabled is false", done => {
+    const transport = aTransportBuilder();
+    const deviceInfo = aDeviceInfoBuilder({
+      isOSU: false,
+      isBootloader: false,
+      managerAllowed: true,
+      targetId: 0x33200000,
+    });
+
+    mockedManagerApiRepository = {
+      ...new StubManagerApiRepository(),
+      catalogForDevice: () =>
+        Promise.resolve([
+          makeAppV2Mock({ versionName: "Mocked dev app", isDevTools: true }),
+          makeAppV2Mock({ versionName: "Another non dev app", isDevTools: false }),
+        ]),
+    };
+
+    listApps({
+      managerDevModeEnabled: false,
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
+    }).subscribe({
+      next: listAppsEvent => {
+        if (listAppsEvent.type === "result") {
+          const {
+            result: { appsListNames },
+          } = listAppsEvent;
+          try {
+            expect(appsListNames).toEqual(["Another non dev app"]);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        }
+      },
+    });
+
+    jest.advanceTimersByTime(1);
+  });
+
+  it("should keep apps with isDevTools if managerDevModeEnabled is disabled but those apps are installed", done => {
+    const transport = aTransportBuilder();
+    const deviceInfo = aDeviceInfoBuilder({
+      isOSU: false,
+      isBootloader: false,
+      managerAllowed: true,
+      targetId: 0x33200000,
+    });
+
+    mockedManagerApiRepository = {
+      ...new StubManagerApiRepository(),
+      catalogForDevice: () =>
+        Promise.resolve([
+          makeAppV2Mock({ versionName: "Mocked dev app", isDevTools: true }),
+          makeAppV2Mock({ versionName: "Another non dev app", isDevTools: false }),
+        ]),
+      getAppsByHash(hashes) {
+        const hashToApp = {
+          hash1: makeAppV2Mock({ versionName: "Mocked dev app", isDevTools: true }),
+          hash2: makeAppV2Mock({ versionName: "Another non dev app", isDevTools: false }),
+        };
+        return Promise.resolve(hashes.map(hash => hashToApp[hash]));
+      },
+    };
+
+    listAppsCommandSpy.mockResolvedValue([
+      { hash: "hash1", name: "Mocked dev app" },
+      { hash: "hash2", name: "Another non dev app" },
+    ]);
+
+    listApps({
+      managerDevModeEnabled: false,
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
+    }).subscribe({
+      next: listAppsEvent => {
+        if (listAppsEvent.type === "result") {
+          const {
+            result: { appsListNames },
+          } = listAppsEvent;
+          try {
+            expect(appsListNames).toEqual(["Mocked dev app", "Another non dev app"]);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        }
+      },
+    });
+
+    jest.advanceTimersByTime(1);
   });
 });
