@@ -38,6 +38,12 @@ function getDeviceTransactionConfig(input: {
       });
     }
   }
+
+  fields.push({
+    type: "fees",
+    label: "Fee",
+  });
+
   if (!input.transaction.comment.isEncrypted && input.transaction.comment.text) {
     fields.push({
       type: "text",

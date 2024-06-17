@@ -5177,7 +5177,7 @@
     "ton": {
       "commentPlaceholder": "Optional",
       "comment": "Comment",
-      "commentWarningText": "Comment must be up to 120 ascii chars"
+      "commentWarningText": "Comment must not exceed 120 characters without special characters"
     },
     "stellar": {
       "memo": "Memo",
@@ -5718,6 +5718,9 @@
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
+    },
+    "TonCommentInvalid": {
+      "title": "Comment must not exceed 120 characters without special characters"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"
