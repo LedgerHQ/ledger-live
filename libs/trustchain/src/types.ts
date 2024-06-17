@@ -104,6 +104,7 @@ export interface TrustchainSDK {
     transport: Transport,
     deviceJWT: JWT,
     memberCredentials: MemberCredentials,
+    callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
   ): Promise<{
     trustchain: Trustchain;
@@ -134,6 +135,7 @@ export interface TrustchainSDK {
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
+    callbacks?: TrustchainDeviceCallbacks,
   ): Promise<{
     jwt: JWT;
     trustchain: Trustchain;
@@ -163,4 +165,9 @@ export interface TrustchainSDK {
    * decrypt data with the trustchain encryption key
    */
   decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object>;
+}
+
+export interface TrustchainDeviceCallbacks {
+  onStartRequestUserInteraction: () => void;
+  onEndRequestUserInteraction: () => void;
 }

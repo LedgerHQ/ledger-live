@@ -57,7 +57,6 @@ class MockSDK implements TrustchainSDK {
     transport: Transport,
     deviceJWT: JWT,
     memberCredentials: MemberCredentials,
-    _topic?: Uint8Array,
   ): Promise<{
     jwt: JWT;
     trustchain: Trustchain;

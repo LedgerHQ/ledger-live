@@ -3,6 +3,7 @@ import { OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getNonce, isFirstBond } from "./utils";
 import {
+  PalletMethod,
   PolkadotAccount,
   PolkadotOperation,
   PolkadotOperationExtra,
@@ -22,19 +23,21 @@ const MODE_TO_TYPE: Record<PolkadotOperationMode | "default", OperationType> = {
   claimReward: "REWARD_PAYOUT",
   default: "FEES",
 };
-const MODE_TO_PALLET_METHOD = {
-  send: "balances.transferKeepAlive",
-  sendMax: "balances.transferAllowDeath",
-  bond: "staking.bond",
-  bondExtra: "staking.bondExtra",
-  unbond: "staking.unbond",
-  rebond: "staking.rebond",
-  withdrawUnbonded: "staking.withdrawUnbonded",
-  nominate: "staking.nominate",
-  chill: "staking.chill",
-  setController: "staking.setController",
-  claimReward: "staking.payoutStakers",
-};
+
+const MODE_TO_PALLET_METHOD: Record<PolkadotOperationMode | "bondExtra" | "sendMax", PalletMethod> =
+  {
+    send: "balances.transferKeepAlive",
+    sendMax: "balances.transferAllowDeath",
+    bond: "staking.bond",
+    bondExtra: "staking.bondExtra",
+    unbond: "staking.unbond",
+    rebond: "staking.rebond",
+    withdrawUnbonded: "staking.withdrawUnbonded",
+    nominate: "staking.nominate",
+    chill: "staking.chill",
+    setController: "staking.setController",
+    claimReward: "staking.payoutStakers",
+  } as const;
 
 const getExtra = (
   type: string,
