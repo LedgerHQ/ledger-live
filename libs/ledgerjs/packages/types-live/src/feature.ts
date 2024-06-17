@@ -168,6 +168,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   ptxSwapThorswapProvider: Feature_PtxSwapThorswapProvider;
+  ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
@@ -492,6 +493,7 @@ export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
 export type Feature_PtxSwapThorswapProvider = DefaultFeature;
+export type Feature_PtxSwapReceiveTRC20WithoutTrx = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;

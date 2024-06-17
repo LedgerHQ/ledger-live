@@ -5,7 +5,10 @@ import {
   usePageState,
   useSwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
+import {
+  maybeTezosAccountUnrevealedAccount,
+  maybeTronEmptyAccount,
+} from "@ledgerhq/live-common/exchange/swap/index";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
@@ -65,6 +68,7 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+  const ptxSwapReceiveTRC20WithoutTrx = useFeature("ptxSwapReceiveTRC20WithoutTrx");
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const setExchangeRate: SetExchangeRateCallback = useCallback(
@@ -115,7 +119,8 @@ const SwapForm = () => {
   const swapError =
     swapTransaction.fromAmountError ||
     exchangeRatesState?.error ||
-    maybeTezosAccountUnrevealedAccount(swapTransaction);
+    maybeTezosAccountUnrevealedAccount(swapTransaction) ||
+    (ptxSwapReceiveTRC20WithoutTrx?.enabled ? maybeTronEmptyAccount(swapTransaction) : undefined);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
