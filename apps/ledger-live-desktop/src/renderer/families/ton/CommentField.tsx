@@ -1,10 +1,10 @@
-import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import Input from "~/renderer/components/Input";
-import invariant from "invariant";
-import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ton/types";
+import { Account } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import Input from "~/renderer/components/Input";
 
 const CommentField = ({
   onChange,
@@ -38,8 +38,8 @@ const CommentField = ({
   // on the ledger-live mobile
   return (
     <Input
-      warning={status.warnings.transaction}
-      error={status.errors.transaction}
+      warning={status.warnings.comment}
+      error={status.errors.comment}
       value={transaction.comment.text}
       placeholder={t("families.ton.commentPlaceholder")}
       onChange={onCommentFieldChange}
