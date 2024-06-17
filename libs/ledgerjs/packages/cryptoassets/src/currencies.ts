@@ -1109,7 +1109,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "ethereum_classic",
     coinType: CoinType.ETH_CLASSIC,
     name: "Ethereum Classic",
-    managerAppName: "Ethereum",
+    managerAppName: "Ethereum Classic",
     ticker: "ETC",
     scheme: "ethereumclassic",
     color: "#3ca569",
