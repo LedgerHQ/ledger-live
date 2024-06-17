@@ -58,6 +58,7 @@ describe("listApps v2", () => {
     const deviceInfo = aDeviceInfoBuilder({ isOSU: true, isBootloader: false });
 
     listApps({
+      managerDevModeEnabled: false,
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
@@ -80,6 +81,7 @@ describe("listApps v2", () => {
     const deviceInfo = aDeviceInfoBuilder({ isOSU: false, isBootloader: true });
 
     listApps({
+      managerDevModeEnabled: false,
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
@@ -102,6 +104,7 @@ describe("listApps v2", () => {
     const deviceInfo = aDeviceInfoBuilder({ isOSU: false, isBootloader: false, targetId: 0 });
 
     listApps({
+      managerDevModeEnabled: false,
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
@@ -129,6 +132,7 @@ describe("listApps v2", () => {
     });
 
     listApps({
+      managerDevModeEnabled: false,
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
@@ -158,6 +162,7 @@ describe("listApps v2", () => {
     });
 
     listApps({
+      managerDevModeEnabled: false,
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
@@ -183,6 +188,7 @@ describe("listApps v2", () => {
     });
 
     listApps({
+      managerDevModeEnabled: false,
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
@@ -214,6 +220,7 @@ describe("listApps v2", () => {
     });
 
     listApps({
+      managerDevModeEnabled: false,
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
@@ -247,6 +254,7 @@ describe("listApps v2", () => {
     });
 
     listApps({
+      managerDevModeEnabled: false,
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
@@ -279,6 +287,7 @@ describe("listApps v2", () => {
       let gotResult = false;
 
       listApps({
+        managerDevModeEnabled: false,
         transport,
         deviceInfo,
         managerApiRepository: mockedManagerApiRepository,
