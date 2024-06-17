@@ -5,6 +5,7 @@ import {
   Trustchain,
   TrustchainMember,
   TrustchainSDK,
+  TrustchainDeviceCallbacks,
 } from "./types";
 import {
   crypto,
@@ -89,6 +90,7 @@ export class SDK implements TrustchainSDK {
     transport: Transport,
     deviceJWT: JWT,
     memberCredentials: MemberCredentials,
+    callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
   ): Promise<{
     jwt: JWT;
@@ -100,7 +102,11 @@ export class SDK implements TrustchainSDK {
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
+
+      callbacks?.onStartRequestUserInteraction();
       const streamTree = await StreamTree.createNewTree(hw, { topic });
+      callbacks?.onEndRequestUserInteraction();
+
       await streamTree.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
       const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
       await api.postSeed(jwt, crypto.to_hex(commandStream));
@@ -134,11 +140,13 @@ export class SDK implements TrustchainSDK {
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
     if (shouldShare) {
+      callbacks?.onStartRequestUserInteraction();
       streamTree = await pushMember(streamTree, path, trustchainRootId, jwt, hw, {
         id: memberCredentials.pubkey,
         name: this.context.name,
         permissions: Permissions.OWNER,
       });
+      callbacks?.onEndRequestUserInteraction();
     }
 
     const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
@@ -190,6 +198,7 @@ export class SDK implements TrustchainSDK {
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
+    callbacks?: TrustchainDeviceCallbacks,
   ): Promise<{
     jwt: JWT;
     trustchain: Trustchain;
@@ -210,11 +219,13 @@ export class SDK implements TrustchainSDK {
     const newPath = streamTree.getApplicationRootPath(applicationId, 1);
 
     // derive a new branch of the tree on the new path
+    callbacks?.onStartRequestUserInteraction();
     streamTree = await pushMember(streamTree, newPath, trustchainId, deviceJWT, hw, {
       id: memberCredentials.pubkey,
       name: this.context.name,
       permissions: Permissions.OWNER,
     });
+    callbacks?.onEndRequestUserInteraction();
 
     // add the remaining members
     for (const m of withoutMemberOrMe) {
