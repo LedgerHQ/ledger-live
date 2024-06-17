@@ -1,5 +1,5 @@
 import path from "path";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import fs from "fs/promises";
 import { v2 as compose } from "docker-compose";
 import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
@@ -38,17 +38,27 @@ export const spawnSpeculos = async (
   ensureEnv();
   console.log(`Starting speculos...`);
 
-  const { data: blob } = await axios({
-    url: `https://raw.githubusercontent.com/LedgerHQ/coin-apps/master/nanox${nanoAppEndpoint}`,
-    method: "GET",
-    responseType: "stream",
-    headers: {
-      Authorization: `Bearer ${process.env.GH_TOKEN}`,
-    },
-  });
+  try {
+    const { data: blob } = await axios({
+      url: `https://raw.githubusercontent.com/LedgerHQ/coin-apps/master/nanox${nanoAppEndpoint}`,
+      method: "GET",
+      responseType: "stream",
+      headers: {
+        Authorization: `Bearer ${process.env.GH_TOKEN}`,
+      },
+    });
 
-  await fs.mkdir(path.resolve(cwd, "tmp"), { recursive: true });
-  await fs.writeFile(path.resolve(cwd, "tmp/app.elf"), blob, "binary");
+    await fs.mkdir(path.resolve(cwd, "tmp"), { recursive: true });
+    await fs.writeFile(path.resolve(cwd, "tmp/app.elf"), blob, "binary");
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      throw new Error(
+        `${err.status}: Failed to download the app.elf file from ${nanoAppEndpoint}\nMake sure that your GH_TOKEN is correct and has the right permissions.`,
+      );
+    }
+
+    throw err;
+  }
 
   await compose.upOne("speculos", {
     cwd,
