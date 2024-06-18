@@ -1,6 +1,6 @@
 import React from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import OpenOrInstallTrustChainApp from "../DeviceActions/openOrInstall";
+import OpenOrInstallTrustChainApp from "../DeviceActions/OpenOrInstall";
 
 type Props = {
   goNext: (device: Device) => void;

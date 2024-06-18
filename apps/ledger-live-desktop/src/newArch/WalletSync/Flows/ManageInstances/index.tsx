@@ -7,9 +7,9 @@ import ManageInstancesStep from "./01-ManageInstancesStep";
 import DeviceActionInstanceStep from "./02-DeviceActionInstanceStep";
 import DeleteInstanceWithTrustchain from "./03-DeleteInstanceWithTrustchain";
 import DeletionFinalStep from "./04-DeletionFinalStep";
-import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
 import { UnsecuredError } from "../Activation/03-UnsecuredError";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
 
 const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) => {
   const [selectedInstance, setSelectedInstance] = useState<TrustchainMember | null>(null);
@@ -57,7 +57,14 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
   };
 
   return (
-    <Flex flexDirection="column" height="100%" rowGap="48px">
+    <Flex
+      flexDirection="column"
+      height="100%"
+      rowGap="48px"
+      paddingX={currentStep === Step.DeleteInstanceWithTrustChain ? "64px" : undefined}
+      alignItems={currentStep === Step.DeleteInstanceWithTrustChain ? "center" : undefined}
+      justifyContent={currentStep === Step.DeleteInstanceWithTrustChain ? "center" : undefined}
+    >
       {getStep()}
     </Flex>
   );
