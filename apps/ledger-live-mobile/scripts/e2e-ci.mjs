@@ -39,6 +39,7 @@ const test_ios = async () => {
     --loglevel error \
     --record-logs all \
     --take-screenshots all \
+    --record-videos all \
     --forceExit \
     --headless \
     --retries 1 \
@@ -55,6 +56,7 @@ const test_android = async () => {
     --loglevel error \\
     --record-logs all \\
     --take-screenshots all \\
+    --record-videos all \\
     --forceExit \\
     --headless \\
     --retries 1 \\
