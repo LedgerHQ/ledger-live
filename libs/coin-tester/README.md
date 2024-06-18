@@ -1,6 +1,9 @@
 # Coin-tester
 
-## Getting started
+- [Setup](#setup)
+- [Run tests for a coin module](#runtests)
+
+## <a name="setup"></a>Setup
 
 ### Prerequisites
 
@@ -59,3 +62,23 @@ SPECULOS_IMAGE=speculos
 ```
 
 If you want you can generate a new seed using [this tool](https://iancoleman.io/bip39/)
+
+### Coin Module Specific setup
+
+#### Polkadot
+
+To coin Polkadot Coin tester we will need to build the local test node Docker image.
+
+```sh
+pnpm coin:polkadot coin-tester:build
+```
+
+## <a name="runtests"></a>Run tests for a coin module
+
+```sh
+pnpm coin:<coin-module-name> coin-tester
+
+# e.g
+# pnpm coin:ethereum coin-tester
+# pnpm coin:polkadot coin-tester
+```
