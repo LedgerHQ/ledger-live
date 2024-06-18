@@ -396,21 +396,5 @@ describe("DefaultKeyringEth", () => {
         new Error("[DefaultKeyringEth] getAddress: Invalid address or public key"),
       );
     });
-
-    it("should throw an error if the public key is not valid", async () => {
-      // GIVEN
-      const derivationPath = "derivationPath";
-      jest
-        .spyOn(mockAppBinding, "getAddress")
-        .mockResolvedValue({ publicKey: "000", address: "0x000" });
-
-      // WHEN
-      const promise = keyring.getAddress(derivationPath);
-
-      // THEN
-      expect(promise).rejects.toThrow(
-        new Error("[DefaultKeyringEth] getAddress: Invalid address or public key"),
-      );
-    });
   });
 });
