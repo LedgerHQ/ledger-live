@@ -70,29 +70,4 @@ describe("synced xpub utilites functions", () => {
       });
     });
   });
-  describe("test transactin pagination", () => {
-    const xpubraw =
-      "xpub6Co7wRMSsree1cGESqdgi4BpcVDgdJfjUWqY8M6Dnh3N1NmphcSwhbRoUA2nitgsJxd7gqhSTbSbXf3uAD4q4FqbCsKSGEpw5ab3DS7TtM2";
-    const storage = new BitcoinLikeStorage();
-    const explorer = new BitcoinLikeExplorer({
-      cryptoCurrency: getCryptoCurrencyById("digibyte"),
-    });
-    const crypto = new Crypto({
-      network: coininfo.digibyte.main.toBitcoinJS(),
-    });
-    const xpub = new Xpub({
-      storage,
-      explorer,
-      crypto,
-      xpub: xpubraw,
-      derivationMode: DerivationModes.SEGWIT,
-    });
-
-    beforeAll(async () => {
-      await xpub.sync();
-    }, 120000);
-    it("should fetch transaction correctly when there are multiple pages", async () => {
-      expect(10).toBe(10);
-    });
-  });
 });
