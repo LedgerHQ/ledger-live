@@ -118,44 +118,45 @@ jobs:
           ENABLE_BROADCAST: ${{ contains(inputs.enable_broadcast, 'true') }}
           SPECULOS_TESTS: ${{ !contains(inputs.speculos_tests, 'false') }}
 
-      - name: upload diffs to s3
-        if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
-        id: s3
-        with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
-          os: linux
-          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
-      - name: upload ci suggested screenshots
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: images
-          path: images-linux.json
-      - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v4
-        if: failure() && !cancelled()
-        with:
-          name: playwright-results-linux
-          path: |
-            apps/ledger-live-desktop/tests/artifacts/test-results
-            apps/ledger-live-desktop/tests/artifacts/html-report
-            apps/ledger-live-desktop/tests/artifacts/coverage
-            apps/ledger-live-desktop/tests/artifacts/videos
-            apps/ledger-live-desktop/tests/artifacts/logs
-            apps/ledger-live-desktop/tests/artifacts/*.log
-      - name: Upload Allure Report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-linux
-          path: apps/ledger-live-desktop/allure-results
+#      - name: upload diffs to s3
+#        if: ${{ !cancelled() }}
+#        uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
+#        id: s3
+#        with:
+#          path: apps/ledger-live-desktop/tests/artifacts/test-results
+#          workspace: ${{ github.workspace }}
+#          os: linux
+#          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+#      - name: upload ci suggested screenshots
+#        if: ${{ !cancelled() }}
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: images
+#          path: images-linux.json
+#      - name: Upload playwright test results [On Failure]
+#        uses: actions/upload-artifact@v4
+#        if: failure() && !cancelled()
+#        with:
+#          name: playwright-results-linux
+#          path: |
+#            apps/ledger-live-desktop/tests/artifacts/test-results
+#            apps/ledger-live-desktop/tests/artifacts/html-report
+#            apps/ledger-live-desktop/tests/artifacts/coverage
+#            apps/ledger-live-desktop/tests/artifacts/videos
+#            apps/ledger-live-desktop/tests/artifacts/logs
+#            apps/ledger-live-desktop/tests/artifacts/*.log
+#      - name: Upload Allure Report
+#        if: ${{ !cancelled() }}
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-results-linux-${{ matrix.shardIndex }}
+#          path: apps/ledger-live-desktop/allure-results
 
       - name: Upload Allure Results
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: "allure-results"
+          name: allure-results-${{ matrix.shardIndex }}
           path: "apps/ledger-live-desktop/allure-results"
 
       - name: Publish report on Allure Server
