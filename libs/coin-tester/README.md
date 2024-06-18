@@ -75,7 +75,11 @@ To coin Polkadot Coin tester we will need to build the local test node Docker im
 pnpm coin:polkadot coin-tester:build
 ```
 
+<<<<<<< HEAD
 ## Run tests for a coin module {#runtests}
+=======
+## <a name="runtests"></a>Run tests for a coin module
+>>>>>>> 6fe46e99f3 (coin module specific setup)
 
 ```sh
 pnpm coin:<coin-module-name> coin-tester
@@ -83,4 +87,8 @@ pnpm coin:<coin-module-name> coin-tester
 # e.g
 # pnpm coin:ethereum coin-tester
 # pnpm coin:polkadot coin-tester
+<<<<<<< HEAD
 ```
+=======
+```
+>>>>>>> 6fe46e99f3 (coin module specific setup)
