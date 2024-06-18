@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import AddAccountsNavigator from "~/components/RootNavigator/AddAccountsNavigator";
+import ImportAccountsNavigator from "~/components/RootNavigator/ImportAccountsNavigator";
 
 const MockComponent = () => {
   const { t } = useTranslation();
@@ -45,6 +46,7 @@ export function TestButtonPage() {
     <Stack.Navigator initialRouteName={ScreenName.MockedAddAssetButton}>
       <Stack.Screen name={ScreenName.MockedAddAssetButton} component={MockComponent} />
       <Stack.Screen name={NavigatorName.AddAccounts} component={AddAccountsNavigator} />
+      <Stack.Screen name={NavigatorName.ImportAccounts} component={ImportAccountsNavigator} />
     </Stack.Navigator>
   );
 }
