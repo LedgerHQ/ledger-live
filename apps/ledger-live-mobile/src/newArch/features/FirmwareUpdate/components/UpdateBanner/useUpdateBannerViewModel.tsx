@@ -40,7 +40,10 @@ export function useUpdateBannerViewModel({
     lastSeenDeviceModelInfo,
     lastConnectedDevice,
   });
-  const isNewUxSupported = isNewFirmwareUpdateUxSupported(lastConnectedDevice?.modelId);
+  const isNewUxSupported = isNewFirmwareUpdateUxSupported(
+    lastConnectedDevice,
+    lastSeenDeviceModelInfo,
+  );
 
   const [unsupportedUpdateDrawerOpened, setUnsupportedUpdateDrawerOpened] =
     useState<boolean>(false);

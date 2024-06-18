@@ -6,7 +6,6 @@ import type { PortfolioRange } from "@ledgerhq/types-live";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 import {
   SettingsAcceptSwapProviderPayload,
-  SettingsAddStarredMarketcoinsPayload,
   SettingsBlacklistTokenPayload,
   DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
@@ -16,7 +15,6 @@ import {
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
-  SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetPersonalizedRecommendationsPayload,
   SettingsSetAvailableUpdatePayload,
@@ -30,8 +28,6 @@ import {
   SettingsSetLocalePayload,
   SettingsSetCustomImageBackupPayload,
   SettingsSetMarketCounterCurrencyPayload,
-  SettingsSetMarketFilterByStarredAccountsPayload,
-  SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
   SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
@@ -71,6 +67,8 @@ import {
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
+  SettingsAddStarredMarketcoinsPayload,
+  SettingsRemoveStarredMarketcoinsPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -197,12 +195,6 @@ const setHasSeenStaxEnabledNftsPopupAction =
   );
 export const setHasSeenStaxEnabledNftsPopup = (hasSeenStaxEnabledNftsPopup: boolean) =>
   setHasSeenStaxEnabledNftsPopupAction({ hasSeenStaxEnabledNftsPopup });
-export const addStarredMarketCoins = createAction<SettingsAddStarredMarketcoinsPayload>(
-  SettingsActionTypes.ADD_STARRED_MARKET_COINS,
-);
-export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarketcoinsPayload>(
-  SettingsActionTypes.REMOVE_STARRED_MARKET_COINS,
-);
 export const setLastConnectedDevice = createAction<SettingsSetLastConnectedDevicePayload>(
   SettingsActionTypes.SET_LAST_CONNECTED_DEVICE,
 );
@@ -217,16 +209,9 @@ export const setCustomImageType = (imageType: ImageType) =>
 export const setHasOrderedNano = createAction<SettingsSetHasOrderedNanoPayload>(
   SettingsActionTypes.SET_HAS_ORDERED_NANO,
 );
-export const setMarketRequestParams = createAction<SettingsSetMarketRequestParamsPayload>(
-  SettingsActionTypes.SET_MARKET_REQUEST_PARAMS,
-);
 export const setMarketCounterCurrency = createAction<SettingsSetMarketCounterCurrencyPayload>(
   SettingsActionTypes.SET_MARKET_COUNTER_CURRENCY,
 );
-export const setMarketFilterByStarredAccounts =
-  createAction<SettingsSetMarketFilterByStarredAccountsPayload>(
-    SettingsActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS,
-  );
 export const setSensitiveAnalytics = createAction<SettingsSetSensitiveAnalyticsPayload>(
   SettingsActionTypes.SET_SENSITIVE_ANALYTICS,
 );
@@ -298,6 +283,13 @@ export const setDismissedContentCard = createAction<SettingsSetDismissedContentC
 
 export const clearDismissedContentCards = createAction<SettingsClearDismissedContentCardsPayload>(
   SettingsActionTypes.CLEAR_DISMISSED_CONTENT_CARDS,
+);
+
+export const addStarredMarketCoins = createAction<SettingsAddStarredMarketcoinsPayload>(
+  SettingsActionTypes.ADD_STARRED_MARKET_COINS,
+);
+export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarketcoinsPayload>(
+  SettingsActionTypes.REMOVE_STARRED_MARKET_COINS,
 );
 
 type PortfolioRangeOption = {

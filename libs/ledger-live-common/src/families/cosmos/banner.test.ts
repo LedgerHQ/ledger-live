@@ -8,7 +8,7 @@ import { BigNumber } from "bignumber.js";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "../../config/sharedConfig";
 
-jest.mock("./js-prepareTransaction", () => ({
+jest.mock("./prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
 }));
 
@@ -29,15 +29,12 @@ const cheapValidator: CosmosValidatorItem | undefined = data.validators.find(
 const account: CosmosAccount = {
   type: "Account",
   id: "js:2:cosmos:cosmos1f9y7wdychcdhwvyrhff3zvs3gy3qxcu2th4g8u:",
-  starred: false,
   used: false,
   seedIdentifier: "02d4c121ce2bb160ebf39aa0be0050b4d553e18872985ac3a4e21904fd1442defe",
   derivationMode: "",
   index: 1,
   freshAddress: "cosmos1f9y7wdychcdhwvyrhff3zvs3gy3qxcu2th4g8u",
   freshAddressPath: "44'/118'/1'/0/0",
-  name: "Cosmos 2 - Nano X Static Account",
-  freshAddresses: [],
   blockHeight: 5417472,
   creationDate: new Date("2022-08-02T16:09:08.906Z"),
   balance: new BigNumber("200250"),
@@ -45,7 +42,6 @@ const account: CosmosAccount = {
   operations: [],
   operationsCount: 1,
   pendingOperations: [],
-  unit: { name: "Atom", code: "ATOM", magnitude: 6 },
   currency: {
     type: "CryptoCurrency",
     id: "cosmos",

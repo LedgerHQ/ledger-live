@@ -1,9 +1,12 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
+import {
+  getCurrentSolanaPreloadData,
+  getSolanaPreloadData,
+} from "@ledgerhq/coin-solana/preload-data";
+import { SolanaPreloadDataV1, SolanaStake, SolanaStakeWithMeta } from "@ledgerhq/coin-solana/types";
+import { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
 import { useObservable } from "../../observable";
-import { getCurrentSolanaPreloadData, getSolanaPreloadData } from "./js-preload-data";
-import { SolanaPreloadDataV1, SolanaStake, SolanaStakeWithMeta } from "./types";
-import { ValidatorsAppValidator } from "./validator-app";
 
 export function useSolanaPreloadData(
   currency: CryptoCurrency,

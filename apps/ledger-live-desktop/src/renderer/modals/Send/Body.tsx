@@ -313,8 +313,8 @@ const Body = ({
       stepId === "warning"
         ? t("common.information")
         : isNFTSend
-        ? t("send.titleNft")
-        : t("send.title"),
+          ? t("send.titleNft")
+          : t("send.title"),
     stepId,
     steps,
     errorSteps,

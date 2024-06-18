@@ -1,20 +1,8 @@
-import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
+import BigNumber from "bignumber.js";
+import { toErrorRaw } from "@ledgerhq/coin-framework/lib/serialization/transaction";
 import { transactionToEthersTransaction } from "../../adapters";
 import * as nodeApi from "../../api/node/rpc.common";
-import {
-  fromTransactionRaw,
-  getSerializedTransaction,
-  getTransactionData,
-  getTypedTransaction,
-  toTransactionRaw,
-} from "../../transaction";
-import {
-  Transaction as EvmTransaction,
-  EvmTransactionEIP1559,
-  EvmTransactionLegacy,
-  FeeData,
-} from "../../types";
 import {
   account,
   eip1559Tx,
@@ -31,6 +19,21 @@ import {
   testData,
   tokenTransaction,
 } from "../fixtures/transaction.fixtures";
+import {
+  fromTransactionRaw,
+  fromTransactionStatusRaw,
+  getSerializedTransaction,
+  getTransactionData,
+  getTypedTransaction,
+  toTransactionRaw,
+  toTransactionStatusRaw,
+} from "../../transaction";
+import {
+  Transaction as EvmTransaction,
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+  FeeData,
+} from "../../types";
 
 describe("EVM Family", () => {
   describe("transaction.ts", () => {
@@ -48,7 +51,7 @@ describe("EVM Family", () => {
           expect(
             fromTransactionRaw({
               ...rawLegacyTx,
-              type: undefined,
+              type: undefined as any,
             }),
           ).toEqual(legacyTx);
         });
@@ -80,7 +83,7 @@ describe("EVM Family", () => {
           expect(
             fromTransactionRaw({
               ...rawLegacyTx,
-              type: undefined,
+              type: undefined as any,
               customGasLimit: "22000",
             }),
           ).toEqual({
@@ -139,6 +142,80 @@ describe("EVM Family", () => {
           expect(
             toTransactionRaw({ ...nftLegacyTx, customGasLimit: new BigNumber(22000) }),
           ).toEqual({ ...nftRawLegacyTx, customGasLimit: "22000" });
+        });
+      });
+    });
+
+    describe("fromTransactionStatusRaw", () => {
+      it("should deserialize an old transaction status without totalFees", () => {
+        const err = new Error("Error Message");
+        const warn = new Error("Warning Message");
+        expect(
+          fromTransactionStatusRaw({
+            amount: "1",
+            errors: { errorName: toErrorRaw(err) },
+            warnings: { warningName: toErrorRaw(warn) },
+            estimatedFees: "2",
+            totalSpent: "4",
+            recipientIsReadOnly: false,
+          } as any),
+        ).toEqual({
+          amount: new BigNumber(1),
+          errors: { errorName: err },
+          warnings: { warningName: warn },
+          estimatedFees: new BigNumber(2),
+          totalFees: new BigNumber(0),
+          totalSpent: new BigNumber(4),
+          recipientIsReadOnly: false,
+        });
+      });
+      it("should deserialize a transaction status", () => {
+        const err = new Error("Error Message");
+        const warn = new Error("Warning Message");
+        expect(
+          fromTransactionStatusRaw({
+            amount: "1",
+            errors: { errorName: toErrorRaw(err) },
+            warnings: { warningName: toErrorRaw(warn) },
+            estimatedFees: "2",
+            totalFees: "3",
+            totalSpent: "4",
+            recipientIsReadOnly: false,
+          }),
+        ).toEqual({
+          amount: new BigNumber(1),
+          errors: { errorName: err },
+          warnings: { warningName: warn },
+          estimatedFees: new BigNumber(2),
+          totalFees: new BigNumber(3),
+          totalSpent: new BigNumber(4),
+          recipientIsReadOnly: false,
+        });
+      });
+    });
+
+    describe("toTransactionStatusRaw", () => {
+      it("should serialize a transaction status", () => {
+        const err = new Error("Error Message");
+        const warn = new Error("Warning Message");
+        expect(
+          toTransactionStatusRaw({
+            amount: new BigNumber(1),
+            errors: { errorName: err },
+            warnings: { warningName: warn },
+            estimatedFees: new BigNumber(2),
+            totalFees: new BigNumber(3),
+            totalSpent: new BigNumber(4),
+            recipientIsReadOnly: false,
+          }),
+        ).toEqual({
+          amount: "1",
+          errors: { errorName: toErrorRaw(err) },
+          warnings: { warningName: toErrorRaw(warn) },
+          estimatedFees: "2",
+          totalFees: "3",
+          totalSpent: "4",
+          recipientIsReadOnly: false,
         });
       });
     });
@@ -392,7 +469,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: undefined,
                 gasPrice: new BigNumber(0),
                 type: 0,
-              }),
+              } as any),
             },
             {
               description: "only contains `maxPriorityFeePerGas`",
@@ -408,7 +485,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: undefined,
                 gasPrice: new BigNumber(0),
                 type: 0,
-              }),
+              } as any),
             },
             {
               description: "only contains `gasPrice`",
@@ -424,7 +501,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: undefined,
                 gasPrice: new BigNumber(20000),
                 type: 0,
-              }),
+              } as any),
             },
           ];
 
@@ -458,7 +535,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: new BigNumber(10),
                 gasPrice: undefined,
                 type: 2,
-              }),
+              } as any),
             },
             {
               description: "contains `maxFeePerGas`, `maxPriorityFeePerGas` and `gasPrice`",
@@ -474,7 +551,7 @@ describe("EVM Family", () => {
                 maxPriorityFeePerGas: new BigNumber(10),
                 gasPrice: undefined,
                 type: 2,
-              }),
+              } as any),
             },
           ];
 

@@ -24,12 +24,7 @@ import {
 } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import {
-  getAccountUnit,
-  getMainAccount,
-  getAccountName,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
@@ -72,6 +67,8 @@ import { ErrorBody } from "../ErrorBody";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
+import { SettingsState, currencySettingsLocaleSelector } from "~/renderer/reducers/settings";
+import { WalletState, accountNameSelector } from "@ledgerhq/live-wallet/store";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -119,8 +116,8 @@ const Logo = styled.div<{ warning?: boolean; info?: boolean }>`
     p.info
       ? p.theme.colors.palette.primary.main
       : p.warning
-      ? p.theme.colors.warning
-      : p.theme.colors.alertRed};
+        ? p.theme.colors.warning
+        : p.theme.colors.alertRed};
 `;
 
 export const Header = styled.div`
@@ -828,15 +825,13 @@ export const renderError = ({
 export const renderInWrongAppForAccount = ({
   t,
   onRetry,
-  accountName,
 }: {
   t: TFunction;
   onRetry?: (() => void) | null | undefined;
-  accountName: string;
 }) =>
   renderError({
     t,
-    error: new WrongDeviceForAccount("", { accountName }),
+    error: new WrongDeviceForAccount(""),
     withExportLogs: true,
     onRetry,
   });
@@ -950,6 +945,8 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo,
   estimatedFees,
   swapDefaultTrack,
+  stateSettings,
+  walletState,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
@@ -959,18 +956,38 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo?: string;
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;
+  stateSettings: SettingsState;
+  walletState: WalletState;
 }) => {
-  const [sourceAccountName, sourceAccountCurrency] = [
-    getAccountName(exchange.fromAccount),
-    getAccountCurrency(exchange.fromAccount),
-  ];
-  const [targetAccountName, targetAccountCurrency] = [
-    getAccountName(exchange.toAccount),
-    getAccountCurrency(exchange.toAccount),
-  ];
+  const sourceAccountCurrency = getAccountCurrency(exchange.fromAccount);
+  const targetAccountCurrency = getAccountCurrency(exchange.toAccount);
+  const sourceAccountName =
+    accountNameSelector(walletState, {
+      accountId: exchange.fromAccount.id,
+    }) ?? sourceAccountCurrency.name;
+
+  // If account exists already then grab the name set.
+  // However if account has not yet been set then use the
+  // crypto/token currency name as the target account.
+  const targetAccountName =
+    accountNameSelector(walletState, {
+      accountId: exchange.toAccount.id,
+    }) ?? targetAccountCurrency.name;
+
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
+
+  const unitFromExchange = currencySettingsLocaleSelector(
+    stateSettings,
+    sourceAccountCurrency,
+  ).unit;
+  const unitToExchange = currencySettingsLocaleSelector(stateSettings, targetAccountCurrency).unit;
+  const unitMainAccount = currencySettingsLocaleSelector(
+    stateSettings,
+    getMainAccount(exchange.fromAccount, exchange.fromParentAccount).currency,
+  ).unit;
+
   return (
     <>
       <ConfirmWrapper>
@@ -995,7 +1012,7 @@ export const renderSwapDeviceConfirmation = ({
             {
               amountSent: (
                 <CurrencyUnitValue
-                  unit={getAccountUnit(exchange.fromAccount)}
+                  unit={unitFromExchange}
                   value={transaction.amount}
                   disableRounding
                   showCode
@@ -1003,7 +1020,7 @@ export const renderSwapDeviceConfirmation = ({
               ),
               amountReceived: (
                 <CurrencyUnitValue
-                  unit={getAccountUnit(exchange.toAccount)}
+                  unit={unitToExchange}
                   value={amountExpectedTo ? BigNumber(amountExpectedTo) : exchangeRate.toAmount}
                   disableRounding
                   showCode
@@ -1017,9 +1034,7 @@ export const renderSwapDeviceConfirmation = ({
               ),
               fees: (
                 <CurrencyUnitValue
-                  unit={getAccountUnit(
-                    getMainAccount(exchange.fromAccount, exchange.fromParentAccount),
-                  )}
+                  unit={unitMainAccount}
                   value={BigNumber(estimatedFees || 0)}
                   disableRounding
                   showCode

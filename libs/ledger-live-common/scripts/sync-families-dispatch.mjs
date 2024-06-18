@@ -21,7 +21,17 @@ const targets = [
 ];
 
 // Coins using coin-framework
-const familiesWPackage = ["algorand", "bitcoin", "evm", "near", "polkadot"];
+const familiesWPackage = [
+  "algorand",
+  "bitcoin",
+  "cardano",
+  "evm",
+  "near",
+  "polkadot",
+  "solana",
+  "tezos",
+  "xrp",
+];
 
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
@@ -174,14 +184,17 @@ async function genTypesFile(families) {
         return "";
       }
 
-      if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/types/index.ts`))) return "/index";
+      if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/types/index.ts`)))
+        return "/index";
 
       return "";
     })();
-    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types${typesAsFolder}";
-import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types${typesAsFolder}";
-import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types${typesAsFolder}";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types${typesAsFolder}";
+    imprts += `import type {
+  Transaction as ${family}Transaction,
+  TransactionRaw as ${family}TransactionRaw,
+  TransactionStatus as ${family}TransactionStatus,
+  TransactionStatusRaw as ${family}TransactionStatusRaw,
+} from "${importPath}${family}/types${typesAsFolder}";
 `;
     exprtsT += `
   | ${family}Transaction`;

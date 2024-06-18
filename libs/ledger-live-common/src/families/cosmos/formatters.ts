@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { CosmosOperation, CosmosAccount } from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
@@ -30,7 +30,7 @@ export function formatAccountSpecifics(account: CosmosAccount): string {
   const { validators } = getCurrentCosmosPreloadData()[account.currency.id] ?? {
     validators: [],
   };
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

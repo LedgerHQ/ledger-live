@@ -10,3 +10,5 @@ node_modules
 .eslintcache
 tsconfig.tsbuildinfo
 rce
+.env
+coverage

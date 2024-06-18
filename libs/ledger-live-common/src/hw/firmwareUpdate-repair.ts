@@ -44,11 +44,6 @@ export const repairChoices = [
   },
 ];
 
-const filterMCUForDeviceInfo = deviceInfo => {
-  const provider = getProviderId(deviceInfo);
-  return mcu => mcu.providers.includes(provider);
-};
-
 const repair = (
   deviceId: string,
   forceMCU_?: string | null,
@@ -126,12 +121,19 @@ const repair = (
                       seVersion,
                       seTargetId,
                     });
-                    const validMcusForDeviceInfo = mcus
-                      .filter(filterMCUForDeviceInfo(deviceInfo))
-                      .filter(mcu => mcu.from_bootloader_version !== "none");
+                    const provider = getProviderId(deviceInfo);
 
-                    log("hw", "firmwareUpdate-repair valid mcus for device", {
-                      validMcusForDeviceInfo,
+                    /**
+                     * filter the MCUs that are available on the provider and
+                     * have a "from_bootloader_version" different from "none"
+                     * */
+                    const availableMcus = mcus.filter(
+                      mcu =>
+                        mcu.providers.includes(provider) && mcu.from_bootloader_version !== "none",
+                    );
+
+                    log("hw", `firmwareUpdate-repair available mcus on provider ${provider}`, {
+                      availableMcus,
                     });
 
                     return from(
@@ -152,7 +154,7 @@ const repair = (
                         });
 
                         const mcu = ManagerAPI.findBestMCU(
-                          validMcusForDeviceInfo.filter(({ id }: McuVersion) =>
+                          availableMcus.filter(({ id }: McuVersion) =>
                             finalFirmware.mcu_versions.includes(id),
                           ),
                         );
@@ -160,8 +162,9 @@ const repair = (
                         log("hw", "firmwareUpdate-repair got mcu", { mcu });
 
                         if (!mcu) return EMPTY;
-                        const expectedBootloaderVersion = semver.coerce(mcu.from_bootloader_version)
-                          ?.version;
+                        const expectedBootloaderVersion = semver.coerce(
+                          mcu.from_bootloader_version,
+                        )?.version;
                         const currentBootloaderVersion = semver.coerce(mcuBlVersion)?.version;
 
                         log("hw", "firmwareUpdate-repair bootloader versions", {

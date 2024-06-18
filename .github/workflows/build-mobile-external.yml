@@ -40,13 +40,13 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2
+          ruby-version: 3.3.0
         env:
           ImageOS: ubuntu20
       - uses: actions/setup-java@v3
         with:
           distribution: "zulu" # See 'Supported distributions' for available options
-          java-version: "11"
+          java-version: "17"
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.10
       - name: install dependencies
@@ -82,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.post-version.outputs.version }}-release
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
     runs-on: macos-latest
@@ -100,7 +100,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2
+          ruby-version: 3.3.0
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
 

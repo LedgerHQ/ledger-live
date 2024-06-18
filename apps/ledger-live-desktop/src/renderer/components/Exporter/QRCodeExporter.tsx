@@ -6,7 +6,7 @@ import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { dataToFrames } from "qrloop";
-import { Settings, encode } from "@ledgerhq/live-common/cross";
+import { Settings, encode } from "@ledgerhq/live-wallet/liveqr/cross";
 import { activeAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   exportSettingsSelector,
@@ -16,8 +16,11 @@ import {
 
 import QRCode from "~/renderer/components/QRCode";
 import { Account } from "@ledgerhq/types-live";
+import { WalletState } from "@ledgerhq/live-wallet/store";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 const mapStateToProps = createStructuredSelector({
+  walletState: state => walletSelector(state),
   accounts: (state, props) => props.accounts || activeAccountsSelector(state),
   settings: exportSettingsSelector,
   device: state => lastSeenDeviceSelector(state) || null,
@@ -37,6 +40,7 @@ type OwnProps = {
   accounts?: Account[];
 };
 type Props = OwnProps & {
+  walletState: WalletState;
   accounts: Account[];
   settings: Settings;
   devices: DeviceModelId[];
@@ -56,8 +60,9 @@ class QRCodeExporter extends PureComponent<
 
   constructor(props: Props) {
     super(props);
-    const { accounts, settings, device, devices } = props;
+    const { accounts, settings, device, devices, walletState } = props;
     const data = encode({
+      walletState,
       accounts,
       settings,
       modelId: device?.modelId,

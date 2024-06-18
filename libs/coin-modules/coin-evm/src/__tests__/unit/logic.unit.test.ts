@@ -1,16 +1,19 @@
 import BigNumber from "bignumber.js";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
 import * as RPC_API from "../../api/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
   attachOperations,
+  createSwapHistoryMap,
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
   getDefaultFeeUnit,
   getEstimatedFees,
   getGasLimit,
+  getMessageProperties,
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
@@ -55,7 +58,14 @@ mockGetConfig.mockImplementation((currency: { id: string }): any => {
     case "optimism": {
       return {
         info: {
-          node: { type: "external", uri: "optimis_uri" },
+          node: { type: "external", uri: "optimism_uri" },
+        },
+      };
+    }
+    case "scroll": {
+      return {
+        info: {
+          node: { type: "external", uri: "scroll_uri" },
         },
       };
     }
@@ -173,7 +183,7 @@ describe("EVM Family", () => {
       it("should return the gasLimit when no customGasLimit provided", () => {
         const tx: Partial<EvmTransaction> = {
           gasLimit: new BigNumber(100),
-          customGasLimit: undefined,
+          customGasLimit: undefined as any,
         };
 
         expect(getGasLimit(tx as any)).toEqual(new BigNumber(100));
@@ -302,6 +312,7 @@ describe("EVM Family", () => {
 
     describe("getAdditionalLayer2Fees", () => {
       const optimism = getCryptoCurrencyById("optimism");
+      const scroll = getCryptoCurrencyById("scroll");
       const ethereum = getCryptoCurrencyById("ethereum");
 
       beforeEach(() => {
@@ -309,17 +320,30 @@ describe("EVM Family", () => {
       });
 
       it("should try to get additionalFees for a valid layer 2", async () => {
-        const spy = jest.spyOn(RPC_API, "getOptimismAdditionalFees").mockImplementation(jest.fn());
+        const spyOptimism = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
+        const spyScroll = jest
+          .spyOn(RPC_API, "getScrollAdditionalFees")
+          .mockImplementation(jest.fn());
 
         await getAdditionalLayer2Fees(optimism, {} as any);
-        expect(spy).toBeCalled();
+        expect(spyOptimism).toHaveBeenCalled();
+        await getAdditionalLayer2Fees(scroll, {} as any);
+        expect(spyScroll).toHaveBeenCalled();
       });
 
       it("should not try to get additionalFees for an invalid layer 2", async () => {
-        const spy = jest.spyOn(RPC_API, "getOptimismAdditionalFees").mockImplementation(jest.fn());
+        const spyOptimism = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
+        const spyScroll = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
 
         await getAdditionalLayer2Fees(ethereum, {} as any);
-        expect(spy).not.toBeCalled();
+        expect(spyOptimism).not.toHaveBeenCalled();
+        expect(spyScroll).not.toHaveBeenCalled();
       });
     });
 
@@ -446,6 +470,79 @@ describe("EVM Family", () => {
       });
     });
 
+    describe("createSwapHistoryMap", () => {
+      it("returns an empty map if initialAccount is undefined", () => {
+        const swapHistory = createSwapHistoryMap(undefined);
+        expect(swapHistory.size).toBe(0);
+      });
+      it("returns an empty map if there are no subAccounts", () => {
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), []);
+        const swapHistory = createSwapHistoryMap(account);
+        expect(swapHistory.size).toBe(0);
+      });
+
+      it("maps TokenAccounts to their swapHistory", () => {
+        const tokenAccount1 = {
+          ...makeTokenAccount("0xCrema1", getTokenById("ethereum/erc20/usd__coin")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin-OUT",
+              swapId: "swap1",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+        const tokenAccount2 = {
+          ...makeTokenAccount("0xCrema2", getTokenById("ethereum/erc20/weth")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fweth-OUT",
+              swapId: "swap2",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [
+          tokenAccount1,
+          tokenAccount2,
+        ]);
+        const swapHistory = createSwapHistoryMap(account);
+
+        expect(swapHistory.size).toBe(2);
+        expect(swapHistory.get(tokenAccount1.token)).toEqual(tokenAccount1.swapHistory);
+        expect(swapHistory.get(tokenAccount2.token)).toEqual(tokenAccount2.swapHistory);
+      });
+      it("should include correct swapHistory for a token account", () => {
+        const tokenAccount = {
+          ...makeTokenAccount("0xCrema", getTokenById("ethereum/erc20/usd__coin")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin-OUT",
+              swapId: "6342cd15-5aa9-4c8c-9fb3-0b67e9b0714a",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              tokenId: "ethereum/erc20/usd__coin",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [tokenAccount]);
+
+        const swapHistoryMap = createSwapHistoryMap(account);
+        expect(swapHistoryMap.get(tokenAccount.token)).toEqual(tokenAccount.swapHistory);
+      });
+    });
     describe("getSyncHash", () => {
       const currency = getCryptoCurrencyById("ethereum");
 
@@ -794,6 +891,30 @@ describe("EVM Family", () => {
         const address = "0x00000";
         const encodedAddress = safeEncodeEIP55(address);
         expect(encodedAddress).toBe(address);
+      });
+    });
+
+    describe("getMessageProperties", () => {
+      it("should return null if the message isn't an EIP712", async () => {
+        expect(await getMessageProperties({ standard: "EIP191", message: "doot-doot" })).toBe(null);
+      });
+
+      it("should return the fields displayed on the nano", async () => {
+        jest.spyOn(EVM_TOOLS, "getEIP712FieldsDisplayedOnNano").mockResolvedValueOnce([
+          {
+            label: "key",
+            value: "value",
+          },
+        ]);
+
+        expect(
+          await getMessageProperties({
+            standard: "EIP712",
+            message: {} as any,
+            domainHash: "0xabc",
+            hashStruct: "0xdef",
+          }),
+        ).toEqual([{ label: "key", value: "value" }]);
       });
     });
   });

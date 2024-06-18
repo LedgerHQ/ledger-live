@@ -3,12 +3,11 @@ import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } 
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
-import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
+import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/estimateMaxSpendable";
 
 import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import type { PickAmountPropsType, RatioType } from "./types";
@@ -23,6 +22,7 @@ import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -33,7 +33,7 @@ const PickAmount = (props: PickAmountPropsType) => {
   const { navigation, route } = props;
   const { account, validators } = route.params;
 
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { locale } = useSettings();
   const bridge = getAccountBridge(account);
   const transaction = route.params.transaction as Transaction;

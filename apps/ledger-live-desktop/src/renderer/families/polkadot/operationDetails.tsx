@@ -24,6 +24,7 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { urls } from "~/config/urls";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 function getURLFeesInfo({
   op,
@@ -152,6 +153,8 @@ const OperationDetailsExtra = ({
   account,
 }: OperationDetailsExtraProps<PolkadotAccount, PolkadotOperation>) => {
   const { extra } = operation;
+
+  const unit = useAccountUnit(account);
   switch (type) {
     case "OUT":
     case "IN":
@@ -166,7 +169,7 @@ const OperationDetailsExtra = ({
               <Box>
                 <FormattedVal
                   val={extra.transferAmount ?? new BigNumber(0)}
-                  unit={account.unit}
+                  unit={unit}
                   disableRounding={true}
                   showCode
                   fontSize={4}
@@ -200,7 +203,7 @@ const OperationDetailsExtra = ({
                 <Box>
                   <FormattedVal
                     val={extra.bondedAmount}
-                    unit={account.unit}
+                    unit={unit}
                     disableRounding={true}
                     showCode
                     fontSize={4}
@@ -224,7 +227,7 @@ const OperationDetailsExtra = ({
               <Box>
                 <FormattedVal
                   val={extra.unbondedAmount ?? new BigNumber(0)}
-                  unit={account.unit}
+                  unit={unit}
                   disableRounding={true}
                   showCode
                   fontSize={4}
@@ -247,7 +250,7 @@ const OperationDetailsExtra = ({
               <Box>
                 <FormattedVal
                   val={BigNumber(extra.withdrawUnbondedAmount ?? new BigNumber(0))}
-                  unit={account.unit}
+                  unit={unit}
                   disableRounding={true}
                   showCode
                   fontSize={4}

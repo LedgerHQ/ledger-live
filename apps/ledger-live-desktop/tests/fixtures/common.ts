@@ -11,6 +11,11 @@ import * as path from "path";
 import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { responseLogfilePath } from "../utils/networkResponseLogger";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { startSpeculos, stopSpeculos } from "../utils/speculos";
+import { Spec } from "../utils/speculos";
+
+import { allure } from "allure-playwright";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -23,6 +28,9 @@ function appendFileErrorHandler(e: Error | null) {
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
+  speculosCurrency: Spec;
+  speculosOffset: number;
+  testName: string;
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
@@ -35,7 +43,9 @@ type TestFixtures = {
   simulateCamera: string;
 };
 
+const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
+if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -44,6 +54,9 @@ export const test = base.extend<TestFixtures>({
   userdata: undefined,
   featureFlags: undefined,
   simulateCamera: undefined,
+  speculosCurrency: undefined,
+  speculosOffset: undefined,
+  testName: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -64,6 +77,9 @@ export const test = base.extend<TestFixtures>({
       env,
       featureFlags,
       simulateCamera,
+      speculosCurrency,
+      speculosOffset,
+      testName,
     },
     use,
   ) => {
@@ -74,58 +90,80 @@ export const test = base.extend<TestFixtures>({
       await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
     }
 
-    // default environment variables
-    env = Object.assign(
-      {
-        ...process.env,
-        VERBOSE: true,
-        MOCK: true,
-        MOCK_COUNTERVALUES: true,
-        HIDE_DEBUG_MOCK: true,
-        CI: process.env.CI || undefined,
-        PLAYWRIGHT_RUN: true,
-        CRASH_ON_INTERNAL_CRASH: true,
-        LEDGER_MIN_HEIGHT: 768,
-        FEATURE_FLAGS: JSON.stringify(featureFlags),
-      },
-      env,
-    );
+    let device: any | undefined;
+    if (IS_NOT_MOCK) {
+      if (speculosCurrency) {
+        setEnv(
+          "SPECULOS_PID_OFFSET",
+          speculosOffset * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+        );
+        device = await startSpeculos(testName, speculosCurrency);
+        setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
+      }
+    }
 
-    // launch app
-    const windowSize = { width: 1024, height: 768 };
+    try {
+      // default environment variables
+      env = Object.assign(
+        {
+          ...process.env,
+          VERBOSE: true,
+          MOCK: IS_NOT_MOCK ? undefined : true,
+          MOCK_COUNTERVALUES: true,
+          HIDE_DEBUG_MOCK: true,
+          CI: process.env.CI || undefined,
+          PLAYWRIGHT_RUN: true,
+          CRASH_ON_INTERNAL_CRASH: true,
+          LEDGER_MIN_HEIGHT: 768,
+          FEATURE_FLAGS: JSON.stringify(featureFlags),
+          MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
+          SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
+          DISABLE_TRANSACTION_BROADCAST:
+            process.env.ENABLE_TRANSACTION_BROADCAST == "1" || !IS_NOT_MOCK ? undefined : 1,
+        },
+        env,
+      );
 
-    const electronApp: ElectronApplication = await electron.launch({
-      args: [
-        `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
-        `--user-data-dir=${userdataDestinationPath}`,
-        // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
-        "--force-device-scale-factor=1",
-        "--disable-dev-shm-usage",
-        // "--use-gl=swiftshader"
-        "--no-sandbox",
-        "--enable-logging",
-        ...(simulateCamera
-          ? [
-              "--use-fake-device-for-media-stream",
-              `--use-file-for-fake-video-capture=${simulateCamera}`,
-            ]
-          : []),
-      ],
-      recordVideo: {
-        dir: `${path.join(__dirname, "../artifacts/videos/")}`,
-        size: windowSize, // FIXME: no default value, it could come from viewport property in conf file but it's not the case
-      },
-      env,
-      colorScheme: theme,
-      locale: lang,
-      executablePath: require("electron/index.js"),
-      timeout: 120000,
-    });
+      // launch app
+      const windowSize = { width: 1024, height: 768 };
 
-    await use(electronApp);
+      const electronApp: ElectronApplication = await electron.launch({
+        args: [
+          `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
+          `--user-data-dir=${userdataDestinationPath}`,
+          // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
+          "--force-device-scale-factor=1",
+          "--disable-dev-shm-usage",
+          // "--use-gl=swiftshader"
+          "--no-sandbox",
+          "--enable-logging",
+          ...(simulateCamera
+            ? [
+                "--use-fake-device-for-media-stream",
+                `--use-file-for-fake-video-capture=${simulateCamera}`,
+              ]
+            : []),
+        ],
+        recordVideo: {
+          dir: `${path.join(__dirname, "../artifacts/videos/")}`,
+          size: windowSize, // FIXME: no default value, it could come from viewport property in conf file but it's not the case
+        },
+        env,
+        colorScheme: theme,
+        locale: lang,
+        executablePath: require("electron/index.js"),
+        timeout: 120000,
+      });
 
-    // close app
-    await electronApp.close();
+      await use(electronApp);
+
+      // close app
+      await electronApp.close();
+    } finally {
+      if (device) {
+        await stopSpeculos(device);
+      }
+    }
   },
   page: async ({ electronApp }, use, testInfo) => {
     // app is ready
@@ -202,5 +240,18 @@ export const test = base.extend<TestFixtures>({
     { auto: true },
   ],
 });
+
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status !== testInfo.expectedStatus) {
+    const screenshot = await page.screenshot();
+    await allure.attachment("Screenshot on Failure", screenshot, "image/png");
+  }
+});
+
+export async function addTmsLink(ids: string[]) {
+  for (const id of ids) {
+    await allure.tms(id, `https://ledgerhq.atlassian.net/browse/${id}`);
+  }
+}
 
 export default test;

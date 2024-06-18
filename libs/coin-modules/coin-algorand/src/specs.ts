@@ -1,13 +1,10 @@
-import { isAccountEmpty } from "@ledgerhq/coin-framework/account/index";
+import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import {
-  getCryptoCurrencyById,
-  listTokensForCryptoCurrency,
-  parseCurrencyUnit,
-} from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
@@ -30,7 +27,7 @@ const checkSendableToEmptyAccount = (amount: BigNumber, recipient: AccountLike) 
 };
 
 // Get list of ASAs associated with the account
-const getAssetsWithBalance = (account: Account): SubAccount[] => {
+const getAssetsWithBalance = (account: Account): TokenAccount[] => {
   return account.subAccounts
     ? account.subAccounts.filter(a => a.type === "TokenAccount" && a.balance.gt(0))
     : [];
@@ -49,7 +46,7 @@ const pickSiblingsOptedIn = (siblings: Account[], assetId: string): Account | un
 // being opted-in by an account
 
 const getRandomAssetId = (account: Account): string | undefined => {
-  const optedInASA = account.subAccounts?.reduce((old: string[], current: SubAccount) => {
+  const optedInASA = account.subAccounts?.reduce((old: string[], current: TokenAccount) => {
     if (current.type === "TokenAccount") {
       return [...old, current.token.id];
     }

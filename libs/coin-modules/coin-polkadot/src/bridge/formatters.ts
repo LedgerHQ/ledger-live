@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import type { Operation } from "@ledgerhq/types-live";
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { PolkadotAccount, PolkadotOperation, PolkadotResources } from "../types";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
@@ -21,16 +21,16 @@ function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined):
           unit ? formatCurrencyUnit(unit, bondedAmount, formatConfig) : bondedAmount
         }`
       : unbondedAmount && !unbondedAmount.isNaN()
-      ? `\n    unbondedAmount: ${
-          unit ? formatCurrencyUnit(unit, unbondedAmount, formatConfig) : unbondedAmount
-        }`
-      : withdrawUnbondedAmount && !withdrawUnbondedAmount.isNaN()
-      ? `\n    withdrawUnbondedAmount: ${
-          unit
-            ? formatCurrencyUnit(unit, withdrawUnbondedAmount, formatConfig)
-            : withdrawUnbondedAmount
-        }`
-      : "";
+        ? `\n    unbondedAmount: ${
+            unit ? formatCurrencyUnit(unit, unbondedAmount, formatConfig) : unbondedAmount
+          }`
+        : withdrawUnbondedAmount && !withdrawUnbondedAmount.isNaN()
+          ? `\n    withdrawUnbondedAmount: ${
+              unit
+                ? formatCurrencyUnit(unit, withdrawUnbondedAmount, formatConfig)
+                : withdrawUnbondedAmount
+            }`
+          : "";
   str += validatorStash ? `\n    validatorStash: ${validatorStash}` : "";
   return str;
 }
@@ -38,7 +38,7 @@ function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined):
 function formatAccountSpecifics(account: PolkadotAccount): string {
   const polkadotResources = account.polkadotResources as PolkadotResources;
   invariant(polkadotResources, "polkadot account expected");
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

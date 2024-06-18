@@ -31,6 +31,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
@@ -49,15 +50,17 @@ const defaultSyncConfig = {
   paginationConfig: {},
   blacklistedTokenIds: ["ethereum/erc20/ampleforth", "ethereum/erc20/steth"],
 };
-export function syncAccount<T extends TransactionCommon>(
-  bridge: AccountBridge<T>,
-  account: Account,
+export function syncAccount<
+  T extends TransactionCommon,
+  A extends Account = Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+>(
+  bridge: AccountBridge<T, A, U>,
+  account: A,
   syncConfig: SyncConfig = defaultSyncConfig,
-): Promise<Account> {
+): Promise<A> {
   return firstValueFrom(
-    bridge
-      .sync(account, syncConfig)
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+    bridge.sync(account, syncConfig).pipe(reduce((a, f: (arg0: A) => A) => f(a), account)),
   );
 }
 
@@ -353,14 +356,16 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
 
       const makeTest = (name, fn) => {
         if (accountData.FIXME_tests && accountData.FIXME_tests.some(r => name.match(r))) {
-          warnDev("FIXME test was skipped. " + name + " for " + initialAccount.name);
+          warnDev(
+            "FIXME test was skipped. " + name + " for " + getDefaultAccountName(initialAccount),
+          );
           return;
         }
 
         test(name, fn);
       };
 
-      describe(impl + " bridge on account " + initialAccount.name, () => {
+      describe(impl + " bridge on account " + getDefaultAccountName(initialAccount), () => {
         describe("sync", () => {
           makeTest("succeed", async () => {
             const account = await getSynced();

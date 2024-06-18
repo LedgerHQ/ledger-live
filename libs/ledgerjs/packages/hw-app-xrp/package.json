@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-xrp",
-  "version": "6.28.6",
+  "version": "6.29.0",
   "description": "Ledger Hardware Wallet Ripple Application API",
   "keywords": [
     "Ledger",

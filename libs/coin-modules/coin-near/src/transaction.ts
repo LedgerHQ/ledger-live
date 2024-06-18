@@ -1,14 +1,14 @@
 import type { Transaction, TransactionRaw } from "./types";
 import { BigNumber } from "bignumber.js";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
+} from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
 export const formatTransaction = (
@@ -19,32 +19,36 @@ ${mode.toUpperCase()} ${
   useAllAmount
     ? "MAX"
     : amount.isZero()
-    ? ""
-    : " " +
-      formatCurrencyUnit(getAccountUnit(account), amount, {
-        showCode: true,
-        disableRounding: true,
-      })
+      ? ""
+      : " " +
+        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+          showCode: true,
+          disableRounding: true,
+        })
 }${recipient ? `\nTO ${recipient}` : ""}`;
 
-export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
-  const common = fromTransactionCommonRaw(tr);
+export const fromTransactionRaw = (transactionRaw: TransactionRaw): Transaction => {
+  const common = fromTransactionCommonRaw(transactionRaw);
   return {
     ...common,
-    family: tr.family,
-    mode: tr.mode,
-    fees: new BigNumber(tr?.fees || 0),
+    family: transactionRaw.family,
+    mode: transactionRaw.mode,
+    fees: new BigNumber(transactionRaw?.fees || 0),
   };
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
-  const common = toTransactionCommonRaw(t);
-  return {
+export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
+  const common = toTransactionCommonRaw(transaction);
+  const transactionRaw: TransactionRaw = {
     ...common,
-    family: t.family,
-    mode: t.mode,
-    fees: t.fees?.toString(),
+    family: transaction.family,
+    mode: transaction.mode,
   };
+  if (transaction.fees) {
+    transactionRaw.fees = transaction.fees.toString();
+  }
+
+  return transactionRaw;
 };
 
 export default {

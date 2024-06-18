@@ -2,13 +2,14 @@ import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "styled-components/native";
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "~/components/Circle";
 import LText from "~/components/LText";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import Wallet from "@ledgerhq/icons-ui/native/Wallet";
+import { useAccountName } from "~/reducers/wallet";
 
 type Props = {
   account: AccountLike;
@@ -19,6 +20,7 @@ function SummaryFromSection({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const currency = getAccountCurrency(account);
+  const accountName = useAccountName(account);
   return (
     <SummaryRowCustom
       label={t("send.summary.from")}
@@ -37,7 +39,7 @@ function SummaryFromSection({ account }: Props) {
             <CurrencyIcon size={14} currency={currency} />
           </View>
           <LText numberOfLines={1} style={styles.summaryRowText}>
-            {getAccountName(account)}
+            {accountName}
           </LText>
         </View>
       }

@@ -10,6 +10,7 @@ import { Button } from "..";
 import MarketCoinChart from "./components/MarketCoinChart";
 import MarketInfo from "./components/MarketInfo";
 import { useMarketCoin } from "~/renderer/screens/market/hooks/useMarketCoin";
+import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -52,8 +53,6 @@ export default function MarketCoinScreen() {
     availableOnSwap,
     color,
     dataChart,
-    dataCurrency,
-    isLoadingData,
     isLoadingDataChart,
     isLoadingCurrency,
     range,
@@ -68,9 +67,10 @@ export default function MarketCoinScreen() {
     changeCounterCurrency,
   } = useMarketCoin();
 
-  const { price, priceChangePercentage } = dataCurrency || {};
+  const { name, ticker, image, internalCurrency, price } = currency || {};
 
-  const { name, ticker, image, internalCurrency } = currency || {};
+  const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
+
   return (
     <Container data-test-id="market-coin-page-container">
       <TrackPage
@@ -144,7 +144,7 @@ export default function MarketCoinScreen() {
       </Flex>
       <MarketCoinChart
         price={price}
-        priceChangePercentage={priceChangePercentage}
+        priceChangePercentage={currentPriceChangePercentage}
         chartData={dataChart}
         range={range}
         counterCurrency={counterCurrency}
@@ -158,8 +158,9 @@ export default function MarketCoinScreen() {
       <MarketInfo
         locale={locale}
         counterCurrency={counterCurrency}
-        loading={isLoadingCurrency || isLoadingData}
-        {...dataCurrency}
+        loading={isLoadingCurrency}
+        range={range}
+        {...currency}
       />
     </Container>
   );

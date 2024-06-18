@@ -25,6 +25,9 @@ import { INITIAL_STATE as DYNAMIC_CONTENT_INITIAL_STATE } from "~/reducers/dynam
 import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/walletconnect";
 import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as NFT_INITIAL_STATE } from "~/reducers/nft";
+import { INITIAL_STATE as MARKET_INITIAL_STATE } from "~/reducers/market";
+import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
+import QueuedDrawersContextProvider from "~/newArch/components/QueuedDrawer/QueuedDrawersContextProvider";
 
 const initialState = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -40,6 +43,8 @@ const initialState = {
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,
   protect: PROTECT_INITIAL_STATE,
   nft: NFT_INITIAL_STATE,
+  market: MARKET_INITIAL_STATE,
+  wallet: WALLET_INITIAL_STATE,
 };
 
 type ExtraOptions = RenderOptions & {
@@ -69,9 +74,11 @@ const customRender = (
         <StyleProvider selectedPalette="dark">
           <FirebaseFeatureFlagsProvider getFeature={getFeature}>
             <AnalyticsContextProvider>
-              <I18nextProvider i18n={i18n}>
-                <NavigationContainer>{children}</NavigationContainer>
-              </I18nextProvider>
+              <QueuedDrawersContextProvider>
+                <I18nextProvider i18n={i18n}>
+                  <NavigationContainer>{children}</NavigationContainer>
+                </I18nextProvider>
+              </QueuedDrawersContextProvider>
             </AnalyticsContextProvider>
           </FirebaseFeatureFlagsProvider>
         </StyleProvider>

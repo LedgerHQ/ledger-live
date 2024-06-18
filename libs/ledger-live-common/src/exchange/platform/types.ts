@@ -2,6 +2,7 @@ import type { Account, AccountLike, AccountRaw, AccountRawLike } from "@ledgerhq
 import { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import type { Transaction } from "../../generated/types";
 import { ExchangeSwap } from "../swap/types";
+import { Device } from "../../hw/actions/types";
 
 export type CompleteExchangeRequestEvent =
   | { type: "complete-exchange" }
@@ -29,7 +30,7 @@ export type ExchangeSellRaw = {
 };
 
 export type StartExchangeInput = {
-  deviceId: string;
+  device: Device;
   exchangeType: number;
   appVersion?: string;
   provider?: string;

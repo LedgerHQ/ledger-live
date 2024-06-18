@@ -16,6 +16,7 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import api from "./api";
 import { setEnv } from "@ledgerhq/live-env";
+import { pairId } from "./helpers";
 
 const value = "ll-ci/0.0.0";
 setEnv("LEDGER_CLIENT_VERSION", value);
@@ -40,6 +41,8 @@ describe("API sanity", () => {
         },
       ],
       autofillGaps: false,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
 
@@ -64,6 +67,8 @@ describe("API sanity", () => {
         },
       ],
       autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
     const currentValue = calculate(state, {
@@ -105,6 +110,8 @@ describe("extreme cases", () => {
         startDate: new Date(),
       })),
       autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
 
@@ -130,6 +137,8 @@ describe("extreme cases", () => {
         startDate: new Date(),
       })),
       autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
 
@@ -161,6 +170,8 @@ describe("WETH rules", () => {
         },
       ],
       autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
       disableAutoRecoverErrors: true,
     });
     const value = calculate(state, {
@@ -170,6 +181,80 @@ describe("WETH rules", () => {
       value: 1000000,
     });
     expect(value).toBeGreaterThan(0);
+  });
+});
+
+describe("HTTP 422 management of unsupported rates", () => {
+  // context of this test: https://ledgerhq.atlassian.net/browse/LIVE-11339
+  test("a cache that was accumulated needs to be cleared when a coin becomes disabled", async () => {
+    // for this test, we start with weth
+    const weth = getTokenById("ethereum/erc20/weth");
+    let state = await loadCountervalues(initialState, {
+      trackingPairs: [
+        {
+          from: weth,
+          to: usd,
+          startDate: new Date(now - 10 * DAY),
+        },
+      ],
+      autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
+    });
+    let value = calculate(state, {
+      disableRounding: true,
+      from: weth,
+      to: usd,
+      value: 1000000,
+    });
+    expect(value).toBeGreaterThan(0);
+    // we will now alter the state to replace the weth token to sether that we know has been disabled by the api
+    const sether = getTokenById("ethereum/erc20/sether");
+    const prevKey = pairId({ from: weth, to: usd });
+    const nextKey = pairId({ from: sether, to: usd });
+    function mutateVisit(o: any) {
+      // we traverse all Object and replace keys
+      if (typeof o === "object" && o !== null) {
+        for (const k in o) {
+          if (k === prevKey) {
+            const v = o[prevKey];
+            delete o[prevKey];
+            o[nextKey] = v;
+          } else {
+            mutateVisit(o[k]);
+          }
+        }
+      }
+    }
+    mutateVisit(state);
+    // at the moment, we still can calculate the value because we didn't refreshed yet
+    value = calculate(state, {
+      disableRounding: true,
+      from: sether,
+      to: usd,
+      value: 1000000,
+    });
+    expect(value).toBeGreaterThan(0);
+
+    state = await loadCountervalues(state, {
+      trackingPairs: [
+        {
+          from: sether,
+          to: usd,
+          startDate: new Date(now - 100 * DAY),
+        },
+      ],
+      autofillGaps: true,
+      refreshRate: 60000,
+      marketCapBatchingAfterRank: 20,
+    });
+    value = calculate(state, {
+      disableRounding: true,
+      from: sether,
+      to: usd,
+      value: 1000000,
+    });
+    expect(value).toBe(undefined);
   });
 });
 
@@ -193,6 +278,8 @@ test("export and import it back", async () => {
       },
     ],
     autofillGaps: true,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
     disableAutoRecoverErrors: true,
   };
   const state = await loadCountervalues(initialState, settings);

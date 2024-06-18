@@ -93,7 +93,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         },
       },
     ],
-    label: t("transfer.swap.main.header", { currency: currency.name }),
+    label: t("account.swap", { currency: currency.name }),
     Icon: iconSwap,
     disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
     modalOnDisabledClick: {

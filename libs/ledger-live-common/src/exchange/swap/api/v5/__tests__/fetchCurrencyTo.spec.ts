@@ -9,23 +9,23 @@ import { flattenV5CurrenciesToAndFrom } from "../../../utils/flattenV5Currencies
 jest.mock("@ledgerhq/live-network/network");
 
 const mockNetwork = network as jest.Mock;
+const providers = ["changelly", "cic", "moonpay", "oneinch", "paraswap"];
 
 describe("fetchCurrencyFrom", () => {
   it("success with 200", async () => {
     mockNetwork.mockReturnValueOnce({
       data: fetchCurrencyToMock,
     });
-
     const result = await fetchCurrencyTo({
-      providers: ["changelly", "cic", "oneinch"],
       currencyFromId: "bitcoin",
+      providers,
     });
 
     expect(result).toStrictEqual(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
     expect(mockNetwork).toHaveBeenCalledWith({
       method: "GET",
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
-      url: "https://swap.ledger.com/v5/currencies/to?providers-whitelist=changelly%2Ccic%2Coneinch&additional-coins-flag=false&currency-from=bitcoin",
+      url: "https://swap.ledger.com/v5/currencies/to?providers-whitelist=changelly%2Ccic%2Cmoonpay%2Coneinch%2Cparaswap&additional-coins-flag=false&currency-from=bitcoin",
     });
   });
 
@@ -34,8 +34,8 @@ describe("fetchCurrencyFrom", () => {
 
     try {
       await fetchCurrencyTo({
-        providers: ["changelly", "cic", "oneinch"],
         currencyFromId: "bitcoin",
+        providers,
       });
     } catch (e) {
       expect(e).toBeInstanceOf(LedgerAPI4xx);

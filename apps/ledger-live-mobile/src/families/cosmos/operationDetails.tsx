@@ -6,13 +6,13 @@ import type { OperationType, Operation } from "@ledgerhq/types-live";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import type { CosmosAccount, CosmosOperation } from "@ledgerhq/live-common/families/cosmos/types";
 import { useSelector } from "react-redux";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 function getURLFeesInfo(op: Operation, currencyId: string): string | null | undefined {
   return op.fee.gt(200000) ? cryptoFactory(currencyId).stakingDocUrl : undefined;
@@ -34,7 +34,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const { locale } = useSettings();
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currencyId = account.currency.id;
   const { extra } = operation;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);

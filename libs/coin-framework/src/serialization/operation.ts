@@ -3,9 +3,9 @@ import {
   AccountBridge,
   Operation,
   OperationRaw,
-  SubAccount,
   SwapOperation,
   SwapOperationRaw,
+  TokenAccount,
   TransactionCommon,
 } from "@ledgerhq/types-live";
 
@@ -50,10 +50,6 @@ export const toOperationRaw = (
     date: date.toISOString(),
     value: value.toFixed(),
     fee: fee.toString(),
-    contract,
-    operator,
-    standard,
-    tokenId,
   };
 
   if (transactionSequenceNumber !== undefined) {
@@ -62,6 +58,22 @@ export const toOperationRaw = (
 
   if (hasFailed !== undefined) {
     copy.hasFailed = hasFailed;
+  }
+
+  if (standard) {
+    copy.standard = standard;
+  }
+
+  if (tokenId) {
+    copy.tokenId = tokenId;
+  }
+
+  if (contract) {
+    copy.contract = contract;
+  }
+
+  if (operator) {
+    copy.operator = operator;
   }
 
   if (subOperations && preserveSubOperation) {
@@ -86,7 +98,7 @@ export const toOperationRaw = (
 
   return copy;
 };
-export const inferSubOperations = (txHash: string, subAccounts: SubAccount[]): Operation[] => {
+export const inferSubOperations = (txHash: string, subAccounts: TokenAccount[]): Operation[] => {
   const all: Operation[] = [];
 
   for (let i = 0; i < subAccounts.length; i++) {
@@ -137,7 +149,7 @@ export const fromOperationRaw = (
     transactionRaw,
   }: OperationRaw,
   accountId: string,
-  subAccounts?: SubAccount[] | null | undefined,
+  subAccounts?: TokenAccount[] | null | undefined,
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"],
 ): Operation => {
   const res: Operation = {

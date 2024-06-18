@@ -1,9 +1,9 @@
-import * as React from "react";
+import React from "react";
 import ReactNative from "react-native";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import UpdateBanner from "./index";
+import UpdateBanner from ".";
 import { makeOverrideInitialState } from "./__mocks__/makeOverrideInitialState";
 
 // Mock react-navigation's useRoute and useNavigation
@@ -68,7 +68,6 @@ const oldUpdateFlowSupportedDataSet: Array<{
   productName: string;
 }> = [
   { ...NANO_S_DATA, version: "1.6.1" },
-  { ...NANO_X_DATA, version: "1.3.0" },
   { ...NANO_SP_DATA, version: "1.0.0" },
 ];
 
@@ -79,13 +78,16 @@ const newUpdateFlowSupportedDataSet: Array<{
 }> = [
   { ...STAX_DATA, version: "1.0.0" },
   { ...EUROPA_DATA, version: "1.0.0" },
+  { ...NANO_X_DATA, version: "1.3.0" },
 ];
 
 describe("<UpdateBanner />", () => {
   let PlatformSpy: jest.SpyInstance;
   beforeEach(() => {
     jest.restoreAllMocks();
-    jest.resetAllMocks();
+    //Can't reset all mocks https://github.com/facebook/react-native/issues/42904
+    navigateToOldUpdateFlow.mockClear();
+    navigateToNewUpdateFlow.mockClear();
     PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
   });
 
@@ -207,7 +209,7 @@ describe("<UpdateBanner />", () => {
       },
     });
 
-    const mockDeviceModelId = DeviceModelId.nanoX;
+    const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
       overrideInitialState: makeOverrideInitialState({
@@ -222,7 +224,7 @@ describe("<UpdateBanner />", () => {
     // Check that the banner is displayed with the correct wording
     expect(await screen.findByText("OS update available")).toBeOnTheScreen();
     expect(
-      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
+      await screen.findByText("Tap to update your Ledger Nano S to OS version mockVersion."),
     ).toBeOnTheScreen();
 
     // Press the banner
@@ -231,7 +233,7 @@ describe("<UpdateBanner />", () => {
     expect(await screen.findByText("USB cable needed")).toBeOnTheScreen();
     expect(
       await screen.findByText(
-        "To start the firmware update, plug your Ledger Nano X to your mobile phone using a USB cable.",
+        "To start the firmware update, plug your Ledger Nano S to your mobile phone using a USB cable.",
       ),
     ).toBeOnTheScreen();
 

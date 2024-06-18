@@ -1,64 +1,31 @@
-import { isAccountDelegating } from "../families/tezos/bakers";
+import { isAccountDelegating } from "../families/tezos/staking";
 import { BitcoinAccount, initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { TronAccount } from "../families/tron/types";
 import { CosmosAccount } from "../families/cosmos/types";
 import {
   getMainAccount,
-  getAccountName,
-  getAccountCurrency,
-  getAccountUnit,
-  getFeesCurrency,
-  getFeesUnit,
-  getAccountSpendableBalance,
   isAccountEmpty as commonIsAccountEmpty,
-  areAllOperationsLoaded,
-  isAccountBalanceSignificant,
   clearAccount as commonClearAccount,
-  findSubAccountById,
-  listSubAccounts,
-  FlattenAccountsOptions,
-  flattenAccounts,
-  shortAddressPreview,
-  isAccountBalanceUnconfirmed,
-  isUpToDateAccount,
-  makeEmptyTokenAccount,
-  accountWithMandatoryTokens,
-  withoutToken,
-  findTokenAccountByCurrency,
-  isAccount,
-  isTokenAccount,
-  isSubAccount,
-  getParentAccount,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/coin-framework/account/index";
 
-// FIXME Remove this redundant export and import all from coin-framework
+// TODO: remove this export and prefer import from root file.
 export {
+  accountWithMandatoryTokens,
+  findTokenAccountByCurrency,
+  flattenAccounts,
   getMainAccount,
-  getAccountName,
   getAccountCurrency,
-  getAccountUnit,
+  getAccountSpendableBalance,
   getFeesCurrency,
   getFeesUnit,
-  getAccountSpendableBalance,
-  areAllOperationsLoaded,
-  isAccountBalanceSignificant,
-  findSubAccountById,
-  listSubAccounts,
-  FlattenAccountsOptions,
-  flattenAccounts,
-  shortAddressPreview,
-  isAccountBalanceUnconfirmed,
-  isUpToDateAccount,
-  makeEmptyTokenAccount,
-  accountWithMandatoryTokens,
-  withoutToken,
-  findTokenAccountByCurrency,
-  isAccount,
-  isTokenAccount,
-  isSubAccount,
   getParentAccount,
-};
+  isAccount,
+  isAccountBalanceUnconfirmed,
+  isTokenAccount,
+  listSubAccounts,
+  shortAddressPreview,
+} from "@ledgerhq/coin-framework/account/index";
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
   return commonIsAccountEmpty(a);

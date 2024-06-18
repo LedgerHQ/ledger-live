@@ -6,8 +6,8 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { ElrondAccount, TransactionStatus } from "@ledgerhq/live-common/families/elrond/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
@@ -36,14 +36,14 @@ const AmountButton = styled.button.attrs(() => ({
     p.error
       ? p.theme.colors.lightRed
       : p.active
-      ? p.theme.colors.palette.primary.main
-      : p.theme.colors.palette.action.hover};
+        ? p.theme.colors.palette.primary.main
+        : p.theme.colors.palette.action.hover};
   color: ${p =>
     p.error
       ? p.theme.colors.alertRed
       : p.active
-      ? p.theme.colors.palette.primary.contrastText
-      : p.theme.colors.palette.primary.main}!important;
+        ? p.theme.colors.palette.primary.contrastText
+        : p.theme.colors.palette.primary.main}!important;
   border: none;
   border-radius: 4px;
   padding: 0px ${p => p.theme.space[2]}px;
@@ -96,7 +96,7 @@ const AmountField = (props: Props) => {
     status: { errors, warnings },
     label,
   } = props;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const [focused, setFocused] = useState(false);
   const onAmountChange = (amount: BigNumber, unit?: Unit) => {
     onChange(amount, unit);
@@ -142,7 +142,7 @@ const AmountField = (props: Props) => {
         value={amount}
         onChange={onAmountChange}
         onChangeFocus={() => setFocused(true)}
-        renderLeft={<InputLeft>{getAccountUnit(account).code}</InputLeft>}
+        renderLeft={<InputLeft>{unit.code}</InputLeft>}
         renderRight={
           <InputRight>
             {options.map(({ label, value }) => (

@@ -10,6 +10,7 @@ import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
 import { BigNumber } from "bignumber.js";
 import { formattedAmount } from "../../models/common";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 let portfolioPage: PortfolioPage;
 let stakePage: StakePage;
@@ -40,11 +41,13 @@ describe("Cosmos delegate flow", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
+  $TmsLink("B2CQA-384");
   it("open account stake flow", async () => {
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToStakeFromTransferMenu();
   });
 
+  $TmsLink("B2CQA-387");
   it("goes through the delegate flow", async () => {
     const delegatedPercent = 50;
     const usableAmount = testedAccount.spendableBalance
@@ -58,8 +61,12 @@ describe("Cosmos delegate flow", () => {
 
     const [assestsDelagated, assestsRemaining] = await stakePage.setAmount(delegatedPercent);
     expect(await stakePage.cosmosDelegationSummaryValidator()).toEqual("Ledger");
-    expect(assestsRemaining).toEqual(formattedAmount(testedAccount.unit, remainingAmount));
-    expect(assestsDelagated).toEqual(formattedAmount(testedAccount.unit, delegatedAmount, true));
+    expect(assestsRemaining).toEqual(
+      formattedAmount(getAccountCurrency(testedAccount).units[0], remainingAmount),
+    );
+    expect(assestsDelagated).toEqual(
+      formattedAmount(getAccountCurrency(testedAccount).units[0], delegatedAmount, true),
+    );
 
     await stakePage.summaryContinue();
     await deviceAction.selectMockDevice();

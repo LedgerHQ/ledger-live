@@ -9,7 +9,6 @@ import { OnboardingContextProvider } from "~/screens/Onboarding/onboardingContex
 import CounterValuesProvider from "~/components/CounterValuesProvider";
 import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
-import MarketDataProvider from "LLM/features/Market/components//MarketDataProviderWrapper";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react/index";
@@ -34,7 +33,7 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
                     <NotificationsProvider>
                       <SnackbarContainer />
                       <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                        <MarketDataProvider>{children}</MarketDataProvider>
+                        {children}
                       </NftMetadataProvider>
                     </NotificationsProvider>
                   </ToastProvider>

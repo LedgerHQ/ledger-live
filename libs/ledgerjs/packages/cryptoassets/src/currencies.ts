@@ -498,7 +498,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "bsc",
     coinType: CoinType.ETH,
     name: "Binance Smart Chain",
-    managerAppName: "Binance Smart Chain",
+    managerAppName: "Ethereum",
     ticker: "BNB",
     scheme: "bsc",
     color: "#F0B90A",
@@ -2195,7 +2195,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "polygon",
     coinType: CoinType.ETH,
     name: "Polygon",
-    managerAppName: "Polygon",
+    managerAppName: "Ethereum",
     ticker: "MATIC",
     scheme: "polygon",
     color: "#6d29de",
@@ -2381,7 +2381,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         magnitude: 0,
       },
     ],
-    family: "ripple",
+    family: "xrp",
     explorerViews: [
       {
         tx: "https://bithomp.com/explorer/$hash",
@@ -4266,6 +4266,100 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  blast: {
+    type: "CryptoCurrency",
+    id: "blast",
+    coinType: CoinType.ETH,
+    name: "Blast",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "blast",
+    color: "#FCFC06",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 81457,
+    },
+    explorerViews: [
+      {
+        tx: "https://blastscan.io/tx/$hash",
+        address: "https://blastscan.io/address/$address",
+        token: "https://blastscan.io/token/$address",
+      },
+    ],
+  },
+  blast_sepolia: {
+    type: "CryptoCurrency",
+    id: "blast_sepolia",
+    coinType: CoinType.ETH,
+    name: "Blast Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "blast_sepolia",
+    color: "#ff0000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: false,
+    isTestnetFor: "blast",
+    ethereumLikeInfo: {
+      chainId: 168587773,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.blastscan.io/tx/$hash",
+        address: "https://testnet.blastscan.io/address/$address",
+        token: "https://testnet.blastscan.io/token/$address",
+      },
+    ],
+  },
+  scroll: {
+    type: "CryptoCurrency",
+    id: "scroll",
+    coinType: CoinType.ETH,
+    name: "Scroll",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "scroll",
+    color: "#ebc28e",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 534352,
+    },
+    explorerViews: [
+      {
+        tx: "https://scrollscan.com/tx/$hash",
+        address: "https://scrollscan.com/address/$address",
+        token: "https://scrollscan.com/token/$address",
+      },
+    ],
+  },
+  scroll_sepolia: {
+    type: "CryptoCurrency",
+    id: "scroll_sepolia",
+    coinType: CoinType.ETH,
+    name: "Scroll Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "scroll_sepolia",
+    color: "#ff0000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: false,
+    isTestnetFor: "scroll",
+    ethereumLikeInfo: {
+      chainId: 534351,
+    },
+    explorerViews: [
+      {
+        tx: "https://sepolia.scrollscan.dev/tx/$hash",
+        address: "https://sepolia.scrollscan.dev/address/$address",
+        token: "https://sepolia.scrollscan.dev/token/$address",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {
@@ -4358,8 +4452,8 @@ export function listCryptoCurrencies(
       ? cryptocurrenciesArray
       : prodCryptoArray
     : withDevCrypto
-    ? cryptocurrenciesArrayWithoutTerminated
-    : prodCryptoArrayWithoutTerminated;
+      ? cryptocurrenciesArrayWithoutTerminated
+      : prodCryptoArrayWithoutTerminated;
 }
 
 /**

@@ -2,12 +2,12 @@ import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type {
   CardanoAccount,
   CardanoDelegation,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
+import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/staking";
 import { getDefaultExplorerView, getStakePoolExplorer } from "@ledgerhq/live-common/explorers";
 
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -29,6 +29,8 @@ import UndelegateIcon from "~/icons/Undelegate";
 import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: CardanoAccount;
@@ -43,7 +45,7 @@ function Delegations({ account }: Props) {
 
   const mainAccount = getMainAccount(account, undefined);
 
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const navigation = useNavigation();
 
   const { cardanoResources } = account;
@@ -109,6 +111,8 @@ function Delegations({ account }: Props) {
     [account.currency],
   );
 
+  const accountName = useAccountName(account);
+
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     const d = delegation;
 
@@ -154,7 +158,7 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {account.name}{" "}
+                {accountName}{" "}
               </LText>
             ),
           },
@@ -188,7 +192,7 @@ function Delegations({ account }: Props) {
             : []),
         ]
       : [];
-  }, [delegation, t, account, onOpenExplorer, unit]);
+  }, [delegation, t, accountName, onOpenExplorer, unit]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
     return [

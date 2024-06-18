@@ -1,15 +1,15 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 import { getAssetCodeIssuer } from "./logic";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
+} from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 
 export const formatTransaction = (
@@ -24,7 +24,7 @@ export const formatTransaction = (
     SEND ${
       useAllAmount
         ? "MAX"
-        : formatCurrencyUnit(getAccountUnit(account), amount, {
+        : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
             showCode: true,
             disableRounding: true,
           })
@@ -33,7 +33,7 @@ export const formatTransaction = (
     with fees=${
       !fees
         ? "?"
-        : formatCurrencyUnit(getAccountUnit(account), fees, {
+        : formatCurrencyUnit(getAccountCurrency(account).units[0], fees, {
             showCode: true,
             disableRounding: true,
           })

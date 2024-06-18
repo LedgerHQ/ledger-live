@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -10,15 +9,17 @@ import ToolTip from "~/renderer/components/Tooltip";
 import { withdrawableBalance } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./AccountBalanceSummaryFooter.styles";
 import { CeloFamily } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const AccountBalanceSummaryFooter: CeloFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
+  const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
   const { spendableBalance, celoResources } = account;
   const { lockedBalance, nonvotingLockedBalance } = celoResources;
   const withdrawableBalanceAmount = withdrawableBalance(account);
-  const unit = getAccountUnit(account);
+
   const formatConfig = {
     disableRounding: false,
     alwaysShowSign: false,

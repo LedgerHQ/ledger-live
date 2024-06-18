@@ -1,4 +1,4 @@
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { TFunction } from "i18next";
 import React from "react";
@@ -6,7 +6,9 @@ import { Trans } from "react-i18next";
 import Track from "~/renderer/analytics/Track";
 import Image from "~/renderer/components/Image";
 
-import NoResultsFound from "~/renderer/images/no-results-found.png";
+import NoResultsFoundDark from "~/renderer/images/no-results-found-dark.png";
+import NoResultsFoundLight from "~/renderer/images/no-results-found-light.png";
+
 import { Button } from "../..";
 
 type NoCryptoPlaceholderProps = {
@@ -30,7 +32,12 @@ export const NoCryptoPlaceholder = ({
   >
     <Track event="Page Market Search" success={false} />
     <Flex justifyContent="center" alignItems="center">
-      <Image alt="no result found" resource={NoResultsFound} width={192} height={192} />
+      <Image
+        alt="no result found"
+        resource={{ dark: NoResultsFoundDark, light: NoResultsFoundLight }}
+        width={192}
+        height={192}
+      />
     </Flex>
     <Text variant="large" my={3} textAlign="center">
       {t("market.warnings.noCryptosFound")}

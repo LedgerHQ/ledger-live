@@ -1,9 +1,9 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { ManagerPage } from "../../models/ManagerPage";
-import { FirmwareUpdateModal } from "../../models/FirmwareUpdateModal";
+import { ManagerPage } from "../../page/manager.page";
+import { FirmwareUpdateModal } from "../../page/modal/firmware.update.modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Layout } from "../../models/Layout";
+import { Layout } from "../../component/layout.component";
 
 test.use({ userdata: "skip-onboarding" });
 
@@ -51,7 +51,7 @@ test("Firmware Update @smoke", async ({ page }) => {
 
   await test.step("Modal is closed", async () => {
     // TODO rewrite this to fit a drawer model, not a modal one.
-    await firmwareUpdateModal.page.locator("data-test-id=drawer-close-button").click();
+    await firmwareUpdateModal.drawerClose.click();
     await expect.soft(page).toHaveScreenshot("modal-closed.png");
   });
 });

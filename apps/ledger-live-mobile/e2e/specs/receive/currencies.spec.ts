@@ -13,6 +13,8 @@ let deviceAction: DeviceAction;
 let common: Common;
 let first = true;
 
+$TmsLink("B2CQA-651");
+$TmsLink("B2CQA-1854");
 describe("Receive different currency", () => {
   beforeAll(async () => {
     await loadConfig("onboardingcompleted", true);

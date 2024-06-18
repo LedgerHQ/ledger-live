@@ -23,6 +23,8 @@ import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "..
 import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
 import { CompleteExchangeStep, convertTransportError } from "../error";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { TronSendTrc20ToNewAccountForbidden } from "../../families/tron/errors";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -46,7 +48,7 @@ const completeExchange = (
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
-        const providerConfig = getSwapProvider(provider);
+        const providerConfig = await getSwapProvider(provider);
         if (providerConfig.type !== "CEX") {
           throw new Error(`Unsupported provider type ${providerConfig.type}`);
         }
@@ -73,7 +75,10 @@ const completeExchange = (
         );
         if (unsubscribed) return;
 
-        const errorsKeys = Object.keys(errors);
+        const errorsKeys = Object.keys(errors).filter(item =>
+          [TronSendTrc20ToNewAccountForbidden.prototype.name].includes(item),
+        );
+
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
         currentStep = "SET_PARTNER_KEY";
@@ -123,7 +128,7 @@ const completeExchange = (
             throw new WrongDeviceForAccountPayout(
               getExchangeErrorMessage(e.statusCode, currentStep),
               {
-                accountName: payoutAccount.name,
+                accountName: getDefaultAccountName(payoutAccount),
               },
             );
           }
@@ -165,7 +170,7 @@ const completeExchange = (
             throw new WrongDeviceForAccountRefund(
               getExchangeErrorMessage(e.statusCode, currentStep),
               {
-                accountName: refundAccount.name,
+                accountName: getDefaultAccountName(refundAccount),
               },
             );
           }

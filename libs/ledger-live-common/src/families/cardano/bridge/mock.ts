@@ -4,10 +4,10 @@ import {
   Token,
   Transaction as CardanoTransaction,
   TransactionStatus,
-} from "../types";
+} from "@ledgerhq/coin-cardano/types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import type { AccountBridge, CurrencyBridge, Account } from "@ledgerhq/types-live";
-import { decodeTokenAssetId, decodeTokenCurrencyId } from "../buildSubAccounts";
+import { decodeTokenAssetId, decodeTokenCurrencyId } from "@ledgerhq/coin-cardano/buildSubAccounts";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -15,8 +15,8 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { CardanoMinAmountError, CardanoNotEnoughFunds } from "../errors";
-import { buildTransaction } from "../js-buildTransaction";
+import { CardanoMinAmountError, CardanoNotEnoughFunds } from "@ledgerhq/coin-cardano/errors";
+import { buildTransaction } from "@ledgerhq/coin-cardano/buildTransaction";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   scanAccounts,

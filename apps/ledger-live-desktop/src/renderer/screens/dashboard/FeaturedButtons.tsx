@@ -60,7 +60,6 @@ const FeaturedButtons = () => {
         Icon={() => <IconsLegacy.BuyCryptoMedium size={18} />}
         title={t("dashboard.featuredButtons.swap.title")}
         body={t("dashboard.featuredButtons.swap.description")}
-        label={t("dashboard.featuredButtons.swap.label")}
         onClick={handleClickSwap}
         entryButtonTestId="swap-entry-button"
       />

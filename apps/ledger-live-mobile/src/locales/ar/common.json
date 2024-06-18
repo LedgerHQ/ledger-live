@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "خطأ في رقم التسلسل",
       "description" : "يُرجى إغلاق النافذة وإعادة المحاولة لاحقاً"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "المبادلة غير متوفرة: الإرسال/التفويض الأولي مطلوب مع حساب Tezos أو زوج الاستبدال."
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "سعر السوق لـ{{currencyTicker}}",
       "currencyPrice" : "سعر 1 {{currencyTicker}}",
-      "currencyPriceChange" : "آخر تغيير خلال 24 ساعة"
+      "currencyPriceChange" : {
+        "day" : "آخر تغيير خلال 24 ساعة",
+        "week" : "التغيير في آخر 7 يوماً",
+        "month" : "التغيير في آخر 30 يوماً",
+        "year" : "التغيير في آخر عام",
+        "all" : "التغيير في آخر عام"
+      }
     },
     "quickActions" : {
       "buy" : "شراء",
@@ -2714,6 +2723,8 @@
       "languageDesc" : "قم بتعيين اللغة المعروضة في Ledger Live.",
       "dateFormat" : "تنسيق التاريخ",
       "dateFormatDesc" : "تعيين تنسيق التاريخ في Ledger Live",
+      "walletSync" : "مزامنة Ledger",
+      "walletSyncDesc" : "قم بنسخ بيانات التطبيق لديك ومزامنة العديد من حالات Ledger Live بسلاسة",
       "region" : "المنطقة",
       "regionDesc" : "اختر منطقتك لتحديث صِيغ التواريخ والوقت والعملات.",
       "password" : "App lock (قفل التطبيق)",
@@ -3130,9 +3141,6 @@
         "title" : "مرحباً بك في المبادلة",
         "whatIsSwap" : "ما هي المبادلة؟",
         "disclaimer" : "استبدل الأصول المشفرة مباشرةً من جهازك Ledger. هذه الخدمة غير متوفرة في بعض البلدان، بما فيها الولايات المتحدة."
-      },
-      "main" : {
-        "header" : "مبادلة"
       },
       "notAvailable" : {
         "title" : "الخدمة غير متوفرة مؤقتاً أو غير متوفرة في بلدك"
@@ -3840,35 +3848,9 @@
     "tokens" : {
       "title" : "إضافة رمز توكن",
       "createParentCurrencyAccount" : "أضف حساب {{parrentCurrencyName}}",
-      "erc20" : {
-        "title" : "إضافة رمز توكن",
-        "disclaimer" : "{{tokenName}} هو رمز ERC20.\nيمكنك تلقي رموز التوكن مباشرةً في حساب إيثريوم.",
-        "learnMore" : "معرفة المزيد عن ERC20"
-      },
-      "trc10" : {
-        "title" : "إضافة رمز توكن",
-        "disclaimer" : "{{tokenName}} هو رمز TRC10.\nيمكنك تلقي رموز التوكن مباشرةً في حساب Tron.",
-        "learnMore" : "معرفة المزيد عن TRC10"
-      },
-      "trc20" : {
-        "title" : "إضافة رمز توكن",
-        "disclaimer" : "{{tokenName}} هو رمز TRC20.\nيمكنك تلقي رموز التوكن مباشرةً في حساب Tron.",
-        "learnMore" : "معرفة المزيد عن TRC20"
-      },
-      "asa" : {
-        "title" : "إضافة رمز توكن",
-        "disclaimer" : "{{tokenName}} هو رمز ASA.\nيمكنك تلقي رموز التوكن مباشرةً في حساب Algorand.",
-        "learnMore" : "تعرّف على المزيد"
-      },
-      "bep20" : {
-        "title" : "إضافة رمز توكن",
-        "disclaimer" : "{{tokenName}} هو رمز BEP-20.\nيمكنك تلقي رموز التوكن مباشرةً في حساب BNB.",
-        "learnMore" : "معرفة المزيد عن BEP-20"
-      },
-      "vip180" : {
-        "title" : "إضافة رمز توكن",
-        "disclaimer" : "{{tokenName}} هو رمز VIP180.\nيمكنك تلقي رموز التوكن مباشرةً في حساب VET.",
-        "learnMore" : "معرفة المزيد عن VIP180"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}.\nيمكنك تلقي رموز التوكن مباشرةً على حساب {{currency}}.",
+        "learnMore" : "تعرف على المزيد عن {{tokenType}}"
       }
     },
     "showMoreChainType" : "المزيد من أنواع العناوين",
@@ -4325,7 +4307,8 @@
       "installUpdate" : {
         "titleInactive" : "تثبيت التحديث",
         "titleActive" : "جارٍ تثبيت التحديث",
-        "description" : "{{deviceName}} سيقوم بإعادة التشغيل مرات عديدة.\n\nلإكمال التحديث، قم بإلغاء قفل {{deviceName}} باستخدام كود PIN الخاص بك بعد انتهاء التثبيت."
+        "description" : "{{deviceName}} سيقوم بإعادة التشغيل مرات عديدة.\n\nلإكمال التحديث، قم بإلغاء قفل {{deviceName}} باستخدام كود PIN الخاص بك بعد انتهاء التثبيت.",
+        "descriptionNanoXBle" : "{{deviceName}} سيقوم بإعادة التشغيل مرات عديدة.\n\nإذا تم إيقاف تشغيل الجهاز ولم يعاد تشغيله تلقائياً، ستحتاج إلى تشغيله بنفسك.\n\nلإكمال التحديث، قم بإلغاء قفل {{deviceName}} عن طريق كود PIN الخاص بك بعد أن ينتهي التثبيت."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4339,14 @@
       "description" : "قم بتحديث برنامج Ledger Nano الثابت عن طريق توصيله إلى تطبيق Ledger Live على سطح المكتب",
       "pleaseConnectUsbTitle" : "كبل USB مطلوب",
       "pleaseConnectUsbDescription" : "لبدء تحديث البرنامج الثابت، قم بتوصيل {{deviceName}} خاصتك بهاتفك الجوال باستخدام كبل USB."
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "الجهاز غير متصل",
+          "description" : "التحديث لم يتمكن من المتابعة لانقطاع اتصالنا مع {{deviceName}}"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -6134,6 +6125,7 @@
       "subtitle" : "استكشف ويب 3.0 المدمج بالكامل مع Ledger",
       "section" : {
         "recentlyUsed" : "المُستخدَم مؤخراً",
+        "locallyLoaded" : "مُحمّلة محلياً",
         "categories" : "الفئات",
         "clearAll" : "إزالة الكل"
       },
@@ -6231,9 +6223,10 @@
       },
       "order" : {
         "topGainers" : "أعلى الرابحين",
-        "market_cap" : "المرتبة",
-        "market_cap_asc" : "المرتبة (سقف أسعار السوق) تصاعدي",
-        "market_cap_desc" : "المرتبة (سقف أسعار السوق) تنازلي"
+        "topLosers" : "أعلى الخاسرين",
+        "marketCap" : "المرتبة",
+        "asc" : "المرتبة (سقف أسعار السوق) تصاعدي",
+        "desc" : "المرتبة (سقف أسعار السوق) تنازلي"
       },
       "currency" : "العملة",
       "time" : "الوقت",
@@ -6303,7 +6296,7 @@
     "designedForStax" : {
       "title" : "<0>مُصمَّم من أجل</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "هذا الرمز غير القابل للاستبدال يحتوي على صورة إضافية للرمز غير القابل للاستبدال، مُصمَّمة خصيصاً لشاشة Ledger Stax بتقنية E Ink (الحبر الإلكتروني).\n\nهذه الصورة سيتم استخدامها عندما تقوم بتعيين هذا الرمز غير القابل للاستبدال كشاشة القَفل لديك.",
+        "description" : "هذا الرمز غير القابل للاستبدال يحتوي على صورة إضافية للرمز غير القابل للاستبدال، مُصمَّمة خصيصاً لشاشة Ledger Stax بتقنية E Ink (الحبر الإلكتروني).\n\nهذه الصورة سيتم استخدامها عندما تقوم بتعيين هذا الرمز غير القابل للاستبدال كشاشة القَفل لديك.",
         "cta" : "فهمت ذلك"
       }
     },
@@ -6563,7 +6556,6 @@
         },
         "swap" : {
           "title" : "مبادلة",
-          "label" : "شائع",
           "body" : "قم بالتحويل بين الأصول المشفرة بأمان"
         },
         "receive" : {

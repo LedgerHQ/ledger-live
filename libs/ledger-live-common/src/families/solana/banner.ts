@@ -1,9 +1,9 @@
-import { getCurrentSolanaPreloadData } from "./js-preload-data";
-import { stakeActions } from "./logic";
+import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";
+import { stakeActions } from "@ledgerhq/coin-solana/logic";
+import { LEDGER_VALIDATOR } from "@ledgerhq/coin-solana/utils";
+import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
+import { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
 import { isAccountEmpty } from "../../account";
-import { LEDGER_VALIDATOR } from "./utils";
-import type { SolanaAccount } from "./types";
-import { ValidatorsAppValidator } from "./validator-app";
 
 export interface AccountBannerState {
   display: boolean;

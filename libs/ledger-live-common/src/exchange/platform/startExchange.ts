@@ -13,16 +13,16 @@ const withDevicePromise = (deviceId, fn) =>
 const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEvent> => {
   return new Observable(o => {
     let unsubscribed = false;
-    const { deviceId, exchangeType, appVersion, provider } = input;
+    const { device, exchangeType, appVersion, provider } = input;
     const startExchangeAsync = async () => {
-      await withDevicePromise(deviceId, async transport => {
-        log("exchange", `attempt to connect to ${deviceId}`);
+      await withDevicePromise(device.deviceId, async transport => {
+        log("exchange", `attempt to connect to ${device.deviceId}`);
         let version;
         if (unsubscribed) return;
         if (provider) {
           switch (exchangeType) {
             case ExchangeTypes.Swap: {
-              const providerConfig = getSwapProvider(provider);
+              const providerConfig = await getSwapProvider(provider);
               if (providerConfig.type !== "CEX") {
                 throw new Error(`Unsupported provider type ${providerConfig.type}`);
               }
@@ -48,7 +48,7 @@ const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEve
         const nonce: string = await exchange.startNewTransaction();
         o.next({
           type: "start-exchange-result",
-          nonce,
+          startExchangeResult: { nonce, device },
         });
       });
     };
@@ -61,7 +61,7 @@ const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEve
       error => {
         o.next({
           type: "start-exchange-error",
-          error,
+          startExchangeError: { error, device },
         });
         o.complete();
         unsubscribed = true;

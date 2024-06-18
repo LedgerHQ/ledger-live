@@ -147,12 +147,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
       <Tooltip content={t("stars.tooltip")}>
-        <Star
-          accountId={account.id}
-          parentId={account.type !== "Account" ? account.parentId : undefined}
-          yellow
-          rounded
-        />
+        <Star accountId={account.id} yellow rounded />
       </Tooltip>
       {isWalletConnectActionDisplayable ? (
         <Tooltip content={t("walletconnect.titleAccount")}>

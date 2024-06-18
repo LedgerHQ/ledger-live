@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
 import polkadotAPI from "../network";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
-import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "../logic";
+import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "./state";
 
 const PRELOAD_MAX_AGE = 60 * 1000;
 

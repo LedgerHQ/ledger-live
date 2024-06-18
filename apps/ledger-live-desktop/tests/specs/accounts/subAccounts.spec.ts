@@ -1,11 +1,11 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { AccountsPage } from "../../models/AccountsPage";
-import { AddAccountModal } from "../../models/AddAccountModal";
-import { ReceiveModal } from "../../models/ReceiveModal";
-import { Layout } from "../../models/Layout";
+import { AccountsPage } from "../../page/accounts.page";
+import { AddAccountModal } from "../../page/modal/add.account.modal";
+import { ReceiveModal } from "../../page/modal/receive.modal";
+import { Layout } from "../../component/layout.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import { PortfolioPage } from "../../models/PortfolioPage";
+import { PortfolioPage } from "../../page/portfolio.page";
 
 test.use({ userdata: "skip-onboarding" });
 
@@ -29,7 +29,7 @@ test.fixme("subAccounts @smoke", async ({ page }) => {
     await addAccountModal.continue();
     await deviceAction.openApp();
     await addAccountModal.waitForSync();
-    expect(await addAccountModal.addAccountsButton).toBeVisible();
+    await expect(addAccountModal.addAccountsButton).toBeVisible();
   });
 
   await test.step("should add parent", async () => {

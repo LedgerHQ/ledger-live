@@ -1,6 +1,6 @@
-import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
+import type { Account } from "@ledgerhq/types-live";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getEstimatedFees } from "../utils";
 
 // Balance is 1 Hbar
@@ -12,9 +12,6 @@ const account: Account = {
   index: 0,
   freshAddress: "",
   freshAddressPath: "",
-  freshAddresses: [],
-  name: "",
-  starred: false,
   used: false,
   balance: new BigNumber(100000000),
   spendableBalance: new BigNumber(0),
@@ -43,13 +40,6 @@ const account: Account = {
     WEEK: { latestDate: null, balances: [] },
   },
   swapHistory: [],
-  unit: {
-    name: "",
-    code: "",
-    magnitude: 0,
-    showAllDigits: undefined,
-    prefixCode: undefined,
-  },
 };
 
 describe("js-estimateMaxSpendable", () => {

@@ -1,71 +1,66 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
-import {
-  marketFilterByStarredAccountsSelector,
-  starredMarketCoinsSelector,
-} from "~/reducers/settings";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/analytics";
-import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/settings";
 import { getAnalyticsProperties } from "LLM/features/Market/utils";
+import {
+  setMarketCurrentPage,
+  setMarketFilterByStarredCurrencies,
+  setMarketRequestParams,
+} from "~/actions/market";
+import { marketFilterByStarredCurrenciesSelector, marketParamsSelector } from "~/reducers/market";
+import { starredMarketCoinsSelector } from "~/reducers/settings";
 
 function useBottomSectionViewModel() {
   const dispatch = useDispatch();
-  const { requestParams, counterCurrency, refresh } = useMarketData();
-  const { range, orderBy, order, top100 } = requestParams;
+
+  const marketParams = useSelector(marketParamsSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
-  const firstMount = useRef(true); // To known if this is the first mount of the page
+  const filterByStarredCurrencies: boolean = useSelector(marketFilterByStarredCurrenciesSelector);
 
-  useEffect(() => {
-    if (firstMount.current) {
-      // We don't want to refresh the market data directly on mount, the data is already refreshed with wanted parameters from MarketDataProviderWrapper
-      firstMount.current = false;
-      return;
-    }
-    if (filterByStarredAccount) {
-      refresh({ starred: starredMarketCoins });
-    } else {
-      refresh({ starred: [], search: "" });
-    }
-  }, [refresh, filterByStarredAccount, starredMarketCoins]);
+  const { range, order, counterCurrency } = marketParams;
 
-  const toggleFilterByStarredAccounts = useCallback(() => {
-    if (!filterByStarredAccount) {
+  const resetMarketPage = useCallback(() => {
+    dispatch(setMarketCurrentPage(1));
+    dispatch(setMarketRequestParams({ page: 1 }));
+  }, [dispatch]);
+
+  const toggleFilterByStarredCurrencies = useCallback(() => {
+    if (!filterByStarredCurrencies) {
       track(
         "Page Market Favourites",
-        getAnalyticsProperties(requestParams, {
+        getAnalyticsProperties(marketParams, {
           currencies: starredMarketCoins,
         }),
       );
     }
-    dispatch(setMarketFilterByStarredAccounts(!filterByStarredAccount));
-  }, [dispatch, filterByStarredAccount, requestParams, starredMarketCoins]);
+
+    dispatch(setMarketFilterByStarredCurrencies(!filterByStarredCurrencies));
+    resetMarketPage();
+  }, [dispatch, filterByStarredCurrencies, marketParams, resetMarketPage, starredMarketCoins]);
 
   const onFilterChange = useCallback(
     (value: MarketListRequestParams) => {
       track(
         "Page Market",
         getAnalyticsProperties({
-          ...requestParams,
+          ...marketParams,
           ...value,
         }),
       );
+
       dispatch(setMarketRequestParams(value));
-      refresh(value);
+      resetMarketPage();
     },
-    [dispatch, refresh, requestParams],
+    [dispatch, marketParams, resetMarketPage],
   );
 
   return {
     onFilterChange,
-    filterByStarredAccount,
-    toggleFilterByStarredAccounts,
+    filterByStarredCurrencies,
+    toggleFilterByStarredCurrencies,
     range,
-    orderBy,
     order,
-    top100,
     counterCurrency,
   };
 }

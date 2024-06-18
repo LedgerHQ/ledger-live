@@ -1,4 +1,4 @@
-import { CurrencyData } from "@ledgerhq/live-common/market/types";
+import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -13,7 +13,6 @@ import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 export enum Page {
   Market = "Page Market",
@@ -23,9 +22,10 @@ export enum Page {
 type MarketActionsProps = {
   currency?: CurrencyData | null;
   page?: Page;
+  currenciesAll?: string[];
 };
 
-export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
+export const useMarketActions = ({ currency, page, currenciesAll }: MarketActionsProps) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -35,8 +35,6 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
-
-  const { data: currenciesAll } = useFetchCurrencyAll();
 
   const { isCurrencyAvailable } = useRampCatalog();
 
@@ -146,7 +144,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
     !!internalCurrency?.id &&
     isCurrencyAvailable(internalCurrency.id, "onRamp");
 
-  const availableOnSwap = !!internalCurrency && currenciesAll.includes(internalCurrency.id);
+  const availableOnSwap = !!internalCurrency && currenciesAll?.includes(internalCurrency.id);
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;

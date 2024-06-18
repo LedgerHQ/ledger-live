@@ -176,10 +176,10 @@ describe("swap/utils/getAvailableAccountsById", () => {
 });
 
 describe("swap/utils/isRegistrationRequired", () => {
-  test("should return registration is not required for changelly", () => {
+  test("should return registration is not required for changelly", async () => {
     const expectedResult = false;
 
-    const result = isRegistrationRequired("changelly");
+    const result = await isRegistrationRequired("changelly");
 
     expect(result).toBe(expectedResult);
   });

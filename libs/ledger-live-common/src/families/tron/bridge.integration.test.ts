@@ -23,9 +23,9 @@ import {
 } from "./errors";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import "../../__tests__/test-helpers/setup";
-import { activationFees } from "./constants";
+import { ACTIVATION_FEES } from "./constants";
 import { fromTransactionRaw } from "./transaction";
-import type { Transaction } from "./types";
+import type { Transaction, TronAccountRaw } from "./types";
 
 const unactivatedAddress = "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD";
 const activatedAddress1 = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
@@ -413,7 +413,7 @@ const tron: CurrenciesData<Transaction> = {
             recipient: unactivatedAddress,
           }),
           expectedStatus: () => ({
-            estimatedFees: activationFees,
+            estimatedFees: ACTIVATION_FEES,
           }),
         },
         {
@@ -421,7 +421,7 @@ const tron: CurrenciesData<Transaction> = {
           transaction: (t, account) => ({
             ...t,
             recipient: unactivatedAddress,
-            amount: account.spendableBalance.minus(activationFees).minus(1),
+            amount: account.spendableBalance.minus(ACTIVATION_FEES).minus(1),
           }),
           expectedStatus: () => ({
             errors: {},
@@ -432,7 +432,7 @@ const tron: CurrenciesData<Transaction> = {
           transaction: (t, account) => ({
             ...t,
             recipient: unactivatedAddress,
-            amount: account.spendableBalance.minus(activationFees),
+            amount: account.spendableBalance.minus(ACTIVATION_FEES),
           }),
           expectedStatus: () => ({
             errors: {},
@@ -751,20 +751,35 @@ const tron: CurrenciesData<Transaction> = {
         freshAddressPath: "44'/195'/0'/0/0",
         pendingOperations: [],
         currencyId: "tron",
-        unitMagnitude: 18,
         balance: "10006000",
         spendableBalance: "1606000",
         subAccounts: [],
         operations: [],
-        freshAddresses: [
-          {
-            address: "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
-            derivationPath: "44'/195'/0'/0/0",
-          },
-        ],
         lastSyncDate: "",
         blockHeight: 0,
-      },
+        tronResources: {
+          frozen: { bandwidth: undefined, energy: undefined },
+          delegatedFrozen: { bandwidth: undefined, energy: undefined },
+          unFrozen: { bandwidth: [], energy: [] },
+          legacyFrozen: {
+            bandwidth: { amount: "2000000", expiredAt: "2022-05-23T08:20:39.000Z" },
+            energy: { amount: "1000000", expiredAt: "2022-05-22T12:51:12.000Z" },
+          },
+          votes: [],
+          tronPower: 3,
+          energy: "12",
+          bandwidth: {
+            freeUsed: "0",
+            freeLimit: "600",
+            gainedUsed: "0",
+            gainedLimit: "2",
+          },
+          unwithdrawnReward: "0",
+          lastWithdrawnRewardDate: undefined,
+          lastVotedDate: undefined,
+          cacheTransactionInfoById: {},
+        },
+      } as TronAccountRaw,
     },
     {
       transactions: [
@@ -836,20 +851,39 @@ const tron: CurrenciesData<Transaction> = {
         freshAddressPath: "44'/195'/0'/0/0",
         pendingOperations: [],
         currencyId: "tron",
-        unitMagnitude: 18,
         balance: "26000197",
         spendableBalance: "197",
         subAccounts: [],
         operations: [],
-        freshAddresses: [
-          {
-            address: activatedAddress1,
-            derivationPath: "44'/195'/0'/0/0",
-          },
-        ],
         lastSyncDate: "",
         blockHeight: 0,
-      },
+        tronResources: {
+          frozen: { bandwidth: undefined, energy: undefined },
+          delegatedFrozen: { bandwidth: undefined, energy: undefined },
+          unFrozen: { bandwidth: [], energy: [] },
+          legacyFrozen: {
+            bandwidth: undefined,
+            energy: { amount: "26000000", expiredAt: "2020-02-01T16:04:51.000Z" },
+          },
+          votes: [
+            { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", voteCount: 15 },
+            { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 1 },
+            { address: "TCZvvbn4SCVyNhCAt1L8Kp1qk5rtMiKdBB", voteCount: 2 },
+          ],
+          tronPower: 26,
+          energy: "326",
+          bandwidth: {
+            freeUsed: "0",
+            freeLimit: "600",
+            gainedUsed: "0",
+            gainedLimit: "0",
+          },
+          unwithdrawnReward: "1336847",
+          lastWithdrawnRewardDate: "2022-05-19T12:45:36.000Z",
+          lastVotedDate: "2022-05-19T12:43:42.000Z",
+          cacheTransactionInfoById: {},
+        },
+      } as TronAccountRaw,
     },
     {
       transactions: [
@@ -1190,20 +1224,17 @@ const tron: CurrenciesData<Transaction> = {
         seedIdentifier:
           "0416c02ea5e939eed995f75c44667a66b9c8dfddede8c6d54211f64b1dace9e1c40bcbbd5341480f43a5f37c7ab3a0c53f9cccff57d59bb0368d1e744135d7f68a",
         name: "Tron 1",
-        starred: false,
         used: true,
         derivationMode: "",
         index: 0,
         freshAddress: "TUxd6v64YTWkfpFpNDdtgc5Ps4SfGxwizT",
         freshAddressPath: "44'/195'/0'/0/0",
-        freshAddresses: [],
         blockHeight: 57509444,
         creationDate: "2023-10-31T14:27:27.000Z",
         operationsCount: 96,
         operations: [],
         pendingOperations: [],
         currencyId: "tron",
-        unitMagnitude: 6,
         lastSyncDate: "2023-12-21T12:28:03.177Z",
         balance: "859005207",
         spendableBalance: "252128207",
@@ -1240,20 +1271,17 @@ const tron: CurrenciesData<Transaction> = {
         seedIdentifier:
           "0416c02ea5e939eed995f75c44667a66b9c8dfddede8c6d54211f64b1dace9e1c40bcbbd5341480f43a5f37c7ab3a0c53f9cccff57d59bb0368d1e744135d7f68a",
         name: "Tron 3",
-        starred: false,
         used: true,
         derivationMode: "",
         index: 2,
         freshAddress: "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh",
         freshAddressPath: "44'/195'/2'/0/0",
-        freshAddresses: [],
         blockHeight: 59127355,
         creationDate: "2024-02-15T16:36:06.000Z",
         operationsCount: 3,
         operations: [],
         pendingOperations: [],
         currencyId: "tron",
-        unitMagnitude: 6,
         lastSyncDate: "2024-02-15T17:11:40.339Z",
         balance: "15000004",
         spendableBalance: "10000004",

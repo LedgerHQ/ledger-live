@@ -6,23 +6,23 @@ import { Trans, useTranslation } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import Icon from "react-native-vector-icons/Feather";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import type {
-  APIGetPoolsDetail,
-  StakePool,
-} from "@ledgerhq/live-common/families/cardano/api/api-types";
+import {
+  LEDGER_POOL_IDS,
+  fetchPoolDetails,
+  type APIGetPoolsDetail,
+  type StakePool,
+} from "@ledgerhq/live-common/families/cardano/staking";
 import type {
   CardanoAccount,
   CardanoDelegation,
+  TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
-import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/families/cardano/types";
 import Button from "~/components/Button";
 import Skeleton from "~/components/Skeleton";
 import Circle from "~/components/Circle";
@@ -39,6 +39,7 @@ import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
 import TranslatedError from "~/components/TranslatedError";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,
@@ -291,7 +292,7 @@ function SummaryWords({
   onChangePool: () => void;
   status: TransactionStatus;
 }) {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [rotateAnim] = useState(() => new Animated.Value(0));
@@ -529,7 +530,7 @@ function SummaryWords({
 }
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { colors } = useTheme();
   return (
     <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>

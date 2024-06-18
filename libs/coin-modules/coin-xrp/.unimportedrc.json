@@ -1,0 +1,27 @@
+{
+  "entry": [
+    "src/api/index.ts",
+    "src/bridge/js.ts",
+    "src/cli-transaction.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/serialization.ts",
+    "src/specs.ts",
+    "src/transaction.ts",
+    "src/datasets/dataset-1.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnresolved": [
+    "jest-get-type",
+    "jest-matcher-utils",
+    "jest-message-util"
+  ],
+  "ignoreUnimported": [],
+  "ignoreUnused": []
+}

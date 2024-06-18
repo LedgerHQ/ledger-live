@@ -1,26 +1,30 @@
+import { AccountBridge } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction } from "../types";
-import { getEstimatedFees } from "../logic";
+import getEstimatedFees from "./getFeesForTransaction";
 import BigNumber from "bignumber.js";
 
 const sameFees = (a: BigNumber, b?: BigNumber | null) => (!a || !b ? a === b : a.eq(b));
 
 /**
  * Calculate fees for the current transaction
- * @param {PolkadotAccount} a
- * @param {Transaction} t
+ * @param {PolkadotAccount} account
+ * @param {Transaction} transaction
  */
-const prepareTransaction = async (a: PolkadotAccount, t: Transaction) => {
-  let fees = t.fees;
+export const prepareTransaction: AccountBridge<
+  Transaction,
+  PolkadotAccount
+>["prepareTransaction"] = async (account, transaction) => {
+  let fees = transaction.fees;
   fees = await getEstimatedFees({
-    a,
-    t,
+    account,
+    transaction,
   });
 
-  if (!sameFees(fees, t.fees)) {
-    return { ...t, fees };
+  if (!sameFees(fees, transaction.fees)) {
+    return { ...transaction, fees };
   }
 
-  return t;
+  return transaction;
 };
 
 export default prepareTransaction;

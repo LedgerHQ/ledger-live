@@ -29,9 +29,7 @@ import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import {
-  getAccountUnit,
   getMainAccount,
-  getAccountName,
   getAccountCurrency,
   getFeesCurrency,
   getFeesUnit,
@@ -43,7 +41,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import ProviderIcon from "../ProviderIcon";
-import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 import Alert from "../Alert";
 import { lighten, Theme } from "../../colors";
@@ -62,6 +60,9 @@ import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
 import ModalLock from "../ModalLock";
 import Config from "react-native-config";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { SettingsState } from "~/reducers/types";
+import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -241,6 +242,8 @@ export function renderConfirmSwap({
   exchange,
   amountExpectedTo,
   estimatedFees,
+  walletState,
+  settingsState,
 }: RawProps & {
   device: Device;
   transaction: Transaction;
@@ -248,10 +251,22 @@ export function renderConfirmSwap({
   exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
   estimatedFees?: string | null;
+  walletState: WalletState;
+  settingsState: SettingsState;
 }) {
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
+  const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
+  const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
+
+  const unitFrom = currencySettingsForAccountSelector(settingsState, {
+    account: exchange.fromAccount,
+  }).unit;
+  const unitTo = currencySettingsForAccountSelector(settingsState, {
+    account: exchange.toAccount,
+  }).unit;
+
   return (
     <ScrollView>
       <Wrapper width="100%">
@@ -273,7 +288,7 @@ export function renderConfirmSwap({
             <Text>
               <CurrencyUnitValue
                 value={transaction.amount}
-                unit={getAccountUnit(exchange.fromAccount)}
+                unit={unitFrom}
                 disableRounding
                 showCode
               />
@@ -283,7 +298,7 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
             <Text>
               <CurrencyUnitValue
-                unit={getAccountUnit(exchange.toAccount)}
+                unit={unitTo}
                 value={amountExpectedTo ? new BigNumber(amountExpectedTo) : exchangeRate.toAmount}
                 disableRounding
                 showCode
@@ -317,14 +332,14 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
             <Flex flexDirection="row" alignItems="center">
               <CurrencyIcon size={20} currency={getAccountCurrency(exchange.fromAccount)} />
-              <Text marginLeft={2}>{getAccountName(exchange.fromAccount)}</Text>
+              <Text marginLeft={2}>{fromAccountName}</Text>
             </Flex>
           </FieldItem>
 
           <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
             <Flex flexDirection="row" alignItems="center">
               <CurrencyIcon size={20} currency={getAccountCurrency(exchange.toAccount)} />
-              <Text marginLeft={2}>{getAccountName(exchange.toAccount)}</Text>
+              <Text marginLeft={2}>{toAccountName}</Text>
             </Flex>
           </FieldItem>
         </Flex>
@@ -607,7 +622,7 @@ export function renderError({
   device,
   hasExportLogButton,
 }: RawProps & {
-  navigation?: StackNavigationProp<ParamListBase>;
+  navigation?: StackNavigationProp<RootStackParamList>;
   error: Error;
   onRetry?: (() => void) | null;
   managerAppName?: string;
@@ -618,11 +633,18 @@ export function renderError({
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
-      navigation.navigate(NavigatorName.MyLedger, {
-        screen: ScreenName.MyLedgerChooseDevice,
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
         params: {
-          tab: MANAGER_TABS.INSTALLED_APPS,
-          updateModalOpened: true,
+          screen: NavigatorName.MyLedger,
+          params: {
+            screen: ScreenName.MyLedgerChooseDevice,
+            params: {
+              tab: MANAGER_TABS.INSTALLED_APPS,
+              updateModalOpened: true,
+              device,
+            },
+          },
         },
       });
     } else if (onRetry) {
@@ -836,8 +858,8 @@ export function renderConnectYourDevice({
           isLocked || unresponsive
             ? "DeviceAction.unlockDevice"
             : device.wired
-            ? "DeviceAction.connectAndUnlockDevice"
-            : "DeviceAction.turnOnAndUnlockDevice",
+              ? "DeviceAction.connectAndUnlockDevice"
+              : "DeviceAction.turnOnAndUnlockDevice",
         )}
       </TitleText>
       {onSelectDeviceLink ? (

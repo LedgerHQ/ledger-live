@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/dummy-live-app",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@ledgerhq/live-app-sdk": "^0.8.0",
@@ -29,6 +29,7 @@
     "@types/node": "^20.8.10",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "webpack": "5.89.0"
   }
 }

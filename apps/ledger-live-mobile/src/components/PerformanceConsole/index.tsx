@@ -73,8 +73,8 @@ const PerformanceConsole = () => {
           visibility === Visibility.opaque
             ? 1
             : visibility === Visibility.transparent || previewTransparent
-            ? 0.7
-            : 0
+              ? 0.7
+              : 0
         }
         pointerEvents={visibility === Visibility.opaque ? "auto" : "none"}
       >

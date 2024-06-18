@@ -9,6 +9,7 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import IconTransfer from "~/renderer/icons/Transfer";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import TranslatedError from "./TranslatedError";
+import { useAccountUnit } from "../hooks/useAccountUnit";
 
 const ErrorContainer = styled(Box)<{
   hasError: unknown;
@@ -71,7 +72,8 @@ export default function RequestAmount({
   validTransactionWarning,
 }: Props) {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const { cryptoUnit, fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
+  const cryptoUnit = useAccountUnit(account);
+  const { fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
     account,
     fiatCurrency,
     cryptoAmount,

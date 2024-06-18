@@ -29,6 +29,7 @@ describe("Receive Flow", () => {
     await receivePage.openViaDeeplink();
   }
 
+  $TmsLink("B2CQA-1864");
   it("Should verify the address after importing an account working on a single network", async () => {
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToReceiveFromTransferMenu();
@@ -45,6 +46,8 @@ describe("Receive Flow", () => {
     await receivePage.expectAddressIsDisplayed(btcReceiveAddress);
   });
 
+  $TmsLink("B2CQA-1858");
+  $TmsLink("B2CQA-1860");
   it("Should display the number of account existing per networks", async () => {
     await openReceive();
     await receivePage.selectAsset("ETH");
@@ -52,6 +55,8 @@ describe("Receive Flow", () => {
     await receivePage.expectNumberOfAccountInListIsDisplayed("OP Mainnet", 1);
   });
 
+  $TmsLink("B2CQA-1856");
+  $TmsLink("B2CQA-1862");
   it("Should create an account on a network", async () => {
     await openReceive();
     await receivePage.selectAsset("ETH");
@@ -69,6 +74,7 @@ describe("Receive Flow", () => {
     await receivePage.expectAccountIsCreated("OP Mainnet 3");
   });
 
+  $TmsLink("B2CQA-650");
   it("Should access to receive after importing a cryptocurrency on a selected network", async () => {
     await openReceive();
     await common.performSearch("Polygon");
@@ -84,6 +90,7 @@ describe("Receive Flow", () => {
     await receivePage.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
   });
 
+  $TmsLink("B2CQA-1859");
   it("Should access to receive after selecting an existing account", async () => {
     await openReceive();
     await receivePage.selectAsset("XRP");

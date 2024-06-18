@@ -1,9 +1,9 @@
 import os from "os";
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { AddAccountModal } from "../../models/AddAccountModal";
-import { PortfolioPage } from "../../models/PortfolioPage";
+import { Layout } from "../../component/layout.component";
+import { AddAccountModal } from "../../page/modal/add.account.modal";
+import { PortfolioPage } from "../../page/portfolio.page";
 
 test.use({ userdata: "skip-onboarding" });
 

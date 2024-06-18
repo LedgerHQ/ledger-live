@@ -5,11 +5,7 @@ import React, { ReactNode, useCallback, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -31,6 +27,7 @@ import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoUndelegationFlowParamList } from "./types";
 import TranslatedError from "~/components/TranslatedError";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<
   CardanoUndelegationFlowParamList,
@@ -193,7 +190,7 @@ const styles = StyleSheet.create({
 });
 
 function SummaryWords({ account }: { account: AccountLike; currentDelegation: CardanoDelegation }) {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -242,7 +239,7 @@ function SummaryWords({ account }: { account: AccountLike; currentDelegation: Ca
 }
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { colors } = useTheme();
   return (
     <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>

@@ -1,30 +1,31 @@
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
-  makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { PolkadotAccount, PolkadotSigner, TransactionStatus, type Transaction } from "../types";
+import { getPreloadStrategy, hydrate, preload } from "./preload";
+import { PolkadotCoinConfig, setCoinConfig } from "../config";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
+import { getAccountShape, sync } from "./synchronization";
+import { createTransaction } from "./createTransaction";
+import { buildSignOperation } from "./signOperation";
 import signerGetAddress from "../signer";
-import createTransaction from "./createTransaction";
-import { estimateMaxSpendable, getTransactionStatus, getAccountShape, broadcast } from "../logic";
-import prepareTransaction from "./prepareTransaction";
-import buildSignOperation from "./signOperation";
+import { broadcast } from "./broadcast";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "./serialization";
-import { getPreloadStrategy, hydrate, preload } from "./preload";
-import type { PolkadotAddress, PolkadotSignature, Transaction } from "../types";
-import { PolkadotSigner } from "../types";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
-): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<PolkadotSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -40,14 +41,13 @@ export function buildCurrencyBridge(
   };
 }
 
-export function buildAccountBridge(
-  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
-): AccountBridge<Transaction> {
+function buildAccountBridge(
+  signerContext: SignerContext<PolkadotSigner>,
+): AccountBridge<Transaction, PolkadotAccount, TransactionStatus> {
   const getAddress = signerGetAddress(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext);
-  const sync = makeSync({ getAccountShape });
 
   return {
     estimateMaxSpendable,
@@ -67,8 +67,11 @@ export function buildAccountBridge(
 }
 
 export function createBridges(
-  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
+  signerContext: SignerContext<PolkadotSigner>,
+  coinConfig: CoinConfig<PolkadotCoinConfig>,
 ) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

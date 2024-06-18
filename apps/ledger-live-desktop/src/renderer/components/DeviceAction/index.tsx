@@ -17,7 +17,10 @@ import {
   setLastSeenDeviceInfo,
   addNewDeviceModel,
 } from "~/renderer/actions/settings";
-import { preferredDeviceModelSelector } from "~/renderer/reducers/settings";
+import {
+  storeSelector as settingsSelector,
+  preferredDeviceModelSelector,
+} from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
@@ -32,7 +35,7 @@ import {
   UserRefusedOnDevice,
   UserRefusedDeviceNameChange,
   UnresponsiveDeviceError,
-  TransportPendingOperation,
+  TransportRaceCondition,
 } from "@ledgerhq/errors";
 import {
   InstallingApp,
@@ -75,6 +78,7 @@ import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { isDeviceNotOnboardedError } from "./utils";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -227,6 +231,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const dispatch = useDispatch();
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const stateSettings = useSelector(settingsSelector);
+  const walletState = useSelector(walletSelector);
 
   const type = useTheme().colors.palette.type;
 
@@ -363,6 +369,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           swapDefaultTrack,
           amountExpectedTo: amountExpectedTo.toString() ?? undefined,
           estimatedFees: estimatedFees?.toString() ?? undefined,
+          stateSettings,
+          walletState,
         });
       }
 
@@ -395,6 +403,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       amountExpectedTo: amountExpectedTo ?? undefined,
       estimatedFees: estimatedFees ?? undefined,
       swapDefaultTrack,
+      stateSettings,
+      walletState,
     });
   }
 
@@ -413,14 +423,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (inWrongDeviceForAccount) {
-    return renderInWrongAppForAccount({
-      t,
-      onRetry,
-      accountName: inWrongDeviceForAccount.accountName,
-    });
+    return renderInWrongAppForAccount({ t, onRetry });
   }
 
-  if (unresponsive || error instanceof TransportPendingOperation) {
+  if (unresponsive || error instanceof TransportRaceCondition) {
     return renderError({
       t,
       error: new UnresponsiveDeviceError(),

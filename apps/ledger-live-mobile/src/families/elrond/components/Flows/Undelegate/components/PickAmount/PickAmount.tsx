@@ -4,7 +4,6 @@ import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -22,6 +21,7 @@ import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -32,7 +32,7 @@ const PickAmount = (props: PickAmountPropsType) => {
   const { navigation, route } = props;
   const { amount, account, validator } = route.params;
 
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const bridge = getAccountBridge(account, undefined);
   const { locale } = useSettings();
 
@@ -210,8 +210,8 @@ const PickAmount = (props: PickAmountPropsType) => {
                         amountAboveMaximum
                           ? "elrond.undelegation.flow.steps.amount.incorrectAmount"
                           : amountBelowMinimum
-                          ? "elrond.undelegation.flow.steps.amount.minAmount"
-                          : "elrond.undelegation.flow.steps.amount.minRemaining"
+                            ? "elrond.undelegation.flow.steps.amount.minAmount"
+                            : "elrond.undelegation.flow.steps.amount.minRemaining"
                       }
                       values={{
                         min: `${denominatedMinimum} ${unit.code}`,

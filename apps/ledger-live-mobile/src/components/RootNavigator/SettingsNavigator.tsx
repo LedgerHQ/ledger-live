@@ -64,8 +64,14 @@ import PostOnboardingDebugScreen from "~/screens/PostOnboarding/PostOnboardingDe
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import DebugTermsOfUse from "~/screens/Settings/Debug/Features/TermsOfUse";
 import CameraPermissions from "~/screens/Settings/Debug/Debugging/CameraPermissions";
-import DebugQueuedDrawers from "~/screens/Settings/Debug/Features/QueuedDrawers";
 import BleEDevicePairingScreen from "~/screens/Settings/Debug/Features/BleDevicePairingScreen";
+import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
+import {
+  EmptyScreen,
+  MainTestScreen,
+  TestScreenWithDrawerForcingToBeOpened,
+  TestScreenWithDrawerRequestingToBeOpened,
+} from "~/newArch/components/QueuedDrawer/TestScreens";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -154,6 +160,15 @@ export default function SettingsNavigator() {
         })}
         {...noNanoBuyNanoWallScreenOptions}
       />
+
+      <Stack.Screen
+        name={ScreenName.EditCurrencyUnits}
+        component={EditCurrencyUnits}
+        options={{
+          title: t("account.settings.accountUnits.title"),
+        }}
+      />
+
       <Stack.Screen
         name={ScreenName.ExperimentalSettings}
         component={ExperimentalSettings}
@@ -448,9 +463,30 @@ export default function SettingsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.DebugQueuedDrawers}
-        component={DebugQueuedDrawers}
+        component={MainTestScreen}
         options={{
-          title: "Debug bottom drawers",
+          title: "QueuedDrawers",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQueuedDrawerScreen0}
+        component={EmptyScreen}
+        options={{
+          title: "Empty screen",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQueuedDrawerScreen1}
+        component={TestScreenWithDrawerRequestingToBeOpened}
+        options={{
+          title: "QueuedDrawers (Auto open)",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQueuedDrawerScreen2}
+        component={TestScreenWithDrawerForcingToBeOpened}
+        options={{
+          title: "QueuedDrawers (Auto force open)",
         }}
       />
     </Stack.Navigator>

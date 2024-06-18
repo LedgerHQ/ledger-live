@@ -1,6 +1,6 @@
 import { getMainAccount, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import Text from "~/renderer/components/Text";

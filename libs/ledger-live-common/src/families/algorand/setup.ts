@@ -3,7 +3,7 @@
 import { createBridges } from "@ledgerhq/coin-algorand/bridge/js";
 import makeCliTools from "@ledgerhq/coin-algorand/cli-transaction";
 import algorandResolver from "@ledgerhq/coin-algorand/hw-getAddress";
-import { Transaction } from "@ledgerhq/coin-algorand/types";
+import { AlgorandAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-algorand/types";
 import Algorand from "@ledgerhq/hw-app-algorand";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
@@ -14,7 +14,9 @@ const createSigner: CreateSigner<Algorand> = (transport: Transport) => {
   return new Algorand(transport);
 };
 
-const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
+const bridge: Bridge<Transaction, AlgorandAccount, TransactionStatus> = createBridges(
+  executeWithSigner(createSigner),
+);
 
 const resolver: Resolver = createResolver(createSigner, algorandResolver);
 

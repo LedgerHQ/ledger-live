@@ -7,15 +7,16 @@ import { track } from "~/renderer/analytics/segment";
 import { useResize } from "~/renderer/hooks/useResize";
 import { useSelector } from "react-redux";
 import { selectedTimeRangeSelector } from "~/renderer/reducers/settings";
+import { useTheme } from "styled-components";
 
-const primary = "primary.c80";
-const neutral = "neutral.c70";
-
-const RESPONSIVE_WIDTH = 275;
+const RESPONSIVE_WIDTH = 330;
 
 export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderProps) {
   const { t } = useTranslation();
   const timeRange = useSelector(selectedTimeRangeSelector);
+  const { colors } = useTheme();
+  const primary = colors.primary.c80;
+  const neutral = colors.neutral.c70;
 
   const onClickButton = (order: Order) => {
     onChangeOrder(order);

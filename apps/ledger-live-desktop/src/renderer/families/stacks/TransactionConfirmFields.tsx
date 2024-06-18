@@ -4,9 +4,10 @@ import TransactionConfirmField from "~/renderer/components/TransactionConfirm/Tr
 import Text from "~/renderer/components/Text";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const addressStyle: React.CSSProperties = {
   wordBreak: "break-all",
@@ -17,7 +18,7 @@ const addressStyle: React.CSSProperties = {
 const StacksExtendedAmountField = ({ account, status: { amount }, field }: FieldComponentProps) => {
   invariant(field.type === "stacks.extendedAmount", "stacks.extendedAmount field expected");
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const specifiedAmount = field.value != null ? field.value : null;
   return (
     <TransactionConfirmField label={field.label}>

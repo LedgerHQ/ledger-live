@@ -1,9 +1,20 @@
 import { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
-  testDir: "specs/",
-  testIgnore: "specs/recorder.spec.ts",
+  projects: [
+    {
+      name: "speculos_tests",
+      testDir: "specs/speculos/",
+    },
+    {
+      name: "mocked_tests",
+      testDir: "specs/",
+      testIgnore: ["**/speculos/**", "specs/recorder.spec.ts"],
+    },
+  ],
   outputDir: "./artifacts/test-results",
+  snapshotPathTemplate:
+    "{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{-platform}{ext}",
   timeout: process.env.CI ? 190000 : 600000,
   expect: {
     timeout: 41000,
@@ -21,7 +32,7 @@ const config: PlaywrightTestConfig = {
   globalTeardown: require.resolve("./utils/global-teardown"),
   use: {
     ignoreHTTPSErrors: true,
-    screenshot: process.env.CI ? "on" : "off",
+    screenshot: process.env.CI ? "only-on-failure" : "off",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
@@ -37,7 +48,7 @@ const config: PlaywrightTestConfig = {
         ["line"],
         ["allure-playwright"],
       ]
-    : "list",
+    : [["allure-playwright"]],
 };
 
 export default config;

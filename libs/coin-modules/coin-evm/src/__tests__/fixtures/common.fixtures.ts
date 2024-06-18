@@ -6,7 +6,6 @@ import {
   decodeAccountId,
   decodeTokenAccountId,
   encodeTokenAccountId,
-  shortAddressPreview,
 } from "@ledgerhq/coin-framework/account/index";
 import {
   encodeERC1155OperationId,
@@ -15,19 +14,12 @@ import {
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  Account,
-  DerivationMode,
-  Operation,
-  ProtoNFT,
-  SubAccount,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { Account, DerivationMode, Operation, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 
 export const makeAccount = (
   address: string,
   currency: CryptoCurrency,
-  subAccounts: SubAccount[] = [],
+  subAccounts: TokenAccount[] = [],
 ): Account => {
   const id = `js:2:${currency.id}:${address}:`;
   const { derivationMode, xpubOrAddress } = decodeAccountId(id);
@@ -44,23 +36,18 @@ export const makeAccount = (
 
   const account: Account = {
     type: "Account",
-    name:
-      currency.name + " " + (derivationMode || "legacy") + " " + shortAddressPreview(xpubOrAddress),
     xpub: xpubOrAddress,
     subAccounts,
     seedIdentifier: xpubOrAddress,
-    starred: true,
     used: true,
     swapHistory: [],
     id,
     derivationMode,
     currency,
-    unit: currency.units[0],
     index,
     nfts: [],
     freshAddress: xpubOrAddress,
     freshAddressPath,
-    freshAddresses: [],
     creationDate: new Date(),
     lastSyncDate: new Date(0),
     blockHeight: 0,
@@ -105,7 +92,6 @@ export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency):
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    starred: false,
     balanceHistoryCache: {
       HOUR: {
         latestDate: null,

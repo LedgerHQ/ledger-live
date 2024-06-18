@@ -14,7 +14,6 @@ import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
@@ -34,6 +33,7 @@ import getOrCreateUser from "../../user";
 import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
+import { walletSelector } from "~/reducers/wallet";
 
 export function useWebView(
   {
@@ -106,11 +106,14 @@ export function useWebView(
     };
   }, [webviewRef]);
 
+  const walletState = useSelector(walletSelector);
+
   const {
     onMessage: onMessageRaw,
     onLoadError,
     server,
   } = useWalletAPIServer({
+    walletState,
     manifest: manifest as AppManifest,
     accounts,
     tracking,
@@ -374,11 +377,7 @@ function useUiHook(): UiHook {
         onSuccess,
         onError,
       }) => {
-        const tx = prepareSignTransaction(
-          account,
-          parentAccount,
-          liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
-        );
+        const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
         navigation.navigate(NavigatorName.SignTransaction, {
           screen: ScreenName.SignTransactionSummary,
@@ -433,18 +432,14 @@ function useUiHook(): UiHook {
             request: {
               exchangeType: ExchangeType[exchangeType],
             },
-            onResult: (result: {
-              startExchangeResult?: string;
-              startExchangeError?: Error;
-              device?: Device;
-            }) => {
+            onResult: result => {
               if (result.startExchangeError) {
-                onCancel(result.startExchangeError);
+                onCancel(result.startExchangeError.error);
               }
 
               if (result.startExchangeResult) {
                 setDevice(result.device);
-                onSuccess(result.startExchangeResult);
+                onSuccess(result.startExchangeResult.nonce);
               }
 
               const n =

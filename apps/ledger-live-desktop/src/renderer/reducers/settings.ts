@@ -13,8 +13,9 @@ import {
   Feature,
   PortfolioRange,
   FirmwareUpdateContext,
+  AccountLike,
 } from "@ledgerhq/types-live";
-import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   LanguageIds,
@@ -28,6 +29,7 @@ import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
+import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
 
 /* Initial state */
 
@@ -71,6 +73,7 @@ export type SettingsState = {
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
   nftsViewMode: "grid" | "list";
+  collectiblesViewMode: LayoutKey;
   showAccountsHelperBanner: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
@@ -135,7 +138,7 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
   return { language: DEFAULT_LANGUAGE.id, locale: DEFAULT_LANGUAGE.locales.default };
 };
 
-const INITIAL_STATE: SettingsState = {
+export const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
   counterValue: "USD",
   ...getInitialLanguageAndLocale(),
@@ -157,6 +160,7 @@ const INITIAL_STATE: SettingsState = {
   dismissedBanners: [],
   accountsViewMode: "list",
   nftsViewMode: "list",
+  collectiblesViewMode: Layout.LIST,
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
@@ -229,7 +233,6 @@ type HandlersPayloads = {
   SET_SWAP_SELECTABLE_CURRENCIES: string[];
   SET_SWAP_ACCEPTED_IP_SHARING: boolean;
   ACCEPT_SWAP_PROVIDER: string;
-  DEBUG_TICK: never;
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
@@ -256,6 +259,7 @@ type HandlersPayloads = {
   SET_ANONYMOUS_BRAZE_ID: string;
   ADD_STARRED_MARKET_COINS: string;
   REMOVE_STARRED_MARKET_COINS: string;
+  SET_CURRENCY_SETTINGS: { key: string; value: CurrencySettings };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -371,15 +375,18 @@ const handlers: SettingsHandlers = {
       acceptedProviders: [...new Set([...(state.swap?.acceptedProviders || []), payload])],
     },
   }),
-  // used to debug performance of redux updates
-  DEBUG_TICK: state => ({
-    ...state,
-  }),
   SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
     ...state,
     lastSeenCustomImage: {
       size: payload.imageSize,
       hash: payload.imageHash,
+    },
+  }),
+  SET_CURRENCY_SETTINGS: (state: SettingsState, { payload }) => ({
+    ...state,
+    currenciesSettings: {
+      ...state.currenciesSettings,
+      [payload.key]: payload.value,
     },
   }),
   SET_OVERRIDDEN_FEATURE_FLAG: (state: SettingsState, { payload }) => ({
@@ -461,6 +468,7 @@ const pairHash = (from: Currency, to: Currency) => `${from.ticker}_${to.ticker}`
 
 export type CurrencySettings = {
   confirmationsNb: number;
+  unit: Unit;
 };
 
 type ConfirmationDefaults = {
@@ -474,7 +482,11 @@ type ConfirmationDefaults = {
     | null;
 };
 
-export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
+type UnitDefaults = {
+  unit: Unit;
+};
+
+export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults & UnitDefaults => {
   let confirmationsNb;
   if (c.type === "CryptoCurrency") {
     const { blockAvgTime } = c;
@@ -487,8 +499,10 @@ export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
       };
     }
   }
+
   return {
     confirmationsNb,
+    unit: c.units[0],
   };
 };
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -510,6 +524,7 @@ const defaultsForCurrency: (a: Currency) => CurrencySettings = crypto => {
   const defaults = currencySettingsDefaults(crypto);
   return {
     confirmationsNb: defaults.confirmationsNb ? defaults.confirmationsNb.def : 0,
+    unit: defaults.unit,
   };
 };
 
@@ -619,12 +634,14 @@ export const currencySettingsLocaleSelector = (
   settings: SettingsState,
   currency: Currency,
 ): CurrencySettings => {
-  const currencySettings = settings.currenciesSettings[currency.ticker];
-  const val = {
+  const currencySettings = Object.keys(settings.currenciesSettings)?.includes(currency.ticker)
+    ? settings.currenciesSettings[currency.ticker]
+    : {};
+
+  return {
     ...defaultsForCurrency(currency),
     ...currencySettings,
   };
-  return val;
 };
 
 export const currencyPropExtractor = (_: State, { currency }: { currency: CryptoCurrency }) =>
@@ -659,10 +676,34 @@ export const confirmationsNbForCurrencySelector = (
   const defs = currencySettingsDefaults(currency);
   return defs.confirmationsNb ? defs.confirmationsNb.def : 0;
 };
+
+export const unitForCurrencySelector = (
+  state: State,
+  {
+    currency,
+  }: {
+    currency: CryptoCurrency;
+  },
+): Unit => {
+  const obj = state.settings.currenciesSettings[currency.ticker];
+  if (obj?.unit) return obj.unit;
+  const defs = currencySettingsDefaults(currency);
+  return defs.unit;
+};
+
+export const accountUnitSelector = (state: State, account: AccountLike): Unit => {
+  if (account.type === "Account") {
+    return unitForCurrencySelector(state, account);
+  } else {
+    return account.token.units[0];
+  }
+};
+
 export const preferredDeviceModelSelector = (state: State) => state.settings.preferredDeviceModel;
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
 export const nftsViewModeSelector = (state: State) => state.settings.nftsViewMode;
+export const collectiblesViewModeSelector = (state: State) => state.settings.collectiblesViewMode;
 export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
@@ -687,7 +728,7 @@ export const enableLearnPageStagingUrlSelector = (state: State) =>
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
 export const hasCompletedOnboardingSelector = (state: State) =>
-  state.settings.hasCompletedOnboarding;
+  state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners || [];
 export const dismissedBannerSelector = (
   state: State,
@@ -704,16 +745,10 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
 export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {
-  // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
-  // to be removed in a while.
-  // @ts-expect-error TODO: time to remove this maybe?
-  if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
-    return {
-      ...state.settings.lastSeenDevice,
-      modelId: DeviceModelId.stax,
-    };
-  }
-  return state.settings.lastSeenDevice;
+  const { lastSeenDevice } = state.settings;
+  if (!lastSeenDevice || !Object.values(DeviceModelId).includes(lastSeenDevice.modelId))
+    return null;
+  return lastSeenDevice;
 };
 export const devicesModelListSelector = (state: State): DeviceModelId[] =>
   state.settings.devicesModelList;
@@ -757,6 +792,7 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;
 
-//MARKET
+export const currenciesSettingsSelector = (state: State) => state.settings.currenciesSettings;
 
+//MARKET
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

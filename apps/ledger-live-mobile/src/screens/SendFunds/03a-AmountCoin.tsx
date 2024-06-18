@@ -10,7 +10,6 @@ import { useTheme } from "@react-navigation/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -32,6 +31,7 @@ import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { ExternalLinkMedium, InformationFill } from "@ledgerhq/native-ui/assets/icons";
 import { Flex, Link } from "@ledgerhq/native-ui";
 import { urls } from "~/utils/urls";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendAmountCoin>;
 
@@ -120,10 +120,11 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   }, [setTransaction, account, parentAccount, transaction]);
   const blur = useCallback(() => Keyboard.dismiss(), []);
   const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
-  if (!account || !transaction) return null;
+
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !transaction || !unit) return null;
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
 
   return (
@@ -152,8 +153,8 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                   status.errors.dustLimit
                     ? status.errors.dustLimit
                     : amount.eq(0) && (bridgePending || !transaction.useAllAmount)
-                    ? null
-                    : status.errors.amount
+                      ? null
+                      : status.errors.amount
                 }
                 warning={status.warnings.amount}
               />

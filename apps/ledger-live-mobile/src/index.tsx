@@ -32,6 +32,7 @@ import {
   exportSelector as settingsExportSelector,
   osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
+  hasCompletedOnboardingSelector,
 } from "~/reducers/settings";
 import { accountsSelector, exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { exportSelector as bleSelector } from "~/reducers/ble";
@@ -81,6 +82,8 @@ import { getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
+import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import QueuedDrawersContextProvider from "~/newArch/components/QueuedDrawer/QueuedDrawersContextProvider";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -92,7 +95,7 @@ checkLibs({
   log,
   Transport,
 });
-// useScreens();
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -103,19 +106,32 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!analyticsFF?.enabled || hasSeenAnalyticsOptInPrompt) return;
+    if (
+      !analyticsFF?.enabled ||
+      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints.includes("Portfolio")) ||
+      hasSeenAnalyticsOptInPrompt
+    )
+      return;
     dispatch(setAnalytics(false));
     dispatch(setPersonalizedRecommendations(false));
-  }, [analyticsFF?.enabled, dispatch, hasSeenAnalyticsOptInPrompt]);
+  }, [
+    analyticsFF?.enabled,
+    analyticsFF?.params?.entryPoints,
+    dispatch,
+    hasSeenAnalyticsOptInPrompt,
+    hasCompletedOnboarding,
+  ]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
   useAppStateListener();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();
+  useAutoDismissPostOnboardingEntryPoint();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
@@ -287,32 +303,33 @@ export default class Root extends Component {
                 <HookNotifications />
                 <HookDynamicContentCards />
                 <TermsAndConditionMigrateLegacyData />
-                <I18nextProvider i18n={i18n}>
-                  <LocaleProvider>
-                    <PlatformAppProviderWrapper>
-                      <FirebaseRemoteConfigProvider>
-                        <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                          <SafeAreaProvider>
-                            <PerformanceProvider>
-                              <StorylyProvider>
-                                <StylesProvider>
-                                  <StyledStatusBar />
-                                  <NavBarColorHandler />
-
-                                  <AuthPass>
-                                    <AppProviders initialCountervalues={initialCountervalues}>
-                                      <App />
-                                    </AppProviders>
-                                  </AuthPass>
-                                </StylesProvider>
-                              </StorylyProvider>
-                            </PerformanceProvider>
-                          </SafeAreaProvider>
-                        </FirebaseFeatureFlagsProvider>
-                      </FirebaseRemoteConfigProvider>
-                    </PlatformAppProviderWrapper>
-                  </LocaleProvider>
-                </I18nextProvider>
+                <QueuedDrawersContextProvider>
+                  <I18nextProvider i18n={i18n}>
+                    <LocaleProvider>
+                      <PlatformAppProviderWrapper>
+                        <FirebaseRemoteConfigProvider>
+                          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                            <SafeAreaProvider>
+                              <PerformanceProvider>
+                                <StorylyProvider>
+                                  <StylesProvider>
+                                    <StyledStatusBar />
+                                    <NavBarColorHandler />
+                                    <AuthPass>
+                                      <AppProviders initialCountervalues={initialCountervalues}>
+                                        <App />
+                                      </AppProviders>
+                                    </AuthPass>
+                                  </StylesProvider>
+                                </StorylyProvider>
+                              </PerformanceProvider>
+                            </SafeAreaProvider>
+                          </FirebaseFeatureFlagsProvider>
+                        </FirebaseRemoteConfigProvider>
+                      </PlatformAppProviderWrapper>
+                    </LocaleProvider>
+                  </I18nextProvider>
+                </QueuedDrawersContextProvider>
               </>
             ) : (
               <LoadingApp />

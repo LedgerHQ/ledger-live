@@ -6,11 +6,7 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  getAccountUnit,
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
 import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
@@ -27,6 +23,7 @@ import TranslatedError from "~/components/TranslatedError";
 import ValidatorImage from "../shared/ValidatorImage";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosClaimRewardsFlowParamList } from "./types";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const options = [
   {
@@ -62,7 +59,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
   invariant(account && account.cosmosResources, "account and cosmos transaction required");
   const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
   const currency = getAccountCurrency(mainAccount);
   const bridgeTransaction = useBridgeTransaction(() => {
     const tx = route.params.transaction;

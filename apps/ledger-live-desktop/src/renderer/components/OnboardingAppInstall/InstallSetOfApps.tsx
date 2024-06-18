@@ -113,13 +113,13 @@ const InstallSetOfApps = ({
             const state = !listedApps
               ? ItemState.Idle
               : currentAppOp?.name === appName
-              ? ItemState.Active
-              : skipped?.reason === SkipReason.NoSuchAppOnProvider
-              ? ItemState.Skipped
-              : !installQueue?.includes(appName) ||
-                skipped?.reason === SkipReason.AppAlreadyInstalled
-              ? ItemState.Installed
-              : ItemState.Idle;
+                ? ItemState.Active
+                : skipped?.reason === SkipReason.NoSuchAppOnProvider
+                  ? ItemState.Skipped
+                  : !installQueue?.includes(appName) ||
+                      skipped?.reason === SkipReason.AppAlreadyInstalled
+                    ? ItemState.Installed
+                    : ItemState.Idle;
 
             return (
               <AppInstallItem

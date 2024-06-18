@@ -1,5 +1,9 @@
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import { getSortParam } from "@ledgerhq/live-common/market/utils/index";
+import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { TFunction } from "i18next";
+
+export const RANGES = Object.keys(rangeDataTable).filter(key => key !== "1h");
 
 const indexes: [string, number][] = [
   ["d", 1],
@@ -50,6 +54,7 @@ export const counterValueFormatter = ({
   locale,
   t,
   allowZeroValue = false,
+  ticker = "",
 }: {
   currency?: string;
   value: number;
@@ -57,6 +62,7 @@ export const counterValueFormatter = ({
   locale: string;
   t?: TFunction;
   allowZeroValue?: boolean;
+  ticker?: string;
 }): string => {
   if (isNaN(value) || (!value && !allowZeroValue)) {
     return "-";
@@ -72,7 +78,11 @@ export const counterValueFormatter = ({
     });
   }
 
-  const formatter = currency ? formatters[locale][currency] : undefined;
+  const formatter = currency
+    ? formatters[locale][currency]
+    : ticker
+      ? new Intl.NumberFormat(locale)
+      : undefined;
 
   if (shorten && t && formatter) {
     const sign = value > 0 ? "" : "-";
@@ -92,9 +102,13 @@ export const counterValueFormatter = ({
     return formattedNumber;
   }
 
-  // FIXME: HOW DID THIS WORK WHEN CURRENCY IS EMTPY
-  // PLEASE FIX
-  return formatter ? formatter.format(value) : value + "";
+  if (formatter) {
+    const formattedValue = formatter.format(value);
+    const upperCaseTicker = ticker?.trim()?.toLocaleUpperCase();
+    return `${formattedValue} ${upperCaseTicker}`.trim();
+  }
+
+  return String(value);
 };
 
 export function getAnalyticsProperties<P extends object>(
@@ -104,9 +118,22 @@ export function getAnalyticsProperties<P extends object>(
   return {
     ...otherProperties,
     access: false,
-    sort: `${requestParams.orderBy}_${requestParams.order}`,
+    ...(requestParams.order &&
+      requestParams.range && { sort: getSortParam(requestParams.order, requestParams.range) }),
     "%change": requestParams.range,
     countervalue: requestParams.counterCurrency,
     view: requestParams.liveCompatible ? "Only Live Supported" : "All coins",
   };
+}
+
+export const isDataStale = (lastUpdate: number, refreshRate: number) => {
+  const currentTime = new Date();
+  const updatedAt = new Date(lastUpdate);
+  const elapsedTime = currentTime.getTime() - updatedAt.getTime();
+
+  return elapsedTime > refreshRate;
+};
+
+export function getCurrentPage(indexPosition: number, pageSize: number): number {
+  return Math.floor(indexPosition / pageSize) + 1;
 }

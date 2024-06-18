@@ -7,11 +7,12 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { SmallMarketItemChart } from "./MarketItemChart";
-import { CurrencyData } from "@ledgerhq/live-common/market/types";
+import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { Button } from "../..";
 import { useTranslation } from "react-i18next";
 import { TableRow, TableCell } from "../../components/Table";
 import { Page, useMarketActions } from "../../hooks/useMarketActions";
+import { formatPercentage, formatPrice } from "../../utils";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 32px;
@@ -39,6 +40,8 @@ type Props = {
   locale: string;
   isStarred: boolean;
   toggleStar: () => void;
+  range?: string;
+  currenciesAll?: string[];
 };
 
 export const MarketRow = memo<Props>(function MarketRowItem({
@@ -49,12 +52,14 @@ export const MarketRow = memo<Props>(function MarketRowItem({
   loading,
   isStarred,
   toggleStar,
+  range,
+  currenciesAll,
 }: Props) {
-  const { t } = useTranslation();
-  const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
-    useMarketActions({ currency, page: Page.Market });
-
   const history = useHistory();
+  const { t } = useTranslation();
+
+  const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
+    useMarketActions({ currency, page: Page.Market, currenciesAll });
 
   const onCurrencyClick = useCallback(() => {
     if (currency) {
@@ -77,6 +82,8 @@ export const MarketRow = memo<Props>(function MarketRowItem({
 
   const hasActions =
     currency?.internalCurrency && (availableOnBuy || availableOnSwap || availableOnStake);
+
+  const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
   return (
     <div style={{ ...style }}>
@@ -161,15 +168,19 @@ export const MarketRow = memo<Props>(function MarketRowItem({
           </TableCell>
           <TableCell data-test-id={"market-coin-price"}>
             <Text variant="body">
-              {counterValueFormatter({ value: currency.price, currency: counterCurrency, locale })}
+              {counterValueFormatter({
+                value: formatPrice(currency.price ?? 0),
+                currency: counterCurrency,
+                locale,
+              })}
             </Text>
           </TableCell>
           <TableCell data-test-id={"market-price-change"}>
-            {currency.priceChangePercentage ? (
+            {currentPriceChangePercentage ? (
               <FormattedVal
                 isPercent
                 isNegative
-                val={parseFloat(currency.priceChangePercentage.toFixed(2))}
+                val={formatPercentage(currentPriceChangePercentage)}
                 inline
                 withIcon
               />
@@ -214,6 +225,7 @@ type CurrencyRowProps = {
   swapAvailableIds: string[];
   range?: string;
   style: React.CSSProperties;
+  currenciesAll: string[];
 };
 
 export const CurrencyRow = memo(function CurrencyRowItem({
@@ -225,6 +237,8 @@ export const CurrencyRow = memo(function CurrencyRowItem({
   starredMarketCoins,
   locale,
   style,
+  range,
+  currenciesAll,
 }: CurrencyRowProps) {
   const currency = data ? data[index] : null;
   const isStarred = currency && starredMarketCoins.includes(currency.id);
@@ -239,6 +253,8 @@ export const CurrencyRow = memo(function CurrencyRowItem({
       key={index}
       locale={locale}
       style={{ ...style }}
+      range={range}
+      currenciesAll={currenciesAll}
     />
   );
 });

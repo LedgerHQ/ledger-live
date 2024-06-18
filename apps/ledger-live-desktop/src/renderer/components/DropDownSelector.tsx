@@ -17,8 +17,8 @@ export const DropDownItem = styled(Box).attrs<DropDownItemProps>(p => ({
   color: p.disabled
     ? "palette.text.shade50"
     : p.isActive
-    ? "palette.text.shade100"
-    : "palette.text.shade60",
+      ? "palette.text.shade100"
+      : "palette.text.shade60",
   bg: p.isActive && !p.disabled ? "palette.background.default" : "",
 }))<DropDownItemProps>`
   height: 40px;

@@ -1,6 +1,5 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
-import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
+import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -19,6 +18,7 @@ import ValidatorImage from "../shared/ValidatorImage";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SolanaDelegationFlowParamList } from "./types";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = BaseComposite<
   StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSelectValidator>
@@ -182,7 +182,7 @@ const ValidatorRow = ({
   const onPressT = useCallback(() => {
     onPress(validator);
   }, [validator, onPress]);
-
+  const unit = useAccountUnit(account);
   return (
     <Touchable
       event="DelegationFlowChosevalidator"
@@ -207,11 +207,7 @@ const ValidatorRow = ({
         </View>
         <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
-            <CurrencyUnitValue
-              showCode
-              unit={getAccountUnit(account)}
-              value={validator.activeStake}
-            />
+            <CurrencyUnitValue showCode unit={unit} value={validator.activeStake} />
           </Text>
         </Text>
       </View>

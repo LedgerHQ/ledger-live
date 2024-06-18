@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "browser": {
     "fs": false,
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
@@ -24,10 +25,12 @@
     "@ledgerhq/hw-transport-web-ble": "workspace:^",
     "@ledgerhq/hw-transport-webhid": "workspace:^",
     "@ledgerhq/hw-transport-webusb": "workspace:^",
+    "@ledgerhq/hw-trustchain": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/trustchain": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
@@ -36,7 +39,7 @@
     "eslint-config-next": "13.5.6",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
-    "next": "13.5.6",
+    "next": "14.2.3",
     "prop-types": "^15.8.1",
     "re-resizable": "^6.9.11",
     "react": "^18.2.0",
@@ -49,7 +52,8 @@
     "semver": "^7.5.4",
     "styled-components": "^6.0.7",
     "typescript": "5.2.2",
-    "utf-8-validate": "^6.0.3"
+    "utf-8-validate": "^6.0.3",
+    "qrcode": "^1.4.4"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.35",
@@ -59,6 +63,7 @@
     "@types/react-dom": "^18.2.13",
     "@types/react-inspector": "^4.0.2",
     "@types/react-table": "^7.7.15",
-    "@types/semver": "^7.3.9"
+    "@types/semver": "^7.3.9",
+    "@types/qrcode": "1"
   }
 }

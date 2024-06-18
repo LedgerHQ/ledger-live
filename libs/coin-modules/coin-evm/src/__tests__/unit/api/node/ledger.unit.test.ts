@@ -61,6 +61,16 @@ describe("EVM Family", () => {
             },
           };
         }
+        case "scroll": {
+          return {
+            info: {
+              node: {
+                type: "ledger",
+                explorerId: "scroll",
+              },
+            },
+          };
+        }
         case "wrong-currency":
           return {
             info: {
@@ -163,6 +173,9 @@ describe("EVM Family", () => {
 
         const response = await LEDGER_API.getTransaction(currency, "0xHash");
         expect(response).toEqual({
+          gasPrice: "83953611012",
+          gasUsed: "21000",
+          value: "70494048649554430",
           hash: "0x8d5ef4d7673fbfa6a4755cdfdb913742c47c7fdac2d214046387bbcbf10957c9",
           blockHeight: 17586913,
           blockHash: "0x6db17db08345729953a1408a56dcc588aa3d23e8cc917f2624b8bf047148cce2",
@@ -551,6 +564,75 @@ describe("EVM Family", () => {
 
         expect(
           await LEDGER_API.getOptimismAdditionalFees({ ...currency, id: "optimism" }, transaction),
+        ).toEqual(new BigNumber("100000000"));
+      });
+    });
+
+    describe("getScrollAdditionalFees", () => {
+      it("should throw with misconfigured currency", async () => {
+        try {
+          await LEDGER_API.getScrollAdditionalFees(wrongCurrency, {} as any);
+          fail("Promise should have been rejected");
+        } catch (e) {
+          if (e instanceof AssertionError) {
+            throw e;
+          }
+          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
+        }
+      });
+
+      it("should return 0 for an incompatible currency", async () => {
+        expect(await LEDGER_API.getScrollAdditionalFees(currency, {} as any)).toEqual(
+          new BigNumber(0),
+        );
+      });
+
+      it("should return 0 for invalid transaction", async () => {
+        const transaction: EvmTransaction = {
+          family: "evm",
+          mode: "send",
+          recipient: "0xINVALID",
+          amount: new BigNumber(1),
+          gasLimit: new BigNumber(2),
+          chainId: 1,
+          nonce: 0,
+          gasPrice: new BigNumber(3),
+          type: 0,
+        };
+
+        expect(
+          await LEDGER_API.getScrollAdditionalFees({ ...currency, id: "scroll" }, transaction),
+        ).toEqual(new BigNumber("0"));
+      });
+
+      it("should return the expected payload", async () => {
+        jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
+          data: [
+            {
+              info: {
+                contract: "0x420000000000000000000000000000000000000F",
+                data: "0xSerializedTransaction",
+                blockNumber: 123,
+              },
+              response: "100000000",
+            },
+          ],
+        }));
+
+        const transaction: EvmTransaction = {
+          family: "evm",
+          mode: "send",
+          recipient: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          amount: new BigNumber(1),
+          gasLimit: new BigNumber(2),
+          chainId: 1,
+          nonce: 0,
+          gasPrice: new BigNumber(3),
+          type: 0,
+        };
+
+        expect(
+          await LEDGER_API.getScrollAdditionalFees({ ...currency, id: "scroll" }, transaction),
         ).toEqual(new BigNumber("100000000"));
       });
     });

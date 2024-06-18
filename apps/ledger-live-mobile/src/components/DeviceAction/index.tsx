@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   DeviceNotOnboarded,
@@ -12,7 +12,7 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
-import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
@@ -55,6 +55,9 @@ import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { PartialNullable } from "~/types/helpers";
 import ModalLock from "../ModalLock";
+import { walletSelector } from "~/reducers/wallet";
+import { settingsStoreSelector } from "~/reducers/settings";
+import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -173,7 +176,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const {
     appAndVersion,
     device,
@@ -230,6 +233,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       onError(error);
     }
   }, [error, onError]);
+
+  const walletState = useSelector(walletSelector);
+  const settingsState = useSelector(settingsStoreSelector);
 
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
@@ -399,6 +405,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       exchange: req?.exchange,
       amountExpectedTo: status.amountExpectedTo,
       estimatedFees: status.estimatedFees,
+      walletState,
+      settingsState,
     });
   }
 

@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -10,13 +9,16 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "./ValidatorRow";
 import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import {
+  LEDGER_POOL_IDS,
+  StakePool,
+  fetchPoolDetails,
+} from "@ledgerhq/live-common/families/cardano/staking";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
-import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
-import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import BigSpinner from "~/renderer/components/BigSpinner";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   t: TFunction;
@@ -29,7 +31,7 @@ type Props = {
 
 const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId }: Props) => {
   const [ledgerPools, setLedgerPools] = useState<Array<StakePool>>([]);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
 
   const [showAll, setShowAll] = useState(
     LEDGER_POOL_IDS.length === 0 ||

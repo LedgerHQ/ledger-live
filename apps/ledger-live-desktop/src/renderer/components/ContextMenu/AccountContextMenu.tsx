@@ -11,13 +11,15 @@ import IconBuy from "~/renderer/icons/Exchange";
 import IconSwap from "~/renderer/icons/Swap";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
 import ContextMenuItem from "./ContextMenuItem";
-import { toggleStarAction } from "~/renderer/actions/accounts";
+import { toggleStarAction } from "~/renderer/actions/wallet";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { swapSelectableCurrenciesSelector } from "~/renderer/reducers/settings";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { ContextMenuItemType } from "./ContextMenuWrapper";
 import { IconsLegacy } from "@ledgerhq/react-ui";
+import { accountStarredSelector } from "~/renderer/reducers/wallet";
+import { State } from "~/renderer/reducers";
 
 type Props = {
   account: AccountLike;
@@ -26,6 +28,7 @@ type Props = {
   children: React.ReactNode;
   withStar?: boolean;
 };
+
 export default function AccountContextMenu({
   leftClick,
   children,
@@ -37,6 +40,10 @@ export default function AccountContextMenu({
   const dispatch = useDispatch();
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
+
+  const isStarred = useSelector((state: State) =>
+    accountStarredSelector(state, { accountId: account.id }),
+  );
 
   const menuItems = useMemo(() => {
     const currency = getAccountCurrency(account);
@@ -124,9 +131,7 @@ export default function AccountContextMenu({
         label: "accounts.contextMenu.star",
         Icon: IconStar,
         callback: () => {
-          dispatch(
-            toggleStarAction(account.id, account.type !== "Account" ? account.parentId : undefined),
-          );
+          dispatch(toggleStarAction(account.id, !isStarred));
           refreshAccountsOrdering();
         },
       });
@@ -165,6 +170,7 @@ export default function AccountContextMenu({
     dispatch,
     history,
     refreshAccountsOrdering,
+    isStarred,
   ]);
   const currency = getAccountCurrency(account);
   return (

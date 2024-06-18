@@ -6,7 +6,7 @@ import {
 import { useState } from "react";
 import { Order } from "./types";
 
-import { useMarketPerformers } from "@ledgerhq/live-common/market/v2/useMarketPerformers";
+import { useMarketPerformers } from "@ledgerhq/live-common/market/hooks/useMarketPerformers";
 import { getSlicedList } from "./utils";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 

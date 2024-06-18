@@ -53,6 +53,7 @@ import {
   hasSeenAnalyticsOptInPromptSelector,
 } from "~/renderer/reducers/settings";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
+import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
@@ -195,6 +196,7 @@ export default function Default() {
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useRecoverRestoreOnboarding();
+  useAutoDismissPostOnboardingEntryPoint();
 
   const listAppsV2 = useFeature("listAppsV2minor1");
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
@@ -203,7 +205,12 @@ export default function Default() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isLocked && analyticsFF?.enabled && !hasSeenAnalyticsOptInPrompt) {
+    if (
+      !isLocked &&
+      analyticsFF?.enabled &&
+      (!hasCompletedOnboarding || analyticsFF?.params?.entryPoints.includes("Portfolio")) &&
+      !hasSeenAnalyticsOptInPrompt
+    ) {
       dispatch(setShareAnalytics(false));
       dispatch(setSharePersonalizedRecommendations(false));
     }

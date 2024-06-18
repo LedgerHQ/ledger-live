@@ -1,16 +1,11 @@
-import {
-  Account,
-  SignOperationFnSignature,
-  SignOperationEvent,
-  DeviceId,
-} from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { EvmAddress, EvmSignature, EvmSigner } from "./types/signer";
+import { EvmSignature, EvmSigner } from "./types/signer";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
@@ -45,18 +40,8 @@ export const applyEIP155 = (vAsHex: string, chainId: number): number => {
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (
-    signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
-  ): SignOperationFnSignature<Transaction> =>
-  ({
-    account,
-    deviceId,
-    transaction,
-  }: {
-    account: Account;
-    deviceId: DeviceId;
-    transaction: Transaction;
-  }): Observable<SignOperationEvent> =>
+  (signerContext: SignerContext<EvmSigner>): AccountBridge<Transaction>["signOperation"] =>
+  ({ account, deviceId, transaction }) =>
     new Observable(o => {
       async function main(): Promise<void> {
         const preparedTransaction = await prepareForSignOperation({

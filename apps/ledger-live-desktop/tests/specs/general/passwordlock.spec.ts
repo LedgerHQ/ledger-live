@@ -1,9 +1,9 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
-import { Modal } from "../../models/Modal";
-import { PasswordlockModal } from "../../models/PasswordlockModal";
-import { LockscreenPage } from "../../models/LockscreenPage";
+import { Layout } from "../../component/layout.component";
+import { Modal } from "../../component/modal.component";
+import { PasswordlockModal } from "../../page/modal/passwordlock.modal";
+import { LockscreenPage } from "../../page/lockscreen.page";
 import fsPromises from "fs/promises";
 
 test.use({ userdata: "skip-onboarding" });
@@ -33,7 +33,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
 
   await test.step("User data should be encrypted", async () => {
     // NOTE: this test might fail if other tests are running at the same time.
-    expect.poll(async () => typeof (await getUserdata()).data.accounts).toBe("string");
+    await expect.poll(async () => typeof (await getUserdata()).data.accounts).toBe("string");
   });
 
   await test.step("Open change password modal", async () => {

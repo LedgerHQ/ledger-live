@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "../../../families/hedera/types";
 import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { createTransaction, prepareTransaction } from "../js-transaction";
+import type { Transaction } from "../../../families/hedera/types";
+import { createTransaction } from "../createTransaction";
+import { prepareTransaction } from "../prepareTransaction";
 
 const account: Account = {
   type: "Account",
@@ -12,9 +13,6 @@ const account: Account = {
   index: 0,
   freshAddress: "",
   freshAddressPath: "",
-  freshAddresses: [],
-  name: "",
-  starred: false,
   used: false,
   balance: new BigNumber(200000),
   spendableBalance: new BigNumber(0),
@@ -43,13 +41,6 @@ const account: Account = {
     WEEK: { latestDate: null, balances: [] },
   },
   swapHistory: [],
-  unit: {
-    name: "",
-    code: "",
-    magnitude: 0,
-    showAllDigits: undefined,
-    prefixCode: undefined,
-  },
 };
 
 const transaction: Transaction = {

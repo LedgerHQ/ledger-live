@@ -1,13 +1,13 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
-import { getAccountUnit } from "../../account";
+} from "@ledgerhq/coin-framework/serialization";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { Account } from "@ledgerhq/types-live";
 
@@ -19,12 +19,12 @@ ${mode.toUpperCase()} ${
   useAllAmount
     ? "MAX"
     : amount.isZero()
-    ? ""
-    : " " +
-      formatCurrencyUnit(getAccountUnit(account), amount, {
-        showCode: true,
-        disableRounding: true,
-      })
+      ? ""
+      : " " +
+        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+          showCode: true,
+          disableRounding: true,
+        })
 }
 TO ${recipient}
 ${
@@ -34,7 +34,7 @@ ${
         .map(
           v =>
             "  " +
-            formatCurrencyUnit(getAccountUnit(account), v.amount, {
+            formatCurrencyUnit(getAccountCurrency(account).units[0], v.amount, {
               disableRounding: true,
             }) +
             " -> " +
@@ -42,7 +42,7 @@ ${
         )
         .join("\n")
 }${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
-with fees=${fees ? formatCurrencyUnit(getAccountUnit(account), fees) : "?"}${
+with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees) : "?"}${
   !memo ? "" : `\n  memo=${memo}`
 }`;
 

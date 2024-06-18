@@ -15,18 +15,22 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import TextInput from "~/components/TextInput";
+import {
+  initialState as liveWalletInitialState,
+  accountUserDataExportSelector,
+} from "@ledgerhq/live-wallet/store";
 
 async function injectMockAccountsInDB(currencies: CryptoCurrency[], tokens: string) {
   const tokenIds = tokens.split(",").map(t => t.toLowerCase().trim());
   await saveAccounts({
-    active: currencies.map(currency =>
-      accountModel.encode(
-        genAccount(String(Math.random()), {
-          currency,
-          tokenIds,
-        }),
-      ),
-    ),
+    active: currencies.map(currency => {
+      const account = genAccount(String(Math.random()), {
+        currency,
+        tokenIds,
+      });
+      const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
+      return accountModel.encode([account, userData]);
+    }),
   });
 }
 

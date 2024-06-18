@@ -30,8 +30,9 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- Needed by Live apps -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Required for the webview camera/audio media -->
     <uses-sdk
+        android:minSdkVersion="21"
         android:targetSdkVersion="27"
-        tools:overrideLibrary="com.ledger.reactnative" />
+        tools:overrideLibrary="com.ledger.reactnative, ca.jaysoo.extradimensions" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"

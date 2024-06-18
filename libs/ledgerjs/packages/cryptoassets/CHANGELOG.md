@@ -1,5 +1,65 @@
 # @ledgerhq/cryptoassets
 
+## 13.1.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+- [#6822](https://github.com/LedgerHQ/ledger-live/pull/6822) [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `ripple` currency's family to `xrp`
+
+- [#6977](https://github.com/LedgerHQ/ledger-live/pull/6977) [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Scroll & Scroll Sepolia
+
+- [#6876](https://github.com/LedgerHQ/ledger-live/pull/6876) [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove from `find` method the ReturnType null which wasn't possible anyway
+
+- [#6861](https://github.com/LedgerHQ/ledger-live/pull/6861) [`84274a6`](https://github.com/LedgerHQ/ledger-live/commit/84274a6e764a385f707bc811ead7a7e92a02ed6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change Polygon, BSC and Ethereum Classic manager app to Ethereum & import new Exchange CAL files
+
+### Patch Changes
+
+- [#6771](https://github.com/LedgerHQ/ledger-live/pull/6771) [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584) Thanks [@gre](https://github.com/gre)! - LL's preferred countervalues will now have all the possible fiats that our CVS api supports.
+
+- [#6778](https://github.com/LedgerHQ/ledger-live/pull/6778) [`4499990`](https://github.com/LedgerHQ/ledger-live/commit/449999066c58ae5df371dfb92a7230f9b5e90a60) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(10131): update token signatures
+
+- [#7114](https://github.com/LedgerHQ/ledger-live/pull/7114) [`d5a1300`](https://github.com/LedgerHQ/ledger-live/commit/d5a130034c18c7ac8b1fd3d4c5271423b4f7639d) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Rollback nano app used for Ethereum Classic from Ethereum to Ethereum Classic, due to Classic using a 61 coin type for its derivation, incompatible with the Ethereum app
+
+- [#7077](https://github.com/LedgerHQ/ledger-live/pull/7077) [`f7e7881`](https://github.com/LedgerHQ/ledger-live/commit/f7e7881a820880143c2b011d6a92b5a36156b2c1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - CAL update fixing the blast_testnet naming for blast_sepolia
+
+- [`fda6a81`](https://github.com/LedgerHQ/ledger-live/commit/fda6a814544b3a1debceab22f69485911e76cadc) Thanks [@valpinkman](https://github.com/valpinkman)! - Update TRC20 exchange importer not compatible with the new `fetchTokens` return
+
+## 13.1.0-next.2
+
+### Patch Changes
+
+- [#7114](https://github.com/LedgerHQ/ledger-live/pull/7114) [`d5a1300`](https://github.com/LedgerHQ/ledger-live/commit/d5a130034c18c7ac8b1fd3d4c5271423b4f7639d) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Rollback nano app used for Ethereum Classic from Ethereum to Ethereum Classic, due to Classic using a 61 coin type for its derivation, incompatible with the Ethereum app
+
+## 13.1.0-next.1
+
+### Patch Changes
+
+- [#7077](https://github.com/LedgerHQ/ledger-live/pull/7077) [`f7e7881`](https://github.com/LedgerHQ/ledger-live/commit/f7e7881a820880143c2b011d6a92b5a36156b2c1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - CAL update fixing the blast_testnet naming for blast_sepolia
+
+## 13.1.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+- [#6822](https://github.com/LedgerHQ/ledger-live/pull/6822) [`801265b`](https://github.com/LedgerHQ/ledger-live/commit/801265b7ff3ed7ebd0012eb50f70898557a2dd52) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `ripple` currency's family to `xrp`
+
+- [#6977](https://github.com/LedgerHQ/ledger-live/pull/6977) [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Scroll & Scroll Sepolia
+
+- [#6876](https://github.com/LedgerHQ/ledger-live/pull/6876) [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove from `find` method the ReturnType null which wasn't possible anyway
+
+- [#6861](https://github.com/LedgerHQ/ledger-live/pull/6861) [`84274a6`](https://github.com/LedgerHQ/ledger-live/commit/84274a6e764a385f707bc811ead7a7e92a02ed6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change Polygon, BSC and Ethereum Classic manager app to Ethereum & import new Exchange CAL files
+
+### Patch Changes
+
+- [#6771](https://github.com/LedgerHQ/ledger-live/pull/6771) [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584) Thanks [@gre](https://github.com/gre)! - LL's preferred countervalues will now have all the possible fiats that our CVS api supports.
+
+- [#6778](https://github.com/LedgerHQ/ledger-live/pull/6778) [`4499990`](https://github.com/LedgerHQ/ledger-live/commit/449999066c58ae5df371dfb92a7230f9b5e90a60) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(10131): update token signatures
+
+- [`fda6a81`](https://github.com/LedgerHQ/ledger-live/commit/fda6a814544b3a1debceab22f69485911e76cadc) Thanks [@valpinkman](https://github.com/valpinkman)! - Update TRC20 exchange importer not compatible with the new `fetchTokens` return
+
 ## 13.0.0
 
 ### Major Changes

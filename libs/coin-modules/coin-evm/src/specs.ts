@@ -11,13 +11,11 @@ import {
   TransactionRes,
 } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import {
-  getCryptoCurrencyById,
-  parseCurrencyUnit,
-} from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { acceptTransaction, avalancheSpeculosDeviceAction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
@@ -48,6 +46,8 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   lukso: 0.01,
   linea: 0.001,
   linea_sepolia: 0.001,
+  blast: 0.001,
+  blast_sepolia: 0.001,
 };
 
 /**

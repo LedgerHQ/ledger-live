@@ -1,12 +1,8 @@
 import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
-import { useBaker, useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useBaker, useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -24,6 +20,8 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import BakerImage from "../../BakerImage";
 import DelegationContainer from "../DelegationContainer";
 import { StepProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountName } from "~/renderer/reducers/wallet";
 
 const urlDelegationHelp = "https://support.ledger.com/hc/en-us/articles/360010653260";
 
@@ -54,10 +52,11 @@ const StepSummary = ({ account, transaction, eventType, transitionTo }: StepProp
     account && transaction && transaction.family === "tezos",
     "step summary requires account and transaction settled",
   );
+  const accountName = useAccountName(account);
   const delegation = useDelegation(account);
   const baker = useBaker(transaction.recipient);
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const getBakerName = (baker: Baker | undefined | null, fallback: string) =>
     baker ? baker.name : fallback;
 
@@ -86,7 +85,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo }: StepProp
               <CryptoCurrencyIcon size={32} currency={currency} />
               <Ellipsis>
                 <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
-                  {getAccountName(account)}
+                  {accountName}
                 </Text>
               </Ellipsis>
               <FormattedVal

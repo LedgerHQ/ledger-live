@@ -14,6 +14,7 @@ import type {
   RateGranularity,
   PairRateMapCache,
   RateMapRaw,
+  BatchStrategySolver,
 } from "./types";
 import {
   pairId,
@@ -145,6 +146,7 @@ const MAX_RETRY_DELAY = 7 * incrementPerGranularity.daily;
 export async function loadCountervalues(
   state: CounterValuesState,
   settings: CountervaluesSettings,
+  batchStrategySolver?: BatchStrategySolver,
 ): Promise<CounterValuesState> {
   const data = { ...state.data };
   const cache = { ...state.cache };
@@ -164,14 +166,10 @@ export async function loadCountervalues(
   rateGranularities.forEach((granularity: RateGranularity) => {
     const format = formatPerGranularity[granularity];
     const earliestHisto = format(nowDate);
-    log("countervalues", "earliestHisto=" + earliestHisto);
     const limit = datapointLimits[granularity];
 
     settings.trackingPairs.forEach(({ from, to, startDate }) => {
-      const key = pairId({
-        from,
-        to,
-      });
+      const key = pairId({ from, to });
 
       const c: PairRateMapCache | null | undefined = cache[key];
       const stats = c?.stats;
@@ -276,6 +274,11 @@ export async function loadCountervalues(
               failures: (s?.failures || 0) + 1,
               oldestDateRequested: s?.oldestDateRequested,
             };
+            if (e.status === 422) {
+              // unsupported currency, we force a clear cache in this case
+              delete data[key];
+              delete cache[key];
+            }
           }
 
           log(
@@ -288,7 +291,7 @@ export async function loadCountervalues(
         }),
     ),
     api
-      .fetchLatest(latestToFetch)
+      .fetchLatest(latestToFetch, batchStrategySolver)
       .then(rates => {
         const out: Record<string, { latest: number | null | undefined }> = {};
         let hasData = false;
@@ -336,8 +339,9 @@ export async function loadCountervalues(
         data[key] = new Map();
       }
 
+      const map = data[key];
       Object.entries(patch[key]).forEach(([k, v]) => {
-        if (typeof v === "number") data[key].set(k, v);
+        if (typeof v === "number") map.set(k, v);
       });
     });
   });

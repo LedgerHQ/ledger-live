@@ -10,7 +10,7 @@ import {
   NearAccount,
 } from "@ledgerhq/coin-near/types";
 import { getCurrentNearPreloadData } from "@ledgerhq/coin-near/preload";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 
 export function useNearMappedStakingPositions(account: NearAccount): NearMappedStakingPosition[] {
   const { validators } = getCurrentNearPreloadData();
@@ -18,7 +18,7 @@ export function useNearMappedStakingPositions(account: NearAccount): NearMappedS
 
   invariant(stakingPositions, "near: stakingPositions is required");
 
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
 
   return useMemo(() => {
     const mappedStakingPositions = mapStakingPositions(stakingPositions || [], validators, unit);
@@ -66,8 +66,8 @@ export function useLedgerFirstShuffledValidatorsNear(search: string) {
 
     const lowercaseSearch = search.toLowerCase();
 
-    const filtered = validators.filter(
-      validator => validator.validatorAddress?.toLowerCase().includes(lowercaseSearch),
+    const filtered = validators.filter(validator =>
+      validator.validatorAddress?.toLowerCase().includes(lowercaseSearch),
     );
 
     return filtered;

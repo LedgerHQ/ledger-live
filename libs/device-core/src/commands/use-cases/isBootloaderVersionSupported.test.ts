@@ -55,4 +55,10 @@ test("isBootloaderVersionSupported", () => {
   expect(isBootloaderVersionSupported("0.9.0", stax)).toBe(false);
   expect(isBootloaderVersionSupported("1.0.0", stax)).toBe(true);
   expect(isBootloaderVersionSupported("1.0.0-whatever0", stax)).toBe(true);
+
+  /**
+   * Europa
+   */
+  expect(isBootloaderVersionSupported("0.1.0", "europa" as DeviceModelId)).toBe(true);
+  expect(isBootloaderVersionSupported("0.1.0-whatever0", "europa" as DeviceModelId)).toBe(true);
 });

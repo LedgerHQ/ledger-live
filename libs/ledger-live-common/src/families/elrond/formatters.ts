@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import type { Operation } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { ElrondAccount, ElrondOperation } from "./types";
@@ -9,7 +9,7 @@ import BigNumber from "bignumber.js";
 function formatAccountSpecifics(account: ElrondAccount): string {
   const { elrondResources } = account;
   invariant(elrondResources, "elrond account expected");
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -44,12 +44,12 @@ function formatAccountSpecifics(account: ElrondAccount): string {
       delegated && delegated.gt(0)
         ? `\n  delegated: ${unit ? formatCurrencyUnit(unit, delegated, formatConfig) : delegated}`
         : undelegating && undelegating.gt(0)
-        ? `\n  undelegating: ${
-            unit ? formatCurrencyUnit(unit, undelegating, formatConfig) : undelegating
-          }`
-        : rewards && rewards.gt(0)
-        ? `\n  rewards: ${unit ? formatCurrencyUnit(unit, rewards, formatConfig) : rewards}`
-        : "";
+          ? `\n  undelegating: ${
+              unit ? formatCurrencyUnit(unit, undelegating, formatConfig) : undelegating
+            }`
+          : rewards && rewards.gt(0)
+            ? `\n  rewards: ${unit ? formatCurrencyUnit(unit, rewards, formatConfig) : rewards}`
+            : "";
   }
 
   return str;

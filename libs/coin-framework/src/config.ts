@@ -18,3 +18,5 @@ export type CurrencyConfig = {
   status: ConfigStatus;
   [key: string]: unknown;
 };
+
+export type CoinConfig<T extends CurrencyConfig> = () => T;

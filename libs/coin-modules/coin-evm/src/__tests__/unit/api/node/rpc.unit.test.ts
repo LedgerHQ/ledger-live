@@ -89,14 +89,35 @@ describe("EVM Family", () => {
               blockNumber: 69,
               confirmations: 100,
               from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+              to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
               nonce: 123,
               gasLimit: ethers.BigNumber.from(123),
               data: "0x",
               value: ethers.BigNumber.from(456),
               chainId: mockedNetwork.chainId,
             };
+          case "getTransactionReceipt":
+            return {
+              blockHash: "0x8a179bc6cb299f936c4fd614995e62d597ec6108b579c23034fb220967ceaa94",
+              blockNumber: 69,
+              byzantium: true,
+              confirmations: 100,
+              contractAddress: null,
+              cumulativeGasUsed: ethers.BigNumber.from(121),
+              effectiveGasPrice: ethers.BigNumber.from(789),
+              from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+              gasUsed: ethers.BigNumber.from(122),
+              logs: [],
+              logsBloom: "0x",
+              status: 1,
+              to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
+              transactionHash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+              transactionIndex: 123,
+              type: 0,
+            };
           case "call":
-            return "0x00000000000000000000000000000000000000000000000000000000000001A4"; // 420 as uint256 hex
+            0x01a5;
+            return "0x000000000000000000000000000000000000000000000000000000000000A455"; // 42069 as uint256 hex
           case "getTransactionCount":
             return ethers.BigNumber.from(5);
           case "estimateGas":
@@ -211,6 +232,9 @@ describe("EVM Family", () => {
           blockHeight: 69,
           hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           nonce: 123,
+          gasPrice: "789",
+          gasUsed: "122",
+          value: "456",
         });
       });
     });
@@ -235,7 +259,7 @@ describe("EVM Family", () => {
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
         ),
-      ).toEqual(new BigNumber(420));
+      ).toEqual(new BigNumber(42069));
     });
   });
 
@@ -448,7 +472,7 @@ describe("EVM Family", () => {
             nonce: 52,
           } as EvmTransaction,
         ),
-      ).toEqual(new BigNumber(420));
+      ).toEqual(new BigNumber(42069));
     });
 
     it("should return 0 if the currency isn't optimism", async () => {
@@ -475,6 +499,71 @@ describe("EVM Family", () => {
     it("should return 0 if the transaction is invalid", async () => {
       expect(
         await RPC_API.getOptimismAdditionalFees(
+          fakeCurrency as CryptoCurrency,
+          {
+            mode: "send",
+            family: "evm",
+            recipient: "", // no recipient for example
+            maxFeePerGas: new BigNumber("0x777159126"),
+            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
+            amount: new BigNumber("0x38d7ea4c68000"),
+            gasLimit: new BigNumber(0),
+            data: Buffer.from(""),
+            type: 2,
+            chainId: 1,
+            nonce: 52,
+          } as EvmTransaction,
+        ),
+      ).toEqual(new BigNumber(0));
+    });
+  });
+
+  describe("getScrollAdditionalFees", () => {
+    it("should return the expected payload", async () => {
+      expect(
+        await RPC_API.getScrollAdditionalFees(
+          { ...fakeCurrency, id: "scroll" } as CryptoCurrency,
+          {
+            mode: "send",
+            family: "evm",
+            recipient: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            maxFeePerGas: new BigNumber("0x777159126"),
+            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
+            amount: new BigNumber("0x38d7ea4c68000"),
+            gasLimit: new BigNumber(0),
+            data: Buffer.from(""),
+            type: 2,
+            chainId: 1,
+            nonce: 52,
+          } as EvmTransaction,
+        ),
+      ).toEqual(new BigNumber(42069));
+    });
+
+    it("should return 0 if the currency isn't optimism", async () => {
+      expect(
+        await RPC_API.getScrollAdditionalFees(
+          fakeCurrency as CryptoCurrency,
+          {
+            mode: "send",
+            family: "evm",
+            recipient: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            maxFeePerGas: new BigNumber("0x777159126"),
+            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
+            amount: new BigNumber("0x38d7ea4c68000"),
+            gasLimit: new BigNumber(0),
+            data: Buffer.from(""),
+            type: 2,
+            chainId: 1,
+            nonce: 52,
+          } as EvmTransaction,
+        ),
+      ).toEqual(new BigNumber(0));
+    });
+
+    it("should return 0 if the transaction is invalid", async () => {
+      expect(
+        await RPC_API.getScrollAdditionalFees(
           fakeCurrency as CryptoCurrency,
           {
             mode: "send",

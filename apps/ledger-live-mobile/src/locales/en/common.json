@@ -916,6 +916,9 @@
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
+    },
+    "TezosUnrevealedAccount": {
+      "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     }
   },
   "crash": {
@@ -2242,7 +2245,13 @@
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
-      "currencyPriceChange": "Last 24h change"
+      "currencyPriceChange": {
+        "day": "Last 24h change",
+        "week": "Last 7 days change",
+        "month": "Last 30 days change",
+        "year": "Last year change",
+        "all": "Last year change"
+      }
     },
     "quickActions": {
       "buy": "Buy",
@@ -2714,6 +2723,8 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
+      "walletSync": "Ledger  Sync",
+      "walletSyncDesc": "Backup your app data and seamlessly synchronize multiple Ledger Live instances",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -3130,9 +3141,6 @@
         "title": "Welcome to Swap",
         "whatIsSwap": "What is Swap?",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
-      },
-      "main": {
-        "header": "Swap"
       },
       "notAvailable": {
         "title": "Service temporarily unavailable, or not available in your country"
@@ -3838,35 +3846,9 @@
     "tokens": {
       "title": "Add token",
       "createParentCurrencyAccount": "Add {{parrentCurrencyName}} account",
-      "erc20": {
-        "title": "Add token",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
-        "learnMore": "Learn more about ERC20"
-      },
-      "trc10": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
-        "learnMore": "Learn more about TRC10"
-      },
-      "trc20": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
-        "learnMore": "Learn more about TRC20"
-      },
-      "asa": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is an ASA Token.\nYou can receive tokens directly on an Algorand account.",
-        "learnMore": "Learn more"
-      },
-      "bep20": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
-      },
-      "vip180": {
-        "title": "Add token",
-        "disclaimer": "{{tokenName}} is a VIP180 Token.\nYou can receive tokens directly in a VET account.",
-        "learnMore": "Learn more about VIP180"
+      "generic": {
+        "disclaimer": "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on an {{currency}} account.",
+        "learnMore": "Learn more about {{tokenType}}"
       }
     },
     "showMoreChainType": "More address types",
@@ -4323,7 +4305,8 @@
       "installUpdate": {
         "titleInactive": "Install update",
         "titleActive": "Installing update",
-        "description": "{{deviceName}} will restart multiple times.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
+        "description": "{{deviceName}} will restart multiple times.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished.",
+        "descriptionNanoXBle": "{{deviceName}} will restart multiple times.\n\nIf the device powers off and does not automatically restart, you will need to power it on yourself.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
       },
       "restoreSettings": {
         "earlySecurityCheck": {
@@ -4354,6 +4337,14 @@
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       "pleaseConnectUsbTitle": "USB cable needed",
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+    },
+    "updateStatusErrors": {
+      "errors": {
+        "TimeoutError": {
+          "title": "Device disconnected",
+          "description": "The update was unable to continue because we lost connection to {{deviceName}}"
+        }
+      }
     },
     "batteryStatusErrors": {
       "errors": {
@@ -6140,6 +6131,7 @@
       "subtitle": "Explore Web3 fully integrated with Ledger",
       "section": {
         "recentlyUsed": "Recently Used",
+        "locallyLoaded": "Locally Loaded",
         "categories": "Categories",
         "clearAll": "Clear All"
       },
@@ -6237,9 +6229,10 @@
       },
       "order": {
         "topGainers": "Top gainers",
-        "market_cap": "Rank",
-        "market_cap_asc": "Rank (Market cap) asc.",
-        "market_cap_desc": "Rank (Market cap) desc."
+        "topLosers": "Top losers",
+        "marketCap": "Rank",
+        "asc": "Rank (Market cap) asc.",
+        "desc": "Rank (Market cap) desc."
       },
       "currency": "Currency",
       "time": "Time",
@@ -6309,7 +6302,7 @@
     "designedForStax": {
       "title": "<0>Designed for</0><1>Ledger</1><2>Stax</2>",
       "drawer": {
-        "description": "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E Ink Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
+        "description": "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E\u00a0Ink\u00a0Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
         "cta": "Got it"
       }
     },
@@ -6569,7 +6562,6 @@
         },
         "swap": {
           "title": "Swap",
-          "label": "Popular",
           "body": "Convert crypto to crypto securely"
         },
         "receive": {
