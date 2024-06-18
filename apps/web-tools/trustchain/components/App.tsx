@@ -99,7 +99,7 @@ const App = () => {
         </Expand>
 
         <Expand title="Trustchain SDK" expanded>
-          <AppInitMemberCredentials
+          <AppInitLiveCredentials
             memberCredentials={memberCredentials}
             setMemberCredentials={setMemberCredentials}
           />

@@ -55,12 +55,16 @@ export function useGetMembers() {
   }
 
   const { isLiveJWTLoading, liveJWT } = useLiveAuthenticate();
-  const { isLoading: isMembersLoading, data: instances } = useQuery({
+  const {
+    isLoading: isMembersLoading,
+    data: instances,
+    isError,
+  } = useQuery({
     queryKey: [liveJWT, trustchain],
     queryFn: () => liveJWT && sdk.getMembers(liveJWT, trustchain),
   });
 
-  return { isMembersLoading: isMembersLoading || isLiveJWTLoading, instances };
+  return { isMembersLoading: isMembersLoading || isLiveJWTLoading, instances, isError };
 }
 
 export function useRemoveMembers() {

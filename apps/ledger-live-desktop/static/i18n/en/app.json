@@ -6336,7 +6336,8 @@
     "error": {
       "title": "Something went wrong",
       "description": "Please try again later.",
-      "cta": "Try again"
+      "cta": "Try again",
+      "fetching": "Something went wrong while fetching your data."
     },
     "unsecuredError": {
       "title": "The synchronization isn't secured by this Ledger",
@@ -6413,7 +6414,7 @@
     },
     "deviceAction": {
       "title": "Continue on your Ledger {{wording}}",
-      "description": "Follow the instruction which appear on your Ledger’s Trusted Display"
+      "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
     }
   }
 }

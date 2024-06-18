@@ -16,7 +16,7 @@ const Separator = () => {
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
-  const { instances, isLoading } = useInstances();
+  const { instances, isLoading, hasError } = useInstances();
 
   const dispatch = useDispatch();
 
@@ -64,10 +64,15 @@ const WalletSyncManage = () => {
       <InstancesRow
         paddingY={24}
         justifyContent="space-between"
-        onClick={!isLoading ? goToManageInstances : undefined}
+        onClick={!isLoading && !hasError ? goToManageInstances : undefined}
         data-testid="walletSync-manage-instances"
+        disabled={isLoading || hasError}
       >
-        {isLoading ? (
+        {hasError ? (
+          <Text fontSize={13.44} color="error.c60">
+            {t("walletSync.error.fetching")}
+          </Text>
+        ) : isLoading ? (
           <InfiniteLoader size={16} />
         ) : (
           <Text fontSize={13.44}>
@@ -86,8 +91,8 @@ const WalletSyncManage = () => {
 
 export default WalletSyncManage;
 
-const InstancesRow = styled(Flex)`
+const InstancesRow = styled(Flex)<{ disabled?: boolean }>`
   &:hover {
-    cursor: pointer;
+    cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
   }
 `;

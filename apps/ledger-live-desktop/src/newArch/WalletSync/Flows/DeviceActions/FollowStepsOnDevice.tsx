@@ -21,7 +21,7 @@ export default function FollowStepsOnDevice({ modelId, isDeviceBlocker }: Props)
   const { t } = useTranslation();
   const wording = getProductName(modelId);
   return (
-    <Wrapper flexDirection="column">
+    <>
       {isDeviceBlocker ? <DeviceBlocker /> : null}
       <AnimationWrapper>
         <Animation animation={getDeviceAnimation(modelId, theme, "openApp")} />
@@ -34,7 +34,7 @@ export default function FollowStepsOnDevice({ modelId, isDeviceBlocker }: Props)
           {t("walletSync.deviceAction.description")}
         </SubTitle>
       </Footer>
-    </Wrapper>
+    </>
   );
 }
 
@@ -48,11 +48,9 @@ export const AnimationWrapper = styled.div`
   justify-content: center;
 `;
 
-const Wrapper = styled(Flex)``;
-
 const Footer = styled(Flex)`
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-content: center;
   align-items: center;
   row-gap: 16px;

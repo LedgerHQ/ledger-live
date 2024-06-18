@@ -13,7 +13,7 @@ export const useInstances = () => {
 
   const deleteAllInstances = () => dispatch(removeAllInstances);
 
-  const { isMembersLoading, instances } = useGetMembers();
+  const { isMembersLoading, instances, isError } = useGetMembers();
 
   return {
     isLoading: isMembersLoading,
@@ -21,5 +21,6 @@ export const useInstances = () => {
     deleteInstance,
     deleteAllInstances,
     createInstance,
+    hasError: isError,
   };
 };
