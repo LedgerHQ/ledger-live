@@ -1,5 +1,33 @@
 # @ledgerhq/live-common
 
+## 34.3.0-nightly.20
+
+### Patch Changes
+
+- [#7081](https://github.com/LedgerHQ/ledger-live/pull/7081) [`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Create feature flag for preparation of next feature
+
+- [#7120](https://github.com/LedgerHQ/ledger-live/pull/7120) [`d2368f6`](https://github.com/LedgerHQ/ledger-live/commit/d2368f632b834207c33df14468599b6a543d11da) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix filtering of apps with isDevMode
+
+- [#7094](https://github.com/LedgerHQ/ledger-live/pull/7094) [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761) Thanks [@CremaFR](https://github.com/CremaFR)! - prevent TRC20 swaps if empty tron account
+
+- Updated dependencies [[`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069)]:
+  - @ledgerhq/coin-polkadot@1.0.0-nightly.11
+  - @ledgerhq/coin-xrp@0.2.0-nightly.10
+  - @ledgerhq/coin-framework@0.14.0-nightly.10
+  - @ledgerhq/coin-algorand@0.5.0-nightly.10
+  - @ledgerhq/coin-bitcoin@0.6.0-nightly.10
+  - @ledgerhq/coin-cardano@0.1.0-nightly.7
+  - @ledgerhq/coin-evm@2.1.0-nightly.11
+  - @ledgerhq/coin-near@0.5.0-nightly.10
+  - @ledgerhq/coin-solana@0.7.0-nightly.15
+  - @ledgerhq/coin-tezos@0.4.0-nightly.9
+  - @ledgerhq/device-core@0.2.0-nightly.8
+  - @ledgerhq/hw-app-eth@6.37.0-nightly.9
+  - @ledgerhq/live-countervalues@0.2.0-nightly.10
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.10
+  - @ledgerhq/live-nft@0.4.0-nightly.10
+  - @ledgerhq/live-wallet@0.2.0-nightly.14
+
 ## 34.3.0-nightly.19
 
 ### Minor Changes

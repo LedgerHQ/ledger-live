@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.45.0-nightly.14
+
+### Minor Changes
+
+- [#7111](https://github.com/LedgerHQ/ledger-live/pull/7111) [`4bd2755`](https://github.com/LedgerHQ/ledger-live/commit/4bd27557f3b4ae67f9dc39355ab10d635a74a0e5) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Storyly when it's closed with a previous action
+
+### Patch Changes
+
+- [#7094](https://github.com/LedgerHQ/ledger-live/pull/7094) [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761) Thanks [@CremaFR](https://github.com/CremaFR)! - prevent TRC20 swaps if empty tron account
+
+- [#7115](https://github.com/LedgerHQ/ledger-live/pull/7115) [`faf98cd`](https://github.com/LedgerHQ/ledger-live/commit/faf98cdf517b68ba8667d63cd1e7a2ced79cd0a5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update analytics opt-in descriptions
+
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`d2368f6`](https://github.com/LedgerHQ/ledger-live/commit/d2368f632b834207c33df14468599b6a543d11da), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761)]:
+  - @ledgerhq/types-live@6.48.0-nightly.4
+  - @ledgerhq/live-common@34.3.0-nightly.20
+  - @ledgerhq/coin-framework@0.14.0-nightly.10
+  - @ledgerhq/coin-evm@2.1.0-nightly.11
+  - @ledgerhq/domain-service@1.2.0-nightly.6
+  - @ledgerhq/live-countervalues@0.2.0-nightly.10
+  - @ledgerhq/live-countervalues-react@0.2.0-nightly.10
+  - @ledgerhq/live-nft@0.4.0-nightly.10
+  - @ledgerhq/live-nft-react@0.4.0-nightly.10
+  - @ledgerhq/live-wallet@0.2.0-nightly.14
+
 ## 3.45.0-nightly.13
 
 ### Patch Changes
