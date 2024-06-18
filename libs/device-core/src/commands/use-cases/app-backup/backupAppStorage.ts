@@ -57,7 +57,7 @@ export async function backupAppStorage(transport: Transport): Promise<string> {
  * @param data - The response data buffer.
  * @returns The response data as a string.
  */
-function parseResponse(data: Buffer): string {
+export function parseResponse(data: Buffer): string {
   const tracer = new LocalTracer("hw", {
     function: "parseResponse@backupAppStorage",
   });
@@ -70,5 +70,5 @@ function parseResponse(data: Buffer): string {
     throw new TransportStatusError(status);
   }
 
-  return data.readUIntBE(0, data.length - 2).toString();
+  return data.subarray(0, data.length - 2).toString("ascii");
 }

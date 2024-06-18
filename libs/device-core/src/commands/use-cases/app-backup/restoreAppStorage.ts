@@ -48,14 +48,14 @@ export async function restoreAppStorage(transport: Transport, chunk: string): Pr
   });
   tracer.trace("Start");
 
-  const params = Buffer.concat([Buffer.from([chunk.length]), Buffer.from(chunk, "hex")]);
+  const params = Buffer.concat([Buffer.from([chunk.length]), Buffer.from(chunk, "ascii")]);
   RESTORE_APP_STORAGE[4] = params;
 
   const response = await transport.send(...RESTORE_APP_STORAGE, RESPONSE_STATUS_SET);
   parseResponse(response);
 }
 
-function parseResponse(data: Buffer): void {
+export function parseResponse(data: Buffer): void {
   const tracer = new LocalTracer("hw", {
     function: "parseResponse@restoreAppStorage",
   });

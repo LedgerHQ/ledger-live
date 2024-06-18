@@ -68,7 +68,7 @@ export async function restoreAppStorageInit(
   parseResponse(response);
 }
 
-function parseResponse(data: Buffer): void {
+export function parseResponse(data: Buffer): void {
   const tracer = new LocalTracer("hw", {
     function: "parseResponse@restoreAppStorageInit",
   });

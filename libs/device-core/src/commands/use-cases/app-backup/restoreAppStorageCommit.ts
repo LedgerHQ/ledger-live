@@ -48,7 +48,7 @@ export async function restoreAppStorageCommit(transport: Transport): Promise<voi
   parseResponse(response);
 }
 
-function parseResponse(data: Buffer): void {
+export function parseResponse(data: Buffer): void {
   const tracer = new LocalTracer("hw", {
     function: "parseResponse@restoreAppStorageCommit",
   });

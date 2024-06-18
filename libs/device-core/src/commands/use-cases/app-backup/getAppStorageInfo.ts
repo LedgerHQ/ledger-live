@@ -60,7 +60,7 @@ export async function getAppStorageInfo(
  * @param data - The response data received from the device.
  * @returns A string representing the parsed response.
  */
-function parseResponse(data: Buffer): AppStorageInfo {
+export function parseResponse(data: Buffer): AppStorageInfo {
   const tracer = new LocalTracer("hw", {
     function: "parseResponse@getAppStorageInfo",
   });
@@ -71,10 +71,10 @@ function parseResponse(data: Buffer): AppStorageInfo {
 
   if (status === StatusCodes.OK) {
     const size = data.readUInt32BE(0); // Len = 4
-    const version = data.readUIntBE(4, 4).toString(); // Len = 4
+    const version = data.subarray(4, 8).toString(); // Len = 4
     const hasSettings = data.readUIntBE(8, 1) === 1; // Len = 1
     const hasData = data.readUIntBE(9, 1) === 1; // Len = 1
-    const hash = data.subarray(12, 33).toString("hex"); // Len = 20
+    const hash = data.subarray(10, 30).toString(); // Len = 20
     return { size, version, hasSettings, hasData, hash };
   }
 
