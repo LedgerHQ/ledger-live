@@ -2182,13 +2182,13 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@polkadot/api':
-        specifier: ^11.3.1
+        specifier: ^11.2.1
         version: 11.3.1
       '@polkadot/types':
-        specifier: ^11.3.1
+        specifier: ^11.2.1
         version: 11.3.1
       '@polkadot/types-known':
-        specifier: ^11.3.1
+        specifier: ^11.2.1
         version: 11.3.1
       '@polkadot/util':
         specifier: ^12.6.2
