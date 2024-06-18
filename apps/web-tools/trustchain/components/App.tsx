@@ -8,7 +8,7 @@ import Expand from "./Expand";
 import { getSdk } from "@ledgerhq/trustchain";
 import { DisplayName, IdentityManager } from "./IdentityManager";
 import { AppQRCodeCandidate } from "./AppQRCodeCandidate";
-import { SDKContext, defaultContext } from "../context";
+import { TrustchainSDKContext, defaultContext } from "../context";
 import { AppQRCodeHost } from "./AppQRCodeHost";
 import { AppMemberRow } from "./AppMemberRow";
 import { AppDecryptUserData } from "./AppDecryptUserData";
@@ -22,6 +22,8 @@ import { AppInitLiveCredentials } from "./AppInitLiveCredentials";
 import { AppMockEnv } from "./AppMockEnv";
 import { AppSetTrustchainAPIEnv } from "./AppSetTrustchainAPIEnv";
 import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
+import { AppWalletSync } from "./AppWalletSync";
+import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 
 const Container = styled.div`
   padding: 0 10px;
@@ -64,9 +66,18 @@ const App = () => {
 
   const mockEnv = useEnv("MOCK");
   const sdk = useMemo(() => getSdk(!!mockEnv, context), [mockEnv, context]);
+  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API").includes("stg");
+  const envWalletSyncApiIsStg = useEnv("WALLET_SYNC_API").includes("stg");
+  const envSummary = mockEnv
+    ? "MOCK"
+    : envTrustchainApiIsStg && envWalletSyncApiIsStg
+      ? "STG"
+      : !envTrustchainApiIsStg && !envWalletSyncApiIsStg
+        ? "PROD"
+        : "MIXED";
 
   return (
-    <SDKContext.Provider value={sdk}>
+    <TrustchainSDKContext.Provider value={sdk}>
       <Container>
         <h2>Wallet Sync Trustchain Playground</h2>
 
@@ -93,12 +104,42 @@ const App = () => {
           />
         </Expand>
 
-        <Expand title="Environment">
+        <Expand
+          title={
+            <>
+              <span>Environment</span>{" "}
+              <code
+                style={{
+                  borderRadius: "4px",
+                  padding: "3px 6px",
+                  background: "#ddd",
+                  color: "#000",
+                }}
+              >
+                {envSummary}
+              </code>
+            </>
+          }
+        >
           <AppSetTrustchainAPIEnv />
+          <AppSetCloudSyncAPIEnv />
           <AppMockEnv />
         </Expand>
 
-        <Expand title="Trustchain SDK" expanded>
+        <Expand
+          title={
+            <>
+              <span>Trustchain SDK</span>{" "}
+              {trustchain ? (
+                <code style={{ fontWeight: "normal" }}>
+                  {trustchain.rootId.slice(0, 6)}..{trustchain.rootId.slice(-6)} at{" "}
+                  {trustchain.applicationPath}
+                </code>
+              ) : null}
+            </>
+          }
+          expanded={!trustchain}
+        >
           <AppInitLiveCredentials
             memberCredentials={memberCredentials}
             setMemberCredentials={setMemberCredentials}
@@ -160,19 +201,30 @@ const App = () => {
             setDeviceJWT={setDeviceJWT}
             jwt={jwt}
           />
+
+          <Expand title="QR Code Host">
+            <AppQRCodeHost trustchain={trustchain} memberCredentials={memberCredentials} />
+          </Expand>
+
+          <Expand title="QR Code Candidate">
+            <AppQRCodeCandidate
+              memberCredentials={memberCredentials}
+              setTrustchain={setTrustchain}
+            />
+          </Expand>
         </Expand>
 
-        <Expand title="QR Code Host">
-          <AppQRCodeHost trustchain={trustchain} memberCredentials={memberCredentials} />
-        </Expand>
-
-        <Expand title="QR Code Candidate">
-          <AppQRCodeCandidate memberCredentials={memberCredentials} setTrustchain={setTrustchain} />
+        <Expand title="Wallet Sync" expanded={!!trustchain}>
+          {trustchain && memberCredentials ? (
+            <AppWalletSync trustchain={trustchain} memberCredentials={memberCredentials} />
+          ) : (
+            "Please create a trustchain first"
+          )}
         </Expand>
 
         <Tooltip id="tooltip" />
       </Container>
-    </SDKContext.Provider>
+    </TrustchainSDKContext.Provider>
   );
 };
 

@@ -4,7 +4,7 @@ import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
 import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { RenderActionable } from "./Actionable";
 import QRCode from "./QRCode";
-import { useSDK } from "../context";
+import { useTrustchainSDK } from "../context";
 
 export function AppQRCodeHost({
   trustchain,
@@ -13,7 +13,7 @@ export function AppQRCodeHost({
   trustchain: Trustchain | null;
   memberCredentials: MemberCredentials | null;
 }) {
-  const sdk = useSDK();
+  const sdk = useTrustchainSDK();
   const [error, setError] = useState<Error | null>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [digits, setDigits] = useState<string | null>(null);

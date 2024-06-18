@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { JWT, MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { Actionable } from "./Actionable";
 import { DisplayName } from "./IdentityManager";
-import { useSDK } from "../context";
+import { useTrustchainSDK } from "../context";
 import { runWithDevice } from "../device";
 
 export function AppMemberRow({
@@ -22,7 +22,7 @@ export function AppMemberRow({
   setDeviceJWT: (deviceJWT: JWT | null) => void;
   setMembers: (members: TrustchainMember[] | null) => void;
 }) {
-  const sdk = useSDK();
+  const sdk = useTrustchainSDK();
 
   const action = useCallback(
     (deviceJWT: JWT, trustchain: Trustchain, memberCredentials: MemberCredentials) =>

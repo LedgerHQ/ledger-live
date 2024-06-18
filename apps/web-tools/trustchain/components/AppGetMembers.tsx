@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { JWT, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { Actionable } from "./Actionable";
-import { useSDK } from "../context";
+import { useTrustchainSDK } from "../context";
 
 export function AppGetMembers({
   jwt,
@@ -14,7 +14,7 @@ export function AppGetMembers({
   members: TrustchainMember[] | null;
   setMembers: (members: TrustchainMember[] | null) => void;
 }) {
-  const sdk = useSDK();
+  const sdk = useTrustchainSDK();
 
   const action = useCallback(
     (jwt: JWT, trustchain: Trustchain) => sdk.getMembers(jwt, trustchain),
