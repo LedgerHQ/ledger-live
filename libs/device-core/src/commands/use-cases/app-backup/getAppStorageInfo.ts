@@ -1,7 +1,7 @@
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
-import { APDU } from "src/commands/entities/APDU";
-import { AppStorageInfo } from "src/commands/entities/AppStorageInfo";
+import type { AppStorageInfo } from "../../entities/AppStorageInfo";
+import type { APDU } from "../../entities/APDU";
 
 /**
  * Name in documentation: INS_APP_STORAGE_GET_INFO

@@ -1,6 +1,6 @@
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
-import { APDU } from "src/commands/entities/APDU";
+import type { APDU } from "../../entities/APDU";
 
 /**
  * Name in documentation: INS_APP_STORAGE_RESTORE_INIT
