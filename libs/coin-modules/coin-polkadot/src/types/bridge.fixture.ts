@@ -4,6 +4,7 @@ import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import {
+  PalletMethod,
   PolkadotAccount,
   PolkadotOperation,
   PolkadotOperationExtra,
@@ -57,7 +58,6 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     lastSyncDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
-
     polkadotResources,
   };
 }
@@ -80,7 +80,7 @@ export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction
 export function createFixtureOperation(operation?: Partial<PolkadotOperation>): PolkadotOperation {
   const extra: PolkadotOperationExtra = {
     transferAmount: operation?.extra?.transferAmount || new BigNumber(0),
-    palletMethod: operation?.extra?.palletMethod || "",
+    palletMethod: operation?.extra?.palletMethod || ("" as PalletMethod),
   };
 
   return {
