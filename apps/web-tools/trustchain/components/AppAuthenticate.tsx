@@ -1,8 +1,7 @@
 import React, { useCallback } from "react";
-
 import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { Actionable } from "./Actionable";
-import { useSDK } from "../context";
+import { useTrustchainSDK } from "../context";
 
 export function AppAuthenticate({
   jwt,
@@ -17,7 +16,7 @@ export function AppAuthenticate({
   trustchain: Trustchain | null;
   deviceJWT: JWT | null;
 }) {
-  const sdk = useSDK();
+  const sdk = useTrustchainSDK();
 
   const action = useCallback(
     (trustchain: Trustchain, memberCredentials: MemberCredentials) =>
