@@ -4,6 +4,7 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
@@ -21,7 +22,7 @@ import { XrpSigner } from "../signer";
 
 export function createBridges(
   signerContext: SignerContext<XrpSigner>,
-  coinConfig: () => XrpConfig,
+  coinConfig: CoinConfig<XrpConfig>,
 ) {
   setCoinConfig(coinConfig);
 

@@ -17,6 +17,8 @@
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
 import { UserRefusedOnDevice, UserRefusedAddress, TransportError } from "@ledgerhq/errors";
+import { PolkadotGenericApp } from "@zondax/ledger-substrate";
+
 const CHUNK_SIZE = 250;
 const CLA = 0x90;
 const INS = {
@@ -31,6 +33,7 @@ const SW_OK = 0x9000;
 const SW_CANCEL = 0x6986;
 const SW_ERROR_DATA_INVALID = 0x6984;
 const SW_ERROR_BAD_KEY_HANDLE = 0x6a80;
+
 /**
  * Polkadot API
  *
@@ -47,35 +50,40 @@ export default class Polkadot {
     transport.decorateAppAPIMethods(this, ["getAddress", "sign"], "DOT");
   }
 
-  serializePath(path: Array<number>): Buffer {
-    const buf = Buffer.alloc(20);
+  serializePath(path: Array<number>, ss58?: number): Buffer {
+    const ss58Provided = ss58 !== undefined;
+    const buf = Buffer.alloc(ss58Provided ? 24 : 20);
     buf.writeUInt32LE(path[0], 0);
     buf.writeUInt32LE(path[1], 4);
     buf.writeUInt32LE(path[2], 8);
     buf.writeUInt32LE(path[3], 12);
     buf.writeUInt32LE(path[4], 16);
+    if (ss58Provided) {
+      buf.writeUInt32LE(ss58, 20);
+    }
     return buf;
   }
 
   /**
    * @param {string} path
-   * @param {boolean} requireConfirmation - if true, user must valid if the address is correct on the device
+   * @param {number} ss58prefix
+   * @param {boolean} showAddrInDevice - if true, user must valid if the address is correct on the device
    */
   async getAddress(
     path: string,
-    requireConfirmation = false,
+    ss58prefix: number = 0,
+    showAddrInDevice = false,
+    runtimeUpgraded = false,
   ): Promise<{
     pubKey: string;
     address: string;
     return_code: number;
   }> {
+    const CLA = runtimeUpgraded ? 0xf9 : 0x90;
     const bipPath = BIPPath.fromString(path).toPathArray();
-    const bip44Path = this.serializePath(bipPath);
+    const bip44Path = this.serializePath(bipPath, ss58prefix);
     return this.transport
-      .send(CLA, INS.GET_ADDR_ED25519, requireConfirmation ? 1 : 0, 0, bip44Path, [
-        SW_OK,
-        SW_CANCEL,
-      ])
+      .send(CLA, INS.GET_ADDR_ED25519, showAddrInDevice ? 1 : 0, 0, bip44Path, [SW_OK, SW_CANCEL])
       .then(response => {
         const errorCodeData = response.slice(-2);
         const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
@@ -114,17 +122,30 @@ export default class Polkadot {
    */
   async sign(
     path: string,
-    message: string,
+    message: Uint8Array,
+    metadata: string,
   ): Promise<{
-    signature: null | string;
+    signature: string | null;
     return_code: number;
   }> {
+    if (metadata.length > 0) {
+      // runtimeUpgraded
+      const app = new PolkadotGenericApp(this.transport);
+      const signatureRequest = await app.signWithMetadata(
+        "m/" + path,
+        Buffer.from(message),
+        Buffer.from(metadata.slice(2), "hex"),
+      );
+      return {
+        signature: signatureRequest.signature.toString("hex"),
+        return_code: SW_OK,
+      };
+    }
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
     const chunks: Buffer[] = [];
-    chunks.push(serializedPath);
     const buffer = Buffer.from(message);
-
+    chunks.push(serializedPath);
     for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
       let end = i + CHUNK_SIZE;
 
@@ -158,7 +179,6 @@ export default class Polkadot {
       if (returnCode === SW_CANCEL) {
         throw new UserRefusedOnDevice();
       }
-
       if (returnCode === SW_ERROR_DATA_INVALID || returnCode === SW_ERROR_BAD_KEY_HANDLE) {
         const errorMessage = response.slice(0, response.length - 2).toString("ascii");
         throw new TransportError(errorMessage, "Sign");

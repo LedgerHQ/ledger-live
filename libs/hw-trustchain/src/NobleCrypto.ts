@@ -1,7 +1,6 @@
 import * as secp from "@noble/secp256k1";
 import * as ecc from "tiny-secp256k1";
 import { BIP32Factory } from "bip32";
-// import * as miscreant from 'miscreant';
 import hmac from "create-hmac";
 import * as crypto from "crypto";
 
@@ -263,14 +262,10 @@ variable : Encrypted data
   }
 
   async ecdh(keyPair: KeyPair, publicKey: Uint8Array): Promise<Uint8Array> {
-    const point = ecc.pointMultiply(
-      publicKey,
-      keyPair.privateKey,
-      ecc.isPointCompressed(publicKey),
-    )!;
+    const pubkey = Buffer.from(publicKey);
+    const privkey = Buffer.from(keyPair.privateKey);
+    const point = ecc.pointMultiply(pubkey, privkey, ecc.isPointCompressed(pubkey))!;
     return point.slice(1);
-    // ecc.pointMultiply(publicKey, keyPair.privateKey, false)
-    // return secp.getSharedSecret(keyPair.privateKey, publicKey, false);
   }
 
   async computeSymmetricKey(privateKey: Uint8Array, extra: Uint8Array): Promise<Uint8Array> {

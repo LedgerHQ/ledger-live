@@ -10,6 +10,7 @@ import {
   fixtureTransactionParams,
   fixtureTxMaterialWithMetadata,
 } from "../network/sidecar.fixture";
+import { getCoinConfig } from "../config";
 
 const mockPaymentInfo = jest.fn().mockResolvedValue({
   weight: "WHATEVER",
@@ -27,6 +28,9 @@ jest.mock("../network/sidecar", () => ({
   getTransactionParams: () => mockTransactionParams(),
 }));
 
+jest.mock("../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
 describe("signOperation", () => {
   // Global setup
   const fakeSignature = u8aConcat(new Uint8Array([1]), new Uint8Array(64).fill(0x42));
@@ -41,7 +45,29 @@ describe("signOperation", () => {
     fn(fakeSigner);
   const signOperation = buildSignOperation(signerContext);
   const deviceId = "dummyDeviceId";
-
+  beforeAll(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        status: {
+          type: "active",
+        },
+        sidecar: {
+          url: "https://polkadot-sidecar.coin.ledger.com",
+          credentials: "",
+        },
+        staking: {
+          electionStatusThreshold: 25,
+        },
+        metadataShortener: {
+          url: "https://api.zondax.ch/polkadot/transaction/metadata",
+        },
+        metadataHash: {
+          url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+        },
+        runtimeUpgraded: false,
+      };
+    });
+  });
   it("returns events in the right order", done => {
     // GIVEN
     const account = createFixtureAccount();

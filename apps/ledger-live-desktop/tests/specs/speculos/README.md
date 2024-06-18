@@ -82,5 +82,5 @@ pnpm desktop build:testing
 ## Run tests
 
 ```
-pnpm desktop test:playwright:speculos specs/<testFolder>/<testName>
+pnpm desktop test:playwright:speculos <testFileName>
 ```

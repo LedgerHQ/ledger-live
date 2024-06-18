@@ -18,7 +18,6 @@
     "src/datasets/dogecoin.ts",
     "src/datasets/litecoin.scanAccounts.1.ts",
     "src/datasets/litecoin.ts",
-    "src/datasets/peercoin.ts",
     "src/datasets/pivx.ts",
     "src/datasets/vertcoin.ts",
     "src/datasets/viacoin.ts",

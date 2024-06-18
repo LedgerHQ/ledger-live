@@ -5,6 +5,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
+import { Account } from "@ledgerhq/types-live";
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
 import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
 import { Transaction as EvmTransaction } from "../../../types";
@@ -20,9 +21,12 @@ import {
   impersonnateAccount,
   polygon,
 } from "../helpers";
+import { defaultNanoApp } from "../scenarios.test";
+
+type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
 const makeScenarioTransactions = ({ address }: { address: string }) => {
-  const send1MaticTransaction: ScenarioTransaction<EvmTransaction> = {
+  const send1MaticTransaction: PolygonScenarioTransaction = {
     name: "Send 1 Matic",
     amount: new BigNumber(ethers.utils.parseEther("1").toString()),
     recipient: ethers.constants.AddressZero,
@@ -42,7 +46,7 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
     },
   };
 
-  const send80USDCTransaction: ScenarioTransaction<EvmTransaction> = {
+  const send80USDCTransaction: PolygonScenarioTransaction = {
     name: "Send 80 USDC",
     recipient: "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503", // Random Receiver
     amount: new BigNumber(
@@ -60,7 +64,7 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
     },
   };
 
-  const sendERC721Transaction: ScenarioTransaction<EvmTransaction> = {
+  const sendERC721Transaction: PolygonScenarioTransaction = {
     name: "Send ERC721",
     recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
     mode: "erc721",
@@ -88,7 +92,7 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
     },
   };
 
-  const sendERC1155Transaction: ScenarioTransaction<EvmTransaction> = {
+  const sendERC1155Transaction: PolygonScenarioTransaction = {
     name: "Send ERC1155",
     recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
     mode: "erc1155",
@@ -124,12 +128,10 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
   ];
 };
 
-const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
-
-export const scenarioPolygon: Scenario<EvmTransaction> = {
+export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
-    const [{ transport, onSignerConfirmation }] = await Promise.all([
+    const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://rpc.ankr.com/polygon"),
     ]);
@@ -162,6 +164,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
     }));
     initMswHandlers(getCoinConfig(polygon).info);
 
+    const onSignerConfirmation = getOnSpeculosConfirmation();
     const currencyBridge = buildCurrencyBridge(signerContext);
     const accountBridge = buildAccountBridge(signerContext);
     const getAddress = resolver(signerContext);
@@ -172,6 +175,8 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
     });
 
     const scenarioAccount = makeAccount(address, polygon);
+
+    await setBlock(lastBlockNumber + 1);
 
     // Send 100 USDC to the scenario account
     await impersonnateAccount({
@@ -233,7 +238,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
     expect(account.operations.length).toBe(7);
   },
   teardown: async () => {
-    await Promise.all([killSpeculos(), killAnvil()]);
     resetIndexer();
+    await Promise.all([killSpeculos(), killAnvil()]);
   },
 };

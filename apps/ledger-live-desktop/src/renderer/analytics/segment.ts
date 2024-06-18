@@ -16,6 +16,7 @@ import {
   sharePersonalizedRecommendationsSelector,
   hasSeenAnalyticsOptInPromptSelector,
   trackingEnabledSelector,
+  developerModeSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
 import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
@@ -71,6 +72,11 @@ const getPtxAttributes = () => {
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
+  const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
+  const ptxSwapLiveAppDemoOne = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
+  const ptxSwapThorswapProvider = analyticsFeatureFlagMethod("ptxSwapThorswapProvider")?.enabled;
+  const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
+
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
   const isBatch2Enabled: boolean =
@@ -90,6 +96,10 @@ const getPtxAttributes = () => {
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxSwapMoonpayProviderEnabled,
+    ptxSwapLiveAppDemoZero,
+    ptxSwapLiveAppDemoOne,
+    ptxSwapThorswapProvider,
+    ptxSwapExodusProvider,
   };
 };
 
@@ -98,8 +108,10 @@ const getMandatoryProperties = (store: ReduxStore) => {
   const analyticsEnabled = shareAnalyticsSelector(state);
   const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
+  const devModeEnabled = developerModeSelector(state);
 
   return {
+    devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,
@@ -115,13 +127,7 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
-  const {
-    isBatch1Enabled,
-    isBatch2Enabled,
-    isBatch3Enabled,
-    stakingProvidersEnabled,
-    ptxSwapMoonpayProviderEnabled,
-  } = getPtxAttributes();
+  const ptxAttributes = getPtxAttributes();
 
   const deviceInfo = device
     ? {
@@ -174,11 +180,7 @@ const extraProperties = (store: ReduxStore) => {
     hasInfinityPass,
     hasSeenMarketWidget: getMarketWidgetAnalytics(),
     modelIdList: devices,
-    stakingProvidersEnabled,
-    isBatch1Enabled,
-    isBatch2Enabled,
-    isBatch3Enabled,
-    ptxSwapMoonpayProviderEnabled,
+    ...ptxAttributes,
     ...deviceInfo,
   };
 };

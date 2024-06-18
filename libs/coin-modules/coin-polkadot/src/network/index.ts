@@ -16,6 +16,8 @@ import {
 } from "./sidecar";
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
+import network from "@ledgerhq/live-network/network";
+import { getCoinConfig } from "../config";
 
 type PolkadotAPIAccount = {
   blockHeight: number;
@@ -67,6 +69,31 @@ const isControllerAddress = makeLRUCache(
 const isElectionClosed = makeLRUCache(sidecarIsElectionClosed, () => "", minutes(1));
 const isNewAccount = makeLRUCache(sidecarIsNewAccount, address => address, minutes(1));
 
+const metadataHash = async (): Promise<string> => {
+  const res: any = await network({
+    method: "POST",
+    url: getCoinConfig().metadataHash.url,
+    data: {
+      id: "dot",
+    },
+  });
+  return res.data.metadataHash;
+};
+
+const shortenMetadata = async (transaction: string): Promise<string> => {
+  const res: any = await network({
+    method: "POST",
+    url: getCoinConfig().metadataShortener.url,
+    data: {
+      chain: {
+        id: "dot",
+      },
+      txBlob: transaction,
+    },
+  });
+  return res.data.txMetadata;
+};
+
 export default {
   getAccount: async (address: string): Promise<PolkadotAPIAccount> => sidecardGetAccount(address),
   getOperations: bisonGetOperations,
@@ -82,6 +109,8 @@ export default {
   isControllerAddress,
   isElectionClosed,
   isNewAccount,
+  metadataHash,
+  shortenMetadata,
   submitExtrinsic: async (extrinsic: string) => sidecarSubmitExtrinsic(extrinsic),
   verifyValidatorAddresses: async (validators: string[]): Promise<string[]> =>
     sidecarVerifyValidatorAddresses(validators),

@@ -369,6 +369,9 @@
     "InvalidRecipient": {
       "title": "Invalid recipient"
     },
+    "InvalidExplorerResponse": {
+      "title": "Invalid response from {{currencyName}} explorer"
+    },
     "LanguageInstallRefusedOnDevice": {
       "title": "Language installation refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -1335,7 +1338,8 @@
       "title": "Welcome back",
       "subtitle": "Select how you’d like to access your wallet:",
       "connect": "Connect your Ledger",
-      "sync": "Sync with Ledger Live desktop"
+      "sync": "Sync with Ledger Live desktop",
+      "walletSync": "Sync with another Ledger Live"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -2749,9 +2753,9 @@
       "developerMode": "Developer mode",
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
       "analytics": "Analytics",
-      "analyticsDesc": "Enable analytics to help Ledger improve user experience.",
+      "analyticsDesc": "Enable Ledger to track app usage data to help measure Ledger Live’s performance and enhance both the app and your experience.",
       "personalizedRecommendations": "Personalized experience",
-      "personalizedRecommendationsDesc": "Receive personalised recommendations that match your preferences.",
+      "personalizedRecommendationsDesc": "Enable Ledger to track app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger improve user experience",
@@ -6579,18 +6583,18 @@
     "variantA": {
       "main": {
         "title": "Help us improve and personalize your experience",
-        "subtitle": "Sharing your Ledger Live data helps us understand your preferences, show content that’s relevant to you, and fix technical issues.",
+        "subtitle": "Sharing your Ledger Live data helps us understand your preferences and show content that's relevant to you.",
         "content": {
           "able": {
-            "title": "With your consent, Ledger will be able to track:",
-            "diagAndUsage": "Analytics data, including page visits, clicks.",
-            "personnalizationData": "Personalization data including clicks, page visits, conversion data."
+            "title": "With your consent, Ledger will be able to track data about how you use Ledger Live (including page visits and clicks):",
+            "diagAndUsage": "To measure the performance of Ledger Live and enhance both the app and your experience (Analytics).",
+            "personnalizationData": "To provide you with personalized recommendations and content tailored to your preferences, as well as to help us measure the effectiveness of our marketing campaigns (Personalization)."
           },
           "unable": {
-            "title": "Ledger will never track information regarding:",
+            "title": "Ledger Live will never track information regarding:",
             "adresses": "Your assets.",
             "balance": "Your portfolio.",
-            "personnalInfos": "Your personal identifying Information."
+            "personnalInfos": "Your personal identifying information (such as your name or your email address)."
           },
           "moreOptions": "Manage your preferences",
           "ctas": {
@@ -6606,12 +6610,12 @@
       "details": {
         "title": "Manage your preferences",
         "analytics": {
-          "title": "Analytics data",
-          "description": "To help improve Ledger Live, share app’s analytics data, including page visits, clicks."
+          "title": "Analytics",
+          "description": "To measure Ledger Live’s performance and improve both the app and your experience, we share usage data, including page visits and clicks."
         },
         "personalizedExp": {
-          "title": "Personalization data",
-          "description": "To get personalized recommendations, share app’s personalization data including, conversion data, clicks, page visits."
+          "title": "Personalization",
+          "description": "To receive personalized recommendations and content that match your preferences and to help us measure the performance of our marketing campaigns, we share app usage data, including clicks, page visits, and conversion data."
         },
         "ctas": {
           "notNow": "Not now",

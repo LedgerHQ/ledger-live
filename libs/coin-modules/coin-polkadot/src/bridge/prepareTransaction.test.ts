@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import prepareTransaction from "./prepareTransaction";
 import { faker } from "@faker-js/faker";
+import { getCoinConfig } from "../config";
 
 const mockCraftTransaction = jest.fn();
 const mockEstimateFees = jest.fn();
@@ -10,7 +11,34 @@ jest.mock("../logic", () => ({
   craftTransaction: () => mockCraftTransaction(),
 }));
 
+jest.mock("../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
 describe("prepareTransaction", () => {
+  beforeAll(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        status: {
+          type: "active",
+        },
+        sidecar: {
+          url: "https://polkadot-sidecar.coin.ledger.com",
+          credentials: "",
+        },
+        staking: {
+          electionStatusThreshold: 25,
+        },
+        metadataShortener: {
+          url: "https://api.zondax.ch/polkadot/transaction/metadata",
+        },
+        metadataHash: {
+          url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+        },
+        runtimeUpgraded: false,
+      };
+    });
+  });
+
   afterEach(() => {
     mockCraftTransaction.mockClear();
     mockEstimateFees.mockClear();

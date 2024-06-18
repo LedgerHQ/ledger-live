@@ -457,8 +457,8 @@ const tron: CurrenciesData<Transaction> = {
             warnings: {
               fee: new TronUnexpectedFees("Estimated fees"),
             },
-            totalSpent: new BigNumber("2000000"),
-            estimatedFees: new BigNumber("1000000"),
+            totalSpent: new BigNumber("2100000"),
+            estimatedFees: new BigNumber("1100000"),
           },
         },
         {
