@@ -10,6 +10,7 @@ import DeviceActionStep from "./02-DeviceActionStep";
 import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrustchain";
 import ActivationFinalStep from "./04-ActivationFinalStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import ErrorStep from "./05-ActivationOrSyncError";
 
 const WalletSyncActivation = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,8 @@ const WalletSyncActivation = () => {
         return <ActivationFinalStep isNewBackup={true} />;
       case Step.SynchronizationFinal:
         return <ActivationFinalStep isNewBackup={false} />;
+      case Step.SynchronizationError:
+        return <ErrorStep />;
     }
   };
 

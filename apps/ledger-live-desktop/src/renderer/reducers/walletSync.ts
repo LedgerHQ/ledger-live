@@ -23,6 +23,7 @@ export enum Step {
   CreateOrSynchronizeTrustChain = "CreateOrSynchronizeTrustChain",
   ActivationFinal = "ActivationFinal",
   SynchronizationFinal = "SynchronizationFinal",
+  SynchronizationError = "SynchronizationError",
 
   //Synchronize
   SynchronizeMode = "SynchronizeMode",

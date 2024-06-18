@@ -26,6 +26,7 @@ export const FlowOptions: Record<
       3: Step.CreateOrSynchronizeTrustChain,
       4: Step.ActivationFinal,
       5: Step.SynchronizationFinal,
+      6: Step.SynchronizationError,
     },
   },
   [Flow.Synchronize]: {

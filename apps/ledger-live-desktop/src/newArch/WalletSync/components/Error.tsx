@@ -1,12 +1,13 @@
 import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 
 type Props = {
   title?: string;
   description?: string;
+  cta?: string;
+  onClick?: () => void;
 };
 
 const Container = styled(Box)`
@@ -19,9 +20,7 @@ const Container = styled(Box)`
   justify-content: center;
 `;
 
-export const Error = ({ title, description }: Props) => {
-  const tryAgain = () => console.log("try again");
-  const { t } = useTranslation();
+export const Error = ({ title, description, cta, onClick }: Props) => {
   const { colors } = useTheme();
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
@@ -34,10 +33,11 @@ export const Error = ({ title, description }: Props) => {
       <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
         {description}
       </Text>
-
-      <ButtonV3 variant="shade" onClick={tryAgain}>
-        {t("walletSync.error.cta")}
-      </ButtonV3>
+      {cta && onClick && (
+        <ButtonV3 variant="shade" onClick={onClick}>
+          {cta}
+        </ButtonV3>
+      )}
     </Flex>
   );
 };
