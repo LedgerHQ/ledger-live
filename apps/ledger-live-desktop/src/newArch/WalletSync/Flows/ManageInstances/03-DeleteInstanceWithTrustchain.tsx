@@ -21,6 +21,7 @@ export default function DeleteInstanceWithTrustchain({ instance }: Props) {
 
   const onRetry = () =>
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
+
   useEffect(() => {
     if (instance) {
       removeMemberMutation.mutateAsync(instance);

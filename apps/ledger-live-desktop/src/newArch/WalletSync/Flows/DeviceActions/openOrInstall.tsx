@@ -6,7 +6,7 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 
-const APP_NAME = "Trustchain";
+const APP_NAME = "Ledger Sync";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 

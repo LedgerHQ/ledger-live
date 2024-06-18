@@ -12,13 +12,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from, lastValueFrom } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
-import { MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
+import { JWT, MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
+import { randomUUID } from "crypto";
 
 enum QueryKey {
   getMembers = "useGetMembers",
   deleteMember = "removeMember",
+  auth = "auth",
 }
 
 export function runWithDevice<T>(
@@ -28,23 +30,22 @@ export function runWithDevice<T>(
   return lastValueFrom(withDevice(deviceId || "")(transport => from(fn(transport))));
 }
 
-const defaultContext = { applicationId: 16, name: "Ledger Sync LLD" }; // TODO : get name dynamically depending on the platform
+const defaultContext = { applicationId: 16, name: `LLD Sync ${randomUUID()}` }; // TODO : get name dynamically depending on the platform
 
 export function useLiveAuthenticate() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
 
+  const dispatch = useDispatch();
+
   if (!trustchain || !memberCredentials) {
-    throw new Error("trustchain or memberCredentials is missing");
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
   }
 
   const { isLoading: isLiveJWTLoading, data: liveJWT } = useQuery({
-    queryKey: [trustchain, memberCredentials],
-    queryFn: () => sdk.auth(trustchain, memberCredentials),
-    // refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    // staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    // select: data => format(data, cryptoCurrenciesList),
+    queryKey: [QueryKey.auth],
+    queryFn: () => sdk.auth(trustchain as Trustchain, memberCredentials as MemberCredentials),
   });
 
   return { isLiveJWTLoading, liveJWT, trustchain, memberCredentials };
@@ -53,10 +54,10 @@ export function useLiveAuthenticate() {
 export function useGetMembers() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
-  const memberCredentials = useSelector(memberCredentialsSelector);
+  const dispatch = useDispatch();
 
-  if (!trustchain || !memberCredentials) {
-    throw new Error("trustchain or memberCredentials is missing");
+  if (!trustchain) {
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
   }
 
   const { isLiveJWTLoading, liveJWT } = useLiveAuthenticate();
@@ -65,8 +66,10 @@ export function useGetMembers() {
     data: instances,
     isError,
   } = useQuery({
-    queryKey: [QueryKey.getMembers, liveJWT?.accessToken, trustchain.rootId],
-    queryFn: () => liveJWT && sdk.getMembers(liveJWT, trustchain),
+    enabled: !!liveJWT && !!trustchain,
+    queryKey: [QueryKey.getMembers, trustchain],
+    queryFn: () => sdk.getMembers(liveJWT as JWT, trustchain as Trustchain),
+    refetchOnMount: true,
   });
 
   return { isMembersLoading: isMembersLoading || isLiveJWTLoading, instances, isError };
@@ -77,6 +80,7 @@ export function useRemoveMembers() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
+  let canGoNext = false;
 
   const queryClient = useQueryClient();
   const removeMember = async (member: TrustchainMember) => {
@@ -89,14 +93,22 @@ export function useRemoveMembers() {
         trustchain as Trustchain,
         memberCredentials as MemberCredentials,
         member,
+        {
+          onStartRequestUserInteraction: () => {},
+          onEndRequestUserInteraction: () => {
+            canGoNext = true;
+          },
+        },
       ),
-    ).then(({ jwt, trustchain }) => {
-      queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
-      dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
-      if (member.id === memberCredentials?.pubkey) {
-        dispatch(resetTrustchainStore());
-      } else {
-        dispatch(setTrustchain(trustchain));
+    ).then(async ({ trustchain }) => {
+      if (canGoNext) {
+        dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
+        if (member.id === memberCredentials?.pubkey) {
+          dispatch(resetTrustchainStore());
+        } else {
+          dispatch(setTrustchain(trustchain));
+        }
+        await queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
       }
     });
   };
@@ -104,8 +116,6 @@ export function useRemoveMembers() {
   const removeMemberMutation = useMutation({
     mutationFn: (member: TrustchainMember) => removeMember(member),
     mutationKey: [QueryKey.deleteMember],
-    onSuccess: () =>
-      dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted })),
     onError: error => console.error("Error while removing member", error),
   });
 

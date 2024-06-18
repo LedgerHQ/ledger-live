@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useFlows } from "LLD/WalletSync/Flows/useFlows";
@@ -56,14 +56,20 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
     }
   };
 
+  const isStepImpacted = useMemo(
+    () =>
+      [Step.DeleteInstanceWithTrustChain, Step.InstanceSuccesfullyDeleted].includes(currentStep),
+    [currentStep],
+  );
+
   return (
     <Flex
       flexDirection="column"
       height="100%"
       rowGap="48px"
-      paddingX={currentStep === Step.DeleteInstanceWithTrustChain ? "64px" : undefined}
-      alignItems={currentStep === Step.DeleteInstanceWithTrustChain ? "center" : undefined}
-      justifyContent={currentStep === Step.DeleteInstanceWithTrustChain ? "center" : undefined}
+      paddingX={isStepImpacted ? "64px" : undefined}
+      alignItems={isStepImpacted ? "center" : undefined}
+      justifyContent={isStepImpacted ? "center" : undefined}
     >
       {getStep()}
     </Flex>
