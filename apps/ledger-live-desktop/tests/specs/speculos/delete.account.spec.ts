@@ -20,7 +20,7 @@ const accounts: Account[] = [
 ];
 
 for (const [i, account] of accounts.entries()) {
-  test.describe.parallel("Delete Accounts", () => {
+  test.describe("Delete Accounts", () => {
     test.use({
       userdata: "speculos-tests-app",
       testName: `deleteAccount_${account.currency.uiName}`,

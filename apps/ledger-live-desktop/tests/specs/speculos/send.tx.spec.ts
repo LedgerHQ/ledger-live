@@ -13,7 +13,7 @@ const transactions = [
 
 //This test might sporadically fail due to getAppAndVersion issue - Jira: LIVE-12581
 for (const [i, transaction] of transactions.entries()) {
-  test.describe.parallel("Send Approve", () => {
+  test.describe("Send Approve", () => {
     test.use({
       userdata: "speculos-tests-app",
       testName: `sendApprove_${transaction.accountToDebit.currency.uiName}`,

@@ -20,7 +20,7 @@ const currencies: Currency[] = [
 ];
 
 for (const [i, currency] of currencies.entries()) {
-  test.describe.parallel("Add Accounts", () => {
+  test.describe("Add Accounts", () => {
     test.use({
       userdata: "skip-onboarding",
       testName: `addAccount_${currency.uiName}`,
