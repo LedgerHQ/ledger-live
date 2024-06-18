@@ -32,7 +32,7 @@ describe("test transactin pagination", () => {
   }, 120000);
   it("should fetch transaction correctly when there are multiple pages", async () => {
     let txs = (xpub.storage as any).txs as TX[];
-    txs = txs.filter((tx) => tx.address === "SXsfhxNuq2eUZMRrNXrCvuaFcGSJKhMvzj"); // this address has more than 2000 txs
+    txs = txs.filter(tx => tx.address === "SXsfhxNuq2eUZMRrNXrCvuaFcGSJKhMvzj"); // this address has more than 2000 txs
     expect(txs.length).toBeGreaterThan(2000);
   });
 });
