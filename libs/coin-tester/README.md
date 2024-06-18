@@ -72,7 +72,8 @@ If you want you can generate a new seed using [this tool](https://iancoleman.io/
 To coin Polkadot Coin tester we will need to build the local test node Docker image.
 
 ```sh
-pnpm coin:polkadot coin-tester:build
+cd libs/coin-modules/coin-polkadot/src/test/coin-tester
+make build
 ```
 ## Run tests for a coin module {#runtests}
 

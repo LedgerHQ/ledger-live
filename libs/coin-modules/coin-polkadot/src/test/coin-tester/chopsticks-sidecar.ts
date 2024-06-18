@@ -48,7 +48,7 @@ export async function spawnChopsticksAndSidecar() {
 }
 
 export const killChopsticksAndSidecar = async (): Promise<void> => {
-  console.log("Stopping anvil...");
+  console.log("Stopping chopsticks...");
   await compose.down({
     cwd,
     log: true,
