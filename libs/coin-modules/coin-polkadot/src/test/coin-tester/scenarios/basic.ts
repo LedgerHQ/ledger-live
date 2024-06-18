@@ -12,7 +12,7 @@ import {
 } from "../../../types/bridge";
 import { createBridges } from "../../../bridge";
 import { makeAccount } from "../../fixtures";
-import { defaultNanoApp } from "../scenarios.test";
+import { defaultNanoApp, LOCAL_TESTNODE_URL, SIDECAR_BASE_URL } from "../scenarios.test";
 import { PolkadotCoinConfig } from "../../../config";
 import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 import { polkadot } from "./utils";
@@ -214,19 +214,16 @@ function getTransactions() {
   ];
 }
 
-const wsProvider = new WsProvider("ws://127.0.0.1:8000", false);
+const wsProvider = new WsProvider(LOCAL_TESTNODE_URL, false);
 let api: ApiPromise;
 let unsubscribeNewBlockListener: () => void;
-
-const POLKADOT_NODE_URL = "ws://127.0.0.1:8000";
-const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
 
 const coinConfig: PolkadotCoinConfig = {
   status: {
     type: "active",
   },
   node: {
-    url: POLKADOT_NODE_URL,
+    url: LOCAL_TESTNODE_URL,
   },
   sidecar: {
     url: SIDECAR_BASE_URL,
