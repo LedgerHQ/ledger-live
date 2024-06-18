@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import useAddAccountViewModel from "./useAddAccountViewModel";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
@@ -10,8 +10,11 @@ type ViewProps = {
   isAddAccountDrawerVisible: boolean;
   doesNotHaveAccount?: boolean;
   currency?: CryptoCurrency | TokenCurrency | null;
+  isWalletSyncDrawerVisible: boolean;
   onCloseAddAccountDrawer: () => void;
   reopenDrawer: () => void;
+  onRequestToOpenWalletSyncDrawer: () => void;
+  onCloseWalletSyncDrawer: () => void;
 };
 
 type AddAccountProps = {
@@ -26,21 +29,11 @@ function View({
   isAddAccountDrawerVisible,
   doesNotHaveAccount,
   currency,
+  isWalletSyncDrawerVisible,
   onCloseAddAccountDrawer,
-  reopenDrawer,
+  onRequestToOpenWalletSyncDrawer,
+  onCloseWalletSyncDrawer,
 }: ViewProps) {
-  const [isWalletSyncDrawerVisible, setWalletSyncDrawerVisible] = useState(false);
-
-  const onRequestToOpenWalletSyncDrawer = () => {
-    onCloseAddAccountDrawer();
-    setWalletSyncDrawerVisible(true);
-  };
-
-  const onCloseWalletSyncDrawer = () => {
-    setWalletSyncDrawerVisible(false);
-    reopenDrawer();
-  };
-
   return (
     <>
       <QueuedDrawer
