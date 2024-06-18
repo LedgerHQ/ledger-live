@@ -3,7 +3,7 @@
 - [Setup](#setup)
 - [Run tests for a coin module](#runtests)
 
-## <a name="setup"></a>Setup
+## Setup {#setup}
 
 ### Prerequisites
 
@@ -73,7 +73,7 @@ To coin Polkadot Coin tester we will need to build the local test node Docker im
 pnpm coin:polkadot coin-tester:build
 ```
 
-## <a name="runtests"></a>Run tests for a coin module
+## Run tests for a coin module {#runtests}
 
 ```sh
 pnpm coin:<coin-module-name> coin-tester
