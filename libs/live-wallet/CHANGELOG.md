@@ -1,5 +1,17 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#7079](https://github.com/LedgerHQ/ledger-live/pull/7079) [`9f33fc1`](https://github.com/LedgerHQ/ledger-live/commit/9f33fc14e0628a68d32957171aa879c30041f27e) Thanks [@KVNLS](https://github.com/KVNLS)! - Keep previously renamed accounts alias
+
+### Patch Changes
+
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761)]:
+  - @ledgerhq/types-live@6.48.1-next.0
+  - @ledgerhq/coin-framework@0.15.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes
