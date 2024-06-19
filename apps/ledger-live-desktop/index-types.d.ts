@@ -20,6 +20,9 @@ type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
 type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
 type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
 type UpdateStatus = import("./src/main/updater/init").UpdateStatus;
+type FeatureId = import("@ledgerhq/types-live").FeatureId;
+type Feature = import("@ledgerhq/types-live").Feature;
+type EnvName = import("@ledgerhq/live-env").EnvName;
 
 interface RawEvents {
   [key: string]: unknown;
@@ -59,6 +62,7 @@ interface Window {
   analytics: any;
 
   getAllFeatureFlags: (appLanguage: string) => Partial<{ [key in FeatureId]: Feature }>;
+  getAllEnvs: () => { [key in EnvName]: unknown };
 
   // for mocking purposes apparently?
   // eslint-disable-next-line

@@ -44,7 +44,7 @@ export const formatFlagsData = (data: Partial<{ [key in FeatureId]: Feature }>) 
   return allureData;
 };
 
-export const formatEnvData = (data: { [key in EnvName]: any }) => {
+export const formatEnvData = (data: { [key in EnvName]: unknown }) => {
   let allureData = "";
   for (const [key, value] of Object.entries(data)) {
     allureData += `ENV.${key} = ${value}\n`;

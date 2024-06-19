@@ -1,6 +1,5 @@
 import fs from "fs";
 import test from "../../fixtures/common";
-import { getAllEnvs } from "@ledgerhq/live-env";
 import { allure } from "allure-playwright";
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
 import { Application } from "tests/page";
@@ -16,9 +15,11 @@ test.describe.parallel("Accounts @smoke", () => {
     const app = new Application(page);
     await app.portfolio.expectPortfolioEmpty();
 
-    const appEnvs = getAllEnvs();
     const featureFlags = await page.evaluate(() => {
       return window.getAllFeatureFlags("en");
+    });
+    const appEnvs = await page.evaluate(() => {
+      return window.getAllEnvs();
     });
 
     await allure.attachment("Feature Flags", JSON.stringify(featureFlags), "application/json");
