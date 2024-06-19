@@ -65,11 +65,6 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       res = new crypto.Zen({ network });
       break;
     }
-    case "vertcoin": {
-      const network = coininfo.vertcoin.main.toBitcoinJS();
-      res = new crypto.Vertcoin({ network });
-      break;
-    }
     case "peercoin": {
       const network = coininfo.peercoin.main.toBitcoinJS();
       res = new crypto.Peercoin({ network });

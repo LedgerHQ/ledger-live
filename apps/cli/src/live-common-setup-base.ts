@@ -36,7 +36,6 @@ setSupportedCurrencies([
   "komodo",
   "pivx",
   "zencash",
-  "vertcoin",
   "peercoin",
   "bitcoin_testnet",
   "ethereum_sepolia",

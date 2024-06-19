@@ -27,7 +27,6 @@ export type Currency =
   | "komodo"
   | "pivx"
   | "zencash"
-  | "vertcoin"
   | "peercoin"
   | "stealthcoin"
   | "decred"

@@ -438,20 +438,6 @@ const qtum: AppSpec<Transaction> = {
   }),
   minViableAmount: minQtum,
 };
-const vertcoin: AppSpec<Transaction> = {
-  name: "Vertcoin",
-  currency: getCryptoCurrencyById("vertcoin"),
-  dependency: "Bitcoin Legacy",
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Vertcoin",
-    appVersion: "2.1.0-rc",
-  },
-  genericDeviceAction: acceptTransaction,
-  test: genericTest,
-  mutations: bitcoinLikeMutations(),
-  minViableAmount: genericMinimalAmount,
-};
 
 const minDash = parseCurrencyUnit(getCryptoCurrencyById("dash").units[0], "0.001");
 const dash: AppSpec<Transaction> = {
@@ -603,7 +589,6 @@ export default {
   peercoin,
   pivx,
   qtum,
-  vertcoin,
   zcash,
   zencash,
   decred,

@@ -40,7 +40,6 @@ setSupportedCurrencies([
   "komodo",
   "pivx",
   "zencash",
-  "vertcoin",
   "peercoin",
   "stealthcoin",
   "decred",

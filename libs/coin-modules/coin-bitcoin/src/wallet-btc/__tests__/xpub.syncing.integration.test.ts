@@ -111,14 +111,6 @@ describe("xpub integration sync", () => {
       currencyId: "zencash",
     },
     {
-      xpub: "xpub6DMytGS7yNiSgVgexAQnyStpPcaLTXfZ8CVCX65DmsyJctLxem4ez1b2HrAtXviiDcp8Bjc9TKsZ8ewfsYPQGiEo7oUEDVd7YEXo5xQru1t",
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 1,
-      balance: 20000000,
-      network: coininfo.vertcoin.main.toBitcoinJS(),
-      currencyId: "vertcoin",
-    },
-    {
       xpub: "xpub6DFFkxo83nYyF7ZHsZYRhDLa6GSK2rtaAZHR66H2YTzBkgBPy6yK5VCD4YVCSUjd1sFe18d17rGveeuSJ2Prn7k9wcwn3BWuZpSE48yThEE",
       derivationMode: DerivationModes.LEGACY,
       addresses: 1,

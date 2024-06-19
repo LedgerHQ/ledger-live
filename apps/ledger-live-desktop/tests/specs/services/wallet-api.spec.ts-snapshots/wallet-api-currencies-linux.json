@@ -361,15 +361,6 @@
   },
   {
     "type": "CryptoCurrency",
-    "id": "vertcoin",
-    "ticker": "VTC",
-    "name": "Vertcoin",
-    "family": "bitcoin",
-    "color": "#1b5c2e",
-    "decimals": 8
-  },
-  {
-    "type": "CryptoCurrency",
     "id": "peercoin",
     "ticker": "PPC",
     "name": "Peercoin",

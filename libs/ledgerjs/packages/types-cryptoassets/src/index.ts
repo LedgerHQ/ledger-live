@@ -112,7 +112,6 @@ export type CryptoCurrencyId =
   | "ubiq"
   | "umee"
   | "vechain"
-  | "vertcoin"
   | "wanchain"
   | "waves"
   | "zcash"

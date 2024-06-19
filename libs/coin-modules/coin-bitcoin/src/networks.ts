@@ -172,20 +172,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "vertcoin") {
-    return {
-      identifier: "vtc",
-      P2PKHVersion: Buffer.from([0x47]),
-      P2SHVersion: Buffer.from([0x05]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xb2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "VertCoin Signed Message:\n",
-      usesTimestampedTransaction: false,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
   } else if (networkName === "dash") {
     return {
       identifier: "dash",

@@ -12,7 +12,6 @@ import dogecoin from "./datasets/dogecoin";
 import zencash from "./datasets/zencash";
 import litecoin from "./datasets/litecoin";
 import pivx from "./datasets/pivx";
-import vertcoin from "./datasets/vertcoin";
 
 import zcash from "./datasets/zcash";
 /*
@@ -43,7 +42,6 @@ export const dataset: DatasetTest<Transaction> = {
     zencash,
     litecoin,
     pivx,
-    vertcoin,
     zcash,
   },
 };

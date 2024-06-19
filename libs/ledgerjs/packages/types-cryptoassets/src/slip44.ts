@@ -93,7 +93,6 @@ export enum CoinType {
   TRON = 195,
   UBIQ = 108,
   VECHAIN = 818,
-  VERTCOIN = 28,
   WANCHAIN = 5718350,
   WAVES = 5741564,
   ZCASH = 133,

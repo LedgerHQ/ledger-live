@@ -3002,43 +3002,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  vertcoin: {
-    type: "CryptoCurrency",
-    id: "vertcoin",
-    coinType: CoinType.VERTCOIN,
-    name: "Vertcoin",
-    managerAppName: "Vertcoin",
-    ticker: "VTC",
-    scheme: "vertcoin",
-    color: "#1b5c2e",
-    supportsSegwit: true,
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 71,
-      P2SH: 5,
-      XPUBVersion: 0x0488b21e,
-    },
-    units: [
-      {
-        name: "vertcoin",
-        code: "VTC",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://vtcblocks.com/tx/$hash",
-        address: "https://vtcblocks.com/address/$address",
-      },
-    ],
-    explorerId: "vtc",
-  },
   wanchain: {
     type: "CryptoCurrency",
     id: "wanchain",

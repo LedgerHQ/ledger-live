@@ -92,7 +92,6 @@ type CoinName =
   | "qtum"
   | "rvn"
   | "rdd"
-  | "vertcoin"
   | "x42"
   | "zcash";
 declare const coininfo: Record<CoinName, Network> & { bitcoin: BitcoinNetwork };
