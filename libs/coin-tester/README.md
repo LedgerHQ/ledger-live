@@ -43,7 +43,7 @@ docker build -f Dockerfile -t speculos:latest .
 
 ### Environment variables
 
-- Generate a [Github token classic](https://github.com/settings/tokens) and make sure to authorize Ledger SSO
+- Generate a [Github token classic](https://github.com/settings/tokens) and give it full "repo" and "project" rights. Make sure to authorize Ledger SSO.
 
 - Go in the coin-module you want to test and create a `.env` in the folder where your test resides.
 For exemple for `coin-evm` create the file should be located in: `src/__test__/coin-tester/.env`.
@@ -81,6 +81,6 @@ make build
 pnpm coin:<coin-module-name> coin-tester
 
 # e.g
-# pnpm coin:ethereum coin-tester
+# pnpm coin:evm coin-tester
 # pnpm coin:polkadot coin-tester
 ```

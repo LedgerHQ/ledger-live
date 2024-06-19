@@ -13,7 +13,7 @@ const cwd = path.join(__dirname);
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
 
 function ensureEnv() {
-  const mandatory_env_variables = ["SEED", "API_PORT", "GH_TOKEN"];
+  const mandatory_env_variables = ["SEED", "SPECULOS_API_PORT", "GH_TOKEN"];
   const optional_env_variables = ["SPECULOS_IMAGE"];
 
   if (!mandatory_env_variables.every(variable => !!process.env[variable])) {
