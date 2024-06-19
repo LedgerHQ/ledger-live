@@ -15,6 +15,9 @@ const transformIncludePatterns = [
   "react-native-startup-time",
   "@segment/analytics-react-native",
   "uuid",
+  "react-native-ble-plx",
+  "react-native-android-location-services-dialog-box",
+  "react-native-vector-icons",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
@@ -53,5 +56,6 @@ module.exports = {
     "^react-native$": "<rootDir>/node_modules/react-native",
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
+    "^react-redux": "<rootDir>/node_modules/react-redux",
   },
 };

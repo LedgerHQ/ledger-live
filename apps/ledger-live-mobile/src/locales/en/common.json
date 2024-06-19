@@ -1339,7 +1339,7 @@
       "subtitle": "Select how you’d like to access your wallet:",
       "connect": "Connect your Ledger",
       "sync": "Sync with Ledger Live desktop",
-      "walletSync": "Sync with another Ledger Live"
+      "walletSync": "Sync with another Ledger Live app"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -2291,6 +2291,22 @@
     "import": {
       "title": "Import from desktop",
       "description": "Import asset from Ledger Live Desktop"
+    },
+    "drawer": {
+      "drawerTitleHasAccount": "Add another account",
+      "drawerSubTitle": "Add your assets using your Ledger, or import them directly from your Ledger Live Desktop app.",
+      "import": {
+        "title": "Import from desktop",
+        "description": "Import asset from Ledger Live Desktop"
+      },
+      "add": {
+        "title": "Add with your Ledger",
+        "description": "Create or import your assets using your Ledger device"
+      },
+      "walletSync": {
+        "title": "Import via another Ledger Live app",
+        "description": "Activate Ledger Sync"
+      }
     }
   },
   "byteSize": {

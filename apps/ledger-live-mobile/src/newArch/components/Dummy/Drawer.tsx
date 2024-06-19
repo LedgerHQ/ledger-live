@@ -7,7 +7,7 @@ type Props = {
   handleClose: () => void;
 };
 
-const DummyDrawer = ({ isOpen, handleClose }: Props) => {
+const Drawer = ({ isOpen, handleClose }: Props) => {
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
       <Text>{"Dummy Drawer"}</Text>
@@ -15,4 +15,4 @@ const DummyDrawer = ({ isOpen, handleClose }: Props) => {
   );
 };
 
-export default DummyDrawer;
+export default Drawer;
