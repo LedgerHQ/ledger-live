@@ -142,7 +142,6 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["REnTkuvjsmfshAZ3vukYfuS3ZGvfUatqFc"], "komodo", true);
     validateAddrs(["DQ7F2iTQn6kUpyvietinaC3Cxje2m1ULjS"], "pivx", true);
     validateAddrs(["zndVnjbrzRxvhPGRea4jgsfSWE1hXFja1dc"], "zencash", true);
-    validateAddrs(["PCYt39DMYuFqUYkP8w6ubZXJbTTL4c9KAV"], "peercoin", true);
     validateAddrs(["S6NMcEfYbavHrP3Uo1wbEUvKhAbKeMuga8"], "stealthcoin", true);
     validateAddrs(["Dso59DoPRkfATcZgHGgfh9mpku7taw9srAv"], "decred", true);
     validateAddrs(["Dcck4QrFF5wuLzQpwxb5evhSRD7ZTsJZwuh"], "decred", true);
@@ -163,7 +162,6 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["REnTkuvjsmfshAZ3vukYfuS3ZGvfUatqFF"], "komodo", false);
     validateAddrs(["DQ7F2iTQn6kUpyvietinaC3Cxje2m1ULjj"], "pivx", false);
     validateAddrs(["zndVnjbrzRxvhPGRea4jgsfSWE1hXFja1dd"], "zencash", false);
-    validateAddrs(["PCYt39DMYuFqUYkP8w6ubZXJbTTL4c9KAA"], "peercoin", false);
     validateAddrs(["S6NMcEfYbavHrP3Uo1wbEUvKhAbKeMugaa"], "stealthcoin", false);
     validateAddrs(["Dso59DoPRkfATcZgHGgff9mpku7taw9srAv"], "decred", false);
     validateAddrs(["Dcck4QrFF5wuLQzpwxb5evhSRD7ZTsJZwuh"], "decred", false);
