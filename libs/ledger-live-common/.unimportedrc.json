@@ -70,6 +70,7 @@
     "src/exchange/swap/updateAccountSwapStatus.ts",
     "src/exchange/swap/utils/index.ts",
     "src/exchange/swap/webApp/index.ts",
+    "src/e2e/index.ts",
     "src/explorer.ts",
     "src/explorers.ts",
     "src/families/algorand/tokens.ts",
