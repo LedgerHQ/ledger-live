@@ -12,8 +12,8 @@ import dogecoin from "./datasets/dogecoin";
 import zencash from "./datasets/zencash";
 import litecoin from "./datasets/litecoin";
 import pivx from "./datasets/pivx";
-
 import zcash from "./datasets/zcash";
+
 /*
 import { createBridges } from "./bridge/js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

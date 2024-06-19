@@ -88,7 +88,6 @@ type CoinName =
   | "mon"
   | "nbt"
   | "nmc"
-  | "peercoin"
   | "qtum"
   | "rvn"
   | "rdd"
