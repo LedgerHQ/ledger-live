@@ -15,6 +15,7 @@ const WalletSyncRow = () => {
   const navigation = useNavigation();
 
   const navigateToWalletSyncActivationScreen = useCallback(() => {
+    // Here we need to check if the user has a backup or not to determine the screen to navigate to
     onClickTrack({ button: AnalyticsButton.LedgerSync, page: AnalyticsPage.SettingsGeneral });
     navigation.navigate(ScreenName.WalletSyncActivationSettings);
   }, [navigation, onClickTrack]);

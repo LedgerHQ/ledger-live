@@ -5,10 +5,26 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
+import Drawer from "LLM/components/Dummy/Drawer";
 
 const Activation = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
+
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+
+  const onPressSyncAccounts = () => {
+    // do nothing for the moment
+  };
+
+  const onPressHasAlreadyCreatedAKey = () => {
+    setIsDrawerOpen(true);
+  };
+
+  const onPressCloseDrawer = () => {
+    setIsDrawerOpen(false);
+  };
+
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={24}>
       <TrackScreen />
@@ -28,7 +44,11 @@ const Activation = () => {
           {t("walletSync.activation.screen.description")}
         </Text>
       </Flex>
-      <Actions />
+      <Actions
+        onPressHasAlreadyCreatedAKey={onPressHasAlreadyCreatedAKey}
+        onPressSyncAccounts={onPressSyncAccounts}
+      />
+      <Drawer isOpen={isDrawerOpen} handleClose={onPressCloseDrawer} />
     </Flex>
   );
 };

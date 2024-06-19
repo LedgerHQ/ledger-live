@@ -8,7 +8,12 @@ import {
   AnalyticsFlow,
 } from "LLM/features/WalletSync/hooks/useWalletSyncAnalytics";
 
-const Actions = () => {
+type Props = {
+  onPressSyncAccounts: () => void;
+  onPressHasAlreadyCreatedAKey: () => void;
+};
+
+const Actions = ({ onPressSyncAccounts, onPressHasAlreadyCreatedAKey }: Props) => {
   const { t } = useTranslation();
   const { onClickTrack } = useWalletSyncAnalytics();
 
@@ -18,6 +23,7 @@ const Actions = () => {
       page: AnalyticsPage.ActivateWalletSync,
       flow: AnalyticsFlow.WalletSync,
     });
+    onPressSyncAccounts();
   };
 
   const onPressHasAlreadyAKey = () => {
@@ -26,6 +32,7 @@ const Actions = () => {
       page: AnalyticsPage.ActivateWalletSync,
       flow: AnalyticsFlow.WalletSync,
     });
+    onPressHasAlreadyCreatedAKey();
   };
 
   return (
