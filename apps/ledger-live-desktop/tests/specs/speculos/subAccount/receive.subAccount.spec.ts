@@ -26,7 +26,7 @@ for (const [i, token] of tokens.entries()) {
     });
 
     test(`[${token.tokenName}] Receive Sub Account`, async ({ page }) => {
-      addTmsLink(["B2CQA-640"]); //todo create a new Jira Ticket for this scenario
+      addTmsLink(["B2CQA-640"]); //TODO: create a new Jira Ticket for this scenario
 
       const app = new Application(page);
 
