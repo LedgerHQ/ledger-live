@@ -218,7 +218,7 @@ class BitcoinLikeWallet {
       onDeviceSignatureGranted,
       onDeviceStreaming,
     } = params;
-    let hasTimestamp = params.hasTimestamp;
+    const hasTimestamp = params.hasTimestamp;
     let length = txInfo.outputs.reduce((sum, output) => {
       return sum + 8 + output.script.length + 1;
     }, 1);
