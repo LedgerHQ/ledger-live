@@ -1,5 +1,11 @@
 # @ledgerhq/context-module
 
+## 0.0.2-nightly.2
+
+### Patch Changes
+
+- [#7076](https://github.com/LedgerHQ/ledger-live/pull/7076) [`7d7c327`](https://github.com/LedgerHQ/ledger-live/commit/7d7c32722a539ef6c5097c4ac2ceccaef9fc8053) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix multiple small bugs
+
 ## 0.0.2-nightly.1
 
 ### Patch Changes
