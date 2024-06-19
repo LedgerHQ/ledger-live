@@ -1,6 +1,12 @@
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { APDU } from "../../entities/APDU";
+import {
+  GenerateAesKeyFailed,
+  InternalComputeAesCmacFailed,
+  InvalidChunkLength,
+  InvalidContext,
+} from "../../../errors";
 
 /**
  * Name in documentation: INS_APP_STORAGE_RESTORE_COMMIT
@@ -10,7 +16,7 @@ import type { APDU } from "../../entities/APDU";
  * p2: 0x00
  * lc: 0x00
  */
-const RESTORE_APP_STORAGE_COMMIT: APDU = [0xe0, 0x6e, 0x00, 0x00, Buffer.from([0x00])];
+const RESTORE_APP_STORAGE_COMMIT = [0xe0, 0x6e, 0x00, 0x00] as const;
 
 /**
  * 0x9000: Success.
@@ -23,18 +29,17 @@ const RESTORE_APP_STORAGE_COMMIT: APDU = [0xe0, 0x6e, 0x00, 0x00, Buffer.from([0
 const RESPONSE_STATUS_SET: number[] = [
   StatusCodes.OK,
   StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT,
-  StatusCodes.FAILED_GEN_AES_KEY,
+  StatusCodes.GEN_AES_KEY_FAILED,
   StatusCodes.INTERNAL_COMPUTE_AES_CMAC_FAILED,
-  StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
-  StatusCodes.INVALID_CHUNK_LEN,
+  StatusCodes.DEVICE_IN_RECOVERY_MODE,
+  StatusCodes.INVALID_CHUNK_LENGTH,
 ];
 
 /**
  * Restores the application storage commit.
  *
  * @param transport - The transport object used for communication with the device.
- * @returns A promise that resolves to a string representing the parsed response.
- * @throws {TransportStatusError} If the response status is invalid.
+ * @returns A promise that resolves to void.
  */
 
 export async function restoreAppStorageCommit(transport: Transport): Promise<void> {
@@ -44,7 +49,10 @@ export async function restoreAppStorageCommit(transport: Transport): Promise<voi
   });
   tracer.trace("Start");
 
-  const response = await transport.send(...RESTORE_APP_STORAGE_COMMIT, RESPONSE_STATUS_SET);
+  const apdu: Readonly<APDU> = [...RESTORE_APP_STORAGE_COMMIT, Buffer.from([0x00])];
+
+  const response = await transport.send(...apdu, RESPONSE_STATUS_SET);
+
   parseResponse(response);
 }
 
@@ -53,12 +61,21 @@ export function parseResponse(data: Buffer): void {
     function: "parseResponse@restoreAppStorageCommit",
   });
   const status = data.readUInt16BE(data.length - 2);
-  if (tracer) {
-    tracer.trace("Result status from 0xe06e0000", { status });
-  }
+  tracer.trace("Result status from 0xe06e0000", { status });
 
-  if (status === StatusCodes.OK) {
-    return;
+  switch (status) {
+    case StatusCodes.OK:
+      return;
+    case StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT:
+      throw new InvalidContext("Invalid context, restoreAppStorageInit must be called first.");
+    case StatusCodes.GEN_AES_KEY_FAILED:
+      throw new GenerateAesKeyFailed("Internal error, crypto operation failed.");
+    case StatusCodes.INTERNAL_COMPUTE_AES_CMAC_FAILED:
+      throw new InternalComputeAesCmacFailed("Failed to verify backup authenticity.");
+    case StatusCodes.DEVICE_IN_RECOVERY_MODE:
+      break;
+    case StatusCodes.INVALID_CHUNK_LENGTH:
+      throw new InvalidChunkLength("Invalid size of the restored app storage.");
   }
 
   throw new TransportStatusError(status);

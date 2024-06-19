@@ -1,6 +1,7 @@
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { APDU } from "../../entities/APDU";
+import { AppNotFound, InvalidAppNameLength, InvalidBackupLength, PinNotSet } from "../../../errors";
 
 /**
  * Name in documentation: INS_APP_STORAGE_RESTORE_INIT
@@ -16,7 +17,7 @@ import type { APDU } from "../../entities/APDU";
  *    1. LC is 0x0b
  *    2. DATA is 0x00007000 0x626974636f696e
  */
-const RESTORE_APP_STORAGE_INIT: APDU = [0xe0, 0x6c, 0x00, 0x00, undefined];
+const RESTORE_APP_STORAGE_INIT = [0xe0, 0x6c, 0x00, 0x00] as const;
 
 /**
  * 0x9000: Success.
@@ -30,11 +31,11 @@ const RESTORE_APP_STORAGE_INIT: APDU = [0xe0, 0x6c, 0x00, 0x00, undefined];
 const RESPONSE_STATUS_SET: number[] = [
   StatusCodes.OK,
   StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT,
-  StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
+  StatusCodes.DEVICE_IN_RECOVERY_MODE,
   StatusCodes.USER_REFUSED_ON_DEVICE,
   StatusCodes.PIN_NOT_SET,
-  StatusCodes.INVALID_APP_NAME_LEN,
-  StatusCodes.INVALID_BACKUP_LEN,
+  StatusCodes.INVALID_APP_NAME_LENGTH,
+  StatusCodes.INVALID_BACKUP_LENGTH,
 ];
 
 /**
@@ -43,8 +44,7 @@ const RESPONSE_STATUS_SET: number[] = [
  * @param transport - The transport object used for communication with the device.
  * @param appName - The name of the application to restore the storage for.
  * @param backupSize - The size of the backup to restore.
- * @returns A promise that resolves to a string representing the parsed response.
- * @throws {TransportStatusError} If the response status is invalid.
+ * @returns A promise that resolves to void.
  */
 export async function restoreAppStorageInit(
   transport: Transport,
@@ -62,9 +62,10 @@ export async function restoreAppStorageInit(
     Buffer.from(backupSize.toString(16).padStart(8, "0"), "hex"), // BACKUP_LEN
     Buffer.from(appName, "ascii"), // APP_NAME
   ]);
-  RESTORE_APP_STORAGE_INIT[4] = params;
+  const apdu: Readonly<APDU> = [...RESTORE_APP_STORAGE_INIT, params];
 
-  const response = await transport.send(...RESTORE_APP_STORAGE_INIT, RESPONSE_STATUS_SET);
+  const response = await transport.send(...apdu, RESPONSE_STATUS_SET);
+
   parseResponse(response);
 }
 
@@ -73,12 +74,22 @@ export function parseResponse(data: Buffer): void {
     function: "parseResponse@restoreAppStorageInit",
   });
   const status = data.readUInt16BE(data.length - 2);
-  if (tracer) {
-    tracer.trace("Result status from 0xe06c0000", { status });
-  }
+  tracer.trace("Result status from 0xe06c0000", { status });
 
-  if (status === StatusCodes.OK) {
-    return;
+  switch (status) {
+    case StatusCodes.OK:
+      return;
+    case StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT:
+      throw new AppNotFound("Application not found.");
+    case StatusCodes.DEVICE_IN_RECOVERY_MODE:
+    case StatusCodes.USER_REFUSED_ON_DEVICE:
+      break;
+    case StatusCodes.PIN_NOT_SET:
+      throw new PinNotSet("Invalid consent, PIN is not set.");
+    case StatusCodes.INVALID_APP_NAME_LENGTH:
+      throw new InvalidAppNameLength("Invalid application name length, two chars minimum.");
+    case StatusCodes.INVALID_BACKUP_LENGTH:
+      throw new InvalidBackupLength("Invalid backup length.");
   }
 
   throw new TransportStatusError(status);

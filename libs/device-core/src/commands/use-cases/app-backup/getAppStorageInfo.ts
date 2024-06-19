@@ -2,6 +2,7 @@ import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-trans
 import { LocalTracer } from "@ledgerhq/logs";
 import type { AppStorageInfo } from "../../entities/AppStorageInfo";
 import type { APDU } from "../../entities/APDU";
+import { AppNotFound, InvalidAppNameLength } from "../../../errors";
 
 /**
  * Name in documentation: INS_APP_STORAGE_GET_INFO
@@ -9,9 +10,9 @@ import type { APDU } from "../../entities/APDU";
  * ins: 0x6a
  * p1: 0x00
  * p2: 0x00
- * data: APP_NAME_LEN (1 byte) + APP_NAME (variable)
+ * data: APP_NAME_LEN (1 byte) + APP_NAME (variable) to configure at runtime
  */
-const GET_APP_STORAGE_INFO: APDU = [0xe0, 0x6a, 0x00, 0x00, undefined];
+const GET_APP_STORAGE_INFO = [0xe0, 0x6a, 0x00, 0x00] as const;
 
 /**
  * 0x9000: Success.
@@ -22,8 +23,8 @@ const GET_APP_STORAGE_INFO: APDU = [0xe0, 0x6a, 0x00, 0x00, undefined];
 const RESPONSE_STATUS_SET: number[] = [
   StatusCodes.OK,
   StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT,
-  StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
-  StatusCodes.INVALID_APP_NAME_LEN,
+  StatusCodes.DEVICE_IN_RECOVERY_MODE,
+  StatusCodes.INVALID_APP_NAME_LENGTH,
 ];
 
 /**
@@ -31,7 +32,7 @@ const RESPONSE_STATUS_SET: number[] = [
  *
  * @param transport - The transport object used to communicate with the device.
  * @param appName - The name of the application to retrieve the storage information for.
- * @returns A promise that resolves to the application storage information.
+ * @returns A promise that resolves to the application storage information object.
  * @throws {TransportStatusError} If the response status is invalid.
  */
 export async function getAppStorageInfo(
@@ -48,9 +49,10 @@ export async function getAppStorageInfo(
     Buffer.from([appName.length]),
     Buffer.from(appName, "ascii"),
   ]);
-  GET_APP_STORAGE_INFO[4] = params;
+  const apdu: Readonly<APDU> = [...GET_APP_STORAGE_INFO, params];
 
-  const response = await transport.send(...GET_APP_STORAGE_INFO, RESPONSE_STATUS_SET);
+  const response = await transport.send(...apdu, RESPONSE_STATUS_SET);
+
   return parseResponse(response);
 }
 
@@ -65,17 +67,35 @@ export function parseResponse(data: Buffer): AppStorageInfo {
     function: "parseResponse@getAppStorageInfo",
   });
   const status = data.readUInt16BE(data.length - 2);
-  if (tracer) {
-    tracer.trace("Result status from 0xe06a0000", { status });
-  }
+  tracer.trace("Result status from 0xe06a0000", { status });
 
-  if (status === StatusCodes.OK) {
-    const size = data.readUInt32BE(0); // Len = 4
-    const version = data.subarray(4, 8).toString(); // Len = 4
-    const hasSettings = data.readUIntBE(8, 1) === 1; // Len = 1
-    const hasData = data.readUIntBE(9, 1) === 1; // Len = 1
-    const hash = data.subarray(10, 30).toString(); // Len = 20
-    return { size, version, hasSettings, hasData, hash };
+  switch (status) {
+    case StatusCodes.OK: {
+      /**
+       * The backup size is a 4-byte unsigned integer.
+       * The data version is a 4-byte string.
+       * The hasSettings and hasData flags are 1-byte booleans.
+       * The hash is a 32-byte string.
+       */
+      let offset = 0;
+      const size = data.readUInt32BE(offset); // Len = 4
+      offset += 4;
+      const dataVersion = data.subarray(offset, offset + 4).toString(); // Len = 4
+      offset += 4;
+      const hasSettings = data.readUIntBE(offset, 1) === 1; // Len = 1
+      offset += 1;
+      const hasData = data.readUIntBE(offset, 1) === 1; // Len = 1
+      offset += 1;
+      const hash = data.subarray(offset, offset + 32).toString(); // Len = 32
+
+      return { size, dataVersion, hasSettings, hasData, hash };
+    }
+    case StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT:
+      throw new AppNotFound("Application not found.");
+    case StatusCodes.DEVICE_IN_RECOVERY_MODE:
+      break;
+    case StatusCodes.INVALID_APP_NAME_LENGTH:
+      throw new InvalidAppNameLength("Invalid application name length, two chars minimum.");
   }
 
   throw new TransportStatusError(status);

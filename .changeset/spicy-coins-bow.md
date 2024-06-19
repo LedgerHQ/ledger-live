@@ -3,4 +3,4 @@
 "@ledgerhq/device-core": minor
 ---
 
-Implemente App data backup relative commands
+Implement App data backup relative commands

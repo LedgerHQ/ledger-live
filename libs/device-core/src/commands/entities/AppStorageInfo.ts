@@ -1,6 +1,6 @@
 export type AppStorageInfo = {
   size: number;
-  version: string;
+  dataVersion: string;
   hasSettings: boolean;
   hasData: boolean;
   hash: string;

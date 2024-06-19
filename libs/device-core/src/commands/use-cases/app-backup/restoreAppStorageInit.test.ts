@@ -1,9 +1,10 @@
-import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
+import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
 import { restoreAppStorageInit, parseResponse } from "./restoreAppStorageInit";
+import { InvalidAppNameLength } from "../../../errors";
 
 jest.mock("@ledgerhq/hw-transport");
 
-describe("getAppStorageInfo", () => {
+describe("restoreAppStorageInit", () => {
   let transport: Transport;
   const response = Buffer.from([0x90, 0x00]);
 
@@ -31,11 +32,11 @@ describe("getAppStorageInfo", () => {
       [
         StatusCodes.OK,
         StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT,
-        StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
+        StatusCodes.DEVICE_IN_RECOVERY_MODE,
         StatusCodes.USER_REFUSED_ON_DEVICE,
         StatusCodes.PIN_NOT_SET,
-        StatusCodes.INVALID_APP_NAME_LEN,
-        StatusCodes.INVALID_BACKUP_LEN,
+        StatusCodes.INVALID_APP_NAME_LENGTH,
+        StatusCodes.INVALID_BACKUP_LENGTH,
       ],
     );
   });
@@ -45,8 +46,10 @@ describe("getAppStorageInfo", () => {
       expect(() => parseResponse(response)).not.toThrow();
     });
     it("should throw TransportStatusError if the response status is invalid", () => {
-      const data = Buffer.from([0x68, 0x4a]);
-      expect(() => parseResponse(data)).toThrow(new TransportStatusError(0x684a));
+      const data = Buffer.from([0x67, 0x0a]);
+      expect(() => parseResponse(data)).toThrow(
+        new InvalidAppNameLength("Invalid application name length, two chars minimum."),
+      );
     });
   });
 });

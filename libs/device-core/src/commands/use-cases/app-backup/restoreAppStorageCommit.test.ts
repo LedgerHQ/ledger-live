@@ -1,9 +1,10 @@
-import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
+import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
 import { restoreAppStorageCommit, parseResponse } from "./restoreAppStorageCommit";
+import { InvalidChunkLength } from "../../../errors";
 
 jest.mock("@ledgerhq/hw-transport");
 
-describe("getAppStorageInfo", () => {
+describe("restoreAppStorageCommit", () => {
   let transport: Transport;
   const response = Buffer.from([0x90, 0x00]);
 
@@ -23,10 +24,10 @@ describe("getAppStorageInfo", () => {
     expect(transport.send).toHaveBeenCalledWith(0xe0, 0x6e, 0x00, 0x00, Buffer.from([0x00]), [
       StatusCodes.OK,
       StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT,
-      StatusCodes.FAILED_GEN_AES_KEY,
+      StatusCodes.GEN_AES_KEY_FAILED,
       StatusCodes.INTERNAL_COMPUTE_AES_CMAC_FAILED,
-      StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
-      StatusCodes.INVALID_CHUNK_LEN,
+      StatusCodes.DEVICE_IN_RECOVERY_MODE,
+      StatusCodes.INVALID_CHUNK_LENGTH,
     ]);
   });
 
@@ -36,7 +37,9 @@ describe("getAppStorageInfo", () => {
     });
     it("should throw TransportStatusError if the response status is invalid", () => {
       const data = Buffer.from([0x67, 0x34]);
-      expect(() => parseResponse(data)).toThrow(new TransportStatusError(0x6734));
+      expect(() => parseResponse(data)).toThrow(
+        new InvalidChunkLength("Invalid size of the restored app storage."),
+      );
     });
   });
 });
