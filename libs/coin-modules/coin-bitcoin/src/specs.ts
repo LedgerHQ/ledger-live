@@ -393,20 +393,7 @@ const bitcoinCash: AppSpec<Transaction> = {
   }),
   minViableAmount: genericMinimalAmount,
 };
-const peercoin: AppSpec<Transaction> = {
-  name: "Peercoin",
-  currency: getCryptoCurrencyById("peercoin"),
-  dependency: "Bitcoin Legacy",
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Peercoin",
-    appVersion: "2.1.0-rc",
-  },
-  genericDeviceAction: acceptTransaction,
-  test: genericTest,
-  mutations: bitcoinLikeMutations(),
-  minViableAmount: genericMinimalAmount,
-};
+
 const pivx: AppSpec<Transaction> = {
   name: "PivX",
   currency: getCryptoCurrencyById("pivx"),
@@ -586,7 +573,6 @@ export default {
   dogecoin,
   komodo,
   litecoin,
-  peercoin,
   pivx,
   qtum,
   zcash,

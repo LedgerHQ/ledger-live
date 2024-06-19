@@ -9,7 +9,6 @@ In Ledger Live, the Bitcoin family includes the following cryptocurrencies:
 - Zcash (ZEC)
 - Horizen (ZEN)
 - Dash
-- Peercoin
 - Komodo
 - PIVX
 - Stealth

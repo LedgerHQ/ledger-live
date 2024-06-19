@@ -361,15 +361,6 @@
   },
   {
     "type": "CryptoCurrency",
-    "id": "peercoin",
-    "ticker": "PPC",
-    "name": "Peercoin",
-    "family": "bitcoin",
-    "color": "#3cb054",
-    "decimals": 6
-  },
-  {
-    "type": "CryptoCurrency",
     "id": "bitcoin_testnet",
     "ticker": "BTC",
     "name": "Bitcoin Testnet",

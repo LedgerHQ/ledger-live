@@ -2008,43 +2008,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  peercoin: {
-    type: "CryptoCurrency",
-    id: "peercoin",
-    coinType: CoinType.PEERCOIN,
-    name: "Peercoin",
-    managerAppName: "Peercoin",
-    ticker: "PPC",
-    scheme: "peercoin",
-    color: "#3cb054",
-    family: "bitcoin",
-    blockAvgTime: 450,
-    bitcoinLikeInfo: {
-      P2PKH: 55,
-      P2SH: 117,
-      XPUBVersion: 0xe6e8e9e5,
-      hasTimestamp: true,
-    },
-    units: [
-      {
-        name: "peercoin",
-        code: "PPC",
-        magnitude: 6,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://blockbook.peercoin.net/tx/$hash",
-        address: "https://blockbook.peercoin.net/address/$address",
-      },
-    ],
-    explorerId: "ppc",
-  },
   persistence: {
     type: "CryptoCurrency",
     id: "persistence",

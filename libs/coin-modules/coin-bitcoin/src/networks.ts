@@ -101,20 +101,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "peercoin") {
-    return {
-      identifier: "ppc",
-      P2PKHVersion: Buffer.from([0x37]),
-      P2SHVersion: Buffer.from([0x75]),
-      xpubVersion: Buffer.from([0xe6, 0xe8, 0xe9, 0xe5]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "PPCoin Signed Message:\n",
-      usesTimestampedTransaction: true,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
   } else if (networkName === "digibyte") {
     return {
       identifier: "dgb",

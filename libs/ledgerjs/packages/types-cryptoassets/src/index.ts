@@ -78,7 +78,6 @@ export type CryptoCurrencyId =
   | "onomy"
   | "ontology"
   | "particl"
-  | "peercoin"
   | "persistence"
   | "pirl"
   | "pivx"

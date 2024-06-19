@@ -67,7 +67,6 @@ export enum CoinType {
   NOS = 229,
   ONTOLOGY = 1024,
   PARTICL = 44,
-  PEERCOIN = 6,
   PIRL = 164,
   PIVX = 77,
   POA = 178,

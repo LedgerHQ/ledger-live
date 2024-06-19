@@ -47,7 +47,6 @@ setSupportedCurrencies([
   "komodo",
   "pivx",
   "zencash",
-  "peercoin",
   "crypto_org",
   "crypto_org_croeseid",
   "celo",

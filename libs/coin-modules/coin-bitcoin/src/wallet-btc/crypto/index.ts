@@ -5,7 +5,6 @@ export { default as Digibyte } from "./digibyte";
 export { default as Zec } from "./zec";
 export { default as Zen } from "./zen";
 export { default as Dash } from "./dash";
-export { default as Peercoin } from "./peercoin";
 export { default as Komodo } from "./komodo";
 export { default as Pivx } from "./pivx";
 export { default as Stealth } from "./stealth";

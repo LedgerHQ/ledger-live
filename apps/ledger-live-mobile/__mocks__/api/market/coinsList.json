@@ -8357,7 +8357,6 @@
   { "id": "pear-swap", "symbol": "pear", "name": "Pear Swap" },
   { "id": "peepo", "symbol": "peepo", "name": "Peepo" },
   { "id": "peepo-sol", "symbol": "$peep", "name": "Peepo (SOL)" },
-  { "id": "peercoin", "symbol": "ppc", "name": "Peercoin" },
   { "id": "peer-to-peer", "symbol": "p2p", "name": "Peer-to-Peer" },
   { "id": "pegasusbot", "symbol": "pgs", "name": "PegasusBot" },
   { "id": "pegasus-dex", "symbol": "peg", "name": "Pegasus DEX" },
