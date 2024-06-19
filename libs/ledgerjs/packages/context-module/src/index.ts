@@ -1,4 +1,5 @@
 export * from "./ContextModule";
+export * from "./ContextModuleBuilder";
 export * from "./DefaultContextModule";
 export * from "./shared/model/ContextResponse";
 
