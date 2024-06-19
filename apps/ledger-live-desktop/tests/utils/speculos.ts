@@ -182,6 +182,24 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Polygon: {
+    currency: getCryptoCurrencyById("polygon"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Polygon",
+      appVersion: "1.10.4",
+    },
+    dependency: "",
+  },
+  Binance_Smart_Chain: {
+    currency: getCryptoCurrencyById("bsc"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Binance Smart Chain",
+      appVersion: "1.10.3",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(

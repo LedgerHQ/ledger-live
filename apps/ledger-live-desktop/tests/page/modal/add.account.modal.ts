@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
+import { Token } from "tests/enum/Tokens";
 
 export class AddAccountModal extends Modal {
   private selectAccount = this.page.locator("text=Choose a crypto asset"); // FIXME: I need an id
@@ -10,6 +11,22 @@ export class AddAccountModal extends Modal {
   private stopButton = this.page.locator("data-test-id=add-accounts-import-stop-button");
   private doneButton = this.page.locator("data-test-id=add-accounts-finish-close-button");
   private successAddLabel = this.page.locator("text=Account added successfully");
+  private selectTokenNetwork = (token: Token) =>
+    this.page
+      .getByRole("option", {
+        name: `${token.tokenName} (${token.tokenTicker}) ${token.tokenNetwork}`,
+      })
+      .locator("span");
+  readonly continueButton = this.page.locator("data-test-id=modal-continue-button");
+
+  @step("Select token $0")
+  async selectToken(token: Token) {
+    await this.selectAccount.click();
+    await this.selectAccountInput.fill(token.tokenName);
+    await this.selectTokenNetwork(token).click();
+    await this.page.mouse.move(0, 0);
+    await this.continueButton.click();
+  }
 
   @step("Select currency $0")
   async select(currency: string) {

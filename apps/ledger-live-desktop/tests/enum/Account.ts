@@ -175,8 +175,8 @@ export class Account {
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
 
-  static readonly BNB_1 = new Account(
-    Currency.BNB,
+  static readonly BSC_1 = new Account(
+    Currency.BSC,
     "Binance Smart Chain 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );

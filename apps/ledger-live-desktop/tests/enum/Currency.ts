@@ -145,7 +145,7 @@ export class Currency {
     [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
-  static readonly BNB = new Currency(
+  static readonly BSC = new Currency(
     "Binance Smart Chain",
     "BNB",
     "Binance Smart Chain",

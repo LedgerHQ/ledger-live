@@ -27,6 +27,7 @@ export class AccountPage extends AppPage {
   private operationRows = this.page.locator("[data-test-id^='operation-row-']");
   private closeModal = this.page.locator("data-test-id=modal-close-button");
   private tokenList = this.page.locator(`[data-test-id^='token-row-']`);
+  private addTokenButton = this.page.getByRole("button", { name: "Add token" });
 
   @step("Navigate to token $0")
   async navigateToToken(token: string) {
@@ -37,6 +38,11 @@ export class AccountPage extends AppPage {
   @step("Click `Receive` button")
   async clickReceive() {
     await this.receiveButton.click();
+  }
+
+  @step("click on add token button")
+  async clickAddToken() {
+    await this.addTokenButton.click();
   }
 
   @step("Click `Send` button")
@@ -127,8 +133,7 @@ export class AccountPage extends AppPage {
   async expectTokenToBePresent(tokenName: string, tokenTicker: string) {
     await expect(this.tokenList).toBeVisible();
     const tokenInfos = await this.tokenList.innerText();
-    console.log(tokenInfos);
-    expect(tokenInfos).toContain(tokenName); //Issue with TRON_WINK
+    expect(tokenInfos).toContain(tokenName);
     expect(tokenInfos).toContain(tokenTicker);
   }
 }
