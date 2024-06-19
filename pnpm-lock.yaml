@@ -4341,8 +4341,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       node-hid:
-        specifier: ^2.1.2
-        version: 2.2.0
+        specifier: 2.1.2
+        version: 2.1.2
       usb:
         specifier: 2.9.0
         version: 2.9.0(patch_hash=d5pno5rjlboai2klvccu6wv334)
@@ -4387,8 +4387,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       node-hid:
-        specifier: ^2.1.2
-        version: 2.2.0
+        specifier: 2.1.2
+        version: 2.1.2
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
@@ -4436,8 +4436,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       node-hid:
-        specifier: ^2.1.2
-        version: 2.2.0
+        specifier: 2.1.2
+        version: 2.1.2
       usb:
         specifier: 2.9.0
         version: 2.9.0(patch_hash=d5pno5rjlboai2klvccu6wv334)
@@ -43192,8 +43192,8 @@ packages:
     resolution: {integrity: sha512-u6fs2AEUljNho3EYTJNBfImO5QTo/J/1Etd+NVdCj7qWKUSN/bSLkZwhDv7I+w/MSC6qJ4cknepkAYykDdK8og==}
     hasBin: true
 
-  /node-hid@2.2.0:
-    resolution: {integrity: sha512-vj48zh9j555DZzUhMc8tk/qw6xPFrDyPBH1ST1Z/hWaA/juBJw7IuSxPeOgpzNFNU36mGYj+THioRMt1xOdm/g==}
+  /node-hid@2.1.2:
+    resolution: {integrity: sha512-qhCyQqrPpP93F/6Wc/xUR7L8mAJW0Z6R7HMQV8jCHHksAxNDe/4z4Un/H9CpLOT+5K39OPyt9tIQlavxWES3lg==}
     engines: {node: '>=10'}
     hasBin: true
     requiresBuild: true
