@@ -220,8 +220,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Particl unit (PART) 1`] = `"123.456.789,00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Peercoin unit (peercoin) 1`] = `"12.345.678.900,000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Persistence unit (Persistence) 1`] = `"12.345.678.900,000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Pirl unit (PIRL) 1`] = `"123.456.789,00000000- -PIRL"`;
@@ -305,10 +303,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Vertcoin unit (vertcoin) 1`] = `"123.456.789,00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Viacoin unit (viacoin) 1`] = `"123.456.789,00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Wanchain unit (WAN) 1`] = `"123.456.789,00000000- -WAN"`;
 
@@ -550,8 +544,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Particl unit (PART) 1`] = `"123,456,789.00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Peercoin unit (peercoin) 1`] = `"12,345,678,900.000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Persistence unit (Persistence) 1`] = `"12,345,678,900.000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Pirl unit (PIRL) 1`] = `"123,456,789.00000000- -PIRL"`;
@@ -635,10 +627,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Vechain unit (VET) 1`] = `"0.012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Velas EVM unit (VLX) 1`] = `"0.012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Vertcoin unit (vertcoin) 1`] = `"123,456,789.00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Viacoin unit (viacoin) 1`] = `"123,456,789.00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Wanchain unit (WAN) 1`] = `"123,456,789.00000000- -WAN"`;
 
@@ -880,8 +868,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Particl unit (PART) 1`] = `"123.456.789,00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Peercoin unit (peercoin) 1`] = `"12.345.678.900,000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Persistence unit (Persistence) 1`] = `"12.345.678.900,000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Pirl unit (PIRL) 1`] = `"123.456.789,00000000- -PIRL"`;
@@ -965,10 +951,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Vertcoin unit (vertcoin) 1`] = `"123.456.789,00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Viacoin unit (viacoin) 1`] = `"123.456.789,00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Wanchain unit (WAN) 1`] = `"123.456.789,00000000- -WAN"`;
 
@@ -1210,8 +1192,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Particl unit (PART) 1`] = `"123 456 789,00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Peercoin unit (peercoin) 1`] = `"12 345 678 900,000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Persistence unit (Persistence) 1`] = `"12 345 678 900,000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Pirl unit (PIRL) 1`] = `"123 456 789,00000000- -PIRL"`;
@@ -1295,10 +1275,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Vertcoin unit (vertcoin) 1`] = `"123 456 789,00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Viacoin unit (viacoin) 1`] = `"123 456 789,00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Wanchain unit (WAN) 1`] = `"123 456 789,00000000- -WAN"`;
 
@@ -1540,8 +1516,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Particl unit (PART) 1`] = `"123,456,789.00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Peercoin unit (peercoin) 1`] = `"12,345,678,900.000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Persistence unit (Persistence) 1`] = `"12,345,678,900.000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Pirl unit (PIRL) 1`] = `"123,456,789.00000000- -PIRL"`;
@@ -1625,10 +1599,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Vechain unit (VET) 1`] = `"0.012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Velas EVM unit (VLX) 1`] = `"0.012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Vertcoin unit (vertcoin) 1`] = `"123,456,789.00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Viacoin unit (viacoin) 1`] = `"123,456,789.00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Wanchain unit (WAN) 1`] = `"123,456,789.00000000- -WAN"`;
 
@@ -1870,8 +1840,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Particl unit (PART) 1`] = `"123,456,789.00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Peercoin unit (peercoin) 1`] = `"12,345,678,900.000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Persistence unit (Persistence) 1`] = `"12,345,678,900.000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Pirl unit (PIRL) 1`] = `"123,456,789.00000000- -PIRL"`;
@@ -1955,10 +1923,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Vechain unit (VET) 1`] = `"0.012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Velas EVM unit (VLX) 1`] = `"0.012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Vertcoin unit (vertcoin) 1`] = `"123,456,789.00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Viacoin unit (viacoin) 1`] = `"123,456,789.00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Wanchain unit (WAN) 1`] = `"123,456,789.00000000- -WAN"`;
 
@@ -2200,8 +2164,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Particl unit (PART) 1`] = `"123.456.789,00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Peercoin unit (peercoin) 1`] = `"12.345.678.900,000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Persistence unit (Persistence) 1`] = `"12.345.678.900,000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Pirl unit (PIRL) 1`] = `"123.456.789,00000000- -PIRL"`;
@@ -2285,10 +2247,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Vertcoin unit (vertcoin) 1`] = `"123.456.789,00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Viacoin unit (viacoin) 1`] = `"123.456.789,00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Wanchain unit (WAN) 1`] = `"123.456.789,00000000- -WAN"`;
 
@@ -2530,8 +2488,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Particl unit (PART) 1`] = `"123 456 789,00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Peercoin unit (peercoin) 1`] = `"12 345 678 900,000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Persistence unit (Persistence) 1`] = `"12 345 678 900,000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Pirl unit (PIRL) 1`] = `"123 456 789,00000000- -PIRL"`;
@@ -2615,10 +2571,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Vertcoin unit (vertcoin) 1`] = `"123 456 789,00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Viacoin unit (viacoin) 1`] = `"123 456 789,00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Wanchain unit (WAN) 1`] = `"123 456 789,00000000- -WAN"`;
 
@@ -2860,8 +2812,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Particl unit (PART) 1`] = `"123.456.789,00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Peercoin unit (peercoin) 1`] = `"12.345.678.900,000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Persistence unit (Persistence) 1`] = `"12.345.678.900,000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Pirl unit (PIRL) 1`] = `"123.456.789,00000000- -PIRL"`;
@@ -2945,10 +2895,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Vertcoin unit (vertcoin) 1`] = `"123.456.789,00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Viacoin unit (viacoin) 1`] = `"123.456.789,00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Wanchain unit (WAN) 1`] = `"123.456.789,00000000- -WAN"`;
 
@@ -3190,8 +3136,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Particl unit (PART) 1`] = `"123,456,789.00000000- -PART"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Peercoin unit (peercoin) 1`] = `"12,345,678,900.000000- -PPC"`;
-
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Persistence unit (Persistence) 1`] = `"12,345,678,900.000000- -XPRT"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Pirl unit (PIRL) 1`] = `"123,456,789.00000000- -PIRL"`;
@@ -3275,10 +3219,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Vechain unit (VET) 1`] = `"0.012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Velas EVM unit (VLX) 1`] = `"0.012345678900000000- -VLX"`;
-
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Vertcoin unit (vertcoin) 1`] = `"123,456,789.00000000- -VTC"`;
-
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Viacoin unit (viacoin) 1`] = `"123,456,789.00000000- -VIA"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Wanchain unit (WAN) 1`] = `"123,456,789.00000000- -WAN"`;
 
@@ -3520,8 +3460,6 @@ exports[`formatCurrencyUnit with default options should correctly format POA uni
 
 exports[`formatCurrencyUnit with default options should correctly format Particl unit (PART) 1`] = `"123,456,789"`;
 
-exports[`formatCurrencyUnit with default options should correctly format Peercoin unit (peercoin) 1`] = `"12,345,678,900"`;
-
 exports[`formatCurrencyUnit with default options should correctly format Persistence unit (Persistence) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Pirl unit (PIRL) 1`] = `"123,456,789"`;
@@ -3605,10 +3543,6 @@ exports[`formatCurrencyUnit with default options should correctly format Umee un
 exports[`formatCurrencyUnit with default options should correctly format Vechain unit (VET) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Velas EVM unit (VLX) 1`] = `"0.0123456"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Vertcoin unit (vertcoin) 1`] = `"123,456,789"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Viacoin unit (viacoin) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Wanchain unit (WAN) 1`] = `"123,456,789"`;
 
