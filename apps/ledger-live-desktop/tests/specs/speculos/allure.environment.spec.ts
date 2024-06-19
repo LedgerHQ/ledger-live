@@ -6,12 +6,12 @@ import { Application } from "tests/page";
 
 const environmentFilePath = "allure-results/environment.properties";
 
-test.describe.parallel("Accounts @smoke", () => {
+test.describe.parallel("Get allure environment @smoke", () => {
   test.use({
     userdata: "skip-onboarding",
   });
 
-  test(`[Add account`, async ({ page }) => {
+  test(`write in Allure environment file`, async ({ page }) => {
     const app = new Application(page);
     await app.portfolio.expectPortfolioEmpty();
 

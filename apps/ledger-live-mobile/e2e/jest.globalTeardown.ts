@@ -10,9 +10,6 @@ export default async () => {
     .then(data => {
       return fs.appendFile(environmentFilePath, data);
     })
-    .then(() => {
-      return fs.unlink(environmentTempFilePath);
-    })
     .catch(error => {
       console.error("Error writting final allure environment:", error);
     });
