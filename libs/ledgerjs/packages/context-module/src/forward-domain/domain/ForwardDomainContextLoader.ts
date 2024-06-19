@@ -37,6 +37,15 @@ export class ForwardDomainContextLoader implements ContextLoader {
       challenge: options.challenge,
     });
 
+    if (!payload) {
+      return [
+        {
+          type: "error" as const,
+          error: new Error("[ContextModule] ForwardDomainLoader: error getting domain payload"),
+        },
+      ];
+    }
+
     return [{ type: "provideDomainName" as const, payload }];
   }
 

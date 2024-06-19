@@ -19,6 +19,7 @@ export async function spawnChopsticksAndSidecar() {
   ensureEnv();
   console.log("Starting chopsticks and sidecar...");
 
+  // await compose.buildOne("chopsticks", { cwd });
   await compose.upAll({
     cwd,
     log: true,

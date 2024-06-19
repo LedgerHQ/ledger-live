@@ -11,23 +11,31 @@ export class HttpNftDataSource implements NftDataSource {
     chainId,
     address,
     selector,
-  }: GetSetPluginPayloadParams): Promise<string> {
-    const response = await axios.request<{ payload: string }>({
-      method: "GET",
-      url: `https://nft.api.live.ledger.com/v1/ethereum/${chainId}/contracts/${address}/plugin-selector/${selector}`,
-      headers: { "X-Ledger-Client-Version": `context-module/${PACKAGE.version}` },
-    });
+  }: GetSetPluginPayloadParams): Promise<string | undefined> {
+    try {
+      const response = await axios.request<{ payload: string }>({
+        method: "GET",
+        url: `https://nft.api.live.ledger.com/v1/ethereum/${chainId}/contracts/${address}/plugin-selector/${selector}`,
+        headers: { "X-Ledger-Client-Version": `context-module/${PACKAGE.version}` },
+      });
 
-    return response.data.payload;
+      return response.data.payload;
+    } catch (error) {
+      return;
+    }
   }
 
   public async getNftInfosPayload({ chainId, address }: GetNftInformationsParams) {
-    const response = await axios.request<{ payload: string }>({
-      method: "GET",
-      url: `https://nft.api.live.ledger.com/v1/ethereum/${chainId}/contracts/${address}`,
-      headers: { "X-Ledger-Client-Version": `context-module/${PACKAGE.version}` },
-    });
+    try {
+      const response = await axios.request<{ payload: string }>({
+        method: "GET",
+        url: `https://nft.api.live.ledger.com/v1/ethereum/${chainId}/contracts/${address}`,
+        headers: { "X-Ledger-Client-Version": `context-module/${PACKAGE.version}` },
+      });
 
-    return response.data.payload;
+      return response.data.payload;
+    } catch (error) {
+      return;
+    }
   }
 }

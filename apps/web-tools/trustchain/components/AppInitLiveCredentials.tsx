@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { MemberCredentials } from "@ledgerhq/trustchain/types";
 import { Actionable } from "./Actionable";
-import { useSDK } from "../context";
+import { useTrustchainSDK } from "../context";
 
 export function AppInitLiveCredentials({
   memberCredentials,
@@ -10,7 +10,7 @@ export function AppInitLiveCredentials({
   memberCredentials: MemberCredentials | null;
   setMemberCredentials: (memberCredentials: MemberCredentials | null) => void;
 }) {
-  const sdk = useSDK();
+  const sdk = useTrustchainSDK();
   const action = useCallback(() => sdk.initMemberCredentials(), [sdk]);
 
   const valueDisplay = useCallback(
