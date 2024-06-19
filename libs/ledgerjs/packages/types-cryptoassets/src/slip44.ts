@@ -94,7 +94,6 @@ export enum CoinType {
   UBIQ = 108,
   VECHAIN = 818,
   VERTCOIN = 28,
-  VIACOIN = 14,
   WANCHAIN = 5718350,
   WAVES = 5741564,
   ZCASH = 133,

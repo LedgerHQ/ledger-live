@@ -29,7 +29,6 @@ export type Currency =
   | "zencash"
   | "vertcoin"
   | "peercoin"
-  | "viacoin"
   | "stealthcoin"
   | "decred"
   | "bitcoin_testnet";

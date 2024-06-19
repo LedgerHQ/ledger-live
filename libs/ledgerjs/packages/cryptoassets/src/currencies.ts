@@ -3039,43 +3039,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "vtc",
   },
-  viacoin: {
-    type: "CryptoCurrency",
-    id: "viacoin",
-    coinType: CoinType.VIACOIN,
-    name: "Viacoin",
-    managerAppName: "Viacoin",
-    ticker: "VIA",
-    scheme: "viacoin",
-    color: "#414141",
-    supportsSegwit: true,
-    family: "bitcoin",
-    blockAvgTime: 24,
-    bitcoinLikeInfo: {
-      P2PKH: 71,
-      P2SH: 33,
-      XPUBVersion: 0x0488b21e,
-    },
-    units: [
-      {
-        name: "viacoin",
-        code: "VIA",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://explorer.viacoin.org/tx/$hash",
-        address: "https://explorer.viacoin.org/address/$address",
-      },
-    ],
-    explorerId: "via",
-  },
   wanchain: {
     type: "CryptoCurrency",
     id: "wanchain",

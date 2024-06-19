@@ -24,7 +24,6 @@ const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo",
   qtum: 4000,
   stratis: 2000,
   vertcoin: 2000,
-  viacoin: 2000,
   peercoin: 2000,
 };
 export const getMinRelayFee = (currency: CryptoCurrency): number => minFees[currency.id] || 0;

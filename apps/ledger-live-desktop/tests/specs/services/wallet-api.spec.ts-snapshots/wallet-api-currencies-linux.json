@@ -379,15 +379,6 @@
   },
   {
     "type": "CryptoCurrency",
-    "id": "viacoin",
-    "ticker": "VIA",
-    "name": "Viacoin",
-    "family": "bitcoin",
-    "color": "#414141",
-    "decimals": 8
-  },
-  {
-    "type": "CryptoCurrency",
     "id": "bitcoin_testnet",
     "ticker": "BTC",
     "name": "Bitcoin Testnet",

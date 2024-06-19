@@ -92,7 +92,6 @@ type CoinName =
   | "qtum"
   | "rvn"
   | "rdd"
-  | "viacoin"
   | "vertcoin"
   | "x42"
   | "zcash";

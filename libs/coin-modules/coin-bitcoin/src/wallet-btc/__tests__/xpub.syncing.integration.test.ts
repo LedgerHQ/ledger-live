@@ -127,14 +127,6 @@ describe("xpub integration sync", () => {
       currencyId: "qtum",
     },
     {
-      xpub: "xpub6DAJ5UZx3jbDDoiZq3t6doR3WV6XvWtsfrbPak49Pc4xapooCAEkn77vEkJVsXmvVGBNmFoCDQ73aRuMRZo2uYuyBjVxJTvC9NZKrK3LzHc",
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 1,
-      balance: 200000000,
-      network: coininfo.viacoin.main.toBitcoinJS(),
-      currencyId: "viacoin",
-    },
-    {
       xpub: "v4PKUB8jAMVY8DsF9CrC5pT4kn1rsHtJY1ehtLSMemakWdMHHwdF5tsQXqQWov93ngSX1GUc1y7x91obdRtu9Bpyk3vqMWKnU9QLpYEjuVqLJy9T",
       derivationMode: DerivationModes.LEGACY,
       addresses: 1,

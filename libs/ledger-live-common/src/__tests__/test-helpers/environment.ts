@@ -42,7 +42,6 @@ setSupportedCurrencies([
   "zencash",
   "vertcoin",
   "peercoin",
-  "viacoin",
   "stealthcoin",
   "decred",
   "tron",

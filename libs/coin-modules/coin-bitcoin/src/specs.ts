@@ -452,23 +452,7 @@ const vertcoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
   minViableAmount: genericMinimalAmount,
 };
-const minViacoin = parseCurrencyUnit(getCryptoCurrencyById("viacoin").units[0], "0.001");
-const viacoin: AppSpec<Transaction> = {
-  name: "Viacoin",
-  currency: getCryptoCurrencyById("viacoin"),
-  dependency: "Bitcoin Legacy",
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Viacoin",
-    appVersion: "2.1.0-rc",
-  },
-  genericDeviceAction: acceptTransaction,
-  test: genericTest,
-  mutations: bitcoinLikeMutations({
-    minimalAmount: minViacoin,
-  }),
-  minViableAmount: minViacoin,
-};
+
 const minDash = parseCurrencyUnit(getCryptoCurrencyById("dash").units[0], "0.001");
 const dash: AppSpec<Transaction> = {
   name: "Dash",
@@ -620,7 +604,6 @@ export default {
   pivx,
   qtum,
   vertcoin,
-  viacoin,
   zcash,
   zencash,
   decred,

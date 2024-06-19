@@ -20,7 +20,6 @@
     "src/datasets/litecoin.ts",
     "src/datasets/pivx.ts",
     "src/datasets/vertcoin.ts",
-    "src/datasets/viacoin.ts",
     "src/datasets/zcash.ts",
     "src/datasets/zencash.ts",
     "src/descriptor.ts",

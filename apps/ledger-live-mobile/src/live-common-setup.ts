@@ -78,7 +78,6 @@ setSupportedCurrencies([
   "zencash",
   "vertcoin",
   "peercoin",
-  "viacoin",
   "bitcoin_testnet",
   "ethereum_sepolia",
   "ethereum_holesky",

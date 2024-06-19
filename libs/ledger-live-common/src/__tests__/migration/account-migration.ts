@@ -49,7 +49,6 @@ setSupportedCurrencies([
   "zencash",
   "vertcoin",
   "peercoin",
-  "viacoin",
   "crypto_org",
   "crypto_org_croeseid",
   "celo",

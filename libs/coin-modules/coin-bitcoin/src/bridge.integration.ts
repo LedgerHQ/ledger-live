@@ -13,7 +13,7 @@ import zencash from "./datasets/zencash";
 import litecoin from "./datasets/litecoin";
 import pivx from "./datasets/pivx";
 import vertcoin from "./datasets/vertcoin";
-import viacoin from "./datasets/viacoin";
+
 import zcash from "./datasets/zcash";
 /*
 import { createBridges } from "./bridge/js";
@@ -44,7 +44,6 @@ export const dataset: DatasetTest<Transaction> = {
     litecoin,
     pivx,
     vertcoin,
-    viacoin,
     zcash,
   },
 };

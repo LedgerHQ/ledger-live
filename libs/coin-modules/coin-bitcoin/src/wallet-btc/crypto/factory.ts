@@ -75,11 +75,6 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       res = new crypto.Peercoin({ network });
       break;
     }
-    case "viacoin": {
-      const network = coininfo.viacoin.main.toBitcoinJS();
-      res = new crypto.ViaCoin({ network });
-      break;
-    }
     case "stealthcoin": {
       const network = coininfo.bitcoin.main.toBitcoinJS();
       res = new crypto.Stealth({ network });
