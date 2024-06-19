@@ -3,7 +3,6 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AmountRequired,
   FeeNotLoaded,
-  FeeNotLoadedSwap,
   NotEnoughGas,
   NotEnoughGasSwap,
   NotEnoughBalance,
