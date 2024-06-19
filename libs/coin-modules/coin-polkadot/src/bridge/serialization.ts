@@ -8,6 +8,7 @@ import {
   type PolkadotOperationExtraRaw,
   isPolkadotOperationExtraRaw,
   isPolkadotOperationExtra,
+  PalletMethod,
 } from "../types";
 import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
@@ -75,7 +76,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
   }
 
   const extra: PolkadotOperationExtra = {
-    palletMethod: extraRaw.palletMethod,
+    palletMethod: extraRaw.palletMethod as PalletMethod,
     validatorStash: extraRaw.validatorStash,
     validators: extraRaw.validators,
   };

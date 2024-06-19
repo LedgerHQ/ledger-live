@@ -1,6 +1,10 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import { fixtureChainSpec, fixtureTxMaterialWithMetadata } from "./sidecar.fixture";
+import {
+  fixtureChainSpec,
+  fixtureStakingProgress,
+  fixtureTxMaterialWithMetadata,
+} from "./sidecar.fixture";
 
 export const SIDECAR_BASE_URL_TEST = "https://polkadot-sidecar.coin.ledger.com";
 
@@ -30,6 +34,9 @@ const handlers = [
   ),
   http.get(`${SIDECAR_BASE_URL_TEST}/runtime/spec`, () => HttpResponse.json(fixtureChainSpec)),
   http.post(`${SIDECAR_BASE_URL_TEST}/transaction/fee-estimate`, () => HttpResponse.json({})),
+  http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/progress`, () =>
+    HttpResponse.json(fixtureStakingProgress),
+  ),
 ];
 
 const mockServer = setupServer(...handlers);

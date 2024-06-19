@@ -84,7 +84,7 @@ export const errorInterceptor = (error: InterceptedError): InterceptedError => {
     if (msg) {
       errorToThrow = makeError(msg, status, url, method);
     } else {
-      errorToThrow = makeError(`API HTTP ${status}`, status, url, method);
+      errorToThrow = makeError(`API HTTP ${status} ${url}`, status, url, method);
     }
 
     log(

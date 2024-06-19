@@ -1,10 +1,11 @@
 import {
   JWT,
-  LiveCredentials,
+  MemberCredentials,
   TrustchainSDKContext,
   Trustchain,
   TrustchainMember,
   TrustchainSDK,
+  TrustchainDeviceCallbacks,
 } from "./types";
 import {
   crypto,
@@ -22,7 +23,6 @@ import {
 import Transport from "@ledgerhq/hw-transport";
 import api from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
-import { makeCipher } from "./wallet-sync-cipher";
 import { log } from "@ledgerhq/logs";
 
 export class SDK implements TrustchainSDK {
@@ -32,12 +32,12 @@ export class SDK implements TrustchainSDK {
     this.context = context;
   }
 
-  async initLiveCredentials(): Promise<LiveCredentials> {
+  async initMemberCredentials(): Promise<MemberCredentials> {
     const kp = await crypto.randomKeypair();
     return convertKeyPairToLiveCredentials(kp);
   }
 
-  async seedIdAuthenticate(transport: Transport): Promise<JWT> {
+  async authWithDevice(transport: Transport): Promise<JWT> {
     const hw = device.apdu(transport);
     const challenge = await api.getAuthenticationChallenge();
     const data = crypto.from_hex(challenge.tlv);
@@ -54,22 +54,19 @@ export class SDK implements TrustchainSDK {
     return response;
   }
 
-  async liveAuthenticate(
-    trustchain: Trustchain,
-    liveInstanceCredentials: LiveCredentials,
-  ): Promise<JWT> {
+  async auth(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<JWT> {
     const challenge = await api.getAuthenticationChallenge();
     const data = crypto.from_hex(challenge.tlv);
     const [parsed, _] = Challenge.fromBytes(data);
     const hash = await crypto.hash(parsed.getUnsignedTLV());
-    const keypair = convertLiveCredentialsToKeyPair(liveInstanceCredentials);
+    const keypair = convertLiveCredentialsToKeyPair(memberCredentials);
     const sig = await crypto.sign(hash, keypair);
     const signature = crypto.to_hex(sig);
     const credential = {
       version: 0,
       curveId: 33,
       signAlgorithm: 1,
-      publicKey: liveInstanceCredentials.pubkey,
+      publicKey: memberCredentials.pubkey,
     };
     const trustchainId = new TextEncoder().encode(trustchain.rootId);
     const att = new Uint8Array(2 + trustchainId.length);
@@ -90,20 +87,25 @@ export class SDK implements TrustchainSDK {
 
   async getOrCreateTrustchain(
     transport: Transport,
-    seedIdToken: JWT,
-    liveInstanceCredentials: LiveCredentials,
+    deviceJWT: JWT,
+    memberCredentials: MemberCredentials,
+    callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
   ): Promise<{
     jwt: JWT;
     trustchain: Trustchain;
   }> {
     const hw = device.apdu(transport);
-    let jwt = seedIdToken;
+    let jwt = deviceJWT;
     let trustchains = await api.getTrustchains(jwt);
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
+
+      callbacks?.onStartRequestUserInteraction();
       const streamTree = await StreamTree.createNewTree(hw, { topic });
+      callbacks?.onEndRequestUserInteraction();
+
       await streamTree.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
       const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
       await api.postSeed(jwt, crypto.to_hex(commandStream));
@@ -134,54 +136,55 @@ export class SDK implements TrustchainSDK {
     if (child) {
       const resolved = await child.resolve();
       const members = resolved.getMembers();
-      shouldShare = !members.some(m => crypto.to_hex(m) === liveInstanceCredentials.pubkey); // not already a member
+      shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
     if (shouldShare) {
+      callbacks?.onStartRequestUserInteraction();
       streamTree = await pushMember(streamTree, path, trustchainRootId, jwt, hw, {
-        id: liveInstanceCredentials.pubkey,
+        id: memberCredentials.pubkey,
         name: this.context.name,
         permissions: Permissions.OWNER,
       });
+      callbacks?.onEndRequestUserInteraction();
     }
 
-    const walletSyncEncryptionKey = await extractEncryptionKey(
-      streamTree,
-      path,
-      liveInstanceCredentials,
-    );
+    const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
 
     const trustchain = {
       rootId: trustchainRootId,
       walletSyncEncryptionKey,
+      applicationPath: path,
     };
 
     return { jwt, trustchain };
   }
 
   async restoreTrustchain(
-    liveJWT: JWT,
+    jwt: JWT,
     trustchainId: string,
-    liveInstanceCredentials: LiveCredentials,
+    memberCredentials: MemberCredentials,
   ): Promise<Trustchain> {
     const { streamTree, applicationRootPath } = await fetchTrustchainAndResolve(
-      liveJWT,
+      jwt,
       trustchainId,
       this.context.applicationId,
     );
     const walletSyncEncryptionKey = await extractEncryptionKey(
       streamTree,
       applicationRootPath,
-      liveInstanceCredentials,
+      memberCredentials,
     );
+
     return {
       rootId: trustchainId,
       walletSyncEncryptionKey,
+      applicationPath: applicationRootPath,
     };
   }
 
-  async getMembers(liveJWT: JWT, trustchain: Trustchain): Promise<TrustchainMember[]> {
+  async getMembers(jwt: JWT, trustchain: Trustchain): Promise<TrustchainMember[]> {
     const { resolved } = await fetchTrustchainAndResolve(
-      liveJWT,
+      jwt,
       trustchain.rootId,
       this.context.applicationId,
     );
@@ -190,10 +193,11 @@ export class SDK implements TrustchainSDK {
 
   async removeMember(
     transport: Transport,
-    seedIdToken: JWT,
+    deviceJWT: JWT,
     trustchain: Trustchain,
-    liveInstanceCredentials: LiveCredentials,
+    memberCredentials: MemberCredentials,
     member: TrustchainMember,
+    callbacks?: TrustchainDeviceCallbacks,
   ): Promise<{
     jwt: JWT;
     trustchain: Trustchain;
@@ -201,24 +205,26 @@ export class SDK implements TrustchainSDK {
     const hw = device.apdu(transport);
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
-    const m = await fetchTrustchainAndResolve(seedIdToken, trustchainId, applicationId);
+    const m = await fetchTrustchainAndResolve(deviceJWT, trustchainId, applicationId);
     const members = m.resolved.getMembersData();
     const withoutMember = members.filter(m => m.id !== member.id);
     if (members.length === withoutMember.length) {
       throw new Error("member not found");
     }
-    const withoutMemberOrMe = withoutMember.filter(m => m.id !== liveInstanceCredentials.pubkey);
-    const softwareDevice = getSoftwareDevice(liveInstanceCredentials);
+    const withoutMemberOrMe = withoutMember.filter(m => m.id !== memberCredentials.pubkey);
+    const softwareDevice = getSoftwareDevice(memberCredentials);
 
     let { streamTree } = m;
     const newPath = streamTree.getApplicationRootPath(applicationId, 1);
 
     // derive a new branch of the tree on the new path
-    streamTree = await pushMember(streamTree, newPath, trustchainId, seedIdToken, hw, {
-      id: liveInstanceCredentials.pubkey,
+    callbacks?.onStartRequestUserInteraction();
+    streamTree = await pushMember(streamTree, newPath, trustchainId, deviceJWT, hw, {
+      id: memberCredentials.pubkey,
       name: this.context.name,
       permissions: Permissions.OWNER,
     });
+    callbacks?.onEndRequestUserInteraction();
 
     // add the remaining members
     for (const m of withoutMemberOrMe) {
@@ -226,7 +232,7 @@ export class SDK implements TrustchainSDK {
         streamTree,
         newPath,
         trustchainId,
-        seedIdToken,
+        deviceJWT,
         softwareDevice,
         m,
       );
@@ -234,39 +240,47 @@ export class SDK implements TrustchainSDK {
     const walletSyncEncryptionKey = await extractEncryptionKey(
       streamTree,
       newPath,
-      liveInstanceCredentials,
+      memberCredentials,
     );
 
-    // TODO close previous node
+    // close the previous stream
+    streamTree = await closeStream(
+      streamTree,
+      m.applicationRootPath,
+      trustchainId,
+      deviceJWT,
+      softwareDevice,
+    );
 
-    const jwt = await api.refreshAuth(seedIdToken);
+    const jwt = await api.refreshAuth(deviceJWT);
 
     return {
       jwt,
       trustchain: {
         rootId: trustchainId,
         walletSyncEncryptionKey,
+        applicationPath: newPath,
       },
     };
   }
 
   async addMember(
-    liveJWT: JWT,
+    jwt: JWT,
     trustchain: Trustchain,
-    liveInstanceCredentials: LiveCredentials,
+    memberCredentials: MemberCredentials,
     member: TrustchainMember,
   ): Promise<void> {
     const { streamTree, applicationRootPath } = await fetchTrustchainAndResolve(
-      liveJWT,
+      jwt,
       trustchain.rootId,
       this.context.applicationId,
     );
-    const softwareDevice = getSoftwareDevice(liveInstanceCredentials);
+    const softwareDevice = getSoftwareDevice(memberCredentials);
     await pushMember(
       streamTree,
       applicationRootPath,
       trustchain.rootId,
-      liveJWT,
+      jwt,
       softwareDevice,
       member,
     );
@@ -276,20 +290,20 @@ export class SDK implements TrustchainSDK {
     await api.deleteTrustchain(jwt, trustchain.rootId);
   }
 
-  async encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
-    const cipher = makeCipher(crypto.from_hex(trustchain.walletSyncEncryptionKey));
-    const encrypted = await cipher.encrypt(obj);
+  async encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array> {
+    const key = crypto.from_hex(trustchain.walletSyncEncryptionKey);
+    const encrypted = await crypto.encryptUserData(key, input);
     return encrypted;
   }
 
-  async decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object> {
-    const cipher = makeCipher(crypto.from_hex(trustchain.walletSyncEncryptionKey));
-    const decrypted = await cipher.decrypt(data);
+  async decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array> {
+    const key = crypto.from_hex(trustchain.walletSyncEncryptionKey);
+    const decrypted = await crypto.decryptUserData(key, data);
     return decrypted;
   }
 }
 
-export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): LiveCredentials {
+export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): MemberCredentials {
   return {
     pubkey: crypto.to_hex(keyPair.publicKey),
     privatekey: crypto.to_hex(keyPair.privateKey),
@@ -297,21 +311,21 @@ export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): LiveCre
 }
 
 export function convertLiveCredentialsToKeyPair(
-  liveInstanceCredentials: LiveCredentials,
+  memberCredentials: MemberCredentials,
 ): CryptoKeyPair {
   return {
-    publicKey: crypto.from_hex(liveInstanceCredentials.pubkey),
-    privateKey: crypto.from_hex(liveInstanceCredentials.privatekey),
+    publicKey: crypto.from_hex(memberCredentials.pubkey),
+    privateKey: crypto.from_hex(memberCredentials.privatekey),
   };
 }
 
-function getSoftwareDevice(liveInstanceCredentials: LiveCredentials): SoftwareDevice {
-  const kp = convertLiveCredentialsToKeyPair(liveInstanceCredentials);
+function getSoftwareDevice(memberCredentials: MemberCredentials): SoftwareDevice {
+  const kp = convertLiveCredentialsToKeyPair(memberCredentials);
   return new SoftwareDevice(kp);
 }
 
-async function fetchTrustchain(liveJWT: JWT, trustchainId: string) {
-  const trustchainData = await api.getTrustchain(liveJWT, trustchainId);
+async function fetchTrustchain(jwt: JWT, trustchainId: string) {
+  const trustchainData = await api.getTrustchain(jwt, trustchainId);
   const streams = Object.values(trustchainData).map(
     data => new CommandStream(CommandStreamDecoder.decode(crypto.from_hex(data))),
   );
@@ -319,12 +333,8 @@ async function fetchTrustchain(liveJWT: JWT, trustchainId: string) {
   return { streamTree };
 }
 
-async function fetchTrustchainAndResolve(
-  liveJWT: JWT,
-  trustchainId: string,
-  applicationId: number,
-) {
-  const { streamTree } = await fetchTrustchain(liveJWT, trustchainId);
+async function fetchTrustchainAndResolve(jwt: JWT, trustchainId: string, applicationId: number) {
+  const { streamTree } = await fetchTrustchain(jwt, trustchainId);
   const applicationRootPath = streamTree.getApplicationRootPath(applicationId);
   const applicationNode = streamTree.getChild(applicationRootPath);
   if (!applicationNode) {
@@ -337,9 +347,9 @@ async function fetchTrustchainAndResolve(
 async function extractEncryptionKey(
   streamTree: StreamTree,
   path: string,
-  liveInstanceCredentials: LiveCredentials,
+  memberCredentials: MemberCredentials,
 ): Promise<string> {
-  const softwareDevice = getSoftwareDevice(liveInstanceCredentials);
+  const softwareDevice = getSoftwareDevice(memberCredentials);
   const pathNumbers = DerivationPath.toIndexArray(path);
   const key = await softwareDevice.readKey(streamTree, pathNumbers);
   // private key is in the first 32 bytes
@@ -373,18 +383,30 @@ async function pushMember(
   } else {
     const commandStream = CommandStreamEncoder.encode([child.blocks[child.blocks.length - 1]]);
     await api.putCommands(jwt, trustchainId, {
-      path: shortenPath(path), // FIXME temporary until backend make it explicit?
+      path,
       blocks: [crypto.to_hex(commandStream)],
     });
   }
   return streamTree;
 }
 
-function shortenPath(path: string): string {
-  // 0'/16'/1' -> 16'
-  const parts = path.split("/");
-  return parts
-    .map((v, i) => (i % 2 === 1 ? v : ""))
-    .filter(Boolean)
-    .join("/");
+async function closeStream(
+  streamTree: StreamTree,
+  path: string,
+  trustchainId: string,
+  jwt: JWT,
+  softwareDevice: Device,
+) {
+  streamTree = await streamTree.close(path, softwareDevice);
+  const child = streamTree.getChild(path);
+  if (!child) {
+    throw new Error("StreamTree.close failed to create the child stream.");
+  }
+  await child.resolve(); // double checks the signatures are correct before sending to the backend
+  const commandStream = CommandStreamEncoder.encode([child.blocks[child.blocks.length - 1]]);
+  await api.putCommands(jwt, trustchainId, {
+    path,
+    blocks: [crypto.to_hex(commandStream)],
+  });
+  return streamTree;
 }

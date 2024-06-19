@@ -8,6 +8,11 @@ export type PolkadotSignature = {
   return_code: number;
 };
 export interface PolkadotSigner {
-  getAddress(path: string, verify?: boolean): Promise<PolkadotAddress>;
-  sign(path: string, message: string): Promise<PolkadotSignature>;
+  getAddress(
+    path: string,
+    ss58prefix: number,
+    showAddrInDevice?: boolean,
+    runtimeUpgraded?: boolean,
+  ): Promise<PolkadotAddress>;
+  sign(path: string, message: Uint8Array, metadata: string): Promise<PolkadotSignature>;
 }

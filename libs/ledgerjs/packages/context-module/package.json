@@ -10,6 +10,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc -p src && tsc -p src -m ES6 --outDir lib-es",
+    "watch": "tsc --watch",
     "test": "jest"
   },
   "keywords": [],

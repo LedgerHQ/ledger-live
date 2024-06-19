@@ -508,6 +508,7 @@ export enum ScreenName {
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
 
   WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  MockedAddAssetButton = "MockedAddAssetButton",
 }
 
 export enum NavigatorName {
