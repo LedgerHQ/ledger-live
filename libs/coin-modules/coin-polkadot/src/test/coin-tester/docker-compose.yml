@@ -17,8 +17,8 @@ services:
         retries: 12
   sidecar-api:
     image: ghcr.io/ledgerhq/polkadot-sidecar:19.0.0-ledger-live
-    platform: linux/x86_64
     container_name: sidecar-api
+    platform: linux/x86_64
     depends_on:
       chopsticks:
         condition: service_healthy

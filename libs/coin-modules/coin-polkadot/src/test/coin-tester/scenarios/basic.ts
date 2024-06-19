@@ -249,9 +249,11 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
 
     const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");
     await cryptoWaitReady();
+    console.log("crypto ready");
     await wsProvider.connect();
+    console.log("ws connected");
     api = await ApiPromise.create({ provider: wsProvider });
-
+    console.log(api);
     const [chain, nodeName, nodeVersion] = await Promise.all([
       api.rpc.system.chain(),
       api.rpc.system.name(),

@@ -13,7 +13,14 @@ export const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
 
 describe("Polkadot Deterministic Tester", () => {
   it("Basic scenario", async () => {
-    await executeScenario(basicScenario);
+    try {
+      await executeScenario(basicScenario);
+    } catch (e) {
+      if (e != "done") {
+        await Promise.all([killSpeculos(), killChopsticksAndSidecar()]);
+        throw e;
+      }
+    }
   });
 });
 
