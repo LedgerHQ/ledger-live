@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 2.1.1-next.0
+
+### Patch Changes
+
+- [#7078](https://github.com/LedgerHQ/ledger-live/pull/7078) [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac) Thanks [@lvndry](https://github.com/lvndry)! - [evm] Improve error message if could not get list of operations
+
+- Updated dependencies [[`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069)]:
+  - @ledgerhq/coin-framework@0.15.0-next.0
+  - @ledgerhq/domain-service@1.2.1-next.0
+  - @ledgerhq/evm-tools@1.1.0
+
 ## 2.1.0
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # @ledgerhq/device-core
 
+## 0.2.1-next.0
+
+### Patch Changes
+
+- [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Create getAppsCatalogForDevice use case
+
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761)]:
+  - @ledgerhq/types-live@6.48.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes
