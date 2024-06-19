@@ -1,5 +1,33 @@
 # @ledgerhq/native-ui
 
+## 0.23.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#6606](https://github.com/LedgerHQ/ledger-live/pull/6606) [`972e3d1`](https://github.com/LedgerHQ/ledger-live/commit/972e3d193f3124cab56dda7a0fee5f718e954ff6) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - (test): add testID="modal-close-button" in BaseModal
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b)]:
+  - @ledgerhq/crypto-icons-ui@1.2.0
+  - @ledgerhq/icons-ui@0.7.0
+
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#6606](https://github.com/LedgerHQ/ledger-live/pull/6606) [`972e3d1`](https://github.com/LedgerHQ/ledger-live/commit/972e3d193f3124cab56dda7a0fee5f718e954ff6) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - (test): add testID="modal-close-button" in BaseModal
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`2f2b754`](https://github.com/LedgerHQ/ledger-live/commit/2f2b754b1350360ca0d9f761ca6e4a8cbaff141b)]:
+  - @ledgerhq/crypto-icons-ui@1.2.0-next.0
+  - @ledgerhq/icons-ui@0.7.0-next.0
+
 ## 0.22.9
 
 ### Patch Changes

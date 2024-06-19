@@ -1,6 +1,6 @@
 {
   "name": "@actions/generate-release-message",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "creates a changelog to be used during the creation of a Github Release",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

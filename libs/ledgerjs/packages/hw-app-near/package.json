@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-near",
-  "version": "6.28.8",
+  "version": "6.29.0",
   "description": "Ledger Hardware Wallet Near Application API",
   "keywords": [
     "Ledger",
