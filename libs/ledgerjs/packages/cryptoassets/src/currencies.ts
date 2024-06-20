@@ -2551,7 +2551,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://xsnexplorer.io/addresses/$address",
       },
     ],
-    explorerId: "xsn",
   },
   stargaze: {
     type: "CryptoCurrency",
