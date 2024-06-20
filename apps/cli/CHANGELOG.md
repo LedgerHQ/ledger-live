@@ -1,5 +1,12 @@
 # @ledgerhq/live-cli
 
+## 24.3.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`1df64d2`](https://github.com/LedgerHQ/ledger-live/commit/1df64d27e75c2a3445903ebce9e1f681683676da)]:
+  - @ledgerhq/hw-transport-node-hid@6.29.1-next.0
+
 ## 24.3.1-next.0
 
 ### Patch Changes
