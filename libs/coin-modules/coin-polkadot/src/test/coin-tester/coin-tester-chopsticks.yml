@@ -2,6 +2,7 @@
 # Inspired by https://github.com/AcalaNetwork/chopsticks/blob/master/configs/polkadot.yml
 # Documentation: https://github.com/AcalaNetwork/chopsticks?tab=readme-ov-file
 endpoint:
+  - wss://rpc.polkadot.io
   - wss://rpc.ibp.network/polkadot
   - wss://polkadot-rpc.dwellir.com
 mock-signature-host: true
