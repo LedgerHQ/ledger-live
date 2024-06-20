@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.83.0-next.1
+
+### Patch Changes
+
+- [#7154](https://github.com/LedgerHQ/ledger-live/pull/7154) [`1ac8733`](https://github.com/LedgerHQ/ledger-live/commit/1ac8733d45e057aecc68c85eff99d6358fc93638) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix cvs wrong value
+
 ## 2.83.0-next.0
 
 ### Minor Changes
