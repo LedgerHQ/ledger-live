@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.45.1-nightly.0
+
+### Patch Changes
+
+- [#7086](https://github.com/LedgerHQ/ledger-live/pull/7086) [`a16f95e`](https://github.com/LedgerHQ/ledger-live/commit/a16f95efc4f61f6575ec03dc1ec0ecd74985cb38) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add WS activation screen from settings
+
+- [#7064](https://github.com/LedgerHQ/ledger-live/pull/7064) [`a08e123`](https://github.com/LedgerHQ/ledger-live/commit/a08e123484f3e0c919ec9865b6d4840985b15dc8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Create a new drawer component on add account. This new drawer has new UI and an entry point to walletSync. This entrypoint is hidden under a feature flag. Also update translations related to WS.
+
+- [#7135](https://github.com/LedgerHQ/ledger-live/pull/7135) [`e985f4a`](https://github.com/LedgerHQ/ledger-live/commit/e985f4acfed10f1aee479b77775f5954c46425b2) Thanks [@Justkant](https://github.com/Justkant)! - chore: update react-native-webview [LIVE-12644]
+
+- Updated dependencies [[`5d17fab`](https://github.com/LedgerHQ/ledger-live/commit/5d17fab23f59b888190cd9e122165be6d0eb8c55)]:
+  - @ledgerhq/live-common@34.3.1-nightly.0
+
 ## 3.45.0
 
 ### Minor Changes

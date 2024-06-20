@@ -1,5 +1,11 @@
 # @ledgerhq/context-module
 
+## 0.0.3-nightly.0
+
+### Patch Changes
+
+- [#7139](https://github.com/LedgerHQ/ledger-live/pull/7139) [`87a3a1e`](https://github.com/LedgerHQ/ledger-live/commit/87a3a1ee2d5ed3dae2251b4a8683063b07ee1df8) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add context module builder
+
 ## 0.0.2
 
 ### Patch Changes

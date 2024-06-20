@@ -1,5 +1,12 @@
 # @ledgerhq/keyring-eth
 
+## 0.1.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`87a3a1e`](https://github.com/LedgerHQ/ledger-live/commit/87a3a1ee2d5ed3dae2251b4a8683063b07ee1df8)]:
+  - @ledgerhq/context-module@0.0.3-nightly.0
+
 ## 0.1.0
 
 ### Minor Changes

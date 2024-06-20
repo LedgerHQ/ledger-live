@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.3.1-nightly.0
+
+### Patch Changes
+
+- [#7133](https://github.com/LedgerHQ/ledger-live/pull/7133) [`5d17fab`](https://github.com/LedgerHQ/ledger-live/commit/5d17fab23f59b888190cd9e122165be6d0eb8c55) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: incorrect error message on NotEnoughBalance
+
 ## 34.3.0
 
 ### Minor Changes
