@@ -1,5 +1,14 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
+## 6.31.1-next.0
+
+### Patch Changes
+
+- [#7142](https://github.com/LedgerHQ/ledger-live/pull/7142) [`1df64d2`](https://github.com/LedgerHQ/ledger-live/commit/1df64d27e75c2a3445903ebce9e1f681683676da) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Force node-hid version to 2.1.2, fix glibc < 2.33 error
+
+- Updated dependencies [[`1df64d2`](https://github.com/LedgerHQ/ledger-live/commit/1df64d27e75c2a3445903ebce9e1f681683676da)]:
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.1-next.0
+
 ## 6.31.0
 
 ### Minor Changes
