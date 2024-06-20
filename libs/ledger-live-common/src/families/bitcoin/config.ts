@@ -185,14 +185,6 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       },
     },
   },
-  config_currency_stealthcoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-      },
-    },
-  },
   config_currency_zcash: {
     type: "object",
     default: {

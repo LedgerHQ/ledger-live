@@ -2622,46 +2622,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "strat",
   },
-  stealthcoin: {
-    terminated: {
-      link: "https://support.ledger.com/",
-    },
-    type: "CryptoCurrency",
-    id: "stealthcoin",
-    coinType: CoinType.STEALTH,
-    name: "Stealth",
-    managerAppName: "Stealth",
-    ticker: "XST",
-    scheme: "stealth",
-    color: "#000000",
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 62,
-      P2SH: 85,
-      XPUBVersion: 0x8f624b66,
-      hasTimestamp: false,
-    },
-    units: [
-      {
-        name: "stealth",
-        code: "XST",
-        magnitude: 6,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.stealthmonitor.org/transactions/$hash",
-        address: "https://www.stealthmonitor.org/address/$address",
-      },
-    ],
-    explorerId: "xst",
-  },
   stellar: {
     type: "CryptoCurrency",
     id: "stellar",

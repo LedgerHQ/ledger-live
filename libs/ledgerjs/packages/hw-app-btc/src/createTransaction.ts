@@ -108,7 +108,6 @@ export async function createTransaction(
 
   const isDecred = additionals.includes("decred");
   const isZcash = additionals.includes("zcash");
-  const isXST = additionals.includes("stealthcoin");
   const startTime = Date.now();
   const sapling = additionals.includes("sapling");
   const bech32 = segwit && additionals.includes("bech32");
@@ -128,9 +127,7 @@ export async function createTransaction(
   const defaultVersion = Buffer.alloc(4);
   !!expiryHeight && !isDecred
     ? defaultVersion.writeUInt32LE(isZcash ? 0x80000005 : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
-    : isXST
-      ? defaultVersion.writeUInt32LE(2, 0)
-      : defaultVersion.writeUInt32LE(1, 0);
+    : defaultVersion.writeUInt32LE(1, 0);
   // Default version to 2 for XST not to have timestamp
   const trustedInputs: Array<any> = [];
   const regularOutputs: Array<TransactionOutput> = [];

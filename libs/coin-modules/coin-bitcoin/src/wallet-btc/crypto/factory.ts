@@ -65,11 +65,6 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       res = new crypto.Zen({ network });
       break;
     }
-    case "stealthcoin": {
-      const network = coininfo.bitcoin.main.toBitcoinJS();
-      res = new crypto.Stealth({ network });
-      break;
-    }
     case "bitcoin_testnet": {
       const network = coininfo.bitcoin.test.toBitcoinJS();
       res = new crypto.Bitcoin({ network });

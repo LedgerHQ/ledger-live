@@ -143,21 +143,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "stealthcoin") {
-    return {
-      identifier: "xst",
-      P2PKHVersion: Buffer.from([0x3e]),
-      P2SHVersion: Buffer.from([0x55]),
-      xpubVersion: Buffer.from([0x8f, 0x62, 0x4b, 0x66]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "StealthCoin Signed Message:\n",
-      usesTimestampedTransaction: false,
-      // Used to depend on "version"
-      timestampDelay: new BigNumber(15),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
   } else if (networkName === "dash") {
     return {
       identifier: "dash",

@@ -11,7 +11,6 @@ In Ledger Live, the Bitcoin family includes the following cryptocurrencies:
 - Dash
 - Komodo
 - PIVX
-- Stealth
 - Bitcoin Gold
 - Dogecoin (DOGE)
 - Qtum

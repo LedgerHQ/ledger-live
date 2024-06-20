@@ -29,7 +29,7 @@ const command = async (transport, currencyId, hash) => {
   const tx = btc.splitTransaction(
     hex,
     currency.supportsSegwit,
-    (currency.id === "stealthcoin" && hex.slice(0, 2) === "01") || bitcoinLikeInfo?.hasTimestamp,
+    bitcoinLikeInfo?.hasTimestamp,
     hasExtraData,
     [currency.id],
   );

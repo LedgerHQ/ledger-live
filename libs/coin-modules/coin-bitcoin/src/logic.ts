@@ -20,7 +20,6 @@ const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo",
   bitcoin: 1000,
   bitcoin_gold: 1000,
   pivx: 2000,
-  stealthcoin: 2000,
   qtum: 4000,
   stratis: 2000,
 };

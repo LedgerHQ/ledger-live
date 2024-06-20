@@ -83,7 +83,6 @@ export enum CoinType {
   STAKENET = 384,
   STACKS = 5757,
   STRATIS = 105,
-  STEALTH = 125,
   STELLAR = 148,
   SHYFT = 7341,
   TEZOS = 1729,
