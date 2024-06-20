@@ -50,7 +50,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -91,7 +91,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -125,7 +125,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_ruby: true
