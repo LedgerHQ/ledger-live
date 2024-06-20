@@ -58,7 +58,7 @@ function OperationComponent({
   const confirmationsNb = useSelector((state: State) =>
     confirmationsNbForCurrencySelector(state, mainAccount),
   );
-  const unit = useAccountUnit(mainAccount);
+  const unit = useAccountUnit(account);
   const accountName = useAccountName(account);
 
   const onClickOnOperation = () => {
