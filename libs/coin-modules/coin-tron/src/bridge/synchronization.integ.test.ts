@@ -61,7 +61,9 @@ const dummyAccount: TronAccount = {
 };
 
 describe("Tron Accounts", () => {
-  test("should always have tronResources", async () => {
+  let bridge: ReturnType<typeof createBridges>;
+
+  beforeAll(() => {
     const signer = jest.fn();
     const coinConfig = (): TronCoinConfig => ({
       status: {
@@ -71,7 +73,10 @@ describe("Tron Accounts", () => {
         url: "https://tron.coin.ledger.com",
       },
     });
-    const bridge = createBridges(signer, coinConfig);
+    bridge = createBridges(signer, coinConfig);
+  });
+
+  test("should always have tronResources", async () => {
     const account = await syncAccount<Transaction, TronAccount>(
       bridge.accountBridge,
       dummyAccount,
@@ -79,5 +84,22 @@ describe("Tron Accounts", () => {
     );
 
     expect(account.tronResources).toEqual(defaultTronResources);
+  });
+
+  test.each([
+    "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre",
+    "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj",
+    "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
+    "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+    "TUxd6v64YTWkfpFpNDdtgc5Ps4SfGxwizT",
+    "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh",
+  ])("should always be sync wihtout error for address %s", async (accountId: string) => {
+    const account = await syncAccount<Transaction, TronAccount>(
+      bridge.accountBridge,
+      { ...dummyAccount, id: `js:2:tron:${accountId}:`, freshAddress: accountId },
+      defaultSyncConfig,
+    );
+
+    expect(account.id).toEqual(`js:2:tron:${accountId}:`);
   });
 });

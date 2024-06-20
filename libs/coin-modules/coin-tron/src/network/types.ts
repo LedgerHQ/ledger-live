@@ -1,20 +1,5 @@
 import { TrongridTxType } from "../types";
 
-type Ret = {
-  contractRet: string; // Better to have an exhaustive list: "STRING" + ?
-  fee?: number;
-};
-
-type TransactionRawData<T> = {
-  contract: Contract<T>[];
-  ref_block_bytes: string;
-  ref_block_hash: string;
-  expiration: number;
-  timestamp?: number;
-  fee_limit?: number;
-  data?: string;
-};
-
 export type TransactionResponseTronAPI<T> = {
   data: T[];
   success: boolean;
@@ -25,14 +10,6 @@ export type TransactionResponseTronAPI<T> = {
       next: string;
     };
   };
-};
-
-type Contract<T> = {
-  parameter: {
-    value: T;
-    type_url: string;
-  };
-  type: TrongridTxType;
 };
 
 //-- TRANSACTION
@@ -55,10 +32,34 @@ export type TransactionTronAPI<T = TransactionContract> = {
   internal_transactions: any[];
 };
 
+type Ret = {
+  contractRet: string; // Better to have an exhaustive list: "STRING" + ?
+  fee?: number;
+};
+
+type TransactionRawData<T> = {
+  contract: Contract<T>[];
+  ref_block_bytes: string;
+  ref_block_hash: string;
+  expiration: number;
+  timestamp?: number;
+  fee_limit?: number;
+  data?: string;
+};
+
+type Contract<T> = {
+  parameter: {
+    value: T;
+    type_url: string;
+  };
+  type: TrongridTxType;
+};
+
 type Vote = {
   vote_address: string;
   vote_count: number;
 };
+
 type TransactionContract = {
   owner_address: string;
   votes?: Vote[];
@@ -91,6 +92,10 @@ export type TransactionInfoTronAPI = {
   };
 };
 
+export function isTransactionTronAPI(tx: unknown): tx is TransactionTronAPI {
+  return (tx as TransactionTronAPI).txID !== undefined;
+}
+
 //-- TRC20
 export type Trc20API = {
   transaction_id: string;
@@ -115,3 +120,28 @@ type Trc20Contract = {
   owner_address: string;
   contract_address: string;
 };
+
+//-- Malformed?
+export type MalformedTransactionTronAPI = {
+  internal_tx_id: string;
+  data: {
+    note: string;
+    rejected: boolean;
+    call_value: {
+      _: number;
+    };
+  };
+  block_timestamp: number;
+  to_address: string;
+  tx_id: string;
+  from_address: string;
+};
+
+export function isMalformedTransactionTronAPI(
+  tx: TransactionTronAPI | MalformedTransactionTronAPI,
+): tx is MalformedTransactionTronAPI {
+  return (
+    (tx as MalformedTransactionTronAPI).internal_tx_id !== undefined ||
+    (tx as MalformedTransactionTronAPI).tx_id !== undefined
+  );
+}

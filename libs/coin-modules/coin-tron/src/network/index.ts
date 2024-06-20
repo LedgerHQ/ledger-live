@@ -43,32 +43,43 @@ import {
   formatTrongridTrc20TxResponse,
   formatTrongridTxResponse,
 } from "./format";
-import { TransactionResponseTronAPI, TransactionTronAPI, Trc20API } from "./types";
+import {
+  isMalformedTransactionTronAPI,
+  isTransactionTronAPI,
+  MalformedTransactionTronAPI,
+  TransactionResponseTronAPI,
+  TransactionTronAPI,
+  Trc20API,
+} from "./types";
 import { stringify } from "querystring";
 
 const getBaseApiUrl = () => getCoinConfig().explorer.url;
 
-async function post<T>(url: string, body: T) {
-  const { data } = await network<any, T>({
+async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
+  const { data } = await network<U, T>({
     method: "POST",
-    url: `${getBaseApiUrl()}${url}`,
+    url: `${getBaseApiUrl()}${endPoint}`,
     data: body,
   });
 
   // Ugly but trongrid send a 200 status event if there are errors
-  if (data.Error) {
-    log("tron-error", data.Error, {
-      url,
+  if ("Error" in data) {
+    log("tron-error", stringify(data.Error as any), {
+      endPoint,
       body,
     });
-    throw new Error(data.Error);
+    throw new Error(stringify(data.Error as any));
   }
 
   return data;
 }
 
-async function fetch<T extends object = any>(url: string) {
-  const { data } = await network<T>({ url: `${getBaseApiUrl()}${url}` });
+async function fetch<T extends object = any>(endPoint: string): Promise<T> {
+  return fetchWithBaseUrl<T>(`${getBaseApiUrl()}${endPoint}`);
+}
+
+async function fetchWithBaseUrl<T extends object = any>(url: string): Promise<T> {
+  const { data } = await network<T>({ url });
 
   // Ugly but trongrid send a 200 status event if there are errors
   if ("Error" in data) {
@@ -311,19 +322,22 @@ const getTransactions =
   async (
     url: string,
   ): Promise<{
-    results: Array<TransactionTronAPI & { detail?: TronTransactionInfo }>;
+    results: Array<
+      (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
+    >;
     nextUrl?: string;
   }> => {
-    const transactions = await fetch<TransactionResponseTronAPI<TransactionTronAPI>>(url);
+    const transactions =
+      await fetchWithBaseUrl<
+        TransactionResponseTronAPI<TransactionTronAPI | MalformedTransactionTronAPI>
+      >(url);
 
     const nextUrl = transactions.meta.links?.next;
     const results = await promiseAllBatched(3, transactions.data || [], async tx => {
-      const fee = tx.ret[0].fee || undefined;
-      const txID = tx.txID;
-
-      if (!txID || fee !== undefined) {
+      if (isMalformedTransactionTronAPI(tx)) {
         return tx;
       }
+      const txID = tx.txID;
 
       const detail = cacheTransactionInfoById[txID] || (await fetchTronTxDetail(txID));
       cacheTransactionInfoById[txID] = detail;
@@ -342,7 +356,7 @@ const getTrc20 = async (
   results: Array<Trc20API>;
   nextUrl?: string;
 }> => {
-  const transactions = await fetch<TransactionResponseTronAPI<Trc20API>>(url);
+  const transactions = await fetchWithBaseUrl<TransactionResponseTronAPI<Trc20API>>(url);
 
   return {
     results: transactions.data,
@@ -352,16 +366,21 @@ const getTrc20 = async (
 
 export async function fetchTronAccountTxs(
   addr: string,
-  shouldFetchMoreTxs: (txs: Array<TransactionTronAPI | Trc20API>) => boolean,
+  shouldFetchMoreTxs: (
+    txs: Array<TransactionTronAPI | Trc20API | MalformedTransactionTronAPI>,
+  ) => boolean,
   cacheTransactionInfoById: Record<string, TronTransactionInfo>,
 ): Promise<TrongridTxInfo[]> {
   const entireTxs = (
-    await getAllTransactions<TransactionTronAPI & { detail?: TronTransactionInfo }>(
-      `/v1/accounts/${addr}/transactions?limit=100`,
+    await getAllTransactions<
+      (TransactionTronAPI & { detail?: TronTransactionInfo }) | MalformedTransactionTronAPI
+    >(
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?limit=100`,
       shouldFetchMoreTxs,
       getTransactions(cacheTransactionInfoById),
     )
   )
+    .filter((tx): tx is TransactionTronAPI => isTransactionTronAPI(tx))
     .filter(tx => {
       // custom smart contract tx has internal txs
       const hasInternalTxs =
@@ -382,7 +401,7 @@ export async function fetchTronAccountTxs(
   // we need to fetch and filter trc20 transactions from another endpoint
   const entireTrc20Txs = (
     await getAllTransactions<Trc20API>(
-      `/v1/accounts/${addr}/transactions/trc20?get_detail=true`,
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?get_detail=true`,
       shouldFetchMoreTxs,
       getTrc20,
     )
