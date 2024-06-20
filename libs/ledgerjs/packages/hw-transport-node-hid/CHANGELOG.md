@@ -1,35 +1,6 @@
 # @ledgerhq/hw-transport-node-hid
 
-## 6.29.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0)]:
-  - @ledgerhq/devices@8.4.0-nightly.3
-  - @ledgerhq/hw-transport@6.31.0-nightly.3
-  - @ledgerhq/hw-transport-node-hid-noevents@6.30.0-nightly.3
-
-## 6.29.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
-  - @ledgerhq/hw-transport@6.31.0-nightly.2
-  - @ledgerhq/errors@6.17.0-nightly.2
-  - @ledgerhq/hw-transport-node-hid-noevents@6.30.0-nightly.2
-  - @ledgerhq/devices@8.4.0-nightly.2
-
-## 6.29.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f)]:
-  - @ledgerhq/errors@6.17.0-nightly.1
-  - @ledgerhq/devices@8.4.0-nightly.1
-  - @ledgerhq/hw-transport@6.31.0-nightly.1
-  - @ledgerhq/hw-transport-node-hid-noevents@6.30.0-nightly.1
-
-## 6.29.0-nightly.0
+## 6.29.0
 
 ### Minor Changes
 
@@ -37,11 +8,25 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11)]:
-  - @ledgerhq/hw-transport-node-hid-noevents@6.30.0-nightly.0
-  - @ledgerhq/hw-transport@6.31.0-nightly.0
-  - @ledgerhq/devices@8.4.0-nightly.0
-  - @ledgerhq/errors@6.17.0-nightly.0
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f), [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0)]:
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.0
+  - @ledgerhq/hw-transport@6.31.0
+  - @ledgerhq/devices@8.4.0
+  - @ledgerhq/errors@6.17.0
+
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f), [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0)]:
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.0-next.0
+  - @ledgerhq/hw-transport@6.31.0-next.0
+  - @ledgerhq/devices@8.4.0-next.0
+  - @ledgerhq/errors@6.17.0-next.0
 
 ## 6.28.6
 

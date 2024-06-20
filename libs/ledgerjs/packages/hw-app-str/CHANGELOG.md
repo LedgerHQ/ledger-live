@@ -1,25 +1,26 @@
 # @ledgerhq/hw-app-str
 
-## 8.0.0-nightly.0
+## 6.29.0
 
-### Major Changes
+### Minor Changes
 
-- [#6923](https://github.com/LedgerHQ/ledger-live/pull/6923) [`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737) Thanks [@overcat](https://github.com/overcat)! - Refactor `hw-app-str` and add `signSorobanAuthorization`. Please check the changelog and documentation of "@ledgerhq/hw-app-str" for more information.
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
 
-## 7.0.0
+### Patch Changes
 
-### Major Changes
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
+  - @ledgerhq/hw-transport@6.31.0
 
-- `Str.getPublicKey`'s function signature has changed. Previously, it was `getPublicKey(path: string, boolValidate?: boolean, boolDisplay?: boolean): Promise<{ publicKey: string; raw: Buffer; }>` and now it is `async getPublicKey(path: string, display = false): Promise<{ rawPublicKey: Buffer }>`
-- `Str.signTransaction` will no longer automatically fallback to `Str.signHash`. If you want to sign a hash, you have to call `Str.signHash` directly.
-- Removed the fixed limit on the maximum length of the transaction in `Str.signTransaction`. Currently, if the transaction is too large for the device to handle, `StellarUserRefusedError` will be thrown.
-- Add `Str.signSorobanAuthorization` method to sign Stellar Soroban authorization.
-- `Str.getAppConfiguration` now returns `maxDataSize`, it represents the maximum size of the data that the device can processed.
-- Add error classes for better error handling, check the documentation for more information:
-  - `StellarUserRefusedError`
-  - `StellarHashSigningNotEnabledError`
-  - `StellarDataTooLargeError`
-  - `StellarDataParsingFailedError`
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
+  - @ledgerhq/hw-transport@6.31.0-next.0
 
 ## 6.28.6
 

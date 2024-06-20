@@ -3,9 +3,9 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AmountRequired,
   FeeNotLoaded,
-  FeeNotLoadedSwap,
   NotEnoughGas,
   NotEnoughGasSwap,
+  NotEnoughBalance,
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
@@ -81,7 +81,7 @@ export const useFromAmountStatusMessage = (
 
     // convert to swap variation of error to display correct message to frontend.
     if (relevantStatus instanceof FeeNotLoaded) {
-      return new FeeNotLoadedSwap();
+      return new NotEnoughBalance();
     }
 
     return relevantStatus;

@@ -1,33 +1,6 @@
 # @ledgerhq/hw-app-trx
 
-## 6.29.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.0-nightly.3
-
-## 6.29.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
-  - @ledgerhq/hw-transport@6.31.0-nightly.2
-
-## 6.29.0-nightly.2
-
-### Patch Changes
-
-- [#6934](https://github.com/LedgerHQ/ledger-live/pull/6934) [`0c6c26c`](https://github.com/LedgerHQ/ledger-live/commit/0c6c26c852a36fb8567bd7eb19716c766f4c0a25) Thanks [@zorro11639](https://github.com/zorro11639)! - Support #signTIP712HashedMessage() for Tron
-
-## 6.29.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.0-nightly.1
-
-## 6.29.0-nightly.0
+## 6.29.0
 
 ### Minor Changes
 
@@ -35,8 +8,23 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11)]:
-  - @ledgerhq/hw-transport@6.31.0-nightly.0
+- [#6934](https://github.com/LedgerHQ/ledger-live/pull/6934) [`0c6c26c`](https://github.com/LedgerHQ/ledger-live/commit/0c6c26c852a36fb8567bd7eb19716c766f4c0a25) Thanks [@zorro11639](https://github.com/zorro11639)! - Support #signTIP712HashedMessage() for Tron
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
+  - @ledgerhq/hw-transport@6.31.0
+
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#6934](https://github.com/LedgerHQ/ledger-live/pull/6934) [`0c6c26c`](https://github.com/LedgerHQ/ledger-live/commit/0c6c26c852a36fb8567bd7eb19716c766f4c0a25) Thanks [@zorro11639](https://github.com/zorro11639)! - Support #signTIP712HashedMessage() for Tron
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f)]:
+  - @ledgerhq/hw-transport@6.31.0-next.0
 
 ## 6.28.6
 

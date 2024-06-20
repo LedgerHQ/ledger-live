@@ -1,0 +1,45 @@
+diff --git a/dist/changesets-get-github-info.cjs.js b/dist/changesets-get-github-info.cjs.js
+index a74df59f8a5988f458a3476087399f5e6dfe4818..6cb2dbab81854301c5ad1525a4bf9bb12072a9ef 100644
+--- a/dist/changesets-get-github-info.cjs.js
++++ b/dist/changesets-get-github-info.cjs.js
+@@ -211,7 +211,7 @@ const GHDataLoader = new DataLoader__default["default"](async requests => {
+ 
+     return cleanedData[repo][data.kind][data.kind === "pull" ? data.pull : data.commit];
+   });
+-});
++}, { maxBatchSize: 500 });
+ async function getInfo(request) {
+   if (!request.commit) {
+     throw new Error("Please pass a commit SHA to getInfo");
+diff --git a/dist/changesets-get-github-info.esm.js b/dist/changesets-get-github-info.esm.js
+index 27e5c972ab1202ff16f5124b471f4bbcc46be2b5..e15e719adf9a6fda8d1ba003b6528120cd37a8df 100644
+--- a/dist/changesets-get-github-info.esm.js
++++ b/dist/changesets-get-github-info.esm.js
+@@ -1,5 +1,5 @@
+-import fetch from 'node-fetch';
+ import DataLoader from 'dataloader';
++import fetch from 'node-fetch';
+ 
+ function _defineProperty(obj, key, value) {
+   if (key in obj) {
+@@ -202,7 +202,7 @@ const GHDataLoader = new DataLoader(async requests => {
+ 
+     return cleanedData[repo][data.kind][data.kind === "pull" ? data.pull : data.commit];
+   });
+-});
++}, { maxBatchSize: 500 });
+ async function getInfo(request) {
+   if (!request.commit) {
+     throw new Error("Please pass a commit SHA to getInfo");
+diff --git a/src/index.ts b/src/index.ts
+index d4daab0335e99c8bbbb36181fa108fe21145fd41..5b272f80cd7a735da3cdfed0798fb8467c461483 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -1,6 +1,6 @@
+ // @ts-ignore
+-import fetch from "node-fetch";
+ import DataLoader from "dataloader";
++import fetch from "node-fetch";
+ 
+ const validRepoNameRegex = /^[\w.-]+\/[\w.-]+$/;
+ 

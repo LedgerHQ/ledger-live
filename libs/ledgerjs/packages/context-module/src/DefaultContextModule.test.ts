@@ -12,7 +12,7 @@ describe("DefaultContextModule", () => {
   });
 
   it("should initialize the context module with all the default loaders", async () => {
-    const contextModule = new DefaultContextModule();
+    const contextModule = new DefaultContextModule({ loaders: [] });
 
     const res = await contextModule.getContexts({} as Transaction, {} as LoaderOptions);
 

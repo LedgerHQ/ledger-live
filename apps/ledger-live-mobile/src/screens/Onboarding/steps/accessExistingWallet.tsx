@@ -13,7 +13,7 @@ import { OnboardingType } from "~/reducers/types";
 import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import DummyDrawer from "LLM/features/WalletSync/drawers/DummyDrawer";
+import Drawer from "LLM/components/Dummy/Drawer";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 
 type NavigationProps = StackNavigatorProps<
@@ -104,7 +104,7 @@ function AccessExistingWallet() {
               ]),
         ]}
       />
-      <DummyDrawer isOpen={isDrawerVisible} handleClose={closeDrawer} />
+      <Drawer isOpen={isDrawerVisible} handleClose={closeDrawer} />
     </OnboardingView>
   );
 }

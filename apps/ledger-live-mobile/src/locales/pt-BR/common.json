@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Erro do número de sequência",
       "description" : "Feche a janela e tente novamente mais tarde"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
     }
   },
   "crash" : {
@@ -1506,7 +1509,7 @@
         "title" : "Código PIN",
         "desc" : "Seu código PIN é a sua primeira camada de segurança. Ele protege o acesso físico à sua Nano e às suas chaves privadas. O PIN deve ter de 4 a 8 dígitos.",
         "checkboxDesc" : "Entendo que devo escolher meu código PIN a sós e guardá-lo em segredo.",
-        "cta" : "Defina o código PIN"
+        "cta" : "Definir código PIN"
       },
       "pinCodeSetup" : {
         "bullets" : {
@@ -1557,7 +1560,7 @@
         "desc" : "Sua Frase de Recuperação Secreta é uma lista de 24 palavras que respaldam as suas chaves privadas.",
         "desc_1" : "Sua Ledger Nano gera uma Frase de Recuperação Secreta única. A Ledger não sabe qual é.",
         "cta" : "Próximo passo",
-        "checkboxDesc" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos ficarão vulneráveis."
+        "checkboxDesc" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos estarão vulneráveis."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1882,7 +1885,7 @@
         "title" : "Como usuário Ledger, meus criptoativos estão armazenados:",
         "answers" : {
           "correct" : "Na blockchain",
-          "wrong" : "Em minha Ledger Nano"
+          "wrong" : "Na minha Ledger Nano"
         },
         "modal" : {
           "text" : "Seus criptoativos são sempre armazenados na blockchain. A sua carteira hardware guarda somente sua chave privada, que lhe dá acesso aos seus criptoativos.",
@@ -1903,7 +1906,7 @@
       "privateKey" : {
         "title" : "Quando conecto minha Ledger Nano ao aplicativo Ledger Live, minha chave privada...",
         "answers" : {
-          "correct" : "permanece desconectada",
+          "correct" : "ainda está offline",
           "wrong" : "se conecta brevemente à internet"
         },
         "modal" : {
@@ -1912,7 +1915,7 @@
         }
       },
       "final" : {
-        "successTitle" : "Já é profissional!",
+        "successTitle" : "Você já é profissional!",
         "successText" : "Você já pode gerenciar seus criptoativos com segurança. Só falta um passo!",
         "failTitle" : "Você logo será profissional...",
         "failText" : "Não se preocupe, a Ledger está aqui para te guiar ao longo da sua jornada. Em breve você se sentirá extra confortável com a segurança dos seus criptoativos. Só mais um passo!",
@@ -1928,7 +1931,7 @@
         "supportLink" : "Entre em contato com o suporte"
       },
       "seed" : {
-        "title" : "Verifique o que veio na caixa",
+        "title" : "Verifique o conteúdo da caixa",
         "desc" : "Se a sua {{deviceName}} veio junto com um código PIN ou frase de recuperação, não é seguro utilizá-la. Entre em contato com o Suporte Ledger imediatamente.",
         "warning" : "Use apenas a frase de recuperação que seu dispositivo exibiu quando você o configurou",
         "continueCTA" : "Continuar",
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "preço de mercado de {{currencyTicker}}",
       "currencyPrice" : "preço de 1 {{currencyTicker}}",
-      "currencyPriceChange" : "Alterações nas últimas 24h"
+      "currencyPriceChange" : {
+        "day" : "Variação em 24 horas",
+        "week" : "Variação em 7 dias",
+        "month" : "Variação em 30 dias",
+        "year" : "Variação no último ano",
+        "all" : "Variação no último ano"
+      }
     },
     "quickActions" : {
       "buy" : "Comprar",
@@ -2714,6 +2723,8 @@
       "languageDesc" : "Escolha em que idioma exibir o Ledger Live.",
       "dateFormat" : "Formato da data",
       "dateFormatDesc" : "Defina qual formato de data usar no Ledger Live",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Faça backup dos dados do seu aplicativo e sincronize várias instâncias do Ledger Live",
       "region" : "Região",
       "regionDesc" : "Selecione sua região para atualizar formatos de datas, horário e moedas.",
       "password" : "Bloquear aplicativo",
@@ -3025,7 +3036,7 @@
       "addressCopied" : "Endereço copiado para a área de transferência",
       "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot",
       "selectCrypto" : {
-        "title" : "Escolher a cripto que deseja receber"
+        "title" : "Selecione a criptomoeda que deseja receber"
       },
       "selectNetwork" : {
         "title" : "Selecione a rede para a cripto escolhida",
@@ -3040,7 +3051,7 @@
         "connectDevice" : "Conectar Dispositivo"
       },
       "selectAccount" : {
-        "title" : "Selecionar ou crie uma nova conta",
+        "title" : "Selecione ou crie uma nova conta",
         "subtitle" : "Seu {{currencyTicker}} será depositado nesta conta.",
         "cta" : "Criar uma nova conta"
       },
@@ -3130,9 +3141,6 @@
         "title" : "Boas-vindas à Troca",
         "whatIsSwap" : "O que é Troca (Swap)?",
         "disclaimer" : "Negocie criptoativos diretamente no seu dispositivo Ledger. Este serviço não está disponível em alguns países, incluindo os EUA."
-      },
-      "main" : {
-        "header" : "Trocar"
       },
       "notAvailable" : {
         "title" : "Serviço temporariamente indisponível, ou indisponível no seu país"
@@ -3840,35 +3848,9 @@
     "tokens" : {
       "title" : "Adicionar Token",
       "createParentCurrencyAccount" : "Adicionar conta {{parrentCurrencyName}}",
-      "erc20" : {
-        "title" : "Adicionar Token",
-        "disclaimer" : "{{tokenName}} é um Token ERC20.\nVocê pode receber tokens diretamente em uma conta Ethereum.",
-        "learnMore" : "Saiba mais sobre o ERC20"
-      },
-      "trc10" : {
-        "title" : "Adicionar Token",
-        "disclaimer" : "{{tokenName}} é um Token TRC10.\nVocê pode receber tokens diretamente em uma conta Tron.",
-        "learnMore" : "Saiba mais sobre TRC10"
-      },
-      "trc20" : {
-        "title" : "Adicionar Token",
-        "disclaimer" : "{{tokenName}} é um Token TRC20.\nVocê pode receber tokens diretamente em uma conta Tron.",
-        "learnMore" : "Saiba mais sobre o TRC20"
-      },
-      "asa" : {
-        "title" : "Adicionar Token",
-        "disclaimer" : "{{tokenName}} é um token ASA.\nVocê pode receber tokens diretamente em uma conta Algorand.",
-        "learnMore" : "Saiba mais"
-      },
-      "bep20" : {
-        "title" : "Adicionar Token",
-        "disclaimer" : "{{tokenName}} é um Token BEP-20.\nVocê pode receber tokens diretamente em uma conta BNB.",
-        "learnMore" : "Saiba mais sobre BEP-20"
-      },
-      "vip180" : {
-        "title" : "Adicionar Token",
-        "disclaimer" : "{{tokenName}} é um token VIP180.\nVocê pode receber tokens diretamente em uma conta VET.",
-        "learnMore" : "Saiba mais sobre o VIP180"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) é um token {{tokenType}}.\nVocê pode receber tokens diretamente em uma conta {{currency}}.",
+        "learnMore" : "Saiba mais sobre {{tokenType}}"
       }
     },
     "showMoreChainType" : "Mais tipos de endereços",
@@ -4325,7 +4307,8 @@
       "installUpdate" : {
         "titleInactive" : "Instalar atualização",
         "titleActive" : "Instalando atualização",
-        "description" : "A {{deviceName}} reiniciará várias vezes.\n\nPara concluir a atualização, desbloqueie a {{deviceName}} com seu PIN após terminar a instalação."
+        "description" : "A {{deviceName}} reiniciará várias vezes.\n\nPara concluir a atualização, desbloqueie a {{deviceName}} com seu PIN após terminar a instalação.",
+        "descriptionNanoXBle" : "A {{deviceName}} será reiniciada várias vezes.\n\nSe o dispositivo for desligado e não reiniciar automaticamente, você precisará ligá-lo por conta própria.\n\nPara concluir a atualização, desbloqueie a {{deviceName}} com seu PIN após terminar a instalação."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4339,14 @@
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
       "pleaseConnectUsbTitle" : "Necessário cabo USB",
       "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "Dispositivo desconectado",
+          "description" : "Não foi possível continuar a atualização porque perdemos a conexão com a {{deviceName}}"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -6134,6 +6125,7 @@
       "subtitle" : "Explore a Web3 junto com a sua Ledger",
       "section" : {
         "recentlyUsed" : "Usado recentemente",
+        "locallyLoaded" : "Carregado localmente",
         "categories" : "Categorias",
         "clearAll" : "Limpar Tudo"
       },
@@ -6231,9 +6223,10 @@
       },
       "order" : {
         "topGainers" : "Maiores altas",
-        "market_cap" : "Posição",
-        "market_cap_asc" : "Posição ascendente (valor de mercado)",
-        "market_cap_desc" : "Posição descendente (valor de mercado)"
+        "topLosers" : "Maiores perdas",
+        "marketCap" : "Posição",
+        "asc" : "Posição asc. (valor de mercado)",
+        "desc" : "Posição desc. (valor de mercado)"
       },
       "currency" : "Moeda",
       "time" : "Alteração",
@@ -6251,7 +6244,7 @@
       "priceStatistics" : "Estatísticas de preço",
       "price" : "Preço",
       "tradingVolume" : "Volume de negociação",
-      "24hLowHight" : "Mínimo em 24h / Máximo em 24h",
+      "24hLowHight" : "Min 24h / Max 24h",
       "7dLowHigh" : "Mínimo em 7d / Máximo em 7d",
       "allTimeHigh" : "Máxima Histórica",
       "allTimeLow" : "Mínima Histórica",
@@ -6303,7 +6296,7 @@
     "designedForStax" : {
       "title" : "<0>Projetado para</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "Este NFT contém uma imagem adicional do NFT, especificamente projetada para a Tela E Ink da Ledger Stax.\n\nEsta imagem será usada quando você definir este NFT como sua tela de bloqueio.",
+        "description" : "Este NFT contém uma imagem adicional do NFT, especificamente projetada para a Tela E Ink da Ledger Stax.\n\nEsta imagem será usada quando você definir este NFT como sua tela de bloqueio.",
         "cta" : "Entendi"
       }
     },
@@ -6469,7 +6462,7 @@
       "receiveModal" : {
         "title" : "Receba um NFT da mesma forma que qualquer outra criptomoeda",
         "bullets" : {
-          "0" : "• Selecione a blockchain cripto da NFT.",
+          "0" : "• Selecione a rede blockchain do NFT.",
           "1" : "• Escolha a conta para receber o NFT"
         },
         "cta" : "Ok, entendi.",
@@ -6545,7 +6538,7 @@
           "supportLink" : "Saiba mais sobre a Figment"
         },
         "kiln" : {
-          "title" : "Staking Solo Kiln",
+          "title" : "Kiln Staking Solo",
           "tag" : "Requer 32 ETH",
           "description" : "Faça staking de mais de 32 ETH em validadores dedicados e resgate recompensas facilmente.",
           "supportLink" : "Saiba mais sobre a Kiln"
@@ -6563,7 +6556,6 @@
         },
         "swap" : {
           "title" : "Trocar",
-          "label" : "Populares",
           "body" : "Troque cripto por cripto em segurança"
         },
         "receive" : {
