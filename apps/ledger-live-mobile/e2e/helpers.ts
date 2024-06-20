@@ -65,7 +65,7 @@ export async function typeTextByElement(
 }
 
 export async function clearTextByElement(elem: Detox.NativeElement) {
-  return elem.clearText();
+  return await elem.clearText();
 }
 
 async function performScroll(
