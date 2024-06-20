@@ -7,7 +7,7 @@ import { ENV } from "../types";
 import chalk from "chalk";
 import { SignOperationEvent } from "@ledgerhq/types-live";
 
-const { API_PORT } = process.env as ENV;
+const { SPECULOS_API_PORT } = process.env as ENV;
 const cwd = path.join(__dirname);
 
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
@@ -70,7 +70,7 @@ export async function spawnSpeculos(nanoAppEndpoint: `/${string}`): Promise<{
     if (out.includes("Running on all addresses (0.0.0.0)")) {
       console.log(chalk.bgYellowBright.black(" -  SPECULOS READY ✅  - "));
       return SpeculosTransportHttp.open({
-        apiPort: API_PORT,
+        apiPort: SPECULOS_API_PORT,
       });
     }
 
@@ -82,17 +82,17 @@ export async function spawnSpeculos(nanoAppEndpoint: `/${string}`): Promise<{
     async function onSpeculosConfirmation(e?: SignOperationEvent): Promise<void> {
       if (e?.type === "device-signature-requested") {
         const { data } = await axios.get(
-          `http://localhost:${process.env.API_PORT}/events?currentscreenonly=true`,
+          `http://localhost:${SPECULOS_API_PORT}/events?currentscreenonly=true`,
         );
 
         if (data.events[0].text !== approvalText) {
-          await axios.post(`http://localhost:${process.env.API_PORT}/button/right`, {
+          await axios.post(`http://localhost:${SPECULOS_API_PORT}/button/right`, {
             action: "press-and-release",
           });
 
           onSpeculosConfirmation(e);
         } else {
-          await axios.post(`http://localhost:${process.env.API_PORT}/button/both`, {
+          await axios.post(`http://localhost:${SPECULOS_API_PORT}/button/both`, {
             action: "press-and-release",
           });
         }

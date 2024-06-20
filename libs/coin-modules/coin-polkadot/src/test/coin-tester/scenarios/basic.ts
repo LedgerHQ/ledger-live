@@ -248,6 +248,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
     ]);
 
     const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");
+
     await cryptoWaitReady();
     console.log("crypto ready");
     await wsProvider.connect();

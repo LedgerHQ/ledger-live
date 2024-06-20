@@ -1,6 +1,7 @@
 name: chopsticks-sidecar
 services:
   chopsticks:
+    # TODO: Deploy the image in in ghr.io/ledgerhq
     image: coin-tester-chopsticks:latest
     container_name: chopsticks
     build:

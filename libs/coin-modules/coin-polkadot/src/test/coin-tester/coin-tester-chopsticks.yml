@@ -1,5 +1,6 @@
 # Configuration file for chopsticks
-# https://github.com/AcalaNetwork/chopsticks?tab=readme-ov-file
+# Inspired by https://github.com/AcalaNetwork/chopsticks/blob/master/configs/polkadot.yml
+# Documentation: https://github.com/AcalaNetwork/chopsticks?tab=readme-ov-file
 endpoint:
   - wss://rpc.ibp.network/polkadot
   - wss://polkadot-rpc.dwellir.com
