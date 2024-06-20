@@ -1,8 +1,9 @@
-import { ApiPromise, HttpProvider } from "@polkadot/api";
+import { ApiPromise, HttpProvider, WsProvider } from "@polkadot/api";
 import { getCoinConfig, PolkadotCoinConfig } from "../../config";
 
 let coinConfig: PolkadotCoinConfig | undefined;
 let api: ApiPromise | undefined;
+
 export default async function () {
   const config = getCoinConfig();
   // Need to constantly check if a new config is setted
@@ -11,8 +12,21 @@ export default async function () {
     const headers = coinConfig.node.credentials
       ? { Authorization: "Basic " + coinConfig.node.credentials }
       : undefined;
+
+    const nodeURL = coinConfig.node.url;
+
+    let provider: HttpProvider | WsProvider;
+
+    if (nodeURL.startsWith("ws://") || nodeURL.startsWith("wss://")) {
+      provider = new WsProvider(nodeURL);
+    } else if (nodeURL.startsWith("http://") || nodeURL.startsWith("https://")) {
+      provider = new HttpProvider(nodeURL, headers);
+    } else {
+      throw new Error("[Polkadot] Invalid node URL");
+    }
+
     api = await ApiPromise.create({
-      provider: new HttpProvider(coinConfig.node.url, headers),
+      provider,
       noInitWarn: true, //to avoid undesired warning (ex: "API/INIT: polkadot/1002000: Not decorating unknown runtime apis")
     });
   }
