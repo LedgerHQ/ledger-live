@@ -8,7 +8,7 @@ const tokens: Token[] = [
   Token.ETH_USDT,
   //Token.XLM_USCD, //TODO: Reactivate when Date.Parse issue is fixed - desactivate time machine for Speculos tests
   Token.ALGO_USDT,
-  Token.TRON_WINK,
+  Token.TRON_BTTOLD,
   Token.BSC_BUSD,
   Token.MATIC_DAI,
 ];

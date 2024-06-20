@@ -7,7 +7,7 @@ import { addTmsLink } from "tests/fixtures/common";
 const tokens: Token[] = [
   Token.ETH_USDT,
   Token.ETH_LIDO,
-  Token.TRON_WINK,
+  Token.TRON_BTTOLD,
   Token.TRON_BTT,
   Token.BSC_BUSD,
   Token.BSC_SHIBA,
