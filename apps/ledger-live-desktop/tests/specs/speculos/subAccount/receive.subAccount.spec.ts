@@ -17,7 +17,7 @@ const tokens: Token[] = [
 
 //Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, token] of tokens.entries()) {
-  test.describe.parallel("Receive @smoke", () => {
+  test.describe.skip("Receive @smoke", () => {
     test.use({
       userdata: "speculos-subAccount",
       testName: `receive subAccount_${token.tokenName}`,
