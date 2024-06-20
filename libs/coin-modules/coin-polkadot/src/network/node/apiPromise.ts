@@ -15,19 +15,20 @@ export default async function () {
 
     const nodeURL = coinConfig.node.url;
 
+    let provider: HttpProvider | WsProvider;
+
     if (nodeURL.startsWith("ws://") || nodeURL.startsWith("wss://")) {
-      api = await ApiPromise.create({
-        provider: new WsProvider(nodeURL),
-        noInitWarn: true,
-      });
+      provider = new WsProvider(nodeURL);
     } else if (nodeURL.startsWith("http://") || nodeURL.startsWith("https://")) {
-      api = await ApiPromise.create({
-        provider: new HttpProvider(coinConfig.node.url, headers),
-        noInitWarn: true, //to avoid undesired warning (ex: "API/INIT: polkadot/1002000: Not decorating unknown runtime apis")
-      });
+      provider = new HttpProvider(nodeURL, headers);
     } else {
       throw new Error("[Polkadot] Invalid node URL");
     }
+
+    api = await ApiPromise.create({
+      provider,
+      noInitWarn: true, //to avoid undesired warning (ex: "API/INIT: polkadot/1002000: Not decorating unknown runtime apis")
+    });
   }
 
   return api;
