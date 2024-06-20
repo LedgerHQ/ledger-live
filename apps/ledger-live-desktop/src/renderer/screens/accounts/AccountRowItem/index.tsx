@@ -145,25 +145,20 @@ const AccountRowItem = (props: Props) => {
 
   const scrollTopFocusRef = useRef<HTMLSpanElement>(null);
 
-  const mountedRef = useRef(true);
-
   useEffect(() => {
-    if (mountedRef.current) {
-      mountedRef.current = false;
-      return;
-    }
+    setExpanded(!!search);
+  }, [search]);
+
+  const toggleAccordion = (e: SyntheticEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    expandedStates[account.id] = !expandedStates[account.id];
+    setExpanded(expandedStates[account.id]);
     if (scrollTopFocusRef.current && !expanded) {
       scrollTopFocusRef.current.scrollIntoView({
         block: "nearest",
         behavior: "smooth",
       });
     }
-  }, [expanded]);
-
-  const toggleAccordion = (e: SyntheticEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    expandedStates[account.id] = !expandedStates[account.id];
-    setExpanded(expandedStates[account.id]);
   };
 
   const onClickHandler = () => onClick(account, parentAccount);

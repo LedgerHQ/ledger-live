@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "~/renderer/components/Box";
 import { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import Header from "~/renderer/screens/accounts/AccountRowItem/Header";
 import Balance from "~/renderer/screens/accounts/AccountRowItem/Balance";
@@ -19,7 +19,6 @@ type Props = {
   onClick: (b: AccountLike, a: Account) => void;
   range: PortfolioRange;
 };
-
 const NestedRow = styled(Box)`
   flex: 1;
   font-weight: 600;
@@ -38,17 +37,12 @@ const NestedRow = styled(Box)`
     background: ${p => p.theme.colors.palette.action.hover};
   }
 `;
-
 function TokenRow(props: Props) {
   const { account, parentAccount, onClick, range, nested, disableRounding } = props;
-
   const onClickRow = () => onClick(account, parentAccount);
-
-  const mainAccount = getMainAccount(account, parentAccount);
   const unit = useAccountUnit(account);
-  const currency = mainAccount.currency;
+  const currency = getAccountCurrency(account);
   const Row = nested ? NestedRow : TableRow;
-
   return (
     <Row className="token-row" onClick={onClickRow} tabIndex={-1}>
       <Header nested={nested} account={account} />
@@ -59,5 +53,4 @@ function TokenRow(props: Props) {
     </Row>
   );
 }
-
 export default React.memo(TokenRow);
