@@ -45,7 +45,6 @@ export type CreateTransactionArg = {
   lockTime?: number;
   sigHashType?: number;
   segwit?: boolean;
-  initialTimestamp?: number;
   additionals: Array<string>;
   expiryHeight?: Buffer;
   useTrustedInputForSegwit?: boolean;
@@ -66,7 +65,6 @@ export async function createTransaction(
     lockTime,
     sigHashType,
     segwit,
-    initialTimestamp,
     additionals,
     expiryHeight,
     onDeviceStreaming,
@@ -221,14 +219,6 @@ export async function createTransaction(
     for (let i = 0; i < result.length; i++) {
       publicKeys.push(compressPublicKey(Buffer.from(result[i].publicKey, "hex")));
     }
-  }
-
-  if (initialTimestamp !== undefined) {
-    targetTransaction.timestamp = Buffer.alloc(4);
-    targetTransaction.timestamp.writeUInt32LE(
-      Math.floor(initialTimestamp + (Date.now() - startTime) / 1000),
-      0,
-    );
   }
 
   onDeviceSignatureRequested();

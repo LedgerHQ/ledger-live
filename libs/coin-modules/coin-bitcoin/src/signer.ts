@@ -72,7 +72,6 @@ export type CreateTransaction = {
   lockTime?: number | undefined;
   sigHashType?: number | undefined;
   segwit?: boolean | undefined;
-  initialTimestamp?: number | undefined;
   additionals: Array<string>;
   expiryHeight?: Buffer | undefined;
   useTrustedInputForSegwit?: boolean | undefined;

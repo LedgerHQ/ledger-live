@@ -199,7 +199,6 @@ class BitcoinLikeWallet {
     sigHashType?: number | undefined;
     segwit?: boolean | undefined;
     hasTimestamp?: boolean | undefined;
-    initialTimestamp?: number | undefined;
     additionals?: Array<string> | undefined;
     expiryHeight?: Buffer | undefined;
     hasExtraData?: boolean | undefined;
@@ -211,7 +210,6 @@ class BitcoinLikeWallet {
       btc,
       fromAccount,
       txInfo,
-      initialTimestamp,
       additionals,
       hasExtraData,
       onDeviceSignatureRequested,
@@ -281,7 +279,6 @@ class BitcoinLikeWallet {
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),
-      initialTimestamp,
       ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
       ...(txInfo.outputs[lastOutputIndex]?.isChange && {
         changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
@@ -296,7 +293,6 @@ class BitcoinLikeWallet {
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),
-      initialTimestamp,
       ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
       ...(txInfo.outputs[lastOutputIndex]?.isChange && {
         changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,

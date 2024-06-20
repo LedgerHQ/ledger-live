@@ -90,7 +90,6 @@ export const buildSignOperation =
             sigHashType,
             segwit,
             hasTimestamp: false,
-            initialTimestamp: undefined,
             additionals,
             expiryHeight,
             hasExtraData,
