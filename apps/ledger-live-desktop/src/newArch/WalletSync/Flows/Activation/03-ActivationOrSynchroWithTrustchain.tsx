@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { setMemberCredentials, setTrustchain } from "@ledgerhq/trustchain/store";
-import { useDispatch } from "react-redux";
+import {
+  memberCredentialsSelector,
+  setMemberCredentials,
+  setTrustchain,
+} from "@ledgerhq/trustchain/store";
+import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
@@ -16,6 +20,8 @@ type Props = {
 
 export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
   const sdk = useTrustchainSdk();
+
+  const memberCredentials = useSelector(memberCredentialsSelector);
   const dispatch = useDispatch();
   const [error, setError] = useState<Error | null>(null);
 
@@ -25,38 +31,36 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
 
   const stuffHandledByTrustchain = useCallback(async () => {
     let hasFinished = false;
-    const memberCredentials = await sdk.initMemberCredentials();
-    dispatch(setMemberCredentials(memberCredentials));
-
-    try {
-      const seedIdToken = await runWithDevice(device?.deviceId, transport =>
-        sdk.authWithDevice(transport),
-      );
-      const { trustchain, hasCreatedTrustchain } = await runWithDevice(
-        device?.deviceId,
-        transport =>
+    if (!memberCredentials) {
+      const newMemberCredentials = await sdk.initMemberCredentials();
+      dispatch(setMemberCredentials(newMemberCredentials));
+    } else {
+      try {
+        const seedIdToken = await runWithDevice("", transport => sdk.authWithDevice(transport));
+        const { trustchain, hasCreatedTrustchain } = await runWithDevice("", transport =>
           sdk.getOrCreateTrustchain(transport, seedIdToken, memberCredentials, {
             onStartRequestUserInteraction: () => {},
             onEndRequestUserInteraction: () => {
               hasFinished = true;
             },
           }),
-      );
-
-      if (hasFinished) {
-        dispatch(setTrustchain(trustchain));
-
-        dispatch(
-          setFlow({
-            flow: Flow.Activation,
-            step: hasCreatedTrustchain ? Step.ActivationFinal : Step.SynchronizationFinal,
-          }),
         );
+
+        if (hasFinished) {
+          dispatch(setTrustchain(trustchain));
+
+          dispatch(
+            setFlow({
+              flow: Flow.Activation,
+              step: hasCreatedTrustchain ? Step.ActivationFinal : Step.SynchronizationFinal,
+            }),
+          );
+        }
+      } catch (error) {
+        setError(error as Error);
       }
-    } catch (error) {
-      setError(error as Error);
     }
-  }, [sdk, dispatch, device?.deviceId]);
+  }, [memberCredentials, sdk, dispatch]);
 
   useEffect(() => {
     stuffHandledByTrustchain();

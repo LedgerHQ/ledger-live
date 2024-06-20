@@ -130,7 +130,7 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
             >
               <QRCode data={url} />
               <IconContainer
-                p={1}
+                p={"8px"}
                 alignItems="center"
                 justifyContent="center"
                 bg="constant.white"
@@ -146,6 +146,7 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
           rowGap="24px"
           flexDirection="column"
           p={"24px"}
+          mt={3}
           backgroundColor={colors.opacityDefault.c05}
         >
           <Text fontSize={16} variant="large" fontWeight="500" color="neutral.c100">

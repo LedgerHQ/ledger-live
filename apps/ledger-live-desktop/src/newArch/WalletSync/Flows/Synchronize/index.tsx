@@ -14,8 +14,8 @@ const SynchronizeWallet = () => {
 
   const { currentStep, goToNextScene } = useFlows();
 
-  const goToActivation = () => {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+  const startSyncWithDevice = () => {
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
   };
 
   const getStep = () => {
@@ -23,7 +23,10 @@ const SynchronizeWallet = () => {
       default:
       case Step.SynchronizeMode:
         return (
-          <SynchronizeModeStep goToQRCode={goToNextScene} goToSyncWithDevice={goToActivation} />
+          <SynchronizeModeStep
+            goToQRCode={goToNextScene}
+            goToSyncWithDevice={startSyncWithDevice}
+          />
         );
       case Step.SynchronizeWithQRCode:
         return <SynchWithQRCodeStep displayPinCode={goToNextScene} />;
