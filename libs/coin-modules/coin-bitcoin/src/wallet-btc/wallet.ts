@@ -198,7 +198,6 @@ class BitcoinLikeWallet {
     lockTime?: number | undefined;
     sigHashType?: number | undefined;
     segwit?: boolean | undefined;
-    hasTimestamp?: boolean | undefined;
     additionals?: Array<string> | undefined;
     expiryHeight?: Buffer | undefined;
     hasExtraData?: boolean | undefined;
@@ -216,7 +215,6 @@ class BitcoinLikeWallet {
       onDeviceSignatureGranted,
       onDeviceStreaming,
     } = params;
-    const hasTimestamp = params.hasTimestamp;
     let length = txInfo.outputs.reduce((sum, output) => {
       return sum + 8 + output.script.length + 1;
     }, 1);
@@ -258,12 +256,11 @@ class BitcoinLikeWallet {
       log("hw", `splitTransaction`, {
         transactionHex: i.txHex,
         isSegwitSupported: true,
-        hasTimestamp,
         hasExtraData,
         additionals,
       });
       return [
-        btc.splitTransaction(i.txHex, true, hasTimestamp, hasExtraData, additionals),
+        btc.splitTransaction(i.txHex, true, hasExtraData, additionals),
         i.output_index,
         null,
         i.sequence,

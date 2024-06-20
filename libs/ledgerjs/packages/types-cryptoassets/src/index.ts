@@ -269,8 +269,6 @@ export type BitcoinLikeInfo = {
   P2PKH: number;
   P2SH: number;
   XPUBVersion?: number;
-  // FIXME optional as we miss some data to fill
-  hasTimestamp?: boolean;
 };
 
 /**

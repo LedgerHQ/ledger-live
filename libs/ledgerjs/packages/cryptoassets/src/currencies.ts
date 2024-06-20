@@ -644,7 +644,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 28,
       P2SH: 85,
       XPUBVersion: 0x0488b21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -1331,7 +1330,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 40,
       P2SH: 100,
       XPUBVersion: 0x0488c21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -2193,7 +2191,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 55,
       P2SH: 85,
       XPUBVersion: 0x0488b21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -2599,7 +2596,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 63,
       P2SH: 125,
       XPUBVersion: 0x0488c21e,
-      hasTimestamp: true,
     },
     units: [
       {

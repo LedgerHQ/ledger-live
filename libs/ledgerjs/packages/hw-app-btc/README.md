@@ -280,7 +280,6 @@ For each UTXO included in your transaction, create a transaction object from the
 
 *   `transactionHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a raw hexadecimal serialized transaction
 *   `isSegwitSupported` **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** is a boolean indicating if the segwit is supported (optional, default `false`)
-*   `hasTimestamp`  is a boolean (peercoin includes timestamp in their transactions, others don't) (optional, default `false`)
 *   `hasExtraData`  is a boolean (komodo, zencash and zcash include extraData in their transactions, others don't) (optional, default `false`)
 *   `additionals` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** list of additionnal options (optional, default `[]`)
 

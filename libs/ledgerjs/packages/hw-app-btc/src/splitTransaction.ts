@@ -5,7 +5,6 @@ import { formatTransactionDebug } from "./debug";
 export function splitTransaction(
   transactionHex: string,
   isSegwitSupported: boolean | null | undefined = false,
-  hasTimestamp = false,
   hasExtraData = false,
   additionals: Array<string> = [],
 ): Transaction {
@@ -30,7 +29,6 @@ export function splitTransaction(
   const isZcashv5 = isZcash && version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
   offset += 4;
   if (
-    !hasTimestamp &&
     isSegwitSupported &&
     transaction[offset] === 0 &&
     transaction[offset + 1] !== 0 &&
@@ -38,11 +36,6 @@ export function splitTransaction(
   ) {
     offset += 2;
     witness = true;
-  }
-
-  if (hasTimestamp) {
-    timestamp = transaction.slice(offset, 4 + offset);
-    offset += 4;
   }
 
   if (overwinter) {

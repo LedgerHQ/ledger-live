@@ -27,7 +27,6 @@ export interface BitcoinSigner {
   splitTransaction(
     transactionHex: string,
     isSegwitSupported: boolean | null | undefined,
-    hasTimestamp: boolean | null | undefined,
     hasExtraData: boolean | null | undefined,
     additionals: Array<string> | null | undefined,
   ): SignerTransaction;

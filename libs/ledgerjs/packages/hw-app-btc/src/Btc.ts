@@ -235,7 +235,6 @@ export default class Btc {
    * For each UTXO included in your transaction, create a transaction object from the raw serialized version of the transaction used in this UTXO.
    * @param transactionHex a raw hexadecimal serialized transaction
    * @param isSegwitSupported is a boolean indicating if the segwit is supported
-   * @param hasTimestamp is a boolean (peercoin includes timestamp in their transactions, others don't)
    * @param hasExtraData is a boolean (komodo, zencash and zcash include extraData in their transactions, others don't)
    * @param additionals list of additionnal options
    * @return the transaction object deserialized from the raw hexadecimal transaction
@@ -245,14 +244,12 @@ export default class Btc {
   splitTransaction(
     transactionHex: string,
     isSegwitSupported: boolean | null | undefined = false,
-    hasTimestamp = false,
     hasExtraData = false,
     additionals: Array<string> = [],
   ): Transaction {
     return splitTransaction(
       transactionHex,
       isSegwitSupported,
-      hasTimestamp,
       hasExtraData,
       additionals,
     );

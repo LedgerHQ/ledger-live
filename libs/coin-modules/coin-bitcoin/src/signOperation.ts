@@ -89,7 +89,6 @@ export const buildSignOperation =
             lockTime,
             sigHashType,
             segwit,
-            hasTimestamp: false,
             additionals,
             expiryHeight,
             hasExtraData,

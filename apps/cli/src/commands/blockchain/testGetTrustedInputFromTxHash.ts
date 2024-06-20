@@ -29,7 +29,6 @@ const command = async (transport, currencyId, hash) => {
   const tx = btc.splitTransaction(
     hex,
     currency.supportsSegwit,
-    bitcoinLikeInfo?.hasTimestamp,
     hasExtraData,
     [currency.id],
   );
