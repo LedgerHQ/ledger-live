@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { SubAccount } from "@ledgerhq/types-live";
@@ -30,6 +30,10 @@ import { Box, Button } from "@ledgerhq/react-ui";
 import { t } from "i18next";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { captureException } from "~/sentry/internal";
+import FeesDrawer from "./FeesDrawer";
+import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -59,6 +63,9 @@ export type SwapProps = {
   swapApiBase: string;
   estimatedFees: string;
   estimatedFeesUnit: string;
+  updateTransaction: any;
+  setTransaction: any;
+  status: TransactionStatus;
 };
 
 export type SwapWebProps = {
@@ -107,6 +114,8 @@ const SwapWebView = ({
   const dispatch = useDispatch();
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
+  const accounts = useSelector(flattenAccountsSelector);
+
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
@@ -191,6 +200,80 @@ const SwapWebView = ({
       },
       "custom.swapRedirectToHistory": () => {
         redirectToHistory();
+      },
+      "custom.getFee": ({ params }: { params: any }) => {
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:199 params",
+          "color: #007acc;",
+          params,
+        );
+        const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+
+        if (!realFromAccountId) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+        }
+
+        const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+
+        if (!fromAccount) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+        }
+
+        if (!swapState?.status) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+        }
+
+        let transaction = params.transaction;
+
+        const setTransaction = (transaction: Transaction): Promise<Transaction> => {
+          return new Promise(resolve => {
+            console.log("Setting transaction:", transaction);
+            resolve(transaction);
+          });
+        };
+
+        const updateTransaction = (
+          updater: (transaction: Transaction) => Transaction,
+        ): Promise<Transaction> => {
+          return new Promise(resolve => {
+            // Simulate the current transaction state
+            const currentTransaction: Transaction = transaction;
+
+            // Call the updater function with the current transaction
+            transaction = updater(currentTransaction);
+
+            // Log the updated transaction
+            console.log(
+              "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:238 updater",
+              "color: #007acc;",
+              transaction,
+            );
+
+            // Resolve the Promise with the updated transaction
+            return resolve(transaction);
+          });
+        };
+
+        let isOpen = true;
+
+        const fromParentAccount = getParentAccount(fromAccount, accounts);
+        const dd = setDrawer(FeesDrawerLiveApp, {
+          setTransaction,
+          updateTransaction,
+          mainAccount: fromAccount,
+          parentAccount: fromParentAccount,
+          status: swapState?.status,
+          provider: swapState?.provider,
+          disableSlowStrategy: true,
+          transaction: transaction,
+          isOpen,
+        });
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:268 dd",
+          "color: #007acc;",
+          dd,
+        );
+        // return Promise.resolve(transaction);
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
