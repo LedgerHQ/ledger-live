@@ -227,7 +227,7 @@ const coinConfig: PolkadotCoinConfig = {
     type: "active",
   },
   node: {
-    url: LOCAL_TESTNODE_HTTP_URL,
+    url: "https://polkadot-fullnodes.api.live.ledger.com",
   },
   sidecar: {
     url: SIDECAR_BASE_URL,
@@ -296,12 +296,21 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
 
     subscriptions.push(unsubGetBasicScenarioBalance);
 
-    await api.tx.balances
+    const unsub = await api.tx.balances
       .transferAllowDeath(
         basicScenarioAccountPair.address,
         parseCurrencyUnit(polkadot.units[0], "500000").toNumber(),
       )
-      .signAndSend(alice);
+      .signAndSend(alice, result => {
+        console.log(`Current status is ${result.status}`);
+
+        if (result.status.isInBlock) {
+          console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+        } else if (result.status.isFinalized) {
+          console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+          unsub();
+        }
+      });
 
     const account = makeAccount(basicScenarioAccountPair.address, polkadot);
 
