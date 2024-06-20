@@ -214,9 +214,9 @@ function getTransactions() {
   ];
 }
 
-export const LOCAL_TESTNODE_WS_URL = "ws://127.0.0.1:8000";
-export const LOCAL_TESTNODE_HTTP_URL = "http://127.0.0.1:8000";
-export const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
+const LOCAL_TESTNODE_WS_URL = "ws://127.0.0.1:8000";
+// const LOCAL_TESTNODE_HTTP_URL = "http://127.0.0.1:8000";
+const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
 
 const wsProvider = new WsProvider(LOCAL_TESTNODE_WS_URL, false);
 let api: ApiPromise;
@@ -227,6 +227,7 @@ const coinConfig: PolkadotCoinConfig = {
     type: "active",
   },
   node: {
+    // TODO: use the local test node ?
     url: "https://polkadot-fullnodes.api.live.ledger.com",
   },
   sidecar: {
