@@ -8,7 +8,7 @@ const tokens: Token[] = [
   Token.ETH_USDT,
   Token.XLM_USCD,
   Token.ALGO_USDT,
-  Token.TRON_BTTOLD,
+  Token.TRON_USDT,
   Token.BSC_BUSD,
   Token.MATIC_DAI,
 ];

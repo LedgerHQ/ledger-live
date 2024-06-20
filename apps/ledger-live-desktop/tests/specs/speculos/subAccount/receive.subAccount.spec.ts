@@ -7,7 +7,7 @@ import { addTmsLink } from "tests/fixtures/common";
 const tokens: Token[] = [
   Token.ETH_USDT,
   Token.ETH_LIDO,
-  Token.TRON_BTTOLD,
+  Token.TRON_USDT,
   Token.TRON_BTT,
   Token.BSC_BUSD,
   Token.BSC_SHIBA,
@@ -25,7 +25,7 @@ for (const [i, token] of tokens.entries()) {
       speculosOffset: i,
     });
 
-    test(`[${token.tokenName}] Receive Sub Account`, async ({ page }) => {
+    test(`[${token.tokenName}] Receive Sub Account (${token.tokenNetwork})`, async ({ page }) => {
       addTmsLink(["B2CQA-640"]); //TODO: create a new Jira Ticket for this scenario
 
       const app = new Application(page);
