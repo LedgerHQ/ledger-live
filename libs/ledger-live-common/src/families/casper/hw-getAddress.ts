@@ -20,7 +20,7 @@ const resolver: Resolver = async (transport, { path, verify }) => {
   return {
     path,
     address: r.Address.length
-      ? r.Address.toString()
+      ? r.Address.toString().toLowerCase()
       : casperAddressFromPubKey(r.publicKey, CLPublicKeyTag.SECP256K1),
     publicKey: r.publicKey.toString("hex"),
   };
