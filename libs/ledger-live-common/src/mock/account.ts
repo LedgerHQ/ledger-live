@@ -175,6 +175,9 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               collateralPercent: "",
               priceMem: "",
               priceSteps: "",
+              maxTxSize: "",
+              maxValueSize: "",
+              utxoCostPerByte: "",
               languageView: {} as types.LanguageView,
             },
           };
