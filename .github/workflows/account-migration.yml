@@ -40,6 +40,7 @@ jobs:
 
       - name: Generate target output filename
         id: target-output-file
+        # we get TARGET_SYNC_FILE_BASENAME from the same command later run in account-migration.ts to get the same basename
         run: |
           TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
           echo "TARGET_SYNC_FILE_BASENAME=$(echo ${TARGET_SYNC_FILE_BASENAME})" >> $GITHUB_OUTPUT
