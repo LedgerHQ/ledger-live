@@ -6,7 +6,7 @@ import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../page/drawer/drawer";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
-import { LiveAppWebview } from "../../models/LiveAppWebview";
+import { LiveAppWebview, LiveAppWebviewServer } from "../../models/LiveAppWebview";
 import BigNumber from "bignumber.js";
 
 const methods = [
@@ -34,12 +34,13 @@ const methods = [
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
+const liveAppServer = new LiveAppWebviewServer("dummy-wallet-app/dist");
 let testServerIsRunning = false;
 const MANIFEST_NAME = "Dummy Wallet API Live App";
 
 test.beforeAll(async () => {
   // Check that dummy app in tests/dummy-live-app has been started successfully
-  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-wallet-app/dist", {
+  testServerIsRunning = await liveAppServer.startLiveApp({
     name: MANIFEST_NAME,
     id: "dummy-live-app",
     apiVersion: "2.0.0",
@@ -62,7 +63,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (testServerIsRunning) {
-    await LiveAppWebview.stopLiveApp();
+    await liveAppServer.stopLiveApp();
   }
 });
 

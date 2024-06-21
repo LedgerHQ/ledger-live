@@ -8,6 +8,12 @@ if (getEnv("PLAYWRIGHT_RUN")) {
   });
 }
 
+// catch exception in playwright test to avoid popup on deeplink in webview
+process.env.PLAYWRIGHT_RUN &&
+  process.on("uncaughtException", function (error) {
+    console.error(error, "Uncaught Exception thrown");
+  });
+
 if (!process.env.IS_INTERNAL_PROCESS) {
   // Main electron thread
   require("./main");

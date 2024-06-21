@@ -10,7 +10,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import useTheme from "~/renderer/hooks/useTheme";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
-import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types";
+import { Loadable } from "@ledgerhq/live-common/platform/types";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import {
   DEFAULT_MULTIBUY_APP_ID,
@@ -37,12 +37,9 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const locale = useSelector(languageSelector);
   const accounts = useSelector(accountsSelector);
 
-  const mockManifest: LiveAppManifest | undefined =
-    process.env.MOCK_REMOTE_LIVE_MANIFEST && JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0];
-
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
-  const manifest = localManifest || mockManifest || remoteManifest;
+  const manifest = localManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);

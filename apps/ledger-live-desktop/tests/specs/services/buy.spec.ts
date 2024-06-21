@@ -7,7 +7,7 @@ import { AccountsPage } from "../../page/accounts.page";
 import { AccountPage } from "../../page/account.page";
 import { SettingsPage } from "../../page/settings.page";
 import { MarketPage } from "../../page/market.page";
-import { LiveAppWebview } from "../../models/LiveAppWebview";
+import { LiveAppWebview, LiveAppWebviewServer } from "../../models/LiveAppWebview";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
@@ -16,11 +16,12 @@ test.use({
   },
 });
 
+const liveAppServer = new LiveAppWebviewServer("dummy-ptx-app/public");
 let testServerIsRunning = false;
 
 test.beforeAll(async () => {
   // Check that dummy app in tests/dummy-ptx-app has been started successfully
-  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
+  testServerIsRunning = await liveAppServer.startLiveApp({
     name: "Buy App",
     id: "multibuy-v2",
     permissions: ["account.request"],
@@ -34,7 +35,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (testServerIsRunning) {
-    await LiveAppWebview.stopLiveApp();
+    await liveAppServer.stopLiveApp();
   }
 });
 

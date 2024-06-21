@@ -1,17 +1,18 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../component/layout.component";
-import { LiveAppWebview } from "../../models/LiveAppWebview";
+import { LiveAppWebview, LiveAppWebviewServer } from "../../models/LiveAppWebview";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
 });
 
+const liveAppServer = new LiveAppWebviewServer("dummy-ptx-app/public");
 let testServerIsRunning = false;
 
 test.beforeAll(async () => {
   // Check that dummy app in tests/dummy-ptx-app has been started successfully
-  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
+  testServerIsRunning = await liveAppServer.startLiveApp({
     name: "Earn",
     id: "earn",
     apiVersion: "^2.0.0",
@@ -26,7 +27,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (testServerIsRunning) {
-    await LiveAppWebview.stopLiveApp();
+    await liveAppServer.stopLiveApp();
   }
 });
 
