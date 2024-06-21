@@ -7,19 +7,18 @@ import {
   typeTextById,
   tapByElement,
 } from "../../helpers";
+import { expect } from "detox";
 
 const baseLink = "send";
 
 export default class SendPage {
   summaryAmount = () => getElementById("send-summary-amount");
   getStep1HeaderTitle = () => getElementById("send-header-step1-title");
-  accoundCardId = (id: string) => "account-card-" + id;
   recipientContinueButtonId = "recipient-continue-button";
   recipientInputId = "recipient-input";
   amountInputId = "amount-input";
   amountContinueButton = () => getElementById("amount-continue-button");
   summaryContinueButton = () => getElementById("summary-continue-button");
-  successCloseButtonId = "success-close-button";
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
@@ -27,14 +26,11 @@ export default class SendPage {
 
   async sendViaDeeplink(currencyLong?: string) {
     const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
-
     await openDeeplink(link);
   }
 
-  async selectAccount(accountId: string) {
-    const id = this.accoundCardId(accountId);
-    await waitForElementById(id);
-    await tapById(id);
+  async expectFirstStep() {
+    await expect(this.getStep1HeaderTitle()).toBeVisible();
   }
 
   async setRecipient(address: string) {
@@ -60,8 +56,7 @@ export default class SendPage {
     await tapByElement(this.summaryContinueButton());
   }
 
-  async successContinue() {
-    await waitForElementById(this.successCloseButtonId);
-    await tapById(this.successCloseButtonId);
+  async expectSummaryAmount(amount: string) {
+    await expect(this.summaryAmount()).toHaveText(amount);
   }
 }

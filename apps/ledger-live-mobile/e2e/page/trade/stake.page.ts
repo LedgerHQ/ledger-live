@@ -8,22 +8,20 @@ export default class StakePage {
   cosmosAssestsRemainingId = "cosmos-assets-remaining";
   cosmosDelegatedRatioId = (delegatedPercent: number) => `delegate-ratio-${delegatedPercent}%`;
   cosmosAllAssestsUsedText = "cosmos-all-assets-used-text";
-  summaryContinueButtonId = "cosmos-summary-continue-button";
+  cosmosSummaryContinueButtonId = "cosmos-summary-continue-button";
+  cosmosDelegationStartId = "cosmos-delegation-start-button";
+  cosmosDelegationAmountContinueId = "cosmos-delegation-amount-continue";
+  currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
+  zeroAssetText = "0\u00a0ATOM";
 
   async selectCurrency(currencyId: string) {
-    const id = "currency-row-" + currencyId;
-    await waitForElementById(id);
-    await tapById(id);
-  }
-
-  async selectAccount(accountId: string) {
-    const id = "account-card-" + accountId;
+    const id = this.currencyRow(currencyId);
     await waitForElementById(id);
     await tapById(id);
   }
 
   async delegationStart() {
-    await tapById("cosmos-delegation-start-button");
+    await tapById(this.cosmosDelegationStartId);
     await waitForElementById(this.cosmosDelegationSummaryValidatorId);
   }
 
@@ -31,22 +29,35 @@ export default class StakePage {
     await waitForElementById(this.cosmosDelegationSummaryAmountId);
     await tapById(this.cosmosDelegationSummaryAmountId);
     await tapById(this.cosmosDelegatedRatioId(delegatedPercent));
+  }
+
+  async expectValidator(validator: string) {
+    expect(await this.cosmosDelegationSummaryValidator()).toEqual(validator);
+  }
+
+  async expectRemainingAmount(
+    delegatedPercent: 25 | 50 | 75 | 100,
+    remainingAmountFormated: string,
+  ) {
     const max = delegatedPercent == 100;
     const id = max ? this.cosmosAllAssestsUsedText : this.cosmosAssestsRemainingId;
     await waitForElementById(id);
-    const assestsRemaining = max ? "0\u00a0ATOM" : (await getTextOfElement(id)).split(": ")[1];
-    await tapById("cosmos-delegation-amount-continue");
+    const assestsRemaining = max ? this.zeroAssetText : (await getTextOfElement(id)).split(": ")[1];
+
+    expect(assestsRemaining).toEqual(remainingAmountFormated);
+  }
+
+  async validateAmount() {
+    await tapById(this.cosmosDelegationAmountContinueId);
     await waitForElementById(this.cosmosDelegationSummaryAmountId);
+  }
+
+  async expectDelegatedAmount(delegatedAmountFormated: string) {
     const assestsDelagated = await this.cosmosDelegationAmountValue();
-    return [assestsDelagated, assestsRemaining];
+    expect(assestsDelagated).toEqual(delegatedAmountFormated);
   }
 
   async summaryContinue() {
-    await tapById(this.summaryContinueButtonId);
-  }
-
-  async successClose() {
-    await waitForElementById("success-close-button");
-    await tapById("success-close-button");
+    await tapById(this.cosmosSummaryContinueButtonId);
   }
 }

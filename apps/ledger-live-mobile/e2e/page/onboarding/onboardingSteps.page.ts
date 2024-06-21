@@ -7,11 +7,11 @@ import {
   waitForElementByText,
 } from "../../helpers";
 import * as bridge from "../../bridge/server";
-import DeviceAction from "../DeviceAction";
-import { ModelId, getUSBDevice, knownDevice } from "../devices";
+import DeviceAction from "../../models/DeviceAction";
+import { ModelId, getUSBDevice, knownDevice } from "../../models/devices";
 import { expect } from "detox";
 
-export default class OnboardingSteps {
+export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
   readyToScanButtonID = "onboarding-scan-button";

@@ -6,10 +6,11 @@ import {
   tapByText,
   typeTextByElement,
 } from "../../helpers";
+import { expect } from "detox";
 
 const baseLink = "swap";
 
-export default class SwapFormPage {
+export default class SwapPage {
   swapFormTab = () => getElementById("swap-form-tab");
   swapHistoryTab = () => getElementById("swap-history-tab");
   swapSourceSelector = () => getElementById("swap-source-selector");
@@ -22,28 +23,32 @@ export default class SwapFormPage {
   termsAcceptButton = () => getElementById("terms-accept-button");
   termsCloseButton = () => getElementById("terms-close-button");
 
-  openViaDeeplink() {
-    return openDeeplink(baseLink);
+  async openViaDeeplink() {
+    await openDeeplink(baseLink);
   }
 
-  navigateToSwapForm() {
-    return tapByElement(this.swapFormTab());
+  async expectSwapPage() {
+    await expect(this.swapFormTab()).toBeVisible();
   }
 
-  navigateToSwapHistory() {
-    return tapByElement(this.swapHistoryTab());
+  async navigateToSwapForm() {
+    await tapByElement(this.swapFormTab());
   }
 
-  openSourceAccountSelector() {
-    return tapByElement(this.swapSourceSelector());
+  async navigateToSwapHistory() {
+    await tapByElement(this.swapHistoryTab());
   }
 
-  openDestinationAccountSelector() {
-    return tapByElement(this.swapDestinationSelector());
+  async openSourceAccountSelector() {
+    await tapByElement(this.swapSourceSelector());
   }
 
-  selectAccount(accountText: string) {
-    return tapByText(accountText);
+  async openDestinationAccountSelector() {
+    await tapByElement(this.swapDestinationSelector());
+  }
+
+  async selectAccount(accountText: string) {
+    await tapByText(accountText);
   }
 
   async enterSourceAmount(amount: string) {
@@ -51,20 +56,29 @@ export default class SwapFormPage {
     await typeTextByElement(this.swapSourceInputTextbox(), amount);
   }
 
-  goToProviderSelection() {
-    return tapByElement(this.chooseProviderButton());
+  async goToProviderSelection() {
+    await tapByElement(this.chooseProviderButton());
   }
 
-  chooseProvider(providerName: string) {
-    return tapByText(providerName);
+  async chooseProvider(providerName: string) {
+    await tapByText(providerName);
   }
 
-  sendMax() {
-    return tapByElement(this.sendMaxToggle());
+  async sendMax() {
+    await tapByElement(this.sendMaxToggle());
   }
 
   async startExchange() {
     await this.exchangeScrollView().scrollTo("bottom");
-    return await tapByElement(this.exchangeButton());
+    await tapByElement(this.exchangeButton());
+  }
+
+  async expectNoMaxToggle() {
+    await expect(this.sendMaxToggle()).not.toExist();
+  }
+
+  async expectTerms() {
+    await expect(this.termsAcceptButton()).toBeVisible();
+    await expect(this.termsCloseButton()).toBeVisible();
   }
 }

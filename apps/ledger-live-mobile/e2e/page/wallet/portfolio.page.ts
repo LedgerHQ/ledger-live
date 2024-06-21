@@ -1,3 +1,4 @@
+import { expect } from "detox";
 import {
   getElementById,
   getTextOfElement,
@@ -7,6 +8,7 @@ import {
   tapById,
   waitForElementById,
 } from "../../helpers";
+import jestExpect from "expect";
 
 const baseLink = "portfolio";
 export default class PortfolioPage {
@@ -17,11 +19,14 @@ export default class PortfolioPage {
   transferScrollListId = "transfer-scroll-list";
   stakeMenuButtonId = "transfer-stake-button";
   accountsListView = "PortfolioAccountsList";
+  receiveButton = "receive-button";
+  managerTabBarId = "TabBarManager";
   seeAllTransactionButton = "portfolio-seeAll-transaction";
   transactionAmountId = "portfolio-operation-amount";
   emptyPortfolioListId = "PortfolioEmptyList";
   emptyPortfolioList = () => getElementById(this.emptyPortfolioListId);
-  portfolioSettingsButton = () => getElementById("settings-icon");
+  portfolioSettingsButtonId = "settings-icon";
+  portfolioSettingsButton = () => getElementById(this.portfolioSettingsButtonId);
   transferButton = () => getElementById("transfer-button");
   swapTransferMenuButton = () => getElementById("swap-transfer-button");
   stakeTransferMenuButton = () => getElementById(this.stakeMenuButtonId);
@@ -33,21 +38,25 @@ export default class PortfolioPage {
   addAccountCta = "add-account-cta";
   lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
 
-  navigateToSettings() {
-    return tapByElement(this.portfolioSettingsButton());
+  async navigateToSettings() {
+    await tapByElement(this.portfolioSettingsButton());
   }
 
-  openTransferMenu() {
-    return tapByElement(this.transferButton());
+  async openTransferMenu() {
+    await tapByElement(this.transferButton());
   }
 
-  navigateToSwapFromTransferMenu() {
-    // await scrollToText("Exchange crypto to crypto.", "transfer-scroll-list"); // FIXME: scroll not working
-    return tapByElement(this.swapTransferMenuButton());
+  async navigateToSwapFromTransferMenu() {
+    return await tapByElement(this.swapTransferMenuButton());
   }
 
-  waitForPortfolioPageToLoad() {
-    return waitForElementById("settings-icon", 120000);
+  async waitForPortfolioPageToLoad() {
+    await waitForElementById(this.portfolioSettingsButtonId, 120000);
+  }
+
+  async expectPortfolioEmpty() {
+    await expect(this.portfolioSettingsButton()).toBeVisible();
+    await expect(this.emptyPortfolioList()).toBeVisible();
   }
 
   async navigateToSendFromTransferMenu() {
@@ -56,39 +65,39 @@ export default class PortfolioPage {
 
   async navigateToStakeFromTransferMenu() {
     await scrollToId(this.stakeMenuButtonId, this.transferScrollListId);
-    return tapByElement(this.stakeTransferMenuButton());
+    await tapByElement(this.stakeTransferMenuButton());
   }
 
-  navigateToReceiveFromTransferMenu() {
-    return tapByElement(this.receiveTransfertMenuButton());
+  async navigateToReceiveFromTransferMenu() {
+    await tapByElement(this.receiveTransfertMenuButton());
   }
 
   async receive() {
-    const element = getElementById("receive-button");
-    await element.tap();
+    await tapById(this.receiveButton);
   }
 
-  async waitForPortfolioReadOnly() {
+  async expectPortfolioReadOnly() {
+    await expect(this.portfolioSettingsButton()).toBeVisible();
     await waitForElementById(this.readOnlyItemsId);
-    expect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
+    jestExpect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
     for (let index = 0; index < 4; index++)
-      expect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
+      jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
   }
 
-  openViaDeeplink() {
-    return openDeeplink(baseLink);
+  async openViaDeeplink() {
+    await openDeeplink(baseLink);
   }
 
-  openWalletTabMarket() {
-    return tapByElement(this.walletTabMarket());
+  async openWalletTabMarket() {
+    await tapByElement(this.walletTabMarket());
   }
 
-  openMyLedger() {
-    return tapByElement(getElementById("TabBarManager"));
+  async openMyLedger() {
+    await tapById(this.managerTabBarId);
   }
 
-  openEarnApp() {
-    return tapByElement(this.earnButton());
+  async openEarnApp() {
+    await tapByElement(this.earnButton());
   }
 
   async addAccount() {
@@ -98,5 +107,13 @@ export default class PortfolioPage {
 
   async scrollToTransactions() {
     await scrollToId(this.seeAllTransactionButton, this.accountsListView);
+  }
+
+  async expectLastTransactionAmount(amount: string) {
+    await expect(this.lastTransactionAmount()).toHaveText(amount);
+  }
+
+  async openLastTransaction() {
+    await tapByElement(this.lastTransactionAmount());
   }
 }

@@ -6,14 +6,15 @@ import {
   scrollToText,
   typeTextByElement,
 } from "../../helpers";
+import { expect } from "detox";
 
-export default class GeneralSettingsPage {
+export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");
   preferredCurrencyButton = () => getElementByText("Preferred currency");
   confirmButton = () => getElementByText("Confirm");
   enterLanguageMenuButton = () => getElementById("language-button");
-  isLocalized = (localization: string) => getElementByText(localization);
+  localizedText = (text: string) => getElementByText(text);
 
   async togglePassword() {
     await this.passwordSettingsSwitch().tap();
@@ -32,7 +33,15 @@ export default class GeneralSettingsPage {
   }
 
   async selectLanguage(lang: string) {
-    await scrollToText(lang, "scrollView-language-change");
+    await scrollToText(lang);
     await tapByText(lang);
+  }
+
+  async expectpreferredCurrencyButton() {
+    await expect(this.preferredCurrencyButton()).toBeVisible();
+  }
+
+  async expectLocalizedText(text: string) {
+    await expect(this.localizedText(text)).toBeVisible();
   }
 }

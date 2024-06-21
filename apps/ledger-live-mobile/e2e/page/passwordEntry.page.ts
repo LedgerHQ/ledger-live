@@ -1,4 +1,5 @@
 import { getElementById, getElementByText, tapByElement, typeTextByElement } from "../helpers";
+import { expect } from "detox";
 
 export default class PasswordEntryPage {
   getPasswordTextInput = () => getElementById("password-text-input");
@@ -11,5 +12,15 @@ export default class PasswordEntryPage {
 
   async login() {
     await tapByElement(this.getLogin());
+  }
+
+  async expectLock() {
+    await expect(this.getPasswordTextInput()).toBeVisible();
+    await expect(this.getPasswordTextInput()).toBeVisible();
+  }
+
+  async expectNoLock() {
+    await expect(this.getPasswordTextInput()).not.toBeVisible();
+    await expect(this.getPasswordTextInput()).not.toBeVisible();
   }
 }
