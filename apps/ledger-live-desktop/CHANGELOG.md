@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.83.0-next.4
+
+### Patch Changes
+
+- [#7157](https://github.com/LedgerHQ/ledger-live/pull/7157) [`38a18fd`](https://github.com/LedgerHQ/ledger-live/commit/38a18fdb7233b77dfd631d10d9eec3cd4aeefe9f) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Reload app restauration if device disconnected after firmware update with language pack
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.4.0-next.1
+
 ## 2.83.0-next.3
 
 ### Patch Changes
