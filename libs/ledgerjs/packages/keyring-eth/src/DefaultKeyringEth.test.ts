@@ -3,7 +3,7 @@ import { DefaultKeyringEth } from "./DefaultKeyringEth";
 import { ethers } from "ethers";
 import { EIP712Params, KeyringEth } from "./KeyringEth";
 import { ContextModule } from "@ledgerhq/context-module/lib/ContextModule";
-import { ContextResponse } from "@ledgerhq/context-module";
+import { ClearSignContext } from "@ledgerhq/context-module";
 import { EIP712Message } from "@ledgerhq/types-live";
 import LL from "@ledgerhq/coin-evm/types/index";
 import BigNumber from "bignumber.js";
@@ -55,7 +55,7 @@ describe("DefaultKeyringEth", () => {
     it("should call app binding provide with one context provided", async () => {
       // GIVEN
       const payload = "payload";
-      const contexts: ContextResponse[] = [{ type: "provideDomainName", payload }];
+      const contexts: ClearSignContext[] = [{ type: "provideDomainName", payload }];
       jest.spyOn(mockContextModule, "getContexts").mockResolvedValue(contexts);
 
       // WHEN
@@ -72,7 +72,7 @@ describe("DefaultKeyringEth", () => {
     it("should call multiple app binding provide", async () => {
       // GIVEN
       const payloads = ["payload1", "payload2"];
-      const contexts: ContextResponse[] = [
+      const contexts: ClearSignContext[] = [
         { type: "provideERC20TokenInformation", payload: payloads[0] },
         { type: "provideNFTInformation", payload: payloads[1] },
       ];
@@ -92,7 +92,7 @@ describe("DefaultKeyringEth", () => {
     it("should call the same multiple app binding provide multiple times", async () => {
       // GIVEN
       const payloads = ["payload1", "payload2", "payload3"];
-      const contexts: ContextResponse[] = [
+      const contexts: ClearSignContext[] = [
         { type: "provideERC20TokenInformation", payload: payloads[0] },
         { type: "provideERC20TokenInformation", payload: payloads[1] },
         { type: "provideERC20TokenInformation", payload: payloads[2] },
@@ -115,7 +115,7 @@ describe("DefaultKeyringEth", () => {
     it("should call all app binding provide", async () => {
       // GIVEN
       const payloads = ["payload1", "payload2", "payload3", "payload4", "payload5"];
-      const contexts: ContextResponse[] = [
+      const contexts: ClearSignContext[] = [
         { type: "provideDomainName", payload: payloads[0] },
         { type: "provideERC20TokenInformation", payload: payloads[1] },
         { type: "provideNFTInformation", payload: payloads[2] },
@@ -137,7 +137,7 @@ describe("DefaultKeyringEth", () => {
 
     it("should handle error context", async () => {
       // GIVEN
-      const contexts: ContextResponse[] = [{ type: "error", error: new Error() }];
+      const contexts: ClearSignContext[] = [{ type: "error", error: new Error() }];
       jest.spyOn(mockContextModule, "getContexts").mockResolvedValue(contexts);
 
       // WHEN

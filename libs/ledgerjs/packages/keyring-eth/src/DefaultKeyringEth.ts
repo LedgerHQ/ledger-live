@@ -10,7 +10,7 @@ import {
   SignMessageMethod,
   SignMessageType,
 } from "./KeyringEth";
-import { ContextResponse, TransactionContext } from "@ledgerhq/context-module";
+import { ClearSignContext, TransactionContext } from "@ledgerhq/context-module";
 import { ContextModule } from "@ledgerhq/context-module/lib/ContextModule";
 import { TxMapper } from "./mapper/TxMapper";
 import { SupportedTransaction } from "./model/Transaction";
@@ -35,7 +35,7 @@ export class DefaultKeyringEth implements KeyringEth {
     const { transactionSubset, transactionRaw } = this._TxMapper.mapTransaction(transaction);
     const transactionContext: TransactionContext = { ...transactionSubset, ...options, challenge };
 
-    const contexts: ContextResponse[] = await this._contextModule.getContexts(transactionContext);
+    const contexts: ClearSignContext[] = await this._contextModule.getContexts(transactionContext);
 
     for (const context of contexts) {
       if (context.type === "error") {

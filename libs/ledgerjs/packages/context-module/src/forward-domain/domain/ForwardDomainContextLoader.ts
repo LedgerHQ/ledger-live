@@ -1,5 +1,5 @@
 import { ContextLoader } from "../../shared/domain/ContextLoader";
-import { ContextResponse } from "../../shared/model/ContextResponse";
+import { ClearSignContext } from "../../shared/model/ClearSignContext";
 import { TransactionContext } from "../../shared/model/TransactionContext";
 import { ForwardDomainDataSource } from "../data/ForwardDomainDataSource";
 
@@ -10,7 +10,7 @@ export class ForwardDomainContextLoader implements ContextLoader {
     this._dataSource = dataSource;
   }
 
-  async load(transactionContext: TransactionContext): Promise<ContextResponse[]> {
+  async load(transactionContext: TransactionContext): Promise<ClearSignContext[]> {
     const { domain, challenge } = transactionContext;
 
     if (!domain) {

@@ -1,5 +1,5 @@
 import { ContextLoader } from "../../shared/domain/ContextLoader";
-import { ContextResponse } from "../../shared/model/ContextResponse";
+import { ClearSignContext } from "../../shared/model/ClearSignContext";
 import { TransactionContext } from "../../shared/model/TransactionContext";
 import { TokenDataSource } from "../data/TokenDataSource";
 
@@ -17,7 +17,7 @@ export class TokenContextLoader implements ContextLoader {
     this._dataSource = dataSource;
   }
 
-  async load(transaction: TransactionContext): Promise<ContextResponse[]> {
+  async load(transaction: TransactionContext): Promise<ClearSignContext[]> {
     if (!transaction.to || !transaction.data || transaction.data === "0x") {
       return [];
     }

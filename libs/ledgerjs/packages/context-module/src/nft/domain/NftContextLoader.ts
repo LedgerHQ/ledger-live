@@ -1,5 +1,5 @@
 import { ContextLoader } from "../../shared/domain/ContextLoader";
-import { ContextResponse } from "../../shared/model/ContextResponse";
+import { ClearSignContext } from "../../shared/model/ClearSignContext";
 import { TransactionContext } from "../../shared/model/TransactionContext";
 import { NftDataSource } from "../data/NftDataSource";
 
@@ -29,8 +29,8 @@ export class NftContextLoader implements ContextLoader {
     this._dataSource = dataSource;
   }
 
-  async load(transaction: TransactionContext): Promise<ContextResponse[]> {
-    const responses: ContextResponse[] = [];
+  async load(transaction: TransactionContext): Promise<ClearSignContext[]> {
+    const responses: ClearSignContext[] = [];
 
     if (!transaction.to || !transaction.data || transaction.data === "0x") {
       return [];
