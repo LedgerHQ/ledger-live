@@ -61,7 +61,7 @@ runs:
         GOMEMLIMIT: 5GiB
       if: ${{ !inputs.skip_builds }}
       run: |
-        pnpm desktop build:${{ inputs.build_type }}
+        pnpm desktop build:${{ inputs.build_type || 'testing' }}
       shell: bash
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
