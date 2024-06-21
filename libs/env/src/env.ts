@@ -633,7 +633,7 @@ const envDefinitions = {
     parser: boolParser,
     desc: "is walletconnect enabled",
   },
-  WALLET_SYNC_API: {
+  CLOUD_SYNC_API: {
     def: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
     parser: stringParser,
     desc: "wallet sync api base url",

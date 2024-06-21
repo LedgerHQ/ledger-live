@@ -1,6 +1,8 @@
 import z from "zod";
 import network from "@ledgerhq/live-network";
+import WS from "isomorphic-ws";
 import { getEnv } from "@ledgerhq/live-env";
+import { Observable } from "rxjs";
 
 export type JWT = {
   accessToken: string;
@@ -44,13 +46,9 @@ const schemaAtomicPostResponse = z.discriminatedUnion("status", [
 export type APISyncUpdateResponse = z.infer<typeof schemaAtomicPostResponse>;
 
 // Fetch data status from cloud
-async function fetchDataStatus(
-  jwt: JWT,
-  datatype: string,
-  version?: number,
-): Promise<APISyncResponse> {
+async function fetchData(jwt: JWT, datatype: string, version?: number): Promise<APISyncResponse> {
   const { data } = await network<unknown>({
-    url: `${getEnv("WALLET_SYNC_API")}/atomic/v1/${datatype}`,
+    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -68,7 +66,7 @@ async function uploadData(
   payload: string,
 ): Promise<APISyncUpdateResponse> {
   const { data } = await network<unknown>({
-    url: `${getEnv("WALLET_SYNC_API")}/atomic/v1/${datatype}?version=${version}`,
+    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?version=${version}`,
     method: "POST",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -84,7 +82,7 @@ async function uploadData(
 // Delete data from cloud
 async function deleteData(jwt: JWT, datatype: string): Promise<void> {
   await network<void>({
-    url: `${getEnv("WALLET_SYNC_API")}/atomic/v1/${datatype}`,
+    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}`,
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -92,8 +90,21 @@ async function deleteData(jwt: JWT, datatype: string): Promise<void> {
   });
 }
 
+function listenNotifications(jwt: JWT, datatype: string): Observable<number> {
+  const url = `${getEnv("CLOUD_SYNC_API").replace("http", "ws")}/atomic/v1/${datatype}/notifications`;
+  const ws: WebSocket = new WS(url);
+  return new Observable(observer => {
+    ws.addEventListener("message", (e: MessageEvent) => observer.next(parseInt(e.data, 10)));
+    ws.addEventListener("close", () => observer.complete());
+    ws.addEventListener("error", error => observer.error(error));
+    ws.addEventListener("open", () => ws.send(jwt.accessToken));
+    return () => ws.close();
+  });
+}
+
 export default {
-  fetchDataStatus,
+  fetchData,
   uploadData,
   deleteData,
+  listenNotifications,
 };

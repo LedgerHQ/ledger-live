@@ -14,7 +14,7 @@ export const accountsDescriptorSchema = z.array(accountDescriptorSchema);
 
 export const schema = z.object({
   accounts: accountsDescriptorSchema,
-  names: z.record(z.string()),
+  accountNames: z.record(z.string()),
   // NB: append more fields here when we have more needs in the future, but NEVER break a type
 });
 

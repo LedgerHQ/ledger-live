@@ -3,6 +3,7 @@ import { Data, schema } from "./datatypes/accounts";
 import api, { JWT } from "./api";
 import Base64 from "base64-js";
 import { compress, decompress } from "fflate";
+import { Observable } from "rxjs";
 
 export type UpdateEvent =
   | {
@@ -18,7 +19,7 @@ export type UpdateEvent =
       type: "deleted-data";
     };
 
-export class WalletSyncSDK {
+export class CloudSyncSDK {
   trustchainSdk: TrustchainSDK;
   getCurrentVersion: () => number | undefined;
   saveNewUpdate: (updateEvent: UpdateEvent) => Promise<void>;
@@ -35,14 +36,23 @@ export class WalletSyncSDK {
     getCurrentVersion: () => number | undefined;
     /**
      * apply the data over the accounts and we also save the version.
+     * All the reconciliation and async save can be performed at this step in order to guarantee atomicity of the operations.
      */
     saveNewUpdate: (event: UpdateEvent) => Promise<void>;
   }) {
     this.trustchainSdk = trustchainSdk;
     this.getCurrentVersion = getCurrentVersion;
     this.saveNewUpdate = saveNewUpdate;
+
+    this.push = this._decorateMethod("push", this.push);
+    this.pull = this._decorateMethod("pull", this.pull);
+    this.destroy = this._decorateMethod("destroy", this.destroy);
   }
 
+  /**
+   * Push new data to the Cloud Sync backend.
+   * Will fails if the version is out of sync. (conflicts)
+   */
   async push(jwt: JWT, trustchain: Trustchain, data: Data): Promise<void> {
     const validated = schema.parse(data);
     const json = JSON.stringify(validated);
@@ -69,8 +79,12 @@ export class WalletSyncSDK {
     }
   }
 
+  /**
+   * Pull new data from the Cloud Sync backend, if any.
+   * If new data is retrieved, it will be decrypted and saveNewUpdate will be called as part of this atomic process.
+   */
   async pull(jwt: JWT, trustchain: Trustchain): Promise<void> {
-    const response = await api.fetchDataStatus(jwt, "accounts", this.getCurrentVersion());
+    const response = await api.fetchData(jwt, "accounts", this.getCurrentVersion());
     switch (response.status) {
       case "no-data": {
         // no data, nothing to do
@@ -85,6 +99,7 @@ export class WalletSyncSDK {
           .decryptUserData(trustchain, Base64.toByteArray(response.payload))
           .catch(e => {
             // TODO if we fail to decrypt, it may mean we need to restore trustchain. and if it still fails and on specific error, we will have to eject. figure out how to integrate this in the pull lifecycle.
+            // or do we "let it fail" and handle it more globally on app side? TBD
             throw e;
           });
         const decompressed = await new Promise<Uint8Array>((resolve, reject) =>
@@ -108,5 +123,36 @@ export class WalletSyncSDK {
     await this.saveNewUpdate({
       type: "deleted-data",
     });
+  }
+
+  _lock: string | null = null;
+  // this helpers will guarantee only one poll()/push() is performed at a time.
+  _decorateMethod<R, A extends unknown[]>(
+    methodName: string,
+    f: (...args: A) => Promise<R>,
+  ): (...args: A) => Promise<R> {
+    return async (...args) => {
+      const { _lock } = this;
+
+      if (_lock) {
+        return Promise.reject(new Error("CloudSyncSDK locked (" + this._lock + ")"));
+      }
+
+      try {
+        this._lock = methodName;
+        return await f.apply(this, args);
+      } finally {
+        this._lock = null;
+      }
+    };
+  }
+
+  /**
+   * This returns an observable that will emit versions in real time.
+   * The current version is emitted once at first and then any update will be emitted.
+   * It is your responsability to then hook this to pull() when you want to refresh the data and make sure you do it in sequence, once at a time (you must prevent race conditions)
+   */
+  listenNotifications(jwt: JWT): Observable<number> {
+    return api.listenNotifications(jwt, "accounts");
   }
 }
