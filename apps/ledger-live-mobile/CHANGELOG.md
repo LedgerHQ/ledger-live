@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.45.1-nightly.1
+
+### Patch Changes
+
+- [#7144](https://github.com/LedgerHQ/ledger-live/pull/7144) [`d9c4124`](https://github.com/LedgerHQ/ledger-live/commit/d9c412417538ff8fdbf2ed16af76312af5b20354) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix crash on experimental settings screen
+
 ## 3.45.1-nightly.0
 
 ### Patch Changes

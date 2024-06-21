@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.82.1-nightly.1
+
+### Patch Changes
+
+- [#7155](https://github.com/LedgerHQ/ledger-live/pull/7155) [`46e29d5`](https://github.com/LedgerHQ/ledger-live/commit/46e29d530f3ae92bf639753c624a76bfcb8b1267) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix cvs wrong value
+
+- [#7156](https://github.com/LedgerHQ/ledger-live/pull/7156) [`d57038e`](https://github.com/LedgerHQ/ledger-live/commit/d57038e2bfe6743dc0eafa05e130658a27bbf713) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix units on token ops
+
 ## 2.82.1-nightly.0
 
 ### Patch Changes
