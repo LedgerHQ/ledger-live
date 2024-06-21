@@ -3,7 +3,7 @@
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 [
   {
-    "balance": "2597152",
+    "balance": "2809234",
     "currencyId": "cosmos",
     "derivationMode": "",
     "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -12,7 +12,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    "spendableBalance": "1040545",
+    "spendableBalance": "1252627",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -777,6 +777,29 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": 75,
       "type": "REWARD",
       "value": "239",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 20947353,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+            "amount": "229964",
+          },
+        ],
+      },
+      "fee": "17882",
+      "hasFailed": false,
+      "hash": "58C8F6148A2575AA3378FB7287D5DB15A150B55AB00DEB1F02170F83AF35FABC",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-58C8F6148A2575AA3378FB7287D5DB15A150B55AB00DEB1F02170F83AF35FABC-REWARD",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 137,
+      "type": "REWARD",
+      "value": "229964",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
