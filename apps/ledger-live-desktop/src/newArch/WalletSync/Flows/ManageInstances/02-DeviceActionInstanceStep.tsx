@@ -1,5 +1,5 @@
 import React from "react";
-import OpenOrInstallTrustChainApp from "../DeviceActions/OpenOrInstall";
+import OpenOrInstallTrustChainApp from "../DeviceActions/openOrInstall";
 
 type Props = {
   goNext: () => void;

@@ -14,7 +14,7 @@ export function useDeleteData() {
   const { liveJWT } = useLiveAuthenticate();
 
   const deleteMutation = useMutation({
-    mutationFn: async () => await sdk.destroyTrustchain(trustchain as Trustchain, liveJWT as JWT),
+    mutationFn: () => sdk.destroyTrustchain(trustchain as Trustchain, liveJWT as JWT),
     mutationKey: [trustchain, liveJWT],
     onSuccess: () => {
       dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.BackupDeleted }));

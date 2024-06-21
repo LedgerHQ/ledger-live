@@ -14,9 +14,9 @@ export default function DeleteBackupStep({ cancel }: DeleteBackupStepProps) {
 
   const { onClickTrack } = useWalletSyncAnalytics();
 
-  const handleDeleteBackup = () => {
+  const handleDeleteBackup = async () => {
     onClickTrack({ button: "delete", page: AnalyticsPage.ConfirmDeleteBackup });
-    deleteMutation.mutate();
+    await deleteMutation.mutateAsync();
   };
 
   const handleCancel = () => {

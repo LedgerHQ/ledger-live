@@ -6,7 +6,7 @@ import {
   setTrustchain,
   trustchainSelector,
 } from "@ledgerhq/trustchain/store";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -16,6 +16,7 @@ import { JWT, MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { randomUUID } from "crypto";
+import { useEffect } from "react";
 
 enum QueryKey {
   getMembers = "useGetMembers",
@@ -39,16 +40,29 @@ export function useLiveAuthenticate() {
 
   const dispatch = useDispatch();
 
-  if (!trustchain || !memberCredentials) {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
-  }
-
-  const { isLoading: isLiveJWTLoading, data: liveJWT } = useQuery({
+  const {
+    isLoading: isLiveJWTLoading,
+    data: liveJWT,
+    isError,
+    error,
+  } = useQuery({
     queryKey: [QueryKey.auth],
     queryFn: () => sdk.auth(trustchain as Trustchain, memberCredentials as MemberCredentials),
+    retry: false,
   });
 
-  return { isLiveJWTLoading, liveJWT, trustchain, memberCredentials };
+  useEffect(() => {
+    if (!trustchain || !memberCredentials || isError) {
+      dispatch(resetTrustchainStore());
+      dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+    }
+
+    if (isError) {
+      console.error("Error while authenticating", error);
+    }
+  }, [dispatch, error, isError, memberCredentials, trustchain]);
+
+  return { isLiveJWTLoading, liveJWT, trustchain, memberCredentials, error, isError };
 }
 
 export function useGetMembers() {
@@ -61,10 +75,11 @@ export function useGetMembers() {
   }
 
   const { isLiveJWTLoading, liveJWT } = useLiveAuthenticate();
+
   const {
     isLoading: isMembersLoading,
     data: instances,
-    isError,
+    isError: isErrorGetMembers,
   } = useQuery({
     enabled: !!liveJWT && !!trustchain,
     queryKey: [QueryKey.getMembers, trustchain],
@@ -72,7 +87,11 @@ export function useGetMembers() {
     refetchOnMount: true,
   });
 
-  return { isMembersLoading: isMembersLoading || isLiveJWTLoading, instances, isError };
+  return {
+    isMembersLoading: isMembersLoading || isLiveJWTLoading,
+    instances,
+    isError: isErrorGetMembers,
+  };
 }
 
 export function useRemoveMembers() {
@@ -80,13 +99,13 @@ export function useRemoveMembers() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
+
   let canGoNext = false;
 
-  const queryClient = useQueryClient();
   const removeMember = async (member: TrustchainMember) => {
     console.log("MEMBER TO REMOVE", member);
     const seedIdToken = await runWithDevice("", transport => sdk.authWithDevice(transport));
-    runWithDevice("", transport =>
+    const { trustchain: newTrustchain } = await runWithDevice("", transport =>
       sdk.removeMember(
         transport,
         seedIdToken,
@@ -100,17 +119,16 @@ export function useRemoveMembers() {
           },
         },
       ),
-    ).then(async ({ trustchain }) => {
-      if (canGoNext) {
-        dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
-        if (member.id === memberCredentials?.pubkey) {
-          dispatch(resetTrustchainStore());
-        } else {
-          dispatch(setTrustchain(trustchain));
-        }
-        await queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
+    );
+
+    if (canGoNext) {
+      dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
+      if (member.id === memberCredentials?.pubkey) {
+        dispatch(resetTrustchainStore());
+      } else {
+        dispatch(setTrustchain(newTrustchain));
       }
-    });
+    }
   };
 
   const removeMemberMutation = useMutation({

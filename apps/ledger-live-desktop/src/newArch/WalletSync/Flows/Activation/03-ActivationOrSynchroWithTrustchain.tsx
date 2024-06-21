@@ -30,7 +30,6 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
   };
 
   const stuffHandledByTrustchain = useCallback(async () => {
-    let hasFinished = false;
     if (!memberCredentials) {
       const newMemberCredentials = await sdk.initMemberCredentials();
       dispatch(setMemberCredentials(newMemberCredentials));
@@ -38,15 +37,10 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
       try {
         const seedIdToken = await runWithDevice("", transport => sdk.authWithDevice(transport));
         const { trustchain, hasCreatedTrustchain } = await runWithDevice("", transport =>
-          sdk.getOrCreateTrustchain(transport, seedIdToken, memberCredentials, {
-            onStartRequestUserInteraction: () => {},
-            onEndRequestUserInteraction: () => {
-              hasFinished = true;
-            },
-          }),
+          sdk.getOrCreateTrustchain(transport, seedIdToken, memberCredentials),
         );
 
-        if (hasFinished) {
+        if (trustchain) {
           dispatch(setTrustchain(trustchain));
 
           dispatch(
@@ -67,11 +61,18 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!device) return null;
-  console.log(error);
-  return error ? (
-    <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />
-  ) : (
-    <FollowStepsOnDevice modelId={device.modelId as DeviceModelId} />
-  );
+  if (device) {
+    return error ? (
+      <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />
+    ) : (
+      <FollowStepsOnDevice modelId={device.modelId as DeviceModelId} />
+    );
+  } else {
+    dispatch(
+      setFlow({
+        flow: Flow.Activation,
+        step: Step.DeviceAction,
+      }),
+    );
+  }
 }

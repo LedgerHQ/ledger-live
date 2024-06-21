@@ -23,9 +23,11 @@ export default function DeleteInstanceWithTrustchain({ instance }: Props) {
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
 
   useEffect(() => {
-    if (instance) {
-      removeMemberMutation.mutateAsync(instance);
+    async function removeMember(instance: TrustchainMember) {
+      await removeMemberMutation.mutateAsync(instance);
     }
+    if (instance) removeMember(instance);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
