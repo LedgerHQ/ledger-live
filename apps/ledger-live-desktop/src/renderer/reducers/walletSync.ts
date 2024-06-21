@@ -44,7 +44,6 @@ export enum Step {
 }
 
 export type WalletSyncState = {
-  activated: boolean;
   flow: Flow;
   step: Step;
   instances: TrustchainMember[];
@@ -54,7 +53,6 @@ export type WalletSyncState = {
 };
 
 export const initialStateWalletSync: WalletSyncState = {
-  activated: false,
   flow: Flow.Activation,
   step: Step.CreateOrSynchronize,
   instances: [],
@@ -64,8 +62,6 @@ export const initialStateWalletSync: WalletSyncState = {
 };
 
 type HandlersPayloads = {
-  WALLET_SYNC_ACTIVATE: boolean;
-  WALLET_SYNC_DEACTIVATE: boolean;
   WALLET_SYNC_CHANGE_FLOW: { flow: Flow; step: Step };
   WALLET_SYNC_CHANGE_ADD_INSTANCE: TrustchainMember;
   WALLET_SYNC_CHANGE_REMOVE_INSTANCE: TrustchainMember;
@@ -83,14 +79,6 @@ type WalletSyncHandlers<PreciseKey = true> = Handlers<
 >;
 
 const handlers: WalletSyncHandlers = {
-  WALLET_SYNC_ACTIVATE: (state: WalletSyncState) => ({
-    ...state,
-    activated: true,
-  }),
-  WALLET_SYNC_DEACTIVATE: (state: WalletSyncState) => ({
-    ...state,
-    activated: false,
-  }),
   WALLET_SYNC_CHANGE_FLOW: (
     state: WalletSyncState,
     { payload: { flow, step } }: { payload: { flow: Flow; step: Step } },
@@ -145,9 +133,6 @@ export const walletSyncFlowSelector = (state: { walletSync: WalletSyncState }) =
   state.walletSync.flow;
 export const walletSyncStepSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.step;
-export const walletSyncStateSelector = (state: { walletSync: WalletSyncState }) =>
-  state.walletSync.activated;
-
 export const walletSyncInstancesSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.instances;
 
