@@ -17,10 +17,10 @@ export function useDeleteData() {
     mutationFn: () => sdk.destroyTrustchain(trustchain as Trustchain, liveJWT as JWT),
     mutationKey: [trustchain, liveJWT],
     onSuccess: () => {
-      dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.BackupDeleted }));
+      dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.BackupDeleted }));
       dispatch(resetTrustchainStore());
     },
-    onError: () => dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.BackupDeletionError })),
+    onError: () => dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.BackupDeletionError })),
   });
 
   return { deleteMutation };

@@ -7,7 +7,7 @@ import ManageBackupStep from "./01-ManageBackupStep";
 import DeleteBackupStep from "./02-DeleteBackupStep";
 import BackupDeleted from "./03-FinalStep";
 
-const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => {
+const WalletSyncManageBackup = forwardRef<BackRef, BackProps>((_props, ref) => {
   const {
     currentStep,
     goToNextScene,
@@ -21,7 +21,7 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
   }));
 
   const goBack = () => {
-    if (currentStep === FlowOptions[Flow.ManageBackups].steps[1]) {
+    if (currentStep === FlowOptions[Flow.ManageBackup].steps[1]) {
       goToWelcomeScreenWalletSync(true);
     } else {
       goToPreviousScene();
@@ -49,5 +49,5 @@ const WalletSyncManageBackups = forwardRef<BackRef, BackProps>((_props, ref) => 
   );
 });
 
-WalletSyncManageBackups.displayName = "WalletSyncManageBackups";
-export default WalletSyncManageBackups;
+WalletSyncManageBackup.displayName = "WalletSyncManageBackup";
+export default WalletSyncManageBackup;

@@ -23,13 +23,13 @@ export default function ManageBackupStep({ goToDeleteBackup }: ManageBackupStepP
     <Flex flexDirection="column" rowGap="24px">
       <TrackPage category={AnalyticsPage.ManageBackup} />
       <Text fontSize={23} variant="large" color="neutral.c100">
-        {t("walletSync.manageBackups.title")}
+        {t("walletSync.manageBackup.title")}
       </Text>
 
       <Card
         testId="walletSync-manage-backup-delete"
-        title="walletSync.manageBackups.options.deleteBackup.title"
-        description="walletSync.manageBackups.options.deleteBackup.description"
+        title="walletSync.manageBackup.options.deleteBackup.title"
+        description="walletSync.manageBackup.options.deleteBackup.description"
         onClick={handleGoDeleteBackup}
         leftIcon={
           <IconContainer

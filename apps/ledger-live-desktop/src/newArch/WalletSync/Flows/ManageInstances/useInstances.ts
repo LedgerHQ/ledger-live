@@ -1,26 +1,15 @@
-import { useDispatch } from "react-redux";
-import { addInstance, removeAllInstances, removeInstance } from "~/renderer/actions/walletSync";
-
+import { useSelector } from "react-redux";
 import { useGetMembers } from "../../useTrustchainSdk";
-import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { walletSyncFakedSelector } from "~/renderer/reducers/walletSync";
 
 export const useInstances = () => {
-  const dispatch = useDispatch();
-
-  const deleteInstance = (instance: TrustchainMember) => dispatch(removeInstance(instance));
-
-  const createInstance = (instance: TrustchainMember) => dispatch(addInstance(instance));
-
-  const deleteAllInstances = () => dispatch(removeAllInstances);
+  const hasBeenfaked = useSelector(walletSyncFakedSelector);
 
   const { isMembersLoading, instances, isError } = useGetMembers();
 
   return {
-    isLoading: isMembersLoading,
-    instances,
-    deleteInstance,
-    deleteAllInstances,
-    createInstance,
-    hasError: isError,
+    isLoading: hasBeenfaked ? false : isMembersLoading,
+    instances: hasBeenfaked ? [] : instances,
+    hasError: hasBeenfaked ? false : isError,
   };
 };

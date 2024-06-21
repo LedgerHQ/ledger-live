@@ -11,9 +11,9 @@ export default function BackupDeleted({ isSuccessful }: BackupDeletedProps) {
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" height="100%">
       {isSuccessful ? (
-        <Success title={t("walletSync.manageBackups.deleteBackupSuccess.title")} />
+        <Success title={t("walletSync.manageBackup.deleteBackupSuccess.title")} />
       ) : (
-        <Error title={t("walletSync.manageBackups.deleteBackupError.title")} />
+        <Error title={t("walletSync.manageBackup.deleteBackupError.title")} />
       )}
     </Flex>
   );

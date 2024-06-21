@@ -19,14 +19,14 @@ const INITIAL_STATE = {
   walletSync: {
     ...initialStateWalletSync,
     activated: true,
-    flow: Flow.ManageBackups,
+    flow: Flow.ManageBackup,
     step: Step.ManageBackup,
   },
 };
 
 describe("useFlows", () => {
-  it("should loads rights Steps for Flow.ManageBackups", async () => {
-    const steps = FlowOptions.ManageBackups.steps;
+  it("should loads rights Steps for Flow.ManageBackup", async () => {
+    const steps = FlowOptions.ManageBackup.steps;
 
     const { result } = renderHook(() => useFlows(), {
       initialState: INITIAL_STATE,
@@ -50,7 +50,7 @@ describe("useFlows", () => {
   });
 
   it("should reset Flow and Step", async () => {
-    const steps = FlowOptions.ManageBackups.steps;
+    const steps = FlowOptions.ManageBackup.steps;
 
     const { result, store } = renderHook(() => useFlows(), { initialState: INITIAL_STATE });
 

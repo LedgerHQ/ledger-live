@@ -4217,8 +4217,7 @@
           "modal": {
             "flow": "Select a Flow",
             "step": "Select a Step",
-            "activated": "Activate/deactivate to have a backup or not",
-            "instance": "Generate Instances",
+            "instance": "Generate Members",
             "cta": "Apply"
           }
         }
@@ -6357,7 +6356,7 @@
         "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
       }
     },
-    "manageBackups": {
+    "manageBackup": {
       "title": "Manage your key",
       "options": {
         "deleteBackup": {

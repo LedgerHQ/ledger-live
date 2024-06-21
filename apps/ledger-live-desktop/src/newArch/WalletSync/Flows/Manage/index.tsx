@@ -24,8 +24,8 @@ const WalletSyncManage = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
   };
 
-  const goToManageBackups = () => {
-    dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.ManageBackup }));
+  const goToManageBackup = () => {
+    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
   };
 
   const goToManageInstances = () => {
@@ -42,7 +42,7 @@ const WalletSyncManage = () => {
     {
       label: t("walletSync.manage.backup.label"),
       description: t("walletSync.manage.backup.description"),
-      onClick: goToManageBackups,
+      onClick: goToManageBackup,
       testId: "walletSync-manage-backup",
     },
   ];

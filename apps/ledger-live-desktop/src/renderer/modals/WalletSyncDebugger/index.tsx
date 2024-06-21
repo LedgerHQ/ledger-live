@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import React, { useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
@@ -11,15 +9,20 @@ import Switch from "~/renderer/components/Switch";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { FlowOptions } from "~/newArch/WalletSync/Flows/useFlows";
 import { useDispatch } from "react-redux";
-import { addInstance, setFaked, setFlow } from "~/renderer/actions/walletSync";
+import {
+  addInstance,
+  setFaked,
+  setFlow,
+  setQrCodePinCode,
+  setQrCodeUrl,
+} from "~/renderer/actions/walletSync";
 import { useHistory } from "react-router";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
 
 type State = {
   flow: Flow;
   step: Step | null;
-  activated: boolean;
   instances: TrustchainMember[];
 };
 
@@ -32,7 +35,6 @@ const WalletSyncDebugger = () => {
   const [state, setState] = useState<State>({
     flow: Flow.Activation,
     step: Step.CreateOrSynchronize,
-    activated: false,
     instances: [],
   });
 
@@ -53,6 +55,9 @@ const WalletSyncDebugger = () => {
     if (state.flow && state.step) {
       dispatch(setFlow({ flow: state.flow, step: state.step }));
       dispatch(setFaked(true));
+
+      dispatch(setQrCodePinCode("392"));
+      dispatch(setQrCodeUrl("url"));
 
       if (state.instances.length > 0)
         state.instances.forEach(instance => dispatch(addInstance(instance)));
@@ -128,20 +133,11 @@ const WalletSyncDebugger = () => {
                 </Flex>
 
                 <Flex justifyContent="space-between" alignItems="center">
-                  <Text>{t("settings.experimental.features.testWalletSync.modal.activated")}</Text>
-                  <Switch
-                    isChecked={state.activated}
-                    onChange={() => setState({ ...state, activated: !state.activated })}
-                  />
-                </Flex>
-
-                <Flex justifyContent="space-between" alignItems="center">
                   <Text>{t("settings.experimental.features.testWalletSync.modal.instance")}</Text>
                   <Switch isChecked={state.instances.length > 0} onChange={generateInstances} />
                 </Flex>
 
-                <Flex
-                  justifyContent="center"
+                <StingifyComponent
                   flexDirection="column"
                   backgroundColor={colors.opacityDefault.c05}
                   p={3}
@@ -149,10 +145,12 @@ const WalletSyncDebugger = () => {
                 >
                   {Object.entries(state).map(([key, value]) => (
                     <Text fontSize={11} key={key}>
-                      {`"${key}"`} : {JSON.stringify(value, null, 2)}
+                      <pre>
+                        {`"${key}"`} : {JSON.stringify(value, null, 2)}
+                      </pre>
                     </Text>
                   ))}
-                </Flex>
+                </StingifyComponent>
 
                 <ButtonV3
                   variant="main"
@@ -173,3 +171,17 @@ const WalletSyncDebugger = () => {
   );
 };
 export default WalletSyncDebugger;
+
+const StingifyComponent = styled(Flex)`
+  max-height: 300px;
+  overflow-y: auto;
+
+  ::-webkit-scrollbar-thumb {
+    background-color: ${p => p.theme.colors.opacityDefault.c20};
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: ${p => p.theme.colors.opacityDefault.c10};
+    border-radius: 8px;
+  }
+`;

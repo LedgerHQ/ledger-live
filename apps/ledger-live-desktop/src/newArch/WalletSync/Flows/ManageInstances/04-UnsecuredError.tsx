@@ -23,7 +23,7 @@ export const UnsecuredError = () => {
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
   };
   const goToDelete = () => {
-    dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.ManageBackup }));
+    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
   };
   const { t } = useTranslation();
   const { colors } = useTheme();
