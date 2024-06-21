@@ -230,12 +230,12 @@ const testSyncAccount = async (account: Account) => {
   }
 
   const currencyIds = currencies?.split(",");
-  // throw error if there's invalid currency ids passed in the cli
-  currencyIds?.forEach(currencyId => {
+
+  for (const currencyId of currencyIds || []) {
     if (!findCryptoCurrencyById(currencyId)) {
-      throw new Error(`Invalid currency id: ${currencyId}`);
+      continue;
     }
-  });
+  }
 
   const migrationAddresses = inputAccounts.length ? inputAccounts : defaultAddresses;
   const filteredAddresses = (migrationAddresses as { currencyId: string }[]).filter(
