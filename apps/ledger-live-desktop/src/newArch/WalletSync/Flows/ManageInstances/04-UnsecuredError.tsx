@@ -19,7 +19,9 @@ const Container = styled(Box)`
 
 export const UnsecuredError = () => {
   const dispatch = useDispatch();
-  const tryAgain = () => console.log("try again");
+  const tryAgain = () => {
+    dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
+  };
   const goToDelete = () => {
     dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.ManageBackup }));
   };

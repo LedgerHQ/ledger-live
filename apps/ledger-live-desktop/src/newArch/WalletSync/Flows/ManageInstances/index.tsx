@@ -7,7 +7,7 @@ import ManageInstancesStep from "./01-ManageInstancesStep";
 import DeviceActionInstanceStep from "./02-DeviceActionInstanceStep";
 import DeleteInstanceWithTrustchain from "./03-DeleteInstanceWithTrustchain";
 import DeletionFinalStep from "./04-DeletionFinalStep";
-import { UnsecuredError } from "../Activation/03-UnsecuredError";
+import { UnsecuredError } from "./04-UnsecuredError";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
 

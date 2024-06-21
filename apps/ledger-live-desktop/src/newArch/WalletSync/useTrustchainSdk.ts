@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from, lastValueFrom } from "rxjs";
-import Transport from "@ledgerhq/hw-transport";
+import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
 import { JWT, MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
@@ -134,7 +134,13 @@ export function useRemoveMembers() {
   const removeMemberMutation = useMutation({
     mutationFn: (member: TrustchainMember) => removeMember(member),
     mutationKey: [QueryKey.deleteMember],
-    onError: error => console.error("Error while removing member", error),
+    onError: error => {
+      console.error("Error while removing member", error);
+
+      if (!(error instanceof TransportStatusError)) {
+        dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
+      }
+    },
   });
 
   return removeMemberMutation;
