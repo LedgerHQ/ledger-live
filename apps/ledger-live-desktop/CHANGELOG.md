@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.83.0-next.3
+
+### Patch Changes
+
+- [#7159](https://github.com/LedgerHQ/ledger-live/pull/7159) [`9269cf8`](https://github.com/LedgerHQ/ledger-live/commit/9269cf8181208b7df03295d86484262d48748e56) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix units on token ops
+
 ## 2.83.0-next.2
 
 ### Patch Changes
