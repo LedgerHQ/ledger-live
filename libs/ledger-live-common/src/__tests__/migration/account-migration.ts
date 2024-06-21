@@ -237,9 +237,9 @@ const testSyncAccount = async (account: Account) => {
     }
   }
 
-  // Basicaally the inputaccounts only exist after the second run
+  // Basically the inputAccounts only exist after the second run
   // So we first try to sync the default addresses
-  // And in the 2nd run we use the input file (which is the ouput of the first run)
+  // And in the 2nd run we use the input file (which is the ouput of the first sync run)
   const migrationAddresses = inputAccounts.length ? inputAccounts : defaultAddresses;
   const filteredAddresses = (migrationAddresses as { currencyId: string }[]).filter(
     ({ currencyId }) => {
