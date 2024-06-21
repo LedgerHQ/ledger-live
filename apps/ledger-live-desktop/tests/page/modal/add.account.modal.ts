@@ -24,7 +24,6 @@ export class AddAccountModal extends Modal {
     await this.selectAccount.click();
     await this.selectAccountInput.fill(token.tokenName);
     await this.selectTokenNetwork(token).click();
-    await this.page.mouse.move(0, 0);
     await this.continueButton.click();
   }
 

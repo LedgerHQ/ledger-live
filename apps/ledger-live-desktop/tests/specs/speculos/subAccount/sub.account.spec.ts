@@ -29,7 +29,7 @@ for (const [i, token] of tokens.entries()) {
 
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(token.parentAccount.accountName);
-      await app.account.expectTokenToBePresent(token.tokenName, token.tokenTicker);
+      await app.account.expectTokenToBePresent(token);
     });
   });
 }

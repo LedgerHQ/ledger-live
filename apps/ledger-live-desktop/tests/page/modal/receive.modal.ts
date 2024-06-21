@@ -21,7 +21,6 @@ export class ReceiveModal extends Modal {
     await this.selectAccount.click();
     await this.selectAccountInput.fill(token.tokenName);
     await this.selectAccountInput.press("Enter");
-    await this.page.mouse.move(0, 0);
   }
 
   async skipDevice() {

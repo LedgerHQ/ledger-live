@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { Token } from "tests/enum/Tokens";
 
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.locator("data-test-id=account-settings-button");
@@ -130,10 +131,10 @@ export class AccountPage extends AppPage {
   }
 
   @step("Expect token to be present")
-  async expectTokenToBePresent(tokenName: string, tokenTicker: string) {
+  async expectTokenToBePresent(token: Token) {
     await expect(this.tokenList).toBeVisible();
     const tokenInfos = await this.tokenList.innerText();
-    expect(tokenInfos).toContain(tokenName);
-    expect(tokenInfos).toContain(tokenTicker);
+    expect(tokenInfos).toContain(token.tokenName);
+    expect(tokenInfos).toContain(token.tokenTicker);
   }
 }
