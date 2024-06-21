@@ -8,7 +8,7 @@ export type XrpCoinConfig = CurrencyConfig & XrpConfig;
 
 let coinConfig: () => XrpCoinConfig | undefined;
 
-export const setCoinConfig = (config: CoinConfig<XrpConfig>): void => {
+export const setCoinConfig = (config: CoinConfig<XrpCoinConfig>): void => {
   coinConfig = config;
 };
 
