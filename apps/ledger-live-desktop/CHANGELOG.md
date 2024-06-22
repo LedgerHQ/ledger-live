@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.82.1-nightly.2
+
+### Patch Changes
+
+- [#7164](https://github.com/LedgerHQ/ledger-live/pull/7164) [`957e933`](https://github.com/LedgerHQ/ledger-live/commit/957e933647699a3341067c45197fab6f60eb84f2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - [LLD]Layout issue with Gainers/Losers widget if asset name is too long
+
 ## 2.82.1-nightly.1
 
 ### Patch Changes

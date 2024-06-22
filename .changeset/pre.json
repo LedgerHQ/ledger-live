@@ -144,7 +144,8 @@
     "@ledgerhq/trustchain": "0.1.0",
     "@ledgerhq/speculos-transport": "0.1.0",
     "@ledgerhq/coin-cardano": "0.0.1",
-    "@ledgerhq/keyring-eth": "0.0.1"
+    "@ledgerhq/keyring-eth": "0.0.1",
+    "@ledgerhq/coin-tron": "0.0.1"
   },
   "changesets": [
     "angry-mayflies-heal",
@@ -157,6 +158,7 @@
     "eight-clocks-suffer",
     "eight-pans-promise",
     "fair-scissors-sparkle",
+    "famous-gifts-cough",
     "fifty-needles-drop",
     "friendly-clouds-pretend",
     "gorgeous-hornets-jump",
@@ -165,6 +167,7 @@
     "large-carrots-attend",
     "mean-rocks-live",
     "plenty-elephants-tie",
+    "purple-olives-reflect",
     "purple-rules-return",
     "quick-pears-dress",
     "quiet-llamas-rush",

@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.45.1-nightly.2
+
+### Patch Changes
+
+- [#7165](https://github.com/LedgerHQ/ledger-live/pull/7165) [`ae97d63`](https://github.com/LedgerHQ/ledger-live/commit/ae97d6313917070e4243d53d4244e347a8628e44) Thanks [@LucasWerey](https://github.com/LucasWerey)! - [iOS] Ledger recover video opens when user clicks on Buy now CTA
+
 ## 3.45.1-nightly.1
 
 ### Patch Changes
