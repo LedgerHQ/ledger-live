@@ -7,7 +7,7 @@ import { LIMIT } from "../constants";
 import { isTestnet } from "../logic";
 import { AccountType, IconTransactionType } from "./api-type";
 import { log } from "@ledgerhq/logs";
-import { IconOperation } from "../types";
+import { IconOperation } from "../types/index";
 import querystring from "querystring";
 import { getCoinConfig } from "../config";
 

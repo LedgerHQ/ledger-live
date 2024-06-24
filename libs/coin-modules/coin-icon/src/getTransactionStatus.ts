@@ -62,11 +62,14 @@ export const getSendTransactionStatus = async (
       leftover.lt(minimumBalanceExistential) &&
       leftover.gt(0)
     ) {
-      errors.amount = new IconDoMaxSendInstead("", {
-        minimumBalance: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
-          showCode: true,
-        }),
-      });
+      errors.amount = new IconDoMaxSendInstead(
+        "Balance cannot be below {{minimumBalance}}. Send max to empty account.",
+        {
+          minimumBalance: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
+            showCode: true,
+          }),
+        },
+      );
     } else if (
       !errors.amount &&
       !transaction.useAllAmount &&
@@ -88,16 +91,16 @@ export const getSendTransactionStatus = async (
       warnings.amount = new IconAllFundsWarning();
     }
 
-    if (
-      !errors.recipient &&
-      amount.lt(EXISTENTIAL_DEPOSIT) &&
-      (await getAccount(transaction.recipient, account.currency)) === null
-    ) {
-      errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-        minimalAmount: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
-          showCode: true,
-        }),
-      });
+    if (!errors.recipient && amount.lt(EXISTENTIAL_DEPOSIT)) {
+      try {
+        await getAccount(transaction.recipient, account.currency);
+      } catch (error) {
+        errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
+          minimalAmount: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
+            showCode: true,
+          }),
+        });
+      }
     }
 
     if (totalSpent.gt(account.spendableBalance)) {

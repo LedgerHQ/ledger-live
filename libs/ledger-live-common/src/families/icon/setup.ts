@@ -3,7 +3,7 @@
 import { createBridges } from "@ledgerhq/coin-icon/bridge/index";
 import makeCliTools from "@ledgerhq/coin-icon/cli-transaction";
 import iconResolver from "@ledgerhq/coin-icon/hw-getAddress";
-import { Transaction } from "@ledgerhq/coin-icon/types";
+import { Transaction } from "@ledgerhq/coin-icon/types/index";
 import Icon from "@ledgerhq/hw-app-icon";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
