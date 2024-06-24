@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.83.0-next.6
+
+### Patch Changes
+
+- [#7174](https://github.com/LedgerHQ/ledger-live/pull/7174) [`7499a8b`](https://github.com/LedgerHQ/ledger-live/commit/7499a8b055c98481ba81a065aad91caf74f62baf) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: rare crash where gasOption is defined but not yet in transaction where it should be
+
 ## 2.83.0-next.5
 
 ### Patch Changes
