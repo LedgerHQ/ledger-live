@@ -27,6 +27,7 @@ export type PalletMethod =
 
 /// cf. ExtrinsicPayloadValue
 export type CoreTransasctionInfo = {
+  // before runtime upgrade
   address: string;
   blockHash: string;
   blockNumber: `0x${string}`;
@@ -40,7 +41,23 @@ export type CoreTransasctionInfo = {
   transactionVersion: `0x${string}`;
   version: number;
 };
+
+export type TransasctionPayloadInfo = {
+  // after runtime upgrade
+  address: string;
+  method: `0x${string}`;
+  nonce: number;
+  genesisHash: string;
+  era: `0x${string}`;
+  blockHash: string;
+  transactionVersion: `0x${string}`;
+  specVersion: `0x${string}`;
+  version: number;
+  mode: number;
+  metadataHash: Uint8Array;
+};
+
 export type CoreTransaction = {
   registry: TypeRegistry;
-  unsigned: CoreTransasctionInfo;
+  unsigned: CoreTransasctionInfo | TransasctionPayloadInfo;
 };
