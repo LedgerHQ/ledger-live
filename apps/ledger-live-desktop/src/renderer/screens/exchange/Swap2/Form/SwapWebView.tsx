@@ -34,6 +34,7 @@ import FeesDrawer from "./FeesDrawer";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import family from "~/renderer/families/algorand";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -207,7 +208,12 @@ const SwapWebView = ({
           "color: #007acc;",
           params,
         );
-        let transaction = params.transaction;
+        let transaction = {
+          recipient: "0x000000000000000000000000000000000000dead",
+          family: "evm",
+          gasLimit: "21000",
+          type: 2,
+        };
 
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
 
