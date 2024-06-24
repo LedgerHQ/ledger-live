@@ -2,7 +2,7 @@ import { getServerInfos, getTransactions } from "../network";
 import { XrplOperation } from "../network/types";
 import { RIPPLE_EPOCH } from "./utils";
 
-type Operation = {
+export type Operation = {
   hash: string;
   address: string;
   type: string;
@@ -21,7 +21,7 @@ type Operation = {
  * @param blockHeight Height to start searching for operations
  * @returns
  */
-export async function listOperations(address: string, blockHeight: number): Promise<string> {
+export async function listOperations(address: string, blockHeight: number): Promise<Operation[]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
@@ -35,9 +35,7 @@ export async function listOperations(address: string, blockHeight: number): Prom
     ledger_index_max: maxLedgerVersion,
   });
 
-  //FIXME: temp hack
-  // return transactions.map(convertToCoreOperation(address));
-  return transactions[0].tx.hash;
+  return transactions.map(convertToCoreOperation(address));
 }
 
 const convertToCoreOperation = (address: string) => (operation: XrplOperation) => {

@@ -7,6 +7,7 @@ import {
   estimateFees,
   getBalance,
   listOperations,
+  type Operation,
 } from "../logic";
 
 export type Api = {
@@ -22,7 +23,7 @@ export type Api = {
   ) => Promise<string>;
   estimateFees: (addr: string, amount: bigint) => Promise<bigint>;
   getBalance: (address: string) => Promise<bigint>;
-  listOperations: (address: string, blockHeight: number) => Promise<string>;
+  listOperations: (address: string, blockHeight: number) => Promise<Operation[]>;
 };
 export function createApi(config: PolkadotConfig): Api {
   setCoinConfig(() => ({ ...config, status: { type: "active" } }));

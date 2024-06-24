@@ -1,4 +1,3 @@
-import XrplDefinitions from "ripple-binary-codec/dist/enums/definitions.json";
 import { setCoinConfig, XrpConfig } from "../config";
 import {
   broadcast,
@@ -8,34 +7,8 @@ import {
   getBalance,
   getNextValidSequence,
   listOperations,
+  type Operation,
 } from "../logic";
-
-export type Operation = {
-  hash: string;
-  address: string;
-  type: string;
-  value: bigint;
-  fee: bigint;
-  blockHeight: number;
-  senders: string[];
-  recipients: string[];
-  date: Date;
-  transactionSequenceNumber: number;
-};
-const { TRANSACTION_TYPES } = XrplDefinitions;
-export type XrplTransaction = {
-  TransactionType: keyof typeof TRANSACTION_TYPES;
-  Flags: number;
-  Account: string;
-  Amount: string;
-  Destination: string;
-  DestinationTag: number | undefined;
-  Fee: string;
-  Sequence: number;
-  LastLedgerSequence: number;
-  SigningPubKey?: string;
-  TxnSignature?: string;
-};
 
 export type Api = {
   broadcast: (tx: string) => Promise<string>;
@@ -50,7 +23,7 @@ export type Api = {
   ) => Promise<string>;
   estimateFees: () => Promise<bigint>;
   getBalance: (address: string) => Promise<bigint>;
-  listOperations: (address: string, blockHeight: number) => Promise<string>;
+  listOperations: (address: string, blockHeight: number) => Promise<Operation[]>;
 };
 export function createApi(config: XrpConfig): Api {
   setCoinConfig(() => ({ ...config, status: { type: "active" } }));
