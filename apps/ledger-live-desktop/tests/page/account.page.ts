@@ -31,9 +31,9 @@ export class AccountPage extends AppPage {
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
 
   @step("Navigate to token $0")
-  async navigateToToken(token: string) {
-    await expect(this.tokenValue(token)).toBeVisible();
-    await this.tokenValue(token).click();
+  async navigateToToken(token: Token) {
+    await expect(this.tokenValue(token.tokenName)).toBeVisible();
+    await this.tokenValue(token.tokenName).click();
   }
 
   @step("Click `Receive` button")
