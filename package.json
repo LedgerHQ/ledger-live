@@ -201,6 +201,11 @@
         "dependencies": {
           "next": "*"
         }
+      },
+      "detox-allure2-adapter": {
+        "dependencies": {
+          "tslib": "*"
+        }
       }
     }
   }
