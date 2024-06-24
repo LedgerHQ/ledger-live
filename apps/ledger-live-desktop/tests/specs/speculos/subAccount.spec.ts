@@ -25,7 +25,7 @@ const tokensReceive: Token[] = [
 ];
 
 for (const [i, token] of tokens.entries()) {
-  test.describe.parallel("Sub Account @smoke", () => {
+  test.describe.parallel("Add subAccount @smoke", () => {
     test.use({
       userdata: "skip-onboarding",
       testName: `add subAccount_${token.tokenName}`,
@@ -34,7 +34,7 @@ for (const [i, token] of tokens.entries()) {
     });
 
     test(`[${token.parentAccount.currency.uiName}] Add Sub Account`, async ({ page }) => {
-      addTmsLink(["B2CQA-640"]);
+      addTmsLink(["B2CQA-2448"]);
 
       const app = new Application(page);
 
@@ -56,7 +56,7 @@ for (const [i, token] of tokens.entries()) {
 
 //Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, token] of tokensReceive.entries()) {
-  test.describe.skip("Receive @smoke", () => {
+  test.describe.skip("Receive subAccount @smoke", () => {
     test.use({
       userdata: "speculos-subAccount",
       testName: `receive subAccount_${token.tokenName}`,
@@ -65,7 +65,7 @@ for (const [i, token] of tokensReceive.entries()) {
     });
 
     test(`[${token.tokenName}] Receive Sub Account (${token.tokenNetwork})`, async ({ page }) => {
-      addTmsLink(["B2CQA-640"]); //TODO: create a new Jira Ticket for this scenario
+      addTmsLink(["B2CQA-640"]);
 
       const app = new Application(page);
 
@@ -86,7 +86,7 @@ for (const [i, token] of tokensReceive.entries()) {
 }
 
 for (const [i, token] of tokens.entries()) {
-  test.describe.parallel("Sub Account @smoke", () => {
+  test.describe.parallel("Receive subAccount @smoke", () => {
     test.use({
       userdata: "speculos-subAccount",
       testName: `subAccount_${token.parentAccount.currency.uiName}`,
