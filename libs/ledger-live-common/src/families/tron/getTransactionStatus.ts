@@ -256,7 +256,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   // Not enough gas check (on currency account)
   // PTX swap uses this to support deeplink to buy additional currency
   //
-  if (estimatedFees.gt(balance) || balance.isZero()) {
+  if (balance.lt(estimatedFees) || balance.isZero()) {
     const query = new URLSearchParams({
       ...(account?.id ? { account: account.id } : {}),
     });
