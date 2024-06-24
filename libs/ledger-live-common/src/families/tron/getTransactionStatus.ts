@@ -275,5 +275,5 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     estimatedFees,
     totalSpent,
     family,
-  };
+  });
 };
