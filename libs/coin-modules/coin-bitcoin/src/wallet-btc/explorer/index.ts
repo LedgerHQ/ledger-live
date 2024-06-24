@@ -8,6 +8,7 @@ type ExplorerParams = {
   batch_size?: number;
   from_height?: number;
   to_height?: number;
+  token?: string;
   order?: "ascending" | "descending";
 };
 
@@ -78,13 +79,18 @@ class BitcoinLikeExplorer implements IExplorer {
     return pendingsTxs;
   }
 
-  async fetchTxs(address: Address, params: ExplorerParams): Promise<TX[]> {
+  async fetchTxs(
+    address: Address,
+    params: ExplorerParams,
+  ): Promise<{ txs: TX[]; nextPageToken: string | null }> {
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs`,
       params,
     });
-    return data.data;
+    const txs = data.data;
+    const nextPageToken = data.token;
+    return { nextPageToken, txs };
   }
 
   async fetchPendingTxs(address: Address, params: ExplorerParams): Promise<TX[]> {
@@ -151,6 +157,7 @@ class BitcoinLikeExplorer implements IExplorer {
    * @param fromBlockheight block height to fetch transactions from
    * @param toBlockheight block height to fetch transactions to
    * @param isPending whether to fetch only pending transactions or only confirmed transactions
+   * @param token pagination token
    */
   async getTxsSinceBlockheight(
     batchSize: number,
@@ -158,7 +165,8 @@ class BitcoinLikeExplorer implements IExplorer {
     fromBlockheight: number,
     toBlockheight: number | undefined,
     isPending: boolean,
-  ): Promise<TX[]> {
+    token: string | null,
+  ): Promise<{ txs: TX[]; nextPageToken: string | null }> {
     const params: ExplorerParams = {
       batch_size: batchSize,
     };
@@ -170,17 +178,26 @@ class BitcoinLikeExplorer implements IExplorer {
       // toBlockheight is height of the current block
       // but in some cases, we don't set this value (e.g. integration tests), so toBlockheight = undefined and we skip this optimization
       if (toBlockheight && fromBlockheight > toBlockheight) {
-        return [];
+        return { txs: [], nextPageToken: null };
       }
       params.from_height = fromBlockheight;
       params.order = "ascending";
       if (toBlockheight) {
         params.to_height = toBlockheight;
       }
+      if (token) {
+        params.token = token;
+      }
     }
-    const txs = isPending
-      ? await this.fetchPendingTxs(address, params)
-      : await this.fetchTxs(address, params);
+    let txs: TX[] = [];
+    let nextPageToken: string | null = null;
+    if (isPending) {
+      txs = await this.fetchPendingTxs(address, params);
+    } else {
+      const result = await this.fetchTxs(address, params);
+      txs = result.txs;
+      nextPageToken = result.nextPageToken;
+    }
 
     const hydratedTxs: TX[] = [];
 
@@ -190,7 +207,7 @@ class BitcoinLikeExplorer implements IExplorer {
       hydratedTxs.push(tx);
     });
 
-    return hydratedTxs;
+    return { txs: hydratedTxs, nextPageToken };
   }
 }
 
