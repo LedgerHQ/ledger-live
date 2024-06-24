@@ -1,5 +1,11 @@
 # @ledgerhq/device-core
 
+## 0.2.1-next.2
+
+### Patch Changes
+
+- [#7173](https://github.com/LedgerHQ/ledger-live/pull/7173) [`19c02ce`](https://github.com/LedgerHQ/ledger-live/commit/19c02cead22422b4a2e94aef74ebc67e992ab54d) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Revert deletion get name fix apdu
+
 ## 0.2.1-next.1
 
 ### Patch Changes
