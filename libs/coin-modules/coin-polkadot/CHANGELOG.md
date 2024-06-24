@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 0.8.0
+
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
+
 ## 0.8.0-hotfix.0
 
 ### Minor Changes
