@@ -255,7 +255,7 @@ const getTransactionStatus = async (
   // Not enough gas check
   // PTX swap uses this to support deeplink to buy additional currency
   //
-  if (estimatedFees.gt(balance) || balance.isZero()) {
+  if (balance.lt(estimatedFees) || balance.isZero()) {
     const query = new URLSearchParams({
       ...(account?.id ? { account: account.id } : {}),
     });
