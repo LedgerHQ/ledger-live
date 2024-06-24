@@ -27,7 +27,10 @@ export class AccountPage extends AppPage {
   private accountAdvancedLogs = this.page.locator("data-test-id=Advanced_Logs");
   private operationRows = this.page.locator("[data-test-id^='operation-row-']");
   private closeModal = this.page.locator("data-test-id=modal-close-button");
-  private tokenList = this.page.locator(`[data-test-id^='token-row-']`);
+  private accountbutton = (accountName: string) =>
+    this.page.getByRole("button", { name: `${accountName}` });
+  private tokenRow = (tokenTicker: string) =>
+    this.page.locator(`data-test-id=token-row-${tokenTicker}`);
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
 
   @step("Navigate to token $0")
@@ -110,6 +113,11 @@ export class AccountPage extends AppPage {
     await expect(this.operationList).not.toBeEmpty();
   }
 
+  @step("Expect token Account to be visible")
+  async expectTokenAccount(token: Token) {
+    await expect(this.accountbutton(token.parentAccount.accountName)).toBeVisible();
+  }
+
   @step("Expect `show more` button to show more operations")
   async expectShowMoreButton() {
     const operationCount = await this.operationRows.count();
@@ -132,8 +140,8 @@ export class AccountPage extends AppPage {
 
   @step("Expect token to be present")
   async expectTokenToBePresent(token: Token) {
-    await expect(this.tokenList).toBeVisible();
-    const tokenInfos = await this.tokenList.innerText();
+    await expect(this.tokenRow(token.tokenTicker)).toBeVisible();
+    const tokenInfos = await this.tokenRow(token.tokenTicker).innerText();
     expect(tokenInfos).toContain(token.tokenName);
     expect(tokenInfos).toContain(token.tokenTicker);
   }

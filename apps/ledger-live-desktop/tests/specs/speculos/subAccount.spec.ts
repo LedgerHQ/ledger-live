@@ -24,6 +24,8 @@ const tokensReceive: Token[] = [
   Token.MATIC_UNI,
 ];
 
+const tokenERC20: Token[] = [Token.ETH_USDT];
+
 for (const [i, token] of tokens.entries()) {
   test.describe.parallel("Add subAccount without parent @smoke", () => {
     test.use({
@@ -47,11 +49,11 @@ for (const [i, token] of tokens.entries()) {
       await app.addAccount.addAccounts();
 
       await app.addAccount.done();
-      await app.layout.expectBalanceVisibility();
       await app.layout.goToPortfolio();
       await app.portfolio.navigateToAsset(token.tokenName);
       await app.account.navigateToToken(token);
       await app.account.expectLastOperationsVisibility();
+      await app.account.expectTokenAccount(token);
     });
   });
 }
@@ -108,6 +110,29 @@ for (const [i, token] of tokens.entries()) {
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(token.parentAccount.accountName);
       await app.account.expectTokenToBePresent(token);
+    });
+  });
+}
+
+for (const [i, token] of tokenERC20.entries()) {
+  test.describe.parallel("ERC20 token", () => {
+    test.use({
+      userdata: "speculos-tests-app",
+      testName: "tokenERC20",
+      speculosCurrency: specs[token.parentAccount.currency.deviceLabel.replace(/ /g, "_")],
+      speculosOffset: i,
+    });
+
+    test(`Check ERC20 token`, async ({ page }) => {
+      addTmsLink(["B2CQA-1079"]);
+
+      const app = new Application(page);
+
+      await app.layout.goToPortfolio();
+      await app.portfolio.navigateToAsset(token.tokenName);
+      await app.account.navigateToToken(token);
+      await app.account.expectLastOperationsVisibility();
+      await app.account.expectTokenAccount(token);
     });
   });
 }

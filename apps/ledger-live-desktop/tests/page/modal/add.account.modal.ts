@@ -7,6 +7,8 @@ export class AddAccountModal extends Modal {
   private selectAccount = this.page.locator("text=Choose a crypto asset"); // FIXME: I need an id
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]'); // FIXME: I need an id
   readonly addAccountsButton = this.page.locator("data-test-id=add-accounts-import-add-button");
+  readonly closeButton = this.page.locator("data-test-id=modal-close-button");
+  private infoBox = this.page.locator("data-test-id=add-token-infoBox");
   private accountsList = this.page.locator("data-test-id=add-accounts-step-import-accounts-list");
   private stopButton = this.page.locator("data-test-id=add-accounts-import-stop-button");
   private doneButton = this.page.locator("data-test-id=add-accounts-finish-close-button");
@@ -24,6 +26,8 @@ export class AddAccountModal extends Modal {
     await this.selectAccount.click();
     await this.selectAccountInput.fill(token.tokenName);
     await this.selectTokenNetwork(token).click();
+    await expect(this.closeButton).toBeVisible();
+    await expect(this.infoBox).toBeVisible();
     await this.continueButton.click();
   }
 
