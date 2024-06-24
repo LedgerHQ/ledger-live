@@ -247,12 +247,7 @@ export default class Btc {
     hasExtraData = false,
     additionals: Array<string> = [],
   ): Transaction {
-    return splitTransaction(
-      transactionHex,
-      isSegwitSupported,
-      hasExtraData,
-      additionals,
-    );
+    return splitTransaction(transactionHex, isSegwitSupported, hasExtraData, additionals);
   }
 
   /**

@@ -26,12 +26,7 @@ const command = async (transport, currencyId, hash) => {
   if (!hex) return `Backend returned no hex for this hash`;
   const hasExtraData =
     currency.id === "zcash" || currency.id === "komodo" || currency.id === "zencash";
-  const tx = btc.splitTransaction(
-    hex,
-    currency.supportsSegwit,
-    hasExtraData,
-    [currency.id],
-  );
+  const tx = btc.splitTransaction(hex, currency.supportsSegwit, hasExtraData, [currency.id]);
   const outHash = await btc.getTrustedInput(0, tx, [currency.id]);
   const ouHash = outHash.substring(8, 72);
   const finalOut = Buffer.from(ouHash, "hex").reverse().toString("hex");

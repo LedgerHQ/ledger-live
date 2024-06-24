@@ -12,7 +12,7 @@ export function splitTransaction(
   const outputs: TransactionOutput[] = [];
   let witness = false;
   let offset = 0;
-  let timestamp = Buffer.alloc(0);
+  const timestamp = Buffer.alloc(0);
   let nExpiryHeight = Buffer.alloc(0);
   let nVersionGroupId = Buffer.alloc(0);
   let extraData = Buffer.alloc(0);
