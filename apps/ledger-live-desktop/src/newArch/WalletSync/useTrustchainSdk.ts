@@ -70,6 +70,8 @@ export function useGetMembers() {
   const trustchain = useSelector(trustchainSelector);
   const dispatch = useDispatch();
 
+  const memberCredentials = useSelector(memberCredentialsSelector);
+
   if (!trustchain) {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
   }
@@ -86,6 +88,18 @@ export function useGetMembers() {
     queryFn: () => sdk.getMembers(liveJWT as JWT, trustchain as Trustchain),
     refetchOnMount: true,
   });
+
+  useEffect(() => {
+    if (
+      memberCredentials &&
+      !instances
+        ?.map((instance: TrustchainMember) => instance.id)
+        .includes(memberCredentials?.pubkey)
+    ) {
+      dispatch(resetTrustchainStore());
+      dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+    }
+  }, [instances, memberCredentials, dispatch]);
 
   return {
     isMembersLoading: isMembersLoading || isLiveJWTLoading,

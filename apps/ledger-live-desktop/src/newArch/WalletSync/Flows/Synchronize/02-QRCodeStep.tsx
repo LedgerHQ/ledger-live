@@ -142,10 +142,6 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
           )}
         </QRContainer>
 
-        <Text fontSize={10} textAlign="center" onClick={() => navigator.clipboard.writeText(url)}>
-          {url}
-        </Text>
-
         <MiddleContainer
           rowGap="24px"
           flexDirection="column"

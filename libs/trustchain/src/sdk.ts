@@ -134,18 +134,15 @@ export class SDK implements TrustchainSDK {
     // make a stream tree from all the trustchains associated to this root id
     let { streamTree } = await fetchTrustchain(jwt, trustchainRootId);
 
-    console.log("streamTree", streamTree);
     const path = streamTree.getApplicationRootPath(this.context.applicationId);
-    console.log("path", path);
     const child = streamTree.getChild(path);
-    console.log("child", child);
     let shouldShare = true;
     if (child) {
       const resolved = await child.resolve();
       const members = resolved.getMembers();
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
-    console.log("shouldShare", shouldShare);
+
     if (shouldShare) {
       callbacks?.onStartRequestUserInteraction();
       streamTree = await pushMember(streamTree, path, trustchainRootId, jwt, hw, {
@@ -155,7 +152,6 @@ export class SDK implements TrustchainSDK {
       });
       callbacks?.onEndRequestUserInteraction();
     }
-    console.log("shared done");
 
     const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
 
@@ -374,7 +370,7 @@ async function pushMember(
   member: TrustchainMember,
 ) {
   const isNewDerivation = !streamTree.getChild(path);
-  console.log("isNewDerivation", isNewDerivation);
+
   streamTree = await streamTree.share(
     path,
     hw,
@@ -382,7 +378,7 @@ async function pushMember(
     member.name,
     member.permissions,
   );
-  console.log("shared", streamTree);
+
   const child = streamTree.getChild(path);
   if (!child) {
     throw new Error("StreamTree.share failed to create the child stream.");
