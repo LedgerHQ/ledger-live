@@ -207,6 +207,14 @@ const SwapWebView = ({
           "color: #007acc;",
           params,
         );
+        let transaction = params.transaction;
+        // for mock purposes
+        if (transaction?.feesStrategy === "medium") {
+          return Promise.resolve({ ...transaction, feesStrategy: "high" });
+        } else {
+          return Promise.resolve({ ...transaction, feesStrategy: "medium" });
+        }
+
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
 
         if (!realFromAccountId) {
@@ -222,8 +230,6 @@ const SwapWebView = ({
         if (!swapState?.status) {
           return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
         }
-
-        let transaction = params.transaction;
 
         const setTransaction = (transaction: Transaction): Promise<Transaction> => {
           return new Promise(resolve => {
@@ -267,12 +273,10 @@ const SwapWebView = ({
           disableSlowStrategy: true,
           transaction: transaction,
           isOpen,
+          onRequestClose: () => {
+            return Promise.resolve(transaction);
+          },
         });
-        console.log(
-          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:268 dd",
-          "color: #007acc;",
-          dd,
-        );
         // return Promise.resolve(transaction);
       },
     };
