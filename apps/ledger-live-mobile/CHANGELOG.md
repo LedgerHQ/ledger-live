@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.45.1-hotfix.1
+
+### Patch Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`33d26a9`](https://github.com/LedgerHQ/ledger-live/commit/33d26a9847d15571cce19f8159e29958398bb3a0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - bugfix crash case in ReceiveFunds/02-SelectAccount
+
 ## 3.45.1-hotfix.0
 
 ### Patch Changes

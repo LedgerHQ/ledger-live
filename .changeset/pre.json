@@ -114,6 +114,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
+    "modern-forks-invent",
     "warm-birds-shake"
   ]
 }
