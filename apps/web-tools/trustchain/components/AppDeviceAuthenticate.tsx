@@ -1,20 +1,22 @@
 import React, { useCallback } from "react";
 import { Actionable } from "./Actionable";
-import { useSDK } from "../context";
+import { useTrustchainSDK } from "../context";
 import { runWithDevice } from "../device";
 
 export function AppDeviceAuthenticate({
+  deviceId,
   deviceJWT,
   setDeviceJWT,
 }: {
+  deviceId: string;
   deviceJWT: { accessToken: string } | null;
   setDeviceJWT: (deviceJWT: { accessToken: string } | null) => void;
 }) {
-  const sdk = useSDK();
+  const sdk = useTrustchainSDK();
 
   const action = useCallback(
-    () => runWithDevice(transport => sdk.authWithDevice(transport)),
-    [sdk],
+    () => runWithDevice(deviceId, transport => sdk.authWithDevice(transport)),
+    [deviceId, sdk],
   );
 
   const valueDisplay = useCallback(

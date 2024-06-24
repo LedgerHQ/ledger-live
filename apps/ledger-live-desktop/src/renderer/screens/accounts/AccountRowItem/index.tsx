@@ -24,7 +24,6 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameSelector } from "@ledgerhq/live-wallet/store";
-
 const Row = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
   border-radius: 4px;
@@ -97,14 +96,12 @@ const TokenShowMoreIndicator = styled(Button)<{ expanded?: boolean }>`
   height: 32px;
   text-align: center;
   padding: 0;
-
   &:hover ${Text} {
     text-decoration: underline;
   }
   &:hover {
     background-color: initial;
   }
-
   > :nth-child(2) {
     margin-left: 8px;
     transform: rotate(${p => (p.expanded ? "180deg" : "0deg")});
@@ -127,16 +124,13 @@ type Props = {
   range: PortfolioRange;
   search?: string;
 };
-
 const expandedStates: {
   [key: string]: boolean;
 } = {};
 const AccountRowItem = (props: Props) => {
   const { account, parentAccount, range, hidden, onClick, disableRounding, search } = props;
-
   const walletState = useSelector(walletSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-
   const [expanded, setExpanded] = useState<boolean>(
     account.type === "Account" && account.subAccounts
       ? expandedStates[account.id] || !!search
@@ -145,31 +139,24 @@ const AccountRowItem = (props: Props) => {
 
   const scrollTopFocusRef = useRef<HTMLSpanElement>(null);
 
-  const mountedRef = useRef(true);
-
   useEffect(() => {
-    if (mountedRef.current) {
-      mountedRef.current = false;
-      return;
-    }
+    setExpanded(!!search);
+  }, [search]);
+
+  const toggleAccordion = (e: SyntheticEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    expandedStates[account.id] = !expandedStates[account.id];
+    setExpanded(expandedStates[account.id]);
     if (scrollTopFocusRef.current && !expanded) {
       scrollTopFocusRef.current.scrollIntoView({
         block: "nearest",
         behavior: "smooth",
       });
     }
-  }, [expanded]);
-
-  const toggleAccordion = (e: SyntheticEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    expandedStates[account.id] = !expandedStates[account.id];
-    setExpanded(expandedStates[account.id]);
   };
 
   const onClickHandler = () => onClick(account, parentAccount);
-
   const unit = useAccountUnit(account);
-
   let currency;
   let mainAccount: Account | null | undefined;
   let tokens;
@@ -177,13 +164,11 @@ const AccountRowItem = (props: Props) => {
   let isToken;
   if (account.type !== "Account") {
     currency = account.token;
-
     mainAccount = parentAccount;
     isToken = mainAccount && listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
     if (!mainAccount) return null;
   } else {
     currency = account.currency;
-
     mainAccount = account;
     tokens = listSubAccounts(account).filter(
       subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
@@ -211,7 +196,6 @@ const AccountRowItem = (props: Props) => {
   const key = `${account.id}`;
   const accountName =
     accountNameSelector(walletState, { accountId: account.id }) || getDefaultAccountName(account);
-
   return (
     <div
       className={`accounts-account-row-item ${tokens && tokens.length > 0 ? "has-tokens" : ""}`}

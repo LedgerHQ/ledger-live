@@ -1,18 +1,12 @@
-import { expect } from "detox";
-import PortfolioPage from "../models/wallet/portfolioPage";
-import SettingsPage from "../models/settings/settingsPage";
-import GeneralSettingsPage from "../models/settings/generalSettingsPage";
-import { loadConfig } from "../bridge/server";
+import { Application } from "../page";
 
-let portfolioPage: PortfolioPage;
-let settingsPage: SettingsPage;
-let generalSettingsPage: GeneralSettingsPage;
+let app: Application;
 
 const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }) => {
   it(`should change selected language to ${l10n.lang}`, async () => {
-    await generalSettingsPage.navigateToLanguageSelect();
-    await generalSettingsPage.selectLanguage(l10n.lang);
-    await expect(generalSettingsPage.isLocalized(l10n.localization)).toBeVisible();
+    await app.settingsGeneral.navigateToLanguageSelect();
+    await app.settingsGeneral.selectLanguage(l10n.lang);
+    await app.settingsGeneral.expectLocalizedText(l10n.localization);
   });
 };
 
@@ -32,18 +26,13 @@ describe("Change Language", () => {
   ];
 
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-
-    portfolioPage = new PortfolioPage();
-    settingsPage = new SettingsPage();
-    generalSettingsPage = new GeneralSettingsPage();
-
-    await portfolioPage.waitForPortfolioPageToLoad();
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   it("should go to General Settings", async () => {
-    await portfolioPage.navigateToSettings();
-    await settingsPage.navigateToGeneralSettings();
+    await app.portfolio.navigateToSettings();
+    await app.settings.navigateToGeneralSettings();
   });
 
   // test steps for each language

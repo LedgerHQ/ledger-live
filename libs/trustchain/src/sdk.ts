@@ -23,7 +23,6 @@ import {
 import Transport from "@ledgerhq/hw-transport";
 import api from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
-import { makeCipher } from "./wallet-sync-cipher";
 import { log } from "@ledgerhq/logs";
 
 export class SDK implements TrustchainSDK {
@@ -295,15 +294,15 @@ export class SDK implements TrustchainSDK {
     await api.deleteTrustchain(jwt, trustchain.rootId);
   }
 
-  async encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array> {
-    const cipher = makeCipher(crypto.from_hex(trustchain.walletSyncEncryptionKey));
-    const encrypted = await cipher.encrypt(obj);
+  async encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array> {
+    const key = crypto.from_hex(trustchain.walletSyncEncryptionKey);
+    const encrypted = await crypto.encryptUserData(key, input);
     return encrypted;
   }
 
-  async decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<object> {
-    const cipher = makeCipher(crypto.from_hex(trustchain.walletSyncEncryptionKey));
-    const decrypted = await cipher.decrypt(data);
+  async decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array> {
+    const key = crypto.from_hex(trustchain.walletSyncEncryptionKey);
+    const decrypted = await crypto.decryptUserData(key, data);
     return decrypted;
   }
 }

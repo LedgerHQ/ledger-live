@@ -10,7 +10,14 @@ export const defaultNanoApp = { firmware: "2.3.0" as const, version: "25.10100.0
 
 describe("Polkadot Deterministic Tester", () => {
   it("Basic scenario", async () => {
-    await executeScenario(basicScenario);
+    try {
+      await executeScenario(basicScenario);
+    } catch (e) {
+      if (e != "done") {
+        await Promise.all([killSpeculos(), killChopsticksAndSidecar()]);
+        throw e;
+      }
+    }
   });
 });
 

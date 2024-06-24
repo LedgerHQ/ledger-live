@@ -1,5 +1,43 @@
 # @ledgerhq/swift-bridge-hw-app-eth
 
+## 1.2.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11)]:
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.0
+  - @ledgerhq/hw-app-eth@6.37.0
+
+## 1.2.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.37.0-next.2
+
+## 1.2.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.37.0-next.1
+
+## 1.2.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11)]:
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.0-next.0
+  - @ledgerhq/hw-app-eth@6.37.0-next.0
+
 ## 1.1.9
 
 ### Patch Changes

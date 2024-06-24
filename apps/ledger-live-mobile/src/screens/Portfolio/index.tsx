@@ -25,7 +25,7 @@ import {
 import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import Carousel from "~/components/Carousel";
 import { ScreenName } from "~/const";
-import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdate/components/UpdateBanner";
+import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import RecoverBanner from "~/components/RecoverBanner";
@@ -34,13 +34,8 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import { track } from "~/analytics";
-import {
-  BaseComposite,
-  BaseNavigation,
-  StackNavigatorProps,
-} from "~/components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
-import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
@@ -58,6 +53,7 @@ import { OnboardingType } from "~/reducers/types";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -131,6 +127,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   }, [setAddModalOpened]);
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
+  const reopenAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
@@ -227,10 +224,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         showsVerticalScrollIndicator={false}
         testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
       />
-      <AddAccountsModal
-        navigation={navigation as unknown as BaseNavigation}
+      <AddAccountDrawer
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
+        reopenDrawer={reopenAddModal}
+        doesNotHaveAccount={!showAssets}
       />
     </ReactNavigationPerformanceView>
   );

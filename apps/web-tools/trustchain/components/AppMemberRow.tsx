@@ -2,10 +2,11 @@ import React, { useCallback } from "react";
 import { JWT, MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { Actionable } from "./Actionable";
 import { DisplayName } from "./IdentityManager";
-import { useSDK } from "../context";
+import { useTrustchainSDK } from "../context";
 import { runWithDevice } from "../device";
 
 export function AppMemberRow({
+  deviceId,
   deviceJWT,
   trustchain,
   memberCredentials,
@@ -14,6 +15,7 @@ export function AppMemberRow({
   setDeviceJWT,
   setMembers,
 }: {
+  deviceId: string;
   deviceJWT: JWT | null;
   trustchain: Trustchain | null;
   memberCredentials: MemberCredentials | null;
@@ -22,11 +24,11 @@ export function AppMemberRow({
   setDeviceJWT: (deviceJWT: JWT | null) => void;
   setMembers: (members: TrustchainMember[] | null) => void;
 }) {
-  const sdk = useSDK();
+  const sdk = useTrustchainSDK();
 
   const action = useCallback(
     (deviceJWT: JWT, trustchain: Trustchain, memberCredentials: MemberCredentials) =>
-      runWithDevice(transport =>
+      runWithDevice(deviceId, transport =>
         sdk.removeMember(transport, deviceJWT, trustchain, memberCredentials, member),
       ).then(async ({ jwt, trustchain }) => {
         setDeviceJWT(jwt);
@@ -34,7 +36,7 @@ export function AppMemberRow({
         await sdk.getMembers(jwt, trustchain).then(setMembers);
         return member;
       }),
-    [sdk, member, setTrustchain, setDeviceJWT, setMembers],
+    [deviceId, sdk, member, setTrustchain, setDeviceJWT, setMembers],
   );
 
   return (

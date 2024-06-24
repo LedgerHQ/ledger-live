@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.44.1",
+  "version": "3.45.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -197,7 +197,7 @@
     "react-native-vector-icons": "^10.0.0",
     "react-native-version-number": "^0.3.6",
     "react-native-video": "5.2.1",
-    "react-native-webview": "11.26.1",
+    "react-native-webview": "13.10.3",
     "react-redux": "^7.2.9",
     "redux": "^4.1.2",
     "redux-actions": "2.6.5",

@@ -441,7 +441,7 @@
       "title" : "Ihre maximale Gebühr ist zu niedrig. Ihre Transaktion kann eine Weile ausstehend bleiben"
     },
     "MaxPriorityFeeLowerThanInitial" : {
-      "title" : "Prioritätsgebühr zu niedrig, bitte geben Sie einen Betrag ein, der höher ist als der Wert der Prioritätsgebühr bei der ersten Transaktion"
+      "title" : "Prioritätsgebühr zu niedrig; bitte gib einen Betrag ein, der höher ist als der Wert der Prioritätsgebühr bei der ersten Transaktion"
     },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Fehler in der Sequenznummer",
       "description" : "Bitte schließe das Fenster und versuche es später noch einmal"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Umtauschen nicht möglich: Erfordert initiales Senden/Delegieren bei Tezos-Konto oder Austausch des Paares."
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "Marktpreis für {{currencyTicker}}",
       "currencyPrice" : "Preis für 1 {{currencyTicker}}",
-      "currencyPriceChange" : "Änderung in den letzten 24 Stunden"
+      "currencyPriceChange" : {
+        "day" : "Änderung in den letzten 24 Stunden",
+        "week" : "Änderung in den letzten 7 Tagen",
+        "month" : "Änderung in den letzten 30 Tagen",
+        "year" : "Änderung im letzten Jahr",
+        "all" : "Änderung im letzten Jahr"
+      }
     },
     "quickActions" : {
       "buy" : "Kaufen",
@@ -2714,6 +2723,8 @@
       "languageDesc" : "Stellen Sie die in Ledger Live angezeigte Sprache ein.",
       "dateFormat" : "Datumsformat",
       "dateFormatDesc" : "Legen Sie das Datumsformat für Ledger Live fest",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Erstellt eine Sicherheitskopie deiner App-Daten und synchronisiert mehrere Ledger Live-Instanzen nahtlos.",
       "region" : "Region",
       "regionDesc" : "Wählen Sie Ihre Region, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
       "password" : "App-Sperre",
@@ -3130,9 +3141,6 @@
         "title" : "Willkommen bei Swap",
         "whatIsSwap" : "Was ist Swap?",
         "disclaimer" : "Tauschen Sie Krypto direkt von Ihrem Ledger-Gerät aus. Dieser Service ist in einigen Ländern, einschließlich den USA, nicht verfügbar."
-      },
-      "main" : {
-        "header" : "Umtauschen"
       },
       "notAvailable" : {
         "title" : "Service vorübergehend oder in Ihrem Land nicht verfügbar"
@@ -3654,8 +3662,8 @@
     "header" : "Transaktion bearbeiten",
     "learnMore" : "Ich möchte mehr erfahren",
     "panel" : {
-      "stuckMessage" : "Ihre älteste „Senden“-Transaktion hängt. Sie können die Transaktion über eine höhere Netzwerkgebühr beschleunigen oder aber sie abbrechen.",
-      "speedupMessage" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen."
+      "stuckMessage" : "Deine älteste Versandtransaktion reagiert zurzeit nicht. Du kannst sie mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen.",
+      "speedupMessage" : "Deine Transaktion ist noch nicht abgeschlossen. Du kannst sie entweder mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen."
     },
     "previousFeesInfo" : {
       "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren: ",
@@ -3666,16 +3674,16 @@
     },
     "speedUp" : {
       "title" : "Beschleunigen",
-      "description" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+      "description" : "Reiche die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
     },
     "cancel" : {
       "title" : "Abbrechen",
       "description" : "Sendet 0 {{ticker}} an deine eigene Adresse."
     },
     "error" : {
-      "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
-      "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
-      "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Ihre Transaktion ist ausstehend, da eine vorherige Transaktion stecken geblieben ist. Sie können auf die Bestätigung der Transaktion warten, die Transaktion beschleunigen oder sie stornieren.",
+      "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da dein Konto nicht genügend Guthaben aufweist.",
+      "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da dein Konto nicht genügend Guthaben aufweist.",
+      "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Deine Transaktion ist ausstehend, da eine vorherige Transaktion zurzeit nicht reagiert. Du kannst auf die Bestätigung der Transaktion warten, sie beschleunigen oder sie stornieren.",
       "TransactionHasBeenValidatedError" : {
         "title" : "Beschleunigung oder Stornierung nicht möglich",
         "description" : "Diese Transaktion wurde bereits validiert"
@@ -3840,35 +3848,9 @@
     "tokens" : {
       "title" : "Token hinzufügen",
       "createParentCurrencyAccount" : "Konto {{parrentCurrencyName}} hinzufügen",
-      "erc20" : {
-        "title" : "Token hinzufügen",
-        "disclaimer" : "{{tokenName}} ist ein ERC20-Token.\nSie können Tokens direkt in einem Ethereum-Konto erhalten.",
-        "learnMore" : "Erfahren Sie mehr über ERC20"
-      },
-      "trc10" : {
-        "title" : "Token hinzufügen",
-        "disclaimer" : "{{tokenName}} ist ein TRC10 Token. \nSie können Token direkt in einem Tron-Konto empfangen.",
-        "learnMore" : "Erfahren Sie mehr über TRC10"
-      },
-      "trc20" : {
-        "title" : "Token hinzufügen",
-        "disclaimer" : "{{tokenName}} ist ein TRC20 Token. \nSie können Token direkt in einem Tron-Konto empfangen.",
-        "learnMore" : "Erfahren Sie mehr über TRC20"
-      },
-      "asa" : {
-        "title" : "Token hinzufügen",
-        "disclaimer" : "{{tokenName}} ist ein ASA-Token.\nDu kannst Token direkt auf einem Algorand-Konto erhalten.",
-        "learnMore" : "Weitere Informationen"
-      },
-      "bep20" : {
-        "title" : "Token hinzufügen",
-        "disclaimer" : "{{tokenName}} ist ein BEP-20-Token.\nSie können Tokens direkt in einem BNB-Konto empfangen.",
-        "learnMore" : "Erfahren Sie mehr über BEP-20"
-      },
-      "vip180" : {
-        "title" : "Token hinzufügen",
-        "disclaimer" : "{{tokenName}} ist ein VIP180-Token.\nDu kannst Token auf einem VET-Konto direkt empfangen.",
-        "learnMore" : "Erfahre mehr über VIP180"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) ist ein {{tokenType}}-Token. Du kannst Token direkt auf einem {{currency}}-Konto empfangen.",
+        "learnMore" : "Erfahre mehr über {{tokenType}}"
       }
     },
     "showMoreChainType" : "Weitere Adresstypen",
@@ -4325,7 +4307,8 @@
       "installUpdate" : {
         "titleInactive" : "Update installieren",
         "titleActive" : "Installiert Update",
-        "description" : "{{deviceName}} wird mehrere Male neu gestartet.\n\nZum Fertigstellen des Updates entsperre dein {{deviceName}}-Gerät mit deiner PIN, nachdem die Installation abgeschlossen wurde."
+        "description" : "{{deviceName}} wird mehrere Male neu gestartet.\n\nZum Fertigstellen des Updates entsperre dein {{deviceName}}-Gerät mit deiner PIN, nachdem die Installation abgeschlossen wurde.",
+        "descriptionNanoXBle" : "{{deviceName}} wird mehrfach neu gestartet.\n\nWenn sich das Gerät ausschaltet und nicht automatisch neu startet, musst du es selbst einschalten.\n\nUm das Update abzuschließen, entsperre deine {{deviceName}} mit deiner PIN, nachdem die Installation abgeschlossen wurde."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4339,14 @@
       "description" : "Aktualisieren Sie Ihre Ledger Nano Firmware, indem Sie sie mit der Ledger Live Anwendung auf dem Desktop verbinden",
       "pleaseConnectUsbTitle" : "USB-Kabel erforderlich",
       "pleaseConnectUsbDescription" : "Um die Firmware-Aktualisierung zu starten, schließen Sie Ihr {{deviceName}} über ein USB-Kabel an Ihr Mobiltelefon an."
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "Gerät nicht verbunden",
+          "description" : "Das Update konnte nicht fortgesetzt werden, da die Verbindung zur {{deviceName}} getrennt wurde"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -4541,20 +4532,20 @@
       },
       "delegationUnavailable" : {
         "title" : "Übertragung nicht verfügbar",
-        "description" : "Nicht genügend verfügbares Guthaben auf Ihrem Konto, um eine neue Delegierung zu starten."
+        "description" : "Nicht genügend verfügbares Guthaben auf deinem Konto, um eine neue Delegierung zu starten."
       }
     },
     "undelegation" : {
       "undelegate" : "Delegierung aufheben",
-      "undelegationMessage" : "Wenn Sie die Delegierung aufheben, erhalten Sie keine Prämien für laufende und kommende Epochen",
-      "verificationSuccessTitle" : "Sie haben die Delegierung Ihrer Vermögenswerte erfolgreich aufgehoben."
+      "undelegationMessage" : "Wenn du die Delegierung aufhebst, erhältst du keine Prämien für laufende und kommende Epochen",
+      "verificationSuccessTitle" : "Du hast die Delegierung deiner Vermögenswerte erfolgreich aufgehoben."
     },
     "delegation" : {
       "pool" : "Pool",
       "poolId" : "Pool-ID",
       "selectPool" : "Pool auswählen",
       "pools" : "Pools",
-      "delegationEarn" : "Sie können durch Delegieren Ihrer Vermögenswerte ADA-Prämien verdienen.",
+      "delegationEarn" : "Du kannst durch Delegieren deiner Vermögenswerte ADA-Prämien verdienen.",
       "delegatingFrom" : "Delegiert von",
       "delegatingTo" : "Delegiert an",
       "info" : "So funktioniert Delegierung",
@@ -4571,7 +4562,7 @@
       "stakeKeyRegistrationDeposit" : "Kaution für Registrierung des Staking-Schlüssels",
       "stakeKeyRegistrationDepositRefund" : "Erstattung der Kaution für Registrierung des Staking-Schlüssels",
       "stepperHeader" : {
-        "starter" : "Verdienen Sie Belohnungen",
+        "starter" : "Belohnungen verdienen",
         "validator" : "Delegierte Vermögenswerte",
         "summary" : "Zusammenfassung",
         "verification" : "Verifizierung",
@@ -4582,11 +4573,11 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "Sie können Prämien verdienen, indem Sie Ihre ADA an einen Pool delegieren.",
+            "description" : "Du kannst Prämien verdienen, indem du deine ADA an einen Pool delegierst.",
             "steps" : {
-              "0" : "Sie behalten das Eigentum an delegierten Vermögenswerten",
-              "1" : "Delegieren Sie mit Ihrem Ledger-Gerät",
-              "2" : "Vermögenswerte können an einen anderen Pool umdelegiert werden. Sie können die Delegierung auch jederzeit aufheben."
+              "0" : "Du behältst das Eigentum an delegierten Vermögenswerten",
+              "1" : "Delegiere mit deinem Ledger-Gerät",
+              "2" : "Vermögenswerte können an einen anderen Pool umdelegiert werden. Du kannst die Delegierung auch jederzeit aufheben."
             },
             "cta" : "Weiter"
           },
@@ -4601,8 +4592,8 @@
           },
           "verification" : {
             "success" : {
-              "title" : "Sie haben Ihre Vermögenswerte erfolgreich delegiert",
-              "text" : "Ihr Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "title" : "Du hast deine Vermögenswerte erfolgreich delegiert",
+              "text" : "Dein Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
               "cta" : "Details anzeigen"
             },
             "pending" : {
@@ -6134,6 +6125,7 @@
       "subtitle" : "Web 3.0 erforschen, vollständig integriert mit Ledger",
       "section" : {
         "recentlyUsed" : "Kürzlich verwendet",
+        "locallyLoaded" : "Lokal geladen",
         "categories" : "Kategorien",
         "clearAll" : "Alle löschen"
       },
@@ -6231,9 +6223,10 @@
       },
       "order" : {
         "topGainers" : "Top-Gewinner",
-        "market_cap" : "Rang",
-        "market_cap_asc" : "Rang (Marktkap.) aufst.",
-        "market_cap_desc" : "Rang (Marktkap.) abst."
+        "topLosers" : "Größte Verlierer",
+        "marketCap" : "Rang",
+        "asc" : "Rang (Marktkap.) aufst.",
+        "desc" : "Rang (Marktkap.) abst."
       },
       "currency" : "Währung",
       "time" : "Uhrzeit",
@@ -6303,7 +6296,7 @@
     "designedForStax" : {
       "title" : "<0>Entwickelt für</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "Dieses NFT enthält ein zusätzliches NFT-Bild, das speziell für das E-Ink-Display des Ledger Stax entwickelt wurde.\n\nDieses Bild wird verwendet, wenn du dieses NFT als Sperrbildschirm festlegst.",
+        "description" : "Dieses NFT enthält ein zusätzliches Bild des NFT, das speziell für das E Ink-Display der Ledger Stax gestaltet wurde.\n\nDieses Bild wird verwendet, wenn du dieses NFT als Sperrbildschirm festlegst.",
         "cta" : "Verstanden"
       }
     },
@@ -6563,7 +6556,6 @@
         },
         "swap" : {
           "title" : "Umtauschen",
-          "label" : "Beliebt",
           "body" : "Sicheres Konvertieren von Krypto in Krypto"
         },
         "receive" : {

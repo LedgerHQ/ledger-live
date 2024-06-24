@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} piyasa fiyatı",
       "currencyPrice" : "1 {{currencyTicker}} fiyatı",
-      "currencyPriceChange" : "Son 24 saatlik değişim"
+      "currencyPriceChange" : {
+        "day" : "Son 24 saatlik değişim",
+        "week" : "Son 7 gündeki değişim",
+        "month" : "Son 30 gündeki değişim",
+        "year" : "Son bir yıldaki değişim",
+        "all" : "Son bir yıldaki değişim"
+      }
     },
     "quickActions" : {
       "buy" : "Satın Al",
@@ -2714,6 +2723,8 @@
       "languageDesc" : "Ledger Live'ın görüntüleneceği dili ayarlayın.",
       "dateFormat" : "Tarih formatı",
       "dateFormatDesc" : "Ledger Live için tarih formatını belirleyin",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Uygulama verilerinizi yedekleyin ve birden çok Ledger Live oturumunu sorunsuz bir şekilde senkronize edin",
       "region" : "Bölge",
       "regionDesc" : "Tarih, saat ve para birimi görüntüleme biçimlerini güncellemek için bölgenizi seçin.",
       "password" : "Uygulama kilidi",
@@ -3031,8 +3042,8 @@
         "title" : "Seçilen kripto için ağ seçin",
         "account" : "{{count}} hesap",
         "account_plural" : "{{count}} hesapları",
-        "subtitle" : "Kriptoyu aktaran cüzdan veya borsada seçilen ağ ile aynı olmalıdır.",
-        "bannerTitle" : "Doğru ağı seçtiğinizden emin olun. Bunu nasıl yapacağınızı öğrenin.",
+        "subtitle" : "Seçeceğiniz ağ, kriptoyu aktaran cüzdan veya borsada seçilmiş ağ ile aynı olmalıdır.",
+        "bannerTitle" : "Doğru ağı seçtiğinizden emin olun. Daha fazla bilgi.",
         "depositFromCexBannerTitle" : "Coinbase hesabınızdan kripto yatırın"
       },
       "stepperHeader" : {
@@ -3074,7 +3085,7 @@
       },
       "securityVerify" : {
         "title" : "Adres doğrulaması, bu işlemi güvenceye almak için çok önemlidir",
-        "subtitle1" : "Adresi Ledger Live'dan kopyalayıp hedefe yapıştırdıktan sonra, Ledger cihazınızın Güvenilir Ekranında gösterilen adresle eşleştiğini mutlaka doğrulayın. İki adres de aynı olmalıdır.",
+        "subtitle1" : "Ledger Live'dan kopyalayıp hedefe yapıştırdığınız adresin, Ledger cihazınızın Güvenilir Ekranında gösterilen adresle eşleştiğini mutlaka doğrulayın. İki adres de aynı olmalıdır.",
         "subtitle2" : "Bu doğrulama, adres değiştirme saldırılarının önlenmesine yardımcı olacaktır.",
         "verifyCta" : "Adresimi doğrula",
         "dontVerifyCta" : "Adresi doğrulamadan göster"
@@ -3130,9 +3141,6 @@
         "title" : "Takas İşlemlerine Hoş Geldiniz",
         "whatIsSwap" : "Takas (Swap) nedir?",
         "disclaimer" : "Kripto takas işlemlerinizi doğrudan Ledger cihazınızdan yapın. Bu hizmet ABD de dahil olmak üzere bazı ülkelerde kullanılamaz."
-      },
-      "main" : {
-        "header" : "Takas edin"
       },
       "notAvailable" : {
         "title" : "Hizmet geçici olarak kullanılamıyor veya ülkenize açık değil"
@@ -3840,35 +3848,9 @@
     "tokens" : {
       "title" : "Token ekle",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} hesabı ekle",
-      "erc20" : {
-        "title" : "Token ekle",
-        "disclaimer" : "{{tokenName}} bir ERC20 Token'ıdır.\nToken'ları doğrudan bir Ethereum hesabına alabilirsiniz.",
-        "learnMore" : "ERC20 hakkında daha fazla bilgi edinin"
-      },
-      "trc10" : {
-        "title" : "Token Ekle",
-        "disclaimer" : "{{tokenName}} bir TRC10 Token'ıdır.\nToken'ları doğrudan bir Tron hesabına alabilirsiniz.",
-        "learnMore" : "TRC10 hakkında daha fazla bilgi edinin"
-      },
-      "trc20" : {
-        "title" : "Token Ekle",
-        "disclaimer" : "{{tokenName}} bir TRC20 Token'ıdır.\nToken'ları doğrudan bir Tron hesabına alabilirsiniz.",
-        "learnMore" : "TRC20 hakkında daha fazla bilgi edinin"
-      },
-      "asa" : {
-        "title" : "Token Ekle",
-        "disclaimer" : "{{tokenName}} bir ASA Token'ıdır.\nToken'ları doğrudan bir Algorand hesabına alabilirsiniz.",
-        "learnMore" : "Daha fazla bilgi"
-      },
-      "bep20" : {
-        "title" : "Token Ekle",
-        "disclaimer" : "{{tokenName}} bir BEP-20 Token'ıdır.\nToken'ları doğrudan bir Tron hesabına alabilirsiniz.",
-        "learnMore" : "BEP-20 hakkında daha fazla bilgi edinin"
-      },
-      "vip180" : {
-        "title" : "Token ekle",
-        "disclaimer" : "{{tokenName}} bir VIP180 Token'ıdır.\nToken'ları doğrudan bir VET hesabına alabilirsiniz.",
-        "learnMore" : "VIP180 hakkında daha fazla bilgi edinin"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır.\n Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
+        "learnMore" : "{{tokenType}} hakkında daha fazla bilgi edinin"
       }
     },
     "showMoreChainType" : "Daha fazla adres türü",
@@ -4325,7 +4307,8 @@
       "installUpdate" : {
         "titleInactive" : "Güncellemeyi yükle",
         "titleActive" : "Güncelleme yükleniyor",
-        "description" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nGüncellemeyi tamamlamak için, kurulum tamamlandıktan sonra {{deviceName}} cihazının kilidini PIN kodunuzla açın."
+        "description" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nGüncellemeyi tamamlamak için, kurulum tamamlandıktan sonra {{deviceName}} cihazının kilidini PIN kodunuzla açın.",
+        "descriptionNanoXBle" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nCihaz kapanıp otomatik olarak yeniden başlamazsa cihazı sizin açmanız gerekecektir.\n\nGüncellemeyi tamamlamak için, kurulum tamamlandıktan sonra {{deviceName}} cihazının kilidini PIN kodunuzla açın."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4339,14 @@
       "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın",
       "pleaseConnectUsbTitle" : "USB kablosu gerekli",
       "pleaseConnectUsbDescription" : "Donanım yazılımı güncellemesini başlatmak için {{deviceName}} cihazınızı bir USB kablosuyla cep telefonunuza bağlayın."
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "Cihaz bağlantısı kesildi",
+          "description" : "{{deviceName}} cihazıyla bağlantımız kesildiğinden güncelleme devam edemedi"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -6134,6 +6125,7 @@
       "subtitle" : "Ledger'la tamamen entegre olan Web 3.0'ı keşfedin",
       "section" : {
         "recentlyUsed" : "Son Kullanılanlar",
+        "locallyLoaded" : "Yerel Olarak Yüklenen",
         "categories" : "Kategoriler",
         "clearAll" : "Tümünü temizle"
       },
@@ -6231,9 +6223,10 @@
       },
       "order" : {
         "topGainers" : "En çok yükselenler",
-        "market_cap" : "Sıralama",
-        "market_cap_asc" : "Sıralama (Piyasa değeri) art.",
-        "market_cap_desc" : "Sıralama (Piyasa değeri) azal."
+        "topLosers" : "En çok düşenler",
+        "marketCap" : "Sıralama",
+        "asc" : "Sıralama (Piyasa değeri) art.",
+        "desc" : "Sıralama (Piyasa değeri) azal."
       },
       "currency" : "Para birimi",
       "time" : "Dönem",
@@ -6303,7 +6296,7 @@
     "designedForStax" : {
       "title" : "<1>Ledger</1><2>Stax</2><0>için tasarlandı</0>",
       "drawer" : {
-        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
+        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
         "cta" : "Anladım"
       }
     },
@@ -6563,7 +6556,6 @@
         },
         "swap" : {
           "title" : "Takas edin",
-          "label" : "Popüler",
           "body" : "Bir kriptoyu diğerine güvenle dönüştürün"
         },
         "receive" : {

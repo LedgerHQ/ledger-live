@@ -1,10 +1,11 @@
 import fs from "fs";
-import { getEnvs, getFlags, loadConfig } from "../bridge/server";
-import PortfolioPage from "../models/wallet/portfolioPage";
+import { getEnvs, getFlags } from "../bridge/server";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { EnvName } from "@ledgerhq/live-env";
+import { Application } from "../page";
 
-let portfolioPage: PortfolioPage;
+let app: Application;
+
 const environmentFilePath = "artifacts/environment.properties.temp";
 
 const formatFlagsData = (data: { [key in FeatureId]: Feature }) => {
@@ -47,9 +48,8 @@ const formatEnvData = (data: { [key in EnvName]: string }) => {
 
 describe("Get Feature Flags and Environment Variables", () => {
   beforeAll(async () => {
-    portfolioPage = new PortfolioPage();
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-    await portfolioPage.waitForPortfolioPageToLoad();
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   it("write in Allure environment file", async () => {

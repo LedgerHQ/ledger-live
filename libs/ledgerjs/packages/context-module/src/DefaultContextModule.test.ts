@@ -11,6 +11,22 @@ describe("DefaultContextModule", () => {
     jest.restoreAllMocks();
   });
 
+  it("should initialize the context module with all the default loaders", async () => {
+    const contextModule = new DefaultContextModule({ loaders: [] });
+
+    const res = await contextModule.getContexts({} as Transaction, {} as LoaderOptions);
+
+    expect(res).toEqual([]);
+  });
+
+  it("should return an empty array when no loaders", async () => {
+    const contextModule = new DefaultContextModule({ loaders: [] });
+
+    const res = await contextModule.getContexts({} as Transaction, {} as LoaderOptions);
+
+    expect(res).toEqual([]);
+  });
+
   it("should call all fetch method from metadata fetcher", async () => {
     const loader = contextLoaderStubBuilder();
     const contextModule = new DefaultContextModule({ loaders: [loader, loader] });

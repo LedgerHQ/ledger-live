@@ -1,5 +1,43 @@
 # @ledgerhq/device-core
 
+## 0.2.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#6775](https://github.com/LedgerHQ/ledger-live/pull/6775) [`aa312f9`](https://github.com/LedgerHQ/ledger-live/commit/aa312f9e43740106893602c9edbaeca1d20e1c4e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix getVersion parsing for Europa
+
+- [#6733](https://github.com/LedgerHQ/ledger-live/pull/6733) [`bfca25b`](https://github.com/LedgerHQ/ledger-live/commit/bfca25b975e00c057da3a7ec82a9b05a0e5d5cf7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Device renaming: add Nano S Plus compatibility
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7), [`6eec3f9`](https://github.com/LedgerHQ/ledger-live/commit/6eec3f973ecea36bafc7ebc8b88526399048cdc4), [`326cae0`](https://github.com/LedgerHQ/ledger-live/commit/326cae088cc33795536deb1d868c86e8dbeb6a13), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f), [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0), [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4), [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c), [`1a5b277`](https://github.com/LedgerHQ/ledger-live/commit/1a5b2777b7b71aa4c4e353010eeb9e3dab432bca), [`a115d6c`](https://github.com/LedgerHQ/ledger-live/commit/a115d6cd5dcbcc753d02dedb80f5eb1693d1a249), [`a2505de`](https://github.com/LedgerHQ/ledger-live/commit/a2505deb93dd0722981a90e12082ff1dbefc29b1), [`f17a3cb`](https://github.com/LedgerHQ/ledger-live/commit/f17a3cbc16abf7fadf686025a5ca56ec1a1e7bb6)]:
+  - @ledgerhq/hw-transport@6.31.0
+  - @ledgerhq/types-live@6.48.0
+  - @ledgerhq/devices@8.4.0
+  - @ledgerhq/errors@6.17.0
+  - @ledgerhq/live-network@1.3.0
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- [#6775](https://github.com/LedgerHQ/ledger-live/pull/6775) [`aa312f9`](https://github.com/LedgerHQ/ledger-live/commit/aa312f9e43740106893602c9edbaeca1d20e1c4e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix getVersion parsing for Europa
+
+- [#6733](https://github.com/LedgerHQ/ledger-live/pull/6733) [`bfca25b`](https://github.com/LedgerHQ/ledger-live/commit/bfca25b975e00c057da3a7ec82a9b05a0e5d5cf7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Device renaming: add Nano S Plus compatibility
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7), [`6eec3f9`](https://github.com/LedgerHQ/ledger-live/commit/6eec3f973ecea36bafc7ebc8b88526399048cdc4), [`326cae0`](https://github.com/LedgerHQ/ledger-live/commit/326cae088cc33795536deb1d868c86e8dbeb6a13), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f), [`3b9c93c`](https://github.com/LedgerHQ/ledger-live/commit/3b9c93c0de8ceff2af96a6ee8e42b8d9c2ab7af0), [`689e6e5`](https://github.com/LedgerHQ/ledger-live/commit/689e6e5a443170b8e6c2b404cc99af2e67d8e8e4), [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c), [`1a5b277`](https://github.com/LedgerHQ/ledger-live/commit/1a5b2777b7b71aa4c4e353010eeb9e3dab432bca), [`a115d6c`](https://github.com/LedgerHQ/ledger-live/commit/a115d6cd5dcbcc753d02dedb80f5eb1693d1a249), [`a2505de`](https://github.com/LedgerHQ/ledger-live/commit/a2505deb93dd0722981a90e12082ff1dbefc29b1), [`f17a3cb`](https://github.com/LedgerHQ/ledger-live/commit/f17a3cbc16abf7fadf686025a5ca56ec1a1e7bb6)]:
+  - @ledgerhq/hw-transport@6.31.0-next.0
+  - @ledgerhq/types-live@6.48.0-next.0
+  - @ledgerhq/devices@8.4.0-next.0
+  - @ledgerhq/errors@6.17.0-next.0
+  - @ledgerhq/live-network@1.3.0-next.0
+
 ## 0.1.2
 
 ### Patch Changes

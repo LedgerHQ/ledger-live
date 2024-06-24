@@ -1339,7 +1339,7 @@
       "subtitle": "Select how you’d like to access your wallet:",
       "connect": "Connect your Ledger",
       "sync": "Sync with Ledger Live desktop",
-      "walletSync": "Sync with another Ledger Live"
+      "walletSync": "Sync with another Ledger Live app"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -2291,6 +2291,22 @@
     "import": {
       "title": "Import from desktop",
       "description": "Import asset from Ledger Live Desktop"
+    },
+    "drawer": {
+      "drawerTitleHasAccount": "Add another account",
+      "drawerSubTitle": "Add your assets using your Ledger, or import them directly from your Ledger Live Desktop app.",
+      "import": {
+        "title": "Import from desktop",
+        "description": "Import asset from Ledger Live Desktop"
+      },
+      "add": {
+        "title": "Add with your Ledger",
+        "description": "Create or import your assets using your Ledger device"
+      },
+      "walletSync": {
+        "title": "Import via another Ledger Live app",
+        "description": "Activate Ledger Sync"
+      }
     }
   },
   "byteSize": {
@@ -2727,8 +2743,8 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
-      "walletSync": "Ledger  Sync",
-      "walletSyncDesc": "Backup your app data and seamlessly synchronize multiple Ledger Live instances",
+      "walletSync": "Ledger Sync",
+      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -6662,6 +6678,16 @@
           "info": "You can revoke your consent any time in the app settings.",
           "link": "Learn more about our Tracking Policy"
         }
+      }
+    }
+  },
+  "walletSync": {
+    "activation": {
+      "screen": {
+        "title": "Sync your accounts across all platforms",
+        "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+        "mainCta": "Sync your accounts",
+        "secondCta": "Already created a key?"
       }
     }
   }

@@ -21,9 +21,9 @@ import {
   mockAccountNoVote,
   mockAccountV2,
 } from "./data.mock";
-import superRepresentatives from "./api/superRepresentativesData.mock";
+import superRepresentatives from "@ledgerhq/coin-tron/network/superRepresentativesData.mock";
 
-jest.mock("./api", () => {
+jest.mock("@ledgerhq/coin-tron/network", () => {
   return {
     getTronSuperRepresentatives: jest.fn().mockImplementation(() => {
       return Promise.resolve(superRepresentatives);
@@ -31,7 +31,7 @@ jest.mock("./api", () => {
   };
 });
 
-jest.mock("./utils", () => {
+jest.mock("@ledgerhq/coin-tron/logic/utils", () => {
   return {
     extractBandwidthInfo: jest.fn().mockImplementation(() => {
       return {

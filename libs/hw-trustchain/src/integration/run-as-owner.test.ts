@@ -14,6 +14,8 @@ import { listen } from "@ledgerhq/logs";
 const DEFAULT_TOPIC = "c96d450545ff2836204c29af291428a5bf740304978f5dfb0b4a261474192851";
 const ROOT_DERIVATION_PATH = "16'/0'";
 
+jest.setTimeout(30 * 1000);
+
 let speculos: SpeculosDevice;
 let sub;
 let logSub;
@@ -24,8 +26,8 @@ beforeEach(
       console.log(log.type + ": " + log.message);
     });
     speculos = await createSpeculosDevice({
-      model: DeviceModelId.nanoS,
-      firmware: "2.0.0",
+      model: DeviceModelId.nanoSP,
+      firmware: "2.1.0",
       appName: TRUSTCHAIN_APP_NAME,
       appVersion: "0.0.1",
       seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
@@ -34,14 +36,18 @@ beforeEach(
     });
 
     // passthrough all success cases
+
+    const goNextOnText = [
+      "Login request",
+      "Identify with your",
+      "request?",
+      "Ensure you trust the",
+    ];
+    const approveOnText = ["Log in to", "Enable"];
     sub = speculos.transport.automationEvents.subscribe(event => {
-      if (event.text === "localhost") {
+      if (goNextOnText.some(t => event.text.includes(t))) {
         speculos.transport.button("right");
-      } else if (event.text === "sync group") {
-        speculos.transport.button("right");
-      } else if (event.text === "Activate Wallet sync") {
-        speculos.transport.button("right");
-      } else if (event.text === "Approve") {
+      } else if (approveOnText.some(t => event.text.includes(t))) {
         speculos.transport.button("both");
       }
     });

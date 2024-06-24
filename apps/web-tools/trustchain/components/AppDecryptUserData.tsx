@@ -1,33 +1,24 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
+import React, { useCallback, useState } from "react";
 import { crypto } from "@ledgerhq/hw-trustchain";
-import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
-import styled from "styled-components";
-import { Tooltip } from "react-tooltip";
-import { JWT, MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
-import { getInitialStore } from "@ledgerhq/trustchain/store";
-import { Actionable, RenderActionable } from "./Actionable";
-import QRCode from "./QRCode";
-import useEnv from "../useEnv";
-import Expand from "./Expand";
-import { getSdk } from "@ledgerhq/trustchain";
-import { DisplayName, IdentityManager } from "./IdentityManager";
-import { AppQRCodeCandidate } from "./AppQRCodeCandidate";
+import { JWT, Trustchain } from "@ledgerhq/trustchain/types";
+import { Actionable } from "./Actionable";
 import { Input } from "./Input";
-import { SDKContext, defaultContext, useSDK } from "../context";
+import { useTrustchainSDK } from "../context";
 
 export function AppDecryptUserData({ trustchain }: { trustchain: Trustchain | null }) {
   const [input, setInput] = useState<string | null>(null);
-  const [output, setOutput] = useState<{ input: string } | null>(null);
-  const sdk = useSDK();
+  const [output, setOutput] = useState<string | null>(null);
+  const sdk = useTrustchainSDK();
 
   const action = useCallback(
     (trustchain: Trustchain, input: string) =>
-      sdk.decryptUserData(trustchain, crypto.from_hex(input)).then(obj => obj as { input: string }),
+      sdk
+        .decryptUserData(trustchain, crypto.from_hex(input))
+        .then(array => new TextDecoder().decode(array)),
     [sdk],
   );
 
-  const valueDisplay = useCallback((output: { input: string }) => <code>{output.input}</code>, []);
+  const valueDisplay = useCallback((output: string) => <code>{output}</code>, []);
 
   return (
     <Actionable

@@ -214,15 +214,19 @@ function getTransactions() {
   ];
 }
 
-const wsProvider = new WsProvider("ws://127.0.0.1:8000", false);
+const LOCAL_TESTNODE_WS_URL = "ws://127.0.0.1:8000";
+const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
+
+const wsProvider = new WsProvider(LOCAL_TESTNODE_WS_URL, false);
 let api: ApiPromise;
 let unsubscribeNewBlockListener: () => void;
-
-const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
 
 const coinConfig: PolkadotCoinConfig = {
   status: {
     type: "active",
+  },
+  node: {
+    url: LOCAL_TESTNODE_WS_URL,
   },
   sidecar: {
     url: SIDECAR_BASE_URL,
@@ -247,6 +251,7 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
     ]);
 
     const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");
+
     await cryptoWaitReady();
     await wsProvider.connect();
     api = await ApiPromise.create({ provider: wsProvider });
@@ -290,12 +295,21 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
 
     subscriptions.push(unsubGetBasicScenarioBalance);
 
-    await api.tx.balances
+    const unsub = await api.tx.balances
       .transferAllowDeath(
         basicScenarioAccountPair.address,
         parseCurrencyUnit(polkadot.units[0], "500000").toNumber(),
       )
-      .signAndSend(alice);
+      .signAndSend(alice, result => {
+        console.log(`Current status is ${result.status}`);
+
+        if (result.status.isInBlock) {
+          console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+        } else if (result.status.isFinalized) {
+          console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+          unsub();
+        }
+      });
 
     const account = makeAccount(basicScenarioAccountPair.address, polkadot);
 

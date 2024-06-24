@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "Error de número de secuencia",
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Permuta no disponible: es necesario un envío o delegación inicial con la cuenta de Tezos o el cambio de par."
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "Precio de mercado de {{currencyTicker}}",
       "currencyPrice" : "Precio de 1 {{currencyTicker}}",
-      "currencyPriceChange" : "Cambio en las últimas 24 horas"
+      "currencyPriceChange" : {
+        "day" : "Cambio en las últimas 24 horas",
+        "week" : "Cambio de los últimos 7 días",
+        "month" : "Cambio de los últimos 30 días",
+        "year" : "Cambio del último año",
+        "all" : "Cambio del último año"
+      }
     },
     "quickActions" : {
       "buy" : "Comprar",
@@ -2714,6 +2723,8 @@
       "languageDesc" : "Configura el idioma de Ledger Live.",
       "dateFormat" : "Formato de fecha",
       "dateFormatDesc" : "Ajusta el formato de fecha de Ledger Live",
+      "walletSync" : "Sincronización de Ledger",
+      "walletSyncDesc" : "Haz una copia de respaldo de los datos de tu aplicación y sincroniza a la perfección varias instancias de Ledger Live",
       "region" : "Región",
       "regionDesc" : "Elige tu región para actualizar el formato de fecha, hora y moneda.",
       "password" : "Bloqueo de aplicaciones",
@@ -3130,9 +3141,6 @@
         "title" : "Bienvenido a Permutar",
         "whatIsSwap" : "¿Qué es la permuta?",
         "disclaimer" : "Intercambia cripto directamente desde tu dispositivo Ledger. Este servicio no está disponible en algunos países, entre ellos, Estados Unidos."
-      },
-      "main" : {
-        "header" : "Permutar"
       },
       "notAvailable" : {
         "title" : "Servicio no disponible temporalmente, o no disponible en tu país"
@@ -3840,35 +3848,9 @@
     "tokens" : {
       "title" : "Agregar token",
       "createParentCurrencyAccount" : "Agregar cuenta {{parrentCurrencyName}}",
-      "erc20" : {
-        "title" : "Agregar token",
-        "disclaimer" : "{{tokenName}} es un Token ERC20.\nPuedes recibir tokens directamente en una cuenta de Ethereum.",
-        "learnMore" : "Aprender más acerca de ERC20"
-      },
-      "trc10" : {
-        "title" : "Agregar token",
-        "disclaimer" : "{{tokenName}} es un Token TRC10.\nPuedes recibir tokens directamente en una cuenta de Tron.",
-        "learnMore" : "Aprender más acerca de TRC10"
-      },
-      "trc20" : {
-        "title" : "Agregar token",
-        "disclaimer" : "{{tokenName}} es un Token TRC20.\nPuedes recibir tokens directamente en una cuenta de Tron.",
-        "learnMore" : "Aprender más acerca de TRC20"
-      },
-      "asa" : {
-        "title" : "Agregar token",
-        "disclaimer" : "{{tokenName}} es un token ASA.\nPuedes recibir tokens directamente en una cuenta de Algorand.",
-        "learnMore" : "Más información"
-      },
-      "bep20" : {
-        "title" : "Agregar token",
-        "disclaimer" : "{{tokenName}} es un token BEP-20.\nPuedes recibir tokens directamente en una cuenta de BNB.",
-        "learnMore" : "Más información acerca de BEP-20"
-      },
-      "vip180" : {
-        "title" : "Agregar token",
-        "disclaimer" : "{{tokenName}} es un token VIP180.\nPuedes recibir tokens directamente en una cuenta de VET.",
-        "learnMore" : "Obtén más información sobre VIP180"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) es un token {{tokenType}}. Puedes recibir tokens directamente en una cuenta de {{currency}}.",
+        "learnMore" : "Más informaciónacerca de {{tokenType}}"
       }
     },
     "showMoreChainType" : "Más tipos de direcciones",
@@ -4325,7 +4307,8 @@
       "installUpdate" : {
         "titleInactive" : "Instalar actualización",
         "titleActive" : "Instalando actualización",
-        "description" : "{{deviceName}} se reiniciará varias veces.\n\nPara completar la actualización, desbloquea {{deviceName}} con tu PIN cuando finalice la instalación."
+        "description" : "{{deviceName}} se reiniciará varias veces.\n\nPara completar la actualización, desbloquea {{deviceName}} con tu PIN cuando finalice la instalación.",
+        "descriptionNanoXBle" : "Tu {{deviceName}} se reiniciará varias veces.\n\nSi el dispositivo se apaga y no se reinicia automáticamente, deberás encenderlo.\n\nPara completar la actualización, desbloquea tu {{deviceName}} con tu PIN cuando finalice la instalación."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4339,14 @@
       "description" : "Actualiza tu firmware Ledger Nano conectándolo a la aplicación Ledger Live Desktop",
       "pleaseConnectUsbTitle" : "Es necesario un cable USB",
       "pleaseConnectUsbDescription" : "Para iniciar la actualización del firmware, conecta tu {{deviceName}} a tu teléfono mediante un cable USB."
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "Dispositivo desconectado",
+          "description" : "La actualización no pudo continuar porque perdimos la conexión con {{deviceName}}"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -6134,6 +6125,7 @@
       "subtitle" : "Explora la Web3 totalmente integrada con Ledger",
       "section" : {
         "recentlyUsed" : "Usadas recientemente",
+        "locallyLoaded" : "Cargado localmente",
         "categories" : "Categorías",
         "clearAll" : "Borrar todo"
       },
@@ -6231,9 +6223,10 @@
       },
       "order" : {
         "topGainers" : "Máximos Ganadores",
-        "market_cap" : "Puesto",
-        "market_cap_asc" : "Posición (capitalización) asc.",
-        "market_cap_desc" : "Posición (capitalización) desc."
+        "topLosers" : "Máximos perdedores",
+        "marketCap" : "Puesto",
+        "asc" : "Posición (capitalización) asc.",
+        "desc" : "Posición (capitalización) desc."
       },
       "currency" : "Divisa",
       "time" : "Tiempo",
@@ -6303,7 +6296,7 @@
     "designedForStax" : {
       "title" : "<0>Diseñado para</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "Este NFT contiene una imagen adicional del NFT, diseñada específicamente para la pantalla de E Ink del Ledger Stax.\n\nEsta imagen se utilizará cuando definas este NFT como tu pantalla de bloqueo.",
+        "description" : "Este NFT contiene una imagen adicional del NFT, diseñada específicamente para la pantalla E Ink del Ledger Stax.\n\nEsta imagen se utilizará cuando definas este NFT como tu pantalla de bloqueo.",
         "cta" : "Entendido"
       }
     },
@@ -6563,7 +6556,6 @@
         },
         "swap" : {
           "title" : "Permutar",
-          "label" : "Popular",
           "body" : "Convierte una cripto en otra de manera segura"
         },
         "receive" : {
