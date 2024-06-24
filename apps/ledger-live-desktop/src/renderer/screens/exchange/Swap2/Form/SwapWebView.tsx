@@ -208,12 +208,6 @@ const SwapWebView = ({
           params,
         );
         let transaction = params.transaction;
-        // for mock purposes
-        if (transaction?.feesStrategy === "medium") {
-          return Promise.resolve({ ...transaction, feesStrategy: "high" });
-        } else {
-          return Promise.resolve({ ...transaction, feesStrategy: "medium" });
-        }
 
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
 
@@ -227,57 +221,41 @@ const SwapWebView = ({
           return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
         }
 
-        if (!swapState?.status) {
-          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
-        }
-
-        const setTransaction = (transaction: Transaction): Promise<Transaction> => {
+        const setTransaction = (newTransaction: Transaction): Promise<Transaction> => {
           return new Promise(resolve => {
-            console.log("Setting transaction:", transaction);
-            resolve(transaction);
+            console.log("Setting transaction:", newTransaction);
+            transaction = newTransaction;
+            resolve(newTransaction);
           });
         };
-
-        const updateTransaction = (
-          updater: (transaction: Transaction) => Transaction,
-        ): Promise<Transaction> => {
-          return new Promise(resolve => {
-            // Simulate the current transaction state
-            const currentTransaction: Transaction = transaction;
-
-            // Call the updater function with the current transaction
-            transaction = updater(currentTransaction);
-
-            // Log the updated transaction
-            console.log(
-              "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:238 updater",
-              "color: #007acc;",
-              transaction,
-            );
-
-            // Resolve the Promise with the updated transaction
-            return resolve(transaction);
-          });
-        };
-
-        let isOpen = true;
 
         const fromParentAccount = getParentAccount(fromAccount, accounts);
-        const dd = setDrawer(FeesDrawerLiveApp, {
-          setTransaction,
-          updateTransaction,
-          mainAccount: fromAccount,
-          parentAccount: fromParentAccount,
-          status: swapState?.status,
-          provider: swapState?.provider,
-          disableSlowStrategy: true,
-          transaction: transaction,
-          isOpen,
-          onRequestClose: () => {
-            return Promise.resolve(transaction);
-          },
+        const drawerPromise = new Promise<Transaction>(resolve => {
+          if (!swapState?.status) {
+            return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+          }
+
+          setDrawer(FeesDrawerLiveApp, {
+            setTransaction,
+            mainAccount: fromAccount,
+            parentAccount: fromParentAccount,
+            status: swapState?.status,
+            provider: swapState?.provider,
+            disableSlowStrategy: true,
+            transaction: transaction,
+            onRequestClose: () => {
+              console.log(
+                "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:271 transaction",
+                "color: #007acc;",
+                transaction,
+              );
+              setDrawer(undefined);
+              resolve(transaction);
+            },
+          });
         });
-        // return Promise.resolve(transaction);
+
+        return drawerPromise;
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,23 +1,21 @@
-import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import React, { useCallback, useState, useEffect } from "react";
 import Box from "~/renderer/components/Box";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
-import { transactionSelector } from "~/renderer/actions/swap";
 import {
   SwapTransactionType,
   SwapSelectorStateType,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
+import { Account, FeeStrategy } from "@ledgerhq/types-live";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
+import { t } from "i18next";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
-  updateTransaction: SwapTransactionType["updateTransaction"];
   mainAccount: SwapSelectorStateType["account"];
   parentAccount: SwapSelectorStateType["parentAccount"];
   status: SwapTransactionType["status"];
@@ -25,7 +23,6 @@ type Props = {
   provider: string | undefined | null;
   transaction: any;
   onRequestClose: any;
-  isOpen: boolean;
 };
 
 function getCurrency(mainAccount: Account, parentAccount?: Account): CryptoCurrency {
@@ -37,30 +34,42 @@ function getCurrency(mainAccount: Account, parentAccount?: Account): CryptoCurre
 
 export default function FeesDrawerLiveApp({
   setTransaction,
-  updateTransaction,
   mainAccount,
   parentAccount,
   status,
   provider,
-  transaction,
-  isOpen,
+  transaction: initialTransaction,
   onRequestClose,
   disableSlowStrategy = false,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const transactionII = useSelector(transactionSelector);
   if (!mainAccount) return;
 
-  console.log(
-    "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/FeesDrawerLiveApp/index.tsx:41 transaction",
-    "color: #007acc;",
-    transaction,
+  const [isOpen, setIsOpen] = useState(true);
+  const [transaction, setTransactionState] = useState(initialTransaction);
+
+  useEffect(() => {
+    setTransactionState(initialTransaction);
+  }, [initialTransaction]);
+
+  const handleSetTransaction = useCallback(
+    (transaction: Transaction) => {
+      setTransactionState(transaction);
+      setTransaction(transaction);
+    },
+    [setTransaction],
   );
-  // console.log(
-  //   "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/FeesDrawerLiveApp/index.tsx:41 transactionII",
-  //   "color: #007acc;",
-  //   transactionII,
-  // );
+
+  const handleUpdateTransaction = useCallback(
+    (updater: (arg0: any) => any) => {
+      setTransactionState((prevTransaction: any) => {
+        const updatedTransaction = updater(prevTransaction);
+        setTransaction(updatedTransaction);
+        return updatedTransaction;
+      });
+    },
+    [setTransaction],
+  );
 
   const mapStrategies = useCallback(
     (strategy: FeeStrategy) =>
@@ -81,14 +90,22 @@ export default function FeesDrawerLiveApp({
     interval: currency.blockAvgTime ? currency.blockAvgTime * 1000 : undefined,
   });
 
+  const handleRequestClose = useCallback(() => {
+    setIsOpen(false);
+    onRequestClose();
+  }, [onRequestClose]);
+
   transaction.gasOption = gasOptions;
   transaction.family = currency.family;
 
+  if (!isOpen) return null;
+
   return (
     <SideDrawer
-      title={"swap2.form.details.label.fees"}
+      title={t("swap2.form.details.label.fees")}
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      preventBackdropClick
+      onRequestClose={handleRequestClose}
       direction="left"
     >
       <Box height="100%">
@@ -98,7 +115,6 @@ export default function FeesDrawerLiveApp({
           provider={provider}
           {...swapDefaultTrack}
         />
-        {/* <DrawerTitle i18nKey= /> */}
         <Box mt={3} flow={4} mx={3}>
           {transaction && mainAccount && (
             <SendAmountFields
@@ -106,8 +122,8 @@ export default function FeesDrawerLiveApp({
               parentAccount={parentAccount}
               status={status}
               transaction={transaction}
-              onChange={setTransaction}
-              updateTransaction={updateTransaction}
+              onChange={handleSetTransaction}
+              updateTransaction={handleUpdateTransaction}
               mapStrategies={mapStrategies}
               disableSlowStrategy={disableSlowStrategy}
               trackProperties={{
