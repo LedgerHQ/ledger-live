@@ -5,12 +5,14 @@ import { useTrustchainSDK } from "../context";
 import { runWithDevice } from "../device";
 
 export function AppGetOrCreateTrustchain({
+  deviceId,
   deviceJWT,
   memberCredentials,
   trustchain,
   setTrustchain,
   setDeviceJWT,
 }: {
+  deviceId: string;
   deviceJWT: JWT | null;
   memberCredentials: MemberCredentials | null;
   trustchain: Trustchain | null;
@@ -21,7 +23,7 @@ export function AppGetOrCreateTrustchain({
 
   const action = useCallback(
     (deviceJWT: JWT, memberCredentials: MemberCredentials) =>
-      runWithDevice(transport =>
+      runWithDevice(deviceId, transport =>
         sdk
           .getOrCreateTrustchain(transport, deviceJWT, memberCredentials)
           .then(({ jwt, trustchain }) => {
@@ -29,7 +31,7 @@ export function AppGetOrCreateTrustchain({
             return trustchain;
           }),
       ),
-    [sdk, setDeviceJWT],
+    [deviceId, sdk, setDeviceJWT],
   );
 
   const valueDisplay = useCallback((trustchain: Trustchain) => trustchain.rootId, []);

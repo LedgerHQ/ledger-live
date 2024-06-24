@@ -7,6 +7,8 @@ import useEnv from "../useEnv";
 import Expand from "./Expand";
 import { getSdk } from "@ledgerhq/trustchain";
 import { DisplayName, IdentityManager } from "./IdentityManager";
+import { AppSetDeviceId } from "./AppSetDeviceId";
+import { AppSetSupportedCurrencies } from "./AppSetSupportedCurrencies";
 import { AppQRCodeCandidate } from "./AppQRCodeCandidate";
 import { TrustchainSDKContext, defaultContext } from "../context";
 import { AppQRCodeHost } from "./AppQRCodeHost";
@@ -22,11 +24,11 @@ import { AppInitLiveCredentials } from "./AppInitLiveCredentials";
 import { AppMockEnv } from "./AppMockEnv";
 import { AppSetTrustchainAPIEnv } from "./AppSetTrustchainAPIEnv";
 import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
-import { AppWalletSync } from "./AppWalletSync";
+import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 
 const Container = styled.div`
-  padding: 0 10px;
+  padding: 0 10px 50px 0;
   margin: 0 auto;
   max-width: 800px;
   display: flex;
@@ -36,19 +38,24 @@ const Container = styled.div`
 const App = () => {
   const [context, setContext] = useState(defaultContext);
   const [deviceJWT, setDeviceJWT] = useState<JWT | null>(null);
+  const [deviceId, setDeviceId] = useState<string>("webhid");
 
-  // this is the state as it will be used by Ledger Live
-  const [state, setState] = useState(getInitialStore);
-  const { memberCredentials, trustchain } = state;
+  // this is the trustchain state as it widecryptUserDatall be used by Ledger Live (here, without redux)
+  const [trustchainState, setTrustchainState] = useState(getInitialStore);
+  const { memberCredentials, trustchain } = trustchainState;
   const setMemberCredentials = useCallback(
     (memberCredentials: MemberCredentials | null) =>
-      setState(s => ({ trustchain: null, memberCredentials })),
+      setTrustchainState(s => ({ trustchain: null, memberCredentials })),
     [],
   );
   const setTrustchain = useCallback(
-    (trustchain: Trustchain | null) => setState(s => ({ ...s, trustchain })),
+    (trustchain: Trustchain | null) => setTrustchainState(s => ({ ...s, trustchain })),
     [],
   );
+
+  const [wssdkHandledVersion, setWssdkHandledVersion] = useState(0);
+
+  const version = wssdkHandledVersion;
 
   const [jwt, setJWT] = useState<JWT | null>(null);
 
@@ -67,7 +74,7 @@ const App = () => {
   const mockEnv = useEnv("MOCK");
   const sdk = useMemo(() => getSdk(!!mockEnv, context), [mockEnv, context]);
   const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API").includes("stg");
-  const envWalletSyncApiIsStg = useEnv("WALLET_SYNC_API").includes("stg");
+  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API").includes("stg");
   const envSummary = mockEnv
     ? "MOCK"
     : envTrustchainApiIsStg && envWalletSyncApiIsStg
@@ -91,14 +98,14 @@ const App = () => {
                 Identities
               </span>{" "}
               <span style={{ fontWeight: "normal" }}>
-                <DisplayName pubkey={state.memberCredentials?.pubkey} />
+                <DisplayName pubkey={memberCredentials?.pubkey} />
               </span>
             </>
           }
         >
           <IdentityManager
-            state={state}
-            setState={setState}
+            state={trustchainState}
+            setState={setTrustchainState}
             defaultContext={defaultContext}
             setContext={setContext}
           />
@@ -124,6 +131,8 @@ const App = () => {
           <AppSetTrustchainAPIEnv />
           <AppSetCloudSyncAPIEnv />
           <AppMockEnv />
+          <AppSetSupportedCurrencies />
+          <AppSetDeviceId deviceId={deviceId} setDeviceId={setDeviceId} />
         </Expand>
 
         <Expand
@@ -145,9 +154,14 @@ const App = () => {
             setMemberCredentials={setMemberCredentials}
           />
 
-          <AppDeviceAuthenticate deviceJWT={deviceJWT} setDeviceJWT={setDeviceJWT} />
+          <AppDeviceAuthenticate
+            deviceId={deviceId}
+            deviceJWT={deviceJWT}
+            setDeviceJWT={setDeviceJWT}
+          />
 
           <AppGetOrCreateTrustchain
+            deviceId={deviceId}
             deviceJWT={deviceJWT}
             memberCredentials={memberCredentials}
             trustchain={trustchain}
@@ -180,6 +194,7 @@ const App = () => {
           {members?.map(member => (
             <AppMemberRow
               key={member.id}
+              deviceId={deviceId}
               deviceJWT={deviceJWT}
               trustchain={trustchain}
               memberCredentials={memberCredentials}
@@ -214,9 +229,21 @@ const App = () => {
           </Expand>
         </Expand>
 
-        <Expand title="Wallet Sync" expanded={!!trustchain}>
+        <Expand
+          title={
+            <>
+              <span>Cloud Sync SDK</span>{" "}
+              {version ? <code style={{ fontWeight: "normal" }}>Version: {version}</code> : null}
+            </>
+          }
+        >
           {trustchain && memberCredentials ? (
-            <AppWalletSync trustchain={trustchain} memberCredentials={memberCredentials} />
+            <AppWalletSync
+              trustchain={trustchain}
+              memberCredentials={memberCredentials}
+              version={version}
+              setVersion={setWssdkHandledVersion}
+            />
           ) : (
             "Please create a trustchain first"
           )}
