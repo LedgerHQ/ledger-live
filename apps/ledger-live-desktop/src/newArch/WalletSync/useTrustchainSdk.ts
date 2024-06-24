@@ -3,6 +3,7 @@ import { getSdk } from "@ledgerhq/trustchain/index";
 import {
   memberCredentialsSelector,
   resetTrustchainStore,
+  setMemberCredentials,
   setTrustchain,
   trustchainSelector,
 } from "@ledgerhq/trustchain/store";
@@ -21,6 +22,7 @@ import { useEffect } from "react";
 enum QueryKey {
   getMembers = "useGetMembers",
   deleteMember = "removeMember",
+  addMember = "addMember",
   auth = "auth",
 }
 
@@ -52,7 +54,14 @@ export function useLiveAuthenticate() {
   });
 
   useEffect(() => {
-    if (!trustchain || !memberCredentials || isError) {
+    async function generateCredentials() {
+      const newMemberCredentials = await sdk.initMemberCredentials();
+      dispatch(setMemberCredentials(newMemberCredentials));
+    }
+    if (!memberCredentials) {
+      generateCredentials();
+    }
+    if (!trustchain || isError) {
       dispatch(resetTrustchainStore());
       dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
     }
@@ -60,7 +69,7 @@ export function useLiveAuthenticate() {
     if (isError) {
       console.error("Error while authenticating", error);
     }
-  }, [dispatch, error, isError, memberCredentials, trustchain]);
+  }, [dispatch, error, isError, memberCredentials, sdk, trustchain]);
 
   return { isLiveJWTLoading, liveJWT, trustchain, memberCredentials, error, isError };
 }
@@ -68,9 +77,8 @@ export function useLiveAuthenticate() {
 export function useGetMembers() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
-  const dispatch = useDispatch();
-
   const memberCredentials = useSelector(memberCredentialsSelector);
+  const dispatch = useDispatch();
 
   if (!trustchain) {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
@@ -91,15 +99,16 @@ export function useGetMembers() {
 
   useEffect(() => {
     if (
+      !!instances &&
       memberCredentials &&
       !instances
-        ?.map((instance: TrustchainMember) => instance.id)
+        .map((instance: TrustchainMember) => instance.id)
         .includes(memberCredentials?.pubkey)
     ) {
       dispatch(resetTrustchainStore());
       dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
     }
-  }, [instances, memberCredentials, dispatch]);
+  }, [instances, memberCredentials, dispatch, isMembersLoading]);
 
   return {
     isMembersLoading: isMembersLoading || isLiveJWTLoading,
@@ -108,7 +117,7 @@ export function useGetMembers() {
   };
 }
 
-export function useRemoveMembers() {
+export function useRemoveMembers({ device }: { device: Device | null }) {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
@@ -117,10 +126,12 @@ export function useRemoveMembers() {
   let canGoNext = false;
 
   const removeMember = async (member: TrustchainMember) => {
-    console.log("MEMBER TO REMOVE", member);
-    const seedIdToken = await runWithDevice("", transport => sdk.authWithDevice(transport));
-    const { trustchain: newTrustchain } = await runWithDevice("", transport =>
-      sdk.removeMember(
+    if (!device) {
+      dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
+    }
+    await runWithDevice(device?.deviceId, async transport => {
+      const seedIdToken = await sdk.authWithDevice(transport);
+      const { trustchain: newTrustchain } = await sdk.removeMember(
         transport,
         seedIdToken,
         trustchain as Trustchain,
@@ -132,17 +143,17 @@ export function useRemoveMembers() {
             canGoNext = true;
           },
         },
-      ),
-    );
+      );
 
-    if (canGoNext) {
-      dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
-      if (member.id === memberCredentials?.pubkey) {
-        dispatch(resetTrustchainStore());
-      } else {
-        dispatch(setTrustchain(newTrustchain));
+      if (canGoNext) {
+        dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
+        if (member.id === memberCredentials?.pubkey) {
+          dispatch(resetTrustchainStore());
+        } else {
+          dispatch(setTrustchain(newTrustchain));
+        }
       }
-    }
+    });
   };
 
   const removeMemberMutation = useMutation({
@@ -158,6 +169,52 @@ export function useRemoveMembers() {
   });
 
   return removeMemberMutation;
+}
+
+export function useAddMember({ device }: { device: Device | null }) {
+  const dispatch = useDispatch();
+  const sdk = useTrustchainSdk();
+  const memberCredentials = useSelector(memberCredentialsSelector);
+
+  const addMember = async () => {
+    if (!device) {
+      dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
+    }
+    if (!memberCredentials) {
+      const newMemberCredentials = await sdk.initMemberCredentials();
+      dispatch(setMemberCredentials(newMemberCredentials));
+    } else {
+      runWithDevice(device?.deviceId, async transport => {
+        const seedIdToken = await sdk.authWithDevice(transport);
+        const { trustchain, hasCreatedTrustchain } = await sdk.getOrCreateTrustchain(
+          transport,
+          seedIdToken,
+          memberCredentials,
+        );
+
+        if (trustchain) {
+          dispatch(setTrustchain(trustchain));
+
+          dispatch(
+            setFlow({
+              flow: Flow.Activation,
+              step: hasCreatedTrustchain ? Step.ActivationFinal : Step.SynchronizationFinal,
+            }),
+          );
+        }
+      });
+    }
+  };
+
+  const addMemberMutation = useMutation({
+    mutationFn: () => addMember(),
+    mutationKey: [QueryKey.addMember],
+    onError: error => {
+      console.error("Error while adding member", error);
+    },
+  });
+
+  return addMemberMutation;
 }
 
 export function useTrustchainSdk() {

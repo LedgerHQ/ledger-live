@@ -11,13 +11,14 @@ import { Flow, Step } from "~/renderer/reducers/walletSync";
 
 type Props = {
   instance: TrustchainMember | null;
+  device: Device | null;
 };
 
-export default function DeleteInstanceWithTrustchain({ instance }: Props) {
+export default function DeleteInstanceWithTrustchain({ instance, device }: Props) {
   const dispatch = useDispatch();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
-  const removeMemberMutation = useRemoveMembers();
+  const removeMemberMutation = useRemoveMembers({ device });
 
   const onRetry = () =>
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));

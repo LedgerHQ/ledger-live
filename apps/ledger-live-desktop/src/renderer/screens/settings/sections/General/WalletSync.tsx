@@ -37,7 +37,9 @@ const WalletSyncRow = () => {
   };
 
   const closeDrawer = () => {
-    dispatch(resetWalletSync());
+    if (hasBeenFaked) {
+      dispatch(resetWalletSync());
+    }
     setOpen(false);
   };
 
