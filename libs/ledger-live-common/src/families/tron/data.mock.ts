@@ -1,5 +1,5 @@
 import { fromAccountRaw } from "../../account/serialization";
-import { TronAccount } from "./types";
+import { TronAccount } from "@ledgerhq/coin-tron/types";
 
 export const __NEXT_REWARD_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 

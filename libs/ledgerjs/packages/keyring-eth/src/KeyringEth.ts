@@ -1,13 +1,12 @@
-import { Transaction } from "ethers";
 import { Keyring } from "./Keyring";
-import { LoaderOptions } from "@ledgerhq/context-module/src/shared/model/LoaderOptions";
 import { EIP712Message } from "@ledgerhq/types-live";
+import { SupportedTransaction } from "./model/Transaction";
 
 export type EcdsaSignature = { r: `0x${string}`; s: `0x${string}`; v: number };
 
 export type EIP712Params = { domainSeparator: `0x${string}`; hashStruct: `0x${string}` };
 
-export type SignTransactionOptions = LoaderOptions["options"];
+export type SignTransactionOptions = { domain?: string };
 
 export type SignMessageMethod = "personalSign" | "eip712" | "eip712Hashed";
 export type SignMessageOptions<Method extends SignMessageMethod> = { method: Method };
@@ -32,8 +31,8 @@ export interface KeyringEth extends Keyring {
 
   signTransaction(
     derivationPath: string,
-    transaction: Transaction,
-    options: SignTransactionOptions,
+    transaction: SupportedTransaction,
+    options?: SignTransactionOptions,
   ): Promise<EcdsaSignature>;
 
   signMessage<Method extends SignMessageMethod>(

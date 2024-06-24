@@ -10,7 +10,13 @@
 const path = require("path");
 const tsconfig = require("./tsconfig.json");
 
-const forcedDependencies = ["react-redux", "react-native", "react-native-svg", "styled-components"];
+const forcedDependencies = [
+  "react-redux",
+  "react-native",
+  "react-native-svg",
+  "styled-components",
+  "react-native-reanimated",
+];
 
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
 

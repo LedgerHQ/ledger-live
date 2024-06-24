@@ -13,6 +13,7 @@ export { isDeviceLocalizationSupported } from "./commands/use-cases/isDeviceLoca
 export { PROVIDERS, getProviderIdUseCase } from "./managerApi/use-cases/getProviderIdUseCase";
 export { fetchMcus } from "./managerApi/use-cases/fetchMcus";
 export { aDeviceInfoBuilder } from "./managerApi/entities/mocks/aDeviceInfo";
+export { getAppsCatalogForDevice } from "./managerApi/use-cases/getAppsCatalogForDevice";
 // src/commands/
 export type { FirmwareInfoEntity } from "./commands/entities/FirmwareInfoEntity";
 export { GET_VERSION_APDU } from "./commands/use-cases/getVersion";
@@ -21,6 +22,12 @@ export { getDeviceName } from "./commands/use-cases/getDeviceName";
 export { isHardwareVersionSupported } from "./commands/use-cases/isHardwareVersionSupported";
 export { isBootloaderVersionSupported } from "./commands/use-cases/isBootloaderVersionSupported";
 export { getVersion } from "./commands/use-cases/getVersion";
+export { type AppStorageInfo, isAppStorageInfo } from "./commands/entities/AppStorageInfo";
+export { backupAppStorage } from "./commands/use-cases/app-backup/backupAppStorage";
+export { getAppStorageInfo } from "./commands/use-cases/app-backup/getAppStorageInfo";
+export { restoreAppStorage } from "./commands/use-cases/app-backup/restoreAppStorage";
+export { restoreAppStorageCommit } from "./commands/use-cases/app-backup/restoreAppStorageCommit";
+export { restoreAppStorageInit } from "./commands/use-cases/app-backup/restoreAppStorageInit";
 // src/capabilities/
 export {
   type CLSSupportedDeviceModelId,

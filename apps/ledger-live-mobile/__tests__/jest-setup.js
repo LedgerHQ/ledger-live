@@ -1,10 +1,11 @@
 import "@testing-library/react-native/extend-expect";
 import "react-native-gesture-handler/jestSetup";
+import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
 import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 import { server } from "./server";
 import { NativeModules } from "react-native";
-
+import { MockedExpoCamera, MockedCameraType } from "../__mocks__/MockedExpoCamera";
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/next/guide/testing/
 jest.useFakeTimers();
 jest.runAllTimers();
@@ -26,7 +27,48 @@ NativeModules.RNAnalytics = {};
 
 const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 
+// Overriding the default RNGH mocks
+// to replace TouchableNativeFeedback with TouchableOpacity
+// as the former breaks tests trying to press buttons
+jest.mock("react-native-gesture-handler", () => {
+  const TouchableOpacity = require("react-native").TouchableOpacity;
+  return {
+    ...require("react-native-gesture-handler/lib/commonjs/mocks").default,
+    RawButton: TouchableOpacity,
+    BaseButton: TouchableOpacity,
+    RectButton: TouchableOpacity,
+    BorderlessButton: TouchableOpacity,
+  };
+});
+
 jest.mock("@segment/analytics-react-native", () => mockAnalytics);
+
+jest.mock("react-native-launch-arguments", () => ({}));
+
+NativeModules.BluetoothHelperModule = {
+  E_BLE_CANCELLED: "BLE_UNKNOWN_STATE",
+};
+
+jest.mock("react-native-share", () => ({
+  default: jest.fn(),
+}));
+
+jest.mock("expo-camera", () => {
+  return {
+    Camera: MockedExpoCamera,
+    CameraType: MockedCameraType,
+  };
+});
+
+jest.mock("expo-barcode-scanner", () => ({
+  BarCodeScanner: {
+    Constants: {
+      BarCodeType: {
+        qr: "qr",
+      },
+    },
+  },
+}));
 
 // Mock of Native Modules
 jest.mock("react-native-localize", () => ({
@@ -88,6 +130,8 @@ jest.mock("@react-native-firebase/messaging", () => ({
 }));
 
 jest.mock("@braze/react-native-sdk", () => ({}));
+
+jest.mock("react-native-webview", () => jest.fn());
 
 const originalError = console.error;
 const originalWarn = console.warn;

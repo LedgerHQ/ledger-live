@@ -170,7 +170,6 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
               <EntryButton
                 Icon={() => <Icon name="BuyCrypto" />}
                 title={t("stake.noFundsModal.options.swap.title")}
-                label={t("stake.noFundsModal.options.swap.label")}
                 body={t("stake.noFundsModal.options.swap.body")}
                 onClick={onSwap}
                 showChevron

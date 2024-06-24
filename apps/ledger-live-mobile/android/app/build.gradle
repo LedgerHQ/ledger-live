@@ -8,6 +8,7 @@ project.ext.envConfigFiles = [
     debug: ".env",
     release: ".env.android.release",
     stagingrelease: ".env.android.staging",
+    detox: ".env.mock",
 ]
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
@@ -184,6 +185,11 @@ android {
             signingConfig signingConfigs.stagingRelease
             matchingFallbacks = ['release']
         }
+        detox {
+            initWith(buildTypes.stagingRelease)
+            applicationIdSuffix ".detox"
+            matchingFallbacks = ['stagingRelease', 'release']
+        }
     }
 }
 
@@ -211,7 +217,7 @@ dependencies {
         implementation jscFlavor
     }
 
-    androidTestImplementation('com.wix:detox-legacy:+')
+    androidTestImplementation('com.wix:detox:+')
     // Needed for Detox getAttributes on Android :  https://github.com/wix/Detox/issues/3147
     implementation 'com.google.android.material:material:1.6.0'
     implementation 'com.facebook.soloader:soloader:0.10.4+'

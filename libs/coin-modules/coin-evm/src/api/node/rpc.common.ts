@@ -6,6 +6,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
+import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
 import { GasEstimationError, InsufficientFunds } from "../../errors";
 import { transactionToEthersTransaction } from "../../adapters";
 import { getSerializedTransaction } from "../../transaction";
@@ -14,8 +15,14 @@ import { getCoinConfig } from "../../config";
 import { FeeHistory } from "../../types";
 import { NodeApi, isExternalNodeConfig } from "./types";
 
-export const RPC_TIMEOUT = process.env.NODE_ENV === "test" ? 100 : 5000; // wait 5 sec after a fail
-export const DEFAULT_RETRIES_RPC_METHODS = process.env.NODE_ENV === "test" ? 1 : 3;
+export const RPC_TIMEOUT =
+  process.env.NODE_ENV === "test"
+    ? 100
+    : /* istanbul ignore next: prod values don't change the behaviour of the test */ 5000; // wait 5 sec after a fail
+export const DEFAULT_RETRIES_RPC_METHODS =
+  process.env.NODE_ENV === "test"
+    ? 1
+    : /* istanbul ignore next: prod values don't change the behaviour of the test */ 3;
 
 /**
  * Cache for RPC providers to avoid recreating the connection on every usage of `withApi`
@@ -40,7 +47,7 @@ export async function withApi<T>(
 ): Promise<T> {
   const config = getCoinConfig(currency).info;
 
-  const { node } = config || {};
+  const { node } = config || /* istanbul ignore next: catched right after if empty */ {};
   if (!isExternalNodeConfig(node)) {
     throw new Error("Currency doesn't have an RPC node provided");
   }
@@ -122,7 +129,7 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
 
       try {
         const gasEstimation = await api.estimateGas({
-          ...(to ? { to } : {}),
+          ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),
           from: account.freshAddress, // Necessary as no signature to infer the sender
           value,
           data,
@@ -266,7 +273,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
             s: "0xffffffffffffffffffffffffffffffffffffffff",
             v: 0,
           });
-        } catch (error) {
+        } catch (error) /* istanbul ignore next: just logs */ {
           log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", { error });
           return null;
         }
@@ -300,6 +307,53 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
   { ttl: 15 * 1000 }, // preventing rate limit by caching this for at least 15sec
 );
 
+/**
+ * ⚠️ Blockchain specific
+ *
+ * For a layer 2 like Scroll, additional fees are needed in order to
+ * take into account layer 1 settlement estimated cost.
+ * This gas price is served through a smart contract oracle.
+ *
+ * @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/
+ */
+export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
+  currency,
+  transaction,
+) =>
+  withApi(currency, async api => {
+    if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
+      return new BigNumber(0);
+    }
+
+    // Fake signature is added to get the best approximation possible for the gas on L1
+    const serializedTransaction = ((): string | null => {
+      try {
+        return getSerializedTransaction(transaction, {
+          r: "0xffffffffffffffffffffffffffffffffffffffff",
+          s: "0xffffffffffffffffffffffffffffffffffffffff",
+          v: 0,
+        });
+      } catch (error) /* istanbul ignore next: just logs */ {
+        log("coin-evm", "getScrollAdditionalFees: Transaction serializing failed", { error });
+        return null;
+      }
+    })();
+
+    if (!serializedTransaction) {
+      return new BigNumber(0);
+    }
+
+    const scrollGasOracle = new ethers.Contract(
+      // contract address provided here
+      // @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/#estimating-the-l1-data-fee
+      "0x5300000000000000000000000000000000000002",
+      ScrollGasPriceOracleAbi,
+      api,
+    );
+    const additionalL1Fees = await scrollGasOracle.getL1Fee(serializedTransaction);
+    return new BigNumber(additionalL1Fees.toString());
+  });
+
 const node: NodeApi = {
   getBlockByHeight,
   getCoinBalance,
@@ -310,6 +364,7 @@ const node: NodeApi = {
   getFeeData,
   broadcastTransaction,
   getOptimismAdditionalFees,
+  getScrollAdditionalFees,
 };
 
 export default node;

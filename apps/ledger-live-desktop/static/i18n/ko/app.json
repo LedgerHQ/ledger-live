@@ -27,6 +27,7 @@
       "title" : "탐색",
       "section" : {
         "recentlyUsed" : "최근 사용된 항목",
+        "locallyLoaded" : "로컬에서 로드된 라이브 앱",
         "browse" : "둘러보기"
       },
       "filter" : {
@@ -1456,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "구매 / 판매",
-        "description" : "신뢰할 수 있는 공급자와 거래"
+        "description" : "신뢰할 수 있는 Ledger 파트너사와 거래"
       },
       "swap" : {
         "title" : "스왑",
-        "description" : "안전하게 암호화폐 교환",
+        "description" : "암호화폐 교환",
         "label" : "인기 있는"
       },
       "earn" : {
         "title" : "스테이킹",
-        "description" : "Ledger와 함께 암호화폐 수익 창출"
+        "description" : "Ledger가 함께하는 안전한 암호화폐 스테이킹"
       }
     },
     "recoverBanner" : {
@@ -3589,6 +3590,12 @@
         },
         "warning" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
       },
+      "states" : {
+        "active" : "활성",
+        "inactive" : "비활성",
+        "activating" : "활성화하기",
+        "deactivating" : "비활성화하기"
+      },
       "flow" : {
         "title" : "위임하기",
         "steps" : {
@@ -3967,7 +3974,11 @@
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "stock" : "지역 시장 지표",
-      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다."
+      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
+      "walletSync" : "Ledger 동기화",
+      "walletSyncDesc" : "간단하게 앱 데이터를 보호하고 여러 Ledger Live 인스턴스를 동기화하세요.",
+      "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
+      "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
     },
     "developer" : {
       "search" : "검색",
@@ -3985,6 +3996,11 @@
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "debugReactQuery" : "디버그 ReactQuery 허용",
       "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
+      "exchangeDeveloperMode" : {
+        "title" : "거래소 개발 모드",
+        "desc" : "거래소 공급자 정보 추가",
+        "placeholder" : "CAL 형식의 거래소 공급자 정보"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "NFT 스팸 신고 허용(베타)",
         "debugNFTSpamReportDesc" : "NFT를 스팸 신고 양식 또는 스팸 표시 중단 양식(스팸으로 표시되지 않게)을 표시하세요.",
@@ -4037,6 +4053,17 @@
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "로컬 앱 생성하기",
+          "modify" : "로컬 앱 수정하기"
+        },
+        "addNetwork" : "신규 네트워크 추가하기",
+        "removeNetwork" : "마지막 네트워크 삭제하기",
+        "export" : "내보내기",
+        "modify" : "수정하기",
+        "create" : "생성하기"
+      },
       "runLocalAppDeleteButton" : "삭제",
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
@@ -4162,6 +4189,18 @@
         "enableNetworkLogs" : {
           "title" : "네트워크 로그 활성화",
           "description" : "콘솔에서 네트워크 로그 활성화(오류 로그는 항상 활성화됨)"
+        },
+        "testWalletSync" : {
+          "title" : "Ledger 동기화 테스트",
+          "description" : "특정 Ledger 동기화 플로우를 시작할 수 있습니다.",
+          "cta" : "테스트",
+          "modal" : {
+            "flow" : "플로우 선택",
+            "step" : "단계 선택",
+            "activated" : "백업 여부 활성화/비활성화",
+            "instance" : "인스턴스 생성",
+            "cta" : "적용"
+          }
         }
       }
     },
@@ -4266,7 +4305,7 @@
     "downloadInProgress" : "업데이트 다운로드 중...",
     "downloadProgress" : "{{progress}}% 완료됨",
     "checking" : "업데이트 확인 중...",
-    "checkSuccess" : "새로운 Ledger Live 업데이트가 있습니다. 앱을 닫으면 자동으로 설치됩니다.",
+    "checkSuccess" : "새로운 업데이트가 있습니다. 앱을 닫으면 Ledger Live가 자동으로 설치되고 다시 시작됩니다",
     "quitAndInstall" : "지금 설치하고 다시 시작하기",
     "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
@@ -5454,6 +5493,10 @@
       "description" : "금액 및 수수료 계산이 불가능합니다"
     },
     "NotEnoughBalance" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
@@ -5465,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "TRC20 토큰 수령을 활성화하려면 먼저 최소 0.1 TRX를 이 주소로 보내야 합니다. <link0>자세히 알아보기</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "이 Tron 계정을 활성 상태로 유지하려면 0.1 TRX 이상이 필요하고 수수료로 1.1 TRX가 필요합니다.<link0>자세히 알아보기 </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "사용 중이신 운영 시스템이 최신 버전이 아닙니다",
@@ -5529,7 +5578,7 @@
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "{{message}}"
     },
-    "TransportPendingOperation" : {
+    "TransportRaceCondition" : {
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "Ledger 장치에 이미 보류 중인 작업이 있습니다. 거부하거나 다시 연결하세요."
     },
@@ -5797,6 +5846,9 @@
     "InvalidXRPTag" : {
       "title" : "유효하지 않은 XRP 데스티네이션 태그"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "{{currencyName}} 탐색기의 응답이 유효하지 않습니다"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "위임에 필요한 잔금이 부족합니다"
     },
@@ -6040,6 +6092,15 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "OS 업데이트 확인 실패",
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
+    },
+    "newAddressTRC20" : {
+      "title" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "당사 비트코인 인프라에 문제개 발생했습니다. 나중에 다시 시도해 주세요."
     }
   },
   "cryptoOrg" : {
@@ -6176,11 +6237,11 @@
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
-      "description" : "공유해 주신 Ledger Live 데이터는 고객의 선호를 이해하고 고객과 관련 있는 콘텐츠를 준비하며 다양한 기술적 문제를 해결하는 데 사용됩니다.",
-      "whatWeTrack" : "동의해 주신다면, Ledger는 다음 정보를 추적합니다.\b",
+      "description" : "Ledger Live 데이터를 공유하면 사용자의 선호도를 이해하고 사용자와 관련 있는 콘텐츠를 표시하는 데 도움이 됩니다.",
+      "whatWeTrack" : "사용자의 동의 하에 Ledger는 다음과 같은 목적으로 사용자가 Ledger Live를 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 추적할 수 있습니다.",
       "whatWeTrackList" : {
-        "1" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
-        "2" : "클릭 수, 페이지 방문, 환전 데이터를 포함한 개인화 데이터"
+        "1" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선할(분석) 목적.",
+        "2" : "사용자 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공하고(개인 맞춤화), 마케팅 캠페인의 효과를 측정할 목적."
       },
       "whatWeDoNotTrack" : "Ledger는 다음과 관련한 정보를 결코 추적하지 않습니다.",
       "whatWeDoNotTrackList" : {
@@ -6192,12 +6253,12 @@
       "refuse" : "모두 거부",
       "accept" : "모두 수락",
       "analyticsData" : {
-        "title" : "분석 데이터",
-        "description" : "Ledger Live 개선에 도움을 주시려면, 방문, 클릭 수 등 앱 분석 데이터를 공유해 주세요."
+        "title" : "애널리틱스",
+        "description" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선하기 위해 당사는 페이지 방문 및 클릭 수를 포함한 사용 데이터를 공유합니다."
       },
       "personalizationData" : {
-        "title" : "개인화 데이터",
-        "description" : "개인 맞춤형 추천을 받아보시려면, 환전 데이터, 클릭 수, 페이지 방문 등을 포함한 앱의 개인화 데이터를 공유해 주세요."
+        "title" : "개인 맞춤화",
+        "description" : "사용자의 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공받고 마케팅 캠페인 성과를 측정하기 위해 당사는 클릭수, 페이지 방문, 전환 데이터를 포함한 앱 사용 데이터를 공유합니다."
       },
       "share" : "공유"
     },
@@ -6229,8 +6290,116 @@
     "profileSettings" : {
       "personalizedExp" : "맞춤화된 경험",
       "analytics" : "애널리틱스",
-      "personalizedExpDesc" : "내가 설정해 둔 환경 설정에 맞는 맞춤형 추천을 받아보세요.",
-      "analyticsDesc" : "Ledger가 사용자 경험을 개선할 수 있도록 애널리틱스 기능을 활성화하세요."
+      "personalizedExpDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
+      "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다."
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger 동기화",
+    "activate" : {
+      "title" : "모든 플랫폼에서 계정을 동기화하세요",
+      "description" : "Ledger 장치가 암호화 키를 생성하여 데이터가 비공개로 유지되고 본인만 검색할 수 있도록 보장합니다.",
+      "cta" : "계정 동기화"
+    },
+    "alreadySync" : "이미 생성된 키가 있나요?",
+    "manage" : {
+      "cta" : "관리",
+      "synchronize" : {
+        "label" : "동기화",
+        "description" : "앱 데이터를 다른 Ledger Live 앱과 동기화하여 매끄러운 사용자 경험을 즐기세요."
+      },
+      "backup" : {
+        "label" : "키 관리",
+        "description" : "다른 Ledger 장치를 통해 암호화 키를 보호하거나 삭제하세요."
+      },
+      "instance" : {
+        "label_one" : "동기화된 인스턴스 1개",
+        "label_other" : "{{count}} 동기화된 인스턴스",
+        "cta" : "관리"
+      }
+    },
+    "loading" : {
+      "title" : "조금만 기다려 주세요...",
+      "activation" : "데이터가 전체적으로 암호화되고 있습니다... ",
+      "synch" : "동기화된 인스턴스를 업데이트하는 중입니다..."
+    },
+    "error" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "나중에 다시 시도해 주세요.",
+      "cta" : "다시 시도하세요"
+    },
+    "unsecuredError" : {
+      "title" : "이 Ledger 장치는 동기화를 보호하지 않습니다",
+      "description" : "암호화 키 생성에 사용된 Ledger 장치를 연결하세요.",
+      "info" : "Ledger 장치를 분실한 경우에도 키를 삭제할 수 있으니 걱정마세요! 이 작업을 수행하면 데이터가 동시에 삭제되고 현재 동기화된 모든 인스턴스의 동기화가 중단됩니다.",
+      "cta" : "다른 Ledger 장치 연결하기",
+      "ctaDelete" : "내 암호화 키 삭제"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "완료",
+        "desc" : "Ledger 동기화를 성공적으로 활성화했습니다. ",
+        "synchAnother" : "다른 Ledger Live 앱과 동기화"
+      },
+      "synch" : {
+        "title" : "동기화 성공!",
+        "desc" : "이제 계정 변경사항이 모든 앱과 플랫폼에 자동으로 표시됩니다."
+      }
+    },
+    "manageBackups" : {
+      "title" : "키 관리",
+      "options" : {
+        "deleteBackup" : {
+          "title" : "데이터 삭제",
+          "description" : "동기화된 모든 데이터가 삭제됩니다."
+        }
+      },
+      "deleteBackup" : {
+        "title" : "암호화 키를 삭제하시겠습니까?",
+        "description" : "삭제를 클릭하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 비동기화하더라도 자금에는 영향이 없으므로 안심하시기 바랍니다. 언제든지 계정을 다시 동기화할 수 있습니다.",
+        "delete" : "삭제",
+        "cancel" : "취소"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "장치가 비동기화되었으며 키가 삭제되었습니다."
+      },
+      "deleteBackupError" : {
+        "title" : "문제가 발생했습니다"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "동기화 방법 선택",
+        "description" : "Ledger 장치로 직접 동기화하거나 Ledger Live에서 QR 코드를 스캔하여 동기화하도록 선택할 수 있습니다.",
+        "scan" : {
+          "title" : "QR 코드 스캔",
+          "description" : "QR 코드를 스캔하여 동기화합니다"
+        },
+        "connectDevice" : {
+          "title" : "Ledger 장치를 사용하세요",
+          "description" : "Ledger 장치에 서명하여 동기화합니다"
+        }
+      },
+      "qrCode" : {
+        "title" : "동기화",
+        "hint" : "두 개의 Ledger Live 데스크탑 앱을 동기화하려고 하시나요? 여기를 클릭하세요.",
+        "description" : "귀하의 계정을 다른 Ledger Live 앱과 스캔하고 동기화하세요",
+        "steps" : {
+          "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
+          "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화</0> > <0>QR 표시</0>로 차례로 이동합니다",
+          "step3" : "100% 로딩될 때까지 QR 코드를 스캔하세요."
+        }
+      },
+      "pinCode" : {
+        "title" : "코드 입력",
+        "description" : "동기화하려는 다른 Ledger Live에 표시된 코드를 입력합니다."
+      }
+    },
+    "manageInstances" : {
+      "title" : "동기화된 인스턴스 관리",
+      "remove" : "제거",
+      "deleteInstanceSuccess" : "귀하의 {{instanceName}} 동기화가 중단되었습니다",
+      "deleteInstanceError" : "{{instanceName}} 장치에 동기화 해제 관련 문제가 발생했습니다"
     }
   }
 }

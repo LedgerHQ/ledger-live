@@ -644,7 +644,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 28,
       P2SH: 85,
       XPUBVersion: 0x0488b21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -1109,7 +1108,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "ethereum_classic",
     coinType: CoinType.ETH_CLASSIC,
     name: "Ethereum Classic",
-    managerAppName: "Ethereum",
+    managerAppName: "Ethereum Classic",
     ticker: "ETC",
     scheme: "ethereumclassic",
     color: "#3ca569",
@@ -1331,7 +1330,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 40,
       P2SH: 100,
       XPUBVersion: 0x0488c21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -1465,12 +1463,42 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     family: "icon",
     units: [
       {
-        name: "ICON",
-        code: "ICON",
-        magnitude: 8,
+        name: "ICX",
+        code: "ICX",
+        magnitude: 18,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://tracker.icon.community/transaction/$hash",
+        address: "https://tracker.icon.community/address/$address",
+      },
+    ],
+  },
+  icon_berlin_testnet: {
+    type: "CryptoCurrency",
+    id: "icon_berlin_testnet",
+    coinType: CoinType.ICON,
+    name: "ICON Berlin Testnet",
+    managerAppName: "ICON",
+    ticker: "ICX",
+    scheme: "icon_berlin_testnet",
+    color: "#00A3B4",
+    family: "icon",
+    isTestnetFor: "icon",
+    units: [
+      {
+        name: "ICX",
+        code: "ICX",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://tracker.berlin.icon.community/transaction/$hash",
+        address: "https://tracker.berlin.icon.community/address/$address",
+      },
+    ],
   },
   iota: {
     type: "CryptoCurrency",
@@ -2008,43 +2036,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  peercoin: {
-    type: "CryptoCurrency",
-    id: "peercoin",
-    coinType: CoinType.PEERCOIN,
-    name: "Peercoin",
-    managerAppName: "Peercoin",
-    ticker: "PPC",
-    scheme: "peercoin",
-    color: "#3cb054",
-    family: "bitcoin",
-    blockAvgTime: 450,
-    bitcoinLikeInfo: {
-      P2PKH: 55,
-      P2SH: 117,
-      XPUBVersion: 0xe6e8e9e5,
-      hasTimestamp: true,
-    },
-    units: [
-      {
-        name: "peercoin",
-        code: "PPC",
-        magnitude: 6,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://blockbook.peercoin.net/tx/$hash",
-        address: "https://blockbook.peercoin.net/address/$address",
-      },
-    ],
-    explorerId: "ppc",
-  },
   persistence: {
     type: "CryptoCurrency",
     id: "persistence",
@@ -2230,7 +2221,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 55,
       P2SH: 85,
       XPUBVersion: 0x0488b21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -2588,7 +2578,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://xsnexplorer.io/addresses/$address",
       },
     ],
-    explorerId: "xsn",
   },
   stargaze: {
     type: "CryptoCurrency",
@@ -2637,7 +2626,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 63,
       P2SH: 125,
       XPUBVersion: 0x0488c21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -2658,46 +2646,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerId: "strat",
-  },
-  stealthcoin: {
-    terminated: {
-      link: "https://support.ledger.com/",
-    },
-    type: "CryptoCurrency",
-    id: "stealthcoin",
-    coinType: CoinType.STEALTH,
-    name: "Stealth",
-    managerAppName: "Stealth",
-    ticker: "XST",
-    scheme: "stealth",
-    color: "#000000",
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 62,
-      P2SH: 85,
-      XPUBVersion: 0x8f624b66,
-      hasTimestamp: false,
-    },
-    units: [
-      {
-        name: "stealth",
-        code: "XST",
-        magnitude: 6,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.stealthmonitor.org/transactions/$hash",
-        address: "https://www.stealthmonitor.org/address/$address",
-      },
-    ],
-    explorerId: "xst",
   },
   stellar: {
     type: "CryptoCurrency",
@@ -3002,80 +2950,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  vertcoin: {
-    type: "CryptoCurrency",
-    id: "vertcoin",
-    coinType: CoinType.VERTCOIN,
-    name: "Vertcoin",
-    managerAppName: "Vertcoin",
-    ticker: "VTC",
-    scheme: "vertcoin",
-    color: "#1b5c2e",
-    supportsSegwit: true,
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 71,
-      P2SH: 5,
-      XPUBVersion: 0x0488b21e,
-    },
-    units: [
-      {
-        name: "vertcoin",
-        code: "VTC",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://vtcblocks.com/tx/$hash",
-        address: "https://vtcblocks.com/address/$address",
-      },
-    ],
-    explorerId: "vtc",
-  },
-  viacoin: {
-    type: "CryptoCurrency",
-    id: "viacoin",
-    coinType: CoinType.VIACOIN,
-    name: "Viacoin",
-    managerAppName: "Viacoin",
-    ticker: "VIA",
-    scheme: "viacoin",
-    color: "#414141",
-    supportsSegwit: true,
-    family: "bitcoin",
-    blockAvgTime: 24,
-    bitcoinLikeInfo: {
-      P2PKH: 71,
-      P2SH: 33,
-      XPUBVersion: 0x0488b21e,
-    },
-    units: [
-      {
-        name: "viacoin",
-        code: "VIA",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://explorer.viacoin.org/tx/$hash",
-        address: "https://explorer.viacoin.org/address/$address",
-      },
-    ],
-    explorerId: "via",
-  },
   wanchain: {
     type: "CryptoCurrency",
     id: "wanchain",
@@ -3277,7 +3151,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "crypto_org",
     coinType: CoinType.CRYPTO_ORG,
     name: "Cronos POS Chain",
-    managerAppName: "Crypto.org Chain",
+    managerAppName: "Cronos POS Chain",
     ticker: "CRO",
     scheme: "crypto_org",
     color: "#0e1c37",
@@ -4263,6 +4137,100 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://sepolia.lineascan.build/tx/$hash",
         address: "https://sepolia.lineascan.build/address/$address",
         token: "https://sepolia.lineascan.build/token/$address",
+      },
+    ],
+  },
+  blast: {
+    type: "CryptoCurrency",
+    id: "blast",
+    coinType: CoinType.ETH,
+    name: "Blast",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "blast",
+    color: "#FCFC06",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 81457,
+    },
+    explorerViews: [
+      {
+        tx: "https://blastscan.io/tx/$hash",
+        address: "https://blastscan.io/address/$address",
+        token: "https://blastscan.io/token/$address",
+      },
+    ],
+  },
+  blast_sepolia: {
+    type: "CryptoCurrency",
+    id: "blast_sepolia",
+    coinType: CoinType.ETH,
+    name: "Blast Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "blast_sepolia",
+    color: "#ff0000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: false,
+    isTestnetFor: "blast",
+    ethereumLikeInfo: {
+      chainId: 168587773,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.blastscan.io/tx/$hash",
+        address: "https://testnet.blastscan.io/address/$address",
+        token: "https://testnet.blastscan.io/token/$address",
+      },
+    ],
+  },
+  scroll: {
+    type: "CryptoCurrency",
+    id: "scroll",
+    coinType: CoinType.ETH,
+    name: "Scroll",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "scroll",
+    color: "#ebc28e",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 534352,
+    },
+    explorerViews: [
+      {
+        tx: "https://scrollscan.com/tx/$hash",
+        address: "https://scrollscan.com/address/$address",
+        token: "https://scrollscan.com/token/$address",
+      },
+    ],
+  },
+  scroll_sepolia: {
+    type: "CryptoCurrency",
+    id: "scroll_sepolia",
+    coinType: CoinType.ETH,
+    name: "Scroll Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "scroll_sepolia",
+    color: "#ff0000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: false,
+    isTestnetFor: "scroll",
+    ethereumLikeInfo: {
+      chainId: 534351,
+    },
+    explorerViews: [
+      {
+        tx: "https://sepolia.scrollscan.dev/tx/$hash",
+        address: "https://sepolia.scrollscan.dev/address/$address",
+        token: "https://sepolia.scrollscan.dev/token/$address",
       },
     ],
   },

@@ -1,5 +1,10 @@
 import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { closeAllModal } from "~/renderer/actions/modals";
+import { context } from "~/renderer/drawers/Provider";
+import { closeInformationCenter } from "~/renderer/actions/UI";
+import { useDispatch } from "react-redux";
+import { openURL } from "~/renderer/linking";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 
 import { StorylyRef } from "storyly-web";
@@ -24,6 +29,8 @@ const getTokenForInstanceId = (stories: StoriesType, targetInstanceId: string): 
 
 const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   const [url, setUrl] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const { setDrawer } = useContext(context);
   const [token, setToken] = useState<string | null>(null);
   const [query, setQuery] = useState<{ g?: string; s?: string; play?: string }>({});
 
@@ -39,10 +46,19 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
       token: token,
       events: {
         closeStoryGroup: clear,
+        actionClicked: story => {
+          if (story?.media?.actionUrl) {
+            openURL(story.media.actionUrl);
+            storylyRef.current?.close?.();
+            dispatch(closeAllModal());
+            setDrawer();
+            dispatch(closeInformationCenter());
+          }
+        },
       },
     });
     storylyRef.current?.openStory({ group: query?.g, story: query?.s, playMode: query?.play });
-  }, [params, token, query]);
+  }, [params, token, query, dispatch, setDrawer]);
 
   useEffect(() => {
     if (url) {

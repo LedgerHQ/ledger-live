@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/trustchain",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Ledger Live trustchain layer",
   "private": true,
   "keywords": [
@@ -54,21 +54,27 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/hw-trustchain": "workspace:*",
-    "@ledgerhq/live-network": "workspace:*",
-    "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/errors": "workspace:*",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport-mocker": "workspace:*",
+    "@ledgerhq/hw-trustchain": "workspace:*",
+    "@ledgerhq/live-env": "workspace:*",
+    "@ledgerhq/live-network": "workspace:*",
+    "@ledgerhq/logs": "workspace:*",
+    "@ledgerhq/speculos-transport": "workspace:*",
+    "@ledgerhq/types-devices": "workspace:^",
+    "base64-js": "1",
     "isomorphic-ws": "5",
-    "ws": "8",
-    "base64-js": "1"
+    "ws": "8"
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",
+    "bip39": "^3.0.4",
+    "expect": "^27.5.1",
     "jest": "^29.7.0",
-    "msw": "2",
+    "msw": "^2.2.13",
     "ts-jest": "^29.1.1",
-    "documentation": "14.0.2"
+    "ts-node": "^10.9.2"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -80,6 +86,6 @@
     "typecheck": "tsc --noEmit",
     "unimported": "unimported",
     "test": "jest",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts"
+    "e2e": "ts-node scripts/e2e.ts"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@actions/get-workflow-artifacts-id",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Get ids of artifacts from previous workflow to download",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

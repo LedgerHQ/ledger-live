@@ -148,7 +148,7 @@
     "id": "ripple",
     "ticker": "XRP",
     "name": "XRP",
-    "family": "xrp",
+    "family": "ripple",
     "color": "#27a2db",
     "decimals": 6
   },
@@ -357,33 +357,6 @@
     "name": "Horizen",
     "family": "bitcoin",
     "color": "#152f5c",
-    "decimals": 8
-  },
-  {
-    "type": "CryptoCurrency",
-    "id": "vertcoin",
-    "ticker": "VTC",
-    "name": "Vertcoin",
-    "family": "bitcoin",
-    "color": "#1b5c2e",
-    "decimals": 8
-  },
-  {
-    "type": "CryptoCurrency",
-    "id": "peercoin",
-    "ticker": "PPC",
-    "name": "Peercoin",
-    "family": "bitcoin",
-    "color": "#3cb054",
-    "decimals": 6
-  },
-  {
-    "type": "CryptoCurrency",
-    "id": "viacoin",
-    "ticker": "VIA",
-    "name": "Viacoin",
-    "family": "bitcoin",
-    "color": "#414141",
     "decimals": 8
   },
   {
@@ -760,6 +733,42 @@
     "id": "linea_sepolia",
     "ticker": "ETH",
     "name": "Linea Sepolia",
+    "family": "ethereum",
+    "color": "#ff0000",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "blast",
+    "ticker": "ETH",
+    "name": "Blast",
+    "family": "ethereum",
+    "color": "#FCFC06",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "blast_sepolia",
+    "ticker": "ETH",
+    "name": "Blast Sepolia",
+    "family": "ethereum",
+    "color": "#ff0000",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "scroll",
+    "ticker": "ETH",
+    "name": "Scroll",
+    "family": "ethereum",
+    "color": "#ebc28e",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "scroll_sepolia",
+    "ticker": "ETH",
+    "name": "Scroll Sepolia",
     "family": "ethereum",
     "color": "#ff0000",
     "decimals": 18

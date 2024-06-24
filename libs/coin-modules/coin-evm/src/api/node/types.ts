@@ -36,6 +36,10 @@ export type NodeApi = {
     currency: CryptoCurrency,
     transaction: EvmTransaction,
   ) => Promise<BigNumber>;
+  getScrollAdditionalFees: (
+    currency: CryptoCurrency,
+    transaction: EvmTransaction,
+  ) => Promise<BigNumber>;
 };
 
 type NodeConfig = EvmConfigInfo["node"];

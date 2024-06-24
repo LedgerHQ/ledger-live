@@ -1,22 +1,19 @@
 import { Component } from "tests/page/abstractClasses";
 
 export class Drawer extends Component {
-  readonly content = this.page.locator("data-test-id=drawer-content");
+  readonly content = this.page.getByTestId("drawer-content");
   private drawerOverlay = this.page.locator("[data-test-id='drawer-overlay'][style='opacity: 1;']");
-  private continueButton = this.page.locator("data-test-id=drawer-continue-button");
-  private closeButton = this.page.locator("data-test-id=drawer-close-button");
+  private continueButton = this.page.getByTestId("drawer-continue-button");
+  private closeButton = this.page.getByTestId("drawer-close-button");
   private currencyButton = (currency: string) =>
-    this.page.locator(`data-test-id=currency-row-${currency.toLowerCase()}`);
-  private accountButton = (accountName: string, index: number) =>
-    this.page.locator(`data-test-id=account-row-${accountName.toLowerCase()}-${index}`).first();
-  readonly selectAssetTitle = this.page.locator("data-test-id=select-asset-drawer-title").first();
-  readonly selectAccountTitle = this.page
-    .locator("data-test-id=select-account-drawer-title")
-    .first();
-  readonly swapAmountFrom = this.page.locator("data-test-id=swap-amount-from").first();
-  readonly swapAmountTo = this.page.locator("data-test-id=swap-amount-to").first();
-  readonly swapAccountFrom = this.page.locator("data-test-id=swap-account-from").first();
-  readonly swapAccountTo = this.page.locator("data-test-id=swap-account-to").first();
+    this.page.getByTestId(`currency-row-${currency.toLowerCase()}`).first();
+  readonly selectAssetTitle = this.page.getByTestId("select-asset-drawer-title").first();
+  readonly selectAccountTitle = this.page.getByTestId("select-account-drawer-title").first();
+  readonly swapAmountFrom = this.page.getByTestId("swap-amount-from").first();
+  readonly swapAmountTo = this.page.getByTestId("swap-amount-to").first();
+  readonly swapAccountFrom = this.page.getByTestId("swap-account-from").first();
+  readonly swapAccountTo = this.page.getByTestId("swap-account-to").first();
+  readonly backButton = this.page.getByRole("button", { name: "Back" });
 
   async continue() {
     await this.continueButton.click();
@@ -43,7 +40,14 @@ export class Drawer extends Component {
     await this.currencyButton(currency).click();
   }
 
+  getAccountButton = (accountName: string, index: number) =>
+    this.page.getByTestId(`account-row-${accountName.toLowerCase()}-${index}`).first();
+
   async selectAccount(accountName: string, index = 0) {
-    await this.accountButton(accountName, index).click();
+    await this.getAccountButton(accountName, index).click();
+  }
+
+  back() {
+    return this.backButton.click();
   }
 }

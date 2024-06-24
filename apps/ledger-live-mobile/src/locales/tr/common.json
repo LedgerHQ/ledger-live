@@ -127,6 +127,9 @@
       "title" : "Üzgünüz, Bluetooth devre dışı",
       "description" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin. ({{state}} durum)"
     },
+    "BitcoinInfrastructureError" : {
+      "title" : "Bitcoin altyapımızla ilgili olarak bir sorun yaşıyoruz. Lütfen daha sonra tekrar deneyin."
+    },
     "CantOpenDevice" : {
       "title" : "Üzgünüz, bağlantı başarısız",
       "description" : "Ledger cihazınız kilidi açılmış durumda ve Bluetooth kapsama alanı içinde olmalıdır."
@@ -369,6 +372,9 @@
     "InvalidRecipient" : {
       "title" : "Geçersiz alıcı"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "{{currencyName}} tarayıcısından geçersiz yanıt"
+    },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "Dil yüklemesi cihaz tarafından reddedildi",
       "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
@@ -485,6 +491,10 @@
       "description" : "İşlem ücretlerini ödemek için lütfen hesabınıza bir miktar EGLD gönderin."
     },
     "NotEnoughBalance" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "Ne yazık ki bakiye, ağ ücretlerini karşılamaya yetmiyor. Tutarı değiştirin veya bakiyeyi doğrulayın.",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
@@ -916,6 +926,9 @@
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
     }
   },
   "crash" : {
@@ -1308,7 +1321,7 @@
         "explore" : "Bu uygulamayı keşfedin"
       },
       "setupLedger" : {
-        "title" : "Ledger'ınızı kurun",
+        "title" : "Ledger cihazınızı kurun",
         "subtitle" : "Ledger'ınızın yeni mi, yoksa sıfırlanan bir cihaz mı olduğunu seçin."
       },
       "accessWallet" : {
@@ -1325,14 +1338,15 @@
       },
       "desktopSync" : {
         "title" : "Masaüstü uygulamasıyla senkronize edin",
-        "subtitle" : "Ledger Live Desktop uygulamasındaki varlıklarınızı mobil uygulamanızla senkronize edin."
+        "subtitle" : "Ledger Live Masaüstü uygulamasındaki varlıklarınızı mobil uygulamanızla senkronize edin."
       }
     },
     "welcomeBackStep" : {
       "title" : "Tekrar hoş geldiniz",
       "subtitle" : "Cüzdanınıza nasıl erişmek istediğinizi seçin:",
       "connect" : "Ledger'ınızı bağlayın",
-      "sync" : "Ledger Live Desktop ile senkronize edin"
+      "sync" : "Ledger Live Masaüstü ile senkronize edin",
+      "walletSync" : "Başka bir Ledger Live uygulamasıyla senkronize et"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "Cihaz olmadan keşfedin",
@@ -2242,7 +2256,13 @@
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} piyasa fiyatı",
       "currencyPrice" : "1 {{currencyTicker}} fiyatı",
-      "currencyPriceChange" : "Son 24 saatlik değişim"
+      "currencyPriceChange" : {
+        "day" : "Son 24 saatlik değişim",
+        "week" : "Son 7 gündeki değişim",
+        "month" : "Son 30 gündeki değişim",
+        "year" : "Son bir yıldaki değişim",
+        "all" : "Son bir yıldaki değişim"
+      }
     },
     "quickActions" : {
       "buy" : "Satın Al",
@@ -2278,6 +2298,22 @@
     "import" : {
       "title" : "Masaüstünden içe aktarın",
       "description" : "Ledger Live Desktop'tan varlık içe aktarın"
+    },
+    "drawer" : {
+      "drawerTitleHasAccount" : "Başka bir hesap ekleyin",
+      "drawerSubTitle" : "Varlıklarınızı Ledger cihazınızı kullanarak ekleyin veya onları doğrudan Ledger Live Masaüstü sürümünüzden içe aktarın.",
+      "import" : {
+        "title" : "Masaüstünden içe aktarın",
+        "description" : "Ledger Live Desktop'tan varlık içe aktarın"
+      },
+      "add" : {
+        "title" : "Ledger cihazınızla ekleyin",
+        "description" : "Ledger cihazınızı kullanarak hesap oluşturun veya varlıklarınızı içe aktarın"
+      },
+      "walletSync" : {
+        "title" : "Başka bir Ledger Live uygulamasıyla içe aktarın",
+        "description" : "Ledger Sync'i etkinleştirin"
+      }
     }
   },
   "byteSize" : {
@@ -2353,7 +2389,7 @@
       "REGISTER" : "Kaydedilmiş",
       "WITHDRAW" : "Çekildi",
       "STAKE" : "Stake edildi",
-      "UNSTAKE" : "Stake iptali",
+      "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi"
     }
   },
@@ -2395,6 +2431,7 @@
       "delegated" : "Yetki devri ({{amount}})",
       "delegatedTo" : "Yetkiyi devralan taraf",
       "delegatedAmount" : "Yetkisi devredilen tutar",
+      "deposit" : "Yatır",
       "redelegated" : "Yeniden yetki devri ({{amount}})",
       "redelegatedFrom" : "Yetkiyi bırakan taraf",
       "redelegatedTo" : "Yetkiyi devralan taraf",
@@ -2714,6 +2751,8 @@
       "languageDesc" : "Ledger Live'ın görüntüleneceği dili ayarlayın.",
       "dateFormat" : "Tarih formatı",
       "dateFormatDesc" : "Ledger Live için tarih formatını belirleyin",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Uygulama verilerinizi kolayca güvence altına alın ve birden çok Ledger Live oturumunu senkronize edin.",
       "region" : "Bölge",
       "regionDesc" : "Tarih, saat ve para birimi görüntüleme biçimlerini güncellemek için bölgenizi seçin.",
       "password" : "Uygulama kilidi",
@@ -2738,9 +2777,9 @@
       "developerMode" : "Geliştirici modu",
       "developerModeDesc" : "Geliştirici uygulamalarını My Ledger'da görün ve Testnet uygulamalarını etkinleştirin.",
       "analytics" : "Analiz",
-      "analyticsDesc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin.",
+      "analyticsDesc" : "Ledger Live'ın performansının ölçülmesini ve hem uygulamanın hem de deneyiminizin geliştirilmesini sağlamak için Ledger'ın uygulama kullanım verilerini takip etmesine izin verin.",
       "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
-      "personalizedRecommendationsDesc" : "Tercihlerinizle uyumlu kişiselleştirilmiş öneriler alın.",
+      "personalizedRecommendationsDesc" : "Kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunulmasını sağlamak ve pazarlama kampanyalarımızın performansını ölçebilmemiz için Ledger'ın uygulama kullanımı verilerini takip etmesine izin verin.",
       "analyticsModal" : {
         "title" : "Analiz verilerini paylaş",
         "desc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin",
@@ -3031,8 +3070,8 @@
         "title" : "Seçilen kripto için ağ seçin",
         "account" : "{{count}} hesap",
         "account_plural" : "{{count}} hesapları",
-        "subtitle" : "Kriptoyu aktaran cüzdan veya borsada seçilen ağ ile aynı olmalıdır.",
-        "bannerTitle" : "Doğru ağı seçtiğinizden emin olun. Bunu nasıl yapacağınızı öğrenin.",
+        "subtitle" : "Seçeceğiniz ağ, kriptoyu aktaran cüzdan veya borsada seçilmiş ağ ile aynı olmalıdır.",
+        "bannerTitle" : "Doğru ağı seçtiğinizden emin olun. Daha fazla bilgi.",
         "depositFromCexBannerTitle" : "Coinbase hesabınızdan kripto yatırın"
       },
       "stepperHeader" : {
@@ -3047,7 +3086,8 @@
       "addAccount" : {
         "title" : "Hesap kontrol ediliyor...",
         "subtitle" : "Blok zincirinde {{currencyName}} için bir hesabınızın olup olmadığı kontrol ediliyor.",
-        "foundAccounts" : "{{count}} hesap bulundu",
+        "foundAccount" : "{{count}} hesap bulundu",
+        "foundAccount_plural" : "{{count}} hesap bulundu",
         "stopSynchronization" : "Senkronizasyonu durdur",
         "addingAccount" : "Hesap bulunamadı. {{currencyName}} için yeni bir hesap oluşturuluyor..."
       },
@@ -3074,7 +3114,7 @@
       },
       "securityVerify" : {
         "title" : "Adres doğrulaması, bu işlemi güvenceye almak için çok önemlidir",
-        "subtitle1" : "Adresi Ledger Live'dan kopyalayıp hedefe yapıştırdıktan sonra, Ledger cihazınızın Güvenilir Ekranında gösterilen adresle eşleştiğini mutlaka doğrulayın. İki adres de aynı olmalıdır.",
+        "subtitle1" : "Ledger Live'dan kopyalayıp hedefe yapıştırdığınız adresin, Ledger cihazınızın Güvenilir Ekranında gösterilen adresle eşleştiğini mutlaka doğrulayın. İki adres de aynı olmalıdır.",
         "subtitle2" : "Bu doğrulama, adres değiştirme saldırılarının önlenmesine yardımcı olacaktır.",
         "verifyCta" : "Adresimi doğrula",
         "dontVerifyCta" : "Adresi doğrulamadan göster"
@@ -3117,7 +3157,7 @@
     },
     "stake" : {
       "title" : "Stake et",
-      "description" : "Elinizdeki kripto bakiyesini artırın."
+      "description" : "Sahip olduğunuz kriptoları stake edin."
     },
     "swap" : {
       "title" : "Takas et",
@@ -3130,9 +3170,6 @@
         "title" : "Takas İşlemlerine Hoş Geldiniz",
         "whatIsSwap" : "Takas (Swap) nedir?",
         "disclaimer" : "Kripto takas işlemlerinizi doğrudan Ledger cihazınızdan yapın. Bu hizmet ABD de dahil olmak üzere bazı ülkelerde kullanılamaz."
-      },
-      "main" : {
-        "header" : "Takas edin"
       },
       "notAvailable" : {
         "title" : "Hizmet geçici olarak kullanılamıyor veya ülkenize açık değil"
@@ -3253,7 +3290,7 @@
       },
       "history" : {
         "tab" : "Geçmiş",
-        "disclaimer" : "Mobil üzerinden yaptığınız takas işlemleri Ledger Live Desktop ile senkronize değildir",
+        "disclaimer" : "Mobil üzerinden yaptığınız takas işlemleri Ledger Live Masaüstü ile senkronize değildir",
         "exportButton" : "Dışa aktarma işlemleri",
         "exportFilename" : "Takas işlemleri",
         "empty" : {
@@ -3840,35 +3877,9 @@
     "tokens" : {
       "title" : "Token ekle",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} hesabı ekle",
-      "erc20" : {
-        "title" : "Token ekle",
-        "disclaimer" : "{{tokenName}} bir ERC20 Token'ıdır.\nToken'ları doğrudan bir Ethereum hesabına alabilirsiniz.",
-        "learnMore" : "ERC20 hakkında daha fazla bilgi edinin"
-      },
-      "trc10" : {
-        "title" : "Token Ekle",
-        "disclaimer" : "{{tokenName}} bir TRC10 Token'ıdır.\nToken'ları doğrudan bir Tron hesabına alabilirsiniz.",
-        "learnMore" : "TRC10 hakkında daha fazla bilgi edinin"
-      },
-      "trc20" : {
-        "title" : "Token Ekle",
-        "disclaimer" : "{{tokenName}} bir TRC20 Token'ıdır.\nToken'ları doğrudan bir Tron hesabına alabilirsiniz.",
-        "learnMore" : "TRC20 hakkında daha fazla bilgi edinin"
-      },
-      "asa" : {
-        "title" : "Token Ekle",
-        "disclaimer" : "{{tokenName}} bir ASA Token'ıdır.\nToken'ları doğrudan bir Algorand hesabına alabilirsiniz.",
-        "learnMore" : "Daha fazla bilgi"
-      },
-      "bep20" : {
-        "title" : "Token Ekle",
-        "disclaimer" : "{{tokenName}} bir BEP-20 Token'ıdır.\nToken'ları doğrudan bir Tron hesabına alabilirsiniz.",
-        "learnMore" : "BEP-20 hakkında daha fazla bilgi edinin"
-      },
-      "vip180" : {
-        "title" : "Token ekle",
-        "disclaimer" : "{{tokenName}} bir VIP180 Token'ıdır.\nToken'ları doğrudan bir VET hesabına alabilirsiniz.",
-        "learnMore" : "VIP180 hakkında daha fazla bilgi edinin"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır.\n Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
+        "learnMore" : "{{tokenType}} hakkında daha fazla bilgi edinin"
       }
     },
     "showMoreChainType" : "Daha fazla adres türü",
@@ -4325,7 +4336,8 @@
       "installUpdate" : {
         "titleInactive" : "Güncellemeyi yükle",
         "titleActive" : "Güncelleme yükleniyor",
-        "description" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nGüncellemeyi tamamlamak için, kurulum tamamlandıktan sonra {{deviceName}} cihazının kilidini PIN kodunuzla açın."
+        "description" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nGüncellemeyi tamamlamak için, kurulum tamamlandıktan sonra {{deviceName}} cihazının kilidini PIN kodunuzla açın.",
+        "descriptionNanoXBle" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nCihaz kapanıp otomatik olarak yeniden başlamazsa cihazı sizin açmanız gerekecektir.\n\nGüncellemeyi tamamlamak için, kurulum tamamlandıktan sonra {{deviceName}} cihazının kilidini PIN kodunuzla açın."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4368,14 @@
       "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın",
       "pleaseConnectUsbTitle" : "USB kablosu gerekli",
       "pleaseConnectUsbDescription" : "Donanım yazılımı güncellemesini başlatmak için {{deviceName}} cihazınızı bir USB kablosuyla cep telefonunuza bağlayın."
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "Cihaz bağlantısı kesildi",
+          "description" : "{{deviceName}} cihazıyla bağlantımız kesildiğinden güncelleme devam edemedi"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -5135,7 +5155,7 @@
       "Amount" : "Tutar",
       "noRewards" : "Ödül yok",
       "delegate" : "Yeniden Stake Et",
-      "undelegate" : "Staking'i İptal Et",
+      "undelegate" : "Staking'i durdur",
       "reward" : "Ödüllerinizi alın",
       "commission" : "Komisyon",
       "iDelegate" : "Yetkisi devredilecek:",
@@ -5828,7 +5848,7 @@
       "commission" : "Komisyon",
       "iStake" : "Stake et:",
       "actions" : {
-        "unstake" : "Staking'i iptal et",
+        "unstake" : "Staking'i durdur",
         "withdraw" : "Çek"
       },
       "drawer" : {
@@ -6134,6 +6154,7 @@
       "subtitle" : "Ledger'la tamamen entegre olan Web 3.0'ı keşfedin",
       "section" : {
         "recentlyUsed" : "Son Kullanılanlar",
+        "locallyLoaded" : "Yerel Olarak Yüklenen",
         "categories" : "Kategoriler",
         "clearAll" : "Tümünü temizle"
       },
@@ -6231,9 +6252,10 @@
       },
       "order" : {
         "topGainers" : "En çok yükselenler",
-        "market_cap" : "Sıralama",
-        "market_cap_asc" : "Sıralama (Piyasa değeri) art.",
-        "market_cap_desc" : "Sıralama (Piyasa değeri) azal."
+        "topLosers" : "En çok düşenler",
+        "marketCap" : "Sıralama",
+        "asc" : "Sıralama (Piyasa değeri) art.",
+        "desc" : "Sıralama (Piyasa değeri) azal."
       },
       "currency" : "Para birimi",
       "time" : "Dönem",
@@ -6303,7 +6325,7 @@
     "designedForStax" : {
       "title" : "<1>Ledger</1><2>Stax</2><0>için tasarlandı</0>",
       "drawer" : {
-        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
+        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
         "cta" : "Anladım"
       }
     },
@@ -6563,7 +6585,6 @@
         },
         "swap" : {
           "title" : "Takas edin",
-          "label" : "Popüler",
           "body" : "Bir kriptoyu diğerine güvenle dönüştürün"
         },
         "receive" : {
@@ -6581,18 +6602,18 @@
     "variantA" : {
       "main" : {
         "title" : "Deneyiminizi geliştirmemize ve kişiselleştirmemize yardım edin",
-        "subtitle" : "Ledger Live verilerinizi paylaşmanız, tercihlerinizi anlayarak sizin ilginizi çekebilecek içerikleri göstermemize ve teknik sorunları çözmemize yardımcı oluyor.",
+        "subtitle" : "Ledger Live verilerinizi paylaşmanız, tercihlerinizi anlayarak sizin ilginizi çekebilecek içerikleri göstermemizi sağlar.",
         "content" : {
           "able" : {
-            "title" : "Sizin onayınız ile Ledger şunları takip edebilecek:",
-            "diagAndUsage" : "Sayfa ziyaretleri ve tıklamalar dâhil olmak üzere analiz verileri.",
-            "personnalizationData" : "Tıklamalar, sayfa ziyaretleri ve dönüştürme verileri dâhil olmak üzere kişiselleştirme verileri."
+            "title" : "Sizin açık rızanızla Ledger, Ledger Live'ı nasıl kullandığınıza dair verileri (sayfa ziyaretleri ve tıklamalar da dâhil) takip edebilecektir:",
+            "diagAndUsage" : "Ledger Live'ın performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için (Analizler).",
+            "personnalizationData" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sağlamanın yanı sıra pazarlama kampanyalarımızın etkinliğini ölçebilmemiz için (Kişiselleştirme)."
           },
           "unable" : {
-            "title" : "Ledger şunlarla ilgili bilgileri hiçbir zaman takip etmez:",
+            "title" : "Ledger Live şu bilgileri hiçbir zaman takip etmez:",
             "adresses" : "Varlıklarınız.",
             "balance" : "Portföyünüz.",
-            "personnalInfos" : "Kişiyi tanımlayıcı bilgileriniz."
+            "personnalInfos" : "Kişiyi tanımlayıcı bilgileriniz (adınız soyadınız veya e-posta adresiniz gibi)."
           },
           "moreOptions" : "Tercihlerinizi yönetin",
           "ctas" : {
@@ -6608,12 +6629,12 @@
       "details" : {
         "title" : "Tercihlerinizi yönetin",
         "analytics" : {
-          "title" : "Analiz verileri",
-          "description" : "Ledger Live'ın geliştirilmesine yardımcı olmak için sayfa ziyaretleri ve tıklamalar dâhil olmak üzere uygulamanın analiz verilerini paylaşın."
+          "title" : "Analiz",
+          "description" : "Ledger Live'ın performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için sayfa ziyaretleri ve tıklamalar da dâhil olmak üzere kullanım verilerini paylaşırız."
         },
         "personalizedExp" : {
-          "title" : "Kişiselleştirme verileri",
-          "description" : "Kişiselleştirilmiş öneriler almak için dönüştürme verileri, tıklamalar ve sayfa ziyaretleri dâhil olmak üzere uygulamanın kişiselleştirme verilerini paylaşın."
+          "title" : "Kişiselleştirme",
+          "description" : "Kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler almanız ve pazarlama kampanyalarımızın performansını ölçebilmemiz için tıklamalar, sayfa ziyaretleri ve dönüşüm verileri de dâhil olmak üzere uygulama kullanımı verilerini paylaşırız."
         },
         "ctas" : {
           "notNow" : "Şimdi değil",
@@ -6660,6 +6681,16 @@
           "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
           "link" : "Takip Politikamız hakkında daha fazla bilgi edinin"
         }
+      }
+    }
+  },
+  "walletSync" : {
+    "activation" : {
+      "screen" : {
+        "title" : "Hesaplarınızı tüm platformlar genelinde senkronize edin",
+        "description" : "Ledger cihazınız bir şifreleme anahtarı oluşturarak verilerinizin gizli kalmasını ve sadece sizin tarafınızdan alınabilmesini sağlar.",
+        "mainCta" : "Hesaplarınızı senkronize edin",
+        "secondCta" : "Zaten bir anahtar oluşturdunuz mu?"
       }
     }
   }

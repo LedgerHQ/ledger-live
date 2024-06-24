@@ -11,18 +11,19 @@ const resolver: Resolver = async (transport, { path, verify }) => {
 
   const casper = new Casper(transport);
 
-  const r = verify
+  const response = verify
     ? await casper.showAddressAndPubKey(getPath(path))
     : await casper.getAddressAndPubKey(getPath(path));
 
-  isError(r);
+  isError(response);
 
+  const { Address, publicKey } = response;
   return {
     path,
-    address: r.Address.length
-      ? r.Address.toString()
-      : casperAddressFromPubKey(r.publicKey, CLPublicKeyTag.SECP256K1),
-    publicKey: r.publicKey.toString("hex"),
+    address: Address.length
+      ? Address.toString().toLowerCase()
+      : casperAddressFromPubKey(publicKey, CLPublicKeyTag.SECP256K1),
+    publicKey: publicKey.toString("hex"),
   };
 };
 

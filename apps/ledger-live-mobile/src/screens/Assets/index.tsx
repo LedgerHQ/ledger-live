@@ -18,11 +18,10 @@ import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 import Spinning from "~/components/Spinning";
 import AssetsNavigationHeader from "./AssetsNavigationHeader";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
-import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { Asset } from "~/types/asset";
 import { ScreenName } from "~/const";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 const List = globalSyncRefreshControl<FlatListProps<Asset>>(FlatList);
 
@@ -65,6 +64,8 @@ function Assets() {
   const openAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
+
+  const reopenAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
 
   const renderItem = useCallback(
     ({ item }: { item: Asset }) => (
@@ -117,10 +118,10 @@ function Assets() {
             />
           </Flex>
         </Flex>
-        <AddAccountsModal
-          navigation={navigation as unknown as BaseNavigation}
+        <AddAccountDrawer
           isOpened={isAddModalOpened}
           onClose={closeAddModal}
+          reopenDrawer={reopenAddModal}
         />
       </SafeAreaView>
     </ReactNavigationPerformanceView>

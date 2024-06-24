@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
 import { useSelector } from "react-redux";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Linking, StyleSheet, View } from "react-native";
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
@@ -48,6 +48,7 @@ import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
+import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 
 function renderLoading() {
   return (
@@ -504,6 +505,17 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       tracking.platformLoadFail(manifest);
     }, [manifest, tracking]);
 
+    const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
+      const { targetUrl } = event.nativeEvent;
+      Linking.canOpenURL(targetUrl).then(supported => {
+        if (supported) {
+          Linking.openURL(targetUrl);
+        } else {
+          console.error(`Don't know how to open URI: ${targetUrl}`);
+        }
+      });
+    }, []);
+
     useEffect(() => {
       tracking.platformLoad(manifest);
     }, [manifest, tracking]);
@@ -524,6 +536,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         allowsInlineMediaPlayback
         onMessage={handleMessage}
         onError={handleError}
+        onOpenWindow={onOpenWindow}
         overScrollMode="content"
         bounces={false}
         mediaPlaybackRequiresUserAction={false}
@@ -531,6 +544,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         scrollEnabled={true}
         style={styles.webview}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
+        webviewDebuggingEnabled={__DEV__}
         {...webviewProps}
       />
     );

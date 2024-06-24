@@ -2,15 +2,13 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 
 export class PortfolioPage extends AppPage {
-  readonly emptyStateTitle = this.page.locator("data-test-id=portfolio-empty-state-title");
-  private addAccountButton = this.page.locator(
-    "data-test-id=portfolio-empty-state-add-account-button",
-  );
-  private buySellEntryButton = this.page.locator("data-test-id=buy-sell-entry-button");
-  private stakeEntryButton = this.page.locator("data-test-id=stake-entry-button");
-  private showAllButton = this.page.locator("text=Show all");
+  readonly emptyStateTitle = this.page.getByTestId("portfolio-empty-state-title");
+  private addAccountButton = this.page.getByTestId("portfolio-empty-state-add-account-button");
+  private buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
+  private stakeEntryButton = this.page.getByTestId("stake-entry-button");
+  private showAllButton = this.page.getByText("Show all");
   private assetRow = (currency: string) =>
-    this.page.locator(`data-test-id=asset-row-${currency.toLowerCase()}`);
+    this.page.getByTestId(`asset-row-${currency.toLowerCase()}`);
 
   @step("Open `Add account` modal")
   async openAddAccountModal() {

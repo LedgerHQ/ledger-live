@@ -36,7 +36,6 @@ export function makeCipher(sessionEncryptionKey: Uint8Array): Cipher {
       const text = new TextDecoder().decode(plaintext);
       return JSON.parse(text);
     } catch (e) {
-      console.error(e);
       throw new InvalidEncryptionKeyError("data can't be decrypted");
     }
   }

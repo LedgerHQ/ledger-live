@@ -19332,6 +19332,7 @@ var package_default = {
     "build:llm:ios": "pnpm turbo ios:local:ipa --no-daemon --filter=live-mobile",
     "build:llm:deps": 'pnpm turbo build --no-daemon --filter="live-mobile^..."',
     "build:ljs": 'pnpm turbo build --no-daemon --filter="./libs/ledgerjs/**"',
+    "build:web-tools": "pnpm turbo build --no-daemon --filter=web-tools",
     "build-ci:llm:ios": "pnpm turbo ios:ci:adhoc --no-daemon --filter=live-mobile",
     "build-ci:llm:android": "pnpm turbo android:apk --no-daemon --filter=live-mobile",
     "clean:ljs": 'pnpm turbo clean --no-daemon --filter="./libs/ledgerjs/**"',
@@ -19346,7 +19347,7 @@ var package_default = {
     "pre:lld": "pnpm turbo pre-build --no-daemon --filter=ledger-live-desktop",
     nightly: "pnpm turbo nightly --no-daemon",
     "nightly:lld": "pnpm turbo nightly --no-daemon --filter=ledger-live-desktop",
-    test: "pnpm turbo test --no-daemon --concurrency=100%",
+    test: "pnpm turbo test --no-daemon --concurrency=50%",
     "run:cli": "./apps/cli/bin/index.js",
     lint: "pnpm turbo lint --no-daemon",
     "lint:fix": "pnpm turbo lint:fix --no-daemon",
@@ -19355,12 +19356,20 @@ var package_default = {
     desktop: "pnpm --filter ledger-live-desktop",
     cli: "pnpm --filter live-cli",
     coin: "pnpm --filter coin-framework",
+    "coin:coverage": 'pnpm turbo coverage --filter="@ledgerhq/coin-*" --concurrency=2 && mkdir -p coverage && mv libs/coin-modules/**/coverage/*.json coverage && pnpm exec nyc merge coverage coverage/coverage-final.json && pnpm exec nyc report -t coverage --report-dir coverage --reporter=html-spa',
+    "coin:coverage:clean": "rm -rf coverage && rm -rf libs/coin-modules/**/coverage",
     "coin:algorand": "pnpm --filter coin-algorand",
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
+    "coin:cardano": "pnpm --filter coin-cardano",
     "coin:evm": "pnpm --filter coin-evm",
     "coin:framework": "pnpm --filter coin-framework",
+    "coin:tester": "pnpm --filter coin-tester",
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
+    "coin:solana": "pnpm --filter coin-solana",
+    "coin:tezos": "pnpm --filter coin-tezos",
+    "coin:tron": "pnpm --filter coin-tron",
+    "coin:xrp": "pnpm --filter coin-xrp",
     "evm-tools": "pnpm --filter evm-tools",
     domain: "pnpm --filter domain-service",
     doc: "pnpm --filter docs",
@@ -19370,12 +19379,15 @@ var package_default = {
     "device-react": "pnpm --filter device-react",
     "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
+    wallet: "pnpm --filter live-wallet",
     portfolio: "pnpm --filter live-portfolio",
     promise: "pnpm --filter live-promise",
     network: "pnpm --filter live-network",
     config: "pnpm --filter live-config",
     utils: "pnpm --filter live-utils",
     hooks: "pnpm --filter live-hooks",
+    trustchain: "pnpm --filter trustchain",
+    "hw-trustchain": "pnpm --filter hw-trustchain",
     countervalues: "pnpm --filter live-countervalues",
     "countervalues-react": "pnpm --filter live-countervalues-react",
     nft: "pnpm --filter live-nft",
@@ -19418,6 +19430,7 @@ var package_default = {
     "ljs:types-cryptoassets": "pnpm --filter types-cryptoassets",
     "ljs:types-devices": "pnpm --filter types-devices",
     "ljs:types-live": "pnpm --filter types-live",
+    "speculos-transport": "pnpm --filter speculos-transport",
     "test-utils": "pnpm --filter test-utils",
     "dummy-live-app": "pnpm --filter dummy-live-app",
     "dummy-wallet-app": "pnpm --filter dummy-wallet-app",
@@ -19432,8 +19445,7 @@ var package_default = {
     "ui:example:next": 'pnpm  --filter="next.js-example"',
     "ui:example:webpack": 'pnpm  --filter="webpack.js-example"',
     actions: "pnpm --filter @actions/*",
-    "import:cal-tokens": 'pnpm --filter="@ledgerhq/cryptoassets" import:cal-tokens',
-    "generate:cryptoassets-md": 'pnpm --filter="ledger-live-desktop" generate:cryptoassets-md'
+    "import:cal-tokens": 'pnpm --filter="@ledgerhq/cryptoassets" import:cal-tokens'
   },
   devDependencies: {
     "@changesets/changelog-github": "^0.5.0",
@@ -19450,6 +19462,7 @@ var package_default = {
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^5.0.1",
+    nyc: "^15.1.0",
     prettier: "^3.0.3",
     rimraf: "^4.4.1",
     turbo: "1.10.1",
@@ -19462,28 +19475,35 @@ var package_default = {
       "blake2"
     ],
     overrides: {
-      "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
-      "tronweb>axios": "0.26.1",
-      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
       "@ledgerhq/devices": "workspace:*",
-      tslib: "2.6.2"
+      tslib: "2.6.2",
+      "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
+      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2"
     },
     patchedDependencies: {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.18.4": "patches/detox@20.18.4.patch",
+      "detox@20.23.0": "patches/detox@20.23.0.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
-      "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch"
+      "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
+      "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch",
+      "@changesets/get-github-info@0.6.0": "patches/@changesets__get-github-info@0.6.0.patch",
+      "react-native-webview@13.10.3": "patches/react-native-webview@13.10.3.patch"
     },
     packageExtensions: {
       "eslint-config-next@*": {
         dependencies: {
           next: "*"
+        }
+      },
+      "detox-allure2-adapter": {
+        dependencies: {
+          tslib: "*"
         }
       }
     }

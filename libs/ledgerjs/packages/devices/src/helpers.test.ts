@@ -1,5 +1,24 @@
 import { DeviceModelId } from ".";
-import { stringToDeviceModelId } from "./helpers";
+import { stringToDeviceModelId, isDeviceModelId } from "./helpers";
+
+const validDeviceModelsIds = ["nanoS", "nanoX", "blue", "nanoSP", "stax", "europa"];
+const invalidDeviceModelsIds = ["does-not-exist", "", null, undefined];
+
+describe("isDeviceModelId", () => {
+  validDeviceModelsIds.forEach(potentialModelId => {
+    test(`Input: ${potentialModelId} -> Expected output: true`, () => {
+      const result = isDeviceModelId(potentialModelId);
+      expect(result).toEqual(true);
+    });
+  });
+
+  invalidDeviceModelsIds.forEach(potentialModelId => {
+    test(`Input: ${potentialModelId} -> Expected output: false`, () => {
+      const result = isDeviceModelId(potentialModelId);
+      expect(result).toEqual(false);
+    });
+  });
+});
 
 type Test = {
   input: [string, DeviceModelId];

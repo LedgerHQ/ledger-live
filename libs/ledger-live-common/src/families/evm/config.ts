@@ -685,6 +685,38 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: { type: "etherscan", uri: "https://api-sepolia.lineascan.build/api" },
     },
   },
+  config_currency_blast: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://rpc.blast.io" },
+      explorer: { type: "etherscan", uri: "https://api.blastscan.io/api" },
+    },
+  },
+  config_currency_blast_sepolia: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://sepolia.blast.io" },
+      explorer: { type: "etherscan", uri: "https://api-sepolia.blastscan.io/api" },
+    },
+  },
+  config_currency_scroll: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://rpc.scroll.io" },
+      explorer: { type: "etherscan", uri: "https://api.scrollscan.com/api" },
+    },
+  },
+  config_currency_scroll_sepolia: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://sepolia-rpc.scroll.io" },
+      explorer: { type: "etherscan", uri: "https://api-sepolia.scrollscan.com/api" },
+    },
+  },
 };
 
 export { evmConfig };

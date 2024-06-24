@@ -7,8 +7,6 @@ export type DerivationMode =
   | "ethMM"
   | "bch_on_bitcoin_segwit"
   | "legacy_on_bch"
-  | "vertcoin_128"
-  | "vertcoin_128_segwit"
   | "etcM"
   | "aeternity"
   | "tezbox"
@@ -36,4 +34,5 @@ export type DerivationMode =
   | "nearbip44h"
   | "vechain"
   | "internet_computer"
-  | "stacks_wallet";
+  | "stacks_wallet"
+  | "icon";

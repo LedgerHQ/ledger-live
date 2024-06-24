@@ -3,40 +3,33 @@ import { Component } from "tests/page/abstractClasses";
 
 export class CustomImageDrawer extends Component {
   private importImageInputSelector = "data-test-id=custom-image-import-image-input";
-  readonly container = this.page.locator("data-test-id=custom-image-container");
+  readonly container = this.page.getByTestId("custom-image-container");
   readonly importImageInput = this.page.locator(this.importImageInputSelector);
-  private importNftButton = this.page.locator("data-test-id=custom-image-import-nft-button");
-  readonly importNftPreviousButton = this.page.locator(
-    "data-test-id=custom-image-nft-previous-button",
-  );
-  private nftCard = (index: number) =>
-    this.page.locator(`data-test-id=custom-image-nft-card-${index}`);
+  private importNftButton = this.page.getByTestId("custom-image-import-nft-button");
+  readonly importNftPreviousButton = this.page.getByTestId("custom-image-nft-previous-button");
+  private nftCard = (index: number) => this.page.getByTestId(`custom-image-nft-card-${index}`);
   readonly nftCardMedia = (index: number) =>
-    this.page.locator(`data-test-id=custom-image-nft-card-media-${index}`);
+    this.page.getByTestId(`custom-image-nft-card-media-${index}`);
   readonly nftCardName = (index: number) =>
-    this.page.locator(`data-test-id=custom-image-nft-card-name-${index}`);
+    this.page.getByTestId(`custom-image-nft-card-name-${index}`);
   readonly nftCardId = (index: number) =>
-    this.page.locator(`data-test-id=custom-image-nft-card-id-${index}`);
-  private cropView = this.page.locator("data-test-id=custom-image-crop-view");
-  private cropRotateButton = this.page.locator("data-test-id=custom-image-crop-rotate-button");
-  private cropContinueButton = this.page.locator("data-test-id=custom-image-crop-continue-button");
+    this.page.getByTestId(`custom-image-nft-card-id-${index}`);
+  private cropView = this.page.getByTestId("custom-image-crop-view");
+  private cropRotateButton = this.page.getByTestId("custom-image-crop-rotate-button");
+  private cropContinueButton = this.page.getByTestId("custom-image-crop-continue-button");
 
   private contrastOptionButton = (index: number) =>
-    this.page.locator(`data-test-id=custom-image-contrast-option-${index}-button`);
-  private contrastPreviousButton = this.page.locator(
-    "data-test-id=custom-image-contrast-previous-button",
-  );
-  readonly contrastContinueButton = this.page.locator(
-    "data-test-id=custom-image-contrast-continue-button",
-  );
-  readonly finishButton = this.page.locator("data-test-id=custom-image-finish-button");
-  readonly deviceActionImageLoadRequested = this.page.locator(
-    "data-test-id=device-action-image-load-requested",
+    this.page.getByTestId(`custom-image-contrast-option-${index}-button`);
+  private contrastPreviousButton = this.page.getByTestId("custom-image-contrast-previous-button");
+  readonly contrastContinueButton = this.page.getByTestId("custom-image-contrast-continue-button");
+  readonly finishButton = this.page.getByTestId("custom-image-finish-button");
+  readonly deviceActionImageLoadRequested = this.page.getByTestId(
+    "device-action-image-load-requested",
   );
   readonly deviceActionImageLoading = (progress: number) =>
-    this.page.locator(`data-test-id=device-action-image-loading-${progress}`);
-  readonly deviceActionImageCommitRequested = this.page.locator(
-    "data-test-id=device-action-image-commit-requested",
+    this.page.getByTestId(`device-action-image-loading-${progress}`);
+  readonly deviceActionImageCommitRequested = this.page.getByTestId(
+    "device-action-image-commit-requested",
   );
 
   async importImage(filePath: string) {

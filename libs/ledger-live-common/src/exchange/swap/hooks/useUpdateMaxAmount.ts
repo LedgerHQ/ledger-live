@@ -41,12 +41,14 @@ export const useUpdateMaxAmount = ({
         }
         bridge.updateTransaction(tx => {
           let additionalFees;
-          if (tx.family === "evm" && next) {
+          if (tx.family === "evm" && !tx.subAccountId && next) {
             additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
-          } else if (tx.family === "tron" && next) {
-            // https://github.com/tronprotocol/documentation/blob/master/TRX/Tron-overview.md
-            // 1 TRX=1,000,000 sun.
-            additionalFees = new BigNumber(1).multipliedBy(1_000_000); // 1 TRX
+          }
+          // do not use useAllAmount for tron because we need to keep some TRX for fees and account alive
+          if (tx.family === "tron" && !tx.subAccountId && next) {
+            return {
+              ...tx,
+            };
           }
           return {
             ...tx,
@@ -73,7 +75,12 @@ export const useUpdateMaxAmount = ({
           transaction,
         });
         setIsMaxLoading(false);
-        setFromAmount(amount);
+        if ("currency" in account && account.currency.id === "tron") {
+          // keep 1.1 TRX for fees and 0.1 TRX for keeping the account alive
+          setFromAmount(account?.balance.minus(new BigNumber(1_200_000)));
+        } else {
+          setFromAmount(amount);
+        }
       };
 
       if (isMaxEnabled) {

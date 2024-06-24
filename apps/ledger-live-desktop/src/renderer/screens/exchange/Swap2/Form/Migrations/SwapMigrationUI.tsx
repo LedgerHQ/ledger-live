@@ -10,6 +10,7 @@ import SwapFormRates from "../FormRates";
 import SwapFormSummary from "../FormSummary";
 import LoadingState from "../Rates/LoadingState";
 import { SwapWebManifestIDs } from "../SwapWebView";
+import { useIsSwapLiveFlagEnabled } from "../useIsSwapLiveFlagEnabled";
 
 const Button = styled(ButtonBase)`
   width: 100%;
@@ -19,7 +20,7 @@ const Button = styled(ButtonBase)`
 type SwapMigrationUIProps = {
   liveAppEnabled: boolean;
   liveApp: React.ReactNode;
-  manifestID: string | null;
+  manifestID: string | undefined;
   // Demo 1 props
   pageState: ReturnType<typeof usePageState>;
   swapTransaction: SwapTransactionType;
@@ -41,15 +42,16 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
     onClick,
   } = props;
   const { t } = useTranslation();
+  const isDemo1Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoOne");
 
   const nativeLoadingUI = pageState === "loading" ? <LoadingState /> : null;
   const nativeNetworkFeesUI =
-    pageState === "loaded" ? (
+    pageState === "loaded" || isDemo1Enabled ? (
       <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
     ) : null;
 
   const nativeQuotesUI =
-    pageState === "loaded" && !manifestID?.startsWith(SwapWebManifestIDs.Demo1) ? (
+    pageState === "loaded" && !isDemo1Enabled ? (
       <SwapFormRates
         swap={swapTransaction.swap}
         provider={provider}

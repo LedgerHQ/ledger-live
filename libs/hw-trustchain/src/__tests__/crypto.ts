@@ -19,4 +19,12 @@ describe("Sodium wrapper tester", () => {
     const decrypted = await crypto.decrypt(key, nonce, encrypted);
     expect(crypto.to_hex(decrypted)).toBe(crypto.to_hex(message));
   });
+
+  it("should encrypt user data", async () => {
+    const keypair = await crypto.randomKeypair();
+    const data = await crypto.randomBytes(64);
+    const encrypted = await crypto.encryptUserData(keypair.privateKey, data);
+    const decrypted = await crypto.decryptUserData(keypair.privateKey, encrypted);
+    expect(crypto.to_hex(decrypted)).toBe(crypto.to_hex(data));
+  });
 });

@@ -57,7 +57,9 @@ export const TLVCommandStreamDecoder = {
     const readGroupKey = TLV.readPublicKey(TLV.readTLV(buffer, readPath.offset));
     const readIV = TLV.readBytes(TLV.readTLV(buffer, readGroupKey.offset));
     const readEncryptedXpriv = TLV.readBytes(TLV.readTLV(buffer, readIV.offset));
-    const readEphemeralPublicKey = TLV.readBytes(TLV.readTLV(buffer, readEncryptedXpriv.offset));
+    const readEphemeralPublicKey = TLV.readPublicKey(
+      TLV.readTLV(buffer, readEncryptedXpriv.offset),
+    );
     return new Derive(
       readPath.value,
       readGroupKey.value,

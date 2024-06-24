@@ -303,7 +303,7 @@
   "swap2": {
     "title": "Swap",
     "tabs": {
-      "exchange": "Exchange",
+      "exchange": "Swap",
       "history": "History"
     },
     "form": {
@@ -385,6 +385,7 @@
         "title": "Transaction broadcast successfully",
         "description": "Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your {{targetCurrency}}.",
         "disclaimer": "Take note of your Swap ID number in case you’d need assistance from <0><0>{{provider}}</0> support</0>.",
+        "tellAboutYourExperience": "Tell us about your experience",
         "seeDetails": "See details"
       }
     },
@@ -1457,16 +1458,16 @@
     "featuredButtons": {
       "buySell": {
         "title": "Buy / Sell",
-        "description": "Buy and sell with trusted providers"
+        "description": "Buy and sell with our trusted providers"
       },
       "swap": {
         "title": "Swap",
-        "description": "Convert crypto to crypto securely",
+        "description": "Convert crypto to crypto",
         "label": "Popular"
       },
       "earn": {
         "title": "Stake",
-        "description": "Grow your crypto with Ledger"
+        "description": "Stake your crypto with Ledger"
       }
     },
     "recoverBanner": {
@@ -3606,6 +3607,12 @@
         },
         "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
       },
+      "states": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "activating": "Activating",
+        "deactivating": "Deactivating"
+      },
       "flow": {
         "title": "Delegate",
         "steps": {
@@ -3989,8 +3996,10 @@
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
-      "walletSync": "Wallet Sync",
-      "walletSyncDesc": "Backup your app data and synchronize multiple Ledger Live instances."
+      "walletSync": "Ledger Sync",
+      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "marketPerformanceWidget": "Market Performance Widget",
+      "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
     "developer": {
       "search": "Search",
@@ -4201,6 +4210,17 @@
         "enableNetworkLogs": {
           "title": "Enable network logs",
           "description": "Enable network logs in the console (error logs are always enabled)"
+        },
+        "testWalletSync": {
+          "title": "Test Ledger Sync",
+          "description": "Allows you to launch a specific LedgerSync flow",
+          "cta": "Test",
+          "modal": {
+            "flow": "Select a Flow",
+            "step": "Select a Step",
+            "instance": "Generate Members",
+            "cta": "Apply"
+          }
         }
       }
     },
@@ -5499,6 +5519,10 @@
       "title": "Invalid recipient for token transfer, supported account types for token transfer: [f0, f4, 0x]"
     },
     "NotEnoughBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds."
+    },
+    "NotEnoughBalanceSwap": {
       "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."
     },
@@ -5510,6 +5534,12 @@
     },
     "NotEnoughGasSwap": {
       "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
+    },
+    "TronEmptyAccount": {
+      "title": "You first need to send at least 0.1 TRX to this address to enable TRC20 token reception. <link0>Learn more </link0>"
+    },
+    "MaybeKeepTronAccountAlive": {
+      "title": "You need at least 0.1 TRX to keep this Tron account active and 1.1 TRX for network fees.<link0>Learn more </link0>"
     },
     "OperatingSystemOutdated": {
       "title": "Your Operating System version is outdated",
@@ -5842,6 +5872,9 @@
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"
     },
+    "InvalidExplorerResponse": {
+      "title": "Invalid response from {{currencyName}} explorer"
+    },
     "NotEnoughBalanceToDelegate": {
       "title": "Insufficient balance to delegate"
     },
@@ -6088,6 +6121,12 @@
     },
     "TezosUnrevealedAccount": {
       "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
+    },
+    "newAddressTRC20": {
+      "title": "You first need to send at least 0.1 TRX to this address to activate it."
+    },
+    "BitcoinInfrastructureError": {
+      "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
     }
   },
   "cryptoOrg": {
@@ -6224,11 +6263,11 @@
   },
   "analyticsOptInPrompt": {
     "variantA": {
-      "description": "Sharing your Ledger Live data helps us understand your preferences, show content that’s relevant to you, and fix technical issues.",
-      "whatWeTrack": "With your consent, Ledger will be able to track:",
+      "description": "Sharing your Ledger Live data helps us understand your preferences and show content that's relevant to you.",
+      "whatWeTrack": "With your consent, Ledger will be able to track data about how you use Ledger Live (including page visits and clicks):",
       "whatWeTrackList": {
-        "1": "Analytics data, including page visits, clicks.",
-        "2": "Personalization data including clicks, page visits, conversion data."
+        "1": "To measure the performance of Ledger Live and enhance both the app and your experience (Analytics).",
+        "2": "To provide you with personalized recommendations and content tailored to your preferences, as well as to help us measure the effectiveness of our marketing campaigns (Personalization)."
       },
       "whatWeDoNotTrack": "Ledger will never track information regarding:",
       "whatWeDoNotTrackList": {
@@ -6240,12 +6279,12 @@
       "refuse": "Refuse all",
       "accept": "Accept all",
       "analyticsData": {
-        "title": "Analytics data",
-        "description": "To help improve Ledger Live, share app’s analytics data, including page visits, clicks."
+        "title": "Analytics",
+        "description": "To measure Ledger Live’s performance and improve both the app and your experience, we share usage data, including page visits and clicks."
       },
       "personalizationData": {
-        "title": "Personalization data",
-        "description": "To get personalized recommendations, share app’s personalization data including, conversion data, clicks, page visits."
+        "title": "Personalization",
+        "description": "To receive personalized recommendations and content that match your preferences and to help us measure the performance of our marketing campaigns, we share app usage data, including clicks, page visits, and conversion data."
       },
       "share": "Share"
     },
@@ -6277,21 +6316,18 @@
     "profileSettings": {
       "personalizedExp": "Personalized experience",
       "analytics": "Analytics",
-      "personalizedExpDesc": "Receive personalised recommendations that match your preferences.",
-      "analyticsDesc": "Enable analytics to help Ledger improve the user experience."
+      "personalizedExpDesc": "Enable Ledger to track app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
+      "analyticsDesc": "Enable Ledger to track app usage data to help measure Ledger Live’s performance and enhance both the app and your experience."
     }
   },
   "walletSync": {
-    "title": "Wallet Sync",
+    "title": "Ledger Sync",
     "activate": {
-      "title": "Activate wallet sync",
-      "description": "Create a secure backup of your Ledger Live and synchronize multiple instances of Ledger Live, both on mobile and desktop.",
-      "cta": "Create a backup"
+      "title": "Sync your accounts across all platforms",
+      "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+      "cta": "Sync your accounts"
     },
-    "alreadySync": {
-      "title": "Already created a back-up on another Device?",
-      "cta": "Synchronize"
-    },
+    "alreadySync": "Already created a key?",
     "manage": {
       "cta": "Manage",
       "synchronize": {
@@ -6299,13 +6335,110 @@
         "description": "Synchronize your app data with another Ledger Live app for a seemless experience."
       },
       "backup": {
-        "label": "Manage your backup",
-        "description": "Secure your backup with another Ledger or delete it."
+        "label": "Manage Key",
+        "description": "Secure or delete your encryption key via another Ledger."
       },
       "instance": {
-        "label": "{{ nbInstances }} synchronized instances",
+        "label": "1 Synchronized instance",
+        "label_other": "{{count}} Synchronized instances",
         "cta": "Manage"
       }
+    },
+    "loading": {
+      "title": "Hang tight...",
+      "activation": "Your data is being end-to-end encrypted... ",
+      "synch": "We are updating the synched instances..."
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "Please try again later.",
+      "cta": "Try again",
+      "fetching": "Something went wrong while fetching your data."
+    },
+    "unsecuredError": {
+      "title": "The synchronization isn't secured by this Ledger",
+      "description": "Please connect the Ledger device you used to create your encryption key.",
+      "info": "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+      "cta": "Connect another Ledger",
+      "ctaDelete": "Delete my encryption key"
+    },
+    "autoRemoveError": {
+      "title": "You can’t remove the current instance",
+      "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
+      "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
+      "cta": "I understand",
+      "ctaDelete": "Delete my encryption key"
+    },
+    "success": {
+      "backup": {
+        "title": "Success",
+        "desc": "You successfully enabled Ledger Sync."
+      },
+      "synch": {
+        "title": "Synchronization successful!",
+        "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
+      },
+      "synchAnother": "Sync with another Ledger Live app",
+      "close": "Close"
+    },
+    "manageBackup": {
+      "title": "Manage your key",
+      "options": {
+        "deleteBackup": {
+          "title": "Delete your data",
+          "description": "All synced data will be deleted."
+        }
+      },
+      "deleteBackup": {
+        "title": "Do you really want to delete your encryption key?",
+        "description": "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time.",
+        "delete": "Delete",
+        "cancel": "Cancel"
+      },
+      "deleteBackupSuccess": {
+        "title": "Your devices have been unsynchronized and your key has been deleted"
+      },
+      "deleteBackupError": {
+        "title": "Something went wrong"
+      }
+    },
+    "synchronize": {
+      "chooseMethod": {
+        "title": "Choose your sync method",
+        "description": "You can choose to sync directly with your Ledger, or by scanning a QR code on Ledger Live.",
+        "scan": {
+          "title": "Scan a QR code",
+          "description": "Synchronize by scanning a QR code"
+        },
+        "connectDevice": {
+          "title": "Use your Ledger",
+          "description": "Synchronize by signing with your Ledger"
+        }
+      },
+      "qrCode": {
+        "title": "Synchronize",
+        "hint": "Trying to sync two Ledger Live desktop apps? Click here.",
+        "description": "Scan and synchronize your accounts with another Ledger Live app",
+        "steps": {
+          "step1": "Open the Ledger Live app you want to sync",
+          "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+          "step3": "Scan QR code until loader hits 100%."
+        }
+      },
+      "pinCode": {
+        "title": "Enter the code",
+        "description": "Type the code displayed on the other Ledger Live you want to sync with."
+      }
+    },
+    "manageInstances": {
+      "title": "Manage synchronized instances",
+      "remove": "Remove",
+      "deleteInstanceSuccess": "Your {{instanceName}} is no longer synchronized",
+      "deleteInstanceError": "Something went wrong with the desynchronization of {{instanceName}}"
+    },
+    "deviceAction": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
     }
   }
 }

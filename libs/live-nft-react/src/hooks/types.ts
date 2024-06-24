@@ -1,7 +1,12 @@
 import { NftSpamReportOpts } from "@ledgerhq/live-nft/api/simplehash";
 import { SimpleHashResponse, SimpleHashSpamReportResponse } from "@ledgerhq/live-nft/api/types";
-import { ProtoNFT } from "@ledgerhq/types-live";
-import { UseInfiniteQueryResult, InfiniteData, UseMutationResult } from "@tanstack/react-query";
+import { ProtoNFT, FloorPrice } from "@ledgerhq/types-live";
+import {
+  UseInfiniteQueryResult,
+  InfiniteData,
+  UseMutationResult,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 // SpamFilter
 export type HookProps = {
@@ -27,3 +32,6 @@ export type SpamReportNftResult = UseMutationResult<
   NftSpamReportOpts,
   unknown
 >;
+
+// FloorPrice
+export type FloorPriceResult = UseQueryResult<FloorPrice, Error>;

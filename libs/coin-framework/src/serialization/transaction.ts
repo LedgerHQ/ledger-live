@@ -54,7 +54,7 @@ const fromErrorRaw = (raw: string): Error => {
   return deserializeError(JSON.parse(raw)) || new Error("unknown reason");
 };
 
-const toErrorRaw = (raw: Error): string => JSON.stringify(serializeError(raw)) || "{}";
+export const toErrorRaw = (raw: Error): string => JSON.stringify(serializeError(raw)) || "{}";
 
 export const fromTransactionStatusRawCommon = (
   ts: TransactionStatusCommonRaw,

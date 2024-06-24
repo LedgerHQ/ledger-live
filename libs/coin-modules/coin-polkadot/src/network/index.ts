@@ -2,6 +2,7 @@ import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
 import { getOperations as bisonGetOperations } from "./bisontrails";
 import {
   getAccount as sidecardGetAccount,
+  getBalances as sidecardGetBalances,
   getMinimumBondBalance as sidecarGetMinimumBondBalance,
   getRegistry as sidecarGetRegistry,
   getStakingProgress as sidecarGetStakingProgress,
@@ -13,9 +14,12 @@ import {
   paymentInfo as sidecarPaymentInfo,
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
+  getLastBlock,
 } from "./sidecar";
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
+import network from "@ledgerhq/live-network/network";
+import coinConfig from "../config";
 
 type PolkadotAPIAccount = {
   blockHeight: number;
@@ -32,6 +36,14 @@ type PolkadotAPIAccount = {
   numSlashingSpans?: number;
 
   nominations: PolkadotNomination[];
+};
+
+type PolkadotAPIBalanceInfo = {
+  blockHeight: number;
+  balance: BigNumber;
+  spendableBalance: BigNumber;
+  nonce: number;
+  lockedBalance: BigNumber;
 };
 
 type CacheOpts = {
@@ -67,9 +79,38 @@ const isControllerAddress = makeLRUCache(
 const isElectionClosed = makeLRUCache(sidecarIsElectionClosed, () => "", minutes(1));
 const isNewAccount = makeLRUCache(sidecarIsNewAccount, address => address, minutes(1));
 
+const metadataHash = async (): Promise<string> => {
+  const res: any = await network({
+    method: "POST",
+    url: coinConfig.getCoinConfig().metadataHash.url,
+    data: {
+      id: "dot",
+    },
+  });
+  return res.data.metadataHash;
+};
+
+const shortenMetadata = async (transaction: string): Promise<string> => {
+  const res: any = await network({
+    method: "POST",
+    url: coinConfig.getCoinConfig().metadataShortener.url,
+    data: {
+      chain: {
+        id: "dot",
+      },
+      txBlob: transaction,
+    },
+  });
+
+  return res.data.txMetadata;
+};
+
 export default {
   getAccount: async (address: string): Promise<PolkadotAPIAccount> => sidecardGetAccount(address),
+  getBalances: async (address: string): Promise<PolkadotAPIBalanceInfo> =>
+    sidecardGetBalances(address),
   getOperations: bisonGetOperations,
+  getLastBlock,
   getMinimumBondBalance,
   getRegistry,
   getStakingProgress: sidecarGetStakingProgress,
@@ -82,6 +123,8 @@ export default {
   isControllerAddress,
   isElectionClosed,
   isNewAccount,
+  metadataHash,
+  shortenMetadata,
   submitExtrinsic: async (extrinsic: string) => sidecarSubmitExtrinsic(extrinsic),
   verifyValidatorAddresses: async (validators: string[]): Promise<string[]> =>
     sidecarVerifyValidatorAddresses(validators),

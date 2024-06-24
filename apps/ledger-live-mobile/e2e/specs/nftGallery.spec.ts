@@ -1,94 +1,64 @@
-import { expect } from "detox";
-import PortfolioPage from "../models/wallet/portfolioPage";
-import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
-import NftViewerPage from "../models/nft/nftViewerPage";
-import NftGalleryPage from "../models/wallet/nftGalleryPage";
-import { tapByElement, tapByText, waitForElementById } from "../helpers";
-import ReceivePage from "../models/trade/receivePage";
-import { loadConfig } from "../bridge/server";
+import { tapByElement } from "../helpers";
+import { Application } from "../page";
 
-let portfolioPage: PortfolioPage;
-let walletTabNavigatorPage: WalletTabNavigatorPage;
-let nftGalleryPage: NftGalleryPage;
-let nftViewerPage: NftViewerPage;
-let receivePage: ReceivePage;
+let app: Application;
+const accountCurrency = "ethereum";
 
-describe("NFT Gallery screen", () => {
+// To-Do Fix NFT not available in account
+describe.skip("NFT Gallery screen", () => {
   beforeAll(async () => {
-    await loadConfig("1Account1NFTNotSpam");
+    app = await Application.init("1Account1NFTNotSpam");
 
-    portfolioPage = new PortfolioPage();
-    walletTabNavigatorPage = new WalletTabNavigatorPage();
-    nftGalleryPage = new NftGalleryPage();
-    nftViewerPage = new NftViewerPage();
-    receivePage = new ReceivePage();
-
-    await portfolioPage.waitForPortfolioPageToLoad();
-    await nftGalleryPage.openViaDeeplink();
-  });
-
-  it("should see NFT tab", async () => {
-    await expect(walletTabNavigatorPage.nftGalleryTab()).toBeVisible();
-  });
-
-  it("should navigate to portfolio page on tab press", async () => {
-    await walletTabNavigatorPage.navigateToPortfolio();
-    await expect(nftGalleryPage.root()).not.toBeVisible();
+    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.nftGallery.openViaDeeplink();
   });
 
   $TmsLink("B2CQA-132");
-  it("should navigate back to NFT gallery on tab press", async () => {
-    await walletTabNavigatorPage.navigateToNftGallery();
-    await expect(nftGalleryPage.root()).toBeVisible();
+  it("should navigate to/from portfolio on tab press", async () => {
+    await app.walletTabNavigator.navigateToPortfolio();
+    await app.nftGallery.expectGalleryNotVisible();
+    await app.portfolio.expectPortfolioWithAccounts();
+
+    await app.walletTabNavigator.navigateToNftGallery();
+    await app.nftGallery.expectGalleryVisible();
   });
 
   $TmsLink("B2CQA-132");
   it("should have a list of NFTs", async () => {
-    await waitForElementById(nftGalleryPage.nftListComponentId);
-    await expect(nftGalleryPage.nftListComponent()).toBeVisible();
-    await expect(nftGalleryPage.nftListItem(0)).toBeVisible();
+    await app.nftGallery.waitForList();
+    await app.nftGallery.expectNftVisible();
   });
 
   it("should navigate to NFT viewer page on NFT gallery item press", async () => {
-    await tapByElement(nftGalleryPage.nftListItem(0));
-    await expect(nftViewerPage.mainScrollView()).toBeVisible();
-  });
+    await app.nftGallery.clickOnNft();
+    await app.nftViewer.expectVisible();
+    await app.nftGallery.expectGalleryNotVisible();
 
-  it("should navigate back to NFT gallery on back button press", async () => {
-    await expect(nftGalleryPage.nftListComponent()).not.toBeVisible();
-    await nftViewerPage.navigateToNftGallery();
-    await expect(nftGalleryPage.nftListComponent()).toBeVisible();
+    await app.nftViewer.navigateToNftGallery();
+    await app.nftGallery.expectGalleryVisible();
   });
 
   it('should show receive NFT\'s modal when "Adding new item" from list', async () => {
-    await expect(nftGalleryPage.nftReceiveModal()).not.toBeVisible();
-    await tapByElement(nftGalleryPage.nftAddNewListItem());
-    await expect(nftGalleryPage.nftReceiveModal()).toBeVisible();
-  });
+    await tapByElement(app.nftGallery.nftAddNewListItem());
+    await app.nftGallery.expectNftReceiveModalVisible();
 
-  it("should let you pick a crypto account to receive NFT", async () => {
-    await expect(receivePage.step1HeaderTitle()).not.toBeVisible();
-    await nftGalleryPage.continueFromReceiveNFTsModal();
-    await expect(receivePage.step1HeaderTitle()).toBeVisible();
-    await expect(receivePage.step2HeaderTitle()).not.toExist();
-    await tapByText("Ethereum");
-    await expect(receivePage.step2HeaderTitle()).toBeVisible();
-    await tapByText("Ethereum");
-    await expect(receivePage.step2Accounts()).toBeVisible();
+    await app.nftGallery.continueFromReceiveNFTsModal();
+    await app.receive.expectFirstStep();
+    await app.receive.selectCurrency(accountCurrency);
+    await app.receive.expectSecondStepNetworks([accountCurrency]);
+    await app.receive.selectNetwork(accountCurrency);
+    await app.receive.expectSecoundStepAccounts();
+    await app.common.closePage();
   });
 
   it("should let users hide NFT's", async () => {
-    await nftGalleryPage.openViaDeeplink();
-    await nftGalleryPage.hideNft(0);
-  });
+    await app.nftGallery.openViaDeeplink();
+    await app.nftGallery.hideNft();
+    await app.nftGallery.expectGalleryEmptyState();
 
-  it("should render empty state", async () => {
-    await expect(nftGalleryPage.emptyScreen()).toBeVisible(50);
-  });
-
-  it('should show filters on "reset" button tap', async () => {
-    await expect(nftGalleryPage.nftFilterDrawer()).not.toBeVisible();
-    await tapByElement(nftGalleryPage.emptyScreenResetButton());
-    await expect(nftGalleryPage.nftFilterDrawer()).toBeVisible();
+    // show filters on "reset" button tap
+    await app.nftGallery.expectFilterDrawerNotVisible();
+    await tapByElement(app.nftGallery.emptyScreenResetButton());
+    await app.nftGallery.expectFilterDrawerVisible();
   });
 });

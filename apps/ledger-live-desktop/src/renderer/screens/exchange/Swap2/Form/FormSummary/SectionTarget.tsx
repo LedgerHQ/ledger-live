@@ -1,23 +1,40 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { track } from "~/renderer/analytics/segment";
-import SummaryLabel from "./SummaryLabel";
-import SectionInformative from "./SectionInformative";
-import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
-import { useTranslation } from "react-i18next";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import SummarySection from "./SummarySection";
-import { openModal } from "~/renderer/actions/modals";
-import { context } from "~/renderer/drawers/Provider";
-import { useGetSwapTrackingProperties } from "../../utils/index";
 import {
   SwapSelectorStateType,
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import TargetAccountDrawer from "../TargetAccountDrawer";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
+import { track } from "~/renderer/analytics/segment";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import { context } from "~/renderer/drawers/Provider";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { useGetSwapTrackingProperties } from "../../utils/index";
+import TargetAccountDrawer from "../TargetAccountDrawer";
+import { useIsSwapLiveFlagEnabled } from "../useIsSwapLiveFlagEnabled";
+import SectionInformative from "./SectionInformative";
+import SummaryLabel from "./SummaryLabel";
+import SummarySection from "./SummarySection";
+import SummaryValue, { Container, Text, NoValuePlaceholder } from "./SummaryValue";
+import styled from "styled-components";
+
+const AccountSectionContainer = styled(SummarySection)`
+  column-gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  ${Container}, ${Text} {
+    flex-shrink: 1;
+  }
+
+  ${Container} ${Text} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
 
 const AccountSection = ({
   account,
@@ -46,7 +63,7 @@ const AccountSection = ({
   }, [handleChange, swapDefaultTrack]);
 
   return (
-    <SummarySection>
+    <AccountSectionContainer>
       <SummaryLabel label={t("swap2.form.details.label.target")} />
       <SummaryValue
         value={accountName}
@@ -54,7 +71,7 @@ const AccountSection = ({
       >
         {currency ? <CryptoCurrencyIcon circle currency={currency} size={16} /> : null}
       </SummaryValue>
-    </SummarySection>
+    </AccountSectionContainer>
   );
 };
 
@@ -94,6 +111,7 @@ const SectionTarget = ({
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const isDemo0Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoZero");
 
   const handleAddAccount = () => {
     track("button_clicked2", {
@@ -127,7 +145,8 @@ const SectionTarget = ({
 
   const handleEditAccount = hideEdit ? undefined : showDrawer;
 
-  if (!currency || !hasRates) return <PlaceholderSection />;
+  if (!currency || (isDemo0Enabled && !hasRates)) return <PlaceholderSection />;
+
   if (!account)
     return (
       <SectionInformative

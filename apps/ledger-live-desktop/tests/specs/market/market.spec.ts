@@ -43,6 +43,9 @@ test("Market", async ({ page }) => {
       page.locator("data-test-id=market-cap"),
       page.locator("data-test-id=market-price-change"),
       page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
+      //Fix for Test App (external) workflow
+      page.getByRole("row").nth(6),
+      page.getByRole("row").nth(7),
     ],
   };
 

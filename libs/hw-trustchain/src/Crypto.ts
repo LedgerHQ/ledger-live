@@ -31,6 +31,14 @@ export interface Crypto {
 export class DerivationPath {
   private constructor() {}
 
+  static hardenedIndex(index: number): number {
+    return index + 0x80000000;
+  }
+
+  static reverseHardenedIndex(index: number): number {
+    return index - 0x80000000;
+  }
+
   static toIndexArray(path: string | number[]): number[] {
     if (Array.isArray(path)) {
       return path;

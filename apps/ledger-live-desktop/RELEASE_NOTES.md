@@ -1,3 +1,23 @@
+# 2.84.0
+
+### 🗑 Removed features
+
+Viacoin (VIA), Peercoin (PPC), and Vertcoin (VTC) are no longer supported.
+
+### 🐛 Fix
+
+We fixed a bug that caused an error when trying to send or stake Injective (INJ).
+
+# 2.83.0
+
+### 🚀 Features
+
+The portfolio page now displays top-performing crypto over a specified period.
+
+### 🐛 Fix
+
+Swapping the entire Polkadot (DOT) balance would result in an error. This has been fixed.
+
 # 2.81.2
 
 ### 🐛 Fix

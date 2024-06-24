@@ -8,7 +8,7 @@ import {
   listBakersWithDefault,
   loadAccountDelegation,
   loadBaker,
-} from "@ledgerhq/coin-tezos/api/index";
+} from "@ledgerhq/coin-tezos/network/index";
 
 export function useBakers(whitelistAddresses: string[]): Baker[] {
   const [bakers, setBakers] = useState<Baker[]>(() => listBakersWithDefault(whitelistAddresses));

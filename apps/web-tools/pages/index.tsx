@@ -33,6 +33,9 @@ export default function Home() {
         <li>
           <Link href="/repl">REPL</Link>
         </li>
+        <li>
+          <Link href="/trustchain">Trustchain</Link>
+        </li>
       </ul>
     </main>
   );

@@ -29,6 +29,7 @@ import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
+import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
 
 /* Initial state */
 
@@ -72,6 +73,7 @@ export type SettingsState = {
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
   nftsViewMode: "grid" | "list";
+  collectiblesViewMode: LayoutKey;
   showAccountsHelperBanner: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
@@ -158,6 +160,7 @@ export const INITIAL_STATE: SettingsState = {
   dismissedBanners: [],
   accountsViewMode: "list",
   nftsViewMode: "list",
+  collectiblesViewMode: Layout.LIST,
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
@@ -200,7 +203,7 @@ export const INITIAL_STATE: SettingsState = {
   dismissedContentCards: {} as Record<string, number>,
   anonymousBrazeId: null,
 
-  //MARKET
+  //Market
   starredMarketCoins: [],
 };
 
@@ -254,9 +257,10 @@ type HandlersPayloads = {
   };
   CLEAR_DISMISSED_CONTENT_CARDS: never;
   SET_ANONYMOUS_BRAZE_ID: string;
-  ADD_STARRED_MARKET_COINS: string;
-  REMOVE_STARRED_MARKET_COINS: string;
   SET_CURRENCY_SETTINGS: { key: string; value: CurrencySettings };
+
+  MARKET_ADD_STARRED_COINS: string;
+  MARKET_REMOVE_STARRED_COINS: string;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -444,11 +448,12 @@ const handlers: SettingsHandlers = {
     ...state,
     anonymousBrazeId: payload,
   }),
-  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+
+  MARKET_ADD_STARRED_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: [...state.starredMarketCoins, payload],
   }),
-  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+  MARKET_REMOVE_STARRED_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
   }),
@@ -700,6 +705,7 @@ export const preferredDeviceModelSelector = (state: State) => state.settings.pre
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
 export const nftsViewModeSelector = (state: State) => state.settings.nftsViewMode;
+export const collectiblesViewModeSelector = (state: State) => state.settings.collectiblesViewMode;
 export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
@@ -724,7 +730,7 @@ export const enableLearnPageStagingUrlSelector = (state: State) =>
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
 export const hasCompletedOnboardingSelector = (state: State) =>
-  state.settings.hasCompletedOnboarding;
+  state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners || [];
 export const dismissedBannerSelector = (
   state: State,
@@ -790,5 +796,4 @@ export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymo
 
 export const currenciesSettingsSelector = (state: State) => state.settings.currenciesSettings;
 
-//MARKET
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

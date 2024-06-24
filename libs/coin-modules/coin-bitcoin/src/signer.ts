@@ -27,7 +27,6 @@ export interface BitcoinSigner {
   splitTransaction(
     transactionHex: string,
     isSegwitSupported: boolean | null | undefined,
-    hasTimestamp: boolean | null | undefined,
     hasExtraData: boolean | null | undefined,
     additionals: Array<string> | null | undefined,
   ): SignerTransaction;
@@ -72,7 +71,6 @@ export type CreateTransaction = {
   lockTime?: number | undefined;
   sigHashType?: number | undefined;
   segwit?: boolean | undefined;
-  initialTimestamp?: number | undefined;
   additionals: Array<string>;
   expiryHeight?: Buffer | undefined;
   useTrustedInputForSegwit?: boolean | undefined;

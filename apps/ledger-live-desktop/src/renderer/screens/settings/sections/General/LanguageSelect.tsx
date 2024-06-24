@@ -1,6 +1,6 @@
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
 import { DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import React, { useCallback, useEffect, useMemo } from "react";

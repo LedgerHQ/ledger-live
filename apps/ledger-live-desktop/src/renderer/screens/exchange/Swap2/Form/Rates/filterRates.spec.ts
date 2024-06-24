@@ -1,4 +1,3 @@
-import { describe, it, expect } from "@jest/globals";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { filterRates } from "~/renderer/screens/exchange/Swap2/Form/Rates/filterRates";
 import { FILTER } from "@ledgerhq/live-common/exchange/swap/utils/index";

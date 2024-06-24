@@ -52,6 +52,7 @@ test("Apps hooks - useAppUninstallNeedsDeps - Expect dep apps", () => {
     useAppUninstallNeedsDeps(mockedState, mockedState.appByName["Ethereum"]),
   );
   expect(result.current.dependents.map(({ name }) => name)).toEqual([
+    "Ethereum Classic",
     "Aave",
     "Polygon",
     "Binance Smart Chain",

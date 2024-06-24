@@ -4,7 +4,7 @@ import {
   getFeesUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -54,7 +54,7 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
                 lineHeight: "15px",
               }}
               color="palette.text.shade100"
-              val={status.estimatedFees}
+              val={status.totalFees}
               unit={feesUnit}
               showCode
               alwaysShowValue
@@ -67,7 +67,7 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
                 lineHeight: "12px",
               }}
               currency={feesCurrency}
-              value={status.estimatedFees}
+              value={status.totalFees}
               alwaysShowSign={false}
               alwaysShowValue
             />

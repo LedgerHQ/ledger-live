@@ -1,6 +1,6 @@
 import { TypeRegistry } from "@polkadot/types";
 import { u8aConcat } from "@polkadot/util";
-import { CoreTransasctionInfo } from "../types";
+import { CoreTransasctionInfo, TransasctionPayloadInfo } from "../types";
 
 /**
  * Serialize a signed transaction in a format that can be submitted over the
@@ -12,14 +12,19 @@ import { CoreTransasctionInfo } from "../types";
  * @param registry - Registry used for constructing the payload.
  */
 export const signExtrinsic = async (
-  unsigned: CoreTransasctionInfo,
+  unsigned: CoreTransasctionInfo | TransasctionPayloadInfo,
   signature: any,
   registry: TypeRegistry,
 ): Promise<string> => {
   const extrinsic = registry.createType("Extrinsic", unsigned, {
     version: unsigned.version,
   });
-  extrinsic.addSignature(unsigned.address, signature, unsigned);
+  if (typeof signature === "string") {
+    extrinsic.addSignature(unsigned.address, Buffer.from(signature, "hex"), unsigned as any);
+  } else {
+    // todo: remove it after runtime upgrade
+    extrinsic.addSignature(unsigned.address, signature, unsigned as any);
+  }
   return extrinsic.toHex();
 };
 
@@ -30,7 +35,7 @@ export const signExtrinsic = async (
  * @param registry - Registry used for constructing the payload.
  */
 export const fakeSignExtrinsic = async (
-  unsigned: CoreTransasctionInfo,
+  unsigned: CoreTransasctionInfo | TransasctionPayloadInfo,
   registry: TypeRegistry,
 ): Promise<string> => {
   const fakeSignature = u8aConcat(new Uint8Array([1]), new Uint8Array(64).fill(0x42));

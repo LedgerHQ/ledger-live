@@ -15,6 +15,7 @@ import {
   ContentCardsLayout,
   VerticalContentCard,
   HeroContentCard,
+  AllLocations,
 } from "~/dynamicContent/types";
 
 export const getMobileContentCards = (array: BrazeContentCard[]) =>
@@ -41,7 +42,7 @@ export const compareCards = (a: ContentCardCommonProperties, b: ContentCardCommo
 
 export const filterCategoriesByLocation = (
   categories: CategoryContentCard[],
-  locationId: ContentCardLocation,
+  locationId: AllLocations,
 ) => {
   const categoriesToDisplay = categories.filter(category => category.location === locationId);
 

@@ -1,11 +1,13 @@
 import BigNumber from "bignumber.js";
-import { OpKind, TezosToolkit } from "@taquito/taquito";
+import { DEFAULT_FEE, OpKind } from "@taquito/taquito";
 import { SignOperationEvent } from "@ledgerhq/types-live";
 import buildSignOperation, { getOperationContents } from "./signOperation";
+import config, { type TezosCoinConfig } from "../config";
 import { TezosSigner } from "../types";
-import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 
-const mockForgeOperations = jest.fn().mockResolvedValue("FORGED_OP");
+const mockForgeOperations = jest.fn();
+const mockEstimateReveal = jest.fn();
 jest.mock("@taquito/taquito", () => ({
   ...jest.requireActual("@taquito/taquito"),
   TezosToolkit: jest.fn().mockReturnValue({
@@ -14,6 +16,9 @@ jest.mock("@taquito/taquito", () => ({
       getBlock: jest.fn().mockResolvedValue({ hash: "hash" }),
       getContract: jest.fn().mockResolvedValue({ counter: "12" }),
       forgeOperations: () => mockForgeOperations(),
+    },
+    estimate: {
+      reveal: () => mockEstimateReveal(),
     },
   }),
 }));
@@ -31,7 +36,7 @@ describe("signOperation", () => {
     createLedgerSigner: () => ({
       publicKey: () => Promise.resolve("PUBKEY"),
       publicKeyHash: () => Promise.resolve("PUBKEYHASH"),
-      sign: () => mockSign(),
+      sign: (arg: unknown) => mockSign(arg),
       secretKey: () => Promise.resolve(undefined),
     }),
   };
@@ -40,8 +45,27 @@ describe("signOperation", () => {
   const signOperation = buildSignOperation(signerContext);
   const deviceId = "dummyDeviceId";
 
+  beforeAll(() => {
+    config.setCoinConfig(
+      (): TezosCoinConfig => ({
+        status: { type: "active" },
+        baker: {
+          url: "https://httpbin.org",
+        },
+        explorer: {
+          url: "https://httpbin.org",
+          maxTxQuery: 100,
+        },
+        node: {
+          url: "https://httpbin.org",
+        },
+      }),
+    );
+  });
+
   afterEach(() => {
     mockForgeOperations.mockClear();
+    mockEstimateReveal.mockClear();
     mockSign.mockClear();
   });
 
@@ -49,6 +73,7 @@ describe("signOperation", () => {
     // GIVEN
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction({ fees: BigNumber(0) });
+    mockForgeOperations.mockResolvedValue("FORGED_OP");
 
     // WHEN & THEN
     const expectedEvent = [
@@ -81,6 +106,7 @@ describe("signOperation", () => {
     // GIVEN
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction({ fees: new BigNumber(0) });
+    mockForgeOperations.mockResolvedValue("f0463d");
 
     // WHEN & THEN
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
@@ -88,8 +114,11 @@ describe("signOperation", () => {
         if (e.type === "signed") {
           const signature = e.signedOperation.signature;
           expect(signature).toEqual("SBYTES");
-          expect(mockSign).toHaveBeenCalledTimes(1);
           expect(mockForgeOperations).toHaveBeenCalledTimes(1);
+          expect(mockSign).toHaveBeenCalledTimes(1);
+          expect(mockSign.mock.lastCall[0]).toEqual(
+            Buffer.concat([Buffer.from("03", "hex"), Buffer.from("f0463d", "hex")]).toString("hex"),
+          );
 
           // Cleanup
           subscriber.unsubscribe();
@@ -101,7 +130,6 @@ describe("signOperation", () => {
 });
 
 describe("getOperationContents - revealed account", () => {
-  const tezos = new TezosToolkit("MOCK_API_KEY");
   const account = createFixtureAccount({ freshAddress: "tz1addr" });
 
   it("mode - send", async () => {
@@ -118,7 +146,6 @@ describe("getOperationContents - revealed account", () => {
     const { type, contents } = await getOperationContents({
       account,
       transaction,
-      tezos,
       counter: 0,
       public_key: "pk",
       public_key_hash: "pkh",
@@ -138,6 +165,7 @@ describe("getOperationContents - revealed account", () => {
         storage_limit: new BigNumber(0).toString(),
       },
     ]);
+    expect(mockEstimateReveal).not.toHaveBeenCalled();
   });
 
   it("mode - delegate", async () => {
@@ -154,7 +182,6 @@ describe("getOperationContents - revealed account", () => {
     const { type, contents } = await getOperationContents({
       account,
       transaction,
-      tezos,
       counter: 0,
       public_key: "pk",
       public_key_hash: "pkh",
@@ -173,6 +200,7 @@ describe("getOperationContents - revealed account", () => {
         delegate: transaction.recipient,
       },
     ]);
+    expect(mockEstimateReveal).not.toHaveBeenCalled();
   });
 
   it("mode - undelegate", async () => {
@@ -189,7 +217,6 @@ describe("getOperationContents - revealed account", () => {
     const { type, contents } = await getOperationContents({
       account,
       transaction,
-      tezos,
       counter: 0,
       public_key: "pk",
       public_key_hash: "pkh",
@@ -207,5 +234,64 @@ describe("getOperationContents - revealed account", () => {
         storage_limit: new BigNumber(0).toString(),
       },
     ]);
+    expect(mockEstimateReveal).not.toHaveBeenCalled();
+  });
+
+  describe("getOperationContents - not revealed account", () => {
+    const account = createFixtureAccount({
+      freshAddress: "tz1addr",
+      // We don't use `counter` in the OperationContents computation
+      tezosResources: { revealed: false, counter: -10 },
+    });
+
+    it("mode - send", async () => {
+      // Given
+      mockEstimateReveal.mockResolvedValue({
+        gasLimit: 100,
+        storageLimit: 200,
+      });
+      const transaction = createFixtureTransaction({
+        family: "tezos",
+        amount: new BigNumber(0),
+        recipient: "RECIPIENT_ADD",
+        fees: new BigNumber(0),
+        mode: "send",
+        gasLimit: new BigNumber(0),
+        storageLimit: new BigNumber(0),
+      });
+
+      const { type, contents } = await getOperationContents({
+        account,
+        transaction,
+        counter: 0,
+        public_key: "pk",
+        public_key_hash: "pkh",
+      });
+
+      expect(type).toBe("OUT");
+      expect(contents.length).toEqual(2);
+      expect(contents).toStrictEqual([
+        {
+          kind: OpKind.REVEAL,
+          fee: DEFAULT_FEE.REVEAL.toString(),
+          gas_limit: "100",
+          storage_limit: "200",
+          source: "pkh",
+          counter: "1",
+          public_key: "pk",
+        },
+        {
+          kind: OpKind.TRANSACTION,
+          amount: transaction.amount.toString(),
+          destination: transaction.recipient,
+          source: "tz1addr",
+          counter: "2",
+          fee: new BigNumber(0).toString(),
+          gas_limit: new BigNumber(0).toString(),
+          storage_limit: new BigNumber(0).toString(),
+        },
+      ]);
+      expect(mockEstimateReveal).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -48,9 +48,9 @@ runs:
       with:
         dotnet-version: 2.1.816
 
-    - uses: pnpm/action-setup@v2
+    - uses: pnpm/action-setup@v4
       with:
-        version: 8.14.1
+        version: 9.4.0
     - name: Get pnpm store directory
       shell: bash
       run: |

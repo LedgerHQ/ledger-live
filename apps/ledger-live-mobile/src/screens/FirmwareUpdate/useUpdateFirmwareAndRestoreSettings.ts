@@ -56,6 +56,7 @@ export const userSolvableErrorClasses: Array<CustomErrorClassType | TransportSta
     ImageCommitRefusedOnDevice,
     ImageLoadRefusedOnDevice,
     WebsocketConnectionFailed,
+    DisconnectedDeviceDuringOperation,
   ];
 
 export type FirmwareUpdateParams = {
@@ -247,9 +248,21 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         break;
 
       case "firmwareUpdate":
+        hasUnrecoverableError =
+          updateActionState.error &&
+          !userSolvableErrorClasses.some(
+            err =>
+              updateActionState.error instanceof err ||
+              updateActionState.error?.name === "TimeoutError",
+          );
+
         if (updateActionState.step === "preparingUpdate" && !updateActionState.lockedDevice) {
           triggerUpdate();
-        } else if (updateActionState.step === "firmwareUpdateCompleted") {
+        } else if (updateActionState.step === "firmwareUpdateCompleted" || hasUnrecoverableError) {
+          if (hasUnrecoverableError) {
+            log("FirmwareUpdate", "error while updating firmware", updateActionState.error);
+          }
+
           proceedToLanguageRestore();
         }
         break;
@@ -324,6 +337,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     staxLoadImageState.imageLoaded,
     triggerUpdate,
     updateActionState.step,
+    updateActionState.error,
     updateActionState.lockedDevice,
     updateStep,
     restoreAppsState.error,

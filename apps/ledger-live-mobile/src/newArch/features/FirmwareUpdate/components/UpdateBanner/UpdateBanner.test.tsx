@@ -52,33 +52,46 @@ const EUROPA_DATA = {
   productName: getDeviceModel(DeviceModelId.europa).productName,
 };
 
+const OUTDATED_NANOX_BLE_UPDATE = {
+  deviceModelId: DeviceModelId.nanoX,
+  productName: getDeviceModel(DeviceModelId.nanoX).productName,
+  version: "2.3.0",
+  fwVersion: "2.4.0",
+  hasCompletedOnboarding: true,
+  wired: false,
+  hasConnectedDevice: true,
+};
+
 const oldUpdateFlowNotSupportedDataSet: Array<{
   deviceModelId: DeviceModelId;
   version: string;
+  fwVersion: string;
   productName: string;
 }> = [
-  { ...NANO_S_DATA, version: "1.6.0" },
-  { ...NANO_X_DATA, version: "1.2.9" },
-  { ...NANO_SP_DATA, version: "0.9.9" },
+  { ...NANO_S_DATA, version: "1.6.0", fwVersion: "1.7.0" },
+  { ...NANO_X_DATA, version: "1.2.9", fwVersion: "1.3.0" },
+  { ...NANO_SP_DATA, version: "0.9.9", fwVersion: "1.0.0" },
 ];
 
 const oldUpdateFlowSupportedDataSet: Array<{
   deviceModelId: DeviceModelId;
   version: string;
+  fwVersion: string;
   productName: string;
 }> = [
-  { ...NANO_S_DATA, version: "1.6.1" },
-  { ...NANO_X_DATA, version: "1.3.0" },
-  { ...NANO_SP_DATA, version: "1.0.0" },
+  { ...NANO_S_DATA, version: "1.6.1", fwVersion: "1.7.2" },
+  { ...NANO_SP_DATA, version: "1.0.0", fwVersion: "1.1.0" },
 ];
 
 const newUpdateFlowSupportedDataSet: Array<{
   deviceModelId: DeviceModelId;
   version: string;
+  fwVersion: string;
   productName: string;
 }> = [
-  { ...STAX_DATA, version: "1.0.0" },
-  { ...EUROPA_DATA, version: "1.0.0" },
+  { ...STAX_DATA, version: "1.0.0", fwVersion: "1.1.0" },
+  { ...EUROPA_DATA, version: "1.0.0", fwVersion: "1.1.0" },
+  { ...NANO_X_DATA, version: "2.4.0", fwVersion: "2.4.1" },
 ];
 
 describe("<UpdateBanner />", () => {
@@ -115,6 +128,7 @@ describe("<UpdateBanner />", () => {
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
+        version: "3.0.0",
       },
     });
 
@@ -139,6 +153,7 @@ describe("<UpdateBanner />", () => {
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
+        version: "3.0.0",
       },
     });
 
@@ -164,6 +179,7 @@ describe("<UpdateBanner />", () => {
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
+        version: "3.0.0",
       },
     });
 
@@ -201,15 +217,92 @@ describe("<UpdateBanner />", () => {
     expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
   });
 
+  it("should open the unsupported drawer if there is a bluetooth update on Android on Nano X with version < 2.4.0", async () => {
+    const { fwVersion, ...nanoX } = OUTDATED_NANOX_BLE_UPDATE;
+    PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
+    useLatestFirmware.mockReturnValue({
+      final: {
+        name: "mockVersion",
+        version: fwVersion,
+      },
+    });
+
+    const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
+      overrideInitialState: makeOverrideInitialState({
+        ...nanoX,
+      }),
+    });
+
+    // Check that the banner is displayed with the correct wording
+    expect(await screen.findByText("OS update available")).toBeOnTheScreen();
+    expect(
+      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
+    ).toBeOnTheScreen();
+
+    // Press the banner
+    await user.press(screen.getByTestId("fw-update-banner"));
+
+    // Check that the unsupported drawer is displayed
+    expect(await screen.findByText("USB cable needed")).toBeOnTheScreen();
+    expect(
+      await screen.findByText(
+        "To start the firmware update, plug your Ledger Nano X to your mobile phone using a USB cable.",
+      ),
+    ).toBeOnTheScreen();
+
+    // Check that the entrypoints to the update flows are not called
+    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
+    expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
+  });
+
+  it("should open the unsupported drawer if there is a bluetooth update on iOS on Nano X with version < 2.4.0", async () => {
+    const { fwVersion, ...nanoX } = OUTDATED_NANOX_BLE_UPDATE;
+    PlatformSpy.mockReturnValue({ OS: "ios" } as typeof ReactNative.Platform);
+    useLatestFirmware.mockReturnValue({
+      final: {
+        name: "mockVersion",
+        version: fwVersion,
+      },
+    });
+
+    const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
+      overrideInitialState: makeOverrideInitialState({
+        ...nanoX,
+      }),
+    });
+
+    // Check that the banner is displayed with the correct wording
+    expect(await screen.findByText("OS update available")).toBeOnTheScreen();
+    expect(
+      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
+    ).toBeOnTheScreen();
+
+    // Press the banner
+    await user.press(screen.getByTestId("fw-update-banner"));
+
+    // Check that the unsupported drawer is displayed
+    expect(await screen.findByText("Firmware Update")).toBeOnTheScreen();
+    expect(
+      await screen.findByText(
+        "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
+      ),
+    ).toBeOnTheScreen();
+
+    // Check that the entrypoints to the update flows are not called
+    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
+    expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
+  });
+
   it("should open the unsupported drawer if there is an update and it's Android but the device has to be wired", async () => {
     PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
+        version: "3.0.0",
       },
     });
 
-    const mockDeviceModelId = DeviceModelId.nanoX;
+    const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
       overrideInitialState: makeOverrideInitialState({
@@ -224,7 +317,7 @@ describe("<UpdateBanner />", () => {
     // Check that the banner is displayed with the correct wording
     expect(await screen.findByText("OS update available")).toBeOnTheScreen();
     expect(
-      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
+      await screen.findByText("Tap to update your Ledger Nano S to OS version mockVersion."),
     ).toBeOnTheScreen();
 
     // Press the banner
@@ -233,7 +326,7 @@ describe("<UpdateBanner />", () => {
     expect(await screen.findByText("USB cable needed")).toBeOnTheScreen();
     expect(
       await screen.findByText(
-        "To start the firmware update, plug your Ledger Nano X to your mobile phone using a USB cable.",
+        "To start the firmware update, plug your Ledger Nano S to your mobile phone using a USB cable.",
       ),
     ).toBeOnTheScreen();
 
@@ -242,12 +335,13 @@ describe("<UpdateBanner />", () => {
     expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
   });
 
-  oldUpdateFlowNotSupportedDataSet.forEach(({ deviceModelId, version, productName }) => {
+  oldUpdateFlowNotSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
     it(`should open the unsupported drawer if there is an update and it's Android but the update is not supported for this device version (${version} ${deviceModelId})`, async () => {
       PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
       useLatestFirmware.mockReturnValue({
         final: {
           name: "mockVersion",
+          version: fwVersion,
         },
       });
 
@@ -284,12 +378,13 @@ describe("<UpdateBanner />", () => {
     });
   });
 
-  oldUpdateFlowSupportedDataSet.forEach(({ deviceModelId, version, productName }) => {
+  oldUpdateFlowSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
     it(`should redirect to the OLD firmware update flow if the device is supported (${version} ${deviceModelId})`, async () => {
       PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
       useLatestFirmware.mockReturnValue({
         final: {
           name: "mockVersion",
+          version: fwVersion,
         },
       });
 
@@ -316,12 +411,13 @@ describe("<UpdateBanner />", () => {
     });
   });
 
-  newUpdateFlowSupportedDataSet.forEach(({ deviceModelId, version, productName }) => {
+  newUpdateFlowSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
     it(`should redirect to the NEW firmware update flow if the device is supported (${version} ${deviceModelId})`, async () => {
       PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
       useLatestFirmware.mockReturnValue({
         final: {
           name: "mockVersion",
+          version: fwVersion,
         },
       });
 

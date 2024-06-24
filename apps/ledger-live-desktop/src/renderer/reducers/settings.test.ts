@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { describe, it, expect } from "@jest/globals";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { lastSeenDeviceSelector, INITIAL_STATE as SETTINGS_INITIAL_STATE } from "./settings";
 import { State } from ".";

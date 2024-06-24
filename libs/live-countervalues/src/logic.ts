@@ -274,6 +274,11 @@ export async function loadCountervalues(
               failures: (s?.failures || 0) + 1,
               oldestDateRequested: s?.oldestDateRequested,
             };
+            if (e.status === 422) {
+              // unsupported currency, we force a clear cache in this case
+              delete data[key];
+              delete cache[key];
+            }
           }
 
           log(
@@ -334,8 +339,9 @@ export async function loadCountervalues(
         data[key] = new Map();
       }
 
+      const map = data[key];
       Object.entries(patch[key]).forEach(([k, v]) => {
-        if (typeof v === "number") data[key].set(k, v);
+        if (typeof v === "number") map.set(k, v);
       });
     });
   });

@@ -13,6 +13,7 @@ export type MyLedgerNavigatorStackParamList = {
         firmwareUpdate?: boolean;
         device?: Device | null;
         appsToRestore?: string[];
+        updateModalOpened?: boolean;
       }
     | undefined;
   [ScreenName.MyLedgerDevice]: {

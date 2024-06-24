@@ -1,5 +1,5 @@
 import { Image } from "react-native";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { isEqual } from "lodash/fp";
 import {
   updateFirmwareActionArgs,
@@ -365,9 +365,13 @@ export const FirmwareUpdate = ({
           <>
             <TrackScreen category={"Update device - Step 2: installing updates"} avoidDuplicates />
             <Text variant="bodyLineHeight" color="neutral.c80">
-              {t("FirmwareUpdate.steps.installUpdate.description", {
-                deviceName: productName,
-              })}
+              {!device.wired && device.modelId === DeviceModelId.nanoX
+                ? t("FirmwareUpdate.steps.installUpdate.descriptionNanoXBle", {
+                    deviceName: productName,
+                  })
+                : t("FirmwareUpdate.steps.installUpdate.description", {
+                    deviceName: productName,
+                  })}
             </Text>
           </>
         ),
@@ -390,7 +394,7 @@ export const FirmwareUpdate = ({
         ),
       },
     }),
-    [isBeforeOnboarding, t, productName, restoreSteps],
+    [isBeforeOnboarding, t, productName, restoreSteps, device.wired, device.modelId],
   );
 
   useEffect(() => {
@@ -579,6 +583,21 @@ export const FirmwareUpdate = ({
       );
     }
 
+    if (updateActionState.error?.name === "TimeoutError") {
+      return (
+        <DeviceActionError
+          t={t}
+          device={device}
+          errorName={updateActionState.error.name}
+          translationContext="FirmwareUpdate.updateStatusErrors"
+        >
+          <Button type="main" outline={false} onPress={quitUpdate} mt={6} alignSelf="stretch">
+            {t("FirmwareUpdate.quitUpdate")}
+          </Button>
+        </DeviceActionError>
+      );
+    }
+
     if (batteryStatusesState.error !== null) {
       return (
         <DeviceActionError
@@ -754,6 +773,7 @@ export const FirmwareUpdate = ({
     restoreStepDeniedError,
     userSolvableError,
     updateActionState.step,
+    updateActionState.error,
     updateActionState.progress,
     t,
     device,

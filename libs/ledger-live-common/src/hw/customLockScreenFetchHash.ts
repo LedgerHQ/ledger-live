@@ -10,7 +10,7 @@ export default async (transport: Transport): Promise<string> => {
   const res = await transport.send(0xe0, 0x66, 0x00, 0x00, Buffer.from([]), [
     StatusCodes.OK,
     StatusCodes.CUSTOM_IMAGE_EMPTY,
-    StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
+    StatusCodes.DEVICE_IN_RECOVERY_MODE,
   ]);
   const status = res.readUInt16BE(res.length - 2);
 
@@ -19,7 +19,7 @@ export default async (transport: Transport): Promise<string> => {
       return res.slice(0, res.length - 2).toString("hex");
     case StatusCodes.CUSTOM_IMAGE_EMPTY:
       return "";
-    case StatusCodes.CUSTOM_IMAGE_BOOTLOADER:
+    case StatusCodes.DEVICE_IN_RECOVERY_MODE:
       throw new UnexpectedBootloader();
   }
   throw new TransportStatusError(status);

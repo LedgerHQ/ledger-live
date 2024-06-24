@@ -4,7 +4,12 @@ import axios, { AxiosRequestConfig } from "axios";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { EtherscanAPIError, EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
+import { log } from "@ledgerhq/logs";
+import {
+  EtherscanAPIError,
+  EtherscanLikeExplorerUsedIncorrectly,
+  InvalidExplorerResponse,
+} from "../../errors";
 import {
   etherscanOperationToOperations,
   etherscanERC20EventToOperations,
@@ -342,40 +347,45 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = makeLRUCache<
   }
 >(
   async (currency, address, accountId, fromBlock, toBlock) => {
-    const lastCoinOperations = await getLastCoinOperations(
-      currency,
-      address,
-      accountId,
-      fromBlock,
-      toBlock,
-    );
+    try {
+      const lastCoinOperations = await getLastCoinOperations(
+        currency,
+        address,
+        accountId,
+        fromBlock,
+        toBlock,
+      );
 
-    const lastInternalOperations = await getLastInternalOperations(
-      currency,
-      address,
-      accountId,
-      fromBlock,
-      toBlock,
-    );
+      const lastInternalOperations = await getLastInternalOperations(
+        currency,
+        address,
+        accountId,
+        fromBlock,
+        toBlock,
+      );
 
-    const lastTokenOperations = await getLastTokenOperations(
-      currency,
-      address,
-      accountId,
-      fromBlock,
-      toBlock,
-    );
+      const lastTokenOperations = await getLastTokenOperations(
+        currency,
+        address,
+        accountId,
+        fromBlock,
+        toBlock,
+      );
 
-    const lastNftOperations = isNFTActive(currency)
-      ? await getLastNftOperations(currency, address, accountId, fromBlock, toBlock)
-      : [];
+      const lastNftOperations = isNFTActive(currency)
+        ? await getLastNftOperations(currency, address, accountId, fromBlock, toBlock)
+        : [];
 
-    return {
-      lastCoinOperations,
-      lastTokenOperations,
-      lastNftOperations,
-      lastInternalOperations,
-    };
+      return {
+        lastCoinOperations,
+        lastTokenOperations,
+        lastNftOperations,
+        lastInternalOperations,
+      };
+    } catch (err) {
+      log("EVM getLastOperations", "Error while fetching data from Etherscan like API", err);
+      throw new InvalidExplorerResponse("", { currencyName: currency.name });
+    }
   },
   (currency, address, accountId, fromBlock, toBlock) => accountId + fromBlock + toBlock,
   { ttl: ETHERSCAN_TIMEOUT },

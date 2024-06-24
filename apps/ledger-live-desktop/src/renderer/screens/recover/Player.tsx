@@ -4,7 +4,11 @@ import { RouteComponentProps, useHistory } from "react-router-dom";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  developerModeSelector,
+  languageSelector,
+} from "~/renderer/reducers/settings";
 import WebRecoverPlayer from "~/renderer/components/WebRecoverPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -57,6 +61,7 @@ export default function RecoverPlayer({
   const currency = currencySettings.ticker;
 
   const device = useSelector(getCurrentDevice);
+  const devModeEnabled = useSelector(developerModeSelector);
 
   const { onboardingState } = useOnboardingStatePolling({
     device: device || null,
@@ -81,6 +86,7 @@ export default function RecoverPlayer({
       availableOnDesktop,
       deviceId: state?.deviceId,
       deviceModelId: device?.modelId,
+      devModeEnabled,
       currency,
       ...params,
       ...queryParams,

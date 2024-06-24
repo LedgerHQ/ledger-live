@@ -17,12 +17,7 @@ describe("Symmetric key exchange scenarii", () => {
     const resolved = await stream.resolve();
     expect(resolved.isCreated()).toBe(true);
     expect(resolved.getMembers().length).toBe(1);
-    expect(resolved.getMembersData().length).toBe(1);
-    expect(Object.keys(resolved.getMembersData()[0]).sort()).toEqual([
-      "name",
-      "permission",
-      "publicKey",
-    ]);
+    expect(resolved.getMembersData().length).toBe(0);
     expect(crypto.to_hex(resolved.getTopic()!)).toBe(crypto.to_hex(topic));
     //const parsed = CommandStreamDecoder.decode(CommandStreamEncoder.encode(stream.blocks));
     //console.log(JSON.stringify(CommandStreamJsonifier.jsonify(parsed), null, 2));

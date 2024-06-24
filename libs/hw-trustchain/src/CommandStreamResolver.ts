@@ -20,14 +20,15 @@ interface PublishedKey {
 }
 
 type MemberData = {
-  publicKey: Uint8Array;
+  id: string;
   name: string;
-  permission: number;
+  permissions: number;
 };
 
 class ResolvedCommandStreamInternals {
   public isCreated: boolean = false;
   public members: Uint8Array[] = [];
+  public membersData: MemberData[] = [];
   public topic: Uint8Array | null = null;
   public keys: Map<string, PublishedKey> = new Map();
   public permission: Map<string, number> = new Map();
@@ -55,14 +56,7 @@ export class ResolvedCommandStream {
   }
 
   public getMembersData(): MemberData[] {
-    return this._internals.members.map(publicKey => {
-      const hex = crypto.to_hex(publicKey);
-      return {
-        publicKey,
-        name: this._internals.names.get(hex)!,
-        permission: this._internals.permission.get(hex)!,
-      };
-    });
+    return this._internals.membersData;
   }
 
   public getTopic(): Uint8Array | null {
@@ -224,11 +218,12 @@ export default class CommandStreamResolver {
       case CommandType.AddMember: {
         this.assertStreamIsCreated(internals);
         this.assertIssuerCanAddMember(block.issuer, internals);
-        const publicKey = (command as AddMember).publicKey;
-        const hex = crypto.to_hex(publicKey);
+        const { publicKey, permissions, name } = command as AddMember;
+        const id = crypto.to_hex(publicKey);
         internals.members.push(publicKey);
-        internals.permission.set(hex, (command as AddMember).permissions);
-        internals.names.set(hex, (command as AddMember).name);
+        internals.permission.set(id, permissions);
+        internals.names.set(id, name);
+        internals.membersData.push({ id, name, permissions });
         break;
       }
       case CommandType.PublishKey:

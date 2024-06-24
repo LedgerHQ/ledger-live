@@ -66,7 +66,7 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
           // HRP is only needed when signing for ethermint chains
           const signResponseApp =
             path[1] === 60
-              ? await app.sign(path, tx, parseInt(chainInstance.prefix))
+              ? await app.sign(path, tx, chainInstance.prefix)
               : await app.sign(path, tx);
 
           switch (signResponseApp.return_code) {

@@ -30,6 +30,7 @@ const UpdateBanner = ({
     : undefined;
 
   const deviceName = lastConnectedDevice?.deviceName;
+
   return bannerVisible ? (
     <>
       <Pressable onPress={onClickUpdate} testID="fw-update-banner">

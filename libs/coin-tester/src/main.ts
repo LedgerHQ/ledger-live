@@ -4,32 +4,42 @@ import {
   TransactionCommon,
   SignOperationEvent,
   CurrencyBridge,
+  Operation,
 } from "@ledgerhq/types-live";
 import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
 
-export type ScenarioTransaction<T extends TransactionCommon> = Partial<T> & {
+export type ScenarioTransaction<T extends TransactionCommon, A extends Account> = Partial<T> & {
   name: string;
   /**
    *
+   * @description assert the account state after the transaction
    * @param previousAccount previousAccount returned by the latest sync before broadcasting this transaction
    * @param currentAccount currentAccount synced after broadcasting this transaction
    * @returns void
    */
-  expect?: (previousAccount: Account, currentAccount: Account) => void;
+  expect?: (previousAccount: A, currentAccount: A) => void;
+  /**
+   * FOR DEV ONLY
+   * if you want to temporarily disable the expect for a transaction
+   * You should push a transaction with a xexpect
+   */
+  xexpect?: (previousAccount: A, currentAccount: A) => void;
 };
 
-export type Scenario<T extends TransactionCommon> = {
+export type Scenario<T extends TransactionCommon, A extends Account> = {
   name: string;
   setup: () => Promise<{
-    accountBridge: AccountBridge<T>;
+    accountBridge: AccountBridge<T, A>;
     currencyBridge: CurrencyBridge;
-    account: Account;
+    account: A;
     retryInterval?: number;
     retryLimit?: number;
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
   }>;
-  getTransactions: (address: string) => ScenarioTransaction<T>[];
+  getTransactions: (address: string) => ScenarioTransaction<T, A>[];
+  beforeSync?: () => Promise<void> | void;
+  mockIndexer?: (account: Account, optimistic: Operation) => Promise<void>;
   beforeAll?: (account: Account) => Promise<void> | void;
   afterAll?: (account: Account) => Promise<void> | void;
   beforeEach?: (account: Account) => Promise<void> | void;
@@ -37,7 +47,9 @@ export type Scenario<T extends TransactionCommon> = {
   teardown?: () => Promise<void> | void;
 };
 
-export async function executeScenario<T extends TransactionCommon>(scenario: Scenario<T>) {
+export async function executeScenario<T extends TransactionCommon, A extends Account>(
+  scenario: Scenario<T, A>,
+) {
   try {
     const {
       accountBridge,
@@ -62,6 +74,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
     currencyBridge.hydrate(data, account.currency);
     console.log("Preload + hydrate completed ✓");
 
+    await scenario.beforeSync?.();
     console.log("Running a synchronization on the account...");
     let scenarioAccount = await firstValueFrom(
       accountBridge
@@ -91,10 +104,11 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       console.log("\n");
       console.log(chalk.cyan("Transaction:", chalk.bold(testTransaction.name), "◌"));
 
-      scenario.beforeEach?.(scenarioAccount);
+      await scenario.beforeEach?.(scenarioAccount);
       console.log("Before each ✔️");
 
       if (scenarioTransactions.indexOf(testTransaction) > 0) {
+        await scenario.beforeSync?.();
         scenarioAccount = await firstValueFrom(
           accountBridge
             .sync(scenarioAccount, { paginationConfig: {} })
@@ -114,7 +128,9 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
       const status = await accountBridge.getTransactionStatus(scenarioAccount, transaction);
       if (Object.entries(status.errors).length) {
-        throw new Error(`Error in transaction status: ${JSON.stringify(status.errors, null, 3)}`);
+        throw new Error(
+          `${testTransaction.name} transaction\nError in transaction status: ${JSON.stringify(status.errors, null, 3)}`,
+        );
       }
 
       console.log(" → ", "🪲  ", chalk.bold("No status errors detected"), "✓");
@@ -141,15 +157,16 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       console.log(" → ", "🔏 ", chalk.bold("Signed the transaction"), "✓");
 
       const optimisticOperation = await accountBridge.broadcast({
-        account: scenarioAccount,
         signedOperation,
+        account: scenarioAccount,
       });
 
       console.log(" → ", "🛫 ", chalk.bold("Broadcasted the transaction"), "✓");
 
       const retry_limit = retryLimit ?? 10;
 
-      const expectHandler = async (retry: number) => {
+      async function expectHandler(retry: number) {
+        await scenario.beforeSync?.();
         scenarioAccount = await firstValueFrom(
           accountBridge
             .sync(
@@ -167,6 +184,8 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
               )}. You might want to add tests in this transaction.`,
             ),
           );
+
+          return;
         }
 
         try {
@@ -176,7 +195,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
             if (retry === 0) {
               console.error(
                 chalk.red(
-                  `Retried 10 times and could not assert all expects for transaction ${chalk.bold(
+                  `Retried ${retry_limit} time(s) and could not assert all expects for transaction ${chalk.bold(
                     testTransaction.name,
                   )}`,
                 ),
@@ -186,17 +205,18 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
             }
 
             console.warn(chalk.magenta("Test asssertion failed. Retrying..."));
-            await new Promise(resolve => setTimeout(resolve, retryInterval ?? 5000));
+            await new Promise(resolve => setTimeout(resolve, retryInterval ?? 3 * 1000));
             await expectHandler(retry - 1);
+          } else {
+            throw err;
           }
-
-          throw err;
         }
-      };
+      }
 
+      await scenario.mockIndexer?.(scenarioAccount, optimisticOperation);
       await expectHandler(retry_limit);
 
-      scenario.afterEach?.(scenarioAccount);
+      await scenario.afterEach?.(scenarioAccount);
       console.log("After each ✔️");
       console.log(chalk.green("Transaction:", chalk.bold(testTransaction.name), "completed  ✓"));
     }

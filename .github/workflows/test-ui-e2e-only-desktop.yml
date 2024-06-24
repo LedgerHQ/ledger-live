@@ -22,14 +22,6 @@ on:
         description: Ignore test having name pattern (entered in the previous field)
         type: boolean
         default: false
-      speculos_tests:
-        description: Run the speculos tests (if false, mocked tests will be run instead)
-        type: boolean
-        default: true
-      enable_broadcast:
-        description: Enable transaction broadcast
-        type: boolean
-        default: false
 
       report_path:
         description: Path where you want to store this execution's results
@@ -40,6 +32,16 @@ on:
         required: false
         type: boolean
         default: false
+      export_to_xray:
+        description: Send tests results to Xray
+        required: false
+        type: boolean
+        default: false
+      test_execution:
+        description: "Test Execution ticket ID"
+        required: false
+        type: string
+        default: "B2CQA-2461"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -60,9 +62,15 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.9.5
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge]
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -82,7 +90,7 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-      - name: generate token
+      - name: Generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
         with:
@@ -91,47 +99,50 @@ jobs:
       - name: Retrieving coin apps
         uses: actions/checkout@v4
         with:
-          ref: generated/ledger-live-bot
+          ref: master
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
-      - name: pull docker image
-        run: docker pull ghcr.io/ledgerhq/speculos:sha-e262a0c
+      - name: Pull docker image
+        run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
+          export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
           export COINAPPS=$PWD/coin-apps
-          if [ "$ENABLE_BROADCAST" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi
-          if [ "$SPECULOS_TESTS" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi
+          export ENABLE_TRANSACTION_BROADCAST=1
+          export MOCK=0
           if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          ENABLE_BROADCAST: ${{ contains(inputs.enable_broadcast, 'true') }}
-          SPECULOS_TESTS: ${{ !contains(inputs.speculos_tests, 'false') }}
+          XRAY: ${{ inputs.export_to_xray }}
+          TEST_EXECUTION: ${{ inputs.test_execution }}
+          PROJECT_KEY: B2CQA
 
-      - name: upload diffs to s3
+      - name: Upload Allure Results
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
-        id: s3
+        uses: actions/upload-artifact@v4.3.0
         with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
-          os: linux
-          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
-      - name: upload ci suggested screenshots
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+          retention-days: 1
+          name: allure-results-${{ matrix.shardIndex }}
+          path: "apps/ledger-live-desktop/allure-results"
+
+      - name: Upload Xray Results
+        if: ${{ !cancelled() && inputs.export_to_xray }}
+        uses: actions/upload-artifact@v4.3.0
         with:
-          name: images
-          path: images-linux.json
+          retention-days: 1
+          name: xray-reports-${{ matrix.shardIndex }}
+          path: apps/ledger-live-desktop/tests/artifacts/xray/xray-report.json
+
       - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.3.0
         if: failure() && !cancelled()
         with:
-          name: playwright-results-linux
+          name: playwright-results-${{ matrix.shardIndex }}
           path: |
             apps/ledger-live-desktop/tests/artifacts/test-results
             apps/ledger-live-desktop/tests/artifacts/html-report
@@ -139,18 +150,23 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
             apps/ledger-live-desktop/tests/artifacts/*.log
-      - name: Upload Allure Report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-linux
-          path: apps/ledger-live-desktop/allure-results
 
-      - name: Upload Allure Results
-        uses: actions/upload-artifact@v4.3.0
+  report-and-notify:
+    name: "Report and Notify"
+    runs-on: [ledger-live-medium]
+    needs: e2e-tests-linux
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
         with:
-          name: "allure-results"
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Download Allure Results
+        uses: actions/download-artifact@v4.1.1
+        with:
           path: "apps/ledger-live-desktop/allure-results"
+          pattern: allure-results-*
+          merge-multiple: true
 
       - name: Publish report on Allure Server
         id: allure-server
@@ -188,9 +204,9 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: >
-          if ${{ steps.tests.outcome == 'success' }};
+          if ${{ needs.e2e-tests-linux.outputs.status == 'success' }};
           then echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
-          elif ${{ steps.tests.outcome == 'failure' }};
+          elif ${{ needs.e2e-tests-linux.outputs.status == 'failure' }};
           then echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
           else echo "STATUS_COLOR=#F3FF33" >> $GITHUB_ENV;
           fi
@@ -226,8 +242,8 @@ jobs:
 
             const report = {
               linux: {
-                pass: ${{ steps.tests.outcome == 'success' }},
-                status: "${{ steps.tests.outcome }}",
+                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-linux.outputs.status }}",
               }
             };
 
@@ -279,11 +295,10 @@ jobs:
                 description: "Run the full e2e test suite for LLD",
               }],
             };
-            
+
             if (${{ !inputs.slack_notif && github.event_name == 'workflow_dispatch' }}) return;
 
             const slackPayload = {
-              "text": "Ledger Live Desktop tests results on ${{github.ref_name}}",
               "attachments": [
                 {
                   "color": "${{ env.STATUS_COLOR }}",
@@ -292,19 +307,12 @@ jobs:
                       "type": "header",
                       "text": {
                         "type": "plain_text",
-                        "text": ":ledger-logo: Ledger Live Desktop tests results on ${{ github.ref_name }}",
+                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }}",
                         "emoji": true
                       }
                     },
                     {
                       "type": "divider"
-                    },
-                    {
-                      "type": "header",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "E2E Tests"
-                      }
                     },
                     {
                       "type": "section",
@@ -348,3 +356,56 @@ jobs:
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+
+  upload-to-xray:
+    name: "Upload to Xray"
+    runs-on: [ledger-live-medium]
+    env:
+      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
+      XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
+      JIRA_URL: https://ledgerhq.atlassian.net/browse
+    needs: e2e-tests-linux
+    if: ${{ !cancelled() && inputs.export_to_xray }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      
+      - name: Download Xray Results
+        uses: actions/download-artifact@v4.1.1
+        with:
+          path: "apps/ledger-live-desktop/artifacts/xray"
+          pattern: xray-reports-*
+          merge-multiple: false
+
+      - name: Extract and Aggregate Xray results
+        run: 
+          ./aggregate-xray-reports.sh
+      
+      - name: Upload aggregated xray results
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: aggregated-xray-reports
+          path: "apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json"
+
+      - name: Authenticate to Xray
+        id: authenticate
+        run: |
+          response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
+          echo "xray_token=$response" >> $GITHUB_OUTPUT
+
+      - name: Publish merged report on Xray
+        id: publish-xray
+        run: |
+          response=$(curl -H "Content-Type: application/json" \
+                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
+                    -X POST \
+                    --data @apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json \
+                    ${{ env.XRAY_API_URL }}/import/execution)
+            key=$(echo $response | jq -r '.key')
+            echo "xray_key=$key" >> $GITHUB_OUTPUT
+
+      - name: Write Xray report in summary
+        shell: bash
+        run: echo "::notice title=Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"

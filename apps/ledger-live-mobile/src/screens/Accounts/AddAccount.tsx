@@ -1,15 +1,12 @@
 import React, { memo, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/live-common/currencies/index";
 import Touchable from "~/components/Touchable";
-import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { track } from "~/analytics";
-import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 function AddAccount({ currencyId }: { currencyId?: string }) {
-  const navigation = useNavigation<BaseNavigation>();
   const currency = currencyId
     ? findCryptoCurrencyById(currencyId) || findTokenById(currencyId)
     : undefined;
@@ -26,26 +23,32 @@ function AddAccount({ currencyId }: { currencyId?: string }) {
     setIsAddModalOpened(false);
   }
 
+  function reopenAddModal() {
+    setIsAddModalOpened(true);
+  }
+
   return (
-    <Touchable event="OpenAddAccountModal" onPress={openAddModal} testID="OpenAddAccountModal">
-      <Flex
-        bg={"neutral.c100"}
-        width={"32px"}
-        height={"32px"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        borderRadius={32}
-        testID="add-account-button"
-      >
-        <PlusMedium size={20} color={"neutral.c00"} />
-      </Flex>
-      <AddAccountsModal
-        navigation={navigation}
+    <>
+      <Touchable event="OpenAddAccountModal" onPress={openAddModal} testID="OpenAddAccountModal">
+        <Flex
+          bg={"neutral.c100"}
+          width={"32px"}
+          height={"32px"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          borderRadius={32}
+          testID="add-account-button"
+        >
+          <PlusMedium size={20} color={"neutral.c00"} />
+        </Flex>
+      </Touchable>
+      <AddAccountDrawer
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
+        reopenDrawer={reopenAddModal}
         currency={currency}
       />
-    </Touchable>
+    </>
   );
 }
 

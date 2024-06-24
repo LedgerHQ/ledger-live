@@ -29,6 +29,7 @@ type MarketListProps = {
   isItemLoaded: (index: number) => boolean;
   onLoadNextPage: (startIndex: number, stopIndex: number) => void;
   checkIfDataIsStaleAndRefetch: (scrollOffset: number) => void;
+  currenciesAll: string[];
 };
 
 function MarketList({
@@ -49,6 +50,7 @@ function MarketList({
   onLoadNextPage,
   checkIfDataIsStaleAndRefetch,
   t,
+  currenciesAll,
 }: MarketListProps) {
   const { order, search, starred, range, counterCurrency } = marketParams;
 
@@ -100,6 +102,7 @@ function MarketList({
                         locale={locale}
                         swapAvailableIds={fromCurrencies ?? []}
                         range={range}
+                        currenciesAll={currenciesAll}
                       />
                     )}
                   </List>
@@ -141,6 +144,7 @@ function MarketList({
                             locale={locale}
                             swapAvailableIds={fromCurrencies ?? []}
                             range={range}
+                            currenciesAll={currenciesAll}
                           />
                         )}
                       </List>

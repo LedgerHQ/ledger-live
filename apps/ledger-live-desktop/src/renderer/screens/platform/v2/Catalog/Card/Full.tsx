@@ -37,7 +37,13 @@ export function FullCard(props: PropsCard<LiveAppManifest>) {
   );
 
   return (
-    <Container highlighted={highlighted} disabled={disabled} onClick={onClick} flex={1}>
+    <Container
+      data-test-id={`platform-catalog-app-${manifest.id}`}
+      highlighted={highlighted}
+      disabled={disabled}
+      onClick={onClick}
+      flex={1}
+    >
       <Flex alignItems="center">
         <Logo icon={manifest.icon} name={manifest.name} size="medium" disabled={disabled} />
 

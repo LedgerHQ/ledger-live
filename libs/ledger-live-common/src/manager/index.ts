@@ -7,7 +7,6 @@ import ManagerAPI from "./api";
 import { getProviderId } from "./provider";
 import type {
   Language,
-  ApplicationVersion,
   DeviceInfo,
   FirmwareUpdateContext,
   OsuFirmware,
@@ -99,61 +98,6 @@ const CacheAPI = {
     }
 
     return languages;
-  },
-  // get list of apps for a given deviceInfo
-  getAppsList: async (
-    deviceInfo: DeviceInfo,
-    isDevMode = false, // TODO getFullListSortedCryptoCurrencies can be a local function.. too much dep for now
-    getFullListSortedCryptoCurrencies: any = () => Promise.resolve([]),
-  ): Promise<ApplicationVersion[]> => {
-    console.warn("deprecated: use @ledgerhq/live-common/src/apps/* instead");
-    if (deviceInfo.isOSU || deviceInfo.isBootloader) return Promise.resolve([]);
-    const deviceVersionP = ManagerAPI.getDeviceVersion(
-      deviceInfo.targetId,
-      getProviderId(deviceInfo),
-    );
-    const firmwareDataP = deviceVersionP.then(deviceVersion =>
-      ManagerAPI.getCurrentFirmware({
-        deviceId: deviceVersion.id,
-        version: deviceInfo.version,
-        provider: getProviderId(deviceInfo),
-      }),
-    );
-    const applicationsByDeviceP = Promise.all([deviceVersionP, firmwareDataP]).then(
-      ([deviceVersion, firmwareData]) =>
-        ManagerAPI.applicationsByDevice({
-          provider: getProviderId(deviceInfo),
-          current_se_firmware_final_version: firmwareData.id,
-          device_version: deviceVersion.id,
-        }),
-    );
-    const [applicationsList, compatibleAppVersionsList, sortedCryptoCurrencies] = await Promise.all(
-      [ManagerAPI.listApps(), applicationsByDeviceP, getFullListSortedCryptoCurrencies()],
-    );
-    const filtered = isDevMode
-      ? compatibleAppVersionsList.slice(0)
-      : compatibleAppVersionsList.filter(version => {
-          const app = applicationsList.find(e => e.id === version.app);
-
-          if (app) {
-            return app.category !== 2;
-          }
-
-          return false;
-        });
-    const sortedCryptoApps: ApplicationVersion[] = [];
-    // sort by crypto first
-    sortedCryptoCurrencies.forEach(crypto => {
-      const app = filtered.find(
-        item => item.name.toLowerCase() === crypto.managerAppName.toLowerCase(),
-      );
-
-      if (app) {
-        filtered.splice(filtered.indexOf(app), 1);
-        sortedCryptoApps.push({ ...app, currency: crypto });
-      }
-    });
-    return sortedCryptoApps.concat(filtered);
   },
 };
 export default CacheAPI;

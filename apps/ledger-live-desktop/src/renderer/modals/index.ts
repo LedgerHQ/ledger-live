@@ -31,6 +31,8 @@ import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_ERROR from "./ErrorModal";
 import MODAL_VAULT_SIGNER from "./VaultSigner";
 
+import MODAL_WALLET_SYNC_DEBUGGER from "./WalletSyncDebugger";
+
 type GlobalModals = MakeModalsType<GlobalModalData>;
 
 const globalModals: GlobalModals = {
@@ -58,6 +60,7 @@ const globalModals: GlobalModals = {
   MODAL_START_STAKE,
   MODAL_PROTECT_DISCOVER,
   MODAL_CREATE_LOCAL_APP,
+  MODAL_WALLET_SYNC_DEBUGGER,
 
   // Platform
   MODAL_PLATFORM_EXCHANGE_START,

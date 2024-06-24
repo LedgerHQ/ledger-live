@@ -1,28 +1,24 @@
 import { AppPage } from "tests/page/abstractClasses";
 
 export class ManagerPage extends AppPage {
-  readonly firmwareUpdateButton = this.page.locator("data-test-id=manager-update-firmware-button");
-  readonly changeDeviceLanguageButton = this.page.locator(
-    "data-test-id=manager-change-language-button",
-  );
-  private installedAppsTab = this.page.locator("data-test-id=manager-installed-apps-tab");
-  private catalogAppsTab = this.page.locator("data-test-id=manager-app-catalog-tab");
-  private updateAllButton = this.page.locator("data-test-id=manager-update-all-apps-button");
-  private updateAllProgressBar = this.page.locator("data-test-id=manager-update-all-progress-bar");
+  readonly firmwareUpdateButton = this.page.getByTestId("manager-update-firmware-button");
+  readonly changeDeviceLanguageButton = this.page.getByTestId("manager-change-language-button");
+  private installedAppsTab = this.page.getByTestId("manager-installed-apps-tab");
+  private catalogAppsTab = this.page.getByTestId("manager-app-catalog-tab");
+  private updateAllButton = this.page.getByTestId("manager-update-all-apps-button");
+  private updateAllProgressBar = this.page.getByTestId("manager-update-all-progress-bar");
   private changeLanguageOption = (language: string) =>
-    this.page.locator(`data-test-id=manager-language-option-${language}`);
+    this.page.getByTestId(`manager-language-option-${language}`);
   private appProgressBar = (currency: string) =>
-    this.page.locator(`data-test-id=manager-${currency}-app-progress-bar`);
+    this.page.getByTestId(`manager-${currency}-app-progress-bar`);
   private installAppButton = (currency: string) =>
-    this.page.locator(`data-test-id=manager-install-${currency}-app-button`);
+    this.page.getByTestId(`manager-install-${currency}-app-button`);
   private uninstallAppButton = (currency: string) =>
-    this.page.locator(`data-test-id=manager-uninstall-${currency}-app-button`);
-  private uninstallAllAppsButton = this.page.locator(
-    "data-test-id=manager-uninstall-all-apps-button",
-  );
-  private confirmButton = this.page.locator("data-test-id=modal-confirm-button");
-  private installedAppEmptyState = this.page.locator("data-test-id=manager-no-apps-empty-state");
-  readonly customImageButton = this.page.locator("data-test-id=manager-custom-image-button");
+    this.page.getByTestId(`manager-uninstall-${currency}-app-button`);
+  private uninstallAllAppsButton = this.page.getByTestId("manager-uninstall-all-apps-button");
+  private confirmButton = this.page.getByTestId("modal-confirm-button");
+  private installedAppEmptyState = this.page.getByTestId("manager-no-apps-empty-state");
+  readonly customImageButton = this.page.getByTestId("manager-custom-image-button");
 
   async goToInstalledAppTab() {
     await this.installedAppsTab.click();

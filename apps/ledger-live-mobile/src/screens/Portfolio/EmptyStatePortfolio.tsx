@@ -7,7 +7,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { hasInstalledAnyAppSelector } from "~/reducers/settings";
 import { NavigatorName } from "~/const";
 import Button from "~/components/Button";
-import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import noAccountsImgDark from "~/images/illustration/Dark/_048.png";
 import noAccountsImgLight from "~/images/illustration/Light/_048.png";
 import noAppsImgDark from "~/images/illustration/Dark/_056.png";
@@ -15,8 +14,9 @@ import noAppsImgLight from "~/images/illustration/Light/_056.png";
 import HelpLink from "~/components/HelpLink";
 import { urls } from "~/utils/urls";
 import Illustration from "~/images/illustration/Illustration";
-import { BaseNavigation, BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 type Props = {
   showHelp?: boolean;
@@ -32,6 +32,10 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
   const openAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
+
+  const reopenAddModal = useCallback(() => {
+    setAddModalOpened(true);
+  }, [setAddModalOpened]);
 
   const navigateToManager = useCallback(() => {
     navigation.navigate(NavigatorName.MyLedger);
@@ -93,10 +97,10 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
               />
             )}
           </Flex>
-          <AddAccountsModal
-            navigation={navigation as unknown as BaseNavigation}
+          <AddAccountDrawer
             isOpened={isAddModalOpened}
             onClose={closeAddModal}
+            reopenDrawer={reopenAddModal}
           />
         </Box>
       </Flex>

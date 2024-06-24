@@ -173,7 +173,6 @@ const currencyIdApproxMarketPrice: Record<string, number> = {
   ripple: 0.000057633,
   dogecoin: 4.9e-9,
   dash: 0.0003367,
-  peercoin: 0.000226,
   zcash: 0.000205798,
   polygon: 1.0e-15,
   bsc: 5.0e-14,

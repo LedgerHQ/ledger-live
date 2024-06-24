@@ -88,12 +88,18 @@ export default function AddAccountsTokenCurrencyDisclaimer({ navigation, route }
                 token.tokenType as keyof typeof urls.supportLinkByTokenType
               ]
             }
-            learnMoreKey={`addAccounts.tokens.${token.tokenType}.learnMore`}
+            learnMoreKey={`addAccounts.tokens.generic.learnMore`}
+            learnMoreTransValues={{
+              tokenType: token.tokenType.toUpperCase(),
+            }}
           >
             <Trans
-              i18nKey={`addAccounts.tokens.${token.tokenType}.disclaimer`}
+              i18nKey={`addAccounts.tokens.generic.disclaimer`}
               values={{
-                tokenName,
+                token: token.name,
+                ticker: token.ticker,
+                tokenType: token.tokenType.toUpperCase(),
+                currency: token.parentCurrency.name,
               }}
             />
           </Alert>

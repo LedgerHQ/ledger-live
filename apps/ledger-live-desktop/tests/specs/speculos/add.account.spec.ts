@@ -1,21 +1,26 @@
-import test from "../../fixtures/common";
+import { test } from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
-import { Application } from "tests/page";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "../../utils/customJsonReporter";
 
 const currencies: Currency[] = [
   Currency.BTC,
-  Currency.tBTC,
   Currency.ETH,
-  Currency.tETH,
-  Currency.sepETH,
+  Currency.ETC,
   Currency.XRP,
   Currency.DOT,
   Currency.TRX,
+  Currency.ADA,
+  Currency.XLM,
+  Currency.BCH,
+  Currency.ALGO,
+  Currency.ATOM,
+  Currency.XTZ,
 ];
 
 for (const [i, currency] of currencies.entries()) {
-  test.describe.parallel("Accounts @smoke", () => {
+  test.describe("Add Accounts", () => {
     test.use({
       userdata: "skip-onboarding",
       testName: `addAccount_${currency.uiName}`,
@@ -24,28 +29,34 @@ for (const [i, currency] of currencies.entries()) {
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
 
-    //@TmsLink("B2CQA-101")
-    //@TmsLink("B2CQA-102")
-    //@TmsLink("B2CQA-314")
-    //@TmsLink("B2CQA-330")
-    //@TmsLink("B2CQA-929")
+    test(
+      `[${currency.uiName}] Add account`,
+      {
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-101, B2CQA-102, B2CQA-314, B2CQA-330, B2CQA-929, B2CQA-786",
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
 
-    test(`[${currency.uiName}] Add account`, async ({ page }) => {
-      const app = new Application(page);
+        await app.portfolio.openAddAccountModal();
+        await app.addAccount.expectModalVisiblity();
+        await app.addAccount.selectCurrency(currency.uiName);
+        firstAccountName = await app.addAccount.getFirstAccountName();
 
-      await app.portfolio.openAddAccountModal();
-      await app.addAccount.expectModalVisiblity();
-      await app.addAccount.selectCurrency(currency.uiName);
-      firstAccountName = await app.addAccount.getFirstAccountName();
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+        await app.layout.expectBalanceVisibility();
 
-      await app.addAccount.addAccounts();
-      await app.addAccount.done();
-      await app.layout.expectBalanceVisibility();
-
-      await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(firstAccountName);
-      await app.account.expectAccountVisibility(firstAccountName);
-      await app.account.expectLastOperationsVisibility();
-    });
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(firstAccountName);
+        await app.account.expectAccountVisibility(firstAccountName);
+        await app.account.expectAccountBalance();
+        await app.account.expectLastOperationsVisibility();
+        await app.account.expectAddressIndex(0);
+        await app.account.expectShowMoreButton();
+      },
+    );
   });
 }

@@ -75,6 +75,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const errorsKeys = Object.keys(errors);
+
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
         currentStep = "SET_PARTNER_KEY";

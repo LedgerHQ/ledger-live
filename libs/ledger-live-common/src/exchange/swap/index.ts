@@ -20,6 +20,8 @@ import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
 import getExchangeRates from "./getExchangeRates";
 import { maybeTezosAccountUnrevealedAccount } from "./maybeTezosAccountUnrevealedAccount";
+import { maybeTronEmptyAccount } from "./maybeTronEmptyAccount";
+import { maybeKeepTronAccountAlive } from "./maybeKeepTronAccountAlive";
 
 export { getAvailableProviders } from "../providers";
 
@@ -140,6 +142,8 @@ export {
   postSwapAccepted,
   getExchangeRates,
   maybeTezosAccountUnrevealedAccount,
+  maybeTronEmptyAccount,
+  maybeKeepTronAccountAlive,
   postSwapCancelled,
   initSwap,
   USStates,

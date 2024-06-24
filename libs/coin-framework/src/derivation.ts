@@ -20,7 +20,6 @@ export type ModeSpec = {
   isUnsplit?: boolean;
   // TODO drop
   skipFirst?: true;
-  overridesCoinType?: number;
   // force a given cointype
   purpose?: number;
   isInvalid?: boolean;
@@ -61,18 +60,6 @@ const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze(
     skipFirst: true,
     // already included in the normal bip44,
     tag: "metamask",
-  },
-  // chrome app and LL wrongly used to derivate vertcoin on 128
-  vertcoin_128: {
-    tag: "legacy",
-    overridesCoinType: 128,
-  },
-  vertcoin_128_segwit: {
-    tag: "legacy",
-    overridesCoinType: 128,
-    isSegwit: true,
-    purpose: 49,
-    addressFormat: "p2sh",
   },
   // MEW legacy derivation for eth
   etcM: {
@@ -175,6 +162,9 @@ const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze(
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
+  icon: {
+    overridesDerivation: "44'/4801368'/0'/0'/<account>'",
+  },
   vechain: {
     overridesDerivation: "44'/818'/0'/0/<account>",
   },
@@ -192,7 +182,6 @@ modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
-  vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
@@ -203,6 +192,8 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
+  icon: ["icon"],
+  icon_berlin_testnet: ["icon"],
   vechain: ["vechain"],
   stacks: ["stacks_wallet"],
   ethereum: ["ethM", "ethMM"],
@@ -266,9 +257,6 @@ export const derivationModeSupportsIndex = (
   if ((mode as { skipFirst: boolean }).skipFirst && index === 0) return false;
   return true;
 };
-const currencyForceCoinType = {
-  vertcoin: true,
-};
 
 /**
  * return a ledger-lib-core compatible DerivationScheme format
@@ -281,19 +269,12 @@ export const getDerivationScheme = ({
   derivationMode: DerivationMode;
   currency: CryptoCurrency;
 }): string => {
-  const { overridesDerivation, overridesCoinType } = modes[derivationMode] as {
+  const { overridesDerivation } = modes[derivationMode] as {
     overridesDerivation: string;
-    overridesCoinType: string;
   };
   if (overridesDerivation) return overridesDerivation;
   const splitFrom = isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
-  const coinType = splitFrom
-    ? getCryptoCurrencyById(splitFrom).coinType
-    : typeof overridesCoinType === "number"
-      ? overridesCoinType
-      : currencyForceCoinType
-        ? currency.coinType
-        : "<coin_type>";
+  const coinType = splitFrom ? getCryptoCurrencyById(splitFrom).coinType : "<coin_type>";
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
@@ -342,6 +323,8 @@ const disableBIP44: Record<string, boolean> = {
   cardano: true,
   cardano_testnet: true,
   near: true,
+  icon: true,
+  icon_berlin_testnet: true,
   vechain: true,
   internet_computer: true,
   casper: true,

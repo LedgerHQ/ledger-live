@@ -67,7 +67,7 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
           Math.max(latestSyncedHeight - SAFE_REORG_THRESHOLD, 0),
           blockHeight,
         );
-      } catch (e) {
+      } catch (e) /* istanbul ignore next: just logs */ {
         log("EVM Family", "Failed to get latest transactions", {
           address,
           currency,

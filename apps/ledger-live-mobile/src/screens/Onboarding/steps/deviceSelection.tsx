@@ -56,20 +56,19 @@ const NOT_SUPPORTED_DEVICES_IOS = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();
-  const deviceStaxSupported = useFeature("supportDeviceStax");
   const deviceEuropaSupported = useFeature("supportDeviceEuropa");
 
   const [isOpen, setOpen] = useState<boolean>(false);
 
   const availableDevices = useMemo(
     () => [
-      ...(deviceStaxSupported?.enabled ? [devices.stax] : []),
+      devices.stax,
       ...(deviceEuropaSupported?.enabled ? [devices.europa] : []),
       devices.nanoX,
       devices.nanoSP,
       devices.nanoS,
     ],
-    [deviceStaxSupported, deviceEuropaSupported],
+    [deviceEuropaSupported],
   );
 
   const getProductName = (modelId: DeviceModelId) =>

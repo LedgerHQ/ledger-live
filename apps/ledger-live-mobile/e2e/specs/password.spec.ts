@@ -1,52 +1,40 @@
-import { device, expect } from "detox";
-import PortfolioPage from "../models/wallet/portfolioPage";
-import SettingsPage from "../models/settings/settingsPage";
-import GeneralSettingsPage from "../models/settings/generalSettingsPage";
-import PasswordEntryPage from "../models/passwordEntryPage";
-import { loadConfig } from "../bridge/server";
+import { device } from "detox";
+import { Application } from "../page";
+
+let app: Application;
 
 const CORRECT_PASSWORD = "passWORD$123!";
 
-let portfolioPage: PortfolioPage;
-let settingsPage: SettingsPage;
-let generalSettingsPage: GeneralSettingsPage;
-let passwordEntryPage: PasswordEntryPage;
-
 describe("Password Lock Screen", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-
-    portfolioPage = new PortfolioPage();
-    settingsPage = new SettingsPage();
-    generalSettingsPage = new GeneralSettingsPage();
-    passwordEntryPage = new PasswordEntryPage();
-    await portfolioPage.waitForPortfolioPageToLoad();
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   $TmsLink("B2CQA-1763");
   it("should ask for the password when lock is toggled", async () => {
-    await portfolioPage.navigateToSettings();
-    await settingsPage.navigateToGeneralSettings();
-    await generalSettingsPage.togglePassword();
-    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD);
-    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD); // confirm password step
+    await app.portfolio.navigateToSettings();
+    await app.settings.navigateToGeneralSettings();
+    await app.settingsGeneral.togglePassword();
+    await app.settingsGeneral.enterNewPassword(CORRECT_PASSWORD);
+    await app.settingsGeneral.enterNewPassword(CORRECT_PASSWORD); // confirm password step
     await device.sendToHome();
     await device.launchApp(); // restart LLM
-    await expect(passwordEntryPage.getPasswordTextInput()).toBeVisible();
+    await app.passwordEntry.expectLock();
   });
 
   $TmsLink("B2CQA-2343");
   it("should stay locked with incorrect password", async () => {
-    await passwordEntryPage.enterPassword("INCORRECT_PASSWORD");
-    await passwordEntryPage.login();
-    await expect(passwordEntryPage.getPasswordTextInput()).toBeVisible();
+    await app.passwordEntry.enterPassword("INCORRECT_PASSWORD");
+    await app.passwordEntry.login();
+    await app.passwordEntry.expectLock();
   });
 
   $TmsLink("B2CQA-1763");
   it("should unlock with correct password", async () => {
-    await passwordEntryPage.enterPassword(CORRECT_PASSWORD);
-    await passwordEntryPage.login();
-    await expect(passwordEntryPage.getPasswordTextInput()).not.toBeVisible();
-    await expect(generalSettingsPage.preferredCurrencyButton()).toBeVisible();
+    await app.passwordEntry.enterPassword(CORRECT_PASSWORD);
+    await app.passwordEntry.login();
+    await app.passwordEntry.expectNoLock();
+    await app.settingsGeneral.expectpreferredCurrencyButton();
   });
 });

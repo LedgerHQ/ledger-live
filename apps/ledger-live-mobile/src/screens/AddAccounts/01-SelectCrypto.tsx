@@ -96,7 +96,12 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const neonEvm = useFeature("currencyNeonEvm");
   const lukso = useFeature("currencyLukso");
   const linea = useFeature("currencyLinea");
-  const lineaSepolia = useFeature("currencyLineaTesnet");
+  const lineaSepolia = useFeature("currencyLineaSepolia");
+  const blast = useFeature("currencyBlast");
+  const blastSepolia = useFeature("currencyBlastSepolia");
+  const scroll = useFeature("currencyScroll");
+  const scrollSepolia = useFeature("currencyScrollSepolia");
+  const icon = useFeature("currencyIcon");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -140,6 +145,11 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       lukso,
       linea,
       linea_sepolia: lineaSepolia,
+      blast,
+      blast_sepolia: blastSepolia,
+      scroll,
+      scroll_sepolia: scrollSepolia,
+      icon,
     }),
     [
       axelar,
@@ -182,6 +192,11 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       lukso,
       linea,
       lineaSepolia,
+      blast,
+      blastSepolia,
+      scroll,
+      scrollSepolia,
+      icon,
     ],
   );
 

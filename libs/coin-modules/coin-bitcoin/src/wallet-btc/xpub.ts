@@ -322,30 +322,40 @@ class Xpub {
     let pendingTxs: TX[] = [];
     let txs: TX[] = [];
     let inserted = 0;
+    let lastTxBlockheight =
+      this.storage.getLastConfirmedTxBlock({
+        account,
+        index,
+      })?.height || -1;
+    lastTxBlockheight = Math.max(lastTxBlockheight, this.syncedBlockHeight);
+    let token: string | null = null;
     do {
-      let lastTxBlockheight =
-        this.storage.getLastConfirmedTxBlock({
-          account,
-          index,
-        })?.height || -1;
-      lastTxBlockheight = Math.max(lastTxBlockheight, this.syncedBlockHeight);
-      if (pendingTxs.length > 0) {
-        txs = await this.explorer.getTxsSinceBlockheight(
+      if (token) {
+        // if there is a token it means it's not the first page, we need to fetch only non-pending txs. There is no pagination for pending txs
+        const result = await this.explorer.getTxsSinceBlockheight(
           this.txsSyncArraySize,
           { address, account, index },
           lastTxBlockheight + 1,
           this.currentBlockHeight,
           false,
+          token,
         );
+        txs = result.txs;
+        token = result.nextPageToken;
         inserted += this.storage.appendTxs(txs); // insert not pending tx
       } else {
-        [pendingTxs, txs] = await Promise.all([
+        // if there is no token it means it's the first page, we need to fetch pending txs and non-pending txs
+        const [pendingResult, txsResult]: [
+          { txs: TX[]; nextPageToken: string | null },
+          { txs: TX[]; nextPageToken: string | null },
+        ] = await Promise.all([
           this.explorer.getTxsSinceBlockheight(
             this.txsSyncArraySize,
             { address, account, index },
             0,
             this.currentBlockHeight,
             true,
+            token,
           ),
           this.explorer.getTxsSinceBlockheight(
             this.txsSyncArraySize,
@@ -353,11 +363,15 @@ class Xpub {
             lastTxBlockheight + 1,
             this.currentBlockHeight,
             false,
+            token,
           ),
         ]);
+        pendingTxs = pendingResult.txs;
+        txs = txsResult.txs;
+        token = txsResult.nextPageToken;
         inserted += this.storage.appendTxs(txs); // insert not pending tx
       }
-    } while (txs.length >= this.txsSyncArraySize); // check whether page is full, if not, it is the last page
+    } while (token); // loop until no more txs, if there is a token it means there is more txs to fetch
     inserted += this.storage.appendTxs(pendingTxs); // insert pending tx
     return inserted;
   }

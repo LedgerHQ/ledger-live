@@ -31,6 +31,7 @@ import Alert from "~/components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
 import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
 import { setFeatureFlagsBannerVisible } from "~/actions/settings";
+import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 const addFlagHint = `\
 If a feature flag is defined in the Firebase project \
@@ -72,7 +73,7 @@ export default function DebugFeatureFlags() {
   }, [featureFlags, searchInput]);
 
   const filteredGroups = useMemo(() => {
-    return Object.keys(groupedFeatures)
+    return objectKeysType(groupedFeatures)
       .sort()
       .filter(
         groupName =>

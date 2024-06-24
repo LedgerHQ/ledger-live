@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.5.0",
+  "version": "0.7.0",
   "private": true,
   "browser": {
     "fs": false,
@@ -15,6 +15,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/view": "^6.28.2",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
@@ -29,10 +31,12 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/trustchain": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@uiw/react-codemirror": "^4.22.2",
     "bignumber.js": "^9.1.2",
     "bufferutil": "^4.0.7",
     "encoding": "^0.1.13",
@@ -41,6 +45,7 @@
     "lodash": "^4.17.21",
     "next": "14.2.3",
     "prop-types": "^15.8.1",
+    "qrcode": "^1.4.4",
     "re-resizable": "^6.9.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -48,6 +53,7 @@
     "react-inspector": "^4.0.1",
     "react-select": "^5.7.4",
     "react-table": "^6.11.4",
+    "react-tooltip": "^5.26.4",
     "rxjs": "^7.8.1",
     "semver": "^7.5.4",
     "styled-components": "^6.0.7",
@@ -58,6 +64,7 @@
     "@types/invariant": "^2.2.35",
     "@types/lodash": "^4.14.198",
     "@types/node": "20.8.10",
+    "@types/qrcode": "1",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
     "@types/react-inspector": "^4.0.2",

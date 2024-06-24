@@ -17,6 +17,7 @@ import ShareAnalyticsButtonFF from "./ShareAnalyticsButtonFF";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import MarketPerformanceWidgetRow from "./MarketPerformanceWidget";
 
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
@@ -60,11 +61,20 @@ const SectionGeneral = () => {
           <Row
             title={t("settings.display.walletSync")}
             desc={t("settings.display.walletSyncDesc")}
-            dataTestId="setting-walletSync-dropDown"
+            dataTestId="setting-walletSync"
+            id="setting-walletSync"
           >
             <WalletSync />
           </Row>
         </FeatureToggle>
+
+        <Row
+          title={t("settings.display.marketPerformanceWidget")}
+          desc={t("settings.display.marketPerformanceWidgetDesc")}
+          dataTestId="setting-marketPerformanceWidget"
+        >
+          <MarketPerformanceWidgetRow />
+        </Row>
 
         <Row title={t("settings.profile.password")} desc={t("settings.profile.passwordDesc")}>
           <PasswordButton />

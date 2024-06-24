@@ -1,0 +1,40 @@
+{
+  "apdus": "=> e0050000c30101070201001210824816fcc5ca9ff1e83e622ae6c63c891401011547304502206bee5f0cf52cfe1277ca5db4ec9d9f3c3b45d08692b335f8c46ed5b6a39bafc4022100e83022f36e40540e20f94fe7370c3f952502f5f7f8be9d956647df96d63d6b621604667eacc0202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\n<= 6985\n",
+  "crypto": {
+    "randomBytesOutputs": [],
+    "randomKeypairOutputs": [
+      "6cecd7b4c17acec70799c7bcda8b52185ef5aaef471bb08f6632916e71acce1f",
+      "76b3325066cf5f9e9891442abba931ccc7b597312b785d1f4b5c655b3a495ab3",
+      "f78e3c8884b9864e0e22e6f72c9f480180f4900c2ce767a7a53a42f9258d3e08"
+    ]
+  },
+  "http": {
+    "transactions": [
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/challenge",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "917",
+            "content-type": "application/json",
+            "date": "Fri, 28 Jun 2024 11:59:51 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"json\":{\"version\":0,\"challenge\":{\"data\":\"824816fcc5ca9ff1e83e622ae6c63c89\",\"expiry\":\"2024-06-28T12:29:52Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"304502206bee5f0cf52cfe1277ca5db4ec9d9f3c3b45d08692b335f8c46ed5b6a39bafc4022100e83022f36e40540e20f94fe7370c3f952502f5f7f8be9d956647df96d63d6b62\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"tlv\":\"0101070201001210824816fcc5ca9ff1e83e622ae6c63c891401011547304502206bee5f0cf52cfe1277ca5db4ec9d9f3c3b45d08692b335f8c46ed5b6a39bafc4022100e83022f36e40540e20f94fe7370c3f952502f5f7f8be9d956647df96d63d6b621604667eacc0202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\"}"
+        }
+      }
+    ]
+  }
+}

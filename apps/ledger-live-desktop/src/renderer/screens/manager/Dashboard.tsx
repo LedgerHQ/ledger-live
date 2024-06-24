@@ -67,9 +67,9 @@ const Dashboard = ({
     // - If a disconnection happens during a reset prevention period
     //   and the drawer is currently closed
     if (!currentDevice || deviceChangedWhenResetPrevented.current) {
-      onReset([]);
+      onReset(appsToRestore);
     }
-  }, [onReset, preventResetOnDeviceChange, currentDevice, drawerState.open]);
+  }, [appsToRestore, onReset, preventResetOnDeviceChange, currentDevice, drawerState.open]);
   const exec = useMemo(
     () =>
       getEnv("MOCK")

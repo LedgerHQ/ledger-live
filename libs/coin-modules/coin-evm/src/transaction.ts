@@ -4,9 +4,9 @@ import type { Account } from "@ledgerhq/types-live";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
-  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
+  fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
-  toTransactionStatusRawCommon as toTransactionStatusRaw,
+  toTransactionStatusRawCommon,
 } from "@ledgerhq/coin-framework/serialization";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
@@ -24,6 +24,8 @@ import type {
   GasOptions,
   GasOptionsRaw,
   Strategy,
+  TransactionStatus,
+  TransactionStatusRaw,
 } from "./types";
 
 export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
@@ -286,6 +288,26 @@ export const getSerializedTransaction = (
     unsignedEthersTransaction,
     signature as ethers.Signature,
   );
+};
+
+export const fromTransactionStatusRaw = (
+  transactionStatusRaw: TransactionStatusRaw,
+): TransactionStatus => {
+  const common = fromTransactionStatusRawCommon(transactionStatusRaw);
+  return {
+    ...common,
+    totalFees: new BigNumber(transactionStatusRaw.totalFees || 0),
+  };
+};
+
+export const toTransactionStatusRaw = (
+  transactionStatus: TransactionStatus,
+): TransactionStatusRaw => {
+  const common = toTransactionStatusRawCommon(transactionStatus);
+  return {
+    ...common,
+    totalFees: transactionStatus.totalFees?.toFixed() || "",
+  };
 };
 
 export default {

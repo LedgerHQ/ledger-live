@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { mapTxToOps, reconciliatePublicKey } from "./bridge/utils/misc";
+import { mapTxToOps, mapPendingTxToOps, reconciliatePublicKey } from "./bridge/utils/misc";
 import { GetAccountShape, makeSync } from "../../bridge/jsHelpers";
 import {
   fetchBalances,
@@ -42,13 +42,15 @@ export const getAccountShape: GetAccountShape = async info => {
       .minus(new BigNumber(tx.token_transfer.amount));
   }
 
+  const pendingOperations = mempoolTxs.flatMap(mapPendingTxToOps(accountId, address));
+
   const result: Partial<Account> = {
     id: accountId,
     xpub: pubKey,
     freshAddress: address,
     balance,
     spendableBalance,
-    operations: rawTxs.flatMap(mapTxToOps(accountId)),
+    operations: pendingOperations.concat(rawTxs.flatMap(mapTxToOps(accountId, address))),
     blockHeight: blockHeight.chain_tip.block_height,
   };
 

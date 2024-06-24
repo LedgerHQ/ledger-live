@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { NetworkInfo } from "./types";
 import { getWalletAccount } from "./wallet-btc";
 import { Account } from "@ledgerhq/types-live";
+import { BitcoinInfrastructureError } from "./errors";
 const speeds = ["fast", "medium", "slow"];
 export function avoidDups(nums: Array<BigNumber>): Array<BigNumber> {
   nums = nums.slice(0);
@@ -37,8 +38,9 @@ export async function getAccountNetworkInfo(account: Account): Promise<NetworkIn
   ])(rawFees);
 
   if (feesPerByte.length !== 3) {
-    throw new Error("cardinality of feesPerByte should be exactly 3");
+    throw new BitcoinInfrastructureError();
   }
+
   const feeItems = {
     items: feesPerByte.map((feePerByte, i: number) => ({
       key: String(i),

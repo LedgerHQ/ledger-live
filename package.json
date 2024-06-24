@@ -70,7 +70,10 @@
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "coin:solana": "pnpm --filter coin-solana",
+    "coin:icon": "pnpm --filter coin-icon",
+    "coin:stellar": "pnpm --filter coin-stellar",
     "coin:tezos": "pnpm --filter coin-tezos",
+    "coin:tron": "pnpm --filter coin-tron",
     "coin:xrp": "pnpm --filter coin-xrp",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
@@ -111,6 +114,7 @@
     "ljs:hw-app-tezos": "pnpm --filter hw-app-tezos",
     "ljs:hw-app-trx": "pnpm --filter hw-app-trx",
     "ljs:hw-app-xrp": "pnpm --filter hw-app-xrp",
+    "ljs:hw-app-icon": "pnpm --filter hw-app-icon",
     "ljs:hw-transport": "pnpm --filter hw-transport",
     "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
     "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",
@@ -147,8 +151,7 @@
     "ui:example:next": "pnpm  --filter=\"next.js-example\"",
     "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
     "actions": "pnpm --filter @actions/*",
-    "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens",
-    "generate:cryptoassets-md": "pnpm --filter=\"ledger-live-desktop\" generate:cryptoassets-md"
+    "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.0",
@@ -165,8 +168,8 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^5.0.1",
-    "prettier": "^3.0.3",
     "nyc": "^15.1.0",
+    "prettier": "^3.0.3",
     "rimraf": "^4.4.1",
     "turbo": "1.10.1",
     "typescript": "^5.4.3",
@@ -182,22 +185,31 @@
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
       "@ledgerhq/devices": "workspace:*",
-      "tslib": "2.6.2"
+      "tslib": "2.6.2",
+      "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
+      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
-      "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.20.2": "patches/detox@20.20.2.patch",
+      "detox@20.23.0": "patches/detox@20.23.0.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
-      "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch"
+      "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
+      "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch",
+      "@changesets/get-github-info@0.6.0": "patches/@changesets__get-github-info@0.6.0.patch",
+      "react-native-webview@13.10.3": "patches/react-native-webview@13.10.3.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {
         "dependencies": {
           "next": "*"
+        }
+      },
+      "detox-allure2-adapter": {
+        "dependencies": {
+          "tslib": "*"
         }
       }
     }

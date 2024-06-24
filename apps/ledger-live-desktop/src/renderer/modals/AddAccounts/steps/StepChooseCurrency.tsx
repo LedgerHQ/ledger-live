@@ -74,7 +74,12 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const neonEvm = useFeature("currencyNeonEvm");
   const lukso = useFeature("currencyLukso");
   const linea = useFeature("currencyLinea");
-  const lineaSepolia = useFeature("currencyLineaTesnet");
+  const lineaSepolia = useFeature("currencyLineaSepolia");
+  const blast = useFeature("currencyBlast");
+  const blastSepolia = useFeature("currencyBlastSepolia");
+  const scroll = useFeature("currencyScroll");
+  const scrollSepolia = useFeature("currencyScrollSepolia");
+  const icon = useFeature("currencyIcon");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -118,6 +123,11 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       lukso,
       linea,
       linea_sepolia: lineaSepolia,
+      blast,
+      blast_sepolia: blastSepolia,
+      scroll,
+      scroll_sepolia: scrollSepolia,
+      icon,
     }),
     [
       axelar,
@@ -160,6 +170,11 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       lukso,
       linea,
       lineaSepolia,
+      blast,
+      blastSepolia,
+      scroll,
+      scrollSepolia,
+      icon,
     ],
   );
 
@@ -200,7 +215,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
       <FullNodeStatus currency={currency} />
       {currency && currency.type === "TokenCurrency" ? (
-        <Alert type="primary" learnMoreUrl={url} mt={4}>
+        <Alert type="primary" learnMoreUrl={url} mt={4} data-test-id="add-token-infoBox">
           <Trans
             i18nKey="addAccounts.tokensTip"
             values={{

@@ -12,3 +12,4 @@ tsconfig.tsbuildinfo
 rce
 .env
 coverage
+db.sqlite*

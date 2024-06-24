@@ -17,7 +17,7 @@ export const TLVCommandStreamEncoder = {
     if (b.topic) {
       object = TLV.pushBytes(object, b.topic);
     } else {
-      object = TLV.pushNull(object);
+      object = TLV.pushBytes(object, new Uint8Array(0));
     }
     object = TLV.pushInt16(object, b.protocolVersion);
     object = TLV.pushPublicKey(object, b.groupKey);

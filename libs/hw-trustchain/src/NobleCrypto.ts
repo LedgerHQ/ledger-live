@@ -1,7 +1,6 @@
 import * as secp from "@noble/secp256k1";
 import * as ecc from "tiny-secp256k1";
 import { BIP32Factory } from "bip32";
-// import * as miscreant from 'miscreant';
 import hmac from "create-hmac";
 import * as crypto from "crypto";
 
@@ -171,19 +170,102 @@ export class NobleCryptoSecp256k1 implements Crypto {
     return this.from_hex(result);
   }
 
+  /**
+   * Ledger Live data are encrypted following pattern based on ECIES.
+   * For each encryption the Ledger Live instance generates a random keypair over secp256k1 (ephemeral public key)
+   * and a 16 bytes IV. Ledger Live then perform an ECDH between the command stream public key and
+   * the ephemeral private key to get the encryption key.
+   * The data is then encrypted using AES-256-GCM and serialized using the following format:
+1 byte : Version of the format (0x00)
+33 bytes : Compressed ephemeral public key
+16 bytes : Nonce/IV
+16 bytes : Tag/MAC (from AES-256-GCM)
+variable : Encrypted data
+   */
+  async encryptUserData(
+    commandStreamPrivateKey: Uint8Array,
+    data: Uint8Array,
+  ): Promise<Uint8Array> {
+    // Generate ephemeral key pair
+    const ephemeralPrivateKey = secp.utils.randomPrivateKey();
+    const ephemeralPublicKey = secp.getPublicKey(ephemeralPrivateKey, true);
+
+    // Derive the shared secret using ECDH
+    const sharedSecret = await this.ecdh(
+      {
+        privateKey: commandStreamPrivateKey,
+        publicKey: secp.getPublicKey(commandStreamPrivateKey, true),
+      },
+      ephemeralPublicKey,
+    );
+
+    // Normalize the shared secret to be used as AES key
+    const aesKey = await this.computeSymmetricKey(sharedSecret, new Uint8Array());
+
+    // Generate a random IV (nonce)
+    const iv = crypto.randomBytes(16);
+
+    // Encrypt the data using AES-256-GCM
+    const cipher = crypto.createCipheriv("aes-256-gcm", aesKey, iv);
+    let encryptedData = cipher.update(data);
+    encryptedData = Buffer.concat([encryptedData, cipher.final()]);
+    const tag = cipher.getAuthTag();
+
+    // Serialize the format
+    const result = new Uint8Array(
+      1 + ephemeralPublicKey.length + iv.length + tag.length + encryptedData.length,
+    );
+    result[0] = 0x00; // Version of the format
+    result.set(ephemeralPublicKey, 1);
+    result.set(iv, 34);
+    result.set(tag, 50);
+    result.set(encryptedData, 66);
+
+    return result;
+  }
+
+  async decryptUserData(
+    commandStreamPrivateKey: Uint8Array,
+    data: Uint8Array,
+  ): Promise<Uint8Array> {
+    const version = data[0];
+    if (version !== 0x00) {
+      throw new Error("Unsupported format version");
+    }
+    const ephemeralPublicKey = data.slice(1, 34);
+    const iv = data.slice(34, 50);
+    const tag = data.slice(50, 66);
+    const encryptedData = data.slice(66);
+
+    // Derive the shared secret using ECDH
+    const sharedSecret = await this.ecdh(
+      {
+        privateKey: commandStreamPrivateKey,
+        publicKey: secp.getPublicKey(commandStreamPrivateKey, true),
+      },
+      ephemeralPublicKey,
+    );
+
+    // Normalize the shared secret to be used as AES key
+    const aesKey = await this.computeSymmetricKey(sharedSecret, new Uint8Array());
+
+    // Decrypt the data using AES-256-GCM
+    const decipher = crypto.createDecipheriv("aes-256-gcm", aesKey, iv);
+    decipher.setAuthTag(tag);
+    let decryptedData = decipher.update(encryptedData);
+    decryptedData = Buffer.concat([decryptedData, decipher.final()]);
+    return new Uint8Array(decryptedData.buffer, decryptedData.byteOffset, decryptedData.byteLength);
+  }
+
   async randomBytes(size: number): Promise<Uint8Array> {
     return secp.utils.randomBytes(size);
   }
 
   async ecdh(keyPair: KeyPair, publicKey: Uint8Array): Promise<Uint8Array> {
-    const point = ecc.pointMultiply(
-      publicKey,
-      keyPair.privateKey,
-      ecc.isPointCompressed(publicKey),
-    )!;
+    const pubkey = Buffer.from(publicKey);
+    const privkey = Buffer.from(keyPair.privateKey);
+    const point = ecc.pointMultiply(pubkey, privkey, ecc.isPointCompressed(pubkey))!;
     return point.slice(1);
-    // ecc.pointMultiply(publicKey, keyPair.privateKey, false)
-    // return secp.getSharedSecret(keyPair.privateKey, publicKey, false);
   }
 
   async computeSymmetricKey(privateKey: Uint8Array, extra: Uint8Array): Promise<Uint8Array> {

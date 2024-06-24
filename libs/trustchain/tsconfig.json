@@ -10,5 +10,6 @@
     "lib": ["es2020", "dom"],
     "outDir": "lib"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/__tests__/**/*"]
 }

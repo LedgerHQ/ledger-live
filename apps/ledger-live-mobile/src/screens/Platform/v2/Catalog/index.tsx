@@ -34,7 +34,7 @@ export function Catalog() {
             middleHeaderContent={
               <>
                 <Flex marginBottom={16}>
-                  <Text fontWeight="semiBold" variant="h4">
+                  <Text fontWeight="semiBold" variant="h4" testID="discover-banner">
                     {title}
                   </Text>
                 </Flex>

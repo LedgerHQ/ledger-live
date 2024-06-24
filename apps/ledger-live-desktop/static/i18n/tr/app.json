@@ -27,6 +27,7 @@
       "title" : "Keşfedin",
       "section" : {
         "recentlyUsed" : "Son kullanılanlar",
+        "locallyLoaded" : "Yerel Olarak Yüklenen Live Uygulamaları",
         "browse" : "Göz atın"
       },
       "filter" : {
@@ -191,7 +192,7 @@
       "ACTIVATE" : "Etkinleştirildi",
       "REGISTER" : "Kaydedildi",
       "STAKE" : "Stake edildi",
-      "UNSTAKE" : "Stake iptali",
+      "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor"
     },
@@ -1456,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Satın Al / Sat",
-        "description" : "Güvenilir sağlayıcılarla alın ve satın"
+        "description" : "Güvenilir sağlayıcılarımızla alın ve satın"
       },
       "swap" : {
         "title" : "Takas et",
-        "description" : "Bir kriptoyu diğerine güvenle dönüştürün",
+        "description" : "Kriptolar arası dönüştürme",
         "label" : "Popüler"
       },
       "earn" : {
         "title" : "Stake et",
-        "description" : "Ledger ile kripto bakiyenizi artırın"
+        "description" : "Ledger ile kriptolarınızı stake edin"
       }
     },
     "recoverBanner" : {
@@ -3589,6 +3590,12 @@
         },
         "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
       },
+      "states" : {
+        "active" : "Aktif",
+        "inactive" : "Devre Dışı",
+        "activating" : "Etkinleştiriliyor",
+        "deactivating" : "Devre dışı bırakılıyor"
+      },
       "flow" : {
         "title" : "Yetki Devredin",
         "steps" : {
@@ -3735,7 +3742,7 @@
         "pending" : "Bırakılmayı bekleyen",
         "available" : "Çekilebilir bakiye"
       },
-      "unstake" : "Staking'i iptal et",
+      "unstake" : "Staking'i durdur",
       "withdraw" : "Çek",
       "activeTooltip" : "Stake edilen miktarlar ödül kazandırır",
       "inactiveTooltip" : "Stake’i iptal edilen miktarlar ödül kazandırmaz",
@@ -3777,7 +3784,7 @@
     "unstake" : {
       "disabledTooltip" : "Stake edilen varlık miktarı stake iptali için yeterli değil",
       "flow" : {
-        "title" : "Staking'i iptal et",
+        "title" : "Staking'i durdur",
         "steps" : {
           "amount" : {
             "title" : "Tutar",
@@ -3967,7 +3974,11 @@
       "region" : "Bölge",
       "regionDesc" : "Tarih, saat ve para birimi görüntüleme biçimlerini güncellemek için bölgenizi seçin.",
       "stock" : "Bölgesel piyasa göstergesi",
-      "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin."
+      "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin.",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Uygulama verilerinizi kolayca güvence altına alın ve birden çok Ledger Live oturumunu senkronize edin.",
+      "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
+      "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
     },
     "developer" : {
       "search" : "Ara",
@@ -3985,6 +3996,11 @@
       "debugAppsDesc" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "debugReactQuery" : "ReactQuery hata ayıklamasına izin ver",
       "debugReactQueryDesc" : "ReactQuery hata ayıklaması konsolunu görüntüleme ve açmaya izin ver",
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange Geliştirici Modu",
+        "desc" : "Exchange sağlayıcısı bilgilerini ekleyin",
+        "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "NFT Spam İhbarı (Beta) özelliğine izin verin",
         "debugNFTSpamReportDesc" : "Bir NFT'yi spam olarak ihbar etmek veya artık spam olarak görüntülenmemesi için bir forma erişin",
@@ -4037,6 +4053,17 @@
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
       "addLocalAppButton" : "Göz Atın",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "Yerel bir uygulama oluşturun",
+          "modify" : "Yerel bir uygulamada değişiklik yapın"
+        },
+        "addNetwork" : "Yeni bir ağ ekleyin",
+        "removeNetwork" : "Son ağı kaldırın",
+        "export" : "Dışa aktar",
+        "modify" : "Değiştir",
+        "create" : "Oluştur"
+      },
       "runLocalAppDeleteButton" : "Sil",
       "runLocalAppOpenButton" : "Aç",
       "enableLearnStagingUrl" : "Öğren sayfası staging URL'si",
@@ -4162,6 +4189,18 @@
         "enableNetworkLogs" : {
           "title" : "Ağ log'larını etkinleştirin",
           "description" : "Konsolda ağ log'larını etkinleştirin (hata log'ları her zaman etkindir)"
+        },
+        "testWalletSync" : {
+          "title" : "Ledger Sync'i Test Edin",
+          "description" : "Belirli bir Ledger Sync akışını başlatmanızı sağlar",
+          "cta" : "Test et",
+          "modal" : {
+            "flow" : "Bir Akış seçin",
+            "step" : "Bir Adım seçin",
+            "activated" : "Bir yedeklemenizin olması veya olmaması için etkinleştirin/devre dışı bırakın",
+            "instance" : "Oturumlar Oluştur",
+            "cta" : "Uygula"
+          }
         }
       }
     },
@@ -4266,7 +4305,7 @@
     "downloadInProgress" : "Güncelleme indiriliyor...",
     "downloadProgress" : "%{{progress}} tamamlandı",
     "checking" : "Güncelleme kontrol ediliyor...",
-    "checkSuccess" : "Yeni Ledger Live güncellemesi mevcut. Güncelleme, uygulamayı kapattığınızda otomatik olarak yüklenecek.",
+    "checkSuccess" : "Yeni güncelleme mevcut. Güncelleme, uygulamayı kapattığınızda Ledger Live'ı otomatik olarak yükleyecek ve yeniden başlatacaktır.",
     "quitAndInstall" : "Hemen yükle ve yeniden başlat",
     "updateAvailable" : "Ledger Live {{version}} sürüm güncellemesi mevcut",
     "error" : "Güncelleme sırasında bir hata oluştu. Lütfen tekrar indirin",
@@ -5454,6 +5493,10 @@
       "description" : "Miktarı ve ücretleri hesaplamak mümkün değil"
     },
     "NotEnoughBalance" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "Ne yazık ki bakiye, ağ ücretlerini karşılamaya yetmiyor. Tutarı değiştirin veya bakiyeyi doğrulayın.",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
@@ -5465,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}} ağında takas işlemi için {{fees}} {{ticker}} ağ ücreti ödemeniz gerekiyor. <link0>{{ticker}} Satın Alın</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "TRC20 token alımını etkinleştirmek için önce bu hesaba en az 0,1 TRX göndermeniz gerekir. <link0>Daha fazla bilgi </link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "Bu Tron hesabının aktif kalması için en az 0,1 TRX ve ağ ücretleri için de en az 1,1 TRX gerekiyor.<link0> Daha fazla bilgi </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "Your Operating System version is outdated",
@@ -5529,7 +5578,7 @@
       "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
       "description" : "{{message}}"
     },
-    "TransportPendingOperation" : {
+    "TransportRaceCondition" : {
       "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
       "description" : "Ledger cihazında zaten bekleyen bir eylem var. Lütfen reddedin veya yeniden bağlanın."
     },
@@ -5797,6 +5846,9 @@
     "InvalidXRPTag" : {
       "title" : "Geçersiz XRP Hedef etiketi (Destination tag)"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "{{currencyName}} tarayıcısından geçersiz yanıt"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Yetki devretmek için yetersiz bakiye"
     },
@@ -6040,6 +6092,15 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "İşletim sistemi güncellemesi denetlenemedi",
       "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
+    },
+    "newAddressTRC20" : {
+      "title" : "Önce bu hesaba en az 0,1 TRX göndererek hesabı etkinleştirmelisiniz."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Bitcoin altyapımızla ilgili olarak bir sorun yaşıyoruz. Lütfen daha sonra tekrar deneyin."
     }
   },
   "cryptoOrg" : {
@@ -6176,11 +6237,11 @@
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
-      "description" : "Ledger Live verilerinizi paylaşmanız, tercihlerinizi anlayarak sizin ilginizi çekebilecek içerikleri göstermemize ve teknik sorunları çözmemize yardımcı oluyor.",
-      "whatWeTrack" : "Sizin onayınız ile Ledger şunları takip edebilecek:",
+      "description" : "Ledger Live verilerinizi paylaşmanız, tercihlerinizi anlayarak sizin ilginizi çekebilecek içerikleri göstermemizi sağlar.",
+      "whatWeTrack" : "Sizin açık rızanızla Ledger, Ledger Live'ı nasıl kullandığınıza dair verileri (sayfa ziyaretleri ve tıklamalar da dâhil) takip edebilecektir:",
       "whatWeTrackList" : {
-        "1" : "Sayfa ziyaretleri ve tıklamalar dâhil olmak üzere analiz verileri.",
-        "2" : "Tıklamalar, sayfa ziyaretleri ve dönüştürme verileri dâhil olmak üzere kişiselleştirme verileri."
+        "1" : "Ledger Live'ın performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için (Analizler).",
+        "2" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sağlamanın yanı sıra pazarlama kampanyalarımızın etkinliğini ölçebilmemiz için (Kişiselleştirme)."
       },
       "whatWeDoNotTrack" : "Ledger şunlarla ilgili bilgileri hiçbir zaman takip etmez:",
       "whatWeDoNotTrackList" : {
@@ -6192,12 +6253,12 @@
       "refuse" : "Tümünü reddet",
       "accept" : "Tümünü kabul et",
       "analyticsData" : {
-        "title" : "Analiz verileri",
-        "description" : "Ledger Live'ın geliştirilmesine yardımcı olmak için sayfa ziyaretleri ve tıklamalar dâhil olmak üzere uygulamanın analiz verilerini paylaşın."
+        "title" : "Analiz",
+        "description" : "Ledger Live'ın performansını ölçmek ve hem uygulamayı hem de deneyiminizi geliştirmek için sayfa ziyaretleri ve tıklamalar da dâhil olmak üzere kullanım verilerini paylaşırız."
       },
       "personalizationData" : {
-        "title" : "Kişiselleştirme verileri",
-        "description" : "Kişiselleştirilmiş öneriler almak için dönüştürme verileri, tıklamalar ve sayfa ziyaretleri dâhil olmak üzere uygulamanın kişiselleştirme verilerini paylaşın."
+        "title" : "Kişiselleştirme",
+        "description" : "Kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler almanız ve pazarlama kampanyalarımızın performansını ölçebilmemiz için tıklamalar, sayfa ziyaretleri ve dönüşüm verileri de dâhil olmak üzere uygulama kullanımı verilerini paylaşırız."
       },
       "share" : "Paylaş"
     },
@@ -6229,8 +6290,116 @@
     "profileSettings" : {
       "personalizedExp" : "Kişiselleştirilmiş deneyim",
       "analytics" : "Analiz",
-      "personalizedExpDesc" : "Tercihlerinizle uyumlu kişiselleştirilmiş öneriler alın.",
-      "analyticsDesc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin."
+      "personalizedExpDesc" : "Kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunulmasını sağlamak ve pazarlama kampanyalarımızın performansını ölçebilmemiz için Ledger'ın uygulama kullanımı verilerini takip etmesine izin verin.",
+      "analyticsDesc" : "Ledger Live'ın performansının ölçülmesini ve hem uygulamanın hem de deneyiminizin geliştirilmesini sağlamak için Ledger'ın uygulama kullanım verilerini takip etmesine izin verin."
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger Sync",
+    "activate" : {
+      "title" : "Hesaplarınızı tüm platformlar genelinde senkronize edin",
+      "description" : "Ledger cihazınız bir şifreleme anahtarı oluşturarak verilerinizin gizli kalmasını ve sadece sizin tarafınızdan alınabilmesini sağlar.",
+      "cta" : "Hesaplarınızı senkronize edin"
+    },
+    "alreadySync" : "Zaten bir anahtar oluşturdunuz mu?",
+    "manage" : {
+      "cta" : "Yönet",
+      "synchronize" : {
+        "label" : "Senkronize et",
+        "description" : "Sorunsuz bir deneyim için uygulama verilerini başka bir Ledger Live uygulamasıyla senkronize edin."
+      },
+      "backup" : {
+        "label" : "Anahtarı Yönet",
+        "description" : "Şifreleme anahtarınızı başka bir Ledger cihazıyla güvence altına alın veya silin."
+      },
+      "instance" : {
+        "label_one" : "1 senkronize oturum",
+        "label_other" : "{{count}} senkronize oturum",
+        "cta" : "Yönet"
+      }
+    },
+    "loading" : {
+      "title" : "Bekleyin...",
+      "activation" : "Verileriniz uçtan uca şifreleniyor... ",
+      "synch" : "Senkronize oturumları güncelliyoruz..."
+    },
+    "error" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Lütfen daha sonra tekrar deneyin.",
+      "cta" : "Tekrar dene"
+    },
+    "unsecuredError" : {
+      "title" : "Senkronizasyon bu Ledger cihazı tarafından güvence altına alınmamış durumda",
+      "description" : "Şifreleme anahtarınızı oluşturmak için kullandığınız Ledger cihazını lütfen bağlayın.",
+      "info" : "Ledger cihazınızı kaybettiyseniz endişelenmeyin! Anahtarınızı yine de silebilirsiniz. Bunu yaptığınızda hem verileriniz silinir hem de hâlihazırda senkronize edilmiş tüm oturumlarınızın senkronizasyonu kaldırılır.",
+      "cta" : "Başka Ledger bağla",
+      "ctaDelete" : "Şifreleme anahtarımı sil"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "Başarılı",
+        "desc" : "Ledger Sync'i başarıyla etkinleştirdiniz. ",
+        "synchAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et"
+      },
+      "synch" : {
+        "title" : "Senkronizasyon başarılı!",
+        "desc" : "Artık hesaplarınızdaki değişiklikler otomatik olarak tüm uygulamalarda ve platformlarda görünecektir."
+      }
+    },
+    "manageBackups" : {
+      "title" : "Anahtarınızı yönetin",
+      "options" : {
+        "deleteBackup" : {
+          "title" : "Verilerinizi silin",
+          "description" : "Tüm senkronize veriler silinecektir."
+        }
+      },
+      "deleteBackup" : {
+        "title" : "Şifreleme anahtarınızı gerçekten de silmek istiyor musunuz?",
+        "description" : "Sil düğmesine tıkladığınızda cihazlarınızın senkronizasyonu kaldırılır ve tüm senkronize verileriniz silinir. Bu eylemin fonlarınızı etkilemeyeceğinden emin olabilirsiniz. Hesaplarınızı istediğiniz zaman yeniden senkronize edebilirsiniz.",
+        "delete" : "Sil",
+        "cancel" : "İptal et"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "Cihazlarınızın senkronizasyonu kaldırıldı ve anahtarınız silindi"
+      },
+      "deleteBackupError" : {
+        "title" : "Bir hata oluştu"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Senkronizasyon yönteminizi seçin",
+        "description" : "Doğrudan Ledger cihazınızla veya Ledger Live'da bir karekodu okutarak senkronize etmeyi seçebilirsiniz.",
+        "scan" : {
+          "title" : "Bir karekodu okutun",
+          "description" : "Bir karekodu okutarak senkronize edin"
+        },
+        "connectDevice" : {
+          "title" : "Ledger cihazınızı kullanın",
+          "description" : "Ledger cihazınızla imzalayarak senkronize edin"
+        }
+      },
+      "qrCode" : {
+        "title" : "Senkronize et",
+        "hint" : "İki ayrı Ledger Live masaüstü sürümünü senkronize etmeye mi çalışıyorsunuz? Buraya tıklayın.",
+        "description" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
+        "steps" : {
+          "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
+          "step2" : "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronize Et</0> > <0>Karekodu Göster</0> adımlarını izleyin",
+          "step3" : "Yükleyici %100 olana kadar karekodu tarayın."
+        }
+      },
+      "pinCode" : {
+        "title" : "Kodu girin",
+        "description" : "Senkronize etmek istediğiniz diğer Ledger Live uygulamasında görüntülenen kodu yazın."
+      }
+    },
+    "manageInstances" : {
+      "title" : "Senkronize oturumları yönet",
+      "remove" : "Kaldır",
+      "deleteInstanceSuccess" : "{{instanceName}} oturumunuz artık senkronize değil",
+      "deleteInstanceError" : "{{instanceName}} oturumunun desenkronizasyonu sırasında bir sorun oluştu"
     }
   }
 }

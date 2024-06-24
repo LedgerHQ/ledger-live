@@ -74,6 +74,15 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Ethereum_Classic: {
+    currency: getCryptoCurrencyById("ethereum_classic"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Ethereum Classic",
+      appVersion: "1.10.4",
+    },
+    dependency: "Ethereum",
+  },
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
     appQuery: {
@@ -106,7 +115,7 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Polkadot",
-      appVersion: "25.10100.1",
+      appVersion: "100.0.5",
     },
     dependency: "",
   },
@@ -125,6 +134,69 @@ export const specs: Specs = {
       model: DeviceModelId.nanoSP,
       appName: "XRP",
       appVersion: "2.2.3",
+    },
+    dependency: "",
+  },
+  Stellar: {
+    currency: getCryptoCurrencyById("stellar"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Stellar",
+      appVersion: "5.0.3",
+    },
+    dependency: "",
+  },
+  Bitcoin_Cash: {
+    currency: getCryptoCurrencyById("bitcoin_cash"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Bitcoin Cash",
+      appVersion: "2.4.1",
+    },
+    dependency: "",
+  },
+  Algorand: {
+    currency: getCryptoCurrencyById("algorand"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Algorand",
+      appVersion: "2.1.11",
+    },
+    dependency: "",
+  },
+  Cosmos: {
+    currency: getCryptoCurrencyById("cosmos"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Cosmos",
+      appVersion: "2.35.22",
+    },
+    dependency: "",
+  },
+  Tezos: {
+    currency: getCryptoCurrencyById("tezos"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "TezosWallet",
+      appVersion: "2.4.5",
+    },
+    dependency: "",
+  },
+  Polygon: {
+    currency: getCryptoCurrencyById("polygon"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Polygon",
+      appVersion: "1.10.4",
+    },
+    dependency: "",
+  },
+  Binance_Smart_Chain: {
+    currency: getCryptoCurrencyById("bsc"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Binance Smart Chain",
+      appVersion: "1.10.4",
     },
     dependency: "",
   },

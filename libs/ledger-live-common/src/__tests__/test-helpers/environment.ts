@@ -40,10 +40,6 @@ setSupportedCurrencies([
   "komodo",
   "pivx",
   "zencash",
-  "vertcoin",
-  "peercoin",
-  "viacoin",
-  "stealthcoin",
   "decred",
   "tron",
   "stellar",
@@ -69,6 +65,8 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "icon",
+  "icon_berlin_testnet",
   "optimism",
   "optimism_sepolia",
   "arbitrum",
@@ -98,6 +96,10 @@ setSupportedCurrencies([
   "lukso",
   "linea",
   "linea_sepolia",
+  "blast",
+  "blast_sepolia",
+  "scroll",
+  "scroll_sepolia",
 ]);
 LiveConfig.setConfig(liveConfig);
 

@@ -108,6 +108,7 @@ const remapSocketError = (context?: string) =>
     }
   });
 
+/** @deprecated use getAppsCatalogForDevice (from ledger-live-common/src/device/use-cases) instead */
 const applicationsByDevice: (params: {
   provider: number;
   current_se_firmware_final_version: Id;
@@ -132,6 +133,7 @@ const applicationsByDevice: (params: {
     }`,
 );
 
+/** @deprecated use getAppsCatalogForDevice (from ledger-live-common/src/device/use-cases) instead */
 const listApps: () => Promise<Array<Application>> = makeLRUCache(
   async () => {
     const { data } = await network({
@@ -515,7 +517,9 @@ async function retrieveMcuVersion({
 }
 
 const API = {
+  /** @deprecated use getAppsCatalogForDevice (from ledger-live-common/src/device/use-cases) instead */
   applicationsByDevice,
+  /** @deprecated use getAppsCatalogForDevice (from ledger-live-common/src/device/use-cases) instead */
   listApps,
   listInstalledApps,
   listCategories,

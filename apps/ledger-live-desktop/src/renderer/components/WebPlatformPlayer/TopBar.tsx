@@ -235,7 +235,11 @@ export const TopBar = ({
         </ItemContainer>
         {shouldDisplaySelectAccount ? (
           <>
-            <ItemContainer isInteractive onClick={onSelectAccount}>
+            <ItemContainer
+              isInteractive
+              onClick={onSelectAccount}
+              data-test-id="web-platform-player-topbar-selected-account"
+            >
               {!currentAccount ? (
                 <>
                   <Wallet size={16} />

@@ -6,6 +6,17 @@ declare module "storyly-web" {
     id: number;
   }>;
 
+  type Story = {
+    group_id: number;
+    id: number;
+    index: number;
+    media: {
+      actionUrl?: string;
+    };
+    seen: boolean;
+    title: string;
+  };
+
   /**
    * Storyly Options
    */
@@ -15,6 +26,7 @@ declare module "storyly-web" {
     events?: {
       closeStoryGroup?(): void;
       isReady?(data: StorylyData): void;
+      actionClicked?(story: Story): void;
     };
     lang?: Language;
     segments?: string[];
@@ -29,6 +41,7 @@ declare module "storyly-web" {
     setSegments: (options: StorylyOptions["segments"]) => void;
     setLang: (options: { language: StorylyOptions["lang"] }) => void;
     openStory: (props: openStoryParams) => void;
+    close: () => void;
   }
 
   interface openStoryParams {

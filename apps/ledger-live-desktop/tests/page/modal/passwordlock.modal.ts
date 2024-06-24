@@ -1,12 +1,12 @@
 import { Modal } from "../../component/modal.component";
 
 export class PasswordlockModal extends Modal {
-  private switchButton = this.page.locator("data-test-id=settings-password-lock-switch");
-  private changeButton = this.page.locator("data-test-id=settings-password-change-button");
-  private newPasswordInput = this.page.locator("data-test-id=new-password-input");
-  private confirmPasswordInput = this.page.locator("data-test-id=confirm-password-input");
-  private currentPasswordInput = this.page.locator("data-test-id=current-password-input");
-  private disablePasswordInput = this.page.locator("data-test-id=disable-password-input");
+  private switchButton = this.page.getByTestId("settings-password-lock-switch");
+  private changeButton = this.page.getByTestId("settings-password-change-button");
+  private newPasswordInput = this.page.getByTestId("new-password-input");
+  private confirmPasswordInput = this.page.getByTestId("confirm-password-input");
+  private currentPasswordInput = this.page.getByTestId("current-password-input");
+  private disablePasswordInput = this.page.getByTestId("disable-password-input");
 
   async toggle() {
     await this.switchButton.click();

@@ -1,5 +1,17 @@
 # ui
 
+## 0.2.1
+
+### Patch Changes
+
+- [#7016](https://github.com/LedgerHQ/ledger-live/pull/7016) [`1fddfc5`](https://github.com/LedgerHQ/ledger-live/commit/1fddfc552a3546675da89e3300a69d635fdd4bc7) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add delete-stop icon to react ui
+
+## 0.2.1-next.0
+
+### Patch Changes
+
+- [#7016](https://github.com/LedgerHQ/ledger-live/pull/7016) [`1fddfc5`](https://github.com/LedgerHQ/ledger-live/commit/1fddfc552a3546675da89e3300a69d635fdd4bc7) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add delete-stop icon to react ui
+
 ## 0.2.0
 
 ### Minor Changes

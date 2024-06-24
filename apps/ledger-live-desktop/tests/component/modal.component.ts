@@ -1,3 +1,4 @@
+import { Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 
@@ -5,31 +6,39 @@ export class Modal extends Component {
   readonly container = this.page.locator(
     '[data-test-id=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
   );
-  readonly title = this.page.locator("data-test-id=modal-title");
-  readonly content = this.page.locator("data-test-id=modal-content");
-  protected backdrop = this.page.locator("data-test-id=modal-backdrop");
-  protected continueButton = this.page.locator("data-test-id=modal-continue-button");
-  protected saveButton = this.page.locator("data-test-id=modal-save-button");
-  protected cancelButton = this.page.locator("data-test-id=modal-cancel-button");
-  protected confirmButton = this.page.locator("data-test-id=modal-confirm-button");
-  protected closeButton = this.page.locator("data-test-id=modal-close-button");
-  protected backButton = this.page.locator("data-test-id=modal-back-button");
-  protected titleProvider = this.page.locator("data-test-id=modal-provider-title");
-  protected rowProvider = this.page.locator('[data-test-id="modal-provider-row"]');
+  readonly title = this.page.getByTestId("modal-title");
+  readonly content = this.page.getByTestId("modal-content");
+  protected backdrop = this.page.getByTestId("modal-backdrop");
+  protected continueButton = this.page.getByTestId("modal-continue-button");
+  protected saveButton = this.page.getByTestId("modal-save-button");
+  protected cancelButton = this.page.getByTestId("modal-cancel-button");
+  protected confirmButton = this.page.getByTestId("modal-confirm-button");
+  protected closeButton = this.page.getByTestId("modal-close-button");
+  protected backButton = this.page.getByTestId("modal-back-button");
+  protected titleProvider = this.page.getByTestId("modal-provider-title");
+  protected rowProvider = this.page.getByTestId("modal-provider-row");
   protected delegateContinueButton = this.page.locator("id=delegate-continue-button");
-  protected spendableBanner = this.page.locator("data-test-id=modal-spendable-banner");
-  protected maxAmountCheckbox = this.page.locator("data-test-id=modal-max-checkbox");
-  protected cryptoAmountField = this.page.locator("data-test-id=modal-amount-field");
+  protected spendableBanner = this.page.getByTestId("modal-spendable-banner");
+  protected maxAmountCheckbox = this.page.getByTestId("modal-max-checkbox");
+  protected cryptoAmountField = this.page.getByTestId("modal-amount-field");
   protected continueAmountButton = this.page.locator("id=send-amount-continue-button");
   protected searchOpenButton = this.page.getByText("Show all");
   protected searchCloseButton = this.page.getByText("Show less");
   protected inputSearchField = this.page.getByPlaceholder("Search by name or address...");
   protected stakeProviderContainer = (stakeProviderID: string) =>
-    this.page.locator(`data-test-id=stake-provider-container-${stakeProviderID}`);
+    this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
   protected signContinueButton = this.page.locator("text=Continue");
   protected confirmText = this.page.locator(
     "text=Please confirm the operation on your device to finalize it",
   );
+  protected optionWithTextAndFollowingText = (text: string, followingText: string) =>
+    this.page
+      .locator(
+        `//*[contains(text(),"${text}")]/following::span[contains(text(),"${followingText}")]`,
+      )
+      .first();
+  protected dropdownOptions = this.page.locator("div.select__option");
+  protected dropdownOptionsList = this.page.locator("div.select-options-list");
 
   @step("Click Continue button")
   async continue() {
@@ -116,5 +125,16 @@ export class Modal extends Component {
 
   async waitForConfirmationScreenToBeDisplayed() {
     await this.confirmText.waitFor({ state: "visible" });
+  }
+
+  async scrollUntilOptionIsDisplayed(dropdown: Locator, element: Locator) {
+    let isVisible = await element.isVisible();
+
+    while (!isVisible) {
+      await dropdown.evaluate(node => {
+        node.scrollBy(0, 50);
+      });
+      isVisible = await element.isVisible();
+    }
   }
 }

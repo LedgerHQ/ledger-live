@@ -27,4 +27,27 @@ describe("HttpForwardDomainDataSource", () => {
       expect.objectContaining({ headers: { "X-Ledger-Client-Version": version } }),
     );
   });
+
+  it("should return undefined when no payload is returned", async () => {
+    // GIVEN
+    const response = { data: { test: "" } };
+    jest.spyOn(axios, "request").mockResolvedValue(response);
+
+    // WHEN
+    const result = await datasource.getDomainNamePayload({ challenge: "", domain: "hello.eth" });
+
+    // THEN
+    expect(result).toEqual(undefined);
+  });
+
+  it("should return undefined when axios throws an error", async () => {
+    // GIVEN
+    jest.spyOn(axios, "request").mockRejectedValue(new Error());
+
+    // WHEN
+    const result = await datasource.getDomainNamePayload({ challenge: "", domain: "hello.eth" });
+
+    // THEN
+    expect(result).toEqual(undefined);
+  });
 });

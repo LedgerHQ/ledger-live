@@ -134,5 +134,6 @@ const styles = StyleSheet.create({
   },
   rightWrapper: {
     alignItems: "flex-end",
+    marginLeft: 12,
   },
 });

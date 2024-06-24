@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { describe, test, expect } from "@jest/globals";
 
 function parsePackageJson(lib: string) {
   return JSON.parse(
@@ -13,8 +12,5 @@ describe("sentry dependencies", () => {
   const nodeVersion = electronPkg.dependencies["@sentry/node"];
   test("sentry/node is in sync with sentry/electron", () => {
     expect(parsePackageJson("@sentry/node").version).toBe(nodeVersion);
-  });
-  test("sentry/tracing is in sync with sentry/electron", () => {
-    expect(parsePackageJson("@sentry/tracing").version).toBe(nodeVersion);
   });
 });

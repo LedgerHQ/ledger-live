@@ -11,10 +11,10 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { InvalidAddressBecauseAlreadyDelegated } from "../types/errors";
-import { isAccountDelegating } from "../api/bakers";
-import { validateRecipient } from "./prepareTransaction";
+import { validateRecipient } from "../logic";
+import { isAccountDelegating } from "../network/bakers";
+import api from "../network/tzkt";
 import { Transaction } from "../types";
-import api from "../api/tzkt";
 
 const EXISTENTIAL_DEPOSIT = new BigNumber(275000);
 
@@ -24,7 +24,6 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
 ) => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-
   let resetTotalSpent = false;
 
   // Recipient validation logic
@@ -32,10 +31,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     if (account.freshAddress === transaction.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else {
-      const { recipientError, recipientWarning } = await validateRecipient(
-        account.currency,
-        transaction.recipient,
-      );
+      const { recipientError, recipientWarning } = await validateRecipient(transaction.recipient);
       if (recipientError) {
         errors.recipient = recipientError;
       }

@@ -160,6 +160,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           transaction,
         );
         if (unsubscribed) return;
+
         const errorsKeys = Object.keys(errors);
 
         if (errorsKeys.length > 0) {

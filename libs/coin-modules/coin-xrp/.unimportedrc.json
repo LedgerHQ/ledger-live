@@ -1,15 +1,12 @@
 {
   "entry": [
     "src/api/index.ts",
-    "src/bridge/js.ts",
-    "src/cli-transaction.ts",
-    "src/deviceTransactionConfig.ts",
-    "src/errors.ts",
-    "src/hw-getAddress.ts",
-    "src/serialization.ts",
-    "src/specs.ts",
-    "src/transaction.ts",
-    "src/datasets/dataset-1.ts"
+    "src/bridge/index.ts",
+    "src/bridge/deviceTransactionConfig.ts",
+    "src/datasets/dataset-1.ts",
+    "src/signer/index.ts",
+    "src/test/index.ts",
+    "src/index.ts"
   ],
   "ignorePatterns": [
     "**/node_modules/**",

@@ -198,7 +198,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.RippleEditFee]: {
+  [ScreenName.XrpEditFee]: {
     accountId: string;
     parentId?: string;
     transaction: RippleTransaction;
@@ -266,7 +266,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.RippleEditTag]: {
+  [ScreenName.XrpEditTag]: {
     accountId: string;
     parentId?: string;
     transaction: RippleTransaction;

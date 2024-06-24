@@ -4,8 +4,8 @@ import {
   CertificateType,
   Network,
   SignTransactionRequest,
-  StakeCredentialParams,
-  StakeCredentialParamsType,
+  CredentialParams,
+  CredentialParamsType,
   TransactionSigningMode,
   TxAuxiliaryDataType,
   TxInput,
@@ -110,8 +110,8 @@ function convertDestination({ destination }: SignerTxOutput): TxOutputDestinatio
 }
 
 function prepareCertificate(cert: SignerTxCertificate): Certificate {
-  const stakeCredential: StakeCredentialParams = {
-    type: StakeCredentialParamsType.KEY_PATH,
+  const stakeCredential: CredentialParams = {
+    type: CredentialParamsType.KEY_PATH,
     keyPath: str_to_path(cert.params.stakeCredential.keyPath),
   };
 
@@ -146,7 +146,7 @@ function prepareCertificate(cert: SignerTxCertificate): Certificate {
 function prepareWithdrawal({ stakeCredential, amount }: SignerTxWithdrawal): Withdrawal {
   return {
     stakeCredential: {
-      type: StakeCredentialParamsType.KEY_PATH,
+      type: CredentialParamsType.KEY_PATH,
       keyPath: str_to_path(stakeCredential.keyPath),
     },
     amount,

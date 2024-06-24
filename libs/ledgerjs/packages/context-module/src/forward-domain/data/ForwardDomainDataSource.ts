@@ -4,5 +4,5 @@ export type GetForwardDomainInfosParams = {
 };
 
 export interface ForwardDomainDataSource {
-  getDomainNamePayload(params: GetForwardDomainInfosParams): Promise<string>;
+  getDomainNamePayload(params: GetForwardDomainInfosParams): Promise<string | undefined>;
 }

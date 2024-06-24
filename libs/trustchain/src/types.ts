@@ -1,25 +1,123 @@
 import Transport from "@ledgerhq/hw-transport";
 
+/**
+ * The JWT is a JSON Web Token that is used to authenticate the user.
+ */
 export type JWT = {
   accessToken: string;
 };
 
+/**
+ * A Trustchain contains the identifier and the contextual data we need to manage members and encrypt/decrypt data.
+ */
 export type Trustchain = {
+  /**
+   * The immutable id of the trustchain root
+   */
   rootId: string;
+  /**
+   * The secret used to encrypt/decrypt the wallet sync data
+   */
   walletSyncEncryptionKey: string;
+  /**
+   * The derivation path on which the current walletSyncEncryptionKey value is stored
+   */
+  applicationPath: string;
 };
 
-export type LiveCredentials = {
-  // in hex
+/**
+ * The Trustchain member credentials are stored on each client, with the privatekey only known by the current client.
+ */
+export type MemberCredentials = {
+  /**
+   * The public key of the member (in hexadecimal)
+   */
   pubkey: string;
-  // in hex
+  /**
+   * The private key of the member (in hexadecimal)
+   */
   privatekey: string;
 };
 
+/**
+ * A member of the trustchain
+ */
 export type TrustchainMember = {
+  /**
+   * The id of the member. It corresponds to the MemberCredentials.pubkey
+   */
   id: string;
+  /**
+   * The name of the member as displayed in the UI
+   */
+  name: string;
+  /**
+   * a technical permissions of the member. it will often just be Permissions.OWNER
+   */
+  permissions: number;
+};
+
+/**
+ * The TrustchainSDKContext is a context that is used to initialize the TrustchainSDK.
+ */
+export type TrustchainSDKContext = {
+  applicationId: number;
   name: string;
 };
+
+/**
+ * provide global callbacks for specific lifecycles.
+ * this allows us to decouple trustchain with the rest of Ledger Live.
+ * For now, we only introduce very specific hooks we need.
+ */
+export type TrustchainLifecycle = {
+  /**
+   * called when a trustchain rotation is occuring
+   * the first function is called when the rotation is starting
+   * the second function is called when the rotation is done.
+   *
+   * in that case, we typically want to delete all other resources depending on it.
+   * we do this with the existing jwt token before refreshing it.
+   */
+  onTrustchainRotation: (
+    trustchainSdk: TrustchainSDK,
+    oldTrustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ) => Promise<(newTrustchain: Trustchain) => Promise<void>>;
+};
+
+export enum TrustchainResultType {
+  created = "created",
+  updated = "updated",
+  restored = "restored",
+}
+
+/**
+ * the trustchain with a result type indicating what happened during getOrCreateTrustchain
+ */
+export type TrustchainResult =
+  | {
+      // the trustchain didn't exist and was created
+      type: TrustchainResultType.created;
+      trustchain: Trustchain;
+    }
+  | {
+      // the trustchain already existed and was updated (typically the current member was added)
+      type: TrustchainResultType.updated;
+      trustchain: Trustchain;
+    }
+  | {
+      // the trustchain existed and was just retrieved (no need to update it)
+      type: TrustchainResultType.restored;
+      trustchain: Trustchain;
+    };
+
+/**
+ * cache (default): the SDK will use the cached JWT if it's still valid, otherwise it will refresh it.
+ * refresh: the SDK will always refresh the JWT if possible.
+ * no-cache: the SDK will always request a new JWT.
+ */
+export type AuthCachePolicy = "no-cache" | "refresh" | "cache";
 
 /**
  * The main interface for the UI to interact with the trustchain protocol.
@@ -28,78 +126,99 @@ export type TrustchainMember = {
  *
  * import { sdk } from "@ledgerhq/trustchain";
  *
- * sdk.seedIdAuthenticate(transport).then(jwt => console.log(jwt));
+ * sdk.authWithDevice(transport).then(jwt => console.log(jwt));
  */
 export interface TrustchainSDK {
   /**
    * Generate the live credentials that represents a Live instance, member of the trustchain.
    * This method is expected to be used the first time Ledger Live is opened (if Live never generated them before) and then persisted over the future user sessions of Ledger Live in order for the member to be able to authenticate and manage the trustchain.
    */
-  initLiveCredentials(): Promise<LiveCredentials>;
+  initMemberCredentials(): Promise<MemberCredentials>;
 
   /**
-   * Provide a token used to create/manage the trustchain at the root level, authenticated with the hardware wallet.
+   * Access a JWT from the TrustchainSDK. manage the reauthentication if needed.
+   * A trustchain must have been created and the Live instance must have been added as a member.
+   * The returned token will typically be used for regular operations like wallet sync.
    */
-  seedIdAuthenticate(transport: Transport): Promise<JWT>;
+  withAuth<T>(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+    f: (jwt: JWT) => Promise<T>,
+    policy?: AuthCachePolicy,
+  ): Promise<T>;
+
+  withDeviceAuth<T>(
+    transport: Transport,
+    f: (jwt: JWT) => Promise<T>,
+    policy?: AuthCachePolicy,
+  ): Promise<T>;
 
   /**
-   * get a token that we can then use for Live credentials. (used for wallet sync)
-   */
-  liveAuthenticate(trustchain: Trustchain, liveInstanceCredentials: LiveCredentials): Promise<JWT>;
-
-  /**
-   * used by the trustchain setup flow
-   * - create trustchain if not exists
-   * - add yourself as member
-   * - yield the trustchain
+   * This method will either create the required trustchains (root and application) or restore them.
+   * The returned trustchain will be initialized on the root level and also will have the branch derivation corresponding to the contextual applicationId.
+   * It will also have the wallet sync encryption key initialized.
+   * The latest jwt is also returned because it was potentially updated during the process.
    */
   getOrCreateTrustchain(
     transport: Transport,
-    seedIdToken: JWT,
-    liveInstanceCredentials: LiveCredentials,
-  ): Promise<Trustchain>;
+    memberCredentials: MemberCredentials,
+    callbacks?: TrustchainDeviceCallbacks,
+    topic?: Uint8Array,
+  ): Promise<TrustchainResult>;
 
   /**
-   * when the trustchain is not valid anymore, we will need to restore it (encryption key is no longer passing, typically during the live authenticate / wallet sync phases)
+   * Restore the current trustchain encryption key, typically due to a key rotation.
    */
   restoreTrustchain(
-    liveJWT: JWT,
     trustchain: Trustchain,
-    liveInstanceCredentials: LiveCredentials,
+    memberCredentials: MemberCredentials,
   ): Promise<Trustchain>;
 
   /**
-   * list the current members for a given trustchain.
+   * list the current members of the application trustchain
    */
   getMembers(
-    liveJWT: JWT,
     trustchain: Trustchain,
-    liveInstanceCredentials: LiveCredentials,
+    memberCredentials: MemberCredentials,
   ): Promise<TrustchainMember[]>;
 
   /**
-   * used by the managing synchronized instances flow
+   * remove a member from the application trustchain
    */
   removeMember(
     transport: Transport,
-    seedIdToken: JWT,
     trustchain: Trustchain,
-    liveInstanceCredentials: LiveCredentials,
+    memberCredentials: MemberCredentials,
     member: TrustchainMember,
+    callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain>;
 
   /**
-   * add a member to the trustchain
+   * add a member to the application trustchain
    */
   addMember(
-    liveJWT: JWT,
     trustchain: Trustchain,
-    liveInstanceCredentials: LiveCredentials,
+    memberCredentials: MemberCredentials,
     member: TrustchainMember,
-  ): Promise<Trustchain>;
+  ): Promise<void>;
 
   /**
-   * completely remove a trustchain
+   * destroy the trustchain
    */
-  destroyTrustchain(trustchain: Trustchain, liveJWT: JWT): Promise<void>;
+  destroyTrustchain(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void>;
+
+  /**
+   * encrypt data with the trustchain encryption key
+   */
+  encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array>;
+
+  /**
+   * decrypt data with the trustchain encryption key
+   */
+  decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array>;
+}
+
+export interface TrustchainDeviceCallbacks {
+  onStartRequestUserInteraction: () => void;
+  onEndRequestUserInteraction: () => void;
 }

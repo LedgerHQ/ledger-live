@@ -46,7 +46,7 @@ const TabIndicator = styled.span.attrs<TabIndicatorProps>(({ currentRef, index, 
   transition: all 0.3s ease-in-out;
 `;
 
-const Tabs = styled.div<{
+export const TabBarRootStyled = styled.div<{
   short: boolean;
   separator: boolean;
   height?: number;
@@ -74,7 +74,6 @@ const Tabs = styled.div<{
     right: 0;
     bottom: 0;
   }
-
   `
       : ""}
 `;
@@ -92,6 +91,7 @@ type Props = {
   fullWidth?: boolean;
   height?: number;
 };
+
 const TabBar = ({
   tabs,
   ids,
@@ -112,6 +112,11 @@ const TabBar = ({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const setTabRef = (index: number) => (ref: HTMLButtonElement | null) => {
+    tabRefs.current[index] = ref;
+  };
+
   const updateIndex = useCallback(
     (j: number) => {
       setIndex(j);
@@ -119,11 +124,9 @@ const TabBar = ({
     },
     [setIndex, onIndexChange],
   );
-  const setTabRef = (index: number) => (ref: HTMLButtonElement | null) => {
-    tabRefs.current[index] = ref;
-  };
+
   return (
-    <Tabs short={short} separator={separator} height={height}>
+    <TabBarRootStyled short={short} separator={separator} height={height}>
       {tabs.map((tab, j) => (
         <Tab
           ref={setTabRef(j)}
@@ -143,7 +146,7 @@ const TabBar = ({
       {mounted && tabRefs.current[i] && (
         <TabIndicator short={short} index={i} currentRef={tabRefs.current[i]} />
       )}
-    </Tabs>
+    </TabBarRootStyled>
   );
 };
 export default TabBar;

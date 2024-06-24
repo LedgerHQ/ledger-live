@@ -15,7 +15,7 @@
       "LLD/*": ["src/newArch/*"]
     },
     "outDir": "dist",
-    "typeRoots": ["index-types.d.ts"]
+    "typeRoots": ["index-types.d.ts", "./node_modules/@types", "./node_modules/@testing-library"]
   },
   "exclude": ["**/node_modules/*"],
   "include": [

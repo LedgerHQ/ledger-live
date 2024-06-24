@@ -10,6 +10,6 @@ export type GetNftInformationsParams = {
 };
 
 export interface NftDataSource {
-  getNftInfosPayload(params: GetNftInformationsParams): Promise<string>;
-  getSetPluginPayload(params: GetSetPluginPayloadParams): Promise<string>;
+  getNftInfosPayload(params: GetNftInformationsParams): Promise<string | undefined>;
+  getSetPluginPayload(params: GetSetPluginPayloadParams): Promise<string | undefined>;
 }

@@ -14,15 +14,14 @@ type Props = {
 };
 
 export default function DeviceModelPicker({ deviceModelId, onChange }: Props) {
-  const supportDeviceStax = useFeature("supportDeviceStax")?.enabled;
   const supportDeviceEuropa = useFeature("supportDeviceEuropa")?.enabled;
   const supportedAndEnabledDeviceModelIds = supportedDeviceModelIds.filter(() => {
     const devicesSupported: Record<CLSSupportedDeviceModelId, boolean> = {
-      [DeviceModelId.stax]: Boolean(supportDeviceStax),
+      [DeviceModelId.stax]: true,
       [DeviceModelId.europa]: Boolean(supportDeviceEuropa),
     };
     return devicesSupported[deviceModelId];
-  }, [supportDeviceStax, supportDeviceEuropa]);
+  }, [supportDeviceEuropa]);
 
   return (
     <Flex height={40}>

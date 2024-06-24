@@ -14,7 +14,7 @@ const Container = styled(Tabbable).attrs<{
   flexDirection: "column",
   alignItems: "center",
   fontSize: 4,
-})<{ id?: string }>`
+})`
   min-height: 180px;
   padding: 24px;
   border-radius: 4px;
@@ -61,7 +61,7 @@ export function AppCard({ manifest, onClick, id }: Props) {
   }, [onClick, isDisabled]);
 
   return (
-    <Container id={id} onClick={handleClick} disabled={isDisabled}>
+    <Container data-test-id={id} onClick={handleClick} disabled={isDisabled}>
       <AppDetails manifest={manifest} />
     </Container>
   );

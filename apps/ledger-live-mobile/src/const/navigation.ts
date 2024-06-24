@@ -35,6 +35,9 @@ export enum ScreenName {
   DebugCustomImageGraphics = "DebugCustomImageGraphics",
   DebugDebugging = "DebugDebugging",
   DebugQueuedDrawers = "DebugQueuedDrawers",
+  DebugQueuedDrawerScreen0 = "DebugQueuedDrawerScreen0",
+  DebugQueuedDrawerScreen1 = "DebugQueuedDrawerScreen1",
+  DebugQueuedDrawerScreen2 = "DebugQueuedDrawerScreen2",
   DebugEnv = "DebugEnv",
   DebugExport = "DebugExport",
   DebugFeatureFlags = "DebugFeatureFlags",
@@ -123,8 +126,8 @@ export enum ScreenName {
   RegionSettings = "RegionSettings",
   RepairDevice = "RepairDevice",
   Resources = "Resources",
-  RippleEditFee = "RippleEditFee",
-  RippleEditTag = "RippleEditTag",
+  XrpEditFee = "XrpEditFee",
+  XrpEditTag = "XrpEditTag",
   ScanAccounts = "ScanAccounts",
   ScanRecipient = "ScanRecipient",
   SendAmountCoin = "SendAmountCoin",
@@ -503,6 +506,19 @@ export enum ScreenName {
 
   AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
+
+  WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  WalletSyncActivationProcess = "WalletSyncActivationProcess",
+  WalletSyncSuccess = "WalletSyncSuccess",
+
+  MockedAddAssetButton = "MockedAddAssetButton",
+  GenericLandingPage = "GenericLandingPage",
+
+  // Web3Hub
+  Web3HubMain = "Web3HubMain",
+  Web3HubSearch = "Web3HubSearch",
+  Web3HubTabs = "Web3HubTabs",
+  Web3HubApp = "Web3HubApp",
 }
 
 export enum NavigatorName {
@@ -611,4 +627,12 @@ export enum NavigatorName {
   SyncOnboarding = "SyncOnboarding",
 
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
+  WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  LandingPages = "LandingPages",
+
+  // Web3Hub
+  Web3Hub = "Web3Hub",
+  Web3HubTab = "Web3HubTab",
+
+  WalletSync = "WalletSync",
 }

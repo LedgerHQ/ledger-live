@@ -101,20 +101,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "peercoin") {
-    return {
-      identifier: "ppc",
-      P2PKHVersion: Buffer.from([0x37]),
-      P2SHVersion: Buffer.from([0x75]),
-      xpubVersion: Buffer.from([0xe6, 0xe8, 0xe9, 0xe5]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "PPCoin Signed Message:\n",
-      usesTimestampedTransaction: true,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
   } else if (networkName === "digibyte") {
     return {
       identifier: "dgb",
@@ -152,49 +138,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
       dustAmount: new BigNumber(10000),
       messagePrefix: "Qtum Signed Message:\n",
-      usesTimestampedTransaction: false,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
-  } else if (networkName === "stealthcoin") {
-    return {
-      identifier: "xst",
-      P2PKHVersion: Buffer.from([0x3e]),
-      P2SHVersion: Buffer.from([0x55]),
-      xpubVersion: Buffer.from([0x8f, 0x62, 0x4b, 0x66]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "StealthCoin Signed Message:\n",
-      usesTimestampedTransaction: false,
-      // Used to depend on "version"
-      timestampDelay: new BigNumber(15),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
-  } else if (networkName === "vertcoin") {
-    return {
-      identifier: "vtc",
-      P2PKHVersion: Buffer.from([0x47]),
-      P2SHVersion: Buffer.from([0x05]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xb2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "VertCoin Signed Message:\n",
-      usesTimestampedTransaction: false,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
-  } else if (networkName === "viacoin") {
-    return {
-      identifier: "via",
-      P2PKHVersion: Buffer.from([0x47]),
-      P2SHVersion: Buffer.from([0x21]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xb2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "ViaCoin Signed Message:\n",
       usesTimestampedTransaction: false,
       timestampDelay: new BigNumber(0),
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,

@@ -280,6 +280,7 @@ function ScanLoading({
   stopSubscription: () => void;
 }) {
   const { t } = useTranslation();
+  const numberOfAccountsFound = scannedAccounts?.length;
 
   return (
     <Loading
@@ -305,11 +306,11 @@ function ScanLoading({
           m={6}
           justifyContent="flex-end"
         >
-          {scannedAccounts?.length > 0 ? (
+          {numberOfAccountsFound > 0 ? (
             <>
               <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
-                {t("transfer.receive.addAccount.foundAccounts", {
-                  count: scannedAccounts?.length,
+                {t("transfer.receive.addAccount.foundAccount", {
+                  count: numberOfAccountsFound,
                 })}
               </LText>
               <Button type="secondary" onPress={stopSubscription}>

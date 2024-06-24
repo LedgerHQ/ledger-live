@@ -291,4 +291,15 @@ describe("HttpExternalPuginDataSource", () => {
       },
     });
   });
+
+  it("should return undefined when axios throws an error", async () => {
+    // GIVEN
+    jest.spyOn(axios, "request").mockRejectedValue(new Error("error"));
+
+    // WHEN
+    const result = await datasource.getDappInfos({ chainId: 1, address: "0x0", selector: "0x01" });
+
+    // THEN
+    expect(result).toEqual(undefined);
+  });
 });

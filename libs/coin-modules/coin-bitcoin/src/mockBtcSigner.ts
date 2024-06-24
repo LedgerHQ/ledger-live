@@ -50,7 +50,6 @@ class MockBtcSigner implements BitcoinSigner {
   splitTransaction(
     _transactionHex: string,
     _isSegwitSupported: boolean | null | undefined,
-    _hasTimestamp: boolean | null | undefined,
     _hasExtraData: boolean | null | undefined,
     _additionals: Array<string> | null | undefined,
   ): SignerTransaction {

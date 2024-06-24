@@ -9,6 +9,8 @@ test.use({
 test("Discover deeplink hot load @smoke", async ({ page }) => {
   await test.step("on deeplink trigger", async () => {
     await sendDeepLink(page, "ledgerlive://discover");
-    await expect.soft(page).toHaveScreenshot("loaded.png");
+    await expect.soft(page).toHaveScreenshot("loaded.png", {
+      mask: [page.locator("data-test-id=live-icon-container")],
+    });
   });
 });

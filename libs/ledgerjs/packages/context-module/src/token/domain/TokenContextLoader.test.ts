@@ -1,12 +1,10 @@
-import { LoaderOptions } from "../../shared/model/LoaderOptions";
-import { Transaction } from "../../shared/model/Transaction";
+import { TransactionContext } from "../../shared/model/TransactionContext";
 import { TokenDataSource } from "../data/TokenDataSource";
 import { TokenContextLoader } from "./TokenContextLoader";
 
 describe("TokenContextLoader", () => {
   const mockTokenDataSource: TokenDataSource = { getTokenInfosPayload: jest.fn() };
   const loader = new TokenContextLoader(mockTokenDataSource);
-  const emptyOptions = {} as LoaderOptions;
 
   beforeEach(() => {
     jest.restoreAllMocks();
@@ -18,10 +16,10 @@ describe("TokenContextLoader", () => {
   describe("load function", () => {
     it("should return an empty array if transaction dest is undefined", async () => {
       // GIVEN
-      const transaction = { to: undefined, data: "0x01" } as Transaction;
+      const transaction = { to: undefined, data: "0x01" } as TransactionContext;
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([]);
@@ -32,10 +30,10 @@ describe("TokenContextLoader", () => {
       const transaction = {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: undefined,
-      } as unknown as Transaction;
+      } as unknown as TransactionContext;
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([]);
@@ -46,10 +44,10 @@ describe("TokenContextLoader", () => {
       const transaction = {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: "0x",
-      } as Transaction;
+      } as TransactionContext;
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([]);
@@ -60,10 +58,10 @@ describe("TokenContextLoader", () => {
       const transaction = {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: "0x095ea7b20000000000000",
-      } as unknown as Transaction;
+      } as unknown as TransactionContext;
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([]);
@@ -75,11 +73,11 @@ describe("TokenContextLoader", () => {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: "0x095ea7b30000000000",
         chainId: 1,
-      } as Transaction;
+      } as TransactionContext;
       jest.spyOn(mockTokenDataSource, "getTokenInfosPayload").mockResolvedValue(undefined);
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([]);
@@ -91,10 +89,10 @@ describe("TokenContextLoader", () => {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: "0x095ea7b30000000000",
         chainId: 1,
-      } as Transaction;
+      } as TransactionContext;
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([

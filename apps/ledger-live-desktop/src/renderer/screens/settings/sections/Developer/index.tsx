@@ -22,6 +22,7 @@ import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
 import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import SpamReportNtf from "./SpamReportNtf";
+import WalletSyncTester from "./WalletSync/WalletSyncTester";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -85,6 +86,10 @@ const Default = () => {
         <StorylyTester />
       </FeatureToggle>
       <ExchangeDeveloperMode />
+
+      <FeatureToggle featureId="lldWalletSync">
+        <WalletSyncTester />
+      </FeatureToggle>
 
       {__DEV__ && (
         <Row

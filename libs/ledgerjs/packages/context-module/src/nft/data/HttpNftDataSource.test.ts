@@ -33,4 +33,34 @@ describe("HttpNftDataSource", () => {
       expect.objectContaining({ headers: { "X-Ledger-Client-Version": version } }),
     );
   });
+
+  describe("getNftInfosPayload", () => {
+    it("should return undefined when axios throws an error", async () => {
+      // GIVEN
+      jest.spyOn(axios, "request").mockRejectedValue(new Error("error"));
+
+      // WHEN
+      const result = await datasource.getNftInfosPayload({ address: "0x00", chainId: 1 });
+
+      // THEN
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe("getSetPluginPayload", () => {
+    it("should return undefined when axios throws an error", async () => {
+      // GIVEN
+      jest.spyOn(axios, "request").mockRejectedValue(new Error("error"));
+
+      // WHEN
+      const result = await datasource.getSetPluginPayload({
+        address: "0x00",
+        chainId: 1,
+        selector: "0x00",
+      });
+
+      // THEN
+      expect(result).toBeUndefined();
+    });
+  });
 });

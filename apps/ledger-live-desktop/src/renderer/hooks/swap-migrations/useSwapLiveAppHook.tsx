@@ -18,7 +18,7 @@ import {
 import { useMaybeAccountUnit } from "../useAccountUnit";
 
 export type UseSwapLiveAppHookProps = {
-  manifestID: string | null;
+  manifestID?: string;
   isSwapLiveAppEnabled: boolean;
   swapTransaction: SwapTransactionType;
   swapError?: Error;

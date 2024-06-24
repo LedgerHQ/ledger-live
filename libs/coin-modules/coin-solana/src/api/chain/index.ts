@@ -12,9 +12,10 @@ import {
   SignaturesForAddressOptions,
   StakeProgram,
 } from "@solana/web3.js";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
-import { Awaited } from "../../logic";
 import { NetworkError } from "@ledgerhq/errors";
+import { Awaited } from "../../logic";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
 
@@ -124,33 +125,41 @@ export function getChainAPI(
         })
         .catch(remapErrors),
 
-    getStakeAccountsByStakeAuth: (authAddr: string) =>
-      connection()
-        .getParsedProgramAccounts(StakeProgram.programId, {
-          filters: [
-            {
-              memcmp: {
-                offset: 12,
-                bytes: authAddr,
+    getStakeAccountsByStakeAuth: makeLRUCache(
+      (authAddr: string) =>
+        connection()
+          .getParsedProgramAccounts(StakeProgram.programId, {
+            filters: [
+              {
+                memcmp: {
+                  offset: 12,
+                  bytes: authAddr,
+                },
               },
-            },
-          ],
-        })
-        .catch(remapErrors),
+            ],
+          })
+          .catch(remapErrors),
+      (addr: string) => addr,
+      minutes(3),
+    ),
 
-    getStakeAccountsByWithdrawAuth: (authAddr: string) =>
-      connection()
-        .getParsedProgramAccounts(StakeProgram.programId, {
-          filters: [
-            {
-              memcmp: {
-                offset: 44,
-                bytes: authAddr,
+    getStakeAccountsByWithdrawAuth: makeLRUCache(
+      (authAddr: string) =>
+        connection()
+          .getParsedProgramAccounts(StakeProgram.programId, {
+            filters: [
+              {
+                memcmp: {
+                  offset: 44,
+                  bytes: authAddr,
+                },
               },
-            },
-          ],
-        })
-        .catch(remapErrors),
+            ],
+          })
+          .catch(remapErrors),
+      (addr: string) => addr,
+      minutes(3),
+    ),
 
     getStakeActivation: (stakeAccAddr: string) =>
       connection().getStakeActivation(new PublicKey(stakeAccAddr)).catch(remapErrors),

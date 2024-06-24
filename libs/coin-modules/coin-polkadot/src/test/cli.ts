@@ -193,6 +193,7 @@ export type CliTools = {
   ) => Transaction[];
   commands: { polkadotValidators: Validators };
 };
+
 export default function makeCliTools(): CliTools {
   return {
     options,

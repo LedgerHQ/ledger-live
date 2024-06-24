@@ -50,7 +50,7 @@ interface EncryptedSharedKey {
   initializationVector: Uint8Array;
 }
 
-export class SodiumDevice implements Device {
+export class SoftwareDevice implements Device {
   private keyPair: KeyPair;
 
   constructor(kp: KeyPair) {
@@ -234,7 +234,6 @@ export class SodiumDevice implements Device {
     }
 
     return sharedKey.xpriv;
-    //return crypto.computeSymmetricKey(sharedKey.xpriv.slice(0, 32), await tree.getRoot().getStreamPublicKey());
   }
 
   isPublicKeyAvailable(): boolean {
@@ -247,7 +246,7 @@ export class SodiumDevice implements Device {
  */
 export async function createDevice(): Promise<Device> {
   const kp = await crypto.randomKeypair();
-  return new SodiumDevice(kp);
+  return new SoftwareDevice(kp);
 }
 
 export const ISSUER_PLACEHOLDER = new Uint8Array([

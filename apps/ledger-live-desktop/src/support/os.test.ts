@@ -1,4 +1,3 @@
-import { describe, test, expect } from "@jest/globals";
 import { setEnv } from "@ledgerhq/live-env";
 import { getOperatingSystemSupportStatus, supportStatusForOS } from "./os";
 

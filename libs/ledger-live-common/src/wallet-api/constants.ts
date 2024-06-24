@@ -2,13 +2,21 @@ import Fuse from "fuse.js";
 import { AppManifest } from "../wallet-api/types";
 
 import { FAMILIES } from "@ledgerhq/wallet-api-core";
+import { reverseRecord } from "../helpers";
+
+export const FAMILIES_MAPPING_WAPI_TO_LL = {
+  ethereum: "evm",
+  ripple: "xrp",
+} as const;
+
+export const FAMILIES_MAPPING_LL_TO_WAPI = reverseRecord(FAMILIES_MAPPING_WAPI_TO_LL);
 
 /**
  * FIXME
  * This is not robust, we should have an explicit adapter between the wallet API currencies (families) and live currencies (families)
  * For example here, the `ethereum` family on `wallet-api` should be mapped to the `evm` family on LL
  */
-export const WALLET_API_FAMILIES = [...FAMILIES, "evm", "xrp"];
+export const WALLET_API_FAMILIES = [...FAMILIES, ...Object.values(FAMILIES_MAPPING_WAPI_TO_LL)];
 
 export const WALLET_API_VERSION = "2.0.0";
 

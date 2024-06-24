@@ -1,12 +1,14 @@
-import { crypto } from "@ledgerhq/hw-trustchain";
+import { Permissions, crypto } from "@ledgerhq/hw-trustchain";
 import { getEnv } from "@ledgerhq/live-env";
 import WebSocket from "isomorphic-ws";
-import { LiveCredentials, TrustchainMember } from "../types";
+import { MemberCredentials, Trustchain, TrustchainMember } from "../types";
 import { makeCipher, makeMessageCipher } from "./cipher";
 import { Message } from "./types";
 import { InvalidDigitsError } from "../errors";
 
 const version = 1;
+
+const CLOSE_TIMEOUT = 100; // just enough time for the onerror to appear before onclose
 
 /**
  * establish a channel to be able to add a member to the trustchain after displaying the QR Code
@@ -28,11 +30,11 @@ export async function createQRCodeHostInstance({
   /**
    * this function will need to using the TrustchainSDK (and use sdk.addMember)
    */
-  addMember: (member: TrustchainMember) => Promise<void>;
+  addMember: (member: TrustchainMember) => Promise<Trustchain>;
 }): Promise<void> {
   const ephemeralKey = await crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
-  const url = `${getEnv("TRUSTCHAIN_API")}/v1/qr?host=${publisher}`;
+  const url = `${getEnv("TRUSTCHAIN_API").replace("http", "ws")}/v1/qr?host=${publisher}`;
   const ws = new WebSocket(url);
   function send(message: Message) {
     ws.send(JSON.stringify(message));
@@ -41,10 +43,16 @@ export async function createQRCodeHostInstance({
   let sessionEncryptionKey: Uint8Array | undefined;
   let cipher: ReturnType<typeof makeMessageCipher> | undefined;
   let expectedDigits: string | undefined;
+  let finished = false;
 
   onDisplayQRCode(url);
   return new Promise((resolve, reject) => {
     ws.addEventListener("error", reject);
+    ws.addEventListener("close", () => {
+      if (finished) return;
+      // this error would reflect a protocol error. because otherwise, we would get the "error" event. it shouldn't be visible to user, but we use it to ensure the promise ends.
+      setTimeout(() => reject(new Error("qrcode websocket prematurely closed")), CLOSE_TIMEOUT);
+    });
     ws.addEventListener("message", async e => {
       try {
         const data = parseMessage(e.data);
@@ -84,21 +92,23 @@ export async function createQRCodeHostInstance({
             break;
           }
           case "TrustchainShareCredential": {
+            finished = true;
             if (!cipher) {
               throw new Error("sessionEncryptionKey not set");
             }
             const { id, name } = await cipher.decryptMessage(data);
-            await addMember({ id, name });
-            const payload = await cipher.encryptMessagePayload({});
+            const trustchain = await addMember({ id, name, permissions: Permissions.OWNER });
+            const payload = await cipher.encryptMessagePayload({ trustchain });
             send({ version, publisher, message: "TrustchainAddedMember", payload });
             resolve();
             break;
           }
           case "Failure": {
-            ws.close();
+            finished = true;
             console.error(data);
             const error = fromErrorMessage(data.payload);
             reject(error);
+            ws.close();
             break;
           }
           default: {
@@ -116,18 +126,18 @@ export async function createQRCodeHostInstance({
 
 /**
  * establish a channel to be able to add myself to the trustchain after scanning the QR Code
- * @returns a promise that resolves when this is done
+ * @returns a promise that resolves a Trustchain when this is done
  */
 export async function createQRCodeCandidateInstance({
-  liveCredentials,
+  memberCredentials,
   memberName,
   scannedUrl,
   onRequestQRCodeInput,
 }: {
   /**
-   * the live credentials of the live instance (given by TrustchainSDK)
+   * the client credentials of the instance (given by TrustchainSDK)
    */
-  liveCredentials: LiveCredentials;
+  memberCredentials: MemberCredentials;
   /**
    * the name of the member
    */
@@ -147,7 +157,7 @@ export async function createQRCodeCandidateInstance({
     },
     callback: (digits: string) => void,
   ) => void;
-}): Promise<void> {
+}): Promise<Trustchain> {
   const m = scannedUrl.match(/host=([0-9A-Fa-f]+)/);
   if (!m) {
     throw new Error("invalid scannedUrl");
@@ -161,8 +171,15 @@ export async function createQRCodeCandidateInstance({
   function send(message: Message) {
     ws.send(JSON.stringify(message));
   }
+  let finished = false;
 
   return new Promise((resolve, reject) => {
+    ws.addEventListener("close", () => {
+      if (finished) return;
+      // this error would reflect a protocol error. because otherwise, we would get the "error" event. it shouldn't be visible to user, but we use it to ensure the promise ends.
+      setTimeout(() => reject(new Error("qrcode websocket prematurely closed")), CLOSE_TIMEOUT);
+    });
+
     ws.addEventListener("message", async e => {
       try {
         const data = parseMessage(e.data);
@@ -178,22 +195,25 @@ export async function createQRCodeCandidateInstance({
           }
           case "HandshakeCompletionSucceeded": {
             const payload = await cipher.encryptMessagePayload({
-              id: liveCredentials.pubkey,
+              id: memberCredentials.pubkey,
               name: memberName,
             });
             send({ version, publisher, message: "TrustchainShareCredential", payload });
             break;
           }
           case "TrustchainAddedMember": {
+            finished = true;
+            const { trustchain } = await cipher.decryptMessage(data);
+            resolve(trustchain);
             ws.close();
-            resolve();
             break;
           }
           case "Failure": {
-            ws.close();
+            finished = true;
             console.error(data);
             const error = fromErrorMessage(data.payload);
             reject(error);
+            ws.close();
             break;
           }
           default:

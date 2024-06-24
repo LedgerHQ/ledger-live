@@ -1,9 +1,10 @@
-import { FAMILIES } from "@ledgerhq/live-app-sdk";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { isTokenAccount } from "../account";
 import byFamily from "../generated/platformAdapter";
 import type { Transaction } from "../generated/types";
 import {
+  FAMILIES_MAPPING_LL_TO_PLATFORM,
+  FAMILIES_MAPPING_PLATFORM_TO_LL,
   PlatformAccount,
   PlatformCurrency,
   PlatformCurrencyType,
@@ -75,7 +76,7 @@ export function currencyToPlatformCurrency(currency: PlatformSupportedCurrency):
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: currency.family,
+    family: FAMILIES_MAPPING_LL_TO_PLATFORM[currency.family] ?? currency.family,
     color: currency.color,
     units: currency.units.map(unit => ({
       name: unit.name,
@@ -92,9 +93,7 @@ export const getPlatformTransactionSignFlowInfos = (
   hasFeesProvided: boolean;
   liveTx: Partial<Transaction>;
 } => {
-  // This is a hack to link WalletAPI "ethereum" family to new "evm" family
-  const isEthereumFamily = platformTx.family === FAMILIES.ETHEREUM;
-  const liveFamily = isEthereumFamily ? "evm" : platformTx.family;
+  const liveFamily = FAMILIES_MAPPING_PLATFORM_TO_LL[platformTx.family] ?? platformTx.family;
 
   const familyModule = byFamily[liveFamily];
 

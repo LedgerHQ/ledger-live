@@ -1,7 +1,6 @@
 import { ContextLoader } from "../../shared/domain/ContextLoader";
-import { ContextResponse } from "../../shared/model/ContextResponse";
-import { LoaderOptions } from "../../shared/model/LoaderOptions";
-import { Transaction } from "../../shared/model/Transaction";
+import { ClearSignContext } from "../../shared/model/ClearSignContext";
+import { TransactionContext } from "../../shared/model/TransactionContext";
 import { ForwardDomainDataSource } from "../data/ForwardDomainDataSource";
 
 export class ForwardDomainContextLoader implements ContextLoader {
@@ -11,16 +10,11 @@ export class ForwardDomainContextLoader implements ContextLoader {
     this._dataSource = dataSource;
   }
 
-  async load(_transaction: Transaction, options: LoaderOptions): Promise<ContextResponse[]> {
-    const { domain, registry } = options.options?.forwardDomain || {};
-    if (!domain && !registry) {
-      return [];
-    }
+  async load(transactionContext: TransactionContext): Promise<ClearSignContext[]> {
+    const { domain, challenge } = transactionContext;
 
-    if ((domain && !registry) || (!domain && registry)) {
-      throw new Error(
-        "[ContextModule] ForwardDomainLoader: Invalid combination of domain and registry. Either both domain and registry should exist",
-      );
+    if (!domain) {
+      return [];
     }
 
     if (!this.isDomainValid(domain as string)) {
@@ -34,8 +28,17 @@ export class ForwardDomainContextLoader implements ContextLoader {
 
     const payload = await this._dataSource.getDomainNamePayload({
       domain: domain!,
-      challenge: options.challenge,
+      challenge: challenge,
     });
+
+    if (!payload) {
+      return [
+        {
+          type: "error" as const,
+          error: new Error("[ContextModule] ForwardDomainLoader: error getting domain payload"),
+        },
+      ];
+    }
 
     return [{ type: "provideDomainName" as const, payload }];
   }

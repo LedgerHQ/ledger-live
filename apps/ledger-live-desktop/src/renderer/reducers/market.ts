@@ -16,12 +16,14 @@ const initialState: MarketState = {
     search: "",
     liveCompatible: false,
     page: 1,
-    counterCurrency: "usd",
+    counterCurrency: "USD",
   },
   currentPage: 1,
 };
 
 type HandlersPayloads = {
+  MARKET_IMPORT_STATE: MarketState;
+
   MARKET_SET_VALUES: MarketListRequestParams;
   MARKET_SET_CURRENT_PAGE: number;
 };
@@ -40,6 +42,16 @@ const handlers: MarketHandlers = {
     ...state,
     currentPage: payload,
   }),
+
+  MARKET_IMPORT_STATE: (state, { payload }: { payload: MarketState }) => ({
+    ...state,
+    marketParams: {
+      ...state.marketParams,
+      range: payload.marketParams.range,
+      counterCurrency: payload.marketParams.counterCurrency,
+      order: payload.marketParams.order,
+    },
+  }),
 };
 
 // Selectors
@@ -47,6 +59,9 @@ const handlers: MarketHandlers = {
 export const marketParamsSelector = (state: { market: MarketState }) => state.market.marketParams;
 export const marketCurrentPageSelector = (state: { market: MarketState }) =>
   state.market.currentPage;
+
+export const marketStoreSelector = (state: { market: MarketState }) => state.market;
+
 // Exporting reducer
 
 export default handleActions<MarketState, HandlersPayloads[keyof HandlersPayloads]>(

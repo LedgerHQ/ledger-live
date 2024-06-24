@@ -56,9 +56,6 @@ export const buildSignOperation =
 
         const segwit = isSegwitDerivationMode(account.derivationMode as DerivationMode);
 
-        const hasTimestamp = currency.id === "peercoin";
-        const initialTimestamp = hasTimestamp ? Math.floor(Date.now() / 1000) : undefined;
-
         const perCoin = perCoinLogic[currency.id];
         let additionals: string[] = [currency.id];
 
@@ -92,8 +89,6 @@ export const buildSignOperation =
             lockTime,
             sigHashType,
             segwit,
-            hasTimestamp,
-            initialTimestamp,
             additionals,
             expiryHeight,
             hasExtraData,

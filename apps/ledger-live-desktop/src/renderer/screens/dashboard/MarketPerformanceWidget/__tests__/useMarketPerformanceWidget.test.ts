@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { describe, expect, it } from "@jest/globals";
 import { Order } from "../types";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { getChangePercentage, getSlicedList } from "../utils";

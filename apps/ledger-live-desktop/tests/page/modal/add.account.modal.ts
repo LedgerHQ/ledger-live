@@ -1,15 +1,53 @@
 import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
+import { Token } from "tests/enum/Tokens";
 
 export class AddAccountModal extends Modal {
   private selectAccount = this.page.locator("text=Choose a crypto asset"); // FIXME: I need an id
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]'); // FIXME: I need an id
-  readonly addAccountsButton = this.page.locator("data-test-id=add-accounts-import-add-button");
-  private accountsList = this.page.locator("data-test-id=add-accounts-step-import-accounts-list");
-  private stopButton = this.page.locator("data-test-id=add-accounts-import-stop-button");
-  private doneButton = this.page.locator("data-test-id=add-accounts-finish-close-button");
+  readonly addAccountsButton = this.page.getByTestId("add-accounts-import-add-button");
+  private accountsList = this.page.getByTestId("add-accounts-step-import-accounts-list");
+  private stopButton = this.page.getByTestId("add-accounts-import-stop-button");
+  private doneButton = this.page.getByTestId("add-accounts-finish-close-button");
+  readonly closeButton = this.page.getByTestId("modal-close-button");
+  private infoBox = this.page.getByTestId("add-token-infoBox");
   private successAddLabel = this.page.locator("text=Account added successfully");
+  private selectTokenNetwork = (token: Token) =>
+    this.page
+      .getByRole("option", {
+        name: `${token.tokenName} (${token.tokenTicker}) ${token.tokenNetwork}`,
+      })
+      .locator("span");
+  readonly continueButton = this.page.getByTestId("modal-continue-button");
+
+  @step("Select token $0")
+  async selectToken(token: Token) {
+    await this.selectAccount.click();
+    await this.selectAccountInput.fill(token.tokenName);
+    if (await this.selectTokenNetwork(token).isVisible()) {
+      await this.selectTokenNetwork(token).click();
+    } else {
+      await this.selectAccountByScrolling(token);
+      await this.dropdownOptions
+        .locator(
+          this.optionWithTextAndFollowingText(token.tokenTicker.toUpperCase(), token.tokenNetwork),
+        )
+        .click();
+    }
+    await expect(this.closeButton).toBeVisible();
+    await expect(this.infoBox).toBeVisible();
+    await this.continueButton.click();
+  }
+
+  @step("Select account by scrolling: {0}")
+  async selectAccountByScrolling(token: Token) {
+    await this.scrollUntilOptionIsDisplayed(
+      this.dropdownOptionsList,
+      this.selectTokenNetwork(token),
+    );
+    await this.selectTokenNetwork(token).isVisible();
+  }
 
   @step("Select currency $0")
   async select(currency: string) {

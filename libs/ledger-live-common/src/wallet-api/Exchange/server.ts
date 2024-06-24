@@ -140,9 +140,9 @@ export const handlers = ({
       return new Promise((resolve, reject) =>
         uiExchangeStart({
           exchangeParams,
-          onSuccess: (nonce: string) => {
+          onSuccess: (nonce: string, device) => {
             tracking.startExchangeSuccess(manifest);
-            resolve({ transactionId: nonce });
+            resolve({ transactionId: nonce, device });
           },
           onCancel: error => {
             tracking.completeExchangeFail(manifest);

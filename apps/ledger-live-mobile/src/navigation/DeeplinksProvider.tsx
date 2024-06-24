@@ -352,6 +352,16 @@ const linkingOptions = () => ({
               [ScreenName.ScanAccounts]: "scan-accounts",
             },
           },
+          [NavigatorName.LandingPages]: {
+            screens: {
+              /**
+               * @params ?useCase: LandingPageUseCase
+               * ie: "ledgerlive://landing-page?useCase=LP_Generic" will open the landing page screen with the use case LP_Generic
+               *
+               */
+              [ScreenName.GenericLandingPage]: "landing-page",
+            },
+          },
         },
       },
     },

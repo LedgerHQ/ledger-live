@@ -11,6 +11,7 @@ export const LedgerExplorerUsedIncorrectly = createCustomErrorClass(
 export const EtherscanLikeExplorerUsedIncorrectly = createCustomErrorClass(
   "EtherscanLikeExplorerUsedIncorrectly",
 );
+export const InvalidExplorerResponse = createCustomErrorClass("InvalidExplorerResponse");
 
 // Node
 export const UnknownNode = createCustomErrorClass("UnknownNode");

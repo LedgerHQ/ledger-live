@@ -70,6 +70,7 @@ export const urls = {
   whatIsARecoveryPhrase: "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase",
   feesMoreInfo: "https://support.ledger.com/hc/articles/360021039173-Choose-network-fees?docs=true",
   feesEIP1559MoreInfo: "https://support.ledger.com/hc/articles/6018110754845?docs=true",
+  feesTron: "https://support.ledger.com/hc/en-us/articles/6331588714141",
   recipientAddressInfo:
     "https://support.ledger.com/hc/articles/4404389453841-Receive-crypto-assets?docs=true",
   managerAppLearnMore: "https://support.ledger.com/hc/categories/4404376139409?docs=true",

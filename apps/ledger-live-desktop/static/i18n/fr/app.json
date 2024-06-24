@@ -27,6 +27,7 @@
       "title" : "Discover",
       "section" : {
         "recentlyUsed" : "Récemment utilisé",
+        "locallyLoaded" : "Apps Live chargées localement",
         "browse" : "Naviguer"
       },
       "filter" : {
@@ -1194,7 +1195,7 @@
         "restoreSeed" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en n’avez pas ? Générez une nouvelle phrase avec votre {{productName}}.",
         "selection" : "Choisissez votre option de configuration :",
         "selectionNewLedger" : "<0>Configurer comme un nouvel appareil :</0> vous créez un nouveau wallet. Cela va générer une nouvelle phrase de récupération secrète.",
-        "selectionRestore" : "<0>Restaurer :</0> vous restaurez l’accès à vos actifs existants, à l’aide de votre phrase de récupération secrète ou via Ledger Recover.",
+        "selectionRestore" : "<0>Restaurer :</0> vous restaurez l’accès à votre wallet, à l’aide de votre phrase de récupération secrète ou via Ledger Recover.",
         "selectionContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}",
         "newSeedDescription1" : "Votre {{productName}} va générer une phrase de récupération secrète : une liste unique de 24 mots. Elle constitue le seul moyen de récupérer vos actifs si votre Ledger est volé, perdu ou si vous oubliez votre code PIN.",
         "newSeedDescription2" : "<0>Conservez-la en lieu sûr et gardez-la confidentielle :</0>\nVotre phrase de récupération secrète contrôle tous vos actifs et est irremplaçable. Toute personne en ayant connaissance contrôle vos actifs et pourrait les voler. Si vous la perdez, Ledger ne peut pas vous aider.",
@@ -1270,7 +1271,7 @@
         "firmwareUpdate" : {
           "title" : {
             "active" : "Vérification du système d’exploitation",
-            "completed" : "Le système d’exploitation de votre {{modelName}} est à jour.",
+            "completed" : "Le système d’exploitation de votre {{modelName}} est à jour",
             "updateAvailable" : "Mise à jour {{firmwareVersion}} disponible"
           },
           "subtitle" : {
@@ -1298,7 +1299,7 @@
         "titleCompleted" : "Votre {{deviceName}} est prêt"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
-        "title" : "Touchez Autoriser pour lancer la vérification de l’authenticité"
+        "title" : "Touchez Autoriser pour lancer la vérification"
       },
       "softwareCheckLockedDeviceDrawer" : {
         "title" : "Déverrouillez votre appareil"
@@ -1456,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Acheter / Vendre",
-        "description" : "Achetez et vendez avec des prestataires de confiance."
+        "description" : "Achetez et vendez avec nos prestataires de confiance."
       },
       "swap" : {
         "title" : "Swap",
-        "description" : "Échangez une crypto contre une autre en toute sécurité.",
+        "description" : "Échangez une crypto contre une autre.",
         "label" : "Populaire"
       },
       "earn" : {
         "title" : "Staker",
-        "description" : "Faites fructifier vos crypto-actifs via Ledger."
+        "description" : "Stakez vos cryptos via Ledger."
       }
     },
     "recoverBanner" : {
@@ -2388,8 +2389,8 @@
       "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
       "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
     },
-    "allowLanguageInstallation" : "Appuyez sur Autoriser\npour installer la langue",
-    "languageInstalled" : "Votre Ledger est maintenant en {{language}}.",
+    "allowLanguageInstallation" : "Appuyez sur \"Allow\" (Autoriser)\npour installer la langue",
+    "languageInstalled" : "Votre appareil Ledger est maintenant en {{language}}.",
     "installingLanguage" : "Installation de la langue",
     "languages" : {
       "english" : "English",
@@ -3589,6 +3590,12 @@
         },
         "warning" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
       },
+      "states" : {
+        "active" : "Actif",
+        "inactive" : "Inactif",
+        "activating" : "Activation",
+        "deactivating" : "Désactivation"
+      },
       "flow" : {
         "title" : "Déléguer",
         "steps" : {
@@ -3967,7 +3974,11 @@
       "region" : "Région",
       "regionDesc" : "Choisissez votre région pour personnaliser les formats de date, d’heure et de nombre.",
       "stock" : "Indicateur de marché régional",
-      "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge."
+      "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge.",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "Sécurisez vos données Ledger Live en toute simplicité et synchronisez-les avec plusieurs appareils.",
+      "marketPerformanceWidget" : "Widget de suivi du marché",
+      "marketPerformanceWidgetDesc" : "Activez cette fonctionnalité pour afficher sur la page Portefeuille le Top des hausses et le Top des baisses sur une période choisie."
     },
     "developer" : {
       "search" : "Rechercher",
@@ -3985,6 +3996,11 @@
       "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "debugReactQuery" : "Autoriser le débogage avec React Query",
       "debugReactQueryDesc" : "Affichez et autorisez l’ouverture de la console de débogage de React Query.",
+      "exchangeDeveloperMode" : {
+        "title" : "Mode développeur Exchange",
+        "desc" : "Ajoutez les informations sur le prestataire d’Exchange.",
+        "placeholder" : "Infos prestataire Exchange (CAL)"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "Autoriser le signalement d’un NFT comme spam (Bêta)",
         "debugNFTSpamReportDesc" : "Signalez un NFT comme spam ou empêchez qu’il soit traité comme spam à l’aide d’un formulaire.",
@@ -4037,6 +4053,17 @@
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
       "addLocalAppButton" : "Naviguer",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "Créer une app locale",
+          "modify" : "Modifier une app locale"
+        },
+        "addNetwork" : "Ajouter un nouveau réseau",
+        "removeNetwork" : "Supprimer le dernier réseau",
+        "export" : "Exporter",
+        "modify" : "Modifier",
+        "create" : "Créer"
+      },
       "runLocalAppDeleteButton" : "Effacer",
       "runLocalAppOpenButton" : "Ouvrir",
       "enableLearnStagingUrl" : "Activer l’URL de test de la page Apprendre",
@@ -4162,6 +4189,18 @@
         "enableNetworkLogs" : {
           "title" : "Activer les logs réseau",
           "description" : "Activez les logs réseau dans la console (les logs d’erreur sont toujours activés)."
+        },
+        "testWalletSync" : {
+          "title" : "Tester Ledger Sync",
+          "description" : "Permet de lancer un processus Ledger Sync spécifique.",
+          "cta" : "Tester",
+          "modal" : {
+            "flow" : "Sélectionner un processus",
+            "step" : "Sélectionner une étape",
+            "activated" : "Activer/désactiver pour générer une synchronisation (ou non)",
+            "instance" : "Créer une synchronisation",
+            "cta" : "Appliquer"
+          }
         }
       }
     },
@@ -4266,7 +4305,7 @@
     "downloadInProgress" : "Téléchargement de la mise à jour...",
     "downloadProgress" : "{{progress}} % terminés",
     "checking" : "Vérification de la mise à jour...",
-    "checkSuccess" : "Nouvelle mise à jour de Ledger Live disponible. Elle s’installera automatiquement à la fermeture de l’application.",
+    "checkSuccess" : "Mise à jour de Ledger Live disponible. Elle s’installera et relancera Ledger Live à la fermeture de l’application.",
     "quitAndInstall" : "Installer maintenant et relancer",
     "updateAvailable" : "Mise à jour disponible vers la version Ledger Live {{version}}",
     "error" : "Erreur lors de la mise à jour. Merci de recommencer le téléchargement.",
@@ -5454,6 +5493,10 @@
       "description" : "Impossible de calculer le montant et les frais"
     },
     "NotEnoughBalance" : {
+      "title" : "Solde insuffisant",
+      "description" : "Vérifiez que ce compte a des fonds suffisants."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "Solde insuffisant, frais de réseau inclus. Modifiez le montant ou vérifiez votre solde.",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
     },
@@ -5465,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse avant de recevoir des tokens TRC20. <link0>En savoir plus </link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "Vous devez avoir au moins 0,1 TRX sur votre compte Tron pour qu’il reste actif, et 1,1 TRX pour les frais de réseau. <link0>En savoir plus </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "Version de votre système d’exploitation obsolète",
@@ -5529,7 +5578,7 @@
       "title" : "Une erreur est survenue. Veuillez reconnecter votre appareil.",
       "description" : "{{message}}"
     },
-    "TransportPendingOperation" : {
+    "TransportRaceCondition" : {
       "title" : "Une erreur est survenue. Veuillez reconnecter votre appareil.",
       "description" : "Une action était déjà en attente sur votre appareil Ledger. Veuillez refuser ou reconnecter."
     },
@@ -5797,6 +5846,9 @@
     "InvalidXRPTag" : {
       "title" : "Tag de destination XRP invalide"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "Réponse de l’explorateur {{currencyName}} invalide"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Solde insuffisant pour déléguer"
     },
@@ -6040,6 +6092,15 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Échec de la vérification du système d’exploitation",
       "description" : "Une erreur est survenue. Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Swap indisponible : effectuez d’abord un envoi/délégation avec ce compte Tezos, ou changez la paire."
+    },
+    "newAddressTRC20" : {
+      "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Notre infrastructure Bitcoin rencontre actuellement des difficultés. Veuillez réessayer plus tard."
     }
   },
   "cryptoOrg" : {
@@ -6176,11 +6237,11 @@
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
-      "description" : "Le partage des données sur l’utilisation de Ledger Live nous permet de mieux comprendre vos préférences, vous présenter des contenus pertinents et résoudre des problèmes techniques.",
-      "whatWeTrack" : "Avec votre consentement, Ledger pourra suivre :",
+      "description" : "Le partage de vos données Ledger Live nous permet de mieux comprendre vos préférences et vous présenter des contenus pertinents.",
+      "whatWeTrack" : "Avec votre consentement, Ledger pourra suivre des données relatives à la façon dont vous utilisez Ledger Live (y compris les visites de pages et clics) :",
       "whatWeTrackList" : {
-        "1" : "Les données analytiques, y compris les visites de pages et clics.",
-        "2" : "Les données de personnalisation, y compris les clics, visites de pages et données de conversion."
+        "1" : "Pour mesurer la performance de Ledger Live et améliorer l’application et votre expérience (Statistiques).",
+        "2" : "Pour vous proposer des recommandations personnalisées et des contenus adaptés à vos préférences, ainsi que pour analyser l’efficacité de nos campagnes marketing (Personnalisation)."
       },
       "whatWeDoNotTrack" : "Ledger ne suivra jamais les données concernant :",
       "whatWeDoNotTrackList" : {
@@ -6192,12 +6253,12 @@
       "refuse" : "Tout refuser",
       "accept" : "Tout accepter",
       "analyticsData" : {
-        "title" : "Données analytiques",
-        "description" : "Aidez à améliorer Ledger Live : partagez les données analytiques de l’application, y compris les visites de pages et les clics."
+        "title" : "Statistiques",
+        "description" : "Le partage des données d’utilisation (y compris les visites de pages et clics) nous permet de mesurer la performance de Ledger Live, d’améliorer l’application et votre expérience."
       },
       "personalizationData" : {
-        "title" : "Données de personnalisation",
-        "description" : "Obtenez des recommandations personnalisées : partagez les données de personnalisation de l’application, y compris les données de conversion, clics et visites de pages."
+        "title" : "Personnalisation",
+        "description" : "Le partage des données sur l’utilisation de l’application (y compris les clics, visites de pages et données de conversion) nous permet de vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et de mesurer l’efficacité de nos campagnes marketing."
       },
       "share" : "Partager"
     },
@@ -6229,8 +6290,116 @@
     "profileSettings" : {
       "personalizedExp" : "Expérience personnalisée",
       "analytics" : "Statistiques",
-      "personalizedExpDesc" : "Recevez des recommandations personnalisées en fonction de vos préférences.",
-      "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur."
+      "personalizedExpDesc" : "Autorisez Ledger à suivre les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
+      "analyticsDesc" : "Autorisez Ledger à suivre les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience."
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger Sync",
+    "activate" : {
+      "title" : "Synchronisez vos comptes sur toutes les plateformes",
+      "description" : "Votre appareil Ledger va générer une clé de chiffrement. Vos données restent privées, et vous seul(e) pouvez les récupérer.",
+      "cta" : "Synchroniser les comptes"
+    },
+    "alreadySync" : "Vous avez déjà créé une clé ?",
+    "manage" : {
+      "cta" : "Gérer",
+      "synchronize" : {
+        "label" : "Synchroniser",
+        "description" : "Synchronisez vos données Ledger Live avec celles d’un autre appareil pour une expérience fluide."
+      },
+      "backup" : {
+        "label" : "Gérer votre clé",
+        "description" : "Protégez ou supprimez votre clé de chiffrement via un autre appareil Ledger."
+      },
+      "instance" : {
+        "label_one" : "1 synchronisation",
+        "label_other" : "{{count}} synchronisations",
+        "cta" : "Gérer"
+      }
+    },
+    "loading" : {
+      "title" : "Quelques secondes...",
+      "activation" : "Chiffrement de vos données de bout en bout... ",
+      "synch" : "Mise à jour de vos synchronisations..."
+    },
+    "error" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Veuillez réessayer plus tard.",
+      "cta" : "Réessayer"
+    },
+    "unsecuredError" : {
+      "title" : "La synchronisation n’est pas protégée par cet appareil Ledger",
+      "description" : "Veuillez connecter l’appareil Ledger que vous avez utilisé pour créer votre clé de chiffrement.",
+      "info" : "Si vous avez perdu votre appareil Ledger, ne vous inquiétez pas ! Vous pouvez quand même supprimer votre clé. En poursuivant, vos données et synchronisations seront supprimées.",
+      "cta" : "Connecter un autre appareil Ledger",
+      "ctaDelete" : "Supprimer ma clé de chiffrement"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "Succès",
+        "desc" : "Activation de Ledger Sync réussie. ",
+        "synchAnother" : "Synchroniser avec une autre application Ledger Live"
+      },
+      "synch" : {
+        "title" : "Synchronisation réussie !",
+        "desc" : "Les modifications apportées à vos comptes apparaîtront automatiquement, dans toutes les apps et sur toutes les plateformes."
+      }
+    },
+    "manageBackups" : {
+      "title" : "Gérer votre clé",
+      "options" : {
+        "deleteBackup" : {
+          "title" : "Supprimer vos données",
+          "description" : "Toutes les données synchronisées seront supprimées."
+        }
+      },
+      "deleteBackup" : {
+        "title" : "Voulez-vous vraiment supprimer votre clé de chiffrement ?",
+        "description" : "En cliquant sur Supprimer, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
+        "delete" : "Supprimer",
+        "cancel" : "Annuler"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "Vos appareils ont été désynchronisés, et votre clé a été supprimée"
+      },
+      "deleteBackupError" : {
+        "title" : "Une erreur est survenue"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Choisissez votre méthode de synchronisation",
+        "description" : "Vous pouvez soit effectuer la synchronisation avec votre appareil Ledger, soit scanner un code QR sur Ledger Live.",
+        "scan" : {
+          "title" : "Scanner un code QR",
+          "description" : "Synchronisez. en scannant un code QR"
+        },
+        "connectDevice" : {
+          "title" : "Utiliser mon wallet Ledger",
+          "description" : "Synchronisez en signant avec votre appareil Ledger."
+        }
+      },
+      "qrCode" : {
+        "title" : "Synchroniser",
+        "hint" : "Essayez-vous de synchroniser deux applications Ledger Live pour l’ordinateur ? Cliquez ici.",
+        "description" : "Scannez et synchronisez vos comptes avec une autre application Ledger Live",
+        "steps" : {
+          "step1" : "Ouvrez l’application Ledger Live à synchroniser",
+          "step2" : "Accédez à <0>Paramètres</0> > <0>Général</0> > <0>Ledger Sync</0> > <0>Synchroniser</0> > <0>Afficher le code QR</0>",
+          "step3" : "Scannez le code QR jusqu’à ce que la barre soit à 100 %."
+        }
+      },
+      "pinCode" : {
+        "title" : "Saisie du code",
+        "description" : "Saisissez le code sur l’autre application Ledger Live que vous voulez synchroniser."
+      }
+    },
+    "manageInstances" : {
+      "title" : "Gérer les synchronisations",
+      "remove" : "Retirer",
+      "deleteInstanceSuccess" : "Votre {{instanceName}} n’est plus synchronisée.",
+      "deleteInstanceError" : "Une erreur s’est produite lors de la désynchronisation de {{instanceName}}"
     }
   }
 }

@@ -177,7 +177,6 @@ export default class Btc {
    * @param lockTime is the optional lockTime of the transaction to sign, or default (0)
    * @param sigHashType is the hash type of the transaction to sign, or default (all)
    * @param segwit is an optional boolean indicating wether to use segwit or not. This includes wrapped segwit.
-   * @param initialTimestamp is an optional timestamp of the function call to use for coins that necessitate timestamps only, (not the one that the tx will include)
    * @param additionals list of additionnal options
    *
    * - "bech32" for spending native segwit outputs
@@ -236,7 +235,6 @@ export default class Btc {
    * For each UTXO included in your transaction, create a transaction object from the raw serialized version of the transaction used in this UTXO.
    * @param transactionHex a raw hexadecimal serialized transaction
    * @param isSegwitSupported is a boolean indicating if the segwit is supported
-   * @param hasTimestamp is a boolean (peercoin includes timestamp in their transactions, others don't)
    * @param hasExtraData is a boolean (komodo, zencash and zcash include extraData in their transactions, others don't)
    * @param additionals list of additionnal options
    * @return the transaction object deserialized from the raw hexadecimal transaction
@@ -246,17 +244,10 @@ export default class Btc {
   splitTransaction(
     transactionHex: string,
     isSegwitSupported: boolean | null | undefined = false,
-    hasTimestamp = false,
     hasExtraData = false,
     additionals: Array<string> = [],
   ): Transaction {
-    return splitTransaction(
-      transactionHex,
-      isSegwitSupported,
-      hasTimestamp,
-      hasExtraData,
-      additionals,
-    );
+    return splitTransaction(transactionHex, isSegwitSupported, hasExtraData, additionals);
   }
 
   /**

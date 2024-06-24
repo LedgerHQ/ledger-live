@@ -55,6 +55,7 @@ export type CryptoCurrencyId =
   | "hpb"
   | "hycon"
   | "icon"
+  | "icon_berlin_testnet"
   | "iota"
   | "iov"
   | "kin"
@@ -78,7 +79,6 @@ export type CryptoCurrencyId =
   | "onomy"
   | "ontology"
   | "particl"
-  | "peercoin"
   | "persistence"
   | "pirl"
   | "pivx"
@@ -100,7 +100,6 @@ export type CryptoCurrencyId =
   | "stakenet"
   | "stargaze"
   | "stratis"
-  | "stealthcoin"
   | "stellar"
   | "stride"
   | "osmosis"
@@ -112,8 +111,6 @@ export type CryptoCurrencyId =
   | "ubiq"
   | "umee"
   | "vechain"
-  | "vertcoin"
-  | "viacoin"
   | "wanchain"
   | "waves"
   | "zcash"
@@ -161,7 +158,11 @@ export type CryptoCurrencyId =
   | "neon_evm"
   | "lukso"
   | "linea"
-  | "linea_sepolia";
+  | "linea_sepolia"
+  | "blast"
+  | "blast_sepolia"
+  | "scroll"
+  | "scroll_sepolia";
 
 export type LedgerExplorerId =
   | "btc"
@@ -176,15 +177,10 @@ export type LedgerExplorerId =
   | "hsr"
   | "kmd"
   | "ltc"
-  | "ppc"
   | "pivx"
   | "posw"
   | "qtum"
-  | "xsn"
   | "strat"
-  | "xst"
-  | "vtc"
-  | "via"
   | "zec"
   | "zen"
   | "avax"
@@ -274,8 +270,6 @@ export type BitcoinLikeInfo = {
   P2PKH: number;
   P2SH: number;
   XPUBVersion?: number;
-  // FIXME optional as we miss some data to fill
-  hasTimestamp?: boolean;
 };
 
 /**

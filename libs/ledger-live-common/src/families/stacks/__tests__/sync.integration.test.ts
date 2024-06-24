@@ -19,7 +19,7 @@ describe("sync for token transfers", () => {
     const rawTxs = await fetchFullTxs(address);
 
     // Contains operations for txn of type token_transfer
-    const operations = flatMap(rawTxs, mapTxToOps(accountId));
+    const operations = flatMap(rawTxs, mapTxToOps(accountId, address));
 
     expect(operations.length).toBeTruthy();
   });

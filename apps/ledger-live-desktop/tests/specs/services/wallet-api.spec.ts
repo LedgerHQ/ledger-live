@@ -36,6 +36,15 @@ const methods = [
 const account_list_mock = {
   rawAccounts: [
     {
+      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
+      balance: "10135465432293584185",
+      blockHeight: 122403,
+      currency: "arbitrum",
+      id: "1612c97a-e3bd-5c33-9618-215fc05f1853",
+      name: "Arbitrum 1",
+      spendableBalance: "10135465432293584185",
+    },
+    {
       id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
       name: "Bitcoin 1 (legacy)",
       address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
@@ -162,7 +171,7 @@ const account_list_mock = {
   ],
 };
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH1AccountARB" });
 
 let testServerIsRunning = false;
 
@@ -220,12 +229,23 @@ test("Wallet API methods @smoke", async ({ page }) => {
       id,
       method: "account.request",
       params: {
-        currencyIds: ["ethereum", "bitcoin"],
+        currencyIds: ["ethereum", "bitcoin", "ethereum/erc20/usd_tether__erc20_"],
       },
     });
 
+    await drawer.waitForDrawerToBeVisible();
+
+    await drawer.selectCurrency("tether usd");
+    // Test name and balance for tokens
+    await expect(drawer.getAccountButton("tether usd", 2)).toContainText(
+      "Tether USD (USDT)71.8174 USDT", // Special space present in the actual rendered element apparently
+    );
+    await drawer.back();
+
     await drawer.selectCurrency("bitcoin");
     await drawer.selectAccount("bitcoin");
+
+    await drawer.waitForDrawerToDisappear();
 
     await expect(response).resolves.toMatchObject({
       id,
@@ -315,7 +335,12 @@ test("Wallet API methods @smoke", async ({ page }) => {
       id,
       method: "currency.list",
       params: {
-        currencyIds: ["bitcoin", "ethereum", "ethereum/erc20/usd_tether__erc20_"],
+        currencyIds: [
+          "bitcoin",
+          "ethereum",
+          "ethereum/erc20/usd_tether__erc20_",
+          // "arbitrum/erc20/arbitrum", // Still not able to get the test fetching tokens with an account present
+        ],
       },
     });
 
@@ -352,6 +377,17 @@ test("Wallet API methods @smoke", async ({ page }) => {
             color: "#0ebdcd",
             decimals: 6,
           },
+          // {
+          //   type: "TokenCurrency",
+          //   standard: "ERC20",
+          //   id: "arbitrum/erc20/arbitrum",
+          //   ticker: "ARB",
+          //   contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+          //   name: "Arbitrum",
+          //   parent: "arbitrum",
+          //   color: "#28a0f0",
+          //   decimals: 18,
+          // },
         ],
       },
     });

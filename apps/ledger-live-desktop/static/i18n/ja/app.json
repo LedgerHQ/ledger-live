@@ -27,6 +27,7 @@
       "title" : "アプリ一覧",
       "section" : {
         "recentlyUsed" : "最近使用した項目",
+        "locallyLoaded" : "ローカルに読み込まれたライブアプリ",
         "browse" : "チェックする"
       },
       "filter" : {
@@ -1188,7 +1189,7 @@
         "continueOnDevice" : "{{productName}}にPINを設定"
       },
       "seedContent" : {
-        "title" : "秘密のリカバリーフレーズ",
+        "title" : "シークレットリカバリーフレーズ",
         "titleCompleted" : "シークレットリカバリーフレーズ確認済み",
         "recoverSeed" : "Placeholder：Recover",
         "restoreSeed" : "資産のセキュリティを最大限に高めるため、必ずLedgerデバイスで生成したシークレットリカバリーフレーズを使用してください。\n\nシークレットリカバリーフレーズを持っていませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
@@ -1203,7 +1204,7 @@
         "newSeedDescription5" : "第三者と共有しないでください。紛失しないでください。",
         "newSeedContinueOnDevice" : "{{productName}}で生成されたシークレットリカバリーフレーズを表示して書き留める",
         "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
-        "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
+        "restoreChoiceSRPTitle" : "シークレットリカバリーフレーズを使用して復元する",
         "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
         "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
         "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をしている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップを復元します。",
@@ -1456,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "購入/売却",
-        "description" : "信頼できるプロバイダーを使用して売買"
+        "description" : "当社のプロバイダーを使用して暗号資産を売買"
       },
       "swap" : {
         "title" : "スワップ",
-        "description" : "安全に別の暗号資産へ交換",
+        "description" : "暗号資産を別の暗号資産へ交換",
         "label" : "人気"
       },
       "earn" : {
         "title" : "ステーキング",
-        "description" : "Ledgerで暗号資産を運用"
+        "description" : "Ledgerで暗号資産をステーキング"
       }
     },
     "recoverBanner" : {
@@ -3589,6 +3590,12 @@
         },
         "warning" : "バリデータは慎重に選択してください。良くないバリデータに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
       },
+      "states" : {
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "activating" : "有効化中",
+        "deactivating" : "無効化中"
+      },
       "flow" : {
         "title" : "デリゲート",
         "steps" : {
@@ -3967,7 +3974,11 @@
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "stock" : "マーケットインジケーターの色分け",
-      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。"
+      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
+      "walletSync" : "Ledger同期",
+      "walletSyncDesc" : "シンプルにアプリのデータを保護し、複数のLedger Liveインスタンスを同期する。",
+      "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
+      "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },
     "developer" : {
       "search" : "検索",
@@ -3985,6 +3996,11 @@
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "debugReactQuery" : "ReactQueryのデバッグを許可する",
       "debugReactQueryDesc" : "ReactQueryデバッグコンソールを表示し、開くことを許可します。",
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange開発者モード",
+        "desc" : "Exchangeプロバイダーの情報を追加する",
+        "placeholder" : "CAL形式のExchangeプロバイダー情報"
+      },
       "debugSpamNft" : {
         "debugNFTSpamReport" : "NFTスパム報告を許可する（ベータ版）",
         "debugNFTSpamReportDesc" : "NFTをスパムとして報告する、またはスパムとして表示を停止するためのフォームを表示します",
@@ -4037,6 +4053,17 @@
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
       "addLocalAppButton" : "画面をチェックする",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "ローカルアプリを作成",
+          "modify" : "ローカルアプリを変更"
+        },
+        "addNetwork" : "新しいネットワークを追加",
+        "removeNetwork" : "最後のネットワークを削除",
+        "export" : "エクスポート",
+        "modify" : "変更",
+        "create" : "作成"
+      },
       "runLocalAppDeleteButton" : "削除",
       "runLocalAppOpenButton" : "開く",
       "enableLearnStagingUrl" : "学習ページのステージングURL",
@@ -4162,6 +4189,18 @@
         "enableNetworkLogs" : {
           "title" : "ネットワークログを有効にする",
           "description" : "コンソールでネットワークログを有効にする（エラーログは常に有効になっています）。"
+        },
+        "testWalletSync" : {
+          "title" : "Ledger Syncをテスト",
+          "description" : "特定のLedgerSyncフローを起動できるようになります",
+          "cta" : "テスト",
+          "modal" : {
+            "flow" : "フローを選択",
+            "step" : "ステップを選択",
+            "activated" : "有効化/無効化してバックアップを取得/非取得",
+            "instance" : "インスタンスの生成",
+            "cta" : "適用"
+          }
         }
       }
     },
@@ -4266,7 +4305,7 @@
     "downloadInProgress" : "アップデートをダウンロード中...",
     "downloadProgress" : "{{progress}}%完了",
     "checking" : "アップデートの確認中...",
-    "checkSuccess" : "新しいLedger Liveアップデートをご利用いただけます。アプリを終了すると自動的にインストールされます。",
+    "checkSuccess" : "新しいアップデートをご利用いただけます。アプリを閉じると、Ledger Liveが自動的にインストールされ、再起動されます。",
     "quitAndInstall" : "今すぐインストールして再起動する",
     "updateAvailable" : "Ledger Liveバージョン {{version}} へのアップデートが利用可能です。",
     "error" : "更新中にエラーが発生再度ダウンロードしてください",
@@ -4826,7 +4865,7 @@
         "1" : {
           "text" : "Ledgerユーザーの暗号資産が保管される場所は？",
           "answers" : {
-            "1" : "Ledger Nanoについて",
+            "1" : "Ledger Nano本体",
             "2" : "ブロックチェーン"
           },
           "results" : {
@@ -5454,6 +5493,10 @@
       "description" : "金額と手数料を算出できません"
     },
     "NotEnoughBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "申し訳ありません。ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
@@ -5465,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "TRC20トークンの受け取りを有効にするには、まずこのアドレスに少なくとも0.1TRXを送付する必要があります。<link0>詳細はこちら</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "このTronアカウントを有効にしておくには少なくとも0.1TRX、ネットワーク手数料には1.1TRXが必要です。<link0>詳細はこちら</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "お使いのオペレーティングシステムのバージョンが古くなっています",
@@ -5529,7 +5578,7 @@
       "title" : "問題が発生しました。デバイスを再接続してください。",
       "description" : "{{message}}"
     },
-    "TransportPendingOperation" : {
+    "TransportRaceCondition" : {
       "title" : "問題が発生しました。デバイスを再接続してください。",
       "description" : "Ledgerデバイスではアクションがすでに保留中です。拒否するか再接続してください。"
     },
@@ -5797,6 +5846,9 @@
     "InvalidXRPTag" : {
       "title" : "無効なXRP宛先タグ"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "{{currencyName}}エクスプローラーからの応答が無効です"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "デリゲートに必要な残高が不足しています。"
     },
@@ -6040,6 +6092,15 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "OSアップデートチェックに失敗しました",
       "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "スワップ利用不可：Tezosアカウントで最初の送付/デリゲートを行うか、ペアを変更する必要があります。"
+    },
+    "newAddressTRC20" : {
+      "title" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "当社のビットコインインフラストラクチャで問題が発生しています。後でもう一度お試しください。"
     }
   },
   "cryptoOrg" : {
@@ -6155,7 +6216,7 @@
   },
   "discoverProtect" : {
     "title" : "お客様のIDで\n鍵を復元",
-    "description" : "秘密のリカバリーフレーズは、安全に保管されなければなりません。\nLedger Nano X限定のソフトローンチ。2023年6月30日まで登録無料。",
+    "description" : "シークレットリカバリーフレーズは、安全に保管されなければなりません。\nLedger Nano X限定のソフトローンチ。2023年6月30日まで登録無料。",
     "cta" : "サブスクリプション契約のメリットとは？",
     "downloadLLM" : "Ledger Live Mobileアプリを使用して<purple>Ledger Recover</purple>のサブスクリプション契約をする"
   },
@@ -6176,11 +6237,11 @@
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
-      "description" : "Ledger Liveデータを共有いただくことで、お客様の設定を理解し、関連するコンテンツを表示するとともに、技術的な問題解決するのに役立ちます。",
-      "whatWeTrack" : "お客様が同意する場合、Ledgerは以下を追跡可能となります。",
+      "description" : "Ledger Liveデータを共有いただくことで、お客様の好みを理解し、お客様に関連するコンテンツを表示することができます。",
+      "whatWeTrack" : "お客様の同意があると、Ledgerは、お客様によるLedger Liveのご使用状況（ページの訪問数やクリック数など）に関するデータを追跡できるようになります。",
       "whatWeTrackList" : {
-        "1" : "ページ訪問数、クリック数などの分析データ。",
-        "2" : "クリック数、ページ訪問数、コンバージョンデータなどのパーソナライゼーションデータ。"
+        "1" : "Ledger Liveのパフォーマンスを測定し、アプリとお客様の体験（アナリティクス）の両方を強化可能です。",
+        "2" : "お客様の好みに合わせてパーソナライズされた推奨事項やコンテンツをご提供でき、当社のマーケティングキャンペーンの効果（パーソナライゼーション）の測定に役立ちます。"
       },
       "whatWeDoNotTrack" : "Ledgerは、以下に関する情報を決して追跡しません。",
       "whatWeDoNotTrackList" : {
@@ -6192,12 +6253,12 @@
       "refuse" : "すべて拒否する",
       "accept" : "すべて受け入れる",
       "analyticsData" : {
-        "title" : "分析データ",
-        "description" : "Ledger Liveの改善に役立てるため、ページ訪問数やクリック数などのアプリの分析データを共有します。"
+        "title" : "アナリティクス",
+        "description" : "Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させるために、ページの訪問数やクリック数などの使用状況データを共有します。"
       },
       "personalizationData" : {
-        "title" : "パーソナライゼーションデータ",
-        "description" : "パーソナライズされたおすすめ情報を取得するために、コンバージョンデータ、クリック数、ページ訪問数などのアプリのパーソナライゼーションデータを共有します。"
+        "title" : "パーソナライゼーション",
+        "description" : "好みに合った、パーソナライズされた推奨事項やコンテンツを受け取り、マーケティングキャンペーンのパフォーマンスの測定に役立てるため、クリック数、ページ訪問数、コンバージョンデータなどのアプリ使用状況データを共有します。"
       },
       "share" : "共有する"
     },
@@ -6229,8 +6290,116 @@
     "profileSettings" : {
       "personalizedExp" : "好みに合わせてコンテンツをカスタマイズ",
       "analytics" : "アナリティクス",
-      "personalizedExpDesc" : "自分好みにパーソナライズされたおすすめ情報を受け取りましょう。",
-      "analyticsDesc" : "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する。"
+      "personalizedExpDesc" : "Ledgerがアプリの使用状況データを追跡して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
+      "analyticsDesc" : "Ledgerがアプリの使用状況データを追跡できるようにし、Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させるようにします。"
+    }
+  },
+  "walletSync" : {
+    "title" : "Ledger同期",
+    "activate" : {
+      "title" : "すべてのプラットフォーム間でアカウントを同期",
+      "description" : "Ledgerは暗号化キーを生成してデータのプライバシーを確保し、あなただけが取得可能にします。",
+      "cta" : "アカウントを同期する"
+    },
+    "alreadySync" : "キーを作成済みですか？",
+    "manage" : {
+      "cta" : "管理",
+      "synchronize" : {
+        "label" : "同期する",
+        "description" : "アプリのデータを別のLedger Liveアプリと同期して、シームレスな体験を実現します。"
+      },
+      "backup" : {
+        "label" : "キーの管理",
+        "description" : "別のLedgerを使用して暗号化キーを保護または削除する。"
+      },
+      "instance" : {
+        "label_one" : "1個の同期されたインスタンス",
+        "label_other" : "{{count}}個の同期されたインスタンス",
+        "cta" : "管理"
+      }
+    },
+    "loading" : {
+      "title" : "お待ちください...",
+      "activation" : "データがエンドツーエンドで暗号化されています... ",
+      "synch" : "同期されたインスタンスを更新しています..."
+    },
+    "error" : {
+      "title" : "問題が発生しました。",
+      "description" : "後でもう一度お試しください。",
+      "cta" : "再試行"
+    },
+    "unsecuredError" : {
+      "title" : "同期はこのLedgerによって保護されていません",
+      "description" : "暗号化キーの作成に使用されたLedgerデバイスを接続してください。",
+      "info" : "Ledgerを紛失しても、心配いりません。その場合でも、キーは削除できます。この操作により同時にデータを削除し、現在同期されているすべてのインスタンスの同期を解除します。",
+      "cta" : "別のLedgerを接続する",
+      "ctaDelete" : "暗号化キーを削除する"
+    },
+    "success" : {
+      "backup" : {
+        "title" : "成功",
+        "desc" : "Ledger Syncが正常に有効になりました。 ",
+        "synchAnother" : "別のLedger Liveアプリと同期する"
+      },
+      "synch" : {
+        "title" : "同期が成功しました",
+        "desc" : "アカウントの変更が、すべてのアプリとプラットフォームに自動的に反映されるようになります。"
+      }
+    },
+    "manageBackups" : {
+      "title" : "キーの管理",
+      "options" : {
+        "deleteBackup" : {
+          "title" : "データの削除",
+          "description" : "同期されたデータはすべて削除されます。"
+        }
+      },
+      "deleteBackup" : {
+        "title" : "本当に暗号化キーを削除してもよろしいですか？",
+        "description" : "「削除」をクリックすると、デバイスの同期が解除され、同期されたデータがすべて削除されます。この操作を実行しても資金には影響しませんので、ご安心ください。アカウントはいつでも再同期できます。",
+        "delete" : "削除",
+        "cancel" : "キャンセル"
+      },
+      "deleteBackupSuccess" : {
+        "title" : "デバイスの同期が解除され、キーが削除されました"
+      },
+      "deleteBackupError" : {
+        "title" : "問題が発生しました。"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "同期方法を選択",
+        "description" : "Ledgerデバイスと直接同期するか、Ledger LiveでQRコードをスキャンして同期するかを選択できます。",
+        "scan" : {
+          "title" : "QRコードをスキャン",
+          "description" : "QRコードをスキャンして同期する"
+        },
+        "connectDevice" : {
+          "title" : "Ledgerを使用",
+          "description" : "Ledgerに署名して同期する"
+        }
+      },
+      "qrCode" : {
+        "title" : "同期する",
+        "hint" : "2つのLedger Liveデスクトップアプリを同期しますか？こちらをクリック。",
+        "description" : "アカウントをスキャンして別のLedger Liveアプリと同期します",
+        "steps" : {
+          "step1" : "同期したいLedger Liveアプリを開く",
+          "step2" : "<0>設定 </0>> <0>一般</0> > <0>Ledger Sync</0> > <0>同期</0> > <0>QRを表示</0>に移動",
+          "step3" : "読み込みが100%に達するまでQRコードをスキャンする。"
+        }
+      },
+      "pinCode" : {
+        "title" : "コードを入力",
+        "description" : "同期したい他のLedger Liveに表示されているコードを入力します。"
+      }
+    },
+    "manageInstances" : {
+      "title" : "同期されたインスタンスの管理",
+      "remove" : "削除",
+      "deleteInstanceSuccess" : "{{instanceName}}の同期は解除されています",
+      "deleteInstanceError" : "{{instanceName}}の同期解除で問題が発生しました"
     }
   }
 }

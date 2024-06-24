@@ -4,10 +4,28 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-const NEW_UX_SUPPORTED_DEVICES = [DeviceModelId.stax, DeviceModelId.europa];
+const NEW_UX_SUPPORTED_DEVICES = [DeviceModelId.stax, DeviceModelId.europa, DeviceModelId.nanoX];
+const versionAffected = [
+  DeviceModelId.nanoX,
+  DeviceModelId.nanoS,
+  DeviceModelId.nanoSP,
+  DeviceModelId.stax,
+];
 
-export function isNewFirmwareUpdateUxSupported(deviceModelId?: DeviceModelId) {
-  return deviceModelId ? NEW_UX_SUPPORTED_DEVICES.includes(deviceModelId) : false;
+// NOTE: This is needed as some devices do not have a firmware restriction in live-common
+function checkForVersion(device: Device, deviceModelInfo: DeviceModelInfo) {
+  return versionAffected.includes(device.modelId)
+    ? isFirmwareUpdateVersionSupported(deviceModelInfo.deviceInfo, device.modelId)
+    : true;
+}
+
+export function isNewFirmwareUpdateUxSupported(
+  device?: Device | null,
+  deviceModelInfo?: DeviceModelInfo | null,
+) {
+  return device?.modelId && deviceModelInfo
+    ? NEW_UX_SUPPORTED_DEVICES.includes(device.modelId) && checkForVersion(device, deviceModelInfo)
+    : false;
 }
 
 export function isOldFirmwareUpdateUxSupported({

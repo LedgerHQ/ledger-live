@@ -33,7 +33,7 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "text",
       label: "Transaction Fee",
-      value: formatCurrencyUnit(getAccountCurrency(account).units[0], fees, {
+      value: formatCurrencyUnit(getAccountCurrency(mainAccount).units[0], fees, {
         showCode: true,
         disableRounding: true,
       }),

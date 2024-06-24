@@ -487,6 +487,40 @@ export type ProtectDataPayload = ProtectState["data"];
 export type ProtectStatusPayload = ProtectState["protectStatus"];
 export type ProtectPayload = ProtectDataPayload | ProtectStatusPayload;
 
+// === NFT ACTIONS ===
+export enum NftStateActionTypes {
+  SET_GALLERY_CHAIN_FILTER = "SET_GALLERY_CHAIN_FILTER",
+  SET_GALLERY_FILTER_DRAWER_VISIBLE = "SET_GALLERY_FILTER_DRAWER_VISIBLE",
+}
+
+export type NftStateGalleryChainFiltersPayload = [keyof NftState["galleryChainFilters"], boolean];
+export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVisible"];
+
+export type NftPayload =
+  | NftStateGalleryChainFiltersPayload
+  | NftStateGalleryFilterDrawerVisiblePayload;
+
+// === MARKET ACTIONS ===
+export enum MarketStateActionTypes {
+  SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
+  SET_MARKET_FILTER_BY_STARRED_CURRENCIES = "SET_MARKET_FILTER_BY_STARRED_CURRENCIES",
+  MARKET_SET_CURRENT_PAGE = "MARKET_SET_CURRENT_PAGE",
+  MARKET_IMPORT = "MARKET_IMPORT",
+}
+
+export type MarketSetMarketFilterByStarredCurrenciesPayload =
+  MarketState["marketFilterByStarredCurrencies"];
+export type MarketSetCurrentPagePayload = MarketState["marketCurrentPage"];
+export type MarketSetMarketRequestParamsPayload = MarketState["marketParams"];
+
+export type MarketImportPayload = Partial<MarketState>;
+
+export type MarketPayload =
+  | MarketSetMarketFilterByStarredCurrenciesPayload
+  | MarketSetMarketRequestParamsPayload
+  | MarketSetCurrentPagePayload
+  | MarketImportPayload;
+
 // === PAYLOADS ===
 
 export type ActionsPayload =
@@ -500,34 +534,6 @@ export type ActionsPayload =
   | Action<PostOnboardingPayload>
   | Action<SwapPayload>
   | Action<ProtectPayload>
-  | Action<EarnPayload>;
-
-// === NFT ACTIONS ===
-export enum NftStateActionTypes {
-  SET_GALLERY_CHAIN_FILTER = "SET_GALLERY_CHAIN_FILTER",
-  SET_GALLERY_FILTER_DRAWER_VISIBLE = "SET_GALLERY_FILTER_DRAWER_VISIBLE",
-}
-
-export type NftStateGalleryChainFiltersPayload = [keyof NftState["galleryChainFilters"], boolean];
-export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVisible"];
-
-export type NftStatePayload =
-  | NftStateGalleryChainFiltersPayload
-  | NftStateGalleryFilterDrawerVisiblePayload;
-
-// === MARKET ACTIONS ===
-export enum MarketStateActionTypes {
-  SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
-  SET_MARKET_FILTER_BY_STARRED_CURRENCIES = "SET_MARKET_FILTER_BY_STARRED_CURRENCIES",
-  MARKET_SET_CURRENT_PAGE = "MARKET_SET_CURRENT_PAGE",
-}
-
-export type MarketSetMarketFilterByStarredCurrenciesPayload =
-  MarketState["marketFilterByStarredCurrencies"];
-export type MarketSetCurrentPagePayload = MarketState["marketCurrentPage"];
-export type MarketSetMarketRequestParamsPayload = MarketState["marketParams"];
-
-export type MarketStatePayload =
-  | MarketSetMarketFilterByStarredCurrenciesPayload
-  | MarketSetMarketRequestParamsPayload
-  | MarketSetCurrentPagePayload;
+  | Action<EarnPayload>
+  | Action<MarketPayload>
+  | Action<NftPayload>;

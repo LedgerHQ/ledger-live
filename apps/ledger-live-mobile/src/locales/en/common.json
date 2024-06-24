@@ -127,6 +127,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
+    "BitcoinInfrastructureError": {
+      "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
+    },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Your Ledger device must be unlocked and in range to use Bluetooth."
@@ -369,6 +372,9 @@
     "InvalidRecipient": {
       "title": "Invalid recipient"
     },
+    "InvalidExplorerResponse": {
+      "title": "Invalid response from {{currencyName}} explorer"
+    },
     "LanguageInstallRefusedOnDevice": {
       "title": "Language installation refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -485,6 +491,10 @@
       "description": "Please send some EGLD to your account to pay for transactions."
     },
     "NotEnoughBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds."
+    },
+    "NotEnoughBalanceSwap": {
       "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."
     },
@@ -1338,7 +1348,8 @@
       "title": "Welcome back",
       "subtitle": "Select how you’d like to access your wallet:",
       "connect": "Connect your Ledger",
-      "sync": "Sync with Ledger Live desktop"
+      "sync": "Sync with Ledger Live desktop",
+      "walletSync": "Sync with another Ledger Live app"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -2290,6 +2301,22 @@
     "import": {
       "title": "Import from desktop",
       "description": "Import asset from Ledger Live Desktop"
+    },
+    "drawer": {
+      "drawerTitleHasAccount": "Add another account",
+      "drawerSubTitle": "Add your assets using your Ledger, or import them directly from your Ledger Live Desktop app.",
+      "import": {
+        "title": "Import from desktop",
+        "description": "Import asset from Ledger Live Desktop"
+      },
+      "add": {
+        "title": "Add with your Ledger",
+        "description": "Create or import your assets using your Ledger device"
+      },
+      "walletSync": {
+        "title": "Import via another Ledger Live app",
+        "description": "Activate Ledger Sync"
+      }
     }
   },
   "byteSize": {
@@ -2407,6 +2434,7 @@
       "delegated": "Delegated ({{amount}})",
       "delegatedTo": "Delegated to",
       "delegatedAmount": "Delegated amount",
+      "deposit": "Deposit",
       "redelegated": "Redelegated ({{amount}})",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",
@@ -2726,6 +2754,8 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
+      "walletSync": "Ledger Sync",
+      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -2750,9 +2780,9 @@
       "developerMode": "Developer mode",
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
       "analytics": "Analytics",
-      "analyticsDesc": "Enable analytics to help Ledger improve user experience.",
+      "analyticsDesc": "Enable Ledger to track app usage data to help measure Ledger Live’s performance and enhance both the app and your experience.",
       "personalizedRecommendations": "Personalized experience",
-      "personalizedRecommendationsDesc": "Receive personalised recommendations that match your preferences.",
+      "personalizedRecommendationsDesc": "Enable Ledger to track app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger improve user experience",
@@ -3059,7 +3089,8 @@
       "addAccount": {
         "title": "Checking for an account...",
         "subtitle": "Checking if you already have an account for {{currencyName}} on the blockchain.",
-        "foundAccounts": "{{count}} accounts found",
+        "foundAccount": "{{count}} account found",
+        "foundAccount_plural": "{{count}} accounts found",
         "stopSynchronization": "Stop synchronization",
         "addingAccount": "No accounts found. Creating a new account for {{currencyName}}..."
       },
@@ -3129,7 +3160,7 @@
     },
     "stake": {
       "title": "Stake",
-      "description": "Grow your crypto holdings."
+      "description": "Stake your crypto holdings."
     },
     "swap": {
       "title": "Swap",
@@ -3847,35 +3878,9 @@
     "tokens": {
       "title": "Add token",
       "createParentCurrencyAccount": "Add {{parrentCurrencyName}} account",
-      "erc20": {
-        "title": "Add token",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
-        "learnMore": "Learn more about ERC20"
-      },
-      "trc10": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
-        "learnMore": "Learn more about TRC10"
-      },
-      "trc20": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
-        "learnMore": "Learn more about TRC20"
-      },
-      "asa": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is an ASA Token.\nYou can receive tokens directly on an Algorand account.",
-        "learnMore": "Learn more"
-      },
-      "bep20": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
-      },
-      "vip180": {
-        "title": "Add token",
-        "disclaimer": "{{tokenName}} is a VIP180 Token.\nYou can receive tokens directly in a VET account.",
-        "learnMore": "Learn more about VIP180"
+      "generic": {
+        "disclaimer": "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on an {{currency}} account.",
+        "learnMore": "Learn more about {{tokenType}}"
       }
     },
     "showMoreChainType": "More address types",
@@ -4332,7 +4337,8 @@
       "installUpdate": {
         "titleInactive": "Install update",
         "titleActive": "Installing update",
-        "description": "{{deviceName}} will restart multiple times.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
+        "description": "{{deviceName}} will restart multiple times.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished.",
+        "descriptionNanoXBle": "{{deviceName}} will restart multiple times.\n\nIf the device powers off and does not automatically restart, you will need to power it on yourself.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
       },
       "restoreSettings": {
         "earlySecurityCheck": {
@@ -4363,6 +4369,14 @@
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       "pleaseConnectUsbTitle": "USB cable needed",
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+    },
+    "updateStatusErrors": {
+      "errors": {
+        "TimeoutError": {
+          "title": "Device disconnected",
+          "description": "The update was unable to continue because we lost connection to {{deviceName}}"
+        }
+      }
     },
     "batteryStatusErrors": {
       "errors": {
@@ -6580,7 +6594,6 @@
         },
         "swap": {
           "title": "Swap",
-          "label": "Popular",
           "body": "Convert crypto to crypto securely"
         },
         "receive": {
@@ -6598,18 +6611,18 @@
     "variantA": {
       "main": {
         "title": "Help us improve and personalize your experience",
-        "subtitle": "Sharing your Ledger Live data helps us understand your preferences, show content that’s relevant to you, and fix technical issues.",
+        "subtitle": "Sharing your Ledger Live data helps us understand your preferences and show content that's relevant to you.",
         "content": {
           "able": {
-            "title": "With your consent, Ledger will be able to track:",
-            "diagAndUsage": "Analytics data, including page visits, clicks.",
-            "personnalizationData": "Personalization data including clicks, page visits, conversion data."
+            "title": "With your consent, Ledger will be able to track data about how you use Ledger Live (including page visits and clicks):",
+            "diagAndUsage": "To measure the performance of Ledger Live and enhance both the app and your experience (Analytics).",
+            "personnalizationData": "To provide you with personalized recommendations and content tailored to your preferences, as well as to help us measure the effectiveness of our marketing campaigns (Personalization)."
           },
           "unable": {
-            "title": "Ledger will never track information regarding:",
+            "title": "Ledger Live will never track information regarding:",
             "adresses": "Your assets.",
             "balance": "Your portfolio.",
-            "personnalInfos": "Your personal identifying Information."
+            "personnalInfos": "Your personal identifying information (such as your name or your email address)."
           },
           "moreOptions": "Manage your preferences",
           "ctas": {
@@ -6625,12 +6638,12 @@
       "details": {
         "title": "Manage your preferences",
         "analytics": {
-          "title": "Analytics data",
-          "description": "To help improve Ledger Live, share app’s analytics data, including page visits, clicks."
+          "title": "Analytics",
+          "description": "To measure Ledger Live’s performance and improve both the app and your experience, we share usage data, including page visits and clicks."
         },
         "personalizedExp": {
-          "title": "Personalization data",
-          "description": "To get personalized recommendations, share app’s personalization data including, conversion data, clicks, page visits."
+          "title": "Personalization",
+          "description": "To receive personalized recommendations and content that match your preferences and to help us measure the performance of our marketing campaigns, we share app usage data, including clicks, page visits, and conversion data."
         },
         "ctas": {
           "notNow": "Not now",
@@ -6677,6 +6690,44 @@
           "info": "You can revoke your consent any time in the app settings.",
           "link": "Learn more about our Tracking Policy"
         }
+      }
+    }
+  },
+  "walletSync": {
+    "activation": {
+      "screen": {
+        "title": "Sync your accounts across all platforms",
+        "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+        "mainCta": "Sync your accounts",
+        "secondCta": "Already created a key?"
+      }
+    },
+    "deviceSelection": {
+      "title": "Choose the Ledger device you will use to secure your backup",
+      "description": "You can retrieve your backup by simply connecting your Ledger to the Ledger Live mobile and desktop apps."
+    },
+    "deviceAction": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
+    },
+    "success": {
+      "sync": "Synchronization successful!",
+      "syncDesc": "Changes in your accounts will now automatically appear across all apps and platforms.",
+      "activation": "Success!",
+      "activationDesc": "You successfully enabled Ledger Sync.",
+      "syncAnother": "Sync with another Ledger Live app",
+      "close": "Close"
+    }
+  },
+  "web3hub": {
+    "manifestsList": {
+      "title": "Explore",
+      "description": "Discover the best of web3 curated by Ledger"
+    },
+    "main": {
+      "header": {
+        "title": "Explore web3",
+        "placeholder": "Search or type a URL"
       }
     }
   }

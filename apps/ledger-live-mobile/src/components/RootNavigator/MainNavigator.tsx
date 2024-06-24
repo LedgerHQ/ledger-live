@@ -5,6 +5,8 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "~/const";
 import { PortfolioTabIcon } from "~/screens/Portfolio";
@@ -32,6 +34,7 @@ export default function MainNavigator() {
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
   const managerNavLockCallback = useManagerNavLockCallback();
+  const web3hub = useFeature("web3hub");
 
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
@@ -131,26 +134,47 @@ export default function MainNavigator() {
           tabBarIcon: () => <TransferTabIcon />,
         }}
       />
-      <Tab.Screen
-        name={NavigatorName.Discover}
-        component={DiscoverNavigator}
-        options={{
-          headerShown: false,
-          tabBarIcon: props => (
-            <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
-          ),
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: e => {
-            e.preventDefault();
-            managerLockAwareCallback(() => {
-              navigation.navigate(NavigatorName.Discover, {
-                screen: ScreenName.DiscoverScreen,
+      {web3hub?.enabled ? (
+        <Tab.Screen
+          name={NavigatorName.Web3HubTab}
+          component={Web3HubTabNavigator}
+          options={{
+            headerShown: false,
+            tabBarIcon: props => (
+              <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: e => {
+              e.preventDefault();
+              managerLockAwareCallback(() => {
+                navigation.navigate(NavigatorName.Web3HubTab);
               });
-            });
-          },
-        })}
-      />
+            },
+          })}
+        />
+      ) : (
+        <Tab.Screen
+          name={NavigatorName.Discover}
+          component={DiscoverNavigator}
+          options={{
+            headerShown: false,
+            tabBarIcon: props => (
+              <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: e => {
+              e.preventDefault();
+              managerLockAwareCallback(() => {
+                navigation.navigate(NavigatorName.Discover, {
+                  screen: ScreenName.DiscoverScreen,
+                });
+              });
+            },
+          })}
+        />
+      )}
       <Tab.Screen
         name={NavigatorName.MyLedger}
         component={MyLedgerNavigator}

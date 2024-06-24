@@ -7,6 +7,10 @@ export class IndexedTree<T> {
     this.children = children;
   }
 
+  public getHighestIndex(): number {
+    return [...this.children.keys()].reduce((a, b) => Math.max(a, b), 0);
+  }
+
   public getChildren(): Map<number, IndexedTree<T>> {
     return this.children;
   }

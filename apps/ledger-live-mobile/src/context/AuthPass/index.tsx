@@ -13,7 +13,7 @@ import { SkipLockContext } from "~/components/behaviour/SkipLock";
 import type { Privacy, State as GlobalState, AppState as EventState } from "~/reducers/types";
 import AuthScreen from "./AuthScreen";
 import RequestBiometricAuth from "~/components/RequestBiometricAuth";
-import { resetQueuedDrawer } from "~/components/QueuedDrawer";
+import { useQueuedDrawerContext } from "~/newArch/components/QueuedDrawer/QueuedDrawersContext";
 
 const mapDispatchToProps = {
   setPrivacy,
@@ -49,6 +49,7 @@ type Props = OwnProps & {
   privacy: Privacy | null | undefined;
   setPrivacy: (_: Privacy) => void;
   isPasswordLockBlocked: EventState["isPasswordLockBlocked"];
+  closeAllDrawers: () => void;
 };
 
 // as we needs to be resilient to reboots (not showing unlock again after a reboot)
@@ -162,13 +163,14 @@ class AuthPass extends PureComponent<Props, State> {
       });
     }
   };
+
   // lock the app
   lock = () => {
     if (!this.props.privacy?.hasPassword || this.state.skipLockCount) return;
     wasUnlocked = false;
 
     // Close the drawer if one was opened
-    resetQueuedDrawer();
+    this.props.closeAllDrawers();
 
     if (this.state.mounted) {
       this.setState(
@@ -238,4 +240,10 @@ const styles = StyleSheet.create({
 export default compose<React.ComponentType<OwnProps>>(
   withTranslation(),
   connect(mapStateToProps, mapDispatchToProps),
+  (Component: React.FC<{ closeAllDrawers(): void }>) => {
+    return (props: Props) => {
+      const { closeAllDrawers } = useQueuedDrawerContext();
+      return <Component {...props} closeAllDrawers={closeAllDrawers} />;
+    };
+  },
 )(AuthPass);

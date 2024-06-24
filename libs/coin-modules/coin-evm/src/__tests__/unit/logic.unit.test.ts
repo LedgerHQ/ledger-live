@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
 import * as RPC_API from "../../api/node/rpc.common";
@@ -12,6 +13,7 @@ import {
   getDefaultFeeUnit,
   getEstimatedFees,
   getGasLimit,
+  getMessageProperties,
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
@@ -56,7 +58,14 @@ mockGetConfig.mockImplementation((currency: { id: string }): any => {
     case "optimism": {
       return {
         info: {
-          node: { type: "external", uri: "optimis_uri" },
+          node: { type: "external", uri: "optimism_uri" },
+        },
+      };
+    }
+    case "scroll": {
+      return {
+        info: {
+          node: { type: "external", uri: "scroll_uri" },
         },
       };
     }
@@ -303,6 +312,7 @@ describe("EVM Family", () => {
 
     describe("getAdditionalLayer2Fees", () => {
       const optimism = getCryptoCurrencyById("optimism");
+      const scroll = getCryptoCurrencyById("scroll");
       const ethereum = getCryptoCurrencyById("ethereum");
 
       beforeEach(() => {
@@ -310,17 +320,30 @@ describe("EVM Family", () => {
       });
 
       it("should try to get additionalFees for a valid layer 2", async () => {
-        const spy = jest.spyOn(RPC_API, "getOptimismAdditionalFees").mockImplementation(jest.fn());
+        const spyOptimism = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
+        const spyScroll = jest
+          .spyOn(RPC_API, "getScrollAdditionalFees")
+          .mockImplementation(jest.fn());
 
         await getAdditionalLayer2Fees(optimism, {} as any);
-        expect(spy).toBeCalled();
+        expect(spyOptimism).toHaveBeenCalled();
+        await getAdditionalLayer2Fees(scroll, {} as any);
+        expect(spyScroll).toHaveBeenCalled();
       });
 
       it("should not try to get additionalFees for an invalid layer 2", async () => {
-        const spy = jest.spyOn(RPC_API, "getOptimismAdditionalFees").mockImplementation(jest.fn());
+        const spyOptimism = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
+        const spyScroll = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
 
         await getAdditionalLayer2Fees(ethereum, {} as any);
-        expect(spy).not.toBeCalled();
+        expect(spyOptimism).not.toHaveBeenCalled();
+        expect(spyScroll).not.toHaveBeenCalled();
       });
     });
 
@@ -868,6 +891,30 @@ describe("EVM Family", () => {
         const address = "0x00000";
         const encodedAddress = safeEncodeEIP55(address);
         expect(encodedAddress).toBe(address);
+      });
+    });
+
+    describe("getMessageProperties", () => {
+      it("should return null if the message isn't an EIP712", async () => {
+        expect(await getMessageProperties({ standard: "EIP191", message: "doot-doot" })).toBe(null);
+      });
+
+      it("should return the fields displayed on the nano", async () => {
+        jest.spyOn(EVM_TOOLS, "getEIP712FieldsDisplayedOnNano").mockResolvedValueOnce([
+          {
+            label: "key",
+            value: "value",
+          },
+        ]);
+
+        expect(
+          await getMessageProperties({
+            standard: "EIP712",
+            message: {} as any,
+            domainHash: "0xabc",
+            hashStruct: "0xdef",
+          }),
+        ).toEqual([{ label: "key", value: "value" }]);
       });
     });
   });

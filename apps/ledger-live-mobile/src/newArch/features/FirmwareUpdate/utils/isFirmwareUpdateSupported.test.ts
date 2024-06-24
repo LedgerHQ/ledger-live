@@ -1,22 +1,103 @@
 import ReactNative from "react-native";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId, Device } from "@ledgerhq/types-devices";
 import {
   isOldFirmwareUpdateUxSupported,
   isNewFirmwareUpdateUxSupported,
 } from "./isFirmwareUpdateSupported";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
+// {
+//   nanoS: ">=1.6.1",
+//   nanoX: ">=1.3.0",
+//   nanoSP: ">=1.0.0",
+//   stax: ">=1.0.0",
+// };
+const staxDevice = {
+  modelId: DeviceModelId.stax,
+} as Device;
+const staxDeviceModelInfo = {
+  modelId: DeviceModelId.stax,
+  deviceInfo: {
+    version: "1.0.0",
+  },
+} as DeviceModelInfo;
+
+const europaDevice = {
+  modelId: DeviceModelId.europa,
+} as Device;
+const europaDeviceModelInfo = {
+  modelId: DeviceModelId.europa,
+  deviceInfo: {
+    version: "1.0.0",
+  },
+} as DeviceModelInfo;
+
+const nanoXSupportedDevice = {
+  modelId: DeviceModelId.nanoX,
+} as Device;
+const nanoXSupportedDeviceModelInfo = {
+  modelId: DeviceModelId.nanoX,
+  deviceInfo: {
+    version: "1.3.0",
+  },
+} as DeviceModelInfo;
+
+const nanoXNotSupportedDevice = {
+  modelId: DeviceModelId.nanoX,
+} as Device;
+const nanoXNotSupportedDeviceModelInfo = {
+  modelId: DeviceModelId.nanoX,
+  deviceInfo: {
+    version: "1.2.0",
+  },
+} as DeviceModelInfo;
+
+const nanoSDevice = {
+  modelId: DeviceModelId.nanoS,
+} as Device;
+const nanoSDeviceModelInfo = {
+  modelId: DeviceModelId.nanoS,
+  deviceInfo: {
+    version: "1.6.0",
+  },
+} as DeviceModelInfo;
+
+const nanoSPDevice = {
+  modelId: DeviceModelId.nanoSP,
+} as Device;
+const nanoSPDeviceModelInfo = {
+  modelId: DeviceModelId.nanoSP,
+  deviceInfo: {
+    version: "1.0.0",
+  },
+} as DeviceModelInfo;
+
+const blueDevice = {
+  modelId: DeviceModelId.blue,
+} as Device;
+const blueDeviceModelInfo = {
+  modelId: DeviceModelId.blue,
+  deviceInfo: {
+    version: "2.1.0",
+  },
+} as DeviceModelInfo;
+
 describe("isNewFirmwareUpdateUxSupported", () => {
-  it("should return true if sync onboarding is supported", () => {
-    expect(isNewFirmwareUpdateUxSupported(DeviceModelId.stax)).toBe(true);
-    expect(isNewFirmwareUpdateUxSupported(DeviceModelId.europa)).toBe(true);
+  it("should return true if new firmware update flow is supported", () => {
+    expect(isNewFirmwareUpdateUxSupported(staxDevice, staxDeviceModelInfo)).toBe(true);
+    expect(isNewFirmwareUpdateUxSupported(europaDevice, europaDeviceModelInfo)).toBe(true);
+    expect(
+      isNewFirmwareUpdateUxSupported(nanoXSupportedDevice, nanoXSupportedDeviceModelInfo),
+    ).toBe(true);
   });
 
-  it("should return false if sync onboarding is not supported", () => {
-    expect(isNewFirmwareUpdateUxSupported(DeviceModelId.nanoS)).toBe(false);
-    expect(isNewFirmwareUpdateUxSupported(DeviceModelId.nanoSP)).toBe(false);
-    expect(isNewFirmwareUpdateUxSupported(DeviceModelId.nanoX)).toBe(false);
-    expect(isNewFirmwareUpdateUxSupported(DeviceModelId.blue)).toBe(false);
+  it("should return false if new firmware update flow is not supported", () => {
+    expect(isNewFirmwareUpdateUxSupported(nanoSDevice, nanoSDeviceModelInfo)).toBe(false);
+    expect(isNewFirmwareUpdateUxSupported(nanoSPDevice, nanoSPDeviceModelInfo)).toBe(false);
+    expect(isNewFirmwareUpdateUxSupported(blueDevice, blueDeviceModelInfo)).toBe(false);
+    expect(
+      isNewFirmwareUpdateUxSupported(nanoXNotSupportedDevice, nanoXNotSupportedDeviceModelInfo),
+    ).toBe(false);
   });
 });
 

@@ -137,7 +137,6 @@ export function inferDescriptorFromDeviceInfo({
     P2PKH: number;
     P2SH: number;
     XPUBVersion?: number;
-    hasTimestamp?: boolean;
   };
   invariant(XPUBVersion, "unsupported bitcoin fork %s", currency.id);
   const { chainCode } = accountDerivation;

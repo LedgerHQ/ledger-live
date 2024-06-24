@@ -4,7 +4,7 @@ import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -16,7 +16,6 @@ import type {
   SidecarPalletStorageItem,
   SidecarStakingInfo,
   SidecarNominations,
-  SidecarConstants,
   SidecarValidatorsParamStatus,
   SidecarValidatorsParamAddresses,
   SidecarValidators,
@@ -25,6 +24,8 @@ import type {
   SidecarTransactionBroadcast,
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
+  SidecarConstants,
+  BlockInfo,
 } from "./sidecar.types";
 import { createRegistryAndExtrinsics } from "./common";
 
@@ -36,12 +37,12 @@ import { createRegistryAndExtrinsics } from "./common";
  * @returns {string}
  */
 const getSidecarUrl = (route: string): string => {
-  const sidecarUrl = getCoinConfig().sidecar.url;
+  const sidecarUrl = coinConfig.getCoinConfig().sidecar.url;
   return `${sidecarUrl}${route || ""}`;
 };
 
 const getElectionOptimisticThreshold = (): number => {
-  return getCoinConfig().staking?.electionStatusThreshold || 25;
+  return coinConfig.getCoinConfig().staking?.electionStatusThreshold || 25;
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
@@ -49,7 +50,7 @@ const VALIDATOR_COMISSION_RATIO = 1000000000;
 // blocks = 2 minutes 30
 
 async function callSidecar<T>(route: string, method: "GET" | "POST" = "GET", data?: unknown) {
-  const credentials = getCoinConfig().sidecar.credentials;
+  const credentials = coinConfig.getCoinConfig().sidecar.credentials;
   const headers = credentials ? { Authorization: "Basic " + credentials } : {};
 
   return network<T>({
@@ -116,6 +117,8 @@ const fetchControllerAddr = async (addr: string): Promise<string | null> => {
  * @returns {SidecarStakingInfo}
  */
 const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchStakingInfo(addr);
   const {
     data,
   }: {
@@ -133,6 +136,8 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
  * @returns {SidecarNominations}
  */
 const fetchNominations = async (addr: string): Promise<SidecarNominations> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchNominations(addr);
   const {
     data,
   }: {
@@ -145,11 +150,12 @@ const fetchNominations = async (addr: string): Promise<SidecarNominations> => {
  * Returns the blockchain's runtime constants.
  *
  * @async
- * @param {string} addr
  *
  * @returns {Object}
  */
 const fetchConstants = async (): Promise<Record<string, any>> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchConstants();
   const {
     data,
   }: {
@@ -205,6 +211,8 @@ const fetchValidators = async (
   status: SidecarValidatorsParamStatus = "all",
   addresses?: SidecarValidatorsParamAddresses,
 ): Promise<SidecarValidators> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchValidators(status, addresses);
   let params = {};
 
   if (status) {
@@ -338,6 +346,7 @@ export const getAccount = async (addr: string) => {
   const balances = await getBalances(addr);
   const stakingInfo = await getStakingInfo(addr);
   const nominations = await getNominations(addr);
+
   return { ...balances, ...stakingInfo, nominations };
 };
 
@@ -347,7 +356,7 @@ export const getAccount = async (addr: string) => {
  * @async
  * @param {*} addr - the account address
  */
-const getBalances = async (addr: string) => {
+export const getBalances = async (addr: string) => {
   const balanceInfo = await fetchBalanceInfo(addr);
   // Locked is the highest value among locks
   const totalLocked = balanceInfo.locks.reduce((total, lock) => {
@@ -405,11 +414,15 @@ export const getStakingInfo = async (addr: string) => {
 
   const eraLength = sessionsPerEra.multipliedBy(epochDuration).multipliedBy(blockTime).toNumber();
   const unlockings = stakingInfo?.staking.unlocking
-    ? stakingInfo?.staking?.unlocking.map<PolkadotUnlocking>(lock => ({
-        amount: new BigNumber(lock.value),
-        // This is an estimation of the date of completion, since it depends on block validation speed
-        completionDate: new Date(activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength),
-      }))
+    ? stakingInfo?.staking?.unlocking.map<PolkadotUnlocking>(lock => {
+        return {
+          amount: new BigNumber(lock.value),
+          // This is an estimation of the date of completion, since it depends on block validation speed
+          completionDate: new Date(
+            activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength,
+          ),
+        };
+      })
     : [];
   const now = new Date();
   const unlocked = unlockings.filter(lock => lock.completionDate <= now);
@@ -437,9 +450,13 @@ export const getStakingInfo = async (addr: string) => {
  *
  * @returns {PolkadotNomination[}
  */
-export const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
+const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
   const nominations = await fetchNominations(addr);
-  if (!nominations) return [];
+
+  if (!nominations) {
+    return [];
+  }
+
   return nominations.targets.map<PolkadotNomination>(nomination => ({
     address: nomination.address,
     value: new BigNumber(nomination.value || 0),
@@ -481,6 +498,7 @@ export const submitExtrinsic = async (extrinsic: string): Promise<string> => {
   } = await callSidecar("/transaction", "POST", {
     tx: extrinsic,
   });
+
   return data.hash;
 };
 
@@ -587,6 +605,14 @@ export const getRegistry = async (): Promise<{
     fetchChainSpec(),
   ]);
   return createRegistryAndExtrinsics(material, spec);
+};
+
+/**
+ * Get lastest block info
+ */
+export const getLastBlock = async (): Promise<{ hash: string; height: number; time: Date }> => {
+  const { data } = await callSidecar<BlockInfo>("/blocks/head");
+  return { hash: data.hash, height: parseInt(data.number), time: new Date() };
 };
 
 /*

@@ -7,6 +7,12 @@ import { Account, AccountLike, AccountRaw, AccountUserData } from "@ledgerhq/typ
 import { getDefaultAccountName, getDefaultAccountNameForCurrencyIndex } from "./accountName";
 import { AddAccountsAction } from "./addAccounts";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { DistantState } from "./walletsync";
+
+export type WSState = {
+  data: DistantState | null;
+  version: number;
+};
 
 export type WalletState = {
   // user's customized name for each account id
@@ -14,11 +20,19 @@ export type WalletState = {
 
   // a set of all the account ids that are starred (NB: token accounts can also be starred)
   starredAccountIds: Set<string>;
+
+  // local copy of the wallet sync data last synchronized with the backend of wallet sync, in order to be able to diff what we need to do when we apply an incremental update
+  walletSyncState: WSState;
+};
+
+export type ExportedWalletState = {
+  walletSyncState: WSState;
 };
 
 export const initialState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
+  walletSyncState: { data: null, version: 0 },
 };
 
 export enum WalletHandlerType {
@@ -27,6 +41,8 @@ export enum WalletHandlerType {
   SET_ACCOUNT_STARRED = "SET_ACCOUNT_STARRED",
   BULK_SET_ACCOUNT_NAMES = "BULK_SET_ACCOUNT_NAMES",
   ADD_ACCOUNTS = "ADD_ACCOUNTS",
+  WALLET_SYNC_UPDATE = "WALLET_SYNC_UPDATE",
+  IMPORT_WALLET_SYNC = "IMPORT_WALLET_SYNC",
 }
 
 export type HandlersPayloads = {
@@ -35,6 +51,11 @@ export type HandlersPayloads = {
   BULK_SET_ACCOUNT_NAMES: { accountNames: Map<string, string> };
   SET_ACCOUNT_STARRED: { accountId: string; starred: boolean };
   ADD_ACCOUNTS: AddAccountsAction["payload"];
+  WALLET_SYNC_UPDATE: {
+    data: DistantState | null;
+    version: number;
+  };
+  IMPORT_WALLET_SYNC: ExportedWalletState;
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -47,7 +68,7 @@ type Handlers<State, Types, PreciseKey = true> = {
 export type WalletHandlers<PreciseKey = true> = Handlers<WalletState, HandlersPayloads, PreciseKey>;
 
 export const handlers: WalletHandlers = {
-  INIT_ACCOUNTS: (_, { payload: { accountsUserData } }): WalletState => {
+  INIT_ACCOUNTS: (state, { payload: { accountsUserData } }): WalletState => {
     const accountNames = new Map();
     const starredAccountIds = new Set<string>();
     accountsUserData.forEach(accountUserData => {
@@ -56,11 +77,19 @@ export const handlers: WalletHandlers = {
         starredAccountIds.add(starredId);
       }
     });
-    return { accountNames, starredAccountIds };
+    return {
+      ...state,
+      accountNames,
+      starredAccountIds,
+    };
   },
   SET_ACCOUNT_NAME: (state, { payload: { accountId, name } }) => {
     const accountNames = new Map(state.accountNames);
-    accountNames.set(accountId, name);
+    if (!name) {
+      accountNames.delete(accountId);
+    } else {
+      accountNames.set(accountId, name);
+    }
     return { ...state, accountNames };
   },
   BULK_SET_ACCOUNT_NAMES: (state, { payload: { accountNames } }) => {
@@ -83,10 +112,19 @@ export const handlers: WalletHandlers = {
   ADD_ACCOUNTS: (state, { payload: { allAccounts, editedNames } }) => {
     const accountNames = new Map(state.accountNames);
     for (const account of allAccounts) {
-      const name = editedNames.get(account.id) || getDefaultAccountName(account);
+      const name =
+        editedNames.get(account.id) ||
+        accountNames.get(account.id) ||
+        getDefaultAccountName(account);
       accountNames.set(account.id, name);
     }
     return { ...state, accountNames };
+  },
+  WALLET_SYNC_UPDATE: (state, { payload }) => {
+    return { ...state, walletSyncState: payload };
+  },
+  IMPORT_WALLET_SYNC: (state, { payload }) => {
+    return { ...state, walletSyncState: payload.walletSyncState };
   },
 };
 
@@ -110,6 +148,19 @@ export const setAccountStarred = (accountId: string, starred: boolean) => ({
 export const initAccounts = (accounts: Account[], accountsUserData: AccountUserData[]) => ({
   type: "INIT_ACCOUNTS",
   payload: { accounts, accountsUserData },
+});
+
+/**
+ * action to import back the wallet state. opposite of exportWalletState
+ */
+export const importWalletState = (payload: ExportedWalletState) => ({
+  type: "IMPORT_WALLET_SYNC",
+  payload,
+});
+
+export const walletSyncUpdate = (data: DistantState | null, version: number) => ({
+  type: "WALLET_SYNC_UPDATE",
+  payload: { data, version },
 });
 
 // Local Selectors
@@ -169,3 +220,16 @@ export const accountRawToAccountUserData = (raw: AccountRaw): AccountUserData =>
   }
   return { id, name, starredIds };
 };
+
+/**
+ * call this selector to save the store state
+ */
+export const exportWalletState = (state: WalletState): ExportedWalletState => ({
+  walletSyncState: state.walletSyncState,
+});
+
+export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean => {
+  return a.walletSyncState !== b.walletSyncState;
+};
+
+export const walletSyncStateSelector = (state: WalletState): WSState => state.walletSyncState;

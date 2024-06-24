@@ -9,15 +9,11 @@ In Ledger Live, the Bitcoin family includes the following cryptocurrencies:
 - Zcash (ZEC)
 - Horizen (ZEN)
 - Dash
-- Peercoin
 - Komodo
 - PIVX
-- Stealth
 - Bitcoin Gold
 - Dogecoin (DOGE)
 - Qtum
-- Vertcoin (VTC)
-- Viacoin (VIA)
 - Decred
 
 ## Derivation Paths
@@ -29,8 +25,6 @@ Each account in Ledger Live has a derivation path formatted as `m / purpose' / c
 - Litecoin: 2
 - Dogecoin: 3
 - Qtum: 2301
-- Vertcoin: 28
-- Viacoin: 14
 - Decred: 42
 
 For a detailed list, see [SLIP-0044](https://github.com/satoshilabs/slips/blob/master/slip-0044.md).

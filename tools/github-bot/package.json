@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-github-bot",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "private": true,
   "description": "Github bot to enhance developer experience on the ledger-live repository",
   "license": "MIT",

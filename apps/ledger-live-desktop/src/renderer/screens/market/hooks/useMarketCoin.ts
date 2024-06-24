@@ -10,16 +10,17 @@ import { Page, useMarketActions } from "./useMarketActions";
 import { useCallback } from "react";
 import { useParams } from "react-router";
 import { setMarketOptions } from "~/renderer/actions/market";
-import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 import { marketParamsSelector } from "~/renderer/reducers/market";
-import { starredMarketCoinsSelector, localeSelector } from "~/renderer/reducers/settings";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
+import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);
   const { colors } = useTheme();
   const dispatch = useDispatch();
   const { currencyId } = useParams<{ currencyId: string }>();
-
+  const { data: currenciesAll } = useFetchCurrencyAll();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
 
@@ -45,6 +46,7 @@ export const useMarketCoin = () => {
     useMarketActions({
       currency: currency,
       page: Page.MarketCoin,
+      currenciesAll,
     });
 
   const color = internalCurrency

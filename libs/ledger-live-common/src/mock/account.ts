@@ -13,8 +13,8 @@ import perFamilyMock from "../generated/mock";
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
-import { TezosAccount } from "../families/tezos/types";
-import { TronAccount } from "../families/tron/types";
+import { TezosAccount } from "@ledgerhq/coin-tezos/types/index";
+import { TronAccount } from "@ledgerhq/coin-tron/types";
 import { CardanoAccount, PaymentChain } from "@ledgerhq/coin-cardano/types";
 import { types } from "@stricahq/typhonjs";
 

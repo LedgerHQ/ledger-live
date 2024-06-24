@@ -1,8 +1,22 @@
 /* eslint-disable react/prop-types */
 
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
+import {
+  ExchangeType,
+  UiHook,
+  useConfig,
+  useWalletAPIServer,
+} from "@ledgerhq/live-common/wallet-api/react";
+import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
+import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
+import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { Operation } from "@ledgerhq/types-live";
+import { ipcRenderer } from "electron";
 import React, {
-  forwardRef,
   RefObject,
+  forwardRef,
   useCallback,
   useEffect,
   useMemo,
@@ -11,39 +25,25 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Operation } from "@ledgerhq/types-live";
-import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import {
-  useWalletAPIServer,
-  useConfig,
-  UiHook,
-  ExchangeType,
-} from "@ledgerhq/live-common/wallet-api/react";
-import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
-import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
-import { openModal } from "../../actions/modals";
-import { updateAccountWithUpdater } from "../../actions/accounts";
-import { flattenAccountsSelector } from "../../reducers/accounts";
-import BigSpinner from "../BigSpinner";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
-import { track } from "~/renderer/analytics/segment";
-import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
-import { Loader } from "./styled";
-import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
-import { useWebviewState } from "./helpers";
-import { getStoreValue, setStoreValue } from "~/renderer/store";
-import { NetworkErrorScreen } from "./NetworkError";
 import getUser from "~/helpers/user";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
-import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { NoAccountOverlay } from "./NoAccountOverlay";
-import { ipcRenderer } from "electron";
+import { track } from "~/renderer/analytics/segment";
+import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
+import { OperationDetails } from "~/renderer/drawers/OperationDetails";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { getStoreValue, setStoreValue } from "~/renderer/store";
+import { updateAccountWithUpdater } from "../../actions/accounts";
+import { openModal } from "../../actions/modals";
+import { flattenAccountsSelector } from "../../reducers/accounts";
+import BigSpinner from "../BigSpinner";
+import { NetworkErrorScreen } from "./NetworkError";
+import { NoAccountOverlay } from "./NoAccountOverlay";
+import { useWebviewState } from "./helpers";
+import { Loader } from "./styled";
+import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -233,6 +233,7 @@ function useWebView(
   webviewRef: RefObject<WebviewTag>,
   tracking: TrackingAPI,
   serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
+  customWebviewStyle?: React.CSSProperties,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
 
@@ -340,14 +341,26 @@ function useWebView(
       height: "100%",
       flex: 1,
       transition: "opacity 200ms ease-out",
+      ...(customWebviewStyle || {}),
     };
-  }, [widgetLoaded]);
+  }, [customWebviewStyle, widgetLoaded]);
 
   return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts };
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, currentAccountHistDb, customHandlers, onStateChange }, ref) => {
+  (
+    {
+      manifest,
+      inputs = {},
+      currentAccountHistDb,
+      customHandlers,
+      onStateChange,
+      hideLoader,
+      webviewStyle: customWebviewStyle,
+    },
+    ref,
+  ) => {
     const tracking = useMemo(
       () =>
         trackingWrapper(
@@ -393,6 +406,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       tracking,
       serverRef,
+      customWebviewStyle,
     );
 
     const isDapp = !!manifest.dapp;
@@ -431,7 +445,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           webpreferences={`nativeWindowOpen=no${isDapp ? ", contextIsolation=no" : ""}`}
           {...webviewProps}
         />
-        {!widgetLoaded ? (
+        {!widgetLoaded && !hideLoader ? (
           <Loader>
             <BigSpinner size={50} />
           </Loader>

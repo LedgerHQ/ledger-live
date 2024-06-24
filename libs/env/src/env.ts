@@ -117,6 +117,11 @@ const envDefinitions = {
     def: "",
     desc: "Polkadot Sidecar API credentials",
   },
+  API_POLKADOT_NODE: {
+    parser: stringParser,
+    def: "https://polkadot-fullnodes.api.live.ledger.com",
+    desc: "Polkadot Node",
+  },
   ELROND_API_ENDPOINT: {
     parser: stringParser,
     def: "https://elrond.coin.ledger.com",
@@ -226,6 +231,36 @@ const envDefinitions = {
     def: "https://testnet-ledger.cardanoscan.io/api",
     parser: stringParser,
     desc: "Cardano API url",
+  },
+  ICON_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v3",
+    desc: "ICON RPC url",
+  },
+  ICON_DEBUG_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v3d",
+    desc: "ICON debug RPC url",
+  },
+  ICON_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v1",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
+  ICON_TESTNET_DEBUG_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3d",
+    desc: "ICON Berlin Testnet debug",
+  },
+  ICON_TESTNET_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://tracker.berlin.icon.community/api/v1",
+    desc: "ICON Berlin Testnet API url",
   },
   COINAPPS: {
     def: "",
@@ -628,6 +663,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "is walletconnect enabled",
   },
+  CLOUD_SYNC_API: {
+    def: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
+    parser: stringParser,
+    desc: "wallet sync api base url",
+  },
   WITH_DEVICE_POLLING_DELAY: {
     def: 500,
     parser: floatParser,
@@ -787,6 +827,11 @@ const envDefinitions = {
     def: 20,
     parser: intParser,
     desc: "Configure the low battery percentage threshold",
+  },
+  LOG_DRAWERS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable logs for drawers",
   },
 };
 

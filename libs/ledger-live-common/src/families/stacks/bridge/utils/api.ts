@@ -88,15 +88,20 @@ export const fetchEstimatedFees = async (
 };
 
 export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
-  const data = await fetch<NetworkStatusResponse>("/extended/v1/status");
+  const data = await fetch<NetworkStatusResponse>("/extended");
   return data as NetworkStatusResponse; // TODO Validate if the response fits this interface
 };
 
 export const fetchTxs = async (addr: string, offset = 0): Promise<TransactionsResponse> => {
-  const response = await fetch<TransactionsResponse>(
-    `/extended/v1/address/${addr}/transactions_with_transfers?offset=${offset}&limit=50`,
-  );
-  return response; // TODO Validate if the response fits this interface
+  const limit = 50;
+  try {
+    const response = await fetch<TransactionsResponse>(
+      `/extended/v2/addresses/${addr}/transactions?offset=${offset}&limit=${limit}`,
+    );
+    return response; // TODO Validate if the response fits this interface
+  } catch (e) {
+    return { limit, offset, total: 0, results: [] };
+  }
 };
 
 export const fetchFullTxs = async (addr: string): Promise<TransactionResponse[]> => {

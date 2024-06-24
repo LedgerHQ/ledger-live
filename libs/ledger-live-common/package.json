@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.2.0",
+  "version": "34.6.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -49,6 +49,10 @@
     "./currencies/*": {
       "require": "./lib/currencies/*.js",
       "default": "./lib-es/currencies/*.js"
+    },
+    "./e2e": {
+      "require": "./lib/e2e/index.js",
+      "default": "./lib-es/e2e/index.js"
     },
     "./featureFlags": {
       "require": "./lib/featureFlags/*.js",
@@ -115,7 +119,7 @@
     "https": false
   },
   "dependencies": {
-    "@cardano-foundation/ledgerjs-hw-app-cardano": "^6.0.1",
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@celo/connect": "^3.0.1",
     "@celo/contractkit": "^3.0.1",
     "@celo/utils": "^3.0.1",
@@ -140,8 +144,11 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-near": "workspace:^",
     "@ledgerhq/coin-polkadot": "workspace:^",
+    "@ledgerhq/coin-icon": "workspace:^",
+    "@ledgerhq/coin-stellar": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/coin-tezos": "workspace:^",
+    "@ledgerhq/coin-tron": "workspace:^",
     "@ledgerhq/coin-xrp": "workspace:^",
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
@@ -161,6 +168,7 @@
     "@ledgerhq/hw-app-trx": "workspace:^",
     "@ledgerhq/hw-app-vet": "workspace:^",
     "@ledgerhq/hw-app-xrp": "workspace:^",
+    "@ledgerhq/hw-app-icon": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
@@ -181,18 +189,16 @@
     "@ledgerhq/wallet-api-server": "^1.5.10",
     "@stacks/network": "6.10.0",
     "@stacks/transactions": "6.11.0",
-    "@stellar/stellar-sdk": "^11.3.0",
     "@stricahq/typhonjs": "^1.2.6",
-    "@taquito/ledger-signer": "^13.0.1",
+    "@taquito/ledger-signer": "^20.0.0",
     "@types/bchaddrjs": "^0.4.0",
-    "@types/bs58check": "^2.1.0",
     "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
     "@types/redux-actions": "^2.6.2",
     "@xstate/react": "^1.6.3",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "@zondax/ledger-casper": "^2.6.1",
-    "@zondax/ledger-cosmos-js": "3.0.2",
+    "@zondax/ledger-cosmos-js": "3.0.3",
     "@zondax/ledger-filecoin": "^0.11.2",
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-stacks": "^1.0.2",
@@ -206,7 +212,6 @@
     "bip39": "^3.0.4",
     "blakejs": "^1.2.1",
     "bs58": "^4.0.1",
-    "bs58check": "^2.1.2",
     "c32check": "1.1.3",
     "casper-js-sdk": "^2.15.2",
     "cosmjs-types": "0.2.1",
@@ -237,7 +242,6 @@
     "simple-cbor": "^0.4.1",
     "thor-devkit": "^2.0.6",
     "triple-beam": "^1.3.0",
-    "tronweb": "5.2.0",
     "tsx": "^4.7.1",
     "usehooks-ts": "^2.13.0",
     "utility-types": "^3.10.0",

@@ -32,16 +32,15 @@ interface DeviceSelectorProps {
 }
 
 export function DeviceSelector({ onClick }: DeviceSelectorProps) {
-  const deviceStaxSupported = useFeature("supportDeviceStax");
   const deviceEuropaSupported = useFeature("supportDeviceEuropa");
 
   const devices = useMemo(
     () => [
-      ...(deviceStaxSupported?.enabled ? [{ id: DeviceModelId.stax, enabled: true }] : []),
+      { id: DeviceModelId.stax, enabled: true },
       ...(deviceEuropaSupported?.enabled ? [{ id: DeviceModelId.europa, enabled: true }] : []),
       ...allDevices,
     ],
-    [deviceStaxSupported, deviceEuropaSupported],
+    [deviceEuropaSupported],
   );
 
   return (

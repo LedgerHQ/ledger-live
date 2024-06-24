@@ -16,6 +16,7 @@ import {
   sharePersonalizedRecommendationsSelector,
   hasSeenAnalyticsOptInPromptSelector,
   trackingEnabledSelector,
+  developerModeSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
 import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
@@ -30,6 +31,7 @@ import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { useCallback, useContext } from "react";
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
@@ -65,11 +67,26 @@ const getMarketWidgetAnalytics = () => {
   return !!marketWidget?.enabled;
 };
 
+const getWalletSyncAttributes = (state: State) => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
+
+  return {
+    hasWalletSync: !!walletSync?.enabled,
+    walletSyncActivated: !!state.trustchain.trustchain,
+  };
+};
+
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
+
+  const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
+  const ptxSwapLiveAppDemoOne = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
+  const ptxSwapThorswapProvider = analyticsFeatureFlagMethod("ptxSwapThorswapProvider")?.enabled;
+  const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
 
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -90,6 +107,10 @@ const getPtxAttributes = () => {
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxSwapMoonpayProviderEnabled,
+    ptxSwapLiveAppDemoZero,
+    ptxSwapLiveAppDemoOne,
+    ptxSwapThorswapProvider,
+    ptxSwapExodusProvider,
   };
 };
 
@@ -98,8 +119,10 @@ const getMandatoryProperties = (store: ReduxStore) => {
   const analyticsEnabled = shareAnalyticsSelector(state);
   const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
+  const devModeEnabled = developerModeSelector(state);
 
   return {
+    devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,
@@ -115,13 +138,9 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
-  const {
-    isBatch1Enabled,
-    isBatch2Enabled,
-    isBatch3Enabled,
-    stakingProvidersEnabled,
-    ptxSwapMoonpayProviderEnabled,
-  } = getPtxAttributes();
+  const ptxAttributes = getPtxAttributes();
+
+  const walletSyncAtributes = getWalletSyncAttributes(state);
 
   const deviceInfo = device
     ? {
@@ -174,12 +193,9 @@ const extraProperties = (store: ReduxStore) => {
     hasInfinityPass,
     hasSeenMarketWidget: getMarketWidgetAnalytics(),
     modelIdList: devices,
-    stakingProvidersEnabled,
-    isBatch1Enabled,
-    isBatch2Enabled,
-    isBatch3Enabled,
-    ptxSwapMoonpayProviderEnabled,
+    ...ptxAttributes,
     ...deviceInfo,
+    ...walletSyncAtributes,
   };
 };
 

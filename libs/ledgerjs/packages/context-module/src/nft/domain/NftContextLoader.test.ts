@@ -1,5 +1,4 @@
-import { LoaderOptions } from "../../shared/model/LoaderOptions";
-import { Transaction } from "../../shared/model/Transaction";
+import { TransactionContext } from "../../shared/model/TransactionContext";
 import { NftDataSource } from "../data/NftDataSource";
 import { NftContextLoader } from "./NftContextLoader";
 
@@ -20,59 +19,54 @@ describe("NftContextLoader", () => {
 
   describe("load function", () => {
     it("should return an empty array if no dest", async () => {
-      const options = {} as LoaderOptions;
-      const transaction = { to: undefined, data: "0x01" } as Transaction;
+      const transaction = { to: undefined, data: "0x01" } as TransactionContext;
 
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([]);
     });
 
     it("should return an empty array if undefined data", async () => {
-      const options = {} as LoaderOptions;
       const transaction = {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: undefined,
-      } as unknown as Transaction;
+      } as unknown as TransactionContext;
 
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([]);
     });
 
     it("should return an empty array if empty data", async () => {
-      const options = {} as LoaderOptions;
       const transaction = {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: "0x",
-      } as unknown as Transaction;
+      } as unknown as TransactionContext;
 
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([]);
     });
 
     it("should return an empty array if selector not supported", async () => {
-      const options = {} as LoaderOptions;
       const transaction = {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: "0x095ea7b20000000000000",
-      } as unknown as Transaction;
+      } as unknown as TransactionContext;
 
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([]);
     });
 
     it("should return an error when no plugin response", async () => {
-      const options = {} as LoaderOptions;
       const transaction = {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: "0x095ea7b30000000000000",
-      } as unknown as Transaction;
+      } as unknown as TransactionContext;
       spyGetPluginPayload.mockResolvedValueOnce(undefined);
 
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([
         expect.objectContaining({
@@ -83,15 +77,14 @@ describe("NftContextLoader", () => {
     });
 
     it("should return an error when no nft data response", async () => {
-      const options = {} as LoaderOptions;
       const transaction = {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: "0x095ea7b30000000000000",
-      } as unknown as Transaction;
+      } as unknown as TransactionContext;
       spyGetPluginPayload.mockResolvedValueOnce("payload1");
       spyGetNftInfosPayload.mockResolvedValueOnce(undefined);
 
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([
         expect.objectContaining({
@@ -102,15 +95,14 @@ describe("NftContextLoader", () => {
     });
 
     it("should return a response", async () => {
-      const options = {} as LoaderOptions;
       const transaction = {
         to: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         data: "0x095ea7b30000000000000",
-      } as unknown as Transaction;
+      } as unknown as TransactionContext;
       spyGetPluginPayload.mockResolvedValueOnce("payload1");
       spyGetNftInfosPayload.mockResolvedValueOnce("payload2");
 
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([
         {

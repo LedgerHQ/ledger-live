@@ -8,10 +8,10 @@ import { SwapGenericAPIError } from "../../../../errors";
 import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { fetchRatesMock } from "./__mocks__/fetchRates.mocks";
-import { getAvailableProviders, getSwapAPIBaseURL, getSwapUserIP } from "../..";
+import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
 
 type Props = {
-  removeProviders: Array<string>;
+  providers: Array<string>;
   currencyFrom?: string;
   toCurrencyId?: string;
   fromCurrencyAmount: string;
@@ -76,7 +76,7 @@ export const throwRateError = (response: ExchangeRate[]) => {
 };
 
 export async function fetchRates({
-  removeProviders,
+  providers,
   currencyFrom,
   toCurrencyId,
   unitTo,
@@ -90,10 +90,6 @@ export async function fetchRates({
   }
 
   const url = new URL(`${getSwapAPIBaseURL()}/rate`);
-  const providers = await getAvailableProviders();
-  removeProviders.forEach(provider => {
-    providers.splice(providers.indexOf(provider), 1);
-  });
   const requestBody = {
     from: currencyFrom,
     to: toCurrencyId,

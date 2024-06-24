@@ -17,6 +17,8 @@ import { StreamTree } from "./StreamTree";
 import { TLV, TLVField } from "./tlv";
 import { SeedIdResult, parseSeedIdResult } from "./SeedId";
 
+export const TRUSTCHAIN_APP_NAME = "Ledger Sync";
+
 enum ParseStreamMode {
   BlockHeader = 0x00,
   Command = 0x01,
@@ -110,13 +112,7 @@ export class APDU {
       member.data.length,
       ...member.data,
     ]);
-    await transport.send(
-      APDU.CLA,
-      APDU.INS_SET_TRUSTED_MEMBER,
-      ParseStreamMode.Empty,
-      OutputDataMode.None,
-      Buffer.from(payload),
-    );
+    await transport.send(APDU.CLA, APDU.INS_SET_TRUSTED_MEMBER, 0, 0, Buffer.from(payload));
   }
 
   static async parseBlockHeader(transport: Transport, header: Uint8Array) {
@@ -541,10 +537,10 @@ export class ApduDevice implements Device {
       return; // Do nothing trusted member is optional in some cases
       // (e.g. if the trusted member is the device itself)
     }
-    trustedParams.members.set(crypto.to_hex(member), { iv, data: member });
+    trustedParams.members.set(crypto.to_hex(publicKey), { iv, data: member });
     // Set the last trusted member. This is used to prevent sending the same current trusted member
     // to the device again.
-    trustedParams.lastTrustedMember = crypto.to_hex(member);
+    trustedParams.lastTrustedMember = crypto.to_hex(publicKey);
   }
 
   private hasTrustedMember(trustedParams: TrustedParams, publicKey: Uint8Array): boolean {
@@ -710,7 +706,7 @@ export class ApduDevice implements Device {
     const sw = response.readUInt16BE(response.length - 2);
     if (sw !== 0x9000) return false;
     const appName = response.subarray(0, response.length - 2).toString();
-    return appName === "Trustchain"; // TODO change app name
+    return appName === TRUSTCHAIN_APP_NAME;
   }
 
   async close(): Promise<void> {

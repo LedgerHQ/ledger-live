@@ -1,0 +1,492 @@
+{
+  "apdus": "=> e0050000c30101070201001210c1797b8ebd4fcce3143954dc323bc3bd140101154730450220799d5617fb34f802f7fcb115df37f143cd5473a2b4dc117d35383713b3f2cfac022100a7f39bc3ae682335f4f437cee9b069d5ffb556bcb8800baddc17019c9f6735cf1604668f85eb202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\n<= 0021012102cad384e1ada935bd3867ebb6b2e4fab49ee98b0cc1a446404b5c2dc3fb88687c47304502210091a6176d2ad19b3297c42d513d20e603517dec82dc3ac63bc94261e4238579f4022054bcf08c60470f7561af3b0e91da1a28b61da352c06ca9bb04356cce7e3a41770000210121029a8bef4947807f60aa2130f194f83b45e3989746a40d7b5a027ba13a38c2115f473045022100fb4d9560535471010d7c6a14d9618a90b1b9c9a2ad4150012c56e305ee3ca97502207953dfa697d10b0b91535d60b8586ac5d35427fd80d5dc1df8ef4e304943b4739000\n=> e006000021023d3b8de90cb6bd82a40c761d8358ca3eb6130ef2e08298f1c8df64aff9d59604\n<= 9000\n=> e00700004b01010102200ac67b074a68b241905d22f6cdcd2dd7f268bdc4250c8dfaa64453de27e98f870621030000000000000000000000000000000000000000000000000000000000000000010101\n<= 0010eaa9fe0ae0ec85a9d6152602e9cd7a340130f74ad5d2ae61cd22ae4abc134e9739d933a2b6842f15e84cae54369061670b56afdc7e9dfdb7fc632d80f65688013aef9000\n=> e0070100a210a005000102000006210000000000000000000000000000000000000000000000000000000000000000000510000000000000000000000000000000000540000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000621000000000000000000000000000000000000000000000000000000000000000000\n<= 00107adb1ab1ead95266b3946abed6c9bac00250053298e7447fbb6cdf7f2e7adb055bd5e651b41ff4726f66bb5b4049959b1e6d9e0c846464f758748f23362e8f9de57f1c2e83f3839807b7818ab361ffd4c2c8de43d700d9e899d9881d447136189c720330e3a541fd01831818c77be764e4f2551562abd9a9c2737e831db5dcd8222c6f7e6d3b18f879e66a46e5c313a5213bc1d304203ce3fe9142a4f9fb1ca7a1206a5fc095290142eab01359210ae67e627a27f59e053027efd498df738cefb2a97378fe0f0e7ab6a2106fa51ab450b641f5ed971fe0d4f68f789d936befc8f851f5dc2e1786d99000\n=> e007020000\n<= 4730450221009692777abc20dc2c176b647c0082c63f7e3c650b786a91f818da0d57030227a6022032ec9b27fcf9bc1acce36f8b18b32a07f89522332b5c3ce78c463df35112d102000318e55b8d83ce3c39b143af3fdfb11bd50de24ef4490164869ccf1e618c3d04629000\n=> e006000021023d3b8de90cb6bd82a40c761d8358ca3eb6130ef2e08298f1c8df64aff9d59604\n<= 9000\n=> e00800004b01010102200ac67b074a68b241905d22f6cdcd2dd7f268bdc4250c8dfaa64453de27e98f87062102cad384e1ada935bd3867ebb6b2e4fab49ee98b0cc1a446404b5c2dc3fb88687c010101\n<= 9000\n=> e0080101a210a005000102000006210399df76e8bb50b38c7abf19e3ec53aaac74f4d060a0164ceca5fbfdef185cd5660510b9093dd26b507162ef2e7b243549f6060540126e2e88f8a3ea5c76fb9f1e0e8293d548a6044aa6447698136f3fdc661140452e9e6ed7f621cd929246931197833bb91ff193b5716eb39ddb498593767a9be90621034b8c128ead2073cfce082e9958b22472a497b96e4141c9c8ed5b6cc6cd17f33d\n<= 9000\n=> e008020049034730450221009692777abc20dc2c176b647c0082c63f7e3c650b786a91f818da0d57030227a6022032ec9b27fcf9bc1acce36f8b18b32a07f89522332b5c3ce78c463df35112d102\n<= 9000\n=> e00700004b010101022078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd0621030000000000000000000000000000000000000000000000000000000000000000010103\n<= 0010bb9cbc3cac34dd8f3704b4484790a5920130f3b8c239cf01a1cdda55c6be805dc0958f8d2c5bc40dbdff0b3994892212cd5a8ca17fd5a6563e71657c85e34daeb3269000\n=> e0070100181516050c8000000080000010800000000600050005000600\n<= 00102f52be3fabb20dd7f28e8c25193909d50250396ed6337f4f20a264e528ca8b3d647235ef70d8a9e442a49ed626ae102026e1345db39219ec2fb8eb0c8d38f4c3076b174536eda5158321e896146597377e6b953cd9aa158931d85c4098d3673bd29103302efbc7ed8c471c7121f7323688979e3c81a0f53d225e6ce25425958a06a72be22f87450edd6b7cea3c2014199fb05fb8042093b174665cd2c86d43d5ffa9a8e5ca92c023e29e10e6ce65e9d781234dc25a9805308bc3987988a7f801b68cfa57468c7a18f639baf047b1fb451884bbc8c42cd29225e6663fa2a36e3672d7d869cb8ac6759000\n=> e007010035113304084d656d62657220310621037d19e45c0fd4487e11dbdd0599e161611cf6eb02a9824246e4865d393cfc09d60104ffffffff\n<= 00106cda9da49d2ec1979fb8a38b199bbbde06405524144d4f096d6f3f3316423a041f1009ab878a74d29560c30fbfaa3b0d375fe5cb0f8df3dac3126feed548ba0862aac0d4d99715fcbaa706f6db010a3995da9000\n=> e00701002b1229050005000621037d19e45c0fd4487e11dbdd0599e161611cf6eb02a9824246e4865d393cfc09d60600\n<= 0010e4140ff3637ebc53f65b256235c207d20250eadf112c1e013ba0570a85a4dbe7068e99c49e50d091c393d67a6bd9802a067337486cbb8d00745351d3ff5f29931cab9e5565d3182f9e31d6430dfff645d5dafb658a9c19d536486672273efb97883803309ff223f02ea576c0c43c7d4eef6099b2c3544fc587f2b938ae3c8619aec81058301eb207c91f70186ec50abd68dc9efc04203e910733280d806a8b9f7fe85a3c9d774ee1dc73f01c76e5057ea8b5976f708f06203e910733280d806a8b9f7fe85a3c9d774ee1dc73f01c76e5057ea8b5976f708f9000\n=> e007020000\n<= 46304402201926b3f0c675d9a43ce77ac40f8e32888513b93cd75df88af9b4f4b1267d547002203230472d2c4e0184097a0ffb8898e58347716ef5839211ba6d38bb610e8ff3e601026a22f900a8f6b04d4f46c73cf27757695acd5533b2657ca80b9f2b58a0e7719c9000\n=> e0050000c3010107020100121084312dc1e16f0a9381740d1809e72eb914010115473045022100ef44a3c12d1ce0be36db345ef7f0ffa5402b45cbb9d82fc9f43a8d2dfbe96e440220605936d9ecbe2c093222660e82ddb1f243d461e8ca8e65a11d06d96a662b86121604668f85f0202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\n<= 0021012103a11c1192364a106dda627a788d168c2439299efcd9981821166e45a3d400db64463044022004cacef0310644684bb5578eca54bda46f4507ef3d7dd6589d0ced0a97d1dfdd02200411c91dd7c93f054a8499401879ac05ef51e4bffea84442b62f97c178e219c80000210121029a8bef4947807f60aa2130f194f83b45e3989746a40d7b5a027ba13a38c2115f473045022100db12a85470a6127455b0a649463ef260506c60a44620f6410e80917f909e28f202204d4ef9d2d396dce3ad198c1d8dd9a4096df04ba46153f1e476bda864d21780399000\n",
+  "crypto": {
+    "randomBytesOutputs": [
+      "b76e8666c561b140f59bf1ef4963459e804c1b3e3985be2a03d061d74b39d32c",
+      "0ac67b074a68b241905d22f6cdcd2dd7f268bdc4250c8dfaa64453de27e98f87",
+      "b918294e1e73b4061481bbc0a30619ea"
+    ],
+    "randomKeypairOutputs": [
+      "fca2cb918d4471bcb44b826800efe29aa057c8b464312f2460f81b66a848a9fc",
+      "ace022e9e5fb4a75abea65064e6ec8dfe5a1407220a3ff011b1d67f1373814f4",
+      "1936b05a7a43bc3d40ed110e133f27e892af4089466168711c40307beafb1ec3",
+      "08e6b52a2e087d0c69bb484bac592d4215a08be505daefcec6b8871ae95001f8",
+      "900ddd35216110f31ee82f63a527e594704ef8ca285fff1d49f50410e9fe69ec",
+      "97819b1dc704d88e04da06249e46d0d78b81db6b9ed3bf1d141d5ec8501a4798",
+      "90bb6cae2979f2ca2459785ba26eb74b8d5578ee0765ded778ce66c1063a07a7"
+    ]
+  },
+  "http": {
+    "transactions": [
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/challenge",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "917",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:42 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"json\":{\"version\":0,\"challenge\":{\"data\":\"c1797b8ebd4fcce3143954dc323bc3bd\",\"expiry\":\"2024-07-11T07:12:43Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"30450220799d5617fb34f802f7fcb115df37f143cd5473a2b4dc117d35383713b3f2cfac022100a7f39bc3ae682335f4f437cee9b069d5ffb556bcb8800baddc17019c9f6735cf\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"tlv\":\"0101070201001210c1797b8ebd4fcce3143954dc323bc3bd140101154730450220799d5617fb34f802f7fcb115df37f143cd5473a2b4dc117d35383713b3f2cfac022100a7f39bc3ae682335f4f437cee9b069d5ffb556bcb8800baddc17019c9f6735cf1604668f85eb202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/authenticate",
+          "method": "POST",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-length": "1070",
+            "content-type": "application/json",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          },
+          "body": "{\"challenge\":{\"version\":0,\"challenge\":{\"data\":\"c1797b8ebd4fcce3143954dc323bc3bd\",\"expiry\":\"2024-07-11T07:12:43Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"30450220799d5617fb34f802f7fcb115df37f143cd5473a2b4dc117d35383713b3f2cfac022100a7f39bc3ae682335f4f437cee9b069d5ffb556bcb8800baddc17019c9f6735cf\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"signature\":{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"02cad384e1ada935bd3867ebb6b2e4fab49ee98b0cc1a446404b5c2dc3fb88687c\"},\"signature\":\"304502210091a6176d2ad19b3297c42d513d20e603517dec82dc3ac63bc94261e4238579f4022054bcf08c60470f7561af3b0e91da1a28b61da352c06ca9bb04356cce7e3a4177\",\"attestation\":\"0000210121029a8bef4947807f60aa2130f194f83b45e3989746a40d7b5a027ba13a38c2115f473045022100fb4d9560535471010d7c6a14d9618a90b1b9c9a2ad4150012c56e305ee3ca97502207953dfa697d10b0b91535d60b8586ac5d35427fd80d5dc1df8ef4e304943b473\"}}"
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "562",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:43 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDJjYWQzODRlMWFkYTkzNWJkMzg2N2ViYjZiMmU0ZmFiNDllZTk4YjBjYzFhNDQ2NDA0YjVjMmRjM2ZiODg2ODdjIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY0LCJpYXQiOjE3MjA2ODAxNjMsImp0aSI6ImNlOTZhOGE3LTViNTUtNGNhMy04YWUwLWYzMzY5ODliYTJmNiIsInBlcm1pc3Npb25zIjp7fSwiZGV2aWNlIjp0cnVlLCJyZWZyZXNoRXhwaXJhdGlvbiI6IjIwMjQtMDctMTFUMDc6NDI6NDRaIn0.7KLe4ZEJs8estrhHnFoa1uSKnHtLPZVA-oMDJ8GOib4fT0dONPJvhFV0ctpCA8FFh0O9hpQo_e8PObdXIU1EWA\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/trustchains",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDJjYWQzODRlMWFkYTkzNWJkMzg2N2ViYjZiMmU0ZmFiNDllZTk4YjBjYzFhNDQ2NDA0YjVjMmRjM2ZiODg2ODdjIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY0LCJpYXQiOjE3MjA2ODAxNjMsImp0aSI6ImNlOTZhOGE3LTViNTUtNGNhMy04YWUwLWYzMzY5ODliYTJmNiIsInBlcm1pc3Npb25zIjp7fSwiZGV2aWNlIjp0cnVlLCJyZWZyZXNoRXhwaXJhdGlvbiI6IjIwMjQtMDctMTFUMDc6NDI6NDRaIn0.7KLe4ZEJs8estrhHnFoa1uSKnHtLPZVA-oMDJ8GOib4fT0dONPJvhFV0ctpCA8FFh0O9hpQo_e8PObdXIU1EWA",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "2",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:43 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/seed",
+          "method": "POST",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDJjYWQzODRlMWFkYTkzNWJkMzg2N2ViYjZiMmU0ZmFiNDllZTk4YjBjYzFhNDQ2NDA0YjVjMmRjM2ZiODg2ODdjIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY0LCJpYXQiOjE3MjA2ODAxNjMsImp0aSI6ImNlOTZhOGE3LTViNTUtNGNhMy04YWUwLWYzMzY5ODliYTJmNiIsInBlcm1pc3Npb25zIjp7fSwiZGV2aWNlIjp0cnVlLCJyZWZyZXNoRXhwaXJhdGlvbiI6IjIwMjQtMDctMTFUMDc6NDI6NDRaIn0.7KLe4ZEJs8estrhHnFoa1uSKnHtLPZVA-oMDJ8GOib4fT0dONPJvhFV0ctpCA8FFh0O9hpQo_e8PObdXIU1EWA",
+            "content-length": "622",
+            "content-type": "application/json",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          },
+          "body": "\"01010102200ac67b074a68b241905d22f6cdcd2dd7f268bdc4250c8dfaa64453de27e98f87062102cad384e1ada935bd3867ebb6b2e4fab49ee98b0cc1a446404b5c2dc3fb88687c01010110a005000102000006210399df76e8bb50b38c7abf19e3ec53aaac74f4d060a0164ceca5fbfdef185cd5660510b9093dd26b507162ef2e7b243549f6060540126e2e88f8a3ea5c76fb9f1e0e8293d548a6044aa6447698136f3fdc661140452e9e6ed7f621cd929246931197833bb91ff193b5716eb39ddb498593767a9be90621034b8c128ead2073cfce082e9958b22472a497b96e4141c9c8ed5b6cc6cd17f33d034730450221009692777abc20dc2c176b647c0082c63f7e3c650b786a91f818da0d57030227a6022032ec9b27fcf9bc1acce36f8b18b32a07f89522332b5c3ce78c463df35112d102\""
+        },
+        "response": {
+          "status": 204,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "date": "Thu, 11 Jul 2024 06:42:44 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          }
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/refresh",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDJjYWQzODRlMWFkYTkzNWJkMzg2N2ViYjZiMmU0ZmFiNDllZTk4YjBjYzFhNDQ2NDA0YjVjMmRjM2ZiODg2ODdjIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY0LCJpYXQiOjE3MjA2ODAxNjMsImp0aSI6ImNlOTZhOGE3LTViNTUtNGNhMy04YWUwLWYzMzY5ODliYTJmNiIsInBlcm1pc3Npb25zIjp7fSwiZGV2aWNlIjp0cnVlLCJyZWZyZXNoRXhwaXJhdGlvbiI6IjIwMjQtMDctMTFUMDc6NDI6NDRaIn0.7KLe4ZEJs8estrhHnFoa1uSKnHtLPZVA-oMDJ8GOib4fT0dONPJvhFV0ctpCA8FFh0O9hpQo_e8PObdXIU1EWA",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "675",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:44 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDJjYWQzODRlMWFkYTkzNWJkMzg2N2ViYjZiMmU0ZmFiNDllZTk4YjBjYzFhNDQ2NDA0YjVjMmRjM2ZiODg2ODdjIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY1LCJpYXQiOjE3MjA2ODAxNjQsImp0aSI6ImUwYzU0YmZlLTdmNDUtNDlhYi05NzlhLWNkNThhNTJkMDRiOSIsInBlcm1pc3Npb25zIjp7IjAwNzhjZjM5NjZiNTU5MzcxZDhiMGMyMTgxNjZmNjcxMmYyYWQ4ZTU5MWU5YjQ1ZWIxZjlkMWY1ZGU4M2U2NzliZCI6eyJtLyI6WyJvd25lciJdfX0sImRldmljZSI6dHJ1ZSwicmVmcmVzaEV4cGlyYXRpb24iOiIyMDI0LTA3LTExVDA3OjQyOjQ0WiJ9.SuUwR_h1O5BUk80J9GsVdLhjKulcvOWB2vrRgDQhHJFUF1Y189HS0K84rcfMgHzFdHUy6QD_y_jdbtKWqZWvdg\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/trustchains",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDJjYWQzODRlMWFkYTkzNWJkMzg2N2ViYjZiMmU0ZmFiNDllZTk4YjBjYzFhNDQ2NDA0YjVjMmRjM2ZiODg2ODdjIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY1LCJpYXQiOjE3MjA2ODAxNjQsImp0aSI6ImUwYzU0YmZlLTdmNDUtNDlhYi05NzlhLWNkNThhNTJkMDRiOSIsInBlcm1pc3Npb25zIjp7IjAwNzhjZjM5NjZiNTU5MzcxZDhiMGMyMTgxNjZmNjcxMmYyYWQ4ZTU5MWU5YjQ1ZWIxZjlkMWY1ZGU4M2U2NzliZCI6eyJtLyI6WyJvd25lciJdfX0sImRldmljZSI6dHJ1ZSwicmVmcmVzaEV4cGlyYXRpb24iOiIyMDI0LTA3LTExVDA3OjQyOjQ0WiJ9.SuUwR_h1O5BUk80J9GsVdLhjKulcvOWB2vrRgDQhHJFUF1Y189HS0K84rcfMgHzFdHUy6QD_y_jdbtKWqZWvdg",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "87",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:44 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"0078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd\":{\"m/\":[\"owner\"]}}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/trustchain/0078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDJjYWQzODRlMWFkYTkzNWJkMzg2N2ViYjZiMmU0ZmFiNDllZTk4YjBjYzFhNDQ2NDA0YjVjMmRjM2ZiODg2ODdjIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY1LCJpYXQiOjE3MjA2ODAxNjQsImp0aSI6ImUwYzU0YmZlLTdmNDUtNDlhYi05NzlhLWNkNThhNTJkMDRiOSIsInBlcm1pc3Npb25zIjp7IjAwNzhjZjM5NjZiNTU5MzcxZDhiMGMyMTgxNjZmNjcxMmYyYWQ4ZTU5MWU5YjQ1ZWIxZjlkMWY1ZGU4M2U2NzliZCI6eyJtLyI6WyJvd25lciJdfX0sImRldmljZSI6dHJ1ZSwicmVmcmVzaEV4cGlyYXRpb24iOiIyMDI0LTA3LTExVDA3OjQyOjQ0WiJ9.SuUwR_h1O5BUk80J9GsVdLhjKulcvOWB2vrRgDQhHJFUF1Y189HS0K84rcfMgHzFdHUy6QD_y_jdbtKWqZWvdg",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "629",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:44 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"m/\":\"01010102200ac67b074a68b241905d22f6cdcd2dd7f268bdc4250c8dfaa64453de27e98f87062102cad384e1ada935bd3867ebb6b2e4fab49ee98b0cc1a446404b5c2dc3fb88687c01010110a005000102000006210399df76e8bb50b38c7abf19e3ec53aaac74f4d060a0164ceca5fbfdef185cd5660510b9093dd26b507162ef2e7b243549f6060540126e2e88f8a3ea5c76fb9f1e0e8293d548a6044aa6447698136f3fdc661140452e9e6ed7f621cd929246931197833bb91ff193b5716eb39ddb498593767a9be90621034b8c128ead2073cfce082e9958b22472a497b96e4141c9c8ed5b6cc6cd17f33d034730450221009692777abc20dc2c176b647c0082c63f7e3c650b786a91f818da0d57030227a6022032ec9b27fcf9bc1acce36f8b18b32a07f89522332b5c3ce78c463df35112d102\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/trustchain/0078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd/derivation",
+          "method": "POST",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDJjYWQzODRlMWFkYTkzNWJkMzg2N2ViYjZiMmU0ZmFiNDllZTk4YjBjYzFhNDQ2NDA0YjVjMmRjM2ZiODg2ODdjIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY1LCJpYXQiOjE3MjA2ODAxNjQsImp0aSI6ImUwYzU0YmZlLTdmNDUtNDlhYi05NzlhLWNkNThhNTJkMDRiOSIsInBlcm1pc3Npb25zIjp7IjAwNzhjZjM5NjZiNTU5MzcxZDhiMGMyMTgxNjZmNjcxMmYyYWQ4ZTU5MWU5YjQ1ZWIxZjlkMWY1ZGU4M2U2NzliZCI6eyJtLyI6WyJvd25lciJdfX0sImRldmljZSI6dHJ1ZSwicmVmcmVzaEV4cGlyYXRpb24iOiIyMDI0LTA3LTExVDA3OjQyOjQ0WiJ9.SuUwR_h1O5BUk80J9GsVdLhjKulcvOWB2vrRgDQhHJFUF1Y189HS0K84rcfMgHzFdHUy6QD_y_jdbtKWqZWvdg",
+            "content-length": "1054",
+            "content-type": "application/json",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          },
+          "body": "\"010101022078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd062102cad384e1ada935bd3867ebb6b2e4fab49ee98b0cc1a446404b5c2dc3fb88687c01010315a8050c800000008000001080000000062102ebe6da7d824dc7bfe5c3e2306981d7d2845c6d8d1bf9112b3d51f7e129000f7d0510d5c51182f9ee1130f3c6793a561ecc8605401595fc3d72152d77c6788670fc160dd3ee3262f197b6740cd923b489a7b703342f34ce7b0fd7283d1c17d9b7457632ad60b4c80b4ceec598f1f4e4a807f7fa78062102a1cdff02e111cdd82b9439d5fc6681f71e9f8ac84c19f9fa10729e3ad77ee2a4113304084d656d62657220310621037d19e45c0fd4487e11dbdd0599e161611cf6eb02a9824246e4865d393cfc09d60104ffffffff129a0510f0c86a8f800d1b9aa8d6785ee1ef30c605401ab9c2b21bd57e00de97f2c3edab76d69006321dcd6367ff807ea06cd6dd25f86964fb7dd56016323d62bc45f55ac20d2802ae33a08c2f067c3abba7105369080621037d19e45c0fd4487e11dbdd0599e161611cf6eb02a9824246e4865d393cfc09d6062103525ffe1c08fc50859138bf0b051bafc874c293182d5538a66f06377421eb4e2d0346304402201926b3f0c675d9a43ce77ac40f8e32888513b93cd75df88af9b4f4b1267d547002203230472d2c4e0184097a0ffb8898e58347716ef5839211ba6d38bb610e8ff3e6\""
+        },
+        "response": {
+          "status": 204,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "date": "Thu, 11 Jul 2024 06:42:45 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          }
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/challenge",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "917",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:45 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"json\":{\"version\":0,\"challenge\":{\"data\":\"7717be7e511c75eaadb00bd2cfdeeac4\",\"expiry\":\"2024-07-11T07:12:46Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"304502204027f97c94e329aad8c29b5a380a49d31799a74a166b0af497abb329746b1531022100b6e4eb28e8ea74736ef1630ea09fdf2c8726a207bd8b95a3187c3d23b98abcfa\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"tlv\":\"01010702010012107717be7e511c75eaadb00bd2cfdeeac41401011547304502204027f97c94e329aad8c29b5a380a49d31799a74a166b0af497abb329746b1531022100b6e4eb28e8ea74736ef1630ea09fdf2c8726a207bd8b95a3187c3d23b98abcfa1604668f85ee202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/authenticate",
+          "method": "POST",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-length": "984",
+            "content-type": "application/json",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          },
+          "body": "{\"challenge\":{\"version\":0,\"challenge\":{\"data\":\"7717be7e511c75eaadb00bd2cfdeeac4\",\"expiry\":\"2024-07-11T07:12:46Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"304502204027f97c94e329aad8c29b5a380a49d31799a74a166b0af497abb329746b1531022100b6e4eb28e8ea74736ef1630ea09fdf2c8726a207bd8b95a3187c3d23b98abcfa\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"signature\":{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"037d19e45c0fd4487e11dbdd0599e161611cf6eb02a9824246e4865d393cfc09d6\"},\"signature\":\"304402204ae1e1fc01f236e06a7aceed83e9d6b093fcd20947abe4f52d6571e43e0c7514022014cacce665f872b7da81f1f3422f484f36e4810627eeb461ae77dcab7abf5758\",\"attestation\":\"0242303037386366333936366235353933373164386230633231383136366636373132663261643865353931653962343565623166396431663564653833653637396264\"}}"
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "689",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:45 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDM3ZDE5ZTQ1YzBmZDQ0ODdlMTFkYmRkMDU5OWUxNjE2MTFjZjZlYjAyYTk4MjQyNDZlNDg2NWQzOTNjZmMwOWQ2IiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY2LCJpYXQiOjE3MjA2ODAxNjUsImp0aSI6IjlmZWI1MTJmLTFkNWMtNGU5Zi1iYzg3LTE5NTQxNTU0MTZkNiIsInBlcm1pc3Npb25zIjp7IjAwNzhjZjM5NjZiNTU5MzcxZDhiMGMyMTgxNjZmNjcxMmYyYWQ4ZTU5MWU5YjQ1ZWIxZjlkMWY1ZGU4M2U2NzliZCI6eyJtLzAnLzE2Jy8wJyI6WyJvd25lciJdfX0sImRldmljZSI6ZmFsc2UsInJlZnJlc2hFeHBpcmF0aW9uIjoiMjAyNC0wNy0xMVQwNzo0Mjo0NloifQ.1-tTNKn7ivS2Zj0Xu3k_fgolgkfOB7zYIp_zNnoJvnBLh1DBFDM0kYSs3d1A6ymzR02P4i_U2UUf5GiwrW9qqw\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/trustchain/0078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDM3ZDE5ZTQ1YzBmZDQ0ODdlMTFkYmRkMDU5OWUxNjE2MTFjZjZlYjAyYTk4MjQyNDZlNDg2NWQzOTNjZmMwOWQ2IiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY2LCJpYXQiOjE3MjA2ODAxNjUsImp0aSI6IjlmZWI1MTJmLTFkNWMtNGU5Zi1iYzg3LTE5NTQxNTU0MTZkNiIsInBlcm1pc3Npb25zIjp7IjAwNzhjZjM5NjZiNTU5MzcxZDhiMGMyMTgxNjZmNjcxMmYyYWQ4ZTU5MWU5YjQ1ZWIxZjlkMWY1ZGU4M2U2NzliZCI6eyJtLzAnLzE2Jy8wJyI6WyJvd25lciJdfX0sImRldmljZSI6ZmFsc2UsInJlZnJlc2hFeHBpcmF0aW9uIjoiMjAyNC0wNy0xMVQwNzo0Mjo0NloifQ.1-tTNKn7ivS2Zj0Xu3k_fgolgkfOB7zYIp_zNnoJvnBLh1DBFDM0kYSs3d1A6ymzR02P4i_U2UUf5GiwrW9qqw",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "1692",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:46 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"m/\":\"01010102200ac67b074a68b241905d22f6cdcd2dd7f268bdc4250c8dfaa64453de27e98f87062102cad384e1ada935bd3867ebb6b2e4fab49ee98b0cc1a446404b5c2dc3fb88687c01010110a005000102000006210399df76e8bb50b38c7abf19e3ec53aaac74f4d060a0164ceca5fbfdef185cd5660510b9093dd26b507162ef2e7b243549f6060540126e2e88f8a3ea5c76fb9f1e0e8293d548a6044aa6447698136f3fdc661140452e9e6ed7f621cd929246931197833bb91ff193b5716eb39ddb498593767a9be90621034b8c128ead2073cfce082e9958b22472a497b96e4141c9c8ed5b6cc6cd17f33d034730450221009692777abc20dc2c176b647c0082c63f7e3c650b786a91f818da0d57030227a6022032ec9b27fcf9bc1acce36f8b18b32a07f89522332b5c3ce78c463df35112d102\",\"m/16'\":\"010101022078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd062102cad384e1ada935bd3867ebb6b2e4fab49ee98b0cc1a446404b5c2dc3fb88687c01010315a8050c800000008000001080000000062102ebe6da7d824dc7bfe5c3e2306981d7d2845c6d8d1bf9112b3d51f7e129000f7d0510d5c51182f9ee1130f3c6793a561ecc8605401595fc3d72152d77c6788670fc160dd3ee3262f197b6740cd923b489a7b703342f34ce7b0fd7283d1c17d9b7457632ad60b4c80b4ceec598f1f4e4a807f7fa78062102a1cdff02e111cdd82b9439d5fc6681f71e9f8ac84c19f9fa10729e3ad77ee2a4113304084d656d62657220310621037d19e45c0fd4487e11dbdd0599e161611cf6eb02a9824246e4865d393cfc09d60104ffffffff129a0510f0c86a8f800d1b9aa8d6785ee1ef30c605401ab9c2b21bd57e00de97f2c3edab76d69006321dcd6367ff807ea06cd6dd25f86964fb7dd56016323d62bc45f55ac20d2802ae33a08c2f067c3abba7105369080621037d19e45c0fd4487e11dbdd0599e161611cf6eb02a9824246e4865d393cfc09d6062103525ffe1c08fc50859138bf0b051bafc874c293182d5538a66f06377421eb4e2d0346304402201926b3f0c675d9a43ce77ac40f8e32888513b93cd75df88af9b4f4b1267d547002203230472d2c4e0184097a0ffb8898e58347716ef5839211ba6d38bb610e8ff3e6\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/trustchain/0078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd/commands",
+          "method": "PUT",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDM3ZDE5ZTQ1YzBmZDQ0ODdlMTFkYmRkMDU5OWUxNjE2MTFjZjZlYjAyYTk4MjQyNDZlNDg2NWQzOTNjZmMwOWQ2IiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY2LCJpYXQiOjE3MjA2ODAxNjUsImp0aSI6IjlmZWI1MTJmLTFkNWMtNGU5Zi1iYzg3LTE5NTQxNTU0MTZkNiIsInBlcm1pc3Npb25zIjp7IjAwNzhjZjM5NjZiNTU5MzcxZDhiMGMyMTgxNjZmNjcxMmYyYWQ4ZTU5MWU5YjQ1ZWIxZjlkMWY1ZGU4M2U2NzliZCI6eyJtLzAnLzE2Jy8wJyI6WyJvd25lciJdfX0sImRldmljZSI6ZmFsc2UsInJlZnJlc2hFeHBpcmF0aW9uIjoiMjAyNC0wNy0xMVQwNzo0Mjo0NloifQ.1-tTNKn7ivS2Zj0Xu3k_fgolgkfOB7zYIp_zNnoJvnBLh1DBFDM0kYSs3d1A6ymzR02P4i_U2UUf5GiwrW9qqw",
+            "content-length": "746",
+            "content-type": "application/json",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          },
+          "body": "{\"path\":\"0h/16h/0h\",\"blocks\":[\"0101010220906fec370f40953f10564acdd270e155c8fbea8d8fc07e5e37e14e78294683f90621037d19e45c0fd4487e11dbdd0599e161611cf6eb02a9824246e4865d393cfc09d6010102113304084d656d626572203206210384d9e1fd49967ab8e2b27a569666942104211ba03207dd7e07bce336167650b00104ffffffff129a0510b918294e1e73b4061481bbc0a30619ea054041de4b2f4bc40634587c509fbb97186433de5b8c998ffbc2514548ec772de3661d6e86a97974679c06fe8f19e187e4ed570033a1913cb4affeeb08b8bf3cbc3e06210384d9e1fd49967ab8e2b27a569666942104211ba03207dd7e07bce336167650b006210350e8c7a110939fedf291d6cc1d84dadc10641f158448d8e82e78403572e97e060346304402204cb5c44f5edfe3c7dbfa96f6111644f3aaf2b0b117b58582e07f3ea8895aad4202201127b9d8bc0fc00f6a5409f9ba41a1bbeed1386f137d00eb6dafc6b39743801b\"]}"
+        },
+        "response": {
+          "status": 204,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "date": "Thu, 11 Jul 2024 06:42:46 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          }
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/challenge",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "917",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:47 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"json\":{\"version\":0,\"challenge\":{\"data\":\"84312dc1e16f0a9381740d1809e72eb9\",\"expiry\":\"2024-07-11T07:12:48Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"3045022100ef44a3c12d1ce0be36db345ef7f0ffa5402b45cbb9d82fc9f43a8d2dfbe96e440220605936d9ecbe2c093222660e82ddb1f243d461e8ca8e65a11d06d96a662b8612\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"tlv\":\"010107020100121084312dc1e16f0a9381740d1809e72eb914010115473045022100ef44a3c12d1ce0be36db345ef7f0ffa5402b45cbb9d82fc9f43a8d2dfbe96e440220605936d9ecbe2c093222660e82ddb1f243d461e8ca8e65a11d06d96a662b86121604668f85f0202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/authenticate",
+          "method": "POST",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-length": "1068",
+            "content-type": "application/json",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          },
+          "body": "{\"challenge\":{\"version\":0,\"challenge\":{\"data\":\"84312dc1e16f0a9381740d1809e72eb9\",\"expiry\":\"2024-07-11T07:12:48Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"3045022100ef44a3c12d1ce0be36db345ef7f0ffa5402b45cbb9d82fc9f43a8d2dfbe96e440220605936d9ecbe2c093222660e82ddb1f243d461e8ca8e65a11d06d96a662b8612\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"signature\":{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03a11c1192364a106dda627a788d168c2439299efcd9981821166e45a3d400db64\"},\"signature\":\"3044022004cacef0310644684bb5578eca54bda46f4507ef3d7dd6589d0ced0a97d1dfdd02200411c91dd7c93f054a8499401879ac05ef51e4bffea84442b62f97c178e219c8\",\"attestation\":\"0000210121029a8bef4947807f60aa2130f194f83b45e3989746a40d7b5a027ba13a38c2115f473045022100db12a85470a6127455b0a649463ef260506c60a44620f6410e80917f909e28f202204d4ef9d2d396dce3ad198c1d8dd9a4096df04ba46153f1e476bda864d2178039\"}}"
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "562",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:48 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDNhMTFjMTE5MjM2NGExMDZkZGE2MjdhNzg4ZDE2OGMyNDM5Mjk5ZWZjZDk5ODE4MjExNjZlNDVhM2Q0MDBkYjY0IiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY5LCJpYXQiOjE3MjA2ODAxNjgsImp0aSI6IjExNGFiZjY1LTFjNjEtNGI4Ni1iNjE2LTA2MGMwM2Y0NjczMyIsInBlcm1pc3Npb25zIjp7fSwiZGV2aWNlIjp0cnVlLCJyZWZyZXNoRXhwaXJhdGlvbiI6IjIwMjQtMDctMTFUMDc6NDI6NDlaIn0.bnVRVxgN5BcVmNd_MFPRxuI3groqqXWKk2b-mChD5sitZRsyAX63Vd_GudFduqVA4l3nAidRCIDza0EVtTIWKg\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/trustchain/0078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDNhMTFjMTE5MjM2NGExMDZkZGE2MjdhNzg4ZDE2OGMyNDM5Mjk5ZWZjZDk5ODE4MjExNjZlNDVhM2Q0MDBkYjY0IiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDY5LCJpYXQiOjE3MjA2ODAxNjgsImp0aSI6IjExNGFiZjY1LTFjNjEtNGI4Ni1iNjE2LTA2MGMwM2Y0NjczMyIsInBlcm1pc3Npb25zIjp7fSwiZGV2aWNlIjp0cnVlLCJyZWZyZXNoRXhwaXJhdGlvbiI6IjIwMjQtMDctMTFUMDc6NDI6NDlaIn0.bnVRVxgN5BcVmNd_MFPRxuI3groqqXWKk2b-mChD5sitZRsyAX63Vd_GudFduqVA4l3nAidRCIDza0EVtTIWKg",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 401,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "163",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:48 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"time\":\"2024-07-11T06:42:48.861920Z\",\"cause\":\"JWT contains no permission\",\"status\":401,\"type\":\"UNAUTHORIZED\",\"message\":\"Unauthorized: JWT contains no permission\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/challenge",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "921",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:48 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"json\":{\"version\":0,\"challenge\":{\"data\":\"cda44ab0f2bd7e379d372816b5236e3d\",\"expiry\":\"2024-07-11T07:12:49Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"3046022100a4367461d5d6d87d1a37d93ca33196b522785d3433d98b62a597d6b49d9e6f73022100df7ad6d4a51a47a130d7f6e8c44d81057b67d620b954360462b3b61f3bca5f6e\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"tlv\":\"0101070201001210cda44ab0f2bd7e379d372816b5236e3d14010115483046022100a4367461d5d6d87d1a37d93ca33196b522785d3433d98b62a597d6b49d9e6f73022100df7ad6d4a51a47a130d7f6e8c44d81057b67d620b954360462b3b61f3bca5f6e1604668f85f1202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/authenticate",
+          "method": "POST",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-length": "986",
+            "content-type": "application/json",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          },
+          "body": "{\"challenge\":{\"version\":0,\"challenge\":{\"data\":\"cda44ab0f2bd7e379d372816b5236e3d\",\"expiry\":\"2024-07-11T07:12:49Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"3046022100a4367461d5d6d87d1a37d93ca33196b522785d3433d98b62a597d6b49d9e6f73022100df7ad6d4a51a47a130d7f6e8c44d81057b67d620b954360462b3b61f3bca5f6e\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"signature\":{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"0384d9e1fd49967ab8e2b27a569666942104211ba03207dd7e07bce336167650b0\"},\"signature\":\"304402207072cebd94440ba5b8f4ceb66b574b5ac3c149ebc7346759f19473cfe8bef26702205b2cc7c8b9ff2610031e284adb18c1cf8ec2e3c150931fcd6142ff91b7a73eff\",\"attestation\":\"0242303037386366333936366235353933373164386230633231383136366636373132663261643865353931653962343565623166396431663564653833653637396264\"}}"
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "689",
+            "content-type": "application/json",
+            "date": "Thu, 11 Jul 2024 06:42:49 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"access_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDM4NGQ5ZTFmZDQ5OTY3YWI4ZTJiMjdhNTY5NjY2OTQyMTA0MjExYmEwMzIwN2RkN2UwN2JjZTMzNjE2NzY1MGIwIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDcwLCJpYXQiOjE3MjA2ODAxNjksImp0aSI6ImE5MDM1Njg2LTZiNjQtNDAxYi1hMTU4LTlhYjE2ZWQ3NTdhNyIsInBlcm1pc3Npb25zIjp7IjAwNzhjZjM5NjZiNTU5MzcxZDhiMGMyMTgxNjZmNjcxMmYyYWQ4ZTU5MWU5YjQ1ZWIxZjlkMWY1ZGU4M2U2NzliZCI6eyJtLzAnLzE2Jy8wJyI6WyJvd25lciJdfX0sImRldmljZSI6ZmFsc2UsInJlZnJlc2hFeHBpcmF0aW9uIjoiMjAyNC0wNy0xMVQwNzo0Mjo1MFoifQ.AoW5sZZzGBEKF5z2qQ9LdsEHPsT5ME_RwZswWXAvTICYoizNFz88scfMAdSpFSX3nl2trWRvqb0CTOVeYRP2vA\"}"
+        }
+      },
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/trustchain/0078cf3966b559371d8b0c218166f6712f2ad8e591e9b45eb1f9d1f5de83e679bd",
+          "method": "DELETE",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ0cnVzdGNoYWluLWJhY2tlbmQuYXBpLmF3cy5zdGcubGRnLXRlY2guY29tIiwic3ViIjoiMDM4NGQ5ZTFmZDQ5OTY3YWI4ZTJiMjdhNTY5NjY2OTQyMTA0MjExYmEwMzIwN2RkN2UwN2JjZTMzNjE2NzY1MGIwIiwiYXVkIjpbIkNsb3VkU3luYyIsInRydXN0Y2hhaW4iXSwiZXhwIjoxNzIwNjgwNDcwLCJpYXQiOjE3MjA2ODAxNjksImp0aSI6ImE5MDM1Njg2LTZiNjQtNDAxYi1hMTU4LTlhYjE2ZWQ3NTdhNyIsInBlcm1pc3Npb25zIjp7IjAwNzhjZjM5NjZiNTU5MzcxZDhiMGMyMTgxNjZmNjcxMmYyYWQ4ZTU5MWU5YjQ1ZWIxZjlkMWY1ZGU4M2U2NzliZCI6eyJtLzAnLzE2Jy8wJyI6WyJvd25lciJdfX0sImRldmljZSI6ZmFsc2UsInJlZnJlc2hFeHBpcmF0aW9uIjoiMjAyNC0wNy0xMVQwNzo0Mjo1MFoifQ.AoW5sZZzGBEKF5z2qQ9LdsEHPsT5ME_RwZswWXAvTICYoizNFz88scfMAdSpFSX3nl2trWRvqb0CTOVeYRP2vA",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 204,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "date": "Thu, 11 Jul 2024 06:42:49 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          }
+        }
+      }
+    ]
+  }
+}

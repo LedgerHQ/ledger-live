@@ -1,5 +1,6 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { v5 as uuidv5 } from "uuid";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import byFamily from "../generated/walletApiAdapter";
 import type { Transaction } from "../generated/types";
 import { isTokenAccount } from "../account";
@@ -10,8 +11,7 @@ import {
   WalletAPISupportedCurrency,
   GetWalletAPITransactionSignFlowInfos,
 } from "./types";
-import { Families } from "@ledgerhq/wallet-api-core";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { FAMILIES_MAPPING_LL_TO_WAPI, FAMILIES_MAPPING_WAPI_TO_LL } from "./constants";
 
 // The namespace is a randomly generated uuid v4 from https://www.uuidgenerator.net/
 const NAMESPACE = "c3c78073-6844-409e-9e75-171ab4c7f9a2";
@@ -86,7 +86,7 @@ export function currencyToWalletAPICurrency(
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: currency.family === "evm" ? "ethereum" : (currency.family as Families),
+    family: FAMILIES_MAPPING_LL_TO_WAPI[currency.family] ?? currency.family,
     color: currency.color,
     decimals: currency.units[0].magnitude,
   };
@@ -96,9 +96,8 @@ export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFl
   WalletAPITransaction,
   Transaction
 > = ({ walletApiTransaction, account }) => {
-  // This is a hack to link WalletAPI "ethereum" family to new "evm" family
-  const isEthereumFamily = walletApiTransaction.family === "ethereum";
-  const liveFamily = isEthereumFamily ? "evm" : walletApiTransaction.family;
+  const liveFamily =
+    FAMILIES_MAPPING_WAPI_TO_LL[walletApiTransaction.family] ?? walletApiTransaction.family;
 
   const familyModule = byFamily[liveFamily];
 

@@ -1,5 +1,3 @@
-version: '2.4'
-
 services:
   speculos:
     # Speculos isn't supported for Mac M1 yet. You have to build the image locally as described in the README.
@@ -9,7 +7,7 @@ services:
     volumes:
       - ./lib/signers/tmp:/speculos/apps
     ports:
-      - "${API_PORT}:${API_PORT}"
+      - "${SPECULOS_API_PORT}:${SPECULOS_API_PORT}"
     build:
       context: /speculos
-    command: --model nanox ./apps/app.elf --seed="${SEED}" --display headless --api-port ${API_PORT}
+    command: --model nanox ./apps/app.elf --seed="${SEED}" --display headless --api-port ${SPECULOS_API_PORT}

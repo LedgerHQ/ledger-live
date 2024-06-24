@@ -2,114 +2,99 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
+import { WebviewLayout } from "../../component/webviewLayout.component";
+
 import { Drawer } from "../../page/drawer/drawer";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
+import dummyLiveApp from "./dapp.spec.ts-mocks/dummy-live-app";
+import dummy1inchLiveApp from "./dapp.spec.ts-mocks/1inch-live-app";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH1AccountPOLYGON" });
 
-test.beforeAll(async () => {
-  process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify([
-    {
-      id: "dummy-live-app",
-      name: "Metamask Test Dapp",
-      private: false,
-      url: "https://metamask.github.io/test-dapp/",
-      dapp: {
-        networks: [
-          {
-            currency: "ethereum",
-            chainID: 1,
-            nodeURL: "https://eth-dapps.api.live.ledger.com",
-          },
-          {
-            currency: "bsc",
-            chainID: 56,
-            nodeURL: "https://bsc-dataseed.binance.org/",
-          },
-          {
-            currency: "polygon",
-            chainID: 137,
-            nodeURL: "https://polygon-mainnet.g.alchemy.com/v2/oPIxZM7kXsPVVY1Sk0kOQwkoIOpSu8PE",
-          },
-          {
-            currency: "arbitrum",
-            chainID: 42161,
-            nodeURL: "https://arb1.arbitrum.io/rpc",
-          },
-          {
-            currency: "optimism",
-            chainID: 10,
-            nodeURL: "https://mainnet.optimism.io",
-          },
-        ],
-      },
-      homepageUrl: "https://metamask.github.io/test-dapp/",
-      icon: "https://cdn.live.ledger.com/icons/platform/1inch.png",
-      platforms: ["android", "ios", "desktop"],
-      apiVersion: "^2.0.0",
-      manifestVersion: "1",
-      branch: "stable",
-      categories: ["tools"],
-      currencies: ["ethereum", "bsc", "polygon", "arbitrum", "optimism"],
-      content: {
-        shortDescription: {
-          en: "Metamask Test Dapp",
-        },
-        description: {
-          en: "Metamask Test Dapp",
-        },
-      },
-      permissions: [],
-      domains: ["http://", "https://"],
-      visibility: "complete",
-    },
-  ]);
+test.describe("Metamask Test Dapp", () => {
+  test.beforeAll(async () => {
+    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummyLiveApp;
+  });
+
+  test("Wallet API methods @smoke", async ({ page, electronApp }) => {
+    const discoverPage = new DiscoverPage(page);
+    const drawer = new Drawer(page);
+    const modal = new Modal(page);
+    const layout = new Layout(page);
+    const deviceAction = new DeviceAction(page);
+
+    await layout.goToDiscover();
+    await discoverPage.openTestApp();
+    await drawer.continue();
+    await drawer.waitForDrawerToDisappear();
+
+    const [, webview] = electronApp.windows();
+
+    // Checks that we support EIP 6963
+    await webview.click("#provider > button");
+
+    webview.getByText("Name: Ledger Live");
+    webview.getByText("Network: 1");
+    webview.getByText("ChainId: 0x1");
+    webview.getByText("Accounts: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
+
+    // Checks that getAccounts returns the correct account
+    await webview.click("#getAccounts");
+
+    webview.getByText("eth_accounts result: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
+
+    // Checks that personalSign works
+    await webview.click("#personalSign");
+    await expect(page.getByText("Sign message")).toBeVisible();
+    await modal.continueToSignTransaction();
+
+    // Step Device
+    await deviceAction.silentSign();
+    // Needs a second sign to close the sign message modal (to fix later)
+    await deviceAction.silentSign();
+
+    // Doesn't seem to wait correctly for the modal to disappear as we can still comment the line above and works
+    await modal.waitForModalToDisappear();
+
+    // Improve the deviceAction mocking to return a result in the webview to test
+    // await webview.getByText("Result:");
+
+    // You can uncomment this to make sure visually that it ends correctly
+    // await page.waitForTimeout(10000);
+  });
 });
 
-test("Wallet API methods @smoke", async ({ page, electronApp }) => {
-  const discoverPage = new DiscoverPage(page);
-  const drawer = new Drawer(page);
-  const modal = new Modal(page);
-  const layout = new Layout(page);
-  const deviceAction = new DeviceAction(page);
+test.describe.skip("1inch dapp", () => {
+  test.beforeAll(async () => {
+    process.env.MOCK_REMOTE_LIVE_MANIFEST = dummy1inchLiveApp;
+  });
 
-  await layout.goToDiscover();
-  await discoverPage.openTestApp();
-  await drawer.continue();
-  await drawer.waitForDrawerToDisappear();
+  test("Dapp switch chain", async ({ page, electronApp }) => {
+    const discoverPage = new DiscoverPage(page);
+    const drawer = new Drawer(page);
+    const layout = new Layout(page);
+    const webviewLayout = new WebviewLayout(page);
 
-  const [, webview] = electronApp.windows();
+    await layout.goToDiscover();
+    await discoverPage.openTestApp();
+    await drawer.continue();
+    await drawer.waitForDrawerToDisappear();
 
-  // Checks that we support EIP 6963
-  await webview.click("#provider > button");
+    const [, webview] = electronApp.windows();
+    const restricted_app = await webview.getByText("Restricted").isVisible();
+    test.skip(restricted_app, "1inch dapp is restricted");
 
-  webview.getByText("Name: Ledger Live");
-  webview.getByText("Network: 1");
-  webview.getByText("ChainId: 0x1");
-  webview.getByText("Accounts: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
-
-  // Checks that getAccounts returns the correct account
-  await webview.click("#getAccounts");
-
-  webview.getByText("eth_accounts result: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
-
-  // Checks that personalSign works
-  await webview.click("#personalSign");
-  await expect(page.getByText("Sign message")).toBeVisible();
-  await modal.continueToSignTransaction();
-
-  // Step Device
-  await deviceAction.silentSign();
-  // Needs a second sign to close the sign message modal (to fix later)
-  await deviceAction.silentSign();
-
-  // Doesn't seem to wait correctly for the modal to disappear as we can still comment the line above and works
-  await modal.waitForModalToDisappear();
-
-  // Improve the deviceAction mocking to return a result in the webview to test
-  // await webview.getByText("Result:");
-
-  // You can uncomment this to make sure visually that it ends correctly
-  // await page.waitForTimeout(10000);
+    const popup = webview.locator(".cross-icon");
+    await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
+    if (await popup.isVisible()) await popup.click();
+    await webview.locator(".connect-wallet__box > button").click();
+    await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
+    await webview.getByRole("button", { name: "Ledger Live Ledger Live" }).click();
+    await page.getByText("Ethereum 110.1354 ETH").click();
+    await webview.getByRole("button", { name: "Ethereum" }).click();
+    await webview.getByRole("button", { name: "Polygon" }).click();
+    await page.getByText("Polygon").click();
+    await expect(webviewLayout.selectedAccountButton).toHaveText("Polygon 1");
+  });
 });

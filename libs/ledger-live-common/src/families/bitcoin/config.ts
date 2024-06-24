@@ -129,14 +129,6 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       },
     },
   },
-  config_currency_peercoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-      },
-    },
-  },
   config_currency_pivx: {
     type: "object",
     default: {
@@ -186,30 +178,6 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
     },
   },
   config_currency_stratis: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-      },
-    },
-  },
-  config_currency_stealthcoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-      },
-    },
-  },
-  config_currency_vertcoin: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-      },
-    },
-  },
-  config_currency_viacoin: {
     type: "object",
     default: {
       status: {

@@ -140,7 +140,9 @@ function AccountSettingRenderBody(props: Props) {
           </Container>
           <Spoiler textTransform title={t("account.settings.advancedLogs")}>
             {tag ? <Tips tag={tag} /> : null}
-            <AdvancedLogsContainer>{JSON.stringify(usefulData, null, 2)}</AdvancedLogsContainer>
+            <AdvancedLogsContainer data-test-id="Advanced_Logs">
+              {JSON.stringify(usefulData, null, 2)}
+            </AdvancedLogsContainer>
           </Spoiler>
           <ConfirmModal
             analyticsName="RemoveAccount"

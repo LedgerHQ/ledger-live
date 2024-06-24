@@ -1,7 +1,6 @@
-import { ContextResponse } from "./shared/model/ContextResponse";
-import { LoaderOptions } from "./shared/model/LoaderOptions";
-import { Transaction } from "./shared/model/Transaction";
+import { ClearSignContext } from "./shared/model/ClearSignContext";
+import { TransactionContext } from "./shared/model/TransactionContext";
 
 export interface ContextModule {
-  getContexts(transaction: Transaction, options: LoaderOptions): Promise<ContextResponse[]>;
+  getContexts(transaction: TransactionContext): Promise<ClearSignContext[]>;
 }

@@ -11,6 +11,8 @@ import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
 import logReport from "../../src/log-report";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
+import { getAllEnvs } from "@ledgerhq/live-env";
+import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -96,7 +98,22 @@ function onMessage(event: WebSocketMessageEvent) {
         const payload = JSON.stringify(logReport.getLogs());
         postMessage({
           type: "appLogs",
-          fileName: msg.fileName,
+          payload,
+        });
+        break;
+      }
+      case "getFlags": {
+        const payload = JSON.stringify(getAllFeatureFlags("en"));
+        postMessage({
+          type: "appFlags",
+          payload,
+        });
+        break;
+      }
+      case "getEnvs": {
+        const payload = JSON.stringify(getAllEnvs());
+        postMessage({
+          type: "appEnvs",
           payload,
         });
         break;

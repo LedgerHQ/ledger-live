@@ -34,6 +34,8 @@ import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
+import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
+import { Linking } from "react-native";
 
 export function useWebView(
   {
@@ -159,9 +161,21 @@ export function useWebView(
     [onDappMessage, onMessageRaw],
   );
 
+  const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
+    const { targetUrl } = event.nativeEvent;
+    Linking.canOpenURL(targetUrl).then(supported => {
+      if (supported) {
+        Linking.openURL(targetUrl);
+      } else {
+        console.error(`Don't know how to open URI: ${targetUrl}`);
+      }
+    });
+  }, []);
+
   return {
     onLoadError,
     onMessage,
+    onOpenWindow,
     webviewProps,
     webviewRef,
     noAccounts,

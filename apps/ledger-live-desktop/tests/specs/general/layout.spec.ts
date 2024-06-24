@@ -66,16 +66,16 @@ test("Layout @smoke", async ({ page }) => {
   await test.step("can toggle discreet mode", async () => {
     await layout.goToPortfolio(); // FIXME: remove this line when LL-8899 is fixed
     await layout.toggleDiscreetMode();
-    await expect
-      .soft(page)
-      .toHaveScreenshot("discreet-mode.png", { mask: [page.locator("canvas")] });
+    await expect.soft(page).toHaveScreenshot("discreet-mode.png", {
+      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+    });
   });
 
   await test.step("can collapse the main sidebar", async () => {
     await layout.drawerCollapseButton.click();
-    await expect
-      .soft(page)
-      .toHaveScreenshot("collapse-sidebar.png", { mask: [page.locator("canvas")] });
+    await expect.soft(page).toHaveScreenshot("collapse-sidebar.png", {
+      mask: [page.locator("canvas"), layout.marketPerformanceWidget],
+    });
   });
 
   await test.step("can display the help modal", async () => {

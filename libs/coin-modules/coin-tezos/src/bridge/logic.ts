@@ -4,8 +4,8 @@ import BigNumber from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { type APIOperation } from "../network/types";
 import { TezosAccount, TezosOperation } from "../types";
-import { APIOperation } from "../api/tzkt";
 
 export const txToOp =
   ({ address, accountId }: { address: string; accountId: string }) =>

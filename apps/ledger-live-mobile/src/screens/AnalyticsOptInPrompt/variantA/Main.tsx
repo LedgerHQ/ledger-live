@@ -25,7 +25,7 @@ function renderItems({
     <Flex>
       {items.map((item, index) => {
         return (
-          <Flex pt="6" key={index} flexDirection={"row"} alignItems="flex-start">
+          <Flex pt="6" key={index} flexDirection={"row"} alignItems="flex-start" mr={8}>
             <Flex mr={3}>{IconComponent}</Flex>
             <Text pt={2} color={itemsColor}>
               {item}

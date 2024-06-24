@@ -109,7 +109,6 @@ export default class BtcOld {
    * @param lockTime is the optional lockTime of the transaction to sign, or default (0)
    * @param sigHashType is the hash type of the transaction to sign, or default (all)
    * @param segwit is an optional boolean indicating wether to use segwit or not
-   * @param initialTimestamp is an optional timestamp of the function call to use for coins that necessitate timestamps only, (not the one that the tx will include)
    * @param additionals list of additionnal options
    *
    * - "bech32" for spending native segwit outputs

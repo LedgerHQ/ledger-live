@@ -55,6 +55,13 @@ export class Currency {
     [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
+  static readonly ETC = new Currency(
+    "Ethereum Classic",
+    "ETC",
+    "Ethereum Classic",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
   static readonly SOL = new Currency(
     "Solana",
     "SOL",
@@ -82,6 +89,67 @@ export class Currency {
     "XRP",
     "Ripple",
     [DeviceLabels.AMOUT, DeviceLabels.DESTINATION, DeviceLabels.SIGN, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly ADA = new Currency(
+    "Cardano",
+    "ADA",
+    "Cardano",
+    [DeviceLabels.SEND, DeviceLabels.SEND_TO_ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM, DeviceLabels.REJECT],
+  );
+  static readonly XLM = new Currency(
+    "Stellar",
+    "XLM",
+    "Stellar",
+    [DeviceLabels.SEND, DeviceLabels.DESTINATION, DeviceLabels.FINALIZE, DeviceLabels.CANCEL],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly BCH = new Currency(
+    "Bitcoin Cash",
+    "BCH",
+    "Bitcoin Cash",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly ALGO = new Currency(
+    "Algorand",
+    "ALGO",
+    "Algorand",
+    [
+      DeviceLabels.AMOUT,
+      DeviceLabels.RECEIVER,
+      DeviceLabels.CAPS_APPROVE,
+      DeviceLabels.CAPS_REJECT,
+    ],
+    [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
+  );
+  static readonly ATOM = new Currency(
+    "Cosmos",
+    "ATOM",
+    "Cosmos",
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
+  );
+  static readonly XTZ = new Currency(
+    "Tezos",
+    "XTZ",
+    "Tezos",
+    [DeviceLabels.AMOUT, DeviceLabels.DESTINATION, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.PUBLICKEY, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+  );
+  static readonly MATIC = new Currency(
+    "Polygon",
+    "MATIC",
+    "Polygon",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly BSC = new Currency(
+    "Binance Smart Chain",
+    "BNB",
+    "Binance Smart Chain",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
 }

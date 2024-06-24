@@ -143,7 +143,7 @@ const BaseInput = styled.TextInput.attrs((p) => ({
   border: 0;
   flex-shrink: 1;
   display: flex;
-  min-height: fit-content;
+  min-height: auto;
   color: ${(p) => p.theme.colors.neutral.c100};
 `;
 

@@ -5,7 +5,7 @@ import {
   isTransactionConfirmed,
 } from "@ledgerhq/coin-evm/editTransaction/index";
 import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
-import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -175,6 +175,7 @@ const Body = ({
   invariant(account, "account required");
   invariant(transactionToUpdate, "transactionToUpdate required");
   invariant(transaction, "original transaction required");
+  invariant(status, "transaction status required");
 
   const currencyName = getAccountCurrency(account).name;
 
@@ -288,7 +289,7 @@ const Body = ({
     editType,
     transaction,
     transactionToUpdate,
-    status,
+    status: status as TransactionStatus,
   });
 
   const stepperProps = {

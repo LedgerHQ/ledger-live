@@ -7,6 +7,10 @@ inputs:
   skip_builds:
     description: "skip the steps to build the desktop and dummy-live-app"
     required: false
+  build_type:
+    description: "whether to use the ':testing' suffix for the build command"
+    required: false
+    default: "testing"
   install_node_gyp:
     description: "install node-gyp"
     required: false
@@ -57,7 +61,7 @@ runs:
         GOMEMLIMIT: 5GiB
       if: ${{ !inputs.skip_builds }}
       run: |
-        pnpm desktop build:testing
+        pnpm desktop build:${{ inputs.build_type || 'testing' }}
       shell: bash
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}

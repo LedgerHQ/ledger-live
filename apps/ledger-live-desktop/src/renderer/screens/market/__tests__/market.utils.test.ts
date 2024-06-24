@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { describe, expect, it } from "@jest/globals";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
 
 describe("Market utils", () => {

@@ -1,5 +1,5 @@
 import "./live-common-setup-network";
-import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -48,9 +48,6 @@ setSupportedCurrencies([
   "komodo",
   "pivx",
   "zencash",
-  "vertcoin",
-  "peercoin",
-  "viacoin",
   "bitcoin_testnet",
   "ethereum_sepolia",
   "ethereum_holesky",

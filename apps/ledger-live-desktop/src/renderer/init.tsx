@@ -47,6 +47,9 @@ import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/device
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
+import { importMarketState } from "./actions/market";
+import { fetchWallet } from "./actions/wallet";
+import { fetchTrustchain } from "./actions/trustchain";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -93,12 +96,14 @@ async function init() {
     });
     const envs = getLocalStorageEnvs();
     for (const k in envs) setEnvOnAllThreads(k, envs[k]);
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const timemachine = require("timemachine");
-    timemachine.config({
+    if (getEnv("MOCK")) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      dateString: require("../../tests/time").default,
-    });
+      const timemachine = require("timemachine");
+      timemachine.config({
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        dateString: require("../../tests/time").default,
+      });
+    }
   }
   if (window.localStorage.getItem("hard-reset")) {
     await hardReset();
@@ -162,10 +167,12 @@ async function init() {
       prepareCurrency(getCryptoCurrencyById("ethereum"));
     }
   } else {
+    // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
   }
   const initialCountervalues = await getKey("app", "countervalues");
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
+
   const postOnboardingState = await getKey("app", "postOnboarding");
   if (postOnboardingState) {
     store.dispatch(
@@ -174,6 +181,15 @@ async function init() {
       }),
     );
   }
+
+  await fetchTrustchain()(store.dispatch);
+  await fetchWallet()(store.dispatch);
+
+  const marketState = await getKey("app", "market");
+  if (marketState) {
+    store.dispatch(importMarketState(marketState));
+  }
+
   webFrame.setVisualZoomLevelLimits(1, 1);
   const matcher = window.matchMedia("(prefers-color-scheme: dark)");
   const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
