@@ -25,15 +25,17 @@ const tokensReceive: Token[] = [
 ];
 
 for (const [i, token] of tokens.entries()) {
-  test.describe.parallel("Add subAccount @smoke", () => {
+  test.describe.parallel("Add subAccount without parent @smoke", () => {
     test.use({
       userdata: "skip-onboarding",
-      testName: `add subAccount_${token.tokenName}`,
+      testName: `add subAccount without parent (${token.tokenName})`,
       speculosCurrency: specs[token.parentAccount.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
     });
 
-    test(`[${token.parentAccount.currency.uiName}] Add Sub Account`, async ({ page }) => {
+    test(`Add Sub Account with parent (${token.parentAccount.currency.uiName})`, async ({
+      page,
+    }) => {
       addTmsLink(["B2CQA-2448"]);
 
       const app = new Application(page);
@@ -56,15 +58,17 @@ for (const [i, token] of tokens.entries()) {
 
 //Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, token] of tokensReceive.entries()) {
-  test.describe.skip("Receive subAccount @smoke", () => {
+  test.describe.skip("Add subAccount when parent exists @smoke", () => {
     test.use({
       userdata: "speculos-subAccount",
-      testName: `receive subAccount_${token.tokenName}`,
+      testName: `Add subAccount when parent exists (${token.tokenName})`,
       speculosCurrency: specs[token.parentAccount.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
     });
 
-    test(`[${token.tokenName}] Receive Sub Account (${token.tokenNetwork})`, async ({ page }) => {
+    test(`[${token.tokenName}] Add subAccount without parent (${token.tokenNetwork})`, async ({
+      page,
+    }) => {
       addTmsLink(["B2CQA-640"]);
 
       const app = new Application(page);
@@ -86,15 +90,17 @@ for (const [i, token] of tokensReceive.entries()) {
 }
 
 for (const [i, token] of tokens.entries()) {
-  test.describe.parallel("Receive subAccount @smoke", () => {
+  test.describe.parallel("Token visible in parent account @smoke", () => {
     test.use({
       userdata: "speculos-subAccount",
-      testName: `subAccount_${token.parentAccount.currency.uiName}`,
+      testName: `Token visible in parent account (${token.parentAccount.currency.uiName})`,
       speculosCurrency: specs[token.parentAccount.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
     });
 
-    test(`[${token.parentAccount.currency.uiName}] Sub Account`, async ({ page }) => {
+    test(`Token visible in parent account (${token.parentAccount.currency.uiName})`, async ({
+      page,
+    }) => {
       addTmsLink(["B2CQA-1425"]);
 
       const app = new Application(page);
