@@ -3,8 +3,8 @@ import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { useTrustchainSDK } from "../context";
 import {
   CloudSyncSDK,
-  AccountsData,
-  accountsSchema,
+  LiveData,
+  liveSchema,
   UpdateEvent,
 } from "@ledgerhq/live-wallet/lib-es/cloudsync/index";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
@@ -25,13 +25,13 @@ export function AppWalletSync({
   memberCredentials: MemberCredentials;
   version: number;
   setVersion: (n: number) => void;
-  forceReadOnlyData?: AccountsData | null;
+  forceReadOnlyData?: LiveData | null;
   readOnly?: boolean;
   takeControl?: () => void;
 }) {
   const trustchainSdk = useTrustchainSDK();
 
-  const [data, setData] = useState<AccountsData | null>(null);
+  const [data, setData] = useState<LiveData | null>(null);
   const [json, setJson] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
@@ -51,7 +51,7 @@ export function AppWalletSync({
         return;
       }
       const data = JSON.parse(value);
-      const validated = accountsSchema.parse(data);
+      const validated = liveSchema.parse(data);
       setData(validated);
       setError(null);
     } catch (e) {
