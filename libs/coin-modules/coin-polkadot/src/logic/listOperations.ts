@@ -15,7 +15,7 @@ export type Operation = {
 };
 
 export async function listOperations(addr: string): Promise<Operation[]> {
-  //TODO: the accountId is used to map Operations to Live types.
+  //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
   const operations = await network.getOperations(fakeAccountId, addr);
 
