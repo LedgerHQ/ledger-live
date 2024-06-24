@@ -214,6 +214,8 @@
     "src/logs/simple.ts",
     "src/manager/api.ts",
     "src/manager/hooks.ts",
+    "src/manager/useDeviceHasUpdatesAvailable.ts",
+    "src/manager/useAvailableLanguagesForDevice.ts",
     "src/manager/index.ts",
     "src/manager/localization.ts",
     "src/manager/provider.ts",
@@ -283,15 +285,8 @@
     "src/wallet-api/types.ts",
     "src/wallet-api/version.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
-  "ignorePatterns": [
-    "**/node_modules/**"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "ignorePatterns": ["**/node_modules/**"],
   "ignoreUnimported": [
     "lib-es/__tests__",
     "lib-es/__tests__/accounts",
@@ -2508,6 +2503,7 @@
     "src/exchange/swap/api/v5/fetchRates.test.ts",
     "src/exchange/swap/const/blockchain.ts",
     "src/exchange/swap/hooks/live-app-migration/useIsSwapLiveApp.test.ts",
+    "src/exchange/swap/hooks/live-app-migration/useSwapLiveConfig.test.ts",
     "src/exchange/swap/hooks/useFromState.test.ts",
     "src/exchange/swap/hooks/usePageState.test.ts",
     "src/exchange/swap/hooks/usePickDefaultAccount.test.ts",

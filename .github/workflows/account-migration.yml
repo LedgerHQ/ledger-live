@@ -40,17 +40,18 @@ jobs:
 
       - name: Generate target output filename
         id: target-output-file
+        # we get TARGET_SYNC_FILE_BASENAME from the same command later run in account-migration.ts to get the same basename
         run: |
           TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
           echo "TARGET_SYNC_FILE_BASENAME=$(echo ${TARGET_SYNC_FILE_BASENAME})" >> $GITHUB_OUTPUT
 
-      - name: Run synchronisation on target branch
+      - name: Run synchronisation on target branch for currencies ${{ inputs.currencies }}
         if: ${{ inputs.currencies }}
         # TARGET_SYNC_FILE_BASENAME is based on https://github.com/LedgerHQ/ledger-live/blob/feat/live-11055-migration-account-test/libs/ledger-live-common/src/__tests__/migration/account-migration.ts#L267
         run: |
           pnpm common test-account-migration --currencies ${{ inputs.currencies }} --outputFolderPath /home/runner/work/ledger-live
 
-      - name: Run synchronisation on target branch
+      - name: Run synchronisation on target branch on all currencies
         if: ${{ !inputs.currencies }}
         run: |
           pnpm common test-account-migration --outputFolderPath /home/runner/work/ledger-live

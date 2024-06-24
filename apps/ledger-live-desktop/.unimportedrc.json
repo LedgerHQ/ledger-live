@@ -9,7 +9,7 @@
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": ["**/node_modules/**"],
-  "ignoreUnresolved": ["unzip-crx-3", "../../../../release-notes.json"],
+  "ignoreUnresolved": ["../../../../release-notes.json", "unzip-crx-3"],
   "ignoreUnimported": [
     "**/*.test.*",
     "**/*.spec.*",

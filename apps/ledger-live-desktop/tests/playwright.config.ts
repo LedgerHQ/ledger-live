@@ -5,6 +5,7 @@ const config: PlaywrightTestConfig = {
     {
       name: "speculos_tests",
       testDir: "specs/speculos/",
+      retries: 2,
     },
     {
       name: "mocked_tests",

@@ -1,4 +1,13 @@
-import { CommandStream, crypto, device, APDU, CommandBlock, CommandStreamEncoder, Seed } from "..";
+import {
+  CommandStream,
+  crypto,
+  device,
+  APDU,
+  CommandBlock,
+  CommandStreamEncoder,
+  Seed,
+  TRUSTCHAIN_APP_NAME,
+} from "..";
 import {
   createSpeculosDevice,
   releaseSpeculosDevice,
@@ -22,9 +31,9 @@ let speculos: SpeculosDevice;
 beforeAll(
   async () => {
     speculos = await createSpeculosDevice({
-      model: DeviceModelId.nanoS,
-      firmware: "2.0.0",
-      appName: "Trustchain",
+      model: DeviceModelId.nanoSP,
+      firmware: "2.1.0",
+      appName: TRUSTCHAIN_APP_NAME,
       appVersion: "0.0.1",
       seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
       coinapps: __dirname,

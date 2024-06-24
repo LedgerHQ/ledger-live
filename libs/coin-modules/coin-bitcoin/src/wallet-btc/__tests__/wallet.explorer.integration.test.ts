@@ -9,14 +9,16 @@ describe("Integration tests for bitcoin v4 explorer api", () => {
     const params = {
       batch_size: 10000,
     };
-    const txs = await explorer.fetchTxs(
-      {
-        account: 0,
-        index: 0,
-        address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
-      },
-      params,
-    );
+    const txs = (
+      await explorer.fetchTxs(
+        {
+          account: 0,
+          index: 0,
+          address: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+        },
+        params,
+      )
+    ).txs;
     expect(txs.length).toBeGreaterThan(10);
 
     const fees = await explorer.getFees();

@@ -1,9 +1,9 @@
 import {
+  ABTestingVariants,
   DefaultFeature,
   Feature,
-  Features,
   FeatureMap,
-  ABTestingVariants,
+  Features,
 } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
@@ -93,6 +93,7 @@ export const DEFAULT_FEATURES: Features = {
   multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
+  ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -396,10 +397,6 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
   },
 
-  ptxSwapLiveApp: {
-    enabled: false,
-  },
-
   ptxSwapLiveAppDemoZero: {
     enabled: false,
     params: {
@@ -477,6 +474,7 @@ export const DEFAULT_FEATURES: Features = {
   lldWalletSync: DEFAULT_FEATURE,
   llmWalletSync: DEFAULT_FEATURE,
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
+  enableAppsBackup: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

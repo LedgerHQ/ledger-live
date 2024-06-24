@@ -11,8 +11,8 @@ type DefaultContextModuleConstructorArgs = {
 export class DefaultContextModule implements ContextModule {
   private _loaders: ContextLoader[];
 
-  constructor({ loaders: loaders }: DefaultContextModuleConstructorArgs) {
-    this._loaders = loaders;
+  constructor(args: DefaultContextModuleConstructorArgs) {
+    this._loaders = args.loaders;
   }
 
   public async getContexts(

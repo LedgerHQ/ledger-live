@@ -78,7 +78,7 @@ const explorerLedgerOperationByAddress: Record<
 
 export const resetIndexer = () => {
   setBlock(0);
-  server.close();
+  server?.close();
 
   for (const address in explorerEtherscanOperationByAddress) {
     delete explorerEtherscanOperationByAddress[address];

@@ -57,25 +57,28 @@ async function postChallengeResponse(request: {
     method: "POST",
     data: request,
   });
-  const jwt = {
+  return {
     accessToken: data.access_token,
   };
-  return jwt;
 }
 
 async function refreshAuth(jwt: JWT): Promise<JWT> {
-  const { data } = await network<JWT>({
+  const { data } = await network<APIJWT>({
     url: `${getEnv("TRUSTCHAIN_API")}/v1/refresh`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
     },
   });
-  return data;
+  return {
+    accessToken: data.access_token,
+  };
 }
 
 export type TrustchainsResponse = {
-  [key: string]: unknown;
+  [trustchainId: string]: {
+    [path: string]: string[]; // list of permissions
+  };
 };
 
 async function getTrustchains(jwt: JWT): Promise<TrustchainsResponse> {
@@ -152,6 +155,16 @@ async function putCommands(
   });
 }
 
+async function deleteTrustchain(jwt: JWT, trustchain_id: string): Promise<void> {
+  await network<void>({
+    url: `${getEnv("TRUSTCHAIN_API")}/v1/trustchain/${trustchain_id}`,
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${jwt.accessToken}`,
+    },
+  });
+}
+
 export default {
   getAuthenticationChallenge,
   postChallengeResponse,
@@ -161,4 +174,5 @@ export default {
   postDerivation,
   postSeed,
   putCommands,
+  deleteTrustchain,
 };

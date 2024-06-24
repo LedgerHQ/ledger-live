@@ -1,35 +1,23 @@
-import { by, web } from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
-import { loadConfig } from "../bridge/server";
+import { by, web } from "detox";
 import { describeifAndroid } from "../helpers";
-import PortfolioPage from "../models/wallet/portfolioPage";
-import DiscoverPage from "../models/discover/discoverPage";
-import LiveAppWebview from "../models/liveApps/liveAppWebview";
-import CryptoDrawer from "../models/liveApps/cryptoDrawer";
 import { stopDummyServer } from "@ledgerhq/test-utils";
+import { Application } from "../page";
 
-let portfolioPage: PortfolioPage;
-let discoverPage: DiscoverPage;
-let liveAppWebview: LiveAppWebview;
-let cryptoDrawer: CryptoDrawer;
+let app: Application;
 
 let continueTest: boolean;
 
 describeifAndroid("Wallet API methods", () => {
   beforeAll(async () => {
-    portfolioPage = new PortfolioPage();
-    discoverPage = new DiscoverPage();
-    liveAppWebview = new LiveAppWebview();
-    cryptoDrawer = new CryptoDrawer();
+    app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
 
     // Check that dummy app in tests/dummy-app-build has been started successfully
-    continueTest = await liveAppWebview.startLiveApp("dummy-wallet-app", 52619);
+    continueTest = await app.liveAppWebview.startLiveApp("dummy-wallet-app", 52619);
     expect(continueTest).toBeTruthy();
 
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-
     // start navigation
-    await portfolioPage.waitForPortfolioPageToLoad();
-    await discoverPage.openViaDeeplink("dummy-live-app");
+    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.discover.openViaDeeplink("dummy-live-app");
 
     const title = await web.element(by.web.id("image-container")).getTitle();
     expect(title).toBe("Dummy Wallet API App");
@@ -43,15 +31,15 @@ describeifAndroid("Wallet API methods", () => {
   });
 
   it("account.request", async () => {
-    const { id, response } = await liveAppWebview.send({
+    const { id, response } = await app.liveAppWebview.send({
       method: "account.request",
       params: {
         currencyIds: ["ethereum", "bitcoin"],
       },
     });
 
-    await cryptoDrawer.selectCurrencyFromDrawer("Bitcoin");
-    await cryptoDrawer.selectAccountFromDrawer("Bitcoin 1 (legacy)");
+    await app.cryptoDrawer.selectCurrencyFromDrawer("Bitcoin");
+    await app.cryptoDrawer.selectAccountFromDrawer("Bitcoin 1 (legacy)");
 
     await expect(response).resolves.toMatchObject({
       jsonrpc: "2.0",

@@ -3,9 +3,13 @@ import {
   SetExchangeRateCallback,
   useIsSwapLiveApp,
   usePageState,
+  useSwapLiveConfig,
   useSwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
+import {
+  maybeTezosAccountUnrevealedAccount,
+  maybeTronEmptyAccount,
+} from "@ledgerhq/live-common/exchange/swap/index";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
@@ -37,11 +41,8 @@ import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import EmptyState from "./Rates/EmptyState";
-import SwapWebView, {
-  SwapWebManifestIDs,
-  SwapWebProps,
-  useSwapLiveAppManifestID,
-} from "./SwapWebView";
+import SwapWebView, { SwapWebProps } from "./SwapWebView";
+import { useIsSwapLiveFlagEnabled } from "./useIsSwapLiveFlagEnabled";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -65,6 +66,7 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+  const ptxSwapReceiveTRC20WithoutTrx = useFeature("ptxSwapReceiveTRC20WithoutTrx");
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const setExchangeRate: SetExchangeRateCallback = useCallback(
@@ -85,13 +87,16 @@ const SwapForm = () => {
     },
     [swapDefaultTrack],
   );
-  const swapLiveAppManifestID = useSwapLiveAppManifestID();
+
+  const swapLiveEnabledFlag = useSwapLiveConfig();
+  const swapLiveAppManifestID = swapLiveEnabledFlag?.params?.manifest_id;
+  const isDemo1Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoOne");
 
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
     onNoRates,
-    isEnabled: !swapLiveAppManifestID?.startsWith(SwapWebManifestIDs.Demo1),
+    isEnabled: !isDemo1Enabled,
     ...(locationState as object),
   });
 
@@ -115,7 +120,8 @@ const SwapForm = () => {
   const swapError =
     swapTransaction.fromAmountError ||
     exchangeRatesState?.error ||
-    maybeTezosAccountUnrevealedAccount(swapTransaction);
+    maybeTezosAccountUnrevealedAccount(swapTransaction) ||
+    (ptxSwapReceiveTRC20WithoutTrx?.enabled ? maybeTronEmptyAccount(swapTransaction) : undefined);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
@@ -478,6 +484,7 @@ const SwapForm = () => {
               targetCurrencyId={targetCurrency?.id}
               manifest={manifest}
               swapState={swapWebProps}
+              isMaxEnabled={swapTransaction.swap.isMaxEnabled}
               // When live app crash, it should disable live app and fall back to native UI
               liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
             />

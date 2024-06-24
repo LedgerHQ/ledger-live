@@ -7,7 +7,18 @@ const cwd = __dirname;
 const delay = (timing: number): Promise<void> =>
   new Promise(resolve => setTimeout(resolve, timing));
 
+const ensureEnv = () => {
+  const mandatory_env_variables = ["SEED"];
+
+  if (!mandatory_env_variables.every(variable => !!process.env[variable])) {
+    throw new Error(
+      `Missing env variables. Make sure that ${mandatory_env_variables.join(",")} are in your .env`,
+    );
+  }
+};
+
 export const spawnAnvil = async (rpc: string): Promise<void> => {
+  ensureEnv();
   console.log("Starting anvil...");
   await compose.upOne("anvil", {
     cwd,

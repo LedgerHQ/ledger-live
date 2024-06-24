@@ -17,6 +17,8 @@ import { StreamTree } from "./StreamTree";
 import { TLV, TLVField } from "./tlv";
 import { SeedIdResult, parseSeedIdResult } from "./SeedId";
 
+export const TRUSTCHAIN_APP_NAME = "Ledger Sync";
+
 enum ParseStreamMode {
   BlockHeader = 0x00,
   Command = 0x01,
@@ -710,7 +712,7 @@ export class ApduDevice implements Device {
     const sw = response.readUInt16BE(response.length - 2);
     if (sw !== 0x9000) return false;
     const appName = response.subarray(0, response.length - 2).toString();
-    return appName === "Trustchain"; // TODO change app name
+    return appName === TRUSTCHAIN_APP_NAME;
   }
 
   async close(): Promise<void> {

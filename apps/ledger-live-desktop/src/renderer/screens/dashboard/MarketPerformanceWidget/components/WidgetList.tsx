@@ -32,7 +32,7 @@ function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
 
   return (
     <Flex alignItems="center" mt={isFirst ? 0 : 2} justifyContent="space-between">
-      <Flex alignItems="center">
+      <Flex alignItems="center" flex={1}>
         <Text color="neutral.c80" variant="h5Inter" mr={2}>
           {index}
         </Text>
@@ -47,7 +47,7 @@ function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
           )}
         </CryptoCurrencyIconWrapper>
 
-        <Flex ml={2} overflow="hidden" flexDirection="column" alignItems="left">
+        <Flex ml={2} overflow="hidden" flexDirection="column" flex={1} alignItems="left">
           <EllipsisText
             variant="paragraph"
             fontWeight="semiBold"

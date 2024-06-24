@@ -126,13 +126,13 @@ export class DefaultKeyringEth implements KeyringEth {
       options?.chainId,
     );
 
-    if (!address.startsWith("0x") || !publicKey.startsWith("0x")) {
+    if (typeof address !== "string" || !address.startsWith("0x") || typeof publicKey !== "string") {
       throw new Error("[DefaultKeyringEth] getAddress: Invalid address or public key");
     }
 
     const result: GetAddressResult = {
       address: address as `0x${string}`,
-      publicKey: publicKey as `0x${string}`,
+      publicKey,
     };
 
     return result;

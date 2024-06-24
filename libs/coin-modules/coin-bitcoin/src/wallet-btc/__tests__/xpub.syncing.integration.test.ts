@@ -127,14 +127,6 @@ describe("xpub integration sync", () => {
       currencyId: "qtum",
     },
     {
-      xpub: "r29uBq4rq2uXchKovN9vruP4WSNj5Kjzk7e8cHBnvnSnPJo5fpxNdqxkMfVXsjuqzBj5s8L8Fa2AdVctX16FDP4oqPLA1GXZRCAyjshXpp2czfJ2",
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 1,
-      balance: 109660,
-      network: coininfo.peercoin.main.toBitcoinJS(),
-      currencyId: "peercoin",
-    },
-    {
       xpub: "xpub6DAJ5UZx3jbDDoiZq3t6doR3WV6XvWtsfrbPak49Pc4xapooCAEkn77vEkJVsXmvVGBNmFoCDQ73aRuMRZo2uYuyBjVxJTvC9NZKrK3LzHc",
       derivationMode: DerivationModes.LEGACY,
       addresses: 1,

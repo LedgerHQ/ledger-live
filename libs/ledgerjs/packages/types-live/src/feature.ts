@@ -162,12 +162,12 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   listAppsV2minor1: Feature_ListAppsV2minor1;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
-  ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   ptxSwapThorswapProvider: Feature_PtxSwapThorswapProvider;
+  ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
@@ -184,6 +184,7 @@ export type Features = CurrencyFeatures & {
   lldWalletSync: Feature_LldWalletSync;
   llmWalletSync: Feature_LlmWalletSync;
   lldNftsGalleryNewArch: DefaultFeature;
+  enableAppsBackup: Feature_EnableAppsBackup;
 };
 
 /**
@@ -492,6 +493,7 @@ export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
 export type Feature_PtxSwapThorswapProvider = DefaultFeature;
+export type Feature_PtxSwapReceiveTRC20WithoutTrx = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
@@ -500,6 +502,7 @@ export type Feature_LlmChatbotSupport = DefaultFeature;
 export type Feature_LldWalletSync = DefaultFeature;
 export type Feature_LlmWalletSync = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;
+export type Feature_EnableAppsBackup = DefaultFeature;
 
 /**
  * Utils types.
