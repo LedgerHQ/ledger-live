@@ -24,10 +24,8 @@ const tokensReceive: Token[] = [
   Token.MATIC_UNI,
 ];
 
-const tokenERC20: Token[] = [Token.ETH_USDT];
-
 for (const [i, token] of tokens.entries()) {
-  test.describe.parallel("Add subAccount without parent @smoke", () => {
+  test.describe.parallel("Add subAccount without parent", () => {
     test.use({
       userdata: "skip-onboarding",
       testName: `add subAccount without parent (${token.tokenName})`,
@@ -35,10 +33,10 @@ for (const [i, token] of tokens.entries()) {
       speculosOffset: i,
     });
 
-    test(`Add Sub Account with parent (${token.parentAccount.currency.uiName})`, async ({
+    test(`Add Sub Account without parent (${token.parentAccount.currency.uiName})`, async ({
       page,
     }) => {
-      addTmsLink(["B2CQA-2448"]);
+      addTmsLink(["B2CQA-2448", "B2CQA-1079"]);
 
       const app = new Application(page);
 
@@ -60,7 +58,7 @@ for (const [i, token] of tokens.entries()) {
 
 //Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, token] of tokensReceive.entries()) {
-  test.describe.skip("Add subAccount when parent exists @smoke", () => {
+  test.describe.skip("Add subAccount when parent exists", () => {
     test.use({
       userdata: "speculos-subAccount",
       testName: `Add subAccount when parent exists (${token.tokenName})`,
@@ -68,7 +66,7 @@ for (const [i, token] of tokensReceive.entries()) {
       speculosOffset: i,
     });
 
-    test(`[${token.tokenName}] Add subAccount without parent (${token.tokenNetwork})`, async ({
+    test(`[${token.tokenName}] Add subAccount when parent exists (${token.tokenNetwork})`, async ({
       page,
     }) => {
       addTmsLink(["B2CQA-640"]);
@@ -92,7 +90,7 @@ for (const [i, token] of tokensReceive.entries()) {
 }
 
 for (const [i, token] of tokens.entries()) {
-  test.describe.parallel("Token visible in parent account @smoke", () => {
+  test.describe.parallel("Token visible in parent account", () => {
     test.use({
       userdata: "speculos-subAccount",
       testName: `Token visible in parent account (${token.parentAccount.currency.uiName})`,
@@ -110,29 +108,6 @@ for (const [i, token] of tokens.entries()) {
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(token.parentAccount.accountName);
       await app.account.expectTokenToBePresent(token);
-    });
-  });
-}
-
-for (const [i, token] of tokenERC20.entries()) {
-  test.describe.parallel("ERC20 token", () => {
-    test.use({
-      userdata: "speculos-tests-app",
-      testName: "tokenERC20",
-      speculosCurrency: specs[token.parentAccount.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
-    });
-
-    test(`Check ERC20 token`, async ({ page }) => {
-      addTmsLink(["B2CQA-1079"]);
-
-      const app = new Application(page);
-
-      await app.layout.goToPortfolio();
-      await app.portfolio.navigateToAsset(token.tokenName);
-      await app.account.navigateToToken(token);
-      await app.account.expectLastOperationsVisibility();
-      await app.account.expectTokenAccount(token);
     });
   });
 }
