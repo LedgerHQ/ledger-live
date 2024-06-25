@@ -10,9 +10,8 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
 } from "@ledgerhq/errors";
-import { StellarWrongMemoFormat, SourceHasMultiSign } from "../../../errors";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
+import type { Transaction } from "@ledgerhq/coin-stellar/types/index";
 import { getMainAccount } from "../../../account";
 import { formatCurrencyUnit } from "../../../currencies";
 import {
@@ -23,6 +22,7 @@ import {
   isInvalidRecipient,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { StellarSourceHasMultiSign, StellarWrongMemoFormat } from "@ledgerhq/coin-stellar/errors";
 
 const receive = makeAccountBridgeReceive();
 
@@ -107,7 +107,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
   }
 
   if (multiSignAddresses.includes(a.freshAddress)) {
-    errors.recipient = new SourceHasMultiSign("", {
+    errors.recipient = new StellarSourceHasMultiSign("", {
       currencyName: a.currency.name,
     });
   }

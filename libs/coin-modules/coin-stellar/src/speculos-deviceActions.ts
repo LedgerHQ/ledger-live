@@ -1,10 +1,23 @@
-import type { DeviceAction } from "../../bot/types";
-import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import type { Transaction, TransactionStatus } from "./types";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "@ledgerhq/coin-framework/lib-es/bot/specs";
+import { Account } from "@ledgerhq/types-live";
 
-const expectedAmount = ({ account, status, transaction }) => {
+const expectedAmount = ({
+  account,
+  status,
+  transaction,
+}: {
+  account: Account;
+  status: TransactionStatus;
+  transaction: Transaction;
+}) => {
   if (transaction.assetCode && transaction.assetIssuer) {
     const amount = formatDeviceAmount(account.currency, status.amount, {
       hideCode: true,

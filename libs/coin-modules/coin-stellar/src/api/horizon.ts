@@ -1,6 +1,5 @@
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { Account, Operation } from "@ledgerhq/types-live";
-
 import { BigNumber } from "bignumber.js";
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
@@ -17,16 +16,21 @@ import {
   Networks,
 } from "@stellar/stellar-sdk";
 import { log } from "@ledgerhq/logs";
-
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
 import { getEnv } from "@ledgerhq/live-env";
+import {
+  type BalanceAsset,
+  type NetworkInfo,
+  type RawOperation,
+  type Signer,
+  NetworkCongestionLevel,
+} from "../types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   getAccountSpendableBalance,
   getReservedBalance,
   rawOperationsToOperations,
 } from "../logic";
-import type { BalanceAsset, NetworkInfo, RawOperation } from "../types";
-import { NetworkCongestionLevel, Signer } from "../types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
@@ -267,7 +271,6 @@ export const fetchAccountNetworkInfo = async (account: Account): Promise<Network
       fees: new BigNumber(0),
       baseFee: new BigNumber(0),
       baseReserve: new BigNumber(0),
-      networkCongestionLevel: undefined,
     };
   }
 };

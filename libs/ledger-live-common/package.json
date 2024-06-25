@@ -144,6 +144,7 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-near": "workspace:^",
     "@ledgerhq/coin-polkadot": "workspace:^",
+    "@ledgerhq/coin-stellar": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/coin-tezos": "workspace:^",
     "@ledgerhq/coin-tron": "workspace:^",

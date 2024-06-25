@@ -11,7 +11,7 @@ import {
   loadAccount,
 } from "./api";
 import { getRecipientAccount, getAmountValue } from "./logic";
-import { StellarAssetRequired, StellarMuxedAccountNotExist } from "../../errors";
+import { StellarAssetRequired, StellarMuxedAccountNotExist } from "./errors";
 
 /**
  * @param {Account} account

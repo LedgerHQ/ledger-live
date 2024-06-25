@@ -7,9 +7,9 @@ import {
   NotEnoughSpendableBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
-import type { Transaction } from "./types";
-import transactionTransformer from "./transaction";
-import { StellarWrongMemoFormat } from "../../errors";
+import type { Transaction } from "@ledgerhq/coin-stellar/types/index";
+import transactionTransformer from "@ledgerhq/coin-stellar/transaction";
+import { StellarWrongMemoFormat } from "@ledgerhq/coin-stellar/errors";
 import { addNotCreatedStellarMockAddresses, addMultisignStellarMockAddresses } from "./bridge/mock";
 
 const notCreatedStellarMockAddress = "GAW46JE3SHIAYLNNNQCAZFQ437WB5ZH7LDRDWR5LVDWHCTHCKYB6RCCH";

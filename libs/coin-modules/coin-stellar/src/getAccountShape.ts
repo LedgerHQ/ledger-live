@@ -1,14 +1,14 @@
-import type { GetAccountShape } from "../../bridge/jsHelpers";
-import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { fetchAccount, fetchOperations } from "./api";
 import { buildSubAccounts } from "./tokens";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
+import { StellarOperation } from "./types";
+import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { STELLAR_BURN_ADDRESS } from "./logic";
 import { StellarBurnAddressError } from "./errors";
-import { StellarOperation } from "./types";
+import { Account } from "@ledgerhq/types-live";
 
-const getAccountShape: GetAccountShape = async (info, syncConfig) => {
+export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig) => {
   const { address, currency, initialAccount, derivationMode } = info;
 
   // FIXME Workaround for burn address, see https://ledgerhq.atlassian.net/browse/LIVE-4014
@@ -21,6 +21,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     xpubOrAddress: address,
     derivationMode,
   });
+
   const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(address);
 
   const oldOperations = (initialAccount?.operations || []) as StellarOperation[];
@@ -37,13 +38,13 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const allOperations = mergeOps(oldOperations, newOperations) as StellarOperation[];
   const assetOperations: StellarOperation[] = [];
 
-  allOperations.forEach(op => {
+  allOperations.forEach(operation => {
     if (
-      op?.extra?.assetCode &&
-      op?.extra?.assetIssuer &&
-      !["OPT_IN", "OPT_OUT"].includes(op.type)
+      operation?.extra?.assetCode &&
+      operation?.extra?.assetIssuer &&
+      !["OPT_IN", "OPT_OUT"].includes(operation.type)
     ) {
-      assetOperations.push(op);
+      assetOperations.push(operation);
     }
   });
 
@@ -64,6 +65,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     blockHeight,
     subAccounts,
   };
+
   return {
     ...shape,
     operations: allOperations.map(op => {
@@ -76,6 +78,3 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     }),
   };
 };
-
-export const sync = makeSync({ getAccountShape });
-export const scanAccounts = makeScanAccounts({ getAccountShape });
