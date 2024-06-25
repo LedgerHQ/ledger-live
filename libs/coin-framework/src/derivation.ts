@@ -168,6 +168,9 @@ const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze(
   internet_computer: {
     overridesDerivation: "44'/223'/0'/0/<account>",
   },
+  kadena: {
+    overridesDerivation: "44'/223'/<account>'/0/0",
+  },
   stacks_wallet: {
     overridesDerivation: "44'/5757'/0'/0/<account>",
     startsAt: 1,
@@ -340,6 +343,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
   vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  kadena: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (

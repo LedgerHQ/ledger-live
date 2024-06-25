@@ -18,6 +18,7 @@ import stellar from "@ledgerhq/coin-stellar/deviceTransactionConfig";
 import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";
 import tron from "@ledgerhq/coin-tron/deviceTransactionConfig";
 import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
+import kadena from "@ledgerhq/coin-kadena/deviceTransactionConfig";
 
 export default {
   casper,
@@ -40,6 +41,7 @@ export default {
   tezos,
   tron,
   xrp,
+  kadena,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";

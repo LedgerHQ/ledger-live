@@ -19,6 +19,7 @@ import { bridge as stellar } from "../../families/stellar/setup";
 import { bridge as tezos } from "../../families/tezos/setup";
 import { bridge as tron } from "../../families/tron/setup";
 import { bridge as xrp } from "../../families/xrp/setup";
+import { bridge as kadena } from "../../families/kadena/setup";
 
 export default {
   casper,
@@ -42,4 +43,5 @@ export default {
   tezos,
   tron,
   xrp,
+  kadena,
 };
