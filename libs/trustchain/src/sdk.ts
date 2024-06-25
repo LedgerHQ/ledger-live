@@ -25,6 +25,7 @@ import api from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
 import { log } from "@ledgerhq/logs";
 import { StatusCodes, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { TrustchainEjected } from "./errors";
 
 export class SDK implements TrustchainSDK {
   context: TrustchainSDKContext;
@@ -200,6 +201,9 @@ export class SDK implements TrustchainSDK {
     jwt: JWT;
     trustchain: Trustchain;
   }> {
+    if (memberCredentials.pubkey === member.id) {
+      throw new Error("removeMember can't be used for the current member");
+    }
     const hw = device.apdu(transport);
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
@@ -350,9 +354,16 @@ async function extractEncryptionKey(
 ): Promise<string> {
   const softwareDevice = getSoftwareDevice(memberCredentials);
   const pathNumbers = DerivationPath.toIndexArray(path);
-  const key = await softwareDevice.readKey(streamTree, pathNumbers);
-  // private key is in the first 32 bytes
-  return crypto.to_hex(key.slice(0, 32));
+  try {
+    const key = await softwareDevice.readKey(streamTree, pathNumbers);
+    // private key is in the first 32 bytes
+    return crypto.to_hex(key.slice(0, 32));
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new TrustchainEjected(e.message);
+    }
+    throw e;
+  }
 }
 
 async function pushMember(
