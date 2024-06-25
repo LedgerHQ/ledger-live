@@ -118,46 +118,28 @@ jobs:
           ENABLE_BROADCAST: ${{ contains(inputs.enable_broadcast, 'true') }}
           SPECULOS_TESTS: ${{ !contains(inputs.speculos_tests, 'false') }}
 
-#      - name: upload diffs to s3
-#        if: ${{ !cancelled() }}
-#        uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
-#        id: s3
-#        with:
-#          path: apps/ledger-live-desktop/tests/artifacts/test-results
-#          workspace: ${{ github.workspace }}
-#          os: linux
-#          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
-#      - name: upload ci suggested screenshots
-#        if: ${{ !cancelled() }}
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: images
-#          path: images-linux.json
-#      - name: Upload playwright test results [On Failure]
-#        uses: actions/upload-artifact@v4
-#        if: failure() && !cancelled()
-#        with:
-#          name: playwright-results-linux
-#          path: |
-#            apps/ledger-live-desktop/tests/artifacts/test-results
-#            apps/ledger-live-desktop/tests/artifacts/html-report
-#            apps/ledger-live-desktop/tests/artifacts/coverage
-#            apps/ledger-live-desktop/tests/artifacts/videos
-#            apps/ledger-live-desktop/tests/artifacts/logs
-#            apps/ledger-live-desktop/tests/artifacts/*.log
-#      - name: Upload Allure Report
-#        if: ${{ !cancelled() }}
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: allure-results-linux-${{ matrix.shardIndex }}
-#          path: apps/ledger-live-desktop/allure-results
-
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4.3.0
         with:
           name: allure-results-${{ matrix.shardIndex }}
           path: "apps/ledger-live-desktop/allure-results"
+
+  report-and-notify:
+    name: "Report and Notify"
+    runs-on: [ledger-live-4xlarge]
+    needs: e2e-tests-linux
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Download Allure Results
+        uses: actions/download-artifact@v4.1.1
+        with:
+          path: "apps/ledger-live-desktop/allure-results"
+          pattern: allure-results-*
+          merge-multiple: true
 
       - name: Publish report on Allure Server
         id: allure-server
@@ -195,9 +177,9 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: >
-          if ${{ steps.tests.outcome == 'success' }};
+          if ${{ needs.e2e-tests-linux.outputs.outcome == 'success' }};
           then echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
-          elif ${{ steps.tests.outcome == 'failure' }};
+          elif ${{ needs.e2e-tests-linux.outputs.outcome == 'failure' }};
           then echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
           else echo "STATUS_COLOR=#F3FF33" >> $GITHUB_ENV;
           fi
@@ -233,8 +215,8 @@ jobs:
 
             const report = {
               linux: {
-                pass: ${{ steps.tests.outcome == 'success' }},
-                status: "${{ steps.tests.outcome }}",
+                pass: ${{ needs.e2e-tests-linux.outputs.outcome == 'success' }},
+                status: "${{ needs.e2e-tests-linux.outputs.outcome }}",
               }
             };
 
