@@ -1,29 +1,26 @@
 # live-mobile
 
-## 3.45.1-nightly.2
+## 3.45.1
 
 ### Patch Changes
 
-- [#7165](https://github.com/LedgerHQ/ledger-live/pull/7165) [`ae97d63`](https://github.com/LedgerHQ/ledger-live/commit/ae97d6313917070e4243d53d4244e347a8628e44) Thanks [@LucasWerey](https://github.com/LucasWerey)! - [iOS] Ledger recover video opens when user clicks on Buy now CTA
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`33d26a9`](https://github.com/LedgerHQ/ledger-live/commit/33d26a9847d15571cce19f8159e29958398bb3a0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - bugfix crash case in ReceiveFunds/02-SelectAccount
 
-## 3.45.1-nightly.1
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/live-common@34.4.0
 
-### Patch Changes
-
-- [#7144](https://github.com/LedgerHQ/ledger-live/pull/7144) [`d9c4124`](https://github.com/LedgerHQ/ledger-live/commit/d9c412417538ff8fdbf2ed16af76312af5b20354) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix crash on experimental settings screen
-
-## 3.45.1-nightly.0
+## 3.45.1-hotfix.1
 
 ### Patch Changes
 
-- [#7086](https://github.com/LedgerHQ/ledger-live/pull/7086) [`a16f95e`](https://github.com/LedgerHQ/ledger-live/commit/a16f95efc4f61f6575ec03dc1ec0ecd74985cb38) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add WS activation screen from settings
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`33d26a9`](https://github.com/LedgerHQ/ledger-live/commit/33d26a9847d15571cce19f8159e29958398bb3a0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - bugfix crash case in ReceiveFunds/02-SelectAccount
 
-- [#7064](https://github.com/LedgerHQ/ledger-live/pull/7064) [`a08e123`](https://github.com/LedgerHQ/ledger-live/commit/a08e123484f3e0c919ec9865b6d4840985b15dc8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Create a new drawer component on add account. This new drawer has new UI and an entry point to walletSync. This entrypoint is hidden under a feature flag. Also update translations related to WS.
+## 3.45.1-hotfix.0
 
-- [#7135](https://github.com/LedgerHQ/ledger-live/pull/7135) [`e985f4a`](https://github.com/LedgerHQ/ledger-live/commit/e985f4acfed10f1aee479b77775f5954c46425b2) Thanks [@Justkant](https://github.com/Justkant)! - chore: update react-native-webview [LIVE-12644]
+### Patch Changes
 
-- Updated dependencies [[`5d17fab`](https://github.com/LedgerHQ/ledger-live/commit/5d17fab23f59b888190cd9e122165be6d0eb8c55)]:
-  - @ledgerhq/live-common@34.3.1-nightly.0
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/live-common@34.4.0-hotfix.0
 
 ## 3.45.0
 

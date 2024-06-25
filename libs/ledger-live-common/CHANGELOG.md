@@ -1,10 +1,28 @@
 # @ledgerhq/live-common
 
-## 34.3.1-nightly.0
+## 34.4.0
+
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
 
 ### Patch Changes
 
-- [#7133](https://github.com/LedgerHQ/ledger-live/pull/7133) [`5d17fab`](https://github.com/LedgerHQ/ledger-live/commit/5d17fab23f59b888190cd9e122165be6d0eb8c55) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: incorrect error message on NotEnoughBalance
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/hw-app-polkadot@6.30.0
+  - @ledgerhq/coin-polkadot@0.8.0
+
+## 34.4.0-hotfix.0
+
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
+
+### Patch Changes
+
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/hw-app-polkadot@6.30.0-hotfix.0
+  - @ledgerhq/coin-polkadot@0.8.0-hotfix.0
 
 ## 34.3.0
 

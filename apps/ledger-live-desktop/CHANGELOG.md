@@ -1,25 +1,18 @@
 # ledger-live-desktop
 
-## 2.82.1-nightly.2
+## 2.82.1
 
 ### Patch Changes
 
-- [#7164](https://github.com/LedgerHQ/ledger-live/pull/7164) [`957e933`](https://github.com/LedgerHQ/ledger-live/commit/957e933647699a3341067c45197fab6f60eb84f2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - [LLD]Layout issue with Gainers/Losers widget if asset name is too long
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/live-common@34.4.0
 
-## 2.82.1-nightly.1
-
-### Patch Changes
-
-- [#7155](https://github.com/LedgerHQ/ledger-live/pull/7155) [`46e29d5`](https://github.com/LedgerHQ/ledger-live/commit/46e29d530f3ae92bf639753c624a76bfcb8b1267) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix cvs wrong value
-
-- [#7156](https://github.com/LedgerHQ/ledger-live/pull/7156) [`d57038e`](https://github.com/LedgerHQ/ledger-live/commit/d57038e2bfe6743dc0eafa05e130658a27bbf713) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix units on token ops
-
-## 2.82.1-nightly.0
+## 2.82.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`5d17fab`](https://github.com/LedgerHQ/ledger-live/commit/5d17fab23f59b888190cd9e122165be6d0eb8c55)]:
-  - @ledgerhq/live-common@34.3.1-nightly.0
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/live-common@34.4.0-hotfix.0
 
 ## 2.82.0
 
