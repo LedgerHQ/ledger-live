@@ -30,6 +30,7 @@ TO ${recipient}`;
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
+
   return {
     ...common,
     family: tr.family,

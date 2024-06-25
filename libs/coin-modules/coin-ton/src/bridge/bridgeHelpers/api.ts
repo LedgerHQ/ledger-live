@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { Address } from "@ton/ton";
 import { getCoinConfig } from "../../config";
 import {
