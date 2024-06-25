@@ -2424,6 +2424,7 @@
       "delegated": "Delegated ({{amount}})",
       "delegatedTo": "Delegated to",
       "delegatedAmount": "Delegated amount",
+      "deposit": "Deposit",
       "redelegated": "Redelegated ({{amount}})",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",
