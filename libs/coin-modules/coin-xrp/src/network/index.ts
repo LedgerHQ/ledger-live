@@ -54,14 +54,12 @@ export const getAccountInfo = async (
   return result;
 };
 
-export const getServerInfos = async (
-  endpointConfig?: string | null | undefined,
-): Promise<ServerInfoResponse> => {
+export const getServerInfos = async (): Promise<ServerInfoResponse> => {
   const {
     data: { result },
   } = await network<{ result: ServerInfoResponse }>({
     method: "POST",
-    url: endpointConfig ?? getCoinConfig().node,
+    url: getCoinConfig().node,
     data: {
       method: "server_info",
       params: [
