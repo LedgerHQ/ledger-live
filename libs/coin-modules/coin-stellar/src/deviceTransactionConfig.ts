@@ -1,6 +1,6 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 
 export type ExtraDeviceTransactionField =
   | {
@@ -28,10 +28,10 @@ function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<CommonDeviceTransactionField | ExtraDeviceTransactionField> {
+}): Array<DeviceTransactionField | ExtraDeviceTransactionField> {
   const { assetCode, assetIssuer } = transaction;
 
-  const fields: Array<CommonDeviceTransactionField | ExtraDeviceTransactionField> = [
+  const fields: Array<DeviceTransactionField | ExtraDeviceTransactionField> = [
     {
       type: "stellar.network",
       label: "Network",
