@@ -1,8 +1,10 @@
+import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account";
 import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import get from "lodash/get";
@@ -10,7 +12,7 @@ import sumBy from "lodash/sumBy";
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction, TronAccount } from "./types";
-import { findSubAccountById, getAccountCurrency } from "../../account";
+import { findSubAccountById } from "../../account";
 import {
   TronInvalidFreezeAmount,
   TronInvalidUnDelegateResourceAmount,
@@ -250,7 +252,23 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     });
   }
 
-  return {
+  //
+  // Not enough gas check (on currency account)
+  // PTX swap uses this to support deeplink to buy additional currency
+  //
+  if (estimatedFees.gt(balance) || balance.isZero()) {
+    const query = new URLSearchParams({
+      ...(account?.id ? { account: account.id } : {}),
+    });
+    errors.gasPrice = new NotEnoughGas(undefined, {
+      fees: formatCurrencyUnit(getFeesUnit(account.currency), estimatedFees),
+      ticker: account.currency.ticker,
+      cryptoName: account.currency.name,
+      links: [`ledgerlive://buy?${query.toString()}`],
+    });
+  }
+
+  return Promise.resolve({
     errors,
     warnings,
     amount: amountSpent,
