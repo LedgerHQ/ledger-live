@@ -5,11 +5,10 @@ import { specs } from "../../utils/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
-// ONLY TESTNET (SEND WILL BE APPROVED ON DEVICE)
 const transactions = [
   //TODO: Reactivate when fees will be stable
   //new Transaction(Account.tBTC_1, Account.tBTC_2, "0.00001", "medium"),
-  new Transaction(Account.sep_ETH_1, Account.sep_ETH_2.address, "0.00001", "medium"),
+  new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", "medium"),
 ];
 
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
@@ -41,8 +40,18 @@ for (const [i, transaction] of transactions.entries()) {
         await app.send.expectTxInfoValidity(transaction);
         await app.send.clickContinue();
 
+        await app.account.clickSend();
+        await app.send.fillTxInfo(transaction);
+        await app.send.expectTxInfoValidity(transaction);
+        await app.send.clickContinue();
+
         await app.speculos.expectValidTxInfo(transaction);
         await app.send.expectTxSent();
+        await app.account.expectTxInfos(transaction);
+
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(transaction.accountToCredit.accountName);
+        await app.account.expectReceiver(transaction);
       },
     );
   });
