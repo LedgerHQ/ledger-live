@@ -1,10 +1,4 @@
-import { DerivationType } from "@taquito/ledger-signer";
-import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
-import { DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate } from "@taquito/taquito";
-import { b58cencode, Prefix, prefix } from "@taquito/utils";
-import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import tezosToolkit from "../network/tezosToolkit";
 import { TezosAccount, Transaction } from "../types";
 import { estimateFees } from "../logic";
 
