@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { StellarOperation, Transaction } from "./types";
-import { encodeOperationId } from "../../operation";
 import { getAmountValue } from "./logic";
 import { fetchSequence } from "./api";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 export const buildOptimisticOperation = async (
   account: Account,

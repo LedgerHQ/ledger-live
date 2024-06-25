@@ -27,7 +27,7 @@ import {
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
   StellarSourceHasMultiSign,
-} from "../../errors";
+} from "./errors";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
   account,
