@@ -158,6 +158,10 @@ export class SDK implements TrustchainSDK {
     return { jwt, trustchain };
   }
 
+  async refreshAuth(jwt: JWT): Promise<JWT> {
+    return api.refreshAuth(jwt);
+  }
+
   async restoreTrustchain(
     jwt: JWT,
     trustchainId: string,
