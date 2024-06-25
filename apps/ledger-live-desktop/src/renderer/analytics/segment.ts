@@ -74,6 +74,7 @@ const getPtxAttributes = () => {
 
   const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
   const ptxSwapLiveAppDemoOne = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
+  const ptxSwapLiveAppDemoTwo = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoTwo")?.enabled;
   const ptxSwapThorswapProvider = analyticsFeatureFlagMethod("ptxSwapThorswapProvider")?.enabled;
   const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
 
@@ -98,6 +99,7 @@ const getPtxAttributes = () => {
     ptxSwapMoonpayProviderEnabled,
     ptxSwapLiveAppDemoZero,
     ptxSwapLiveAppDemoOne,
+    ptxSwapLiveAppDemoTwo,
     ptxSwapThorswapProvider,
     ptxSwapExodusProvider,
   };

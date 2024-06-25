@@ -80,12 +80,16 @@ export type SwapWebProps = {
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
   Demo1: "swap-live-app-demo-1",
+  Demo2: "swap-live-app-demo-2",
 };
 
 export const useSwapLiveAppManifestID = () => {
   const demo0 = useFeature("ptxSwapLiveAppDemoZero");
   const demo1 = useFeature("ptxSwapLiveAppDemoOne");
+  const demo2 = useFeature("ptxSwapLiveAppDemoTwo");
   switch (true) {
+    case demo2?.enabled:
+      return demo2?.params?.manifest_id ?? SwapWebManifestIDs.Demo2;
     case demo1?.enabled:
       return demo1?.params?.manifest_id ?? SwapWebManifestIDs.Demo1;
     case demo0?.enabled:

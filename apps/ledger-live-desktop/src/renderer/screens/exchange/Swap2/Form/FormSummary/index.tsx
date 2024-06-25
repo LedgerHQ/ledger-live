@@ -53,6 +53,7 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
   const ratesState = swapTransaction.swap.rates;
   const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0;
   const demo1 = useFeature("ptxSwapLiveAppDemoOne");
+  const demo2 = useFeature("ptxSwapLiveAppDemoTwo");
 
   return (
     <Form ready={!!hasRates}>
@@ -63,7 +64,7 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
         targetAccounts={targetAccounts}
         hasRates={!!hasRates}
       />
-      {!demo1?.enabled && (
+      {!demo1?.enabled && !demo2?.enabled && (
         <SectionFees
           transaction={transaction}
           account={fromAccount}
