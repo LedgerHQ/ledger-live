@@ -87,7 +87,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
    * If no gasOptions available, this means this currency does not have a
    * gasTracker. Hence, we do not display the fee fields.
    */
-  if (!transaction.gasOptions) {
+  if (!gasOptions || !transaction.gasOptions) {
     return null;
   }
 
@@ -109,11 +109,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
         )
       ) : (
         <>
-          <SelectFeeStrategy
-            gasOptions={transaction.gasOptions}
-            onClick={onFeeStrategyClick}
-            {...props}
-          />
+          <SelectFeeStrategy gasOptions={gasOptions} onClick={onFeeStrategyClick} {...props} />
         </>
       )}
       {messageGas && (
