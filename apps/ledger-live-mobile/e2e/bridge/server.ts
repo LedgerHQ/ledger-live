@@ -1,6 +1,7 @@
 import { Server, WebSocket } from "ws";
 import path from "path";
 import fs from "fs";
+import net from "net";
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { NavigatorName } from "../../src/const";
 import { Subject } from "rxjs";
@@ -17,6 +18,31 @@ let webSocket: WebSocket;
 const lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
 let clientResponse: (data: string) => void;
 const RESPONSE_TIMEOUT = 10000;
+
+export async function findFreePort(): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer({ allowHalfOpen: false });
+
+    server.on("listening", () => {
+      const address = server.address();
+      if (address && typeof address !== "string") {
+        const port: number = address.port;
+        server.close(() => {
+          resolve(port); // Resolve with the free port
+        });
+      } else {
+        console.warn("Unable to determine port. Selecting default");
+        resolve(8099); // Resolve with the free port
+      }
+    });
+
+    server.on("error", err => {
+      reject(err); // Reject with the error
+    });
+
+    server.listen(0); // Let the system choose an available port
+  });
+}
 
 function uniqueId(): string {
   const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
