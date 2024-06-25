@@ -175,7 +175,7 @@ export interface TonResponseWalletInfo {
   wallet_id: number | null;
   last_transaction_lt: string | null;
   last_transaction_hash: string | null;
-  status: TonAccountState;
+  status: TonAccountStatus;
 }
 
 export interface TonResponseJettonTransfer {
