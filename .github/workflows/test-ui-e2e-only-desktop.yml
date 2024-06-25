@@ -103,7 +103,7 @@ jobs:
         id: tests
         run: |
           export COINAPPS=$PWD/coin-apps
-          if [ "$ENABLE_BROADCAST" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi
+          if [ "$ENABLE_BROADCAST" = true || github.event_name == 'schedule']; then export ENABLE_TRANSACTION_BROADCAST=1; fi
           if [ "$SPECULOS_TESTS" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi
           if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"

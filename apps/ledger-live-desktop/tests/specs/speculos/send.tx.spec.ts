@@ -3,12 +3,12 @@ import { Account } from "../../enum/Account";
 import { Transaction } from "../../models/Transaction";
 import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
+import { addTmsLink } from "tests/fixtures/common";
 
-// ONLY TESTNET (SEND WILL BE APPROVED ON DEVICE)
 const transactions = [
   //TODO: Reactivate when fees will be stable
   //new Transaction(Account.tBTC_1, Account.tBTC_2, "0.00001", "medium"),
-  new Transaction(Account.sep_ETH_1, Account.sep_ETH_2.address, "0.00001", "medium"),
+  new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", "medium"),
 ];
 
 //This test might sporadically fail due to getAppAndVersion issue - Jira: LIVE-12581
@@ -21,9 +21,9 @@ for (const [i, transaction] of transactions.entries()) {
       speculosOffset: i,
     });
 
-    //@TmsLink("TODO")
-
     test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
+      //Todo: add more currencies (Jira: QAA-122)
+      addTmsLink(["B2CQA-507"]);
       const app = new Application(page);
 
       await app.layout.goToAccounts();
@@ -36,6 +36,11 @@ for (const [i, transaction] of transactions.entries()) {
 
       await app.speculos.expectValidTxInfo(transaction);
       await app.send.expectTxSent();
+      await app.account.expectTxInfos(transaction);
+
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(transaction.accountToCredit.accountName);
+      await app.account.expectReceiver(transaction);
     });
   });
 }

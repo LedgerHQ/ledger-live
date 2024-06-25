@@ -42,7 +42,7 @@ export class SendModal extends Modal {
 
   @step("Fill tx information")
   async fillTxInfo(tx: Transaction) {
-    await this.fillRecipient(tx.recipient);
+    await this.fillRecipient(tx.accountToCredit.address);
     await this.continueRecipientButton.click();
     await this.cryptoAmountField.fill(tx.amount);
     await this.countinueSendAmount();
@@ -51,9 +51,9 @@ export class SendModal extends Modal {
   @step("Verify tx information before confirming")
   async expectTxInfoValidity(tx: Transaction) {
     await expect(this.totalDebitValue).toBeVisible();
-    await expect(this.addressValue(tx.recipient)).toBeVisible();
+    await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
     const displayedReceiveAddress = await this.recipientAddressDisplayedValue.innerText();
-    expect(displayedReceiveAddress).toEqual(tx.recipient);
+    expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
 
     await expect(this.amountValue(tx.amount, tx.accountToDebit.currency.uiLabel)).toBeVisible();
     const displayedAmount = await this.amountDisplayedValue.innerText();
