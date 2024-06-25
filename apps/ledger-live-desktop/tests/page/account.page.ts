@@ -174,4 +174,9 @@ export class AccountPage extends AppPage {
     expect(tokenInfos).toContain(token.tokenName);
     expect(tokenInfos).toContain(token.tokenTicker);
   }
+
+  @step("navigate to token in account")
+  async navigateToTokenInAccount(token: Token) {
+    await this.tokenRow(token.tokenTicker).click();
+  }
 }
