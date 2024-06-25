@@ -5,3 +5,5 @@ export * from "./estimateFees";
 export * from "./getBalance";
 export * from "./listOperations";
 export * from "./utils";
+
+export { parseAPIValue } from "./common";

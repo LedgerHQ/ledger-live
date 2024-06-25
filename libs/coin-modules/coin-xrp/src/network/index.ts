@@ -1,7 +1,4 @@
-import { BigNumber } from "bignumber.js";
 import network from "@ledgerhq/live-network";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { NEW_ACCOUNT_ERROR_MESSAGE } from "../logic";
 import { getCoinConfig } from "../config";
 import {
@@ -11,10 +8,6 @@ import {
   ServerInfoResponse,
   SubmitReponse,
 } from "./types";
-
-const rippleUnit = getCryptoCurrencyById("ripple").units[0];
-
-export const parseAPIValue = (value: string): BigNumber => parseCurrencyUnit(rippleUnit, value);
 
 export const submit = async (signature: string): Promise<SubmitReponse> => {
   const {

@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { NetworkDown } from "@ledgerhq/errors";
-import { getServerInfos, parseAPIValue } from "../network";
+import { getServerInfos } from "../network";
 import { NetworkInfo } from "../types";
+import { parseAPIValue } from "./common";
 
 // FIXME this could be cleaner
 const remapError = (error: Error) => {

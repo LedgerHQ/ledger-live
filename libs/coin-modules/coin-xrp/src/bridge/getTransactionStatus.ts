@@ -13,8 +13,8 @@ import BigNumber from "bignumber.js";
 import { isValidClassicAddress } from "ripple-address-codec";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { getServerInfos, parseAPIValue } from "../network";
-import { cachedRecipientIsNew } from "../logic";
+import { getServerInfos } from "../network";
+import { cachedRecipientIsNew, parseAPIValue } from "../logic";
 import { Transaction, TransactionStatus } from "../types";
 
 export const getTransactionStatus: AccountBridge<
