@@ -11,7 +11,7 @@ export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split(
 
 const getAssetIdFromAsset = (asset: BalanceAsset) => `${asset.asset_code}:${asset.asset_issuer}`;
 
-const buildStellarTokenAccount = ({
+function buildStellarTokenAccount({
   parentAccountId,
   stellarAsset,
   token,
@@ -21,7 +21,7 @@ const buildStellarTokenAccount = ({
   stellarAsset: BalanceAsset;
   token: TokenCurrency;
   operations: StellarOperation[];
-}): TokenAccount => {
+}): TokenAccount {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
   const balance = parseCurrencyUnit(token.units[0], stellarAsset.balance || "0");
@@ -51,9 +51,9 @@ const buildStellarTokenAccount = ({
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
   };
-};
+}
 
-export const buildSubAccounts = ({
+export function buildSubAccounts({
   currency,
   accountId,
   assets,
@@ -65,7 +65,7 @@ export const buildSubAccounts = ({
   assets: BalanceAsset[];
   syncConfig: SyncConfig;
   operations: StellarOperation[];
-}): TokenAccount[] | undefined => {
+}): TokenAccount[] | undefined {
   const { blacklistedTokenIds = [] } = syncConfig;
   const allTokens = listTokensForCryptoCurrency(currency);
 
@@ -95,4 +95,4 @@ export const buildSubAccounts = ({
   });
 
   return tokenAccounts;
-};
+}

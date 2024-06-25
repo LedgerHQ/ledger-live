@@ -77,15 +77,15 @@ Horizon.AxiosClient.interceptors.response.use(response => {
   return response;
 });
 
-const getFormattedAmount = (amount: BigNumber) => {
+function getFormattedAmount(amount: BigNumber) {
   return amount.div(new BigNumber(10).pow(currency.units[0].magnitude)).toString(10);
-};
+}
 
-export const fetchBaseFee = async (): Promise<{
+export async function fetchBaseFee(): Promise<{
   baseFee: number;
   recommendedFee: number;
   networkCongestionLevel: NetworkCongestionLevel;
-}> => {
+}> {
   // For tests
   if (getEnv("API_STELLAR_HORIZON_STATIC_FEE")) {
     return {
@@ -123,7 +123,7 @@ export const fetchBaseFee = async (): Promise<{
     recommendedFee,
     networkCongestionLevel,
   };
-};
+}
 
 /**
  * Get all account-related data
@@ -131,14 +131,12 @@ export const fetchBaseFee = async (): Promise<{
  * @async
  * @param {string} addr
  */
-export const fetchAccount = async (
-  addr: string,
-): Promise<{
+export async function fetchAccount(addr: string): Promise<{
   blockHeight: number;
   balance: BigNumber;
   spendableBalance: BigNumber;
   assets: BalanceAsset[];
-}> => {
+}> {
   let account: Horizon.ServerApi.AccountRecord = {} as Horizon.ServerApi.AccountRecord;
   let assets: BalanceAsset[] = [];
   let balance = "0";
@@ -167,7 +165,7 @@ export const fetchAccount = async (
     spendableBalance,
     assets,
   };
-};
+}
 
 /**
  * Fetch all operations for a single account from indexer
@@ -179,7 +177,7 @@ export const fetchAccount = async (
  *
  * @return {Operation[]}
  */
-export const fetchOperations = async ({
+export async function fetchOperations({
   accountId,
   addr,
   order,
@@ -189,7 +187,7 @@ export const fetchOperations = async ({
   addr: string;
   order: "asc" | "desc";
   cursor: string;
-}): Promise<Operation[]> => {
+}): Promise<Operation[]> {
   if (!addr) {
     return [];
   }
@@ -250,9 +248,9 @@ export const fetchOperations = async ({
 
     throw e;
   }
-};
+}
 
-export const fetchAccountNetworkInfo = async (account: Account): Promise<NetworkInfo> => {
+export async function fetchAccountNetworkInfo(account: Account): Promise<NetworkInfo> {
   try {
     const extendedAccount = await server.accounts().accountId(account.freshAddress).call();
     const baseReserve = getReservedBalance(extendedAccount);
@@ -273,31 +271,31 @@ export const fetchAccountNetworkInfo = async (account: Account): Promise<Network
       baseReserve: new BigNumber(0),
     };
   }
-};
+}
 
-export const fetchSequence = async (a: Account): Promise<BigNumber> => {
-  const extendedAccount = await loadAccount(a.freshAddress);
+export async function fetchSequence(account: Account): Promise<BigNumber> {
+  const extendedAccount = await loadAccount(account.freshAddress);
   return extendedAccount ? new BigNumber(extendedAccount.sequence) : new BigNumber(0);
-};
+}
 
-export const fetchSigners = async (a: Account): Promise<Signer[]> => {
+export async function fetchSigners(account: Account): Promise<Signer[]> {
   try {
-    const extendedAccount = await server.accounts().accountId(a.freshAddress).call();
+    const extendedAccount = await server.accounts().accountId(account.freshAddress).call();
     return extendedAccount.signers;
   } catch (error) {
     return [];
   }
-};
+}
 
-export const broadcastTransaction = async (signedTransaction: string): Promise<string> => {
+export async function broadcastTransaction(signedTransaction: string): Promise<string> {
   const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
   const res = await server.submitTransaction(transaction, {
     skipMemoRequiredCheck: true,
   });
   return res.hash;
-};
+}
 
-export const buildPaymentOperation = ({
+export function buildPaymentOperation({
   destination,
   amount,
   assetCode,
@@ -307,7 +305,7 @@ export const buildPaymentOperation = ({
   amount: BigNumber;
   assetCode: string | undefined;
   assetIssuer: string | undefined;
-}) => {
+}) {
   const formattedAmount = getFormattedAmount(amount);
   // Non-native assets should always have asset code and asset issuer. If an
   // asset doesn't have both, we assume it is native asset.
@@ -317,31 +315,31 @@ export const buildPaymentOperation = ({
     amount: formattedAmount,
     asset,
   });
-};
+}
 
-export const buildCreateAccountOperation = (destination: string, amount: BigNumber) => {
+export function buildCreateAccountOperation(destination: string, amount: BigNumber) {
   const formattedAmount = getFormattedAmount(amount);
   return StellarSdkOperation.createAccount({
     destination: destination,
     startingBalance: formattedAmount,
   });
-};
+}
 
-export const buildChangeTrustOperation = (assetCode: string, assetIssuer: string) => {
+export function buildChangeTrustOperation(assetCode: string, assetIssuer: string) {
   return StellarSdkOperation.changeTrust({
     asset: new Asset(assetCode, assetIssuer),
   });
-};
+}
 
-export const buildTransactionBuilder = (source: StellarSdkAccount, fee: BigNumber) => {
+export function buildTransactionBuilder(source: StellarSdkAccount, fee: BigNumber) {
   const formattedFee = fee.toString();
   return new TransactionBuilder(source, {
     fee: formattedFee,
     networkPassphrase: Networks.PUBLIC,
   });
-};
+}
 
-export const loadAccount = async (addr: string): Promise<AccountRecord | null> => {
+export async function loadAccount(addr: string): Promise<AccountRecord | null> {
   if (!addr || !addr.length) {
     return null;
   }
@@ -351,4 +349,4 @@ export const loadAccount = async (addr: string): Promise<AccountRecord | null> =
   } catch (e) {
     return null;
   }
-};
+}
