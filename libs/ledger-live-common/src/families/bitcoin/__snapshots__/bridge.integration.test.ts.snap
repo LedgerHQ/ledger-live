@@ -19339,7 +19339,7 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 2`] = `
 exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
 [
   {
-    "balance": "2183232",
+    "balance": "2169047",
     "bitcoinResources": {},
     "currencyId": "litecoin",
     "derivationMode": "native_segwit",
@@ -19347,10 +19347,10 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
     "freshAddressPath": "84'/2'/0'/0/4",
     "id": "js:2:litecoin:Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF:native_segwit",
     "index": 0,
-    "operationsCount": 11,
+    "operationsCount": 12,
     "pendingOperations": [],
     "seedIdentifier": "045e6b1f8055c0b1b54e35cfe61793cdf492d153ecd4184f16e0d50286750b78940bd4bf3f55072bd3c5f665b106979b562e4f55d5c19dafac72022bb9e869c506",
-    "spendableBalance": "2183232",
+    "spendableBalance": "2169047",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -19566,6 +19566,25 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 2`] = `
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
       "value": "207154",
+    },
+    {
+      "accountId": "js:2:litecoin:Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF:native_segwit",
+      "blockHash": "e4d9e010780f6474a3e243bc939d61ef9081b1ab37f73219013fbeb8149fc0c9",
+      "blockHeight": 2708514,
+      "extra": {},
+      "fee": "14185",
+      "hasFailed": false,
+      "hash": "87c1d5f332624fb10e394f4c36313aac3531ef7c75e091088e8fe445c29296e7",
+      "id": "js:2:litecoin:Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF:native_segwit-87c1d5f332624fb10e394f4c36313aac3531ef7c75e091088e8fe445c29296e7-OUT",
+      "recipients": [
+        "ltc1q4me3c2chhq03y9dkluuazcynfq0px8zykk9wu3",
+      ],
+      "senders": [
+        "ltc1qz8p9kd4u2f206wta45365pwq5s46zmutuf7kwg",
+      ],
+      "transactionSequenceNumber": 4294967293,
+      "type": "OUT",
+      "value": "14185",
     },
     {
       "accountId": "js:2:litecoin:Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF:native_segwit",
