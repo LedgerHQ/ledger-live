@@ -1,10 +1,9 @@
-import { LoaderOptions } from "../../shared/model/LoaderOptions";
-import { Transaction } from "../../shared/model/Transaction";
+import { TransactionContext } from "../../shared/model/TransactionContext";
 import { ForwardDomainDataSource } from "../data/ForwardDomainDataSource";
 import { ForwardDomainContextLoader } from "./ForwardDomainContextLoader";
 
 describe("ForwardDomainContextLoader", () => {
-  const transaction = {} as Transaction;
+  const transaction = {} as TransactionContext;
   const mockForwardDomainDataSource: ForwardDomainDataSource = { getDomainNamePayload: jest.fn() };
 
   beforeEach(() => {
@@ -14,52 +13,19 @@ describe("ForwardDomainContextLoader", () => {
 
   describe("load function", () => {
     it("should return an empty array when no domain or registry", async () => {
-      const options = {} as LoaderOptions;
-
       const loader = new ForwardDomainContextLoader(mockForwardDomainDataSource);
-      const promise = () => loader.load(transaction, options);
+      const promise = () => loader.load(transaction);
 
       expect(promise()).resolves.toEqual([]);
     });
 
-    it("should throw an error when no registry", async () => {
-      const options = { options: { forwardDomain: { domain: "test.eth" } } } as LoaderOptions;
-
-      const loader = new ForwardDomainContextLoader(mockForwardDomainDataSource);
-      const promise = () => loader.load(transaction, options);
-
-      expect(promise()).rejects.toThrow(
-        new Error(
-          "[ContextModule] ForwardDomainLoader: Invalid combination of domain and registry. Either both domain and registry should exist",
-        ),
-      );
-    });
-
-    it("should throw an error when no domain", async () => {
-      const options = { options: { forwardDomain: { registry: "ens" } } } as LoaderOptions;
-
-      const loader = new ForwardDomainContextLoader(mockForwardDomainDataSource);
-      const promise = () => loader.load(transaction, options);
-
-      expect(promise()).rejects.toThrow(
-        new Error(
-          "[ContextModule] ForwardDomainLoader: Invalid combination of domain and registry. Either both domain and registry should exist",
-        ),
-      );
-    });
-
     it("should return an error when domain > max length", async () => {
-      const options = {
-        options: {
-          forwardDomain: {
-            domain: "maxlength-maxlength-maxlength-maxlength-maxlength",
-            registry: "ens",
-          },
-        },
-      } as LoaderOptions;
+      const transaction = {
+        domain: "maxlength-maxlength-maxlength-maxlength-maxlength-maxlength",
+      } as TransactionContext;
 
       const loader = new ForwardDomainContextLoader(mockForwardDomainDataSource);
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([
         {
@@ -70,12 +36,12 @@ describe("ForwardDomainContextLoader", () => {
     });
 
     it("should return an error when domain is not valid", async () => {
-      const options = {
-        options: { forwardDomain: { domain: "hello👋", registry: "ens" } },
-      } as LoaderOptions;
+      const transaction = {
+        domain: "hello👋",
+      } as TransactionContext;
 
       const loader = new ForwardDomainContextLoader(mockForwardDomainDataSource);
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([
         {
@@ -86,12 +52,13 @@ describe("ForwardDomainContextLoader", () => {
     });
 
     it("should return a payload", async () => {
-      const options = {
-        options: { forwardDomain: { domain: "hello.eth", registry: "ens" } },
-      } as LoaderOptions;
+      const transaction = {
+        domain: "hello.eth",
+        challenge: "challenge",
+      } as TransactionContext;
 
       const loader = new ForwardDomainContextLoader(mockForwardDomainDataSource);
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([
         {
@@ -102,13 +69,14 @@ describe("ForwardDomainContextLoader", () => {
     });
 
     it("should return an error when no payload", async () => {
-      const options = {
-        options: { forwardDomain: { domain: "hello.eth", registry: "ens" } },
-      } as LoaderOptions;
+      const transaction = {
+        domain: "hello.eth",
+        challenge: "challenge",
+      } as TransactionContext;
       jest.spyOn(mockForwardDomainDataSource, "getDomainNamePayload").mockResolvedValue(undefined);
 
       const loader = new ForwardDomainContextLoader(mockForwardDomainDataSource);
-      const result = await loader.load(transaction, options);
+      const result = await loader.load(transaction);
 
       expect(result).toEqual([
         {

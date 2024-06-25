@@ -1,8 +1,7 @@
 import { ContextModule } from "./ContextModule";
 import { ContextLoader } from "./shared/domain/ContextLoader";
 import { ContextResponse } from "./shared/model/ContextResponse";
-import { LoaderOptions } from "./shared/model/LoaderOptions";
-import { Transaction } from "./shared/model/Transaction";
+import { TransactionContext } from "./shared/model/TransactionContext";
 
 type DefaultContextModuleConstructorArgs = {
   loaders: ContextLoader[];
@@ -15,11 +14,8 @@ export class DefaultContextModule implements ContextModule {
     this._loaders = args.loaders;
   }
 
-  public async getContexts(
-    transaction: Transaction,
-    options: LoaderOptions,
-  ): Promise<ContextResponse[]> {
-    const promises = this._loaders.map(fetcher => fetcher.load(transaction, options));
+  public async getContexts(transaction: TransactionContext): Promise<ContextResponse[]> {
+    const promises = this._loaders.map(fetcher => fetcher.load(transaction));
     const responses = await Promise.all(promises);
     return responses.flat();
   }
