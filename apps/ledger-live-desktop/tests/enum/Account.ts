@@ -122,6 +122,12 @@ export class Account {
     "6TFDU3BYQ2FO32SOYQDTHDW5XKGEYH4FCT34ZQRHFPJRVMLEQWOO2OEUU4",
   );
 
+  static readonly ALGO_3 = new Account(
+    Currency.ALGO,
+    "Algorand 3",
+    "3ASRTAN6KCZCICTIFQ5N2UBOSSBOZ7WFSOI2CJEJ4ESK532RODQZ7KCSOA",
+  );
+
   static readonly XLM_1 = new Account(
     Currency.XLM,
     "Stellar 1",
