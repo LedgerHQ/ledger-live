@@ -106,7 +106,6 @@ export async function createTransaction(
 
   const isDecred = additionals.includes("decred");
   const isZcash = additionals.includes("zcash");
-  const startTime = Date.now();
   const sapling = additionals.includes("sapling");
   const bech32 = segwit && additionals.includes("bech32");
   const useBip143 =
