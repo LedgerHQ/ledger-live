@@ -1,7 +1,6 @@
-export type TransactionContext = {
+import { TransactionSubset } from "./TransactionSubset";
+
+export type TransactionContext = TransactionSubset & {
   challenge: string;
-  chainId: number;
-  to?: string;
-  data?: string;
   domain?: string;
 };

@@ -4800,6 +4800,9 @@ importers:
 
   libs/ledgerjs/packages/keyring-eth:
     dependencies:
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../../../coin-modules/coin-evm
       '@ledgerhq/context-module':
         specifier: workspace:^
         version: link:../context-module
@@ -4812,6 +4815,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
       ethers:
         specifier: ^5.7.2
         version: 5.7.2
@@ -37881,7 +37887,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
+      ts-node: 10.9.2(@types/node@20.12.12)(typescript@5.4.5)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -51662,7 +51668,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0
+      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2)
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2

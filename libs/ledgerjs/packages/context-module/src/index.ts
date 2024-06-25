@@ -3,6 +3,7 @@ export * from "./ContextModuleBuilder";
 export * from "./DefaultContextModule";
 export * from "./shared/model/ContextResponse";
 export * from "./shared/model/TransactionContext";
+export * from "./shared/model/TransactionSubset";
 
 export * from "./token/domain/TokenContextLoader";
 export * from "./nft/domain/NftContextLoader";

@@ -1,13 +1,24 @@
 import AppBinding from "@ledgerhq/hw-app-eth";
 import { DefaultKeyringEth } from "./DefaultKeyringEth";
-import { Transaction, ethers } from "ethers";
+import { ethers } from "ethers";
 import { EIP712Params, KeyringEth } from "./KeyringEth";
 import { ContextModule } from "@ledgerhq/context-module/lib/ContextModule";
 import { ContextResponse } from "@ledgerhq/context-module";
 import { EIP712Message } from "@ledgerhq/types-live";
+import LL from "@ledgerhq/coin-evm/types/index";
+import BigNumber from "bignumber.js";
 
 describe("DefaultKeyringEth", () => {
   let keyring: KeyringEth;
+  const defaultTransaction: ethers.Transaction = {
+    chainId: 1,
+    to: "0x0123456789ABCDEF0123456789ABCDEF01234567",
+    data: "0x",
+    nonce: 1,
+    gasLimit: ethers.BigNumber.from(0),
+    gasPrice: ethers.BigNumber.from(0),
+    value: ethers.BigNumber.from(1),
+  };
 
   const mockAppBinding = {
     provideDomainName: jest.fn(),
@@ -48,7 +59,7 @@ describe("DefaultKeyringEth", () => {
       jest.spyOn(mockContextModule, "getContexts").mockResolvedValue(contexts);
 
       // WHEN
-      await keyring.signTransaction("", {} as Transaction, {});
+      await keyring.signTransaction("", defaultTransaction, {});
 
       // THEN
       expect(mockAppBinding.provideDomainName).toHaveBeenCalledWith(payload);
@@ -68,7 +79,7 @@ describe("DefaultKeyringEth", () => {
       jest.spyOn(mockContextModule, "getContexts").mockResolvedValue(contexts);
 
       // WHEN
-      await keyring.signTransaction("", {} as Transaction, {});
+      await keyring.signTransaction("", defaultTransaction);
 
       // THEN
       expect(mockAppBinding.provideDomainName).not.toHaveBeenCalled();
@@ -89,7 +100,7 @@ describe("DefaultKeyringEth", () => {
       jest.spyOn(mockContextModule, "getContexts").mockResolvedValue(contexts);
 
       // WHEN
-      await keyring.signTransaction("", {} as Transaction, {});
+      await keyring.signTransaction("", defaultTransaction);
 
       // THEN
       expect(mockAppBinding.provideDomainName).not.toHaveBeenCalled();
@@ -114,7 +125,7 @@ describe("DefaultKeyringEth", () => {
       jest.spyOn(mockContextModule, "getContexts").mockResolvedValue(contexts);
 
       // WHEN
-      await keyring.signTransaction("", {} as Transaction, {});
+      await keyring.signTransaction("", defaultTransaction);
 
       // THEN
       expect(mockAppBinding.provideDomainName).toHaveBeenCalledWith(payloads[0]);
@@ -130,7 +141,7 @@ describe("DefaultKeyringEth", () => {
       jest.spyOn(mockContextModule, "getContexts").mockResolvedValue(contexts);
 
       // WHEN
-      const response = await keyring.signTransaction("", {} as Transaction, {});
+      const response = await keyring.signTransaction("", defaultTransaction);
 
       // THEN
       expect(response).toEqual({ r: "0x", s: "0x", v: 66 });
@@ -139,32 +150,66 @@ describe("DefaultKeyringEth", () => {
     it("should provide a challenge to the context module", async () => {
       // GIVEN
       const challenge = "challenge";
-      const contexts: ContextResponse[] = [{ type: "provideDomainName", payload: "payload" }];
-      jest.spyOn(mockContextModule, "getContexts").mockResolvedValue(contexts);
       jest.spyOn(mockAppBinding, "getChallenge").mockResolvedValue(challenge);
 
       // WHEN
-      await keyring.signTransaction("", {} as Transaction, {});
+      await keyring.signTransaction("", defaultTransaction);
 
       // THEN
-      expect(mockContextModule.getContexts).toHaveBeenCalledWith(expect.any(Object), {
-        challenge,
-        options: {},
-      });
+      expect(mockContextModule.getContexts).toHaveBeenCalledWith(
+        expect.objectContaining({ challenge }),
+      );
+    });
+
+    it("sould provide a domain to the context module", async () => {
+      // GIVEN
+      const domain = "domain";
+
+      // WHEN
+      await keyring.signTransaction("", defaultTransaction, { domain });
+
+      // THEN
+      expect(mockContextModule.getContexts).toHaveBeenCalledWith(
+        expect.objectContaining({ domain }),
+      );
     });
 
     it("should call app binding signTransaction", async () => {
       // GIVEN
-      const transaction = {} as Transaction;
       const derivationPath = "derivationPath";
 
       // WHEN
-      await keyring.signTransaction(derivationPath, transaction, {});
+      await keyring.signTransaction(derivationPath, defaultTransaction, {});
 
       // THEN
       expect(mockAppBinding.signTransaction).toHaveBeenCalledWith(
         derivationPath,
-        "c6808080808080",
+        "dd018080940123456789abcdef0123456789abcdef012345670180018080",
+        null,
+      );
+    });
+
+    it("should call app binding signTransaction with an LL type", async () => {
+      // GIVEN
+      const transaction: LL.Transaction = {
+        chainId: 1,
+        recipient: "",
+        amount: new BigNumber(1),
+        gasLimit: new BigNumber(1),
+        gasPrice: new BigNumber(1),
+        family: "evm",
+        nonce: 1,
+        mode: "send",
+      };
+      const derivationPath = "derivationPath";
+
+      // WHEN
+      await keyring.signTransaction(derivationPath, transaction);
+
+      // THEN
+      expect(mockAppBinding.signTransaction).toHaveBeenCalledWith(
+        derivationPath,
+        "c9010101800180018080",
         null,
       );
     });
