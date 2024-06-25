@@ -79,6 +79,10 @@ class MockSDK implements TrustchainSDK {
     });
   }
 
+  async refreshAuth(jwt: JWT): Promise<JWT> {
+    return jwt;
+  }
+
   async restoreTrustchain(
     jwt: JWT,
     trustchainId: string,

@@ -22,6 +22,12 @@ export { getDeviceName } from "./commands/use-cases/getDeviceName";
 export { isHardwareVersionSupported } from "./commands/use-cases/isHardwareVersionSupported";
 export { isBootloaderVersionSupported } from "./commands/use-cases/isBootloaderVersionSupported";
 export { getVersion } from "./commands/use-cases/getVersion";
+export type { AppStorageInfo } from "./commands/entities/AppStorageInfo";
+export { backupAppStorage } from "./commands/use-cases/app-backup/backupAppStorage";
+export { getAppStorageInfo } from "./commands/use-cases/app-backup/getAppStorageInfo";
+export { restoreAppStorage } from "./commands/use-cases/app-backup/restoreAppStorage";
+export { restoreAppStorageCommit } from "./commands/use-cases/app-backup/restoreAppStorageCommit";
+export { restoreAppStorageInit } from "./commands/use-cases/app-backup/restoreAppStorageInit";
 // src/capabilities/
 export {
   type CLSSupportedDeviceModelId,

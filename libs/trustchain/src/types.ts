@@ -113,6 +113,11 @@ export interface TrustchainSDK {
   }>;
 
   /**
+   * Refresh the current JWT.
+   */
+  refreshAuth(jwt: JWT): Promise<JWT>;
+
+  /**
    * Restore the current trustchain encryption key, typically due to a key rotation.
    */
   restoreTrustchain(

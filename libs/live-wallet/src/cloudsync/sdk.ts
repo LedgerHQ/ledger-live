@@ -1,5 +1,5 @@
 import { Trustchain, TrustchainSDK } from "@ledgerhq/trustchain/types";
-import { Data, schema } from "./datatypes/accounts";
+import { LiveData, liveSchema } from "./datatypes/live";
 import api, { JWT } from "./api";
 import Base64 from "base64-js";
 import { compress, decompress } from "fflate";
@@ -8,7 +8,7 @@ import { Observable } from "rxjs";
 export type UpdateEvent =
   | {
       type: "new-data";
-      data: Data;
+      data: LiveData;
       version: number;
     }
   | {
@@ -53,8 +53,8 @@ export class CloudSyncSDK {
    * Push new data to the Cloud Sync backend.
    * Will fails if the version is out of sync. (conflicts)
    */
-  async push(jwt: JWT, trustchain: Trustchain, data: Data): Promise<void> {
-    const validated = schema.parse(data);
+  async push(jwt: JWT, trustchain: Trustchain, data: LiveData): Promise<void> {
+    const validated = liveSchema.parse(data);
     const json = JSON.stringify(validated);
     const bytes = new TextEncoder().encode(json);
     const compressed = await new Promise<Uint8Array>((resolve, reject) =>
@@ -63,7 +63,7 @@ export class CloudSyncSDK {
     const encrypted = await this.trustchainSdk.encryptUserData(trustchain, compressed);
     const base64 = Base64.fromByteArray(encrypted);
     const version = (this.getCurrentVersion() || 0) + 1;
-    const response = await api.uploadData(jwt, "accounts", version, base64);
+    const response = await api.uploadData(jwt, "live", version, base64);
     switch (response.status) {
       case "updated": {
         await this.saveNewUpdate({
@@ -84,7 +84,7 @@ export class CloudSyncSDK {
    * If new data is retrieved, it will be decrypted and saveNewUpdate will be called as part of this atomic process.
    */
   async pull(jwt: JWT, trustchain: Trustchain): Promise<void> {
-    const response = await api.fetchData(jwt, "accounts", this.getCurrentVersion());
+    const response = await api.fetchData(jwt, "live", this.getCurrentVersion());
     switch (response.status) {
       case "no-data": {
         // no data, nothing to do
@@ -106,7 +106,7 @@ export class CloudSyncSDK {
           decompress(decrypted, (err, result) => (err ? reject(err) : resolve(result))),
         );
         const json = JSON.parse(new TextDecoder().decode(decompressed));
-        const validated = schema.parse(json);
+        const validated = liveSchema.parse(json);
         const version = response.version;
         await this.saveNewUpdate({
           type: "new-data",
@@ -119,7 +119,7 @@ export class CloudSyncSDK {
   }
 
   async destroy(jwt: JWT): Promise<void> {
-    await api.deleteData(jwt, "accounts");
+    await api.deleteData(jwt, "live");
     await this.saveNewUpdate({
       type: "deleted-data",
     });
