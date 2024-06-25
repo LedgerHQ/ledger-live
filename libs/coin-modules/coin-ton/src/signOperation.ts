@@ -63,7 +63,7 @@ export const buildSignOperation =
 
         const signature = packTransaction(account, accountInfo.status === "uninit", sig);
 
-        const operation = buildOptimisticOperation(account, transaction, address);
+        const operation = buildOptimisticOperation(account, transaction);
 
         o.next({
           type: "signed",
@@ -84,10 +84,9 @@ export const buildSignOperation =
       };
     });
 
-const buildOptimisticOperation = (
+export const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
-  address: string,
 ): TonOperation => {
   const { recipient, amount, fees, comment, useAllAmount, subAccountId } = transaction;
   const { id: accountId } = account;
@@ -101,7 +100,7 @@ const buildOptimisticOperation = (
     id: "",
     hash: "",
     type: "OUT",
-    senders: [address],
+    senders: [account.freshAddress],
     recipients: [recipient],
     accountId,
     value,
@@ -126,7 +125,7 @@ const buildOptimisticOperation = (
         fee: fees,
         blockHash: null,
         blockHeight: null,
-        senders: [address],
+        senders: [account.freshAddress],
         recipients: [recipient],
         accountId: subAccount.id,
         date: new Date(),

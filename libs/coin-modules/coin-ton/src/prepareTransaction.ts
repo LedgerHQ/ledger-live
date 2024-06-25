@@ -4,6 +4,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { toNano } from "@ton/core";
 import BigNumber from "bignumber.js";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
+import { MAX_FEE_TOKEN_TRANSFER } from "./constants";
 import type { Transaction } from "./types";
 import { buildTonTransaction, getTonEstimatedFees, isJettonTransfer } from "./utils";
 
@@ -19,7 +20,7 @@ const prepareTransaction: AccountBridge<Transaction, Account>["prepareTransactio
   if (tokenTransfer && simpleTx.payload && isJettonTransfer(simpleTx.payload)) {
     simpleTx.payload = undefined;
   }
-  let fees = BigNumber(toNano(0.5).toString());
+  let fees = BigNumber(toNano(MAX_FEE_TOKEN_TRANSFER).toString());
   if (!tokenTransfer) {
     fees = await getTonEstimatedFees(account, accountInfo.status === "uninit", simpleTx);
   }
