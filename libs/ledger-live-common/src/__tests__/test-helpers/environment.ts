@@ -113,6 +113,7 @@ setSupportedCurrencies([
   "sonic_blaze",
   "mina",
   "babylon",
+  "kadena",
 ]);
 LiveConfig.setConfig(liveConfig);
 

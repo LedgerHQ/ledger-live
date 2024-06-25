@@ -23,6 +23,7 @@ import vechain from "@ledgerhq/coin-vechain/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
 import sui from "@ledgerhq/coin-sui/transaction";
 import mina from "@ledgerhq/coin-mina/transaction";
+import kadena from "@ledgerhq/coin-kadena/transaction";
 
 export default {
   algorand,
@@ -50,4 +51,5 @@ export default {
   xrp,
   sui,
   mina,
+  kadena,
 };

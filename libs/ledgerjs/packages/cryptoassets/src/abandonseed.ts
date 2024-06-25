@@ -125,6 +125,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   sonic_blaze: EVM_DEAD_ADDRESS,
   mina: "B62qmphduibdMJQjEvnnDizL9kVV4ripuiE9adR2wsqtegJaxHJzCic",
   babylon: "bbn1vh34djka7ug2gww9njrsmmr7emj3dx3paz5sj4",
+  kadena: "k:9f68e4252ac1739f722d52a7dc6215bd177947494e6d3e83bbbe1fc2efe6ce47",
 };
 
 /**

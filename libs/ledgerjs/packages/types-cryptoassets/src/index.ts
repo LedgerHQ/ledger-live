@@ -177,6 +177,7 @@ export type CryptoCurrencyId =
   | "sonic"
   | "sonic_blaze"
   | "mina";
+  | "kadena";
 
 export type LedgerExplorerId =
   | "btc"

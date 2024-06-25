@@ -23,6 +23,7 @@ import { cliTools as vechain } from "../families/vechain/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
 import { cliTools as sui } from "../families/sui/setup";
 import { cliTools as mina } from "../families/mina/setup";
+import { cliTools as kadena } from "../families/kadena/setup";
 
 export default {
   algorand,
@@ -50,4 +51,5 @@ export default {
   xrp,
   sui,
   mina,
+  kadena,
 };

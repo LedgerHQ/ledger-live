@@ -1,0 +1,11 @@
+{
+  "entry": [
+    "src/bridge/js.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/hw-getAddress.ts",
+    "src/serialization.ts",
+    "src/transaction.ts"
+  ],
+  "ignoreUnimported": [],
+  "ignoreUnresolved": []
+}
