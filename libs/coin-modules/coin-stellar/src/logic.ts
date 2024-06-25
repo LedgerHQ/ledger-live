@@ -36,20 +36,20 @@ const getMinimumBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber 
   return parseCurrencyUnit(currency.units[0], getReservedBalance(account).toString());
 };
 
-export const getAccountSpendableBalance = async (
+export async function getAccountSpendableBalance(
   balance: BigNumber,
   account: Horizon.ServerApi.AccountRecord,
-): Promise<BigNumber> => {
+): Promise<BigNumber> {
   const minimumBalance = getMinimumBalance(account);
   const { recommendedFee } = await fetchBaseFee();
   return BigNumber.max(balance.minus(minimumBalance).minus(recommendedFee), 0);
-};
+}
 
-export const getAmountValue = (
+export function getAmountValue(
   account: Account,
   transaction: Transaction,
   fees: BigNumber,
-): BigNumber => {
+): BigNumber {
   // Asset
   if (transaction.subAccountId) {
     const asset = findSubAccountById(account, transaction.subAccountId) as TokenAccount;
@@ -60,9 +60,9 @@ export const getAmountValue = (
   return transaction.useAllAmount && transaction.networkInfo
     ? BigNumber.max(account.spendableBalance.minus(fees), 0)
     : transaction.amount;
-};
+}
 
-export const getBalanceId = (balance: BalanceAsset): string | null => {
+export function getBalanceId(balance: BalanceAsset): string | null {
   switch (balance.asset_type) {
     case "native":
       return "native";
@@ -74,9 +74,9 @@ export const getBalanceId = (balance: BalanceAsset): string | null => {
     default:
       return null;
   }
-};
+}
 
-export const getReservedBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber => {
+export function getReservedBalance(account: Horizon.ServerApi.AccountRecord): BigNumber {
   const numOfSponsoringEntries = Number(account.num_sponsoring);
   const numOfSponsoredEntries = Number(account.num_sponsored);
 
@@ -91,9 +91,9 @@ export const getReservedBalance = (account: Horizon.ServerApi.AccountRecord): Bi
     .minus(numOfSponsoredEntries)
     .times(BASE_RESERVE)
     .plus(amountInOffers);
-};
+}
 
-export const getOperationType = (operation: RawOperation, addr: string): OperationType => {
+export function getOperationType(operation: RawOperation, addr: string): OperationType {
   switch (operation.type) {
     case "create_account":
       return operation.funder === addr ? "OUT" : "IN";
@@ -126,18 +126,18 @@ export const getOperationType = (operation: RawOperation, addr: string): Operati
 
       return "IN";
   }
-};
+}
 
-export const getAssetCodeIssuer = (tr: Transaction | TransactionRaw): string[] => {
+export function getAssetCodeIssuer(tr: Transaction | TransactionRaw): string[] {
   if (tr.subAccountId) {
     const assetString = tr.subAccountId.split("+")[1];
     return assetString.split(":");
   }
 
   return [tr.assetCode || "", tr.assetIssuer || ""];
-};
+}
 
-const getRecipients = (operation: RawOperation): string[] => {
+function getRecipients(operation: RawOperation): string[] {
   switch (operation.type) {
     case "create_account":
       return [operation.account];
@@ -151,13 +151,13 @@ const getRecipients = (operation: RawOperation): string[] => {
     default:
       return [];
   }
-};
+}
 
-export const formatOperation = async (
+export async function formatOperation(
   rawOperation: RawOperation,
   accountId: string,
   addr: string,
-): Promise<StellarOperation> => {
+): Promise<StellarOperation> {
   const transaction = await rawOperation.transaction();
   const type = getOperationType(rawOperation, addr);
   const value = getValue(rawOperation, transaction, type);
@@ -204,13 +204,13 @@ export const formatOperation = async (
   }
 
   return operation;
-};
+}
 
-const getValue = (
+function getValue(
   operation: RawOperation,
   transaction: Horizon.ServerApi.TransactionRecord,
   type: OperationType,
-): BigNumber => {
+): BigNumber {
   let value = new BigNumber(0);
 
   if (!operation.transaction_successful) {
@@ -235,9 +235,9 @@ const getValue = (
     default:
       return type !== "IN" ? new BigNumber(transaction.fee_charged) : value;
   }
-};
+}
 
-export const isMemoValid = (memoType: string, memoValue: string): boolean => {
+export function isMemoValid(memoType: string, memoValue: string): boolean {
   switch (memoType) {
     case "MEMO_TEXT":
       if (memoValue.length > 28) {
@@ -263,19 +263,19 @@ export const isMemoValid = (memoType: string, memoValue: string): boolean => {
   }
 
   return true;
-};
+}
 
-export const isAccountMultiSign = async (account: Account): Promise<boolean> => {
+export async function isAccountMultiSign(account: Account): Promise<boolean> {
   const signers = await fetchSigners(account);
   return signers.length > 1;
-};
+}
 
 /**
  * Returns true if address is valid, false if it's invalid (can't parse or wrong checksum)
  *
  * @param {*} address
  */
-export const isAddressValid = (address: string): boolean => {
+export function isAddressValid(address: string): boolean {
   if (!address) return false;
 
   // FIXME Workaround for burn address, see https://ledgerhq.atlassian.net/browse/LIVE-4014
@@ -286,7 +286,7 @@ export const isAddressValid = (address: string): boolean => {
   } catch (err) {
     return false;
   }
-};
+}
 
 export const getRecipientAccount: CacheRes<
   Array<{
@@ -307,13 +307,11 @@ export const getRecipientAccount: CacheRes<
   }, // 5 minutes
 );
 
-export const recipientAccount = async (
-  address?: string,
-): Promise<{
+export async function recipientAccount(address?: string): Promise<{
   id: string | null;
   isMuxedAccount: boolean;
   assetIds: string[];
-} | null> => {
+} | null> {
   if (!address) {
     return null;
   }
@@ -340,13 +338,13 @@ export const recipientAccount = async (
       return [...allAssets, getBalanceId(balance)];
     }, []),
   };
-};
+}
 
-export const rawOperationsToOperations = (
+export function rawOperationsToOperations(
   operations: RawOperation[],
   addr: string,
   accountId: string,
-): Promise<StellarOperation[]> => {
+): Promise<StellarOperation[]> {
   const supportedOperationTypes = [
     "create_account",
     "payment",
@@ -370,4 +368,4 @@ export const rawOperationsToOperations = (
       .filter(operation => supportedOperationTypes.includes(operation.type))
       .map(operation => formatOperation(operation, accountId, addr)),
   );
-};
+}

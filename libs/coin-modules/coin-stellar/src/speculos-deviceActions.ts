@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/coin-framework/lib-es/bot/specs";
 import { Account } from "@ledgerhq/types-live";
 
-const expectedAmount = ({
+function expectedAmount({
   account,
   status,
   transaction,
@@ -17,7 +17,7 @@ const expectedAmount = ({
   account: Account;
   status: TransactionStatus;
   transaction: Transaction;
-}) => {
+}) {
   if (transaction.assetCode && transaction.assetIssuer) {
     const amount = formatDeviceAmount(account.currency, status.amount, {
       hideCode: true,
@@ -29,10 +29,11 @@ const expectedAmount = ({
   return formatDeviceAmount(account.currency, status.amount, {
     postfixCode: true,
   });
-};
+}
 
-const truncateAddress = (stellarAddress: string, start = 6, end = 6) =>
-  `${stellarAddress.slice(0, start)}..${stellarAddress.slice(-end)}`;
+function truncateAddress(stellarAddress: string, start = 6, end = 6) {
+  return `${stellarAddress.slice(0, start)}..${stellarAddress.slice(-end)}`;
+}
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [

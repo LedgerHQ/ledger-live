@@ -5,10 +5,10 @@ import { getAmountValue } from "./logic";
 import { fetchSequence } from "./api";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
-export const buildOptimisticOperation = async (
+export async function buildOptimisticOperation(
   account: Account,
   transaction: Transaction,
-): Promise<StellarOperation> => {
+): Promise<StellarOperation> {
   const transactionSequenceNumber = await fetchSequence(account);
   const fees = transaction.fees ?? new BigNumber(0);
   const type = transaction.mode === "changeTrust" ? "OPT_IN" : "OUT";
@@ -60,4 +60,4 @@ export const buildOptimisticOperation = async (
   }
 
   return operation;
-};
+}

@@ -16,10 +16,10 @@ const createSigner: CreateSigner<Stellar> = (transport: Transport) => {
   return new Stellar(transport);
 };
 
-const polkadot = getCryptoCurrencyById("polkadot");
-const getCurrencyConfig = (): StellarCoinConfig => {
-  return getCurrencyConfiguration(polkadot);
-};
+const stellar = getCryptoCurrencyById("stellar");
+function getCurrencyConfig(): StellarCoinConfig {
+  return getCurrencyConfiguration(stellar);
+}
 
 const bridge: Bridge<Transaction, StellarAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
