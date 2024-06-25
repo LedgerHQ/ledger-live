@@ -217,6 +217,7 @@
     "src/market/utils/countervalueFormatter.ts",
     "src/market/utils/rangeDataTable.ts",
     "src/mock/account.ts",
+    "src/mock/helpers.ts",
     "src/network-troubleshooting/index.ts",
     "src/nft/helpers.ts",
     "src/nft/index.ts",

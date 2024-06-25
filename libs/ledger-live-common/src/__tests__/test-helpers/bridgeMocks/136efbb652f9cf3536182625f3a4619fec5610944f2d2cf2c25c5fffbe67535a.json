@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest-mainnet.onomy.io/cosmos/bank/v1beta1/balances/onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v","method":"GET"},"response":{"body":{"balances":[{"denom":"anom","amount":"2056240423338275653"}],"pagination":{"next_key":null,"total":"1"}}}}

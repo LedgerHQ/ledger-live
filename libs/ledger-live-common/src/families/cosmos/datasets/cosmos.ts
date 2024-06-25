@@ -6,9 +6,10 @@ import {
   AmountRequired,
 } from "@ledgerhq/errors";
 import invariant from "invariant";
-import type { CosmosAccount, Transaction } from "../types";
-import transactionTransformer from "../transaction";
+import type { CosmosAccount, Transaction } from "@ledgerhq/coin-cosmos/types/index";
 import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
+// import { fromTransactionRaw } from "../transaction";
+import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
 
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
@@ -86,7 +87,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "send max",
-          transaction: transactionTransformer.fromTransactionRaw({
+          transaction: fromTransactionRaw({
             amount: "0",
             recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
             useAllAmount: true,
@@ -114,7 +115,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "send with memo",
-          transaction: transactionTransformer.fromTransactionRaw({
+          transaction: fromTransactionRaw({
             amount: "0",
             recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
             useAllAmount: true,

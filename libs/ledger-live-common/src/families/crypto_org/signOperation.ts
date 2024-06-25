@@ -37,6 +37,7 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
           const { publicKey } = await hwApp.getAddress(account.freshAddressPath, cointype, false);
           const unsigned = await buildTransaction(account, transaction, publicKey);
           // Sign by device
+          // TODO: hwApp.sign() is cosmos
           const { signature } = await hwApp.sign(
             account.freshAddressPath,
             unsigned.toSignDocument(0).toUint8Array(),
