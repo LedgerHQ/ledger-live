@@ -2,7 +2,6 @@ import test from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { Transaction } from "../../models/Transaction";
 import { specs } from "../../utils/speculos";
-import { Application } from "tests/page";
 
 // ONLY TESTNET (SEND WILL BE APPROVED ON DEVICE)
 const transactions = [
@@ -23,9 +22,7 @@ for (const [i, transaction] of transactions.entries()) {
 
     //@TmsLink("TODO")
 
-    test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
-      const app = new Application(page);
-
+    test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ app }) => {
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
 
