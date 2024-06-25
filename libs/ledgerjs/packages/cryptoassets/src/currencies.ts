@@ -4204,6 +4204,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  kadena: {
+    type: "CryptoCurrency",
+    id: "kadena",
+    coinType: CoinType.KDA,
+    name: "Kadena",
+    managerAppName: "Kadena",
+    ticker: "KDA",
+    scheme: "kadena",
+    color: "#4A9079",
+    family: "kadena",
+    units: [
+      {
+        name: "KDA",
+        code: "KDA",
+        magnitude: 12,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.chainweb.com/testnet/txdetail/$hash",
+        address: "https://explorer.chainweb.com/testnet/account/$address?token=coin",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {

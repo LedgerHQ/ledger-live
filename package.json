@@ -68,6 +68,7 @@
     "coin:framework": "pnpm --filter coin-framework",
     "coin:tester": "pnpm --filter coin-tester",
     "coin:near": "pnpm --filter coin-near",
+    "coin:kadena": "pnpm --filter coin-kadena",
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "coin:solana": "pnpm --filter coin-solana",
     "coin:stellar": "pnpm --filter coin-stellar",

@@ -17,6 +17,7 @@ import { cliTools as stellar } from "../families/stellar/setup";
 import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as tron } from "../families/tron/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
+import { cliTools as kadena } from "../families/kadena/setup";
 
 export default {
   celo,
@@ -38,4 +39,5 @@ export default {
   tezos,
   tron,
   xrp,
+  kadena,
 };

@@ -71,6 +71,12 @@ import type {
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
 } from "../families/internet_computer/types";
 import type {
+  Transaction as kadenaTransaction,
+  TransactionRaw as kadenaTransactionRaw,
+  TransactionStatus as kadenaTransactionStatus,
+  TransactionStatusRaw as kadenaTransactionStatusRaw,
+} from "@ledgerhq/coin-kadena/types";
+import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
   TransactionStatus as nearTransactionStatus,
@@ -138,6 +144,7 @@ export type Transaction =
   | filecoinTransaction
   | hederaTransaction
   | internet_computerTransaction
+  | kadenaTransaction
   | nearTransaction
   | polkadotTransaction
   | solanaTransaction
@@ -161,6 +168,7 @@ export type TransactionRaw =
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | internet_computerTransactionRaw
+  | kadenaTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
@@ -184,6 +192,7 @@ export type TransactionStatus =
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | internet_computerTransactionStatus
+  | kadenaTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
@@ -207,6 +216,7 @@ export type TransactionStatusRaw =
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | internet_computerTransactionStatusRaw
+  | kadenaTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
