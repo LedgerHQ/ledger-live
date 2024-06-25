@@ -1,6 +1,11 @@
 import { TezosToolkit } from "@taquito/taquito";
 import coinConfig from "../config";
 
-const tezos = new TezosToolkit(coinConfig.getCoinConfig().node.url);
+let tezos: TezosToolkit | null = null;
 
-export default tezos;
+export function getTezosToolkit(): TezosToolkit {
+  if (!tezos) {
+    tezos = new TezosToolkit(coinConfig.getCoinConfig().node.url);
+  }
+  return tezos;
+}

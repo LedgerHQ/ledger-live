@@ -6,7 +6,7 @@ import { DEFAULT_FEE, OpKind, TezosToolkit } from "@taquito/taquito";
 import type { SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import type { TezosAccount, TezosSigner, Transaction, TransactionStatus } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import tezosToolkit from "../network/tezosToolkit";
+import { getTezosToolkit } from "../network/tezosToolkit";
 import { buildTransaction } from "./buildTransaction";
 
 // Exported for test purpose only
@@ -64,6 +64,7 @@ export const buildSignOperation =
         const signedInfo = await signerContext(deviceId, async signer => {
           const ledgerSigner = signer.createLedgerSigner(freshAddressPath, false, 0);
 
+          const tezosToolkit = getTezosToolkit();
           tezosToolkit.setProvider({ signer: ledgerSigner });
 
           const publicKey = await ledgerSigner.publicKey();

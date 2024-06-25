@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { OpKind, TezosToolkit } from "@taquito/taquito";
 import { SignOperationEvent } from "@ledgerhq/types-live";
 import buildSignOperation, { getOperationContents } from "./signOperation";
+import config, { type TezosCoinConfig } from "../config";
 import { TezosSigner } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 
@@ -39,6 +40,20 @@ describe("signOperation", () => {
     fn(fakeSigner);
   const signOperation = buildSignOperation(signerContext);
   const deviceId = "dummyDeviceId";
+
+  beforeAll(() => {
+    config.setCoinConfig(
+      (): TezosCoinConfig => ({
+        status: { type: "active" },
+        explorer: {
+          url: "https://httpbin.org",
+        },
+        node: {
+          url: "https://httpbin.org",
+        },
+      }),
+    );
+  });
 
   afterEach(() => {
     mockForgeOperations.mockClear();

@@ -4,7 +4,7 @@ import { DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate } from "@taquito/taquito";
 import { b58cencode, Prefix, prefix } from "@taquito/utils";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import tezosToolkit from "../network/tezosToolkit";
+import { getTezosToolkit } from "../network/tezosToolkit";
 import { TezosOperationMode } from "../types/model";
 
 export type CoreAccountInfo = {
@@ -34,7 +34,7 @@ export type EstimatedFees = {
  * @param {Account} account
  * @param {Transaction} transaction
  */
-export default async function estimateFees({
+export async function estimateFees({
   account,
   transaction,
 }: {
@@ -46,6 +46,7 @@ export default async function estimateFees({
     prefix[Prefix.EDPK],
   );
 
+  const tezosToolkit = getTezosToolkit();
   tezosToolkit.setProvider({
     signer: {
       publicKeyHash: async () => account.address,
