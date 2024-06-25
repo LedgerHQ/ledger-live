@@ -1,5 +1,20 @@
 # @ledgerhq/device-core
 
+## 0.3.0-nightly.0
+
+### Minor Changes
+
+- [#7124](https://github.com/LedgerHQ/ledger-live/pull/7124) [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Implement App data backup relative commands
+
+### Patch Changes
+
+- Updated dependencies [[`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3)]:
+  - @ledgerhq/types-live@6.48.1-nightly.0
+  - @ledgerhq/errors@6.18.0-nightly.0
+  - @ledgerhq/devices@8.4.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.1-nightly.0
+  - @ledgerhq/live-network@1.3.1-nightly.0
+
 ## 0.2.0
 
 ### Minor Changes

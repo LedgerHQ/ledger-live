@@ -1,5 +1,25 @@
 # web-tools
 
+## 0.6.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`0cee1a6`](https://github.com/LedgerHQ/ledger-live/commit/0cee1a68f932adebb5a147854f0973c7cb0c756e), [`57c2c48`](https://github.com/LedgerHQ/ledger-live/commit/57c2c486bf76e531bfb6e27d0c40aeb9144b3636), [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3)]:
+  - @ledgerhq/live-common@34.4.1-nightly.0
+  - @ledgerhq/types-live@6.48.1-nightly.0
+  - @ledgerhq/errors@6.18.0-nightly.0
+  - @ledgerhq/coin-framework@0.14.1-nightly.0
+  - @ledgerhq/domain-service@1.2.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.37.1-nightly.0
+  - @ledgerhq/live-wallet@0.2.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.1-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.1-nightly.0
+  - @ledgerhq/hw-transport-web-ble@6.29.1-nightly.0
+  - @ledgerhq/hw-transport-webhid@6.29.1-nightly.0
+  - @ledgerhq/hw-transport-webusb@6.29.1-nightly.0
+  - @ledgerhq/trustchain@0.1.2-nightly.0
+  - @ledgerhq/hw-trustchain@0.1.2-nightly.0
+
 ## 0.6.1
 
 ### Patch Changes

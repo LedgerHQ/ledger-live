@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.45.2-nightly.0
+
+### Patch Changes
+
+- [#7148](https://github.com/LedgerHQ/ledger-live/pull/7148) [`1ae0a50`](https://github.com/LedgerHQ/ledger-live/commit/1ae0a507ca0a54a6dcedae853628ed411840d28e) Thanks [@gre](https://github.com/gre)! - bugfix crash case in ReceiveFunds/02-SelectAccount
+
+- [#7167](https://github.com/LedgerHQ/ledger-live/pull/7167) [`ab651de`](https://github.com/LedgerHQ/ledger-live/commit/ab651def5ec49e9842f8000737d64be4d22dc74d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix typo when scanning for existing account: "1 accounts found" on receive crypto flow
+
+- Updated dependencies [[`0cee1a6`](https://github.com/LedgerHQ/ledger-live/commit/0cee1a68f932adebb5a147854f0973c7cb0c756e), [`57c2c48`](https://github.com/LedgerHQ/ledger-live/commit/57c2c486bf76e531bfb6e27d0c40aeb9144b3636), [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3)]:
+  - @ledgerhq/live-common@34.4.1-nightly.0
+  - @ledgerhq/types-live@6.48.1-nightly.0
+  - @ledgerhq/errors@6.18.0-nightly.0
+  - @ledgerhq/coin-framework@0.14.1-nightly.0
+  - @ledgerhq/coin-evm@2.1.1-nightly.0
+  - @ledgerhq/domain-service@1.2.1-nightly.0
+  - @ledgerhq/live-countervalues@0.2.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.1-nightly.0
+  - @ledgerhq/live-nft@0.4.1-nightly.0
+  - @ledgerhq/live-nft-react@0.4.1-nightly.0
+  - @ledgerhq/live-wallet@0.2.1-nightly.0
+  - @ledgerhq/devices@8.4.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.1-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.1-nightly.0
+  - @ledgerhq/react-native-hid@6.32.1-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.33.1-nightly.0
+
 ## 3.45.1
 
 ### Patch Changes

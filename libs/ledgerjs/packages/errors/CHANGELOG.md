@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.18.0-nightly.0
+
+### Minor Changes
+
+- [#7124](https://github.com/LedgerHQ/ledger-live/pull/7124) [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Implement App data backup relative commands
+
 ## 6.17.0
 
 ### Minor Changes

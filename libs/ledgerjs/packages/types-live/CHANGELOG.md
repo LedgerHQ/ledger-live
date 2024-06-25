@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.48.1-nightly.0
+
+### Patch Changes
+
+- [#7074](https://github.com/LedgerHQ/ledger-live/pull/7074) [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - refactor Swap FF logic and rollback "Add account banner" for demo1
+
 ## 6.48.0
 
 ### Minor Changes

@@ -1,5 +1,52 @@
 # @ledgerhq/live-common
 
+## 34.4.1-nightly.0
+
+### Patch Changes
+
+- [#7158](https://github.com/LedgerHQ/ledger-live/pull/7158) [`0cee1a6`](https://github.com/LedgerHQ/ledger-live/commit/0cee1a68f932adebb5a147854f0973c7cb0c756e) Thanks [@lawRathod](https://github.com/lawRathod)! - Drop casper address checksum encoding to make addresses more compliant to other exchanges
+
+- [#7036](https://github.com/LedgerHQ/ledger-live/pull/7036) [`57c2c48`](https://github.com/LedgerHQ/ledger-live/commit/57c2c486bf76e531bfb6e27d0c40aeb9144b3636) Thanks [@valpinkman](https://github.com/valpinkman)! - Add a quitApp before launching the renameDevice device flow
+
+- [#7074](https://github.com/LedgerHQ/ledger-live/pull/7074) [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - refactor Swap FF logic and rollback "Add account banner" for demo1
+
+- Updated dependencies [[`4d567da`](https://github.com/LedgerHQ/ledger-live/commit/4d567da94cde447400328b1dabe129fbf8b917cd), [`1e7f4ca`](https://github.com/LedgerHQ/ledger-live/commit/1e7f4ca3cad57bacfdb4212f6a8b1614c601e5a2), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3)]:
+  - @ledgerhq/coin-bitcoin@0.6.1-nightly.0
+  - @ledgerhq/coin-solana@0.7.1-nightly.0
+  - @ledgerhq/errors@6.18.0-nightly.0
+  - @ledgerhq/device-core@0.3.0-nightly.0
+  - @ledgerhq/coin-framework@0.14.1-nightly.0
+  - @ledgerhq/coin-algorand@0.5.1-nightly.0
+  - @ledgerhq/coin-cardano@0.1.1-nightly.0
+  - @ledgerhq/coin-evm@2.1.1-nightly.0
+  - @ledgerhq/coin-near@0.5.1-nightly.0
+  - @ledgerhq/coin-polkadot@0.8.1-nightly.0
+  - @ledgerhq/coin-tezos@0.4.1-nightly.0
+  - @ledgerhq/coin-tron@0.0.2-nightly.0
+  - @ledgerhq/coin-xrp@0.2.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.37.1-nightly.0
+  - @ledgerhq/live-countervalues@0.2.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.1-nightly.0
+  - @ledgerhq/live-nft@0.4.1-nightly.0
+  - @ledgerhq/live-wallet@0.2.1-nightly.0
+  - @ledgerhq/devices@8.4.1-nightly.0
+  - @ledgerhq/hw-app-algorand@6.29.1-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.30.1-nightly.0
+  - @ledgerhq/hw-app-exchange@0.5.1-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.30.1-nightly.0
+  - @ledgerhq/hw-app-solana@7.2.1-nightly.0
+  - @ledgerhq/hw-app-str@6.29.1-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.1-nightly.0
+  - @ledgerhq/live-network@1.3.1-nightly.0
+  - @ledgerhq/speculos-transport@0.1.2-nightly.0
+  - @ledgerhq/hw-app-btc@10.3.1-nightly.0
+  - @ledgerhq/hw-app-near@6.29.1-nightly.0
+  - @ledgerhq/hw-app-tezos@6.29.1-nightly.0
+  - @ledgerhq/hw-app-trx@6.29.1-nightly.0
+  - @ledgerhq/hw-app-xrp@6.29.1-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.29.1-nightly.0
+
 ## 34.4.0
 
 ### Minor Changes
