@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import test from "../../fixtures/mockFixtures";
 import { expect } from "@playwright/test";
+import { SwapPage } from "../../page/swap.page";
+import { DeviceAction } from "../../models/DeviceAction";
+import { Drawer } from "../../page/drawer/drawer";
+import { AccountsPage } from "../../page/accounts.page";
+import { AccountPage } from "../../page/account.page";
 import { Layout } from "../../component/layout.component";
 import { Modal } from "../../component/modal.component";
-import test from "../../fixtures/mockFixtures";
-import { DeviceAction } from "../../models/DeviceAction";
-import { AccountPage } from "../../page/account.page";
-import { AccountsPage } from "../../page/accounts.page";
-import { Drawer } from "../../page/drawer/drawer";
-import { SwapPage } from "../../page/swap.page";
 import {
   getBitcoinToDogecoinRatesMock,
   getBitcoinToEthereumRatesMock,

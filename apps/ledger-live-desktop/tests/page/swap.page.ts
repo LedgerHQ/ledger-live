@@ -1,5 +1,5 @@
-import { AppPage } from "tests/page/abstractClasses";
 import { waitFor } from "../utils/waitFor";
+import { AppPage } from "tests/page/abstractClasses";
 
 export class SwapPage extends AppPage {
   private swapMenuButton = this.page.locator("data-test-id=drawer-swap-button"); // TODO: Should this be here?
