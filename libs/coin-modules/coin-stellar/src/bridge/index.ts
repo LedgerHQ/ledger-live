@@ -65,7 +65,7 @@ function buildAccountBridge(signerContext: SignerContext<StellarSigner>) {
 }
 
 export function createBridges(
-  signerContext: SignerContext<Stellar>,
+  signerContext: SignerContext<StellarSigner>,
   coinConfig: CoinConfig<StellarCoinConfig>,
 ) {
   setCoinConfig(coinConfig);
