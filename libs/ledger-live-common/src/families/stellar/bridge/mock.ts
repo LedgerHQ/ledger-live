@@ -26,14 +26,22 @@ import { StellarSourceHasMultiSign, StellarWrongMemoFormat } from "@ledgerhq/coi
 
 const receive = makeAccountBridgeReceive();
 
+const notCreatedStellarMockAddress = "GAW46JE3SHIAYLNNNQCAZFQ437WB5ZH7LDRDWR5LVDWHCTHCKYB6RCCH";
+
+const multisignStellarMockAddress = "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS";
+
 const notCreatedAddresses: string[] = [];
 const multiSignAddresses: string[] = [];
+
 export function addNotCreatedStellarMockAddresses(addr: string) {
   notCreatedAddresses.push(addr);
 }
 export function addMultisignStellarMockAddresses(addr: string) {
   multiSignAddresses.push(addr);
 }
+
+addNotCreatedStellarMockAddresses(notCreatedStellarMockAddress);
+addMultisignStellarMockAddresses(multisignStellarMockAddress);
 
 const createTransaction = (): Transaction => ({
   family: "stellar",
