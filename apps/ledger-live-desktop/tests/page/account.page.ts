@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import { Token } from "tests/enum/Tokens";
+import { Token } from "tests/enum/Token";
 import { Transaction } from "tests/models/Transaction";
 
 export class AccountPage extends AppPage {
