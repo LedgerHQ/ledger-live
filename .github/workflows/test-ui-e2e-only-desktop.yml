@@ -177,9 +177,9 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: >
-          if ${{ needs.e2e-tests-linux.outputs.outcome == 'success' }};
+          if ${{ needs.e2e-tests-linux.outputs.status == 'success' }};
           then echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
-          elif ${{ needs.e2e-tests-linux.outputs.outcome == 'failure' }};
+          elif ${{ needs.e2e-tests-linux.outputs.status == 'failure' }};
           then echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
           else echo "STATUS_COLOR=#F3FF33" >> $GITHUB_ENV;
           fi
@@ -215,8 +215,8 @@ jobs:
 
             const report = {
               linux: {
-                pass: ${{ needs.e2e-tests-linux.outputs.outcome == 'success' }},
-                status: "${{ needs.e2e-tests-linux.outputs.outcome }}",
+                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-linux.outputs.status }}",
               }
             };
 
