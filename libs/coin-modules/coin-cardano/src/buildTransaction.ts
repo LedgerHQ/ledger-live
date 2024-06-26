@@ -17,6 +17,7 @@ import {
   Token,
   Transaction,
 } from "./types";
+import { CARDANO_MAX_SUPPLY } from "./constants";
 
 function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
   const address = TyphonUtils.getAddressFromHex(
@@ -109,9 +110,13 @@ const buildSendTokenTransaction = async ({
   });
 
   const totalAddedTokenAmount = new BigNumber(0);
-  const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmount(
-    tokensToSend,
-    new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
+  const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
+    {
+      address: receiverAddress,
+      amount: new BigNumber(CARDANO_MAX_SUPPLY),
+      tokens: tokensToSend,
+    },
+    new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
   );
   // Add enough utxo to cover token amount
   for (let i = 0; i < sortedTokenUtxo.length; i++) {
@@ -172,14 +177,17 @@ const buildSendAdaTransaction = async ({
     // if account holds any tokens then add it to changeAddress,
     // with minimum required ADA to spend those tokens
     if (tokenBalance.length) {
-      const minAmountToSpendTokens = TyphonUtils.calculateMinUtxoAmount(
-        tokenBalance,
-        new BigNumber(protocolParams.lovelacePerUtxoWord),
-        false,
+      const minAmountForChangeTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
+        {
+          address: changeAddress,
+          amount: new BigNumber(CARDANO_MAX_SUPPLY),
+          tokens: tokenBalance,
+        },
+        new BigNumber(protocolParams.utxoCostPerByte),
       );
       typhonTx.addOutput({
         address: changeAddress,
-        amount: minAmountToSpendTokens,
+        amount: minAmountForChangeTokens,
         tokens: tokenBalance,
       });
     }

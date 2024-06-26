@@ -6,7 +6,13 @@ import {
 import groupBy from "lodash/groupBy";
 import { getBipPathString } from "./logic";
 import { CertificateType } from "@stricahq/typhonjs/dist/types";
-import { SignerTxCertificate, SignerTxInput, SignerTxOutput, SignerTxWithdrawal } from "./signer";
+import {
+  CardanoTxOutputFormat,
+  SignerTxCertificate,
+  SignerTxInput,
+  SignerTxOutput,
+  SignerTxWithdrawal,
+} from "./signer";
 
 /**
  * Convert StricaTypes Transaction into a simpler types.
@@ -127,6 +133,7 @@ const prepareLedgerOutput =
     );
 
     return {
+      format: CardanoTxOutputFormat.MAP_BABBAGE,
       amount: output.amount.toString(),
       destination,
       tokenBundle,
