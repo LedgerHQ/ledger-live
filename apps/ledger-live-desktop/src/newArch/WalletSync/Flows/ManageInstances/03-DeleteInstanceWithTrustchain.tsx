@@ -1,35 +1,40 @@
-import React, { useCallback, useEffect } from "react";
-import Loading from "../../components/LoadingStep";
-import { useTranslation } from "react-i18next";
-import { Flow, Instance, Step } from "~/renderer/reducers/walletSync";
-import { useInstances } from "./useInstances";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { useDispatch, useSelector } from "react-redux";
+import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setFlow } from "~/renderer/actions/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { useRemoveMembers } from "../../hooks/useRemoveMember";
 
 type Props = {
-  instance: Instance | null;
+  instance: TrustchainMember | null;
+  device: Device | null;
 };
 
-export default function DeleteInstanceWithTrustchain({ instance }: Props) {
-  const { t } = useTranslation();
+export default function DeleteInstanceWithTrustchain({ instance, device }: Props) {
   const dispatch = useDispatch();
-  const { deleteInstance } = useInstances();
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
-  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
-  const stuffHandledByTrustchain = useCallback(() => {
-    dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
-    deleteInstance(instance as Instance);
+  const removeMemberMutation = useRemoveMembers({ device });
 
-    //IF ERROR
-    // dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceErrorDeletion }));
-  }, [deleteInstance, dispatch, instance]);
+  const onRetry = () =>
+    dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
 
-  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
   useEffect(() => {
-    setTimeout(() => {
-      stuffHandledByTrustchain();
-    }, 3000);
-  }, [stuffHandledByTrustchain]);
+    async function removeMember(instance: TrustchainMember) {
+      await removeMemberMutation.mutateAsync(instance);
+    }
+    if (instance) removeMember(instance);
 
-  return <Loading title={t("walletSync.loading.title")} subtitle={t("walletSync.loading.synch")} />;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return removeMemberMutation.isError ? (
+    <ErrorDisplay error={removeMemberMutation.error} withExportLogs onRetry={onRetry} />
+  ) : (
+    <FollowStepsOnDevice modelId={lastSeenDevice?.modelId as DeviceModelId} />
+  );
 }

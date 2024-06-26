@@ -1,12 +1,9 @@
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import {
   Flow,
   Step,
-  walletSyncFakedSelector,
   walletSyncFlowSelector,
-  walletSyncStateSelector,
   walletSyncStepSelector,
 } from "~/renderer/reducers/walletSync";
 
@@ -26,6 +23,8 @@ export const FlowOptions: Record<
       2: Step.DeviceAction,
       3: Step.CreateOrSynchronizeTrustChain,
       4: Step.ActivationFinal,
+      5: Step.SynchronizationFinal,
+      6: Step.SynchronizationError,
     },
   },
   [Flow.Synchronize]: {
@@ -36,7 +35,7 @@ export const FlowOptions: Record<
       4: Step.Synchronized,
     },
   },
-  [Flow.ManageBackups]: {
+  [Flow.ManageBackup]: {
     steps: {
       1: Step.ManageBackup,
       2: Step.DeleteBackup,
@@ -53,9 +52,9 @@ export const FlowOptions: Record<
       6: Step.UnsecuredLedger,
     },
   },
-  [Flow.walletSyncActivated]: {
+  [Flow.WalletSyncActivated]: {
     steps: {
-      1: Step.walletSyncActivated,
+      1: Step.WalletSyncActivated,
     },
   },
 };
@@ -72,18 +71,9 @@ export const STEPS_WITH_BACK: Step[] = [
   Step.SynchronizedInstances,
 ];
 
-export const useFlows = ({ flow }: HookProps) => {
+export const useFlows = () => {
   const dispatch = useDispatch();
 
-  const hasBeenFaked = useSelector(walletSyncFakedSelector);
-
-  useEffect(() => {
-    if (flow && !hasBeenFaked) {
-      dispatch(setFlow({ flow, step: FlowOptions[flow].steps[1] }));
-    }
-  }, [dispatch, flow, hasBeenFaked]);
-
-  const walletSyncActivated = useSelector(walletSyncStateSelector);
   const currentFlow = useSelector(walletSyncFlowSelector);
   const currentStep = useSelector(walletSyncStepSelector);
 
@@ -103,9 +93,9 @@ export const useFlows = ({ flow }: HookProps) => {
     dispatch(setFlow({ flow: currentFlow, step: stepsRecord[newStep] }));
   };
 
-  const goToWelcomeScreenWalletSync = () => {
-    if (walletSyncActivated) {
-      dispatch(setFlow({ flow: Flow.walletSyncActivated, step: Step.walletSyncActivated }));
+  const goToWelcomeScreenWalletSync = (isWalletSyncActivated: boolean) => {
+    if (isWalletSyncActivated) {
+      dispatch(setFlow({ flow: Flow.WalletSyncActivated, step: Step.WalletSyncActivated }));
     } else {
       dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
     }

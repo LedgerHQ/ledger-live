@@ -8,6 +8,7 @@ type Props = {
   title?: string;
   description?: string;
   withCta?: boolean;
+  onClick?: () => void;
 };
 
 const Container = styled(Box)`
@@ -20,8 +21,7 @@ const Container = styled(Box)`
   justify-content: center;
 `;
 
-export const Success = ({ title, description, withCta = false }: Props) => {
-  const onClick = () => console.log("click");
+export const Success = ({ title, description, withCta = false, onClick }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   return (
@@ -36,7 +36,7 @@ export const Success = ({ title, description, withCta = false }: Props) => {
         {description}
       </Text>
 
-      {withCta && (
+      {withCta && onClick && (
         <BottomContainer mb={3} width={"100%"} px={"40px"}>
           <ButtonV3 variant="main" onClick={onClick} flex={1}>
             {t("walletSync.success.backup.synchAnother")}

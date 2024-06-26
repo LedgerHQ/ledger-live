@@ -4,30 +4,38 @@
  * It essentially is the client's credentials that are only stored on the
  * client side and the trustchain returned by the backend.
  */
-import { MemberCredentials, Trustchain } from "./types";
+import { JWT, MemberCredentials, Trustchain } from "./types";
 
 export type TrustchainStore = {
   trustchain: Trustchain | null;
   memberCredentials: MemberCredentials | null;
+  jwt: JWT | null;
 };
 
 export const getInitialStore = (): TrustchainStore => {
   return {
     trustchain: null,
     memberCredentials: null,
+    jwt: null,
   };
 };
 
-export enum WalletHandlerType {
-  RESET_TRUSTCHAIN_STORE = "RESET_TRUSTCHAIN_STORE",
-  SET_TRUSTCHAIN = "SET_TRUSTCHAIN",
-  SET_MEMBER_CREDENTIALS = "SET_MEMBER_CREDENTIALS",
+export const trustchainStoreActionTypePrefix = "TRUSTCHAIN_STORE_";
+
+export enum TrustchainHandlerType {
+  TRUSTCHAIN_STORE_IMPORT_STATE = `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
+  TRUSTCHAIN_STORE_RESET = `${trustchainStoreActionTypePrefix}RESET`,
+  TRUSTCHAIN_STORE_SET_TRUSTCHAIN = `${trustchainStoreActionTypePrefix}SET_TRUSTCHAIN`,
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS = `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
+  TRUSTCHAIN_STORE_SET_JWT = `${trustchainStoreActionTypePrefix}SET_JWT`,
 }
 
-export type HandlersPayloads = {
-  RESET_TRUSTCHAIN_STORE: never;
-  SET_TRUSTCHAIN: { trustchain: Trustchain };
-  SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
+export type TrustchainHandlersPayloads = {
+  TRUSTCHAIN_STORE_IMPORT_STATE: { trustchainStore: TrustchainStore };
+  TRUSTCHAIN_STORE_RESET: never;
+  TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
+  TRUSTCHAIN_STORE_SET_JWT: { jwt: JWT };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -37,43 +45,73 @@ type Handlers<State, Types, PreciseKey = true> = {
   ) => State;
 };
 
-export type WalletHandlers<PreciseKey = true> = Handlers<
+export type TrustchainHandlers<PreciseKey = true> = Handlers<
   TrustchainStore,
-  HandlersPayloads,
+  TrustchainHandlersPayloads,
   PreciseKey
 >;
 
-export const handlers: WalletHandlers = {
-  RESET_TRUSTCHAIN_STORE: (): TrustchainStore => {
+export const trustchainHandlers: TrustchainHandlers = {
+  TRUSTCHAIN_STORE_IMPORT_STATE: (_, { payload: { trustchainStore } }) => {
+    return trustchainStore;
+  },
+  TRUSTCHAIN_STORE_RESET: (): TrustchainStore => {
     return { ...getInitialStore() };
   },
-  SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
+  TRUSTCHAIN_STORE_SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
     return { ...state, trustchain };
   },
-  SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
     return { ...state, memberCredentials };
+  },
+  TRUSTCHAIN_STORE_SET_JWT: (state, { payload: { jwt } }) => {
+    return { ...state, jwt };
   },
 };
 
 // actions
 
+export const importTrustchainStoreState = ({
+  trustchainStore,
+}: {
+  trustchainStore: TrustchainStore;
+}) => ({
+  type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
+  payload: { trustchainStore },
+});
+
 export const resetTrustchainStore = () => ({
-  type: "RESET_TRUSTCHAIN_STORE",
+  type: `${trustchainStoreActionTypePrefix}RESET`,
 });
 
 export const setTrustchain = (trustchain: Trustchain) => ({
-  type: "SET_TRUSTCHAIN",
+  type: `${trustchainStoreActionTypePrefix}SET_TRUSTCHAIN`,
   payload: { trustchain },
 });
 
 export const setMemberCredentials = (memberCredentials: MemberCredentials) => ({
-  type: "SET_MEMBER_CREDENTIALS",
+  type: `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
   payload: { memberCredentials },
+});
+
+export const setJwt = (jwt: JWT) => ({
+  type: `${trustchainStoreActionTypePrefix}SET_JWT`,
+  payload: { jwt },
 });
 
 // Local Selectors
 
-export const trustchainSelector = (state: TrustchainStore): Trustchain | null => state.trustchain;
+export const trustchainStoreSelector = (state: {
+  trustchainStore: TrustchainStore;
+}): TrustchainStore => state.trustchainStore;
 
-export const liveCredentialsSelector = (state: TrustchainStore): MemberCredentials | null =>
-  state.memberCredentials;
+export const trustchainSelector = (state: {
+  trustchainStore: TrustchainStore;
+}): Trustchain | null => state.trustchainStore.trustchain;
+
+export const memberCredentialsSelector = (state: {
+  trustchainStore: TrustchainStore;
+}): MemberCredentials | null => state.trustchainStore.memberCredentials;
+
+export const jwtSelector = (state: { trustchainStore: TrustchainStore }): JWT | null =>
+  state.trustchainStore.jwt;

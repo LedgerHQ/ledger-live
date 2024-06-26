@@ -36,7 +36,7 @@ export class SDK implements TrustchainSDK {
 
   async initMemberCredentials(): Promise<MemberCredentials> {
     const kp = await crypto.randomKeypair();
-    return convertKeyPairToLiveCredentials(kp);
+    return convertKeyPairToMemberCredentials(kp);
   }
 
   async authWithDevice(transport: Transport): Promise<JWT> {
@@ -61,7 +61,7 @@ export class SDK implements TrustchainSDK {
     const data = crypto.from_hex(challenge.tlv);
     const [parsed, _] = Challenge.fromBytes(data);
     const hash = await crypto.hash(parsed.getUnsignedTLV());
-    const keypair = convertLiveCredentialsToKeyPair(memberCredentials);
+    const keypair = convertMemberCredentialsToKeyPair(memberCredentials);
     const sig = await crypto.sign(hash, keypair);
     const signature = crypto.to_hex(sig);
     const credential = {
@@ -96,10 +96,12 @@ export class SDK implements TrustchainSDK {
   ): Promise<{
     jwt: JWT;
     trustchain: Trustchain;
+    hasCreatedTrustchain: boolean;
   }> {
     const hw = device.apdu(transport);
     let jwt = deviceJWT;
     let trustchains = await api.getTrustchains(jwt);
+    let hasCreatedTrustchain = false;
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
@@ -109,6 +111,7 @@ export class SDK implements TrustchainSDK {
       await api.postSeed(jwt, crypto.to_hex(commandStream));
       jwt = await api.refreshAuth(jwt);
       trustchains = await api.getTrustchains(jwt);
+      hasCreatedTrustchain = true;
     }
 
     // we find our trustchain root id
@@ -136,6 +139,7 @@ export class SDK implements TrustchainSDK {
       const members = resolved.getMembers();
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
+
     if (shouldShare) {
       streamTree = await remapUserInteractions(
         pushMember(streamTree, path, trustchainRootId, jwt, hw, {
@@ -155,7 +159,7 @@ export class SDK implements TrustchainSDK {
       applicationPath: path,
     };
 
-    return { jwt, trustchain };
+    return { jwt, trustchain, hasCreatedTrustchain };
   }
 
   async refreshAuth(jwt: JWT): Promise<JWT> {
@@ -310,14 +314,14 @@ export class SDK implements TrustchainSDK {
   }
 }
 
-export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): MemberCredentials {
+export function convertKeyPairToMemberCredentials(keyPair: CryptoKeyPair): MemberCredentials {
   return {
     pubkey: crypto.to_hex(keyPair.publicKey),
     privatekey: crypto.to_hex(keyPair.privateKey),
   };
 }
 
-export function convertLiveCredentialsToKeyPair(
+export function convertMemberCredentialsToKeyPair(
   memberCredentials: MemberCredentials,
 ): CryptoKeyPair {
   return {
@@ -327,7 +331,7 @@ export function convertLiveCredentialsToKeyPair(
 }
 
 function getSoftwareDevice(memberCredentials: MemberCredentials): SoftwareDevice {
-  const kp = convertLiveCredentialsToKeyPair(memberCredentials);
+  const kp = convertMemberCredentialsToKeyPair(memberCredentials);
   return new SoftwareDevice(kp);
 }
 
@@ -379,6 +383,7 @@ async function pushMember(
   member: TrustchainMember,
 ) {
   const isNewDerivation = !streamTree.getChild(path);
+
   streamTree = await streamTree.share(
     path,
     hw,
@@ -386,6 +391,7 @@ async function pushMember(
     member.name,
     member.permissions,
   );
+
   const child = streamTree.getChild(path);
   if (!child) {
     throw new Error("StreamTree.share failed to create the child stream.");

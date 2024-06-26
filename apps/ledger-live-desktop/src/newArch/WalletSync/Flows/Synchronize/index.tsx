@@ -12,12 +12,10 @@ import SyncFinalStep from "./04-SyncFinalStep";
 const SynchronizeWallet = () => {
   const dispatch = useDispatch();
 
-  const { currentStep, goToNextScene } = useFlows({
-    flow: Flow.Synchronize,
-  });
+  const { currentStep, goToNextScene } = useFlows();
 
-  const goToActivation = () => {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+  const startSyncWithDevice = () => {
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
   };
 
   const getStep = () => {
@@ -25,10 +23,13 @@ const SynchronizeWallet = () => {
       default:
       case Step.SynchronizeMode:
         return (
-          <SynchronizeModeStep goToQRCode={goToNextScene} goToSyncWithDevice={goToActivation} />
+          <SynchronizeModeStep
+            goToQRCode={goToNextScene}
+            goToSyncWithDevice={startSyncWithDevice}
+          />
         );
       case Step.SynchronizeWithQRCode:
-        return <SynchWithQRCodeStep displayPinCode={goToNextScene} />;
+        return <SynchWithQRCodeStep />;
       case Step.PinCode:
         return <PinCodeStep />;
       case Step.Synchronized:
@@ -37,7 +38,14 @@ const SynchronizeWallet = () => {
   };
 
   return (
-    <Flex flexDirection="column" height="100%" paddingX="40px" rowGap="48px">
+    <Flex
+      flexDirection="column"
+      height="100%"
+      paddingX="40px"
+      rowGap="48px"
+      alignItems={currentStep === Step.Synchronized ? "center" : undefined}
+      justifyContent={currentStep === Step.Synchronized ? "center" : undefined}
+    >
       {getStep()}
     </Flex>
   );

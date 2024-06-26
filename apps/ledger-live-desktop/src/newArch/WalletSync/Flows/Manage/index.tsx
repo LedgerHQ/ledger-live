@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Icons } from "@ledgerhq/react-ui";
+import { Box, Flex, Text, Icons, InfiniteLoader } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -8,6 +8,7 @@ import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
 import { useInstances } from "../ManageInstances/useInstances";
+import { useLifeCycle } from "../../hooks/walletSync.hooks";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -16,7 +17,8 @@ const Separator = () => {
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
-  const { instances } = useInstances();
+  useLifeCycle();
+  const { instances, isLoading, hasError } = useInstances();
 
   const dispatch = useDispatch();
 
@@ -24,8 +26,8 @@ const WalletSyncManage = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
   };
 
-  const goToManageBackups = () => {
-    dispatch(setFlow({ flow: Flow.ManageBackups, step: Step.ManageBackup }));
+  const goToManageBackup = () => {
+    dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
   };
 
   const goToManageInstances = () => {
@@ -42,7 +44,7 @@ const WalletSyncManage = () => {
     {
       label: t("walletSync.manage.backup.label"),
       description: t("walletSync.manage.backup.description"),
-      onClick: goToManageBackups,
+      onClick: goToManageBackup,
       testId: "walletSync-manage-backup",
     },
   ];
@@ -64,12 +66,21 @@ const WalletSyncManage = () => {
       <InstancesRow
         paddingY={24}
         justifyContent="space-between"
-        onClick={goToManageInstances}
+        onClick={!isLoading && !hasError ? goToManageInstances : undefined}
         data-testid="walletSync-manage-instances"
+        disabled={isLoading || hasError}
       >
-        <Text fontSize={13.44}>
-          {t("walletSync.manage.instance.label", { count: instances.length })}
-        </Text>
+        {hasError ? (
+          <Text fontSize={13.44} color="error.c60">
+            {t("walletSync.error.fetching")}
+          </Text>
+        ) : isLoading ? (
+          <InfiniteLoader size={16} />
+        ) : (
+          <Text fontSize={13.44}>
+            {t("walletSync.manage.instance.label", { count: instances?.length })}
+          </Text>
+        )}
 
         <Flex columnGap={"8px"} alignItems={"center"}>
           <Text fontSize={13.44}>{t("walletSync.manage.instance.cta")}</Text>
@@ -82,8 +93,8 @@ const WalletSyncManage = () => {
 
 export default WalletSyncManage;
 
-const InstancesRow = styled(Flex)`
+const InstancesRow = styled(Flex)<{ disabled?: boolean }>`
   &:hover {
-    cursor: pointer;
+    cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
   }
 `;

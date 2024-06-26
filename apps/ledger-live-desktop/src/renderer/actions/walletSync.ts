@@ -1,9 +1,5 @@
-import { Flow, Instance, Step } from "../reducers/walletSync";
-
-export const setWalletSync = (payload: boolean) => ({
-  type: payload ? "WALLET_SYNC_ACTIVATE" : "WALLET_SYNC_DEACTIVATE",
-  payload,
-});
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { Flow, Step } from "../reducers/walletSync";
 
 export const setFlow = (payload: { flow: Flow; step: Step }) => ({
   type: "WALLET_SYNC_CHANGE_FLOW",
@@ -15,12 +11,12 @@ export const setFaked = (payload: boolean) => ({
   payload,
 });
 
-export const addInstance = (payload: Instance) => ({
+export const addInstance = (payload: TrustchainMember) => ({
   type: "WALLET_SYNC_CHANGE_ADD_INSTANCE",
   payload,
 });
 
-export const removeInstance = (payload: Instance) => ({
+export const removeInstance = (payload: TrustchainMember) => ({
   type: "WALLET_SYNC_CHANGE_REMOVE_INSTANCE",
   payload,
 });
@@ -31,4 +27,14 @@ export const removeAllInstances = () => ({
 
 export const resetWalletSync = () => ({
   type: "WALLET_SYNC_RESET",
+});
+
+export const setQrCodeUrl = (payload: string | null) => ({
+  type: "WALLET_SYNC_CHANGE_QRCODE_URL",
+  payload,
+});
+
+export const setQrCodePinCode = (payload: string | null) => ({
+  type: "WALLET_SYNC_CHANGE_QRCODE_PINCODE",
+  payload,
 });

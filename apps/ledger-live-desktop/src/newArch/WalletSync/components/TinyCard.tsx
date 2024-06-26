@@ -1,4 +1,4 @@
-import { Flex, Text } from "@ledgerhq/react-ui";
+import { Box, Flex, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import styled from "styled-components";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -8,9 +8,10 @@ export type CardProps = {
   cta: string;
   onClick: () => void;
   testId: string;
+  currentInstance?: boolean;
 };
 
-export const TinyCard = ({ text, cta, onClick, testId }: CardProps) => {
+export const TinyCard = ({ text, cta, onClick, testId, currentInstance = false }: CardProps) => {
   return (
     <CardContainer
       flexDirection="row"
@@ -19,17 +20,24 @@ export const TinyCard = ({ text, cta, onClick, testId }: CardProps) => {
       data-testid={testId}
       justifyContent="space-between"
     >
-      <Ellipsis>
-        <Text fontSize={14} variant="body" fontWeight="semiBold" color="neutral.c100">
-          {text}
-        </Text>
-      </Ellipsis>
+      <Flex alignItems="center">
+        {currentInstance && (
+          <Flex mr={2}>
+            <CurrentInstance />
+          </Flex>
+        )}
+        <Ellipsis>
+          <Text fontSize={14} variant="body" fontWeight="semiBold" color="neutral.c100">
+            {text}
+          </Text>
+        </Ellipsis>
+      </Flex>
       <ButtonContainer>
         <Text
           fontSize={14}
           variant="body"
           fontWeight="semiBold"
-          color="primary.c80"
+          color={currentInstance ? "neutral.c70" : "primary.c80"}
           onClick={onClick}
         >
           {cta}
@@ -48,4 +56,11 @@ const ButtonContainer = styled(Flex)`
   &:hover {
     cursor: pointer;
   }
+`;
+
+const CurrentInstance = styled(Box)`
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  background-color: ${p => p.theme.colors.success.c70};
 `;
