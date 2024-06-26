@@ -1,5 +1,16 @@
 # web-tools
 
+## 0.6.1-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`b478096`](https://github.com/LedgerHQ/ledger-live/commit/b478096537a0f86a9e39acc8c6cf17b1184e0849), [`d13a5d7`](https://github.com/LedgerHQ/ledger-live/commit/d13a5d7f8f23624feb3a4a041cd7966d3b100dcf)]:
+  - @ledgerhq/cryptoassets@13.1.1-next.0
+  - @ledgerhq/live-common@34.4.0-next.3
+  - @ledgerhq/coin-framework@0.15.0-next.1
+  - @ledgerhq/hw-app-eth@6.37.1-next.1
+  - @ledgerhq/live-wallet@0.3.0-next.1
+
 ## 0.6.1-next.2
 
 ### Patch Changes

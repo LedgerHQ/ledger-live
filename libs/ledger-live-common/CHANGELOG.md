@@ -1,5 +1,30 @@
 # @ledgerhq/live-common
 
+## 34.4.0-next.3
+
+### Patch Changes
+
+- [#7188](https://github.com/LedgerHQ/ledger-live/pull/7188) [`d13a5d7`](https://github.com/LedgerHQ/ledger-live/commit/d13a5d7f8f23624feb3a4a041cd7966d3b100dcf) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-13071): use not enough gas error for Tron
+
+- Updated dependencies [[`b478096`](https://github.com/LedgerHQ/ledger-live/commit/b478096537a0f86a9e39acc8c6cf17b1184e0849)]:
+  - @ledgerhq/cryptoassets@13.1.1-next.0
+  - @ledgerhq/coin-framework@0.15.0-next.1
+  - @ledgerhq/coin-algorand@0.5.1-next.1
+  - @ledgerhq/coin-bitcoin@0.6.1-next.1
+  - @ledgerhq/coin-cardano@0.1.1-next.1
+  - @ledgerhq/coin-evm@2.1.1-next.1
+  - @ledgerhq/coin-near@0.5.1-next.1
+  - @ledgerhq/coin-polkadot@1.0.0-next.1
+  - @ledgerhq/coin-solana@0.7.1-next.1
+  - @ledgerhq/coin-tezos@0.4.1-next.1
+  - @ledgerhq/coin-xrp@0.3.0-next.1
+  - @ledgerhq/hw-app-eth@6.37.1-next.1
+  - @ledgerhq/hw-app-vet@0.2.1-next.0
+  - @ledgerhq/live-countervalues@0.2.1-next.1
+  - @ledgerhq/live-countervalues-react@0.2.1-next.1
+  - @ledgerhq/live-nft@0.4.1-next.1
+  - @ledgerhq/live-wallet@0.3.0-next.1
+
 ## 34.4.0-next.2
 
 ### Patch Changes
