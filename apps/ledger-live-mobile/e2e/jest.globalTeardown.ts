@@ -17,10 +17,8 @@ export default async () => {
       await launchApp();
       const app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
       await app.portfolio.waitForPortfolioPageToLoad();
-      const featureFlags = await getFlags();
-      const appEnvs = await getEnvs();
-      const flagsData = featureFlags ? formatFlagsData(JSON.parse(featureFlags)) : "";
-      const envsData = appEnvs ? formatEnvData(JSON.parse(appEnvs)) : "";
+      const flagsData = formatFlagsData(JSON.parse(await getFlags()));
+      const envsData = formatEnvData(JSON.parse(await getEnvs()));
       await fs.appendFile(environmentFilePath, flagsData + envsData);
       closeBridge();
       await cleanupDetox();
