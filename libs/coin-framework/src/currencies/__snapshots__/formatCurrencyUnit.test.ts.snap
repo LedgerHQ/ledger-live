@@ -276,8 +276,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Stargaze unit (Stargaze) 1`] = `"12.345.678.900,000000- -STARS"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Stealth unit (stealth) 1`] = `"12.345.678.900,000000- -XST"`;
-
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Stellar unit (Lumen) 1`] = `"1.234.567.890,0000000- -XLM"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Stratis unit (stratis) 1`] = `"123.456.789,00000000- -STRAT"`;
@@ -599,8 +597,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Stakenet unit (xsn) 1`] = `"123,456,789.00000000- -XSN"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Stargaze unit (Stargaze) 1`] = `"12,345,678,900.000000- -STARS"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Stealth unit (stealth) 1`] = `"12,345,678,900.000000- -XST"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Stellar unit (Lumen) 1`] = `"1,234,567,890.0000000- -XLM"`;
 
@@ -924,8 +920,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Stargaze unit (Stargaze) 1`] = `"12.345.678.900,000000- -STARS"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Stealth unit (stealth) 1`] = `"12.345.678.900,000000- -XST"`;
-
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Stellar unit (Lumen) 1`] = `"1.234.567.890,0000000- -XLM"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Stratis unit (stratis) 1`] = `"123.456.789,00000000- -STRAT"`;
@@ -1247,8 +1241,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Stakenet unit (xsn) 1`] = `"123 456 789,00000000- -XSN"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Stargaze unit (Stargaze) 1`] = `"12 345 678 900,000000- -STARS"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Stealth unit (stealth) 1`] = `"12 345 678 900,000000- -XST"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Stellar unit (Lumen) 1`] = `"1 234 567 890,0000000- -XLM"`;
 
@@ -1572,8 +1564,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Stargaze unit (Stargaze) 1`] = `"12,345,678,900.000000- -STARS"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Stealth unit (stealth) 1`] = `"12,345,678,900.000000- -XST"`;
-
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Stellar unit (Lumen) 1`] = `"1,234,567,890.0000000- -XLM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Stratis unit (stratis) 1`] = `"123,456,789.00000000- -STRAT"`;
@@ -1895,8 +1885,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Stakenet unit (xsn) 1`] = `"123,456,789.00000000- -XSN"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Stargaze unit (Stargaze) 1`] = `"12,345,678,900.000000- -STARS"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Stealth unit (stealth) 1`] = `"12,345,678,900.000000- -XST"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Stellar unit (Lumen) 1`] = `"1,234,567,890.0000000- -XLM"`;
 
@@ -2220,8 +2208,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Stargaze unit (Stargaze) 1`] = `"12.345.678.900,000000- -STARS"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Stealth unit (stealth) 1`] = `"12.345.678.900,000000- -XST"`;
-
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Stellar unit (Lumen) 1`] = `"1.234.567.890,0000000- -XLM"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Stratis unit (stratis) 1`] = `"123.456.789,00000000- -STRAT"`;
@@ -2543,8 +2529,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Stakenet unit (xsn) 1`] = `"123 456 789,00000000- -XSN"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Stargaze unit (Stargaze) 1`] = `"12 345 678 900,000000- -STARS"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Stealth unit (stealth) 1`] = `"12 345 678 900,000000- -XST"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Stellar unit (Lumen) 1`] = `"1 234 567 890,0000000- -XLM"`;
 
@@ -2868,8 +2852,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Stargaze unit (Stargaze) 1`] = `"12.345.678.900,000000- -STARS"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Stealth unit (stealth) 1`] = `"12.345.678.900,000000- -XST"`;
-
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Stellar unit (Lumen) 1`] = `"1.234.567.890,0000000- -XLM"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Stratis unit (stratis) 1`] = `"123.456.789,00000000- -STRAT"`;
@@ -3192,8 +3174,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Stargaze unit (Stargaze) 1`] = `"12,345,678,900.000000- -STARS"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Stealth unit (stealth) 1`] = `"12,345,678,900.000000- -XST"`;
-
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Stellar unit (Lumen) 1`] = `"1,234,567,890.0000000- -XLM"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Stratis unit (stratis) 1`] = `"123,456,789.00000000- -STRAT"`;
@@ -3515,8 +3495,6 @@ exports[`formatCurrencyUnit with default options should correctly format Stacks 
 exports[`formatCurrencyUnit with default options should correctly format Stakenet unit (xsn) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Stargaze unit (Stargaze) 1`] = `"12,345,678,900"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Stealth unit (stealth) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Stellar unit (Lumen) 1`] = `"1,234,567,890"`;
 
