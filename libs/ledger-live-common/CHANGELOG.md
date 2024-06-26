@@ -1,5 +1,31 @@
 # @ledgerhq/live-common
 
+## 34.4.1-nightly.1
+
+### Patch Changes
+
+- [#7149](https://github.com/LedgerHQ/ledger-live/pull/7149) [`f4f7b0a`](https://github.com/LedgerHQ/ledger-live/commit/f4f7b0a575f85ef7625e7e982ffbd77ea57a2575) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-13069): swap currencies api cache
+
+- Updated dependencies [[`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6), [`370285f`](https://github.com/LedgerHQ/ledger-live/commit/370285fd5464477526678e8303f4413fea8bcbbe)]:
+  - @ledgerhq/cryptoassets@13.1.1-nightly.0
+  - @ledgerhq/coin-tron@0.0.2-nightly.1
+  - @ledgerhq/coin-framework@0.14.1-nightly.1
+  - @ledgerhq/coin-algorand@0.5.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.6.1-nightly.1
+  - @ledgerhq/coin-cardano@0.1.1-nightly.1
+  - @ledgerhq/coin-evm@2.1.1-nightly.1
+  - @ledgerhq/coin-near@0.5.1-nightly.1
+  - @ledgerhq/coin-polkadot@0.8.1-nightly.1
+  - @ledgerhq/coin-solana@0.7.1-nightly.1
+  - @ledgerhq/coin-tezos@0.4.1-nightly.1
+  - @ledgerhq/coin-xrp@0.2.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.37.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.2.1-nightly.1
+  - @ledgerhq/live-countervalues@0.2.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.1-nightly.1
+  - @ledgerhq/live-nft@0.4.1-nightly.1
+  - @ledgerhq/live-wallet@0.2.1-nightly.1
+
 ## 34.4.1-nightly.0
 
 ### Patch Changes

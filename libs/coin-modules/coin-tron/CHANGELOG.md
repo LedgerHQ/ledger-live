@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tron
 
+## 0.0.2-nightly.1
+
+### Patch Changes
+
+- [#7176](https://github.com/LedgerHQ/ledger-live/pull/7176) [`370285f`](https://github.com/LedgerHQ/ledger-live/commit/370285fd5464477526678e8303f4413fea8bcbbe) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-13071): use not enough gas error for Tron
+
+- Updated dependencies [[`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6)]:
+  - @ledgerhq/cryptoassets@13.1.1-nightly.0
+  - @ledgerhq/coin-framework@0.14.1-nightly.1
+
 ## 0.0.2-nightly.0
 
 ### Patch Changes

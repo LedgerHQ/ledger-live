@@ -1,5 +1,11 @@
 # @ledgerhq/context-module
 
+## 0.1.0-nightly.1
+
+### Minor Changes
+
+- [#7170](https://github.com/LedgerHQ/ledger-live/pull/7170) [`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Remove the dependency of ethers, replaced by custom types: TransactionContext in input and ClearSignContext in output
+
 ## 0.0.3-nightly.0
 
 ### Patch Changes

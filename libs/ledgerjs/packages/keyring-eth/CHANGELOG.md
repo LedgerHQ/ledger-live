@@ -1,5 +1,18 @@
 # @ledgerhq/keyring-eth
 
+## 0.2.0-nightly.2
+
+### Minor Changes
+
+- [#7170](https://github.com/LedgerHQ/ledger-live/pull/7170) [`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Support the specific transaction type of ledger live
+
+### Patch Changes
+
+- Updated dependencies [[`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad)]:
+  - @ledgerhq/context-module@0.1.0-nightly.1
+  - @ledgerhq/coin-evm@2.1.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.37.1-nightly.1
+
 ## 0.1.1-nightly.1
 
 ### Patch Changes

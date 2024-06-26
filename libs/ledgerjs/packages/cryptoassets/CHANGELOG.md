@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.1.1-nightly.0
+
+### Patch Changes
+
+- [#7183](https://github.com/LedgerHQ/ledger-live/pull/7183) [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-13101): update tron dead address
+
 ## 13.1.0
 
 ### Minor Changes
