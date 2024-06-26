@@ -23,10 +23,10 @@ import type {
   Transaction,
   TransactionRaw,
 } from "./types";
-import { findSubAccountById } from "@ledgerhq/coin-framework/lib-es/account/helpers";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/parseCurrencyUnit";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 
 export const STELLAR_BURN_ADDRESS = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
 
