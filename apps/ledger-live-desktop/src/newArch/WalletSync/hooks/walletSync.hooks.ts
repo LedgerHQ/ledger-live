@@ -7,14 +7,13 @@ import {
   resetTrustchainStore,
 } from "@ledgerhq/trustchain/store";
 import { Trustchain, MemberCredentials, JWT } from "@ledgerhq/trustchain/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { ErrorType, QueryKey } from "./type.hooks";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { TrustchainEjected } from "@ledgerhq/trustchain/errors";
-import { useEffect } from "react";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -22,18 +21,16 @@ export const useAuth = () => {
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
 
+  async function authFn() {
+    const newJwt = await sdk.auth(trustchain as Trustchain, memberCredentials as MemberCredentials);
+    dispatch(setJwt(newJwt));
+    return newJwt;
+  }
   const auth = useQuery({
     queryKey: [QueryKey.auth],
-    queryFn: () => sdk.auth(trustchain as Trustchain, memberCredentials as MemberCredentials),
+    queryFn: authFn,
     enabled: false,
   });
-
-  useEffect(() => {
-    if (auth.data) {
-      console.log("useAuth", auth.data);
-      dispatch(setJwt(auth.data));
-    }
-  }, [auth.data, dispatch]);
 
   return auth;
 };
@@ -45,23 +42,23 @@ export const useRestoreTrustchain = () => {
   const jwt = useSelector(jwtSelector);
   const trustchain = useSelector(trustchainSelector);
 
+  async function restoreTrustchain() {
+    const newTrustchain = await sdk.restoreTrustchain(
+      jwt as JWT,
+      (trustchain as Trustchain).rootId,
+      memberCredentials as MemberCredentials,
+    );
+
+    dispatch(setTrustchain(newTrustchain));
+
+    return newTrustchain;
+  }
+
   const restore = useQuery({
     enabled: false,
     queryKey: [QueryKey.restoreTrustchain],
-    queryFn: () =>
-      sdk.restoreTrustchain(
-        jwt as JWT,
-        (trustchain as Trustchain).rootId,
-        memberCredentials as MemberCredentials,
-      ),
+    queryFn: restoreTrustchain,
   });
-
-  useEffect(() => {
-    if (restore.data) {
-      console.log("useRestoreTrustchain", restore.data);
-      dispatch(setTrustchain(restore.data));
-    }
-  }, [dispatch, restore.data]);
 
   return restore;
 };
@@ -71,23 +68,23 @@ export const useRefreshAuth = () => {
   const sdk = useTrustchainSdk();
   const jwt = useSelector(jwtSelector);
 
+  async function refresh() {
+    const newJwt = await sdk.refreshAuth(jwt as JWT);
+    dispatch(setJwt(newJwt));
+    return newJwt;
+  }
+
   const resfresh = useQuery({
     enabled: false,
     queryKey: [QueryKey.refreshAuth, jwt],
-    queryFn: () => sdk.refreshAuth(jwt as JWT),
+    queryFn: refresh,
   });
-
-  useEffect(() => {
-    if (resfresh.data) {
-      console.log("useRefreshAuth", resfresh.data);
-      dispatch(setJwt(resfresh.data));
-    }
-  }, [dispatch, resfresh.data, resfresh.isLoading]);
 
   return resfresh;
 };
 
 export const useLifeCycle = () => {
+  const queryClient = useQueryClient();
   const auth = useAuth();
   const refreshAuth = useRefreshAuth();
   const restoreTrustchain = useRestoreTrustchain();
@@ -95,13 +92,16 @@ export const useLifeCycle = () => {
   const dispatch = useDispatch();
 
   function reset() {
-    // handle permission issue
     dispatch(resetTrustchainStore());
     dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
   }
 
   const exactErrorActions: { [key: string]: () => void } = {
-    [ErrorType.JWT_EXPIRED_REFRESH]: () => refreshAuth.refetch(),
+    [ErrorType.JWT_EXPIRED_REFRESH]: () => {
+      refreshAuth.refetch().then(() => {
+        queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
+      });
+    },
     [ErrorType.JWT_EXPIRED_CHALLENGE]: () => auth.refetch(),
   };
 
@@ -146,18 +146,4 @@ export const useLifeCycle = () => {
     error: auth.error || refreshAuth.error,
     isError: !!auth.error || !!refreshAuth.error,
   };
-
-  /**
-   * 
-   * 1. call some endpoint with a JWT on Trustchain API or Cloud Sync API
-2. if status == 401
-  2.1 if type == JWT_EXPIRED
-    2.1.1 if refreshable == false => call /challenge, perform full auth, go to 1
-    2.1.2 if refreshable == true => call /refresh
-       2.1.2.1 if status == 200 => go to 1
-       2.1.2.2 otherwise if status == 401
-         2.1.2.2.1 if type == JWT_EXPIRED: edge case, JWT refresh has expired between first and second call => call /challenge, perform full auth, go to 1
-         2.1.2.2.2 otherwise, there is an actual permission issue => handle it
-  2.2 otherwise, there is an actual permission issue => handle it
-   */
 };

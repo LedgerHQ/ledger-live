@@ -35,7 +35,7 @@ export default function SynchWithQRCodeStep() {
   ];
 
   const { goToActivation, startQRCodeProcessing, url, error, isLoading } = useQRCode();
-
+  console.log("url", url);
   useEffect(() => {
     startQRCodeProcessing();
     // eslint-disable-next-line react-hooks/exhaustive-deps

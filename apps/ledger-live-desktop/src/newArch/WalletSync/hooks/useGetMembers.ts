@@ -20,7 +20,7 @@ export function useGetMembers() {
     isError: isErrorGetMembers,
     error: getMembersError,
   } = useQuery({
-    queryKey: [QueryKey.getMembers, jwt, trustchain],
+    queryKey: [QueryKey.getMembers, trustchain],
     queryFn: () => sdk.getMembers(jwt as JWT, trustchain as Trustchain),
     refetchOnMount: true,
     refetchOnReconnect: true,

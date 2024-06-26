@@ -8,6 +8,7 @@ import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
 import { useInstances } from "../ManageInstances/useInstances";
+import { useLifeCycle } from "../../hooks/walletSync.hooks";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -16,6 +17,7 @@ const Separator = () => {
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
+  useLifeCycle();
   const { instances, isLoading, hasError } = useInstances();
 
   const dispatch = useDispatch();

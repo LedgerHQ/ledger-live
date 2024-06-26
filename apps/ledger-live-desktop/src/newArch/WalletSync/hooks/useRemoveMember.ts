@@ -25,7 +25,7 @@ export function useRemoveMembers({ device }: { device: Device | null }) {
     }
     await runWithDevice(device?.deviceId, async transport => {
       const seedIdToken = await sdk.authWithDevice(transport);
-      dispatch(setJwt(seedIdToken));
+
       const { trustchain: newTrustchain } = await sdk.removeMember(
         transport,
         seedIdToken,
@@ -35,6 +35,7 @@ export function useRemoveMembers({ device }: { device: Device | null }) {
       );
 
       if (newTrustchain) {
+        dispatch(setJwt(seedIdToken));
         dispatch(setTrustchain(newTrustchain));
         dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
       }
