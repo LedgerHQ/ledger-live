@@ -10,8 +10,8 @@ export class AddAccountModal extends Modal {
   private accountsList = this.page.getByTestId("add-accounts-step-import-accounts-list");
   private stopButton = this.page.getByTestId("add-accounts-import-stop-button");
   private doneButton = this.page.getByTestId("add-accounts-finish-close-button");
-  readonly closeButton = this.page.locator("data-test-id=modal-close-button");
-  private infoBox = this.page.locator("data-test-id=add-token-infoBox");
+  readonly closeButton = this.page.getByTestId("modal-close-button");
+  private infoBox = this.page.getByTestId("add-token-infoBox");
   private successAddLabel = this.page.locator("text=Account added successfully");
   private selectTokenNetwork = (token: Token) =>
     this.page
@@ -19,7 +19,7 @@ export class AddAccountModal extends Modal {
         name: `${token.tokenName} (${token.tokenTicker}) ${token.tokenNetwork}`,
       })
       .locator("span");
-  readonly continueButton = this.page.locator("data-test-id=modal-continue-button");
+  readonly continueButton = this.page.getByTestId("modal-continue-button");
 
   @step("Select token $0")
   async selectToken(token: Token) {

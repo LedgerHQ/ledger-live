@@ -29,8 +29,7 @@ export class AccountPage extends AppPage {
   private closeModal = this.page.getByTestId("modal-close-button");
   private accountbutton = (accountName: string) =>
     this.page.getByRole("button", { name: `${accountName}` });
-  private tokenRow = (tokenTicker: string) =>
-    this.page.locator(`data-test-id=token-row-${tokenTicker}`);
+  private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
 
   @step("Navigate to token $0")
