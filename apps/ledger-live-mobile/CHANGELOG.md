@@ -66,6 +66,28 @@
   - @ledgerhq/live-nft@0.4.1-next.0
   - @ledgerhq/live-nft-react@0.4.1-next.0
 
+## 3.45.1
+
+### Patch Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`33d26a9`](https://github.com/LedgerHQ/ledger-live/commit/33d26a9847d15571cce19f8159e29958398bb3a0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - bugfix crash case in ReceiveFunds/02-SelectAccount
+
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/live-common@34.4.0
+
+## 3.45.1-hotfix.1
+
+### Patch Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`33d26a9`](https://github.com/LedgerHQ/ledger-live/commit/33d26a9847d15571cce19f8159e29958398bb3a0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - bugfix crash case in ReceiveFunds/02-SelectAccount
+
+## 3.45.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/live-common@34.4.0-hotfix.0
+
 ## 3.45.0
 
 ### Minor Changes
