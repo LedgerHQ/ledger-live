@@ -38,6 +38,7 @@ export enum Step {
   InstanceSuccesfullyDeleted = "InstanceSuccesfullyDeleted",
   InstanceErrorDeletion = "InstanceErrorDeletion",
   UnsecuredLedger = "UnsecuredLedger",
+  AutoRemoveInstance = "AutoRemoveInstance",
 
   //walletSyncActivated
   WalletSyncActivated = "WalletSyncActivated",

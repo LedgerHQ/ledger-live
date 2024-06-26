@@ -7,7 +7,7 @@ import ManageInstancesStep from "./01-ManageInstancesStep";
 import DeviceActionInstanceStep from "./02-DeviceActionInstanceStep";
 import DeleteInstanceWithTrustchain from "./03-DeleteInstanceWithTrustchain";
 import DeletionFinalStep from "./04-DeletionFinalStep";
-import { UnsecuredError } from "./04-UnsecuredError";
+import { DeletionError, ErrorReason } from "./04-DeletionError";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import DeletionErrorFinalStep from "./04-DeletionFinalErrorStep";
 
@@ -58,7 +58,9 @@ const WalletSyncManageInstances = forwardRef<BackRef, BackProps>((_props, ref) =
       case Step.InstanceErrorDeletion:
         return <DeletionErrorFinalStep instance={selectedInstance} />;
       case Step.UnsecuredLedger:
-        return <UnsecuredError />;
+        return <DeletionError error={ErrorReason.UNSECURED} />;
+      case Step.AutoRemoveInstance:
+        return <DeletionError error={ErrorReason.AUTO_REMOVE} />;
     }
   };
 

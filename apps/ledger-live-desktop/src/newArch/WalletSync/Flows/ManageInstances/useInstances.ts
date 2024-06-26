@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
-import { useGetMembers } from "../../useTrustchainSdk";
 import { walletSyncFakedSelector } from "~/renderer/reducers/walletSync";
+import { useGetMembers } from "../../hooks/useGetMembers";
 
 export const useInstances = () => {
   const hasBeenfaked = useSelector(walletSyncFakedSelector);

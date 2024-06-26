@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useRemoveMembers } from "../../useTrustchainSdk";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
@@ -8,6 +7,7 @@ import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { useRemoveMembers } from "../../hooks/useRemoveMember";
 
 type Props = {
   instance: TrustchainMember | null;

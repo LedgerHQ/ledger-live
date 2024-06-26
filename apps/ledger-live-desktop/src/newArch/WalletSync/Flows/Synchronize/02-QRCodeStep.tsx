@@ -1,23 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Flex, Icons, Link, Text, NumberedList } from "@ledgerhq/react-ui";
+import { Flex, Icons, Link, Text, NumberedList, InfiniteLoader } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
-import { useLiveAuthenticate, useTrustchainSdk } from "../../useTrustchainSdk";
-import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
-import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
 import QRCode from "~/renderer/components/QRCode";
-import { useDispatch } from "react-redux";
-import { setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { useQRCode } from "../../hooks/useQRCode";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 
-type Props = {
-  displayPinCode: () => void;
-};
-export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
+export default function SynchWithQRCodeStep() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-
   const { colors } = useTheme();
 
   const steps = [
@@ -43,54 +34,22 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
     { element: t("walletSync.synchronize.qrCode.steps.step3") },
   ];
 
-  const sdk = useTrustchainSdk();
-
-  const { trustchain, memberCredentials } = useLiveAuthenticate();
-
-  const [url, setUrl] = useState<string | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-
-  console.log("SynchWithQRCodeStep", url);
-  console.log("error", error);
-
-  const goToActivation = useCallback(() => {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
-  }, [dispatch]);
-
-  const onStart = useCallback(() => {
-    if (!trustchain || !memberCredentials) return;
-    setError(null);
-    createQRCodeHostInstance({
-      onDisplayQRCode: url => {
-        setUrl(url);
-      },
-      onDisplayDigits: digits => {
-        dispatch(setQrCodePinCode(digits)); // Should we assert that it is a string of 3 digits ?
-        displayPinCode();
-      },
-      addMember: async member => {
-        const jwt = await sdk.auth(trustchain, memberCredentials);
-        await sdk.addMember(jwt, trustchain, memberCredentials, member);
-        return trustchain;
-      },
-    })
-      .catch(e => {
-        if (e instanceof InvalidDigitsError) {
-          return;
-        }
-        setError(e);
-      })
-      .then(() => {
-        setUrl(null);
-        dispatch(setQrCodePinCode(null));
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
-      });
-  }, [trustchain, memberCredentials, dispatch, displayPinCode, sdk]);
+  const { goToActivation, startQRCodeProcessing, url, error, isLoading } = useQRCode();
 
   useEffect(() => {
-    onStart();
+    startQRCodeProcessing();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (isLoading) {
+    <Flex flexDirection="column" rowGap="24px" alignItems="center" flex={1}>
+      <InfiniteLoader size={30} />
+    </Flex>;
+  }
+
+  if (error) {
+    return <ErrorDisplay error={error} onRetry={startQRCodeProcessing} />;
+  }
 
   return (
     <Flex flexDirection="column" rowGap="24px" alignItems="center" flex={1}>

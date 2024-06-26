@@ -29,7 +29,7 @@ const SynchronizeWallet = () => {
           />
         );
       case Step.SynchronizeWithQRCode:
-        return <SynchWithQRCodeStep displayPinCode={goToNextScene} />;
+        return <SynchWithQRCodeStep />;
       case Step.PinCode:
         return <PinCodeStep />;
       case Step.Synchronized:

@@ -5,7 +5,7 @@ import { Card } from "../../components/Card";
 import styled, { useTheme } from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import { ManageBackupStepProps } from "./types";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../useWalletSyncAnalytics";
+import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 export default function ManageBackupStep({ goToDeleteBackup }: ManageBackupStepProps) {

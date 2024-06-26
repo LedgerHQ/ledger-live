@@ -6345,6 +6345,13 @@
       "cta": "Connect another Ledger",
       "ctaDelete": "Delete my encryption key"
     },
+    "autoRemoveError": {
+      "title": "You can’t remove the current instance",
+      "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
+      "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
+      "cta": "I understand",
+      "ctaDelete": "Delete my encryption key"
+    },
     "success": {
       "backup": {
         "title": "Success",

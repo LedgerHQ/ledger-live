@@ -3,11 +3,11 @@ import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
-import { useAddMember } from "../../useTrustchainSdk";
 
 import { DeviceModelId } from "@ledgerhq/devices";
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { useAddMember } from "../../hooks/useAddMember";
 
 type Props = {
   device: Device | null;

@@ -3,14 +3,14 @@ import { useTranslation } from "react-i18next";
 import { DeleteBackupStepProps } from "./types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { useWalletSyncAnalytics, AnalyticsPage } from "../../useWalletSyncAnalytics";
+import { useWalletSyncAnalytics, AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { useDeleteData } from "./useDeleteData";
+import { useDestroyTrustchain } from "../../hooks/useDestroyTrustchain";
 
 export default function DeleteBackupStep({ cancel }: DeleteBackupStepProps) {
   const { t } = useTranslation();
 
-  const { deleteMutation } = useDeleteData();
+  const { deleteMutation } = useDestroyTrustchain();
 
   const { onClickTrack } = useWalletSyncAnalytics();
 
