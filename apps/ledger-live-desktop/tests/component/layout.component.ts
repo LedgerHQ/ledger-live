@@ -6,13 +6,13 @@ export class Layout extends Component {
   readonly appVersion = this.page.locator("data-test-id=app-version");
 
   // portfolio && accounts
-  readonly totalBalance = this.page.locator("data-test-id=total-balance");
+  readonly totalBalance = this.page.getByTestId("total-balance");
 
   // drawer
   readonly drawerCollapseButton = this.page.locator("data-test-id=drawer-collapse-button");
   readonly drawerPortfolioButton = this.page.locator("data-test-id=drawer-dashboard-button");
   private drawerMarketButton = this.page.locator("data-test-id=drawer-market-button");
-  private drawerAccountsButton = this.page.locator("data-test-id=drawer-accounts-button");
+  private drawerAccountsButton = this.page.getByTestId("drawer-accounts-button");
   private drawerDiscoverButton = this.page.locator("data-test-id=drawer-catalog-button");
   private drawerSendButton = this.page.locator("data-test-id=drawer-send-button");
   private drawerReceiveButton = this.page.locator("data-test-id=drawer-receive-button");
