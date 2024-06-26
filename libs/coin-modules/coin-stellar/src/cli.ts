@@ -2,7 +2,7 @@ import type { AccountLike, Account, AccountLikeArray } from "@ledgerhq/types-liv
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getAssetIdFromTokenId } from "./tokens";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/lib-es/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 
 const options = [
   {
