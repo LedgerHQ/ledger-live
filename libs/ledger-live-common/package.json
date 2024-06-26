@@ -187,7 +187,6 @@
     "@ledgerhq/wallet-api-server": "^1.5.10",
     "@stacks/network": "6.10.0",
     "@stacks/transactions": "6.11.0",
-    "@stellar/stellar-sdk": "^11.3.0",
     "@stricahq/typhonjs": "^1.2.6",
     "@taquito/ledger-signer": "^20.0.0",
     "@types/bchaddrjs": "^0.4.0",
