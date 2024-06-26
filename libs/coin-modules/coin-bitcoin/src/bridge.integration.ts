@@ -12,9 +12,8 @@ import dogecoin from "./datasets/dogecoin";
 import zencash from "./datasets/zencash";
 import litecoin from "./datasets/litecoin";
 import pivx from "./datasets/pivx";
-import vertcoin from "./datasets/vertcoin";
-import viacoin from "./datasets/viacoin";
 import zcash from "./datasets/zcash";
+
 /*
 import { createBridges } from "./bridge/js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -43,8 +42,6 @@ export const dataset: DatasetTest<Transaction> = {
     zencash,
     litecoin,
     pivx,
-    vertcoin,
-    viacoin,
     zcash,
   },
 };
@@ -162,7 +159,6 @@ const mockSignerContext = <T>(
     splitTransaction: (
       _transactionHex: string,
       _isSegwitSupported: boolean | null | undefined,
-      _hasTimestamp: boolean | null | undefined,
       _hasExtraData: boolean | null | undefined,
       _additionals: Array<string> | null | undefined,
     ): SignerTransaction => ({
