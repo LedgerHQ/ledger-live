@@ -3182,9 +3182,6 @@ importers:
       '@stacks/transactions':
         specifier: 6.11.0
         version: 6.11.0
-      '@stellar/stellar-sdk':
-        specifier: ^11.3.0
-        version: 11.3.0
       '@stricahq/typhonjs':
         specifier: ^1.2.6
         version: 1.2.8

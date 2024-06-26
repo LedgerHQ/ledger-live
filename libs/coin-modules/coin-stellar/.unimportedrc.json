@@ -1,8 +1,6 @@
 {
   "entry": [
     "src/api/index.ts",
-    "src/bridge/js.ts",
-    "src/cli-transaction.ts",
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/hw-getAddress.ts",
@@ -12,6 +10,6 @@
   ],
   "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.{js,jsx,ts,tsx}"],
   "ignoreUnresolved": [""],
-  "ignoreUnimported": ["src/families/stellar/logic.ts"],
-  "ignoreUnused": ["@stellar/stellar-sdk"]
+  "ignoreUnimported": [],
+  "ignoreUnused": []
 }

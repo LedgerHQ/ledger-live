@@ -951,6 +951,7 @@
     "lib-es/families/polkadot/walletApiAdapter.test.d.ts.map",
     "lib-es/families/polkadot/walletApiAdapter.test.js",
     "lib-es/families/polkadot/walletApiAdapter.test.js.map",
+    "src/families/stellar/logic.ts",
     "lib-es/families/xrp/bridge.integration.test.d.ts",
     "lib-es/families/xrp/bridge.integration.test.d.ts.map",
     "lib-es/families/xrp/bridge.integration.test.js",
