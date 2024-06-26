@@ -43,6 +43,7 @@ import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import EmptyState from "./Rates/EmptyState";
 import SwapWebView, { SwapWebProps } from "./SwapWebView";
 import { useIsSwapLiveFlagEnabled } from "./useIsSwapLiveFlagEnabled";
+import { NotEnoughBalance, NotEnoughBalanceSwap } from "@ledgerhq/errors";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -118,10 +119,14 @@ const SwapForm = () => {
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError =
-    swapTransaction.fromAmountError ||
-    exchangeRatesState?.error ||
-    maybeTezosAccountUnrevealedAccount(swapTransaction) ||
-    (ptxSwapReceiveTRC20WithoutTrx?.enabled ? maybeTronEmptyAccount(swapTransaction) : undefined);
+    swapTransaction.fromAmountError instanceof NotEnoughBalance
+      ? new NotEnoughBalanceSwap(swapTransaction.fromAmountError.message)
+      : swapTransaction.fromAmountError ||
+        exchangeRatesState?.error ||
+        maybeTezosAccountUnrevealedAccount(swapTransaction) ||
+        (ptxSwapReceiveTRC20WithoutTrx?.enabled
+          ? maybeTronEmptyAccount(swapTransaction)
+          : undefined);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);

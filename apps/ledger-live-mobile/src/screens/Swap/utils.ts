@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalanceSwap } from "@ledgerhq/errors";
 import { useAnalytics } from "../../analytics/segment";
 
 export const SWAP_VERSION = "2.34";
@@ -22,7 +22,7 @@ export const useTrackSwapError = () => {
           message: "min_amount",
         });
       }
-      if (error instanceof NotEnoughBalance) {
+      if (error instanceof NotEnoughBalanceSwap) {
         track("error_message", {
           ...sharedSwapTracking,
           ...properties,
