@@ -1,9 +1,7 @@
 import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-framework/config";
 import { MissingCoinConfig } from "@ledgerhq/coin-framework/errors";
 
-export type StellarConfig = unknown;
-
-export type StellarCoinConfig = CurrencyConfig & StellarConfig;
+export type StellarCoinConfig = CurrencyConfig;
 
 let coinConfig: CoinConfig<StellarCoinConfig> | undefined;
 

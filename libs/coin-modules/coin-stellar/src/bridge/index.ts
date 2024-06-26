@@ -16,7 +16,7 @@ import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper
 import resolver from "../hw-getAddress";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import Stellar from "@ledgerhq/hw-app-str";
-import { getAccountShape } from "../getAccountShape";
+import { getAccountShape } from "../synchronization";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { StellarCoinConfig, setCoinConfig } from "../config";
 
