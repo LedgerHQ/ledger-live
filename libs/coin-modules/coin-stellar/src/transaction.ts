@@ -8,8 +8,8 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/lib-es/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { getAssetCodeIssuer } from "./logic";
 
 export function formatTransaction(

@@ -14,7 +14,7 @@ import { buildSignOperation } from "../signOperation";
 import { broadcast } from "../broadcast";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import resolver from "../hw-getAddress";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getAccountShape } from "../synchronization";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { StellarCoinConfig, setCoinConfig } from "../config";

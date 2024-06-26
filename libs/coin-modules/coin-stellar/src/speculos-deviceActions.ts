@@ -1,12 +1,12 @@
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction, TransactionStatus } from "./types";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/lib-es/bot/specs";
+} from "@ledgerhq/coin-framework/bot/specs";
 import { Account } from "@ledgerhq/types-live";
 
 function expectedAmount({
