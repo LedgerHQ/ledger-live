@@ -13,6 +13,7 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': workspace:*
   tslib: 2.6.2
+  '@grpc/grpc-js': 1.6.7
 
 packageExtensionsChecksum: bcc0ac67c2d7bcc88fe46412ebcf46be
 
@@ -13475,7 +13476,7 @@ packages:
       '@firebase/logger': 0.4.0
       '@firebase/util': 1.9.3
       '@firebase/webchannel-wrapper': 0.10.1
-      '@grpc/grpc-js': 1.7.3
+      '@grpc/grpc-js': 1.6.7
       '@grpc/proto-loader': 0.6.13
       node-fetch: 2.6.7
       tslib: 2.6.2
@@ -13824,19 +13825,11 @@ packages:
     dependencies:
       graphql: 15.8.0
 
-  /@grpc/grpc-js@1.7.3:
-    resolution: {integrity: sha512-H9l79u4kJ2PVSxUNA08HMYAnUBLj9v6KjYQ7SQ71hOZcEXhShE/y5iQCesP8+6/Ik/7i2O0a10bPquIcYfufog==}
+  /@grpc/grpc-js@1.6.7:
+    resolution: {integrity: sha512-eBM03pu9hd3VqDQG+kHahiG1x80RGkkqqRb1Pchcwqej/KkAH95gAvKs6laqaHCycYaPK+TKuNQnOz9UXYA8qw==}
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
-      '@grpc/proto-loader': 0.7.12
-      '@types/node': 20.12.12
-    dev: false
-
-  /@grpc/grpc-js@1.8.2:
-    resolution: {integrity: sha512-5cqCjUvDKJWHGeu1prlrFOUmjuML0NequZKJ38PsCkfwIqPnZq4Q9burPP3It7/+46wpl0KsqVN3s6Te3B9Qtw==}
-    engines: {node: ^8.13.0 || >=10.10.0}
-    dependencies:
-      '@grpc/proto-loader': 0.7.12
+      '@grpc/proto-loader': 0.6.13
       '@types/node': 20.12.12
     dev: false
 
@@ -13850,17 +13843,6 @@ packages:
       long: 4.0.0
       protobufjs: 6.11.4
       yargs: 16.2.0
-    dev: false
-
-  /@grpc/proto-loader@0.7.12:
-    resolution: {integrity: sha512-DCVwMxqYzpUCiDMl7hQ384FqP4T3DbNpXU8pt681l3UWCip1WUiD5JrkImUwCB9a7f2cq4CUTmi5r/xIMRPY1Q==}
-    engines: {node: '>=6'}
-    hasBin: true
-    dependencies:
-      lodash.camelcase: 4.3.0
-      long: 5.2.3
-      protobufjs: 7.2.5
-      yargs: 17.7.2
     dev: false
 
   /@hapi/bourne@2.1.0:
@@ -13917,7 +13899,7 @@ packages:
     peerDependencies:
       expo: ^45.0.3
     dependencies:
-      '@grpc/grpc-js': 1.8.2
+      '@grpc/grpc-js': 1.6.7
       '@hashgraph/cryptography': 1.4.7
       '@hashgraph/proto': 2.4.1
       bignumber.js: 9.1.2
@@ -23267,6 +23249,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core-darwin-x64@1.4.11:
@@ -23275,6 +23258,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core-linux-arm-gnueabihf@1.4.11:
@@ -23283,6 +23267,7 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core-linux-arm64-gnu@1.4.11:
@@ -23291,6 +23276,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core-linux-arm64-musl@1.4.11:
@@ -23299,6 +23285,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core-linux-x64-gnu@1.4.11:
@@ -23307,6 +23294,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core-linux-x64-musl@1.4.11:
@@ -23315,6 +23303,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core-win32-arm64-msvc@1.4.11:
@@ -23323,6 +23312,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core-win32-ia32-msvc@1.4.11:
@@ -23331,6 +23321,7 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core-win32-x64-msvc@1.4.11:
@@ -23339,6 +23330,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@swc/core@1.4.11:
@@ -23364,6 +23356,7 @@ packages:
       '@swc/core-win32-arm64-msvc': 1.4.11
       '@swc/core-win32-ia32-msvc': 1.4.11
       '@swc/core-win32-x64-msvc': 1.4.11
+    dev: true
 
   /@swc/counter@0.1.3:
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
@@ -23396,6 +23389,7 @@ packages:
     resolution: {integrity: sha512-/JLo/l2JsT/LRd80C3HfbmVpxOAJ11FO2RCEslFrgzLltoP9j8XIbsyDcfCt2WWyX+CM96rBoNM+IToAkFOugg==}
     dependencies:
       '@swc/counter': 0.1.3
+    dev: true
 
   /@szmarczak/http-timer@1.1.2:
     resolution: {integrity: sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA==}
@@ -26821,7 +26815,7 @@ packages:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.91.0(metro@0.80.8)
+      webpack: 5.91.0(webpack-cli@4.10.0)
     dev: true
 
   /babel-loader@9.1.3(@babel/core@7.24.3)(webpack@5.89.0):
@@ -29656,7 +29650,7 @@ packages:
       postcss-modules-values: 4.0.0(postcss@8.4.38)
       postcss-value-parser: 4.2.0
       semver: 7.5.4
-      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
+      webpack: 5.89.0
 
   /css-loader@6.10.0(webpack@5.91.0):
     resolution: {integrity: sha512-LTSA/jWbwdMlk+rhmElbDR2vbtQoTBPr7fkJE+mxrHj+7ru0hUmHafDRzWIjIHTwpitWVaqY2/UWGRca3yUgRw==}
@@ -32410,7 +32404,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.57.0)(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       eslint: 8.57.0
-      jest: 29.7.0(@types/node@20.12.12)
+      jest: 29.7.0(ts-node@10.9.2)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -35895,7 +35889,7 @@ packages:
       lodash: 4.17.21
       pretty-error: 4.0.0
       tapable: 2.2.1
-      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
+      webpack: 5.89.0
 
   /html-webpack-plugin@5.6.0(webpack@5.91.0):
     resolution: {integrity: sha512-iwaY4wzbe48AfKLZ/Cc8k0L+FKG6oSNRaZ8x5A/T/IVDGyXcbHncM9TdDa93wn0FsSm82FhTKW7f3vS61thXAw==}
@@ -35914,7 +35908,7 @@ packages:
       lodash: 4.17.21
       pretty-error: 4.0.0
       tapable: 2.2.1
-      webpack: 5.91.0(metro@0.80.8)
+      webpack: 5.91.0(webpack-cli@4.10.0)
     dev: true
 
   /htmlparser2@6.1.0:
@@ -37894,7 +37888,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(@types/node@20.12.12)(typescript@5.4.5)
+      ts-node: 10.9.2(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -37935,7 +37929,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
+      ts-node: 10.9.2(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -39053,6 +39047,7 @@ packages:
       merge-stream: 2.0.0
       metro: 0.80.8
       supports-color: 8.1.1
+    dev: true
 
   /jest-worker@28.1.3:
     resolution: {integrity: sha512-CqRA220YV/6jCo8VWvAt1KKx6eek1VIHMPeLEbpcfSfkEeWyBNppynM/o6q+Wmw+sOhos2ml34wZbSX3G13//g==}
@@ -50061,7 +50056,7 @@ packages:
     peerDependencies:
       webpack: ^5.0.0
     dependencies:
-      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
+      webpack: 5.89.0
 
   /style-loader@3.3.4(webpack@5.91.0):
     resolution: {integrity: sha512-0WqXzrsMTyb8yjZJHDqwmnwRJvhALK9LfRtRc6B4UTWe8AijYLZYZ9thuJTZc2VfQWINADW/j+LiJnfy2RoC1w==}
@@ -50887,6 +50882,7 @@ packages:
       webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
     transitivePeerDependencies:
       - metro
+    dev: true
 
   /terser-webpack-plugin@5.3.10(esbuild@0.19.12)(webpack@5.89.0):
     resolution: {integrity: sha512-BKFPWlPDndPs+NGGCr1U59t0XScL5317Y0UReNrHaw9/FwhPENlq6bfgs+4yPfyP51vqC1bQ4rp1EfXW5ZSH9w==}
@@ -51618,7 +51614,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)
+      jest: 29.7.0(ts-node@10.9.2)
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -51651,7 +51647,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2)
+      jest: 29.7.0
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -54082,7 +54078,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.91.0(metro@0.80.8)
+      webpack: 5.91.0(webpack-cli@4.10.0)
     dev: true
 
   /webpack-dev-middleware@6.1.2(webpack@5.89.0):
@@ -54438,6 +54434,7 @@ packages:
       - esbuild
       - metro
       - uglify-js
+    dev: true
 
   /webpack@5.89.0(esbuild@0.19.12):
     resolution: {integrity: sha512-qyfIC10pOr70V+jkmud8tMfajraGCZMBWJtrmuBymQKCrLTRejBI8STDp1MCyZu/QTdZSeacCQYpYNQVOzX5kw==}
