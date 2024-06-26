@@ -488,7 +488,7 @@
       "description": "Please send some EGLD to your account to pay for transactions."
     },
     "NotEnoughBalance": {
-      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
+      "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
     "NotEnoughBalanceSwap": {
