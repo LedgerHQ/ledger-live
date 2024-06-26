@@ -1,10 +1,22 @@
 # @ledgerhq/hw-app-polkadot
 
-## 6.30.0-next.0
+## 6.31.0-next.0
 
 ### Minor Changes
 
 - [#6326](https://github.com/LedgerHQ/ledger-live/pull/6326) [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - polkadot generic nano app support
+
+## 6.30.0
+
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
+
+## 6.30.0-hotfix.0
+
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
 
 ## 6.29.0
 

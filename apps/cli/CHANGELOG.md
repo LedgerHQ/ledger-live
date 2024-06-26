@@ -1,6 +1,6 @@
 # @ledgerhq/live-cli
 
-## 24.3.1-next.4
+## 24.3.2-next.4
 
 ### Patch Changes
 
@@ -12,28 +12,28 @@
   - @ledgerhq/live-countervalues@0.2.1-next.1
   - @ledgerhq/live-wallet@0.3.0-next.1
 
-## 24.3.1-next.3
+## 24.3.2-next.3
 
 ### Patch Changes
 
 - Updated dependencies []:
   - @ledgerhq/live-common@34.4.0-next.2
 
-## 24.3.1-next.2
+## 24.3.2-next.2
 
 ### Patch Changes
 
 - Updated dependencies []:
   - @ledgerhq/live-common@34.4.0-next.1
 
-## 24.3.1-next.1
+## 24.3.2-next.1
 
 ### Patch Changes
 
 - Updated dependencies [[`1df64d2`](https://github.com/LedgerHQ/ledger-live/commit/1df64d27e75c2a3445903ebce9e1f681683676da)]:
   - @ledgerhq/hw-transport-node-hid@6.29.1-next.0
 
-## 24.3.1-next.0
+## 24.3.2-next.0
 
 ### Patch Changes
 
@@ -45,6 +45,20 @@
   - @ledgerhq/live-wallet@0.3.0-next.0
   - @ledgerhq/coin-bitcoin@0.6.1-next.0
   - @ledgerhq/live-countervalues@0.2.1-next.0
+
+## 24.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/live-common@34.4.0
+
+## 24.3.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/live-common@34.4.0-hotfix.0
 
 ## 24.3.0
 

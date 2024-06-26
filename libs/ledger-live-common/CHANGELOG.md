@@ -1,6 +1,6 @@
 # @ledgerhq/live-common
 
-## 34.4.0-next.3
+## 34.5.0-next.3
 
 ### Patch Changes
 
@@ -25,21 +25,21 @@
   - @ledgerhq/live-nft@0.4.1-next.1
   - @ledgerhq/live-wallet@0.3.0-next.1
 
-## 34.4.0-next.2
+## 34.5.0-next.2
 
 ### Patch Changes
 
 - Updated dependencies [[`19c02ce`](https://github.com/LedgerHQ/ledger-live/commit/19c02cead22422b4a2e94aef74ebc67e992ab54d)]:
   - @ledgerhq/device-core@0.2.1-next.2
 
-## 34.4.0-next.1
+## 34.5.0-next.1
 
 ### Patch Changes
 
 - Updated dependencies [[`38a18fd`](https://github.com/LedgerHQ/ledger-live/commit/38a18fdb7233b77dfd631d10d9eec3cd4aeefe9f)]:
   - @ledgerhq/device-core@0.2.1-next.1
 
-## 34.4.0-next.0
+## 34.5.0-next.0
 
 ### Minor Changes
 
@@ -101,6 +101,30 @@
   - @ledgerhq/live-countervalues@0.2.1-next.0
   - @ledgerhq/live-countervalues-react@0.2.1-next.0
   - @ledgerhq/live-nft@0.4.1-next.0
+
+## 34.4.0
+
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
+
+### Patch Changes
+
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/hw-app-polkadot@6.30.0
+  - @ledgerhq/coin-polkadot@0.8.0
+
+## 34.4.0-hotfix.0
+
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
+
+### Patch Changes
+
+- Updated dependencies [[`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de)]:
+  - @ledgerhq/hw-app-polkadot@6.30.0-hotfix.0
+  - @ledgerhq/coin-polkadot@0.8.0-hotfix.0
 
 ## 34.3.0
 
