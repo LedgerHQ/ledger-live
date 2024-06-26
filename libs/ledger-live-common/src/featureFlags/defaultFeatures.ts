@@ -1,9 +1,9 @@
 import {
+  ABTestingVariants,
   DefaultFeature,
   Feature,
-  Features,
   FeatureMap,
-  ABTestingVariants,
+  Features,
 } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
@@ -394,10 +394,6 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   buySellShortcut: {
-    enabled: false,
-  },
-
-  ptxSwapLiveApp: {
     enabled: false,
   },
 

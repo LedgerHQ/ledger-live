@@ -1,17 +1,15 @@
-import { device, expect } from "detox";
-import OnboardingSteps from "../models/onboarding/onboardingSteps";
-import PortfolioPage from "../models/wallet/portfolioPage";
+import { device } from "detox";
 import { isAndroid } from "../helpers";
 import { launchApp } from "../setup";
+import { Application } from "../page";
 
-let onboardingSteps: OnboardingSteps;
-let portfolioPage: PortfolioPage;
+let app: Application;
+
 let isFirstTest = true;
 
 describe("Onboarding", () => {
   beforeAll(() => {
-    onboardingSteps = new OnboardingSteps();
-    portfolioPage = new PortfolioPage();
+    app = new Application();
   });
 
   beforeEach(async () => {
@@ -24,68 +22,66 @@ describe("Onboarding", () => {
 
   $TmsLink("B2CQA-1803");
   it("does the Onboarding and choose to access wallet", async () => {
-    await onboardingSteps.startOnboarding();
-    await onboardingSteps.chooseToAccessYourWallet();
-    await onboardingSteps.chooseToConnectYourLedger();
-    await onboardingSteps.selectPairMyNano();
-    await onboardingSteps.selectAddDevice();
-    await onboardingSteps.addDeviceViaBluetooth();
-    await portfolioPage.waitForPortfolioPageToLoad();
-    await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
-    await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
+    await app.onboarding.startOnboarding();
+    await app.onboarding.chooseToAccessYourWallet();
+    await app.onboarding.chooseToConnectYourLedger();
+    await app.onboarding.selectPairMyNano();
+    await app.onboarding.selectAddDevice();
+    await app.onboarding.addDeviceViaBluetooth();
+    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.expectPortfolioEmpty();
   });
 
   $TmsLink("B2CQA-1802");
   it("does the Onboarding and choose to restore a Nano X", async () => {
-    await onboardingSteps.startOnboarding();
-    await onboardingSteps.chooseSetupLedger();
-    await onboardingSteps.chooseDevice("nanoX");
-    await onboardingSteps.goesThroughRestorePhrase();
-    await onboardingSteps.selectPairMyNano();
-    await onboardingSteps.selectAddDevice();
-    await onboardingSteps.addDeviceViaBluetooth();
-    await portfolioPage.waitForPortfolioPageToLoad();
-    await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
-    await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
+    await app.onboarding.startOnboarding();
+    await app.onboarding.chooseSetupLedger();
+    await app.onboarding.chooseDevice("nanoX");
+    await app.onboarding.goesThroughRestorePhrase();
+    await app.onboarding.selectPairMyNano();
+    await app.onboarding.selectAddDevice();
+    await app.onboarding.addDeviceViaBluetooth();
+    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.portfolio.expectPortfolioEmpty();
   });
 
   $TmsLink("B2CQA-1800");
   $TmsLink("B2CQA-1833");
   it("does the Onboarding and choose to restore a Nano SP", async () => {
-    await onboardingSteps.startOnboarding();
-    await onboardingSteps.chooseSetupLedger();
-    await onboardingSteps.chooseDevice("nanoSP");
+    await app.onboarding.startOnboarding();
+    await app.onboarding.chooseSetupLedger();
+    await app.onboarding.chooseDevice("nanoSP");
     if (!isAndroid()) {
-      await onboardingSteps.checkDeviceNotCompatible();
-      await onboardingSteps.chooseDevice("nanoS");
-      await onboardingSteps.checkDeviceNotCompatible();
+      await app.onboarding.checkDeviceNotCompatible();
+      await app.onboarding.chooseDevice("nanoS");
+      await app.onboarding.checkDeviceNotCompatible();
     } else {
-      await onboardingSteps.goesThroughRestorePhrase();
-      await onboardingSteps.selectPairMyNano();
-      await onboardingSteps.addDeviceViaUSB("nanoSP");
-      await portfolioPage.waitForPortfolioPageToLoad();
+      await app.onboarding.goesThroughRestorePhrase();
+      await app.onboarding.selectPairMyNano();
+      await app.onboarding.addDeviceViaUSB("nanoSP");
+      await app.portfolio.waitForPortfolioPageToLoad();
     }
   });
 
   $TmsLink("B2CQA-1799");
   it("does the Onboarding and choose to setup a new Nano X", async () => {
-    await onboardingSteps.startOnboarding();
-    await onboardingSteps.chooseSetupLedger();
-    await onboardingSteps.chooseDevice("nanoX");
-    await onboardingSteps.goesThroughCreateWallet();
-    await onboardingSteps.selectPairMyNano();
-    await onboardingSteps.selectAddDevice();
-    await onboardingSteps.addDeviceViaBluetooth();
-    await portfolioPage.waitForPortfolioPageToLoad();
+    await app.onboarding.startOnboarding();
+    await app.onboarding.chooseSetupLedger();
+    await app.onboarding.chooseDevice("nanoX");
+    await app.onboarding.goesThroughCreateWallet();
+    await app.onboarding.selectPairMyNano();
+    await app.onboarding.selectAddDevice();
+    await app.onboarding.addDeviceViaBluetooth();
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   $TmsLink("B2CQA-1804");
   it("does the Onboarding and choose to synchronize with Ledger Live Desktop", async () => {
     await device.launchApp({ permissions: { camera: "YES" } }); // Make sure permission is given
-    await onboardingSteps.startOnboarding();
-    await onboardingSteps.chooseToAccessYourWallet();
-    await onboardingSteps.chooseToSyncWithLedgerLiveDesktop();
-    await onboardingSteps.goesThroughLedgerLiveDesktopScanning();
-    await onboardingSteps.waitForScanningPage();
+    await app.onboarding.startOnboarding();
+    await app.onboarding.chooseToAccessYourWallet();
+    await app.onboarding.chooseToSyncWithLedgerLiveDesktop();
+    await app.onboarding.goesThroughLedgerLiveDesktopScanning();
+    await app.onboarding.waitForScanningPage();
   });
 });

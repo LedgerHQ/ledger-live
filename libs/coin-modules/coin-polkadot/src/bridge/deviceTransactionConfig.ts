@@ -10,7 +10,7 @@ export type ExtraDeviceTransactionField = {
   type: "polkadot.validators";
   label: string;
 };
-type DeviceTransactionField = CommonDeviceTransactionField & ExtraDeviceTransactionField;
+type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
 const getSendFields = ({
   transaction,

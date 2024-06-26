@@ -6,6 +6,7 @@ import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
 import { getEnv } from "@ledgerhq/live-env";
 
 type Props = {
+  baseUrl?: string;
   currencyTo?: string;
   providers: string[];
   additionalCoinsFlag?: boolean;
@@ -19,6 +20,7 @@ export type ResponseData = {
 };
 
 export async function fetchCurrencyFrom({
+  baseUrl = getSwapAPIBaseURL(),
   currencyTo,
   providers,
   additionalCoinsFlag = false,
@@ -27,7 +29,7 @@ export async function fetchCurrencyFrom({
     return flattenV5CurrenciesToAndFrom(fetchCurrencyFromMock);
 
   const headers = getSwapUserIP();
-  const url = new URL(`${getSwapAPIBaseURL()}/currencies/from`);
+  const url = new URL(`${baseUrl}/currencies/from`);
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());
 

@@ -3,6 +3,7 @@ import {
   SetExchangeRateCallback,
   useIsSwapLiveApp,
   usePageState,
+  useSwapLiveConfig,
   useSwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
@@ -40,11 +41,8 @@ import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import EmptyState from "./Rates/EmptyState";
-import SwapWebView, {
-  SwapWebManifestIDs,
-  SwapWebProps,
-  useSwapLiveAppManifestID,
-} from "./SwapWebView";
+import SwapWebView, { SwapWebProps } from "./SwapWebView";
+import { useIsSwapLiveFlagEnabled } from "./useIsSwapLiveFlagEnabled";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -89,13 +87,16 @@ const SwapForm = () => {
     },
     [swapDefaultTrack],
   );
-  const swapLiveAppManifestID = useSwapLiveAppManifestID();
+
+  const swapLiveEnabledFlag = useSwapLiveConfig();
+  const swapLiveAppManifestID = swapLiveEnabledFlag?.params?.manifest_id;
+  const isDemo1Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoOne");
 
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
     onNoRates,
-    isEnabled: !swapLiveAppManifestID?.startsWith(SwapWebManifestIDs.Demo1),
+    isEnabled: !isDemo1Enabled,
     ...(locationState as object),
   });
 
@@ -486,6 +487,7 @@ const SwapForm = () => {
               targetCurrencyId={targetCurrency?.id}
               manifest={manifest}
               swapState={swapWebProps}
+              isMaxEnabled={swapTransaction.swap.isMaxEnabled}
               // When live app crash, it should disable live app and fall back to native UI
               liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
             />

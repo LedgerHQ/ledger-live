@@ -1,76 +1,57 @@
-import { genAccount } from "@ledgerhq/live-common/mock/account";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
-import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
-import PortfolioPage from "../../models/wallet/portfolioPage";
-import StakePage from "../../models/trade/stakePage";
-import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
-import { BigNumber } from "bignumber.js";
-import { formattedAmount } from "../../models/common";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import {
+  COSMOS_MIN_FEES,
+  COSMOS_MIN_SAFE,
+  formattedAmount,
+  getAccountUnit,
+  initTestAccounts,
+} from "../../models/currencies";
+import { Application } from "../../page";
+import DeviceAction from "../../models/DeviceAction";
 
-let portfolioPage: PortfolioPage;
-let stakePage: StakePage;
+let app: Application;
 let deviceAction: DeviceAction;
 
 const testedCurrency = "cosmos";
-const id = "cosmosid";
-
-setSupportedCurrencies([testedCurrency]);
-const testedAccount = genAccount(id, {
-  currency: getCryptoCurrencyById(testedCurrency),
-});
-
-const COSMOS_MIN_SAFE = new BigNumber(100000); // 100000 uAtom
-const COSMOS_MIN_FEES = new BigNumber(6000);
+const defaultValidator = "Ledger";
+const testAccount = initTestAccounts([testedCurrency])[0];
 
 describe("Cosmos delegate flow", () => {
   beforeAll(async () => {
-    await loadConfig("onboardingcompleted", true);
-
-    await loadBleState({ knownDevices: [knownDevice] });
-    await loadAccounts([testedAccount]);
-
-    portfolioPage = new PortfolioPage();
+    app = await Application.init("onboardingcompleted", [knownDevice], [testAccount]);
     deviceAction = new DeviceAction(knownDevice);
-    stakePage = new StakePage();
 
-    await portfolioPage.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   $TmsLink("B2CQA-384");
   it("open account stake flow", async () => {
-    await portfolioPage.openTransferMenu();
-    await portfolioPage.navigateToStakeFromTransferMenu();
+    await app.portfolio.openTransferMenu();
+    await app.portfolio.navigateToStakeFromTransferMenu();
   });
 
   $TmsLink("B2CQA-387");
   it("goes through the delegate flow", async () => {
     const delegatedPercent = 50;
-    const usableAmount = testedAccount.spendableBalance
-      .minus(COSMOS_MIN_SAFE)
-      .minus(COSMOS_MIN_FEES);
+    const unit = getAccountUnit(testAccount);
+
+    const usableAmount = testAccount.spendableBalance.minus(COSMOS_MIN_SAFE).minus(COSMOS_MIN_FEES);
     const delegatedAmount = usableAmount.div(100 / delegatedPercent).integerValue();
     const remainingAmount = usableAmount.minus(delegatedAmount);
 
-    await stakePage.selectCurrency(testedCurrency);
-    await stakePage.selectAccount(testedAccount.id);
+    await app.stake.selectCurrency(testedCurrency);
+    await app.common.selectAccount(testAccount.id);
 
-    const [assestsDelagated, assestsRemaining] = await stakePage.setAmount(delegatedPercent);
-    expect(await stakePage.cosmosDelegationSummaryValidator()).toEqual("Ledger");
-    expect(assestsRemaining).toEqual(
-      formattedAmount(getAccountCurrency(testedAccount).units[0], remainingAmount),
+    await app.stake.setAmount(delegatedPercent);
+    await app.stake.expectRemainingAmount(delegatedPercent, formattedAmount(unit, remainingAmount));
+    await app.stake.validateAmount();
+    await app.stake.expectDelegatedAmount(
+      formattedAmount(unit, delegatedAmount, { showAllDigits: true, showCode: true }),
     );
-    expect(assestsDelagated).toEqual(
-      formattedAmount(getAccountCurrency(testedAccount).units[0], delegatedAmount, true),
-    );
-
-    await stakePage.summaryContinue();
+    await app.stake.expectValidator(defaultValidator);
+    await app.stake.summaryContinue();
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
-    await stakePage.successClose();
+    await app.common.successClose();
   });
 });

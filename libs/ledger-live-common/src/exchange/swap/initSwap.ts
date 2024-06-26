@@ -30,7 +30,7 @@ import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { TronSendTrc20ToNewAccountForbidden } from "../../families/tron/errors";
+import { TronSendTrc20ToNewAccountForbidden } from "@ledgerhq/coin-tron/types/errors";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));

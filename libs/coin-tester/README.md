@@ -23,6 +23,7 @@ pnpm build:libs
 You only have to build speculos locally if you are on a Mac M1. Otherwise you can uncomment the image provided in the docker-compose.yml
 
 1. Clone speculos: `git clone git@github.com:LedgerHQ/speculos.git`
+
 2. Patch Dockerfile:
 
 ```Dockerfile
@@ -33,6 +34,7 @@ FROM speculos-builder:latest AS builder
 ```
 
 3. Build image
+
 ```sh
 cd speculos
 docker build -f build.Dockerfile -t speculos-builder:latest .
@@ -41,7 +43,7 @@ docker build -f Dockerfile -t speculos:latest .
 
 ### Environment variables
 
-- Generate a [Github token classic](https://github.com/settings/tokens) and make sure to authorize Ledger SSO
+- Generate a [Github token classic](https://github.com/settings/tokens) and give it full "repo" and "project" rights. Make sure to authorize Ledger SSO.
 
 - Go in the coin-module you want to test and create a `.env` in the folder where your test resides.
 For exemple for `coin-evm` create the file should be located in: `src/__test__/coin-tester/.env`.
@@ -70,15 +72,23 @@ If you want you can generate a new seed using [this tool](https://iancoleman.io/
 To coin Polkadot Coin tester we will need to build the local test node Docker image.
 
 ```sh
-pnpm coin:polkadot coin-tester:build
+cd libs/coin-modules/coin-polkadot/src/test/coin-tester
+make build
 ```
-
 ## Run tests for a coin module {#runtests}
 
 ```sh
 pnpm coin:<coin-module-name> coin-tester
 
 # e.g
-# pnpm coin:ethereum coin-tester
+# pnpm coin:evm coin-tester
 # pnpm coin:polkadot coin-tester
 ```
+
+## Troubleshooting
+
+### EVM Coin tester
+
+> The \"RPC\" variable is not set. Defaulting to a blank string.
+
+This error can safely be ignored. The RPC is passed as a variable env at runtime. Check [here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/__tests__/coin-tester/anvil.ts#L28) and [here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/__tests__/coin-tester/scenarios/ethereum.ts#L144)

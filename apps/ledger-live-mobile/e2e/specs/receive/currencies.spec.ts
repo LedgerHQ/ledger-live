@@ -1,36 +1,25 @@
-import { loadBleState, loadConfig } from "../../bridge/server";
-import PortfolioPage from "../../models/wallet/portfolioPage";
-import ReceivePage from "../../models/trade/receivePage";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
-import Common from "../../models/common";
-import { waitForElementById } from "../../helpers";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { Application } from "../../page";
 
-let portfolioPage: PortfolioPage;
-let receivePage: ReceivePage;
+let app: Application;
 let deviceAction: DeviceAction;
-let common: Common;
 let first = true;
 
 $TmsLink("B2CQA-651");
 $TmsLink("B2CQA-1854");
 describe("Receive different currency", () => {
   beforeAll(async () => {
-    await loadConfig("onboardingcompleted", true);
-    await loadBleState({ knownDevices: [knownDevice] });
-
-    portfolioPage = new PortfolioPage();
+    app = await Application.init("onboardingcompleted", [knownDevice]);
     deviceAction = new DeviceAction(knownDevice);
-    receivePage = new ReceivePage();
-    common = new Common();
 
-    await portfolioPage.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   it.each([
     ["bitcoin"],
-    ["ethereum", "Ethereum"],
+    ["ethereum", "ethereum"],
     ["bsc"],
     ["ripple"],
     //["solana"], // TOFIX Error during flow
@@ -38,27 +27,21 @@ describe("Receive different currency", () => {
     ["dogecoin"],
     ["tron"],
     ["avalanche_c_chain"],
-    ["polygon", "Polygon"],
+    ["polygon", "polygon"],
     ["polkadot"],
-    ["cosmos", "Cosmos"],
+    ["cosmos", "cosmos"],
   ])("receive on %p (through scanning)", async (currencyId: string, network: string = "") => {
     const currency = getCryptoCurrencyById(currencyId);
     const currencyName = getCryptoCurrencyById(currencyId).name;
 
-    await receivePage.openViaDeeplink();
-    await common.performSearch(currencyName);
-    await receivePage.selectCurrency(currencyName);
-    if (network) {
-      await receivePage.selectNetwork(network);
-    }
-    if (first) {
-      await deviceAction.selectMockDevice();
-      first = false;
-    }
+    await app.receive.openViaDeeplink();
+    await app.common.performSearch(currencyName);
+    await app.receive.selectCurrency(currencyName);
+    if (network) await app.receive.selectNetwork(network);
+    first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await receivePage.selectAccount(`${currencyName} 2`);
-    await receivePage.doNotVerifyAddress();
-    await waitForElementById(receivePage.accountAddress);
-    await receivePage.expectReceivePageIsDisplayed(currency.ticker, `${currencyName} 2`);
+    await app.receive.selectAccount(`${currencyName} 2`);
+    await app.receive.doNotVerifyAddress();
+    await app.receive.expectReceivePageIsDisplayed(currency.ticker, `${currencyName} 2`);
   });
 });

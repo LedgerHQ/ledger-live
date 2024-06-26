@@ -108,6 +108,7 @@ const ignoreErrors = [
   "524 undefined",
   "Missing or invalid topic field", // wallet connect issue
   "Bad status on response: 503", // cryptoorg node
+  "Render frame was disposed before WebFrameMain could be accessed", // LIVE-12926
 ];
 
 export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMainOptions>) {

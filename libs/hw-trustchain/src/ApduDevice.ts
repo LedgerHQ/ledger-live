@@ -17,7 +17,7 @@ import { StreamTree } from "./StreamTree";
 import { TLV, TLVField } from "./tlv";
 import { SeedIdResult, parseSeedIdResult } from "./SeedId";
 
-export const TRUSTCHAIN_APP_NAME = "Trustchain";
+export const TRUSTCHAIN_APP_NAME = "Ledger Sync";
 
 enum ParseStreamMode {
   BlockHeader = 0x00,

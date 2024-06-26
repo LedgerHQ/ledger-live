@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { Token } from "tests/enum/Tokens";
 
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.locator("data-test-id=account-settings-button");
@@ -26,16 +27,26 @@ export class AccountPage extends AppPage {
   private accountAdvancedLogs = this.page.locator("data-test-id=Advanced_Logs");
   private operationRows = this.page.locator("[data-test-id^='operation-row-']");
   private closeModal = this.page.locator("data-test-id=modal-close-button");
+  private accountbutton = (accountName: string) =>
+    this.page.getByRole("button", { name: `${accountName}` });
+  private tokenRow = (tokenTicker: string) =>
+    this.page.locator(`data-test-id=token-row-${tokenTicker}`);
+  private addTokenButton = this.page.getByRole("button", { name: "Add token" });
 
   @step("Navigate to token $0")
-  async navigateToToken(token: string) {
-    await expect(this.tokenValue(token)).toBeVisible();
-    await this.tokenValue(token).click();
+  async navigateToToken(token: Token) {
+    await expect(this.tokenValue(token.tokenName)).toBeVisible();
+    await this.tokenValue(token.tokenName).click();
   }
 
   @step("Click `Receive` button")
   async clickReceive() {
     await this.receiveButton.click();
+  }
+
+  @step("click on add token button")
+  async clickAddToken() {
+    await this.addTokenButton.click();
   }
 
   @step("Click `Send` button")
@@ -102,6 +113,11 @@ export class AccountPage extends AppPage {
     await expect(this.operationList).not.toBeEmpty();
   }
 
+  @step("Expect token Account to be visible")
+  async expectTokenAccount(token: Token) {
+    await expect(this.accountbutton(token.parentAccount.accountName)).toBeVisible();
+  }
+
   @step("Expect `show more` button to show more operations")
   async expectShowMoreButton() {
     const operationCount = await this.operationRows.count();
@@ -120,5 +136,13 @@ export class AccountPage extends AppPage {
     const advancedLogsJson = advancedLogsText ? JSON.parse(advancedLogsText) : null;
     expect(advancedLogsJson).toHaveProperty("index", indexNumber);
     await this.closeModal.click();
+  }
+
+  @step("Expect token to be present")
+  async expectTokenToBePresent(token: Token) {
+    await expect(this.tokenRow(token.tokenTicker)).toBeVisible();
+    const tokenInfos = await this.tokenRow(token.tokenTicker).innerText();
+    expect(tokenInfos).toContain(token.tokenName);
+    expect(tokenInfos).toContain(token.tokenTicker);
   }
 }
