@@ -9,7 +9,7 @@
     "src/transaction.ts"
   ],
   "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.{js,jsx,ts,tsx}"],
-  "ignoreUnresolved": [""],
+  "ignoreUnresolved": [],
   "ignoreUnimported": [],
   "ignoreUnused": []
 }
