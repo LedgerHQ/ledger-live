@@ -82,21 +82,10 @@ export default function FeesDrawerLiveApp({
     [disableSlowStrategy],
   );
 
-  const currency = getCurrency(mainAccount as Account, parentAccount);
-
-  // const [gasOptions, error, loading] = useGasOptions({
-  //   currency,
-  //   transaction: transaction as any,
-  //   interval: currency.blockAvgTime ? currency.blockAvgTime * 1000 : undefined,
-  // });
-
   const handleRequestClose = useCallback(() => {
     setIsOpen(false);
     onRequestClose();
   }, [onRequestClose]);
-
-  // transaction.gasOption = gasOptions;
-  // transaction.family = currency.family;
 
   if (!isOpen) return null;
 

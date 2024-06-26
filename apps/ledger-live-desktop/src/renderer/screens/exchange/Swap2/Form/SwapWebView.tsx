@@ -4,7 +4,11 @@ import styled from "styled-components";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
-import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+  getParentAccount,
+} from "@ledgerhq/live-common/account/helpers";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { SubAccount } from "@ledgerhq/types-live";
@@ -27,11 +31,10 @@ import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { captureException } from "~/sentry/internal";
-import FeesDrawer from "./FeesDrawer";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
-import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import family from "~/renderer/families/algorand";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -101,8 +104,8 @@ const SwapWebView = ({
   const dispatch = useDispatch();
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
-  const accounts = useSelector(flattenAccountsSelector);
-
+  // const accountsFL = useSelector(flattenAccountsSelector);
+  const accounts = useSelector(shallowAccountsSelector);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
@@ -187,18 +190,12 @@ const SwapWebView = ({
       "custom.swapRedirectToHistory": () => {
         redirectToHistory();
       },
-      "custom.getFee": ({ params }: { params: any }) => {
+      "custom.getFee": async ({ params }: { params: any }) => {
         console.log(
           "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:199 params",
           "color: #007acc;",
           params,
         );
-        let transaction = {
-          recipient: "0x000000000000000000000000000000000000dead",
-          family: "evm",
-          gasLimit: "21000",
-          type: 2,
-        };
 
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
 
@@ -211,40 +208,68 @@ const SwapWebView = ({
         if (!fromAccount) {
           return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
         }
+        const fromParentAccount = getParentAccount(fromAccount, accounts);
 
+        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+        const bridge = getAccountBridge(fromAccount, fromParentAccount);
+        const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
+        let transaction = bridge.createTransaction(mainAccount);
+        const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
+          ...transaction,
+          recipient: "0x000000000000000000000000000000000000dEaD",
+          amount: new BigNumber(params.fromAmount),
+          feesStrategy: params.feeStrategy || "medium",
+        });
+
+        let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
+        let finalTx = preparedTransaction;
         const setTransaction = (newTransaction: Transaction): Promise<Transaction> => {
-          return new Promise(resolve => {
+          return new Promise(async resolve => {
             console.log("Setting transaction:", newTransaction);
-            transaction = newTransaction;
+            const preparedTransaction = await bridge.prepareTransaction(
+              mainAccount,
+              newTransaction,
+            );
+            status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
+            console.log(
+              "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:239 status",
+              "color: #007acc;",
+              status,
+            );
+            finalTx = preparedTransaction;
             resolve(newTransaction);
           });
         };
-
-        const fromParentAccount = getParentAccount(fromAccount, accounts);
-        const drawerPromise = new Promise<Transaction>(resolve => {
-          if (!swapState?.status) {
-            return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
-          }
-
-          setDrawer(FeesDrawerLiveApp, {
-            setTransaction,
-            mainAccount: fromAccount,
-            parentAccount: fromParentAccount,
-            status: swapState?.status,
-            provider: swapState?.provider,
-            disableSlowStrategy: true,
-            transaction: transaction,
-            onRequestClose: () => {
-              console.log(
-                "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:271 transaction",
-                "color: #007acc;",
-                transaction,
-              );
-              setDrawer(undefined);
-              resolve(transaction);
-            },
-          });
-        });
+        const drawerPromise = new Promise<{ feesStrategy: BigNumber; estimatedfees: BigNumber }>(
+          async resolve => {
+            setDrawer(FeesDrawerLiveApp, {
+              setTransaction,
+              mainAccount: fromAccount,
+              parentAccount: fromParentAccount,
+              status: status,
+              provider: undefined,
+              disableSlowStrategy: true,
+              transaction: preparedTransaction,
+              onRequestClose: () => {
+                console.log(
+                  "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:261 transaction",
+                  "color: #007acc;",
+                  finalTx,
+                );
+                console.log(
+                  "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:254 status",
+                  "color: #007acc;",
+                  status,
+                );
+                setDrawer(undefined);
+                resolve({
+                  feesStrategy: finalTx.feesStrategy,
+                  estimatedfees: status.estimatedFees,
+                });
+              },
+            });
+          },
+        );
 
         return drawerPromise;
       },
