@@ -23,10 +23,12 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/context-module": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "bignumber.js": "^9.1.2",
     "ethers": "^5.7.2"
   }
 }

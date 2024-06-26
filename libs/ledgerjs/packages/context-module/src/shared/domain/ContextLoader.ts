@@ -1,7 +1,6 @@
-import { ContextResponse } from "../model/ContextResponse";
-import { LoaderOptions } from "../model/LoaderOptions";
-import { Transaction } from "../model/Transaction";
+import { ClearSignContext } from "../model/ClearSignContext";
+import { TransactionContext } from "../model/TransactionContext";
 
 export type ContextLoader = {
-  load: (transaction: Transaction, options: LoaderOptions) => Promise<ContextResponse[]>;
+  load: (transaction: TransactionContext) => Promise<ClearSignContext[]>;
 };

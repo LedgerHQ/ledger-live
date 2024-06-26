@@ -12,10 +12,10 @@ export type AccountDescriptor = z.infer<typeof accountDescriptorSchema>;
 
 export const accountsDescriptorSchema = z.array(accountDescriptorSchema);
 
-export const schema = z.object({
+export const liveSchema = z.object({
   accounts: accountsDescriptorSchema,
   accountNames: z.record(z.string()),
   // NB: append more fields here when we have more needs in the future, but NEVER break a type
 });
 
-export type Data = z.infer<typeof schema>;
+export type LiveData = z.infer<typeof liveSchema>;

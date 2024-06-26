@@ -24,6 +24,8 @@ import Transport from "@ledgerhq/hw-transport";
 import api from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
 import { log } from "@ledgerhq/logs";
+import { StatusCodes, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { TrustchainEjected } from "./errors";
 
 export class SDK implements TrustchainSDK {
   context: TrustchainSDKContext;
@@ -41,7 +43,7 @@ export class SDK implements TrustchainSDK {
     const hw = device.apdu(transport);
     const challenge = await api.getAuthenticationChallenge();
     const data = crypto.from_hex(challenge.tlv);
-    const seedId = await hw.getSeedId(data);
+    const seedId = await remapUserInteractions(hw.getSeedId(data));
     const signature = crypto.to_hex(seedId.signature);
     const response = await api.postChallengeResponse({
       challenge: challenge.json,
@@ -101,11 +103,7 @@ export class SDK implements TrustchainSDK {
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
-
-      callbacks?.onStartRequestUserInteraction();
       const streamTree = await StreamTree.createNewTree(hw, { topic });
-      callbacks?.onEndRequestUserInteraction();
-
       await streamTree.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
       const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
       await api.postSeed(jwt, crypto.to_hex(commandStream));
@@ -139,13 +137,14 @@ export class SDK implements TrustchainSDK {
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
     if (shouldShare) {
-      callbacks?.onStartRequestUserInteraction();
-      streamTree = await pushMember(streamTree, path, trustchainRootId, jwt, hw, {
-        id: memberCredentials.pubkey,
-        name: this.context.name,
-        permissions: Permissions.OWNER,
-      });
-      callbacks?.onEndRequestUserInteraction();
+      streamTree = await remapUserInteractions(
+        pushMember(streamTree, path, trustchainRootId, jwt, hw, {
+          id: memberCredentials.pubkey,
+          name: this.context.name,
+          permissions: Permissions.OWNER,
+        }),
+        callbacks,
+      );
     }
 
     const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
@@ -157,6 +156,10 @@ export class SDK implements TrustchainSDK {
     };
 
     return { jwt, trustchain };
+  }
+
+  async refreshAuth(jwt: JWT): Promise<JWT> {
+    return api.refreshAuth(jwt);
   }
 
   async restoreTrustchain(
@@ -202,6 +205,9 @@ export class SDK implements TrustchainSDK {
     jwt: JWT;
     trustchain: Trustchain;
   }> {
+    if (memberCredentials.pubkey === member.id) {
+      throw new Error("removeMember can't be used for the current member");
+    }
     const hw = device.apdu(transport);
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
@@ -218,13 +224,14 @@ export class SDK implements TrustchainSDK {
     const newPath = streamTree.getApplicationRootPath(applicationId, 1);
 
     // derive a new branch of the tree on the new path
-    callbacks?.onStartRequestUserInteraction();
-    streamTree = await pushMember(streamTree, newPath, trustchainId, deviceJWT, hw, {
-      id: memberCredentials.pubkey,
-      name: this.context.name,
-      permissions: Permissions.OWNER,
-    });
-    callbacks?.onEndRequestUserInteraction();
+    streamTree = await remapUserInteractions(
+      pushMember(streamTree, newPath, trustchainId, deviceJWT, hw, {
+        id: memberCredentials.pubkey,
+        name: this.context.name,
+        permissions: Permissions.OWNER,
+      }),
+      callbacks,
+    );
 
     // add the remaining members
     for (const m of withoutMemberOrMe) {
@@ -351,9 +358,16 @@ async function extractEncryptionKey(
 ): Promise<string> {
   const softwareDevice = getSoftwareDevice(memberCredentials);
   const pathNumbers = DerivationPath.toIndexArray(path);
-  const key = await softwareDevice.readKey(streamTree, pathNumbers);
-  // private key is in the first 32 bytes
-  return crypto.to_hex(key.slice(0, 32));
+  try {
+    const key = await softwareDevice.readKey(streamTree, pathNumbers);
+    // private key is in the first 32 bytes
+    return crypto.to_hex(key.slice(0, 32));
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new TrustchainEjected(e.message);
+    }
+    throw e;
+  }
 }
 
 async function pushMember(
@@ -409,4 +423,29 @@ async function closeStream(
     blocks: [crypto.to_hex(commandStream)],
   });
   return streamTree;
+}
+
+/**
+ * remap device errors related to user interactions (error when user refuses,...)
+ */
+function remapUserInteractions<T>(
+  promise: Promise<T>,
+  callbacks?: TrustchainDeviceCallbacks,
+): Promise<T> {
+  callbacks?.onStartRequestUserInteraction();
+  return promise
+    .catch(error => {
+      if (
+        error instanceof TransportStatusError &&
+        [StatusCodes.USER_REFUSED_ON_DEVICE, StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED].includes(
+          error.statusCode,
+        )
+      ) {
+        throw new UserRefusedOnDevice();
+      }
+      throw error;
+    })
+    .finally(() => {
+      callbacks?.onStartRequestUserInteraction();
+    });
 }

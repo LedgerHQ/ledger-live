@@ -1,4 +1,4 @@
-type ContextSuccess = {
+type ClearSignContextSuccess = {
   type:
     | "provideERC20TokenInformation"
     | "provideNFTInformation"
@@ -8,9 +8,9 @@ type ContextSuccess = {
   payload: string;
 };
 
-type ContextError = {
+type ClearSignContextError = {
   type: "error";
   error: Error;
 };
 
-export type ContextResponse = ContextSuccess | ContextError;
+export type ClearSignContext = ClearSignContextSuccess | ClearSignContextError;

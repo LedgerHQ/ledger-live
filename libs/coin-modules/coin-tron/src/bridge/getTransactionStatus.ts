@@ -1,9 +1,10 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
+import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account";
 import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
@@ -247,6 +248,22 @@ const getTransactionStatus = async (
     });
     warnings.fee = new TronUnexpectedFees("Estimated fees", {
       fees,
+    });
+  }
+
+  //
+  // Not enough gas check
+  // PTX swap uses this to support deeplink to buy additional currency
+  //
+  if (balance.lt(estimatedFees) || balance.isZero()) {
+    const query = new URLSearchParams({
+      ...(account?.id ? { account: account.id } : {}),
+    });
+    errors.gasPrice = new NotEnoughGas(undefined, {
+      fees: formatCurrencyUnit(getFeesUnit(acc.currency), estimatedFees),
+      ticker: acc.currency.ticker,
+      cryptoName: acc.currency.name,
+      links: [`ledgerlive://buy?${query.toString()}`],
     });
   }
 
