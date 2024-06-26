@@ -1,5 +1,5 @@
 import test from "../../fixtures/common";
-import { Token } from "../../enum/Tokens";
+import { Token } from "../../enum/Token";
 import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
 import { addTmsLink } from "tests/fixtures/common";

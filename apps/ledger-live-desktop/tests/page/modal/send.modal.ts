@@ -5,8 +5,7 @@ import { Transaction } from "../../models/Transaction";
 
 export class SendModal extends Modal {
   private drowdownAccount = this.page.locator('[data-test-id="modal-content"] svg').nth(1);
-  readonly recipientInput = this.page.getByPlaceholder("Enter");
-  readonly algoRecipientInput = this.page.getByPlaceholder("Enter Algorand address");
+  readonly recipientInput = this.page.locator('[id="send-recipient-input"]');
   private continueRecipientButton = this.page.getByRole("button", { name: "continue" });
   private totalDebitValue = this.page.locator("text=Total to debit");
   private checkDeviceLabel = this.page.locator(
@@ -19,7 +18,7 @@ export class SendModal extends Modal {
     this.page.locator(`text=${amount} ${currency}`).first();
   private recipientAddressDisplayedValue = this.page.locator("data-test-id=recipient-address");
   private amountDisplayedValue = this.page.locator("data-test-id=transaction-amount");
-  private ASAErrorLabel = this.page.locator("id=input-error");
+  private addressErrorMessage = this.page.locator("id=input-error");
 
   async selectAccount(name: string) {
     await this.drowdownAccount.click();
@@ -67,16 +66,15 @@ export class SendModal extends Modal {
     await expect(this.checkTransactionbroadcastLabel).toBeVisible();
   }
 
-  @step("verify ASA")
-  async expectASA(tx: Transaction) {
-    await this.algoRecipientInput.clear();
-    await this.algoRecipientInput.fill(tx.accountToCredit.address);
-    //todo: not ideal to add timeout
-    await this.page.waitForTimeout(1000);
-    if (await this.ASAErrorLabel.isVisible()) {
-      await expect(this.continueRecipientButton).toBeDisabled();
-    } else {
-      await expect(this.continueRecipientButton).toBeEnabled();
-    }
+  @step("Check continue button disable and error message")
+  async checkErrorMessage() {
+    await expect(this.continueRecipientButton).toBeDisabled();
+    await expect(this.addressErrorMessage).toBeVisible();
+  }
+
+  @step("Check continue button enable")
+  async checkContinueButtonEnable() {
+    await expect(this.continueRecipientButton).toBeEnabled();
+    await expect(this.addressErrorMessage).not.toBeVisible();
   }
 }
