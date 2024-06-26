@@ -7,6 +7,7 @@ import { addTmsLink } from "tests/fixtures/common";
 const currencies: Currency[] = [
   Currency.BTC,
   Currency.ETH,
+  Currency.ETC,
   Currency.XRP,
   Currency.DOT,
   Currency.TRX,
@@ -19,7 +20,7 @@ const currencies: Currency[] = [
 ];
 
 for (const [i, currency] of currencies.entries()) {
-  test.describe.parallel("Accounts @smoke", () => {
+  test.describe.parallel("Add Accounts", () => {
     test.use({
       userdata: "skip-onboarding",
       testName: `addAccount_${currency.uiName}`,
