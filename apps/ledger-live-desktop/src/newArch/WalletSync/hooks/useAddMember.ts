@@ -27,14 +27,14 @@ export function useAddMember({ device }: { device: Device | null }) {
       await runWithDevice(device?.deviceId, async transport => {
         const seedIdToken = await sdk.authWithDevice(transport);
 
-        const { trustchain, hasCreatedTrustchain } = await sdk.getOrCreateTrustchain(
+        const { trustchain, hasCreatedTrustchain, jwt } = await sdk.getOrCreateTrustchain(
           transport,
           seedIdToken,
           memberCredentials,
         );
 
         if (trustchain) {
-          dispatch(setJwt(seedIdToken));
+          dispatch(setJwt(jwt));
           dispatch(setTrustchain(trustchain));
 
           dispatch(
