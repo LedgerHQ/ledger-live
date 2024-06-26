@@ -16,6 +16,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
   return new Polkadot(transport);
@@ -23,6 +24,7 @@ const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
 
 const polkadot = getCryptoCurrencyById("polkadot");
 const getCurrencyConfig = (): PolkadotCoinConfig => {
+  const polkadot = getCryptoCurrencyById("polkadot");
   return getCurrencyConfiguration(polkadot);
 };
 

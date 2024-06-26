@@ -1,28 +1,16 @@
 # @ledgerhq/coin-polkadot
 
-## 1.0.0-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`b478096`](https://github.com/LedgerHQ/ledger-live/commit/b478096537a0f86a9e39acc8c6cf17b1184e0849)]:
-  - @ledgerhq/cryptoassets@13.1.1-next.0
-  - @ledgerhq/coin-framework@0.15.0-next.1
-
-## 1.0.0-next.0
-
-### Major Changes
-
-- [#6874](https://github.com/LedgerHQ/ledger-live/pull/6874) [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Use Polkadot node instead of Sidecar fork
+## 0.8.0
 
 ### Minor Changes
 
-- [#6326](https://github.com/LedgerHQ/ledger-live/pull/6326) [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - polkadot generic nano app support
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
 
-### Patch Changes
+## 0.8.0-hotfix.0
 
-- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761)]:
-  - @ledgerhq/types-live@6.48.1-next.0
-  - @ledgerhq/coin-framework@0.15.0-next.0
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
 
 ## 0.7.0
 

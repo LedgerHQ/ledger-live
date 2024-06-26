@@ -12,9 +12,6 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         url: getEnv("API_POLKADOT_SIDECAR"),
         credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
       },
-      node: {
-        url: getEnv("API_POLKADOT_NODE"),
-      },
       staking: {
         electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
       },
