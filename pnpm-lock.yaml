@@ -13,6 +13,8 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': workspace:*
   tslib: 2.6.2
+  '@hashgraph/sdk>@grpc/grpc-js': 1.6.7
+  '@hashgraph/sdk>@hashgraph/cryptography': 1.1.2
 
 packageExtensionsChecksum: bcc0ac67c2d7bcc88fe46412ebcf46be
 
@@ -2965,7 +2967,7 @@ importers:
         version: 1.2.0
       '@hashgraph/sdk':
         specifier: 2.14.2
-        version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)
+        version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.73.6)(react@18.2.0)
       '@keplr-wallet/cosmos':
         specifier: ^0.9.16
         version: 0.9.16
@@ -13842,19 +13844,19 @@ packages:
     dependencies:
       graphql: 15.8.0
 
+  /@grpc/grpc-js@1.6.7:
+    resolution: {integrity: sha512-eBM03pu9hd3VqDQG+kHahiG1x80RGkkqqRb1Pchcwqej/KkAH95gAvKs6laqaHCycYaPK+TKuNQnOz9UXYA8qw==}
+    engines: {node: ^8.13.0 || >=10.10.0}
+    dependencies:
+      '@grpc/proto-loader': 0.6.13
+      '@types/node': 20.12.12
+    dev: false
+
   /@grpc/grpc-js@1.7.3:
     resolution: {integrity: sha512-H9l79u4kJ2PVSxUNA08HMYAnUBLj9v6KjYQ7SQ71hOZcEXhShE/y5iQCesP8+6/Ik/7i2O0a10bPquIcYfufog==}
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
-      '@grpc/proto-loader': 0.7.12
-      '@types/node': 20.12.12
-    dev: false
-
-  /@grpc/grpc-js@1.8.2:
-    resolution: {integrity: sha512-5cqCjUvDKJWHGeu1prlrFOUmjuML0NequZKJ38PsCkfwIqPnZq4Q9burPP3It7/+46wpl0KsqVN3s6Te3B9Qtw==}
-    engines: {node: ^8.13.0 || >=10.10.0}
-    dependencies:
-      '@grpc/proto-loader': 0.7.12
+      '@grpc/proto-loader': 0.7.13
       '@types/node': 20.12.12
     dev: false
 
@@ -13870,8 +13872,8 @@ packages:
       yargs: 16.2.0
     dev: false
 
-  /@grpc/proto-loader@0.7.12:
-    resolution: {integrity: sha512-DCVwMxqYzpUCiDMl7hQ384FqP4T3DbNpXU8pt681l3UWCip1WUiD5JrkImUwCB9a7f2cq4CUTmi5r/xIMRPY1Q==}
+  /@grpc/proto-loader@0.7.13:
+    resolution: {integrity: sha512-AiXO/bfe9bmxBjxxtYxFAXGZvMaN5s8kO+jBHAJCON8rJoB5YS/D6X7ZNc6XQkuHNmyl4CYaMI1fJ/Gn27RGGw==}
     engines: {node: '>=6'}
     hasBin: true
     dependencies:
@@ -13893,32 +13895,25 @@ packages:
     dependencies:
       '@hapi/hoek': 9.3.0
 
-  /@hashgraph/cryptography@1.4.7:
-    resolution: {integrity: sha512-DrwZxIw3AM01JINaINTBmFEJVn9lzTHHf343zYXzpu+MrUJbZzuGyzd5bW6DmGGvFqTF/xDo0S/XiO2StdhVgg==}
+  /@hashgraph/cryptography@1.1.2(react-native@0.73.6)(react@18.2.0):
+    resolution: {integrity: sha512-oSnDDs5foNq6Yni4kCwbA01NuVY2mewVr1jhkJG7yNDT6+xIBCztRWDeINb1JuShXe57Cuf88M1zmN5iFN7JgA==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
-      expo: ^45.0.3
-      expo-crypto: ^10.1.2
-      expo-random: ^12.1.2
-    peerDependenciesMeta:
-      expo:
-        optional: true
-      expo-crypto:
-        optional: true
-      expo-random:
-        optional: true
+      expo: ^44.0.5
     dependencies:
-      asn1js: 3.0.5
       bignumber.js: 9.1.2
-      bn.js: 5.2.1
-      buffer: 6.0.3
       crypto-js: 4.2.0
       elliptic: 6.5.5
+      expo-crypto: 10.2.0(react-native@0.73.6)(react@18.2.0)
+      expo-random: 12.3.0(react-native@0.73.6)(react@18.2.0)
       js-base64: 3.7.7
-      node-forge: 1.3.1
-      spark-md5: 3.0.2
       tweetnacl: 1.0.3
       utf8: 3.0.0
+    transitivePeerDependencies:
+      - expo-constants
+      - expo-modules-core
+      - react
+      - react-native
     dev: false
 
   /@hashgraph/proto@2.4.1:
@@ -13929,14 +13924,14 @@ packages:
       protobufjs: 6.11.4
     dev: false
 
-  /@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4):
+  /@hashgraph/sdk@2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.73.6)(react@18.2.0):
     resolution: {integrity: sha512-58CGz+NZvuI7VxpmvFXo7IJc60kWRGIdQeYy1b5Y2j3aO5nwElX8IJGpscB+ZiFepwkHC6gvW3dX9tRV2lWGaQ==}
     engines: {node: '>=10.17.0'}
     peerDependencies:
       expo: ^45.0.3
     dependencies:
-      '@grpc/grpc-js': 1.8.2
-      '@hashgraph/cryptography': 1.4.7
+      '@grpc/grpc-js': 1.6.7
+      '@hashgraph/cryptography': 1.1.2(react-native@0.73.6)(react@18.2.0)
       '@hashgraph/proto': 2.4.1
       bignumber.js: 9.1.2
       crypto-js: 4.2.0
@@ -13946,8 +13941,10 @@ packages:
       protobufjs: 6.11.4
       utf8: 3.0.0
     transitivePeerDependencies:
-      - expo-crypto
-      - expo-random
+      - expo-constants
+      - expo-modules-core
+      - react
+      - react-native
     dev: false
     patched: true
 
@@ -26546,15 +26543,6 @@ packages:
       safer-buffer: 2.1.2
     dev: false
 
-  /asn1js@3.0.5:
-    resolution: {integrity: sha512-FVnvrKJwpt9LP2lAMl8qZswRNm3T4q9CON+bxldk2iwk3FFpuwhx2FfinyitizWHsVYyaY+y5JzDR0rCMV5yTQ==}
-    engines: {node: '>=12.0.0'}
-    dependencies:
-      pvtsutils: 1.3.5
-      pvutils: 1.1.3
-      tslib: 2.6.2
-    dev: false
-
   /assert-plus@1.0.0:
     resolution: {integrity: sha512-NfJ4UzBCcQGLDlQq7nHxH+tv3kyZ0hHQqF5BO6J7tNJeP5do1llPr8dZ8zHonfhAu0PHAdMkSo+8o0wxg9lZWw==}
     engines: {node: '>=0.8'}
@@ -33463,6 +33451,28 @@ packages:
       - supports-color
     dev: false
 
+  /expo-crypto@10.2.0(react-native@0.73.6)(react@18.2.0):
+    resolution: {integrity: sha512-YVFp+DJXBtt4t6oZXepnzb+xwpKzFbXn3B9Oma1Tfh6J0rIlm/I20UW/5apdvEdbj44fxJ5DsiZeyADI3bcZkQ==}
+    peerDependencies:
+      expo: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      react-native: 0.73.6(react@18.2.0)
+    dev: false
+
   /expo-file-system@15.4.5(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.73.6)(react@18.2.0):
     resolution: {integrity: sha512-xy61KaTaDgXhT/dllwYDHm3ch026EyO8j4eC6wSVr/yE12MMMxAC09yGwy4f7kkOs6ztGVQF5j7ldRzNLN4l0Q==}
     peerDependencies:
@@ -33870,6 +33880,29 @@ packages:
       - encoding
       - supports-color
     dev: true
+
+  /expo-random@12.3.0(react-native@0.73.6)(react@18.2.0):
+    resolution: {integrity: sha512-q+AsTfGNT+Q+fb2sRrYtRkI3g5tV4H0kuYXM186aueILGO/vLn/YYFa7xFZj1IZ8LJZg2h96JDPDpsqHfRG2mQ==}
+    peerDependencies:
+      expo: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      base64-js: 1.5.1
+      react: 18.2.0
+      react-native: 0.73.6(react@18.2.0)
+    dev: false
 
   /expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6)(react@18.2.0):
     resolution: {integrity: sha512-mFdBpWisPXBuocRGywC14nDai5vSUmvEyQpwvKH/xUo+m5/TUvfqV6YIewFpW22zn5WFGFiuJPhzNrqhBBinIw==}
@@ -45952,17 +45985,6 @@ packages:
       bitcoin-ops: 1.4.1
     dev: false
 
-  /pvtsutils@1.3.5:
-    resolution: {integrity: sha512-ARvb14YB9Nm2Xi6nBq1ZX6dAM0FsJnuk+31aUp4TrcZEdKUlSqOqsxJHUPJDNE3qiIp+iUPEIeR6Je/tgV7zsA==}
-    dependencies:
-      tslib: 2.6.2
-    dev: false
-
-  /pvutils@1.1.3:
-    resolution: {integrity: sha512-pMpnA0qRdFp32b1sJl1wOJNxZLQ2cbQx+k6tjNtZ8CpvVhNqEPRgivZ2WOUev2YMajecdH7ctUPDvEe87nariQ==}
-    engines: {node: '>=6.0.0'}
-    dev: false
-
   /q@1.5.1:
     resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
@@ -49473,10 +49495,6 @@ packages:
 
   /space-separated-tokens@2.0.2:
     resolution: {integrity: sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q==}
-
-  /spark-md5@3.0.2:
-    resolution: {integrity: sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==}
-    dev: false
 
   /spawn-command@0.0.2:
     resolution: {integrity: sha512-zC8zGoGkmc8J9ndvml8Xksr1Amk9qBujgbF0JAIWO7kXr43w0h/0GJNM/Vustixu+YE8N/MTrQ7N31FvHUACxQ==}
