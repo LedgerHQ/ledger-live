@@ -3,7 +3,7 @@ import { Account } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { StellarOperation, Transaction } from "./types";
 import { getAmountValue } from "./logic";
-import { fetchSequence } from "./api";
+import { fetchSequence } from "./network";
 
 export async function buildOptimisticOperation(
   account: Account,

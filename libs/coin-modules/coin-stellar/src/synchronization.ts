@@ -1,4 +1,4 @@
-import { fetchAccount, fetchOperations } from "./api";
+import { fetchAccount, fetchOperations } from "./network";
 import { buildSubAccounts } from "./tokens";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
