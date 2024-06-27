@@ -169,4 +169,15 @@ export class Account {
     "Tezos 2",
     "tz1g3uEPZ9T3AhUZDTbGW9V43JRfizJmSnPv",
   );
+  static readonly MATIC_1 = new Account(
+    Currency.MATIC,
+    "Polygon 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly BSC_1 = new Account(
+    Currency.BSC,
+    "Binance Smart Chain 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
 }
