@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { Account } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
   TonAccountInfo,
@@ -15,6 +15,15 @@ export const mockAddress = "UQDzd8aeBOU-jqYw_ZSuZjceI5p-F4b7HMprAsUJAtRPbMol";
 export const mockAccountId =
   "js:2:ton:b19891a06654f21c64147550b3321bef63acd25b5dd61b688b022c42fac4831d:ton";
 
+export const tokenAccount = {
+  id: "subAccountId",
+  type: "TokenAccount",
+  spendableBalance: new BigNumber("5000000"),
+  token: {
+    contractAddress: "0:A2CC9B938389950125001F6B8AF280CACA23BE045714AD69387DD546588D667E",
+  },
+} as TokenAccount;
+
 export const account = {
   id: mockAccountId,
   freshAddress: mockAddress,
@@ -25,16 +34,7 @@ export const account = {
   spendableBalance: new BigNumber("1000000000"),
   balance: new BigNumber("1000000000"),
   seedIdentifier: "seedIdentifier",
-  subAccounts: [
-    {
-      id: "subAccountId",
-      type: "TokenAccount",
-      spendableBalance: new BigNumber("5000000"),
-      token: {
-        contractAddress: "0:A2CC9B938389950125001F6B8AF280CACA23BE045714AD69387DD546588D667E",
-      },
-    },
-  ],
+  subAccounts: [tokenAccount],
 } as Account;
 
 export const transaction = {

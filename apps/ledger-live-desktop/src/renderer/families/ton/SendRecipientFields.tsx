@@ -22,7 +22,7 @@ const Root = (props: {
     <Box flow={1}>
       <Box mb={10}>
         <Label>
-          <LabelInfoTooltip text={<Trans i18nKey="families.ton.commentWarningText" />}>
+          <LabelInfoTooltip text={<Trans i18nKey="errors.TonCommentInvalid.title" />}>
             <span>
               <Trans i18nKey="families.ton.comment" />
             </span>

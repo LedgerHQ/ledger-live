@@ -146,7 +146,7 @@ describe("Build TON transaction", () => {
     });
   });
 
-  test("Build TON transaction when useAllAmount is true", () => {
+  test("Build TON transaction when useAllAmount is true and there is a comment", () => {
     const transaction = { ...baseTransaction };
     transaction.useAllAmount = true;
     transaction.comment.text = "valid coment";
