@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.46.0-nightly.2
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+### Patch Changes
+
+- [#7196](https://github.com/LedgerHQ/ledger-live/pull/7196) [`a48d861`](https://github.com/LedgerHQ/ledger-live/commit/a48d8612c1f0119d88ef461e3b182953fb353035) Thanks [@pavanvora](https://github.com/pavanvora)! - Add missing translation for stake deposit key
+
+- [#7172](https://github.com/LedgerHQ/ledger-live/pull/7172) [`0188f97`](https://github.com/LedgerHQ/ledger-live/commit/0188f9746533de8a7d99461e9be451e0e997967a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - UI: Discover tab/My Ledger doesn't compensate for keyboard height
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/types-cryptoassets@7.14.0-nightly.0
+  - @ledgerhq/types-live@6.49.0-nightly.1
+  - @ledgerhq/live-common@34.5.0-nightly.2
+  - @ledgerhq/coin-framework@0.15.0-nightly.2
+  - @ledgerhq/live-wallet@0.3.0-nightly.2
+  - @ledgerhq/coin-evm@2.1.1-nightly.2
+  - @ledgerhq/domain-service@1.2.1-nightly.1
+  - @ledgerhq/live-countervalues@0.2.1-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.1-nightly.2
+  - @ledgerhq/live-nft@0.4.1-nightly.2
+  - @ledgerhq/live-nft-react@0.4.1-nightly.2
+  - @ledgerhq/native-ui@0.23.1-nightly.0
+
 ## 3.45.2-nightly.1
 
 ### Patch Changes

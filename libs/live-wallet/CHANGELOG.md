@@ -1,5 +1,19 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.2
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/types-cryptoassets@7.14.0-nightly.0
+  - @ledgerhq/cryptoassets@13.2.0-nightly.1
+  - @ledgerhq/types-live@6.49.0-nightly.1
+  - @ledgerhq/coin-framework@0.15.0-nightly.2
+
 ## 0.2.1-nightly.1
 
 ### Patch Changes

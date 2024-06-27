@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 10.4.0-nightly.1
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
 ## 10.3.1-nightly.0
 
 ### Patch Changes

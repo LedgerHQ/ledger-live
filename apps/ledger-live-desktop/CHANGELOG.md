@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.83.0-nightly.2
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+### Patch Changes
+
+- [#7065](https://github.com/LedgerHQ/ledger-live/pull/7065) [`85b28fe`](https://github.com/LedgerHQ/ledger-live/commit/85b28fe52a4b986ddd2be31ec7cfa9776750498f) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add setQuote custom wallet api method for swap live app
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/types-cryptoassets@7.14.0-nightly.0
+  - @ledgerhq/types-live@6.49.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.0-nightly.2
+  - @ledgerhq/live-common@34.5.0-nightly.2
+  - @ledgerhq/coin-framework@0.15.0-nightly.2
+  - @ledgerhq/live-wallet@0.3.0-nightly.2
+  - @ledgerhq/coin-evm@2.1.1-nightly.2
+  - @ledgerhq/domain-service@1.2.1-nightly.1
+  - @ledgerhq/live-countervalues@0.2.1-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.1-nightly.2
+  - @ledgerhq/live-nft@0.4.1-nightly.2
+  - @ledgerhq/live-nft-react@0.4.1-nightly.2
+  - @ledgerhq/react-ui@0.15.1-nightly.0
+
 ## 2.82.2-nightly.1
 
 ### Patch Changes

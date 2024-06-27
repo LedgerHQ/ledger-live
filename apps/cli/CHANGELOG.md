@@ -1,5 +1,22 @@
 # @ledgerhq/live-cli
 
+## 24.4.0-nightly.2
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/cryptoassets@13.2.0-nightly.1
+  - @ledgerhq/hw-app-btc@10.4.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.0-nightly.2
+  - @ledgerhq/live-common@34.5.0-nightly.2
+  - @ledgerhq/coin-framework@0.15.0-nightly.2
+  - @ledgerhq/live-wallet@0.3.0-nightly.2
+  - @ledgerhq/live-countervalues@0.2.1-nightly.2
+
 ## 24.3.2-nightly.1
 
 ### Patch Changes
