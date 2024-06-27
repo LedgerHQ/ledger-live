@@ -41,11 +41,17 @@ export class StreamTree {
     this.tree = tree;
   }
 
-  public getApplicationRootPath(applicationId: number): string {
-    // TODO implement with key rotation (currently always returns on roots 0h)
-    const treeRoot = "0h"; // TODO change this
-    const applicationRoot = "0h"; // TODO change this
-    return `${treeRoot}/${applicationId}h/${applicationRoot}`;
+  public getApplicationRootPath(applicationId: number, increment: number = 0): string {
+    // tree index is always 0 in the current implementation
+    const treeIndex = 0;
+    // for application index, we have key rotation that is possible so we need to find the last index
+    const child = this.tree
+      .getChild(DerivationPath.hardenedIndex(treeIndex))
+      ?.getChild(DerivationPath.hardenedIndex(applicationId));
+    const applicationIndex = child
+      ? DerivationPath.reverseHardenedIndex(child.getHighestIndex())
+      : 0;
+    return `${treeIndex}h/${applicationId}h/${applicationIndex + increment}h`;
   }
 
   public async getPublishKeyEvent(
@@ -91,15 +97,6 @@ export class StreamTree {
     return this.tree.getValue()!;
   }
 
-  public createApplicationStreams(
-    owner: Device,
-    applicationId: number,
-  ): Promise<ApplicationStreams> {
-    owner as Device;
-    applicationId as number;
-    throw new Error("Not implemented");
-  }
-
   /**
    * Share a private key with a member
    */
@@ -129,6 +126,17 @@ export class StreamTree {
       const newStream = await stream.edit().addMember(name, member, permission).issue(owner, this);
       return this.update(newStream);
     }
+  }
+
+  /**
+   * Close a stream
+   */
+  public async close(path: string | number[], owner: Device): Promise<StreamTree> {
+    const indexes =
+      typeof path === "string" ? DerivationPath.toIndexArray(path) : (path as number[]);
+    let stream = this.getChild(indexes) || new CommandStream();
+    stream = await stream.edit().close().issue(owner, this);
+    return this.update(stream);
   }
 
   public update(stream: CommandStream): StreamTree {

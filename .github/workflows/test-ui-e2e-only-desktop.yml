@@ -80,6 +80,7 @@ jobs:
         id: setup-test-desktop
         with:
           skip_ruby: true
+          build_type: staging
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
       - name: generate token
@@ -279,7 +280,7 @@ jobs:
                 description: "Run the full e2e test suite for LLD",
               }],
             };
-            
+
             if (${{ !inputs.slack_notif && github.event_name == 'workflow_dispatch' }}) return;
 
             const slackPayload = {

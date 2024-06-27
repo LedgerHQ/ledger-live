@@ -1,7 +1,7 @@
 import { isAccountDelegating } from "../families/tezos/staking";
 import { BitcoinAccount, initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { TronAccount } from "../families/tron/types";
+import { TronAccount } from "@ledgerhq/coin-tron/types";
 import { CosmosAccount } from "../families/cosmos/types";
 import {
   getMainAccount,

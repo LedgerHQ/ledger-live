@@ -205,7 +205,12 @@ export default function Default() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isLocked && analyticsFF?.enabled && !hasSeenAnalyticsOptInPrompt) {
+    if (
+      !isLocked &&
+      analyticsFF?.enabled &&
+      (!hasCompletedOnboarding || analyticsFF?.params?.entryPoints.includes("Portfolio")) &&
+      !hasSeenAnalyticsOptInPrompt
+    ) {
       dispatch(setShareAnalytics(false));
       dispatch(setSharePersonalizedRecommendations(false));
     }

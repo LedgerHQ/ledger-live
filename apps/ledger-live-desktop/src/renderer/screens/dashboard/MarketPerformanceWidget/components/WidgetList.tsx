@@ -32,16 +32,22 @@ function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
 
   return (
     <Flex alignItems="center" mt={isFirst ? 0 : 2} justifyContent="space-between">
-      <Flex alignItems="center">
+      <Flex alignItems="center" flex={1}>
         <Text color="neutral.c80" variant="h5Inter" mr={2}>
           {index}
         </Text>
 
-        <CryptoCurrencyIconWrapper>
-          <img width="32px" height="32px" src={data.image} alt={"currency logo"} />
+        <CryptoCurrencyIconWrapper hasImage={!!data.image}>
+          {data.image ? (
+            <img width="32px" height="32px" src={data.image} alt={"currency logo"} />
+          ) : (
+            <Text color="neutral.c100" variant="h5Inter" fontSize={12}>
+              {data.name.charAt(0).toUpperCase()}
+            </Text>
+          )}
         </CryptoCurrencyIconWrapper>
 
-        <Flex ml={2} overflow="hidden" flexDirection="column" alignItems="left">
+        <Flex ml={2} overflow="hidden" flexDirection="column" flex={1} alignItems="left">
           <EllipsisText
             variant="paragraph"
             fontWeight="semiBold"
@@ -96,15 +102,20 @@ function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
   );
 }
 
-const CryptoCurrencyIconWrapper = styled.div`
+const CryptoCurrencyIconWrapper = styled(Flex)<{
+  hasImage?: boolean;
+}>`
   height: 32px;
   width: 32px;
   position: relative;
   border-radius: 32px;
   overflow: hidden;
+  background-color: ${p => (p.hasImage ? "transparent" : p.theme.colors.opacityDefault.c05)};
   img {
     object-fit: cover;
   }
+  align-items: center;
+  justify-content: center;
 `;
 
 const EllipsisText = styled(Text)`

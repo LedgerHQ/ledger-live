@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { isDeviceModelId } from "@ledgerhq/devices/helpers";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { Subscription, from } from "rxjs";
@@ -15,6 +16,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { useHistory } from "react-router-dom";
+import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import nanoS from "./assets/nanoS.png";
 import blue from "./assets/blue.png";
@@ -25,8 +27,12 @@ import blueDark from "./assets/blue_dark.png";
 import nanoXDark from "./assets/nanoX_dark.png";
 import nanoSPDark from "./assets/nanoSP_dark.png";
 import stax from "./assets/stax.png";
+import europa from "./assets/europa.png";
 
-const illustrations = {
+const illustrations: Record<
+  DeviceModelId,
+  { light: string; dark: string; width: number; height: number }
+> = {
   nanoX: {
     light: nanoX,
     dark: nanoXDark,
@@ -51,6 +57,12 @@ const illustrations = {
     width: 141,
     height: 223,
   },
+  europa: {
+    light: europa,
+    dark: europa,
+    width: 141,
+    height: 223,
+  },
   blue: {
     light: blue,
     dark: blueDark,
@@ -58,8 +70,9 @@ const illustrations = {
     height: 64,
   },
 };
+
 const Illustration = styled.div<{
-  modelId: string;
+  modelId: DeviceModelId;
 }>`
   // prettier-ignore
   background: url('${p =>
@@ -73,7 +86,10 @@ const Illustration = styled.div<{
 `;
 const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const modelId = process.env.OVERRIDE_MODEL_ID || lastSeenDevice?.modelId || "nanoS";
+  const overriddenModelId = process.env.OVERRIDE_MODELID;
+  const modelId: DeviceModelId = isDeviceModelId(overriddenModelId)
+    ? overriddenModelId
+    : lastSeenDevice?.modelId || DeviceModelId.nanoS;
   const [readyToDecide, setReadyToDecide] = useState(false);
   const [showSpinner, setShowSpinner] = useState(true);
   const device = useSelector(getCurrentDevice);

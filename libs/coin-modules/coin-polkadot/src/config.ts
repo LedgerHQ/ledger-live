@@ -2,6 +2,10 @@ import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-framework/config";
 import { MissingCoinConfig } from "@ledgerhq/coin-framework/errors";
 
 export type PolkadotConfig = {
+  node: {
+    url: string;
+    credentials?: string;
+  };
   sidecar: {
     url: string;
     credentials?: string;
@@ -9,6 +13,13 @@ export type PolkadotConfig = {
   staking?: {
     electionStatusThreshold: number;
   };
+  metadataShortener: {
+    url: string;
+  };
+  metadataHash: {
+    url: string;
+  };
+  runtimeUpgraded: boolean;
 };
 
 export type PolkadotCoinConfig = CurrencyConfig & PolkadotConfig;

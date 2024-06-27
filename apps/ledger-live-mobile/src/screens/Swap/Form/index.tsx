@@ -43,6 +43,7 @@ import type { DetailsSwapParamList } from "../types";
 import {
   getAvailableProviders,
   maybeTezosAccountUnrevealedAccount,
+  maybeTronEmptyAccount,
 } from "@ledgerhq/live-common/exchange/swap/index";
 import { DEFAULT_SWAP_RATES_LLM_INTERVAL_MS } from "@ledgerhq/live-common/exchange/swap/const/timeout";
 import { useSelectedSwapRate } from "./useSelectedSwapRate";
@@ -71,6 +72,7 @@ export function SwapForm({
   );
 
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+  const ptxSwapReceiveTRC20WithoutTrx = useFeature("ptxSwapReceiveTRC20WithoutTrx");
   const navigation = useNavigation<Navigation["navigation"]>();
 
   const onNoRates: OnNoRatesCallback = useCallback(
@@ -139,7 +141,9 @@ export function SwapForm({
   const swapError =
     swapTransaction.fromAmountError ||
     exchangeRatesState?.error ||
-    maybeTezosAccountUnrevealedAccount(swapTransaction);
+    maybeTezosAccountUnrevealedAccount(swapTransaction) ||
+    (ptxSwapReceiveTRC20WithoutTrx?.enabled ? maybeTronEmptyAccount(swapTransaction) : undefined);
+
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
 

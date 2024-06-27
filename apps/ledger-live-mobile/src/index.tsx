@@ -32,6 +32,7 @@ import {
   exportSelector as settingsExportSelector,
   osThemeSelector,
   hasSeenAnalyticsOptInPromptSelector,
+  hasCompletedOnboardingSelector,
 } from "~/reducers/settings";
 import { accountsSelector, exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { exportSelector as bleSelector } from "~/reducers/ble";
@@ -105,13 +106,25 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!analyticsFF?.enabled || hasSeenAnalyticsOptInPrompt) return;
+    if (
+      !analyticsFF?.enabled ||
+      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints.includes("Portfolio")) ||
+      hasSeenAnalyticsOptInPrompt
+    )
+      return;
     dispatch(setAnalytics(false));
     dispatch(setPersonalizedRecommendations(false));
-  }, [analyticsFF?.enabled, dispatch, hasSeenAnalyticsOptInPrompt]);
+  }, [
+    analyticsFF?.enabled,
+    analyticsFF?.params?.entryPoints,
+    dispatch,
+    hasSeenAnalyticsOptInPrompt,
+    hasCompletedOnboarding,
+  ]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
   useAppStateListener();

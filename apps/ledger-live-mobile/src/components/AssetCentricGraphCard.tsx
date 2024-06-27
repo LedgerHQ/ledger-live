@@ -168,6 +168,7 @@ function AssetCentricGraphCard({
                       color={"neutral.c100"}
                       numberOfLines={1}
                       adjustsFontSizeToFit
+                      testID="asset-graph-balance"
                     >
                       {items[0].value !== undefined ? (
                         <CurrencyUnitValue

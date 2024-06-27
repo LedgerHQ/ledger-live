@@ -298,6 +298,8 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
+  [ScreenName.MockedAddAssetButton]: undefined;
+  [ScreenName.WalletSyncActivationSettings]: undefined;
 
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;

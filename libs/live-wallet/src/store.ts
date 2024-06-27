@@ -56,11 +56,18 @@ export const handlers: WalletHandlers = {
         starredAccountIds.add(starredId);
       }
     });
-    return { accountNames, starredAccountIds };
+    return {
+      accountNames,
+      starredAccountIds,
+    };
   },
   SET_ACCOUNT_NAME: (state, { payload: { accountId, name } }) => {
     const accountNames = new Map(state.accountNames);
-    accountNames.set(accountId, name);
+    if (!name) {
+      accountNames.delete(accountId);
+    } else {
+      accountNames.set(accountId, name);
+    }
     return { ...state, accountNames };
   },
   BULK_SET_ACCOUNT_NAMES: (state, { payload: { accountNames } }) => {
@@ -83,7 +90,10 @@ export const handlers: WalletHandlers = {
   ADD_ACCOUNTS: (state, { payload: { allAccounts, editedNames } }) => {
     const accountNames = new Map(state.accountNames);
     for (const account of allAccounts) {
-      const name = editedNames.get(account.id) || getDefaultAccountName(account);
+      const name =
+        editedNames.get(account.id) ||
+        accountNames.get(account.id) ||
+        getDefaultAccountName(account);
       accountNames.set(account.id, name);
     }
     return { ...state, accountNames };

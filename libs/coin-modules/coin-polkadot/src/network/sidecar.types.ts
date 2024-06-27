@@ -13,49 +13,38 @@ interface IPallet {
   pallet: string;
   palletIndex: number;
 }
-interface IUnlocking {
+export interface IUnlocking {
   value: string;
   era: string;
 }
 interface IStakingLedger {
-  stash: string;
-  total: string;
-  active: string;
   unlocking: IUnlocking[];
-  claimedRewards: string[];
 }
 interface ITarget {
   address: string;
   value: string;
   status: "active" | "inactive" | "waiting" | null;
 }
-interface IIdentity {
-  display?: string;
-  displayParent?: string;
-  email?: string;
-  image?: string;
-  legal?: string;
+export interface IIdentity {
+  display?: string | undefined;
+  displayParent?: string | undefined;
+  email?: string | undefined;
+  image?: string | undefined;
+  legal?: string | undefined;
   other?: Record<string, any>;
-  parent?: string;
-  pgp?: string;
-  riot?: string;
-  twitter?: string;
-  web?: string;
+  parent?: string | undefined;
+  pgp?: string | undefined;
+  riot?: string | undefined;
+  twitter?: string | undefined;
+  web?: string | undefined;
   judgements: Array<[string, Record<string, any>]>;
 }
-interface IValidatorExposure {
-  who: string;
-  value: string;
-}
-interface IValidator {
-  at?: IAt;
+export interface IValidator {
   accountId: string;
-  controllerId?: string | null;
   identity: IIdentity;
   own: string;
   total: string;
-  nominatorsCount: string;
-  nominators?: IValidatorExposure[];
+  nominatorsCount: number;
   commission: string;
   rewardsPoints: string | null;
   isElected: boolean;
@@ -101,22 +90,17 @@ export interface SidecarPalletStorageItem extends IPallet {
   value?: any;
 }
 export interface SidecarStakingInfo {
-  at: IAt;
-  controller: string;
-  rewardDestination: string;
-  numSlashingSpans: string;
+  numSlashingSpans: number;
   staking: IStakingLedger;
 }
 export interface SidecarNominations {
-  at?: IAt;
   submittedIn: string | null;
   targets: ITarget[];
 }
 export interface SidecarConstants {
-  at: IAt;
   consts: Record<string, any>;
 }
-export type SidecarValidatorsParamStatus = "all" | "elected" | "waiting";
+export type SidecarValidatorsParamStatus = "all" | "elected" | "waiting" | "nextElected";
 export type SidecarValidatorsParamAddresses = string[];
 export type SidecarValidators = IValidator[];
 export interface SidecarPalletStakingProgress {

@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "序列号错误",
       "description" : "请关闭窗口，稍后再重试"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "无法互换：需使用 Tezos 账户发起发送/委托或更改交易对。"
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 市场价格",
       "currencyPrice" : "1 {{currencyTicker}} 价格",
-      "currencyPriceChange" : "最近 24 小时变化"
+      "currencyPriceChange" : {
+        "day" : "最近 24 小时变化",
+        "week" : "最近 7 天变化",
+        "month" : "最近 30 天变化",
+        "year" : "最近一年变化",
+        "all" : "最近一年变化"
+      }
     },
     "quickActions" : {
       "buy" : "买入",
@@ -2714,6 +2723,8 @@
       "languageDesc" : "设置 Ledger Live 显示的语言。",
       "dateFormat" : "日期格式",
       "dateFormatDesc" : "设置 Ledger Live 的日期格式",
+      "walletSync" : "Ledger  Sync",
+      "walletSyncDesc" : "备份您的应用程序数据并顺畅同步多个 Ledger Live 实例",
       "region" : "地区",
       "regionDesc" : "选择您所在的地区来更新日期、时间和货币的格式。",
       "password" : "应用程序锁",
@@ -3130,9 +3141,6 @@
         "title" : "欢迎使用互换（Swap）",
         "whatIsSwap" : "什么是互换（Swap）？",
         "disclaimer" : "通过您的 Ledger 设备直接兑换加密货币。该服务在一些国家（包括美国）不可用。"
-      },
-      "main" : {
-        "header" : "互换"
       },
       "notAvailable" : {
         "title" : "服务暂时不可用，或在您的国家不可用"
@@ -3840,35 +3848,9 @@
     "tokens" : {
       "title" : "添加代币",
       "createParentCurrencyAccount" : "添加 {{parrentCurrencyName}} 账户",
-      "erc20" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 为 ERC20 代币。\n您可以直接通过以太坊账户接收代币。",
-        "learnMore" : "了解关于 ERC20 的更多详情"
-      },
-      "trc10" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 为 TRC10 代币。\n您可以直接通过 Tron 波场账户接收代币。",
-        "learnMore" : "了解关于 TRC10 的更多详情"
-      },
-      "trc20" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 为 TRC20 代币。\n您可以直接通过 Tron 波场账户接收代币。",
-        "learnMore" : "了解关于 TRC20 的更多详情"
-      },
-      "asa" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 为 ASA 代币。\n您可以直接通过 Algorand 账户接收代币。",
-        "learnMore" : "了解更多"
-      },
-      "bep20" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 为 BEP-20 代币。\n您可以直接通过 BNB 币安账户接收代币。",
-        "learnMore" : "了解关于 BEP-20 的更多详情"
-      },
-      "vip180" : {
-        "title" : "添加代币",
-        "disclaimer" : "{{tokenName}} 是 VIP180 代币。\n您可以直接在 VET 账户中接收代币。",
-        "learnMore" : "详细了解 VIP180"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}}) 是一个 {{tokenType}} 代币。\n您可以直接在 {{currency}} 账户上接收代币。",
+        "learnMore" : "了解关于 {{tokenType}} 的更多信息"
       }
     },
     "showMoreChainType" : "更多地址类型",
@@ -4325,7 +4307,8 @@
       "installUpdate" : {
         "titleInactive" : "安装更新",
         "titleActive" : "正在安装更新",
-        "description" : "{{deviceName}} 会重启多次。\n\n要完成更新，请在安装完成后使用您的识别码解锁 {{deviceName}}。"
+        "description" : "{{deviceName}} 会重启多次。\n\n要完成更新，请在安装完成后使用您的识别码解锁 {{deviceName}}。",
+        "descriptionNanoXBle" : "{{deviceName}} 会重启多次。\n\n如果设备关机且没有自动重启，您将需要自行为设备开机。\n\n要完成更新，请在安装完成后使用您的识别码解锁 {{deviceName}}。"
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4339,14 @@
       "description" : "将您的 Ledger Nano 固件连接到桌面板的 Ledger Live 应用程序以更新",
       "pleaseConnectUsbTitle" : "需要使用 USB 线",
       "pleaseConnectUsbDescription" : "要开始固件更新，请使用 USB 线将 {{deviceName}} 插入手机。"
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "设备已断开",
+          "description" : "与 {{deviceName}} 的连接断开，无法继续更新"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -6134,6 +6125,7 @@
       "subtitle" : "浏览与 Ledger 完全集成的 Web3",
       "section" : {
         "recentlyUsed" : "最近使用",
+        "locallyLoaded" : "本地加载",
         "categories" : "类别",
         "clearAll" : "清除所有"
       },
@@ -6231,9 +6223,10 @@
       },
       "order" : {
         "topGainers" : "顶尖获利者",
-        "market_cap" : "排名",
-        "market_cap_asc" : "排名（市值）升序",
-        "market_cap_desc" : "排名（市值）降序"
+        "topLosers" : "跌幅排名",
+        "marketCap" : "排名",
+        "asc" : "排名（市值）升序",
+        "desc" : "排名（市值）降序"
       },
       "currency" : "货币",
       "time" : "时间",
@@ -6303,7 +6296,7 @@
     "designedForStax" : {
       "title" : "<0>专为</0> <1>Ledger</1> <2>Stax</2> 设计",
       "drawer" : {
-        "description" : "此 NFT 包含 NFT 的附加图片，专为 Ledger Stax 的 E Ink 屏幕设计。\n\n当您将此 NFT 设置为锁屏时，将使用此图片。",
+        "description" : "此 NFT 包含 NFT 的附加图片，专为 Ledger Stax 的 E Ink 屏幕设计。\n\n当您将此 NFT 设置为锁屏时，将使用此图片。",
         "cta" : "知道了"
       }
     },
@@ -6563,7 +6556,6 @@
         },
         "swap" : {
           "title" : "互换",
-          "label" : "热门",
           "body" : "安全地转换加密货币"
         },
         "receive" : {

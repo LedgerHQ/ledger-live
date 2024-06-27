@@ -53,6 +53,7 @@ import { BrazePlugin } from "./BrazePlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
+import { getEnv } from "@ledgerhq/live-env";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -102,10 +103,12 @@ const getMandatoryProperties = async (store: AppStore) => {
   const analyticsEnabled = analyticsEnabledSelector(state);
   const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
+  const devModeEnabled = getEnv("MANAGER_DEV_MODE");
 
   return {
     userId: user?.id,
     braze_external_id: user?.id, // Needed for braze with this exact name
+    devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,

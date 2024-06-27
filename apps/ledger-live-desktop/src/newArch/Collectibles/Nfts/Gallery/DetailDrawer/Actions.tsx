@@ -37,7 +37,6 @@ const Actions: React.FC<ActionsProps> = ({ protoNft, account, metadata, onNFTSen
           {t("NFT.viewer.actions.send")}
         </Text>
       </Button>
-
       <ExternalViewerButton nft={protoNft} account={account} metadata={metadata as NFTMetadata} />
     </NFTActions>
   );

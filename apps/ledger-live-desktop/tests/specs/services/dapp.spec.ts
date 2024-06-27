@@ -65,7 +65,7 @@ test.describe("Metamask Test Dapp", () => {
   });
 });
 
-test.describe("1inch dapp", () => {
+test.describe.skip("1inch dapp", () => {
   test.beforeAll(async () => {
     process.env.MOCK_REMOTE_LIVE_MANIFEST = dummy1inchLiveApp;
   });
@@ -82,7 +82,12 @@ test.describe("1inch dapp", () => {
     await drawer.waitForDrawerToDisappear();
 
     const [, webview] = electronApp.windows();
+    const restricted_app = await webview.getByText("Restricted").isVisible();
+    test.skip(restricted_app, "1inch dapp is restricted");
+
+    const popup = webview.locator(".cross-icon");
     await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
+    if (await popup.isVisible()) await popup.click();
     await webview.locator(".connect-wallet__box > button").click();
     await webview.getByRole("button", { name: "Connect wallet", exact: true }).click();
     await webview.getByRole("button", { name: "Ledger Live Ledger Live" }).click();

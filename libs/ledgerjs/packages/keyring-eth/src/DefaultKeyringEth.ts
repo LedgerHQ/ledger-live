@@ -1,4 +1,4 @@
-import { Transaction, ethers } from "ethers";
+import { ethers } from "ethers";
 import AppBinding from "@ledgerhq/hw-app-eth";
 import {
   EcdsaSignature,
@@ -10,29 +10,32 @@ import {
   SignMessageMethod,
   SignMessageType,
 } from "./KeyringEth";
-import { ContextResponse } from "@ledgerhq/context-module";
+import { ClearSignContext, TransactionContext } from "@ledgerhq/context-module";
 import { ContextModule } from "@ledgerhq/context-module/lib/ContextModule";
+import { TxMapper } from "./mapper/TxMapper";
+import { SupportedTransaction } from "./model/Transaction";
 
 export class DefaultKeyringEth implements KeyringEth {
   private _appBinding: AppBinding;
   private _contextModule: ContextModule;
+  private _TxMapper: TxMapper;
 
   constructor(appBinding: AppBinding, contextModule: ContextModule) {
     this._appBinding = appBinding;
     this._contextModule = contextModule;
+    this._TxMapper = new TxMapper();
   }
 
   public async signTransaction(
     derivationPath: string,
-    transaction: Transaction,
-    options: SignTransactionOptions,
+    transaction: SupportedTransaction,
+    options?: SignTransactionOptions,
   ) {
     const challenge = await this._appBinding.getChallenge();
+    const { transactionSubset, transactionRaw } = this._TxMapper.mapTransaction(transaction);
+    const transactionContext: TransactionContext = { ...transactionSubset, ...options, challenge };
 
-    const contexts: ContextResponse[] = await this._contextModule.getContexts(transaction, {
-      challenge,
-      options,
-    });
+    const contexts: ClearSignContext[] = await this._contextModule.getContexts(transactionContext);
 
     for (const context of contexts) {
       if (context.type === "error") {
@@ -43,10 +46,9 @@ export class DefaultKeyringEth implements KeyringEth {
       await this._appBinding[context.type](context.payload);
     }
 
-    const serializedTransaction = ethers.utils.serializeTransaction(transaction);
     const response = await this._appBinding.signTransaction(
       derivationPath,
-      serializedTransaction.slice(2),
+      transactionRaw,
       null, // context is already fetched by context-module
     );
 
@@ -126,13 +128,13 @@ export class DefaultKeyringEth implements KeyringEth {
       options?.chainId,
     );
 
-    if (!address.startsWith("0x") || !publicKey.startsWith("0x")) {
+    if (typeof address !== "string" || !address.startsWith("0x") || typeof publicKey !== "string") {
       throw new Error("[DefaultKeyringEth] getAddress: Invalid address or public key");
     }
 
     const result: GetAddressResult = {
       address: address as `0x${string}`,
-      publicKey: publicKey as `0x${string}`,
+      publicKey,
     };
 
     return result;

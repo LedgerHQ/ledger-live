@@ -1,10 +1,12 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 
+import { getSwapAPIBaseURL } from "../../index";
 import { fetchCurrencyTo } from "../../api/v5";
 import { useAPI } from "../../../../hooks/useAPI";
 import { useFeature } from "../../../../featureFlags";
-import { getAvailableProviders } from "../../../providers";
+import { useFilteredProviders } from "./useFilteredProviders";
+import { FETCH_CURRENCIES_TIMEOUT_MS } from "./constants";
 
 type Props = {
   fromCurrencyAccount: AccountLike | undefined;
@@ -13,12 +15,7 @@ type Props = {
 
 export function useFetchCurrencyTo({ fromCurrencyAccount }: Props) {
   const fetchAdditionalCoins = useFeature("fetchAdditionalCoins");
-  const providers = getAvailableProviders();
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-
-  const providersFiltered = ptxSwapMoonpayProviderFlag?.enabled
-    ? providers
-    : providers.filter(provider => provider !== "moonpay");
+  const { providers, loading, error } = useFilteredProviders();
 
   const currencyFromId = fromCurrencyAccount
     ? getAccountCurrency(fromCurrencyAccount).id
@@ -27,12 +24,13 @@ export function useFetchCurrencyTo({ fromCurrencyAccount }: Props) {
   return useAPI({
     queryFn: fetchCurrencyTo,
     queryProps: {
+      baseUrl: getSwapAPIBaseURL(),
       currencyFromId,
-      providers: providersFiltered,
+      providers,
       additionalCoinsFlag: fetchAdditionalCoins?.enabled,
     },
-    // assume a currency list for the given props won't change during a users session.
-    staleTimeout: Infinity,
-    enabled: !!currencyFromId,
+    // BE caches this so less of a problem when FE fetches frequently
+    staleTimeout: FETCH_CURRENCIES_TIMEOUT_MS,
+    enabled: !!currencyFromId && !loading && !error,
   });
 }

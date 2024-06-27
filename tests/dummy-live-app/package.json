@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/dummy-live-app",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@ledgerhq/live-app-sdk": "^0.8.0",

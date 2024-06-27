@@ -583,6 +583,21 @@ export const FirmwareUpdate = ({
       );
     }
 
+    if (updateActionState.error?.name === "TimeoutError") {
+      return (
+        <DeviceActionError
+          t={t}
+          device={device}
+          errorName={updateActionState.error.name}
+          translationContext="FirmwareUpdate.updateStatusErrors"
+        >
+          <Button type="main" outline={false} onPress={quitUpdate} mt={6} alignSelf="stretch">
+            {t("FirmwareUpdate.quitUpdate")}
+          </Button>
+        </DeviceActionError>
+      );
+    }
+
     if (batteryStatusesState.error !== null) {
       return (
         <DeviceActionError
@@ -758,6 +773,7 @@ export const FirmwareUpdate = ({
     restoreStepDeniedError,
     userSolvableError,
     updateActionState.step,
+    updateActionState.error,
     updateActionState.progress,
     t,
     device,

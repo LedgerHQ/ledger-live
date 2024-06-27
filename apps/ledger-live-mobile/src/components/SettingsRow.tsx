@@ -1,7 +1,6 @@
 import React, { ReactNode } from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
-import { Box, Checkbox, Flex, Text, Tag } from "@ledgerhq/native-ui";
-import { ChevronRightMedium, InfoMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Box, Checkbox, Flex, Text, Tag, Icons } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
 
@@ -94,7 +93,7 @@ export default function SettingsRow({
       )}
       {!!onHelpPress && (
         <Box marginLeft={3}>
-          <InfoMedium size={16} color={"neutral.c80"} />
+          <Icons.Information size={"M"} color={"neutral.c80"} />
         </Box>
       )}
     </Flex>
@@ -140,7 +139,7 @@ export default function SettingsRow({
           {children}
           {arrowRight ? (
             <Box marginLeft={4}>
-              <ChevronRightMedium size={16} color={"neutral.c70"} />
+              <Icons.ChevronRight size={"M"} color={"neutral.c70"} />
             </Box>
           ) : selected ? (
             <Box marginRight={4}>

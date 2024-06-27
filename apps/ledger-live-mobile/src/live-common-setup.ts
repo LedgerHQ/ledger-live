@@ -76,9 +76,6 @@ setSupportedCurrencies([
   "komodo",
   "pivx",
   "zencash",
-  "vertcoin",
-  "peercoin",
-  "viacoin",
   "bitcoin_testnet",
   "ethereum_sepolia",
   "ethereum_holesky",
@@ -122,6 +119,8 @@ setSupportedCurrencies([
   "lukso",
   "linea",
   "linea_sepolia",
+  "scroll",
+  "scroll_sepolia",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

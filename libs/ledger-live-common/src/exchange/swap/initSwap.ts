@@ -30,6 +30,7 @@ import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { TronSendTrc20ToNewAccountForbidden } from "@ledgerhq/coin-tron/types/errors";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -160,7 +161,10 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           transaction,
         );
         if (unsubscribed) return;
-        const errorsKeys = Object.keys(errors);
+
+        const errorsKeys = Object.keys(errors).filter(item =>
+          [TronSendTrc20ToNewAccountForbidden.prototype.name].includes(item),
+        );
 
         if (errorsKeys.length > 0) {
           throw errors[errorsKeys[0]]; // throw the first error

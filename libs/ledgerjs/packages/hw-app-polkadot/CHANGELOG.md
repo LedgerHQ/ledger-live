@@ -1,5 +1,41 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.30.0
+
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
+
+## 6.30.0-hotfix.0
+
+### Minor Changes
+
+- [#7153](https://github.com/LedgerHQ/ledger-live/pull/7153) [`b0c7b8d`](https://github.com/LedgerHQ/ledger-live/commit/b0c7b8dcc7088853ad73518cb470e8b5b05be4de) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - polkadot generic nano app support
+
+## 6.29.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f)]:
+  - @ledgerhq/hw-transport@6.31.0
+  - @ledgerhq/errors@6.17.0
+
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+### Patch Changes
+
+- Updated dependencies [[`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11), [`815ae3d`](https://github.com/LedgerHQ/ledger-live/commit/815ae3dae8027823854ada837df3dc983d09b10f), [`cec1599`](https://github.com/LedgerHQ/ledger-live/commit/cec1599a41aa1a18a249e34312164bc93b63972f)]:
+  - @ledgerhq/hw-transport@6.31.0-next.0
+  - @ledgerhq/errors@6.17.0-next.0
+
 ## 6.28.6
 
 ### Patch Changes

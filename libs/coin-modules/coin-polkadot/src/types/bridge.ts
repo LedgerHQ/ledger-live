@@ -24,19 +24,23 @@ export type PolkadotNomination = {
   value: BigNumber;
   status: PolkadotNominationStatus;
 };
+
 export type PolkadotNominationRaw = {
   address: string;
   value: string;
   status: PolkadotNominationStatus;
 };
+
 export type PolkadotUnlocking = {
   amount: BigNumber;
   completionDate: Date;
 };
+
 export type PolkadotUnlockingRaw = {
   amount: string;
   completionDate: string;
 };
+
 export type PolkadotResources = {
   controller: string | null | undefined;
   stash: string | null | undefined;
@@ -48,6 +52,7 @@ export type PolkadotResources = {
   nominations: PolkadotNomination[] | null | undefined;
   numSlashingSpans: number | undefined;
 };
+
 export type PolkadotResourcesRaw = {
   controller: string | null | undefined;
   stash: string | null | undefined;
@@ -59,6 +64,7 @@ export type PolkadotResourcesRaw = {
   nominations: PolkadotNominationRaw[] | null | undefined;
   numSlashingSpans: number | undefined;
 };
+
 export type Transaction = TransactionCommon & {
   mode: PolkadotOperationMode;
   family: "polkadot";
@@ -68,6 +74,7 @@ export type Transaction = TransactionCommon & {
   rewardDestination: string | null | undefined;
   numSlashingSpans: number | null | undefined;
 };
+
 export type TransactionRaw = TransactionCommonRaw & {
   family: "polkadot";
   mode: PolkadotOperationMode;
@@ -97,36 +104,56 @@ export type PolkadotStakingProgress = {
   maxNominatorRewardedPerValidator: number;
   bondingDuration: number;
 };
+
 export type PolkadotPreloadData = {
   validators: PolkadotValidator[];
   staking: PolkadotStakingProgress | undefined;
   minimumBondBalance: string;
 };
+
 export type PolkadotSearchFilter = (query: string) => (validator: PolkadotValidator) => boolean;
 export type PolkadotAccount = Account & {
   polkadotResources: PolkadotResources;
 };
+
 export type PolkadotAccountRaw = AccountRaw & {
   polkadotResources: PolkadotResourcesRaw;
 };
+
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type PolkadotOperation = Operation<PolkadotOperationExtra>;
 export type PolkadotOperationRaw = OperationRaw<PolkadotOperationExtraRaw>;
 
+export type PalletMethod =
+  | "balances.transfer"
+  | "balances.transferKeepAlive"
+  | "balances.transferAllowDeath"
+  | "staking.bond"
+  | "staking.bondExtra"
+  | "staking.unbond"
+  | "staking.rebond"
+  | "staking.withdrawUnbonded"
+  | "staking.nominate"
+  | "staking.chill"
+  | "staking.setController"
+  | "staking.payoutStakers";
+
 export type PolkadotOperationExtra = {
   transferAmount?: BigNumber;
-  palletMethod: string;
+  palletMethod: PalletMethod;
   bondedAmount?: BigNumber;
   unbondedAmount?: BigNumber;
   withdrawUnbondedAmount?: BigNumber;
   validatorStash?: string | undefined;
   validators?: string[] | undefined;
 };
+
 export function isPolkadotOperationExtra(op: OperationExtra): op is PolkadotOperationExtra {
   return op !== null && typeof op === "object" && "palletMethod" in op;
 }
+
 export type PolkadotOperationExtraRaw = {
   transferAmount?: string;
   palletMethod: string;
@@ -136,6 +163,7 @@ export type PolkadotOperationExtraRaw = {
   validatorStash?: string | undefined;
   validators?: string[] | undefined;
 };
+
 export function isPolkadotOperationExtraRaw(
   op: OperationExtraRaw,
 ): op is PolkadotOperationExtraRaw {

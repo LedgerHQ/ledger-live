@@ -5,6 +5,7 @@ const config: PlaywrightTestConfig = {
     {
       name: "speculos_tests",
       testDir: "specs/speculos/",
+      retries: 2,
     },
     {
       name: "mocked_tests",
@@ -28,11 +29,11 @@ const config: PlaywrightTestConfig = {
     },
   },
   globalTimeout: 0,
-  globalSetup: require.resolve("./utils/global-setup"),
-  globalTeardown: require.resolve("./utils/global-teardown"),
+  globalSetup: require.resolve("./utils/global.setup"),
+  globalTeardown: require.resolve("./utils/global.teardown"),
   use: {
     ignoreHTTPSErrors: true,
-    screenshot: process.env.CI ? "on" : "off",
+    screenshot: process.env.CI ? "only-on-failure" : "off",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
@@ -48,7 +49,7 @@ const config: PlaywrightTestConfig = {
         ["line"],
         ["allure-playwright"],
       ]
-    : "allure-playwright",
+    : [["allure-playwright"]],
 };
 
 export default config;

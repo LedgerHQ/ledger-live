@@ -4,6 +4,7 @@ import "@mocks/console";
 import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 import { server } from "./server";
 import { NativeModules } from "react-native";
+import { MockedExpoCamera, MockedCameraType } from "../__mocks__/MockedExpoCamera";
 
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/next/guide/testing/
 jest.useFakeTimers();
@@ -27,6 +28,33 @@ NativeModules.RNAnalytics = {};
 const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 
 jest.mock("@segment/analytics-react-native", () => mockAnalytics);
+
+jest.mock("react-native-launch-arguments", () => ({}));
+
+NativeModules.BluetoothHelperModule = {
+  E_BLE_CANCELLED: "BLE_UNKNOWN_STATE",
+};
+
+jest.mock("react-native-share", () => ({
+  default: jest.fn(),
+}));
+
+jest.mock("expo-camera", () => {
+  return {
+    Camera: MockedExpoCamera,
+    CameraType: MockedCameraType,
+  };
+});
+
+jest.mock("expo-barcode-scanner", () => ({
+  BarCodeScanner: {
+    Constants: {
+      BarCodeType: {
+        qr: "qr",
+      },
+    },
+  },
+}));
 
 // Mock of Native Modules
 jest.mock("react-native-localize", () => ({
