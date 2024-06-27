@@ -29,7 +29,7 @@ export function buildSignOperation(
         const unsignedPayload: Buffer = Buffer.from(unsigned.signatureBase());
         // Sign by device
         const { signature } = await signerContext(deviceId, signer =>
-          signer.signTransaction(",", unsignedPayload),
+          signer.signTransaction(account.freshAddressPath, unsignedPayload),
         );
         unsigned.addSignature(account.freshAddress, signature.toString("base64"));
         obs.next({
