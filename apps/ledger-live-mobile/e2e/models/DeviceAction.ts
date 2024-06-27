@@ -18,8 +18,15 @@ const mockListAppsResult = (
   installedDesc: string,
   deviceInfo: DeviceInfo,
   deviceModelId?: DeviceModelId,
+  deviceName?: string | null,
 ) => {
-  const result = innerMockListAppResult(appDesc, installedDesc, deviceInfo, deviceModelId);
+  const result = innerMockListAppResult(
+    appDesc,
+    installedDesc,
+    deviceInfo,
+    deviceModelId,
+    deviceName,
+  );
   Object.keys(result?.appByName).forEach(key => {
     result.appByName[key] = { ...result.appByName[key], type: AppType.currency };
   });
@@ -92,7 +99,13 @@ export default class DeviceAction {
 
     const { device } = this;
 
-    const result = mockListAppsResult(appDesc, installedDesc, deviceInfo, device.modelId);
+    const result = mockListAppsResult(
+      appDesc,
+      installedDesc,
+      deviceInfo,
+      device.modelId,
+      device.deviceName,
+    );
     await mockDeviceEvent(
       {
         type: "deviceChange",

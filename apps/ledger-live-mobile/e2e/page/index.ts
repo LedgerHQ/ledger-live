@@ -21,6 +21,7 @@ import SettingsGeneralPage from "./settings/settingsGeneral.page";
 import SettingsPage from "./settings/settings.page";
 import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
+import TransfertMenuDrawer from "./wallet/transferMenu.drawer";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 
 import type { Account } from "@ledgerhq/types-live";
@@ -51,6 +52,7 @@ export class Application {
   public settingsGeneral = new SettingsGeneralPage();
   public stake = new StakePage();
   public swap = new SwapPage();
+  public transfertMenu = new TransfertMenuDrawer();
   public walletTabNavigator = new WalletTabNavigatorPage();
 
   static async init(userdata?: string, knownDevices?: DeviceLike[], testAccounts?: Account[]) {
