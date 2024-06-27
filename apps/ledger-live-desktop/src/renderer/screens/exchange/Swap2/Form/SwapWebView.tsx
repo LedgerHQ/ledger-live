@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
-
 import {
   getAccountCurrency,
   getMainAccount,
@@ -35,6 +34,8 @@ import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
+import { convertToAtomicUnit } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -190,21 +191,22 @@ const SwapWebView = ({
       "custom.swapRedirectToHistory": () => {
         redirectToHistory();
       },
-      "custom.getFee": async ({ params }: { params: any }) => {
-        console.log(
-          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:199 params",
-          "color: #007acc;",
-          params,
-        );
-
+      // opens the drawer with the fees
+      "custom.getFee": async ({
+        params,
+      }: {
+        params: {
+          fromAccountId: string;
+          fromAmount: string;
+          feeStrategy: string;
+        };
+      }) => {
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
-
         if (!realFromAccountId) {
           return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
         }
 
         const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
-
         if (!fromAccount) {
           return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
         }
@@ -216,10 +218,82 @@ const SwapWebView = ({
         let transaction = bridge.createTransaction(mainAccount);
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
           ...transaction,
-          recipient: "0x000000000000000000000000000000000000dEaD",
-          amount: new BigNumber(params.fromAmount),
+          recipient: getAbandonSeedAddress(mainAccount.currency.id),
+          amount: convertToAtomicUnit({
+            amount: new BigNumber(params.fromAmount),
+            account: mainAccount,
+          }),
+          feesStrategy: params.feeStrategy || "high",
+        });
+        let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
+        let finalTx = preparedTransaction;
+        return Promise.resolve({
+          feesStrategy: finalTx.feesStrategy,
+          estimatedfees: status.estimatedFees,
+          errors: status.errors,
+          warnings: status.warnings,
+        });
+      },
+      "custom.setFeeDrawer": async ({
+        params,
+      }: {
+        params: {
+          fromAccountId: string;
+          fromAmount: string;
+          feeStrategy: string;
+        };
+      }) => {
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:199 params",
+          "color: #007acc;",
+          params,
+        );
+
+        const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:201 realFromAccountId",
+          "color: #007acc;",
+          realFromAccountId,
+        );
+        if (!realFromAccountId) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+        }
+
+        const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:211 fromAccount",
+          "color: #007acc;",
+          fromAccount,
+        );
+        if (!fromAccount) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
+        }
+        const fromParentAccount = getParentAccount(fromAccount, accounts);
+
+        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:214 mainAccount",
+          "color: #007acc;",
+          mainAccount,
+        );
+        const bridge = getAccountBridge(fromAccount, fromParentAccount);
+        const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
+        let transaction = bridge.createTransaction(mainAccount);
+        const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
+          ...transaction,
+          recipient: getAbandonSeedAddress(mainAccount.currency.id),
+          amount: convertToAtomicUnit({
+            amount: new BigNumber(params.fromAmount),
+            account: mainAccount,
+          }),
           feesStrategy: params.feeStrategy || "medium",
         });
+
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/SwapWebView.tsx:229 preparedTransaction",
+          "color: #007acc;",
+          preparedTransaction,
+        );
 
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
         let finalTx = preparedTransaction;
