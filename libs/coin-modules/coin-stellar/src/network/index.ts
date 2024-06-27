@@ -14,4 +14,4 @@ export {
   BASE_RESERVE,
   BASE_RESERVE_MIN_COUNT,
   MIN_BALANCE,
-} from "../network/horizon";
+} from "./horizon";
