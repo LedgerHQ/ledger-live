@@ -200,7 +200,8 @@
       "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
       "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch",
       "@changesets/get-github-info@0.6.0": "patches/@changesets__get-github-info@0.6.0.patch",
-      "react-native-webview@13.10.3": "patches/react-native-webview@13.10.3.patch"
+      "react-native-webview@13.10.3": "patches/react-native-webview@13.10.3.patch",
+      "buffer@6.0.3": "patches/buffer@6.0.3.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

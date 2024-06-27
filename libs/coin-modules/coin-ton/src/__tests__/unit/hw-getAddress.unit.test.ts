@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import resolver from "../../hw-getAddress";
 import { TonSigner } from "../../signer";
 import { getLedgerTonPath } from "../../utils";

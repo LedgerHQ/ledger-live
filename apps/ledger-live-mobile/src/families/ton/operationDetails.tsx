@@ -14,10 +14,7 @@ function OperationDetailsExtra({ operation }: Props) {
       {operation.extra.comment &&
         !operation.extra.comment.isEncrypted &&
         operation.extra.comment.text && (
-          <Section
-            title={t("families.ton.comment")}
-            value={operation.extra.comment.text}
-          />
+          <Section title={t("send.summary.comment")} value={operation.extra.comment.text} />
         )}
     </>
   );

@@ -5,6 +5,7 @@ import {
   accountInfo,
   fees,
   jettonTransaction,
+  tokenAccount,
   totalFees,
   transaction,
 } from "../fixtures/common.fixtures";
@@ -25,13 +26,11 @@ describe("estimateMaxSpendable", () => {
   });
 
   it("should return the max spendable for a jetton transfer", async () => {
-    if (account.subAccounts?.[0]) {
-      const res = await estimateMaxSpendable({
-        account: account.subAccounts?.[0],
-        parentAccount: account,
-        transaction: jettonTransaction,
-      });
-      expect(res).toEqual(account.subAccounts?.[0].spendableBalance);
-    }
+    const res = await estimateMaxSpendable({
+      account: tokenAccount,
+      parentAccount: account,
+      transaction: jettonTransaction,
+    });
+    expect(res).toEqual(tokenAccount.spendableBalance);
   });
 });

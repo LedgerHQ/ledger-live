@@ -5176,8 +5176,7 @@
     },
     "ton": {
       "commentPlaceholder": "Optional",
-      "comment": "Comment",
-      "commentWarningText": "Comment must not exceed 120 characters without special characters"
+      "comment": "Comment"
     },
     "stellar": {
       "memo": "Memo",

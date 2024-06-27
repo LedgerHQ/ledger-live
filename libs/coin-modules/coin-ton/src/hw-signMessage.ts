@@ -1,6 +1,5 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account } from "@ledgerhq/types-live";
-import { AnyMessage } from "@ledgerhq/types-live";
+import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { TonSigner } from "./signer";
 import { TonTransaction } from "./types";
 import { getLedgerTonPath } from "./utils";
@@ -8,8 +7,7 @@ import { getLedgerTonPath } from "./utils";
 export const signMessage =
   (signerContext: SignerContext<TonSigner>) =>
   async (deviceId: string, account: Account, { message }: AnyMessage) => {
-    if (!message) throw new Error("Message cannot be empty");
-    if (typeof message !== "string") throw new Error("Message must be a string");
+    if (typeof message !== "string") throw new Error("Invalid message value");
 
     const parsedMessage = JSON.parse(message);
     const ledgerPath = getLedgerTonPath(account.freshAddressPath);

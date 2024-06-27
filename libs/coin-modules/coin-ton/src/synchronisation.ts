@@ -106,7 +106,7 @@ export const getAccountShape: GetAccountShape<Account> = async (info, { blacklis
   return toReturn;
 };
 
-export const getSubAccountShape = async (
+const getSubAccountShape = async (
   info: AccountShapeInfo,
   parentId: string,
   token: TokenCurrency,
