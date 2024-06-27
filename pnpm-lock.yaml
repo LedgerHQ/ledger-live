@@ -27,6 +27,9 @@ patchedDependencies:
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
+  buffer@6.0.3:
+    hash: 2xnca52oxhztvr7iaoovwclcze
+    path: patches/buffer@6.0.3.patch
   detox@20.23.0:
     hash: yanhspfjw3apvvf4gev5ovygia
     path: patches/detox@20.23.0.patch
@@ -951,7 +954,7 @@ importers:
         version: 9.1.2
       buffer:
         specifier: 6.0.3
-        version: 6.0.3
+        version: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       color:
         specifier: ^4.0.0
         version: 4.2.3
@@ -2097,6 +2100,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.0
+      bluebird:
+        specifier: ^3.7.2
+        version: 3.7.2
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -2365,7 +2371,7 @@ importers:
         specifier: ^1.1.3
         version: 1.1.3
       msw:
-        specifier: ^2.0.11
+        specifier: ^2.2.13
         version: 2.2.13(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
@@ -2584,7 +2590,7 @@ importers:
         specifier: ^2.1.3
         version: 2.1.3
       '@types/bs58check':
-        specifier: ^2.1.0
+        specifier: ^2.1.2
         version: 2.1.2
       '@types/invariant':
         specifier: ^2.2.37
@@ -2593,8 +2599,8 @@ importers:
         specifier: ^29.5.12
         version: 29.5.12
       '@types/lodash':
-        specifier: ^4.14.191
-        version: 4.17.0
+        specifier: ^4.17.4
+        version: 4.17.4
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -2602,7 +2608,7 @@ importers:
         specifier: ^29.1.4
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
 
-  libs/coin-modules/coin-tron:
+  libs/coin-modules/coin-ton:
     dependencies:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
@@ -2622,43 +2628,49 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
-      '@ledgerhq/live-promise':
-        specifier: workspace:^
-        version: link:../../promise
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@ton/core':
+        specifier: ^0.56.1
+        version: 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto':
+        specifier: ^3.2.0
+        version: 3.2.0
+      '@ton/ton':
+        specifier: ^13.11.1
+        version: 13.11.2(@ton/core@0.56.3)(@ton/crypto@3.2.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
-      bs58check:
-        specifier: ^2.1.2
-        version: 2.1.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1
+      imurmurhash:
+        specifier: ^0.1.4
+        version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      msw:
+        specifier: ^2.0.11
+        version: 2.3.1(typescript@5.4.3)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
-      tronweb:
-        specifier: ^5.3.2
-        version: 5.3.2
     devDependencies:
-      '@agrozyme/types-tronweb':
-        specifier: ^5.3.2
-        version: 5.3.2
-      '@types/bs58check':
-        specifier: ^2.1.0
-        version: 2.1.2
+      '@types/imurmurhash':
+        specifier: ^0.1.4
+        version: 0.1.4
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -2667,21 +2679,15 @@ importers:
         version: 29.5.12
       '@types/lodash':
         specifier: ^4.14.191
-        version: 4.17.0
+        version: 4.17.4
       jest:
         specifier: ^29.7.0
         version: 29.7.0
-      msw:
-        specifier: ^2.0.11
-        version: 2.2.13(typescript@5.4.5)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.2(jest@29.7.0)(typescript@5.4.5)
-      typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
+        version: 29.1.4(jest@29.7.0)(typescript@5.4.3)
 
-  libs/coin-modules/coin-xrp:
+  libs/coin-modules/coin-tron:
     dependencies:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
@@ -2808,33 +2814,24 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../../promise
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      '@ton/core':
-        specifier: ^0.56.1
-        version: 0.56.3(@ton/crypto@3.2.0)
-      '@ton/crypto':
-        specifier: ^3.2.0
-        version: 3.2.0
-      '@ton/ton':
-        specifier: ^13.11.1
-        version: 13.11.1(@ton/core@0.56.3)(@ton/crypto@3.2.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      bs58check:
+        specifier: ^2.1.2
+        version: 2.1.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1
-      imurmurhash:
-        specifier: ^0.1.4
-        version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2844,10 +2841,16 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      tronweb:
+        specifier: ^5.3.2
+        version: 5.3.2
     devDependencies:
-      '@types/imurmurhash':
-        specifier: ^0.1.4
-        version: 0.1.4
+      '@agrozyme/types-tronweb':
+        specifier: ^5.3.2
+        version: 5.3.2
+      '@types/bs58check':
+        specifier: ^2.1.0
+        version: 2.1.2
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -2860,9 +2863,15 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      msw:
+        specifier: ^2.0.11
+        version: 2.2.13(typescript@5.4.5)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.2(jest@29.7.0)(typescript@5.4.3)
+        version: 29.1.2(jest@29.7.0)(typescript@5.4.5)
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
 
   libs/coin-modules/coin-xrp:
     dependencies:
@@ -2900,6 +2909,9 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^8.4.1
+        version: 8.4.1
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -3239,9 +3251,6 @@ importers:
       '@types/lodash':
         specifier: '4'
         version: 4.17.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -3338,6 +3347,9 @@ importers:
       '@ledgerhq/coin-tezos':
         specifier: workspace:^
         version: link:../coin-modules/coin-tezos
+      '@ledgerhq/coin-ton':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-ton
       '@ledgerhq/coin-tron':
         specifier: workspace:^
         version: link:../coin-modules/coin-tron
@@ -3465,8 +3477,8 @@ importers:
         specifier: ^1.2.6
         version: 1.2.8
       '@taquito/ledger-signer':
-        specifier: ^13.0.1
-        version: 13.0.1
+        specifier: ^20.0.0
+        version: 20.0.0
       '@ton-community/ton-ledger':
         specifier: ^7.0.1
         version: 7.0.1(@ton/core@0.56.3)
@@ -6783,7 +6795,7 @@ importers:
         version: 9.1.2
       buffer:
         specifier: ^6.0.3
-        version: 6.0.3
+        version: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -30471,6 +30483,7 @@ snapshots:
       '@babel/helper-validator-identifier': 7.22.20
       chalk: 2.4.2
       js-tokens: 4.0.0
+      picocolors: 1.0.0
 
   '@babel/highlight@7.24.6':
     dependencies:
@@ -32781,7 +32794,7 @@ snapshots:
       '@noble/hashes': 1.4.0
       base64-arraybuffer: 0.2.0
       borc: 2.1.2
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       simple-cbor: 0.4.1
 
   '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))':
@@ -32869,7 +32882,7 @@ snapshots:
       axios: 0.24.0
       bech32: 1.1.4
       bignumber.js: 9.0.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       json-bigint: 1.0.0
 
   '@elrondnetwork/erdjs@11.0.0':
@@ -32878,7 +32891,7 @@ snapshots:
       bech32: 1.1.4
       bignumber.js: 9.0.1
       blake2b: 2.1.3
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       json-duplicate-key-handle: 1.0.0
       keccak: 3.0.2
       protobufjs: 6.11.3
@@ -35847,7 +35860,7 @@ snapshots:
       '@keplr-wallet/unit': 0.9.12
       axios: 0.21.4
       bech32: 1.1.4
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       long: 4.0.0
       protobufjs: 6.11.4
 
@@ -35855,7 +35868,7 @@ snapshots:
     dependencies:
       bip32: 2.0.6
       bip39: 3.1.0
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       crypto-js: 4.2.0
       elliptic: 6.5.5
       sha.js: 2.4.11
@@ -36103,7 +36116,7 @@ snapshots:
       '@open-draft/logger': 0.3.0
       '@open-draft/until': 2.1.0
       is-node-process: 1.2.0
-      outvariant: 1.4.0
+      outvariant: 1.4.2
       strict-event-emitter: 0.5.1
 
   '@mswjs/interceptors@0.29.1':
@@ -37042,8 +37055,10 @@ snapshots:
 
   '@polkadot/rpc-augment@11.2.1':
     dependencies:
+      '@polkadot/rpc-core': 11.2.1
+      '@polkadot/types': 11.2.1
+      '@polkadot/types-codec': 11.2.1
       '@polkadot/util': 12.6.2
-      '@substrate/ss58-registry': 1.47.0
       tslib: 2.6.2
     transitivePeerDependencies:
       - bufferutil
@@ -37175,8 +37190,8 @@ snapshots:
 
   '@polkadot/wasm-crypto-wasm@7.3.2(@polkadot/util@12.6.2)':
     dependencies:
-      '@polkadot/util': 12.5.1
-      '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.5.1)
+      '@polkadot/util': 12.6.2
+      '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
       tslib: 2.6.2
 
   '@polkadot/wasm-crypto@7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2)))':
@@ -37212,9 +37227,9 @@ snapshots:
 
   '@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2))':
     dependencies:
-      '@polkadot/util': 12.5.1
-      '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.5.1)
-      '@polkadot/x-global': 12.5.1
+      '@polkadot/util': 12.6.2
+      '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
+      '@polkadot/x-global': 12.6.2
       tslib: 2.6.2
 
   '@polkadot/x-textdecoder@12.6.2':
@@ -38766,12 +38781,12 @@ snapshots:
 
   '@scure/bip39@1.2.2':
     dependencies:
-      '@noble/hashes': 1.4.0
+      '@noble/hashes': 1.3.3
       '@scure/base': 1.1.6
 
   '@scure/bip39@1.3.0':
     dependencies:
-      '@noble/hashes': 1.3.3
+      '@noble/hashes': 1.4.0
       '@scure/base': 1.1.6
 
   '@segment/analytics-react-native@2.19.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0)))(@segment/sovran-react-native@0.4.5(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native-get-random-values@1.11.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0)))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)':
@@ -39570,14 +39585,14 @@ snapshots:
 
   '@solana/buffer-layout@4.0.1':
     dependencies:
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
   '@solana/spl-token@0.3.8(@solana/web3.js@1.77.3)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/buffer-layout-utils': 0.2.0
       '@solana/web3.js': 1.77.3
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -39594,7 +39609,7 @@ snapshots:
       bn.js: 5.2.1
       borsh: 0.7.0
       bs58: 4.0.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       fast-stable-stringify: 1.0.0
       jayson: 4.1.0
       node-fetch: 2.7.0
@@ -40315,7 +40330,7 @@ snapshots:
       '@stellar/js-xdr': 3.1.1
       base32.js: 0.1.0
       bignumber.js: 9.1.2
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       sha.js: 2.4.11
       tweetnacl: 1.0.3
     optionalDependencies:
@@ -41679,7 +41694,7 @@ snapshots:
     dependencies:
       blakejs: 1.2.1
       bn.js: 5.2.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       chai: 4.4.1
       elliptic: 6.5.4
       hash.js: 1.1.7
@@ -41697,7 +41712,7 @@ snapshots:
       bignumber.js: 9.1.2
       blakejs: 1.2.1
       bs58: 5.0.0
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       lodash: 4.17.21
 
   '@styled-system/background@5.1.2':
@@ -42034,10 +42049,12 @@ snapshots:
     dependencies:
       '@stablelib/blake2b': 1.0.1
       '@stablelib/ed25519': 1.0.3
+      '@taquito/core': 20.0.0
       '@types/bs58check': 2.1.2
+      bignumber.js: 9.1.2
       blakejs: 1.2.1
       bs58check: 3.0.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       elliptic: 6.5.5
       typedarray-to-buffer: 4.0.0
 
@@ -44005,7 +44022,7 @@ snapshots:
   algosdk@1.13.1:
     dependencies:
       algo-msgpack-with-bigint: 2.1.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       hi-base32: 0.5.1
       js-sha256: 0.9.0
       js-sha3: 0.8.0
@@ -44972,7 +44989,7 @@ snapshots:
   bchaddrjs@0.5.2:
     dependencies:
       bs58check: 2.1.2
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       cashaddrjs: 0.4.4
       stream-browserify: 3.0.0
 
@@ -45373,6 +45390,7 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
+    patched: true
 
   buffers@0.1.1: {}
 
@@ -49659,7 +49677,6 @@ snapshots:
     dependencies:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.3.3
-    dev: true
 
   fetch-retry@4.1.1: {}
 
@@ -49919,7 +49936,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@6.5.3(eslint@8.57.0)(typescript@5.1.3)(vue-template-compiler@2.7.16)(webpack@5.89.0):
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       '@types/json-schema': 7.0.15
       chalk: 4.1.2
       chokidar: 3.6.0
@@ -49960,7 +49977,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@8.0.0(typescript@5.4.3)(webpack@5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)):
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       chalk: 4.1.2
       chokidar: 3.6.0
       cosmiconfig: 7.1.0
@@ -50580,8 +50597,9 @@ snapshots:
 
   hast-util-from-html@2.0.1:
     dependencies:
-      '@types/hast': 2.3.10
-      hast-util-from-parse5: 7.1.2
+      '@types/hast': 3.0.4
+      devlop: 1.1.0
+      hast-util-from-parse5: 8.0.1
       parse5: 7.1.2
       vfile: 6.0.1
       vfile-message: 4.0.2
@@ -50614,6 +50632,7 @@ snapshots:
   hast-util-parse-selector@3.1.1:
     dependencies:
       '@types/hast': 2.3.10
+    dev: true
 
   hast-util-parse-selector@4.0.0:
     dependencies:
@@ -52911,7 +52930,7 @@ snapshots:
 
   jest-message-util@28.1.3:
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       '@jest/types': 28.1.3
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
@@ -56370,6 +56389,7 @@ snapshots:
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
       caniuse-lite: 1.0.30001600
+      graceful-fs: 4.2.11
       postcss: 8.4.31
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -56392,7 +56412,8 @@ snapshots:
     dependencies:
       '@headlessui/react': 1.7.18(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@popperjs/core': 2.11.8
-      clsx: 1.2.1
+      clsx: 2.1.1
+      escape-string-regexp: 5.0.0
       flexsearch: 0.7.43
       focus-visible: 5.2.0
       git-url-parse: 13.1.1
@@ -56413,9 +56434,9 @@ snapshots:
       '@mdx-js/mdx': 2.3.0
       '@mdx-js/react': 2.3.0(react@18.2.0)
       '@napi-rs/simple-git': 0.1.16
-      '@theguild/remark-mermaid': 0.0.4(react@18.2.0)
-      '@theguild/remark-npm2yarn': 0.1.1
-      clsx: 1.2.1
+      '@theguild/remark-mermaid': 0.0.5(react@18.2.0)
+      '@theguild/remark-npm2yarn': 0.2.1
+      clsx: 2.1.1
       github-slugger: 2.0.0
       graceful-fs: 4.2.11
       gray-matter: 4.0.3
@@ -56426,8 +56447,9 @@ snapshots:
       p-limit: 3.1.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      rehype-katex: 6.0.3
+      rehype-katex: 7.0.0
       rehype-pretty-code: 0.9.11(shiki@0.14.7)
+      rehype-raw: 7.0.0
       remark-gfm: 3.0.1
       remark-math: 5.1.1
       remark-reading-time: 2.0.1
@@ -56539,7 +56561,7 @@ snapshots:
       assert: 1.5.1
       base-64: 0.1.0
       browserify-zlib: 0.2.0
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       console-browserify: 1.2.0
       constants-browserify: 1.0.0
       domain-browser: 1.2.0
@@ -57050,7 +57072,7 @@ snapshots:
 
   parse-json@5.2.0:
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       error-ex: 1.3.2
       json-parse-even-better-errors: 2.3.1
       lines-and-columns: 1.2.4
@@ -58383,7 +58405,7 @@ snapshots:
 
   qrloop@1.4.1:
     dependencies:
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       md5: 2.3.0
 
   qs@6.11.0:
@@ -58481,7 +58503,7 @@ snapshots:
 
   react-dev-utils@12.0.1(eslint@8.57.0)(typescript@5.4.3)(webpack@5.89.0):
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       address: 1.2.2
       browserslist: 4.23.0
       chalk: 4.1.2
@@ -59546,7 +59568,7 @@ snapshots:
   readable-stream@4.5.2:
     dependencies:
       abort-controller: 3.0.0
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       events: 3.3.0
       process: 0.11.10
       string_decoder: 1.3.0
@@ -60051,7 +60073,7 @@ snapshots:
     dependencies:
       assert: 2.1.0
       big-integer: 1.6.52
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       create-hash: 1.2.0
       decimal.js: 10.4.3
       ripple-address-codec: 4.3.1
@@ -60116,7 +60138,7 @@ snapshots:
 
   rollup-plugin-terser@7.0.2(rollup@2.79.1):
     dependencies:
-      '@babel/code-frame': 7.24.2
+      '@babel/code-frame': 7.24.6
       jest-worker: 26.6.2
       rollup: 2.79.1
       serialize-javascript: 4.0.0
@@ -60159,7 +60181,7 @@ snapshots:
       '@babel/runtime': 7.24.1
       eventemitter3: 4.0.7
       uuid: 8.3.2
-      ws: 8.14.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 8.16.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     optionalDependencies:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
