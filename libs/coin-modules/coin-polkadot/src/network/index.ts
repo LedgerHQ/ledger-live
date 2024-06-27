@@ -2,6 +2,7 @@ import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
 import { getOperations as bisonGetOperations } from "./bisontrails";
 import {
   getAccount as sidecardGetAccount,
+  getBalances as sidecardGetBalances,
   getMinimumBondBalance as sidecarGetMinimumBondBalance,
   getRegistry as sidecarGetRegistry,
   getStakingProgress as sidecarGetStakingProgress,
@@ -34,6 +35,14 @@ type PolkadotAPIAccount = {
   numSlashingSpans?: number;
 
   nominations: PolkadotNomination[];
+};
+
+type PolkadotAPIBalanceInfo = {
+  blockHeight: number;
+  balance: BigNumber;
+  spendableBalance: BigNumber;
+  nonce: number;
+  lockedBalance: BigNumber;
 };
 
 type CacheOpts = {
@@ -96,6 +105,8 @@ const shortenMetadata = async (transaction: string): Promise<string> => {
 
 export default {
   getAccount: async (address: string): Promise<PolkadotAPIAccount> => sidecardGetAccount(address),
+  getBalances: async (address: string): Promise<PolkadotAPIBalanceInfo> =>
+    sidecardGetBalances(address),
   getOperations: bisonGetOperations,
   getMinimumBondBalance,
   getRegistry,

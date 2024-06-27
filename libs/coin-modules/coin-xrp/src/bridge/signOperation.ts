@@ -1,33 +1,11 @@
-import invariant from "invariant";
 import { Observable } from "rxjs";
-import BigNumber from "bignumber.js";
 import { encode } from "ripple-binary-codec";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import XrplDefinitions from "ripple-binary-codec/dist/enums/definitions.json";
-import { getNextValidSequence, removeCachedRecipientIsNew, UINT32_MAX, validateTag } from "./logic";
-import { XrpSignature, XrpSigner } from "./signer";
-import { getLedgerIndex } from "./api";
-import { Transaction } from "./types";
-
-const LEDGER_OFFSET = 20;
-
-const { TRANSACTION_TYPES } = XrplDefinitions;
-type XrplTransaction = {
-  TransactionType: keyof typeof TRANSACTION_TYPES;
-  Flags: number;
-  Account: string;
-  Amount: string;
-  Destination: string;
-  DestinationTag: number | undefined;
-  Fee: string;
-  Sequence: number;
-  LastLedgerSequence: number;
-  SigningPubKey?: string;
-  TxnSignature?: string;
-};
+import { craftTransaction, getNextValidSequence, removeCachedRecipientIsNew } from "../logic";
+import { Transaction, XrpSignature, XrpSigner } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<XrpSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -38,39 +16,32 @@ export const buildSignOperation =
       async function main() {
         const { fee } = transaction;
         if (!fee) throw new FeeNotLoaded();
+
         try {
-          const tag = transaction.tag ? transaction.tag : undefined;
-          const nextSequenceNumber = await getNextValidSequence(account);
-          const xrplTransaction: XrplTransaction = {
-            TransactionType: "Payment",
-            Account: account.freshAddress,
-            Amount: transaction.amount.toFixed(),
-            Destination: transaction.recipient,
-            DestinationTag: tag,
-            Fee: fee.toFixed(),
-            Flags: 2147483648,
-            Sequence: nextSequenceNumber,
-            LastLedgerSequence: (await getLedgerIndex()) + LEDGER_OFFSET,
-          };
-
-          if (tag)
-            invariant(
-              validateTag(new BigNumber(tag)),
-              `tag is set but is not in a valid format, should be between [0 - ${UINT32_MAX.toString()}]`,
-            );
-
           o.next({
             type: "device-signature-requested",
           });
 
-          const signature = (await signerContext(deviceId, async signer => {
+          const nextSequenceNumber = await getNextValidSequence(account.freshAddress);
+
+          const signature = await signerContext(deviceId, async signer => {
             const { freshAddressPath: derivationPath } = account;
             const { publicKey } = await signer.getAddress(derivationPath);
 
-            const serializedTransaction = encode({
-              ...xrplTransaction,
-              SigningPubKey: publicKey,
-            });
+            const { xrplTransaction, serializedTransaction } = await craftTransaction(
+              {
+                address: account.freshAddress,
+                nextSequenceNumber,
+              },
+              {
+                recipient: transaction.recipient,
+                amount: BigInt(transaction.amount.toString()),
+                fee: BigInt(fee.toString()),
+                tag: transaction.tag,
+              },
+              publicKey,
+            );
+
             const transactionSignature = await signer.signTransaction(
               derivationPath,
               serializedTransaction,
@@ -80,8 +51,8 @@ export const buildSignOperation =
               ...xrplTransaction,
               SigningPubKey: publicKey,
               TxnSignature: transactionSignature,
-            }).toUpperCase();
-          })) as XrpSignature;
+            }).toUpperCase() as XrpSignature;
+          });
 
           o.next({
             type: "device-signature-granted",

@@ -1,5 +1,5 @@
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-import estimateFees from "./estimateFees";
+import { estimateFees } from "./estimateFees";
 import {
   fixtureChainSpec,
   fixtureTxMaterialWithMetadata,

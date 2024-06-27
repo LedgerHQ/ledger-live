@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Transaction } from "./types";
+import { Transaction } from "../types";
 import { AccountBridge } from "@ledgerhq/types-live";
 
 export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => ({
