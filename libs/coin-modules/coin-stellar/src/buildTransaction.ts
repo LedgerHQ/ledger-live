@@ -9,7 +9,7 @@ import {
   buildTransactionBuilder,
   buildChangeTrustOperation,
   loadAccount,
-} from "./api";
+} from "./network";
 import { getRecipientAccount, getAmountValue } from "./logic";
 import { StellarAssetRequired, StellarMuxedAccountNotExist } from "./errors";
 

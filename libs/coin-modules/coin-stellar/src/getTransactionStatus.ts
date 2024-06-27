@@ -14,7 +14,7 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { isAddressValid, isAccountMultiSign, isMemoValid, getRecipientAccount } from "./logic";
-import { BASE_RESERVE, MIN_BALANCE } from "./api";
+import { BASE_RESERVE, MIN_BALANCE } from "./network";
 import type { Transaction } from "./types";
 import {
   StellarWrongMemoFormat,

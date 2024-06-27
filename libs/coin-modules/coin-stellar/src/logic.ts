@@ -15,7 +15,7 @@ import {
   fetchBaseFee,
   fetchSigners,
   loadAccount,
-} from "./api";
+} from "./network";
 import type {
   BalanceAsset,
   RawOperation,
