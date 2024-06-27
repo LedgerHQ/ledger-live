@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.5.0-next.6
+
+### Patch Changes
+
+- [#7217](https://github.com/LedgerHQ/ledger-live/pull/7217) [`fec3dc8`](https://github.com/LedgerHQ/ledger-live/commit/fec3dc84ea00fc6f7f632942826978607e20c2ff) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - update snapshots
+
 ## 34.5.0-next.5
 
 ### Patch Changes
