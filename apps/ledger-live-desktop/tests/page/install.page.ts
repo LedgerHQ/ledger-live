@@ -4,7 +4,7 @@ export class InstallSetOfApps extends AppPage {
   private debugInstallSetOfAppsButton = this.page.getByTestId("debug-install-set-of-apps-button");
   private resetButton = this.page.getByTestId("reset-button");
   private installCtaButton = this.page.getByTestId("install-cta-button");
-  private cancelCtaButton = this.page.getByTestId("kip-cta-button");
+  private cancelCtaButton = this.page.getByTestId("skip-cta-button");
   private inputOptionSelector = this.page.getByTestId("input-option-selector");
 
   private circleProgressSelector = (circleProgress: string) =>

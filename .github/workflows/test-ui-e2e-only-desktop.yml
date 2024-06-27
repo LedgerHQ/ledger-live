@@ -117,7 +117,7 @@ jobs:
 
   report-and-notify:
     name: "Report and Notify"
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ledger-live-medium]
     needs: e2e-tests-linux
     if: always()
     steps:
