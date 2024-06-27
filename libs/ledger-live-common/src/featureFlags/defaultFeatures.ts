@@ -470,6 +470,7 @@ export const DEFAULT_FEATURES: Features = {
   llmWalletSync: DEFAULT_FEATURE,
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
+  web3hub: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
