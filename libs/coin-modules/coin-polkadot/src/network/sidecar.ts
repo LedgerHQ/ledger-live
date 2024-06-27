@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network/network";
@@ -23,9 +24,9 @@ import type {
   SidecarTransactionBroadcast,
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
+  SidecarConstants,
 } from "./sidecar.types";
 import { createRegistryAndExtrinsics } from "./common";
-import node from "./node";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -114,8 +115,16 @@ const fetchControllerAddr = async (addr: string): Promise<string | null> => {
  *
  * @returns {SidecarStakingInfo}
  */
-const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> =>
-  node.fetchStakingInfo(addr);
+const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchStakingInfo(addr);
+  const {
+    data,
+  }: {
+    data: SidecarStakingInfo;
+  } = await callSidecar(`/accounts/${addr}/staking-info`);
+  return data;
+};
 
 /**
  * Returns the list of nominations for an account, with status and associated stake if relevant.
@@ -125,8 +134,16 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> =>
  *
  * @returns {SidecarNominations}
  */
-const fetchNominations = async (addr: string): Promise<SidecarNominations> =>
-  node.fetchNominations(addr);
+const fetchNominations = async (addr: string): Promise<SidecarNominations> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchNominations(addr);
+  const {
+    data,
+  }: {
+    data: SidecarNominations;
+  } = await callSidecar(`/accounts/${addr}/nominations`);
+  return data;
+};
 
 /**
  * Returns the blockchain's runtime constants.
@@ -135,7 +152,16 @@ const fetchNominations = async (addr: string): Promise<SidecarNominations> =>
  *
  * @returns {Object}
  */
-const fetchConstants = async (): Promise<Record<string, any>> => node.fetchConstants();
+const fetchConstants = async (): Promise<Record<string, any>> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchConstants();
+  const {
+    data,
+  }: {
+    data: SidecarConstants;
+  } = await callSidecar(`/runtime/constants`);
+  return data.consts;
+};
 
 /**
  * Returns the activeEra info
@@ -183,7 +209,26 @@ export const getMinimumBondBalance = async (): Promise<BigNumber> => {
 const fetchValidators = async (
   status: SidecarValidatorsParamStatus = "all",
   addresses?: SidecarValidatorsParamAddresses,
-): Promise<SidecarValidators> => node.fetchValidators(status, addresses);
+): Promise<SidecarValidators> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchValidators(status, addresses);
+  let params = {};
+
+  if (status) {
+    params = { ...params, status };
+  }
+
+  if (addresses && addresses.length) {
+    params = { ...params, addresses: addresses.join(",") };
+  }
+
+  const {
+    data,
+  }: {
+    data: SidecarValidators;
+  } = await callSidecar(`/validators?${querystring.stringify(params)}`);
+  return data;
+};
 
 /**
  * Fetch the progress info concerning staking.
