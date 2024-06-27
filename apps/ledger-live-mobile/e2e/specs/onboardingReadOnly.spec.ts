@@ -35,7 +35,7 @@ describe("Onboarding - Read Only", () => {
   $TmsLink("B2CQA-364");
   it("buy a nano from the market page", async () => {
     await app.portfolio.expectPortfolioReadOnly();
-    await app.portfolio.openWalletTabMarket();
+    await app.walletTabNavigator.navigateToMarket();
     await app.market.searchAsset("BTC");
     await app.market.openAssetPage("Bitcoin (BTC)");
     await app.market.buyAsset();

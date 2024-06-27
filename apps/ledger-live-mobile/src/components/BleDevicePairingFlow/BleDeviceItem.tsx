@@ -58,7 +58,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
 
   return (
     <Flex mb={3}>
-      <TouchableOpacity onPress={onSelect}>
+      <TouchableOpacity onPress={onSelect} testID={`device-scanned-${deviceMeta.deviceId}`}>
         <Flex
           alignItems="center"
           flexDirection="row"
