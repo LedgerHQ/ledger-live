@@ -20,8 +20,9 @@ import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { urls } from "~/utils/urls";
 
-const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
+const infoURL = urls.feesTron;
 
 function getURLWhatIsThis(
   op: Operation,
@@ -29,7 +30,7 @@ function getURLWhatIsThis(
   currencyId: string,
 ): string | null | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
-    return helpURL;
+    return infoURL;
   }
 
   return undefined;
