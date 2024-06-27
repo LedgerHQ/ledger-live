@@ -76,7 +76,7 @@ export const useRefreshAuth = () => {
 
   const resfresh = useQuery({
     enabled: false,
-    queryKey: [QueryKey.refreshAuth, jwt],
+    queryKey: [QueryKey.refreshAuth],
     queryFn: refresh,
   });
 
