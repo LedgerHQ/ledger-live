@@ -1,5 +1,20 @@
 # web-tools
 
+## 0.6.2-next.4
+
+### Patch Changes
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+- Updated dependencies [[`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/cryptoassets@13.1.1-next.1
+  - @ledgerhq/hw-app-eth@6.37.1-next.2
+  - @ledgerhq/types-live@6.48.1-next.1
+  - @ledgerhq/live-common@34.5.0-next.4
+  - @ledgerhq/coin-framework@0.15.0-next.2
+  - @ledgerhq/domain-service@1.2.1-next.1
+  - @ledgerhq/live-wallet@0.3.0-next.2
+
 ## 0.6.2-next.3
 
 ### Patch Changes

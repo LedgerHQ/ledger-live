@@ -1,5 +1,20 @@
 # @ledgerhq/live-cli
 
+## 24.3.2-next.5
+
+### Patch Changes
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+- Updated dependencies [[`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/hw-transport-node-hid@6.29.1-next.1
+  - @ledgerhq/cryptoassets@13.1.1-next.1
+  - @ledgerhq/coin-bitcoin@0.6.1-next.2
+  - @ledgerhq/live-common@34.5.0-next.4
+  - @ledgerhq/live-countervalues@0.2.1-next.2
+  - @ledgerhq/coin-framework@0.15.0-next.2
+  - @ledgerhq/live-wallet@0.3.0-next.2
+
 ## 24.3.2-next.4
 
 ### Patch Changes
