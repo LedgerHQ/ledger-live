@@ -3,4 +3,6 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  collectCoverage: true,
+  coverageReporters: ["json", "html"],
 };
