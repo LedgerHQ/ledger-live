@@ -66,7 +66,7 @@ export const buildTonTransaction = (
     amount: finalAmount,
     bounce: TonAddress.isFriendly(to) ? TonAddress.parseFriendly(to).isBounceable : true,
     timeout: getTransferExpirationTime(),
-    sendMode: useAllAmount
+    sendMode: useAllAmount && !subAccount
       ? SendMode.CARRY_ALL_REMAINING_BALANCE
       : SendMode.IGNORE_ERRORS + SendMode.PAY_GAS_SEPARATELY,
   };
@@ -74,11 +74,12 @@ export const buildTonTransaction = (
   if (comment.text.length) {
     tonTransaction.payload = { type: "comment", text: comment.text };
   }
+  
   if (subAccount) {
     tonTransaction.payload = {
       type: "jetton-transfer",
       queryId: BigInt(1),
-      amount: useAllAmount ? BigInt(0) : BigInt(amount.toFixed()),
+      amount: BigInt(amount.toFixed()),
       destination: TonAddress.parse(recipientParsed),
       responseDestination: TonAddress.parse(account.freshAddress),
       customPayload: null,
