@@ -13,7 +13,7 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': workspace:*
   tslib: 2.6.2
-  '@grpc/grpc-js': 1.6.7
+  '@hashgraph/sdk>@grpc/grpc-js': 1.6.7
 
 packageExtensionsChecksum: bcc0ac67c2d7bcc88fe46412ebcf46be
 
@@ -13476,7 +13476,7 @@ packages:
       '@firebase/logger': 0.4.0
       '@firebase/util': 1.9.3
       '@firebase/webchannel-wrapper': 0.10.1
-      '@grpc/grpc-js': 1.6.7
+      '@grpc/grpc-js': 1.7.3
       '@grpc/proto-loader': 0.6.13
       node-fetch: 2.6.7
       tslib: 2.6.2
@@ -13833,6 +13833,14 @@ packages:
       '@types/node': 20.12.12
     dev: false
 
+  /@grpc/grpc-js@1.7.3:
+    resolution: {integrity: sha512-H9l79u4kJ2PVSxUNA08HMYAnUBLj9v6KjYQ7SQ71hOZcEXhShE/y5iQCesP8+6/Ik/7i2O0a10bPquIcYfufog==}
+    engines: {node: ^8.13.0 || >=10.10.0}
+    dependencies:
+      '@grpc/proto-loader': 0.7.13
+      '@types/node': 20.12.12
+    dev: false
+
   /@grpc/proto-loader@0.6.13:
     resolution: {integrity: sha512-FjxPYDRTn6Ec3V0arm1FtSpmP6V50wuph2yILpyvTKzjc76oDdoihXqM1DzOW5ubvCC8GivfCnNtfaRE8myJ7g==}
     engines: {node: '>=6'}
@@ -13843,6 +13851,17 @@ packages:
       long: 4.0.0
       protobufjs: 6.11.4
       yargs: 16.2.0
+    dev: false
+
+  /@grpc/proto-loader@0.7.13:
+    resolution: {integrity: sha512-AiXO/bfe9bmxBjxxtYxFAXGZvMaN5s8kO+jBHAJCON8rJoB5YS/D6X7ZNc6XQkuHNmyl4CYaMI1fJ/Gn27RGGw==}
+    engines: {node: '>=6'}
+    hasBin: true
+    dependencies:
+      lodash.camelcase: 4.3.0
+      long: 5.2.3
+      protobufjs: 7.2.5
+      yargs: 17.7.2
     dev: false
 
   /@hapi/bourne@2.1.0:
