@@ -50,6 +50,7 @@ export const FlowOptions: Record<
       4: Step.InstanceSuccesfullyDeleted,
       5: Step.InstanceErrorDeletion,
       6: Step.UnsecuredLedger,
+      7: Step.AutoRemoveInstanc,
     },
   },
   [Flow.WalletSyncActivated]: {
