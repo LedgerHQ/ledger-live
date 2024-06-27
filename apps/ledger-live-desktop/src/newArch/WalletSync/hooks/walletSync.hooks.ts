@@ -102,7 +102,10 @@ export const useLifeCycle = () => {
         queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
       });
     },
-    [ErrorType.JWT_EXPIRED_CHALLENGE]: () => auth.refetch(),
+    [ErrorType.JWT_EXPIRED_CHALLENGE]: () =>
+      auth.refetch().then(() => {
+        queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
+      }),
   };
 
   const includesErrorActions: { [key: string]: () => void } = {
