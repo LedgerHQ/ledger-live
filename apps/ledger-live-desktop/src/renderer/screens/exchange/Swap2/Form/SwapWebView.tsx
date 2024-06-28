@@ -31,7 +31,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { captureException } from "~/sentry/internal";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
-import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
@@ -108,8 +108,7 @@ const SwapWebView = ({
   const dispatch = useDispatch();
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
-  // const accountsFL = useSelector(flattenAccountsSelector);
-  const accounts = useSelector(shallowAccountsSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
@@ -228,10 +227,11 @@ const SwapWebView = ({
         let transaction = bridge.createTransaction(mainAccount);
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
           ...transaction,
+          subAccountId,
           recipient: getAbandonSeedAddress(mainAccount.currency.id),
           amount: convertToAtomicUnit({
             amount: new BigNumber(params.fromAmount),
-            account: mainAccount,
+            account: fromAccount,
           }),
           feesStrategy: params.feeStrategy || "medium",
         });

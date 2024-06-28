@@ -107,7 +107,7 @@ export default function FeesDrawerLiveApp({
         <Box mt={3} flow={4} mx={3}>
           {transaction && mainAccount && (
             <SendAmountFields
-              account={mainAccount as Account}
+              account={parentAccount || (mainAccount as Account)}
               parentAccount={parentAccount}
               status={status}
               transaction={transaction}
