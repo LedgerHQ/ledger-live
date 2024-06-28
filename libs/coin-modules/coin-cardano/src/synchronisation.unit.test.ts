@@ -124,7 +124,19 @@ describe("makeGetAccountShape", () => {
       getTransactionsMock.mockReturnValue(
         Promise.resolve({
           transactions: [],
-          externalCredentials: [{ path: "p", networkId: "id" }],
+          externalCredentials: [
+            {
+              isUsed: false,
+              key: "00000000000000000000000000000000000000000000000000000000",
+              path: {
+                purpose: 1852,
+                coin: 1815,
+                account: 0,
+                chain: 0,
+                index: 0,
+              },
+            },
+          ],
           internalCredentials: [],
         } as any),
       );
