@@ -14,6 +14,7 @@ export default class CommonPage {
   searchBarId = "common-search-field";
   searchBar = () => getElementById(this.searchBarId);
   successCloseButtonId = "success-close-button";
+  closeButton = () => getElementById("NavigationHeaderCloseButton");
 
   accoundCardId = (id: string) => "account-card-" + id;
 
@@ -28,6 +29,10 @@ export default class CommonPage {
 
   async expectSearch(text: string) {
     await expect(this.searchBar()).toHaveText(text);
+  }
+
+  async closePage() {
+    await tapByElement(this.closeButton());
   }
 
   async successClose() {

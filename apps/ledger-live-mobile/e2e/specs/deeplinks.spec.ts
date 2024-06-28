@@ -78,7 +78,7 @@ describe("DeepLinks Tests", () => {
 
   it("should open NFT Gallery", async () => {
     await app.nftGallery.openViaDeeplink();
-    await app.nftGallery.expectNftGalleryVisible();
+    await app.nftGallery.expectGalleryVisible();
   });
 
   it("should open Swap Form page", async () => {
@@ -90,6 +90,7 @@ describe("DeepLinks Tests", () => {
     await app.send.openViaDeeplink();
     await app.send.expectFirstStep();
     await app.portfolio.openViaDeeplink();
+    await app.portfolio.waitForPortfolioPageToLoad();
     await app.send.sendViaDeeplink(ethereumLong);
     await app.send.expectFirstStep();
     await app.common.expectSearch(ethereumLong);
@@ -99,7 +100,8 @@ describe("DeepLinks Tests", () => {
     await app.receive.openViaDeeplink();
     await app.receive.expectFirstStep();
     await app.portfolio.openViaDeeplink();
+    await app.portfolio.waitForPortfolioPageToLoad();
     await app.receive.receiveViaDeeplink(ethereumLong);
-    await app.receive.expectSecondStep([ethereumLong, arbitrumLong, bobaLong]);
+    await app.receive.expectSecondStepNetworks([ethereumLong, arbitrumLong, bobaLong]);
   });
 });
