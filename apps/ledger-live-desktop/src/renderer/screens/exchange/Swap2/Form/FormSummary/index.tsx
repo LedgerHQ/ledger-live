@@ -1,7 +1,7 @@
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import React from "react";
 import styled from "styled-components";
+import { useIsSwapLiveFlagEnabled } from "../useIsSwapLiveFlagEnabled";
 import SectionFees from "./SectionFees";
 import SectionTarget from "./SectionTarget";
 
@@ -52,10 +52,10 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
   const { currency: toCurrency, account: toAccount } = swapTransaction.swap.to;
   const ratesState = swapTransaction.swap.rates;
   const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0;
-  const demo1 = useFeature("ptxSwapLiveAppDemoOne");
+  const isDemo1Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoOne");
 
   return (
-    <Form ready={!!hasRates}>
+    <Form ready={!!hasRates || isDemo1Enabled}>
       <SectionTarget
         account={toAccount}
         currency={toCurrency}
@@ -63,7 +63,7 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
         targetAccounts={targetAccounts}
         hasRates={!!hasRates}
       />
-      {!demo1?.enabled && (
+      {!isDemo1Enabled && (
         <SectionFees
           transaction={transaction}
           account={fromAccount}

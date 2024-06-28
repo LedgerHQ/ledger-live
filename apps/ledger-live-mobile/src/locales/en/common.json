@@ -2424,6 +2424,7 @@
       "delegated": "Delegated ({{amount}})",
       "delegatedTo": "Delegated to",
       "delegatedAmount": "Delegated amount",
+      "deposit": "Deposit",
       "redelegated": "Redelegated ({{amount}})",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",
@@ -2743,8 +2744,8 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
-      "walletSync": "Ledger  Sync",
-      "walletSyncDesc": "Backup your app data and seamlessly synchronize multiple Ledger Live instances",
+      "walletSync": "Ledger Sync",
+      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -3078,7 +3079,8 @@
       "addAccount": {
         "title": "Checking for an account...",
         "subtitle": "Checking if you already have an account for {{currencyName}} on the blockchain.",
-        "foundAccounts": "{{count}} accounts found",
+        "foundAccount": "{{count}} account found",
+        "foundAccount_plural": "{{count}} accounts found",
         "stopSynchronization": "Stop synchronization",
         "addingAccount": "No accounts found. Creating a new account for {{currencyName}}..."
       },
@@ -6678,6 +6680,16 @@
           "info": "You can revoke your consent any time in the app settings.",
           "link": "Learn more about our Tracking Policy"
         }
+      }
+    }
+  },
+  "walletSync": {
+    "activation": {
+      "screen": {
+        "title": "Sync your accounts across all platforms",
+        "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+        "mainCta": "Sync your accounts",
+        "secondCta": "Already created a key?"
       }
     }
   }

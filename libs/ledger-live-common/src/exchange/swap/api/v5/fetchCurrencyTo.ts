@@ -8,6 +8,7 @@ import { flattenV5CurrenciesToAndFrom } from "../../utils/flattenV5CurrenciesToA
 import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
 
 type Props = {
+  baseUrl?: string;
   currencyFromId?: string;
   providers: string[];
   additionalCoinsFlag?: boolean;
@@ -22,6 +23,7 @@ type CurrencyGroup = {
 };
 
 export async function fetchCurrencyTo({
+  baseUrl = getSwapAPIBaseURL(),
   currencyFromId,
   providers,
   additionalCoinsFlag = false,
@@ -29,7 +31,7 @@ export async function fetchCurrencyTo({
   if (isIntegrationTestEnv())
     return Promise.resolve(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
 
-  const url = new URL(`${getSwapAPIBaseURL()}/currencies/to`);
+  const url = new URL(`${baseUrl}/currencies/to`);
 
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());

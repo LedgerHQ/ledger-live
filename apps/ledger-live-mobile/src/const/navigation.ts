@@ -506,6 +506,8 @@ export enum ScreenName {
 
   AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
+
+  WalletSyncActivationSettings = "WalletSyncActivationSettings",
   MockedAddAssetButton = "MockedAddAssetButton",
 }
 
@@ -615,4 +617,5 @@ export enum NavigatorName {
   SyncOnboarding = "SyncOnboarding",
 
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
+  WalletSyncActivationSettings = "WalletSyncActivationSettings",
 }

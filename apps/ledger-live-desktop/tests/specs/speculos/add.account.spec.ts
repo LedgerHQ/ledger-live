@@ -7,11 +7,12 @@ import { addTmsLink } from "tests/fixtures/common";
 const currencies: Currency[] = [
   Currency.BTC,
   Currency.ETH,
+  Currency.ETC,
   Currency.XRP,
   Currency.DOT,
   Currency.TRX,
   Currency.ADA,
-  //Currency.XLM, //TODO: Reactivate when Date.Parse issue is fixed - desactivate time machine for Speculos tests
+  Currency.XLM,
   Currency.BCH,
   Currency.ALGO,
   Currency.ATOM,
@@ -19,7 +20,7 @@ const currencies: Currency[] = [
 ];
 
 for (const [i, currency] of currencies.entries()) {
-  test.describe.parallel("Accounts @smoke", () => {
+  test.describe.parallel("Add Accounts", () => {
     test.use({
       userdata: "skip-onboarding",
       testName: `addAccount_${currency.uiName}`,

@@ -644,7 +644,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 28,
       P2SH: 85,
       XPUBVersion: 0x0488b21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -1331,7 +1330,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 40,
       P2SH: 100,
       XPUBVersion: 0x0488c21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -2008,43 +2006,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  peercoin: {
-    type: "CryptoCurrency",
-    id: "peercoin",
-    coinType: CoinType.PEERCOIN,
-    name: "Peercoin",
-    managerAppName: "Peercoin",
-    ticker: "PPC",
-    scheme: "peercoin",
-    color: "#3cb054",
-    family: "bitcoin",
-    blockAvgTime: 450,
-    bitcoinLikeInfo: {
-      P2PKH: 55,
-      P2SH: 117,
-      XPUBVersion: 0xe6e8e9e5,
-      hasTimestamp: true,
-    },
-    units: [
-      {
-        name: "peercoin",
-        code: "PPC",
-        magnitude: 6,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://blockbook.peercoin.net/tx/$hash",
-        address: "https://blockbook.peercoin.net/address/$address",
-      },
-    ],
-    explorerId: "ppc",
-  },
   persistence: {
     type: "CryptoCurrency",
     id: "persistence",
@@ -2230,7 +2191,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 55,
       P2SH: 85,
       XPUBVersion: 0x0488b21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -2588,7 +2548,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://xsnexplorer.io/addresses/$address",
       },
     ],
-    explorerId: "xsn",
   },
   stargaze: {
     type: "CryptoCurrency",
@@ -2637,7 +2596,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       P2PKH: 63,
       P2SH: 125,
       XPUBVersion: 0x0488c21e,
-      hasTimestamp: true,
     },
     units: [
       {
@@ -2658,46 +2616,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerId: "strat",
-  },
-  stealthcoin: {
-    terminated: {
-      link: "https://support.ledger.com/",
-    },
-    type: "CryptoCurrency",
-    id: "stealthcoin",
-    coinType: CoinType.STEALTH,
-    name: "Stealth",
-    managerAppName: "Stealth",
-    ticker: "XST",
-    scheme: "stealth",
-    color: "#000000",
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 62,
-      P2SH: 85,
-      XPUBVersion: 0x8f624b66,
-      hasTimestamp: false,
-    },
-    units: [
-      {
-        name: "stealth",
-        code: "XST",
-        magnitude: 6,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.stealthmonitor.org/transactions/$hash",
-        address: "https://www.stealthmonitor.org/address/$address",
-      },
-    ],
-    explorerId: "xst",
   },
   stellar: {
     type: "CryptoCurrency",
@@ -3001,80 +2919,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://explore.vechain.org/accounts/$address",
       },
     ],
-  },
-  vertcoin: {
-    type: "CryptoCurrency",
-    id: "vertcoin",
-    coinType: CoinType.VERTCOIN,
-    name: "Vertcoin",
-    managerAppName: "Vertcoin",
-    ticker: "VTC",
-    scheme: "vertcoin",
-    color: "#1b5c2e",
-    supportsSegwit: true,
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 71,
-      P2SH: 5,
-      XPUBVersion: 0x0488b21e,
-    },
-    units: [
-      {
-        name: "vertcoin",
-        code: "VTC",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://vtcblocks.com/tx/$hash",
-        address: "https://vtcblocks.com/address/$address",
-      },
-    ],
-    explorerId: "vtc",
-  },
-  viacoin: {
-    type: "CryptoCurrency",
-    id: "viacoin",
-    coinType: CoinType.VIACOIN,
-    name: "Viacoin",
-    managerAppName: "Viacoin",
-    ticker: "VIA",
-    scheme: "viacoin",
-    color: "#414141",
-    supportsSegwit: true,
-    family: "bitcoin",
-    blockAvgTime: 24,
-    bitcoinLikeInfo: {
-      P2PKH: 71,
-      P2SH: 33,
-      XPUBVersion: 0x0488b21e,
-    },
-    units: [
-      {
-        name: "viacoin",
-        code: "VIA",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://explorer.viacoin.org/tx/$hash",
-        address: "https://explorer.viacoin.org/address/$address",
-      },
-    ],
-    explorerId: "via",
   },
   wanchain: {
     type: "CryptoCurrency",

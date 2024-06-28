@@ -19,7 +19,6 @@ export async function spawnChopsticksAndSidecar() {
   ensureEnv();
   console.log("Starting chopsticks and sidecar...");
 
-  // await compose.buildOne("chopsticks", { cwd });
   await compose.upAll({
     cwd,
     log: true,
@@ -48,7 +47,7 @@ export async function spawnChopsticksAndSidecar() {
 }
 
 export const killChopsticksAndSidecar = async (): Promise<void> => {
-  console.log("Stopping anvil...");
+  console.log("Stopping chopsticks...");
   await compose.down({
     cwd,
     log: true,

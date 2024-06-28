@@ -35,7 +35,7 @@ export type Input = {
 export const command = async (transport: Transport): Promise<void> => {
   const res = await transport.send(0xe0, 0x63, 0x00, 0x00, Buffer.from([]), [
     StatusCodes.OK,
-    StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
+    StatusCodes.DEVICE_IN_RECOVERY_MODE,
     StatusCodes.USER_REFUSED_ON_DEVICE,
     StatusCodes.CUSTOM_IMAGE_EMPTY,
     StatusCodes.UNKNOWN_APDU,
@@ -48,7 +48,7 @@ export const command = async (transport: Transport): Promise<void> => {
       return;
     case StatusCodes.CUSTOM_IMAGE_EMPTY:
       throw new ImageDoesNotExistOnDevice();
-    case StatusCodes.CUSTOM_IMAGE_BOOTLOADER:
+    case StatusCodes.DEVICE_IN_RECOVERY_MODE:
       throw new UnexpectedBootloader();
     case StatusCodes.USER_REFUSED_ON_DEVICE:
       throw new UserRefusedOnDevice();
