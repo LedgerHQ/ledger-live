@@ -1,5 +1,26 @@
 # @ledgerhq/hw-app-str
 
+## 7.0.0
+
+### Major Changes
+
+- [#6923](https://github.com/LedgerHQ/ledger-live/pull/6923) [`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737) Thanks [@overcat](https://github.com/overcat)! - Refactor `hw-app-str` and add `signSorobanAuthorization`. Please check the changelog and documentation of "@ledgerhq/hw-app-str" for more information.
+
+  - `Str.getPublicKey`'s function signature has changed. Previously, it was `getPublicKey(path: string, boolValidate?: boolean, boolDisplay?: boolean): Promise<{ publicKey: string; raw: Buffer; }>` and now it is `async getPublicKey(path: string, display = false): Promise<{ rawPublicKey: Buffer }>`
+  - `Str.signTransaction` will no longer automatically fallback to `Str.signHash`. If you want to sign a hash, you have to call `Str.signHash` directly.
+  - Removed the fixed limit on the maximum length of the transaction in `Str.signTransaction`. Currently, if the transaction is too large for the device to handle, `StellarUserRefusedError` will be thrown.
+  - Add `Str.signSorobanAuthorization` method to sign Stellar Soroban authorization.
+  - `Str.getAppConfiguration` now returns `maxDataSize`, it represents the maximum size of the data that the device can processed.
+  - Add error classes for better error handling, check the documentation for more information:
+    - `StellarUserRefusedError`
+    - `StellarHashSigningNotEnabledError`
+    - `StellarDataTooLargeError`
+    - `StellarDataParsingFailedError`
+
+### Patch Changes
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
 ## 7.0.0-next.1
 
 ### Patch Changes

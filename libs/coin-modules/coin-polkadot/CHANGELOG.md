@@ -1,5 +1,26 @@
 # @ledgerhq/coin-polkadot
 
+## 1.0.0
+
+### Major Changes
+
+- [#6874](https://github.com/LedgerHQ/ledger-live/pull/6874) [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Use Polkadot node instead of Sidecar fork
+
+### Minor Changes
+
+- [#6326](https://github.com/LedgerHQ/ledger-live/pull/6326) [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - polkadot generic nano app support
+
+### Patch Changes
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+- [#7220](https://github.com/LedgerHQ/ledger-live/pull/7220) [`6b86eb6`](https://github.com/LedgerHQ/ledger-live/commit/6b86eb6eed728fa91ab02c9ea23bd1e8bc5b54db) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Revert call from node to sidecar
+
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761), [`b478096`](https://github.com/LedgerHQ/ledger-live/commit/b478096537a0f86a9e39acc8c6cf17b1184e0849), [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/types-live@6.48.1
+  - @ledgerhq/coin-framework@0.15.0
+  - @ledgerhq/cryptoassets@13.1.1
+
 ## 1.0.0-next.3
 
 ### Patch Changes
