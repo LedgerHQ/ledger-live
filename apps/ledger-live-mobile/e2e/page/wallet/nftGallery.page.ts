@@ -1,4 +1,4 @@
-import { getElementById, openDeeplink, tapByElement } from "../../helpers";
+import { getElementById, openDeeplink, tapByElement, waitForElementById } from "../../helpers";
 import { expect } from "detox";
 
 const baseLink = "nftgallery";
@@ -23,7 +23,11 @@ export default class NftGalleryPage {
     await openDeeplink(baseLink);
   }
 
-  async hideNft(index: number) {
+  async clickOnNft(index = 0) {
+    await tapByElement(this.nftListItem(index));
+  }
+
+  async hideNft(index = 0) {
     await expect(this.nftListItem(index)).toBeVisible();
     await tapByElement(this.selectAndHide());
     await tapByElement(this.nftListItem(index));
@@ -33,5 +37,38 @@ export default class NftGalleryPage {
 
   async continueFromReceiveNFTsModal() {
     await tapByElement(this.nftReceiveModalContinueButton());
+  }
+
+  async waitForList() {
+    await waitForElementById(this.nftListComponentId);
+  }
+
+  async expectGalleryVisible() {
+    await expect(this.root()).toBeVisible();
+  }
+
+  async expectGalleryNotVisible() {
+    await expect(this.root()).not.toBeVisible();
+  }
+
+  async expectGalleryEmptyState() {
+    await this.expectGalleryVisible();
+    await expect(this.emptyScreen()).toBeVisible(50);
+  }
+
+  async expectNftVisible(index = 0) {
+    await expect(this.nftListItem(index)).toBeVisible();
+  }
+
+  async expectFilterDrawerVisible() {
+    await expect(this.nftFilterDrawer()).toBeVisible();
+  }
+
+  async expectFilterDrawerNotVisible() {
+    await expect(this.nftFilterDrawer()).not.toBeVisible();
+  }
+
+  async expectNftReceiveModalVisible() {
+    await expect(this.nftReceiveModal()).toBeVisible();
   }
 }
