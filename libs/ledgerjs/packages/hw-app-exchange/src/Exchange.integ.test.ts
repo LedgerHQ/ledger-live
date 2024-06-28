@@ -6,7 +6,7 @@ import secp256k1 from "secp256k1";
 import protobuf from "protobufjs";
 import BigNumber from "bignumber.js";
 
-describe("Check SWAP until payload signature", () => {
+describe("Check Exchange until payload signature", () => {
   let transport: Transport;
 
   beforeAll(async () => {
@@ -163,7 +163,94 @@ describe("Check SWAP until payload signature", () => {
     await exchange.checkTransactionSignature(payloadSignature);
   });
 
-  it("NG Sell", async () => {
+  it.only("Legacy SELL", async () => {
+    // Given
+    const exchange = new Exchange(transport, ExchangeTypes.Sell);
+
+    // When
+    const transactionId = await exchange.startNewTransaction();
+
+    // Then
+    expect(transactionId).toEqual(expect.any(String));
+    expect(transactionId).toHaveLength(44);
+
+    const { partnerInfo, partnerSigned, partnerPrivKey } =
+      await appExchangeSellDataset(legacySignFormat);
+    await exchange.setPartnerKey(partnerInfo);
+
+    await exchange.checkPartner(partnerSigned);
+
+    const amount = new BigNumber(100_000);
+    let encodedPayload = await generateSellPayloadProtobuf({
+      traderEmail: "test@ledger.fr",
+      inCurrency: "ETH",
+      inAmount: Buffer.from(amount.toString(16), "hex"),
+      inAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
+      outCurrency: "EUR",
+      outAmount: {
+        coefficient: Buffer.from("1", "hex"),
+        exponent: 1,
+      },
+      deviceTransactionId: Buffer.from(transactionId),
+    });
+    console.log("DEBUG - Before Payload SHA256", encodedPayload.toString("base64url"));
+    console.log("DEBUG - Payload SHA256", await sha256(encodedPayload));
+    encodedPayload = Buffer.from(encodedPayload.toString("base64url"));
+
+    //-- CMD 6
+    const estimatedFees = new BigNumber(0);
+    await exchange.processTransaction(encodedPayload, estimatedFees);
+
+    //-- CMD 7
+    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
+    await exchange.checkTransactionSignature(payloadSignature);
+  });
+
+  it("Legacy SELL with prepared data", async () => {
+    // Given
+    // this is R1 curve
+    const pubkey =
+      "044f22668f5f321d3784266c932a2a3141c3ec196ddd51f42cf975267eda23d3a8b02170e4c5c70536e7d03ba4e66ee3e1f9d65e772d3217871a830a7cf60da366";
+    // In base64url encoding
+    const payload =
+      "CiRzdGVwaGFuZS5wcm9oYXN6a2ErY29pbmlmeUBsZWRnZXIuZnISA0JUQxoDB6EgIiMyTXhKdUw2ZVByck5IOFdYWlRZN2RCSnNZWmduSFM3UWQ1NSoDRVVSMgYKAnQsEAI6IDUK6gyX90fx0PdggUYUpHUjgBsa630Ly7qipPRr-BhL";
+    // In base64url encoding
+    const signature =
+      "u63xyhIAlgIKj0bfatpXGfoCxG0OfkeplLX9tVPia65mxBubSzj31MS-ohJvexi990b4gjgkUF1fORbUe9UdmA";
+    const exchange = new Exchange(transport, ExchangeTypes.Sell);
+
+    // When
+    const transactionId = await exchange.startNewTransaction();
+
+    // Then
+    expect(transactionId).toEqual(expect.any(String));
+    expect(transactionId).toHaveLength(44);
+
+    const { partnerInfo, partnerSigned } = await appExchangeSellPreparedDataset(legacySignFormat, {
+      name: "Coinify",
+      curve: "secp256r1",
+      pubkey,
+    });
+    await exchange.setPartnerKey(partnerInfo);
+
+    await exchange.checkPartner(partnerSigned);
+
+    const encodedPayload = Buffer.from(payload);
+
+    const estimatedFees = new BigNumber(0);
+    await exchange.processTransaction(encodedPayload, estimatedFees);
+
+    const payloadSignature = Buffer.from(signature, "base64url");
+    await exchange.checkTransactionSignature(payloadSignature);
+
+    // await exchange.checkPayoutAddress(
+    //   Buffer.from("034254430f626974636f696e5f746573746e657400", "hex"),
+    //   Buffer.from("304402203c742abf08a3de00967063818a7ba2c1ef5af68bef356c94a46d86c99ddaba7a02207617ce84dc59998eca965cf15e5bb3ac6f3841cf919b42333e8457870a4812fa", "hex"),
+    //   Buffer.from("01058000003180000001800000000000000000000002", "hex"),
+    // );
+  });
+
+  it("NG SELL", async () => {
     // Given
     const exchange = new Exchange(transport, ExchangeTypes.SellNg);
 
@@ -269,6 +356,38 @@ async function appExchangeDataset(signFormat: PartnerSignFormat) {
   const msg = signFormat(partnerInfo);
 
   const sig = await signMessage(msg, LEDGER_FAKE_PRIVATE_KEY, "der");
+
+  return {
+    partnerInfo,
+    partnerSigned: sig,
+  };
+}
+type PreparedData = {
+  name: string;
+  curve: "secp256k1" | "secp256r1";
+  pubkey: string;
+};
+async function appExchangeSellPreparedDataset(signFormat: PartnerSignFormat, info: PreparedData) {
+  const pubKey = Buffer.from(info.pubkey, "hex");
+  secp256k1.publicKeyVerify(pubKey);
+
+  const partnerInfo = {
+    name: info.name,
+    curve: info.curve,
+    publicKey: pubKey,
+  };
+  const msg = signFormat(partnerInfo);
+  console.log("APDU to sign:", msg.toString("hex"));
+
+  // const sig = await signMessage(msg, LEDGER_FAKE_PRIVATE_KEY, "der");
+  const sig = Buffer.from(
+    // To Test
+    // "304502204a90851b0e66b27480f04ec20fd24f59e39322097993a267a0f05ac48d66fc7e022100d8e96c93c0951e3c4241deafe864319bdeb2d2ad3fc6d9292ff92f062a6472b4",
+    // Correct expected
+    "30450221008e8b2172ddd48e196dbff81ebe8aebc4ec0988f72de1b02da202f3a8d8f33f9c02205273c1d426aeb460fd36a27696aafda68bdff4139886f29e558895ea85527749",
+    "hex",
+  );
+  // console.log("SIGNATURE Coinify:", Buffer.from(sig).toString("hex"));
 
   return {
     partnerInfo,
@@ -383,4 +502,10 @@ function convertSignatureToDER(sig: Uint8Array): Buffer {
 // Convert raw buffer to a JWS compatible one: '.'+base64Url(raw)
 function convertToJWSPayload(raw: Buffer): Buffer {
   return Buffer.from("." + raw.toString("base64url"));
+}
+
+async function sha256(buffer: Buffer): Promise<string> {
+  const shaPayload = await subtle.digest("SHA-256", buffer);
+  const bytes = new Uint8Array(shaPayload);
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
 }
