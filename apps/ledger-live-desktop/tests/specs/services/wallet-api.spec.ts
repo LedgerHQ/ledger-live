@@ -315,7 +315,12 @@ test("Wallet API methods @smoke", async ({ page }) => {
       id,
       method: "currency.list",
       params: {
-        currencyIds: ["bitcoin", "ethereum", "ethereum/erc20/usd_tether__erc20_"],
+        currencyIds: [
+          "bitcoin",
+          "ethereum",
+          "ethereum/erc20/usd_tether__erc20_",
+          // "arbitrum/erc20/arbitrum", // Seems like arbitrum is not loading when the app starts, I tried to set a timeout before doing the call
+        ],
       },
     });
 
@@ -352,6 +357,17 @@ test("Wallet API methods @smoke", async ({ page }) => {
             color: "#0ebdcd",
             decimals: 6,
           },
+          // {
+          //   type: "TokenCurrency",
+          //   standard: "ERC20",
+          //   id: "arbitrum/erc20/arbitrum",
+          //   ticker: "ARB",
+          //   contract: "0x912CE59144191C1204E64559FE8253a0e49E6548",
+          //   name: "Arbitrum",
+          //   parent: "arbitrum",
+          //   color: "#28a0f0",
+          //   decimals: 18,
+          // },
         ],
       },
     });
