@@ -193,25 +193,26 @@ export const test = base.extend<TestFixtures>({
     });
 
     // start recording all network responses in artifacts/networkResponse.log
-    page.on("response", async data => {
+    await page.route("**/*", async route => {
       const now = Date.now();
       const timestamp = new Date(now).toISOString();
 
-      const headers = await data.allHeaders();
+      const headers = route.request().headers();
 
       if (headers.teststatus && headers.teststatus === "mocked") {
         fs.appendFile(
           responseLogfilePath,
-          `[${timestamp}] MOCKED RESPONSE: ${data.request().url()}\n`,
+          `[${timestamp}] MOCKED RESPONSE: ${route.request().url()}\n`,
           appendFileErrorHandler,
         );
       } else {
         fs.appendFile(
           responseLogfilePath,
-          `[${timestamp}] REAL RESPONSE: ${data.request().url()}\n`,
+          `[${timestamp}] REAL RESPONSE: ${route.request().url()}\n`,
           appendFileErrorHandler,
         );
       }
+      await route.continue();
     });
 
     // app is loaded
@@ -239,13 +240,6 @@ export const test = base.extend<TestFixtures>({
     },
     { auto: true },
   ],
-});
-
-test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
-    const screenshot = await page.screenshot();
-    await allure.attachment("Screenshot on Failure", screenshot, "image/png");
-  }
 });
 
 export async function addTmsLink(ids: string[]) {

@@ -1,5 +1,202 @@
 # ledger-live-desktop
 
+## 2.83.0
+
+### Minor Changes
+
+- [#7106](https://github.com/LedgerHQ/ledger-live/pull/7106) [`aab1636`](https://github.com/LedgerHQ/ledger-live/commit/aab1636be8a9ba1576d84af6ac3cb399ec2aa477) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat: tracking ptx analytics attributes
+
+- [#7061](https://github.com/LedgerHQ/ledger-live/pull/7061) [`60c9206`](https://github.com/LedgerHQ/ledger-live/commit/60c92060a4e3274e1afeb0f39c8be7e8c6796123) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Storyly cta behavior with deeplinks
+
+### Patch Changes
+
+- [#7078](https://github.com/LedgerHQ/ledger-live/pull/7078) [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac) Thanks [@lvndry](https://github.com/lvndry)! - [evm] Improve error message if could not get list of operations
+
+- [#7159](https://github.com/LedgerHQ/ledger-live/pull/7159) [`9269cf8`](https://github.com/LedgerHQ/ledger-live/commit/9269cf8181208b7df03295d86484262d48748e56) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix units on token ops
+
+- [#7157](https://github.com/LedgerHQ/ledger-live/pull/7157) [`38a18fd`](https://github.com/LedgerHQ/ledger-live/commit/38a18fdb7233b77dfd631d10d9eec3cd4aeefe9f) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Reload app restauration if device disconnected after firmware update with language pack
+
+- [#7038](https://github.com/LedgerHQ/ledger-live/pull/7038) [`6fdab18`](https://github.com/LedgerHQ/ledger-live/commit/6fdab1803ffeb735683b4c476cce9bbf905df7c2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add manage Synchronized instances in Debugger + WalletSync
+
+- [#7174](https://github.com/LedgerHQ/ledger-live/pull/7174) [`7499a8b`](https://github.com/LedgerHQ/ledger-live/commit/7499a8b055c98481ba81a065aad91caf74f62baf) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: rare crash where gasOption is defined but not yet in transaction where it should be
+
+- [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor "app update available" logic to only rely on v2 manager apis
+
+- [#6885](https://github.com/LedgerHQ/ledger-live/pull/6885) [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Manage your Backup for WalletSync
+
+- [#7094](https://github.com/LedgerHQ/ledger-live/pull/7094) [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761) Thanks [@CremaFR](https://github.com/CremaFR)! - prevent TRC20 swaps if empty tron account
+
+- [#7115](https://github.com/LedgerHQ/ledger-live/pull/7115) [`faf98cd`](https://github.com/LedgerHQ/ledger-live/commit/faf98cdf517b68ba8667d63cd1e7a2ced79cd0a5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update analytics opt-in descriptions
+
+- [#7057](https://github.com/LedgerHQ/ledger-live/pull/7057) [`cb6a975`](https://github.com/LedgerHQ/ledger-live/commit/cb6a9752c56b07f6347b77d7279b270eae89935d) Thanks [@lvndry](https://github.com/lvndry)! - Top Banner open url in browser
+
+- [#6823](https://github.com/LedgerHQ/ledger-live/pull/6823) [`ae8acfa`](https://github.com/LedgerHQ/ledger-live/commit/ae8acfa5f7100f39bbf0d486a8baebf563587d10) Thanks [@mikhd](https://github.com/mikhd)! - Solana minor delegations ui issues
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+- [#6885](https://github.com/LedgerHQ/ledger-live/pull/6885) [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - WalletSync - Synchronize Flow
+
+- [#7091](https://github.com/LedgerHQ/ledger-live/pull/7091) [`e0c89dc`](https://github.com/LedgerHQ/ledger-live/commit/e0c89dc38e4ee16743b706744d7b278ba964fd0d) Thanks [@cksanders](https://github.com/cksanders)! - Add Dev Mode as a property to all events & send to Recover Live App
+
+- [#7154](https://github.com/LedgerHQ/ledger-live/pull/7154) [`1ac8733`](https://github.com/LedgerHQ/ledger-live/commit/1ac8733d45e057aecc68c85eff99d6358fc93638) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix cvs wrong value
+
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`2e5d5bd`](https://github.com/LedgerHQ/ledger-live/commit/2e5d5bdb988c73c91f1fe42c809b192ca5dbeb7a), [`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737), [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac), [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917), [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917), [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`d2368f6`](https://github.com/LedgerHQ/ledger-live/commit/d2368f632b834207c33df14468599b6a543d11da), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761), [`9e82327`](https://github.com/LedgerHQ/ledger-live/commit/9e823278b69d7ccd5f8927f699930172cd50a59d), [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f), [`fc6d09b`](https://github.com/LedgerHQ/ledger-live/commit/fc6d09be89a6e8775d77b98d5a0256b68346a14d), [`6b3c8ca`](https://github.com/LedgerHQ/ledger-live/commit/6b3c8cab371db8212e1b0a02f03bb0baa46ce95c), [`c988a94`](https://github.com/LedgerHQ/ledger-live/commit/c988a946d86e7f874823ac96d66573281ba00b13), [`9f33fc1`](https://github.com/LedgerHQ/ledger-live/commit/9f33fc14e0628a68d32957171aa879c30041f27e), [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78), [`1df64d2`](https://github.com/LedgerHQ/ledger-live/commit/1df64d27e75c2a3445903ebce9e1f681683676da), [`d9f586e`](https://github.com/LedgerHQ/ledger-live/commit/d9f586ea4bd45d15f3e42c9f733f30dceef3027d), [`d13a5d7`](https://github.com/LedgerHQ/ledger-live/commit/d13a5d7f8f23624feb3a4a041cd7966d3b100dcf), [`fec3dc8`](https://github.com/LedgerHQ/ledger-live/commit/fec3dc84ea00fc6f7f632942826978607e20c2ff), [`6692f5f`](https://github.com/LedgerHQ/ledger-live/commit/6692f5fe6701a4e47c626ea3cbb73a4641c9021d), [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e)]:
+  - @ledgerhq/types-live@6.48.1
+  - @ledgerhq/live-common@34.5.0
+  - @ledgerhq/coin-evm@2.1.1
+  - @ledgerhq/coin-framework@0.15.0
+  - @ledgerhq/react-ui@0.15.1
+  - @ledgerhq/live-wallet@0.3.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.1
+  - @ledgerhq/coin-bitcoin@0.6.1
+  - @ledgerhq/live-countervalues-react@0.2.1
+  - @ledgerhq/live-countervalues@0.2.1
+  - @ledgerhq/domain-service@1.2.1
+  - @ledgerhq/live-nft-react@0.4.1
+  - @ledgerhq/live-nft@0.4.1
+
+## 2.83.0-next.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.5.0-next.7
+
+## 2.83.0-next.10
+
+### Patch Changes
+
+- Updated dependencies [[`fec3dc8`](https://github.com/LedgerHQ/ledger-live/commit/fec3dc84ea00fc6f7f632942826978607e20c2ff)]:
+  - @ledgerhq/live-common@34.5.0-next.6
+
+## 2.83.0-next.9
+
+### Patch Changes
+
+- Updated dependencies [[`9e82327`](https://github.com/LedgerHQ/ledger-live/commit/9e823278b69d7ccd5f8927f699930172cd50a59d)]:
+  - @ledgerhq/live-common@34.5.0-next.5
+
+## 2.83.0-next.8
+
+### Patch Changes
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+- Updated dependencies [[`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.1-next.1
+  - @ledgerhq/types-live@6.48.1-next.1
+  - @ledgerhq/coin-bitcoin@0.6.1-next.2
+  - @ledgerhq/live-countervalues-react@0.2.1-next.2
+  - @ledgerhq/coin-evm@2.1.1-next.2
+  - @ledgerhq/live-common@34.5.0-next.4
+  - @ledgerhq/live-countervalues@0.2.1-next.2
+  - @ledgerhq/react-ui@0.15.1-next.1
+  - @ledgerhq/coin-framework@0.15.0-next.2
+  - @ledgerhq/domain-service@1.2.1-next.1
+  - @ledgerhq/live-nft-react@0.4.1-next.2
+  - @ledgerhq/live-wallet@0.3.0-next.2
+  - @ledgerhq/live-nft@0.4.1-next.2
+
+## 2.83.0-next.7
+
+### Patch Changes
+
+- Updated dependencies [[`d13a5d7`](https://github.com/LedgerHQ/ledger-live/commit/d13a5d7f8f23624feb3a4a041cd7966d3b100dcf)]:
+  - @ledgerhq/live-common@34.4.0-next.3
+  - @ledgerhq/coin-framework@0.15.0-next.1
+  - @ledgerhq/coin-bitcoin@0.6.1-next.1
+  - @ledgerhq/coin-evm@2.1.1-next.1
+  - @ledgerhq/live-countervalues@0.2.1-next.1
+  - @ledgerhq/live-countervalues-react@0.2.1-next.1
+  - @ledgerhq/live-nft@0.4.1-next.1
+  - @ledgerhq/live-nft-react@0.4.1-next.1
+  - @ledgerhq/live-wallet@0.3.0-next.1
+
+## 2.83.0-next.6
+
+### Patch Changes
+
+- [#7174](https://github.com/LedgerHQ/ledger-live/pull/7174) [`7499a8b`](https://github.com/LedgerHQ/ledger-live/commit/7499a8b055c98481ba81a065aad91caf74f62baf) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: rare crash where gasOption is defined but not yet in transaction where it should be
+
+## 2.83.0-next.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.4.0-next.2
+
+## 2.83.0-next.4
+
+### Patch Changes
+
+- [#7157](https://github.com/LedgerHQ/ledger-live/pull/7157) [`38a18fd`](https://github.com/LedgerHQ/ledger-live/commit/38a18fdb7233b77dfd631d10d9eec3cd4aeefe9f) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Reload app restauration if device disconnected after firmware update with language pack
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.4.0-next.1
+
+## 2.83.0-next.3
+
+### Patch Changes
+
+- [#7159](https://github.com/LedgerHQ/ledger-live/pull/7159) [`9269cf8`](https://github.com/LedgerHQ/ledger-live/commit/9269cf8181208b7df03295d86484262d48748e56) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix units on token ops
+
+## 2.83.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`1df64d2`](https://github.com/LedgerHQ/ledger-live/commit/1df64d27e75c2a3445903ebce9e1f681683676da)]:
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.1-next.0
+
+## 2.83.0-next.1
+
+### Patch Changes
+
+- [#7154](https://github.com/LedgerHQ/ledger-live/pull/7154) [`1ac8733`](https://github.com/LedgerHQ/ledger-live/commit/1ac8733d45e057aecc68c85eff99d6358fc93638) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix cvs wrong value
+
+## 2.83.0-next.0
+
+### Minor Changes
+
+- [#7106](https://github.com/LedgerHQ/ledger-live/pull/7106) [`aab1636`](https://github.com/LedgerHQ/ledger-live/commit/aab1636be8a9ba1576d84af6ac3cb399ec2aa477) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat: tracking ptx analytics attributes
+
+- [#7061](https://github.com/LedgerHQ/ledger-live/pull/7061) [`60c9206`](https://github.com/LedgerHQ/ledger-live/commit/60c92060a4e3274e1afeb0f39c8be7e8c6796123) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Storyly cta behavior with deeplinks
+
+### Patch Changes
+
+- [#7078](https://github.com/LedgerHQ/ledger-live/pull/7078) [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac) Thanks [@lvndry](https://github.com/lvndry)! - [evm] Improve error message if could not get list of operations
+
+- [#7038](https://github.com/LedgerHQ/ledger-live/pull/7038) [`6fdab18`](https://github.com/LedgerHQ/ledger-live/commit/6fdab1803ffeb735683b4c476cce9bbf905df7c2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add manage Synchronized instances in Debugger + WalletSync
+
+- [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor "app update available" logic to only rely on v2 manager apis
+
+- [#6885](https://github.com/LedgerHQ/ledger-live/pull/6885) [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Manage your Backup for WalletSync
+
+- [#7094](https://github.com/LedgerHQ/ledger-live/pull/7094) [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761) Thanks [@CremaFR](https://github.com/CremaFR)! - prevent TRC20 swaps if empty tron account
+
+- [#7115](https://github.com/LedgerHQ/ledger-live/pull/7115) [`faf98cd`](https://github.com/LedgerHQ/ledger-live/commit/faf98cdf517b68ba8667d63cd1e7a2ced79cd0a5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update analytics opt-in descriptions
+
+- [#7057](https://github.com/LedgerHQ/ledger-live/pull/7057) [`cb6a975`](https://github.com/LedgerHQ/ledger-live/commit/cb6a9752c56b07f6347b77d7279b270eae89935d) Thanks [@lvndry](https://github.com/lvndry)! - Top Banner open url in browser
+
+- [#6823](https://github.com/LedgerHQ/ledger-live/pull/6823) [`ae8acfa`](https://github.com/LedgerHQ/ledger-live/commit/ae8acfa5f7100f39bbf0d486a8baebf563587d10) Thanks [@mikhd](https://github.com/mikhd)! - Solana minor delegations ui issues
+
+- [#6885](https://github.com/LedgerHQ/ledger-live/pull/6885) [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - WalletSync - Synchronize Flow
+
+- [#7091](https://github.com/LedgerHQ/ledger-live/pull/7091) [`e0c89dc`](https://github.com/LedgerHQ/ledger-live/commit/e0c89dc38e4ee16743b706744d7b278ba964fd0d) Thanks [@cksanders](https://github.com/cksanders)! - Add Dev Mode as a property to all events & send to Recover Live App
+
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`2e5d5bd`](https://github.com/LedgerHQ/ledger-live/commit/2e5d5bdb988c73c91f1fe42c809b192ca5dbeb7a), [`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737), [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac), [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917), [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917), [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`d2368f6`](https://github.com/LedgerHQ/ledger-live/commit/d2368f632b834207c33df14468599b6a543d11da), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761), [`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f), [`fc6d09b`](https://github.com/LedgerHQ/ledger-live/commit/fc6d09be89a6e8775d77b98d5a0256b68346a14d), [`6b3c8ca`](https://github.com/LedgerHQ/ledger-live/commit/6b3c8cab371db8212e1b0a02f03bb0baa46ce95c), [`c988a94`](https://github.com/LedgerHQ/ledger-live/commit/c988a946d86e7f874823ac96d66573281ba00b13), [`9f33fc1`](https://github.com/LedgerHQ/ledger-live/commit/9f33fc14e0628a68d32957171aa879c30041f27e), [`d9f586e`](https://github.com/LedgerHQ/ledger-live/commit/d9f586ea4bd45d15f3e42c9f733f30dceef3027d), [`6692f5f`](https://github.com/LedgerHQ/ledger-live/commit/6692f5fe6701a4e47c626ea3cbb73a4641c9021d), [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e)]:
+  - @ledgerhq/types-live@6.48.1-next.0
+  - @ledgerhq/live-common@34.4.0-next.0
+  - @ledgerhq/coin-evm@2.1.1-next.0
+  - @ledgerhq/coin-framework@0.15.0-next.0
+  - @ledgerhq/react-ui@0.15.1-next.0
+  - @ledgerhq/live-wallet@0.3.0-next.0
+  - @ledgerhq/coin-bitcoin@0.6.1-next.0
+  - @ledgerhq/domain-service@1.2.1-next.0
+  - @ledgerhq/live-countervalues@0.2.1-next.0
+  - @ledgerhq/live-countervalues-react@0.2.1-next.0
+  - @ledgerhq/live-nft@0.4.1-next.0
+  - @ledgerhq/live-nft-react@0.4.1-next.0
+
 ## 2.82.1
 
 ### Patch Changes

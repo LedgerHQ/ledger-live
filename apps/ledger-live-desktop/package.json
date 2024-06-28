@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.82.1",
+  "version": "2.83.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -46,8 +46,7 @@
     "test:playwright:clean": "git clean -fdX tests/artifacts",
     "typecheck": "node scripts/typecheck.js",
     "check": "pnpm lint; pnpm typecheck",
-    "unimported": "unimported",
-    "generate:cryptoassets-md": "ts-node --compilerOptions '{\"module\":\"commonjs\"}' ./src/generate-cryptoassets-md.ts"
+    "unimported": "unimported"
   },
   "dependencies": {
     "@braze/web-sdk": "^4.6.3",

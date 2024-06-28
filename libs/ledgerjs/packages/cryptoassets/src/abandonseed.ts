@@ -17,7 +17,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   ripple: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E",
   tezos: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
-  tron: EVM_DEAD_ADDRESS,
+  // https://developers.tron.network/reference/getburntrx-1
+  tron: "TLsV52sRDL79HXGGm9yzwKibb6BeruhUzy",
   ethereum: EVM_DEAD_ADDRESS,
   bitcoin: "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA",
   bitcoin_cash: "1mW6fDEMjKrDHvLvoEsaeLxSCzZBf3Bfg",

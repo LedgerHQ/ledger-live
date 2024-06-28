@@ -1,4 +1,4 @@
-import { CommandStream, Derive, crypto, device } from "..";
+import { CommandStream, Derive, TRUSTCHAIN_APP_NAME, crypto, device } from "..";
 import * as secp from "@noble/secp256k1";
 import {
   createSpeculosDevice,
@@ -26,7 +26,7 @@ beforeEach(
     speculos = await createSpeculosDevice({
       model: DeviceModelId.nanoS,
       firmware: "2.0.0",
-      appName: "Trustchain",
+      appName: TRUSTCHAIN_APP_NAME,
       appVersion: "0.0.1",
       seed: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
       coinapps: __dirname,
@@ -56,7 +56,7 @@ afterEach(async () => {
 });
 
 describe("Chain is owned by a device", () => {
-  it("should be connected to a device", async () => {
+  it.skip("should be connected to a device", async () => {
     const alice = device.apdu(speculos.transport);
     expect(await alice.isConnected()).toBe(true);
   });
@@ -73,7 +73,7 @@ describe("Chain is owned by a device", () => {
     expect(result).toBe(true);
   });
 
-  it("should seed a new tree", async () => {
+  it.skip("should seed a new tree", async () => {
     const alice = device.apdu(speculos.transport);
     const topic = crypto.from_hex(DEFAULT_TOPIC);
     let stream = new CommandStream([]);
@@ -88,7 +88,7 @@ describe("Chain is owned by a device", () => {
     expect(crypto.to_hex(resolved.getTopic()!)).toBe(crypto.to_hex(topic));
   });
 
-  it("should seed a new tree and add a bob", async () => {
+  it.skip("should seed a new tree and add a bob", async () => {
     const alice = device.apdu(speculos.transport);
     const bob = await device.software();
     const bobPublicKey = (await bob.getPublicKey()).publicKey;
@@ -104,7 +104,7 @@ describe("Chain is owned by a device", () => {
     expect(resolved.getMembers().find(v => bytesEqual(v, bobPublicKey))).not.toBe(undefined);
   });
 
-  it("should seed a new tree, and derive a subtree and add a member in the subtree", async () => {
+  it.skip("should seed a new tree, and derive a subtree and add a member in the subtree", async () => {
     const alice = device.apdu(speculos.transport);
     const bob = await device.software();
     const bobPublicKey = (await bob.getPublicKey()).publicKey;
@@ -218,7 +218,7 @@ describe("Chain is owned by a device", () => {
     tree = tree.update(stream);
   });
 
-  it("should publish a key to a member added by a software device", async () => {
+  it.skip("should publish a key to a member added by a software device", async () => {
     const alice = device.apdu(speculos.transport);
     const bob = await device.software();
     const charlie = await device.software();
@@ -246,7 +246,7 @@ describe("Chain is owned by a device", () => {
     expect(stream).not.toBe(null);
   });
 
-  it("should not allow to publish a key to a non-member", async () => {
+  it.skip("should not allow to publish a key to a non-member", async () => {
     const alice = device.apdu(speculos.transport);
     const bob = await device.software();
     const charlie = await device.software();

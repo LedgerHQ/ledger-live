@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { stringCamelCase } from "@polkadot/util";
-import type { CoreTransaction, PalletMethod, PolkadotOperationMode } from "../types";
+import type { CoreTransaction, PalletMethodName, PolkadotOperationMode } from "../types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import polkadotAPI from "../network";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/index";
@@ -27,7 +27,7 @@ export type CreateExtrinsicArg = {
 };
 
 type ExtrinsicParams = {
-  name: PalletMethod;
+  name: PalletMethodName;
   pallet: "staking" | "balances";
   args: Record<string, string | string[] | number | null | undefined>;
 };

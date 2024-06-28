@@ -35,8 +35,13 @@ describe("Trustchain QR Code", () => {
 
   test("digits matching scenario", async () => {
     const onDisplayDigits = jest.fn();
-    const addMember = jest.fn(() => Promise.resolve());
-    const liveCredentials = convertKeyPairToLiveCredentials(await crypto.randomKeypair());
+    const trustchain = {
+      rootId: "test-root-id",
+      walletSyncEncryptionKey: "test-wallet-sync-encryption-key",
+      applicationPath: "0'/16'/0'",
+    };
+    const addMember = jest.fn(() => Promise.resolve(trustchain));
+    const memberCredentials = convertKeyPairToLiveCredentials(await crypto.randomKeypair());
 
     let scannedUrlResolve: (url: string) => void;
     const scannedUrlPromise = new Promise<string>(resolve => {
@@ -59,13 +64,13 @@ describe("Trustchain QR Code", () => {
     const memberName = "foo";
 
     const candidateP = createQRCodeCandidateInstance({
-      liveCredentials,
+      memberCredentials,
       memberName,
       scannedUrl,
       onRequestQRCodeInput,
     });
 
-    await Promise.all([hostP, candidateP]);
+    const [_, res] = await Promise.all([hostP, candidateP]);
 
     expect(onDisplayDigits).toHaveBeenCalledWith(expect.any(String));
     expect(addMember).toHaveBeenCalled();
@@ -73,5 +78,6 @@ describe("Trustchain QR Code", () => {
       { digits: 3, connected: false },
       expect.any(Function),
     );
+    expect(res).toEqual(trustchain);
   });
 });

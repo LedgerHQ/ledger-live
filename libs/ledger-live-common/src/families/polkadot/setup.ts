@@ -21,8 +21,8 @@ const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
   return new Polkadot(transport);
 };
 
+const polkadot = getCryptoCurrencyById("polkadot");
 const getCurrencyConfig = (): PolkadotCoinConfig => {
-  const polkadot = getCryptoCurrencyById("polkadot");
   return getCurrencyConfiguration(polkadot);
 };
 
