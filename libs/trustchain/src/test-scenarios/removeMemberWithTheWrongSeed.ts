@@ -14,23 +14,13 @@ export async function scenario(transport: Transport, { switchDeviceSeed }: Scena
   const member2creds = await sdk2.initMemberCredentials();
   const member2 = { name: name2, id: member2creds.pubkey, permissions: 0xffffffff };
 
-  const jwt1 = await sdk1.authWithDevice(transport);
-  const { trustchain, jwt: newJWT1 } = await sdk1.getOrCreateTrustchain(
-    transport,
-    jwt1,
-    member1creds,
-  );
-
-  await sdk1.addMember(newJWT1, trustchain, member1creds, member2);
+  const trustchain = await sdk1.getOrCreateTrustchain(transport, member1creds);
+  await sdk1.addMember(trustchain, member1creds, member2);
   transport = await switchDeviceSeed();
-
-  const jwt2 = await sdk2.authWithDevice(transport);
 
   // Test that we can't remove member1 because we are not using the device that corresponds to the trustchain
   // TODO: in future, we expect a precise error. https://ledgerhq.atlassian.net/browse/LIVE-13168
-  await expect(
-    sdk2.removeMember(transport, jwt2, trustchain, member2creds, member1),
-  ).rejects.toThrow();
+  await expect(sdk2.removeMember(transport, trustchain, member2creds, member1)).rejects.toThrow();
 
-  await sdk2.destroyTrustchain(trustchain, newJWT1);
+  await sdk2.destroyTrustchain(trustchain, member2creds);
 }

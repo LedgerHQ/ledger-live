@@ -6,11 +6,10 @@ export async function scenario(transport: Transport) {
   const name1 = "Member 1";
   const sdk1 = getSdk(false, { applicationId, name: name1 });
   const member1creds = await sdk1.initMemberCredentials();
-  const initialJwt = await sdk1.authWithDevice(transport);
-  const { trustchain, jwt } = await sdk1.getOrCreateTrustchain(transport, initialJwt, member1creds);
-  const members = await sdk1.getMembers(jwt, trustchain);
+  const trustchain = await sdk1.getOrCreateTrustchain(transport, member1creds);
+  const members = await sdk1.getMembers(trustchain, member1creds);
   await expect(
-    sdk1.removeMember(transport, jwt, trustchain, member1creds, members[0]),
+    sdk1.removeMember(transport, trustchain, member1creds, members[0]),
   ).rejects.toThrow();
-  await sdk1.destroyTrustchain(trustchain, jwt);
+  await sdk1.destroyTrustchain(trustchain, member1creds);
 }

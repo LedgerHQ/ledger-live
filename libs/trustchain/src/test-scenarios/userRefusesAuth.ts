@@ -6,7 +6,10 @@ import { RecorderConfig, recorderConfigDefaults } from "../test-helpers/types";
 export async function scenario(transport: Transport) {
   const applicationId = 16;
   const sdk1 = getSdk(false, { applicationId, name: "Foo" });
-  await expect(sdk1.authWithDevice(transport)).rejects.toThrow(UserRefusedOnDevice);
+  const memberCredentials = await sdk1.initMemberCredentials();
+  await expect(sdk1.getOrCreateTrustchain(transport, memberCredentials)).rejects.toThrow(
+    UserRefusedOnDevice,
+  );
 }
 
 export const recorderConfig: RecorderConfig = {
