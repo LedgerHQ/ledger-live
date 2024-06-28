@@ -37,6 +37,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
 import {
   convertToAtomicUnit,
+  convertToNonAtomicUnit,
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 
@@ -193,7 +194,6 @@ const SwapWebView = ({
       "custom.swapRedirectToHistory": () => {
         redirectToHistory();
       },
-      // opens the drawer with the fees
       "custom.getFee": async ({
         params,
       }: {
@@ -205,7 +205,7 @@ const SwapWebView = ({
         };
       }): Promise<{
         feesStrategy: BigNumber;
-        estimatedFees: BigNumber;
+        estimatedFees: BigNumber | undefined;
         errors: any;
         warnings: any;
         customFeeConfig: object;
@@ -223,6 +223,7 @@ const SwapWebView = ({
 
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const bridge = getAccountBridge(fromAccount, fromParentAccount);
+
         const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
         let transaction = bridge.createTransaction(mainAccount);
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
@@ -235,39 +236,40 @@ const SwapWebView = ({
           }),
           feesStrategy: params.feeStrategy || "medium",
         });
+
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
         let finalTx = preparedTransaction;
         let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
 
-        const setTransaction = (newTransaction: Transaction): Promise<Transaction> => {
-          return new Promise(async resolve => {
-            console.log("Setting transaction:", newTransaction);
-            const preparedTransaction = await bridge.prepareTransaction(
-              mainAccount,
-              newTransaction,
-            );
-            status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-            customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
-            finalTx = preparedTransaction;
-            resolve(newTransaction);
-          });
+        const setTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
+          console.log("Setting transaction:", newTransaction);
+          const preparedTransaction = await bridge.prepareTransaction(mainAccount, newTransaction);
+          status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
+          customFeeConfig = transaction && getCustomFeesPerFamily(preparedTransaction);
+          finalTx = preparedTransaction;
+          return newTransaction;
         };
+
         if (!params.openDrawer) {
-          return Promise.resolve({
+          return {
             feesStrategy: finalTx.feesStrategy,
-            estimatedFees: status.estimatedFees,
+            estimatedFees: convertToNonAtomicUnit({
+              amount: status.estimatedFees,
+              account: mainAccount,
+            }),
             errors: status.errors,
             warnings: status.warnings,
             customFeeConfig,
-          });
+          };
         }
-        const drawerPromise = new Promise<{
+
+        return new Promise<{
           feesStrategy: BigNumber;
-          estimatedFees: BigNumber;
+          estimatedFees: BigNumber | undefined;
           errors: any;
           warnings: any;
           customFeeConfig: object;
-        }>(async resolve => {
+        }>(resolve => {
           setDrawer(FeesDrawerLiveApp, {
             setTransaction,
             mainAccount: fromAccount,
@@ -280,7 +282,10 @@ const SwapWebView = ({
               setDrawer(undefined);
               resolve({
                 feesStrategy: finalTx.feesStrategy,
-                estimatedFees: status.estimatedFees,
+                estimatedFees: convertToNonAtomicUnit({
+                  amount: status.estimatedFees,
+                  account: mainAccount,
+                }),
                 errors: status.errors,
                 warnings: status.warnings,
                 customFeeConfig,
@@ -288,8 +293,6 @@ const SwapWebView = ({
             },
           });
         });
-
-        return drawerPromise;
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
