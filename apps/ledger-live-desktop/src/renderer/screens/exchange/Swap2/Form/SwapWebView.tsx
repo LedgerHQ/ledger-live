@@ -205,7 +205,7 @@ const SwapWebView = ({
         };
       }): Promise<{
         feesStrategy: BigNumber;
-        estimatedfees: BigNumber;
+        estimatedFees: BigNumber;
         errors: any;
         warnings: any;
         customFeeConfig: object;
@@ -255,7 +255,7 @@ const SwapWebView = ({
         if (!params.openDrawer) {
           return Promise.resolve({
             feesStrategy: finalTx.feesStrategy,
-            estimatedfees: status.estimatedFees,
+            estimatedFees: status.estimatedFees,
             errors: status.errors,
             warnings: status.warnings,
             customFeeConfig,
@@ -263,7 +263,7 @@ const SwapWebView = ({
         }
         const drawerPromise = new Promise<{
           feesStrategy: BigNumber;
-          estimatedfees: BigNumber;
+          estimatedFees: BigNumber;
           errors: any;
           warnings: any;
           customFeeConfig: object;
@@ -280,7 +280,7 @@ const SwapWebView = ({
               setDrawer(undefined);
               resolve({
                 feesStrategy: finalTx.feesStrategy,
-                estimatedfees: status.estimatedFees,
+                estimatedFees: status.estimatedFees,
                 errors: status.errors,
                 warnings: status.warnings,
                 customFeeConfig,
