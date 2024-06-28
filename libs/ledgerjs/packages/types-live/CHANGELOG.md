@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.49.0-nightly.2
+
+### Patch Changes
+
+- [#7197](https://github.com/LedgerHQ/ledger-live/pull/7197) [`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove all code associated to referralProgram feature flag on LLM. Only the code that would be used if the feature flag is enabled
+
 ## 6.49.0-nightly.1
 
 ### Minor Changes

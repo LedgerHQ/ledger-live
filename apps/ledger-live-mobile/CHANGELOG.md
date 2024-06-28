@@ -1,5 +1,39 @@
 # live-mobile
 
+## 3.46.0-nightly.3
+
+### Patch Changes
+
+- [#7208](https://github.com/LedgerHQ/ledger-live/pull/7208) [`a5ba930`](https://github.com/LedgerHQ/ledger-live/commit/a5ba9304a6761fbab72406d24f6cb734588465d9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix ios splashscreen. Dark or white screen was displayed instead of ledger logo
+
+- [#7198](https://github.com/LedgerHQ/ledger-live/pull/7198) [`912db56`](https://github.com/LedgerHQ/ledger-live/commit/912db56c582aad64825fd8ade1c9fcf91fcd5226) Thanks [@lvndry](https://github.com/lvndry)! - Enforce @grpc/grpc-js and @hashgraph/cryptography versions
+
+- [#7197](https://github.com/LedgerHQ/ledger-live/pull/7197) [`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove all code associated to referralProgram feature flag on LLM. Only the code that would be used if the feature flag is enabled
+
+- [#7141](https://github.com/LedgerHQ/ledger-live/pull/7141) [`0648604`](https://github.com/LedgerHQ/ledger-live/commit/06486047081268519de8468d70f7792b49e1e09f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add activation drawer from onboarding entry point
+
+- [#7216](https://github.com/LedgerHQ/ledger-live/pull/7216) [`9f0115c`](https://github.com/LedgerHQ/ledger-live/commit/9f0115c0cf0bd813401ef0a2d9c9d506ff0d1e45) Thanks [@lvndry](https://github.com/lvndry)! - [tron] Update fee documentation url
+
+- [#7202](https://github.com/LedgerHQ/ledger-live/pull/7202) [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4) Thanks [@CremaFR](https://github.com/CremaFR)! - feat transform NotEnoughBalance into specific error for swap to have different error messages
+
+- Updated dependencies [[`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4), [`b14d37d`](https://github.com/LedgerHQ/ledger-live/commit/b14d37dc7bd4708950ecde4ace9b121c436935bc), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/types-live@6.49.0-nightly.2
+  - @ledgerhq/live-common@34.5.0-nightly.3
+  - @ledgerhq/errors@6.18.0-nightly.1
+  - @ledgerhq/coin-framework@0.15.0-nightly.3
+  - @ledgerhq/coin-evm@2.1.1-nightly.3
+  - @ledgerhq/domain-service@1.2.1-nightly.2
+  - @ledgerhq/live-countervalues@0.2.1-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.1-nightly.3
+  - @ledgerhq/live-nft@0.4.1-nightly.3
+  - @ledgerhq/live-nft-react@0.4.1-nightly.3
+  - @ledgerhq/live-wallet@0.3.0-nightly.3
+  - @ledgerhq/devices@8.4.1-nightly.1
+  - @ledgerhq/hw-transport@6.31.1-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.1-nightly.1
+  - @ledgerhq/react-native-hid@6.32.1-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.33.1-nightly.1
+
 ## 3.46.0-nightly.2
 
 ### Minor Changes

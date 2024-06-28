@@ -1,5 +1,20 @@
 # @ledgerhq/coin-xrp
 
+## 0.3.0-nightly.3
+
+### Minor Changes
+
+- [#7160](https://github.com/LedgerHQ/ledger-live/pull/7160) [`b14d37d`](https://github.com/LedgerHQ/ledger-live/commit/b14d37dc7bd4708950ecde4ace9b121c436935bc) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Expose API on CoinModule (Xrp and Polkadot) so they can be used in a dedicated service
+
+### Patch Changes
+
+- Updated dependencies [[`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/types-live@6.49.0-nightly.2
+  - @ledgerhq/errors@6.18.0-nightly.1
+  - @ledgerhq/coin-framework@0.15.0-nightly.3
+  - @ledgerhq/devices@8.4.1-nightly.1
+  - @ledgerhq/live-network@1.3.1-nightly.1
+
 ## 0.2.1-nightly.2
 
 ### Patch Changes

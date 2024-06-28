@@ -1,5 +1,24 @@
 # @ledgerhq/live-cli
 
+## 24.4.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4), [`b14d37d`](https://github.com/LedgerHQ/ledger-live/commit/b14d37dc7bd4708950ecde4ace9b121c436935bc), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/live-common@34.5.0-nightly.3
+  - @ledgerhq/errors@6.18.0-nightly.1
+  - @ledgerhq/coin-framework@0.15.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.7.0-nightly.3
+  - @ledgerhq/live-countervalues@0.2.1-nightly.3
+  - @ledgerhq/live-wallet@0.3.0-nightly.3
+  - @ledgerhq/hw-transport@6.31.1-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.1-nightly.1
+  - @ledgerhq/hw-transport-node-hid@6.29.1-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.29.1-nightly.1
+  - @ledgerhq/live-network@1.3.1-nightly.1
+  - @ledgerhq/hw-app-btc@10.4.0-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.29.1-nightly.1
+
 ## 24.4.0-nightly.2
 
 ### Minor Changes

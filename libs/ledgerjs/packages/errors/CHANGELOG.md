@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.18.0-nightly.1
+
+### Patch Changes
+
+- [#7202](https://github.com/LedgerHQ/ledger-live/pull/7202) [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4) Thanks [@CremaFR](https://github.com/CremaFR)! - feat transform NotEnoughBalance into specific error for swap to have different error messages
+
 ## 6.18.0-nightly.0
 
 ### Minor Changes

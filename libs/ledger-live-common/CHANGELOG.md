@@ -1,5 +1,54 @@
 # @ledgerhq/live-common
 
+## 34.5.0-nightly.3
+
+### Minor Changes
+
+- [#7160](https://github.com/LedgerHQ/ledger-live/pull/7160) [`b14d37d`](https://github.com/LedgerHQ/ledger-live/commit/b14d37dc7bd4708950ecde4ace9b121c436935bc) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Expose API on CoinModule (Xrp and Polkadot) so they can be used in a dedicated service
+
+### Patch Changes
+
+- [#7197](https://github.com/LedgerHQ/ledger-live/pull/7197) [`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove all code associated to referralProgram feature flag on LLM. Only the code that would be used if the feature flag is enabled
+
+- [#7202](https://github.com/LedgerHQ/ledger-live/pull/7202) [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4) Thanks [@CremaFR](https://github.com/CremaFR)! - feat transform NotEnoughBalance into specific error for swap to have different error messages
+
+- Updated dependencies [[`b14d37d`](https://github.com/LedgerHQ/ledger-live/commit/b14d37dc7bd4708950ecde4ace9b121c436935bc), [`76becbb`](https://github.com/LedgerHQ/ledger-live/commit/76becbbd99330ec0e7dce63437d437ce6c559cb7), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/coin-polkadot@0.9.0-nightly.3
+  - @ledgerhq/coin-xrp@0.3.0-nightly.3
+  - @ledgerhq/errors@6.18.0-nightly.1
+  - @ledgerhq/coin-framework@0.15.0-nightly.3
+  - @ledgerhq/coin-algorand@0.5.1-nightly.3
+  - @ledgerhq/coin-bitcoin@0.7.0-nightly.3
+  - @ledgerhq/coin-cardano@0.1.1-nightly.3
+  - @ledgerhq/coin-evm@2.1.1-nightly.3
+  - @ledgerhq/coin-near@0.5.1-nightly.3
+  - @ledgerhq/coin-solana@0.7.1-nightly.3
+  - @ledgerhq/coin-tezos@0.4.1-nightly.3
+  - @ledgerhq/coin-tron@0.0.2-nightly.3
+  - @ledgerhq/device-core@0.3.0-nightly.2
+  - @ledgerhq/hw-app-eth@6.37.1-nightly.3
+  - @ledgerhq/live-countervalues@0.2.1-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.1-nightly.3
+  - @ledgerhq/live-nft@0.4.1-nightly.3
+  - @ledgerhq/live-wallet@0.3.0-nightly.3
+  - @ledgerhq/devices@8.4.1-nightly.1
+  - @ledgerhq/hw-app-algorand@6.29.1-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.30.1-nightly.1
+  - @ledgerhq/hw-app-exchange@0.5.1-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.30.1-nightly.1
+  - @ledgerhq/hw-app-solana@7.2.1-nightly.1
+  - @ledgerhq/hw-app-str@6.29.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.2.1-nightly.3
+  - @ledgerhq/hw-transport@6.31.1-nightly.1
+  - @ledgerhq/live-network@1.3.1-nightly.1
+  - @ledgerhq/speculos-transport@0.1.2-nightly.1
+  - @ledgerhq/hw-app-btc@10.4.0-nightly.2
+  - @ledgerhq/hw-app-near@6.29.1-nightly.1
+  - @ledgerhq/hw-app-tezos@6.29.1-nightly.1
+  - @ledgerhq/hw-app-trx@6.29.1-nightly.1
+  - @ledgerhq/hw-app-xrp@6.29.1-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.29.1-nightly.1
+
 ## 34.5.0-nightly.2
 
 ### Minor Changes
