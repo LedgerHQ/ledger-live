@@ -12,6 +12,7 @@ import {
 } from "@ledgerhq/errors";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/coin-stellar/types/index";
+import { StellarSourceHasMultiSign, StellarWrongMemoFormat } from "@ledgerhq/coin-stellar/errors";
 import { getMainAccount } from "../../../account";
 import { formatCurrencyUnit } from "../../../currencies";
 import {
@@ -22,7 +23,6 @@ import {
   isInvalidRecipient,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
-import { StellarSourceHasMultiSign, StellarWrongMemoFormat } from "@ledgerhq/coin-stellar/errors";
 
 const receive = makeAccountBridgeReceive();
 

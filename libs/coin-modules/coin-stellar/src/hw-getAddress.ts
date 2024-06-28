@@ -1,8 +1,8 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { StellarSigner } from "./types/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import { StrKey } from "@stellar/stellar-sdk";
+import { StellarSigner } from "./types/signer";
 
 function resolver(signerContext: SignerContext<StellarSigner>): GetAddressFn {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
