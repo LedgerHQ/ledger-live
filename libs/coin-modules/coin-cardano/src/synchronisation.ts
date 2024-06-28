@@ -16,7 +16,7 @@ import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-liv
 import { getDelegationInfo } from "./api/getDelegationInfo";
 import { APITransaction, HashType } from "./api/api-types";
 import { getTransactions } from "./api/getTransactions";
-import { getNetworkInfo } from "./api/getNetworkInfo";
+import { fetchNetworkInfo } from "./api/getNetworkInfo";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { getNetworkParameters } from "./networks";
 import { CardanoSigner } from "./signer";
@@ -148,7 +148,7 @@ export const makeGetAccountShape =
           stakeCred: stakeCredential,
         }).getBech32(),
       }));
-    const cardanoNetworkInfo = await getNetworkInfo(initialAccount, currency);
+    const cardanoNetworkInfo = await fetchNetworkInfo(currency);
     const delegationInfo = await getDelegationInfo(currency, stakeCredential.key);
 
     const totalBalance = delegationInfo?.rewards ? utxosSum.plus(delegationInfo.rewards) : utxosSum;
