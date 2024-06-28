@@ -46,13 +46,15 @@ const AnimatedInput = (
 
   return (
     <InputContainer status={inputStatus} style={style}>
-      {placeholder && <AnimatedNotchedLabel placeholder={placeholder} inputStatus={inputStatus} />}
+      {placeholder && (
+        <AnimatedNotchedLabel placeholder={placeholder} inputStatus={inputStatus} value={value} />
+      )}
       <BaseInput
         ref={ref}
         onFocus={onFocus}
         onBlur={onBlur}
         error={error}
-        value={value as string}
+        value={value}
         color={theme ? inputTextColor[inputStatus]({ theme }) : "neutral.c100"}
         inputContainerStyle={{
           backgroundColor: "none",
