@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import { getMainAccount } from "@ledgerhq/coin-framework/account";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
 import type { Transaction } from "./types";
-import { getMainAccount } from "@ledgerhq/coin-framework/account";
 
 const notCreatedStellarMockAddress = "GAW46JE3SHIAYLNNNQCAZFQ437WB5ZH7LDRDWR5LVDWHCTHCKYB6RCCH";
 

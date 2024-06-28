@@ -1,6 +1,5 @@
 {
   "entry": [
-    "src/api/index.ts",
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/hw-getAddress.ts",

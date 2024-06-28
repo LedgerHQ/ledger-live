@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "./types";
 import { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "./types";
 
 /**
  * Create an empty transaction
