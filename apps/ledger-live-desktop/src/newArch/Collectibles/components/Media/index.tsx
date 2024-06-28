@@ -4,7 +4,7 @@ import { Placeholder, Image, Video } from "LLD/Collectibles/components";
 
 const MediaComponent: React.FC<MediaProps> = props => {
   const Component = props.contentType === "video" && !props.useFallback ? Video : Image;
-
+  console.log(props);
   return props.uri ? (
     <Component
       {...props}
