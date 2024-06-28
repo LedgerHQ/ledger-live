@@ -13,7 +13,7 @@ Playwright x Speculos: Simulate Device Testing for Ledger Live
 
 Clone the _ledger-live_ repository and install dependencies:
 
-HTTPS: `git clone https://github.com/LedgerHQ/ledger-live.git`
+HTTPS: `git clone https://github.com/LedgerHQ/ledger-live.git`  
 SSH `git clone git@github.com:LedgerHQ/ledger-live.git`
 
 ```
@@ -25,9 +25,8 @@ pnpm build:lld:deps
 
 Clone Speculos repository
 
-HTTPS: `git clone https://github.com/LedgerHQ/speculos.git`
+HTTPS: `git clone https://github.com/LedgerHQ/speculos.git`  
 SSH: `git clone git@github.com:LedgerHQ/speculos.git`
-```
 
 Once the repository is cloned, follow these steps:
 
@@ -59,7 +58,7 @@ docker build -f Dockerfile -t speculos:latest .
 
 Clone CoinApps repository
 
-HTTPS: `git clone https://github.com/LedgerHQ/coin-apps.git`
+HTTPS: `git clone https://github.com/LedgerHQ/coin-apps.git`  
 SSH: `git@github.com:LedgerHQ/coin-apps.git`
 
 # Setup
