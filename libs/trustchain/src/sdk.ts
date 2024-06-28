@@ -121,9 +121,8 @@ export class SDK implements TrustchainSDK {
         }
       }
     }
-    if (!trustchainRootId) {
-      throw new Error("can't find the trustchain root id");
-    }
+
+    invariant(trustchainRootId, "trustchainRootId should be defined");
 
     // make a stream tree from all the trustchains associated to this root id
     let { streamTree } = await fetchTrustchain(jwt, trustchainRootId);
@@ -205,18 +204,18 @@ export class SDK implements TrustchainSDK {
     jwt: JWT;
     trustchain: Trustchain;
   }> {
-    if (memberCredentials.pubkey === member.id) {
-      throw new Error("removeMember can't be used for the current member");
-    }
+    // invariant because the sdk does not support this case, and the UI should not allows it.
+    invariant(
+      memberCredentials.pubkey !== member.id,
+      "removeMember must not be used to remove the current member.",
+    );
     const hw = device.apdu(transport);
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
     const m = await fetchTrustchainAndResolve(deviceJWT, trustchainId, applicationId);
     const members = m.resolved.getMembersData();
     const withoutMember = members.filter(m => m.id !== member.id);
-    if (members.length === withoutMember.length) {
-      throw new Error("member not found");
-    }
+    invariant(withoutMember.length < members.length, "member not found"); // invariant because the UI should not allow this case.
     const withoutMemberOrMe = withoutMember.filter(m => m.id !== memberCredentials.pubkey);
     const softwareDevice = getSoftwareDevice(memberCredentials);
 
@@ -344,9 +343,7 @@ async function fetchTrustchainAndResolve(jwt: JWT, trustchainId: string, applica
   const { streamTree } = await fetchTrustchain(jwt, trustchainId);
   const applicationRootPath = streamTree.getApplicationRootPath(applicationId);
   const applicationNode = streamTree.getChild(applicationRootPath);
-  if (!applicationNode) {
-    throw new Error("could not find the application stream.");
-  }
+  invariant(applicationNode, "could not find the application stream.");
   const resolved = await applicationNode.resolve();
   return { resolved, streamTree, applicationRootPath, applicationNode };
 }
@@ -387,9 +384,7 @@ async function pushMember(
     member.permissions,
   );
   const child = streamTree.getChild(path);
-  if (!child) {
-    throw new Error("StreamTree.share failed to create the child stream.");
-  }
+  invariant(child, "StreamTree.share failed to create the child stream.");
   await child.resolve(); // double checks the signatures are correct before sending to the backend
   if (isNewDerivation) {
     const commandStream = CommandStreamEncoder.encode(child.blocks);
@@ -413,9 +408,7 @@ async function closeStream(
 ) {
   streamTree = await streamTree.close(path, softwareDevice);
   const child = streamTree.getChild(path);
-  if (!child) {
-    throw new Error("StreamTree.close failed to create the child stream.");
-  }
+  invariant(child, "StreamTree.close failed to create the child stream.");
   await child.resolve(); // double checks the signatures are correct before sending to the backend
   const commandStream = CommandStreamEncoder.encode([child.blocks[child.blocks.length - 1]]);
   await api.putCommands(jwt, trustchainId, {
@@ -448,4 +441,10 @@ function remapUserInteractions<T>(
     .finally(() => {
       callbacks?.onStartRequestUserInteraction();
     });
+}
+
+function invariant(condition: unknown, message: string): asserts condition {
+  if (!condition) {
+    throw new Error(message);
+  }
 }

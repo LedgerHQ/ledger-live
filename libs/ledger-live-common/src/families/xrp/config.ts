@@ -1,4 +1,4 @@
-import { XrpConfig } from "@ledgerhq/coin-xrp/config";
+import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 import { CurrencyLiveConfigDefinition } from "../../config";
 
 export const xrpConfig: CurrencyLiveConfigDefinition = {
@@ -9,6 +9,6 @@ export const xrpConfig: CurrencyLiveConfigDefinition = {
         type: "active",
       },
       node: "https://xrplcluster.com/ledgerlive",
-    } as XrpConfig,
+    } as XrpCoinConfig,
   },
 };

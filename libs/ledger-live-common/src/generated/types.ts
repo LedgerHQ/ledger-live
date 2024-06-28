@@ -123,7 +123,7 @@ import type {
   TransactionRaw as xrpTransactionRaw,
   TransactionStatus as xrpTransactionStatus,
   TransactionStatusRaw as xrpTransactionStatusRaw,
-} from "@ledgerhq/coin-xrp/types";
+} from "@ledgerhq/coin-xrp/types/index";
 
 export type Transaction =
   | algorandTransaction

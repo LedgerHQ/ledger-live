@@ -12,8 +12,7 @@ import { DeviceEventEmitter } from "react-native";
 import logReport from "../../src/log-report";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs } from "@ledgerhq/live-env";
-import { DEFAULT_FEATURES, getFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId } from "@ledgerhq/types-live";
+import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -21,15 +20,6 @@ let ws: WebSocket;
 let retryCount = 0;
 const maxRetries = 5; // Maximum number of retry attempts
 const retryDelay = 500; // Initial retry delay in milliseconds
-
-const getAllFeatureFlags = (appLanguage: string): Partial<{ [key in FeatureId]: boolean }> => {
-  const res: Partial<{ [key in FeatureId]: boolean }> = {};
-  Object.keys(DEFAULT_FEATURES).forEach(k => {
-    const key = k as keyof typeof DEFAULT_FEATURES;
-    res[key] = getFeature({ key, appLanguage });
-  });
-  return res;
-};
 
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
