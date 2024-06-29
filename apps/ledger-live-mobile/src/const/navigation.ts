@@ -509,6 +509,7 @@ export enum ScreenName {
 
   WalletSyncActivationSettings = "WalletSyncActivationSettings",
   MockedAddAssetButton = "MockedAddAssetButton",
+  GenericLandingPage = "GenericLandingPage",
 }
 
 export enum NavigatorName {
@@ -618,4 +619,5 @@ export enum NavigatorName {
 
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
   WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  LandingPages = "LandingPages",
 }
