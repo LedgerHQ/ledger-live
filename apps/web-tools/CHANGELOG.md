@@ -1,5 +1,15 @@
 # web-tools
 
+## 0.7.0-nightly.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.5.0-nightly.4
+  - @ledgerhq/types-live@6.49.0-nightly.2
+  - @ledgerhq/trustchain@0.1.2-nightly.2
+  - @ledgerhq/live-wallet@0.3.0-nightly.4
+
 ## 0.7.0-nightly.3
 
 ### Patch Changes

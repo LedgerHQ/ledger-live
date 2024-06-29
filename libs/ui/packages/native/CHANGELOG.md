@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.23.1-nightly.1
+
+### Patch Changes
+
+- [#7215](https://github.com/LedgerHQ/ledger-live/pull/7215) [`f98ca2e`](https://github.com/LedgerHQ/ledger-live/commit/f98ca2e82f42036546a7b7005782a6f97213bc32) Thanks [@LucasWerey](https://github.com/LucasWerey)! - input animation triggers if there is any value entered
+
 ## 0.23.1-nightly.0
 
 ### Patch Changes

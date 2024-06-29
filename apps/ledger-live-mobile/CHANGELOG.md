@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.46.0-nightly.4
+
+### Minor Changes
+
+- [#7224](https://github.com/LedgerHQ/ledger-live/pull/7224) [`72e957e`](https://github.com/LedgerHQ/ledger-live/commit/72e957e862911cf3e03330c41b982ec31b12acf9) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added growth landing pages and deelinks that leverages Braze cards
+
+### Patch Changes
+
+- [#7204](https://github.com/LedgerHQ/ledger-live/pull/7204) [`c9329bb`](https://github.com/LedgerHQ/ledger-live/commit/c9329bb94d115bef23b02fdbed7c62f01c186d0a) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix scanning QR code cannot show all devices with grand screen issue.
+
+- Updated dependencies [[`c9329bb`](https://github.com/LedgerHQ/ledger-live/commit/c9329bb94d115bef23b02fdbed7c62f01c186d0a), [`f98ca2e`](https://github.com/LedgerHQ/ledger-live/commit/f98ca2e82f42036546a7b7005782a6f97213bc32)]:
+  - @ledgerhq/types-devices@6.25.1-nightly.0
+  - @ledgerhq/native-ui@0.23.1-nightly.1
+  - @ledgerhq/live-common@34.5.0-nightly.4
+  - @ledgerhq/types-live@6.49.0-nightly.2
+  - @ledgerhq/live-wallet@0.3.0-nightly.4
+
 ## 3.46.0-nightly.3
 
 ### Patch Changes
