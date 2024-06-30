@@ -1,10 +1,10 @@
 import { MinaUnsignedTransaction } from "./types";
 
 export type MinaAddress = {
-  publicKey: string;
+  publicKey?: string;
 };
-export type MinaSignature = { signature: string; returnCode: string };
+export type MinaSignature = { signature?: string };
 export interface MinaSigner {
-  getAddress(account: number): Promise<MinaAddress>;
+  getAddress(account?: number): Promise<MinaAddress>;
   signTransaction(transaction: MinaUnsignedTransaction): Promise<MinaSignature>;
 }

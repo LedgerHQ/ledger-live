@@ -77,6 +77,12 @@ import type {
   TransactionStatusRaw as multiversxTransactionStatusRaw,
 } from "@ledgerhq/coin-multiversx/types";
 import type {
+  Transaction as minaTransaction,
+  TransactionRaw as minaTransactionRaw,
+  TransactionStatus as minaTransactionStatus,
+  TransactionStatusRaw as minaTransactionStatusRaw,
+} from "@ledgerhq/coin-mina/types";
+import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
   TransactionStatus as nearTransactionStatus,
@@ -151,6 +157,7 @@ export type Transaction =
   | iconTransaction
   | internet_computerTransaction
   | multiversxTransaction
+  | minaTransaction
   | nearTransaction
   | polkadotTransaction
   | solanaTransaction
@@ -176,6 +183,7 @@ export type TransactionRaw =
   | iconTransactionRaw
   | internet_computerTransactionRaw
   | multiversxTransactionRaw
+  | minaTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
@@ -201,6 +209,7 @@ export type TransactionStatus =
   | iconTransactionStatus
   | internet_computerTransactionStatus
   | multiversxTransactionStatus
+  | minaTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
@@ -226,6 +235,7 @@ export type TransactionStatusRaw =
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
   | multiversxTransactionStatusRaw
+  | minaTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
