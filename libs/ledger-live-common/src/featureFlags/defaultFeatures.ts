@@ -80,6 +80,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyIcon: DEFAULT_FEATURE,
   currencyTon: DEFAULT_FEATURE,
   currencyEtherlink: DEFAULT_FEATURE,
+  currencyMina: DEFAULT_FEATURE,
 };
 
 /**

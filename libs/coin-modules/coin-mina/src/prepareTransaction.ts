@@ -1,4 +1,4 @@
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import getEstimatedFees from "./getFeesForTransaction";

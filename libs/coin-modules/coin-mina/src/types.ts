@@ -39,6 +39,7 @@ export type StatusErrorMap = {
   recipient?: Error;
   amount?: Error;
   fees?: Error;
+  transaction?: Error;
 };
 
 export type MinaUnsignedTransaction = {
@@ -57,3 +58,5 @@ export interface MinaSignedTransaction {
   signature: string;
   transaction: MinaUnsignedTransaction;
 }
+
+export type MinaOperation = Operation<{ memo?: string }>;
