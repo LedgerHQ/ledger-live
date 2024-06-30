@@ -1,1 +1,2 @@
-export * from "@ledgerhq/coin-near/types";
+// Encapsulate for LLD and LLM
+export * from "@ledgerhq/coin-mina/types";

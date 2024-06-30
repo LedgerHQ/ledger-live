@@ -8,8 +8,9 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "./types";
-import { isValidAddress, getMaxAmount, getTotalSpent } from "./logic";
+import { isValidAddress, isValidMemo, getMaxAmount, getTotalSpent } from "./logic";
 import { AccountBridge } from "@ledgerhq/types-live";
+import { InvalidMemoMina } from "./errors";
 // import { fetchAccountBalance } from "./api";
 // import {} from "./constants";
 
@@ -34,17 +35,20 @@ const getTransactionStatus: AccountBridge<
     errors.recipient = new InvalidAddress();
   }
 
+  if (t.memo && !isValidMemo(t.memo)) {
+    errors.transaction = new InvalidMemoMina();
+  }
+
   if (t.recipient === a.freshAddress) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   const estimatedFees = t.fees || new BigNumber(0);
 
-  const maxAmount = getMaxAmount(a, t);
   const maxAmountWithFees = getMaxAmount(a, t, estimatedFees);
 
   const totalSpent = getTotalSpent(a, t, estimatedFees);
-  const amount = useAllAmount ? maxAmount : new BigNumber(t.amount);
+  const amount = useAllAmount ? maxAmountWithFees : new BigNumber(t.amount);
 
   if (amount.lte(0) && !t.useAllAmount) {
     errors.amount = new AmountRequired();
