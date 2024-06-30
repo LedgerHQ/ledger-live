@@ -2,9 +2,8 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 // import * as minaAPI from "mina-ledger-js";
-import type { MinaSignedTransaction, Transaction } from "./types";
+import type { MinaOperation, MinaSignedTransaction, Transaction } from "./types";
 import type {
-  Operation,
   Account,
   DeviceId,
   SignOperationEvent,
@@ -16,7 +15,6 @@ import { MinaSignature, MinaSigner } from "./signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction } from "./buildTransaction";
 import { reEncodeRawSignature } from "./logic";
-import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 // import { buildTransaction } from "./js-buildTransaction";
 
@@ -24,13 +22,13 @@ const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
   fee: BigNumber,
-): Operation => {
+): MinaOperation => {
   let value = new BigNumber(transaction.amount);
 
   value = value.plus(fee);
   const type: OperationType = "OUT";
 
-  const operation: Operation = {
+  const operation: MinaOperation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
@@ -42,7 +40,9 @@ const buildOptimisticOperation = (
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
     date: new Date(),
-    extra: {},
+    extra: {
+      memo: transaction.memo,
+    },
   };
 
   return operation;
