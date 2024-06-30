@@ -1,11 +1,11 @@
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getTransactions } from "./api";
-import { MinaAccount } from "./types";
+import { MinaAccount, MinaOperation } from "./types";
 import { RosettaTransaction } from "./api/rosetta/types";
-import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
@@ -14,7 +14,7 @@ const mapRosettaTxnToOperation = (
   accountId: string,
   address: string,
   txn: RosettaTransaction,
-): Operation[] => {
+): MinaOperation[] => {
   try {
     const hash = txn.transaction.transaction_identifier.hash;
     const blockHeight = txn.block_identifier.index;
@@ -59,7 +59,7 @@ const mapRosettaTxnToOperation = (
     invariant(fromAccount, "mina: missing fromAccount");
     invariant(toAccount, "mina: missing toAccount");
 
-    const op: Operation = {
+    const op: MinaOperation = {
       id: "",
       type: "NONE",
       hash,
@@ -76,7 +76,7 @@ const mapRosettaTxnToOperation = (
       },
     };
 
-    const ops: Operation[] = [];
+    const ops: MinaOperation[] = [];
     if (isSending) {
       const type = "OUT";
       ops.push({
