@@ -12,6 +12,7 @@ const resolver = (signerContext: SignerContext<MinaSigner>): GetAddressFn => {
     log("debug", "getAddress, extracted account for path: ", { account, path });
     invariant(account !== undefined, "Invalid account path, supported: 44'/12586'/<account>'/0/0");
     const r = (await signerContext(deviceId, signer => signer.getAddress(account))) as MinaAddress;
+    invariant(r.publicKey, "[mina] getAddress: expected publicKey to be defined");
     return {
       address: r.publicKey,
       publicKey: r.publicKey,
