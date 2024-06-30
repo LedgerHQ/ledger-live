@@ -32,7 +32,7 @@ jest.mock('icon-sdk-js', () => ({
   },
 }));
 
-jest.mock('./logic', () => ({
+jest.mock('../../logic', () => ({
   getNid: jest.fn().mockReturnValue(1),
   getNonce: jest.fn().mockReturnValue(1),
 }));
