@@ -50,6 +50,10 @@ export const broadcastTransaction = async (txn: MinaSignedTransaction): Promise<
 };
 
 export const getFees = async (txn: Transaction, address: string): Promise<BigNumber> => {
+  if (!txn.amount || !txn.recipient) {
+    return txn.fees;
+  }
+
   const { data } = await fetchTransactionMetadata(
     address,
     txn.recipient,
