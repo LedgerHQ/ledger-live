@@ -5539,6 +5539,11 @@
       "memo": "Tag / Memo",
       "memoPlaceholder": "Optional",
       "requiredMemoPlaceholder": "Required"
+    },
+    "mina": {
+      "memoPlaceholder": "Optional",
+      "memo": "Memo",
+      "memoWarningText": "The value of memo can be a string shorter than or equal to 32 characters"
     }
   },
   "errors": {
@@ -6569,6 +6574,9 @@
         "swap": "Swap",
         "deposit": "Deposit"
       }
+    }, 
+    "InvalidMemoMina": {
+      "title": "Memo text cannot be longer than 32 characters"
     }
   },
   "cryptoOrg": {
