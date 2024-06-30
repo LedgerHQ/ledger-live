@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
-import { buildTransaction } from './buildTransaction';
-import { Transaction, IconAccount } from './types';
-import { createFixtureAccount, createFixtureTransaction } from './types/bridge.fixture';
+import { Transaction, IconAccount } from '../../types';
+import { createFixtureAccount, createFixtureTransaction } from '../../types/bridge.fixture';
+import { buildTransaction } from '../../buildTransaction';
 
 const mockFrom = jest.fn().mockReturnThis();
 const mockTo = jest.fn().mockReturnThis();
