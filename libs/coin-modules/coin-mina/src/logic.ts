@@ -1,10 +1,15 @@
 import { BigNumber } from "bignumber.js";
 import { Transaction, MinaAccount } from "./types";
 import { CoinType } from "@ledgerhq/types-cryptoassets";
+import { MAX_MEMO_LENGTH } from "./consts";
 
 export const isValidAddress = (_address: string): boolean => {
   // TODO add a proper address validation
   return true;
+};
+
+export const isValidMemo = (memo: string): boolean => {
+  return memo.length <= MAX_MEMO_LENGTH;
 };
 
 export const isImplicitAccount = (address: string): boolean => {
