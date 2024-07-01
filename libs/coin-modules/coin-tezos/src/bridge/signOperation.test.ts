@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { DEFAULT_FEE, OpKind, TezosToolkit } from "@taquito/taquito";
+import { DEFAULT_FEE, OpKind } from "@taquito/taquito";
 import { SignOperationEvent } from "@ledgerhq/types-live";
 import buildSignOperation, { getOperationContents } from "./signOperation";
 import config, { type TezosCoinConfig } from "../config";
@@ -126,7 +126,6 @@ describe("signOperation", () => {
 });
 
 describe("getOperationContents - revealed account", () => {
-  const tezos = new TezosToolkit("MOCK_API_KEY");
   const account = createFixtureAccount({ freshAddress: "tz1addr" });
 
   it("mode - send", async () => {
@@ -143,7 +142,6 @@ describe("getOperationContents - revealed account", () => {
     const { type, contents } = await getOperationContents({
       account,
       transaction,
-      tezos,
       counter: 0,
       public_key: "pk",
       public_key_hash: "pkh",
@@ -180,7 +178,6 @@ describe("getOperationContents - revealed account", () => {
     const { type, contents } = await getOperationContents({
       account,
       transaction,
-      tezos,
       counter: 0,
       public_key: "pk",
       public_key_hash: "pkh",
@@ -216,7 +213,6 @@ describe("getOperationContents - revealed account", () => {
     const { type, contents } = await getOperationContents({
       account,
       transaction,
-      tezos,
       counter: 0,
       public_key: "pk",
       public_key_hash: "pkh",
@@ -238,7 +234,6 @@ describe("getOperationContents - revealed account", () => {
   });
 
   describe("getOperationContents - not revealed account", () => {
-    const tezos = new TezosToolkit("MOCK_API_KEY");
     const account = createFixtureAccount({
       freshAddress: "tz1addr",
       // We don't use `counter` in the OperationContents computation
@@ -264,7 +259,6 @@ describe("getOperationContents - revealed account", () => {
       const { type, contents } = await getOperationContents({
         account,
         transaction,
-        tezos,
         counter: 0,
         public_key: "pk",
         public_key_hash: "pkh",
