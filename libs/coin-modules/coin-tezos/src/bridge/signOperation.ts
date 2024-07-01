@@ -6,7 +6,7 @@ import type { SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import type { TezosAccount, TezosSigner, Transaction, TransactionStatus } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getTezosToolkit } from "../network/tezosToolkit";
-import { craftTransaction } from "../logic/craftTransaction";
+import { craftTransaction, rawEncode } from "../logic/craftTransaction";
 
 // Exported for test purpose only
 export async function getOperationContents({
@@ -74,7 +74,6 @@ export const buildSignOperation =
           const publicKey = await ledgerSigner.publicKey();
           const publicKeyHash = await ledgerSigner.publicKeyHash();
 
-          const block = await tezosToolkit.rpc.getBlock();
           const sourceData = await tezosToolkit.rpc.getContract(freshAddress);
 
           o.next({ type: "device-signature-requested" });
@@ -92,10 +91,7 @@ export const buildSignOperation =
             public_key_hash: publicKeyHash,
           });
 
-          const forgedBytes = await tezosToolkit.rpc.forgeOperations({
-            branch: block.hash,
-            contents,
-          });
+          const forgedBytes = await rawEncode(contents);
 
           // 0x03 is a conventional prefix (aka a watermark) for tezos transactions
           const signature = await ledgerSigner.sign(
