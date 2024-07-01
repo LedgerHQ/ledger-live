@@ -91,18 +91,6 @@ export const getSendTransactionStatus = async (
       warnings.amount = new IconAllFundsWarning();
     }
 
-    if (!errors.recipient && amount.lt(EXISTENTIAL_DEPOSIT)) {
-      try {
-        await getAccount(transaction.recipient, account.currency);
-      } catch (error) {
-        errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-          minimalAmount: formatCurrencyUnit(account.currency.units[0], EXISTENTIAL_DEPOSIT, {
-            showCode: true,
-          }),
-        });
-      }
-    }
-
     if (totalSpent.gt(account.spendableBalance)) {
       errors.amount = new NotEnoughBalance();
     }
