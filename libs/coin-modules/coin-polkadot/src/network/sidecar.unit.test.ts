@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
-import { setCoinConfig } from "../config";
+import coinConfig from "../config";
 import { getAccount, getRegistry } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
 
@@ -15,7 +15,7 @@ describe("getAccount", () => {
   let balanceResponseStub = {};
 
   beforeAll(() => {
-    setCoinConfig(() => ({
+    coinConfig.setCoinConfig(() => ({
       status: {
         type: "active",
       },
@@ -96,7 +96,7 @@ describe("getAccount", () => {
 
 describe("getRegistry", () => {
   beforeAll(() => {
-    setCoinConfig(() => ({
+    coinConfig.setCoinConfig(() => ({
       status: {
         type: "active",
       },

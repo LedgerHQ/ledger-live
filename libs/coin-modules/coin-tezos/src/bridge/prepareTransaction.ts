@@ -9,8 +9,8 @@ function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined):
 }
 
 export const prepareTransaction: AccountBridge<
-Transaction,
-TezosAccount
+  Transaction,
+  TezosAccount
 >["prepareTransaction"] = async (account, transaction) => {
   if (account.balance.lte(0)) {
     return Promise.resolve(transaction);

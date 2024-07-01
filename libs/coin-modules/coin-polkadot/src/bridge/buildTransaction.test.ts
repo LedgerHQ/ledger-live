@@ -2,7 +2,7 @@ import { TypeRegistry } from "@polkadot/types";
 import { buildTransaction } from "./buildTransaction";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { faker } from "@faker-js/faker";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 
 const registry = new TypeRegistry();
 
@@ -27,7 +27,7 @@ jest.mock("../network", () => {
 });
 
 jest.mock("../config");
-const mockGetConfig = jest.mocked(getCoinConfig);
+const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
 
 describe("buildTransaction", () => {
   let spyRegistry: jest.SpyInstance | undefined;

@@ -9,7 +9,7 @@ import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { PolkadotAccount, PolkadotSigner, TransactionStatus, type Transaction } from "../types";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
-import { PolkadotCoinConfig, setCoinConfig } from "../config";
+import polkadotCoinConfig, { type PolkadotCoinConfig } from "../config";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
@@ -70,7 +70,7 @@ export function createBridges(
   signerContext: SignerContext<PolkadotSigner>,
   coinConfig: CoinConfig<PolkadotCoinConfig>,
 ) {
-  setCoinConfig(coinConfig);
+  polkadotCoinConfig.setCoinConfig(coinConfig);
 
   return {
     currencyBridge: buildCurrencyBridge(signerContext),

@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { NEW_ACCOUNT_ERROR_MESSAGE } from "../logic";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 import {
   AccountInfoResponse,
   AccountTxResponse,
@@ -9,12 +9,14 @@ import {
   SubmitReponse,
 } from "./types";
 
+const getNodeUrl = () => coinConfig.getCoinConfig().node;
+
 export const submit = async (signature: string): Promise<SubmitReponse> => {
   const {
     data: { result },
   } = await network<{ result: SubmitReponse }>({
     method: "POST",
-    url: getCoinConfig().node,
+    url: getNodeUrl(),
     data: {
       method: "submit",
       params: [
@@ -35,7 +37,7 @@ export const getAccountInfo = async (
     data: { result },
   } = await network<{ result: AccountInfoResponse }>({
     method: "POST",
-    url: getCoinConfig().node,
+    url: getNodeUrl(),
     data: {
       method: "account_info",
       params: [
@@ -59,7 +61,7 @@ export const getServerInfos = async (): Promise<ServerInfoResponse> => {
     data: { result },
   } = await network<{ result: ServerInfoResponse }>({
     method: "POST",
-    url: getCoinConfig().node,
+    url: getNodeUrl(),
     data: {
       method: "server_info",
       params: [
@@ -85,7 +87,7 @@ export const getTransactions = async (
     data: { result },
   } = await network<{ result: AccountTxResponse }>({
     method: "POST",
-    url: getCoinConfig().node,
+    url: getNodeUrl(),
     data: {
       method: "account_tx",
       params: [
@@ -110,7 +112,7 @@ export async function getLedgerIndex(): Promise<number> {
     data: { result },
   } = await network<{ result: LedgerResponse }>({
     method: "POST",
-    url: getCoinConfig().node,
+    url: getNodeUrl(),
     data: {
       method: "ledger",
       params: [

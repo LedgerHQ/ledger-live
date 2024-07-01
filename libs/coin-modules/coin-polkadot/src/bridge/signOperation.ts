@@ -9,7 +9,7 @@ import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
 import { signExtrinsic } from "../logic";
 import polkadotAPI from "../network";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -21,7 +21,7 @@ export const buildSignOperation =
   ({ account, deviceId, transaction }) =>
     new Observable(o => {
       async function main() {
-        const runtimeUpgraded = getCoinConfig().runtimeUpgraded;
+        const runtimeUpgraded = coinConfig.getCoinConfig().runtimeUpgraded;
         o.next({
           type: "device-signature-requested",
         });

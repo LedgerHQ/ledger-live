@@ -10,7 +10,7 @@ import {
   fixtureTransactionParams,
   fixtureTxMaterialWithMetadata,
 } from "../network/sidecar.fixture";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 
 const mockPaymentInfo = jest.fn().mockResolvedValue({
   weight: "WHATEVER",
@@ -29,7 +29,7 @@ jest.mock("../network/sidecar", () => ({
 }));
 
 jest.mock("../config");
-const mockGetConfig = jest.mocked(getCoinConfig);
+const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
 
 describe("signOperation", () => {
   // Global setup

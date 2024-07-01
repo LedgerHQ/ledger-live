@@ -1,4 +1,5 @@
-import { Api, createApi } from ".";
+import type { Api } from "@ledgerhq/coin-framework/api/index";
+import { createApi } from ".";
 
 describe("Xrp Api", () => {
   let module: Api;
@@ -8,8 +9,12 @@ describe("Xrp Api", () => {
 
   describe("estimateFees", () => {
     it("returns a default value", async () => {
+      // Given
+      const address = "rDCyjRD2TcSSGUQpEcEhJGmDWfjPJpuGxu";
+      const amount = BigInt(100);
+
       // When
-      const result = await module.estimateFees();
+      const result = await module.estimateFees(address, amount);
 
       // Then
       expect(result).toEqual(BigInt(10));
