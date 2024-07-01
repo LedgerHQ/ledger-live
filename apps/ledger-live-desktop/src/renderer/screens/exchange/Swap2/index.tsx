@@ -4,9 +4,11 @@ import { Route } from "react-router-dom";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
+import { SwapApp } from "./App";
 import SwapForm from "./Form";
 import SwapHistory from "./History";
 import SwapNavbar from "./Navbar";
+import { useIsSwapLiveFlagEnabled } from "./hooks/useIsSwapLiveFlagEnabled";
 const Body = styled(Box)`
   flex: 1;
 `;
@@ -28,6 +30,9 @@ const Main = styled.main`
 `;
 const Swap2 = () => {
   const { t } = useTranslation();
+  const isDemo3Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoThree");
+  const SwapPage = isDemo3Enabled ? SwapApp : SwapForm;
+
   return (
     <>
       <Text mb={20} ff="Inter|SemiBold" fontSize={7} color="palette.text.shade100">
@@ -36,7 +41,7 @@ const Swap2 = () => {
       <Body>
         <SwapNavbar />
         <Main>
-          <Route path="/swap" component={SwapForm} exact />
+          <Route path="/swap" component={SwapPage} exact />
           <Route path="/swap/history" component={SwapHistory} exact />
         </Main>
       </Body>

@@ -13,47 +13,51 @@ const useMockFeature = useFeature as jest.Mock;
 
 describe("useSwapLiveConfig", () => {
   // Setup the mock for useFeatureFlags to return an object with getFeature
-  const setupFeatureFlagsMock = (demoZeroConfig, demoOneConfig, demoThreeConfig) => {
-    useMockFeature.mockImplementation(flagName => {
-      switch (flagName) {
-        case "ptxSwapLiveAppDemoZero":
-          return demoZeroConfig;
-        case "ptxSwapLiveAppDemoOne":
-          return demoOneConfig;
-        case "ptxSwapLiveAppDemoThree":
-          return demoThreeConfig;
-        default:
-          return null;
-      }
-    });
+  const setupFeatureFlagsMock = (
+    flags: Partial<{ enabled: boolean; params: { manifest_id: string } }>[],
+  ) => {
+    const flagsKeys = [
+      "ptxSwapLiveAppDemoZero",
+      "ptxSwapLiveAppDemoOne",
+      "ptxSwapLiveAppDemoThree",
+    ];
+
+    useMockFeature.mockImplementation(flagName => flags[flagsKeys.indexOf(flagName)] ?? null);
   };
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should return null if all features have the same enabled state", () => {
-    setupFeatureFlagsMock({ enabled: true }, { enabled: true }, { enabled: true });
+  it("should highest priority flag if all features have the same enabled state", () => {
+    setupFeatureFlagsMock([
+      { enabled: true, params: { manifest_id: "demo_0" } },
+      { enabled: true, params: { manifest_id: "demo_1" } },
+      { enabled: true, params: { manifest_id: "demo_3" } },
+    ]);
     const { result } = renderHook(() => useSwapLiveConfig());
 
-    expect(result.current).toBeNull();
+    expect(result.current).not.toBeNull();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result.current?.params as any)?.manifest_id).toEqual("demo_3");
   });
 
   it("should return null if both features are disabled", () => {
-    setupFeatureFlagsMock({ enabled: false }, { enabled: false }, { enabled: false });
+    setupFeatureFlagsMock([{ enabled: false }, { enabled: false }, { enabled: false }]);
     const { result } = renderHook(() => useSwapLiveConfig());
     expect(result.current).toBeNull();
   });
 
   it("should return demoZero if only demoZero is enabled", () => {
-    setupFeatureFlagsMock(
+    setupFeatureFlagsMock([
       {
         enabled: true,
         params: { manifest_id: "swap-live-app-demo-0" },
       },
       { enabled: false },
       { enabled: false },
-    );
+    ]);
     const { result } = renderHook(() => useSwapLiveConfig());
     expect(result.current).toEqual({
       enabled: true,
@@ -62,14 +66,14 @@ describe("useSwapLiveConfig", () => {
   });
 
   it("should return demoOne if only demoOne is enabled", () => {
-    setupFeatureFlagsMock(
+    setupFeatureFlagsMock([
       { enabled: false },
       {
         enabled: true,
         params: { manifest_id: "swap-live-app-demo-1" },
       },
       { enabled: false },
-    );
+    ]);
     const { result } = renderHook(() => useSwapLiveConfig());
     expect(result.current).toEqual({
       enabled: true,
@@ -78,14 +82,14 @@ describe("useSwapLiveConfig", () => {
   });
 
   it("should return demoThree if only demoOne is enabled", () => {
-    setupFeatureFlagsMock(
+    setupFeatureFlagsMock([
       { enabled: false },
       {
         enabled: true,
         params: { manifest_id: "swap-live-app-demo-3" },
       },
       { enabled: false },
-    );
+    ]);
 
     const { result } = renderHook(() => useSwapLiveConfig());
     expect(result.current).toEqual({
