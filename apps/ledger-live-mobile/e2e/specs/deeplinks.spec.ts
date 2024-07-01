@@ -8,26 +8,6 @@ const bitcoinLong = "bitcoin";
 const arbitrumLong = "arbitrum";
 const bobaLong = "boba";
 
-const discoverApps = [
-  { name: "MoonPay", url: " https://www.moonpay.com/" },
-  { name: "Ramp", url: " https://ramp.network/buy" },
-  { name: "ParaSwap", url: " https://paraswap.io" },
-  { name: "Kiln", url: " https://kiln.fi" },
-  { name: "Lido", url: " https://lido.fi/" },
-  { name: "1inch", url: " https://1inch.io/" },
-  { name: "BTCDirect", url: " https://btcdirect.eu/" },
-  { name: "Banxa", url: " https://banxa.com/" },
-  { name: "Bitrefill", url: " https://bitrefill.com" },
-  { name: "Zerion", url: " https://zerion.io/" },
-  { name: "Rainbow", url: " https://rainbow.me" },
-  { name: "POAP", url: " https://app.poap.xyz/" },
-  { name: "Yearn", url: " https://beta.yearn.finance" },
-  { name: "ChangeNOW", url: " https://changenow.io/" },
-  { name: "Transak", url: " https://transak.com" },
-];
-
-const randomLiveApp = discoverApps[Math.floor(Math.random() * discoverApps.length)];
-
 $TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
   beforeAll(async () => {
@@ -70,10 +50,11 @@ describe("DeepLinks Tests", () => {
     await app.discover.expectDiscoverPage();
   });
 
-  it(`should open discovery to random live App: ${randomLiveApp.name}`, async () => {
+  it(`should open discovery to random live App`, async () => {
     // Opening only one random liveApp to avoid flakiness
-    await app.discover.openViaDeeplink(randomLiveApp.name);
-    await app.discover.expectUrl(randomLiveApp.url);
+    const randomLiveApp = app.discover.getRandomLiveApp();
+    await app.discover.openViaDeeplink(randomLiveApp);
+    await app.discover.expectApp(randomLiveApp);
   });
 
   it("should open NFT Gallery", async () => {
