@@ -1,7 +1,7 @@
 import React from "react";
 import { Media, Skeleton } from "../../index";
 import { Box, Text } from "@ledgerhq/react-ui";
-import { rgba } from "@ledgerhq/react-ui/styles";
+import { rgba } from "~/renderer/styles/helpers";
 import styled from "styled-components";
 import { isNFTRow, isOrdinalsRow, isRareSatsRow } from "LLD/Collectibles/utils/typeGuardsChecker";
 import { RowProps as Props } from "LLD/Collectibles/types/Collection";
