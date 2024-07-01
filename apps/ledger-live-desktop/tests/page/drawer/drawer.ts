@@ -1,4 +1,6 @@
 import { Component } from "tests/page/abstractClasses";
+import { expect } from "@playwright/test";
+import { BasicTransaction } from "tests/models/Transaction";
 
 export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
@@ -7,6 +9,10 @@ export class Drawer extends Component {
   private closeButton = this.page.getByTestId("drawer-close-button");
   private currencyButton = (currency: string) =>
     this.page.getByTestId(`currency-row-${currency.toLowerCase()}`).first();
+  private addressValue = (address: string) =>
+    this.page.locator('[data-test-id="drawer-content"]').locator(`text=${address}`);
+  private amountValue = (amount: string) =>
+    this.page.locator('[data-test-id="drawer-content"]').locator(`text=${amount}`);
   readonly selectAssetTitle = this.page.getByTestId("select-asset-drawer-title").first();
   readonly selectAccountTitle = this.page.getByTestId("select-account-drawer-title").first();
   readonly swapAmountFrom = this.page.getByTestId("swap-amount-from").first();
@@ -17,6 +23,20 @@ export class Drawer extends Component {
 
   async continue() {
     await this.continueButton.click();
+  }
+
+  async adressValueIsVisible(address: string) {
+    await this.addressValue(address).waitFor({ state: "visible" });
+  }
+
+  async amoutValueIsVisible(amount: string) {
+    await this.amountValue(amount).waitFor({ state: "visible" });
+  }
+
+  async expectReceiverInfos(tx: BasicTransaction) {
+    await expect(this.addressValue(tx.accountToDebit.address)).toBeVisible();
+    await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
+    await expect(this.amountValue(tx.amount)).toBeVisible();
   }
 
   async waitForDrawerToBeVisible() {

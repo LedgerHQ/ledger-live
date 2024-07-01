@@ -2,8 +2,6 @@ import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { Token } from "tests/enum/Token";
-import { Transaction } from "tests/models/Transaction";
-
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.getByTestId("account-settings-button");
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
@@ -32,14 +30,7 @@ export class AccountPage extends AppPage {
     this.page.getByRole("button", { name: `${accountName}` });
   private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
-  private closeModalButton = this.page.locator("data-test-id=modal-close-button");
-  private closeDrawerButton = this.page.locator("data-test-id=drawer-close-button");
-  private addressValue = (address: string) =>
-    this.page.locator('[data-test-id="drawer-content"]').locator(`text=${address}`);
-  private amountValue = (ammount: string) =>
-    this.page.locator('[data-test-id="drawer-content"]').locator(`text=${ammount}`);
   private viewDetailsButton = this.page.getByText("View details");
-  private synchronizeButton = this.page.locator("data-test-id=topbar-synchronize-button");
 
   @step("Navigate to token $0")
   async navigateToToken(token: Token) {
@@ -76,6 +67,16 @@ export class AccountPage extends AppPage {
 
   async startStakingFlowFromMainStakeButton() {
     await this.stakeButton.click();
+  }
+
+  @step("Click on View Details button")
+  async navigateToViewDetails() {
+    await this.viewDetailsButton.click();
+  }
+
+  @step("Click on last operation")
+  async clickOnLastOperation() {
+    await this.operationRows.first().click();
   }
 
   async clickBannerCTA() {
@@ -143,28 +144,7 @@ export class AccountPage extends AppPage {
     const advancedLogsText = await this.accountAdvancedLogs.innerText();
     const advancedLogsJson = advancedLogsText ? JSON.parse(advancedLogsText) : null;
     expect(advancedLogsJson).toHaveProperty("index", indexNumber);
-    await this.closeModalButton.click();
-  }
-
-  @step("Expect last operation to have tx infos")
-  async expectTxInfos(tx: Transaction) {
-    await this.viewDetailsButton.click();
-    await expect(this.addressValue(tx.accountToDebit.address)).toBeVisible();
-    await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
-    await this.closeDrawerButton.click();
-  }
-
-  @step("Expect receiver account to have received funds")
-  async expectReceiver(tx: Transaction) {
-    if (process.env.ENABLE_TRANSACTION_BROADCAST == "1") {
-      await this.synchronizeButton.click();
-      await this.operationRows.first().click();
-      await expect(this.addressValue(tx.accountToDebit.address)).toBeVisible();
-      await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
-      await expect(this.amountValue(tx.amount)).toBeVisible();
-    } else {
-      await this.synchronizeButton.click();
-    }
+    await this.closeModal.click();
   }
 
   @step("Expect token to be present")
