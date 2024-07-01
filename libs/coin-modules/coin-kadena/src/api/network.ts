@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 import { AxiosResponse, Method } from "axios";
 import { ChainId, ICommandResult, Pact, createClient } from "@kadena/client";
 import { GetInfoResponse, GetTxnsResponse } from "./types";
-import { PactCommandObject } from "hw-app-kda";
+import { PactCommandObject } from "../hw-app-kda/Kadena";
 import { KadenaOperation } from "../types";
 import { KDA_CHAINWEB_VER, KDA_NETWORK } from "../constants";
 
