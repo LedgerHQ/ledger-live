@@ -169,7 +169,7 @@ const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze(
     overridesDerivation: "44'/223'/0'/0/<account>",
   },
   kadena: {
-    overridesDerivation: "44'/223'/<account>'/0/0",
+    overridesDerivation: "44'/626'/<account>'/0/0",
   },
   stacks_wallet: {
     overridesDerivation: "44'/5757'/0'/0/<account>",
