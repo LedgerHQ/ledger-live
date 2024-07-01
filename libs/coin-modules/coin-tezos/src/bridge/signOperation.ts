@@ -1,13 +1,12 @@
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { OperationContents } from "@taquito/rpc";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { DEFAULT_FEE, OpKind, TezosToolkit } from "@taquito/taquito";
+import { TezosToolkit } from "@taquito/taquito";
 import type { SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import type { TezosAccount, TezosSigner, Transaction, TransactionStatus } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getTezosToolkit } from "../network/tezosToolkit";
-import { buildTransaction } from "./buildTransaction";
+import { craftTransaction } from "../logic/craftTransaction";
 
 // Exported for test purpose only
 export async function getOperationContents({
@@ -25,26 +24,31 @@ export async function getOperationContents({
   public_key: string;
   public_key_hash: string;
 }) {
-  const contents: OperationContents[] = [];
-
+  let publicKey = undefined;
   if (!account.tezosResources.revealed) {
-    const revealFees = await tezos.estimate.reveal();
-
-    contents.push({
-      kind: OpKind.REVEAL,
-      fee: DEFAULT_FEE.REVEAL.toString(),
-      gas_limit: (revealFees?.gasLimit || 0).toString(),
-      storage_limit: (revealFees?.storageLimit || 0).toString(),
-      source: public_key_hash,
-      counter: (counter + 1).toString(),
-      public_key,
-    });
+    publicKey = {
+      publicKey: public_key,
+      publicKeyHash: public_key_hash,
+    };
   }
 
-  const { type, content } = await buildTransaction(account, transaction, counter + contents.length);
-  contents.push(content);
-
-  return { type, contents };
+  return craftTransaction(
+    {
+      address: account.freshAddress,
+      counter,
+    },
+    {
+      type: transaction.mode,
+      recipient: transaction.recipient,
+      amount: BigInt(transaction.amount.toString()),
+      fee: {
+        fees: (transaction.fees || 0).toString(),
+        gasLimit: (transaction.gasLimit || 0).toString(),
+        storageLimit: (transaction.storageLimit || 0).toString(),
+      },
+    },
+    publicKey,
+  );
 }
 
 export const buildSignOperation =
