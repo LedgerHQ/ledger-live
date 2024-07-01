@@ -1,11 +1,12 @@
 import Transport from "@ledgerhq/hw-transport";
 import { getSdk } from "..";
+import { getEnv } from "@ledgerhq/live-env";
 
 export async function scenario(transport: Transport) {
   const applicationId = 16;
 
   const name1 = "Member 1";
-  const sdk1 = getSdk(false, { applicationId, name: name1 });
+  const sdk1 = getSdk(!!getEnv("MOCK"), { applicationId, name: name1 });
   const member1creds = await sdk1.initMemberCredentials();
 
   // verify that getOrCreateTrustchain is idempotent
@@ -15,7 +16,7 @@ export async function scenario(transport: Transport) {
 
   // verify that a second member can join the trustchain and get the same trustchain
   const name2 = "Member 2";
-  const sdk2 = getSdk(false, { applicationId, name: name2 });
+  const sdk2 = getSdk(!!getEnv("MOCK"), { applicationId, name: name2 });
   const member2creds = await sdk2.initMemberCredentials();
   const t3 = await sdk2.getOrCreateTrustchain(transport, member2creds);
   expect(t1).toEqual(t3);

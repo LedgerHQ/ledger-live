@@ -8,6 +8,7 @@ import {
 } from "./types";
 import Transport from "@ledgerhq/hw-transport";
 import { Permissions } from "@ledgerhq/hw-trustchain";
+import { TrustchainEjected } from "./errors";
 
 const mockedLiveCredentialsPrivateKey = "mock-private-key";
 
@@ -20,6 +21,14 @@ function assertTrustchain(trustchain: Trustchain) {
 function assertLiveCredentials(memberCredentials: MemberCredentials) {
   if (!memberCredentials.privatekey.startsWith(mockedLiveCredentialsPrivateKey)) {
     throw new Error("in mock context, memberCredentials must be the mocked memberCredentials");
+  }
+}
+
+function assertAllowedPermissions(trustchainId: string, memberId: string) {
+  const members = trustchainMembers.get(trustchainId) || [];
+  const member = members.find(m => m.id === memberId);
+  if (!member) {
+    throw new TrustchainEjected();
   }
 }
 
@@ -74,11 +83,9 @@ export class MockSDK implements TrustchainSDK {
     };
     trustchains.set(trustchain.rootId, trustchain);
 
-    if (trustchains.has(trustchain.rootId)) {
-      trustchains.set(trustchain.rootId, trustchain);
-    }
     const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
-    if (currentMembers.length === 0) {
+    // add itself if not yet here
+    if (!currentMembers.some(m => m.id === memberCredentials.pubkey)) {
       currentMembers.push({
         id: memberCredentials.pubkey,
         name: this.context.name,
@@ -99,6 +106,7 @@ export class MockSDK implements TrustchainSDK {
   ): Promise<Trustchain> {
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
+    assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);
     const latest = trustchains.get(trustchain.rootId);
     if (!latest) {
       throw new Error("trustchain not found");
@@ -112,6 +120,7 @@ export class MockSDK implements TrustchainSDK {
   ): Promise<TrustchainMember[]> {
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
+    assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);
     const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
     return Promise.resolve([...currentMembers]);
   }
@@ -125,6 +134,10 @@ export class MockSDK implements TrustchainSDK {
     void transport;
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
+    assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);
+    if (member.id === memberCredentials.pubkey) {
+      throw new Error("cannot remove self");
+    }
     const currentMembers = (trustchainMembers.get(trustchain.rootId) || []).filter(
       m => m.id !== member.id,
     );
