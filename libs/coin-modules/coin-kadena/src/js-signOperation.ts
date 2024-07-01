@@ -7,7 +7,7 @@ import type {
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { TransferCrossChainTxParams, TransferTxParams } from "hw-app-kda";
+import { TransferCrossChainTxParams, TransferTxParams } from "./hw-app-kda/Kadena";
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import { fetchCoinDetailsForAccount } from "./api/network";

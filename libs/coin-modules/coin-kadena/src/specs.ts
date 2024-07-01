@@ -12,6 +12,7 @@ import {
   } from "@ledgerhq/coin-framework/currencies/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { fetchCoinDetailsForAccount } from "./api/network";
 
 const currency = getCryptoCurrencyById("kadena");
 const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "1");
@@ -87,8 +88,12 @@ const kadena: AppSpec<Transaction> = {
         };
       },
       test: ({ account }) => {
-        botTest("account balance should be null", () =>
-          expect(account.balance.toString()).toBe("0")
+        botTest("account balance should be null on chain ID 0", async () => {
+          const balance = await fetchCoinDetailsForAccount(account.freshAddress, [
+            "0",
+          ]);
+          expect(balance.toString()).toBe("0");
+        }
         );
       },
     },
