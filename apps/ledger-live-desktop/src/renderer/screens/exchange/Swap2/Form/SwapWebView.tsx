@@ -82,6 +82,7 @@ export type SwapWebProps = {
   targetCurrencyId?: string;
   isMaxEnabled?: boolean;
 };
+let lastGasOptions: any = undefined;
 
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
@@ -226,6 +227,7 @@ const SwapWebView = ({
 
         const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
         let transaction = bridge.createTransaction(mainAccount);
+
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
           ...transaction,
           subAccountId,
@@ -235,18 +237,18 @@ const SwapWebView = ({
             account: fromAccount,
           }),
           feesStrategy: params.feeStrategy || "medium",
+          gasOptions: lastGasOptions,
         });
 
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
         let finalTx = preparedTransaction;
         let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
-
         const setTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
-          console.log("Setting transaction:", newTransaction);
           const preparedTransaction = await bridge.prepareTransaction(mainAccount, newTransaction);
           status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
           customFeeConfig = transaction && getCustomFeesPerFamily(preparedTransaction);
           finalTx = preparedTransaction;
+          lastGasOptions = preparedTransaction.gasOptions;
           return newTransaction;
         };
 
