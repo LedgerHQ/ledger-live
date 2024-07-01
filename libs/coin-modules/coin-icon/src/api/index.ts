@@ -42,10 +42,7 @@ async function fetch(url: string) {
 }
 
 export const getAccount = async (addr: string, network: CryptoCurrency): Promise<AccountType> => {
-  const query = querystring.stringify({
-    address: addr,
-  });
-  const data = await fetch(`${getApiUrl(network)}/addresses/details/${addr}?${query}`);
+  const data = await fetch(`${getApiUrl(network)}/addresses/details/${addr}`);
   return data;
 };
 
@@ -150,7 +147,6 @@ export const getTxHistory = async (
   limit: number = LIMIT,
 ): Promise<IconTransactionType[]> => {
   const query = querystring.stringify({
-    address: addr,
     skip: skip,
     limit: limit,
   });
