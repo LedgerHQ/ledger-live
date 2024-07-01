@@ -57,7 +57,9 @@
     "axios": "^1.6.8",
     "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
-    "hw-app-kda": "link:../../../../hw-app-kda",
+    "@ledgerhq/hw-transport": "^6.3.0",
+    "blake2b": "^2.1.4",
+    "hw-app-alamgu": "git+https://github.com/alamgu/hw-app-alamgu#6822e963dd4a92d50929bd8a3b750c90973504b3",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1"
