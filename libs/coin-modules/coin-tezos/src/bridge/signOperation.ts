@@ -1,7 +1,6 @@
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { TezosToolkit } from "@taquito/taquito";
 import type { SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import type { TezosAccount, TezosSigner, Transaction, TransactionStatus } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
@@ -12,14 +11,12 @@ import { craftTransaction, rawEncode } from "../logic/craftTransaction";
 export async function getOperationContents({
   account,
   transaction,
-  tezos,
   counter,
   public_key,
   public_key_hash,
 }: {
   account: TezosAccount;
   transaction: Transaction;
-  tezos: TezosToolkit;
   counter: number;
   public_key: string;
   public_key_hash: string;
@@ -85,7 +82,6 @@ export const buildSignOperation =
           const { type, contents } = await getOperationContents({
             account,
             transaction,
-            tezos: tezosToolkit,
             counter: Number(sourceData.counter),
             public_key: publicKey,
             public_key_hash: publicKeyHash,
