@@ -75,6 +75,7 @@ export type SwapWebProps = {
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
   Demo1: "swap-live-app-demo-1",
+  Demo3: "swap-live-app-demo-3",
 };
 
 const SwapWebAppWrapper = styled.div`

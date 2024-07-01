@@ -442,6 +442,7 @@ const SwapForm = () => {
     swapTransaction.reverseSwap();
   };
 
+  console.log("gg.swapLiveAppManifestID", swapLiveAppManifestID);
   const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
   const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
 
@@ -462,29 +463,11 @@ const SwapForm = () => {
     swapError,
   });
 
+  console.log("gg.manifest", manifest);
+
   return (
     <Wrapper>
       <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
-      <SwapFormSelectors
-        fromAccount={sourceAccount}
-        toAccount={swapTransaction.swap.to.account}
-        fromAmount={swapTransaction.swap.from.amount}
-        toCurrency={targetCurrency}
-        toAmount={!isDemo1Enabled ? exchangeRate?.toAmount : quoteState.amountTo}
-        setFromAccount={setFromAccount}
-        setFromAmount={setFromAmount}
-        setToCurrency={setToCurrency}
-        isMaxEnabled={swapTransaction.swap.isMaxEnabled}
-        toggleMax={toggleMax}
-        fromAmountError={!isDemo1Enabled ? swapError : quoteState.swapError}
-        fromAmountWarning={swapWarning}
-        isSwapReversable={swapTransaction.swap.isSwapReversable}
-        reverseSwap={reverseSwap}
-        provider={provider}
-        loadingRates={swapTransaction.swap.rates.status === "loading"}
-        isSendMaxLoading={swapTransaction.swap.isMaxLoading}
-        updateSelectedRate={swapTransaction.swap.updateSelectedRate}
-      />
       {pageState === "empty" && <EmptyState />}
       <SwapMigrationUI
         manifestID={swapLiveAppManifestID}
@@ -510,7 +493,28 @@ const SwapForm = () => {
         // Demo 0 props
         disabled={!isSwapReady}
         onClick={onSubmit}
-      />
+      >
+        <SwapFormSelectors
+          fromAccount={sourceAccount}
+          toAccount={swapTransaction.swap.to.account}
+          fromAmount={swapTransaction.swap.from.amount}
+          toCurrency={targetCurrency}
+          toAmount={!isDemo1Enabled ? exchangeRate?.toAmount : quoteState.amountTo}
+          setFromAccount={setFromAccount}
+          setFromAmount={setFromAmount}
+          setToCurrency={setToCurrency}
+          isMaxEnabled={swapTransaction.swap.isMaxEnabled}
+          toggleMax={toggleMax}
+          fromAmountError={!isDemo1Enabled ? swapError : quoteState.swapError}
+          fromAmountWarning={swapWarning}
+          isSwapReversable={swapTransaction.swap.isSwapReversable}
+          reverseSwap={reverseSwap}
+          provider={provider}
+          loadingRates={swapTransaction.swap.rates.status === "loading"}
+          isSendMaxLoading={swapTransaction.swap.isMaxLoading}
+          updateSelectedRate={swapTransaction.swap.updateSelectedRate}
+        />
+      </SwapMigrationUI>
     </Wrapper>
   );
 };

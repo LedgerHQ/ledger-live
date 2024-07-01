@@ -13,13 +13,15 @@ const useMockFeature = useFeature as jest.Mock;
 
 describe("useSwapLiveConfig", () => {
   // Setup the mock for useFeatureFlags to return an object with getFeature
-  const setupFeatureFlagsMock = (demoZeroConfig, demoOneConfig) => {
+  const setupFeatureFlagsMock = (demoZeroConfig, demoOneConfig, demoThreeConfig) => {
     useMockFeature.mockImplementation(flagName => {
       switch (flagName) {
         case "ptxSwapLiveAppDemoZero":
           return demoZeroConfig;
         case "ptxSwapLiveAppDemoOne":
           return demoOneConfig;
+        case "ptxSwapLiveAppDemoThree":
+          return demoThreeConfig;
         default:
           return null;
       }
@@ -30,15 +32,15 @@ describe("useSwapLiveConfig", () => {
     jest.clearAllMocks();
   });
 
-  it("should return null if both features have the same enabled state", () => {
-    setupFeatureFlagsMock({ enabled: true }, { enabled: true });
+  it("should return null if all features have the same enabled state", () => {
+    setupFeatureFlagsMock({ enabled: true }, { enabled: true }, { enabled: true });
     const { result } = renderHook(() => useSwapLiveConfig());
 
     expect(result.current).toBeNull();
   });
 
   it("should return null if both features are disabled", () => {
-    setupFeatureFlagsMock({ enabled: false }, { enabled: false });
+    setupFeatureFlagsMock({ enabled: false }, { enabled: false }, { enabled: false });
     const { result } = renderHook(() => useSwapLiveConfig());
     expect(result.current).toBeNull();
   });
@@ -49,6 +51,7 @@ describe("useSwapLiveConfig", () => {
         enabled: true,
         params: { manifest_id: "swap-live-app-demo-0" },
       },
+      { enabled: false },
       { enabled: false },
     );
     const { result } = renderHook(() => useSwapLiveConfig());
@@ -65,11 +68,29 @@ describe("useSwapLiveConfig", () => {
         enabled: true,
         params: { manifest_id: "swap-live-app-demo-1" },
       },
+      { enabled: false },
     );
     const { result } = renderHook(() => useSwapLiveConfig());
     expect(result.current).toEqual({
       enabled: true,
       params: { manifest_id: "swap-live-app-demo-1" },
+    });
+  });
+
+  it("should return demoThree if only demoOne is enabled", () => {
+    setupFeatureFlagsMock(
+      { enabled: false },
+      {
+        enabled: true,
+        params: { manifest_id: "swap-live-app-demo-3" },
+      },
+      { enabled: false },
+    );
+
+    const { result } = renderHook(() => useSwapLiveConfig());
+    expect(result.current).toEqual({
+      enabled: true,
+      params: { manifest_id: "swap-live-app-demo-3" },
     });
   });
 });
