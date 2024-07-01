@@ -24,6 +24,8 @@ import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { AnnouncementDeviceModelId } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
+import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
+import { getAllEnvs } from "@ledgerhq/live-env";
 
 const mockListAppsResult = (
   appDesc: string,
@@ -277,6 +279,8 @@ const localizationEvents = [
 interface RawEvents {
   [key: string]: unknown;
 }
+window.getAllFeatureFlags = getAllFeatureFlags;
+window.getAllEnvs = getAllEnvs;
 
 if (getEnv("MOCK")) {
   window.mock = {

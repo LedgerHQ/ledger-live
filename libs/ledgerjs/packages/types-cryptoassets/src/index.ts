@@ -78,7 +78,6 @@ export type CryptoCurrencyId =
   | "onomy"
   | "ontology"
   | "particl"
-  | "peercoin"
   | "persistence"
   | "pirl"
   | "pivx"
@@ -100,7 +99,6 @@ export type CryptoCurrencyId =
   | "stakenet"
   | "stargaze"
   | "stratis"
-  | "stealthcoin"
   | "stellar"
   | "stride"
   | "osmosis"
@@ -112,8 +110,6 @@ export type CryptoCurrencyId =
   | "ubiq"
   | "umee"
   | "vechain"
-  | "vertcoin"
-  | "viacoin"
   | "wanchain"
   | "waves"
   | "zcash"
@@ -180,15 +176,10 @@ export type LedgerExplorerId =
   | "hsr"
   | "kmd"
   | "ltc"
-  | "ppc"
   | "pivx"
   | "posw"
   | "qtum"
-  | "xsn"
   | "strat"
-  | "xst"
-  | "vtc"
-  | "via"
   | "zec"
   | "zen"
   | "avax"
@@ -278,8 +269,6 @@ export type BitcoinLikeInfo = {
   P2PKH: number;
   P2SH: number;
   XPUBVersion?: number;
-  // FIXME optional as we miss some data to fill
-  hasTimestamp?: boolean;
 };
 
 /**

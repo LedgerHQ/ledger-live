@@ -1,16 +1,18 @@
 import { CoinConfig, CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-export type XrpConfig = CurrencyConfig & {
+export type XrpConfig = {
   node: string;
 };
 
-let coinConfig: () => XrpConfig | undefined;
+export type XrpCoinConfig = CurrencyConfig & XrpConfig;
 
-export const setCoinConfig = (config: CoinConfig<XrpConfig>): void => {
+let coinConfig: () => XrpCoinConfig | undefined;
+
+export const setCoinConfig = (config: CoinConfig<XrpCoinConfig>): void => {
   coinConfig = config;
 };
 
-export const getCoinConfig = (): XrpConfig => {
+export const getCoinConfig = (): XrpCoinConfig => {
   if (!coinConfig?.()) {
     throw new Error("Xrp module config not set");
   }
