@@ -6115,6 +6115,9 @@
     },
     "newAddressTRC20": {
       "title": "You first need to send at least 0.1 TRX to this address to activate it."
+    },
+    "BitcoinInfrastructureError": {
+      "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
     }
   },
   "cryptoOrg": {
