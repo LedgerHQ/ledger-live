@@ -2136,6 +2136,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport':
+        specifier: ^6.3.0
+        version: link:../../ledgerjs/packages/hw-transport
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -2157,12 +2160,15 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      blake2b:
+        specifier: ^2.1.4
+        version: 2.1.4
       expect:
         specifier: ^27.4.6
         version: 27.5.1
-      hw-app-kda:
-        specifier: link:../../../../hw-app-kda
-        version: link:../../../../hw-app-kda
+      hw-app-alamgu:
+        specifier: git+https://github.com/alamgu/hw-app-alamgu#6822e963dd4a92d50929bd8a3b750c90973504b3
+        version: github.com/alamgu/hw-app-alamgu/6822e963dd4a92d50929bd8a3b750c90973504b3(typescript@5.4.3)
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
