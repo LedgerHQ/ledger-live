@@ -1,11 +1,16 @@
 import { decode, encode } from "ripple-binary-codec";
 
-export function combine(transaction: string, signature: string, pubkey: string): string {
+export function combine(transaction: string, signature: string, publicKey?: string): string {
   const xrplTransaction = decode(transaction);
 
-  return encode({
-    ...xrplTransaction,
-    SigningPubKey: pubkey,
-    TxnSignature: signature,
-  });
+  return publicKey
+    ? encode({
+        ...xrplTransaction,
+        SigningPubKey: publicKey,
+        TxnSignature: signature,
+      })
+    : encode({
+        ...xrplTransaction,
+        TxnSignature: signature,
+      });
 }

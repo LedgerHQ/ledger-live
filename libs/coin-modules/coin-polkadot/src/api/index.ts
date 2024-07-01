@@ -12,7 +12,7 @@ import {
 
 export type Api = {
   broadcast: (tx: string) => Promise<string>;
-  combine: (tx: string, signature: string, pubkey: string) => string;
+  combine: (tx: string, signature: string, pubkey?: string) => string;
   craftTransaction: (
     address: string,
     transaction: {
