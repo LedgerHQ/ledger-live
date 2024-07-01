@@ -2,6 +2,7 @@ import {
   JWT,
   MemberCredentials,
   Trustchain,
+  TrustchainDeviceCallbacks,
   TrustchainMember,
   TrustchainSDK,
   TrustchainSDKContext,
@@ -45,6 +46,8 @@ export class MockSDK implements TrustchainSDK {
     this.context = context;
   }
 
+  private deviceJwtAcquired = false;
+
   private _id = 1;
   initMemberCredentials(): Promise<MemberCredentials> {
     const id = this._id++;
@@ -72,6 +75,7 @@ export class MockSDK implements TrustchainSDK {
   async getOrCreateTrustchain(
     transport: Transport,
     memberCredentials: MemberCredentials,
+    callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
     void transport;
     assertLiveCredentials(memberCredentials);
@@ -83,9 +87,18 @@ export class MockSDK implements TrustchainSDK {
     };
     trustchains.set(trustchain.rootId, trustchain);
 
+    if (!this.deviceJwtAcquired) {
+      callbacks?.onStartRequestUserInteraction();
+      this.deviceJwtAcquired = true; // simulate device auth interaction
+      callbacks?.onEndRequestUserInteraction();
+    }
+
     const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
     // add itself if not yet here
     if (!currentMembers.some(m => m.id === memberCredentials.pubkey)) {
+      callbacks?.onStartRequestUserInteraction();
+      // simulate device add interaction
+      callbacks?.onEndRequestUserInteraction();
       currentMembers.push({
         id: memberCredentials.pubkey,
         name: this.context.name,
@@ -130,6 +143,7 @@ export class MockSDK implements TrustchainSDK {
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
+    callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
     void transport;
     assertTrustchain(trustchain);
@@ -138,6 +152,11 @@ export class MockSDK implements TrustchainSDK {
     if (member.id === memberCredentials.pubkey) {
       throw new Error("cannot remove self");
     }
+
+    callbacks?.onStartRequestUserInteraction();
+    // simulate device interaction
+    callbacks?.onEndRequestUserInteraction();
+
     const currentMembers = (trustchainMembers.get(trustchain.rootId) || []).filter(
       m => m.id !== member.id,
     );

@@ -24,6 +24,7 @@ import { AppSetTrustchainAPIEnv } from "./AppSetTrustchainAPIEnv";
 import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
+import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
 
 const Container = styled.div`
   padding: 0 10px 50px 0;
@@ -83,9 +84,20 @@ const App = () => {
         ? "PROD"
         : "MIXED";
 
+  const [deviceInteractionVisible, setDeviceInteractionVisible] = useState(false);
+  const callbacks = useMemo(
+    () => ({
+      onStartRequestUserInteraction: () => setDeviceInteractionVisible(true),
+      onEndRequestUserInteraction: () => setDeviceInteractionVisible(false),
+    }),
+    [],
+  );
+
   return (
     <TrustchainSDKContext.Provider value={sdk}>
       <Container>
+        <DeviceInteractionLayer visible={deviceInteractionVisible} />
+
         <h2>Wallet Sync Trustchain Playground</h2>
 
         <Expand
@@ -159,6 +171,7 @@ const App = () => {
             memberCredentials={memberCredentials}
             trustchain={trustchain}
             setTrustchain={setTrustchain}
+            callbacks={callbacks}
           />
 
           <AppRestoreTrustchain
@@ -183,6 +196,7 @@ const App = () => {
               member={member}
               setTrustchain={setTrustchain}
               setMembers={setMembers}
+              callbacks={callbacks}
             />
           ))}
 

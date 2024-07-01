@@ -1,5 +1,10 @@
 import React, { useCallback } from "react";
-import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import {
+  JWT,
+  MemberCredentials,
+  Trustchain,
+  TrustchainDeviceCallbacks,
+} from "@ledgerhq/trustchain/types";
 import { Actionable } from "./Actionable";
 import { useTrustchainSDK } from "../context";
 import { runWithDevice } from "../device";
@@ -9,18 +14,22 @@ export function AppGetOrCreateTrustchain({
   memberCredentials,
   trustchain,
   setTrustchain,
+  callbacks,
 }: {
   deviceId: string;
   memberCredentials: MemberCredentials | null;
   trustchain: Trustchain | null;
   setTrustchain: (trustchain: Trustchain | null) => void;
+  callbacks?: TrustchainDeviceCallbacks;
 }) {
   const sdk = useTrustchainSDK();
 
   const action = useCallback(
     (memberCredentials: MemberCredentials) =>
-      runWithDevice(deviceId, transport => sdk.getOrCreateTrustchain(transport, memberCredentials)),
-    [deviceId, sdk],
+      runWithDevice(deviceId, transport =>
+        sdk.getOrCreateTrustchain(transport, memberCredentials, callbacks),
+      ),
+    [deviceId, sdk, callbacks],
   );
 
   const valueDisplay = useCallback((trustchain: Trustchain) => trustchain.rootId, []);

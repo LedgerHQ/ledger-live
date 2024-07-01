@@ -64,6 +64,7 @@ export class SDK implements TrustchainSDK {
     transport: Transport,
     f: (jwt: JWT) => Promise<T>,
     policy?: AuthCachePolicy,
+    callbacks?: TrustchainDeviceCallbacks,
   ): Promise<T> {
     return genericWithJWT(
       jwt => {
@@ -71,7 +72,7 @@ export class SDK implements TrustchainSDK {
         return f(jwt);
       },
       this.deviceJwt,
-      () => authWithDevice(transport),
+      () => authWithDevice(transport, callbacks),
       policy,
     );
   }
@@ -89,7 +90,7 @@ export class SDK implements TrustchainSDK {
   ): Promise<Trustchain> {
     const hw = device.apdu(transport);
 
-    const withJwt: WithJwt = f => this.withDeviceAuth(transport, f);
+    const withJwt: WithJwt = f => this.withDeviceAuth(transport, f, undefined, callbacks);
 
     let trustchains = await withJwt(api.getTrustchains);
 
@@ -189,7 +190,7 @@ export class SDK implements TrustchainSDK {
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
-    const withJwt: WithJwt = f => this.withDeviceAuth(transport, f);
+    const withJwt: WithJwt = f => this.withDeviceAuth(transport, f, undefined, callbacks);
 
     // invariant because the sdk does not support this case, and the UI should not allows it.
     invariant(
@@ -348,11 +349,14 @@ async function genericWithJWT<T>(
   });
 }
 
-async function authWithDevice(transport: Transport): Promise<JWT> {
+async function authWithDevice(
+  transport: Transport,
+  callbacks?: TrustchainDeviceCallbacks,
+): Promise<JWT> {
   const hw = device.apdu(transport);
   const challenge = await api.getAuthenticationChallenge();
   const data = crypto.from_hex(challenge.tlv);
-  const seedId = await remapUserInteractions(hw.getSeedId(data));
+  const seedId = await remapUserInteractions(hw.getSeedId(data), callbacks);
   const signature = crypto.to_hex(seedId.signature);
   const response = await api.postChallengeResponse({
     challenge: challenge.json,
@@ -521,7 +525,7 @@ function remapUserInteractions<T>(
       throw error;
     })
     .finally(() => {
-      callbacks?.onStartRequestUserInteraction();
+      callbacks?.onEndRequestUserInteraction();
     });
 }
 
