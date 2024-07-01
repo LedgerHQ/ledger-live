@@ -16,7 +16,7 @@ type BaseMediaProps = BaseProps & {
   previewUri?: string | undefined;
   originalUri?: string | undefined;
   mediaType: string | undefined;
-  setUseFallback: (a: boolean) => void;
+  setUseFallback?: (a: boolean) => void;
 };
 
 export type ImageProps = BaseMediaProps & {

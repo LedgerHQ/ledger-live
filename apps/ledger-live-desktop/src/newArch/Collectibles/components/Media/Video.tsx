@@ -68,7 +68,7 @@ const VideoComponent: React.FC<VideoProps> = ({
       <Skeleton full />
       <video
         onError={() => {
-          setUseFallback(true);
+          setUseFallback?.(true);
         }}
         onLoadedData={() => setLoaded(true)}
         autoPlay

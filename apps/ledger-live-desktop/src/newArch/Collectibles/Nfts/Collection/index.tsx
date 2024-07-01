@@ -13,6 +13,7 @@ import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import ShowMore from "../../components/Collection/ShowMore";
 import { FieldStatus } from "../../types/DetailDrawer";
+import CollectionContextMenu from "LLD/components/ContextMenu/CollectibleContextMenu";
 
 export type NftsInTheCollections = {
   contract: string;
@@ -36,6 +37,7 @@ type NftItemProps = {
   tokenId: string;
   currencyId: string;
   numberOfNfts: number;
+  account: Account;
   onClick: (collectionAddress: string) => void;
 };
 
@@ -47,26 +49,33 @@ const NftItem: React.FC<NftItemProps> = ({
   contract,
   tokenId,
   currencyId,
+  account,
   numberOfNfts,
-
   onClick,
 }) => {
   const { metadata, status } = useNftMetadata(contract, tokenId, currencyId);
+
   return (
-    <TableRow
-      isLoading={status === FieldStatus.Loading}
-      tokenName={metadata?.tokenName || contract}
-      numberOfNfts={numberOfNfts}
-      onClick={() => onClick(contract)}
-      media={{
-        isLoading: status === FieldStatus.Loading,
-        useFallback: true,
-        contentType: "image",
-        uri: metadata?.medias.preview.uri,
-        mediaType: metadata?.medias.preview.mediaType,
-        setUseFallback: () => null,
-      }}
-    />
+    <CollectionContextMenu
+      collectionName={metadata?.tokenName}
+      collectionAddress={contract}
+      account={account}
+      typeOfCollectible={CollectibleTypeEnum.NFT}
+    >
+      <TableRow
+        isLoading={status === FieldStatus.Loading}
+        tokenName={metadata?.tokenName || contract}
+        numberOfNfts={numberOfNfts}
+        onClick={() => onClick(contract)}
+        media={{
+          isLoading: status === FieldStatus.Loading,
+          useFallback: true,
+          contentType: "image",
+          uri: metadata?.medias.preview.uri,
+          mediaType: metadata?.medias.preview.mediaType,
+        }}
+      />
+    </CollectionContextMenu>
   );
 };
 
@@ -92,6 +101,7 @@ function View({
               key={`${item.contract}-${item.nft.tokenId}`}
               contract={item.contract}
               tokenId={item.nft.tokenId}
+              account={account}
               currencyId={item.nft.currencyId}
               numberOfNfts={item.nftsNumber}
               onClick={onOpenCollection}

@@ -71,6 +71,7 @@ const PanAndZoomBody = memo<PanAndZoomBodyProps>(
           uri={imageUri}
           mediaType={mediaType}
           contentType={contentType}
+          isLoading={false}
         />
       </PrismaZoom>
     </ImageContainer>
