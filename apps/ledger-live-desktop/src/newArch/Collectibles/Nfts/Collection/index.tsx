@@ -11,20 +11,24 @@ import EmptyCollection from "../../components/Collection/EmptyCollection";
 import { CollectibleTypeEnum } from "../../types/Collectibles";
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
+import ShowMore from "../../components/Collection/ShowMore";
+import { FieldStatus } from "../../types/DetailDrawer";
 
 export type NftsInTheCollections = {
   contract: string;
   nft: ProtoNFT;
   nftsNumber: number;
-  isLoading: boolean;
-  onClick: () => () => void;
+  onClick: (collectionAddress: string) => void;
 };
 
 type ViewProps = {
   tableHeaderProps: TableHeaderProps;
   nftsInTheCollection: NftsInTheCollections[];
   account: Account;
+  displayShowMore: boolean;
   onReceive: () => void;
+  onOpenCollection: (collectionAddress: string) => void;
+  onShowMore: () => void;
 };
 
 type NftItemProps = {
@@ -32,12 +36,11 @@ type NftItemProps = {
   tokenId: string;
   currencyId: string;
   numberOfNfts: number;
-  isLoading: boolean;
+  onClick: (collectionAddress: string) => void;
 };
 
 type Props = {
   account: Account;
-  collectionAddress: string;
 };
 
 const NftItem: React.FC<NftItemProps> = ({
@@ -45,17 +48,19 @@ const NftItem: React.FC<NftItemProps> = ({
   tokenId,
   currencyId,
   numberOfNfts,
-  isLoading,
+
+  onClick,
 }) => {
-  const { metadata } = useNftMetadata(contract, tokenId, currencyId);
+  const { metadata, status } = useNftMetadata(contract, tokenId, currencyId);
   return (
     <TableRow
-      isLoading={isLoading}
-      tokenName={metadata?.tokenName || tokenId}
+      isLoading={status === FieldStatus.Loading}
+      tokenName={metadata?.tokenName || contract}
       numberOfNfts={numberOfNfts}
-      onClick={() => () => {}}
+      onClick={() => onClick(contract)}
       media={{
-        useFallback: false,
+        isLoading: status === FieldStatus.Loading,
+        useFallback: true,
         contentType: "image",
         uri: metadata?.medias.preview.uri,
         mediaType: metadata?.medias.preview.mediaType,
@@ -65,9 +70,18 @@ const NftItem: React.FC<NftItemProps> = ({
   );
 };
 
-function View({ tableHeaderProps, nftsInTheCollection, account, onReceive }: ViewProps) {
+function View({
+  tableHeaderProps,
+  nftsInTheCollection,
+  account,
+  displayShowMore,
+  onReceive,
+  onOpenCollection,
+  onShowMore,
+}: ViewProps) {
   const { t } = useTranslation();
   const hasNfts = nftsInTheCollection.length > 0;
+
   return (
     <Box>
       <TableContainer id="tokens-list" mb={50}>
@@ -80,7 +94,7 @@ function View({ tableHeaderProps, nftsInTheCollection, account, onReceive }: Vie
               tokenId={item.nft.tokenId}
               currencyId={item.nft.currencyId}
               numberOfNfts={item.nftsNumber}
-              isLoading={item.isLoading}
+              onClick={onOpenCollection}
             />
           ))
         ) : (
@@ -96,13 +110,14 @@ function View({ tableHeaderProps, nftsInTheCollection, account, onReceive }: Vie
             </Button>
           </EmptyCollection>
         )}
+        {displayShowMore && <ShowMore onShowMore={onShowMore} />}
       </TableContainer>
     </Box>
   );
 }
 
-const NftCollection: React.FC<Props> = ({ account, collectionAddress }) => {
-  return <View {...useNftCollectionModel({ account, collectionAddress })} account={account} />;
+const NftCollection: React.FC<Props> = ({ account }) => {
+  return <View {...useNftCollectionModel({ account })} account={account} />;
 };
 
 export default NftCollection;

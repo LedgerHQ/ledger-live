@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Icons } from "@ledgerhq/react-ui";
-import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { openModal } from "~/renderer/actions/modals";
@@ -11,29 +11,41 @@ import { nftsByCollections } from "@ledgerhq/live-nft/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { NftsInTheCollections as NftsInTheCollectionsType } from "./index";
+import { filterHiddenCollections, mapCollectionsToStructure } from "../../utils/collectionUtils";
 
 type Props = {
   account: Account;
-  collectionAddress: string;
 };
+const INCREMENT = 5;
 
-export const useNftCollectionModel = ({ account, collectionAddress }: Props) => {
+export const useNftCollectionModel = ({ account }: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const thresold = nftsFromSimplehashFeature?.params?.threshold;
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const [numberOfVisibleCollections, setNumberOfVisibleCollections] = useState(INCREMENT);
+  const [displayShowMore, setDisplayShowMore] = useState(false);
 
-  const onReceive = () =>
+  const onReceive = useCallback(() => {
     dispatch(
       openModal("MODAL_RECEIVE", {
         account,
         receiveNFTMode: true,
       }),
     );
+  }, [dispatch, account]);
 
-  const onOpenCollection = () =>
-    history.push(`/account/${account.id}/nft-collection/${collectionAddress}`);
+  const onOpenCollection = useCallback(
+    (collectionAddress?: string) => {
+      history.push(`/account/${account.id}/nft-collection/${collectionAddress}`);
+    },
+    [account.id, history],
+  );
+
+  const onOpenGallery = useCallback(() => {
+    history.push(`/account/${account.id}/nft-collection`);
+  }, [account.id, history]);
 
   const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
     nftsOwned: account.nfts || [],
@@ -47,18 +59,28 @@ export const useNftCollectionModel = ({ account, collectionAddress }: Props) => 
     [account.nfts, nfts, nftsFromSimplehashFeature],
   );
 
-  const nftsInTheCollection: NftsInTheCollectionsType[] = Object.entries(collections).map(
-    ([contract, nfts]) => ({
-      contract,
-      nft: nfts[0] as ProtoNFT,
-      nftsNumber: Number(nfts.length),
-      isLoading: false,
-      onClick: () => onOpenCollection,
-    }),
+  const collectionsLength = Object.keys(collections).length;
+
+  const onShowMore = useCallback(() => {
+    setNumberOfVisibleCollections(numberOfVisibleCollections =>
+      Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
+    );
+    if (hasNextPage) fetchNextPage();
+  }, [collectionsLength, fetchNextPage, hasNextPage]);
+
+  const filteredCollections = useMemo(
+    () => filterHiddenCollections(collections, hiddenNftCollections, account.id),
+    [account.id, collections, hiddenNftCollections],
   );
 
-  const actions =
-    nftsInTheCollection.length > 0
+  const nftsInTheCollection: NftsInTheCollectionsType[] = useMemo(
+    () =>
+      mapCollectionsToStructure(filteredCollections, numberOfVisibleCollections, onOpenCollection),
+    [filteredCollections, numberOfVisibleCollections, onOpenCollection],
+  );
+
+  const actions = useMemo(() => {
+    return nftsInTheCollection.length > 0
       ? [
           {
             element: (
@@ -70,19 +92,28 @@ export const useNftCollectionModel = ({ account, collectionAddress }: Props) => 
           },
           {
             element: <HeaderActions textKey="NFT.collections.galleryCTA" />,
-            action: onOpenCollection,
+            action: onOpenGallery,
           },
         ]
       : [];
+  }, [nftsInTheCollection.length, onReceive, onOpenGallery]);
 
   const tableHeaderProps: TableHeaderProps = {
     titleKey: TitleKey.NFTCollections,
     actions: actions,
   };
 
+  useEffect(() => {
+    const moreToShow = numberOfVisibleCollections < filteredCollections.length;
+    setDisplayShowMore(moreToShow);
+  }, [numberOfVisibleCollections, filteredCollections.length]);
+
   return {
     tableHeaderProps,
     nftsInTheCollection,
+    displayShowMore,
     onReceive,
+    onOpenCollection,
+    onShowMore,
   };
 };
