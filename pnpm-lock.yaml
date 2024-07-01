@@ -2315,10 +2315,10 @@ importers:
         version: link:../../ledgerjs/packages/types-live
       '@solana/spl-token':
         specifier: ^0.3.7
-        version: 0.3.8(@solana/web3.js@1.77.3)
+        version: 0.3.8(@solana/web3.js@1.77.4)
       '@solana/web3.js':
-        specifier: 1.77.3
-        version: 1.77.3
+        specifier: 1.77.4
+        version: 1.77.4
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3315,8 +3315,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       '@solana/web3.js':
-        specifier: 1.77.3
-        version: 1.77.3
+        specifier: 1.77.4
+        version: 1.77.4
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0
@@ -12592,15 +12592,9 @@ packages:
       metro: '*'
       metro-core: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
-      glob:
-        optional: true
       metro:
         optional: true
       metro-core:
-        optional: true
-      minimatch:
         optional: true
     dependencies:
       '@babel/runtime': 7.24.1
@@ -17885,9 +17879,6 @@ packages:
 
   /@react-native-community/cli-tools@12.3.6:
     resolution: {integrity: sha512-FPEvZn19UTMMXUp/piwKZSh8cMEfO8G3KDtOwo53O347GTcwNrKjgZGtLSPELBX2gr+YlzEft3CoRv2Qmo83fQ==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.7
       chalk: 4.1.2
@@ -20137,7 +20128,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       '@solana/buffer-layout': 4.0.1
-      '@solana/web3.js': 1.77.3
+      '@solana/web3.js': 1.77.4
       bigint-buffer: 1.1.5
       bignumber.js: 9.1.2
     transitivePeerDependencies:
@@ -20152,7 +20143,7 @@ packages:
     dependencies:
       buffer: 6.0.3
 
-  /@solana/spl-token@0.3.8(@solana/web3.js@1.77.3):
+  /@solana/spl-token@0.3.8(@solana/web3.js@1.77.4):
     resolution: {integrity: sha512-ogwGDcunP9Lkj+9CODOWMiVJEdRtqHAtX2rWF62KxnnSWtMZtV9rDhTrZFshiyJmxDnRL/1nKE1yJHg4jjs3gg==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -20160,7 +20151,7 @@ packages:
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/buffer-layout-utils': 0.2.0
-      '@solana/web3.js': 1.77.3
+      '@solana/web3.js': 1.77.4
       buffer: 6.0.3
     transitivePeerDependencies:
       - bufferutil
@@ -20168,8 +20159,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@solana/web3.js@1.77.3:
-    resolution: {integrity: sha512-PHaO0BdoiQRPpieC1p31wJsBaxwIOWLh8j2ocXNKX8boCQVldt26Jqm2tZE4KlrvnCIV78owPLv1pEUgqhxZ3w==}
+  /@solana/web3.js@1.77.4:
+    resolution: {integrity: sha512-XdN0Lh4jdY7J8FYMyucxCwzn6Ga2Sr1DHDWRbqVzk7ZPmmpSPOVWHzO67X1cVT+jNi1D6gZi2tgjHgDPuj6e9Q==}
     dependencies:
       '@babel/runtime': 7.24.1
       '@noble/curves': 1.4.0
@@ -25971,9 +25962,6 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependenciesMeta:
-      ajv:
-        optional: true
     dependencies:
       ajv: 8.11.2
 
@@ -32989,7 +32977,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -33226,8 +33213,6 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
-      expo-file-system:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -33259,8 +33244,6 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
-      expo-file-system:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -33290,8 +33273,6 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-constants:
-        optional: true
       expo-file-system:
         optional: true
       expo-modules-core:
@@ -33912,8 +33893,6 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-modules-autolinking:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -41978,9 +41957,6 @@ packages:
   /metro-transform-worker@0.80.8:
     resolution: {integrity: sha512-+4FG3TQk3BTbNqGkFb2uCaxYTfsbuFOCKMMURbwu0ehCP8ZJuTUramkaNZoATS49NSAkRgUltgmBa4YaKZ5mqw==}
     engines: {node: '>=18'}
-    peerDependenciesMeta:
-      metro-minify-terser:
-        optional: true
     dependencies:
       '@babel/core': 7.24.3
       '@babel/generator': 7.24.1
