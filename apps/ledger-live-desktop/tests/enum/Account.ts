@@ -79,6 +79,12 @@ export class Account {
     "12fY9vqzD8j1uvqSRx9y3gXRA1S3bwr5xunBVZvx1eeZFaHY",
   );
 
+  static readonly DOT_3 = new Account(
+    Currency.DOT,
+    "Polkadot 3",
+    "1532VyvZyyMUmLfhMUYh2KRVLzwYfHcxjtejyX4swkpG82BX",
+  );
+
   static readonly SOL_1 = new Account(
     Currency.SOL,
     "Solana 1",
