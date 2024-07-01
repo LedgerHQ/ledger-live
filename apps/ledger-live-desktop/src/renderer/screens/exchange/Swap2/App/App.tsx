@@ -35,11 +35,6 @@ export function SwapApp() {
   const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
   const manifest = localManifest || remoteManifest;
 
-  console.log(
-    "apps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/App/App.tsx:19 manifest",
-    manifest,
-  );
-
   if (!manifest) {
     // TODO: fix with proper error handling
     return <ErrorWrapper>Unable to load application: missing manifest</ErrorWrapper>;
