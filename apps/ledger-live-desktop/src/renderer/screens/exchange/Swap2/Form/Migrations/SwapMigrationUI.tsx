@@ -18,6 +18,7 @@ const Button = styled(ButtonBase)`
 `;
 
 type SwapMigrationUIProps = {
+  children: React.ReactNode;
   liveAppEnabled: boolean;
   liveApp: React.ReactNode;
   manifestID: string | undefined;
@@ -32,6 +33,7 @@ type SwapMigrationUIProps = {
 
 export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
   const {
+    children,
     liveAppEnabled,
     liveApp,
     manifestID,
@@ -72,6 +74,7 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
    */
   const allNativeUI = (
     <>
+      {children}
       {nativeLoadingUI}
       {nativeNetworkFeesUI}
       {nativeQuotesUI}
@@ -94,6 +97,7 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
        */
       return (
         <>
+          {children}
           {nativeLoadingUI}
           {nativeNetworkFeesUI}
           {nativeQuotesUI}
@@ -109,10 +113,18 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
        */
       return (
         <>
+          {children}
           {nativeNetworkFeesUI}
           {liveApp}
         </>
       );
+
+    case manifestID?.startsWith(SwapWebManifestIDs.Demo3):
+      /**
+       * Demo 3 live app should contain:
+       *  - Quotes UI
+       */
+      return <>{liveApp}</>;
 
     /**
      * Fall back to show all native UI

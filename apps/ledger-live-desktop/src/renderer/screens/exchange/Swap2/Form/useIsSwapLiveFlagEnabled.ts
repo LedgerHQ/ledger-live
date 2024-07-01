@@ -4,15 +4,19 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 export const useIsSwapLiveFlagEnabled = (flag: string): boolean => {
   const demoZero = useFeature("ptxSwapLiveAppDemoZero");
   const demoOne = useFeature("ptxSwapLiveAppDemoOne");
+  const demoThree = useFeature("ptxSwapLiveAppDemoThree");
 
-  if (demoZero?.enabled === demoOne?.enabled) return false;
-
-  switch (flag) {
-    case "ptxSwapLiveAppDemoOne":
-      return Boolean(demoOne?.enabled);
-    case "ptxSwapLiveAppDemoZero":
-      return Boolean(demoZero?.enabled && !demoOne?.enabled);
-    default:
-      throw new Error(`Unknown Swap Live App flag: ${flag}`);
+  if (flag === "ptxSwapLiveAppDemoThree") {
+    return !!demoThree?.enabled;
   }
+
+  if (flag === "ptxSwapLiveAppDemoOne") {
+    return !!demoOne?.enabled;
+  }
+
+  if (flag === "ptxSwapLiveAppDemoZero") {
+    return !!demoZero?.enabled;
+  }
+
+  throw new Error(`Unknown Swap Live App flag: ${flag}`);
 };
