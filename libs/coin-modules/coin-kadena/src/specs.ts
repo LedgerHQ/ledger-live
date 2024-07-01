@@ -42,7 +42,6 @@ const kadena: AppSpec<Transaction> = {
         const recipient = sibling.freshAddress;
  
         let transaction = bridge.createTransaction(account);
-        const fees = transaction.gasPrice.multipliedBy(transaction.gasLimit);
 
         let amount = maxSpendable
           .div(1.9 + 0.2 * Math.random())
@@ -63,6 +62,33 @@ const kadena: AppSpec<Transaction> = {
             accountBeforeTransaction.balance.minus(total).toString()
           );
         }
+        );
+      },
+    },
+    {
+      name: "send max",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gt(0), "Spendable balance is too low");
+
+        const sibling = pickSiblings(siblings, 4);
+        const recipient = sibling.freshAddress;
+ 
+        let transaction = bridge.createTransaction(account);
+
+        let amount = maxSpendable
+
+        checkSendableToEmptyAccount(amount, sibling);
+ 
+        const updates = [{ amount }, { recipient }];
+        return {
+          transaction,
+          updates,
+        };
+      },
+      test: ({ account }) => {
+        botTest("account balance should be null", () =>
+          expect(account.balance.toString()).toBe("0")
         );
       },
     },
