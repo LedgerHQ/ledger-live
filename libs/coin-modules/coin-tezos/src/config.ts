@@ -1,4 +1,4 @@
-import buildConConfig, { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildConConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type TezosConfig = {
   explorer: {
