@@ -3121,7 +3121,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "crypto_org",
     coinType: CoinType.CRYPTO_ORG,
     name: "Cronos POS Chain",
-    managerAppName: "Crypto.org Chain",
+    managerAppName: "Cronos POS Chain",
     ticker: "CRO",
     scheme: "crypto_org",
     color: "#0e1c37",
