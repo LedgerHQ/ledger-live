@@ -6,7 +6,7 @@ import config, { type TezosCoinConfig } from "../config";
 import { TezosSigner } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 
-const mockForgeOperations = jest.fn().mockResolvedValue("FORGED_OP");
+const mockForgeOperations = jest.fn();
 const mockEstimateReveal = jest.fn();
 jest.mock("@taquito/taquito", () => ({
   ...jest.requireActual("@taquito/taquito"),
@@ -36,7 +36,7 @@ describe("signOperation", () => {
     createLedgerSigner: () => ({
       publicKey: () => Promise.resolve("PUBKEY"),
       publicKeyHash: () => Promise.resolve("PUBKEYHASH"),
-      sign: () => mockSign(),
+      sign: (arg: unknown) => mockSign(arg),
       secretKey: () => Promise.resolve(undefined),
     }),
   };
@@ -69,6 +69,7 @@ describe("signOperation", () => {
     // GIVEN
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction({ fees: BigNumber(0) });
+    mockForgeOperations.mockResolvedValue("FORGED_OP");
 
     // WHEN & THEN
     const expectedEvent = [
@@ -101,6 +102,7 @@ describe("signOperation", () => {
     // GIVEN
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction({ fees: new BigNumber(0) });
+    mockForgeOperations.mockResolvedValue("f0463d");
 
     // WHEN & THEN
     const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
@@ -108,8 +110,11 @@ describe("signOperation", () => {
         if (e.type === "signed") {
           const signature = e.signedOperation.signature;
           expect(signature).toEqual("SBYTES");
-          expect(mockSign).toHaveBeenCalledTimes(1);
           expect(mockForgeOperations).toHaveBeenCalledTimes(1);
+          expect(mockSign).toHaveBeenCalledTimes(1);
+          expect(mockSign.mock.lastCall[0]).toEqual(
+            Buffer.concat([Buffer.from("03", "hex"), Buffer.from("f0463d", "hex")]).toString("hex"),
+          );
 
           // Cleanup
           subscriber.unsubscribe();
