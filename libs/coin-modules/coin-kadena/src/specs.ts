@@ -58,13 +58,10 @@ const kadena: AppSpec<Transaction> = {
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
         botTest("account balance decreased with operation value", () => {
-          console.log(operation)
-          console.log(account)
           const total = operation.value.plus(operation.fee)
           expect(account.balance.toString()).toBe(
             accountBeforeTransaction.balance.minus(total).toString()
           );
-          console.log("END TEST");
         }
         );
       },
