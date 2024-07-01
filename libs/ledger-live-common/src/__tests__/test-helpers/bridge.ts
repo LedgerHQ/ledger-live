@@ -42,7 +42,7 @@ const blacklistOpsSumEq = {
 
 function expectBalanceIsOpsSum(a) {
   expect(a.balance).toEqual(
-    a.operations.reduce((sum, op) => { console.log(op); sum.plus(getOperationAmountNumber(op)); }, new BigNumber(0)),
+    a.operations.reduce((sum, op) => sum.plus(getOperationAmountNumber(op)), new BigNumber(0)),
   );
 }
 
