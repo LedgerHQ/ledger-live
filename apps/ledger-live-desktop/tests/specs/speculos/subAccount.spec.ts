@@ -2,7 +2,7 @@ import test from "../../fixtures/common";
 import { Token } from "../../enum/Tokens";
 import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTestAnnotations } from "tests/fixtures/common";
 
 const tokens: Token[] = [
   Token.ETH_USDT,
@@ -35,8 +35,8 @@ for (const [i, token] of tokens.entries()) {
 
     test(`Add Sub Account without parent (${token.parentAccount.currency.uiName})`, async ({
       page,
-    }) => {
-      addTmsLink(["B2CQA-2448", "B2CQA-1079"]);
+    }, testInfo) => {
+      await addTestAnnotations(testInfo, ["B2CQA-2448", "B2CQA-1079"]);
 
       const app = new Application(page);
 
@@ -68,8 +68,8 @@ for (const [i, token] of tokensReceive.entries()) {
 
     test(`[${token.tokenName}] Add subAccount when parent exists (${token.tokenNetwork})`, async ({
       page,
-    }) => {
-      addTmsLink(["B2CQA-640"]);
+    }, testInfo) => {
+      await addTestAnnotations(testInfo, ["B2CQA-640"]);
 
       const app = new Application(page);
 
@@ -100,8 +100,8 @@ for (const [i, token] of tokens.entries()) {
 
     test(`Token visible in parent account (${token.parentAccount.currency.uiName})`, async ({
       page,
-    }) => {
-      addTmsLink(["B2CQA-1425"]);
+    }, testInfo) => {
+      await addTestAnnotations(testInfo, ["B2CQA-1425"]);
 
       const app = new Application(page);
 

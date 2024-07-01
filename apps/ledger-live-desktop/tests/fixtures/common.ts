@@ -267,15 +267,6 @@ export async function launchApp({
   });
 }
 
-export async function addTmsLink(ids: string[]) {
-test.afterEach(async ({ page }, testInfo) => {
-  if (testInfo.status !== testInfo.expectedStatus) {
-    const screenshot = await page.screenshot();
-    await allure.attachment("Screenshot on Failure", screenshot, "image/png");
-  }
-});
-
-export async function addTestAnnotations(testInfo: TestInfo, ids: string[], name: string) {
 export async function addTestAnnotations(testInfo: TestInfo, ids: string[]) {
   for (const id of ids) {
     await allure.tms(id, `https://ledgerhq.atlassian.net/browse/${id}`);
