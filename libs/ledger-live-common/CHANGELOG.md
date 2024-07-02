@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 34.4.1-hotfix.0
+
+### Patch Changes
+
+- [#7245](https://github.com/LedgerHQ/ledger-live/pull/7245) [`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: polkadot send tx in LLM
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/hw-app-polkadot@6.30.1-hotfix.0
+
 ## 34.4.0
 
 ### Minor Changes

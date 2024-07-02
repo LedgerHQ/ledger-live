@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.45.2-hotfix.2
+
+### Patch Changes
+
+- [#7241](https://github.com/LedgerHQ/ledger-live/pull/7241) [`a9954fa`](https://github.com/LedgerHQ/ledger-live/commit/a9954fac8d0827d659f1e0f134d437bd45802cbf) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new tests for the UpdateBanner
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/live-common@34.4.1-hotfix.0
+
 ## 3.45.2-hotfix.1
 
 ### Patch Changes
