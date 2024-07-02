@@ -30,6 +30,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     transaction: tx,
   });
 
+  // As we use `useAllAmount`, we know we will receive an amount value.
   return estimation.amount!;
 };
 

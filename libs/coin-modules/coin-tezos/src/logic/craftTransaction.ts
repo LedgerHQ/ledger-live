@@ -1,6 +1,6 @@
 import { OpKind, type OperationContents } from "@taquito/rpc";
 import { DEFAULT_FEE } from "@taquito/taquito";
-import { UnsupportedTransactionType } from "../types/errors";
+import { UnsupportedTransactionMode } from "../types/errors";
 import { getTezosToolkit } from "./tezosToolkit";
 
 type TransactionFee = {
@@ -95,7 +95,7 @@ export async function craftTransaction(
       break;
     }
     default:
-      throw new UnsupportedTransactionType();
+      throw new UnsupportedTransactionMode("unsupported mode", { mode: transaction.type });
   }
 
   return { type, contents };
