@@ -1,12 +1,11 @@
 import network from "@ledgerhq/live-network/network";
-import { API_BAKER } from "../types";
-import { asBaker, cache } from "./bakers";
+import { asBaker, cache, type TezosApiBaker } from "./bakers";
 import coinConfig, { TezosCoinConfig } from "../config";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
 
-const data: API_BAKER[] = [
+const data: TezosApiBaker[] = [
   {
     address: "tz1Kf25fX1VdmYGSEzwFy1wNmkbSEZ2V83sY",
     name: "Tezos Seoul",
