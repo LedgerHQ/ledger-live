@@ -45,6 +45,7 @@ const ErrorDescription = styled(Text).attrs({
 `;
 
 export default function WebviewErrorDrawer(error?: SwapLiveError) {
+  console.log("WebviewErrorDrawer", error);
   const swapDefaultTrack = useGetSwapTrackingProperties();
   let titleKey = "swap2.webviewErrorDrawer.title";
   let descriptionKey = "swap2.webviewErrorDrawer.description";

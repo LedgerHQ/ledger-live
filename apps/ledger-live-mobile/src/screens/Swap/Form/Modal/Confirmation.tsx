@@ -109,6 +109,8 @@ export function Confirmation({
           swapStep: "SIGN_COIN_TRANSACTION",
           statusCode: "DISABLE_TRANSACTION_BROADCAST",
           errorMessage: "DISABLE_TRANSACTION_BROADCAST",
+          sourceCurrencyId: swapTx.current.swap.from.currency?.id,
+          targetCurrencyId: swapTx.current.swap.to.currency?.id,
           hardwareWalletType: deviceMeta.device.modelId,
           swapType: exchangeRate.current.tradeMethod,
         });
@@ -117,6 +119,8 @@ export function Confirmation({
           provider,
           swapId,
           transactionId: operation.hash,
+          sourceCurrencyId: swapTx.current.swap.from.currency?.id,
+          targetCurrencyId: swapTx.current.swap.to.currency?.id,
           hardwareWalletType: deviceMeta.device.modelId,
           swapType: exchangeRate.current.tradeMethod,
         });
