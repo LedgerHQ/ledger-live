@@ -1,4 +1,4 @@
-import { getTezosToolkit } from "../network/tezosToolkit";
+import { getTezosToolkit } from "./tezosToolkit";
 
 export async function broadcast(signature: string): Promise<string> {
   const { rpc } = getTezosToolkit();

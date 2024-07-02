@@ -4,8 +4,8 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import type { TezosAccount, TezosSigner, Transaction, TransactionStatus } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { getTezosToolkit } from "../network/tezosToolkit";
-import { craftTransaction, rawEncode } from "../logic/craftTransaction";
+import { craftTransaction, rawEncode } from "../logic";
+import { getTezosToolkit } from "../logic/tezosToolkit";
 
 // Exported for test purpose only
 export async function getOperationContents({
