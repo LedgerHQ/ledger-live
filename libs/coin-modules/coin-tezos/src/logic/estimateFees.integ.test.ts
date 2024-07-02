@@ -26,7 +26,7 @@ describe("estimateFees", () => {
     const account = {
       xpub: "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
       address: "tz1UHux4ijk2Qu6Ee3dDpka4vnAiEhiDLZMa",
-      balance: BigNumber("2000000"),
+      balance: BigInt("2000000"),
       revealed: false,
     };
     const transaction = {
@@ -40,10 +40,10 @@ describe("estimateFees", () => {
 
     // Then
     expect(result).toEqual({
-      estimatedFees: BigNumber("666"),
-      fees: BigNumber("292"),
-      gasLimit: BigNumber("169"),
-      storageLimit: BigNumber("277"),
+      estimatedFees: BigInt("666"),
+      fees: BigInt("292"),
+      gasLimit: BigInt("169"),
+      storageLimit: BigInt("277"),
     });
   });
 
@@ -52,7 +52,7 @@ describe("estimateFees", () => {
     const account = {
       xpub: "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
       address: "tz1UHux4ijk2Qu6Ee3dDpka4vnAiEhiDLZMa",
-      balance: BigNumber("2000000"),
+      balance: BigInt("2000000"),
       revealed: false,
     };
     const transaction = {
@@ -67,11 +67,11 @@ describe("estimateFees", () => {
 
     // Then
     expect(result).toEqual({
-      estimatedFees: BigNumber("867"),
-      fees: BigNumber("493"),
-      gasLimit: BigNumber("669"),
-      storageLimit: BigNumber("277"),
-      amount: BigNumber("1929883"),
+      estimatedFees: BigInt("867"),
+      fees: BigInt("493"),
+      gasLimit: BigInt("669"),
+      storageLimit: BigInt("277"),
+      amount: BigInt("1929883"),
     });
   });
 });
