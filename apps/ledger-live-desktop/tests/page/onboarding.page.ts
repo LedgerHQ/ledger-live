@@ -3,7 +3,7 @@ import { AppPage } from "tests/page/abstractClasses";
 
 export class OnboardingPage extends AppPage {
   deviceAction = new DeviceAction(this.page);
-  private getStartedButton = this.page.getByTestId("v3-onboarding-get-started-button");
+  private getStartedButton = this.page.locator('button:has-text("Get Started")');
   private selectDeviceButton = (deviceId: string) => this.page.getByTestId(`v3-device-${deviceId}`);
   private checkMyNanoButton = this.page.locator('button:has-text("Check my Nano")');
   readonly continueButton = this.page.locator('button:has-text("Continue")');
