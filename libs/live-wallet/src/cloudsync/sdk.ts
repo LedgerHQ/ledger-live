@@ -1,5 +1,5 @@
-import { Trustchain, TrustchainSDK } from "@ledgerhq/trustchain/types";
-import { LiveData, liveSchema } from "./datatypes/live";
+import { MemberCredentials, Trustchain, TrustchainSDK } from "@ledgerhq/trustchain/types";
+import { LiveData, liveSchema, liveSlug } from "./datatypes/live";
 import api, { JWT } from "./api";
 import Base64 from "base64-js";
 import { compress, decompress } from "fflate";
@@ -53,7 +53,11 @@ export class CloudSyncSDK {
    * Push new data to the Cloud Sync backend.
    * Will fails if the version is out of sync. (conflicts)
    */
-  async push(jwt: JWT, trustchain: Trustchain, data: LiveData): Promise<void> {
+  async push(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+    data: LiveData,
+  ): Promise<void> {
     const validated = liveSchema.parse(data);
     const json = JSON.stringify(validated);
     const bytes = new TextEncoder().encode(json);
@@ -63,7 +67,9 @@ export class CloudSyncSDK {
     const encrypted = await this.trustchainSdk.encryptUserData(trustchain, compressed);
     const base64 = Base64.fromByteArray(encrypted);
     const version = (this.getCurrentVersion() || 0) + 1;
-    const response = await api.uploadData(jwt, "live", version, base64);
+    const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
+      api.uploadData(jwt, liveSlug, version, base64),
+    );
     switch (response.status) {
       case "updated": {
         await this.saveNewUpdate({
@@ -83,8 +89,10 @@ export class CloudSyncSDK {
    * Pull new data from the Cloud Sync backend, if any.
    * If new data is retrieved, it will be decrypted and saveNewUpdate will be called as part of this atomic process.
    */
-  async pull(jwt: JWT, trustchain: Trustchain): Promise<void> {
-    const response = await api.fetchData(jwt, "live", this.getCurrentVersion());
+  async pull(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void> {
+    const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
+      api.fetchData(jwt, liveSlug, this.getCurrentVersion()),
+    );
     switch (response.status) {
       case "no-data": {
         // no data, nothing to do
@@ -118,8 +126,10 @@ export class CloudSyncSDK {
     }
   }
 
-  async destroy(jwt: JWT): Promise<void> {
-    await api.deleteData(jwt, "live");
+  async destroy(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void> {
+    await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
+      api.deleteData(jwt, liveSlug),
+    );
     await this.saveNewUpdate({
       type: "deleted-data",
     });
@@ -152,7 +162,17 @@ export class CloudSyncSDK {
    * The current version is emitted once at first and then any update will be emitted.
    * It is your responsability to then hook this to pull() when you want to refresh the data and make sure you do it in sequence, once at a time (you must prevent race conditions)
    */
-  listenNotifications(jwt: JWT): Observable<number> {
-    return api.listenNotifications(jwt, "accounts");
+  listenNotifications(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ): Observable<number> {
+    const getFreshJwt = (): Promise<JWT> =>
+      this.trustchainSdk.withAuth(
+        trustchain,
+        memberCredentials,
+        jwt => Promise.resolve(jwt),
+        "refresh",
+      );
+    return api.listenNotifications(getFreshJwt, liveSlug);
   }
 }

@@ -1,30 +1,41 @@
 import Transport from "@ledgerhq/hw-transport";
 import { getSdk } from "..";
+import { getEnv } from "@ledgerhq/live-env";
 
 export async function scenario(transport: Transport) {
   const applicationId = 16;
-
   const name1 = "Member 1";
-  const sdk1 = getSdk(false, { applicationId, name: name1 });
+  const sdk1 = getSdk(!!getEnv("MOCK"), { applicationId, name: name1 });
   const member1creds = await sdk1.initMemberCredentials();
-  const initialJwt = await sdk1.authWithDevice(transport);
+
+  let interactionCounter = 0;
+  let totalInteractionCounter = 0;
+  const callbacks = {
+    onStartRequestUserInteraction: () => {
+      totalInteractionCounter++;
+      interactionCounter++;
+    },
+    onEndRequestUserInteraction: () => {
+      interactionCounter--;
+    },
+  };
 
   // verify that getOrCreateTrustchain is idempotent
-  const t1 = await sdk1.getOrCreateTrustchain(transport, initialJwt, member1creds);
-  const t2 = await sdk1.getOrCreateTrustchain(transport, t1.jwt, member1creds);
-  expect(t1.trustchain).toEqual(t2.trustchain);
+  const t1 = await sdk1.getOrCreateTrustchain(transport, member1creds, callbacks);
+  expect(totalInteractionCounter).toBe(2); // there are two interaction: one for device auth, one for trustchain addition
+  const t2 = await sdk1.getOrCreateTrustchain(transport, member1creds, callbacks);
+  expect(totalInteractionCounter).toBe(2); // no more interaction happened
+  expect(t1).toEqual(t2);
 
   // verify that a second member can join the trustchain and get the same trustchain
   const name2 = "Member 2";
-  const sdk2 = getSdk(false, { applicationId, name: name2 });
+  const sdk2 = getSdk(!!getEnv("MOCK"), { applicationId, name: name2 });
   const member2creds = await sdk2.initMemberCredentials();
-  const anotherJwt = await sdk2.authWithDevice(transport);
-  const t3 = await sdk2.getOrCreateTrustchain(transport, anotherJwt, member2creds);
-  expect(t1.trustchain).toEqual(t3.trustchain);
+  const t3 = await sdk2.getOrCreateTrustchain(transport, member2creds, callbacks);
+  expect(t1).toEqual(t3);
 
   // check there are indeed our two members in the trustchain
-  const jwt = await sdk1.auth(t1.trustchain, member1creds);
-  const members = await sdk1.getMembers(jwt, t1.trustchain);
+  const members = await sdk1.getMembers(t1, member1creds);
   expect(members).toEqual([
     {
       id: member1creds.pubkey,
@@ -39,5 +50,13 @@ export async function scenario(transport: Transport) {
   ]);
 
   // destroy
-  await sdk1.destroyTrustchain(t1.trustchain, await sdk1.auth(t1.trustchain, member1creds));
+  await sdk1.destroyTrustchain(t1, member1creds);
+
+  expect({
+    interactionCounter,
+    totalInteractionCounter,
+  }).toEqual({
+    interactionCounter: 0, // total of interaction+- is back at 0
+    totalInteractionCounter: 4,
+  });
 }

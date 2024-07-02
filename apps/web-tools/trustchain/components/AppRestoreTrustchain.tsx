@@ -4,29 +4,25 @@ import { Actionable } from "./Actionable";
 import { useTrustchainSDK } from "../context";
 
 export function AppRestoreTrustchain({
-  jwt,
   memberCredentials,
   trustchain,
   setTrustchain,
 }: {
-  jwt: JWT | null;
   memberCredentials: MemberCredentials | null;
   trustchain: Trustchain | null;
   setTrustchain: (trustchain: Trustchain | null) => void;
 }) {
   const sdk = useTrustchainSDK();
   const action = useCallback(
-    (jwt: JWT, trustchainId: string, memberCredentials: MemberCredentials) =>
-      sdk.restoreTrustchain(jwt, trustchainId, memberCredentials),
+    (trustchain: Trustchain, memberCredentials: MemberCredentials) =>
+      sdk.restoreTrustchain(trustchain, memberCredentials),
     [sdk],
   );
 
   return (
     <Actionable
       buttonTitle="sdk.restoreTrustchain"
-      inputs={
-        jwt && memberCredentials && trustchain ? [jwt, trustchain.rootId, memberCredentials] : null
-      }
+      inputs={memberCredentials && trustchain ? [trustchain, memberCredentials] : null}
       action={action}
       setValue={setTrustchain}
       value={trustchain}

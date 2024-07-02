@@ -1,23 +1,24 @@
 import React, { useCallback } from "react";
-import { JWT, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
+import { JWT, MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { Actionable } from "./Actionable";
 import { useTrustchainSDK } from "../context";
 
 export function AppGetMembers({
-  jwt,
+  memberCredentials,
   trustchain,
   members,
   setMembers,
 }: {
-  jwt: JWT | null;
   trustchain: Trustchain | null;
   members: TrustchainMember[] | null;
   setMembers: (members: TrustchainMember[] | null) => void;
+  memberCredentials: MemberCredentials | null;
 }) {
   const sdk = useTrustchainSDK();
 
   const action = useCallback(
-    (jwt: JWT, trustchain: Trustchain) => sdk.getMembers(jwt, trustchain),
+    (trustchain: Trustchain, memberCredentials: MemberCredentials) =>
+      sdk.getMembers(trustchain, memberCredentials),
     [sdk],
   );
 
@@ -33,7 +34,7 @@ export function AppGetMembers({
   return (
     <Actionable
       buttonTitle="sdk.getMembers"
-      inputs={jwt && trustchain ? [jwt, trustchain] : null}
+      inputs={memberCredentials && trustchain ? [trustchain, memberCredentials] : null}
       action={action}
       valueDisplay={valueDisplay}
       value={members}

@@ -157,8 +157,19 @@ export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
 export const PeerRemovedPairing = createCustomErrorClass("PeerRemovedPairing");
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
-export const LedgerAPI4xx = createCustomErrorClass("LedgerAPI4xx");
-export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
+type NetworkType = {
+  status: number;
+  url: string | undefined;
+  method: string;
+};
+export const LedgerAPI4xx = createCustomErrorClass<
+  NetworkType,
+  LedgerErrorConstructor<NetworkType>
+>("LedgerAPI4xx");
+export const LedgerAPI5xx = createCustomErrorClass<
+  NetworkType,
+  LedgerErrorConstructor<NetworkType>
+>("LedgerAPI5xx");
 export const FirmwareOrAppUpdateRequired = createCustomErrorClass("FirmwareOrAppUpdateRequired");
 
 // SpeedUp / Cancel EVM tx

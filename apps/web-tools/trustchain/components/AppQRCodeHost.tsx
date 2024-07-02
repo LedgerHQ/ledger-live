@@ -28,8 +28,7 @@ export function AppQRCodeHost({
         setDigits(digits);
       },
       addMember: async member => {
-        const jwt = await sdk.auth(trustchain, memberCredentials);
-        await sdk.addMember(jwt, trustchain, memberCredentials, member);
+        await sdk.addMember(trustchain, memberCredentials, member);
         return trustchain;
       },
     })

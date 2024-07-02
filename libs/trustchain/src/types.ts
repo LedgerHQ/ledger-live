@@ -66,6 +66,13 @@ export type TrustchainSDKContext = {
 };
 
 /**
+ * cache (default): the SDK will use the cached JWT if it's still valid, otherwise it will refresh it.
+ * refresh: the SDK will always refresh the JWT if possible.
+ * no-cache: the SDK will always request a new JWT.
+ */
+export type AuthCachePolicy = "no-cache" | "refresh" | "cache";
+
+/**
  * The main interface for the UI to interact with the trustchain protocol.
  *
  * @example
@@ -82,17 +89,22 @@ export interface TrustchainSDK {
   initMemberCredentials(): Promise<MemberCredentials>;
 
   /**
-   * Auth with a hardware wallet at the trustchain root level.
-   * The returned token will typically be used to create/manage the trustchain.
-   */
-  authWithDevice(transport: Transport): Promise<JWT>;
-
-  /**
-   * Auth with Live credentials.
+   * Access a JWT from the TrustchainSDK. manage the reauthentication if needed.
    * A trustchain must have been created and the Live instance must have been added as a member.
    * The returned token will typically be used for regular operations like wallet sync.
    */
-  auth(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<JWT>;
+  withAuth<T>(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+    f: (jwt: JWT) => Promise<T>,
+    policy?: AuthCachePolicy,
+  ): Promise<T>;
+
+  withDeviceAuth<T>(
+    transport: Transport,
+    f: (jwt: JWT) => Promise<T>,
+    policy?: AuthCachePolicy,
+  ): Promise<T>;
 
   /**
    * This method will either create the required trustchains (root and application) or restore them.
@@ -102,54 +114,42 @@ export interface TrustchainSDK {
    */
   getOrCreateTrustchain(
     transport: Transport,
-    deviceJWT: JWT,
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
-  ): Promise<{
-    trustchain: Trustchain;
-    jwt: JWT;
-  }>;
-
-  /**
-   * Refresh the current JWT.
-   */
-  refreshAuth(jwt: JWT): Promise<JWT>;
+  ): Promise<Trustchain>;
 
   /**
    * Restore the current trustchain encryption key, typically due to a key rotation.
    */
   restoreTrustchain(
-    jwt: JWT,
-    trustchainId: string,
+    trustchain: Trustchain,
     memberCredentials: MemberCredentials,
   ): Promise<Trustchain>;
 
   /**
    * list the current members of the application trustchain
    */
-  getMembers(jwt: JWT, trustchain: Trustchain): Promise<TrustchainMember[]>;
+  getMembers(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ): Promise<TrustchainMember[]>;
 
   /**
    * remove a member from the application trustchain
    */
   removeMember(
     transport: Transport,
-    deviceJWT: JWT,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
-  ): Promise<{
-    jwt: JWT;
-    trustchain: Trustchain;
-  }>;
+  ): Promise<Trustchain>;
 
   /**
    * add a member to the application trustchain
    */
   addMember(
-    jwt: JWT,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
@@ -158,7 +158,7 @@ export interface TrustchainSDK {
   /**
    * destroy the trustchain
    */
-  destroyTrustchain(trustchain: Trustchain, jwt: JWT): Promise<void>;
+  destroyTrustchain(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void>;
 
   /**
    * encrypt data with the trustchain encryption key

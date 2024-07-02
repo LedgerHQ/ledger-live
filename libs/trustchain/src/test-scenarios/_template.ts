@@ -8,11 +8,12 @@ export async function scenario(transport: Transport) {
    * The end-to-end tests are used to generate mock for the same unit tests.
    */
   const applicationId = 16;
-
   const name1 = "cli-member1";
   const sdk1 = getSdk(false, { applicationId, name: name1 });
-  const deviceJWT = await sdk1.authWithDevice(transport);
-  console.warn("TODO use", deviceJWT);
+  const memberCredentials = await sdk1.initMemberCredentials();
+  const trustchain = await sdk1.getOrCreateTrustchain(transport, memberCredentials);
+
+  await sdk1.destroyTrustchain(trustchain, memberCredentials);
 }
 
 // this can overrides the default config used by the recorder
