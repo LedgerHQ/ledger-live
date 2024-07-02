@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.45.2-hotfix.0
+
+### Patch Changes
+
+- [#7241](https://github.com/LedgerHQ/ledger-live/pull/7241) [`aa30245`](https://github.com/LedgerHQ/ledger-live/commit/aa302450112c7215263a266fb1bb07256d9efdeb) Thanks [@valpinkman](https://github.com/valpinkman)! - Add version check for nano X bluetooth firmware update
+
 ## 3.45.1
 
 ### Patch Changes
