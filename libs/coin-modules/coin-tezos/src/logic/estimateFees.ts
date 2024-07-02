@@ -3,14 +3,13 @@ import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
 import { DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate } from "@taquito/taquito";
 import { b58cencode, Prefix, prefix } from "@taquito/utils";
 import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
 import { getTezosToolkit } from "./tezosToolkit";
 import { TezosOperationMode } from "../types/model";
 
 export type CoreAccountInfo = {
   xpub?: string;
   address: string;
-  balance: BigNumber;
+  balance: bigint;
   revealed: boolean;
 };
 export type CoreTransactionInfo = {
@@ -21,11 +20,11 @@ export type CoreTransactionInfo = {
 };
 
 export type EstimatedFees = {
-  fees: BigNumber;
-  gasLimit: BigNumber;
-  storageLimit: BigNumber;
-  estimatedFees: BigNumber;
-  amount?: BigNumber;
+  fees: bigint;
+  gasLimit: bigint;
+  storageLimit: bigint;
+  estimatedFees: bigint;
+  amount?: bigint;
   taquitoError?: string;
 };
 /**
@@ -62,10 +61,10 @@ export async function estimateFees({
   }
 
   const estimation: EstimatedFees = {
-    fees: new BigNumber(0),
-    gasLimit: new BigNumber(0),
-    storageLimit: new BigNumber(0),
-    estimatedFees: new BigNumber(0),
+    fees: BigInt(0),
+    gasLimit: BigInt(0),
+    storageLimit: BigInt(0),
+    estimatedFees: BigInt(0),
   };
 
   try {
@@ -96,9 +95,9 @@ export async function estimateFees({
 
     if (transaction.useAllAmount) {
       const totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez;
-      const maxAmount = account.balance
-        .minus(totalFees + (account.revealed ? 0 : DEFAULT_FEE.REVEAL))
-        .toNumber();
+      const maxAmount =
+        parseInt(account.balance.toString()) -
+        (totalFees + (account.revealed ? 0 : DEFAULT_FEE.REVEAL));
       // from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
       // we need to increase the gasLimit and fee returned by the estimation
@@ -109,18 +108,18 @@ export async function estimateFees({
       };
       const incr = increasedFee(gasBuffer, Number(estimate.opSize));
 
-      estimation.fees = new BigNumber(estimate.suggestedFeeMutez + incr);
-      estimation.gasLimit = new BigNumber(estimate.gasLimit + gasBuffer);
-      estimation.amount = maxAmount - incr > 0 ? new BigNumber(maxAmount - incr) : new BigNumber(0);
+      estimation.fees = BigInt(estimate.suggestedFeeMutez + incr);
+      estimation.gasLimit = BigInt(estimate.gasLimit + gasBuffer);
+      estimation.amount = maxAmount - incr > 0 ? BigInt(maxAmount - incr) : BigInt(0);
     } else {
-      estimation.fees = new BigNumber(estimate.suggestedFeeMutez);
-      estimation.gasLimit = new BigNumber(estimate.gasLimit);
+      estimation.fees = BigInt(estimate.suggestedFeeMutez);
+      estimation.gasLimit = BigInt(estimate.gasLimit);
     }
 
-    estimation.storageLimit = new BigNumber(estimate.storageLimit);
+    estimation.storageLimit = BigInt(estimate.storageLimit);
     estimation.estimatedFees = estimation.fees;
     if (!account.revealed) {
-      estimation.estimatedFees = estimation.estimatedFees.plus(DEFAULT_FEE.REVEAL);
+      estimation.estimatedFees = estimation.estimatedFees + BigInt(DEFAULT_FEE.REVEAL);
     }
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
