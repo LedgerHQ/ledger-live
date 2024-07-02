@@ -8,6 +8,8 @@ import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
 import { encodeAccountId } from "../../../../account";
 import { encodeOperationId } from "../../../../operation";
 import flatMap from "lodash/flatMap";
+import { buildTokenAccounts } from "./erc20/tokenAccounts";
+import { Transaction } from "../../types";
 
 type TxsById = {
   [id: string]:
@@ -143,21 +145,32 @@ export const getTxToBroadcast = (
   signature: string,
   rawData: Record<string, any>,
 ): BroadcastTransactionRequest => {
-  const { senders, recipients, value, fee } = operation;
-  const { gasLimit, gasFeeCap, gasPremium, method, version, nonce, signatureType } = rawData;
+  const {
+    sender,
+    recipient,
+    gasLimit,
+    gasFeeCap,
+    gasPremium,
+    method,
+    version,
+    nonce,
+    signatureType,
+    params,
+    value,
+  } = rawData;
 
   return {
     message: {
       version,
       method,
       nonce,
-      params: "",
-      to: recipients[0],
-      from: senders[0],
+      params: params ?? "",
+      to: recipient,
+      from: sender,
       gaslimit: gasLimit.toNumber(),
       gaspremium: gasPremium.toString(),
       gasfeecap: gasFeeCap.toString(),
-      value: value.minus(fee).toFixed(),
+      value,
     },
     signature: {
       type: signatureType,
@@ -180,9 +193,11 @@ export const getAccountShape: GetAccountShape = async info => {
   const blockHeight = await fetchBlockHeight();
   const balance = await fetchBalances(address);
   const rawTxs = await fetchTxs(address);
+  const tokenAccounts = await buildTokenAccounts(address, accountId, info.initialAccount);
 
-  const result = {
+  const result: Partial<Account> = {
     id: accountId,
+    subAccounts: tokenAccounts,
     balance: new BigNumber(balance.total_balance),
     spendableBalance: new BigNumber(balance.spendable_balance),
     operations: flatMap(processTxs(rawTxs), mapTxToOps(accountId, info)),
@@ -190,4 +205,13 @@ export const getAccountShape: GetAccountShape = async info => {
   };
 
   return result;
+};
+
+export const getSubAccount = (account: Account, tx: Transaction) => {
+  const subAccount =
+    tx.subAccountId && account.subAccounts
+      ? account.subAccounts.find(sa => sa.id === tx.subAccountId)
+      : null;
+
+  return subAccount;
 };

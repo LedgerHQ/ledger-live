@@ -4,6 +4,7 @@ import { AxiosRequestConfig, AxiosResponse } from "axios";
 import network from "@ledgerhq/live-network/network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
+
 import {
   BalanceResponse,
   BroadcastTransactionRequest,
@@ -13,6 +14,10 @@ import {
   NetworkStatusResponse,
   TransactionResponse,
   TransactionsResponse,
+  FetchERC20TransactionsResponse,
+  ERC20Transfer,
+  ERC20BalanceResponse,
+  ConvertFilToEthResponse,
 } from "./types";
 
 const getFilecoinURL = (path?: string): string => {
@@ -30,6 +35,7 @@ const fetch = async <T>(path: string) => {
     method: "GET",
     url,
   };
+
   const rawResponse = await network(opts);
 
   // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
@@ -89,4 +95,34 @@ export const broadcastTx = async (
 ): Promise<BroadcastTransactionResponse> => {
   const response = await send<BroadcastTransactionResponse>(`/transaction/broadcast`, message);
   return response; // TODO Validate if the response fits this interface
+};
+
+export const fetchERC20TokenBalance = async (
+  ethAddr: string,
+  contractAddr: string,
+): Promise<string> => {
+  const res = await fetch<ERC20BalanceResponse>(
+    `/contract/${contractAddr}/address/${ethAddr}/balance/erc20`,
+  );
+
+  if (res.data.length) {
+    return res.data[0].balance;
+  }
+
+  return "0";
+};
+
+export const fetchERC20Transactions = async (ethAddr: string): Promise<ERC20Transfer[]> => {
+  const res = await fetch<FetchERC20TransactionsResponse>(
+    `/addresses/${ethAddr}/transactions/erc20`,
+  );
+  return res.txs.sort((a, b) => b.timestamp - a.timestamp);
+};
+
+export const fetchEthAddrForF1Fil = async (filAddr: string): Promise<string> => {
+  const response = await fetch<ConvertFilToEthResponse>(`/convert/address/${filAddr}/eth`);
+  if (!response) {
+    return "";
+  }
+  return response.address;
 };
