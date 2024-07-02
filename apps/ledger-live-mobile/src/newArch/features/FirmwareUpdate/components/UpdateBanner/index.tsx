@@ -1,9 +1,10 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Text, Flex, Icons } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import semver from "semver";
 
 import Button from "~/components/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -29,8 +30,24 @@ const UpdateBanner = ({
     ? getDeviceModel(lastConnectedDevice.modelId).productName
     : undefined;
 
+  const connectionType = lastConnectedDevice?.wired ? "usb" : "bluetooth";
   const deviceName = lastConnectedDevice?.deviceName;
-  return bannerVisible ? (
+
+  const shouldDisplay = useMemo(() => {
+    if (!bannerVisible || !version) {
+      return false;
+    }
+
+    if (connectionType === "bluetooth") {
+      if (lastConnectedDevice?.modelId === DeviceModelId.nanoX) {
+        return semver.gt(version, "2.4.0");
+      }
+    }
+
+    return true;
+  }, [bannerVisible, connectionType, lastConnectedDevice, version]);
+
+  return shouldDisplay ? (
     <>
       <Pressable onPress={onClickUpdate} testID="fw-update-banner">
         <Flex
