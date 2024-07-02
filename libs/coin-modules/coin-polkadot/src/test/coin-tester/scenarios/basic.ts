@@ -246,7 +246,9 @@ export const basicScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
   name: "Polkadot Basic transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
-      spawnSpeculos(`/${defaultNanoApp.firmware}/PolkadotMigration/app_${defaultNanoApp.version}.elf`),
+      spawnSpeculos(
+        `/${defaultNanoApp.firmware}/PolkadotMigration/app_${defaultNanoApp.version}.elf`,
+      ),
       spawnChopsticksAndSidecar(),
     ]);
 
