@@ -4,7 +4,7 @@ import { setCoinConfig } from "../../config";
 setCoinConfig((): any => {
   return {
     infra: {
-      API_MINA_ROSETTA_NODE: "https://mina-rosetta-api.zondax.dev",
+      API_MINA_ROSETTA_NODE: "https://mina-rosetta-api-devnet.zondax.dev",
     },
   };
 });
