@@ -107,6 +107,9 @@ export type ProtocolParams = {
   collateralPercent: string;
   priceSteps: string;
   priceMem: string;
+  maxTxSize: string;
+  maxValueSize: string;
+  utxoCostPerByte: string;
   languageView: TyphonTypes.LanguageView;
 };
 
@@ -118,6 +121,9 @@ export type ProtocolParamsRaw = {
   collateralPercent: string;
   priceSteps: string;
   priceMem: string;
+  maxTxSize: string;
+  maxValueSize: string;
+  utxoCostPerByte: string;
   // TyphonTypes.LanguageView is already a raw type
   languageView: TyphonTypes.LanguageView;
 };

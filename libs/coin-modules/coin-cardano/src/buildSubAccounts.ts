@@ -90,10 +90,14 @@ const mapTxToTokenAccountOperation = ({
         fee: new BigNumber(tx.fees),
         value: token.amount.absoluteValue(),
         senders: tx.inputs.map(i =>
-          isHexString(i.address) ? TyphonUtils.getAddressFromHex(i.address).getBech32() : i.address,
+          isHexString(i.address)
+            ? TyphonUtils.getAddressFromHex(Buffer.from(i.address, "hex")).getBech32()
+            : i.address,
         ),
         recipients: tx.outputs.map(o =>
-          isHexString(o.address) ? TyphonUtils.getAddressFromHex(o.address).getBech32() : o.address,
+          isHexString(o.address)
+            ? TyphonUtils.getAddressFromHex(Buffer.from(o.address, "hex")).getBech32()
+            : o.address,
         ),
         blockHeight: tx.blockHeight,
         date: new Date(tx.timestamp),

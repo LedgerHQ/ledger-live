@@ -6,7 +6,7 @@ import { getDelegationInfo } from "./api/getDelegationInfo";
 import { makeGetAccountShape } from "./synchronisation";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
-import { getNetworkInfo } from "./api/getNetworkInfo";
+import { fetchNetworkInfo } from "./api/getNetworkInfo";
 import { APINetworkInfo } from "./api/api-types";
 import { CardanoSigner } from "./signer";
 
@@ -67,7 +67,7 @@ describe("makeGetAccountShape", () => {
     const buildSubAccountsMock = jest.mocked(buildSubAccounts);
     buildSubAccountsMock.mockReturnValue([]);
     getTransactionsMock = jest.mocked(getTransactions);
-    const getNetworkInfoMock = jest.mocked(getNetworkInfo);
+    const getNetworkInfoMock = jest.mocked(fetchNetworkInfo);
     getNetworkInfoMock.mockReturnValue(
       Promise.resolve({ protocolParams: { lovelacePerUtxoWord: "1" } } as APINetworkInfo),
     );
@@ -124,7 +124,19 @@ describe("makeGetAccountShape", () => {
       getTransactionsMock.mockReturnValue(
         Promise.resolve({
           transactions: [],
-          externalCredentials: [{ path: "p", networkId: "id" }],
+          externalCredentials: [
+            {
+              isUsed: false,
+              key: "00000000000000000000000000000000000000000000000000000000",
+              path: {
+                purpose: 1852,
+                coin: 1815,
+                account: 0,
+                chain: 0,
+                index: 0,
+              },
+            },
+          ],
           internalCredentials: [],
         } as any),
       );

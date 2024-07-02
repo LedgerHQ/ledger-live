@@ -18,6 +18,11 @@ export type CardanoExtendedPublicKey = {
   publicKeyHex: string;
   chainCodeHex: string;
 };
+// Coming from @cardano-foundation/ledgerjs-hw-app-cardano code (type TxOutputFormat)
+export enum CardanoTxOutputFormat {
+  ARRAY_LEGACY = 0,
+  MAP_BABBAGE = 1,
+}
 export type GetAddressRequest = {
   path: string;
   stakingPathString: string;
@@ -31,6 +36,7 @@ export type SignerTxInput = {
   path: string | null;
 };
 export type SignerTxOutput = {
+  format: CardanoTxOutputFormat;
   amount: string;
   destination:
     | {

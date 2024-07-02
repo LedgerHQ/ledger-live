@@ -17,9 +17,12 @@ import {
   Token,
   Transaction,
 } from "./types";
+import { CARDANO_MAX_SUPPLY } from "./constants";
 
 function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
-  const address = TyphonUtils.getAddressFromHex(utxo.address) as TyphonTypes.ShelleyAddress;
+  const address = TyphonUtils.getAddressFromHex(
+    Buffer.from(utxo.address, "hex"),
+  ) as TyphonTypes.ShelleyAddress;
   if (address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) {
     address.paymentCredential.bipPath = utxo.paymentCredential.path;
   }
@@ -40,7 +43,7 @@ function getRewardWithdrawalCertificate(account: CardanoAccount): TyphonTypes.Wi
 
   const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
   const stakeKeyHashCredential: TyphonTypes.HashCredential = {
-    hash: stakeCredential.key,
+    hash: Buffer.from(stakeCredential.key, "hex"),
     type: TyphonTypes.HashType.ADDRESS,
     bipPath: stakeCredential.path,
   };
@@ -107,9 +110,13 @@ const buildSendTokenTransaction = async ({
   });
 
   const totalAddedTokenAmount = new BigNumber(0);
-  const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmount(
-    tokensToSend,
-    new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
+  const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
+    {
+      address: receiverAddress,
+      amount: new BigNumber(CARDANO_MAX_SUPPLY),
+      tokens: tokensToSend,
+    },
+    new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
   );
   // Add enough utxo to cover token amount
   for (let i = 0; i < sortedTokenUtxo.length; i++) {
@@ -170,14 +177,17 @@ const buildSendAdaTransaction = async ({
     // if account holds any tokens then add it to changeAddress,
     // with minimum required ADA to spend those tokens
     if (tokenBalance.length) {
-      const minAmountToSpendTokens = TyphonUtils.calculateMinUtxoAmount(
-        tokenBalance,
-        new BigNumber(protocolParams.lovelacePerUtxoWord),
-        false,
+      const minAmountForChangeTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
+        {
+          address: changeAddress,
+          amount: new BigNumber(CARDANO_MAX_SUPPLY),
+          tokens: tokenBalance,
+        },
+        new BigNumber(protocolParams.utxoCostPerByte),
       );
       typhonTx.addOutput({
         address: changeAddress,
-        amount: minAmountToSpendTokens,
+        amount: minAmountForChangeTokens,
         tokens: tokenBalance,
       });
     }
@@ -239,7 +249,7 @@ const buildDelegateTransaction = async ({
 
   const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
   const stakeKeyHashCredential: TyphonTypes.HashCredential = {
-    hash: stakeCredential.key,
+    hash: Buffer.from(stakeCredential.key, "hex"),
     type: TyphonTypes.HashType.ADDRESS,
     bipPath: stakeCredential.path,
   };
@@ -301,7 +311,7 @@ const buildUndelegateTransaction = async ({
 
   const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
   const stakeKeyHashCredential: TyphonTypes.HashCredential = {
-    hash: stakeCredential.key,
+    hash: Buffer.from(stakeCredential.key, "hex"),
     type: TyphonTypes.HashType.ADDRESS,
     bipPath: stakeCredential.path,
   };
@@ -367,6 +377,9 @@ export const buildTransaction = async (
       priceSteps: new BigNumber(protocolParams.priceSteps),
       priceMem: new BigNumber(protocolParams.priceMem),
       languageView: protocolParams.languageView,
+      maxTxSize: Number(protocolParams.maxTxSize),
+      maxValueSize: Number(protocolParams.maxValueSize),
+      utxoCostPerByte: new BigNumber(protocolParams.utxoCostPerByte),
     },
   });
   const ttl = getTTL(account.currency.id);
@@ -395,7 +408,7 @@ export const buildTransaction = async (
   });
 
   if (transaction.mode === "send") {
-    const receiverAddress = TyphonUtils.getAddressFromBech32(transaction.recipient);
+    const receiverAddress = TyphonUtils.getAddressFromString(transaction.recipient);
     if (transaction.subAccountId) {
       // Token Transaction
       const tokenAccount = account.subAccounts
