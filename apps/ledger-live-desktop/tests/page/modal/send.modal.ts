@@ -5,8 +5,8 @@ import { Transaction } from "../../models/Transaction";
 
 export class SendModal extends Modal {
   private drowdownAccount = this.page.locator('[data-test-id="modal-content"] svg').nth(1);
-  readonly recipientInput = this.page.getByPlaceholder("Enter");
-  private continueRecipientButton = this.page.getByRole("button", { name: "continue" });
+  readonly recipientInput = this.page.locator('[id="send-recipient-input"]');
+  readonly continueButton = this.page.getByRole("button", { name: "continue" });
   private totalDebitValue = this.page.locator("text=Total to debit");
   private checkDeviceLabel = this.page.locator(
     "text=Double-check the transaction details on your Ledger device before signing.",
@@ -18,6 +18,13 @@ export class SendModal extends Modal {
     this.page.locator(`text=${amount} ${currency}`).first();
   private recipientAddressDisplayedValue = this.page.locator("data-test-id=recipient-address");
   private amountDisplayedValue = this.page.locator("data-test-id=transaction-amount");
+  private sendMaxCheckbox = this.page.locator("[data-test-id=modal-max-checkbox] > div");
+  private genericErrorMessage = this.page.locator("id=input-error");
+  private ASAErrorMessage = this.page.getByText(
+    "Recipient account has not opted in the selected ASA.",
+  );
+  private invalidAddressErrorMessage = (network: string) =>
+    this.page.getByText(`This is not a valid ${network} address`);
 
   async selectAccount(name: string) {
     await this.drowdownAccount.click();
@@ -29,8 +36,8 @@ export class SendModal extends Modal {
   }
 
   @step("Click `Continue` button")
-  async clickContinue() {
-    await this.continueRecipientButton.click();
+  async clickContinueToDevice() {
+    await this.continueButton.click();
     await expect(this.checkDeviceLabel).toBeVisible();
   }
 
@@ -42,8 +49,8 @@ export class SendModal extends Modal {
 
   @step("Fill tx information")
   async fillTxInfo(tx: Transaction) {
-    await this.fillRecipient(tx.recipient);
-    await this.continueRecipientButton.click();
+    await this.fillRecipient(tx.accountToCredit.address);
+    await this.continueButton.click();
     await this.cryptoAmountField.fill(tx.amount);
     await this.countinueSendAmount();
   }
@@ -51,9 +58,9 @@ export class SendModal extends Modal {
   @step("Verify tx information before confirming")
   async expectTxInfoValidity(tx: Transaction) {
     await expect(this.totalDebitValue).toBeVisible();
-    await expect(this.addressValue(tx.recipient)).toBeVisible();
+    await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
     const displayedReceiveAddress = await this.recipientAddressDisplayedValue.innerText();
-    expect(displayedReceiveAddress).toEqual(tx.recipient);
+    expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
 
     await expect(this.amountValue(tx.amount, tx.accountToDebit.currency.uiLabel)).toBeVisible();
     const displayedAmount = await this.amountDisplayedValue.innerText();
@@ -63,5 +70,55 @@ export class SendModal extends Modal {
   @step("Verify tx sent text")
   async expectTxSent() {
     await expect(this.checkTransactionbroadcastLabel).toBeVisible();
+  }
+
+  @step("Check continue button disable and ASA error message visible")
+  async checkASAError() {
+    await expect(this.continueButton).toBeDisabled();
+    await expect(this.ASAErrorMessage).toBeVisible();
+  }
+
+  @step("Check invalid address error message")
+  async checkInvalidAddressError(tx: Transaction) {
+    await expect(this.continueButton).toBeDisabled();
+    await expect(
+      this.invalidAddressErrorMessage(tx.accountToDebit.currency.deviceLabel),
+    ).toBeVisible();
+  }
+
+  @step("Check continue button enable")
+  async checkContinueButtonEnable() {
+    await expect(this.continueButton).toBeEnabled();
+    await expect(this.genericErrorMessage).not.toBeVisible();
+  }
+
+  @step("fill amount")
+  async fillAmount(Tx: Transaction) {
+    if (Tx.amount == "send max") {
+      await this.sendMaxCheckbox.click();
+    } else {
+      await this.cryptoAmountField.fill(Tx.amount);
+    }
+  }
+
+  @step("Click `Continue` button")
+  async clickContinue() {
+    await this.continueButton.click();
+  }
+
+  @step("check error message")
+  async checkErrorMessage(errorMessage: string | null) {
+    await expect(this.continueButton).toBeDisabled();
+    if (errorMessage !== null) {
+      await expect(this.genericErrorMessage).toBeVisible();
+      const errorText: any = await this.genericErrorMessage.textContent();
+      const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
+      expect(normalize(errorText)).toEqual(normalize(errorMessage));
+    }
+  }
+
+  @step("check continue button disabled")
+  async checkContinueButtonDisabled() {
+    await expect(this.continueButton).toBeDisabled();
   }
 }

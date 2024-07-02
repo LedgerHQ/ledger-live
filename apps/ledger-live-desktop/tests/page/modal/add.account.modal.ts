@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
-import { Token } from "tests/enum/Tokens";
+import { Token } from "tests/enum/Token";
 
 export class AddAccountModal extends Modal {
   private selectAccount = this.page.locator("text=Choose a crypto asset"); // FIXME: I need an id
