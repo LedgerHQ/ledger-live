@@ -4,15 +4,16 @@ import test from "../../fixtures/common";
 import { MarketPage } from "../../page/market.page";
 import { Layout } from "../../component/layout.component";
 import { MarketCoinPage } from "../../page/market.coin.page";
-import { LiveAppWebview } from "../../models/LiveAppWebview";
+import { LiveAppWebview, LiveAppWebviewServer } from "../../models/LiveAppWebview";
 
 test.use({ userdata: "skip-onboarding" });
 
+const liveAppServer = new LiveAppWebviewServer("dummy-ptx-app/public");
 let testServerIsRunning = false;
 
 test.beforeAll(async () => {
   // Check that dummy app in tests/dummy-ptx-app has been started successfully
-  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
+  testServerIsRunning = await liveAppServer.startLiveApp({
     name: "Buy App",
     id: "multibuy-v2",
     permissions: ["account.request"],
@@ -26,7 +27,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (testServerIsRunning) {
-    await LiveAppWebview.stopLiveApp();
+    await liveAppServer.stopLiveApp();
   }
 });
 

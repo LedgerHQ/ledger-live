@@ -5,15 +5,16 @@ import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../page/drawer/drawer";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import { LiveAppWebview } from "../../models/LiveAppWebview";
+import { LiveAppWebview, LiveAppWebviewServer } from "../../models/LiveAppWebview";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
+const liveAppServer = new LiveAppWebviewServer("dummy-live-app/build");
 let testServerIsRunning = false;
 
 test.beforeAll(async () => {
   // Check that dummy app in tests/dummy-live-app has been started successfully
-  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-live-app/build", {
+  testServerIsRunning = await liveAppServer.startLiveApp({
     name: "Dummy Live App",
     id: "dummy-live-app",
     permissions: [],
@@ -27,7 +28,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (testServerIsRunning) {
-    await LiveAppWebview.stopLiveApp();
+    await liveAppServer.stopLiveApp();
   }
 });
 

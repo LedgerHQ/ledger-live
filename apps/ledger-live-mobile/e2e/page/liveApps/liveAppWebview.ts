@@ -2,16 +2,27 @@ import { randomUUID } from "crypto";
 import { web, by } from "detox";
 import { e2eBridgeServer } from "../../bridge/server";
 import { first, filter, map } from "rxjs/operators";
-import { startDummyServer } from "@ledgerhq/test-utils";
+import { startDummyServer, createDummyServer, stopDummyServer } from "@ledgerhq/test-utils";
 import { getElementById } from "../../helpers";
 import { firstValueFrom } from "rxjs";
 
 export default class LiveAppWebview {
+  dummyServer: ReturnType<typeof createDummyServer>;
+  serverStarted = false;
+
+  constructor(liveAppDirectory: string) {
+    this.dummyServer = createDummyServer(`${liveAppDirectory}/build`);
+  }
+
   appTitle = () => getElementById("live-app-title");
 
-  async startLiveApp(liveAppDirectory: string, liveAppPort = 3000) {
+  async startLiveApp(liveAppPort = 3000) {
     try {
-      const port = await startDummyServer(`${liveAppDirectory}/dist`, liveAppPort);
+      if (this.serverStarted) {
+        await this.stopLiveApp();
+      }
+
+      const port = await startDummyServer(this.dummyServer, liveAppPort);
 
       const url = `http://localhost:${port}`;
       const response = await fetch(url);
@@ -20,6 +31,7 @@ export default class LiveAppWebview {
         console.info(
           `========> Dummy Wallet API app successfully running on port ${port}! <=========`,
         );
+        this.serverStarted = true;
         return true;
       } else {
         throw new Error("Ping response != 200, got: " + response.status);
@@ -29,6 +41,11 @@ export default class LiveAppWebview {
       console.error(error);
       return false;
     }
+  }
+
+  async stopLiveApp() {
+    await stopDummyServer(this.dummyServer);
+    this.serverStarted = false;
   }
 
   async send(params: Record<string, unknown>) {

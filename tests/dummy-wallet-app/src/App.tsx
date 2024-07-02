@@ -42,6 +42,12 @@ export default function App() {
             ))}
           </ol>
         </div>
+        <a href="ledgerlive://discover/dummy-live-app" data-test-id="dummy-live-app-anchor">
+          Dummy live app
+        </a>
+        <a href="ledgerlive://discover/dummy-live-app-2" data-test-id="dummy-live-app-2-anchor">
+          Dummy live app 2
+        </a>
         <button onClick={testLogger}>Test logger</button>
         {res ? <pre>{JSON.stringify(res, null, 2)}</pre> : null}
       </header>

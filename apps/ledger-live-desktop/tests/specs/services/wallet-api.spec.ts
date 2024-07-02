@@ -6,7 +6,7 @@ import { Drawer } from "../../page/drawer/drawer";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
-import { LiveAppWebview } from "../../models/LiveAppWebview";
+import { LiveAppWebview, LiveAppWebviewServer } from "../../models/LiveAppWebview";
 import BigNumber from "bignumber.js";
 import { version as LLD_VERSION } from "../../../package.json";
 
@@ -164,11 +164,14 @@ const account_list_mock = {
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
+const liveAppServer = new LiveAppWebviewServer("dummy-wallet-app/dist");
+const liveAppServer2 = new LiveAppWebviewServer("dummy-wallet-app/dist");
 let testServerIsRunning = false;
+let testServer2IsRunning = false;
 
 test.beforeAll(async () => {
   // Check that dummy app in tests/dummy-live-app has been started successfully
-  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-wallet-app/dist", {
+  testServerIsRunning = await liveAppServer.startLiveApp({
     name: "Dummy Wallet API Live App",
     id: "dummy-live-app",
     apiVersion: "2.0.0",
@@ -185,22 +188,68 @@ test.beforeAll(async () => {
 
   if (!testServerIsRunning) {
     console.warn("Stopping Buy/Sell test setup");
-    return;
+    throw new Error("Test server not running - Cancelling Wallet API E2E test");
+  }
+
+  testServer2IsRunning = await liveAppServer2.startLiveApp({
+    name: "Dummy Wallet API Live App 2",
+    id: "dummy-live-app-2",
+    apiVersion: "2.0.0",
+    content: {
+      shortDescription: {
+        en: "App to test the Wallet API",
+      },
+      description: {
+        en: "App to test the Wallet API with Playwright",
+      },
+    },
+    permissions: methods,
+  });
+
+  if (!testServer2IsRunning) {
+    console.warn("Stopping Buy/Sell test setup");
+    throw new Error("Test server 2 not running - Cancelling Wallet API E2E test");
   }
 });
 
 test.afterAll(async () => {
   if (testServerIsRunning) {
-    await LiveAppWebview.stopLiveApp();
+    await liveAppServer.stopLiveApp();
+  }
+
+  if (testServer2IsRunning) {
+    await liveAppServer2.stopLiveApp();
   }
 });
 
-test("Wallet API methods @smoke", async ({ page }) => {
-  if (!testServerIsRunning) {
-    console.warn("Test server not running - Cancelling Wallet API E2E test");
-    return;
-  }
+test("Live-app switch with deeplink", async ({ page, electronApp }) => {
+  const discoverPage = new DiscoverPage(page);
+  const liveAppWebview = new LiveAppWebview(page);
+  const drawer = new Drawer(page);
+  // const modal = new Modal(page);
+  const layout = new Layout(page);
+  // const deviceAction = new DeviceAction(page);
 
+  await layout.goToDiscover();
+  await discoverPage.openTestApp();
+  await drawer.continue();
+  await drawer.waitForDrawerToDisappear();
+
+  await expect(liveAppWebview.liveAppTitle).toHaveText("Dummy Wallet API Live App");
+
+  const [, webview] = electronApp.windows();
+  const liveApp2Anchor = webview.locator("data-test-id=dummy-live-app-2-anchor");
+  await liveApp2Anchor.click();
+
+  await expect(liveAppWebview.liveAppTitle).toHaveText("Dummy Wallet API Live App 2");
+
+  const liveAppAnchor = webview.locator("data-test-id=dummy-live-app-anchor");
+  await liveAppAnchor.click();
+
+  await expect(liveAppWebview.liveAppTitle).toHaveText("Dummy Wallet API Live App");
+});
+
+test("Wallet API methods @smoke", async ({ page }) => {
   const discoverPage = new DiscoverPage(page);
   const liveAppWebview = new LiveAppWebview(page);
   const drawer = new Drawer(page);
