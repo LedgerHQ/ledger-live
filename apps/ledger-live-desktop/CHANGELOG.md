@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.83.0-nightly.5
+
+### Patch Changes
+
+- [#7233](https://github.com/LedgerHQ/ledger-live/pull/7233) [`681f9bf`](https://github.com/LedgerHQ/ledger-live/commit/681f9bfd5dd1ff674c1d5c7ac8d08e3360744ba6) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - add toAccountId to queryparams for swap live app
+
 ## 2.83.0-nightly.4
 
 ### Patch Changes

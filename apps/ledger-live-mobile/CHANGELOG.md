@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.46.0-nightly.5
+
+### Patch Changes
+
+- [#7223](https://github.com/LedgerHQ/ledger-live/pull/7223) [`4818a20`](https://github.com/LedgerHQ/ledger-live/commit/4818a20d19decf11fe3bf62a373948ea932feb0a) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix image overlaps bug during Send on Flex.
+
+- [#7223](https://github.com/LedgerHQ/ledger-live/pull/7223) [`ba54c8f`](https://github.com/LedgerHQ/ledger-live/commit/ba54c8f0c620cc458edbdc200f05920fba605173) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix redirecting to wrong workflow bug.
+
 ## 3.46.0-nightly.4
 
 ### Minor Changes
