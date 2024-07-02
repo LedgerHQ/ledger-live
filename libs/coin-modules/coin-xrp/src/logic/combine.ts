@@ -1,11 +1,18 @@
 import { decode, encode } from "ripple-binary-codec";
+import { JsonObject } from "ripple-binary-codec/dist/types/serialized-type";
 
-export function combine(transaction: string, signature: string, pubkey: string): string {
-  const xrplTransaction = decode(transaction);
+type XRPTransaction = JsonObject & {
+  TxnSignature: string;
+  SigningPubKey?: string;
+};
 
-  return encode({
-    ...xrplTransaction,
-    SigningPubKey: pubkey,
-    TxnSignature: signature,
-  });
+export function combine(transaction: string, signature: string, publicKey?: string): string {
+  const xrplTransaction: JsonObject = decode(transaction);
+  let transactionWithSignature: XRPTransaction = { ...xrplTransaction, TxnSignature: signature };
+
+  if (publicKey) {
+    transactionWithSignature = { ...transactionWithSignature, SigningPubKey: publicKey };
+  }
+
+  return encode(transactionWithSignature);
 }
