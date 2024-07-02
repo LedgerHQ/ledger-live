@@ -7,6 +7,7 @@ import { Account, AccountLike, AccountRaw, AccountUserData } from "@ledgerhq/typ
 import { getDefaultAccountName, getDefaultAccountNameForCurrencyIndex } from "./accountName";
 import { AddAccountsAction } from "./addAccounts";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { DistantState as WalletSyncState } from "./walletsync";
 
 export type WalletState = {
   // user's customized name for each account id
@@ -14,11 +15,18 @@ export type WalletState = {
 
   // a set of all the account ids that are starred (NB: token accounts can also be starred)
   starredAccountIds: Set<string>;
+
+  // local copy of the wallet sync data last synchronized with the backend of wallet sync, in order to be able to diff what we need to do when we apply an incremental update
+  wsState: {
+    data: WalletSyncState | null;
+    version: number;
+  };
 };
 
 export const initialState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
+  wsState: { data: null, version: 0 },
 };
 
 export enum WalletHandlerType {
@@ -27,6 +35,7 @@ export enum WalletHandlerType {
   SET_ACCOUNT_STARRED = "SET_ACCOUNT_STARRED",
   BULK_SET_ACCOUNT_NAMES = "BULK_SET_ACCOUNT_NAMES",
   ADD_ACCOUNTS = "ADD_ACCOUNTS",
+  WALLET_SYNC_UPDATE = "WALLET_SYNC_UPDATE",
 }
 
 export type HandlersPayloads = {
@@ -35,6 +44,10 @@ export type HandlersPayloads = {
   BULK_SET_ACCOUNT_NAMES: { accountNames: Map<string, string> };
   SET_ACCOUNT_STARRED: { accountId: string; starred: boolean };
   ADD_ACCOUNTS: AddAccountsAction["payload"];
+  WALLET_SYNC_UPDATE: {
+    data: WalletSyncState | null;
+    version: number;
+  };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -59,6 +72,9 @@ export const handlers: WalletHandlers = {
     return {
       accountNames,
       starredAccountIds,
+      /////
+      // FIXME this part of the state is not correctly saved/restored at the moment, we need to improve the INIT_ACCOUNTS to include these data!
+      wsState: { data: null, version: 0 },
     };
   },
   SET_ACCOUNT_NAME: (state, { payload: { accountId, name } }) => {
@@ -97,6 +113,9 @@ export const handlers: WalletHandlers = {
       accountNames.set(account.id, name);
     }
     return { ...state, accountNames };
+  },
+  WALLET_SYNC_UPDATE: (state, { payload }) => {
+    return { ...state, wsState: payload };
   },
 };
 
