@@ -1,12 +1,23 @@
 import { BigNumber } from "bignumber.js";
 import { Transaction, MinaAccount } from "./types";
 import { CoinType } from "@ledgerhq/types-cryptoassets";
-import { MAX_MEMO_LENGTH } from "./consts";
+import { MAX_MEMO_LENGTH, MINA_DECODED_ADDRESS_LENGTH } from "./consts";
+import bs58check from "bs58check";
 
-export const isValidAddress = (_address: string): boolean => {
-  // TODO add a proper address validation
-  return true;
-};
+/*
+ * Validate a Mina address.
+ */
+export function isValidAddress(address: string) {
+  try {
+    if (!address.toLowerCase().startsWith("b62")) {
+      return false;
+    }
+    const decodedAddress = Buffer.from(bs58check.decode(address)).toString("hex");
+    return !!decodedAddress && decodedAddress.length === MINA_DECODED_ADDRESS_LENGTH;
+  } catch (ex) {
+    return false;
+  }
+}
 
 export const isValidMemo = (memo: string): boolean => {
   return memo.length <= MAX_MEMO_LENGTH;
