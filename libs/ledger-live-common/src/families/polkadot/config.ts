@@ -16,12 +16,12 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
       },
       metadataShortener: {
-        url: "https://api.zondax.ch/polkadot/transaction/metadata",
+        url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
       },
       metadataHash: {
-        url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+        url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
       },
-      runtimeUpgraded: false,
+      runtimeUpgraded: true,
     },
   },
 };
