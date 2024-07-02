@@ -1,8 +1,8 @@
 import { AppPage } from "tests/page/abstractClasses";
 
 export class AssetPage extends AppPage {
-  private stakeButton = this.page.locator("data-test-id=asset-page-stake-button");
-  private buyButton = this.page.locator("data-test-id=asset-page-buy-button");
+  private stakeButton = this.page.getByTestId("asset-page-stake-button");
+  private buyButton = this.page.getByTestId("asset-page-buy-button");
 
   async startStakeFlow() {
     await this.stakeButton.click();

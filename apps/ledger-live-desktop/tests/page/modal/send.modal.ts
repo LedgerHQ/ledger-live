@@ -13,11 +13,11 @@ export class SendModal extends Modal {
   );
   private checkTransactionbroadcastLabel = this.page.locator("text=Transaction sent");
   private addressValue = (address: string) =>
-    this.page.locator('[data-test-id="modal-content"]').locator(`text=${address}`);
+    this.page.getByTestId("modal-content").locator(`text=${address}`);
   private amountValue = (amount: string, currency: string) =>
     this.page.locator(`text=${amount} ${currency}`).first();
-  private recipientAddressDisplayedValue = this.page.locator("data-test-id=recipient-address");
-  private amountDisplayedValue = this.page.locator("data-test-id=transaction-amount");
+  private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
+  private amountDisplayedValue = this.page.getByTestId("transaction-amount");
 
   async selectAccount(name: string) {
     await this.drowdownAccount.click();
@@ -25,7 +25,7 @@ export class SendModal extends Modal {
   }
 
   async clickOnCameraButton() {
-    await this.page.locator('[data-test-id="open-camera-qrcode-scanner"]').first().click();
+    await this.page.getByTestId("open-camera-qrcode-scanner").first().click();
   }
 
   @step("Click `Continue` button")

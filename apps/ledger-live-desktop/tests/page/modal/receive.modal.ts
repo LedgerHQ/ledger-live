@@ -4,9 +4,7 @@ import { step } from "tests/misc/reporters/step";
 import { Token } from "tests/enum/Tokens";
 
 export class ReceiveModal extends Modal {
-  private skipDeviceButton = this.page.locator(
-    "data-test-id=receive-connect-device-skip-device-button",
-  );
+  private skipDeviceButton = this.page.getByTestId("receive-connect-device-skip-device-button");
   private verifyAddressOnDeviceLabel = this.page.locator(
     "text=Verify that the shared address exactly matches the one on your device",
   );

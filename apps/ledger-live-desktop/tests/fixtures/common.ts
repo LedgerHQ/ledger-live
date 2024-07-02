@@ -16,6 +16,7 @@ import { startSpeculos, stopSpeculos } from "../utils/speculos";
 import { Spec } from "../utils/speculos";
 
 import { allure } from "allure-playwright";
+import { Application } from "tests/page";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -41,6 +42,7 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   recordTestNamesForApiResponseLogging: void;
   simulateCamera: string;
+  app: Application;
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -57,6 +59,12 @@ export const test = base.extend<TestFixtures>({
   speculosCurrency: undefined,
   speculosOffset: undefined,
   testName: undefined,
+
+  app: async ({ page }, use) => {
+    const app = new Application(page);
+    await use(app);
+  },
+
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },

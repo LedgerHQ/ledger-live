@@ -1,17 +1,15 @@
 import { AppPage } from "tests/page/abstractClasses";
 
 export class InstallSetOfApps extends AppPage {
-  private debugInstallSetOfAppsButton = this.page.locator(
-    "data-test-id=debug-install-set-of-apps-button",
-  );
-  private resetButton = this.page.locator("data-test-id=reset-button");
-  private installCtaButton = this.page.locator("data-test-id=install-cta-button");
-  private cancelCtaButton = this.page.locator("data-test-id=skip-cta-button");
-  private inputOptionSelector = this.page.locator("data-test-id=input-option-selector");
+  private debugInstallSetOfAppsButton = this.page.getByTestId("debug-install-set-of-apps-button");
+  private resetButton = this.page.getByTestId("reset-button");
+  private installCtaButton = this.page.getByTestId("install-cta-button");
+  private cancelCtaButton = this.page.getByTestId("skip-cta-button");
+  private inputOptionSelector = this.page.getByTestId("input-option-selector");
 
   private circleProgressSelector = (circleProgress: string) =>
     this.page.locator(`circle[style="stroke-dashoffset: ${circleProgress};"]`);
-  private installingText = this.page.locator("data-test-id=installing-text");
+  private installingText = this.page.getByTestId("installing-text");
 
   async waitForLaunch() {
     await this.debugInstallSetOfAppsButton.waitFor({ state: "visible" });
