@@ -44,6 +44,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
@@ -51,15 +52,15 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
     "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
+    "icon-sdk-js": "1.5.2",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "prando": "^6.0.1",
-    "icon-sdk-js":"1.5.2",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
@@ -70,6 +71,7 @@
     "ts-jest": "^29.1.1"
   },
   "scripts": {
+    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-icon.json",
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",
     "prewatch": "pnpm build",

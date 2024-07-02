@@ -69,7 +69,7 @@ import type {
   TransactionRaw as iconTransactionRaw,
   TransactionStatus as iconTransactionStatus,
   TransactionStatusRaw as iconTransactionStatusRaw,
-} from "@ledgerhq/coin-icon/types";
+} from "@ledgerhq/coin-icon/types/index";
 import type {
   Transaction as internet_computerTransaction,
   TransactionRaw as internet_computerTransactionRaw,

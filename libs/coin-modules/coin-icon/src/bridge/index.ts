@@ -19,7 +19,7 @@ import { prepareTransaction } from "../prepareTransaction";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape } from "../synchronization";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
-import type { Transaction } from "../types";
+import type { Transaction } from "../types/index";
 import { IconSigner } from "../signer";
 import { IconCoinConfig, setCoinConfig } from "../config";
 
