@@ -4,7 +4,7 @@ import { DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate } from "@taquito/taquito";
 import { b58cencode, Prefix, prefix } from "@taquito/utils";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { getTezosToolkit } from "../network/tezosToolkit";
+import { getTezosToolkit } from "./tezosToolkit";
 import { TezosOperationMode } from "../types/model";
 
 export type CoreAccountInfo = {
