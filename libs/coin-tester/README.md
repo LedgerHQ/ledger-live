@@ -59,7 +59,7 @@ A `.env` should have at the very least the following attributes:
 ```conf
 SEED=chronic find success crew board merit elder life achieve scout gravity soul brief pen job
 GH_TOKEN=
-API_PORT=4040
+SPECULOS_API_PORT=4040
 SPECULOS_IMAGE=speculos
 ```
 
