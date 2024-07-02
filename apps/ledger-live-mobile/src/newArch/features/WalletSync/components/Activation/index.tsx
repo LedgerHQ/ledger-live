@@ -7,7 +7,11 @@ import { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
 import Drawer from "LLM/components/Dummy/Drawer";
 
-const Activation = () => {
+type Props<T extends boolean> = T extends true
+  ? { isInsideDrawer: T; openSyncMethodDrawer: () => void }
+  : { isInsideDrawer?: T; openSyncMethodDrawer?: undefined };
+
+const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDrawer }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -18,7 +22,7 @@ const Activation = () => {
   };
 
   const onPressHasAlreadyCreatedAKey = () => {
-    setIsDrawerOpen(true);
+    isInsideDrawer ? openSyncMethodDrawer() : setIsDrawerOpen(true);
   };
 
   const onPressCloseDrawer = () => {
@@ -48,7 +52,7 @@ const Activation = () => {
         onPressHasAlreadyCreatedAKey={onPressHasAlreadyCreatedAKey}
         onPressSyncAccounts={onPressSyncAccounts}
       />
-      <Drawer isOpen={isDrawerOpen} handleClose={onPressCloseDrawer} />
+      {!isInsideDrawer && <Drawer isOpen={isDrawerOpen} handleClose={onPressCloseDrawer} />}
     </Flex>
   );
 };

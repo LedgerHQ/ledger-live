@@ -137,11 +137,6 @@ export const DEFAULT_FEATURES: Features = {
     params: { amount: "$20", isNew: true, path: "/discover/refer-a-friend" },
   },
 
-  referralProgramMobile: {
-    enabled: false,
-    params: { path: "/discover/refer-a-friend" },
-  },
-
   protectServicesDesktop: {
     enabled: false,
     params: {

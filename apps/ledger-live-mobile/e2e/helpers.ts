@@ -1,5 +1,6 @@
 import { by, element, waitFor, device } from "detox";
 import { Direction } from "detox/detox";
+import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
 
 const DEFAULT_TIMEOUT = 60000; // 60s !!
 const BASE_DEEPLINK = "ledgerlive://";
@@ -128,4 +129,25 @@ export async function openDeeplink(path?: string) {
 
 export function isAndroid() {
   return device.getPlatform() === "android";
+}
+
+export async function launchApp() {
+  const port = await findFreePort();
+  closeBridge();
+  initBridge(port);
+  await device.launchApp({
+    launchArgs: {
+      wsPort: port,
+      detoxURLBlacklistRegex:
+        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*app.adjust.*",".*clients3.google.com.*"\\)',
+    },
+    languageAndLocale: {
+      language: "en-US",
+      locale: "en-US",
+    },
+    permissions: {
+      camera: "YES", // Give iOS permissions for the camera
+    },
+  });
+  return port;
 }

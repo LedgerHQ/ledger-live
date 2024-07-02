@@ -23,10 +23,14 @@ import {
 } from "~/renderer/reducers/settings";
 import { useRedirectToSwapHistory } from "../utils/index";
 
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { captureException } from "~/sentry/internal";
+import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -62,9 +66,10 @@ export type SwapWebProps = {
   manifest: LiveAppManifest;
   swapState?: Partial<SwapProps>;
   liveAppUnavailable(): void;
-  sourceCurrencyId?: string;
-  targetCurrencyId?: string;
   isMaxEnabled?: boolean;
+  sourceCurrency?: TokenCurrency | CryptoCurrency;
+  targetCurrency?: TokenCurrency | CryptoCurrency;
+  setQuoteState: (next: CustomSwapQuotesState) => void;
 };
 
 export const SwapWebManifestIDs = {
@@ -81,9 +86,10 @@ const SwapWebView = ({
   manifest,
   swapState,
   liveAppUnavailable,
-  sourceCurrencyId,
-  targetCurrencyId,
   isMaxEnabled,
+  sourceCurrency,
+  targetCurrency,
+  setQuoteState,
 }: SwapWebProps) => {
   const {
     colors: {
@@ -123,6 +129,68 @@ const SwapWebView = ({
       ...customPTXHandlers,
       "custom.swapStateGet": () => {
         return Promise.resolve(swapState);
+      },
+      "custom.setQuote": (quote: {
+        params?: {
+          amountTo?: number;
+          code?: string;
+          parameter: { minAmount: string; maxAmount: string };
+        };
+      }) => {
+        const toUnit = targetCurrency?.units[0];
+        const fromUnit = sourceCurrency?.units[0];
+
+        if (!quote.params) {
+          setQuoteState({
+            amountTo: undefined,
+            swapError: undefined,
+          });
+          return Promise.resolve();
+        }
+
+        if (quote.params?.code && fromUnit) {
+          switch (quote.params.code) {
+            case "minAmountError":
+              setQuoteState({
+                amountTo: undefined,
+                swapError: new SwapExchangeRateAmountTooLow(undefined, {
+                  minAmountFromFormatted: formatCurrencyUnit(
+                    fromUnit,
+                    new BigNumber(quote.params.parameter.minAmount).times(10 ** fromUnit.magnitude),
+                    {
+                      alwaysShowSign: false,
+                      disableRounding: true,
+                      showCode: true,
+                    },
+                  ),
+                }),
+              });
+              return Promise.resolve();
+            case "maxAmountError":
+              setQuoteState({
+                amountTo: undefined,
+                swapError: new SwapExchangeRateAmountTooLow(undefined, {
+                  minAmountFromFormatted: formatCurrencyUnit(
+                    fromUnit,
+                    new BigNumber(quote.params.parameter.maxAmount).times(10 ** fromUnit.magnitude),
+                    {
+                      alwaysShowSign: false,
+                      disableRounding: true,
+                      showCode: true,
+                    },
+                  ),
+                }),
+              });
+              return Promise.resolve();
+          }
+        }
+
+        if (toUnit && quote?.params?.amountTo) {
+          const amountTo = BigNumber(quote?.params?.amountTo).times(10 ** toUnit.magnitude);
+          setQuoteState({ amountTo, swapError: undefined });
+        }
+
+        return Promise.resolve();
       },
       // TODO: when we need bidirectional communication
       // "custom.swapStateSet": (params: CustomHandlersParams<unknown>) => {
@@ -196,14 +264,15 @@ const SwapWebView = ({
       addressFrom: addressFrom,
       addressTo: addressTo,
       amountFrom: swapState?.fromAmount,
-      from: sourceCurrencyId,
+      from: sourceCurrency?.id,
       hasError: swapState?.error ? "true" : undefined, // append param only if error is true
       isMaxEnabled: isMaxEnabled,
       loading: swapState?.loading,
       networkFees: swapState?.estimatedFees,
       networkFeesCurrency: fromCurrency,
       provider: swapState?.provider,
-      to: targetCurrencyId,
+      to: targetCurrency?.id,
+      toAccountId: swapState?.toAccountId,
     };
 
     Object.entries(swapParams).forEach(([key, value]) => {
@@ -215,17 +284,18 @@ const SwapWebView = ({
 
     return searchParams.toString();
   }, [
-    swapState?.fromAmount,
-    swapState?.loading,
-    swapState?.estimatedFees,
-    swapState?.provider,
-    swapState?.error,
     addressFrom,
     addressTo,
-    sourceCurrencyId,
-    isMaxEnabled,
     fromCurrency,
-    targetCurrencyId,
+    isMaxEnabled,
+    sourceCurrency?.id,
+    swapState?.error,
+    swapState?.estimatedFees,
+    swapState?.fromAmount,
+    swapState?.loading,
+    swapState?.provider,
+    swapState?.toAccountId,
+    targetCurrency?.id,
   ]);
 
   // return loader???

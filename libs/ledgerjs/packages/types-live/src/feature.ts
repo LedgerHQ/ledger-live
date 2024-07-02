@@ -137,7 +137,6 @@ export type Features = CurrencyFeatures & {
   buySellShortcut: DefaultFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
-  referralProgramMobile: Feature_ReferralProgramMobile;
   disableNftSend: Feature_DisableNftSend;
   disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
   disableNftRaribleOpensea: Feature_DisableNftRaribleOpensea;
@@ -220,10 +219,6 @@ export type Feature_StakePrograms = Feature<{
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;
-
-export type Feature_ReferralProgramMobile = Feature<{
-  path: string;
-}>;
 
 export type Feature_ReferralProgramDesktopSidebar = Feature<{
   path: string;
