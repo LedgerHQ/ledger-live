@@ -79,29 +79,6 @@ export type Delegation = {
   sendShouldWarnDelegation: boolean;
 };
 
-export type API_BAKER = {
-  address: string;
-  name: string;
-  logo: string;
-  balance: number;
-  stakingBalance: number;
-  stakingCapacity: number;
-  maxStakingBalance: number;
-  freeSpace: number;
-  fee: number;
-  minDelegation: number;
-  payoutDelay: number;
-  payoutPeriod: number;
-  openForDelegation: true;
-  estimatedRoi: number;
-  serviceType: string;
-  serviceHealth: string;
-  payoutTiming: string;
-  payoutAccuracy: string;
-  audit?: string;
-  insuranceCoverage: number;
-};
-
 export type TezosAccount = Account & { tezosResources: TezosResources };
 export function isTezosAccount(account: Account): account is TezosAccount {
   return "tezosResources" in account;
