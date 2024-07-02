@@ -1,18 +1,16 @@
 import expect from "expect";
 import invariant from "invariant";
 import BigNumber from "bignumber.js";
-import type { Transaction } from "./types";
-import {
-  getCryptoCurrencyById,
-  parseCurrencyUnit,
-  listTokensForCryptoCurrency,
-} from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { SubAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { acceptTransaction } from "./speculos-deviceActions";
+import type { Transaction } from "./types";
 
 const currency = getCryptoCurrencyById("stellar");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");

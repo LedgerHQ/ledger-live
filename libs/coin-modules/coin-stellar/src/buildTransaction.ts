@@ -9,15 +9,15 @@ import {
   buildTransactionBuilder,
   buildChangeTrustOperation,
   loadAccount,
-} from "./api";
+} from "./network";
 import { getRecipientAccount, getAmountValue } from "./logic";
-import { StellarAssetRequired, StellarMuxedAccountNotExist } from "../../errors";
+import { StellarAssetRequired, StellarMuxedAccountNotExist } from "./errors";
 
 /**
  * @param {Account} account
  * @param {Transaction} transaction
  */
-export const buildTransaction = async (account: Account, transaction: Transaction) => {
+export async function buildTransaction(account: Account, transaction: Transaction) {
   const { recipient, networkInfo, fees, memoType, memoValue, mode, assetCode, assetIssuer } =
     transaction;
 
@@ -101,6 +101,6 @@ export const buildTransaction = async (account: Account, transaction: Transactio
 
   const built = transactionBuilder.setTimeout(0).build();
   return built;
-};
+}
 
 export default buildTransaction;

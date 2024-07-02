@@ -1,7 +1,7 @@
-import type { AccountLike, Account, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import type { Transaction } from "../../generated/types";
-import { getAccountCurrency } from "../../account";
+import type { AccountLike, Account, AccountLikeArray } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import type { Transaction } from "./types";
 import { getAssetIdFromTokenId } from "./tokens";
 
 const options = [
@@ -35,7 +35,7 @@ const options = [
     type: String,
     desc: "Same as token",
   },
-];
+] as const;
 
 function inferTransactions(
   transactions: Array<{
@@ -98,8 +98,10 @@ function inferAccounts(account: Account, opts: Record<string, any>): AccountLike
   return [account];
 }
 
-export default {
-  options,
-  inferAccounts,
-  inferTransactions,
-};
+export default function makeCliTools() {
+  return {
+    options,
+    inferTransactions,
+    inferAccounts,
+  };
+}

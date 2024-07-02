@@ -1,16 +1,17 @@
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { listTokensForCryptoCurrency, findTokenById, parseCurrencyUnit } from "../../currencies";
-import type { BalanceAsset, StellarOperation } from "./types";
-import { encodeOperationId } from "../../operation";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import type { BalanceAsset, StellarOperation } from "./types";
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
 const getAssetIdFromAsset = (asset: BalanceAsset) => `${asset.asset_code}:${asset.asset_issuer}`;
 
-const buildStellarTokenAccount = ({
+function buildStellarTokenAccount({
   parentAccountId,
   stellarAsset,
   token,
@@ -20,7 +21,7 @@ const buildStellarTokenAccount = ({
   stellarAsset: BalanceAsset;
   token: TokenCurrency;
   operations: StellarOperation[];
-}): TokenAccount => {
+}): TokenAccount {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
   const balance = parseCurrencyUnit(token.units[0], stellarAsset.balance || "0");
@@ -50,9 +51,9 @@ const buildStellarTokenAccount = ({
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
   };
-};
+}
 
-export const buildSubAccounts = ({
+export function buildSubAccounts({
   currency,
   accountId,
   assets,
@@ -64,7 +65,7 @@ export const buildSubAccounts = ({
   assets: BalanceAsset[];
   syncConfig: SyncConfig;
   operations: StellarOperation[];
-}): TokenAccount[] | undefined => {
+}): TokenAccount[] | undefined {
   const { blacklistedTokenIds = [] } = syncConfig;
   const allTokens = listTokensForCryptoCurrency(currency);
 
@@ -94,4 +95,4 @@ export const buildSubAccounts = ({
   });
 
   return tokenAccounts;
-};
+}
