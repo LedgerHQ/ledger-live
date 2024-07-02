@@ -1457,16 +1457,16 @@
     "featuredButtons": {
       "buySell": {
         "title": "Buy / Sell",
-        "description": "Buy and sell with trusted providers"
+        "description": "Buy and sell with our trusted providers"
       },
       "swap": {
         "title": "Swap",
-        "description": "Convert crypto to crypto securely",
+        "description": "Convert crypto to crypto",
         "label": "Popular"
       },
       "earn": {
         "title": "Stake",
-        "description": "Grow your crypto with Ledger"
+        "description": "Stake your crypto with Ledger"
       }
     },
     "recoverBanner": {
