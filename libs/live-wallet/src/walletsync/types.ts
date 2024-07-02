@@ -4,9 +4,6 @@ import { ZodType, z } from "zod";
 /**
  * WalletSyncDataManager is a module that is responsible for managing the reconciliation of incremental data updates.
  *
- * - in index.ts: a top-level WalletSyncDataManager composes all modules. The data is segmented into JS Object fields (one field = one module)
- * - under modules/ folder: each module implements a WalletSyncDataManager at the field level of the main data.
- *
  * Glossary:
  *
  * LocalState = All the data that the client has locally that the module needs as an input for the reconciliation.
@@ -74,3 +71,11 @@ export type DistantDiff<DistantState> = {
   hasChanges: boolean;
   nextState: DistantState;
 };
+
+// utility types
+
+export type ExtractLocalState<T> = T extends WalletSyncDataManager<infer L, any, any> ? L : never;
+
+export type ExtractUpdateEvent<T> = T extends WalletSyncDataManager<any, infer U, any> ? U : never;
+
+export type ExtractSchema<T> = T extends WalletSyncDataManager<any, any, infer S> ? S : never;

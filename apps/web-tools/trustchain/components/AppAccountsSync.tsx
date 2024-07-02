@@ -9,7 +9,7 @@ import {
   accountNameWithDefaultSelector,
   setAccountName as setAccountNameAction,
 } from "@ledgerhq/live-wallet/store";
-import walletsync from "@ledgerhq/live-wallet/walletsync/index";
+import walletsync, { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Account, BridgeCacheSystem } from "@ledgerhq/types-live";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
@@ -74,7 +74,7 @@ export default function AppAccountsSync({
   }, []);
 
   const saveNewUpdate = useCallback(
-    async (event: UpdateEvent) => {
+    async (event: UpdateEvent<DistantState>) => {
       switch (event.type) {
         case "new-data": {
           const version = event.version;
@@ -148,7 +148,14 @@ export default function AppAccountsSync({
   );
 
   const walletSyncSdk = useMemo(
-    () => new CloudSyncSDK({ trustchainSdk, getCurrentVersion, saveNewUpdate }),
+    () =>
+      new CloudSyncSDK({
+        slug: "live",
+        schema: walletsync.schema,
+        trustchainSdk,
+        getCurrentVersion,
+        saveNewUpdate,
+      }),
     [trustchainSdk, getCurrentVersion, saveNewUpdate],
   );
 
