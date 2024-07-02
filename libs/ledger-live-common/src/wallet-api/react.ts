@@ -6,12 +6,7 @@ import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@l
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import { useWalletAPIServer as useWalletAPIServerRaw } from "@ledgerhq/wallet-api-server/lib/react";
-import {
-  ServerError,
-  createCurrencyNotFound,
-  Transport,
-  Permission,
-} from "@ledgerhq/wallet-api-core";
+import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { StateDB } from "../hooks/useDBRaw";
 import { Observable, firstValueFrom, Subject } from "rxjs";
 import { first } from "rxjs/operators";
@@ -71,11 +66,9 @@ export function useWalletAPIAccounts(
   }, [walletState, accounts]);
 }
 
-const allCurrenciesAndTokens = listCurrencies(true);
-
 export function useWalletAPICurrencies(): WalletAPICurrency[] {
   return useMemo(() => {
-    return allCurrenciesAndTokens.reduce<WalletAPICurrency[]>((filtered, currency) => {
+    return listCurrencies(true).reduce<WalletAPICurrency[]>((filtered, currency) => {
       if (isWalletAPISupportedCurrency(currency)) {
         filtered.push(currencyToWalletAPICurrency(currency));
       }
@@ -86,6 +79,8 @@ export function useWalletAPICurrencies(): WalletAPICurrency[] {
 
 export function useManifestCurrencies(manifest: AppManifest) {
   return useMemo(() => {
+    const allCurrenciesAndTokens = listCurrencies(true);
+
     return manifest.currencies === "*"
       ? allCurrenciesAndTokens
       : matchCurrencies(allCurrenciesAndTokens, manifest.currencies);
@@ -350,24 +345,13 @@ export function useWalletAPIServer({
 
       return new Promise((resolve, reject) => {
         // handle no curencies selected case
-        const currencyIds = currencies.map(({ id }) => id);
-
-        let currencyList: CryptoOrTokenCurrency[] = [];
-        // if single currency available redirect to select account directly
-        if (currencyIds.length === 1) {
-          const currency = findCryptoCurrencyById(currencyIds[0]) || findTokenById(currencyIds[0]);
+        const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
+          const currency = findCryptoCurrencyById(id) || findTokenById(id);
           if (currency) {
-            currencyList = [currency];
+            prev.push(currency);
           }
-
-          if (!currencyList[0]) {
-            tracking.requestAccountFail(manifest);
-            // @TODO replace with correct error
-            reject(new ServerError(createCurrencyNotFound(currencyIds[0])));
-          }
-        } else {
-          currencyList = allCurrenciesAndTokens.filter(({ id }) => currencyIds.includes(id));
-        }
+          return prev;
+        }, []);
 
         uiAccountRequest({
           accounts$,
