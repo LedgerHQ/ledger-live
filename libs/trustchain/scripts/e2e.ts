@@ -22,7 +22,7 @@ async function main() {
       const snapshotFile = path.join(unitFolder, slug + ".json");
       const unitTestFile = path.join(unitFolder, slug + ".ts");
       const snapshotFileExists = await exists(snapshotFile);
-      if (snapshotFileExists && process.env.SKIP_IF_SNAPSHOT_EXISTS) {
+      if (snapshotFileExists && !process.env.RUN_EVEN_IF_SNAPSHOT_EXISTS) {
         continue;
       }
       console.log("RUNNING E2E ON TEST SCENARIO", slug);
