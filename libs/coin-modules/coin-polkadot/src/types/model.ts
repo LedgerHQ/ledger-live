@@ -73,13 +73,13 @@ export type CoreTransasctionInfo = {
 export type TransasctionPayloadInfo = {
   // after runtime upgrade
   address: string;
+  blockHash: string;
+  era: `0x${string}`;
+  genesisHash: string;
   method: `0x${string}`;
   nonce: number;
-  genesisHash: string;
-  era: `0x${string}`;
-  blockHash: string;
-  transactionVersion: `0x${string}`;
   specVersion: `0x${string}`;
+  transactionVersion: `0x${string}`;
   version: number;
   mode: number;
   metadataHash: Uint8Array;

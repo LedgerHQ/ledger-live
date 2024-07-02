@@ -227,16 +227,16 @@ export async function craftTransaction(
     const metadataHash = await polkadotAPI.metadataHash();
     unsigned = {
       address,
+      blockHash,
+      era,
+      genesisHash,
       method,
       nonce: nonceToUse,
-      genesisHash,
-      era,
-      blockHash,
       transactionVersion,
       specVersion,
       version: EXTRINSIC_VERSION,
-      mode: 1,
       metadataHash: hexToU8a("01" + metadataHash),
+      mode: 1,
     } as TransasctionPayloadInfo;
   }
 

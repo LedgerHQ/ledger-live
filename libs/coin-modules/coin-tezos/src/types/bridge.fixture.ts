@@ -6,7 +6,7 @@ import type {
   TezosOperationExtra,
   TezosResources,
   Transaction,
-} from "./model";
+} from "./bridge";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
