@@ -21336,9 +21336,9 @@
       },
       {
         "data": {
-          "id": "mock:1:polygon:true_polygon_0:",
+          "id": "mock:1:arbitrum:true_arbitrum_0:",
           "seedIdentifier": "mock",
-          "name": "Polygon 1",
+          "name": "Arbitrum 1",
           "starred": false,
           "derivationMode": "",
           "index": 0,
@@ -21349,7 +21349,7 @@
           "operationsCount": 0,
           "operations": [],
           "pendingOperations": [],
-          "currencyId": "polygon",
+          "currencyId": "arbitrum",
           "unitMagnitude": 18,
           "lastSyncDate": "2020-03-14T17:34:42.000Z",
           "balance": "10135465432293584185",
