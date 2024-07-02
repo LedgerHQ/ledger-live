@@ -115,6 +115,19 @@ jobs:
           name: allure-results-${{ matrix.shardIndex }}
           path: "apps/ledger-live-desktop/allure-results"
 
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v4.3.0
+        if: failure() && !cancelled()
+        with:
+          name: playwright-results-linux
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
+
   report-and-notify:
     name: "Report and Notify"
     runs-on: [ledger-live-medium]
