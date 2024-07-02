@@ -79,7 +79,7 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Ethereum Classic",
-      appVersion: "1.10.3",
+      appVersion: "1.10.4",
     },
     dependency: "",
   },
@@ -196,7 +196,7 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Binance Smart Chain",
-      appVersion: "1.10.3",
+      appVersion: "1.10.4",
     },
     dependency: "",
   },
