@@ -114,6 +114,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
+    "dull-foxes-suffer",
     "witty-clouds-change"
   ]
 }

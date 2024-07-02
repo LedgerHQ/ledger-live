@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.45.2-hotfix.1
+
+### Patch Changes
+
+- [#7241](https://github.com/LedgerHQ/ledger-live/pull/7241) [`22a4ebf`](https://github.com/LedgerHQ/ledger-live/commit/22a4ebf8130b0c8f06c132769a6b0ef5602bfd7d) Thanks [@valpinkman](https://github.com/valpinkman)! - move update firmware checks to the ViewProps component and add tests
+
 ## 3.45.2-hotfix.0
 
 ### Patch Changes
