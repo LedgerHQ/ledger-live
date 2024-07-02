@@ -39,7 +39,7 @@ import { accountsSelector } from "~/reducers/accounts";
 
 type Props = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccount>;
 
-function AddAccountsAccounts({ navigation, route }: Props) {
+function AddAccount({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -96,11 +96,11 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   );
 
   useEffect(() => {
-    if (!scanning && scannedAccounts.length === 1) {
+    if (!scanning && !selectedAccount && scannedAccounts.length === 1) {
       setAddingAccount(true);
       selectAccount(scannedAccounts[0], 4000);
     }
-  }, [scanning, scannedAccounts, selectAccount]);
+  }, [scanning, scannedAccounts, selectAccount, selectedAccount]);
 
   const startSubscription = useCallback(() => {
     const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
@@ -138,13 +138,15 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
             pa.subAccounts = [...(pa.subAccounts || []), tokenA];
           }
-
           setScannedAccounts((accs: Account[]) => [...accs, pa]); // add the account with the newly added token account to the list of scanned accounts
         } else {
           setScannedAccounts((accs: Account[]) => [...accs, account]); // add the account to the list of scanned accounts
         }
       },
-      complete: () => setScanning(false),
+      complete: () => {
+        setAddingAccount(true);
+        setScanning(false);
+      },
       error: error => {
         logger.critical(error);
         setError(error);
@@ -195,7 +197,12 @@ function AddAccountsAccounts({ navigation, route }: Props) {
         <Flex px={6}>
           <AccountCard
             account={acc}
-            onPress={() => selectAccount(account)}
+            onPress={() =>
+              navigation.navigate(ScreenName.ReceiveConfirmation, {
+                ...route.params,
+                accountId: account.id,
+              })
+            }
             AccountSubTitle={
               currency.type === "TokenCurrency" ? (
                 <LText color="neutral.c70">
@@ -207,7 +214,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
         </Flex>
       ) : null;
     },
-    [currency.id, currency.type, selectAccount, walletState],
+    [currency.id, currency.type, navigation, route.params, walletState],
   );
 
   const renderHeader = useCallback(
@@ -371,4 +378,4 @@ function Loading({
   );
 }
 
-export default memo(AddAccountsAccounts);
+export default memo(AddAccount);
