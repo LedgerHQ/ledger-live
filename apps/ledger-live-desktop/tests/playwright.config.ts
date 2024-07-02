@@ -1,5 +1,12 @@
 import { PlaywrightTestConfig } from "@playwright/test";
 
+const xrayOptions = {
+  embedAnnotationsAsProperties: true,
+  textContentAnnotations: ["test_description"],
+  embedAttachmentsAsProperty: "testrun_evidence",
+  outputFile: "artifacts/xray/xml-report.xml",
+};
+
 const config: PlaywrightTestConfig = {
   projects: [
     {
@@ -48,6 +55,8 @@ const config: PlaywrightTestConfig = {
         ["github"],
         ["line"],
         ["allure-playwright"],
+        ["junit", xrayOptions],
+        ["./utils/xray-reporter.ts"],
       ]
     : [["allure-playwright"]],
 };

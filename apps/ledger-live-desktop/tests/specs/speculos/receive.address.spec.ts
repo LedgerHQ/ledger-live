@@ -2,11 +2,12 @@ import test from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTestAnnotations } from "tests/fixtures/common";
 
 const accounts: Account[] = [
   // Derivation path is updated when account receive money
   Account.BTC_1,
+  Account.tBTC_1,
   Account.ETH_1,
   Account.SOL_1,
   Account.TRX_1,
@@ -17,7 +18,7 @@ const accounts: Account[] = [
   Account.XTZ_1,
 ];
 
-//Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
+//Warning 🚨: test can fail due to GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, account] of accounts.entries()) {
   test.describe.skip("Receive", () => {
     test.use({
@@ -27,8 +28,8 @@ for (const [i, account] of accounts.entries()) {
       speculosOffset: i,
     });
 
-    test(`[${account.currency.uiName}] Receive`, async ({ page }) => {
-      addTmsLink(["B2CQA-249"]);
+    test(`[${account.currency.uiName}] Receive`, async ({ page }, testInfo) => {
+      await addTestAnnotations(testInfo, ["B2CQA-249", "B2CQA-651"]);
 
       const app = new Application(page);
 

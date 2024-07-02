@@ -2,7 +2,7 @@ import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
 import { Application } from "tests/page";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTestAnnotations } from "tests/fixtures/common";
 
 const currencies: Currency[] = [
   Currency.BTC,
@@ -29,8 +29,15 @@ for (const [i, currency] of currencies.entries()) {
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
 
-    test(`[${currency.uiName}] Add account`, async ({ page }) => {
-      addTmsLink(["B2CQA-101", "B2CQA-102", "B2CQA-314", "B2CQA-330", "B2CQA-929"]);
+    test(`[${currency.uiName}] Add account`, async ({ page }, testInfo) => {
+      await addTestAnnotations(testInfo, [
+        "B2CQA-101",
+        "B2CQA-102",
+        "B2CQA-314",
+        "B2CQA-330",
+        "B2CQA-929",
+        "B2CQA-786",
+      ]);
 
       const app = new Application(page);
 

@@ -30,16 +30,21 @@ on:
         description: Enable transaction broadcast
         type: boolean
         default: false
-
-      report_path:
-        description: Path where you want to store this execution's results
-        required: false
-        default: "allure-results-linux"
       slack_notif:
         description: "Send notification to Slack?"
         required: false
         type: boolean
         default: false
+      export_to_xray:
+        description: Send tests results to Xray
+        required: false
+        type: boolean
+        default: false
+      test_plan:
+        description: "Test plan identifier to be used in Xray"
+        required: false
+        type: string
+        default: "B2CQA-2377"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -110,9 +115,13 @@ jobs:
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+          XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
           ENABLE_BROADCAST: ${{ contains(inputs.enable_broadcast, 'true') }}
           SPECULOS_TESTS: ${{ !contains(inputs.speculos_tests, 'false') }}
-
+          XRAY: ${{ inputs.export_to_xray }}
+          TEST_PLAN: ${{ inputs.test_plan }}
+          PROJECT_KEY: B2CQA
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop

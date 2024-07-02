@@ -4,6 +4,7 @@ import {
   ElectronApplication,
   _electron as electron,
   ChromiumBrowserContext,
+  TestInfo,
 } from "@playwright/test";
 import * as fs from "fs";
 import fsPromises from "fs/promises";
@@ -12,8 +13,7 @@ import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { responseLogfilePath } from "../utils/networkResponseLogger";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos } from "../utils/speculos";
-import { Spec } from "../utils/speculos";
+import { startSpeculos, stopSpeculos, Spec } from "../utils/speculos";
 
 import { allure } from "allure-playwright";
 
@@ -267,9 +267,10 @@ export async function launchApp({
   });
 }
 
-export async function addTmsLink(ids: string[]) {
+export async function addTestAnnotations(testInfo: TestInfo, ids: string[]) {
   for (const id of ids) {
     await allure.tms(id, `https://ledgerhq.atlassian.net/browse/${id}`);
+    testInfo.annotations.push({ type: "test_key", description: `${id}` });
   }
 }
 

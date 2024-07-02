@@ -3,6 +3,7 @@ import { Account } from "../../enum/Account";
 import { Transaction } from "../../models/Transaction";
 import { specs } from "../../utils/speculos";
 import { Application } from "tests/page";
+import { addTestAnnotations } from "tests/fixtures/common";
 
 // ONLY TESTNET (SEND WILL BE APPROVED ON DEVICE)
 const transactions = [
@@ -11,7 +12,7 @@ const transactions = [
   new Transaction(Account.sep_ETH_1, Account.sep_ETH_2.address, "0.00001", "medium"),
 ];
 
-//This test might sporadically fail due to getAppAndVersion issue - Jira: LIVE-12581
+//Warning 🚨: test can fail due to GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, transaction] of transactions.entries()) {
   test.describe.parallel("Send Approve", () => {
     test.use({
@@ -23,7 +24,9 @@ for (const [i, transaction] of transactions.entries()) {
 
     //@TmsLink("TODO")
 
-    test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
+    test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }, testInfo) => {
+      await addTestAnnotations(testInfo, ["B2CQA-473"]); // todo: update the key
+
       const app = new Application(page);
 
       await app.layout.goToAccounts();
