@@ -62,26 +62,12 @@ export class SDK implements TrustchainSDK {
     const [parsed, _] = Challenge.fromBytes(data);
     const hash = await crypto.hash(parsed.getUnsignedTLV());
     const keypair = convertLiveCredentialsToKeyPair(memberCredentials);
-    const sig = await crypto.sign(hash, keypair);
-    const signature = crypto.to_hex(sig);
-    const credential = {
-      version: 0,
-      curveId: 33,
-      signAlgorithm: 1,
-      publicKey: memberCredentials.pubkey,
-    };
-    const trustchainId = new TextEncoder().encode(trustchain.rootId);
-    const att = new Uint8Array(2 + trustchainId.length);
-    att[0] = 0x02;
-    att[1] = trustchainId.length;
-    att.set(trustchainId, 2);
-    const attestation = crypto.to_hex(att);
     const response = await api.postChallengeResponse({
       challenge: challenge.json,
       signature: {
-        credential,
-        signature,
-        attestation,
+        credential: credentialForPubKey(memberCredentials.pubkey),
+        signature: crypto.to_hex(await crypto.sign(hash, keypair)),
+        attestation: crypto.to_hex(liveAuthentication(trustchain.rootId)),
       },
     });
     return response;
@@ -212,14 +198,18 @@ export class SDK implements TrustchainSDK {
     const hw = device.apdu(transport);
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
-    const m = await fetchTrustchainAndResolve(deviceJWT, trustchainId, applicationId);
-    const members = m.resolved.getMembersData();
+    // eslint-disable-next-line prefer-const
+    let { resolved, streamTree, applicationRootPath } = await fetchTrustchainAndResolve(
+      deviceJWT,
+      trustchainId,
+      applicationId,
+    );
+    const members = resolved.getMembersData();
     const withoutMember = members.filter(m => m.id !== member.id);
     invariant(withoutMember.length < members.length, "member not found"); // invariant because the UI should not allow this case.
     const withoutMemberOrMe = withoutMember.filter(m => m.id !== memberCredentials.pubkey);
     const softwareDevice = getSoftwareDevice(memberCredentials);
 
-    let { streamTree } = m;
     const newPath = streamTree.getApplicationRootPath(applicationId, 1);
 
     // derive a new branch of the tree on the new path
@@ -252,7 +242,7 @@ export class SDK implements TrustchainSDK {
     // close the previous stream
     streamTree = await closeStream(
       streamTree,
-      m.applicationRootPath,
+      applicationRootPath,
       trustchainId,
       deviceJWT,
       softwareDevice,
@@ -441,6 +431,20 @@ function remapUserInteractions<T>(
     .finally(() => {
       callbacks?.onStartRequestUserInteraction();
     });
+}
+
+// spec https://ledgerhq.atlassian.net/wiki/spaces/TA/pages/4335960138/ARCH+LedgerLive+Auth+specifications
+function liveAuthentication(rootId: string): Uint8Array {
+  const trustchainId = new TextEncoder().encode(rootId);
+  const att = new Uint8Array(2 + trustchainId.length);
+  att[0] = 0x02; // Prefix tag
+  att[1] = trustchainId.length;
+  att.set(trustchainId, 2);
+  return att;
+}
+
+function credentialForPubKey(publicKey: string) {
+  return { version: 0, curveId: 33, signAlgorithm: 1, publicKey };
 }
 
 function invariant(condition: unknown, message: string): asserts condition {
