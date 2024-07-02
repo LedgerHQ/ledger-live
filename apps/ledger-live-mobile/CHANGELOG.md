@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.45.2-hotfix.3
+
+### Patch Changes
+
+- [#7241](https://github.com/LedgerHQ/ledger-live/pull/7241) [`fc95e03`](https://github.com/LedgerHQ/ledger-live/commit/fc95e032a0045093e343017051fc2f64fa3bcdef) Thanks [@valpinkman](https://github.com/valpinkman)! - Bluetooth update banner to always display but shows the correct message in a drawer if the update is not supported
+
 ## 3.45.2-hotfix.2
 
 ### Patch Changes

@@ -114,6 +114,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
+    "blue-pumpkins-pretend",
     "dull-foxes-suffer",
     "lucky-lobsters-rescue",
     "pink-forks-remain",
