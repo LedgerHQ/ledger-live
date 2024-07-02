@@ -472,8 +472,8 @@ const SwapForm = () => {
   }, [
     setQuoteState,
     sourceAccount,
-    swapWebProps.toAccountId,
-    swapWebProps.fromAmount,
+    swapWebProps?.toAccountId,
+    swapWebProps?.fromAmount,
     isDemo1Enabled,
   ]);
 
