@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { CoreTransactionInfo, estimateFees } from "./estimateFees";
 import coinConfig, { TezosCoinConfig } from "../config";
 
@@ -21,18 +20,27 @@ describe("estimateFees", () => {
     );
   });
 
-  it("returns correct value", async () => {
-    // Given
-    const account = {
+  const accounts = [
+    {
       xpub: "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
       address: "tz1UHux4ijk2Qu6Ee3dDpka4vnAiEhiDLZMa",
       balance: BigInt("2000000"),
       revealed: false,
-    };
+    },
+    {
+      // No xpub provided
+      address: "tz1UHux4ijk2Qu6Ee3dDpka4vnAiEhiDLZMa",
+      balance: BigInt("2000000"),
+      revealed: false,
+    },
+  ];
+
+  it.each(accounts)("returns correct value", async account => {
+    // Given
     const transaction = {
       mode: "send",
       recipient: "tz1PWFt4Ym6HedY78MgUP2kVDtSampGwprs5",
-      amount: 1_000_000,
+      amount: BigInt(1_000_000),
     } satisfies CoreTransactionInfo;
 
     // When
@@ -47,18 +55,12 @@ describe("estimateFees", () => {
     });
   });
 
-  it("returns correct value when useAllAmount", async () => {
+  it.each(accounts)("returns correct value when useAllAmount", async account => {
     // Given
-    const account = {
-      xpub: "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
-      address: "tz1UHux4ijk2Qu6Ee3dDpka4vnAiEhiDLZMa",
-      balance: BigInt("2000000"),
-      revealed: false,
-    };
     const transaction = {
       mode: "send",
       recipient: "tz1PWFt4Ym6HedY78MgUP2kVDtSampGwprs5",
-      amount: 1_000_000,
+      amount: BigInt(1_000_000),
       useAllAmount: true,
     } satisfies CoreTransactionInfo;
 

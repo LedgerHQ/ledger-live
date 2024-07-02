@@ -7,15 +7,15 @@ import { getTezosToolkit } from "./tezosToolkit";
 import { TezosOperationMode } from "../types/model";
 
 export type CoreAccountInfo = {
-  xpub?: string;
   address: string;
   balance: bigint;
   revealed: boolean;
+  xpub?: string;
 };
 export type CoreTransactionInfo = {
   mode: TezosOperationMode;
   recipient: string;
-  amount: number;
+  amount: bigint;
   useAllAmount?: boolean;
 };
 
@@ -57,7 +57,7 @@ export async function estimateFees({
 
   let amount = transaction.amount;
   if (transaction.useAllAmount) {
-    amount = 1; // send max do a pre-estimation with minimum amount (taquito refuses 0)
+    amount = BigInt(1); // send max do a pre-estimation with minimum amount (taquito refuses 0)
   }
 
   const estimation: EstimatedFees = {
@@ -74,7 +74,7 @@ export async function estimateFees({
         estimate = await tezosToolkit.estimate.transfer({
           mutez: true,
           to: transaction.recipient,
-          amount,
+          amount: parseInt(amount.toString()),
           storageLimit: DEFAULT_STORAGE_LIMIT.ORIGINATION, // https://github.com/TezTech/eztz/blob/master/PROTO_003_FEES.md for originating an account
         });
         break;
