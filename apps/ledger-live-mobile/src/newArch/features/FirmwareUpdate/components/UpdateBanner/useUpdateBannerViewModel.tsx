@@ -1,7 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
+import { DeviceModelId } from "@ledgerhq/devices";
+import semver from "semver";
 import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
@@ -30,8 +32,22 @@ export function useUpdateBannerViewModel({
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
   const latestFirmware = useLatestFirmware(lastSeenDeviceModelInfo?.deviceInfo);
 
-  const bannerVisible = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
+  const bannerReady = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
   const version = latestFirmware?.final?.name ?? "";
+  const connectionType = lastConnectedDevice?.wired ? "usb" : "bluetooth";
+  const bannerVisible = useMemo(() => {
+    if (!bannerReady || !version) {
+      return false;
+    }
+
+    if (connectionType === "bluetooth") {
+      if (lastConnectedDevice?.modelId === DeviceModelId.nanoX) {
+        return semver.gt(version, "2.4.0");
+      }
+    }
+
+    return true;
+  }, [bannerReady, connectionType, lastConnectedDevice, version]);
 
   const {
     updateSupported: isOldUxSupported,

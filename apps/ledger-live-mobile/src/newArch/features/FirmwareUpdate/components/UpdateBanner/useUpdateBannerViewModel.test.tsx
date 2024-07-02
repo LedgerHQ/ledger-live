@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 /** Brace yourselves for the mocks ... */
 
@@ -129,6 +130,54 @@ describe("useUpdateBannerViewModel", () => {
     );
 
     expect(result.current.bannerVisible).toBe(false);
+  });
+
+  it("should return bannerVisible: false if connection is bluetooth, model is nano X and version is lower than 2.4.0", () => {
+    const lastConnectedDevice = { wired: false, modelId: DeviceModelId.nanoX };
+    lastConnectedDeviceSelector.mockReturnValue(lastConnectedDevice);
+    hasConnectedDeviceSelector.mockReturnValue(true);
+    hasCompletedOnboardingSelector.mockReturnValue(true);
+    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion", version: "2.3.0" } });
+
+    const { result } = renderHook(() =>
+      useUpdateBannerViewModel({
+        onBackFromUpdate: jest.fn(),
+      }),
+    );
+
+    expect(result.current.bannerVisible).toBe(false);
+  });
+
+  it("should return bannerVisible: true if connection is bluetooth, model is nano X and version is higher than 2.4.0", () => {
+    const lastConnectedDevice = { wired: false, modelId: DeviceModelId.nanoX };
+    lastConnectedDeviceSelector.mockReturnValue(lastConnectedDevice);
+    hasConnectedDeviceSelector.mockReturnValue(true);
+    hasCompletedOnboardingSelector.mockReturnValue(true);
+    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion", version: "2.4.1" } });
+
+    const { result } = renderHook(() =>
+      useUpdateBannerViewModel({
+        onBackFromUpdate: jest.fn(),
+      }),
+    );
+
+    expect(result.current.bannerVisible).toBe(true);
+  });
+
+  it("should return bannerVisible: true if connection is usb, model is nano X", () => {
+    const lastConnectedDevice = { wired: true, modelId: DeviceModelId.nanoX };
+    lastConnectedDeviceSelector.mockReturnValue(lastConnectedDevice);
+    hasConnectedDeviceSelector.mockReturnValue(true);
+    hasCompletedOnboardingSelector.mockReturnValue(true);
+    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion", version: "2.3.1" } });
+
+    const { result } = renderHook(() =>
+      useUpdateBannerViewModel({
+        onBackFromUpdate: jest.fn(),
+      }),
+    );
+
+    expect(result.current.bannerVisible).toBe(true);
   });
 
   it("should return the correct values of isUpdateSupportedButDeviceNotWired", () => {
