@@ -6,7 +6,7 @@ import CommonPage from "./common.page";
 import CryptoDrawer from "./liveApps/cryptoDrawer";
 import CustomLockscreenPage from "./stax/customLockscreen.page";
 import DiscoverPage from "./discover/discover.page";
-import LiveAppWebview from "./liveApps/liveAppWebview";
+import DummyWalletApp from "./liveApps/dummyWalletApp.webView";
 import ManagerPage from "./manager/manager.page";
 import MarketPage from "./market/market.page";
 import NftGalleryPage from "./wallet/nftGallery.page";
@@ -21,6 +21,7 @@ import SettingsGeneralPage from "./settings/settingsGeneral.page";
 import SettingsPage from "./settings/settings.page";
 import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
+import TransfertMenuDrawer from "./wallet/transferMenu.drawer";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 
 import type { Account } from "@ledgerhq/types-live";
@@ -36,7 +37,7 @@ export class Application {
   public cryptoDrawer = new CryptoDrawer();
   public customLockscreen = new CustomLockscreenPage();
   public discover = new DiscoverPage();
-  public liveAppWebview = new LiveAppWebview();
+  public dummyWalletApp = new DummyWalletApp();
   public manager = new ManagerPage();
   public market = new MarketPage();
   public nftGallery = new NftGalleryPage();
@@ -51,6 +52,7 @@ export class Application {
   public settingsGeneral = new SettingsGeneralPage();
   public stake = new StakePage();
   public swap = new SwapPage();
+  public transfertMenu = new TransfertMenuDrawer();
   public walletTabNavigator = new WalletTabNavigatorPage();
 
   static async init(userdata?: string, knownDevices?: DeviceLike[], testAccounts?: Account[]) {

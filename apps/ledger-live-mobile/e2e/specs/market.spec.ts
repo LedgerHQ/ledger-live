@@ -11,7 +11,7 @@ describe("Market page for user with no device", () => {
 
   $TmsLink("B2CQA-1880");
   it("should find the researched crypto", async () => {
-    await app.portfolio.openWalletTabMarket();
+    await app.walletTabNavigator.navigateToMarket();
     await app.market.searchAsset("eth");
     await app.market.expectMarketRowTitle(asset);
   });

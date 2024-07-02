@@ -1,5 +1,5 @@
 import DeviceAction from "../../models/DeviceAction";
-import { knownDevice } from "../../models/devices";
+import { knownDevices } from "../../models/devices";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import {
@@ -30,6 +30,7 @@ const testedCurrencies: CryptoCurrencyId[] = [
   "cosmos",
 ];
 const testAccounts = initTestAccounts(testedCurrencies);
+const knownDevice = knownDevices.nanoX;
 
 $TmsLink("B2CQA-1823");
 describe("Send flow", () => {
