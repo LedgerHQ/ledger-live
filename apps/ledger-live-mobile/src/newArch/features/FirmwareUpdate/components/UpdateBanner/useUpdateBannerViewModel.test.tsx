@@ -1,6 +1,5 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
-import { DeviceModelId } from "@ledgerhq/devices";
 
 /** Brace yourselves for the mocks ... */
 
@@ -24,7 +23,7 @@ jest.mock("~/reducers/settings", () => ({
   lastConnectedDeviceSelector: jest.fn(),
   hasCompletedOnboardingSelector: jest.fn(),
 }));
-const { lastConnectedDeviceSelector, hasCompletedOnboardingSelector } =
+const { lastConnectedDeviceSelector, hasCompletedOnboardingSelector, lastSeenDeviceSelector } =
   jest.requireMock("~/reducers/settings");
 
 jest.mock("~/reducers/appstate", () => ({
@@ -132,54 +131,6 @@ describe("useUpdateBannerViewModel", () => {
     expect(result.current.bannerVisible).toBe(false);
   });
 
-  it("should return bannerVisible: false if connection is bluetooth, model is nano X and version is lower than 2.4.0", () => {
-    const lastConnectedDevice = { wired: false, modelId: DeviceModelId.nanoX };
-    lastConnectedDeviceSelector.mockReturnValue(lastConnectedDevice);
-    hasConnectedDeviceSelector.mockReturnValue(true);
-    hasCompletedOnboardingSelector.mockReturnValue(true);
-    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion", version: "2.3.0" } });
-
-    const { result } = renderHook(() =>
-      useUpdateBannerViewModel({
-        onBackFromUpdate: jest.fn(),
-      }),
-    );
-
-    expect(result.current.bannerVisible).toBe(false);
-  });
-
-  it("should return bannerVisible: true if connection is bluetooth, model is nano X and version is higher than 2.4.0", () => {
-    const lastConnectedDevice = { wired: false, modelId: DeviceModelId.nanoX };
-    lastConnectedDeviceSelector.mockReturnValue(lastConnectedDevice);
-    hasConnectedDeviceSelector.mockReturnValue(true);
-    hasCompletedOnboardingSelector.mockReturnValue(true);
-    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion", version: "2.4.1" } });
-
-    const { result } = renderHook(() =>
-      useUpdateBannerViewModel({
-        onBackFromUpdate: jest.fn(),
-      }),
-    );
-
-    expect(result.current.bannerVisible).toBe(true);
-  });
-
-  it("should return bannerVisible: true if connection is usb, model is nano X", () => {
-    const lastConnectedDevice = { wired: true, modelId: DeviceModelId.nanoX };
-    lastConnectedDeviceSelector.mockReturnValue(lastConnectedDevice);
-    hasConnectedDeviceSelector.mockReturnValue(true);
-    hasCompletedOnboardingSelector.mockReturnValue(true);
-    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion", version: "2.3.1" } });
-
-    const { result } = renderHook(() =>
-      useUpdateBannerViewModel({
-        onBackFromUpdate: jest.fn(),
-      }),
-    );
-
-    expect(result.current.bannerVisible).toBe(true);
-  });
-
   it("should return the correct values of isUpdateSupportedButDeviceNotWired", () => {
     hasConnectedDeviceSelector.mockReturnValue(true);
     hasCompletedOnboardingSelector.mockReturnValue(true);
@@ -260,10 +211,63 @@ describe("useUpdateBannerViewModel", () => {
     expect(navigateToOldUpdateFlow).toHaveBeenCalled();
   });
 
+  it("should not call startFirmwareUpdateFlow when onClickUpdate is called for a bluetooth Nano X update with version < 2.4.0", () => {
+    hasConnectedDeviceSelector.mockReturnValue(true);
+    hasCompletedOnboardingSelector.mockReturnValue(true);
+    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion", version: "2.4.0" } });
+    lastConnectedDeviceSelector.mockReturnValue({ modelId: "nanoX", wired: false });
+    lastSeenDeviceSelector.mockReturnValue({ modelId: "nanoX", deviceInfo: { version: "2.3.9" } });
+
+    isOldFirmwareUpdateUxSupported.mockReturnValue({
+      updateSupported: false,
+      updateSupportedButDeviceNotWired: false,
+    });
+    isNewFirmwareUpdateUxSupported.mockReturnValue(true);
+
+    const { result } = renderHook(() =>
+      useUpdateBannerViewModel({
+        onBackFromUpdate: jest.fn(),
+      }),
+    );
+
+    act(() => result.current.onClickUpdate());
+
+    expect(result.current.unsupportedUpdateDrawerOpened).toBe(true);
+  });
+
   it("should call startFirmwareUpdateFlow when onClickUpdate is called if new update flow is supported", () => {
     hasConnectedDeviceSelector.mockReturnValue(true);
     hasCompletedOnboardingSelector.mockReturnValue(true);
     useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+    lastSeenDeviceSelector.mockReturnValue({ modelId: "mockId", deviceInfo: { version: "3.0.0" } });
+
+    isOldFirmwareUpdateUxSupported.mockReturnValue({
+      updateSupported: false,
+      updateSupportedButDeviceNotWired: false,
+    });
+    isNewFirmwareUpdateUxSupported.mockReturnValue(true);
+
+    const { result } = renderHook(() =>
+      useUpdateBannerViewModel({
+        onBackFromUpdate: jest.fn(),
+      }),
+    );
+
+    act(() => result.current.onClickUpdate());
+
+    expect(result.current.unsupportedUpdateDrawerOpened).toBe(false);
+    expect(navigateToNewUpdateFlow).toHaveBeenCalled();
+  });
+
+  it("should call startFirmwareUpdateFlow when onClickUpdate is called for a bluetooth Nano X update with version >= 2.4.0", () => {
+    hasConnectedDeviceSelector.mockReturnValue(true);
+    hasCompletedOnboardingSelector.mockReturnValue(true);
+    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+    lastConnectedDeviceSelector.mockReturnValue({
+      modelId: "nanoX",
+      wired: false,
+    });
+    lastSeenDeviceSelector.mockReturnValue({ modelId: "nanoX", deviceInfo: { version: "2.4.0" } });
 
     isOldFirmwareUpdateUxSupported.mockReturnValue({
       updateSupported: false,

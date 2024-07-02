@@ -1,4 +1,5 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
+import { Platform } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
@@ -32,23 +33,9 @@ export function useUpdateBannerViewModel({
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
   const latestFirmware = useLatestFirmware(lastSeenDeviceModelInfo?.deviceInfo);
 
-  const bannerReady = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
+  const bannerVisible = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
   const version = latestFirmware?.final?.name ?? "";
-  const finalVersion = latestFirmware?.final?.version ?? "";
   const connectionType = lastConnectedDevice?.wired ? "usb" : "bluetooth";
-  const bannerVisible = useMemo(() => {
-    if (!bannerReady || !finalVersion) {
-      return false;
-    }
-
-    if (connectionType === "bluetooth") {
-      if (lastConnectedDevice?.modelId === DeviceModelId.nanoX) {
-        return semver.gt(finalVersion, "2.4.0");
-      }
-    }
-
-    return true;
-  }, [bannerReady, connectionType, lastConnectedDevice, finalVersion]);
 
   const {
     updateSupported: isOldUxSupported,
@@ -70,13 +57,22 @@ export function useUpdateBannerViewModel({
 
   const onClickUpdate = useCallback(() => {
     if (isNewUxSupported) {
-      navigateToNewUpdateFlow({
-        navigation,
-        lastConnectedDevice,
-        lastSeenDeviceModelInfo,
-        latestFirmware,
-        onBackFromUpdate,
-      });
+      if (
+        connectionType === "bluetooth" &&
+        lastConnectedDevice?.modelId === DeviceModelId.nanoX &&
+        lastSeenDeviceModelInfo?.deviceInfo.version &&
+        semver.lt(lastSeenDeviceModelInfo?.deviceInfo.version, "2.4.0")
+      ) {
+        setUnsupportedUpdateDrawerOpened(true);
+      } else {
+        navigateToNewUpdateFlow({
+          navigation,
+          lastConnectedDevice,
+          lastSeenDeviceModelInfo,
+          latestFirmware,
+          onBackFromUpdate,
+        });
+      }
     } else if (isOldUxSupported) {
       navigateToOldUpdateFlow({ route, navigation });
     } else {
@@ -91,6 +87,7 @@ export function useUpdateBannerViewModel({
     navigation,
     onBackFromUpdate,
     route,
+    connectionType,
   ]);
 
   return {
@@ -100,6 +97,11 @@ export function useUpdateBannerViewModel({
     onClickUpdate,
     unsupportedUpdateDrawerOpened,
     closeUnsupportedUpdateDrawer,
-    isUpdateSupportedButDeviceNotWired: isOldUxSupportedButDeviceNotWired,
+    isUpdateSupportedButDeviceNotWired:
+      isOldUxSupportedButDeviceNotWired ||
+      (connectionType === "bluetooth" &&
+        Platform.OS === "android" &&
+        !!lastSeenDeviceModelInfo &&
+        semver.lt(lastSeenDeviceModelInfo?.deviceInfo.version, "2.4.0")),
   };
 }

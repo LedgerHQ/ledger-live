@@ -207,6 +207,92 @@ describe("<UpdateBanner />", () => {
     expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
   });
 
+  it("should open the unsupported drawer if there is a bluetooth update on Android on Nano X with version < 2.4.0", async () => {
+    PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
+    useLatestFirmware.mockReturnValue({
+      final: {
+        name: "mockVersion",
+        version: "2.4.0",
+      },
+    });
+
+    const mockDeviceModelId = DeviceModelId.nanoX;
+    const mockDeviceVersion = "2.3.0";
+    const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
+      overrideInitialState: makeOverrideInitialState({
+        deviceModelId: mockDeviceModelId,
+        version: mockDeviceVersion,
+        hasCompletedOnboarding: true,
+        wired: false,
+        hasConnectedDevice: true,
+      }),
+    });
+
+    // Check that the banner is displayed with the correct wording
+    expect(await screen.findByText("OS update available")).toBeOnTheScreen();
+    expect(
+      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
+    ).toBeOnTheScreen();
+
+    // Press the banner
+    await user.press(screen.getByTestId("fw-update-banner"));
+
+    // Check that the unsupported drawer is displayed
+    expect(await screen.findByText("USB cable needed")).toBeOnTheScreen();
+    expect(
+      await screen.findByText(
+        "To start the firmware update, plug your Ledger Nano X to your mobile phone using a USB cable.",
+      ),
+    ).toBeOnTheScreen();
+
+    // Check that the entrypoints to the update flows are not called
+    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
+    expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
+  });
+
+  it("should open the unsupported drawer if there is a bluetooth update on iOS on Nano X with version < 2.4.0", async () => {
+    PlatformSpy.mockReturnValue({ OS: "ios" } as typeof ReactNative.Platform);
+    useLatestFirmware.mockReturnValue({
+      final: {
+        name: "mockVersion",
+        version: "2.4.0",
+      },
+    });
+
+    const mockDeviceModelId = DeviceModelId.nanoX;
+    const mockDeviceVersion = "2.3.0";
+    const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
+      overrideInitialState: makeOverrideInitialState({
+        deviceModelId: mockDeviceModelId,
+        version: mockDeviceVersion,
+        hasCompletedOnboarding: true,
+        wired: false,
+        hasConnectedDevice: true,
+      }),
+    });
+
+    // Check that the banner is displayed with the correct wording
+    expect(await screen.findByText("OS update available")).toBeOnTheScreen();
+    expect(
+      await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
+    ).toBeOnTheScreen();
+
+    // Press the banner
+    await user.press(screen.getByTestId("fw-update-banner"));
+
+    // Check that the unsupported drawer is displayed
+    expect(await screen.findByText("Firmware Update")).toBeOnTheScreen();
+    expect(
+      await screen.findByText(
+        "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
+      ),
+    ).toBeOnTheScreen();
+
+    // Check that the entrypoints to the update flows are not called
+    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
+    expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
+  });
+
   it("should open the unsupported drawer if there is an update and it's Android but the device has to be wired", async () => {
     PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
     useLatestFirmware.mockReturnValue({
@@ -356,119 +442,5 @@ describe("<UpdateBanner />", () => {
       expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
       expect(navigateToNewUpdateFlow).toHaveBeenCalled();
     });
-  });
-
-  it("should not display the firmware update banner if the device is nano X, on Android, on bluetooth, and the firmware version is not supported (<2.4.0)", async () => {
-    PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
-    useLatestFirmware.mockReturnValue({
-      final: {
-        name: "mockVersion",
-        version: "2.4.0",
-      },
-    });
-
-    render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
-        deviceModelId: DeviceModelId.nanoX,
-        version: "2.3.0",
-        hasCompletedOnboarding: true,
-        wired: false, // Device is not wired
-        hasConnectedDevice: true,
-      }),
-    });
-
-    // Check that the banner is not displayed
-    expect(await screen.queryByTestId("fw-update-banner")).toBeNull();
-  });
-
-  it("should display the firmware update banner if the device is nano X, on Android and on usb", async () => {
-    PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
-    useLatestFirmware.mockReturnValue({
-      final: {
-        name: "mockVersion",
-        version: "2.4.0",
-      },
-    });
-
-    const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
-        deviceModelId: DeviceModelId.nanoX,
-        version: "2.3.0",
-        hasCompletedOnboarding: true,
-        wired: true, // Device is wired
-        hasConnectedDevice: true,
-      }),
-    });
-
-    // Check that the banner is displayed
-    expect(await screen.findByTestId("fw-update-banner")).toBeOnTheScreen();
-
-    // Check that the banner is displayed with the correct wording
-    expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-    expect(
-      await screen.findByText(`Tap to update your Ledger Nano X to OS version mockVersion.`),
-    ).toBeOnTheScreen();
-
-    // Press the banner and check that the entrypoint to the new update flow is called
-    await user.press(screen.getByTestId("fw-update-banner"));
-    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
-    expect(navigateToNewUpdateFlow).toHaveBeenCalled();
-  });
-
-  it("should display the firmware update banner if the device is nano X, on iOS, on bluetooth and with a supported firmware version (>=2.4.0)", async () => {
-    PlatformSpy.mockReturnValue({ OS: "ios" } as typeof ReactNative.Platform);
-    useLatestFirmware.mockReturnValue({
-      final: {
-        name: "mockVersion",
-        version: "2.4.1",
-      },
-    });
-
-    const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
-        deviceModelId: DeviceModelId.nanoX,
-        version: "2.4.0",
-        hasCompletedOnboarding: true,
-        wired: false, // Device is wired
-        hasConnectedDevice: true,
-      }),
-    });
-
-    // Check that the banner is displayed
-    expect(await screen.findByTestId("fw-update-banner")).toBeOnTheScreen();
-
-    // Check that the banner is displayed with the correct wording
-    expect(await screen.findByText("OS update available")).toBeOnTheScreen();
-    expect(
-      await screen.findByText(`Tap to update your Ledger Nano X to OS version mockVersion.`),
-    ).toBeOnTheScreen();
-
-    // Press the banner and check that the entrypoint to the new update flow is called
-    await user.press(screen.getByTestId("fw-update-banner"));
-    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
-    expect(navigateToNewUpdateFlow).toHaveBeenCalled();
-  });
-
-  it("should not display the firmware update banner if the device is nano X, on iOS, on bluetooth, and the firmware version is not supported (<2.4.0)", async () => {
-    PlatformSpy.mockReturnValue({ OS: "ios" } as typeof ReactNative.Platform);
-    useLatestFirmware.mockReturnValue({
-      final: {
-        name: "mockVersion",
-        version: "2.4.0",
-      },
-    });
-
-    render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: makeOverrideInitialState({
-        deviceModelId: DeviceModelId.nanoX,
-        version: "2.3.0",
-        hasCompletedOnboarding: true,
-        wired: false, // Device is not wired
-        hasConnectedDevice: true,
-      }),
-    });
-
-    // Check that the banner is not displayed
-    expect(await screen.queryByTestId("fw-update-banner")).toBeNull();
   });
 });
