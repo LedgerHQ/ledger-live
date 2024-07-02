@@ -98,6 +98,7 @@ setSupportedCurrencies([
   "blast_sepolia",
   "scroll",
   "scroll_sepolia",
+  "ton",
 ]);
 LiveConfig.setConfig(liveConfig);
 

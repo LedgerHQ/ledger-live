@@ -1,23 +1,23 @@
 /* eslint-disable no-console */
-import { readFileSync, existsSync, writeFileSync } from "fs";
-import BigNumber from "bignumber.js";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import { argv } from "yargs";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { promisify } from "util";
+import BigNumber from "bignumber.js";
 import childProcess from "child_process";
+import { existsSync, readFileSync, writeFileSync } from "fs";
+import { promisify } from "util";
+import { argv } from "yargs";
 
+import { firstValueFrom, reduce } from "rxjs";
+import { encodeAccountId, fromAccountRaw, toAccountRaw } from "../../account";
+import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
+import { liveConfig } from "../../config/sharedConfig";
 import {
   findCryptoCurrencyById,
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "../../currencies";
-import { encodeAccountId, fromAccountRaw, toAccountRaw } from "../../account";
-import { firstValueFrom, reduce } from "rxjs";
-import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
 import { MigrationAddress, migrationAddresses as defaultAddresses } from "./addresses";
-import { liveConfig } from "../../config/sharedConfig";
 
 // mandatory to run the script
 setSupportedCurrencies([
@@ -96,6 +96,7 @@ setSupportedCurrencies([
   "lukso",
   "filecoin",
   "linea",
+  "ton",
 ]);
 
 LiveConfig.setConfig(liveConfig);

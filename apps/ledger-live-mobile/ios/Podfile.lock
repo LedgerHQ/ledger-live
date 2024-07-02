@@ -47,6 +47,8 @@ PODS:
     - React-NativeModulesApple
     - React-RCTAppDelegate
     - ReactCommon/turbomodule/core
+  - ExpoRandom (14.0.1):
+    - ExpoModulesCore
   - FBLazyVector (0.73.6)
   - FBReactNativeSpec (0.73.6):
     - RCT-Folly (= 2022.05.16.00)
@@ -1098,6 +1100,8 @@ PODS:
     - React-Core
   - react-native-fast-crypto (2.2.0):
     - React
+  - react-native-fast-pbkdf2 (0.3.1):
+    - React-Core
   - react-native-flipper (0.163.0):
     - React-Core
   - react-native-flipper-performance-plugin (0.4.0):
@@ -1416,6 +1420,7 @@ DEPENDENCIES:
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@11.8.0_expo-modules-core@1.11.12_expo@50.0.14_react-native@0.73.6_react@18.2.0/node_modules/expo-image-manipulator/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@12.8.2_expo-modules-core@1.11.12_expo@50.0.14_react-native@0.73.6_react@18.2.0/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@1.11.12_react-native@0.73.6_react@18.2.0/node_modules/expo-modules-core`)"
+  - "ExpoRandom (from `../../../node_modules/.pnpm/expo-random@14.0.1_expo-modules-core@1.11.12_expo@50.0.14_react-native@0.73.6_react@18.2.0/node_modules/expo-random/ios`)"
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - Flipper (= 0.201.0)
@@ -1472,6 +1477,7 @@ DEPENDENCIES:
   - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-fast-crypto (from `../node_modules/react-native-fast-crypto`)
+  - react-native-fast-pbkdf2 (from `../node_modules/react-native-fast-pbkdf2`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-flipper-performance-plugin (from `../node_modules/react-native-flipper-performance-plugin`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
@@ -1604,6 +1610,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-keep-awake@12.8.2_expo-modules-core@1.11.12_expo@50.0.14_react-native@0.73.6_react@18.2.0/node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@1.11.12_react-native@0.73.6_react@18.2.0/node_modules/expo-modules-core"
+  ExpoRandom:
+    :path: "../../../node_modules/.pnpm/expo-random@14.0.1_expo-modules-core@1.11.12_expo@50.0.14_react-native@0.73.6_react@18.2.0/node_modules/expo-random/ios"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
@@ -1667,6 +1675,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-config"
   react-native-fast-crypto:
     :path: "../node_modules/react-native-fast-crypto"
+  react-native-fast-pbkdf2:
+    :path: "../node_modules/react-native-fast-pbkdf2"
   react-native-flipper:
     :path: "../node_modules/react-native-flipper"
   react-native-flipper-performance-plugin:
@@ -1813,6 +1823,7 @@ SPEC CHECKSUMS:
   ExpoImageManipulator: c1d7cb865eacd620a35659f3da34c70531f10b59
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
   ExpoModulesCore: 61dc57c6e2a35f2f84baf488146db624e03af4cd
+  ExpoRandom: 099ddce39b39ffb984b45118d031e8713e962a50
   FBLazyVector: f64d1e2ea739b4d8f7e4740cde18089cd97fe864
   FBReactNativeSpec: 7351d9daa8a692bc3af6eb00a56e4cdb07403431
   Firebase: 5f8193dff4b5b7c5d5ef72ae54bb76c08e2b841d
@@ -1869,6 +1880,7 @@ SPEC CHECKSUMS:
   react-native-ble-plx: c040d0123518e121bf4cda02061bf72644f68d15
   react-native-config: 86038147314e2e6d10ea9972022aa171e6b1d4d8
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
+  react-native-fast-pbkdf2: 44d6ffa0346863e14100294004a1595ec76b2e9f
   react-native-flipper: 2d552a8178d839ef378220101fb7f0cd5b2a8003
   react-native-flipper-performance-plugin: 42ec5017abd26e7c5a1f527f2db92c14a90cabdb
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06

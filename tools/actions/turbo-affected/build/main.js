@@ -19361,6 +19361,7 @@ var package_default = {
     "coin:framework": "pnpm --filter coin-framework",
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
+    "coin:ton": "pnpm --filter coin-ton",
     "evm-tools": "pnpm --filter evm-tools",
     domain: "pnpm --filter domain-service",
     doc: "pnpm --filter docs",

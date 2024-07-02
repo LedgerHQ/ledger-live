@@ -19,6 +19,7 @@ import { bridge as solana } from "../../families/solana/setup";
 import { bridge as tezos } from "../../families/tezos/setup";
 import { bridge as tron } from "../../families/tron/setup";
 import { bridge as xrp } from "../../families/xrp/setup";
+import { bridge as ton } from "../../families/ton/setup";
 
 export default {
   casper,
@@ -42,4 +43,5 @@ export default {
   tezos,
   tron,
   xrp,
+  ton,
 };

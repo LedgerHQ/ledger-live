@@ -1,0 +1,12 @@
+{
+  "entry": [
+    "src/bridge/js.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/types.ts",
+    "src/cli-transaction.ts"
+  ],
+  "ignoreUnimported": [
+    "src/transaction.ts"
+  ]
+}

@@ -5174,6 +5174,10 @@
       "memo": "Memo",
       "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
     },
+    "ton": {
+      "commentPlaceholder": "Optional",
+      "comment": "Comment"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
@@ -5714,6 +5718,9 @@
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
     },
+    "TonCommentInvalid": {
+      "title": "Comment must not exceed 120 characters without special characters"
+    },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"
     },
@@ -6115,6 +6122,9 @@
     },
     "newAddressTRC20": {
       "title": "You first need to send at least 0.1 TRX to this address to activate it."
+    },
+    "TonExcessFee": {
+      "title": "It constitutes a token transfer. You will pay 0.05 TON in fees, and any extra will be returned to you."
     }
   },
   "cryptoOrg": {
