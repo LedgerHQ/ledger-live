@@ -17,8 +17,12 @@ describe("broadcast", () => {
     config.setCoinConfig(
       (): TezosCoinConfig => ({
         status: { type: "active" },
+        baker: {
+          url: "https://httpbin.org",
+        },
         explorer: {
           url: "https://httpbin.org",
+          maxTxQuery: 100,
         },
         node: {
           url: "https://httpbin.org",

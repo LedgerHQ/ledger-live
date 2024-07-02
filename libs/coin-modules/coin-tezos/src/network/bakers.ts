@@ -2,14 +2,14 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
 import { ledgerValidatorAddress } from "./bakers.whitelist-default";
 import { API_BAKER, Baker, Delegation } from "../types";
+import coinConfig from "../config";
 
 export const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
     const bakers: Baker[] = [];
-    const TEZOS_API_BASE_URL = getEnv("API_TEZOS_BAKER");
+    const TEZOS_API_BASE_URL = coinConfig.getCoinConfig().baker.url;
     const { data } = await network<API_BAKER[]>({
       url: `${TEZOS_API_BASE_URL}/v2/bakers`,
     });

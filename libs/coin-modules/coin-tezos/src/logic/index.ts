@@ -1,6 +1,8 @@
 export { validateRecipient } from "./validateRecipient";
 
-import { broadcast } from "./broadcast";
-import { estimateFees } from "./estimateFees";
-
-export { broadcast, estimateFees };
+export { broadcast } from "./broadcast";
+export { combine } from "./combine";
+export { craftTransaction, rawEncode } from "./craftTransaction";
+export { estimateFees } from "./estimateFees";
+export { getBalance } from "./getBalance";
+export { listOperations } from "./listOperations";

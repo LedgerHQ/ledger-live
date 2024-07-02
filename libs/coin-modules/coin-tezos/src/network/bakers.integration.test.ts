@@ -3,6 +3,7 @@ import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization";
 import { TezosAccountRaw } from "../types";
 import { loadAccountDelegation, listBakers } from "../network/bakers";
 import whitelist from "../network/bakers.whitelist-default";
+import coinConfig, { TezosCoinConfig } from "../config";
 
 function makeAccountRaw(
   name: string,
@@ -38,6 +39,24 @@ const accountTZrevealedDelegating = makeAccountRaw(
 );
 
 describe("tezos bakers", () => {
+  beforeAll(() => {
+    coinConfig.setCoinConfig(
+      (): TezosCoinConfig => ({
+        status: { type: "active" },
+        baker: {
+          url: "https://tezos-bakers.api.live.ledger.com",
+        },
+        explorer: {
+          url: "https://xtz-tzkt-explorer.api.live.ledger.com",
+          maxTxQuery: 100,
+        },
+        node: {
+          url: "https://xtz-node.api.live.ledger.com",
+        },
+      }),
+    );
+  });
+
   test("atleast 10 whitelisted bakers are online", async () => {
     const bakers = await listBakers(whitelist);
     const retrievedAddresses = bakers.map(o => o.address);
