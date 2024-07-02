@@ -13,6 +13,7 @@ export type UpdateEvent =
     }
   | {
       type: "pushed-data";
+      data: LiveData;
       version: number;
     }
   | {
@@ -75,6 +76,7 @@ export class CloudSyncSDK {
         await this.saveNewUpdate({
           type: "pushed-data",
           version,
+          data,
         });
         break;
       }

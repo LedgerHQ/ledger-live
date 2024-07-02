@@ -4,16 +4,12 @@ import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { useTrustchainSDK } from "../context";
 import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
 import {
-  diffWalletSyncState,
-  resolveWalletSyncDiffIntoSyncUpdate,
-} from "@ledgerhq/live-wallet/cloudsync/state";
-import {
   WalletState,
   handlers as walletH,
-  inferLocalToDistantDiff,
   accountNameWithDefaultSelector,
   setAccountName as setAccountNameAction,
 } from "@ledgerhq/live-wallet/store";
+import walletsync from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Account, BridgeCacheSystem } from "@ledgerhq/types-live";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
@@ -33,6 +29,13 @@ type State = {
   accounts: Account[];
   walletState: WalletState;
 };
+
+const localStateSelector = (state: State) => ({
+  accounts: {
+    list: state.accounts,
+  },
+  accountNames: state.walletState.accountNames,
+});
 
 export default function AppAccountsSync({
   deviceId,
@@ -72,46 +75,73 @@ export default function AppAccountsSync({
 
   const saveNewUpdate = useCallback(
     async (event: UpdateEvent) => {
-      // in this current version, we just display the data as is, but in real app we would first reconciliate the account data and manage the sync
       switch (event.type) {
         case "new-data": {
           const version = event.version;
           const data = event.data;
           const wsState = stateRef.current.walletState.wsState;
+          console.log("<- incoming data to resolve", data);
 
-          // TODO there remain a case to solve: when an account failed to be resolved in the past, we would need to eventually retry it. we could do this basically by adding in the resolved the failed
-
-          const diff = diffWalletSyncState(wsState, { version, data });
-
-          // FIXME we should pass the current accounts we already have, because we're currently having added that we already know. removing them manually for now.
-          diff.added = diff.added.filter(
-            a => !stateRef.current.accounts.some(aa => aa.id === a.id),
+          const ctx = { getAccountBridge, bridgeCache, blacklistedTokenIds: [] };
+          const localState = localStateSelector(stateRef.current);
+          const resolved = await walletsync.resolveIncomingDistantState(
+            ctx,
+            localState,
+            wsState.data,
+            data,
           );
 
-          const resolved = await resolveWalletSyncDiffIntoSyncUpdate(
-            diff,
-            getAccountBridge,
-            bridgeCache,
-          );
+          if (resolved.hasChanges) {
+            console.log("resolved as", resolved);
+            setState(s => {
+              const localState = localStateSelector(s);
+              const newLocalState = walletsync.applyUpdate(localState, resolved.update);
+              console.log("new update applied as", newLocalState);
 
-          setState(s => {
-            // apply the sync accounts update on the accounts. FIXME: this should be moved to lib side
-            const removed = new Set(resolved.removed);
-            const accounts = [...s.accounts.filter(a => !removed.has(a.id)), ...resolved.added];
-            // apply the sync accounts update on the walletState (it will be reduced if integrated with redux)
-            const walletState = walletH.WALLET_SYNC_UPDATE(s.walletState, { payload: resolved });
-            return { accounts, walletState };
-          });
+              // we now need to "reverse" the localStateSelector back into our own internal state
+
+              let walletState = s.walletState;
+              // save new account names
+              walletState = walletH.BULK_SET_ACCOUNT_NAMES(walletState, {
+                payload: { accountNames: newLocalState.accountNames },
+              });
+              // save new distant state
+              walletState = walletH.WALLET_SYNC_UPDATE(walletState, {
+                payload: { data, version },
+              });
+
+              const state = {
+                // save new accounts
+                accounts: newLocalState.accounts.list,
+                walletState,
+              };
+
+              return state;
+            });
+          } else {
+            console.log("resolved. no changes to apply.");
+          }
           break;
         }
         case "pushed-data": {
-          const version = event.version;
-          setState(s => ({ ...s, version }));
+          setState(s => ({
+            ...s,
+            walletState: walletH.WALLET_SYNC_UPDATE(s.walletState, {
+              payload: { data: event.data, version: event.version },
+            }),
+          }));
           break;
         }
-        case "deleted-data":
-          setState(s => ({ ...s, version: 0, data: null }));
+        case "deleted-data": {
+          console.log("deleted data");
+          setState(s => ({
+            ...s,
+            walletState: walletH.WALLET_SYNC_UPDATE(s.walletState, {
+              payload: { data: null, version: 0 },
+            }),
+          }));
           break;
+        }
       }
     },
     [bridgeCache, setState],
@@ -132,28 +162,33 @@ export default function AppAccountsSync({
       // skip if there is something already pending
       if (pending) return;
       pending = true;
+      // when it's taking longer than expected, we will visualize the loading
       const visualTimeout = setTimeout(() => setVisualPending(true), 400);
       try {
         // check if there is a pull to do
         await walletSyncSdk.pull(trustchain, memberCredentials);
 
-        // check if there is a push to do
-        const diff = inferLocalToDistantDiff(
-          stateRef.current.accounts,
-          stateRef.current.walletState,
+        // is there new changes to push?
+        const diff = walletsync.diffLocalToDistant(
+          localStateSelector(stateRef.current),
+          stateRef.current.walletState.wsState.data,
         );
 
-        if (diff.hasChanges && diff.newState.data) {
-          await walletSyncSdk.push(trustchain, memberCredentials, diff.newState.data);
+        if (diff.hasChanges) {
+          console.log("local->dist diff to push", diff.nextState);
+          // push the new changes
+          await walletSyncSdk.push(trustchain, memberCredentials, diff.nextState);
         }
       } catch (e) {
-        console.error("FIXME: error handling", e);
+        // FIXME error to be displayed to the web tools page
+        console.error(e);
       } finally {
         pending = false;
         clearTimeout(visualTimeout);
         setVisualPending(false);
       }
     }, pollingInterval);
+
     return () => clearInterval(interval);
   }, [trustchainSdk, walletSyncSdk, trustchain, memberCredentials]);
 
@@ -305,19 +340,21 @@ function AccountRow({
         borderBottom: "1px solid #f0f0f0",
       }}
     >
-      <EditableAccountNameField
-        name={accountNameWithDefaultSelector(walletState, account)}
-        setName={name => setAccountName(account.id, name)}
-        style={{
-          width: 140,
-          display: "inline-block",
-          fontWeight: 600,
-          fontSize: 16,
-          padding: 0,
-          border: "none",
-          outline: "none",
-        }}
-      />
+      <span style={{ flex: 1, minWidth: "50%" }}>
+        <EditableAccountNameField
+          name={accountNameWithDefaultSelector(walletState, account)}
+          setName={name => setAccountName(account.id, name)}
+          style={{
+            width: "100%",
+            display: "inline-block",
+            fontWeight: 600,
+            fontSize: 16,
+            padding: 0,
+            border: "none",
+            outline: "none",
+          }}
+        />
+      </span>
       <span style={{ color: getCurrencyColor(account.currency), fontWeight: 600 }}>
         {formatCurrencyUnit(account.currency.units[0], account.balance, { showCode: true })}
       </span>

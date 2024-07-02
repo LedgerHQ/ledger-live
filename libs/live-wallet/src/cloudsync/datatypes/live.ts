@@ -1,3 +1,5 @@
+// TODO DEPRECATED REMOVE IT ALL. REPLACED BY walletsync.ts
+
 import { z } from "zod";
 
 export const accountDescriptorSchema = z.object({
