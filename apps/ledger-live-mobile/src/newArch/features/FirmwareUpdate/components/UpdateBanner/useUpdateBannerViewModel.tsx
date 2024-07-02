@@ -34,20 +34,21 @@ export function useUpdateBannerViewModel({
 
   const bannerReady = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
   const version = latestFirmware?.final?.name ?? "";
+  const finalVersion = latestFirmware?.final?.version ?? "";
   const connectionType = lastConnectedDevice?.wired ? "usb" : "bluetooth";
   const bannerVisible = useMemo(() => {
-    if (!bannerReady || !version) {
+    if (!bannerReady || !finalVersion) {
       return false;
     }
 
     if (connectionType === "bluetooth") {
       if (lastConnectedDevice?.modelId === DeviceModelId.nanoX) {
-        return semver.gt(version, "2.4.0");
+        return semver.gt(finalVersion, "2.4.0");
       }
     }
 
     return true;
-  }, [bannerReady, connectionType, lastConnectedDevice, version]);
+  }, [bannerReady, connectionType, lastConnectedDevice, finalVersion]);
 
   const {
     updateSupported: isOldUxSupported,

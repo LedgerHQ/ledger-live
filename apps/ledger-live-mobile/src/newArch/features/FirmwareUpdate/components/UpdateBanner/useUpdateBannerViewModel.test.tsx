@@ -77,7 +77,7 @@ describe("useUpdateBannerViewModel", () => {
     lastConnectedDeviceSelector.mockReturnValue(lastConnectedDevice);
     hasConnectedDeviceSelector.mockReturnValue(true);
     hasCompletedOnboardingSelector.mockReturnValue(true);
-    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
+    useLatestFirmware.mockReturnValue({ final: { name: "mockVersion", version: "1.0.0" } });
 
     const { result } = renderHook(() =>
       useUpdateBannerViewModel({
