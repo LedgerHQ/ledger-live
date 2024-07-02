@@ -1,3 +1,4 @@
+import { NotEnoughBalance, NotEnoughBalanceSwap } from "@ledgerhq/errors";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import {
   SetExchangeRateCallback,
@@ -44,7 +45,6 @@ import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import EmptyState from "./Rates/EmptyState";
 import SwapWebView, { SwapWebProps } from "./SwapWebView";
 import { useIsSwapLiveFlagEnabled } from "./useIsSwapLiveFlagEnabled";
-import { NotEnoughBalance, NotEnoughBalanceSwap } from "@ledgerhq/errors";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -461,6 +461,21 @@ const SwapForm = () => {
     amountTo: exchangeRate?.toAmount,
     swapError,
   });
+
+  useEffect(() => {
+    if (isDemo1Enabled) {
+      setQuoteState({
+        amountTo: undefined,
+        swapError: undefined,
+      });
+    }
+  }, [
+    setQuoteState,
+    sourceAccount,
+    swapWebProps.toAccountId,
+    swapWebProps.fromAmount,
+    isDemo1Enabled,
+  ]);
 
   return (
     <Wrapper>
