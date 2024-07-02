@@ -1,5 +1,30 @@
 # next.js-example
 
+## 0.1.1
+
+### Patch Changes
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+- Updated dependencies [[`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f), [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/react-ui@0.15.1
+
+## 0.1.1-next.1
+
+### Patch Changes
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+- Updated dependencies [[`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/react-ui@0.15.1-next.1
+
+## 0.1.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`822ec31`](https://github.com/LedgerHQ/ledger-live/commit/822ec3129fa8a51d924d90ca71d85adc6779df7f)]:
+  - @ledgerhq/react-ui@0.15.1-next.0
+
 ## 0.1.0
 
 ### Minor Changes

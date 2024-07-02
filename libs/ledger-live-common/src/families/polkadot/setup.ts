@@ -12,10 +12,10 @@ import type { Bridge } from "@ledgerhq/types-live";
 import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
 import polkadotResolver from "@ledgerhq/coin-polkadot/signer/index";
 import makeCliTools, { type CliTools } from "@ledgerhq/coin-polkadot/test/cli";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
   return new Polkadot(transport);
