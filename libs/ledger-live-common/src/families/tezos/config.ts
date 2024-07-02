@@ -8,6 +8,9 @@ export const tezosConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
+      baker: {
+        url: getEnv("API_TEZOS_BAKER"),
+      },
       explorer: {
         url: getEnv("API_TEZOS_TZKT_API"),
         maxTxQuery: getEnv("TEZOS_MAX_TX_QUERIES"),

@@ -5,6 +5,7 @@ import { b58cencode, Prefix, prefix } from "@taquito/utils";
 import { log } from "@ledgerhq/logs";
 import { getTezosToolkit } from "./tezosToolkit";
 import { TezosOperationMode } from "../types/model";
+import { UnsupportedTransactionMode } from "../types/errors";
 
 export type CoreAccountInfo = {
   address: string;
@@ -90,7 +91,7 @@ export async function estimateFees({
         });
         break;
       default:
-        throw new Error("unsupported mode=" + transaction.mode);
+        throw new UnsupportedTransactionMode("unsupported mode", { mode: transaction.mode });
     }
 
     if (transaction.useAllAmount) {
