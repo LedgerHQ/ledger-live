@@ -23,18 +23,27 @@ export default async function getEstimatedFees({
   account: TezosAccount;
   transaction: Transaction;
 }): Promise<EstimatedFees> {
-  return estimateFees({
+  const estimate = await estimateFees({
     account: {
       xpub: account.xpub,
       address: account.freshAddress,
-      balance: account.balance,
+      balance: BigInt(account.balance.toString()),
       revealed: account.tezosResources.revealed,
     },
     transaction: {
       mode: transaction.mode,
       recipient: transaction.recipient,
-      amount: transaction.amount.toNumber(),
+      amount: BigInt(transaction.amount.toString()),
       useAllAmount: transaction.useAllAmount,
     },
   });
+
+  return {
+    fees: BigNumber(estimate.fees.toString()),
+    gasLimit: BigNumber(estimate.gasLimit.toString()),
+    storageLimit: BigNumber(estimate.storageLimit.toString()),
+    estimatedFees: BigNumber(estimate.estimatedFees.toString()),
+    amount: estimate.amount ? BigNumber(estimate.amount.toString()) : undefined,
+    taquitoError: estimate.taquitoError,
+  };
 }
