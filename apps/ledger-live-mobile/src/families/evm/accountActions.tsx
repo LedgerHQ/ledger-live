@@ -1,5 +1,5 @@
 import React from "react";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
@@ -14,12 +14,23 @@ const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
 const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
 
 type Props = {
-  account: Account;
+  account: Account | TokenAccount;
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 };
 
-function getNavigatorParams({ parentRoute, account, parentAccount }: Props): NavigationParamsType {
+function getNavigatorParams(
+  { parentRoute, account, parentAccount }: Props,
+  {
+    isAvalancheCAccount,
+    isEthereumMaticTokenAccount,
+    isArbitrumGRTTokenAccount,
+  }: {
+    isEthereumMaticTokenAccount: boolean;
+    isAvalancheCAccount: boolean;
+    isArbitrumGRTTokenAccount: boolean;
+  },
+): NavigationParamsType {
   if (isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
@@ -28,6 +39,29 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
         params: {
           account,
           parentAccount,
+        },
+      },
+    ];
+  }
+
+  if (isEthereumMaticTokenAccount || isAvalancheCAccount || isArbitrumGRTTokenAccount) {
+    const yieldId = (() => {
+      if (isEthereumMaticTokenAccount) {
+        return "ethereum-matic-native-staking";
+      } else if (isAvalancheCAccount) {
+        return "avalanche-avax-liquid-staking";
+      }
+      return "arbitrum-grt-native-staking";
+    })();
+
+    return [
+      ScreenName.PlatformApp,
+      {
+        params: {
+          platform: "stakekit",
+          name: "StakeKit",
+          accountId: account.id,
+          yieldId,
         },
       },
     ];
@@ -63,12 +97,29 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
 }
 
 const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionButtonEvent[] => {
-  if (account.type === "Account" && account.currency.id === "ethereum") {
-    const navigationParams = getNavigatorParams({
-      account,
-      parentAccount,
-      parentRoute,
-    });
+  const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
+  const isEthereumMaticTokenAccount =
+    account.type === "TokenAccount" && account.token.id === "ethereum/erc20/matic";
+  const isAvalancheCAccount =
+    account.type === "Account" && account.currency.id === "avalanche_c_chain";
+  const isArbitrumGRTTokenAccount =
+    account.type === "TokenAccount" && account.token.id === "arbitrum/erc20/graph_token";
+
+  const canStake =
+    isEthereumAccount ||
+    isEthereumMaticTokenAccount ||
+    isAvalancheCAccount ||
+    isArbitrumGRTTokenAccount;
+
+  if (canStake) {
+    const navigationParams = getNavigatorParams(
+      {
+        account,
+        parentAccount,
+        parentRoute,
+      },
+      { isEthereumMaticTokenAccount, isAvalancheCAccount, isArbitrumGRTTokenAccount },
+    );
 
     return [
       {
@@ -77,7 +128,8 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         label: <Trans i18nKey="account.stake" />,
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
-          currency: "ETH",
+          currency:
+            account.type === "TokenAccount" ? account?.token?.name : account?.currency?.name,
         },
       },
     ];
