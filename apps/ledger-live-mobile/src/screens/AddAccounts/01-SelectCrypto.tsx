@@ -85,6 +85,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
+  const mina = useFeature("currencyMina");
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
@@ -168,6 +169,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       mantra,
       xion,
       zenrock,
+      mina: mina,
     }),
     [
       aptos,
@@ -224,6 +226,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       mantra,
       xion,
       zenrock,
+      mina,
     ],
   );
 
