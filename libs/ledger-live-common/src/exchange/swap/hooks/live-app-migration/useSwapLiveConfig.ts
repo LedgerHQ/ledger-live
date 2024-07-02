@@ -4,8 +4,11 @@ import { useFeature } from "../../../../featureFlags";
 export function useSwapLiveConfig() {
   const demoZero = useFeature("ptxSwapLiveAppDemoZero");
   const demoOne = useFeature("ptxSwapLiveAppDemoOne");
+  const demoThree = useFeature("ptxSwapLiveAppDemoThree");
 
-  if (demoZero?.enabled === demoOne?.enabled) return null;
+  // Order is important in order to get the first enabled flag
+  const flags = [demoThree, demoOne, demoZero];
+  const enabledFlag = flags.find(flag => flag?.enabled);
 
-  return demoZero?.enabled && !demoOne?.enabled ? demoZero : demoOne?.enabled ? demoOne : null;
+  return enabledFlag ?? null;
 }

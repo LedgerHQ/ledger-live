@@ -14,7 +14,7 @@ import { context } from "~/renderer/drawers/Provider";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import TargetAccountDrawer from "../TargetAccountDrawer";
-import { useIsSwapLiveFlagEnabled } from "../useIsSwapLiveFlagEnabled";
+import { useIsSwapLiveFlagEnabled } from "../../hooks/useIsSwapLiveFlagEnabled";
 import SectionInformative from "./SectionInformative";
 import SummaryLabel from "./SummaryLabel";
 import SummarySection from "./SummarySection";

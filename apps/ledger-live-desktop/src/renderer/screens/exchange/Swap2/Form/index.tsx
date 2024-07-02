@@ -43,7 +43,7 @@ import SwapFormSelectors from "./FormSelectors";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import EmptyState from "./Rates/EmptyState";
 import SwapWebView, { SwapWebProps } from "./SwapWebView";
-import { useIsSwapLiveFlagEnabled } from "./useIsSwapLiveFlagEnabled";
+import { useIsSwapLiveFlagEnabled } from "../hooks/useIsSwapLiveFlagEnabled";
 import { NotEnoughBalance, NotEnoughBalanceSwap } from "@ledgerhq/errors";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];

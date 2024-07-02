@@ -64,17 +64,18 @@ export type SwapProps = {
 
 export type SwapWebProps = {
   manifest: LiveAppManifest;
+  liveAppUnavailable: () => void;
+  setQuoteState?: (next: CustomSwapQuotesState) => void;
   swapState?: Partial<SwapProps>;
-  liveAppUnavailable(): void;
   isMaxEnabled?: boolean;
   sourceCurrency?: TokenCurrency | CryptoCurrency;
   targetCurrency?: TokenCurrency | CryptoCurrency;
-  setQuoteState: (next: CustomSwapQuotesState) => void;
 };
 
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
   Demo1: "swap-live-app-demo-1",
+  Demo3: "swap-live-app-demo-3",
 };
 
 const SwapWebAppWrapper = styled.div`
@@ -141,7 +142,7 @@ const SwapWebView = ({
         const fromUnit = sourceCurrency?.units[0];
 
         if (!quote.params) {
-          setQuoteState({
+          setQuoteState?.({
             amountTo: undefined,
             swapError: undefined,
           });
@@ -151,7 +152,7 @@ const SwapWebView = ({
         if (quote.params?.code && fromUnit) {
           switch (quote.params.code) {
             case "minAmountError":
-              setQuoteState({
+              setQuoteState?.({
                 amountTo: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
                   minAmountFromFormatted: formatCurrencyUnit(
@@ -167,7 +168,7 @@ const SwapWebView = ({
               });
               return Promise.resolve();
             case "maxAmountError":
-              setQuoteState({
+              setQuoteState?.({
                 amountTo: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
                   minAmountFromFormatted: formatCurrencyUnit(
@@ -187,7 +188,7 @@ const SwapWebView = ({
 
         if (toUnit && quote?.params?.amountTo) {
           const amountTo = BigNumber(quote?.params?.amountTo).times(10 ** toUnit.magnitude);
-          setQuoteState({ amountTo, swapError: undefined });
+          setQuoteState?.({ amountTo, swapError: undefined });
         }
 
         return Promise.resolve();

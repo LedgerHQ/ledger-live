@@ -1,7 +1,7 @@
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import React from "react";
 import styled from "styled-components";
-import { useIsSwapLiveFlagEnabled } from "../useIsSwapLiveFlagEnabled";
+import { useIsSwapLiveFlagEnabled } from "../../hooks/useIsSwapLiveFlagEnabled";
 import SectionFees from "./SectionFees";
 import SectionTarget from "./SectionTarget";
 
