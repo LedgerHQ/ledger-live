@@ -10,6 +10,7 @@ export const tezosConfig: Record<string, ConfigInfo> = {
       },
       explorer: {
         url: getEnv("API_TEZOS_TZKT_API"),
+        maxTxQuery: getEnv("TEZOS_MAX_TX_QUERIES"),
       },
       node: {
         url: getEnv("API_TEZOS_NODE"),
