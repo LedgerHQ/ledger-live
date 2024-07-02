@@ -313,6 +313,8 @@ export enum ScreenName {
 
   // ton
   TonEditComment = "TonEditComment",
+  // mina
+  MinaEditMemo = "MinaEditMemo",
 
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",

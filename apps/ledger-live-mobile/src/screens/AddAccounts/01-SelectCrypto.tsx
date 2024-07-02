@@ -83,6 +83,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
+  const mina = useFeature("currencyMina");
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
@@ -152,6 +153,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       scroll,
       scroll_sepolia: scrollSepolia,
       icon,
+      mina: mina,
     }),
     [
       axelar,
@@ -200,6 +202,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       scroll,
       scrollSepolia,
       icon,
+      mina,
     ],
   );
 
