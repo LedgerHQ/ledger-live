@@ -21,6 +21,7 @@ export function createCollectibleObject(type: CollectibleType, data: unknown) {
           useFallback: data.useFallback,
           squareWithDefault: false,
           setUseFallback: data.setUseFallback,
+          isLoading: data.isLoading,
         },
         panAndZoomProps: <PanAndZoomProps>{
           collectibleName: data.nftName,

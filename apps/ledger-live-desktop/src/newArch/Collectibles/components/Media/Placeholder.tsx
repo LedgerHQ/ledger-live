@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import styled from "styled-components";
 import Fallback from "./Fallback.png";
+import { Box } from "@ledgerhq/react-ui";
 
 const StyledPlaceholder = styled.div`
   background-image: url("${Fallback}");
@@ -13,7 +14,15 @@ const StyledPlaceholder = styled.div`
   aspect-ratio: 1.4;
 `;
 
-const PlaceholderComponent: React.FC = () => <StyledPlaceholder />;
+type Props = {
+  size?: number;
+};
+
+const PlaceholderComponent: React.FC<Props> = ({ size }) => (
+  <Box size={size}>
+    <StyledPlaceholder />
+  </Box>
+);
 
 PlaceholderComponent.displayName = "Placeholder";
 

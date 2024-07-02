@@ -16,18 +16,20 @@ type BaseMediaProps = BaseProps & {
   previewUri?: string | undefined;
   originalUri?: string | undefined;
   mediaType: string | undefined;
-  setUseFallback: (a: boolean) => void;
+  setUseFallback?: (a: boolean) => void;
 };
 
 export type ImageProps = BaseMediaProps & {
   collectibleName?: string | null;
   onClick?: (e: React.MouseEvent) => void;
   isFallback: boolean;
+  isLoading: boolean;
 };
 
 export type VideoProps = BaseMediaProps;
 
 export type MediaProps = BaseMediaProps & {
+  isLoading: boolean;
   useFallback: boolean;
   contentType: string | undefined;
   collectibleName?: string | null;
