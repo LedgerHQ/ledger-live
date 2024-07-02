@@ -232,12 +232,12 @@ const coinConfig: PolkadotCoinConfig = {
     url: SIDECAR_BASE_URL,
   },
   metadataShortener: {
-    url: "https://api.zondax.ch/polkadot/transaction/metadata",
+    url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
   },
   metadataHash: {
-    url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+    url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
   },
-  runtimeUpgraded: false,
+  runtimeUpgraded: true,
 };
 
 const subscriptions: any[] = [];
