@@ -1,5 +1,125 @@
 # @ledgerhq/live-common
 
+## 34.5.0-next.3
+
+### Patch Changes
+
+- [#7188](https://github.com/LedgerHQ/ledger-live/pull/7188) [`d13a5d7`](https://github.com/LedgerHQ/ledger-live/commit/d13a5d7f8f23624feb3a4a041cd7966d3b100dcf) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-13071): use not enough gas error for Tron
+
+- Updated dependencies [[`b478096`](https://github.com/LedgerHQ/ledger-live/commit/b478096537a0f86a9e39acc8c6cf17b1184e0849)]:
+  - @ledgerhq/cryptoassets@13.1.1-next.0
+  - @ledgerhq/coin-framework@0.15.0-next.1
+  - @ledgerhq/coin-algorand@0.5.1-next.1
+  - @ledgerhq/coin-bitcoin@0.6.1-next.1
+  - @ledgerhq/coin-cardano@0.1.1-next.1
+  - @ledgerhq/coin-evm@2.1.1-next.1
+  - @ledgerhq/coin-near@0.5.1-next.1
+  - @ledgerhq/coin-polkadot@1.0.0-next.1
+  - @ledgerhq/coin-solana@0.7.1-next.1
+  - @ledgerhq/coin-tezos@0.4.1-next.1
+  - @ledgerhq/coin-xrp@0.3.0-next.1
+  - @ledgerhq/hw-app-eth@6.37.1-next.1
+  - @ledgerhq/hw-app-vet@0.2.1-next.0
+  - @ledgerhq/live-countervalues@0.2.1-next.1
+  - @ledgerhq/live-countervalues-react@0.2.1-next.1
+  - @ledgerhq/live-nft@0.4.1-next.1
+  - @ledgerhq/live-wallet@0.3.0-next.1
+
+## 34.5.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`19c02ce`](https://github.com/LedgerHQ/ledger-live/commit/19c02cead22422b4a2e94aef74ebc67e992ab54d)]:
+  - @ledgerhq/device-core@0.2.1-next.2
+
+## 34.5.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`38a18fd`](https://github.com/LedgerHQ/ledger-live/commit/38a18fdb7233b77dfd631d10d9eec3cd4aeefe9f)]:
+  - @ledgerhq/device-core@0.2.1-next.1
+
+## 34.5.0-next.0
+
+### Minor Changes
+
+- [#6891](https://github.com/LedgerHQ/ledger-live/pull/6891) [`d9f586e`](https://github.com/LedgerHQ/ledger-live/commit/d9f586ea4bd45d15f3e42c9f733f30dceef3027d) Thanks [@pavanvora](https://github.com/pavanvora)! - update ledgerjs to 7.1.2 to support cardano app v7
+
+- [#6326](https://github.com/LedgerHQ/ledger-live/pull/6326) [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - polkadot generic nano app support
+
+### Patch Changes
+
+- [#7081](https://github.com/LedgerHQ/ledger-live/pull/7081) [`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Create feature flag for preparation of next feature
+
+- [#6793](https://github.com/LedgerHQ/ledger-live/pull/6793) [`2e5d5bd`](https://github.com/LedgerHQ/ledger-live/commit/2e5d5bdb988c73c91f1fe42c809b192ca5dbeb7a) Thanks [@lawRathod](https://github.com/lawRathod)! - Add pending operations to stacks account object
+
+- [#6923](https://github.com/LedgerHQ/ledger-live/pull/6923) [`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737) Thanks [@overcat](https://github.com/overcat)! - Refactor `hw-app-str` and add `signSorobanAuthorization`. Please check the changelog and documentation of "@ledgerhq/hw-app-str" for more information.
+
+  - `Str.getPublicKey`'s function signature has changed. Previously, it was `getPublicKey(path: string, boolValidate?: boolean, boolDisplay?: boolean): Promise<{ publicKey: string; raw: Buffer; }>` and now it is `async getPublicKey(path: string, display = false): Promise<{ rawPublicKey: Buffer }>`
+  - `Str.signTransaction` will no longer automatically fallback to `Str.signHash`. If you want to sign a hash, you have to call `Str.signHash` directly.
+  - Removed the fixed limit on the maximum length of the transaction in `Str.signTransaction`. Currently, if the transaction is too large for the device to handle, `StellarUserRefusedError` will be thrown.
+  - Add `Str.signSorobanAuthorization` method to sign Stellar Soroban authorization.
+  - `Str.getAppConfiguration` now returns `maxDataSize`, it represents the maximum size of the data that the device can processed.
+  - Add error classes for better error handling, check the documentation for more information:
+    - `StellarUserRefusedError`
+    - `StellarHashSigningNotEnabledError`
+    - `StellarDataTooLargeError`
+    - `StellarDataParsingFailedError`
+
+- [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Create getAppsCatalogForDevice use case
+
+- [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor "app update available" logic to only rely on v2 manager apis
+
+- [#7120](https://github.com/LedgerHQ/ledger-live/pull/7120) [`d2368f6`](https://github.com/LedgerHQ/ledger-live/commit/d2368f632b834207c33df14468599b6a543d11da) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix filtering of apps with isDevMode
+
+- [#7094](https://github.com/LedgerHQ/ledger-live/pull/7094) [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761) Thanks [@CremaFR](https://github.com/CremaFR)! - prevent TRC20 swaps if empty tron account
+
+- [#7090](https://github.com/LedgerHQ/ledger-live/pull/7090) [`fc6d09b`](https://github.com/LedgerHQ/ledger-live/commit/fc6d09be89a6e8775d77b98d5a0256b68346a14d) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: incorrect fee computation for erc20 when using max button
+
+- [#7087](https://github.com/LedgerHQ/ledger-live/pull/7087) [`6b3c8ca`](https://github.com/LedgerHQ/ledger-live/commit/6b3c8cab371db8212e1b0a02f03bb0baa46ce95c) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed tron activation fee
+
+- [#6968](https://github.com/LedgerHQ/ledger-live/pull/6968) [`c988a94`](https://github.com/LedgerHQ/ledger-live/commit/c988a946d86e7f874823ac96d66573281ba00b13) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix crypto-assets-service integration using wrong URL
+
+- [#7058](https://github.com/LedgerHQ/ledger-live/pull/7058) [`6692f5f`](https://github.com/LedgerHQ/ledger-live/commit/6692f5fe6701a4e47c626ea3cbb73a4641c9021d) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Sends device value for swap accepted & cancelled operations
+
+- Updated dependencies [[`bc8114c`](https://github.com/LedgerHQ/ledger-live/commit/bc8114c0a9a90bf95d57087710b405730b9a6a17), [`782d637`](https://github.com/LedgerHQ/ledger-live/commit/782d637b5fba8c9c9d37609b6ad492f45a4b3737), [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac), [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917), [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`9f33fc1`](https://github.com/LedgerHQ/ledger-live/commit/9f33fc14e0628a68d32957171aa879c30041f27e), [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e)]:
+  - @ledgerhq/coin-cardano@0.1.1-next.0
+  - @ledgerhq/hw-app-str@7.0.0-next.0
+  - @ledgerhq/coin-evm@2.1.1-next.0
+  - @ledgerhq/device-core@0.2.1-next.0
+  - @ledgerhq/coin-polkadot@1.0.0-next.0
+  - @ledgerhq/coin-xrp@0.3.0-next.0
+  - @ledgerhq/coin-framework@0.15.0-next.0
+  - @ledgerhq/live-wallet@0.3.0-next.0
+  - @ledgerhq/hw-app-polkadot@6.30.0-next.0
+  - @ledgerhq/coin-algorand@0.5.1-next.0
+  - @ledgerhq/coin-bitcoin@0.6.1-next.0
+  - @ledgerhq/coin-near@0.5.1-next.0
+  - @ledgerhq/coin-solana@0.7.1-next.0
+  - @ledgerhq/coin-tezos@0.4.1-next.0
+  - @ledgerhq/hw-app-eth@6.37.1-next.0
+  - @ledgerhq/live-countervalues@0.2.1-next.0
+  - @ledgerhq/live-countervalues-react@0.2.1-next.0
+  - @ledgerhq/live-nft@0.4.1-next.0
+
+## 34.4.1
+
+### Patch Changes
+
+- [#7245](https://github.com/LedgerHQ/ledger-live/pull/7245) [`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: polkadot send tx in LLM
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/hw-app-polkadot@6.30.1
+
+## 34.4.1-hotfix.0
+
+### Patch Changes
+
+- [#7245](https://github.com/LedgerHQ/ledger-live/pull/7245) [`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: polkadot send tx in LLM
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/hw-app-polkadot@6.30.1-hotfix.0
+
 ## 34.4.0
 
 ### Minor Changes

@@ -135,6 +135,8 @@ export default class Polkadot {
         Buffer.from(message),
         Buffer.from(metadata.slice(2), "hex"),
       );
+      // we need to cast the signature to Buffer explicitly. In react native, the signature from signWithMetadata is not necessarily a Buffer
+      signatureRequest.signature = Buffer.from(signatureRequest.signature);
       return {
         signature: signatureRequest.signature.toString("hex"),
         return_code: SW_OK,
