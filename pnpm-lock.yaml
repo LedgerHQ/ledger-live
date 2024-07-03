@@ -2090,6 +2090,9 @@ importers:
 
   libs/coin-modules/coin-icon:
     dependencies:
+      '@faker-js/faker':
+        specifier: ^8.4.1
+        version: 8.4.1
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -12499,9 +12502,15 @@ packages:
       metro: '*'
       metro-core: '*'
     peerDependenciesMeta:
+      '@expo/metro-config':
+        optional: true
+      glob:
+        optional: true
       metro:
         optional: true
       metro-core:
+        optional: true
+      minimatch:
         optional: true
     dependencies:
       '@babel/runtime': 7.24.1
@@ -13172,7 +13181,6 @@ packages:
   /@faker-js/faker@8.4.1:
     resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
-    dev: true
 
   /@fal-works/esbuild-plugin-global-externals@2.1.2:
     resolution: {integrity: sha512-cEee/Z+I12mZcFJshKcCqC8tuX5hG3s+d+9nZ3LabqKF1vKdF41B92pJVCBggjAGORAeOzyyDDKrZwIkLffeOQ==}
@@ -17576,6 +17584,9 @@ packages:
 
   /@react-native-community/cli-tools@12.3.6:
     resolution: {integrity: sha512-FPEvZn19UTMMXUp/piwKZSh8cMEfO8G3KDtOwo53O347GTcwNrKjgZGtLSPELBX2gr+YlzEft3CoRv2Qmo83fQ==}
+    peerDependenciesMeta:
+      find-up:
+        optional: true
     dependencies:
       appdirsjs: 1.2.7
       chalk: 4.1.2
@@ -25557,6 +25568,9 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependenciesMeta:
+      ajv:
+        optional: true
     dependencies:
       ajv: 8.11.2
 
@@ -32779,6 +32793,8 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
+      expo-file-system:
+        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -32810,6 +32826,8 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
+      expo-file-system:
+        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -32839,6 +32857,8 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
+      expo-constants:
+        optional: true
       expo-file-system:
         optional: true
       expo-modules-core:
@@ -33459,6 +33479,8 @@ packages:
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
+      expo-modules-autolinking:
+        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -37600,7 +37622,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(@types/node@20.12.12)(typescript@5.4.5)
+      ts-node: 10.9.2(@types/node@20.12.12)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -41763,6 +41785,9 @@ packages:
   /metro-transform-worker@0.80.8:
     resolution: {integrity: sha512-+4FG3TQk3BTbNqGkFb2uCaxYTfsbuFOCKMMURbwu0ehCP8ZJuTUramkaNZoATS49NSAkRgUltgmBa4YaKZ5mqw==}
     engines: {node: '>=18'}
+    peerDependenciesMeta:
+      metro-minify-terser:
+        optional: true
     dependencies:
       '@babel/core': 7.24.3
       '@babel/generator': 7.24.1
