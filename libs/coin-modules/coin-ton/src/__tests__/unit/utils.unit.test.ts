@@ -1,6 +1,6 @@
 import { Address, toNano } from "@ton/core";
 import { MAX_FEE_TOKEN_TRANSFER } from "../../constants";
-import { TonComment, TonPayloadFormat } from "../../types";
+import { TonComment, TonPayloadFormat, TonPayloadJettonTransfer } from "../../types";
 import {
   addressesAreEqual,
   buildTonTransaction,
@@ -184,21 +184,21 @@ describe("Build TON transaction", () => {
 
     expect(jettonTransfer.payload?.type).toStrictEqual("jetton-transfer");
 
-    if (jettonTransfer.payload?.type === "jetton-transfer") {
-      expect({
-        ...jettonTransfer.payload,
-        destination: jettonTransfer.payload?.destination?.toString(),
-        responseDestination: jettonTransfer.payload?.responseDestination?.toString(),
-      }).toStrictEqual({
-        type: "jetton-transfer",
-        queryId: BigInt(1),
-        amount: BigInt(jettonTransaction.amount.toFixed()),
-        destination: Address.parse(jettonTransaction.recipient).toString(),
-        responseDestination: Address.parse(account.freshAddress).toString(),
-        customPayload: null,
-        forwardAmount: BigInt(1),
-        forwardPayload: null,
-      });
-    }
+    expect({
+      ...jettonTransfer.payload,
+      destination: (jettonTransfer.payload as TonPayloadJettonTransfer).destination.toString(),
+      responseDestination: (
+        jettonTransfer.payload as TonPayloadJettonTransfer
+      ).responseDestination.toString(),
+    }).toStrictEqual({
+      type: "jetton-transfer",
+      queryId: BigInt(1),
+      amount: BigInt(jettonTransaction.amount.toFixed()),
+      destination: Address.parse(jettonTransaction.recipient).toString(),
+      responseDestination: Address.parse(account.freshAddress).toString(),
+      customPayload: null,
+      forwardAmount: BigInt(1),
+      forwardPayload: null,
+    });
   });
 });
