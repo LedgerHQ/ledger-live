@@ -72,11 +72,12 @@ import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
 export const AnimationWrapper = styled.div`
   width: 600px;
   max-width: 100%;
-  padding-bottom: 20px;
+  padding-bottom: 12px;
   align-self: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 8px;
 `;
 
 const ProgressWrapper = styled.div`
@@ -222,7 +223,7 @@ const DeviceSwapSummaryStyled = styled.section`
   margin: ${({ theme }) => theme.space[3]}px;
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: ${({ theme }) => theme.space[2]}px;
+  gap: ${({ theme }) => theme.space[4]}px;
 `;
 
 const DeviceSwapSummaryValueStyled = styled.div`
@@ -1090,7 +1091,7 @@ export const renderSwapDeviceConfirmation = ({
           {...swapDefaultTrack}
         />
         <Box flex={0}>
-          <Alert type="primary" {...alertProperties} mb={7} mx={4}>
+          <Alert type="primary" {...alertProperties} mb={5} mx={4}>
             <Trans
               i18nKey={`DeviceAction.swap.notice.${noticeType.message}`}
               values={{ providerName: getProviderName(exchangeRate.provider) }}

@@ -38,6 +38,16 @@ export function isCompleteExchangeData(data: unknown): data is Data {
   return "signature" in data && "binaryPayload" in data;
 }
 
+const Root = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+  flex-grow: 1;
+  overflow: hidden;
+`;
+
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
   const dispatch = useDispatch();
   const { onResult, onCancel, swapId, magnitudeAwareRate, ...exchangeParams } = data;
