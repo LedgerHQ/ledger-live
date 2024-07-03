@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.45.2
+
+### Patch Changes
+
+- [#7241](https://github.com/LedgerHQ/ledger-live/pull/7241) [`fc95e03`](https://github.com/LedgerHQ/ledger-live/commit/fc95e032a0045093e343017051fc2f64fa3bcdef) Thanks [@valpinkman](https://github.com/valpinkman)! - Bluetooth update banner to always display but shows the correct message in a drawer if the update is not supported
+
+- [#7241](https://github.com/LedgerHQ/ledger-live/pull/7241) [`22a4ebf`](https://github.com/LedgerHQ/ledger-live/commit/22a4ebf8130b0c8f06c132769a6b0ef5602bfd7d) Thanks [@valpinkman](https://github.com/valpinkman)! - move update firmware checks to the ViewProps component and add tests
+
+- [#7241](https://github.com/LedgerHQ/ledger-live/pull/7241) [`a9954fa`](https://github.com/LedgerHQ/ledger-live/commit/a9954fac8d0827d659f1e0f134d437bd45802cbf) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new tests for the UpdateBanner
+
+- [#7241](https://github.com/LedgerHQ/ledger-live/pull/7241) [`aa30245`](https://github.com/LedgerHQ/ledger-live/commit/aa302450112c7215263a266fb1bb07256d9efdeb) Thanks [@valpinkman](https://github.com/valpinkman)! - Add version check for nano X bluetooth firmware update
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/live-common@34.4.1
+
 ## 3.45.2-hotfix.3
 
 ### Patch Changes
