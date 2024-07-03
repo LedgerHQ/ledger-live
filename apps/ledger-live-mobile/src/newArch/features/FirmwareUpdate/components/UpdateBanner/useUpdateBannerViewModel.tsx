@@ -102,6 +102,7 @@ export function useUpdateBannerViewModel({
       (connectionType === "bluetooth" &&
         Platform.OS === "android" &&
         !!lastSeenDeviceModelInfo &&
+        lastConnectedDevice?.deviceId === DeviceModelId.nanoX &&
         semver.lt(lastSeenDeviceModelInfo?.deviceInfo.version, "2.4.0")),
   };
 }
