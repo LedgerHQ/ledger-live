@@ -2,8 +2,6 @@ import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type TonCoinConfig = () => CurrencyConfig & {
   infra: {
-    // Can be used for sensitive or rate limited requests
-    API_TON_KEY: string;
     API_TON_ENDPOINT: string;
   };
 };
