@@ -222,7 +222,8 @@ const DeviceSwapSummaryStyled = styled.section`
   margin: ${({ theme }) => theme.space[3]}px;
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: ${({ theme }) => theme.space[2]}px;
+  row-gap: ${({ theme }) => theme.space[2]}px;
+  column-gap: ${({ theme }) => theme.space[4]}px;
 `;
 
 const DeviceSwapSummaryValueStyled = styled.div`
