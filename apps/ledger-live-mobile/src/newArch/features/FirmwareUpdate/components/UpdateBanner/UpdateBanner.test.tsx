@@ -52,6 +52,16 @@ const EUROPA_DATA = {
   productName: getDeviceModel(DeviceModelId.europa).productName,
 };
 
+const OUTDATED_NANOX_BLE_UPDATE = {
+  deviceModelId: DeviceModelId.nanoX,
+  productName: getDeviceModel(DeviceModelId.nanoX).productName,
+  version: "2.3.0",
+  fwVersion: "2.4.0",
+  hasCompletedOnboarding: true,
+  wired: false,
+  hasConnectedDevice: true,
+};
+
 const oldUpdateFlowNotSupportedDataSet: Array<{
   deviceModelId: DeviceModelId;
   version: string;
@@ -208,23 +218,18 @@ describe("<UpdateBanner />", () => {
   });
 
   it("should open the unsupported drawer if there is a bluetooth update on Android on Nano X with version < 2.4.0", async () => {
+    const { fwVersion, ...nanoX } = OUTDATED_NANOX_BLE_UPDATE;
     PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
-        version: "2.4.0",
+        version: fwVersion,
       },
     });
 
-    const mockDeviceModelId = DeviceModelId.nanoX;
-    const mockDeviceVersion = "2.3.0";
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
       overrideInitialState: makeOverrideInitialState({
-        deviceModelId: mockDeviceModelId,
-        version: mockDeviceVersion,
-        hasCompletedOnboarding: true,
-        wired: false,
-        hasConnectedDevice: true,
+        ...nanoX,
       }),
     });
 
@@ -251,23 +256,18 @@ describe("<UpdateBanner />", () => {
   });
 
   it("should open the unsupported drawer if there is a bluetooth update on iOS on Nano X with version < 2.4.0", async () => {
+    const { fwVersion, ...nanoX } = OUTDATED_NANOX_BLE_UPDATE;
     PlatformSpy.mockReturnValue({ OS: "ios" } as typeof ReactNative.Platform);
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
-        version: "2.4.0",
+        version: fwVersion,
       },
     });
 
-    const mockDeviceModelId = DeviceModelId.nanoX;
-    const mockDeviceVersion = "2.3.0";
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
       overrideInitialState: makeOverrideInitialState({
-        deviceModelId: mockDeviceModelId,
-        version: mockDeviceVersion,
-        hasCompletedOnboarding: true,
-        wired: false,
-        hasConnectedDevice: true,
+        ...nanoX,
       }),
     });
 
