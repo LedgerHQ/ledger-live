@@ -66,15 +66,16 @@ export const buildTonTransaction = (
     amount: finalAmount,
     bounce: TonAddress.isFriendly(to) ? TonAddress.parseFriendly(to).isBounceable : true,
     timeout: getTransferExpirationTime(),
-    sendMode: useAllAmount && !subAccount
-      ? SendMode.CARRY_ALL_REMAINING_BALANCE
-      : SendMode.IGNORE_ERRORS + SendMode.PAY_GAS_SEPARATELY,
+    sendMode:
+      useAllAmount && !subAccount
+        ? SendMode.CARRY_ALL_REMAINING_BALANCE
+        : SendMode.IGNORE_ERRORS + SendMode.PAY_GAS_SEPARATELY,
   };
 
   if (comment.text.length) {
     tonTransaction.payload = { type: "comment", text: comment.text };
   }
-  
+
   if (subAccount) {
     tonTransaction.payload = {
       type: "jetton-transfer",
