@@ -462,21 +462,6 @@ const SwapForm = () => {
     swapError,
   });
 
-  useEffect(() => {
-    if (isDemo1Enabled) {
-      setQuoteState({
-        amountTo: undefined,
-        swapError: undefined,
-      });
-    }
-  }, [
-    setQuoteState,
-    sourceAccount,
-    swapWebProps?.toAccountId,
-    swapWebProps?.fromAmount,
-    isDemo1Enabled,
-  ]);
-
   return (
     <Wrapper>
       <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
