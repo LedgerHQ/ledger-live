@@ -2383,9 +2383,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -22665,7 +22662,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.4.3)
       tslib: 2.6.2
       typescript: 5.4.3
-      webpack: 5.89.0(esbuild@0.19.12)
+      webpack: 5.89.0(metro@0.80.8)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -26866,7 +26863,7 @@ packages:
       '@babel/core': 7.24.3
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)
+      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -32410,7 +32407,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -34714,7 +34711,7 @@ packages:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.4.3
-      webpack: 5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)
+      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
     dev: true
 
   /form-data@2.3.3:
@@ -37971,7 +37968,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(typescript@5.4.3)
+      ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -38012,7 +38009,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.2(typescript@5.4.3)
+      ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -50652,7 +50649,7 @@ packages:
     dependencies:
       '@swc/core': 1.4.11
       '@swc/counter': 0.1.3
-      webpack: 5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)
+      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
     dev: true
 
   /swiper@7.4.1:
@@ -54194,7 +54191,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)
+      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
     dev: true
 
   /webpack-dev-server@4.15.2(webpack-cli@4.10.0)(webpack@5.91.0):
