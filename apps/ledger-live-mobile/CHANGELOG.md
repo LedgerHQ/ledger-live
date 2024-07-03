@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.45.3-hotfix.0
+
+### Patch Changes
+
+- [#7252](https://github.com/LedgerHQ/ledger-live/pull/7252) [`da24c80`](https://github.com/LedgerHQ/ledger-live/commit/da24c80d4e038767c55522160587a3ae5b163562) Thanks [@valpinkman](https://github.com/valpinkman)! - Add missing condition for BLE nano X firmware update
+
 ## 3.46.0
 
 ### Minor Changes
