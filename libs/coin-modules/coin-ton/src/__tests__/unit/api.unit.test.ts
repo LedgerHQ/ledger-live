@@ -26,8 +26,6 @@ describe("getAccount", () => {
         type: "active",
       },
       infra: {
-        // Can be used for sensitive or rate limited requests
-        API_TON_KEY: "validKey",
         API_TON_ENDPOINT: API_TON_ENDPOINT,
       },
     }));
