@@ -1,3 +1,13 @@
+# 2.83.0
+
+### 🚀 Features
+
+The portfolio page now displays top-performing crypto over a specified period.
+
+### 🐛 Fix
+
+Swapping the entire Polkadot (DOT) balance would result in an error. This has been fixed.
+
 # 2.81.2
 
 ### 🐛 Fix

@@ -1,56 +1,50 @@
 # @ledgerhq/live-wallet
 
-## 0.3.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/types-live@6.49.0-nightly.2
-  - @ledgerhq/trustchain@0.1.2-nightly.2
-
-## 0.3.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4)]:
-  - @ledgerhq/types-live@6.49.0-nightly.2
-  - @ledgerhq/coin-framework@0.15.0-nightly.3
-  - @ledgerhq/devices@8.4.1-nightly.1
-  - @ledgerhq/live-network@1.3.1-nightly.1
-  - @ledgerhq/trustchain@0.1.2-nightly.1
-
-## 0.3.0-nightly.2
+## 0.3.0
 
 ### Minor Changes
 
-- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+- [#7079](https://github.com/LedgerHQ/ledger-live/pull/7079) [`9f33fc1`](https://github.com/LedgerHQ/ledger-live/commit/9f33fc14e0628a68d32957171aa879c30041f27e) Thanks [@KVNLS](https://github.com/KVNLS)! - Keep previously renamed accounts alias
 
 ### Patch Changes
 
-- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
-  - @ledgerhq/types-cryptoassets@7.14.0-nightly.0
-  - @ledgerhq/cryptoassets@13.2.0-nightly.1
-  - @ledgerhq/types-live@6.49.0-nightly.1
-  - @ledgerhq/coin-framework@0.15.0-nightly.2
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
 
-## 0.2.1-nightly.1
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761), [`b478096`](https://github.com/LedgerHQ/ledger-live/commit/b478096537a0f86a9e39acc8c6cf17b1184e0849), [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/types-live@6.48.1
+  - @ledgerhq/coin-framework@0.15.0
+  - @ledgerhq/cryptoassets@13.1.1
 
-### Patch Changes
-
-- Updated dependencies [[`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6)]:
-  - @ledgerhq/cryptoassets@13.1.1-nightly.0
-  - @ledgerhq/coin-framework@0.14.1-nightly.1
-
-## 0.2.1-nightly.0
+## 0.3.0-next.2
 
 ### Patch Changes
 
-- Updated dependencies [[`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5)]:
-  - @ledgerhq/types-live@6.48.1-nightly.0
-  - @ledgerhq/coin-framework@0.14.1-nightly.0
-  - @ledgerhq/devices@8.4.1-nightly.0
-  - @ledgerhq/live-network@1.3.1-nightly.0
-  - @ledgerhq/trustchain@0.1.2-nightly.0
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+- Updated dependencies [[`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/cryptoassets@13.1.1-next.1
+  - @ledgerhq/types-live@6.48.1-next.1
+  - @ledgerhq/coin-framework@0.15.0-next.2
+
+## 0.3.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`b478096`](https://github.com/LedgerHQ/ledger-live/commit/b478096537a0f86a9e39acc8c6cf17b1184e0849)]:
+  - @ledgerhq/cryptoassets@13.1.1-next.0
+  - @ledgerhq/coin-framework@0.15.0-next.1
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#7079](https://github.com/LedgerHQ/ledger-live/pull/7079) [`9f33fc1`](https://github.com/LedgerHQ/ledger-live/commit/9f33fc14e0628a68d32957171aa879c30041f27e) Thanks [@KVNLS](https://github.com/KVNLS)! - Keep previously renamed accounts alias
+
+### Patch Changes
+
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761)]:
+  - @ledgerhq/types-live@6.48.1-next.0
+  - @ledgerhq/coin-framework@0.15.0-next.0
 
 ## 0.2.0
 

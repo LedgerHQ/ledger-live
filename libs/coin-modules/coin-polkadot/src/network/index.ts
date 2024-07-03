@@ -100,6 +100,7 @@ const shortenMetadata = async (transaction: string): Promise<string> => {
       txBlob: transaction,
     },
   });
+
   return res.data.txMetadata;
 };
 

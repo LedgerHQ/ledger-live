@@ -1,47 +1,50 @@
 # @ledgerhq/coin-evm
 
-## 2.1.1-nightly.3
+## 2.1.1
 
 ### Patch Changes
 
-- Updated dependencies [[`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
-  - @ledgerhq/errors@6.18.0-nightly.1
-  - @ledgerhq/coin-framework@0.15.0-nightly.3
-  - @ledgerhq/domain-service@1.2.1-nightly.2
-  - @ledgerhq/evm-tools@1.1.1-nightly.1
-  - @ledgerhq/devices@8.4.1-nightly.1
-  - @ledgerhq/live-network@1.3.1-nightly.1
+- [#7078](https://github.com/LedgerHQ/ledger-live/pull/7078) [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac) Thanks [@lvndry](https://github.com/lvndry)! - [evm] Improve error message if could not get list of operations
 
-## 2.1.1-nightly.2
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
 
-### Patch Changes
+- Updated dependencies [[`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069), [`b478096`](https://github.com/LedgerHQ/ledger-live/commit/b478096537a0f86a9e39acc8c6cf17b1184e0849), [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/coin-framework@0.15.0
+  - @ledgerhq/cryptoassets@13.1.1
+  - @ledgerhq/domain-service@1.2.1
+  - @ledgerhq/evm-tools@1.1.1
 
-- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
-  - @ledgerhq/cryptoassets@13.2.0-nightly.1
-  - @ledgerhq/coin-framework@0.15.0-nightly.2
-  - @ledgerhq/domain-service@1.2.1-nightly.1
-  - @ledgerhq/evm-tools@1.1.1-nightly.1
-
-## 2.1.1-nightly.1
+## 2.1.1-next.2
 
 ### Patch Changes
 
-- Updated dependencies [[`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6)]:
-  - @ledgerhq/cryptoassets@13.1.1-nightly.0
-  - @ledgerhq/coin-framework@0.14.1-nightly.1
-  - @ledgerhq/evm-tools@1.1.1-nightly.0
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
 
-## 2.1.1-nightly.0
+- Updated dependencies [[`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/cryptoassets@13.1.1-next.1
+  - @ledgerhq/coin-framework@0.15.0-next.2
+  - @ledgerhq/domain-service@1.2.1-next.1
+  - @ledgerhq/evm-tools@1.1.1-next.1
+
+## 2.1.1-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3)]:
-  - @ledgerhq/errors@6.18.0-nightly.0
-  - @ledgerhq/coin-framework@0.14.1-nightly.0
-  - @ledgerhq/domain-service@1.2.1-nightly.0
+- Updated dependencies [[`b478096`](https://github.com/LedgerHQ/ledger-live/commit/b478096537a0f86a9e39acc8c6cf17b1184e0849)]:
+  - @ledgerhq/cryptoassets@13.1.1-next.0
+  - @ledgerhq/coin-framework@0.15.0-next.1
+  - @ledgerhq/evm-tools@1.1.1-next.0
+
+## 2.1.1-next.0
+
+### Patch Changes
+
+- [#7078](https://github.com/LedgerHQ/ledger-live/pull/7078) [`993c5f2`](https://github.com/LedgerHQ/ledger-live/commit/993c5f25b8a3ef3bb1f96dd93883e430e61f9fac) Thanks [@lvndry](https://github.com/lvndry)! - [evm] Improve error message if could not get list of operations
+
+- Updated dependencies [[`cde94b9`](https://github.com/LedgerHQ/ledger-live/commit/cde94b9584d6889849fb097813a5fc11ea19d069)]:
+  - @ledgerhq/coin-framework@0.15.0-next.0
+  - @ledgerhq/domain-service@1.2.1-next.0
   - @ledgerhq/evm-tools@1.1.0
-  - @ledgerhq/devices@8.4.1-nightly.0
-  - @ledgerhq/live-network@1.3.1-nightly.0
 
 ## 2.1.0
 

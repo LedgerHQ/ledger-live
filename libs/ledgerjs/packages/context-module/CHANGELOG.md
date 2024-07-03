@@ -1,16 +1,24 @@
 # @ledgerhq/context-module
 
-## 0.1.0-nightly.1
-
-### Minor Changes
-
-- [#7170](https://github.com/LedgerHQ/ledger-live/pull/7170) [`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Remove the dependency of ethers, replaced by custom types: TransactionContext in input and ClearSignContext in output
-
-## 0.0.3-nightly.0
+## 0.0.3
 
 ### Patch Changes
 
-- [#7139](https://github.com/LedgerHQ/ledger-live/pull/7139) [`87a3a1e`](https://github.com/LedgerHQ/ledger-live/commit/87a3a1ee2d5ed3dae2251b4a8683063b07ee1df8) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add context module builder
+- [#7076](https://github.com/LedgerHQ/ledger-live/pull/7076) [`7d7c327`](https://github.com/LedgerHQ/ledger-live/commit/7d7c32722a539ef6c5097c4ac2ceccaef9fc8053) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix multiple small bugs
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+## 0.0.3-next.1
+
+### Patch Changes
+
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
+
+## 0.0.3-next.0
+
+### Patch Changes
+
+- [#7076](https://github.com/LedgerHQ/ledger-live/pull/7076) [`7d7c327`](https://github.com/LedgerHQ/ledger-live/commit/7d7c32722a539ef6c5097c4ac2ceccaef9fc8053) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix multiple small bugs
 
 ## 0.0.2
 

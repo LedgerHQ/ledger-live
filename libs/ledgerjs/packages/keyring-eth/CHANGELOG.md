@@ -1,52 +1,46 @@
 # @ledgerhq/keyring-eth
 
-## 0.2.0-nightly.4
+## 0.1.1
 
 ### Patch Changes
 
-- Updated dependencies [[`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4)]:
-  - @ledgerhq/types-live@6.49.0-nightly.2
-  - @ledgerhq/coin-evm@2.1.1-nightly.3
-  - @ledgerhq/hw-app-eth@6.37.1-nightly.3
-  - @ledgerhq/hw-transport@6.31.1-nightly.1
+- [#7076](https://github.com/LedgerHQ/ledger-live/pull/7076) [`7d7c327`](https://github.com/LedgerHQ/ledger-live/commit/7d7c32722a539ef6c5097c4ac2ceccaef9fc8053) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix small bug and add test scripts
 
-## 0.2.0-nightly.3
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
 
-### Patch Changes
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`7d7c327`](https://github.com/LedgerHQ/ledger-live/commit/7d7c32722a539ef6c5097c4ac2ceccaef9fc8053), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761), [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/types-live@6.48.1
+  - @ledgerhq/context-module@0.0.3
+  - @ledgerhq/hw-app-eth@6.37.1
 
-- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
-  - @ledgerhq/types-live@6.49.0-nightly.1
-  - @ledgerhq/coin-evm@2.1.1-nightly.2
-  - @ledgerhq/hw-app-eth@6.37.1-nightly.2
-
-## 0.2.0-nightly.2
-
-### Minor Changes
-
-- [#7170](https://github.com/LedgerHQ/ledger-live/pull/7170) [`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Support the specific transaction type of ledger live
+## 0.1.1-next.2
 
 ### Patch Changes
 
-- Updated dependencies [[`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad)]:
-  - @ledgerhq/context-module@0.1.0-nightly.1
-  - @ledgerhq/coin-evm@2.1.1-nightly.1
-  - @ledgerhq/hw-app-eth@6.37.1-nightly.1
+- [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
 
-## 0.1.1-nightly.1
+- Updated dependencies [[`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78)]:
+  - @ledgerhq/context-module@0.0.3-next.1
+  - @ledgerhq/hw-app-eth@6.37.1-next.2
+  - @ledgerhq/types-live@6.48.1-next.1
 
-### Patch Changes
-
-- Updated dependencies [[`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5)]:
-  - @ledgerhq/types-live@6.48.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.37.1-nightly.0
-  - @ledgerhq/hw-transport@6.31.1-nightly.0
-
-## 0.1.1-nightly.0
+## 0.1.1-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`87a3a1e`](https://github.com/LedgerHQ/ledger-live/commit/87a3a1ee2d5ed3dae2251b4a8683063b07ee1df8)]:
-  - @ledgerhq/context-module@0.0.3-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.37.1-next.1
+
+## 0.1.1-next.0
+
+### Patch Changes
+
+- [#7076](https://github.com/LedgerHQ/ledger-live/pull/7076) [`7d7c327`](https://github.com/LedgerHQ/ledger-live/commit/7d7c32722a539ef6c5097c4ac2ceccaef9fc8053) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix small bug and add test scripts
+
+- Updated dependencies [[`9551536`](https://github.com/LedgerHQ/ledger-live/commit/955153681ebc19344ed5becfbf7b131224b2ebd0), [`7d7c327`](https://github.com/LedgerHQ/ledger-live/commit/7d7c32722a539ef6c5097c4ac2ceccaef9fc8053), [`785c618`](https://github.com/LedgerHQ/ledger-live/commit/785c6180c2212ca879c2fddb8302f0bab5686761)]:
+  - @ledgerhq/types-live@6.48.1-next.0
+  - @ledgerhq/context-module@0.0.3-next.0
+  - @ledgerhq/hw-app-eth@6.37.1-next.0
 
 ## 0.1.0
 
