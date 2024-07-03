@@ -183,8 +183,7 @@ export const fetchAndMergeProviderData = async () => {
     return finalProvidersData;
   } catch (error) {
     console.error("Error fetching or processing provider data:", error);
-    const transformedProvidersData = transformData(swapProviders);
-    const finalProvidersData = mergeProviderData(transformedProvidersData, swapAdditionData);
+    const finalProvidersData = mergeProviderData(swapProviders, swapAdditionData);
     providerDataCache = finalProvidersData;
 
     return finalProvidersData;
