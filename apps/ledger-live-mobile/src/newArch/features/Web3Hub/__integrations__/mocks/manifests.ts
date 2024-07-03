@@ -91,8 +91,8 @@ export const data: AppManifest[] = [
     private: false,
     url: "https://www.staderlabs.com/eth/stake/",
     dapp: {
+      provider: "evm",
       nanoApp: "Staderlabs",
-      dappName: "stader-eth",
       networks: [
         {
           currency: "ethereum",
