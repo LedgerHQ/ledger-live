@@ -1,9 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import "@testing-library/jest-dom";
-import { describe, it, expect, jest } from "@jest/globals";
-
 import React from "react";
 import { render, screen } from "tests/testUtils";
 import { account, NftCollectionTest, NoNftCollectionTest } from "./shared";
@@ -26,9 +23,9 @@ describe("displayNftCollection", () => {
       initialRoute: `/`,
     });
 
-    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeDefined();
-    await expect(screen.getByText(/receive nft/i)).toBeDefined();
-    await expect(screen.getByText(/see gallery/i)).toBeDefined();
+    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeVisible();
+    await expect(screen.getByText(/receive nft/i)).toBeVisible();
+    await expect(screen.getByText(/see gallery/i)).toBeVisible();
   });
 
   it("it should open the NFTs gallery", async () => {
@@ -42,11 +39,11 @@ describe("displayNftCollection", () => {
       initialRoute: `/`,
     });
 
-    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeDefined();
-    await expect(screen.getByText(/receive nft/i)).toBeDefined();
-    await expect(screen.getByText(/see gallery/i)).toBeDefined();
+    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeVisible();
+    await expect(screen.getByText(/receive nft/i)).toBeVisible();
+    await expect(screen.getByText(/see gallery/i)).toBeVisible();
     await user.click(screen.getByText(/see gallery/i));
-    await expect(screen.getByText(/all nft/i)).toBeDefined();
+    await expect(screen.getByText(/all nft/i)).toBeVisible();
   });
 
   it("it should open the corresponding NFTs collection and it should open detail drawer", async () => {
@@ -60,12 +57,12 @@ describe("displayNftCollection", () => {
       initialRoute: `/`,
     });
 
-    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeDefined();
-    await expect(screen.getByText(/receive nft/i)).toBeDefined();
-    await expect(screen.getByText(/see gallery/i)).toBeDefined();
+    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeVisible();
+    await expect(screen.getByText(/receive nft/i)).toBeVisible();
+    await expect(screen.getByText(/see gallery/i)).toBeVisible();
     await user.click(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i));
-    await expect(screen.getByText(/all nft/i)).toBeDefined();
-    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeDefined();
+    await expect(screen.getByText(/all nft/i)).toBeVisible();
+    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeVisible();
   });
 
   it("it should not display nft", async () => {
@@ -79,7 +76,7 @@ describe("displayNftCollection", () => {
       initialRoute: `/`,
     });
 
-    await expect(screen.getByText(/receive nft/i)).toBeDefined();
-    await expect(screen.getByText(/learn more/i)).toBeDefined();
+    await expect(screen.getByText(/receive nft/i)).toBeVisible();
+    await expect(screen.getByText(/learn more/i)).toBeVisible();
   });
 });

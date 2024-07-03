@@ -26,7 +26,6 @@ const moduleNameMapper = {
 };
 
 const commonConfig = {
-  preset: "ts-jest",
   testEnvironment: "jsdom",
   globals: {
     __DEV__: false,
@@ -35,16 +34,13 @@ const commonConfig = {
     __SENTRY_URL__: null,
     __PRERELEASE__: "null",
     __CHANNEL__: "null",
-    "ts-jest": {
-      isolatedModules: true,
-      diagnostics: "warnOnly",
-    },
   },
   moduleNameMapper,
   testPathIgnorePatterns,
-  setupFiles: ["jest-canvas-mock", "<rootDir>/tests/jestSetup.js"],
+  setupFiles: ["jest-canvas-mock"],
+  setupFilesAfterEnv: ["<rootDir>/tests/jestSetup.js"],
   globalSetup: "<rootDir>/tests/setup.ts",
-  moduleDirectories: ["node_modules"],
+  moduleDirectories: ["node_modules", "./tests"],
   modulePaths: [compilerOptions.baseUrl],
   resolver: "<rootDir>/scripts/resolver.js",
 };
@@ -56,12 +52,20 @@ module.exports = {
     {
       ...commonConfig,
       displayName: "default",
+      extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
       testPathIgnorePatterns: [
         ...testPathIgnorePatterns,
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
       transform: {
-        "^.+\\.tsx?$": "ts-jest",
+        "^.+\\.(t|j)sx?$": [
+          "@swc/jest",
+          {
+            jsc: {
+              target: "esnext",
+            },
+          },
+        ],
         "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
           "<rootDir>/tests/fileTransformer.js",
       },
@@ -69,9 +73,17 @@ module.exports = {
     {
       ...commonConfig,
       displayName: "dom",
-      setupFiles: [...commonConfig.setupFiles, "<rootDir>/tests/jestJSDOMSetup.ts"],
+      extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
+      setupFiles: [...commonConfig.setupFiles],
       transform: {
-        "^.+\\.tsx?$": "ts-jest",
+        "^.+\\.(t|j)sx?$": [
+          "@swc/jest",
+          {
+            jsc: {
+              target: "esnext",
+            },
+          },
+        ],
         "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
           "<rootDir>/tests/fileTransformer.js",
       },

@@ -1,4 +1,6 @@
-const { TextDecoder, TextEncoder } = require("util");
+import { TextDecoder, TextEncoder } from "util";
+import "@jest/globals";
+import "@testing-library/jest-dom";
 
 jest.mock("@sentry/electron/renderer", () => ({
   init: jest.fn(),
