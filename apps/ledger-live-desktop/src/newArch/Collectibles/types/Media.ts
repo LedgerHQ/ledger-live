@@ -16,12 +16,12 @@ type BaseMediaProps = BaseProps & {
   previewUri?: string | undefined;
   originalUri?: string | undefined;
   mediaType: string | undefined;
-  setUseFallback?: (a: boolean) => void;
+  setUseFallback?: (useFallback: boolean) => void;
 };
 
 export type ImageProps = BaseMediaProps & {
   collectibleName?: string | null;
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (event: React.MouseEvent) => void;
   isFallback: boolean;
   isLoading: boolean;
 };
@@ -34,5 +34,5 @@ export type MediaProps = BaseMediaProps & {
   contentType: string | undefined;
   collectibleName?: string | null;
   mediaFormat?: keyof NFTMedias;
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (event: React.MouseEvent) => void;
 };

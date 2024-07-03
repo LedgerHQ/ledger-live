@@ -55,6 +55,7 @@ const NftItem: React.FC<NftItemProps> = ({
   onClick,
 }) => {
   const { metadata, status } = useNftMetadata(contract, tokenId, currencyId);
+  const isLoading = status === FieldStatus.Loading;
 
   return (
     <CollectionContextMenu
@@ -64,12 +65,12 @@ const NftItem: React.FC<NftItemProps> = ({
       typeOfCollectible={CollectibleTypeEnum.NFT}
     >
       <TableRow
-        isLoading={status === FieldStatus.Loading}
+        isLoading={isLoading}
         tokenName={metadata?.tokenName || contract}
         numberOfNfts={numberOfNfts}
         onClick={() => onClick(contract)}
         media={{
-          isLoading: status === FieldStatus.Loading,
+          isLoading: isLoading,
           useFallback: true,
           contentType: "image",
           uri: metadata?.medias.preview.uri,

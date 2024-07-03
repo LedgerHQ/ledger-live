@@ -1,16 +1,18 @@
 import { NFT, ProtoNFT } from "@ledgerhq/types-live";
 
+type NFTCollectionItem = (ProtoNFT | NFT)[];
+
 export const filterHiddenCollections = (
-  collections: (ProtoNFT | NFT)[] | Record<string, (ProtoNFT | NFT)[]>,
+  collections: NFTCollectionItem | Record<string, NFTCollectionItem>,
   hiddenNftCollections: string[],
   accountId: string,
-): [string, (ProtoNFT | NFT)[]][] =>
+): [string, NFTCollectionItem][] =>
   Object.entries(collections).filter(
     ([contract]) => !hiddenNftCollections.includes(`${accountId}|${contract}`),
   );
 
 export const mapCollectionsToStructure = (
-  filteredCollections: [string, (ProtoNFT | NFT)[]][],
+  filteredCollections: [string, NFTCollectionItem][],
   numberOfVisibleCollections: number,
 
   onOpenCollection: (collectionAddress?: string) => void,
