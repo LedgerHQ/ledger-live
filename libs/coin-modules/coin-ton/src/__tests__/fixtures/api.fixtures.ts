@@ -11,7 +11,7 @@ import {
 } from "./common.fixtures";
 
 // Define the mock base URL for the TON API
-export const API_TON_ENDPOINT = "https://toncenter.com/api/v3";
+export const API_TON_ENDPOINT = "https://ton.coin.ledger.com/api/v3";
 
 // Create request handlers for the mock server
 const handlers = [

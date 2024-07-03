@@ -23,27 +23,24 @@ const getTonUrl = (path?: string): string => {
 };
 
 const fetch = async <T>(path: string): Promise<T> => {
-  const currencyConfig = getCoinConfig();
   const url = getTonUrl(path);
 
   const { data } = await network<T>({
     method: "GET",
     url,
-    headers: { "X-API-Key": currencyConfig.infra.API_TON_KEY },
   });
 
   return data;
 };
 
 const send = async <T>(path: string, data: Record<string, unknown>) => {
-  const currencyConfig = getCoinConfig();
   const url = getTonUrl(path);
 
   const { data: dataResponse } = await network<T>({
     method: "POST",
     url,
     data: JSON.stringify(data),
-    headers: { "X-API-Key": currencyConfig.infra.API_TON_KEY, "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json" },
   });
 
   return dataResponse;
