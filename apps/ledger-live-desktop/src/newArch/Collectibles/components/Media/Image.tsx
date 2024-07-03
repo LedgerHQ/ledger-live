@@ -83,7 +83,7 @@ const ImageComponent: React.FC<ImageProps> = ({
           key={isFallback?.toString()}
           onClick={onClick}
           onLoad={() => setLoaded(true)}
-          onError={() => (isFallback ? setError(true) : setUseFallback(true))}
+          onError={() => (isFallback ? setError(true) : setUseFallback?.(true))}
           src={uri}
         />
       ) : (
