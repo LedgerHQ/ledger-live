@@ -1,10 +1,23 @@
-import type { DeviceAction } from "../../bot/types";
-import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "@ledgerhq/coin-framework/bot/specs";
+import { Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "./types";
 
-const expectedAmount = ({ account, status, transaction }) => {
+function expectedAmount({
+  account,
+  status,
+  transaction,
+}: {
+  account: Account;
+  status: TransactionStatus;
+  transaction: Transaction;
+}) {
   if (transaction.assetCode && transaction.assetIssuer) {
     const amount = formatDeviceAmount(account.currency, status.amount, {
       hideCode: true,
@@ -16,10 +29,11 @@ const expectedAmount = ({ account, status, transaction }) => {
   return formatDeviceAmount(account.currency, status.amount, {
     postfixCode: true,
   });
-};
+}
 
-const truncateAddress = (stellarAddress: string, start = 6, end = 6) =>
-  `${stellarAddress.slice(0, start)}..${stellarAddress.slice(-end)}`;
+function truncateAddress(stellarAddress: string, start = 6, end = 6) {
+  return `${stellarAddress.slice(0, start)}..${stellarAddress.slice(-end)}`;
+}
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [

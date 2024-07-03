@@ -1,6 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "./types";
-import { getAssetCodeIssuer } from "./logic";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -9,13 +7,15 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAssetCodeIssuer } from "./logic";
+import type { Transaction, TransactionRaw } from "./types";
 
-export const formatTransaction = (
+export function formatTransaction(
   { amount, recipient, fees, memoValue, useAllAmount, subAccountId }: Transaction,
   mainAccount: Account,
-): string => {
+): string {
   const account =
     (subAccountId && (mainAccount.subAccounts || []).find(a => a.id === subAccountId)) ||
     mainAccount;
@@ -38,9 +38,9 @@ export const formatTransaction = (
             disableRounding: true,
           })
     }${memoValue ? "\n  memo=" + memoValue : ""}`;
-};
+}
 
-const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+function fromTransactionRaw(tr: TransactionRaw): Transaction {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
   const [assetCode, assetIssuer] = getAssetCodeIssuer(tr);
@@ -63,19 +63,19 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     assetCode,
     assetIssuer,
   };
-};
+}
 
-const toTransactionRaw = (t: Transaction): TransactionRaw => {
-  const common = toTransactionCommonRaw(t);
-  const { networkInfo } = t;
-  const [assetCode, assetIssuer] = getAssetCodeIssuer(t);
+function toTransactionRaw(transaction: Transaction): TransactionRaw {
+  const common = toTransactionCommonRaw(transaction);
+  const { networkInfo } = transaction;
+  const [assetCode, assetIssuer] = getAssetCodeIssuer(transaction);
   return {
     ...common,
-    family: t.family,
-    fees: t.fees ? t.fees.toString() : null,
-    baseReserve: t.baseReserve ? t.baseReserve.toString() : null,
-    memoValue: t.memoValue ? t.memoValue.toString() : null,
-    memoType: t.memoType ? t.memoType.toString() : null,
+    family: transaction.family,
+    fees: transaction.fees ? transaction.fees.toString() : null,
+    baseReserve: transaction.baseReserve ? transaction.baseReserve.toString() : null,
+    memoValue: transaction.memoValue ? transaction.memoValue.toString() : null,
+    memoType: transaction.memoType ? transaction.memoType.toString() : null,
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: networkInfo.fees.toString(),
@@ -83,11 +83,11 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
       baseReserve: networkInfo.baseReserve.toString(),
       networkCongestionLevel: networkInfo.networkCongestionLevel,
     },
-    mode: t.mode,
+    mode: transaction.mode,
     assetCode,
     assetIssuer,
   };
-};
+}
 
 export default {
   formatTransaction,

@@ -7,7 +7,6 @@ import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
 import internet_computer from "../families/internet_computer/transaction";
 import stacks from "../families/stacks/transaction";
-import stellar from "../families/stellar/transaction";
 import vechain from "../families/vechain/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
@@ -16,6 +15,7 @@ import evm from "@ledgerhq/coin-evm/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
 import solana from "@ledgerhq/coin-solana/transaction";
+import stellar from "@ledgerhq/coin-stellar/transaction";
 import tezos from "@ledgerhq/coin-tezos/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
@@ -30,7 +30,6 @@ export default {
   hedera,
   internet_computer,
   stacks,
-  stellar,
   vechain,
   algorand,
   bitcoin,
@@ -39,6 +38,7 @@ export default {
   near,
   polkadot,
   solana,
+  stellar,
   tezos,
   tron,
   xrp,
