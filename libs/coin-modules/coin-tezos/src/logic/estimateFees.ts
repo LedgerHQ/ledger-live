@@ -56,17 +56,22 @@ export async function estimateFees({
     },
   });
 
-  let amount = transaction.amount;
-  if (transaction.useAllAmount) {
-    amount = BigInt(1); // send max do a pre-estimation with minimum amount (taquito refuses 0)
-  }
-
   const estimation: EstimatedFees = {
     fees: BigInt(0),
     gasLimit: BigInt(0),
     storageLimit: BigInt(0),
     estimatedFees: BigInt(0),
   };
+
+  // For legacy compatibility
+  if (account.balance === BigInt(0)) {
+    return transaction.useAllAmount ? { ...estimation, amount: BigInt(0) } : estimation;
+  }
+
+  let amount = transaction.amount;
+  if (transaction.useAllAmount) {
+    amount = BigInt(1); // send max do a pre-estimation with minimum amount (taquito refuses 0)
+  }
 
   try {
     let estimate: Estimate;
