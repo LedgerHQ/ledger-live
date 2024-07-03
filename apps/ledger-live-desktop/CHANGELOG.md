@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.83.1-nightly.0
+
+### Patch Changes
+
+- [#7246](https://github.com/LedgerHQ/ledger-live/pull/7246) [`bb406fa`](https://github.com/LedgerHQ/ledger-live/commit/bb406fa193be8168e7bf34a12ea16bf6cacd584f) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - in demo1 reset error and amout to value when target currency is changed
+
 ## 2.83.0
 
 ### Minor Changes
