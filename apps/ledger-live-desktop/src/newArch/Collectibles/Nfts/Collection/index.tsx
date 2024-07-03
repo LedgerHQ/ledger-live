@@ -1,5 +1,4 @@
-import React from "react";
-import { TableHeaderProps } from "../../types/Collection";
+import React, { useMemo } from "react";
 import { useNftCollectionModel } from "./useNftCollectionModel";
 import { Box, Icons, Flex } from "@ledgerhq/react-ui";
 import TableContainer from "~/renderer/components/TableContainer";
@@ -14,6 +13,8 @@ import { useTranslation } from "react-i18next";
 import ShowMore from "../../components/Collection/ShowMore";
 import { FieldStatus } from "../../types/DetailDrawer";
 import CollectionContextMenu from "LLD/components/ContextMenu/CollectibleContextMenu";
+import HeaderActions from "../../components/Collection/HeaderActions";
+import { TableHeaderProps, TableHeaderTitleKey as TitleKey } from "../../types/Collection";
 
 export type NftsInTheCollections = {
   contract: string;
@@ -23,10 +24,10 @@ export type NftsInTheCollections = {
 };
 
 type ViewProps = {
-  tableHeaderProps: TableHeaderProps;
   nftsInTheCollection: NftsInTheCollections[];
   account: Account;
   displayShowMore: boolean;
+  onOpenGallery: () => void;
   onReceive: () => void;
   onOpenCollection: (collectionAddress: string) => void;
   onShowMore: () => void;
@@ -80,16 +81,40 @@ const NftItem: React.FC<NftItemProps> = ({
 };
 
 function View({
-  tableHeaderProps,
   nftsInTheCollection,
   account,
   displayShowMore,
+  onOpenGallery,
   onReceive,
   onOpenCollection,
   onShowMore,
 }: ViewProps) {
   const { t } = useTranslation();
   const hasNfts = nftsInTheCollection.length > 0;
+
+  const actions = useMemo(() => {
+    return hasNfts
+      ? [
+          {
+            element: (
+              <HeaderActions textKey="NFT.collections.receiveCTA">
+                <Icons.ArrowDown size="S" />
+              </HeaderActions>
+            ),
+            action: onReceive,
+          },
+          {
+            element: <HeaderActions textKey="NFT.collections.galleryCTA" />,
+            action: onOpenGallery,
+          },
+        ]
+      : [];
+  }, [hasNfts, onReceive, onOpenGallery]);
+
+  const tableHeaderProps: TableHeaderProps = {
+    titleKey: TitleKey.NFTCollections,
+    actions,
+  };
 
   return (
     <Box>

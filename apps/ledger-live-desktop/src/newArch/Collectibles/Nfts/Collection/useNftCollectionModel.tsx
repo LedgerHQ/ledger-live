@@ -1,11 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Icons } from "@ledgerhq/react-ui";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { openModal } from "~/renderer/actions/modals";
-import { TableHeaderProps, TableHeaderTitleKey as TitleKey } from "../../types/Collection";
-import HeaderActions from "LLD/Collectibles/components/Collection/HeaderActions";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { nftsByCollections } from "@ledgerhq/live-nft/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -79,39 +76,16 @@ export const useNftCollectionModel = ({ account }: Props) => {
     [filteredCollections, numberOfVisibleCollections, onOpenCollection],
   );
 
-  const actions = useMemo(() => {
-    return nftsInTheCollection.length > 0
-      ? [
-          {
-            element: (
-              <HeaderActions textKey="NFT.collections.receiveCTA">
-                <Icons.ArrowDown size="S" />
-              </HeaderActions>
-            ),
-            action: onReceive,
-          },
-          {
-            element: <HeaderActions textKey="NFT.collections.galleryCTA" />,
-            action: onOpenGallery,
-          },
-        ]
-      : [];
-  }, [nftsInTheCollection.length, onReceive, onOpenGallery]);
-
-  const tableHeaderProps: TableHeaderProps = {
-    titleKey: TitleKey.NFTCollections,
-    actions: actions,
-  };
-
   useEffect(() => {
     const moreToShow = numberOfVisibleCollections < filteredCollections.length;
     setDisplayShowMore(moreToShow);
   }, [numberOfVisibleCollections, filteredCollections.length]);
 
   return {
-    tableHeaderProps,
     nftsInTheCollection,
+    account,
     displayShowMore,
+    onOpenGallery,
     onReceive,
     onOpenCollection,
     onShowMore,
