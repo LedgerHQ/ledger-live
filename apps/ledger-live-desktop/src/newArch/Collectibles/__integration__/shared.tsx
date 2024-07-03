@@ -16,11 +16,7 @@ const NftCollectionNavigation = () => (
   </Switch>
 );
 
-const NftCollectionTestBase = () => (
-  <>
-    <NftCollectionNavigation />
-  </>
-);
+const NftCollectionTestBase = () => <NftCollectionNavigation />;
 
 export const NftCollectionTest = withRouter(NftCollectionTestBase);
 export const NoNftCollectionTest = withRouter(() => (

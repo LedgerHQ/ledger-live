@@ -1,7 +1,7 @@
 import React from "react";
 import { Media, Skeleton } from "../../index";
 import { Box, Text } from "@ledgerhq/react-ui";
-import { rgba } from "@ledgerhq/react-ui/styles";
+import { rgba } from "~/renderer/styles/helpers";
 import styled from "styled-components";
 import { isNFTRow, isOrdinalsRow, isRareSatsRow } from "LLD/Collectibles/utils/typeGuardsChecker";
 import { RowProps as Props } from "LLD/Collectibles/types/Collection";
@@ -33,16 +33,14 @@ const TableRow: React.FC<Props> = props => {
 
   const nftCount = () => {
     return (
-      <>
-        <Skeleton width={42} minHeight={24} barHeight={10} show={props.isLoading}>
-          {isNFTRow(props) && (
-            <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4} textAlign="right">
-              {props.numberOfNfts || 0}
-            </Text>
-          )}
-          {isOrdinalsRow(props) && null}
-        </Skeleton>
-      </>
+      <Skeleton width={42} minHeight={24} barHeight={10} show={props.isLoading}>
+        {isNFTRow(props) && (
+          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4} textAlign="right">
+            {props.numberOfNfts || 0}
+          </Text>
+        )}
+        {isOrdinalsRow(props) && null}
+      </Skeleton>
     );
   };
 

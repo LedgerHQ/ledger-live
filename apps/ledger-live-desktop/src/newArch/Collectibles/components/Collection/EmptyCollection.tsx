@@ -40,25 +40,23 @@ const EmptyCollection: React.FC<Props> = ({ collectionType, currencyName, childr
     switch (collectionType) {
       case CollectibleTypeEnum.NFT:
         return (
-          <>
-            <Placeholder>
-              <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
-                {t("NFT.collections.placeholder", {
-                  currency: currencyName,
-                })}
-                &nbsp;
-                <LabelWithExternalIcon
-                  color="wallet"
-                  ff="Inter|SemiBold"
-                  onClick={() => {
-                    openURL(supportLinkByTokenType.nfts);
-                    track(`More info on Manage nfts tokens`);
-                  }}
-                  label={t("tokensList.link")}
-                />
-              </Text>
-            </Placeholder>
-          </>
+          <Placeholder>
+            <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+              {t("NFT.collections.placeholder", {
+                currency: currencyName,
+              })}
+              &nbsp;
+              <LabelWithExternalIcon
+                color="wallet"
+                ff="Inter|SemiBold"
+                onClick={() => {
+                  openURL(supportLinkByTokenType.nfts);
+                  track(`More info on Manage nfts tokens`);
+                }}
+                label={t("tokensList.link")}
+              />
+            </Text>
+          </Placeholder>
         );
       case CollectibleTypeEnum.Ordinal:
         return null;
