@@ -232,6 +232,9 @@ const DeviceSwapSummaryValueStyled = styled.div`
   font-size: 14px;
   justify-self: flex-end;
   max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.space[1]}px;
 `;
 
 const EllipsesTextStyled = styled(Text)`
@@ -240,6 +243,7 @@ const EllipsesTextStyled = styled(Text)`
   white-space: nowrap;
   flex-shrink: 1;
   display: inline-block;
+  max-width: 100%;
 `;
 
 // these are not components because we want reconciliation to not remount the sub elements
@@ -1039,10 +1043,10 @@ export const renderSwapDeviceConfirmation = ({
       />
     ),
     provider: (
-      <Box horizontal alignItems="center" style={{ gap: "6px" }}>
+      <>
         <ProviderIcon size="XXS" name={exchangeRate.provider} />
         <EllipsesTextStyled title={providerName}>{providerName}</EllipsesTextStyled>
-      </Box>
+      </>
     ),
     fees: (
       <CurrencyUnitValue
@@ -1058,24 +1062,24 @@ export const renderSwapDeviceConfirmation = ({
       />
     ),
     sourceAccount: (
-      <Box horizontal alignItems="center" style={{ gap: "6px" }}>
+      <>
         {sourceAccountCurrency && (
           <CryptoCurrencyIcon circle currency={sourceAccountCurrency} size={18} />
         )}
         <EllipsesTextStyled textTransform={"capitalize"} title={sourceAccountName}>
           {sourceAccountName}
         </EllipsesTextStyled>
-      </Box>
+      </>
     ),
     targetAccount: (
-      <Box horizontal alignItems="center" style={{ gap: "6px" }}>
+      <>
         {targetAccountCurrency && (
           <CryptoCurrencyIcon circle currency={targetAccountCurrency} size={18} />
         )}
         <EllipsesTextStyled textTransform={"capitalize"} title={targetAccountName}>
           {targetAccountName}
         </EllipsesTextStyled>
-      </Box>
+      </>
     ),
   });
 
