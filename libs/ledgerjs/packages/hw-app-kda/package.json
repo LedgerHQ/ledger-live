@@ -1,0 +1,50 @@
+{
+  "name": "@ledgerhq/hw-app-kda",
+  "version": "1.0.0",
+  "description": "Ledger Hardware Wallet Kadena Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "near",
+    "Kadena",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-kda",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Kadena.js",
+  "module": "lib-es/Kadena.js",
+  "types": "lib/Kadena.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/coin-kadena": "workspace:^",
+    "near-api-js": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^16.10.3",
+    "blake2b": "^2.1.4",
+    "hw-app-alamgu": "^0.1.1"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "unimported": "unimported"
+  }
+}
