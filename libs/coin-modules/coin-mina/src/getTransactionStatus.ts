@@ -31,7 +31,7 @@ const getTransactionStatus: AccountBridge<
     errors.recipient = new RecipientRequired();
   }
 
-  if (!isValidAddress(t.recipient)) {
+  if (t.recipient && !isValidAddress(t.recipient)) {
     errors.recipient = new InvalidAddress();
   }
 

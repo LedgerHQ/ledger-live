@@ -32,9 +32,7 @@ function MinaEditMemo({ navigation, route }: NavigationProps) {
   invariant(account, "account is required");
   const [memo, setMemo] = useState(route.params?.transaction.memo);
   const onChangeMemoValue = useCallback((str: string) => {
-    let value: string = str;
-    value = str.replace(/\D/g, "");
-    setMemo(value === "" ? undefined : value);
+    setMemo(str === "" ? undefined : str);
   }, []);
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
@@ -69,8 +67,8 @@ function MinaEditMemo({ navigation, route }: NavigationProps) {
                 },
               ]}
               value={memo?.toString() ?? ""}
-              placeholder="Eg: 1658490330"
-              keyboardType="number-pad"
+              placeholder="Optional memo"
+              keyboardType="default"
               returnKeyType="done"
               onChangeText={onChangeMemoValue}
               onSubmitEditing={onValidateText}
