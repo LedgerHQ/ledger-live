@@ -1,5 +1,37 @@
 ## 34.5.0-next.4
 
+## 34.6.0-nightly.0
+
+### Minor Changes
+
+- [#7221](https://github.com/LedgerHQ/ledger-live/pull/7221) [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90) Thanks [@Justkant](https://github.com/Justkant)! - feat(LLM): web3hub FF to replace discover section [LIVE-13124]
+
+### Patch Changes
+
+- [#7230](https://github.com/LedgerHQ/ledger-live/pull/7230) [`fdc6453`](https://github.com/LedgerHQ/ledger-live/commit/fdc645396b22e1440868b68ba19189cd041603d8) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): avoid caching listCurrencies result too early [LIVE-13205]
+
+- [#7189](https://github.com/LedgerHQ/ledger-live/pull/7189) [`a0e3a56`](https://github.com/LedgerHQ/ledger-live/commit/a0e3a56244d92ca62e5c0b3899d0ca18c54e5df9) Thanks [@lvndry](https://github.com/lvndry)! - Move stellar logic to coin-stellar
+
+- Updated dependencies [[`201cf62`](https://github.com/LedgerHQ/ledger-live/commit/201cf622ee3994a4a0c65672183d469a0d1b52fe), [`a0e3a56`](https://github.com/LedgerHQ/ledger-live/commit/a0e3a56244d92ca62e5c0b3899d0ca18c54e5df9), [`ac58825`](https://github.com/LedgerHQ/ledger-live/commit/ac58825de73832da71d587911ab9b2635ad16ccf)]:
+  - @ledgerhq/coin-bitcoin@0.6.2-nightly.0
+  - @ledgerhq/coin-stellar@0.2.0-nightly.0
+  - @ledgerhq/coin-polkadot@1.1.0-nightly.0
+  - @ledgerhq/coin-xrp@0.4.0-nightly.0
+  - @ledgerhq/coin-framework@0.15.1-nightly.0
+  - @ledgerhq/coin-algorand@0.5.2-nightly.0
+  - @ledgerhq/coin-cardano@0.1.2-nightly.0
+  - @ledgerhq/coin-evm@2.1.2-nightly.0
+  - @ledgerhq/coin-near@0.5.2-nightly.0
+  - @ledgerhq/coin-solana@0.7.2-nightly.0
+  - @ledgerhq/coin-tezos@0.4.2-nightly.0
+  - @ledgerhq/coin-tron@0.0.2-nightly.4
+  - @ledgerhq/device-core@0.2.2-nightly.0
+  - @ledgerhq/hw-app-eth@6.37.2-nightly.0
+  - @ledgerhq/live-countervalues@0.2.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.0
+  - @ledgerhq/live-nft@0.4.2-nightly.0
+  - @ledgerhq/live-wallet@0.3.1-nightly.0
+
 ## 34.5.0
 
 ### Minor Changes

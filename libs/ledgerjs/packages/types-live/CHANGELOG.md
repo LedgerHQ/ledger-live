@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.49.0-nightly.0
+
+### Minor Changes
+
+- [#7221](https://github.com/LedgerHQ/ledger-live/pull/7221) [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90) Thanks [@Justkant](https://github.com/Justkant)! - feat(LLM): web3hub FF to replace discover section [LIVE-13124]
+
 ## 6.48.1
 
 ### Patch Changes

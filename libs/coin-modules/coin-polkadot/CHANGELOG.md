@@ -1,5 +1,17 @@
 # @ledgerhq/coin-polkadot
 
+## 1.1.0-nightly.0
+
+### Minor Changes
+
+- [#7234](https://github.com/LedgerHQ/ledger-live/pull/7234) [`ac58825`](https://github.com/LedgerHQ/ledger-live/commit/ac58825de73832da71d587911ab9b2635ad16ccf) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Combine has now pubkey optional
+
+### Patch Changes
+
+- Updated dependencies [[`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90)]:
+  - @ledgerhq/types-live@6.49.0-nightly.0
+  - @ledgerhq/coin-framework@0.15.1-nightly.0
+
 ## 1.0.0
 
 ### Major Changes

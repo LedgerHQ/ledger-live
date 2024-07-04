@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.83.1-nightly.1
+
+### Patch Changes
+
+- [#7247](https://github.com/LedgerHQ/ledger-live/pull/7247) [`ebde0bd`](https://github.com/LedgerHQ/ledger-live/commit/ebde0bd0a9c4b4cb4369764ad2a4d9fb95fccbef) Thanks [@adumitrana-ledger](https://github.com/adumitrana-ledger)! - LIVE-13231: add discreet mode option
+
+- [#7237](https://github.com/LedgerHQ/ledger-live/pull/7237) [`201cf62`](https://github.com/LedgerHQ/ledger-live/commit/201cf622ee3994a4a0c65672183d469a0d1b52fe) Thanks [@lvndry](https://github.com/lvndry)! - Better error message if cardinality is not 3
+
+- [#7253](https://github.com/LedgerHQ/ledger-live/pull/7253) [`173bb3c`](https://github.com/LedgerHQ/ledger-live/commit/173bb3c84cc855f83ab8dc49362bc381afecc31e) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - remove unsued useEffect for demo1
+
+- Updated dependencies [[`fdc6453`](https://github.com/LedgerHQ/ledger-live/commit/fdc645396b22e1440868b68ba19189cd041603d8), [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90), [`a0e3a56`](https://github.com/LedgerHQ/ledger-live/commit/a0e3a56244d92ca62e5c0b3899d0ca18c54e5df9), [`201cf62`](https://github.com/LedgerHQ/ledger-live/commit/201cf622ee3994a4a0c65672183d469a0d1b52fe)]:
+  - @ledgerhq/live-common@34.6.0-nightly.0
+  - @ledgerhq/types-live@6.49.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.6.2-nightly.0
+  - @ledgerhq/coin-framework@0.15.1-nightly.0
+  - @ledgerhq/coin-evm@2.1.2-nightly.0
+  - @ledgerhq/domain-service@1.2.2-nightly.0
+  - @ledgerhq/live-countervalues@0.2.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.0
+  - @ledgerhq/live-nft@0.4.2-nightly.0
+  - @ledgerhq/live-nft-react@0.4.2-nightly.0
+  - @ledgerhq/live-wallet@0.3.1-nightly.0
+
 ## 2.83.1-nightly.0
 
 ### Patch Changes

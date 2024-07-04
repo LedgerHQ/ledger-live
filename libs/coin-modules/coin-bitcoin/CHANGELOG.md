@@ -1,5 +1,15 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.6.2-nightly.0
+
+### Patch Changes
+
+- [#7237](https://github.com/LedgerHQ/ledger-live/pull/7237) [`201cf62`](https://github.com/LedgerHQ/ledger-live/commit/201cf622ee3994a4a0c65672183d469a0d1b52fe) Thanks [@lvndry](https://github.com/lvndry)! - Better error message if cardinality is not 3
+
+- Updated dependencies [[`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90)]:
+  - @ledgerhq/types-live@6.49.0-nightly.0
+  - @ledgerhq/coin-framework@0.15.1-nightly.0
+
 ## 0.6.1
 
 ### Patch Changes

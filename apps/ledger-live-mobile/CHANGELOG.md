@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.47.0-nightly.0
+
+### Minor Changes
+
+- [#7221](https://github.com/LedgerHQ/ledger-live/pull/7221) [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90) Thanks [@Justkant](https://github.com/Justkant)! - feat(LLM): web3hub FF to replace discover section [LIVE-13124]
+
+### Patch Changes
+
+- [#7237](https://github.com/LedgerHQ/ledger-live/pull/7237) [`201cf62`](https://github.com/LedgerHQ/ledger-live/commit/201cf622ee3994a4a0c65672183d469a0d1b52fe) Thanks [@lvndry](https://github.com/lvndry)! - Better error message if cardinality is not 3
+
+- Updated dependencies [[`fdc6453`](https://github.com/LedgerHQ/ledger-live/commit/fdc645396b22e1440868b68ba19189cd041603d8), [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90), [`a0e3a56`](https://github.com/LedgerHQ/ledger-live/commit/a0e3a56244d92ca62e5c0b3899d0ca18c54e5df9)]:
+  - @ledgerhq/live-common@34.6.0-nightly.0
+  - @ledgerhq/types-live@6.49.0-nightly.0
+  - @ledgerhq/coin-framework@0.15.1-nightly.0
+  - @ledgerhq/coin-evm@2.1.2-nightly.0
+  - @ledgerhq/domain-service@1.2.2-nightly.0
+  - @ledgerhq/live-countervalues@0.2.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.0
+  - @ledgerhq/live-nft@0.4.2-nightly.0
+  - @ledgerhq/live-nft-react@0.4.2-nightly.0
+  - @ledgerhq/live-wallet@0.3.1-nightly.0
+
 ## 3.46.0
 
 ### Minor Changes
