@@ -50,7 +50,9 @@ const getTransactionStatus = async (
     ? null
     : acc.subAccounts && acc.subAccounts.find(ta => ta.id === transaction.subAccountId);
   const account = tokenAccount || acc;
-  const isContractAddressRecipient = (await fetchTronContract(recipient)) !== undefined;
+  const isContractInteraction =
+    (await fetchTronContract(tokenAccount ? tokenAccount.token.contractAddress : recipient)) !==
+    undefined;
 
   if (mode === "send" && !recipient) {
     errors.recipient = new RecipientRequired();
@@ -68,7 +70,7 @@ const getTransactionStatus = async (
       mode === "send" &&
       account.type === "TokenAccount" &&
       account.token.tokenType === "trc20" &&
-      !isContractAddressRecipient && // send trc20 to a smart contract is allowed
+      !isContractInteraction && // send trc20 to a smart contract is allowed
       (await fetchTronAccount(recipient)).length === 0
     ) {
       // send trc20 to a new account is forbidden by us (because it will not activate the account)
@@ -190,7 +192,7 @@ const getTransactionStatus = async (
   const estimatedFees =
     Object.entries(errors).length > 0
       ? new BigNumber(0)
-      : await getEstimatedFees(acc, transaction, isContractAddressRecipient);
+      : await getEstimatedFees(acc, transaction, isContractInteraction, tokenAccount);
   const balance =
     account.type === "Account"
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
