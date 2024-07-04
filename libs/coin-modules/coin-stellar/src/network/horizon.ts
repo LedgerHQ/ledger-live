@@ -16,7 +16,6 @@ import {
   Networks,
 } from "@stellar/stellar-sdk";
 import { log } from "@ledgerhq/logs";
-import { getEnv } from "@ledgerhq/live-env";
 import {
   type BalanceAsset,
   type NetworkInfo,
@@ -31,13 +30,19 @@ import {
   rawOperationsToOperations,
 } from "../bridge/logic";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import coinConfig from "../config";
 
-const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
 const currency = getCryptoCurrencyById("stellar");
-const server = new Horizon.Server(getEnv("API_STELLAR_HORIZON"));
+let server: Horizon.Server | undefined;
+const getServer = () => {
+  if (!server) {
+    server = new Horizon.Server(coinConfig.getCoinConfig().explorer.url);
+  }
+  return server;
+};
 
 // Constants
 export const BASE_RESERVE = 0.5;
@@ -48,7 +53,7 @@ export const MIN_BALANCE = 1;
 // and the version (0.26.1) used by `@ledgerhq/live-network/network`, it is not possible to use the interceptors
 // provided by `@ledgerhq/live-network/network`.
 Horizon.AxiosClient.interceptors.request.use(config => {
-  if (!getEnv("ENABLE_NETWORK_LOGS")) {
+  if (!coinConfig.getCoinConfig().enableNetworkLogs) {
     return config;
   }
 
@@ -58,7 +63,7 @@ Horizon.AxiosClient.interceptors.request.use(config => {
 });
 
 Horizon.AxiosClient.interceptors.response.use(response => {
-  if (getEnv("ENABLE_NETWORK_LOGS")) {
+  if (coinConfig.getCoinConfig().enableNetworkLogs) {
     const { url, method } = response.config;
     log("network-success", `${response.status} ${method} ${url}`, { data: response.data });
   }
@@ -70,7 +75,7 @@ Horizon.AxiosClient.interceptors.response.use(response => {
 
   if (next_href) {
     const next = new URL(next_href);
-    next.host = new URL(getEnv("API_STELLAR_HORIZON")).host;
+    next.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
     response.data._links.next.href = next.toString();
   }
 
@@ -87,7 +92,7 @@ export async function fetchBaseFee(): Promise<{
   networkCongestionLevel: NetworkCongestionLevel;
 }> {
   // For tests
-  if (getEnv("API_STELLAR_HORIZON_STATIC_FEE")) {
+  if (coinConfig.getCoinConfig().useStaticFees) {
     return {
       baseFee: 100,
       recommendedFee: 100,
@@ -100,7 +105,7 @@ export async function fetchBaseFee(): Promise<{
   let networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
 
   try {
-    const feeStats = await server.feeStats();
+    const feeStats = await getServer().feeStats();
     const ledgerCapacityUsage = feeStats.ledger_capacity_usage;
     recommendedFee = new BigNumber(feeStats.fee_charged.mode).toNumber();
 
@@ -142,7 +147,7 @@ export async function fetchAccount(addr: string): Promise<{
   let balance = "0";
 
   try {
-    account = await server.accounts().accountId(addr).call();
+    account = await getServer().accounts().accountId(addr).call();
     balance =
       account.balances?.find(balance => {
         return balance.asset_type === "native";
@@ -195,10 +200,10 @@ export async function fetchOperations({
   let operations: Operation[] = [];
 
   try {
-    let rawOperations = await server
+    let rawOperations = await getServer()
       .operations()
       .forAccount(addr)
-      .limit(LIMIT)
+      .limit(coinConfig.getCoinConfig().explorer.fetchLmit)
       .order(order)
       .cursor(cursor)
       .includeFailed(true)
@@ -252,7 +257,7 @@ export async function fetchOperations({
 
 export async function fetchAccountNetworkInfo(account: Account): Promise<NetworkInfo> {
   try {
-    const extendedAccount = await server.accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
     const baseReserve = getReservedBalance(extendedAccount);
     const { recommendedFee, networkCongestionLevel, baseFee } = await fetchBaseFee();
 
@@ -280,7 +285,7 @@ export async function fetchSequence(account: Account): Promise<BigNumber> {
 
 export async function fetchSigners(account: Account): Promise<Signer[]> {
   try {
-    const extendedAccount = await server.accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
     return extendedAccount.signers;
   } catch (error) {
     return [];
@@ -289,7 +294,7 @@ export async function fetchSigners(account: Account): Promise<Signer[]> {
 
 export async function broadcastTransaction(signedTransaction: string): Promise<string> {
   const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
-  const res = await server.submitTransaction(transaction, {
+  const res = await getServer().submitTransaction(transaction, {
     skipMemoRequiredCheck: true,
   });
   return res.hash;
@@ -345,7 +350,7 @@ export async function loadAccount(addr: string): Promise<AccountRecord | null> {
   }
 
   try {
-    return await server.loadAccount(addr);
+    return await getServer().loadAccount(addr);
   } catch (e) {
     return null;
   }

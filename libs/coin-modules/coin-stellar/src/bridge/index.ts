@@ -13,7 +13,7 @@ import { createTransaction } from "./createTransaction";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import resolver from "../signer";
+import signerGetAddress from "../signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getAccountShape } from "./synchronization";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
@@ -22,7 +22,7 @@ import stellarCoinConfig, { type StellarCoinConfig } from "../config";
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
 function buildCurrencyBridge(signerContext: SignerContext<StellarSigner>): CurrencyBridge {
-  const getAddress = resolver(signerContext);
+  const getAddress = signerGetAddress(signerContext);
 
   const scanAccounts = makeScanAccounts({
     getAccountShape,
@@ -44,7 +44,7 @@ function buildCurrencyBridge(signerContext: SignerContext<StellarSigner>): Curre
 }
 
 function buildAccountBridge(signerContext: SignerContext<StellarSigner>) {
-  const getAddress = resolver(signerContext);
+  const getAddress = signerGetAddress(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext);
   const sync = makeSync({ getAccountShape });
