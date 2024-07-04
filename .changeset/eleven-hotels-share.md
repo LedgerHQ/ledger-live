@@ -12,4 +12,4 @@
 "@ledgerhq/live-cli": patch
 ---
 
-add support for ton and jettons
+add support for ton

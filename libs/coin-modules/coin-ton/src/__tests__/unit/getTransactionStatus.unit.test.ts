@@ -6,13 +6,9 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
-import { TonCommentInvalid, TonExcessFee } from "../../errors";
+import { TonCommentInvalid } from "../../errors";
 import getTransactionStatus from "../../getTransactionStatus";
-import {
-  account,
-  transaction as baseTransaction,
-  jettonTransaction,
-} from "../fixtures/common.fixtures";
+import { account, transaction as baseTransaction } from "../fixtures/common.fixtures";
 
 describe("getTransactionStatus", () => {
   describe("Recipient", () => {
@@ -87,34 +83,6 @@ describe("getTransactionStatus", () => {
       expect(res.errors).toEqual(
         expect.objectContaining({
           amount: new NotEnoughBalance(),
-        }),
-      );
-    });
-
-    it("should detect the amount is greater than the spendable amount of the token account and have an error", async () => {
-      const transaction = {
-        ...jettonTransaction,
-        amount: BigNumber(1000000002),
-        fees: new BigNumber("20"),
-      };
-      const res = await getTransactionStatus(account, transaction);
-      expect(res.errors).toEqual(
-        expect.objectContaining({
-          amount: new NotEnoughBalance(),
-        }),
-      );
-    });
-
-    it("should detect the transaction is a jetton transfer and have a warning", async () => {
-      const transaction = {
-        ...jettonTransaction,
-        amount: BigNumber(1000000002),
-        fees: new BigNumber("20"),
-      };
-      const res = await getTransactionStatus(account, transaction);
-      expect(res.warnings).toEqual(
-        expect.objectContaining({
-          amount: new TonExcessFee(),
         }),
       );
     });

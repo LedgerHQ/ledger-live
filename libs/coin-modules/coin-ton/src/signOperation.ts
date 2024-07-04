@@ -1,4 +1,3 @@
-import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { Address, beginCell, external, storeMessage } from "@ton/core";
@@ -44,7 +43,7 @@ export const buildSignOperation =
         const address = account.freshAddress;
         const accountInfo = await fetchAccountInfo(address);
 
-        const tonTx = buildTonTransaction(transaction, accountInfo.seqno, account);
+        const tonTx = buildTonTransaction(transaction, accountInfo.seqno);
 
         const ledgerPath = getLedgerTonPath(account.freshAddressPath);
 
@@ -88,13 +87,8 @@ export const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
 ): TonOperation => {
-  const { recipient, amount, fees, comment, useAllAmount, subAccountId } = transaction;
+  const { recipient, amount, fees, comment } = transaction;
   const { id: accountId } = account;
-
-  const subAccount = findSubAccountById(account, subAccountId ?? "");
-  const tokenTransfer = Boolean(subAccount && isTokenAccount(subAccount));
-
-  const value = tokenTransfer ? fees : amount.plus(fees);
 
   const op: TonOperation = {
     id: "",
@@ -103,7 +97,7 @@ export const buildOptimisticOperation = (
     senders: [account.freshAddress],
     recipients: [recipient],
     accountId,
-    value,
+    value: amount.plus(fees),
     fee: fees,
     blockHash: null,
     blockHeight: null,
@@ -115,29 +109,6 @@ export const buildOptimisticOperation = (
       comment: comment,
     },
   };
-  if (tokenTransfer && subAccount) {
-    op.subOperations = [
-      {
-        id: "",
-        hash: "",
-        type: "OUT",
-        value: useAllAmount ? subAccount.balance : amount,
-        fee: fees,
-        blockHash: null,
-        blockHeight: null,
-        senders: [account.freshAddress],
-        recipients: [recipient],
-        accountId: subAccount.id,
-        date: new Date(),
-        extra: {
-          lt: "",
-          explorerHash: "",
-          comment: comment,
-        },
-        contract: subAccount.token.contractAddress,
-      },
-    ];
-  }
   return op;
 };
 

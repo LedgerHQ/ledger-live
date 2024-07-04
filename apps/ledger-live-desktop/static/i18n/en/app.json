@@ -6131,9 +6131,6 @@
     },
     "BitcoinInfrastructureError": {
       "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
-    },
-    "TonExcessFee": {
-      "title": "It constitutes a token transfer. You will pay 0.05 TON in fees, and any extra will be returned to you."
     }
   },
   "cryptoOrg": {

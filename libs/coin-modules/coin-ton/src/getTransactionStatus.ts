@@ -1,4 +1,3 @@
-import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import {
   AmountRequired,
   InvalidAddress,
@@ -8,7 +7,7 @@ import {
 } from "@ledgerhq/errors";
 import { Account, AccountBridge, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { TonCommentInvalid, TonExcessFee } from "./errors";
+import { TonCommentInvalid } from "./errors";
 import { Transaction, TransactionStatus } from "./types";
 import { addressesAreEqual, commentIsValid, isAddressValid } from "./utils";
 
@@ -68,21 +67,14 @@ const validateAmount = (
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
 
-  const isTokenTransaction = Boolean(account && isTokenAccount(account));
-
   // if no amount or 0
   if (!transaction.amount || transaction.amount.isZero()) {
     errors.amount = new AmountRequired(); // "Amount required"
-  } else if (
-    totalSpent.isGreaterThan(isTokenTransaction ? account.spendableBalance : account.balance)
-  ) {
+  } else if (totalSpent.isGreaterThan(account.balance)) {
     // if not enough to make the transaction
     errors.amount = new NotEnoughBalance(); // "Sorry, insufficient funds"
   }
 
-  if (isTokenTransaction) {
-    warnings.amount = new TonExcessFee();
-  }
   return [errors, warnings];
 };
 
@@ -104,17 +96,14 @@ export const getTransactionStatus: AccountBridge<
   account: Account,
   transaction: Transaction,
 ): Promise<TransactionStatus> => {
-  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
-  const tokenTransfer = Boolean(subAccount && isTokenAccount(subAccount));
-  const totalSpent = tokenTransfer ? transaction.amount : transaction.amount.plus(transaction.fees);
-  // let amount = t.useAllAmount ? isTokenTransaction ? ;
+  const totalSpent = transaction.amount.plus(transaction.fees);
 
   // Recipient related errors and warnings
   const [recipientErr] = validateRecipient(account, transaction);
   // Sender related errors and warnings
   const [senderErr] = validateSender(account);
   // Amount related errors and warnings
-  const [amountErr, amountWarn] = validateAmount(subAccount || account, transaction, totalSpent);
+  const [amountErr, amountWarn] = validateAmount(account, transaction, totalSpent);
   // Comment related errors and warnings
   const [commentErr] = validateComment(transaction);
 

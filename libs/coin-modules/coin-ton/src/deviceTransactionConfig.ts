@@ -1,4 +1,3 @@
-import { isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
@@ -10,7 +9,6 @@ function getDeviceTransactionConfig(input: {
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
-  const tokenTransfer = Boolean(input.account && isTokenAccount(input.account));
 
   fields.push({
     type: "address",
@@ -18,25 +16,17 @@ function getDeviceTransactionConfig(input: {
     address: input.transaction.recipient,
   });
 
-  if (tokenTransfer) {
+  if (input.transaction.useAllAmount) {
     fields.push({
       type: "text",
-      label: "Jetton units",
-      value: input.transaction.amount.toString(),
+      label: "Amount",
+      value: "ALL YOUR TONs",
     });
   } else {
-    if (input.transaction.useAllAmount) {
-      fields.push({
-        type: "text",
-        label: "Amount",
-        value: "ALL YOUR TONs",
-      });
-    } else {
-      fields.push({
-        type: "amount",
-        label: "Amount",
-      });
-    }
+    fields.push({
+      type: "amount",
+      label: "Amount",
+    });
   }
 
   fields.push({
