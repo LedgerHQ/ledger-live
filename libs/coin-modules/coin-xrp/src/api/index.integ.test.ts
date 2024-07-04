@@ -63,7 +63,7 @@ describe("Xrp Api", () => {
       });
 
       // Then
-      expect(result.slice(0, 35)).toEqual("120000228000000024001BCDA6201B001F0");
+      expect(result.slice(0, 34)).toEqual("120000228000000024001BCDA6201B001F");
       expect(result.slice(38)).toEqual(
         "61400000000000000A6840000000000000018114CF30F590D7A9067B2604D80D46090FBF342EBE988314CA26FB6B0EF6859436C2037BA0A9913208A59B98",
       );

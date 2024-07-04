@@ -7,6 +7,7 @@ import {
   estimateFees,
   getBalance,
   listOperations,
+  lastBlock,
   rawEncode,
 } from "../logic";
 import api from "../network/tzkt";
@@ -20,6 +21,7 @@ export function createApi(config: TezosConfig): Api {
     craftTransaction: craft,
     estimateFees: estimate,
     getBalance,
+    lastBlock,
     listOperations,
   };
 }

@@ -21,6 +21,9 @@ export function createApi(config: PolkadotConfig): Api {
     craftTransaction: craft,
     estimateFees: estimate,
     getBalance,
+    lastBlock: () => {
+      throw new Error("UnsupportedMethod");
+    },
     listOperations,
   };
 }
