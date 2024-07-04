@@ -55,7 +55,7 @@ const handlers: MarketHandlers = {
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
   }),
 
-  MARKET_IMPORT_STATE: (_, { payload }: { payload: MarketState }) => payload as MarketState,
+  MARKET_IMPORT_STATE: (_, { payload }: { payload: MarketState }) => payload,
 };
 
 // Selectors
