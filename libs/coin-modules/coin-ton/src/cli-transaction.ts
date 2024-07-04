@@ -11,21 +11,13 @@ function inferTransactions(
   }>,
   opts: Record<string, string>,
 ): Transaction[] {
-  return flatMap(transactions, ({ transaction, account }) => {
+  return flatMap(transactions, ({ transaction }) => {
     invariant(transaction.family === "ton", "ton family");
-
-    const isTokenAccount = account.type === "TokenAccount";
-
-    if (isTokenAccount) {
-      const isDelisted = account.token.delisted === true;
-      invariant(!isDelisted, "token is delisted");
-    }
 
     return {
       ...transaction,
       family: "ton",
       mode: opts.mode || "send",
-      subAccountId: isTokenAccount ? account.id : null,
     } as Transaction;
   });
 }

@@ -1,16 +1,12 @@
 import {
   estimateFee,
   fetchAccountInfo,
-  fetchJettonTransactions,
-  fetchJettonWallets,
   fetchLastBlockNumber,
   fetchTransactions,
 } from "../../bridge/bridgeHelpers/api";
 import { setCoinConfig } from "../../config";
 import mockServer, { API_TON_ENDPOINT } from "../fixtures/api.fixtures";
 import {
-  jettonTransferResponse,
-  jettonWallets,
   lastBlockNumber,
   mockAddress,
   tonAccount,
@@ -55,16 +51,6 @@ describe("getAccount", () => {
       status: tonAccount.status,
       seqno: tonWallet.seqno,
     });
-  });
-
-  it("should return the jetton transactions", async () => {
-    const result = await fetchJettonTransactions(mockAddress);
-    expect(result).toEqual(jettonTransferResponse.jetton_transfers);
-  });
-
-  it("should return the jetton wallets", async () => {
-    const result = await fetchJettonWallets();
-    expect(result).toEqual(jettonWallets.jetton_wallets);
   });
 
   it("should return the estimated fees", async () => {

@@ -1,4 +1,3 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/lib/account/helpers";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import type { Account } from "@ledgerhq/types-live";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
@@ -38,33 +37,28 @@ export default function TonCommentRow({ account, transaction }: Props) {
   }, [navigation, route.params, account, transaction]);
   const comment = transaction.comment;
 
-  // if the transaction is token transfer, it is not possible to send a comment.
-  const subAccount = findSubAccountById(account, transaction.subAccountId || "");
-
   return (
     <View>
-      {!subAccount ? (
-        <SummaryRow title={<Trans i18nKey="send.summary.comment" />} onPress={editComment}>
-          {!comment || comment.isEncrypted || !transaction.comment.text ? (
-            <LText
-              style={[
-                styles.link,
-                {
-                  textDecorationColor: colors.live,
-                },
-              ]}
-              color="live"
-              onPress={editComment}
-            >
-              <Trans i18nKey="common.edit" />
-            </LText>
-          ) : (
-            <LText semiBold style={styles.tagText} onPress={editComment}>
-              {String(comment.text)}
-            </LText>
-          )}
-        </SummaryRow>
-      ) : null}
+      <SummaryRow title={<Trans i18nKey="send.summary.comment" />} onPress={editComment}>
+        {!comment || comment.isEncrypted || !transaction.comment.text ? (
+          <LText
+            style={[
+              styles.link,
+              {
+                textDecorationColor: colors.live,
+              },
+            ]}
+            color="live"
+            onPress={editComment}
+          >
+            <Trans i18nKey="common.edit" />
+          </LText>
+        ) : (
+          <LText semiBold style={styles.tagText} onPress={editComment}>
+            {String(comment.text)}
+          </LText>
+        )}
+      </SummaryRow>
     </View>
   );
 }

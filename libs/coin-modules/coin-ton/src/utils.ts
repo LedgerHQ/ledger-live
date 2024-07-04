@@ -1,17 +1,9 @@
-import { decodeAccountId, findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Account } from "@ledgerhq/types-live";
-import {
-  SendMode,
-  Address as TonAddress,
-  WalletContractV4,
-  comment,
-  internal,
-  toNano,
-} from "@ton/ton";
+import { SendMode, Address as TonAddress, WalletContractV4, comment, internal } from "@ton/ton";
 import BigNumber from "bignumber.js";
 import { estimateFee } from "./bridge/bridgeHelpers/api";
-import { MAX_FEE_TOKEN_TRANSFER } from "./constants";
-import { TonComment, TonPayloadFormat, TonTransaction, Transaction } from "./types";
+import { TonComment, TonTransaction, Transaction } from "./types";
 
 export const isAddressValid = (recipient: string) => {
   try {
@@ -36,12 +28,8 @@ export const addressesAreEqual = (addr1: string, addr2: string) => {
   }
 };
 
-export const buildTonTransaction = (
-  transaction: Transaction,
-  seqno: number,
-  account: Account,
-): TonTransaction => {
-  const { subAccountId, useAllAmount, amount, comment, recipient } = transaction;
+export const buildTonTransaction = (transaction: Transaction, seqno: number): TonTransaction => {
+  const { useAllAmount, amount, comment, recipient } = transaction;
   let recipientParsed = recipient;
   // if recipient is not valid calculate fees with empty address
   // we handle invalid addresses in account bridge
@@ -51,43 +39,25 @@ export const buildTonTransaction = (
     recipientParsed = new TonAddress(0, Buffer.alloc(32)).toRawString();
   }
 
-  // if there is a sub account, the transaction is a token transfer
-  const subAccount = findSubAccountById(account, subAccountId ?? "");
+  const finalAmount = useAllAmount ? BigInt(0) : BigInt(amount.toFixed());
 
-  const finalAmount = subAccount
-    ? toNano(MAX_FEE_TOKEN_TRANSFER) // for commission fees, excess will be returned
-    : useAllAmount
-      ? BigInt(0)
-      : BigInt(amount.toFixed());
-  const to = subAccount ? subAccount.token.contractAddress : recipientParsed;
   const tonTransaction: TonTransaction = {
-    to: TonAddress.parse(to),
+    to: TonAddress.parse(recipientParsed),
     seqno,
     amount: finalAmount,
-    bounce: TonAddress.isFriendly(to) ? TonAddress.parseFriendly(to).isBounceable : true,
+    bounce: TonAddress.isFriendly(recipientParsed)
+      ? TonAddress.parseFriendly(recipientParsed).isBounceable
+      : true,
     timeout: getTransferExpirationTime(),
-    sendMode:
-      useAllAmount && !subAccount
-        ? SendMode.CARRY_ALL_REMAINING_BALANCE
-        : SendMode.IGNORE_ERRORS + SendMode.PAY_GAS_SEPARATELY,
+    sendMode: useAllAmount
+      ? SendMode.CARRY_ALL_REMAINING_BALANCE
+      : SendMode.IGNORE_ERRORS + SendMode.PAY_GAS_SEPARATELY,
   };
 
   if (comment.text.length) {
     tonTransaction.payload = { type: "comment", text: comment.text };
   }
 
-  if (subAccount) {
-    tonTransaction.payload = {
-      type: "jetton-transfer",
-      queryId: BigInt(1),
-      amount: BigInt(amount.toFixed()),
-      destination: TonAddress.parse(recipientParsed),
-      responseDestination: TonAddress.parse(account.freshAddress),
-      customPayload: null,
-      forwardAmount: BigInt(1),
-      forwardPayload: null,
-    };
-  }
   return tonTransaction;
 };
 
@@ -148,6 +118,3 @@ export const getLedgerTonPath = (path: string): number[] => {
   }
   return numPath;
 };
-
-export const isJettonTransfer = (payload: TonPayloadFormat): boolean =>
-  payload.type === "jetton-transfer";
