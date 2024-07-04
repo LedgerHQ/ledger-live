@@ -5,7 +5,8 @@ import {
   MarketSetMarketFilterByStarredCurrenciesPayload,
   MarketSetMarketRequestParamsPayload,
   MarketStateActionTypes,
-  MarketStatePayload,
+  MarketPayload,
+  MarketImportPayload,
 } from "~/actions/types";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 
@@ -26,7 +27,7 @@ export const INITIAL_STATE: MarketState = {
   marketCurrentPage: 1,
 };
 
-const handlers: ReducerMap<MarketState, MarketStatePayload> = {
+const handlers: ReducerMap<MarketState, MarketPayload> = {
   [MarketStateActionTypes.SET_MARKET_REQUEST_PARAMS]: (state, action) => ({
     ...state,
     marketParams: {
@@ -45,6 +46,11 @@ const handlers: ReducerMap<MarketState, MarketStatePayload> = {
     ...state,
     marketCurrentPage: (action as Action<MarketSetCurrentPagePayload>).payload,
   }),
+
+  [MarketStateActionTypes.MARKET_IMPORT]: (state, action) => ({
+    ...state,
+    ...(action as Action<MarketImportPayload>).payload,
+  }),
 };
 
 // Selectors
@@ -53,7 +59,7 @@ export const marketParamsSelector = (state: State) => state.market.marketParams;
 export const marketFilterByStarredCurrenciesSelector = (state: State) =>
   state.market.marketFilterByStarredCurrencies;
 export const marketCurrentPageSelector = (state: State) => state.market.marketCurrentPage;
-
+export const exportMarketSelector = (s: State) => s.market;
 // Exporting reducer
 
-export default handleActions<MarketState, MarketStatePayload>(handlers, INITIAL_STATE);
+export default handleActions<MarketState, MarketPayload>(handlers, INITIAL_STATE);
