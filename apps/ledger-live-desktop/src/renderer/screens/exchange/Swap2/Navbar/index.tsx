@@ -1,19 +1,22 @@
 import React, { useMemo } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { track } from "~/renderer/analytics/segment";
-import TabBar from "~/renderer/components/TabBar";
+import TabBar, { TabBarRootStyled } from "~/renderer/components/TabBar";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import swapRoutes from "./routes.json";
 
 const Nav = styled.nav`
   background-color: ${p => p.theme.colors.palette.background.paper};
-
   border-top-right-radius: 4px;
   border-top-left-radius: 4px;
+  ${TabBarRootStyled} {
+    height: auto;
+    margin-top: 3px;
+  }
 `;
 
 /*
@@ -32,6 +35,7 @@ const Navbar = () => {
     () => swapRoutes.filter(route => !route.disabled).map(route => t(route.title)),
     [t],
   );
+
   const onWrappedTabChange = (nextIndex: number) => {
     track("button_clicked2", {
       button: `${swapRoutes[nextIndex].name} Tab`,
@@ -44,13 +48,15 @@ const Navbar = () => {
       pathname: nextPathname,
     });
   };
+
+  if (currentIndex < 0 || currentIndex >= tabs.length) {
+    return null;
+  }
+
   return (
-    (currentIndex >= 0 && (
-      <Nav>
-        <TabBar tabs={tabs} onIndexChange={onWrappedTabChange} index={currentIndex} />
-      </Nav>
-    )) ||
-    null
+    <Nav>
+      <TabBar tabs={tabs} onIndexChange={onWrappedTabChange} index={currentIndex} />
+    </Nav>
   );
 };
 export default Navbar;
