@@ -114,8 +114,7 @@ libs/ledger-live-common/src/apps/                        			@ledgerhq/live-devic
 libs/ledger-live-common/src/hw/                          			@ledgerhq/live-devices
 libs/ledger-live-common/src/manager/                     			@ledgerhq/live-devices
 libs/ledger-live-common/src/device/                      			@ledgerhq/live-devices
-libs/ledger-live-common/src/device-react/                			@ledgerhq/live-devices
-libs/ledger-live-common/src/device-core/                 			@ledgerhq/live-devices
+libs/ledger-live-common/src/deviceSDK/                           @ledgerhq/live-devices
 libs/device-core/                                             @ledgerhq/live-devices
 libs/device-react/                                            @ledgerhq/live-devices
 libs/speculos-transport/                                      @ledgerhq/live-devices
