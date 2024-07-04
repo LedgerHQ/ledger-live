@@ -7,6 +7,7 @@ import {
   defaultExtrinsicArg,
   estimateFees,
   getBalance,
+  lastBlock,
   listOperations,
 } from "../logic";
 
@@ -21,9 +22,7 @@ export function createApi(config: PolkadotConfig): Api {
     craftTransaction: craft,
     estimateFees: estimate,
     getBalance,
-    lastBlock: () => {
-      throw new Error("UnsupportedMethod");
-    },
+    lastBlock,
     listOperations,
   };
 }

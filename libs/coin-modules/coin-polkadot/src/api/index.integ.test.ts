@@ -1,25 +1,28 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
-/**
- * https://teztnets.com/ghostnet-about
- * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
- */
-describe("Tezos Api", () => {
+
+describe("Polkadot Api", () => {
   let module: Api;
-  const address = "tz1THUNARo58aD5YdNGYPnWNnvd8yHPrMdsF";
+  const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
     module = createApi({
-      baker: {
-        url: "https://baker.example.com",
-      },
-      explorer: {
-        url: "https://api.ghostnet.tzkt.io",
-        maxTxQuery: 100,
-      },
       node: {
-        url: "https://rpc.ghostnet.teztnets.com",
+        url: "https://polkadot-rpc.publicnode.com",
       },
+      sidecar: {
+        url: "https://polkadot-sidecar.coin.ledger.com",
+      },
+      staking: {
+        electionStatusThreshold: 25,
+      },
+      metadataShortener: {
+        url: "https://api.zondax.ch/polkadot/transaction/metadata",
+      },
+      metadataHash: {
+        url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+      },
+      runtimeUpgraded: false,
     });
   });
 
@@ -32,14 +35,14 @@ describe("Tezos Api", () => {
       const result = await module.estimateFees(address, amount);
 
       // Then
-      expect(result).toEqual(BigInt(287));
+      expect(result).toEqual(BigInt(154107779));
     });
   });
 
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const result = await module.listOperations(address, 0);
+      const result = await module.listOperations(address, 21500219);
 
       // Then
       expect(result.length).toBeGreaterThanOrEqual(1);
@@ -78,13 +81,13 @@ describe("Tezos Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction(address, {
-        recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+        recipient: "16YreVmGhM8mNMqnsvK7rn7b1e4SKYsTfFUn4UfCZ65BgDjh",
         amount: BigInt(10),
         fee: BigInt(1),
       });
 
       // Then
-      expect(result.slice(64)).toEqual(
+      expect(result).toEqual(
         "6c0053ddb3b3a89ed5c8d8326066032beac6de225c9e010300000a0000a31e81ac3425310e3274a4698a793b2839dc0afa00",
       );
     });
