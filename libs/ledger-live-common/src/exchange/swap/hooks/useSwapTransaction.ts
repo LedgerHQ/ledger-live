@@ -5,7 +5,7 @@ import {
   FeeNotLoaded,
   NotEnoughGas,
   NotEnoughGasSwap,
-  NotEnoughBalance,
+  NotEnoughBalanceSwap,
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
@@ -81,7 +81,7 @@ export const useFromAmountStatusMessage = (
 
     // convert to swap variation of error to display correct message to frontend.
     if (relevantStatus instanceof FeeNotLoaded) {
-      return new NotEnoughBalance();
+      return new NotEnoughBalanceSwap();
     }
 
     return relevantStatus;

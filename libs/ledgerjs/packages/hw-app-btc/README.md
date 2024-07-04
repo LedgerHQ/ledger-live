@@ -221,7 +221,6 @@ To sign a transaction involving standard (P2PKH) inputs, call createTransaction 
 *   `lockTime`  is the optional lockTime of the transaction to sign, or default (0)
 *   `sigHashType`  is the hash type of the transaction to sign, or default (all)
 *   `segwit`  is an optional boolean indicating wether to use segwit or not. This includes wrapped segwit.
-*   `initialTimestamp`  is an optional timestamp of the function call to use for coins that necessitate timestamps only, (not the one that the tx will include)
 *   `additionals`  list of additionnal options*   "bech32" for spending native segwit outputs
     *   "bech32m" for spending segwit v1+ outputs
     *   "abc" for bch
@@ -281,7 +280,6 @@ For each UTXO included in your transaction, create a transaction object from the
 
 *   `transactionHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a raw hexadecimal serialized transaction
 *   `isSegwitSupported` **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** is a boolean indicating if the segwit is supported (optional, default `false`)
-*   `hasTimestamp`  is a boolean (peercoin includes timestamp in their transactions, others don't) (optional, default `false`)
 *   `hasExtraData`  is a boolean (komodo, zencash and zcash include extraData in their transactions, others don't) (optional, default `false`)
 *   `additionals` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** list of additionnal options (optional, default `[]`)
 
@@ -495,7 +493,6 @@ To sign a transaction involving standard (P2PKH) inputs, call createTransaction 
 *   `lockTime`  is the optional lockTime of the transaction to sign, or default (0)
 *   `sigHashType`  is the hash type of the transaction to sign, or default (all)
 *   `segwit`  is an optional boolean indicating wether to use segwit or not
-*   `initialTimestamp`  is an optional timestamp of the function call to use for coins that necessitate timestamps only, (not the one that the tx will include)
 *   `additionals`  list of additionnal options*   "bech32" for spending native segwit outputs
     *   "abc" for bch
     *   "gold" for btg
@@ -520,7 +517,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ### CreateTransactionArg
 
-Type: {inputs: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<\[[Transaction](#transaction), [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), ([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))]>, associatedKeysets: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, changePath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, outputScriptHex: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), lockTime: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, sigHashType: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, segwit: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, initialTimestamp: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, additionals: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, expiryHeight: [Buffer](https://nodejs.org/api/buffer.html)?, useTrustedInputForSegwit: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, onDeviceStreaming: function (arg0: {progress: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), total: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}): void?, onDeviceSignatureRequested: function (): void?, onDeviceSignatureGranted: function (): void?}
+Type: {inputs: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<\[[Transaction](#transaction), [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), ([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))]>, associatedKeysets: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, changePath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, outputScriptHex: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), lockTime: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, sigHashType: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, segwit: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, additionals: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>, expiryHeight: [Buffer](https://nodejs.org/api/buffer.html)?, useTrustedInputForSegwit: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, onDeviceStreaming: function (arg0: {progress: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), total: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}): void?, onDeviceSignatureRequested: function (): void?, onDeviceSignatureGranted: function (): void?}
 
 #### Properties
 
@@ -531,7 +528,6 @@ Type: {inputs: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Referen
 *   `lockTime` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 *   `sigHashType` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 *   `segwit` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
-*   `initialTimestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 *   `additionals` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
 *   `expiryHeight` **[Buffer](https://nodejs.org/api/buffer.html)?**&#x20;
 *   `useTrustedInputForSegwit` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;

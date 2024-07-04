@@ -1,10 +1,9 @@
 import { ethers } from "ethers";
 import { Interface } from "ethers/lib/utils";
 import { ContextLoader } from "../../shared/domain/ContextLoader";
-import { LoaderOptions } from "../../shared/model/LoaderOptions";
-import { Transaction } from "../../shared/model/Transaction";
+import { TransactionContext } from "../../shared/model/TransactionContext";
 import { TokenDataSource } from "../../token/data/TokenDataSource";
-import { ContextResponse } from "../../shared/model/ContextResponse";
+import { ClearSignContext } from "../../shared/model/ClearSignContext";
 import { ExternalPluginDataSource } from "../data/ExternalPluginDataSource";
 
 export class ExternalPluginContextLoader implements ContextLoader {
@@ -19,8 +18,8 @@ export class ExternalPluginContextLoader implements ContextLoader {
     this._tokenDataSource = tokenDataSource;
   }
 
-  async load(transaction: Transaction, _options: LoaderOptions) {
-    const response: ContextResponse[] = [];
+  async load(transaction: TransactionContext) {
+    const response: ClearSignContext[] = [];
 
     if (!transaction.to || !transaction.data || transaction.data === "0x") {
       return [];

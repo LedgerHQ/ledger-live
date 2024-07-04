@@ -2,6 +2,7 @@ import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
 import { getOperations as bisonGetOperations } from "./bisontrails";
 import {
   getAccount as sidecardGetAccount,
+  getBalances as sidecardGetBalances,
   getMinimumBondBalance as sidecarGetMinimumBondBalance,
   getRegistry as sidecarGetRegistry,
   getStakingProgress as sidecarGetStakingProgress,
@@ -17,7 +18,7 @@ import {
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
 import network from "@ledgerhq/live-network/network";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 
 type PolkadotAPIAccount = {
   blockHeight: number;
@@ -34,6 +35,14 @@ type PolkadotAPIAccount = {
   numSlashingSpans?: number;
 
   nominations: PolkadotNomination[];
+};
+
+type PolkadotAPIBalanceInfo = {
+  blockHeight: number;
+  balance: BigNumber;
+  spendableBalance: BigNumber;
+  nonce: number;
+  lockedBalance: BigNumber;
 };
 
 type CacheOpts = {
@@ -72,7 +81,7 @@ const isNewAccount = makeLRUCache(sidecarIsNewAccount, address => address, minut
 const metadataHash = async (): Promise<string> => {
   const res: any = await network({
     method: "POST",
-    url: getCoinConfig().metadataHash.url,
+    url: coinConfig.getCoinConfig().metadataHash.url,
     data: {
       id: "dot",
     },
@@ -83,7 +92,7 @@ const metadataHash = async (): Promise<string> => {
 const shortenMetadata = async (transaction: string): Promise<string> => {
   const res: any = await network({
     method: "POST",
-    url: getCoinConfig().metadataShortener.url,
+    url: coinConfig.getCoinConfig().metadataShortener.url,
     data: {
       chain: {
         id: "dot",
@@ -91,11 +100,14 @@ const shortenMetadata = async (transaction: string): Promise<string> => {
       txBlob: transaction,
     },
   });
+
   return res.data.txMetadata;
 };
 
 export default {
   getAccount: async (address: string): Promise<PolkadotAPIAccount> => sidecardGetAccount(address),
+  getBalances: async (address: string): Promise<PolkadotAPIBalanceInfo> =>
+    sidecardGetBalances(address),
   getOperations: bisonGetOperations,
   getMinimumBondBalance,
   getRegistry,

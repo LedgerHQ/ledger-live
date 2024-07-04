@@ -1,8 +1,7 @@
-import { LoaderOptions } from "../../shared/model/LoaderOptions";
 import { TokenDataSource } from "../../token/data/TokenDataSource";
 import { ExternalPluginDataSource } from "../data/ExternalPluginDataSource";
 import { ExternalPluginContextLoader } from "./ExternalPluginContextLoader";
-import { Transaction } from "../../shared/model/Transaction";
+import { TransactionContext } from "../../shared/model/TransactionContext";
 import { SelectorDetails } from "../model/SelectorDetails";
 import { DappInfos } from "../model/DappInfos";
 import { Interface } from "ethers/lib/utils";
@@ -28,20 +27,23 @@ const dappInfosBuilder = ({
   } as DappInfos;
 };
 
-const transactionBuilder = (abi: object, functionName: string, params: unknown[]): Transaction => {
+const transactionBuilder = (
+  abi: object,
+  functionName: string,
+  params: unknown[],
+): TransactionContext => {
   const contract = new Interface(JSON.stringify(abi));
   const data = contract.encodeFunctionData(functionName, params);
   return {
     to: "0x0",
     data,
-  } as Transaction;
+  } as TransactionContext;
 };
 
 describe("ExternalPluginContextLoader", () => {
   const mockTokenDataSource: TokenDataSource = { getTokenInfosPayload: jest.fn() };
   const mockExternalPluginDataSource: ExternalPluginDataSource = { getDappInfos: jest.fn() };
   const loader = new ExternalPluginContextLoader(mockExternalPluginDataSource, mockTokenDataSource);
-  const emptyOptions = {} as LoaderOptions;
 
   beforeEach(() => {
     jest.restoreAllMocks();
@@ -53,10 +55,10 @@ describe("ExternalPluginContextLoader", () => {
   describe("load function", () => {
     it("should return an empty array if no destination address is provided", async () => {
       // GIVEN
-      const transaction = {} as Transaction;
+      const transaction = {} as TransactionContext;
 
       // WHEN
-      const promise = () => loader.load(transaction, emptyOptions);
+      const promise = () => loader.load(transaction);
 
       // THEN
       expect(promise()).resolves.toEqual([]);
@@ -64,10 +66,10 @@ describe("ExternalPluginContextLoader", () => {
 
     it("should return an empty array if data is undefined", async () => {
       // GIVEN
-      const transaction = { to: "0x0" } as Transaction;
+      const transaction = { to: "0x0" } as TransactionContext;
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([]);
@@ -75,10 +77,10 @@ describe("ExternalPluginContextLoader", () => {
 
     it("should return an empty array if no data provided", async () => {
       // GIVEN
-      const transaction = { to: "0x0", data: "0x" } as Transaction;
+      const transaction = { to: "0x0", data: "0x" } as TransactionContext;
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([]);
@@ -92,7 +94,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockExternalPluginDataSource, "getDappInfos").mockResolvedValue(undefined);
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([]);
@@ -109,7 +111,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockExternalPluginDataSource, "getDappInfos").mockResolvedValue(dappInfos);
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([]);
@@ -127,7 +129,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockExternalPluginDataSource, "getDappInfos").mockResolvedValue(dappInfos);
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual(
@@ -157,7 +159,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockTokenDataSource, "getTokenInfosPayload").mockResolvedValue(undefined);
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([
@@ -187,7 +189,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockExternalPluginDataSource, "getDappInfos").mockResolvedValue(dappInfos);
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual(
@@ -227,7 +229,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockExternalPluginDataSource, "getDappInfos").mockResolvedValue(dappInfos);
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([
@@ -271,7 +273,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockExternalPluginDataSource, "getDappInfos").mockResolvedValue(dappInfos);
 
       // WHEN
-      const promise = loader.load(transaction, emptyOptions);
+      const promise = loader.load(transaction);
 
       // THEN
       expect(promise).rejects.toEqual(
@@ -294,7 +296,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockExternalPluginDataSource, "getDappInfos").mockResolvedValue(dappInfos);
 
       // WHEN
-      const promise = loader.load(transaction, emptyOptions);
+      const promise = loader.load(transaction);
 
       // THEN
       expect(promise).rejects.toEqual(
@@ -321,7 +323,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockExternalPluginDataSource, "getDappInfos").mockResolvedValue(dappInfos);
 
       // WHEN
-      const promise = loader.load(transaction, emptyOptions);
+      const promise = loader.load(transaction);
 
       // THEN
       expect(promise).rejects.toEqual(
@@ -366,7 +368,7 @@ describe("ExternalPluginContextLoader", () => {
       jest.spyOn(mockExternalPluginDataSource, "getDappInfos").mockResolvedValue(dappInfos);
 
       // WHEN
-      const result = await loader.load(transaction, emptyOptions);
+      const result = await loader.load(transaction);
 
       // THEN
       expect(result).toEqual([

@@ -1,9 +1,9 @@
 import { SDK } from "./sdk";
-import { mockSdk } from "./mockSdk";
+import { MockSDK } from "./mockSdk";
 import { TrustchainSDKContext, TrustchainSDK } from "./types";
 
 /**
  * Get an implementation of a TrustchainSDK
  */
 export const getSdk = (isMockEnv: boolean, context: TrustchainSDKContext): TrustchainSDK =>
-  isMockEnv ? mockSdk : new SDK(context);
+  isMockEnv ? new MockSDK(context) : new SDK(context);

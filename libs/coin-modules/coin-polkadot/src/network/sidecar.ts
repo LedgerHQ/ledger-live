@@ -1,9 +1,10 @@
 import { BigNumber } from "bignumber.js";
+import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network/network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -23,9 +24,9 @@ import type {
   SidecarTransactionBroadcast,
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
+  SidecarConstants,
 } from "./sidecar.types";
 import { createRegistryAndExtrinsics } from "./common";
-import node from "./node";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -35,12 +36,12 @@ import node from "./node";
  * @returns {string}
  */
 const getSidecarUrl = (route: string): string => {
-  const sidecarUrl = getCoinConfig().sidecar.url;
+  const sidecarUrl = coinConfig.getCoinConfig().sidecar.url;
   return `${sidecarUrl}${route || ""}`;
 };
 
 const getElectionOptimisticThreshold = (): number => {
-  return getCoinConfig().staking?.electionStatusThreshold || 25;
+  return coinConfig.getCoinConfig().staking?.electionStatusThreshold || 25;
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
@@ -48,7 +49,7 @@ const VALIDATOR_COMISSION_RATIO = 1000000000;
 // blocks = 2 minutes 30
 
 async function callSidecar<T>(route: string, method: "GET" | "POST" = "GET", data?: unknown) {
-  const credentials = getCoinConfig().sidecar.credentials;
+  const credentials = coinConfig.getCoinConfig().sidecar.credentials;
   const headers = credentials ? { Authorization: "Basic " + credentials } : {};
 
   return network<T>({
@@ -114,8 +115,16 @@ const fetchControllerAddr = async (addr: string): Promise<string | null> => {
  *
  * @returns {SidecarStakingInfo}
  */
-const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> =>
-  node.fetchStakingInfo(addr);
+const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchStakingInfo(addr);
+  const {
+    data,
+  }: {
+    data: SidecarStakingInfo;
+  } = await callSidecar(`/accounts/${addr}/staking-info`);
+  return data;
+};
 
 /**
  * Returns the list of nominations for an account, with status and associated stake if relevant.
@@ -125,8 +134,16 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> =>
  *
  * @returns {SidecarNominations}
  */
-const fetchNominations = async (addr: string): Promise<SidecarNominations> =>
-  node.fetchNominations(addr);
+const fetchNominations = async (addr: string): Promise<SidecarNominations> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchNominations(addr);
+  const {
+    data,
+  }: {
+    data: SidecarNominations;
+  } = await callSidecar(`/accounts/${addr}/nominations`);
+  return data;
+};
 
 /**
  * Returns the blockchain's runtime constants.
@@ -135,7 +152,16 @@ const fetchNominations = async (addr: string): Promise<SidecarNominations> =>
  *
  * @returns {Object}
  */
-const fetchConstants = async (): Promise<Record<string, any>> => node.fetchConstants();
+const fetchConstants = async (): Promise<Record<string, any>> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchConstants();
+  const {
+    data,
+  }: {
+    data: SidecarConstants;
+  } = await callSidecar(`/runtime/constants`);
+  return data.consts;
+};
 
 /**
  * Returns the activeEra info
@@ -183,7 +209,26 @@ export const getMinimumBondBalance = async (): Promise<BigNumber> => {
 const fetchValidators = async (
   status: SidecarValidatorsParamStatus = "all",
   addresses?: SidecarValidatorsParamAddresses,
-): Promise<SidecarValidators> => node.fetchValidators(status, addresses);
+): Promise<SidecarValidators> => {
+  //LIVE-13136: commented for the time being
+  // return node.fetchValidators(status, addresses);
+  let params = {};
+
+  if (status) {
+    params = { ...params, status };
+  }
+
+  if (addresses && addresses.length) {
+    params = { ...params, addresses: addresses.join(",") };
+  }
+
+  const {
+    data,
+  }: {
+    data: SidecarValidators;
+  } = await callSidecar(`/validators?${querystring.stringify(params)}`);
+  return data;
+};
 
 /**
  * Fetch the progress info concerning staking.
@@ -310,7 +355,7 @@ export const getAccount = async (addr: string) => {
  * @async
  * @param {*} addr - the account address
  */
-const getBalances = async (addr: string) => {
+export const getBalances = async (addr: string) => {
   const balanceInfo = await fetchBalanceInfo(addr);
   // Locked is the highest value among locks
   const totalLocked = balanceInfo.locks.reduce((total, lock) => {

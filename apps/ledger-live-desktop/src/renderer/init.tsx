@@ -94,12 +94,14 @@ async function init() {
     });
     const envs = getLocalStorageEnvs();
     for (const k in envs) setEnvOnAllThreads(k, envs[k]);
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const timemachine = require("timemachine");
-    timemachine.config({
+    if (getEnv("MOCK")) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      dateString: require("../../tests/time").default,
-    });
+      const timemachine = require("timemachine");
+      timemachine.config({
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        dateString: require("../../tests/time").default,
+      });
+    }
   }
   if (window.localStorage.getItem("hard-reset")) {
     await hardReset();

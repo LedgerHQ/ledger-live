@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalanceSwap } from "@ledgerhq/errors";
 import { track } from "~/renderer/analytics/segment";
 
 export const SWAP_VERSION = "2.35";
@@ -42,7 +42,7 @@ export const trackSwapError = (error: Error, properties: Record<string, unknown>
       message: "min_amount",
     });
   }
-  if (error instanceof NotEnoughBalance) {
+  if (error instanceof NotEnoughBalanceSwap) {
     track("error_message", {
       ...properties,
       message: "no_funds",

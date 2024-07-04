@@ -127,6 +127,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
+    "BitcoinInfrastructureError": {
+      "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
+    },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Your Ledger device must be unlocked and in range to use Bluetooth."
@@ -488,6 +491,10 @@
       "description": "Please send some EGLD to your account to pay for transactions."
     },
     "NotEnoughBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds."
+    },
+    "NotEnoughBalanceSwap": {
       "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."
     },
@@ -2424,6 +2431,7 @@
       "delegated": "Delegated ({{amount}})",
       "delegatedTo": "Delegated to",
       "delegatedAmount": "Delegated amount",
+      "deposit": "Deposit",
       "redelegated": "Redelegated ({{amount}})",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",
@@ -3149,7 +3157,7 @@
     },
     "stake": {
       "title": "Stake",
-      "description": "Grow your crypto holdings."
+      "description": "Stake your crypto holdings."
     },
     "swap": {
       "title": "Swap",

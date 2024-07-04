@@ -76,9 +76,6 @@ setSupportedCurrencies([
   "komodo",
   "pivx",
   "zencash",
-  "vertcoin",
-  "peercoin",
-  "viacoin",
   "bitcoin_testnet",
   "ethereum_sepolia",
   "ethereum_holesky",
@@ -122,6 +119,8 @@ setSupportedCurrencies([
   "lukso",
   "linea",
   "linea_sepolia",
+  "blast",
+  "blast_sepolia",
   "scroll",
   "scroll_sepolia",
 ]);

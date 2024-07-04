@@ -19,3 +19,5 @@ export const liveSchema = z.object({
 });
 
 export type LiveData = z.infer<typeof liveSchema>;
+
+export const liveSlug = "live";

@@ -1,7 +1,6 @@
 import { ContextLoader } from "../../shared/domain/ContextLoader";
-import { ContextResponse } from "../../shared/model/ContextResponse";
-import { LoaderOptions } from "../../shared/model/LoaderOptions";
-import { Transaction } from "../../shared/model/Transaction";
+import { ClearSignContext } from "../../shared/model/ClearSignContext";
+import { TransactionContext } from "../../shared/model/TransactionContext";
 import { NftDataSource } from "../data/NftDataSource";
 
 enum ERC721_SUPPORTED_SELECTOR {
@@ -30,8 +29,8 @@ export class NftContextLoader implements ContextLoader {
     this._dataSource = dataSource;
   }
 
-  async load(transaction: Transaction, _options: LoaderOptions): Promise<ContextResponse[]> {
-    const responses: ContextResponse[] = [];
+  async load(transaction: TransactionContext): Promise<ClearSignContext[]> {
+    const responses: ClearSignContext[] = [];
 
     if (!transaction.to || !transaction.data || transaction.data === "0x") {
       return [];

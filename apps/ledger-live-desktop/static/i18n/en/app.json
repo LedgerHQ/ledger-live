@@ -1457,16 +1457,16 @@
     "featuredButtons": {
       "buySell": {
         "title": "Buy / Sell",
-        "description": "Buy and sell with trusted providers"
+        "description": "Buy and sell with our trusted providers"
       },
       "swap": {
         "title": "Swap",
-        "description": "Convert crypto to crypto securely",
+        "description": "Convert crypto to crypto",
         "label": "Popular"
       },
       "earn": {
         "title": "Stake",
-        "description": "Grow your crypto with Ledger"
+        "description": "Stake your crypto with Ledger"
       }
     },
     "recoverBanner": {
@@ -5515,6 +5515,10 @@
       "description": "Impossible to calculate amount and fees"
     },
     "NotEnoughBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds."
+    },
+    "NotEnoughBalanceSwap": {
       "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."
     },
@@ -6110,6 +6114,9 @@
     },
     "newAddressTRC20": {
       "title": "You first need to send at least 0.1 TRX to this address to activate it."
+    },
+    "BitcoinInfrastructureError": {
+      "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
     }
   },
   "cryptoOrg": {

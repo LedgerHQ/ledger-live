@@ -29,6 +29,7 @@ const familiesWPackage = [
   "near",
   "polkadot",
   "solana",
+  "stellar",
   "tezos",
   "tron",
   "xrp",

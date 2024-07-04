@@ -16,6 +16,7 @@ import { startSpeculos, stopSpeculos } from "../utils/speculos";
 import { Spec } from "../utils/speculos";
 
 import { allure } from "allure-playwright";
+import { Application } from "tests/page";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -41,6 +42,7 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   recordTestNamesForApiResponseLogging: void;
   simulateCamera: string;
+  app: Application;
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -57,6 +59,12 @@ export const test = base.extend<TestFixtures>({
   speculosCurrency: undefined,
   speculosOffset: undefined,
   testName: undefined,
+
+  app: async ({ page }, use) => {
+    const app = new Application(page);
+    await use(app);
+  },
+
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -127,32 +135,13 @@ export const test = base.extend<TestFixtures>({
       // launch app
       const windowSize = { width: 1024, height: 768 };
 
-      const electronApp: ElectronApplication = await electron.launch({
-        args: [
-          `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
-          `--user-data-dir=${userdataDestinationPath}`,
-          // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
-          "--force-device-scale-factor=1",
-          "--disable-dev-shm-usage",
-          // "--use-gl=swiftshader"
-          "--no-sandbox",
-          "--enable-logging",
-          ...(simulateCamera
-            ? [
-                "--use-fake-device-for-media-stream",
-                `--use-file-for-fake-video-capture=${simulateCamera}`,
-              ]
-            : []),
-        ],
-        recordVideo: {
-          dir: `${path.join(__dirname, "../artifacts/videos/")}`,
-          size: windowSize, // FIXME: no default value, it could come from viewport property in conf file but it's not the case
-        },
+      const electronApp: ElectronApplication = await launchApp({
         env,
-        colorScheme: theme,
-        locale: lang,
-        executablePath: require("electron/index.js"),
-        timeout: 120000,
+        lang,
+        theme,
+        userdataDestinationPath,
+        simulateCamera,
+        windowSize,
       });
 
       await use(electronApp);
@@ -241,6 +230,50 @@ export const test = base.extend<TestFixtures>({
     { auto: true },
   ],
 });
+
+export async function launchApp({
+  env,
+  lang,
+  theme,
+  userdataDestinationPath,
+  simulateCamera,
+  windowSize,
+}: {
+  env: Record<string, string>;
+  lang: string;
+  theme: "light" | "dark" | "no-preference" | undefined;
+  userdataDestinationPath: string;
+  simulateCamera?: string;
+  windowSize: { width: number; height: number };
+}): Promise<ElectronApplication> {
+  return await electron.launch({
+    args: [
+      `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
+      `--user-data-dir=${userdataDestinationPath}`,
+      // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
+      "--force-device-scale-factor=1",
+      "--disable-dev-shm-usage",
+      // "--use-gl=swiftshader"
+      "--no-sandbox",
+      "--enable-logging",
+      ...(simulateCamera
+        ? [
+            "--use-fake-device-for-media-stream",
+            `--use-file-for-fake-video-capture=${simulateCamera}`,
+          ]
+        : []),
+    ],
+    recordVideo: {
+      dir: `${path.join(__dirname, "../artifacts/videos/")}`,
+      size: windowSize, // FIXME: no default value, it could come from viewport property in conf file but it's not the case
+    },
+    env,
+    colorScheme: theme,
+    locale: lang,
+    executablePath: require("electron/index.js"),
+    timeout: 120000,
+  });
+}
 
 export async function addTmsLink(ids: string[]) {
   for (const id of ids) {

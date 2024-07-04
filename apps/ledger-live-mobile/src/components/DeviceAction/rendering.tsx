@@ -35,7 +35,7 @@ import {
   getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId, QRCodeDevices } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
@@ -773,7 +773,7 @@ export function renderDeviceNotOnboarded({
   navigation: StackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
-    if (device.modelId === DeviceModelId.stax) {
+    if (QRCodeDevices.includes(device.modelId)) {
       // On pairing success, navigate to the Sync Onboarding Companion
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,
