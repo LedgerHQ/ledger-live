@@ -70,6 +70,7 @@
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "coin:solana": "pnpm --filter coin-solana",
+    "coin:stellar": "pnpm --filter coin-stellar",
     "coin:tezos": "pnpm --filter coin-tezos",
     "coin:tron": "pnpm --filter coin-tron",
     "coin:xrp": "pnpm --filter coin-xrp",

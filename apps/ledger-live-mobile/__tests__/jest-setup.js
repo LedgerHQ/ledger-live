@@ -1,11 +1,11 @@
 import "@testing-library/react-native/extend-expect";
 import "react-native-gesture-handler/jestSetup";
+import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
 import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 import { server } from "./server";
 import { NativeModules } from "react-native";
 import { MockedExpoCamera, MockedCameraType } from "../__mocks__/MockedExpoCamera";
-
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/next/guide/testing/
 jest.useFakeTimers();
 jest.runAllTimers();

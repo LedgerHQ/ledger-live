@@ -2640,6 +2640,7 @@
     "src/families/stacks/bridge.integration.test.ts",
     "src/families/stacks/bridge/utils/misc.unit.test.ts",
     "src/families/stellar/__snapshots__/bridge.integration.test.ts.snap",
+    "src/families/stellar/logic.ts",
     "src/families/stellar/bridge.integration.test.ts",
     "src/families/tezos/bridge.integration.test.ts",
     "src/families/tezos/logic.ts",

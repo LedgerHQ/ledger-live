@@ -4,33 +4,32 @@ import { AppPage } from "tests/page/abstractClasses";
 import { Token } from "tests/enum/Tokens";
 
 export class AccountPage extends AppPage {
-  readonly settingsButton = this.page.locator("data-test-id=account-settings-button");
-  private settingsDeleteButton = this.page.locator("data-test-id=account-settings-delete-button");
-  private settingsConfirmButton = this.page.locator("data-test-id=modal-confirm-button");
-  private swapButton = this.page.locator("data-test-id=swap-account-action-button");
-  private buyButton = this.page.locator("data-test-id=buy-button");
-  private sellButton = this.page.locator("data-test-id=sell-button");
-  private stakeButton = this.page.locator("data-test-id=stake-from-account-action-button");
-  private stakeButtonCosmos = this.page.locator("data-test-id=stake-button-cosmos");
-  readonly stakeBanner = this.page.locator("data-test-id=account-stake-banner");
-  private stakeBannerButton = this.page.locator("data-test-id=account-stake-banner-button");
-  private receiveButton = this.page.locator("data-test-id=receive-account-action-button");
+  readonly settingsButton = this.page.getByTestId("account-settings-button");
+  private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
+  private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
+  private swapButton = this.page.getByTestId("swap-account-action-button");
+  private buyButton = this.page.getByTestId("buy-button");
+  private sellButton = this.page.getByTestId("sell-button");
+  private stakeButton = this.page.getByTestId("stake-from-account-action-button");
+  private stakeButtonCosmos = this.page.getByTestId("stake-button-cosmos");
+  readonly stakeBanner = this.page.getByTestId("account-stake-banner");
+  private stakeBannerButton = this.page.getByTestId("account-stake-banner-button");
+  private receiveButton = this.page.getByTestId("receive-account-action-button");
   private sendButton = this.page.getByRole("button", { name: "Send" });
   private accountName = (name: string) => this.page.locator(`text=${name}`);
   private lastOperation = this.page.locator("text=Latest operations");
   private tokenValue = (tokenName: string) =>
-    this.page.locator(`data-test-id=account-row-${tokenName.toLowerCase()}`);
-  private accountBalance = this.page.locator("data-test-id=total-balance");
+    this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`);
+  private accountBalance = this.page.getByTestId("total-balance");
   private operationList = this.page.locator("id=operation-list");
   private showMoreButton = this.page.getByText("Show more");
   private advancedButton = this.page.getByText("Advanced");
-  private accountAdvancedLogs = this.page.locator("data-test-id=Advanced_Logs");
+  private accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
   private operationRows = this.page.locator("[data-test-id^='operation-row-']");
-  private closeModal = this.page.locator("data-test-id=modal-close-button");
+  private closeModal = this.page.getByTestId("modal-close-button");
   private accountbutton = (accountName: string) =>
     this.page.getByRole("button", { name: `${accountName}` });
-  private tokenRow = (tokenTicker: string) =>
-    this.page.locator(`data-test-id=token-row-${tokenTicker}`);
+  private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
 
   @step("Navigate to token $0")

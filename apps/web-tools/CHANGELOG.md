@@ -4,6 +4,20 @@
 
 ### Patch Changes
 
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/live-common@34.4.1
+
+## 0.6.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/live-common@34.4.1-hotfix.0
+
+## 0.6.2
+
+### Patch Changes
+
 - [#7206](https://github.com/LedgerHQ/ledger-live/pull/7206) [`81e5b8b`](https://github.com/LedgerHQ/ledger-live/commit/81e5b8bf4830dcb9d666436f2cc4367d92e93e78) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - chore: resolve merge conflicts
 
 - [#7019](https://github.com/LedgerHQ/ledger-live/pull/7019) [`2e56708`](https://github.com/LedgerHQ/ledger-live/commit/2e567080b07abb8540907c0cb89457c746362917) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor install/uninstall app commands to only rely on v2 manager apis
@@ -91,6 +105,20 @@
   - @ledgerhq/live-wallet@0.3.0-next.0
   - @ledgerhq/domain-service@1.2.1-next.0
   - @ledgerhq/hw-app-eth@6.37.1-next.0
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/live-common@34.4.1
+
+## 0.6.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/live-common@34.4.1-hotfix.0
 
 ## 0.6.1
 

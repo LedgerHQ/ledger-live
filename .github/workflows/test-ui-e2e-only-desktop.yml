@@ -22,14 +22,6 @@ on:
         description: Ignore test having name pattern (entered in the previous field)
         type: boolean
         default: false
-      speculos_tests:
-        description: Run the speculos tests (if false, mocked tests will be run instead)
-        type: boolean
-        default: true
-      enable_broadcast:
-        description: Enable transaction broadcast
-        type: boolean
-        default: false
 
       report_path:
         description: Path where you want to store this execution's results
@@ -63,6 +55,11 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge]
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -103,33 +100,23 @@ jobs:
         id: tests
         run: |
           export COINAPPS=$PWD/coin-apps
-          if [ "$ENABLE_BROADCAST" = true ]; then export ENABLE_TRANSACTION_BROADCAST=1; fi
-          if [ "$SPECULOS_TESTS" = true ]; then export MOCK=0 && speculos_tests=":speculos"; fi
+          export ENABLE_TRANSACTION_BROADCAST=1
+          export MOCK=0
           if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright$speculos_tests ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}"
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          ENABLE_BROADCAST: ${{ contains(inputs.enable_broadcast, 'true') }}
-          SPECULOS_TESTS: ${{ !contains(inputs.speculos_tests, 'false') }}
 
-      - name: upload diffs to s3
+      - name: Upload Allure Results
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
-        id: s3
+        uses: actions/upload-artifact@v4.3.0
         with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
-          os: linux
-          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
-      - name: upload ci suggested screenshots
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: images
-          path: images-linux.json
+          name: allure-results-${{ matrix.shardIndex }}
+          path: "apps/ledger-live-desktop/allure-results"
+
       - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.3.0
         if: failure() && !cancelled()
         with:
           name: playwright-results-linux
@@ -140,18 +127,23 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
             apps/ledger-live-desktop/tests/artifacts/*.log
-      - name: Upload Allure Report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-linux
-          path: apps/ledger-live-desktop/allure-results
 
-      - name: Upload Allure Results
-        uses: actions/upload-artifact@v4.3.0
+  report-and-notify:
+    name: "Report and Notify"
+    runs-on: [ledger-live-medium]
+    needs: e2e-tests-linux
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
         with:
-          name: "allure-results"
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Download Allure Results
+        uses: actions/download-artifact@v4.1.1
+        with:
           path: "apps/ledger-live-desktop/allure-results"
+          pattern: allure-results-*
+          merge-multiple: true
 
       - name: Publish report on Allure Server
         id: allure-server
@@ -189,9 +181,9 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: >
-          if ${{ steps.tests.outcome == 'success' }};
+          if ${{ needs.e2e-tests-linux.outputs.status == 'success' }};
           then echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
-          elif ${{ steps.tests.outcome == 'failure' }};
+          elif ${{ needs.e2e-tests-linux.outputs.status == 'failure' }};
           then echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
           else echo "STATUS_COLOR=#F3FF33" >> $GITHUB_ENV;
           fi
@@ -227,8 +219,8 @@ jobs:
 
             const report = {
               linux: {
-                pass: ${{ steps.tests.outcome == 'success' }},
-                status: "${{ steps.tests.outcome }}",
+                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-linux.outputs.status }}",
               }
             };
 

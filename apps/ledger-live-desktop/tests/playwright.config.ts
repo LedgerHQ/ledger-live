@@ -5,7 +5,7 @@ const config: PlaywrightTestConfig = {
     {
       name: "speculos_tests",
       testDir: "specs/speculos/",
-      retries: 2,
+      retries: process.env.CI ? 2 : 0,
     },
     {
       name: "mocked_tests",
@@ -34,6 +34,7 @@ const config: PlaywrightTestConfig = {
   use: {
     ignoreHTTPSErrors: true,
     screenshot: process.env.CI ? "only-on-failure" : "off",
+    testIdAttribute: "data-test-id",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",

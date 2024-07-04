@@ -203,6 +203,20 @@
   - @ledgerhq/live-nft@0.4.1-next.0
   - @ledgerhq/live-nft-react@0.4.1-next.0
 
+## 2.82.2
+
+### Patch Changes
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/live-common@34.4.1
+
+## 2.82.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff)]:
+  - @ledgerhq/live-common@34.4.1-hotfix.0
+
 ## 2.82.1
 
 ### Patch Changes

@@ -184,6 +184,7 @@ export type Features = CurrencyFeatures & {
   llmWalletSync: Feature_LlmWalletSync;
   lldNftsGalleryNewArch: DefaultFeature;
   enableAppsBackup: Feature_EnableAppsBackup;
+  web3hub: Feature_web3hub;
 };
 
 /**
@@ -498,6 +499,7 @@ export type Feature_LldWalletSync = DefaultFeature;
 export type Feature_LlmWalletSync = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
+export type Feature_web3hub = DefaultFeature;
 
 /**
  * Utils types.
