@@ -123,11 +123,11 @@ export const dataset: DatasetTest<Transaction> = {
   },
 };
 
-describe("Ton bridge", () => {
-  test.todo(
-    "This is an empty test to make jest command pass. Remove it once there is a real test.",
-  );
-});
+// describe("Ton bridge", () => {
+//   test.todo(
+//     "This is an empty test to make jest command pass. Remove it once there is a real test.",
+//   );
+// });
 
 /**
  * NOTE: if tests are added to this file,
