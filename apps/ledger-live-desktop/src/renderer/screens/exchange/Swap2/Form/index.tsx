@@ -50,9 +50,14 @@ const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 0.5rem;
   max-width: 37rem;
   padding: ${({ theme }) => theme.space[2]}px ${({ theme }) => theme.space[4]}px 0;
+  row-gap: 0.5rem;
+  @media screen and (min-height: 800px) {
+    row-gap: 2rem;
+    margin-top: 12px;
+    padding: ${({ theme }) => theme.space[4]}px;
+  }
 `;
 
 const idleTime = 60 * 60000; // 1 hour
