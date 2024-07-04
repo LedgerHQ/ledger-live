@@ -14,7 +14,7 @@ const api = {
     return data;
   },
   async getLastBlock(): Promise<{ hash: string; level: number; date: Date }> {
-    const { data } = await network<APIBlock>({
+    const { data } = await network<APIBlock[]>({
       url: `${getExplorerUrl()}/v1/blocks`,
       params: {
         "sort.desc": "level",
@@ -22,9 +22,9 @@ const api = {
     });
 
     return {
-      hash: data.hash,
-      level: data.level,
-      date: new Date(data.timestamp),
+      hash: data[0].hash,
+      level: data[0].level,
+      date: new Date(data[0].timestamp),
     };
   },
   async getAccountByAddress(address: string): Promise<APIAccount> {
