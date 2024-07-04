@@ -60,16 +60,16 @@ export class MockSDK implements TrustchainSDK {
   withAuth<T>(
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
-    f: (jwt: JWT) => Promise<T>,
+    job: (jwt: JWT) => Promise<T>,
   ): Promise<T> {
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
-    return f(mockedLiveJWT);
+    return job(mockedLiveJWT);
   }
 
-  withDeviceAuth<T>(transport: Transport, f: (jwt: JWT) => Promise<T>): Promise<T> {
+  withDeviceAuth<T>(transport: Transport, job: (jwt: JWT) => Promise<T>): Promise<T> {
     void transport;
-    return f(mockedDeviceJWT);
+    return job(mockedDeviceJWT);
   }
 
   async getOrCreateTrustchain(

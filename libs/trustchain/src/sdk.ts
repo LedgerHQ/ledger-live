@@ -46,13 +46,13 @@ export class SDK implements TrustchainSDK {
   withAuth<T>(
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
-    f: (jwt: JWT) => Promise<T>,
+    job: (jwt: JWT) => Promise<T>,
     policy?: AuthCachePolicy,
   ): Promise<T> {
     return genericWithJWT(
       jwt => {
         this.jwt = jwt;
-        return f(jwt);
+        return job(jwt);
       },
       this.jwt,
       () => auth(trustchain, memberCredentials),
@@ -62,14 +62,14 @@ export class SDK implements TrustchainSDK {
 
   withDeviceAuth<T>(
     transport: Transport,
-    f: (jwt: JWT) => Promise<T>,
+    job: (jwt: JWT) => Promise<T>,
     policy?: AuthCachePolicy,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<T> {
     return genericWithJWT(
       jwt => {
         this.deviceJwt = jwt;
-        return f(jwt);
+        return job(jwt);
       },
       this.deviceJwt,
       () => authWithDevice(transport, callbacks),
@@ -295,7 +295,7 @@ export class SDK implements TrustchainSDK {
   }
 }
 
-type WithJwt = <T>(f: (jwt: JWT) => Promise<T>) => Promise<T>;
+type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
 
 type JwtExpirationCheck = {
   hasExpired: boolean;
@@ -314,7 +314,7 @@ function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
 }
 
 async function genericWithJWT<T>(
-  f: (jwt: JWT) => Promise<T>,
+  job: (jwt: JWT) => Promise<T>,
   initialJWT: JWT | undefined,
   auth: () => Promise<JWT>,
   policy: AuthCachePolicy = "cache",
@@ -337,13 +337,13 @@ async function genericWithJWT<T>(
         ? await refresh(initialJWT)
         : initialJWT;
 
-  return f(jwt).catch(async e => {
+  return job(jwt).catch(async e => {
     // JWT expiration handling: if the function fails, we will recover a valid jwt accordingly to spec. https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/4207083687/TCH+Usage+documentation#JWT-expiration-handling
     const { hasExpired, canBeRefreshed } = networkCheckJwtExpiration(e);
     if (hasExpired) {
       log("trustchain", "JWT expired -> " + (canBeRefreshed ? "refreshing" : "reauthenticating"));
       jwt = await (jwt && canBeRefreshed ? refresh(jwt) : auth());
-      return f(jwt);
+      return job(jwt);
     }
     throw e;
   });
