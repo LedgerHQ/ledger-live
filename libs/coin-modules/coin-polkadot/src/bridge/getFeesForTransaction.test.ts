@@ -7,7 +7,7 @@ import {
 } from "../network/sidecar.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { createRegistryAndExtrinsics } from "../network/common";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 
 const mockPaymentInfo = jest.fn();
 const mockRegistry = jest
@@ -21,7 +21,7 @@ jest.mock("../network/sidecar", () => ({
 }));
 
 jest.mock("../config");
-const mockGetConfig = jest.mocked(getCoinConfig);
+const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
 
 describe("getEstimatedFees", () => {
   const transaction = createFixtureTransaction();

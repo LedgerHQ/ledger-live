@@ -1,4 +1,5 @@
-import { PolkadotConfig, setCoinConfig } from "../config";
+import type { Api } from "@ledgerhq/coin-framework/api/index";
+import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,
   craftEstimationTransaction,
@@ -7,26 +8,10 @@ import {
   estimateFees,
   getBalance,
   listOperations,
-  type Operation,
 } from "../logic";
 
-export type Api = {
-  broadcast: (tx: string) => Promise<string>;
-  combine: (tx: string, signature: string, pubkey?: string) => string;
-  craftTransaction: (
-    address: string,
-    transaction: {
-      recipient: string;
-      amount: bigint;
-      fee: bigint;
-    },
-  ) => Promise<string>;
-  estimateFees: (addr: string, amount: bigint) => Promise<bigint>;
-  getBalance: (address: string) => Promise<bigint>;
-  listOperations: (address: string, blockHeight: number) => Promise<Operation[]>;
-};
 export function createApi(config: PolkadotConfig): Api {
-  setCoinConfig(() => ({ ...config, status: { type: "active" } }));
+  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,

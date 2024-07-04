@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { fetchAllBakers, hydrateBakers } from "../api/bakers";
+import { fetchAllBakers, hydrateBakers } from "../network/bakers";
 
 export const getPreloadStrategy = (_currency: CryptoCurrency) => ({
   preloadMaxAge: 30 * 1000,
