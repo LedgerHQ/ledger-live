@@ -9,11 +9,14 @@ import {
 import { Page, useMarketActions } from "./useMarketActions";
 import { useCallback } from "react";
 import { useParams } from "react-router";
-import { setMarketOptions } from "~/renderer/actions/market";
-import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
-import { marketParamsSelector } from "~/renderer/reducers/market";
-import { starredMarketCoinsSelector, localeSelector } from "~/renderer/reducers/settings";
+import {
+  addStarredMarketCoins,
+  removeStarredMarketCoins,
+  setMarketOptions,
+} from "~/renderer/actions/market";
+import { marketParamsSelector, starredMarketCoinsSelector } from "~/renderer/reducers/market";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { localeSelector } from "~/renderer/reducers/settings";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);

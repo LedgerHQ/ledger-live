@@ -112,7 +112,6 @@ export type SettingsState = {
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [key: string]: number };
   anonymousBrazeId: string | null;
-  starredMarketCoins: string[];
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -202,9 +201,6 @@ export const INITIAL_STATE: SettingsState = {
   supportedCounterValues: [],
   dismissedContentCards: {} as Record<string, number>,
   anonymousBrazeId: null,
-
-  //MARKET
-  starredMarketCoins: [],
 };
 
 /* Handlers */
@@ -257,8 +253,6 @@ type HandlersPayloads = {
   };
   CLEAR_DISMISSED_CONTENT_CARDS: never;
   SET_ANONYMOUS_BRAZE_ID: string;
-  ADD_STARRED_MARKET_COINS: string;
-  REMOVE_STARRED_MARKET_COINS: string;
   SET_CURRENCY_SETTINGS: { key: string; value: CurrencySettings };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
@@ -446,14 +440,6 @@ const handlers: SettingsHandlers = {
   SET_ANONYMOUS_BRAZE_ID: (state: SettingsState, { payload }) => ({
     ...state,
     anonymousBrazeId: payload,
-  }),
-  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: [...state.starredMarketCoins, payload],
-  }),
-  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
   }),
 };
 
@@ -793,6 +779,3 @@ export const dismissedContentCardsSelector = (state: State) => state.settings.di
 export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;
 
 export const currenciesSettingsSelector = (state: State) => state.settings.currenciesSettings;
-
-//MARKET
-export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
