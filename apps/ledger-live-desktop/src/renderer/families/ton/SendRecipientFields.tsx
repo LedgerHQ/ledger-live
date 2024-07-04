@@ -1,4 +1,3 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ton/types";
 import { Account } from "@ledgerhq/types-live";
 import React from "react";
@@ -15,10 +14,7 @@ const Root = (props: {
   onChange: (a: Transaction) => void;
   trackProperties?: object;
 }) => {
-  // if the transaction is token transfer, it is not possible to send a comment.
-  const subAccount = findSubAccountById(props.account, props.transaction.subAccountId || "");
-
-  return !subAccount ? (
+  return (
     <Box flow={1}>
       <Box mb={10}>
         <Label>
@@ -35,7 +31,7 @@ const Root = (props: {
         </Box>
       </Box>
     </Box>
-  ) : null;
+  );
 };
 export default {
   component: Root,
