@@ -253,13 +253,14 @@ const getTransactionStatus = async (
     });
   }
 
+  const parentAccountBalance = account.type === "Account" ? account.balance : acc.balance;
   //
   // Not enough gas check
   // PTX swap uses this to support deeplink to buy additional currency
   //
-  if (balance.lt(estimatedFees) || balance.isZero()) {
+  if (parentAccountBalance.lt(estimatedFees) || parentAccountBalance.isZero()) {
     const query = new URLSearchParams({
-      ...(account?.id ? { account: account.id } : {}),
+      ...(acc?.id ? { account: acc.id } : {}),
     });
     errors.gasPrice = new NotEnoughGas(undefined, {
       fees: formatCurrencyUnit(getFeesUnit(acc.currency), estimatedFees),
