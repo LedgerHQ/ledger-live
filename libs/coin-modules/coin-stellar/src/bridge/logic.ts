@@ -19,14 +19,14 @@ import {
   fetchBaseFee,
   fetchSigners,
   loadAccount,
-} from "./network";
+} from "../network";
 import type {
   BalanceAsset,
   RawOperation,
   StellarOperation,
   Transaction,
   TransactionRaw,
-} from "./types";
+} from "../types";
 
 export const STELLAR_BURN_ADDRESS = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
 

@@ -4,7 +4,7 @@ import { getMainAccount } from "@ledgerhq/coin-framework/account";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 
 const notCreatedStellarMockAddress = "GAW46JE3SHIAYLNNNQCAZFQ437WB5ZH7LDRDWR5LVDWHCTHCKYB6RCCH";
 

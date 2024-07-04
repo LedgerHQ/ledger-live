@@ -2,16 +2,15 @@ import invariant from "invariant";
 import { Memo, Operation as StellarSdkOperation, xdr } from "@stellar/stellar-sdk";
 import { AmountRequired, FeeNotLoaded, NetworkDown } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
+import { StellarAssetRequired, StellarMuxedAccountNotExist, type Transaction } from "../types";
 import {
   buildPaymentOperation,
   buildCreateAccountOperation,
   buildTransactionBuilder,
   buildChangeTrustOperation,
   loadAccount,
-} from "./network";
+} from "../network";
 import { getRecipientAccount, getAmountValue } from "./logic";
-import { StellarAssetRequired, StellarMuxedAccountNotExist } from "./errors";
 
 /**
  * @param {Account} account

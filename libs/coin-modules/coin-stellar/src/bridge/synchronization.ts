@@ -2,11 +2,10 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { Account } from "@ledgerhq/types-live";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { fetchAccount, fetchOperations } from "./network";
+import { fetchAccount, fetchOperations } from "../network";
 import { buildSubAccounts } from "./tokens";
-import { StellarOperation } from "./types";
+import { StellarBurnAddressError, StellarOperation } from "../types";
 import { STELLAR_BURN_ADDRESS } from "./logic";
-import { StellarBurnAddressError } from "./errors";
 
 export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig) => {
   const { address, currency, initialAccount, derivationMode } = info;

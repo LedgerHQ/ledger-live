@@ -9,8 +9,8 @@ import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
-import { acceptTransaction } from "./speculos-deviceActions";
-import type { Transaction } from "./types";
+import { acceptTransaction } from "./bot-deviceActions";
+import type { Transaction } from "../types";
 
 const currency = getCryptoCurrencyById("stellar");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");

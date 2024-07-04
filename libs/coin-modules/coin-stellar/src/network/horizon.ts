@@ -29,7 +29,7 @@ import {
   getAccountSpendableBalance,
   getReservedBalance,
   rawOperationsToOperations,
-} from "../logic";
+} from "../bridge/logic";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");

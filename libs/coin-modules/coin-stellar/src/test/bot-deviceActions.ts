@@ -7,7 +7,7 @@ import {
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
 import { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
+import type { Transaction, TransactionStatus } from "../types";
 
 function expectedAmount({
   account,

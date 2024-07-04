@@ -2,10 +2,10 @@ import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 import { buildTransaction } from "./buildTransaction";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { StellarSigner } from "./types/signer";
+import { StellarSigner } from "../types/signer";
 
 export function buildSignOperation(
   signerContext: SignerContext<StellarSigner>,

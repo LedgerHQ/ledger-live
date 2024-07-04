@@ -14,8 +14,7 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { isAddressValid, isAccountMultiSign, isMemoValid, getRecipientAccount } from "./logic";
-import { BASE_RESERVE, MIN_BALANCE } from "./network";
-import type { Transaction } from "./types";
+import { BASE_RESERVE, MIN_BALANCE } from "../network";
 import {
   StellarWrongMemoFormat,
   StellarAssetRequired,
@@ -27,7 +26,8 @@ import {
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
   StellarSourceHasMultiSign,
-} from "./errors";
+  type Transaction,
+} from "../types";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
   account,

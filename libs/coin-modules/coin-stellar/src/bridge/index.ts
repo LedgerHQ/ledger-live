@@ -5,19 +5,19 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { getTransactionStatus } from "../getTransactionStatus";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
 import type { StellarSigner, Transaction, TransactionStatus } from "../types";
-import { prepareTransaction } from "../prepareTransaction";
-import { createTransaction } from "../createTransaction";
-import { buildSignOperation } from "../signOperation";
-import { broadcast } from "../broadcast";
+import { prepareTransaction } from "./prepareTransaction";
+import { createTransaction } from "./createTransaction";
+import { buildSignOperation } from "./signOperation";
+import { broadcast } from "./broadcast";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import resolver from "../hw-getAddress";
+import resolver from "../signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { getAccountShape } from "../synchronization";
+import { getAccountShape } from "./synchronization";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
-import { StellarCoinConfig, setCoinConfig } from "../config";
+import stellarCoinConfig, { type StellarCoinConfig } from "../config";
 
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
@@ -68,7 +68,7 @@ export function createBridges(
   signerContext: SignerContext<StellarSigner>,
   coinConfig: CoinConfig<StellarCoinConfig>,
 ) {
-  setCoinConfig(coinConfig);
+  stellarCoinConfig.setCoinConfig(coinConfig);
 
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
