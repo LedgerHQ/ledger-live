@@ -1,37 +1,31 @@
 import React, { useCallback } from "react";
-import { JWT, Trustchain } from "@ledgerhq/trustchain/types";
+import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { Actionable } from "./Actionable";
 import { useTrustchainSDK } from "../context";
 
 export function AppDestroyTrustchain({
   trustchain,
-  jwt,
   setTrustchain,
-  setJWT,
-  setDeviceJWT,
+  memberCredentials,
 }: {
   trustchain: Trustchain | null;
-  jwt: JWT | null;
   setTrustchain: (trustchain: Trustchain | null) => void;
-  setJWT: (jwt: JWT | null) => void;
-  setDeviceJWT: (deviceJWT: JWT | null) => void;
+  memberCredentials: MemberCredentials | null;
 }) {
   const sdk = useTrustchainSDK();
   const action = useCallback(
-    (trustchain: Trustchain, jwt: JWT) =>
-      sdk.destroyTrustchain(trustchain, jwt).then(() => {
+    (trustchain: Trustchain, memberCredentials: MemberCredentials) =>
+      sdk.destroyTrustchain(trustchain, memberCredentials).then(() => {
         // all of these state should be reset
         setTrustchain(null);
-        setJWT(null);
-        setDeviceJWT(null);
       }),
-    [sdk, setTrustchain, setJWT, setDeviceJWT],
+    [sdk, setTrustchain],
   );
 
   return (
     <Actionable
       buttonTitle="sdk.destroyTrustchain"
-      inputs={trustchain && jwt ? [trustchain, jwt] : null}
+      inputs={trustchain && memberCredentials ? [trustchain, memberCredentials] : null}
       action={action}
       buttonProps={{
         "data-tooltip-id": "tooltip",

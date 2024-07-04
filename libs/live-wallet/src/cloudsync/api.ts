@@ -90,14 +90,42 @@ async function deleteData(jwt: JWT, datatype: string): Promise<void> {
   });
 }
 
-function listenNotifications(jwt: JWT, datatype: string): Observable<number> {
+function listenNotifications(
+  getFreshJwt: () => Promise<JWT>,
+  datatype: string,
+): Observable<number> {
   const url = `${getEnv("CLOUD_SYNC_API").replace("http", "ws")}/atomic/v1/${datatype}/notifications`;
   const ws: WebSocket = new WS(url);
+
   return new Observable(observer => {
-    ws.addEventListener("message", (e: MessageEvent) => observer.next(parseInt(e.data, 10)));
+    function sendJwt() {
+      getFreshJwt()
+        .then(jwt => ws.send(jwt.accessToken))
+        .catch(error => {
+          observer.error(error);
+          ws.close();
+        });
+    }
+
+    ws.addEventListener("message", (e: MessageEvent) => {
+      if (e.data === "ping") {
+        ws.send("pong");
+      } else if (e.data === "JWT expired") {
+        sendJwt();
+      } else {
+        const possiblyNumber = parseInt(e.data, 10);
+        if (!isNaN(possiblyNumber)) {
+          observer.next(possiblyNumber);
+        } else {
+          console.warn("cloudsync: unexpected message", e.data);
+        }
+      }
+    });
     ws.addEventListener("close", () => observer.complete());
     ws.addEventListener("error", error => observer.error(error));
-    ws.addEventListener("open", () => ws.send(jwt.accessToken));
+    ws.addEventListener("open", () => {
+      sendJwt();
+    });
     return () => ws.close();
   });
 }
