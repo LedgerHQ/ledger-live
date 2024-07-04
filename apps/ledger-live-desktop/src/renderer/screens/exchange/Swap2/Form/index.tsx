@@ -126,8 +126,8 @@ const SwapForm = () => {
         exchangeRatesState?.error ||
         maybeTezosAccountUnrevealedAccount(swapTransaction) ||
         (ptxSwapReceiveTRC20WithoutTrx?.enabled
-          ? maybeTronEmptyAccount(swapTransaction)
-          : undefined);
+          ? undefined
+          : maybeTronEmptyAccount(swapTransaction));
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
