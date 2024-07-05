@@ -94,6 +94,7 @@ export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
 export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
 // Error message specifically for the PTX swap flow
 export const NotEnoughGasSwap = createCustomErrorClass("NotEnoughGasSwap");
+export const TronEmptyAccount = createCustomErrorClass("TronEmptyAccount");
 export const NotSupportedLegacyAddress = createCustomErrorClass("NotSupportedLegacyAddress");
 export const GasLessThanEstimate = createCustomErrorClass("GasLessThanEstimate");
 export const PriorityFeeTooLow = createCustomErrorClass("PriorityFeeTooLow");
