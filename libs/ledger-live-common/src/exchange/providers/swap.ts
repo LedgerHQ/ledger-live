@@ -16,7 +16,7 @@ type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
 };
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
-const swapAdditionData: Record<string, AdditionalProviderConfig> = {
+const defaultSwapCdnData: Record<string, AdditionalProviderConfig> = {
   changelly: {
     needsKYC: false,
     needsBearerToken: false,
@@ -45,7 +45,7 @@ const swapAdditionData: Record<string, AdditionalProviderConfig> = {
   },
 };
 
-const swapProviders: Record<string, ProviderConfig & AdditionalProviderConfig> = {
+const defaultSwapProviders: Record<string, ProviderConfig & AdditionalProviderConfig> = {
   changelly: {
     name: "Changelly",
     publicKey: {
@@ -174,7 +174,7 @@ export const fetchAndMergeProviderData = async () => {
     return finalProvidersData;
   } catch (error) {
     console.error("Error fetching or processing provider data:", error);
-    const finalProvidersData = mergeProviderData(swapProviders, swapAdditionData);
+    const finalProvidersData = mergeProviderData(defaultSwapProviders, defaultSwapCdnData);
 
     return finalProvidersData;
   }
@@ -193,7 +193,7 @@ function mergeProviderData(baseData, additionalData) {
 
 export const getAvailableProviders = (): string[] => {
   if (isIntegrationTestEnv()) {
-    return Object.keys(swapProviders).filter(p => p !== "changelly");
+    return Object.keys(defaultSwapProviders).filter(p => p !== "changelly");
   }
-  return Object.keys(swapProviders);
+  return Object.keys(defaultSwapProviders);
 };
