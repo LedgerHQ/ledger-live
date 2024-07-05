@@ -1,6 +1,5 @@
 import {
   memberCredentialsSelector,
-  setJwt,
   setMemberCredentials,
   setTrustchain,
 } from "@ledgerhq/trustchain/store";
@@ -9,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
-import { QueryKey } from "./type.hooks";
+import { TrustchainResultType } from "@ledgerhq/trustchain/types";
 
 export function useAddMember({ device }: { device: Device | null }) {
   const dispatch = useDispatch();
@@ -24,16 +23,22 @@ export function useAddMember({ device }: { device: Device | null }) {
       const newMemberCredentials = await sdk.initMemberCredentials();
       dispatch(setMemberCredentials(newMemberCredentials));
     } else {
+      let goNext = false;
       await runWithDevice(device?.deviceId, async transport => {
-        const trustchain = await sdk.getOrCreateTrustchain(transport, memberCredentials);
+        const trustchainResult = await sdk.getOrCreateTrustchain(transport, memberCredentials, {
+          onStartRequestUserInteraction: () => (goNext = false),
+          onEndRequestUserInteraction: () => (goNext = true),
+        });
 
-        if (trustchain) {
-          dispatch(setTrustchain(trustchain));
-
+        if (trustchainResult && goNext) {
+          dispatch(setTrustchain(trustchainResult.trustchain));
           dispatch(
             setFlow({
               flow: Flow.Activation,
-              step: hasCreatedTrustchain ? Step.ActivationFinal : Step.SynchronizationFinal,
+              step:
+                trustchainResult.type === TrustchainResultType.created
+                  ? Step.ActivationFinal
+                  : Step.SynchronizationFinal,
             }),
           );
         }
@@ -43,7 +48,6 @@ export function useAddMember({ device }: { device: Device | null }) {
 
   const addMemberMutation = useMutation({
     mutationFn: () => addMember(),
-    mutationKey: [QueryKey.addMember],
     onError: error => {
       console.error("Error while adding member", error);
     },

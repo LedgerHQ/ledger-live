@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   trustchainSelector,
   resetTrustchainStore,
-  jwtSelector,
   memberCredentialsSelector,
 } from "@ledgerhq/trustchain/store";
 import { useMutation } from "@tanstack/react-query";
@@ -17,12 +16,11 @@ export function useDestroyTrustchain() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
-  const jwt = useSelector(jwtSelector);
 
   const deleteMutation = useMutation({
     mutationFn: () =>
       sdk.destroyTrustchain(trustchain as Trustchain, memberCredentials as MemberCredentials),
-    mutationKey: [QueryKey.destroyTrustchain, trustchain, jwt],
+    mutationKey: [QueryKey.destroyTrustchain, trustchain],
     onSuccess: () => {
       dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.BackupDeleted }));
       dispatch(resetTrustchainStore());
