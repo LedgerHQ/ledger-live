@@ -23,10 +23,7 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
   const addMemberMutation = useAddMember({ device });
 
   useEffect(() => {
-    async function addMember() {
-      await addMemberMutation.mutateAsync();
-    }
-    addMember();
+    addMemberMutation.mutate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
