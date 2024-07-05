@@ -1,7 +1,7 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 import { decode, encodeForSigning } from "ripple-binary-codec";
-import { sign } from "ripple-keypairs" 
+import { sign } from "ripple-keypairs";
 
 describe("Xrp Api", () => {
   let module: Api;
