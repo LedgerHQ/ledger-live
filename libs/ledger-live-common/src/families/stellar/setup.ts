@@ -7,7 +7,7 @@ import { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
 import makeCliTools from "@ledgerhq/coin-stellar/cli";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { createBridges } from "@ledgerhq/coin-stellar/bridge/index";
-import stellarResolver from "@ledgerhq/coin-stellar/hw-getAddress";
+import stellarResolver from "@ledgerhq/coin-stellar/signer/index";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
