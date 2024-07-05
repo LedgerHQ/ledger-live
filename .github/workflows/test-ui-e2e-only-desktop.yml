@@ -52,6 +52,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.9.5
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge]
@@ -89,16 +90,17 @@ jobs:
       - name: Retrieving coin apps
         uses: actions/checkout@v4
         with:
-          ref: generated/ledger-live-bot
+          ref: master
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
       - name: pull docker image
-        run: docker pull ghcr.io/ledgerhq/speculos:sha-e262a0c
+        run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
+          export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
           export COINAPPS=$PWD/coin-apps
           export ENABLE_TRANSACTION_BROADCAST=1
           export MOCK=0
@@ -119,7 +121,7 @@ jobs:
         uses: actions/upload-artifact@v4.3.0
         if: failure() && !cancelled()
         with:
-          name: playwright-results-linux
+          name: playwright-results-${{ matrix.shardIndex }}
           path: |
             apps/ledger-live-desktop/tests/artifacts/test-results
             apps/ledger-live-desktop/tests/artifacts/html-report
