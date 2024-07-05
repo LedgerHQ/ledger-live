@@ -2,6 +2,7 @@ import {
   TransportStatusError,
   WrongDeviceForAccountRefund,
   WrongDeviceForAccountPayout,
+  NotEnoughBalanceSwap,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { firstValueFrom, from, Observable } from "rxjs";
@@ -81,6 +82,11 @@ const completeExchange = (
 
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
+        if (fromAccount.balance < transaction.amount.plus(estimatedFees)) {
+          throw new NotEnoughBalanceSwap(
+            "Amount and fees are greater than the balance of the account",
+          );
+        }
         currentStep = "SET_PARTNER_KEY";
         await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerConfig));
         if (unsubscribed) return;

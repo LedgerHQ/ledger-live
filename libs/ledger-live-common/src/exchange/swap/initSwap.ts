@@ -1,5 +1,6 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import {
+  NotEnoughBalanceSwap,
   TransportStatusError,
   WrongDeviceForAccountPayout,
   WrongDeviceForAccountRefund,
@@ -283,6 +284,11 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
         if (unsubscribed) return;
         ignoreTransportError = true;
+        if (fromAccount.balance < amountExpectedFrom.plus(estimatedFees)) {
+          throw new NotEnoughBalanceSwap(
+            "Amount and fees are greater than the balance of the account",
+          );
+        }
         await swap.signCoinTransaction();
       }).catch(e => {
         if (ignoreTransportError) return;
