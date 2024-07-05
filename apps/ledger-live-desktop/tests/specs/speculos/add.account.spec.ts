@@ -6,7 +6,7 @@ import { addTmsLink } from "tests/fixtures/common";
 const currencies: Currency[] = [
   Currency.BTC,
   Currency.ETH,
-  //Currency.ETC, //Todo: reactivate when ETC app is fixed
+  Currency.ETC,
   Currency.XRP,
   Currency.DOT,
   Currency.TRX,

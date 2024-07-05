@@ -59,10 +59,11 @@ const ImageComponent: React.FC<ImageProps> = ({
   objectFit = "cover",
   setUseFallback,
   isFallback,
+  isLoading,
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
-  const isImageReady = uri && !error;
+  const isImageReady = uri && !isLoading && !error;
 
   return (
     <Wrapper
@@ -82,7 +83,7 @@ const ImageComponent: React.FC<ImageProps> = ({
           key={isFallback?.toString()}
           onClick={onClick}
           onLoad={() => setLoaded(true)}
-          onError={() => (isFallback ? setError(true) : setUseFallback(true))}
+          onError={() => (isFallback ? setError(true) : setUseFallback?.(true))}
           src={uri}
         />
       ) : (
