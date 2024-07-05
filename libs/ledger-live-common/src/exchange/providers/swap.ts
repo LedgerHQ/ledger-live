@@ -191,9 +191,9 @@ function mergeProviderData(baseData, additionalData) {
   return mergedData;
 }
 
-export const getAvailableProviders = (): string[] => {
+export const getAvailableProviders = async (): Promise<string[]> => {
   if (isIntegrationTestEnv()) {
     return Object.keys(DEFAULT_SWAP_PROVIDERS).filter(p => p !== "changelly");
   }
-  return Object.keys(DEFAULT_SWAP_PROVIDERS);
+  return Object.keys(await fetchAndMergeProviderData());
 };
