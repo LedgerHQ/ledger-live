@@ -15,6 +15,7 @@ export type NftComponentData = {
   imageUri: string;
   useFallback: boolean;
   mediaType: string;
+  isLoading: boolean;
   setUseFallback: () => void;
   closeCollectiblesPanAndZoom: () => void;
 };

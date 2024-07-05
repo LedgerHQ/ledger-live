@@ -1,4 +1,3 @@
-import { describe, test, expect } from "@jest/globals";
 import { BigNumber } from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";

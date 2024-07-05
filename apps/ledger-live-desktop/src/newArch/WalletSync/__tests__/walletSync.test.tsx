@@ -1,9 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import "@testing-library/jest-dom";
-import { describe, it, expect } from "@jest/globals";
-
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
