@@ -1,5 +1,31 @@
 ## 34.5.0-next.4
 
+## 34.6.0-nightly.1
+
+### Minor Changes
+
+- [#7194](https://github.com/LedgerHQ/ledger-live/pull/7194) [`c59adf2`](https://github.com/LedgerHQ/ledger-live/commit/c59adf2b0d49ea3c72b94fcb356eb72bcbfc4a6b) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Expose Tezos features for Alpaca
+
+### Patch Changes
+
+- Updated dependencies [[`7909030`](https://github.com/LedgerHQ/ledger-live/commit/79090300ca478f51166edbad5fb4d889a6f7bfe8), [`c59adf2`](https://github.com/LedgerHQ/ledger-live/commit/c59adf2b0d49ea3c72b94fcb356eb72bcbfc4a6b)]:
+  - @ledgerhq/coin-tron@0.0.2-nightly.5
+  - @ledgerhq/coin-polkadot@1.1.0-nightly.1
+  - @ledgerhq/coin-tezos@0.5.0-nightly.1
+  - @ledgerhq/coin-xrp@0.4.0-nightly.1
+  - @ledgerhq/coin-framework@0.16.0-nightly.1
+  - @ledgerhq/coin-algorand@0.5.2-nightly.1
+  - @ledgerhq/coin-bitcoin@0.6.2-nightly.1
+  - @ledgerhq/coin-cardano@0.1.2-nightly.1
+  - @ledgerhq/coin-evm@2.1.2-nightly.1
+  - @ledgerhq/coin-near@0.5.2-nightly.1
+  - @ledgerhq/coin-solana@0.7.2-nightly.1
+  - @ledgerhq/coin-stellar@0.2.0-nightly.1
+  - @ledgerhq/live-countervalues@0.2.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.1
+  - @ledgerhq/live-nft@0.4.2-nightly.1
+  - @ledgerhq/live-wallet@0.3.1-nightly.1
+
 ## 34.6.0-nightly.0
 
 ### Minor Changes

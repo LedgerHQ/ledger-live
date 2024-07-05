@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.47.0-nightly.1
+
+### Patch Changes
+
+- [#7244](https://github.com/LedgerHQ/ledger-live/pull/7244) [`47265fe`](https://github.com/LedgerHQ/ledger-live/commit/47265fe142914485e0838ed59d39eff3dc83e877) Thanks [@sergiubreban](https://github.com/sergiubreban)! - copy updates
+
+- [#7093](https://github.com/LedgerHQ/ledger-live/pull/7093) [`9ad599d`](https://github.com/LedgerHQ/ledger-live/commit/9ad599df00d93c27b5cf72e9ba5a8bab2dbca43e) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add target and source currency llm
+
+- [#7266](https://github.com/LedgerHQ/ledger-live/pull/7266) [`281e8c7`](https://github.com/LedgerHQ/ledger-live/commit/281e8c787f99b608d051171e8ecbbfec89c53a55) Thanks [@CremaFR](https://github.com/CremaFR)! - fix trc20 ff
+
+- [#7258](https://github.com/LedgerHQ/ledger-live/pull/7258) [`586e638`](https://github.com/LedgerHQ/ledger-live/commit/586e638508fefce0fff57ebedca347921ebedca2) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add missing Blast currency in list of supported currencies of LLM
+
+- Updated dependencies [[`c59adf2`](https://github.com/LedgerHQ/ledger-live/commit/c59adf2b0d49ea3c72b94fcb356eb72bcbfc4a6b)]:
+  - @ledgerhq/live-common@34.6.0-nightly.1
+  - @ledgerhq/coin-framework@0.16.0-nightly.1
+  - @ledgerhq/coin-evm@2.1.2-nightly.1
+  - @ledgerhq/live-countervalues@0.2.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.1
+  - @ledgerhq/live-nft@0.4.2-nightly.1
+  - @ledgerhq/live-nft-react@0.4.2-nightly.1
+  - @ledgerhq/live-wallet@0.3.1-nightly.1
+
 ## 3.47.0-nightly.0
 
 ### Minor Changes

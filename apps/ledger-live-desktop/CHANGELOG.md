@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.83.1-nightly.2
+
+### Patch Changes
+
+- [#7227](https://github.com/LedgerHQ/ledger-live/pull/7227) [`7637ffb`](https://github.com/LedgerHQ/ledger-live/commit/7637ffb1876db80879903c00e2cd98b01c80f8af) Thanks [@LucasWerey](https://github.com/LucasWerey)! - refactor of nfts collection on account page. fix jest config
+
+- [#7244](https://github.com/LedgerHQ/ledger-live/pull/7244) [`47265fe`](https://github.com/LedgerHQ/ledger-live/commit/47265fe142914485e0838ed59d39eff3dc83e877) Thanks [@sergiubreban](https://github.com/sergiubreban)! - copy updates
+
+- [#7263](https://github.com/LedgerHQ/ledger-live/pull/7263) [`6917226`](https://github.com/LedgerHQ/ledger-live/commit/69172266814c1be717e7c84c956eff0a0a3bf363) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - set fromAccountId to hash params in swap-live-app
+
+- [#7266](https://github.com/LedgerHQ/ledger-live/pull/7266) [`281e8c7`](https://github.com/LedgerHQ/ledger-live/commit/281e8c787f99b608d051171e8ecbbfec89c53a55) Thanks [@CremaFR](https://github.com/CremaFR)! - fix trc20 ff
+
+- [#7269](https://github.com/LedgerHQ/ledger-live/pull/7269) [`99091a9`](https://github.com/LedgerHQ/ledger-live/commit/99091a916535b3ea74715a32eeff98ab996b10fa) Thanks [@adumitrana-ledger](https://github.com/adumitrana-ledger)! - fix: spacing improvements for swap page
+
+- Updated dependencies [[`c59adf2`](https://github.com/LedgerHQ/ledger-live/commit/c59adf2b0d49ea3c72b94fcb356eb72bcbfc4a6b)]:
+  - @ledgerhq/live-common@34.6.0-nightly.1
+  - @ledgerhq/coin-framework@0.16.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.6.2-nightly.1
+  - @ledgerhq/coin-evm@2.1.2-nightly.1
+  - @ledgerhq/live-countervalues@0.2.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.1
+  - @ledgerhq/live-nft@0.4.2-nightly.1
+  - @ledgerhq/live-nft-react@0.4.2-nightly.1
+  - @ledgerhq/live-wallet@0.3.1-nightly.1
+
 ## 2.83.1-nightly.1
 
 ### Patch Changes

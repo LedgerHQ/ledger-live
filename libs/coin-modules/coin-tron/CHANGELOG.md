@@ -1,5 +1,14 @@
 # @ledgerhq/coin-tron
 
+## 0.0.2-nightly.5
+
+### Patch Changes
+
+- [#7267](https://github.com/LedgerHQ/ledger-live/pull/7267) [`7909030`](https://github.com/LedgerHQ/ledger-live/commit/79090300ca478f51166edbad5fb4d889a6f7bfe8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Tron API request providing link for next pages with trongrid's URI instead of continuing on the reverse proxy
+
+- Updated dependencies [[`c59adf2`](https://github.com/LedgerHQ/ledger-live/commit/c59adf2b0d49ea3c72b94fcb356eb72bcbfc4a6b)]:
+  - @ledgerhq/coin-framework@0.16.0-nightly.1
+
 ## 0.0.2-nightly.4
 
 ### Patch Changes

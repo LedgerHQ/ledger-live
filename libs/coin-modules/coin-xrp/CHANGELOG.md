@@ -1,5 +1,16 @@
 # @ledgerhq/coin-xrp
 
+## 0.4.0-nightly.1
+
+### Minor Changes
+
+- [#7194](https://github.com/LedgerHQ/ledger-live/pull/7194) [`c59adf2`](https://github.com/LedgerHQ/ledger-live/commit/c59adf2b0d49ea3c72b94fcb356eb72bcbfc4a6b) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Expose Tezos features for Alpaca
+
+### Patch Changes
+
+- Updated dependencies [[`c59adf2`](https://github.com/LedgerHQ/ledger-live/commit/c59adf2b0d49ea3c72b94fcb356eb72bcbfc4a6b)]:
+  - @ledgerhq/coin-framework@0.16.0-nightly.1
+
 ## 0.4.0-nightly.0
 
 ### Minor Changes
