@@ -49,7 +49,17 @@ const handlers: ReducerMap<MarketState, MarketPayload> = {
 
   [MarketStateActionTypes.MARKET_IMPORT]: (state, action) => ({
     ...state,
-    ...(action as Action<MarketImportPayload>).payload,
+    marketFilterByStarredCurrencies:
+      (action as Action<MarketImportPayload>).payload.marketFilterByStarredCurrencies ||
+      state.marketFilterByStarredCurrencies,
+
+    marketParams: {
+      ...state.marketParams,
+      range: (action as Action<MarketImportPayload>).payload.marketParams?.range,
+      counterCurrency: (action as Action<MarketImportPayload>).payload.marketParams
+        ?.counterCurrency,
+      order: (action as Action<MarketImportPayload>).payload.marketParams?.order,
+    },
   }),
 };
 

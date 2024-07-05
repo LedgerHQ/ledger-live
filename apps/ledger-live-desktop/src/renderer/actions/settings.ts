@@ -377,3 +377,13 @@ export const setCurrencySettings = (payload: { key: string; value: CurrencySetti
   type: "SET_CURRENCY_SETTINGS",
   payload,
 });
+
+export const addStarredMarketCoins = (payload: string) => ({
+  type: "MARKET_ADD_STARRED_COINS",
+  payload,
+});
+
+export const removeStarredMarketCoins = (payload: string) => ({
+  type: "MARKET_REMOVE_STARRED_COINS",
+  payload,
+});

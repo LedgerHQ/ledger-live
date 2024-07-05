@@ -11,16 +11,6 @@ export const setMarketCurrentPage = (payload: number) => ({
   payload,
 });
 
-export const addStarredMarketCoins = (payload: string) => ({
-  type: "MARKET_ADD_STARRED_COINS",
-  payload,
-});
-
-export const removeStarredMarketCoins = (payload: string) => ({
-  type: "MARKET_REMOVE_STARRED_COINS",
-  payload,
-});
-
 export const importMarketState = (payload: MarketState) => ({
   type: "MARKET_IMPORT_STATE",
   payload,

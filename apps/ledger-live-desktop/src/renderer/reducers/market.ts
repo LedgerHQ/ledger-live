@@ -5,7 +5,6 @@ import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/uti
 export type MarketState = {
   marketParams: MarketListRequestParams;
   currentPage: number;
-  starredMarketCoins: string[];
 };
 
 const initialState: MarketState = {
@@ -20,7 +19,6 @@ const initialState: MarketState = {
     counterCurrency: "usd",
   },
   currentPage: 1,
-  starredMarketCoins: [],
 };
 
 type HandlersPayloads = {
@@ -28,8 +26,6 @@ type HandlersPayloads = {
 
   MARKET_SET_VALUES: MarketListRequestParams;
   MARKET_SET_CURRENT_PAGE: number;
-  MARKET_ADD_STARRED_COINS: string;
-  MARKET_REMOVE_STARRED_COINS: string;
 };
 
 type MarketHandlers<PreciseKey = true> = Handlers<MarketState, HandlersPayloads, PreciseKey>;
@@ -46,16 +42,16 @@ const handlers: MarketHandlers = {
     ...state,
     currentPage: payload,
   }),
-  MARKET_ADD_STARRED_COINS: (state: MarketState, { payload }) => ({
-    ...state,
-    starredMarketCoins: [...state.starredMarketCoins, payload],
-  }),
-  MARKET_REMOVE_STARRED_COINS: (state: MarketState, { payload }) => ({
-    ...state,
-    starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
-  }),
 
-  MARKET_IMPORT_STATE: (_, { payload }: { payload: MarketState }) => payload,
+  MARKET_IMPORT_STATE: (state, { payload }: { payload: MarketState }) => ({
+    ...state,
+    marketParams: {
+      ...state.marketParams,
+      range: payload.marketParams.range,
+      counterCurrency: payload.marketParams.counterCurrency,
+      order: payload.marketParams.order,
+    },
+  }),
 };
 
 // Selectors
@@ -63,8 +59,6 @@ const handlers: MarketHandlers = {
 export const marketParamsSelector = (state: { market: MarketState }) => state.market.marketParams;
 export const marketCurrentPageSelector = (state: { market: MarketState }) =>
   state.market.currentPage;
-export const starredMarketCoinsSelector = (state: { market: MarketState }) =>
-  state.market.starredMarketCoins;
 
 export const marketStoreSelector = (state: { market: MarketState }) => state.market;
 
