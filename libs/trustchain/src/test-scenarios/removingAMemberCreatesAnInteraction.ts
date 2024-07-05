@@ -26,7 +26,7 @@ export async function scenario(transport: Transport) {
     },
   };
 
-  const trustchain = await sdk1.getOrCreateTrustchain(transport, member1creds, callbacks);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, member1creds, callbacks);
   expect(totalInteractionCounter).toBe(2); // there are two interaction: one for device auth, one for trustchain addition
 
   await sdk1.addMember(trustchain, member1creds, member2);

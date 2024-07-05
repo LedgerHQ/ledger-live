@@ -7,6 +7,8 @@ import {
   TrustchainSDK,
   TrustchainDeviceCallbacks,
   AuthCachePolicy,
+  TrustchainResult,
+  TrustchainResultType,
 } from "./types";
 import {
   crypto,
@@ -87,7 +89,9 @@ export class SDK implements TrustchainSDK {
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
-  ): Promise<Trustchain> {
+  ): Promise<TrustchainResult> {
+    let type = TrustchainResultType.restored;
+
     const hw = device.apdu(transport);
 
     const withJwt: WithJwt = f => this.withDeviceAuth(transport, f, undefined, callbacks);
@@ -96,6 +100,7 @@ export class SDK implements TrustchainSDK {
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
+      type = TrustchainResultType.created;
       const streamTree = await StreamTree.createNewTree(hw, { topic });
       await streamTree.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
       const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
@@ -130,6 +135,7 @@ export class SDK implements TrustchainSDK {
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
     if (shouldShare) {
+      if (type === TrustchainResultType.restored) type = TrustchainResultType.updated;
       streamTree = await remapUserInteractions(
         pushMember(streamTree, path, trustchainRootId, withJwt, hw, {
           id: memberCredentials.pubkey,
@@ -148,7 +154,7 @@ export class SDK implements TrustchainSDK {
       applicationPath: path,
     };
 
-    return trustchain;
+    return { type, trustchain };
   }
 
   async restoreTrustchain(

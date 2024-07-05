@@ -4,6 +4,8 @@ import {
   Trustchain,
   TrustchainDeviceCallbacks,
   TrustchainMember,
+  TrustchainResult,
+  TrustchainResultType,
   TrustchainSDK,
   TrustchainSDKContext,
 } from "./types";
@@ -76,9 +78,12 @@ export class MockSDK implements TrustchainSDK {
     transport: Transport,
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
-  ): Promise<Trustchain> {
+  ): Promise<TrustchainResult> {
     void transport;
     assertLiveCredentials(memberCredentials);
+    let type = trustchains.has("mock-root-id")
+      ? TrustchainResultType.restored
+      : TrustchainResultType.created;
 
     const trustchain: Trustchain = trustchains.get("mock-root-id") || {
       rootId: "mock-root-id",
@@ -96,6 +101,7 @@ export class MockSDK implements TrustchainSDK {
     const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
     // add itself if not yet here
     if (!currentMembers.some(m => m.id === memberCredentials.pubkey)) {
+      if (type === TrustchainResultType.restored) type = TrustchainResultType.updated;
       callbacks?.onStartRequestUserInteraction();
       // simulate device add interaction
       callbacks?.onEndRequestUserInteraction();
@@ -106,7 +112,7 @@ export class MockSDK implements TrustchainSDK {
       });
       trustchainMembers.set(trustchain.rootId, currentMembers);
     }
-    return Promise.resolve(trustchain);
+    return Promise.resolve({ type, trustchain });
   }
 
   async refreshAuth(jwt: JWT): Promise<JWT> {
