@@ -1,8 +1,7 @@
-// @flow
 import URL from "url";
 import { log } from "@ledgerhq/logs";
-import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
+import coinConfig from "../config";
 
 type APIAccount =
   | {
@@ -42,6 +41,9 @@ type CommonOperationType = {
   status?: "applied" | "failed" | "backtracked" | "skipped";
 };
 
+/**
+ * Source: https://api.tzkt.io/#operation/Accounts_GetOperations
+ */
 export type APIOperation =
   | (CommonOperationType & {
       type: "transaction";
@@ -49,6 +51,7 @@ export type APIOperation =
       initiator: { address: string } | undefined | null;
       sender: { address: string } | undefined | null;
       target: { address: string } | undefined | null;
+      counter: number;
     })
   | (CommonOperationType & {
       type: "reveal";
@@ -77,18 +80,18 @@ export type APIOperation =
       type: ""; // this is to express fact we have others and we need to always filter out others
     });
 
+const getExplorerUrl = () => coinConfig.getCoinConfig().explorer.url;
+
 const api = {
   async getBlockCount(): Promise<number> {
-    const { data } = await network({
-      method: "GET",
-      url: `${getEnv("API_TEZOS_TZKT_API")}/v1/blocks/count`,
+    const { data } = await network<number>({
+      url: `${getExplorerUrl()}/v1/blocks/count`,
     });
     return data;
   },
   async getAccountByAddress(address: string): Promise<APIAccount> {
-    const { data } = await network({
-      method: "GET",
-      url: `${getEnv("API_TEZOS_TZKT_API")}/v1/accounts/${address}`,
+    const { data } = await network<APIAccount>({
+      url: `${getExplorerUrl()}/v1/accounts/${address}`,
     });
     return data;
   },
@@ -99,10 +102,9 @@ const api = {
       sort?: number;
     },
   ): Promise<APIOperation[]> {
-    const { data } = await network({
-      method: "GET",
+    const { data } = await network<APIOperation[]>({
       url: URL.format({
-        pathname: `${getEnv("API_TEZOS_TZKT_API")}/v1/accounts/${address}/operations`,
+        pathname: `${getExplorerUrl()}/v1/accounts/${address}/operations`,
         query,
       }),
     });
@@ -115,7 +117,7 @@ export const fetchAllTransactions = async (
   lastId?: number,
 ): Promise<APIOperation[]> => {
   let ops: APIOperation[] = [];
-  let maxIteration = getEnv("TEZOS_MAX_TX_QUERIES");
+  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
   do {
     const newOps = await api.getAccountOperations(address, { lastId, sort: 0 });
     if (newOps.length === 0) return ops;

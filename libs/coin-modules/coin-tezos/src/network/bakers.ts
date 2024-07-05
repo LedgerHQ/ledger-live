@@ -2,15 +2,38 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
 import { ledgerValidatorAddress } from "./bakers.whitelist-default";
-import { API_BAKER, Baker, Delegation } from "../types";
+import { Baker, Delegation } from "../types";
+import coinConfig from "../config";
+
+export type TezosApiBaker = {
+  address: string;
+  name: string;
+  logo: string;
+  balance: number;
+  stakingBalance: number;
+  stakingCapacity: number;
+  maxStakingBalance: number;
+  freeSpace: number;
+  fee: number;
+  minDelegation: number;
+  payoutDelay: number;
+  payoutPeriod: number;
+  openForDelegation: true;
+  estimatedRoi: number;
+  serviceType: string;
+  serviceHealth: string;
+  payoutTiming: string;
+  payoutAccuracy: string;
+  audit?: string;
+  insuranceCoverage: number;
+};
 
 export const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
     const bakers: Baker[] = [];
-    const TEZOS_API_BASE_URL = getEnv("API_TEZOS_BAKER");
-    const { data } = await network<API_BAKER[]>({
+    const TEZOS_API_BASE_URL = coinConfig.getCoinConfig().baker.url;
+    const { data } = await network<TezosApiBaker[]>({
       url: `${TEZOS_API_BASE_URL}/v2/bakers`,
     });
 
@@ -110,7 +133,7 @@ export async function loadAccountDelegation(
   return { ...delegation, baker };
 }
 
-export const asBaker = (data: API_BAKER): Baker | undefined => {
+export const asBaker = (data: TezosApiBaker): Baker | undefined => {
   const { address, name, logo, freeSpace, estimatedRoi } = data;
 
   if (

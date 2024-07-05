@@ -1,11 +1,11 @@
 import network from "@ledgerhq/live-network/network";
-import { API_BAKER } from "../types";
-import { asBaker, cache } from "./bakers";
+import { asBaker, cache, type TezosApiBaker } from "./bakers";
+import coinConfig, { TezosCoinConfig } from "../config";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
 
-const data: API_BAKER[] = [
+const data: TezosApiBaker[] = [
   {
     address: "tz1Kf25fX1VdmYGSEzwFy1wNmkbSEZ2V83sY",
     name: "Tezos Seoul",
@@ -96,6 +96,24 @@ const data: API_BAKER[] = [
 ];
 
 describe("Tezos Baker", () => {
+  beforeAll(() => {
+    coinConfig.setCoinConfig(
+      (): TezosCoinConfig => ({
+        status: { type: "active" },
+        baker: {
+          url: "https://httpbin.org",
+        },
+        explorer: {
+          url: "https://httpbin.org",
+          maxTxQuery: 100,
+        },
+        node: {
+          url: "https://httpbin.org",
+        },
+      }),
+    );
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
     cache.reset();

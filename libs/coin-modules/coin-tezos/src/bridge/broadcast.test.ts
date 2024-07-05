@@ -1,5 +1,6 @@
 import { SignedOperation } from "@ledgerhq/types-live";
-import { createFixtureOperation } from "../types/model.fixture";
+import { createFixtureOperation } from "../types/bridge.fixture";
+import config, { type TezosCoinConfig } from "../config";
 import { broadcast } from "./broadcast";
 
 const mockInjectOperation = jest.fn();
@@ -12,6 +13,24 @@ jest.mock("@taquito/taquito", () => ({
 }));
 
 describe("broadcast", () => {
+  beforeAll(() => {
+    config.setCoinConfig(
+      (): TezosCoinConfig => ({
+        status: { type: "active" },
+        baker: {
+          url: "https://httpbin.org",
+        },
+        explorer: {
+          url: "https://httpbin.org",
+          maxTxQuery: 100,
+        },
+        node: {
+          url: "https://httpbin.org",
+        },
+      }),
+    );
+  });
+
   it("calls 'injectOperation' from TezosToolkit and returns its hash computation", async () => {
     // GIVEN
     const signedOperation: SignedOperation = {
