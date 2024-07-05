@@ -17,7 +17,7 @@ const getFeesFromBandwidth = (account: Account, transaction: Transaction): BigNu
   const estimatedBandwidthCost = getEstimatedBlockSize(account, transaction);
 
   if (available.lt(estimatedBandwidthCost)) {
-    return estimatedBandwidthCost;
+    return new BigNumber(2000); // cost is around 0.002 TRX
   }
 
   return new BigNumber(0); // no fee
