@@ -65,6 +65,32 @@ export type TrustchainSDKContext = {
   name: string;
 };
 
+export enum TrustchainResultType {
+  created = "created",
+  updated = "updated",
+  restored = "restored",
+}
+
+/**
+ * the trustchain with a result type indicating what happened during getOrCreateTrustchain
+ */
+export type TrustchainResult =
+  | {
+      // the trustchain didn't exist and was created
+      type: TrustchainResultType.created;
+      trustchain: Trustchain;
+    }
+  | {
+      // the trustchain already existed and was updated (typically the current member was added)
+      type: TrustchainResultType.updated;
+      trustchain: Trustchain;
+    }
+  | {
+      // the trustchain existed and was just retrieved (no need to update it)
+      type: TrustchainResultType.restored;
+      trustchain: Trustchain;
+    };
+
 /**
  * cache (default): the SDK will use the cached JWT if it's still valid, otherwise it will refresh it.
  * refresh: the SDK will always refresh the JWT if possible.
@@ -117,7 +143,7 @@ export interface TrustchainSDK {
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
-  ): Promise<Trustchain>;
+  ): Promise<TrustchainResult>;
 
   /**
    * Restore the current trustchain encryption key, typically due to a key rotation.

@@ -9,7 +9,7 @@ export async function scenario(transport: Transport, { pauseRecorder }: Scenario
 
   const jwt1 = await sdk.withDeviceAuth(transport, jwt => Promise.resolve(jwt));
   await pauseRecorder(6 * 60 * 1000);
-  const trustchain = await sdk.getOrCreateTrustchain(transport, creds);
+  const { trustchain } = await sdk.getOrCreateTrustchain(transport, creds);
   const jwt2 = await sdk.withDeviceAuth(transport, jwt2 => Promise.resolve(jwt2));
   // assert that jwt was refreshed (due to the expiration)
   expect(jwt1).not.toEqual(jwt2);
