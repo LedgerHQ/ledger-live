@@ -15,7 +15,6 @@ jest.mock(
 const INITIAL_STATE = {
   walletSync: {
     ...initialStateWalletSync,
-    activated: true,
     flow: Flow.ManageBackup,
     step: Step.ManageBackup,
   },

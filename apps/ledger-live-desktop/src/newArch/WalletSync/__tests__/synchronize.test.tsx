@@ -1,10 +1,7 @@
-/**
- * @jest-environment jsdom
- */
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
+import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
 
 const WalletSyncTestApp = () => (
   <>
@@ -24,7 +21,8 @@ const openDrawer = async () => {
     initialState: {
       walletSync: {
         ...initialStateWalletSync,
-        activated: true,
+        flow: Flow.WalletSyncActivated,
+        step: Step.WalletSyncActivated,
       },
     },
   });

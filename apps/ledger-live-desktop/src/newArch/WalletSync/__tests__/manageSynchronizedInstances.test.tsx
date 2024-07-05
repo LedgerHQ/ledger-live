@@ -25,7 +25,6 @@ describe("manageSynchronizedInstances", () => {
       initialState: {
         walletSync: {
           ...initialStateWalletSync,
-          activated: true,
           instances: [
             {
               id: "1",

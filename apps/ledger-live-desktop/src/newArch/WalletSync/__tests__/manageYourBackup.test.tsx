@@ -4,7 +4,7 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
+import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
 
 const WalletSyncTestApp = () => (
   <>
@@ -23,7 +23,18 @@ describe("ManageYourBackup", () => {
   it("should open drawer and display Wallet Sync Manage flow and delete your backup", async () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
-        walletSync: { ...initialStateWalletSync, activated: true },
+        walletSync: {
+          ...initialStateWalletSync,
+          flow: Flow.WalletSyncActivated,
+          step: Step.WalletSyncActivated,
+        },
+        trustchainStore: {
+          trustchain: {
+            rootId: "rootId",
+            deviceId: "deviceId",
+            trustchainId: "trustchainId",
+          },
+        },
       },
     });
 
