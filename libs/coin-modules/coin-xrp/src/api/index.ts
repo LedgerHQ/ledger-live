@@ -1,4 +1,5 @@
-import { setCoinConfig, XrpConfig } from "../config";
+import type { Api } from "@ledgerhq/coin-framework/api/index";
+import coinConfig, { type XrpConfig } from "../config";
 import {
   broadcast,
   combine,
@@ -7,26 +8,10 @@ import {
   getBalance,
   getNextValidSequence,
   listOperations,
-  type Operation,
 } from "../logic";
 
-export type Api = {
-  broadcast: (tx: string) => Promise<string>;
-  combine: (tx: string, signature: string, pubkey: string) => string;
-  craftTransaction: (
-    address: string,
-    transaction: {
-      recipient: string;
-      amount: bigint;
-      fee: bigint;
-    },
-  ) => Promise<string>;
-  estimateFees: () => Promise<bigint>;
-  getBalance: (address: string) => Promise<bigint>;
-  listOperations: (address: string, blockHeight: number) => Promise<Operation[]>;
-};
 export function createApi(config: XrpConfig): Api {
-  setCoinConfig(() => ({ ...config, status: { type: "active" } }));
+  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
@@ -51,7 +36,7 @@ async function craft(
   return tx.serializedTransaction;
 }
 
-async function estimate(): Promise<bigint> {
+async function estimate(_addr: string, _amount: bigint): Promise<bigint> {
   const fees = await estimateFees();
   return fees.fee;
 }

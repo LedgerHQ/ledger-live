@@ -6,7 +6,7 @@ import {
   LiveData,
   liveSchema,
   UpdateEvent,
-} from "@ledgerhq/live-wallet/lib-es/cloudsync/index";
+} from "@ledgerhq/live-wallet/cloudsync/index";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { Actionable } from "./Actionable";
@@ -92,15 +92,13 @@ export function AppWalletSync({
   }, [trustchainSdk, getCurrentVersion, saveNewUpdate]);
 
   const onPull = useCallback(async () => {
-    const jwt = await trustchainSdk.auth(trustchain, memberCredentials);
-    await walletSyncSdk.pull(jwt, trustchain);
-  }, [trustchainSdk, trustchain, memberCredentials, walletSyncSdk]);
+    await walletSyncSdk.pull(trustchain, memberCredentials);
+  }, [trustchain, memberCredentials, walletSyncSdk]);
 
   const onPush = useCallback(async () => {
     if (!data) return;
-    const jwt = await trustchainSdk.auth(trustchain, memberCredentials);
-    await walletSyncSdk.push(jwt, trustchain, data);
-  }, [trustchainSdk, trustchain, memberCredentials, walletSyncSdk, data]);
+    await walletSyncSdk.push(trustchain, memberCredentials, data);
+  }, [trustchain, memberCredentials, walletSyncSdk, data]);
 
   const onGenRandomAccountData = useCallback(() => {
     const accountNames: Record<string, string> = {};
@@ -129,45 +127,43 @@ export function AppWalletSync({
   }, [setData]);
 
   const onDestroy = useCallback(async () => {
-    const jwt = await trustchainSdk.auth(trustchain, memberCredentials);
-    await walletSyncSdk.destroy(jwt);
-  }, [trustchainSdk, trustchain, memberCredentials, walletSyncSdk]);
+    await walletSyncSdk.destroy(trustchain, memberCredentials);
+  }, [trustchain, memberCredentials, walletSyncSdk]);
 
   const [onUnsubscribe, setSubscription] = useState<null | (() => void)>(null);
 
   const onListen = useCallback(async () => {
-    const jwt = await trustchainSdk.auth(trustchain, memberCredentials);
     await new Promise((success, failure) => {
       let pending = false;
       async function poll() {
         try {
           if (pending) return;
           pending = true;
-          // in Ledger Live integration, we would obviously manage auth caching
-          const jwt = await trustchainSdk.auth(trustchain, memberCredentials);
-          await walletSyncSdk.pull(jwt, trustchain);
+          await walletSyncSdk.pull(trustchain, memberCredentials);
         } finally {
           pending = false;
         }
       }
 
-      const subscription = walletSyncSdk.listenNotifications(jwt).subscribe({
-        next: () => {
-          poll();
-        },
-        complete: () => {
-          setSubscription(null);
-          success(null);
-        },
-        error: failure,
-      });
+      const subscription = walletSyncSdk
+        .listenNotifications(trustchain, memberCredentials)
+        .subscribe({
+          next: () => {
+            poll();
+          },
+          complete: () => {
+            setSubscription(null);
+            success(null);
+          },
+          error: failure,
+        });
       setSubscription(() => () => {
         setSubscription(null);
         subscription.unsubscribe();
         success(null);
       });
     });
-  }, [trustchainSdk, trustchain, memberCredentials, walletSyncSdk]);
+  }, [trustchain, memberCredentials, walletSyncSdk]);
 
   return (
     <div>

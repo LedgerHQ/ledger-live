@@ -1457,16 +1457,16 @@
     "featuredButtons": {
       "buySell": {
         "title": "Buy / Sell",
-        "description": "Buy and sell with trusted providers"
+        "description": "Buy and sell with our trusted providers"
       },
       "swap": {
         "title": "Swap",
-        "description": "Convert crypto to crypto securely",
+        "description": "Convert crypto to crypto",
         "label": "Popular"
       },
       "earn": {
         "title": "Stake",
-        "description": "Grow your crypto with Ledger"
+        "description": "Stake your crypto with Ledger"
       }
     },
     "recoverBanner": {
@@ -5532,6 +5532,9 @@
     "NotEnoughGasSwap": {
       "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
     },
+    "TronEmptyAccount": {
+      "title": "You first need to send at least 0.1 TRX to this address to enable TRC20 token reception. <link0>Learn more </link0>"
+    },
     "OperatingSystemOutdated": {
       "title": "Your Operating System version is outdated",
       "description": "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
@@ -6115,6 +6118,9 @@
     },
     "newAddressTRC20": {
       "title": "You first need to send at least 0.1 TRX to this address to activate it."
+    },
+    "BitcoinInfrastructureError": {
+      "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
     }
   },
   "cryptoOrg": {

@@ -22,25 +22,17 @@ export async function scenario(transport: Transport) {
   const member3creds = await sdk3.initMemberCredentials();
 
   // auth with the device and init the first trustchain
-  const device1JWT = await sdk1.authWithDevice(transport);
-  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, device1JWT, member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, member1creds);
 
   // member 1 adds member 2
-  const jwt1 = await sdk1.auth(trustchain, member1creds);
   const member2 = { name: name2, id: member2creds.pubkey, permissions: 0xffffffff };
-  await sdk1.addMember(jwt1, trustchain, member1creds, member2);
+  await sdk1.addMember(trustchain, member1creds, member2);
 
   // member 3 do a getOrCreateTrustchain that should add itself implicitly
-  const device3JWT = await sdk3.authWithDevice(transport);
-  const { trustchain: trustchain3 } = await sdk3.getOrCreateTrustchain(
-    transport,
-    device3JWT,
-    member3creds,
-  );
+  const { trustchain: trustchain3 } = await sdk3.getOrCreateTrustchain(transport, member3creds);
 
   // list members
-  const jwt = await sdk3.auth(trustchain3, member3creds);
-  const members = await sdk3.getMembers(jwt, trustchain);
+  const members = await sdk3.getMembers(trustchain3, member3creds);
   expect(members).toEqual([
     {
       id: member1creds.pubkey,
@@ -59,5 +51,5 @@ export async function scenario(transport: Transport) {
     },
   ]);
 
-  await sdk2.destroyTrustchain(trustchain, jwt);
+  await sdk2.destroyTrustchain(trustchain, member2creds);
 }

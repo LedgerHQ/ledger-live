@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
 import { getAccount, getStakingInfo, getStakingProgress, getValidators } from "./sidecar";
-import { setCoinConfig } from "../config";
+import coinConfig from "../config";
 
 describe("sidecar integration test", () => {
   beforeAll(() => {
-    setCoinConfig(() => ({
+    coinConfig.setCoinConfig(() => ({
       status: {
         type: "active",
       },

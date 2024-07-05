@@ -22,6 +22,18 @@
 
 - [#6326](https://github.com/LedgerHQ/ledger-live/pull/6326) [`4b7f19c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f19c96d95d86d5b6fbb480032d77532bf755e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - polkadot generic nano app support
 
+## 6.30.1
+
+### Patch Changes
+
+- [#7245](https://github.com/LedgerHQ/ledger-live/pull/7245) [`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: polkadot send tx in LLM
+
+## 6.30.1-hotfix.0
+
+### Patch Changes
+
+- [#7245](https://github.com/LedgerHQ/ledger-live/pull/7245) [`2dafbf7`](https://github.com/LedgerHQ/ledger-live/commit/2dafbf7a2ee0cefd00e19b203b97f5918c2607ff) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: polkadot send tx in LLM
+
 ## 6.30.0
 
 ### Minor Changes

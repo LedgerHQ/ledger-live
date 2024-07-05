@@ -3,30 +3,27 @@ import { AppPage } from "tests/page/abstractClasses";
 
 export class OnboardingPage extends AppPage {
   deviceAction = new DeviceAction(this.page);
-  private getStartedButton = this.page.locator("data-test-id=v3-onboarding-get-started-button");
-  private selectDeviceButton = (deviceId: string) =>
-    this.page.locator(`data-test-id=v3-device-${deviceId}`);
+  private getStartedButton = this.page.locator('button:has-text("Get Started")');
+  private selectDeviceButton = (deviceId: string) => this.page.getByTestId(`v3-device-${deviceId}`);
   private checkMyNanoButton = this.page.locator('button:has-text("Check my Nano")');
   readonly continueButton = this.page.locator('button:has-text("Continue")');
-  private newDeviceButton = this.page.locator("data-test-id=v3-onboarding-new-device");
-  private connectDeviceButton = this.page.locator("data-test-id=v3-onboarding-initialized-device");
-  private restoreDeviceButton = this.page.locator("data-test-id=v3-onboarding-restore-device");
-  readonly pedagogyModal = this.page.locator("data-test-id=v3-onboarding-pedagogy-modal");
-  private stepperContinueButton = this.page.locator("data-test-id=v3-modal-stepper-continue");
-  private stepperEndButton = this.page.locator("data-test-id=v3-modal-stepper-end");
-  private tutorialContinueButton = this.page.locator("data-test-id=v3-tutorial-continue");
-  private pinCodeCheckbox = this.page.locator("data-test-id=v3-private-pin-code-checkbox");
-  private pinCodeDrawer = this.page.locator("data-test-id=v3-pin-code-drawer");
-  private recoveryPhraseCheckbox = this.page.locator("data-test-id=v3-recovery-phrase-checkbox");
-  private recoveryPhraseLossCheckbox = this.page.locator(
-    "data-test-id=v3-recovery-phrase-loss-checkbox",
-  );
-  private recoverySeedDrawer = this.page.locator("data-test-id=v3-seed-drawer");
-  private hideSeedDrawer = this.page.locator("data-test-id=v3-hide-seed-drawer");
-  readonly quizContainer = this.page.locator("data-test-id=v3-quiz-container");
-  private quizStartButton = this.page.locator("data-test-id=v3-quiz-start-button");
-  private quizAnswerTopButton = this.page.locator("data-test-id=v3-quiz-answer-0");
-  private quizAnswerBottomButton = this.page.locator("data-test-id=v3-quiz-answer-1");
+  private newDeviceButton = this.page.getByTestId("v3-onboarding-new-device");
+  private connectDeviceButton = this.page.getByTestId("v3-onboarding-initialized-device");
+  private restoreDeviceButton = this.page.getByTestId("v3-onboarding-restore-device");
+  readonly pedagogyModal = this.page.getByTestId("v3-onboarding-pedagogy-modal");
+  private stepperContinueButton = this.page.getByTestId("v3-modal-stepper-continue");
+  private stepperEndButton = this.page.getByTestId("v3-modal-stepper-end");
+  private tutorialContinueButton = this.page.getByTestId("v3-tutorial-continue");
+  private pinCodeCheckbox = this.page.getByTestId("v3-private-pin-code-checkbox");
+  private pinCodeDrawer = this.page.getByTestId("v3-pin-code-drawer");
+  private recoveryPhraseCheckbox = this.page.getByTestId("v3-recovery-phrase-checkbox");
+  private recoveryPhraseLossCheckbox = this.page.getByTestId("v3-recovery-phrase-loss-checkbox");
+  private recoverySeedDrawer = this.page.getByTestId("v3-seed-drawer");
+  private hideSeedDrawer = this.page.getByTestId("v3-hide-seed-drawer");
+  readonly quizContainer = this.page.getByTestId("v3-quiz-container");
+  private quizStartButton = this.page.getByTestId("v3-quiz-start-button");
+  private quizAnswerTopButton = this.page.getByTestId("v3-quiz-answer-0");
+  private quizAnswerBottomButton = this.page.getByTestId("v3-quiz-answer-1");
   readonly roleAnimation = this.page.locator("[role=animation]");
 
   async waitForLaunch() {

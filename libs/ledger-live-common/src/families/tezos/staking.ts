@@ -1,2 +1,2 @@
-export { getAccountDelegationSync, isAccountDelegating } from "@ledgerhq/coin-tezos/api/bakers";
-export { default as whitelist } from "@ledgerhq/coin-tezos/api/bakers.whitelist-default";
+export { getAccountDelegationSync, isAccountDelegating } from "@ledgerhq/coin-tezos/network/bakers";
+export { default as whitelist } from "@ledgerhq/coin-tezos/network/bakers.whitelist-default";

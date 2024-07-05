@@ -74,14 +74,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-  Ethereum_classic: {
+  Ethereum_Classic: {
     currency: getCryptoCurrencyById("ethereum_classic"),
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Ethereum Classic",
       appVersion: "1.10.4",
     },
-    dependency: "",
+    dependency: "Ethereum",
   },
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
@@ -115,7 +115,7 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Polkadot",
-      appVersion: "25.10100.1",
+      appVersion: "100.0.5",
     },
     dependency: "",
   },

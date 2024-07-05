@@ -1,13 +1,12 @@
 import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
-import { Application } from "tests/page";
 import { addTmsLink } from "tests/fixtures/common";
 
 const currencies: Currency[] = [
   Currency.BTC,
   Currency.ETH,
-  //Currency.ETC, //Todo: reactivate when ETC app is fixed
+  Currency.ETC,
   Currency.XRP,
   Currency.DOT,
   Currency.TRX,
@@ -20,7 +19,7 @@ const currencies: Currency[] = [
 ];
 
 for (const [i, currency] of currencies.entries()) {
-  test.describe.parallel("Add Accounts", () => {
+  test.describe("Add Accounts", () => {
     test.use({
       userdata: "skip-onboarding",
       testName: `addAccount_${currency.uiName}`,
@@ -29,10 +28,8 @@ for (const [i, currency] of currencies.entries()) {
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
 
-    test(`[${currency.uiName}] Add account`, async ({ page }) => {
+    test(`[${currency.uiName}] Add account`, async ({ app }) => {
       addTmsLink(["B2CQA-101", "B2CQA-102", "B2CQA-314", "B2CQA-330", "B2CQA-929"]);
-
-      const app = new Application(page);
 
       await app.portfolio.openAddAccountModal();
       await app.addAccount.expectModalVisiblity();

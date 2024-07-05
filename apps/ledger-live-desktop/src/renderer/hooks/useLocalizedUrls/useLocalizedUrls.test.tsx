@@ -1,5 +1,4 @@
 /** @jest-environment jsdom */
-import { describe, test, expect, jest } from "@jest/globals";
 import { renderHook } from "@testing-library/react";
 import { combineReducers, legacy_createStore as createStore } from "redux";
 import settings from "~/renderer/reducers/settings";
