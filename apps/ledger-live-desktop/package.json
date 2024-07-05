@@ -164,6 +164,8 @@
     "@playwright/test": "^1.45.0",
     "@sentry/cli": "2.31.0",
     "@sentry/types": "7.109.0",
+    "@swc/core": "^1.3.95",
+    "@swc/jest": "^0.2.29",
     "@testing-library/dom": "^9.3.3",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",

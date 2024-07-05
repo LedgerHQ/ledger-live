@@ -11,7 +11,7 @@ export async function scenario(transport: Transport) {
   const name1 = "cli-member1";
   const sdk1 = getSdk(false, { applicationId, name: name1 });
   const memberCredentials = await sdk1.initMemberCredentials();
-  const trustchain = await sdk1.getOrCreateTrustchain(transport, memberCredentials);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, memberCredentials);
 
   await sdk1.destroyTrustchain(trustchain, memberCredentials);
 }

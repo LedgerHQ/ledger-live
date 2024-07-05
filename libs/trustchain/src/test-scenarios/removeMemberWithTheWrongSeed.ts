@@ -15,7 +15,7 @@ export async function scenario(transport: Transport, { switchDeviceSeed }: Scena
   const member2creds = await sdk2.initMemberCredentials();
   const member2 = { name: name2, id: member2creds.pubkey, permissions: 0xffffffff };
 
-  const trustchain = await sdk1.getOrCreateTrustchain(transport, member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, member1creds);
   await sdk1.addMember(trustchain, member1creds, member2);
   transport = await switchDeviceSeed();
 

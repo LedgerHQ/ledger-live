@@ -14,7 +14,7 @@ export async function scenario(transport: Transport) {
   const member1creds = await sdk1.initMemberCredentials();
 
   // auth with the device and init the first trustchain
-  const trustchain = await sdk1.getOrCreateTrustchain(transport, member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, member1creds);
 
   // verify we have member 1 in the trustchain
   const members = await sdk1.getMembers(trustchain, member1creds);

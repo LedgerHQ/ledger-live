@@ -1,9 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import "@testing-library/jest-dom";
-import { describe, expect, it, jest } from "@jest/globals";
-
 import { FlowOptions, useFlows } from "../Flows/useFlows";
 import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
 import { renderHook } from "tests/testUtils";
