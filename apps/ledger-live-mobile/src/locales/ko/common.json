@@ -916,6 +916,9 @@
     "SequenceNumberError" : {
       "title" : "시퀀스 번호 오류",
       "description" : "창을 닫고 나중에 다시 시도하세요"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
     }
   },
   "crash" : {
@@ -2242,7 +2245,13 @@
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 시장가",
       "currencyPrice" : "1 {{currencyTicker}} 가격",
-      "currencyPriceChange" : "지난 24시간 변경 사항"
+      "currencyPriceChange" : {
+        "day" : "지난 24시간 변경 사항",
+        "week" : "지난 7일간 변동 사항",
+        "month" : "지난 30일간 변동 사항",
+        "year" : "지난해 변동 사항",
+        "all" : "지난해 변동 사항"
+      }
     },
     "quickActions" : {
       "buy" : "구매",
@@ -2714,6 +2723,8 @@
       "languageDesc" : "Ledger Live에 표시되는 언어를 설정하세요.",
       "dateFormat" : "날짜 형식",
       "dateFormatDesc" : "Ledger Live 날짜 형식 설정",
+      "walletSync" : "Ledger 동기화",
+      "walletSyncDesc" : "앱 데이터를 백업하고 복수의 Ledger Live 인스턴스를 원활하게 동기화하세요",
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "password" : "앱 잠금",
@@ -3130,9 +3141,6 @@
         "title" : "스왑 거래에 오신 것을 환영합니다",
         "whatIsSwap" : "스왑이란?",
         "disclaimer" : "내 Ledger 장치에서 암호화폐를 바로 교환하세요. 미국을 포함한 일부 국가에서 이용할 수 없는 서비스입니다."
-      },
-      "main" : {
-        "header" : "스왑"
       },
       "notAvailable" : {
         "title" : "서비스가 잠시 이용 불가하거나 거주하시는 국가에서 이용할 수 없습니다"
@@ -3840,35 +3848,9 @@
     "tokens" : {
       "title" : "토큰 추가",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} 계정 추가",
-      "erc20" : {
-        "title" : "토큰 추가",
-        "disclaimer" : "{{tokenName}}는 ERC20 토큰입니다.\n이더리움 계정으로 곧바로 토큰을 받을 수 있습니다.",
-        "learnMore" : "ERC20에 대해 자세히 알아보기"
-      },
-      "trc10" : {
-        "title" : "토큰 추가",
-        "disclaimer" : "{{tokenName}}는 TRC10 토큰입니다.\n토큰을 트론 계정으로 바로 받을 수 있습니다.",
-        "learnMore" : "ERC10에 대해 자세히 알아보기"
-      },
-      "trc20" : {
-        "title" : "토큰 추가",
-        "disclaimer" : "{{tokenName}}는 TRC20 토큰입니다.\n토큰을 트론 계정으로 바로 받을 수 있습니다.",
-        "learnMore" : "TRC20에 대해 자세히 알아보기"
-      },
-      "asa" : {
-        "title" : "토큰 추가",
-        "disclaimer" : "{{tokenName}}은 ASA 토큰입니다.\n알고랜드 계정으로 토큰을 바로 받을 수 있습니다.",
-        "learnMore" : "자세히 알아보기"
-      },
-      "bep20" : {
-        "title" : "토큰 추가",
-        "disclaimer" : "{{tokenName}}는 BEP-20 토큰입니다.\nBNB 계정에서 직접 토큰을 받을 수 있습니다.",
-        "learnMore" : "BEP-20에 대해 자세히 알아보기"
-      },
-      "vip180" : {
-        "title" : "토큰 추가",
-        "disclaimer" : "{{tokenName}}(은)는 VIP180 토큰입니다.\nVET 계정에서 직접 토큰을 받을 수 있습니다.",
-        "learnMore" : "VIP18에 대해 자세히 알아보기"
+      "generic" : {
+        "disclaimer" : "{{token}} ({{ticker}})는 {{tokenType}} 토큰입니다. {{currency}} 계정으로 직접 토큰을 받을 수 있습니다.",
+        "learnMore" : "{{tokenType}}에 대해 자세히 알아보기"
       }
     },
     "showMoreChainType" : "더 많은 주소 유형",
@@ -4325,7 +4307,8 @@
       "installUpdate" : {
         "titleInactive" : "업데이트 설치",
         "titleActive" : "업데이트 설치 중",
-        "description" : "{{deviceName}} 장치가 여러 번 다시 시작됩니다.\n\n업데이트를 완료하려면 설치가 완료된 후 PIN을 사용해 {{deviceName}}를 잠금 해제하세요."
+        "description" : "{{deviceName}} 장치가 여러 번 다시 시작됩니다.\n\n업데이트를 완료하려면 설치가 완료된 후 PIN을 사용해 {{deviceName}}를 잠금 해제하세요.",
+        "descriptionNanoXBle" : "{{deviceName}} 장치가 여러 번 다시 시작됩니다.\n\n장치의 전원이 꺼지고 난 후, 자동으로 다시 시작되지 않으면 직접 전원을 켜 주세요.\n\n업데이트를 완료하려면 설치가 완료된 후 PIN을 사용해 {{deviceName}} 장치를 잠금 해제하세요."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4356,6 +4339,14 @@
       "description" : "Ledger Nano 펌웨어를 Ledger Live 데스크탑 애플리케이션에 연결해 업데이트하세요",
       "pleaseConnectUsbTitle" : "USB 케이블이 필요합니다",
       "pleaseConnectUsbDescription" : "펌웨어 업데이트를 시작하려면 USB 케이블로 {{deviceName}} 장치를 핸드폰에 연결하세요."
+    },
+    "updateStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "장치 연결 해제됨",
+          "description" : "{{deviceName}} 장치의 연결이 끊어져 업데이트가 중단되었습니다"
+        }
+      }
     },
     "batteryStatusErrors" : {
       "errors" : {
@@ -6134,6 +6125,7 @@
       "subtitle" : "Ledger와 완전히 통합된 Web3 살펴보기",
       "section" : {
         "recentlyUsed" : "최근 사용된 항목",
+        "locallyLoaded" : "로컬에서 로드됨",
         "categories" : "카테고리",
         "clearAll" : "모두 지우기"
       },
@@ -6231,9 +6223,10 @@
       },
       "order" : {
         "topGainers" : "최고 상승 목록",
-        "market_cap" : "순위",
-        "market_cap_asc" : "순위(시가총액) 오름차순",
-        "market_cap_desc" : "순위(시가총액) 내림차순"
+        "topLosers" : "최고 하락 코인",
+        "marketCap" : "순위",
+        "asc" : "순위(시가총액) 오름차순",
+        "desc" : "순위(시가총액) 내림차순"
       },
       "currency" : "통화",
       "time" : "시간",
@@ -6303,7 +6296,7 @@
     "designedForStax" : {
       "title" : "<0>Ledger</0><1>Stax</1>을 위한 <2>디자인</2>",
       "drawer" : {
-        "description" : "이 NFT에는 Ledger Stax의 E 잉크 스크린에 맞게 특별히 디자인한 추가 NFT 이미지가 포함되어 있습니다.\n\n해당 NFT를 잠금 화면으로 설정하면 이 이미지가 사용됩니다.",
+        "description" : "이 NFT에는 Ledger Stax의 E 잉크 스크린에 맞게 특별히 디자인한 추가 NFT 이미지가 포함되어 있습니다.\n\n  해당 NFT를 잠금 화면으로 설정하면 이 이미지가 사용됩니다.",
         "cta" : "알겠습니다"
       }
     },
@@ -6563,7 +6556,6 @@
         },
         "swap" : {
           "title" : "스왑",
-          "label" : "인기 있는",
           "body" : "안전하게 암호화폐 교환"
         },
         "receive" : {

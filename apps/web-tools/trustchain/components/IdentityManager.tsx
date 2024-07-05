@@ -3,24 +3,43 @@ import styled from "styled-components";
 import { TrustchainSDKContext } from "@ledgerhq/trustchain/types";
 import { TrustchainStore, getInitialStore } from "@ledgerhq/trustchain/store";
 
-const IdentityDoc = styled.div`
-  margin: 10px;
-  color: #666;
-  font-style: italic;
-`;
-
 const IdentityLabel = styled.label`
   display: block;
   margin: 5px;
 `;
 
+const IdentityColor = styled.span<{
+  pubkey: string;
+}>`
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid black;
+  background-color: ${({ pubkey }) => {
+    const hash = pubkey.slice(2, 8);
+    const r = parseInt(hash.slice(0, 2), 16);
+    const g = parseInt(hash.slice(2, 4), 16);
+    const b = parseInt(hash.slice(4, 6), 16);
+    return `rgb(${r}, ${g}, ${b})`;
+  }};
+`;
+
 export function memberNameForPubKey(pubkey: string): string {
-  return "debug-" + pubkey.slice(0, 6);
+  return "debug-" + pubkey.slice(2, 8);
 }
 
 type Identities = { [_: string]: TrustchainStore };
 
 const initialObject: Identities = {};
+
+export function DisplayName({ pubkey }: { pubkey?: string }) {
+  if (!pubkey) return null;
+  return (
+    <>
+      <code>{memberNameForPubKey(pubkey)}</code> <IdentityColor pubkey={pubkey} />
+    </>
+  );
+}
 
 export function IdentityManager({
   state,
@@ -33,7 +52,7 @@ export function IdentityManager({
   defaultContext: TrustchainSDKContext;
   setContext: (context: TrustchainSDKContext) => void;
 }) {
-  // any new state.liveCredentials?.pubkey will be considered a new identity to save
+  // any new state.memberCredentials?.pubkey will be considered a new identity to save
   // this is the way we identify what is the current member in this list
   // we save/update it by this key on the localStorage
   const [identities, setIdentities] = useState(initialObject);
@@ -63,7 +82,7 @@ export function IdentityManager({
     };
   }, []);
 
-  const currentIdentityKey = state.liveCredentials?.pubkey;
+  const currentIdentityKey = state.memberCredentials?.pubkey;
 
   // sync the current key to the uri query param with id=
   useEffect(() => {
@@ -125,33 +144,21 @@ export function IdentityManager({
 
   return (
     <div>
-      <IdentityDoc>
-        This simulates different Live instance. localStorage is used to save to state on your
-        browser to be able to easily restore and switch member identities.
-      </IdentityDoc>
-
       <div>
         {Object.entries(identities).map(([pubkey, state]) => (
           <IdentityLabel key={pubkey}>
-            <input
-              type="radio"
-              name="identity"
-              checked={pubkey === currentIdentityKey}
-              onChange={() => onSelectIdentity(pubkey)}
-            />{" "}
-            <strong>{memberNameForPubKey(pubkey)}</strong>{" "}
+            <span style={{ display: "inline-block", minWidth: 200 }}>
+              <input
+                type="radio"
+                name="identity"
+                checked={pubkey === currentIdentityKey}
+                onChange={() => onSelectIdentity(pubkey)}
+              />{" "}
+              <DisplayName pubkey={pubkey} />{" "}
+            </span>
             <button onClick={() => onRemoveIdentity(pubkey)}>Remove</button>
           </IdentityLabel>
         ))}
-        <IdentityLabel>
-          <input
-            type="radio"
-            name="identity"
-            checked={!currentIdentityKey}
-            onChange={() => onSelectIdentity()}
-          />{" "}
-          New Identity
-        </IdentityLabel>
       </div>
     </div>
   );

@@ -1,5 +1,33 @@
 # @ledgerhq/live-env
 
+## 2.1.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+- [#6902](https://github.com/LedgerHQ/ledger-live/pull/6902) [`6d44f25`](https://github.com/LedgerHQ/ledger-live/commit/6d44f255c5b2f453c61d0b754807db1f76d7174e) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add coin config to Polkadot and possibility to basic auth to Sidecar
+
+### Patch Changes
+
+- [#6883](https://github.com/LedgerHQ/ledger-live/pull/6883) [`6623cd1`](https://github.com/LedgerHQ/ledger-live/commit/6623cd13102bd8340bd7d4dfdd469934527985c3) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add user IP
+
+- [#6796](https://github.com/LedgerHQ/ledger-live/pull/6796) [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c) Thanks [@gre](https://github.com/gre)! - Drop technical Account#name and Account#starred fields and replace it with a new architecture: a wallet store that contains all user's data.
+
+## 2.1.0-next.0
+
+### Minor Changes
+
+- [#6596](https://github.com/LedgerHQ/ledger-live/pull/6596) [`77fa530`](https://github.com/LedgerHQ/ledger-live/commit/77fa530c8626df94fa7f9c0a8b3a99f2efa7cb11) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade React Native to version 0.73.6
+
+- [#6902](https://github.com/LedgerHQ/ledger-live/pull/6902) [`6d44f25`](https://github.com/LedgerHQ/ledger-live/commit/6d44f255c5b2f453c61d0b754807db1f76d7174e) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add coin config to Polkadot and possibility to basic auth to Sidecar
+
+### Patch Changes
+
+- [#6883](https://github.com/LedgerHQ/ledger-live/pull/6883) [`6623cd1`](https://github.com/LedgerHQ/ledger-live/commit/6623cd13102bd8340bd7d4dfdd469934527985c3) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add user IP
+
+- [#6796](https://github.com/LedgerHQ/ledger-live/pull/6796) [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c) Thanks [@gre](https://github.com/gre)! - Drop technical Account#name and Account#starred fields and replace it with a new architecture: a wallet store that contains all user's data.
+
 ## 2.0.2
 
 ### Patch Changes

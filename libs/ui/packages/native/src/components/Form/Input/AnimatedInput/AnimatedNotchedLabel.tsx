@@ -64,11 +64,16 @@ const LineCutout = styled(Flex)<LineCutoutProps>`
 type AnimatedNotchedLabelProps = {
   placeholder: string;
   inputStatus: InputStatus;
+  value: string;
 };
 
-export const AnimatedNotchedLabel = ({ placeholder, inputStatus }: AnimatedNotchedLabelProps) => {
+export const AnimatedNotchedLabel = ({
+  placeholder,
+  inputStatus,
+  value,
+}: AnimatedNotchedLabelProps) => {
   const [labelWidth, setLabelWidth] = useState(0);
-  const notched = inputStatus !== "default";
+  const notched = inputStatus !== "default" || value.length > 0;
 
   const labelTop = useSharedValue(notched ? labelFinalPositions.top : labelInitialPositions.top);
   const labelLeft = useSharedValue(notched ? labelFinalPositions.left : labelInitialPositions.left);

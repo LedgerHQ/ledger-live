@@ -1,8 +1,8 @@
 import { AppPage } from "tests/page/abstractClasses";
 
 export class MarketCoinPage extends AppPage {
-  private buyButton = this.page.locator("data-test-id=market-coin-buy-button");
-  private stakeButton = this.page.locator(`data-test-id=market-coin-stake-button`);
+  private buyButton = this.page.getByTestId("market-coin-buy-button");
+  private stakeButton = this.page.getByTestId("market-coin-stake-button");
 
   async openBuyPage() {
     await this.buyButton.click();

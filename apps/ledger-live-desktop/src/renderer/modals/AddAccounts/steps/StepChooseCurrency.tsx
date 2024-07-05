@@ -215,7 +215,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
       <FullNodeStatus currency={currency} />
       {currency && currency.type === "TokenCurrency" ? (
-        <Alert type="primary" learnMoreUrl={url} mt={4}>
+        <Alert type="primary" learnMoreUrl={url} mt={4} data-test-id="add-token-infoBox">
           <Trans
             i18nKey="addAccounts.tokensTip"
             values={{

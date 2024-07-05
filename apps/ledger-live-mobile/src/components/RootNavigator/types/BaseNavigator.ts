@@ -70,6 +70,7 @@ import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
+import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -298,6 +299,8 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
+  [ScreenName.MockedAddAssetButton]: undefined;
+  [ScreenName.WalletSyncActivationSettings]: undefined;
 
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;
@@ -306,4 +309,5 @@ export type BaseNavigatorStackParamList = {
     onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
     isBeforeOnboarding?: boolean;
   };
+  [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
 };

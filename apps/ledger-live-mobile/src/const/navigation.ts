@@ -126,8 +126,8 @@ export enum ScreenName {
   RegionSettings = "RegionSettings",
   RepairDevice = "RepairDevice",
   Resources = "Resources",
-  RippleEditFee = "RippleEditFee",
-  RippleEditTag = "RippleEditTag",
+  XrpEditFee = "XrpEditFee",
+  XrpEditTag = "XrpEditTag",
   ScanAccounts = "ScanAccounts",
   ScanRecipient = "ScanRecipient",
   SendAmountCoin = "SendAmountCoin",
@@ -506,6 +506,16 @@ export enum ScreenName {
 
   AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
+
+  WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  MockedAddAssetButton = "MockedAddAssetButton",
+  GenericLandingPage = "GenericLandingPage",
+
+  // Web3Hub
+  Web3HubMain = "Web3HubMain",
+  Web3HubSearch = "Web3HubSearch",
+  Web3HubTabs = "Web3HubTabs",
+  Web3HubApp = "Web3HubApp",
 }
 
 export enum NavigatorName {
@@ -614,4 +624,9 @@ export enum NavigatorName {
   SyncOnboarding = "SyncOnboarding",
 
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
+  WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  LandingPages = "LandingPages",
+
+  // Web3Hub
+  Web3Hub = "Web3Hub",
 }

@@ -15,14 +15,14 @@ const Wrapper = styled.div<{
   full?: ImageProps["full"];
   size?: ImageProps["size"];
   loaded: boolean;
-  square: ImageProps["square"];
+  squareWithDefault: ImageProps["squareWithDefault"];
   maxHeight?: ImageProps["maxHeight"];
   objectFit?: ImageProps["objectFit"];
   error?: boolean;
 }>`
   width: ${({ full, size }) => (full ? "100%" : `${size}px`)};
   height: ${({ full }) => full && "100%"};
-  aspect-ratio: ${({ square }) => (square ? "1 / 1" : "initial")};
+  aspect-ratio: ${({ squareWithDefault }) => (squareWithDefault ? "1 / 1" : "initial")};
   max-height: ${({ maxHeight }) => maxHeight && `${maxHeight}px`};
   border-radius: 4px;
   overflow: hidden;
@@ -51,20 +51,19 @@ const Wrapper = styled.div<{
 
 const ImageComponent: React.FC<ImageProps> = ({
   uri,
-  metadata,
   full = false,
   size = 32,
-  tokenId,
   maxHeight,
   onClick,
-  square = true,
+  squareWithDefault = true,
   objectFit = "cover",
   setUseFallback,
   isFallback,
+  isLoading,
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
-  const isImageReady = uri && !error;
+  const isImageReady = uri && !isLoading && !error;
 
   return (
     <Wrapper
@@ -72,7 +71,7 @@ const ImageComponent: React.FC<ImageProps> = ({
       size={size}
       loaded={loaded}
       error={error || !uri}
-      square={square}
+      squareWithDefault={squareWithDefault}
       maxHeight={maxHeight}
       objectFit={objectFit}
     >
@@ -84,11 +83,11 @@ const ImageComponent: React.FC<ImageProps> = ({
           key={isFallback?.toString()}
           onClick={onClick}
           onLoad={() => setLoaded(true)}
-          onError={() => (isFallback ? setError(true) : setUseFallback(true))}
+          onError={() => (isFallback ? setError(true) : setUseFallback?.(true))}
           src={uri}
         />
       ) : (
-        <Placeholder tokenId={tokenId} metadata={metadata} full={full} />
+        <Placeholder />
       )}
     </Wrapper>
   );

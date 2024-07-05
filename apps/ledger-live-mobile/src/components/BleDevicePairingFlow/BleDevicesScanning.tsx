@@ -6,7 +6,7 @@ import { HwTransportErrorType } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { Device, DeviceModelId, QRCodeDevices } from "@ledgerhq/types-devices";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { knownDevicesSelector } from "~/reducers/ble";
@@ -50,9 +50,13 @@ export default function BleDevicesScanning({
 }: BleDevicesScanningProps) {
   const { t } = useTranslation();
 
-  const productName = filterByDeviceModelId
-    ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
-    : null;
+  const isQRCodeDevice =
+    filterByDeviceModelId !== null && QRCodeDevices.includes(filterByDeviceModelId);
+
+  const productName =
+    filterByDeviceModelId && !isQRCodeDevice
+      ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
+      : null;
 
   const [locationDisabledError, setLocationDisabledError] = useState<boolean>(false);
   const [locationUnauthorizedError, setLocationUnauthorizedError] = useState<boolean>(false);
@@ -98,10 +102,12 @@ export default function BleDevicesScanning({
     [areKnownDevicesDisplayed, knownDeviceIds],
   );
 
-  const filterByDeviceModelIds = useMemo(
-    () => (filterByDeviceModelId ? [filterByDeviceModelId] : undefined),
-    [filterByDeviceModelId],
-  );
+  const filterByDeviceModelIds = useMemo(() => {
+    if (isQRCodeDevice) {
+      return QRCodeDevices;
+    }
+    return filterByDeviceModelId ? [filterByDeviceModelId] : undefined;
+  }, [filterByDeviceModelId, isQRCodeDevice]);
 
   const { scannedDevices, scanningBleError } = useBleDevicesScanning({
     bleTransportListen: TransportBLE.listen,

@@ -14,7 +14,6 @@ import type {
   Transaction,
   TransferCommand,
 } from "./types";
-import { assertUnreachable } from "./utils";
 
 // do not show fields like 'To', 'Recipient', etc., as per Ledger policy
 
@@ -27,14 +26,8 @@ function getDeviceTransactionConfig({
   transaction: Transaction;
 }): Array<DeviceTransactionField> {
   const { commandDescriptor } = transaction.model;
-  if (commandDescriptor === undefined) {
-    throw new Error("missing command descriptor");
-  }
-  if (Object.keys(commandDescriptor.errors).length > 0) {
-    throw new Error("unexpected invalid command");
-  }
 
-  return fieldsForCommand(commandDescriptor, account);
+  return commandDescriptor ? fieldsForCommand(commandDescriptor, account) : [];
 }
 
 export default getDeviceTransactionConfig;
@@ -62,7 +55,7 @@ function fieldsForCommand(
     case "stake.split":
       return fieldsForStakeSplit(command);
     default:
-      return assertUnreachable(command);
+      return [];
   }
 }
 
@@ -76,6 +69,7 @@ function fieldsForTransfer(_command: TransferCommand): DeviceTransactionField[] 
 
   return fields;
 }
+
 function fieldsForTokenTransfer(command: TokenTransferCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 

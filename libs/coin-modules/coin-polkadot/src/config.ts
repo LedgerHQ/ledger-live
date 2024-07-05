@@ -1,7 +1,10 @@
-import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-framework/config";
-import { MissingCoinConfig } from "@ledgerhq/coin-framework/errors";
+import buildConConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type PolkadotConfig = {
+  node: {
+    url: string;
+    credentials?: string;
+  };
   sidecar: {
     url: string;
     credentials?: string;
@@ -9,20 +12,17 @@ export type PolkadotConfig = {
   staking?: {
     electionStatusThreshold: number;
   };
+  metadataShortener: {
+    url: string;
+  };
+  metadataHash: {
+    url: string;
+  };
+  runtimeUpgraded: boolean;
 };
 
 export type PolkadotCoinConfig = CurrencyConfig & PolkadotConfig;
 
-let coinConfig: CoinConfig<PolkadotCoinConfig> | undefined;
+const coinConfig = buildConConfig<PolkadotCoinConfig>();
 
-export const setCoinConfig = (config: CoinConfig<PolkadotCoinConfig>): void => {
-  coinConfig = config;
-};
-
-export const getCoinConfig = (): PolkadotCoinConfig => {
-  if (!coinConfig) {
-    throw new MissingCoinConfig();
-  }
-
-  return coinConfig();
-};
+export default coinConfig;

@@ -1,5 +1,4 @@
 // A test files that can contains generic failsafe we have for LLD
-import { describe, test, expect } from "@jest/globals";
 import "./live-common-set-supported-currencies";
 import {
   getAbandonSeedAddress,

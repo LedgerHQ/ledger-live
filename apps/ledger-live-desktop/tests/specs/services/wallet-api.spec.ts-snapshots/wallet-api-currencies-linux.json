@@ -361,33 +361,6 @@
   },
   {
     "type": "CryptoCurrency",
-    "id": "vertcoin",
-    "ticker": "VTC",
-    "name": "Vertcoin",
-    "family": "bitcoin",
-    "color": "#1b5c2e",
-    "decimals": 8
-  },
-  {
-    "type": "CryptoCurrency",
-    "id": "peercoin",
-    "ticker": "PPC",
-    "name": "Peercoin",
-    "family": "bitcoin",
-    "color": "#3cb054",
-    "decimals": 6
-  },
-  {
-    "type": "CryptoCurrency",
-    "id": "viacoin",
-    "ticker": "VIA",
-    "name": "Viacoin",
-    "family": "bitcoin",
-    "color": "#414141",
-    "decimals": 8
-  },
-  {
-    "type": "CryptoCurrency",
     "id": "bitcoin_testnet",
     "ticker": "BTC",
     "name": "Bitcoin Testnet",

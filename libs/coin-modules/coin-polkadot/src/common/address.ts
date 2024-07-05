@@ -16,7 +16,10 @@ export const isValidAddress = (
   if (!address) return false;
 
   try {
-    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address, false, ss58Format));
+    encodeAddress(
+      isHex(address) ? hexToU8a(address) : decodeAddress(address, false, ss58Format),
+      ss58Format,
+    );
     return true;
   } catch (err) {
     return false;

@@ -58,7 +58,7 @@ function OperationComponent({
   const confirmationsNb = useSelector((state: State) =>
     confirmationsNbForCurrencySelector(state, mainAccount),
   );
-  const unit = useAccountUnit(mainAccount);
+  const unit = useAccountUnit(account);
   const accountName = useAccountName(account);
 
   const onClickOnOperation = () => {
@@ -74,6 +74,7 @@ function OperationComponent({
       className="operation-row"
       isOptimistic={isOptimistic}
       onClick={onClickOnOperation}
+      data-test-id={`operation-row-${operation.id}`}
     >
       <ConfirmationCell
         operation={operation}

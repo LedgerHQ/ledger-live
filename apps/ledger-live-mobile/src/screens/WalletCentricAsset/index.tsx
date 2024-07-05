@@ -3,7 +3,6 @@ import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
@@ -32,7 +31,6 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
-import { ReferralProgram } from "./referralProgram";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { View } from "react-native-animatable";
 import Alert from "~/components/Alert";
@@ -48,7 +46,6 @@ type NavigationProps = BaseComposite<
 >;
 
 const AssetScreen = ({ route }: NavigationProps) => {
-  const featureReferralProgramMobile = useFeature("referralProgramMobile");
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProps["navigation"]>();
@@ -118,7 +115,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
         mt={6}
         onLayout={onGraphCardLayout}
         key="AssetGraph"
-        testID={`account-assets-${currency.name}`}
+        testID={`account-assets-${currency.name.toLocaleLowerCase()}`}
       >
         <AssetGraph
           accounts={cryptoAccounts}
@@ -129,11 +126,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty={cryptoAccountsEmpty}
         />
       </Box>,
-      featureReferralProgramMobile?.enabled &&
-      featureReferralProgramMobile?.params?.path &&
-      currency.ticker === "BTC" ? (
-        <ReferralProgram key="ReferralProgram" />
-      ) : null,
       currencyConfig?.status.type === "will_be_deprecated" && (
         <View style={{ marginTop: 16 }}>
           <Alert
@@ -196,8 +188,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
       cryptoAccounts,
       defaultAccount,
       onAddAccount,
-      featureReferralProgramMobile?.enabled,
-      featureReferralProgramMobile?.params?.path,
       currencyConfig,
     ],
   );

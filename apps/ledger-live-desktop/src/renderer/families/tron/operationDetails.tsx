@@ -25,17 +25,19 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { OperationDetailsExtraProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
+import { urls } from "~/config/urls";
+
+const infoURL = urls.feesTron;
 
 function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined {
   if (op.fee.gt(200000)) {
-    return helpURL;
+    return infoURL;
   }
 }
 
 function getURLWhatIsThis({ op }: { op: Operation; currencyId: string }): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
-    return helpURL;
+    return infoURL;
   }
 }
 

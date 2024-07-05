@@ -1,5 +1,6 @@
 {
   "entry": [
+    "src/cloudsync/index.ts",
     "src/liveqr/cross.ts",
     "src/liveqr/importAccounts.ts",
     "src/ordering.ts",

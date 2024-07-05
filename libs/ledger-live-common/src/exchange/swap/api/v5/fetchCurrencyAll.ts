@@ -10,6 +10,7 @@ import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
 import { getEnv } from "@ledgerhq/live-env";
 
 type Props = {
+  baseUrl?: string;
   additionalCoinsFlag?: boolean;
   providers: string[];
 };
@@ -19,11 +20,15 @@ export type ResponseDataAll = {
   to: ResponseDataTo["currencyGroups"];
 };
 
-export async function fetchCurrencyAll({ providers, additionalCoinsFlag = false }: Props) {
+export async function fetchCurrencyAll({
+  baseUrl = getSwapAPIBaseURL(),
+  providers,
+  additionalCoinsFlag = false,
+}: Props) {
   if (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN"))
     return Promise.resolve(flattenV5CurrenciesAll(fetchCurrencyAllMock));
 
-  const url = new URL(`${getSwapAPIBaseURL()}/currencies/all`);
+  const url = new URL(`${baseUrl}/currencies/all`);
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());
   const headers = getSwapUserIP();

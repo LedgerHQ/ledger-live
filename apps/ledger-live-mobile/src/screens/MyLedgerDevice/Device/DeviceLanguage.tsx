@@ -2,7 +2,7 @@ import { Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/useAvailableLanguagesForDevice";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import QueuedDrawer from "~/components/QueuedDrawer";
