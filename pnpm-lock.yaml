@@ -2436,7 +2436,7 @@ importers:
         version: 29.7.0
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.4(jest@29.7.0)(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
 
   libs/coin-modules/coin-tezos:
     dependencies:
@@ -2512,7 +2512,7 @@ importers:
         version: 29.5.12
       '@types/lodash':
         specifier: ^4.17.5
-        version: 4.17.5
+        version: 4.17.6
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -13216,40 +13216,40 @@ packages:
   '@tanstack/virtual-core@3.2.0':
     resolution: {integrity: sha512-P5XgYoAw/vfW65byBbJQCw+cagdXDT/qH6wmABiLt4v4YBT2q2vqCOhihe+D1Nt325F/S/0Tkv6C5z0Lv+VBQQ==}
 
-  '@taquito/core@20.0.0':
-    resolution: {integrity: sha512-JSDWLaVeaSqI98Xwd2TQwNy/fznSLEhikUxM7da6WbGJGtH8lG9SI9q6N9LLPfOFNGlP5RVQLO9HK/Pcmn4H8Q==}
+  '@taquito/core@20.0.1':
+    resolution: {integrity: sha512-/NvTkS8Enz5zxm481h7Ld5+MTa3/q84PMqtQ+HN3Mniv4EshnX5uIGfbdXdCQoaAeVdJOCeNIZDgeP6ZnkomRA==}
     engines: {node: '>=18'}
 
-  '@taquito/http-utils@20.0.0':
-    resolution: {integrity: sha512-R4Qen9oA/wQ7S5jC8K3viJkY/o9uQFEPQfuyPJCm90Tlg5HMd8UFRbJKqMvsW/nNVo39kukzEMS8o5wFST6dBA==}
+  '@taquito/http-utils@20.0.1':
+    resolution: {integrity: sha512-belYNmWoT49IF8o51gEB5je5Wz54+C7Q5hmvh7modl7fG0qE8VD1ulSH+WjuZsFTPJdNEAfCe0O50Vb5tNzw2w==}
     engines: {node: '>=18'}
 
-  '@taquito/ledger-signer@20.0.0':
-    resolution: {integrity: sha512-wfl1plx/uAIbmHsYxwsO2pXKDa9aMOmuuw25rjwsniBP36hM0Ly9GSrQ0z1CozteQF9ThP+OwrNMCwlfqXx43Q==}
+  '@taquito/ledger-signer@20.0.1':
+    resolution: {integrity: sha512-w8PM2tmBGK7FaQnifDJr43Gt+xt5AApiMr8rh7PV5v+uyHfmaqudNBK0SdlbTKpS7GkERs4X8CBojpeGAage8Q==}
     engines: {node: '>=18'}
 
-  '@taquito/local-forging@20.0.0':
-    resolution: {integrity: sha512-oxeyoqXjuTyl7gWqJGXoOqfWwH1bTiO76P/eOA5ULXgGwx9Muvt/yW5EPoIn6lK3Ajl41IE2sT+4JbKjQsAkuw==}
+  '@taquito/local-forging@20.0.1':
+    resolution: {integrity: sha512-+XYHnoAYXpOYA4WbUvUO86F6uoUh1anaNQGD544ySaonJW1ZgwhylrGvvTVjQfFSqqP3TRWn69EqINco+hX7gA==}
     engines: {node: '>=18'}
 
-  '@taquito/michel-codec@20.0.0':
-    resolution: {integrity: sha512-Xe6zHI8d5o/v9xNFJSvtspMK9Zf/iPDgUU7mIbucF/ppAYm1pofm5zL4SY5+tK0/Xz7irXjVx0a5l2sgGCBZmQ==}
+  '@taquito/michel-codec@20.0.1':
+    resolution: {integrity: sha512-TB6fJS4ArW4p1mqR28cjKbYs4cbLz/wnf8bHI/4ubxpiPcARZkja7r4U89D+Lb6Kn1Er+USPIMdbRTkP011e0w==}
     engines: {node: '>=18'}
 
-  '@taquito/michelson-encoder@20.0.0':
-    resolution: {integrity: sha512-b28UTIX733vLmE1R/wW3J5cMz4EIf8ioZen2u6Ms8enT7MMQw4svM9Eq/D+Wr6di3VDeGh1Aqvgl+XRbEw8AQA==}
+  '@taquito/michelson-encoder@20.0.1':
+    resolution: {integrity: sha512-YfMLpxDL/Qd9AlIfjlCsXYiE07ReZRAqvj+mI/Q8sPsKpqrkjvhyieNUQDLVqMDRcWLBWUSIqccr7UVRlQ/+BQ==}
     engines: {node: '>=18'}
 
-  '@taquito/rpc@20.0.0':
-    resolution: {integrity: sha512-4ijTIKGAl3NnB9ibvZzBpruf00w4TDi9CSLeoNOiP0T/laTZsUfmtR7p5AwirGNGBqAXr7mWSqSCrn2IEwSjAw==}
+  '@taquito/rpc@20.0.1':
+    resolution: {integrity: sha512-Ec6fXoehjLpfILpVAHZ1NJz6cAaguEFs9McK2Ct4RRKmVhModgrVPAGXn17rb7fLXwOLP3MCzqSgFPToY7ZIFA==}
     engines: {node: '>=18'}
 
-  '@taquito/taquito@20.0.0':
-    resolution: {integrity: sha512-iA53YlMdElAb919vhS7UswjHFumiDGOB6IE1vAh5dOLdPvK8L6uDlSXU6Aaz/nQyTJGe6I6RusjXEoMVnZUe2g==}
+  '@taquito/taquito@20.0.1':
+    resolution: {integrity: sha512-BcRNWcUGOWfthFPgPf12U1ZIf1xSyy1ZS4xU5TciuxI395LnKTz6I3WfmMggsZzWxqEgi/Lj8GXjji7DCtaZRg==}
     engines: {node: '>=18'}
 
-  '@taquito/utils@20.0.0':
-    resolution: {integrity: sha512-45GT2caKPpi8sC6BdlTNZRgsqjXy6D2hVfisymzU68EWXZ6Rss5aNNj6OZgDMVmwAnSJok41D2DCdUegiJJBbw==}
+  '@taquito/utils@20.0.1':
+    resolution: {integrity: sha512-aJaKukIW9thzU/WZ7p9ARRIDoXLQZ8TsB0brtbf48GqBFoGXDNAsDo72lkeTpehEcgYItSjdBuWEKH/lyTMr+w==}
     engines: {node: '>=18'}
 
   '@testing-library/dom@9.3.4':
@@ -13644,8 +13644,8 @@ packages:
   '@types/lodash@4.17.0':
     resolution: {integrity: sha512-t7dhREVv6dbNj0q17X12j7yDG4bD/DHYX7o5/DbDxobP0HnGPgpRz2Ej77aL7TZT3DSw13fqUTj8J4mMnqa7WA==}
 
-  '@types/lodash@4.17.4':
-    resolution: {integrity: sha512-wYCP26ZLxaT3R39kiN2+HcJ4kTd3U1waI/cY7ivWYqFP6pW3ZNpvi6Wd6PHZx7T/t8z0vlkXMg3QYLa7DZ/IJQ==}
+  '@types/lodash@4.17.6':
+    resolution: {integrity: sha512-OpXEVoCKSS3lQqjx9GGGOapBeuW5eUboYHRlHP9urXPX25IKZ6AnP5ZRxtVf63iieUbsHxLn8NQ5Nlftc6yzAA==}
 
   '@types/long@4.0.2':
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
@@ -26823,8 +26823,8 @@ packages:
       esbuild:
         optional: true
 
-  ts-jest@29.1.4:
-    resolution: {integrity: sha512-YiHwDhSvCiItoAgsKtoLFCuakDzDsJ1DLDnSouTaTmdOcOwIkSzbLXduaQ6M5DRVhuZC/NYaaZ/mtHbWMv/S6Q==}
+  ts-jest@29.1.5:
+    resolution: {integrity: sha512-UuClSYxM7byvvYfyWdFI+/2UxMmwNyJb0NPkZPQE2hew3RurV7l7zURgOHAd/1I1ZdPpe3GUsXNXAcN8TFKSIg==}
     engines: {node: ^14.15.0 || ^16.10.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -38891,7 +38891,7 @@ snapshots:
       '@storybook/preview-api': 7.6.17
       '@storybook/theming': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@storybook/types': 7.6.17
-      '@types/lodash': 4.17.5
+      '@types/lodash': 4.17.6
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -38924,7 +38924,7 @@ snapshots:
       '@storybook/preview-api': 7.6.17
       '@storybook/theming': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@storybook/types': 7.6.17
-      '@types/lodash': 4.17.5
+      '@types/lodash': 4.17.6
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -40184,24 +40184,18 @@ snapshots:
 
   '@tanstack/virtual-core@3.2.0': {}
 
-  /@taquito/core@20.0.0:
-    resolution: {integrity: sha512-JSDWLaVeaSqI98Xwd2TQwNy/fznSLEhikUxM7da6WbGJGtH8lG9SI9q6N9LLPfOFNGlP5RVQLO9HK/Pcmn4H8Q==}
-    engines: {node: '>=18'}
+  '@taquito/core@20.0.1':
     dependencies:
       json-stringify-safe: 5.0.1
 
-  /@taquito/http-utils@20.0.0:
-    resolution: {integrity: sha512-R4Qen9oA/wQ7S5jC8K3viJkY/o9uQFEPQfuyPJCm90Tlg5HMd8UFRbJKqMvsW/nNVo39kukzEMS8o5wFST6dBA==}
-    engines: {node: '>=18'}
+  '@taquito/http-utils@20.0.1':
     dependencies:
       '@taquito/core': 20.0.1
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
 
-  /@taquito/ledger-signer@20.0.0:
-    resolution: {integrity: sha512-wfl1plx/uAIbmHsYxwsO2pXKDa9aMOmuuw25rjwsniBP36hM0Ly9GSrQ0z1CozteQF9ThP+OwrNMCwlfqXx43Q==}
-    engines: {node: '>=18'}
+  '@taquito/ledger-signer@20.0.1':
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
       '@stablelib/blake2b': 1.0.1
@@ -40212,24 +40206,17 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  /@taquito/local-forging@20.0.0:
-    resolution: {integrity: sha512-oxeyoqXjuTyl7gWqJGXoOqfWwH1bTiO76P/eOA5ULXgGwx9Muvt/yW5EPoIn6lK3Ajl41IE2sT+4JbKjQsAkuw==}
-    engines: {node: '>=18'}
+  '@taquito/local-forging@20.0.1':
     dependencies:
       '@taquito/core': 20.0.1
       '@taquito/utils': 20.0.1
       bignumber.js: 9.1.2
 
-  /@taquito/michel-codec@20.0.0:
-    resolution: {integrity: sha512-Xe6zHI8d5o/v9xNFJSvtspMK9Zf/iPDgUU7mIbucF/ppAYm1pofm5zL4SY5+tK0/Xz7irXjVx0a5l2sgGCBZmQ==}
-    engines: {node: '>=18'}
+  '@taquito/michel-codec@20.0.1':
     dependencies:
-      '@taquito/core': 20.0.0
-    dev: false
+      '@taquito/core': 20.0.1
 
-  /@taquito/michelson-encoder@20.0.0:
-    resolution: {integrity: sha512-b28UTIX733vLmE1R/wW3J5cMz4EIf8ioZen2u6Ms8enT7MMQw4svM9Eq/D+Wr6di3VDeGh1Aqvgl+XRbEw8AQA==}
-    engines: {node: '>=18'}
+  '@taquito/michelson-encoder@20.0.1':
     dependencies:
       '@taquito/core': 20.0.1
       '@taquito/rpc': 20.0.1
@@ -40239,9 +40226,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  /@taquito/rpc@20.0.0:
-    resolution: {integrity: sha512-4ijTIKGAl3NnB9ibvZzBpruf00w4TDi9CSLeoNOiP0T/laTZsUfmtR7p5AwirGNGBqAXr7mWSqSCrn2IEwSjAw==}
-    engines: {node: '>=18'}
+  '@taquito/rpc@20.0.1':
     dependencies:
       '@taquito/core': 20.0.1
       '@taquito/http-utils': 20.0.1
@@ -40250,10 +40235,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  /@taquito/taquito@20.0.0:
-    resolution: {integrity: sha512-iA53YlMdElAb919vhS7UswjHFumiDGOB6IE1vAh5dOLdPvK8L6uDlSXU6Aaz/nQyTJGe6I6RusjXEoMVnZUe2g==}
-    engines: {node: '>=18'}
-    requiresBuild: true
+  '@taquito/taquito@20.0.1':
     dependencies:
       '@taquito/core': 20.0.1
       '@taquito/http-utils': 20.0.1
@@ -40267,9 +40249,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  /@taquito/utils@20.0.0:
-    resolution: {integrity: sha512-45GT2caKPpi8sC6BdlTNZRgsqjXy6D2hVfisymzU68EWXZ6Rss5aNNj6OZgDMVmwAnSJok41D2DCdUegiJJBbw==}
-    engines: {node: '>=18'}
+  '@taquito/utils@20.0.1':
     dependencies:
       '@stablelib/blake2b': 1.0.1
       '@stablelib/ed25519': 1.0.3
@@ -40740,9 +40720,7 @@ snapshots:
 
   '@types/lodash@4.17.0': {}
 
-  /@types/lodash@4.17.4:
-    resolution: {integrity: sha512-wYCP26ZLxaT3R39kiN2+HcJ4kTd3U1waI/cY7ivWYqFP6pW3ZNpvi6Wd6PHZx7T/t8z0vlkXMg3QYLa7DZ/IJQ==}
-    dev: true
+  '@types/lodash@4.17.6': {}
 
   '@types/long@4.0.2': {}
 
@@ -59569,29 +59547,7 @@ snapshots:
       typescript: 5.4.5
       yargs-parser: 21.1.1
 
-  /ts-jest@29.1.4(jest@29.7.0)(typescript@5.4.3):
-    resolution: {integrity: sha512-YiHwDhSvCiItoAgsKtoLFCuakDzDsJ1DLDnSouTaTmdOcOwIkSzbLXduaQ6M5DRVhuZC/NYaaZ/mtHbWMv/S6Q==}
-    engines: {node: ^14.15.0 || ^16.10.0 || ^18.0.0 || >=20.0.0}
-    hasBin: true
-    peerDependencies:
-      '@babel/core': '>=7.0.0-beta.0 <8'
-      '@jest/transform': ^29.0.0
-      '@jest/types': ^29.0.0
-      babel-jest: ^29.0.0
-      esbuild: '*'
-      jest: ^29.0.0
-      typescript: '>=4.3 <6'
-    peerDependenciesMeta:
-      '@babel/core':
-        optional: true
-      '@jest/transform':
-        optional: true
-      '@jest/types':
-        optional: true
-      babel-jest:
-        optional: true
-      esbuild:
-        optional: true
+  ts-jest@29.1.5(jest@29.7.0)(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
