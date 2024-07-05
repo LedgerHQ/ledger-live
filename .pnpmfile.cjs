@@ -51,6 +51,7 @@ function readPackage(pkg, context) {
 
       /* Storybook packages */
       addDependencies("@storybook/webpack-config", { "resolve-from": "*" }),
+      addDependencies("jest-allure2-reporter", { tslib: "*" }),
       addDependencies("@storybook/addon-knobs", {
         // Match the major version of the package
         "@storybook/client-api": major ? "" + major : "*",
