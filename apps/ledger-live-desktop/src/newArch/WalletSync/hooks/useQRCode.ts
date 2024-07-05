@@ -35,8 +35,7 @@ export function useQRCode() {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCode }));
       },
       addMember: async member => {
-        const jwt = await sdk.auth(trustchain, memberCredentials);
-        await sdk.addMember(jwt, trustchain, memberCredentials, member);
+        await sdk.addMember(trustchain, memberCredentials, member);
         return trustchain;
       },
     })

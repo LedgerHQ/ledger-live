@@ -27,7 +27,6 @@ export enum TrustchainHandlerType {
   TRUSTCHAIN_STORE_RESET = `${trustchainStoreActionTypePrefix}RESET`,
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN = `${trustchainStoreActionTypePrefix}SET_TRUSTCHAIN`,
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS = `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
-  TRUSTCHAIN_STORE_SET_JWT = `${trustchainStoreActionTypePrefix}SET_JWT`,
 }
 
 export type TrustchainHandlersPayloads = {
@@ -35,7 +34,6 @@ export type TrustchainHandlersPayloads = {
   TRUSTCHAIN_STORE_RESET: never;
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
-  TRUSTCHAIN_STORE_SET_JWT: { jwt: JWT };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -64,9 +62,6 @@ export const trustchainHandlers: TrustchainHandlers = {
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
     return { ...state, memberCredentials };
   },
-  TRUSTCHAIN_STORE_SET_JWT: (state, { payload: { jwt } }) => {
-    return { ...state, jwt };
-  },
 };
 
 // actions
@@ -94,11 +89,6 @@ export const setMemberCredentials = (memberCredentials: MemberCredentials) => ({
   payload: { memberCredentials },
 });
 
-export const setJwt = (jwt: JWT) => ({
-  type: `${trustchainStoreActionTypePrefix}SET_JWT`,
-  payload: { jwt },
-});
-
 // Local Selectors
 
 export const trustchainStoreSelector = (state: {
@@ -112,6 +102,3 @@ export const trustchainSelector = (state: {
 export const memberCredentialsSelector = (state: {
   trustchainStore: TrustchainStore;
 }): MemberCredentials | null => state.trustchainStore.memberCredentials;
-
-export const jwtSelector = (state: { trustchainStore: TrustchainStore }): JWT | null =>
-  state.trustchainStore.jwt;

@@ -1,6 +1,5 @@
 import {
   memberCredentialsSelector,
-  setJwt,
   setTrustchain,
   trustchainSelector,
 } from "@ledgerhq/trustchain/store";
@@ -24,18 +23,14 @@ export function useRemoveMembers({ device }: { device: Device | null }) {
       dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
     }
     await runWithDevice(device?.deviceId, async transport => {
-      const seedIdToken = await sdk.authWithDevice(transport);
-
-      const { trustchain: newTrustchain, jwt } = await sdk.removeMember(
+      const newTrustchain = await sdk.removeMember(
         transport,
-        seedIdToken,
         trustchain as Trustchain,
         memberCredentials as MemberCredentials,
         member,
       );
 
       if (newTrustchain) {
-        dispatch(setJwt(jwt));
         dispatch(setTrustchain(newTrustchain));
         dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
       }

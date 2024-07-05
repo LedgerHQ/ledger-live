@@ -1,8 +1,8 @@
-import { jwtSelector, trustchainSelector } from "@ledgerhq/trustchain/store";
+import { memberCredentialsSelector, trustchainSelector } from "@ledgerhq/trustchain/store";
 import { useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { QueryKey } from "./type.hooks";
-import { Trustchain, JWT } from "@ledgerhq/trustchain/types";
+import { Trustchain, MemberCredentials } from "@ledgerhq/trustchain/types";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useLifeCycle } from "./walletSync.hooks";
@@ -10,8 +10,7 @@ import { useLifeCycle } from "./walletSync.hooks";
 export function useGetMembers() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
-  const jwt = useSelector(jwtSelector);
-
+  const memberCredentials = useSelector(memberCredentialsSelector);
   const errorHandler = useLifeCycle();
 
   const {
@@ -21,7 +20,7 @@ export function useGetMembers() {
     error: getMembersError,
   } = useQuery({
     queryKey: [QueryKey.getMembers, trustchain],
-    queryFn: () => sdk.getMembers(jwt as JWT, trustchain as Trustchain),
+    queryFn: () => sdk.getMembers(trustchain as Trustchain, memberCredentials as MemberCredentials),
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
