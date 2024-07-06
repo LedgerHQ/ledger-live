@@ -115,7 +115,7 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Polkadot",
-      appVersion: "25.10100.1",
+      appVersion: "100.0.5",
     },
     dependency: "",
   },

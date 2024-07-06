@@ -28,7 +28,7 @@ describe("displayNftCollection", () => {
     await expect(screen.getByText(/see gallery/i)).toBeVisible();
   });
 
-  it("it should open the NFTs gallery", async () => {
+  it("should open the NFTs gallery", async () => {
     const { user } = render(<NftCollectionTest />, {
       initialState: {
         accounts: [account],
@@ -44,9 +44,11 @@ describe("displayNftCollection", () => {
     await expect(screen.getByText(/see gallery/i)).toBeVisible();
     await user.click(screen.getByText(/see gallery/i));
     await expect(screen.getByText(/all nft/i)).toBeVisible();
+    // Check breadcrumb and page title
+    await expect(screen.getAllByText(/nft/i).length).toBe(2);
   });
 
-  it("it should open the corresponding NFTs collection and it should open detail drawer", async () => {
+  it("should open the corresponding NFTs collection and it should open detail drawer", async () => {
     const { user } = render(<NftCollectionTest />, {
       initialState: {
         accounts: [account],
@@ -62,10 +64,11 @@ describe("displayNftCollection", () => {
     await expect(screen.getByText(/see gallery/i)).toBeVisible();
     await user.click(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i));
     await expect(screen.getByText(/all nft/i)).toBeVisible();
-    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeVisible();
+    // Check breadcrumb and page title
+    await expect(screen.getAllByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i).length).toBe(2);
   });
 
-  it("it should not display nft", async () => {
+  it("should not display nft", async () => {
     render(<NoNftCollectionTest />, {
       initialState: {
         accounts: [account],
