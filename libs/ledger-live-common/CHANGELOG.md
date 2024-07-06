@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.6.0-nightly.2
+
+### Patch Changes
+
+- [#7256](https://github.com/LedgerHQ/ledger-live/pull/7256) [`6353cea`](https://github.com/LedgerHQ/ledger-live/commit/6353cea99f7ba6e604b7c7708b056aae817150a4) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: fallback for CDN/CAL failure
+
 ## 34.6.0-nightly.1
 
 ### Minor Changes
