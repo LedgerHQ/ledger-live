@@ -1,5 +1,13 @@
 ## 34.5.0-next.4
 
+## 34.6.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`f0ed580`](https://github.com/LedgerHQ/ledger-live/commit/f0ed580b0e71c1f1aa1b38f6ef7a536f14a5e750)]:
+  - @ledgerhq/coin-polkadot@1.1.0-nightly.2
+  - @ledgerhq/coin-evm@2.1.2-nightly.1
+
 ## 34.6.0-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.47.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.6.0-nightly.3
+  - @ledgerhq/coin-evm@2.1.2-nightly.1
+
 ## 3.47.0-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.83.1-nightly.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.6.0-nightly.3
+  - @ledgerhq/coin-evm@2.1.2-nightly.1
+
 ## 2.83.1-nightly.3
 
 ### Patch Changes
