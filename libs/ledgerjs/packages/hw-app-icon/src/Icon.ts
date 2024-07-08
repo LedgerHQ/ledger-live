@@ -125,7 +125,7 @@ export default class Icx {
     const paths = splitPath(path);
     let offset = 0;
     const rawTx = Buffer.from(rawTxAscii);
-    let toSend: Buffer[] = [];
+    const toSend: Buffer[] = [];
     let response: Buffer;
     while (offset !== rawTx.length) {
       const maxChunkSize = offset === 0 ? 150 - 1 - paths.length * 4 - 4 : 150;
