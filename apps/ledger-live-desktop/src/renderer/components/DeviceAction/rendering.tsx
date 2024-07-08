@@ -1094,7 +1094,7 @@ export const renderSwapDeviceConfirmation = ({
           {...swapDefaultTrack}
         />
         <Box flex={0}>
-          <Alert type="primary" {...alertProperties} mb={4} mx={4}>
+          <Alert type="primary" {...alertProperties} mb={5} mx={4}>
             <Trans
               i18nKey={`DeviceAction.swap.notice.${noticeType.message}`}
               values={{ providerName: getProviderName(exchangeRate.provider) }}
