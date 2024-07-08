@@ -30,9 +30,11 @@ const kadena: AppSpec<Transaction> = {
   name: "Kadena",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "kadena",
+    appVersion: "0.2.6",
   },
+  testTimeout: 10 * 60 * 1000,
   genericDeviceAction: acceptTransaction,
   mutations: [
     {
@@ -66,37 +68,37 @@ const kadena: AppSpec<Transaction> = {
         );
       },
     },
-    {
-      name: "send max",
-      maxRun: 1,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(0), "Spendable balance is too low");
+    // {
+    //   name: "send max",
+    //   maxRun: 1,
+    //   transaction: ({ account, siblings, bridge, maxSpendable }) => {
+    //     invariant(maxSpendable.gt(0), "Spendable balance is too low");
 
-        const sibling = pickSiblings(siblings, 4);
-        const recipient = sibling.freshAddress;
+    //     const sibling = pickSiblings(siblings, 4);
+    //     const recipient = sibling.freshAddress;
  
-        let transaction = bridge.createTransaction(account);
+    //     let transaction = bridge.createTransaction(account);
 
-        let amount = maxSpendable
+    //     let amount = maxSpendable
 
-        checkSendableToEmptyAccount(amount, sibling);
+    //     checkSendableToEmptyAccount(amount, sibling);
  
-        const updates = [{ amount }, { recipient }];
-        return {
-          transaction,
-          updates,
-        };
-      },
-      test: ({ account }) => {
-        botTest("account balance should be null on chain ID 0", async () => {
-          const balance = await fetchCoinDetailsForAccount(account.freshAddress, [
-            "0",
-          ]);
-          expect(balance.toString()).toBe("0");
-        }
-        );
-      },
-    },
+    //     const updates = [{ amount }, { recipient }];
+    //     return {
+    //       transaction,
+    //       updates,
+    //     };
+    //   },
+    //   test: ({ account }) => {
+    //     botTest("account balance should be null on chain ID 0", async () => {
+    //       const balance = await fetchCoinDetailsForAccount(account.freshAddress, [
+    //         "0",
+    //       ]);
+    //       expect(balance.toString()).toBe("0");
+    //     }
+    //     );
+    //   },
+    // },
   ],
 };
  

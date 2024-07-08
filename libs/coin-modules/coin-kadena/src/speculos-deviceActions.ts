@@ -1,7 +1,9 @@
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
- 
+import { kdaToBaseUnit } from "./utils";
+import { KDA_FEES, KDA_FEES_BASE } from "./constants";
+
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
@@ -10,67 +12,50 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       expectedValue: () => "KDA",
     },
     {
-      title: "From (1/5)",
+      title: "From",
       button: SpeculosButton.RIGHT,
+      expectedValue: ({ account }) => {
+        return account.freshAddress;
+      },
     },
     {
-      title: "From (2/5)",
+      title: "To",
       button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "From (3/5)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "From (4/5)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "From (5/5)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "To (1/5)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "To (2/5)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "To (3/5)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "To (4/5)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "To (5/5)",
-      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        return transaction.recipient;
+      },
     },
     {
       title: "Amount",
       button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        return `KDA ${kdaToBaseUnit(transaction.amount).toString()}`;
+      },
     },
     {
-      title: "Gas Limit (1/2)",
+      title: "Gas Limit",
       button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        return `${transaction.gasLimit.toString()} Max`;
+      },
     },
     {
-      title: "Gas Price (2/2)",
+      title: "Gas Price",
       button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        return `KDA ${KDA_FEES_BASE}`;
+      },
     },
     {
-      title: "Sign Transaction",
+      title: "ign Transaction?",
       button: SpeculosButton.RIGHT,
     },
     {
       title: "Reject",
-      button: SpeculosButton.RIGHT,
+      button: SpeculosButton.LEFT,
     },
     {
-      title: "Confirm",
+      title: " Confirm",
       button: SpeculosButton.BOTH,
     },
   ],
