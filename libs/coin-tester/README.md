@@ -3,7 +3,11 @@
 - [Setup](#setup)
 - [Run tests for a coin module](#runtests)
 
-## Setup {#setup}
+## What is the coin config
+
+Find more information [here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/coin-tester.md)
+
+## [Setup](#setup)
 
 ### Prerequisites
 
@@ -75,7 +79,7 @@ To coin Polkadot Coin tester we will need to build the local test node Docker im
 cd libs/coin-modules/coin-polkadot/src/test/coin-tester
 make build
 ```
-## Run tests for a coin module {#runtests}
+## [Run tests for a coin module](#run-tests-for-a-coin-module)
 
 ```sh
 pnpm coin:<coin-module-name> coin-tester
