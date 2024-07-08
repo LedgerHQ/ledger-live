@@ -47,7 +47,7 @@ jobs:
             core.exportVariable("head_branch", newHeadBranch);
             core.exportVariable("base_branch", newBaseBranch);
 
-      - uses: LedgerHQ/ledger-live/tools/actions/turbo-affected@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/turbo-affected
         id: affected
         with:
           ref: ${{ format('origin/{0}', env.base_branch) }}
