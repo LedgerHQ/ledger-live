@@ -5536,7 +5536,7 @@
       "title": "You first need to send at least 0.1 TRX to this address to enable TRC20 token reception. <link0>Learn more </link0>"
     },
     "MaybeKeepTronAccountAlive": {
-      "title": "You need at least 1.2 TRX to keep this account active in the Tron protocol and pay for the network fees. Learn more <link0>Learn more </link0>"
+      "title": "You need at least 0.1 TRX to keep this Tron account active and 1.1 TRX for network fees.<link0>Learn more </link0>"
     },
     "OperatingSystemOutdated": {
       "title": "Your Operating System version is outdated",
