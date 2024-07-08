@@ -52,7 +52,7 @@ jobs:
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: install and build
         run: |
-          pnpm i --filter="live-cli..." --filter="ledger-live"
+          pnpm i --filter="@ledgerhq/live-cli..." --filter="ledger-live*"
           pnpm build:cli
           cd apps/cli
           npm link

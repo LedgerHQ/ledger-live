@@ -34,7 +34,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
 
       - name: install dependencies
-        run: pnpm i -F "ledger-live"
+        run: pnpm i -F "ledger-live*"
 
       - name: exit prerelease mode
         run: pnpm changeset pre exit

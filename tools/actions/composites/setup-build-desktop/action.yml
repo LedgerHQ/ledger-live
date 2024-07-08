@@ -19,7 +19,7 @@ runs:
       env:
         LC_ALL: en_US.UTF-8
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live*" --unsafe-perm
       shell: bash
     - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
       id: version

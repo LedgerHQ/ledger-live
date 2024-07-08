@@ -81,9 +81,9 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
-        run: pnpm i -F "web-tools..." -F "ledger-live"
+        run: pnpm i -F "web-tools..." -F "ledger-live*"
       - name: build web-tools
-        run: pnpm turbo run build --filter="web-tools" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm turbo run build --filter="./apps/web-tools" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
   test-cli:
     name: "Test CLI"
@@ -108,16 +108,16 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           skip-turbo-cache: "false"
       - name: Install dependencies
-        run: pnpm i -F "live-cli..." -F "ledger-live"
+        run: pnpm i -F "@ledgerhq/live-cli..." -F "ledger-live"
       - name: build cli
         run: pnpm build:cli --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: lint cli
-        run: pnpm lint --filter="live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
+        run: pnpm lint --filter="@ledgerhq/live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
       - name: typecheck cli
-        run: pnpm typecheck --filter="live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm typecheck --filter="@ledgerhq/live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: test cli
         id: test
-        run: pnpm run test --filter="live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm run test --filter="@ledgerhq/live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: get diff
         id: diff
         run: |
