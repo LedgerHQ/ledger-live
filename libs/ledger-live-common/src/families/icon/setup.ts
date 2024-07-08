@@ -28,9 +28,8 @@ const getCurrencyConfig = (): IconCoinConfig => {
       node_testnet_endpoint: getEnv("ICON_TESTNET_NODE_ENDPOINT"),
       debug_endpoint: getEnv("ICON_DEBUG_ENDPOINT"),
       debug_testnet_endpoint: getEnv("ICON_TESTNET_DEBUG_ENDPOINT"),
-    }
-  }
-  
+    },
+  };
 };
 
 const bridge: Bridge<Transaction> = createBridges(
