@@ -22,7 +22,8 @@
 
     "src/newArch/Collectibles/**",
     "src/newArch/WalletSync/**",
-    "src/newArch/components/ContextMenu/**"
+    "src/newArch/components/ContextMenu/**",
+    "src/newArch/components/BreadCrumb/**"
   ],
   "ignoreUnused": [
     "@types/semver",
