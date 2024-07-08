@@ -1,8 +1,8 @@
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
 import fs from "fs";
 import { ElectronApplication } from "@playwright/test";
-import { launchApp } from "tests/fixtures/common";
 import { OnboardingPage } from "../page/onboarding.page";
+import { launchApp } from "tests/utils/electronUtils";
 
 const environmentFilePath = "allure-results/environment.properties";
 
