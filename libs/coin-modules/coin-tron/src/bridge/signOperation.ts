@@ -5,7 +5,6 @@ import { Observable } from "rxjs";
 import {
   claimRewardTronTransaction,
   createTronTransaction,
-  fetchTronContract,
   freezeTronTransaction,
   legacyUnfreezeTronTransaction,
   unDelegateResourceTransaction,
@@ -26,9 +25,7 @@ export const buildSignOperation =
           transaction.subAccountId && account.subAccounts
             ? account.subAccounts.find(sa => sa.id === transaction.subAccountId)
             : undefined;
-        const isContractAddressRecipient =
-          (await fetchTronContract(transaction.recipient)) !== undefined;
-        const fee = await getEstimatedFees(account, transaction, isContractAddressRecipient);
+        const fee = await getEstimatedFees(account, transaction, subAccount);
         const balance = subAccount
           ? subAccount.balance
           : BigNumber.max(0, account.spendableBalance.minus(fee));
