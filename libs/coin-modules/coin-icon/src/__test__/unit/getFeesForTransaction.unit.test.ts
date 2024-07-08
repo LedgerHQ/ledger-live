@@ -12,9 +12,7 @@ jest.mock("../../api/node");
 jest.mock("@ledgerhq/cryptoassets");
 jest.mock("../../logic");
 
-
 const mockedLogic = jest.mocked(logic);
-
 
 describe("getEstimatedFees", () => {
   beforeAll(() => {
@@ -34,7 +32,9 @@ describe("getEstimatedFees", () => {
       fees: new BigNumber(10),
     } as any;
 
-    const unsignedTx = { /* mock unsigned transaction */ };
+    const unsignedTx = {
+      /* mock unsigned transaction */
+    };
     const stepLimit = new BigNumber(100000);
     const stepPrice = new BigNumber(10);
 
@@ -65,7 +65,7 @@ describe("getEstimatedFees", () => {
 
     (getAbandonSeedAddress as jest.Mock).mockReturnValue("fake-recipient-address");
     mockedLogic.calculateAmount.mockReturnValue(new BigNumber(100));
-    // @ts-ignore
+    // @ts-expect-error type
     mockedLogic.FEES_SAFETY_BUFFER = new BigNumber(100);
     (buildTransaction as jest.Mock).mockRejectedValue(new Error("Error"));
     // Mock getFees and getStepPrice if necessary, but they won't be called in this test case

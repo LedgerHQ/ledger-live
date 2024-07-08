@@ -42,11 +42,29 @@ describe("ICON API", () => {
       const skip = 0;
       const network = { id: "icon" } as CryptoCurrency;
       const maxLength = 10;
-      // @ts-ignore
+      // @ts-expect-error type
       mockedLogic.LIMIT = 10;
 
-      const tx1 = { hash: "tx1", from_address: addr, to_address: "hx456", transaction_fee: "10", block_number: 12345, block_timestamp: 1609459200000, status: "0x1", value: "1000" } as IconTransactionType;
-      const tx2 = { hash: "tx2", from_address: "hx456", to_address: addr, transaction_fee: "5", block_number: 12346, block_timestamp: 1609459201000, status: "0x1", value: "2000" } as IconTransactionType;
+      const tx1 = {
+        hash: "tx1",
+        from_address: addr,
+        to_address: "hx456",
+        transaction_fee: "10",
+        block_number: 12345,
+        block_timestamp: 1609459200000,
+        status: "0x1",
+        value: "1000",
+      } as IconTransactionType;
+      const tx2 = {
+        hash: "tx2",
+        from_address: "hx456",
+        to_address: addr,
+        transaction_fee: "5",
+        block_number: 12346,
+        block_timestamp: 1609459201000,
+        status: "0x1",
+        value: "2000",
+      } as IconTransactionType;
       const txHistory = [tx1, tx2];
       querystringMock.mockReturnValue("address=hx123&skip=0&limit=10");
       networkMock.mockResolvedValue({ data: txHistory });
@@ -64,12 +82,39 @@ describe("ICON API", () => {
       const skip = 0;
       const network = { id: "icon" } as CryptoCurrency;
       const maxLength = 10;
-      // @ts-ignore
+      // @ts-expect-error type
       mockedLogic.LIMIT = 2; // set a small limit for easier testing
 
-      const tx1 = { hash: "tx1", from_address: addr, to_address: "hx456", transaction_fee: "10", block_number: 12345, block_timestamp: 1609459200000, status: "0x1", value: "1000" } as IconTransactionType;
-      const tx2 = { hash: "tx2", from_address: "hx456", to_address: addr, transaction_fee: "5", block_number: 12346, block_timestamp: 1609459201000, status: "0x1", value: "2000" } as IconTransactionType;
-      const tx3 = { hash: "tx3", from_address: addr, to_address: "hx456", transaction_fee: "15", block_number: 12347, block_timestamp: 1609459202000, status: "0x1", value: "1500" } as IconTransactionType;
+      const tx1 = {
+        hash: "tx1",
+        from_address: addr,
+        to_address: "hx456",
+        transaction_fee: "10",
+        block_number: 12345,
+        block_timestamp: 1609459200000,
+        status: "0x1",
+        value: "1000",
+      } as IconTransactionType;
+      const tx2 = {
+        hash: "tx2",
+        from_address: "hx456",
+        to_address: addr,
+        transaction_fee: "5",
+        block_number: 12346,
+        block_timestamp: 1609459201000,
+        status: "0x1",
+        value: "2000",
+      } as IconTransactionType;
+      const tx3 = {
+        hash: "tx3",
+        from_address: addr,
+        to_address: "hx456",
+        transaction_fee: "15",
+        block_number: 12347,
+        block_timestamp: 1609459202000,
+        status: "0x1",
+        value: "1500",
+      } as IconTransactionType;
 
       networkMock
         .mockResolvedValueOnce({ data: [tx1, tx2] }) // First fetch returns two transactions

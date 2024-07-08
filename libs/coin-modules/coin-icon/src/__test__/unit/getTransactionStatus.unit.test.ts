@@ -17,11 +17,9 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { IconDoMaxSendInstead } from "../../errors";
 import { getAccount } from "../../api";
 
-
 jest.mock("../../logic");
 jest.mock("../../api");
 jest.mock("@ledgerhq/coin-framework/currencies/index");
-
 
 const mockedLogic = jest.mocked(logic);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
@@ -35,15 +33,19 @@ describe("getSendTransactionStatus", () => {
     account = {
       spendableBalance: new BigNumber(1000),
       currency: {
-        name: "Icon", units: [{
-          code: "ICX",
-          name: "",
-          magnitude: 0
-        }]
+        name: "Icon",
+        units: [
+          {
+            code: "ICX",
+            name: "",
+            magnitude: 0,
+          },
+        ],
       } as CryptoCurrency,
       iconResources: {
-        totalDelegated: new BigNumber(0), votingPower: new BigNumber(0),
-        nonce: 0
+        totalDelegated: new BigNumber(0),
+        votingPower: new BigNumber(0),
+        nonce: 0,
       },
     } as IconAccount;
     transaction = {
@@ -65,7 +67,7 @@ describe("getSendTransactionStatus", () => {
   });
 
   it("should return RecipientRequired error if recipient is missing", async () => {
-    transaction.recipient = '';
+    transaction.recipient = "";
     const result = await getSendTransactionStatus(account, transaction);
     expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
   });
@@ -107,21 +109,22 @@ describe("getSendTransactionStatus", () => {
     account.spendableBalance = new BigNumber(120);
     const result = await getSendTransactionStatus(account, transaction);
     expect(result.errors.amount).toBeInstanceOf(IconDoMaxSendInstead);
-    expect(result.errors.amount.message).toBe("Balance cannot be below {{minimumBalance}}. Send max to empty account.");
+    expect(result.errors.amount.message).toBe(
+      "Balance cannot be below {{minimumBalance}}. Send max to empty account.",
+    );
   });
 
   it("should return NotEnoughBalanceBecauseDestinationNotCreated error if getAccount fails", async () => {
     mockedLogic.calculateAmount.mockReturnValue(new BigNumber(0.001));
     account.spendableBalance = new BigNumber(0.002);
     mockedLogic.getMinimumBalance.mockReturnValue(new BigNumber(0.0008));
-    // @ts-ignore
+    // @ts-expect-error type
     mockedLogic.EXISTENTIAL_DEPOSIT = new BigNumber(0.00125);
     transaction.fees = new BigNumber(0.0001);
     mockedGetAccount.mockRejectedValue(new Error("Account not found"));
     const result = await getSendTransactionStatus(account, transaction);
     expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceBecauseDestinationNotCreated);
   });
-
 });
 
 describe("getTransactionStatus", () => {
@@ -149,7 +152,9 @@ describe("getTransactionStatus", () => {
       amount: new BigNumber(100),
       totalSpent: new BigNumber(110),
     } as any;
-    jest.spyOn(TransactionStatus, 'getSendTransactionStatus').mockResolvedValue(sendTransactionStatus);
+    jest
+      .spyOn(TransactionStatus, "getSendTransactionStatus")
+      .mockResolvedValue(sendTransactionStatus);
     const result = await getTransactionStatus(account, transaction);
     expect(result).toEqual(sendTransactionStatus);
   });
@@ -179,5 +184,4 @@ describe("getTransactionStatus", () => {
     const result = await getTransactionStatus(account, transaction);
     expect(result.errors.amount).toBeInstanceOf(AmountRequired);
   });
-
 });

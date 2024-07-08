@@ -1,9 +1,13 @@
 import { BigNumber } from "bignumber.js";
 
-
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { IconAccount, IconAccountRaw, IconResources, IconResourcesRaw } from "../../types";
-import { assignFromAccountRaw, assignToAccountRaw, fromIconResourcesRaw, toIconResourcesRaw } from "../../serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromIconResourcesRaw,
+  toIconResourcesRaw,
+} from "../../serialization";
 
 describe("Icon Resources Utilities", () => {
   describe("toIconResourcesRaw", () => {

@@ -63,7 +63,10 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<IconSigner>, coinConfig: CoinConfig<IconCoinConfig>,) {
+export function createBridges(
+  signerContext: SignerContext<IconSigner>,
+  coinConfig: CoinConfig<IconCoinConfig>,
+) {
   setCoinConfig(coinConfig);
 
   return {

@@ -20,7 +20,6 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { IconAccount, Transaction } from "../../types";
 import { BERLIN_TESTNET_NID, MAINNET_NID } from "../../constants";
 
-
 jest.mock("@ledgerhq/cryptoassets", () => ({
   getCryptoCurrencyById: jest.fn(),
 }));
@@ -32,13 +31,17 @@ describe("Icon Utils", () => {
     it("should convert loop to ICX correctly", () => {
       const value = "1000000000000000000";
       const result = convertLoopToIcx(value);
-      expect(result.isEqualTo(new BigNumber(IconAmount.fromLoop(value, IconAmount.Unit.ICX.toString())))).toBe(true);
+      expect(
+        result.isEqualTo(new BigNumber(IconAmount.fromLoop(value, IconAmount.Unit.ICX.toString()))),
+      ).toBe(true);
     });
 
     it("should convert ICX to loop correctly", () => {
       const value = "1";
       const result = convertICXtoLoop(value);
-      expect(result.isEqualTo(new BigNumber(IconAmount.toLoop(value, IconAmount.Unit.ICX.toString())))).toBe(true);
+      expect(
+        result.isEqualTo(new BigNumber(IconAmount.toLoop(value, IconAmount.Unit.ICX.toString()))),
+      ).toBe(true);
     });
   });
 
@@ -54,7 +57,9 @@ describe("Icon Utils", () => {
   describe("Transaction-related functions", () => {
     it("should identify self transaction correctly", () => {
       const account = { freshAddress: "hx1234567890123456789012345678901234567890" } as Account;
-      const transaction = { recipient: "hx1234567890123456789012345678901234567890" } as Transaction;
+      const transaction = {
+        recipient: "hx1234567890123456789012345678901234567890",
+      } as Transaction;
       expect(isSelfTransaction(account, transaction)).toBe(true);
     });
 

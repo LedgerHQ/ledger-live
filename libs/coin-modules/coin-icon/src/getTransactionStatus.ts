@@ -6,7 +6,6 @@ import {
   FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
-  NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 
 import type { IconAccount, Transaction, TransactionStatus } from "./types";
@@ -22,7 +21,6 @@ import {
 } from "./logic";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { IconAllFundsWarning, IconDoMaxSendInstead } from "./errors";
-import { getAccount } from "./api";
 
 export const getSendTransactionStatus = async (
   account: IconAccount,
