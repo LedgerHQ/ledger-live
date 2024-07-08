@@ -67,7 +67,7 @@ jobs:
         with:
           ruby-version: 3.3.0
       - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live*" --no-frozen-lockfile --unsafe-perm
       - name: regenerate pods
         run: NO_FLIPPER=1 pnpm mobile pod
       - name: status

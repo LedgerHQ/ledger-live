@@ -39,7 +39,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
-        run: pnpm i --filter="ledger-live"
+        run: pnpm i --filter="ledger-live*"
       - name: Lint commits
         run: |
           set -o pipefail
