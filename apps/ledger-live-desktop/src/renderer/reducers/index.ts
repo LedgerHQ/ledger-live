@@ -13,7 +13,7 @@ import market, { MarketState } from "./market";
 import wallet from "./wallet";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import walletSync, { WalletSyncState } from "./walletSync";
-import trustchainStore from "./trustchainStore";
+import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/trustchain/store";
 
 export type State = {
@@ -29,7 +29,7 @@ export type State = {
   market: MarketState;
   wallet: WalletState;
   walletSync: WalletSyncState;
-  trustchainStore: TrustchainStore;
+  trustchain: TrustchainStore;
 };
 
 export default combineReducers({
@@ -45,5 +45,5 @@ export default combineReducers({
   market,
   wallet,
   walletSync,
-  trustchainStore,
+  trustchain,
 });

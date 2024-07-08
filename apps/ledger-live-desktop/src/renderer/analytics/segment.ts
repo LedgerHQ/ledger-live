@@ -73,7 +73,7 @@ const getWalletSyncAttributes = (state: State) => {
 
   return {
     hasWalletSync: !!walletSync?.enabled,
-    walletSyncActivated: !!state.trustchainStore.trustchain,
+    walletSyncActivated: !!state.trustchain.trustchain,
   };
 };
 

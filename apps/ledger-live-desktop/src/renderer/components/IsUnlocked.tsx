@@ -7,6 +7,7 @@ import { setEncryptionKey, isEncryptionKeyCorrect, hasBeenDecrypted } from "~/re
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import { useHardReset } from "~/renderer/reset";
 import { fetchAccounts } from "~/renderer/actions/accounts";
+import { fetchTrustchain } from "~/renderer/reducers/trustchain";
 import { unlock } from "~/renderer/actions/application";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import Box from "~/renderer/components/Box";
@@ -46,11 +47,12 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
       if (submitting) return;
       setSubmitting(true);
       try {
-        const isAccountDecrypted = await hasBeenDecrypted("app", "accounts");
+        const isAccountDecrypted = await hasBeenDecrypted();
         if (!isAccountDecrypted) {
-          await setEncryptionKey("app", "accounts", inputValue.password);
+          await setEncryptionKey(inputValue.password);
           await dispatch(fetchAccounts());
-        } else if (!(await isEncryptionKeyCorrect("app", "accounts", inputValue.password))) {
+          await dispatch(fetchTrustchain());
+        } else if (!(await isEncryptionKeyCorrect(inputValue.password))) {
           throw new PasswordIncorrectError();
         }
         dispatch(unlock());
