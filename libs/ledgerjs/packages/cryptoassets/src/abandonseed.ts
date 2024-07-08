@@ -17,7 +17,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   ripple: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E",
   tezos: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
-  // Randomly generated inactive tron address.
+  // Randomly generated inactive tron address using tronprotocol/wallet-cli (https://github.com/tronprotocol/wallet-cli)
   tron: "TQDyHP3QX24zSDn5418DHm2hvYs2wzuYYY",
   ethereum: EVM_DEAD_ADDRESS,
   bitcoin: "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA",

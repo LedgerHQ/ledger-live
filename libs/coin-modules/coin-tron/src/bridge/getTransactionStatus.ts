@@ -192,7 +192,7 @@ const getTransactionStatus = async (
   const estimatedFees =
     Object.entries(errors).length > 0
       ? new BigNumber(0)
-      : await getEstimatedFees(acc, transaction, isContractInteraction, tokenAccount);
+      : await getEstimatedFees(acc, transaction, tokenAccount);
   const balance =
     account.type === "Account"
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
