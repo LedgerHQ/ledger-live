@@ -4,19 +4,17 @@
  * It essentially is the client's credentials that are only stored on the
  * client side and the trustchain returned by the backend.
  */
-import { JWT, MemberCredentials, Trustchain } from "./types";
+import { MemberCredentials, Trustchain } from "./types";
 
 export type TrustchainStore = {
   trustchain: Trustchain | null;
   memberCredentials: MemberCredentials | null;
-  jwt: JWT | null;
 };
 
 export const getInitialStore = (): TrustchainStore => {
   return {
     trustchain: null,
     memberCredentials: null,
-    jwt: null,
   };
 };
 
