@@ -44,6 +44,12 @@ export const useUpdateMaxAmount = ({
           if (tx.family === "evm" && !tx.subAccountId && next) {
             additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
           }
+          // do not use useAllAmount for tron because we need to keep some TRX for fees and account alive
+          if (tx.family === "tron" && !tx.subAccountId && next) {
+            return {
+              ...tx,
+            };
+          }
           return {
             ...tx,
             useAllAmount: next,
@@ -69,7 +75,12 @@ export const useUpdateMaxAmount = ({
           transaction,
         });
         setIsMaxLoading(false);
-        setFromAmount(amount);
+        if ("currency" in account && account.currency.id === "tron") {
+          // keep 1.1 TRX for fees and 0.1 TRX for keeping the account alive
+          setFromAmount(account?.balance.minus(new BigNumber(1_200_000)));
+        } else {
+          setFromAmount(amount);
+        }
       };
 
       if (isMaxEnabled) {
