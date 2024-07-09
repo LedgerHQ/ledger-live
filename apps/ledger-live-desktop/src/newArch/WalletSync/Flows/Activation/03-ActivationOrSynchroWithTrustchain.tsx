@@ -4,7 +4,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
 
-import { DeviceModelId } from "@ledgerhq/devices";
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { useAddMember } from "../../hooks/useAddMember";
@@ -31,7 +30,7 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
     return addMemberMutation.isError ? (
       <ErrorDisplay error={addMemberMutation.error} withExportLogs onRetry={onRetry} />
     ) : (
-      <FollowStepsOnDevice modelId={device.modelId as DeviceModelId} />
+      <FollowStepsOnDevice modelId={device.modelId} />
     );
   } else {
     dispatch(
