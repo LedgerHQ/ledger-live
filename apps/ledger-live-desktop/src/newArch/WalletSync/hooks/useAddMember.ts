@@ -3,55 +3,71 @@ import {
   setMemberCredentials,
   setTrustchain,
 } from "@ledgerhq/trustchain/store";
-import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
-import { TrustchainResultType } from "@ledgerhq/trustchain/types";
+import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
+import { useEffect, useState } from "react";
 
 export function useAddMember({ device }: { device: Device | null }) {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
+  const [error, setError] = useState<Error | null>(null);
+
+  const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
+
+  useEffect(() => {
+    addMember();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addMember = async () => {
-    if (!device) {
-      dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
-    }
-    if (!memberCredentials) {
+    let currentCredentials = memberCredentials;
+    if (!currentCredentials) {
       const newMemberCredentials = await sdk.initMemberCredentials();
       dispatch(setMemberCredentials(newMemberCredentials));
-    } else {
-      let goNext = false;
-      await runWithDevice(device?.deviceId, async transport => {
-        const trustchainResult = await sdk.getOrCreateTrustchain(transport, memberCredentials, {
-          onStartRequestUserInteraction: () => (goNext = false),
-          onEndRequestUserInteraction: () => (goNext = true),
+      currentCredentials = newMemberCredentials;
+    }
+
+    try {
+      runWithDevice(device?.deviceId, async transport => {
+        const trustchainResult = await sdk.getOrCreateTrustchain(transport, currentCredentials, {
+          onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+          onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
         });
 
-        if (trustchainResult && goNext) {
-          dispatch(setTrustchain(trustchainResult.trustchain));
-          dispatch(
-            setFlow({
-              flow: Flow.Activation,
-              step:
-                trustchainResult.type === TrustchainResultType.created
-                  ? Step.ActivationFinal
-                  : Step.SynchronizationFinal,
-            }),
-          );
-        }
+        transitionToNextScreen(trustchainResult);
       });
+    } catch (error) {
+      setError(error as Error);
     }
   };
 
-  const addMemberMutation = useMutation({
-    mutationFn: () => addMember(),
-    onError: error => {
-      console.error("Error while adding member", error);
-    },
-  });
+  const transitionToNextScreen = (trustchainResult: TrustchainResult) => {
+    dispatch(setTrustchain(trustchainResult.trustchain));
+    dispatch(
+      setFlow({
+        flow: Flow.Activation,
+        step:
+          trustchainResult.type === TrustchainResultType.created
+            ? Step.ActivationFinal
+            : Step.SynchronizationFinal,
+      }),
+    );
+  };
 
-  return addMemberMutation;
+  const handleMissingDevice = () => {
+    dispatch(
+      setFlow({
+        flow: Flow.Activation,
+        step: Step.DeviceAction,
+      }),
+    );
+  };
+  const onRetry = () => {
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
+  };
+  return { error, userDeviceInteraction, handleMissingDevice, onRetry };
 }
