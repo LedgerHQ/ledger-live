@@ -8,10 +8,14 @@ import { settingsExportSelector, areSettingsLoaded } from "./../reducers/setting
 import { State } from "../reducers";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { accountUserDataExportSelector } from "@ledgerhq/live-wallet/store";
+
 import {
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
 } from "@ledgerhq/trustchain/store";
+
+import { marketStoreSelector } from "../reducers/market";
+
 let DB_MIDDLEWARE_ENABLED = true;
 
 // ability to temporary disable the db middleware from outside
@@ -49,6 +53,10 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
     next(action);
     const state = store.getState();
     setKey("app", "trustchainStore", trustchainStoreSelector(state));
+  } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("MARKET")) {
+    next(action);
+    const state = store.getState();
+    setKey("app", "market", marketStoreSelector(state));
   } else {
     const oldState = store.getState();
     const res = next(action);
