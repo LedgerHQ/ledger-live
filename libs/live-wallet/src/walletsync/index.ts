@@ -4,6 +4,7 @@ import { createAggregator } from "./aggregator";
 import { createWalletSyncWatchLoop, VisualConfig, WatchConfig } from "./createWalletSyncWatchLoop";
 export { createWalletSyncWatchLoop };
 export type { VisualConfig, WatchConfig };
+export { trustchainLifecycle } from "./trustchainLifecyle";
 
 // Maintain here the list of modules to aggregate for WalletSync data
 // New modules can be added over time, it's also possible to remove modules but don't replace modules because the schema of a field must not change.
@@ -34,6 +35,8 @@ export type Schema = ExtractSchema<Root>;
 export type DistantState = z.infer<Schema>;
 
 export default root;
+
+export const liveSlug = "live";
 
 /**
  * specialized version of createWalletSyncWatchLoop for the root WalletSyncDataManager.
