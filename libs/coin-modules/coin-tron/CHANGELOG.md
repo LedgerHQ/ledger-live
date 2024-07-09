@@ -1,5 +1,18 @@
 # @ledgerhq/coin-tron
 
+## 0.0.2-nightly.6
+
+### Patch Changes
+
+- [#7260](https://github.com/LedgerHQ/ledger-live/pull/7260) [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use random dead address to determine trx fees, update pricing for the sending of trc20 tokens
+
+- Updated dependencies [[`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b)]:
+  - @ledgerhq/cryptoassets@13.1.2-nightly.0
+  - @ledgerhq/errors@6.18.0-nightly.2
+  - @ledgerhq/coin-framework@0.16.0-nightly.2
+  - @ledgerhq/devices@8.4.1-nightly.2
+  - @ledgerhq/live-network@1.3.1-nightly.2
+
 ## 0.0.2-nightly.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.18.0-nightly.2
+
+### Patch Changes
+
+- [#7286](https://github.com/LedgerHQ/ledger-live/pull/7286) [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: tron max value computation
+
 ## 6.18.0-nightly.1
 
 ### Patch Changes

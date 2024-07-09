@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.47.0-nightly.4
+
+### Patch Changes
+
+- [#7259](https://github.com/LedgerHQ/ledger-live/pull/7259) [`ff23360`](https://github.com/LedgerHQ/ledger-live/commit/ff23360bba807a7e6bd497271fcffdb327a6e23f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Store
+
+- Updated dependencies [[`383ecdd`](https://github.com/LedgerHQ/ledger-live/commit/383ecdda660f91f1ef9d50910174f1f3d97b2747), [`289996a`](https://github.com/LedgerHQ/ledger-live/commit/289996ac487b1f3c4f95afa3218b1c86218a30c2), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b)]:
+  - @ledgerhq/live-common@34.6.0-nightly.4
+  - @ledgerhq/errors@6.18.0-nightly.2
+  - @ledgerhq/coin-framework@0.16.0-nightly.2
+  - @ledgerhq/coin-evm@2.1.2-nightly.2
+  - @ledgerhq/live-countervalues@0.2.2-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.2
+  - @ledgerhq/live-nft@0.4.2-nightly.2
+  - @ledgerhq/live-nft-react@0.4.2-nightly.2
+  - @ledgerhq/live-wallet@0.3.1-nightly.2
+  - @ledgerhq/domain-service@1.2.2-nightly.1
+  - @ledgerhq/devices@8.4.1-nightly.2
+  - @ledgerhq/hw-transport@6.31.1-nightly.2
+  - @ledgerhq/hw-transport-http@6.30.1-nightly.2
+  - @ledgerhq/react-native-hid@6.32.1-nightly.2
+  - @ledgerhq/react-native-hw-transport-ble@6.33.1-nightly.2
+
 ## 3.47.0-nightly.3
 
 ### Patch Changes

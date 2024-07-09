@@ -1,5 +1,54 @@
 ## 34.5.0-next.4
 
+## 34.6.0-nightly.4
+
+### Patch Changes
+
+- [#7278](https://github.com/LedgerHQ/ledger-live/pull/7278) [`383ecdd`](https://github.com/LedgerHQ/ledger-live/commit/383ecdda660f91f1ef9d50910174f1f3d97b2747) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: getAvailableProviders returns CAL providers
+
+- [#7277](https://github.com/LedgerHQ/ledger-live/pull/7277) [`289996a`](https://github.com/LedgerHQ/ledger-live/commit/289996ac487b1f3c4f95afa3218b1c86218a30c2) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: regression stop ignoring all swaps error
+
+- [#7286](https://github.com/LedgerHQ/ledger-live/pull/7286) [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: tron max value computation
+
+- Updated dependencies [[`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b)]:
+  - @ledgerhq/cryptoassets@13.1.2-nightly.0
+  - @ledgerhq/coin-tron@0.0.2-nightly.6
+  - @ledgerhq/errors@6.18.0-nightly.2
+  - @ledgerhq/coin-framework@0.16.0-nightly.2
+  - @ledgerhq/coin-algorand@0.5.2-nightly.2
+  - @ledgerhq/coin-bitcoin@0.6.2-nightly.2
+  - @ledgerhq/coin-cardano@0.1.2-nightly.2
+  - @ledgerhq/coin-evm@2.1.2-nightly.2
+  - @ledgerhq/coin-near@0.5.2-nightly.2
+  - @ledgerhq/coin-polkadot@1.1.0-nightly.3
+  - @ledgerhq/coin-solana@0.7.2-nightly.2
+  - @ledgerhq/coin-stellar@0.2.0-nightly.2
+  - @ledgerhq/coin-tezos@0.5.0-nightly.2
+  - @ledgerhq/coin-xrp@0.4.0-nightly.2
+  - @ledgerhq/hw-app-eth@6.37.2-nightly.1
+  - @ledgerhq/hw-app-vet@0.2.2-nightly.0
+  - @ledgerhq/live-countervalues@0.2.2-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.2
+  - @ledgerhq/live-nft@0.4.2-nightly.2
+  - @ledgerhq/live-wallet@0.3.1-nightly.2
+  - @ledgerhq/device-core@0.2.2-nightly.1
+  - @ledgerhq/devices@8.4.1-nightly.2
+  - @ledgerhq/hw-app-algorand@6.29.1-nightly.2
+  - @ledgerhq/hw-app-cosmos@6.30.1-nightly.2
+  - @ledgerhq/hw-app-exchange@0.5.1-nightly.2
+  - @ledgerhq/hw-app-polkadot@6.31.1-nightly.0
+  - @ledgerhq/hw-app-solana@7.2.1-nightly.2
+  - @ledgerhq/hw-app-str@7.0.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.1-nightly.2
+  - @ledgerhq/live-network@1.3.1-nightly.2
+  - @ledgerhq/speculos-transport@0.1.2-nightly.2
+  - @ledgerhq/hw-app-btc@10.4.0-nightly.3
+  - @ledgerhq/hw-app-near@6.29.1-nightly.2
+  - @ledgerhq/hw-app-tezos@6.29.1-nightly.2
+  - @ledgerhq/hw-app-trx@6.29.1-nightly.2
+  - @ledgerhq/hw-app-xrp@6.29.1-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.29.1-nightly.2
+
 ## 34.6.0-nightly.3
 
 ### Patch Changes

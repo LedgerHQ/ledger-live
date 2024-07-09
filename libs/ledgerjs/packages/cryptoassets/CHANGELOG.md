@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.1.2-nightly.0
+
+### Patch Changes
+
+- [#7260](https://github.com/LedgerHQ/ledger-live/pull/7260) [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use random dead address to determine trx fees, update pricing for the sending of trc20 tokens
+
 ## 13.1.1
 
 ### Patch Changes
