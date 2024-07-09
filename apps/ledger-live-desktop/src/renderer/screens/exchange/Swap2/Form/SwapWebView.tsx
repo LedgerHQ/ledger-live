@@ -74,9 +74,6 @@ export type SwapProps = {
   swapApiBase: string;
   estimatedFees: string;
   estimatedFeesUnit: string;
-  updateTransaction: any;
-  setTransaction: any;
-  status: TransactionStatus;
 };
 
 export type SwapWebProps = {
