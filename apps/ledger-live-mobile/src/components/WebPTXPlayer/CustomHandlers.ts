@@ -98,8 +98,13 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
               },
             });
           },
-          "custom.exchange.error": () => {
-            // todo add screen for LLM
+          "custom.exchange.error": ({ error }) => {
+            navigation.navigate(NavigatorName.CustomError, {
+              screen: ScreenName.CustomErrorScreen,
+              params: {
+                error,
+              },
+            });
           },
         },
       }),

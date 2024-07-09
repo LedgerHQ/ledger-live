@@ -87,6 +87,7 @@ import LandingPagesNavigator from "./LandingPagesNavigator";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 import WalletSyncNavigator from "LLM/features/WalletSync/Navigator";
+import CustomErrorNavigator from "./CustomErrorNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -298,6 +299,12 @@ export default function BaseNavigator() {
           name={NavigatorName.PlatformExchange}
           component={PlatformExchangeNavigator}
           options={{ headerShown: false }}
+          {...noNanoBuyNanoWallScreenOptions}
+        />
+        <Stack.Screen
+          name={NavigatorName.CustomError}
+          component={CustomErrorNavigator}
+          options={{ title: "" }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
