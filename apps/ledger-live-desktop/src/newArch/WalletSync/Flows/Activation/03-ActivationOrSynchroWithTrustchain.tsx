@@ -11,18 +11,14 @@ type Props = {
 };
 
 export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
-  const { error, userDeviceInteraction, handleMissingDevice, onRetry } = useAddMember({ device });
-
-  if (!device) {
-    handleMissingDevice();
-  }
+  const { error, userDeviceInteraction, onRetry } = useAddMember({ device });
 
   if (error) {
     return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
   }
 
   if (userDeviceInteraction && device) {
-    <FollowStepsOnDevice modelId={device.modelId} />;
+    return <FollowStepsOnDevice modelId={device.modelId} />;
   } else {
     return <InfiniteLoader size={50} />;
   }

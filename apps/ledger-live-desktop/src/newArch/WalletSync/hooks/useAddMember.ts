@@ -19,6 +19,10 @@ export function useAddMember({ device }: { device: Device | null }) {
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
 
   useEffect(() => {
+    if (!device) {
+      handleMissingDevice();
+    }
+
     addMember();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
