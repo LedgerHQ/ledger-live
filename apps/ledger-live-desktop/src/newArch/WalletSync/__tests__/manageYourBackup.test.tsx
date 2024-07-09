@@ -1,13 +1,9 @@
-/**
- * @jest-environment jsdom
- */
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
-import { getSdk } from "@ledgerhq/trustchain/index";
 
 import * as ReactQuery from "@tanstack/react-query";
+import { mockedSdk, simpleTrustChain, walletSyncActivatedState } from "../testHelper/helper";
 
 const WalletSyncTestApp = () => (
   <>
@@ -21,11 +17,6 @@ jest.mock(
   () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
   { virtual: true },
 );
-
-const mockedSdk = getSdk(true, {
-  applicationId: 12,
-  name: "LLD Integration",
-});
 
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({
@@ -48,17 +39,9 @@ describe("ManageYourBackup", () => {
   it("should open drawer and display Wallet Sync Manage flow and delete your backup", async () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
-        walletSync: {
-          ...initialStateWalletSync,
-          flow: Flow.WalletSyncActivated,
-          step: Step.WalletSyncActivated,
-        },
+        walletSync: walletSyncActivatedState,
         trustchainStore: {
-          trustchain: {
-            rootId: "rootId",
-            deviceId: "deviceId",
-            trustchainId: "trustchainId",
-          },
+          trustchain: simpleTrustChain,
         },
       },
     });

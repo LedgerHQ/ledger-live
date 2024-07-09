@@ -19,4 +19,6 @@ export function useInitMemberCredentials() {
   useEffect(() => {
     generateMemberCredentials();
   }, [generateMemberCredentials]);
+
+  return { memberCredentials, generateMemberCredentials };
 }
