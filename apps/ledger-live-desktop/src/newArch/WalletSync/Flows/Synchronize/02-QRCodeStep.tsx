@@ -6,6 +6,8 @@ import { rgba } from "~/renderer/styles/helpers";
 import QRCode from "~/renderer/components/QRCode";
 import { useQRCode } from "../../hooks/useQRCode";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
 
 export default function SynchWithQRCodeStep() {
   const { t } = useTranslation();
@@ -53,6 +55,7 @@ export default function SynchWithQRCodeStep() {
 
   return (
     <Flex flexDirection="column" rowGap="24px" alignItems="center" flex={1}>
+      <TrackPage category={AnalyticsPage.SyncWithQR} />
       <Text
         fontSize={23}
         variant="large"

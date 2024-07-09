@@ -8,14 +8,30 @@ import SynchronizeModeStep from "./01-SyncModeStep";
 import SynchWithQRCodeStep from "./02-QRCodeStep";
 import PinCodeStep from "./03-PinCodeStep";
 import SyncFinalStep from "./04-SyncFinalStep";
+import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
 
 const SynchronizeWallet = () => {
   const dispatch = useDispatch();
 
   const { currentStep, goToNextScene } = useFlows();
+  const { onClickTrack } = useWalletSyncAnalytics();
 
   const startSyncWithDevice = () => {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
+    onClickTrack({
+      button: "With your Ledger",
+      page: AnalyticsPage.SyncMethod,
+      flow: "Wallet Sync",
+    });
+  };
+
+  const startSyncWithQRcode = () => {
+    goToNextScene();
+    onClickTrack({
+      button: "Scan a QR code",
+      page: AnalyticsPage.SyncMethod,
+      flow: "Wallet Sync",
+    });
   };
 
   const getStep = () => {
@@ -24,7 +40,7 @@ const SynchronizeWallet = () => {
       case Step.SynchronizeMode:
         return (
           <SynchronizeModeStep
-            goToQRCode={goToNextScene}
+            goToQRCode={startSyncWithQRcode}
             goToSyncWithDevice={startSyncWithDevice}
           />
         );
