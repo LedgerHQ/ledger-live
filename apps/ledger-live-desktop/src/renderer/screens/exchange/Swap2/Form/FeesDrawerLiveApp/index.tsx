@@ -8,11 +8,11 @@ import {
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
-import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Button, Divider } from "@ledgerhq/react-ui";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
@@ -82,10 +82,13 @@ export default function FeesDrawerLiveApp({
     [disableSlowStrategy],
   );
 
-  const handleRequestClose = useCallback(() => {
-    setIsOpen(false);
-    onRequestClose();
-  }, [onRequestClose]);
+  const handleRequestClose = useCallback(
+    (save: boolean) => {
+      setIsOpen(false);
+      onRequestClose(save);
+    },
+    [onRequestClose, setIsOpen],
+  );
 
   if (!isOpen) return null;
 
@@ -94,17 +97,18 @@ export default function FeesDrawerLiveApp({
       title={t("swap2.form.details.label.fees")}
       isOpen={isOpen}
       preventBackdropClick
-      onRequestClose={handleRequestClose}
+      onRequestClose={() => handleRequestClose(false)}
       direction="left"
     >
-      <Box height="100%">
+      <Divider />
+      <Box height="90%" display="flex" flexDirection="column">
         <TrackPage
           category="Swap"
           name="Form - Edit Fees"
           provider={provider}
           {...swapDefaultTrack}
         />
-        <Box mt={3} flow={4} mx={3}>
+        <Box mt={3} flow={4} mx={3} flex="1">
           {transaction && mainAccount && (
             <SendAmountFields
               account={parentAccount || (mainAccount as Account)}
@@ -121,6 +125,17 @@ export default function FeesDrawerLiveApp({
               }}
             />
           )}
+        </Box>
+        <Divider />
+        <Box mt={3} mx={3} alignSelf="flex-end">
+          <Button
+            variant={"main"}
+            outline
+            borderRadius={48}
+            onClick={() => handleRequestClose(true)}
+          >
+            {t("common.continue")}
+          </Button>
         </Box>
       </Box>
     </SideDrawer>

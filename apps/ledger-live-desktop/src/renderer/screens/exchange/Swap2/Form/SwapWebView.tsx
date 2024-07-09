@@ -275,7 +275,7 @@ const SwapWebView = ({
           openDrawer: boolean;
         };
       }): Promise<{
-        feesStrategy: BigNumber;
+        feesStrategy: string;
         estimatedFees: BigNumber | undefined;
         errors: any;
         warnings: any;
@@ -311,6 +311,7 @@ const SwapWebView = ({
         });
 
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
+        const statusInit = status;
         let finalTx = preparedTransaction;
         let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
         const setTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
@@ -336,7 +337,7 @@ const SwapWebView = ({
         }
 
         return new Promise<{
-          feesStrategy: BigNumber;
+          feesStrategy: string;
           estimatedFees: BigNumber | undefined;
           errors: any;
           warnings: any;
@@ -350,8 +351,20 @@ const SwapWebView = ({
             provider: undefined,
             disableSlowStrategy: true,
             transaction: preparedTransaction,
-            onRequestClose: () => {
+            onRequestClose: (save: boolean) => {
               setDrawer(undefined);
+              if (!save) {
+                resolve({
+                  feesStrategy: params.feeStrategy,
+                  estimatedFees: convertToNonAtomicUnit({
+                    amount: statusInit.estimatedFees,
+                    account: mainAccount,
+                  }),
+                  errors: statusInit.errors,
+                  warnings: statusInit.warnings,
+                  customFeeConfig,
+                });
+              }
               resolve({
                 feesStrategy: finalTx.feesStrategy,
                 estimatedFees: convertToNonAtomicUnit({
