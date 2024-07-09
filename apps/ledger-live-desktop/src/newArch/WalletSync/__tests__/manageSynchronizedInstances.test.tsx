@@ -6,7 +6,6 @@ import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
 import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
 import { getSdk } from "@ledgerhq/trustchain/index";
-import { defaultContext } from "../hooks/useTrustchainSdk";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
 
 const WalletSyncTestApp = () => (
@@ -22,7 +21,10 @@ jest.mock(
   { virtual: true },
 );
 
-const mockedSdk = getSdk(true, defaultContext);
+const mockedSdk = getSdk(true, {
+  applicationId: 12,
+  name: "LLD Integration",
+});
 
 const INSTANCES: Array<TrustchainMember> = [
   {
