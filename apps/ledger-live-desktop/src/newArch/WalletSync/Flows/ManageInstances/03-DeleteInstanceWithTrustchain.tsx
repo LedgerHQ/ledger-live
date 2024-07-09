@@ -17,7 +17,7 @@ export default function DeleteInstanceWithTrustchain({ instance, device }: Props
     return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
   }
   if (userDeviceInteraction && device) {
-    <FollowStepsOnDevice modelId={device.modelId} />;
+    return <FollowStepsOnDevice modelId={device.modelId} />;
   } else {
     return <InfiniteLoader size={50} />;
   }

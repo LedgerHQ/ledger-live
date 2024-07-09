@@ -9,7 +9,7 @@ import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
 import { TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { TrustchainMember, Trustchain, MemberCredentials } from "@ledgerhq/trustchain/types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   device: Device | null;
@@ -23,16 +23,60 @@ export function useRemoveMembers({ device, member }: Props) {
   const memberCredentials = useSelector(memberCredentialsSelector);
   const [error, setError] = useState<Error | null>(null);
 
+  const sdkRef = useRef(sdk);
+  const deviceRef = useRef(device);
+  const memberCredentialsRef = useRef(memberCredentials);
+  const trustchainRef = useRef(trustchain);
+
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
 
-  const onRetry = () =>
-    dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
+  const onRetry = useCallback(
+    () => dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance })),
+    [dispatch],
+  );
 
-  const onResetFlow = () =>
-    dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances }));
+  const onResetFlow = useCallback(
+    () => dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances })),
+    [dispatch],
+  );
+
+  const transitionToNextScreen = useCallback(
+    (trustchainResult: Trustchain) => {
+      dispatch(setTrustchain(trustchainResult));
+      dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
+    },
+    [dispatch],
+  );
+
+  const removeMember = useCallback(
+    (member: TrustchainMember) => {
+      try {
+        runWithDevice(deviceRef.current?.deviceId, async transport => {
+          const newTrustchain = await sdkRef.current.removeMember(
+            transport,
+            trustchainRef.current as Trustchain,
+            memberCredentialsRef.current as MemberCredentials,
+            member,
+            {
+              onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+              onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+            },
+          );
+
+          transitionToNextScreen(newTrustchain);
+        });
+      } catch (error) {
+        setError(error as Error);
+        if (!(error instanceof TransportStatusError || error instanceof UserRefusedOnDevice)) {
+          dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
+        }
+      }
+    },
+    [dispatch, transitionToNextScreen],
+  );
 
   useEffect(() => {
-    if (!device) {
+    if (!deviceRef.current) {
       onRetry();
     }
     if (!member) {
@@ -40,38 +84,7 @@ export function useRemoveMembers({ device, member }: Props) {
     } else {
       removeMember(member);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const removeMember = async (member: TrustchainMember) => {
-    try {
-      await runWithDevice(device?.deviceId, async transport => {
-        const newTrustchain = await sdk.removeMember(
-          transport,
-          trustchain as Trustchain,
-          memberCredentials as MemberCredentials,
-          member,
-          {
-            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-          },
-        );
-
-        transitionToNextScreen(newTrustchain);
-      });
-    } catch (error) {
-      setError(error as Error);
-      if (!(error instanceof TransportStatusError || error instanceof UserRefusedOnDevice)) {
-        dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
-      }
-    }
-  };
-
-  const transitionToNextScreen = (trustchainResult: Trustchain) => {
-    dispatch(setTrustchain(trustchainResult));
-    dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.InstanceSuccesfullyDeleted }));
-  };
+  }, [member, onResetFlow, onRetry, removeMember]);
 
   return {
     error,

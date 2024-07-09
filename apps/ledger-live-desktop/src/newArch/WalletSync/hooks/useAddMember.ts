@@ -1,14 +1,14 @@
-import {
-  memberCredentialsSelector,
-  setMemberCredentials,
-  setTrustchain,
-} from "@ledgerhq/trustchain/store";
+import { memberCredentialsSelector, setTrustchain } from "@ledgerhq/trustchain/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
-import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
-import { useEffect, useState } from "react";
+import {
+  MemberCredentials,
+  TrustchainResult,
+  TrustchainResultType,
+} from "@ledgerhq/trustchain/types";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useAddMember({ device }: { device: Device | null }) {
   const dispatch = useDispatch();
@@ -18,60 +18,65 @@ export function useAddMember({ device }: { device: Device | null }) {
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
 
-  useEffect(() => {
-    if (!device) {
-      handleMissingDevice();
-    }
+  const sdkRef = useRef(sdk);
+  const deviceRef = useRef(device);
+  const memberCredentialsRef = useRef(memberCredentials);
 
-    addMember();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const transitionToNextScreen = useCallback(
+    (trustchainResult: TrustchainResult) => {
+      dispatch(setTrustchain(trustchainResult.trustchain));
+      dispatch(
+        setFlow({
+          flow: Flow.Activation,
+          step:
+            trustchainResult.type === TrustchainResultType.created
+              ? Step.ActivationFinal
+              : Step.SynchronizationFinal,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
-  const addMember = async () => {
-    let currentCredentials = memberCredentials;
-    if (!currentCredentials) {
-      const newMemberCredentials = await sdk.initMemberCredentials();
-      dispatch(setMemberCredentials(newMemberCredentials));
-      currentCredentials = newMemberCredentials;
-    }
-
-    try {
-      runWithDevice(device?.deviceId, async transport => {
-        const trustchainResult = await sdk.getOrCreateTrustchain(transport, currentCredentials, {
-          onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-          onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-        });
-
-        transitionToNextScreen(trustchainResult);
-      });
-    } catch (error) {
-      setError(error as Error);
-    }
-  };
-
-  const transitionToNextScreen = (trustchainResult: TrustchainResult) => {
-    dispatch(setTrustchain(trustchainResult.trustchain));
-    dispatch(
-      setFlow({
-        flow: Flow.Activation,
-        step:
-          trustchainResult.type === TrustchainResultType.created
-            ? Step.ActivationFinal
-            : Step.SynchronizationFinal,
-      }),
-    );
-  };
-
-  const handleMissingDevice = () => {
+  const handleMissingDevice = useCallback(() => {
     dispatch(
       setFlow({
         flow: Flow.Activation,
         step: Step.DeviceAction,
       }),
     );
-  };
+  }, [dispatch]);
+
   const onRetry = () => {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
   };
+
+  useEffect(() => {
+    if (!deviceRef.current) {
+      handleMissingDevice();
+    }
+
+    const addMember = async () => {
+      try {
+        runWithDevice(deviceRef.current?.deviceId, async transport => {
+          const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
+            transport,
+            memberCredentialsRef.current as MemberCredentials,
+            {
+              onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+              onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+            },
+          );
+
+          transitionToNextScreen(trustchainResult);
+        });
+      } catch (error) {
+        setError(error as Error);
+      }
+    };
+
+    addMember();
+  }, [dispatch, handleMissingDevice, transitionToNextScreen]);
+
   return { error, userDeviceInteraction, handleMissingDevice, onRetry };
 }
