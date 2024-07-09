@@ -4,7 +4,10 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
+import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
+import { getSdk } from "@ledgerhq/trustchain/index";
+
+import * as ReactQuery from "@tanstack/react-query";
 
 const WalletSyncTestApp = () => (
   <>
@@ -19,11 +22,44 @@ jest.mock(
   { virtual: true },
 );
 
+const mockedSdk = getSdk(true, {
+  applicationId: 12,
+  name: "LLD Integration",
+});
+
+jest.mock("../hooks/useTrustchainSdk", () => ({
+  useTrustchainSdk: () => ({
+    destroyTrustchain: (mockedSdk.destroyTrustchain = jest.fn()),
+    getMembers: (mockedSdk.getMembers = jest.fn()),
+  }),
+}));
+
+jest.mock("@tanstack/react-query", () => {
+  return {
+    __esModule: true,
+    ...jest.requireActual("@tanstack/react-query"),
+  };
+});
+jest
+  .spyOn(ReactQuery, "useQuery")
+  .mockImplementation(jest.fn().mockReturnValue({ data: [], isLoading: false, isSuccess: true }));
+
 describe("ManageYourBackup", () => {
   it("should open drawer and display Wallet Sync Manage flow and delete your backup", async () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
-        walletSync: { ...initialStateWalletSync, activated: true },
+        walletSync: {
+          ...initialStateWalletSync,
+          flow: Flow.WalletSyncActivated,
+          step: Step.WalletSyncActivated,
+        },
+        trustchainStore: {
+          trustchain: {
+            rootId: "rootId",
+            deviceId: "deviceId",
+            trustchainId: "trustchainId",
+          },
+        },
       },
     });
 
