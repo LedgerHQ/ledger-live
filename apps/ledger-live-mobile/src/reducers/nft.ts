@@ -4,7 +4,7 @@ import type { NftState, State } from "./types";
 import type {
   NftStateGalleryFilterDrawerVisiblePayload,
   NftStateGalleryChainFiltersPayload,
-  NftStatePayload,
+  NftPayload,
 } from "../actions/types";
 import { NftStateActionTypes } from "../actions/types";
 
@@ -16,7 +16,7 @@ export const INITIAL_STATE: NftState = {
   },
 };
 
-const handlers: ReducerMap<NftState, NftStatePayload> = {
+const handlers: ReducerMap<NftState, NftPayload> = {
   [NftStateActionTypes.SET_GALLERY_FILTER_DRAWER_VISIBLE]: (state, action) => ({
     ...state,
     filterDrawerVisible: (action as Action<NftStateGalleryFilterDrawerVisiblePayload>).payload,
@@ -36,4 +36,4 @@ const handlers: ReducerMap<NftState, NftStatePayload> = {
 export const galleryChainFiltersSelector = (state: State) => state.nft.galleryChainFilters;
 export const galleryFilterDrawerVisibleSelector = (state: State) => state.nft.filterDrawerVisible;
 
-export default handleActions<NftState, NftStatePayload>(handlers, INITIAL_STATE);
+export default handleActions<NftState, NftPayload>(handlers, INITIAL_STATE);
