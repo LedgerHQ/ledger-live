@@ -19,10 +19,19 @@
     "node_modules/**",
     "src/generate-cryptoassets-md.test.ts",
     "src/generate-cryptoassets-md.ts",
+
     "src/newArch/Collectibles/**",
-    "src/newArch/WalletSync/**"
+    "src/newArch/WalletSync/**",
+    "src/newArch/components/ContextMenu/**",
+    "src/newArch/components/BreadCrumb/**"
   ],
-  "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types", "allure-commandline"],
+  "ignoreUnused": [
+    "@types/semver",
+    "@types/qrcode",
+    "@types/react-key-handler",
+    "prop-types",
+    "allure-commandline"
+  ],
   "aliases": {
     "~/*": ["./src/*"]
   }

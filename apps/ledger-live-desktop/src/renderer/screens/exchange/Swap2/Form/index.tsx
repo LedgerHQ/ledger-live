@@ -1,3 +1,4 @@
+import { NotEnoughBalance, NotEnoughBalanceSwap } from "@ledgerhq/errors";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import {
   SetExchangeRateCallback,
@@ -9,6 +10,7 @@ import {
 import {
   maybeTezosAccountUnrevealedAccount,
   maybeTronEmptyAccount,
+  maybeKeepTronAccountAlive,
 } from "@ledgerhq/live-common/exchange/swap/index";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -30,7 +32,6 @@ import styled from "styled-components";
 import { rateSelector, updateRateAction, updateTransactionAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import Box from "~/renderer/components/Box";
 import { context } from "~/renderer/drawers/Provider";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
@@ -44,16 +45,20 @@ import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import EmptyState from "./Rates/EmptyState";
 import SwapWebView, { SwapWebProps } from "./SwapWebView";
 import { useIsSwapLiveFlagEnabled } from "./useIsSwapLiveFlagEnabled";
-import { NotEnoughBalance, NotEnoughBalanceSwap } from "@ledgerhq/errors";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
-const Wrapper = styled(Box).attrs({
-  p: 20,
-  mt: 12,
-})`
-  row-gap: 2rem;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   max-width: 37rem;
+  padding: ${({ theme }) => theme.space[2]}px ${({ theme }) => theme.space[4]}px 0;
+  row-gap: 0.5rem;
+  @media screen and (min-height: 800px) {
+    row-gap: 2rem;
+    margin-top: 12px;
+    padding: ${({ theme }) => theme.space[4]}px;
+  }
 `;
 
 const idleTime = 60 * 60000; // 1 hour
@@ -126,9 +131,10 @@ const SwapForm = () => {
         exchangeRatesState?.error ||
         maybeTezosAccountUnrevealedAccount(swapTransaction) ||
         (ptxSwapReceiveTRC20WithoutTrx?.enabled
-          ? maybeTronEmptyAccount(swapTransaction)
-          : undefined);
-  const swapWarning = swapTransaction.fromAmountWarning;
+          ? undefined
+          : maybeTronEmptyAccount(swapTransaction));
+  const swapWarning =
+    swapTransaction.fromAmountWarning || maybeKeepTronAccountAlive(swapTransaction);
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();

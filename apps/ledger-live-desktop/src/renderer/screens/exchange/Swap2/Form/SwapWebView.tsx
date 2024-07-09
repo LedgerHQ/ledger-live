@@ -21,6 +21,7 @@ import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import useTheme from "~/renderer/hooks/useTheme";
 import {
   counterValueCurrencySelector,
+  discreetModeSelector,
   enablePlatformDevToolsSelector,
   languageSelector,
 } from "~/renderer/reducers/settings";
@@ -118,6 +119,7 @@ const SwapWebView = ({
   const { setDrawer } = React.useContext(context);
   const accounts = useSelector(flattenAccountsSelector);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const discreetMode = useSelector(discreetModeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
   const redirectToHistory = useRedirectToSwapHistory();
@@ -392,6 +394,7 @@ const SwapWebView = ({
       provider: swapState?.provider,
       to: targetCurrency?.id,
       toAccountId: swapState?.toAccountId,
+      fromAccountId: swapState?.fromAccountId,
     };
 
     Object.entries(swapParams).forEach(([key, value]) => {
@@ -414,6 +417,7 @@ const SwapWebView = ({
     swapState?.loading,
     swapState?.provider,
     swapState?.toAccountId,
+    swapState?.fromAccountId,
     targetCurrency?.id,
   ]);
 
@@ -457,6 +461,7 @@ const SwapWebView = ({
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
+            discreetMode,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

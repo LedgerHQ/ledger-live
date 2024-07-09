@@ -203,7 +203,7 @@ export const INITIAL_STATE: SettingsState = {
   dismissedContentCards: {} as Record<string, number>,
   anonymousBrazeId: null,
 
-  //MARKET
+  //Market
   starredMarketCoins: [],
 };
 
@@ -257,9 +257,10 @@ type HandlersPayloads = {
   };
   CLEAR_DISMISSED_CONTENT_CARDS: never;
   SET_ANONYMOUS_BRAZE_ID: string;
-  ADD_STARRED_MARKET_COINS: string;
-  REMOVE_STARRED_MARKET_COINS: string;
   SET_CURRENCY_SETTINGS: { key: string; value: CurrencySettings };
+
+  MARKET_ADD_STARRED_COINS: string;
+  MARKET_REMOVE_STARRED_COINS: string;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -447,11 +448,12 @@ const handlers: SettingsHandlers = {
     ...state,
     anonymousBrazeId: payload,
   }),
-  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+
+  MARKET_ADD_STARRED_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: [...state.starredMarketCoins, payload],
   }),
-  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+  MARKET_REMOVE_STARRED_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
   }),
@@ -794,5 +796,4 @@ export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymo
 
 export const currenciesSettingsSelector = (state: State) => state.settings.currenciesSettings;
 
-//MARKET
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

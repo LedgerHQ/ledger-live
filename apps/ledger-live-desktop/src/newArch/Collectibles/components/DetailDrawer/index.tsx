@@ -97,6 +97,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
     useFallback,
     mediaType,
     tokenId,
+    isLoading: areFieldsLoading,
     closeCollectiblesPanAndZoom,
     setUseFallback,
   });

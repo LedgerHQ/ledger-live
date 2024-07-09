@@ -4,12 +4,13 @@ import { crypto } from "@ledgerhq/hw-trustchain";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { setEnv } from "@ledgerhq/live-env";
 import Transport from "@ledgerhq/hw-transport";
+import { ScenarioOptions } from "./types";
 
 setEnv("GET_CALLS_RETRY", 0);
 
 export function replayTrustchainSdkTests<Json extends JsonShape>(
   json: Json,
-  testFn: (transport: Transport) => Promise<void>,
+  scenario: (transport: Transport, scenarioOptions: ScenarioOptions) => Promise<void>,
 ) {
   // This replays, in order, all HTTP queries we have saved in json records
   let httpTransactionIndex = 0;
@@ -77,7 +78,11 @@ export function replayTrustchainSdkTests<Json extends JsonShape>(
     try {
       // This replays, in order, all APDUs we have saved in json records
       const transport = await openTransportReplayer(recordStore);
-      await testFn(transport);
+      const options: ScenarioOptions = {
+        pauseRecorder: () => Promise.resolve(), // replayer don't need to pause
+        switchDeviceSeed: async () => transport, // nothing to actually do, we will continue replaying
+      };
+      await scenario(transport, options);
     } finally {
       mockServer.close();
     }

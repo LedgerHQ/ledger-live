@@ -5,8 +5,8 @@ import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import type { Account, AccountLike, AccountLikeArray, SubAccount } from "@ledgerhq/types-live";
 import type { Transaction, Baker } from "../types";
-import { listBakers, fetchAllBakers } from "../api/bakers";
-import defaultList from "../api/bakers.whitelist-default";
+import { listBakers, fetchAllBakers } from "../network/bakers";
+import defaultList from "../network/bakers.whitelist-default";
 
 const options = [
   {

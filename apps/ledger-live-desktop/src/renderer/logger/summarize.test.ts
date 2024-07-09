@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, test, expect } from "@jest/globals";
 import { summarize } from "./summarize";
 describe("circular reference protection", () => {
   test("object circular reference", () => {

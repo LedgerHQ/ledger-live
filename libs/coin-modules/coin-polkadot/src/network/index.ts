@@ -18,7 +18,7 @@ import {
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
 import network from "@ledgerhq/live-network/network";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 
 type PolkadotAPIAccount = {
   blockHeight: number;
@@ -81,7 +81,7 @@ const isNewAccount = makeLRUCache(sidecarIsNewAccount, address => address, minut
 const metadataHash = async (): Promise<string> => {
   const res: any = await network({
     method: "POST",
-    url: getCoinConfig().metadataHash.url,
+    url: coinConfig.getCoinConfig().metadataHash.url,
     data: {
       id: "dot",
     },
@@ -92,7 +92,7 @@ const metadataHash = async (): Promise<string> => {
 const shortenMetadata = async (transaction: string): Promise<string> => {
   const res: any = await network({
     method: "POST",
-    url: getCoinConfig().metadataShortener.url,
+    url: coinConfig.getCoinConfig().metadataShortener.url,
     data: {
       chain: {
         id: "dot",
@@ -100,6 +100,7 @@ const shortenMetadata = async (transaction: string): Promise<string> => {
       txBlob: transaction,
     },
   });
+
   return res.data.txMetadata;
 };
 
