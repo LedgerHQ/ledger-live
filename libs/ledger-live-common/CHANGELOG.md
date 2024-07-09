@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.6.0-next.1
+
+### Minor Changes
+
+- [#7295](https://github.com/LedgerHQ/ledger-live/pull/7295) [`c59b06f`](https://github.com/LedgerHQ/ledger-live/commit/c59b06f5a904366ae98840cad316855a8a92c1bc) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Cosmos library to sign tx
+
 ## 34.6.0-next.0
 
 ### Minor Changes
