@@ -16,6 +16,15 @@ jest.mock(
   { virtual: true },
 );
 
+jest.mock("../hooks/useQRCode", () => ({
+  useQRCode: () => ({
+    startQRCodeProcessing: () => jest.fn(),
+    url: "https://ledger.com",
+    error: null,
+    isLoading: false,
+  }),
+}));
+
 const openDrawer = async () => {
   const { user } = render(<WalletSyncTestApp />, {
     initialState: {
@@ -23,6 +32,13 @@ const openDrawer = async () => {
         ...initialStateWalletSync,
         flow: Flow.WalletSyncActivated,
         step: Step.WalletSyncActivated,
+      },
+      trustchainStore: {
+        trustchain: {
+          rootId: "rootId",
+          deviceId: "deviceId",
+          trustchainId: "trustchainId",
+        },
       },
     },
   });
@@ -59,7 +75,22 @@ describe("Synchronize flow", () => {
     //PinCode Page after scanning QRCode
     // Need to wait 3 seconds to simulate the time taken to scan the QR code
     setTimeout(async () => {
-      await waitFor(() => expect(screen.getByText("Enter the code")).toBeDefined());
+      await waitFor(() => {
+        screen.debug();
+        expect(screen.getByText("Enter the code")).toBeDefined();
+      });
+    }, 3000);
+
+    //Succes Page after PinCode
+    setTimeout(async () => {
+      await waitFor(() => {
+        screen.debug();
+        expect(
+          screen.getByText(
+            "Changes in your accounts will now automatically appear across all apps and platforms.",
+          ),
+        ).toBeDefined();
+      });
     }, 3000);
   });
 });

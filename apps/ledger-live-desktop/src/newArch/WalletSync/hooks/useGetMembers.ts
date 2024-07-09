@@ -29,7 +29,6 @@ export function useGetMembers() {
 
   useEffect(() => {
     if (isErrorGetMembers) {
-      console.log("Error while fetching members", getMembersError);
       errorHandler.handleError(getMembersError);
     }
   }, [errorHandler, getMembersError, isErrorGetMembers]);

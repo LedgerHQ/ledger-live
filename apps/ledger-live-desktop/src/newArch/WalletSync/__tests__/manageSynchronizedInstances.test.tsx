@@ -4,7 +4,10 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
+import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
+import { getSdk } from "@ledgerhq/trustchain/index";
+import { defaultContext } from "../hooks/useTrustchainSdk";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
 
 const WalletSyncTestApp = () => (
   <>
@@ -19,24 +22,63 @@ jest.mock(
   { virtual: true },
 );
 
+const mockedSdk = getSdk(true, defaultContext);
+
+const INSTANCES: Array<TrustchainMember> = [
+  {
+    id: "currentInstance",
+    name: "macOS",
+    permissions: 112,
+  },
+  {
+    id: "2",
+    name: "Ipone 15",
+    permissions: 112,
+  },
+];
+
+jest.mock("../hooks/useTrustchainSdk", () => ({
+  useTrustchainSdk: () => ({
+    getMembers: (mockedSdk.getMembers = jest.fn()),
+    removeMember: (mockedSdk.removeMember = jest.fn()),
+  }),
+}));
+
+jest.mock("../hooks/useGetMembers", () => ({
+  useGetMembers: () => ({
+    isMembersLoading: false,
+    instances: INSTANCES,
+    isError: false,
+  }),
+}));
+
+jest.mock("@tanstack/react-query", () => {
+  return {
+    __esModule: true,
+    ...jest.requireActual("@tanstack/react-query"),
+  };
+});
+
 describe("manageSynchronizedInstances", () => {
-  it("should open drawer and display Wallet Sync ManageSynchronizedInstances flow and delete your instance", async () => {
+  it("should open drawer and display Wallet Sync ManageSynchronizedInstances flow, try delete current instance, handle exception and delete your instance", async () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
         walletSync: {
           ...initialStateWalletSync,
-          instances: [
-            {
-              id: "1",
-              name: "macOS",
-              typeOfDevice: "desktop",
-            },
-            {
-              id: "2",
-              name: "Ipone 15",
-              typeOfDevice: "mobile",
-            },
-          ],
+          flow: Flow.WalletSyncActivated,
+          step: Step.WalletSyncActivated,
+          instances: INSTANCES,
+        },
+        trustchainStore: {
+          trustchain: {
+            rootId: "rootId",
+            deviceId: "deviceId",
+            trustchainId: "trustchainId",
+          },
+          memberCredentials: {
+            pubkey: "currentInstance",
+            privatekey: "privatekey",
+          },
         },
       },
     });
@@ -57,11 +99,28 @@ describe("manageSynchronizedInstances", () => {
 
     await waitFor(() => expect(screen.getByText("Manage synchronized instances")).toBeDefined());
 
-    const instance = screen.getByTestId("walletSync-manage-instance-2");
+    const instance = screen.getByTestId("walletSync-manage-instance-currentInstance");
     expect(instance).toBeDefined();
+
+    await user.click(screen.getAllByText("Remove")[0]);
+
+    // Auto remove check handled
+    expect(screen.getByText(/You can’t remove the current instance/i)).toBeDefined();
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "I understand",
+      }),
+    );
+
+    const myInstance = screen.getByTestId("walletSync-manage-instance-2");
+    expect(myInstance).toBeDefined();
 
     await user.click(screen.getAllByText("Remove")[1]);
 
-    //Need to fake device action
+    // NEED TO FAKE DEVICE ACTION
+    // await waitFor(() =>
+    //   expect(screen.getByText(`Your ${INSTANCES[1]} is no longer synchronized`)).toBeDefined(),
+    // );
   });
 });

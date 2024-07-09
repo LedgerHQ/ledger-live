@@ -5,6 +5,10 @@ import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
 import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
+import { getSdk } from "@ledgerhq/trustchain/index";
+import { defaultContext } from "../hooks/useTrustchainSdk";
+
+import * as ReactQuery from "@tanstack/react-query";
 
 const WalletSyncTestApp = () => (
   <>
@@ -18,6 +22,25 @@ jest.mock(
   () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
   { virtual: true },
 );
+
+const mockedSdk = getSdk(true, defaultContext);
+
+jest.mock("../hooks/useTrustchainSdk", () => ({
+  useTrustchainSdk: () => ({
+    destroyTrustchain: (mockedSdk.destroyTrustchain = jest.fn()),
+    getMembers: (mockedSdk.getMembers = jest.fn()),
+  }),
+}));
+
+jest.mock("@tanstack/react-query", () => {
+  return {
+    __esModule: true,
+    ...jest.requireActual("@tanstack/react-query"),
+  };
+});
+jest
+  .spyOn(ReactQuery, "useQuery")
+  .mockImplementation(jest.fn().mockReturnValue({ data: [], isLoading: false, isSuccess: true }));
 
 describe("ManageYourBackup", () => {
   it("should open drawer and display Wallet Sync Manage flow and delete your backup", async () => {
