@@ -47,7 +47,8 @@
     "test:playwright:clean": "git clean -fdX tests/artifacts",
     "typecheck": "node scripts/typecheck.js",
     "check": "pnpm lint; pnpm typecheck",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "assets:replace": "zx ./scripts/replace-assets.mjs"
   },
   "dependencies": {
     "@braze/web-sdk": "^4.6.3",
