@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, memo } from "react";
+import React, { useMemo, memo } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
@@ -11,10 +11,10 @@ import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import NFTContextMenu from "~/renderer/components/ContextMenu/NFTContextMenu";
-import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
-import { setDrawer } from "~/renderer/drawers/Provider";
 import { State } from "~/renderer/reducers";
 import { IconsLegacy } from "@ledgerhq/react-ui";
+import NftDetailDrawer from "LLD/Collectibles/Nfts/Gallery/DetailDrawer/index";
+
 const Wrapper = styled(Card)`
   &.disabled {
     pointer-events: none;
@@ -66,17 +66,11 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
   const { nftName } = (metadata as NFTMetadata) || {};
   const show = useMemo(() => status === "loading", [status]);
   const isGrid = mode === "grid";
-  const onItemClick = useCallback(() => {
-    setDrawer(
-      NFTViewerDrawer,
-      {
-        account,
-        nftId: id,
-        isOpen: true,
-      },
-      { forceDisableFocusTrap: true },
-    );
-  }, [id, account]);
+
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const onItemClick = () => setIsOpen(true);
+
   const MaybeContext = ({ children }: { children: React.ReactNode }) =>
     withContextMenu && nft && metadata ? (
       <NFTContextMenu key={id} nft={nft} account={account} metadata={metadata as NFTMetadata}>
@@ -156,6 +150,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
           </>
         ) : null}
       </Wrapper>
+      <NftDetailDrawer isOpened={isOpen} setIsOpened={setIsOpen} account={account} tokenId={id} />
     </MaybeContext>
   );
 };

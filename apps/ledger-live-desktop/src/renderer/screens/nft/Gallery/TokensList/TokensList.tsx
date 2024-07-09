@@ -29,6 +29,7 @@ const TokensList = ({ account, nfts, onHideCollection }: Props) => {
           id={nft.id}
           account={account}
           onHideCollection={onHideCollection}
+          withContextMenu
         />
       ))}
     </Container>
