@@ -30,6 +30,7 @@ export type VideoProps = BaseMediaProps;
 
 export type MediaProps = BaseMediaProps & {
   isLoading: boolean;
+  backgroundSize?: string;
   useFallback: boolean;
   contentType: string | undefined;
   collectibleName?: string | null;
