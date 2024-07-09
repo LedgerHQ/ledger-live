@@ -21,6 +21,11 @@ export const initAccounts = (data: [Account, AccountUserData][]) => {
   };
 };
 
+export const replaceAccounts = (accounts: Account[]) => ({
+  type: "DB:REPLACE_ACCOUNTS",
+  payload: accounts,
+});
+
 export const reorderAccounts = (comparator: AccountComparator) => (dispatch: Dispatch) =>
   dispatch({
     type: "DB:REORDER_ACCOUNTS",
