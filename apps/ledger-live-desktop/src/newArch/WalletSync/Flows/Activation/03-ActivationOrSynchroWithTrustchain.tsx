@@ -17,12 +17,12 @@ export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
     handleMissingDevice();
   }
 
+  if (error) {
+    return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
+  }
+
   if (userDeviceInteraction && device) {
-    return error ? (
-      <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />
-    ) : (
-      <FollowStepsOnDevice modelId={device.modelId} />
-    );
+    <FollowStepsOnDevice modelId={device.modelId} />;
   } else {
     return <InfiniteLoader size={50} />;
   }

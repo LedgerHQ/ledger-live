@@ -13,12 +13,11 @@ type Props = {
 export default function DeleteInstanceWithTrustchain({ instance, device }: Props) {
   const { error, userDeviceInteraction, onRetry } = useRemoveMembers({ device, member: instance });
 
+  if (error) {
+    return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
+  }
   if (userDeviceInteraction && device) {
-    return error ? (
-      <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />
-    ) : (
-      <FollowStepsOnDevice modelId={device.modelId} />
-    );
+    <FollowStepsOnDevice modelId={device.modelId} />;
   } else {
     return <InfiniteLoader size={50} />;
   }
