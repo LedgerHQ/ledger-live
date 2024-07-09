@@ -10,6 +10,7 @@ import styled from "styled-components";
 import IconSend from "~/renderer/icons/Send";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
 import TokensList from "./TokensList";
+import TokenList from "LLD/Collectibles/components/Gallery/TokenList";
 import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -20,7 +21,7 @@ import { State } from "~/renderer/reducers";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import theme from "@ledgerhq/react-ui/styles/theme";
 import { useOnScreen } from "../useOnScreen";
-import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, useNftGalleryFilter, useNftMetadata } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SpinnerContainer = styled.div`
@@ -119,6 +120,12 @@ const Gallery = () => {
     threshold: 0.5,
   });
 
+  console.log("nfts", nfts);
+
+  const tokensIdList: string[] = Object.keys(
+    nfts.reduce((acc, nft) => ({ ...acc, [nft.id]: nft }), {}),
+  );
+
   const [collectionsRender, isLoading] = useMemo(() => {
     const collectionsRender: JSX.Element[] = [];
     let isLoading = false;
@@ -133,7 +140,13 @@ const Gallery = () => {
             </Text>
           </ClickableCollectionName>
           {account && (
-            <TokensList account={account} nfts={nfts.slice(0, maxVisibleNFTs - displayedNFTs)} />
+            <>
+              {/*    <TokensList account={account} nfts={nfts.slice(0, maxVisibleNFTs - displayedNFTs)} /> */}
+              <TokenList
+                account={account}
+                collectibles={tokensIdList.slice(0, maxVisibleNFTs - displayedNFTs)}
+              />
+            </>
           )}
         </div>,
       );
@@ -143,7 +156,7 @@ const Gallery = () => {
       displayedNFTs += nfts.length;
     });
     return [collectionsRender, isLoading];
-  }, [collections, maxVisibleNFTs, account, onSelectCollection]);
+  }, [collections, maxVisibleNFTs, account, onSelectCollection, tokensIdList]);
 
   return (
     <>

@@ -9,7 +9,7 @@ import { hasAccountsSelector } from "~/renderer/reducers/accounts";
 import { Bar, ItemContainer } from "./shared";
 import Box from "~/renderer/components/Box";
 import Tooltip from "~/renderer/components/Tooltip";
-import Breadcrumb from "~/renderer/components/Breadcrumb";
+import Breadcrumb from "LLD/components/BreadCrumb";
 import HelpSideBar from "~/renderer/modals/Help";
 
 // TODO: ActivityIndicator
