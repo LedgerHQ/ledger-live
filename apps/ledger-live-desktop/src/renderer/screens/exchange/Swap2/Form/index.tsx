@@ -182,9 +182,6 @@ const SwapForm = () => {
       feeStrategy: feeStrategyParam,
       customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
       toNewTokenId,
-      setTransaction: swapTransaction.setTransaction,
-      updateTransaction: swapTransaction.updateTransaction,
-      status: swapTransaction.status,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
