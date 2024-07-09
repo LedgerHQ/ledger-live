@@ -85,6 +85,10 @@ function readPackage(pkg, context) {
       addDependencies("@cosmjs/tendermint-rpc", {
         "@cosmjs/utils": pkg.version,
       }),
+
+      removeDependencies("@zondax/ledger-cosmos-js", ["crypto"], {
+        kind: "dependencies",
+      }),
       /* React Native and Metro bundler packages */
       // Crashes ios build if removed /!\
       addDependencies("@react-native/codegen", {
