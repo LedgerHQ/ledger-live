@@ -30,6 +30,10 @@ import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
+import {
+  KadenaAccount,
+  Transaction as KadenaTransaction,
+} from "@ledgerhq/live-common/families/kadena/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
@@ -335,6 +339,20 @@ export type SendFundsNavigatorStackParamList = {
     account: Account;
     parentId?: string;
     transaction: CasperTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.KadenaEditChainID]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: KadenaTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
