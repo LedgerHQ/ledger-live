@@ -9,6 +9,8 @@ import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
 import { useInstances } from "../ManageInstances/useInstances";
 import { useLifeCycle } from "../../hooks/walletSync.hooks";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -22,16 +24,22 @@ const WalletSyncManage = () => {
 
   const dispatch = useDispatch();
 
+  const { onClickTrack } = useWalletSyncAnalytics();
+
   const goToSync = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
+
+    onClickTrack({ button: "Synchronize", page: AnalyticsPage.WalletSyncSettings });
   };
 
   const goToManageBackup = () => {
     dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
+    onClickTrack({ button: "Manage Backup", page: AnalyticsPage.WalletSyncSettings });
   };
 
   const goToManageInstances = () => {
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances }));
+    onClickTrack({ button: "Manage Instances", page: AnalyticsPage.WalletSyncSettings });
   };
 
   const Options: OptionProps[] = [
@@ -51,6 +59,7 @@ const WalletSyncManage = () => {
 
   return (
     <Box height="100%" paddingX="40px">
+      <TrackPage category={AnalyticsPage.WalletSyncSettings} />
       <Box marginBottom={"24px"}>
         <Text fontSize={23} variant="large">
           {t("walletSync.title")}

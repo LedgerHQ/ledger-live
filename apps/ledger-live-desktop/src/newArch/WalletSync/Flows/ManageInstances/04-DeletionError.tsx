@@ -6,6 +6,8 @@ import styled, { useTheme } from "styled-components";
 import { setFlow } from "~/renderer/actions/walletSync";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 const Container = styled(Box)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};
@@ -28,15 +30,21 @@ type Props = {
 
 export const DeletionError = ({ error }: Props) => {
   const dispatch = useDispatch();
+
+  const { onClickTrack } = useWalletSyncAnalytics();
+
   const tryAgain = () => {
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
+    onClickTrack({ button: "connect new ledger", page: errorConfig[error].analyticsPage });
   };
   const goToDelete = () => {
     dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
+    onClickTrack({ button: "delete backup", page: errorConfig[error].analyticsPage });
   };
 
   const understood = () => {
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances }));
+    onClickTrack({ button: "I understand", page: errorConfig[error].analyticsPage });
   };
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -51,6 +59,7 @@ export const DeletionError = ({ error }: Props) => {
       ctaSecondary: t("walletSync.unsecuredError.ctaDelete"),
       primaryAction: tryAgain,
       secondaryAction: goToDelete,
+      analyticsPage: AnalyticsPage.Unsecured,
     },
     [ErrorReason.AUTO_REMOVE]: {
       icon: <Icons.InformationFill size={"L"} color={colors.primary.c80} />,
@@ -61,13 +70,23 @@ export const DeletionError = ({ error }: Props) => {
       ctaSecondary: t("walletSync.autoRemoveError.ctaDelete"),
       primaryAction: understood,
       secondaryAction: goToDelete,
+      analyticsPage: AnalyticsPage.AutoRemove,
     },
   };
 
   const getErrorConfig = (error: ErrorReason) => errorConfig[error];
 
-  const { icon, title, description, info, cta, ctaSecondary, primaryAction, secondaryAction } =
-    getErrorConfig(error);
+  const {
+    icon,
+    title,
+    description,
+    info,
+    cta,
+    ctaSecondary,
+    primaryAction,
+    secondaryAction,
+    analyticsPage,
+  } = getErrorConfig(error);
 
   return (
     <Flex
@@ -78,6 +97,7 @@ export const DeletionError = ({ error }: Props) => {
       rowGap="24px"
       paddingX={50}
     >
+      <TrackPage category={analyticsPage} />
       <Container>{icon}</Container>
       <Text fontSize={24} variant="h4Inter" color="neutral.c100" textAlign="center">
         {title}

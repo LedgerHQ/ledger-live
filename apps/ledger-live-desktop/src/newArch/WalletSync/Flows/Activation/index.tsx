@@ -11,6 +11,7 @@ import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrust
 import ActivationFinalStep from "./04-ActivationFinalStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import ErrorStep from "./05-ActivationOrSyncError";
+import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
 
 const WalletSyncActivation = () => {
   const dispatch = useDispatch();
@@ -18,8 +19,24 @@ const WalletSyncActivation = () => {
 
   const { currentStep, goToNextScene } = useFlows();
 
+  const { onClickTrack } = useWalletSyncAnalytics();
+
   const goToSync = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
+    onClickTrack({
+      button: "Already created a key?",
+      page: AnalyticsPage.Activation,
+      flow: "Wallet Sync",
+    });
+  };
+
+  const goToCreateBackup = () => {
+    goToNextScene();
+    onClickTrack({
+      button: "create your backup",
+      page: AnalyticsPage.Activation,
+      flow: "Wallet Sync",
+    });
   };
 
   const goToActivationOrSynchroWithTrustchain = (device: Device) => {
@@ -31,7 +48,7 @@ const WalletSyncActivation = () => {
     switch (currentStep) {
       default:
       case Step.CreateOrSynchronize:
-        return <CreateOrSynchronizeStep goToCreateBackup={goToNextScene} goToSync={goToSync} />;
+        return <CreateOrSynchronizeStep goToCreateBackup={goToCreateBackup} goToSync={goToSync} />;
       case Step.DeviceAction:
         return <DeviceActionStep goNext={goToActivationOrSynchroWithTrustchain} />;
       case Step.CreateOrSynchronizeTrustChain:
