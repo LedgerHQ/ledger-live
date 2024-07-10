@@ -23,15 +23,7 @@ export type NftsInTheCollections = {
   onClick: (collectionAddress: string) => void;
 };
 
-type ViewProps = {
-  nftsInTheCollection: NftsInTheCollections[];
-  account: Account;
-  displayShowMore: boolean;
-  onOpenGallery: () => void;
-  onReceive: () => void;
-  onOpenCollection: (collectionAddress: string) => void;
-  onShowMore: () => void;
-};
+type ViewProps = ReturnType<typeof useNftCollectionModel>;
 
 type NftItemProps = {
   contract: string;

@@ -58,8 +58,13 @@ const Item = ({
       alignItems={!isGridLayout ?? "center"}
       onClick={() => {}}
     >
-      <Skeleton width={40} minHeight={40} full={isGridLayout} show={isLoading}>
-        <Flex flexDirection={isGridLayout ? "column" : "row"}>
+      <Flex
+        flexDirection={isGridLayout ? "column" : "row"}
+        flex={1}
+        pl={isGridLayout ? 0 : "5px"}
+        columnGap={"10px"}
+      >
+        <Skeleton width={40} minHeight={40} full={isGridLayout} show={isLoading}>
           <Media
             isLoading={isLoading}
             useFallback={false}
@@ -70,11 +75,16 @@ const Item = ({
             size={isGridLayout ? undefined : 40}
             backgroundSize={isGridLayout ? undefined : "700%"}
           />
-          <Box ml={isGridLayout ? 0 : 2}>
-            <Component />
-          </Box>
-        </Flex>
-      </Skeleton>
+        </Skeleton>
+        <Box display={"flex"} flex={1}>
+          <Component
+            isLoading={isLoading}
+            tokenId="1221"
+            tokenName="Test"
+            onHideCollection={onHideCollection}
+          />
+        </Box>
+      </Flex>
     </Wrapper>
   );
 };
