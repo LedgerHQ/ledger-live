@@ -122,6 +122,7 @@ export class SDK implements TrustchainSDK {
     }
 
     invariant(trustchainRootId, "trustchainRootId should be defined");
+    log("trustchain", "getOrCreateTrustchain rootId=" + trustchainRootId);
 
     // make a stream tree from all the trustchains associated to this root id
     let { streamTree } = await withJwt(jwt => fetchTrustchain(jwt, trustchainRootId));

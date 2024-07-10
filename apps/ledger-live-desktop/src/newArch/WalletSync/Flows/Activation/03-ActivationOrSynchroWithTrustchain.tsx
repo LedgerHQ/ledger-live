@@ -1,31 +1,43 @@
-import React, { useCallback, useEffect } from "react";
-import Loading from "../../components/LoadingStep";
-import { useTranslation } from "react-i18next";
-import { UnsecuredError } from "./03-UnsecuredError";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { setFlow } from "~/renderer/actions/walletSync";
+
+import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { useAddMember } from "../../hooks/useAddMember";
 
 type Props = {
-  goNext: () => void;
+  device: Device | null;
 };
 
-export default function ActivationOrSynchroWithTrustchain({ goNext }: Props) {
-  const { t } = useTranslation();
+export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
+  const dispatch = useDispatch();
 
-  const hasError = false;
+  const onRetry = () => {
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
+  };
 
-  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
-  const stuffHandledByTrustchain = useCallback(() => {
-    goNext();
-  }, [goNext]);
-  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
+  const addMemberMutation = useAddMember({ device });
+
   useEffect(() => {
-    setTimeout(() => {
-      !hasError && stuffHandledByTrustchain();
-    }, 3000);
-  }, [hasError, stuffHandledByTrustchain]);
+    addMemberMutation.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  return hasError ? (
-    <UnsecuredError />
-  ) : (
-    <Loading title={t("walletSync.loading.title")} subtitle={t("walletSync.loading.activation")} />
-  );
+  if (device) {
+    return addMemberMutation.isError ? (
+      <ErrorDisplay error={addMemberMutation.error} withExportLogs onRetry={onRetry} />
+    ) : (
+      <FollowStepsOnDevice modelId={device.modelId} />
+    );
+  } else {
+    dispatch(
+      setFlow({
+        flow: Flow.Activation,
+        step: Step.DeviceAction,
+      }),
+    );
+  }
 }
