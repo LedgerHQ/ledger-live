@@ -229,7 +229,7 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
       />
       {previewResult ? (
         <FramedPicture
-          frameConfig={getFramedPictureConfig("transfer", deviceModelId)}
+          frameConfig={getFramedPictureConfig("transfer", deviceModelId, theme.colors.palette.type)}
           source={previewResult?.imageBase64DataUri}
         />
       ) : null}
