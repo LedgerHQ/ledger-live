@@ -94,6 +94,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const sui = useFeature("currencySui");
   const mina = useFeature("currencyMina");
   const babylon = useFeature("currencyBabylon");
+  const kadena = useFeature("currencyKadena");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -156,6 +157,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       sui,
       mina,
       babylon,
+      kadena,
     }),
     [
       aptos,
@@ -217,6 +219,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       sui,
       mina,
       babylon,
+      kadena,
     ],
   );
 

@@ -134,6 +134,7 @@ export type CurrencyFeatures = {
   currencySui: DefaultFeature;
   currencyMina: DefaultFeature;
   currencyBabylon: DefaultFeature;
+  currencyKadena: DefaultFeature;
 };
 
 /**
