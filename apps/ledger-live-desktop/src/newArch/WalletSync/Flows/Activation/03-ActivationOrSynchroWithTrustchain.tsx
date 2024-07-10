@@ -1,43 +1,25 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { setFlow } from "~/renderer/actions/walletSync";
 
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { useAddMember } from "../../hooks/useAddMember";
+import { InfiniteLoader } from "@ledgerhq/react-ui";
 
 type Props = {
   device: Device | null;
 };
 
 export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
-  const dispatch = useDispatch();
+  const { error, userDeviceInteraction, onRetry } = useAddMember({ device });
 
-  const onRetry = () => {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
-  };
+  if (error) {
+    return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
+  }
 
-  const addMemberMutation = useAddMember({ device });
-
-  useEffect(() => {
-    addMemberMutation.mutate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (device) {
-    return addMemberMutation.isError ? (
-      <ErrorDisplay error={addMemberMutation.error} withExportLogs onRetry={onRetry} />
-    ) : (
-      <FollowStepsOnDevice modelId={device.modelId} />
-    );
+  if (userDeviceInteraction && device) {
+    return <FollowStepsOnDevice modelId={device.modelId} />;
   } else {
-    dispatch(
-      setFlow({
-        flow: Flow.Activation,
-        step: Step.DeviceAction,
-      }),
-    );
+    return <InfiniteLoader size={50} />;
   }
 }

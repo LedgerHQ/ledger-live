@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
+import { simpleTrustChain, walletSyncActivatedState } from "../testHelper/helper";
 
 const WalletSyncTestApp = () => (
   <>
@@ -28,17 +28,9 @@ jest.mock("../hooks/useQRCode", () => ({
 const openDrawer = async () => {
   const { user } = render(<WalletSyncTestApp />, {
     initialState: {
-      walletSync: {
-        ...initialStateWalletSync,
-        flow: Flow.WalletSyncActivated,
-        step: Step.WalletSyncActivated,
-      },
+      walletSync: walletSyncActivatedState,
       trustchainStore: {
-        trustchain: {
-          rootId: "rootId",
-          deviceId: "deviceId",
-          trustchainId: "trustchainId",
-        },
+        trustchain: simpleTrustChain,
       },
     },
   });
