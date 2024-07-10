@@ -8,7 +8,6 @@ import {
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -21,16 +20,9 @@ type Props = {
   status: SwapTransactionType["status"];
   disableSlowStrategy?: boolean;
   provider: string | undefined | null;
-  transaction: any;
-  onRequestClose: any;
+  transaction: Transaction | null | undefined;
+  onRequestClose: (save: boolean) => void;
 };
-
-function getCurrency(mainAccount: Account, parentAccount?: Account): CryptoCurrency {
-  if (parentAccount) {
-    return parentAccount.currency;
-  }
-  return mainAccount.currency;
-}
 
 export default function FeesDrawerLiveApp({
   setTransaction,
@@ -43,14 +35,9 @@ export default function FeesDrawerLiveApp({
   disableSlowStrategy = false,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  if (!mainAccount) return;
 
   const [isOpen, setIsOpen] = useState(true);
   const [transaction, setTransactionState] = useState(initialTransaction);
-
-  useEffect(() => {
-    setTransactionState(initialTransaction);
-  }, [initialTransaction]);
 
   const handleSetTransaction = useCallback(
     (transaction: Transaction) => {
@@ -61,8 +48,8 @@ export default function FeesDrawerLiveApp({
   );
 
   const handleUpdateTransaction = useCallback(
-    (updater: (arg0: any) => any) => {
-      setTransactionState((prevTransaction: any) => {
+    (updater: (arg0: Transaction) => Transaction) => {
+      setTransactionState((prevTransaction: Transaction) => {
         const updatedTransaction = updater(prevTransaction);
         setTransaction(updatedTransaction);
         return updatedTransaction;
@@ -90,6 +77,7 @@ export default function FeesDrawerLiveApp({
     [onRequestClose, setIsOpen],
   );
 
+  if (!mainAccount) return;
   if (!isOpen) return null;
 
   return (

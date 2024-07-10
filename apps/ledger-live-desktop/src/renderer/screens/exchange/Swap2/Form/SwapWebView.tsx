@@ -25,7 +25,7 @@ import {
   enablePlatformDevToolsSelector,
   languageSelector,
 } from "~/renderer/reducers/settings";
-import { useRedirectToSwapHistory } from "../utils/index";
+import { useRedirectToSwapHistory, transformToBigNumbers } from "../utils/index";
 
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
@@ -45,6 +45,7 @@ import {
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
+import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -85,7 +86,7 @@ export type SwapWebProps = {
   targetCurrency?: TokenCurrency | CryptoCurrency;
   setQuoteState: (next: CustomSwapQuotesState) => void;
 };
-let lastGasOptions: any = undefined;
+let lastGasOptions: GasOptions;
 
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
@@ -270,12 +271,13 @@ const SwapWebView = ({
           fromAmount: string;
           feeStrategy: string;
           openDrawer: boolean;
+          customFeeConfig: object;
         };
       }): Promise<{
         feesStrategy: string;
         estimatedFees: BigNumber | undefined;
-        errors: any;
-        warnings: any;
+        errors: object;
+        warnings: object;
         customFeeConfig: object;
       }> => {
         const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
@@ -305,8 +307,8 @@ const SwapWebView = ({
           }),
           feesStrategy: params.feeStrategy || "medium",
           gasOptions: lastGasOptions,
+          ...transformToBigNumbers(params.customFeeConfig),
         });
-
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
         const statusInit = status;
         let finalTx = preparedTransaction;
