@@ -34,11 +34,12 @@ const WalletSyncRow = () => {
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
   const trustchain = useSelector(trustchainSelector);
 
-  const { onClickTrack, onCloseTrack } = useWalletSyncAnalytics();
+  const { onClickTrack, onActionTrack } = useWalletSyncAnalytics();
 
   const handleBack = () => {
-    if (childRef.current) {
+    if (childRef.current && hasBack) {
       childRef.current.goBack();
+      onActionTrack({ button: "Back", step: currentStep, flow: "Wallet Sync" });
     }
   };
 
@@ -46,7 +47,7 @@ const WalletSyncRow = () => {
     if (hasBeenFaked) {
       dispatch(resetWalletSync());
     } else {
-      onCloseTrack({ button: "Close", step: currentStep, flow: "Wallet Sync" });
+      onActionTrack({ button: "Close", step: currentStep, flow: "Wallet Sync" });
     }
     setOpen(false);
   };

@@ -37,7 +37,7 @@ type OnClickTrack = {
   flow?: Flow;
 };
 
-type onCloseTrack = {
+type onActionTrack = {
   button: string;
   step: Step;
   flow: Flow;
@@ -81,9 +81,9 @@ export function useWalletSyncAnalytics() {
     track("button_clicked2", { button, page, flow });
   };
 
-  const onCloseTrack = ({ button, step, flow }: onCloseTrack) => {
+  const onActionTrack = ({ button, step, flow }: onActionTrack) => {
     track("button_clicked2", { button, page: StepMappedToAnalytics[step], flow });
   };
 
-  return { onClickTrack, onCloseTrack };
+  return { onClickTrack, onActionTrack };
 }
