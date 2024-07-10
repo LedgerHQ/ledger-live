@@ -20,7 +20,7 @@ type Props = {
   status: SwapTransactionType["status"];
   disableSlowStrategy?: boolean;
   provider: string | undefined | null;
-  transaction: Transaction | null | undefined;
+  transaction: Transaction;
   onRequestClose: (save: boolean) => void;
 };
 
@@ -49,7 +49,7 @@ export default function FeesDrawerLiveApp({
 
   const handleUpdateTransaction = useCallback(
     (updater: (arg0: Transaction) => Transaction) => {
-      setTransactionState((prevTransaction: Transaction) => {
+      setTransactionState(prevTransaction => {
         const updatedTransaction = updater(prevTransaction);
         setTransaction(updatedTransaction);
         return updatedTransaction;
