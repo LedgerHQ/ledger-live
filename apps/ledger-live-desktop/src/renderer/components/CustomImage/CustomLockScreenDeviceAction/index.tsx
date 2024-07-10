@@ -128,6 +128,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
           deviceModelId={deviceModelId}
           progress={progress}
           source={source}
+          type={type}
         />
       ) : imageCommitRequested && device ? (
         <RenderImageCommitRequested

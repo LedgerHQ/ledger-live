@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import Button from "~/renderer/components/Button";
 import { useHistory } from "react-router-dom";
 import Box from "~/renderer/components/Box";
-import { Flex } from "@ledgerhq/react-ui";
+import { Flex, Theme } from "@ledgerhq/react-ui";
 import FramedPicture from "~/renderer/components/CustomImage/FramedPicture";
 import Animation from "~/renderer/animations";
 import Slider from "~/renderer/components/Slider";
@@ -12,9 +12,11 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getFramedPictureConfig } from "~/renderer/components/CustomImage/framedPictureConfigs";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import DeviceModelPicker from "~/renderer/components/CustomImage/DeviceModelPicker";
+import useTheme from "~/renderer/hooks/useTheme";
 
 const CustomLockScreenAssets = () => {
   const history = useHistory();
+  const type: Theme["theme"] = useTheme().colors.palette.type;
 
   const onBack = useCallback(() => {
     history.push({ pathname: "/settings/developer" });
@@ -39,7 +41,7 @@ const CustomLockScreenAssets = () => {
       <Box horizontal>
         <Flex mr={3}>
           <FramedPicture
-            frameConfig={getFramedPictureConfig("transfer", deviceModelId)}
+            frameConfig={getFramedPictureConfig("transfer", deviceModelId, type)}
             source={source}
             loadingProgress={0}
             background={
@@ -51,7 +53,7 @@ const CustomLockScreenAssets = () => {
         </Flex>
         <Flex mr={3}>
           <FramedPicture
-            frameConfig={getFramedPictureConfig("transfer", deviceModelId)}
+            frameConfig={getFramedPictureConfig("transfer", deviceModelId, type)}
             source={source}
             loadingProgress={1}
             background={
@@ -62,7 +64,7 @@ const CustomLockScreenAssets = () => {
           />
         </Flex>
         <FramedPicture
-          frameConfig={getFramedPictureConfig("transfer", deviceModelId)}
+          frameConfig={getFramedPictureConfig("transfer", deviceModelId, type)}
           source={source}
           loadingProgress={+(fixedPercentage / 100).toFixed(2)}
         />

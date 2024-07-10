@@ -48,6 +48,7 @@ export type FramedPictureConfig = {
   innerTop: number;
   innerBottomHeight: number;
   borderRightRadius: number;
+  borderLeftRadius?: number;
   /** source of the background image */
   backgroundSource?: string;
 };
@@ -86,6 +87,7 @@ const FramedPicture: React.FC<Props> = ({
     innerTop,
     innerLeft,
     borderRightRadius,
+    borderLeftRadius,
     innerBottomHeight,
     backgroundSource,
   } = scaleFrameConfig(frameConfig, scale || 1);
@@ -129,6 +131,8 @@ const FramedPicture: React.FC<Props> = ({
                   objectFit: "fill",
                   borderTopRightRadius: borderRightRadius,
                   borderBottomRightRadius: borderRightRadius,
+                  borderTopLeftRadius: borderLeftRadius,
+                  borderBottomLeftRadius: borderLeftRadius,
                 }}
               />
             ) : null}
