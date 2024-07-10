@@ -34,7 +34,7 @@ const WalletSyncRow = () => {
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
   const trustchain = useSelector(trustchainSelector);
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack, onCloseTrack } = useWalletSyncAnalytics();
 
   const handleBack = () => {
     if (childRef.current) {
@@ -45,6 +45,8 @@ const WalletSyncRow = () => {
   const closeDrawer = () => {
     if (hasBeenFaked) {
       dispatch(resetWalletSync());
+    } else {
+      onCloseTrack({ button: "Close", step: currentStep, flow: "Wallet Sync" });
     }
     setOpen(false);
   };
