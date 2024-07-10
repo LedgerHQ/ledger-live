@@ -7,6 +7,7 @@ import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/redu
 import { resetWalletSync } from "~/renderer/actions/walletSync";
 import { BackRef, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
 import { STEPS_WITH_BACK, useFlows } from "LLD/WalletSync/Flows/useFlows";
+import { trustchainSelector } from "@ledgerhq/trustchain/store";
 
 /**
  *
@@ -18,7 +19,7 @@ import { STEPS_WITH_BACK, useFlows } from "LLD/WalletSync/Flows/useFlows";
  */
 
 const WalletSyncRow = () => {
-  const { goToWelcomeScreenWalletSync } = useFlows({});
+  const { goToWelcomeScreenWalletSync } = useFlows();
   const childRef = useRef<BackRef>(null);
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ const WalletSyncRow = () => {
   const currentStep = useSelector(walletSyncStepSelector);
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
+  const trustchain = useSelector(trustchainSelector);
 
   const handleBack = () => {
     if (childRef.current) {
@@ -35,19 +37,17 @@ const WalletSyncRow = () => {
   };
 
   const closeDrawer = () => {
-    resetFlow();
+    if (hasBeenFaked) {
+      dispatch(resetWalletSync());
+    }
     setOpen(false);
   };
 
   const openDrawer = () => {
     if (!hasBeenFaked) {
-      goToWelcomeScreenWalletSync();
+      goToWelcomeScreenWalletSync(!!trustchain?.rootId);
     }
     setOpen(true);
-  };
-
-  const resetFlow = () => {
-    dispatch(resetWalletSync());
   };
 
   return (

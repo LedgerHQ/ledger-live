@@ -47,6 +47,8 @@ import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/device
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
+import { importTrustchainStoreState } from "@ledgerhq/trustchain/store";
+import { importMarketState } from "./actions/market";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -168,6 +170,7 @@ async function init() {
   }
   const initialCountervalues = await getKey("app", "countervalues");
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
+
   const postOnboardingState = await getKey("app", "postOnboarding");
   if (postOnboardingState) {
     store.dispatch(
@@ -176,6 +179,21 @@ async function init() {
       }),
     );
   }
+
+  const trustchainStoreState = await getKey("app", "trustchainStore");
+  if (trustchainStoreState) {
+    store.dispatch(
+      importTrustchainStoreState({
+        trustchainStore: trustchainStoreState,
+      }),
+    );
+  }
+
+  const marketState = await getKey("app", "market");
+  if (marketState) {
+    store.dispatch(importMarketState(marketState));
+  }
+
   webFrame.setVisualZoomLevelLimits(1, 1);
   const matcher = window.matchMedia("(prefers-color-scheme: dark)");
   const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));

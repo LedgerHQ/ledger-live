@@ -10,6 +10,7 @@ import {
 import {
   maybeTezosAccountUnrevealedAccount,
   maybeTronEmptyAccount,
+  maybeKeepTronAccountAlive,
 } from "@ledgerhq/live-common/exchange/swap/index";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -132,7 +133,8 @@ const SwapForm = () => {
         (ptxSwapReceiveTRC20WithoutTrx?.enabled
           ? undefined
           : maybeTronEmptyAccount(swapTransaction));
-  const swapWarning = swapTransaction.fromAmountWarning;
+  const swapWarning =
+    swapTransaction.fromAmountWarning || maybeKeepTronAccountAlive(swapTransaction);
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();

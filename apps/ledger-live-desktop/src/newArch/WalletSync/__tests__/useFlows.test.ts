@@ -1,8 +1,5 @@
-/**
- * @jest-environment jsdom
- */
 import { FlowOptions, useFlows } from "../Flows/useFlows";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
 import { renderHook } from "tests/testUtils";
 import { act } from "react-dom/test-utils";
 
@@ -12,17 +9,21 @@ jest.mock(
   { virtual: true },
 );
 
-describe("useFlows", () => {
-  it("should loads rights Steps for Flow.ManageBackups", async () => {
-    const steps = FlowOptions.ManageBackups.steps;
+const INITIAL_STATE = {
+  walletSync: {
+    ...initialStateWalletSync,
+    flow: Flow.ManageBackup,
+    step: Step.ManageBackup,
+  },
+};
 
-    const { result } = renderHook(
-      () =>
-        useFlows({
-          flow: Flow.ManageBackups,
-        }),
-      {},
-    );
+describe("useFlows", () => {
+  it("should loads rights Steps for Flow.ManageBackup", async () => {
+    const steps = FlowOptions.ManageBackup.steps;
+
+    const { result } = renderHook(() => useFlows(), {
+      initialState: INITIAL_STATE,
+    });
 
     expect(result.current.currentStep).toBe(Object.values(steps)[0]);
 
@@ -42,20 +43,14 @@ describe("useFlows", () => {
   });
 
   it("should reset Flow and Step", async () => {
-    const steps = FlowOptions.ManageBackups.steps;
+    const steps = FlowOptions.ManageBackup.steps;
 
-    const { result, store } = renderHook(
-      () =>
-        useFlows({
-          flow: Flow.ManageBackups,
-        }),
-      {},
-    );
+    const { result, store } = renderHook(() => useFlows(), { initialState: INITIAL_STATE });
 
     expect(result.current.currentStep).toBe(Object.values(steps)[0]);
 
     act(() => {
-      result.current.goToWelcomeScreenWalletSync();
+      result.current.goToWelcomeScreenWalletSync(false);
     });
     expect(store.getState().walletSync.step).toBe(Step.CreateOrSynchronize);
     expect(store.getState().walletSync.flow).toBe(Flow.Activation);

@@ -1,14 +1,14 @@
 import React from "react";
 import { Error } from "../../components/Error";
 import { useTranslation } from "react-i18next";
-import { Instance } from "~/renderer/reducers/walletSync";
 import { Flex } from "@ledgerhq/react-ui";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
 
-type Props = {
-  instance: Instance | null;
+export type FinalStepProps = {
+  instance: TrustchainMember | null;
 };
 
-export default function DeletionErrorFinalStep({ instance }: Props) {
+export default function DeletionErrorFinalStep({ instance }: FinalStepProps) {
   const { t } = useTranslation();
   const title = "walletSync.manageInstances.deleteInstanceError";
   return (
