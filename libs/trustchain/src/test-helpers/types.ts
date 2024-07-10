@@ -18,6 +18,7 @@ export type RecorderConfig = {
   overridesAppPath?: string;
   goNextOnText?: string[];
   approveOnText?: string[];
+  approveOnceOnText?: string[];
 };
 
 export const recorderConfigDefaults = {
