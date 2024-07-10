@@ -53,6 +53,7 @@ export function useWebviewState(
   const { manifest, inputs } = params;
   const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
+  const [windowContentSize, setWindowContentSize] = useState<Record<string, number> | null>(null);
 
   useImperativeHandle(
     webviewAPIRef,
@@ -91,6 +92,9 @@ export function useWebviewState(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         notify: (method: `event.${string}`, params: any) => {
           serverRef?.current?.sendMessage(method, params);
+        },
+        setWindowContentSize(size) {
+          setWindowContentSize(size);
         },
       };
     },
@@ -256,6 +260,15 @@ export function useWebviewState(
     webviewRef,
     isMounted,
   ]);
+
+  useEffect(() => {
+    if (windowContentSize?.["scrollHeight"]) {
+      webviewRef.current?.style?.setProperty?.(
+        "min-height",
+        `${Number(windowContentSize?.["scrollHeight"])}px`,
+      );
+    }
+  }, [windowContentSize]);
 
   const props = {
     src: initialURL,

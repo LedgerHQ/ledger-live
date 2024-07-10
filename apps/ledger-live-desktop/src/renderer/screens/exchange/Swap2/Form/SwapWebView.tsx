@@ -132,6 +132,12 @@ const SwapWebView = ({
       "custom.swapStateGet": () => {
         return Promise.resolve(swapState);
       },
+      "custom.setContentSize": ({ params }: { params?: Record<string, number> }) => {
+        if (params) {
+          webviewAPIRef.current?.setWindowContentSize(params);
+        }
+        return Promise.resolve();
+      },
       "custom.setQuote": (quote: {
         params?: {
           amountTo?: number;

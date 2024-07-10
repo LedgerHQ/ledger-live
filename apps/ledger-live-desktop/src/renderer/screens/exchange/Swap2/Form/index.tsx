@@ -52,12 +52,12 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 37rem;
-  padding: ${({ theme }) => theme.space[2]}px ${({ theme }) => theme.space[4]}px 0;
-  row-gap: 0.5rem;
+  padding: 12px 20px 0;
+  row-gap: 0.75rem;
   @media screen and (min-height: 800px) {
     row-gap: 2rem;
     margin-top: 12px;
-    padding: ${({ theme }) => theme.space[4]}px;
+    padding: 20px;
   }
 `;
 

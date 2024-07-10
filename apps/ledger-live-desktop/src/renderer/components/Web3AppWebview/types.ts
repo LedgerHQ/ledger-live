@@ -29,5 +29,8 @@ export type WebviewState = {
 export type WebviewAPI = Pick<
   Electron.WebviewTag,
   "reload" | "goBack" | "goForward" | "openDevTools" | "loadURL" | "clearHistory"
+> & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-> & { notify: (method: `event.${string}`, params: any) => void };
+  notify: (method: `event.${string}`, params: any) => void;
+  setWindowContentSize: (size: Record<string, number>) => void;
+};
