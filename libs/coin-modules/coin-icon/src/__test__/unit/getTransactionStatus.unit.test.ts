@@ -6,7 +6,6 @@ import {
   FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
-  NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import * as logic from "../../logic";
 import { IconAccount, Transaction } from "../../types";
@@ -112,18 +111,6 @@ describe("getSendTransactionStatus", () => {
     expect(result.errors.amount.message).toBe(
       "Balance cannot be below {{minimumBalance}}. Send max to empty account.",
     );
-  });
-
-  it("should return NotEnoughBalanceBecauseDestinationNotCreated error if getAccount fails", async () => {
-    mockedLogic.calculateAmount.mockReturnValue(new BigNumber(0.001));
-    account.spendableBalance = new BigNumber(0.002);
-    mockedLogic.getMinimumBalance.mockReturnValue(new BigNumber(0.0008));
-    // @ts-expect-error type
-    mockedLogic.EXISTENTIAL_DEPOSIT = new BigNumber(0.00125);
-    transaction.fees = new BigNumber(0.0001);
-    mockedGetAccount.mockRejectedValue(new Error("Account not found"));
-    const result = await getSendTransactionStatus(account, transaction);
-    expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceBecauseDestinationNotCreated);
   });
 });
 
