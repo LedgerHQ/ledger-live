@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import Box from "~/renderer/components/Box";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
 import {

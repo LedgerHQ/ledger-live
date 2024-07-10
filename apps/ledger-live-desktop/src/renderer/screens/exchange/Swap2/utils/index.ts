@@ -52,6 +52,7 @@ export const trackSwapError = (error: Error, properties: Record<string, unknown>
 };
 
 type TransformableObject = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
 
@@ -70,7 +71,7 @@ export function transformToBigNumbers(obj: TransformableObject): TransformableOb
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       const value = obj[key];
-      if (typeof value === "string" && !isNaN(value as any)) {
+      if (typeof value === "string" && !isNaN(value as unknown as number)) {
         transformedObj[key] = new BigNumber(value);
       } else if (typeof value === "object") {
         transformedObj[key] = transformToBigNumbers(value);

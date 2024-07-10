@@ -294,7 +294,7 @@ const SwapWebView = ({
         const bridge = getAccountBridge(fromAccount, fromParentAccount);
 
         const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
-        let transaction = bridge.createTransaction(mainAccount);
+        const transaction = bridge.createTransaction(mainAccount);
 
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
           ...transaction,
@@ -337,8 +337,8 @@ const SwapWebView = ({
         return new Promise<{
           feesStrategy: string;
           estimatedFees: BigNumber | undefined;
-          errors: any;
-          warnings: any;
+          errors: object;
+          warnings: object;
           customFeeConfig: object;
         }>(resolve => {
           setDrawer(FeesDrawerLiveApp, {
