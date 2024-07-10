@@ -8,6 +8,7 @@ project.ext.envConfigFiles = [
     debug: ".env",
     release: ".env.android.release",
     stagingrelease: ".env.android.staging",
+    detox: ".env.mock",
 ]
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
@@ -183,6 +184,11 @@ android {
             applicationIdSuffix ".staging"
             signingConfig signingConfigs.stagingRelease
             matchingFallbacks = ['release']
+        }
+        detox {
+            initWith(buildTypes.stagingRelease)
+            applicationIdSuffix ".detox"
+            matchingFallbacks = ['stagingRelease', 'release']
         }
     }
 }
