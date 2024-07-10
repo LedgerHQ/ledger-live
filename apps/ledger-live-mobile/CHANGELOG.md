@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.47.0-next.2
+
+### Patch Changes
+
+- [#7288](https://github.com/LedgerHQ/ledger-live/pull/7288) [`a1399f6`](https://github.com/LedgerHQ/ledger-live/commit/a1399f693ba61358928e7c42df0229f1c265a6ef) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: imageProcessor webview should have a source
+
 ## 3.47.0-next.1
 
 ### Patch Changes
