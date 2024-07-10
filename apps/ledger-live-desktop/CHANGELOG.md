@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.83.1-nightly.6
+
+### Patch Changes
+
+- [#7131](https://github.com/LedgerHQ/ledger-live/pull/7131) [`08e85c3`](https://github.com/LedgerHQ/ledger-live/commit/08e85c3fbaf5e27b072e39730f9ceb4135a59d1e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Integration of Trustchain in UI (V1)
+
+- Updated dependencies [[`08e85c3`](https://github.com/LedgerHQ/ledger-live/commit/08e85c3fbaf5e27b072e39730f9ceb4135a59d1e), [`a43bb22`](https://github.com/LedgerHQ/ledger-live/commit/a43bb226a3402dad7c15f42b9a58b66c3a4b2534)]:
+  - @ledgerhq/trustchain@0.1.2-nightly.4
+  - @ledgerhq/live-common@34.6.0-nightly.5
+  - @ledgerhq/live-wallet@0.3.1-nightly.3
+
 ## 2.83.1-nightly.5
 
 ### Patch Changes

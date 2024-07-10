@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.1.2-nightly.3
+
+### Patch Changes
+
+- [#7131](https://github.com/LedgerHQ/ledger-live/pull/7131) [`08e85c3`](https://github.com/LedgerHQ/ledger-live/commit/08e85c3fbaf5e27b072e39730f9ceb4135a59d1e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove JWT
+
 ## 0.1.2-nightly.2
 
 ### Patch Changes

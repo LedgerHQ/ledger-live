@@ -1,5 +1,16 @@
 ## 34.5.0-next.4
 
+## 34.6.0-nightly.5
+
+### Minor Changes
+
+- [#7293](https://github.com/LedgerHQ/ledger-live/pull/7293) [`a43bb22`](https://github.com/LedgerHQ/ledger-live/commit/a43bb226a3402dad7c15f42b9a58b66c3a4b2534) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Cosmos library to sign tx
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-wallet@0.3.1-nightly.3
+
 ## 34.6.0-nightly.4
 
 ### Patch Changes
