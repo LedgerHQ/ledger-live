@@ -19,7 +19,10 @@ type Props = {
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 };
 
-function getNavigatorParams({ parentRoute, account, parentAccount }: Props): NavigationParamsType {
+function getNavigatorParams(
+  { parentRoute, account, parentAccount }: Props,
+  { isAvalancheCAccount }: { isAvalancheCAccount: boolean },
+): NavigationParamsType {
   if (isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
@@ -28,6 +31,22 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
         params: {
           account,
           parentAccount,
+        },
+      },
+    ];
+  }
+
+  if (isAvalancheCAccount) {
+    const yieldId = "avalanche-avax-liquid-staking";
+
+    return [
+      ScreenName.PlatformApp,
+      {
+        params: {
+          platform: "stakekit",
+          name: "StakeKit",
+          accountId: account.id,
+          yieldId,
         },
       },
     ];
@@ -63,12 +82,21 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
 }
 
 const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionButtonEvent[] => {
-  if (account.type === "Account" && account.currency.id === "ethereum") {
-    const navigationParams = getNavigatorParams({
-      account,
-      parentAccount,
-      parentRoute,
-    });
+  const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
+  const isAvalancheCAccount =
+    account.type === "Account" && account.currency.id === "avalanche_c_chain";
+
+  const canStake = isEthereumAccount || isAvalancheCAccount;
+
+  if (canStake) {
+    const navigationParams = getNavigatorParams(
+      {
+        account,
+        parentAccount,
+        parentRoute,
+      },
+      { isAvalancheCAccount },
+    );
 
     return [
       {
@@ -77,7 +105,7 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         label: <Trans i18nKey="account.stake" />,
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
-          currency: "ETH",
+          currency: account?.currency?.name,
         },
       },
     ];

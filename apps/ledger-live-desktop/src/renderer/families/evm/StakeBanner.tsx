@@ -33,6 +33,7 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
 
   const stakingUrl = useLocalizedUrl(urls.stakingEthereum);
 
+  if (stakeProvider === "stakekit") return null;
   if (stakeProvider === "lido" && !stakeAccountBannerParams?.eth?.lido) return null;
   if (stakeProvider === "kiln" && !stakeAccountBannerParams?.eth?.kiln) return null;
 
