@@ -22,6 +22,7 @@ import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/ty
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsExportSelector } from "./reducers/settings";
 import logger from "./logger";
+import { trustchainStoreSelector } from "@ledgerhq/trustchain/store";
 import { marketStoreSelector } from "./reducers/market";
 
 /*
@@ -42,6 +43,8 @@ export type PostOnboarding = ReturnType<typeof hubStateSelector>;
 export type Settings = ReturnType<typeof settingsExportSelector>;
 export type Market = ReturnType<typeof marketStoreSelector>;
 
+export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
+
 // The types seen from the user side.
 type DatabaseValues = {
   accounts: Account[];
@@ -54,6 +57,7 @@ type DatabaseValues = {
   countervalues: Countervalues;
   postOnboarding: PostOnboarding;
   settings: Settings;
+  trustchainStore: TrustchainStore;
   market: Market;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;

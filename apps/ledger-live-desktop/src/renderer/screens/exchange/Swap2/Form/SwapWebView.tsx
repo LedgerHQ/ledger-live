@@ -36,7 +36,6 @@ import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomH
 import { captureException } from "~/sentry/internal";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
 import {

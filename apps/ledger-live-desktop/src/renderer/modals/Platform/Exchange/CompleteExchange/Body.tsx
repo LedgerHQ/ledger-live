@@ -8,13 +8,13 @@ import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import Box from "~/renderer/components/Box";
 import { BodyContent, BodyContentProps } from "./BodyContent";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 import { DisabledTransactionBroadcastError } from "@ledgerhq/errors";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { getEnv } from "@ledgerhq/live-env";
+import styled from "styled-components";
 
 export type Data = {
   provider: string;
@@ -37,6 +37,16 @@ export function isCompleteExchangeData(data: unknown): data is Data {
   }
   return "signature" in data && "binaryPayload" in data;
 }
+
+const Root = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+  flex-grow: 1;
+  overflow: hidden;
+`;
 
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
   const dispatch = useDispatch();
@@ -188,7 +198,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   }, [signedOperation, broadcast, onBroadcastSuccess, setError, broadcastRef]);
 
   return (
-    <Box alignItems={"center"} justifyContent={"center"} px={32} height={"100%"}>
+    <Root>
       <BodyContent
         error={error}
         signRequest={signRequest}
@@ -200,7 +210,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         onTransactionComplete={setTransaction}
         onViewDetails={onViewDetails}
       />
-    </Box>
+    </Root>
   );
 };
 

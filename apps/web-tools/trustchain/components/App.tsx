@@ -43,7 +43,7 @@ const App = () => {
   const { memberCredentials, trustchain } = trustchainState;
   const setMemberCredentials = useCallback(
     (memberCredentials: MemberCredentials | null) =>
-      setTrustchainState(s => ({ trustchain: null, memberCredentials })),
+      setTrustchainState(s => ({ jwt: null, trustchain: null, memberCredentials })),
     [],
   );
   const setTrustchain = useCallback(
