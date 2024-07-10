@@ -5,6 +5,8 @@ import { CollectibleType } from "./Collectibles";
 export enum FieldStatus {
   Loading = "loading",
   Loaded = "loaded",
+  Error = "error",
+  NoData = "nodata",
 }
 
 export type ExternalViewerButtonProps = {

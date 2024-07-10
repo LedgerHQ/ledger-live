@@ -10,7 +10,7 @@ import styled from "styled-components";
 import IconSend from "~/renderer/icons/Send";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
 import TokensList from "./TokensList";
-import TokenList from "LLD/Collectibles/components/Gallery/TokenList";
+import NftTokensList from "LLD/Collectibles/Nfts/Gallery/TokensList";
 import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -120,12 +120,6 @@ const Gallery = () => {
     threshold: 0.5,
   });
 
-  console.log("nfts", nfts);
-
-  const tokensIdList: string[] = Object.keys(
-    nfts.reduce((acc, nft) => ({ ...acc, [nft.id]: nft }), {}),
-  );
-
   const [collectionsRender, isLoading] = useMemo(() => {
     const collectionsRender: JSX.Element[] = [];
     let isLoading = false;
@@ -142,9 +136,9 @@ const Gallery = () => {
           {account && (
             <>
               {/*    <TokensList account={account} nfts={nfts.slice(0, maxVisibleNFTs - displayedNFTs)} /> */}
-              <TokenList
+              <NftTokensList
                 account={account}
-                collectibles={tokensIdList.slice(0, maxVisibleNFTs - displayedNFTs)}
+                nfts={nfts.slice(0, maxVisibleNFTs - displayedNFTs)}
               />
             </>
           )}
@@ -156,7 +150,7 @@ const Gallery = () => {
       displayedNFTs += nfts.length;
     });
     return [collectionsRender, isLoading];
-  }, [collections, maxVisibleNFTs, account, onSelectCollection, tokensIdList]);
+  }, [collections, maxVisibleNFTs, account, onSelectCollection]);
 
   return (
     <>

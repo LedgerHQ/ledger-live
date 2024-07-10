@@ -29,18 +29,22 @@ const Wrapper = styled(Card)`
 
 type Props = {
   id: string;
+  tokenName: string;
   previewUri: string;
   mode: LayoutKey;
   account: Account;
   isLoading: boolean;
   withContextMenu: boolean;
+  mediaType: string;
   onHideCollection?: () => void;
 };
 
 const Item = ({
   id,
   previewUri,
+  mediaType,
   mode,
+  tokenName,
   account,
   withContextMenu,
   isLoading,
@@ -71,16 +75,17 @@ const Item = ({
             contentType="image"
             mediaFormat="preview"
             uri={previewUri}
-            mediaType="preview"
+            mediaType={mediaType}
             size={isGridLayout ? undefined : 40}
+            full={isGridLayout}
             backgroundSize={isGridLayout ? undefined : "700%"}
           />
         </Skeleton>
         <Box display={"flex"} flex={1}>
           <Component
             isLoading={isLoading}
-            tokenId="1221"
-            tokenName="Test"
+            tokenId={id}
+            tokenName={tokenName}
             onHideCollection={onHideCollection}
           />
         </Box>

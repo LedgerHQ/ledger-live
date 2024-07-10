@@ -9,8 +9,13 @@ import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
 
 type Props = {
   account: Account;
-  isLoading?: boolean;
-  collectibles: { id: string; previewUri: string }[];
+  collectibles: {
+    id: string;
+    previewUri: string;
+    tokenName: string;
+    isLoading: boolean;
+    mediaType: string;
+  }[];
   onHideCollection?: () => void;
 };
 
@@ -22,7 +27,7 @@ const Container = styled(Box).attrs<{
   grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
 `;
 
-const TokensList = ({ account, collectibles, isLoading, onHideCollection }: Props) => {
+const TokensList = ({ account, collectibles, onHideCollection }: Props) => {
   const collectiblesViewMode = useSelector(collectiblesViewModeSelector);
 
   return (
@@ -32,9 +37,11 @@ const TokensList = ({ account, collectibles, isLoading, onHideCollection }: Prop
           key={collectible.id}
           mode={collectiblesViewMode}
           id={collectible.id}
+          tokenName={collectible.tokenName}
           account={account}
-          isLoading={isLoading || false}
+          isLoading={collectible.isLoading}
           previewUri={collectible.previewUri}
+          mediaType={collectible.mediaType}
           onHideCollection={onHideCollection}
           withContextMenu
         />
