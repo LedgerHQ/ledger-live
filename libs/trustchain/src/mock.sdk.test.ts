@@ -11,6 +11,7 @@ const nonMockableScenarios = [
   "removeMemberWithTheWrongSeed", // can't simulate seed<>trustchain relationship
   "tokenExpires", // can't simulate token expiration
   "userRefusesAuth", // can't simulate device interaction at the moment
+  "userRefusesRemoveMember", // can't simulate device interaction at the moment
 ];
 
 const scenarioFolder = path.join(__dirname, "./test-scenarios");
