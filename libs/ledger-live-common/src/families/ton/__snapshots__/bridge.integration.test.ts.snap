@@ -10,7 +10,7 @@ exports[`ton currency bridge scanAccounts ton seed 1 1`] = `
     "freshAddressPath": "44'/607'/0'/0'/0'/0'",
     "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
     "index": 0,
-    "operationsCount": 9,
+    "operationsCount": 6,
     "pendingOperations": [],
     "seedIdentifier": "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060",
     "spendableBalance": "933174896",
@@ -65,7 +65,7 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
         "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
       ],
       "type": "OUT",
-      "value": "55547465",
+      "value": "50000000",
     },
     {
       "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
@@ -95,29 +95,6 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
     {
       "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
       "blockHash": null,
-      "blockHeight": 37795026,
-      "extra": {
-        "comment": {
-          "isEncrypted": false,
-          "text": "",
-        },
-        "explorerHash": "zlj5W9f4F4rHDFHzdC3gSa+nKcgobho4MV8JzZWkzoE=",
-        "lt": "46398669000001",
-      },
-      "fee": "0",
-      "hasFailed": false,
-      "hash": "4dDNdHb5JwpES6VYZS6ZyKSDnNNk0i37CLF6sYqD7oc=",
-      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton-4dDNdHb5JwpES6VYZS6ZyKSDnNNk0i37CLF6sYqD7oc=-NONE",
-      "recipients": [],
-      "senders": [
-        "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
-      ],
-      "type": "NONE",
-      "value": "396411",
-    },
-    {
-      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
-      "blockHash": null,
       "blockHeight": 37795081,
       "extra": {
         "comment": {
@@ -138,7 +115,7 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
         "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
       ],
       "type": "OUT",
-      "value": "52474733",
+      "value": "50000000",
     },
     {
       "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
@@ -168,29 +145,6 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
     {
       "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
       "blockHash": null,
-      "blockHeight": 37795087,
-      "extra": {
-        "comment": {
-          "isEncrypted": false,
-          "text": "",
-        },
-        "explorerHash": "3QMpehQMIEz1L9i2RR8NlQ8MEhtIW8OlN9DBmm5PtyM=",
-        "lt": "46398745000001",
-      },
-      "fee": "0",
-      "hasFailed": false,
-      "hash": "ExoMI/oYFVbPvh+Q52cf2Pyq0aL4jSpuwen8nmOvGBo=",
-      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton-ExoMI/oYFVbPvh+Q52cf2Pyq0aL4jSpuwen8nmOvGBo=-NONE",
-      "recipients": [],
-      "senders": [
-        "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
-      ],
-      "type": "NONE",
-      "value": "396410",
-    },
-    {
-      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
-      "blockHash": null,
       "blockHeight": 37794992,
       "extra": {
         "comment": {
@@ -212,29 +166,6 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
       ],
       "type": "IN",
       "value": "1",
-    },
-    {
-      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
-      "blockHash": null,
-      "blockHeight": 37794992,
-      "extra": {
-        "comment": {
-          "isEncrypted": false,
-          "text": "",
-        },
-        "explorerHash": "XxJMiFGk4BHIwNWy1w4ZdenPc0Bh2No+tpUEIi6sycs=",
-        "lt": "46398628000001",
-      },
-      "fee": "0",
-      "hasFailed": false,
-      "hash": "f73qoft8iF7ANKH32Mq0cRGO9STLYlhuOFVXPQE1jI0=",
-      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton-f73qoft8iF7ANKH32Mq0cRGO9STLYlhuOFVXPQE1jI0=-NONE",
-      "recipients": [],
-      "senders": [
-        "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
-      ],
-      "type": "NONE",
-      "value": "84142",
     },
     {
       "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",

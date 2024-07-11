@@ -7,8 +7,6 @@ import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
 import internet_computer from "../families/internet_computer/transaction";
 import stacks from "../families/stacks/transaction";
-import ton from "../families/ton/transaction";
-import tron from "../families/tron/transaction";
 import vechain from "../families/vechain/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
@@ -34,7 +32,6 @@ export default {
   hedera,
   internet_computer,
   stacks,
-  ton,
   vechain,
   algorand,
   bitcoin,

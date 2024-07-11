@@ -78,6 +78,22 @@ interface TonBlock {
   prev_blocks: BlockReference[];
 }
 
+interface TrComputePhase {
+  exit_code: number;
+  success: boolean;
+}
+
+interface TonDescription {
+  aborted: boolean;
+  compute_ph: TrComputePhase;
+  credit_first: boolean;
+  storage_ph?: unknown;
+  credit_ph?: unknown;
+  action?: unknown;
+  bounce?: unknown;
+  destroyed: boolean;
+}
+
 export interface TonTransaction {
   account: string;
   hash: string;
@@ -88,7 +104,7 @@ export interface TonTransaction {
   total_fees: string;
   prev_trans_hash: string;
   prev_trans_lt: string;
-  description: unknown;
+  description: TonDescription;
   block_ref: {
     workchain: number;
     shard: string;

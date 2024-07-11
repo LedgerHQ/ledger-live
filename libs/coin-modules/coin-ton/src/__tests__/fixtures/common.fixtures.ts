@@ -90,7 +90,15 @@ export const tonTransactionResponse: TonTransactionsList = {
       total_fees: "0",
       prev_trans_hash: "",
       prev_trans_lt: "",
-      description: "",
+      description: {
+        aborted: true,
+        destroyed: false,
+        compute_ph: {
+          success: false,
+          exit_code: -14,
+        },
+        credit_first: true,
+      },
       block_ref: null,
       in_msg: {
         source: "0:959EAA8BD0E3A2662D814278D51A6F997946207D48478008BEBE7F45F3EF781F",

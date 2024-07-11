@@ -1,4 +1,5 @@
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { Operation } from "@ledgerhq/types-live";
 import { Address } from "@ton/ton";
 import BigNumber from "bignumber.js";
 import { TonOperation } from "../../types";
@@ -71,32 +72,38 @@ export function mapTxToOps(
 
     const date = new Date(tx.now * 1000); // now is defined in seconds
     const hash = tx.in_msg?.hash ?? tx.hash; // this is the hash we know in signature time
+    const hasFailed =
+      tx.description.compute_ph.success === false && tx.description.compute_ph.exit_code !== 0;
+
     if (isReceiving) {
+      let subOperations: Operation[] | undefined;
       if (tx.total_fees !== "0") {
         // these are small amount of fees payed when receiving
         // we don't want to show them in the charts
-        ops.push({
-          id: encodeOperationId(accountId, hash, "NONE"),
-          hash,
-          type: "NONE",
-          value: BigNumber(tx.total_fees),
-          fee: BigNumber(0),
-          blockHeight: tx.mc_block_seqno ?? 1,
-          blockHash: null,
-          hasFailed: false,
-          accountId,
-          senders: [accountAddr],
-          recipients: [],
-          date,
-          extra: {
-            lt: tx.lt,
-            explorerHash: tx.hash,
-            comment: {
-              isEncrypted: false,
-              text: "",
+        subOperations = [
+          {
+            id: encodeOperationId(accountId, hash, "NONE"),
+            hash,
+            type: "NONE",
+            value: BigNumber(tx.total_fees),
+            fee: BigNumber(0),
+            blockHeight: tx.mc_block_seqno ?? 1,
+            blockHash: null,
+            hasFailed,
+            accountId,
+            senders: [accountAddr],
+            recipients: [],
+            date,
+            extra: {
+              lt: tx.lt,
+              explorerHash: tx.hash,
+              comment: {
+                isEncrypted: false,
+                text: "",
+              },
             },
           },
-        });
+        ];
       }
       ops.push({
         id: encodeOperationId(accountId, hash, "IN"),
@@ -106,7 +113,7 @@ export function mapTxToOps(
         fee: BigNumber(tx.total_fees),
         blockHeight: tx.mc_block_seqno ?? 1,
         blockHash: null,
-        hasFailed: false,
+        hasFailed,
         accountId,
         senders: getFriendlyAddress(addressBook, tx.in_msg?.source),
         recipients: [accountAddr],
@@ -122,6 +129,7 @@ export function mapTxToOps(
                 : "",
           },
         },
+        subOperations,
       });
     }
 
@@ -130,11 +138,11 @@ export function mapTxToOps(
         id: encodeOperationId(accountId, hash, "OUT"),
         hash: tx.out_msgs[0].hash, // this hash matches with in_msg.hash of IN transaction
         type: "OUT",
-        value: BigNumber(tx.out_msgs[0].value ?? 0).plus(BigNumber(tx.total_fees)),
+        value: BigNumber(tx.out_msgs[0].value ?? 0),
         fee: BigNumber(tx.total_fees),
         blockHeight: tx.mc_block_seqno ?? 1,
         blockHash: null,
-        hasFailed: false,
+        hasFailed,
         accountId,
         senders: [accountAddr],
         recipients: getFriendlyAddress(addressBook, tx.out_msgs[0].destination),
