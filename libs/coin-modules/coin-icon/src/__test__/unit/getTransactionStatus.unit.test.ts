@@ -14,7 +14,6 @@ import * as TransactionStatus from "../../getTransactionStatus";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { IconDoMaxSendInstead } from "../../errors";
-import { getAccount } from "../../api";
 
 jest.mock("../../logic");
 jest.mock("../../api");
@@ -22,7 +21,6 @@ jest.mock("@ledgerhq/coin-framework/currencies/index");
 
 const mockedLogic = jest.mocked(logic);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
-const mockedGetAccount = jest.mocked(getAccount);
 
 describe("getSendTransactionStatus", () => {
   let account: IconAccount;
