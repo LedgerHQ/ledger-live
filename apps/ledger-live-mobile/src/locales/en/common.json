@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError": {
       "title": "Failed to load Swap Live App"
+    },
+    "InvalidMemoMina": {
+      "title": "Memo text cannot be longer than 32 characters"
     }
   },
   "crash": {
