@@ -58,7 +58,7 @@ export function useAddMember({ device }: { device: Device | null }) {
 
     const addMember = async () => {
       try {
-        runWithDevice(deviceRef.current?.deviceId, async transport => {
+        await runWithDevice(deviceRef.current?.deviceId, async transport => {
           const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
             transport,
             memberCredentialsRef.current as MemberCredentials,
