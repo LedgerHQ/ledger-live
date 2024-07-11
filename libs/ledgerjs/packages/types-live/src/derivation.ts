@@ -32,4 +32,4 @@ export type DerivationMode =
   | "stacks_wallet"
   | "icon"
   | "ton"
-  | "mina";
+  | "minabip44h";
