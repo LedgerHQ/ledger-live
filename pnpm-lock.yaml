@@ -5551,20 +5551,32 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-transport-mocker
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.12
       '@types/lodash':
         specifier: '4'
         version: 4.17.0
+      '@types/ws':
+        specifier: ^8.5.3
+        version: 8.5.10
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      msw:
+        specifier: ^2.3.1
+        version: 2.3.1(typescript@5.4.3)
+      timemachine:
+        specifier: ^0.3.2
+        version: 0.3.2
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.2(jest@29.7.0)(typescript@5.4.3)
       ws:
-        specifier: '8'
+        specifier: ^8.16.0
         version: 8.16.0
 
   libs/promise:
@@ -10042,6 +10054,10 @@ packages:
 
   '@mswjs/interceptors@0.26.14':
     resolution: {integrity: sha512-q4S8RGjOUzv3A3gCawuKkUEcNJXjdPaSqoRHFvuZPWQnc7yOw702iGBRDMJoBK+l0KSv9XN8YP5ek6duRzrpqw==}
+    engines: {node: '>=18'}
+
+  '@mswjs/interceptors@0.29.1':
+    resolution: {integrity: sha512-3rDakgJZ77+RiQUuSK69t1F0m8BQKA8Vh5DCS5V0DWvNY67zob2JhhQrhCO0AKLGINTRSFd1tBaHcJTkhefoSw==}
     engines: {node: '>=18'}
 
   '@napi-rs/simple-git-android-arm-eabi@0.1.16':
@@ -23027,6 +23043,16 @@ packages:
       typescript:
         optional: true
 
+  msw@2.3.1:
+    resolution: {integrity: sha512-ocgvBCLn/5l3jpl1lssIb3cniuACJLoOfZu01e3n5dbJrpA5PeeWn28jCLgQDNt6d7QT8tF2fYRzm9JoEHtiig==}
+    engines: {node: '>=18'}
+    hasBin: true
+    peerDependencies:
+      typescript: '>= 4.7.x'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   multi-sort-stream@1.0.4:
     resolution: {integrity: sha512-hAZ8JOEQFbgdLe8HWZbb7gdZg0/yAIHF00Qfo3kd0rXFv96nXe+/bPTrKHZ2QMHugGX4FiAyET1Lt+jiB+7Qlg==}
 
@@ -35448,6 +35474,15 @@ snapshots:
   '@mswjs/cookies@1.1.0': {}
 
   '@mswjs/interceptors@0.26.14':
+    dependencies:
+      '@open-draft/deferred-promise': 2.2.0
+      '@open-draft/logger': 0.3.0
+      '@open-draft/until': 2.1.0
+      is-node-process: 1.2.0
+      outvariant: 1.4.2
+      strict-event-emitter: 0.5.1
+
+  '@mswjs/interceptors@0.29.1':
     dependencies:
       '@open-draft/deferred-promise': 2.2.0
       '@open-draft/logger': 0.3.0
@@ -55413,6 +55448,28 @@ snapshots:
       yargs: 17.7.2
     optionalDependencies:
       typescript: 5.4.5
+
+  msw@2.3.1(typescript@5.4.3):
+    dependencies:
+      '@bundled-es-modules/cookie': 2.0.0
+      '@bundled-es-modules/statuses': 1.0.1
+      '@inquirer/confirm': 3.1.7
+      '@mswjs/cookies': 1.1.0
+      '@mswjs/interceptors': 0.29.1
+      '@open-draft/until': 2.1.0
+      '@types/cookie': 0.6.0
+      '@types/statuses': 2.0.5
+      chalk: 4.1.2
+      graphql: 16.8.1
+      headers-polyfill: 4.0.3
+      is-node-process: 1.2.0
+      outvariant: 1.4.2
+      path-to-regexp: 6.2.1
+      strict-event-emitter: 0.5.1
+      type-fest: 4.14.0
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.4.3
 
   multi-sort-stream@1.0.4: {}
 
