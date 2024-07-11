@@ -51,32 +51,22 @@ export const useLifeCycle = () => {
   }
 
   const includesErrorActions: { [key: string]: () => void } = {
-    [ErrorType.NOT_MEMBER]: () => {
-      console.log("NOT_MEMBER");
-    },
-    [ErrorType.NO_PERMISSION]: () => {
-      console.log("NO_PERMISSION");
-    },
-
-    [ErrorType.NO_PERMISSION_FOR_TRUSTCHAIN]: () => {
-      restoreTrustchain.refetch();
-    },
-    [ErrorType.NO_TRUSTCHAIN]: () => {
-      reset();
-    },
+    [ErrorType.NOT_MEMBER]: () => reset(),
+    [ErrorType.NO_PERMISSION]: () => reset(),
+    [ErrorType.NO_PERMISSION_FOR_TRUSTCHAIN]: () => restoreTrustchain.refetch(),
+    [ErrorType.NO_TRUSTCHAIN]: () => reset(),
   };
 
   function handleError(error: Error) {
-    for (const key in includesErrorActions) {
-      if (error.message.includes(key)) {
-        includesErrorActions[key]();
-        return;
-      }
-    }
-
+    console.error("GetMember : " + error);
     if (error instanceof TrustchainEjected) {
       reset();
     }
+    const errorToHandle = Object.entries(includesErrorActions).find(([err, _action]) =>
+      error.message.includes(err),
+    );
+
+    if (errorToHandle) errorToHandle[1]();
   }
 
   return {
