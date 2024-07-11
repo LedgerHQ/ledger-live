@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.47.0-nightly.6
+
+### Patch Changes
+
+- [#7311](https://github.com/LedgerHQ/ledger-live/pull/7311) [`bb7c1a8`](https://github.com/LedgerHQ/ledger-live/commit/bb7c1a8c8c02a3c9b8b91469e0d4e336fbf8a552) Thanks [@Justkant](https://github.com/Justkant)! - fix: imageProcessor webview should have a source
+
+- [#7292](https://github.com/LedgerHQ/ledger-live/pull/7292) [`5b97757`](https://github.com/LedgerHQ/ledger-live/commit/5b977571ed098fe3625a7270f53145400be272ba) Thanks [@sergiubreban](https://github.com/sergiubreban)! - Add devMode query parameter when navigating to smart routing
+
+- Updated dependencies [[`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545)]:
+  - @ledgerhq/icons-ui@0.7.1-nightly.0
+  - @ledgerhq/native-ui@0.23.1-nightly.2
+
 ## 3.47.0-nightly.5
 
 ### Patch Changes

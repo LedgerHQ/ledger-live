@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.84.0-nightly.7
+
+### Minor Changes
+
+- [#7302](https://github.com/LedgerHQ/ledger-live/pull/7302) [`e759570`](https://github.com/LedgerHQ/ledger-live/commit/e7595705fe59b926008d5df230579cbb811ef648) Thanks [@KVNLS](https://github.com/KVNLS)! - [LIVE-13321] Fix Sentry usage on browser side
+
+- [#7309](https://github.com/LedgerHQ/ledger-live/pull/7309) [`8b79952`](https://github.com/LedgerHQ/ledger-live/commit/8b7995272316c56a07d5e48cafb70430fe5d5ec3) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Device Selector alignment and text overflow
+
+### Patch Changes
+
+- [#7292](https://github.com/LedgerHQ/ledger-live/pull/7292) [`5b97757`](https://github.com/LedgerHQ/ledger-live/commit/5b977571ed098fe3625a7270f53145400be272ba) Thanks [@sergiubreban](https://github.com/sergiubreban)! - Add devMode query parameter when navigating to smart routing
+
+- [#7255](https://github.com/LedgerHQ/ledger-live/pull/7255) [`b19a28e`](https://github.com/LedgerHQ/ledger-live/commit/b19a28e7acda23da937c71c515414a27d7dee35a) Thanks [@adumitrana-ledger](https://github.com/adumitrana-ledger)! - LIVE-13135: fix overflow details on swap device confirmation
+
+- [#7299](https://github.com/LedgerHQ/ledger-live/pull/7299) [`8656410`](https://github.com/LedgerHQ/ledger-live/commit/8656410b3d1e20728a1f92f6584007bedc72c1a9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add analytics for WalletSync
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.15.2-nightly.0
+
 ## 2.83.1-nightly.6
 
 ### Patch Changes
