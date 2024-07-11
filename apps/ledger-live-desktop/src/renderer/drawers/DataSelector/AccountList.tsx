@@ -106,8 +106,8 @@ function Row({
   onAccountSelect: (account: AccountLike, parentAccount?: Account) => void;
 }) {
   const accountCurrency = getAccountCurrency(subAccount || account);
-  const accountName = useAccountName(account);
-  const unit = useAccountUnit(account);
+  const accountName = useAccountName(subAccount || account);
+  const unit = useAccountUnit(subAccount || account);
 
   return (
     <RowContainer
