@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "購入/売却",
-        "description" : "信頼できるプロバイダーを使用して売買"
+        "description" : "当社のプロバイダーを使用して暗号資産を売買"
       },
       "swap" : {
         "title" : "スワップ",
-        "description" : "安全に別の暗号資産へ交換",
+        "description" : "暗号資産を別の暗号資産へ交換",
         "label" : "人気"
       },
       "earn" : {
         "title" : "ステーキング",
-        "description" : "Ledgerで暗号資産を運用"
+        "description" : "Ledgerで暗号資産をステーキング"
       }
     },
     "recoverBanner" : {
@@ -5151,6 +5151,10 @@
       "memo" : "メモ",
       "memoWarningText" : "メモを使用する場合は、受取先とタイプを確認してください。"
     },
+    "ton" : {
+      "commentPlaceholder" : "任意",
+      "comment" : "コメント"
+    },
     "stellar" : {
       "memo" : "メモ",
       "memoType" : {
@@ -5493,6 +5497,10 @@
       "description" : "金額と手数料を算出できません"
     },
     "NotEnoughBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "申し訳ありません。ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
@@ -5686,6 +5694,9 @@
     "SequenceNumberError" : {
       "title" : "シーケンス番号エラー",
       "description" : "ウィンドウを閉じて、後でもう一度お試しください"
+    },
+    "TonCommentInvalid" : {
+      "title" : "コメントは特殊文字を除いて、120文字を超えてはなりません"
     },
     "CantScanQRCode" : {
       "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"
@@ -6088,6 +6099,9 @@
     },
     "newAddressTRC20" : {
       "title" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "当社のビットコインインフラストラクチャで問題が発生しています。後でもう一度お試しください。"
     }
   },
   "cryptoOrg" : {
