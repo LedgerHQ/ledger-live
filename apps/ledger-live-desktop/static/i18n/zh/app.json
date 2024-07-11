@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "买入 / 卖出",
-        "description" : "通过值得信赖的服务提供商进行买卖"
+        "description" : "通过我们值得信赖的服务提供商进行买卖"
       },
       "swap" : {
         "title" : "互换",
-        "description" : "安全地转换加密货币",
+        "description" : "转换加密货币",
         "label" : "热门"
       },
       "earn" : {
         "title" : "权益质押",
-        "description" : "通过 Ledger 增长加密资产"
+        "description" : "使用 Ledger 设备权益质押加密货币"
       }
     },
     "recoverBanner" : {
@@ -4197,8 +4197,7 @@
           "modal" : {
             "flow" : "选择流程",
             "step" : "选择步骤",
-            "activated" : "通过启用/停用以进行备份或不进行备份",
-            "instance" : "生成实例",
+            "instance" : "生成成员",
             "cta" : "应用"
           }
         }
@@ -5493,6 +5492,10 @@
       "description" : "无法计算金额和费用"
     },
     "NotEnoughBalance" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额。",
       "description" : "请确保该账户资金充足。"
     },
@@ -5504,6 +5507,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "您首先需要向该地址发送至少 0.1 TRX 才能启用 TRC20 代币接收。<link0>了解更多</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "您至少需要 0.1 TRX 才能使该 Tron 账户保持活跃状态，还需要 1.1 TRX 用于支付网络费用。<link0>了解更多</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "您的操作系统版本已过时",
@@ -6088,6 +6097,9 @@
     },
     "newAddressTRC20" : {
       "title" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "我们的比特币基础设施遇到了问题。请稍后重试。"
     }
   },
   "cryptoOrg" : {
@@ -6300,7 +6312,7 @@
         "description" : "使用另一台 Ledger 设备保护或删除您的加密密钥。"
       },
       "instance" : {
-        "label_one" : "1 个已同步实例",
+        "label" : "1 个已同步实例",
         "label_other" : "{{count}} 个已同步实例",
         "cta" : "管理"
       }
@@ -6313,7 +6325,8 @@
     "error" : {
       "title" : "出错了",
       "description" : "请稍后重试。",
-      "cta" : "请重试"
+      "cta" : "请重试",
+      "fetching" : "提取您的数据时出现错误。"
     },
     "unsecuredError" : {
       "title" : "同步不受此 Ledger 设备保护",
@@ -6322,10 +6335,17 @@
       "cta" : "连接另一个 Ledger 设备",
       "ctaDelete" : "删除我的加密密钥"
     },
+    "autoRemoveError" : {
+      "title" : "您无法删除当前实例",
+      "description" : "出于安全原因，如果不删除加密密钥，则无法删除当前正在使用的实例。",
+      "info" : "删除加密密钥将导致您的设备取消同步，所有已同步数据都将删除。但是，这不会对您的资金产生影响。您可以随时重新同步自己的账户。",
+      "cta" : "我了解",
+      "ctaDelete" : "删除我的加密密钥"
+    },
     "success" : {
       "backup" : {
         "title" : "成功",
-        "desc" : "您已成功启用 Ledger Sync。 ",
+        "desc" : "您已成功启用 Ledger Sync。",
         "synchAnother" : "与另一个 Ledger Live 应用程序同步"
       },
       "synch" : {
@@ -6333,7 +6353,7 @@
         "desc" : "您的账户更改将自动显示在所有应用程序和平台上。"
       }
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "管理您的密钥",
       "options" : {
         "deleteBackup" : {
@@ -6387,6 +6407,10 @@
       "remove" : "删除",
       "deleteInstanceSuccess" : "您的 {{instanceName}} 已不再同步",
       "deleteInstanceError" : "取消同步 {{instanceName}} 时出现问题"
+    },
+    "deviceAction" : {
+      "title" : "继续在您的 Ledger {{wording}} 上操作",
+      "description" : "按照 Ledger 设备可信任显示屏上的指示进行操作。"
     }
   }
 }
