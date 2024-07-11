@@ -192,7 +192,7 @@
       "ACTIVATE" : "Etkinleştirildi",
       "REGISTER" : "Kaydedildi",
       "STAKE" : "Stake edildi",
-      "UNSTAKE" : "Stake iptali",
+      "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor"
     },
@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Satın Al / Sat",
-        "description" : "Güvenilir sağlayıcılarla alın ve satın"
+        "description" : "Güvenilir sağlayıcılarımızla alın ve satın"
       },
       "swap" : {
         "title" : "Takas et",
-        "description" : "Bir kriptoyu diğerine güvenle dönüştürün",
+        "description" : "Kriptolar arası dönüştürme",
         "label" : "Popüler"
       },
       "earn" : {
         "title" : "Stake et",
-        "description" : "Ledger ile kripto bakiyenizi artırın"
+        "description" : "Ledger ile kriptolarınızı stake edin"
       }
     },
     "recoverBanner" : {
@@ -3742,7 +3742,7 @@
         "pending" : "Bırakılmayı bekleyen",
         "available" : "Çekilebilir bakiye"
       },
-      "unstake" : "Staking'i iptal et",
+      "unstake" : "Staking'i durdur",
       "withdraw" : "Çek",
       "activeTooltip" : "Stake edilen miktarlar ödül kazandırır",
       "inactiveTooltip" : "Stake’i iptal edilen miktarlar ödül kazandırmaz",
@@ -3784,7 +3784,7 @@
     "unstake" : {
       "disabledTooltip" : "Stake edilen varlık miktarı stake iptali için yeterli değil",
       "flow" : {
-        "title" : "Staking'i iptal et",
+        "title" : "Staking'i durdur",
         "steps" : {
           "amount" : {
             "title" : "Tutar",
@@ -5151,6 +5151,10 @@
       "memo" : "Memo",
       "memoWarningText" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın"
     },
+    "ton" : {
+      "commentPlaceholder" : "Tercihe bağlı",
+      "comment" : "Yorum"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5493,6 +5497,10 @@
       "description" : "Miktarı ve ücretleri hesaplamak mümkün değil"
     },
     "NotEnoughBalance" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "Ne yazık ki bakiye, ağ ücretlerini karşılamaya yetmiyor. Tutarı değiştirin veya bakiyeyi doğrulayın.",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
@@ -5686,6 +5694,9 @@
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
+    },
+    "TonCommentInvalid" : {
+      "title" : "Yorum, özel karakterler içermemeli ve 120 karakteri aşmamalıdır"
     },
     "CantScanQRCode" : {
       "title" : "Bu karekod okunamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"
@@ -6088,6 +6099,9 @@
     },
     "newAddressTRC20" : {
       "title" : "Önce bu hesaba en az 0,1 TRX göndererek hesabı etkinleştirmelisiniz."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Bitcoin altyapımızla ilgili olarak bir sorun yaşıyoruz. Lütfen daha sonra tekrar deneyin."
     }
   },
   "cryptoOrg" : {
