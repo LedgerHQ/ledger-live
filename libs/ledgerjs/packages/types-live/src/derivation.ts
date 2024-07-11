@@ -33,4 +33,4 @@ export type DerivationMode =
   | "icon"
   | "ton"
   | "aptos"
-  | "mina";
+  | "minabip44h";
