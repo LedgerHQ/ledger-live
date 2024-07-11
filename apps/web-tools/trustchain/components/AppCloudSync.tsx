@@ -16,7 +16,6 @@ const liveSchema = walletsync.schema;
 
 export function AppWalletSync({
   trustchain,
-  setTrustchain,
   memberCredentials,
   version,
   setVersion,
@@ -97,20 +96,6 @@ export function AppWalletSync({
     [setVersion, setData, setJson],
   );
 
-  const onTrustchainRefreshNeeded = useCallback(
-    async (trustchain: Trustchain) => {
-      try {
-        const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
-        setTrustchain(newTrustchain);
-      } catch (e) {
-        if (e instanceof TrustchainEjected) {
-          setTrustchain(null);
-        }
-      }
-    },
-    [trustchainSdk, setTrustchain, memberCredentials],
-  );
-
   const walletSyncSdk = useMemo(() => {
     return new CloudSyncSDK({
       slug: liveSlug,
@@ -118,9 +103,8 @@ export function AppWalletSync({
       trustchainSdk,
       getCurrentVersion,
       saveNewUpdate,
-      onTrustchainRefreshNeeded,
     });
-  }, [trustchainSdk, getCurrentVersion, saveNewUpdate, onTrustchainRefreshNeeded]);
+  }, [trustchainSdk, getCurrentVersion, saveNewUpdate]);
 
   const onPull = useCallback(async () => {
     await walletSyncSdk.pull(trustchain, memberCredentials);

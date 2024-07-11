@@ -3,6 +3,7 @@ import { CloudSyncSDK } from "../cloudsync";
 import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { WalletSyncDataManager } from "./types";
 import { log } from "@ledgerhq/logs";
+import { TrustchainEjected, TrustchainOutdated } from "@ledgerhq/trustchain/errors";
 
 export type WatchConfig =
   | {
@@ -35,6 +36,7 @@ export function createWalletSyncWatchLoop<
   trustchain,
   memberCredentials,
   setVisualPending,
+  onTrustchainRefreshNeeded,
   onError,
   getState,
   localStateSelector,
@@ -68,6 +70,11 @@ export function createWalletSyncWatchLoop<
    * imperatively set the visual pending state. This is useful to show a loading spinner when the sync is taking longer than expected.
    */
   setVisualPending?: (b: boolean) => void;
+  /**
+   * called with the trustchain is possibly outdated.
+   * a typical implementation is to call trustchainSdk.restoreTrustchain and update trustchain object.
+   */
+  onTrustchainRefreshNeeded: (trustchain: Trustchain) => Promise<void>;
   /**
    * imperatively inform of an error
    */
@@ -127,6 +134,11 @@ export function createWalletSyncWatchLoop<
         await walletSyncSdk.push(trustchain, memberCredentials, diff.nextState);
       }
     } catch (e) {
+      const shouldRefresh = e instanceof TrustchainEjected || e instanceof TrustchainOutdated;
+      if (shouldRefresh) {
+        await onTrustchainRefreshNeeded(trustchain);
+        return;
+      }
       if (unsubscribed) return;
       if (onError) onError(e);
       else {
