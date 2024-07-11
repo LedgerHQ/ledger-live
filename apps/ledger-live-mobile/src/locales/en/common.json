@@ -974,6 +974,8 @@
     },
     "DeleteAppDataError": {
       "title": "Error deleting app data"
+    "InvalidMemoMina": {
+      "title": "Memo text cannot be longer than 32 characters"
     }
   },
   "crash": {
