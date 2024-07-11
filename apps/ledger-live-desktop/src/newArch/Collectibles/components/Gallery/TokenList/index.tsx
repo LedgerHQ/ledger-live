@@ -1,21 +1,15 @@
 import React, { memo } from "react";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import { useSelector } from "react-redux";
 import { collectiblesViewModeSelector } from "~/renderer/reducers/settings";
 import Item from "./Item";
 import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
+import { TokenListProps } from "~/newArch/Collectibles/Nfts/Gallery/TokensList/useTokenListModel";
 
 type Props = {
-  account: Account;
-  collectibles: {
-    id: string;
-    previewUri: string;
-    tokenName: string;
-    isLoading: boolean;
-    mediaType: string;
-  }[];
+  account: TokenListProps["account"];
+  collectibles: TokenListProps["formattedNfts"];
   onHideCollection?: () => void;
 };
 
@@ -37,6 +31,8 @@ const TokensList = ({ account, collectibles, onHideCollection }: Props) => {
           key={collectible.id}
           mode={collectiblesViewMode}
           id={collectible.id}
+          amount={collectible.amount}
+          standard={collectible.standard}
           tokenName={collectible.tokenName}
           account={account}
           isLoading={collectible.isLoading}

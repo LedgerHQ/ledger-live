@@ -1,20 +1,15 @@
 import React from "react";
-import TokenList from "LLD/Collectibles/components/Gallery/TokenList";
+import TokensList from "LLD/Collectibles/components/Gallery/TokenList";
 import { useTokenListModel } from "./useTokenListModel";
-import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
+import { BaseNftsProps } from "LLD/Collectibles/types/Collectibles";
 
 type ViewProps = ReturnType<typeof useTokenListModel>;
 
 function View({ account, formattedNfts }: ViewProps) {
-  return <TokenList account={account} collectibles={formattedNfts} />;
+  return <TokensList account={account} collectibles={formattedNfts} />;
 }
 
-type Props = {
-  nfts: (ProtoNFT | NFT)[];
-  account: Account;
-};
-
-const NftTokensList: React.FC<Props> = ({ ...props }) => (
+const NftTokensList: React.FC<BaseNftsProps> = ({ ...props }) => (
   <View {...useTokenListModel({ ...props })} />
 );
 

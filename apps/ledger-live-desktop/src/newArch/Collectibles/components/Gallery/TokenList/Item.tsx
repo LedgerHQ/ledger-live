@@ -9,6 +9,7 @@ import { Skeleton } from "../../Skeleton";
 import { Media } from "../../Media";
 import Box from "~/renderer/components/Box";
 import { Flex } from "@ledgerhq/react-ui";
+import BigNumber from "bignumber.js";
 
 const Wrapper = styled(Card)`
   &.disabled {
@@ -29,6 +30,8 @@ const Wrapper = styled(Card)`
 
 type Props = {
   id: string;
+  standard: string;
+  amount: string | BigNumber;
   tokenName: string;
   previewUri: string;
   mode: LayoutKey;
@@ -41,6 +44,8 @@ type Props = {
 
 const Item = ({
   id,
+  standard,
+  amount,
   previewUri,
   mediaType,
   mode,
@@ -81,10 +86,12 @@ const Item = ({
             backgroundSize={isGridLayout ? undefined : "700%"}
           />
         </Skeleton>
-        <Box display={"flex"} flex={1}>
+        <Box flex={1}>
           <Component
             isLoading={isLoading}
             tokenId={id}
+            standard={standard}
+            amount={amount}
             tokenName={tokenName}
             onHideCollection={onHideCollection}
           />
