@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
   NFTMetadataLoadingError,
@@ -123,6 +123,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     () => getScreenVisibleAreaDimensions(deviceModelId),
     [deviceModelId],
   );
+  const { colors } = useTheme();
+  const theme = colors.type as "light" | "dark";
 
   const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
@@ -409,7 +411,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}
-                framedPictureConfig={getFramedPictureConfig("preview", deviceModelId)}
+                framedPictureConfig={getFramedPictureConfig("preview", deviceModelId, theme)}
               />
             </Flex>
           </Flex>

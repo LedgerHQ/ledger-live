@@ -415,3 +415,14 @@ export function getDeviceAnimation({
 
   return animation;
 }
+
+export const getDeviceAnimationStyles = (modelId: DeviceModelId) => {
+  switch (modelId) {
+    case DeviceModelId.stax:
+      return { height: 210 };
+    case DeviceModelId.europa:
+      return { height: 165 };
+    default:
+      return {};
+  }
+};

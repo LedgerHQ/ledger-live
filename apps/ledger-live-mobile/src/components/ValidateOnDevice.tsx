@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import invariant from "invariant";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -21,7 +21,7 @@ import Alert from "./Alert";
 import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
 import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import { TitleText } from "./DeviceAction/rendering";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 
@@ -170,7 +170,7 @@ export default function ValidateOnDevice({
           <AnimationContainer>
             <Animation
               source={getDeviceAnimation({ device, key: "sign", theme })}
-              style={DevicesWithTouchScreen.includes(device.modelId) ? { height: 210 } : {}}
+              style={getDeviceAnimationStyles(device.modelId)}
             />
           </AnimationContainer>
           {Title ? (
