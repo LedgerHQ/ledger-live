@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Kaufen & Verkaufen",
-        "description" : "Bei vertrauenswürdigen Anbietern kaufen und verkaufen"
+        "description" : "Bei unseren vertrauenswürdigen Anbietern kaufen und verkaufen"
       },
       "swap" : {
         "title" : "Swappen",
-        "description" : "Sicheres Konvertieren von Kryptos in andere Kryptos",
+        "description" : "Kryptos in andere Kryptos konvertieren",
         "label" : "beliebt"
       },
       "earn" : {
         "title" : "Staken",
-        "description" : "Dein Kryptovermögen mit Ledger vermehren"
+        "description" : "Krypto mit Ledger staken"
       }
     },
     "recoverBanner" : {
@@ -4197,8 +4197,7 @@
           "modal" : {
             "flow" : "Ablauf auswählen",
             "step" : "Schritt auswählen",
-            "activated" : "Zum Erstellen einer Sicherheitskopie aktivieren; bei Deaktivierung wird keine Sicherheitskopie erstellt",
-            "instance" : "Instanzen erzeugen",
+            "instance" : "Mitglieder generieren",
             "cta" : "Anwenden"
           }
         }
@@ -5493,8 +5492,12 @@
       "description" : "Berechnung von Betrag und Gebühren nicht möglich"
     },
     "NotEnoughBalance" : {
-      "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
+    },
+    "NotEnoughBalanceSwap" : {
+      "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
       "title" : "Die Adresse des Empfängers ist inaktiv. Senden Sie mindestens {{minimalAmount}}, um sie zu aktivieren"
@@ -5504,6 +5507,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "Zum Swappen benötigst du {{fees}} {{ticker}} für Netzwerkgebühren, da du dich im {{cryptoName}}-Netzwerk befindest. <link0>{{ticker}} kaufen</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "Du musst zuerst mindestens 0,1 TRX an diese Adresse senden, um den Empfang von TRC20-Token zu ermöglichen. <link0>Weitere Informationen</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "Du brauchst mindestens 0,1 TRX, um dieses Tron-Konto aktiv zu halten, sowie 1,1 TRX für Netzwerkgebühren. <link0>Weitere Informationen</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "Die Version Ihres Betriebssystems ist veraltet",
@@ -6088,6 +6097,9 @@
     },
     "newAddressTRC20" : {
       "title" : "Du musst zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Bei unserer Bitcoin-Infrastruktur ist ein Problem aufgetreten. Versuche es bitte später noch einmal."
     }
   },
   "cryptoOrg" : {
@@ -6300,7 +6312,7 @@
         "description" : "Schütze oder lösche deinen Verschlüsselungsschlüssel mit einem anderen Ledger-Gerät."
       },
       "instance" : {
-        "label_one" : "1 synchronisierte Instanz",
+        "label" : "1 synchronisierte Instanz",
         "label_other" : "{{count}} synchronisierte Instanzen",
         "cta" : "Verwalten"
       }
@@ -6313,7 +6325,8 @@
     "error" : {
       "title" : "Etwas ist schief gelaufen",
       "description" : "Versuche es bitte später noch einmal.",
-      "cta" : "Wiederholen"
+      "cta" : "Wiederholen",
+      "fetching" : "Beim Abrufen deiner Daten ist ein Problem aufgetreten."
     },
     "unsecuredError" : {
       "title" : "Die Synchronisierung wird nicht durch dieses Ledger-Gerät abgesichert",
@@ -6322,10 +6335,17 @@
       "cta" : "Anderes Ledger-Gerät verbinden",
       "ctaDelete" : "Meinen Verschlüsselungsschlüssel löschen"
     },
+    "autoRemoveError" : {
+      "title" : "Du kannst die aktuelle Instanz nicht entfernen",
+      "description" : "Aus Sicherheitsgründen kannst du die Instanz, die du gerade benutzt, nicht entfernen, ohne deinen Verschlüsselungsschlüssel zu löschen.",
+      "info" : "Wenn du jedoch deinen Verschlüsselungsschlüssel löschst, werden deine Geräte nicht mehr synchronisiert, und alle synchronisierten Daten werden gelöscht. Allerdings hat dies keine Auswirkungen auf dein Vermögen. Du kannst deine Konten jederzeit neu synchronisieren.",
+      "cta" : "Verstanden",
+      "ctaDelete" : "Meinen Verschlüsselungsschlüssel löschen"
+    },
     "success" : {
       "backup" : {
         "title" : "Erfolgreich",
-        "desc" : "Du hast Ledger Sync erfolgreich aktiviert. ",
+        "desc" : "Du hast Ledger Sync erfolgreich aktiviert.",
         "synchAnother" : "Mit einer anderen Ledger Live-App synchronisieren"
       },
       "synch" : {
@@ -6333,7 +6353,7 @@
         "desc" : "Änderungen bei deinen Konten werden jetzt automatisch in allen Apps und auf allen Plattformen angezeigt."
       }
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Deinen Schlüssel verwalten",
       "options" : {
         "deleteBackup" : {
@@ -6387,6 +6407,10 @@
       "remove" : "Entfernen",
       "deleteInstanceSuccess" : "Deine {{instanceName}} ist nicht mehr synchronisiert",
       "deleteInstanceError" : "Beim Desynchronisieren von {{instanceName}} ist ein Problem aufgetreten"
+    },
+    "deviceAction" : {
+      "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+      "description" : "Befolge die Anweisungen, die auf dem Trusted Display deines Ledger-Geräts erscheinen."
     }
   }
 }
