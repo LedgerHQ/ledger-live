@@ -15,6 +15,7 @@ export type WebviewProps = {
   customHandlers?: WalletAPICustomHandlers;
   currentAccountHistDb?: CurrentAccountHistDB;
   hideLoader?: boolean;
+  webviewStyle?: React.CSSProperties;
 };
 
 export type WebviewState = {
@@ -32,5 +33,4 @@ export type WebviewAPI = Pick<
 > & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   notify: (method: `event.${string}`, params: any) => void;
-  setWindowContentSize: (size: Record<string, number>) => void;
 };

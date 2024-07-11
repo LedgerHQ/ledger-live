@@ -83,6 +83,8 @@ const SwapWebAppWrapper = styled.div`
   flex: 1;
 `;
 
+const defaultContentSize: Record<string, number> = {};
+
 const SwapWebView = ({
   manifest,
   swapState,
@@ -125,6 +127,8 @@ const SwapWebView = ({
     };
   }, [swapState?.fromAccountId, swapState?.toAccountId]);
 
+  const [windowContentSize, setWindowContentSize] = useState(defaultContentSize);
+
   const customHandlers = useMemo(() => {
     return {
       ...loggerHandlers,
@@ -134,7 +138,7 @@ const SwapWebView = ({
       },
       "custom.setContentSize": ({ params }: { params?: Record<string, number> }) => {
         if (params) {
-          webviewAPIRef.current?.setWindowContentSize(params);
+          setWindowContentSize(params);
         }
         return Promise.resolve();
       },
@@ -308,6 +312,14 @@ const SwapWebView = ({
     targetCurrency?.id,
   ]);
 
+  const webviewStyle = useMemo<React.CSSProperties | undefined>(() => {
+    if (windowContentSize.scrollHeight) {
+      return {
+        minHeight: windowContentSize.scrollHeight,
+      };
+    }
+  }, [windowContentSize.scrollHeight]);
+
   // return loader???
   if (!hasSwapState) {
     return null;
@@ -343,6 +355,7 @@ const SwapWebView = ({
 
       <SwapWebAppWrapper>
         <Web3AppWebview
+          webviewStyle={webviewStyle}
           manifest={{ ...manifest, url: `${manifest.url}#${hashString}` }}
           inputs={{
             theme: themeType,
