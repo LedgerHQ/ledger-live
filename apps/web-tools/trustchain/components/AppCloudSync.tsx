@@ -59,8 +59,8 @@ export function AppWalletSync({
           return;
         }
         const data = JSON.parse(value);
-        const validated = liveSchema.parse(data);
-        setData(validated);
+        liveSchema.parse(data);
+        setData(data);
         setError(null);
       } catch (e) {
         setError("Invalid data: " + String(e));
