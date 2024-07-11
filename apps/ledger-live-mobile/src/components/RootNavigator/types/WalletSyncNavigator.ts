@@ -6,5 +6,6 @@ export type WalletSyncNavigatorStackParamList = {
   [ScreenName.WalletSyncSuccess]: {
     created: boolean;
   };
-  [ScreenName.WalletSyncActivationDeviceSelection]: undefined;
+
+  [ScreenName.WalletSyncActivationProcess]: undefined;
 };

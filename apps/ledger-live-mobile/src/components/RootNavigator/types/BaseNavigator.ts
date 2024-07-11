@@ -303,7 +303,7 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.MockedAddAssetButton]: undefined;
 
   // WALLET SYNC
-  [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList> | undefined;
+  [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
 
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;

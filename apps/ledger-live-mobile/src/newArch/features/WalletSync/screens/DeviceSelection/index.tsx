@@ -14,18 +14,12 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 
-import FollowInstructionsDrawer from "~/newArch/features/WalletSync/screens/FollowInstructions";
-
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { logDrawer } from "~/newArch/components/QueuedDrawer/utils/logDrawer";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    WalletSyncNavigatorStackParamList,
-    ScreenName.WalletSyncActivationDeviceSelection
-  >
+  StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
 >;
 
 type Props = NavigationProps;
@@ -36,12 +30,13 @@ export const headerOptions: ReactNavigationHeaderOptions = {
 };
 
 type ChooseDeviceProps = Props & {
-  isFocused: boolean;
+  isFocused?: boolean;
+  goToFollowInstructions: (device: Device) => void;
 };
 
 const APP_NAME = "Ledger Sync";
 
-const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
+const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused, goToFollowInstructions }) => {
   const request = useMemo(
     () => ({
       appName: APP_NAME,
@@ -58,13 +53,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     if (device) setDevice(device);
   };
 
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-
-  const openDrawer = useCallback(() => {
-    setIsDrawerVisible(true);
-    logDrawer("Follow Steps on device", "open");
-  }, []);
-
   const onResult = useCallback(
     (payload: AppResult) => {
       setDevice(undefined);
@@ -72,20 +60,10 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
       // Nb Unsetting device here caused the scanning to start again,
       // scanning causes a disconnect, which throws an error when we try to talk
       // to the device on the next step.
-      openDrawer();
+      goToFollowInstructions(payload.device);
     },
-    [openDrawer],
+    [goToFollowInstructions],
   );
-
-  const closeDrawer = useCallback(() => {
-    setIsDrawerVisible(false);
-    logDrawer("Wallet Sync Welcome back", "close");
-  }, []);
-
-  const reopenDrawer = useCallback(() => {
-    setIsDrawerVisible(true);
-    logDrawer("Wallet Sync Welcome back", "reopen");
-  }, []);
 
   const onModalHide = () => {
     setDevice(undefined);
@@ -144,7 +122,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         <SelectDevice2
           onSelect={onSelectDevice}
           stopBleScanning={!!device}
-          displayServicesWidget
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
       </Flex>
@@ -157,17 +134,11 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         request={request}
         onError={onError}
       />
-
-      <FollowInstructionsDrawer
-        isOpen={isDrawerVisible}
-        handleClose={closeDrawer}
-        reopenDrawer={reopenDrawer}
-      />
     </>
   );
 };
 
-export default function WalletSyncActivationDeviceSelection(props: Props) {
+export default function WalletSyncActivationDeviceSelection(props: ChooseDeviceProps) {
   const isFocused = useIsFocused();
   return <ChooseDevice {...props} isFocused={isFocused} />;
 }

@@ -508,7 +508,7 @@ export enum ScreenName {
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
 
   WalletSyncActivationSettings = "WalletSyncActivationSettings",
-  WalletSyncActivationDeviceSelection = "WalletSyncActivationDeviceSelection",
+  WalletSyncActivationProcess = "WalletSyncActivationProcess",
   WalletSyncSuccess = "WalletSyncSuccess",
 
   MockedAddAssetButton = "MockedAddAssetButton",

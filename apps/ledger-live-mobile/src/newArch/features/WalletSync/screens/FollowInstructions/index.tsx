@@ -1,46 +1,38 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
-import Drawer from "LLM/components/Dummy/Drawer";
 import { TrackScreen } from "~/analytics";
 import FollowInstructions from "../../components/FollowInstructions";
 import { useNavigation } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 
 type Props = {
   isOpen: boolean;
-  reopenDrawer: () => void;
   handleClose: () => void;
 };
 
-const FollowInstructionsDrawer = ({ isOpen, handleClose, reopenDrawer }: Props) => {
-  const [isSyncMethodDrawerOpen, setIsSyncMethodDrawerOpen] = React.useState(false);
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncSuccess>
+>;
 
-  const navigation = useNavigation();
-  const onPressCloseDrawer = () => {
-    setIsSyncMethodDrawerOpen(false);
-    reopenDrawer();
-  };
+const FollowInstructionsDrawer = ({ isOpen, handleClose }: Props) => {
+  const navigation = useNavigation<NavigationProps["navigation"]>();
 
-  const openSyncMethodDrawer = () => {
-    setIsSyncMethodDrawerOpen(true);
-    handleClose();
-  };
-
-  const goNext = () => {
+  const goNext = useCallback(() => {
     console.log("Navigate to goNext");
     handleClose();
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncSuccess,
       params: { created: true },
     });
-  };
+  }, [handleClose, navigation]);
 
   useEffect(() => {
-    console.log("Navigate to WalletSyncSuccess");
-    setTimeout(() => goNext(), 3000);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (isOpen) {
+      setTimeout(() => goNext(), 3000);
+    }
+  }, [goNext, isOpen]);
 
   return (
     <>
@@ -48,8 +40,6 @@ const FollowInstructionsDrawer = ({ isOpen, handleClose, reopenDrawer }: Props) 
       <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
         <FollowInstructions />
       </QueuedDrawer>
-
-      <Drawer isOpen={isSyncMethodDrawerOpen} handleClose={onPressCloseDrawer} />
     </>
   );
 };
