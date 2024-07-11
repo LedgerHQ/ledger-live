@@ -10,12 +10,6 @@ const WalletSyncTestApp = () => (
   </>
 );
 
-jest.mock(
-  "electron",
-  () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
-  { virtual: true },
-);
-
 jest.mock("../hooks/useQRCode", () => ({
   useQRCode: () => ({
     startQRCodeProcessing: () => jest.fn(),
