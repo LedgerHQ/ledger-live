@@ -31,5 +31,5 @@ export async function scenario(transport: Transport) {
   await expect(sdk2.restoreTrustchain(trustchain, member2creds)).rejects.toThrow(TrustchainEjected);
 
   // member3 destroy the trustchain
-  await sdk2.destroyTrustchain(trustchain, member2creds);
+  await sdk1.destroyTrustchain(trustchain, member1creds);
 }
