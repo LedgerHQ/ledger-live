@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import invariant from "invariant";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -16,12 +16,11 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { QRCodeDevices } from "@ledgerhq/types-devices";
 import Alert from "./Alert";
 import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
 import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import { TitleText } from "./DeviceAction/rendering";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 
@@ -170,7 +169,7 @@ export default function ValidateOnDevice({
           <AnimationContainer>
             <Animation
               source={getDeviceAnimation({ device, key: "sign", theme })}
-              style={QRCodeDevices.includes(device.modelId) ? { height: 210 } : {}}
+              style={getDeviceAnimationStyles(device.modelId)}
             />
           </AnimationContainer>
           {Title ? (

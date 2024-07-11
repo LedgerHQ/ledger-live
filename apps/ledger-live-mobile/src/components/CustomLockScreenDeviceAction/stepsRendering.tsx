@@ -23,6 +23,7 @@ const ImageLoadingGeneric: React.FC<{
   lottieSource?: FramedImageWithLottieProps["lottieSource"];
   deviceModelId: CLSSupportedDeviceModelId;
 }> = ({ title, fullScreen = true, children, progress, lottieSource, deviceModelId }) => {
+  const { colors } = useTheme();
   return (
     <Flex
       flexDirection="column"
@@ -48,7 +49,11 @@ const ImageLoadingGeneric: React.FC<{
         ) : (
           <FramedImageWithContext
             loadingProgress={progress}
-            framedPictureConfig={getFramedPictureConfig("transfer", deviceModelId)}
+            framedPictureConfig={getFramedPictureConfig(
+              "transfer",
+              deviceModelId,
+              colors.type as "light" | "dark",
+            )}
           >
             {children}
           </FramedImageWithContext>
