@@ -1,15 +1,13 @@
 import React from "react";
-import { ScreenName } from "~/const";
 import WalletSyncActivation from "LLM/features/WalletSync/screens/Activation";
 import { createStackNavigator } from "@react-navigation/stack";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-
-export type WalletSyncNavigator = {
-  [ScreenName.WalletSyncActivationSettings]: undefined;
-};
+import WalletSyncActivationDeviceSelection from "./screens/DeviceSelection";
+import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
+import { ScreenName } from "~/const";
+import { Success } from "./screens/Success";
 
 interface NavigatorProps {
-  Stack: ReturnType<typeof createStackNavigator<BaseNavigatorStackParamList>>;
+  Stack: ReturnType<typeof createStackNavigator<WalletSyncNavigatorStackParamList>>;
 }
 
 export default function WalletSyncNavigator({ Stack }: NavigatorProps) {
@@ -21,6 +19,24 @@ export default function WalletSyncNavigator({ Stack }: NavigatorProps) {
         options={{
           title: "",
           headerRight: () => null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.WalletSyncActivationDeviceSelection}
+        component={WalletSyncActivationDeviceSelection}
+        options={{
+          title: "",
+          headerRight: () => null,
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.WalletSyncSuccess}
+        component={Success}
+        options={{
+          title: "",
+          headerRight: () => null,
+          headerLeft: () => null,
         }}
       />
     </Stack.Group>
