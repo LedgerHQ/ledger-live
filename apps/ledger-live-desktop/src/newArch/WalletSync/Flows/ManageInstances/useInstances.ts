@@ -1,15 +1,20 @@
 import { useSelector } from "react-redux";
-import { walletSyncFakedSelector } from "~/renderer/reducers/walletSync";
+import {
+  walletSyncFakedSelector,
+  walletSyncInstancesSelector,
+} from "~/renderer/reducers/walletSync";
 import { useGetMembers } from "../../hooks/useGetMembers";
 
 export const useInstances = () => {
   const hasBeenfaked = useSelector(walletSyncFakedSelector);
 
+  const fakedInstances = useSelector(walletSyncInstancesSelector);
+
   const { isMembersLoading, instances, isError } = useGetMembers();
 
   return {
     isLoading: hasBeenfaked ? false : isMembersLoading,
-    instances: hasBeenfaked ? [] : instances,
+    instances: hasBeenfaked ? fakedInstances : instances,
     hasError: hasBeenfaked ? false : isError,
   };
 };

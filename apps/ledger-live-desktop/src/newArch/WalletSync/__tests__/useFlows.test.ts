@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { FlowOptions, useFlows } from "../Flows/useFlows";
 import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSync";
 import { renderHook } from "tests/testUtils";

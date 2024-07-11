@@ -8,6 +8,10 @@ import { resetWalletSync } from "~/renderer/actions/walletSync";
 import { BackRef, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
 import { STEPS_WITH_BACK, useFlows } from "LLD/WalletSync/Flows/useFlows";
 import { trustchainSelector } from "@ledgerhq/trustchain/store";
+import {
+  AnalyticsPage,
+  useWalletSyncAnalytics,
+} from "~/newArch/WalletSync/hooks/useWalletSyncAnalytics";
 
 /**
  *
@@ -30,15 +34,20 @@ const WalletSyncRow = () => {
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
   const trustchain = useSelector(trustchainSelector);
 
+  const { onClickTrack, onActionTrack } = useWalletSyncAnalytics();
+
   const handleBack = () => {
-    if (childRef.current) {
+    if (childRef.current && hasBack) {
       childRef.current.goBack();
+      onActionTrack({ button: "Back", step: currentStep, flow: "Wallet Sync" });
     }
   };
 
   const closeDrawer = () => {
     if (hasBeenFaked) {
       dispatch(resetWalletSync());
+    } else {
+      onActionTrack({ button: "Close", step: currentStep, flow: "Wallet Sync" });
     }
     setOpen(false);
   };
@@ -46,6 +55,7 @@ const WalletSyncRow = () => {
   const openDrawer = () => {
     if (!hasBeenFaked) {
       goToWelcomeScreenWalletSync(!!trustchain?.rootId);
+      onClickTrack({ button: "Wallet Sync", page: AnalyticsPage.SettingsGeneral });
     }
     setOpen(true);
   };

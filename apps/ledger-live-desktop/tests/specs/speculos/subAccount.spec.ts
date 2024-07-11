@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { Token } from "../../enum/Tokens";
 import { specs } from "../../utils/speculos";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
 
 const tokens: Token[] = [
   Token.ETH_USDT,
