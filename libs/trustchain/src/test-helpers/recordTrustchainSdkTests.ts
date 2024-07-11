@@ -20,6 +20,7 @@ export async function recordTestTrustchainSdk(
   if (!coinapps) throw new Error("coinapps is required"); // it's completed by e2e script
   const overridesAppPath = config.overridesAppPath;
   const goNextOnText = config.goNextOnText || recorderConfigDefaults.goNextOnText;
+  const approveOnceOnText = config.approveOnceOnText || [];
   const approveOnText = config.approveOnText || recorderConfigDefaults.approveOnText;
 
   const recordStore = new RecordStore();
@@ -37,7 +38,11 @@ export async function recordTestTrustchainSdk(
 
     // passthrough all success cases for the Ledger Sync coin app to accept all.
     device.transport.automationEvents.subscribe(event => {
-      if (goNextOnText.some(t => event.text.includes(t))) {
+      const approveOnceIndex = approveOnceOnText.findIndex(t => event.text.includes(t));
+      if (approveOnceIndex > -1) {
+        approveOnceOnText.splice(approveOnceIndex, 1);
+        device.transport.button("both");
+      } else if (goNextOnText.some(t => event.text.includes(t))) {
         device.transport.button("right");
       } else if (approveOnText.some(t => event.text.includes(t))) {
         device.transport.button("both");
