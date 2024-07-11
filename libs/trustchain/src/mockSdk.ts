@@ -3,6 +3,7 @@ import {
   MemberCredentials,
   Trustchain,
   TrustchainDeviceCallbacks,
+  TrustchainLifecycle,
   TrustchainMember,
   TrustchainResult,
   TrustchainResultType,
@@ -44,8 +45,11 @@ const trustchainMembers = new Map<string, TrustchainMember[]>();
 
 export class MockSDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
-  constructor(context: TrustchainSDKContext) {
+  private lifecyle?: TrustchainLifecycle;
+
+  constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
     this.context = context;
+    this.lifecyle = lifecyle;
   }
 
   private deviceJwtAcquired = false;
@@ -158,6 +162,11 @@ export class MockSDK implements TrustchainSDK {
     if (member.id === memberCredentials.pubkey) {
       throw new Error("cannot remove self");
     }
+    const afterRotation = await this.lifecyle?.onTrustchainRotation(
+      this,
+      trustchain,
+      memberCredentials,
+    );
 
     callbacks?.onStartRequestUserInteraction();
     // simulate device interaction
@@ -175,6 +184,9 @@ export class MockSDK implements TrustchainSDK {
       applicationPath: "0'/16'/" + index + "'",
     };
     trustchains.set(newTrustchain.rootId, newTrustchain);
+
+    if (afterRotation) await afterRotation(newTrustchain);
+
     return Promise.resolve(newTrustchain);
   }
 

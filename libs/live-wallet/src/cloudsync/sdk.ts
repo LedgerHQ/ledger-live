@@ -1,9 +1,8 @@
 import { MemberCredentials, Trustchain, TrustchainSDK } from "@ledgerhq/trustchain/types";
 import api, { JWT } from "./api";
-import Base64 from "base64-js";
-import { compress, decompress } from "fflate";
 import { Observable } from "rxjs";
 import { z, ZodType } from "zod";
+import { Cipher, makeCipher } from "./cipher";
 
 export type UpdateEvent<Data> =
   | {
@@ -21,11 +20,13 @@ export type UpdateEvent<Data> =
     };
 
 export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
-  slug: string;
-  schema: Schema;
-  trustchainSdk: TrustchainSDK;
-  getCurrentVersion: () => number | undefined;
-  saveNewUpdate: (updateEvent: UpdateEvent<Data>) => Promise<void>;
+  private slug: string;
+  private schema: Schema;
+  private trustchainSdk: TrustchainSDK;
+  private getCurrentVersion: () => number | undefined;
+  private saveNewUpdate: (updateEvent: UpdateEvent<Data>) => Promise<void>;
+  private cipher: Cipher<Data>;
+  private onTrustchainRefreshNeeded: (trustchain: Trustchain) => Promise<void>;
 
   constructor({
     slug,
@@ -33,6 +34,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     trustchainSdk,
     getCurrentVersion,
     saveNewUpdate,
+    onTrustchainRefreshNeeded,
   }: {
     /**
      * slug used with cloud sync API ((example "live")
@@ -55,13 +57,19 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
      * All the reconciliation and async save can be performed at this step in order to guarantee atomicity of the operations.
      */
     saveNewUpdate: (event: UpdateEvent<Data>) => Promise<void>;
+    /**
+     * called with the trustchain is possibly outdated.
+     * a typical implementation is to call trustchainSdk.restoreTrustchain and update trustchain object.
+     */
+    onTrustchainRefreshNeeded: (trustchain: Trustchain) => Promise<void>;
   }) {
     this.slug = slug;
     this.schema = schema;
     this.trustchainSdk = trustchainSdk;
     this.getCurrentVersion = getCurrentVersion;
     this.saveNewUpdate = saveNewUpdate;
-
+    this.cipher = makeCipher(trustchainSdk);
+    this.onTrustchainRefreshNeeded = onTrustchainRefreshNeeded;
     this.push = this._decorateMethod("push", this.push);
     this.pull = this._decorateMethod("pull", this.pull);
     this.destroy = this._decorateMethod("destroy", this.destroy);
@@ -78,13 +86,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
   ): Promise<void> {
     this.schema.parse(data); // validate against the schema, throws if it doesn't parse
     const validated = data; // IMPORTANT: we intentionally don't take validated out of parse() because we need to keep the possible extra field that we don't handle yet and that need to be preserved on the distant data
-    const json = JSON.stringify(validated);
-    const bytes = new TextEncoder().encode(json);
-    const compressed = await new Promise<Uint8Array>((resolve, reject) =>
-      compress(bytes, (err, result) => (err ? reject(err) : resolve(result))),
-    );
-    const encrypted = await this.trustchainSdk.encryptUserData(trustchain, compressed);
-    const base64 = Base64.fromByteArray(encrypted);
+    const base64 = await this.cipher.encrypt(trustchain, validated);
     const version = (this.getCurrentVersion() || 0) + 1;
     const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
       api.uploadData(jwt, this.slug, version, base64),
@@ -116,6 +118,10 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     switch (response.status) {
       case "no-data": {
         // no data, nothing to do
+        const version = this.getCurrentVersion();
+        if (version) {
+          await this.onTrustchainRefreshNeeded(trustchain);
+        }
         break;
       }
       case "up-to-date": {
@@ -123,25 +129,11 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
         break;
       }
       case "out-of-sync": {
-        const decrypted = await this.trustchainSdk
-          .decryptUserData(trustchain, Base64.toByteArray(response.payload))
-          .catch(e => {
-            // TODO if we fail to decrypt, it may mean we need to restore trustchain. and if it still fails and on specific error, we will have to eject. figure out how to integrate this in the pull lifecycle.
-            // or do we "let it fail" and handle it more globally on app side? TBD
-            throw e;
-          });
-        const decompressed = await new Promise<Uint8Array>((resolve, reject) =>
-          decompress(decrypted, (err, result) => (err ? reject(err) : resolve(result))),
-        );
-        const json = JSON.parse(new TextDecoder().decode(decompressed));
+        const json = await this.cipher.decrypt(trustchain, response.payload);
         this.schema.parse(json); // validate against the schema, throws if it doesn't parse
         const validated = json; // IMPORTANT: we intentionally don't take validated out of parse() because we need to keep the possible extra field that we don't handle yet and that need to be preserved on the distant data
         const version = response.version;
-        await this.saveNewUpdate({
-          type: "new-data",
-          data: validated,
-          version,
-        });
+        await this.saveNewUpdate({ type: "new-data", data: validated, version });
         break;
       }
     }
@@ -164,11 +156,9 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
   ): (...args: A) => Promise<R> {
     return async (...args) => {
       const { _lock } = this;
-
       if (_lock) {
         return Promise.reject(new Error("CloudSyncSDK locked (" + this._lock + ")"));
       }
-
       try {
         this._lock = methodName;
         return await f.apply(this, args);

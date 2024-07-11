@@ -9,6 +9,7 @@ import {
   AuthCachePolicy,
   TrustchainResult,
   TrustchainResultType,
+  TrustchainLifecycle,
 } from "./types";
 import {
   crypto,
@@ -36,13 +37,14 @@ import {
 import { TrustchainEjected, TrustchainNotAllowed } from "./errors";
 
 export class SDK implements TrustchainSDK {
-  context: TrustchainSDKContext;
+  private context: TrustchainSDKContext;
+  private jwt: JWT | undefined = undefined;
+  private deviceJwt: JWT | undefined = undefined;
+  private lifecycle?: TrustchainLifecycle;
 
-  jwt: JWT | undefined = undefined;
-  deviceJwt: JWT | undefined = undefined;
-
-  constructor(context: TrustchainSDKContext) {
+  constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
     this.context = context;
+    this.lifecycle = lifecyle;
   }
 
   withAuth<T>(
@@ -166,6 +168,7 @@ export class SDK implements TrustchainSDK {
       trustchain,
       memberCredentials,
       jwt => fetchTrustchainAndResolve(jwt, trustchain.rootId, this.context.applicationId),
+      "refresh",
     );
     const walletSyncEncryptionKey = await extractEncryptionKey(
       streamTree,
@@ -204,6 +207,13 @@ export class SDK implements TrustchainSDK {
       memberCredentials.pubkey !== member.id,
       "removeMember must not be used to remove the current member.",
     );
+
+    const afterRotation = await this.lifecycle?.onTrustchainRotation(
+      this,
+      trustchain,
+      memberCredentials,
+    );
+
     const hw = device.apdu(transport);
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
@@ -251,11 +261,15 @@ export class SDK implements TrustchainSDK {
     // deviceJwt have changed, proactively refresh it
     this.deviceJwt = await withJwt(api.refreshAuth);
 
-    return {
+    const newTrustchain: Trustchain = {
       rootId: trustchainId,
       walletSyncEncryptionKey,
       applicationPath: newPath,
     };
+
+    if (afterRotation) await afterRotation(newTrustchain);
+
+    return newTrustchain;
   }
 
   async addMember(

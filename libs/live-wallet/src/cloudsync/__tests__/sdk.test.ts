@@ -90,6 +90,7 @@ describe("CloudSyncSDK basics", () => {
 
   let version = 0;
   let data: Data | null = null;
+  let onTrustchainRefreshNeeded: jest.Mock;
 
   it("init", async () => {
     trustchainSdk = new MockSDK({ applicationId: 16, name: "user" });
@@ -102,6 +103,8 @@ describe("CloudSyncSDK basics", () => {
     trustchain = result.trustchain;
 
     const getCurrentVersion = () => version;
+
+    onTrustchainRefreshNeeded = jest.fn(() => Promise.resolve());
 
     const saveNewUpdate = (up: UpdateEvent<Data>) => {
       switch (up.type) {
@@ -126,6 +129,7 @@ describe("CloudSyncSDK basics", () => {
       trustchainSdk,
       getCurrentVersion,
       saveNewUpdate,
+      onTrustchainRefreshNeeded,
     });
   });
 
@@ -170,6 +174,23 @@ describe("CloudSyncSDK basics", () => {
     expect(storedVersion).toBe(0);
   });
 
+  it("should call onTrustchainRefreshNeeded when local data exists (has version) but there is no upstream data", async () => {
+    try {
+      expect(onTrustchainRefreshNeeded).not.toHaveBeenCalled();
+      await sdk.pull(trustchain, creds);
+      expect(onTrustchainRefreshNeeded).not.toHaveBeenCalled();
+
+      // BUT if we had old data with old version. this should be called
+      data = { value: "old" };
+      version = 1;
+      await sdk.pull(trustchain, creds);
+      expect(onTrustchainRefreshNeeded).toHaveBeenCalled();
+    } finally {
+      data = null;
+      version = 0;
+    }
+  });
+
   it("protects from race condition", async () => {
     const promises = [sdk.pull(trustchain, creds), sdk.pull(trustchain, creds)];
     await expect(Promise.all(promises)).rejects.toThrow();
@@ -203,6 +224,8 @@ describe("CloudSyncSDK basics", () => {
 
     const getCurrentVersion = () => version2;
 
+    const onTrustchainRefreshNeeded = () => Promise.resolve();
+
     const saveNewUpdate = (up: UpdateEvent<Data>) => {
       switch (up.type) {
         case "new-data":
@@ -226,6 +249,7 @@ describe("CloudSyncSDK basics", () => {
       trustchainSdk,
       getCurrentVersion,
       saveNewUpdate,
+      onTrustchainRefreshNeeded,
     });
 
     await sdk.pull(trustchain, creds);

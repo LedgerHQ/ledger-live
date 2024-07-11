@@ -13,6 +13,7 @@ import {
   walletSyncUpdate,
 } from "@ledgerhq/live-wallet/store";
 import walletsync, {
+  liveSlug,
   DistantState,
   walletSyncWatchLoop,
 } from "@ledgerhq/live-wallet/walletsync/index";
@@ -26,6 +27,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCu
 import { listSupportedCurrencies } from "@ledgerhq/coin-framework/lib-es/currencies/support";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { Loading } from "./Loading";
+import { TrustchainEjected } from "@ledgerhq/trustchain/lib-es/errors";
 
 /*
 import * as icons from "@ledgerhq/crypto-icons-ui/react";
@@ -52,12 +54,14 @@ export default function AppAccountsSync({
   memberCredentials,
   state,
   setState,
+  setTrustchain,
 }: {
   deviceId: string;
   trustchain: Trustchain;
   memberCredentials: MemberCredentials;
   state: State;
   setState: (_: (_: State) => State) => void;
+  setTrustchain: (_: Trustchain | null) => void;
 }) {
   const trustchainSdk = useTrustchainSDK();
 
@@ -156,16 +160,31 @@ export default function AppAccountsSync({
     [bridgeCache, setState],
   );
 
+  const onTrustchainRefreshNeeded = useCallback(
+    async (trustchain: Trustchain) => {
+      try {
+        const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
+        setTrustchain(newTrustchain);
+      } catch (e) {
+        if (e instanceof TrustchainEjected) {
+          setTrustchain(null);
+        }
+      }
+    },
+    [trustchainSdk, setTrustchain, memberCredentials],
+  );
+
   const walletSyncSdk = useMemo(
     () =>
       new CloudSyncSDK({
-        slug: "live",
+        slug: liveSlug,
         schema: walletsync.schema,
         trustchainSdk,
         getCurrentVersion,
         saveNewUpdate,
+        onTrustchainRefreshNeeded,
       }),
-    [trustchainSdk, getCurrentVersion, saveNewUpdate],
+    [trustchainSdk, getCurrentVersion, saveNewUpdate, onTrustchainRefreshNeeded],
   );
 
   const [visualPending, setVisualPending] = useState(true);
