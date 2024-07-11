@@ -33,7 +33,7 @@ import {
   TransportStatusError,
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
-import { TrustchainEjected } from "./errors";
+import { TrustchainEjected, TrustchainNotAllowed } from "./errors";
 
 export class SDK implements TrustchainSDK {
   context: TrustchainSDKContext;
@@ -307,17 +307,23 @@ type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
 type JwtExpirationCheck = {
   hasExpired: boolean;
   canBeRefreshed: boolean;
+  isNotPermitted: boolean;
 };
 
 function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
   let hasExpired = false;
   let canBeRefreshed = false;
+  let isNotPermitted = false;
   // this assume live-network is used and we adapt to its error's format
-  if (error instanceof LedgerAPI4xx && error.message.includes("JWT is expired")) {
-    hasExpired = true;
-    canBeRefreshed = error.message.includes("/refresh");
+  if (error instanceof LedgerAPI4xx) {
+    if (error.message.includes("JWT is expired")) {
+      hasExpired = true;
+      canBeRefreshed = error.message.includes("/refresh");
+    } else if (error.message.includes("JWT contains no permission")) {
+      isNotPermitted = true;
+    }
   }
-  return { hasExpired, canBeRefreshed };
+  return { hasExpired, canBeRefreshed, isNotPermitted };
 }
 
 async function genericWithJWT<T>(
@@ -329,7 +335,11 @@ async function genericWithJWT<T>(
   function refresh(jwt: JWT) {
     return api.refreshAuth(jwt).catch(e => {
       log("trustchain", "JWT refresh failed, reauthenticating", e);
-      if (networkCheckJwtExpiration(e).hasExpired) {
+      const { hasExpired, isNotPermitted } = networkCheckJwtExpiration(e);
+      if (isNotPermitted) {
+        throw new TrustchainNotAllowed();
+      }
+      if (hasExpired) {
         return auth();
       }
       throw e;
@@ -346,7 +356,10 @@ async function genericWithJWT<T>(
 
   return job(jwt).catch(async e => {
     // JWT expiration handling: if the function fails, we will recover a valid jwt accordingly to spec. https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/4207083687/TCH+Usage+documentation#JWT-expiration-handling
-    const { hasExpired, canBeRefreshed } = networkCheckJwtExpiration(e);
+    const { hasExpired, canBeRefreshed, isNotPermitted } = networkCheckJwtExpiration(e);
+    if (isNotPermitted) {
+      throw new TrustchainNotAllowed();
+    }
     if (hasExpired) {
       log("trustchain", "JWT expired -> " + (canBeRefreshed ? "refreshing" : "reauthenticating"));
       jwt = await (jwt && canBeRefreshed ? refresh(jwt) : auth());
