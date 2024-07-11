@@ -312,13 +312,10 @@ const SwapWebView = ({
     targetCurrency?.id,
   ]);
 
-  const webviewStyle = useMemo<React.CSSProperties | undefined>(() => {
-    if (windowContentSize.scrollHeight) {
-      return {
-        minHeight: windowContentSize.scrollHeight,
-      };
-    }
-  }, [windowContentSize.scrollHeight]);
+  const webviewStyle = useMemo(
+    () => ({ minHeight: windowContentSize.scrollHeight }),
+    [windowContentSize.scrollHeight],
+  );
 
   // return loader???
   if (!hasSwapState) {
