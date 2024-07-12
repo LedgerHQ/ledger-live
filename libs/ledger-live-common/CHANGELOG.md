@@ -1,5 +1,12 @@
 ## 34.5.0-next.4
 
+## 34.6.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`d540c6e`](https://github.com/LedgerHQ/ledger-live/commit/d540c6e5ef70261bcc102d1e8e23cdd83fe064ec)]:
+  - @ledgerhq/coin-tezos@0.5.0-next.1
+
 ## 34.6.0-next.1
 
 ### Minor Changes
