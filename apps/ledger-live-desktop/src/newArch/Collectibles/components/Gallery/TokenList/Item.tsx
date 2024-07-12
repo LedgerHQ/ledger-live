@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/types-live";
 import React, { memo } from "react";
-import { Layout, LayoutKey } from "~/newArch/Collectibles/types/Layouts";
+import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
 import RowItem from "./RowItem";
 import CardItem from "./CardItem";
 import Card from "~/renderer/components/Box/Card";

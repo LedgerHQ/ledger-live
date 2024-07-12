@@ -1,39 +1,43 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 interface InteractionObserverHookParams {
   root?: React.RefObject<Element>;
-  target: React.RefObject<Element>;
-  onIntersect: Function;
+  targets: React.RefObject<Element>[];
+  onIntersect: () => void;
   threshold?: number;
   rootMargin?: string;
   enabled?: boolean;
 }
 
-/**
- * Observe if target is getting into viewport
- * (related to root. Root is document viewport if not given)
- **/
 export function useOnScreen({
   root,
-  target,
+  targets,
   onIntersect,
   threshold = 1.0,
-  rootMargin = "0px",
+  rootMargin = "20px",
   enabled = true,
-}: InteractionObserverHookParams) {
+}: InteractionObserverHookParams): boolean[] {
+  const [isIntersecting, setIsIntersecting] = useState<boolean[]>(targets.map(() => false));
+  const stableOnIntersect = useCallback(onIntersect, [onIntersect]);
+
   useEffect(() => {
     if (!enabled) {
       return;
     }
 
-    const el = target && target.current;
-
-    if (!el) {
-      return;
-    }
-
     const observer = new IntersectionObserver(
-      entries => entries.forEach(entry => entry.isIntersecting && onIntersect()),
+      entries => {
+        entries.forEach((entry, index) => {
+          const newState = [...isIntersecting];
+          if (entry.isIntersecting) {
+            stableOnIntersect();
+            newState[index] = true;
+          } else {
+            newState[index] = false;
+          }
+          setIsIntersecting(newState);
+        });
+      },
       {
         root: root?.current ?? null,
         rootMargin,
@@ -41,10 +45,22 @@ export function useOnScreen({
       },
     );
 
-    observer.observe(el);
+    targets.forEach(target => {
+      const element = target.current;
+      if (element) {
+        observer.observe(element);
+      }
+    });
 
     return () => {
-      observer.unobserve(el);
+      targets.forEach(target => {
+        const element = target.current;
+        if (element) {
+          observer.unobserve(element);
+        }
+      });
     };
-  }, [enabled, root, rootMargin, threshold, target, onIntersect]);
+  }, [enabled, root, rootMargin, threshold, targets, stableOnIntersect, isIntersecting]);
+
+  return isIntersecting;
 }

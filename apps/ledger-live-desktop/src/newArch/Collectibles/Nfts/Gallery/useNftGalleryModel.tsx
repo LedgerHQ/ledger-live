@@ -20,7 +20,7 @@ const useNftGalleryModel = () => {
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
 
   const listFooterRef = useRef<HTMLDivElement>(null);
-  const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(1);
+  const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(5);
 
   const { account, hiddenNftCollections } = useSelector((state: State) => ({
     account: accountSelector(state, { accountId: id }),
@@ -42,7 +42,7 @@ const useNftGalleryModel = () => {
   }, [account?.id, account?.nfts, hiddenNftCollections, nfts, nftsFromSimplehashFeature?.enabled]);
 
   useEffect(() => {
-    if (collections.length <= 0) {
+    if (collections.length < 1) {
       history.push(`/account/${account?.id}/`);
     }
   }, [account?.id, history, collections.length]);
@@ -61,6 +61,7 @@ const useNftGalleryModel = () => {
   );
 
   const updateMaxVisibleNtfs = useCallback(() => {
+    console.log("Active");
     setMaxVisibleNFTs(prevMaxVisibleNFTs => prevMaxVisibleNFTs + 5);
     if (hasNextPage) {
       fetchNextPage();
@@ -68,9 +69,9 @@ const useNftGalleryModel = () => {
   }, [hasNextPage, fetchNextPage]);
 
   useOnScreen({
-    enabled: maxVisibleNFTs < (account?.nfts?.length ?? 0),
+    enabled: maxVisibleNFTs < Number(account?.nfts?.length),
     onIntersect: updateMaxVisibleNtfs,
-    target: listFooterRef,
+    targets: [listFooterRef],
     threshold: 0.5,
   });
 
@@ -86,7 +87,16 @@ const useNftGalleryModel = () => {
     {} as Record<string, typeof nfts>,
   );
 
-  return { account, hiddenNftCollections, nftsByCollection, onSend, onSelectCollection };
+  return {
+    account,
+    hiddenNftCollections,
+    nftsByCollection,
+    listFooterRef,
+    collections,
+    maxVisibleNFTs,
+    onSend,
+    onSelectCollection,
+  };
 };
 
 export default useNftGalleryModel;
