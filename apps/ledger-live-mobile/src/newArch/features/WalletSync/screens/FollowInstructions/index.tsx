@@ -20,7 +20,6 @@ const FollowInstructionsDrawer = ({ isOpen, handleClose }: Props) => {
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
   const goNext = useCallback(() => {
-    console.log("Navigate to goNext");
     handleClose();
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncSuccess,
@@ -29,6 +28,7 @@ const FollowInstructionsDrawer = ({ isOpen, handleClose }: Props) => {
   }, [handleClose, navigation]);
 
   useEffect(() => {
+    // TODO : Update when Trustchain integration
     if (isOpen) {
       setTimeout(() => goNext(), 3000);
     }

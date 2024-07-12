@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React from "react";
 import FollowInstructionsDrawer from "../FollowInstructions";
 import { useFollowInstructions } from "../FollowInstructions/useFollowInstructions";
 import WalletSyncActivationDeviceSelection from "../DeviceSelection";

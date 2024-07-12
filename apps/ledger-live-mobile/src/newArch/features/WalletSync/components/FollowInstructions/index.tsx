@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
@@ -10,8 +10,6 @@ import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Animation from "~/components/Animation";
 import { useSelector } from "react-redux";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
-import { useNavigation } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "~/const";
 
 const getProductName = (modelId: DeviceModelId) =>
   getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
@@ -20,16 +18,10 @@ const animationStyles = (modelId: DeviceModelId) =>
   [DeviceModelId.stax, DeviceModelId.europa].includes(modelId) ? { height: 210 } : {};
 
 const FollowInstructions: React.FC = () => {
-  const { colors, theme } = useTheme();
+  const { theme } = useTheme();
   const { t } = useTranslation();
 
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-
   const device = useSelector(lastSeenDeviceSelector);
-
-  const onPressCloseDrawer = () => {
-    setIsDrawerOpen(false);
-  };
 
   if (!device) return;
   return (

@@ -1,7 +1,6 @@
 import React from "react";
 import { Success } from "../../components/Success";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components/native";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 
@@ -13,13 +12,12 @@ type Props = BaseComposite<
 
 export function ActivationSuccess({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+
   const { created } = route.params;
   const title = created ? "walletSync.success.activation" : "walletSync.success.sync";
   const desc = created ? "walletSync.success.activationDesc" : "walletSync.success.syncDesc";
 
   function syncAnother(): void {
-    console.log("syncAnother");
     navigation.navigate(ScreenName.WalletSyncActivationProcess);
   }
 

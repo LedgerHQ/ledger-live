@@ -1,11 +1,6 @@
 import { Box, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
-
-import { ScreenName } from "~/const";
 import SafeAreaView from "~/components/SafeAreaView";
 type Props = {
   title: string;
@@ -37,7 +32,7 @@ export function Success({ title, desc, mainButton, secondaryButton }: Props) {
             {desc}
           </Text>
         </Flex>
-        <Flex flexDirection="column" rowGap={10}>
+        <Flex flexDirection="column" rowGap={10} mb={8}>
           <Button type="main" onPress={mainButton.onPress}>
             {mainButton.label}
           </Button>

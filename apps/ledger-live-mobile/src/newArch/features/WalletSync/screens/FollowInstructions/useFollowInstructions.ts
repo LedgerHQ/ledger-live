@@ -7,11 +7,9 @@ const messageLog = "Follow Steps on device";
 export const useFollowInstructions = () => {
   const [isDrawerInstructionsVisible, setIsDrawerInstructionsVisible] = useState(false);
 
-  const openDrawer = useCallback((device: Device) => {
+  const openDrawer = useCallback((_device: Device) => {
     setIsDrawerInstructionsVisible(true);
     logDrawer(messageLog, "open");
-
-    console.log("useFollowInstructions", device);
   }, []);
 
   const closeDrawer = useCallback(() => {
