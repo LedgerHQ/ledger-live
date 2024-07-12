@@ -229,12 +229,23 @@ test("Wallet API methods @smoke", async ({ page }) => {
       id,
       method: "account.request",
       params: {
-        currencyIds: ["ethereum", "bitcoin"],
+        currencyIds: ["ethereum", "bitcoin", "ethereum/erc20/usd_tether__erc20_"],
       },
     });
 
+    await drawer.waitForDrawerToBeVisible();
+
+    await drawer.selectCurrency("tether usd");
+    // Test name and balance for tokens
+    await expect(drawer.getAccountButton("tether usd", 2)).toContainText(
+      "Tether USD (USDT)71.8174 USDT", // Special space present in the actual rendered element apparently
+    );
+    await drawer.back();
+
     await drawer.selectCurrency("bitcoin");
     await drawer.selectAccount("bitcoin");
+
+    await drawer.waitForDrawerToDisappear();
 
     await expect(response).resolves.toMatchObject({
       id,
