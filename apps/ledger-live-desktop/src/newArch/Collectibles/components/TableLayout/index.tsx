@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { LayoutContainer } from "./LayoutContainer";
 import { TableLayoutToggle } from "./LayoutToggle";
 
-const TableLayout = () => {
+const TableLayoutComponent = () => {
   return (
     <LayoutContainer>
       <TableLayoutToggle />
@@ -10,4 +10,4 @@ const TableLayout = () => {
   );
 };
 
-export default memo(TableLayout);
+export const TableLayout = memo(TableLayoutComponent);

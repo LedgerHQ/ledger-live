@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from "react";
+import React, { memo, useEffect, useMemo } from "react";
 import { Box, Text } from "@ledgerhq/react-ui";
-import { CollectionName } from "../../../../components";
+import { CollectionName } from "LLD/Collectibles/components";
 import TokenList from "../TokensList";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import styled from "styled-components";
@@ -35,7 +35,13 @@ const LazyCollection: React.FC<LazyCollectionProps> = ({
         <div key={contract}>
           <ClickableCollectionName mb={2} onClick={() => onSelectCollection(contract)}>
             <Text ff="Inter|Medium" fontSize={6} color="palette.text.shade100">
-              <CollectionName nft={nfts[0]} fallback={contract} account={account} showHideMenu />
+              <CollectionName
+                collectiblesNumber={nfts.length}
+                nft={nfts[0]}
+                fallback={contract}
+                account={account}
+                showHideMenu
+              />
             </Text>
           </ClickableCollectionName>
           {account && (
@@ -58,4 +64,4 @@ const LazyCollection: React.FC<LazyCollectionProps> = ({
   return <>{renderedCollections}</>;
 };
 
-export default LazyCollection;
+export default memo(LazyCollection);

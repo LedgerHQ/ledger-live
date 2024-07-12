@@ -61,7 +61,6 @@ const useNftGalleryModel = () => {
   );
 
   const updateMaxVisibleNtfs = useCallback(() => {
-    console.log("Active");
     setMaxVisibleNFTs(prevMaxVisibleNFTs => prevMaxVisibleNFTs + 5);
     if (hasNextPage) {
       fetchNextPage();

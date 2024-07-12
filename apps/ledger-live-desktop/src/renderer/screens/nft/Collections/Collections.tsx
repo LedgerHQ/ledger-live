@@ -21,7 +21,7 @@ import Box from "~/renderer/components/Box";
 import Row from "./Row";
 import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import NftCollection from "~/newArch/Collectibles/Nfts/Collection";
+import NftCollection from "~/newArch/Collectibles/Nfts/Collections";
 
 const INCREMENT = 5;
 const EmptyState = styled.div`

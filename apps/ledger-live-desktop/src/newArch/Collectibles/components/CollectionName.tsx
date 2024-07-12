@@ -6,6 +6,7 @@ import { Skeleton } from "LLD/Collectibles/components";
 import styled from "styled-components";
 import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import { FieldStatus } from "LLD/Collectibles/types/DetailDrawer";
+import { Text } from "@ledgerhq/react-ui";
 
 const Dots = styled.div`
   justify-content: flex-end;
@@ -24,9 +25,16 @@ type Props = {
   fallback?: string;
   account?: Account;
   showHideMenu?: boolean;
+  collectiblesNumber?: number;
 };
 
-const CollectionNameComponent: React.FC<Props> = ({ nft, fallback, account, showHideMenu }) => {
+const CollectionNameComponent: React.FC<Props> = ({
+  nft,
+  fallback,
+  account,
+  showHideMenu,
+  collectiblesNumber,
+}) => {
   const { status, metadata } = useNftCollectionMetadata(nft?.contract, nft?.currencyId);
   const { tokenName } = metadata || {};
   const loading = status === FieldStatus.Loading;
@@ -34,8 +42,13 @@ const CollectionNameComponent: React.FC<Props> = ({ nft, fallback, account, show
 
   return (
     <Skeleton width={80} minHeight={24} barHeight={10} show={loading}>
-      <Flex columnGap={"6px"} alignItems={"center"}>
+      <Flex columnGap={"3px"} alignItems={"center"}>
         {tokenName || fallback || "-"}
+        {collectiblesNumber && (
+          <Text fontWeight="small" color={"neutral.c70"} fontSize={12}>
+            ({collectiblesNumber})
+          </Text>
+        )}
         {isComponentReady && (
           <NFTCollectionContextMenu
             collectionName={tokenName || fallback || "-"}

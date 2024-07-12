@@ -5,7 +5,7 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import { Flex, Icons } from "@ledgerhq/react-ui";
-import TableLayout from "../../components/TableLayout";
+import { TableLayout } from "../../components";
 import { useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import styled from "styled-components";
