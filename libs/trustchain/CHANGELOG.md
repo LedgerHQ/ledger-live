@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.1.2-nightly.5
+
+### Patch Changes
+
+- [#7303](https://github.com/LedgerHQ/ledger-live/pull/7303) [`c0f4803`](https://github.com/LedgerHQ/ledger-live/commit/c0f48035b974f2bcde9df8423c6bb9bbb31d4b38) Thanks [@thesan](https://github.com/thesan)! - Test refusing member removal on device
+
 ## 0.1.2-nightly.4
 
 ### Patch Changes

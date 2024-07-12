@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.84.0-nightly.8
+
+### Minor Changes
+
+- [#7306](https://github.com/LedgerHQ/ledger-live/pull/7306) [`ed600dd`](https://github.com/LedgerHQ/ledger-live/commit/ed600dd0737b20c39851321a052dc2df812d4290) Thanks [@KVNLS](https://github.com/KVNLS)! - Upgrade Sentry to V8 and V5 for Electron
+
+### Patch Changes
+
+- [#7314](https://github.com/LedgerHQ/ledger-live/pull/7314) [`ba4c384`](https://github.com/LedgerHQ/ledger-live/commit/ba4c384c0c2dde1335ebeb50cb52c64d4330442a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handle Unsecured Error for WalletSync
+
+- [#7305](https://github.com/LedgerHQ/ledger-live/pull/7305) [`5e137a4`](https://github.com/LedgerHQ/ledger-live/commit/5e137a482177e7a5ba1425725d0afb020bd5a4e5) Thanks [@adumitrana-ledger](https://github.com/adumitrana-ledger)! - Fix long accounts text overflow
+
+- Updated dependencies [[`c0f4803`](https://github.com/LedgerHQ/ledger-live/commit/c0f48035b974f2bcde9df8423c6bb9bbb31d4b38)]:
+  - @ledgerhq/trustchain@0.1.2-nightly.5
+  - @ledgerhq/live-wallet@0.3.1-nightly.4
+  - @ledgerhq/live-common@34.6.0-nightly.6
+
 ## 2.84.0-nightly.7
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.47.0-nightly.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-wallet@0.3.1-nightly.4
+  - @ledgerhq/live-common@34.6.0-nightly.6
+
 ## 3.47.0-nightly.6
 
 ### Patch Changes
