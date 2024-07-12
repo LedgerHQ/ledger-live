@@ -10,7 +10,7 @@ export const data: AppManifest[] = [
     apiVersion: "^2.0.0",
     manifestVersion: "2",
     branch: "stable",
-    categories: [],
+    categories: ["games"],
     currencies: ["**"],
     content: {
       shortDescription: {
@@ -50,7 +50,7 @@ export const data: AppManifest[] = [
     apiVersion: "^2.0.0 || ^1.0.0",
     manifestVersion: "2",
     branch: "debug",
-    categories: ["others"],
+    categories: ["other"],
     currencies: ["**"],
     content: {
       shortDescription: {
@@ -102,12 +102,12 @@ export const data: AppManifest[] = [
       ],
     },
     homepageUrl: "https://www.staderlabs.com/eth/",
-    icon: "https://www.staderlabs.com/assets/images/stader-icon.svg",
+    icon: "https://cdn.live.ledger.com/icons/platform/stader-bnb.png",
     platforms: ["android", "ios", "desktop"],
     apiVersion: "^2.0.0 || ^1.0.0",
     manifestVersion: "2",
     branch: "stable",
-    categories: ["stake/earn/manage"],
+    categories: ["defi"],
     currencies: ["ethereum", "ethereum/erc20/bnb", "bsc"],
     content: {
       shortDescription: {
