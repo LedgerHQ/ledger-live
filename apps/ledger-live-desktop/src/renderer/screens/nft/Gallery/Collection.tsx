@@ -9,7 +9,7 @@ import { openModal } from "~/renderer/actions/modals";
 import styled from "styled-components";
 import Media from "~/renderer/components/Nft/Media";
 import IconSend from "~/renderer/icons/Send";
-import TokensList from "LLD/Collectibles/Nfts/Gallery/components/TokensList";
+import TokensList from "~/newArch/Collectibles/Nfts/components/TokensList";
 import Spinner from "~/renderer/components/Spinner";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

@@ -2,18 +2,18 @@ import React, { useMemo } from "react";
 import { useNftCollectionsModel } from "./useNftCollectionsModel";
 import { Box, Icons, Flex } from "@ledgerhq/react-ui";
 import TableContainer from "~/renderer/components/TableContainer";
-import TableHeader from "../../components/Collection/TableHeader";
+import TableHeader from "../../components/Collections/TableHeader";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-nft-react";
-import TableRow from "../../components/Collection/TableRow";
-import EmptyCollection from "../../components/Collection/EmptyCollection";
+import TableRow from "../../components/Collections/TableRow";
+import EmptyCollection from "../../components/Collections/EmptyCollection";
 import { CollectibleTypeEnum } from "../../types/Collectibles";
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
-import ShowMore from "../../components/Collection/ShowMore";
+import ShowMore from "../../components/Collections/ShowMore";
 import { FieldStatus } from "../../types/DetailDrawer";
 import CollectionContextMenu from "LLD/components/ContextMenu/CollectibleContextMenu";
-import HeaderActions from "../../components/Collection/HeaderActions";
+import HeaderActions from "../../components/Collections/HeaderActions";
 import { TableHeaderProps, TableHeaderTitleKey as TitleKey } from "../../types/Collection";
 
 export type NftsInTheCollections = {

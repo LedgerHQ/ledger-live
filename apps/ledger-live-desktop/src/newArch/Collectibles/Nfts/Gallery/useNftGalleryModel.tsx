@@ -68,9 +68,9 @@ const useNftGalleryModel = () => {
   }, [hasNextPage, fetchNextPage]);
 
   useOnScreen({
-    enabled: maxVisibleNFTs < Number(account?.nfts?.length),
+    enabled: maxVisibleNFTs < nfts?.length,
     onIntersect: updateMaxVisibleNtfs,
-    targets: [listFooterRef],
+    target: listFooterRef,
     threshold: 0.5,
   });
 

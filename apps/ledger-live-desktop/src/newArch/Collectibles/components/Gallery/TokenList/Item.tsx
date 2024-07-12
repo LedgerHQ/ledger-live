@@ -40,6 +40,7 @@ type Props = {
   withContextMenu: boolean;
   mediaType: string;
   onHideCollection?: () => void;
+  onItemClick: () => void;
 };
 
 const Item = ({
@@ -54,6 +55,7 @@ const Item = ({
   withContextMenu,
   isLoading,
   onHideCollection,
+  onItemClick,
 }: Props) => {
   const isGridLayout = mode === Layout.GRID;
   const Component = isGridLayout ? CardItem : RowItem;
@@ -62,10 +64,10 @@ const Item = ({
     <Wrapper
       px={isGridLayout ? 3 : 2}
       py={isGridLayout ? 3 : 2}
-      className={(isLoading || process.env.ALWAYS_SHOW_SKELETONS) ?? "disabled"}
+      className={(isLoading || process.env.ALWAYS_SHOW_SKELETONS) && "disabled"}
       horizontal={!isGridLayout}
       alignItems={!isGridLayout ?? "center"}
-      onClick={() => {}}
+      onClick={onItemClick}
     >
       <Flex
         flexDirection={isGridLayout ? "column" : "row"}

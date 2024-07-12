@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import useNftGalleryModel from "./useNftGalleryModel";
 import Box from "~/renderer/components/Box";
@@ -16,6 +16,7 @@ type ViewProps = ReturnType<typeof useNftGalleryModel>;
 
 const Footer = styled.footer`
   height: 20px;
+  margin-bottom: 20px;
 `;
 
 const SpinnerContainer = styled.div`
@@ -72,7 +73,6 @@ function View({
         setIsLoading={setIsLoading}
         onSelectCollection={onSelectCollection}
       />
-
       <Footer ref={listFooterRef}>
         {isLoading ? (
           <SpinnerContainer>
@@ -94,4 +94,4 @@ function View({
 
 const NftGallery: React.FC<{}> = () => <View {...useNftGalleryModel()} />;
 
-export default NftGallery;
+export default memo(NftGallery);

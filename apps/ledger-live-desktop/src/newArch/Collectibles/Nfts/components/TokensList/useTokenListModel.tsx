@@ -6,11 +6,13 @@ import { useNftMetadataBatch } from "@ledgerhq/live-nft-react";
 import { FieldStatus } from "LLD/Collectibles/types/DetailDrawer";
 import { BaseNftsProps } from "LLD/Collectibles/types/Collectibles";
 import BigNumber from "bignumber.js";
+import { useState } from "react";
 
 export type TokenListProps = {
   account: Account;
   formattedNfts: {
     id: string;
+    collectibleId: string;
     standard: string;
     amount: string | BigNumber;
     tokenName: string;
@@ -18,6 +20,10 @@ export type TokenListProps = {
     isLoading: boolean;
     mediaType: string;
   }[];
+  isDrawerOpen: boolean;
+  nftIdToOpen: string;
+  setIsDrawerOpen: (isDrawerOpen: boolean) => void;
+  onItemClick: (id: string) => void;
 };
 
 export const useTokenListModel = ({ nfts, account }: BaseNftsProps): TokenListProps => {
@@ -41,6 +47,7 @@ export const useTokenListModel = ({ nfts, account }: BaseNftsProps): TokenListPr
 
   const formattedNfts = metadata.map((meta, index) => ({
     id: nftsList[index]?.tokenId || "",
+    collectibleId: nftsList[index]?.id || "",
     standard: nftsList[index]?.standard || "",
     amount: nftsList[index]?.amount || "",
     tokenName: meta.metadata?.nftName || meta.metadata?.tokenName || "",
@@ -52,8 +59,19 @@ export const useTokenListModel = ({ nfts, account }: BaseNftsProps): TokenListPr
       meta?.status !== FieldStatus.NoData,
   }));
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [nftIdToOpen, setNftIdToOpen] = useState<string>("");
+  const onItemClick = (id: string) => {
+    setNftIdToOpen(id);
+    setIsDrawerOpen(true);
+  };
+
   return {
     account: account,
     formattedNfts: formattedNfts,
+    isDrawerOpen,
+    nftIdToOpen,
+    onItemClick,
+    setIsDrawerOpen,
   };
 };

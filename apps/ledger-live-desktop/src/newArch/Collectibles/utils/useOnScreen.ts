@@ -1,43 +1,39 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 
 interface InteractionObserverHookParams {
   root?: React.RefObject<Element>;
-  targets: React.RefObject<Element>[];
-  onIntersect: () => void;
+  target: React.RefObject<Element>;
+  onIntersect: Function;
   threshold?: number;
   rootMargin?: string;
   enabled?: boolean;
 }
 
+/**
+ * Observe if target is getting into viewport
+ * (related to root. Root is document viewport if not given)
+ **/
 export function useOnScreen({
   root,
-  targets,
+  target,
   onIntersect,
   threshold = 1.0,
-  rootMargin = "20px",
+  rootMargin = "0px",
   enabled = true,
-}: InteractionObserverHookParams): boolean[] {
-  const [isIntersecting, setIsIntersecting] = useState<boolean[]>(targets.map(() => false));
-  const stableOnIntersect = useCallback(onIntersect, [onIntersect]);
-
+}: InteractionObserverHookParams) {
   useEffect(() => {
     if (!enabled) {
       return;
     }
 
+    const el = target && target.current;
+
+    if (!el) {
+      return;
+    }
+
     const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach((entry, index) => {
-          const newState = [...isIntersecting];
-          if (entry.isIntersecting) {
-            stableOnIntersect();
-            newState[index] = true;
-          } else {
-            newState[index] = false;
-          }
-          setIsIntersecting(newState);
-        });
-      },
+      entries => entries.forEach(entry => entry.isIntersecting && onIntersect()),
       {
         root: root?.current ?? null,
         rootMargin,
@@ -45,22 +41,10 @@ export function useOnScreen({
       },
     );
 
-    targets.forEach(target => {
-      const element = target.current;
-      if (element) {
-        observer.observe(element);
-      }
-    });
+    observer.observe(el);
 
     return () => {
-      targets.forEach(target => {
-        const element = target.current;
-        if (element) {
-          observer.unobserve(element);
-        }
-      });
+      observer.unobserve(el);
     };
-  }, [enabled, root, rootMargin, threshold, targets, stableOnIntersect, isIntersecting]);
-
-  return isIntersecting;
+  }, [enabled, root, rootMargin, threshold, target, onIntersect]);
 }

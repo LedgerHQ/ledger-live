@@ -7,7 +7,7 @@ import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import { Flex, Icons } from "@ledgerhq/react-ui";
 import { Skeleton, Media, CollectionName, TableLayout } from "../../components";
-import TokensList from "../Gallery/components/TokensList";
+import TokensList from "../components/TokensList";
 import OperationsList from "~/renderer/components/OperationsList";
 import styled from "styled-components";
 import Spinner from "~/renderer/components/Spinner";
@@ -16,6 +16,7 @@ type ViewProps = ReturnType<typeof useNftCollectionModel>;
 
 const Footer = styled.footer`
   height: 20px;
+  margin-bottom: 20px;
 `;
 
 const SpinnerContainer = styled.div`
@@ -23,7 +24,6 @@ const SpinnerContainer = styled.div`
   flex: 1;
   align-items: center;
   justify-content: center;
-  padding: 20px;
 `;
 const SpinnerBackground = styled.div`
   background: ${p => p.theme.colors.palette.background.paper};

@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useMemo } from "react";
 import { Box, Text } from "@ledgerhq/react-ui";
 import { CollectionName } from "LLD/Collectibles/components";
-import TokenList from "../TokensList";
+import TokenList from "../../../components/TokensList";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import styled from "styled-components";
 
@@ -59,7 +59,8 @@ const LazyCollection: React.FC<LazyCollectionProps> = ({
   useEffect(() => {
     const isLoading = renderedCollections.length < collections.length;
     setIsLoading(isLoading);
-  }, [renderedCollections, collections, setIsLoading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [renderedCollections]);
 
   return <>{renderedCollections}</>;
 };

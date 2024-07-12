@@ -48,7 +48,7 @@ const useNftCollectionModel = () => {
   useOnScreen({
     enabled: maxVisibleNFTs < nfts?.length,
     onIntersect: updateMaxVisibleNtfs,
-    targets: [listFooterRef],
+    target: listFooterRef,
     threshold: 0.5,
   });
 

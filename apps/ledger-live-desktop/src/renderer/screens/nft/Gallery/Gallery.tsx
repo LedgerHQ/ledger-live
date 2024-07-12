@@ -10,7 +10,7 @@ import styled from "styled-components";
 import IconSend from "~/renderer/icons/Send";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
 import TokensList from "./TokensList";
-import NftTokensList from "LLD/Collectibles/Nfts/Gallery/TokensList";
+import NftTokensList from "LLD/Collectibles/"
 import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
 import TrackPage from "~/renderer/analytics/TrackPage";
