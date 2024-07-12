@@ -43,7 +43,7 @@ export const useTokenListModel = ({ nfts, account }: BaseNftsProps): TokenListPr
     id: nftsList[index]?.tokenId || "",
     standard: nftsList[index]?.standard || "",
     amount: nftsList[index]?.amount || "",
-    tokenName: meta?.metadata?.tokenName || "",
+    tokenName: meta.metadata?.nftName || meta.metadata?.tokenName || "",
     previewUri: meta?.metadata?.medias.preview.uri || "",
     mediaType: meta?.metadata?.medias.preview.mediaType || "",
     isLoading:

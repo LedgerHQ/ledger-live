@@ -4,7 +4,7 @@ import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTCollectionContextMenu";
 import { Skeleton } from "LLD/Collectibles/components";
 import styled from "styled-components";
-import { IconsLegacy } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import { FieldStatus } from "LLD/Collectibles/types/DetailDrawer";
 
 const Dots = styled.div`
@@ -18,17 +18,13 @@ const Dots = styled.div`
     color: ${p => p.theme.colors.palette.text.shade80};
   }
 `;
-const Container = styled.div`
-  display: flex;
-  column-gap: 10px;
-`;
 
 type Props = {
   nft?: ProtoNFT;
   fallback?: string;
   account?: Account;
   showHideMenu?: boolean;
-}; // TODO Make me pretty
+};
 
 const CollectionNameComponent: React.FC<Props> = ({ nft, fallback, account, showHideMenu }) => {
   const { status, metadata } = useNftCollectionMetadata(nft?.contract, nft?.currencyId);
@@ -38,7 +34,7 @@ const CollectionNameComponent: React.FC<Props> = ({ nft, fallback, account, show
 
   return (
     <Skeleton width={80} minHeight={24} barHeight={10} show={loading}>
-      <Container>
+      <Flex columnGap={"6px"} alignItems={"center"}>
         {tokenName || fallback || "-"}
         {isComponentReady && (
           <NFTCollectionContextMenu
@@ -52,7 +48,7 @@ const CollectionNameComponent: React.FC<Props> = ({ nft, fallback, account, show
             </Dots>
           </NFTCollectionContextMenu>
         )}
-      </Container>
+      </Flex>
     </Skeleton>
   );
 };

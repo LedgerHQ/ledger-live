@@ -58,7 +58,7 @@ const NftItem: React.FC<NftItemProps> = ({
     >
       <TableRow
         isLoading={isLoading}
-        tokenName={metadata?.tokenName || contract}
+        tokenName={metadata?.tokenName || metadata?.nftName || "-"}
         numberOfNfts={numberOfNfts}
         onClick={() => onClick(contract)}
         media={{

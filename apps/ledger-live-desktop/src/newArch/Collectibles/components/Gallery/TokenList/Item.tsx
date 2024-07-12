@@ -60,7 +60,7 @@ const Item = ({
 
   return (
     <Wrapper
-      px={3}
+      px={isGridLayout ? 3 : 2}
       py={isGridLayout ? 3 : 2}
       className={(isLoading || process.env.ALWAYS_SHOW_SKELETONS) ?? "disabled"}
       horizontal={!isGridLayout}
@@ -71,7 +71,7 @@ const Item = ({
         flexDirection={isGridLayout ? "column" : "row"}
         flex={1}
         pl={isGridLayout ? 0 : "5px"}
-        columnGap={"10px"}
+        columnGap={"16px"}
       >
         <Skeleton width={40} minHeight={40} full={isGridLayout} show={isLoading}>
           <Media

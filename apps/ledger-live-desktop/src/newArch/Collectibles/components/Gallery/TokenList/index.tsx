@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { collectiblesViewModeSelector } from "~/renderer/reducers/settings";
 import Item from "./Item";
 import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
-import { TokenListProps } from "~/newArch/Collectibles/Nfts/Gallery/TokensList/useTokenListModel";
+import { TokenListProps } from "LLD/Collectibles/Nfts/Gallery/components/TokensList/useTokenListModel";
 
 type Props = {
   account: TokenListProps["account"];

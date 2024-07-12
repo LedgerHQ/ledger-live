@@ -13,7 +13,7 @@ import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import NFTContextMenu from "~/renderer/components/ContextMenu/NFTContextMenu";
 import { State } from "~/renderer/reducers";
 import { IconsLegacy } from "@ledgerhq/react-ui";
-import NftDetailDrawer from "LLD/Collectibles/Nfts/Gallery/DetailDrawer/index";
+import NftDetailDrawer from "~/newArch/Collectibles/Nfts/Gallery/components/DetailDrawer/index";
 
 const Wrapper = styled(Card)`
   &.disabled {
