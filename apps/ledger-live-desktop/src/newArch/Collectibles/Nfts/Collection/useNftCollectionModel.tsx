@@ -61,13 +61,14 @@ const useNftCollectionModel = () => {
   }, [account?.id, history, slicedNfts.length]);
 
   return {
-    id,
+    isLoading,
     collectionAddress,
     account,
     nfts,
-    isLoading,
-    slicedNfts,
     metadata,
+    slicedNfts,
+    listFooterRef,
+    maxVisibleNFTs,
     filterOperation,
     onSend,
   };

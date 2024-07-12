@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import useNftCollectionModel from "./useNftCollectionModel";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -9,8 +9,33 @@ import { Flex, Icons } from "@ledgerhq/react-ui";
 import { Skeleton, Media, CollectionName, TableLayout } from "../../components";
 import TokensList from "../Gallery/components/TokensList";
 import OperationsList from "~/renderer/components/OperationsList";
+import styled from "styled-components";
+import Spinner from "~/renderer/components/Spinner";
 
 type ViewProps = ReturnType<typeof useNftCollectionModel>;
+
+const Footer = styled.footer`
+  height: 20px;
+`;
+
+const SpinnerContainer = styled.div`
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+`;
+const SpinnerBackground = styled.div`
+  background: ${p => p.theme.colors.palette.background.paper};
+  border-radius: 100%;
+  padding: 2px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid ${p => p.theme.colors.palette.background.paper};
+`;
 
 function View({
   isLoading,
@@ -18,10 +43,18 @@ function View({
   collectionAddress,
   nfts,
   metadata,
+  slicedNfts,
+  listFooterRef,
+  maxVisibleNFTs,
   filterOperation,
   onSend,
 }: ViewProps) {
   const { t } = useTranslation();
+  const [areItemsLoading, setAreItemsLoading] = React.useState(false);
+
+  useEffect(() => {
+    setAreItemsLoading(maxVisibleNFTs < nfts.length);
+  }, [maxVisibleNFTs, nfts.length]);
 
   return (
     <>
@@ -63,7 +96,16 @@ function View({
           </Button>
         </Flex>
         <TableLayout />
-        {account && <TokensList account={account} nfts={nfts} />}
+        {account && <TokensList account={account} nfts={slicedNfts} />}
+        <Footer ref={listFooterRef}>
+          {areItemsLoading && (
+            <SpinnerContainer>
+              <SpinnerBackground>
+                <Spinner size={14} />
+              </SpinnerBackground>
+            </SpinnerContainer>
+          )}
+        </Footer>
         <OperationsList
           account={account}
           title={t("NFT.gallery.collection.operationList.header")}
