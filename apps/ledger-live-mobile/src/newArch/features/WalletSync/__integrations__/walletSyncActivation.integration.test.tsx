@@ -1,11 +1,26 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
-import { render } from "@tests/test-renderer";
+import { render, waitFor } from "@tests/test-renderer";
 import { WalletSyncSharedNavigator } from "./shared";
-import { State } from "~/reducers/types";
+import { DeviceLike, State } from "~/reducers/types";
+import { setEnv } from "@ledgerhq/live-env";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
+
+const LAST_SEEN_DEVICE = {
+  modelId: DeviceModelId.stax,
+} as DeviceModelInfo;
+
+const DEVICE = {
+  id: "1",
+  name: "STAX A",
+  modelId: DeviceModelId.stax,
+} as DeviceLike;
 
 describe("WalletSyncActivation", () => {
   it("Should WalletSyncActivation Flow and go through device selection", async () => {
+    setEnv("MOCK", "1");
+
     const { user } = render(<WalletSyncSharedNavigator />, {
       overrideInitialState: (state: State) => ({
         ...state,
@@ -13,6 +28,11 @@ describe("WalletSyncActivation", () => {
           ...state.settings,
           readOnlyModeEnabled: false,
           overriddenFeatureFlags: { llmWalletSync: { enabled: true } },
+          lastSeenDevice: LAST_SEEN_DEVICE,
+        },
+        ble: {
+          ...state.ble,
+          knownDevices: [DEVICE],
         },
       }),
     });
@@ -30,5 +50,19 @@ describe("WalletSyncActivation", () => {
     expect(
       await screen.findByText(/Choose the Ledger device you will use to secure your backup/i),
     ).toBeVisible();
+
+    await user.press(
+      await screen.findByRole("button", {
+        name: "STAX A",
+      }),
+    );
+
+    await waitFor(async () => {
+      expect(await screen.getByTestId("device-action-loading")).toBeVisible();
+    });
+
+    // await waitFor(async () => {
+    //   expect(await screen.findByText(`Continue on your Ledger Stax`)).toBeVisible();
+    // });
   });
 });
