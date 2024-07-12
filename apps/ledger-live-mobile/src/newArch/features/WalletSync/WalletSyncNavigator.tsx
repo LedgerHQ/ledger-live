@@ -5,8 +5,8 @@ import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { WalletSyncNavigatorStackParamList } from "../../../components/RootNavigator/types/WalletSyncNavigator";
 import WalletSyncActivation from "LLM/features/WalletSync/screens/Activation";
-import { Success } from "LLM/features/WalletSync/screens/Success";
 import { ActivationProcess } from "./screens/Activation/ActivationProcess";
+import { ActivationSuccess } from "./screens/Activation/ActivationSuccess";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
@@ -34,7 +34,7 @@ export default function WalletSynceNavigator() {
 
       <Stack.Screen
         name={ScreenName.WalletSyncSuccess}
-        component={Success}
+        component={ActivationSuccess}
         options={{
           title: "",
           headerRight: () => null,

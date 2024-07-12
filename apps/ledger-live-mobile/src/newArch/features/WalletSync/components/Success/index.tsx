@@ -7,17 +7,22 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 
 import { ScreenName } from "~/const";
 import SafeAreaView from "~/components/SafeAreaView";
-type Props = BaseComposite<
-  StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncSuccess>
->;
+type Props = {
+  title: string;
+  desc: string;
+  mainButton: {
+    label: string;
+    onPress: () => void;
+  };
 
-export function Success({ navigation, route }: Props) {
-  const { t } = useTranslation();
+  secondaryButton: {
+    label: string;
+    onPress: () => void;
+  };
+};
+
+export function Success({ title, desc, mainButton, secondaryButton }: Props) {
   const { colors } = useTheme();
-  const { created } = route.params;
-  const title = created ? "walletSync.success.activation" : "walletSync.success.sync";
-  const desc = created ? "walletSync.success.activationDesc" : "walletSync.success.syncDesc";
-
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
       <Flex flexDirection="column" alignItems="center" justifyContent="space-between" flex={1}>
@@ -26,16 +31,18 @@ export function Success({ navigation, route }: Props) {
             <Icons.CheckmarkCircleFill size={"L"} color={colors.success.c60} />
           </Container>
           <Text variant="h4" color="neutral.c100" textAlign="center" fontWeight="semiBold">
-            {t(title)}
+            {title}
           </Text>
           <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
-            {t(desc)}
+            {desc}
           </Text>
         </Flex>
         <Flex flexDirection="column" rowGap={10}>
-          <Button type="main">{t("walletSync.success.syncAnother")}</Button>
-          <Button type="main" outline>
-            {t("walletSync.success.close")}
+          <Button type="main" onPress={mainButton.onPress}>
+            {mainButton.label}
+          </Button>
+          <Button type="main" outline onPress={secondaryButton.onPress}>
+            {secondaryButton.label}
           </Button>
         </Flex>
       </Flex>
