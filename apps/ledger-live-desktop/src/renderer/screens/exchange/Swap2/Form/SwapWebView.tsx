@@ -33,7 +33,7 @@ import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
-import { captureException } from "~/sentry/internal";
+import { captureException } from "~/sentry/renderer";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
