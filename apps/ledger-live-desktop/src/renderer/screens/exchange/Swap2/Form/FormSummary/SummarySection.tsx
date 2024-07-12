@@ -1,4 +1,4 @@
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -10,8 +10,10 @@ const Container = styled.div`
 
 type SummarySectionProps = {
   children: React.ReactNode;
-};
+} & HTMLAttributes<HTMLDivElement>;
 
-const SummarySection = ({ children }: SummarySectionProps) => <Container>{children}</Container>;
+const SummarySection = ({ children, ...rest }: SummarySectionProps) => (
+  <Container {...rest}>{children}</Container>
+);
 
 export default SummarySection;

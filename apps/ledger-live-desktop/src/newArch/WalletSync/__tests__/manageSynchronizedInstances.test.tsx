@@ -12,12 +12,6 @@ const WalletSyncTestApp = () => (
   </>
 );
 
-jest.mock(
-  "electron",
-  () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
-  { virtual: true },
-);
-
 const INSTANCES: Array<TrustchainMember> = [
   {
     id: "currentInstance",

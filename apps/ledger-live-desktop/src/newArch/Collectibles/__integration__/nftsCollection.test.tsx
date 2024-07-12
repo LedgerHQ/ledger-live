@@ -5,12 +5,6 @@ import React from "react";
 import { render, screen } from "tests/testUtils";
 import { account, NftCollectionTest, NoNftCollectionTest } from "./shared";
 
-jest.mock(
-  "electron",
-  () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
-  { virtual: true },
-);
-
 describe("displayNftCollection", () => {
   it("should display NFTs collection", async () => {
     render(<NftCollectionTest />, {

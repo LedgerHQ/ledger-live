@@ -7,9 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
-import { TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { TrustchainMember, Trustchain, MemberCredentials } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
 
 type Props = {
   device: Device | null;
@@ -49,9 +49,9 @@ export function useRemoveMembers({ device, member }: Props) {
   );
 
   const removeMember = useCallback(
-    (member: TrustchainMember) => {
+    async (member: TrustchainMember) => {
       try {
-        runWithDevice(deviceRef.current?.deviceId, async transport => {
+        await runWithDevice(deviceRef.current?.deviceId, async transport => {
           const newTrustchain = await sdkRef.current.removeMember(
             transport,
             trustchainRef.current as Trustchain,
@@ -66,8 +66,8 @@ export function useRemoveMembers({ device, member }: Props) {
           transitionToNextScreen(newTrustchain);
         });
       } catch (error) {
-        setError(error as Error);
-        if (!(error instanceof TransportStatusError || error instanceof UserRefusedOnDevice)) {
+        if (error instanceof Error) setError(error);
+        if (error instanceof TrustchainNotAllowed) {
           dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
         }
       }
