@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 0.5.0-nightly.3
+
+### Patch Changes
+
+- [#7325](https://github.com/LedgerHQ/ledger-live/pull/7325) [`1bf6186`](https://github.com/LedgerHQ/ledger-live/commit/1bf61861ceeba147f37429926d19b9a1a244e76c) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix tezos bridge send flow error.
+
 ## 0.5.0-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 ## 34.5.0-next.4
 
+## 34.6.0-nightly.7
+
+### Patch Changes
+
+- [#7296](https://github.com/LedgerHQ/ledger-live/pull/7296) [`7f2ca21`](https://github.com/LedgerHQ/ledger-live/commit/7f2ca21ba29c52a99c1c004173c19bf9cf8082b5) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: extracted fee drawer for swap live app
+
+- Updated dependencies [[`1bf6186`](https://github.com/LedgerHQ/ledger-live/commit/1bf61861ceeba147f37429926d19b9a1a244e76c)]:
+  - @ledgerhq/coin-tezos@0.5.0-nightly.3
+
 ## 34.6.0-nightly.6
 
 ### Patch Changes

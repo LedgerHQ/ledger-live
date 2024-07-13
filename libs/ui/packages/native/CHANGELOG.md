@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.23.1-nightly.3
+
+### Patch Changes
+
+- [#7307](https://github.com/LedgerHQ/ledger-live/pull/7307) [`77bcd53`](https://github.com/LedgerHQ/ledger-live/commit/77bcd539ad23daf7abc81e202665f6b9ab45c437) Thanks [@Justkant](https://github.com/Justkant)! - fix: use auto instead of fit-content that does not exist on RN
+
 ## 0.23.1-nightly.2
 
 ### Patch Changes

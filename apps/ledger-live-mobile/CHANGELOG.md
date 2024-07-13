@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.47.0-nightly.8
+
+### Minor Changes
+
+- [#7307](https://github.com/LedgerHQ/ledger-live/pull/7307) [`581a6f9`](https://github.com/LedgerHQ/ledger-live/commit/581a6f9fe4702109125b3362b5059cc85c99d6fd) Thanks [@Justkant](https://github.com/Justkant)! - feat(web3hub): main and search screen first iteration
+
+### Patch Changes
+
+- Updated dependencies [[`77bcd53`](https://github.com/LedgerHQ/ledger-live/commit/77bcd539ad23daf7abc81e202665f6b9ab45c437), [`7f2ca21`](https://github.com/LedgerHQ/ledger-live/commit/7f2ca21ba29c52a99c1c004173c19bf9cf8082b5)]:
+  - @ledgerhq/native-ui@0.23.1-nightly.3
+  - @ledgerhq/live-common@34.6.0-nightly.7
+
 ## 3.47.0-nightly.7
 
 ### Patch Changes
