@@ -6699,5 +6699,17 @@
         "secondCta": "Already created a key?"
       }
     }
+  },
+  "web3hub": {
+    "manifestsList": {
+      "title": "Explore",
+      "description": "Discover the best of web3 curated by Ledger"
+    },
+    "main": {
+      "header": {
+        "title": "Explore web3",
+        "placeholder": "Search or type a URL"
+      }
+    }
   }
 }

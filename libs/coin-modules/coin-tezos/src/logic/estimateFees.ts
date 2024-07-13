@@ -80,7 +80,7 @@ export async function estimateFees({
         estimate = await tezosToolkit.estimate.transfer({
           mutez: true,
           to: transaction.recipient,
-          amount: parseInt(amount.toString()),
+          amount: Number(amount),
           storageLimit: DEFAULT_STORAGE_LIMIT.ORIGINATION, // https://github.com/TezTech/eztz/blob/master/PROTO_003_FEES.md for originating an account
         });
         break;
@@ -120,6 +120,7 @@ export async function estimateFees({
     } else {
       estimation.fees = BigInt(estimate.suggestedFeeMutez);
       estimation.gasLimit = BigInt(estimate.gasLimit);
+      estimation.amount = transaction.amount;
     }
 
     estimation.storageLimit = BigInt(estimate.storageLimit);
