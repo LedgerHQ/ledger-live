@@ -46,10 +46,10 @@ describe("prepareTransaction", () => {
     expect(newTx.taquitoError).toEqual("proto.020-PsParisC.contract.empty_transaction");
   });
 
-  it("returns new transaction with estimated value by TezosToolkit", async () => {
+  it("returns new transaction with estimated fees by TezosToolkit", async () => {
     // Given
     const tx = createFixtureTransaction({
-      amount: BigNumber(2),
+      amount: BigNumber(200),
       recipient: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
     });
     const tezosEstimate = {
@@ -60,37 +60,57 @@ describe("prepareTransaction", () => {
     mockTezosEstimate.mockResolvedValue(tezosEstimate);
 
     // When
-    const newTx = await prepareTransaction(createFixtureAccount({ balance: BigNumber(10) }), tx);
+    const newTx = await prepareTransaction(createFixtureAccount({ balance: BigNumber(1_000) }), tx);
 
     // Then
     expect(newTx).toEqual({
       ...tx,
       fees: new BigNumber(tezosEstimate.suggestedFeeMutez),
+      estimatedFees: new BigNumber(tezosEstimate.suggestedFeeMutez),
       gasLimit: new BigNumber(tezosEstimate.gasLimit),
       storageLimit: new BigNumber(tezosEstimate.storageLimit),
     });
   });
 
-  // it("returns a new Transaction with new fees", async () => {
-  //   // Given
-  //   const fees = new BigNumber(faker.number.int(50));
-  //   mockEstimateFees.mockResolvedValue(fees);
-  //   const tx = createFixtureTransaction();
+  it("returns new transaction with estimated fees by TezosToolkit when useAllAmount", async () => {
+    // Given
+    const tx = createFixtureTransaction({
+      amount: BigNumber(200),
+      recipient: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
+      useAllAmount: true,
+    });
+    const tezosEstimate = {
+      suggestedFeeMutez: faker.number.int(20),
+      gasLimit: faker.number.int(20),
+      storageLimit: faker.number.int(20),
+      opSize: faker.number.int(20),
+      burnFeeMutez: faker.number.int(20),
+    };
+    mockTezosEstimate.mockResolvedValue(tezosEstimate);
+    const account = createFixtureAccount({ balance: BigNumber(1_000) });
 
-  //   // When
-  //   const newTx = await prepareTransaction(createFixtureAccount(), tx);
+    // When
+    const newTx = await prepareTransaction(account, tx);
 
-  //   // Then
-  //   expect(mockCraftTransaction).toHaveBeenCalledTimes(1); // Check that Tx is concerted to core Tx.
-  //   expect(mockEstimateFees).toHaveBeenCalledTimes(1);
-  //   expect(newTx.fees).toEqual(fees);
-  //   expect(newTx).not.toBe(tx);
-  //   expect(newTx).toMatchObject({
-  //     amount: tx.amount,
-  //     recipient: tx.recipient,
-  //     mode: tx.mode,
-  //   });
-  // });
+    // Then
+    const gasLimit = 500; // hardcoded in the function
+    const computedFees = new BigNumber(
+      tezosEstimate.suggestedFeeMutez + tezosEstimate.opSize + gasLimit * 0.1,
+    );
+    expect(newTx).toEqual({
+      ...tx,
+      fees: computedFees,
+      estimatedFees: computedFees,
+      gasLimit: new BigNumber(tezosEstimate.gasLimit + gasLimit),
+      storageLimit: new BigNumber(tezosEstimate.storageLimit),
+      amount: account.balance.minus(
+        tezosEstimate.opSize +
+          gasLimit * 0.1 +
+          tezosEstimate.suggestedFeeMutez +
+          tezosEstimate.burnFeeMutez,
+      ),
+    });
+  });
 
   // it("returns the passed transaction if fees are the same", async () => {
   //   // Given
