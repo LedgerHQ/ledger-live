@@ -25,8 +25,8 @@ describe("Onboarding", () => {
     await app.onboarding.chooseToAccessYourWallet();
     await app.onboarding.chooseToConnectYourLedger();
     await app.onboarding.selectPairMyNano();
-    await app.onboarding.selectAddDevice();
-    await app.onboarding.addDeviceViaBluetooth();
+    await app.common.selectAddDevice();
+    await app.common.addDeviceViaBluetooth();
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.portfolio.expectPortfolioEmpty();
   });
@@ -38,8 +38,8 @@ describe("Onboarding", () => {
     await app.onboarding.chooseDevice("nanoX");
     await app.onboarding.goesThroughRestorePhrase();
     await app.onboarding.selectPairMyNano();
-    await app.onboarding.selectAddDevice();
-    await app.onboarding.addDeviceViaBluetooth();
+    await app.common.selectAddDevice();
+    await app.common.addDeviceViaBluetooth();
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.portfolio.expectPortfolioEmpty();
   });
@@ -57,7 +57,7 @@ describe("Onboarding", () => {
     } else {
       await app.onboarding.goesThroughRestorePhrase();
       await app.onboarding.selectPairMyNano();
-      await app.onboarding.addDeviceViaUSB("nanoSP");
+      await app.common.addDeviceViaUSB("nanoSP");
       await app.portfolio.waitForPortfolioPageToLoad();
     }
   });
@@ -69,8 +69,8 @@ describe("Onboarding", () => {
     await app.onboarding.chooseDevice("nanoX");
     await app.onboarding.goesThroughCreateWallet();
     await app.onboarding.selectPairMyNano();
-    await app.onboarding.selectAddDevice();
-    await app.onboarding.addDeviceViaBluetooth();
+    await app.common.selectAddDevice();
+    await app.common.addDeviceViaBluetooth();
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
