@@ -1,22 +1,14 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AppBranch, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
+import type { MainProps, SearchProps } from "LLM/features/Web3Hub/types";
 import { AppIcon } from "~/screens/Platform/v2/AppIcon";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { Theme } from "~/colors";
-import type { Web3HubStackParamList } from "LLM/features/Web3Hub/Navigator";
 
-type MainProps = BaseComposite<
-  NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubMain>
->;
-type SearchProps = BaseComposite<
-  NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubSearch>
->;
 export type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
@@ -70,8 +62,11 @@ export default function ManifestItem({
     if (isDisabled) {
       return;
     }
-    navigation.push(ScreenName.Web3HubApp, {
-      manifestId: manifest.id,
+    navigation.push(NavigatorName.Web3Hub, {
+      screen: ScreenName.Web3HubApp,
+      params: {
+        manifestId: manifest.id,
+      },
     });
   }, [isDisabled, navigation, manifest.id]);
 

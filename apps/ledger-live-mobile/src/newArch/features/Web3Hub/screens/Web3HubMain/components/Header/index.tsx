@@ -3,12 +3,12 @@ import React, { useCallback, useContext } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import Animated, { useAnimatedStyle, interpolate, Extrapolation } from "react-native-reanimated";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import type { SearchProps } from "LLM/features/Web3Hub/types";
 import TextInput from "~/components/TextInput";
 import { HeaderContext } from "LLM/features/Web3Hub/HeaderContext";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 
 const TITLE_HEIGHT = 50;
 const SEARCH_HEIGHT = 60;
@@ -19,7 +19,7 @@ const LAYOUT_RANGE = [0, 35];
 
 type Props = {
   title?: string;
-  navigation: NativeStackHeaderProps["navigation"];
+  navigation: SearchProps["navigation"];
 };
 
 export default function Web3HubMainHeader({ title, navigation }: Props) {
@@ -70,7 +70,9 @@ export default function Web3HubMainHeader({ title, navigation }: Props) {
   });
 
   const goToSearch = useCallback(() => {
-    navigation.push(ScreenName.Web3HubSearch, {});
+    navigation.push(NavigatorName.Web3Hub, {
+      screen: ScreenName.Web3HubSearch,
+    });
   }, [navigation]);
 
   return (
