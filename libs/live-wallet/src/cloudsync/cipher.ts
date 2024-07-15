@@ -1,5 +1,5 @@
 import Base64 from "base64-js";
-import { compress, decompress } from "fflate";
+import pako from "pako";
 import { TrustchainSDK, Trustchain } from "@ledgerhq/trustchain/types";
 
 export type Cipher<Data> = {
@@ -17,9 +17,7 @@ export function makeCipher<Data>(trustchainSdk: TrustchainSDK): Cipher<Data> {
         trustchain,
         Base64.toByteArray(base64payload),
       );
-      const decompressed = await new Promise<Uint8Array>((resolve, reject) =>
-        decompress(decrypted, (err, result) => (err ? reject(err) : resolve(result))),
-      );
+      const decompressed = pako.inflate(decrypted);
       const json = JSON.parse(new TextDecoder().decode(decompressed));
       return json;
     },
@@ -27,9 +25,7 @@ export function makeCipher<Data>(trustchainSdk: TrustchainSDK): Cipher<Data> {
     encrypt: async (trustchain: Trustchain, data: Data): Promise<string> => {
       const json = JSON.stringify(data);
       const bytes = new TextEncoder().encode(json);
-      const compressed = await new Promise<Uint8Array>((resolve, reject) =>
-        compress(bytes, (err, result) => (err ? reject(err) : resolve(result))),
-      );
+      const compressed = pako.deflate(bytes);
       const encrypted = await trustchainSdk.encryptUserData(trustchain, compressed);
       const base64 = Base64.fromByteArray(encrypted);
       return base64;
