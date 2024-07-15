@@ -41,7 +41,7 @@ export default function Web3HubMainHeader({ navigation, onSearch }: Props) {
         <Box width={"80%"}>
           <TextInput
             autoFocus
-            testID="web3hub-search-header-search"
+            role="searchbox"
             placeholder={t("web3hub.main.header.placeholder")}
             keyboardType="default"
             returnKeyType="done"
