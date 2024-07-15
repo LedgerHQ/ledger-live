@@ -1,9 +1,10 @@
 name: chopsticks-sidecar
 services:
   chopsticks:
-    # TODO: Deploy the image in in ghr.io/ledgerhq
+    # TODO: Deploy the image in in ghcr.io/ledgerhq
     image: coin-tester-chopsticks:latest
     container_name: chopsticks
+    platform: linux/x86_64
     build:
       context: .
       dockerfile: chopsticks.Dockerfile
@@ -17,7 +18,7 @@ services:
         timeout: 10s
         retries: 12
   sidecar-api:
-    image: ghcr.io/ledgerhq/polkadot-sidecar:19.0.0-ledger-live
+    image: ghcr.io/ledgerhq/polkadot-sidecar:20.0.0-ledger-live
     container_name: sidecar-api
     platform: linux/x86_64
     depends_on:

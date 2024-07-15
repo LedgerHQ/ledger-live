@@ -1,11 +1,11 @@
 import { ApiPromise, HttpProvider, WsProvider } from "@polkadot/api";
-import { getCoinConfig, PolkadotCoinConfig } from "../../config";
+import polkadotCoinConfig, { type PolkadotCoinConfig } from "../../config";
 
 let coinConfig: PolkadotCoinConfig | undefined;
 let api: ApiPromise | undefined;
 
 export default async function () {
-  const config = getCoinConfig();
+  const config = polkadotCoinConfig.getCoinConfig();
   // Need to constantly check if a new config is setted
   if (!api || coinConfig !== config) {
     coinConfig = config;

@@ -47,6 +47,8 @@ import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/device
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
+import { importTrustchainStoreState } from "@ledgerhq/trustchain/store";
+import { importMarketState } from "./actions/market";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -164,10 +166,12 @@ async function init() {
       prepareCurrency(getCryptoCurrencyById("ethereum"));
     }
   } else {
+    // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
   }
   const initialCountervalues = await getKey("app", "countervalues");
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
+
   const postOnboardingState = await getKey("app", "postOnboarding");
   if (postOnboardingState) {
     store.dispatch(
@@ -176,6 +180,16 @@ async function init() {
       }),
     );
   }
+  const trustchainStoreState = await getKey("app", "trustchain");
+  if (trustchainStoreState) {
+    store.dispatch(importTrustchainStoreState(trustchainStoreState));
+  }
+
+  const marketState = await getKey("app", "market");
+  if (marketState) {
+    store.dispatch(importMarketState(marketState));
+  }
+
   webFrame.setVisualZoomLevelLimits(1, 1);
   const matcher = window.matchMedia("(prefers-color-scheme: dark)");
   const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));

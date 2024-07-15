@@ -14,8 +14,8 @@ import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupported
 import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
-import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 
 export function useMarket() {
   const lldRefreshMarketDataFeature = useFeature("lldRefreshMarketData");

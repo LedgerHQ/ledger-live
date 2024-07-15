@@ -6,6 +6,7 @@ import {
   NotEnoughGas,
   NotEnoughGasSwap,
   NotEnoughBalanceSwap,
+  NotEnoughBalance,
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
@@ -63,8 +64,11 @@ export const useFromAmountStatusMessage = (
     const [relevantStatus] = statusEntries
       .filter(Boolean)
       .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
+    const isRelevantStatus =
+      (relevantStatus as Error) instanceof NotEnoughGas ||
+      (relevantStatus as Error) instanceof NotEnoughBalance;
 
-    if (relevantStatus instanceof NotEnoughGas && currency && estimatedFees) {
+    if (isRelevantStatus && currency && estimatedFees) {
       const query = new URLSearchParams({
         // get account id first and set it equal to account.
         // if parent account exists then overwrite the former.

@@ -4,7 +4,7 @@ import type { TokenAccount } from "@ledgerhq/types-live";
 import { GetAccountShape, makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId, areAllOperationsLoaded } from "@ledgerhq/coin-framework/account/index";
 import { encodeAddress, isStringHex, reconciliatePublicKey, txToOp } from "./logic";
-import api, { fetchAllTransactions } from "../api/tzkt";
+import api, { fetchAllTransactions } from "../network/tzkt";
 import { TezosAccount, TezosOperation } from "../types";
 
 export const getAccountShape: GetAccountShape<TezosAccount> = async ({

@@ -1,8 +1,7 @@
 import test from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { specs } from "../../utils/speculos";
-import { Application } from "tests/page";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
 
 const accounts: Account[] = [
   // Derivation path is updated when account receive money
@@ -27,10 +26,8 @@ for (const [i, account] of accounts.entries()) {
       speculosOffset: i,
     });
 
-    test(`[${account.currency.uiName}] Receive`, async ({ page }) => {
+    test(`[${account.currency.uiName}] Receive`, async ({ app }) => {
       addTmsLink(["B2CQA-249"]);
-
-      const app = new Application(page);
 
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.accountName);

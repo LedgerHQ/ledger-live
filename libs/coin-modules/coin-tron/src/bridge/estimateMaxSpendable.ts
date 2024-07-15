@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/coin-framework/account";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { fetchTronContract } from "../network";
 import { Transaction, TronAccount } from "../types";
 import createTransaction from "./createTransaction";
 import getEstimatedFees from "./getEstimateFees";
@@ -20,9 +19,7 @@ const estimateMaxSpendable: AccountBridge<
       recipient: transaction?.recipient || "0x0000000000000000000000000000000000000000",
       amount: new BigNumber(0),
     },
-    transaction && transaction.recipient
-      ? (await fetchTronContract(transaction.recipient)) !== undefined
-      : false,
+    account.type === "TokenAccount" ? account : undefined,
   );
   return account.type === "Account"
     ? BigNumber.max(0, account.spendableBalance.minus(fees))

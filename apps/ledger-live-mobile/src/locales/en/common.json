@@ -127,6 +127,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
+    "BitcoinInfrastructureError": {
+      "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
+    },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Your Ledger device must be unlocked and in range to use Bluetooth."
@@ -3154,7 +3157,7 @@
     },
     "stake": {
       "title": "Stake",
-      "description": "Grow your crypto holdings."
+      "description": "Stake your crypto holdings."
     },
     "swap": {
       "title": "Swap",
@@ -6694,6 +6697,18 @@
         "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
         "mainCta": "Sync your accounts",
         "secondCta": "Already created a key?"
+      }
+    }
+  },
+  "web3hub": {
+    "manifestsList": {
+      "title": "Explore",
+      "description": "Discover the best of web3 curated by Ledger"
+    },
+    "main": {
+      "header": {
+        "title": "Explore web3",
+        "placeholder": "Search or type a URL"
       }
     }
   }

@@ -8,16 +8,30 @@ import SynchronizeModeStep from "./01-SyncModeStep";
 import SynchWithQRCodeStep from "./02-QRCodeStep";
 import PinCodeStep from "./03-PinCodeStep";
 import SyncFinalStep from "./04-SyncFinalStep";
+import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
 
 const SynchronizeWallet = () => {
   const dispatch = useDispatch();
 
-  const { currentStep, goToNextScene } = useFlows({
-    flow: Flow.Synchronize,
-  });
+  const { currentStep, goToNextScene } = useFlows();
+  const { onClickTrack } = useWalletSyncAnalytics();
 
-  const goToActivation = () => {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+  const startSyncWithDevice = () => {
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
+    onClickTrack({
+      button: "With your Ledger",
+      page: AnalyticsPage.SyncMethod,
+      flow: "Wallet Sync",
+    });
+  };
+
+  const startSyncWithQRcode = () => {
+    goToNextScene();
+    onClickTrack({
+      button: "Scan a QR code",
+      page: AnalyticsPage.SyncMethod,
+      flow: "Wallet Sync",
+    });
   };
 
   const getStep = () => {
@@ -25,10 +39,13 @@ const SynchronizeWallet = () => {
       default:
       case Step.SynchronizeMode:
         return (
-          <SynchronizeModeStep goToQRCode={goToNextScene} goToSyncWithDevice={goToActivation} />
+          <SynchronizeModeStep
+            goToQRCode={startSyncWithQRcode}
+            goToSyncWithDevice={startSyncWithDevice}
+          />
         );
       case Step.SynchronizeWithQRCode:
-        return <SynchWithQRCodeStep displayPinCode={goToNextScene} />;
+        return <SynchWithQRCodeStep />;
       case Step.PinCode:
         return <PinCodeStep />;
       case Step.Synchronized:
@@ -37,7 +54,14 @@ const SynchronizeWallet = () => {
   };
 
   return (
-    <Flex flexDirection="column" height="100%" paddingX="40px" rowGap="48px">
+    <Flex
+      flexDirection="column"
+      height="100%"
+      paddingX="40px"
+      rowGap="48px"
+      alignItems={currentStep === Step.Synchronized ? "center" : undefined}
+      justifyContent={currentStep === Step.Synchronized ? "center" : undefined}
+    >
       {getStep()}
     </Flex>
   );
