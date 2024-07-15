@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { Box, Flex, Icons } from "@ledgerhq/native-ui";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import TextInput from "~/components/TextInput";
 import Touchable from "~/components/Touchable";
 
@@ -11,13 +12,19 @@ const SEARCH_HEIGHT = 60;
 
 type Props = {
   navigation: NativeStackHeaderProps["navigation"];
+  onSearch: (search: string) => void;
 };
 
-export default function Web3HubMainHeader({ navigation }: Props) {
+export default function Web3HubMainHeader({ navigation, onSearch }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [search, setSearch] = useState("");
-  const { colors } = useTheme();
+  const debouncedSearch = useDebounce(search, 400);
+
+  useEffect(() => {
+    onSearch(debouncedSearch);
+  }, [debouncedSearch, onSearch]);
 
   return (
     <Box

@@ -113,4 +113,60 @@ describe("Web3Hub integration test", () => {
     await user.press(screen.getByTestId("navigation-header-back-button"));
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
   });
+
+  it("Should list manifests, go to search and search an app and go it app page", async () => {
+    const { user } = render(<Web3HubTest />);
+
+    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+
+    expect(await screen.findByTestId("web3hub-loading-indicator")).toBeOnTheScreen();
+    await waitForElementToBeRemoved(() => screen.getByTestId("web3hub-loading-indicator"), {
+      timeout: 1500, // timeout because we mock the request and fake 1s delay
+    });
+
+    expect(await screen.findByTestId("web3hub-main-header-search")).toBeOnTheScreen();
+    await user.press(screen.getByTestId("web3hub-main-header-search"));
+    expect(await screen.findByTestId("web3hub-search-header-search")).toBeOnTheScreen();
+
+    expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
+
+    await user.type(screen.getByTestId("web3hub-search-header-search"), "Tool");
+
+    expect(await screen.findByTestId("web3hub-loading-indicator")).toBeOnTheScreen();
+    await waitForElementToBeRemoved(() => screen.getByTestId("web3hub-loading-indicator"), {
+      timeout: 1500, // timeout because we mock the request and fake 1s delay
+    });
+
+    expect(screen.queryByText("Dummy Wallet App")).not.toBeOnTheScreen();
+    expect((await screen.findAllByText("Wallet API Tools"))[0]).toBeOnTheScreen();
+    await user.press(screen.getAllByText("Wallet API Tools")[0]);
+    expect(await screen.findByText("Web3HubApp")).toBeOnTheScreen();
+    expect(await screen.findByText("wallet-api-tools")).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId("navigation-header-back-button"));
+    expect(await screen.findByTestId("web3hub-search-header-search")).toBeOnTheScreen();
+
+    expect((await screen.findAllByText("Wallet API Tools"))[0]).toBeOnTheScreen();
+
+    await user.clear(screen.getByTestId("web3hub-search-header-search"));
+    expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
+    await user.type(screen.getByTestId("web3hub-search-header-search"), "Dummy");
+
+    expect(await screen.findByTestId("web3hub-loading-indicator")).toBeOnTheScreen();
+    await waitForElementToBeRemoved(() => screen.getByTestId("web3hub-loading-indicator"), {
+      timeout: 1500, // timeout because we mock the request and fake 1s delay
+    });
+
+    expect(screen.queryByText("Wallet API Tools")).not.toBeOnTheScreen();
+    expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
+    await user.press(screen.getAllByText("Dummy Wallet App")[0]);
+    expect(await screen.findByText("Web3HubApp")).toBeOnTheScreen();
+    expect(await screen.findByText("dummy")).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId("navigation-header-back-button"));
+    expect(await screen.findByTestId("web3hub-search-header-search")).toBeOnTheScreen();
+
+    await user.press(screen.getByTestId("navigation-header-back-button"));
+    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+  });
 });
