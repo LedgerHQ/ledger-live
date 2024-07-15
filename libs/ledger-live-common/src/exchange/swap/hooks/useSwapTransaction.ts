@@ -3,10 +3,10 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AmountRequired,
   FeeNotLoaded,
+  NotEnoughBalance,
+  NotEnoughBalanceSwap,
   NotEnoughGas,
   NotEnoughGasSwap,
-  NotEnoughBalanceSwap,
-  NotEnoughBalance,
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
@@ -68,6 +68,10 @@ export const useFromAmountStatusMessage = (
       (relevantStatus as Error) instanceof NotEnoughGas ||
       (relevantStatus as Error) instanceof NotEnoughBalance;
 
+    if ((relevantStatus as Error) instanceof NotEnoughBalance) {
+      return new NotEnoughBalanceSwap();
+    }
+
     if (isRelevantStatus && currency && estimatedFees) {
       const query = new URLSearchParams({
         // get account id first and set it equal to account.
@@ -84,12 +88,12 @@ export const useFromAmountStatusMessage = (
     }
 
     // convert to swap variation of error to display correct message to frontend.
-    if (relevantStatus instanceof FeeNotLoaded) {
+    if ((relevantStatus as Error) instanceof FeeNotLoaded) {
       return new NotEnoughBalanceSwap();
     }
 
     return relevantStatus;
-  }, [statusEntries, currency, estimatedFees, transaction?.amount, account?.id, parentAccount?.id]);
+  }, [transaction?.amount, statusEntries, currency, estimatedFees, account?.id, parentAccount?.id]);
 };
 
 type UseSwapTransactionProps = {
