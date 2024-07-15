@@ -5535,15 +5535,15 @@ importers:
       bignumber.js:
         specifier: '9'
         version: 9.1.2
-      fflate:
-        specifier: ^0.8.2
-        version: 0.8.2
       isomorphic-ws:
         specifier: ^5.0.0
         version: 5.0.0(ws@8.16.0)
       lodash:
         specifier: '4'
         version: 4.17.21
+      pako:
+        specifier: ^2.0.4
+        version: 2.1.0
       rxjs:
         specifier: '7'
         version: 7.8.1
@@ -5560,6 +5560,9 @@ importers:
       '@types/lodash':
         specifier: '4'
         version: 4.17.0
+      '@types/pako':
+        specifier: ^2.0.0
+        version: 2.0.3
       '@types/ws':
         specifier: ^8.5.3
         version: 8.5.10
@@ -19141,9 +19144,6 @@ packages:
 
   fetch-retry@5.0.6:
     resolution: {integrity: sha512-3yurQZ2hD9VISAhJJP9bpYFNQrHHBXE2JxxjY5aLEcDi46RmAzJE2OC9FAde0yis5ElW0jTTzs0zfg/Cca4XqQ==}
-
-  fflate@0.8.2:
-    resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
 
   figures@1.7.0:
     resolution: {integrity: sha512-UxKlfCRuCBxSXU4C6t9scbDyWZ4VlaFFdojKtzJuSkuOBQ5CNFum+zZXFwHjo+CxBC1t6zlYPgHIgFjL8ggoEQ==}
@@ -48961,8 +48961,6 @@ snapshots:
   fetch-retry@4.1.1: {}
 
   fetch-retry@5.0.6: {}
-
-  fflate@0.8.2: {}
 
   figures@1.7.0:
     dependencies:
