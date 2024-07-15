@@ -2619,6 +2619,8 @@
     "src/families/hedera/tests/js-transaction.test.ts",
     "src/families/hedera/tests/transaction.test.ts",
     "src/families/hedera/tests/utils.integration.test.ts",
+    "src/families/icon/bridge.integration.test.ts",
+    "src/families/icon/__snapshots__/bridge.integration.test.ts.snap",
     "src/families/internet_computer/__snapshots__/bridge.integration.test.ts.snap",
     "src/families/internet_computer/bridge.integration.test.ts",
     "src/families/near/__snapshots__/bridge.integration.test.ts.snap",
