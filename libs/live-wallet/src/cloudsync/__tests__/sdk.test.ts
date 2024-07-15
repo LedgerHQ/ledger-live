@@ -8,6 +8,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTransportReplayer";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { TrustchainOutdated } from "@ledgerhq/trustchain/errors";
 
 describe("CloudSyncSDK basics", () => {
   const port = 54034;
@@ -90,7 +91,6 @@ describe("CloudSyncSDK basics", () => {
 
   let version = 0;
   let data: Data | null = null;
-  let onTrustchainRefreshNeeded: jest.Mock;
 
   it("init", async () => {
     trustchainSdk = new MockSDK({ applicationId: 16, name: "user" });
@@ -103,8 +103,6 @@ describe("CloudSyncSDK basics", () => {
     trustchain = result.trustchain;
 
     const getCurrentVersion = () => version;
-
-    onTrustchainRefreshNeeded = jest.fn(() => Promise.resolve());
 
     const saveNewUpdate = (up: UpdateEvent<Data>) => {
       switch (up.type) {
@@ -129,7 +127,6 @@ describe("CloudSyncSDK basics", () => {
       trustchainSdk,
       getCurrentVersion,
       saveNewUpdate,
-      onTrustchainRefreshNeeded,
     });
   });
 
@@ -174,17 +171,11 @@ describe("CloudSyncSDK basics", () => {
     expect(storedVersion).toBe(0);
   });
 
-  it("should call onTrustchainRefreshNeeded when local data exists (has version) but there is no upstream data", async () => {
+  it("should throw TrustchainOutdated when local data exists (has version) but there is no upstream data", async () => {
     try {
-      expect(onTrustchainRefreshNeeded).not.toHaveBeenCalled();
-      await sdk.pull(trustchain, creds);
-      expect(onTrustchainRefreshNeeded).not.toHaveBeenCalled();
-
-      // BUT if we had old data with old version. this should be called
       data = { value: "old" };
       version = 1;
-      await sdk.pull(trustchain, creds);
-      expect(onTrustchainRefreshNeeded).toHaveBeenCalled();
+      await expect(sdk.pull(trustchain, creds)).rejects.toThrow(TrustchainOutdated);
     } finally {
       data = null;
       version = 0;
@@ -224,8 +215,6 @@ describe("CloudSyncSDK basics", () => {
 
     const getCurrentVersion = () => version2;
 
-    const onTrustchainRefreshNeeded = () => Promise.resolve();
-
     const saveNewUpdate = (up: UpdateEvent<Data>) => {
       switch (up.type) {
         case "new-data":
@@ -249,7 +238,6 @@ describe("CloudSyncSDK basics", () => {
       trustchainSdk,
       getCurrentVersion,
       saveNewUpdate,
-      onTrustchainRefreshNeeded,
     });
 
     await sdk.pull(trustchain, creds);

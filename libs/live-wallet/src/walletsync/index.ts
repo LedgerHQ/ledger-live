@@ -54,6 +54,7 @@ export function walletSyncWatchLoop<UserState>({
   getState,
   localStateSelector,
   latestDistantStateSelector,
+  onTrustchainRefreshNeeded,
 }: {
   watchConfig?: WatchConfig;
   visualConfig?: VisualConfig;
@@ -61,6 +62,7 @@ export function walletSyncWatchLoop<UserState>({
   trustchain: Trustchain;
   memberCredentials: MemberCredentials;
   setVisualPending: (b: boolean) => void;
+  onTrustchainRefreshNeeded: (trustchain: Trustchain) => Promise<void>;
   onError?: (e: unknown) => void;
   getState: () => UserState;
   localStateSelector: (state: UserState) => LocalState;
@@ -79,5 +81,6 @@ export function walletSyncWatchLoop<UserState>({
     getState,
     localStateSelector,
     latestDistantStateSelector,
+    onTrustchainRefreshNeeded,
   });
 }
