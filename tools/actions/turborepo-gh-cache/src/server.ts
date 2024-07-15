@@ -28,31 +28,35 @@ async function startServer() {
   app.get(
     "/v8/artifacts/:artifactId",
     asyncHandler(async (req: any, res: any) => {
-      const { artifactId } = req.params;
-      const filename = artifactId + ".gz";
-      const cacheKey = await cache.restoreCache(
-        [`${cacheDirectory}/${filename}`],
-        artifactId,
-        undefined,
-        {
-          timeoutInMs: 5000,
-        },
-      );
-      if (!cacheKey) {
-        console.log(`Artifact ${artifactId} not found.`);
-        return res.status(404).send("Not found");
-      } else {
-        console.log(
-          `Artifact ${artifactId} downloaded successfully to ${cacheDirectory}/${filename}.`,
+      try {
+        const { artifactId } = req.params;
+        const filename = artifactId + ".gz";
+        const cacheKey = await cache.restoreCache(
+          [`${cacheDirectory}/${filename}`],
+          artifactId,
+          undefined,
+          {
+            timeoutInMs: 5000,
+          },
         );
-      }
+        if (!cacheKey) {
+          console.log(`Artifact ${artifactId} not found.`);
+          return res.status(404).send("Not found");
+        } else {
+          console.log(
+            `Artifact ${artifactId} downloaded successfully to ${cacheDirectory}/${filename}.`,
+          );
+        }
 
-      fs.createReadStream(path.join(absoluteCacheDirectory, filename))
-        .pipe(res)
-        .on("error", err => {
-          console.error(err);
-          res.end(err);
-        });
+        fs.createReadStream(path.join(absoluteCacheDirectory, filename))
+          .pipe(res)
+          .on("error", err => {
+            console.error(err);
+            res.end(err);
+          });
+      } catch (error) {
+        return res.status(500).send("Error", error);
+      }
     }),
   );
 

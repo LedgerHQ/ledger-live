@@ -42,7 +42,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@fix/turborepo-2-upgrade
         id: toolchain
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -72,7 +72,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@fix/turborepo-2-upgrade
         id: toolchain
         with:
           skip-turbo-cache: "false"
@@ -99,7 +99,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@fix/turborepo-2-upgrade
         id: toolchain
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -139,7 +139,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@fix/turborepo-2-upgrade
         id: cache
         with:
           skip-turbo-cache: "false"
@@ -187,7 +187,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@fix/turborepo-2-upgrade
         id: toolchain
         with:
           skip-turbo-cache: "false"
@@ -235,7 +235,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@fix/turborepo-2-upgrade
         id: toolchain
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}

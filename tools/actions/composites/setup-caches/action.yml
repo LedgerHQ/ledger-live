@@ -98,7 +98,7 @@ runs:
     - name: TurboRepo local caching server
       id: turborepo-cache-server
       if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
-      uses: LedgerHQ/ledger-live/tools/actions/turborepo-s3-cache@develop
+      uses: LedgerHQ/ledger-live/tools/actions/turborepo-s3-cache@fix/turborepo-2-upgrade
       with:
         server-token: "${{ inputs.turbo-server-token }}"
         cleanup-cache-folder: "true"
