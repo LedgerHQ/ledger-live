@@ -17,6 +17,7 @@ import {
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
+import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-trustchain";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
@@ -34,12 +35,10 @@ type ChooseDeviceProps = Props & {
   goToFollowInstructions: (device: Device) => void;
 };
 
-const APP_NAME = "Ledger Sync";
-
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused, goToFollowInstructions }) => {
   const request = useMemo(
     () => ({
-      appName: APP_NAME,
+      appName: TRUSTCHAIN_APP_NAME,
     }),
     [],
   );

@@ -288,6 +288,9 @@ importers:
       '@ledgerhq/hw-transport-vault':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-vault
+      '@ledgerhq/hw-trustchain':
+        specifier: workspace:^
+        version: link:../../libs/hw-trustchain
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -805,6 +808,9 @@ importers:
       '@ledgerhq/hw-transport-http':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-http
+      '@ledgerhq/hw-trustchain':
+        specifier: workspace:^
+        version: link:../../libs/hw-trustchain
       '@ledgerhq/icons-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/icons
