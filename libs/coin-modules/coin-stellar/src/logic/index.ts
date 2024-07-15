@@ -3,4 +3,4 @@
 // export { craftTransaction } from "./craftTransaction";
 // export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
-// export { listOperations } from "./listOperations";
+export { listOperations } from "./listOperations";

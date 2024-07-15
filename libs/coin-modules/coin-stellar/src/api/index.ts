@@ -6,7 +6,7 @@ import {
   // craftTransaction,
   // estimateFees,
   getBalance,
-  // listOperations,
+  listOperations,
   // rawEncode,
 } from "../logic";
 
@@ -21,6 +21,6 @@ export function createApi(config: StellarConfig): Api {
     craftTransaction: () => Promise.reject(new Error("Method not supported")),
     estimateFees: () => Promise.reject(new Error("Method not supported")),
     getBalance,
-    listOperations: () => Promise.reject(new Error("Method not supported")),
+    listOperations,
   };
 }

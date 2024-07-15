@@ -3,13 +3,13 @@ import { createApi } from ".";
 
 describe("Stellar Api", () => {
   let module: Api;
-  const address = "GATRE74FSR4TJRCLVH4PODH4XUOPJ2PAXFSH5P7FL7J4ORTOJUVQB3UZ";
+  const address = "GD6QELUZPSKPRWVXOQ3F6GBF4OBRMCHO5PHREXH4ZRTPJAG7V5MD7JGX";
 
   beforeAll(() => {
     module = createApi({
       explorer: {
         url: "https://horizon-testnet.stellar.org/",
-        fetchLmit: 200,
+        fetchLmit: 100,
       },
       useStaticFees: true,
       enableNetworkLogs: false,
@@ -30,21 +30,21 @@ describe("Stellar Api", () => {
   //   });
   // });
 
-  // describe("listOperations", () => {
-  //   it("returns a list regarding address parameter", async () => {
-  //     // When
-  //     const result = await module.listOperations(address, 0);
+  describe("listOperations", () => {
+    it("returns a list regarding address parameter", async () => {
+      // When
+      const result = await module.listOperations(address, 0);
 
-  //     // Then
-  //     expect(result.length).toBeGreaterThanOrEqual(1);
-  //     result.forEach(operation => {
-  //       expect(operation.address).toEqual(address);
-  //       const isSenderOrReceipt =
-  //         operation.senders.includes(address) || operation.recipients.includes(address);
-  //       expect(isSenderOrReceipt).toBeTruthy();
-  //     });
-  //   });
-  // });
+      // Then
+      expect(result.length).toBeGreaterThanOrEqual(1);
+      result.forEach(operation => {
+        expect(operation.address).toEqual(address);
+        const isSenderOrReceipt =
+          operation.senders.includes(address) || operation.recipients.includes(address);
+        expect(isSenderOrReceipt).toBeTruthy();
+      });
+    });
+  });
 
   // describe("lastBlock", () => {
   //   it("returns last block info", async () => {
