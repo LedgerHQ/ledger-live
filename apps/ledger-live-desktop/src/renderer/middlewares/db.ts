@@ -52,7 +52,7 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
   } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith(trustchainStoreActionTypePrefix)) {
     next(action);
     const state = store.getState();
-    setKey("app", "trustchainStore", trustchainStoreSelector(state));
+    setKey("app", "trustchain", trustchainStoreSelector(state));
   } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("MARKET")) {
     next(action);
     const state = store.getState();
