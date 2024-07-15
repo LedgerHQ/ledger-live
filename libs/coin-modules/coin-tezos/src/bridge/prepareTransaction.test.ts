@@ -3,20 +3,72 @@ import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.
 import prepareTransaction from "./prepareTransaction";
 import { faker } from "@faker-js/faker";
 
-jest.mock("../logic", () => ({
-  validateRecipient: jest.fn(),
+const mockTezosEstimate = jest.fn();
+jest.mock("../logic/tezosToolkit", () => ({
+  getTezosToolkit: () => ({
+    setProvider: jest.fn(),
+    estimate: {
+      transfer: () => mockTezosEstimate(),
+    },
+  }),
 }));
 
 describe("prepareTransaction", () => {
-  it.only("returns error the same transaction when amount below 0", async () => {
+  beforeEach(() => {
+    mockTezosEstimate.mockReset();
+  });
+
+  it("returns the same transaction when account balance is 0", async () => {
     // Given
-    const tx = createFixtureTransaction({ amount: BigNumber(faker.number.int({ max: 0 })) });
+    const tx = createFixtureTransaction({ amount: BigNumber(0) });
 
     // When
     const newTx = await prepareTransaction(createFixtureAccount(), tx);
 
     // Then
     expect(newTx).toBe(tx);
+  });
+
+  it("returns error when amount is 0", async () => {
+    // Given
+    const tx = createFixtureTransaction({
+      amount: BigNumber(0),
+      recipient: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
+    });
+    mockTezosEstimate.mockRejectedValue({
+      id: "proto.020-PsParisC.contract.empty_transaction",
+    });
+
+    // When
+    const newTx = await prepareTransaction(createFixtureAccount({ balance: BigNumber(10) }), tx);
+
+    // Then
+    expect(newTx.taquitoError).toEqual("proto.020-PsParisC.contract.empty_transaction");
+  });
+
+  it("returns new transaction with estimated value by TezosToolkit", async () => {
+    // Given
+    const tx = createFixtureTransaction({
+      amount: BigNumber(2),
+      recipient: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
+    });
+    const tezosEstimate = {
+      suggestedFeeMutez: faker.number.int(20),
+      gasLimit: faker.number.int(20),
+      storageLimit: faker.number.int(20),
+    };
+    mockTezosEstimate.mockResolvedValue(tezosEstimate);
+
+    // When
+    const newTx = await prepareTransaction(createFixtureAccount({ balance: BigNumber(10) }), tx);
+
+    // Then
+    expect(newTx).toEqual({
+      ...tx,
+      fees: new BigNumber(tezosEstimate.suggestedFeeMutez),
+      gasLimit: new BigNumber(tezosEstimate.gasLimit),
+      storageLimit: new BigNumber(tezosEstimate.storageLimit),
+    });
   });
 
   // it("returns a new Transaction with new fees", async () => {
