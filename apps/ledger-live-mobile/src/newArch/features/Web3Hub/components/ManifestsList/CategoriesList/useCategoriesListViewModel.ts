@@ -7,12 +7,14 @@ export type useCategoriesListViewModelProps = {
   selectCategory: (category: string) => void;
 };
 
+export const queryKey = ["web3hub/categories"];
+
 export default function useCategoriesListViewModel({
   selectedCategory,
   selectCategory,
 }: useCategoriesListViewModelProps) {
   const categoriesQuery = useQuery({
-    queryKey: ["web3hub/categories"],
+    queryKey,
     queryFn: fetchCategoriesMock,
     select: selectCategories,
   });
