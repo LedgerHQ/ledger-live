@@ -13,7 +13,9 @@ import {
   setAccountName,
   setAccountNames,
   setAccountStarred,
+  walletStateExportShouldDiffer,
   walletSyncUpdate,
+  wsStateSelector,
 } from "./store";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
@@ -185,7 +187,7 @@ describe("Wallet store", () => {
       wsState: { data: {}, version: 42 },
     };
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
-    expect(result.wsState).toEqual({ data: {}, version: 42 });
+    expect(wsStateSelector(result)).toEqual({ data: {}, version: 42 });
   });
 
   it("can export the wallet state", () => {
@@ -196,5 +198,18 @@ describe("Wallet store", () => {
     expect(exportWalletState(result)).toEqual({
       wsState: { data: {}, version: 42 },
     });
+  });
+
+  it("walletStateExportShouldDiffer", () => {
+    const exportedState = {
+      wsState: { data: {}, version: 42 },
+    };
+    const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
+    expect(exportWalletState(result)).toEqual({
+      wsState: { data: {}, version: 42 },
+    });
+    expect(walletStateExportShouldDiffer(initialState, result)).toBe(true);
+    expect(walletStateExportShouldDiffer(initialState, initialState)).toBe(false);
+    expect(walletStateExportShouldDiffer(result, result)).toBe(false);
   });
 });

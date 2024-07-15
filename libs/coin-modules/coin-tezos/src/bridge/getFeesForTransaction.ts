@@ -43,7 +43,7 @@ export default async function getEstimatedFees({
     gasLimit: BigNumber(estimate.gasLimit.toString()),
     storageLimit: BigNumber(estimate.storageLimit.toString()),
     estimatedFees: BigNumber(estimate.estimatedFees.toString()),
-    amount: estimate.amount !== undefined ? BigNumber(estimate.amount.toString()) : undefined,
+    amount: estimate.amount !== undefined ? BigNumber(estimate.amount.toString()) : BigNumber(0),
     taquitoError: estimate.taquitoError,
   };
 }

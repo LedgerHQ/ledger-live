@@ -85,7 +85,7 @@ export default function Web3HubMainHeader({ title, navigation }: Props) {
           <TouchableOpacity onPress={goToSearch}>
             <View pointerEvents="none">
               <TextInput
-                testID="web3hub-main-header-search"
+                role="searchbox"
                 placeholder={t("web3hub.main.header.placeholder")}
                 keyboardType="default"
                 returnKeyType="done"

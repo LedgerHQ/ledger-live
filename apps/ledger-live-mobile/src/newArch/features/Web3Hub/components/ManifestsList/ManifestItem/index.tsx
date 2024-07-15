@@ -90,7 +90,7 @@ export default function ManifestItem({
         flexDirection="row"
         alignItems="center"
         height={72}
-        backgroundColor={colors.card}
+        backgroundColor={colors.background}
         paddingX={4}
         paddingY={2}
       >

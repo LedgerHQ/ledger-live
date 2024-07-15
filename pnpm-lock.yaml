@@ -2653,12 +2653,18 @@ importers:
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       expect:
         specifier: ^27.4.6
         version: 27.5.1
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      ripple-keypairs:
+        specifier: ^2.0.0
+        version: 2.0.0
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.2(jest@29.7.0)(typescript@5.4.5)
@@ -5541,15 +5547,15 @@ importers:
       bignumber.js:
         specifier: '9'
         version: 9.1.2
-      fflate:
-        specifier: ^0.8.2
-        version: 0.8.2
       isomorphic-ws:
         specifier: ^5.0.0
         version: 5.0.0(ws@8.16.0)
       lodash:
         specifier: '4'
         version: 4.17.21
+      pako:
+        specifier: ^2.0.4
+        version: 2.1.0
       rxjs:
         specifier: '7'
         version: 7.8.1
@@ -5566,6 +5572,9 @@ importers:
       '@types/lodash':
         specifier: '4'
         version: 4.17.0
+      '@types/pako':
+        specifier: ^2.0.0
+        version: 2.0.3
       '@types/ws':
         specifier: ^8.5.3
         version: 8.5.10
@@ -19148,9 +19157,6 @@ packages:
   fetch-retry@5.0.6:
     resolution: {integrity: sha512-3yurQZ2hD9VISAhJJP9bpYFNQrHHBXE2JxxjY5aLEcDi46RmAzJE2OC9FAde0yis5ElW0jTTzs0zfg/Cca4XqQ==}
 
-  fflate@0.8.2:
-    resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
-
   figures@1.7.0:
     resolution: {integrity: sha512-UxKlfCRuCBxSXU4C6t9scbDyWZ4VlaFFdojKtzJuSkuOBQ5CNFum+zZXFwHjo+CxBC1t6zlYPgHIgFjL8ggoEQ==}
     engines: {node: '>=0.10.0'}
@@ -25931,6 +25937,10 @@ packages:
   ripple-binary-codec@1.11.0:
     resolution: {integrity: sha512-g7+gs3T+NfoeW6vIq5dcN0CkIT4t/zwRzFxz8X2RzfbrWRnewPUKqQbmBgs05tXLX5NuWPaneiaAVpFpYBcdfw==}
     engines: {node: '>= 10'}
+
+  ripple-keypairs@2.0.0:
+    resolution: {integrity: sha512-b5rfL2EZiffmklqZk1W+dvSy97v3V/C7936WxCCgDynaGPp7GE6R2XO7EU9O2LlM/z95rj870IylYnOQs+1Rag==}
+    engines: {node: '>= 16'}
 
   rlp@2.2.7:
     resolution: {integrity: sha512-d5gdPmgQ0Z+AklL2NVXr/IoSjNZFfTVvQWzL/AM2AOcSzYP2xjlb0AC8YyCLc41MSNf6P6QVtjgPdmVtzb+4lQ==}
@@ -48968,8 +48978,6 @@ snapshots:
 
   fetch-retry@5.0.6: {}
 
-  fflate@0.8.2: {}
-
   figures@1.7.0:
     dependencies:
       escape-string-regexp: 1.0.5
@@ -59332,6 +59340,15 @@ snapshots:
       create-hash: 1.2.0
       decimal.js: 10.4.3
       ripple-address-codec: 4.3.1
+
+  ripple-keypairs@2.0.0:
+    dependencies:
+      '@noble/curves': 1.4.0
+      '@xrplf/isomorphic': 1.0.0
+      ripple-address-codec: 5.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   rlp@2.2.7:
     dependencies:

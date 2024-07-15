@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSharedValue } from "react-native-reanimated";
@@ -27,11 +27,13 @@ const Stack = createNativeStackNavigator<Web3HubStackParamList>();
 export default function Web3HubNavigator() {
   const { t } = useTranslation();
   const layoutY = useSharedValue(0);
+  const [search, setSearch] = useState("");
 
   return (
     <HeaderContext.Provider
       value={{
         layoutY,
+        search,
       }}
     >
       <Stack.Navigator initialRouteName={ScreenName.Web3HubMain}>
@@ -40,6 +42,8 @@ export default function Web3HubNavigator() {
           component={Web3HubMain}
           options={{
             title: t("web3hub.main.header.title"),
+            // Never just pass a component to header like `header: Web3HubMainHeader,`
+            // as it would break the fast-refresh for the header
             header: props => (
               <Web3HubMainHeader title={props.options.title} navigation={props.navigation} />
             ),
@@ -50,7 +54,9 @@ export default function Web3HubNavigator() {
           name={ScreenName.Web3HubSearch}
           component={Web3HubSearch}
           options={{
-            header: props => <Web3HubSearchHeader navigation={props.navigation} />,
+            header: props => (
+              <Web3HubSearchHeader navigation={props.navigation} onSearch={setSearch} />
+            ),
           }}
         />
         <Stack.Screen

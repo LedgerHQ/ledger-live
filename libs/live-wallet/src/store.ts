@@ -227,3 +227,9 @@ export const accountRawToAccountUserData = (raw: AccountRaw): AccountUserData =>
 export const exportWalletState = (state: WalletState): ExportedWalletState => ({
   wsState: state.wsState,
 });
+
+export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean => {
+  return a.wsState !== b.wsState;
+};
+
+export const wsStateSelector = (state: WalletState): WSState => state.wsState;

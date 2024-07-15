@@ -419,7 +419,11 @@ async function auth(trustchain: Trustchain, memberCredentials: MemberCredentials
       },
     })
     .catch(e => {
-      if (e instanceof LedgerAPI4xx && e.message.includes("Not a member of trustchain")) {
+      if (
+        e instanceof LedgerAPI4xx &&
+        (e.message.includes("Not a member of trustchain") ||
+          e.message.includes("You are not member"))
+      ) {
         throw new TrustchainEjected(e.message);
       }
       throw e;

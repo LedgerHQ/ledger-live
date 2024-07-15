@@ -34,7 +34,7 @@ describe("ManageYourBackup", () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
         walletSync: walletSyncActivatedState,
-        trustchainStore: {
+        trustchain: {
           trustchain: simpleTrustChain,
         },
       },

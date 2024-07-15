@@ -1,4 +1,5 @@
 import { MemberCredentials, Trustchain, TrustchainSDK } from "@ledgerhq/trustchain/types";
+import { TrustchainOutdated } from "@ledgerhq/trustchain/errors";
 import api, { JWT } from "./api";
 import { Observable } from "rxjs";
 import { z, ZodType } from "zod";
@@ -26,7 +27,6 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
   private getCurrentVersion: () => number | undefined;
   private saveNewUpdate: (updateEvent: UpdateEvent<Data>) => Promise<void>;
   private cipher: Cipher<Data>;
-  private onTrustchainRefreshNeeded: (trustchain: Trustchain) => Promise<void>;
 
   constructor({
     slug,
@@ -34,7 +34,6 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     trustchainSdk,
     getCurrentVersion,
     saveNewUpdate,
-    onTrustchainRefreshNeeded,
   }: {
     /**
      * slug used with cloud sync API ((example "live")
@@ -57,11 +56,6 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
      * All the reconciliation and async save can be performed at this step in order to guarantee atomicity of the operations.
      */
     saveNewUpdate: (event: UpdateEvent<Data>) => Promise<void>;
-    /**
-     * called with the trustchain is possibly outdated.
-     * a typical implementation is to call trustchainSdk.restoreTrustchain and update trustchain object.
-     */
-    onTrustchainRefreshNeeded: (trustchain: Trustchain) => Promise<void>;
   }) {
     this.slug = slug;
     this.schema = schema;
@@ -69,10 +63,9 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     this.getCurrentVersion = getCurrentVersion;
     this.saveNewUpdate = saveNewUpdate;
     this.cipher = makeCipher(trustchainSdk);
-    this.onTrustchainRefreshNeeded = onTrustchainRefreshNeeded;
-    this.push = this._decorateMethod("push", this.push);
-    this.pull = this._decorateMethod("pull", this.pull);
-    this.destroy = this._decorateMethod("destroy", this.destroy);
+    this.push = this.decorateMethod("push", this.push);
+    this.pull = this.decorateMethod("pull", this.pull);
+    this.destroy = this.decorateMethod("destroy", this.destroy);
   }
 
   /**
@@ -93,11 +86,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     );
     switch (response.status) {
       case "updated": {
-        await this.saveNewUpdate({
-          type: "pushed-data",
-          version,
-          data,
-        });
+        await this.saveNewUpdate({ type: "pushed-data", version, data });
         break;
       }
       case "out-of-sync": {
@@ -120,7 +109,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
         // no data, nothing to do
         const version = this.getCurrentVersion();
         if (version) {
-          await this.onTrustchainRefreshNeeded(trustchain);
+          throw new TrustchainOutdated();
         }
         break;
       }
@@ -143,29 +132,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
       api.deleteData(jwt, this.slug),
     );
-    await this.saveNewUpdate({
-      type: "deleted-data",
-    });
-  }
-
-  _lock: string | null = null;
-  // this helpers will guarantee only one poll()/push() is performed at a time.
-  _decorateMethod<R, A extends unknown[]>(
-    methodName: string,
-    f: (...args: A) => Promise<R>,
-  ): (...args: A) => Promise<R> {
-    return async (...args) => {
-      const { _lock } = this;
-      if (_lock) {
-        return Promise.reject(new Error("CloudSyncSDK locked (" + this._lock + ")"));
-      }
-      try {
-        this._lock = methodName;
-        return await f.apply(this, args);
-      } finally {
-        this._lock = null;
-      }
-    };
+    await this.saveNewUpdate({ type: "deleted-data" });
   }
 
   /**
@@ -185,5 +152,25 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
         "refresh",
       );
     return api.listenNotifications(getFreshJwt, this.slug);
+  }
+
+  private lock: string | null = null;
+  // this helpers will guarantee only one poll()/push() is performed at a time.
+  private decorateMethod<R, A extends unknown[]>(
+    methodName: string,
+    f: (...args: A) => Promise<R>,
+  ): (...args: A) => Promise<R> {
+    return async (...args) => {
+      const { lock } = this;
+      if (lock) {
+        return Promise.reject(new Error("CloudSyncSDK locked (" + this.lock + ")"));
+      }
+      try {
+        this.lock = methodName;
+        return await f.apply(this, args);
+      } finally {
+        this.lock = null;
+      }
+    };
   }
 }

@@ -28,7 +28,7 @@ export enum TrustchainHandlerType {
 }
 
 export type TrustchainHandlersPayloads = {
-  TRUSTCHAIN_STORE_IMPORT_STATE: { trustchainStore: TrustchainStore };
+  TRUSTCHAIN_STORE_IMPORT_STATE: { trustchain: TrustchainStore };
   TRUSTCHAIN_STORE_RESET: never;
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
@@ -48,8 +48,8 @@ export type TrustchainHandlers<PreciseKey = true> = Handlers<
 >;
 
 export const trustchainHandlers: TrustchainHandlers = {
-  TRUSTCHAIN_STORE_IMPORT_STATE: (_, { payload: { trustchainStore } }) => {
-    return trustchainStore;
+  TRUSTCHAIN_STORE_IMPORT_STATE: (_, { payload: { trustchain } }) => {
+    return trustchain;
   },
   TRUSTCHAIN_STORE_RESET: (): TrustchainStore => {
     return { ...getInitialStore() };
@@ -64,13 +64,9 @@ export const trustchainHandlers: TrustchainHandlers = {
 
 // actions
 
-export const importTrustchainStoreState = ({
-  trustchainStore,
-}: {
-  trustchainStore: TrustchainStore;
-}) => ({
+export const importTrustchainStoreState = (trustchain: TrustchainStore) => ({
   type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
-  payload: { trustchainStore },
+  payload: { trustchain },
 });
 
 export const resetTrustchainStore = () => ({
@@ -88,15 +84,14 @@ export const setMemberCredentials = (memberCredentials: MemberCredentials) => ({
 });
 
 // Local Selectors
+// FIXME: these are not actually local Selector, a localSelector takes a TrustchainStore in param. we will need to rework this.
 
-export const trustchainStoreSelector = (state: {
-  trustchainStore: TrustchainStore;
-}): TrustchainStore => state.trustchainStore;
+export const trustchainStoreSelector = (state: { trustchain: TrustchainStore }): TrustchainStore =>
+  state.trustchain;
 
-export const trustchainSelector = (state: {
-  trustchainStore: TrustchainStore;
-}): Trustchain | null => state.trustchainStore.trustchain;
+export const trustchainSelector = (state: { trustchain: TrustchainStore }): Trustchain | null =>
+  state.trustchain.trustchain;
 
 export const memberCredentialsSelector = (state: {
-  trustchainStore: TrustchainStore;
-}): MemberCredentials | null => state.trustchainStore.memberCredentials;
+  trustchain: TrustchainStore;
+}): MemberCredentials | null => state.trustchain.memberCredentials;
