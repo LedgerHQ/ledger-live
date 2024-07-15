@@ -612,8 +612,7 @@ export const getRegistry = async (): Promise<{
  */
 export const getLastBlock = async (): Promise<{ hash: string; height: number; time: Date }> => {
   const { data } = await callSidecar<BlockInfo>("/blocks/head");
-  //FIXME: find a way to get the block real date.
-  return { hash: data.hash, height: parseInt(data.number), time: new Date("2024-07-04") };
+  return { hash: data.hash, height: parseInt(data.number), time: new Date() };
 };
 
 /*
