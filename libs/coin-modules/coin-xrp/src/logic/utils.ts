@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
 import { isValidClassicAddress } from "ripple-address-codec";
-import { getAccountInfo } from "../network";
+import { getAccountInfo, NEW_ACCOUNT_ERROR_MESSAGE } from "../network";
 
-export const NEW_ACCOUNT_ERROR_MESSAGE = "actNotFound";
 export const UINT32_MAX = new BigNumber(2).pow(32).minus(1);
 
 /** @see https://xrpl.org/basic-data-types.html#specifying-time */

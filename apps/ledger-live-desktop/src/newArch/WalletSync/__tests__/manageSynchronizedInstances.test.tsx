@@ -55,7 +55,7 @@ describe("manageSynchronizedInstances", () => {
           ...walletSyncActivatedState,
           instances: INSTANCES,
         },
-        trustchainStore: {
+        trustchain: {
           trustchain: simpleTrustChain,
           memberCredentials: {
             pubkey: "currentInstance",

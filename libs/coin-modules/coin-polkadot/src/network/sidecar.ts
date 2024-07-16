@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import coinConfig from "../config";
 import type {
@@ -25,6 +25,7 @@ import type {
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
   SidecarConstants,
+  BlockInfo,
 } from "./sidecar.types";
 import { createRegistryAndExtrinsics } from "./common";
 
@@ -604,6 +605,14 @@ export const getRegistry = async (): Promise<{
     fetchChainSpec(),
   ]);
   return createRegistryAndExtrinsics(material, spec);
+};
+
+/**
+ * Get lastest block info
+ */
+export const getLastBlock = async (): Promise<{ hash: string; height: number; time: Date }> => {
+  const { data } = await callSidecar<BlockInfo>("/blocks/head");
+  return { hash: data.hash, height: parseInt(data.number), time: new Date() };
 };
 
 /*

@@ -3,11 +3,14 @@ import { CloudSyncSDK } from "../cloudsync";
 import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { WalletSyncDataManager } from "./types";
 import { log } from "@ledgerhq/logs";
+import { TrustchainEjected, TrustchainOutdated } from "@ledgerhq/trustchain/errors";
 
 export type WatchConfig =
   | {
       type: "polling";
-      pollingInterval: number;
+      pollingInterval?: number;
+      initialTimeout?: number;
+      userIntentDebounce?: number;
     }
   | {
       type: "notifications";
@@ -35,6 +38,8 @@ export function createWalletSyncWatchLoop<
   trustchain,
   memberCredentials,
   setVisualPending,
+  onStartPolling,
+  onTrustchainRefreshNeeded,
   onError,
   getState,
   localStateSelector,
@@ -69,6 +74,15 @@ export function createWalletSyncWatchLoop<
    */
   setVisualPending?: (b: boolean) => void;
   /**
+   * call at beginning of each polling loop
+   */
+  onStartPolling?: () => void;
+  /*
+   * called with the trustchain is possibly outdated.
+   * a typical implementation is to call trustchainSdk.restoreTrustchain and update trustchain object.
+   */
+  onTrustchainRefreshNeeded: (trustchain: Trustchain) => Promise<void>;
+  /**
    * imperatively inform of an error
    */
   onError?: (e: unknown) => void;
@@ -95,6 +109,7 @@ export function createWalletSyncWatchLoop<
    */
   latestDistantStateSelector: (state: UserState) => DistantState | null;
 }): {
+  onUserRefreshIntent: () => void;
   unsubscribe: () => void;
 } {
   const visualPendingTimeout = visualConfig?.visualPendingTimeout || 1000;
@@ -104,12 +119,15 @@ export function createWalletSyncWatchLoop<
 
   async function loop() {
     // skip if there is something already pending
-    if (pending) return;
+    if (pending || unsubscribed) return;
     pending = true;
     // when it's taking longer than expected, we will visualize the loading
     const visualTimeout =
       setVisualPending && setTimeout(() => setVisualPending(true), visualPendingTimeout);
     try {
+      log("walletsync", "loop");
+      if (onStartPolling) onStartPolling();
+
       // check if there is a pull to do
       await walletSyncSdk.pull(trustchain, memberCredentials);
       if (unsubscribed) return;
@@ -127,6 +145,11 @@ export function createWalletSyncWatchLoop<
         await walletSyncSdk.push(trustchain, memberCredentials, diff.nextState);
       }
     } catch (e) {
+      const shouldRefresh = e instanceof TrustchainEjected || e instanceof TrustchainOutdated;
+      if (shouldRefresh) {
+        await onTrustchainRefreshNeeded(trustchain);
+        return;
+      }
       if (unsubscribed) return;
       if (onError) onError(e);
       else {
@@ -143,11 +166,26 @@ export function createWalletSyncWatchLoop<
     throw new Error("notifications not implemented yet");
   } else {
     const pollingInterval = watchConfig?.pollingInterval || 30000;
-    const interval = setInterval(loop, pollingInterval);
+    const initialTimeout = watchConfig?.initialTimeout || 5000;
+    const userIntentDebounce = watchConfig?.userIntentDebounce || 1000;
+
+    // main loop
+    const callback = () => {
+      timeout = setTimeout(callback, pollingInterval);
+      loop();
+    };
+    let timeout = setTimeout(callback, initialTimeout);
+
     return {
+      onUserRefreshIntent: () => {
+        if (unsubscribed) return;
+        // user intent will cancel the next loop call and reschedule one in a short time
+        clearTimeout(timeout);
+        timeout = setTimeout(callback, userIntentDebounce);
+      },
       unsubscribe: () => {
         unsubscribed = true;
-        clearInterval(interval);
+        clearInterval(timeout);
       },
     };
   }

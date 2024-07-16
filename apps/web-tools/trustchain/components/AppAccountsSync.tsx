@@ -182,9 +182,8 @@ export default function AppAccountsSync({
         trustchainSdk,
         getCurrentVersion,
         saveNewUpdate,
-        onTrustchainRefreshNeeded,
       }),
-    [trustchainSdk, getCurrentVersion, saveNewUpdate, onTrustchainRefreshNeeded],
+    [trustchainSdk, getCurrentVersion, saveNewUpdate],
   );
 
   const [visualPending, setVisualPending] = useState(true);
@@ -199,10 +198,11 @@ export default function AppAccountsSync({
       getState: () => stateRef.current,
       localStateSelector,
       latestDistantStateSelector,
+      onTrustchainRefreshNeeded,
     });
 
     return unsubscribe;
-  }, [trustchainSdk, walletSyncSdk, trustchain, memberCredentials]);
+  }, [trustchainSdk, walletSyncSdk, trustchain, memberCredentials, onTrustchainRefreshNeeded]);
 
   const setAccounts = useCallback(
     (fn: (_: Account[]) => Account[]) => {
