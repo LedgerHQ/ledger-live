@@ -15,7 +15,7 @@ type Props = {
 };
 
 const FollowInstructionsDrawer = ({ isOpen, handleClose, device }: Props) => {
-  const { error, userDeviceInteraction, onRetry } = useAddMember({ device });
+  const { error, userDeviceInteraction } = useAddMember({ device });
 
   return (
     <>
