@@ -13,8 +13,8 @@ import { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { isAddressValid, isAccountMultiSign, isMemoValid, getRecipientAccount } from "./logic";
-import { BASE_RESERVE, MIN_BALANCE } from "../network";
+import { isAddressValid, isAccountMultiSign, isMemoValid } from "./logic";
+import { BASE_RESERVE, MIN_BALANCE, getRecipientAccount } from "../network";
 import {
   StellarWrongMemoFormat,
   StellarAssetRequired,
@@ -99,7 +99,6 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     }
 
     const recipientAccount = await getRecipientAccount({
-      account: account,
       recipient: transaction.recipient,
     });
 

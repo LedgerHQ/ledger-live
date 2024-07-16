@@ -1,21 +1,35 @@
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
+import type { CacheRes } from "@ledgerhq/live-network/cache";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import { log } from "@ledgerhq/logs";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
-  NetworkError,
-  NotFoundError,
-  Horizon,
-  BASE_FEE,
   Asset,
-  Operation as StellarSdkOperation,
+  BASE_FEE,
+  Horizon,
+  NetworkError,
+  Networks,
+  NotFoundError,
   Account as StellarSdkAccount,
+  Operation as StellarSdkOperation,
   Transaction as StellarSdkTransaction,
   TransactionBuilder,
-  Networks,
+  StrKey,
+  MuxedAccount,
+  // @ts-expect-error stellar-sdk ts definition missing?
+  AccountRecord,
 } from "@stellar/stellar-sdk";
-import { log } from "@ledgerhq/logs";
+import { BigNumber } from "bignumber.js";
+import {
+  getAccountSpendableBalance,
+  getReservedBalance,
+  rawOperationsToOperations,
+} from "../bridge/logic";
+import coinConfig from "../config";
 import {
   type BalanceAsset,
   type NetworkInfo,
@@ -23,14 +37,6 @@ import {
   type Signer,
   NetworkCongestionLevel,
 } from "../types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import {
-  getAccountSpendableBalance,
-  getReservedBalance,
-  rawOperationsToOperations,
-} from "../bridge/logic";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import coinConfig from "../config";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
@@ -300,50 +306,6 @@ export async function broadcastTransaction(signedTransaction: string): Promise<s
   return res.hash;
 }
 
-export function buildPaymentOperation({
-  destination,
-  amount,
-  assetCode,
-  assetIssuer,
-}: {
-  destination: string;
-  amount: BigNumber;
-  assetCode: string | undefined;
-  assetIssuer: string | undefined;
-}) {
-  const formattedAmount = getFormattedAmount(amount);
-  // Non-native assets should always have asset code and asset issuer. If an
-  // asset doesn't have both, we assume it is native asset.
-  const asset = assetCode && assetIssuer ? new Asset(assetCode, assetIssuer) : Asset.native();
-  return StellarSdkOperation.payment({
-    destination: destination,
-    amount: formattedAmount,
-    asset,
-  });
-}
-
-export function buildCreateAccountOperation(destination: string, amount: BigNumber) {
-  const formattedAmount = getFormattedAmount(amount);
-  return StellarSdkOperation.createAccount({
-    destination: destination,
-    startingBalance: formattedAmount,
-  });
-}
-
-export function buildChangeTrustOperation(assetCode: string, assetIssuer: string) {
-  return StellarSdkOperation.changeTrust({
-    asset: new Asset(assetCode, assetIssuer),
-  });
-}
-
-export function buildTransactionBuilder(source: StellarSdkAccount, fee: BigNumber) {
-  const formattedFee = fee.toString();
-  return new TransactionBuilder(source, {
-    fee: formattedFee,
-    networkPassphrase: Networks.PUBLIC,
-  });
-}
-
 export async function loadAccount(addr: string): Promise<AccountRecord | null> {
   if (!addr || !addr.length) {
     return null;
@@ -353,5 +315,70 @@ export async function loadAccount(addr: string): Promise<AccountRecord | null> {
     return await getServer().loadAccount(addr);
   } catch (e) {
     return null;
+  }
+}
+
+export const getRecipientAccount: CacheRes<
+  Array<{
+    recipient: string;
+  }>,
+  {
+    id: string | null;
+    isMuxedAccount: boolean;
+    assetIds: string[];
+  } | null
+> = makeLRUCache(
+  async ({ recipient }) => await recipientAccount(recipient),
+  extract => extract.recipient,
+  {
+    max: 300,
+    ttl: 5 * 60,
+  }, // 5 minutes
+);
+
+async function recipientAccount(address?: string): Promise<{
+  id: string | null;
+  isMuxedAccount: boolean;
+  assetIds: string[];
+} | null> {
+  if (!address) {
+    return null;
+  }
+
+  let accountAddress = address;
+
+  const isMuxedAccount = StrKey.isValidMed25519PublicKey(address);
+
+  if (isMuxedAccount) {
+    const muxedAccount = MuxedAccount.fromAddress(address, "0");
+    accountAddress = muxedAccount.baseAccount().accountId();
+  }
+
+  const account: AccountRecord = await loadAccount(accountAddress);
+
+  if (!account) {
+    return null;
+  }
+
+  return {
+    id: account.id,
+    isMuxedAccount,
+    assetIds: account.balances.reduce((allAssets: any[], balance: any) => {
+      return [...allAssets, getBalanceId(balance)];
+    }, []),
+  };
+}
+
+function getBalanceId(balance: BalanceAsset): string | null {
+  switch (balance.asset_type) {
+    case "native":
+      return "native";
+    case "liquidity_pool_shares":
+      return balance.liquidity_pool_id || null;
+    case "credit_alphanum4":
+    case "credit_alphanum12":
+      return `${balance.asset_code}:${balance.asset_issuer}`;
+    default:
+      return null;
   }
 }

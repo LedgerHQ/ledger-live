@@ -1,6 +1,6 @@
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import type { AccountBridge, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { broadcastTransaction as apiBroadcast } from "../network";
+import { broadcast as apiBroadcast } from "../logic";
 import { Transaction } from "../types";
 
 /**

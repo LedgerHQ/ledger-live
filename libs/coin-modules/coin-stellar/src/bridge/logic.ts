@@ -1,25 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import type { CacheRes } from "@ledgerhq/live-network/cache";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import {
-  Horizon,
-  StrKey,
-  MuxedAccount,
-  // @ts-expect-error stellar-sdk ts definition missing?
-  AccountRecord,
-} from "@stellar/stellar-sdk";
+import { Horizon, StrKey } from "@stellar/stellar-sdk";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import {
-  BASE_RESERVE,
-  BASE_RESERVE_MIN_COUNT,
-  fetchBaseFee,
-  fetchSigners,
-  loadAccount,
-} from "../network";
+import { BASE_RESERVE, BASE_RESERVE_MIN_COUNT, fetchBaseFee, fetchSigners } from "../network";
 import type {
   BalanceAsset,
   RawOperation,
@@ -60,20 +46,6 @@ export function getAmountValue(
   return transaction.useAllAmount && transaction.networkInfo
     ? BigNumber.max(account.spendableBalance.minus(fees), 0)
     : transaction.amount;
-}
-
-export function getBalanceId(balance: BalanceAsset): string | null {
-  switch (balance.asset_type) {
-    case "native":
-      return "native";
-    case "liquidity_pool_shares":
-      return balance.liquidity_pool_id || null;
-    case "credit_alphanum4":
-    case "credit_alphanum12":
-      return `${balance.asset_code}:${balance.asset_issuer}`;
-    default:
-      return null;
-  }
 }
 
 export function getReservedBalance(account: Horizon.ServerApi.AccountRecord): BigNumber {
@@ -286,58 +258,6 @@ export function isAddressValid(address: string): boolean {
   } catch (err) {
     return false;
   }
-}
-
-export const getRecipientAccount: CacheRes<
-  Array<{
-    account: Account;
-    recipient: string;
-  }>,
-  {
-    id: string | null;
-    isMuxedAccount: boolean;
-    assetIds: string[];
-  } | null
-> = makeLRUCache(
-  async ({ recipient }) => await recipientAccount(recipient),
-  extract => extract.recipient,
-  {
-    max: 300,
-    ttl: 5 * 60,
-  }, // 5 minutes
-);
-
-export async function recipientAccount(address?: string): Promise<{
-  id: string | null;
-  isMuxedAccount: boolean;
-  assetIds: string[];
-} | null> {
-  if (!address) {
-    return null;
-  }
-
-  let accountAddress = address;
-
-  const isMuxedAccount = StrKey.isValidMed25519PublicKey(address);
-
-  if (isMuxedAccount) {
-    const muxedAccount = MuxedAccount.fromAddress(address, "0");
-    accountAddress = muxedAccount.baseAccount().accountId();
-  }
-
-  const account: AccountRecord = await loadAccount(accountAddress);
-
-  if (!account) {
-    return null;
-  }
-
-  return {
-    id: account.id,
-    isMuxedAccount,
-    assetIds: account.balances.reduce((allAssets: any[], balance: any) => {
-      return [...allAssets, getBalanceId(balance)];
-    }, []),
-  };
 }
 
 export function rawOperationsToOperations(
