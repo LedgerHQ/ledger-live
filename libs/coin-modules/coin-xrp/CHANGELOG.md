@@ -1,5 +1,16 @@
 # @ledgerhq/coin-xrp
 
+## 0.4.0-nightly.3
+
+### Minor Changes
+
+- [#7265](https://github.com/LedgerHQ/ledger-live/pull/7265) [`afa03ae`](https://github.com/LedgerHQ/ledger-live/commit/afa03ae921ad1ca7df83dc0ba717c1cc27cb08cd) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add lastBlock function
+
+### Patch Changes
+
+- Updated dependencies [[`afa03ae`](https://github.com/LedgerHQ/ledger-live/commit/afa03ae921ad1ca7df83dc0ba717c1cc27cb08cd)]:
+  - @ledgerhq/coin-framework@0.16.0-nightly.3
+
 ## 0.4.0-nightly.2
 
 ### Patch Changes

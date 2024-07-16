@@ -1,5 +1,14 @@
 # web-tools
 
+## 0.6.3-nightly.8
+
+### Patch Changes
+
+- Updated dependencies [[`afa03ae`](https://github.com/LedgerHQ/ledger-live/commit/afa03ae921ad1ca7df83dc0ba717c1cc27cb08cd)]:
+  - @ledgerhq/coin-framework@0.16.0-nightly.3
+  - @ledgerhq/live-common@34.6.0-nightly.8
+  - @ledgerhq/live-wallet@0.3.1-nightly.5
+
 ## 0.6.3-nightly.7
 
 ### Patch Changes

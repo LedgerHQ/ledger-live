@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.47.0-nightly.9
+
+### Minor Changes
+
+- [#7330](https://github.com/LedgerHQ/ledger-live/pull/7330) [`03c514a`](https://github.com/LedgerHQ/ledger-live/commit/03c514a940c8a6a93ba4ac4b326e3068f99fc426) Thanks [@Justkant](https://github.com/Justkant)! - feat(web3hub): add search with mocks
+
+### Patch Changes
+
+- [#7318](https://github.com/LedgerHQ/ledger-live/pull/7318) [`ff2e04c`](https://github.com/LedgerHQ/ledger-live/commit/ff2e04c16b858e94a282c6982590081fd3402fea) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix filter not work bug when clicking device.
+
+- [#7324](https://github.com/LedgerHQ/ledger-live/pull/7324) [`b24a4da`](https://github.com/LedgerHQ/ledger-live/commit/b24a4da7cc25587b010af64fdbdad68ae4bead70) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Activation Flow Ledger Sync
+
+- Updated dependencies [[`afa03ae`](https://github.com/LedgerHQ/ledger-live/commit/afa03ae921ad1ca7df83dc0ba717c1cc27cb08cd)]:
+  - @ledgerhq/coin-framework@0.16.0-nightly.3
+  - @ledgerhq/live-common@34.6.0-nightly.8
+  - @ledgerhq/coin-evm@2.1.2-nightly.3
+  - @ledgerhq/live-countervalues@0.2.2-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.3
+  - @ledgerhq/live-nft@0.4.2-nightly.3
+  - @ledgerhq/live-nft-react@0.4.2-nightly.3
+  - @ledgerhq/live-wallet@0.3.1-nightly.5
+
 ## 3.47.0-nightly.8
 
 ### Minor Changes
