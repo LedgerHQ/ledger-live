@@ -9,33 +9,10 @@ import { Flex, Icons } from "@ledgerhq/react-ui";
 import { Skeleton, Media, CollectionName, TableLayout } from "../../components";
 import TokensList from "../components/TokensList";
 import OperationsList from "~/renderer/components/OperationsList";
-import styled from "styled-components";
 import Spinner from "~/renderer/components/Spinner";
+import { Footer, SpinnerContainer, SpinnerBackground } from "../components/CommonStyled";
 
 type ViewProps = ReturnType<typeof useNftCollectionModel>;
-
-const Footer = styled.footer`
-  height: 20px;
-  margin-bottom: 20px;
-`;
-
-const SpinnerContainer = styled.div`
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-`;
-const SpinnerBackground = styled.div`
-  background: ${p => p.theme.colors.palette.background.paper};
-  border-radius: 100%;
-  padding: 2px;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid ${p => p.theme.colors.palette.background.paper};
-`;
 
 function View({
   isLoading,

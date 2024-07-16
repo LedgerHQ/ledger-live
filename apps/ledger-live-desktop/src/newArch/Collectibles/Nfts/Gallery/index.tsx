@@ -8,35 +8,11 @@ import { Flex, Icons } from "@ledgerhq/react-ui";
 import { TableLayout } from "../../components";
 import { useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
-import styled from "styled-components";
 import Spinner from "~/renderer/components/Spinner";
 import LazyCollection from "./components/LazyCollection";
+import { Footer, SpinnerContainer, SpinnerBackground } from "../components/CommonStyled";
 
 type ViewProps = ReturnType<typeof useNftGalleryModel>;
-
-const Footer = styled.footer`
-  height: 20px;
-  margin-bottom: 20px;
-`;
-
-const SpinnerContainer = styled.div`
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-`;
-const SpinnerBackground = styled.div`
-  background: ${p => p.theme.colors.palette.background.paper};
-  border-radius: 100%;
-  padding: 2px;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid ${p => p.theme.colors.palette.background.paper};
-`;
 
 function View({
   account,
