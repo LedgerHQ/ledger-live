@@ -4217,8 +4217,7 @@
           "modal": {
             "flow": "Select a Flow",
             "step": "Select a Step",
-            "activated": "Activate/deactivate to have a backup or not",
-            "instance": "Generate Instances",
+            "instance": "Generate Members",
             "cta": "Apply"
           }
         }
@@ -5535,6 +5534,9 @@
     "TronEmptyAccount": {
       "title": "You first need to send at least 0.1 TRX to this address to enable TRC20 token reception. <link0>Learn more </link0>"
     },
+    "MaybeKeepTronAccountAlive": {
+      "title": "You need at least 0.1 TRX to keep this Tron account active and 1.1 TRX for network fees.<link0>Learn more </link0>"
+    },
     "OperatingSystemOutdated": {
       "title": "Your Operating System version is outdated",
       "description": "Please upgrade your operating system and retry. You can check the article below to understand why Ledger Live is not supported on your current operating system version."
@@ -6333,7 +6335,7 @@
         "description": "Secure or delete your encryption key via another Ledger."
       },
       "instance": {
-        "label_one": "1 Synchronized instance",
+        "label": "1 Synchronized instance",
         "label_other": "{{count}} Synchronized instances",
         "cta": "Manage"
       }
@@ -6346,7 +6348,8 @@
     "error": {
       "title": "Something went wrong",
       "description": "Please try again later.",
-      "cta": "Try again"
+      "cta": "Try again",
+      "fetching": "Something went wrong while fetching your data."
     },
     "unsecuredError": {
       "title": "The synchronization isn't secured by this Ledger",
@@ -6355,10 +6358,17 @@
       "cta": "Connect another Ledger",
       "ctaDelete": "Delete my encryption key"
     },
+    "autoRemoveError": {
+      "title": "You can’t remove the current instance",
+      "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
+      "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
+      "cta": "I understand",
+      "ctaDelete": "Delete my encryption key"
+    },
     "success": {
       "backup": {
         "title": "Success",
-        "desc": "You successfully enabled Ledger Sync. ",
+        "desc": "You successfully enabled Ledger Sync.",
         "synchAnother": "Sync with another Ledger Live app"
       },
       "synch": {
@@ -6366,7 +6376,7 @@
         "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
       }
     },
-    "manageBackups": {
+    "manageBackup": {
       "title": "Manage your key",
       "options": {
         "deleteBackup": {
@@ -6420,6 +6430,10 @@
       "remove": "Remove",
       "deleteInstanceSuccess": "Your {{instanceName}} is no longer synchronized",
       "deleteInstanceError": "Something went wrong with the desynchronization of {{instanceName}}"
+    },
+    "deviceAction": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
     }
   }
 }

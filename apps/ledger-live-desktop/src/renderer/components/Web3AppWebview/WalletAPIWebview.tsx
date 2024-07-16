@@ -233,6 +233,7 @@ function useWebView(
   webviewRef: RefObject<WebviewTag>,
   tracking: TrackingAPI,
   serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
+  customWebviewStyle?: React.CSSProperties,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
 
@@ -340,15 +341,24 @@ function useWebView(
       height: "100%",
       flex: 1,
       transition: "opacity 200ms ease-out",
+      ...(customWebviewStyle || {}),
     };
-  }, [widgetLoaded]);
+  }, [customWebviewStyle, widgetLoaded]);
 
   return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts };
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
-    { manifest, inputs = {}, currentAccountHistDb, customHandlers, onStateChange, hideLoader },
+    {
+      manifest,
+      inputs = {},
+      currentAccountHistDb,
+      customHandlers,
+      onStateChange,
+      hideLoader,
+      webviewStyle: customWebviewStyle,
+    },
     ref,
   ) => {
     const tracking = useMemo(
@@ -396,6 +406,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       tracking,
       serverRef,
+      customWebviewStyle,
     );
 
     const isDapp = !!manifest.dapp;

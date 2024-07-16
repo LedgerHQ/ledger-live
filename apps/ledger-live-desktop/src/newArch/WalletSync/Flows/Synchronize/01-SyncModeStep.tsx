@@ -3,6 +3,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Card } from "../../components/Card";
 import styled, { useTheme } from "styled-components";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
 
 type Props = {
   goToQRCode: () => void;
@@ -14,6 +16,7 @@ export default function SynchronizeModeStep({ goToQRCode, goToSyncWithDevice }: 
   const { colors } = useTheme();
   return (
     <Flex flexDirection="column" rowGap="16px">
+      <TrackPage category={AnalyticsPage.SyncMethod} />
       <Text fontSize={23} variant="large" color="neutral.c100">
         {t("walletSync.synchronize.chooseMethod.title")}
       </Text>

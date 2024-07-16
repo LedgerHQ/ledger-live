@@ -35,6 +35,7 @@ export function MarketPerformanceWidgetContainer({
       }}
       py={"23px"}
       grow
+      data-test-id="market-performance-widget"
     >
       <MarketPerformanceWidgetHeader order={order} onChangeOrder={setOrder} />
 

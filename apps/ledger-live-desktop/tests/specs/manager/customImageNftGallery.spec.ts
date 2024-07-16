@@ -9,6 +9,7 @@ import padStart from "lodash/padStart";
 
 test.use({
   userdata: "2_accounts_eth_with_tokens_and_nft",
+  featureFlags: { nftsFromSimplehash: { enabled: false } },
 });
 
 test("Custom image (with populated NFT gallery)", async ({ page }) => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ElementType, ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { Unit } from "@ledgerhq/types-cryptoassets";
@@ -15,19 +15,29 @@ type Props = {
   value: BigNumber;
   before?: string;
   after?: string;
+  component?: ElementType;
 } & RestProps;
 
-const CurrencyUnitValue = ({ unit, value, before = "", after = "", ...rest }: Props) => {
+const DefaultRender = ({ children }: { children: ReactNode }) => <>{children}</>;
+
+const CurrencyUnitValue = ({
+  unit,
+  value,
+  before = "",
+  after = "",
+  component: Component = DefaultRender,
+  ...rest
+}: Props) => {
   const locale = useSelector(localeSelector);
-  return (
-    <>
-      {before +
-        formatCurrencyUnit(unit, value, {
-          ...rest,
-          locale,
-        }) +
-        after}
-    </>
-  );
+  const formattedValue =
+    before +
+    formatCurrencyUnit(unit, value, {
+      ...rest,
+      locale,
+    }) +
+    after;
+
+  return <Component>{formattedValue}</Component>;
 };
+
 export default CurrencyUnitValue;

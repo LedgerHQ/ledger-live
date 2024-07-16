@@ -3,6 +3,7 @@ import React from "react";
 import { Switch, Route, withRouter } from "react-router";
 import NftCollection from "../Nfts/Collection";
 import NFTGallery from "~/renderer/screens/nft/Gallery";
+import NftBreadCrumb from "LLD/components/BreadCrumb";
 
 export const account = genAccount("ethereum1", {
   withNft: true,
@@ -16,9 +17,17 @@ const NftCollectionNavigation = () => (
   </Switch>
 );
 
-const NftCollectionTestBase = () => <NftCollectionNavigation />;
+const NftCollectionTestBase = () => (
+  <>
+    <NftBreadCrumb />
+    <NftCollectionNavigation />
+  </>
+);
 
 export const NftCollectionTest = withRouter(NftCollectionTestBase);
 export const NoNftCollectionTest = withRouter(() => (
-  <NftCollection account={genAccount("ethereum1")} />
+  <>
+    <NftBreadCrumb />
+    <NftCollection account={genAccount("ethereum1")} />
+  </>
 ));

@@ -2,6 +2,19 @@ import { Application } from "../page";
 
 let app: Application;
 
+const langButtonText = [
+  { lang: "Français", localization: "Général" },
+  { lang: "Español", localization: "General" },
+  { lang: "Русский", localization: "Общие" },
+  { lang: "Deutsch", localization: "Allgemeines" },
+  { lang: "Português (Brasil)", localization: "Geral" },
+  { lang: "Türkçe", localization: "Genel" },
+  { lang: "简体中文", localization: "常规" },
+  { lang: "한국어", localization: "일반" },
+  { lang: "日本語", localization: "一般" },
+  { lang: "English", localization: "General" },
+];
+
 const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }) => {
   it(`should change selected language to ${l10n.lang}`, async () => {
     await app.settingsGeneral.navigateToLanguageSelect();
@@ -12,19 +25,6 @@ const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }
 
 $TmsLink("B2CQA-2344");
 describe("Change Language", () => {
-  const langButtonText = [
-    { lang: "Français", localization: "Général" },
-    { lang: "Español", localization: "General" },
-    { lang: "Русский", localization: "Общие" },
-    { lang: "Deutsch", localization: "Allgemeines" },
-    { lang: "Português (Brasil)", localization: "Geral" },
-    { lang: "Türkçe", localization: "Genel" },
-    { lang: "简体中文", localization: "常规" },
-    { lang: "한국어", localization: "일반" },
-    { lang: "日本語", localization: "一般" },
-    { lang: "English", localization: "General" },
-  ];
-
   beforeAll(async () => {
     app = await Application.init("1AccountBTC1AccountETHReadOnlyFalse");
     await app.portfolio.waitForPortfolioPageToLoad();

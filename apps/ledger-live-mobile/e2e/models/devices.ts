@@ -1,10 +1,12 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-export const knownDevice = {
-  name: "Mock device name",
-  id: "mock_1",
-  modelId: DeviceModelId.nanoX,
+export const knownDevices = {
+  nanoX: { name: "Nano X", id: "mock_1", modelId: DeviceModelId.nanoX },
+  nanoSP: { name: "Nano SP", id: "mock_2", modelId: DeviceModelId.nanoSP },
+  nanoS: { name: "Nano S", id: "mock_3", modelId: DeviceModelId.nanoS },
+  stax: { name: "Stax", id: "mock_4", modelId: DeviceModelId.stax },
+  europa: { name: "Flex", id: "mock_5", modelId: DeviceModelId.europa },
 };
 
 export type ModelId = "nanoX" | "nanoSP" | "nanoS" | "stax";

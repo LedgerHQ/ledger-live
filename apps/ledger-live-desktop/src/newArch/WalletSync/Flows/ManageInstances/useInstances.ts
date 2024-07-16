@@ -1,25 +1,20 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addInstance, removeAllInstances, removeInstance } from "~/renderer/actions/walletSync";
-import { Instance, walletSyncInstancesSelector } from "~/renderer/reducers/walletSync";
+import { useSelector } from "react-redux";
+import {
+  walletSyncFakedSelector,
+  walletSyncInstancesSelector,
+} from "~/renderer/reducers/walletSync";
+import { useGetMembers } from "../../hooks/useGetMembers";
 
 export const useInstances = () => {
-  const [selectedInstance, setSelectedInstance] = useState<Instance | null>(null);
-  const dispatch = useDispatch();
-  const instances = useSelector(walletSyncInstancesSelector);
+  const hasBeenfaked = useSelector(walletSyncFakedSelector);
 
-  const deleteInstance = (instance: Instance) => dispatch(removeInstance(instance));
+  const fakedInstances = useSelector(walletSyncInstancesSelector);
 
-  const createInstance = (instance: Instance) => dispatch(addInstance(instance));
-
-  const deleteAllInstances = () => dispatch(removeAllInstances);
+  const { isMembersLoading, instances, isError } = useGetMembers();
 
   return {
-    instances,
-    deleteInstance,
-    deleteAllInstances,
-    createInstance,
-    selectedInstance,
-    setSelectedInstance,
+    isLoading: hasBeenfaked ? false : isMembersLoading,
+    instances: hasBeenfaked ? fakedInstances : instances,
+    hasError: hasBeenfaked ? false : isError,
   };
 };

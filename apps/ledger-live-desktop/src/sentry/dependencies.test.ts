@@ -13,7 +13,4 @@ describe("sentry dependencies", () => {
   test("sentry/node is in sync with sentry/electron", () => {
     expect(parsePackageJson("@sentry/node").version).toBe(nodeVersion);
   });
-  test("sentry/tracing is in sync with sentry/electron", () => {
-    expect(parsePackageJson("@sentry/tracing").version).toBe(nodeVersion);
-  });
 });

@@ -316,10 +316,6 @@ export const setSwapHasAcceptedIPSharing = (hasAcceptedIPSharing: boolean) => ({
   type: "SET_SWAP_ACCEPTED_IP_SHARING",
   payload: hasAcceptedIPSharing,
 });
-export const toggleStarredMarketCoins = (payload: string) => ({
-  type: "TOGGLE_STARRED_MARKET_COINS",
-  payload,
-});
 export const setOverriddenFeatureFlag = (featureFlag: {
   key: FeatureId;
   value: Feature | undefined;
@@ -377,17 +373,17 @@ export const setAnonymousBrazeId = (payload: string) => ({
   payload,
 });
 
+export const setCurrencySettings = (payload: { key: string; value: CurrencySettings }) => ({
+  type: "SET_CURRENCY_SETTINGS",
+  payload,
+});
+
 export const addStarredMarketCoins = (payload: string) => ({
-  type: "ADD_STARRED_MARKET_COINS",
+  type: "MARKET_ADD_STARRED_COINS",
   payload,
 });
 
 export const removeStarredMarketCoins = (payload: string) => ({
-  type: "REMOVE_STARRED_MARKET_COINS",
-  payload,
-});
-
-export const setCurrencySettings = (payload: { key: string; value: CurrencySettings }) => ({
-  type: "SET_CURRENCY_SETTINGS",
+  type: "MARKET_REMOVE_STARRED_COINS",
   payload,
 });

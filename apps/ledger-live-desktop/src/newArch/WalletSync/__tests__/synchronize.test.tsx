@@ -1,10 +1,7 @@
-/**
- * @jest-environment jsdom
- */
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
+import { simpleTrustChain, walletSyncActivatedState } from "../testHelper/helper";
 
 const WalletSyncTestApp = () => (
   <>
@@ -13,18 +10,21 @@ const WalletSyncTestApp = () => (
   </>
 );
 
-jest.mock(
-  "electron",
-  () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
-  { virtual: true },
-);
+jest.mock("../hooks/useQRCode", () => ({
+  useQRCode: () => ({
+    startQRCodeProcessing: () => jest.fn(),
+    url: "https://ledger.com",
+    error: null,
+    isLoading: false,
+  }),
+}));
 
 const openDrawer = async () => {
   const { user } = render(<WalletSyncTestApp />, {
     initialState: {
-      walletSync: {
-        ...initialStateWalletSync,
-        activated: true,
+      walletSync: walletSyncActivatedState,
+      trustchain: {
+        trustchain: simpleTrustChain,
       },
     },
   });
@@ -61,7 +61,22 @@ describe("Synchronize flow", () => {
     //PinCode Page after scanning QRCode
     // Need to wait 3 seconds to simulate the time taken to scan the QR code
     setTimeout(async () => {
-      await waitFor(() => expect(screen.getByText("Enter the code")).toBeDefined());
+      await waitFor(() => {
+        screen.debug();
+        expect(screen.getByText("Enter the code")).toBeDefined();
+      });
+    }, 3000);
+
+    //Succes Page after PinCode
+    setTimeout(async () => {
+      await waitFor(() => {
+        screen.debug();
+        expect(
+          screen.getByText(
+            "Changes in your accounts will now automatically appear across all apps and platforms.",
+          ),
+        ).toBeDefined();
+      });
     }, 3000);
   });
 });

@@ -78,7 +78,6 @@ jobs:
         id: setup-test-desktop
         with:
           skip_ruby: true
-          build_type: staging
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
       - name: generate token

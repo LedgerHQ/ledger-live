@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Account } from "../../enum/Account";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
 
 const accounts: Account[] = [
   Account.BTC_1,

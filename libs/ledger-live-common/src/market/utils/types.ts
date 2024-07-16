@@ -28,7 +28,6 @@ export type MarketListRequestParams = {
   range?: string;
   order?: Order;
   search?: string;
-  lastRequestTime?: Date;
   liveCompatible?: boolean;
   liveCoinsList?: string[];
 };
