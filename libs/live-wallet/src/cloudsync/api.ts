@@ -1,6 +1,7 @@
 import z from "zod";
 import network from "@ledgerhq/live-network";
 import WS from "isomorphic-ws";
+import type { WebSocket } from "ws";
 import { getEnv } from "@ledgerhq/live-env";
 import { Observable } from "rxjs";
 
@@ -19,7 +20,7 @@ const schemaAtomicGetOutOfSync = z.object({
   version: z.number(),
   payload: z.string(),
   date: z.string(),
-  info: z.string().optional(),
+  info: z.string().nullable().optional(),
 });
 const schemaAtomicGetResponse = z.discriminatedUnion("status", [
   schemaAtomicGetNoData,
@@ -107,17 +108,18 @@ function listenNotifications(
         });
     }
 
-    ws.addEventListener("message", (e: MessageEvent) => {
-      if (e.data === "ping") {
+    ws.addEventListener("message", e => {
+      const data = e.data.toString();
+      if (data === "ping") {
         ws.send("pong");
-      } else if (e.data === "JWT expired") {
+      } else if (data === "JWT expired") {
         sendJwt();
       } else {
-        const possiblyNumber = parseInt(e.data, 10);
+        const possiblyNumber = parseInt(data, 10);
         if (!isNaN(possiblyNumber)) {
           observer.next(possiblyNumber);
         } else {
-          console.warn("cloudsync: unexpected message", e.data);
+          console.warn("cloudsync: unexpected message", data);
         }
       }
     });

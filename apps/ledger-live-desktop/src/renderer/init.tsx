@@ -166,6 +166,7 @@ async function init() {
       prepareCurrency(getCryptoCurrencyById("ethereum"));
     }
   } else {
+    // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
   }
   const initialCountervalues = await getKey("app", "countervalues");
@@ -179,14 +180,9 @@ async function init() {
       }),
     );
   }
-
-  const trustchainStoreState = await getKey("app", "trustchainStore");
+  const trustchainStoreState = await getKey("app", "trustchain");
   if (trustchainStoreState) {
-    store.dispatch(
-      importTrustchainStoreState({
-        trustchainStore: trustchainStoreState,
-      }),
-    );
+    store.dispatch(importTrustchainStoreState(trustchainStoreState));
   }
 
   const marketState = await getKey("app", "market");

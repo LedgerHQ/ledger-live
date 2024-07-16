@@ -2,13 +2,16 @@ import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
+import TrackPage from "~/renderer/analytics/TrackPage";
 import ButtonV3 from "~/renderer/components/ButtonV3";
+import { AnalyticsPage } from "../hooks/useWalletSyncAnalytics";
 
 type Props = {
   title?: string;
   description?: string;
   withCta?: boolean;
   onClick?: () => void;
+  analyticsPage?: AnalyticsPage;
 };
 
 const Container = styled(Box)`
@@ -21,11 +24,12 @@ const Container = styled(Box)`
   justify-content: center;
 `;
 
-export const Success = ({ title, description, withCta = false, onClick }: Props) => {
+export const Success = ({ title, description, withCta = false, onClick, analyticsPage }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
+      <TrackPage category={String(analyticsPage)} />
       <Container>
         <Icons.CheckmarkCircleFill size={"L"} color={colors.success.c60} />
       </Container>

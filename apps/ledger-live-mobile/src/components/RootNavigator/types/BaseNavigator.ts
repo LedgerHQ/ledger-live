@@ -301,7 +301,9 @@ export type BaseNavigatorStackParamList = {
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
   [ScreenName.MockedAddAssetButton]: undefined;
-  [ScreenName.WalletSyncActivationSettings]: undefined;
+
+  // WALLET SYNC
+  [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
 
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;

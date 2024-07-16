@@ -12,12 +12,6 @@ const WalletSyncTestApp = () => (
   </>
 );
 
-jest.mock(
-  "electron",
-  () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
-  { virtual: true },
-);
-
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({
     destroyTrustchain: (mockedSdk.destroyTrustchain = jest.fn()),
@@ -40,7 +34,7 @@ describe("ManageYourBackup", () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
         walletSync: walletSyncActivatedState,
-        trustchainStore: {
+        trustchain: {
           trustchain: simpleTrustChain,
         },
       },

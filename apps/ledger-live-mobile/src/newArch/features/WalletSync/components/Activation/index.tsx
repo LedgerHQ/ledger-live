@@ -6,6 +6,14 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
 import Drawer from "LLM/components/Dummy/Drawer";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName } from "~/const";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
+
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
+>;
 
 type Props<T extends boolean> = T extends true
   ? { isInsideDrawer: T; openSyncMethodDrawer: () => void }
@@ -16,9 +24,10 @@ const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDr
   const { t } = useTranslation();
 
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const navigation = useNavigation<NavigationProps["navigation"]>();
 
   const onPressSyncAccounts = () => {
-    // do nothing for the moment
+    navigation.navigate(ScreenName.WalletSyncActivationProcess);
   };
 
   const onPressHasAlreadyCreatedAKey = () => {

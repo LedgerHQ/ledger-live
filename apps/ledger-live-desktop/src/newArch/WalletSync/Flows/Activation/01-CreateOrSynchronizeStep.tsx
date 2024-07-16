@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { LogoWrapper } from "LLD/WalletSync/components/LogoWrapper";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
 
 type Props = {
   goToCreateBackup: () => void;
@@ -16,6 +18,7 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: 
 
   return (
     <Flex flexDirection="column" alignSelf="center" justifyContent="center" rowGap="24px">
+      <TrackPage category={AnalyticsPage.Activation} />
       <Flex justifyContent="center" alignItems="center">
         <LogoWrapper>
           <Icons.Mobile color={colors.constant.purple} />

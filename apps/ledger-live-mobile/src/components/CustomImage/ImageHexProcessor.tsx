@@ -3,7 +3,7 @@ import React from "react";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
-import { injectedCode } from "./injectedCode/imageHexToBase64Processing";
+import { injectedCode, htmlPage } from "./injectedCode/imageHexToBase64Processing";
 import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
 
 export type Props = ProcessorRawResult & {
@@ -100,12 +100,13 @@ export default class ImageHexProcessor extends React.Component<Props> {
         <Flex flex={0}>
           <WebView
             ref={c => (this.webViewRef = c)}
-            injectedJavaScript={injectedCode}
             androidLayerType="software"
-            androidHardwareAccelerationDisabled
             onError={this.handleWebViewError}
             onLoadEnd={this.handleWebViewLoaded}
             onMessage={this.handleWebViewMessage}
+            originWhitelist={["*"]}
+            source={{ html: htmlPage }}
+            webviewDebuggingEnabled={__DEV__}
           />
         </Flex>
       </>

@@ -3,12 +3,6 @@ import { Flow, Step, initialStateWalletSync } from "~/renderer/reducers/walletSy
 import { renderHook } from "tests/testUtils";
 import { act } from "react-dom/test-utils";
 
-jest.mock(
-  "electron",
-  () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
-  { virtual: true },
-);
-
 const INITIAL_STATE = {
   walletSync: {
     ...initialStateWalletSync,

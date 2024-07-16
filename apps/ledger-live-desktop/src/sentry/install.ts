@@ -118,7 +118,6 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
     dsn: __SENTRY_URL__,
     release: __APP_VERSION__,
     environment: __DEV__ ? "development" : "production",
-    debug: __DEV__,
     ignoreErrors,
     sampleRate: __DEV__ ? 1 : productionBuildSampleRate,
     tracesSampleRate: __DEV__ ? 1 : tracesSampleRate,

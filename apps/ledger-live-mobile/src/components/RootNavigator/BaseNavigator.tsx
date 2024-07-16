@@ -403,7 +403,13 @@ export default function BaseNavigator() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-        {WalletSyncNavigator({ Stack })}
+
+        <Stack.Screen
+          name={NavigatorName.WalletSync}
+          component={WalletSyncNavigator}
+          options={{ headerShown: false }}
+        />
+
         {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
