@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.6.0-next.3
+
+### Patch Changes
+
+- [#7343](https://github.com/LedgerHQ/ledger-live/pull/7343) [`2e99ffc`](https://github.com/LedgerHQ/ledger-live/commit/2e99ffc1febe7778e8a96927060718bc77856732) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use eq comparitor for bignumber
+
 ## 34.6.0-next.2
 
 ### Patch Changes
