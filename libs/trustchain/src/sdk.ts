@@ -402,6 +402,19 @@ async function genericWithJWT<T>(
   });
 }
 
+function encodeToHexaString(value?: Uint8Array, prefix?: boolean): string {
+  let result = "";
+  let index = 0;
+  if (!value) return result;
+  if (prefix) result += "0x";
+  while (index <= value.length) {
+    const item = value[index]?.toString(16);
+    if (item) result += item.length < 2 ? "0" + item : item;
+    index++;
+  }
+  return result;
+}
+
 async function authWithDevice(
   transport: Transport,
   callbacks?: TrustchainDeviceCallbacks,
@@ -409,6 +422,8 @@ async function authWithDevice(
   const hw = device.apdu(transport);
   const challenge = await api.getAuthenticationChallenge();
   const data = crypto.from_hex(challenge.tlv);
+
+  console.log("data", encodeToHexaString(data));
   const seedId = await remapUserInteractions(hw.getSeedId(data), callbacks);
   const signature = crypto.to_hex(seedId.signature);
   const response = await api.postChallengeResponse({

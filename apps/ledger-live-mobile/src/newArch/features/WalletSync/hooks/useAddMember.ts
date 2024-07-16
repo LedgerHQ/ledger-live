@@ -8,6 +8,11 @@ import {
 } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { trace, listen } from "@ledgerhq/logs";
+
+listen(log => {
+  console.log(log);
+});
 
 export function useAddMember({ device }: { device: Device | null }) {
   const dispatch = useDispatch();
@@ -41,13 +46,14 @@ export function useAddMember({ device }: { device: Device | null }) {
     }
 
     const addMember = async () => {
-      if (!deviceRef.current) return;
       try {
-        console.log("Running with device ", deviceRef.current);
+        console.log("Running with device", deviceRef.current);
+
+        if (!deviceRef.current) return;
         await runWithDevice(deviceRef.current.deviceId, async transport => {
           console.log("Getting or creating trustchain", transport);
 
-          console.log("memberCredentialsRef.current", memberCredentialsRef.current);
+          console.log("check transpoort", transport);
           const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
             transport,
             memberCredentialsRef.current as MemberCredentials,
