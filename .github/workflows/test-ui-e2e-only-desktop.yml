@@ -32,6 +32,16 @@ on:
         required: false
         type: boolean
         default: false
+      export_to_xray:
+        description: Send tests results to Xray
+        required: false
+        type: boolean
+        default: false
+      test_execution:
+        description: "Test execution be used in Xray"
+        required: false
+        type: string
+        default: "B2CQA-2461"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -53,6 +63,8 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.9.5
+      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge]
@@ -80,7 +92,7 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-      - name: generate token
+      - name: Generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
         with:
@@ -93,7 +105,7 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
-      - name: pull docker image
+      - name: Pull docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
       - name: Run playwright tests [Linux => xvfb-run]
@@ -108,13 +120,25 @@ jobs:
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          XRAY: ${{ inputs.export_to_xray }}
+          TEST_EXECUTION: ${{ inputs.test_execution }}
+          PROJECT_KEY: B2CQA
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4.3.0
         with:
+          retention-days: 1
           name: allure-results-${{ matrix.shardIndex }}
           path: "apps/ledger-live-desktop/allure-results"
+
+      - name: Upload Xray Results
+        if: ${{ !cancelled() && inputs.export_to_xray }}
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          retention-days: 1
+          name: xray-reports-${{ matrix.shardIndex }}
+          path: apps/ledger-live-desktop/tests/artifacts/xray/xray-report.json
 
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v4.3.0
@@ -132,6 +156,9 @@ jobs:
   report-and-notify:
     name: "Report and Notify"
     runs-on: [ledger-live-medium]
+    env:
+      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
     needs: e2e-tests-linux
     if: always()
     steps:
@@ -163,6 +190,50 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: echo "::notice title=Allure report URL::${{ steps.allure-server.outputs.report-url }}"
+
+      - name: Download Xray Reports
+        if: ${{ !cancelled() && inputs.export_to_xray }}
+        uses: actions/download-artifact@v4.1.1
+        with:
+          path: "apps/ledger-live-desktop/artifacts/xray"
+          pattern: xray-reports-*
+          merge-multiple: false
+
+      - name: Extract and Aggregate Xray reports
+        if: ${{ !cancelled() && inputs.export_to_xray }}
+        run: 
+          ./aggregate-xray-reports.sh
+      
+      - name: Upload aggregated xray reports
+        if: ${{ !cancelled() && inputs.export_to_xray }}
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: aggregated-xray-reports
+          path: "apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json"
+
+      - name: Authenticate to Xray
+        if: ${{ !cancelled() && inputs.export_to_xray }}
+        id: authenticate
+        run: |
+          response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' https://xray.cloud.getxray.app/api/v2/authenticate)
+          echo "xray_token=$response" >> $GITHUB_OUTPUT
+
+      - name: Publish merged report on Xray
+        if: ${{ !cancelled() && inputs.export_to_xray }}
+        id: publish-xray
+        run: |
+          response=$(curl -H "Content-Type: application/json" \
+                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
+                    -X POST \
+                    --data @apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json \
+                    https://xray.cloud.getxray.app/api/v2/import/execution)
+            key=$(echo $response | jq -r '.key')
+            echo "xray_key=$key" >> $GITHUB_OUTPUT
+
+      - name: Write Xray report in summary
+        if: ${{ !cancelled() && inputs.export_to_xray }}
+        shell: bash
+        run: echo "::notice title=Xray report URL::https://ledgerhq.atlassian.net/browse/${{ steps.publish-xray.outputs.xray_key }}"
 
       - name: Get summary
         if: ${{ !cancelled() }}
