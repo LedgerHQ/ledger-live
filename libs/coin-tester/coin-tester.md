@@ -41,7 +41,7 @@ Everytime we do a synchronization we intercept the calls made to the explorer an
 
 The coin tester engine is located [here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/src/main.ts). The function `executeScenario` is then imported inside the coin module to run specific scenarios.
 
-## Exemples
+## Examples
 
 - [EVM](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-evm/src/__tests__/coin-tester)
 - [Polkadot](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-polkadot/src/test/coin-tester)
