@@ -8,7 +8,7 @@ Historically to test the coin modules we had to run Ledger Live and test manuall
 
 ## How it works
 
-The coin tester exectutes **scenarios**. A scenario is a suite of transactions that are ran together.
+The coin tester executes **scenarios**. A scenario is a suite of transactions that are run together.
 
 A scenario could look like:
 
