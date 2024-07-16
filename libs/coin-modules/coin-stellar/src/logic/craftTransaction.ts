@@ -19,7 +19,7 @@ export async function craftTransaction(
     address: string;
   },
   transaction: {
-    mode: "send" | "changeTrust";
+    mode: string;
     recipient: string;
     amount: bigint;
     fee: bigint;
@@ -30,7 +30,6 @@ export async function craftTransaction(
   },
 ): Promise<{ transaction: StellarSdkTransaction; xdr: string }> {
   const { amount, recipient, fee, memoType, memoValue, mode, assetCode, assetIssuer } = transaction;
-  console.log("amount", amount);
 
   const source = await loadAccount(account.address);
 

@@ -17,22 +17,18 @@ export type Operation = {
   transactionSequenceNumber: number;
 };
 
-export type Transaction<M, S> = {
-  mode: M;
+export type Transaction = {
+  mode: string;
   recipient: string;
   amount: bigint;
   fee: bigint;
-  supplement: S;
+  supplement?: unknown;
 };
 
 export type Api = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
-  craftTransaction: <M, S>(
-    address: string,
-    transaction: Transaction<M, S>,
-    pubkey?: string,
-  ) => Promise<string>;
+  craftTransaction: (address: string, transaction: Transaction, pubkey?: string) => Promise<string>;
   estimateFees: (addr: string, amount: bigint) => Promise<bigint>;
   getBalance: (address: string) => Promise<bigint>;
   lastBlock: () => Promise<BlockInfo>;
