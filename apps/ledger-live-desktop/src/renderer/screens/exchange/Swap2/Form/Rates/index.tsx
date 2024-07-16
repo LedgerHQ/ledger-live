@@ -130,19 +130,6 @@ export default function ProviderRate({
     }
   }, [filteredRates, selectedRate, dispatch]);
 
-  const updateFilter = useCallback(
-    (newFilter: string[]) => {
-      track("button_clicked2", {
-        button: "Filter selected",
-        page: "Page Swap Form",
-        ...swapDefaultTrack,
-        value: newFilter,
-      });
-      setFilter(newFilter);
-    },
-    [swapDefaultTrack],
-  );
-
   return (
     <Box height="100%" width="100%">
       <TrackPage
