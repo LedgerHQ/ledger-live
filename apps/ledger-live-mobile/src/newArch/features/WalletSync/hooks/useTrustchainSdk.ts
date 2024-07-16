@@ -1,23 +1,17 @@
-import { firstValueFrom, from, lastValueFrom } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { useMemo } from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { getSdk } from "@ledgerhq/trustchain/index";
 import Transport from "@ledgerhq/hw-transport";
 import { Platform } from "react-native";
 import { useDevice } from "./useDevice";
-import { withDevice, withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
-import { CantOpenDevice } from "@ledgerhq/errors";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
 export function runWithDevice<T>(
   deviceId: string,
   fn: (transport: Transport) => Promise<T>,
 ): Promise<T> {
-  return firstValueFrom(
-    withDevicePolling(deviceId)(
-      transport => from(fn(transport)),
-      e => e instanceof CantOpenDevice,
-    ),
-  );
+  return firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 }
 
 export function useTrustchainSdk() {
