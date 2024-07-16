@@ -106,8 +106,6 @@ export class SDK implements TrustchainSDK {
 
     let trustchains = await withJwt(api.getTrustchains);
 
-    console.log("trustchains", trustchains);
-
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
       type = TrustchainResultType.created;
@@ -131,31 +129,23 @@ export class SDK implements TrustchainSDK {
       }
     }
 
-    console.log("trustchainRootId", trustchainRootId);
-
     invariant(trustchainRootId, "trustchainRootId should be defined");
     log("trustchain", "getOrCreateTrustchain rootId=" + trustchainRootId);
 
     // make a stream tree from all the trustchains associated to this root id
     let { streamTree } = await withJwt(jwt => fetchTrustchain(jwt, trustchainRootId));
-    console.log("streamTree", streamTree);
     const path = streamTree.getApplicationRootPath(this.context.applicationId);
     const child = streamTree.getChild(path);
     let shouldShare = true;
 
-    console.log("Here", path, child);
     if (child) {
-      console.log("Beforeresolved");
       const resolved = await child.resolve();
-      console.log("resolved", resolved);
       const members = resolved.getMembers();
 
-      console.log("members", members);
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
     if (shouldShare) {
       if (type === TrustchainResultType.restored) type = TrustchainResultType.updated;
-      console.log("shouldShare", shouldShare);
       streamTree = await remapUserInteractions(
         pushMember(streamTree, path, trustchainRootId, withJwt, hw, {
           id: memberCredentials.pubkey,
@@ -165,8 +155,6 @@ export class SDK implements TrustchainSDK {
         callbacks,
       );
     }
-
-    console.log("vefore walletSyncEncryptionKey", streamTree, path, memberCredentials);
 
     const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
 
@@ -402,19 +390,6 @@ async function genericWithJWT<T>(
   });
 }
 
-function encodeToHexaString(value?: Uint8Array, prefix?: boolean): string {
-  let result = "";
-  let index = 0;
-  if (!value) return result;
-  if (prefix) result += "0x";
-  while (index <= value.length) {
-    const item = value[index]?.toString(16);
-    if (item) result += item.length < 2 ? "0" + item : item;
-    index++;
-  }
-  return result;
-}
-
 async function authWithDevice(
   transport: Transport,
   callbacks?: TrustchainDeviceCallbacks,
@@ -423,7 +398,6 @@ async function authWithDevice(
   const challenge = await api.getAuthenticationChallenge();
   const data = crypto.from_hex(challenge.tlv);
 
-  console.log("data", encodeToHexaString(data));
   const seedId = await remapUserInteractions(hw.getSeedId(data), callbacks);
   const signature = crypto.to_hex(seedId.signature);
   const response = await api.postChallengeResponse({
@@ -585,7 +559,6 @@ function remapUserInteractions<T>(
   callbacks?.onStartRequestUserInteraction();
   return promise
     .catch(error => {
-      console.log("error remapUserInteractions", error);
       if (
         error instanceof TransportStatusError &&
         [StatusCodes.USER_REFUSED_ON_DEVICE, StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED].includes(

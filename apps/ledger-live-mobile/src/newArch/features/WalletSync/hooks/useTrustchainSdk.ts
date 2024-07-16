@@ -4,7 +4,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getSdk } from "@ledgerhq/trustchain/index";
 import Transport from "@ledgerhq/hw-transport";
 import { Platform } from "react-native";
-import { useDevice } from "./useDevice";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
 export function runWithDevice<T>(
@@ -14,18 +13,22 @@ export function runWithDevice<T>(
   return firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 }
 
+const platformMap: Record<string, string | undefined> = {
+  ios: "iOS",
+  android: "Android",
+};
+
 export function useTrustchainSdk() {
   const isMockEnv = !!getEnv("MOCK");
 
-  const { device } = useDevice();
   const defaultContext = useMemo(() => {
     const applicationId = 16;
-    const platform = Platform.OS;
     const hash = getEnv("USER_ID").slice(0, 5);
 
-    const name = `${device || platform}${hash ? " " + hash : ""}`;
+    const name = `${platformMap[Platform.OS] ?? Platform.OS} ${Platform.Version} ${hash ? " " + hash : ""}`;
+
     return { applicationId, name };
-  }, [device]);
+  }, []);
 
   const sdk = getSdk(isMockEnv, defaultContext);
 
