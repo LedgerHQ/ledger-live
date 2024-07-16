@@ -4,7 +4,7 @@ The coin tester is a deterministic tool to test the coin modules.
 
 ## Motivation
 
-Historically to test the coin modules we had to run Ledger Live and test manually the different operations supported on Ledger Live. Howecer we wanted to make sure that the coin modules could be used in Ledger Live as well as any other software wallet. We thus needed a way to easily test the full capabilites of a coin modules without rellying on the client specific use cases.
+Historically to test the coin modules we had to run Ledger Live and test manually the different operations supported on Ledger Live. However we wanted to make sure that the coin modules could be used in Ledger Live as well as any other software wallet. We thus needed a way to easily test the full capabilities of a coin modules without relying on the client specific use cases.
 
 ## How it works
 
