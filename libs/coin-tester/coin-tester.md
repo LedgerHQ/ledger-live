@@ -16,7 +16,7 @@ A scenario could look like:
 > Send 1 NFT to Bob
 > Stake 100 Eth to this staking pool 
 
-You'll just need to defined the transctions as expected by the coin module and then let the coin module do the job
+You'll just need to define the transactions as expected by the coin module and then let the coin module do the job
 
 The coin modules works quite simply:
 
