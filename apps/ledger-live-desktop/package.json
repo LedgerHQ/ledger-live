@@ -63,6 +63,7 @@
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/hw-transport-vault": "workspace:^",
+    "@ledgerhq/hw-trustchain": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
