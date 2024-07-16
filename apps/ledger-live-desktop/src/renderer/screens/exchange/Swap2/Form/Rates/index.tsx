@@ -57,7 +57,7 @@ export default function ProviderRate({
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
-  const [filter, setFilter] = useState<string[]>([]);
+  const [filter] = useState<string[]>([]);
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
   const [isRegistrationRequiredMap, setIsRegistrationRequiredMap] = useState<{
     [x: string]: boolean;
