@@ -24,14 +24,22 @@ type NavigationProps = BaseComposite<
   >
 >;
 
-function KadenaEditComment({ navigation, route }: NavigationProps) {
+function KadenaEditChainID({ navigation, route }: NavigationProps) {
   const isFocused = useIsFocused();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
 
-  const onValidateText = useCallback(() => {
+  const [senderChainID, setSenderChainID] = useState(route.params?.transaction.senderChainID);
+  const [receiverChainID, setReceiverChainID] = useState(route.params?.transaction.receiverChainID);
+
+  const onValidateSenderChainID = useCallback((str: string) => {
+    let value: string = str;
+    setSenderChainID(value === "" ? undefined : new Number(value));
+  }, []);
+
+  const onValidateChainID = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
     // @ts-expect-error FIXME: No current / next navigation params?
@@ -44,15 +52,50 @@ function KadenaEditComment({ navigation, route }: NavigationProps) {
   }, [navigation, route.params, account]);
   return (
     <SafeAreaView style={styles.root}>
+      <KeyboardView
+        style={[
+          styles.body,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
+      >
+      {isFocused && (
+        <TextInput
+          allowFontScaling={false}
+          autoFocus
+          style={[
+            styles.textInputAS,
+            {
+              color: colors.darkBlue,
+            },
+          ]}
+          value={senderChainID?.toString() ?? ""}
+          placeholder="Eg: 1"
+          keyboardType="number-pad"
+          returnKeyType="done"
+          onChangeText={onValidateSenderChainID}
+          onSubmitEditing={onValidateChainID}
+        />)}
+          <View style={styles.flex}>
+            <Button
+              event="InternetComputerEditMemo"
+              type="primary"
+              title={t("send.summary.validateMemo")}
+              onPress={onValidateChainID}
+              containerStyle={styles.buttonContainer}
+            />
+          </View>
+      </KeyboardView>
     </SafeAreaView>
   );
 }
 
 const options = {
-  title: i18next.t("send.summary.comment"),
+  title: i18next.t("send.summary.senderchainId"),
   headerLeft: undefined,
 };
-export { KadenaEditComment as component, options };
+export { KadenaEditChainID as component, options };
 const styles = StyleSheet.create({
   root: {
     flex: 1,
