@@ -25,7 +25,7 @@ The coin modules works quite simply:
 3. We loop through the array of transaction and execute the transactions. For each transaction we check that the coin module acted as expected.
 4. We teardown the setup
 
-The coin tester being deterministic, the goal of the setup is to make sure we always tests in a know and controlled environment. The account we use should have the funds and assets (NFTs, Tokens, ERCs) to execute the scenarios transactions.
+The coin tester being deterministic, the goal of the setup is to make sure we always tests in a known and controlled environment. The account we use should have the funds and assets (NFTs, Tokens, ERC20s, etc) to execute the scenarios transactions.
 
 As transactions are ran in a local testnode we can't use a "real" explorer, we thus use the functions `beforeSync` and `mockIndexer` locally index transactions.
 Everytime we do a synchronization we intercept the calls made to the explorer and populate the response with the local explorer.
