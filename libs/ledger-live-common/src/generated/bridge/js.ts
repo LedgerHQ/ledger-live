@@ -32,7 +32,6 @@ export default {
   hedera,
   internet_computer,
   stacks,
-  ton,
   vechain,
   algorand,
   bitcoin,
@@ -45,5 +44,6 @@ export default {
   tezos,
   tron,
   xrp,
+  ton,
   icon,
 };

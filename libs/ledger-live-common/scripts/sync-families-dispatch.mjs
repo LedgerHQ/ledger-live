@@ -1,6 +1,6 @@
 #!/usr/bin/env zx
-import rimraf from "rimraf";
 import "zx/globals";
+import rimraf from "rimraf";
 
 const targets = [
   "hw-getAddress.ts",
@@ -33,7 +33,7 @@ const familiesWPackage = [
   "tezos",
   "tron",
   "xrp",
-  "ton"
+  "ton",
   "icon",
 ];
 

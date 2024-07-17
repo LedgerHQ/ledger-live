@@ -32,7 +32,6 @@ export default {
   hedera,
   internet_computer,
   stacks,
-  ton,
   vechain,
   algorand,
   bitcoin,

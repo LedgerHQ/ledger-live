@@ -31,7 +31,6 @@ export default {
   hedera,
   internet_computer,
   stacks,
-  ton,
   algorand,
   bitcoin,
   cardano,
@@ -43,6 +42,7 @@ export default {
   tezos,
   tron,
   xrp,
+  ton,
   icon,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
