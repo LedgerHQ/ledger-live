@@ -10,6 +10,7 @@ export const Container = styled.div`
   column-gap: 0.375rem;
   align-items: center;
   color: ${p => p.theme.colors.palette.text.shade100};
+  justify-content: flex-end;
 `;
 export const Text = styled(TextBase).attrs(() => ({
   ff: "Inter",

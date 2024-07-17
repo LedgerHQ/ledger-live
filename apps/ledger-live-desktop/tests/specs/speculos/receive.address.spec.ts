@@ -18,7 +18,7 @@ const accounts: Account[] = [
 
 //Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, account] of accounts.entries()) {
-  test.describe.skip("Receive", () => {
+  test.describe("Receive", () => {
     test.use({
       userdata: "speculos-tests-app",
       testName: `receiveSpeculos_${account.currency.uiName}`,

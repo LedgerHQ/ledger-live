@@ -176,6 +176,8 @@ describe("CloudSyncSDK basics", () => {
       data = { value: "old" };
       version = 1;
       await expect(sdk.pull(trustchain, creds)).rejects.toThrow(TrustchainOutdated);
+      expect(data).toEqual(null);
+      expect(version).toBe(0);
     } finally {
       data = null;
       version = 0;

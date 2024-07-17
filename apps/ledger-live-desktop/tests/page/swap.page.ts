@@ -1,5 +1,5 @@
-import { waitFor } from "../utils/waitFor";
 import { AppPage } from "tests/page/abstractClasses";
+import { waitFor } from "../utils/waitFor";
 
 export class SwapPage extends AppPage {
   private swapMenuButton = this.page.getByTestId("drawer-swap-button"); // TODO: Should this be here?
@@ -112,22 +112,6 @@ export class SwapPage extends AppPage {
     await this.customFeeTextbox.fill(amount);
   }
 
-  async filterByCentralisedQuotes() {
-    await this.centralisedQuoteFilterButton.click();
-  }
-
-  async filterByDecentralisedQuotes() {
-    await this.decentralisedQuoteFilterButton.click();
-  }
-
-  async filterByFloatingRateQuotes() {
-    await this.floatQuoteFilterButton.click();
-  }
-
-  async filterByFixedRateQuotes() {
-    await this.fixedQuoteFilterButton.click();
-  }
-
   async selectExchangeQuote(
     providerName: "changelly" | "cic" | "oneinch" | "paraswap",
     exchangeType: "fixed" | "float",
@@ -155,11 +139,6 @@ export class SwapPage extends AppPage {
   async waitForExchangeDetails() {
     await this.detailsSwapId.waitFor({ state: "visible" });
     return this.detailsSwapId.innerText();
-  }
-
-  async waitForProviderRates() {
-    await this.centralisedQuoteFilterButton.waitFor({ state: "visible" });
-    await this.decentralisedQuoteFilterButton.waitFor({ state: "visible" });
   }
 
   // TODO: pull this function out into a utility function so we can use it elsewhere

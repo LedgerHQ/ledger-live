@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import test from "../../fixtures/mockFixtures";
 import { expect } from "@playwright/test";
-import { SwapPage } from "../../page/swap.page";
-import { DeviceAction } from "../../models/DeviceAction";
-import { Drawer } from "../../page/drawer/drawer";
-import { AccountsPage } from "../../page/accounts.page";
-import { AccountPage } from "../../page/account.page";
 import { Layout } from "../../component/layout.component";
 import { Modal } from "../../component/modal.component";
+import test from "../../fixtures/mockFixtures";
+import { DeviceAction } from "../../models/DeviceAction";
+import { AccountPage } from "../../page/account.page";
+import { AccountsPage } from "../../page/accounts.page";
+import { Drawer } from "../../page/drawer/drawer";
+import { SwapPage } from "../../page/swap.page";
 import {
   getBitcoinToDogecoinRatesMock,
   getBitcoinToEthereumRatesMock,
-  getEthereumToTetherRatesMock,
   getProvidersCDNDataMock,
 } from "./services-api-mocks/getRates.mock";
 
@@ -97,65 +96,12 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectCurrencyFromCurrencyDropdown("Dogecoin");
       await swapPage.sendMax(); // entering amount in textbox doesn't generate a quote in mock/PW
       await layout.waitForLoadingSpinnerToHaveDisappeared();
-      await swapPage.waitForProviderRates();
       await expect.soft(page).toHaveScreenshot("add-to-account-button.png");
     });
 
     await test.step("Add account from missing Destination (To) account", async () => {
       await swapPage.addDestinationAccount();
       await expect.soft(page).toHaveScreenshot("add-missing-destination-account.png");
-    });
-  });
-
-  test("Filter Rates @smoke", async ({ page, mockProviderSvgs, mockFeesEndpoint }) => {
-    const swapPage = new SwapPage(page);
-    const layout = new Layout(page);
-
-    await page.route("https://swap.ledger.com/v5/rate**", async route => {
-      const mockRatesResponse = getEthereumToTetherRatesMock();
-      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
-    });
-
-    await page.route("https://cdn.live.ledger.com/swap-providers/data.json", async route => {
-      const mockProvidersResponse = getProvidersCDNDataMock();
-      await route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
-    });
-
-    await test.step("Generate ETH to USDT quotes", async () => {
-      await swapPage.navigate();
-      await swapPage.reverseSwapPair();
-      await swapPage.filterDestinationCurrencyDropdown("Tether USD");
-      await layout.waitForLoadingSpinnerToHaveDisappeared();
-      await swapPage.selectCurrencyFromCurrencyDropdown("Tether USD");
-      await swapPage.sendMax();
-      await layout.waitForLoadingSpinnerToHaveDisappeared();
-      await swapPage.waitForProviderRates();
-      await expect.soft(page).toHaveScreenshot("eth-to-usdt-quotes-generated.png");
-    });
-
-    await test.step("Decentralised Quotes filtered", async () => {
-      await swapPage.filterByDecentralisedQuotes();
-      await expect.soft(page).toHaveScreenshot("only-decentralised-quotes-displayed.png");
-    });
-
-    await test.step("Fixed Decentralised Quotes filtered", async () => {
-      await swapPage.filterByFixedRateQuotes();
-      await expect.soft(page).toHaveScreenshot("fixed-decentralised-quotes-displayed.png");
-    });
-
-    await test.step("Floating Decentralised Quotes filtered", async () => {
-      await swapPage.filterByFloatingRateQuotes();
-      await expect.soft(page).toHaveScreenshot("floating-decentralised-quotes-displayed.png");
-    });
-
-    await test.step("Floating Centralised Quotes filtered", async () => {
-      await swapPage.filterByCentralisedQuotes();
-      await expect.soft(page).toHaveScreenshot("floating-centralised-quotes-displayed.png");
-    });
-
-    await test.step("Fixed Centralised filtered", async () => {
-      await swapPage.filterByFixedRateQuotes();
-      await expect.soft(page).toHaveScreenshot("fixed-centralised-quotes-diplayed.png");
     });
   });
 
