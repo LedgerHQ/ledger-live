@@ -6,17 +6,11 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { saveSettings } from "~/renderer/actions/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { useTheme } from "styled-components";
 
-import CompletedOnboardingDark from "./assets/completeOnboardingDark.mp4";
-import CompletedOnboardingLight from "./assets/completeOnboardingLight.mp4";
+import StaxCompletionView from "./StaxCompletionView";
+import EuropaCompletionView from "./EuropaCompletionView";
 
 const GO_TO_POSTONBOARDING_TIMEOUT = 6000;
-
-const videos = {
-  dark: CompletedOnboardingDark,
-  light: CompletedOnboardingLight,
-};
 
 const CompletionScreen = () => {
   const dispatch = useDispatch();
@@ -24,9 +18,6 @@ const CompletionScreen = () => {
   const device = useSelector(getCurrentDevice);
 
   const handleInitPostOnboarding = useStartPostOnboardingCallback();
-
-  const { colors } = useTheme();
-  const palette = colors.palette.type;
 
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
@@ -45,11 +36,11 @@ const CompletionScreen = () => {
 
   return (
     <Flex alignItems="center" width="100%" justifyContent="center">
-      <Flex height={"100vh"}>
-        <video autoPlay loop height="100%">
-          <source src={videos[palette]} type="video/mp4" />
-        </video>
-      </Flex>
+      {device?.modelId === DeviceModelId.stax ? (
+        <StaxCompletionView />
+      ) : (
+        <EuropaCompletionView device={device} />
+      )}
     </Flex>
   );
 };
