@@ -57,6 +57,8 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "icon",
+  "icon_berlin_testnet",
   "optimism",
   "optimism_sepolia",
   "arbitrum",
