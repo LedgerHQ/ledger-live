@@ -4,7 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import type { SearchProps } from "LLM/features/Web3Hub/types";
-import { AppIcon } from "~/screens/Platform/v2/AppIcon";
+import AppIcon from "LLM/features/Web3Hub/components/AppIcon";
 import { ScreenName } from "~/const";
 import CurrencyIconList from "./CurrencyIconList";
 

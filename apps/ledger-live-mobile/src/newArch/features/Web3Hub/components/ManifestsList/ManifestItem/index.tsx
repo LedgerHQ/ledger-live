@@ -5,7 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AppBranch, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import type { MainProps, SearchProps } from "LLM/features/Web3Hub/types";
-import { AppIcon } from "~/screens/Platform/v2/AppIcon";
+import AppIcon from "LLM/features/Web3Hub/components/AppIcon";
 import { NavigatorName, ScreenName } from "~/const";
 import { Theme } from "~/colors";
 
@@ -79,6 +79,11 @@ export default function ManifestItem({
     return new URL(manifest.url).origin;
   }, [manifest.url]);
 
+  const icon = useMemo(() => {
+    // RN tries to load file locally if there is a space in front of the file url
+    return manifest.icon?.trim();
+  }, [manifest.icon]);
+
   return (
     <TouchableOpacity disabled={isDisabled} onPress={handlePress}>
       <Flex
@@ -89,7 +94,7 @@ export default function ManifestItem({
         paddingX={4}
         paddingY={2}
       >
-        <AppIcon isDisabled={isDisabled} size={48} name={manifest.name} icon={manifest.icon} />
+        <AppIcon isDisabled={isDisabled} size={48} name={manifest.name} icon={icon} />
         <Flex marginX={16} height="100%" flexGrow={1} flexShrink={1} justifyContent={"center"}>
           <Flex flexDirection="row" alignItems={"center"} mb={2}>
             <Text variant="large" color={color} numberOfLines={1} fontWeight="semiBold">

@@ -5,9 +5,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Animated, { useAnimatedStyle, interpolate, Extrapolation } from "react-native-reanimated";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { useQueryClient } from "@tanstack/react-query";
 import type { SearchProps } from "LLM/features/Web3Hub/types";
 import TextInput from "~/components/TextInput";
 import { HeaderContext } from "LLM/features/Web3Hub/HeaderContext";
+import { queryKey } from "LLM/features/Web3Hub/components/ManifestsList/useManifestsListViewModel";
 import { NavigatorName, ScreenName } from "~/const";
 
 const TITLE_HEIGHT = 50;
@@ -75,13 +77,22 @@ export default function Web3HubMainHeader({ title, navigation }: Props) {
     });
   }, [navigation]);
 
+  // TODO remove later
+  // Useful for testing the infinite loading and onEndReach working correctly
+  const queryClient = useQueryClient();
+  const clearCache = useCallback(() => {
+    queryClient.resetQueries({ queryKey: queryKey("all") });
+  }, [queryClient]);
+
   return (
     <Animated.View style={heightStyle}>
       <Animated.View style={transformStyle}>
         <Animated.View style={opacityStyle}>
-          <Text mt={5} mb={2} numberOfLines={1} variant="h4" mx={5} accessibilityRole="header">
-            {title}
-          </Text>
+          <TouchableOpacity onPress={clearCache}>
+            <Text mt={5} mb={2} numberOfLines={1} variant="h4" mx={5} accessibilityRole="header">
+              {title}
+            </Text>
+          </TouchableOpacity>
         </Animated.View>
         <Flex height={SEARCH_HEIGHT} mx={5} justifyContent="center">
           <TouchableOpacity onPress={goToSearch}>

@@ -10,11 +10,15 @@ import Web3HubTabsHeader from "./screens/Web3HubTabs/components/Header";
 import Web3HubApp from "./screens/Web3HubApp";
 import Web3HubAppHeader from "./screens/Web3HubApp/components/Header";
 
+// Uncomment to use mocks
+// process.env.MOCK_WEB3HUB = "1";
+
 export type Web3HubStackParamList = {
   [ScreenName.Web3HubSearch]: undefined;
   [ScreenName.Web3HubTabs]: undefined;
   [ScreenName.Web3HubApp]: {
     manifestId: string;
+    queryParams?: Record<string, string | undefined>;
   };
 };
 

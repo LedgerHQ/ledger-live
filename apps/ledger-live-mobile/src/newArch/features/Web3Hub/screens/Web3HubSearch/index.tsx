@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ScrollView } from "react-native";
+import { View } from "react-native";
 import type { SearchProps } from "LLM/features/Web3Hub/types";
 import { HeaderContext } from "LLM/features/Web3Hub/HeaderContext";
 import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
@@ -9,7 +9,7 @@ export default function Web3HubSearch({ navigation }: SearchProps) {
   const { search } = useContext(HeaderContext);
 
   return (
-    <ScrollView
+    <View
       style={{
         flex: 1,
       }}
@@ -19,6 +19,6 @@ export default function Web3HubSearch({ navigation }: SearchProps) {
       ) : (
         <ManifestsList navigation={navigation} />
       )}
-    </ScrollView>
+    </View>
   );
 }
