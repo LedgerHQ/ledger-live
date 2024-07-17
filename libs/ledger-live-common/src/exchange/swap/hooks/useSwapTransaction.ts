@@ -6,7 +6,6 @@ import {
   NotEnoughGas,
   NotEnoughGasSwap,
   NotEnoughBalanceSwap,
-  NotEnoughBalance,
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
@@ -62,11 +61,9 @@ export const useFromAmountStatusMessage = (
     if (transaction?.amount.lte(0)) return undefined;
 
     const [relevantStatus] = statusEntries
-      .filter(Boolean)
+      .filter(maybeError => maybeError instanceof Error)
       .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
-    const isRelevantStatus =
-      (relevantStatus as Error) instanceof NotEnoughGas ||
-      (relevantStatus as Error) instanceof NotEnoughBalance;
+    const isRelevantStatus = (relevantStatus as Error) instanceof NotEnoughGas;
 
     if (isRelevantStatus && currency && estimatedFees) {
       const query = new URLSearchParams({
