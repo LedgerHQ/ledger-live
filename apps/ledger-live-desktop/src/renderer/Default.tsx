@@ -55,8 +55,6 @@ import {
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
-import NftGallery from "LLD/Collectibles/Nfts/Gallery";
-import NFTCollection from "LLD/Collectibles/Nfts/Collection";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -77,7 +75,8 @@ const WelcomeScreenSettings = lazy(
 const SyncOnboarding = lazy(() => import("./components/SyncOnboarding"));
 const RecoverPlayer = lazy(() => import("~/renderer/screens/recover/Player"));
 
-//const NFTCollection = lazy(() => import("~/renderer/screens/nft/Gallery/Collection"));
+const NFTGallery = lazy(() => import("~/renderer/screens/nft/Gallery"));
+const NFTCollection = lazy(() => import("~/renderer/screens/nft/Gallery/Collection"));
 const RecoverRestore = lazy(() => import("~/renderer/components/RecoverRestore"));
 const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
@@ -341,7 +340,7 @@ export default function Default() {
                             <Route
                               exact
                               path="/account/:id/nft-collection"
-                              render={withSuspense(NftGallery)}
+                              render={withSuspense(NFTGallery)}
                             />
                             <Route path="/swap-web" render={withSuspense(SwapWeb)} />
                             <Route

@@ -10,7 +10,6 @@ import styled from "styled-components";
 import IconSend from "~/renderer/icons/Send";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
 import TokensList from "./TokensList";
-import NftTokensList from "LLD/Collectibles/"
 import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -21,7 +20,7 @@ import { State } from "~/renderer/reducers";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import theme from "@ledgerhq/react-ui/styles/theme";
 import { useOnScreen } from "../useOnScreen";
-import { isThresholdValid, useNftGalleryFilter, useNftMetadata } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SpinnerContainer = styled.div`
@@ -134,13 +133,7 @@ const Gallery = () => {
             </Text>
           </ClickableCollectionName>
           {account && (
-            <>
-              {/*    <TokensList account={account} nfts={nfts.slice(0, maxVisibleNFTs - displayedNFTs)} /> */}
-              <NftTokensList
-                account={account}
-                nfts={nfts.slice(0, maxVisibleNFTs - displayedNFTs)}
-              />
-            </>
+            <TokensList account={account} nfts={nfts.slice(0, maxVisibleNFTs - displayedNFTs)} />
           )}
         </div>,
       );
