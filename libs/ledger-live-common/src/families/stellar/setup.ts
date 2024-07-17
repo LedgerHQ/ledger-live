@@ -1,16 +1,20 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
-import { Transaction, StellarAccount, TransactionStatus } from "@ledgerhq/coin-stellar/types/index";
-import Transport from "@ledgerhq/hw-transport";
-import Stellar from "@ledgerhq/hw-app-str";
-import type { Bridge } from "@ledgerhq/types-live";
-import { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
-import makeCliTools from "@ledgerhq/coin-stellar/cli";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { createBridges } from "@ledgerhq/coin-stellar/bridge/index";
+import makeCliTools from "@ledgerhq/coin-stellar/test/cli";
+import { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
 import stellarResolver from "@ledgerhq/coin-stellar/signer/index";
+import type {
+  StellarAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/coin-stellar/types/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import Stellar from "@ledgerhq/hw-app-str";
+import Transport from "@ledgerhq/hw-transport";
+import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
-import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
+import { Resolver } from "../../hw/getAddress/types";
 
 const createSigner: CreateSigner<Stellar> = (transport: Transport) => {
   return new Stellar(transport);
