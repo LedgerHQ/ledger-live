@@ -81,7 +81,7 @@ The command `export COINAPPS="/Users/firstname.lastname/coin-apps` should be adj
 Before executing any test, don’t forget to build the app, do it whenever the source code changed.
 
 ```
-pnpm desktop build:staging
+pnpm desktop build:testing
 ```
 
 ## Run tests
