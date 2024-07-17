@@ -2,7 +2,7 @@ import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { specs } from "../../utils/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "../../utils/custom-json-reporter";
+import { getDescription } from "../../utils/customJsonReporter";
 
 const accounts: Account[] = [
   // Derivation path is updated when account receive money

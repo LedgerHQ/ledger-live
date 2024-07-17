@@ -3,7 +3,7 @@ import { Account } from "../../enum/Account";
 import { Transaction } from "../../models/Transaction";
 import { specs } from "../../utils/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "../../utils/custom-json-reporter";
+import { getDescription } from "../../utils/customJsonReporter";
 
 // ONLY TESTNET (SEND WILL BE APPROVED ON DEVICE)
 const transactions = [

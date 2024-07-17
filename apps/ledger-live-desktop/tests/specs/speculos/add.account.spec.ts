@@ -2,7 +2,7 @@ import { test } from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "../../utils/custom-json-reporter";
+import { getDescription } from "../../utils/customJsonReporter";
 
 const currencies: Currency[] = [
   Currency.BTC,
