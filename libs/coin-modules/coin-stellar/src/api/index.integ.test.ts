@@ -46,17 +46,17 @@ describe("Stellar Api", () => {
     });
   });
 
-  // describe("lastBlock", () => {
-  //   it("returns last block info", async () => {
-  //     // When
-  //     const result = await module.lastBlock();
+  describe("lastBlock", () => {
+    it("returns last block info", async () => {
+      // When
+      const result = await module.lastBlock();
 
-  //     // Then
-  //     expect(result.hash).toBeDefined();
-  //     expect(result.height).toBeDefined();
-  //     expect(result.time).toBeInstanceOf(Date);
-  //   });
-  // });
+      // Then
+      expect(result.hash).toBeDefined();
+      expect(result.height).toBeDefined();
+      expect(result.time).toBeInstanceOf(Date);
+    });
+  });
 
   describe("getBalance", () => {
     it("returns a list regarding address parameter", async () => {

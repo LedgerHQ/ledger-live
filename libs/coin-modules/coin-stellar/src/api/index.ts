@@ -2,13 +2,12 @@ import type { Api } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type StellarConfig } from "../config";
 import {
   broadcast,
-  // combine,
+  combine,
   craftTransaction,
   // estimateFees,
   getBalance,
   listOperations,
   lastBlock,
-  // rawEncode,
 } from "../logic";
 
 export function createApi(config: StellarConfig): Api {
@@ -16,9 +15,7 @@ export function createApi(config: StellarConfig): Api {
 
   return {
     broadcast,
-    combine: () => {
-      throw new Error("Method not supported");
-    },
+    combine: compose,
     craftTransaction: craft,
     estimateFees: () => Promise.reject(new Error("Method not supported")),
     getBalance,
@@ -65,4 +62,11 @@ async function craft(
     },
   );
   return tx.xdr;
+}
+
+function compose(tx: string, signature: string, pubkey?: string): string {
+  if (!pubkey) {
+    throw new Error("Missing pubkey");
+  }
+  return combine(tx, signature, pubkey);
 }
