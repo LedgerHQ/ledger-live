@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 0.0.2-next.1
+
+### Patch Changes
+
+- [#7353](https://github.com/LedgerHQ/ledger-live/pull/7353) [`f717195`](https://github.com/LedgerHQ/ledger-live/commit/f7171954d3c1c5bfd223841720522818499abcc4) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Throw notenoughgas for tron token remove NotEnoughBalance from useFromAmountStatusMessage
+
 ## 0.0.2-next.0
 
 ### Patch Changes
