@@ -99,7 +99,7 @@ import type {
   TransactionRaw as stellarTransactionRaw,
   TransactionStatus as stellarTransactionStatus,
   TransactionStatusRaw as stellarTransactionStatusRaw,
-} from "../families/stellar/types";
+} from "@ledgerhq/coin-stellar/types/index";
 import type {
   Transaction as tezosTransaction,
   TransactionRaw as tezosTransactionRaw,
@@ -123,7 +123,7 @@ import type {
   TransactionRaw as xrpTransactionRaw,
   TransactionStatus as xrpTransactionStatus,
   TransactionStatusRaw as xrpTransactionStatusRaw,
-} from "@ledgerhq/coin-xrp/types";
+} from "@ledgerhq/coin-xrp/types/index";
 
 export type Transaction =
   | algorandTransaction

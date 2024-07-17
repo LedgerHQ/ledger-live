@@ -1,8 +1,7 @@
 import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Account } from "../../enum/Account";
-import { Application } from "tests/page";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
 
 const accounts: Account[] = [
   Account.BTC_1,
@@ -20,7 +19,7 @@ const accounts: Account[] = [
 ];
 
 for (const [i, account] of accounts.entries()) {
-  test.describe.parallel("Delete Accounts", () => {
+  test.describe("Delete Accounts", () => {
     test.use({
       userdata: "speculos-tests-app",
       testName: `deleteAccount_${account.currency.uiName}`,
@@ -28,10 +27,8 @@ for (const [i, account] of accounts.entries()) {
       speculosOffset: i,
     });
 
-    test(`[${account.currency.uiName}] Delete Account`, async ({ page }) => {
+    test(`[${account.currency.uiName}] Delete Account`, async ({ app }) => {
       addTmsLink(["B2CQA-320"]);
-
-      const app = new Application(page);
 
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.accountName);

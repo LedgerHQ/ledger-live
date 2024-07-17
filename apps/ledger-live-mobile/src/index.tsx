@@ -27,6 +27,7 @@ import {
   saveSettings,
   saveCountervalues,
   savePostOnboardingState,
+  saveMarketState,
 } from "./db";
 import {
   exportSelector as settingsExportSelector,
@@ -84,6 +85,7 @@ import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import QueuedDrawersContextProvider from "~/newArch/components/QueuedDrawer/QueuedDrawersContextProvider";
+import { exportMarketSelector } from "./reducers/market";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -199,6 +201,13 @@ function App() {
     throttle: 500,
     getChangesStats: getPostOnboardingStateChanged,
     lense: postOnboardingSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveMarketState,
+    throttle: 500,
+    getChangesStats: (a, b) => a.market !== b.market,
+    lense: exportMarketSelector,
   });
 
   return (

@@ -83,9 +83,10 @@ import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
+import LandingPagesNavigator from "./LandingPagesNavigator";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
-import WalletSyncNavigator from "LLM/features/WalletSync/Navigator";
+import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -395,7 +396,13 @@ export default function BaseNavigator() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-        {WalletSyncNavigator({ Stack })}
+
+        <Stack.Screen
+          name={NavigatorName.WalletSync}
+          component={WalletSyncNavigator}
+          options={{ headerShown: false }}
+        />
+
         {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
@@ -529,6 +536,11 @@ export default function BaseNavigator() {
           name={NavigatorName.AnalyticsOptInPrompt}
           options={{ headerShown: false }}
           component={AnalyticsOptInPromptNavigator}
+        />
+        <Stack.Screen
+          name={NavigatorName.LandingPages}
+          options={{ headerShown: false }}
+          component={LandingPagesNavigator}
         />
         <Stack.Screen
           name={ScreenName.FirmwareUpdate}

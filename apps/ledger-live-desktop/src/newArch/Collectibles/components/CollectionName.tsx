@@ -5,6 +5,7 @@ import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTColle
 import { Skeleton } from "LLD/Collectibles/components";
 import styled from "styled-components";
 import { IconsLegacy } from "@ledgerhq/react-ui";
+import { FieldStatus } from "LLD/Collectibles/types/DetailDrawer";
 
 const Dots = styled.div`
   justify-content: flex-end;
@@ -32,7 +33,7 @@ type Props = {
 const CollectionNameComponent: React.FC<Props> = ({ nft, fallback, account, showHideMenu }) => {
   const { status, metadata } = useNftCollectionMetadata(nft?.contract, nft?.currencyId);
   const { tokenName } = metadata || {};
-  const loading = status === "loading";
+  const loading = status === FieldStatus.Loading;
   const isComponentReady = account && showHideMenu && nft;
 
   return (

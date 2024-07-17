@@ -7,6 +7,11 @@ import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/redu
 import { resetWalletSync } from "~/renderer/actions/walletSync";
 import { BackRef, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
 import { STEPS_WITH_BACK, useFlows } from "LLD/WalletSync/Flows/useFlows";
+import { trustchainSelector } from "@ledgerhq/trustchain/store";
+import {
+  AnalyticsPage,
+  useWalletSyncAnalytics,
+} from "~/newArch/WalletSync/hooks/useWalletSyncAnalytics";
 
 /**
  *
@@ -18,7 +23,7 @@ import { STEPS_WITH_BACK, useFlows } from "LLD/WalletSync/Flows/useFlows";
  */
 
 const WalletSyncRow = () => {
-  const { goToWelcomeScreenWalletSync } = useFlows({});
+  const { goToWelcomeScreenWalletSync } = useFlows();
   const childRef = useRef<BackRef>(null);
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
@@ -27,27 +32,32 @@ const WalletSyncRow = () => {
   const currentStep = useSelector(walletSyncStepSelector);
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
+  const trustchain = useSelector(trustchainSelector);
+
+  const { onClickTrack, onActionTrack } = useWalletSyncAnalytics();
 
   const handleBack = () => {
-    if (childRef.current) {
+    if (childRef.current && hasBack) {
       childRef.current.goBack();
+      onActionTrack({ button: "Back", step: currentStep, flow: "Wallet Sync" });
     }
   };
 
   const closeDrawer = () => {
-    resetFlow();
+    if (hasBeenFaked) {
+      dispatch(resetWalletSync());
+    } else {
+      onActionTrack({ button: "Close", step: currentStep, flow: "Wallet Sync" });
+    }
     setOpen(false);
   };
 
   const openDrawer = () => {
     if (!hasBeenFaked) {
-      goToWelcomeScreenWalletSync();
+      goToWelcomeScreenWalletSync(!!trustchain?.rootId);
+      onClickTrack({ button: "Wallet Sync", page: AnalyticsPage.SettingsGeneral });
     }
     setOpen(true);
-  };
-
-  const resetFlow = () => {
-    dispatch(resetWalletSync());
   };
 
   return (

@@ -48,6 +48,7 @@ import {
 import { DEFAULT_SWAP_RATES_LLM_INTERVAL_MS } from "@ledgerhq/live-common/exchange/swap/const/timeout";
 import { useSelectedSwapRate } from "./useSelectedSwapRate";
 import { walletSelector } from "~/reducers/wallet";
+import { NotEnoughBalance, NotEnoughBalanceSwap } from "@ledgerhq/errors";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -139,10 +140,14 @@ export function SwapForm({
   }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
 
   const swapError =
-    swapTransaction.fromAmountError ||
-    exchangeRatesState?.error ||
-    maybeTezosAccountUnrevealedAccount(swapTransaction) ||
-    (ptxSwapReceiveTRC20WithoutTrx?.enabled ? maybeTronEmptyAccount(swapTransaction) : undefined);
+    swapTransaction.fromAmountError instanceof NotEnoughBalance
+      ? new NotEnoughBalanceSwap(swapTransaction.fromAmountError.message)
+      : swapTransaction.fromAmountError ||
+        exchangeRatesState?.error ||
+        maybeTezosAccountUnrevealedAccount(swapTransaction) ||
+        (ptxSwapReceiveTRC20WithoutTrx?.enabled
+          ? undefined
+          : maybeTronEmptyAccount(swapTransaction));
 
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);

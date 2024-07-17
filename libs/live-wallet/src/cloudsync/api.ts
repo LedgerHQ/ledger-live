@@ -1,6 +1,7 @@
 import z from "zod";
 import network from "@ledgerhq/live-network";
 import WS from "isomorphic-ws";
+import type { WebSocket } from "ws";
 import { getEnv } from "@ledgerhq/live-env";
 import { Observable } from "rxjs";
 
@@ -19,7 +20,7 @@ const schemaAtomicGetOutOfSync = z.object({
   version: z.number(),
   payload: z.string(),
   date: z.string(),
-  info: z.string().optional(),
+  info: z.string().nullable().optional(),
 });
 const schemaAtomicGetResponse = z.discriminatedUnion("status", [
   schemaAtomicGetNoData,
@@ -90,14 +91,43 @@ async function deleteData(jwt: JWT, datatype: string): Promise<void> {
   });
 }
 
-function listenNotifications(jwt: JWT, datatype: string): Observable<number> {
+function listenNotifications(
+  getFreshJwt: () => Promise<JWT>,
+  datatype: string,
+): Observable<number> {
   const url = `${getEnv("CLOUD_SYNC_API").replace("http", "ws")}/atomic/v1/${datatype}/notifications`;
   const ws: WebSocket = new WS(url);
+
   return new Observable(observer => {
-    ws.addEventListener("message", (e: MessageEvent) => observer.next(parseInt(e.data, 10)));
+    function sendJwt() {
+      getFreshJwt()
+        .then(jwt => ws.send(jwt.accessToken))
+        .catch(error => {
+          observer.error(error);
+          ws.close();
+        });
+    }
+
+    ws.addEventListener("message", e => {
+      const data = e.data.toString();
+      if (data === "ping") {
+        ws.send("pong");
+      } else if (data === "JWT expired") {
+        sendJwt();
+      } else {
+        const possiblyNumber = parseInt(data, 10);
+        if (!isNaN(possiblyNumber)) {
+          observer.next(possiblyNumber);
+        } else {
+          console.warn("cloudsync: unexpected message", data);
+        }
+      }
+    });
     ws.addEventListener("close", () => observer.complete());
     ws.addEventListener("error", error => observer.error(error));
-    ws.addEventListener("open", () => ws.send(jwt.accessToken));
+    ws.addEventListener("open", () => {
+      sendJwt();
+    });
     return () => ws.close();
   });
 }

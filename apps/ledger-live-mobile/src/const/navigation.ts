@@ -508,7 +508,17 @@ export enum ScreenName {
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
 
   WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  WalletSyncActivationProcess = "WalletSyncActivationProcess",
+  WalletSyncSuccess = "WalletSyncSuccess",
+
   MockedAddAssetButton = "MockedAddAssetButton",
+  GenericLandingPage = "GenericLandingPage",
+
+  // Web3Hub
+  Web3HubMain = "Web3HubMain",
+  Web3HubSearch = "Web3HubSearch",
+  Web3HubTabs = "Web3HubTabs",
+  Web3HubApp = "Web3HubApp",
 }
 
 export enum NavigatorName {
@@ -618,4 +628,10 @@ export enum NavigatorName {
 
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
   WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  LandingPages = "LandingPages",
+
+  // Web3Hub
+  Web3Hub = "Web3Hub",
+
+  WalletSync = "WalletSync",
 }

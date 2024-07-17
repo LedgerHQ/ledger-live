@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.4.0",
+  "version": "34.5.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -49,6 +49,10 @@
     "./currencies/*": {
       "require": "./lib/currencies/*.js",
       "default": "./lib-es/currencies/*.js"
+    },
+    "./e2e": {
+      "require": "./lib/e2e/index.js",
+      "default": "./lib-es/e2e/index.js"
     },
     "./featureFlags": {
       "require": "./lib/featureFlags/*.js",
@@ -140,6 +144,7 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-near": "workspace:^",
     "@ledgerhq/coin-polkadot": "workspace:^",
+    "@ledgerhq/coin-stellar": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/coin-tezos": "workspace:^",
     "@ledgerhq/coin-tron": "workspace:^",
@@ -182,7 +187,6 @@
     "@ledgerhq/wallet-api-server": "^1.5.10",
     "@stacks/network": "6.10.0",
     "@stacks/transactions": "6.11.0",
-    "@stellar/stellar-sdk": "^11.3.0",
     "@stricahq/typhonjs": "^1.2.6",
     "@taquito/ledger-signer": "^20.0.0",
     "@types/bchaddrjs": "^0.4.0",
@@ -192,7 +196,7 @@
     "@xstate/react": "^1.6.3",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "@zondax/ledger-casper": "^2.6.1",
-    "@zondax/ledger-cosmos-js": "3.0.2",
+    "@zondax/ledger-cosmos-js": "3.0.3",
     "@zondax/ledger-filecoin": "^0.11.2",
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-stacks": "^1.0.2",

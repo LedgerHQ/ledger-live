@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import prepareTransaction from "./prepareTransaction";
 import { faker } from "@faker-js/faker";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 
 const mockCraftTransaction = jest.fn();
 const mockEstimateFees = jest.fn();
@@ -12,7 +12,7 @@ jest.mock("../logic", () => ({
 }));
 
 jest.mock("../config");
-const mockGetConfig = jest.mocked(getCoinConfig);
+const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
 
 describe("prepareTransaction", () => {
   beforeAll(() => {

@@ -127,6 +127,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
+    "BitcoinInfrastructureError": {
+      "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
+    },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Your Ledger device must be unlocked and in range to use Bluetooth."
@@ -488,6 +491,10 @@
       "description": "Please send some EGLD to your account to pay for transactions."
     },
     "NotEnoughBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds."
+    },
+    "NotEnoughBalanceSwap": {
       "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."
     },
@@ -3150,7 +3157,7 @@
     },
     "stake": {
       "title": "Stake",
-      "description": "Grow your crypto holdings."
+      "description": "Stake your crypto holdings."
     },
     "swap": {
       "title": "Swap",
@@ -6690,6 +6697,34 @@
         "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
         "mainCta": "Sync your accounts",
         "secondCta": "Already created a key?"
+      }
+    },
+    "deviceSelection": {
+      "title": "Choose the Ledger device you will use to secure your backup",
+      "description": "You can retrieve your backup by simply connecting your Ledger to the Ledger Live mobile and desktop apps."
+    },
+    "deviceAction": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
+    },
+    "success": {
+      "sync": "Synchronization successful!",
+      "syncDesc": "Changes in your accounts will now automatically appear across all apps and platforms.",
+      "activation": "Success!",
+      "activationDesc": "You successfully enabled Ledger Sync.",
+      "syncAnother": "Sync with another Ledger Live app",
+      "close": "Close"
+    }
+  },
+  "web3hub": {
+    "manifestsList": {
+      "title": "Explore",
+      "description": "Discover the best of web3 curated by Ledger"
+    },
+    "main": {
+      "header": {
+        "title": "Explore web3",
+        "placeholder": "Search or type a URL"
       }
     }
   }

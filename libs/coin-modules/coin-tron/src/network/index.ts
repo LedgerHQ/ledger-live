@@ -332,7 +332,10 @@ const getTransactions =
         TransactionResponseTronAPI<TransactionTronAPI | MalformedTransactionTronAPI>
       >(url);
 
-    const nextUrl = transactions.meta.links?.next;
+    const nextUrl = transactions.meta.links?.next?.replace(
+      /https:\/\/api(\.[a-z]*)?.trongrid.io/,
+      getBaseApiUrl(),
+    );
     const results = await promiseAllBatched(3, transactions.data || [], async tx => {
       if (isMalformedTransactionTronAPI(tx)) {
         return tx;
@@ -360,7 +363,10 @@ const getTrc20 = async (
 
   return {
     results: transactions.data,
-    nextUrl: transactions.meta.links?.next,
+    nextUrl: transactions.meta.links?.next?.replace(
+      /https:\/\/api(\.[a-z]*)?.trongrid.io/,
+      getBaseApiUrl(),
+    ),
   };
 };
 

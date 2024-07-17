@@ -25,7 +25,7 @@ const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {
   onDeviceSelect: (item: Device) => void;
-  filterByDeviceModelId?: FilterByDeviceModelId;
+  filterByDeviceModelId?: FilterByDeviceModelId | FilterByDeviceModelId[];
   areKnownDevicesDisplayed?: boolean;
   areKnownDevicesPairable?: boolean;
 };
@@ -50,9 +50,10 @@ export default function BleDevicesScanning({
 }: BleDevicesScanningProps) {
   const { t } = useTranslation();
 
-  const productName = filterByDeviceModelId
-    ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
-    : null;
+  const productName =
+    filterByDeviceModelId && !Array.isArray(filterByDeviceModelId)
+      ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
+      : null;
 
   const [locationDisabledError, setLocationDisabledError] = useState<boolean>(false);
   const [locationUnauthorizedError, setLocationUnauthorizedError] = useState<boolean>(false);
@@ -98,10 +99,15 @@ export default function BleDevicesScanning({
     [areKnownDevicesDisplayed, knownDeviceIds],
   );
 
-  const filterByDeviceModelIds = useMemo(
-    () => (filterByDeviceModelId ? [filterByDeviceModelId] : undefined),
-    [filterByDeviceModelId],
-  );
+  const filterByDeviceModelIds = useMemo(() => {
+    if (Array.isArray(filterByDeviceModelId)) {
+      return filterByDeviceModelId.filter(
+        // This array should not contain `null` value, this is to make the type check pass
+        (v: FilterByDeviceModelId): v is DeviceModelId => v !== null,
+      );
+    }
+    return filterByDeviceModelId ? [filterByDeviceModelId] : undefined;
+  }, [filterByDeviceModelId]);
 
   const { scannedDevices, scanningBleError } = useBleDevicesScanning({
     bleTransportListen: TransportBLE.listen,

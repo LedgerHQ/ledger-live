@@ -1,7 +1,7 @@
 import type { PolkadotAccount, Transaction } from "../types";
 import { craftTransaction, type CreateExtrinsicArg } from "../logic";
 import { isFirstBond, getNonce } from "./utils";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 
 export const extractExtrinsicArg = (
   account: PolkadotAccount,
@@ -29,7 +29,7 @@ export const buildTransaction = async (
   transaction: Transaction,
   forceLatestParams = false,
 ) => {
-  const runtimeUpgraded = getCoinConfig().runtimeUpgraded;
+  const runtimeUpgraded = coinConfig.getCoinConfig().runtimeUpgraded;
   return craftTransaction(
     account.freshAddress,
     getNonce(account),

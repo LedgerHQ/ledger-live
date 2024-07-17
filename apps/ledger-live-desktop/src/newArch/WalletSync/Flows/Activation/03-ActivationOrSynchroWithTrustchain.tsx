@@ -1,31 +1,25 @@
-import React, { useCallback, useEffect } from "react";
-import Loading from "../../components/LoadingStep";
-import { useTranslation } from "react-i18next";
-import { UnsecuredError } from "./03-UnsecuredError";
+import React from "react";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+
+import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { useAddMember } from "../../hooks/useAddMember";
+import { InfiniteLoader } from "@ledgerhq/react-ui";
 
 type Props = {
-  goNext: () => void;
+  device: Device | null;
 };
 
-export default function ActivationOrSynchroWithTrustchain({ goNext }: Props) {
-  const { t } = useTranslation();
+export default function ActivationOrSynchroWithTrustchain({ device }: Props) {
+  const { error, userDeviceInteraction, onRetry } = useAddMember({ device });
 
-  const hasError = false;
+  if (error) {
+    return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;
+  }
 
-  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
-  const stuffHandledByTrustchain = useCallback(() => {
-    goNext();
-  }, [goNext]);
-  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
-  useEffect(() => {
-    setTimeout(() => {
-      !hasError && stuffHandledByTrustchain();
-    }, 3000);
-  }, [hasError, stuffHandledByTrustchain]);
-
-  return hasError ? (
-    <UnsecuredError />
-  ) : (
-    <Loading title={t("walletSync.loading.title")} subtitle={t("walletSync.loading.activation")} />
-  );
+  if (userDeviceInteraction && device) {
+    return <FollowStepsOnDevice modelId={device.modelId} />;
+  } else {
+    return <InfiniteLoader size={50} />;
+  }
 }

@@ -1,4 +1,4 @@
-import { knownDevice } from "../../models/devices";
+import { knownDevices } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
 import { Application } from "../../page";
 
@@ -7,6 +7,7 @@ let deviceAction: DeviceAction;
 
 const testedCurrency = "bitcoin";
 const expectedBalance = "1.19576\u00a0BTC";
+const knownDevice = knownDevices.nanoX;
 
 describe("Add account from modal", () => {
   beforeAll(async () => {

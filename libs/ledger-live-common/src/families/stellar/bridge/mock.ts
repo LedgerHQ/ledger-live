@@ -10,9 +10,9 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
 } from "@ledgerhq/errors";
-import { StellarWrongMemoFormat, SourceHasMultiSign } from "../../../errors";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
+import type { Transaction } from "@ledgerhq/coin-stellar/types/index";
+import { StellarSourceHasMultiSign, StellarWrongMemoFormat } from "@ledgerhq/coin-stellar/errors";
 import { getMainAccount } from "../../../account";
 import { formatCurrencyUnit } from "../../../currencies";
 import {
@@ -26,14 +26,22 @@ import {
 
 const receive = makeAccountBridgeReceive();
 
+const notCreatedStellarMockAddress = "GAW46JE3SHIAYLNNNQCAZFQ437WB5ZH7LDRDWR5LVDWHCTHCKYB6RCCH";
+
+const multisignStellarMockAddress = "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS";
+
 const notCreatedAddresses: string[] = [];
 const multiSignAddresses: string[] = [];
+
 export function addNotCreatedStellarMockAddresses(addr: string) {
   notCreatedAddresses.push(addr);
 }
 export function addMultisignStellarMockAddresses(addr: string) {
   multiSignAddresses.push(addr);
 }
+
+addNotCreatedStellarMockAddresses(notCreatedStellarMockAddress);
+addMultisignStellarMockAddresses(multisignStellarMockAddress);
 
 const createTransaction = (): Transaction => ({
   family: "stellar",
@@ -107,7 +115,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
   }
 
   if (multiSignAddresses.includes(a.freshAddress)) {
-    errors.recipient = new SourceHasMultiSign("", {
+    errors.recipient = new StellarSourceHasMultiSign("", {
       currencyName: a.currency.name,
     });
   }

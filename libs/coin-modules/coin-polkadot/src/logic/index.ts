@@ -13,7 +13,8 @@ export {
 } from "./craftTransaction";
 export { signExtrinsic } from "./signTransaction";
 
-import broadcast from "./broadcast";
-import estimateFees from "./estimateFees";
-
-export { broadcast, estimateFees };
+export { broadcast } from "./broadcast";
+export { getBalance } from "./getBalance";
+export { estimateFees } from "./estimateFees";
+export { lastBlock } from "./lastBlock";
+export { listOperations, type Operation } from "./listOperations";
