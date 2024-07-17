@@ -1,13 +1,13 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type StellarConfig } from "../config";
 import {
-  // broadcast,
+  broadcast,
   // combine,
   craftTransaction,
   // estimateFees,
   getBalance,
   listOperations,
-  // lastBlock,
+  lastBlock,
   // rawEncode,
 } from "../logic";
 
@@ -15,14 +15,14 @@ export function createApi(config: StellarConfig): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
-    broadcast: () => Promise.reject(new Error("Method not supported")),
+    broadcast,
     combine: () => {
       throw new Error("Method not supported");
     },
     craftTransaction: craft,
     estimateFees: () => Promise.reject(new Error("Method not supported")),
     getBalance,
-    lastBlock: () => Promise.reject(new Error("Method not supported")),
+    lastBlock,
     listOperations,
   };
 }

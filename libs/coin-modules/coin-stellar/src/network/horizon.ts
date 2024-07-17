@@ -8,20 +8,14 @@ import type { Account, Operation } from "@ledgerhq/types-live";
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
-  Asset,
   BASE_FEE,
   Horizon,
   NetworkError,
   Networks,
   NotFoundError,
-  Account as StellarSdkAccount,
-  Operation as StellarSdkOperation,
   Transaction as StellarSdkTransaction,
-  TransactionBuilder,
   StrKey,
   MuxedAccount,
-  // @ts-expect-error stellar-sdk ts definition missing?
-  AccountRecord,
 } from "@stellar/stellar-sdk";
 import { BigNumber } from "bignumber.js";
 import {
@@ -87,10 +81,6 @@ Horizon.AxiosClient.interceptors.response.use(response => {
 
   return response;
 });
-
-function getFormattedAmount(amount: BigNumber) {
-  return amount.div(new BigNumber(10).pow(currency.units[0].magnitude)).toString(10);
-}
 
 export async function fetchBaseFee(): Promise<{
   baseFee: number;
@@ -316,6 +306,19 @@ export async function loadAccount(addr: string): Promise<AccountRecord | null> {
   } catch (e) {
     return null;
   }
+}
+
+export async function getLastBlock(): Promise<{
+  height: number;
+  hash: string;
+  time: Date;
+}> {
+  const ledger = await getServer().ledgers().order("desc").limit(1).call();
+  return {
+    height: ledger.records[0].sequence,
+    hash: ledger.records[0].hash,
+    time: new Date(ledger.records[0].closed_at),
+  };
 }
 
 export const getRecipientAccount: CacheRes<

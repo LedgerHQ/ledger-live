@@ -6,6 +6,7 @@ export {
   fetchSequence,
   fetchSigners,
   fetchAccountNetworkInfo,
+  getLastBlock,
   getRecipientAccount,
   loadAccount,
   BASE_RESERVE,
