@@ -149,6 +149,10 @@ import EUROPA_DARK_allowConnection from "~/renderer/animations/europa/dark/allow
 import EUROPA_DARK_confirmLockscreen from "~/renderer/animations/europa/dark/confirmLockscreen.json";
 // @ts-ignore
 import EUROPA_DARK_USB_connection_success from "~/renderer/animations/europa/dark/connectionSuccess.json";
+// @ts-ignore
+import EUROPA_DARK_onboarding_success from "~/renderer/animations/europa/dark/onboardingSuccess.json";
+// @ts-ignore
+import EUROPA_LIGHT_onboarding_success from "~/renderer/animations/europa/light/onboardingSuccess.json";
 
 /* eslint-enable camelcase */
 type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
@@ -165,7 +169,8 @@ export type AnimationKey =
   | "confirmLockscreen"
   | "recoverWithProtect"
   | "connectionSuccess";
-type DeviceAnimations = { [key in AnimationKey]: ThemedAnimation };
+
+type DeviceAnimations<Key extends string = string> = { [key in Key]: ThemedAnimation };
 
 const nanoS: DeviceAnimations = {
   plugAndPinCode: {
@@ -371,7 +376,7 @@ const stax: DeviceAnimations = {
   },
 };
 
-const europa: DeviceAnimations = {
+const europa: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
   plugAndPinCode: {
     light: EUROPA_LIGHT_enterPin,
     dark: EUROPA_DARK_enterPin,
@@ -419,6 +424,10 @@ const europa: DeviceAnimations = {
   connectionSuccess: {
     light: EUROPA_LIGHT_USB_connection_success,
     dark: EUROPA_DARK_USB_connection_success,
+  },
+  onboardingSuccess: {
+    light: EUROPA_LIGHT_onboarding_success,
+    dark: EUROPA_DARK_onboarding_success,
   },
 };
 
@@ -474,21 +483,19 @@ const blue: DeviceAnimations = {
   },
 };
 
-type Animations = {
-  [modelId in DeviceModelId]: DeviceAnimations;
-};
-const animations: Animations = { nanoX, nanoS, nanoSP, stax, europa, blue };
+const animations = { nanoX, nanoS, nanoSP, stax, europa, blue };
 
 export const getDeviceAnimation = (
   modelId: DeviceModelId,
   theme: Theme["theme"],
-  key: AnimationKey,
+  key: AnimationKey | "onboardingSuccess",
 ) => {
   const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || modelId;
 
   // Handles the case where OVERRIDE_MODEL_ID is incorrect
   const animationModel = animations[animationModelId] || animations.nanoX;
-  const animationKey: ThemedAnimation | undefined = animationModel[key];
+  const animationKey: ThemedAnimation | undefined =
+    animationModel[animationModelId === "europa" ? key : (key as AnimationKey)];
 
   if (!animationKey) {
     return null;
