@@ -1,4 +1,4 @@
-import { AppStorageInfo, backupAppStorage, getAppStorageInfo } from "@ledgerhq/device-core/index";
+import { AppStorageInfo, backupAppStorage, getAppStorageInfo } from "@ledgerhq/device-core";
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, from, switchMap } from "rxjs";
 import { AppName, BackupAppDataError, BackupAppDataEvent, BackupAppDataEventType } from "./types";
@@ -33,6 +33,7 @@ export function backupAppData(
           let offset = 0;
           while (offset < dataSize) {
             const chunk: Buffer = await backupAppStorage(transport);
+            // Make sure that the process advances
             if (chunk.length === 0) {
               subscriber.error(new BackupAppDataError("Chunk data is empty."));
               return;
@@ -41,7 +42,7 @@ export function backupAppData(
             offset += chunk.length;
             subscriber.next({
               type: BackupAppDataEventType.Progress,
-              data: (offset / dataSize).toFixed(2),
+              data: Number((offset / dataSize).toFixed(2)),
             });
           }
 

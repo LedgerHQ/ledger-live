@@ -1,4 +1,4 @@
-import { Observable, Subscriber, switchMap } from "rxjs";
+import { Observable, switchMap } from "rxjs";
 import {
   AppName,
   AppStorageType,
@@ -11,7 +11,8 @@ import { AppStorageInfo } from "@ledgerhq/device-core/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 
 /**
- * Backs up the application data for a specific app on a Ledger device.
+ * Backs up the application data for a specific app on a Ledger device. All interactions
+ * with the storage provider are handled by this function.
  *
  * @param storageProvider - The storage provider object used for storing the backup data.
  * @param appName - The name of the application to backup.
@@ -20,16 +21,16 @@ import { DeviceModelId } from "@ledgerhq/devices";
  * @throws {BackupAppDataError}
  */
 export function backupAppDataUseCase(
-  storageProvider: StorageProvider<AppStorageType>,
   appName: AppName,
   deviceModelId: DeviceModelId,
+  storageProvider: StorageProvider<AppStorageType>,
   backupAppDataFn: () => Observable<BackupAppDataEvent>,
 ): Observable<BackupAppDataEvent> {
   let appDataInfo: AppStorageInfo;
   const obs: Observable<BackupAppDataEvent> = backupAppDataFn().pipe(
     switchMap(async (event: BackupAppDataEvent): Promise<BackupAppDataEvent> => {
       switch (event.type) {
-        case BackupAppDataEventType.AppDataInfoFetched:
+        case BackupAppDataEventType.AppDataInfoFetched: {
           const appStorage = await storageProvider.getItem(`${deviceModelId}-${appName}`);
           // Check if the app data is already backed up
           if (appStorage && appStorage.appDataInfo?.hash === event.data.hash) {
@@ -41,6 +42,7 @@ export function backupAppDataUseCase(
           // If not, store the app data info and transfer the event
           appDataInfo = event.data;
           return event;
+        }
         case BackupAppDataEventType.AppDataBackedUp:
           // Store the app data
           await storageProvider.setItem(`${deviceModelId}-${appName}`, {

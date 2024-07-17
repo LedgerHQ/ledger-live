@@ -1,4 +1,4 @@
-import { AppStorageInfo, appStorageInfoGuard } from "@ledgerhq/device-core/index";
+import { type AppStorageInfo, appStorageInfoGuard } from "@ledgerhq/device-core";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 

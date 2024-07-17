@@ -15,11 +15,11 @@ import { DeviceModelId } from "@ledgerhq/devices";
  */
 export function backupAppDataUseCaseDI(
   transport: Transport,
-  storageProvider: StorageProvider<AppStorageType>,
-  deviceModelId: DeviceModelId,
   appName: AppName,
+  deviceModelId: DeviceModelId,
+  storageProvider: StorageProvider<AppStorageType>,
 ): Observable<BackupAppDataEvent> {
-  return backupAppDataUseCase(storageProvider, appName, deviceModelId, () =>
+  return backupAppDataUseCase(appName, deviceModelId, storageProvider, () =>
     backupAppData(transport, appName),
   );
 }
