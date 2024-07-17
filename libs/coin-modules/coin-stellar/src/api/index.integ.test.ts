@@ -16,19 +16,18 @@ describe("Stellar Api", () => {
     });
   });
 
-  // describe("estimateFees", () => {
-  //   it("returns a default value", async () => {
-  //     // Given
-  //     const address = "rDCyjRD2TcSSGUQpEcEhJGmDWfjPJpuGxu";
-  //     const amount = BigInt(100);
+  describe("estimateFees", () => {
+    it("returns a default value", async () => {
+      // Given
+      const amount = BigInt(100_000);
 
-  //     // When
-  //     const result = await module.estimateFees(address, amount);
+      // When
+      const result = await module.estimateFees(address, amount);
 
-  //     // Then
-  //     expect(result).toEqual(BigInt(10));
-  //   });
-  // });
+      // Then
+      expect(result).toEqual(BigInt(100));
+    });
+  });
 
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
@@ -68,20 +67,23 @@ describe("Stellar Api", () => {
     });
   });
 
-  // describe("craftTransaction", () => {
-  //   it("returns a raw transaction", async () => {
-  //     // When
-  //     const result = await module.craftTransaction(address, {
-  //       recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
-  //       amount: BigInt(10),
-  //       fee: BigInt(1),
-  //     });
+  describe("craftTransaction", () => {
+    it("returns a raw transaction", async () => {
+      // When
+      const result = await module.craftTransaction(address, {
+        mode: "send",
+        recipient: "GD6QELUZPSKPRWVXOQ3F6GBF4OBRMCHO5PHREXH4ZRTPJAG7V5MD7JGX",
+        amount: BigInt(1_000_000),
+        fee: BigInt(100),
+      });
 
-  //     // Then
-  //     expect(result.slice(0, 34)).toEqual("120000228000000024001BCDA6201B001F");
-  //     expect(result.slice(38)).toEqual(
-  //       "61400000000000000A6840000000000000018114CF30F590D7A9067B2604D80D46090FBF342EBE988314CA26FB6B0EF6859436C2037BA0A9913208A59B98",
-  //     );
-  //   });
-  // });
+      // Then
+      expect(result.slice(0, 68)).toEqual(
+        "AAAAAgAAAAD9Ai6ZfJT42rd0Nl8YJeODFgju688SXPzMZvSA369YPwAAAGQAAHloAAAI",
+      );
+      expect(result.slice(70)).toEqual(
+        "AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAD9Ai6ZfJT42rd0Nl8YJeODFgju688SXPzMZvSA369YPwAAAAAAAAAAAA9CQAAAAAAAAAAA",
+      );
+    });
+  });
 });
