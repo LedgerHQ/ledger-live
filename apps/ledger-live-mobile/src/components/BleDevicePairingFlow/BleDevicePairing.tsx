@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/native-ui";
 
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import Animation from "../Animation";
 import { TrackScreen } from "~/analytics";
 import GenericErrorView from "../GenericErrorView";
@@ -103,7 +103,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
           </Text>
         </Flex>
         <Animation
-          style={{ marginTop: -20 }}
+          style={{ height: 200 }}
           source={getDeviceAnimation({
             device: deviceToPair,
             key: "blePaired",
@@ -186,7 +186,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
           </Text>
         </Flex>
         <Animation
-          style={{ marginTop: -20 }}
+          style={deviceToPair.modelId === "stax" ? { marginTop: -20 } : { height: 200 }}
           source={getDeviceAnimation({
             device: deviceToPair,
             key: "blePairing",
