@@ -34,6 +34,7 @@ const familiesWPackage = [
   "tron",
   "xrp",
   "ton"
+  "icon",
 ];
 
 cd(path.join(__dirname, "..", "src"));

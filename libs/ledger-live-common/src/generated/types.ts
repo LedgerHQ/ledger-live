@@ -65,6 +65,12 @@ import type {
   TransactionStatusRaw as hederaTransactionStatusRaw,
 } from "../families/hedera/types";
 import type {
+  Transaction as iconTransaction,
+  TransactionRaw as iconTransactionRaw,
+  TransactionStatus as iconTransactionStatus,
+  TransactionStatusRaw as iconTransactionStatusRaw,
+} from "@ledgerhq/coin-icon/types/index";
+import type {
   Transaction as internet_computerTransaction,
   TransactionRaw as internet_computerTransactionRaw,
   TransactionStatus as internet_computerTransactionStatus,
@@ -143,6 +149,7 @@ export type Transaction =
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
+  | iconTransaction
   | internet_computerTransaction
   | nearTransaction
   | polkadotTransaction
@@ -167,6 +174,7 @@ export type TransactionRaw =
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | iconTransactionRaw
   | internet_computerTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
@@ -191,6 +199,7 @@ export type TransactionStatus =
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
+  | iconTransactionStatus
   | internet_computerTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
@@ -215,6 +224,7 @@ export type TransactionStatusRaw =
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
+  | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw

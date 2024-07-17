@@ -40,6 +40,8 @@ export class Layout extends Component {
   readonly appUpdateBanner = this.page.getByTestId("layout-app-update-banner");
   // }
 
+  readonly marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
+
   @step("Go to Portfolio")
   async goToPortfolio() {
     await this.drawerPortfolioButton.click();

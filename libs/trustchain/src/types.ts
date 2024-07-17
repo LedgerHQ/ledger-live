@@ -66,6 +66,53 @@ export type TrustchainSDKContext = {
 };
 
 /**
+ * provide global callbacks for specific lifecycles.
+ * this allows us to decouple trustchain with the rest of Ledger Live.
+ * For now, we only introduce very specific hooks we need.
+ */
+export type TrustchainLifecycle = {
+  /**
+   * called when a trustchain rotation is occuring
+   * the first function is called when the rotation is starting
+   * the second function is called when the rotation is done.
+   *
+   * in that case, we typically want to delete all other resources depending on it.
+   * we do this with the existing jwt token before refreshing it.
+   */
+  onTrustchainRotation: (
+    trustchainSdk: TrustchainSDK,
+    oldTrustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ) => Promise<(newTrustchain: Trustchain) => Promise<void>>;
+};
+
+export enum TrustchainResultType {
+  created = "created",
+  updated = "updated",
+  restored = "restored",
+}
+
+/**
+ * the trustchain with a result type indicating what happened during getOrCreateTrustchain
+ */
+export type TrustchainResult =
+  | {
+      // the trustchain didn't exist and was created
+      type: TrustchainResultType.created;
+      trustchain: Trustchain;
+    }
+  | {
+      // the trustchain already existed and was updated (typically the current member was added)
+      type: TrustchainResultType.updated;
+      trustchain: Trustchain;
+    }
+  | {
+      // the trustchain existed and was just retrieved (no need to update it)
+      type: TrustchainResultType.restored;
+      trustchain: Trustchain;
+    };
+
+/**
  * cache (default): the SDK will use the cached JWT if it's still valid, otherwise it will refresh it.
  * refresh: the SDK will always refresh the JWT if possible.
  * no-cache: the SDK will always request a new JWT.
@@ -117,7 +164,7 @@ export interface TrustchainSDK {
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
-  ): Promise<Trustchain>;
+  ): Promise<TrustchainResult>;
 
   /**
    * Restore the current trustchain encryption key, typically due to a key rotation.

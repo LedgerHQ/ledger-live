@@ -17,8 +17,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   ripple: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E",
   tezos: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
-  // https://developers.tron.network/reference/getburntrx-1
-  tron: "TLsV52sRDL79HXGGm9yzwKibb6BeruhUzy",
+  // Randomly generated inactive tron address using tronprotocol/wallet-cli (https://github.com/tronprotocol/wallet-cli)
+  tron: "TQDyHP3QX24zSDn5418DHm2hvYs2wzuYYY",
   ethereum: EVM_DEAD_ADDRESS,
   bitcoin: "1LqBGSKuX5yYUonjxT5qGfpUsXKYYWeabA",
   bitcoin_cash: "1mW6fDEMjKrDHvLvoEsaeLxSCzZBf3Bfg",
@@ -101,6 +101,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   dydx: "dydx19rl4cm2hmr8afy4kldpxz3fka4jguq0a4erelz",
   vechain: EVM_DEAD_ADDRESS,
   lukso: EVM_DEAD_ADDRESS,
+  icon: "hxd3f4224ffb2cfd354f8db2eef39e12aadb7a4ebb",
+  icon_berlin_testnet: "hxd3f4224ffb2cfd354f8db2eef39e12aadb7a4ebb",
   linea: EVM_DEAD_ADDRESS,
   ton: "UQChCJybqqY3KOVE_6QCCVJDvXDMT-lPszwl1loaCEyVDfbq",
   linea_sepolia: EVM_DEAD_ADDRESS,

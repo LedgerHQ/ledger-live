@@ -27,7 +27,9 @@ export function AppGetOrCreateTrustchain({
   const action = useCallback(
     (memberCredentials: MemberCredentials) =>
       runWithDevice(deviceId, transport =>
-        sdk.getOrCreateTrustchain(transport, memberCredentials, callbacks),
+        sdk
+          .getOrCreateTrustchain(transport, memberCredentials, callbacks)
+          .then(result => result.trustchain),
       ),
     [deviceId, sdk, callbacks],
   );

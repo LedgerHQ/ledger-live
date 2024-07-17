@@ -7,8 +7,6 @@ import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
 import stacks from "../families/stacks/deviceTransactionConfig";
-import ton from "../families/ton/deviceTransactionConfig";
-import tron from "../families/tron/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
@@ -21,6 +19,7 @@ import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";
 import tron from "@ledgerhq/coin-tron/deviceTransactionConfig";
 import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 import ton from "@ledgerhq/coin-ton/deviceTransactionConfig";
+import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
 
 export default {
   casper,
@@ -44,7 +43,7 @@ export default {
   tezos,
   tron,
   xrp,
-  ton,
+  icon,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";

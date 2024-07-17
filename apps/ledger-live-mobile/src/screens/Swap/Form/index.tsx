@@ -146,8 +146,8 @@ export function SwapForm({
         exchangeRatesState?.error ||
         maybeTezosAccountUnrevealedAccount(swapTransaction) ||
         (ptxSwapReceiveTRC20WithoutTrx?.enabled
-          ? maybeTronEmptyAccount(swapTransaction)
-          : undefined);
+          ? undefined
+          : maybeTronEmptyAccount(swapTransaction));
 
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);

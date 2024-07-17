@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Flex, Icons, Link, Text, NumberedList } from "@ledgerhq/react-ui";
+import { Flex, Icons, Link, Text, NumberedList, InfiniteLoader } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
+import QRCode from "~/renderer/components/QRCode";
+import { useQRCode } from "../../hooks/useQRCode";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
 
-type Props = {
-  displayPinCode: () => void;
-};
-export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
+export default function SynchWithQRCodeStep() {
   const { t } = useTranslation();
-
   const { colors } = useTheme();
 
   const steps = [
@@ -35,15 +36,26 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
     { element: t("walletSync.synchronize.qrCode.steps.step3") },
   ];
 
-  // TO CHANGE WHEN INTRAGRATION WITH TRUSTCHAIN
+  const { goToActivation, startQRCodeProcessing, url, error, isLoading } = useQRCode();
+  console.log("url", url);
   useEffect(() => {
-    setTimeout(() => {
-      displayPinCode();
-    }, 3000);
-  }, [displayPinCode]);
+    startQRCodeProcessing();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (isLoading) {
+    <Flex flexDirection="column" rowGap="24px" alignItems="center" flex={1}>
+      <InfiniteLoader size={30} />
+    </Flex>;
+  }
+
+  if (error) {
+    return <ErrorDisplay error={error} onRetry={startQRCodeProcessing} />;
+  }
 
   return (
     <Flex flexDirection="column" rowGap="24px" alignItems="center" flex={1}>
+      <TrackPage category={AnalyticsPage.SyncWithQR} />
       <Text
         fontSize={23}
         variant="large"
@@ -69,21 +81,34 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
           alignItems="center"
           justifyContent="center"
         >
-          <Flex
-            alignItems="center"
-            justifyContent="center"
-            width={24}
-            height={24}
-            position="absolute"
-          >
-            <Icons.LedgerLogo size="L" color="constant.black" />
-          </Flex>
+          {url && (
+            <Flex
+              borderRadius={24}
+              position="relative"
+              bg="constant.white"
+              alignItems="center"
+              justifyContent="center"
+              p={4}
+            >
+              <QRCode data={url} />
+              <IconContainer
+                p={"8px"}
+                alignItems="center"
+                justifyContent="center"
+                bg="constant.white"
+                position="absolute"
+              >
+                <Icons.LedgerLogo size="L" color="constant.black" />
+              </IconContainer>
+            </Flex>
+          )}
         </QRContainer>
 
         <MiddleContainer
           rowGap="24px"
           flexDirection="column"
           p={"24px"}
+          mt={3}
           backgroundColor={colors.opacityDefault.c05}
         >
           <Text fontSize={16} variant="large" fontWeight="500" color="neutral.c100">
@@ -91,7 +116,7 @@ export default function SynchWithQRCodeStep({ displayPinCode }: Props) {
           </Text>
           <NumberedList steps={steps} />
         </MiddleContainer>
-        <Link color="neutral.c70">
+        <Link color="neutral.c70" onClick={goToActivation}>
           <Text fontSize={14} variant="paragraph" fontWeight="semiBold" color="neutral.c70">
             {t("walletSync.synchronize.qrCode.hint")}
           </Text>
@@ -112,3 +137,5 @@ const QRContainer = styled(Flex)`
 const Italic = styled(Text)`
   font-style: italic;
 `;
+
+const IconContainer = styled(Flex)``;

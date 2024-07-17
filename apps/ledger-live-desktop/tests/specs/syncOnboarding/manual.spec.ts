@@ -14,15 +14,15 @@ const modelIds = [
 ];
 
 for (const modelId of modelIds) {
-  test.describe.parallel(`[${modelId}] SyncOnboarding with stax selected`, () => {
+  test.describe.parallel(`[${modelId}] SyncOnboarding`, () => {
     test(`[${modelId}] Manual @smoke`, async ({ page }) => {
       const onboardingPage = new OnboardingPage(page);
 
-      await page.evaluate(id => {
+      await page.evaluate((id: DeviceModelId) => {
         window.ledger.addDevice({
           deviceId: "42",
           deviceName: `Ledger test ${id}`,
-          modelId: id as DeviceModelId,
+          modelId: id,
           wired: true,
         });
       }, modelId);
@@ -32,7 +32,7 @@ for (const modelId of modelIds) {
       });
 
       await test.step(`[${modelId}] Select stax device`, async () => {
-        await onboardingPage.selectDevice("stax");
+        await onboardingPage.selectDevice(modelId as "nanoS" | "nanoX" | "nanoSP" | "stax");
       });
 
       await test.step(`[${modelId}] Take screenshot of main screen`, async () => {

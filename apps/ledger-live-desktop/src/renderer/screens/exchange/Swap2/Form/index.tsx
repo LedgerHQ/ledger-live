@@ -8,6 +8,7 @@ import {
   useSwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
+  maybeKeepTronAccountAlive,
   maybeTezosAccountUnrevealedAccount,
   maybeTronEmptyAccount,
 } from "@ledgerhq/live-common/exchange/swap/index";
@@ -31,7 +32,6 @@ import styled from "styled-components";
 import { rateSelector, updateRateAction, updateTransactionAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import Box from "~/renderer/components/Box";
 import { context } from "~/renderer/drawers/Provider";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
@@ -48,12 +48,16 @@ import { useIsSwapLiveFlagEnabled } from "./useIsSwapLiveFlagEnabled";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
-const Wrapper = styled(Box).attrs({
-  p: 20,
-  mt: 12,
-})`
-  row-gap: 2rem;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   max-width: 37rem;
+  padding: 0.75rem ${({ theme }) => theme.space[4]}px 0;
+  row-gap: 1rem;
+  @media screen and (min-height: 1200px) {
+    padding-top: 1rem;
+    row-gap: 1.5rem;
+  }
 `;
 
 const idleTime = 60 * 60000; // 1 hour
@@ -126,9 +130,10 @@ const SwapForm = () => {
         exchangeRatesState?.error ||
         maybeTezosAccountUnrevealedAccount(swapTransaction) ||
         (ptxSwapReceiveTRC20WithoutTrx?.enabled
-          ? maybeTronEmptyAccount(swapTransaction)
-          : undefined);
-  const swapWarning = swapTransaction.fromAmountWarning;
+          ? undefined
+          : maybeTronEmptyAccount(swapTransaction));
+  const swapWarning =
+    swapTransaction.fromAmountWarning || maybeKeepTronAccountAlive(swapTransaction);
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();

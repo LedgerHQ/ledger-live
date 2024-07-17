@@ -1,12 +1,12 @@
 import test from "../../fixtures/common";
 import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
 
 const currencies: Currency[] = [
   Currency.BTC,
   Currency.ETH,
-  //Currency.ETC, //Todo: reactivate when ETC app is fixed
+  Currency.ETC,
   Currency.XRP,
   Currency.DOT,
   Currency.TRX,

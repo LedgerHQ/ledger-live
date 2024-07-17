@@ -1,5 +1,3 @@
-import { jest } from "@jest/globals";
-
 export const remote: jest.Mocked<{ dialog: {} }> = {
   dialog: {
     showOpenDialog: jest.fn().mockReturnValue("path/to/output"),
@@ -14,9 +12,24 @@ export const app: jest.Mocked<{ getPath: () => unknown }> = {
   getPath: jest.fn().mockReturnValue("path/to/output"),
 };
 
-const electron: jest.Mocked<{ remote: typeof remote; shell: { openExternal: () => unknown } }> = {
+export const ipcRenderer: jest.Mocked<{
+  on: () => unknown;
+  send: () => unknown;
+  invoke: () => unknown;
+}> = {
+  on: jest.fn(),
+  send: jest.fn(),
+  invoke: jest.fn(),
+};
+
+const electron: jest.Mocked<{
+  remote: typeof remote;
+  shell: { openExternal: () => unknown };
+  ipcRenderer: typeof ipcRenderer;
+}> = {
   remote,
   shell,
+  ipcRenderer,
 };
 
 export default electron;

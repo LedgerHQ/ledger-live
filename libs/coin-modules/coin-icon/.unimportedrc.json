@@ -1,0 +1,41 @@
+{
+  "entry": [
+    "src/account.ts",
+    "src/bridge/js.ts",
+    "src/cli-transaction.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/serialization.ts",
+    "src/specs.ts",
+    "src/transaction.ts"
+  ],
+  "ignoreUnimported": [
+    "src/api/api-type.ts",
+    "src/api/index.ts",
+    "src/api/node.ts",
+    "src/bridge/index.ts",
+    "src/broadcast.ts",
+    "src/buildTransaction.ts",
+    "src/config.ts",
+    "src/createTransaction.ts",
+    "src/estimateMaxSpendable.ts",
+    "src/getFeesForTransaction.ts",
+    "src/getTransactionStatus.ts",
+    "src/initAccount.ts",
+    "src/prepareTransaction.ts",
+    "src/signOperation.ts",
+    "src/synchronization.ts",
+    "src/types/bridge.fixture.ts"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnused": [
+    "@faker-js/faker",
+    "@ledgerhq/live-env",
+    "@ledgerhq/live-network",
+    "@ledgerhq/live-promise",
+    "@ledgerhq/logs",
+    "prando",
+    "rxjs"
+  ]
+}

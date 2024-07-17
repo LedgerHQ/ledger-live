@@ -1,11 +1,11 @@
 import test from "../../fixtures/common";
 import { Token } from "../../enum/Tokens";
 import { specs } from "../../utils/speculos";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
 
 const tokens: Token[] = [
   Token.ETH_USDT,
-  //Token.XLM_USCD, //TODO: Reactivate when Date.Parse issue is fixed - desactivate time machine for Speculos tests
+  Token.XLM_USCD,
   Token.ALGO_USDT,
   Token.TRON_USDT,
   Token.BSC_BUSD,
@@ -55,7 +55,7 @@ for (const [i, token] of tokens.entries()) {
 
 //Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, token] of tokensReceive.entries()) {
-  test.describe.skip("Add subAccount when parent exists", () => {
+  test.describe("Add subAccount when parent exists", () => {
     test.use({
       userdata: "speculos-subAccount",
       testName: `Add subAccount when parent exists (${token.tokenName})`,

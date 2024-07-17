@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "677185650562",
+    "project_id": "ledger-live-testing",
+    "storage_bucket": "ledger-live-testing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677185650562:android:dadc730f54ee1f7b1c199b",
+        "android_client_info": {
+          "package_name": "com.ledger.live.detox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "677185650562-g7mkiri825e0sg7vutbmedbk5dkil2ab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjp1KOOY6_iHsJegtqIqKqLexeQwNydOw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "677185650562-g7mkiri825e0sg7vutbmedbk5dkil2ab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
