@@ -2,6 +2,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { LottieViewProps } from "lottie-react-native";
 import Config from "react-native-config";
+import { ViewStyle } from "react-native";
 
 type AnimationSource = LottieViewProps["source"];
 type AnimationRecord = Record<"light" | "dark", AnimationSource>;
@@ -322,6 +323,10 @@ const animations: Animations = {
         light: require("../animations/europa/light/allowConnection.json"),
         dark: require("../animations/europa/dark/allowConnection.json"),
       },
+      onboardingSucceed: {
+        light: require("../animations/europa/light/onboardingSuccess.json"),
+        dark: require("../animations/europa/dark/onboardingSuccess.json"),
+      },
       allowCustomLockScreen: {
         light: require("../animations/europa/light/customimage/allowConnection.json"),
         dark: require("../animations/europa/dark/customimage/allowConnection.json"),
@@ -372,6 +377,10 @@ const animations: Animations = {
         light: require("../animations/europa/light/pairingSuccess.json"),
         dark: require("../animations/europa/dark/pairingSuccess.json"),
       },
+      onboardingSucceed: {
+        light: require("../animations/europa/light/onboardingSuccess.json"),
+        dark: require("../animations/europa/dark/onboardingSuccess.json"),
+      },
       allowCustomLockScreen: {
         light: require("../animations/europa/light/customimage/allowConnection.json"),
         dark: require("../animations/europa/dark/customimage/allowConnection.json"),
@@ -416,12 +425,12 @@ export function getDeviceAnimation({
   return animation;
 }
 
-export const getDeviceAnimationStyles = (modelId: DeviceModelId) => {
+export const getDeviceAnimationStyles = (modelId: DeviceModelId, override: ViewStyle = {}) => {
   switch (modelId) {
     case DeviceModelId.stax:
-      return { height: 210 };
+      return { height: 210, ...override };
     case DeviceModelId.europa:
-      return { height: 165 };
+      return { height: 165, ...override };
     default:
       return {};
   }

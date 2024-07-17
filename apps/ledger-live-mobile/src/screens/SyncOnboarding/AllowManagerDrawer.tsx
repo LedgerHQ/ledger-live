@@ -5,7 +5,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "styled-components/native";
 import Animation from "~/components/Animation";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 
 export type Props = {
   /**
@@ -46,7 +46,10 @@ const AllowManagerDrawer = ({ isOpen, device, onClose }: Props) => {
           {t("earlySecurityCheck.allowManagerDrawer.title")}
         </Text>
         <Flex alignSelf="stretch" alignItems="center" justifyContent="center">
-          <Animation source={getDeviceAnimation({ device, key: "allowManager", theme })} />
+          <Animation
+            source={getDeviceAnimation({ device, key: "allowManager", theme })}
+            style={getDeviceAnimationStyles(device.modelId, { height: 200 })}
+          />
         </Flex>
       </Flex>
     </QueuedDrawer>
