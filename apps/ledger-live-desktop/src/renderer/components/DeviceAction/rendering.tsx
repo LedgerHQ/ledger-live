@@ -68,6 +68,7 @@ import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import { currencySettingsLocaleSelector, SettingsState } from "~/renderer/reducers/settings";
 import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -663,7 +664,15 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
       setTrackingSource("device action open onboarding button");
       dispatch(closeAllModal());
       setDrawer(undefined);
-      history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
+      if (!device?.modelId) {
+        history.push("/onboarding");
+      } else {
+        history.push(
+          isSyncOnboardingSupported(device.modelId)
+            ? `/sync-onboarding/${device.modelId}`
+            : "/onboarding",
+        );
+      }
     }, [device?.modelId, dispatch, history, setDrawer]);
 
     return (
