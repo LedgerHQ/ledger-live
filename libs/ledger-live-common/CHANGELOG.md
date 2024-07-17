@@ -1,5 +1,29 @@
 ## 34.5.0-next.4
 
+## 34.6.0-nightly.9
+
+### Patch Changes
+
+- Updated dependencies [[`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978)]:
+  - @ledgerhq/live-network@1.4.0-nightly.3
+  - @ledgerhq/coin-framework@0.16.0-nightly.4
+  - @ledgerhq/coin-algorand@0.5.2-nightly.4
+  - @ledgerhq/coin-bitcoin@0.6.2-nightly.4
+  - @ledgerhq/coin-cardano@0.1.2-nightly.4
+  - @ledgerhq/coin-evm@2.1.2-nightly.4
+  - @ledgerhq/coin-near@0.5.2-nightly.4
+  - @ledgerhq/coin-polkadot@1.1.0-nightly.5
+  - @ledgerhq/coin-solana@0.7.2-nightly.4
+  - @ledgerhq/coin-stellar@0.2.0-nightly.4
+  - @ledgerhq/coin-tezos@0.5.0-nightly.5
+  - @ledgerhq/coin-tron@0.0.2-nightly.8
+  - @ledgerhq/coin-xrp@0.4.0-nightly.4
+  - @ledgerhq/device-core@0.2.2-nightly.2
+  - @ledgerhq/live-countervalues@0.2.2-nightly.4
+  - @ledgerhq/live-nft@0.4.2-nightly.4
+  - @ledgerhq/live-wallet@0.3.1-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.4
+
 ## 34.6.0-nightly.8
 
 ### Patch Changes

@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.84.0-nightly.11
+
+### Patch Changes
+
+- [#7338](https://github.com/LedgerHQ/ledger-live/pull/7338) [`584d20f`](https://github.com/LedgerHQ/ledger-live/commit/584d20f69eccb1e25f4de3310fae210423869e0b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update TRUSTCHAIN_APP_NAME from package
+
+- [#7322](https://github.com/LedgerHQ/ledger-live/pull/7322) [`e047aa9`](https://github.com/LedgerHQ/ledger-live/commit/e047aa9799988a7371f5f46767bfd05a0a0f5b2c) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - remove quotes filters on swap-live-app demo0
+
+- Updated dependencies [[`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978)]:
+  - @ledgerhq/live-network@1.4.0-nightly.3
+  - @ledgerhq/coin-framework@0.16.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.6.2-nightly.4
+  - @ledgerhq/coin-evm@2.1.2-nightly.4
+  - @ledgerhq/live-common@34.6.0-nightly.9
+  - @ledgerhq/live-countervalues@0.2.2-nightly.4
+  - @ledgerhq/live-nft@0.4.2-nightly.4
+  - @ledgerhq/live-wallet@0.3.1-nightly.6
+  - @ledgerhq/trustchain@0.1.2-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.4
+  - @ledgerhq/live-nft-react@0.4.2-nightly.4
+
 ## 2.84.0-nightly.10
 
 ### Patch Changes

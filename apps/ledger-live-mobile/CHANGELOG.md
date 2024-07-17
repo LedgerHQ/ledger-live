@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.47.0-nightly.10
+
+### Patch Changes
+
+- [#7338](https://github.com/LedgerHQ/ledger-live/pull/7338) [`584d20f`](https://github.com/LedgerHQ/ledger-live/commit/584d20f69eccb1e25f4de3310fae210423869e0b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update TRUSTCHAIN_APP_NAME from package
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.16.0-nightly.4
+  - @ledgerhq/coin-evm@2.1.2-nightly.4
+  - @ledgerhq/live-common@34.6.0-nightly.9
+  - @ledgerhq/live-countervalues@0.2.2-nightly.4
+  - @ledgerhq/live-nft@0.4.2-nightly.4
+  - @ledgerhq/live-wallet@0.3.1-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.4
+  - @ledgerhq/live-nft-react@0.4.2-nightly.4
+
 ## 3.47.0-nightly.9
 
 ### Minor Changes

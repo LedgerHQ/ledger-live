@@ -1,5 +1,11 @@
 # @ledgerhq/live-network
 
+## 1.4.0-nightly.3
+
+### Minor Changes
+
+- [#7334](https://github.com/LedgerHQ/ledger-live/pull/7334) [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978) Thanks [@gre](https://github.com/gre)! - live-network no longer retry network calls on HTTP status code that shouldn't be retried like 401 & some others.
+
 ## 1.3.1-nightly.2
 
 ### Patch Changes
