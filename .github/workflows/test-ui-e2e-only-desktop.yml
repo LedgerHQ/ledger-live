@@ -381,7 +381,6 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       
       - name: Download Xray Results
-        if: ${{ !cancelled() && inputs.export_to_xray }}
         uses: actions/download-artifact@v4.1.1
         with:
           path: "apps/ledger-live-desktop/artifacts/xray"
@@ -389,26 +388,22 @@ jobs:
           merge-multiple: false
 
       - name: Extract and Aggregate Xray results
-        if: ${{ !cancelled() && inputs.export_to_xray }}
         run: 
           ./aggregate-xray-reports.sh
       
       - name: Upload aggregated xray results
-        if: ${{ !cancelled() && inputs.export_to_xray }}
         uses: actions/upload-artifact@v4.3.0
         with:
           name: aggregated-xray-reports
           path: "apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json"
 
       - name: Authenticate to Xray
-        if: ${{ !cancelled() && inputs.export_to_xray }}
         id: authenticate
         run: |
           response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
           echo "xray_token=$response" >> $GITHUB_OUTPUT
 
       - name: Publish merged report on Xray
-        if: ${{ !cancelled() && inputs.export_to_xray }}
         id: publish-xray
         run: |
           response=$(curl -H "Content-Type: application/json" \
@@ -420,6 +415,5 @@ jobs:
             echo "xray_key=$key" >> $GITHUB_OUTPUT
 
       - name: Write Xray report in summary
-        if: ${{ !cancelled() && inputs.export_to_xray }}
         shell: bash
         run: echo "::notice title=Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
