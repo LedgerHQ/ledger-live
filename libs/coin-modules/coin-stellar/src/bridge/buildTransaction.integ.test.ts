@@ -5,6 +5,8 @@ import { NetworkInfo } from "../types";
 import coinConfig, { type StellarCoinConfig } from "../config";
 
 describe("buildTransaction", () => {
+  const sender = "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ";
+
   beforeAll(() => {
     coinConfig.setCoinConfig(
       (): StellarCoinConfig => ({
@@ -28,9 +30,7 @@ describe("buildTransaction", () => {
 
   it("throws an error if transaction has no NetworkInfo", async () => {
     // Given
-    const account = createFixtureAccount({
-      freshAddress: "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ",
-    });
+    const account = createFixtureAccount({ freshAddress: sender });
     const transaction = createFixtureTransaction({ fees: BigNumber(1) });
 
     // When
@@ -39,9 +39,7 @@ describe("buildTransaction", () => {
 
   it.skip("crash if transaction amount is 0", async () => {
     // Given
-    const account = createFixtureAccount({
-      freshAddress: "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ",
-    });
+    const account = createFixtureAccount({ freshAddress: sender });
     const transaction = createFixtureTransaction({
       amount: BigNumber(0),
       fees: BigNumber(1),
@@ -57,9 +55,7 @@ describe("buildTransaction", () => {
 
   it("throws an error when recipient is an invalid address", async () => {
     // Given
-    const account = createFixtureAccount({
-      freshAddress: "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ",
-    });
+    const account = createFixtureAccount({ freshAddress: sender });
     const transaction = createFixtureTransaction({
       amount: BigNumber(10),
       fees: BigNumber(1),
@@ -73,9 +69,7 @@ describe("buildTransaction", () => {
 
   it("returns a built transaction in Stellar format", async () => {
     // Given
-    const account = createFixtureAccount({
-      freshAddress: "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ",
-    });
+    const account = createFixtureAccount({ freshAddress: sender });
     const transaction = createFixtureTransaction({
       amount: BigNumber(10),
       fees: BigNumber(1),
@@ -87,12 +81,12 @@ describe("buildTransaction", () => {
 
     // Then
     expect(builtTransaction.fee).toEqual("1");
-    expect(builtTransaction.source).toEqual(
-      "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ",
-    );
+    expect(builtTransaction.source).toEqual(sender);
     expect(builtTransaction.operations).toHaveLength(1);
     const operation = builtTransaction.operations[0];
     expect(operation.type).toEqual("payment");
+    expect((operation as any).destination).toEqual(transaction.recipient);
+    expect((operation as any).amount).toEqual("0.0000010");
     expect((operation as any).asset.code).toEqual("XLM");
     expect((operation as any).asset.issuer).toBeUndefined();
     expect(builtTransaction.toXDR().slice(0, 68)).toEqual(
@@ -103,11 +97,45 @@ describe("buildTransaction", () => {
     );
   });
 
+  it("returns a built transaction in Stellar format when useAllAmount", async () => {
+    // Given
+    const sender = "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ";
+    const account = createFixtureAccount({
+      freshAddress: sender,
+      balance: BigNumber(600239412),
+      spendableBalance: BigNumber(500239412),
+    });
+    const transaction = createFixtureTransaction({
+      amount: BigNumber(10),
+      fees: BigNumber(1),
+      networkInfo: { family: "stellar" } as NetworkInfo,
+      useAllAmount: true,
+    });
+
+    // When
+    const builtTransaction = await buildTransaction(account, transaction);
+
+    // Then
+    expect(builtTransaction.fee).toEqual("1");
+    expect(builtTransaction.source).toEqual(sender);
+    expect(builtTransaction.operations).toHaveLength(1);
+    const operation = builtTransaction.operations[0];
+    expect(operation.type).toEqual("payment");
+    expect((operation as any).destination).toEqual(transaction.recipient);
+    expect((operation as any).amount).toEqual("50.0239411");
+    expect((operation as any).asset.code).toEqual("XLM");
+    expect((operation as any).asset.issuer).toBeUndefined();
+    expect(builtTransaction.toXDR().slice(0, 68)).toEqual(
+      "AAAAAgAAAACnLoGyX7Arx0zl7s6F7d8pSe2arRNq4dfpGSPkW5/d3AAAAAECbx/3AAHJ",
+    );
+    expect(builtTransaction.toXDR().slice(70)).toEqual(
+      "AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAADw9kGYtpM1vsCgDoHjZOVO/sjTKLsmA51f8vdM9oaecgAAAAAAAAAAHdEMMwAAAAAAAAAA",
+    );
+  });
+
   it("returns a built transaction in Stellar format when asset used is USDC", async () => {
     // Given
-    const account = createFixtureAccount({
-      freshAddress: "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ",
-    });
+    const account = createFixtureAccount({ freshAddress: sender });
     const transaction = createFixtureTransaction({
       amount: BigNumber(10),
       fees: BigNumber(1),
@@ -139,9 +167,7 @@ describe("buildTransaction", () => {
 
   it("returns a built transaction in Stellar format", async () => {
     // Given
-    const account = createFixtureAccount({
-      freshAddress: "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ",
-    });
+    const account = createFixtureAccount({ freshAddress: sender });
     const transaction = createFixtureTransaction({
       amount: BigNumber(10),
       fees: BigNumber(1),

@@ -1,8 +1,9 @@
-import invariant from "invariant";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { AmountRequired, FeeNotLoaded } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
+import invariant from "invariant";
 import { craftTransaction } from "../logic";
+import type { Transaction } from "../types";
+import { getAmountValue } from "./logic";
 
 /**
  * @param {Account} account
@@ -12,18 +13,24 @@ export async function buildTransaction(account: Account, transaction: Transactio
   const { recipient, networkInfo, fees, memoType, memoValue, mode, assetCode, assetIssuer } =
     transaction;
 
+  invariant(networkInfo && networkInfo.family === "stellar", "stellar family");
+
   if (!fees) {
     throw new FeeNotLoaded();
   }
 
-  invariant(networkInfo && networkInfo.family === "stellar", "stellar family");
+  const amount = getAmountValue(account, transaction, fees);
+
+  if (!amount) {
+    throw new AmountRequired();
+  }
 
   const { transaction: built } = await craftTransaction(
     { address: account.freshAddress },
     {
       mode,
       recipient,
-      amount: BigInt(transaction.amount.toString()),
+      amount: BigInt(amount.toString()),
       fee: BigInt(fees.toString()),
       assetCode,
       assetIssuer,
