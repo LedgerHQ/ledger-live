@@ -1,5 +1,5 @@
-import { Account } from "@ledgerhq/types-live";
-import React, { memo } from "react";
+import { Account, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
+import React from "react";
 import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
 import RowItem from "./RowItem";
 import CardItem from "./CardItem";
@@ -37,8 +37,9 @@ type Props = {
   mode: LayoutKey;
   account: Account;
   isLoading: boolean;
-  withContextMenu: boolean;
   mediaType: string;
+  metadata: NFTMetadata | null | undefined;
+  nft: ProtoNFT | undefined;
   onHideCollection?: () => void;
   onItemClick: () => void;
 };
@@ -51,8 +52,9 @@ const Item = ({
   mediaType,
   mode,
   tokenName,
+  metadata,
   account,
-  withContextMenu,
+  nft,
   isLoading,
   onHideCollection,
   onItemClick,
@@ -96,6 +98,9 @@ const Item = ({
             amount={amount}
             tokenName={tokenName}
             onHideCollection={onHideCollection}
+            nft={nft}
+            metadata={metadata}
+            account={account}
           />
         </Box>
       </Flex>
@@ -103,4 +108,4 @@ const Item = ({
   );
 };
 
-export default memo<Props>(Item);
+export default Item;

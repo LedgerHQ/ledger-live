@@ -1,4 +1,4 @@
-import { Account } from "@ledgerhq/types-live";
+import { Account, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { getNFTsByListOfIds } from "~/renderer/reducers/accounts";
 import { State } from "~/renderer/reducers";
@@ -12,6 +12,8 @@ export type TokenListProps = {
   account: Account;
   formattedNfts: {
     id: string;
+    metadata: NFTMetadata | null | undefined;
+    nft: ProtoNFT | undefined;
     collectibleId: string;
     standard: string;
     amount: string | BigNumber;
@@ -47,6 +49,8 @@ export const useTokenListModel = ({ nfts, account }: BaseNftsProps): TokenListPr
 
   const formattedNfts = metadata.map((meta, index) => ({
     id: nftsList[index]?.tokenId || "",
+    metadata: meta.metadata,
+    nft: nftsList[index],
     collectibleId: nftsList[index]?.id || "",
     standard: nftsList[index]?.standard || "",
     amount: nftsList[index]?.amount || "",

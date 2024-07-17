@@ -17,7 +17,7 @@ export type ExternalViewerButtonProps = {
 
 export enum ItemType {
   Separator = "separator",
-  ExternalLink = "externalLink",
+  ExternalLink = "external",
 }
 
 export type CopyableFieldProps = {

@@ -15,14 +15,7 @@ type Props = {
   onHideCollection?: () => void;
 };
 
-const CardItem: React.FC<Props> = ({
-  tokenName,
-  tokenId,
-  amount,
-  isLoading,
-  standard,
-  onHideCollection,
-}) => {
+const CardItem: React.FC<Props> = ({ tokenName, tokenId, amount, isLoading, standard }) => {
   return (
     <Flex flexDirection={"column"} mt={2}>
       <Skeleton width={142} minHeight={24} barHeight={10} show={isLoading}>

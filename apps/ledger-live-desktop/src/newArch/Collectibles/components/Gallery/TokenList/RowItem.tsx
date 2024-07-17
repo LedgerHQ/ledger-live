@@ -8,6 +8,8 @@ import { centerEllipsis } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import BigNumber from "bignumber.js";
+import { ProtoNFT, NFTMetadata, Account } from "@ledgerhq/types-live";
+import ContextMenu from "./ContextMenu";
 
 type Props = {
   tokenName: string;
@@ -15,10 +17,25 @@ type Props = {
   standard?: string;
   isLoading: boolean;
   amount?: string | BigNumber;
+  nft: ProtoNFT | undefined;
+  metadata: NFTMetadata | null | undefined;
+  account: Account;
   onHideCollection?: () => void;
 };
 
-const RowItem: React.FC<Props> = ({ tokenName, tokenId, isLoading, amount, standard }) => {
+const RowItem: React.FC<Props> = ({
+  tokenName,
+  tokenId,
+  isLoading,
+  amount,
+  standard,
+  nft,
+  metadata,
+  account,
+  onHideCollection,
+}) => {
+  const hasContextMenu = !!(nft && metadata);
+
   return (
     <Flex height={"100%"} width={"100%"} flex={1} justifyContent={"space-between"}>
       <Flex flexDirection={"column"} height={"100%"}>
@@ -46,9 +63,19 @@ const RowItem: React.FC<Props> = ({ tokenName, tokenId, isLoading, amount, stand
             {`x${amount}`}
           </Text>
         )}
-        <Dots>
-          <Icons.MoreHorizontal />
-        </Dots>
+        {hasContextMenu && (
+          <ContextMenu
+            account={account}
+            nft={nft}
+            metadata={metadata}
+            leftClick
+            onHideCollection={onHideCollection}
+          >
+            <Dots>
+              <Icons.MoreHorizontal />
+            </Dots>
+          </ContextMenu>
+        )}
       </Flex>
     </Flex>
   );

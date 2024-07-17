@@ -32,6 +32,8 @@ const TokensList = ({ account, collectibles, onHideCollection, onItemClick }: Pr
           key={collectible.id}
           mode={collectiblesViewMode}
           id={collectible.id}
+          metadata={collectible.metadata}
+          nft={collectible.nft}
           amount={collectible.amount}
           standard={collectible.standard}
           tokenName={collectible.tokenName}
@@ -41,7 +43,6 @@ const TokensList = ({ account, collectibles, onHideCollection, onItemClick }: Pr
           mediaType={collectible.mediaType}
           onHideCollection={onHideCollection}
           onItemClick={() => onItemClick(collectible.collectibleId)}
-          withContextMenu
         />
       ))}
     </Container>
