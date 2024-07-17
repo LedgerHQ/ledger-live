@@ -28,6 +28,7 @@ import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { TrustchainStore } from "@ledgerhq/trustchain/store";
 
 // === ACCOUNT STATE ===
 
@@ -357,4 +358,5 @@ export type State = {
   nft: NftState;
   market: MarketState;
   wallet: WalletState;
+  trustchain: TrustchainStore;
 };
