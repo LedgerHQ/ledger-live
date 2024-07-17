@@ -1,5 +1,36 @@
 ## 34.5.0-next.4
 
+## 34.6.0-nightly.10
+
+### Minor Changes
+
+- [#7075](https://github.com/LedgerHQ/ledger-live/pull/7075) [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Sync, Send, Receive, Create Account for Icon network
+
+### Patch Changes
+
+- Updated dependencies [[`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b)]:
+  - @ledgerhq/cryptoassets@13.2.0-nightly.1
+  - @ledgerhq/hw-app-icon@1.1.0-nightly.0
+  - @ledgerhq/coin-framework@0.16.0-nightly.5
+  - @ledgerhq/coin-algorand@0.5.2-nightly.5
+  - @ledgerhq/coin-bitcoin@0.6.2-nightly.5
+  - @ledgerhq/coin-cardano@0.1.2-nightly.5
+  - @ledgerhq/coin-evm@2.1.2-nightly.5
+  - @ledgerhq/coin-icon@0.4.1-nightly.0
+  - @ledgerhq/coin-near@0.5.2-nightly.5
+  - @ledgerhq/coin-polkadot@1.1.0-nightly.6
+  - @ledgerhq/coin-solana@0.7.2-nightly.5
+  - @ledgerhq/coin-stellar@0.2.0-nightly.5
+  - @ledgerhq/coin-tezos@0.5.0-nightly.6
+  - @ledgerhq/coin-tron@0.0.2-nightly.9
+  - @ledgerhq/coin-xrp@0.4.0-nightly.5
+  - @ledgerhq/hw-app-eth@6.37.2-nightly.2
+  - @ledgerhq/hw-app-vet@0.2.2-nightly.1
+  - @ledgerhq/live-countervalues@0.2.2-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.5
+  - @ledgerhq/live-nft@0.4.2-nightly.5
+  - @ledgerhq/live-wallet@0.3.1-nightly.7
+
 ## 34.6.0-nightly.9
 
 ### Patch Changes

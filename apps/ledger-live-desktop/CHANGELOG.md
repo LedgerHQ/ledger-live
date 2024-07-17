@@ -1,5 +1,31 @@
 # ledger-live-desktop
 
+## 2.84.0-nightly.12
+
+### Minor Changes
+
+- [#7075](https://github.com/LedgerHQ/ledger-live/pull/7075) [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Sync, Send, Receive, Create Account for Icon network
+
+### Patch Changes
+
+- [#7351](https://github.com/LedgerHQ/ledger-live/pull/7351) [`6c1e360`](https://github.com/LedgerHQ/ledger-live/commit/6c1e360c232b1e4ca504157115a84d3cf4815e5f) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [swap] reset toAmount on target change
+
+- [#7327](https://github.com/LedgerHQ/ledger-live/pull/7327) [`5ce7fe7`](https://github.com/LedgerHQ/ledger-live/commit/5ce7fe72a98d2c939ac1340232aca989cd8d8297) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix onboarding error when device connected.
+
+- Updated dependencies [[`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b), [`8dd0fb1`](https://github.com/LedgerHQ/ledger-live/commit/8dd0fb195525eef4600a8ecbca2a80a1899de321)]:
+  - @ledgerhq/live-common@34.6.0-nightly.10
+  - @ledgerhq/types-devices@6.25.1-nightly.1
+  - @ledgerhq/coin-framework@0.16.0-nightly.5
+  - @ledgerhq/coin-bitcoin@0.6.2-nightly.5
+  - @ledgerhq/coin-evm@2.1.2-nightly.5
+  - @ledgerhq/live-countervalues@0.2.2-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.2-nightly.5
+  - @ledgerhq/live-nft@0.4.2-nightly.5
+  - @ledgerhq/live-nft-react@0.4.2-nightly.5
+  - @ledgerhq/live-wallet@0.3.1-nightly.7
+  - @ledgerhq/types-live@6.49.0-nightly.0
+  - @ledgerhq/trustchain@0.1.2-nightly.7
+
 ## 2.84.0-nightly.11
 
 ### Patch Changes

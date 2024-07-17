@@ -146,7 +146,9 @@
     "@ledgerhq/coin-cardano": "0.0.1",
     "@ledgerhq/keyring-eth": "0.0.1",
     "@ledgerhq/coin-tron": "0.0.1",
-    "@ledgerhq/coin-stellar": "0.1.0"
+    "@ledgerhq/coin-stellar": "0.1.0",
+    "@ledgerhq/coin-icon": "0.4.0",
+    "@ledgerhq/hw-app-icon": "1.0.0"
   },
   "changesets": [
     "beige-cooks-hug",
@@ -190,9 +192,11 @@
     "khaki-poets-swim",
     "large-carrots-attend",
     "lemon-pumpkins-speak",
+    "light-starfishes-appear",
     "lovely-boats-sniff",
     "mean-badgers-buy",
     "metal-buses-judge",
+    "mighty-toys-enjoy",
     "modern-forks-invent",
     "modern-kangaroos-arrive",
     "moody-moose-glow",
@@ -212,6 +216,7 @@
     "rotten-zoos-reflect",
     "rude-bobcats-pump",
     "rude-flowers-breathe",
+    "selfish-experts-double",
     "serious-emus-attack",
     "serious-taxis-perform",
     "sharp-rabbits-accept",
@@ -238,6 +243,7 @@
     "thin-pugs-fly",
     "tidy-fireants-sit",
     "tiny-drinks-smell",
+    "tricky-steaks-hope",
     "two-eyes-report",
     "unlucky-nails-learn",
     "weak-kings-flow",
