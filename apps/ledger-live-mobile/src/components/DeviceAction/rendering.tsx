@@ -35,7 +35,7 @@ import {
   getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
-import { DeviceModelId, QRCodeDevices } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
@@ -63,6 +63,7 @@ import Config from "react-native-config";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { SettingsState } from "~/reducers/types";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -773,7 +774,7 @@ export function renderDeviceNotOnboarded({
   navigation: StackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
-    if (QRCodeDevices.includes(device.modelId)) {
+    if (isSyncOnboardingSupported(device.modelId)) {
       // On pairing success, navigate to the Sync Onboarding Companion
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,
