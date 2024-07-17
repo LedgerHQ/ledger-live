@@ -217,8 +217,6 @@ const getTransactionStatus = async (
       errors.amount = useAllAmount ? new NotEnoughBalance() : new AmountRequired();
     } else if (amount.gt(balance)) {
       errors.amount = new NotEnoughBalance();
-    } else if (account.type === "TokenAccount" && estimatedFees.gt(acc.balance)) {
-      errors.amount = new NotEnoughBalance();
     }
 
     const energy = (acc.tronResources && acc.tronResources.energy) || new BigNumber(0);
@@ -262,7 +260,7 @@ const getTransactionStatus = async (
     const query = new URLSearchParams({
       ...(acc?.id ? { account: acc.id } : {}),
     });
-    errors.gasPrice = new NotEnoughGas(undefined, {
+    errors.gasLimit = new NotEnoughGas(undefined, {
       fees: formatCurrencyUnit(getFeesUnit(acc.currency), estimatedFees),
       ticker: acc.currency.ticker,
       cryptoName: acc.currency.name,
