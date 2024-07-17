@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { ChevronRightMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
@@ -25,7 +25,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
       case DeviceModelId.stax:
         return <IconsLegacy.StaxMedium size={20} />;
       case DeviceModelId.europa:
-        return <IconsLegacy.EuropaMedium size={20} />;
+        return <Icons.Flex />;
       case DeviceModelId.nanoX:
       default:
         return <IconsLegacy.NanoXFoldedMedium size={20} />;

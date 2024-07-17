@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
-import { Box, IconsLegacy, Flex } from "@ledgerhq/native-ui";
+import { Box, IconsLegacy, Flex, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
@@ -79,7 +79,7 @@ const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => 
       icon = <IconsLegacy.StaxMedium size={size} color={color} />;
       break;
     case DeviceModelId.europa:
-      icon = <IconsLegacy.EuropaMedium size={size} color={color} />;
+      icon = <Icons.Flex color={color} />;
       break;
     case DeviceModelId.nanoX:
     default:

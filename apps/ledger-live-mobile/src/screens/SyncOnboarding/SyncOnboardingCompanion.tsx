@@ -36,6 +36,7 @@ import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import Stories from "~/components/StorylyStories";
 import { TrackScreen, screen } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
+import ContinueOnEuropa from "./assets/ContinueOnEuropa";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import BackupStep from "./companionSteps/BackupStep";
 import { useIsFocused } from "@react-navigation/native";
@@ -118,9 +119,15 @@ const ContinueOnDeviceWithAnim: React.FC<{
   deviceModelId: DeviceModelId;
   text: string;
   withTopDivider?: boolean;
-}> = ({ text, withTopDivider }) => {
+}> = ({ text, withTopDivider, deviceModelId }) => {
   // TODO: when lotties are available, move this component to its own file and use a different lottie for each deviceModelId, as Icon prop
-  return <ContinueOnDevice Icon={ContinueOnStax} text={text} withTopDivider={withTopDivider} />;
+  return (
+    <ContinueOnDevice
+      Icon={deviceModelId === DeviceModelId.stax ? ContinueOnStax : ContinueOnEuropa}
+      text={text}
+      withTopDivider={withTopDivider}
+    />
+  );
 };
 
 /**
