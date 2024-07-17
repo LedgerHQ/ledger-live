@@ -9,10 +9,7 @@ describe("Stellar Api", () => {
     module = createApi({
       explorer: {
         url: "https://horizon-testnet.stellar.org/",
-        fetchLmit: 100,
       },
-      useStaticFees: true,
-      enableNetworkLogs: false,
     });
   });
 

@@ -11,10 +11,8 @@ describe("buildTransaction", () => {
         status: { type: "active" },
         explorer: {
           url: "https://stellar.coin.ledger.com", //"https://horizon-testnet.stellar.org/",
-          fetchLmit: 100,
+          fetchLimit: 100,
         },
-        useStaticFees: true,
-        enableNetworkLogs: false,
       }),
     );
   });

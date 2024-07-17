@@ -3,10 +3,10 @@ import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/c
 export type StellarConfig = {
   explorer: {
     url: string;
-    fetchLmit: number;
+    fetchLimit?: number;
   };
-  useStaticFees: boolean;
-  enableNetworkLogs: boolean;
+  useStaticFees?: boolean;
+  enableNetworkLogs?: boolean;
 };
 
 export type StellarCoinConfig = CurrencyConfig & StellarConfig;

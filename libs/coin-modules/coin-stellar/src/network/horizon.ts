@@ -35,6 +35,7 @@ import {
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
+const FETCH_LIMIT = 100;
 const currency = getCryptoCurrencyById("stellar");
 let server: Horizon.Server | undefined;
 const getServer = () => {
@@ -199,7 +200,7 @@ export async function fetchOperations({
     let rawOperations = await getServer()
       .operations()
       .forAccount(addr)
-      .limit(coinConfig.getCoinConfig().explorer.fetchLmit)
+      .limit(coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT)
       .order(order)
       .cursor(cursor)
       .includeFailed(true)
