@@ -447,6 +447,7 @@ const SwapWebView = ({
       amountTo: undefined,
       swapError: undefined,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapState?.toAccountId]);
 
   const webviewStyle = useMemo(
