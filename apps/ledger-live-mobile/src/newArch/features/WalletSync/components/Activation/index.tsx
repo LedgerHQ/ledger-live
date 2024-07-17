@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
+import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
@@ -22,7 +23,7 @@ type Props<T extends boolean> = T extends true
 const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDrawer }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
-
+  useInitMemberCredentials();
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const navigation = useNavigation<NavigationProps["navigation"]>();
 

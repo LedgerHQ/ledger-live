@@ -7,12 +7,15 @@ import { WalletSyncNavigatorStackParamList } from "../../../components/RootNavig
 import WalletSyncActivation from "LLM/features/WalletSync/screens/Activation";
 import { ActivationProcess } from "./screens/Activation/ActivationProcess";
 import { ActivationSuccess } from "./screens/Activation/ActivationSuccess";
+import { useInitMemberCredentials } from "./hooks/useInitMemberCredentials";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
 export default function WalletSynceNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
+
+  useInitMemberCredentials();
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen

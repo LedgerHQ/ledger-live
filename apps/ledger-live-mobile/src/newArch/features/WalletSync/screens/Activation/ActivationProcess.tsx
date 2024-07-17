@@ -11,7 +11,14 @@ type Props = BaseComposite<
 >;
 
 export function ActivationProcess({ route, navigation }: Props) {
-  const { isDrawerInstructionsVisible, closeDrawer, openDrawer } = useFollowInstructions();
+  const {
+    isDrawerInstructionsVisible,
+    closeDrawer,
+    openDrawer,
+
+    device,
+  } = useFollowInstructions();
+
   return (
     <>
       <WalletSyncActivationDeviceSelection
@@ -19,7 +26,13 @@ export function ActivationProcess({ route, navigation }: Props) {
         route={route}
         goToFollowInstructions={openDrawer}
       />
-      <FollowInstructionsDrawer isOpen={isDrawerInstructionsVisible} handleClose={closeDrawer} />
+      {isDrawerInstructionsVisible && (
+        <FollowInstructionsDrawer
+          isOpen={isDrawerInstructionsVisible}
+          handleClose={closeDrawer}
+          device={device}
+        />
+      )}
     </>
   );
 }

@@ -4,24 +4,24 @@ import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 
 import Animation from "~/components/Animation";
-import { useSelector } from "react-redux";
-import { lastSeenDeviceSelector } from "~/reducers/settings";
 
+type Props = {
+  device: Device;
+};
 const getProductName = (modelId: DeviceModelId) =>
   getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
 const animationStyles = (modelId: DeviceModelId) =>
   [DeviceModelId.stax, DeviceModelId.europa].includes(modelId) ? { height: 210 } : {};
 
-const FollowInstructions: React.FC = () => {
+const FollowInstructions: React.FC<Props> = ({ device }) => {
   const { theme } = useTheme();
   const { t } = useTranslation();
-
-  const device = useSelector(lastSeenDeviceSelector);
 
   if (!device) return;
   return (
