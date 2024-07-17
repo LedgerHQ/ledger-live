@@ -6,7 +6,6 @@ import {
   NotEnoughGas,
   NotEnoughGasSwap,
   NotEnoughBalanceSwap,
-  NotEnoughBalance,
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
