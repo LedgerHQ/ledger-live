@@ -1,3 +1,4 @@
+import { HWDeviceProvider } from "./HWDeviceProvider";
 import { SDK } from "./sdk";
 import { MockSDK } from "./mockSdk";
 import { TrustchainSDKContext, TrustchainSDK, TrustchainLifecycle } from "./types";
@@ -9,4 +10,5 @@ export const getSdk = (
   isMockEnv: boolean,
   context: TrustchainSDKContext,
   lifecycle?: TrustchainLifecycle,
-): TrustchainSDK => (isMockEnv ? new MockSDK(context, lifecycle) : new SDK(context, lifecycle));
+): TrustchainSDK =>
+  isMockEnv ? new MockSDK(context, lifecycle) : new SDK(context, new HWDeviceProvider(), lifecycle);
