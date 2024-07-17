@@ -37,12 +37,15 @@ const commonConfig = {
   },
   moduleNameMapper,
   testPathIgnorePatterns,
-  setupFiles: ["jest-canvas-mock"],
+  setupFiles: ["jest-canvas-mock", "./jest.polyfills.js"],
   setupFilesAfterEnv: ["<rootDir>/tests/jestSetup.js"],
   globalSetup: "<rootDir>/tests/setup.ts",
   moduleDirectories: ["node_modules", "./tests"],
   modulePaths: [compilerOptions.baseUrl],
   resolver: "<rootDir>/scripts/resolver.js",
+  testEnvironmentOptions: {
+    customExportConditions: [""],
+  },
 };
 
 module.exports = {

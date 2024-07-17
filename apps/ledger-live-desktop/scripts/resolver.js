@@ -24,6 +24,7 @@ module.exports = (path, options) => {
         delete pkg["exports"];
         delete pkg["module"];
       }
+
       return pkg;
     },
   });

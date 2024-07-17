@@ -49,6 +49,8 @@ const NftItem: React.FC<NftItemProps> = ({
   const { metadata, status } = useNftMetadata(contract, tokenId, currencyId);
   const isLoading = status === FieldStatus.Loading;
 
+  console.log("metadata", metadata, status);
+
   return (
     <CollectionContextMenu
       collectionName={metadata?.tokenName}
