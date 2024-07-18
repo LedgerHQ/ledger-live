@@ -1508,6 +1508,25 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
+  kaspa: {
+    type: "CryptoCurrency",
+    id: "kaspa",
+    coinType: CoinType.KASPA,
+    name: "KASPA",
+    managerAppName: "KASPA",
+    ticker: "KAS",
+    scheme: "kaspa",
+    color: "#70C7BA",
+    family: "kaspa",
+    units: [
+      {
+        name: "IOV",
+        code: "IOV",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [],
+  },
   kin: {
     type: "CryptoCurrency",
     id: "kin",

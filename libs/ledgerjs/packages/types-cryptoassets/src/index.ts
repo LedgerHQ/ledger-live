@@ -57,6 +57,7 @@ export type CryptoCurrencyId =
   | "icon"
   | "iota"
   | "iov"
+  | "kaspa"
   | "kin"
   | "komodo"
   | "kusama"
