@@ -1513,19 +1513,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "kaspa",
     coinType: CoinType.KASPA,
     name: "KASPA",
-    managerAppName: "KASPA",
+    managerAppName: "Kaspa",
     ticker: "KAS",
     scheme: "kaspa",
     color: "#70C7BA",
     family: "kaspa",
     units: [
       {
-        name: "IOV",
-        code: "IOV",
-        magnitude: 6,
+        name: "KAS",
+        code: "KAS",
+        magnitude: 8,
+        showAllDigits: true
+      },
+      {
+        name: "Sompis",
+        code: "Sompi",
+        magnitude: 0
+      }
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.kaspa.org/addresses/$address",
+        tx: "https://explorer.kaspa.org/txs/$hash",
       },
     ],
-    explorerViews: [],
   },
   kin: {
     type: "CryptoCurrency",
