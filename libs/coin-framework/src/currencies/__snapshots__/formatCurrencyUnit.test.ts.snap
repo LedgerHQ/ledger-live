@@ -140,7 +140,9 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hycon unit (HYCON) 1`] = `"123.456.789,00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ICON unit (ICON) 1`] = `"123.456.789,00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ICON unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format IOTA unit (IOTA) 1`] = `"123.456.789,00000000- -IOTA"`;
 
@@ -462,7 +464,9 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hycon unit (HYCON) 1`] = `"123,456,789.00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ICON unit (ICON) 1`] = `"123,456,789.00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ICON unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format IOTA unit (IOTA) 1`] = `"123,456,789.00000000- -IOTA"`;
 
@@ -784,7 +788,9 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hycon unit (HYCON) 1`] = `"123.456.789,00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ICON unit (ICON) 1`] = `"123.456.789,00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ICON unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format IOTA unit (IOTA) 1`] = `"123.456.789,00000000- -IOTA"`;
 
@@ -1106,7 +1112,9 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hycon unit (HYCON) 1`] = `"123 456 789,00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ICON unit (ICON) 1`] = `"123 456 789,00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ICON unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format IOTA unit (IOTA) 1`] = `"123 456 789,00000000- -IOTA"`;
 
@@ -1428,7 +1436,9 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hycon unit (HYCON) 1`] = `"123,456,789.00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ICON unit (ICON) 1`] = `"123,456,789.00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ICON unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format IOTA unit (IOTA) 1`] = `"123,456,789.00000000- -IOTA"`;
 
@@ -1750,7 +1760,9 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hycon unit (HYCON) 1`] = `"123,456,789.00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ICON unit (ICON) 1`] = `"123,456,789.00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ICON unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format IOTA unit (IOTA) 1`] = `"123,456,789.00000000- -IOTA"`;
 
@@ -2072,7 +2084,9 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hycon unit (HYCON) 1`] = `"123.456.789,00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ICON unit (ICON) 1`] = `"123.456.789,00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ICON unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format IOTA unit (IOTA) 1`] = `"123.456.789,00000000- -IOTA"`;
 
@@ -2394,7 +2408,9 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hycon unit (HYCON) 1`] = `"123 456 789,00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ICON unit (ICON) 1`] = `"123 456 789,00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ICON unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format IOTA unit (IOTA) 1`] = `"123 456 789,00000000- -IOTA"`;
 
@@ -2716,7 +2732,9 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hycon unit (HYCON) 1`] = `"123.456.789,00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ICON unit (ICON) 1`] = `"123.456.789,00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ICON unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format IOTA unit (IOTA) 1`] = `"123.456.789,00000000- -IOTA"`;
 
@@ -3038,7 +3056,9 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hycon unit (HYCON) 1`] = `"123,456,789.00000000- -HYCON"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ICON unit (ICON) 1`] = `"123,456,789.00000000- -ICON"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ICON unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format IOTA unit (IOTA) 1`] = `"123,456,789.00000000- -IOTA"`;
 
@@ -3360,7 +3380,9 @@ exports[`formatCurrencyUnit with default options should correctly format Horizen
 
 exports[`formatCurrencyUnit with default options should correctly format Hycon unit (HYCON) 1`] = `"123,456,789"`;
 
-exports[`formatCurrencyUnit with default options should correctly format ICON unit (ICON) 1`] = `"123,456,789"`;
+exports[`formatCurrencyUnit with default options should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format ICON unit (ICX) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format IOTA unit (IOTA) 1`] = `"123,456,789"`;
 

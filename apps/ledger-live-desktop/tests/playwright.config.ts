@@ -49,6 +49,7 @@ const config: PlaywrightTestConfig = {
         ["github"],
         ["line"],
         ["allure-playwright"],
+        ["./utils/customJsonReporter.ts"],
       ]
     : [["allure-playwright"]],
 };

@@ -32,6 +32,16 @@ on:
         required: false
         type: boolean
         default: false
+      export_to_xray:
+        description: Send tests results to Xray
+        required: false
+        type: boolean
+        default: false
+      test_execution:
+        description: "Test Execution ticket ID"
+        required: false
+        type: string
+        default: "B2CQA-2461"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -80,7 +90,7 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-      - name: generate token
+      - name: Generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
         with:
@@ -93,7 +103,7 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
-      - name: pull docker image
+      - name: Pull docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
       - name: Run playwright tests [Linux => xvfb-run]
@@ -108,13 +118,25 @@ jobs:
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
+          XRAY: ${{ inputs.export_to_xray }}
+          TEST_EXECUTION: ${{ inputs.test_execution }}
+          PROJECT_KEY: B2CQA
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4.3.0
         with:
+          retention-days: 1
           name: allure-results-${{ matrix.shardIndex }}
           path: "apps/ledger-live-desktop/allure-results"
+
+      - name: Upload Xray Results
+        if: ${{ !cancelled() && inputs.export_to_xray }}
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          retention-days: 1
+          name: xray-reports-${{ matrix.shardIndex }}
+          path: apps/ledger-live-desktop/tests/artifacts/xray/xray-report.json
 
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v4.3.0
@@ -342,3 +364,56 @@ jobs:
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+
+  upload-to-xray:
+    name: "Upload to Xray"
+    runs-on: [ledger-live-medium]
+    env:
+      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
+      XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
+      JIRA_URL: https://ledgerhq.atlassian.net/browse
+    needs: e2e-tests-linux
+    if: ${{ !cancelled() && inputs.export_to_xray }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      
+      - name: Download Xray Results
+        uses: actions/download-artifact@v4.1.1
+        with:
+          path: "apps/ledger-live-desktop/artifacts/xray"
+          pattern: xray-reports-*
+          merge-multiple: false
+
+      - name: Extract and Aggregate Xray results
+        run: 
+          ./aggregate-xray-reports.sh
+      
+      - name: Upload aggregated xray results
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: aggregated-xray-reports
+          path: "apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json"
+
+      - name: Authenticate to Xray
+        id: authenticate
+        run: |
+          response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
+          echo "xray_token=$response" >> $GITHUB_OUTPUT
+
+      - name: Publish merged report on Xray
+        id: publish-xray
+        run: |
+          response=$(curl -H "Content-Type: application/json" \
+                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
+                    -X POST \
+                    --data @apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json \
+                    ${{ env.XRAY_API_URL }}/import/execution)
+            key=$(echo $response | jq -r '.key')
+            echo "xray_key=$key" >> $GITHUB_OUTPUT
+
+      - name: Write Xray report in summary
+        shell: bash
+        run: echo "::notice title=Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
