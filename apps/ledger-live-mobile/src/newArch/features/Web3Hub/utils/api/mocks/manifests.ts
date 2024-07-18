@@ -216,3 +216,22 @@ export const mocks: AppManifest[] = [
     visibility: "complete",
   },
 ];
+
+function getManifests() {
+  let manifests: AppManifest[] = [];
+
+  for (let i = 0; i < 14; i++) {
+    manifests = manifests.concat(
+      mocks.map(manifest => {
+        return {
+          ...manifest,
+          id: `${manifest.id}-${i}`,
+        };
+      }),
+    );
+  }
+
+  return manifests;
+}
+
+export const manifests = getManifests();

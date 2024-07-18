@@ -1,14 +1,10 @@
-import { Text } from "@ledgerhq/native-ui";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { View } from "react-native";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import { Web3HubStackParamList } from "../../Navigator";
+import { Text } from "@ledgerhq/native-ui";
+import type { TabsProps } from "LLM/features/Web3Hub/types";
 import { ScreenName } from "~/const";
 
-type Props = BaseComposite<NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubTabs>>;
-
-export default function Web3HubTabs(_: Props) {
+export default function Web3HubTabs(_: TabsProps) {
   return (
     <View
       style={{

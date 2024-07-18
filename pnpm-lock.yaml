@@ -829,6 +829,9 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../libs/live-network
       '@ledgerhq/live-nft':
         specifier: workspace:^
         version: link:../../libs/live-nft

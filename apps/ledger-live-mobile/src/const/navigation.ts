@@ -632,6 +632,7 @@ export enum NavigatorName {
 
   // Web3Hub
   Web3Hub = "Web3Hub",
+  Web3HubTab = "Web3HubTab",
 
   WalletSync = "WalletSync",
 }
