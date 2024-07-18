@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "スワップ",
     "tabs" : {
-      "exchange" : "取引",
+      "exchange" : "スワップ",
       "history" : "履歴"
     },
     "form" : {
@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "購入/売却",
-        "description" : "信頼できるプロバイダーを使用して売買"
+        "description" : "当社のプロバイダーを使用して暗号資産を売買"
       },
       "swap" : {
         "title" : "スワップ",
-        "description" : "安全に別の暗号資産へ交換",
+        "description" : "暗号資産を別の暗号資産へ交換",
         "label" : "人気"
       },
       "earn" : {
         "title" : "ステーキング",
-        "description" : "Ledgerで暗号資産を運用"
+        "description" : "Ledgerで暗号資産をステーキング"
       }
     },
     "recoverBanner" : {
@@ -4197,8 +4197,7 @@
           "modal" : {
             "flow" : "フローを選択",
             "step" : "ステップを選択",
-            "activated" : "有効化/無効化してバックアップを取得/非取得",
-            "instance" : "インスタンスの生成",
+            "instance" : "メンバーの生成",
             "cta" : "適用"
           }
         }
@@ -5493,6 +5492,10 @@
       "description" : "金額と手数料を算出できません"
     },
     "NotEnoughBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "申し訳ありません。ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
@@ -5504,6 +5507,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "TRC20トークンの受け取りを有効にするには、まずこのアドレスに少なくとも0.1TRXを送付する必要があります。<link0>詳細はこちら</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "このTronアカウントを有効にしておくには少なくとも0.1TRX、ネットワーク手数料には1.1TRXが必要です。<link0>詳細はこちら</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "お使いのオペレーティングシステムのバージョンが古くなっています",
@@ -6088,6 +6097,9 @@
     },
     "newAddressTRC20" : {
       "title" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "当社のビットコインインフラストラクチャで問題が発生しています。後でもう一度お試しください。"
     }
   },
   "cryptoOrg" : {
@@ -6300,7 +6312,7 @@
         "description" : "別のLedgerを使用して暗号化キーを保護または削除する。"
       },
       "instance" : {
-        "label_one" : "1個の同期されたインスタンス",
+        "label" : "1個の同期されたインスタンス",
         "label_other" : "{{count}}個の同期されたインスタンス",
         "cta" : "管理"
       }
@@ -6313,7 +6325,8 @@
     "error" : {
       "title" : "問題が発生しました。",
       "description" : "後でもう一度お試しください。",
-      "cta" : "再試行"
+      "cta" : "再試行",
+      "fetching" : "データの取得中に問題が発生しました。"
     },
     "unsecuredError" : {
       "title" : "同期はこのLedgerによって保護されていません",
@@ -6322,10 +6335,17 @@
       "cta" : "別のLedgerを接続する",
       "ctaDelete" : "暗号化キーを削除する"
     },
+    "autoRemoveError" : {
+      "title" : "現在のインスタンスは削除できません",
+      "description" : "セキュリティ上の理由から、暗号化キーを削除せずに現在使用しているインスタンスを削除することはできません。",
+      "info" : "暗号化キーを削除するとデバイスの同期が解除され、同期されたデータはすべて削除されます。ただし、これはお客様の資金には影響しません。アカウントはいつでも再同期できます。",
+      "cta" : "わかりました",
+      "ctaDelete" : "暗号化キーを削除する"
+    },
     "success" : {
       "backup" : {
         "title" : "成功",
-        "desc" : "Ledger Syncが正常に有効になりました。 ",
+        "desc" : "Ledger Syncが正常に有効になりました。",
         "synchAnother" : "別のLedger Liveアプリと同期する"
       },
       "synch" : {
@@ -6333,7 +6353,7 @@
         "desc" : "アカウントの変更が、すべてのアプリとプラットフォームに自動的に反映されるようになります。"
       }
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "キーの管理",
       "options" : {
         "deleteBackup" : {
@@ -6387,6 +6407,10 @@
       "remove" : "削除",
       "deleteInstanceSuccess" : "{{instanceName}}の同期は解除されています",
       "deleteInstanceError" : "{{instanceName}}の同期解除で問題が発生しました"
+    },
+    "deviceAction" : {
+      "title" : "Ledger{{wording}}で続ける",
+      "description" : "Ledgerの信頼できるディスプレイに表示される指示に従ってください。"
     }
   }
 }
