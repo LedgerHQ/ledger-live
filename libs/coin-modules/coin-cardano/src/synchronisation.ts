@@ -182,7 +182,7 @@ export const makeGetAccountShape =
       id: accountId,
       xpub,
       balance: totalBalance,
-      spendableBalance: utxosSum.minus(minAdaForTokens),
+      spendableBalance: BigNumber.max(0, utxosSum.minus(minAdaForTokens)),
       operations: operations,
       syncHash,
       subAccounts,
