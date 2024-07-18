@@ -1,6 +1,6 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import { Web3HubTabStackParamList } from "LLM/features/Web3Hub/TabNavigator";
+import { Web3HubTabStackParamList } from "LLM/features/Web3Hub/types";
 import { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
 import { PortfolioNavigatorStackParamList } from "./PortfolioNavigator";
