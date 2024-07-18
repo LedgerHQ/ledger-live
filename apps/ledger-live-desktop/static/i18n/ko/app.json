@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "스왑",
     "tabs" : {
-      "exchange" : "교환",
+      "exchange" : "스왑",
       "history" : "내역"
     },
     "form" : {
@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "구매 / 판매",
-        "description" : "신뢰할 수 있는 공급자와 거래"
+        "description" : "신뢰할 수 있는 Ledger 파트너사와 거래"
       },
       "swap" : {
         "title" : "스왑",
-        "description" : "안전하게 암호화폐 교환",
+        "description" : "암호화폐 교환",
         "label" : "인기 있는"
       },
       "earn" : {
         "title" : "스테이킹",
-        "description" : "Ledger와 함께 암호화폐 수익 창출"
+        "description" : "Ledger가 함께하는 안전한 암호화폐 스테이킹"
       }
     },
     "recoverBanner" : {
@@ -4197,8 +4197,7 @@
           "modal" : {
             "flow" : "플로우 선택",
             "step" : "단계 선택",
-            "activated" : "백업 여부 활성화/비활성화",
-            "instance" : "인스턴스 생성",
+            "instance" : "멤버 생성",
             "cta" : "적용"
           }
         }
@@ -5493,6 +5492,10 @@
       "description" : "금액 및 수수료 계산이 불가능합니다"
     },
     "NotEnoughBalance" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
@@ -5504,6 +5507,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "TRC20 토큰 수령을 활성화하려면 먼저 최소 0.1 TRX를 이 주소로 보내야 합니다. <link0>자세히 알아보기</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "이 Tron 계정을 활성 상태로 유지하려면 0.1 TRX 이상이 필요하고 수수료로 1.1 TRX가 필요합니다.<link0>자세히 알아보기 </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "사용 중이신 운영 시스템이 최신 버전이 아닙니다",
@@ -6088,6 +6097,9 @@
     },
     "newAddressTRC20" : {
       "title" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "당사 비트코인 인프라에 문제개 발생했습니다. 나중에 다시 시도해 주세요."
     }
   },
   "cryptoOrg" : {
@@ -6300,7 +6312,7 @@
         "description" : "다른 Ledger 장치를 통해 암호화 키를 보호하거나 삭제하세요."
       },
       "instance" : {
-        "label_one" : "동기화된 인스턴스 1개",
+        "label" : "동기화된 인스턴스 1개",
         "label_other" : "{{count}} 동기화된 인스턴스",
         "cta" : "관리"
       }
@@ -6313,7 +6325,8 @@
     "error" : {
       "title" : "문제가 발생했습니다",
       "description" : "나중에 다시 시도해 주세요.",
-      "cta" : "다시 시도하세요"
+      "cta" : "다시 시도하세요",
+      "fetching" : "데이터를 가져오는 중에 문제가 발생했습니다."
     },
     "unsecuredError" : {
       "title" : "이 Ledger 장치는 동기화를 보호하지 않습니다",
@@ -6322,10 +6335,17 @@
       "cta" : "다른 Ledger 장치 연결하기",
       "ctaDelete" : "내 암호화 키 삭제"
     },
+    "autoRemoveError" : {
+      "title" : "현재 인스턴스를 제거할 수 없습니다.",
+      "description" : "보안상의 이유로 암호화 키를 삭제하지 않으면 현재 사용 중인 인스턴스를 제거할 수 없습니다.",
+      "info" : "암호화 키를 삭제하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 그러나 이는 귀하의 자금에 영향을 미치지 않습니다. 언제든지 계정을 다시 동기화할 수 있습니다.",
+      "cta" : "이해합니다",
+      "ctaDelete" : "내 암호화 키 삭제"
+    },
     "success" : {
       "backup" : {
         "title" : "완료",
-        "desc" : "Ledger 동기화를 성공적으로 활성화했습니다. ",
+        "desc" : "Ledger 동기화를 성공적으로 활성화했습니다.",
         "synchAnother" : "다른 Ledger Live 앱과 동기화"
       },
       "synch" : {
@@ -6333,7 +6353,7 @@
         "desc" : "이제 계정 변경사항이 모든 앱과 플랫폼에 자동으로 표시됩니다."
       }
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "키 관리",
       "options" : {
         "deleteBackup" : {
@@ -6387,6 +6407,10 @@
       "remove" : "제거",
       "deleteInstanceSuccess" : "귀하의 {{instanceName}} 동기화가 중단되었습니다",
       "deleteInstanceError" : "{{instanceName}} 장치에 동기화 해제 관련 문제가 발생했습니다"
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}}에서 계속하세요",
+      "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
     }
   }
 }
