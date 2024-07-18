@@ -1,0 +1,76 @@
+{
+    "name": "@ledgerhq/coin-kaspa",
+    "version": "0.0.1",
+    "description": "Ledger Kaspa Coin integration",
+    "keywords": [
+      "Ledger",
+      "LedgerWallet",
+      "kas",
+      "Kaspa",
+      "Hardware Wallet"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/LedgerHQ/ledger-live.git"
+    },
+    "bugs": {
+      "url": "https://github.com/LedgerHQ/ledger-live/issues"
+    },
+    "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-kaspa",
+    "publishConfig": {
+      "access": "public"
+    },
+    "typesVersions": {
+      "*": {
+        "lib/*": [
+          "lib/*"
+        ],
+        "lib-es/*": [
+          "lib-es/*"
+        ],
+        "*": [
+          "lib/*"
+        ]
+      }
+    },
+    "exports": {
+      "./lib/*": "./lib/*.js",
+      "./lib-es/*": "./lib-es/*.js",
+      "./*": {
+        "require": "./lib/*.js",
+        "default": "./lib-es/*.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "license": "Apache-2.0",
+    "dependencies": {
+      "@ledgerhq/coin-framework": "workspace:^",
+      "@ledgerhq/cryptoassets": "workspace:^",
+      "@ledgerhq/devices": "workspace:^",
+      "@ledgerhq/errors": "workspace:^",
+      "@ledgerhq/live-env": "workspace:^",
+      "@ledgerhq/live-network": "workspace:^",
+      "@ledgerhq/logs": "workspace:^",
+      "@ledgerhq/types-cryptoassets": "workspace:^",
+      "@ledgerhq/types-live": "workspace:^"
+    },
+    "devDependencies": {
+      "jest": "^29.7.0",
+      "jest-file-snapshot": "^0.5.0",
+      "object-hash": "^2.2.0",
+      "ts-jest": "^29.1.1"
+    },
+    "scripts": {
+      "clean": "rimraf lib lib-es",
+      "build": "tsc && tsc -m ES6 --outDir lib-es",
+      "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-bitcoin.json",
+      "prewatch": "pnpm build",
+      "watch": "tsc --watch",
+      "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+      "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+      "lint:fix": "pnpm lint --fix",
+      "test": "jest",
+      "typecheck": "tsc --noEmit",
+      "unimported": "unimported"
+    }
+  }
