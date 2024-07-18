@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "moduleResolution": "node",
+        "pretty": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "strict": true,
+        "declaration": true,
+        "declarationMap": true,
+        "downlevelIteration": true,
+        "noImplicitAny": false,
+        "noImplicitThis": false,
+        "module": "commonjs",
+        "lib": ["DOM", "ES2017"],
+        "isolatedModules": false,
+        "target": "ES6",
+        "outDir": "lib"
+    },
+    "include": ["src/**/*"]
+}
