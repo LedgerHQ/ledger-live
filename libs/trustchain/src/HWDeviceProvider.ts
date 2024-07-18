@@ -1,28 +1,36 @@
-import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
-import { crypto } from "@ledgerhq/hw-trustchain";
-import { ApduDevice } from "@ledgerhq/hw-trustchain/ApduDevice";
-
-import api from "./api";
-import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks } from "./types";
-import { genericWithJWT } from "./auth";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { ApduDevice } from "@ledgerhq/hw-trustchain/ApduDevice";
+import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
+import { crypto, device } from "@ledgerhq/hw-trustchain";
+import api from "./api";
+import { genericWithJWT } from "./auth";
+import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks } from "./types";
 
 export class HWDeviceProvider {
   private policy?: AuthCachePolicy;
   private jwt?: JWT;
+  private hw?: ApduDevice;
 
   constructor(policy?: AuthCachePolicy) {
     this.policy = policy;
   }
+  public tempGetHWDevice(transport: Transport): ApduDevice {
+    this.hw = device.apdu(transport);
+    return this.hw;
+  }
 
-  public withJwt<T>(transport: Transport, job: (jwt: JWT) => Promise<T>): Promise<T> {
+  public withJwt<T>(
+    transport: Transport,
+    job: (jwt: JWT) => Promise<T>,
+    callbacks?: TrustchainDeviceCallbacks,
+  ): Promise<T> {
     return genericWithJWT(
       jwt => {
         this.jwt = jwt;
         return job(jwt);
       },
       this.jwt,
-      () => this._authWithDevice(transport),
+      () => this._authWithDevice(transport, callbacks),
       this.policy,
     );
   }
@@ -31,9 +39,9 @@ export class HWDeviceProvider {
     transport: Transport,
     job: (hw: ApduDevice) => Promise<T>,
     callbacks?: TrustchainDeviceCallbacks,
+    hw: ApduDevice = this.hw ?? device.apdu(transport),
   ): Promise<T> {
     callbacks?.onStartRequestUserInteraction();
-    const hw = new ApduDevice(transport);
     try {
       return await job(hw);
     } catch (error) {
@@ -51,10 +59,29 @@ export class HWDeviceProvider {
     }
   }
 
-  private async _authWithDevice(transport: Transport): Promise<JWT> {
+  public async refreshJwt(
+    transport: Transport,
+    callbacks?: TrustchainDeviceCallbacks,
+  ): Promise<void> {
+    this.jwt = await this.withJwt(transport, api.refreshAuth, callbacks);
+  }
+
+  public clearJwt() {
+    this.jwt = undefined;
+  }
+
+  private async _authWithDevice(
+    transport: Transport,
+    callbacks?: TrustchainDeviceCallbacks,
+  ): Promise<JWT> {
     const challenge = await api.getAuthenticationChallenge();
     const data = crypto.from_hex(challenge.tlv);
-    const seedId = await this.withHw(transport, hw => hw.getSeedId(data));
+    const seedId = await this.withHw(
+      transport,
+      hw => hw.getSeedId(data),
+      callbacks,
+      device.apdu(transport), // If the hw instance used here is reused in the other interactions these other interaction fail with RecordStoreWrongAPDU
+    );
     const signature = crypto.to_hex(seedId.signature);
     return api.postChallengeResponse({
       challenge: challenge.json,

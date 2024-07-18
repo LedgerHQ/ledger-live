@@ -37,8 +37,6 @@ export class SDK implements TrustchainSDK {
   private hwDeviceProvider: HWDeviceProvider;
   private lifecycle?: TrustchainLifecycle;
 
-  private deviceJwt: JWT | undefined = undefined; // TODO remove
-
   constructor(
     context: TrustchainSDKContext,
     hwDeviceProvider: HWDeviceProvider,
@@ -99,6 +97,8 @@ export class SDK implements TrustchainSDK {
   ): Promise<TrustchainResult> {
     let type = TrustchainResultType.restored;
 
+    this.hwDeviceProvider.tempGetHWDevice(transport);
+
     const withJwt: WithJwt = job => this.hwDeviceProvider.withJwt(transport, job);
 
     let trustchains = await withJwt(api.getTrustchains);
@@ -113,7 +113,7 @@ export class SDK implements TrustchainSDK {
       const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
       await withJwt(jwt => api.postSeed(jwt, crypto.to_hex(commandStream)));
       // deviceJwt have changed, proactively refresh it
-      this.deviceJwt = await withJwt(api.refreshAuth);
+      await this.hwDeviceProvider.refreshJwt(transport, callbacks);
       trustchains = await withJwt(api.getTrustchains);
     }
 
@@ -223,6 +223,7 @@ export class SDK implements TrustchainSDK {
       memberCredentials,
     );
 
+    this.hwDeviceProvider.tempGetHWDevice(transport);
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
     // eslint-disable-next-line prefer-const
@@ -270,7 +271,7 @@ export class SDK implements TrustchainSDK {
     await sendCloseStreamToAPI();
 
     // deviceJwt have changed, proactively refresh it
-    this.deviceJwt = await withJwt(api.refreshAuth);
+    await this.hwDeviceProvider.refreshJwt(transport, callbacks);
 
     const newTrustchain: Trustchain = {
       rootId: trustchainId,
@@ -319,7 +320,7 @@ export class SDK implements TrustchainSDK {
       api.deleteTrustchain(jwt, trustchain.rootId),
     );
     this.jwt = undefined;
-    this.deviceJwt = undefined;
+    this.hwDeviceProvider.clearJwt();
   }
 
   async encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array> {
