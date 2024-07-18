@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import invariant from "invariant";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";

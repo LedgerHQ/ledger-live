@@ -105,7 +105,7 @@ const configs = {
 export function getFramedPictureConfig(
   type: "preview" | "transfer",
   deviceModelId: CLSSupportedDeviceModelId,
-  theme:"light"|"dark"
+  theme: "light" | "dark",
 ): FramedPictureConfig {
   return configs[type][deviceModelId][theme];
 }
