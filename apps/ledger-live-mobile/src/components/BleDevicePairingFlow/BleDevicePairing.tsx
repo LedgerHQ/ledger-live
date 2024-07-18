@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/native-ui";
 
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
-import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Animation from "../Animation";
 import { TrackScreen } from "~/analytics";
 import GenericErrorView from "../GenericErrorView";

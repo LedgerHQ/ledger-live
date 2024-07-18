@@ -30,14 +30,13 @@ export const europaTransferConfig: Omit<FramedPictureConfig, "backgroundSource">
 };
 
 type FrameConfigMap = {
-  [key in "transfer"|"preview"]: {
+  [key in "transfer" | "preview"]: {
     [modelId in CLSSupportedDeviceModelId]: {
       light: FramedPictureConfig;
       dark: FramedPictureConfig;
-
-    }
-  }
-}
+    };
+  };
+};
 
 const configs: FrameConfigMap = {
   transfer: {
@@ -87,9 +86,9 @@ const configs: FrameConfigMap = {
 };
 
 export function getFramedPictureConfig(
-  type: "transfer"|"preview", // later on, there will be more types (like "preview" on LLM)
+  type: "transfer" | "preview", // later on, there will be more types (like "preview" on LLM)
   deviceModelId: CLSSupportedDeviceModelId,
-  theme: "dark"|"light"
+  theme: "dark" | "light",
 ): FramedPictureConfig {
   return configs[type][deviceModelId][theme];
 }
