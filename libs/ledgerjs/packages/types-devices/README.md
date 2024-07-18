@@ -11,7 +11,7 @@ Ledger types for devices and transport.
 #### Table of Contents
 
 *   [DeviceModelId](#devicemodelid)
-*   [QRCodeDevices](#qrcodedevices)
+*   [DevicesWithTouchScreen](#deviceswithtouchscreen)
 *   [DeviceModel](#devicemodel)
 *   [ChargingModes](#chargingmodes)
 *   [BatteryStatusFlags](#batterystatusflags)
@@ -31,9 +31,9 @@ Ledger types for devices and transport.
 
 DeviceModelId is a unique identifier to identify the model of a Ledger hardware wallet.
 
-### QRCodeDevices
+### DevicesWithTouchScreen
 
-QRCodeDevices is a list of DeviceModelId of whom the Ledger device can present a QR code.
+DevicesWithTouchScreen is a list of DeviceModelId of whom the Ledger device can present a QR code.
 
 Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[DeviceModelId](#devicemodelid)>
 

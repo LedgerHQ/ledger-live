@@ -86,8 +86,8 @@ import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
-import WalletSyncNavigator from "LLM/features/WalletSync/Navigator";
 import CustomErrorNavigator from "./CustomErrorNavigator";
+import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -403,7 +403,13 @@ export default function BaseNavigator() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-        {WalletSyncNavigator({ Stack })}
+
+        <Stack.Screen
+          name={NavigatorName.WalletSync}
+          component={WalletSyncNavigator}
+          options={{ headerShown: false }}
+        />
+
         {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}

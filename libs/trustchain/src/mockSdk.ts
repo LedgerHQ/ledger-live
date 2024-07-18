@@ -3,6 +3,7 @@ import {
   MemberCredentials,
   Trustchain,
   TrustchainDeviceCallbacks,
+  TrustchainLifecycle,
   TrustchainMember,
   TrustchainResult,
   TrustchainResultType,
@@ -42,10 +43,24 @@ const mockedDeviceJWT = { accessToken: "mock-device-jwt" };
 const trustchains = new Map<string, Trustchain>();
 const trustchainMembers = new Map<string, TrustchainMember[]>();
 
+/**
+ * to mock the encryption/decryption, we just xor the data with 0xff
+ */
+const applyXor = (a: Uint8Array) => {
+  const b = new Uint8Array(a.length);
+  for (let i = 0; i < a.length; i++) {
+    b[i] = a[i] ^ 0xff;
+  }
+  return b;
+};
+
 export class MockSDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
-  constructor(context: TrustchainSDKContext) {
+  private lifecyle?: TrustchainLifecycle;
+
+  constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
     this.context = context;
+    this.lifecyle = lifecyle;
   }
 
   private deviceJwtAcquired = false;
@@ -158,6 +173,15 @@ export class MockSDK implements TrustchainSDK {
     if (member.id === memberCredentials.pubkey) {
       throw new Error("cannot remove self");
     }
+    const afterRotation = await this.lifecyle?.onTrustchainRotation(
+      this,
+      trustchain,
+      memberCredentials,
+    );
+
+    callbacks?.onStartRequestUserInteraction();
+    // simulate device interaction
+    callbacks?.onEndRequestUserInteraction();
 
     callbacks?.onStartRequestUserInteraction();
     // simulate device interaction
@@ -175,6 +199,9 @@ export class MockSDK implements TrustchainSDK {
       applicationPath: "0'/16'/" + index + "'",
     };
     trustchains.set(newTrustchain.rootId, newTrustchain);
+
+    if (afterRotation) await afterRotation(newTrustchain);
+
     return Promise.resolve(newTrustchain);
   }
 
@@ -209,11 +236,11 @@ export class MockSDK implements TrustchainSDK {
 
   encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array> {
     assertTrustchain(trustchain);
-    return Promise.resolve(input);
+    return Promise.resolve(applyXor(input));
   }
 
   decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array> {
     assertTrustchain(trustchain);
-    return Promise.resolve(data);
+    return Promise.resolve(applyXor(data));
   }
 }

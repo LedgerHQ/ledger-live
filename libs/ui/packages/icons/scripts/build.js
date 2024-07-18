@@ -184,12 +184,12 @@ const convert = (svg, options, componentName, outputFile) => {
 
       component = component.replace(/fill="white"/g, 'fill="currentColor"');
       component = component.replace(/stroke="white"/g, 'stroke="currentColor"');
-      component = component.replace(/<path/g, '<path vector-effect="non-scaling-stroke"');
-      component = component.replace(/<Path/g, '<Path vector-effect="non-scaling-stroke"');
+      component = component.replace(/<path/g, '<path vectorEffect="non-scaling-stroke"');
+      component = component.replace(/<Path/g, '<Path vectorEffect="non-scaling-stroke"');
 
       if (!options.native) {
         component = component.replace(/(<\s*\/?\s*)svg(\s*([^>]*)?\s*>)/gi, "$1Svg$2");
-        component = component.replace(/strokeWidth={(\d+(\.\d+)?)}/g, "stroke-width={strokeWidth}");
+        component = component.replace(/strokeWidth={(\d+(\.\d+)?)}/g, "strokeWidth={strokeWidth}");
       }
       component = component.replace(/strokeWidth={(\d+(\.\d+)?)}/g, "strokeWidth={strokeWidth}");
       fs.writeFileSync(outputFile, component, "utf-8");

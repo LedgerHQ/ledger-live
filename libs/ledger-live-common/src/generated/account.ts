@@ -3,6 +3,7 @@ import vechain from "../families/vechain/account";
 import bitcoin from "@ledgerhq/coin-bitcoin/account";
 import cardano from "@ledgerhq/coin-cardano/account";
 import near from "@ledgerhq/coin-near/account";
+import icon from "@ledgerhq/coin-icon/account";
 
 export default {
   crypto_org,
@@ -10,4 +11,5 @@ export default {
   bitcoin,
   cardano,
   near,
+  icon,
 };

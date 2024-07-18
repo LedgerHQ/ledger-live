@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/electron/main";
-import "@sentry/tracing";
 import { Primitive } from "@sentry/types";
 import { init, setShouldSendCallback } from "./install";
 const available = init(Sentry);

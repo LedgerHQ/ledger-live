@@ -1,26 +1,29 @@
-import { Text } from "@ledgerhq/native-ui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useContext } from "react";
+import { ScrollView } from "react-native";
 import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import SafeAreaView from "~/components/SafeAreaView";
 import { ScreenName } from "~/const";
-import { Web3HubStackParamList } from "../../Navigator";
+import { Web3HubStackParamList } from "LLM/features/Web3Hub/Navigator";
+import { HeaderContext } from "LLM/features/Web3Hub/HeaderContext";
+import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
+import SearchList from "./components/SearchList";
 
 type Props = BaseComposite<NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubSearch>>;
 
-export default function Web3HubSearch(_: Props) {
+export default function Web3HubSearch({ navigation }: Props) {
+  const { search } = useContext(HeaderContext);
+
   return (
-    <SafeAreaView
-      edges={["top", "left", "right"]}
-      isFlex
+    <ScrollView
       style={{
-        flexDirection: "column",
-        gap: 26,
-        marginHorizontal: 24,
-        marginTop: 114,
+        flex: 1,
       }}
     >
-      <Text>{ScreenName.Web3HubSearch}</Text>
-    </SafeAreaView>
+      {search ? (
+        <SearchList navigation={navigation} search={search} />
+      ) : (
+        <ManifestsList navigation={navigation} />
+      )}
+    </ScrollView>
   );
 }

@@ -1,5 +1,6 @@
 {
   "entry": [
+    "src/walletsync/index.ts",
     "src/cloudsync/index.ts",
     "src/liveqr/cross.ts",
     "src/liveqr/importAccounts.ts",
@@ -8,5 +9,11 @@
     "src/store.ts",
     "src/accountName.ts"
   ],
-  "ignoreUnused": []
+  "ignoreUnresolved": ["bufferutil", "utf-8-validate"],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "walletsync/__mocks__/**"
+  ]
 }
