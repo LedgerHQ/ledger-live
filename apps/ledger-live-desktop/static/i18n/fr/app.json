@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Acheter / Vendre",
-        "description" : "Achetez et vendez avec des prestataires de confiance."
+        "description" : "Achetez et vendez avec nos prestataires de confiance."
       },
       "swap" : {
         "title" : "Swap",
-        "description" : "Échangez une crypto contre une autre en toute sécurité.",
+        "description" : "Échangez une crypto contre une autre.",
         "label" : "Populaire"
       },
       "earn" : {
         "title" : "Staker",
-        "description" : "Faites fructifier vos crypto-actifs via Ledger."
+        "description" : "Stakez vos cryptos via Ledger."
       }
     },
     "recoverBanner" : {
@@ -4197,8 +4197,7 @@
           "modal" : {
             "flow" : "Sélectionner un processus",
             "step" : "Sélectionner une étape",
-            "activated" : "Activer/désactiver pour générer une synchronisation (ou non)",
-            "instance" : "Créer une synchronisation",
+            "instance" : "Créer des membres",
             "cta" : "Appliquer"
           }
         }
@@ -5493,6 +5492,10 @@
       "description" : "Impossible de calculer le montant et les frais"
     },
     "NotEnoughBalance" : {
+      "title" : "Solde insuffisant",
+      "description" : "Vérifiez que ce compte a des fonds suffisants."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "Solde insuffisant, frais de réseau inclus. Modifiez le montant ou vérifiez votre solde.",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
     },
@@ -5504,6 +5507,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse avant de recevoir des tokens TRC20. <link0>En savoir plus </link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "Vous devez avoir au moins 0,1 TRX sur votre compte Tron pour qu’il reste actif, et 1,1 TRX pour les frais de réseau. <link0>En savoir plus </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "Version de votre système d’exploitation obsolète",
@@ -6088,6 +6097,9 @@
     },
     "newAddressTRC20" : {
       "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Notre infrastructure Bitcoin rencontre actuellement des difficultés. Veuillez réessayer plus tard."
     }
   },
   "cryptoOrg" : {
@@ -6300,7 +6312,7 @@
         "description" : "Protégez ou supprimez votre clé de chiffrement via un autre appareil Ledger."
       },
       "instance" : {
-        "label_one" : "1 synchronisation",
+        "label" : "1 synchronisation",
         "label_other" : "{{count}} synchronisations",
         "cta" : "Gérer"
       }
@@ -6313,7 +6325,8 @@
     "error" : {
       "title" : "Une erreur est survenue",
       "description" : "Veuillez réessayer plus tard.",
-      "cta" : "Réessayer"
+      "cta" : "Réessayer",
+      "fetching" : "Une erreur est survenue lors de la récupération de vos données."
     },
     "unsecuredError" : {
       "title" : "La synchronisation n’est pas protégée par cet appareil Ledger",
@@ -6322,10 +6335,17 @@
       "cta" : "Connecter un autre appareil Ledger",
       "ctaDelete" : "Supprimer ma clé de chiffrement"
     },
+    "autoRemoveError" : {
+      "title" : "Suppression de l’instance impossible",
+      "description" : "Pour des raisons de sécurité, vous ne pouvez pas supprimer l’instance que vous utilisez actuellement sans supprimer votre clé de chiffrement.",
+      "info" : "En supprimant vote clé de chiffrement, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
+      "cta" : "Compris",
+      "ctaDelete" : "Supprimer ma clé de chiffrement"
+    },
     "success" : {
       "backup" : {
         "title" : "Succès",
-        "desc" : "Activation de Ledger Sync réussie. ",
+        "desc" : "Activation de Ledger Sync réussie.",
         "synchAnother" : "Synchroniser avec une autre application Ledger Live"
       },
       "synch" : {
@@ -6333,7 +6353,7 @@
         "desc" : "Les modifications apportées à vos comptes apparaîtront automatiquement, dans toutes les apps et sur toutes les plateformes."
       }
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Gérer votre clé",
       "options" : {
         "deleteBackup" : {
@@ -6387,6 +6407,10 @@
       "remove" : "Retirer",
       "deleteInstanceSuccess" : "Votre {{instanceName}} n’est plus synchronisée.",
       "deleteInstanceError" : "Une erreur s’est produite lors de la désynchronisation de {{instanceName}}"
+    },
+    "deviceAction" : {
+      "title" : "Continuez sur votre Ledger {{wording}}",
+      "description" : "Suivez les instructions sur l’écran de confiance de votre appareil Ledger."
     }
   }
 }
