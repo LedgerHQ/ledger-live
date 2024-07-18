@@ -45,6 +45,7 @@ export enum Step {
 }
 
 export type WalletSyncState = {
+  isDrawerOpen: boolean;
   flow: Flow;
   step: Step;
   instances: TrustchainMember[];
@@ -54,6 +55,7 @@ export type WalletSyncState = {
 };
 
 export const initialStateWalletSync: WalletSyncState = {
+  isDrawerOpen: false,
   flow: Flow.Activation,
   step: Step.CreateOrSynchronize,
   instances: [],
@@ -63,6 +65,7 @@ export const initialStateWalletSync: WalletSyncState = {
 };
 
 type HandlersPayloads = {
+  WALLET_SYNC_CHANGE_DRAWER_VISIBILITY: boolean;
   WALLET_SYNC_CHANGE_FLOW: { flow: Flow; step: Step };
   WALLET_SYNC_CHANGE_ADD_INSTANCE: TrustchainMember;
   WALLET_SYNC_CHANGE_REMOVE_INSTANCE: TrustchainMember;
@@ -80,6 +83,13 @@ type WalletSyncHandlers<PreciseKey = true> = Handlers<
 >;
 
 const handlers: WalletSyncHandlers = {
+  WALLET_SYNC_CHANGE_DRAWER_VISIBILITY: (
+    state: WalletSyncState,
+    { payload }: { payload: boolean },
+  ) => ({
+    ...state,
+    isDrawerOpen: payload,
+  }),
   WALLET_SYNC_CHANGE_FLOW: (
     state: WalletSyncState,
     { payload: { flow, step } }: { payload: { flow: Flow; step: Step } },
@@ -129,6 +139,9 @@ const handlers: WalletSyncHandlers = {
 
 // Selectors
 export const walletSyncSelector = (state: { walletSync: WalletSyncState }) => state.walletSync;
+
+export const walletSyncDrawerVisibilitySelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.isDrawerOpen;
 
 export const walletSyncFlowSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.flow;

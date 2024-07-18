@@ -6368,13 +6368,14 @@
     "success": {
       "backup": {
         "title": "Success",
-        "desc": "You successfully enabled Ledger Sync.",
-        "synchAnother": "Sync with another Ledger Live app"
+        "desc": "You successfully enabled Ledger Sync."
       },
       "synch": {
         "title": "Synchronization successful!",
         "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
-      }
+      },
+      "synchAnother": "Sync with another Ledger Live app",
+      "close": "Close"
     },
     "manageBackup": {
       "title": "Manage your key",
