@@ -6,7 +6,7 @@ import * as deviceCore from "@ledgerhq/device-core";
 
 jest.mock("@ledgerhq/hw-transport");
 jest.mock("@ledgerhq/device-core", () => ({
-  appStorageInfoGuard: jest.fn().mockResolvedValue(true),
+  isAppStorageInfo: jest.fn().mockResolvedValue(true),
   getAppStorageInfo: jest.fn().mockResolvedValue({
     size: 6,
     dataVersion: "test",
@@ -98,7 +98,7 @@ describe("backupAppData", () => {
     const backupObservable: Observable<BackupAppDataEvent> = backupAppData(transport, appName);
     lastValueFrom(backupObservable).catch(e => {
       expect(e).toBeInstanceOf(BackupAppDataError);
-      expect(e.message).toBe("Chunk data is empty.");
+      expect(e.message).toBe("Chunk data is empty");
     });
   });
 
@@ -115,7 +115,7 @@ describe("backupAppData", () => {
     const backupObservable: Observable<BackupAppDataEvent> = backupAppData(transport, appName);
     lastValueFrom(backupObservable).catch(e => {
       expect(e).toBeInstanceOf(BackupAppDataError);
-      expect(e.message).toBe("App data size mismatch.");
+      expect(e.message).toBe("App data size mismatch");
     });
   });
 });

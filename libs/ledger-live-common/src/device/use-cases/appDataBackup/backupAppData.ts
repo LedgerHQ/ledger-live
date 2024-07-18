@@ -7,14 +7,14 @@ import { AppName, BackupAppDataError, BackupAppDataEvent, BackupAppDataEventType
  * Backs up the application data for a specific app on a Ledger device.
  * @param transport - The transport object used to communicate with the Ledger device.
  * @param appName - The name of the application to backup.
- * @returns A promise that resolves to the app storage data.
+ * @returns An observable that emits BackupAppDataEvent according to the backup process.
  * @throws {BackupAppDataError}
  */
 export function backupAppData(
   transport: Transport,
   appName: AppName,
 ): Observable<BackupAppDataEvent> {
-  const obs = new Observable(subscriber => {
+  const obs = new Observable<BackupAppDataEvent>(subscriber => {
     const sub = from(getAppStorageInfo(transport, appName))
       .pipe(
         switchMap(async (appDataInfo: AppStorageInfo) => {
@@ -35,7 +35,7 @@ export function backupAppData(
             const chunk: Buffer = await backupAppStorage(transport);
             // Make sure that the process advances
             if (chunk.length === 0) {
-              subscriber.error(new BackupAppDataError("Chunk data is empty."));
+              subscriber.error(new BackupAppDataError("Chunk data is empty"));
               return;
             }
             appData = Buffer.concat([appData, chunk]);
@@ -48,7 +48,7 @@ export function backupAppData(
 
           // Check data size
           if (appData.length !== dataSize) {
-            subscriber.error(new BackupAppDataError("App data size mismatch."));
+            subscriber.error(new BackupAppDataError("App data size mismatch"));
             return;
           }
 
@@ -59,11 +59,11 @@ export function backupAppData(
           subscriber.complete();
         }),
       )
-      .subscribe(subscriber);
+      .subscribe();
 
     return () => {
       sub.unsubscribe();
     };
   });
-  return obs as Observable<BackupAppDataEvent>;
+  return obs;
 }

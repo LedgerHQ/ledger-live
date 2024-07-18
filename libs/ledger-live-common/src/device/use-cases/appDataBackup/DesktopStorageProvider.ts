@@ -2,7 +2,7 @@ import {
   StorageProvider,
   AppStorageType,
   AppStorageKey,
-  appStorageTypeGuard,
+  isAppStorageType,
   BackupAppDataError,
 } from "./types";
 
@@ -16,18 +16,22 @@ export class DesktopStorageProvider implements StorageProvider<AppStorageType> {
    *
    * @param key - The key to retrieve the value for, type of AppStorageKey.
    * @returns A promise that resolves to the value associated with the key, or null if the key does not exist.
-   * @throws Error if the retrieved data is not of type AppStorageType.
+   * @throws Error if the retrieved data cannot be parsed or is not of type AppStorageType.
    */
   getItem(key: AppStorageKey): Promise<AppStorageType | null> {
     const data: string | null = global.localStorage.getItem(key);
     if (!data) {
       return Promise.resolve(null);
     }
-    const parsedData = JSON.parse(data);
-    if (appStorageTypeGuard(parsedData)) {
-      return Promise.resolve(parsedData);
+    try {
+      const parsedData = JSON.parse(data);
+      if (isAppStorageType(parsedData)) {
+        return Promise.resolve(parsedData);
+      }
+    } catch (error: unknown) {
+      throw new BackupAppDataError("Cannot parse the data(SyntaxError).");
     }
-    throw new BackupAppDataError("Cannot parse the data.");
+    throw new BackupAppDataError("Invalid data type.");
   }
 
   /**
@@ -36,10 +40,15 @@ export class DesktopStorageProvider implements StorageProvider<AppStorageType> {
    * @param key - The key to set the value for, type of AppStorageKey.
    * @param value - The stringified value of type AppStorageType.
    * @returns A promise that resolves to nothing when the value is successfully set.
+   * @throws Error if the value cannot be stringified.
    */
   setItem(key: AppStorageKey, value: AppStorageType): Promise<void> {
-    const data = JSON.stringify(value);
-    return Promise.resolve(global.localStorage.setItem(key, data));
+    try {
+      const data = JSON.stringify(value);
+      return Promise.resolve(global.localStorage.setItem(key, data));
+    } catch (error: unknown) {
+      throw new BackupAppDataError("Cannot stringify the data(TypeError).");
+    }
   }
 
   /**

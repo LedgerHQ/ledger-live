@@ -18,9 +18,6 @@ describe("backupAppDataUseCase", () => {
   const appName = "MyApp";
   const deviceModelId = DeviceModelId.stax;
 
-  beforeEach(() => {});
-  afterEach(() => {});
-
   it("should transfer the AppDataInfoFetched event when no backup found", async () => {
     const backupAppDataFnMock = jest.fn(() =>
       of({
@@ -125,7 +122,7 @@ describe("backupAppDataUseCase", () => {
 
     await firstValueFrom(backupAppDataUseCaseObservable).catch(e => {
       expect(e).toBeInstanceOf(BackupAppDataError);
-      expect(e.message).toBe("Invalid event type.");
+      expect(e.message).toBe("Invalid event type");
     });
   });
 

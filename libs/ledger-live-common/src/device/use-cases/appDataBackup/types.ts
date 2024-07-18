@@ -1,7 +1,10 @@
-import { type AppStorageInfo, appStorageInfoGuard } from "@ledgerhq/device-core";
+import { type AppStorageInfo, isAppStorageInfo } from "@ledgerhq/device-core";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
+/**
+ * The interface for the storage provider used to store the application data, should be implemented in a platform-specific context.
+ */
 export interface StorageProvider<VType> {
   getItem(key: string): Promise<VType | null>;
   setItem(key: string, value: VType): Promise<void>;
@@ -9,6 +12,10 @@ export interface StorageProvider<VType> {
 }
 
 export type AppName = string;
+
+/**
+ * The key used to store the application data in the device storage, is a combination of the device model ID and the application name.
+ */
 export type AppStorageKey =
   `${Exclude<DeviceModelId, DeviceModelId.blue | DeviceModelId.nanoS>}-${AppName}`;
 
@@ -17,43 +24,70 @@ export type AppStorageType = {
   appData: string;
 };
 
-export function appStorageTypeGuard(data: AppStorageType | unknown): data is AppStorageType {
+export function isAppStorageType(data: AppStorageType | unknown): data is AppStorageType {
   return (
     typeof data === "object" &&
     data !== null &&
     "appDataInfo" in data &&
-    appStorageInfoGuard(data.appDataInfo) &&
+    isAppStorageInfo(data.appDataInfo) &&
     "appData" in data &&
     typeof data.appData === "string"
   );
 }
 
 export enum BackupAppDataEventType {
+  /**
+   * The progress of the ongoing backup process.
+   */
   Progress = "progress",
+  /**
+   * The application data information has been fetched.
+   */
   AppDataInfoFetched = "appDataInfoFetched",
+  /**
+   * The application data has been backed up.
+   */
   AppDataBackedUp = "appDataBackedUp",
+  /**
+   * The application data has already been backed up, no need to backup again.
+   */
   AppDataAlreadyBackedUp = "appDataAlreadyBackedUp",
+  /**
+   * There is no application data to backup.
+   */
   NoAppDataToBackup = "noAppDataToBackup",
 }
 
 export type BackupAppDataEvent =
   | {
       type: BackupAppDataEventType.Progress;
-      data: number; // Progress percentage
+      /**
+       * The progress of the backup process as a number between 0 and 1.
+       */
+      data: number;
     }
   | {
       type: BackupAppDataEventType.AppDataInfoFetched;
+      /**
+       * The application data information.
+       */
       data: AppStorageInfo;
     }
   | {
       type: BackupAppDataEventType.AppDataBackedUp;
-      data: string; // Base64 encoded app data or empty string
+      /**
+       * The base64 encoded application data or an empty string.
+       */
+      data: string;
     }
   | {
-      type: BackupAppDataEventType.AppDataAlreadyBackedUp; // Go to next app backup or finish
+      type: BackupAppDataEventType.AppDataAlreadyBackedUp;
     }
   | {
-      type: BackupAppDataEventType.NoAppDataToBackup; // Go to next app backup or finish
+      type: BackupAppDataEventType.NoAppDataToBackup;
     };
 
+/**
+ * An error that occurs during the backup process, the error message should be descriptive when thrown.
+ */
 export const BackupAppDataError = createCustomErrorClass("BackupAppDataError");

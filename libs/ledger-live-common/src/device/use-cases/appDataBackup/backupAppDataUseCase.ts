@@ -16,8 +16,8 @@ import { DeviceModelId } from "@ledgerhq/devices";
  *
  * @param storageProvider - The storage provider object used for storing the backup data.
  * @param appName - The name of the application to backup.
- * @param backupAppDataFn - The function that returns the app data to backup.
- * @returns An observable that emits events during the backup process.
+ * @param backupAppDataFn - The function that returns observable for the backup process.
+ * @returns An observable that emits BackupAppDataEvent during the backup process.
  * @throws {BackupAppDataError}
  */
 export function backupAppDataUseCase(
@@ -55,7 +55,7 @@ export function backupAppDataUseCase(
         case BackupAppDataEventType.NoAppDataToBackup:
           return event;
         default:
-          throw new BackupAppDataError("Invalid event type.");
+          throw new BackupAppDataError("Invalid event type");
       }
     }),
   );

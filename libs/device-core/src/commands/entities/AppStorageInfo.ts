@@ -6,7 +6,7 @@ export type AppStorageInfo = {
   hash: string;
 };
 
-export function appStorageInfoGuard(data: AppStorageInfo | unknown): data is AppStorageInfo {
+export function isAppStorageInfo(data: AppStorageInfo | unknown): data is AppStorageInfo {
   return (
     typeof data === "object" &&
     data !== null &&
