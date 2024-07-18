@@ -192,7 +192,7 @@
       "ACTIVATE" : "Etkinleştirildi",
       "REGISTER" : "Kaydedildi",
       "STAKE" : "Stake edildi",
-      "UNSTAKE" : "Stake iptali",
+      "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
       "SENDING" : "Gönderiliyor"
     },
@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "Takas edin",
     "tabs" : {
-      "exchange" : "Takas edin",
+      "exchange" : "Takas et",
       "history" : "Geçmiş"
     },
     "form" : {
@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Satın Al / Sat",
-        "description" : "Güvenilir sağlayıcılarla alın ve satın"
+        "description" : "Güvenilir sağlayıcılarımızla alın ve satın"
       },
       "swap" : {
         "title" : "Takas et",
-        "description" : "Bir kriptoyu diğerine güvenle dönüştürün",
+        "description" : "Kriptolar arası dönüştürme",
         "label" : "Popüler"
       },
       "earn" : {
         "title" : "Stake et",
-        "description" : "Ledger ile kripto bakiyenizi artırın"
+        "description" : "Ledger ile kriptolarınızı stake edin"
       }
     },
     "recoverBanner" : {
@@ -3742,7 +3742,7 @@
         "pending" : "Bırakılmayı bekleyen",
         "available" : "Çekilebilir bakiye"
       },
-      "unstake" : "Staking'i iptal et",
+      "unstake" : "Staking'i durdur",
       "withdraw" : "Çek",
       "activeTooltip" : "Stake edilen miktarlar ödül kazandırır",
       "inactiveTooltip" : "Stake’i iptal edilen miktarlar ödül kazandırmaz",
@@ -3784,7 +3784,7 @@
     "unstake" : {
       "disabledTooltip" : "Stake edilen varlık miktarı stake iptali için yeterli değil",
       "flow" : {
-        "title" : "Staking'i iptal et",
+        "title" : "Staking'i durdur",
         "steps" : {
           "amount" : {
             "title" : "Tutar",
@@ -4197,8 +4197,7 @@
           "modal" : {
             "flow" : "Bir Akış seçin",
             "step" : "Bir Adım seçin",
-            "activated" : "Bir yedeklemenizin olması veya olmaması için etkinleştirin/devre dışı bırakın",
-            "instance" : "Oturumlar Oluştur",
+            "instance" : "Üye Oluştur",
             "cta" : "Uygula"
           }
         }
@@ -5493,6 +5492,10 @@
       "description" : "Miktarı ve ücretleri hesaplamak mümkün değil"
     },
     "NotEnoughBalance" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "Ne yazık ki bakiye, ağ ücretlerini karşılamaya yetmiyor. Tutarı değiştirin veya bakiyeyi doğrulayın.",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
@@ -5504,6 +5507,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}} ağında takas işlemi için {{fees}} {{ticker}} ağ ücreti ödemeniz gerekiyor. <link0>{{ticker}} Satın Alın</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "TRC20 token alımını etkinleştirmek için önce bu hesaba en az 0,1 TRX göndermeniz gerekir. <link0>Daha fazla bilgi </link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "Bu Tron hesabının aktif kalması için en az 0,1 TRX ve ağ ücretleri için de en az 1,1 TRX gerekiyor.<link0> Daha fazla bilgi </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "Your Operating System version is outdated",
@@ -6088,6 +6097,9 @@
     },
     "newAddressTRC20" : {
       "title" : "Önce bu hesaba en az 0,1 TRX göndererek hesabı etkinleştirmelisiniz."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Bitcoin altyapımızla ilgili olarak bir sorun yaşıyoruz. Lütfen daha sonra tekrar deneyin."
     }
   },
   "cryptoOrg" : {
@@ -6300,7 +6312,7 @@
         "description" : "Şifreleme anahtarınızı başka bir Ledger cihazıyla güvence altına alın veya silin."
       },
       "instance" : {
-        "label_one" : "1 senkronize oturum",
+        "label" : "1 senkronize oturum",
         "label_other" : "{{count}} senkronize oturum",
         "cta" : "Yönet"
       }
@@ -6313,7 +6325,8 @@
     "error" : {
       "title" : "Bir hata oluştu",
       "description" : "Lütfen daha sonra tekrar deneyin.",
-      "cta" : "Tekrar dene"
+      "cta" : "Tekrar dene",
+      "fetching" : "Verileriniz alınırken bir sorun oluştu."
     },
     "unsecuredError" : {
       "title" : "Senkronizasyon bu Ledger cihazı tarafından güvence altına alınmamış durumda",
@@ -6322,10 +6335,17 @@
       "cta" : "Başka Ledger bağla",
       "ctaDelete" : "Şifreleme anahtarımı sil"
     },
+    "autoRemoveError" : {
+      "title" : "Mevcut oturumu kaldıramazsınız",
+      "description" : "Güvenlik nedeniyle şu anda kullandığınız oturumu, şifreleme anahtarını silmeden kaldıramazsınız.",
+      "info" : "Şifreleme anahtarınızı sildiğinizde cihazlarınızın senkronizasyonu kaldırılır ve tüm senkronize verileriniz silinir. Ancak bu işlem, fonlarınızı etkilemez. Hesaplarınızı istediğiniz zaman yeniden senkronize edebilirsiniz.",
+      "cta" : "Anladım",
+      "ctaDelete" : "Şifreleme anahtarımı sil"
+    },
     "success" : {
       "backup" : {
         "title" : "Başarılı",
-        "desc" : "Ledger Sync'i başarıyla etkinleştirdiniz. ",
+        "desc" : "Ledger Sync'i başarıyla etkinleştirdiniz.",
         "synchAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et"
       },
       "synch" : {
@@ -6333,7 +6353,7 @@
         "desc" : "Artık hesaplarınızdaki değişiklikler otomatik olarak tüm uygulamalarda ve platformlarda görünecektir."
       }
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Anahtarınızı yönetin",
       "options" : {
         "deleteBackup" : {
@@ -6387,6 +6407,10 @@
       "remove" : "Kaldır",
       "deleteInstanceSuccess" : "{{instanceName}} oturumunuz artık senkronize değil",
       "deleteInstanceError" : "{{instanceName}} oturumunun desenkronizasyonu sırasında bir sorun oluştu"
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}} üzerinde devam edin",
+      "description" : "Ledger cihazınızın Güvenilir Ekranında gösterilen talimatları izleyin."
     }
   }
 }
