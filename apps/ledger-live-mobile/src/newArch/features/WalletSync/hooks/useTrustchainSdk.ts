@@ -30,7 +30,7 @@ export function useTrustchainSdk() {
     return { applicationId, name };
   }, []);
 
-  const sdk = getSdk(isMockEnv, defaultContext);
+  const sdk = useMemo(() => getSdk(isMockEnv, defaultContext), [isMockEnv, defaultContext]);
 
   return sdk;
 }
