@@ -1,18 +1,19 @@
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import { NativeStackHeaderProps } from "@react-navigation/native-stack";
-import { Box, Flex, Icons } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
+import BackButton from "LLM/features/Web3Hub/components/BackButton";
+import TabButton from "LLM/features/Web3Hub/components/TabButton";
+import { AppProps } from "LLM/features/Web3Hub/types";
 import TextInput from "~/components/TextInput";
-import Touchable from "~/components/Touchable";
 
 const SEARCH_HEIGHT = 60;
 
 type Props = {
-  navigation: NativeStackHeaderProps["navigation"];
+  navigation: AppProps["navigation"];
 };
 
-export default function Web3HubMainHeader({ navigation }: Props) {
+export default function Web3HubAppHeader({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
 
@@ -22,13 +23,9 @@ export default function Web3HubMainHeader({ navigation }: Props) {
       paddingTop={insets.top}
       height={SEARCH_HEIGHT + insets.top}
     >
-      <Flex height={SEARCH_HEIGHT} flexDirection="row" alignItems="center">
-        <Touchable testID="navigation-header-back-button" onPress={navigation.goBack}>
-          <Box p={5}>
-            <Icons.ArrowLeft />
-          </Box>
-        </Touchable>
-        <Box width={"80%"}>
+      <Flex flex={1} height={SEARCH_HEIGHT} flexDirection="row" alignItems="center">
+        <BackButton onPress={navigation.goBack} />
+        <Flex flex={1}>
           <TextInput
             placeholder="Current URL"
             keyboardType="default"
@@ -36,7 +33,8 @@ export default function Web3HubMainHeader({ navigation }: Props) {
             value=""
             disabled
           />
-        </Box>
+        </Flex>
+        <TabButton count={2} navigation={navigation} />
       </Flex>
     </Box>
   );

@@ -9,18 +9,10 @@ import Web3HubTabs from "./screens/Web3HubTabs";
 import Web3HubTabsHeader from "./screens/Web3HubTabs/components/Header";
 import Web3HubApp from "./screens/Web3HubApp";
 import Web3HubAppHeader from "./screens/Web3HubApp/components/Header";
+import type { AppProps, SearchProps, TabsProps, Web3HubStackParamList } from "./types";
 
-// Uncomment to use mocks
+// Uncomment to use mocks (you need to reload the app)
 // process.env.MOCK_WEB3HUB = "1";
-
-export type Web3HubStackParamList = {
-  [ScreenName.Web3HubSearch]: undefined;
-  [ScreenName.Web3HubTabs]: undefined;
-  [ScreenName.Web3HubApp]: {
-    manifestId: string;
-    queryParams?: Record<string, string | undefined>;
-  };
-};
 
 const Stack = createNativeStackNavigator<Web3HubStackParamList>();
 
@@ -41,7 +33,11 @@ export default function Navigator() {
           component={Web3HubSearch}
           options={{
             header: props => (
-              <Web3HubSearchHeader navigation={props.navigation} onSearch={setSearch} />
+              <Web3HubSearchHeader
+                // Using as here because we cannot use generics on the header props
+                navigation={props.navigation as SearchProps["navigation"]}
+                onSearch={setSearch}
+              />
             ),
           }}
         />
@@ -51,7 +47,11 @@ export default function Navigator() {
           options={{
             title: "N Tabs", // Temporary, will probably be changed
             header: props => (
-              <Web3HubTabsHeader title={props.options.title} navigation={props.navigation} />
+              <Web3HubTabsHeader
+                title={props.options.title}
+                // Using as here because we cannot use generics on the header props
+                navigation={props.navigation as TabsProps["navigation"]}
+              />
             ),
           }}
         />
@@ -59,7 +59,12 @@ export default function Navigator() {
           name={ScreenName.Web3HubApp}
           component={Web3HubApp}
           options={{
-            header: props => <Web3HubAppHeader navigation={props.navigation} />,
+            header: props => (
+              <Web3HubAppHeader
+                // Using as here because we cannot use generics on the header props
+                navigation={props.navigation as AppProps["navigation"]}
+              />
+            ),
           }}
         />
       </Stack.Navigator>
