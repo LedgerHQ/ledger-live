@@ -28,7 +28,7 @@ export const fetchNominations = async (address: string): Promise<SidecarNominati
   const stashes = await api.derive.staking.stashes();
 
   const allStashes = stashes.map(stash => stash.toString());
-  let returnTargets = [];
+  const returnTargets = [];
   for (const target of targets) {
     let status: "active" | "inactive" | "waiting" | null = null;
     let value = "0";
@@ -38,9 +38,11 @@ export const fetchNominations = async (address: string): Promise<SidecarNominati
         status = "waiting";
       }
     } else {
-      const pageCount:number = (exposure.toJSON() as any).pageCount ?? 0;
+      const pageCount: number = (exposure.toJSON() as any).pageCount ?? 0;
       for (let i = 0; i < pageCount; i++) {
-        const nominators = (await api.query.staking.erasStakersPaged(activeEra, target.toString(), i)).unwrap().others;
+        const nominators = (
+          await api.query.staking.erasStakersPaged(activeEra, target.toString(), i)
+        ).unwrap().others;
         if (!status && nominators.length > 0) {
           status = "inactive";
         }
@@ -58,7 +60,6 @@ export const fetchNominations = async (address: string): Promise<SidecarNominati
       status,
     });
   }
-
   return {
     submittedIn: submittedIn.toString(),
     targets: returnTargets,

@@ -28,6 +28,7 @@ import type {
   BlockInfo,
 } from "./sidecar.types";
 import { createRegistryAndExtrinsics } from "./common";
+import node from "./node";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -136,14 +137,7 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
  * @returns {SidecarNominations}
  */
 const fetchNominations = async (addr: string): Promise<SidecarNominations> => {
-  //LIVE-13136: commented for the time being
-  // return node.fetchNominations(addr);
-  const {
-    data,
-  }: {
-    data: SidecarNominations;
-  } = await callSidecar(`/accounts/${addr}/nominations`);
-  return data;
+  return node.fetchNominations(addr);
 };
 
 /**
