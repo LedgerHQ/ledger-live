@@ -18,7 +18,7 @@ const DEVICE = {
 } as DeviceLike;
 
 describe("WalletSyncActivation", () => {
-  it("Should WalletSyncActivation Flow and go through device selection", async () => {
+  it("Should open WalletSyncActivation Flow and go through device selection", async () => {
     setEnv("MOCK", "1");
 
     const { user } = render(<WalletSyncSharedNavigator />, {

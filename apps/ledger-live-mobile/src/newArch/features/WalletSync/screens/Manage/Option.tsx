@@ -1,4 +1,4 @@
-import { Flex, Box, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { Separator } from "../../components/Separator";
