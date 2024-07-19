@@ -13,7 +13,6 @@ export function useAddMember({ device }: { device: Device | null }) {
 
   const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
 
-  const deviceRef = useRef(device);
   const memberCredentialsRef = useRef(memberCredentials);
 
   const transitionToNextScreen = useCallback(
@@ -31,18 +30,10 @@ export function useAddMember({ device }: { device: Device | null }) {
   const onRetry = () => {};
 
   useEffect(() => {
-    deviceRef.current = device;
-  }, [device]);
-
-  useEffect(() => {
-    if (!deviceRef.current) {
-      handleMissingDevice();
-    }
-
     const addMember = async () => {
       try {
-        if (!deviceRef.current) return;
-        await runWithDevice(deviceRef.current.deviceId, async transport => {
+        if (!device) return;
+        await runWithDevice(device.deviceId, async transport => {
           const trustchainResult = await sdk.getOrCreateTrustchain(
             transport,
             memberCredentialsRef.current as MemberCredentials,
@@ -61,8 +52,8 @@ export function useAddMember({ device }: { device: Device | null }) {
       }
     };
 
-    addMember();
-  }, [dispatch, handleMissingDevice, sdk, transitionToNextScreen]);
+    setTimeout(() => addMember(), 3500);
+  }, [device, dispatch, handleMissingDevice, sdk, transitionToNextScreen]);
 
   return { error, userDeviceInteraction, handleMissingDevice, onRetry };
 }
