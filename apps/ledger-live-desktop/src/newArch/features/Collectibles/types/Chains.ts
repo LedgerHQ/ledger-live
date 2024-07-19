@@ -4,3 +4,10 @@ export enum Chains {
   BITCOIN = "BTC",
   UTXO = "UTXO",
 }
+
+export enum ChainsEnum {
+  POLYGON = "polygon",
+  ETHEREUM = "ethereum",
+  BITCOIN = "bitcoin",
+  UTXO = "utxo",
+}

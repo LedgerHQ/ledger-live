@@ -1,17 +1,17 @@
 import React, { memo } from "react";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import { useSelector } from "react-redux";
 import { collectiblesViewModeSelector } from "~/renderer/reducers/settings";
 import Item from "./Item";
 import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
+import { TokenListProps } from "~/newArch/Collectibles/Nfts/components/TokensList/useTokensListModel";
 
 type Props = {
-  account: Account;
-  isLoading?: boolean;
-  collectibles: { id: string; previewUri: string }[];
+  account: TokenListProps["account"];
+  collectibles: TokenListProps["formattedNfts"];
   onHideCollection?: () => void;
+  onItemClick: (id: string) => void;
 };
 
 const Container = styled(Box).attrs<{
@@ -22,7 +22,7 @@ const Container = styled(Box).attrs<{
   grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
 `;
 
-const TokensList = ({ account, collectibles, isLoading, onHideCollection }: Props) => {
+const TokensList = ({ account, collectibles, onHideCollection, onItemClick }: Props) => {
   const collectiblesViewMode = useSelector(collectiblesViewModeSelector);
 
   return (
@@ -32,11 +32,17 @@ const TokensList = ({ account, collectibles, isLoading, onHideCollection }: Prop
           key={collectible.id}
           mode={collectiblesViewMode}
           id={collectible.id}
+          metadata={collectible.metadata}
+          nft={collectible.nft}
+          amount={collectible.amount}
+          standard={collectible.standard}
+          tokenName={collectible.tokenName}
           account={account}
-          isLoading={isLoading || false}
+          isLoading={collectible.isLoading}
           previewUri={collectible.previewUri}
+          mediaType={collectible.mediaType}
           onHideCollection={onHideCollection}
-          withContextMenu
+          onItemClick={() => onItemClick(collectible.collectibleId)}
         />
       ))}
     </Container>
