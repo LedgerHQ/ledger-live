@@ -24,6 +24,7 @@ import { settingsExportSelector } from "./reducers/settings";
 import logger from "./logger";
 import { trustchainStoreSelector } from "@ledgerhq/trustchain/store";
 import { marketStoreSelector } from "./reducers/market";
+import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -58,6 +59,7 @@ type DatabaseValues = {
   postOnboarding: PostOnboarding;
   settings: Settings;
   trustchain: TrustchainStore;
+  wallet: ExportedWalletState;
   market: Market;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;

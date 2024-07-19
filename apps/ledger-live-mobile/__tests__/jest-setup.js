@@ -117,6 +117,8 @@ jest.mock("@react-native-firebase/messaging", () => ({
 
 jest.mock("@braze/react-native-sdk", () => ({}));
 
+jest.mock("react-native-webview", () => jest.fn());
+
 const originalError = console.error;
 const originalWarn = console.warn;
 

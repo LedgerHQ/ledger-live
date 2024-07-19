@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSharedValue } from "react-native-reanimated";
 import { ScreenName } from "~/const";
 import { HeaderContext } from "./HeaderContext";
-import Web3HubMain from "./screens/Web3HubMain";
-import Web3HubMainHeader from "./screens/Web3HubMain/components/Header";
 import Web3HubSearch from "./screens/Web3HubSearch";
 import Web3HubSearchHeader from "./screens/Web3HubSearch/components/Header";
 import Web3HubTabs from "./screens/Web3HubTabs";
@@ -13,19 +10,21 @@ import Web3HubTabsHeader from "./screens/Web3HubTabs/components/Header";
 import Web3HubApp from "./screens/Web3HubApp";
 import Web3HubAppHeader from "./screens/Web3HubApp/components/Header";
 
+// Uncomment to use mocks
+// process.env.MOCK_WEB3HUB = "1";
+
 export type Web3HubStackParamList = {
-  [ScreenName.Web3HubMain]: undefined;
   [ScreenName.Web3HubSearch]: undefined;
   [ScreenName.Web3HubTabs]: undefined;
   [ScreenName.Web3HubApp]: {
     manifestId: string;
+    queryParams?: Record<string, string | undefined>;
   };
 };
 
 const Stack = createNativeStackNavigator<Web3HubStackParamList>();
 
-export default function Web3HubNavigator() {
-  const { t } = useTranslation();
+export default function Navigator() {
   const layoutY = useSharedValue(0);
   const [search, setSearch] = useState("");
 
@@ -36,20 +35,7 @@ export default function Web3HubNavigator() {
         search,
       }}
     >
-      <Stack.Navigator initialRouteName={ScreenName.Web3HubMain}>
-        <Stack.Screen
-          name={ScreenName.Web3HubMain}
-          component={Web3HubMain}
-          options={{
-            title: t("web3hub.main.header.title"),
-            // Never just pass a component to header like `header: Web3HubMainHeader,`
-            // as it would break the fast-refresh for the header
-            header: props => (
-              <Web3HubMainHeader title={props.options.title} navigation={props.navigation} />
-            ),
-            animation: "none",
-          }}
-        />
+      <Stack.Navigator>
         <Stack.Screen
           name={ScreenName.Web3HubSearch}
           component={Web3HubSearch}
