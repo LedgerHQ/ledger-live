@@ -17,7 +17,6 @@ import { openURL } from "~/renderer/linking";
 import { colors } from "~/renderer/styles/theme";
 import { track } from "~/renderer/analytics/segment";
 
-
 const IconWrapper = styled(Box)`
   background: ${colors.lightGreen};
   color: ${colors.positiveGreen};
@@ -87,8 +86,8 @@ const SwapCompleted = ({
       page: "ModalStep-finished",
       flow: "swap",
       button: "FeedbackForm",
-    })
-  }
+    });
+  };
 
   const SwapPill = ({ swapId }: { swapId: string }) => (
     <SwapIdWrapper>
