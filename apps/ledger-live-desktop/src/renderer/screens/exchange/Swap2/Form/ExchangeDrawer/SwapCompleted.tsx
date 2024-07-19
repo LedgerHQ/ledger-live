@@ -84,7 +84,7 @@ const SwapCompleted = ({
 
   const openFeedbackFormTrack = () => {
     track("button_clicked", {
-      page: "quoteSwap",
+      page: "ModalStep-finished",
       flow: "swap",
       button: "FeedbackForm",
     })
