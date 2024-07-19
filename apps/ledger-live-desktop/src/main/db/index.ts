@@ -92,6 +92,7 @@ async function reload() {
 const encryptedDataPaths = [
   ["app", "accounts"],
   ["app", "trustchain"],
+  ["app", "wallet"],
 ];
 
 /**

@@ -183,6 +183,10 @@ export class MockSDK implements TrustchainSDK {
     // simulate device interaction
     callbacks?.onEndRequestUserInteraction();
 
+    callbacks?.onStartRequestUserInteraction();
+    // simulate device interaction
+    callbacks?.onEndRequestUserInteraction();
+
     const currentMembers = (trustchainMembers.get(trustchain.rootId) || []).filter(
       m => m.id !== member.id,
     );

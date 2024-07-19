@@ -3,7 +3,7 @@ import { Box, InfiniteLoader } from "@ledgerhq/native-ui";
 
 export default function LoadingIndicator() {
   return (
-    <Box height={40} testID="web3hub-loading-indicator">
+    <Box height={40} accessible accessibilityRole="progressbar">
       <InfiniteLoader size={30} />
     </Box>
   );

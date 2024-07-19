@@ -1,18 +1,13 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import { AppIcon } from "~/screens/Platform/v2/AppIcon";
+import type { SearchProps } from "LLM/features/Web3Hub/types";
+import AppIcon from "LLM/features/Web3Hub/components/AppIcon";
 import { ScreenName } from "~/const";
-import type { Web3HubStackParamList } from "LLM/features/Web3Hub/Navigator";
 import CurrencyIconList from "./CurrencyIconList";
 
-type SearchProps = BaseComposite<
-  NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubSearch>
->;
 export type NavigationProp = SearchProps["navigation"];
 
 export default function SearchItem({
