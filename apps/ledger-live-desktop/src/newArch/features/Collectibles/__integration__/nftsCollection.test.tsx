@@ -11,7 +11,7 @@ describe("displayNftCollection", () => {
       initialState: {
         accounts: [account],
         overriddenFeatureFlagsSelector: {
-          nftsFromSimplehash: false,
+          nftsFromSimplehash: true,
         },
       },
       initialRoute: `/`,
@@ -27,7 +27,7 @@ describe("displayNftCollection", () => {
       initialState: {
         accounts: [account],
         overriddenFeatureFlagsSelector: {
-          nftsFromSimplehash: false,
+          nftsFromSimplehash: true,
         },
       },
       initialRoute: `/`,
@@ -47,7 +47,7 @@ describe("displayNftCollection", () => {
       initialState: {
         accounts: [account],
         overriddenFeatureFlagsSelector: {
-          nftsFromSimplehash: false,
+          nftsFromSimplehash: true,
         },
       },
       initialRoute: `/`,
@@ -67,7 +67,7 @@ describe("displayNftCollection", () => {
       initialState: {
         accounts: [account],
         overriddenFeatureFlagsSelector: {
-          nftsFromSimplehash: false,
+          nftsFromSimplehash: true,
         },
       },
       initialRoute: `/`,

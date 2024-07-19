@@ -4,8 +4,9 @@ import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTCollectionContextMenu";
 import { Skeleton } from "LLD/features/Collectibles/components";
 import styled from "styled-components";
-import { IconsLegacy } from "@ledgerhq/react-ui";
-import { FieldStatus } from "LLD/features/Collectibles/types/DetailDrawer";
+import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
+import { FieldStatus } from "LLD/Collectibles/types/DetailDrawer";
+import { Text } from "@ledgerhq/react-ui";
 
 const Dots = styled.div`
   justify-content: flex-end;
@@ -18,19 +19,22 @@ const Dots = styled.div`
     color: ${p => p.theme.colors.palette.text.shade80};
   }
 `;
-const Container = styled.div`
-  display: flex;
-  column-gap: 10px;
-`;
 
 type Props = {
   nft?: ProtoNFT;
   fallback?: string;
   account?: Account;
   showHideMenu?: boolean;
-}; // TODO Make me pretty
+  collectiblesNumber?: number;
+};
 
-const CollectionNameComponent: React.FC<Props> = ({ nft, fallback, account, showHideMenu }) => {
+const CollectionNameComponent: React.FC<Props> = ({
+  nft,
+  fallback,
+  account,
+  showHideMenu,
+  collectiblesNumber,
+}) => {
   const { status, metadata } = useNftCollectionMetadata(nft?.contract, nft?.currencyId);
   const { tokenName } = metadata || {};
   const loading = status === FieldStatus.Loading;
@@ -38,8 +42,13 @@ const CollectionNameComponent: React.FC<Props> = ({ nft, fallback, account, show
 
   return (
     <Skeleton width={80} minHeight={24} barHeight={10} show={loading}>
-      <Container>
+      <Flex columnGap={"3px"} alignItems={"center"}>
         {tokenName || fallback || "-"}
+        {collectiblesNumber && (
+          <Text fontWeight="small" color={"neutral.c70"} fontSize={12}>
+            ({collectiblesNumber})
+          </Text>
+        )}
         {isComponentReady && (
           <NFTCollectionContextMenu
             collectionName={tokenName || fallback || "-"}
@@ -52,7 +61,7 @@ const CollectionNameComponent: React.FC<Props> = ({ nft, fallback, account, show
             </Dots>
           </NFTCollectionContextMenu>
         )}
-      </Container>
+      </Flex>
     </Skeleton>
   );
 };
