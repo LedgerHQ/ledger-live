@@ -7,3 +7,4 @@ export { Placeholder } from "./Media/Placeholder";
 export { TableLayoutToggle } from "./TableLayout/LayoutToggle";
 export { LayoutContainer } from "./TableLayout/LayoutContainer";
 export { DetailDrawer } from "./DetailDrawer";
+export { TableLayout } from "./TableLayout";

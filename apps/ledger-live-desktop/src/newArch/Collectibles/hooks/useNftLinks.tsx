@@ -101,6 +101,8 @@ export default (
 ): ContextMenuItemType[] => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const devicesModelList = useSelector(devicesModelListSelector);
+
   const hideCollection = useMemo(
     () => ({
       id: "hide-collection",
@@ -130,7 +132,6 @@ export default (
     return customImageUri;
   }, [metadata]);
 
-  const devicesModelList = useSelector(devicesModelListSelector);
   const customImageDeviceModelIds = devicesModelList.filter(deviceModelId =>
     isCustomLockScreenSupported(deviceModelId),
   );

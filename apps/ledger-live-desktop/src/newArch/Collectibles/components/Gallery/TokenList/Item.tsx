@@ -1,6 +1,6 @@
-import { Account } from "@ledgerhq/types-live";
-import React, { memo } from "react";
-import { Layout, LayoutKey } from "~/newArch/Collectibles/types/Layouts";
+import { Account, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
+import React from "react";
+import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
 import RowItem from "./RowItem";
 import CardItem from "./CardItem";
 import Card from "~/renderer/components/Box/Card";
@@ -9,6 +9,7 @@ import { Skeleton } from "../../Skeleton";
 import { Media } from "../../Media";
 import Box from "~/renderer/components/Box";
 import { Flex } from "@ledgerhq/react-ui";
+import BigNumber from "bignumber.js";
 
 const Wrapper = styled(Card)`
   &.disabled {
@@ -29,54 +30,82 @@ const Wrapper = styled(Card)`
 
 type Props = {
   id: string;
+  standard: string;
+  amount: string | BigNumber;
+  tokenName: string;
   previewUri: string;
   mode: LayoutKey;
   account: Account;
   isLoading: boolean;
-  withContextMenu: boolean;
+  mediaType: string;
+  metadata: NFTMetadata | null | undefined;
+  nft: ProtoNFT | undefined;
   onHideCollection?: () => void;
+  onItemClick: () => void;
 };
 
 const Item = ({
   id,
+  standard,
+  amount,
   previewUri,
+  mediaType,
   mode,
+  tokenName,
+  metadata,
   account,
-  withContextMenu,
+  nft,
   isLoading,
   onHideCollection,
+  onItemClick,
 }: Props) => {
   const isGridLayout = mode === Layout.GRID;
   const Component = isGridLayout ? CardItem : RowItem;
 
   return (
     <Wrapper
-      px={3}
+      px={isGridLayout ? 3 : 2}
       py={isGridLayout ? 3 : 2}
-      className={(isLoading || process.env.ALWAYS_SHOW_SKELETONS) ?? "disabled"}
+      className={(isLoading || process.env.ALWAYS_SHOW_SKELETONS) && "disabled"}
       horizontal={!isGridLayout}
       alignItems={!isGridLayout ?? "center"}
-      onClick={() => {}}
+      onClick={onItemClick}
     >
-      <Skeleton width={40} minHeight={40} full={isGridLayout} show={isLoading}>
-        <Flex flexDirection={isGridLayout ? "column" : "row"}>
+      <Flex
+        flexDirection={isGridLayout ? "column" : "row"}
+        flex={1}
+        pl={isGridLayout ? 0 : "5px"}
+        columnGap={"16px"}
+      >
+        <Skeleton width={40} minHeight={40} full={isGridLayout} show={isLoading}>
           <Media
             isLoading={isLoading}
             useFallback={false}
             contentType="image"
             mediaFormat="preview"
             uri={previewUri}
-            mediaType="preview"
+            mediaType={mediaType}
             size={isGridLayout ? undefined : 40}
+            full={isGridLayout}
             backgroundSize={isGridLayout ? undefined : "700%"}
           />
-          <Box ml={isGridLayout ? 0 : 2}>
-            <Component />
-          </Box>
-        </Flex>
-      </Skeleton>
+        </Skeleton>
+        <Box flex={1}>
+          <Component
+            isLoading={isLoading}
+            tokenId={id}
+            standard={standard}
+            amount={amount}
+            tokenName={tokenName}
+            onHideCollection={onHideCollection}
+            nft={nft}
+            metadata={metadata}
+            account={account}
+          />
+        </Box>
+      </Flex>
     </Wrapper>
   );
 };
 
-export default memo<Props>(Item);
+export default Item;
