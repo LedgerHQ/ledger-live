@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 interface ChildrenProps {
   children: JSX.Element;
 }
+
 interface ExtraOptions {
   initialState?: {
     [key: string]: unknown;

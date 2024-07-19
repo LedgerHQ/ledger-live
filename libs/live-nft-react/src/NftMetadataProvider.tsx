@@ -94,6 +94,7 @@ export function useNftCollectionMetadata(
   currencyId: string | undefined,
 ): NFTResource<NonNullable<NFTCollectionMetadataResponse["result"]>> {
   const { cache, loadCollectionMetadata } = useContext(NftMetadataContext);
+
   const key = contract && currencyId ? getNftCollectionKey(contract, currencyId) : "";
 
   const cachedData = cache[key] as NFTResource<

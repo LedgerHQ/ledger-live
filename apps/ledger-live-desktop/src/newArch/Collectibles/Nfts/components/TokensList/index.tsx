@@ -1,10 +1,10 @@
 import React from "react";
 import TokensList from "LLD/Collectibles/components/Gallery/TokenList";
-import { useTokenListModel } from "./useTokenListModel";
+import { useTokensListModel } from "./useTokensListModel";
 import { BaseNftsProps } from "LLD/Collectibles/types/Collectibles";
 import NftDetailDrawer from "LLD/Collectibles/Nfts/components/DetailDrawer";
 
-type ViewProps = ReturnType<typeof useTokenListModel>;
+type ViewProps = ReturnType<typeof useTokensListModel>;
 
 function View({
   account,
@@ -30,7 +30,7 @@ function View({
 }
 
 const NftTokensList: React.FC<BaseNftsProps> = ({ ...props }) => (
-  <View {...useTokenListModel({ ...props })} />
+  <View {...useTokensListModel({ ...props })} />
 );
 
 export default NftTokensList;

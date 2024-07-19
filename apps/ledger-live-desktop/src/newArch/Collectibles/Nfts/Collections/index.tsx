@@ -3,7 +3,7 @@ import { useNftCollectionsModel } from "./useNftCollectionsModel";
 import { Box, Icons, Flex } from "@ledgerhq/react-ui";
 import TableContainer from "~/renderer/components/TableContainer";
 import TableHeader from "../../components/Collection/TableHeader";
-import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import TableRow from "../../components/Collection/TableRow";
 import EmptyCollection from "../../components/Collection/EmptyCollection";
@@ -15,13 +15,6 @@ import { FieldStatus } from "../../types/DetailDrawer";
 import CollectionContextMenu from "LLD/components/ContextMenu/CollectibleContextMenu";
 import HeaderActions from "../../components/Collection/HeaderActions";
 import { TableHeaderProps, TableHeaderTitleKey as TitleKey } from "../../types/Collection";
-
-export type NftsInTheCollections = {
-  contract: string;
-  nft: ProtoNFT;
-  nftsNumber: number;
-  onClick: (collectionAddress: string) => void;
-};
 
 type ViewProps = ReturnType<typeof useNftCollectionsModel>;
 
@@ -46,10 +39,9 @@ const NftItem: React.FC<NftItemProps> = ({
   numberOfNfts,
   onClick,
 }) => {
+  console.log("contract", contract);
   const { metadata, status } = useNftMetadata(contract, tokenId, currencyId);
   const isLoading = status === FieldStatus.Loading;
-
-  console.log("metadata", metadata, status);
 
   return (
     <CollectionContextMenu
@@ -146,8 +138,8 @@ function View({
   );
 }
 
-const NftCollection: React.FC<Props> = ({ account }) => {
+const NftCollections: React.FC<Props> = ({ account }) => {
   return <View {...useNftCollectionsModel({ account })} account={account} />;
 };
 
-export default NftCollection;
+export default NftCollections;

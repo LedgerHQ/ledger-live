@@ -6,7 +6,7 @@ import NftBreadCrumb from "LLD/components/BreadCrumb";
 import NftCollection from "../Nfts/Collection";
 import NftCollections from "../Nfts/Collections";
 
-export const account = genAccount("ethereum1", {
+export const account = genAccount("mockethereum", {
   withNft: true,
   operationsSize: 30,
 });
@@ -30,6 +30,6 @@ export const NftCollectionTest = withRouter(NftCollectionTestBase);
 export const NoNftCollectionTest = withRouter(() => (
   <>
     <NftBreadCrumb />
-    <NftCollections account={genAccount("ethereum1")} />
+    <NftCollections account={genAccount("mockethereum")} />
   </>
 ));

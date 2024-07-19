@@ -28,7 +28,7 @@ export type TokenListProps = {
   onItemClick: (id: string) => void;
 };
 
-export const useTokenListModel = ({ nfts, account }: BaseNftsProps): TokenListProps => {
+export const useTokensListModel = ({ nfts, account }: BaseNftsProps): TokenListProps => {
   const nftsIdsList: string[] = Object.keys(
     nfts.reduce((acc, nft) => ({ ...acc, [nft.id]: nft }), {}),
   );

@@ -48,9 +48,12 @@ const commonConfig = {
   },
 };
 
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"],
   coverageReporters: ["json", "lcov", "json-summary"],
+  silent: false,
+  verbose: true,
   projects: [
     {
       ...commonConfig,

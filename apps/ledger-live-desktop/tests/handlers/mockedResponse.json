@@ -1,256 +1,62 @@
-{
-  "next_cursor": "MTYyNjkwMjYzN19ldm0tMS4weDU3ZjE4ODdhOGJmMTliMTRmYzBkZjZmZDliMmFjYzlhZjE0N2VhODUuMDQ3NDgzNTg0MTcwMTA2NTA5MzE1MjEwMDM0NzY0Njc5Nzk5NzI3NTA1MTkzNjkwMTAxOTU1ODMyOTczNTcwODg5MzY5MTIyMjQ1NzQzX19uZXh0",
-  "next": "https://ledger-25462.api.simplehash.com/api/v0/nfts/owners_v2?chains=ethereum&cursor=MTYyNjkwMjYzN19ldm0tMS4weDU3ZjE4ODdhOGJmMTliMTRmYzBkZjZmZDliMmFjYzlhZjE0N2VhODUuMDQ3NDgzNTg0MTcwMTA2NTA5MzE1MjEwMDM0NzY0Njc5Nzk5NzI3NTA1MTkzNjkwMTAxOTU1ODMyOTczNTcwODg5MzY5MTIyMjQ1NzQzX19uZXh0&filters=spam_score__lte%3D40&limit=50&wallet_addresses=0x96786936c6df010F0A1cabC812371125501C4c31",
-  "previous": null,
-  "nfts": [
-    {
-      "nft_id": "ethereum.0xe064eezaesqd0b6ceca44f56175sq1232122a232c4395c0d52ed0c4.22",
-      "chain": "ethereum",
-      "contract_address": "0xe064E0b6c23ZQSDqEca44f561752a232C4395c0d52Ed0c4",
-      "token_id": "22",
-      "name": "Incubita",
-      "description": "Where nothing is as it seems.",
-      "previews": {
-        "image_small_url": "",
-        "image_medium_url": "",
-        "image_large_url": "",
-        "image_opengraph_url": "",
-        "blurhash": "",
-        "predominant_color": "#c9c2bb"
-      },
-      "image_url": "",
-      "image_properties": {
-        "width": 2500,
-        "height": 2500,
-        "size": 2656266,
-        "mime_type": "image/jpeg"
-      },
-      "video_url": "",
-      "video_properties": {
-        "width": 2500,
-        "height": 2500,
-        "duration": 15.019,
-        "video_coding": "aac",
-        "audio_coding": "h264",
-        "size": 46534902,
-        "mime_type": "video/mp4"
-      },
-      "audio_url": null,
-      "audio_properties": null,
-      "model_url": null,
-      "model_properties": null,
-      "other_url": null,
-      "other_properties": null,
-      "background_color": null,
-      "external_url": null,
-      "created_date": "2024-06-17T12:02:35",
-      "status": "minted",
-      "token_count": 1,
-      "owner_count": 1,
-      "owners": [
-        {
-          "owner_address": "",
-          "quantity": 1,
-          "quantity_string": "1",
-          "first_acquired_date": "2024-07-09T08:13:11",
-          "last_acquired_date": "2024-07-09T08:13:11"
-        }
-      ],
-      "contract": {
-        "type": "",
-        "name": "",
-        "symbol": "",
-        "deployed_by": "",
-        "deployed_via_contract": null,
-        "owned_by": "",
-        "has_multiple_collections": false
-      },
-      "collection": {
-        "collection_id": "",
-        "name": "Marterium",
-        "description": null,
-        "image_url": "",
-        "image_properties": {
-          "width": 512,
-          "height": 512,
-          "mime_type": "image/png"
-        },
-        "banner_image_url": "",
-        "category": null,
-        "is_nsfw": false,
-        "external_url": "",
-        "twitter_username": "",
-        "discord_url": null,
-        "instagram_username": "",
-        "medium_username": null,
-        "telegram_url": null,
-        "marketplace_pages": [
-          {
-            "marketplace_id": "magiceden",
-            "marketplace_name": "Magic Eden",
-            "marketplace_collection_id": "",
-            "nft_url": "",
-            "collection_url": "",
-            "verified": null
-          },
-          {
-            "marketplace_id": "opensea",
-            "marketplace_name": "OpenSea",
-            "marketplace_collection_id": "",
-            "nft_url": "",
-            "collection_url": "",
-            "verified": false
-          }
-        ],
-        "metaplex_mint": null,
-        "metaplex_candy_machine": null,
-        "metaplex_first_verified_creator": null,
-        "spam_score": 0,
-        "floor_prices": [
-          {
-            "marketplace_id": "opensea",
-            "marketplace_name": "OpenSea",
-            "value": 0,
-            "payment_token": {
-              "payment_token_id": "ethereum.native",
-              "name": "Ether",
-              "symbol": "ETH",
-              "address": null,
-              "decimals": 18
-            },
-            "value_usd_cents": 12
-          }
-        ],
-        "top_bids": [],
-        "distinct_owner_count": 22,
-        "distinct_nft_count": 23,
-        "total_quantity": 23,
-        "chains": ["ethereum"],
-        "top_contracts": ["ethereum.23212"],
-        "collection_royalties": [
-          {
-            "source": "opensea",
-            "total_creator_fee_basis_points": 1000,
-            "recipients": [
-              {
-                "address": "",
-                "percentage": 100.0,
-                "basis_points": 1000
-              }
-            ]
-          }
-        ]
-      },
-      "last_sale": {
-        "from_address": null,
-        "to_address": "",
-        "quantity": 1,
-        "quantity_string": "1",
-        "timestamp": "2024-06-17T12:02:35",
-        "transaction": "",
-        "marketplace_id": "",
-        "marketplace_name": "",
-        "is_bundle_sale": false,
-        "payment_token": {
-          "payment_token_id": "ethereum.native",
-          "name": "Ether",
-          "symbol": "ETH",
-          "address": null,
-          "decimals": 18
-        },
-        "unit_price": 500000000000000,
-        "total_price": 500000000000000,
-        "unit_price_usd_cents": 176
-      },
-      "primary_sale": {
-        "from_address": null,
-        "to_address": "",
-        "quantity": 1,
-        "quantity_string": "1",
-        "timestamp": "2024-06-17T12:02:35",
-        "transaction": "",
-        "marketplace_id": "primary_sale",
-        "marketplace_name": "Primary Sale",
-        "is_bundle_sale": false,
-        "payment_token": {
-          "payment_token_id": "ethereum.native",
-          "name": "Ether",
-          "symbol": "ETH",
-          "address": null,
-          "decimals": 18
-        },
-        "unit_price": 12,
-        "total_price": 32,
-        "unit_price_usd_cents": 176
-      },
-      "first_created": {
-        "minted_to": "",
-        "quantity": 1,
-        "quantity_string": "1",
-        "timestamp": "2024-06-17T12:02:35",
-        "block_number": 20111377,
-        "transaction": "",
-        "transaction_initiator": ""
-      },
-      "rarity": {
-        "rank": 1,
-        "score": 0.0,
-        "unique_attributes": 0
-      },
-      "royalty": [
-        {
-          "source": "opensea",
-          "total_creator_fee_basis_points": 1000,
-          "recipients": [
-            {
-              "address": "",
-              "percentage": 100.0,
-              "basis_points": 1000
-            }
-          ]
-        },
-        {
-          "source": "erc2981",
-          "total_creator_fee_basis_points": 1000,
-          "recipients": [
-            {
-              "address": "",
-              "percentage": 100.0,
-              "basis_points": 1000
-            }
-          ]
-        }
-      ],
-      "extra_metadata": {
-        "attributes": [
-          {
-            "trait_type": "Artist",
-            "value": "Marterium",
-            "display_type": null
-          }
-        ],
-        "created_by": "Marterium",
-        "animation_details": {
-          "bytes": 46534902,
-          "format": "MP4",
-          "duration": 15,
-          "sha256": "",
-          "width": 2500,
-          "height": 2500,
-          "codecs": ["H.264", "AAC"]
-        },
-        "image_details": {
-          "bytes": 2656266,
-          "format": "JPEG",
-          "sha256": "",
-          "width": 2500,
-          "height": 2500
-        },
-        "image_url": "",
-        "image_original_url": "",
-        "animation_original_url": "",
-        "metadata_original_url": ""
+[
+  {
+    "status": 200,
+    "result": {
+      "contract": "0xe3be0054da2f8da5002e8bdd8aa4c7fdf851e86d",
+      "tokenName": "Momentum by Rik Oostenbroek",
+      "namedTokens": true,
+      "image": {
+        "uri": "https://lh3.googleusercontent.com/YCk4DQvox_L0e8a02Ze8CizUOK_6AHdg4FO1iIy4wzbsyxn7abOCewhM0EFRiYdDpNGIHohZIyCfAOH8PlnYB4eL5QB0iolwNQS2",
+        "mediaType": "image/png"
       }
     }
-  ]
-}
+  },
+  {
+    "status": 200,
+    "result": {
+      "contract": "0x92e64d1a27f4f42ecaf0ef7f725f119751113a38",
+      "tokenName": "The Vault of Wonders: Chapter 1 - The Abyssal Unseen by Boldtron",
+      "namedTokens": true,
+      "image": {
+        "uri": "https://lh3.googleusercontent.com/WnhLfzBaO_HtgpLhIBpLvMTcELF5ec_mYsqGlvQEmtLVa5QGTsS_MoIMXha79l5E8MVO2BTnYrQI3Rfl6JSueBBN3PUsLQvrWg",
+        "mediaType": "image/jpeg"
+      }
+    }
+  },
+  {
+    "status": 200,
+    "result": {
+      "contract": "0x19dbc1c820dd3f13260829a4e06dda6d9ef758db",
+      "tokenName": "Entangled",
+      "namedTokens": true,
+      "image": {
+        "uri": "https://lh3.googleusercontent.com/zKChkOfwzp8NuMK5itPe4dhGvhcWMWKVsL5g8saIaGa8ofYLpXrC244QCtj4KXilI28Yc3FxQrlT5PY6M0NRKwGlCg_MkRB19w",
+        "mediaType": "image/png"
+      }
+    }
+  },
+  {
+    "status": 200,
+    "result": {
+      "contract": "0xfca598e0fcfe1ec1305b451c1d60498db511fa70",
+      "tokenName": "Ray Marching the Moon: Full & New",
+      "namedTokens": true,
+      "image": {
+        "uri": "https://lh3.googleusercontent.com/k63c8zyUFkFxPELzzS260DQQmg5J8bPOGzeU6aevwDILvS4icOPPd8nLANHIZ2I_D4RCUC7UWdUpc4XlkVAH980wRXoT-xI2qu8",
+        "mediaType": "image/png"
+      }
+    }
+  },
+  {
+    "status": 200,
+    "result": {
+      "contract": "0xe064e0b6ceca44f561752a232c4395c0d52ed0c4",
+      "tokenName": "Marterium",
+      "namedTokens": true,
+      "image": {
+        "uri": "https://lh3.googleusercontent.com/FTTeSV1ngRz7LsAyUCqz_5lLOwerYa4uMjEQytoWRV-XbdRtuzigfOIibrs4zs7MNOdyo0JDHc5zaGdyi9TmvcPDtflszzl7g0k",
+        "mediaType": "image/png"
+      }
+    }
+  }
+]
