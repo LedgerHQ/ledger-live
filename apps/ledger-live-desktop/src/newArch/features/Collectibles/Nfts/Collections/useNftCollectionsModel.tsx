@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+import { State } from "~/renderer/reducers";
+import { accountSelector } from "~/renderer/reducers/accounts";
+import { FieldStatus } from "../../types/DetailDrawer";
 import { openModal } from "~/renderer/actions/modals";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { nftsByCollections } from "@ledgerhq/live-nft/index";
@@ -24,57 +27,45 @@ const INCREMENT = 5;
 export const useNftCollectionsModel = ({ account }: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
-  const [numberOfVisibleCollections, setNumberOfVisibleCollections] = useState(INCREMENT);
-  const [displayShowMore, setDisplayShowMore] = useState(false);
+  const history = useHistory();
 
-  const onReceive = useCallback(() => {
+  const { id, collectionAddress } = useParams<{ id: string; collectionAddress: string }>();
+  const account = useSelector((state: State) => accountSelector(state, { accountId: id }));
+
+  const listFooterRef = useRef<HTMLDivElement>(null);
+  const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(1);
+
+  const nfts = useMemo<(ProtoNFT | NFT)[]>(
+    () => (nftsByCollections(account?.nfts, collectionAddress) as (ProtoNFT | NFT)[]) || [],
+    [account?.nfts, collectionAddress],
+  );
+
+  const [nft] = nfts;
+  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, account?.currency.id);
+  const isLoading = useMemo(() => status === FieldStatus.Loading, [status]);
+
+  const onSend = useCallback(() => {
     dispatch(
-      openModal("MODAL_RECEIVE", {
+      openModal("MODAL_SEND", {
         account,
-        receiveNFTMode: true,
+        isNFTSend: true,
+        nftCollection: collectionAddress,
       }),
     );
-  }, [dispatch, account]);
+  }, [collectionAddress, dispatch, account]);
 
-  const onOpenCollection = useCallback(
-    (collectionAddress?: string) => {
-      history.push(`/account/${account.id}/nft-collection/${collectionAddress}`);
-    },
-    [account.id, history],
-  );
+  const filterOperation = (op: Operation) =>
+    !!op.nftOperations?.length &&
+    !!op.nftOperations.find(nftOp => nftOp?.contract === collectionAddress);
 
-  const onOpenGallery = useCallback(() => {
-    history.push(`/account/${account.id}/nft-collection`);
-  }, [account.id, history]);
+  const updateMaxVisibleNtfs = () => setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
 
-  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
-    nftsOwned: account.nfts || [],
-    addresses: account.freshAddress,
-    chains: [account.currency.id],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+  useOnScreen({
+    enabled: maxVisibleNFTs < nfts?.length,
+    onIntersect: updateMaxVisibleNtfs,
+    target: listFooterRef,
+    threshold: 0.5,
   });
-
-  const collections = useMemo(
-    () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account.nfts),
-    [account.nfts, nfts, nftsFromSimplehashFeature],
-  );
-
-  const collectionsLength = Object.keys(collections).length;
-
-  const onShowMore = useCallback(() => {
-    setNumberOfVisibleCollections(numberOfVisibleCollections =>
-      Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
-    );
-    if (hasNextPage) fetchNextPage();
-  }, [collectionsLength, fetchNextPage, hasNextPage]);
-
-  const filteredCollections = useMemo(
-    () => filterHiddenCollections(collections, hiddenNftCollections, account.id),
-    [account.id, collections, hiddenNftCollections],
-  );
 
   const nftsInTheCollection: NftsInTheCollections[] = useMemo(
     () =>
@@ -83,17 +74,23 @@ export const useNftCollectionsModel = ({ account }: Props) => {
   );
 
   useEffect(() => {
-    const moreToShow = numberOfVisibleCollections < filteredCollections.length;
-    setDisplayShowMore(moreToShow);
-  }, [numberOfVisibleCollections, filteredCollections.length]);
+    if (slicedNfts.length <= 0) {
+      history.push(`/account/${account?.id}/`);
+    }
+  }, [account?.id, history, slicedNfts.length]);
 
   return {
-    nftsInTheCollection,
+    isLoading,
+    collectionAddress,
     account,
-    displayShowMore,
-    onOpenGallery,
-    onReceive,
-    onOpenCollection,
-    onShowMore,
+    nfts,
+    metadata,
+    slicedNfts,
+    listFooterRef,
+    maxVisibleNFTs,
+    filterOperation,
+    onSend,
   };
 };
+
+export default useNftCollectionModel;
