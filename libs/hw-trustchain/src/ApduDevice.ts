@@ -499,10 +499,6 @@ export class ApduDevice implements Device {
     return APDU.getSeedId(this.transport, data);
   }
 
-  async getAppVersion() {
-    return this.transport.send(0xb0, 0x01, 0x00, 0x00);
-  }
-
   private assertStreamIsValid(stream: CommandBlock[]) {
     const blockToSign = stream.filter(block => block.signature.length == 0).length;
     if (blockToSign !== 1)

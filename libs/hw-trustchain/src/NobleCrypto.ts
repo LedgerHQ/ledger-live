@@ -269,10 +269,7 @@ variable : Encrypted data
   }
 
   async computeSymmetricKey(privateKey: Uint8Array, extra: Uint8Array): Promise<Uint8Array> {
-    console.log(" hmac", hmac("sha256", Buffer.from(extra)));
     const digest = hmac("sha256", Buffer.from(extra)).update(Buffer.from(privateKey)).digest();
-
-    console.log("digest", digest);
     return digest;
   }
 

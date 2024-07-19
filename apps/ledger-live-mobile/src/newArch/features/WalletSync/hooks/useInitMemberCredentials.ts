@@ -11,7 +11,6 @@ export function useInitMemberCredentials() {
 
   const generateMemberCredentials = useCallback(async () => {
     if (!memberCredentials) {
-      console.log("Generating new member credentials");
       const newMemberCredentials = await sdk.initMemberCredentials();
       dispatch(setMemberCredentials(newMemberCredentials));
     }

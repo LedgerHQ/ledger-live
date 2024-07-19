@@ -76,9 +76,3 @@ if (__DEV__ && process.env.NODE_ENV !== "test") {
     }
   }, 100);
 }
-
-// the current global.crypto implementation isn't complete and feature detecting it create bad bugs,
-// notably in the library `@node/secp256k1` that will try to use `global.crypto.subtle.digest` when it finds global.crypto to be available.
-// Therefore we fully fallback on "crypto" library usage.
-// @ts-expect-error force this delete on global
-delete global.crypto;
