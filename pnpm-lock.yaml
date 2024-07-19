@@ -414,6 +414,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      msw:
+        specifier: ^2.3.2
+        version: 2.3.2(typescript@5.4.3)
       prando:
         specifier: ^5.1.2
         version: 5.1.2
@@ -531,6 +534,9 @@ importers:
       uncontrollable:
         specifier: ^7.2.1
         version: 7.2.1(@types/react@18.2.73)(react@18.2.0)
+      undici:
+        specifier: ^6.19.2
+        version: 6.19.2
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
@@ -10031,6 +10037,10 @@ packages:
 
   '@mswjs/interceptors@0.26.14':
     resolution: {integrity: sha512-q4S8RGjOUzv3A3gCawuKkUEcNJXjdPaSqoRHFvuZPWQnc7yOw702iGBRDMJoBK+l0KSv9XN8YP5ek6duRzrpqw==}
+    engines: {node: '>=18'}
+
+  '@mswjs/interceptors@0.29.1':
+    resolution: {integrity: sha512-3rDakgJZ77+RiQUuSK69t1F0m8BQKA8Vh5DCS5V0DWvNY67zob2JhhQrhCO0AKLGINTRSFd1tBaHcJTkhefoSw==}
     engines: {node: '>=18'}
 
   '@napi-rs/simple-git-android-arm-eabi@0.1.16':
@@ -22461,6 +22471,16 @@ packages:
       typescript:
         optional: true
 
+  msw@2.3.2:
+    resolution: {integrity: sha512-vDn6d6a50vxPE+HnaKQfpmZ4SVXlOjF97yD5FJcUT3v2/uZ65qvTYNL25yOmnrfCNWZ4wtAS7EbtXxygMug2Tw==}
+    engines: {node: '>=18'}
+    hasBin: true
+    peerDependencies:
+      typescript: '>= 4.7.x'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   multi-sort-stream@1.0.4:
     resolution: {integrity: sha512-hAZ8JOEQFbgdLe8HWZbb7gdZg0/yAIHF00Qfo3kd0rXFv96nXe+/bPTrKHZ2QMHugGX4FiAyET1Lt+jiB+7Qlg==}
 
@@ -27177,6 +27197,10 @@ packages:
   undici@6.10.2:
     resolution: {integrity: sha512-HcVuBy7ACaDejIMdwCzAvO22OsiE6ir6ziTIr9kAE0vB+PheVe29ZvRN8p7FXCO2uZHTjEoUs5bPiFpuc/hwwQ==}
     engines: {node: '>=18.0'}
+
+  undici@6.19.2:
+    resolution: {integrity: sha512-JfjKqIauur3Q6biAtHJ564e3bWa8VvT+7cSiOJHFbX4Erv6CLGDpg8z+Fmg/1OI/47RA+GI2QZaF48SSaLvyBA==}
+    engines: {node: '>=18.17'}
 
   unfetch@4.2.0:
     resolution: {integrity: sha512-F9p7yYCn6cIW9El1zi0HI6vqpeIvBsr3dSuRO6Xuppb1u5rXpCPmMvLSyECLhybr9isec8Ohl0hPekMVrEinDA==}
@@ -34662,6 +34686,15 @@ snapshots:
   '@mswjs/cookies@1.1.0': {}
 
   '@mswjs/interceptors@0.26.14':
+    dependencies:
+      '@open-draft/deferred-promise': 2.2.0
+      '@open-draft/logger': 0.3.0
+      '@open-draft/until': 2.1.0
+      is-node-process: 1.2.0
+      outvariant: 1.4.2
+      strict-event-emitter: 0.5.1
+
+  '@mswjs/interceptors@0.29.1':
     dependencies:
       '@open-draft/deferred-promise': 2.2.0
       '@open-draft/logger': 0.3.0
@@ -53774,6 +53807,28 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
+  msw@2.3.2(typescript@5.4.3):
+    dependencies:
+      '@bundled-es-modules/cookie': 2.0.0
+      '@bundled-es-modules/statuses': 1.0.1
+      '@inquirer/confirm': 3.1.7
+      '@mswjs/cookies': 1.1.0
+      '@mswjs/interceptors': 0.29.1
+      '@open-draft/until': 2.1.0
+      '@types/cookie': 0.6.0
+      '@types/statuses': 2.0.5
+      chalk: 4.1.2
+      graphql: 16.8.1
+      headers-polyfill: 4.0.3
+      is-node-process: 1.2.0
+      outvariant: 1.4.2
+      path-to-regexp: 6.2.1
+      strict-event-emitter: 0.5.1
+      type-fest: 4.14.0
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.4.3
+
   multi-sort-stream@1.0.4: {}
 
   multibase@0.6.1:
@@ -59987,6 +60042,8 @@ snapshots:
       '@fastify/busboy': 2.1.1
 
   undici@6.10.2: {}
+
+  undici@6.19.2: {}
 
   unfetch@4.2.0: {}
 
