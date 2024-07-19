@@ -185,6 +185,7 @@ describe("Wallet store", () => {
   it("can import the wallet state", () => {
     const exportedState = {
       walletSyncState: { data: {}, version: 42 },
+      nonImportedAccountInfos: [],
     };
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
     expect(walletSyncStateSelector(result)).toEqual({ data: {}, version: 42 });
@@ -193,20 +194,24 @@ describe("Wallet store", () => {
   it("can export the wallet state", () => {
     const exportedState = {
       walletSyncState: { data: {}, version: 42 },
+      nonImportedAccountInfos: [],
     };
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
     expect(exportWalletState(result)).toEqual({
       walletSyncState: { data: {}, version: 42 },
+      nonImportedAccountInfos: [],
     });
   });
 
   it("walletStateExportShouldDiffer", () => {
     const exportedState = {
       walletSyncState: { data: {}, version: 42 },
+      nonImportedAccountInfos: [],
     };
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
     expect(exportWalletState(result)).toEqual({
       walletSyncState: { data: {}, version: 42 },
+      nonImportedAccountInfos: [],
     });
     expect(walletStateExportShouldDiffer(initialState, result)).toBe(true);
     expect(walletStateExportShouldDiffer(initialState, initialState)).toBe(false);

@@ -5,6 +5,7 @@ import { createWalletSyncWatchLoop, VisualConfig, WatchConfig } from "./createWa
 export { createWalletSyncWatchLoop };
 export type { VisualConfig, WatchConfig };
 export { trustchainLifecycle } from "./trustchainLifecyle";
+export * from "./incrementalUpdates";
 
 // Maintain here the list of modules to aggregate for WalletSync data
 // New modules can be added over time, it's also possible to remove modules but don't replace modules because the schema of a field must not change.
@@ -56,6 +57,7 @@ export function walletSyncWatchLoop<UserState>({
   localStateSelector,
   latestDistantStateSelector,
   onTrustchainRefreshNeeded,
+  localIncrementUpdate,
 }: {
   watchConfig?: WatchConfig;
   visualConfig?: VisualConfig;
@@ -69,6 +71,7 @@ export function walletSyncWatchLoop<UserState>({
   getState: () => UserState;
   localStateSelector: (state: UserState) => LocalState;
   latestDistantStateSelector: (state: UserState) => DistantState | null;
+  localIncrementUpdate: () => Promise<void>;
 }) {
   const walletsync = root;
   return createWalletSyncWatchLoop({
@@ -85,5 +88,6 @@ export function walletSyncWatchLoop<UserState>({
     localStateSelector,
     latestDistantStateSelector,
     onTrustchainRefreshNeeded,
+    localIncrementUpdate,
   });
 }

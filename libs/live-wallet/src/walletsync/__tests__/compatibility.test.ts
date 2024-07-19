@@ -54,8 +54,8 @@ describe("the root WalletSyncDataManager can accept data that misses a new field
     });
   });
 
-  test("on resolveIncomingDistantState (accept new accounts)", async () => {
-    const diff = await walletsync.resolveIncomingDistantState(
+  test("on resolveIncrementalUpdate (accept new accounts)", async () => {
+    const diff = await walletsync.resolveIncrementalUpdate(
       dummyContext,
       emptyState,
       null,
@@ -71,6 +71,7 @@ describe("the root WalletSyncDataManager can accept data that misses a new field
         update: {
           added: [firstaccount],
           removed: [],
+          nonImportedAccountInfos: [],
         },
       });
     } else {
@@ -113,12 +114,12 @@ describe("the general module can accept data that are not yet understood and han
     });
   });
 
-  test("on resolveIncomingDistantState with changes", async () => {
+  test("on resolveIncrementalUpdate with changes", async () => {
     const localData = {
       ...emptyState,
       accounts: genModuleState("accounts", 0),
     };
-    const resolved = await walletsync.resolveIncomingDistantState(
+    const resolved = await walletsync.resolveIncrementalUpdate(
       dummyContext,
       localData,
       // basically we verify the extra data are just going to be ignored
