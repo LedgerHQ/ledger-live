@@ -856,11 +856,7 @@ export default class BleTransport extends Transport {
     tracer.trace("Writing to device", {
       willMessageBeAcked: !this.writableWithoutResponseCharacteristic,
     });
-    tracer.trace("Check transport BLE", {
-      isConnected: this.isConnected,
-      writeWithResponseCharacteristic: this.writableWithResponseCharacteristic,
-      writableWithoutResponseCharacteristic: this.writableWithoutResponseCharacteristic,
-    });
+
     try {
       if (!this.writableWithoutResponseCharacteristic) {
         // The message will be acked in response by the device
