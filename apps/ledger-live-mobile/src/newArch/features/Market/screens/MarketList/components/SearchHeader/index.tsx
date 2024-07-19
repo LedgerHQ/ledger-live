@@ -29,7 +29,7 @@ function SearchHeader({ search, refresh }: Props) {
   }, [debouncedSearch, refresh]);
 
   useEffect(() => {
-    setInputSearch(search?.toLowerCase());
+    setInputSearch(search);
   }, [search]);
 
   return (

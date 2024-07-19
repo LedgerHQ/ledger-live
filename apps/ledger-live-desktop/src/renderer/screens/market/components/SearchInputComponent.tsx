@@ -32,7 +32,7 @@ function SearchInputComponent({ search, updateSearch }: Props) {
   }, [debouncedSearch, updateSearch]);
 
   useEffect(() => {
-    setInputSearch(search.toLowerCase());
+    setInputSearch(search);
   }, [search]);
 
   return (
