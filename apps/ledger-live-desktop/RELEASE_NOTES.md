@@ -1,3 +1,13 @@
+# 2.84.0
+
+### 🗑 Removed features
+
+Viacoin (VIA), Peercoin (PPC), and Vertcoin (VTC) are no longer supported.
+
+### 🐛 Fix
+
+We fixed a bug that caused an error when trying to send or stake Injective (INJ).
+
 # 2.83.0
 
 ### 🚀 Features

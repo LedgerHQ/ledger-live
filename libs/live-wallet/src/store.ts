@@ -22,17 +22,17 @@ export type WalletState = {
   starredAccountIds: Set<string>;
 
   // local copy of the wallet sync data last synchronized with the backend of wallet sync, in order to be able to diff what we need to do when we apply an incremental update
-  wsState: WSState;
+  walletSyncState: WSState;
 };
 
 export type ExportedWalletState = {
-  wsState: WSState;
+  walletSyncState: WSState;
 };
 
 export const initialState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
-  wsState: { data: null, version: 0 },
+  walletSyncState: { data: null, version: 0 },
 };
 
 export enum WalletHandlerType {
@@ -121,10 +121,10 @@ export const handlers: WalletHandlers = {
     return { ...state, accountNames };
   },
   WALLET_SYNC_UPDATE: (state, { payload }) => {
-    return { ...state, wsState: payload };
+    return { ...state, walletSyncState: payload };
   },
   IMPORT_WALLET_SYNC: (state, { payload }) => {
-    return { ...state, wsState: payload.wsState };
+    return { ...state, walletSyncState: payload.walletSyncState };
   },
 };
 
@@ -225,5 +225,11 @@ export const accountRawToAccountUserData = (raw: AccountRaw): AccountUserData =>
  * call this selector to save the store state
  */
 export const exportWalletState = (state: WalletState): ExportedWalletState => ({
-  wsState: state.wsState,
+  walletSyncState: state.walletSyncState,
 });
+
+export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean => {
+  return a.walletSyncState !== b.walletSyncState;
+};
+
+export const walletSyncStateSelector = (state: WalletState): WSState => state.walletSyncState;

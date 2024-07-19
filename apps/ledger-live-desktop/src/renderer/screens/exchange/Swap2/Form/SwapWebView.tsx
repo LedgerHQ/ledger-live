@@ -1,8 +1,3 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
-import { context } from "~/renderer/drawers/Provider";
-import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -13,11 +8,15 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { SubAccount } from "@ledgerhq/types-live";
 import { SwapOperation } from "@ledgerhq/types-live/lib/swap";
 import BigNumber from "bignumber.js";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/Web3AppWebview/types";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
+import { context } from "~/renderer/drawers/Provider";
 import useTheme from "~/renderer/hooks/useTheme";
 import {
   counterValueCurrencySelector,
@@ -25,26 +24,27 @@ import {
   enablePlatformDevToolsSelector,
   languageSelector,
 } from "~/renderer/reducers/settings";
-import { useRedirectToSwapHistory, transformToBigNumbers } from "../utils/index";
+import { transformToBigNumbers, useRedirectToSwapHistory } from "../utils/index";
+import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
+import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
-import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
-import { captureException } from "~/sentry/renderer";
-import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
-import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
+import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   convertToAtomicUnit,
   convertToNonAtomicUnit,
   getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { captureException } from "~/sentry/renderer";
 import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
-import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
+import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -441,6 +441,14 @@ const SwapWebView = ({
     swapState?.fromAccountId,
     targetCurrency?.id,
   ]);
+
+  useEffect(() => {
+    setQuoteState({
+      amountTo: undefined,
+      swapError: undefined,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [swapState?.toAccountId]);
 
   const webviewStyle = useMemo(
     () => ({ minHeight: windowContentSize.scrollHeight }),

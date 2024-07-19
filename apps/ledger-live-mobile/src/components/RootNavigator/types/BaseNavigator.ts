@@ -14,6 +14,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
@@ -71,6 +72,7 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
+import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -107,6 +109,7 @@ export type BaseNavigatorStackParamList = {
     customDappURL?: string;
     uri?: string;
   };
+  [NavigatorName.Web3Hub]: NavigatorScreenParams<Web3HubStackParamList>;
   [ScreenName.Recover]: {
     platform?: string;
     device?: Device;
@@ -300,7 +303,9 @@ export type BaseNavigatorStackParamList = {
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
   [ScreenName.MockedAddAssetButton]: undefined;
-  [ScreenName.WalletSyncActivationSettings]: undefined;
+
+  // WALLET SYNC
+  [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
 
   [ScreenName.FirmwareUpdate]: {
     deviceInfo?: DeviceInfo | null;
@@ -311,3 +316,10 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
 };
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace ReactNavigation {
+    interface RootParamList extends BaseNavigatorStackParamList {}
+  }
+}

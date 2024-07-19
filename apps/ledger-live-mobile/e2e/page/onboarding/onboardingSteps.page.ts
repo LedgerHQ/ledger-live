@@ -1,14 +1,5 @@
-import {
-  tapByText,
-  tapByElement,
-  getElementById,
-  waitForElementById,
-  tapById,
-  waitForElementByText,
-} from "../../helpers";
-import * as bridge from "../../bridge/server";
-import DeviceAction from "../../models/DeviceAction";
-import { ModelId, getUSBDevice, knownDevice } from "../../models/devices";
+import { tapByElement, getElementById, waitForElementById, tapById } from "../../helpers";
+import { ModelId } from "../../models/devices";
 import { expect } from "detox";
 
 export default class OnboardingStepsPage {
@@ -26,7 +17,6 @@ export default class OnboardingStepsPage {
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
   syncWithLedgerLiveDesktop = () => getElementById("Existing Wallet | Sync");
   readyToScanButton = () => getElementById(this.readyToScanButtonID);
-  addDeviceButton = () => getElementById("connect-with-bluetooth");
   pairNanoButton = () => getElementById("Onboarding-PairNewNano");
   maybeLaterButton = () => getElementById("notifications-prompt-later");
 
@@ -170,28 +160,6 @@ export default class OnboardingStepsPage {
 
   async selectPairMyNano() {
     await tapByElement(this.pairNanoButton());
-  }
-
-  async selectAddDevice() {
-    await tapByElement(this.addDeviceButton());
-  }
-
-  async addDeviceViaBluetooth(name = knownDevice.name) {
-    const deviceAction = new DeviceAction(knownDevice);
-    await bridge.addDevicesBT(name);
-    await waitForElementByText(name);
-    await tapByText(name);
-    await bridge.open(); // Mocked action open ledger manager on the Nano
-    await deviceAction.waitForSpinner();
-    await deviceAction.accessManager();
-  }
-
-  async addDeviceViaUSB(device: ModelId) {
-    const nano = getUSBDevice(device);
-    await bridge.addDevicesUSB(nano);
-    await waitForElementByText(nano.deviceName);
-    await tapByText(nano.deviceName);
-    await new DeviceAction(nano).accessManager();
   }
 
   async declineNotifications() {

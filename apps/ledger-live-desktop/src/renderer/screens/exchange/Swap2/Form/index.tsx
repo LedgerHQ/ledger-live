@@ -8,9 +8,9 @@ import {
   useSwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
+  maybeKeepTronAccountAlive,
   maybeTezosAccountUnrevealedAccount,
   maybeTronEmptyAccount,
-  maybeKeepTronAccountAlive,
 } from "@ledgerhq/live-common/exchange/swap/index";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -52,12 +52,11 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 37rem;
-  padding: 12px 20px 0;
-  row-gap: 0.75rem;
-  @media screen and (min-height: 800px) {
-    row-gap: 2rem;
-    margin-top: 12px;
-    padding: 20px;
+  padding: 0.75rem ${({ theme }) => theme.space[4]}px 0;
+  row-gap: 1rem;
+  @media screen and (min-height: 1200px) {
+    padding-top: 1rem;
+    row-gap: 1.5rem;
   }
 `;
 

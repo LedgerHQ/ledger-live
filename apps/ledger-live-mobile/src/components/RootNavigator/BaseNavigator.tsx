@@ -86,7 +86,9 @@ import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
-import WalletSyncNavigator from "LLM/features/WalletSync/Navigator";
+import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
+import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -104,6 +106,7 @@ export default function BaseNavigator() {
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
+  const web3hub = useFeature("web3hub");
 
   return (
     <>
@@ -186,6 +189,13 @@ export default function BaseNavigator() {
           component={SendFundsNavigator}
           options={{ headerShown: false }}
         />
+        {web3hub?.enabled ? (
+          <Stack.Screen
+            name={NavigatorName.Web3Hub}
+            component={Web3HubNavigator}
+            options={{ headerShown: false }}
+          />
+        ) : null}
         <Stack.Screen
           name={ScreenName.PlatformApp}
           component={LiveApp}
@@ -396,7 +406,13 @@ export default function BaseNavigator() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-        {WalletSyncNavigator({ Stack })}
+
+        <Stack.Screen
+          name={NavigatorName.WalletSync}
+          component={WalletSyncNavigator}
+          options={{ headerShown: false }}
+        />
+
         {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}

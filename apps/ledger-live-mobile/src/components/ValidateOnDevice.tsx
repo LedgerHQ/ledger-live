@@ -16,7 +16,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { QRCodeDevices } from "@ledgerhq/types-devices";
+import { DevicesWithTouchScreen } from "@ledgerhq/types-devices";
 import Alert from "./Alert";
 import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
 import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
@@ -170,7 +170,7 @@ export default function ValidateOnDevice({
           <AnimationContainer>
             <Animation
               source={getDeviceAnimation({ device, key: "sign", theme })}
-              style={QRCodeDevices.includes(device.modelId) ? { height: 210 } : {}}
+              style={DevicesWithTouchScreen.includes(device.modelId) ? { height: 210 } : {}}
             />
           </AnimationContainer>
           {Title ? (

@@ -6698,6 +6698,22 @@
         "mainCta": "Sync your accounts",
         "secondCta": "Already created a key?"
       }
+    },
+    "deviceSelection": {
+      "title": "Choose the Ledger device you will use to secure your backup",
+      "description": "You can retrieve your backup by simply connecting your Ledger to the Ledger Live mobile and desktop apps."
+    },
+    "deviceAction": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
+    },
+    "success": {
+      "sync": "Synchronization successful!",
+      "syncDesc": "Changes in your accounts will now automatically appear across all apps and platforms.",
+      "activation": "Success!",
+      "activationDesc": "You successfully enabled Ledger Sync.",
+      "syncAnother": "Sync with another Ledger Live app",
+      "close": "Close"
     }
   },
   "web3hub": {

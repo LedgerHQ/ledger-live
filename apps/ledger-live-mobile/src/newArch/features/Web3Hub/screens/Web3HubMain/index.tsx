@@ -1,15 +1,14 @@
 import React, { useContext } from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const";
-import type { Web3HubStackParamList } from "LLM/features/Web3Hub/Navigator";
+import { View } from "react-native";
+import { useAnimatedScrollHandler } from "react-native-reanimated";
+import type { MainProps } from "LLM/features/Web3Hub/types";
 import { HeaderContext } from "LLM/features/Web3Hub/HeaderContext";
-import ManifestList from "LLM/features/Web3Hub/components/ManifestsList";
+import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
+import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "~/components/TabBar/shared";
 
-type Props = BaseComposite<NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubMain>>;
+const PADDING_BOTTOM = MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM;
 
-export default function Web3HubMain({ navigation }: Props) {
+export default function Web3HubMain({ navigation }: MainProps) {
   const { layoutY } = useContext(HeaderContext);
 
   const scrollHandler = useAnimatedScrollHandler(event => {
@@ -18,14 +17,17 @@ export default function Web3HubMain({ navigation }: Props) {
   });
 
   return (
-    <Animated.ScrollView
+    <View
       style={{
         flex: 1,
       }}
-      onScroll={scrollHandler}
-      scrollEventThrottle={16}
     >
-      <ManifestList navigation={navigation} />
-    </Animated.ScrollView>
+      <ManifestsList
+        navigation={navigation}
+        onScroll={scrollHandler}
+        // Using this padding to keep the view visible under the tab button
+        pb={PADDING_BOTTOM}
+      />
+    </View>
   );
 }

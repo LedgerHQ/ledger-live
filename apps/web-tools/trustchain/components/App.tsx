@@ -82,8 +82,8 @@ const App = () => {
   const [wssdkHandledVersion, setWssdkHandledVersion] = useState(0);
   const [wssdkHandledData, setWssdkHandledData] = useState<DistantState | null>(null);
 
-  const version = state.walletState.wsState.version || wssdkHandledVersion;
-  const data = state.walletState.wsState.data || wssdkHandledData;
+  const version = state.walletState.walletSyncState.version || wssdkHandledVersion;
+  const data = state.walletState.walletSyncState.data || wssdkHandledData;
 
   const wsStateRef = useRef({ version, data });
   useEffect(() => {
@@ -282,7 +282,7 @@ const App = () => {
               data={data}
               setVersion={setWssdkHandledVersion}
               setData={setWssdkHandledData}
-              forceReadOnlyData={state.walletState.wsState.data}
+              forceReadOnlyData={state.walletState.walletSyncState.data}
               readOnly={accountsSync}
               takeControl={takeControl}
             />

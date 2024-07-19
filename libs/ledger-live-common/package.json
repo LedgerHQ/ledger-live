@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.5.0",
+  "version": "34.6.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -144,6 +144,7 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-near": "workspace:^",
     "@ledgerhq/coin-polkadot": "workspace:^",
+    "@ledgerhq/coin-icon": "workspace:^",
     "@ledgerhq/coin-stellar": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/coin-tezos": "workspace:^",
@@ -167,6 +168,7 @@
     "@ledgerhq/hw-app-trx": "workspace:^",
     "@ledgerhq/hw-app-vet": "workspace:^",
     "@ledgerhq/hw-app-xrp": "workspace:^",
+    "@ledgerhq/hw-app-icon": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",

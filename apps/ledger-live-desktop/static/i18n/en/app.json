@@ -303,7 +303,7 @@
   "swap2": {
     "title": "Swap",
     "tabs": {
-      "exchange": "Exchange",
+      "exchange": "Swap",
       "history": "History"
     },
     "form": {

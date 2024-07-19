@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useHistory, useLocation } from "react-router-dom";
+import styled from "styled-components";
 import { track } from "~/renderer/analytics/segment";
 import TabBar, { TabBarRootStyled } from "~/renderer/components/TabBar";
-import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -55,7 +55,7 @@ const Navbar = () => {
 
   return (
     <Nav>
-      <TabBar tabs={tabs} onIndexChange={onWrappedTabChange} index={currentIndex} />
+      <TabBar tabs={tabs} onIndexChange={onWrappedTabChange} index={currentIndex} fontSize={14} />
     </Nav>
   );
 };

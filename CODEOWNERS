@@ -94,7 +94,7 @@ libs/ledger-live-common/src/wallet-api/                  @ledgerhq/wallet-api
 **/wallet-api.spec.ts-snapshots/                         @ledgerhq/wallet-api
 **/dapp.spec.ts                                          @ledgerhq/wallet-api
 libs/test-utils/                                         @ledgerhq/wallet-api
-apps/ledger-live-mobile/src/newArch/features/web3hub/    @ledgerhq/wallet-api
+apps/ledger-live-mobile/src/newArch/features/Web3Hub/    @ledgerhq/wallet-api
 
 # Devices team
 apps/cli/src/commands/devices                                      @ledgerhq/live-devices

@@ -1,21 +1,24 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
-import { ScrollView } from "react-native";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const";
-import { Web3HubStackParamList } from "../../Navigator";
-import ManifestList from "LLM/features/Web3Hub/components/ManifestsList";
+import React, { useContext } from "react";
+import { View } from "react-native";
+import type { SearchProps } from "LLM/features/Web3Hub/types";
+import { HeaderContext } from "LLM/features/Web3Hub/HeaderContext";
+import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
+import SearchList from "./components/SearchList";
 
-type Props = BaseComposite<NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubSearch>>;
+export default function Web3HubSearch({ navigation }: SearchProps) {
+  const { search } = useContext(HeaderContext);
 
-export default function Web3HubSearch({ navigation }: Props) {
   return (
-    <ScrollView
+    <View
       style={{
         flex: 1,
       }}
     >
-      <ManifestList navigation={navigation} />
-    </ScrollView>
+      {search ? (
+        <SearchList navigation={navigation} search={search} />
+      ) : (
+        <ManifestsList navigation={navigation} />
+      )}
+    </View>
   );
 }

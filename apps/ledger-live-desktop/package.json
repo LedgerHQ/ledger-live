@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.83.0",
+  "version": "2.84.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -63,6 +63,7 @@
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/hw-transport-vault": "workspace:^",
+    "@ledgerhq/hw-trustchain": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",

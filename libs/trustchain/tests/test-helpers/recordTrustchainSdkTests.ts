@@ -4,7 +4,7 @@ import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { createSpeculosDevice, releaseSpeculosDevice } from "@ledgerhq/speculos-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import Transport from "@ledgerhq/hw-transport";
-import { crypto } from "@ledgerhq/hw-trustchain";
+import { crypto, TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-trustchain";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { RecorderConfig, ScenarioOptions, genSeed, recorderConfigDefaults } from "./types";
 import { getSdk } from "../../src";
@@ -30,7 +30,7 @@ export async function recordTestTrustchainSdk(
     const device = await createSpeculosDevice({
       model: DeviceModelId.nanoSP,
       firmware: "2.1.0",
-      appName: "Ledger Sync",
+      appName: TRUSTCHAIN_APP_NAME,
       appVersion: "0.0.1",
       seed,
       coinapps, // folder where there is the Ledger Sync coin app

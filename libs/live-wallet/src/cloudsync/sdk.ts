@@ -106,9 +106,10 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     );
     switch (response.status) {
       case "no-data": {
-        // no data, nothing to do
         const version = this.getCurrentVersion();
         if (version) {
+          // server have no data anymore, we need to delete our local data and inform upstream that the trustchain may be outdated.
+          await this.saveNewUpdate({ type: "deleted-data" });
           throw new TrustchainOutdated();
         }
         break;
