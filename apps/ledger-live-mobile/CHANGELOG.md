@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.47.0-nightly.12
+
+### Minor Changes
+
+- [#7350](https://github.com/LedgerHQ/ledger-live/pull/7350) [`0c8f9da`](https://github.com/LedgerHQ/ledger-live/commit/0c8f9da0cbbaf95f25478cf3ba882d6b4ac3f241) Thanks [@Justkant](https://github.com/Justkant)! - feat(web3hub): add app screen webview
+
+  Also add real fetch calls to new manifest-api v2 preview
+  Update tests for app screen with mocks
+
 ## 3.47.0-nightly.11
 
 ### Minor Changes

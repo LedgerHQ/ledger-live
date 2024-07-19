@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.84.0-nightly.13
+
+### Patch Changes
+
+- [#7359](https://github.com/LedgerHQ/ledger-live/pull/7359) [`53e9dd4`](https://github.com/LedgerHQ/ledger-live/commit/53e9dd47be5302a3b2c474f02ee172c2074bdfea) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework new Arch folder
+
 ## 2.84.0-nightly.12
 
 ### Minor Changes
