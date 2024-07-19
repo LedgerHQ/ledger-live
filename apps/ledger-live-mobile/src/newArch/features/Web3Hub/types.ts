@@ -1,21 +1,32 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { Web3HubTabStackParamList } from "LLM/features/Web3Hub/TabNavigator";
-import type { Web3HubStackParamList } from "LLM/features/Web3Hub/Navigator";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
+import { BaseComposite, MainComposite } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 
-export type MainProps = BaseComposite<
-  NativeStackScreenProps<Web3HubTabStackParamList, ScreenName.Web3HubMain>
+export type Web3HubTabStackParamList = {
+  [ScreenName.Web3HubMain]: undefined;
+};
+
+export type Web3HubTabScreenProps<T extends keyof Web3HubTabStackParamList> = MainComposite<
+  NativeStackScreenProps<Web3HubTabStackParamList, T>
 >;
 
-export type SearchProps = BaseComposite<
-  NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubSearch>
+export type Web3HubStackParamList = {
+  [ScreenName.Web3HubSearch]: undefined;
+  [ScreenName.Web3HubTabs]: undefined;
+  [ScreenName.Web3HubApp]: {
+    manifestId: string;
+    queryParams?: Record<string, string | undefined>;
+  };
+};
+
+export type Web3HubScreenProps<T extends keyof Web3HubStackParamList> = BaseComposite<
+  NativeStackScreenProps<Web3HubStackParamList, T>
 >;
 
-export type AppProps = BaseComposite<
-  NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubApp>
->;
+export type MainProps = Web3HubTabScreenProps<ScreenName.Web3HubMain>;
 
-export type TabsProps = BaseComposite<
-  NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubTabs>
->;
+export type SearchProps = Web3HubScreenProps<ScreenName.Web3HubSearch>;
+
+export type AppProps = Web3HubScreenProps<ScreenName.Web3HubApp>;
+
+export type TabsProps = Web3HubScreenProps<ScreenName.Web3HubTabs>;

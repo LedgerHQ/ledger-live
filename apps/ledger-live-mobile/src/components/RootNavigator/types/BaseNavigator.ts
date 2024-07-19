@@ -14,7 +14,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { Web3HubStackParamList } from "LLM/features/Web3Hub/Navigator";
+import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
@@ -109,7 +109,7 @@ export type BaseNavigatorStackParamList = {
     customDappURL?: string;
     uri?: string;
   };
-  [NavigatorName.Web3Hub]: NavigatorScreenParams<Web3HubStackParamList> | undefined;
+  [NavigatorName.Web3Hub]: NavigatorScreenParams<Web3HubStackParamList>;
   [ScreenName.Recover]: {
     platform?: string;
     device?: Device;
@@ -316,3 +316,10 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
 };
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace ReactNavigation {
+    interface RootParamList extends BaseNavigatorStackParamList {}
+  }
+}

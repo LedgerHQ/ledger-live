@@ -6,11 +6,7 @@ import { ScreenName } from "~/const";
 import { HeaderContext } from "./HeaderContext";
 import Web3HubMain from "./screens/Web3HubMain";
 import Web3HubMainHeader from "./screens/Web3HubMain/components/Header";
-import { SearchProps } from "./types";
-
-export type Web3HubTabStackParamList = {
-  [ScreenName.Web3HubMain]: undefined;
-};
+import { MainProps, Web3HubTabStackParamList } from "./types";
 
 const Stack = createNativeStackNavigator<Web3HubTabStackParamList>();
 
@@ -36,7 +32,7 @@ export default function TabNavigator() {
               <Web3HubMainHeader
                 title={props.options.title}
                 // Using as here because we cannot use generics on the header props
-                navigation={props.navigation as SearchProps["navigation"]}
+                navigation={props.navigation as MainProps["navigation"]}
               />
             ),
             animation: "none",
