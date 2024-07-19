@@ -127,6 +127,9 @@
       "title" : "Entschuldigung, Bluetooth ist deaktiviert",
       "description" : "Bitte aktivieren Sie Bluetooth in den Einstellungen Ihres Telefons. ({{state}} Status)"
     },
+    "BitcoinInfrastructureError" : {
+      "title" : "Bei unserer Bitcoin-Infrastruktur ist ein Problem aufgetreten. Versuche es bitte später noch einmal."
+    },
     "CantOpenDevice" : {
       "title" : "Entschuldigung, Verbindung fehlgeschlagen",
       "description" : "Ihr Ledger-Gerät muss entsperrt und in Reichweite sein, um Bluetooth zu verwenden."
@@ -369,6 +372,9 @@
     "InvalidRecipient" : {
       "title" : "Ungültiger Empfänger"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "Ungültige Antwort vom {{currencyName}}-Explorer"
+    },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "Sprachinstallation auf dem Gerät abgelehnt",
       "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
@@ -485,8 +491,12 @@
       "description" : "Bitte überweisen Sie einige EGLD auf Ihr Konto, um die Transaktionen zu bezahlen."
     },
     "NotEnoughBalance" : {
-      "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
+    },
+    "NotEnoughBalanceSwap" : {
+      "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
     },
     "NoSuchAppOnProvider" : {
       "title" : "Die {{appName}}-App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
@@ -1335,7 +1345,8 @@
       "title" : "Willkommen zurück",
       "subtitle" : "Wähle aus, wie du auf deine Wallet zugreifen möchtest:",
       "connect" : "Ledger-Gerät verbinden",
-      "sync" : "Mit Ledger Live Desktop synchronisieren"
+      "sync" : "Mit Ledger Live Desktop synchronisieren",
+      "walletSync" : "Mit einer anderen Ledger Live-App synchronisieren"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "Erkunden Sie ohne ein Gerät",
@@ -2287,6 +2298,22 @@
     "import" : {
       "title" : "Vom Desktop importieren",
       "description" : "Werte von Ledger Live Desktop importieren"
+    },
+    "drawer" : {
+      "drawerTitleHasAccount" : "Weiteres Konto hinzufügen",
+      "drawerSubTitle" : "Füge deine Vermögenswerte mithilfe deines Ledger-Geräts hinzu oder importiere sie direkt aus deiner Ledger Live Desktop-App.",
+      "import" : {
+        "title" : "Von Desktop importieren",
+        "description" : "Werte von Ledger Live Desktop importieren"
+      },
+      "add" : {
+        "title" : "Mit deinem Ledger-Gerät hinzufügen",
+        "description" : "Konto erstellen oder Vermögenswerte mithilfe deines Ledger-Geräts importieren"
+      },
+      "walletSync" : {
+        "title" : "Über eine andere Ledger Live-App importieren",
+        "description" : "Ledger Sync aktivieren"
+      }
     }
   },
   "byteSize" : {
@@ -2404,6 +2431,7 @@
       "delegated" : "Delegiert ({{amount}})",
       "delegatedTo" : "delegiert an",
       "delegatedAmount" : "Delegierter Betrag",
+      "deposit" : "Einzahlung",
       "redelegated" : "Erneut delegiert ({{amount}})",
       "redelegatedFrom" : "Zurückdelegiert von",
       "redelegatedTo" : "Zurückdelegiert zu",
@@ -2724,7 +2752,7 @@
       "dateFormat" : "Datumsformat",
       "dateFormatDesc" : "Legen Sie das Datumsformat für Ledger Live fest",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Erstellt eine Sicherheitskopie deiner App-Daten und synchronisiert mehrere Ledger Live-Instanzen nahtlos.",
+      "walletSyncDesc" : "Schütze deine App-Daten ganz bequem und synchronisiere mehrere Ledger Live-Instanzen.",
       "region" : "Region",
       "regionDesc" : "Wählen Sie Ihre Region, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
       "password" : "App-Sperre",
@@ -2749,9 +2777,9 @@
       "developerMode" : "Entwicklermodus",
       "developerModeDesc" : "Zeigen Sie Entwickler-Apps in My Ledger an und aktivieren Sie Testnet-Apps.",
       "analytics" : "Analysen",
-      "analyticsDesc" : "Aktivieren Sie Analysen, um Ledger bei der Verbesserung der Benutzerfreundlichkeit zu helfen.",
+      "analyticsDesc" : "Ermöglicht Ledger die Verfolgung von App-Nutzungsdaten, um die Leistung von Ledger Live zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren.",
       "personalizedRecommendations" : "Personalisierte Nutzung",
-      "personalizedRecommendationsDesc" : "Erhalte individuelle Empfehlungen, die zu deinen Vorlieben passen.",
+      "personalizedRecommendationsDesc" : "Ermöglicht Ledger die Verfolgung von App-Nutzungsdaten, um personalisierte Empfehlungen und Inhalte anzubieten, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen.",
       "analyticsModal" : {
         "title" : "Analysen teilen",
         "desc" : "Aktivieren Sie Analysen, um Ledger bei der Verbesserung der Benutzerfreundlichkeit zu helfen",
@@ -3058,7 +3086,8 @@
       "addAccount" : {
         "title" : "Auf vorhandenes Konto wird geprüft …",
         "subtitle" : "Es wird geprüft, ob du bereits ein Konto für {{currencyName}} auf der Blockchain hast.",
-        "foundAccounts" : "{{count}} Konten gefunden",
+        "foundAccount" : "{{count}} Konto gefunden",
+        "foundAccount_plural" : "{{count}} Konten gefunden",
         "stopSynchronization" : "Synchronisierung stoppen",
         "addingAccount" : "Keine Konten gefunden. Neues Konto für {{currencyName}} wird erstellt …"
       },
@@ -3128,7 +3157,7 @@
     },
     "stake" : {
       "title" : "Staken",
-      "description" : "Vermehren Sie Ihr Kryptovermögen."
+      "description" : "Stake deine gehaltenen Kryptos."
     },
     "swap" : {
       "title" : "Umtauschen",
@@ -6573,18 +6602,18 @@
     "variantA" : {
       "main" : {
         "title" : "Hilf mit, dein Nutzungserlebnis zu verbessern und zu personalisieren",
-        "subtitle" : "Die Freigabe deiner Ledger Live-Daten hilft uns, deine Vorlieben zu verstehen, dir Inhalte zu zeigen, die für dich relevant sind, und technische Probleme zu beheben.",
+        "subtitle" : "Die Weitergabe deiner Ledger Live-Daten hilft uns, deine Vorlieben zu verstehen und Inhalte anzuzeigen, die für dich relevant sind.",
         "content" : {
           "able" : {
-            "title" : "Mit deiner Zustimmung darf Ledger folgende Daten verfolgen:",
-            "diagAndUsage" : "Analysedaten, einschließlich Seitenaufrufe, Klicks",
-            "personnalizationData" : "Personalisierungsdaten, einschließlich Klicks, Seitenaufrufe, Konversionsdaten"
+            "title" : "Mit deiner Einwilligung kann Ledger Daten über die Nutzung von Ledger Live durch dich (einschließlich Seitenbesuche und Klicks) zu folgenden Zwecken erfassen:",
+            "diagAndUsage" : "Um die Leistung von Ledger Live zu messen und sowohl die App als auch dein Nutzungserlebnis zu verbessern (Analyse)",
+            "personnalizationData" : "Um dir personalisierte Empfehlungen und Inhalte anzuzeigen, die auf deine Vorlieben zugeschnitten sind, und die Wirksamkeit unserer Marketingkampagnen zu messen (Personalisierung)"
           },
           "unable" : {
-            "title" : "Ledger wird niemals die folgenden Informationen erfassen:",
+            "title" : "Ledger Live wird keinesfalls die folgenden Informationen erfassen:",
             "adresses" : "Deine Vermögenswerte",
             "balance" : "Dein Portfolio",
-            "personnalInfos" : "Deine personenbezogenen Daten"
+            "personnalInfos" : "Deine personenbezogenen Daten (z. B. deinen Namen oder deine E-Mail-Adresse)."
           },
           "moreOptions" : "Voreinstellungen verwalten",
           "ctas" : {
@@ -6600,12 +6629,12 @@
       "details" : {
         "title" : "Voreinstellungen verwalten",
         "analytics" : {
-          "title" : "Analysedaten",
-          "description" : "Damit Ledger Live noch besser wird, gib bitte die Analysedaten der App frei, einschließlich Seitenaufrufe und Klicks."
+          "title" : "Analysen",
+          "description" : "Um die Leistung von Ledger Live zu messen und die App wie auch dein Nutzungserlebnis zu verbessern, geben wir Nutzungsdaten (Seitenbesuche, Klicks) weiter."
         },
         "personalizedExp" : {
-          "title" : "Personalisierungsdaten",
-          "description" : "Wenn du personalisierte Empfehlungen erhalten möchtest, gib die Personalisierungsdaten der App frei, einschließlich Konversionsdaten, Klicks und Seitenaufrufe."
+          "title" : "Personalisierung",
+          "description" : "Damit wir dir personalisierte Empfehlungen und Inhalte anzeigen können, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen, geben wir Daten zur App-Nutzung (Klicks, Seitenbesuche und Konversionsdaten) weiter."
         },
         "ctas" : {
           "notNow" : "Nicht jetzt",
@@ -6652,6 +6681,16 @@
           "info" : "Du kannst deine Einwilligung in den App-Einstellungen jederzeit widerrufen.",
           "link" : "Weitere Informationen über unsere Tracking-Richtlinie"
         }
+      }
+    }
+  },
+  "walletSync" : {
+    "activation" : {
+      "screen" : {
+        "title" : "Synchronisiere deine Konten auf allen Plattformen",
+        "description" : "Dein Ledger-Gerät erzeugt einen Verschlüsselungsschlüssel, mit dem sichergestellt wird, dass deine Daten privat bleiben und nur von dir abgerufen werden können.",
+        "mainCta" : "Konten synchronisieren",
+        "secondCta" : "Du hast bereits einen Schlüssel erstellt?"
       }
     }
   }

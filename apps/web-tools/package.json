@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "private": true,
   "browser": {
     "fs": false,
@@ -15,6 +15,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/view": "^6.28.2",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
@@ -34,8 +36,8 @@
     "@ledgerhq/trustchain": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@uiw/react-codemirror": "^4.22.2",
     "bignumber.js": "^9.1.2",
-    "brace": "^0.11.1",
     "bufferutil": "^4.0.7",
     "encoding": "^0.1.13",
     "eslint-config-next": "13.5.6",

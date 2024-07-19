@@ -1,34 +1,38 @@
-import { NFTMedias, NFTMetadata } from "@ledgerhq/types-live";
+import { NFTMedias } from "@ledgerhq/types-live";
+import React, { CSSProperties } from "react";
 
 type BaseProps = {
-  metadata: NFTMetadata;
   tokenId?: string;
   full?: boolean;
   size?: number;
   maxHeight?: number;
   maxWidth?: number;
-  objectFit?: "cover" | "contain" | "fill" | "scale-down" | "none";
-  square?: boolean;
+  objectFit?: CSSProperties["objectFit"];
+  squareWithDefault?: boolean;
 };
 
-export type ImageProps = BaseProps & {
-  uri: string;
-  mediaType: string;
-  onClick?: (e: React.MouseEvent) => void;
-  setUseFallback: (a: boolean) => void;
+type BaseMediaProps = BaseProps & {
+  uri: string | undefined;
+  previewUri?: string | undefined;
+  originalUri?: string | undefined;
+  mediaType: string | undefined;
+  setUseFallback?: (useFallback: boolean) => void;
+};
+
+export type ImageProps = BaseMediaProps & {
+  collectibleName?: string | null;
+  onClick?: (event: React.MouseEvent) => void;
   isFallback: boolean;
+  isLoading: boolean;
 };
 
-export type VideoProps = BaseProps & {
-  uri: string;
-  mediaType: string;
-  setUseFallback: (a: boolean) => void;
-};
+export type VideoProps = BaseMediaProps;
 
-export type PlaceholderProps = Pick<BaseProps, "metadata" | "tokenId" | "full">;
-// TODO Figure out if we really need this once we know who creates/processes the media.
-
-export type MediaProps = BaseProps & {
+export type MediaProps = BaseMediaProps & {
+  isLoading: boolean;
+  useFallback: boolean;
+  contentType: string | undefined;
+  collectibleName?: string | null;
   mediaFormat?: keyof NFTMedias;
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (event: React.MouseEvent) => void;
 };

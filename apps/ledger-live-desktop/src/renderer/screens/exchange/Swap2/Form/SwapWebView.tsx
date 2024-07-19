@@ -18,18 +18,20 @@ import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import useTheme from "~/renderer/hooks/useTheme";
 import {
   counterValueCurrencySelector,
+  discreetModeSelector,
   enablePlatformDevToolsSelector,
   languageSelector,
 } from "~/renderer/reducers/settings";
 import { useRedirectToSwapHistory } from "../utils/index";
 
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { Box, Button } from "@ledgerhq/react-ui";
-import { t } from "i18next";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { captureException } from "~/sentry/internal";
+import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -65,26 +67,15 @@ export type SwapWebProps = {
   manifest: LiveAppManifest;
   swapState?: Partial<SwapProps>;
   liveAppUnavailable(): void;
-  sourceCurrencyId?: string;
-  targetCurrencyId?: string;
+  isMaxEnabled?: boolean;
+  sourceCurrency?: TokenCurrency | CryptoCurrency;
+  targetCurrency?: TokenCurrency | CryptoCurrency;
+  setQuoteState: (next: CustomSwapQuotesState) => void;
 };
 
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
   Demo1: "swap-live-app-demo-1",
-};
-
-export const useSwapLiveAppManifestID = () => {
-  const demo0 = useFeature("ptxSwapLiveAppDemoZero");
-  const demo1 = useFeature("ptxSwapLiveAppDemoOne");
-  switch (true) {
-    case demo1?.enabled:
-      return demo1?.params?.manifest_id ?? SwapWebManifestIDs.Demo1;
-    case demo0?.enabled:
-      return demo0?.params?.manifest_id ?? SwapWebManifestIDs.Demo0;
-    default:
-      return null;
-  }
 };
 
 const SwapWebAppWrapper = styled.div`
@@ -96,8 +87,10 @@ const SwapWebView = ({
   manifest,
   swapState,
   liveAppUnavailable,
-  sourceCurrencyId,
-  targetCurrencyId,
+  isMaxEnabled,
+  sourceCurrency,
+  targetCurrency,
+  setQuoteState,
 }: SwapWebProps) => {
   const {
     colors: {
@@ -108,16 +101,16 @@ const SwapWebView = ({
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const discreetMode = useSelector(discreetModeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
   const redirectToHistory = useRedirectToSwapHistory();
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
-  const manifestID = useSwapLiveAppManifestID();
-  const isDemo1Enabled = manifestID?.startsWith(SwapWebManifestIDs.Demo1);
+
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
 
-  const { fromCurrency, addressFrom, toCurrency, addressTo } = useMemo(() => {
+  const { fromCurrency, addressFrom, addressTo } = useMemo(() => {
     const [, , fromCurrency, addressFrom] =
       getAccountIdFromWalletAccountId(swapState?.fromAccountId || "")?.split(":") || [];
 
@@ -138,6 +131,68 @@ const SwapWebView = ({
       ...customPTXHandlers,
       "custom.swapStateGet": () => {
         return Promise.resolve(swapState);
+      },
+      "custom.setQuote": (quote: {
+        params?: {
+          amountTo?: number;
+          code?: string;
+          parameter: { minAmount: string; maxAmount: string };
+        };
+      }) => {
+        const toUnit = targetCurrency?.units[0];
+        const fromUnit = sourceCurrency?.units[0];
+
+        if (!quote.params) {
+          setQuoteState({
+            amountTo: undefined,
+            swapError: undefined,
+          });
+          return Promise.resolve();
+        }
+
+        if (quote.params?.code && fromUnit) {
+          switch (quote.params.code) {
+            case "minAmountError":
+              setQuoteState({
+                amountTo: undefined,
+                swapError: new SwapExchangeRateAmountTooLow(undefined, {
+                  minAmountFromFormatted: formatCurrencyUnit(
+                    fromUnit,
+                    new BigNumber(quote.params.parameter.minAmount).times(10 ** fromUnit.magnitude),
+                    {
+                      alwaysShowSign: false,
+                      disableRounding: true,
+                      showCode: true,
+                    },
+                  ),
+                }),
+              });
+              return Promise.resolve();
+            case "maxAmountError":
+              setQuoteState({
+                amountTo: undefined,
+                swapError: new SwapExchangeRateAmountTooLow(undefined, {
+                  minAmountFromFormatted: formatCurrencyUnit(
+                    fromUnit,
+                    new BigNumber(quote.params.parameter.maxAmount).times(10 ** fromUnit.magnitude),
+                    {
+                      alwaysShowSign: false,
+                      disableRounding: true,
+                      showCode: true,
+                    },
+                  ),
+                }),
+              });
+              return Promise.resolve();
+          }
+        }
+
+        if (toUnit && quote?.params?.amountTo) {
+          const amountTo = BigNumber(quote?.params?.amountTo).times(10 ** toUnit.magnitude);
+          setQuoteState({ amountTo, swapError: undefined });
+        }
+
+        return Promise.resolve();
       },
       // TODO: when we need bidirectional communication
       // "custom.swapStateSet": (params: CustomHandlersParams<unknown>) => {
@@ -208,15 +263,19 @@ const SwapWebView = ({
     const searchParams = new URLSearchParams();
 
     const swapParams = {
-      provider: swapState?.provider,
-      from: sourceCurrencyId,
-      to: targetCurrencyId,
-      amountFrom: swapState?.fromAmount,
-      loading: swapState?.loading,
       addressFrom: addressFrom,
       addressTo: addressTo,
+      amountFrom: swapState?.fromAmount,
+      from: sourceCurrency?.id,
+      hasError: swapState?.error ? "true" : undefined, // append param only if error is true
+      isMaxEnabled: isMaxEnabled,
+      loading: swapState?.loading,
       networkFees: swapState?.estimatedFees,
       networkFeesCurrency: fromCurrency,
+      provider: swapState?.provider,
+      to: targetCurrency?.id,
+      toAccountId: swapState?.toAccountId,
+      fromAccountId: swapState?.fromAccountId,
     };
 
     Object.entries(swapParams).forEach(([key, value]) => {
@@ -231,12 +290,16 @@ const SwapWebView = ({
     addressFrom,
     addressTo,
     fromCurrency,
+    isMaxEnabled,
+    sourceCurrency?.id,
+    swapState?.error,
     swapState?.estimatedFees,
     swapState?.fromAmount,
     swapState?.loading,
     swapState?.provider,
-    targetCurrencyId,
-    sourceCurrencyId,
+    swapState?.toAccountId,
+    swapState?.fromAccountId,
+    targetCurrency?.id,
   ]);
 
   // return loader???
@@ -262,23 +325,6 @@ const SwapWebView = ({
     }
   };
 
-  // Keep the previous UI
-  // Display only the disabled swap button
-  if (
-    isDemo1Enabled &&
-    (swapState.error ||
-      swapState.fromAmount === "0" ||
-      !(fromCurrency && addressFrom && toCurrency && addressTo))
-  ) {
-    return (
-      <Box width="100%">
-        <Button width="100%" disabled>
-          {t("sidebar.swap")}
-        </Button>
-      </Box>
-    );
-  }
-
   return (
     <>
       {enablePlatformDevTools && (
@@ -296,6 +342,7 @@ const SwapWebView = ({
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
+            discreetMode,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

@@ -1,10 +1,10 @@
-import invariant from "invariant";
-import { useState, useEffect, useMemo, useRef } from "react";
-import { getTronSuperRepresentatives } from "./api";
 import { BigNumber } from "bignumber.js";
-import type { SuperRepresentative, TronAccount, Vote } from "./types";
+import invariant from "invariant";
+import { ONE_TRX } from "@ledgerhq/coin-tron/logic/constants";
+import { getTronSuperRepresentatives } from "@ledgerhq/coin-tron/network";
+import type { SuperRepresentative, TronAccount, Vote } from "@ledgerhq/coin-tron/types";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useBridgeSync } from "../../bridge/react";
-import { ONE_TRX } from "./constants";
 
 export type Action = {
   type: "updateVote" | "resetVotes" | "clearVotes";

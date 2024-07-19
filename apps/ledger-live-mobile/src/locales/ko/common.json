@@ -127,6 +127,9 @@
       "title" : "죄송하지만 블루투스가 비활성 상태입니다",
       "description" : "휴대폰 설정에서 블루투스를 활성화해주세요. ({{state}} 주)"
     },
+    "BitcoinInfrastructureError" : {
+      "title" : "당사 비트코인 인프라에 문제개 발생했습니다. 나중에 다시 시도해 주세요."
+    },
     "CantOpenDevice" : {
       "title" : "죄송하지만, 연결에 실패했습니다",
       "description" : "귀하의 Ledger 장치가 반드시 잠금 해제 상태로 블루투스 사용 가능 범위 내에 있어야 합니다."
@@ -369,6 +372,9 @@
     "InvalidRecipient" : {
       "title" : "유효하지 않은 수령인"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "{{currencyName}} 탐색기의 응답이 유효하지 않습니다"
+    },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "장치에서 언어 설치가 거부되었습니다",
       "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
@@ -485,6 +491,10 @@
       "description" : "계정에 EGLD를 전송하여 트랜잭션 수수료를 지불하세요."
     },
     "NotEnoughBalance" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
@@ -1335,7 +1345,8 @@
       "title" : "다시 돌아오신 것을 환영합니다.",
       "subtitle" : "아래와 같이 지갑에 액세스할 방법을 선택합니다.",
       "connect" : "Ledger 장치에 연결합니다",
-      "sync" : "Ledger Live 데스크탑과 동기화합니다"
+      "sync" : "Ledger Live 데스크탑과 동기화합니다",
+      "walletSync" : "다른 Ledger Live 앱과 동기화"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "장치가 없어도 가능합니다",
@@ -2287,6 +2298,22 @@
     "import" : {
       "title" : "데스크탑에서 가져오기",
       "description" : "Ledger Live 데스크탑에서 자산 가져오기"
+    },
+    "drawer" : {
+      "drawerTitleHasAccount" : "다른 계정 추가",
+      "drawerSubTitle" : "Ledger를 사용하여 자산을 추가하거나 Ledger Live 데스크탑 앱에서 직접 가져오세요.",
+      "import" : {
+        "title" : "데스크탑에서 가져오기",
+        "description" : "Ledger Live 데스크탑에서 자산 가져오기"
+      },
+      "add" : {
+        "title" : "기존 Ledger 장치로 추가",
+        "description" : "Ledger 장치를 사용하여 자산을 생성하거나 가져옵니다."
+      },
+      "walletSync" : {
+        "title" : "다른 Ledger Live 앱을 통해 가져오기",
+        "description" : "Ledger 동기화 활성화"
+      }
     }
   },
   "byteSize" : {
@@ -2404,6 +2431,7 @@
       "delegated" : "({{amount}}) 위임됨",
       "delegatedTo" : "다음에게 위임됨",
       "delegatedAmount" : "위임된 금액",
+      "deposit" : "입금",
       "redelegated" : "({{amount}}) 재위임됨",
       "redelegatedFrom" : "다음으로부터 재위임됨",
       "redelegatedTo" : "다음에게 재위임됨",
@@ -2724,7 +2752,7 @@
       "dateFormat" : "날짜 형식",
       "dateFormatDesc" : "Ledger Live 날짜 형식 설정",
       "walletSync" : "Ledger 동기화",
-      "walletSyncDesc" : "앱 데이터를 백업하고 복수의 Ledger Live 인스턴스를 원활하게 동기화하세요",
+      "walletSyncDesc" : "간단하게 앱 데이터를 보호하고 여러 Ledger Live 인스턴스를 동기화하세요.",
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "password" : "앱 잠금",
@@ -2749,9 +2777,9 @@
       "developerMode" : "개발자 모드",
       "developerModeDesc" : "My Ledger에 개발자 앱을 표시하고 Testnet 앱을 활성화합니다.",
       "analytics" : "애널리틱스",
-      "analyticsDesc" : "Ledger가 사용자 경험을 개선할 수 있도록 애널리틱스 기능을 활성화하세요.",
+      "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다.",
       "personalizedRecommendations" : "맞춤화된 경험",
-      "personalizedRecommendationsDesc" : "내가 설정해 둔 환경 설정에 맞는 맞춤형 추천을 받아보세요.",
+      "personalizedRecommendationsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 추적하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
       "analyticsModal" : {
         "title" : "애널리틱스 공유",
         "desc" : "Ledger가 사용자 경험을 개선할 수 있도록 애널리틱스 기능을 활성화하세요.",
@@ -3058,7 +3086,8 @@
       "addAccount" : {
         "title" : "계정 확인 중...",
         "subtitle" : "블록체인에 {{currencyName}}에 대한 계정이 이미 있는지 확인합니다.",
-        "foundAccounts" : "{{count}}계정 발견",
+        "foundAccount" : "{{count}}개의 계정을 찾았습니다",
+        "foundAccount_plural" : "{{count}}개의 계정 발견",
         "stopSynchronization" : "동기화 중지",
         "addingAccount" : "계정이 발견되지 않습니다. {{currencyName}}에 대한 새 계정 생성 중..."
       },
@@ -3128,7 +3157,7 @@
     },
     "stake" : {
       "title" : "스테이킹",
-      "description" : "암호화폐 보유 자산을 더 키워보세요."
+      "description" : "암호화폐 자산 스테이킹"
     },
     "swap" : {
       "title" : "스왑",
@@ -6573,18 +6602,18 @@
     "variantA" : {
       "main" : {
         "title" : "사용자 경험을 개선하고 개인 맞춤형 서비스를 제공할 수 있도록 도와주세요.",
-        "subtitle" : "공유해 주신 Ledger Live 데이터는 고객의 선호를 이해하고 고객과 관련 있는 콘텐츠를 준비하며 다양한 기술적 문제를 해결하는 데 사용됩니다.",
+        "subtitle" : "Ledger Live 데이터를 공유하면 사용자의 선호도를 이해하고 사용자와 관련 있는 콘텐츠를 표시하는 데 도움이 됩니다.",
         "content" : {
           "able" : {
-            "title" : "동의해 주신다면, Ledger는 다음 정보를 추적합니다.\b",
-            "diagAndUsage" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
-            "personnalizationData" : "클릭 수, 페이지 방문, 환전 데이터를 포함한 개인화 데이터"
+            "title" : "사용자의 동의 하에 Ledger는 다음과 같은 목적으로 사용자가 Ledger Live를 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 추적할 수 있습니다.",
+            "diagAndUsage" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선할(분석) 목적.",
+            "personnalizationData" : "사용자 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공하고(개인 맞춤화), 마케팅 캠페인의 효과를 측정할 목적."
           },
           "unable" : {
-            "title" : "Ledger는 다음과 관련한 정보를 결코 추적하지 않습니다.",
+            "title" : "Ledger Live는 다음과 관련한 정보를 결코 추적하지 않습니다.",
             "adresses" : "고객 자산.",
             "balance" : "고객 포트폴리오.",
-            "personnalInfos" : "고객의 개인 식별 정보."
+            "personnalInfos" : "사용자 개인 식별 정보(예: 이름이나 이메일 주소)"
           },
           "moreOptions" : "환경 설정 관리",
           "ctas" : {
@@ -6600,12 +6629,12 @@
       "details" : {
         "title" : "환경 설정 관리",
         "analytics" : {
-          "title" : "분석 데이터",
-          "description" : "Ledger Live 개선에 도움을 주시려면, 방문, 클릭 수 등 앱 분석 데이터를 공유해 주세요."
+          "title" : "애널리틱스",
+          "description" : "Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두 개선하기 위해 당사는 페이지 방문 및 클릭 수를 포함한 사용 데이터를 공유합니다."
         },
         "personalizedExp" : {
-          "title" : "개인화 데이터",
-          "description" : "개인 맞춤형 추천을 받아보시려면, 환전 데이터, 클릭 수, 페이지 방문 등을 포함한 앱의 개인화 데이터를 공유해 주세요."
+          "title" : "개인 맞춤화",
+          "description" : "사용자의 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공받고 마케팅 캠페인 성과를 측정하기 위해 당사는 클릭수, 페이지 방문, 전환 데이터를 포함한 앱 사용 데이터를 공유합니다."
         },
         "ctas" : {
           "notNow" : "나중에 하기",
@@ -6652,6 +6681,16 @@
           "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
           "link" : "당사 추적 정책 자세히 살펴보기"
         }
+      }
+    }
+  },
+  "walletSync" : {
+    "activation" : {
+      "screen" : {
+        "title" : "모든 플랫폼에서 계정을 동기화하세요",
+        "description" : "Ledger 장치가 암호화 키를 생성하여 데이터가 비공개로 유지되고 본인만 검색할 수 있도록 합니다.",
+        "mainCta" : "계정 동기화",
+        "secondCta" : "이미 생성된 키가 있나요?"
       }
     }
   }

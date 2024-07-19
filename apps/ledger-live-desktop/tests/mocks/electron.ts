@@ -1,5 +1,3 @@
-import { jest } from "@jest/globals";
-
 export const remote: jest.Mocked<{ dialog: {} }> = {
   dialog: {
     showOpenDialog: jest.fn().mockReturnValue("path/to/output"),

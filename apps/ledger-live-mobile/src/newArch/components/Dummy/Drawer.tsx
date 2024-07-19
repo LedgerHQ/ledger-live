@@ -1,6 +1,6 @@
 import React from "react";
-import { Text } from "@ledgerhq/native-ui";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
+import { Text } from "@ledgerhq/native-ui";
 
 type Props = {
   isOpen: boolean;

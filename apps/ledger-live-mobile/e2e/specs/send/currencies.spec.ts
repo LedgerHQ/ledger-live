@@ -1,28 +1,18 @@
-import { expect } from "detox";
-import { genAccount } from "@ledgerhq/live-common/mock/account";
-import {
-  formatCurrencyUnit,
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
-import PortfolioPage from "../../models/wallet/portfolioPage";
-import SendPage from "../../models/trade/sendPage";
-import OperationDetailsPage from "../../models/trade/operationDetailsPage";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
-import { tapByElement } from "../../helpers";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import Common, { formattedAmount } from "../../models/common";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import {
+  formattedAmount,
+  getAccountName,
+  getAccountUnit,
+  initTestAccounts,
+} from "../../models/currencies";
+import { Application } from "../../page";
 
-let portfolioPage: PortfolioPage;
-let sendPage: SendPage;
+let app: Application;
 let deviceAction: DeviceAction;
-let operationDetailsPage: OperationDetailsPage;
-let common: Common;
+
 let first = true;
 
 const testedCurrencies: CryptoCurrencyId[] = [
@@ -39,65 +29,47 @@ const testedCurrencies: CryptoCurrencyId[] = [
   "polkadot",
   "cosmos",
 ];
-const testAccounts = testedCurrencies.map(currencyId =>
-  genAccount("mock" + currencyId, { currency: getCryptoCurrencyById(currencyId) }),
-);
-setSupportedCurrencies(testedCurrencies);
+const testAccounts = initTestAccounts(testedCurrencies);
 
 $TmsLink("B2CQA-1823");
 describe("Send flow", () => {
   beforeAll(async () => {
-    await loadConfig("onboardingcompleted", true);
-    await loadBleState({ knownDevices: [knownDevice] });
-    await loadAccounts(testAccounts);
-
-    portfolioPage = new PortfolioPage();
+    app = await Application.init("onboardingcompleted", [knownDevice], testAccounts);
     deviceAction = new DeviceAction(knownDevice);
-    sendPage = new SendPage();
-    operationDetailsPage = new OperationDetailsPage();
-    common = new Common();
 
-    await portfolioPage.waitForPortfolioPageToLoad();
+    await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   it.each(testAccounts.map(account => [account.currency.name, account]))(
     "%s: open send flow, sends half balance and displays the new operation",
     async (_currency, account: Account) => {
       const halfBalance = account.balance.div(2);
-      const amount =
-        // half of the balance, formatted with the same unit as what the input should use
-        formatCurrencyUnit(getAccountCurrency(account).units[0], halfBalance, {
-          useGrouping: false,
-        });
+      const accountName = getAccountName(account);
+      const unit = getAccountUnit(account);
+      const amountInput = formattedAmount(unit, halfBalance, { useGrouping: false });
+      const amountWithCode = formattedAmount(unit, halfBalance);
 
-      const amountWithCode = formattedAmount(getAccountCurrency(account).units[0], halfBalance);
+      await app.portfolio.openViaDeeplink();
+      await app.send.openViaDeeplink();
+      await app.common.performSearch(accountName);
+      await app.common.selectAccount(account.id);
+      await app.send.setRecipient(account.freshAddress);
+      await app.send.recipientContinue();
+      await app.send.setAmount(amountInput);
+      await app.send.amountContinue();
+      await app.send.expectSummaryAmount(amountWithCode);
+      await app.send.summaryContinue();
 
-      await portfolioPage.openViaDeeplink();
-      await sendPage.openViaDeeplink();
-      await common.performSearch(getDefaultAccountName(account));
-      await sendPage.selectAccount(account.id);
-      await sendPage.setRecipient(account.freshAddress);
-      await sendPage.recipientContinue();
-      await sendPage.setAmount(amount);
-      await sendPage.amountContinue();
-
-      await expect(sendPage.summaryAmount()).toHaveText(amountWithCode);
-      await sendPage.summaryContinue();
-
-      if (first) {
-        await deviceAction.selectMockDevice();
-        first = false;
-      }
+      first && (await deviceAction.selectMockDevice(), (first = false));
       await deviceAction.openApp();
 
-      await sendPage.successContinue();
-      await portfolioPage.scrollToTransactions();
-      const lastTransaction = portfolioPage.lastTransactionAmount();
-      await expect(lastTransaction).toHaveText(`-${amountWithCode}`);
-      await tapByElement(lastTransaction);
-      await operationDetailsPage.isOpened();
-      await operationDetailsPage.checkAccount(getDefaultAccountName(account));
-      await operationDetailsPage.checkAmount(`-${amountWithCode}`);
+      await app.common.successClose();
+      await app.portfolio.scrollToTransactions();
+      await app.portfolio.expectLastTransactionAmount(`-${amountWithCode}`);
+      await app.portfolio.openLastTransaction();
+      await app.operationDetails.isOpened();
+      await app.operationDetails.checkAccount(accountName);
+      await app.operationDetails.checkAmount(`-${amountWithCode}`);
     },
   );
 });

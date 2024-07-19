@@ -22,6 +22,7 @@ import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/ty
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsExportSelector } from "./reducers/settings";
 import logger from "./logger";
+import { marketStoreSelector } from "./reducers/market";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -39,6 +40,7 @@ export type Countervalues = Record<string, CounterValuesStatus | RateMapRaw> & {
 export type PostOnboarding = ReturnType<typeof hubStateSelector>;
 
 export type Settings = ReturnType<typeof settingsExportSelector>;
+export type Market = ReturnType<typeof marketStoreSelector>;
 
 // The types seen from the user side.
 type DatabaseValues = {
@@ -52,6 +54,7 @@ type DatabaseValues = {
   countervalues: Countervalues;
   postOnboarding: PostOnboarding;
   settings: Settings;
+  market: Market;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };

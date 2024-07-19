@@ -8,4 +8,4 @@ RUN npm install -g @acala-network/chopsticks@latest
 
 EXPOSE 8000
 
-CMD ["chopsticks", "--endpoint", "wss://rpc.polkadot.io", "--config", "coin-tester-chopsticks.yml"]
+CMD ["chopsticks", "--config", "coin-tester-chopsticks.yml"]

@@ -127,6 +127,9 @@
       "title" : "Desculpe, Bluetooth desativado",
       "description" : "Ative o Bluetooth nas configurações do seu telefone. (Estado {{state}})"
     },
+    "BitcoinInfrastructureError" : {
+      "title" : "Estamos enfrentando um problema com a nossa infraestrutura Bitcoin. Tente novamente mais tarde."
+    },
     "CantOpenDevice" : {
       "title" : "Desculpe, falha de conexão",
       "description" : "Seu dispositivo Ledger deve estar desbloqueado e no alcance para usar o Bluetooth."
@@ -369,6 +372,9 @@
     "InvalidRecipient" : {
       "title" : "Destinatário inválido"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "Resposta inválida do explorador {{currencyName}}"
+    },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "Instalação de idioma recusada no dispositivo",
       "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
@@ -485,8 +491,12 @@
       "description" : "Envie um pouco de EGLD para a sua conta para pagar pelas transações."
     },
     "NotEnoughBalance" : {
-      "title" : "Saldo insuficiente, incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
+      "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughBalanceSwap" : {
+      "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
     "NoSuchAppOnProvider" : {
       "title" : "O aplicativo {{appName}} não pode ser encontrado para a sua configuração específica.",
@@ -1335,7 +1345,8 @@
       "title" : "Boas-vindas de volta",
       "subtitle" : "Selecione como deseja acessar sua carteira:",
       "connect" : "Conectar sua Ledger",
-      "sync" : "Sincronizar com o Ledger Live desktop"
+      "sync" : "Sincronizar com o Ledger Live desktop",
+      "walletSync" : "Sincronizar com outro aplicativo Ledger Live"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "Explorar sem um dispositivo",
@@ -2287,6 +2298,22 @@
     "import" : {
       "title" : "Importar do desktop",
       "description" : "Importe ativos do Ledger Live desktop"
+    },
+    "drawer" : {
+      "drawerTitleHasAccount" : "Adicionar outra conta",
+      "drawerSubTitle" : "Adicione seus ativos usando sua Ledger ou importe-os diretamente do aplicativo Ledger Live Desktop.",
+      "import" : {
+        "title" : "Importar do desktop",
+        "description" : "Importe ativos do Ledger Live desktop"
+      },
+      "add" : {
+        "title" : "Adicionar com sua Ledger",
+        "description" : "Criar ou importar seus ativos com seu dispositivo Ledger"
+      },
+      "walletSync" : {
+        "title" : "Importar via outro aplicativo Ledger Live",
+        "description" : "Ativar Ledger Sync"
+      }
     }
   },
   "byteSize" : {
@@ -2404,6 +2431,7 @@
       "delegated" : "Delegado ({{amount}})",
       "delegatedTo" : "Delegado a",
       "delegatedAmount" : "Quantia Delegada",
+      "deposit" : "Depositar",
       "redelegated" : "Redelegado ({{amount}})",
       "redelegatedFrom" : "Redelegado de",
       "redelegatedTo" : "Redelegado para",
@@ -2724,7 +2752,7 @@
       "dateFormat" : "Formato da data",
       "dateFormatDesc" : "Defina qual formato de data usar no Ledger Live",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Faça backup dos dados do seu aplicativo e sincronize várias instâncias do Ledger Live",
+      "walletSyncDesc" : "Proteja os dados do seu aplicativo e sincronize várias instâncias do Ledger Live de forma simples.",
       "region" : "Região",
       "regionDesc" : "Selecione sua região para atualizar formatos de datas, horário e moedas.",
       "password" : "Bloquear aplicativo",
@@ -2749,9 +2777,9 @@
       "developerMode" : "Modo desenvolvedor",
       "developerModeDesc" : "Exiba os aplicativos de desenvolvedor em Minha Ledger e habilite os aplicativos de Testnet.",
       "analytics" : "Métricas",
-      "analyticsDesc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência de uso.",
+      "analyticsDesc" : "Permitir que a Ledger rastreie os dados de uso do aplicativo para ajudar a medir o desempenho do Ledger Live e aprimorar o aplicativo e sua experiência.",
       "personalizedRecommendations" : "Experiência personalizada",
-      "personalizedRecommendationsDesc" : "Receba recomendações personalizadas de acordo com suas preferências.",
+      "personalizedRecommendationsDesc" : "Permitir que a Ledger rastreie os dados de uso do aplicativo para fornecer recomendações e conteúdo personalizados que correspondam às suas preferências e para ajudar a medir o desempenho de nossas campanhas de marketing.",
       "analyticsModal" : {
         "title" : "Compartilhar métricas",
         "desc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência de uso",
@@ -3058,7 +3086,8 @@
       "addAccount" : {
         "title" : "Buscando uma conta...",
         "subtitle" : "Verificando se você já tem uma conta {{currencyName}} na blockchain.",
-        "foundAccounts" : "{{count}} contas encontradas",
+        "foundAccount" : "{{count}} conta encontrada",
+        "foundAccount_plural" : "{{count}} contas encontradas",
         "stopSynchronization" : "Parar Sincronização",
         "addingAccount" : "Nenhuma conta encontrada. Criando uma nova conta {{currencyName}}..."
       },
@@ -3128,7 +3157,7 @@
     },
     "stake" : {
       "title" : "Aplicar",
-      "description" : "Multiplique seus criptoativos."
+      "description" : "Faça staking dos seus criptoativos."
     },
     "swap" : {
       "title" : "Trocar",
@@ -6573,18 +6602,18 @@
     "variantA" : {
       "main" : {
         "title" : "Ajude-nos a melhorar e personalizar a sua experiência",
-        "subtitle" : "Compartilhar seus dados de uso do Ledger Live nos ajuda a entender suas preferências, mostrar conteúdo relevante para você e corrigir problemas técnicos.",
+        "subtitle" : "O compartilhamento de seus dados do Ledger Live nos ajuda a entender suas preferências e a mostrar conteúdo relevante para você.",
         "content" : {
           "able" : {
-            "title" : "Com o seu consentimento, o Ledger Live poderá monitorar:",
-            "diagAndUsage" : "Métricas de uso, incluindo visitas a páginas e cliques.",
-            "personnalizationData" : "Dados de personalização incluindo cliques, visitas a páginas e dados de conversão."
+            "title" : "Com o seu consentimento, a Ledger poderá registrar dados sobre como você usa o Ledger Live (incluindo visitas a páginas e cliques):",
+            "diagAndUsage" : "Para medir o desempenho do Ledger Live e aprimorar o aplicativo e sua experiência (Métricas).",
+            "personnalizationData" : "Para fornecer recomendações personalizadas e conteúdo adaptado às suas preferências, bem como para nos ajudar a medir a eficácia de nossas campanhas de marketing (Personalização)."
           },
           "unable" : {
-            "title" : "A Ledger nunca monitorará informações relacionadas a:",
+            "title" : "O Ledger Live nunca armazenará informações relacionadas a:",
             "adresses" : "Seus ativos.",
             "balance" : "Seu portfólio.",
-            "personnalInfos" : "Suas informações de identificação pessoal."
+            "personnalInfos" : "Suas informações de identificação pessoal (como seu nome ou seu endereço de e-mail)."
           },
           "moreOptions" : "Gerenciar suas preferências",
           "ctas" : {
@@ -6601,11 +6630,11 @@
         "title" : "Gerenciar suas preferências",
         "analytics" : {
           "title" : "Métricas",
-          "description" : "Para ajudar a melhorar o Ledger Live, compartilhe os dados de analytics do aplicativo, incluindo visitas a páginas e cliques."
+          "description" : "Para medir o desempenho do Ledger Live e melhorar o aplicativo e sua experiência, compartilhamos dados de uso, incluindo visitas a páginas e cliques."
         },
         "personalizedExp" : {
-          "title" : "Dados de personalização",
-          "description" : "Para obter recomendações personalizadas, compartilhe os dados de personalização do aplicativo, incluindo dados de conversão, cliques e visitas à página."
+          "title" : "Personalização",
+          "description" : "Para receber recomendações e conteúdos personalizados que correspondam às suas preferências e para nos ajudar a medir o desempenho de nossas campanhas de marketing, compartilhamos dados de uso do aplicativo, que inclui cliques, visitas a páginas e dados de conversão."
         },
         "ctas" : {
           "notNow" : "Agora não",
@@ -6652,6 +6681,16 @@
           "info" : "Você pode revogar seu consentimento a qualquer momento nas configurações do aplicativo.",
           "link" : "Saiba mais sobre nossa Política de Monitoramento"
         }
+      }
+    }
+  },
+  "walletSync" : {
+    "activation" : {
+      "screen" : {
+        "title" : "Sincronize suas contas em todas as plataformas",
+        "description" : "Sua Ledger vai gerar uma chave de encriptação garantindo que seus dados permaneçam privados e só possam ser recuperados por você.",
+        "mainCta" : "Sincronize suas contas",
+        "secondCta" : "Já criou uma chave?"
       }
     }
   }

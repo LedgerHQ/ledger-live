@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Acheter / Vendre",
-        "description" : "Achetez et vendez avec des prestataires de confiance."
+        "description" : "Achetez et vendez avec nos prestataires de confiance."
       },
       "swap" : {
         "title" : "Swap",
-        "description" : "Échangez une crypto contre une autre en toute sécurité.",
+        "description" : "Échangez une crypto contre une autre.",
         "label" : "Populaire"
       },
       "earn" : {
         "title" : "Staker",
-        "description" : "Faites fructifier vos crypto-actifs via Ledger."
+        "description" : "Stakez vos cryptos via Ledger."
       }
     },
     "recoverBanner" : {
@@ -5493,6 +5493,10 @@
       "description" : "Impossible de calculer le montant et les frais"
     },
     "NotEnoughBalance" : {
+      "title" : "Solde insuffisant",
+      "description" : "Vérifiez que ce compte a des fonds suffisants."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "Solde insuffisant, frais de réseau inclus. Modifiez le montant ou vérifiez votre solde.",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
     },
@@ -5504,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse avant de recevoir des tokens TRC20. <link0>En savoir plus </link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "Vous devez avoir au moins 0,1 TRX sur votre compte Tron pour qu’il reste actif, et 1,1 TRX pour les frais de réseau. <link0>En savoir plus </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "Version de votre système d’exploitation obsolète",
@@ -6088,6 +6098,9 @@
     },
     "newAddressTRC20" : {
       "title" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Notre infrastructure Bitcoin rencontre actuellement des difficultés. Veuillez réessayer plus tard."
     }
   },
   "cryptoOrg" : {

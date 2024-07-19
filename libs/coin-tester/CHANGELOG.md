@@ -1,5 +1,23 @@
 # @ledgerhq/coin-tester
 
+## 0.2.1
+
+### Patch Changes
+
+- [#7181](https://github.com/LedgerHQ/ledger-live/pull/7181) [`f0ed580`](https://github.com/LedgerHQ/ledger-live/commit/f0ed580b0e71c1f1aa1b38f6ef7a536f14a5e750) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - polkadot coin tester update
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.1
+
+## 0.2.1-next.0
+
+### Patch Changes
+
+- [#7181](https://github.com/LedgerHQ/ledger-live/pull/7181) [`f0ed580`](https://github.com/LedgerHQ/ledger-live/commit/f0ed580b0e71c1f1aa1b38f6ef7a536f14a5e750) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - polkadot coin tester update
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes

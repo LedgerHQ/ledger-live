@@ -45,7 +45,6 @@ export type CreateTransactionArg = {
   lockTime?: number;
   sigHashType?: number;
   segwit?: boolean;
-  initialTimestamp?: number;
   additionals: Array<string>;
   expiryHeight?: Buffer;
   useTrustedInputForSegwit?: boolean;
@@ -66,7 +65,6 @@ export async function createTransaction(
     lockTime,
     sigHashType,
     segwit,
-    initialTimestamp,
     additionals,
     expiryHeight,
     onDeviceStreaming,
@@ -108,8 +106,6 @@ export async function createTransaction(
 
   const isDecred = additionals.includes("decred");
   const isZcash = additionals.includes("zcash");
-  const isXST = additionals.includes("stealthcoin");
-  const startTime = Date.now();
   const sapling = additionals.includes("sapling");
   const bech32 = segwit && additionals.includes("bech32");
   const useBip143 =
@@ -128,9 +124,7 @@ export async function createTransaction(
   const defaultVersion = Buffer.alloc(4);
   !!expiryHeight && !isDecred
     ? defaultVersion.writeUInt32LE(isZcash ? 0x80000005 : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
-    : isXST
-      ? defaultVersion.writeUInt32LE(2, 0)
-      : defaultVersion.writeUInt32LE(1, 0);
+    : defaultVersion.writeUInt32LE(1, 0);
   // Default version to 2 for XST not to have timestamp
   const trustedInputs: Array<any> = [];
   const regularOutputs: Array<TransactionOutput> = [];
@@ -224,14 +218,6 @@ export async function createTransaction(
     for (let i = 0; i < result.length; i++) {
       publicKeys.push(compressPublicKey(Buffer.from(result[i].publicKey, "hex")));
     }
-  }
-
-  if (initialTimestamp !== undefined) {
-    targetTransaction.timestamp = Buffer.alloc(4);
-    targetTransaction.timestamp.writeUInt32LE(
-      Math.floor(initialTimestamp + (Date.now() - startTime) / 1000),
-      0,
-    );
   }
 
   onDeviceSignatureRequested();

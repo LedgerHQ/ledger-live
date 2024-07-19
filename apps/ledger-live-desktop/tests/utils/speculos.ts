@@ -74,6 +74,15 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Ethereum_Classic: {
+    currency: getCryptoCurrencyById("ethereum_classic"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Ethereum Classic",
+      appVersion: "1.10.4",
+    },
+    dependency: "Ethereum",
+  },
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
     appQuery: {
@@ -106,7 +115,7 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Polkadot",
-      appVersion: "25.10100.1",
+      appVersion: "100.0.5",
     },
     dependency: "",
   },
@@ -170,6 +179,24 @@ export const specs: Specs = {
       model: DeviceModelId.nanoSP,
       appName: "TezosWallet",
       appVersion: "2.4.5",
+    },
+    dependency: "",
+  },
+  Polygon: {
+    currency: getCryptoCurrencyById("polygon"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Polygon",
+      appVersion: "1.10.4",
+    },
+    dependency: "",
+  },
+  Binance_Smart_Chain: {
+    currency: getCryptoCurrencyById("bsc"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Binance Smart Chain",
+      appVersion: "1.10.4",
     },
     dependency: "",
   },

@@ -117,14 +117,16 @@ describe("BitcoinApi", () => {
       const params = {
         batch_size: 10000,
       };
-      const txs = await explorer.fetchTxs(
-        {
-          account: 0,
-          index: 0,
-          address: "bc1pd85hsqr75rg6fwwd8kmftd3tv26tgp3spkfmn4uga6t5xsv2talqmzqt0h",
-        },
-        params,
-      );
+      const txs = (
+        await explorer.fetchTxs(
+          {
+            account: 0,
+            index: 0,
+            address: "bc1pd85hsqr75rg6fwwd8kmftd3tv26tgp3spkfmn4uga6t5xsv2talqmzqt0h",
+          },
+          params,
+        )
+      ).txs;
       expect(txs.length).toEqual(2);
       expect(txs[0].inputs.length).toEqual(1);
       expect(txs[0].outputs.length).toEqual(2);

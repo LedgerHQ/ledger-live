@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-trustchain",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Ledger Live trustchain hardware layer",
   "private": true,
   "keywords": [
@@ -28,7 +28,6 @@
     "tiny-secp256k1": "1"
   },
   "devDependencies": {
-    "@ledgerhq/speculos-transport": "workspace:*",
     "@types/lodash": "4",
     "@types/jest": "^29.5.10",
     "jest": "^29.7.0",

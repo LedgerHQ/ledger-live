@@ -6,11 +6,10 @@
       }
     },
     "settings": {
-      "enablePlatformDevTools": true,
       "hasCompletedOnboarding": true,
       "counterValue": "USD",
       "language": "en",
-      "theme": "light",
+      "theme": null,
       "region": null,
       "orderAccounts": "balance|desc",
       "countervalueFirst": false,
@@ -32,7 +31,7 @@
       "discreetMode": false,
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
-      "dismissedDynamicCards": [],
+      "hasAcceptedSwapKYC": false,
       "lastSeenDevice": null,
       "blacklistedTokenIds": [],
       "swapAcceptedProviderIds": [],

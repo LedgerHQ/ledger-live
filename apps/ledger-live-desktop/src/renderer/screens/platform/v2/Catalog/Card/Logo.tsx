@@ -34,6 +34,7 @@ export function Logo({
       alignItems="center"
       justifyContent="center"
       backgroundColor={isLoaded ? "transparent" : "neutral.c50"}
+      data-test-id="live-icon-container"
     >
       {!isLoaded && <Text>{name[0].toUpperCase()}</Text>}
 

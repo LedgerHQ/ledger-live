@@ -137,7 +137,6 @@ export type Features = CurrencyFeatures & {
   buySellShortcut: DefaultFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
-  referralProgramMobile: Feature_ReferralProgramMobile;
   disableNftSend: Feature_DisableNftSend;
   disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
   disableNftRaribleOpensea: Feature_DisableNftRaribleOpensea;
@@ -162,7 +161,6 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   listAppsV2minor1: Feature_ListAppsV2minor1;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
-  ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
@@ -186,6 +184,7 @@ export type Features = CurrencyFeatures & {
   llmWalletSync: Feature_LlmWalletSync;
   lldNftsGalleryNewArch: DefaultFeature;
   enableAppsBackup: Feature_EnableAppsBackup;
+  web3hub: Feature_web3hub;
 };
 
 /**
@@ -221,10 +220,6 @@ export type Feature_StakePrograms = Feature<{
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;
-
-export type Feature_ReferralProgramMobile = Feature<{
-  path: string;
-}>;
 
 export type Feature_ReferralProgramDesktopSidebar = Feature<{
   path: string;
@@ -504,6 +499,7 @@ export type Feature_LldWalletSync = DefaultFeature;
 export type Feature_LlmWalletSync = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
+export type Feature_web3hub = DefaultFeature;
 
 /**
  * Utils types.

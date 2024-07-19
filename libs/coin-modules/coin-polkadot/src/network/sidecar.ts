@@ -4,7 +4,7 @@ import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network/network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -36,12 +36,12 @@ import { createRegistryAndExtrinsics } from "./common";
  * @returns {string}
  */
 const getSidecarUrl = (route: string): string => {
-  const sidecarUrl = getCoinConfig().sidecar.url;
+  const sidecarUrl = coinConfig.getCoinConfig().sidecar.url;
   return `${sidecarUrl}${route || ""}`;
 };
 
 const getElectionOptimisticThreshold = (): number => {
-  return getCoinConfig().staking?.electionStatusThreshold || 25;
+  return coinConfig.getCoinConfig().staking?.electionStatusThreshold || 25;
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
@@ -49,7 +49,7 @@ const VALIDATOR_COMISSION_RATIO = 1000000000;
 // blocks = 2 minutes 30
 
 async function callSidecar<T>(route: string, method: "GET" | "POST" = "GET", data?: unknown) {
-  const credentials = getCoinConfig().sidecar.credentials;
+  const credentials = coinConfig.getCoinConfig().sidecar.credentials;
   const headers = credentials ? { Authorization: "Basic " + credentials } : {};
 
   return network<T>({
@@ -355,7 +355,7 @@ export const getAccount = async (addr: string) => {
  * @async
  * @param {*} addr - the account address
  */
-const getBalances = async (addr: string) => {
+export const getBalances = async (addr: string) => {
   const balanceInfo = await fetchBalanceInfo(addr);
   // Locked is the highest value among locks
   const totalLocked = balanceInfo.locks.reduce((total, lock) => {

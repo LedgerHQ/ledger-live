@@ -4,6 +4,7 @@ import {
   MarketStateActionTypes,
   MarketSetCurrentPagePayload,
   MarketSetMarketFilterByStarredCurrenciesPayload,
+  MarketImportPayload,
 } from "./types";
 
 export const setMarketRequestParams = createAction<MarketSetMarketRequestParamsPayload>(
@@ -18,3 +19,5 @@ export const setMarketFilterByStarredCurrencies =
 export const setMarketCurrentPage = createAction<MarketSetCurrentPagePayload>(
   MarketStateActionTypes.MARKET_SET_CURRENT_PAGE,
 );
+
+export const importMarket = createAction<MarketImportPayload>(MarketStateActionTypes.MARKET_IMPORT);

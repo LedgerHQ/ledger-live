@@ -15,5 +15,6 @@ export interface IExplorer {
     fromBlockheight: number,
     toBlockheight: number | undefined,
     isPending: boolean,
-  ): Promise<TX[]>;
+    token: string | null,
+  ): Promise<{ txs: TX[]; nextPageToken: string | null }>;
 }

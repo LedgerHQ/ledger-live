@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "买入 / 卖出",
-        "description" : "通过值得信赖的服务提供商进行买卖"
+        "description" : "通过我们值得信赖的服务提供商进行买卖"
       },
       "swap" : {
         "title" : "互换",
-        "description" : "安全地转换加密货币",
+        "description" : "转换加密货币",
         "label" : "热门"
       },
       "earn" : {
         "title" : "权益质押",
-        "description" : "通过 Ledger 增长加密资产"
+        "description" : "使用 Ledger 设备权益质押加密货币"
       }
     },
     "recoverBanner" : {
@@ -5493,6 +5493,10 @@
       "description" : "无法计算金额和费用"
     },
     "NotEnoughBalance" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额。",
       "description" : "请确保该账户资金充足。"
     },
@@ -5504,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "您首先需要向该地址发送至少 0.1 TRX 才能启用 TRC20 代币接收。<link0>了解更多</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "您至少需要 0.1 TRX 才能使该 Tron 账户保持活跃状态，还需要 1.1 TRX 用于支付网络费用。<link0>了解更多</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "您的操作系统版本已过时",
@@ -6088,6 +6098,9 @@
     },
     "newAddressTRC20" : {
       "title" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "我们的比特币基础设施遇到了问题。请稍后重试。"
     }
   },
   "cryptoOrg" : {

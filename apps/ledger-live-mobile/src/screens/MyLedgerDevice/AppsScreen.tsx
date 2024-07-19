@@ -45,6 +45,7 @@ import ProviderWarning from "./ProviderWarning";
 import { UpdateStep } from "../FirmwareUpdate";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import camelCase from "lodash/camelCase";
+import KeyboardView from "~/components/KeyboardView";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
@@ -239,61 +240,63 @@ const AppsScreen = ({
 
   const renderList = useCallback(
     (items?: App[]) => (
-      <FlatList
-        testID="manager-deviceInfo-scrollView"
-        data={items}
-        ListHeaderComponent={
-          <Flex mt={4}>
-            <DeviceCard
-              distribution={distribution}
-              state={state}
-              result={result}
-              deviceId={deviceId}
-              initialDeviceName={initialDeviceName}
-              pendingInstalls={pendingInstalls}
-              deviceInfo={deviceInfo}
-              dispatch={dispatch}
-              device={device}
-              appList={deviceApps}
-              onLanguageChange={onLanguageChange}
-            >
-              {showFwUpdateBanner ? (
-                <Flex p={6} pb={0}>
-                  <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-                </Flex>
-              ) : null}
-            </DeviceCard>
-            <ProviderWarning />
-            <Benchmarking state={state} />
-            {
-              <AppUpdateAll
+      <KeyboardView style={{ flex: 1 }} behavior="padding">
+        <FlatList
+          testID="manager-deviceInfo-scrollView"
+          data={items}
+          ListHeaderComponent={
+            <Flex mt={4}>
+              <DeviceCard
+                distribution={distribution}
                 state={state}
-                appsToUpdate={update}
+                result={result}
+                deviceId={deviceId}
+                initialDeviceName={initialDeviceName}
+                pendingInstalls={pendingInstalls}
+                deviceInfo={deviceInfo}
                 dispatch={dispatch}
-                isModalOpened={updateModalOpened}
-              />
-            }
-            <Flex flexDirection="row" mt={8} mb={6} backgroundColor="background.main">
-              <Searchbar searchQuery={query} onQueryUpdate={setQuery} />
-              <Flex ml={6}>
-                <AppFilter
-                  filter={appFilter}
-                  setFilter={setFilter}
-                  sort={sort}
-                  setSort={setSort}
-                  order={order}
-                  setOrder={setOrder}
+                device={device}
+                appList={deviceApps}
+                onLanguageChange={onLanguageChange}
+              >
+                {showFwUpdateBanner ? (
+                  <Flex p={6} pb={0}>
+                    <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+                  </Flex>
+                ) : null}
+              </DeviceCard>
+              <ProviderWarning />
+              <Benchmarking state={state} />
+              {
+                <AppUpdateAll
+                  state={state}
+                  appsToUpdate={update}
+                  dispatch={dispatch}
+                  isModalOpened={updateModalOpened}
                 />
+              }
+              <Flex flexDirection="row" mt={8} mb={6} backgroundColor="background.main">
+                <Searchbar searchQuery={query} onQueryUpdate={setQuery} />
+                <Flex ml={6}>
+                  <AppFilter
+                    filter={appFilter}
+                    setFilter={setFilter}
+                    sort={sort}
+                    setSort={setSort}
+                    order={order}
+                    setOrder={setOrder}
+                  />
+                </Flex>
               </Flex>
             </Flex>
-          </Flex>
-        }
-        renderItem={renderRow}
-        ListEmptyComponent={renderNoResults}
-        keyExtractor={item => item.name}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.list}
-      />
+          }
+          renderItem={renderRow}
+          ListEmptyComponent={renderNoResults}
+          keyExtractor={item => item.name}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.list}
+        />
+      </KeyboardView>
     ),
 
     [

@@ -16,7 +16,7 @@ type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
 };
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
-const swapAdditionData: Record<string, AdditionalProviderConfig> = {
+const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   changelly: {
     needsKYC: false,
     needsBearerToken: false,
@@ -45,7 +45,7 @@ const swapAdditionData: Record<string, AdditionalProviderConfig> = {
   },
 };
 
-const swapProviders: Record<string, ProviderConfig & AdditionalProviderConfig> = {
+const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProviderConfig> = {
   changelly: {
     name: "Changelly",
     publicKey: {
@@ -141,28 +141,20 @@ function transformData(providersData) {
 }
 
 export const getProvidersData = async () => {
-  try {
-    const providersData = await network({
-      url:
-        "https://crypto-assets-service.api.ledger.com/v1/partners" +
-        "?output=name,signature,public_key,public_key_curve" +
-        "&service_name=swap",
-    });
-    return providersData.data;
-  } catch {
-    return swapProviders;
-  }
+  const providersData = await network({
+    url:
+      "https://crypto-assets-service.api.ledger.com/v1/partners" +
+      "?output=name,signature,public_key,public_key_curve" +
+      "&service_name=swap",
+  });
+  return transformData(providersData.data);
 };
 
 export const getProvidersCDNData = async () => {
-  try {
-    const providersData = await network({
-      url: "https://cdn.live.ledger.com/swap-providers/data.json",
-    });
-    return providersData.data;
-  } catch {
-    return swapAdditionData;
-  }
+  const providersData = await network({
+    url: "https://cdn.live.ledger.com/swap-providers/data.json",
+  });
+  return providersData.data;
 };
 
 export const fetchAndMergeProviderData = async () => {
@@ -176,16 +168,13 @@ export const fetchAndMergeProviderData = async () => {
       getProvidersCDNData(),
     ]);
 
-    const transformedProvidersData = transformData(providersData);
-    const finalProvidersData = mergeProviderData(transformedProvidersData, providersExtraData);
+    const finalProvidersData = mergeProviderData(providersData, providersExtraData);
     providerDataCache = finalProvidersData;
 
     return finalProvidersData;
   } catch (error) {
     console.error("Error fetching or processing provider data:", error);
-    const transformedProvidersData = transformData(swapProviders);
-    const finalProvidersData = mergeProviderData(transformedProvidersData, swapAdditionData);
-    providerDataCache = finalProvidersData;
+    const finalProvidersData = mergeProviderData(DEFAULT_SWAP_PROVIDERS, SWAP_DATA_CDN);
 
     return finalProvidersData;
   }
@@ -202,9 +191,9 @@ function mergeProviderData(baseData, additionalData) {
   return mergedData;
 }
 
-export const getAvailableProviders = (): string[] => {
+export const getAvailableProviders = async (): Promise<string[]> => {
   if (isIntegrationTestEnv()) {
-    return Object.keys(swapProviders).filter(p => p !== "changelly");
+    return Object.keys(DEFAULT_SWAP_PROVIDERS).filter(p => p !== "changelly");
   }
-  return Object.keys(swapProviders);
+  return Object.keys(await fetchAndMergeProviderData());
 };

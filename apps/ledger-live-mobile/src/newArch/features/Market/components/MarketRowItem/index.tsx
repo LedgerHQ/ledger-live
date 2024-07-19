@@ -47,7 +47,7 @@ function MarketRowItem({ item, index, counterCurrency, range }: Props) {
         )
       )}
       <Flex mx="4" flexDirection="column" justifyContent="center" alignItems="flex-start" flex={1}>
-        <Text variant="large" fontWeight="semiBold" numberOfLines={1}>
+        <Text variant="large" fontWeight="semiBold" numberOfLines={1} testID="market-row-title">
           {`${name} (${ticker.toLocaleUpperCase()})`}
         </Text>
         <Flex flexDirection="row" alignItems="center">

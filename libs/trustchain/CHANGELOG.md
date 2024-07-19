@@ -1,5 +1,31 @@
 # @ledgerhq/live-wallet
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`c9329bb`](https://github.com/LedgerHQ/ledger-live/commit/c9329bb94d115bef23b02fdbed7c62f01c186d0a), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/types-devices@6.25.1
+  - @ledgerhq/errors@6.18.0
+  - @ledgerhq/hw-transport@6.31.1
+  - @ledgerhq/live-network@1.3.1
+  - @ledgerhq/speculos-transport@0.1.2
+  - @ledgerhq/hw-trustchain@0.1.2
+  - @ledgerhq/hw-transport-mocker@6.29.1
+
+## 0.1.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c9329bb`](https://github.com/LedgerHQ/ledger-live/commit/c9329bb94d115bef23b02fdbed7c62f01c186d0a), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/types-devices@6.25.1-next.0
+  - @ledgerhq/errors@6.18.0-next.0
+  - @ledgerhq/hw-transport@6.31.1-next.0
+  - @ledgerhq/live-network@1.3.1-next.0
+  - @ledgerhq/speculos-transport@0.1.2-next.0
+  - @ledgerhq/hw-trustchain@0.1.2-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.1-next.0
+
 ## 0.1.1
 
 ### Patch Changes

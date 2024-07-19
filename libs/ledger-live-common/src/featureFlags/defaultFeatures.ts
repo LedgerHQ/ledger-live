@@ -1,9 +1,9 @@
 import {
+  ABTestingVariants,
   DefaultFeature,
   Feature,
-  Features,
   FeatureMap,
-  ABTestingVariants,
+  Features,
 } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
@@ -135,11 +135,6 @@ export const DEFAULT_FEATURES: Features = {
   referralProgramDesktopSidebar: {
     enabled: false,
     params: { amount: "$20", isNew: true, path: "/discover/refer-a-friend" },
-  },
-
-  referralProgramMobile: {
-    enabled: false,
-    params: { path: "/discover/refer-a-friend" },
   },
 
   protectServicesDesktop: {
@@ -397,10 +392,6 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
   },
 
-  ptxSwapLiveApp: {
-    enabled: false,
-  },
-
   ptxSwapLiveAppDemoZero: {
     enabled: false,
     params: {
@@ -479,6 +470,7 @@ export const DEFAULT_FEATURES: Features = {
   llmWalletSync: DEFAULT_FEATURE,
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
+  web3hub: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

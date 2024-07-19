@@ -72,6 +72,7 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/4406211657233-Send-a-custom-Ethereum-transaction-in-Ledger-Live?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=eth_fees",
   feesPolkadot:
     "https://support.ledger.com/hc/en-us/articles/360016289919?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=dot_fees",
+  feesTron: "https://support.ledger.com/hc/en-us/articles/6331588714141",
   verifyTransactionDetails:
     "https://support.ledger.com/hc/en-us/articles/4404389453841-Receive-crypto-assets?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=tx_device_check",
   erc20:

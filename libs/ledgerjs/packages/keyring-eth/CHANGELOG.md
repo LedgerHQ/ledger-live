@@ -1,5 +1,35 @@
 # @ledgerhq/keyring-eth
 
+## 0.2.0
+
+### Minor Changes
+
+- [#7170](https://github.com/LedgerHQ/ledger-live/pull/7170) [`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Support the specific transaction type of ledger live
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04), [`87a3a1e`](https://github.com/LedgerHQ/ledger-live/commit/87a3a1ee2d5ed3dae2251b4a8683063b07ee1df8), [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90), [`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4), [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5), [`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad)]:
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/context-module@0.1.0
+  - @ledgerhq/coin-evm@2.1.2
+  - @ledgerhq/hw-app-eth@6.37.2
+  - @ledgerhq/hw-transport@6.31.1
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#7170](https://github.com/LedgerHQ/ledger-live/pull/7170) [`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Support the specific transaction type of ledger live
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04), [`87a3a1e`](https://github.com/LedgerHQ/ledger-live/commit/87a3a1ee2d5ed3dae2251b4a8683063b07ee1df8), [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90), [`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4), [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5), [`5ed9a8b`](https://github.com/LedgerHQ/ledger-live/commit/5ed9a8b08d4cb751f86313eb9eace72b37499cad)]:
+  - @ledgerhq/types-live@6.49.0-next.0
+  - @ledgerhq/context-module@0.1.0-next.0
+  - @ledgerhq/coin-evm@2.1.2-next.0
+  - @ledgerhq/hw-app-eth@6.37.2-next.0
+  - @ledgerhq/hw-transport@6.31.1-next.0
+
 ## 0.1.1
 
 ### Patch Changes
