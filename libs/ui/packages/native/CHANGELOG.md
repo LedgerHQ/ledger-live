@@ -1,5 +1,23 @@
 # @ledgerhq/native-ui
 
+## 0.23.1
+
+### Patch Changes
+
+- [#7215](https://github.com/LedgerHQ/ledger-live/pull/7215) [`f98ca2e`](https://github.com/LedgerHQ/ledger-live/commit/f98ca2e82f42036546a7b7005782a6f97213bc32) Thanks [@LucasWerey](https://github.com/LucasWerey)! - input animation triggers if there is any value entered
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/crypto-icons-ui@1.3.0
+
+## 0.23.1-next.0
+
+### Patch Changes
+
+- [#7215](https://github.com/LedgerHQ/ledger-live/pull/7215) [`f98ca2e`](https://github.com/LedgerHQ/ledger-live/commit/f98ca2e82f42036546a7b7005782a6f97213bc32) Thanks [@LucasWerey](https://github.com/LucasWerey)! - input animation triggers if there is any value entered
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/crypto-icons-ui@1.3.0-next.0
+
 ## 0.23.0
 
 ### Minor Changes

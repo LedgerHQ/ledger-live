@@ -23,7 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: Ledger Live Mobile 3.39.0
+      short_description: Ledger Live Mobile 3.40.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -114,14 +114,11 @@ release:
         **Rewards are not guaranteed. Ledger provides no advice or
         recommendations on use of staking services.
       new_in_version: >-
-        Fixes
-        You can now clear nominations for your bonded DOT.
+        Removed Features
+        Viacoin (VIA), Peercoin (PPC), and Vertcoin (VTC) are no longer supported.
 
-        A bug that caused the app to crash when accessing TRC20 accounts has been resolved.
-
-        We've fixed the bug that prevented the hiding of token accounts.
-
-        Adding a Solana (SOL) account or sending a transaction would sometimes result in an error. We've patched this up.
+        Fix
+        We fixed a bug that caused an error when trying to send or stake Injective (INJ).
       saga_features: ""
   media:
     - purpose: screenshot
