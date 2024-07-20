@@ -1,12 +1,12 @@
 # @ledgerhq/types-devices
 
-## 6.25.1-nightly.1
+## 6.25.1
 
 ### Patch Changes
 
-- [#7327](https://github.com/LedgerHQ/ledger-live/pull/7327) [`8dd0fb1`](https://github.com/LedgerHQ/ledger-live/commit/8dd0fb195525eef4600a8ecbca2a80a1899de321) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Rename QRCodeDevices by DevicesWithTouchScreen
+- [#7204](https://github.com/LedgerHQ/ledger-live/pull/7204) [`c9329bb`](https://github.com/LedgerHQ/ledger-live/commit/c9329bb94d115bef23b02fdbed7c62f01c186d0a) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix scanning QR code cannot show all devices with grand screen issue.
 
-## 6.25.1-nightly.0
+## 6.25.1-next.0
 
 ### Patch Changes
 

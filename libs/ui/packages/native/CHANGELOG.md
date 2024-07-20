@@ -1,30 +1,22 @@
 # @ledgerhq/native-ui
 
-## 0.23.1-nightly.3
-
-### Patch Changes
-
-- [#7307](https://github.com/LedgerHQ/ledger-live/pull/7307) [`77bcd53`](https://github.com/LedgerHQ/ledger-live/commit/77bcd539ad23daf7abc81e202665f6b9ab45c437) Thanks [@Justkant](https://github.com/Justkant)! - fix: use auto instead of fit-content that does not exist on RN
-
-## 0.23.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545)]:
-  - @ledgerhq/icons-ui@0.7.1-nightly.0
-
-## 0.23.1-nightly.1
+## 0.23.1
 
 ### Patch Changes
 
 - [#7215](https://github.com/LedgerHQ/ledger-live/pull/7215) [`f98ca2e`](https://github.com/LedgerHQ/ledger-live/commit/f98ca2e82f42036546a7b7005782a6f97213bc32) Thanks [@LucasWerey](https://github.com/LucasWerey)! - input animation triggers if there is any value entered
 
-## 0.23.1-nightly.0
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
+  - @ledgerhq/crypto-icons-ui@1.3.0
+
+## 0.23.1-next.0
 
 ### Patch Changes
 
+- [#7215](https://github.com/LedgerHQ/ledger-live/pull/7215) [`f98ca2e`](https://github.com/LedgerHQ/ledger-live/commit/f98ca2e82f42036546a7b7005782a6f97213bc32) Thanks [@LucasWerey](https://github.com/LucasWerey)! - input animation triggers if there is any value entered
+
 - Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04)]:
-  - @ledgerhq/crypto-icons-ui@1.3.0-nightly.0
+  - @ledgerhq/crypto-icons-ui@1.3.0-next.0
 
 ## 0.23.0
 

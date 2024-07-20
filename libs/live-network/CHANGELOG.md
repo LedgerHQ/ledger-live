@@ -1,31 +1,18 @@
 # @ledgerhq/live-network
 
-## 1.4.0-nightly.3
-
-### Minor Changes
-
-- [#7334](https://github.com/LedgerHQ/ledger-live/pull/7334) [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978) Thanks [@gre](https://github.com/gre)! - live-network no longer retry network calls on HTTP status code that shouldn't be retried like 401 & some others.
-
-## 1.3.1-nightly.2
+## 1.3.1
 
 ### Patch Changes
 
-- Updated dependencies [[`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b)]:
-  - @ledgerhq/errors@6.18.0-nightly.2
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0
 
-## 1.3.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
-  - @ledgerhq/errors@6.18.0-nightly.1
-
-## 1.3.1-nightly.0
+## 1.3.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3)]:
-  - @ledgerhq/errors@6.18.0-nightly.0
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0-next.0
 
 ## 1.3.0
 

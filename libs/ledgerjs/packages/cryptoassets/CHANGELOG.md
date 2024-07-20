@@ -1,16 +1,28 @@
 # @ledgerhq/cryptoassets
 
-## 13.2.0-nightly.1
+## 13.2.0
 
 ### Minor Changes
 
-- [#7075](https://github.com/LedgerHQ/ledger-live/pull/7075) [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Sync, Send, Receive, Create Account for Icon network
-
-## 13.1.2-nightly.0
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
 
 ### Patch Changes
 
 - [#7260](https://github.com/LedgerHQ/ledger-live/pull/7260) [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use random dead address to determine trx fees, update pricing for the sending of trc20 tokens
+
+- [#7183](https://github.com/LedgerHQ/ledger-live/pull/7183) [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-13101): update tron dead address
+
+## 13.2.0-next.0
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+### Patch Changes
+
+- [#7260](https://github.com/LedgerHQ/ledger-live/pull/7260) [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use random dead address to determine trx fees, update pricing for the sending of trc20 tokens
+
+- [#7183](https://github.com/LedgerHQ/ledger-live/pull/7183) [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-13101): update tron dead address
 
 ## 13.1.1
 

@@ -1,25 +1,18 @@
 # @ledgerhq/hw-app-trx
 
-## 6.29.1-nightly.2
+## 6.29.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.1-nightly.2
+  - @ledgerhq/hw-transport@6.31.1
 
-## 6.29.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.1-nightly.1
-
-## 6.29.1-nightly.0
+## 6.29.1-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.1-next.0
 
 ## 6.29.0
 

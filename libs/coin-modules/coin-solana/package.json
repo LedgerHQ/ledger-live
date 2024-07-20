@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "0.7.2-nightly.5",
+  "version": "0.7.2",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
