@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.48.0-nightly.0
+
+### Minor Changes
+
+- [#7365](https://github.com/LedgerHQ/ledger-live/pull/7365) [`14e30e0`](https://github.com/LedgerHQ/ledger-live/commit/14e30e00b5b7fd6827b00dfd8fe93b6cee2cf6b7) Thanks [@Justkant](https://github.com/Justkant)! - feat(web3hub): add tabs button to main, search and app screens
+
 ## 3.47.0
 
 ### Minor Changes
