@@ -4,7 +4,7 @@ import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers"
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getTransactions } from "./api";
 import { MinaAccount, MinaOperation } from "./types";
-import { RosettaTransaction } from "./api/rosetta/types";
+import { RosettaTransactionWithDate } from "./api/rosetta/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
@@ -13,13 +13,13 @@ import invariant from "invariant";
 const mapRosettaTxnToOperation = (
   accountId: string,
   address: string,
-  txn: RosettaTransaction,
+  txn: RosettaTransactionWithDate,
 ): MinaOperation[] => {
   try {
     const hash = txn.transaction.transaction_identifier.hash;
     const blockHeight = txn.block_identifier.index;
     const blockHash = txn.block_identifier.hash;
-    const date = new Date();
+    const date = txn.date;
     const memo = txn.transaction.metadata?.memo || "";
 
     let value = new BigNumber(0);
@@ -28,7 +28,6 @@ const mapRosettaTxnToOperation = (
     let fromAccount: string = "";
     let toAccount: string = "";
     let isSending = false;
-
     for (const op of txn.transaction.operations) {
       const opValue = new BigNumber(op.amount.value);
       switch (op.type) {

@@ -45,6 +45,10 @@ export type FetchAccountBalanceResponse = {
   };
 };
 
+export type RosettaTransactionWithDate = RosettaTransaction & {
+  date: Date;
+};
+
 export type RosettaTransaction = {
   block_identifier: {
     index: number;
@@ -129,5 +133,19 @@ export type RosettaMetadataResponse = {
 export type RosettaSubmitResponse = {
   transaction_identifier: {
     hash: string;
+  };
+};
+
+export type RosettaBlockInfoResponse = {
+  block: {
+    block_identifier: {
+      index: number;
+      hash: string;
+    };
+    parent_block_identifier: {
+      index: number;
+      hash: string;
+    };
+    timestamp: number;
   };
 };
