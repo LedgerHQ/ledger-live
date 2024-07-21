@@ -1,13 +1,6 @@
 import { fetchTransactionMetadata } from ".";
-import { setCoinConfig } from "../../config";
-
-setCoinConfig((): any => {
-  return {
-    infra: {
-      API_MINA_ROSETTA_NODE: "https://mina-rosetta-api-devnet.zondax.dev",
-    },
-  };
-});
+import { setConfig } from "../../testUtils";
+setConfig();
 
 test("get metadata for a transactions", async () => {
   const metadata = await fetchTransactionMetadata(

@@ -3,28 +3,50 @@ import { MinaAPIAccount, MinaSignedTransaction, Transaction } from "../types";
 import {
   fetchAccountBalance,
   fetchAccountTransactions,
+  fetchBlockInfo,
   fetchNetworkStatus,
   fetchTransactionMetadata,
   rosettaSubmitTransaction,
 } from "./rosetta";
-import { RosettaTransaction } from "./rosetta/types";
+import { RosettaTransactionWithDate } from "./rosetta/types";
 import { MINA_TOKEN_ID } from "../consts";
+import { isValidAddress } from "../logic";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   const networkStatus = await fetchNetworkStatus();
-  const balance = await fetchAccountBalance(address);
+  let balance = new BigNumber(0);
+  let spendableBalance = new BigNumber(0);
+  try {
+    const resp = await fetchAccountBalance(address);
+    balance = new BigNumber(resp.balances[0].metadata.total_balance);
+    spendableBalance = new BigNumber(resp.balances[0].metadata.liquid_balance);
+  } catch (e) {
+    /* empty */
+  }
 
   return {
     blockHeight: networkStatus.current_block_identifier.index,
-    balance: new BigNumber(balance.balances[0].metadata.total_balance),
-    spendableBalance: new BigNumber(balance.balances[0].metadata.liquid_balance),
+    balance,
+    spendableBalance,
   };
 };
 
-export const getTransactions = async (address: string): Promise<RosettaTransaction[]> => {
+export const getTransactions = async (address: string): Promise<RosettaTransactionWithDate[]> => {
   const res = await fetchAccountTransactions(address);
 
-  return res.transactions;
+  const txns: RosettaTransactionWithDate[] = [];
+  for (const txn of res.transactions) {
+    const date = await getBlockDate(txn.block_identifier.hash);
+    txns.push({ ...txn, date: date });
+  }
+
+  return txns;
+};
+
+export const getBlockDate = async (hash: string): Promise<Date> => {
+  const res = await fetchBlockInfo(hash);
+
+  return new Date(res.block.timestamp);
 };
 
 export const broadcastTransaction = async (txn: MinaSignedTransaction): Promise<string> => {
@@ -50,7 +72,7 @@ export const broadcastTransaction = async (txn: MinaSignedTransaction): Promise<
 };
 
 export const getFees = async (txn: Transaction, address: string): Promise<BigNumber> => {
-  if (!txn.amount || !txn.recipient) {
+  if (!txn.amount || !txn.recipient || !isValidAddress(txn.recipient)) {
     return txn.fees;
   }
 

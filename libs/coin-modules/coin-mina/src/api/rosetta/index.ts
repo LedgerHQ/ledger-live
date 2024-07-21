@@ -3,6 +3,7 @@ import {
   FetchAccountBalanceResponse,
   FetchAccountTransactionsResponse,
   FetchNetworkStatusResponse,
+  RosettaBlockInfoResponse,
   RosettaMetadataResponse,
   RosettaPreprocessResponse,
   RosettaSubmitResponse,
@@ -77,4 +78,14 @@ export const rosettaSubmitTransaction = async (blob: string) => {
     url: getRosettaUrl("/construction/submit"),
     data: addNetworkIdentifier({ signed_transaction: blob }),
   });
+};
+
+export const fetchBlockInfo = async (hash: string) => {
+  const res = await network<RosettaBlockInfoResponse>({
+    method: "POST",
+    url: getRosettaUrl("/block"),
+    data: addNetworkIdentifier({ block_identifier: { hash } }),
+  });
+
+  return res.data;
 };
