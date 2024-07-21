@@ -10,20 +10,20 @@ import type { Transaction } from "./types";
 import { fromTransactionRaw } from "./transaction";
 import { InvalidMemoMina } from "./errors";
 
-const ACCOUNT_ADDRESS = "";
-const ACCOUNT_ADDRESS_1 = "";
+const ACCOUNT_ADDRESS = "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM";
+const ACCOUNT_ADDRESS_1 = "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314";
 
 const mina: CurrenciesData<Transaction> = {
   scanAccounts: [
     {
       name: "mina seed 1",
       apdus: `
-      => 80040157148000002c8000018d800000008000000080000000
-      <= 18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec9000
-      => 80040157148000002c8000018d800000008000000080000001
-      <= 6cbf3b0f8d8b4667bf64bf44b4fefa830e4cef0e5da1e5cfb4015b5a755c4ac09000
-      => 80040157148000002c8000018d800000008000000080000002
-      <= 59dff1cf9185758c0c2f878c37a175280f3967dca8fee6e4ad0c4aa26daf8e5c9000
+      => e00200000400000000
+      <= 423632716b6446574a5357387a6154425a6a5456746d65553372567879556b4e7850684b4b573854324a4274706a3558666479774c534d009000
+      => e00200000400000001
+      <= 423632716b576348686f6973574443523776336776577a5836775845567547594c485871336d53796d3447457a6659586d534476333134009000
+      => e00200000400000002
+      <= 423632716d6233356642476a50714c75456f4842336242766f3834397a32707738423271335854703677765a4d4c734641336562325647009000
       `,
     },
   ],
@@ -48,7 +48,7 @@ const mina: CurrenciesData<Transaction> = {
       },
       transactions: [
         {
-          name: "Not a valid address",
+          name: "not a valid address",
           transaction: fromTransactionRaw({
             family: "mina",
             recipient: "novalidaddress",
@@ -63,7 +63,7 @@ const mina: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Not enough balance",
+          name: "not enough balance",
           transaction: fromTransactionRaw({
             family: "mina",
             recipient: ACCOUNT_ADDRESS_1,
@@ -78,7 +78,7 @@ const mina: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Invalid Memo",
+          name: "invalid Memo",
           transaction: fromTransactionRaw({
             family: "mina",
             recipient: ACCOUNT_ADDRESS_1,
@@ -94,7 +94,7 @@ const mina: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Amount Required",
+          name: "amount Required",
           transaction: fromTransactionRaw({
             family: "mina",
             recipient: ACCOUNT_ADDRESS_1,
@@ -109,7 +109,7 @@ const mina: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "Recipient same as source",
+          name: "recipient same as source",
           transaction: fromTransactionRaw({
             family: "mina",
             recipient: ACCOUNT_ADDRESS,
@@ -118,13 +118,13 @@ const mina: CurrenciesData<Transaction> = {
           }),
           expectedStatus: {
             errors: {
-              amount: new InvalidAddressBecauseDestinationIsAlsoSource(),
+              recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
             },
             warnings: {},
           },
         },
         {
-          name: "New account and sufficient amount",
+          name: "new account and sufficient amount",
           transaction: fromTransactionRaw({
             family: "mina",
             recipient: ACCOUNT_ADDRESS_1,
@@ -154,14 +154,3 @@ describe("Mina bridge", () => {
     "This is an empty test to make jest command pass. Remove it once there is a real test.",
   );
 });
-
-/**
- * NOTE: if tests are added to this file,
- * like done in libs/coin-polkadot/src/bridge.integration.test.ts for example,
- * this file fill need to be imported in ledger-live-common
- * libs/ledger-live-common/src/families/algorand/bridge.integration.test.ts
- * like done for polkadot.
- * cf.
- * - libs/coin-polkadot/src/bridge.integration.test.ts
- * - libs/ledger-live-common/src/families/polkadot/bridge.integration.test.ts
- */
