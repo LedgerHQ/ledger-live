@@ -338,6 +338,7 @@ const disableBIP44: Record<string, boolean> = {
   icon_berlin_testnet: true,
   vechain: true,
   internet_computer: true,
+  mina: true,
   casper: true,
   filecoin: true,
   ton: true,
