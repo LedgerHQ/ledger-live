@@ -932,7 +932,8 @@
     },
     "CustomError": {
       "title": "Sorry, try again.",
-      "description": "The server could not handle your request. Please try again later or contact Ledger Support."
+      "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
+      "errorCode": "Code: {{errorCode}}"
     }
   },
   "crash": {
