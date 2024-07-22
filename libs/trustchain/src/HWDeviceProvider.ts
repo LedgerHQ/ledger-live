@@ -14,10 +14,6 @@ export class HWDeviceProvider {
   constructor(policy?: AuthCachePolicy) {
     this.policy = policy;
   }
-  public tempGetHWDevice(transport: Transport): ApduDevice {
-    this.hw = device.apdu(transport);
-    return this.hw;
-  }
 
   public withJwt<T>(
     transport: Transport,
@@ -39,11 +35,10 @@ export class HWDeviceProvider {
     transport: Transport,
     job: (hw: ApduDevice) => Promise<T>,
     callbacks?: TrustchainDeviceCallbacks,
-    hw: ApduDevice = this.hw ?? device.apdu(transport),
   ): Promise<T> {
     callbacks?.onStartRequestUserInteraction();
     try {
-      return await job(hw);
+      return await job(this.hw ?? this.refreshHwDevice(transport));
     } catch (error) {
       if (
         error instanceof TransportStatusError &&
@@ -76,12 +71,7 @@ export class HWDeviceProvider {
   ): Promise<JWT> {
     const challenge = await api.getAuthenticationChallenge();
     const data = crypto.from_hex(challenge.tlv);
-    const seedId = await this.withHw(
-      transport,
-      hw => hw.getSeedId(data),
-      callbacks,
-      device.apdu(transport), // If the hw instance used here is reused in the other interactions these other interaction fail with RecordStoreWrongAPDU
-    );
+    const seedId = await this.withHw(transport, hw => hw.getSeedId(data), callbacks);
     const signature = crypto.to_hex(seedId.signature);
     return api.postChallengeResponse({
       challenge: challenge.json,
@@ -91,5 +81,10 @@ export class HWDeviceProvider {
         attestation: crypto.to_hex(seedId.attestationResult),
       },
     });
+  }
+
+  public refreshHwDevice(transport: Transport): ApduDevice {
+    this.hw = device.apdu(transport);
+    return this.hw;
   }
 }
