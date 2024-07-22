@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.47.1-hotfix.0
+
+### Patch Changes
+
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Upadate Europa assets
+
+- Updated dependencies [[`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea), [`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a)]:
+  - @ledgerhq/devices@8.4.2-hotfix.0
+  - @ledgerhq/icons-ui@0.7.1-hotfix.0
+  - @ledgerhq/coin-framework@0.16.1-hotfix.0
+  - @ledgerhq/coin-evm@2.1.3-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/react-native-hid@6.32.2-hotfix.0
+  - @ledgerhq/react-native-hw-transport-ble@6.33.2-hotfix.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.0
+  - @ledgerhq/native-ui@0.23.2-hotfix.0
+  - @ledgerhq/live-countervalues@0.2.3-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.2.3-hotfix.0
+  - @ledgerhq/live-nft@0.4.3-hotfix.0
+  - @ledgerhq/live-nft-react@0.4.3-hotfix.0
+  - @ledgerhq/hw-transport-http@6.30.2-hotfix.0
+
 ## 3.47.0
 
 ### Minor Changes

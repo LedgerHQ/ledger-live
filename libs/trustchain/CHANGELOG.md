@@ -1,5 +1,15 @@
 # @ledgerhq/live-wallet
 
+## 0.1.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/speculos-transport@0.1.3-hotfix.0
+  - @ledgerhq/hw-trustchain@0.1.3-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.2-hotfix.0
+
 ## 0.1.2
 
 ### Patch Changes

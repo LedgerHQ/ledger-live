@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-str
 
+## 7.0.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+
 ## 7.0.1
 
 ### Patch Changes

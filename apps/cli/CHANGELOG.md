@@ -1,5 +1,22 @@
 # @ledgerhq/live-cli
 
+## 24.4.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.16.1-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.7.1-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/hw-transport-node-hid@6.29.3-hotfix.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.0
+  - @ledgerhq/live-countervalues@0.2.3-hotfix.0
+  - @ledgerhq/hw-app-btc@10.4.1-hotfix.0
+  - @ledgerhq/hw-transport-http@6.30.2-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.2-hotfix.0
+  - @ledgerhq/hw-transport-node-speculos@6.29.2-hotfix.0
+
 ## 24.4.0
 
 ### Minor Changes

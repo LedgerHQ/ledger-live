@@ -116,6 +116,10 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
-    "healthy-days-pay"
+    "blue-fireants-change",
+    "healthy-days-pay",
+    "old-vans-fry",
+    "strange-oranges-bake",
+    "strong-bats-walk"
   ]
 }

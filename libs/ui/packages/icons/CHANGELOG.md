@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.7.1-hotfix.0
+
+### Patch Changes
+
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Update Europa icon
+
 ## 0.7.0
 
 ### Minor Changes
