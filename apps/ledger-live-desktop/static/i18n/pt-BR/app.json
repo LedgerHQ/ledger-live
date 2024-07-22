@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Comprar / Vender",
-        "description" : "Comprar e vender com provedores confiáveis"
+        "description" : "Comprar e vender com nossos provedores de confiança"
       },
       "swap" : {
         "title" : "Trocar",
-        "description" : "Troque cripto por cripto em segurança",
+        "description" : "Trocar cripto por cripto",
         "label" : "Populares"
       },
       "earn" : {
         "title" : "Aplicar",
-        "description" : "Multiplique sua cripto com a Ledger"
+        "description" : "Faça staking de suas criptos com a Ledger"
       }
     },
     "recoverBanner" : {
@@ -5493,8 +5493,12 @@
       "description" : "Impossível calcular quantia e taxas"
     },
     "NotEnoughBalance" : {
-      "title" : "Saldo insuficiente, incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
+      "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughBalanceSwap" : {
+      "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
       "title" : "Endereço do destinatário inativo. Envie pelo menos {{minimalAmount}} para ativá-lo"
@@ -5504,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas de rede desta troca, já que está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "Primeiro, você precisa enviar pelo menos 0,1 TRX para este endereço para habilitar o recebimento de tokens TRC20. <link0>Saiba mais </link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "Você precisa de pelo menos 0,1 TRX para manter essa conta Tron ativa e 1,1 TRX para as taxas de rede. <link0>Saiba mais </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "A versão do seu sistema operacional está desatualizada",
@@ -6088,6 +6098,9 @@
     },
     "newAddressTRC20" : {
       "title" : "Primeiro, você precisa enviar pelo menos 0,1 TRX a este endereço para ativá-lo."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Estamos enfrentando um problema com a nossa infraestrutura Bitcoin. Tente novamente mais tarde."
     }
   },
   "cryptoOrg" : {

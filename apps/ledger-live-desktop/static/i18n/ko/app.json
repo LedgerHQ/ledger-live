@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "구매 / 판매",
-        "description" : "신뢰할 수 있는 공급자와 거래"
+        "description" : "신뢰할 수 있는 Ledger 파트너사와 거래"
       },
       "swap" : {
         "title" : "스왑",
-        "description" : "안전하게 암호화폐 교환",
+        "description" : "암호화폐 교환",
         "label" : "인기 있는"
       },
       "earn" : {
         "title" : "스테이킹",
-        "description" : "Ledger와 함께 암호화폐 수익 창출"
+        "description" : "Ledger가 함께하는 안전한 암호화폐 스테이킹"
       }
     },
     "recoverBanner" : {
@@ -5493,6 +5493,10 @@
       "description" : "금액 및 수수료 계산이 불가능합니다"
     },
     "NotEnoughBalance" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 자금이 충분한지 확인해 주세요."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
@@ -5504,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "TRC20 토큰 수령을 활성화하려면 먼저 최소 0.1 TRX를 이 주소로 보내야 합니다. <link0>자세히 알아보기</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "이 Tron 계정을 활성 상태로 유지하려면 0.1 TRX 이상이 필요하고 수수료로 1.1 TRX가 필요합니다.<link0>자세히 알아보기 </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "사용 중이신 운영 시스템이 최신 버전이 아닙니다",
@@ -6088,6 +6098,9 @@
     },
     "newAddressTRC20" : {
       "title" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "당사 비트코인 인프라에 문제개 발생했습니다. 나중에 다시 시도해 주세요."
     }
   },
   "cryptoOrg" : {

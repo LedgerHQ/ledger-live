@@ -127,6 +127,9 @@
       "title" : "Bluetoothが無効です。",
       "description" : "スマートフォンの設定でBluetoothを有効にしてください。({{state}}状態)"
     },
+    "BitcoinInfrastructureError" : {
+      "title" : "当社のビットコインインフラストラクチャで問題が発生しています。後でもう一度お試しください。"
+    },
     "CantOpenDevice" : {
       "title" : "接続に失敗しました。",
       "description" : "Bluetoothを使用するには、Ledgerデバイスのロックを解除し、通信範囲内に置いてください。"
@@ -369,6 +372,9 @@
     "InvalidRecipient" : {
       "title" : "無効な送付先"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "{{currencyName}}エクスプローラーからの応答が無効です"
+    },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "言語のインストールがデバイス上で拒否されました",
       "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
@@ -485,6 +491,10 @@
       "description" : "EGLDをアカウントに送付し、トランザクションの支払いを行ってください。"
     },
     "NotEnoughBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "申し訳ありません。ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
@@ -1335,7 +1345,8 @@
       "title" : "おかえりなさい",
       "subtitle" : "ウォレットへのアクセス方法を選択する：",
       "connect" : "Ledgerを接続する",
-      "sync" : "Ledger Live Desktopと同期する"
+      "sync" : "Ledger Live Desktopと同期する",
+      "walletSync" : "別のLedger Liveアプリと同期する"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "デバイスなしで探索する",
@@ -2287,6 +2298,22 @@
     "import" : {
       "title" : "デスクトップからインポート",
       "description" : "Ledger Live Desktopから資産をインポート"
+    },
+    "drawer" : {
+      "drawerTitleHasAccount" : "別のアカウントを追加",
+      "drawerSubTitle" : "Ledgerを使用して資産を追加するか、Ledger Liveデスクトップアプリから資産を直接インポートする。",
+      "import" : {
+        "title" : "デスクトップからインポート",
+        "description" : "Ledger Live Desktopから資産をインポート"
+      },
+      "add" : {
+        "title" : "Ledgerを使って追加",
+        "description" : "Ledgerデバイスを使用して資産のアカウントを作成またはインポート"
+      },
+      "walletSync" : {
+        "title" : "別のLedger Liveアプリからインポート",
+        "description" : "Ledger Syncを有効化する"
+      }
     }
   },
   "byteSize" : {
@@ -2404,6 +2431,7 @@
       "delegated" : "{{amount}}デリゲート済み",
       "delegatedTo" : "デリゲート先：",
       "delegatedAmount" : "デリゲート数",
+      "deposit" : "入金",
       "redelegated" : "{{amount}}を再デリゲート済み",
       "redelegatedFrom" : "再デリゲート元",
       "redelegatedTo" : "再デリゲート先",
@@ -2724,7 +2752,7 @@
       "dateFormat" : "日付形式",
       "dateFormatDesc" : "Ledger Liveの日付形式を設定。",
       "walletSync" : "Ledger同期",
-      "walletSyncDesc" : "アプリデータをバックアップして、複数のLedger Liveインスタンスをシームレスに同期する。",
+      "walletSyncDesc" : "シンプルにアプリのデータを保護し、複数のLedger Liveインスタンスを同期する。",
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "password" : "アプリロック",
@@ -2749,9 +2777,9 @@
       "developerMode" : "デベロッパーモード",
       "developerModeDesc" : "My Ledgerに開発者用アプリを表示し、テストネットアプリを有効化してください。",
       "analytics" : "アナリティクス",
-      "analyticsDesc" : "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する。",
+      "analyticsDesc" : "Ledgerがアプリの使用状況データを追跡できるようにし、Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させるようにします。",
       "personalizedRecommendations" : "好みに合わせてコンテンツをカスタマイズ",
-      "personalizedRecommendationsDesc" : "自分好みにパーソナライズされたおすすめ情報を受け取りましょう。",
+      "personalizedRecommendationsDesc" : "Ledgerがアプリの使用状況データを追跡して、好みに合ったパーソナライズされた推奨事項やコンテンツを提供し、Ledgerのマーケティングキャンペーンのパフォーマンスを測定できるようにします。",
       "analyticsModal" : {
         "title" : "アナリティクスの共有",
         "desc" : "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する",
@@ -3058,7 +3086,8 @@
       "addAccount" : {
         "title" : "アカウントを確認しています...",
         "subtitle" : "ブロックチェーン上に、お客様の{{currencyName}}のアカウントがすでにあるかどうかを確認しています。",
-        "foundAccounts" : "{{count}}件のアカウントが見つかりました",
+        "foundAccount" : "{{count}}件のアカウントを検出",
+        "foundAccount_plural" : "{{count}}件のアカウントを検出",
         "stopSynchronization" : "同期の停止",
         "addingAccount" : "アカウントが見つかりませんでした。{{currencyName}}の新しいアカウントを作成しています..."
       },
@@ -3128,7 +3157,7 @@
     },
     "stake" : {
       "title" : "ステーキング",
-      "description" : "暗号資産を運用する。"
+      "description" : "保有する暗号資産をステーキングしましょう。"
     },
     "swap" : {
       "title" : "スワップ",
@@ -6573,18 +6602,18 @@
     "variantA" : {
       "main" : {
         "title" : "コンテンツの改善およびパーソナライズへご協力ください",
-        "subtitle" : "お客様のLedger Liveデータを共有いただくことで、お客様の設定を理解し、関連するコンテンツを表示するとともに、技術的な問題解決するのに役立ちます。",
+        "subtitle" : "お客様のLedger Liveデータを共有いただくことで、お客様の好みを理解し、お客様に関連するコンテンツを表示することができます。",
         "content" : {
           "able" : {
-            "title" : "お客様が同意する場合、Ledgerは以下を追跡可能となります。",
-            "diagAndUsage" : "ページ訪問数、クリック数などの分析データ。",
-            "personnalizationData" : "クリック数、ページ訪問数、コンバージョンデータなどのパーソナライゼーションデータ。"
+            "title" : "お客様の同意があると、Ledgerは、お客様によるLedger Liveのご使用状況（ページの訪問数やクリック数など）に関するデータを追跡できるようになります。",
+            "diagAndUsage" : "Ledger Liveのパフォーマンスを測定し、アプリとお客様の体験（アナリティクス）の両方を強化可能です。",
+            "personnalizationData" : "お客様の好みに合わせてパーソナライズされた推奨事項やコンテンツをご提供でき、当社のマーケティングキャンペーンの効果（パーソナライゼーション）の測定に役立ちます。"
           },
           "unable" : {
-            "title" : "Ledgerは、以下に関する情報を決して追跡しません。",
+            "title" : "Ledger Liveは、以下に関する情報を決して追跡しません。",
             "adresses" : "お客様の資産。",
             "balance" : "お客様のポートフォリオ。",
-            "personnalInfos" : "お客様の個人識別情報。"
+            "personnalInfos" : "お客様の個人識別情報（お名前やメールアドレスなど）。"
           },
           "moreOptions" : "環境設定の管理",
           "ctas" : {
@@ -6600,12 +6629,12 @@
       "details" : {
         "title" : "環境設定の管理",
         "analytics" : {
-          "title" : "分析データ",
-          "description" : "Ledger Liveの改善に役立てるため、ページ訪問数やクリック数などのアプリの分析データを共有します。"
+          "title" : "アナリティクス",
+          "description" : "Ledger Liveのパフォーマンスを測定し、アプリと体験の両方を向上させるために、ページの訪問数やクリック数などの使用状況データを共有します。"
         },
         "personalizedExp" : {
-          "title" : "パーソナライゼーションデータ",
-          "description" : "パーソナライズされたおすすめ情報を取得するために、コンバージョンデータ（資料のご請求、ご購入などのアクション）、クリック数、ページ訪問数などのアプリのパーソナライゼーションデータを共有します。"
+          "title" : "パーソナライゼーション",
+          "description" : "好みに合った、パーソナライズされた推奨事項やコンテンツを受け取り、マーケティングキャンペーンのパフォーマンスの測定に役立てるため、クリック数、ページ訪問数、コンバージョンデータなどのアプリ使用状況データを共有します。"
         },
         "ctas" : {
           "notNow" : "後で",
@@ -6652,6 +6681,16 @@
           "info" : "同意はアプリの設定からいつでも取り消すことができます。",
           "link" : "当社の追跡ポリシーの詳細についてご覧ください"
         }
+      }
+    }
+  },
+  "walletSync" : {
+    "activation" : {
+      "screen" : {
+        "title" : "すべてのプラットフォーム間でアカウントを同期",
+        "description" : "Ledgerは暗号化キーを生成してデータのプライバシーを確保し、あなただけが取得可能にします。",
+        "mainCta" : "アカウントを同期する",
+        "secondCta" : "キーを作成済みですか？"
       }
     }
   }

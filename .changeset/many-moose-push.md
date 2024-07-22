@@ -1,6 +1,5 @@
 ---
 "ledger-live-desktop": patch
-"live-mobile": patch
 ---
 
-copy updates
+always show scrollbar in swap live
