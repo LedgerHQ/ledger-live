@@ -1,6 +1,5 @@
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { Icon } from "@ledgerhq/react-ui";
-import Link from "@ledgerhq/react-ui/components/cta/Link";
+import { Icon, Link } from "@ledgerhq/react-ui";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
