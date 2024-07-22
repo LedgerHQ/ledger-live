@@ -27,7 +27,6 @@
     "package.json",
     "release-notes.json",
     "tests",
-    "tests/handlers/*.json",
     "index-types.d.ts",
     "tests/jestSetup.ts"
   ]

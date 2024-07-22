@@ -8,7 +8,7 @@ import NftCollections from "../Nfts/Collections";
 
 export const account = genAccount("mockethereum", {
   withNft: true,
-  operationsSize: 30,
+  tokenIds: ["0x6209F12493CbFEE0D9eC53C3cd8D6B9e4Ad2Abaa"],
 });
 
 const NftCollectionNavigation = () => (

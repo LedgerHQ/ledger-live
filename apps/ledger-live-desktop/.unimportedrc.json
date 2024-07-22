@@ -30,7 +30,9 @@
     "@types/qrcode",
     "@types/react-key-handler",
     "prop-types",
-    "allure-commandline"
+    "allure-commandline",
+    "msw",
+    "undici"
   ],
   "aliases": {
     "~/*": ["./src/*"]

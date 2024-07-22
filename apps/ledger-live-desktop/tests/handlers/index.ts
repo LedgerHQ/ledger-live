@@ -1,3 +1,2 @@
-import NFTsHandlers from "./nfts";
-
-export default [...NFTsHandlers];
+/** Export all the msw handlers here so the server knows what to handle */
+export default [];
