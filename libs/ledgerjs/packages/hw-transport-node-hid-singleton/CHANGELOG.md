@@ -1,5 +1,14 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
+## 6.31.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea)]:
+  - @ledgerhq/devices@8.4.2-hotfix.0
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.3-hotfix.0
+
 ## 6.31.2
 
 ### Patch Changes

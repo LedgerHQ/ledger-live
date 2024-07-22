@@ -1,5 +1,11 @@
 # @ledgerhq/devices
 
+## 8.4.2-hotfix.0
+
+### Patch Changes
+
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Rename Ledger Europa
+
 ## 8.4.1
 
 ### Patch Changes

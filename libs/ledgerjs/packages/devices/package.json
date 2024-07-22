@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/devices",
-  "version": "8.4.1",
+  "version": "8.4.2-hotfix.0",
   "description": "Ledger devices",
   "keywords": [
     "Ledger"

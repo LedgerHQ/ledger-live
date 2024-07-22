@@ -1,5 +1,15 @@
 # @ledgerhq/device-core
 
+## 0.3.1-hotfix.0
+
+### Patch Changes
+
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`6b2fc93`](https://github.com/LedgerHQ/ledger-live/commit/6b2fc93beb6624fb2d991a6bb69cea3e9a8ef453) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - shouldForceFirmwareUpdate: add <1.1.1 condition for europa
+
+- Updated dependencies [[`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea)]:
+  - @ledgerhq/devices@8.4.2-hotfix.0
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+
 ## 0.3.0
 
 ### Minor Changes
