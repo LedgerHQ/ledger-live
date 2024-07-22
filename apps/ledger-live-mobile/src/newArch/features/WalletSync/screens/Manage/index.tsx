@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { Box, Flex, Text, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Option, OptionProps } from "./Option";
@@ -10,12 +10,13 @@ import {
 } from "../../hooks/useWalletSyncAnalytics";
 import { Separator } from "../../components/Separator";
 import { TouchableOpacity } from "react-native";
+import { useGetMembers } from "../../hooks/useGetMembers";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
 
-  //const { instances, isLoading, hasError } = useInstances();
-  const instances = ["instance1", "instance2", "instance3"];
+  const { data, isLoading, isError } = useGetMembers();
+
   const disabled = false;
 
   const { onClickTrack } = useWalletSyncAnalytics();
@@ -68,11 +69,19 @@ const WalletSyncManage = () => {
           paddingTop={24}
           alignItems="center"
         >
-          <Text fontWeight="semiBold" variant="large" color="neutral.c100">
-            {t("walletSync.walletSyncActivated.synchronizedInstances.title", {
-              count: instances?.length,
-            })}
-          </Text>
+          {isError ? (
+            <Text fontSize={13.44} color="error.c60">
+              {t("walletSync.walletSyncActivated.errors.fetching")}
+            </Text>
+          ) : isLoading ? (
+            <InfiniteLoader size={16} />
+          ) : (
+            <Text fontWeight="semiBold" variant="large" color="neutral.c100">
+              {t("walletSync.walletSyncActivated.synchronizedInstances.title", {
+                count: data?.length,
+              })}
+            </Text>
+          )}
 
           <Flex flexDirection="row" alignItems="center" justifyContent="center">
             <Text variant="body" color="primary.c80" mr={2}>

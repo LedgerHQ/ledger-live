@@ -6734,6 +6734,9 @@
         "cta": "Manage now",
         "title": "{{count}} Synchronized Instance",
         "title_plural": "{{count}} Synchronized Instances"
+      },
+      "errors": {
+        "fetching": "Something went wrong while fetching your synchronized instances. Please try again later."
       }
     }
   },
