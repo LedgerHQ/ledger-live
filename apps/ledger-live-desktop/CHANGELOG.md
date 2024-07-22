@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.84.1-hotfix.0
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`3298ccb`](https://github.com/LedgerHQ/ledger-live/commit/3298ccb398ccd703f84f79a6d58ee71f5c2a77d9) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix(LLD): AccountList not showing the correct name and balance for tokens
+
 ## 2.84.0
 
 ### Minor Changes

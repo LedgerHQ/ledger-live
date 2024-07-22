@@ -115,5 +115,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1",
     "@ledgerhq/react-devtools": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "healthy-days-pay"
+  ]
 }
