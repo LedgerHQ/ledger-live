@@ -11,11 +11,13 @@ export type TrustchainStore = {
   memberCredentials: MemberCredentials | null;
 };
 
+export const INITIAL_STATE: TrustchainStore = {
+  trustchain: null,
+  memberCredentials: null,
+};
+
 export const getInitialStore = (): TrustchainStore => {
-  return {
-    trustchain: null,
-    memberCredentials: null,
-  };
+  return INITIAL_STATE;
 };
 
 export const trustchainStoreActionTypePrefix = "TRUSTCHAIN_STORE_";

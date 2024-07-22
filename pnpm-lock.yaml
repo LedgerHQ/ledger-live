@@ -853,6 +853,9 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
+      '@ledgerhq/trustchain':
+        specifier: workspace:^
+        version: link:../../libs/trustchain
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
@@ -49418,7 +49421,7 @@ snapshots:
       memfs: 3.5.3
       minimatch: 3.1.2
       schema-utils: 2.7.0
-      semver: 7.5.4
+      semver: 7.6.2
       tapable: 1.1.3
       typescript: 5.4.3
       webpack: 5.89.0
