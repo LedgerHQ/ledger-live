@@ -11,7 +11,7 @@ import Box from "~/renderer/components/Box";
 import Tooltip from "~/renderer/components/Tooltip";
 import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
-import BreadCrumbNew from "LLD/components/BreadCrumb";
+import BreadCrumbNewArch from "LLD/components/BreadCrumb";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 // TODO: ActivityIndicator
@@ -72,7 +72,7 @@ const TopBar = () => {
     <Container color="palette.text.shade80">
       <Inner bg="palette.background.default">
         <Box grow horizontal justifyContent="space-between">
-          {isNftReworkedEnabled ? <BreadCrumbNew /> : <Breadcrumb />}
+          {isNftReworkedEnabled ? <BreadCrumbNewArch /> : <Breadcrumb />}
           <Box horizontal>
             {hasAccounts && (
               <>

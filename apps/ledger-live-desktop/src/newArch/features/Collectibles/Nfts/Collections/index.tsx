@@ -39,7 +39,6 @@ const NftItem: React.FC<NftItemProps> = ({
   numberOfNfts,
   onClick,
 }) => {
-  console.log("contract", contract);
   const { metadata, status } = useNftMetadata(contract, tokenId, currencyId);
   const isLoading = status === FieldStatus.Loading;
 
@@ -52,7 +51,7 @@ const NftItem: React.FC<NftItemProps> = ({
     >
       <TableRow
         isLoading={isLoading}
-        tokenName={metadata?.tokenName || metadata?.nftName || "-"}
+        tokenName={metadata?.tokenName || metadata?.nftName || ""}
         numberOfNfts={numberOfNfts}
         onClick={() => onClick(contract)}
         media={{
