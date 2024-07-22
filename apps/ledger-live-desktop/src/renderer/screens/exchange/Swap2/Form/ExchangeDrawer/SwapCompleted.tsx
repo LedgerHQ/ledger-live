@@ -1,4 +1,5 @@
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { Icon, Link } from "@ledgerhq/react-ui";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -13,6 +14,7 @@ import IconCheck from "~/renderer/icons/Check";
 import IconClock from "~/renderer/icons/Clock";
 import { openURL } from "~/renderer/linking";
 import { colors } from "~/renderer/styles/theme";
+import { track } from "~/renderer/analytics/segment";
 
 const IconWrapper = styled(Box)`
   background: ${colors.lightGreen};
@@ -78,6 +80,14 @@ const SwapCompleted = ({
     openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.support);
   }, [provider]);
 
+  const openFeedbackFormTrack = () => {
+    track("button_clicked", {
+      page: "ModalStep-finished",
+      flow: "swap",
+      button: "FeedbackForm",
+    });
+  };
+
   const SwapPill = ({ swapId }: { swapId: string }) => (
     <SwapIdWrapper>
       <Pill color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4} data-test-id="swap-id">
@@ -109,6 +119,22 @@ const SwapCompleted = ({
         />
       </Text>
       <SwapPill swapId={swapId} />
+      <Link
+        mt={4}
+        href="https://ledger.typeform.com/to/FIHc3fk2"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-test-id="share-your-feedback-link"
+        size="medium"
+        type="shade"
+        color="palette.text.shade100"
+        Icon={() => <Icon name="ExternalLink" />}
+        alwaysUnderline
+        onClick={openFeedbackFormTrack}
+      >
+        <Trans i18nKey={`swap2.exchangeDrawer.completed.tellAboutYourExperience`} />
+      </Link>
+
       <Alert type="help" mt={6}>
         <Trans
           i18nKey={`swap2.exchangeDrawer.completed.disclaimer`}
