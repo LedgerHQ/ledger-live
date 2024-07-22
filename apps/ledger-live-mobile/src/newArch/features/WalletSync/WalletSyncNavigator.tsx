@@ -11,7 +11,6 @@ import { useInitMemberCredentials } from "./hooks/useInitMemberCredentials";
 import WalletSyncManage from "./screens/Manage";
 import { useTranslation } from "react-i18next";
 
-
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
 export default function WalletSynceNavigator() {
@@ -19,7 +18,7 @@ export default function WalletSynceNavigator() {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   const { t } = useTranslation();
   useInitMemberCredentials();
-  
+
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
