@@ -136,7 +136,6 @@ export type Features = CurrencyFeatures & {
   mockFeature: Feature_MockFeature;
   buySellUi: Feature_BuySellUiManifest;
   buySellShortcut: DefaultFeature;
-  multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   disableNftSend: Feature_DisableNftSend;
   disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
@@ -476,7 +475,6 @@ export type Feature_BuySellUiManifest = Feature<{
 
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
-export type Feature_MultibuyNavigation = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
