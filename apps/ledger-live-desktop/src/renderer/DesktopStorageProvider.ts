@@ -4,11 +4,11 @@ import {
   AppStorageKey,
   isAppStorageType,
   BackupAppDataError,
-} from "./types";
+} from "@ledgerhq/live-common/device/use-cases/appDataBackup/types";
 
 /**
- * The storage provider for LLD.
- * Implements the StorageProvider interface.
+ * The storage provider for LLD that implements the StorageProvider interface.
+ * This a temporary placement for the DesktopStorageProvider, it could be moved to the appropriate location if needed.
  */
 export class DesktopStorageProvider implements StorageProvider<AppStorageType> {
   /**

@@ -24,7 +24,8 @@
     "src/newArch/features/AnalyticsOptInPrompt/**",
     "src/newArch/features/WalletSync/**",
     "src/newArch/components/ContextMenu/**",
-    "src/newArch/components/BreadCrumb/**"
+    "src/newArch/components/BreadCrumb/**",
+    "src/renderer/DesktopStorageProvider.ts"
   ],
   "ignoreUnused": [
     "@types/semver",
