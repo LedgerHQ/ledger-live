@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Trans } from "react-i18next";
-import { Text, Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, Icons } from "@ledgerhq/native-ui";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId } from "@ledgerhq/devices";
 
@@ -34,7 +34,7 @@ const Item = ({ device, onPress }: Props) => {
       case DeviceModelId.stax:
         return <IconsLegacy.StaxMedium size={24} />;
       case DeviceModelId.europa:
-        return <IconsLegacy.EuropaMedium size={24} />;
+        return <Icons.Flex />;
       case DeviceModelId.nanoX:
       default:
         return <IconsLegacy.NanoXFoldedMedium size={24} />;
