@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "購入/売却",
-        "description" : "信頼できるプロバイダーを使用して売買"
+        "description" : "当社のプロバイダーを使用して暗号資産を売買"
       },
       "swap" : {
         "title" : "スワップ",
-        "description" : "安全に別の暗号資産へ交換",
+        "description" : "暗号資産を別の暗号資産へ交換",
         "label" : "人気"
       },
       "earn" : {
         "title" : "ステーキング",
-        "description" : "Ledgerで暗号資産を運用"
+        "description" : "Ledgerで暗号資産をステーキング"
       }
     },
     "recoverBanner" : {
@@ -5493,6 +5493,10 @@
       "description" : "金額と手数料を算出できません"
     },
     "NotEnoughBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに十分な資金があることを確認してください。"
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "申し訳ありません。ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
@@ -5504,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "TRC20トークンの受け取りを有効にするには、まずこのアドレスに少なくとも0.1TRXを送付する必要があります。<link0>詳細はこちら</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "このTronアカウントを有効にしておくには少なくとも0.1TRX、ネットワーク手数料には1.1TRXが必要です。<link0>詳細はこちら</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "お使いのオペレーティングシステムのバージョンが古くなっています",
@@ -6088,6 +6098,9 @@
     },
     "newAddressTRC20" : {
       "title" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "当社のビットコインインフラストラクチャで問題が発生しています。後でもう一度お試しください。"
     }
   },
   "cryptoOrg" : {

@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.46.0",
+  "version": "3.47.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -89,6 +89,7 @@
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-nft": "workspace:^",
     "@ledgerhq/live-nft-react": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",

@@ -38,8 +38,6 @@ import { TrustchainEjected, TrustchainNotAllowed } from "./errors";
 
 export class SDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
-  private jwt: JWT | undefined = undefined;
-  private deviceJwt: JWT | undefined = undefined;
   private lifecycle?: TrustchainLifecycle;
 
   constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
@@ -47,12 +45,19 @@ export class SDK implements TrustchainSDK {
     this.lifecycle = lifecyle;
   }
 
+  private jwt: JWT | undefined = undefined;
+  private jwtHash = "";
   withAuth<T>(
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     job: (jwt: JWT) => Promise<T>,
     policy?: AuthCachePolicy,
   ): Promise<T> {
+    const hash = trustchain.rootId + " " + memberCredentials.pubkey;
+    if (this.jwtHash !== hash) {
+      this.jwt = undefined;
+      this.jwtHash = hash;
+    }
     return genericWithJWT(
       jwt => {
         this.jwt = jwt;
@@ -64,6 +69,7 @@ export class SDK implements TrustchainSDK {
     );
   }
 
+  private deviceJwt: JWT | undefined = undefined;
   withDeviceAuth<T>(
     transport: Transport,
     job: (jwt: JWT) => Promise<T>,
