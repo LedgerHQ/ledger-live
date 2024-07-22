@@ -77,7 +77,7 @@ jobs:
       - name: Retrieving internal assets
         uses: actions/checkout@v4
         with:
-          ref: feat/13125-live-assets
+          ref: main
           repository: LedgerHQ/ledger-live-internal-assets
           token: ${{ steps.generate-token.outputs.token }}
           path: ledger-live-internal-assets
@@ -137,7 +137,7 @@ jobs:
       - name: Retrieving internal assets
         uses: actions/checkout@v4
         with:
-          ref: feat/13125-live-assets
+          ref: main
           repository: LedgerHQ/ledger-live-internal-assets
           token: ${{ steps.generate-token.outputs.token }}
           path: ledger-live-internal-assets
