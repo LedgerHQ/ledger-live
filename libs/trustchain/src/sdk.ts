@@ -97,8 +97,6 @@ export class SDK implements TrustchainSDK {
   ): Promise<TrustchainResult> {
     let type = TrustchainResultType.restored;
 
-    this.hwDeviceProvider.refreshHwDevice(transport);
-
     const withJwt: WithJwt = job => this.hwDeviceProvider.withJwt(transport, job, callbacks);
 
     let trustchains = await withJwt(api.getTrustchains);
@@ -223,7 +221,6 @@ export class SDK implements TrustchainSDK {
       memberCredentials,
     );
 
-    this.hwDeviceProvider.refreshHwDevice(transport);
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
     // eslint-disable-next-line prefer-const

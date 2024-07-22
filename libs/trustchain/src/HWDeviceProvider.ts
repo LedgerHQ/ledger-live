@@ -38,7 +38,7 @@ export class HWDeviceProvider {
   ): Promise<T> {
     callbacks?.onStartRequestUserInteraction();
     try {
-      return await job(this.hw ?? this.refreshHwDevice(transport));
+      return await job(this.hw ?? this._refreshHwDevice(transport));
     } catch (error) {
       if (
         error instanceof TransportStatusError &&
@@ -83,7 +83,7 @@ export class HWDeviceProvider {
     });
   }
 
-  public refreshHwDevice(transport: Transport): ApduDevice {
+  private _refreshHwDevice(transport: Transport): ApduDevice {
     this.hw = device.apdu(transport);
     return this.hw;
   }
