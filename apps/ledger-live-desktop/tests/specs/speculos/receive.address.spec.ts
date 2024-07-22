@@ -17,7 +17,7 @@ const accounts: Account[] = [
   Account.XTZ_1,
 ];
 
-//Warning 🚨: test can fail due to GetAppAndVersion issue - Jira: LIVE-12581
+//Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
 for (const [i, account] of accounts.entries()) {
   test.describe("Receive", () => {
     test.use({
