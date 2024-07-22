@@ -23,7 +23,6 @@ import { tonConfig } from "../families/ton/config";
 import { tronConfig } from "../families/tron/config";
 import { vechainConfig } from "../families/vechain/config";
 import { iconConfig } from "../families/icon/config";
-import { appConfig } from "../apps/config";
 
 const countervaluesConfig: ConfigSchema = {
   config_countervalues_refreshRate: {
