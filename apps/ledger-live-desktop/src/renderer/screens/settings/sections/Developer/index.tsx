@@ -91,9 +91,7 @@ const Default = () => {
         <WalletSyncTester />
       </FeatureToggle>
 
-      <FeatureToggle featureId="spamReportNfts">
-        <SimpleHashTools />
-      </FeatureToggle>
+      <SimpleHashTools />
 
       {__DEV__ && (
         <Row
