@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Box, Flex, Text, Icons, InfiniteLoader, Alert } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Option, OptionProps } from "./Option";
@@ -10,14 +10,12 @@ import {
 } from "../../hooks/useWalletSyncAnalytics";
 import { Separator } from "../../components/Separator";
 import { TouchableOpacity } from "react-native";
-import { useGetMembers } from "../../hooks/useGetMembers";
+import { TrustchainNotFound, useGetMembers } from "../../hooks/useGetMembers";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
 
-  const { data, isLoading, isError } = useGetMembers();
-
-  const disabled = false;
+  const { data, isLoading, isError, error } = useGetMembers();
 
   const { onClickTrack } = useWalletSyncAnalytics();
 
@@ -43,43 +41,60 @@ const WalletSyncManage = () => {
       description: t("walletSync.walletSyncActivated.synchronize.description"),
       onClick: goToSync,
       testId: "walletSync-synchronize",
+      id: "synchronize",
     },
     {
       label: t("walletSync.walletSyncActivated.manageKey.title"),
       description: t("walletSync.walletSyncActivated.manageKey.description"),
       onClick: goToManageBackup,
       testId: "walletSync-manage-backup",
+      id: "manageKey",
     },
   ];
+
+  function getError(error: Error) {
+    // if (error instanceof UnavailableServerError) { DO SOMETHING}
+
+    return <Alert type="error" title={error.message} />;
+  }
 
   return (
     <Box height="100%" paddingX="16px">
       {/* <TrackPage category={AnalyticsPage.WalletSyncSettings} /> */}
 
-      <Separator />
+      {isError ? getError(error) : <Separator />}
 
       {Options.map((props, index) => (
-        <Option {...props} key={index} />
+        <Option
+          {...props}
+          key={index}
+          disabled={
+            props.id === "manageKey"
+              ? error instanceof TrustchainNotFound
+                ? false
+                : isError
+              : isError
+          }
+        />
       ))}
 
-      <InstancesRow disabled={disabled}>
-        <Flex
+      <InstancesRow disabled={isError}>
+        <Container
           flexDirection="row"
           justifyContent="space-between"
           paddingTop={24}
           alignItems="center"
+          disabled={isError}
         >
-          {isError ? (
-            <Text fontSize={13.44} color="error.c60">
-              {t("walletSync.walletSyncActivated.errors.fetching")}
-            </Text>
-          ) : isLoading ? (
+          {isLoading ? (
             <InfiniteLoader size={16} />
           ) : (
             <Text fontWeight="semiBold" variant="large" color="neutral.c100">
-              {t("walletSync.walletSyncActivated.synchronizedInstances.title", {
-                count: data?.length,
-              })}
+              {isError
+                ? t("walletSync.walletSyncActivated.synchronizedInstances.error")
+                : t("walletSync.walletSyncActivated.synchronizedInstances.title", {
+                    count: data?.length,
+                  })}
             </Text>
           )}
 
@@ -89,7 +104,7 @@ const WalletSyncManage = () => {
             </Text>
             <Icons.ChevronRight size="M" color="neutral.c70" />
           </Flex>
-        </Flex>
+        </Container>
       </InstancesRow>
     </Box>
   );
@@ -102,3 +117,7 @@ const InstancesRow = styled(TouchableOpacity)<{ disabled?: boolean }>`
     cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
   }
 `;
+
+const Container = styled(Flex).attrs((p: { disabled?: boolean }) => ({
+  opacity: p.disabled ? 0.3 : 1,
+}))<{ disabled?: boolean }>``;
