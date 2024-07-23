@@ -134,13 +134,14 @@ export class SDK implements TrustchainSDK {
 
     // make a stream tree from all the trustchains associated to this root id
     let { streamTree } = await withJwt(jwt => fetchTrustchain(jwt, trustchainRootId));
-
     const path = streamTree.getApplicationRootPath(this.context.applicationId);
     const child = streamTree.getChild(path);
     let shouldShare = true;
+
     if (child) {
       const resolved = await child.resolve();
       const members = resolved.getMembers();
+
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
     if (shouldShare) {
@@ -396,6 +397,7 @@ async function authWithDevice(
   const hw = device.apdu(transport);
   const challenge = await api.getAuthenticationChallenge();
   const data = crypto.from_hex(challenge.tlv);
+
   const seedId = await remapUserInteractions(hw.getSeedId(data), callbacks);
   const signature = crypto.to_hex(seedId.signature);
   const response = await api.postChallengeResponse({

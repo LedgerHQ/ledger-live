@@ -9,7 +9,7 @@ export class Token {
   ) {}
   static readonly ETH_USDT = new Token(Account.ETH_1, "Tether USD", "USDT", "Ethereum");
   static readonly ETH_LIDO = new Token(Account.ETH_1, "LIDO Staked ETH", "STETH", "Ethereum");
-  static readonly XLM_USCD = new Token(Account.XLM_1, "USDC", "USDC", "Stellar");
+  static readonly XLM_USCD = new Token(Account.XLM_1, "USDC", "usdc", "Stellar");
   static readonly ALGO_USDT = new Token(Account.ALGO_1, "Tether USDt", "USDT", "Algorand");
   static readonly TRON_USDT = new Token(Account.TRX_1, "Tether USD", "USDT", "Tron");
   static readonly TRON_BTT = new Token(Account.TRX_1, "BitTorrent", "BTT", "Tron");

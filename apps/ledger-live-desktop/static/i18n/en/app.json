@@ -385,6 +385,7 @@
         "title": "Transaction broadcast successfully",
         "description": "Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your {{targetCurrency}}.",
         "disclaimer": "Take note of your Swap ID number in case you’d need assistance from <0><0>{{provider}}</0> support</0>.",
+        "tellAboutYourExperience": "Tell us about your experience",
         "seeDetails": "See details"
       }
     },
@@ -6368,13 +6369,14 @@
     "success": {
       "backup": {
         "title": "Success",
-        "desc": "You successfully enabled Ledger Sync.",
-        "synchAnother": "Sync with another Ledger Live app"
+        "desc": "You successfully enabled Ledger Sync."
       },
       "synch": {
         "title": "Synchronization successful!",
         "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
-      }
+      },
+      "synchAnother": "Sync with another Ledger Live app",
+      "close": "Close"
     },
     "manageBackup": {
       "title": "Manage your key",
