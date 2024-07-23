@@ -31,7 +31,11 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void; onDone: () =
   const { t } = useTranslation();
   const [connectionStatus, setConnectionStatus] = useState(0);
   const currentDevice = useSelector(getCurrentDevice);
-  const { theme } = useTheme();
+  const {
+    colors: {
+      palette: { type: theme },
+    },
+  } = useTheme();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   useEffect(() => {
     let sub: Subscription | undefined;
