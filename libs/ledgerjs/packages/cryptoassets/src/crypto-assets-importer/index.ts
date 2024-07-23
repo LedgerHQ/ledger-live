@@ -12,6 +12,7 @@ import { importSPLTokens } from "./importers/spl";
 import { importStellarTokens } from "./importers/stellar";
 import { importTRC10Tokens } from "./importers/trc10";
 import { importTRC20Tokens } from "./importers/trc20";
+import { importFilecoinERC20Tokens } from "./importers/filecoin";
 
 import { importBEP20Exchange } from "./exchange/bep20";
 import { importERC20Exchange } from "./exchange/erc20";
@@ -36,6 +37,7 @@ const importTokens = async () => {
     importStellarTokens(outputFolder),
     importTRC10Tokens(outputFolder),
     importTRC20Tokens(outputFolder),
+    importFilecoinERC20Tokens(outputFolder),
   ];
 
   await Promise.allSettled(promises);

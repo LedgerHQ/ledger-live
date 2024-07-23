@@ -10,9 +10,10 @@ export type FilecoinERC20Token = [
   boolean, // disabled counter values
   boolean, // delisted
   (string | null)?, // countervalue_ticker (legacy)
-  (string | null)?, // coumpound_for (legacy)
 ];
 
 import tokens from "./filecoin-erc20.json";
+
+export { default as hash } from "./filecoin-erc20-hash.json";
 
 export default tokens as FilecoinERC20Token[];
