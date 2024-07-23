@@ -1,7 +1,8 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { CollectibleTypeEnum, CollectibleType } from "LLD/Collectibles/types/Collectibles";
+import { CollectibleType } from "LLD/Collectibles/types/Collectibles";
+import { CollectibleTypeEnum } from "LLD/Collectibles/types/enum/Collectibles";
 import Text from "~/renderer/components/Text";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { supportLinkByTokenType } from "~/config/urls";

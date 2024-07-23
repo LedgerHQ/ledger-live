@@ -1,4 +1,5 @@
-import { CollectibleTypeEnum, CollectibleType } from "LLD/Collectibles/types/Collectibles";
+import { CollectibleType } from "LLD/Collectibles/types/Collectibles";
+import { CollectibleTypeEnum } from "LLD/Collectibles/types/enum/Collectibles";
 import { PanAndZoomProps, DetailDrawerProps } from "LLD/Collectibles/types/DetailDrawer";
 import { MediaProps } from "LLD/Collectibles/types/Media";
 import { NftComponentData } from "LLD/Collectibles/types/Nfts";

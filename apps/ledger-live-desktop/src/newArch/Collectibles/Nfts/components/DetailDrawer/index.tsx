@@ -4,7 +4,7 @@ import { DetailDrawer } from "LLD/Collectibles/components/DetailDrawer";
 import useNftDetailDrawer from "LLD/Collectibles/hooks/useNftDetailDrawer";
 import useCollectibles from "LLD/Collectibles/hooks/useCollectibles";
 import { NftsDetailDrawerProps } from "LLD/Collectibles/types/Nfts";
-import { CollectibleTypeEnum } from "LLD/Collectibles/types/Collectibles";
+import { CollectibleTypeEnum } from "LLD/Collectibles/types/enum/Collectibles";
 import Actions from "./Actions";
 
 const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetailDrawerProps) => {

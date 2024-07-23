@@ -1,6 +1,7 @@
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
-import { CollectibleType, CollectibleTypeEnum } from "../../Collectibles/types/Collectibles";
+import { CollectibleType } from "LLD/Collectibles/types/Collectibles";
+import { CollectibleTypeEnum } from "LLD/Collectibles/types/enum/Collectibles";
 import { Account } from "@ledgerhq/types-live";
 import { Dispatch } from "redux";
 import { TFunction } from "i18next";

@@ -5,10 +5,11 @@ import { Media } from "LLD/Collectibles/components";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { PositionProps, LayoutProps, SpaceProps, position, layout, space } from "styled-system";
-import { DetailDrawerProps, FieldStatus } from "LLD/Collectibles/types/DetailDrawer";
+import { DetailDrawerProps } from "LLD/Collectibles/types/DetailDrawer";
+import { FieldStatus } from "LLD/Collectibles/types/enum/DetailDrawer";
 import { createCollectibleObject } from "LLD/Collectibles/utils/createCollectibleObject";
 import { useTranslation } from "react-i18next";
-import { CollectibleTypeEnum } from "LLD/Collectibles/types/Collectibles";
+import { CollectibleTypeEnum } from "LLD/Collectibles/types/enum/Collectibles";
 
 type ChildComponentProps = {
   children: ReactElement;

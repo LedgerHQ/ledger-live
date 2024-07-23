@@ -2,19 +2,22 @@ import React, { useMemo } from "react";
 import { useNftCollectionsModel } from "./useNftCollectionsModel";
 import { Box, Icons, Flex } from "@ledgerhq/react-ui";
 import TableContainer from "~/renderer/components/TableContainer";
-import TableHeader from "../../components/Collection/TableHeader";
+import TableHeader from "LLD/Collectibles/components/Collection/TableHeader";
 import { Account } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-nft-react";
-import TableRow from "../../components/Collection/TableRow";
-import EmptyCollection from "../../components/Collection/EmptyCollection";
-import { CollectibleTypeEnum } from "../../types/Collectibles";
+import TableRow from "LLD/Collectibles/components/Collection/TableRow";
+import EmptyCollection from "LLD/Collectibles/components/Collection/EmptyCollection";
+import { CollectibleTypeEnum } from "LLD/Collectibles/types/enum/Collectibles";
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
-import ShowMore from "../../components/Collection/ShowMore";
-import { FieldStatus } from "../../types/DetailDrawer";
+import ShowMore from "LLD/Collectibles/components/Collection/ShowMore";
+import { FieldStatus } from "LLD/Collectibles/types/enum/DetailDrawer";
 import CollectionContextMenu from "LLD/components/ContextMenu/CollectibleContextMenu";
-import HeaderActions from "../../components/Collection/HeaderActions";
-import { TableHeaderProps, TableHeaderTitleKey as TitleKey } from "../../types/Collection";
+import HeaderActions from "LLD/Collectibles/components/Collection/HeaderActions";
+import {
+  TableHeaderProps,
+  TableHeaderTitleKey as TitleKey,
+} from "LLD/Collectibles/types/Collection";
 
 type ViewProps = ReturnType<typeof useNftCollectionsModel>;
 

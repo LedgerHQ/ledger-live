@@ -1,7 +1,8 @@
 import React, { useCallback, memo, ReactElement } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import { ExternalViewerButtonProps, ItemType } from "LLD/Collectibles/types/DetailDrawer";
+import { ExternalViewerButtonProps } from "LLD/Collectibles/types/DetailDrawer";
+import { ItemType } from "LLD/Collectibles/types/enum/DetailDrawer";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";

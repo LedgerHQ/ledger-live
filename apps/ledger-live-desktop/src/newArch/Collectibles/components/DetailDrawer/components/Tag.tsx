@@ -2,7 +2,8 @@ import React, { useMemo } from "react";
 import Text from "~/renderer/components/Text";
 import styled from "styled-components";
 import { Skeleton } from "LLD/Collectibles/components/index";
-import { FieldStatus, TagProps } from "LLD/Collectibles/types/DetailDrawer";
+import { TagProps } from "LLD/Collectibles/types/DetailDrawer";
+import { FieldStatus } from "LLD/Collectibles/types/enum/DetailDrawer";
 
 const PropertiesContainer = styled.div<{ isNewDesign?: boolean }>`
   display: flex;
