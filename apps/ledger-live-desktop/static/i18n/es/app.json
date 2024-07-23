@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "Permutar",
     "tabs" : {
-      "exchange" : "Cambia",
+      "exchange" : "Permutar",
       "history" : "Historial"
     },
     "form" : {
@@ -385,6 +385,7 @@
         "title" : "Transacción transmitida con éxito.",
         "description" : "Tu operación de Permuta ha sido enviada a la red para su confirmación. Espera que transacción se confirme y que el proveedor procese y envíe tus {{targetCurrency}}.",
         "disclaimer" : "Toma nota de tu número de ID de permuta, en caso de que necesites asistencia del soporte de <0><0>{{provider}}</0> </0>.",
+        "tellAboutYourExperience" : "Tell us about your experience",
         "seeDetails" : "Ver detalles"
       }
     },
@@ -4025,6 +4026,24 @@
           "collection" : "Denuncia de una colección como spam"
         }
       },
+      "debugRefreshMetadata" : {
+        "debugRefreshTitle" : "Allow NFT Spam Report (Beta)",
+        "debugRefreshDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "refresh" : "Refresh",
+        "contractAddress" : "Contract Address",
+        "contractAddressDesc" : "contract_address of the NFT refreshed, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract refreshed",
+        "tokenId" : "Token ID",
+        "tokenIdDesc" : "token_id of the NFT refreshed",
+        "success" : "The refresh was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the refresh. Please try again later.",
+        "refreshType" : {
+          "desc" : "What would you like to refresh?",
+          "nft" : "Refresh metadata for an individual NFT",
+          "contract" : "Refresh metadata for a contract"
+        }
+      },
       "experimentalApps" : "Permitir aplicaciones experimentales",
       "experimentalAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales.",
       "catalogUrl" : "Definir el proveedor del catálogo de aplicaciones",
@@ -4197,9 +4216,17 @@
           "modal" : {
             "flow" : "Seleccionar un flujo",
             "step" : "Seleccionar un paso",
-            "activated" : "Activar/desactivar copia de respaldo",
-            "instance" : "Generar instancias",
+            "instance" : "Generar miembros",
             "cta" : "Aplicar"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash Tools",
+          "description" : "Provides some useful tools using SimpleHash",
+          "cta" : "Open",
+          "tabs" : {
+            "spam" : "Spam Report",
+            "refresh" : "Refresh Metadata"
           }
         }
       }
@@ -6313,7 +6340,7 @@
         "description" : "Protege o elimina tu clave de cifrado con otro Ledger."
       },
       "instance" : {
-        "label_one" : "1 instancia sincronizada",
+        "label" : "1 instancia sincronizada",
         "label_other" : "{{count}} instancias sincronizadas",
         "cta" : "Administrar"
       }
@@ -6326,7 +6353,8 @@
     "error" : {
       "title" : "Algo ha salido mal",
       "description" : "Inténtalo de nuevo más tarde.",
-      "cta" : "Inténtalo de nuevo"
+      "cta" : "Inténtalo de nuevo",
+      "fetching" : "Se ha producido un error al recuperar tus datos."
     },
     "unsecuredError" : {
       "title" : "Este Ledger no protege la sincronización",
@@ -6335,18 +6363,26 @@
       "cta" : "Conectar otro Ledger",
       "ctaDelete" : "Eliminar mi clave de cifrado"
     },
+    "autoRemoveError" : {
+      "title" : "No puedes quitar la instancia actual",
+      "description" : "Por motivos de seguridad, no puedes quitar la instancia que estás usando sin eliminar tu clave de cifrado.",
+      "info" : "Si eliminas tu clave de cifrado, tus dispositivos dejarán de estar sincronizados y se eliminarán todos los datos sincronizados. Sin embargo, esto no afecta a tus fondos. Puedes volver a sincronizar tus cuentas en cualquier momento.",
+      "cta" : "Entiendo",
+      "ctaDelete" : "Eliminar mi clave de cifrado"
+    },
     "success" : {
       "backup" : {
         "title" : "Éxito",
-        "desc" : "Has activado correctamente Ledger Sync. ",
-        "synchAnother" : "Sincronizar con otra aplicación Ledger Live"
+        "desc" : "Has activado correctamente Ledger Sync."
       },
       "synch" : {
         "title" : "Sincronización correcta",
         "desc" : "Ahora, los cambios de tus cuentas aparecerán automáticamente en todas las aplicaciones y plataformas."
-      }
+      },
+      "synchAnother" : "Sincronizar con otra aplicación Ledger Live",
+      "close" : "Cerrar"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Administra tu clave",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6436,10 @@
       "remove" : "Eliminar",
       "deleteInstanceSuccess" : "Tu {{instanceName}} ya no está sincronizada",
       "deleteInstanceError" : "Se produjo un error en la anulación de la sincronización de {{instanceName}}"
+    },
+    "deviceAction" : {
+      "title" : "Continúa en tu Ledger {{wording}}",
+      "description" : "Sigue la instrucción que aparece en la pantalla de confianza de tu Ledger."
     }
   }
 }
