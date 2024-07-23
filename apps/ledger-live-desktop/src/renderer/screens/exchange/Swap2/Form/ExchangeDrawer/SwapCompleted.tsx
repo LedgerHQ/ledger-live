@@ -86,6 +86,7 @@ const SwapCompleted = ({
       flow: "swap",
       button: "FeedbackForm",
     });
+    openURL("https://ledger.typeform.com/to/FIHc3fk2");
   };
 
   const SwapPill = ({ swapId }: { swapId: string }) => (
@@ -121,7 +122,6 @@ const SwapCompleted = ({
       <SwapPill swapId={swapId} />
       <Link
         mt={4}
-        href="https://ledger.typeform.com/to/FIHc3fk2"
         target="_blank"
         rel="noopener noreferrer"
         data-test-id="share-your-feedback-link"
