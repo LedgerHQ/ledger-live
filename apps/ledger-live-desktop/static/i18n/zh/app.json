@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "互换",
     "tabs" : {
-      "exchange" : "兑换",
+      "exchange" : "互换",
       "history" : "历史记录"
     },
     "form" : {
@@ -385,6 +385,7 @@
         "title" : "交易播送成功",
         "description" : "您的互换操作已经发送到网络上确认。请等待您的交易被确认，并等待供应方处理和发送您的 {{targetCurrency}}。",
         "disclaimer" : "记下您的互换 ID 号码，以防您需要来自 <0><0> {{provider}}</0> 支持</0> 的协助。",
+        "tellAboutYourExperience" : "Tell us about your experience",
         "seeDetails" : "查看详情"
       }
     },
@@ -4025,6 +4026,24 @@
           "collection" : "将藏品报告为垃圾"
         }
       },
+      "debugRefreshMetadata" : {
+        "debugRefreshTitle" : "Allow NFT Spam Report (Beta)",
+        "debugRefreshDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "refresh" : "Refresh",
+        "contractAddress" : "Contract Address",
+        "contractAddressDesc" : "contract_address of the NFT refreshed, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract refreshed",
+        "tokenId" : "Token ID",
+        "tokenIdDesc" : "token_id of the NFT refreshed",
+        "success" : "The refresh was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the refresh. Please try again later.",
+        "refreshType" : {
+          "desc" : "What would you like to refresh?",
+          "nft" : "Refresh metadata for an individual NFT",
+          "contract" : "Refresh metadata for a contract"
+        }
+      },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
       "catalogUrl" : "设置目录应用程序提供商",
@@ -4197,9 +4216,17 @@
           "modal" : {
             "flow" : "选择流程",
             "step" : "选择步骤",
-            "activated" : "通过启用/停用以进行备份或不进行备份",
-            "instance" : "生成实例",
+            "instance" : "生成成员",
             "cta" : "应用"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash Tools",
+          "description" : "Provides some useful tools using SimpleHash",
+          "cta" : "Open",
+          "tabs" : {
+            "spam" : "Spam Report",
+            "refresh" : "Refresh Metadata"
           }
         }
       }
@@ -6313,7 +6340,7 @@
         "description" : "使用另一台 Ledger 设备保护或删除您的加密密钥。"
       },
       "instance" : {
-        "label_one" : "1 个已同步实例",
+        "label" : "1 个已同步实例",
         "label_other" : "{{count}} 个已同步实例",
         "cta" : "管理"
       }
@@ -6326,7 +6353,8 @@
     "error" : {
       "title" : "出错了",
       "description" : "请稍后重试。",
-      "cta" : "请重试"
+      "cta" : "请重试",
+      "fetching" : "提取您的数据时出现错误。"
     },
     "unsecuredError" : {
       "title" : "同步不受此 Ledger 设备保护",
@@ -6335,18 +6363,26 @@
       "cta" : "连接另一个 Ledger 设备",
       "ctaDelete" : "删除我的加密密钥"
     },
+    "autoRemoveError" : {
+      "title" : "您无法删除当前实例",
+      "description" : "出于安全原因，如果不删除加密密钥，则无法删除当前正在使用的实例。",
+      "info" : "删除加密密钥将导致您的设备取消同步，所有已同步数据都将删除。但是，这不会对您的资金产生影响。您可以随时重新同步自己的账户。",
+      "cta" : "我了解",
+      "ctaDelete" : "删除我的加密密钥"
+    },
     "success" : {
       "backup" : {
         "title" : "成功",
-        "desc" : "您已成功启用 Ledger Sync。 ",
-        "synchAnother" : "与另一个 Ledger Live 应用程序同步"
+        "desc" : "您已成功启用 Ledger Sync。"
       },
       "synch" : {
         "title" : "同步成功！",
         "desc" : "您的账户更改将自动显示在所有应用程序和平台上。"
-      }
+      },
+      "synchAnother" : "与另一个 Ledger Live 应用程序同步",
+      "close" : "关闭"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "管理您的密钥",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6436,10 @@
       "remove" : "删除",
       "deleteInstanceSuccess" : "您的 {{instanceName}} 已不再同步",
       "deleteInstanceError" : "取消同步 {{instanceName}} 时出现问题"
+    },
+    "deviceAction" : {
+      "title" : "继续在您的 Ledger {{wording}} 上操作",
+      "description" : "按照 Ledger 设备可信任显示屏上的指示进行操作。"
     }
   }
 }
