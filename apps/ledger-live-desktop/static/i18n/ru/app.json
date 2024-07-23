@@ -385,6 +385,7 @@
         "title" : "Транзакция успешно транслирована",
         "description" : "Транзакция в рамках обмена была отправлена и ожидает подтверждения в сети. Дождитесь подтверждения транзакции, после чего оператор вышлет вам {{targetCurrency}}.",
         "disclaimer" : "Сохраните ID обмена на случай, если в дальнейшем потребуется помощь от <0>поддержки  <0>{{provider}}</0></0>.",
+        "tellAboutYourExperience" : "Tell us about your experience",
         "seeDetails" : "Подробности"
       }
     },
@@ -4025,6 +4026,24 @@
           "collection" : "Сообщить о спаме с указанием коллекции"
         }
       },
+      "debugRefreshMetadata" : {
+        "debugRefreshTitle" : "Allow NFT Spam Report (Beta)",
+        "debugRefreshDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "refresh" : "Refresh",
+        "contractAddress" : "Contract Address",
+        "contractAddressDesc" : "contract_address of the NFT refreshed, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract refreshed",
+        "tokenId" : "Token ID",
+        "tokenIdDesc" : "token_id of the NFT refreshed",
+        "success" : "The refresh was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the refresh. Please try again later.",
+        "refreshType" : {
+          "desc" : "What would you like to refresh?",
+          "nft" : "Refresh metadata for an individual NFT",
+          "contract" : "Refresh metadata for a contract"
+        }
+      },
       "experimentalApps" : "Разрешить экспериментальные приложения",
       "experimentalAppsDesc" : "Показывать и открывать экспериментальные приложения на платформе.",
       "catalogUrl" : "Сменить оператора Каталога приложений",
@@ -4197,9 +4216,17 @@
           "modal" : {
             "flow" : "Выбрать поток",
             "step" : "Выбрать шаг",
-            "activated" : "Активировать для резервного копирования или отключить",
-            "instance" : "Создать элементы",
+            "instance" : "Сгенерировать участников",
             "cta" : "Применить"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash Tools",
+          "description" : "Provides some useful tools using SimpleHash",
+          "cta" : "Open",
+          "tabs" : {
+            "spam" : "Spam Report",
+            "refresh" : "Refresh Metadata"
           }
         }
       }
@@ -6313,7 +6340,7 @@
         "description" : "Обезопасьте или удалите ваш ключ шифрования с помощью другого устройства Ledger."
       },
       "instance" : {
-        "label_one" : "Элементов синхронизировано: 1",
+        "label" : "Элементов синхронизировано: 1",
         "label_other" : "Элементов синхронизировано: {{count}}",
         "cta" : "Настроить"
       }
@@ -6326,7 +6353,8 @@
     "error" : {
       "title" : "Что-то пошло не так",
       "description" : "Повторите попытку позже.",
-      "cta" : "Повторить"
+      "cta" : "Повторить",
+      "fetching" : "Что-то пошло не так при получении ваших данных"
     },
     "unsecuredError" : {
       "title" : "Синхронизация не защищена этим устройством Ledger",
@@ -6335,18 +6363,26 @@
       "cta" : "Подключить другой Ledger",
       "ctaDelete" : "Удалить ключ шифрования"
     },
+    "autoRemoveError" : {
+      "title" : "Не получается удалить текущий элемент",
+      "description" : "Из соображений безопасности вы не можете удалить используемый элемент без удаления ключа шифрования.",
+      "info" : "Удаление ключа шифрования сбросит сопряжения между устройствами и удалит все синхронизированные данные, однако оно никак не повлияет на сохранность криптоактивов. Счета можно в любой момент синхронизировать повторно.",
+      "cta" : "Понятно",
+      "ctaDelete" : "Удалить ключ шифрования"
+    },
     "success" : {
       "backup" : {
         "title" : "Всё получилось",
-        "desc" : "Вы активировали Ledger Sync. ",
-        "synchAnother" : "Синхронизировать с другим приложением Ledger Live"
+        "desc" : "Вы активировали Ledger Sync."
       },
       "synch" : {
         "title" : "Синхронизация прошла успешно",
         "desc" : "Изменения с вашими счетами автоматически отобразятся во всех приложениях и платформах."
-      }
+      },
+      "synchAnother" : "Синхронизировать с другим приложением Ledger Live",
+      "close" : "Закрыть"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Управление ключом",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6436,10 @@
       "remove" : "Удалить",
       "deleteInstanceSuccess" : "Элемент {{instanceName}} теперь не синхронизирован",
       "deleteInstanceError" : "Что-то пошло не так при удалении {{instanceName}}"
+    },
+    "deviceAction" : {
+      "title" : "Продолжите операцию на вашем Ledger {{wording}}",
+      "description" : "Следуйте руководству на экране устройства Ledger."
     }
   }
 }
