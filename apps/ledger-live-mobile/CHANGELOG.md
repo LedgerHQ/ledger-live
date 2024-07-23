@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.47.2-hotfix.1
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`e2badea`](https://github.com/LedgerHQ/ledger-live/commit/e2badea161adfbefebb913e2ea5da133202b1534) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix filter not work bug when clicking device.
+
+- Updated dependencies [[`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/types-devices@6.25.2-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.1
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.1
+
 ## 3.47.2-hotfix.0
 
 ### Patch Changes

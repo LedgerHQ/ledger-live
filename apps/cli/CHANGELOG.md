@@ -1,5 +1,14 @@
 # @ledgerhq/live-cli
 
+## 24.4.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/types-devices@6.25.2-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.1
+  - @ledgerhq/live-wallet@0.4.1-hotfix.1
+
 ## 24.4.1-hotfix.0
 
 ### Patch Changes

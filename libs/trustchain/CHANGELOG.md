@@ -1,5 +1,12 @@
 # @ledgerhq/live-wallet
 
+## 0.1.3-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/types-devices@6.25.2-hotfix.0
+
 ## 0.1.3-hotfix.0
 
 ### Patch Changes

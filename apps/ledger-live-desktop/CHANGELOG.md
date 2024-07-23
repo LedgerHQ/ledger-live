@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.84.1-hotfix.3
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`c4c9113`](https://github.com/LedgerHQ/ledger-live/commit/c4c91130c1bf3ce954be41fa1de20902fc8723e7) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix onboarding error when device connected.
+
+- Updated dependencies [[`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/types-devices@6.25.2-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.1
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.1
+
 ## 2.84.1-hotfix.2
 
 ### Patch Changes

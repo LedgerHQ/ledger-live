@@ -1,5 +1,15 @@
 # web-tools
 
+## 0.7.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.6.1-hotfix.1
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/trustchain@0.1.3-hotfix.1
+  - @ledgerhq/live-wallet@0.4.1-hotfix.1
+
 ## 0.7.1-hotfix.0
 
 ### Patch Changes
