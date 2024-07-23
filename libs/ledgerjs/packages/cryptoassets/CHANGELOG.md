@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.2.1-nightly.0
+
+### Patch Changes
+
+- [#7232](https://github.com/LedgerHQ/ledger-live/pull/7232) [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: rename crypto.org to cronos POS chain
+
 ## 13.2.0
 
 ### Minor Changes

@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.84.1-nightly.0
+
+### Patch Changes
+
+- [#7360](https://github.com/LedgerHQ/ledger-live/pull/7360) [`5909f28`](https://github.com/LedgerHQ/ledger-live/commit/5909f28ed289bdd4403229750d838a1782388aa1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework Success screen WS
+
+- [#7389](https://github.com/LedgerHQ/ledger-live/pull/7389) [`1cc7146`](https://github.com/LedgerHQ/ledger-live/commit/1cc7146f5958a2d9377ad42cbb708604c9e202b2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix word break issue inside nft drawer
+
+- [#7379](https://github.com/LedgerHQ/ledger-live/pull/7379) [`8bec338`](https://github.com/LedgerHQ/ledger-live/commit/8bec338527714a2a25487ac9fa447425c31ca4b4) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Adds swap feedback form
+
+- [#7385](https://github.com/LedgerHQ/ledger-live/pull/7385) [`8826f68`](https://github.com/LedgerHQ/ledger-live/commit/8826f68ba73d2d476facc183cbc4125450752bda) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - always show scrollbar in swap live
+
+- [#7363](https://github.com/LedgerHQ/ledger-live/pull/7363) [`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Lower case search + add debounce on Market Search
+
+- Updated dependencies [[`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192)]:
+  - @ledgerhq/live-common@34.6.1-nightly.0
+  - @ledgerhq/coin-framework@0.16.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.7.1-nightly.0
+  - @ledgerhq/coin-evm@2.1.3-nightly.0
+  - @ledgerhq/live-countervalues@0.2.3-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.3-nightly.0
+  - @ledgerhq/live-nft@0.4.3-nightly.0
+  - @ledgerhq/live-nft-react@0.4.3-nightly.0
+  - @ledgerhq/live-wallet@0.4.1-nightly.0
+
 ## 2.84.0
 
 ### Minor Changes

@@ -1,5 +1,33 @@
 ## 34.5.0-next.4
 
+## 34.6.1-nightly.0
+
+### Patch Changes
+
+- [#7363](https://github.com/LedgerHQ/ledger-live/pull/7363) [`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improve Search for Market when >=2 chars
+
+- Updated dependencies [[`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0)]:
+  - @ledgerhq/cryptoassets@13.2.1-nightly.0
+  - @ledgerhq/coin-framework@0.16.1-nightly.0
+  - @ledgerhq/coin-algorand@0.5.3-nightly.0
+  - @ledgerhq/coin-bitcoin@0.7.1-nightly.0
+  - @ledgerhq/coin-cardano@0.1.3-nightly.0
+  - @ledgerhq/coin-evm@2.1.3-nightly.0
+  - @ledgerhq/coin-icon@0.4.1-nightly.1
+  - @ledgerhq/coin-near@0.5.3-nightly.0
+  - @ledgerhq/coin-polkadot@1.1.1-nightly.0
+  - @ledgerhq/coin-solana@0.7.3-nightly.0
+  - @ledgerhq/coin-stellar@0.2.1-nightly.0
+  - @ledgerhq/coin-tezos@0.5.1-nightly.0
+  - @ledgerhq/coin-tron@0.0.3-nightly.0
+  - @ledgerhq/coin-xrp@0.4.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.37.3-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.3-nightly.0
+  - @ledgerhq/live-countervalues@0.2.3-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.3-nightly.0
+  - @ledgerhq/live-nft@0.4.3-nightly.0
+  - @ledgerhq/live-wallet@0.4.1-nightly.0
+
 ## 34.6.0
 
 ### Minor Changes

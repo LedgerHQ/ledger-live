@@ -1,5 +1,25 @@
 # live-mobile
 
+## 3.48.0-nightly.1
+
+### Patch Changes
+
+- [#7392](https://github.com/LedgerHQ/ledger-live/pull/7392) [`aa0c629`](https://github.com/LedgerHQ/ledger-live/commit/aa0c6294c8ccce16c842f9def8cbd1f3c01f38ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Increase allocation path size
+
+- [#7363](https://github.com/LedgerHQ/ledger-live/pull/7363) [`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Lowercase search on market
+
+- [#7352](https://github.com/LedgerHQ/ledger-live/pull/7352) [`5d29293`](https://github.com/LedgerHQ/ledger-live/commit/5d292933be68ef83f58ebc3868497d3484e2a594) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - - Integration of Trustchain SDK in LLM (V1)
+  - Activation Flow
+- Updated dependencies [[`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192)]:
+  - @ledgerhq/live-common@34.6.1-nightly.0
+  - @ledgerhq/coin-framework@0.16.1-nightly.0
+  - @ledgerhq/coin-evm@2.1.3-nightly.0
+  - @ledgerhq/live-countervalues@0.2.3-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.3-nightly.0
+  - @ledgerhq/live-nft@0.4.3-nightly.0
+  - @ledgerhq/live-nft-react@0.4.3-nightly.0
+  - @ledgerhq/live-wallet@0.4.1-nightly.0
+
 ## 3.48.0-nightly.0
 
 ### Minor Changes
