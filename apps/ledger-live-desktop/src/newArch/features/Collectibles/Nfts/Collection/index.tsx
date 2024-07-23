@@ -6,7 +6,7 @@ import Box from "~/renderer/components/Box/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import { Flex, Icons } from "@ledgerhq/react-ui";
-import { Skeleton, Media, CollectionName, TableLayout } from "../../components";
+import { Skeleton, Media, CollectionName, TableLayout } from "LLD/Collectibles/components";
 import TokensList from "../components/TokensList";
 import OperationsList from "~/renderer/components/OperationsList";
 import Spinner from "~/renderer/components/Spinner";

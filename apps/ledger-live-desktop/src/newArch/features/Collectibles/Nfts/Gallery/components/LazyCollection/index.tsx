@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useMemo } from "react";
 import { Box, Text } from "@ledgerhq/react-ui";
 import { CollectionName } from "LLD/Collectibles/components";
-import TokenList from "../../../components/TokensList";
+import TokenList from "LLD/Collectibles/Nfts/components/TokensList";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import styled from "styled-components";
 

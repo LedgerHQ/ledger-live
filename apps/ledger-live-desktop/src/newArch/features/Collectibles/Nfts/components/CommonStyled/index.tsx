@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 const Footer = styled.footer`
-  height: 20px;
-  margin-bottom: 20px;
+  height: 24px;
+  margin-bottom: 24px;
 `;
 
 const SpinnerContainer = styled.div`
