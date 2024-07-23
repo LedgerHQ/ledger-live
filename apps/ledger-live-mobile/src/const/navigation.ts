@@ -311,6 +311,9 @@ export enum ScreenName {
   // internet_computer
   InternetComputerEditMemo = "InternetComputerEditMemo",
 
+  // ton
+  TonEditComment = "TonEditComment",
+
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
 
