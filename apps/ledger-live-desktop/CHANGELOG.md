@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.84.1-nightly.1
+
+### Patch Changes
+
+- [#7393](https://github.com/LedgerHQ/ledger-live/pull/7393) [`721b45b`](https://github.com/LedgerHQ/ledger-live/commit/721b45b11d7db386a6e3cf735699d85a3a7ac698) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - set toNewTokenId to hash params
+
 ## 2.84.1-nightly.0
 
 ### Patch Changes
