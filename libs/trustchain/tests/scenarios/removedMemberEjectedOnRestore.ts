@@ -21,12 +21,12 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   await sdk1.addMember(trustchain, member1creds, member2);
 
   // member1 removes member2
-  await sdk1.removeMember(transport, trustchain, member1creds, member2);
+  const newTrustchain = await sdk1.removeMember(transport, trustchain, member1creds, member2);
 
   // now member2 will get an ejected error when trying to restore the trustchain
   // NB: restoreTrustchain is typically what we would call when member2 see that the encryptionKey no longer work after the rotation
   await expect(sdk2.restoreTrustchain(trustchain, member2creds)).rejects.toThrow(TrustchainEjected);
 
   // member3 destroy the trustchain
-  await sdk1.destroyTrustchain(trustchain, member1creds);
+  await sdk1.destroyTrustchain(newTrustchain, member1creds);
 }
