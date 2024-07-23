@@ -5,17 +5,20 @@ import { useHistory } from "react-router-dom";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { saveSettings } from "~/renderer/actions/settings";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 import StaxCompletionView from "./StaxCompletionView";
 import EuropaCompletionView from "./EuropaCompletionView";
+import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 const GO_TO_POSTONBOARDING_TIMEOUT = 6000;
 
 const CompletionScreen = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const device = useSelector(getCurrentDevice);
+  const currentDevice = useSelector(getCurrentDevice);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const device = currentDevice || lastSeenDevice;
 
   const handleInitPostOnboarding = useStartPostOnboardingCallback();
 
@@ -38,9 +41,9 @@ const CompletionScreen = () => {
     <Flex alignItems="center" width="100%" justifyContent="center">
       {device?.modelId === DeviceModelId.stax ? (
         <StaxCompletionView />
-      ) : (
+      ) : device ? (
         <EuropaCompletionView device={device} />
-      )}
+      ) : null}
     </Flex>
   );
 };
