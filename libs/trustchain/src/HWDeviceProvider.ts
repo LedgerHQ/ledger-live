@@ -7,17 +7,13 @@ import { genericWithJWT } from "./auth";
 import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks } from "./types";
 
 export class HWDeviceProvider {
-  private policy: AuthCachePolicy;
   private jwt?: JWT;
   private hw?: ApduDevice;
-
-  constructor(policy?: AuthCachePolicy) {
-    this.policy = policy ?? "cache";
-  }
 
   public withJwt<T>(
     transport: Transport,
     job: (jwt: JWT) => Promise<T>,
+    policy?: AuthCachePolicy,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<T> {
     return genericWithJWT(
@@ -27,7 +23,7 @@ export class HWDeviceProvider {
       },
       this.jwt,
       () => this._authWithDevice(transport, callbacks),
-      this.policy,
+      policy,
     );
   }
 
@@ -58,7 +54,7 @@ export class HWDeviceProvider {
     transport: Transport,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<void> {
-    this.jwt = await this.withJwt(transport, api.refreshAuth, callbacks);
+    this.jwt = await this.withJwt(transport, api.refreshAuth, undefined, callbacks);
   }
 
   public clearJwt() {

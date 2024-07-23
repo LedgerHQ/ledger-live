@@ -97,7 +97,8 @@ export class SDK implements TrustchainSDK {
   ): Promise<TrustchainResult> {
     let type = TrustchainResultType.restored;
 
-    const withJwt: WithJwt = job => this.hwDeviceProvider.withJwt(transport, job, callbacks);
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(transport, job, undefined, callbacks);
 
     let trustchains = await withJwt(api.getTrustchains);
 
@@ -207,7 +208,8 @@ export class SDK implements TrustchainSDK {
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
-    const withJwt: WithJwt = job => this.hwDeviceProvider.withJwt(transport, job, callbacks);
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(transport, job, undefined, callbacks);
 
     // invariant because the sdk does not support this case, and the UI should not allows it.
     invariant(
