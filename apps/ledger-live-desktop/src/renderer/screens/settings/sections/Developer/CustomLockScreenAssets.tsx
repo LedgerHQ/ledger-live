@@ -45,9 +45,7 @@ const CustomLockScreenAssets = () => {
             source={source}
             loadingProgress={0}
             background={
-              <Animation
-                animation={getDeviceAnimation(DeviceModelId.stax, "light", "allowManager")}
-              />
+              <Animation animation={getDeviceAnimation(DeviceModelId.stax, type, "allowManager")} />
             }
           />
         </Flex>
@@ -58,7 +56,7 @@ const CustomLockScreenAssets = () => {
             loadingProgress={1}
             background={
               <Animation
-                animation={getDeviceAnimation(DeviceModelId.stax, "light", "confirmLockscreen")}
+                animation={getDeviceAnimation(DeviceModelId.stax, type, "confirmLockscreen")}
               />
             }
           />
