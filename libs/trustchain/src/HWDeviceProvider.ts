@@ -7,12 +7,12 @@ import { genericWithJWT } from "./auth";
 import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks } from "./types";
 
 export class HWDeviceProvider {
-  private policy?: AuthCachePolicy;
+  private policy: AuthCachePolicy;
   private jwt?: JWT;
   private hw?: ApduDevice;
 
   constructor(policy?: AuthCachePolicy) {
-    this.policy = policy;
+    this.policy = policy ?? "cache";
   }
 
   public withJwt<T>(
