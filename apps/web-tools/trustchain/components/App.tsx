@@ -26,11 +26,10 @@ import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
-import { Account } from "@ledgerhq/types-live";
-import { WalletState, initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
+import { initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
 import { DistantState, trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";
 import { Loading } from "./Loading";
-import { NonImportedAccountInfo } from "@ledgerhq/live-wallet/lib-es/walletsync/modules/accounts";
+import { State } from "./types";
 
 const Container = styled.div`
   padding: 0 10px 50px 0;
@@ -314,12 +313,6 @@ const App = () => {
       </Container>
     </TrustchainSDKContext.Provider>
   );
-};
-
-type State = {
-  accounts: Account[];
-  walletState: WalletState;
-  nonImportedAccounts: NonImportedAccountInfo[];
 };
 
 const AppAccountsSync = dynamic<{

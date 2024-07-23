@@ -1,11 +1,11 @@
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Observable, concat, find, from, ignoreElements, mergeMap, tap } from "rxjs";
-import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { useTrustchainSDK } from "../context";
 import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
 import {
   WalletState,
-  handlers as walletH,
+  handlers as walletHandlers,
   accountNameWithDefaultSelector,
   setAccountName as setAccountNameAction,
   WSState,
@@ -32,19 +32,13 @@ import { listSupportedCurrencies } from "@ledgerhq/coin-framework/lib-es/currenc
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { Loading } from "./Loading";
 import { TrustchainEjected } from "@ledgerhq/trustchain/lib-es/errors";
-import { NonImportedAccountInfo } from "@ledgerhq/live-wallet/lib-es/walletsync/modules/accounts";
 import { Tick } from "./Tick";
+import { State } from "./types";
 
 /*
 import * as icons from "@ledgerhq/crypto-icons-ui/react";
 import { inferCryptoCurrencyIcon } from "@ledgerhq/live-common/currencies/cryptoIcons";
 */
-
-type State = {
-  accounts: Account[];
-  nonImportedAccounts: NonImportedAccountInfo[];
-  walletState: WalletState;
-};
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(s.walletState);
 
@@ -114,12 +108,15 @@ export default function AppAccountsSync({
         // we now need to "reverse" the localStateSelector back into our own internal state
         let walletState = s.walletState;
         if (newLocalState) {
-          walletState = walletH.BULK_SET_ACCOUNT_NAMES(
+          walletState = walletHandlers.BULK_SET_ACCOUNT_NAMES(
             walletState,
             setAccountNames(newLocalState.accountNames),
           );
         }
-        walletState = walletH.WALLET_SYNC_UPDATE(walletState, walletSyncUpdate(data, version));
+        walletState = walletHandlers.WALLET_SYNC_UPDATE(
+          walletState,
+          walletSyncUpdate(data, version),
+        );
         if (newLocalState) {
           return {
             accounts: newLocalState.accounts.list, // save new accounts
@@ -230,7 +227,7 @@ export default function AppAccountsSync({
     (id: string, name: string) => {
       setState(s => ({
         ...s,
-        walletState: walletH.SET_ACCOUNT_NAME(s.walletState, setAccountNameAction(id, name)),
+        walletState: walletHandlers.SET_ACCOUNT_NAME(s.walletState, setAccountNameAction(id, name)),
       }));
     },
     [setState],
