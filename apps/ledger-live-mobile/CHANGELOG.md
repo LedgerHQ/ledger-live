@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.47.2-hotfix.0
+
+### Patch Changes
+
+- [#7397](https://github.com/LedgerHQ/ledger-live/pull/7397) [`77473c4`](https://github.com/LedgerHQ/ledger-live/commit/77473c4ee44ed37c0933af5075423da921e370bd) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Update LLM restore apps assets
+
 ## 3.47.1-hotfix.0
 
 ### Patch Changes

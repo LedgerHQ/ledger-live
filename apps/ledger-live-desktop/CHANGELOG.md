@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.84.1-hotfix.2
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`86ae0ac`](https://github.com/LedgerHQ/ledger-live/commit/86ae0acac0a6450ad12a60df30f958368af1300c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix sentry error & troubleshoot animation theme
+
 ## 2.84.1-hotfix.1
 
 ### Patch Changes
