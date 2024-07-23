@@ -3,5 +3,3 @@ export enum ReportOption {
   contract = "contract",
   collection = "collection",
 }
-
-export type SelectOption = { value: string; label: string };
