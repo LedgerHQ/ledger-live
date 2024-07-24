@@ -927,6 +927,9 @@
       "title" : "シーケンス番号エラー",
       "description" : "ウィンドウを閉じて、後でもう一度お試しください"
     },
+    "TonCommentInvalid" : {
+      "title" : "コメントは特殊文字を除いて、120文字を超えてはなりません"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "スワップ利用不可：Tezosアカウントで最初の送付/デリゲートを行うか、ペアを変更する必要があります。"
     }
@@ -3647,6 +3650,8 @@
         "value" : "メモの値"
       },
       "validateMemo" : "メモの確認",
+      "comment" : "コメント",
+      "validateComment" : "コメントを検証する",
       "quantity" : "数量"
     },
     "validation" : {
@@ -6691,6 +6696,34 @@
         "description" : "Ledgerは暗号化キーを生成してデータのプライバシーを確保し、あなただけが取得可能にします。",
         "mainCta" : "アカウントを同期する",
         "secondCta" : "キーを作成済みですか？"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "バックアップの保護に使用するLedgerデバイスを選択",
+      "description" : "LedgerをLedger Liveモバイル＆デスクトップアプリに接続するだけで、バックアップを取得できます。"
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}}で続ける",
+      "description" : "Ledgerの信頼できるディスプレイに表示される指示に従ってください。"
+    },
+    "success" : {
+      "sync" : "同期成功！",
+      "syncDesc" : "アカウントの変更が、すべてのアプリとプラットフォームに自動的に反映されるようになります。",
+      "activation" : "成功！",
+      "activationDesc" : "Ledger Syncが正常に有効になりました。",
+      "syncAnother" : "別のLedger Liveアプリと同期する",
+      "close" : "閉じる"
+    }
+  },
+  "web3hub" : {
+    "manifestsList" : {
+      "title" : "探索",
+      "description" : "Ledgerが厳選するWeb3の世界をチェック"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Web3を探索",
+        "placeholder" : "検索またはURLを入力"
       }
     }
   }
