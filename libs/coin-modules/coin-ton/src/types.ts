@@ -32,7 +32,7 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type TonOperation = Operation<{ comment: TonComment; lt: string; explorerHash: string }>;
+export type TonOperation = Operation<TonOperationExtra>;
 
 export type TonPayloadJettonTransfer = {
   type: "jetton-transfer";
@@ -74,3 +74,9 @@ export interface TonTransaction {
 }
 
 export interface TonCell extends Cell {}
+
+export type TonOperationExtra = {
+  comment: TonComment;
+  lt: string;
+  explorerHash: string;
+};

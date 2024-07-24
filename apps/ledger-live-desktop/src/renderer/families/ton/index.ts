@@ -2,6 +2,7 @@ import {
   TonOperation,
   Transaction,
   TransactionStatus,
+  TonOperationExtra,
 } from "@ledgerhq/live-common/families/ton/types";
 import { Account } from "@ledgerhq/types-live";
 import { LLDCoinFamily } from "../types";
@@ -13,15 +14,19 @@ const family: LLDCoinFamily<Account, Transaction, TransactionStatus, TonOperatio
   operationDetails,
   AccountSubHeader,
   sendRecipientFields,
-  getTransactionExplorer: (explorerView, operation) =>
-    explorerView &&
-    explorerView.tx &&
-    explorerView.tx.replace(
-      "$hash",
-      operation.extra.explorerHash && operation.extra.explorerHash !== ""
-        ? operation.extra.explorerHash
-        : `by-msg-hash/${operation.hash}`,
-    ),
+  getTransactionExplorer: (explorerView, operation) => {
+    const operationExtra = operation.extra as TonOperationExtra;
+    return (
+      explorerView &&
+      explorerView.tx &&
+      explorerView.tx.replace(
+        "$hash",
+        operationExtra.explorerHash && operationExtra.explorerHash !== ""
+          ? operationExtra.explorerHash
+          : `by-msg-hash/${operation.hash}`,
+      )
+    );
+  },
 };
 
 export default family;
