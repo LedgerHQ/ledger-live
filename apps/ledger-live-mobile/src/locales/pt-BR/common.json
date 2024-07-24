@@ -927,6 +927,9 @@
       "title" : "Erro do número de sequência",
       "description" : "Feche a janela e tente novamente mais tarde"
     },
+    "TonCommentInvalid" : {
+      "title" : "O comentário não deve exceder 120 caracteres sem caracteres especiais"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
     }
@@ -3647,6 +3650,8 @@
         "value" : "Valor do memo"
       },
       "validateMemo" : "Validar Memo",
+      "comment" : "Comentários",
+      "validateComment" : "Validar comentários",
       "quantity" : "Quantidade"
     },
     "validation" : {
@@ -6691,6 +6696,34 @@
         "description" : "Sua Ledger vai gerar uma chave de encriptação garantindo que seus dados permaneçam privados e só possam ser recuperados por você.",
         "mainCta" : "Sincronize suas contas",
         "secondCta" : "Já criou uma chave?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "Escolha o dispositivo da Ledger que você usará para proteger seu backup",
+      "description" : "Você pode recuperar seu backup simplesmente conectando sua Ledger aos aplicativos Ledger Live móvel e desktop."
+    },
+    "deviceAction" : {
+      "title" : "Continuar em sua Ledger {{wording}}",
+      "description" : "Siga as instruções que aparecem na Tela Confiável da sua Ledger."
+    },
+    "success" : {
+      "sync" : "Sincronização bem-sucedida!",
+      "syncDesc" : "As alterações em suas contas agora aparecerão automaticamente em todos os aplicativos e plataformas.",
+      "activation" : "Sucesso!",
+      "activationDesc" : "Você ativou o Ledger Sync com sucesso.",
+      "syncAnother" : "Sincronizar com outro aplicativo Ledger Live",
+      "close" : "Fechar"
+    }
+  },
+  "web3hub" : {
+    "manifestsList" : {
+      "title" : "Explorar",
+      "description" : "Explore o melhor da web3 com a curadoria da Ledger"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Explore a web3",
+        "placeholder" : "Pesquise ou digite uma URL"
       }
     }
   }
