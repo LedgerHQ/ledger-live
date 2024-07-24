@@ -927,6 +927,9 @@
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
     },
+    "TonCommentInvalid" : {
+      "title" : "Yorum, özel karakterler içermemeli ve 120 karakteri aşmamalıdır"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
     }
@@ -3647,6 +3650,8 @@
         "value" : "Memo değeri"
       },
       "validateMemo" : "Memo'yu onayla",
+      "comment" : "Yorum",
+      "validateComment" : "Yorumu onayla",
       "quantity" : "Miktar"
     },
     "validation" : {
@@ -6405,7 +6410,7 @@
       "choosePicture" : "Bir resim seçin"
     },
     "confirmCrop" : "Kırpmayı onayla",
-    "confirmContrast" : "Zıtlığı onayla",
+    "confirmContrast" : "Kontrastı onayla",
     "nftEntryPointButtonLabel" : "Kilitli ekran resmi olarak belirleyin",
     "customImage" : "Özel resim",
     "doThisLater" : "Belki sonra",
@@ -6691,6 +6696,34 @@
         "description" : "Ledger cihazınız bir şifreleme anahtarı oluşturarak verilerinizin gizli kalmasını ve sadece sizin tarafınızdan alınabilmesini sağlar.",
         "mainCta" : "Hesaplarınızı senkronize edin",
         "secondCta" : "Zaten bir anahtar oluşturdunuz mu?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "Yedeklemenizi güvence altına almak için kullanacağınız Ledger cihazını seçin",
+      "description" : "Ledger cihazınızı Ledger Live mobil ve masaüstü sürümlerine bağlayarak yedeklemenize erişebilirsiniz."
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}} üzerinde devam edin",
+      "description" : "Ledger cihazınızın Güvenilir Ekranında gösterilen talimatları izleyin."
+    },
+    "success" : {
+      "sync" : "Senkronizasyon başarılı!",
+      "syncDesc" : "Artık hesaplarınızdaki değişiklikler otomatik olarak tüm uygulamalarda ve platformlarda görünecektir.",
+      "activation" : "Başarılı!",
+      "activationDesc" : "Ledger Sync'i başarıyla etkinleştirdiniz.",
+      "syncAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et",
+      "close" : "Kapat"
+    }
+  },
+  "web3hub" : {
+    "manifestsList" : {
+      "title" : "Keşfedin",
+      "description" : "Ledger tarafından derlenen, Web3'ün en iyilerini keşfedin"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Web3'ü keşfedin",
+        "placeholder" : "Arama yapın veya bir URL yazın"
       }
     }
   }
