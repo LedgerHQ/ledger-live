@@ -431,6 +431,7 @@ export enum ScreenName {
   VerifyAccount = "VerifyAccount",
   AnalyticsAllocation = "AnalyticsAllocation",
   AnalyticsOperations = "AnalyticsOperations",
+  CustomErrorScreen = "CustomErrorScreen",
   // solana
   SolanaEditMemo = "SolanaEditMemo",
   SolanaEditAmount = "SolanaEditAmount",
@@ -573,6 +574,7 @@ export enum NavigatorName {
   Unfreeze = "Unfreeze",
   NoFundsFlow = "NoFundsFlow",
   StakeFlow = "StakeFlow",
+  CustomError = "CustomError",
 
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",
