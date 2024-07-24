@@ -65,6 +65,27 @@ export type TrustchainSDKContext = {
   name: string;
 };
 
+/**
+ * provide global callbacks for specific lifecycles.
+ * this allows us to decouple trustchain with the rest of Ledger Live.
+ * For now, we only introduce very specific hooks we need.
+ */
+export type TrustchainLifecycle = {
+  /**
+   * called when a trustchain rotation is occuring
+   * the first function is called when the rotation is starting
+   * the second function is called when the rotation is done.
+   *
+   * in that case, we typically want to delete all other resources depending on it.
+   * we do this with the existing jwt token before refreshing it.
+   */
+  onTrustchainRotation: (
+    trustchainSdk: TrustchainSDK,
+    oldTrustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ) => Promise<(newTrustchain: Trustchain) => Promise<void>>;
+};
+
 export enum TrustchainResultType {
   created = "created",
   updated = "updated",

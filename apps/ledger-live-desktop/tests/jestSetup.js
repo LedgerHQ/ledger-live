@@ -2,14 +2,6 @@ import { TextDecoder, TextEncoder } from "util";
 import "@jest/globals";
 import "@testing-library/jest-dom";
 
-jest.mock("@sentry/electron/renderer", () => ({
-  init: jest.fn(),
-  setUser: jest.fn(),
-  captureException: jest.fn(),
-  addBreadcrumb: jest.fn(),
-  setTags: jest.fn(),
-}));
-
 jest.mock("src/sentry/install", () => ({
   init: jest.fn(),
   setUser: jest.fn(),
@@ -66,6 +58,13 @@ jest.mock("src/renderer/analytics/segment", () => ({
   trackPage: jest.fn(),
   start: jest.fn(),
   useTrack: jest.fn(),
+}));
+
+jest.mock("src/sentry/renderer", () => ({
+  captureException: jest.fn(),
+  captureBreadcrumb: jest.fn(),
+  setTags: jest.fn(),
+  getSentryIfAvailable: jest.fn().mockReturnValue(false),
 }));
 
 global.TextEncoder = TextEncoder;

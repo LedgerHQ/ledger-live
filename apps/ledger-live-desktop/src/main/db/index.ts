@@ -87,40 +87,70 @@ async function reload() {
 }
 
 /**
+ * define all db paths where we need encryption
+ */
+const encryptedDataPaths = [
+  ["app", "accounts"],
+  ["app", "trustchain"],
+  ["app", "wallet"],
+];
+
+/**
  * Register a keyPath in db that is encrypted
  * This will decrypt the keyPath at this moment, and will be used
  * in `save` to encrypt it back
  */
-async function setEncryptionKey(ns: string, keyPath: string, encryptionKey: string): Promise<void> {
-  if (!encryptionKeys[ns]) encryptionKeys[ns] = {};
-  encryptionKeys[ns]![keyPath] = encryptionKey;
-  const val = await getKey(ns, keyPath, null);
+async function setEncryptionKey(encryptionKey: string): Promise<void> {
+  const nsToSave = new Set<string>();
 
-  // no need to decode if already decoded
-  if (!val || typeof val !== "string") {
-    return save(ns);
+  for (const [ns, keyPath] of encryptedDataPaths) {
+    nsToSave.add(ns);
+    if (!encryptionKeys[ns]) encryptionKeys[ns] = {};
+    encryptionKeys[ns]![keyPath] = encryptionKey;
   }
-  try {
-    let decrypted = JSON.parse(decryptData(val, encryptionKey));
 
-    // handle the case when we just migrated from the previous storage
-    // which stored the data in binary with a `data` key
-    if (ns === "app" && keyPath === "accounts" && decrypted.data) {
-      decrypted = decrypted.data;
+  for (const [ns, keyPath] of encryptedDataPaths) {
+    const val = await getKey(ns, keyPath, null);
+
+    // no need to decode if already decoded
+    if (!val || typeof val !== "string") {
+      continue;
     }
+    try {
+      let decrypted = JSON.parse(decryptData(val, encryptionKey));
 
-    // only set decrypted data in memory
-    set(memoryNamespaces[ns]!, keyPath, decrypted);
-    return save(ns);
-  } catch (err) {
-    log("db", "setEncryptionKey failure: " + String(err));
-    console.error(err);
-    throw new DBWrongPassword();
+      // handle the case when we just migrated from the previous storage
+      // which stored the data in binary with a `data` key
+      for (const path of encryptedDataPaths) {
+        if (ns === path[0] && keyPath === path[1] && decrypted.data) {
+          decrypted = decrypted.data;
+          break;
+        }
+      }
+
+      // only set decrypted data in memory
+      set(memoryNamespaces[ns]!, keyPath, decrypted);
+    } catch (err) {
+      log("db", "setEncryptionKey failure: " + String(err));
+      console.error(err);
+      throw new DBWrongPassword();
+    }
+  }
+
+  for (const ns of nsToSave) {
+    await save(ns);
   }
 }
-async function removeEncryptionKey(ns: string, keyPath: string) {
-  set(encryptionKeys, `${ns}.${keyPath}`, undefined);
-  return save(ns);
+async function removeEncryptionKey() {
+  const nsToSave = new Set<string>();
+  for (const [ns, keyPath] of encryptedDataPaths) {
+    nsToSave.add(ns);
+    set(encryptionKeys, `${ns}.${keyPath}`, undefined);
+  }
+
+  for (const ns of nsToSave) {
+    await save(ns);
+  }
 }
 
 /**
@@ -151,7 +181,9 @@ async function getKey<V>(
  * /!\ it consider encrypted if it's string and can't JSON.parse, so
  *     can brings false-positive if bad used
  */
-async function hasBeenDecrypted(ns: string, keyPath: string): Promise<boolean> {
+async function hasBeenDecrypted(): Promise<boolean> {
+  // conventionally we check the first path
+  const [ns, keyPath] = encryptedDataPaths[0];
   const v = await getKey(ns, keyPath);
   if (typeof v !== "string") return true;
   try {
@@ -200,14 +232,16 @@ async function resetAll() {
   memoryNamespaces.app = null;
   await fs.unlink(path.resolve(DBPath, "app.json"));
 }
-function isEncryptionKeyCorrect(ns: string, keyPath: string, encryptionKey: string) {
+function isEncryptionKeyCorrect(encryptionKey: string) {
+  const [ns, keyPath] = encryptedDataPaths[0]; // conventionally we check the first path
   try {
     return encryptionKeys[ns]![keyPath] === encryptionKey;
   } catch (err) {
     return false;
   }
 }
-function hasEncryptionKey(ns: string, keyPath: string) {
+function hasEncryptionKey() {
+  const [ns, keyPath] = encryptedDataPaths[0]; // conventionally we check the first path
   try {
     return !!encryptionKeys[ns]![keyPath];
   } catch (err) {

@@ -101,6 +101,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   dydx: "dydx19rl4cm2hmr8afy4kldpxz3fka4jguq0a4erelz",
   vechain: EVM_DEAD_ADDRESS,
   lukso: EVM_DEAD_ADDRESS,
+  icon: "hxd3f4224ffb2cfd354f8db2eef39e12aadb7a4ebb",
+  icon_berlin_testnet: "hxd3f4224ffb2cfd354f8db2eef39e12aadb7a4ebb",
   linea: EVM_DEAD_ADDRESS,
   linea_sepolia: EVM_DEAD_ADDRESS,
   blast: EVM_DEAD_ADDRESS,

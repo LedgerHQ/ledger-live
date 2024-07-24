@@ -1,17 +1,17 @@
+import {
+  SwapDataType,
+  SwapSelectorStateType,
+  SwapTransactionType,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import React from "react";
+import styled from "styled-components";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ArrowsUpDown from "~/renderer/icons/ArrowsUpDown";
-import styled from "styled-components";
-import { track } from "~/renderer/analytics/segment";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 import FromRow from "./FromRow";
 import ToRow from "./ToRow";
-import {
-  SwapSelectorStateType,
-  SwapTransactionType,
-  SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/types";
-import { useGetSwapTrackingProperties } from "../../utils/index";
 
 type FormInputsProps = {
   fromAccount: SwapSelectorStateType["account"];
@@ -49,10 +49,7 @@ const Main = styled.section`
   display: flex;
   flex-direction: column;
   margin-bottom: 5px;
-  row-gap: 5px;
-  @media screen and (min-height: 800px) {
-    row-gap: 12px;
-  }
+  row-gap: 12px;
 `;
 
 function SwapButton({ onClick, disabled }: SwapButtonProps): JSX.Element {

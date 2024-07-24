@@ -27,10 +27,10 @@ const PasswordModal = () => {
     async (password?: string | null) => {
       if (password) {
         dispatch(setHasPassword(true));
-        await setEncryptionKey("app", "accounts", password);
+        await setEncryptionKey(password);
       } else {
         dispatch(setHasPassword(false));
-        await removeEncryptionKey("app", "accounts");
+        await removeEncryptionKey();
       }
     },
     [dispatch],
@@ -54,7 +54,7 @@ const PasswordModal = () => {
         return;
       }
       if (hasPassword) {
-        if (!(await isEncryptionKeyCorrect("app", "accounts", currentPassword))) {
+        if (!(await isEncryptionKeyCorrect(currentPassword))) {
           setIncorrectPassword(new PasswordIncorrectError());
           return;
         }

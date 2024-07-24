@@ -5,8 +5,8 @@ import { useHistory } from "react-router-dom";
 import ContextMenuItem from "./Item";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { Account } from "@ledgerhq/types-live";
-import { CollectibleType } from "../../Collectibles/types/Collectibles";
 import { createContextMenuItems } from "./createContextMenuItems";
+import { CollectibleType } from "LLD/features/Collectibles/types/Collectibles";
 
 type Props = {
   account: Account;

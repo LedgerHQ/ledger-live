@@ -8,6 +8,7 @@ project.ext.envConfigFiles = [
     debug: ".env",
     release: ".env.android.release",
     stagingrelease: ".env.android.staging",
+    detox: ".env.mock",
 ]
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
@@ -184,6 +185,18 @@ android {
             signingConfig signingConfigs.stagingRelease
             matchingFallbacks = ['release']
         }
+        detox {
+            initWith(buildTypes.stagingRelease)
+            applicationIdSuffix ".detox"
+            matchingFallbacks = ['stagingRelease', 'release']
+        }
+    }
+
+    packagingOptions {
+        pickFirst "lib/x86/libcrypto.so"
+        pickFirst "lib/x86_64/libcrypto.so"
+        pickFirst "lib/armeabi-v7a/libcrypto.so"
+        pickFirst "lib/arm64-v8a/libcrypto.so"
     }
 }
 

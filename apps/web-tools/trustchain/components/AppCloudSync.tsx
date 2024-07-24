@@ -1,28 +1,35 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { useTrustchainSDK } from "../context";
-import {
-  CloudSyncSDK,
-  LiveData,
-  liveSchema,
-  UpdateEvent,
-} from "@ledgerhq/live-wallet/cloudsync/index";
+import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
+import walletsync, {
+  DistantState as LiveData,
+  liveSlug,
+} from "@ledgerhq/live-wallet/walletsync/index";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { Actionable } from "./Actionable";
 import { JsonEditor } from "./JsonEditor";
+import { TrustchainEjected } from "@ledgerhq/trustchain/lib-es/errors";
+
+const liveSchema = walletsync.schema;
 
 export function AppWalletSync({
   trustchain,
   memberCredentials,
   version,
   setVersion,
+  data,
+  setData,
   forceReadOnlyData,
   readOnly,
   takeControl,
 }: {
   trustchain: Trustchain;
+  setTrustchain: (t: Trustchain | null) => void;
   memberCredentials: MemberCredentials;
+  data: LiveData | null;
+  setData: (d: LiveData | null) => void;
   version: number;
   setVersion: (n: number) => void;
   forceReadOnlyData?: LiveData | null;
@@ -31,7 +38,6 @@ export function AppWalletSync({
 }) {
   const trustchainSdk = useTrustchainSDK();
 
-  const [data, setData] = useState<LiveData | null>(null);
   const [json, setJson] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
@@ -40,24 +46,27 @@ export function AppWalletSync({
       setData(forceReadOnlyData);
       setJson(JSON.stringify(forceReadOnlyData, null, 2));
     }
-  }, [forceReadOnlyData]);
+  }, [forceReadOnlyData, setData]);
 
-  const onJsonEditorChange = useCallback((value: string) => {
-    setJson(value);
-    try {
-      if (!value.trim()) {
-        setData(null);
+  const onJsonEditorChange = useCallback(
+    (value: string) => {
+      setJson(value);
+      try {
+        if (!value.trim()) {
+          setData(null);
+          setError(null);
+          return;
+        }
+        const data = JSON.parse(value);
+        liveSchema.parse(data);
+        setData(data);
         setError(null);
-        return;
+      } catch (e) {
+        setError("Invalid data: " + String(e));
       }
-      const data = JSON.parse(value);
-      const validated = liveSchema.parse(data);
-      setData(validated);
-      setError(null);
-    } catch (e) {
-      setError("Invalid data: " + String(e));
-    }
-  }, []);
+    },
+    [setData],
+  );
 
   const versionRef = useRef(version);
   useEffect(() => {
@@ -67,7 +76,7 @@ export function AppWalletSync({
   const getCurrentVersion = useCallback(() => versionRef.current, []);
 
   const saveNewUpdate = useCallback(
-    async (event: UpdateEvent) => {
+    async (event: UpdateEvent<LiveData>) => {
       switch (event.type) {
         case "new-data":
           setVersion(event.version);
@@ -88,7 +97,13 @@ export function AppWalletSync({
   );
 
   const walletSyncSdk = useMemo(() => {
-    return new CloudSyncSDK({ trustchainSdk, getCurrentVersion, saveNewUpdate });
+    return new CloudSyncSDK({
+      slug: liveSlug,
+      schema: walletsync.schema,
+      trustchainSdk,
+      getCurrentVersion,
+      saveNewUpdate,
+    });
   }, [trustchainSdk, getCurrentVersion, saveNewUpdate]);
 
   const onPull = useCallback(async () => {

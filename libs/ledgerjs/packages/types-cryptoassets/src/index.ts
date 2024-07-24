@@ -55,6 +55,7 @@ export type CryptoCurrencyId =
   | "hpb"
   | "hycon"
   | "icon"
+  | "icon_berlin_testnet"
   | "iota"
   | "iov"
   | "kin"

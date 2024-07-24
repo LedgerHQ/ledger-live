@@ -1,30 +1,13 @@
-import {
-  test as base,
-  Page,
-  ElectronApplication,
-  _electron as electron,
-  ChromiumBrowserContext,
-} from "@playwright/test";
-import * as fs from "fs";
+import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
 import fsPromises from "fs/promises";
 import * as path from "path";
-import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
-import { responseLogfilePath } from "../utils/networkResponseLogger";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos } from "../utils/speculos";
-import { Spec } from "../utils/speculos";
+import { startSpeculos, stopSpeculos, Spec } from "../utils/speculos";
 
-import { allure } from "allure-playwright";
 import { Application } from "tests/page";
-
-export function generateUUID(): string {
-  return crypto.randomBytes(16).toString("hex");
-}
-
-function appendFileErrorHandler(e: Error | null) {
-  if (e) console.error("couldn't append file", e);
-}
+import { generateUUID, safeAppendFile } from "tests/utils/fileUtils";
+import { launchApp } from "tests/utils/electronUtils";
 
 type TestFixtures = {
   lang: string;
@@ -66,14 +49,14 @@ export const test = base.extend<TestFixtures>({
   },
 
   userdataDestinationPath: async ({}, use) => {
-    use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
+    await use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
   userdataOriginalFile: async ({ userdata }, use) => {
-    use(path.join(__dirname, "../userdata/", `${userdata}.json`));
+    await use(path.join(__dirname, "../userdata/", `${userdata}.json`));
   },
   userdataFile: async ({ userdataDestinationPath }, use) => {
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
-    use(fullFilePath);
+    await use(fullFilePath);
   },
   electronApp: async (
     {
@@ -99,15 +82,13 @@ export const test = base.extend<TestFixtures>({
     }
 
     let device: any | undefined;
-    if (IS_NOT_MOCK) {
-      if (speculosCurrency) {
-        setEnv(
-          "SPECULOS_PID_OFFSET",
-          speculosOffset * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
-        );
-        device = await startSpeculos(testName, speculosCurrency);
-        setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
-      }
+    if (IS_NOT_MOCK && speculosCurrency) {
+      setEnv(
+        "SPECULOS_PID_OFFSET",
+        speculosOffset * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+      );
+      device = await startSpeculos(testName, speculosCurrency);
+      setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
     }
 
     try {
@@ -178,30 +159,7 @@ export const test = base.extend<TestFixtures>({
         // Direct Electron console to Node terminal.
         console.log(txt);
       }
-      fs.appendFile(logFile, `${txt}\n`, appendFileErrorHandler);
-    });
-
-    // start recording all network responses in artifacts/networkResponse.log
-    await page.route("**/*", async route => {
-      const now = Date.now();
-      const timestamp = new Date(now).toISOString();
-
-      const headers = route.request().headers();
-
-      if (headers.teststatus && headers.teststatus === "mocked") {
-        fs.appendFile(
-          responseLogfilePath,
-          `[${timestamp}] MOCKED RESPONSE: ${route.request().url()}\n`,
-          appendFileErrorHandler,
-        );
-      } else {
-        fs.appendFile(
-          responseLogfilePath,
-          `[${timestamp}] REAL RESPONSE: ${route.request().url()}\n`,
-          appendFileErrorHandler,
-        );
-      }
-      await route.continue();
+      safeAppendFile(logFile, `${txt}\n`);
     });
 
     // app is loaded
@@ -213,72 +171,6 @@ export const test = base.extend<TestFixtures>({
 
     console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
   },
-
-  // below is used for the logging file at `artifacts/networkResponses.log`
-  recordTestNamesForApiResponseLogging: [
-    async ({}, use, testInfo) => {
-      fs.appendFile(
-        responseLogfilePath,
-        `Network call responses for test: '${testInfo.title}':\n`,
-        appendFileErrorHandler,
-      );
-
-      await use();
-
-      fs.appendFile(responseLogfilePath, `\n`, appendFileErrorHandler);
-    },
-    { auto: true },
-  ],
 });
-
-export async function launchApp({
-  env,
-  lang,
-  theme,
-  userdataDestinationPath,
-  simulateCamera,
-  windowSize,
-}: {
-  env: Record<string, string>;
-  lang: string;
-  theme: "light" | "dark" | "no-preference" | undefined;
-  userdataDestinationPath: string;
-  simulateCamera?: string;
-  windowSize: { width: number; height: number };
-}): Promise<ElectronApplication> {
-  return await electron.launch({
-    args: [
-      `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
-      `--user-data-dir=${userdataDestinationPath}`,
-      // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
-      "--force-device-scale-factor=1",
-      "--disable-dev-shm-usage",
-      // "--use-gl=swiftshader"
-      "--no-sandbox",
-      "--enable-logging",
-      ...(simulateCamera
-        ? [
-            "--use-fake-device-for-media-stream",
-            `--use-file-for-fake-video-capture=${simulateCamera}`,
-          ]
-        : []),
-    ],
-    recordVideo: {
-      dir: `${path.join(__dirname, "../artifacts/videos/")}`,
-      size: windowSize, // FIXME: no default value, it could come from viewport property in conf file but it's not the case
-    },
-    env,
-    colorScheme: theme,
-    locale: lang,
-    executablePath: require("electron/index.js"),
-    timeout: 120000,
-  });
-}
-
-export async function addTmsLink(ids: string[]) {
-  for (const id of ids) {
-    await allure.tms(id, `https://ledgerhq.atlassian.net/browse/${id}`);
-  }
-}
 
 export default test;

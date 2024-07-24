@@ -31,6 +31,7 @@ import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { useCallback, useContext } from "react";
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
@@ -64,6 +65,16 @@ const getMarketWidgetAnalytics = () => {
   const marketWidget = analyticsFeatureFlagMethod("marketperformanceWidgetDesktop");
 
   return !!marketWidget?.enabled;
+};
+
+const getWalletSyncAttributes = (state: State) => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
+
+  return {
+    hasWalletSync: !!walletSync?.enabled,
+    walletSyncActivated: !!state.trustchain.trustchain,
+  };
 };
 
 const getPtxAttributes = () => {
@@ -129,6 +140,8 @@ const extraProperties = (store: ReduxStore) => {
   const accounts = accountsSelector(state);
   const ptxAttributes = getPtxAttributes();
 
+  const walletSyncAtributes = getWalletSyncAttributes(state);
+
   const deviceInfo = device
     ? {
         modelId: device.modelId,
@@ -182,6 +195,7 @@ const extraProperties = (store: ReduxStore) => {
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,
+    ...walletSyncAtributes,
   };
 };
 

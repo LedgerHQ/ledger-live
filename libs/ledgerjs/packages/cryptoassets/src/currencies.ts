@@ -1463,12 +1463,42 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     family: "icon",
     units: [
       {
-        name: "ICON",
-        code: "ICON",
-        magnitude: 8,
+        name: "ICX",
+        code: "ICX",
+        magnitude: 18,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://tracker.icon.community/transaction/$hash",
+        address: "https://tracker.icon.community/address/$address",
+      },
+    ],
+  },
+  icon_berlin_testnet: {
+    type: "CryptoCurrency",
+    id: "icon_berlin_testnet",
+    coinType: CoinType.ICON,
+    name: "ICON Berlin Testnet",
+    managerAppName: "ICON",
+    ticker: "ICX",
+    scheme: "icon_berlin_testnet",
+    color: "#00A3B4",
+    family: "icon",
+    isTestnetFor: "icon",
+    units: [
+      {
+        name: "ICX",
+        code: "ICX",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://tracker.berlin.icon.community/transaction/$hash",
+        address: "https://tracker.berlin.icon.community/address/$address",
+      },
+    ],
   },
   iota: {
     type: "CryptoCurrency",
@@ -3121,7 +3151,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "crypto_org",
     coinType: CoinType.CRYPTO_ORG,
     name: "Cronos POS Chain",
-    managerAppName: "Crypto.org Chain",
+    managerAppName: "Cronos POS Chain",
     ticker: "CRO",
     scheme: "crypto_org",
     color: "#0e1c37",

@@ -24,6 +24,10 @@ listenLogs(({ id, date, ...log }) => {
   logger.debug(log);
 });
 
+// listenLogs(log => {
+//   console.log(log.type + ": " + log.message);
+// });
+
 // This defines our IPC Transport that will proxy to an internal process (we shouldn't use node-hid on renderer)
 registerTransportModule({
   id: "ipc",

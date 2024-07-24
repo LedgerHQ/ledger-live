@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Route } from "react-router-dom";
 import AccountCrumb from "~/renderer/components/Breadcrumb/AccountCrumb";
 import AssetCrumb from "~/renderer/components/Breadcrumb/AssetCrumb";
-import NFTCrumb from "LLD/Collectibles/Nfts/BreadCrumb";
+import NFTCrumb from "LLD/features/Collectibles/Nfts/BreadCrumb";
 import MarketCrumb from "~/renderer/components/Breadcrumb/MarketCrumb";
 const Wrapper = styled.div`
   display: flex;

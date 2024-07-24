@@ -15,7 +15,8 @@
     "src/components/RootNavigator/types.ts",
     "src/logic/keyboardVisible.ts",
     "src/contentCards/cards/vertical/*",
-    "src/**/__integrations__/*.tsx"
+    "src/**/__integrations__/*.tsx",
+    "src/MobileStorageProvider.ts"
   ],
   "ignoreUnused": [
     "@react-native-masked-view/masked-view",
@@ -34,6 +35,7 @@
     "react-native-randombytes",
     "react-native-tcp",
     "react-native-tcp-socket",
-    "react-native-udp"
+    "react-native-udp",
+    "safe-buffer"
   ]
 }

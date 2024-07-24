@@ -5,7 +5,7 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
+import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "~/const";
@@ -136,8 +136,8 @@ export default function MainNavigator() {
       />
       {web3hub?.enabled ? (
         <Tab.Screen
-          name={NavigatorName.Web3Hub}
-          component={Web3HubNavigator}
+          name={NavigatorName.Web3HubTab}
+          component={Web3HubTabNavigator}
           options={{
             headerShown: false,
             tabBarIcon: props => (
@@ -148,7 +148,7 @@ export default function MainNavigator() {
             tabPress: e => {
               e.preventDefault();
               managerLockAwareCallback(() => {
-                navigation.navigate(NavigatorName.Web3Hub);
+                navigation.navigate(NavigatorName.Web3HubTab);
               });
             },
           })}

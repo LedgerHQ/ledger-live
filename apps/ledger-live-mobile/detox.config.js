@@ -55,10 +55,9 @@ module.exports = {
     "android.release": {
       type: "android.apk",
       build:
-        "cd android && ENVFILE=.env.mock ./gradlew app:assembleStagingRelease app:assembleAndroidTest -DtestBuildType=stagingRelease && cd ..",
-      binaryPath: `android/app/build/outputs/apk/stagingRelease/app-${androidArch}-stagingRelease.apk`,
-      testBinaryPath:
-        "android/app/build/outputs/apk/androidTest/stagingRelease/app-stagingRelease-androidTest.apk",
+        "cd android && ENVFILE=.env.mock ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox && cd ..",
+      binaryPath: `android/app/build/outputs/apk/detox/app-${androidArch}-detox.apk`,
+      testBinaryPath: "android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk",
     },
   },
   devices: {

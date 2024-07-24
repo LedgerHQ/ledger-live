@@ -303,7 +303,7 @@
   "swap2": {
     "title": "Swap",
     "tabs": {
-      "exchange": "Exchange",
+      "exchange": "Swap",
       "history": "History"
     },
     "form": {
@@ -385,6 +385,7 @@
         "title": "Transaction broadcast successfully",
         "description": "Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your {{targetCurrency}}.",
         "disclaimer": "Take note of your Swap ID number in case you’d need assistance from <0><0>{{provider}}</0> support</0>.",
+        "tellAboutYourExperience": "Tell us about your experience",
         "seeDetails": "See details"
       }
     },
@@ -4217,8 +4218,7 @@
           "modal": {
             "flow": "Select a Flow",
             "step": "Select a Step",
-            "activated": "Activate/deactivate to have a backup or not",
-            "instance": "Generate Instances",
+            "instance": "Generate Members",
             "cta": "Apply"
           }
         }
@@ -6336,7 +6336,7 @@
         "description": "Secure or delete your encryption key via another Ledger."
       },
       "instance": {
-        "label_one": "1 Synchronized instance",
+        "label": "1 Synchronized instance",
         "label_other": "{{count}} Synchronized instances",
         "cta": "Manage"
       }
@@ -6349,7 +6349,8 @@
     "error": {
       "title": "Something went wrong",
       "description": "Please try again later.",
-      "cta": "Try again"
+      "cta": "Try again",
+      "fetching": "Something went wrong while fetching your data."
     },
     "unsecuredError": {
       "title": "The synchronization isn't secured by this Ledger",
@@ -6358,18 +6359,26 @@
       "cta": "Connect another Ledger",
       "ctaDelete": "Delete my encryption key"
     },
+    "autoRemoveError": {
+      "title": "You can’t remove the current instance",
+      "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
+      "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
+      "cta": "I understand",
+      "ctaDelete": "Delete my encryption key"
+    },
     "success": {
       "backup": {
         "title": "Success",
-        "desc": "You successfully enabled Ledger Sync. ",
-        "synchAnother": "Sync with another Ledger Live app"
+        "desc": "You successfully enabled Ledger Sync."
       },
       "synch": {
         "title": "Synchronization successful!",
         "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
-      }
+      },
+      "synchAnother": "Sync with another Ledger Live app",
+      "close": "Close"
     },
-    "manageBackups": {
+    "manageBackup": {
       "title": "Manage your key",
       "options": {
         "deleteBackup": {
@@ -6423,6 +6432,10 @@
       "remove": "Remove",
       "deleteInstanceSuccess": "Your {{instanceName}} is no longer synchronized",
       "deleteInstanceError": "Something went wrong with the desynchronization of {{instanceName}}"
+    },
+    "deviceAction": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
     }
   }
 }

@@ -20,6 +20,7 @@ import { stellarConfig } from "../families/stellar/config";
 import { tezosConfig } from "../families/tezos/config";
 import { tronConfig } from "../families/tron/config";
 import { vechainConfig } from "../families/vechain/config";
+import { iconConfig } from "../families/icon/config";
 import { appConfig } from "../apps/config";
 
 const countervaluesConfig: ConfigSchema = {
@@ -61,4 +62,5 @@ export const liveConfig: ConfigSchema = {
   ...tezosConfig,
   ...tronConfig,
   ...vechainConfig,
+  ...iconConfig,
 };
