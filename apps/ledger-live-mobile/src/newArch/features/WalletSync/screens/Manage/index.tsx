@@ -13,10 +13,17 @@ import { TouchableOpacity } from "react-native";
 import { TrustchainNotFound, useGetMembers } from "../../hooks/useGetMembers";
 import ManageKeyDrawer from "../ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
+import ManageInstanceDrawer from "../ManageInstances/ManageInstancesDrawer";
+import { useManageInstancesDrawer } from "../ManageInstances/useManageInstanceDrawer";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
   const { isDrawerVisible, closeDrawer, openDrawer } = useManageKeyDrawer();
+  const {
+    isDrawerVisible: isInstanceDrawerVisible,
+    closeDrawer: closeInstanceDrawer,
+    openDrawer: openInstanceDrawer,
+  } = useManageInstancesDrawer();
   const { data, isLoading, isError, error } = useGetMembers();
 
   const { onClickTrack } = useWalletSyncAnalytics();
@@ -32,10 +39,13 @@ const WalletSyncManage = () => {
     onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.WalletSyncActivated });
   };
 
-  // const goToManageInstances = () => {
-  //   dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances }));
-  //   onClickTrack({ button: "Manage Instances", page: AnalyticsPage.WalletSyncSettings });
-  // };
+  const goToManageInstances = () => {
+    openInstanceDrawer();
+    onClickTrack({
+      button: AnalyticsButton.ManageSynchronizations,
+      page: AnalyticsPage.WalletSyncActivated,
+    });
+  };
 
   const Options: OptionProps[] = [
     {
@@ -72,7 +82,7 @@ const WalletSyncManage = () => {
           key={index}
           disabled={
             props.id === "manageKey"
-              ? error instanceof TrustchainNotFound
+              ? isError && error instanceof TrustchainNotFound
                 ? false
                 : isError
               : isError
@@ -80,7 +90,7 @@ const WalletSyncManage = () => {
         />
       ))}
 
-      <InstancesRow disabled={isError}>
+      <InstancesRow disabled={isError} onPress={isError ? undefined : goToManageInstances}>
         <Container
           flexDirection="row"
           justifyContent="space-between"
@@ -113,6 +123,7 @@ const WalletSyncManage = () => {
        * DRAWERS
        */}
       <ManageKeyDrawer isOpen={isDrawerVisible} handleClose={closeDrawer} />
+      <ManageInstanceDrawer isOpen={isInstanceDrawerVisible} handleClose={closeInstanceDrawer} />
     </Box>
   );
 };

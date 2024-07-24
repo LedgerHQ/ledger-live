@@ -6751,6 +6751,10 @@
           }
         }
       },
+      "manageInstances": {
+        "title": "Manage synchronized instances",
+        "remove": "Remove"
+      },
       "synchronizedInstances": {
         "cta": "Manage now",
         "title": "{{count}} Synchronized Instance",
