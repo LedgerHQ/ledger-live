@@ -23,6 +23,7 @@ export type HookResult = {
   handleTokenIdChange: (value: string) => void;
   handleRefreshTypeChange: (option: SelectOption) => void;
   onClick: () => void;
+  closeInfo: () => void;
 };
 
 export function useHook(): HookResult {
@@ -34,6 +35,7 @@ export function useHook(): HookResult {
   const [chainId, setChainId] = useState("");
   const [tokenId, setTokenId] = useState("");
 
+  const closeInfo = () => setDisplayInfo(false);
   const handleContractAddressChange = (value: string) => setContractAddress(value);
   const handleChainIdChange = (option: SelectOption) => setChainId(option.value);
   const handleTokenIdChange = (value: string) => setTokenId(value);
@@ -50,9 +52,6 @@ export function useHook(): HookResult {
 
     refreshMutation.mutateAsync(data).finally(() => {
       setDisplayInfo(true);
-      setTimeout(() => {
-        setDisplayInfo(false);
-      }, 5000);
     });
   };
 
@@ -62,6 +61,7 @@ export function useHook(): HookResult {
     handleTokenIdChange,
     handleRefreshTypeChange,
     onClick,
+    closeInfo,
     displayInfo,
     refreshType,
     contractAddress,
@@ -90,14 +90,14 @@ export default function RefreshMetadata(props: HookResult) {
   if (displayInfo && !refreshMutation.isPending) {
     const getErrorText = (error: Error) => {
       if (error instanceof LedgerAPI4xx) {
-        return t("settings.developer.debugRefreshMetadata.error");
+        return t("settings.developer.debugSimpleHash.debugRefreshMetadata.error");
       }
       return (error as Error).message;
     };
 
     const text = refreshMutation.isError
       ? getErrorText(refreshMutation.error)
-      : t("settings.developer.debugRefreshMetadata.success");
+      : t("settings.developer.debugSimpleHash.debugRefreshMetadata.success");
     return <Result text={text} variant={refreshMutation.isSuccess ? "success" : "error"} />;
   }
 
@@ -105,16 +105,18 @@ export default function RefreshMetadata(props: HookResult) {
     <Flex flexDirection="column">
       <SelectRow
         title={""}
-        desc={t("settings.developer.debugRefreshMetadata.refreshType.desc")}
+        desc={t("settings.developer.debugSimpleHash.debugRefreshMetadata.refreshType.desc")}
         value={{ label: refreshType, value: refreshType }}
         options={[
           {
-            label: t(`settings.developer.debugRefreshMetadata.refreshType.${RefreshOption.nft}`),
+            label: t(
+              `settings.developer.debugSimpleHash.debugRefreshMetadata.refreshType.${RefreshOption.nft}`,
+            ),
             value: RefreshOption.nft,
           },
           {
             label: t(
-              `settings.developer.debugRefreshMetadata.refreshType.${RefreshOption.contract}`,
+              `settings.developer.debugSimpleHash.debugRefreshMetadata.refreshType.${RefreshOption.contract}`,
             ),
             value: RefreshOption.contract,
           },
@@ -123,15 +125,15 @@ export default function RefreshMetadata(props: HookResult) {
       />
 
       <InputRow
-        title={t("settings.developer.debugRefreshMetadata.contractAddress")}
-        desc={t("settings.developer.debugRefreshMetadata.contractAddressDesc")}
+        title={t("settings.developer.debugSimpleHash.debugRefreshMetadata.contractAddress")}
+        desc={t("settings.developer.debugSimpleHash.debugRefreshMetadata.contractAddressDesc")}
         value={contractAddress}
         onChange={handleContractAddressChange}
       />
 
       <SelectRow
-        title={t("settings.developer.debugRefreshMetadata.chainId")}
-        desc={t("settings.developer.debugRefreshMetadata.chainIdDesc")}
+        title={t("settings.developer.debugSimpleHash.debugRefreshMetadata.chainId")}
+        desc={t("settings.developer.debugSimpleHash.debugRefreshMetadata.chainIdDesc")}
         value={{ label: chainId, value: chainId }}
         options={[
           { label: "Ethereum", value: "ethereum" },
@@ -143,8 +145,8 @@ export default function RefreshMetadata(props: HookResult) {
       <DisabledContainer disabled={refreshType !== RefreshOption.nft}>
         <InputRow
           disabled={refreshType !== RefreshOption.nft}
-          title={t("settings.developer.debugRefreshMetadata.tokenId")}
-          desc={t("settings.developer.debugRefreshMetadata.tokenIdDesc")}
+          title={t("settings.developer.debugSimpleHash.debugRefreshMetadata.tokenId")}
+          desc={t("settings.developer.debugSimpleHash.debugRefreshMetadata.tokenIdDesc")}
           value={tokenId}
           onChange={handleTokenIdChange}
         />
