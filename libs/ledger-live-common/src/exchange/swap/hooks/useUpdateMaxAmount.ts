@@ -77,7 +77,9 @@ export const useUpdateMaxAmount = ({
         setIsMaxLoading(false);
         if ("currency" in account && account.currency.id === "tron") {
           // keep 1.1 TRX for fees and 0.1 TRX for keeping the account alive
-          setFromAmount(account?.balance.minus(new BigNumber(1_200_000)));
+          if (account?.balance.gt(new BigNumber(1_200_000))) {
+            setFromAmount(account?.balance.minus(new BigNumber(1_200_000)));
+          }
         } else {
           setFromAmount(amount);
         }
