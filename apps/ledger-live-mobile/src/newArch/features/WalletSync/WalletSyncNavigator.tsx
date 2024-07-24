@@ -10,6 +10,7 @@ import { ActivationSuccess } from "./screens/Activation/ActivationSuccess";
 import { useInitMemberCredentials } from "./hooks/useInitMemberCredentials";
 import WalletSyncManage from "./screens/Manage";
 import { useTranslation } from "react-i18next";
+import { WalletSyncManageKeyDeletionSuccess } from "./screens/ManageKey/DeletionSuccess";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
@@ -54,6 +55,16 @@ export default function WalletSynceNavigator() {
         options={{
           title: t("walletSync.title"),
           headerRight: () => null,
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.WalletSyncManageKeyDeleteSuccess}
+        component={WalletSyncManageKeyDeletionSuccess}
+        options={{
+          title: "",
+          headerRight: () => null,
+          headerLeft: () => null,
         }}
       />
     </Stack.Navigator>

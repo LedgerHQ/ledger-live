@@ -4,8 +4,8 @@ import styled, { useTheme } from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
 type Props = {
   title: string;
-  desc: string;
-  mainButton: {
+  desc?: string;
+  mainButton?: {
     label: string;
     onPress: () => void;
   };
@@ -32,10 +32,13 @@ export function Success({ title, desc, mainButton, secondaryButton }: Props) {
             {desc}
           </Text>
         </Flex>
-        <Flex flexDirection="column" rowGap={10} mb={8}>
-          <Button type="main" onPress={mainButton.onPress}>
-            {mainButton.label}
-          </Button>
+        <Flex flexDirection="column" rowGap={10} mb={8} width={"100%"} px={"16px"}>
+          {mainButton && (
+            <Button type="main" onPress={mainButton.onPress}>
+              {mainButton.label}
+            </Button>
+          )}
+
           <Button type="main" outline onPress={secondaryButton.onPress}>
             {secondaryButton.label}
           </Button>
