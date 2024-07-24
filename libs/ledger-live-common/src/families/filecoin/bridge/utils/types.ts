@@ -75,3 +75,28 @@ interface BlockIdentifier {
   index: number;
   hash: string;
 }
+
+export interface ConvertFilToEthResponse {
+  address: string;
+}
+
+export interface FetchERC20TransactionsResponse {
+  txs: ERC20Transfer[];
+}
+
+export interface ERC20Transfer {
+  id: string;
+  height: number;
+  type: string;
+  to: string;
+  from: string;
+  amount: string;
+  contract_address: string;
+  timestamp: number;
+  tx_hash: string;
+  tx_cid?: string;
+}
+
+export interface ERC20BalanceResponse {
+  data: { balance: string; height: number }[];
+}

@@ -1,9 +1,11 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
-import { BotScenario, Methods } from "./utils";
+import { BotScenario, expectedToFieldForTokenTransfer, Methods, methodToString } from "./utils";
 import { isFilEthAddress } from "./bridge/utils/addresses";
 import { fromEthAddress, fromString, toEthAddress } from "iso-filecoin/address";
+import { getSubAccount } from "./bridge/utils/utils";
+import invariant from "invariant";
 
 export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Transaction, any> => {
   const data: Parameters<typeof deviceActionFlow<Transaction>>[0] = { steps: [] };
@@ -34,6 +36,14 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
         return transaction.recipient + addr.toString();
       },
     });
+  } else if (scenario == BotScenario.TOKEN_TRANSFER) {
+    data.steps.push({
+      title: "To",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        return expectedToFieldForTokenTransfer(transaction.recipient);
+      },
+    });
   } else {
     data.steps.push({
       title: "To",
@@ -53,7 +63,24 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => transaction.nonce.toString(),
     },
-    {
+  ]);
+
+  if (scenario == BotScenario.TOKEN_TRANSFER) {
+    data.steps.push({
+      title: "Value",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ account, transaction }) => {
+        const subAccount = getSubAccount(account, transaction);
+        invariant(subAccount, "subAccount is required for token transfer");
+
+        return formatDeviceAmount(subAccount.token, transaction.amount, {
+          hideCode: false,
+          showAllDigits: true,
+        });
+      },
+    });
+  } else {
+    data.steps.push({
       title: "Value",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, status }) =>
@@ -61,37 +88,58 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
           hideCode: true,
           showAllDigits: true,
         }),
-    },
-    {
+    });
+  }
+
+  if (scenario === BotScenario.TOKEN_TRANSFER) {
+    data.steps.push({
       title: "Gas Limit",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.gasLimit.toFixed(),
-    },
-    {
-      title: "Gas Premium",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ account, transaction }) =>
-        formatDeviceAmount(account.currency, transaction.gasPremium, {
-          hideCode: true,
+      expectedValue: ({ transaction, account }) =>
+        formatDeviceAmount(account.currency, transaction.gasLimit, {
+          hideCode: false,
           showAllDigits: true,
         }),
-    },
-    {
-      title: "Gas Fee Cap",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ account, transaction }) =>
-        formatDeviceAmount(account.currency, transaction.gasFeeCap, {
-          hideCode: true,
-          showAllDigits: true,
-        }),
-    },
-  ]);
+    });
+  } else {
+    data.steps = data.steps.concat([
+      {
+        title: "Gas Limit",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ transaction }) => transaction.gasLimit.toFixed(),
+      },
+      {
+        title: "Gas Premium",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ account, transaction }) =>
+          formatDeviceAmount(account.currency, transaction.gasPremium, {
+            hideCode: true,
+            showAllDigits: true,
+          }),
+      },
+      {
+        title: "Gas Fee Cap",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ account, transaction }) =>
+          formatDeviceAmount(account.currency, transaction.gasFeeCap, {
+            hideCode: true,
+            showAllDigits: true,
+          }),
+      },
+    ]);
+  }
 
   if (scenario == BotScenario.ETH_RECIPIENT || scenario == BotScenario.F4_RECIPIENT) {
     data.steps.push({
       title: "Method",
       button: SpeculosButton.RIGHT,
       expectedValue: () => Methods.InvokeEVM.toString(),
+    });
+  } else if (scenario == BotScenario.TOKEN_TRANSFER) {
+    data.steps.push({
+      title: "Method",
+      button: SpeculosButton.RIGHT,
+      expectedValue: () => methodToString(Methods.ERC20Transfer),
     });
   } else {
     data.steps.push({

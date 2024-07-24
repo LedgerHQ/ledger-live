@@ -1,10 +1,15 @@
 import type { DeviceTransactionField } from "../../transaction";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
-import { formatCurrencyUnit, getCryptoCurrencyById } from "../../currencies";
-import { methodToString } from "./utils";
-
-const currency = getCryptoCurrencyById("filecoin");
+import { formatCurrencyUnit } from "../../currencies";
+import {
+  AccountType,
+  Methods,
+  expectedToFieldForTokenTransfer,
+  getAccountUnit,
+  methodToString,
+} from "./utils";
+import { validateAddress } from "./bridge/utils/addresses";
 
 export type ExtraDeviceTransactionField =
   | {
@@ -26,6 +31,11 @@ export type ExtraDeviceTransactionField =
       type: "filecoin.method";
       label: string;
       value: string;
+    }
+  | {
+      type: "filecoin.recipient";
+      label: string;
+      value: string;
     };
 
 function getDeviceTransactionConfig(input: {
@@ -34,38 +44,73 @@ function getDeviceTransactionConfig(input: {
   transaction: Transaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
-  const fields: Array<DeviceTransactionField> = [];
+  const tokenTransfer = input.account.type === AccountType.TokenAccount;
+  const subAccount = tokenTransfer ? (input.account as TokenAccount) : null;
 
-  fields.push({
-    type: "amount",
-    label: "Value",
-  });
+  const fields: Array<DeviceTransactionField> = [];
+  const unit = input.parentAccount
+    ? input.parentAccount.currency.units[0]
+    : getAccountUnit(input.account);
+  const formatConfig = {
+    disableRounding: true,
+    alwaysShowSign: false,
+    showCode: false,
+  };
+
+  if (subAccount) {
+    const value = expectedToFieldForTokenTransfer(input.transaction.recipient);
+    fields.push({
+      type: "filecoin.recipient",
+      label: "To",
+      value,
+    });
+  }
+
+  const recipient = input.transaction.recipient;
+  if (recipient.length >= 4 && recipient.substring(0, 4) === "0xff") {
+    const validated = validateAddress(recipient);
+    if (validated.isValid) {
+      const value = validated.parsedAddress.toString();
+      fields.push({
+        type: "filecoin.recipient",
+        label: "To",
+        value,
+      });
+    }
+  }
+
   fields.push({
     type: "filecoin.gasLimit",
     label: "Gas Limit",
-    value: input.transaction.gasLimit.toFixed(),
+    value: formatCurrencyUnit(unit, input.transaction.gasLimit, formatConfig),
   });
-  fields.push({
-    type: "filecoin.gasPremium",
-    label: "Gas Premium",
-    value: formatCurrencyUnit(currency.units[0], input.transaction.gasPremium, {
-      showCode: false,
-      disableRounding: true,
-    }),
-  });
-  fields.push({
-    type: "filecoin.gasFeeCap",
-    label: "Gas Fee Cap",
-    value: formatCurrencyUnit(currency.units[0], input.transaction.gasFeeCap, {
-      showCode: false,
-      disableRounding: true,
-    }),
-  });
-  fields.push({
-    type: "filecoin.method",
-    label: "Method",
-    value: methodToString(input.transaction.method),
-  });
+
+  if (!subAccount) {
+    fields.push({
+      type: "filecoin.gasFeeCap",
+      label: "Gas Fee Cap",
+      value: formatCurrencyUnit(unit, input.transaction.gasFeeCap, formatConfig),
+    });
+
+    fields.push({
+      type: "filecoin.gasPremium",
+      label: "Gas Premium",
+      value: formatCurrencyUnit(unit, input.transaction.gasPremium, formatConfig),
+    });
+    fields.push({
+      type: "filecoin.method",
+      label: "Method",
+      value: methodToString(input.transaction.method),
+    });
+  }
+
+  if (subAccount) {
+    fields.push({
+      type: "filecoin.method",
+      label: "Method",
+      value: methodToString(Methods.ERC20Transfer),
+    });
+  }
 
   return fields;
 }
