@@ -2,13 +2,15 @@
   "data": {
     "PLAYWRIGHT_RUN": {
       "localStorage": {
-        "acceptedTermsVersion": "2042-01-01"
+        "acceptedTermsVersion": "2042-01-01",
+        "hasAnsweredLanguageAvailable": "2022-09-23"
       }
     },
     "settings": {
       "hasCompletedOnboarding": true,
       "counterValue": "USD",
       "language": "en",
+      "locale": "en-US",
       "theme": null,
       "region": null,
       "orderAccounts": "balance|desc",
