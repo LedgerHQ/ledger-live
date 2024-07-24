@@ -1076,7 +1076,7 @@ importers:
         specifier: ^2.9.0
         version: 2.16.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       react-native-get-random-values:
-        specifier: ^1.11.0
+        specifier: '1'
         version: 1.11.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
       react-native-haptic-feedback:
         specifier: ^2.0.3
@@ -1114,6 +1114,9 @@ importers:
       react-native-qrcode-svg:
         specifier: 6.1.1
         version: 6.1.1(react-native-svg@13.14.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+      react-native-quick-crypto:
+        specifier: ^0.7.1
+        version: 0.7.1(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       react-native-randombytes:
         specifier: ^3.6.1
         version: 3.6.1
@@ -1189,6 +1192,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      safe-buffer:
+        specifier: ^5.2.1
+        version: 5.2.1
       semver:
         specifier: ^7.3.7
         version: 7.5.4
@@ -2063,9 +2069,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      react-native-get-random-values:
-        specifier: ^1.8.0
-        version: 1.11.0
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -8383,6 +8386,9 @@ packages:
     engines: {node: '>13'}
     peerDependencies:
       esbuild: '>=0.15.10'
+
+  '@craftzdog/react-native-buffer@6.0.5':
+    resolution: {integrity: sha512-Av+YqfwA9e7jhgI9GFE/gTpwl/H+dRRLmZyJPOpKTy107j9Oj7oXlm3/YiMNz+C/CEGqcKAOqnXDLs4OL6AAFw==}
 
   '@crypto-org-chain/chain-jslib@1.1.2':
     resolution: {integrity: sha512-30jHu5RbDtmy1uUcLf5Rf283HC0Kzs25CDGQkaT7dfd19Kl3S/DRcKtLI2wAiqahPmPIyz99B3uqRuSfw+6pKA==}
@@ -25382,6 +25388,15 @@ packages:
       react-native: '>=0.63.4'
       react-native-svg: ^12.1.0
 
+  react-native-quick-base64@2.1.2:
+    resolution: {integrity: sha512-xghaXpWdB0ji8OwYyo0fWezRroNxiNFCNFpGUIyE7+qc4gA/IGWnysIG5L0MbdoORv8FkTKUvfd6yCUN5R2VFA==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  react-native-quick-crypto@0.7.1:
+    resolution: {integrity: sha512-1F8D8oYdociccdiU5hciSJ+rvehdmaJRV2hIv/LgEwBthwkVdD7pSf6kFKwoY9Y2Ly6f7tfBCjYg4/uQRge8Jg==}
+
   react-native-randombytes@3.6.1:
     resolution: {integrity: sha512-qxkwMbOZ0Hff1V7VqpaWrR6ItkA+oF6bnI79Qp9F3Tk8WBsdKDi6m1mi3dEdFWePoRLrhJ2L03rU0yabst1tVw==}
 
@@ -32131,6 +32146,14 @@ snapshots:
       - canvas
       - supports-color
       - utf-8-validate
+
+  '@craftzdog/react-native-buffer@6.0.5(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      ieee754: 1.2.1
+      react-native-quick-base64: 2.1.2(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+    transitivePeerDependencies:
+      - react
+      - react-native
 
   '@crypto-org-chain/chain-jslib@1.1.2':
     dependencies:
@@ -58224,10 +58247,6 @@ snapshots:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
 
-  react-native-get-random-values@1.11.0:
-    dependencies:
-      fast-base64-decode: 1.0.0
-
   react-native-get-random-values@1.11.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0)):
     dependencies:
       fast-base64-decode: 1.0.0
@@ -58328,6 +58347,23 @@ snapshots:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
       react-native-svg: 13.14.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+
+  react-native-quick-base64@2.1.2(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
+    dependencies:
+      base64-js: 1.5.1
+      react: 18.2.0
+      react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
+
+  react-native-quick-crypto@0.7.1(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@craftzdog/react-native-buffer': 6.0.5(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+      events: 3.3.0
+      readable-stream: 4.5.2
+      string_decoder: 1.3.0
+      util: 0.12.5
+    transitivePeerDependencies:
+      - react
+      - react-native
 
   react-native-randombytes@3.6.1:
     dependencies:
