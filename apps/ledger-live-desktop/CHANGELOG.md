@@ -1,5 +1,37 @@
 # ledger-live-desktop
 
+## 2.84.1
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`e87b017`](https://github.com/LedgerHQ/ledger-live/commit/e87b017b2d1cfaf22b8703045fbcbfee6796a119) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix(LLD): AccountList not showing the correct name and balance for tokens
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`86ae0ac`](https://github.com/LedgerHQ/ledger-live/commit/86ae0acac0a6450ad12a60df30f958368af1300c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix sentry error & troubleshoot animation theme
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`c4c9113`](https://github.com/LedgerHQ/ledger-live/commit/c4c91130c1bf3ce954be41fa1de20902fc8723e7) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix onboarding error when device connected.
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Upadate Europa assets
+
+- Updated dependencies [[`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f), [`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/devices@8.4.2
+  - @ledgerhq/types-devices@6.25.2
+  - @ledgerhq/coin-framework@0.16.1
+  - @ledgerhq/coin-bitcoin@0.7.1
+  - @ledgerhq/coin-evm@2.1.3
+  - @ledgerhq/live-common@34.6.1
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.3
+  - @ledgerhq/live-wallet@0.4.1
+  - @ledgerhq/react-ui@0.15.3
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-countervalues@0.2.3
+  - @ledgerhq/live-countervalues-react@0.2.3
+  - @ledgerhq/live-nft@0.4.3
+  - @ledgerhq/live-nft-react@0.4.3
+  - @ledgerhq/hw-transport-http@6.30.2
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.2
+  - @ledgerhq/hw-transport-vault@1.3.2
+
 ## 2.84.1-hotfix.3
 
 ### Patch Changes

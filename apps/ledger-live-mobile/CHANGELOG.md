@@ -1,5 +1,34 @@
 # live-mobile
 
+## 3.47.2
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`e2badea`](https://github.com/LedgerHQ/ledger-live/commit/e2badea161adfbefebb913e2ea5da133202b1534) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix filter not work bug when clicking device.
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Upadate Europa assets
+
+- [#7397](https://github.com/LedgerHQ/ledger-live/pull/7397) [`77473c4`](https://github.com/LedgerHQ/ledger-live/commit/77473c4ee44ed37c0933af5075423da921e370bd) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Update LLM restore apps assets
+
+- Updated dependencies [[`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f), [`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e), [`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/devices@8.4.2
+  - @ledgerhq/icons-ui@0.7.1
+  - @ledgerhq/types-devices@6.25.2
+  - @ledgerhq/coin-framework@0.16.1
+  - @ledgerhq/coin-evm@2.1.3
+  - @ledgerhq/live-common@34.6.1
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/react-native-hid@6.32.2
+  - @ledgerhq/react-native-hw-transport-ble@6.33.2
+  - @ledgerhq/live-wallet@0.4.1
+  - @ledgerhq/native-ui@0.23.2
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-countervalues@0.2.3
+  - @ledgerhq/live-countervalues-react@0.2.3
+  - @ledgerhq/live-nft@0.4.3
+  - @ledgerhq/live-nft-react@0.4.3
+  - @ledgerhq/hw-transport-http@6.30.2
+
 ## 3.47.2-hotfix.1
 
 ### Patch Changes
