@@ -3,6 +3,7 @@ import React, { useContext, useMemo } from "react";
 import FramedPicture, { Props as FramedImageProps, ImageSourceContext } from "./FramedPicture";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { getFramedPictureConfig } from "./framedPictureConfigs";
+import { useTheme } from "styled-components/native";
 
 export type Props = {
   lottieSource: React.ComponentProps<typeof AnimatedLottieView>["source"];
@@ -18,7 +19,12 @@ const FramedLottie: React.FC<Props> = ({
   loadingProgress,
   deviceModelId,
 }) => {
-  const framedPictureConfig = getFramedPictureConfig("transfer", deviceModelId);
+  const { colors } = useTheme();
+  const framedPictureConfig = getFramedPictureConfig(
+    "transfer",
+    deviceModelId,
+    colors.type as "light" | "dark",
+  );
   const lottiesStyle = useMemo(
     () => ({
       width: framedPictureConfig.frameWidth,
@@ -28,7 +34,11 @@ const FramedLottie: React.FC<Props> = ({
   );
   return (
     <FramedPicture
-      framedPictureConfig={getFramedPictureConfig("transfer", deviceModelId)}
+      framedPictureConfig={getFramedPictureConfig(
+        "transfer",
+        deviceModelId,
+        colors.type as "light" | "dark",
+      )}
       source={source}
       loadingProgress={loadingProgress}
       background={<AnimatedLottieView autoPlay loop style={lottiesStyle} source={lottieSource} />}

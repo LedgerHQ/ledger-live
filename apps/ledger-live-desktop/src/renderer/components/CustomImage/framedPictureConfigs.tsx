@@ -1,8 +1,11 @@
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import staxTransferBackground from "./assets/transferBackground.png";
+import staxTransferBackgroundLight from "./assets/staxTransferBackgroundLight.png";
+import staxTransferBackgroundDark from "./assets/staxTransferBackgroundDark.png";
+import europaTransferBackgroundLight from "./assets/europaTransferBackgroundLight.png";
+import europaTransferBackgroundDark from "./assets/europaTransferBackgroundDark.png";
 import { FramedPictureConfig } from "./FramedPicture";
 
-export const staxTransferConfig: FramedPictureConfig = {
+export const staxTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   frameHeight: 236,
   frameWidth: 150,
   innerHeight: 223,
@@ -12,10 +15,9 @@ export const staxTransferConfig: FramedPictureConfig = {
   innerLeft: 1.5,
   innerBottomHeight: 27,
   borderRightRadius: 6.5,
-  backgroundSource: staxTransferBackground,
 };
 
-export const europaTransferConfig: FramedPictureConfig = {
+export const europaTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   frameHeight: 236, // TODO:TBD
   frameWidth: 150, // TODO:TBD
   innerHeight: 223, // TODO:TBD
@@ -25,19 +27,68 @@ export const europaTransferConfig: FramedPictureConfig = {
   innerLeft: 1.5, // TODO:TBD
   innerBottomHeight: 27, // TODO:TBD
   borderRightRadius: 6.5, // TODO:TBD
-  backgroundSource: staxTransferBackground, // TODO: replace by europaTransferBackground when it exists
 };
 
-const configs = {
+type FrameConfigMap = {
+  [key in "transfer" | "preview"]: {
+    [modelId in CLSSupportedDeviceModelId]: {
+      light: FramedPictureConfig;
+      dark: FramedPictureConfig;
+    };
+  };
+};
+
+const configs: FrameConfigMap = {
   transfer: {
-    stax: staxTransferConfig,
-    europa: europaTransferConfig,
+    stax: {
+      light: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundLight,
+      },
+      dark: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundDark,
+      },
+    },
+    europa: {
+      light: {
+        ...europaTransferConfig,
+        backgroundSource: europaTransferBackgroundLight,
+      },
+      dark: {
+        ...europaTransferConfig,
+        backgroundSource: europaTransferBackgroundDark,
+      },
+    },
+  },
+  preview: {
+    stax: {
+      light: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundLight,
+      },
+      dark: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundDark,
+      },
+    },
+    europa: {
+      light: {
+        ...europaTransferConfig,
+        backgroundSource: europaTransferBackgroundLight,
+      },
+      dark: {
+        ...europaTransferConfig,
+        backgroundSource: europaTransferBackgroundDark,
+      },
+    },
   },
 };
 
 export function getFramedPictureConfig(
-  type: "transfer", // later on, there will be more types (like "preview" on LLM)
+  type: "transfer" | "preview", // later on, there will be more types (like "preview" on LLM)
   deviceModelId: CLSSupportedDeviceModelId,
+  theme: "dark" | "light",
 ): FramedPictureConfig {
-  return configs[type][deviceModelId];
+  return configs[type][deviceModelId][theme];
 }

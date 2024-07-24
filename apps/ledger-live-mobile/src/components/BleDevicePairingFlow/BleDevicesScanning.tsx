@@ -6,7 +6,7 @@ import { HwTransportErrorType } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Device, DeviceModelId, QRCodeDevices } from "@ledgerhq/types-devices";
+import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { knownDevicesSelector } from "~/reducers/ble";
@@ -25,7 +25,7 @@ const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {
   onDeviceSelect: (item: Device) => void;
-  filterByDeviceModelId?: FilterByDeviceModelId;
+  filterByDeviceModelId?: FilterByDeviceModelId | FilterByDeviceModelId[];
   areKnownDevicesDisplayed?: boolean;
   areKnownDevicesPairable?: boolean;
 };
@@ -50,11 +50,8 @@ export default function BleDevicesScanning({
 }: BleDevicesScanningProps) {
   const { t } = useTranslation();
 
-  const isQRCodeDevice =
-    filterByDeviceModelId !== null && QRCodeDevices.includes(filterByDeviceModelId);
-
   const productName =
-    filterByDeviceModelId && !isQRCodeDevice
+    filterByDeviceModelId && !Array.isArray(filterByDeviceModelId)
       ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
       : null;
 
@@ -103,11 +100,14 @@ export default function BleDevicesScanning({
   );
 
   const filterByDeviceModelIds = useMemo(() => {
-    if (isQRCodeDevice) {
-      return QRCodeDevices;
+    if (Array.isArray(filterByDeviceModelId)) {
+      return filterByDeviceModelId.filter(
+        // This array should not contain `null` value, this is to make the type check pass
+        (v: FilterByDeviceModelId): v is DeviceModelId => v !== null,
+      );
     }
     return filterByDeviceModelId ? [filterByDeviceModelId] : undefined;
-  }, [filterByDeviceModelId, isQRCodeDevice]);
+  }, [filterByDeviceModelId]);
 
   const { scannedDevices, scanningBleError } = useBleDevicesScanning({
     bleTransportListen: TransportBLE.listen,

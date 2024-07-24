@@ -68,6 +68,7 @@ export type FramedPictureConfig = {
    * (the screen border is curved on the top right and bottom right corner)
    */
   borderRightRadius: number;
+  borderLeftRadius?: number;
   /**
    * Source of the background picture representing a Ledger Stax
    * */

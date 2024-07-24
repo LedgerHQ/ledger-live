@@ -21,6 +21,7 @@ import {
 import imageSource from "~/components/CustomImage/assets/examplePicture2.webp";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
+import { useTheme } from "styled-components/native";
 
 const aStaxDevice: Device = {
   deviceId: "",
@@ -43,6 +44,8 @@ export default function DebugCustomImageGraphics() {
   const [showAllAssets, setShowAllAssets] = useState(false);
   const [deviceActionStep, setDeviceActionStep] = useState<DeviceActionStep>("confirmLoad");
   const [progress, setProgress] = useState(0);
+  const { colors } = useTheme();
+  const theme = colors.type as "light" | "dark";
 
   const [deviceModelId, setDeviceModelId] = useState<CLSSupportedDeviceModelId>(DeviceModelId.stax);
   const device = {
@@ -62,8 +65,8 @@ export default function DebugCustomImageGraphics() {
     />
   );
 
-  const framedPreviewConfig = getFramedPictureConfig("preview", deviceModelId);
-  const framedTransferConfig = getFramedPictureConfig("transfer", deviceModelId);
+  const framedPreviewConfig = getFramedPictureConfig("preview", deviceModelId, theme);
+  const framedTransferConfig = getFramedPictureConfig("transfer", deviceModelId, theme);
 
   return (
     <ImageSourceContext.Provider value={{ source: imageSource }}>
@@ -108,7 +111,7 @@ export default function DebugCustomImageGraphics() {
             <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} />
           ) : deviceActionStep === "preview" ? (
             <FramedImageWithContext
-              framedPictureConfig={getFramedPictureConfig("preview", deviceModelId)}
+              framedPictureConfig={getFramedPictureConfig("preview", deviceModelId, theme)}
             />
           ) : null}
         </Flex>
