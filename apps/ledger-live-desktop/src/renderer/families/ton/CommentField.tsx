@@ -39,7 +39,7 @@ const CommentField = ({
   return (
     <Input
       warning={status.warnings.comment}
-      error={status.errors.comment}
+      error={status.errors.transaction}
       value={transaction.comment.text}
       placeholder={t("families.ton.commentPlaceholder")}
       onChange={onCommentFieldChange}
