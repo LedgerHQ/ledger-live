@@ -136,7 +136,7 @@ export class Currency {
     "XTZ",
     "Tezos",
     [DeviceLabels.AMOUT, DeviceLabels.DESTINATION, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
-    [DeviceLabels.PUBLICKEY, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
   static readonly MATIC = new Currency(
     "Polygon",
