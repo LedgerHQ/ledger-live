@@ -15,5 +15,5 @@
     "src/specs.ts",
     "src/speculos-deviceActions.ts"
   ],
-  "ignoreUnused": ["msw", "@ledgerhq/types-cryptoassets", "@ledgerhq/live-env", "imurmurhash"]
+  "ignoreUnused": ["msw", "@ledgerhq/types-cryptoassets", "@ledgerhq/live-env"]
 }
