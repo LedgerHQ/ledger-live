@@ -57,10 +57,22 @@ const applyXor = (a: Uint8Array) => {
 export class MockSDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
   private lifecyle?: TrustchainLifecycle;
+  private static instance: MockSDK;
 
   constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
     this.context = context;
     this.lifecyle = lifecyle;
+  }
+
+  // Static method to control access to the Singleton instance
+  public static getInstance(
+    context: TrustchainSDKContext,
+    lifecycle?: TrustchainLifecycle,
+  ): MockSDK {
+    if (!MockSDK.instance) {
+      MockSDK.instance = new MockSDK(context, lifecycle);
+    }
+    return MockSDK.instance;
   }
 
   private deviceJwtAcquired = false;

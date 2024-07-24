@@ -39,10 +39,19 @@ import { TrustchainEjected, TrustchainNotAllowed } from "./errors";
 export class SDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
   private lifecycle?: TrustchainLifecycle;
+  private static instance: SDK;
 
   constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
     this.context = context;
     this.lifecycle = lifecyle;
+  }
+
+  // Static method to control access to the Singleton instance
+  public static getInstance(context: TrustchainSDKContext, lifecycle?: TrustchainLifecycle): SDK {
+    if (!SDK.instance) {
+      SDK.instance = new SDK(context, lifecycle);
+    }
+    return SDK.instance;
   }
 
   private jwt: JWT | undefined = undefined;

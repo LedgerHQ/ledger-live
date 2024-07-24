@@ -9,4 +9,5 @@ export const getSdk = (
   isMockEnv: boolean,
   context: TrustchainSDKContext,
   lifecycle?: TrustchainLifecycle,
-): TrustchainSDK => (isMockEnv ? new MockSDK(context, lifecycle) : new SDK(context, lifecycle));
+): TrustchainSDK =>
+  isMockEnv ? MockSDK.getInstance(context, lifecycle) : SDK.getInstance(context, lifecycle);
