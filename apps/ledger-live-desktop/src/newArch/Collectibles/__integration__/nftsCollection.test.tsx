@@ -2,24 +2,18 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen } from "tests/testUtils";
-import { account, NftCollectionTest, NoNftCollectionTest } from "./shared";
-import mockedData from "./mockedData";
+import { render, screen, waitFor } from "tests/testUtils";
+import { NftCollectionTest, NoNftCollectionTest } from "./shared";
+import { configure } from "@testing-library/dom";
+import { account } from "./mockedAccount";
+
+configure({ testIdAttribute: "data-test-id" });
 
 jest.mock(
   "electron",
   () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
   { virtual: true },
 );
-
-jest.mock("@ledgerhq/live-nft-react", () => {
-  return {
-    useNftMetadata: jest.fn(() => mockedData.mockReturnValue1),
-    isThresholdValid: jest.fn(() => true),
-    useNftGalleryFilter: jest.fn(() => mockedData.mockReturnValue2),
-    useNftCollectionMetadata: jest.fn(() => mockedData.mockReturnValue3),
-  };
-});
 
 describe("displayNftCollection", () => {
   it("should display NFTs collections", async () => {
@@ -30,12 +24,10 @@ describe("displayNftCollection", () => {
       initialRoute: `/`,
     });
 
-    const mockedNftElements = screen.getAllByText(/mocked nft/i);
-    expect(mockedNftElements.length).toBeGreaterThan(0);
-    mockedNftElements.forEach(element => expect(element).toBeVisible());
-
+    await waitFor(() => expect(screen.getByText(/momentum/i)).toBeVisible());
     await expect(screen.getByText(/receive nft/i)).toBeVisible();
     await expect(screen.getByText(/see gallery/i)).toBeVisible();
+    await expect(screen.getByText(/see more collections/i)).toBeVisible();
   });
 
   it("should open the NFTs gallery", async () => {
@@ -46,18 +38,14 @@ describe("displayNftCollection", () => {
       initialRoute: `/`,
     });
 
-    const mockedNftElements = screen.getAllByText(/mocked nft/i);
-    expect(mockedNftElements.length).toBeGreaterThan(1);
-    mockedNftElements.forEach(element => expect(element).toBeVisible());
+    await waitFor(() => expect(screen.getByText(/momentum/i)).toBeVisible());
     await expect(screen.getByText(/receive nft/i)).toBeVisible();
     await expect(screen.getByText(/see gallery/i)).toBeVisible();
     await user.click(screen.getByText(/see gallery/i));
     await expect(screen.getByText(/all nft/i)).toBeVisible();
-    // Check breadcrumb and page title
-    await expect(mockedNftElements.length).toBeGreaterThan(1);
   });
 
-  it("should open the corresponding NFTs collection", async () => {
+  it("should open the corresponding NFTs collection and the correct detail drawer", async () => {
     const { user } = render(<NftCollectionTest />, {
       initialState: {
         accounts: [account],
@@ -65,16 +53,26 @@ describe("displayNftCollection", () => {
       initialRoute: `/`,
     });
 
-    const mockedNftElements = screen.getAllByText(/mocked nft/i);
-    expect(mockedNftElements.length).toBeGreaterThan(1);
-    mockedNftElements.forEach(element => expect(element).toBeVisible());
-    await expect(screen.getByText(/receive nft/i)).toBeVisible();
-    await expect(screen.getByText(/see gallery/i)).toBeVisible();
-    await user.click(mockedNftElements[0]);
-    await expect(screen.getByText(/all nft/i)).toBeVisible();
-    // Check breadcrumb and page title
-    await expect(mockedNftElements.length).toBeGreaterThan(1);
-    await user.click(mockedNftElements[0]);
+    // Check initial state
+    await waitFor(() => expect(screen.getByText(/momentum/i)).toBeVisible());
+
+    // Open specific collection
+    await user.click(screen.getByText(/momentum/i));
+    await waitFor(() => expect(screen.getByText(/ID: 35/i)).toBeVisible());
+
+    // Open Detail drawer
+    await user.click(screen.getByText(/ID: 35/i));
+    await screen.findByTestId("side-drawer-container");
+    await screen.findByTestId("drawer-close-button");
+    await screen.findByText(/properties/i);
+
+    // Open external viewer
+    await user.click(screen.getByTestId("external-viewer-button"));
+    await expect(screen.getByText(/open in opensea.io/i)).toBeVisible();
+
+    // Close drawer
+    await waitFor(() => user.click(screen.getByTestId("drawer-close-button")));
+    await waitFor(() => expect(screen.queryByTestId("side-drawer-container")).toBeNull());
   });
 
   it("should not display nft", async () => {
