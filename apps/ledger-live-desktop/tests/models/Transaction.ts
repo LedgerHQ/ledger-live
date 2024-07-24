@@ -9,11 +9,7 @@ export abstract class Transaction {
     public readonly speed: string,
   ) {}
 }
-export class BasicTransaction extends Transaction {
-  constructor(accountToDebit: Account, accountToCredit: Account, amount: string, speed: string) {
-    super(accountToDebit, accountToCredit, amount, speed);
-  }
-}
+export class BasicTransaction extends Transaction {}
 export class TokenTransaction extends Transaction {
   constructor(
     accountToDebit: Account,
