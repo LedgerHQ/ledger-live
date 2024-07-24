@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.84.1-nightly.2
+
+### Patch Changes
+
+- [#7328](https://github.com/LedgerHQ/ledger-live/pull/7328) [`7415624`](https://github.com/LedgerHQ/ledger-live/commit/74156248e7f9564be69dc962be7a8ec6abcb295f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add storage provider for backup app data.
+
+- Updated dependencies [[`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15)]:
+  - @ledgerhq/live-common@34.6.1-nightly.1
+
 ## 2.84.1-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/device-core
 
+## 0.3.1-nightly.0
+
+### Patch Changes
+
+- [#7328](https://github.com/LedgerHQ/ledger-live/pull/7328) [`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add and export type guard for AppStorageInfo
+
 ## 0.3.0
 
 ### Minor Changes

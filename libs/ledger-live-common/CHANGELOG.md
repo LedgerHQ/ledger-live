@@ -1,5 +1,14 @@
 ## 34.5.0-next.4
 
+## 34.6.1-nightly.1
+
+### Patch Changes
+
+- [#7328](https://github.com/LedgerHQ/ledger-live/pull/7328) [`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add app data backup use case for desktop
+
+- Updated dependencies [[`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15)]:
+  - @ledgerhq/device-core@0.3.1-nightly.0
+
 ## 34.6.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.48.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15)]:
+  - @ledgerhq/live-common@34.6.1-nightly.1
+
 ## 3.48.0-nightly.1
 
 ### Patch Changes
