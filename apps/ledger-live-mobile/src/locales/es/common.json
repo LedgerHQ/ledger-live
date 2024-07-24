@@ -927,6 +927,9 @@
       "title" : "Error de número de secuencia",
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
     },
+    "TonCommentInvalid" : {
+      "title" : "El comentario no debe superar los 120 caracteres y no debe incluir caracteres especiales"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "Permuta no disponible: es necesario un envío o delegación inicial con la cuenta de Tezos o el cambio de par."
     }
@@ -3647,6 +3650,8 @@
         "value" : "Valor de Memo"
       },
       "validateMemo" : "Validar Memo",
+      "comment" : "Comentario",
+      "validateComment" : "Validar comentario",
       "quantity" : "Cantidad"
     },
     "validation" : {
@@ -6691,6 +6696,34 @@
         "description" : "Tu Ledger generará una clave de cifrado, para garantizar la privacidad de tus datos, que solo tú podrás recuperar.",
         "mainCta" : "Sincroniza tus cuentas",
         "secondCta" : "¿Ya has creado una clave?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "Elige el dispositivo Ledger que vas a usar para proteger tu copia de respaldo",
+      "description" : "Para recuperar tu copia de respaldo, sólo tienes que conectar tu Ledger a las aplicaciones Ledger Live Mobile y Desktop."
+    },
+    "deviceAction" : {
+      "title" : "Continúa en tu Ledger {{wording}}",
+      "description" : "Sigue las instrucciones que aparecen en la pantalla confiable de tu Ledger."
+    },
+    "success" : {
+      "sync" : "Sincronización correcta",
+      "syncDesc" : "Ahora, los cambios de tus cuentas aparecerán automáticamente en todas las aplicaciones y plataformas.",
+      "activation" : "¡Completado!",
+      "activationDesc" : "Has activado correctamente Ledger Sync.",
+      "syncAnother" : "Sincronizar con otra aplicación Ledger Live",
+      "close" : "Cerrar"
+    }
+  },
+  "web3hub" : {
+    "manifestsList" : {
+      "title" : "Explorar",
+      "description" : "Descubre lo mejor de la web3 seleccionado por Ledger"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Explora la web3",
+        "placeholder" : "Busca o escribe una URL"
       }
     }
   }
