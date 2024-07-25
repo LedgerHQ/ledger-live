@@ -954,10 +954,14 @@ export function LoadingAppInstall({
   request?: AppRequest;
 }) {
   const currency = request?.currency || request?.account?.currency;
-  const appNameToTrack = props.appName || request?.appName || currency?.managerAppName;
+  const appNameToTrack = props.appName ?? request?.appName ?? currency?.managerAppName;
+
   useEffect(() => {
-    track("In-line app install", { appName: appNameToTrack, flow: analyticsPropertyFlow });
-  }, [appNameToTrack, analyticsPropertyFlow]);
+    track(`${appNameToTrack?.replace(/\s/g, "").toLowerCase()}_installed`, {
+      flow: analyticsPropertyFlow,
+      installType: "inline",
+    });
+  }, [analyticsPropertyFlow, appNameToTrack]);
 
   return renderLoading({ ...props, lockModal: true });
 }

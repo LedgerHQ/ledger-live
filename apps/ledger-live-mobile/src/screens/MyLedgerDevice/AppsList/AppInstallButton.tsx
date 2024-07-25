@@ -59,7 +59,11 @@ export default function AppInstallButton({
       storageWarning(name);
       return;
     }
-    track("ManagerAppInstall", { appName: name });
+
+    track(`${name.replace(/\s/g, "").toLowerCase()}_installed`, {
+      installType: "manager",
+    });
+
     if (needsDependencies) {
       setAppWithDependenciesToInstall(needsDependencies);
     } else {
