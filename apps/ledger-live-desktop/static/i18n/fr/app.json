@@ -385,6 +385,7 @@
         "title" : "Transaction bien émise",
         "description" : "Votre opération de swap a été envoyée au réseau pour confirmation. Veuillez attendre que votre transaction soit confirmée, puis que le prestataire traite et vous envoie vos {{targetCurrency}}.",
         "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
+        "tellAboutYourExperience" : "Tell us about your experience",
         "seeDetails" : "Voir les détails"
       }
     },
@@ -4025,6 +4026,24 @@
           "collection" : "Signaler une collection comme spam"
         }
       },
+      "debugRefreshMetadata" : {
+        "debugRefreshTitle" : "Autoriser le signalement d’un NFT comme spam (Bêta)",
+        "debugRefreshDesc" : "Signalez un NFT comme spam ou empêchez qu’il soit traité comme spam à l’aide d’un formulaire.",
+        "refresh" : "Actualiser",
+        "contractAddress" : "Adresse du contrat",
+        "contractAddressDesc" : "contract_address of the NFT refreshed, or the contract itself",
+        "chainId" : "Identifiant de chaîne",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract refreshed",
+        "tokenId" : "Identifiant du token",
+        "tokenIdDesc" : "token_id of the NFT refreshed",
+        "success" : "The refresh was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the refresh. Please try again later.",
+        "refreshType" : {
+          "desc" : "What would you like to refresh?",
+          "nft" : "Refresh metadata for an individual NFT",
+          "contract" : "Refresh metadata for a contract"
+        }
+      },
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
       "catalogUrl" : "Définir le fournisseur du Catalogue d’apps",
@@ -4197,9 +4216,17 @@
           "modal" : {
             "flow" : "Sélectionner un processus",
             "step" : "Sélectionner une étape",
-            "activated" : "Activer/désactiver pour générer une synchronisation (ou non)",
-            "instance" : "Créer une synchronisation",
+            "instance" : "Créer des membres",
             "cta" : "Appliquer"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash Tools",
+          "description" : "Provides some useful tools using SimpleHash",
+          "cta" : "Ouvrir",
+          "tabs" : {
+            "spam" : "Spam Report",
+            "refresh" : "Refresh Metadata"
           }
         }
       }
@@ -6313,7 +6340,7 @@
         "description" : "Protégez ou supprimez votre clé de chiffrement via un autre appareil Ledger."
       },
       "instance" : {
-        "label_one" : "1 synchronisation",
+        "label" : "1 synchronisation",
         "label_other" : "{{count}} synchronisations",
         "cta" : "Gérer"
       }
@@ -6326,7 +6353,8 @@
     "error" : {
       "title" : "Une erreur est survenue",
       "description" : "Veuillez réessayer plus tard.",
-      "cta" : "Réessayer"
+      "cta" : "Réessayer",
+      "fetching" : "Une erreur est survenue lors de la récupération de vos données."
     },
     "unsecuredError" : {
       "title" : "La synchronisation n’est pas protégée par cet appareil Ledger",
@@ -6335,18 +6363,26 @@
       "cta" : "Connecter un autre appareil Ledger",
       "ctaDelete" : "Supprimer ma clé de chiffrement"
     },
+    "autoRemoveError" : {
+      "title" : "Suppression de l’instance impossible",
+      "description" : "Pour des raisons de sécurité, vous ne pouvez pas supprimer l’instance que vous utilisez actuellement sans supprimer votre clé de chiffrement.",
+      "info" : "En supprimant vote clé de chiffrement, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
+      "cta" : "Compris",
+      "ctaDelete" : "Supprimer ma clé de chiffrement"
+    },
     "success" : {
       "backup" : {
         "title" : "Succès",
-        "desc" : "Activation de Ledger Sync réussie. ",
-        "synchAnother" : "Synchroniser avec une autre application Ledger Live"
+        "desc" : "Activation de Ledger Sync réussie."
       },
       "synch" : {
         "title" : "Synchronisation réussie !",
         "desc" : "Les modifications apportées à vos comptes apparaîtront automatiquement, dans toutes les apps et sur toutes les plateformes."
-      }
+      },
+      "synchAnother" : "Synchroniser avec une autre application Ledger Live",
+      "close" : "Fermer"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Gérer votre clé",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6436,10 @@
       "remove" : "Retirer",
       "deleteInstanceSuccess" : "Votre {{instanceName}} n’est plus synchronisée.",
       "deleteInstanceError" : "Une erreur s’est produite lors de la désynchronisation de {{instanceName}}"
+    },
+    "deviceAction" : {
+      "title" : "Continuez sur votre Ledger {{wording}}",
+      "description" : "Suivez les instructions sur l’écran de confiance de votre appareil Ledger."
     }
   }
 }
