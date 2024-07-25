@@ -1,11 +1,11 @@
 import React, { memo } from "react";
 import useBreadCrumbModel from "./useBreadCrumbModel";
-import { NftBreadcrumbProps } from "LLD/Collectibles/types/Nfts";
+import { NftBreadcrumbProps } from "LLD/features/Collectibles/types/Nfts";
 import LabelWithMeta from "./LabelWithMeta";
 import { Separator, TextLink, AngleDown } from "LLD/components/BreadCrumb/common";
 import Button from "~/renderer/components/Button";
 import DropDownSelector from "~/renderer/components/DropDownSelector";
-import { CollectionName } from "LLD/Collectibles/components";
+import { CollectionName } from "LLD/features/Collectibles/components";
 import { Icons } from "@ledgerhq/react-ui";
 
 function View({

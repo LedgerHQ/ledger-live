@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import { FieldStatus } from "LLD/Collectibles/types/enum/DetailDrawer";
+import { FieldStatus } from "LLD/features/Collectibles/types/enum/DetailDrawer";
 import { openModal } from "~/renderer/actions/modals";
-import { useOnScreen } from "LLD/Collectibles/utils/useOnScreen";
+import { useOnScreen } from "LLD/features/Collectibles/utils/useOnScreen";
 
 const useNftCollectionModel = () => {
   const dispatch = useDispatch();

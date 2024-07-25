@@ -77,9 +77,9 @@ const SyncOnboarding = lazy(() => import("./components/SyncOnboarding"));
 const RecoverPlayer = lazy(() => import("~/renderer/screens/recover/Player"));
 
 const NFTGallery = lazy(() => import("~/renderer/screens/nft/Gallery"));
-const NFTGalleryNew = lazy(() => import("LLD/Collectibles/Nfts/Gallery"));
+const NFTGalleryNew = lazy(() => import("LLD/features/Collectibles/Nfts/Gallery"));
 const NFTCollection = lazy(() => import("~/renderer/screens/nft/Gallery/Collection"));
-const NFTCollectionNew = lazy(() => import("LLD/Collectibles/Nfts/Collection"));
+const NFTCollectionNew = lazy(() => import("LLD/features/Collectibles/Nfts/Collection"));
 const RecoverRestore = lazy(() => import("~/renderer/components/RecoverRestore"));
 const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));

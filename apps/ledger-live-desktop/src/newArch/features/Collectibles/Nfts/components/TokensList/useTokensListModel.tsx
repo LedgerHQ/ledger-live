@@ -1,10 +1,10 @@
-import { TokensListProps } from "LLD/Collectibles/types/TokensList";
+import { TokensListProps } from "LLD/features/Collectibles/types/TokensList";
 import { useSelector } from "react-redux";
 import { getNFTsByListOfIds } from "~/renderer/reducers/accounts";
 import { State } from "~/renderer/reducers";
 import { useNftMetadataBatch } from "@ledgerhq/live-nft-react";
-import { FieldStatus } from "LLD/Collectibles/types/enum/DetailDrawer";
-import { BaseNftsProps } from "LLD/Collectibles/types/Collectibles";
+import { FieldStatus } from "LLD/features/Collectibles/types/enum/DetailDrawer";
+import { BaseNftsProps } from "LLD/features/Collectibles/types/Collectibles";
 import { useState } from "react";
 
 export const useTokensListModel = ({ nfts, account }: BaseNftsProps): TokensListProps => {

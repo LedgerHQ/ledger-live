@@ -27,7 +27,7 @@ import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
 import Collections from "~/renderer/screens/nft/Collections";
-import NftCollections from "LLD/Collectibles/Nfts/Collections";
+import NftCollections from "LLD/features/Collectibles/Nfts/Collections";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";

@@ -76,7 +76,3 @@ jest.mock("src/sentry/renderer", () => ({
   setTags: jest.fn(),
   getSentryIfAvailable: jest.fn().mockReturnValue(false),
 }));
-
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
-global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));

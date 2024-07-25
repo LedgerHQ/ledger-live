@@ -5,12 +5,12 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import { Flex, Icons } from "@ledgerhq/react-ui";
-import { TableLayout } from "LLD/Collectibles/components";
+import { TableLayout } from "LLD/features/Collectibles/components";
 import { useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import Spinner from "~/renderer/components/Spinner";
 import LazyCollection from "./components/LazyCollection";
-import { TrackingPageCategory } from "LLD/Collectibles/types/enum/Tracking";
+import { TrackingPageCategory } from "LLD/features/Collectibles/types/enum/Tracking";
 import { Footer, SpinnerContainer, SpinnerBackground } from "../components/CommonStyled";
 
 type ViewProps = ReturnType<typeof useNftGalleryModel>;

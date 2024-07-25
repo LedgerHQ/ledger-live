@@ -4,8 +4,8 @@ import Box from "~/renderer/components/Box";
 import { useSelector } from "react-redux";
 import { collectiblesViewModeSelector } from "~/renderer/reducers/settings";
 import Item from "./Item";
-import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
-import { TokensListProps } from "LLD/Collectibles/types/TokensList";
+import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
+import { TokensListProps } from "LLD/features/Collectibles/types/TokensList";
 
 type Props = {
   account: TokensListProps["account"];

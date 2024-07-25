@@ -2,19 +2,22 @@ import React, { useMemo } from "react";
 import { useNftCollectionsModel } from "./useNftCollectionsModel";
 import { Box, Icons, Flex } from "@ledgerhq/react-ui";
 import TableContainer from "~/renderer/components/TableContainer";
-import TableHeader from "../../components/Collection/TableHeader";
+import TableHeader from "LLD/features/Collectibles/components/Collection/TableHeader";
 import { Account } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-nft-react";
-import TableRow from "../../components/Collection/TableRow";
-import EmptyCollection from "../../components/Collection/EmptyCollection";
-import { CollectibleTypeEnum } from "../../types/Collectibles";
+import TableRow from "LLD/features/Collectibles/components/Collection/TableRow";
+import EmptyCollection from "LLD/features/Collectibles/components/Collection/EmptyCollection";
+import { CollectibleTypeEnum } from "LLD/features/Collectibles/types/enum/Collectibles";
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
-import ShowMore from "../../components/Collection/ShowMore";
-import { FieldStatus } from "../../types/DetailDrawer";
+import ShowMore from "LLD/features/Collectibles/components/Collection/ShowMore";
+import { FieldStatus } from "LLD/features/Collectibles/types/enum/DetailDrawer";
 import CollectionContextMenu from "LLD/components/ContextMenu/CollectibleContextMenu";
-import HeaderActions from "../../components/Collection/HeaderActions";
-import { TableHeaderProps, TableHeaderTitleKey as TitleKey } from "../../types/Collection";
+import HeaderActions from "LLD/features/Collectibles/components/Collection/HeaderActions";
+import {
+  TableHeaderProps,
+  TableHeaderTitleKey as TitleKey,
+} from "LLD/features/Collectibles/types/Collection";
 
 type ViewProps = ReturnType<typeof useNftCollectionsModel>;
 
@@ -67,82 +70,73 @@ const NftItem: React.FC<NftItemProps> = ({
 };
 
 function View({
-  isLoading,
+  nftsInTheCollection,
   account,
-  collectionAddress,
-  nfts,
-  metadata,
-  slicedNfts,
-  listFooterRef,
-  maxVisibleNFTs,
-  filterOperation,
-  onSend,
+  displayShowMore,
+  onOpenGallery,
+  onReceive,
+  onOpenCollection,
+  onShowMore,
 }: ViewProps) {
   const { t } = useTranslation();
-  const [areItemsLoading, setAreItemsLoading] = React.useState(false);
+  const hasNfts = nftsInTheCollection.length > 0;
 
-  useEffect(() => {
-    setAreItemsLoading(maxVisibleNFTs < nfts.length);
-  }, [maxVisibleNFTs, nfts.length]);
+  const actions = useMemo(() => {
+    return hasNfts
+      ? [
+          {
+            element: (
+              <HeaderActions textKey="NFT.collections.receiveCTA">
+                <Icons.ArrowDown size="S" />
+              </HeaderActions>
+            ),
+            action: onReceive,
+          },
+          {
+            element: <HeaderActions textKey="NFT.collections.galleryCTA" />,
+            action: onOpenGallery,
+          },
+        ]
+      : [];
+  }, [hasNfts, onReceive, onOpenGallery]);
+
+  const tableHeaderProps: TableHeaderProps = {
+    titleKey: TitleKey.NFTCollections,
+    actions,
+  };
 
   return (
-    <>
-      <TrackPage category="Page" name="NFT Specific Collection" />
-      <Flex flexDirection={"column"} mb={16} width={"100%"}>
-        <Flex flex={1} justifyContent={"space-between"}>
-          <Box horizontal alignItems="center" mb={16}>
-            <Skeleton width={40} minHeight={40} show={isLoading}>
-              <Media
-                size={40}
-                uri={metadata?.medias.preview.uri}
-                tokenId={metadata?.tokenId}
-                mediaType={metadata?.medias.preview.mediaType}
-                isLoading={isLoading}
-                contentType="image"
-                useFallback
-              />
-            </Skeleton>
-            <Box ml={3}>
-              <Skeleton width={93} barHeight={6} minHeight={24} show={isLoading}>
-                <Text ff="Inter|Regular" color="palette.text.shade60" fontSize={2}>
-                  {t("NFT.gallery.collection.header.contract", {
-                    contract: collectionAddress,
-                  })}
-                </Text>
-                <Skeleton width={93} barHeight={6} minHeight={24} show={isLoading}>
-                  <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={22}>
-                    <CollectionName nft={nfts[0]} />
-                  </Text>
-                </Skeleton>
-              </Skeleton>
-            </Box>
-          </Box>
-          <Button small primary icon onClick={onSend}>
-            <Box horizontal flow={1} alignItems="center">
-              <Icons.ArrowUp size={"S"} />
-              <Box>{t("NFT.gallery.collection.header.sendCTA")}</Box>
-            </Box>
-          </Button>
-        </Flex>
-        <TableLayout />
-        {account && <TokensList account={account} nfts={slicedNfts} />}
-        <Footer ref={listFooterRef}>
-          {areItemsLoading && (
-            <SpinnerContainer>
-              <SpinnerBackground>
-                <Spinner size={14} />
-              </SpinnerBackground>
-            </SpinnerContainer>
-          )}
-        </Footer>
-        <OperationsList
-          account={account}
-          title={t("NFT.gallery.collection.operationList.header")}
-          filterOperation={collectionAddress ? filterOperation : undefined}
-          t={t}
-        />
-      </Flex>
-    </>
+    <Box>
+      <TableContainer id="tokens-list" mb={50}>
+        <TableHeader {...tableHeaderProps} />
+        {hasNfts ? (
+          nftsInTheCollection.map(item => (
+            <NftItem
+              key={`${item.contract}-${item.nft.tokenId}`}
+              contract={item.contract}
+              tokenId={item.nft.tokenId}
+              account={account}
+              currencyId={item.nft.currencyId}
+              numberOfNfts={item.nftsNumber}
+              onClick={onOpenCollection}
+            />
+          ))
+        ) : (
+          <EmptyCollection
+            currencyName={account.currency.name}
+            collectionType={CollectibleTypeEnum.NFT}
+          >
+            <Button small primary onClick={onReceive} icon>
+              <Flex alignItems={"center"}>
+                <Icons.ArrowDown size="XS" />
+                <Box>{t("NFT.collections.receiveCTA")}</Box>
+              </Flex>
+            </Button>
+          </EmptyCollection>
+        )}
+        {displayShowMore && <ShowMore onShowMore={onShowMore} />}
+      </TableContainer>
+    </Box>
   );
 }
 
