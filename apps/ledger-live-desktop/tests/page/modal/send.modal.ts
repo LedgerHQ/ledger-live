@@ -5,20 +5,19 @@ import { Transaction } from "../../models/Transaction";
 
 export class SendModal extends Modal {
   private drowdownAccount = this.page.locator('[data-testid="modal-content"] svg').nth(1);
-  readonly recipientInput = this.page.locator('[id="send-recipient-input"]');
-  readonly continueButton = this.page.getByRole("button", { name: "continue" });
+  readonly recipientInput = this.page.getByPlaceholder("Enter");
+  private continueRecipientButton = this.page.getByRole("button", { name: "continue" });
   private totalDebitValue = this.page.locator("text=Total to debit");
   private checkDeviceLabel = this.page.locator(
     "text=Double-check the transaction details on your Ledger device before signing.",
   );
   private checkTransactionbroadcastLabel = this.page.locator("text=Transaction sent");
+  private addressValue = (address: string) =>
+    this.page.getByTestId("modal-content").locator(`text=${address}`);
+  private amountValue = (amount: string, currency: string) =>
+    this.page.locator(`text=${amount} ${currency}`).first();
   private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
   private amountDisplayedValue = this.page.getByTestId("transaction-amount");
-  private ASAErrorMessage = this.page.getByText(
-    "Recipient account has not opted in the selected ASA.",
-  );
-  private invalidAddressErrorMessage = (network: string) =>
-    this.page.getByText(`This is not a valid ${network} address`);
 
   async selectAccount(name: string) {
     await this.drowdownAccount.click();
@@ -30,8 +29,8 @@ export class SendModal extends Modal {
   }
 
   @step("Click `Continue` button")
-  async clickContinueToDevice() {
-    await this.continueButton.click();
+  async clickContinue() {
+    await this.continueRecipientButton.click();
     await expect(this.checkDeviceLabel).toBeVisible();
   }
 
@@ -43,8 +42,8 @@ export class SendModal extends Modal {
 
   @step("Fill tx information")
   async fillTxInfo(tx: Transaction) {
-    await this.fillRecipient(tx.accountToCredit.address);
-    await this.continueButton.click();
+    await this.fillRecipient(tx.recipient);
+    await this.continueRecipientButton.click();
     await this.cryptoAmountField.fill(tx.amount);
     await this.countinueSendAmount();
   }
@@ -52,9 +51,11 @@ export class SendModal extends Modal {
   @step("Verify tx information before confirming")
   async expectTxInfoValidity(tx: Transaction) {
     await expect(this.totalDebitValue).toBeVisible();
+    await expect(this.addressValue(tx.recipient)).toBeVisible();
     const displayedReceiveAddress = await this.recipientAddressDisplayedValue.innerText();
-    expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
+    expect(displayedReceiveAddress).toEqual(tx.recipient);
 
+    await expect(this.amountValue(tx.amount, tx.accountToDebit.currency.uiLabel)).toBeVisible();
     const displayedAmount = await this.amountDisplayedValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
   }
@@ -62,43 +63,5 @@ export class SendModal extends Modal {
   @step("Verify tx sent text")
   async expectTxSent() {
     await expect(this.checkTransactionbroadcastLabel).toBeVisible();
-  }
-
-  @step("Check continue button disable and ASA error message visible")
-  async checkASAError() {
-    await expect(this.continueButton).toBeDisabled();
-    await expect(this.ASAErrorMessage).toBeVisible();
-  }
-
-  @step("Check invalid address error message")
-  async checkInvalidAddressError(tx: Transaction) {
-    await expect(this.continueButton).toBeDisabled();
-    await expect(
-      this.invalidAddressErrorMessage(tx.accountToDebit.currency.deviceLabel),
-    ).toBeVisible();
-  }
-
-  @step("Check continue button enable")
-  async checkContinueButtonEnable() {
-    await expect(this.continueButton).toBeEnabled();
-  }
-
-  @step("Fill amount")
-  async fillAmount(tx: Transaction) {
-    if (tx.amount == "send max") {
-      await this.toggleMaxAmount();
-    } else {
-      await this.cryptoAmountField.fill(tx.amount);
-    }
-  }
-
-  @step("Click `Continue` button")
-  async clickContinue() {
-    await this.continueButton.click();
-  }
-
-  @step("Check continue button disabled")
-  async checkContinueButtonDisabled() {
-    await expect(this.continueButton).toBeDisabled();
   }
 }

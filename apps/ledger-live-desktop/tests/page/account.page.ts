@@ -1,7 +1,8 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import { Token } from "tests/enum/Token";
+import { Token } from "tests/enum/Tokens";
+
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.getByTestId("account-settings-button");
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
@@ -30,7 +31,6 @@ export class AccountPage extends AppPage {
     this.page.getByRole("button", { name: `${accountName}` });
   private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
-  private viewDetailsButton = this.page.getByText("View details");
 
   @step("Navigate to token $0")
   async navigateToToken(token: Token) {
@@ -67,16 +67,6 @@ export class AccountPage extends AppPage {
 
   async startStakingFlowFromMainStakeButton() {
     await this.stakeButton.click();
-  }
-
-  @step("Click on View Details button")
-  async navigateToViewDetails() {
-    await this.viewDetailsButton.click();
-  }
-
-  @step("Click on last operation")
-  async clickOnLastOperation() {
-    await this.operationRows.first().click();
   }
 
   async clickBannerCTA() {
@@ -153,10 +143,5 @@ export class AccountPage extends AppPage {
     const tokenInfos = await this.tokenRow(token.tokenTicker).innerText();
     expect(tokenInfos).toContain(token.tokenName);
     expect(tokenInfos).toContain(token.tokenTicker);
-  }
-
-  @step("navigate to token in account")
-  async navigateToTokenInAccount(token: Token) {
-    await this.tokenRow(token.tokenTicker).click();
   }
 }
