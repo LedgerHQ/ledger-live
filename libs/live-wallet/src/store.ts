@@ -61,7 +61,7 @@ export type HandlersPayloads = {
     data: DistantState | null;
     version: number;
   };
-  IMPORT_WALLET_SYNC: ExportedWalletState;
+  IMPORT_WALLET_SYNC: Partial<ExportedWalletState>;
   SET_NON_IMPORTED_ACCOUNTS: NonImportedAccountInfo[];
 };
 
@@ -133,8 +133,7 @@ export const handlers: WalletHandlers = {
   IMPORT_WALLET_SYNC: (state, { payload }) => {
     return {
       ...state,
-      walletSyncState: payload.walletSyncState,
-      nonImportedAccountInfos: payload.nonImportedAccountInfos,
+      ...payload,
     };
   },
   SET_NON_IMPORTED_ACCOUNTS: (state, { payload }) => {
@@ -167,7 +166,7 @@ export const initAccounts = (accounts: Account[], accountsUserData: AccountUserD
 /**
  * action to import back the wallet state. opposite of exportWalletState
  */
-export const importWalletState = (payload: ExportedWalletState) => ({
+export const importWalletState = (payload: Partial<ExportedWalletState>) => ({
   type: "IMPORT_WALLET_SYNC",
   payload,
 });

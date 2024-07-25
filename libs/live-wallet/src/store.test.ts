@@ -187,6 +187,16 @@ describe("Wallet store", () => {
     nonImportedAccountInfos: [],
   };
 
+  it("allows partial wallet state", () => {
+    const result = handlers.IMPORT_WALLET_SYNC(
+      initialState,
+      importWalletState({
+        walletSyncState: { version: 42, data: {} },
+      }),
+    );
+    expect(result.nonImportedAccountInfos).toEqual([]);
+  });
+
   it("can import the wallet state", () => {
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
     expect(walletSyncStateSelector(result)).toEqual({ data: {}, version: 42 });
