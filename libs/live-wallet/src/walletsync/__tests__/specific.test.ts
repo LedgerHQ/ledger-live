@@ -14,6 +14,7 @@ test("applyUpdate works with accounts update", () => {
       update: {
         added: [account1],
         removed: [],
+        nonImportedAccountInfos: [],
       },
     },
     accountNames: {
@@ -24,6 +25,7 @@ test("applyUpdate works with accounts update", () => {
     ...emptyState,
     accounts: {
       list: [account1],
+      nonImportedAccountInfos: [],
     },
   });
 });

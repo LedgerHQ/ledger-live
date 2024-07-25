@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import noop from "lodash/noop";
-import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
+import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
 import walletsync, {
   liveSlug,
   DistantState,
   walletSyncWatchLoop,
   LocalState,
   Schema,
+  makeSaveNewUpdate,
+  makeLocalIncrementalUpdate,
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -16,75 +18,66 @@ import { State } from "~/renderer/reducers";
 import { cache as bridgeCache } from "~/renderer/bridge/cache";
 import {
   setAccountNames,
+  setNonImportedAccounts,
   walletSyncStateSelector,
   walletSyncUpdate,
+  WSState,
 } from "@ledgerhq/live-wallet/store";
 import { replaceAccounts } from "~/renderer/actions/accounts";
 import { latestDistantStateSelector } from "~/renderer/reducers/wallet";
-import { log } from "@ledgerhq/logs";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
 
+const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
+
 function localStateSelector(state: State): LocalState {
   // READ. connect the redux state to the walletsync modules
   return {
-    accounts: { list: state.accounts },
+    accounts: {
+      list: state.accounts,
+      nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
+    },
     accountNames: state.wallet.accountNames,
   };
 }
 
-function saveUpdate(newLocalState: LocalState, dispatch: Dispatch) {
+async function save(
+  data: DistantState | null,
+  version: number,
+  newLocalState: LocalState | null,
+  dispatch: Dispatch,
+) {
   // WRITE. save the state for the walletsync modules
-  dispatch(setAccountNames(newLocalState.accountNames));
-  dispatch(replaceAccounts(newLocalState.accounts.list)); // IMPORTANT: keep this one last, it's doing the DB:* trigger to save the data
+  dispatch(walletSyncUpdate(data, version));
+  if (newLocalState) {
+    dispatch(setNonImportedAccounts(newLocalState.accounts.nonImportedAccountInfos));
+    dispatch(setAccountNames(newLocalState.accountNames));
+    dispatch(replaceAccounts(newLocalState.accounts.list)); // IMPORTANT: keep this one last, it's doing the DB:* trigger to save the data
+  }
 }
+
+const ctx = { getAccountBridge, bridgeCache, blacklistedTokenIds: [] };
 
 export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
   const trustchainSdk = useTrustchainSdk();
-  const store = useStore();
-  const dispatch = useDispatch();
+  const getState = useGetState();
   const getCurrentVersion = useCallback(
-    () => walletSyncStateSelector(walletSelector(store.getState())).version,
-    [store],
+    () => latestWalletStateSelector(getState()).version,
+    [getState],
   );
+  const saveUpdate = useSaveUpdate();
 
-  const saveNewUpdate = useCallback(
-    async (event: UpdateEvent<DistantState>) => {
-      log("walletsync", "saveNewUpdate", { event });
-      switch (event.type) {
-        case "new-data": {
-          // we resolve incoming distant state changes
-          const ctx = { getAccountBridge, bridgeCache, blacklistedTokenIds: [] };
-          const state = store.getState();
-          const latest = latestDistantStateSelector(state);
-          const local = localStateSelector(state);
-          const data = event.data;
-          const resolved = await walletsync.resolveIncomingDistantState(ctx, local, latest, data);
-
-          if (resolved.hasChanges) {
-            const version = event.version;
-            const localState = localStateSelector(store.getState()); // fetch again latest state because it might have changed
-            const newLocalState = walletsync.applyUpdate(localState, resolved.update); // we resolve in sync the new local state to save
-            dispatch(walletSyncUpdate(data, version));
-            saveUpdate(newLocalState, dispatch);
-            log("walletsync", "resolved. changes applied.");
-          } else {
-            log("walletsync", "resolved. no changes to apply.");
-          }
-          break;
-        }
-        case "pushed-data": {
-          dispatch(walletSyncUpdate(event.data, event.version));
-          break;
-        }
-        case "deleted-data": {
-          dispatch(walletSyncUpdate(null, 0));
-          break;
-        }
-      }
-    },
-    [store, dispatch],
+  const saveNewUpdate = useMemo(
+    () =>
+      makeSaveNewUpdate({
+        ctx,
+        getState,
+        latestDistantStateSelector,
+        localStateSelector,
+        saveUpdate,
+      }),
+    [getState, saveUpdate],
   );
 
   const cloudSyncSDK = useMemo(
@@ -109,7 +102,8 @@ export type WalletSyncUserState = {
 };
 
 export function useWatchWalletSync(): WalletSyncUserState {
-  const store = useStore();
+  const saveUpdate = useSaveUpdate();
+  const getState = useGetState();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
   const trustchainSdk = useTrustchainSdk();
@@ -131,12 +125,21 @@ export function useWatchWalletSync(): WalletSyncUserState {
       return;
     }
 
+    const localIncrementUpdate = makeLocalIncrementalUpdate({
+      ctx,
+      getState,
+      latestWalletStateSelector,
+      localStateSelector,
+      saveUpdate,
+    });
+
     const { unsubscribe, onUserRefreshIntent } = walletSyncWatchLoop({
       walletSyncSdk,
+      localIncrementUpdate,
       trustchain,
       memberCredentials,
       setVisualPending,
-      getState: () => store.getState(),
+      getState,
       localStateSelector,
       latestDistantStateSelector,
       onError: e => setWalletSyncError(e && e instanceof Error ? e : new Error(String(e))),
@@ -148,13 +151,28 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
     return unsubscribe;
   }, [
-    store,
+    getState,
     trustchainSdk,
     walletSyncSdk,
     trustchain,
     memberCredentials,
     onTrustchainRefreshNeeded,
+    saveUpdate,
   ]);
 
   return state;
+}
+
+function useSaveUpdate() {
+  const dispatch = useDispatch();
+  return useCallback(
+    (data: DistantState | null, version: number, newLocalState: LocalState | null) =>
+      save(data, version, newLocalState, dispatch),
+    [dispatch],
+  );
+}
+
+function useGetState() {
+  const store = useStore();
+  return useCallback(() => store.getState(), [store]);
 }

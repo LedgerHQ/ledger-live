@@ -44,6 +44,7 @@ export function createWalletSyncWatchLoop<
   getState,
   localStateSelector,
   latestDistantStateSelector,
+  localIncrementUpdate,
 }: {
   /**
    * the configuration to use to watch for changes.
@@ -108,6 +109,10 @@ export function createWalletSyncWatchLoop<
    * yield the latest DistantState that was fetched from the cloud sync backend. It is normally stored by the walletsync/store.ts
    */
   latestDistantStateSelector: (state: UserState) => DistantState | null;
+  /**
+   * a function we need to regularly call to also resolve possible local state updates. (see incrementalUpdates.ts)
+   */
+  localIncrementUpdate: () => Promise<void>;
 }): {
   onUserRefreshIntent: () => void;
   unsubscribe: () => void;
@@ -129,7 +134,11 @@ export function createWalletSyncWatchLoop<
       if (onStartPolling) onStartPolling();
 
       // check if there is a pull to do
+      // TODO this needs to be called separately, probably more often than the rest of this logic.
       await walletSyncSdk.pull(trustchain, memberCredentials);
+      if (unsubscribed) return;
+
+      await localIncrementUpdate();
       if (unsubscribed) return;
 
       // is there new changes to push?
