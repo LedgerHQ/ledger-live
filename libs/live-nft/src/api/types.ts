@@ -7,6 +7,10 @@ export interface SimpleHashSpamReportResponse {
   readonly message: string;
 }
 
+export interface SimpleHashRefreshResponse {
+  readonly message: string;
+}
+
 export interface SimpleHashNft {
   readonly nft_id: string;
   readonly chain: string;
