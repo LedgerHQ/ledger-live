@@ -1,5 +1,5 @@
 import { test } from "../../fixtures/common";
-import { Token } from "../../enum/Token";
+import { Token } from "../../enum/Tokens";
 import { specs } from "../../utils/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";

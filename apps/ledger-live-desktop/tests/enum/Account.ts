@@ -79,12 +79,6 @@ export class Account {
     "12fY9vqzD8j1uvqSRx9y3gXRA1S3bwr5xunBVZvx1eeZFaHY",
   );
 
-  static readonly DOT_3 = new Account(
-    Currency.DOT,
-    "Polkadot 3",
-    "1532VyvZyyMUmLfhMUYh2KRVLzwYfHcxjtejyX4swkpG82BX",
-  );
-
   static readonly SOL_1 = new Account(
     Currency.SOL,
     "Solana 1",
@@ -126,12 +120,6 @@ export class Account {
     Currency.ALGO,
     "Algorand 2",
     "6TFDU3BYQ2FO32SOYQDTHDW5XKGEYH4FCT34ZQRHFPJRVMLEQWOO2OEUU4",
-  );
-
-  static readonly ALGO_3 = new Account(
-    Currency.ALGO,
-    "Algorand 3",
-    "3ASRTAN6KCZCICTIFQ5N2UBOSSBOZ7WFSOI2CJEJ4ESK532RODQZ7KCSOA",
   );
 
   static readonly XLM_1 = new Account(
