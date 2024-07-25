@@ -64,18 +64,18 @@ function getDeviceTransactionConfig(input: {
       label: "To",
       value,
     });
-  }
-
-  const recipient = input.transaction.recipient;
-  if (recipient.length >= 4 && recipient.substring(0, 4) === "0xff") {
-    const validated = validateAddress(recipient);
-    if (validated.isValid) {
-      const value = validated.parsedAddress.toString();
-      fields.push({
-        type: "filecoin.recipient",
-        label: "To",
-        value,
-      });
+  } else {
+    const recipient = input.transaction.recipient;
+    if (recipient.length >= 4 && recipient.substring(0, 4) === "0xff") {
+      const validated = validateAddress(recipient);
+      if (validated.isValid) {
+        const value = validated.parsedAddress.toString();
+        fields.push({
+          type: "filecoin.recipient",
+          label: "To",
+          value,
+        });
+      }
     }
   }
 

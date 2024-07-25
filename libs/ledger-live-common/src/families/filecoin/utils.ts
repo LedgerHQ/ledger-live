@@ -75,6 +75,8 @@ export const expectedToFieldForTokenTransfer = (recipient: string) => {
 
   if (addrProtocol === "f0") {
     value = `${ethAddr} ${recipient}`;
+  } else if (addrProtocol === "f4") {
+    value = `${ethAddr} ${recipient}`;
   } else {
     value = ethAddr;
   }
