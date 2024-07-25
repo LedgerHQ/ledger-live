@@ -466,6 +466,7 @@ const SwapWebView = ({
     setQuoteState(newQuoteState);
 
     // This effect runs when the network status changes or the target account changes
+    // when the toAccountId has changed, quote state should be reset
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkStatus, swapState?.toAccountId]);
 
