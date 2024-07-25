@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "Takas edin",
     "tabs" : {
-      "exchange" : "Takas edin",
+      "exchange" : "Takas et",
       "history" : "Geçmiş"
     },
     "form" : {
@@ -385,6 +385,7 @@
         "title" : "İşlem başarıyla yayınlandı",
         "description" : "Takas işleminiz onaylanmak üzere ağa gönderildi. İşleminizin onaylanması ve sağlayıcının {{targetCurrency}} gönderme işlemini gerçekleştirmesi için bekleyin.",
         "disclaimer" : "<0><0>{{provider}}</0> desteğinden</0> yardıma ihtiyacınız olursa gerekli olacak Swap ID'nizi (Takas Kimliği) not edin.",
+        "tellAboutYourExperience" : "Tell us about your experience",
         "seeDetails" : "Ayrıntıları gör"
       }
     },
@@ -4025,6 +4026,24 @@
           "collection" : "Bir koleksiyon için spam ihbarı"
         }
       },
+      "debugRefreshMetadata" : {
+        "debugRefreshTitle" : "Allow NFT Spam Report (Beta)",
+        "debugRefreshDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "refresh" : "Refresh",
+        "contractAddress" : "Contract Address",
+        "contractAddressDesc" : "contract_address of the NFT refreshed, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract refreshed",
+        "tokenId" : "Token ID",
+        "tokenIdDesc" : "token_id of the NFT refreshed",
+        "success" : "The refresh was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the refresh. Please try again later.",
+        "refreshType" : {
+          "desc" : "What would you like to refresh?",
+          "nft" : "Refresh metadata for an individual NFT",
+          "contract" : "Refresh metadata for a contract"
+        }
+      },
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "catalogUrl" : "Katalog uygulama sağlayıcısını belirle",
@@ -4197,9 +4216,17 @@
           "modal" : {
             "flow" : "Bir Akış seçin",
             "step" : "Bir Adım seçin",
-            "activated" : "Bir yedeklemenizin olması veya olmaması için etkinleştirin/devre dışı bırakın",
-            "instance" : "Oturumlar Oluştur",
+            "instance" : "Üye Oluştur",
             "cta" : "Uygula"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash Tools",
+          "description" : "Provides some useful tools using SimpleHash",
+          "cta" : "Open",
+          "tabs" : {
+            "spam" : "Spam Report",
+            "refresh" : "Refresh Metadata"
           }
         }
       }
@@ -6313,7 +6340,7 @@
         "description" : "Şifreleme anahtarınızı başka bir Ledger cihazıyla güvence altına alın veya silin."
       },
       "instance" : {
-        "label_one" : "1 senkronize oturum",
+        "label" : "1 senkronize oturum",
         "label_other" : "{{count}} senkronize oturum",
         "cta" : "Yönet"
       }
@@ -6326,7 +6353,8 @@
     "error" : {
       "title" : "Bir hata oluştu",
       "description" : "Lütfen daha sonra tekrar deneyin.",
-      "cta" : "Tekrar dene"
+      "cta" : "Tekrar dene",
+      "fetching" : "Verileriniz alınırken bir sorun oluştu."
     },
     "unsecuredError" : {
       "title" : "Senkronizasyon bu Ledger cihazı tarafından güvence altına alınmamış durumda",
@@ -6335,18 +6363,26 @@
       "cta" : "Başka Ledger bağla",
       "ctaDelete" : "Şifreleme anahtarımı sil"
     },
+    "autoRemoveError" : {
+      "title" : "Mevcut oturumu kaldıramazsınız",
+      "description" : "Güvenlik nedeniyle şu anda kullandığınız oturumu, şifreleme anahtarını silmeden kaldıramazsınız.",
+      "info" : "Şifreleme anahtarınızı sildiğinizde cihazlarınızın senkronizasyonu kaldırılır ve tüm senkronize verileriniz silinir. Ancak bu işlem, fonlarınızı etkilemez. Hesaplarınızı istediğiniz zaman yeniden senkronize edebilirsiniz.",
+      "cta" : "Anladım",
+      "ctaDelete" : "Şifreleme anahtarımı sil"
+    },
     "success" : {
       "backup" : {
         "title" : "Başarılı",
-        "desc" : "Ledger Sync'i başarıyla etkinleştirdiniz. ",
-        "synchAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et"
+        "desc" : "Ledger Sync'i başarıyla etkinleştirdiniz."
       },
       "synch" : {
         "title" : "Senkronizasyon başarılı!",
         "desc" : "Artık hesaplarınızdaki değişiklikler otomatik olarak tüm uygulamalarda ve platformlarda görünecektir."
-      }
+      },
+      "synchAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et",
+      "close" : "Kapat"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Anahtarınızı yönetin",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6436,10 @@
       "remove" : "Kaldır",
       "deleteInstanceSuccess" : "{{instanceName}} oturumunuz artık senkronize değil",
       "deleteInstanceError" : "{{instanceName}} oturumunun desenkronizasyonu sırasında bir sorun oluştu"
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}} üzerinde devam edin",
+      "description" : "Ledger cihazınızın Güvenilir Ekranında gösterilen talimatları izleyin."
     }
   }
 }
