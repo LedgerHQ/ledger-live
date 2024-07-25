@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "Trocar",
     "tabs" : {
-      "exchange" : "Negociar",
+      "exchange" : "Trocar",
       "history" : "Histórico"
     },
     "form" : {
@@ -385,6 +385,7 @@
         "title" : "Transação transmitida com sucesso",
         "description" : "Sua operação de troca foi enviada à rede para ser confirmada. Aguarde sua transação ser confirmada e o provedor processar e enviar seu {{targetCurrency}}.",
         "disclaimer" : "Anote o número Swap ID da sua troca para caso precise de ajuda do <0>suporte do <0>{{provider}}</0></0>.",
+        "tellAboutYourExperience" : "Tell us about your experience",
         "seeDetails" : "Ver Detalhes"
       }
     },
@@ -4025,6 +4026,24 @@
           "collection" : "Denúncia de spam para uma coleção"
         }
       },
+      "debugRefreshMetadata" : {
+        "debugRefreshTitle" : "Allow NFT Spam Report (Beta)",
+        "debugRefreshDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "refresh" : "Refresh",
+        "contractAddress" : "Contract Address",
+        "contractAddressDesc" : "contract_address of the NFT refreshed, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract refreshed",
+        "tokenId" : "Token ID",
+        "tokenIdDesc" : "token_id of the NFT refreshed",
+        "success" : "The refresh was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the refresh. Please try again later.",
+        "refreshType" : {
+          "desc" : "What would you like to refresh?",
+          "nft" : "Refresh metadata for an individual NFT",
+          "contract" : "Refresh metadata for a contract"
+        }
+      },
       "experimentalApps" : "Permitir aplicativos experimentais",
       "experimentalAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'.",
       "catalogUrl" : "Definir o provedor do catálogo de aplicativos",
@@ -4197,9 +4216,17 @@
           "modal" : {
             "flow" : "Selecione um Fluxo",
             "step" : "Selecione uma etapa",
-            "activated" : "Ativar/desativar para ter um backup ou não",
-            "instance" : "Gerar instâncias",
+            "instance" : "Gerar Membros",
             "cta" : "Aplicar"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash Tools",
+          "description" : "Provides some useful tools using SimpleHash",
+          "cta" : "Open",
+          "tabs" : {
+            "spam" : "Spam Report",
+            "refresh" : "Refresh Metadata"
           }
         }
       }
@@ -6313,7 +6340,7 @@
         "description" : "Proteja ou exclua sua chave de encriptação com outra Ledger."
       },
       "instance" : {
-        "label_one" : "1 instância sincronizada",
+        "label" : "1 instância sincronizada",
         "label_other" : "{{count}} instâncias sincronizadas",
         "cta" : "Gerenciar"
       }
@@ -6326,7 +6353,8 @@
     "error" : {
       "title" : "Algo deu errado",
       "description" : "Tente novamente mais tarde.",
-      "cta" : "Tentar novamente"
+      "cta" : "Tentar novamente",
+      "fetching" : "Algo deu errado ao buscar seus dados."
     },
     "unsecuredError" : {
       "title" : "A sincronização não é protegida por esta Ledger",
@@ -6335,28 +6363,36 @@
       "cta" : "Conectar outra Ledger",
       "ctaDelete" : "Excluir minha chave de encriptação"
     },
+    "autoRemoveError" : {
+      "title" : "Não é possível remover a instância atual",
+      "description" : "Por motivos de segurança, não é possível remover a instância que você está usando no momento sem excluir sua chave criptográfica.",
+      "info" : "Excluir a chave criptográfica resultará na dessincronização dos dispositivos e todos os dados sincronizados serão excluídos. No entanto, isso não afetará seus fundos. Você pode sincronizar suas contas novamente a qualquer momento.",
+      "cta" : "Eu entendo",
+      "ctaDelete" : "Excluir minha chave criptográfica"
+    },
     "success" : {
       "backup" : {
         "title" : "Sucesso",
-        "desc" : "Você ativou o Ledger Sync com sucesso. ",
-        "synchAnother" : "Sincronizar com outro aplicativo Ledger Live"
+        "desc" : "Você ativou o Ledger Sync com sucesso."
       },
       "synch" : {
         "title" : "Sincronização bem-sucedida!",
         "desc" : "As alterações em suas contas agora aparecerão automaticamente em todos os aplicativos e plataformas."
-      }
+      },
+      "synchAnother" : "Sync with another Ledger Live app",
+      "close" : "Fechar"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Gerenciar sua chave",
       "options" : {
         "deleteBackup" : {
-          "title" : "Exclua seus dados",
+          "title" : "Excluir seus dados",
           "description" : "Todos os dados sincronizados serão excluídos."
         }
       },
       "deleteBackup" : {
-        "title" : "Deseja realmente excluir sua chave de encriptação?",
-        "description" : "Ao clicar em excluir, seus dispositivos serão dessincronizados e todos os dados sincronizados serão excluídos. Tenha certeza de que essa ação não afetará seus fundos. Você pode ressincronizar suas contas a qualquer momento.",
+        "title" : "Deseja realmente excluir sua chave criptográfica?",
+        "description" : "Ao clicar em excluir, seus dispositivos serão dessincronizados e todos os dados sincronizados serão excluídos. Pode ter certeza de que essa ação não afetará seus fundos. Você pode sincronizar suas contas novamente a qualquer momento.",
         "delete" : "Excluir",
         "cancel" : "Cancelar"
       },
@@ -6400,6 +6436,10 @@
       "remove" : "Remover",
       "deleteInstanceSuccess" : "Seu {{instanceName}} não está mais sincronizado",
       "deleteInstanceError" : "Algo deu errado com a dessincronização de {{instanceName}}"
+    },
+    "deviceAction" : {
+      "title" : "Continuar em sua Ledger {{wording}}",
+      "description" : "Siga as instruções que aparecem na Tela Confiável da sua Ledger."
     }
   }
 }
