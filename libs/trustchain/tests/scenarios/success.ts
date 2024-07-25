@@ -90,7 +90,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const restored = await sdk3.restoreTrustchain(trustchain, member3creds);
   expect(restored).toEqual(newTrustchain);
 
-  // member3 destroy the trustchain
+  // member2 destroy the trustchain
   await sdk2.destroyTrustchain(trustchain, member2creds);
 }
 
