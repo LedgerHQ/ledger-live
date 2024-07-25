@@ -7,7 +7,10 @@ import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { nftsByCollections } from "@ledgerhq/live-nft/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
-import { filterHiddenCollections, mapCollectionsToStructure } from "../../utils/collectionUtils";
+import {
+  filterHiddenCollections,
+  mapCollectionsToStructure,
+} from "LLD/features/Collectibles/utils/collectionUtils";
 
 type NftsInTheCollections = {
   contract: string;

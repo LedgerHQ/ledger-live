@@ -1,34 +1,13 @@
-import { Account, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
+import { TokensListProps } from "LLD/features/Collectibles/types/TokensList";
 import { useSelector } from "react-redux";
 import { getNFTsByListOfIds } from "~/renderer/reducers/accounts";
 import { State } from "~/renderer/reducers";
 import { useNftMetadataBatch } from "@ledgerhq/live-nft-react";
-import { FieldStatus } from "LLD/Collectibles/types/DetailDrawer";
-import { BaseNftsProps } from "LLD/Collectibles/types/Collectibles";
-import BigNumber from "bignumber.js";
+import { FieldStatus } from "LLD/features/Collectibles/types/enum/DetailDrawer";
+import { BaseNftsProps } from "LLD/features/Collectibles/types/Collectibles";
 import { useState } from "react";
 
-export type TokenListProps = {
-  account: Account;
-  formattedNfts: {
-    id: string;
-    metadata: NFTMetadata | null | undefined;
-    nft: ProtoNFT | undefined;
-    collectibleId: string;
-    standard: string;
-    amount: string | BigNumber;
-    tokenName: string;
-    previewUri: string;
-    isLoading: boolean;
-    mediaType: string;
-  }[];
-  isDrawerOpen: boolean;
-  nftIdToOpen: string;
-  setIsDrawerOpen: (isDrawerOpen: boolean) => void;
-  onItemClick: (id: string) => void;
-};
-
-export const useTokensListModel = ({ nfts, account }: BaseNftsProps): TokenListProps => {
+export const useTokensListModel = ({ nfts, account }: BaseNftsProps): TokensListProps => {
   const nftsIdsList: string[] = Object.keys(
     nfts.reduce((acc, nft) => ({ ...acc, [nft.id]: nft }), {}),
   );

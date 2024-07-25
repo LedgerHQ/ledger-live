@@ -1,6 +1,6 @@
 import { Account, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import React from "react";
-import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
+import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
 import RowItem from "./RowItem";
 import CardItem from "./CardItem";
 import Card from "~/renderer/components/Box/Card";
@@ -15,7 +15,6 @@ const Wrapper = styled(Card)`
   &.disabled {
     pointer-events: none;
   }
-
   cursor: pointer;
   border: 1px solid transparent;
   transition: background-color ease-in-out 200ms;
@@ -68,7 +67,7 @@ const Item = ({
       py={isGridLayout ? 3 : 2}
       className={(isLoading || process.env.ALWAYS_SHOW_SKELETONS) && "disabled"}
       horizontal={!isGridLayout}
-      alignItems={!isGridLayout ?? "center"}
+      alignItems={!isGridLayout ? "center" : undefined}
       onClick={onItemClick}
     >
       <Flex

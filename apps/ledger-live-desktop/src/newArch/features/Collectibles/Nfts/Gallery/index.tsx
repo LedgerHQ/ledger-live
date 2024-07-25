@@ -5,11 +5,12 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import { Flex, Icons } from "@ledgerhq/react-ui";
-import { TableLayout } from "../../components";
+import { TableLayout } from "LLD/features/Collectibles/components";
 import { useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import Spinner from "~/renderer/components/Spinner";
 import LazyCollection from "./components/LazyCollection";
+import { TrackingPageCategory } from "LLD/features/Collectibles/types/enum/Tracking";
 import { Footer, SpinnerContainer, SpinnerBackground } from "../components/CommonStyled";
 
 type ViewProps = ReturnType<typeof useNftGalleryModel>;
@@ -27,7 +28,7 @@ function View({
 
   return (
     <Flex pb={16} flexDirection={"column"}>
-      <TrackPage category="Page" name="NFT Gallery" />
+      <TrackPage category={TrackingPageCategory.NFTGallery} />
       <Box horizontal alignItems="center" mb={16} width={"100%"}>
         <Box flex={1}>
           <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={22}>

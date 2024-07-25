@@ -4,12 +4,12 @@ import Box from "~/renderer/components/Box";
 import { useSelector } from "react-redux";
 import { collectiblesViewModeSelector } from "~/renderer/reducers/settings";
 import Item from "./Item";
-import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
-import { TokenListProps } from "~/newArch/Collectibles/Nfts/components/TokensList/useTokensListModel";
+import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
+import { TokensListProps } from "LLD/features/Collectibles/types/TokensList";
 
 type Props = {
-  account: TokenListProps["account"];
-  collectibles: TokenListProps["formattedNfts"];
+  account: TokensListProps["account"];
+  collectibles: TokensListProps["formattedNfts"];
   onHideCollection?: () => void;
   onItemClick: (id: string) => void;
 };

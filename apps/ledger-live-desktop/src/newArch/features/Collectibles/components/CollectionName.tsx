@@ -5,7 +5,7 @@ import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTColle
 import { Skeleton } from "LLD/features/Collectibles/components";
 import styled from "styled-components";
 import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
-import { FieldStatus } from "LLD/Collectibles/types/DetailDrawer";
+import { FieldStatus } from "LLD/features/Collectibles/types/enum/DetailDrawer";
 import { Text } from "@ledgerhq/react-ui";
 
 const Dots = styled.div`

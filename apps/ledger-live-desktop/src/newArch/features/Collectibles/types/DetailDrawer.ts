@@ -2,23 +2,11 @@ import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import { ReactNode } from "react";
 import { CollectibleType } from "./Collectibles";
 
-export enum FieldStatus {
-  Loading = "loading",
-  Loaded = "loaded",
-  Error = "error",
-  NoData = "nodata",
-}
-
 export type ExternalViewerButtonProps = {
   nft: ProtoNFT;
   account: Account;
   metadata: NFTMetadata;
 };
-
-export enum ItemType {
-  Separator = "separator",
-  ExternalLink = "external",
-}
 
 export type CopyableFieldProps = {
   value: string;

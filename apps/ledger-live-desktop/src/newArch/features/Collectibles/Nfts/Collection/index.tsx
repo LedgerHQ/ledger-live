@@ -6,10 +6,11 @@ import Box from "~/renderer/components/Box/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import { Flex, Icons } from "@ledgerhq/react-ui";
-import { Skeleton, Media, CollectionName, TableLayout } from "../../components";
+import { Skeleton, Media, CollectionName, TableLayout } from "LLD/features/Collectibles/components";
 import TokensList from "../components/TokensList";
 import OperationsList from "~/renderer/components/OperationsList";
 import Spinner from "~/renderer/components/Spinner";
+import { TrackingPageCategory } from "LLD/features/Collectibles/types/enum/Tracking";
 import { Footer, SpinnerContainer, SpinnerBackground } from "../components/CommonStyled";
 
 type ViewProps = ReturnType<typeof useNftCollectionModel>;
@@ -35,7 +36,7 @@ function View({
 
   return (
     <>
-      <TrackPage category="Page" name="NFT Specific Collection" />
+      <TrackPage category={TrackingPageCategory.NFTSpecificCollection} />
       <Flex flexDirection={"column"} mb={16} width={"100%"}>
         <Flex flex={1} justifyContent={"space-between"}>
           <Box horizontal alignItems="center" mb={16}>

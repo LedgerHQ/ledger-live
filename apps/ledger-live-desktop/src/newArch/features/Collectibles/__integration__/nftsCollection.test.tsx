@@ -2,73 +2,83 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen } from "tests/testUtils";
-import { account, NftCollectionTest, NoNftCollectionTest } from "./shared";
+import { render, screen, waitFor } from "tests/testUtils";
+import { NftCollectionTest, NoNftCollectionTest } from "./shared";
+import { configure } from "@testing-library/dom";
+import { account } from "./mockedAccount";
+
+configure({ testIdAttribute: "data-test-id" });
+
+jest.mock(
+  "electron",
+  () => ({ ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn() } }),
+  { virtual: true },
+);
 
 describe("displayNftCollection", () => {
-  it("should display NFTs collection", async () => {
+  it("should display NFTs collections", async () => {
     render(<NftCollectionTest />, {
       initialState: {
         accounts: [account],
-        overriddenFeatureFlagsSelector: {
-          nftsFromSimplehash: true,
-        },
       },
       initialRoute: `/`,
     });
 
-    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/momentum/i)).toBeVisible());
     await expect(screen.getByText(/receive nft/i)).toBeVisible();
     await expect(screen.getByText(/see gallery/i)).toBeVisible();
+    await expect(screen.getByText(/see more collections/i)).toBeVisible();
   });
 
   it("should open the NFTs gallery", async () => {
     const { user } = render(<NftCollectionTest />, {
       initialState: {
         accounts: [account],
-        overriddenFeatureFlagsSelector: {
-          nftsFromSimplehash: true,
-        },
       },
       initialRoute: `/`,
     });
 
-    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/momentum/i)).toBeVisible());
     await expect(screen.getByText(/receive nft/i)).toBeVisible();
     await expect(screen.getByText(/see gallery/i)).toBeVisible();
     await user.click(screen.getByText(/see gallery/i));
     await expect(screen.getByText(/all nft/i)).toBeVisible();
-    // Check breadcrumb and page title
-    await expect(screen.getAllByText(/nft/i).length).toBe(2);
   });
 
-  it("should open the corresponding NFTs collection and it should open detail drawer", async () => {
+  it("should open the corresponding NFTs collection and the correct detail drawer", async () => {
     const { user } = render(<NftCollectionTest />, {
       initialState: {
         accounts: [account],
-        overriddenFeatureFlagsSelector: {
-          nftsFromSimplehash: true,
-        },
       },
       initialRoute: `/`,
     });
 
-    await expect(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i)).toBeVisible();
-    await expect(screen.getByText(/receive nft/i)).toBeVisible();
-    await expect(screen.getByText(/see gallery/i)).toBeVisible();
-    await user.click(screen.getByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i));
-    await expect(screen.getByText(/all nft/i)).toBeVisible();
-    // Check breadcrumb and page title
-    await expect(screen.getAllByText(/0x670fd103b1a08628e9557cd66b87ded841115190/i).length).toBe(2);
+    // Check initial state
+    await waitFor(() => expect(screen.getByText(/momentum/i)).toBeVisible());
+
+    // Open specific collection
+    await user.click(screen.getByText(/momentum/i));
+    await waitFor(() => expect(screen.getByText(/ID: 35/i)).toBeVisible());
+
+    // Open Detail drawer
+    await user.click(screen.getByText(/ID: 35/i));
+    await screen.findByTestId("side-drawer-container");
+    await screen.findByTestId("drawer-close-button");
+    await screen.findByText(/properties/i);
+
+    // Open external viewer
+    await user.click(screen.getByTestId("external-viewer-button"));
+    await expect(screen.getByText(/open in opensea.io/i)).toBeVisible();
+
+    // Close drawer
+    await waitFor(() => user.click(screen.getByTestId("drawer-close-button")));
+    await waitFor(() => expect(screen.queryByTestId("side-drawer-container")).toBeNull());
   });
 
   it("should not display nft", async () => {
     render(<NoNftCollectionTest />, {
       initialState: {
         accounts: [account],
-        overriddenFeatureFlagsSelector: {
-          nftsFromSimplehash: true,
-        },
       },
       initialRoute: `/`,
     });

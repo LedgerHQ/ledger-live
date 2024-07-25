@@ -8,6 +8,7 @@ const CopyableFieldContainer = styled.div`
   display: inline-flex;
   position: relative;
   max-width: 100%;
+  min-width: 4.5rem;
 
   ${GradientHover} {
     display: none;

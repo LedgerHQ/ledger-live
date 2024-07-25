@@ -1,8 +1,8 @@
 import React from "react";
-import TokensList from "LLD/Collectibles/components/Gallery/TokenList";
+import TokensList from "LLD/features/Collectibles/components/Gallery/TokenList";
 import { useTokensListModel } from "./useTokensListModel";
-import { BaseNftsProps } from "LLD/Collectibles/types/Collectibles";
-import NftDetailDrawer from "LLD/Collectibles/Nfts/components/DetailDrawer";
+import { BaseNftsProps } from "LLD/features/Collectibles/types/Collectibles";
+import NftDetailDrawer from "LLD/features/Collectibles/Nfts/components/DetailDrawer";
 
 type ViewProps = ReturnType<typeof useTokensListModel>;
 

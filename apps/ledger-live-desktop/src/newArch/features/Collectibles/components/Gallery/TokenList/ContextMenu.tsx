@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import ContextMenuItem from "LLD/components/ContextMenu/Item";
 import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
-import useNftLinks from "LLD/Collectibles/hooks/useNftLinks";
+import useNftLinks from "LLD/features/Collectibles/hooks/useNftLinks";
 
 type Props = {
   account: Account;

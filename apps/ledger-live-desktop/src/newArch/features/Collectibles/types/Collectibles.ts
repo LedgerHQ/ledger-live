@@ -1,9 +1,5 @@
 import { ProtoNFT, NFT, Account } from "@ledgerhq/types-live";
-
-export enum CollectibleTypeEnum {
-  NFT = "NFT",
-  Ordinal = "Ordinal",
-}
+import { CollectibleTypeEnum } from "./enum/Collectibles";
 
 export type CollectibleType = CollectibleTypeEnum.NFT | CollectibleTypeEnum.Ordinal;
 

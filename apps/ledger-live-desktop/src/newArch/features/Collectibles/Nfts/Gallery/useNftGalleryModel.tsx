@@ -7,9 +7,11 @@ import { useNftGalleryFilter, isThresholdValid } from "@ledgerhq/live-nft-react"
 import { nftsByCollections } from "@ledgerhq/live-nft";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { openModal } from "~/renderer/actions/modals";
-import { useOnScreen } from "LLD/Collectibles/utils/useOnScreen";
+import { useOnScreen } from "LLD/features/Collectibles/utils/useOnScreen";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { ChainsEnum } from "../../types/Chains";
+import { ChainsEnum } from "LLD/features/Collectibles/types/enum/Chains";
+
+const defaultNumberOfVisibleNfts = 10;
 
 const useNftGalleryModel = () => {
   const dispatch = useDispatch();
@@ -20,7 +22,7 @@ const useNftGalleryModel = () => {
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
 
   const listFooterRef = useRef<HTMLDivElement>(null);
-  const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(5);
+  const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(defaultNumberOfVisibleNfts);
 
   const { account, hiddenNftCollections } = useSelector((state: State) => ({
     account: accountSelector(state, { accountId: id }),
