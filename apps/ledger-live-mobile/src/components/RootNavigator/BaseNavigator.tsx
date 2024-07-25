@@ -86,6 +86,7 @@ import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
+import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -308,6 +309,12 @@ export default function BaseNavigator() {
           name={NavigatorName.PlatformExchange}
           component={PlatformExchangeNavigator}
           options={{ headerShown: false }}
+          {...noNanoBuyNanoWallScreenOptions}
+        />
+        <Stack.Screen
+          name={NavigatorName.CustomError}
+          component={CustomErrorNavigator}
+          options={{ title: "" }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen

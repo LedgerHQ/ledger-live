@@ -72,6 +72,7 @@ import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
+import { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 
 export type NavigateInput<
@@ -237,7 +238,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.WalletConnect]: NavigatorScreenParams<WalletConnectLiveAppNavigatorParamList>;
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;
-
+  [NavigatorName.CustomError]: NavigatorScreenParams<CustomErrorNavigatorParamList>;
   // Polkadot
   [NavigatorName.PolkadotSimpleOperationFlow]: NavigatorScreenParams<PolkadotSimpleOperationFlowParamList>;
   [NavigatorName.PolkadotNominateFlow]: NavigatorScreenParams<PolkadotNominateFlowParamList>;

@@ -470,6 +470,7 @@ export const DEFAULT_FEATURES: Features = {
   lldWalletSync: DEFAULT_FEATURE,
   llmWalletSync: DEFAULT_FEATURE,
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
+  lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
 };
