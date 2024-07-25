@@ -10,9 +10,9 @@ export class Drawer extends Component {
   private currencyButton = (currency: string) =>
     this.page.getByTestId(`currency-row-${currency.toLowerCase()}`).first();
   private addressValue = (address: string) =>
-    this.page.locator('[data-test-id="drawer-content"]').locator(`text=${address}`);
+    this.page.getByTestId("drawer-content").locator(`text=${address}`);
   private amountValue = (amount: string) =>
-    this.page.locator('[data-test-id="drawer-content"]').locator(`text=${amount}`);
+    this.page.getByTestId("drawer-content").locator(`text=${amount}`);
   readonly selectAssetTitle = this.page.getByTestId("select-asset-drawer-title").first();
   readonly selectAccountTitle = this.page.getByTestId("select-account-drawer-title").first();
   readonly swapAmountFrom = this.page.getByTestId("swap-amount-from").first();
