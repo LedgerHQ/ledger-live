@@ -35,7 +35,6 @@
     "react-native-randombytes",
     "react-native-tcp",
     "react-native-tcp-socket",
-    "react-native-udp",
-    "safe-buffer"
+    "react-native-udp"
   ]
 }

@@ -76,7 +76,6 @@ const metroConfig = {
     resolverMainFields: ["react-native", "browser", "main"],
     extraNodeModules: {
       ...require("node-libs-react-native"),
-      crypto: require.resolve("react-native-quick-crypto"),
       fs: require.resolve("react-native-level-fs"),
       net: require.resolve("react-native-tcp-socket"),
       tls: require.resolve("tls"),

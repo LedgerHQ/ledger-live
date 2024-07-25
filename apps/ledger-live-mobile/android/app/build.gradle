@@ -191,13 +191,6 @@ android {
             matchingFallbacks = ['stagingRelease', 'release']
         }
     }
-
-    packagingOptions {
-        pickFirst "lib/x86/libcrypto.so"
-        pickFirst "lib/x86_64/libcrypto.so"
-        pickFirst "lib/armeabi-v7a/libcrypto.so"
-        pickFirst "lib/arm64-v8a/libcrypto.so"
-    }
 }
 
 dependencies {
