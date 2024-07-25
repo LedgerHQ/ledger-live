@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.49.1-nightly.0
+
+### Patch Changes
+
+- [#7403](https://github.com/LedgerHQ/ledger-live/pull/7403) [`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add ordinals feature flag
+
 ## 6.49.0
 
 ### Minor Changes

@@ -1,5 +1,34 @@
 ## 34.5.0-next.4
 
+## 34.6.1-nightly.2
+
+### Patch Changes
+
+- [#7403](https://github.com/LedgerHQ/ledger-live/pull/7403) [`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add ordinals feature flag
+
+- [#7419](https://github.com/LedgerHQ/ledger-live/pull/7419) [`58c4bee`](https://github.com/LedgerHQ/ledger-live/commit/58c4beefb618cbad7e5f1ff7dfbf946f3bb763f7) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [tron swap] fix negative amountTo when max switch is on
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.16.1-nightly.1
+  - @ledgerhq/coin-algorand@0.5.3-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.1-nightly.1
+  - @ledgerhq/coin-cardano@0.1.3-nightly.1
+  - @ledgerhq/coin-evm@2.1.3-nightly.1
+  - @ledgerhq/coin-icon@0.4.1-nightly.2
+  - @ledgerhq/coin-near@0.5.3-nightly.1
+  - @ledgerhq/coin-polkadot@1.1.1-nightly.1
+  - @ledgerhq/coin-solana@0.7.3-nightly.1
+  - @ledgerhq/coin-stellar@0.2.1-nightly.1
+  - @ledgerhq/coin-tezos@0.5.1-nightly.1
+  - @ledgerhq/coin-tron@0.0.3-nightly.1
+  - @ledgerhq/coin-xrp@0.4.1-nightly.1
+  - @ledgerhq/device-core@0.3.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.37.3-nightly.1
+  - @ledgerhq/live-countervalues@0.2.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.3-nightly.1
+  - @ledgerhq/live-nft@0.4.3-nightly.1
+  - @ledgerhq/live-wallet@0.4.1-nightly.1
+
 ## 34.6.1-nightly.1
 
 ### Patch Changes

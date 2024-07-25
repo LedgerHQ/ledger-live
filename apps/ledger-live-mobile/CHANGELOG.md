@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.48.0-nightly.3
+
+### Minor Changes
+
+- [#7301](https://github.com/LedgerHQ/ledger-live/pull/7301) [`0a113e3`](https://github.com/LedgerHQ/ledger-live/commit/0a113e3b6912e0ca6749bc6eccf270e8c93a6ad6) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds custom error screen
+
+- [#7362](https://github.com/LedgerHQ/ledger-live/pull/7362) [`5eecbeb`](https://github.com/LedgerHQ/ledger-live/commit/5eecbebc2004809997ec4e24a3171f7014cf7594) Thanks [@gre](https://github.com/gre)! - Implement crypto polyfill with react-native-quick-crypto for better implementation and better performance.
+
+### Patch Changes
+
+- [#7381](https://github.com/LedgerHQ/ledger-live/pull/7381) [`29d2d37`](https://github.com/LedgerHQ/ledger-live/commit/29d2d37edf1d0d1aa4e202fdb7a8bd7f4b386c89) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - WalletSyncActivated landing page
+
+- [#7395](https://github.com/LedgerHQ/ledger-live/pull/7395) [`8484db6`](https://github.com/LedgerHQ/ledger-live/commit/8484db6b95fa8ee9ccbc152155a11073e5810273) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add mobile storage provider for app data backup
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`58c4bee`](https://github.com/LedgerHQ/ledger-live/commit/58c4beefb618cbad7e5f1ff7dfbf946f3bb763f7)]:
+  - @ledgerhq/types-live@6.49.1-nightly.0
+  - @ledgerhq/live-common@34.6.1-nightly.2
+  - @ledgerhq/coin-framework@0.16.1-nightly.1
+  - @ledgerhq/coin-evm@2.1.3-nightly.1
+  - @ledgerhq/domain-service@1.2.3-nightly.0
+  - @ledgerhq/live-countervalues@0.2.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.3-nightly.1
+  - @ledgerhq/live-nft@0.4.3-nightly.1
+  - @ledgerhq/live-nft-react@0.4.3-nightly.1
+  - @ledgerhq/live-wallet@0.4.1-nightly.1
+
 ## 3.48.0-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.3
+
+### Minor Changes
+
+- [#7411](https://github.com/LedgerHQ/ledger-live/pull/7411) [`2cd3114`](https://github.com/LedgerHQ/ledger-live/commit/2cd31146db355cb08dafabee809135b5561c7351) Thanks [@KVNLS](https://github.com/KVNLS)! - LLD - Fix transaction id overflow in operation details
+
+### Patch Changes
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`58c4bee`](https://github.com/LedgerHQ/ledger-live/commit/58c4beefb618cbad7e5f1ff7dfbf946f3bb763f7)]:
+  - @ledgerhq/types-live@6.49.1-nightly.0
+  - @ledgerhq/live-common@34.6.1-nightly.2
+  - @ledgerhq/coin-framework@0.16.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.1-nightly.1
+  - @ledgerhq/coin-evm@2.1.3-nightly.1
+  - @ledgerhq/domain-service@1.2.3-nightly.0
+  - @ledgerhq/live-countervalues@0.2.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.3-nightly.1
+  - @ledgerhq/live-nft@0.4.3-nightly.1
+  - @ledgerhq/live-nft-react@0.4.3-nightly.1
+  - @ledgerhq/live-wallet@0.4.1-nightly.1
+
 ## 2.84.1-nightly.2
 
 ### Patch Changes
