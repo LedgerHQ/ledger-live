@@ -126,6 +126,7 @@ const SwapWebView = ({
   const redirectToHistory = useRedirectToSwapHistory();
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const { networkStatus } = useNetworkStatus();
+  const isOffline = networkStatus === NetworkStatus.OFFLINE;
 
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
@@ -449,21 +450,12 @@ const SwapWebView = ({
 
   useEffect(() => {
     // Determine the new quote state based on network status
-    const newQuoteState =
-      networkStatus === NetworkStatus.OFFLINE
-        ? {
-            // If offline:
-            amountTo: undefined, // Reset the amount
-            swapError: new NetworkDown(), // Set a network down error
-          }
-        : {
-            // If online or the target account has changed:
-            amountTo: undefined, // Reset the amount
-            swapError: undefined, // Clear any previous errors
-          };
-
-    // Update the quote state with the new values
-    setQuoteState(newQuoteState);
+    setQuoteState({
+      amountTo: undefined,
+      ...{
+        swapError: isOffline ? new NetworkDown() : undefined,
+      },
+    });
 
     // This effect runs when the network status changes or the target account changes
     // when the toAccountId has changed, quote state should be reset
@@ -476,7 +468,7 @@ const SwapWebView = ({
   );
 
   // return loader???
-  if (!hasSwapState || networkStatus === NetworkStatus.OFFLINE) {
+  if (!hasSwapState || isOffline) {
     return null;
   }
 
