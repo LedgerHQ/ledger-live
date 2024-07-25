@@ -11,7 +11,7 @@ import { TonCommentInvalid } from "./errors";
 import { Transaction, TransactionStatus } from "./types";
 import { addressesAreEqual, commentIsValid, isAddressValid } from "./utils";
 
-type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "comment";
+type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "transaction";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 /**
@@ -83,7 +83,7 @@ const validateComment = (transaction: Transaction): Array<ValidationIssues> => {
 
   // if the comment isn'transaction encrypted, it should be valid
   if (transaction.comment.isEncrypted || !commentIsValid(transaction.comment)) {
-    errors.comment = new TonCommentInvalid();
+    errors.transaction = new TonCommentInvalid();
   }
   return [errors];
 };
@@ -104,14 +104,14 @@ export const getTransactionStatus: AccountBridge<
   const [senderErr] = validateSender(account);
   // Amount related errors and warnings
   const [amountErr, amountWarn] = validateAmount(account, transaction, totalSpent);
-  // Comment related errors and warnings
-  const [commentErr] = validateComment(transaction);
+  // Transaction related errors and warnings
+  const [transactionErr] = validateComment(transaction);
 
   const errors: ValidationIssues = {
     ...recipientErr,
     ...senderErr,
     ...amountErr,
-    ...commentErr,
+    ...transactionErr,
   };
 
   const warnings: ValidationIssues = {
