@@ -78,7 +78,7 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
           </InputRight>
         }
         allowZero
-        data-test-id="currency-textbox"
+        data-testid="currency-textbox"
       />
     </Box>
   );

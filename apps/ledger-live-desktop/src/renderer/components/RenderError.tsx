@@ -54,7 +54,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
     }
   }, [hardReset]);
   return (
-    <Box alignItems="center" grow bg="palette.background.default" data-test-id="render-error">
+    <Box alignItems="center" grow bg="palette.background.default" data-testid="render-error">
       <TriggerAppReady />
       <Space of={100} />
       <Image alt="" resource={CrashScreen} width="200" />
@@ -107,7 +107,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
       <Box my={6} color="palette.text.shade80">
         <ErrContainer>{printError(error)}</ErrContainer>
       </Box>
-      <VersionContainer data-test-id="app-version">{`Ledger Live ${__APP_VERSION__}`}</VersionContainer>
+      <VersionContainer data-testid="app-version">{`Ledger Live ${__APP_VERSION__}`}</VersionContainer>
       {children}
     </Box>
   );

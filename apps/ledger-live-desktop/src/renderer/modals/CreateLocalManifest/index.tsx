@@ -359,7 +359,7 @@ function FormLocalManifest({
                   disabled={!formIsValid}
                   primary
                   onClick={submitHandler}
-                  data-test-id="create-local-manifest"
+                  data-testid="create-local-manifest"
                 >
                   {<Trans i18nKey={`settings.developer.createLocalAppModal.create`} />}
                 </Button>

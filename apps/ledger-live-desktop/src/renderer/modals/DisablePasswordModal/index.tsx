@@ -83,7 +83,7 @@ const DisablePasswordModal = () => {
                   <InputPassword
                     autoFocus
                     type="password"
-                    data-test-id="disable-password-input"
+                    data-testid="disable-password-input"
                     onChange={handleInputChange("currentPassword")}
                     value={currentPassword}
                     error={incorrectPassword}
@@ -102,7 +102,7 @@ const DisablePasswordModal = () => {
                 primary
                 onClick={disablePassword}
                 disabled={!currentPassword && !incorrectPassword}
-                data-test-id="modal-save-button"
+                data-testid="modal-save-button"
               >
                 {t("common.save")}
               </Button>

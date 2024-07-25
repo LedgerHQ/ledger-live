@@ -33,7 +33,7 @@ export class Layout extends Component {
   private discreetTooltip = this.page.locator("#tippy-12"); // automatically generated tippy id but it's consistent
 
   // general
-  readonly inputError = this.page.locator("id=input-error"); // no data-test-id because css style is applied
+  readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
   private loadingSpinner = this.page.getByTestId("loading-spinner");
   readonly logo = this.page.getByTestId("logo");
 

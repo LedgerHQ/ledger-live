@@ -40,7 +40,7 @@ const Stars = ({ pathname, collapsed }: Props) => {
   const walletState = useSelector(walletSelector);
   const starredAccounts = useSelector(starredAccountsSelector);
   return starredAccounts && starredAccounts.length ? (
-    <Container key={pathname} data-test-id="drawer-bookmarked-accounts">
+    <Container key={pathname} data-testid="drawer-bookmarked-accounts">
       {starredAccounts.map((account, i) => (
         <Tooltip
           content={

@@ -234,7 +234,7 @@ const UpdateModal = ({
       overflowY="hidden"
       width="100%"
       flex={1}
-      data-test-id="firmware-update-container"
+      data-testid="firmware-update-container"
     >
       <SideDrawerHeader onRequestClose={onRequestCancel} />
       <Text alignSelf="center" variant="h5Inter">

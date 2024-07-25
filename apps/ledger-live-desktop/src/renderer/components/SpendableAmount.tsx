@@ -57,7 +57,7 @@ const SpendableAmount = <T extends TransactionCommon>({
       showAllDigits={showAllDigits}
       showCode
       alwaysShowValue
-      data-test-id="modal-spendable-banner"
+      data-testid="modal-spendable-banner"
     />
   ) : null;
 };

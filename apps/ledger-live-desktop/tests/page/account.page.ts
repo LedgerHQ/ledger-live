@@ -24,7 +24,7 @@ export class AccountPage extends AppPage {
   private showMoreButton = this.page.getByText("Show more");
   private advancedButton = this.page.getByText("Advanced");
   private accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
-  private operationRows = this.page.locator("[data-test-id^='operation-row-']");
+  private operationRows = this.page.locator("[data-testid^='operation-row-']");
   private closeModal = this.page.getByTestId("modal-close-button");
   private accountbutton = (accountName: string) =>
     this.page.getByRole("button", { name: `${accountName}` });

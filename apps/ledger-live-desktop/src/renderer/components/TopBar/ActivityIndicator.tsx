@@ -47,7 +47,7 @@ export default function ActivityIndicatorInner() {
   const isDisabled = isError || isRotating;
   const content = (
     <ItemContainer
-      data-test-id="topbar-synchronize-button"
+      data-testid="topbar-synchronize-button"
       disabled={isDisabled}
       onClick={isDisabled ? undefined : onClick}
       isInteractive
@@ -103,7 +103,7 @@ export default function ActivityIndicatorInner() {
             </Box>
           </>
         ) : isUpToDate ? (
-          <span data-test-id="topbar-synchronized">
+          <span data-testid="topbar-synchronized">
             <Trans i18nKey="common.sync.upToDate" />
           </span>
         ) : (

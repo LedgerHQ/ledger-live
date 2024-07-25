@@ -113,7 +113,7 @@ export default function DashboardPage() {
         totalCurrencies={totalCurrencies}
         hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
       />
-      <Box flow={7} id="portfolio-container" data-test-id="portfolio-container">
+      <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
         {!hasInstalledApps ? (
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (

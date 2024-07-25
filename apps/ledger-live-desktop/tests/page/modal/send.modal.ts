@@ -12,8 +12,8 @@ export class SendModal extends Modal {
     "text=Double-check the transaction details on your Ledger device before signing.",
   );
   private checkTransactionbroadcastLabel = this.page.locator("text=Transaction sent");
-  private recipientAddressDisplayedValue = this.page.locator("data-test-id=recipient-address");
-  private amountDisplayedValue = this.page.locator("data-test-id=transaction-amount");
+  private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
+  private amountDisplayedValue = this.page.getByTestId("transaction-amount");
   private ASAErrorMessage = this.page.getByText(
     "Recipient account has not opted in the selected ASA.",
   );
