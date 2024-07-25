@@ -28,6 +28,7 @@ import { transformToBigNumbers, useRedirectToSwapHistory } from "../utils/index"
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
+import { NetworkDown } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
@@ -41,6 +42,7 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
+import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { captureException } from "~/sentry/renderer";
 import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
@@ -123,6 +125,7 @@ const SwapWebView = ({
   const locale = useSelector(languageSelector);
   const redirectToHistory = useRedirectToSwapHistory();
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
+  const { networkStatus } = useNetworkStatus();
 
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
@@ -445,12 +448,26 @@ const SwapWebView = ({
   ]);
 
   useEffect(() => {
-    setQuoteState({
-      amountTo: undefined,
-      swapError: undefined,
-    });
+    // Determine the new quote state based on network status
+    const newQuoteState =
+      networkStatus === NetworkStatus.OFFLINE
+        ? {
+            // If offline:
+            amountTo: undefined, // Reset the amount
+            swapError: new NetworkDown(), // Set a network down error
+          }
+        : {
+            // If online or the target account has changed:
+            amountTo: undefined, // Reset the amount
+            swapError: undefined, // Clear any previous errors
+          };
+
+    // Update the quote state with the new values
+    setQuoteState(newQuoteState);
+
+    // This effect runs when the network status changes or the target account changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [swapState?.toAccountId]);
+  }, [networkStatus, swapState?.toAccountId]);
 
   const webviewStyle = useMemo(
     () => ({ minHeight: windowContentSize.scrollHeight }),
@@ -458,7 +475,7 @@ const SwapWebView = ({
   );
 
   // return loader???
-  if (!hasSwapState) {
+  if (!hasSwapState || networkStatus === NetworkStatus.OFFLINE) {
     return null;
   }
 
