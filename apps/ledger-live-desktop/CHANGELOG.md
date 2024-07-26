@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.4
+
+### Patch Changes
+
+- [#7400](https://github.com/LedgerHQ/ledger-live/pull/7400) [`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Tool for SimpleHash
+
+- [#7366](https://github.com/LedgerHQ/ledger-live/pull/7366) [`c6cf93e`](https://github.com/LedgerHQ/ledger-live/commit/c6cf93edd96941a53beccb03b87d593d3fa10f5c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Fix data tracked on Braze content cards
+
+- [#7428](https://github.com/LedgerHQ/ledger-live/pull/7428) [`57a3116`](https://github.com/LedgerHQ/ledger-live/commit/57a311637f0da2cc731949e0c0a1bad04484c6fc) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - demo1 sawp handle NetworkDown error
+
+- [#7415](https://github.com/LedgerHQ/ledger-live/pull/7415) [`b6ed682`](https://github.com/LedgerHQ/ledger-live/commit/b6ed6822ecf943762f33d4f27b9fe6cf97173e3d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - sdk is now a "Singleton"
+
+- Updated dependencies [[`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc)]:
+  - @ledgerhq/live-nft-react@0.4.3-nightly.2
+  - @ledgerhq/live-nft@0.4.3-nightly.2
+  - @ledgerhq/live-common@34.6.1-nightly.3
+
 ## 2.85.0-nightly.3
 
 ### Minor Changes

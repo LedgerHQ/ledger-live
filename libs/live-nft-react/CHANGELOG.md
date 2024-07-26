@@ -1,5 +1,14 @@
 # @ledgerhq/live-nft-react
 
+## 0.4.3-nightly.2
+
+### Patch Changes
+
+- [#7400](https://github.com/LedgerHQ/ledger-live/pull/7400) [`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useRefreshMetada hook NFts and contract
+
+- Updated dependencies [[`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc)]:
+  - @ledgerhq/live-nft@0.4.3-nightly.2
+
 ## 0.4.3-nightly.1
 
 ### Patch Changes

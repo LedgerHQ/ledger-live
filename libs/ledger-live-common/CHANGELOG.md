@@ -1,5 +1,12 @@
 ## 34.5.0-next.4
 
+## 34.6.1-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc)]:
+  - @ledgerhq/live-nft@0.4.3-nightly.2
+
 ## 34.6.1-nightly.2
 
 ### Patch Changes

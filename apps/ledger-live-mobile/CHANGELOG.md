@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.48.0-nightly.4
+
+### Minor Changes
+
+- [#7412](https://github.com/LedgerHQ/ledger-live/pull/7412) [`7b41333`](https://github.com/LedgerHQ/ledger-live/commit/7b41333e836b6778ca8fffe085d7d42cb625a668) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Small Flexible Cards Ui Modifications
+
+### Patch Changes
+
+- [#7366](https://github.com/LedgerHQ/ledger-live/pull/7366) [`c6cf93e`](https://github.com/LedgerHQ/ledger-live/commit/c6cf93edd96941a53beccb03b87d593d3fa10f5c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Fix data tracked on Braze content cards
+
+- [#7415](https://github.com/LedgerHQ/ledger-live/pull/7415) [`b6ed682`](https://github.com/LedgerHQ/ledger-live/commit/b6ed6822ecf943762f33d4f27b9fe6cf97173e3d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - sdk is now a "Singleton"
+
+- [#7417](https://github.com/LedgerHQ/ledger-live/pull/7417) [`a383685`](https://github.com/LedgerHQ/ledger-live/commit/a3836858388206b92cdf809aa0fb28ff963635ea) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Save trustchain store in DB
+
+- [#7409](https://github.com/LedgerHQ/ledger-live/pull/7409) [`1656029`](https://github.com/LedgerHQ/ledger-live/commit/1656029a08d1a61c9db1196babe279c828e31b0e) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update wording for changing custom lock screen
+
+- Updated dependencies [[`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc)]:
+  - @ledgerhq/live-nft-react@0.4.3-nightly.2
+  - @ledgerhq/live-nft@0.4.3-nightly.2
+  - @ledgerhq/live-common@34.6.1-nightly.3
+
 ## 3.48.0-nightly.3
 
 ### Minor Changes
