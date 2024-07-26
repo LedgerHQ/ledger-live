@@ -16,13 +16,13 @@ export async function scenario(
   const member2creds = await sdk2.initMemberCredentials();
   const member2 = { name: name2, id: member2creds.pubkey, permissions: 0xffffffff };
 
-  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(member1creds);
   await sdk1.addMember(trustchain, member1creds, member2);
 
-  transport = await switchDeviceSeed();
+  await switchDeviceSeed();
 
-  await expect(sdk2.removeMember(transport, trustchain, member2creds, member1)).rejects.toThrow(
-    TrustchainNotAllowed
+  await expect(sdk2.removeMember(trustchain, member2creds, member1)).rejects.toThrow(
+    TrustchainNotAllowed,
   );
 
   await sdk2.destroyTrustchain(trustchain, member2creds);

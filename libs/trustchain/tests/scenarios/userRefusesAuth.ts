@@ -16,7 +16,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
       interactionCounter--;
     },
   };
-  await expect(sdk1.getOrCreateTrustchain(transport, memberCredentials, callbacks)).rejects.toThrow(
+  await expect(sdk1.getOrCreateTrustchain(memberCredentials, callbacks)).rejects.toThrow(
     UserRefusedOnDevice,
   );
   expect(interactionCounter).toBe(0);

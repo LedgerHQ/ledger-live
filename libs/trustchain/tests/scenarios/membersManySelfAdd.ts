@@ -8,7 +8,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
     const name = "Member " + i;
     const sdk = sdkForName(name);
     const creds = await sdk.initMemberCredentials();
-    const { trustchain } = await sdk.getOrCreateTrustchain(transport, creds);
+    const { trustchain } = await sdk.getOrCreateTrustchain(creds);
     if (!trustchainId) trustchainId = trustchain.rootId;
     expect(trustchain.rootId).toBe(trustchainId);
     if (i === n - 1) {

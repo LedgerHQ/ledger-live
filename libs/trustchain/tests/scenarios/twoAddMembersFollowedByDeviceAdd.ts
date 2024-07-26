@@ -25,7 +25,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const member4creds = await sdk4.initMemberCredentials();
 
   // auth with the device and init the first trustchain
-  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(member1creds);
 
   // member 1 adds member 2
   await sdk1.addMember(trustchain, member1creds, member2);
@@ -34,7 +34,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   await sdk1.addMember(trustchain, member1creds, member3);
 
   // member 4 implicits add itself with device auth
-  const { trustchain: trustchain4 } = await sdk4.getOrCreateTrustchain(transport, member4creds);
+  const { trustchain: trustchain4 } = await sdk4.getOrCreateTrustchain(member4creds);
   expect(trustchain).toEqual(trustchain4);
 
   // list members

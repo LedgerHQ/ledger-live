@@ -1,10 +1,12 @@
 import path from "path";
 import fs from "fs";
+import { of } from "rxjs";
 import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTransportReplayer";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { ScenarioOptions } from "../../../tests/test-helpers/types";
 import { getSdk } from "../..";
+import { WithDevice } from "../../types";
 
 setEnv("MOCK", "true");
 
@@ -27,15 +29,15 @@ fs.readdirSync(scenarioFolder).forEach(file => {
     test(slug, async () => {
       const scenario = mod.scenario;
       const transport = new TransportReplayer(new RecordStore());
+      const withDevice$ = of<WithDevice>(job => job(transport));
       const options: ScenarioOptions = {
         sdkForName: name =>
-          getSdk(!!getEnv("MOCK"), {
-            applicationId: 16,
-            name,
-            apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
-          }),
+          getSdk(
+            { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
+            { withDevice$, isMockEnv: !!getEnv("MOCK") },
+          ),
         pauseRecorder: () => Promise.resolve(), // replayer don't need to pause
-        switchDeviceSeed: async () => transport, // nothing to actually do, we will continue replaying
+        switchDeviceSeed: async () => {}, // nothing to actually do, we will continue replaying
       };
       await scenario(transport, options);
     });

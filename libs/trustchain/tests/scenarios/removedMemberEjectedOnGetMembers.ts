@@ -14,13 +14,13 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const member2 = { name: name2, id: member2creds.pubkey, permissions: 0xffffffff };
 
   // auth with the device and init the first trustchain
-  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(member1creds);
 
   // member 1 adds member 2 (= qr code flow)
   await sdk1.addMember(trustchain, member1creds, member2);
 
   // member1 removes member2
-  const newTrustchain = await sdk1.removeMember(transport, trustchain, member1creds, member2);
+  const newTrustchain = await sdk1.removeMember(trustchain, member1creds, member2);
 
   // member2 is no longer a member so is not authorized to get the members
   await expect(sdk2.getMembers(trustchain, member2creds)).rejects.toThrow(TrustchainEjected);

@@ -1,4 +1,3 @@
-import Transport from "@ledgerhq/hw-transport";
 import { generateMnemonic } from "bip39";
 import { TrustchainSDK } from "../../src/types";
 
@@ -14,7 +13,7 @@ export type ScenarioOptions = {
   /**
    * switch to the another device seed
    */
-  switchDeviceSeed: (newSeed?: string) => Promise<Transport>;
+  switchDeviceSeed: (newSeed?: string) => Promise<void>;
 };
 
 export type RecorderConfig = {

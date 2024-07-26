@@ -5,8 +5,6 @@ import { setupServer } from "msw/node";
 import { CloudSyncSDK, UpdateEvent } from "../sdk";
 import { MockSDK } from "@ledgerhq/trustchain/mockSdk";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTransportReplayer";
-import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { TrustchainOutdated } from "@ledgerhq/trustchain/errors";
 
@@ -128,9 +126,7 @@ describe("CloudSyncSDK basics", () => {
 
     creds = await trustchainSdk.initMemberCredentials();
 
-    const transport = new TransportReplayer(new RecordStore());
-
-    const result = await trustchainSdk.getOrCreateTrustchain(transport, creds);
+    const result = await trustchainSdk.getOrCreateTrustchain(creds);
     trustchain = result.trustchain;
     expectedBackendTrustchain = trustchain;
 

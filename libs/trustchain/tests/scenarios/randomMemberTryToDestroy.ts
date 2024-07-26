@@ -14,7 +14,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const member2creds = await sdk2.initMemberCredentials();
 
   // auth with the device and init the first trustchain
-  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(member1creds);
 
   // now member2 will get an ejected error when trying to destroy the trustchain
   await expect(sdk2.destroyTrustchain(trustchain, member2creds)).rejects.toThrow(TrustchainEjected);
