@@ -13,6 +13,11 @@ export type JWT = {
 };
 
 /**
+ * A function which allow all interactions with the hardware device.
+ */
+export type WithDevice = <T>(job: (transport: Transport) => Promise<T>) => Promise<T>;
+
+/**
  * A Trustchain contains the identifier and the contextual data we need to manage members and encrypt/decrypt data.
  */
 export type Trustchain = {
@@ -161,7 +166,6 @@ export interface TrustchainSDK {
    * The latest jwt is also returned because it was potentially updated during the process.
    */
   getOrCreateTrustchain(
-    transport: Transport,
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
@@ -187,7 +191,6 @@ export interface TrustchainSDK {
    * remove a member from the application trustchain
    */
   removeMember(
-    transport: Transport,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,

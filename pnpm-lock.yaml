@@ -5917,6 +5917,9 @@ importers:
       isomorphic-ws:
         specifier: '5'
         version: 5.0.0(ws@8.16.0)
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
       ws:
         specifier: '8'
         version: 8.16.0
