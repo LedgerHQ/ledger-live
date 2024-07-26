@@ -170,6 +170,11 @@ export const urls = {
         tos: "https://criptointercambio.com/terms-of-use",
         support: "https://criptointercambio.com/en/about",
       },
+      exodus: {
+        main: "https://www.exodus.com/",
+        tos: "https://www.exodus.com/terms/",
+        support: "support@xopay.com",
+      },
       moonpay: {
         main: "https://www.moonpay.com/",
         tos: "https://www.moonpay.com/legal/terms_of_use",
