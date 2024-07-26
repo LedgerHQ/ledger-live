@@ -45,6 +45,18 @@ jest.mock("@segment/analytics-react-native", () => mockAnalytics);
 
 jest.mock("react-native-launch-arguments", () => ({}));
 
+jest.mock("react-native-bootsplash", () => {
+  return {
+    hide: jest.fn().mockResolvedValue(),
+    isVisible: jest.fn().mockResolvedValue(false),
+    useHideAnimation: jest.fn().mockReturnValue({
+      container: {},
+      logo: { source: 0 },
+      brand: { source: 0 },
+    }),
+  };
+});
+
 NativeModules.BluetoothHelperModule = {
   E_BLE_CANCELLED: "BLE_UNKNOWN_STATE",
 };

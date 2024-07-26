@@ -3,7 +3,6 @@ import "./live-common-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
-import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
@@ -304,7 +303,6 @@ export default class Root extends Component {
 
   onRebootStart = () => {
     clearTimeout(this.initTimeout);
-    if (SplashScreen.show) SplashScreen.show(); // on iOS it seems to not be exposed
   };
 
   render() {

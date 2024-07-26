@@ -1128,8 +1128,6 @@ PODS:
     - React-Core
   - react-native-safe-area-context (4.9.0):
     - React-Core
-  - react-native-splash-screen (3.2.0):
-    - React
   - react-native-startup-time (2.1.0):
     - React-Core
   - react-native-tcp-socket (6.0.6):
@@ -1320,6 +1318,8 @@ PODS:
     - React-Core
   - rn-fetch-blob (0.12.0):
     - React-Core
+  - RNBootSplash (6.0.0):
+    - React-Core
   - RNCAsyncStorage (1.23.1):
     - React-Core
   - RNCClipboard (1.13.2):
@@ -1486,7 +1486,6 @@ DEPENDENCIES:
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
-  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-startup-time (from `../node_modules/react-native-startup-time`)
   - react-native-tcp-socket (from `../node_modules/react-native-tcp-socket`)
   - react-native-udp (from `../node_modules/react-native-udp`)
@@ -1515,6 +1514,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "ReactNativePerformance (from `../node_modules/@shopify/react-native-performance`)"
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
+  - RNBootSplash (from `../node_modules/react-native-bootsplash`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
@@ -1694,8 +1694,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
-  react-native-splash-screen:
-    :path: "../node_modules/react-native-splash-screen"
   react-native-startup-time:
     :path: "../node_modules/react-native-startup-time"
   react-native-tcp-socket:
@@ -1752,6 +1750,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@shopify/react-native-performance"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
+  RNBootSplash:
+    :path: "../node_modules/react-native-bootsplash"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
@@ -1886,7 +1886,6 @@ SPEC CHECKSUMS:
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
-  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-startup-time: 8ceecdaaae6bc912f4ea668d91ecbacb04981817
   react-native-tcp-socket: e724380c910c2e704816ec817ed28f1342246ff7
   react-native-udp: df79c3cb72c4e71240cd3ce4687bfb8a137140d5
@@ -1915,6 +1914,7 @@ SPEC CHECKSUMS:
   ReactCommon: 2aa35648354bd4c4665b9a5084a7d37097b89c10
   ReactNativePerformance: ab7dee4c4862623d72c1530a9fc71b55458edf71
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
+  RNBootSplash: 16564e5c1b48ba8d9dd0fd3d53538f111daf7369
   RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
   RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
   RNCMaskedView: 949696f25ec596bfc697fc88e6f95cf0c79669b6

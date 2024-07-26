@@ -13,4 +13,10 @@
         <item name="windowActionBar">false</item>
         <item name="android:forceDarkAllowed">false</item>
     </style>
+
+    <style name="BootTheme" parent="Theme.BootSplash.TransparentStatus">
+        <item name="bootSplashBackground">@color/background_light</item>
+        <item name="bootSplashLogo">@mipmap/ic_launcher</item>
+        <item name="postBootSplashTheme">@style/AppTheme</item>
+    </style>
 </resources>

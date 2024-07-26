@@ -14,7 +14,7 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 import com.facebook.react.modules.i18nmanager.I18nUtil
 import expo.modules.ReactActivityDelegateWrapper
 import java.util.Locale
-import org.devio.rn.splashscreen.SplashScreen
+import com.zoontek.rnbootsplash.RNBootSplash
 
 class MainActivity : ReactActivity() {
 
@@ -33,9 +33,7 @@ class MainActivity : ReactActivity() {
             )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (!BuildConfig.DEBUG) {
-            SplashScreen.show(this, true)
-        }
+        RNBootSplash.init(this, R.style.BootTheme) // ⬅️ initialize the splash screen
         super.onCreate(null)
 
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?

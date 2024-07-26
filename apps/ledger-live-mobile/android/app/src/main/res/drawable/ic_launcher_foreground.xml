@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <inset
+            android:insetLeft="2dp"
+            android:insetTop="2dp"
+            android:insetRight="2dp"
+            android:insetBottom="2dp">
+            <bitmap
+                android:gravity="center"
+                android:src="@mipmap/ic_launcher_foreground"/>
+        </inset>
+    </item>
+</layer-list>

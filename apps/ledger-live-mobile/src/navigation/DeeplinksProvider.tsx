@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Linking } from "react-native";
-import SplashScreen from "react-native-splash-screen";
+import BootSplash from "react-native-bootsplash";
 import {
   getStateFromPath,
   LinkingOptions,
@@ -592,7 +592,7 @@ export const DeeplinksProvider = ({
       ref={navigationRef}
       onReady={() => {
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
-        setTimeout(() => SplashScreen.hide(), 300);
+        setTimeout(() => BootSplash.hide(), 300);
         routingInstrumentation.registerNavigationContainer(navigationRef);
       }}
     >

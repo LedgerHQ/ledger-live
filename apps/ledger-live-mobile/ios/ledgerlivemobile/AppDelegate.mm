@@ -4,7 +4,7 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 #import "RNCConfig.h"
-#import "RNSplashScreen.h"  // here
+#import "RNBootSplash.h"
 #import <BrazeKit/BrazeKit-Swift.h>
 #import "BrazeReactUtils.h"
 #import "BrazeReactBridge.h"
@@ -22,7 +22,6 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #endif
 #endif
-
 
 @implementation AppDelegate
 
@@ -85,15 +84,15 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
 
   [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
 
-  [self.window makeKeyAndVisible];
-  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
-  UIViewController *vc = [sb instantiateInitialViewController];
-  rootView.loadingView = vc.view;
-
   [super application:application didFinishLaunchingWithOptions:launchOptions];
-  [RNSplashScreen show];
 
   return YES;
+}
+
+- (UIView *)createRootViewWithBridge:(RCTBridge *)bridge moduleName:(NSString *)moduleName initProps:(NSDictionary *)initProps {
+  UIView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:moduleName initialProperties:initProps];
+  [RNBootSplash initWithStoryboard:@"LaunchScreen" rootView:rootView];
+  return rootView;
 }
 
 - (void)registerForPushNotifications {
@@ -114,9 +113,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   completionHandler(UIBackgroundFetchResultNoData);
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-  didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void (^)(void))completionHandler {
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
   [[BrazeReactUtils sharedInstance] populateInitialUrlForCategories:response.notification.request.content.userInfo];
   BOOL processedByBraze = AppDelegate.braze != nil && [AppDelegate.braze.notifications handleUserNotificationWithResponse:response
                                                                                                     withCompletionHandler:completionHandler];
@@ -152,7 +149,7 @@ static Braze *_braze;
   _braze = braze;
 }
 
-- (void) showOverlay{
+- (void)showOverlay{
   UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
   UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
   UIImageView *logoView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Blurry_nocache1"]];
@@ -173,7 +170,7 @@ static Braze *_braze;
   logoView.center = CGPointMake(self.window.frame.size.width  / 2,self.window.frame.size.height / 2);
 }
 
-- (void) hideOverlay{
+- (void)hideOverlay {
   UIView *blurEffectView = [self.window viewWithTag:12345];
   UIView *logoView = [self.window viewWithTag:12346];
 
@@ -238,4 +235,3 @@ continueUserActivity:(NSUserActivity *)userActivity
 }
 
 @end
-
