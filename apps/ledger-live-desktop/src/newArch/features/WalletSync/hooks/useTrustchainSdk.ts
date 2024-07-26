@@ -1,10 +1,9 @@
 import os from "os";
-import { from, lastValueFrom } from "rxjs";
-import { useMemo } from "react";
+import { ReplaySubject } from "rxjs";
+import { useEffect, useMemo } from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { getSdk } from "@ledgerhq/trustchain/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import Transport from "@ledgerhq/hw-transport";
 import { trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";
 import { useStore } from "react-redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -13,12 +12,7 @@ import { TrustchainSDK } from "@ledgerhq/trustchain/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
-export function runWithDevice<T>(
-  deviceId: string | undefined,
-  fn: (transport: Transport) => Promise<T>,
-): Promise<T> {
-  return lastValueFrom(withDevice(deviceId || "")(transport => from(fn(transport))));
-}
+const deviceId$ = new ReplaySubject<string>(1);
 
 const platformMap: Record<string, string | undefined> = {
   darwin: "Mac",
@@ -28,7 +22,7 @@ const platformMap: Record<string, string | undefined> = {
 
 let sdkInstance: TrustchainSDK | null = null;
 
-export function useTrustchainSdk() {
+export function useTrustchainSdk(deviceId: string | undefined) {
   const featureWalletSync = useFeature("lldWalletSync");
   const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
     featureWalletSync?.params?.environment,
@@ -51,8 +45,12 @@ export function useTrustchainSdk() {
     [cloudSyncApiBaseUrl, store],
   );
 
+  useEffect(() => {
+    if (typeof deviceId !== "undefined") deviceId$.next(deviceId);
+  }, [deviceId]);
+
   if (sdkInstance === null) {
-    sdkInstance = getSdk(isMockEnv, defaultContext, lifecycle);
+    sdkInstance = getSdk(defaultContext, { lifecycle, withDevice, deviceId$, isMockEnv });
   }
 
   return sdkInstance;

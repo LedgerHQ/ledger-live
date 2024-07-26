@@ -6,7 +6,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
+import { useTrustchainSdk } from "./useTrustchainSdk";
 import { TrustchainMember, Trustchain, MemberCredentials } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
@@ -18,7 +18,7 @@ type Props = {
 
 export function useRemoveMember({ device, member }: Props) {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk();
+  const sdk = useTrustchainSdk(device?.deviceId);
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const [error, setError] = useState<Error | null>(null);
@@ -51,20 +51,17 @@ export function useRemoveMember({ device, member }: Props) {
   const removeMember = useCallback(
     async (member: TrustchainMember) => {
       try {
-        await runWithDevice(deviceRef.current?.deviceId, async transport => {
-          const newTrustchain = await sdkRef.current.removeMember(
-            transport,
-            trustchainRef.current as Trustchain,
-            memberCredentialsRef.current as MemberCredentials,
-            member,
-            {
-              onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-              onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-            },
-          );
+        const newTrustchain = await sdkRef.current.removeMember(
+          trustchainRef.current as Trustchain,
+          memberCredentialsRef.current as MemberCredentials,
+          member,
+          {
+            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+          },
+        );
 
-          transitionToNextScreen(newTrustchain);
-        });
+        transitionToNextScreen(newTrustchain);
       } catch (error) {
         if (error instanceof Error) setError(error);
         if (error instanceof TrustchainNotAllowed) {
