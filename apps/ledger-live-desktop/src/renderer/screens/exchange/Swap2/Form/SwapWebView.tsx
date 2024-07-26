@@ -485,8 +485,6 @@ const SwapWebView = ({
     }
   };
 
-  console.log("SLA swapState?.estimatedFees", swapState?.estimatedFees);
-
   return (
     <>
       {enablePlatformDevTools && (
