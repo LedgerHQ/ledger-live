@@ -173,7 +173,7 @@ export const urls = {
       exodus: {
         main: "https://www.exodus.com/",
         tos: "https://www.exodus.com/terms/",
-        support: "support@xopay.com",
+        support: "mailto:support@xopay.com",
       },
       moonpay: {
         main: "https://www.moonpay.com/",
