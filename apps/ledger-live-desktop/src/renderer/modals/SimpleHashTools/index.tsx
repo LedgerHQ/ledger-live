@@ -13,12 +13,17 @@ import RefreshMetadata, {
 } from "~/renderer/screens/settings/sections/Developer/SimpleHashTools/RefreshMetadata";
 import { Flex } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/ButtonV3";
+import SpamScore, {
+  HookResult as SpamScoreHookResult,
+  useHook as useHookSpamScore,
+} from "~/renderer/screens/settings/sections/Developer/SimpleHashTools/SpamScore";
 
 const getItems = (
   t: (a: string) => string,
   hooks: {
     refresh: RefreshHookResult;
     spam: SpamHookResult;
+    check: SpamScoreHookResult;
   },
 ) => {
   const items = [
@@ -27,14 +32,27 @@ const getItems = (
       label: t("settings.experimental.features.testSimpleHash.tabs.spam"),
       value: <SpamReport {...hooks.spam} />,
       onClick: hooks.spam.onClick,
-      cta: t("settings.developer.debugSpamNft.report"),
+      cta: t("settings.developer.debugSimpleHash.debugSpamNft.report"),
+      closeInfo: hooks.spam.closeInfo,
+      displayInfo: hooks.spam.displayInfo,
     },
     {
       key: "refresh",
       label: t("settings.experimental.features.testSimpleHash.tabs.refresh"),
       value: <RefreshMetadata {...hooks.refresh} />,
       onClick: hooks.refresh.onClick,
-      cta: t("settings.developer.debugRefreshMetadata.refresh"),
+      cta: t("settings.developer.debugSimpleHash.debugRefreshMetadata.refresh"),
+      closeInfo: hooks.refresh.closeInfo,
+      displayInfo: hooks.refresh.displayInfo,
+    },
+    {
+      key: "check",
+      label: t("settings.experimental.features.testSimpleHash.tabs.check"),
+      value: <SpamScore {...hooks.check} />,
+      onClick: hooks.check.onClick,
+      cta: t("settings.developer.debugSimpleHash.debugCheckSpamScore.check"),
+      closeInfo: hooks.check.closeInfo,
+      displayInfo: hooks.check.displayInfo,
     },
   ];
 
@@ -45,13 +63,18 @@ const SimpleHashToolsDebugger = () => {
   const { t } = useTranslation();
   const metadataHook = useHookRefresh();
   const spamHook = useHookSpam();
+  const spamScoreHook = useHookSpamScore();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+
   const items = useMemo(
-    () => getItems(t, { refresh: metadataHook, spam: spamHook }),
-    [metadataHook, spamHook, t],
+    () => getItems(t, { refresh: metadataHook, spam: spamHook, check: spamScoreHook }),
+    [metadataHook, spamHook, spamScoreHook, t],
   );
 
   const activeItem = useMemo(() => items[activeTabIndex], [activeTabIndex, items]);
+
+  const displayInfo = activeItem.displayInfo;
+  const closeInfo = activeItem.closeInfo;
 
   return (
     <Modal
@@ -85,9 +108,22 @@ const SimpleHashToolsDebugger = () => {
             </>
           )}
           renderFooter={() => (
-            <Button alignSelf={"flex-start"} mt={3} variant="color" onClick={activeItem.onClick}>
-              {activeItem.cta}
-            </Button>
+            <>
+              {displayInfo ? (
+                <Button variant="main" onClick={closeInfo}>
+                  {t("settings.developer.debugSimpleHash.back")}
+                </Button>
+              ) : (
+                <Button
+                  alignSelf={"flex-start"}
+                  mt={3}
+                  variant="color"
+                  onClick={activeItem.onClick}
+                >
+                  {activeItem.cta}
+                </Button>
+              )}
+            </>
           )}
         />
       )}
