@@ -7,18 +7,20 @@ export const InputRow = ({
   value,
   onChange,
   visible = true,
+  disabled = false,
 }: {
   title: string;
   desc: string;
   value: string;
   onChange: (value: string) => void;
   visible?: boolean;
+  disabled?: boolean;
 }) => {
   if (!visible) return null;
   return (
     <Flex flexDirection="column" mb={2}>
       <Text mb={2}>{title}</Text>
-      <Input placeholder={desc} value={value} onChange={onChange} />
+      <Input placeholder={desc} value={value} onChange={onChange} disabled={disabled} />
     </Flex>
   );
 };

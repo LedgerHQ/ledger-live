@@ -4046,6 +4046,24 @@
           "collection": "Spam report for a collection"
         }
       },
+      "debugRefreshMetadata": {
+        "debugRefreshTitle": "Allow NFT Spam Report (Beta)",
+        "debugRefreshDesc": "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "refresh": "Refresh",
+        "contractAddress": "Contract Address",
+        "contractAddressDesc": "contract_address of the NFT refreshed, or the contract itself",
+        "chainId": "Chain ID",
+        "chainIdDesc": "chain_id (e.g., ethereum) of the NFT or contract refreshed",
+        "tokenId": "Token ID",
+        "tokenIdDesc": "token_id of the NFT refreshed",
+        "success": "The refresh was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error": "An error occurred while sending the refresh. Please try again later.",
+        "refreshType": {
+          "desc": "What would you like to refresh?",
+          "nft": "Refresh metadata for an individual NFT",
+          "contract": "Refresh metadata for a contract"
+        }
+      },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
       "catalogUrl": "Set the catalog apps provider",
@@ -4220,6 +4238,15 @@
             "step": "Select a Step",
             "instance": "Generate Members",
             "cta": "Apply"
+          }
+        },
+        "testSimpleHash": {
+          "title": "SimpleHash Tools",
+          "description": "Provides some useful tools using SimpleHash",
+          "cta": "Open",
+          "tabs": {
+            "spam": "Spam Report",
+            "refresh": "Refresh Metadata"
           }
         }
       }

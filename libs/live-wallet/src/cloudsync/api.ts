@@ -47,9 +47,14 @@ const schemaAtomicPostResponse = z.discriminatedUnion("status", [
 export type APISyncUpdateResponse = z.infer<typeof schemaAtomicPostResponse>;
 
 // Fetch data status from cloud
-async function fetchData(jwt: JWT, datatype: string, version?: number): Promise<APISyncResponse> {
+async function fetchData(
+  jwt: JWT,
+  datatype: string,
+  version: number | undefined,
+  applicationPath: string,
+): Promise<APISyncResponse> {
   const { data } = await network<unknown>({
-    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}`,
+    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?path=${encodeURIComponent(applicationPath)}`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -65,9 +70,10 @@ async function uploadData(
   datatype: string,
   version: number,
   payload: string,
+  applicationPath: string,
 ): Promise<APISyncUpdateResponse> {
   const { data } = await network<unknown>({
-    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?version=${version}`,
+    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?version=${version}&path=${encodeURIComponent(applicationPath)}`,
     method: "POST",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -81,9 +87,9 @@ async function uploadData(
 }
 
 // Delete data from cloud
-async function deleteData(jwt: JWT, datatype: string): Promise<void> {
+async function deleteData(jwt: JWT, datatype: string, applicationPath: string): Promise<void> {
   await network<void>({
-    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}`,
+    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?path=${encodeURIComponent(applicationPath)}`,
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,

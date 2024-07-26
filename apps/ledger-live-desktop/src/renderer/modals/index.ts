@@ -32,6 +32,7 @@ import MODAL_ERROR from "./ErrorModal";
 import MODAL_VAULT_SIGNER from "./VaultSigner";
 
 import MODAL_WALLET_SYNC_DEBUGGER from "./WalletSyncDebugger";
+import MODAL_SIMPLEHASH_TOOLS from "./SimpleHashTools";
 
 type GlobalModals = MakeModalsType<GlobalModalData>;
 
@@ -61,6 +62,7 @@ const globalModals: GlobalModals = {
   MODAL_PROTECT_DISCOVER,
   MODAL_CREATE_LOCAL_APP,
   MODAL_WALLET_SYNC_DEBUGGER,
+  MODAL_SIMPLEHASH_TOOLS,
 
   // Platform
   MODAL_PLATFORM_EXCHANGE_START,
