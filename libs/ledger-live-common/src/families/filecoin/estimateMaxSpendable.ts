@@ -8,6 +8,7 @@ import { isFilEthAddress, validateAddress } from "./bridge/utils/addresses";
 import { fetchBalances, fetchEstimatedFees } from "./bridge/utils/api";
 import BigNumber from "bignumber.js";
 import { BroadcastBlockIncl } from "./bridge/utils/types";
+import { encodeTxnParams, generateTokenTxnParams } from "./bridge/utils/erc20/tokenAccounts";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,
@@ -39,6 +40,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   const invalidAddressErr = new InvalidAddress(undefined, {
     currencyName: subAccount ? subAccount.token.name : a.currency.name,
   });
+
   const senderValidation = validateAddress(sender);
   if (!senderValidation.isValid) throw invalidAddressErr;
   sender = senderValidation.parsedAddress.toString();
@@ -63,17 +65,27 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   const amount = transaction?.amount;
 
   const validatedContractAddress = validateAddress(subAccount?.token.contractAddress ?? "");
-  const finalRecipient =
-    tokenAccountTxn && validatedContractAddress.isValid
-      ? validatedContractAddress.parsedAddress.toString()
-      : recipient;
+  if (!validatedContractAddress.isValid) {
+    throw invalidAddressErr;
+  }
+  const contractAddress = validatedContractAddress.parsedAddress.toString();
+  const finalRecipient = tokenAccountTxn ? contractAddress : recipient;
+
+  // If token transfer, the evm payload is required to estimate fees
+  const params =
+    tokenAccountTxn && transaction
+      ? await generateTokenTxnParams(contractAddress, transaction.amount)
+      : undefined;
 
   const result = await fetchEstimatedFees({
     to: finalRecipient,
     from: sender,
     methodNum,
     blockIncl: BroadcastBlockIncl,
+    params: params ? encodeTxnParams(params) : undefined, // If token transfer, the eth call params are required to estimate fees
+    value: tokenAccountTxn ? "0" : undefined, // If token transfer, the value should be 0 (avoid any native token transfer on fee estimation)
   });
+
   const gasFeeCap = new BigNumber(result.gas_fee_cap);
   const gasLimit = new BigNumber(result.gas_limit);
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
