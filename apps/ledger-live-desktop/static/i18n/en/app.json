@@ -6396,7 +6396,8 @@
       "title": "Something went wrong",
       "description": "Please try again later.",
       "cta": "Try again",
-      "fetching": "Something went wrong while fetching your data."
+      "fetching": "Something went wrong while fetching your data.",
+      "ledgerSyncDown": "Ledger Sync is currently unavailable.<br/>This doesn’t have any impact on your assets."
     },
     "unsecuredError": {
       "title": "The synchronization isn't secured by this Ledger",

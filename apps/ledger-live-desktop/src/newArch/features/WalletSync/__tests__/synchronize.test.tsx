@@ -19,12 +19,25 @@ jest.mock("../hooks/useQRCode", () => ({
   }),
 }));
 
+jest.mock("../hooks/useGetMembers", () => ({
+  useGetMembers: () => ({
+    isLoading: false,
+    data: [],
+    isError: false,
+    error: null,
+  }),
+}));
+
 const openDrawer = async () => {
   const { user } = render(<WalletSyncTestApp />, {
     initialState: {
       walletSync: walletSyncActivatedState,
       trustchain: {
         trustchain: simpleTrustChain,
+        memberCredentials: {
+          pubkey: "pubkey",
+          privatekey: "privatekey",
+        },
       },
     },
   });
