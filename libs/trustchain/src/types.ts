@@ -1,3 +1,4 @@
+import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 
 /**
@@ -15,7 +16,10 @@ export type JWT = {
 /**
  * A function which allow all interactions with the hardware device.
  */
-export type WithDevice = <T>(job: (transport: Transport) => Promise<T>) => Promise<T>;
+export type WithDevice = (
+  deviceId: string,
+  options?: { openTimeoutMs?: number },
+) => <T>(fn: (transport: Transport) => Observable<T>) => Observable<T>;
 
 /**
  * A Trustchain contains the identifier and the contextual data we need to manage members and encrypt/decrypt data.

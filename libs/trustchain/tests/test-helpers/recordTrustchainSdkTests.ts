@@ -1,6 +1,6 @@
 import fsPromises from "fs/promises";
 import { setupServer } from "msw/node";
-import { BehaviorSubject } from "rxjs";
+import { of } from "rxjs";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { createSpeculosDevice, releaseSpeculosDevice } from "@ledgerhq/speculos-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -9,7 +9,6 @@ import { crypto, TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-trustchain";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { RecorderConfig, ScenarioOptions, genSeed, recorderConfigDefaults } from "./types";
 import { getSdk } from "../../src";
-import { WithDevice } from "../../src/types";
 
 setEnv("GET_CALLS_RETRY", 0);
 
@@ -113,12 +112,15 @@ export async function recordTestTrustchainSdk(
   };
 
   let { device, sub } = await createDeviceWithSeed(seed);
-  const withDevice$ = new BehaviorSubject<WithDevice>(job => job(device.transport));
   const options: ScenarioOptions = {
     sdkForName: name =>
       getSdk(
         { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
-        { withDevice$, isMockEnv: !!getEnv("MOCK") },
+        {
+          withDevice: () => fn => fn(device.transport),
+          deviceId$: of("foo"),
+          isMockEnv: !!getEnv("MOCK"),
+        },
       ),
     pauseRecorder: async (milliseconds: number) => {
       await new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -129,7 +131,6 @@ export async function recordTestTrustchainSdk(
       const res = await createDeviceWithSeed(newSeed || genSeed());
       device = res.device;
       sub = res.sub;
-      withDevice$.next(job => job(device.transport));
     },
   };
 

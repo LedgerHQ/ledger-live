@@ -1,4 +1,4 @@
-import { firstValueFrom, Observable } from "rxjs";
+import { firstValueFrom, from, lastValueFrom, Observable } from "rxjs";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { ApduDevice } from "@ledgerhq/hw-trustchain/ApduDevice";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
@@ -8,13 +8,17 @@ import { genericWithJWT } from "./auth";
 import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks, WithDevice } from "./types";
 
 export class HWDeviceProvider {
-  private withDevice$: Observable<WithDevice>;
+  // NOTE withDevice should be imported statically but ATM making @ledgerhq/live-common a dependency of @ledgerhq/hw-trustchain creates a circular dependency
+  private withDevice: WithDevice;
+
+  private deviceId$: Observable<string>;
   private jwt?: JWT;
   private api: ReturnType<typeof getApi>;
 
-  constructor(apiBaseURL: string, withDevice$: Observable<WithDevice>) {
+  constructor(apiBaseURL: string, withDevice: WithDevice, deviceId$: Observable<string>) {
     this.api = getApi(apiBaseURL);
-    this.withDevice$ = withDevice$;
+    this.withDevice = withDevice;
+    this.deviceId$ = deviceId$;
   }
 
   public withJwt<T>(
@@ -39,9 +43,9 @@ export class HWDeviceProvider {
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<T> {
     callbacks?.onStartRequestUserInteraction();
-    const withDevice = await firstValueFrom(this.withDevice$);
+    const runWithDevice = this.withDevice(await firstValueFrom(this.deviceId$));
     try {
-      return await withDevice(transport => job(device.apdu(transport)));
+      return await lastValueFrom(runWithDevice(transport => from(job(device.apdu(transport)))));
     } catch (error) {
       if (
         error instanceof TransportStatusError &&

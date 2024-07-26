@@ -10,7 +10,7 @@ test("encryptUserData + decryptUserData", async () => {
       name: "test",
       apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
     },
-    { withDevice$: EMPTY, isMockEnv: false },
+    { withDevice: () => () => EMPTY, deviceId$: EMPTY, isMockEnv: false },
   );
   const obj = new Uint8Array([1, 2, 3, 4, 5]);
   const keypair = await crypto.randomKeypair();

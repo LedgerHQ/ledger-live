@@ -7,7 +7,6 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import Transport from "@ledgerhq/hw-transport";
 import { ScenarioOptions } from "./types";
 import { getSdk } from "../../src";
-import { WithDevice } from "../../src/types";
 
 setEnv("GET_CALLS_RETRY", 0);
 
@@ -81,12 +80,15 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
   try {
     // This replays, in order, all APDUs we have saved in json records
     const transport = await openTransportReplayer(recordStore);
-    const withDevice$ = of<WithDevice>(job => job(transport));
     const options: ScenarioOptions = {
       sdkForName: name =>
         getSdk(
           { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
-          { withDevice$, isMockEnv: !!getEnv("MOCK") },
+          {
+            withDevice: () => fn => fn(transport),
+            deviceId$: of("foo"),
+            isMockEnv: !!getEnv("MOCK"),
+          },
         ),
       pauseRecorder: () => Promise.resolve(), // replayer don't need to pause
       switchDeviceSeed: async () => {}, // nothing to actually do, we will continue replaying
