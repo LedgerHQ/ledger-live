@@ -152,10 +152,10 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("Market page loads with ETH staking available", async () => {
     const maskItemsInMarket = {
       mask: [
-        page.locator("data-test-id=market-small-graph"),
-        page.locator("data-test-id=market-coin-price"),
-        page.locator("data-test-id=market-cap"),
-        page.locator("data-test-id=market-price-change"),
+        page.getByTestId("market-small-graph"),
+        page.getByTestId("market-coin-price"),
+        page.getByTestId("market-cap"),
+        page.getByTestId("market-price-change"),
         page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
       ],
     };

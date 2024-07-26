@@ -4,7 +4,7 @@ import { Component } from "tests/page/abstractClasses";
 
 export class Modal extends Component {
   readonly container = this.page.locator(
-    '[data-test-id=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
+    '[data-testid=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
   );
   readonly title = this.page.getByTestId("modal-title");
   readonly content = this.page.getByTestId("modal-content");

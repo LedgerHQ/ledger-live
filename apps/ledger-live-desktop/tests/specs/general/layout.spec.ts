@@ -20,7 +20,7 @@ test("Layout @smoke", async ({ page }) => {
     await sendModal.container.waitFor({ state: "visible" });
     const sendButtonLoader = sendModal.container
       .locator("id=send-recipient-continue-button")
-      .locator("data-test-id=loading-spinner");
+      .getByTestId("loading-spinner");
     await sendButtonLoader.waitFor({ state: "detached" });
     await expect.soft(sendModal.container).toHaveScreenshot("send-modal.png");
     await sendModal.close();
@@ -43,7 +43,7 @@ test("Layout @smoke", async ({ page }) => {
     await expect(page).toHaveURL(/.*\/platform.*/);
     await page.waitForLoadState("domcontentloaded");
     await expect.soft(page).toHaveScreenshot("discover.png", {
-      mask: [page.locator("data-test-id=live-icon-container")],
+      mask: [page.getByTestId("live-icon-container")],
     });
   });
 

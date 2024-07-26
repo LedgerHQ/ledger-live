@@ -54,7 +54,7 @@ const SummaryValue = ({
       {children}
       {value && <Text title={String(value ?? "")}>{value}</Text>}
       {handleChange ? (
-        <Button onClick={handleChange} data-test-id="change-exchange-details-button">
+        <Button onClick={handleChange} data-testid="change-exchange-details-button">
           {t("swap2.form.changeCTA")}
         </Button>
       ) : null}

@@ -8,15 +8,15 @@ export class SettingsPage extends AppPage {
   private developerTab = this.page.getByTestId("settings-developer-tab");
   private experimentalDevModeToggle = this.page.getByTestId("MANAGER_DEV_MODE-button");
   readonly counterValueSelector = this.page.locator(
-    "[data-test-id='setting-countervalue-dropDown'] .select__value-container",
+    "[data-testid='setting-countervalue-dropDown'] .select__value-container",
   );
   private counterValueSearchBar = this.page.locator('[placeholder="Search"]');
   private counterValueropdownChoiceEuro = this.page.locator(".select__option");
   readonly languageSelector = this.page.locator(
-    "[data-test-id='setting-language-dropDown'] .select__value-container",
+    "[data-testid='setting-language-dropDown'] .select__value-container",
   );
   readonly themeSelector = this.page.locator(
-    "[data-test-id='setting-theme-dropDown'] .select__value-container",
+    "[data-testid='setting-theme-dropDown'] .select__value-container",
   );
   private themeChoiceLight = this.page.locator("text='Clair'");
   private versionRow = this.page.getByTestId("version-row");
