@@ -1,5 +1,13 @@
 ## 34.5.0-next.4
 
+## 34.6.1-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811), [`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef)]:
+  - @ledgerhq/crypto-icons-ui@1.3.1-nightly.0
+  - @ledgerhq/live-nft@0.4.3-nightly.3
+
 ## 34.6.1-nightly.3
 
 ### Patch Changes

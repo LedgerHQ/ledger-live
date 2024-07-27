@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 1.3.1-nightly.0
+
+### Patch Changes
+
+- [#7442](https://github.com/LedgerHQ/ledger-live/pull/7442) [`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change the size of polkadot icon that was bigger than others
+
 ## 1.3.0
 
 ### Minor Changes

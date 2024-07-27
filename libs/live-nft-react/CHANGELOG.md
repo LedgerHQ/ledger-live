@@ -1,5 +1,14 @@
 # @ledgerhq/live-nft-react
 
+## 0.4.3-nightly.3
+
+### Patch Changes
+
+- [#7408](https://github.com/LedgerHQ/ledger-live/pull/7408) [`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Spam Score checker
+
+- Updated dependencies [[`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef)]:
+  - @ledgerhq/live-nft@0.4.3-nightly.3
+
 ## 0.4.3-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.48.0-nightly.5
+
+### Patch Changes
+
+- [#7423](https://github.com/LedgerHQ/ledger-live/pull/7423) [`a8d6cb7`](https://github.com/LedgerHQ/ledger-live/commit/a8d6cb72df5f088a0140f469cb2f85370cde3075) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix storyly issue on android that was displaying a blackscreen after switching app
+
+- Updated dependencies [[`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef)]:
+  - @ledgerhq/live-nft-react@0.4.3-nightly.3
+  - @ledgerhq/live-nft@0.4.3-nightly.3
+  - @ledgerhq/live-common@34.6.1-nightly.4
+  - @ledgerhq/native-ui@0.23.2-nightly.0
+
 ## 3.48.0-nightly.4
 
 ### Minor Changes

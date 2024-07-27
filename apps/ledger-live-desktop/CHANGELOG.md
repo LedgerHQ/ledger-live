@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.5
+
+### Patch Changes
+
+- [#7439](https://github.com/LedgerHQ/ledger-live/pull/7439) [`0ddefd3`](https://github.com/LedgerHQ/ledger-live/commit/0ddefd30ac80c01280a5aec2dd1642a3bb0b4e6b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - On receive flow default account name was displayed instead of the account name selected by the user
+
+- [#7408](https://github.com/LedgerHQ/ledger-live/pull/7408) [`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Spam Score checker
+
+- Updated dependencies [[`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef)]:
+  - @ledgerhq/live-nft-react@0.4.3-nightly.3
+  - @ledgerhq/live-nft@0.4.3-nightly.3
+  - @ledgerhq/live-common@34.6.1-nightly.4
+  - @ledgerhq/react-ui@0.15.3-nightly.0
+
 ## 2.85.0-nightly.4
 
 ### Patch Changes
