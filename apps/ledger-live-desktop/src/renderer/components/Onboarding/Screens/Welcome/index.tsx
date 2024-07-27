@@ -176,7 +176,7 @@ export function Welcome() {
             </Button>
           )}
           <Button
-            data-test-id="v3-onboarding-get-started-button"
+            data-testid="v3-onboarding-get-started-button"
             iconPosition="right"
             Icon={IconsLegacy.ArrowRightMedium}
             variant="main"

@@ -34,7 +34,6 @@ const config: PlaywrightTestConfig = {
   use: {
     ignoreHTTPSErrors: true,
     screenshot: process.env.CI ? "only-on-failure" : "off",
-    testIdAttribute: "data-test-id",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",

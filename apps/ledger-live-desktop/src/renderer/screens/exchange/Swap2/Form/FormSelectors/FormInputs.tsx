@@ -58,7 +58,7 @@ function SwapButton({ onClick, disabled }: SwapButtonProps): JSX.Element {
       lighterPrimary
       disabled={disabled}
       onClick={onClick}
-      data-test-id="swap-reverse-pair-button"
+      data-testid="swap-reverse-pair-button"
     >
       <ArrowsUpDown size={14} />
     </RoundButton>

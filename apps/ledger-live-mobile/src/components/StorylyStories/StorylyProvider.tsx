@@ -55,7 +55,7 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   };
 
   const clear = () => {
-    storylyRef?.current?.close();
+    storylyRef?.current?.closeStory();
     setUrl(null);
     setToken(null);
   };

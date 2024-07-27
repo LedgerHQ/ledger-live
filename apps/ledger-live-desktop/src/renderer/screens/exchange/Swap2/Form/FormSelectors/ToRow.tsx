@@ -92,7 +92,7 @@ function ToRow({
         </FormLabel>
       </Box>
       <Box horizontal>
-        <Box flex="1" data-test-id="destination-currency-dropdown">
+        <Box flex="1" data-testid="destination-currency-dropdown">
           <SelectCurrency
             currencies={currencies}
             onChange={setCurrencyAndTrack}

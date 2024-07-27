@@ -929,6 +929,11 @@
     },
     "TezosUnrevealedAccount": {
       "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
+    },
+    "CustomError": {
+      "title": "Sorry, try again.",
+      "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
+      "errorCode": "Code: {{errorCode}}"
     }
   },
   "crash": {
@@ -6388,7 +6393,7 @@
   },
   "customImage": {
     "title": "Lock screen picture",
-    "replace": "Replace",
+    "change": "Change",
     "drawer": {
       "options": {
         "uploadFromPhone": "Choose from my picture gallery",
@@ -6691,6 +6696,7 @@
     }
   },
   "walletSync": {
+    "title": "Ledger Sync",
     "activation": {
       "screen": {
         "title": "Sync your accounts across all platforms",
@@ -6714,6 +6720,21 @@
       "activationDesc": "You successfully enabled Ledger Sync.",
       "syncAnother": "Sync with another Ledger Live app",
       "close": "Close"
+    },
+    "walletSyncActivated": {
+      "synchronize": {
+        "title": "Synchronize",
+        "description": "Synchronize your app data with another Ledger Live app for a seamless experience. "
+      },
+      "manageKey": {
+        "title": "Manage Key",
+        "description": "Secure or delete your encryption key via another Ledger. "
+      },
+      "synchronizedInstances": {
+        "cta": "Manage now",
+        "title": "{{count}} Synchronized Instance",
+        "title_plural": "{{count}} Synchronized Instances"
+      }
     }
   },
   "web3hub": {

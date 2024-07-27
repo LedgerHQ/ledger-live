@@ -41,7 +41,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
           ff="Inter|SemiBold"
           color="palette.text.shade100"
           fontSize={5}
-          data-test-id="portfolio-empty-state-title"
+          data-testid="portfolio-empty-state-title"
         >
           {t("emptyState.accounts.title")}
         </Text>
@@ -71,7 +71,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
           <Button
             primary
             onClick={openAddAccounts}
-            data-test-id="portfolio-empty-state-add-account-button"
+            data-testid="portfolio-empty-state-add-account-button"
           >
             {t("emptyState.accounts.buttons.addAccount")}
           </Button>

@@ -60,7 +60,7 @@ const ProviderItem = ({ provider, stakeOnClick, redirectIfOnlyProvider }: Props)
       pl={3}
       onClick={stakeLink}
       py={4}
-      data-test-id={`stake-provider-container-${provider.id}`}
+      data-testid={`stake-provider-container-${provider.id}`}
     >
       <StakingIcon icon={provider.icon} />
       <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">

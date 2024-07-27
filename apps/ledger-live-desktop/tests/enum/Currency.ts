@@ -38,28 +38,28 @@ export class Currency {
     "Ethereum",
     "ETH",
     "Ethereum",
-    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
   static readonly tETH = new Currency(
     "Ethereum Holesky",
     "𝚝ETH",
     "Ethereum Holesky",
-    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
   static readonly sepETH = new Currency(
     "Ethereum Sepolia",
     "𝚝ETH",
     "Ethereum Sepolia",
-    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
   static readonly ETC = new Currency(
     "Ethereum Classic",
     "ETC",
     "Ethereum Classic",
-    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
   static readonly SOL = new Currency(
@@ -136,7 +136,7 @@ export class Currency {
     "XTZ",
     "Tezos",
     [DeviceLabels.AMOUT, DeviceLabels.DESTINATION, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
-    [DeviceLabels.PUBLICKEY, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
   static readonly MATIC = new Currency(
     "Polygon",

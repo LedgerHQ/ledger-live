@@ -72,7 +72,7 @@ export function UseCaseOption({
   dataTestId,
 }: UseCaseOptionProps) {
   return (
-    <UseCaseOptionContainer data-test-id={dataTestId} id={id} onClick={onClick}>
+    <UseCaseOptionContainer data-testid={dataTestId} id={id} onClick={onClick}>
       <Container>
         <IllustrationContainer>{illustration}</IllustrationContainer>
         <TitleText variant="h3">{title}</TitleText>

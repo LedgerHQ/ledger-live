@@ -12,6 +12,7 @@ import { Dispatch, SetStateAction } from "react";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
 import type { BleState, MarketState, ProtectState, SettingsState } from "./reducers/types";
+import { TrustchainStore } from "@ledgerhq/trustchain/store";
 
 export type Notifications = {
   announcements: Announcement[];
@@ -272,6 +273,14 @@ export function getMarketState(): Promise<MarketState> {
 
 export async function saveMarketState(obj: MarketState): Promise<void> {
   await store.save("market", obj);
+}
+
+export function getTrustchainState(): Promise<TrustchainStore> {
+  return store.get("trustchain") as Promise<TrustchainStore>;
+}
+
+export async function saveTrustchainState(obj: TrustchainStore): Promise<void> {
+  await store.save("trustchain", obj);
 }
 
 export async function getProtect(): Promise<ProtectState> {

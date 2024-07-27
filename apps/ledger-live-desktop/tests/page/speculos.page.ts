@@ -25,9 +25,9 @@ export class SpeculosPage extends AppPage {
 
   @step("Verify transaction info on device")
   async expectValidTxInfo(tx: Transaction) {
-    const amountScreen = await pressRightUntil(DeviceLabels.AMOUT);
+    const amountScreen = await pressRightUntil(tx.accountToDebit.currency.sendPattern[0]);
     expect(verifyAmount(tx.amount, amountScreen)).toBe(true);
-    const addressScreen = await pressRightUntil(DeviceLabels.ADDRESS);
+    const addressScreen = await pressRightUntil(tx.accountToDebit.currency.sendPattern[1]);
     expect(assertAddressesEquality(tx.recipient, addressScreen)).toBe(true);
     await pressRightUntil(tx.accountToDebit.currency.sendPattern[2]);
     await pressBoth();

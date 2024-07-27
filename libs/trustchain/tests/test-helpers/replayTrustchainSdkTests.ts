@@ -25,6 +25,7 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
       expect(id + request.method + " " + request.url.toString()).toEqual(
         id + expected.request.method + " " + expected.request.url,
       );
+
       expect({
         url: request.url.toString(),
         method: request.method,

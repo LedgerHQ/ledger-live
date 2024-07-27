@@ -86,11 +86,12 @@ const SwapCompleted = ({
       flow: "swap",
       button: "FeedbackForm",
     });
+    openURL("https://ledger.typeform.com/to/FIHc3fk2");
   };
 
   const SwapPill = ({ swapId }: { swapId: string }) => (
     <SwapIdWrapper>
-      <Pill color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4} data-test-id="swap-id">
+      <Pill color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4} data-testid="swap-id">
         #{swapId}
       </Pill>
       <GradientHover>
@@ -121,10 +122,9 @@ const SwapCompleted = ({
       <SwapPill swapId={swapId} />
       <Link
         mt={4}
-        href="https://ledger.typeform.com/to/FIHc3fk2"
         target="_blank"
         rel="noopener noreferrer"
-        data-test-id="share-your-feedback-link"
+        data-testid="share-your-feedback-link"
         size="medium"
         type="shade"
         color="palette.text.shade100"

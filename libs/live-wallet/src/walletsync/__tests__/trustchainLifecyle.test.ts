@@ -72,13 +72,13 @@ describe("trustchainLifecycle", () => {
       applicationPath: "new-application-path",
     };
 
-    mockTrustchainSdk.withAuth = (_t, _m, job) => job({ accessToken: "old-jwt" });
+    mockTrustchainSdk.withAuth = (_t, _m, job) => job({ accessToken: "old-jwt", permissions: {} });
     const afterRotation = await lifecycle.onTrustchainRotation(
       mockTrustchainSdk,
       oldTrustchain,
       creds,
     );
-    mockTrustchainSdk.withAuth = (_t, _m, job) => job({ accessToken: "new-jwt" });
+    mockTrustchainSdk.withAuth = (_t, _m, job) => job({ accessToken: "new-jwt", permissions: {} });
     await afterRotation(newTrustchain);
 
     expect(removedCount).toBe(1);

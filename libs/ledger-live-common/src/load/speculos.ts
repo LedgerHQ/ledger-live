@@ -123,6 +123,20 @@ export function appCandidatesMatches(appCandidate: AppCandidate, search: AppSear
       (search.appVersion && semver.satisfies(appCandidate.appVersion, search.appVersion)))
   );
 }
+
+export const findLatestAppCandidate = (
+  appCandidates: AppCandidate[],
+  search: AppSearch,
+): AppCandidate | null => {
+  let apps = appCandidates.filter(c => appCandidatesMatches(c, search));
+  if (apps.length === 0) {
+    return null;
+  }
+
+  apps = apps.sort((a, b) => semver.rcompare(a.appVersion, b.appVersion));
+  return apps[0];
+};
+
 export const findAppCandidate = (
   appCandidates: AppCandidate[],
   search: AppSearch,

@@ -215,7 +215,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
       <FullNodeStatus currency={currency} />
       {currency && currency.type === "TokenCurrency" ? (
-        <Alert type="primary" learnMoreUrl={url} mt={4} data-test-id="add-token-infoBox">
+        <Alert type="primary" learnMoreUrl={url} mt={4} data-testid="add-token-infoBox">
           <Trans
             i18nKey="addAccounts.tokensTip"
             values={{
@@ -300,7 +300,7 @@ export const StepChooseCurrencyFooter = ({
       {isToken ? (
         <Box horizontal>
           {parentCurrency ? (
-            <Button ml={2} primary onClick={onTokenCta} data-test-id="modal-continue-button">
+            <Button ml={2} primary onClick={onTokenCta} data-testid="modal-continue-button">
               {parentTokenAccount
                 ? t("addAccounts.cta.receive")
                 : t("addAccounts.cta.addAccountName", {
@@ -314,7 +314,7 @@ export const StepChooseCurrencyFooter = ({
           primary
           disabled={!currency || fullNodeNotReady || !navigator.onLine}
           onClick={() => transitionTo("connectDevice")}
-          data-test-id="modal-continue-button"
+          data-testid="modal-continue-button"
         >
           {t("common.continue")}
         </Button>

@@ -108,7 +108,7 @@ const TopBanner = ({
   const { Icon, message, right } = content;
 
   return (
-    <Container status={status} id={id} data-test-id={testId}>
+    <Container status={status} id={id} data-testid={testId}>
       {Icon && (
         <IconContainer>
           <Icon size={18} />

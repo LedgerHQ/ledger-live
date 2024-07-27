@@ -20,7 +20,7 @@ const Footer = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency
         <Trans i18nKey="common.cancel" />
       </Button>
       <Button
-        data-test-id="modal-confirm-button"
+        data-testid="modal-confirm-button"
         onClick={() => {
           confirmBlacklistToken(token.id);
           onClose && onClose();

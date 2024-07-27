@@ -22,7 +22,7 @@ export function trustchainLifecycle({
       );
       return async newTrustchain => {
         // when trustchain rotates, we need to delete old data to inform members still on the old id
-        await api.deleteData(oldJwt, liveSlug);
+        await api.deleteData(oldJwt, liveSlug, oldTrustchain.applicationPath);
         const newJwt = await trustchainSdk.withAuth(
           newTrustchain,
           memberCredentials,
@@ -34,7 +34,7 @@ export function trustchainLifecycle({
         if (!data) return;
         const cipher = makeCipher(trustchainSdk);
         const payload = await cipher.encrypt(newTrustchain, data);
-        await api.uploadData(newJwt, liveSlug, version, payload);
+        await api.uploadData(newJwt, liveSlug, version, payload, newTrustchain.applicationPath);
       };
     },
   };

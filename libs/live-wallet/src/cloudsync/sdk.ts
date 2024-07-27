@@ -82,7 +82,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     const base64 = await this.cipher.encrypt(trustchain, validated);
     const version = (this.getCurrentVersion() || 0) + 1;
     const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
-      api.uploadData(jwt, this.slug, version, base64),
+      api.uploadData(jwt, this.slug, version, base64, trustchain.applicationPath),
     );
     switch (response.status) {
       case "updated": {
@@ -102,7 +102,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
    */
   async pull(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void> {
     const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
-      api.fetchData(jwt, this.slug, this.getCurrentVersion()),
+      api.fetchData(jwt, this.slug, this.getCurrentVersion(), trustchain.applicationPath),
     );
     switch (response.status) {
       case "no-data": {
@@ -131,7 +131,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
 
   async destroy(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void> {
     await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
-      api.deleteData(jwt, this.slug),
+      api.deleteData(jwt, this.slug, trustchain.applicationPath),
     );
     await this.saveNewUpdate({ type: "deleted-data" });
   }

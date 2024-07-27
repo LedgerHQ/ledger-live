@@ -4,6 +4,11 @@ import { JWT } from "./types";
 
 export type APIJWT = {
   access_token: string;
+  permissions: {
+    [trustchainId: string]: {
+      [path: string]: string[];
+    };
+  };
 };
 
 export type Challenge = {
@@ -59,6 +64,7 @@ async function postChallengeResponse(request: {
   });
   return {
     accessToken: data.access_token,
+    permissions: data.permissions,
   };
 }
 
@@ -72,6 +78,7 @@ async function refreshAuth(jwt: JWT): Promise<JWT> {
   });
   return {
     accessToken: data.access_token,
+    permissions: data.permissions,
   };
 }
 
