@@ -26,6 +26,7 @@ export type HookResult = {
   displayInfo: boolean;
   chainId: string;
   spamReportMutation: SpamReportNftResult;
+  closeInfo: () => void;
 };
 
 export function useHook(): HookResult {
@@ -39,6 +40,7 @@ export function useHook(): HookResult {
 
   const [report, setReport] = useState<EventType>(EventType.mark_as_not_spam);
 
+  const closeInfo = () => setDisplayInfo(false);
   const handleCollectionIdChange = (value: string) => setCollectionId(value);
   const handleContractAddressChange = (value: string) => setContractAddress(value);
   const handleChainIdChange = (option: SelectOption) => setChainId(option.value);
@@ -58,9 +60,6 @@ export function useHook(): HookResult {
 
     spamReportMutation.mutateAsync(data).finally(() => {
       setDisplayInfo(true);
-      setTimeout(() => {
-        setDisplayInfo(false);
-      }, 5000);
     });
   };
 
@@ -80,6 +79,7 @@ export function useHook(): HookResult {
     displayInfo,
     chainId,
     spamReportMutation,
+    closeInfo,
   };
 }
 
@@ -108,7 +108,7 @@ export default function SpamReport(props: HookResult) {
         text={
           spamReportMutation.isError
             ? spamReportMutation.error?.message
-            : t("settings.developer.debugSpamNft.success")
+            : t("settings.developer.debugSimpleHash.debugSpamNft.success")
         }
         variant={spamReportMutation.isSuccess ? "success" : "error"}
       />
@@ -119,19 +119,25 @@ export default function SpamReport(props: HookResult) {
     <Flex flexDirection="column" justifyContent="space-between">
       <SelectRow
         title={""}
-        desc={t("settings.developer.debugSpamNft.reportType.desc")}
+        desc={t("settings.developer.debugSimpleHash.debugSpamNft.reportType.desc")}
         value={{ label: reportType, value: reportType }}
         options={[
           {
-            label: t(`settings.developer.debugSpamNft.reportType.${ReportOption.individual}`),
+            label: t(
+              `settings.developer.debugSimpleHash.debugSpamNft.reportType.${ReportOption.individual}`,
+            ),
             value: ReportOption.individual,
           },
           {
-            label: t(`settings.developer.debugSpamNft.reportType.${ReportOption.contract}`),
+            label: t(
+              `settings.developer.debugSimpleHash.debugSpamNft.reportType.${ReportOption.contract}`,
+            ),
             value: ReportOption.contract,
           },
           {
-            label: t(`settings.developer.debugSpamNft.reportType.${ReportOption.collection}`),
+            label: t(
+              `settings.developer.debugSimpleHash.debugSpamNft.reportType.${ReportOption.collection}`,
+            ),
             value: ReportOption.collection,
           },
         ]}
@@ -141,8 +147,8 @@ export default function SpamReport(props: HookResult) {
       <DisabledContainer disabled={reportType !== ReportOption.collection}>
         <InputRow
           disabled={reportType !== ReportOption.collection}
-          title={t("settings.developer.debugSpamNft.collectionId")}
-          desc={t("settings.developer.debugSpamNft.collectionIdDesc")}
+          title={t("settings.developer.debugSimpleHash.debugSpamNft.collectionId")}
+          desc={t("settings.developer.debugSimpleHash.debugSpamNft.collectionIdDesc")}
           value={collectionId}
           onChange={handleCollectionIdChange}
         />
@@ -151,15 +157,15 @@ export default function SpamReport(props: HookResult) {
       <DisabledContainer disabled={reportType === ReportOption.collection}>
         <InputRow
           disabled={reportType === ReportOption.collection}
-          title={t("settings.developer.debugSpamNft.contractAddress")}
-          desc={t("settings.developer.debugSpamNft.contractAddressDesc")}
+          title={t("settings.developer.debugSimpleHash.debugSpamNft.contractAddress")}
+          desc={t("settings.developer.debugSimpleHash.debugSpamNft.contractAddressDesc")}
           value={contractAddress}
           onChange={handleContractAddressChange}
         />
 
         <SelectRow
-          title={t("settings.developer.debugSpamNft.chainId")}
-          desc={t("settings.developer.debugSpamNft.chainIdDesc")}
+          title={t("settings.developer.debugSimpleHash.debugSpamNft.chainId")}
+          desc={t("settings.developer.debugSimpleHash.debugSpamNft.chainIdDesc")}
           value={{ label: chainId, value: chainId }}
           options={[
             { label: "Ethereum", value: "ethereum" },
@@ -172,16 +178,16 @@ export default function SpamReport(props: HookResult) {
       <DisabledContainer disabled={reportType !== ReportOption.individual}>
         <InputRow
           disabled={reportType !== ReportOption.individual}
-          title={t("settings.developer.debugSpamNft.tokenId")}
-          desc={t("settings.developer.debugSpamNft.tokenIdDesc")}
+          title={t("settings.developer.debugSimpleHash.debugSpamNft.tokenId")}
+          desc={t("settings.developer.debugSimpleHash.debugSpamNft.tokenIdDesc")}
           value={tokenId}
           onChange={handleTokenIdChange}
         />
       </DisabledContainer>
 
       <SelectRow
-        title={t("settings.developer.debugSpamNft.eventType")}
-        desc={t("settings.developer.debugSpamNft.eventTypeDesc")}
+        title={t("settings.developer.debugSimpleHash.debugSpamNft.eventType")}
+        desc={t("settings.developer.debugSimpleHash.debugSpamNft.eventTypeDesc")}
         value={{ label: report, value: report }}
         onChange={handleReportChange}
         options={[

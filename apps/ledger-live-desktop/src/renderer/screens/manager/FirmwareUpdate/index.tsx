@@ -195,7 +195,7 @@ const FirmwareUpdate = (props: Props) => {
             </Box>
           )}
           <FakeLink
-            data-test-id="manager-update-firmware-button"
+            data-testid="manager-update-firmware-button"
             disabled={!!disableFirmwareUpdate}
             onClick={() => {
               track("Manager Firmware Update Click", {

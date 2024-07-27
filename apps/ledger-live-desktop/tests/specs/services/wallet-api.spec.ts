@@ -514,15 +514,15 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     // Click on notification toaster
     // NOTE: toaster not visible in output, need to find a better way to handle css animations
-    // await page.waitForSelector('[data-test-id="toaster"][style="opacity: 1;"]');
-    const toaster = page.locator("data-test-id=toaster");
+    // await page.waitForSelector('[data-testid="toaster"][style="opacity: 1;"]');
+    const toaster = page.getByTestId("toaster");
     await toaster.scrollIntoViewIfNeeded();
     await expect(toaster).toBeVisible();
     await expect(toaster.getByText("Transaction sent !")).toBeVisible();
 
     // Display transaction drawer
     await toaster.click();
-    const drawer = page.locator("data-test-id=drawer-content");
+    const drawer = page.getByTestId("drawer-content");
     await expect(drawer).toBeVisible();
     await expect(drawer.getByText("View in explorer")).toBeVisible();
     await expect(drawer.getByText("Confirmed")).toBeVisible();

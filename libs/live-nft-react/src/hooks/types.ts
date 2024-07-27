@@ -47,3 +47,6 @@ export type RefreshMetadataResult = UseMutationResult<
   RefreshOpts,
   unknown
 >;
+
+// Check Spam Score Contract or NFT
+export type CheckSpamScoreResult = UseQueryResult<SimpleHashResponse, Error>;

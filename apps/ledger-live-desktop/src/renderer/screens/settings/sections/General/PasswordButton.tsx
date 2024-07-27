@@ -35,7 +35,7 @@ const PasswordButton = () => {
           <Button
             small
             onClick={handleOpenPasswordModal}
-            data-test-id="settings-password-change-button"
+            data-testid="settings-password-change-button"
           >
             {t("settings.profile.changePassword")}
           </Button>
@@ -43,7 +43,7 @@ const PasswordButton = () => {
         <Switch
           isChecked={hasPassword}
           onChange={handleChangePasswordCheck}
-          data-test-id="settings-password-lock-switch"
+          data-testid="settings-password-lock-switch"
         />
       </Box>
     </>

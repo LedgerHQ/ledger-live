@@ -216,7 +216,7 @@ const Carousel = ({
 
   return (
     <CarouselWrapper
-      data-test-id="carousel"
+      data-testid="carousel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -234,7 +234,7 @@ const Carousel = ({
           );
         })}
       </Slides>
-      <Close data-test-id="carousel-close-button" onClick={onDismiss}>
+      <Close data-testid="carousel-close-button" onClick={onDismiss}>
         <IconCross size={16} />
       </Close>
       {showControls ? (

@@ -148,14 +148,14 @@ function MarkeCoinChartComponent({
       <Flex mb={2} flexDirection="row" justifyContent="space-between" alignItems="flex-end">
         <Flex flexDirection="column">
           <SubTitle>{t("market.marketList.price")}</SubTitle>
-          <Title data-test-id={"market-price"}>
+          <Title data-testid={"market-price"}>
             {counterValueFormatter({
               currency: counterCurrency,
               value: formatPrice(price ?? 0),
               locale,
             })}
           </Title>
-          <Flex data-test-id={"market-price-delta"}>
+          <Flex data-testid={"market-price-delta"}>
             {priceChangePercentage && (
               <FormattedVal
                 isPercent
@@ -170,14 +170,14 @@ function MarkeCoinChartComponent({
         <Flex flexDirection="column" justifyContent="space-between">
           <Flex mb={3}>
             <CountervalueSelect
-              data-test-id="market-coin-counter-value-select"
+              data-testid="market-coin-counter-value-select"
               counterCurrency={counterCurrency}
               setCounterCurrency={setCounterCurrency}
               supportedCounterCurrencies={supportedCounterCurrencies}
             />
           </Flex>
           <Bar
-            data-test-id="market-coin-range-select"
+            data-testid="market-coin-range-select"
             onTabChange={setRange}
             initialActiveIndex={activeRangeIndex}
           >

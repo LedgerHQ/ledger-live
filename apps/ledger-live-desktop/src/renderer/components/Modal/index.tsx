@@ -254,7 +254,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
         {state => {
           return (
             <Container
-              data-test-id="modal-backdrop"
+              data-testid="modal-backdrop"
               state={state}
               centered={centered}
               isOpened={isOpened}
@@ -273,7 +273,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
                   this.onIndirectMouseDown();
                   e.stopPropagation();
                 }}
-                data-test-id="modal-container"
+                data-testid="modal-container"
                 style={bodyStyle}
               >
                 {render && render(renderProps)}

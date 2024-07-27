@@ -82,7 +82,7 @@ export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
         </PinHelpContainer>
       </ScrollArea>
       <Button
-        data-test-id="v3-seed-drawer"
+        data-testid="v3-seed-drawer"
         left="-258px"
         width="248px"
         mt="auto"

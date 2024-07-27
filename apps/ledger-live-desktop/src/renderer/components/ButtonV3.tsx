@@ -49,7 +49,7 @@ function Button({
       {...rest}
       disabled={disabled}
       onClick={isClickDisabled ? undefined : onClickHandler}
-      data-test-id={buttonTestId}
+      data-testid={buttonTestId}
       ref={null}
     >
       {children}

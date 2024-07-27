@@ -22,6 +22,7 @@ export interface SimpleHashNft {
   readonly token_count: number;
   readonly collection: {
     readonly name: string;
+    readonly spam_score: number;
   };
   readonly contract: {
     readonly type: string;

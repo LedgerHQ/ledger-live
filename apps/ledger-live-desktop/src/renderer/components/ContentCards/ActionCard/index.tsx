@@ -45,7 +45,7 @@ const ActionCard = ({ img, leftContent, title, description, actions, onView }: P
         <Link
           size="small"
           onClick={() => actions.dismiss.action()}
-          data-test-id={actions.dismiss.dataTestId}
+          data-testid={actions.dismiss.dataTestId}
         >
           {actions.dismiss.label}
         </Link>
