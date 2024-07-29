@@ -465,6 +465,7 @@ const SwapForm = () => {
   const [quoteState, setQuoteState] = useSwapLiveAppQuoteState({
     amountTo: exchangeRate?.toAmount,
     swapError,
+    counterValue: undefined,
   });
 
   return (
@@ -482,6 +483,7 @@ const SwapForm = () => {
         isMaxEnabled={swapTransaction.swap.isMaxEnabled}
         toggleMax={toggleMax}
         fromAmountError={!isDemo1Enabled ? swapError : quoteState.swapError}
+        counterValue={!isDemo1Enabled ? quoteState.counterValue : undefined}
         fromAmountWarning={swapWarning}
         isSwapReversable={swapTransaction.swap.isSwapReversable}
         reverseSwap={reverseSwap}
