@@ -14,9 +14,6 @@ export class SendModal extends Modal {
   private checkTransactionbroadcastLabel = this.page.locator("text=Transaction sent");
   private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
   private amountDisplayedValue = this.page.getByTestId("transaction-amount");
-  private ASAErrorMessage = this.page.getByText(
-    "Recipient account has not opted in the selected ASA.",
-  );
   private invalidAddressErrorMessage = (network: string) =>
     this.page.getByText(`This is not a valid ${network} address`);
 
@@ -62,12 +59,6 @@ export class SendModal extends Modal {
   @step("Verify tx sent text")
   async expectTxSent() {
     await expect(this.checkTransactionbroadcastLabel).toBeVisible();
-  }
-
-  @step("Check continue button disable and ASA error message visible")
-  async checkASAError() {
-    await this.checkContinueButtonDisabled();
-    await expect(this.ASAErrorMessage).toBeVisible();
   }
 
   @step("Check invalid address error message")

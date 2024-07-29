@@ -1,63 +1,34 @@
 import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
-import { Token } from "../../enum/Token";
 import { Fee } from "../../enum/Fee";
-import { BasicTransaction, TokenTransaction } from "../../models/Transaction";
+import { Transaction } from "../../models/Transaction";
 import { specs } from "../../utils/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
-const transaction = new BasicTransaction(
-  Account.sep_ETH_1,
-  Account.sep_ETH_2,
-  "0.00001",
-  Fee.MEDIUM,
-);
-
-const transactionETH_BTC = new BasicTransaction(
-  Account.ETH_1,
-  Account.BTC_1,
-  "0.00001",
-  Fee.MEDIUM,
-);
-
-const transactionsToken = new TokenTransaction(
-  Account.ALGO_1,
-  Account.ALGO_2,
-  Account.ALGO_3,
-  "0.1",
-  Fee.MEDIUM,
-  Token.ALGO_USDT,
-);
-
-const transactionInputValid = [
-  new BasicTransaction(Account.ETH_1, Account.ETH_2, "send max", Fee.MEDIUM),
-  new BasicTransaction(Account.ETH_1, Account.ETH_2, "0.00001", Fee.MEDIUM),
-];
-
 const transactionsInputsInvalid = [
   {
-    transaction: new BasicTransaction(Account.ETH_1, Account.ETH_2, "", Fee.MEDIUM),
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "", Fee.MEDIUM),
     expectedErrorMessage: null,
   },
   {
-    transaction: new BasicTransaction(Account.ETH_1, Account.ETH_2, "0", Fee.MEDIUM),
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0", Fee.MEDIUM),
     expectedErrorMessage: null,
   },
   {
-    transaction: new BasicTransaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", Fee.MEDIUM),
     expectedErrorMessage: "Recipient address is inactive. Send at least 10 XRP to activate it",
   },
   {
-    transaction: new BasicTransaction(Account.DOT_1, Account.DOT_2, "1.2", Fee.MEDIUM),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2", Fee.MEDIUM),
     expectedErrorMessage: "Balance cannot be below 1 DOT. Send max to empty account.",
   },
   {
-    transaction: new BasicTransaction(Account.DOT_1, Account.DOT_3, "0.5", Fee.MEDIUM),
+    transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5", Fee.MEDIUM),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 DOT to activate it",
   },
   {
-    transaction: new BasicTransaction(Account.ETH_1, Account.ETH_2, "100", Fee.MEDIUM),
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "100", Fee.MEDIUM),
     expectedErrorMessage: "Sorry, insufficient funds",
   },
 ];
@@ -65,9 +36,11 @@ const transactionsInputsInvalid = [
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 
 test.describe("Send from 1 account to another", () => {
+  const transaction = new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.MEDIUM);
+
   test.use({
     userdata: "speculos-tests-app",
-    testName: `sendApprove_${transaction.accountToDebit.currency.uiName}`,
+    testName: `sendApprove_${transaction.accountToDebit.currency.name}`,
     speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
     speculosOffset: 0,
   });
@@ -107,17 +80,24 @@ test.describe("Send from 1 account to another", () => {
   );
 });
 
-test.describe("Send token (subAccount) from 1 account to another", () => {
+test.describe("Send token (subAccount) - invalid input", () => {
+  const tokenTransactionInvalid = {
+    transaction: new Transaction(Account.ALGO_USDT_1, Account.ALGO_USDT_2, "0.1", Fee.MEDIUM),
+    expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
+  };
+
   test.use({
     userdata: "speculos-subAccount",
-    testName: `sendToken_${transactionsToken.accountToDebit.currency.uiName}`,
+    testName: `sendToken_invalid_input_${tokenTransactionInvalid.transaction.accountToDebit.currency.name}`,
     speculosCurrency:
-      specs[transactionsToken.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
+      specs[
+        tokenTransactionInvalid.transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")
+      ],
     speculosOffset: 0,
   });
 
   test(
-    `Send [${transactionsToken.accountToCredit1.accountName}] (${transactionsToken.token.tokenTicker}) to [${transactionsToken.accountToCredit2.accountName}]`,
+    `Send [${tokenTransactionInvalid.transaction.accountToCredit.accountName}] to [${tokenTransactionInvalid.transaction.accountToCredit.accountName}] - invalid input`,
     {
       annotation: {
         type: "TMS",
@@ -126,29 +106,74 @@ test.describe("Send token (subAccount) from 1 account to another", () => {
     },
     async ({ app }) => {
       await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(transactionsToken.accountToDebit.accountName);
-      await app.account.navigateToTokenInAccount(transactionsToken.token);
+      await app.accounts.navigateToAccountByName(
+        tokenTransactionInvalid.transaction.accountToDebit.accountName,
+      );
+      await app.account.navigateToTokenInAccount(
+        tokenTransactionInvalid.transaction.accountToDebit,
+      );
       await app.account.clickSend();
-      await app.send.fillRecipient(transactionsToken.accountToCredit1.address);
-      await app.send.checkASAError();
-      await app.send.fillRecipient(transactionsToken.accountToCredit2.address);
+      await app.send.fillRecipient(tokenTransactionInvalid.transaction.accountToCredit.address);
+      await app.send.checkContinueButtonDisabled();
+      await app.layout.checkErrorMessage(tokenTransactionInvalid.expectedErrorMessage);
+    },
+  );
+});
+
+test.describe("Send token (subAccount) - valid input", () => {
+  const tokenTransactionValid = new Transaction(
+    Account.ALGO_USDT_1,
+    Account.ALGO_USDT_3,
+    "0.1",
+    Fee.MEDIUM,
+  );
+
+  test.use({
+    userdata: "speculos-subAccount",
+    testName: `sendToken_valid_input_${tokenTransactionValid.accountToDebit.currency.name}`,
+    speculosCurrency:
+      specs[tokenTransactionValid.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
+    speculosOffset: 0,
+  });
+
+  test(
+    `Send [${tokenTransactionValid.accountToCredit.accountName}] to [${tokenTransactionValid.accountToCredit.accountName}] - valid input`,
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-479",
+      },
+    },
+    async ({ app }) => {
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(tokenTransactionValid.accountToDebit.accountName);
+      await app.account.navigateToTokenInAccount(tokenTransactionValid.accountToDebit);
+      await app.account.clickSend();
+      await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);
       await app.send.checkContinueButtonEnable();
       await app.layout.checkInputErrorNotVisible();
     },
   );
 });
 
-test.describe("Check ETH input error", () => {
+test.describe("Check invalid address input error", () => {
+  const transactionInvalidAddress = new Transaction(
+    Account.ETH_1,
+    Account.BTC_1,
+    "0.00001",
+    Fee.MEDIUM,
+  );
+
   test.use({
     userdata: "speculos-tests-app",
-    testName: `ETH_input_error_${transactionETH_BTC.accountToDebit.currency.uiName}`,
+    testName: `Invalid_address_input_error_${transactionInvalidAddress.accountToDebit.currency.name}`,
     speculosCurrency:
-      specs[transactionETH_BTC.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
+      specs[transactionInvalidAddress.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
     speculosOffset: 0,
   });
 
   test(
-    `Check [${transactionETH_BTC.accountToDebit.currency}] input error`,
+    `Check [${transactionInvalidAddress.accountToDebit.currency}] invalid address input error`,
     {
       annotation: {
         type: "TMS",
@@ -157,27 +182,29 @@ test.describe("Check ETH input error", () => {
     },
     async ({ app }) => {
       await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(transactionETH_BTC.accountToDebit.accountName);
+      await app.accounts.navigateToAccountByName(
+        transactionInvalidAddress.accountToDebit.accountName,
+      );
 
       await app.account.clickSend();
-      await app.send.fillRecipient(transactionETH_BTC.accountToCredit.address);
-      await app.send.checkInvalidAddressError(transactionETH_BTC);
+      await app.send.fillRecipient(transactionInvalidAddress.accountToCredit.address);
+      await app.send.checkInvalidAddressError(transactionInvalidAddress);
     },
   );
 });
 
 for (const [i, transaction] of transactionsInputsInvalid.entries()) {
-  test.describe("Check error message for send test (invalid input)", () => {
+  test.describe("Check invalid amount input error", () => {
     test.use({
       userdata: "speculos-tests-app",
-      testName: `Send_test_invalid_input_${transaction.transaction.accountToDebit.currency.uiName}`,
+      testName: `Invalid_amount_input_error_${transaction.transaction.accountToDebit.currency.name}`,
       speculosCurrency:
         specs[transaction.transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
     });
 
     test(
-      `Check [${transaction.expectedErrorMessage}] for [${transaction.transaction.accountToDebit.currency.uiName}] - Send test invalid input - ${i} `,
+      `Check [${transaction.expectedErrorMessage}] for [${transaction.transaction.accountToDebit.currency.name}] - invalid amount input error - ${i} `,
       {
         annotation: {
           type: "TMS",
@@ -201,34 +228,40 @@ for (const [i, transaction] of transactionsInputsInvalid.entries()) {
   });
 }
 
-for (const [i, transaction] of transactionInputValid.entries()) {
-  test.describe("Check valid input for send test", () => {
-    test.use({
-      userdata: "speculos-tests-app",
-      testName: `Send_test_valid_input_${transaction.accountToDebit.currency.uiName}`,
-      speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
-    });
+test.describe("Verify send max user flow", () => {
+  const transactionInputValid = new Transaction(
+    Account.ETH_1,
+    Account.ETH_2,
+    "send max",
+    Fee.MEDIUM,
+  );
 
-    test(
-      `Check Valid amount input [${transaction.amount}] for send tests`,
-      {
-        annotation: {
-          type: "TMS",
-          description: "B2CQA-473",
-        },
-      },
-      async ({ app }) => {
-        await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
-
-        await app.account.clickSend();
-        await app.send.fillRecipient(transaction.accountToCredit.address);
-        await app.send.clickContinue();
-        await app.send.fillAmount(transaction.amount);
-        await app.send.checkContinueButtonEnable();
-        await app.layout.checkInputErrorNotVisible();
-      },
-    );
+  test.use({
+    userdata: "speculos-tests-app",
+    testName: `Verify_send_max_user_flow_${transactionInputValid.accountToDebit.currency.name}`,
+    speculosCurrency:
+      specs[transactionInputValid.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
+    speculosOffset: 0,
   });
-}
+
+  test(
+    `Check Valid amount input [${transactionInputValid.amount}] for send tests`,
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-473",
+      },
+    },
+    async ({ app }) => {
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(transactionInputValid.accountToDebit.accountName);
+
+      await app.account.clickSend();
+      await app.send.fillRecipient(transactionInputValid.accountToCredit.address);
+      await app.send.clickContinue();
+      await app.send.fillAmount(transactionInputValid.amount);
+      await app.send.checkContinueButtonEnable();
+      await app.layout.checkInputErrorNotVisible();
+    },
+  );
+});

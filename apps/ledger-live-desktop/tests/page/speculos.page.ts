@@ -31,7 +31,7 @@ export class SpeculosPage extends AppPage {
     expect(assertAddressesEquality(tx.accountToCredit.address, addressScreen)).toBe(true);
     await pressRightUntil(tx.accountToDebit.currency.sendPattern[2]);
     await pressBoth();
-    if (tx.accountToDebit.currency.uiName === Currency.tBTC.uiName) {
+    if (tx.accountToDebit.currency.name === Currency.tBTC.name) {
       await waitFor("Fees");
       await pressRightUntil(DeviceLabels.SIGN);
       await pressBoth();

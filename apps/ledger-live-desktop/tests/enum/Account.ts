@@ -192,4 +192,76 @@ export class Account {
     "Binance Smart Chain 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
+
+  static readonly ETH_USDT = new Account(
+    Currency.ETH_USDT,
+    "Ethereum 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly ETH_LIDO = new Account(
+    Currency.ETH_LIDO,
+    "Ethereum 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly XLM_USCD = new Account(
+    Currency.XLM_USCD,
+    "Stellar 1",
+    "GCAGRZ7XABYSXV7CPFSFWQIUK6XFXECBPWP2SGMVOB2KFWN7YM4TDGSX",
+  );
+
+  static readonly ALGO_USDT_1 = new Account(
+    Currency.ALGO_USDT,
+    "Algorand 1",
+    "HQ6YJWSVG3KVRE56V6UGWMUJLDVNPQUNXJBY7VJ56VMNMGIKVDTC7JEKOU",
+  );
+
+  static readonly ALGO_USDT_2 = new Account(
+    Currency.ALGO_USDT,
+    "Algorand 2",
+    "6TFDU3BYQ2FO32SOYQDTHDW5XKGEYH4FCT34ZQRHFPJRVMLEQWOO2OEUU4",
+  );
+
+  static readonly ALGO_USDT_3 = new Account(
+    Currency.ALGO_USDT,
+    "Algorand 3",
+    "3ASRTAN6KCZCICTIFQ5N2UBOSSBOZ7WFSOI2CJEJ4ESK532RODQZ7KCSOA",
+  );
+
+  static readonly TRX_USDT = new Account(
+    Currency.TRX_USDT,
+    "Tron 1",
+    "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
+  );
+
+  static readonly TRX_BTT = new Account(
+    Currency.TRX_BTT,
+    "Tron 1",
+    "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
+  );
+
+  static readonly BSC_BUSD = new Account(
+    Currency.BSC_BUSD,
+    "Binance Smart Chain 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly BSC_SHIBA = new Account(
+    Currency.BSC_SHIBA,
+    "Binance Smart Chain 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly MATIC_DAI = new Account(
+    Currency.MATIC_DAI,
+    "Polygon 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly MATIC_UNI = new Account(
+    Currency.MATIC_UNI,
+    "Polygon 1",
+    "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
 }
