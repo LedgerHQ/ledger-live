@@ -1,7 +1,8 @@
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import { StatusCodes } from "@ledgerhq/errors";
 
 import { Transaction } from "./transaction";
+import { publicKeyToAddress } from "./kaspa-util";
 
 const BIP32Path = require("bip32-path");
 
@@ -42,18 +43,15 @@ function serializePath(path) {
 }
 
 export default class Kaspa {
-    /**
-     * @type {Transport}
-     */
     transport: Transport;
 
     constructor(transport: Transport) {
         this.transport = transport;
-        this.transport.decorateAppAPIMethods(
-            this,
-            ["getVersion", "getAddress", "signTransaction"],
-            "kaspa",
-        );
+        this.transport.decorateAppAPIMethods(this, [
+            "getVersion",
+            "getAddress",
+            "signTransaction",
+        ], "kaspa");
     }
 
     /**
@@ -61,25 +59,28 @@ export default class Kaspa {
      *
      * @param {string} path a BIP32 path
      * @param {boolean} display flag to show display
-     * @returns {Buffer} an object with the address field
+     * @return an object with the address field
      *
      * @example
      * kaspa.getAddress("44'/111111'/0'").then(r => r.address)
      */
-    async getAddress(path, display: boolean = false): Promise<Buffer> {
+    async getAddress(path, display: boolean = false): Promise<{
+        publicKey: string;
+        address: string;
+      }> {
         const pathBuffer = pathToBuffer(path);
 
         const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
 
-        const publicKeyBuffer = await this.sendToDevice(
-            INS.GET_ADDRESS,
-            p1,
-            pathBuffer,
-        );
+        const publicKeyBuffer : Buffer = await this.sendToDevice(INS.GET_ADDRESS, p1, pathBuffer);
 
-        return publicKeyBuffer;
+        return {
+            "publicKey": publicKeyBuffer.toString("hex"),
+            "address": publicKeyToAddress(publicKeyBuffer.subarray(2, 34), false)
+        }
     }
 
+    
     /**
      * Sign a Kaspa transaction. Applies the signatures into the input objects
      *
@@ -89,69 +90,55 @@ export default class Kaspa {
      * @example
      * kaspa.signTransaction(transaction)
      */
-    async signTransaction(transaction: Transaction): Promise<void> {
-        const header = transaction.serialize();
+    async signTransaction(path: string, message: string): Promise<{
+        "signature": string
+    }> {
+        // const header = transaction.serialize();
 
-        await this.sendToDevice(INS.SIGN_TX, P1_HEADER, header, P2_MORE);
+        // await this.sendToDevice(INS.SIGN_TX, P1_HEADER, header, P2_MORE);
 
-        for (const output of transaction.outputs) {
-            await this.sendToDevice(
-                INS.SIGN_TX,
-                P1_OUTPUTS,
-                output.serialize(),
-                P2_MORE,
-            );
-        }
+        // for (const output of transaction.outputs) {
+        //     await this.sendToDevice(INS.SIGN_TX, P1_OUTPUTS, output.serialize(), P2_MORE);
+        // }
 
-        let signatureBuffer: Buffer | null = null;
+        // let signatureBuffer: Buffer | null = null;
 
-        for (let i = 0; i < transaction.inputs.length; i++) {
-            let p2 = i >= transaction.inputs.length - 1 ? P2_LAST : P2_MORE;
-            const input = transaction.inputs[i];
-            signatureBuffer = await this.sendToDevice(
-                INS.SIGN_TX,
-                P1_INPUTS,
-                input.serialize(),
-                p2,
-            );
-        }
+        // for (let i = 0; i < transaction.inputs.length; i++) {
+        //     let p2 = i >= transaction.inputs.length - 1 ? P2_LAST : P2_MORE;
+        //     const input = transaction.inputs[i];
+        //     signatureBuffer = await this.sendToDevice(INS.SIGN_TX, P1_INPUTS, input.serialize(), p2);
+        // }
 
-        while (signatureBuffer) {
-            const [hasMore, inputIndex, sigLen, ...signatureAndSighash] =
-                signatureBuffer;
-            const sigBuf = signatureAndSighash.slice(0, sigLen);
-            const sighashLen = signatureAndSighash[64];
-            const sighashBuf = signatureAndSighash.slice(65, 65 + sighashLen);
+        // while (signatureBuffer) {
+        //     const [hasMore, inputIndex, sigLen, ...signatureAndSighash] = signatureBuffer;
+        //     const sigBuf = signatureAndSighash.slice(0, sigLen);
+        //     const sighashLen = signatureAndSighash[64];
+        //     const sighashBuf = signatureAndSighash.slice(65, 65 + sighashLen);
 
-            if (sigLen != 64) {
-                throw new Error(
-                    `Expected signature length is 64. Received ${sigLen} for input ${inputIndex}`,
-                );
+        //     if (sigLen != 64) {
+        //         throw new Error(`Expected signature length is 64. Received ${sigLen} for input ${inputIndex}`);
+        //     }
+
+        //     if (sighashLen != 32) {
+        //         throw new Error(`Expected sighash length is 32. Received ${sighashLen} for input ${inputIndex}`)
+        //     }
+
+        //     transaction.inputs[inputIndex].setSignature(Buffer.from(sigBuf).toString("hex"));
+        //     transaction.inputs[inputIndex].setSighash(Buffer.from(sighashBuf).toString("hex"));
+
+        //     // Keep going as long as hasMore is true-ish
+        //     if (!hasMore) {
+        //         break;
+        //     }
+
+        //     signatureBuffer = await this.sendToDevice(INS.SIGN_TX, P1_NEXT_SIGNATURE);
+        // }
+        return new Promise(() => {
+            console.log("nothing to do")
+            return {
+                "signature": "test"
             }
-
-            if (sighashLen != 32) {
-                throw new Error(
-                    `Expected sighash length is 32. Received ${sighashLen} for input ${inputIndex}`,
-                );
-            }
-
-            transaction.inputs[inputIndex].setSignature(
-                Buffer.from(sigBuf).toString("hex"),
-            );
-            transaction.inputs[inputIndex].setSighash(
-                Buffer.from(sighashBuf).toString("hex"),
-            );
-
-            // Keep going as long as hasMore is true-ish
-            if (!hasMore) {
-                break;
-            }
-
-            signatureBuffer = await this.sendToDevice(
-                INS.SIGN_TX,
-                P1_NEXT_SIGNATURE,
-            );
-        }
+        })
     }
 
     /**
@@ -159,32 +146,23 @@ export default class Kaspa {
      * @param {String} message - the personal message string to sign. Max 120 len for Nano S, 200 len for others
      * @param {0|1} addressType
      * @param {number} addressIndex
-     *
+     * 
      * @returns {Buffer} application config object
      *
      * @example
      * kaspa.signMessage(message).then(r => r.version)
      */
-    async signMessage(
-        message: string,
-        addressType?: 0 | 1,
-        addressIndex?: number,
-        account?: number,
-    ) {
+    async signMessage(message: string, addressType?: 0|1, addressIndex?: number, account?: number) {
         account = account ?? 0x80000000;
         addressIndex = addressIndex ?? 0;
         addressType = addressType ?? 0;
 
-        if (account < 0x80000000 || account > 0xffffffff) {
-            throw new Error(
-                "Account must be between 0x80000000 and 0xFFFFFFFF",
-            );
+        if (account < 0x80000000 || account > 0xFFFFFFFF) {
+            throw new Error('Account must be between 0x80000000 and 0xFFFFFFFF');
         }
 
-        if (addressIndex < 0 || addressIndex > 0xffffffff) {
-            throw new Error(
-                "Address index must be an integer in range [0, 0xFFFFFFFF]",
-            );
+        if (addressIndex < 0 || addressIndex > 0xFFFFFFFF) {
+            throw new Error('Address index must be an integer in range [0, 0xFFFFFFFF]');
         }
 
         const addressTypeBuf = Buffer.alloc(1);
@@ -208,19 +186,11 @@ export default class Kaspa {
             messageBuffer,
         ]);
 
-        const signatureBuffer = await this.sendToDevice(
-            INS.SIGN_MESSAGE,
-            P1_NON_CONFIRM,
-            payload,
-        );
+        const signatureBuffer = await this.sendToDevice(INS.SIGN_MESSAGE, P1_NON_CONFIRM, payload);
         const [sigLen, ...signatureAndMessageHash] = signatureBuffer;
-        const signature = Buffer.from(
-            signatureAndMessageHash.slice(0, sigLen),
-        ).toString("hex");
+        const signature = Buffer.from(signatureAndMessageHash.slice(0, sigLen)).toString('hex');
         const messageHashLen = signatureAndMessageHash[64];
-        const messageHash = Buffer.from(
-            signatureAndMessageHash.slice(65, 65 + messageHashLen),
-        ).toString("hex");
+        const messageHash = Buffer.from(signatureAndMessageHash.slice(65, 65 + messageHashLen)).toString('hex');
 
         return { signature, messageHash };
     }
@@ -234,20 +204,12 @@ export default class Kaspa {
      * kaspa.getVersion().then(r => r.version)
      */
     async getVersion() {
-        const [major, minor, patch] = await this.sendToDevice(
-            INS.GET_VERSION,
-            P1_NON_CONFIRM,
-        );
+        const [major, minor, patch] = await this.sendToDevice(INS.GET_VERSION, P1_NON_CONFIRM);
 
         return { version: `${major}.${minor}.${patch}` };
     }
-
-    async sendToDevice(
-        instruction,
-        p1,
-        payload = Buffer.alloc(0),
-        p2 = P2_LAST,
-    ) {
+    
+    async sendToDevice(instruction, p1, payload = Buffer.alloc(0), p2 = P2_LAST) {
         const acceptStatusList = [StatusCodes.OK];
 
         const reply = await this.transport.send(
@@ -256,9 +218,13 @@ export default class Kaspa {
             p1,
             p2,
             payload,
-            acceptStatusList,
+            acceptStatusList
         );
-
+    
         return reply.subarray(0, reply.length - 2);
     }
 }
+// const t = new Transport()
+// const k = new Kaspa(t)
+
+// console.log(k.getAddress("44'/111111'/0'/0/0"))

@@ -19,10 +19,10 @@ import sync from "./commands/blockchain/sync";
 import testDetectOpCollision from "./commands/blockchain/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/blockchain/testGetTrustedInputFromTxHash";
 import app from "./commands/device/app";
-import appUninstallAll from "./commands/device/appUninstallAll";
 import appsCheckAllAppVersions from "./commands/device/appsCheckAllAppVersions";
 import appsInstallAll from "./commands/device/appsInstallAll";
 import appsUpdateTestAll from "./commands/device/appsUpdateTestAll";
+import appUninstallAll from "./commands/device/appUninstallAll";
 import cleanSpeculos from "./commands/device/cleanSpeculos";
 import customLockScreenFetch from "./commands/device/customLockScreenFetch";
 import customLockScreenFetchAndRestore from "./commands/device/customLockScreenFetchAndRestore";
@@ -82,10 +82,10 @@ export default {
   testDetectOpCollision,
   testGetTrustedInputFromTxHash,
   app,
-  appUninstallAll,
   appsCheckAllAppVersions,
   appsInstallAll,
   appsUpdateTestAll,
+  appUninstallAll,
   cleanSpeculos,
   customLockScreenFetch,
   customLockScreenFetchAndRestore,

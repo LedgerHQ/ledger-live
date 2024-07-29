@@ -1,11 +1,9 @@
 export type KaspaAddress = {
     address: string,
-    publicKey: string,
-    returnCode: number,
+    publicKey: string
   };
   export type KaspaSignature = {
-    signature: Buffer | null,
-    returnCode: number
+    signature: string
   };
   export interface KaspaSigner {
     getAddress(path: string, display?: boolean): Promise<KaspaAddress>;

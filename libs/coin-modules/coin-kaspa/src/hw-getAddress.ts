@@ -1,21 +1,17 @@
-// import type { GetAddressFn } from "@ledgerhq/coin-kaspa/bridge/getAddressWrapper";
-import type { SignerContext } from "@ledgerhq/coin-kaspa/signer";
-// import type { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import type { KaspaAddress, KaspaSignature, KaspaSigner } from "./signer";
- 
-const resolver = (
-  signerContext: SignerContext<KaspaSigner, KaspaAddress | KaspaSignature>,
-) => {
-  return async (deviceId: string, { path, verify }) => {
-    const address = (await signerContext(deviceId, signer =>
-      signer.getAddress(path, verify),
-    )) as KaspaAddress;
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { KaspaSigner } from "./signer";
+
+const resolver = (signerContext: SignerContext<KaspaSigner>): GetAddressFn => {
+  return async (deviceId: string, { path, verify }: GetAddressOptions) => {
+    const r = await signerContext(deviceId, signer => signer.getAddress(path, verify || false));
     return {
-      address: address.address,
-      publicKey: address.publicKey,
+      address: r.address,
+      publicKey: r.publicKey,
       path,
     };
   };
 };
- 
+
 export default resolver;

@@ -1,5 +1,5 @@
 {
-  "name": "hw-app-kaspa",
+  "name": "@ledgerhq/hw-app-kaspa",
   "version": "1.2.1",
   "description": "",
   "main": "lib/index.js",
