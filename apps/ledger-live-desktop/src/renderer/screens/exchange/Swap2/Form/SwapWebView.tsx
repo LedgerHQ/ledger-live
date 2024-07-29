@@ -421,6 +421,8 @@ const SwapWebView = ({
       toAccountId: swapState?.toAccountId,
       fromAccountId: swapState?.fromAccountId,
       toNewTokenId: swapState?.toNewTokenId,
+      feeStrategy: swapState?.feeStrategy,
+      customFeeConfig: swapState?.customFeeConfig,
     };
 
     Object.entries(swapParams).forEach(([key, value]) => {
@@ -434,14 +436,7 @@ const SwapWebView = ({
   }, [
     addressFrom,
     addressTo,
-    swapState?.fromAmount,
-    swapState?.error,
-    swapState?.loading,
-    swapState?.estimatedFees,
-    swapState?.provider,
-    swapState?.toAccountId,
-    swapState?.fromAccountId,
-    swapState?.toNewTokenId,
+    swapState,
     sourceCurrency?.id,
     isMaxEnabled,
     fromCurrency,
