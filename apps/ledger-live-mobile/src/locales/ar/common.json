@@ -929,6 +929,11 @@
     },
     "TezosUnrevealedAccount" : {
       "title" : "المبادلة غير متوفرة: الإرسال/التفويض الأولي مطلوب مع حساب Tezos أو زوج الاستبدال."
+    },
+    "CustomError" : {
+      "title" : "عذراً، حاول مرة أخرى.",
+      "description" : "لم يتمكن الخادم من معالجة طلبك. يرجى إعادة المحاولة مرة أخرى لاحقاً أو التواصل مع دعم Ledger.",
+      "errorCode" : "الكود: {{errorCode}}"
     }
   },
   "crash" : {
@@ -6382,7 +6387,7 @@
   },
   "customImage" : {
     "title" : "صورة شاشة القَفل",
-    "replace" : "استبدال",
+    "change" : "تغيير",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "اختر من معرض الصور خاصتي",
@@ -6685,12 +6690,74 @@
     }
   },
   "walletSync" : {
+    "title" : "مزامنة Ledger",
     "activation" : {
       "screen" : {
         "title" : "قم بمزامنة حساباتك عبر جميع المنصات",
         "description" : "جهازك Ledger سيقوم بإنشاء مفتاح تشفير، مما يضمن أن بياناتك تظل خاصةً وقابلة للاستعادة بواسطتك أنت وحدك.",
         "mainCta" : "مزامنة حساباتك",
         "secondCta" : "أنشأت مفتاحاً بالفعل؟"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "اختر جهاز Ledger الذي ستستخدمه في تأمين نسخك الاحتياطي",
+      "description" : "يمكنك استرداد نسخك الاحتياطي ببساطة بتوصيل جهازك Ledger بتطبيقات Ledger Live للجوّال وسطح المكتب."
+    },
+    "deviceAction" : {
+      "title" : "تابع على جهازك Ledger {{wording}}",
+      "description" : "اتبع التعليمات التي تظهر على الشاشة الموثوقة (Trusted Display) لجهازك Ledger."
+    },
+    "success" : {
+      "sync" : "تمت المزامنة بنجاح!",
+      "syncDesc" : "التغييرات في حساباتك ستظهر الآن تلقائياً عبر كل التطبيقات والمنصات.",
+      "activation" : "تم بنجاح!",
+      "activationDesc" : "لقد مكّنت مزامنة Ledger بنجاح.",
+      "syncAnother" : "المزامنة مع تطبيق Ledger Live آخر",
+      "close" : "إغلاق"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "مزامنة",
+        "description" : "Synchronize your app data with another Ledger Live app for a seamless experience. "
+      },
+      "manageKey" : {
+        "title" : "إدارة المفتاح",
+        "description" : "قم بتأمين أو حذف مفتاح التشفير الخاص بك عبر جهاز Ledger آخر. "
+      },
+      "synchronizedInstances" : {
+        "cta" : "Manage now",
+        "title" : "{{count}} Synchronized Instance",
+        "title_plural" : "{{count}} حالة تمت مزامنتها",
+        "error" : "Instances"
+      },
+      "errors" : {
+        "fetching" : "Something went wrong while fetching your synchronized instances.",
+        "trustchain" : "Unexpected falsy trustchain",
+        "memberCredentials" : "Unexpected falsy member credentials",
+        "ledgerSyncUnavailable" : "Ledger Sync is currently unavailable. This doesn’t have any impact on your assets."
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "اختر طريقة المزامنة التي تريدها",
+        "scan" : {
+          "title" : "مسح ضوئي لكود QR"
+        },
+        "connectDevice" : {
+          "title" : "استخدم جهازك Ledger"
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "manifestsList" : {
+      "title" : "استكشف",
+      "description" : "اكتشف أفضل ما في ويب 3.0 مُنسّقاً بواسطة Ledger"
+    },
+    "main" : {
+      "header" : {
+        "title" : "استكشف ويب 3.0",
+        "placeholder" : "ابحث أو اكتب عنوان URL"
       }
     }
   }
