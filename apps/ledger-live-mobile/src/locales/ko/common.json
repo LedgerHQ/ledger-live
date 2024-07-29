@@ -929,6 +929,11 @@
     },
     "TezosUnrevealedAccount" : {
       "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
+    },
+    "CustomError" : {
+      "title" : "죄송하지만 다시 시도하세요.",
+      "description" : "서버가 요청을 처리할 수 없습니다. 나중에 다시 시도하거나 Ledger 지원 부서에 연락하세요.",
+      "errorCode" : "코드: {{errorCode}}"
     }
   },
   "crash" : {
@@ -6382,7 +6387,7 @@
   },
   "customImage" : {
     "title" : "잠금 화면 사진",
-    "replace" : "교체",
+    "change" : "변경",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "내 사진 갤러리에서 선택",
@@ -6685,12 +6690,74 @@
     }
   },
   "walletSync" : {
+    "title" : "Ledger 동기화",
     "activation" : {
       "screen" : {
         "title" : "모든 플랫폼에서 계정을 동기화하세요",
         "description" : "Ledger 장치가 암호화 키를 생성하여 데이터가 비공개로 유지되고 본인만 검색할 수 있도록 합니다.",
         "mainCta" : "계정 동기화",
         "secondCta" : "이미 생성된 키가 있나요?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "안전한 백업용으로 사용할 Ledger 장치를 선택하세요",
+      "description" : "Ledger 장치를 Ledger Live 모바일 및 데스크탑 앱에 연결하기만 하면 간편하게 백업을 복구할 수 있습니다."
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}}에서 계속하세요",
+      "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
+    },
+    "success" : {
+      "sync" : "동기화 성공!",
+      "syncDesc" : "이제 계정 변경사항이 모든 앱과 플랫폼에 자동으로 표시됩니다.",
+      "activation" : "완료되었습니다!",
+      "activationDesc" : "Ledger 동기화를 성공적으로 활성화했습니다.",
+      "syncAnother" : "다른 Ledger Live 앱과 동기화",
+      "close" : "닫기"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "Synchronize",
+        "description" : "Synchronize your app data with another Ledger Live app for a seamless experience. "
+      },
+      "manageKey" : {
+        "title" : "Manage Key",
+        "description" : "Secure or delete your encryption key via another Ledger. "
+      },
+      "synchronizedInstances" : {
+        "cta" : "Manage now",
+        "title" : "{{count}} Synchronized Instance",
+        "title_plural" : "{{count}} Synchronized Instances",
+        "error" : "Instances"
+      },
+      "errors" : {
+        "fetching" : "Something went wrong while fetching your synchronized instances.",
+        "trustchain" : "Unexpected falsy trustchain",
+        "memberCredentials" : "Unexpected falsy member credentials",
+        "ledgerSyncUnavailable" : "Ledger Sync is currently unavailable. This doesn’t have any impact on your assets."
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "동기화 방법 선택",
+        "scan" : {
+          "title" : "QR 코드 스캔"
+        },
+        "connectDevice" : {
+          "title" : "Ledger 장치를 사용하세요"
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "manifestsList" : {
+      "title" : "탐색",
+      "description" : "Ledger가 엄선한 최고의 web3를 만나보세요"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Web3 탐색",
+        "placeholder" : "URL을 검색하거나 입력하세요"
       }
     }
   }
