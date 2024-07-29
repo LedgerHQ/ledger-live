@@ -8,7 +8,7 @@ import { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { FieldStatus } from "LLD/features/Collectibles/types/enum/DetailDrawer";
 import { openModal } from "~/renderer/actions/modals";
-import { useOnScreen } from "LLD/features/Collectibles/utils/useOnScreen";
+import { useOnScreen } from "LLD/hooks/useOnScreen";
 
 const useNftCollectionModel = () => {
   const dispatch = useDispatch();

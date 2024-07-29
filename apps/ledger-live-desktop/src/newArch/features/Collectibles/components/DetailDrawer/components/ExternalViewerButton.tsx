@@ -77,7 +77,7 @@ const ExternalViewerButtonComponent: React.FC<ExternalViewerButtonProps> = ({
       {() => (
         <Box horizontal>
           <Button
-            data-test-id="external-viewer-button"
+            data-testid="external-viewer-button"
             small
             primary
             flow={1}

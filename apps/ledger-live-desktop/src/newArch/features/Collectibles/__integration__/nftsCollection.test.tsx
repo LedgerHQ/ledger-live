@@ -4,10 +4,7 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import { NftCollectionTest, NoNftCollectionTest } from "./shared";
-import { configure } from "@testing-library/dom";
 import { account } from "./mockedAccount";
-
-configure({ testIdAttribute: "data-test-id" });
 
 jest.mock(
   "electron",

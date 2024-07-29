@@ -7,11 +7,11 @@ import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import { Flex, Icons } from "@ledgerhq/react-ui";
 import { Skeleton, Media, CollectionName, TableLayout } from "LLD/features/Collectibles/components";
-import TokensList from "../components/TokensList";
+import TokensList from "../../components/TokensList";
 import OperationsList from "~/renderer/components/OperationsList";
 import Spinner from "~/renderer/components/Spinner";
 import { TrackingPageCategory } from "LLD/features/Collectibles/types/enum/Tracking";
-import { Footer, SpinnerContainer, SpinnerBackground } from "../components/CommonStyled";
+import { Footer, SpinnerContainer, SpinnerBackground } from "../../components/CommonStyled";
 
 type ViewProps = ReturnType<typeof useNftCollectionModel>;
 

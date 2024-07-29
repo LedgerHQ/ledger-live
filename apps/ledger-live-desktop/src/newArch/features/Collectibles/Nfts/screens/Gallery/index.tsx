@@ -11,7 +11,7 @@ import { Account } from "@ledgerhq/types-live";
 import Spinner from "~/renderer/components/Spinner";
 import LazyCollection from "./components/LazyCollection";
 import { TrackingPageCategory } from "LLD/features/Collectibles/types/enum/Tracking";
-import { Footer, SpinnerContainer, SpinnerBackground } from "../components/CommonStyled";
+import { Footer, SpinnerContainer, SpinnerBackground } from "../../components/CommonStyled";
 
 type ViewProps = ReturnType<typeof useNftGalleryModel>;
 

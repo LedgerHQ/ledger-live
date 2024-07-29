@@ -59,8 +59,7 @@ const LazyCollection: React.FC<LazyCollectionProps> = ({
   useEffect(() => {
     const isLoading = renderedCollections.length < collections.length;
     setIsLoading(isLoading);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [renderedCollections]);
+  }, [collections.length, renderedCollections, setIsLoading]);
 
   return <>{renderedCollections}</>;
 };

@@ -76,9 +76,9 @@ const SyncOnboarding = lazy(() => import("./components/SyncOnboarding"));
 const RecoverPlayer = lazy(() => import("~/renderer/screens/recover/Player"));
 
 const NFTGallery = lazy(() => import("~/renderer/screens/nft/Gallery"));
-const NFTGalleryNew = lazy(() => import("LLD/features/Collectibles/Nfts/Gallery"));
+const NFTGalleryNew = lazy(() => import("LLD/features/Collectibles/Nfts/screens/Gallery"));
 const NFTCollection = lazy(() => import("~/renderer/screens/nft/Gallery/Collection"));
-const NFTCollectionNew = lazy(() => import("LLD/features/Collectibles/Nfts/Collection"));
+const NFTCollectionNew = lazy(() => import("LLD/features/Collectibles/Nfts/screens/Collection"));
 const RecoverRestore = lazy(() => import("~/renderer/components/RecoverRestore"));
 const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
@@ -302,64 +302,72 @@ export default function Default() {
                         <IsTermOfUseUpdated />
                         <SyncNewAccounts priority={2} />
 
-                      <Box
-                        grow
-                        horizontal
-                        bg="palette.background.default"
-                        color="palette.text.shade60"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                        }}
-                      >
-                        <FeatureToggle featureId="protectServicesDesktop">
-                          <Switch>
-                            <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
-                          </Switch>
-                        </FeatureToggle>
-                        <MainSideBar />
-                        <Page>
-                          <TopBannerContainer>
-                            <UpdateBanner />
-                            <FirmwareUpdateBanner />
-                            <VaultSignerBanner />
-                          </TopBannerContainer>
-                          <Switch>
-                            <Route path="/" exact render={withSuspense(Dashboard)} />
-                            <Route path="/settings" render={withSuspense(Settings)} />
-                            <Route path="/accounts" render={withSuspense(Accounts)} />
-                            <Route path="/card" render={withSuspense(Card)} />
-                            <Redirect from="/manager/reload" to="/manager" />
-                            <Route path="/manager" render={withSuspense(Manager)} />
-                            <Route path="/platform" render={withSuspense(PlatformCatalog)} exact />
-                            <Route path="/platform/:appId?" component={LiveApp} />
-                            <Route path="/earn" render={withSuspense(Earn)} />
-                            <Route exact path="/exchange/:appId?" render={withSuspense(Exchange)} />
-                            <Route
-                              exact
-                              path="/account/:id/nft-collection"
-                              render={withSuspense(
-                                isNftReworkedEnabled ? NFTGalleryNew : NFTGallery,
-                              )}
-                            />
-                            <Route path="/swap-web" render={withSuspense(SwapWeb)} />
-                            <Route
-                              path="/account/:id/nft-collection/:collectionAddress?"
-                              render={withSuspense(
-                                isNftReworkedEnabled ? NFTCollectionNew : NFTCollection,
-                              )}
-                            />
-                            <Route path="/account/:parentId/:id" render={withSuspense(Account)} />
-                            <Route path="/account/:id" render={withSuspense(Account)} />
-                            <Route path="/asset/:assetId+" render={withSuspense(Asset)} />
-                            <Route path="/swap" render={withSuspense(Swap2)} />
-                            <Route path="/market/:currencyId" render={withSuspense(MarketCoin)} />
-                            <Route path="/market" render={withSuspense(Market)} />
-                          </Switch>
-                        </Page>
-                        <Drawer />
-                        <ToastOverlay />
-                      </Box>
+                        <Box
+                          grow
+                          horizontal
+                          bg="palette.background.default"
+                          color="palette.text.shade60"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                          }}
+                        >
+                          <FeatureToggle featureId="protectServicesDesktop">
+                            <Switch>
+                              <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
+                            </Switch>
+                          </FeatureToggle>
+                          <MainSideBar />
+                          <Page>
+                            <TopBannerContainer>
+                              <UpdateBanner />
+                              <FirmwareUpdateBanner />
+                              <VaultSignerBanner />
+                            </TopBannerContainer>
+                            <Switch>
+                              <Route path="/" exact render={withSuspense(Dashboard)} />
+                              <Route path="/settings" render={withSuspense(Settings)} />
+                              <Route path="/accounts" render={withSuspense(Accounts)} />
+                              <Route path="/card" render={withSuspense(Card)} />
+                              <Redirect from="/manager/reload" to="/manager" />
+                              <Route path="/manager" render={withSuspense(Manager)} />
+                              <Route
+                                path="/platform"
+                                render={withSuspense(PlatformCatalog)}
+                                exact
+                              />
+                              <Route path="/platform/:appId?" component={LiveApp} />
+                              <Route path="/earn" render={withSuspense(Earn)} />
+                              <Route
+                                exact
+                                path="/exchange/:appId?"
+                                render={withSuspense(Exchange)}
+                              />
+                              <Route
+                                exact
+                                path="/account/:id/nft-collection"
+                                render={withSuspense(
+                                  isNftReworkedEnabled ? NFTGalleryNew : NFTGallery,
+                                )}
+                              />
+                              <Route path="/swap-web" render={withSuspense(SwapWeb)} />
+                              <Route
+                                path="/account/:id/nft-collection/:collectionAddress?"
+                                render={withSuspense(
+                                  isNftReworkedEnabled ? NFTCollectionNew : NFTCollection,
+                                )}
+                              />
+                              <Route path="/account/:parentId/:id" render={withSuspense(Account)} />
+                              <Route path="/account/:id" render={withSuspense(Account)} />
+                              <Route path="/asset/:assetId+" render={withSuspense(Asset)} />
+                              <Route path="/swap" render={withSuspense(Swap2)} />
+                              <Route path="/market/:currencyId" render={withSuspense(MarketCoin)} />
+                              <Route path="/market" render={withSuspense(Market)} />
+                            </Switch>
+                          </Page>
+                          <Drawer />
+                          <ToastOverlay />
+                        </Box>
 
                         {__PRERELEASE__ &&
                         __CHANNEL__ !== "next" &&

@@ -2,8 +2,8 @@ import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
 import React from "react";
 import { Switch, Route, withRouter } from "react-router";
 import NftBreadCrumb from "LLD/components/BreadCrumb";
-import NFTGallery from "../Nfts/Gallery";
-import NftCollection from "../Nfts/Collection";
+import NFTGallery from "../Nfts/screens/Gallery";
+import NftCollection from "../Nfts/screens/Collection";
 import NftCollections from "../Nfts/Collections";
 import { account } from "./mockedAccount";
 

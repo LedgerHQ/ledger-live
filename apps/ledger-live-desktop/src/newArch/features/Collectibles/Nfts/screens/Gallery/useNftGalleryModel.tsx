@@ -7,7 +7,7 @@ import { useNftGalleryFilter, isThresholdValid } from "@ledgerhq/live-nft-react"
 import { nftsByCollections } from "@ledgerhq/live-nft";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { openModal } from "~/renderer/actions/modals";
-import { useOnScreen } from "LLD/features/Collectibles/utils/useOnScreen";
+import { useOnScreen } from "LLD/hooks/useOnScreen";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ChainsEnum } from "LLD/features/Collectibles/types/enum/Chains";
 
