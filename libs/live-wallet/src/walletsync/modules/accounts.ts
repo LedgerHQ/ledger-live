@@ -136,7 +136,7 @@ const manager: WalletSyncDataManager<
     // filter out accounts we may already have
     diff.added = diff.added.filter(a => !existingIds.has(a.id));
 
-    const resolved = await resolveWalletSyncDiffIntoSyncUpdate(diff, ctx);
+    const resolved = await resolveWalletSyncDiffIntoSyncUpdate(existingIds, diff, ctx);
 
     for (const failedId in resolved.failures) {
       const nonImported = nonImportedById.get(failedId);
@@ -273,12 +273,13 @@ export type WalletSyncAccountsUpdate = {
  * logic related to {wallet sync data update -> local state} management
  */
 export async function resolveWalletSyncDiffIntoSyncUpdate(
+  existingIds: Set<string>,
   diff: WalletSyncDiff,
   { getAccountBridge, bridgeCache, blacklistedTokenIds }: WalletSyncDataManagerResolutionContext,
 ): Promise<WalletSyncAccountsUpdate> {
   const failures: WalletSyncAccountsUpdate["failures"] = {};
 
-  const added = (
+  let added = (
     await promiseAllBatched(3, diff.added, async descriptor => {
       try {
         const account = await integrateNewAccountDescriptor(
@@ -297,11 +298,15 @@ export async function resolveWalletSyncDiffIntoSyncUpdate(
     })
   ).filter(Boolean) as Account[];
 
-  return {
-    removed: diff.removed,
-    added,
-    failures,
-  };
+  const addedIds = new Set(added.map(a => a.id));
+
+  // if some of the account ends up resolving one of the removed, we need to clean it up, this is the case if there were an implicit migration of account ids
+  const removed = diff.removed.filter(id => !addedIds.has(id));
+
+  // if some of the resolved are converging to the same account.id, we also remove them out
+  added = added.filter(a => !existingIds.has(a.id));
+
+  return { removed, added, failures };
 }
 
 const MINUTE = 60 * 1000;
