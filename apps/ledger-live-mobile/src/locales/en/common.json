@@ -6742,6 +6742,17 @@
         "memberCredentials": "Unexpected falsy member credentials",
         "ledgerSyncUnavailable": "Ledger Sync is currently unavailable. This doesn’t have any impact on your assets."
       }
+    },
+    "synchronize": {
+      "chooseMethod": {
+        "title": "Choose your sync method",
+        "scan": {
+          "title": "Scan a QR code"
+        },
+        "connectDevice": {
+          "title": "Use your Ledger"
+        }
+      }
     }
   },
   "web3hub": {
