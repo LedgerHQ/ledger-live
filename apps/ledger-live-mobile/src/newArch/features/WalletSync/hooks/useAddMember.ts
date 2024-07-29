@@ -40,27 +40,26 @@ export function useAddMember({ device }: { device: Device | null }) {
   useEffect(() => {
     const addMember = async () => {
       try {
-        if (!device) return;
-        await runWithDevice(device.deviceId, async transport => {
+        await runWithDevice(device?.deviceId || "", async transport => {
           const trustchainResult = await sdk.getOrCreateTrustchain(
             transport,
             memberCredentialsRef.current as MemberCredentials,
             {
-              onStartRequestUserInteraction: () => {
-                setUserDeviceInteraction(true);
-              },
+              onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
               onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
             },
           );
-
-          transitionToNextScreen(trustchainResult);
+          if (trustchainResult) {
+            transitionToNextScreen(trustchainResult);
+          }
         });
       } catch (error) {
         setError(error as Error);
       }
     };
-
-    setTimeout(() => addMember(), 3500);
+    if (device && device.deviceId) {
+      addMember();
+    }
   }, [device, dispatch, sdk, transitionToNextScreen]);
 
   return { error, userDeviceInteraction, onRetry };
