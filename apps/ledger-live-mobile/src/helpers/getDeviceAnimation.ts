@@ -2,6 +2,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { LottieViewProps } from "lottie-react-native";
 import Config from "react-native-config";
+import { ViewStyle } from "react-native";
 
 type AnimationSource = LottieViewProps["source"];
 type AnimationRecord = Record<"light" | "dark", AnimationSource>;
@@ -228,6 +229,14 @@ const animations: Animations = {
         light: require("../animations/stax/allowConnection.json"),
         dark: require("../animations/stax/allowConnection.json"),
       },
+      allowCustomLockScreen: {
+        light: require("../animations/stax/customimage/allowConnection.json"),
+        dark: require("../animations/stax/customimage/allowConnection.json"),
+      },
+      confirmCustomLockScreen: {
+        light: require("../animations/stax/customimage/confirmLockscreen.json"),
+        dark: require("../animations/stax/customimage/confirmLockscreen.json"),
+      },
     },
     bluetooth: {
       plugAndPinCode: {
@@ -269,84 +278,116 @@ const animations: Animations = {
       blePaired: {
         light: require("../animations/stax/pairingSuccess.json"),
         dark: require("../animations/stax/pairingSuccess.json"),
+      },
+      allowCustomLockScreen: {
+        light: require("../animations/stax/customimage/allowConnection.json"),
+        dark: require("../animations/stax/customimage/allowConnection.json"),
+      },
+      confirmCustomLockScreen: {
+        light: require("../animations/stax/customimage/confirmLockscreen.json"),
+        dark: require("../animations/stax/customimage/confirmLockscreen.json"),
       },
     },
   },
   europa: {
     wired: {
       plugAndPinCode: {
-        light: require("../animations/stax/enterPIN.json"),
-        dark: require("../animations/stax/enterPIN.json"),
+        light: require("../animations/europa/light/enterPIN.json"),
+        dark: require("../animations/europa/dark/enterPIN.json"),
       },
       enterPinCode: {
-        light: require("../animations/stax/enterPIN.json"),
-        dark: require("../animations/stax/enterPIN.json"),
+        light: require("../animations/europa/light/enterPIN.json"),
+        dark: require("../animations/europa/dark/enterPIN.json"),
       },
       quitApp: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/europa/light/allowConnection.json"),
+        dark: require("../animations/europa/dark/allowConnection.json"),
       },
       allowManager: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/europa/light/allowConnection.json"),
+        dark: require("../animations/europa/dark/allowConnection.json"),
       },
       openApp: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/europa/light/allowConnection.json"),
+        dark: require("../animations/europa/dark/allowConnection.json"),
       },
       verify: {
-        light: require("../animations/stax/verifyAddress.json"),
-        dark: require("../animations/stax/verifyAddress.json"),
+        light: require("../animations/europa/light/verifyAddress.json"),
+        dark: require("../animations/europa/dark/verifyAddress.json"),
       },
       sign: {
-        light: require("../animations/stax/signTransaction.json"),
-        dark: require("../animations/stax/signTransaction.json"),
+        light: require("../animations/europa/light/signTransaction.json"),
+        dark: require("../animations/europa/dark/signTransaction.json"),
       },
       allowUpdate: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/europa/light/allowConnection.json"),
+        dark: require("../animations/europa/dark/allowConnection.json"),
+      },
+      onboardingSucceed: {
+        light: require("../animations/europa/light/onboardingSuccess.json"),
+        dark: require("../animations/europa/dark/onboardingSuccess.json"),
+      },
+      allowCustomLockScreen: {
+        light: require("../animations/europa/light/customimage/allowConnection.json"),
+        dark: require("../animations/europa/dark/customimage/allowConnection.json"),
+      },
+      confirmCustomLockScreen: {
+        light: require("../animations/europa/light/customimage/confirmLockscreen.json"),
+        dark: require("../animations/europa/dark/customimage/confirmLockscreen.json"),
       },
     },
     bluetooth: {
       plugAndPinCode: {
-        light: require("../animations/stax/enterPIN.json"),
-        dark: require("../animations/stax/enterPIN.json"),
+        light: require("../animations/europa/light/enterPIN.json"),
+        dark: require("../animations/europa/dark/enterPIN.json"),
       },
       enterPinCode: {
-        light: require("../animations/stax/enterPIN.json"),
-        dark: require("../animations/stax/enterPIN.json"),
+        light: require("../animations/europa/light/enterPIN.json"),
+        dark: require("../animations/europa/dark/enterPIN.json"),
       },
       quitApp: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/europa/light/allowConnection.json"),
+        dark: require("../animations/europa/dark/allowConnection.json"),
       },
       allowManager: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/europa/light/allowConnection.json"),
+        dark: require("../animations/europa/dark/allowConnection.json"),
       },
       openApp: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/europa/light/allowConnection.json"),
+        dark: require("../animations/europa/dark/allowConnection.json"),
       },
       verify: {
-        light: require("../animations/stax/verifyAddress.json"),
-        dark: require("../animations/stax/verifyAddress.json"),
+        light: require("../animations/europa/light/verifyAddress.json"),
+        dark: require("../animations/europa/dark/verifyAddress.json"),
       },
       sign: {
-        light: require("../animations/stax/signTransaction.json"),
-        dark: require("../animations/stax/signTransaction.json"),
+        light: require("../animations/europa/light/signTransaction.json"),
+        dark: require("../animations/europa/dark/signTransaction.json"),
       },
       allowUpdate: {
-        light: require("../animations/stax/allowConnection.json"),
-        dark: require("../animations/stax/allowConnection.json"),
+        light: require("../animations/europa/light/allowConnection.json"),
+        dark: require("../animations/europa/dark/allowConnection.json"),
       },
       blePairing: {
-        light: require("../animations/stax/pairingProgress.json"),
-        dark: require("../animations/stax/pairingProgress.json"),
+        light: require("../animations/europa/light/pairingProgress.json"),
+        dark: require("../animations/europa/dark/pairingProgress.json"),
       },
       blePaired: {
-        light: require("../animations/stax/pairingSuccess.json"),
-        dark: require("../animations/stax/pairingSuccess.json"),
+        light: require("../animations/europa/light/pairingSuccess.json"),
+        dark: require("../animations/europa/dark/pairingSuccess.json"),
+      },
+      onboardingSucceed: {
+        light: require("../animations/europa/light/onboardingSuccess.json"),
+        dark: require("../animations/europa/dark/onboardingSuccess.json"),
+      },
+      allowCustomLockScreen: {
+        light: require("../animations/europa/light/customimage/allowConnection.json"),
+        dark: require("../animations/europa/dark/customimage/allowConnection.json"),
+      },
+      confirmCustomLockScreen: {
+        light: require("../animations/europa/light/customimage/confirmLockscreen.json"),
+        dark: require("../animations/europa/dark/customimage/confirmLockscreen.json"),
       },
     },
   },
@@ -383,3 +424,14 @@ export function getDeviceAnimation({
 
   return animation;
 }
+
+export const getDeviceAnimationStyles = (modelId: DeviceModelId, override: ViewStyle = {}) => {
+  switch (modelId) {
+    case DeviceModelId.stax:
+      return { height: 210, ...override };
+    case DeviceModelId.europa:
+      return { height: 165, ...override };
+    default:
+      return {};
+  }
+};

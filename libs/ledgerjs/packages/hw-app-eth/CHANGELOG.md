@@ -1,5 +1,22 @@
 # @ledgerhq/hw-app-eth
 
+## 6.37.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/hw-transport-mocker@6.29.2
+
+## 6.37.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.2-hotfix.0
+
 ## 6.37.2
 
 ### Patch Changes

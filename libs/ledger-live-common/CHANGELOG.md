@@ -1,5 +1,92 @@
 ## 34.5.0-next.4
 
+## 34.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f), [`5451145`](https://github.com/LedgerHQ/ledger-live/commit/54511453591d3702e09ca77559bb0564937b2a65)]:
+  - @ledgerhq/devices@8.4.2
+  - @ledgerhq/device-core@0.3.1
+  - @ledgerhq/coin-framework@0.16.1
+  - @ledgerhq/coin-algorand@0.5.3
+  - @ledgerhq/coin-bitcoin@0.7.1
+  - @ledgerhq/coin-cardano@0.1.3
+  - @ledgerhq/coin-evm@2.1.3
+  - @ledgerhq/coin-near@0.5.3
+  - @ledgerhq/coin-polkadot@1.1.1
+  - @ledgerhq/coin-solana@0.7.3
+  - @ledgerhq/coin-stellar@0.2.1
+  - @ledgerhq/coin-tezos@0.5.1
+  - @ledgerhq/coin-tron@0.0.3
+  - @ledgerhq/coin-xrp@0.4.1
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/live-wallet@0.4.1
+  - @ledgerhq/speculos-transport@0.1.3
+  - @ledgerhq/live-countervalues@0.2.3
+  - @ledgerhq/live-countervalues-react@0.2.3
+  - @ledgerhq/live-nft@0.4.3
+  - @ledgerhq/hw-app-algorand@6.29.2
+  - @ledgerhq/hw-app-btc@10.4.1
+  - @ledgerhq/hw-app-cosmos@6.30.2
+  - @ledgerhq/hw-app-eth@6.37.3
+  - @ledgerhq/hw-app-exchange@0.5.2
+  - @ledgerhq/hw-app-near@6.29.2
+  - @ledgerhq/hw-app-polkadot@6.31.2
+  - @ledgerhq/hw-app-solana@7.2.2
+  - @ledgerhq/hw-app-str@7.0.2
+  - @ledgerhq/hw-app-tezos@6.29.2
+  - @ledgerhq/hw-app-trx@6.29.2
+  - @ledgerhq/hw-app-vet@0.2.3
+  - @ledgerhq/hw-app-xrp@6.29.2
+  - @ledgerhq/hw-transport-mocker@6.29.2
+
+## 34.6.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-wallet@0.4.1-hotfix.1
+
+## 34.6.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea), [`6b2fc93`](https://github.com/LedgerHQ/ledger-live/commit/6b2fc93beb6624fb2d991a6bb69cea3e9a8ef453)]:
+  - @ledgerhq/devices@8.4.2-hotfix.0
+  - @ledgerhq/device-core@0.3.1-hotfix.0
+  - @ledgerhq/coin-framework@0.16.1-hotfix.0
+  - @ledgerhq/coin-algorand@0.5.3-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.7.1-hotfix.0
+  - @ledgerhq/coin-cardano@0.1.3-hotfix.0
+  - @ledgerhq/coin-evm@2.1.3-hotfix.0
+  - @ledgerhq/coin-near@0.5.3-hotfix.0
+  - @ledgerhq/coin-polkadot@1.1.1-hotfix.0
+  - @ledgerhq/coin-solana@0.7.3-hotfix.0
+  - @ledgerhq/coin-stellar@0.2.1-hotfix.0
+  - @ledgerhq/coin-tezos@0.5.1-hotfix.0
+  - @ledgerhq/coin-tron@0.0.3-hotfix.0
+  - @ledgerhq/coin-xrp@0.4.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.0
+  - @ledgerhq/speculos-transport@0.1.3-hotfix.0
+  - @ledgerhq/live-countervalues@0.2.3-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.2.3-hotfix.0
+  - @ledgerhq/live-nft@0.4.3-hotfix.0
+  - @ledgerhq/hw-app-algorand@6.29.2-hotfix.0
+  - @ledgerhq/hw-app-btc@10.4.1-hotfix.0
+  - @ledgerhq/hw-app-cosmos@6.30.2-hotfix.0
+  - @ledgerhq/hw-app-eth@6.37.3-hotfix.0
+  - @ledgerhq/hw-app-exchange@0.5.2-hotfix.0
+  - @ledgerhq/hw-app-near@6.29.2-hotfix.0
+  - @ledgerhq/hw-app-polkadot@6.31.2-hotfix.0
+  - @ledgerhq/hw-app-solana@7.2.2-hotfix.0
+  - @ledgerhq/hw-app-str@7.0.2-hotfix.0
+  - @ledgerhq/hw-app-tezos@6.29.2-hotfix.0
+  - @ledgerhq/hw-app-trx@6.29.2-hotfix.0
+  - @ledgerhq/hw-app-vet@0.2.3-hotfix.0
+  - @ledgerhq/hw-app-xrp@6.29.2-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.2-hotfix.0
+
 ## 34.6.0
 
 ### Minor Changes

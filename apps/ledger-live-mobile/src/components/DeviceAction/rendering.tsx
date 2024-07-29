@@ -35,7 +35,6 @@ import {
   getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
@@ -49,7 +48,7 @@ import Button from "../Button";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "~/const";
 import Animation from "../Animation";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "~/const/manager";
@@ -126,9 +125,6 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
   mb: 8,
 })``;
 
-const animationStyles = (modelId: DeviceModelId) =>
-  [DeviceModelId.stax, DeviceModelId.europa].includes(modelId) ? { height: 210 } : {};
-
 export type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
   colors?: Theme["colors"];
@@ -147,7 +143,7 @@ export function renderRequestQuitApp({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "quitApp", theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <CenteredText>{t("DeviceAction.quitApp")}</CenteredText>
@@ -208,7 +204,7 @@ export function renderVerifyAddress({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "verify", theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.verifyAddress.title")}</TitleText>
@@ -279,7 +275,7 @@ export function renderConfirmSwap({
         <AnimationContainer marginTop="16px">
           <Animation
             source={getDeviceAnimation({ device, key: "sign", theme })}
-            style={animationStyles(device.modelId)}
+            style={getDeviceAnimationStyles(device.modelId)}
           />
         </AnimationContainer>
         <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
@@ -390,7 +386,7 @@ export function renderAllowManager({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "allowManager", theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Wrapper>
@@ -429,7 +425,7 @@ export function renderAllowLanguageInstallation({
       <AnimationContainer my={8}>
         <Animation
           source={getDeviceAnimation({ device, key, theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Flex>
@@ -455,7 +451,7 @@ export const renderAllowRemoveCustomLockscreen = ({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key, theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Wrapper>
@@ -495,7 +491,7 @@ const AllowOpeningApp = ({
             key: "openApp",
             theme,
           })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.allowAppPermission", { wording })}</TitleText>
@@ -850,7 +846,7 @@ export function renderConnectYourDevice({
             key: isLocked || unresponsive ? "enterPinCode" : "plugAndPinCode",
             theme,
           })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       {device.deviceName && <ConnectDeviceNameText>{device.deviceName}</ConnectDeviceNameText>}
@@ -936,7 +932,7 @@ export function renderSecureTransferDeviceConfirmation({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "sign", theme })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t(`DeviceAction.${exchangeTypeName}.title`)}</TitleText>
