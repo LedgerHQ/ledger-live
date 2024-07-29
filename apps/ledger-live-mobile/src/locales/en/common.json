@@ -6417,6 +6417,8 @@
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
+    "keepOnDevice": "Keep",
+    "discardOnDevice": "Discard",
     "nftEntryPointButtonLabel": "Set as lockscreen picture",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",

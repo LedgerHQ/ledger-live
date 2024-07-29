@@ -18,19 +18,6 @@ const staxTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   leftPaddingColor: "#272727",
 };
 
-const europaTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
-  // NB: measures in px taken directly on the .png
-  frameHeight: 888, // TODO: TBD
-  frameWidth: 564, // TODO: TBD
-  innerHeight: 840, // TODO: TBD
-  innerWidth: (840 * 400) / 670, // TODO: TBD
-  innerRight: 30, // TODO: TBD
-  innerTop: 24, // TODO: TBD
-  borderRightRadius: 24, // TODO: TBD
-  resizeMode: "cover", // TODO: TBD
-  leftPaddingColor: "#272727", // TBD
-};
-
 const staxPreviewConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   // NB: measures in px taken directly on the .png
   frameHeight: 1283,
@@ -43,15 +30,30 @@ const staxPreviewConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   resizeMode: "cover",
 };
 
+const EUROPA_FRAME_WIDTH = 572;
+const EUROPA_FRAME_HEIGHT = 784;
+
+const europaTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
+  frameWidth: EUROPA_FRAME_WIDTH,
+  frameHeight: EUROPA_FRAME_HEIGHT,
+  innerWidth: 448,
+  innerHeight: 575,
+  innerRight: 65,
+  innerTop: 60,
+  borderRightRadius: 4,
+  borderLeftRadius: 4,
+  resizeMode: "cover",
+};
+
 const europaPreviewConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
-  // NB: measures in px taken directly on the .png
-  frameHeight: 1283, // TODO: TBD
-  frameWidth: 810, // TODO: TBD
-  innerHeight: 1211, // TODO: TBD
-  innerWidth: 1211 * (400 / 670), // TODO: TBD
-  innerRight: 35, // TODO: TBD
-  innerTop: 38, // TODO: TBD
-  borderRightRadius: 57, // TODO: TBD
+  frameWidth: EUROPA_FRAME_WIDTH,
+  frameHeight: EUROPA_FRAME_HEIGHT,
+  innerWidth: 448,
+  innerHeight: 575,
+  innerRight: 65,
+  innerTop: 60,
+  borderRightRadius: 4,
+  borderLeftRadius: 4,
   resizeMode: "cover",
 };
 
