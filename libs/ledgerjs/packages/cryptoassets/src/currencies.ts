@@ -21,7 +21,7 @@
  * if bitcoin family, supportsSegwit defines if it supports segwit.
  */
 
-import { CryptoCurrency, CoinType, Unit, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CoinType, CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
 
 const makeTestnetUnit = u => ({ ...u, code: `𝚝${u.code}` });
 
@@ -2829,6 +2829,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://scan.tomochain.com/txs/$hash",
+      },
+    ],
+  },
+  ton: {
+    type: "CryptoCurrency",
+    id: "ton",
+    coinType: CoinType.TON,
+    name: "TON",
+    managerAppName: "TON",
+    ticker: "TON",
+    scheme: "ton",
+    color: "#0098ea",
+    family: "ton",
+    units: [
+      {
+        name: "TON",
+        code: "TON",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://tonscan.org/tx/$hash",
+        address: "https://tonscan.org/address/$address",
       },
     ],
   },

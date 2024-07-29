@@ -33,6 +33,7 @@ const familiesWPackage = [
   "tezos",
   "tron",
   "xrp",
+  "ton",
   "icon",
 ];
 

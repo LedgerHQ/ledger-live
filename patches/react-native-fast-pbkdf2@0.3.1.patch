@@ -1,0 +1,53 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index a022b38c398d5e64bb77df6c6fc1c2f73932f019..ab443a9e2dae873a32688ad9fe5fb1c920e61cf9 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -2,11 +2,11 @@ buildscript {
+     if (project == rootProject) {
+         repositories {
+             google()
+-            jcenter()
++            mavenCentral()
+         }
+ 
+         dependencies {
+-            classpath 'com.android.tools.build:gradle:3.5.3'
++            classpath 'com.android.tools.build:gradle:8.1.1'
+         }
+     }
+ }
+@@ -18,11 +18,11 @@ def safeExtGet(prop, fallback) {
+ }
+ 
+ android {
+-    compileSdkVersion safeExtGet('Pbkdf2_compileSdkVersion', 29)
+-    buildToolsVersion safeExtGet('Pbkdf2_buildToolsVersion', '29.0.2')
++    compileSdkVersion safeExtGet('Pbkdf2_compileSdkVersion', 34)
++    buildToolsVersion safeExtGet('Pbkdf2_buildToolsVersion', '33.0.1')
+     defaultConfig {
+-        minSdkVersion safeExtGet('Pbkdf2_minSdkVersion', 16)
+-        targetSdkVersion safeExtGet('Pbkdf2_targetSdkVersion', 29)
++        minSdkVersion safeExtGet('Pbkdf2_minSdkVersion', 24)
++        targetSdkVersion safeExtGet('Pbkdf2_targetSdkVersion', 34)
+         versionCode 1
+         versionName "1.0"
+ 
+@@ -45,16 +45,14 @@ android {
+ repositories {
+     mavenLocal()
+     maven {
+-        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+         url("$rootDir/../node_modules/react-native/android")
+     }
+     google()
+-    jcenter()
++    mavenCentral()
+ }
+ 
+ dependencies {
+-    //noinspection GradleDynamicVersion
+-    implementation "com.facebook.react:react-native:+"  // From node_modules
++    implementation "com.facebook.react:react-native:+"
+     implementation 'com.madgag.spongycastle:core:1.58.0.0'
+     implementation 'com.madgag.spongycastle:prov:1.54.0.0'
+     implementation 'com.madgag.spongycastle:pg:1.54.0.0'
