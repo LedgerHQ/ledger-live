@@ -36,7 +36,7 @@ const ConfirmFooter = ({ footer, manifestId, manifestName }: Props) => {
       {footer ? (
         footer
       ) : (
-        <Text marginTop={30} data-test-id="confirm-footer-toc">
+        <Text marginTop={30} data-testid="confirm-footer-toc">
           <Trans
             i18nKey="TransactionConfirm.termsAndConditions"
             values={{ appName: manifestName || manifestId }}

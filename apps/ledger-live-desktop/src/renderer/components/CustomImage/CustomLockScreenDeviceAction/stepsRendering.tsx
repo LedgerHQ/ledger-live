@@ -27,7 +27,7 @@ export const RenderImageLoadRequested = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      data-test-id="device-action-image-load-requested"
+      data-testid="device-action-image-load-requested"
     >
       <DeviceBlocker />
       <AnimationWrapper>
@@ -66,7 +66,7 @@ export const RenderLoadingImage = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      data-test-id={`device-action-image-loading-${progress}`}
+      data-testid={`device-action-image-loading-${progress}`}
     >
       <AnimationWrapper>
         <FramedPicture
@@ -111,7 +111,7 @@ export const RenderImageCommitRequested = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      data-test-id="device-action-image-commit-requested"
+      data-testid="device-action-image-commit-requested"
     >
       <DeviceBlocker />
       <AnimationWrapper>

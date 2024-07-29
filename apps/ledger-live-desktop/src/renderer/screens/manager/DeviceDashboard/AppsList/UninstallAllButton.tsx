@@ -46,7 +46,7 @@ const UninstallAllButton = ({ installedApps, uninstallQueue, dispatch }: Props) 
         fontSize={3}
         onClick={openModal}
         event="Manager Uninstall All"
-        data-test-id="manager-uninstall-all-apps-button"
+        data-testid="manager-uninstall-all-apps-button"
       >
         <Trash size={14} />
         <Text

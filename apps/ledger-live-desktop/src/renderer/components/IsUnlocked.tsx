@@ -106,7 +106,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
   }, [isLocked]);
   if (isLocked) {
     return (
-      <Box sticky alignItems="center" justifyContent="center" data-test-id="lockscreen-container">
+      <Box sticky alignItems="center" justifyContent="center" data-testid="lockscreen-container">
         <form onSubmit={handleSubmit}>
           <Box alignItems="center">
             <LedgerLiveLogo
@@ -132,7 +132,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
                   value={inputValue.password}
                   error={incorrectPassword}
                   id="lockscreen-password-input"
-                  data-test-id="lockscreen-password-input"
+                  data-testid="lockscreen-password-input"
                 />
               </Box>
               <Box ml={2}>
@@ -146,7 +146,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
                     padding: 0,
                     justifyContent: "center",
                   }}
-                  data-test-id="lockscreen-login-button"
+                  data-testid="lockscreen-login-button"
                 >
                   <Box alignItems="center">
                     <IconArrowRight size={20} />
@@ -159,7 +159,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
               mt={3}
               small
               onClick={handleOpenHardResetModal}
-              data-test-id="lockscreen-forgotten-button"
+              data-testid="lockscreen-forgotten-button"
             >
               {t("common.lockScreen.lostPassword")}
             </Button>

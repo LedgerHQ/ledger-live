@@ -9,6 +9,7 @@ import { trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";
 import { useStore } from "react-redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { walletSyncStateSelector } from "@ledgerhq/live-wallet/store";
+import { TrustchainSDK } from "@ledgerhq/trustchain/types";
 
 export function runWithDevice<T>(
   deviceId: string | undefined,
@@ -22,6 +23,8 @@ const platformMap: Record<string, string | undefined> = {
   win32: "Windows",
   linux: "Linux",
 };
+
+let sdkInstance: TrustchainSDK | null = null;
 
 export function useTrustchainSdk() {
   const isMockEnv = !!getEnv("MOCK");
@@ -40,10 +43,10 @@ export function useTrustchainSdk() {
       }),
     [store],
   );
-  const sdk = useMemo(
-    () => getSdk(isMockEnv, defaultContext, lifecycle),
-    [isMockEnv, defaultContext, lifecycle],
-  );
 
-  return sdk;
+  if (sdkInstance === null) {
+    sdkInstance = getSdk(isMockEnv, defaultContext, lifecycle);
+  }
+
+  return sdkInstance;
 }

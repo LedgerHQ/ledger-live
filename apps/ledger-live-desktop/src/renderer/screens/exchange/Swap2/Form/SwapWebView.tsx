@@ -28,6 +28,7 @@ import { transformToBigNumbers, useRedirectToSwapHistory } from "../utils/index"
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
+import { NetworkDown } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
@@ -41,6 +42,7 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
+import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { captureException } from "~/sentry/renderer";
 import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
@@ -123,6 +125,8 @@ const SwapWebView = ({
   const locale = useSelector(languageSelector);
   const redirectToHistory = useRedirectToSwapHistory();
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
+  const { networkStatus } = useNetworkStatus();
+  const isOffline = networkStatus === NetworkStatus.OFFLINE;
 
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
@@ -445,12 +449,18 @@ const SwapWebView = ({
   ]);
 
   useEffect(() => {
+    // Determine the new quote state based on network status
     setQuoteState({
       amountTo: undefined,
-      swapError: undefined,
+      ...{
+        swapError: isOffline ? new NetworkDown() : undefined,
+      },
     });
+
+    // This effect runs when the network status changes or the target account changes
+    // when the toAccountId has changed, quote state should be reset
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [swapState?.toAccountId]);
+  }, [networkStatus, swapState?.toAccountId]);
 
   const webviewStyle = useMemo(
     () => ({ minHeight: windowContentSize.scrollHeight }),
@@ -458,7 +468,7 @@ const SwapWebView = ({
   );
 
   // return loader???
-  if (!hasSwapState) {
+  if (!hasSwapState || isOffline) {
     return null;
   }
 

@@ -2,7 +2,7 @@ import { Component } from "tests/page/abstractClasses";
 
 export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
-  private drawerOverlay = this.page.locator("[data-test-id='drawer-overlay'][style='opacity: 1;']");
+  private drawerOverlay = this.page.locator("[data-testid='drawer-overlay'][style='opacity: 1;']");
   private continueButton = this.page.getByTestId("drawer-continue-button");
   private closeButton = this.page.getByTestId("drawer-close-button");
   private currencyButton = (currency: string) =>

@@ -7,10 +7,10 @@ import { ZodType, z } from "zod";
  *
  * (1) we determine if there are changes between local state and latest distant state by `diffLocalToDistant(localState, latestDist)`. This is a synchronous operation.
  *
- * (2) when receiving a new distant state from cloud sync, the module must calculate the update to apply to the local state. resolveIncomingDistantState calculates the update and applyUpdate applies it.
+ * (2) when receiving a new distant state from cloud sync, the module must calculate the update to apply to the local state. resolveIncrementalUpdate calculates the update and applyUpdate applies it.
  *
  * state transition is done incrementally with a diff, moving from A to B is essentially
- * - resolveIncomingDistantState: solving the transition (distA->distB) from stateA (this is asynchronous, for instance we need to fetch data from the blockchain to get a valid Account state)
+ * - resolveIncrementalUpdate: solving the transition (distA->distB) from stateA (this is asynchronous, for instance we need to fetch data from the blockchain to get a valid Account state)
  * - applyUpdate: applying that transition update to get to stateB
  *
  *  so in other words:
@@ -42,8 +42,9 @@ export interface WalletSyncDataManager<
 
   /**
    * Asynchronously accept new DistantState data and determine the potential Update to do on the local state
+   * The function is also called regularly to check there is no pending update to do in the LocalState, in that case latestState===incomingState, some modules could bail out this case by returning {hasChanges:false}
    */
-  resolveIncomingDistantState: (
+  resolveIncrementalUpdate: (
     ctx: WalletSyncDataManagerResolutionContext,
     localData: LocalState,
     latestState: DistantState | null,

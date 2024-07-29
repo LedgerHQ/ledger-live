@@ -6393,7 +6393,7 @@
   },
   "customImage": {
     "title": "Lock screen picture",
-    "replace": "Replace",
+    "change": "Change",
     "drawer": {
       "options": {
         "uploadFromPhone": "Choose from my picture gallery",

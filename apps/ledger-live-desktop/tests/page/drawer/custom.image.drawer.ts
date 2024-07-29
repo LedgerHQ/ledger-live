@@ -2,7 +2,7 @@ import { waitFor } from "../../utils/waitFor";
 import { Component } from "tests/page/abstractClasses";
 
 export class CustomImageDrawer extends Component {
-  private importImageInputSelector = "data-test-id=custom-image-import-image-input";
+  private importImageInputSelector = "data-testid=custom-image-import-image-input";
   readonly container = this.page.getByTestId("custom-image-container");
   readonly importImageInput = this.page.locator(this.importImageInputSelector);
   private importNftButton = this.page.getByTestId("custom-image-import-nft-button");

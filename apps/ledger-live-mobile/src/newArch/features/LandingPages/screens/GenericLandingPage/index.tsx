@@ -30,7 +30,7 @@ const GenericLandingPage = (props: NavigationProps) => {
   return (
     <Flex>
       <TrackScreen name="Landing Page" useCase={useCase} />
-      <ContentCardsLocation locationId={props.route.params?.useCase} />
+      <ContentCardsLocation locationId={props.route.params?.useCase} mb={8} />
     </Flex>
   );
 };

@@ -1122,12 +1122,6 @@ PODS:
     - React-Core
   - react-native-performance (3.1.2):
     - React-Core
-  - react-native-quick-crypto (0.7.1):
-    - glog
-    - OpenSSL-Universal
-    - RCT-Folly (= 2022.05.16.00)
-    - React
-    - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
   - react-native-restart (0.0.24):
@@ -1398,10 +1392,10 @@ PODS:
   - SocketRocket (0.6.1)
   - sovran-react-native (0.4.5):
     - React-Core
-  - Storyly (2.0.2)
-  - storyly-react-native (2.0.1):
+  - Storyly (2.18.1)
+  - storyly-react-native (2.18.1):
     - React
-    - Storyly (~> 2.0.0)
+    - Storyly (= 2.18.1)
   - TOCropViewController (2.5.3)
   - Yoga (1.14.0)
   - ZXingObjC/Core (3.6.9)
@@ -1450,7 +1444,6 @@ DEPENDENCIES:
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
-  - OpenSSL-Universal
   - OpenSSL-Universal (= 1.1.1100)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -1490,7 +1483,6 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-performance (from `../node_modules/react-native-performance`)
-  - react-native-quick-crypto (from `../node_modules/react-native-quick-crypto`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1696,8 +1688,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-pager-view"
   react-native-performance:
     :path: "../node_modules/react-native-performance"
-  react-native-quick-crypto:
-    :path: "../node_modules/react-native-quick-crypto"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
   react-native-restart:
@@ -1893,7 +1883,6 @@ SPEC CHECKSUMS:
   react-native-netinfo: 48c5f79a84fbc3ba1d28a8b0d04adeda72885fa8
   react-native-pager-view: 0eb900a8c5d83c02a74b0125d4b5f9fdcc5b8f44
   react-native-performance: e66c3730f9e463b959dc21ff38fd2c8b8e53ea79
-  react-native-quick-crypto: 2980fb54ccfd2316ea7fa06b9c99352507570bea
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
@@ -1952,12 +1941,12 @@ SPEC CHECKSUMS:
   SentryPrivate: d651efb234cf385ec9a1cdd3eff94b5e78a0e0fe
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   sovran-react-native: fd3dc8f1a4b14acdc4ad25fc6b4ac4f52a2a2a15
-  Storyly: df48014753dfb30c663242c26478d5a6c58379e3
-  storyly-react-native: 5c67a9cc9bf2a327ce6544a5093c35d8449ef727
+  Storyly: 97332ff6eccc9ce4024207338f88b34177c95503
+  storyly-react-native: a112c85399fefc126d8d6a7d692be1b7a12bfaa7
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
   Yoga: 805bf71192903b20fc14babe48080582fee65a80
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
-PODFILE CHECKSUM: eee6c7f1fc37e1ec2d2684378982283948996949
+PODFILE CHECKSUM: abcd948ae1b81d2a7716125d26ad10710d7a4504
 
 COCOAPODS: 1.14.3

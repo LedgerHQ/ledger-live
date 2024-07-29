@@ -51,7 +51,7 @@ export class StreamTree {
     const applicationIndex = child
       ? DerivationPath.reverseHardenedIndex(child.getHighestIndex())
       : 0;
-    return `${treeIndex}h/${applicationId}h/${applicationIndex + increment}h`;
+    return `m/${treeIndex}'/${applicationId}'/${applicationIndex + increment}'`;
   }
 
   public async getPublishKeyEvent(
