@@ -1,5 +1,32 @@
 # @ledgerhq/live-wallet
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f)]:
+  - @ledgerhq/devices@8.4.2
+  - @ledgerhq/coin-framework@0.16.1
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/trustchain@0.1.3
+
+## 0.4.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/trustchain@0.1.3-hotfix.1
+
+## 0.4.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea)]:
+  - @ledgerhq/devices@8.4.2-hotfix.0
+  - @ledgerhq/coin-framework@0.16.1-hotfix.0
+  - @ledgerhq/trustchain@0.1.3-hotfix.0
+
 ## 0.4.0
 
 ### Minor Changes
