@@ -116,7 +116,7 @@ jobs:
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
-              ref: "feat/DSDK-13125-live-assets",
+              ref: "main",
               workflow_id: "pre-desktop.yml",
               inputs: {
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
@@ -131,7 +131,7 @@ jobs:
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
-              ref: "feat/DSDK-13125-live-assets",
+              ref: "main",
               workflow_id: "pre-mobile.yml",
               inputs: {
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
