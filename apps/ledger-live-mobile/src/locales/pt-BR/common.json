@@ -929,6 +929,11 @@
     },
     "TezosUnrevealedAccount" : {
       "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
+    },
+    "CustomError" : {
+      "title" : "Tente novamente.",
+      "description" : "O servidor não conseguiu processar sua solicitação. Tente novamente mais tarde ou fale com o Suporte Ledger.",
+      "errorCode" : "Código: {{errorCode}}"
     }
   },
   "crash" : {
@@ -6382,7 +6387,7 @@
   },
   "customImage" : {
     "title" : "Imagem da tela de bloqueio",
-    "replace" : "Substituir",
+    "change" : "Variação",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Escolher na minha galeria de imagens",
@@ -6685,12 +6690,74 @@
     }
   },
   "walletSync" : {
+    "title" : "Ledger Sync",
     "activation" : {
       "screen" : {
         "title" : "Sincronize suas contas em todas as plataformas",
         "description" : "Sua Ledger vai gerar uma chave de encriptação garantindo que seus dados permaneçam privados e só possam ser recuperados por você.",
         "mainCta" : "Sincronize suas contas",
         "secondCta" : "Já criou uma chave?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "Escolha o dispositivo da Ledger que você usará para proteger seu backup",
+      "description" : "Você pode recuperar seu backup simplesmente conectando sua Ledger aos aplicativos Ledger Live móvel e desktop."
+    },
+    "deviceAction" : {
+      "title" : "Continuar em sua Ledger {{wording}}",
+      "description" : "Siga as instruções que aparecem na Tela Confiável da sua Ledger."
+    },
+    "success" : {
+      "sync" : "Sincronização bem-sucedida!",
+      "syncDesc" : "As alterações em suas contas agora aparecerão automaticamente em todos os aplicativos e plataformas.",
+      "activation" : "Sucesso!",
+      "activationDesc" : "Você ativou o Ledger Sync com sucesso.",
+      "syncAnother" : "Sincronizar com outro aplicativo Ledger Live",
+      "close" : "Fechar"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "Synchronize",
+        "description" : "Synchronize your app data with another Ledger Live app for a seamless experience. "
+      },
+      "manageKey" : {
+        "title" : "Manage Key",
+        "description" : "Secure or delete your encryption key via another Ledger. "
+      },
+      "synchronizedInstances" : {
+        "cta" : "Manage now",
+        "title" : "{{count}} Synchronized Instance",
+        "title_plural" : "{{count}} Synchronized Instances",
+        "error" : "Instances"
+      },
+      "errors" : {
+        "fetching" : "Something went wrong while fetching your synchronized instances.",
+        "trustchain" : "Unexpected falsy trustchain",
+        "memberCredentials" : "Unexpected falsy member credentials",
+        "ledgerSyncUnavailable" : "Ledger Sync is currently unavailable. This doesn’t have any impact on your assets."
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Escolha seu método de sincronização",
+        "scan" : {
+          "title" : "Escanear um QR code"
+        },
+        "connectDevice" : {
+          "title" : "Use sua Ledger"
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "manifestsList" : {
+      "title" : "Explorar",
+      "description" : "Explore o melhor da web3 com a curadoria da Ledger"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Explore a web3",
+        "placeholder" : "Pesquise ou digite uma URL"
       }
     }
   }
