@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
-export default function WalletSynceNavigator() {
+export default function WalletSyncNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   const { t } = useTranslation();
