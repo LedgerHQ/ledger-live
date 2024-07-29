@@ -317,6 +317,7 @@
     "src/families/stellar/logic.ts",
     "src/families/tezos/logic.ts",
     "src/families/tezos/react.ts",
+    "src/families/ton/types.ts",
     "src/hw/actions/uninstallAllApps.ts",
     "src/hw/getBitcoinLikeInfo.ts",
     "src/index.ts",
