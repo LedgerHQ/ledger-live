@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback } from "react";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";

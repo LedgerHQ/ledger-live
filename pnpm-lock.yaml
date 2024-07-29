@@ -811,9 +811,15 @@ importers:
       '@formatjs/intl-relativetimeformat':
         specifier: ^11.1.8
         version: 11.2.12
+<<<<<<< HEAD
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-cosmos
+=======
+      '@ledgerhq/coin-elrond':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-elrond
+>>>>>>> c6698fe82d (fixes after review)
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-evm
@@ -2064,6 +2070,10 @@ importers:
         specifier: ^29.1.1
         version: 29.1.2(jest@29.7.0)(typescript@5.4.3)
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 07dade77ac (regenerate pnpm-lock)
   libs/coin-modules/coin-cosmos:
     dependencies:
       '@cosmjs/amino':
@@ -2081,6 +2091,19 @@ importers:
       '@keplr-wallet/proto-types':
         specifier: ^0.12.76
         version: 0.12.89
+<<<<<<< HEAD
+=======
+  libs/coin-modules/coin-elrond:
+    dependencies:
+      '@elrondnetwork/erdjs':
+        specifier: 11.0.0
+        version: 11.0.0
+      '@elrondnetwork/erdjs-network-providers':
+        specifier: ^1.1.2
+        version: 1.2.0
+>>>>>>> 72fb9a4a7c (rename to elrond for easier integration)
+=======
+>>>>>>> 07dade77ac (regenerate pnpm-lock)
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -2093,15 +2116,33 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+<<<<<<< HEAD
+<<<<<<< HEAD
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
+=======
+>>>>>>> 72fb9a4a7c (rename to elrond for easier integration)
+=======
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../live-config
+>>>>>>> 07dade77ac (regenerate pnpm-lock)
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../../promise
+>>>>>>> 72fb9a4a7c (rename to elrond for easier integration)
+=======
+>>>>>>> 07dade77ac (regenerate pnpm-lock)
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
@@ -2111,18 +2152,36 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+<<<<<<< HEAD
+<<<<<<< HEAD
       axios:
         specifier: 0.26.1
         version: 0.26.1
+=======
+>>>>>>> 72fb9a4a7c (rename to elrond for easier integration)
+=======
+      axios:
+        specifier: 0.26.1
+        version: 0.26.1
+>>>>>>> 07dade77ac (regenerate pnpm-lock)
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+<<<<<<< HEAD
+<<<<<<< HEAD
       cosmjs-types:
         specifier: 0.2.1
         version: 0.2.1
+=======
+>>>>>>> 72fb9a4a7c (rename to elrond for easier integration)
+=======
+      cosmjs-types:
+        specifier: 0.2.1
+        version: 0.2.1
+>>>>>>> 07dade77ac (regenerate pnpm-lock)
       expect:
         specifier: ^27.4.6
         version: 27.5.1
@@ -2132,6 +2191,10 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 07dade77ac (regenerate pnpm-lock)
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -2144,16 +2207,113 @@ importers:
     devDependencies:
       '@types/invariant':
         specifier: ^2.2.2
+<<<<<<< HEAD
+=======
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.37
+>>>>>>> 72fb9a4a7c (rename to elrond for easier integration)
+=======
+>>>>>>> 07dade77ac (regenerate pnpm-lock)
         version: 2.2.37
       '@types/jest':
         specifier: ^29.5.10
         version: 29.5.12
       '@types/lodash':
+<<<<<<< HEAD
+<<<<<<< HEAD
         specifier: ^4.14.191
         version: 4.17.4
       '@types/semver':
         specifier: ^7.5.8
         version: 7.5.8
+=======
+        specifier: ^4.17.7
+        version: 4.17.7
+>>>>>>> 72fb9a4a7c (rename to elrond for easier integration)
+=======
+        specifier: ^4.14.191
+        version: 4.17.7
+      '@types/semver':
+        specifier: ^7.5.8
+        version: 7.5.8
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
+  libs/coin-modules/coin-elrond:
+    dependencies:
+      '@elrondnetwork/erdjs':
+        specifier: 11.0.0
+        version: 11.0.0
+      '@elrondnetwork/erdjs-network-providers':
+        specifier: ^1.1.2
+        version: 1.2.0
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../../promise
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bech32:
+        specifier: ^1.1.3
+        version: 1.1.4
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.37
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.17.7
+        version: 4.17.7
+>>>>>>> 07dade77ac (regenerate pnpm-lock)
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -3349,12 +3509,6 @@ importers:
       '@dfinity/principal':
         specifier: ^0.15.6
         version: 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
-      '@elrondnetwork/erdjs':
-        specifier: 11.0.0
-        version: 11.0.0
-      '@elrondnetwork/erdjs-network-providers':
-        specifier: ^1.1.2
-        version: 1.2.0
       '@hashgraph/sdk':
         specifier: 2.14.2
         version: 2.14.2(patch_hash=ftpe7kgiykw2quxzn7vgiqumd4)(react-native@0.73.6(react@18.2.0))(react@18.2.0)
@@ -3367,9 +3521,15 @@ importers:
       '@ledgerhq/coin-cardano':
         specifier: workspace:^
         version: link:../coin-modules/coin-cardano
+<<<<<<< HEAD
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../coin-modules/coin-cosmos
+=======
+      '@ledgerhq/coin-elrond':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-elrond
+>>>>>>> 72fb9a4a7c (rename to elrond for easier integration)
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
@@ -3427,6 +3587,9 @@ importers:
       '@ledgerhq/hw-app-cosmos':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-cosmos
+      '@ledgerhq/hw-app-elrond':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-elrond
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-eth
@@ -4173,6 +4336,52 @@ importers:
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.2(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+
+  libs/ledgerjs/packages/hw-app-elrond:
+    dependencies:
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
+      '@multiversx/sdk-core':
+        specifier: ^13.3.0
+        version: 13.3.0(bignumber.js@9.1.2)(protobufjs@7.3.2)
+      bignumber.js:
+        specifier: ^9.0.1
+        version: 9.1.2
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
+      protobufjs:
+        specifier: ^7.2.6
+        version: 7.3.2
+    devDependencies:
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../hw-transport-mocker
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/node':
+        specifier: ^20.8.10
+        version: 20.12.12
+      documentation:
+        specifier: 14.0.2
+        version: 14.0.2
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
         version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
@@ -10468,6 +10677,15 @@ packages:
     resolution: {integrity: sha512-3rDakgJZ77+RiQUuSK69t1F0m8BQKA8Vh5DCS5V0DWvNY67zob2JhhQrhCO0AKLGINTRSFd1tBaHcJTkhefoSw==}
     engines: {node: '>=18'}
 
+  '@multiversx/sdk-core@13.3.0':
+    resolution: {integrity: sha512-P8/8KzMrWL58nhtxg/Ti+18V1dg4YYCn4tY8Gw9+Ke9mErz9Q2+rvWirwBqKgv6romZDMhUB+x7fME1W2PiIng==}
+    peerDependencies:
+      bignumber.js: ^9.0.1
+      protobufjs: ^7.2.6
+
+  '@multiversx/sdk-transaction-decoder@1.0.2':
+    resolution: {integrity: sha512-j43QsKquu8N51WLmVlJ7dV2P3A1448R7/ktvl8r3i6wRMpfdtzDPNofTdHmMRT7DdQdvs4+RNgz8hVKL11Etsw==}
+
   '@napi-rs/simple-git-android-arm-eabi@0.1.16':
     resolution: {integrity: sha512-dbrCL0Pl5KZG7x7tXdtVsA5CO6At5ohDX3myf5xIYn9kN4jDFxsocl8bNt6Vb/hZQoJd8fI+k5VlJt+rFhbdVw==}
     engines: {node: '>= 10'}
@@ -14607,6 +14825,9 @@ packages:
 
   '@types/lodash@4.17.4':
     resolution: {integrity: sha512-wYCP26ZLxaT3R39kiN2+HcJ4kTd3U1waI/cY7ivWYqFP6pW3ZNpvi6Wd6PHZx7T/t8z0vlkXMg3QYLa7DZ/IJQ==}
+
+  '@types/lodash@4.17.7':
+    resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
 
   '@types/long@4.0.2':
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
@@ -20423,10 +20644,6 @@ packages:
     resolution: {integrity: sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==}
     engines: {node: '>=8'}
 
-  globalthis@1.0.3:
-    resolution: {integrity: sha512-sFdI5LyBiNTHjRd7cGPWapiHWMOXKyuBNX/cWJ3NfzrZQVa8GI/8cofCl74AOVqq9W5kNmguTIzJ/1s2gyI9wA==}
-    engines: {node: '>= 0.4'}
-
   globalthis@1.0.4:
     resolution: {integrity: sha512-DpLKbNU4WylpxJykQujfCcwYWiV/Jhm50Goo0wrVILAv5jOr9d+H+UR3PhSCD2rCCEIg0uc+G+muBTwD54JhDQ==}
     engines: {node: '>= 0.4'}
@@ -25435,6 +25652,10 @@ packages:
 
   protobufjs@7.2.5:
     resolution: {integrity: sha512-gGXRSXvxQ7UiPgfw8gevrfRWcTlSbOFg+p/N+JVJEK5VhueL2miT6qTymqAmjr1Q5WbOCyJbyrk6JfWKwlFn6A==}
+    engines: {node: '>=12.0.0'}
+
+  protobufjs@7.3.2:
+    resolution: {integrity: sha512-RXyHaACeqXeqAKGLDl68rQKbmObRsTIn4TYVUUug1KfS47YWCo5MacGITEryugIgZqORCvJWEk4l449POg5Txg==}
     engines: {node: '>=12.0.0'}
 
   protocols@2.0.1:
@@ -34263,7 +34484,15 @@ snapshots:
       getenv: 1.0.0
       glob: 7.1.6
       resolve-from: 5.0.0
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       slash: 3.0.0
       xcode: 3.0.1
       xml2js: 0.6.0
@@ -34547,7 +34776,7 @@ snapshots:
       find-up: 5.0.0
       find-yarn-workspace-root: 2.0.0
       js-yaml: 3.14.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       npm-package-arg: 7.0.0
       split: 1.0.1
       sudo-prompt: 9.1.1
@@ -34561,7 +34790,7 @@ snapshots:
       find-up: 5.0.0
       find-yarn-workspace-root: 2.0.0
       js-yaml: 3.14.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       npm-package-arg: 7.0.0
       ora: 3.4.0
       split: 1.0.1
@@ -35117,7 +35346,7 @@ snapshots:
     dependencies:
       lodash.camelcase: 4.3.0
       long: 5.2.3
-      protobufjs: 7.2.5
+      protobufjs: 7.3.2
       yargs: 17.7.2
 
   '@hapi/bourne@2.1.0': {}
@@ -35292,7 +35521,11 @@ snapshots:
   '@jest/console@28.1.3':
     dependencies:
       '@jest/types': 28.1.3
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
       chalk: 4.1.2
       jest-message-util: 28.1.3
       jest-util: 28.1.3
@@ -35333,7 +35566,7 @@ snapshots:
       jest-util: 27.5.1
       jest-validate: 27.5.1
       jest-watcher: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       rimraf: 3.0.2
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35352,14 +35585,22 @@ snapshots:
       '@jest/test-result': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 28.1.3
+<<<<<<< HEAD
       jest-config: 28.1.3(@types/node@20.12.12)
+=======
+      jest-config: 28.1.3(@types/node@20.14.10)
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
       jest-haste-map: 28.1.3
       jest-message-util: 28.1.3
       jest-regex-util: 28.0.2
@@ -35407,7 +35648,7 @@ snapshots:
       jest-util: 29.7.0
       jest-validate: 29.7.0
       jest-watcher: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35443,7 +35684,7 @@ snapshots:
       jest-util: 29.7.0
       jest-validate: 29.7.0
       jest-watcher: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35479,7 +35720,7 @@ snapshots:
       jest-util: 29.7.0
       jest-validate: 29.7.0
       jest-watcher: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35515,7 +35756,7 @@ snapshots:
       jest-util: 29.7.0
       jest-validate: 29.7.0
       jest-watcher: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35551,7 +35792,7 @@ snapshots:
       jest-util: 29.7.0
       jest-validate: 29.7.0
       jest-watcher: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35587,7 +35828,7 @@ snapshots:
       jest-util: 29.7.0
       jest-validate: 29.7.0
       jest-watcher: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35623,7 +35864,7 @@ snapshots:
       jest-util: 29.7.0
       jest-validate: 29.7.0
       jest-watcher: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35659,7 +35900,7 @@ snapshots:
       jest-util: 29.7.0
       jest-validate: 29.7.0
       jest-watcher: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -35809,7 +36050,11 @@ snapshots:
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
       '@jridgewell/trace-mapping': 0.3.25
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
       chalk: 4.1.2
       collect-v8-coverage: 1.0.2
       exit: 0.1.2
@@ -35949,7 +36194,7 @@ snapshots:
       jest-haste-map: 27.5.1
       jest-regex-util: 27.5.1
       jest-util: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pirates: 4.0.6
       slash: 3.0.0
       source-map: 0.6.1
@@ -35971,7 +36216,7 @@ snapshots:
       jest-haste-map: 28.1.3
       jest-regex-util: 28.0.2
       jest-util: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pirates: 4.0.6
       slash: 3.0.0
       write-file-atomic: 4.0.2
@@ -35992,7 +36237,7 @@ snapshots:
       jest-haste-map: 29.7.0
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pirates: 4.0.6
       slash: 3.0.0
       write-file-atomic: 4.0.2
@@ -36013,7 +36258,7 @@ snapshots:
       jest-haste-map: 29.7.0(metro@0.80.8)
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pirates: 4.0.6
       slash: 3.0.0
       write-file-atomic: 4.0.2
@@ -36042,7 +36287,11 @@ snapshots:
       '@jest/schemas': 28.1.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
       '@types/yargs': 17.0.32
       chalk: 4.1.2
 
@@ -36364,6 +36613,21 @@ snapshots:
       outvariant: 1.4.2
       strict-event-emitter: 0.5.1
 
+  '@multiversx/sdk-core@13.3.0(bignumber.js@9.1.2)(protobufjs@7.3.2)':
+    dependencies:
+      '@multiversx/sdk-transaction-decoder': 1.0.2
+      bech32: 1.1.4
+      bignumber.js: 9.1.2
+      blake2b: 2.1.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+      json-bigint: 1.0.0
+      keccak: 3.0.2
+      protobufjs: 7.3.2
+
+  '@multiversx/sdk-transaction-decoder@1.0.2':
+    dependencies:
+      bech32: 2.0.0
+
   '@napi-rs/simple-git-android-arm-eabi@0.1.16':
     optional: true
 
@@ -36664,7 +36928,15 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
 
   '@npmcli/move-file@1.1.2':
     dependencies:
@@ -37082,7 +37354,15 @@ snapshots:
       '@types/shimmer': 1.2.0
       import-in-the-middle: 1.4.2
       require-in-the-middle: 7.3.0
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       shimmer: 1.2.1
     transitivePeerDependencies:
       - supports-color
@@ -38123,7 +38403,11 @@ snapshots:
       hermes-profile-transformer: 0.0.6
       node-stream-zip: 1.15.0
       ora: 5.4.1
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
       strip-ansi: 5.2.0
       wcwidth: 1.0.1
       yaml: 2.4.1
@@ -38208,7 +38492,11 @@ snapshots:
       node-fetch: 2.7.0
       open: 6.4.0
       ora: 5.4.1
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
       shell-quote: 1.8.1
       sudo-prompt: 9.2.1
     transitivePeerDependencies:
@@ -40969,7 +41257,7 @@ snapshots:
       '@storybook/preview-api': 7.6.17
       '@storybook/theming': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@storybook/types': 7.6.17
-      '@types/lodash': 4.17.4
+      '@types/lodash': 4.17.7
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -40998,11 +41286,19 @@ snapshots:
       '@storybook/csf': 0.1.3
       '@storybook/docs-tools': 7.6.20
       '@storybook/global': 5.0.0
+<<<<<<< HEAD
       '@storybook/manager-api': 7.6.20(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@storybook/preview-api': 7.6.20
       '@storybook/theming': 7.6.20(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@storybook/types': 7.6.20
       '@types/lodash': 4.17.4
+=======
+      '@storybook/manager-api': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@storybook/preview-api': 7.6.17
+      '@storybook/theming': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@storybook/types': 7.6.17
+      '@types/lodash': 4.17.7
+>>>>>>> 72fb9a4a7c (rename to elrond for easier integration)
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -41078,9 +41374,19 @@ snapshots:
       '@storybook/preview': 7.6.17
       '@storybook/preview-api': 7.6.17
       '@swc/core': 1.4.11
+<<<<<<< HEAD
+<<<<<<< HEAD
       '@types/node': 18.19.26
       '@types/semver': 7.5.8
       babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
+=======
+      '@types/node': 18.19.39
+=======
+      '@types/node': 18.19.26
+>>>>>>> e50007a6d6 (Update auto-generated files.)
+      '@types/semver': 7.5.7
+      babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.89.0(@swc/core@1.4.11)(esbuild@0.19.12))
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
       browser-assert: 1.2.1
       case-sensitive-paths-webpack-plugin: 2.4.0
       cjs-module-lexer: 1.2.3
@@ -41095,9 +41401,15 @@ snapshots:
       path-browserify: 1.0.1
       process: 0.11.10
       semver: 7.6.3
+<<<<<<< HEAD
       style-loader: 3.3.4(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(esbuild@0.19.12)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
+=======
+      style-loader: 3.3.4(webpack@5.89.0(@swc/core@1.4.11)(esbuild@0.19.12))
+      swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.89.0(@swc/core@1.4.11)(esbuild@0.19.12))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(esbuild@0.19.12)(webpack@5.89.0(@swc/core@1.4.11)(esbuild@0.19.12))
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       ts-dedent: 2.2.0
       url: 0.11.3
       util: 0.12.5
@@ -41130,9 +41442,19 @@ snapshots:
       '@storybook/preview': 7.6.20
       '@storybook/preview-api': 7.6.20
       '@swc/core': 1.4.11
+<<<<<<< HEAD
+<<<<<<< HEAD
       '@types/node': 18.19.26
       '@types/semver': 7.5.8
       babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.8))
+=======
+      '@types/node': 18.19.39
+=======
+      '@types/node': 18.19.26
+>>>>>>> e50007a6d6 (Update auto-generated files.)
+      '@types/semver': 7.5.7
+      babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.89.0(@swc/core@1.4.11)(metro@0.80.8))
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
       browser-assert: 1.2.1
       case-sensitive-paths-webpack-plugin: 2.4.0
       cjs-module-lexer: 1.2.3
@@ -41147,9 +41469,15 @@ snapshots:
       path-browserify: 1.0.1
       process: 0.11.10
       semver: 7.6.3
+<<<<<<< HEAD
       style-loader: 3.3.4(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.8))
       swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.8))
       terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(metro@0.80.8)(webpack@5.94.0(@swc/core@1.4.11)(metro@0.80.8))
+=======
+      style-loader: 3.3.4(webpack@5.89.0(@swc/core@1.4.11)(metro@0.80.8))
+      swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.89.0(@swc/core@1.4.11)(metro@0.80.8))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(metro@0.80.8)(webpack@5.89.0(@swc/core@1.4.11)(metro@0.80.8))
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       ts-dedent: 2.2.0
       url: 0.11.3
       util: 0.12.5
@@ -41268,6 +41596,7 @@ snapshots:
       puppeteer-core: 2.1.1
       read-pkg-up: 7.0.1
       semver: 7.6.3
+<<<<<<< HEAD
       strip-json-comments: 3.1.1
       tempy: 1.0.1
       ts-dedent: 2.2.0
@@ -41316,6 +41645,8 @@ snapshots:
       puppeteer-core: 2.1.1
       read-pkg-up: 7.0.1
       semver: 7.6.3
+=======
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       strip-json-comments: 3.1.1
       tempy: 1.0.1
       ts-dedent: 2.2.0
@@ -41629,6 +41960,7 @@ snapshots:
       prompts: 2.4.2
       read-pkg-up: 7.0.1
       semver: 7.6.3
+<<<<<<< HEAD
       telejson: 7.2.0
       tiny-invariant: 1.3.3
       ts-dedent: 2.2.0
@@ -41677,6 +42009,8 @@ snapshots:
       prompts: 2.4.2
       read-pkg-up: 7.0.1
       semver: 7.6.3
+=======
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       telejson: 7.2.0
       tiny-invariant: 1.3.3
       ts-dedent: 2.2.0
@@ -41899,9 +42233,15 @@ snapshots:
       '@storybook/docs-tools': 7.6.17
       '@storybook/node-logger': 7.6.17
       '@storybook/react': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.3)
+<<<<<<< HEAD
       '@storybook/react-docgen-typescript-plugin': 1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))
       '@types/node': 18.19.26
       '@types/semver': 7.5.8
+=======
+      '@storybook/react-docgen-typescript-plugin': 1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.89.0(esbuild@0.19.12))
+      '@types/node': 18.19.26
+      '@types/semver': 7.5.7
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
       babel-plugin-add-react-displayname: 0.0.5
       fs-extra: 11.2.0
       magic-string: 0.30.8
@@ -41910,7 +42250,11 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       react-refresh: 0.14.0
       semver: 7.6.3
+<<<<<<< HEAD
       webpack: 5.94.0(esbuild@0.19.12)
+=======
+      webpack: 5.89.0(esbuild@0.19.12)
+>>>>>>> e50007a6d6 (Update auto-generated files.)
     optionalDependencies:
       '@babel/core': 7.24.3
       typescript: 5.4.3
@@ -41933,6 +42277,7 @@ snapshots:
     dependencies:
       '@babel/preset-flow': 7.24.1(@babel/core@7.24.3)
       '@babel/preset-react': 7.24.1(@babel/core@7.24.3)
+<<<<<<< HEAD
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.11(react-refresh@0.14.0)(webpack-dev-server@4.15.2(webpack@5.91.0(metro@0.80.8)))(webpack@5.94.0(metro@0.80.8))
       '@storybook/core-webpack': 7.6.20
       '@storybook/docs-tools': 7.6.20
@@ -41941,6 +42286,16 @@ snapshots:
       '@storybook/react-docgen-typescript-plugin': 1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.80.8))
       '@types/node': 18.19.26
       '@types/semver': 7.5.8
+=======
+      '@pmmmwh/react-refresh-webpack-plugin': 0.5.11(react-refresh@0.14.0)(webpack-dev-server@4.15.2(webpack@5.91.0(metro@0.80.8)))(webpack@5.89.0(metro@0.80.8))
+      '@storybook/core-webpack': 7.6.17
+      '@storybook/docs-tools': 7.6.17
+      '@storybook/node-logger': 7.6.17
+      '@storybook/react': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.3)
+      '@storybook/react-docgen-typescript-plugin': 1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.89.0(metro@0.80.8))
+      '@types/node': 18.19.26
+      '@types/semver': 7.5.7
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
       babel-plugin-add-react-displayname: 0.0.5
       fs-extra: 11.2.0
       magic-string: 0.30.8
@@ -41949,7 +42304,11 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       react-refresh: 0.14.0
       semver: 7.6.3
+<<<<<<< HEAD
       webpack: 5.94.0(metro@0.80.8)
+=======
+      webpack: 5.89.0(metro@0.80.8)
+>>>>>>> e50007a6d6 (Update auto-generated files.)
     optionalDependencies:
       '@babel/core': 7.24.3
       typescript: 5.4.3
@@ -42130,10 +42489,21 @@ snapshots:
 
   '@storybook/react-webpack5@7.6.20(@babel/core@7.24.3)(metro@0.80.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.3)(webpack-dev-server@4.15.2(webpack@5.91.0(metro@0.80.8)))':
     dependencies:
+<<<<<<< HEAD
       '@storybook/builder-webpack5': 7.6.20(metro@0.80.8)(typescript@5.4.3)
       '@storybook/preset-react-webpack': 7.6.20(@babel/core@7.24.3)(metro@0.80.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.3)(webpack-dev-server@4.15.2(webpack@5.91.0(metro@0.80.8)))
       '@storybook/react': 7.6.20(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.3)
       '@types/node': 18.19.26
+=======
+      '@storybook/builder-webpack5': 7.6.17(metro@0.80.8)(typescript@5.4.3)
+      '@storybook/preset-react-webpack': 7.6.17(@babel/core@7.24.3)(metro@0.80.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.3)(webpack-dev-server@4.15.2(webpack@5.91.0(metro@0.80.8)))
+      '@storybook/react': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.3)
+<<<<<<< HEAD
+      '@types/node': 18.19.39
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
+=======
+      '@types/node': 18.19.26
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     optionalDependencies:
@@ -43045,7 +43415,11 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
 
   '@types/content-disposition@0.5.8': {}
 
@@ -43162,7 +43536,11 @@ snapshots:
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
 
   '@types/fs-extra@9.0.13':
     dependencies:
@@ -43258,7 +43636,11 @@ snapshots:
 
   '@types/jsonfile@6.1.4':
     dependencies:
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
 
   '@types/jsonwebtoken@9.0.6':
     dependencies:
@@ -43302,6 +43684,8 @@ snapshots:
   '@types/lodash@4.17.0': {}
 
   '@types/lodash@4.17.4': {}
+
+  '@types/lodash@4.17.7': {}
 
   '@types/long@4.0.2': {}
 
@@ -43711,7 +44095,11 @@ snapshots:
 
   '@types/ws@7.4.7':
     dependencies:
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
 
   '@types/ws@8.5.10':
     dependencies:
@@ -43748,7 +44136,15 @@ snapshots:
       graphemer: 1.4.0
       ignore: 5.3.1
       natural-compare-lite: 1.4.0
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
       typescript: 5.4.3
@@ -44220,7 +44616,15 @@ snapshots:
       open: 8.4.2
       ora: 5.4.1
       read-pkg: 5.2.0
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       strip-ansi: 6.0.1
     transitivePeerDependencies:
       - encoding
@@ -46490,7 +46894,7 @@ snapshots:
   chokidar@3.6.0:
     dependencies:
       anymatch: 3.1.3
-      braces: 3.0.2
+      braces: 3.0.3
       glob-parent: 5.1.2
       is-binary-path: 2.1.0
       is-glob: 4.0.3
@@ -46877,7 +47281,15 @@ snapshots:
       dot-prop: 8.0.2
       env-paths: 3.0.0
       json-schema-typed: 8.0.1
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       uint8array-extras: 0.3.0
 
   config-file-ts@0.2.6:
@@ -47346,6 +47758,48 @@ snapshots:
     dependencies:
       hyphenate-style-name: 1.0.4
 
+<<<<<<< HEAD
+=======
+  css-loader@6.10.0(webpack@5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)):
+    dependencies:
+      icss-utils: 5.1.0(postcss@8.4.38)
+      postcss: 8.4.38
+      postcss-modules-extract-imports: 3.0.0(postcss@8.4.38)
+      postcss-modules-local-by-default: 4.0.4(postcss@8.4.38)
+      postcss-modules-scope: 3.1.1(postcss@8.4.38)
+      postcss-modules-values: 4.0.0(postcss@8.4.38)
+      postcss-value-parser: 4.2.0
+      semver: 7.6.3
+    optionalDependencies:
+      webpack: 5.89.0(@swc/core@1.4.11)(esbuild@0.19.12)
+
+  css-loader@6.10.0(webpack@5.89.0(@swc/core@1.4.11)(metro@0.80.8)):
+    dependencies:
+      icss-utils: 5.1.0(postcss@8.4.38)
+      postcss: 8.4.38
+      postcss-modules-extract-imports: 3.0.0(postcss@8.4.38)
+      postcss-modules-local-by-default: 4.0.4(postcss@8.4.38)
+      postcss-modules-scope: 3.1.1(postcss@8.4.38)
+      postcss-modules-values: 4.0.0(postcss@8.4.38)
+      postcss-value-parser: 4.2.0
+      semver: 7.6.3
+    optionalDependencies:
+      webpack: 5.89.0(@swc/core@1.4.11)(metro@0.80.8)
+
+  css-loader@6.10.0(webpack@5.89.0):
+    dependencies:
+      icss-utils: 5.1.0(postcss@8.4.38)
+      postcss: 8.4.38
+      postcss-modules-extract-imports: 3.0.0(postcss@8.4.38)
+      postcss-modules-local-by-default: 4.0.4(postcss@8.4.38)
+      postcss-modules-scope: 3.1.1(postcss@8.4.38)
+      postcss-modules-values: 4.0.0(postcss@8.4.38)
+      postcss-value-parser: 4.2.0
+      semver: 7.6.3
+    optionalDependencies:
+      webpack: 5.89.0
+
+>>>>>>> e50007a6d6 (Update auto-generated files.)
   css-loader@6.10.0(webpack@5.91.0(metro@0.80.8)):
     dependencies:
       icss-utils: 5.1.0(postcss@8.4.38)
@@ -48701,7 +49155,7 @@ snapshots:
       es-set-tostringtag: 2.0.3
       function-bind: 1.1.2
       get-intrinsic: 1.2.4
-      globalthis: 1.0.3
+      globalthis: 1.0.4
       has-property-descriptors: 1.0.2
       has-proto: 1.0.3
       has-symbols: 1.0.3
@@ -49372,7 +49826,7 @@ snapshots:
       '@types/eslint': 8.56.6
       eslint: 8.57.0
       jest-worker: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       normalize-path: 3.0.0
       schema-utils: 4.2.0
       webpack: 5.94.0
@@ -50511,7 +50965,7 @@ snapshots:
 
   find-yarn-workspace-root@2.0.0:
     dependencies:
-      micromatch: 4.0.5
+      micromatch: 4.0.7
 
   firebase@9.23.0:
     dependencies:
@@ -50631,7 +51085,15 @@ snapshots:
       memfs: 3.5.3
       minimatch: 3.1.2
       schema-utils: 2.7.0
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       tapable: 1.1.3
       typescript: 5.1.3
       webpack: 5.94.0
@@ -51039,7 +51501,15 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       serialize-error: 7.0.1
     optional: true
 
@@ -51069,10 +51539,6 @@ snapshots:
   globals@13.24.0:
     dependencies:
       type-fest: 0.20.2
-
-  globalthis@1.0.3:
-    dependencies:
-      define-properties: 1.2.1
 
   globalthis@1.0.4:
     dependencies:
@@ -51682,7 +52148,7 @@ snapshots:
       http-proxy: 1.18.1
       is-glob: 4.0.3
       is-plain-obj: 3.0.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
     optionalDependencies:
       '@types/express': 4.17.21
 
@@ -52382,7 +52848,11 @@ snapshots:
       '@babel/parser': 7.24.1
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
     transitivePeerDependencies:
       - supports-color
 
@@ -52543,7 +53013,11 @@ snapshots:
       '@jest/expect': 28.1.3
       '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
       chalk: 4.1.2
       co: 4.6.0
       dedent: 0.7.0
@@ -52883,7 +53357,7 @@ snapshots:
       jest-runner: 28.1.3
       jest-util: 28.1.3
       jest-validate: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 28.1.3
       slash: 3.0.0
@@ -52913,7 +53387,7 @@ snapshots:
       jest-runner: 28.1.3
       jest-util: 28.1.3
       jest-validate: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 28.1.3
       slash: 3.0.0
@@ -52943,7 +53417,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -52972,7 +53446,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53004,7 +53478,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53035,7 +53509,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53067,7 +53541,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53099,7 +53573,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53131,7 +53605,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53163,7 +53637,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53195,7 +53669,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53227,7 +53701,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53259,7 +53733,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53290,7 +53764,7 @@ snapshots:
       jest-runner: 29.7.0
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       parse-json: 5.2.0
       pretty-format: 29.7.0
       slash: 3.0.0
@@ -53442,7 +53916,11 @@ snapshots:
       '@jest/environment': 28.1.3
       '@jest/fake-timers': 28.1.3
       '@jest/types': 28.1.3
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
       jest-mock: 28.1.3
       jest-util: 28.1.3
 
@@ -53484,7 +53962,7 @@ snapshots:
       jest-serializer: 27.5.1
       jest-util: 27.5.1
       jest-worker: 27.5.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -53495,14 +53973,18 @@ snapshots:
     dependencies:
       '@jest/types': 28.1.3
       '@types/graceful-fs': 4.1.9
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
       jest-regex-util: 28.0.2
       jest-util: 28.1.3
       jest-worker: 28.1.3
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -53520,7 +54002,7 @@ snapshots:
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
       jest-worker: 29.7.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -53538,7 +54020,7 @@ snapshots:
       jest-regex-util: 29.6.3
       jest-util: 29.7.0
       jest-worker: 29.7.0(metro@0.80.8)
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       walker: 1.0.8
     optionalDependencies:
       fsevents: 2.3.3
@@ -53635,7 +54117,7 @@ snapshots:
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 29.7.0
       slash: 3.0.0
       stack-utils: 2.0.6
@@ -53797,7 +54279,11 @@ snapshots:
       '@jest/test-result': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
       chalk: 4.1.2
       emittery: 0.10.2
       graceful-fs: 4.2.11
@@ -53956,7 +54442,15 @@ snapshots:
       jest-util: 27.5.1
       natural-compare: 1.4.0
       pretty-format: 27.5.1
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -54011,7 +54505,11 @@ snapshots:
       jest-util: 29.7.0
       natural-compare: 1.4.0
       pretty-format: 29.7.0
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -54028,7 +54526,11 @@ snapshots:
   jest-util@28.1.3:
     dependencies:
       '@jest/types': 28.1.3
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> c488897e58 (adapt files and move hw-app to separate package)
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -54095,7 +54597,11 @@ snapshots:
     dependencies:
       '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
+<<<<<<< HEAD
       '@types/node': 20.12.12
+=======
+      '@types/node': 20.14.10
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.10.2
@@ -54420,7 +54926,7 @@ snapshots:
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       neo-async: 2.6.2
       node-dir: 0.1.17
       recast: 0.21.5
@@ -54445,7 +54951,7 @@ snapshots:
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       neo-async: 2.6.2
       node-dir: 0.1.17
       recast: 0.21.5
@@ -54470,7 +54976,7 @@ snapshots:
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       neo-async: 2.6.2
       node-dir: 0.1.17
       recast: 0.23.6
@@ -55547,7 +56053,15 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
 
   make-error@1.3.6: {}
 
@@ -55982,7 +56496,7 @@ snapshots:
       graceful-fs: 4.2.11
       invariant: 2.2.4
       jest-worker: 29.7.0(metro@0.80.8)
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       node-abort-controller: 3.1.1
       nullthrows: 1.1.1
       walker: 1.0.8
@@ -57207,7 +57721,11 @@ snapshots:
 
   node-abi@3.56.0:
     dependencies:
+<<<<<<< HEAD
       semver: 7.6.3
+=======
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
 
   node-abort-controller@3.1.1: {}
 
@@ -58339,8 +58857,17 @@ snapshots:
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.32)
       postcss-normalize: 10.0.1(browserslist@4.23.0)(postcss@8.4.32)
       postcss-preset-env: 7.8.3(postcss@8.4.32)
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
       webpack: 5.94.0
+=======
+      semver: 7.6.2
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
+      webpack: 5.89.0
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
     transitivePeerDependencies:
       - browserslist
 
@@ -58352,8 +58879,17 @@ snapshots:
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.38)
       postcss-normalize: 10.0.1(browserslist@4.23.0)(postcss@8.4.38)
       postcss-preset-env: 7.8.3(postcss@8.4.38)
+<<<<<<< HEAD
+<<<<<<< HEAD
       semver: 7.6.3
       webpack: 5.94.0
+=======
+      semver: 7.6.2
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
+      webpack: 5.89.0
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
     transitivePeerDependencies:
       - browserslist
 
@@ -59010,6 +59546,21 @@ snapshots:
       long: 4.0.0
 
   protobufjs@7.2.5:
+    dependencies:
+      '@protobufjs/aspromise': 1.1.2
+      '@protobufjs/base64': 1.1.2
+      '@protobufjs/codegen': 2.0.4
+      '@protobufjs/eventemitter': 1.1.0
+      '@protobufjs/fetch': 1.1.0
+      '@protobufjs/float': 1.0.2
+      '@protobufjs/inquire': 1.1.0
+      '@protobufjs/path': 1.1.2
+      '@protobufjs/pool': 1.1.0
+      '@protobufjs/utf8': 1.1.0
+      '@types/node': 20.12.12
+      long: 5.2.3
+
+  protobufjs@7.3.2:
     dependencies:
       '@protobufjs/aspromise': 1.1.2
       '@protobufjs/base64': 1.1.2
@@ -62384,7 +62935,7 @@ snapshots:
       is-glob: 4.0.3
       jiti: 1.21.0
       lilconfig: 2.1.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.0.0
@@ -63098,6 +63649,19 @@ snapshots:
       typescript: 5.4.3
       yargs-parser: 21.1.1
 
+  ts-jest@29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-util: 29.7.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.6.3
+      typescript: 5.4.3
+      yargs-parser: 21.1.1
+
   ts-jest@29.1.5(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
@@ -63108,6 +63672,31 @@ snapshots:
       lodash.memoize: 4.1.2
       make-error: 1.3.6
       semver: 7.6.3
+      typescript: 5.4.3
+      yargs-parser: 21.1.1
+
+<<<<<<< HEAD
+  ts-jest@29.1.5(jest@29.7.0(@types/node@20.14.10)(ts-node@10.9.2(@types/node@20.14.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0(@types/node@20.14.10)(ts-node@10.9.2(@types/node@20.14.10)(source-map-support@0.5.21)(typescript@5.4.3))
+=======
+  ts-jest@29.1.5(jest@29.7.0)(typescript@5.4.3):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0
+>>>>>>> e50007a6d6 (Update auto-generated files.)
+      jest-util: 29.7.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+<<<<<<< HEAD
+      semver: 7.6.2
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       typescript: 5.4.3
       yargs-parser: 21.1.1
 
@@ -63128,8 +63717,17 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       enhanced-resolve: 5.16.0
+<<<<<<< HEAD
       micromatch: 4.0.5
       semver: 7.6.3
+=======
+      micromatch: 4.0.7
+<<<<<<< HEAD
+      semver: 7.6.2
+>>>>>>> bf822e9c3c (move files from ledger-live-common to new package)
+=======
+      semver: 7.6.3
+>>>>>>> e50007a6d6 (Update auto-generated files.)
       source-map: 0.7.4
       typescript: 5.1.3
       webpack: 5.94.0

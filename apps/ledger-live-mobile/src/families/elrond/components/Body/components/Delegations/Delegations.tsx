@@ -2,8 +2,8 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import BigNumber from "bignumber.js";
 import type { StackNavigationProp } from "@react-navigation/stack";
 
