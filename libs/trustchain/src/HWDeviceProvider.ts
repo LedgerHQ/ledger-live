@@ -11,7 +11,7 @@ export class HWDeviceProvider {
   /**
    * TODO withDevice should be imported statically from @ledgerhq/live-common/hw/deviceAccess
    *
-   * but ATM making @ledgerhq/live-common a dependency of @ledgerhq/hw-trustchain causes:
+   * but ATM making @ledgerhq/live-common a dependency of @ledgerhq/trustchain causes:
    * > Turbo error: Invalid package dependency graph: cyclic dependency detected:
    * >   @ledgerhq/trustchain,@ledgerhq/live-wallet,@ledgerhq/live-common
    *
