@@ -1,42 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
 
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-
 import { ListInstances } from "../../components/ManageInstances/ListInstances";
-import { useGetMembers } from "../../hooks/useGetMembers";
-import { memberCredentialsSelector } from "@ledgerhq/trustchain/store";
-import { useSelector } from "react-redux";
 import { DeletionError, ErrorReason } from "../../components/ManageInstances/DeletionError";
+import DeviceActionForInstance from "./DeviceActionForInstance";
+import { HookResult, Scene } from "./useManageInstanceDrawer";
 
-type Props = {
-  isOpen: boolean;
-  handleClose: () => void;
-};
-
-export enum Scene {
-  List,
-  Instructions,
-  AutoRemove,
-  Unsecured,
-}
-
-const ManageInstancesDrawer = ({ isOpen, handleClose }: Props) => {
-  const { isError, error, isLoading, data } = useGetMembers();
-  const memberCredentials = useSelector(memberCredentialsSelector);
-
-  //const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
-
-  const [scene, setScene] = useState(Scene.List);
-
-  const onClickDelete = (scene: Scene) => setScene(scene);
-
-  const closeDrawer = () => {
-    handleClose();
-    setScene(Scene.List);
-  };
+const ManageInstancesDrawer = ({
+  isDrawerVisible,
+  handleClose,
+  memberCredentials,
+  onClickInstance,
+  memberHook,
+  scene,
+  onClickDelete,
+  changeScene,
+}: HookResult) => {
+  const { error, isError, isLoading, data } = memberHook;
 
   const getScene = () => {
     if (isError) {
@@ -66,9 +49,13 @@ const ManageInstancesDrawer = ({ isOpen, handleClose }: Props) => {
           error={ErrorReason.AUTO_REMOVE}
           // eslint-disable-next-line no-console
           goToDelete={() => console.log("gotoDelete")}
-          understood={() => setScene(Scene.List)}
+          understood={() => changeScene(Scene.List)}
         />
       );
+    }
+
+    if (scene === Scene.DeviceAction) {
+      return <DeviceActionForInstance goToFollowInstructions={onClickInstance} />;
     }
     if (scene === Scene.Instructions) {
       return null;
@@ -78,7 +65,7 @@ const ManageInstancesDrawer = ({ isOpen, handleClose }: Props) => {
   return (
     <>
       <TrackScreen />
-      <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={closeDrawer}>
+      <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>
         {getScene()}
       </QueuedDrawer>
     </>
