@@ -5,7 +5,7 @@ import { FlatList, ListRenderItemInfo } from "react-native";
 import { useTranslation } from "react-i18next";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import { TinyCard } from "../TinyCard";
-import { Scene } from "../../screens/ManageInstances/ManageInstancesDrawer";
+import { Scene } from "../../screens/ManageInstances/useManageInstanceDrawer";
 
 type Props = {
   onClickDelete: (scene: Scene) => void;
@@ -21,7 +21,7 @@ export function ListInstances({ onClickDelete, members, currentInstance }: Props
   const handleGoDeleteInstance = (instance: TrustchainMember) => {
     // eslint-disable-next-line no-console
     console.log("delete instance IMPLEMENTED IN NEXT PR", instance);
-    onClickDelete(Scene.Instructions);
+    onClickDelete(Scene.DeviceAction);
   };
 
   const renderItem = ({ item }: ListRenderItemInfo<TrustchainMember>) => {
