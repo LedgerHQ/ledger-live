@@ -1,4 +1,3 @@
-import { Observable } from "rxjs";
 import { HWDeviceProvider } from "./HWDeviceProvider";
 import { SDK } from "./sdk";
 import { MockSDK } from "./mockSdk";
@@ -6,7 +5,6 @@ import { TrustchainSDKContext, TrustchainSDK, TrustchainLifecycle, WithDevice } 
 
 type Config = {
   withDevice: WithDevice;
-  deviceId$: Observable<string>;
   lifecycle?: TrustchainLifecycle;
   isMockEnv?: boolean;
 };
@@ -16,15 +14,11 @@ type Config = {
  */
 export const getSdk = (
   context: TrustchainSDKContext,
-  { withDevice, deviceId$, lifecycle, isMockEnv }: Config,
+  { withDevice, lifecycle, isMockEnv }: Config,
 ): TrustchainSDK => {
   if (isMockEnv) {
     return new MockSDK(context, lifecycle);
   }
 
-  return new SDK(
-    context,
-    new HWDeviceProvider(context.apiBaseUrl, withDevice, deviceId$),
-    lifecycle,
-  );
+  return new SDK(context, new HWDeviceProvider(context.apiBaseUrl, withDevice), lifecycle);
 };

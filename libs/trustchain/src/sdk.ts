@@ -95,28 +95,30 @@ export class SDK implements TrustchainSDK {
   }
 
   async getOrCreateTrustchain(
+    deviceId: string,
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
   ): Promise<TrustchainResult> {
     let type = TrustchainResultType.restored;
 
-    const withJwt: WithJwt = job => this.hwDeviceProvider.withJwt(job, undefined, callbacks);
-    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(job, callbacks);
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(deviceId, job, undefined, callbacks);
+    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
 
     let trustchains = await withJwt(this.api.getTrustchains);
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
       type = TrustchainResultType.created;
-      const streamTree = await this.hwDeviceProvider.withHw(hw =>
+      const streamTree = await this.hwDeviceProvider.withHw(deviceId, hw =>
         StreamTree.createNewTree(hw, { topic }),
       );
       await streamTree.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
       const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
       await withJwt(jwt => this.api.postSeed(jwt, crypto.to_hex(commandStream)));
       // deviceJwt have changed, proactively refresh it
-      await this.hwDeviceProvider.refreshJwt(callbacks);
+      await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
       trustchains = await withJwt(this.api.getTrustchains);
     }
 
@@ -201,13 +203,15 @@ export class SDK implements TrustchainSDK {
   }
 
   async removeMember(
+    deviceId: string,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
-    const withJwt: WithJwt = job => this.hwDeviceProvider.withJwt(job, undefined, callbacks);
-    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(job, callbacks);
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(deviceId, job, undefined, callbacks);
+    const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
 
     // invariant because the sdk does not support this case, and the UI should not allows it.
     invariant(
@@ -266,7 +270,7 @@ export class SDK implements TrustchainSDK {
     await sendCloseStreamToAPI();
 
     // deviceJwt have changed, proactively refresh it
-    await this.hwDeviceProvider.refreshJwt(callbacks);
+    await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
 
     const newTrustchain: Trustchain = {
       rootId: trustchainId,

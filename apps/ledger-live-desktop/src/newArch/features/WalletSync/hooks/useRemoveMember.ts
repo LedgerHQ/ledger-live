@@ -18,7 +18,7 @@ type Props = {
 
 export function useRemoveMember({ device, member }: Props) {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk(device?.deviceId);
+  const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const [error, setError] = useState<Error | null>(null);
@@ -51,7 +51,11 @@ export function useRemoveMember({ device, member }: Props) {
   const removeMember = useCallback(
     async (member: TrustchainMember) => {
       try {
+        if (!deviceRef.current) {
+          throw new Error("Device not found");
+        }
         const newTrustchain = await sdkRef.current.removeMember(
+          deviceRef.current?.deviceId,
           trustchainRef.current as Trustchain,
           memberCredentialsRef.current as MemberCredentials,
           member,

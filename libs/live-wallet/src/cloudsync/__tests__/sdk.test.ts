@@ -126,7 +126,7 @@ describe("CloudSyncSDK basics", () => {
 
     creds = await trustchainSdk.initMemberCredentials();
 
-    const result = await trustchainSdk.getOrCreateTrustchain(creds);
+    const result = await trustchainSdk.getOrCreateTrustchain("foo", creds);
     trustchain = result.trustchain;
     expectedBackendTrustchain = trustchain;
 

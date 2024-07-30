@@ -12,7 +12,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useAddMember({ device }: { device: Device | null }) {
   const dispatch = useDispatch();
-  const sdk = useTrustchainSdk(device?.deviceId);
+  const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const [error, setError] = useState<Error | null>(null);
 
@@ -52,13 +52,13 @@ export function useAddMember({ device }: { device: Device | null }) {
   };
 
   useEffect(() => {
-    if (!deviceRef.current) {
-      handleMissingDevice();
-    }
-
     const addMember = async () => {
       try {
+        if (!deviceRef.current) {
+          return handleMissingDevice();
+        }
         const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
+          deviceRef.current.deviceId,
           memberCredentialsRef.current as MemberCredentials,
           {
             onStartRequestUserInteraction: () => setUserDeviceInteraction(true),

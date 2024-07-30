@@ -1,4 +1,4 @@
-import { firstValueFrom, from, lastValueFrom, Observable } from "rxjs";
+import { from, lastValueFrom } from "rxjs";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { ApduDevice } from "@ledgerhq/hw-trustchain/ApduDevice";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
@@ -10,18 +10,16 @@ import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks, WithDevice } from "./t
 export class HWDeviceProvider {
   // NOTE withDevice should be imported statically but ATM making @ledgerhq/live-common a dependency of @ledgerhq/hw-trustchain creates a circular dependency
   private withDevice: WithDevice;
-
-  private deviceId$: Observable<string>;
   private jwt?: JWT;
   private api: ReturnType<typeof getApi>;
 
-  constructor(apiBaseURL: string, withDevice: WithDevice, deviceId$: Observable<string>) {
+  constructor(apiBaseURL: string, withDevice: WithDevice) {
     this.api = getApi(apiBaseURL);
     this.withDevice = withDevice;
-    this.deviceId$ = deviceId$;
   }
 
   public withJwt<T>(
+    deviceId: string,
     job: (jwt: JWT) => Promise<T>,
     policy?: AuthCachePolicy,
     callbacks?: TrustchainDeviceCallbacks,
@@ -32,18 +30,19 @@ export class HWDeviceProvider {
         return job(jwt);
       },
       this.jwt,
-      () => this._authWithDevice(callbacks),
+      () => this._authWithDevice(deviceId, callbacks),
       (jwt: JWT) => this.api.refreshAuth(jwt),
       policy,
     );
   }
 
   public async withHw<T>(
+    deviceId: string,
     job: (hw: ApduDevice) => Promise<T>,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<T> {
     callbacks?.onStartRequestUserInteraction();
-    const runWithDevice = this.withDevice(await firstValueFrom(this.deviceId$));
+    const runWithDevice = this.withDevice(deviceId);
     try {
       return await lastValueFrom(runWithDevice(transport => from(job(device.apdu(transport)))));
     } catch (error) {
@@ -61,18 +60,21 @@ export class HWDeviceProvider {
     }
   }
 
-  public async refreshJwt(callbacks?: TrustchainDeviceCallbacks): Promise<void> {
-    this.jwt = await this.withJwt(this.api.refreshAuth, undefined, callbacks);
+  public async refreshJwt(deviceId: string, callbacks?: TrustchainDeviceCallbacks): Promise<void> {
+    this.jwt = await this.withJwt(deviceId, this.api.refreshAuth, undefined, callbacks);
   }
 
   public clearJwt() {
     this.jwt = undefined;
   }
 
-  private async _authWithDevice(callbacks?: TrustchainDeviceCallbacks): Promise<JWT> {
+  private async _authWithDevice(
+    deviceId: string,
+    callbacks?: TrustchainDeviceCallbacks,
+  ): Promise<JWT> {
     const challenge = await this.api.getAuthenticationChallenge();
     const data = crypto.from_hex(challenge.tlv);
-    const seedId = await this.withHw(hw => hw.getSeedId(data), callbacks);
+    const seedId = await this.withHw(deviceId, hw => hw.getSeedId(data), callbacks);
     const signature = crypto.to_hex(seedId.signature);
     return this.api.postChallengeResponse({
       challenge: challenge.json,

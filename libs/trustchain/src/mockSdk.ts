@@ -89,6 +89,7 @@ export class MockSDK implements TrustchainSDK {
   }
 
   async getOrCreateTrustchain(
+    deviceId: string,
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<TrustchainResult> {
@@ -157,6 +158,7 @@ export class MockSDK implements TrustchainSDK {
   }
 
   async removeMember(
+    deviceId: string,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
