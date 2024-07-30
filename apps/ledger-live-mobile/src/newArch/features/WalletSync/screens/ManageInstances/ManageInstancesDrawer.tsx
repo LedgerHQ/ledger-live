@@ -9,15 +9,18 @@ import { ListInstances } from "../../components/ManageInstances/ListInstances";
 import { useGetMembers } from "../../hooks/useGetMembers";
 import { memberCredentialsSelector } from "@ledgerhq/trustchain/store";
 import { useSelector } from "react-redux";
+import { DeletionError, ErrorReason } from "../../components/ManageInstances/DeletionError";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
 };
 
-enum Scene {
+export enum Scene {
   List,
   Instructions,
+  AutoRemove,
+  Unsecured,
 }
 
 const ManageInstancesDrawer = ({ isOpen, handleClose }: Props) => {
@@ -28,7 +31,7 @@ const ManageInstancesDrawer = ({ isOpen, handleClose }: Props) => {
 
   const [scene, setScene] = useState(Scene.List);
 
-  const onClickDelete = () => setScene(Scene.Instructions);
+  const onClickDelete = (scene: Scene) => setScene(scene);
 
   const closeDrawer = () => {
     handleClose();
@@ -53,6 +56,17 @@ const ManageInstancesDrawer = ({ isOpen, handleClose }: Props) => {
           onClickDelete={onClickDelete}
           members={data}
           currentInstance={memberCredentials?.pubkey}
+        />
+      );
+    }
+
+    if (scene === Scene.AutoRemove) {
+      return (
+        <DeletionError
+          error={ErrorReason.AUTO_REMOVE}
+          // eslint-disable-next-line no-console
+          goToDelete={() => console.log("gotoDelete")}
+          understood={() => setScene(Scene.List)}
         />
       );
     }
