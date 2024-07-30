@@ -28,6 +28,7 @@ import type {
   BlockInfo,
 } from "./sidecar.types";
 import { createRegistryAndExtrinsics } from "./common";
+import node from "./node";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -211,24 +212,7 @@ const fetchValidators = async (
   status: SidecarValidatorsParamStatus = "all",
   addresses?: SidecarValidatorsParamAddresses,
 ): Promise<SidecarValidators> => {
-  //LIVE-13136: commented for the time being
-  // return node.fetchValidators(status, addresses);
-  let params = {};
-
-  if (status) {
-    params = { ...params, status };
-  }
-
-  if (addresses && addresses.length) {
-    params = { ...params, addresses: addresses.join(",") };
-  }
-
-  const {
-    data,
-  }: {
-    data: SidecarValidators;
-  } = await callSidecar(`/validators?${querystring.stringify(params)}`);
-  return data;
+  return await node.fetchValidators(status, addresses);
 };
 
 /**
