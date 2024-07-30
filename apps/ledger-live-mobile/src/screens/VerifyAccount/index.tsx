@@ -2,10 +2,11 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { getMainAccount, getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import SelectDevice2 from "~/components/SelectDevice2";
@@ -18,10 +19,13 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
+import Button from "~/components/wrappedUi/Button";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.VerifyAccount>
 >;
+
+const edges = ["left", "right"] as const;
 
 export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const action = useAppDeviceAction();
@@ -57,6 +61,10 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
     onDone();
   }, [account, onSuccess, onDone]);
 
+  const onSkipDevice = useCallback(() => {
+    setSkipDevice(true);
+  }, []);
+
   const handleSkipClose = useCallback(() => {
     setSkipDevice(false);
   }, []);
@@ -83,6 +91,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
   return (
     <SafeAreaView
+      edges={edges}
       style={[
         styles.root,
         {
@@ -97,6 +106,16 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
+        <View>
+          <View style={styles.header}>
+            <Text style={styles.headerText} color="grey">
+              <Trans i18nKey="SelectDevice.withoutDeviceHeader" />
+            </Text>
+          </View>
+          <Button onPress={onSkipDevice} event="WithoutDevice" type={"main"} mt={6} mb={6}>
+            <Trans i18nKey="SelectDevice.withoutDevice" />
+          </Button>
+        </View>
       </Flex>
       {device ? (
         <DeviceActionModal
@@ -145,5 +164,12 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flexDirection: "row",
+  },
+  header: {
+    alignItems: "center",
+  },
+  headerText: {
+    fontSize: 14,
+    lineHeight: 21,
   },
 });
