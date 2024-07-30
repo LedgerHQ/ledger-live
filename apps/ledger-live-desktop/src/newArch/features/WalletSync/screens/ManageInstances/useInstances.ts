@@ -10,11 +10,12 @@ export const useInstances = () => {
 
   const fakedInstances = useSelector(walletSyncInstancesSelector);
 
-  const { isMembersLoading, instances, isError } = useGetMembers();
+  const { isMembersLoading, instances, isError, error } = useGetMembers();
 
   return {
     isLoading: hasBeenfaked ? false : isMembersLoading,
     instances: hasBeenfaked ? fakedInstances : instances,
     hasError: hasBeenfaked ? false : isError,
+    error: hasBeenfaked ? null : error,
   };
 };

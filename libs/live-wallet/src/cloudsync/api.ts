@@ -29,6 +29,11 @@ const schemaAtomicGetResponse = z.discriminatedUnion("status", [
 ]);
 export type APISyncResponse = z.infer<typeof schemaAtomicGetResponse>;
 
+export type StatusAPIResponse = {
+  name: string;
+  version: string;
+};
+
 const schemaAtomicPostUpdated = z.object({
   status: z.literal("updated"),
 });
@@ -138,9 +143,18 @@ function listenNotifications(
   });
 }
 
+async function fetchStatus(): Promise<StatusAPIResponse> {
+  const { data } = await network<StatusAPIResponse>({
+    url: `${getEnv("CLOUD_SYNC_API")}/_info`,
+    method: "GET",
+  });
+  return data;
+}
+
 export default {
   fetchData,
   uploadData,
   deleteData,
   listenNotifications,
+  fetchStatus,
 };

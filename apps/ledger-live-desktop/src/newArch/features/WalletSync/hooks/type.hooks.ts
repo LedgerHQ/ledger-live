@@ -9,6 +9,8 @@ export enum QueryKey {
   restoreTrustchain = "restoreTrustchain",
   refreshAuth = "refreshAuth",
   getMembers = "useGetMembers",
+  fetchTrustchainStatus = "fetchTrustchainStatus",
+  fetchCloudSyncStatus = "fetchCloudSyncStatus",
 }
 
 export enum ErrorType {
