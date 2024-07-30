@@ -24,9 +24,9 @@ const useAddAccountViewModel = ({ isOpened, onClose, reopenDrawer }: AddAccountD
     onClose();
   }, [trackButtonClick, onClose]);
 
-  const onCloseWalletSyncDrawer = () => {
+  const onCloseWalletSyncDrawer = (reopenPrevious = true) => {
     setWalletSyncDrawerVisible(false);
-    reopenDrawer();
+    reopenPrevious && reopenDrawer();
   };
 
   const onRequestToOpenWalletSyncDrawer = () => {

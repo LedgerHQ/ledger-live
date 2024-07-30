@@ -6792,6 +6792,22 @@
         "connectDevice": {
           "title": "Use your Ledger"
         }
+      },
+      "qrCode": {
+        "show": {
+          "title": "Show QR",
+          "explanation": {
+            "title": "Scan and synchronize your accounts using another Ledger Live app",
+            "steps": {
+              "step1": "Open the Ledger Live app you want to sync",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0>",
+              "step3": "Scan QR code until loader hits 100%."
+            }
+          }
+        },
+        "scan": {
+          "title": "Scan"
+        }
       }
     }
   },
