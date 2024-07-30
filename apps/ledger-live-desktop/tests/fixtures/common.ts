@@ -169,6 +169,11 @@ export const test = base.extend<TestFixtures>({
     // use page in the test
     await use(page);
 
+    if (testInfo.status === "passed") {
+      await electronApp.close();
+      await page.video()?.delete();
+    }
+
     console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
   },
 });
