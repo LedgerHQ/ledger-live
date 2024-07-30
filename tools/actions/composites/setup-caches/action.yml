@@ -44,9 +44,9 @@ runs:
       if: inputs.install-proto == 'true'
       uses: moonrepo/setup-toolchain@v0
 
-    - name: Update proto
-      run: proto upgrade
-      shell: bash
+    # - name: Update proto
+    #   run: proto upgrade
+    #   shell: bash
 
     - name: Setup the toolchain
       shell: bash
