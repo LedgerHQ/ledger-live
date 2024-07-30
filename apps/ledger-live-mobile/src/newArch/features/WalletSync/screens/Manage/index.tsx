@@ -10,7 +10,7 @@ import {
 } from "../../hooks/useWalletSyncAnalytics";
 import { Separator } from "../../components/Separator";
 import { TouchableOpacity } from "react-native";
-import { TrustchainNotFound, useGetMembers } from "../../hooks/useGetMembers";
+import { TrustchainNotFound } from "../../hooks/useGetMembers";
 import ManageKeyDrawer from "../ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 import ManageInstanceDrawer from "../ManageInstances/ManageInstancesDrawer";
@@ -18,13 +18,11 @@ import { useManageInstancesDrawer } from "../ManageInstances/useManageInstanceDr
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
-  const { isDrawerVisible, closeDrawer, openDrawer } = useManageKeyDrawer();
-  const {
-    isDrawerVisible: isInstanceDrawerVisible,
-    closeDrawer: closeInstanceDrawer,
-    openDrawer: openInstanceDrawer,
-  } = useManageInstancesDrawer();
-  const { data, isLoading, isError, error } = useGetMembers();
+
+  const manageKeyHook = useManageKeyDrawer();
+  const manageInstancesHook = useManageInstancesDrawer();
+
+  const { data, isLoading, isError, error } = manageInstancesHook.memberHook;
 
   const { onClickTrack } = useWalletSyncAnalytics();
 
@@ -35,12 +33,12 @@ const WalletSyncManage = () => {
   };
 
   const goToManageBackup = () => {
-    openDrawer();
+    manageKeyHook.openDrawer();
     onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.WalletSyncActivated });
   };
 
   const goToManageInstances = () => {
-    openInstanceDrawer();
+    manageInstancesHook.openDrawer();
     onClickTrack({
       button: AnalyticsButton.ManageSynchronizations,
       page: AnalyticsPage.WalletSyncActivated,
@@ -122,8 +120,8 @@ const WalletSyncManage = () => {
       {/**
        * DRAWERS
        */}
-      <ManageKeyDrawer isOpen={isDrawerVisible} handleClose={closeDrawer} />
-      <ManageInstanceDrawer isOpen={isInstanceDrawerVisible} handleClose={closeInstanceDrawer} />
+      <ManageKeyDrawer {...manageKeyHook} />
+      <ManageInstanceDrawer {...manageInstancesHook} />
     </Box>
   );
 };

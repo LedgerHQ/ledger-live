@@ -42,7 +42,7 @@ export enum AnalyticsButton {
   Cancel = "Cancel",
   CreateYourKey = "Create your key",
   LedgerSync = "Ledger Sync",
-  UseAnother = "connect new ledger",
+  UseAnother = "Connect new ledger",
   Understand = "I understand",
 }
 

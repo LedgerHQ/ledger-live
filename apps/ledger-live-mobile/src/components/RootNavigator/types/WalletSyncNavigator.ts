@@ -11,4 +11,5 @@ export type WalletSyncNavigatorStackParamList = {
   [ScreenName.WalletSyncActivated]: undefined;
 
   [ScreenName.WalletSyncManageKeyDeleteSuccess]: undefined;
+  [ScreenName.WalletSyncUnSynchSuccess]: undefined;
 };
