@@ -1,5 +1,38 @@
 # live-mobile
 
+## 3.48.0-nightly.0
+
+### Minor Changes
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+### Patch Changes
+
+- [#7387](https://github.com/LedgerHQ/ledger-live/pull/7387) [`fc0474e`](https://github.com/LedgerHQ/ledger-live/commit/fc0474e93915e6582d37c1b42f9e531ddf34f475) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Banner when error throws
+
+- [#7387](https://github.com/LedgerHQ/ledger-live/pull/7387) [`fc0474e`](https://github.com/LedgerHQ/ledger-live/commit/fc0474e93915e6582d37c1b42f9e531ddf34f475) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Get members of trutchain
+
+- [#7446](https://github.com/LedgerHQ/ledger-live/pull/7446) [`47da0ad`](https://github.com/LedgerHQ/ledger-live/commit/47da0adb4e675a852982d6aa316b3c7a5ab7850f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Save & Import trustchain store
+
+- Updated dependencies [[`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf)]:
+  - @ledgerhq/types-cryptoassets@7.15.0-nightly.0
+  - @ledgerhq/types-live@6.50.0-nightly.1
+  - @ledgerhq/live-common@34.7.0-nightly.0
+  - @ledgerhq/coin-framework@0.17.0-nightly.0
+  - @ledgerhq/live-config@3.1.0-nightly.0
+  - @ledgerhq/live-env@2.2.0-nightly.0
+  - @ledgerhq/coin-evm@2.1.4-nightly.0
+  - @ledgerhq/domain-service@1.2.3-nightly.1
+  - @ledgerhq/live-countervalues@0.2.4-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.0
+  - @ledgerhq/live-nft@0.4.4-nightly.0
+  - @ledgerhq/live-nft-react@0.4.4-nightly.0
+  - @ledgerhq/live-wallet@0.4.2-nightly.0
+  - @ledgerhq/native-ui@0.23.3-nightly.0
+  - @ledgerhq/hw-trustchain@0.1.4-nightly.0
+  - @ledgerhq/live-network@1.3.2-nightly.0
+  - @ledgerhq/trustchain@0.1.4-nightly.0
+
 ## 3.47.2
 
 ### Patch Changes

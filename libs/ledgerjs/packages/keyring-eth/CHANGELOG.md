@@ -1,5 +1,16 @@
 # @ledgerhq/keyring-eth
 
+## 0.2.2-nightly.0
+
+### Patch Changes
+
+- [#7447](https://github.com/LedgerHQ/ledger-live/pull/7447) [`802e44d`](https://github.com/LedgerHQ/ledger-live/commit/802e44dca14c9fbdaa250ad881e504b9f926771e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update test-sign-transaction script
+
+- Updated dependencies [[`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf)]:
+  - @ledgerhq/types-live@6.50.0-nightly.1
+  - @ledgerhq/coin-evm@2.1.4-nightly.0
+  - @ledgerhq/hw-app-eth@6.37.4-nightly.0
+
 ## 0.2.1
 
 ### Patch Changes

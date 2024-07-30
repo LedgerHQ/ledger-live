@@ -1,5 +1,42 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.0
+
+### Minor Changes
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+### Patch Changes
+
+- Updated dependencies [[`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf)]:
+  - @ledgerhq/cryptoassets@13.3.0-nightly.1
+  - @ledgerhq/crypto-icons-ui@1.4.0-nightly.1
+  - @ledgerhq/coin-framework@0.17.0-nightly.0
+  - @ledgerhq/live-config@3.1.0-nightly.0
+  - @ledgerhq/live-env@2.2.0-nightly.0
+  - @ledgerhq/coin-algorand@0.5.4-nightly.0
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.0
+  - @ledgerhq/coin-cardano@0.1.4-nightly.0
+  - @ledgerhq/coin-evm@2.1.4-nightly.0
+  - @ledgerhq/coin-icon@0.4.1-nightly.3
+  - @ledgerhq/coin-near@0.5.4-nightly.0
+  - @ledgerhq/coin-polkadot@1.1.2-nightly.0
+  - @ledgerhq/coin-solana@0.7.4-nightly.0
+  - @ledgerhq/coin-stellar@0.2.2-nightly.0
+  - @ledgerhq/coin-tezos@0.5.2-nightly.0
+  - @ledgerhq/coin-ton@0.3.12-nightly.0
+  - @ledgerhq/coin-xrp@0.4.2-nightly.0
+  - @ledgerhq/live-countervalues@0.2.4-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.0
+  - @ledgerhq/live-nft@0.4.4-nightly.0
+  - @ledgerhq/live-wallet@0.4.2-nightly.0
+  - @ledgerhq/coin-tron@0.0.4-nightly.0
+  - @ledgerhq/hw-app-eth@6.37.4-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.4-nightly.0
+  - @ledgerhq/device-core@0.3.2-nightly.0
+  - @ledgerhq/live-network@1.3.2-nightly.0
+  - @ledgerhq/speculos-transport@0.1.4-nightly.0
+
 ## 34.6.1
 
 ### Patch Changes

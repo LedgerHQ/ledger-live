@@ -1,5 +1,12 @@
 # webpack.js-example
 
+## 0.1.4-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.15.4-nightly.0
+
 ## 0.1.3
 
 ### Patch Changes
