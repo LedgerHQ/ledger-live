@@ -19,7 +19,7 @@ type Props = {
     isLoading: boolean;
     pinCode: string | null;
   };
-
+  onQrCodeScanned: (data: string) => void;
   currentOption: Options;
   setOption: (option: Options) => void;
 };
@@ -31,6 +31,7 @@ const ActivationFlow = ({
   qrProcess,
   currentOption,
   setOption,
+  onQrCodeScanned,
 }: Props) => {
   const getScene = () => {
     switch (currentStep) {
@@ -49,7 +50,13 @@ const ActivationFlow = ({
           </>
         );
       case Steps.QrCodeMethod:
-        return <QrCodeMethod currentOption={currentOption} setSelectedOption={setOption} />;
+        return (
+          <QrCodeMethod
+            onQrCodeScanned={onQrCodeScanned}
+            currentOption={currentOption}
+            setSelectedOption={setOption}
+          />
+        );
 
       case Steps.PinDisplay:
         return qrProcess.pinCode ? <PinCodeDisplay pinCode={qrProcess.pinCode} /> : null;
