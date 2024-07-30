@@ -147,7 +147,6 @@ const SwapWebView = ({
   }, [swapState?.fromAccountId, swapState?.toAccountId]);
 
   const [windowContentSize, setWindowContentSize] = useState(defaultContentSize);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const customHandlers = useMemo(() => {
     return {
@@ -221,13 +220,11 @@ const SwapWebView = ({
           }
         }
 
-        console.log("SLA quote?.params?", quote?.params?.amountToCounterValue);
-
         if (toUnit && quote?.params?.amountTo) {
           const amountTo = BigNumber(quote?.params?.amountTo).times(10 ** toUnit.magnitude);
           const counterValue = quote?.params?.amountToCounterValue?.value
             ? BigNumber(quote.params.amountToCounterValue.value).times(
-                10 ** counterValueCurrency.units[0].magnitude,
+                10 ** fiatCurrency.units[0].magnitude,
               )
             : undefined;
 

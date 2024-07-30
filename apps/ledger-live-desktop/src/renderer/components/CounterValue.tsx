@@ -84,6 +84,7 @@ export default function CounterValue({
   if (typeof calculatedCounterValue !== "number") {
     return <NoCountervaluePlaceholder placeholder={placeholder} style={placeholderStyle} />;
   }
+
   return (
     <>
       {prefix || null}
