@@ -13,7 +13,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const member2 = { name: name2, id: member2creds.pubkey, permissions: 0xffffffff };
 
   // auth with the device and init the first trustchain
-  const { trustchain } = await sdk1.getOrCreateTrustchain(member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain("foo", member1creds);
 
   // member 1 adds member 2 (= qr code flow)
   await sdk1.addMember(trustchain, member1creds, member2);

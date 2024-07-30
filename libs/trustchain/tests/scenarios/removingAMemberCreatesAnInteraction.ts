@@ -23,12 +23,18 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
     },
   };
 
-  const { trustchain } = await sdk1.getOrCreateTrustchain(member1creds, callbacks);
+  const { trustchain } = await sdk1.getOrCreateTrustchain("foo", member1creds, callbacks);
   expect(totalInteractionCounter).toBe(2); // there are two interaction: one for device auth, one for trustchain addition
 
   await sdk1.addMember(trustchain, member1creds, member2);
 
-  const newTrustchain = await sdk1.removeMember(trustchain, member1creds, member2, callbacks);
+  const newTrustchain = await sdk1.removeMember(
+    "foo",
+    trustchain,
+    member1creds,
+    member2,
+    callbacks,
+  );
   expect(totalInteractionCounter).toBe(4); // there are 2 interactions for trustchain addition
 
   // destroy the trustchain

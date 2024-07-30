@@ -10,7 +10,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const member1 = { id: member1creds.pubkey, name: name1, permissions: 0xffffffff };
 
   // auth with the device and init the first trustchain
-  const { trustchain } = await sdk1.getOrCreateTrustchain(member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain("foo", member1creds);
 
   // second member initializes itself
   const name2 = "Member 2";
@@ -36,9 +36,9 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
       interactionCounter--;
     },
   };
-  await expect(sdk1.removeMember(trustchain, member1creds, member2, callbacks)).rejects.toThrow(
-    UserRefusedOnDevice,
-  );
+  await expect(
+    sdk1.removeMember("foo", trustchain, member1creds, member2, callbacks),
+  ).rejects.toThrow(UserRefusedOnDevice);
   expect(interactionCounter).toBe(0);
   expect(totalInteractionCounter).toBe(2);
 
