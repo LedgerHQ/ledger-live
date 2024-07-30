@@ -1,23 +1,10 @@
 import { CoreTransactionInfo, estimateFees } from "./estimateFees";
 import coinConfig, { TezosCoinConfig } from "../config";
+import { mockConfig } from "../test/config";
 
 describe("estimateFees", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(
-      (): TezosCoinConfig => ({
-        status: { type: "active" },
-        baker: {
-          url: "https://tezos-bakers.api.live.ledger.com",
-        },
-        explorer: {
-          url: "https://xtz-tzkt-explorer.api.live.ledger.com",
-          maxTxQuery: 100,
-        },
-        node: {
-          url: "https://xtz-node.api.live.ledger.com",
-        },
-      }),
-    );
+    coinConfig.setCoinConfig((): TezosCoinConfig => mockConfig as TezosCoinConfig);
   });
 
   const accounts = [
@@ -45,13 +32,13 @@ describe("estimateFees", () => {
 
     // When
     const result = await estimateFees({ account, transaction });
-
     // Then
     expect(result).toEqual({
       estimatedFees: BigInt("666"),
       fees: BigInt("292"),
       gasLimit: BigInt("169"),
       storageLimit: BigInt("277"),
+      amount: BigInt("1000000"),
     });
   });
 

@@ -20,6 +20,12 @@ describe("Tezos Api", () => {
       node: {
         url: "https://rpc.ghostnet.teztnets.com",
       },
+      fees: {
+        minGasLimit: 600,
+        minStorageLimit: 0,
+        minFees: 500,
+        minEstimatedFees: 500,
+      },
     });
   });
 
