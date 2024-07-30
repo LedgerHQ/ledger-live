@@ -5,9 +5,10 @@ import { FlatList, ListRenderItemInfo } from "react-native";
 import { useTranslation } from "react-i18next";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import { TinyCard } from "../TinyCard";
+import { Scene } from "../../screens/ManageInstances/ManageInstancesDrawer";
 
 type Props = {
-  onClickDelete: () => void;
+  onClickDelete: (scene: Scene) => void;
   members?: TrustchainMember[];
   currentInstance?: string;
 };
@@ -15,13 +16,12 @@ type Props = {
 export function ListInstances({ onClickDelete, members, currentInstance }: Props) {
   const { t } = useTranslation();
 
-  // eslint-disable-next-line no-console
-  const handleAutoRemove = () => console.log("auto remove, IMPLEMENTED IN NEXT PR");
+  const handleAutoRemove = () => onClickDelete(Scene.AutoRemove);
 
   const handleGoDeleteInstance = (instance: TrustchainMember) => {
     // eslint-disable-next-line no-console
     console.log("delete instance IMPLEMENTED IN NEXT PR", instance);
-    onClickDelete();
+    onClickDelete(Scene.Instructions);
   };
 
   const renderItem = ({ item }: ListRenderItemInfo<TrustchainMember>) => {
@@ -29,11 +29,13 @@ export function ListInstances({ onClickDelete, members, currentInstance }: Props
     return (
       <TinyCard
         key={instance.id}
-        testId={`walletSync-manage-instance-${instance.id}`}
+        testID={`walletSync-manage-instance-${instance.id}`}
         text={instance.name}
         cta={t("walletSync.walletSyncActivated.manageInstances.remove")}
         onClick={
-          currentInstance == instance.id ? handleAutoRemove : () => handleGoDeleteInstance(instance)
+          currentInstance === instance.id
+            ? handleAutoRemove
+            : () => handleGoDeleteInstance(instance)
         }
         currentInstance={currentInstance === instance.id}
       />

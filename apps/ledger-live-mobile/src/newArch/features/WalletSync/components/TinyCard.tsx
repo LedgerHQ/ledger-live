@@ -7,17 +7,17 @@ export type CardProps = {
   text: string;
   cta: string;
   onClick: () => void;
-  testId: string;
+  testID: string;
   currentInstance?: boolean;
 };
 
-export const TinyCard = ({ text, cta, onClick, testId, currentInstance = false }: CardProps) => {
+export const TinyCard = ({ text, cta, onClick, testID, currentInstance = false }: CardProps) => {
   return (
     <CardContainer
       flexDirection="row"
       p={"12px"}
       alignItems="center"
-      data-testid={testId}
+      testID={testID}
       justifyContent="space-between"
     >
       <Flex alignItems="center" flexDirection="row">
