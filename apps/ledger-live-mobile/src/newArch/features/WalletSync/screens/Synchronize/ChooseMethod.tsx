@@ -11,7 +11,11 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
 >;
 
-const ChooseSyncMethod = () => {
+type Props = {
+  onScanMethodPress: () => void;
+};
+
+const ChooseSyncMethod = ({ onScanMethodPress }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
@@ -20,7 +24,6 @@ const ChooseSyncMethod = () => {
       screen: ScreenName.WalletSyncActivationProcess,
     });
   };
-  const onScanMethodPress = () => {};
 
   return (
     <Flex justifyContent="center" alignItems="left" flexDirection="column" rowGap={24}>

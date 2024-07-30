@@ -8,6 +8,9 @@ import { TrackScreen } from "~/analytics";
 import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
+import QrCodeMethod from "../../screens/Synchronize/QrCodeMethod";
+import { useWindowDimensions } from "react-native";
+import DrawerHeader from "../Synchronize/DrawerHeader";
 
 type Props<T extends boolean> = T extends true
   ? { isInsideDrawer: T; openSyncMethodDrawer: () => void }
@@ -16,8 +19,13 @@ type Props<T extends boolean> = T extends true
 const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDrawer }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { height } = useWindowDimensions();
+  const maxDrawerHeight = height - 180;
+
   useInitMemberCredentials();
+
   const [isChooseMethodDrawerOpen, setIsChooseMethodDrawerOpen] = React.useState(false);
+  const [isQrCodeDrawerOpen, setIsQrCodeDrawerOpen] = React.useState(false);
 
   const onPressSyncAccounts = () => {
     isInsideDrawer ? openSyncMethodDrawer() : setIsChooseMethodDrawerOpen(true);
@@ -29,6 +37,20 @@ const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDr
 
   const onPressCloseDrawer = () => {
     setIsChooseMethodDrawerOpen(false);
+  };
+
+  const onScanMethodPress = () => {
+    setIsChooseMethodDrawerOpen(false);
+    setIsQrCodeDrawerOpen(true);
+  };
+
+  const onPressCloseQrCodeDrawer = () => {
+    setIsQrCodeDrawerOpen(false);
+    setIsChooseMethodDrawerOpen(true);
+  };
+
+  const CustomDrawerHeader = () => {
+    return <DrawerHeader onClose={onPressCloseQrCodeDrawer} />;
   };
 
   return (
@@ -55,12 +77,23 @@ const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDr
         onPressSyncAccounts={onPressSyncAccounts}
       />
       {!isInsideDrawer && (
-        <QueuedDrawer
-          isRequestingToBeOpened={isChooseMethodDrawerOpen}
-          onClose={onPressCloseDrawer}
-        >
-          <ChooseSyncMethod />
-        </QueuedDrawer>
+        <>
+          <QueuedDrawer
+            isRequestingToBeOpened={isChooseMethodDrawerOpen}
+            onClose={onPressCloseDrawer}
+          >
+            <ChooseSyncMethod onScanMethodPress={onScanMethodPress} />
+          </QueuedDrawer>
+          <QueuedDrawer
+            isRequestingToBeOpened={isQrCodeDrawerOpen}
+            onClose={onPressCloseQrCodeDrawer}
+            CustomHeader={CustomDrawerHeader}
+          >
+            <Flex maxHeight={maxDrawerHeight}>
+              <QrCodeMethod />
+            </Flex>
+          </QueuedDrawer>
+        </>
       )}
     </Flex>
   );

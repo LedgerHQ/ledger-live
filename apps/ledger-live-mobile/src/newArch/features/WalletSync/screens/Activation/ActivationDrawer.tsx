@@ -3,6 +3,10 @@ import QueuedDrawer from "LLM/components/QueuedDrawer";
 import Activation from "../../components/Activation";
 import { TrackScreen } from "~/analytics";
 import ChooseSyncMethod from "../Synchronize/ChooseMethod";
+import QrCodeMethod from "../Synchronize/QrCodeMethod";
+import DrawerHeader from "../../components/Synchronize/DrawerHeader";
+import { useWindowDimensions } from "react-native";
+import { Flex } from "@ledgerhq/native-ui";
 
 type Props = {
   isOpen: boolean;
@@ -12,6 +16,9 @@ type Props = {
 
 const ActivationDrawer = ({ isOpen, handleClose, reopenDrawer }: Props) => {
   const [isSyncMethodDrawerOpen, setIsSyncMethodDrawerOpen] = React.useState(false);
+  const [isQrCodeDrawerOpen, setIsQrCodeDrawerOpen] = React.useState(false);
+  const { height } = useWindowDimensions();
+  const maxDrawerHeight = height - 180;
 
   const onPressCloseDrawer = () => {
     setIsSyncMethodDrawerOpen(false);
@@ -23,6 +30,20 @@ const ActivationDrawer = ({ isOpen, handleClose, reopenDrawer }: Props) => {
     handleClose();
   };
 
+  const onCloseQrCodeDrawer = () => {
+    setIsQrCodeDrawerOpen(false);
+    setIsSyncMethodDrawerOpen(true);
+  };
+
+  const onScanMethodPress = () => {
+    setIsSyncMethodDrawerOpen(false);
+    setIsQrCodeDrawerOpen(true);
+  };
+
+  const CustomDrawerHeader = () => {
+    return <DrawerHeader onClose={onCloseQrCodeDrawer} />;
+  };
+
   return (
     <>
       <TrackScreen />
@@ -31,7 +52,17 @@ const ActivationDrawer = ({ isOpen, handleClose, reopenDrawer }: Props) => {
       </QueuedDrawer>
 
       <QueuedDrawer isRequestingToBeOpened={isSyncMethodDrawerOpen} onClose={onPressCloseDrawer}>
-        <ChooseSyncMethod />
+        <ChooseSyncMethod onScanMethodPress={onScanMethodPress} />
+      </QueuedDrawer>
+
+      <QueuedDrawer
+        isRequestingToBeOpened={isQrCodeDrawerOpen}
+        onClose={onCloseQrCodeDrawer}
+        CustomHeader={CustomDrawerHeader}
+      >
+        <Flex maxHeight={maxDrawerHeight}>
+          <QrCodeMethod />
+        </Flex>
       </QueuedDrawer>
     </>
   );

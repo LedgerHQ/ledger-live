@@ -5,6 +5,10 @@ import { TrackScreen } from "~/analytics";
 import SelectAddAccountMethod from "./components/SelectAddAccountMethod";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
+import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
+import DrawerHeader from "LLM/features/WalletSync/components/Synchronize/DrawerHeader";
+import { Flex } from "@ledgerhq/native-ui";
+import { useWindowDimensions } from "react-native";
 
 type ViewProps = {
   isAddAccountDrawerVisible: boolean;
@@ -14,7 +18,7 @@ type ViewProps = {
   onCloseAddAccountDrawer: () => void;
   reopenDrawer: () => void;
   onRequestToOpenWalletSyncDrawer: () => void;
-  onCloseWalletSyncDrawer: () => void;
+  onCloseWalletSyncDrawer: (reopenPrevious?: boolean) => void;
 };
 
 type AddAccountProps = {
@@ -34,6 +38,24 @@ function View({
   onRequestToOpenWalletSyncDrawer,
   onCloseWalletSyncDrawer,
 }: ViewProps) {
+  const [isQrCodeDrawerOpen, setIsQrCodeDrawerOpen] = React.useState(false);
+  const { height } = useWindowDimensions();
+  const maxDrawerHeight = height - 180;
+
+  const onScanMethodPress = () => {
+    onCloseWalletSyncDrawer(false);
+    setIsQrCodeDrawerOpen(true);
+  };
+
+  const onCloseQrCodeDrawer = () => {
+    setIsQrCodeDrawerOpen(false);
+    onRequestToOpenWalletSyncDrawer();
+  };
+
+  const CustomDrawerHeader = () => {
+    return <DrawerHeader onClose={onCloseQrCodeDrawer} />;
+  };
+
   return (
     <>
       <QueuedDrawer
@@ -52,7 +74,17 @@ function View({
         isRequestingToBeOpened={isWalletSyncDrawerVisible}
         onClose={onCloseWalletSyncDrawer}
       >
-        <ChooseSyncMethod />
+        <ChooseSyncMethod onScanMethodPress={onScanMethodPress} />
+      </QueuedDrawer>
+
+      <QueuedDrawer
+        isRequestingToBeOpened={isQrCodeDrawerOpen}
+        onClose={onCloseQrCodeDrawer}
+        CustomHeader={CustomDrawerHeader}
+      >
+        <Flex maxHeight={maxDrawerHeight}>
+          <QrCodeMethod />
+        </Flex>
       </QueuedDrawer>
     </>
   );
