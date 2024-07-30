@@ -101,7 +101,7 @@ export const RenderImageLoadRequested = ({
       }),
     [device.deviceName, device.modelId, t, wording],
   );
-  if (deviceModelId === "europa") {
+  if (deviceModelId === DeviceModelId.europa) {
     return (
       <>
         <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={8} alignSelf="stretch">
@@ -178,7 +178,7 @@ export const RenderImageCommitRequested = ({
         })
       }
       lottieSource={
-        deviceModelId === "stax"
+        deviceModelId === DeviceModelId.stax
           ? getDeviceAnimation({ theme, key: "confirmCustomLockScreen", device })
           : undefined
       }
