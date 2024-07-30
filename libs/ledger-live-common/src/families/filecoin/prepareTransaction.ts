@@ -15,7 +15,8 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 ) => {
   const { balance } = account;
   const { address } = getAddress(account);
-  const { recipient, useAllAmount } = transaction;
+  const { useAllAmount } = transaction;
+  const recipient = transaction.recipient.toLowerCase();
 
   const subAccount = getSubAccount(account, transaction);
   const tokenAccountTxn = !!subAccount;
