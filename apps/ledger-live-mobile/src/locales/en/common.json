@@ -6735,7 +6735,21 @@
       },
       "manageKey": {
         "title": "Manage Key",
-        "description": "Secure or delete your encryption key via another Ledger. "
+        "description": "Secure or delete your encryption key via another Ledger.",
+        "success": "Your devices have been unsynchronized and your key has been deleted",
+        "drawer": {
+          "step1": {
+            "title": "Manage your key",
+            "titleCta": "Delete your key",
+            "descCta": "All your synced data will be deleted."
+          },
+          "step2": {
+            "delete": "Delete",
+            "cancel": "Cancel",
+            "title": "Do you really want to delete your encryption key?",
+            "desc": "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time."
+          }
+        }
       },
       "synchronizedInstances": {
         "cta": "Manage now",

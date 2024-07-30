@@ -11,10 +11,12 @@ import {
 import { Separator } from "../../components/Separator";
 import { TouchableOpacity } from "react-native";
 import { TrustchainNotFound, useGetMembers } from "../../hooks/useGetMembers";
+import ManageKeyDrawer from "../ManageKey/ManageKeyDrawer";
+import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
-
+  const { isDrawerVisible, closeDrawer, openDrawer } = useManageKeyDrawer();
   const { data, isLoading, isError, error } = useGetMembers();
 
   const { onClickTrack } = useWalletSyncAnalytics();
@@ -26,7 +28,7 @@ const WalletSyncManage = () => {
   };
 
   const goToManageBackup = () => {
-    //dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
+    openDrawer();
     onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.WalletSyncActivated });
   };
 
@@ -106,6 +108,11 @@ const WalletSyncManage = () => {
           </Flex>
         </Container>
       </InstancesRow>
+
+      {/**
+       * DRAWERS
+       */}
+      <ManageKeyDrawer isOpen={isDrawerVisible} handleClose={closeDrawer} />
     </Box>
   );
 };
