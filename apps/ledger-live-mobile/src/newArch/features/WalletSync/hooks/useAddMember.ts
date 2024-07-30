@@ -1,6 +1,6 @@
 import { memberCredentialsSelector, setTrustchain } from "@ledgerhq/trustchain/store";
 import { useDispatch, useSelector } from "react-redux";
-import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
+import { useTrustchainSdk } from "./useTrustchainSdk";
 import {
   MemberCredentials,
   TrustchainResult,
@@ -40,19 +40,17 @@ export function useAddMember({ device }: { device: Device | null }) {
   useEffect(() => {
     const addMember = async () => {
       try {
-        await runWithDevice(device?.deviceId || "", async transport => {
-          const trustchainResult = await sdk.getOrCreateTrustchain(
-            transport,
-            memberCredentialsRef.current as MemberCredentials,
-            {
-              onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-              onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-            },
-          );
-          if (trustchainResult) {
-            transitionToNextScreen(trustchainResult);
-          }
-        });
+        const trustchainResult = await sdk.getOrCreateTrustchain(
+          device?.deviceId ?? "",
+          memberCredentialsRef.current as MemberCredentials,
+          {
+            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+          },
+        );
+        if (trustchainResult) {
+          transitionToNextScreen(trustchainResult);
+        }
       } catch (error) {
         setError(error as Error);
       }
