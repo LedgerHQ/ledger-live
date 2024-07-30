@@ -41,6 +41,12 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -68,10 +74,19 @@ jobs:
       - name: Get short SHA
         id: slug
         run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Retrieving internal assets
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          repository: LedgerHQ/ledger-live-internal-assets
+          token: ${{ steps.generate-token.outputs.token }}
+          path: ledger-live-internal-assets
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
         run: cd apps/ledger-live-mobile && npm version $VERSION
+      - name: Replace assets
+        run: pnpm mobile assets:replace
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -96,6 +111,12 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -113,6 +134,15 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - name: Retrieving internal assets
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          repository: LedgerHQ/ledger-live-internal-assets
+          token: ${{ steps.generate-token.outputs.token }}
+          path: ledger-live-internal-assets
+      - name: Replace assets
+        run: pnpm mobile assets:replace
       - name: bundle ios and android js
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"

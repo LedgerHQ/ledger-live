@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -31,6 +31,11 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void; onDone: () =
   const { t } = useTranslation();
   const [connectionStatus, setConnectionStatus] = useState(0);
   const currentDevice = useSelector(getCurrentDevice);
+  const {
+    colors: {
+      palette: { type: theme },
+    },
+  } = useTheme();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   useEffect(() => {
     let sub: Subscription | undefined;
@@ -53,7 +58,7 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void; onDone: () =
         height={"140px"}
         animation={getDeviceAnimation(
           lastSeenDevice?.modelId ?? DeviceModelId.nanoS,
-          "light",
+          theme,
           "plugAndPinCode",
         )}
         loop={connectionStatus !== 1}

@@ -1,96 +1,74 @@
 # live-mobile
 
-## 3.48.0-nightly.5
+## 3.47.2
 
 ### Patch Changes
 
-- [#7423](https://github.com/LedgerHQ/ledger-live/pull/7423) [`a8d6cb7`](https://github.com/LedgerHQ/ledger-live/commit/a8d6cb72df5f088a0140f469cb2f85370cde3075) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix storyly issue on android that was displaying a blackscreen after switching app
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`e2badea`](https://github.com/LedgerHQ/ledger-live/commit/e2badea161adfbefebb913e2ea5da133202b1534) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix filter not work bug when clicking device.
 
-- Updated dependencies [[`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef)]:
-  - @ledgerhq/live-nft-react@0.4.3-nightly.3
-  - @ledgerhq/live-nft@0.4.3-nightly.3
-  - @ledgerhq/live-common@34.6.1-nightly.4
-  - @ledgerhq/native-ui@0.23.2-nightly.0
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Upadate Europa assets
 
-## 3.48.0-nightly.4
+- [#7397](https://github.com/LedgerHQ/ledger-live/pull/7397) [`77473c4`](https://github.com/LedgerHQ/ledger-live/commit/77473c4ee44ed37c0933af5075423da921e370bd) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Update LLM restore apps assets
 
-### Minor Changes
+- Updated dependencies [[`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f), [`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e), [`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/devices@8.4.2
+  - @ledgerhq/icons-ui@0.7.1
+  - @ledgerhq/types-devices@6.25.2
+  - @ledgerhq/coin-framework@0.16.1
+  - @ledgerhq/coin-evm@2.1.3
+  - @ledgerhq/live-common@34.6.1
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/react-native-hid@6.32.2
+  - @ledgerhq/react-native-hw-transport-ble@6.33.2
+  - @ledgerhq/live-wallet@0.4.1
+  - @ledgerhq/native-ui@0.23.2
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-countervalues@0.2.3
+  - @ledgerhq/live-countervalues-react@0.2.3
+  - @ledgerhq/live-nft@0.4.3
+  - @ledgerhq/live-nft-react@0.4.3
+  - @ledgerhq/hw-transport-http@6.30.2
 
-- [#7412](https://github.com/LedgerHQ/ledger-live/pull/7412) [`7b41333`](https://github.com/LedgerHQ/ledger-live/commit/7b41333e836b6778ca8fffe085d7d42cb625a668) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Small Flexible Cards Ui Modifications
-
-### Patch Changes
-
-- [#7366](https://github.com/LedgerHQ/ledger-live/pull/7366) [`c6cf93e`](https://github.com/LedgerHQ/ledger-live/commit/c6cf93edd96941a53beccb03b87d593d3fa10f5c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Fix data tracked on Braze content cards
-
-- [#7415](https://github.com/LedgerHQ/ledger-live/pull/7415) [`b6ed682`](https://github.com/LedgerHQ/ledger-live/commit/b6ed6822ecf943762f33d4f27b9fe6cf97173e3d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - sdk is now a "Singleton"
-
-- [#7417](https://github.com/LedgerHQ/ledger-live/pull/7417) [`a383685`](https://github.com/LedgerHQ/ledger-live/commit/a3836858388206b92cdf809aa0fb28ff963635ea) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Save trustchain store in DB
-
-- [#7409](https://github.com/LedgerHQ/ledger-live/pull/7409) [`1656029`](https://github.com/LedgerHQ/ledger-live/commit/1656029a08d1a61c9db1196babe279c828e31b0e) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update wording for changing custom lock screen
-
-- Updated dependencies [[`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc)]:
-  - @ledgerhq/live-nft-react@0.4.3-nightly.2
-  - @ledgerhq/live-nft@0.4.3-nightly.2
-  - @ledgerhq/live-common@34.6.1-nightly.3
-
-## 3.48.0-nightly.3
-
-### Minor Changes
-
-- [#7301](https://github.com/LedgerHQ/ledger-live/pull/7301) [`0a113e3`](https://github.com/LedgerHQ/ledger-live/commit/0a113e3b6912e0ca6749bc6eccf270e8c93a6ad6) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds custom error screen
-
-- [#7362](https://github.com/LedgerHQ/ledger-live/pull/7362) [`5eecbeb`](https://github.com/LedgerHQ/ledger-live/commit/5eecbebc2004809997ec4e24a3171f7014cf7594) Thanks [@gre](https://github.com/gre)! - Implement crypto polyfill with react-native-quick-crypto for better implementation and better performance.
+## 3.47.2-hotfix.1
 
 ### Patch Changes
 
-- [#7381](https://github.com/LedgerHQ/ledger-live/pull/7381) [`29d2d37`](https://github.com/LedgerHQ/ledger-live/commit/29d2d37edf1d0d1aa4e202fdb7a8bd7f4b386c89) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - WalletSyncActivated landing page
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`e2badea`](https://github.com/LedgerHQ/ledger-live/commit/e2badea161adfbefebb913e2ea5da133202b1534) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix filter not work bug when clicking device.
 
-- [#7395](https://github.com/LedgerHQ/ledger-live/pull/7395) [`8484db6`](https://github.com/LedgerHQ/ledger-live/commit/8484db6b95fa8ee9ccbc152155a11073e5810273) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add mobile storage provider for app data backup
+- Updated dependencies [[`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/types-devices@6.25.2-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.1
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.1
 
-- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`58c4bee`](https://github.com/LedgerHQ/ledger-live/commit/58c4beefb618cbad7e5f1ff7dfbf946f3bb763f7)]:
-  - @ledgerhq/types-live@6.49.1-nightly.0
-  - @ledgerhq/live-common@34.6.1-nightly.2
-  - @ledgerhq/coin-framework@0.16.1-nightly.1
-  - @ledgerhq/coin-evm@2.1.3-nightly.1
-  - @ledgerhq/domain-service@1.2.3-nightly.0
-  - @ledgerhq/live-countervalues@0.2.3-nightly.1
-  - @ledgerhq/live-countervalues-react@0.2.3-nightly.1
-  - @ledgerhq/live-nft@0.4.3-nightly.1
-  - @ledgerhq/live-nft-react@0.4.3-nightly.1
-  - @ledgerhq/live-wallet@0.4.1-nightly.1
-
-## 3.48.0-nightly.2
+## 3.47.2-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15)]:
-  - @ledgerhq/live-common@34.6.1-nightly.1
+- [#7397](https://github.com/LedgerHQ/ledger-live/pull/7397) [`77473c4`](https://github.com/LedgerHQ/ledger-live/commit/77473c4ee44ed37c0933af5075423da921e370bd) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Update LLM restore apps assets
 
-## 3.48.0-nightly.1
+## 3.47.1-hotfix.0
 
 ### Patch Changes
 
-- [#7392](https://github.com/LedgerHQ/ledger-live/pull/7392) [`aa0c629`](https://github.com/LedgerHQ/ledger-live/commit/aa0c6294c8ccce16c842f9def8cbd1f3c01f38ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Increase allocation path size
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Upadate Europa assets
 
-- [#7363](https://github.com/LedgerHQ/ledger-live/pull/7363) [`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Lowercase search on market
-
-- [#7352](https://github.com/LedgerHQ/ledger-live/pull/7352) [`5d29293`](https://github.com/LedgerHQ/ledger-live/commit/5d292933be68ef83f58ebc3868497d3484e2a594) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - - Integration of Trustchain SDK in LLM (V1)
-  - Activation Flow
-- Updated dependencies [[`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192)]:
-  - @ledgerhq/live-common@34.6.1-nightly.0
-  - @ledgerhq/coin-framework@0.16.1-nightly.0
-  - @ledgerhq/coin-evm@2.1.3-nightly.0
-  - @ledgerhq/live-countervalues@0.2.3-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.3-nightly.0
-  - @ledgerhq/live-nft@0.4.3-nightly.0
-  - @ledgerhq/live-nft-react@0.4.3-nightly.0
-  - @ledgerhq/live-wallet@0.4.1-nightly.0
-
-## 3.48.0-nightly.0
-
-### Minor Changes
-
-- [#7365](https://github.com/LedgerHQ/ledger-live/pull/7365) [`14e30e0`](https://github.com/LedgerHQ/ledger-live/commit/14e30e00b5b7fd6827b00dfd8fe93b6cee2cf6b7) Thanks [@Justkant](https://github.com/Justkant)! - feat(web3hub): add tabs button to main, search and app screens
+- Updated dependencies [[`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea), [`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a)]:
+  - @ledgerhq/devices@8.4.2-hotfix.0
+  - @ledgerhq/icons-ui@0.7.1-hotfix.0
+  - @ledgerhq/coin-framework@0.16.1-hotfix.0
+  - @ledgerhq/coin-evm@2.1.3-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/react-native-hid@6.32.2-hotfix.0
+  - @ledgerhq/react-native-hw-transport-ble@6.33.2-hotfix.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.0
+  - @ledgerhq/native-ui@0.23.2-hotfix.0
+  - @ledgerhq/live-countervalues@0.2.3-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.2.3-hotfix.0
+  - @ledgerhq/live-nft@0.4.3-hotfix.0
+  - @ledgerhq/live-nft-react@0.4.3-hotfix.0
+  - @ledgerhq/hw-transport-http@6.30.2-hotfix.0
 
 ## 3.47.0
 

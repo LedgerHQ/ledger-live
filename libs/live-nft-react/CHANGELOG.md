@@ -1,38 +1,19 @@
 # @ledgerhq/live-nft-react
 
-## 0.4.3-nightly.3
+## 0.4.3
 
 ### Patch Changes
 
-- [#7408](https://github.com/LedgerHQ/ledger-live/pull/7408) [`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Spam Score checker
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-nft@0.4.3
 
-- Updated dependencies [[`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef)]:
-  - @ledgerhq/live-nft@0.4.3-nightly.3
-
-## 0.4.3-nightly.2
-
-### Patch Changes
-
-- [#7400](https://github.com/LedgerHQ/ledger-live/pull/7400) [`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useRefreshMetada hook NFts and contract
-
-- Updated dependencies [[`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc)]:
-  - @ledgerhq/live-nft@0.4.3-nightly.2
-
-## 0.4.3-nightly.1
+## 0.4.3-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9)]:
-  - @ledgerhq/types-live@6.49.1-nightly.0
-  - @ledgerhq/live-nft@0.4.3-nightly.1
-
-## 0.4.3-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0)]:
-  - @ledgerhq/cryptoassets@13.2.1-nightly.0
-  - @ledgerhq/live-nft@0.4.3-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/live-nft@0.4.3-hotfix.0
 
 ## 0.4.2
 

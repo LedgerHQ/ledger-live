@@ -1,96 +1,84 @@
 # ledger-live-desktop
 
-## 2.85.0-nightly.5
+## 2.84.1
 
 ### Patch Changes
 
-- [#7439](https://github.com/LedgerHQ/ledger-live/pull/7439) [`0ddefd3`](https://github.com/LedgerHQ/ledger-live/commit/0ddefd30ac80c01280a5aec2dd1642a3bb0b4e6b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - On receive flow default account name was displayed instead of the account name selected by the user
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`e87b017`](https://github.com/LedgerHQ/ledger-live/commit/e87b017b2d1cfaf22b8703045fbcbfee6796a119) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix(LLD): AccountList not showing the correct name and balance for tokens
 
-- [#7408](https://github.com/LedgerHQ/ledger-live/pull/7408) [`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Spam Score checker
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`86ae0ac`](https://github.com/LedgerHQ/ledger-live/commit/86ae0acac0a6450ad12a60df30f958368af1300c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix sentry error & troubleshoot animation theme
 
-- Updated dependencies [[`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef)]:
-  - @ledgerhq/live-nft-react@0.4.3-nightly.3
-  - @ledgerhq/live-nft@0.4.3-nightly.3
-  - @ledgerhq/live-common@34.6.1-nightly.4
-  - @ledgerhq/react-ui@0.15.3-nightly.0
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`c4c9113`](https://github.com/LedgerHQ/ledger-live/commit/c4c91130c1bf3ce954be41fa1de20902fc8723e7) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix onboarding error when device connected.
 
-## 2.85.0-nightly.4
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Upadate Europa assets
 
-### Patch Changes
+- Updated dependencies [[`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f), [`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/devices@8.4.2
+  - @ledgerhq/types-devices@6.25.2
+  - @ledgerhq/coin-framework@0.16.1
+  - @ledgerhq/coin-bitcoin@0.7.1
+  - @ledgerhq/coin-evm@2.1.3
+  - @ledgerhq/live-common@34.6.1
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.3
+  - @ledgerhq/live-wallet@0.4.1
+  - @ledgerhq/react-ui@0.15.3
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-countervalues@0.2.3
+  - @ledgerhq/live-countervalues-react@0.2.3
+  - @ledgerhq/live-nft@0.4.3
+  - @ledgerhq/live-nft-react@0.4.3
+  - @ledgerhq/hw-transport-http@6.30.2
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.2
+  - @ledgerhq/hw-transport-vault@1.3.2
 
-- [#7400](https://github.com/LedgerHQ/ledger-live/pull/7400) [`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Tool for SimpleHash
-
-- [#7366](https://github.com/LedgerHQ/ledger-live/pull/7366) [`c6cf93e`](https://github.com/LedgerHQ/ledger-live/commit/c6cf93edd96941a53beccb03b87d593d3fa10f5c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Fix data tracked on Braze content cards
-
-- [#7428](https://github.com/LedgerHQ/ledger-live/pull/7428) [`57a3116`](https://github.com/LedgerHQ/ledger-live/commit/57a311637f0da2cc731949e0c0a1bad04484c6fc) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - demo1 sawp handle NetworkDown error
-
-- [#7415](https://github.com/LedgerHQ/ledger-live/pull/7415) [`b6ed682`](https://github.com/LedgerHQ/ledger-live/commit/b6ed6822ecf943762f33d4f27b9fe6cf97173e3d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - sdk is now a "Singleton"
-
-- Updated dependencies [[`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc)]:
-  - @ledgerhq/live-nft-react@0.4.3-nightly.2
-  - @ledgerhq/live-nft@0.4.3-nightly.2
-  - @ledgerhq/live-common@34.6.1-nightly.3
-
-## 2.85.0-nightly.3
-
-### Minor Changes
-
-- [#7411](https://github.com/LedgerHQ/ledger-live/pull/7411) [`2cd3114`](https://github.com/LedgerHQ/ledger-live/commit/2cd31146db355cb08dafabee809135b5561c7351) Thanks [@KVNLS](https://github.com/KVNLS)! - LLD - Fix transaction id overflow in operation details
+## 2.84.1-hotfix.3
 
 ### Patch Changes
 
-- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`58c4bee`](https://github.com/LedgerHQ/ledger-live/commit/58c4beefb618cbad7e5f1ff7dfbf946f3bb763f7)]:
-  - @ledgerhq/types-live@6.49.1-nightly.0
-  - @ledgerhq/live-common@34.6.1-nightly.2
-  - @ledgerhq/coin-framework@0.16.1-nightly.1
-  - @ledgerhq/coin-bitcoin@0.7.1-nightly.1
-  - @ledgerhq/coin-evm@2.1.3-nightly.1
-  - @ledgerhq/domain-service@1.2.3-nightly.0
-  - @ledgerhq/live-countervalues@0.2.3-nightly.1
-  - @ledgerhq/live-countervalues-react@0.2.3-nightly.1
-  - @ledgerhq/live-nft@0.4.3-nightly.1
-  - @ledgerhq/live-nft-react@0.4.3-nightly.1
-  - @ledgerhq/live-wallet@0.4.1-nightly.1
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`c4c9113`](https://github.com/LedgerHQ/ledger-live/commit/c4c91130c1bf3ce954be41fa1de20902fc8723e7) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix onboarding error when device connected.
 
-## 2.84.1-nightly.2
+- Updated dependencies [[`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/types-devices@6.25.2-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.1
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.1
+
+## 2.84.1-hotfix.2
 
 ### Patch Changes
 
-- [#7328](https://github.com/LedgerHQ/ledger-live/pull/7328) [`7415624`](https://github.com/LedgerHQ/ledger-live/commit/74156248e7f9564be69dc962be7a8ec6abcb295f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add storage provider for backup app data.
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`86ae0ac`](https://github.com/LedgerHQ/ledger-live/commit/86ae0acac0a6450ad12a60df30f958368af1300c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix sentry error & troubleshoot animation theme
 
-- Updated dependencies [[`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15)]:
-  - @ledgerhq/live-common@34.6.1-nightly.1
-
-## 2.84.1-nightly.1
+## 2.84.1-hotfix.1
 
 ### Patch Changes
 
-- [#7393](https://github.com/LedgerHQ/ledger-live/pull/7393) [`721b45b`](https://github.com/LedgerHQ/ledger-live/commit/721b45b11d7db386a6e3cf735699d85a3a7ac698) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - set toNewTokenId to hash params
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Upadate Europa assets
 
-## 2.84.1-nightly.0
+- Updated dependencies [[`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea)]:
+  - @ledgerhq/devices@8.4.2-hotfix.0
+  - @ledgerhq/coin-framework@0.16.1-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.7.1-hotfix.0
+  - @ledgerhq/coin-evm@2.1.3-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.3-hotfix.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.0
+  - @ledgerhq/react-ui@0.15.3-hotfix.0
+  - @ledgerhq/live-countervalues@0.2.3-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.2.3-hotfix.0
+  - @ledgerhq/live-nft@0.4.3-hotfix.0
+  - @ledgerhq/live-nft-react@0.4.3-hotfix.0
+  - @ledgerhq/hw-transport-http@6.30.2-hotfix.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.2-hotfix.0
+  - @ledgerhq/hw-transport-vault@1.3.2-hotfix.0
+
+## 2.84.1-hotfix.0
 
 ### Patch Changes
 
-- [#7360](https://github.com/LedgerHQ/ledger-live/pull/7360) [`5909f28`](https://github.com/LedgerHQ/ledger-live/commit/5909f28ed289bdd4403229750d838a1782388aa1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework Success screen WS
-
-- [#7389](https://github.com/LedgerHQ/ledger-live/pull/7389) [`1cc7146`](https://github.com/LedgerHQ/ledger-live/commit/1cc7146f5958a2d9377ad42cbb708604c9e202b2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix word break issue inside nft drawer
-
-- [#7379](https://github.com/LedgerHQ/ledger-live/pull/7379) [`8bec338`](https://github.com/LedgerHQ/ledger-live/commit/8bec338527714a2a25487ac9fa447425c31ca4b4) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Adds swap feedback form
-
-- [#7385](https://github.com/LedgerHQ/ledger-live/pull/7385) [`8826f68`](https://github.com/LedgerHQ/ledger-live/commit/8826f68ba73d2d476facc183cbc4125450752bda) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - always show scrollbar in swap live
-
-- [#7363](https://github.com/LedgerHQ/ledger-live/pull/7363) [`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Lower case search + add debounce on Market Search
-
-- Updated dependencies [[`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192)]:
-  - @ledgerhq/live-common@34.6.1-nightly.0
-  - @ledgerhq/coin-framework@0.16.1-nightly.0
-  - @ledgerhq/coin-bitcoin@0.7.1-nightly.0
-  - @ledgerhq/coin-evm@2.1.3-nightly.0
-  - @ledgerhq/live-countervalues@0.2.3-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.3-nightly.0
-  - @ledgerhq/live-nft@0.4.3-nightly.0
-  - @ledgerhq/live-nft-react@0.4.3-nightly.0
-  - @ledgerhq/live-wallet@0.4.1-nightly.0
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`3298ccb`](https://github.com/LedgerHQ/ledger-live/commit/3298ccb398ccd703f84f79a6d58ee71f5c2a77d9) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix(LLD): AccountList not showing the correct name and balance for tokens
 
 ## 2.84.0
 

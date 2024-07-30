@@ -1,48 +1,49 @@
 # web-tools
 
-## 0.7.1-nightly.4
+## 0.7.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/live-common@34.6.1-nightly.4
+  - @ledgerhq/coin-framework@0.16.1
+  - @ledgerhq/live-common@34.6.1
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/hw-transport-web-ble@6.29.2
+  - @ledgerhq/hw-transport-webhid@6.29.2
+  - @ledgerhq/hw-transport-webusb@6.29.2
+  - @ledgerhq/live-wallet@0.4.1
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/trustchain@0.1.3
+  - @ledgerhq/hw-trustchain@0.1.3
+  - @ledgerhq/hw-app-eth@6.37.3
+  - @ledgerhq/hw-transport-http@6.30.2
 
-## 0.7.1-nightly.3
+## 0.7.1-hotfix.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/live-common@34.6.1-nightly.3
+  - @ledgerhq/live-common@34.6.1-hotfix.1
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/trustchain@0.1.3-hotfix.1
+  - @ledgerhq/live-wallet@0.4.1-hotfix.1
 
-## 0.7.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`58c4bee`](https://github.com/LedgerHQ/ledger-live/commit/58c4beefb618cbad7e5f1ff7dfbf946f3bb763f7)]:
-  - @ledgerhq/types-live@6.49.1-nightly.0
-  - @ledgerhq/live-common@34.6.1-nightly.2
-  - @ledgerhq/coin-framework@0.16.1-nightly.1
-  - @ledgerhq/domain-service@1.2.3-nightly.0
-  - @ledgerhq/hw-app-eth@6.37.3-nightly.1
-  - @ledgerhq/live-wallet@0.4.1-nightly.1
-
-## 0.7.1-nightly.1
+## 0.7.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15)]:
-  - @ledgerhq/live-common@34.6.1-nightly.1
-
-## 0.7.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192), [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0)]:
-  - @ledgerhq/live-common@34.6.1-nightly.0
-  - @ledgerhq/cryptoassets@13.2.1-nightly.0
-  - @ledgerhq/coin-framework@0.16.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.37.3-nightly.0
-  - @ledgerhq/live-wallet@0.4.1-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.16.1-hotfix.0
+  - @ledgerhq/live-common@34.6.1-hotfix.0
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/hw-transport-web-ble@6.29.2-hotfix.0
+  - @ledgerhq/hw-transport-webhid@6.29.2-hotfix.0
+  - @ledgerhq/hw-transport-webusb@6.29.2-hotfix.0
+  - @ledgerhq/live-wallet@0.4.1-hotfix.0
+  - @ledgerhq/hw-trustchain@0.1.3-hotfix.0
+  - @ledgerhq/hw-app-eth@6.37.3-hotfix.0
+  - @ledgerhq/hw-transport-http@6.30.2-hotfix.0
+  - @ledgerhq/trustchain@0.1.3-hotfix.0
 
 ## 0.7.0
 

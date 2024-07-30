@@ -3,8 +3,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import { StyleSheet } from "react-native";
-import staxAllowConnection from "~/animations/stax/customimage/allowConnection.json";
-import staxConfirmLockscreen from "~/animations/stax/customimage/confirmLockscreen.json";
 import { FramedImageWithContext } from "../CustomImage/FramedPicture";
 import { getFramedPictureConfig } from "../CustomImage/framedPictureConfigs";
 import {
@@ -14,6 +12,8 @@ import {
 import { useTranslation } from "react-i18next";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useTheme } from "styled-components/native";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 
 const ImageLoadingGeneric: React.FC<{
   title: string;
@@ -23,6 +23,7 @@ const ImageLoadingGeneric: React.FC<{
   lottieSource?: FramedImageWithLottieProps["lottieSource"];
   deviceModelId: CLSSupportedDeviceModelId;
 }> = ({ title, fullScreen = true, children, progress, lottieSource, deviceModelId }) => {
+  const { colors } = useTheme();
   return (
     <Flex
       flexDirection="column"
@@ -48,7 +49,11 @@ const ImageLoadingGeneric: React.FC<{
         ) : (
           <FramedImageWithContext
             loadingProgress={progress}
-            framedPictureConfig={getFramedPictureConfig("transfer", deviceModelId)}
+            framedPictureConfig={getFramedPictureConfig(
+              "transfer",
+              deviceModelId,
+              colors.type as "light" | "dark",
+            )}
           >
             {children}
           </FramedImageWithContext>
@@ -70,6 +75,8 @@ export const RenderImageLoadRequested = ({
   wording?: string;
 }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const theme = colors.type as "dark" | "light";
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
@@ -79,7 +86,7 @@ export const RenderImageLoadRequested = ({
           productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
         })
       }
-      lottieSource={staxAllowConnection}
+      lottieSource={getDeviceAnimation({ theme, key: "allowCustomLockScreen", device })}
       progress={0}
       deviceModelId={deviceModelId}
     />
@@ -128,6 +135,8 @@ export const RenderImageCommitRequested = ({
   wording?: string;
 }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const theme = colors.type as "dark" | "light";
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
@@ -137,7 +146,7 @@ export const RenderImageCommitRequested = ({
           productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
         })
       }
-      lottieSource={staxConfirmLockscreen}
+      lottieSource={getDeviceAnimation({ theme, key: "confirmCustomLockScreen", device })}
       progress={maxProgressWithConfirmButton[deviceModelId]}
       deviceModelId={deviceModelId}
     />

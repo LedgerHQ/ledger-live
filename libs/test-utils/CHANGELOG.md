@@ -1,39 +1,25 @@
 # @ledgerhq/test-utils
 
-## 0.2.4-nightly.4
+## 0.2.4
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/live-common@34.6.1-nightly.4
+  - @ledgerhq/live-common@34.6.1
 
-## 0.2.4-nightly.3
+## 0.2.4-hotfix.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/live-common@34.6.1-nightly.3
+  - @ledgerhq/live-common@34.6.1-hotfix.1
 
-## 0.2.4-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`58c4bee`](https://github.com/LedgerHQ/ledger-live/commit/58c4beefb618cbad7e5f1ff7dfbf946f3bb763f7)]:
-  - @ledgerhq/live-common@34.6.1-nightly.2
-
-## 0.2.4-nightly.1
+## 0.2.4-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15)]:
-  - @ledgerhq/live-common@34.6.1-nightly.1
-
-## 0.2.4-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`3164745`](https://github.com/LedgerHQ/ledger-live/commit/31647459be359bd286c6a97acbc5a75660c32192)]:
-  - @ledgerhq/live-common@34.6.1-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.6.1-hotfix.0
 
 ## 0.2.3
 

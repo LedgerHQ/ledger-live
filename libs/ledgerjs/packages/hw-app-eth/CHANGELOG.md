@@ -1,21 +1,21 @@
 # @ledgerhq/hw-app-eth
 
-## 6.37.3-nightly.1
+## 6.37.3
 
 ### Patch Changes
 
-- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9)]:
-  - @ledgerhq/types-live@6.49.1-nightly.0
-  - @ledgerhq/domain-service@1.2.3-nightly.0
-  - @ledgerhq/evm-tools@1.1.3-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/hw-transport-mocker@6.29.2
 
-## 6.37.3-nightly.0
+## 6.37.3-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0)]:
-  - @ledgerhq/cryptoassets@13.2.1-nightly.0
-  - @ledgerhq/evm-tools@1.1.3-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.2-hotfix.0
 
 ## 6.37.2
 

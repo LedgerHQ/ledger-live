@@ -7,7 +7,7 @@ const forceUpdateConditions: Record<DeviceModelId, string> = {
   nanoS: noVersionCondition,
   nanoSP: noVersionCondition,
   blue: noVersionCondition,
-  europa: noVersionCondition,
+  europa: "<1.1.1",
   stax: "<=1.3.0",
 };
 
