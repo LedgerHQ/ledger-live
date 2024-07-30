@@ -5,12 +5,13 @@ import { getEnv } from "@ledgerhq/live-env";
 
 test("encryptUserData + decryptUserData", async () => {
   const sdk = getSdk(
+    false,
     {
       applicationId: 16,
       name: "test",
       apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
     },
-    { withDevice: () => () => EMPTY, isMockEnv: false },
+    () => () => EMPTY,
   );
   const obj = new Uint8Array([1, 2, 3, 4, 5]);
   const keypair = await crypto.randomKeypair();

@@ -43,7 +43,7 @@ export function useTrustchainSdk() {
   );
 
   if (sdkInstance === null) {
-    sdkInstance = getSdk(defaultContext, { lifecycle, withDevice, isMockEnv });
+    sdkInstance = getSdk(isMockEnv, defaultContext, withDevice, lifecycle);
   }
 
   return sdkInstance;

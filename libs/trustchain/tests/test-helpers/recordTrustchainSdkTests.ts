@@ -1,6 +1,5 @@
 import fsPromises from "fs/promises";
 import { setupServer } from "msw/node";
-import { of } from "rxjs";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { createSpeculosDevice, releaseSpeculosDevice } from "@ledgerhq/speculos-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -115,12 +114,9 @@ export async function recordTestTrustchainSdk(
   const options: ScenarioOptions = {
     sdkForName: name =>
       getSdk(
+        !!getEnv("MOCK"),
         { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
-        {
-          withDevice: () => fn => fn(device.transport),
-          deviceId$: of("foo"),
-          isMockEnv: !!getEnv("MOCK"),
-        },
+        () => fn => fn(device.transport),
       ),
     pauseRecorder: async (milliseconds: number) => {
       await new Promise(resolve => setTimeout(resolve, milliseconds));

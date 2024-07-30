@@ -8,7 +8,17 @@ import { genericWithJWT } from "./auth";
 import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks, WithDevice } from "./types";
 
 export class HWDeviceProvider {
-  // NOTE withDevice should be imported statically but ATM making @ledgerhq/live-common a dependency of @ledgerhq/hw-trustchain creates a circular dependency
+  /**
+   * TODO withDevice should be imported statically from @ledgerhq/live-common/hw/deviceAccess
+   *
+   * but ATM making @ledgerhq/live-common a dependency of @ledgerhq/hw-trustchain causes:
+   * > Turbo error: Invalid package dependency graph: cyclic dependency detected:
+   * >   @ledgerhq/trustchain,@ledgerhq/live-wallet,@ledgerhq/live-common
+   *
+   * Maybe hw/deviceAccess.ts and hw/index.ts could be moved to @ledgerhq/devices
+   * This would break the cyclic dependency as @ledgerhq/live-common would depend on @ledgerhq/devices
+   * but not the other way around.
+   */
   private withDevice: WithDevice;
   private jwt?: JWT;
   private api: ReturnType<typeof getApi>;

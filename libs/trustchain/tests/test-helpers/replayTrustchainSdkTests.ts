@@ -1,6 +1,5 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { of } from "rxjs";
 import { crypto } from "@ledgerhq/hw-trustchain";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
@@ -83,12 +82,9 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
     const options: ScenarioOptions = {
       sdkForName: name =>
         getSdk(
+          !!getEnv("MOCK"),
           { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
-          {
-            withDevice: () => fn => fn(transport),
-            deviceId$: of("foo"),
-            isMockEnv: !!getEnv("MOCK"),
-          },
+          () => fn => fn(transport),
         ),
       pauseRecorder: () => Promise.resolve(), // replayer don't need to pause
       switchDeviceSeed: async () => {}, // nothing to actually do, we will continue replaying

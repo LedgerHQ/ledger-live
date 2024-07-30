@@ -10,7 +10,7 @@ export const mockedSdk = getSdk(
     name: "LLD Integration",
     apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
   },
-  { withDevice: () => () => EMPTY, deviceId$: EMPTY, isMockEnv: true },
+  () => () => EMPTY,
 );
 
 export const walletSyncActivatedState = {

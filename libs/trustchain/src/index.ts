@@ -3,18 +3,14 @@ import { SDK } from "./sdk";
 import { MockSDK } from "./mockSdk";
 import { TrustchainSDKContext, TrustchainSDK, TrustchainLifecycle, WithDevice } from "./types";
 
-type Config = {
-  withDevice: WithDevice;
-  lifecycle?: TrustchainLifecycle;
-  isMockEnv?: boolean;
-};
-
 /**
  * Get an implementation of a TrustchainSDK
  */
 export const getSdk = (
+  isMockEnv: boolean,
   context: TrustchainSDKContext,
-  { withDevice, lifecycle, isMockEnv }: Config,
+  withDevice: WithDevice,
+  lifecycle?: TrustchainLifecycle,
 ): TrustchainSDK => {
   if (isMockEnv) {
     return new MockSDK(context, lifecycle);
