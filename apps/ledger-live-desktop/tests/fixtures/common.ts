@@ -8,6 +8,7 @@ import { startSpeculos, stopSpeculos, Spec } from "../utils/speculos";
 import { Application } from "tests/page";
 import { generateUUID, safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
+import { captureArtifacts } from "tests/utils/allureUtils";
 
 type TestFixtures = {
   lang: string;
@@ -169,12 +170,16 @@ export const test = base.extend<TestFixtures>({
     // use page in the test
     await use(page);
 
+    // Take screenshot and video only on failure
+    if (testInfo.status !== "passed") {
+      await captureArtifacts(page, testInfo);
+    }
+
+    //Remove video if test passed
     if (testInfo.status === "passed") {
       await electronApp.close();
       await page.video()?.delete();
     }
-
-    console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
   },
 });
 
