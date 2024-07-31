@@ -71,6 +71,7 @@ describe("AddAccount", () => {
       await user.press(await screen.getByText(/import via another ledger live app/i));
     });
     await expect(await screen.findByText(/choose your sync method/i)).toBeVisible();
+    await expect(await screen.findByText(/Scan a QR code/i));
   });
 
   /**====== Import from desktop Test =======*/

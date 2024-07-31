@@ -57,5 +57,6 @@ module.exports = {
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
     "^react-redux": "<rootDir>/node_modules/react-redux",
+    "react-native-qrcode-svg": "<rootDir>/__mocks__/react-native-qrcode.tsx",
   },
 };
