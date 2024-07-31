@@ -23,13 +23,13 @@ for (const [i, account] of accounts.entries()) {
   test.describe("Delete Accounts", () => {
     test.use({
       userdata: "speculos-tests-app",
-      testName: `deleteAccount_${account.currency.uiName}`,
+      testName: `deleteAccount_${account.currency.name}`,
       speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
     });
 
     test(
-      `[${account.currency.uiName}] Delete Account`,
+      `[${account.currency.name}] Delete Account`,
       {
         annotation: {
           type: "TMS",

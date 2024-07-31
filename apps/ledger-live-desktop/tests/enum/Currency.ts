@@ -2,8 +2,8 @@ import { DeviceLabels } from "./DeviceLabels";
 
 export class Currency {
   constructor(
-    public readonly uiName: string,
-    public readonly uiLabel: string,
+    public readonly name: string,
+    public readonly ticker: string,
     public readonly deviceLabel: string,
     public readonly sendPattern: DeviceLabels[],
     public readonly receivePattern: DeviceLabels[],
@@ -149,6 +149,81 @@ export class Currency {
     "Binance Smart Chain",
     "BNB",
     "Binance Smart Chain",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly ETH_USDT = new Currency(
+    "Tether USD",
+    "USDT",
+    "Ethereum",
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly ETH_LIDO = new Currency(
+    "LIDO Staked ETH",
+    "STETH",
+    "Ethereum",
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly XLM_USCD = new Currency(
+    "USDC",
+    "usdc",
+    "Stellar",
+    [DeviceLabels.SEND, DeviceLabels.DESTINATION, DeviceLabels.FINALIZE, DeviceLabels.CANCEL],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly ALGO_USDT = new Currency(
+    "Tether USDt",
+    "USDT",
+    "Algorand",
+    [
+      DeviceLabels.AMOUT,
+      DeviceLabels.RECEIVER,
+      DeviceLabels.CAPS_APPROVE,
+      DeviceLabels.CAPS_REJECT,
+    ],
+    [DeviceLabels.ADDRESS, DeviceLabels.CAPS_APPROVE, DeviceLabels.CAPS_REJECT],
+  );
+  static readonly TRX_USDT = new Currency(
+    "Tether USD",
+    "USDT",
+    "Tron",
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.SIGN, DeviceLabels.CANCEL],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.CANCEL],
+  );
+  static readonly TRX_BTT = new Currency(
+    "BitTorrent",
+    "BTT",
+    "Tron",
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.SIGN, DeviceLabels.CANCEL],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.CANCEL],
+  );
+  static readonly BSC_BUSD = new Currency(
+    "Binance-Peg BUSD Token",
+    "BUSD",
+    "Binance Smart Chain",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly BSC_SHIBA = new Currency(
+    "Shiba Inu",
+    "SHIB",
+    "Binance Smart Chain",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly MATIC_DAI = new Currency(
+    "(PoS) Dai Stablecoin",
+    "DAI",
+    "Polygon",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly MATIC_UNI = new Currency(
+    "Uniswap (PoS)",
+    "UNI",
+    "Polygon",
     [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
