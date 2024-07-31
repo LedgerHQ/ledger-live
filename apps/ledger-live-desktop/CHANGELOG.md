@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.2
+
+### Patch Changes
+
+- [#7466](https://github.com/LedgerHQ/ledger-live/pull/7466) [`1837d42`](https://github.com/LedgerHQ/ledger-live/commit/1837d42491df591a38755278c1e5bf9e4987fb26) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [tron] display tron keep alive as error not warning
+
+- [#7460](https://github.com/LedgerHQ/ledger-live/pull/7460) [`18c94d8`](https://github.com/LedgerHQ/ledger-live/commit/18c94d8e6f98e6ab3b50d696702333eae22ec093) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [swap] get counterValue from swap-live-app in demo1
+
+- Updated dependencies [[`1837d42`](https://github.com/LedgerHQ/ledger-live/commit/1837d42491df591a38755278c1e5bf9e4987fb26)]:
+  - @ledgerhq/live-common@34.7.0-nightly.2
+
 ## 2.85.0-nightly.1
 
 ### Patch Changes

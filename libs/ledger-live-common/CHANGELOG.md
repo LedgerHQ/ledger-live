@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.2
+
+### Patch Changes
+
+- [#7466](https://github.com/LedgerHQ/ledger-live/pull/7466) [`1837d42`](https://github.com/LedgerHQ/ledger-live/commit/1837d42491df591a38755278c1e5bf9e4987fb26) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [tron] display tron keep alive as error not warning
+
 ## 34.7.0-nightly.1
 
 ### Patch Changes
