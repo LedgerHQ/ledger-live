@@ -385,6 +385,7 @@
         "title" : "Transaction bien émise",
         "description" : "Votre opération de swap a été envoyée au réseau pour confirmation. Veuillez attendre que votre transaction soit confirmée, puis que le prestataire traite et vous envoie vos {{targetCurrency}}.",
         "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
+        "tellAboutYourExperience" : "Faites-nous part de votre expérience",
         "seeDetails" : "Voir les détails"
       }
     },
@@ -4008,7 +4009,7 @@
         "contractAddress" : "Adresse du contrat",
         "contractAddressDesc" : "contract_address du NFT signalé ou de son contrat",
         "chainId" : "Identifiant de chaîne",
-        "chainIdDesc" : "chain_id (par ex. Ethereum) du NFT signalé ou de son contrat",
+        "chainIdDesc" : "chain_id (ex. Ethereum) du NFT signalé ou de son contrat",
         "collectionId" : "Identifiant de la collection",
         "collectionIdDesc" : "Identifiant (ID) SimpleHash de la collection du NFT signalé",
         "tokenId" : "Identifiant du token",
@@ -4197,8 +4198,7 @@
           "modal" : {
             "flow" : "Sélectionner un processus",
             "step" : "Sélectionner une étape",
-            "activated" : "Activer/désactiver pour générer une synchronisation (ou non)",
-            "instance" : "Créer une synchronisation",
+            "instance" : "Créer des membres",
             "cta" : "Appliquer"
           }
         }
@@ -5492,6 +5492,9 @@
       "title" : "Impossible de calculer le montant et les frais",
       "description" : "Impossible de calculer le montant et les frais"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Bénéficiaire invalide pour le transfert de tokens. Types de comptes pris en charge pour le transfert de tokens : [f0, f4, 0x]"
+    },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
@@ -6313,7 +6316,7 @@
         "description" : "Protégez ou supprimez votre clé de chiffrement via un autre appareil Ledger."
       },
       "instance" : {
-        "label_one" : "1 synchronisation",
+        "label" : "1 synchronisation",
         "label_other" : "{{count}} synchronisations",
         "cta" : "Gérer"
       }
@@ -6326,7 +6329,8 @@
     "error" : {
       "title" : "Une erreur est survenue",
       "description" : "Veuillez réessayer plus tard.",
-      "cta" : "Réessayer"
+      "cta" : "Réessayer",
+      "fetching" : "Une erreur est survenue lors de la récupération de vos données."
     },
     "unsecuredError" : {
       "title" : "La synchronisation n’est pas protégée par cet appareil Ledger",
@@ -6335,18 +6339,26 @@
       "cta" : "Connecter un autre appareil Ledger",
       "ctaDelete" : "Supprimer ma clé de chiffrement"
     },
+    "autoRemoveError" : {
+      "title" : "Suppression de la synchronisation impossible",
+      "description" : "Pour des raisons de sécurité, vous ne pouvez pas supprimer la synchronisation que vous utilisez actuellement sans supprimer votre clé de chiffrement.",
+      "info" : "En supprimant vote clé de chiffrement, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
+      "cta" : "Compris",
+      "ctaDelete" : "Supprimer ma clé de chiffrement"
+    },
     "success" : {
       "backup" : {
         "title" : "Succès",
-        "desc" : "Activation de Ledger Sync réussie. ",
-        "synchAnother" : "Synchroniser avec une autre application Ledger Live"
+        "desc" : "Activation de Ledger Sync réussie."
       },
       "synch" : {
         "title" : "Synchronisation réussie !",
         "desc" : "Les modifications apportées à vos comptes apparaîtront automatiquement, dans toutes les apps et sur toutes les plateformes."
-      }
+      },
+      "synchAnother" : "Synchroniser avec une autre application Ledger Live",
+      "close" : "Fermer"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Gérer votre clé",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6412,10 @@
       "remove" : "Retirer",
       "deleteInstanceSuccess" : "Votre {{instanceName}} n’est plus synchronisée.",
       "deleteInstanceError" : "Une erreur s’est produite lors de la désynchronisation de {{instanceName}}"
+    },
+    "deviceAction" : {
+      "title" : "Continuez sur votre Ledger {{wording}}",
+      "description" : "Suivez les instructions sur l’écran de confiance de votre appareil Ledger."
     }
   }
 }
