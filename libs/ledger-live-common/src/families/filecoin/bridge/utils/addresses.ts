@@ -2,11 +2,11 @@ import {
   IAddress,
   PROTOCOL_INDICATOR,
   fromEthAddress,
+  isEthAddress,
   fromString,
   toEthAddress,
 } from "iso-filecoin/address";
 import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
 
 export type ValidateAddressResult =
   | {
@@ -17,25 +17,13 @@ export type ValidateAddressResult =
       isValid: false;
     };
 
-export const convertF4ToEthAddress = (addr: string) => {
-  const parsed = fromString(addr);
-
-  return toEthAddress(parsed);
-};
-
-export const convertF0toEthAddress = (addr: string): string => {
-  if (addr.slice(0, 2) != "f0") {
-    throw new Error("Address does not start with f0");
-  }
-
-  const id = new BigNumber(addr.slice(2));
-  const idHex = id.toString(16).padStart(16, "0");
-
-  return `0xff${"".padStart(22, "0")}${idHex}`;
-};
-
 export const isFilEthAddress = (addr: IAddress) =>
   addr.protocol === PROTOCOL_INDICATOR.DELEGATED && addr.namespace === 10;
+
+export const isIdAddress = (addr: IAddress) => addr.protocol === PROTOCOL_INDICATOR.ID;
+
+export const isEthereumConvertableAddr = (addr: IAddress) =>
+  isIdAddress(addr) || isFilEthAddress(addr);
 
 export const validateAddress = (input: string): ValidateAddressResult => {
   try {
@@ -67,25 +55,43 @@ export const isRecipientValidForTokenTransfer = (addr: string): boolean => {
     return false;
   }
 
-  const accountType = addr.substring(0, 2);
-  if (["f0", "0x", "f4"].includes(accountType)) {
+  if (isEthereumConvertableAddr(valid.parsedAddress)) {
     return true;
   }
 
   return false;
 };
 
-export const convertAddressFilToEth = (addr: string): string => {
-  const recipientAddressProtocol = addr.slice(0, 2);
-
-  switch (recipientAddressProtocol) {
-    case "f0":
-      return convertF0toEthAddress(addr);
-    case "f4":
-      return convertF4ToEthAddress(addr);
-    case "0x":
-      return addr;
-    default:
-      throw new Error("supported address protocols are f0, f4");
+export const getEquivalentAddress = (addr: string): string => {
+  if (isEthAddress(addr)) {
+    if (!addr.startsWith("0x")) addr = "0x" + addr;
+    return fromEthAddress(addr, "mainnet").toString();
+  } else {
+    const parsed = fromString(addr);
+    if (isEthereumConvertableAddr(parsed)) {
+      return toEthAddress(parsed);
+    }
+    return "";
   }
+};
+
+export const convertAddressFilToEth = (addr: string): string => {
+  if (isEthAddress(addr)) {
+    return addr;
+  }
+
+  const parsed = fromString(addr);
+  if (isEthereumConvertableAddr(parsed)) {
+    return toEthAddress(parsed);
+  }
+  throw new Error("address type not supported");
+};
+
+export const convertAddressEthToFil = (addr: string): string => {
+  if (!isEthAddress(addr)) {
+    return addr;
+  }
+
+  if (!addr.startsWith("0x")) addr = "0x" + addr;
+  return fromEthAddress(addr, "mainnet").toString();
 };

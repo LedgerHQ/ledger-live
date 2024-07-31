@@ -1,6 +1,6 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { convertAddressFilToEth } from "./bridge/utils/addresses";
+import { getEquivalentAddress } from "./bridge/utils/addresses";
 
 export enum Methods {
   Transfer = 0,
@@ -69,16 +69,11 @@ export function getAccountUnit(account: AccountLike) {
 }
 
 export const expectedToFieldForTokenTransfer = (recipient: string) => {
-  const addrProtocol = recipient.substring(0, 2);
-  const ethAddr = convertAddressFilToEth(recipient);
+  let value = recipient;
+  const equivalent = getEquivalentAddress(value);
 
-  let value: string;
-  if (addrProtocol === "f0") {
-    value = `${ethAddr} ${recipient}`;
-  } else if (addrProtocol === "f4") {
-    value = `${ethAddr} ${recipient}`;
-  } else {
-    value = ethAddr;
+  if (equivalent && value != equivalent) {
+    value += ` / ${equivalent}`;
   }
 
   return value;

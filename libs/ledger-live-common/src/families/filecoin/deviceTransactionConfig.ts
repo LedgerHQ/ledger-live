@@ -58,11 +58,10 @@ function getDeviceTransactionConfig(input: {
   };
 
   if (subAccount) {
-    const value = expectedToFieldForTokenTransfer(input.transaction.recipient);
     fields.push({
       type: "filecoin.recipient",
       label: "To",
-      value,
+      value: input.transaction.recipient,
     });
   } else {
     const recipient = input.transaction.recipient;
