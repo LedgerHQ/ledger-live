@@ -15,8 +15,8 @@ const ManageInstancesDrawer = ({
   memberCredentials,
   memberHook,
   scene,
-  onClickDelete,
   changeScene,
+  onClickInstance,
 }: HookResult) => {
   const { error, isError, isLoading, data } = memberHook;
 
@@ -35,7 +35,8 @@ const ManageInstancesDrawer = ({
     if (scene === Scene.List) {
       return (
         <ListInstances
-          onClickDelete={onClickDelete}
+          changeScene={changeScene}
+          onClickInstance={onClickInstance}
           members={data}
           currentInstance={memberCredentials?.pubkey}
         />
@@ -51,13 +52,6 @@ const ManageInstancesDrawer = ({
           understood={() => changeScene(Scene.List)}
         />
       );
-    }
-
-    if (scene === Scene.DeviceAction) {
-      return null;
-    }
-    if (scene === Scene.Instructions) {
-      return null;
     }
   };
 

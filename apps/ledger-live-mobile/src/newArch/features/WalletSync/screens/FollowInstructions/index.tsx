@@ -6,17 +6,22 @@ import FollowInstructions from "../../components/FollowInstructions";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { useAddMember } from "../../hooks/useAddMember";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   device: Device | null;
+  userDeviceInteraction: boolean;
+  error: Error | null;
 };
 
-const FollowInstructionsDrawer = ({ isOpen, handleClose, device }: Props) => {
-  const { error, userDeviceInteraction } = useAddMember({ device });
-
+const GenericFollowInstructionsDrawer = ({
+  isOpen,
+  handleClose,
+  device,
+  error,
+  userDeviceInteraction,
+}: Props) => {
   return (
     <>
       <TrackScreen />
@@ -35,4 +40,4 @@ const FollowInstructionsDrawer = ({ isOpen, handleClose, device }: Props) => {
   );
 };
 
-export default FollowInstructionsDrawer;
+export default GenericFollowInstructionsDrawer;

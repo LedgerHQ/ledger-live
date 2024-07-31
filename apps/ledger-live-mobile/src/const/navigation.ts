@@ -517,6 +517,8 @@ export enum ScreenName {
   WalletSyncActivated = "WalletSyncActivated",
   WalletSyncManageKeyDeleteSuccess = "WalletSyncManageKeyDeleteSuccess",
   WalletSyncUnSynchSuccess = "WalletSyncUnSynchSuccess",
+  WalletSyncManageInstancesProcess = "WalletSyncManageInstancesProcess",
+  WalletSyncManageInstancesSuccess = "WalletSyncManageInstancesSuccess",
 
   MockedAddAssetButton = "MockedAddAssetButton",
   GenericLandingPage = "GenericLandingPage",

@@ -1,3 +1,4 @@
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import { ScreenName } from "~/const";
 
 export type WalletSyncNavigatorStackParamList = {
@@ -12,4 +13,12 @@ export type WalletSyncNavigatorStackParamList = {
 
   [ScreenName.WalletSyncManageKeyDeleteSuccess]: undefined;
   [ScreenName.WalletSyncUnSynchSuccess]: undefined;
+
+  [ScreenName.WalletSyncManageInstancesProcess]: {
+    member: TrustchainMember;
+  };
+
+  [ScreenName.WalletSyncManageInstancesSuccess]: {
+    member: TrustchainMember;
+  };
 };

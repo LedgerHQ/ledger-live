@@ -4,14 +4,19 @@ import WalletSyncActivationDeviceSelection from "../DeviceSelection";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import FollowInstructionsDrawer from "./ActivationInstructionDrawer";
+import DeletionFollowInstructionsDrawer from "./DeletionInstructionDrawer";
 
 type Props = BaseComposite<
-  StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
+  StackNavigatorProps<
+    WalletSyncNavigatorStackParamList,
+    ScreenName.WalletSyncManageInstancesProcess
+  >
 >;
 
-export function ActivationProcess({ route, navigation }: Props) {
+export function ManageInstancesProcess({ route, navigation }: Props) {
   const { isDrawerInstructionsVisible, closeDrawer, openDrawer, device } = useFollowInstructions();
+
+  const member = route.params?.member;
 
   return (
     <>
@@ -21,10 +26,11 @@ export function ActivationProcess({ route, navigation }: Props) {
         goToFollowInstructions={openDrawer}
       />
       {isDrawerInstructionsVisible && (
-        <FollowInstructionsDrawer
+        <DeletionFollowInstructionsDrawer
           isOpen={isDrawerInstructionsVisible}
           handleClose={closeDrawer}
           device={device}
+          member={member}
         />
       )}
     </>
