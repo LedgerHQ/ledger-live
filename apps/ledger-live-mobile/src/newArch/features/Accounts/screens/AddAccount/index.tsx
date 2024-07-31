@@ -1,25 +1,14 @@
 import React from "react";
 import useAddAccountViewModel from "./useAddAccountViewModel";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { TrackScreen } from "~/analytics";
-import SelectAddAccountMethod from "./components/SelectAddAccountMethod";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
-import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
 import DrawerHeader from "LLM/features/WalletSync/components/Synchronize/DrawerHeader";
 import { Flex } from "@ledgerhq/native-ui";
 import { useWindowDimensions } from "react-native";
+import StepFlow from "./StepFlow";
+import { Steps } from "../../types/enum/addAccount";
 
-type ViewProps = {
-  isAddAccountDrawerVisible: boolean;
-  doesNotHaveAccount?: boolean;
-  currency?: CryptoCurrency | TokenCurrency | null;
-  isWalletSyncDrawerVisible: boolean;
-  onCloseAddAccountDrawer: () => void;
-  reopenDrawer: () => void;
-  onRequestToOpenWalletSyncDrawer: () => void;
-  onCloseWalletSyncDrawer: (reopenPrevious?: boolean) => void;
-};
+type ViewProps = ReturnType<typeof useAddAccountViewModel> & AddAccountProps;
 
 type AddAccountProps = {
   isOpened: boolean;
@@ -29,64 +18,37 @@ type AddAccountProps = {
   reopenDrawer: () => void;
 };
 
+const StartingStep = Steps.AddAccountMethod;
+
 function View({
   isAddAccountDrawerVisible,
   doesNotHaveAccount,
   currency,
-  isWalletSyncDrawerVisible,
   onCloseAddAccountDrawer,
-  onRequestToOpenWalletSyncDrawer,
-  onCloseWalletSyncDrawer,
 }: ViewProps) {
-  const [isQrCodeDrawerOpen, setIsQrCodeDrawerOpen] = React.useState(false);
+  const [currentStep, setCurrentStep] = React.useState<Steps>(StartingStep);
   const { height } = useWindowDimensions();
   const maxDrawerHeight = height - 180;
 
-  const onScanMethodPress = () => {
-    onCloseWalletSyncDrawer(false);
-    setIsQrCodeDrawerOpen(true);
-  };
+  const CustomDrawerHeader = () => <DrawerHeader onClose={onCloseAddAccountDrawer} />;
 
-  const onCloseQrCodeDrawer = () => {
-    setIsQrCodeDrawerOpen(false);
-    onRequestToOpenWalletSyncDrawer();
-  };
-
-  const CustomDrawerHeader = () => {
-    return <DrawerHeader onClose={onCloseQrCodeDrawer} />;
-  };
+  const handleStepChange = (step: Steps) => setCurrentStep(step);
 
   return (
-    <>
-      <QueuedDrawer
-        isRequestingToBeOpened={isAddAccountDrawerVisible}
-        onClose={onCloseAddAccountDrawer}
-      >
-        <TrackScreen category="Add/Import accounts" type="drawer" />
-        <SelectAddAccountMethod
+    <QueuedDrawer
+      isRequestingToBeOpened={isAddAccountDrawerVisible}
+      onClose={onCloseAddAccountDrawer}
+      CustomHeader={currentStep === Steps.QrCodeMethod ? CustomDrawerHeader : undefined}
+    >
+      <Flex maxHeight={maxDrawerHeight}>
+        <StepFlow
+          startingStep={StartingStep}
           doesNotHaveAccount={doesNotHaveAccount}
           currency={currency}
-          onClose={onCloseAddAccountDrawer}
-          setWalletSyncDrawerVisible={onRequestToOpenWalletSyncDrawer}
+          onStepChange={handleStepChange}
         />
-      </QueuedDrawer>
-      <QueuedDrawer
-        isRequestingToBeOpened={isWalletSyncDrawerVisible}
-        onClose={onCloseWalletSyncDrawer}
-      >
-        <ChooseSyncMethod onScanMethodPress={onScanMethodPress} />
-      </QueuedDrawer>
-
-      <QueuedDrawer
-        isRequestingToBeOpened={isQrCodeDrawerOpen}
-        onClose={onCloseQrCodeDrawer}
-        CustomHeader={CustomDrawerHeader}
-      >
-        <Flex maxHeight={maxDrawerHeight}>
-          <QrCodeMethod />
-        </Flex>
-      </QueuedDrawer>
-    </>
+      </Flex>
+    </QueuedDrawer>
   );
 }
 
