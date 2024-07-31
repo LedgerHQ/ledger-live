@@ -94,6 +94,7 @@ const walletState: WalletState = {
     data: null,
     version: 0,
   },
+  nonImportedAccountInfos: [],
 };
 
 for (const raw of raws) {

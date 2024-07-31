@@ -77,6 +77,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyScroll: DEFAULT_FEATURE,
   currencyScrollSepolia: DEFAULT_FEATURE,
   currencyIcon: DEFAULT_FEATURE,
+  currencyTon: DEFAULT_FEATURE,
 };
 
 /**
@@ -91,14 +92,12 @@ export const DEFAULT_FEATURES: Features = {
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
-  multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
-  listAppsV2minor1: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   newsfeedPage: initFeature(),

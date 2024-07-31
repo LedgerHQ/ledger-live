@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-polkadot",
-  "version": "6.31.1",
+  "version": "6.31.2",
   "description": "Ledger Hardware Wallet Polkadot Application API",
   "keywords": [
     "Ledger",

@@ -26,10 +26,10 @@ import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
-import { Account } from "@ledgerhq/types-live";
-import { WalletState, initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
+import { initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
 import { DistantState, trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";
 import { Loading } from "./Loading";
+import { State } from "./types";
 
 const Container = styled.div`
   padding: 0 10px 50px 0;
@@ -39,8 +39,9 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const initialState = {
+const initialState: State = {
   accounts: [],
+  nonImportedAccounts: [],
   walletState: walletInitialState,
 };
 
@@ -72,12 +73,14 @@ const App = () => {
     setAccountsSync(false);
   }, [setAccountsSync]);
 
+  /*
   // turning accounts sync off will cascade to state reset
   useEffect(() => {
     if (!accountsSync) {
       setState(initialState);
     }
   }, [accountsSync]);
+  */
 
   const [wssdkHandledVersion, setWssdkHandledVersion] = useState(0);
   const [wssdkHandledData, setWssdkHandledData] = useState<DistantState | null>(null);
@@ -310,11 +313,6 @@ const App = () => {
       </Container>
     </TrustchainSDKContext.Provider>
   );
-};
-
-type State = {
-  accounts: Account[];
-  walletState: WalletState;
 };
 
 const AppAccountsSync = dynamic<{

@@ -140,7 +140,7 @@ function AccountSettingRenderBody(props: Props) {
           </Container>
           <Spoiler textTransform title={t("account.settings.advancedLogs")}>
             {tag ? <Tips tag={tag} /> : null}
-            <AdvancedLogsContainer data-test-id="Advanced_Logs">
+            <AdvancedLogsContainer data-testid="Advanced_Logs">
               {JSON.stringify(usefulData, null, 2)}
             </AdvancedLogsContainer>
           </Spoiler>
@@ -173,12 +173,12 @@ function AccountSettingRenderBody(props: Props) {
             danger
             type="button"
             onClick={handleOpenRemoveAccountModal}
-            data-test-id="account-settings-delete-button"
+            data-testid="account-settings-delete-button"
           >
             {t("settings.removeAccountModal.delete")}
           </Button>
           <Button
-            data-test-id="account-settings-apply-button"
+            data-testid="account-settings-apply-button"
             event="DoneEditingAccount"
             ml="auto"
             onClick={onSubmit}

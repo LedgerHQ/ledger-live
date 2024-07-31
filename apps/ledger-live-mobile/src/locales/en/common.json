@@ -927,6 +927,9 @@
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
     },
+    "TonCommentInvalid": {
+      "title": "Comment must not exceed 120 characters without special characters"
+    },
     "TezosUnrevealedAccount": {
       "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     },
@@ -3652,6 +3655,8 @@
         "value": "Memo value"
       },
       "validateMemo": "Validate memo",
+      "comment": "Comment",
+      "validateComment": "Validate comment",
       "quantity": "Quantity"
     },
     "validation": {
@@ -6393,7 +6398,7 @@
   },
   "customImage": {
     "title": "Lock screen picture",
-    "replace": "Replace",
+    "change": "Change",
     "drawer": {
       "options": {
         "uploadFromPhone": "Choose from my picture gallery",
@@ -6417,6 +6422,8 @@
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
+    "keepOnDevice": "Keep",
+    "discardOnDevice": "Discard",
     "nftEntryPointButtonLabel": "Set as lockscreen picture",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
@@ -6728,12 +6735,44 @@
       },
       "manageKey": {
         "title": "Manage Key",
-        "description": "Secure or delete your encryption key via another Ledger. "
+        "description": "Secure or delete your encryption key via another Ledger.",
+        "success": "Your devices have been unsynchronized and your key has been deleted",
+        "drawer": {
+          "step1": {
+            "title": "Manage your key",
+            "titleCta": "Delete your key",
+            "descCta": "All your synced data will be deleted."
+          },
+          "step2": {
+            "delete": "Delete",
+            "cancel": "Cancel",
+            "title": "Do you really want to delete your encryption key?",
+            "desc": "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time."
+          }
+        }
       },
       "synchronizedInstances": {
         "cta": "Manage now",
         "title": "{{count}} Synchronized Instance",
-        "title_plural": "{{count}} Synchronized Instances"
+        "title_plural": "{{count}} Synchronized Instances",
+        "error": "Instances"
+      },
+      "errors": {
+        "fetching": "Something went wrong while fetching your synchronized instances.",
+        "trustchain": "Unexpected falsy trustchain",
+        "memberCredentials": "Unexpected falsy member credentials",
+        "ledgerSyncUnavailable": "Ledger Sync is currently unavailable. This doesn’t have any impact on your assets."
+      }
+    },
+    "synchronize": {
+      "chooseMethod": {
+        "title": "Choose your sync method",
+        "scan": {
+          "title": "Scan a QR code"
+        },
+        "connectDevice": {
+          "title": "Use your Ledger"
+        }
       }
     }
   },

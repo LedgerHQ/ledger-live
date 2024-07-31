@@ -1,5 +1,33 @@
 # @ledgerhq/live-wallet
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/types-devices@6.25.2
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/speculos-transport@0.1.3
+  - @ledgerhq/hw-trustchain@0.1.3
+  - @ledgerhq/hw-transport-mocker@6.29.2
+
+## 0.1.3-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`af3d126`](https://github.com/LedgerHQ/ledger-live/commit/af3d126b524dbacf606e3beb56246608f2243eca)]:
+  - @ledgerhq/types-devices@6.25.2-hotfix.0
+
+## 0.1.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/speculos-transport@0.1.3-hotfix.0
+  - @ledgerhq/hw-trustchain@0.1.3-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.2-hotfix.0
+
 ## 0.1.2
 
 ### Patch Changes

@@ -5,6 +5,7 @@ import stacks from "../families/stacks/hw-signMessage";
 import vechain from "../families/vechain/hw-signMessage";
 import { messageSigner as bitcoin } from "../families/bitcoin/setup";
 import { messageSigner as evm } from "../families/evm/setup";
+import { messageSigner as ton } from "../families/ton/setup";
 
 export default {
   casper,
@@ -14,4 +15,5 @@ export default {
   vechain,
   bitcoin,
   evm,
+  ton,
 };

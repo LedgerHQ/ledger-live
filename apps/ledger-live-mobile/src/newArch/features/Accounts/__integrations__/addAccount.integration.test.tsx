@@ -70,7 +70,7 @@ describe("AddAccount", () => {
     await act(async () => {
       await user.press(await screen.getByText(/import via another ledger live app/i));
     });
-    await expect(await screen.findByText(/dummy drawer/i)).toBeVisible();
+    await expect(await screen.findByText(/choose your sync method/i)).toBeVisible();
   });
 
   /**====== Import from desktop Test =======*/

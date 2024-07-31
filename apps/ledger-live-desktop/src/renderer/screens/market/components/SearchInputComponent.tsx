@@ -38,7 +38,7 @@ function SearchInputComponent({ search, updateSearch }: Props) {
   return (
     <SearchContainer>
       <SearchInput
-        data-test-id="market-search-input"
+        data-testid="market-search-input"
         value={inputSearch}
         onChange={setInputSearch}
         placeholder={t("common.search")}

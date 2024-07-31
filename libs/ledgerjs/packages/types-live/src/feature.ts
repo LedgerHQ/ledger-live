@@ -118,6 +118,7 @@ export type CurrencyFeatures = {
   currencyScroll: DefaultFeature;
   currencyScrollSepolia: DefaultFeature;
   currencyIcon: DefaultFeature;
+  currencyTon: DefaultFeature;
 };
 
 /**
@@ -136,7 +137,6 @@ export type Features = CurrencyFeatures & {
   mockFeature: Feature_MockFeature;
   buySellUi: Feature_BuySellUiManifest;
   buySellShortcut: DefaultFeature;
-  multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   disableNftSend: Feature_DisableNftSend;
   disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
@@ -160,7 +160,6 @@ export type Features = CurrencyFeatures & {
   domainInputResolution: Feature_DomainInputResolution;
   discover: Feature_Discover;
   transactionsAlerts: Feature_TransactionsAlerts;
-  listAppsV2minor1: Feature_ListAppsV2minor1;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
@@ -477,7 +476,6 @@ export type Feature_BuySellUiManifest = Feature<{
 
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
-export type Feature_MultibuyNavigation = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
@@ -486,7 +484,6 @@ export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
 export type Feature_Objkt = DefaultFeature;
-export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;

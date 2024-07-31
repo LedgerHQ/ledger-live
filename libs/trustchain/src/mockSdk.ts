@@ -36,8 +36,15 @@ function assertAllowedPermissions(trustchainId: string, memberId: string) {
   }
 }
 
-const mockedLiveJWT = { accessToken: "mock-live-jwt" };
-const mockedDeviceJWT = { accessToken: "mock-device-jwt" };
+const mockedLiveJWT = {
+  accessToken: "mock-live-jwt",
+  permissions: {},
+};
+
+const mockedDeviceJWT = {
+  accessToken: "mock-device-jwt",
+  permissions: {},
+};
 
 // global states in memory
 const trustchains = new Map<string, Trustchain>();
@@ -103,7 +110,7 @@ export class MockSDK implements TrustchainSDK {
     const trustchain: Trustchain = trustchains.get("mock-root-id") || {
       rootId: "mock-root-id",
       walletSyncEncryptionKey: "mock-wallet-sync-encryption-key",
-      applicationPath: "0'/16'/0'",
+      applicationPath: "m/0'/16'/0'",
     };
     trustchains.set(trustchain.rootId, trustchain);
 
@@ -192,11 +199,11 @@ export class MockSDK implements TrustchainSDK {
     );
     trustchainMembers.set(trustchain.rootId, currentMembers);
     // we extract the index part to increment it and recreate a path
-    const index = 1 + parseInt(trustchain.applicationPath.split("/")[2].split("'")[0]);
+    const index = 1 + parseInt(trustchain.applicationPath.split("/")[3].split("'")[0]);
     const newTrustchain = {
       rootId: trustchain.rootId,
       walletSyncEncryptionKey: "mock-wallet-sync-encryption-key-" + index,
-      applicationPath: "0'/16'/" + index + "'",
+      applicationPath: "m/0'/16'/" + index + "'",
     };
     trustchains.set(newTrustchain.rootId, newTrustchain);
 

@@ -99,7 +99,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
         </TableRow>
       ) : (
         <TableRow
-          data-test-id={`market-${currency?.ticker}-row`}
+          data-testid={`market-${currency?.ticker}-row`}
           onClick={onCurrencyClick}
           role="row"
         >
@@ -136,7 +136,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
               <Flex flex={1}>
                 {availableOnBuy && (
                   <Button
-                    data-test-id={`market-${currency?.ticker}-buy-button`}
+                    data-testid={`market-${currency?.ticker}-buy-button`}
                     variant="color"
                     mr={1}
                     onClick={onBuy}
@@ -146,7 +146,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
                 )}
                 {availableOnSwap && (
                   <Button
-                    data-test-id={`market-${currency?.ticker}-swap-button`}
+                    data-testid={`market-${currency?.ticker}-swap-button`}
                     variant="color"
                     mr={1}
                     onClick={onSwap}
@@ -156,7 +156,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
                 )}
                 {availableOnStake && (
                   <Button
-                    data-test-id={`market-${currency?.ticker}-stake-button`}
+                    data-testid={`market-${currency?.ticker}-stake-button`}
                     variant="color"
                     onClick={e => onStake(e)}
                   >
@@ -166,7 +166,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
               </Flex>
             ) : null}
           </TableCell>
-          <TableCell data-test-id={"market-coin-price"}>
+          <TableCell data-testid={"market-coin-price"}>
             <Text variant="body">
               {counterValueFormatter({
                 value: formatPrice(currency.price ?? 0),
@@ -175,7 +175,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
               })}
             </Text>
           </TableCell>
-          <TableCell data-test-id={"market-price-change"}>
+          <TableCell data-testid={"market-price-change"}>
             {currentPriceChangePercentage ? (
               <FormattedVal
                 isPercent
@@ -189,7 +189,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
             )}
           </TableCell>
 
-          <TableCell data-test-id={"market-cap"}>
+          <TableCell data-testid={"market-cap"}>
             <Text>
               {counterValueFormatter({
                 shorten: true,
@@ -199,13 +199,13 @@ export const MarketRow = memo<Props>(function MarketRowItem({
               })}
             </Text>
           </TableCell>
-          <TableCell data-test-id={"market-small-graph"}>
+          <TableCell data-testid={"market-small-graph"}>
             {currency.sparklineIn7d && (
               <SmallMarketItemChart sparklineIn7d={currency.sparklineIn7d} />
             )}
           </TableCell>
 
-          <TableCell data-test-id={`market-${currency?.ticker}-star-button`} onClick={onStarClick}>
+          <TableCell data-testid={`market-${currency?.ticker}-star-button`} onClick={onStarClick}>
             <Icon name={isStarred ? "StarSolid" : "Star"} size={18} />
           </TableCell>
         </TableRow>

@@ -27,7 +27,7 @@ const ImportButton: React.FC<Props> = props => {
   const { colors } = useTheme();
 
   return (
-    <Container bg={colors.opacityDefault.c05} onClick={onClick} data-test-id={testId}>
+    <Container bg={colors.opacityDefault.c05} onClick={onClick} data-testid={testId}>
       <Text variant="large" fontWeight="semiBold">
         {text}
       </Text>

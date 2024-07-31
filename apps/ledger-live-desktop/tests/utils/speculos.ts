@@ -4,7 +4,7 @@ import {
   listAppCandidates,
   createSpeculosDevice,
   releaseSpeculosDevice,
-  findAppCandidate,
+  findLatestAppCandidate,
   SpeculosTransport,
 } from "@ledgerhq/live-common/load/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
@@ -202,7 +202,7 @@ export async function startSpeculos(
   }
 
   const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
-  const appCandidate = findAppCandidate(appCandidates, appQuery);
+  const appCandidate = findLatestAppCandidate(appCandidates, appQuery);
   if (!appCandidate) {
     console.warn("no app found for " + testName);
     console.warn(appQuery);

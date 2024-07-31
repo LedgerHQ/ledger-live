@@ -311,6 +311,9 @@ export enum ScreenName {
   // internet_computer
   InternetComputerEditMemo = "InternetComputerEditMemo",
 
+  // ton
+  TonEditComment = "TonEditComment",
+
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
 
@@ -512,6 +515,7 @@ export enum ScreenName {
   WalletSyncActivationProcess = "WalletSyncActivationProcess",
   WalletSyncSuccess = "WalletSyncSuccess",
   WalletSyncActivated = "WalletSyncActivated",
+  WalletSyncManageKeyDeleteSuccess = "WalletSyncManageKeyDeleteSuccess",
 
   MockedAddAssetButton = "MockedAddAssetButton",
   GenericLandingPage = "GenericLandingPage",

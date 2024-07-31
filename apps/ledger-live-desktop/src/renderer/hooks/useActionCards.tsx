@@ -54,7 +54,10 @@ const useActionCards = () => {
     const actionCard = findActionCard(cardId);
 
     if (currentCard) {
-      isTrackedUser && braze.logContentCardClick(currentCard);
+      // For some reason braze won't log the click event if the card url is empty
+      // Setting it as the card id just to have a dummy non empty value
+      isTrackedUser &&
+        braze.logContentCardClick({ ...currentCard, url: currentCard.id } as braze.ClassicCard);
       link && openURL(link);
     }
     if (actionCard) {

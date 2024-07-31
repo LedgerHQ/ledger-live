@@ -23,14 +23,14 @@ for (const [i, currency] of currencies.entries()) {
   test.describe("Add Accounts", () => {
     test.use({
       userdata: "skip-onboarding",
-      testName: `addAccount_${currency.uiName}`,
+      testName: `addAccount_${currency.name}`,
       speculosCurrency: specs[currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
 
     test(
-      `[${currency.uiName}] Add account`,
+      `[${currency.name}] Add account`,
       {
         annotation: {
           type: "TMS",
@@ -42,7 +42,7 @@ for (const [i, currency] of currencies.entries()) {
 
         await app.portfolio.openAddAccountModal();
         await app.addAccount.expectModalVisiblity();
-        await app.addAccount.selectCurrency(currency.uiName);
+        await app.addAccount.selectCurrency(currency.name);
         firstAccountName = await app.addAccount.getFirstAccountName();
 
         await app.addAccount.addAccounts();

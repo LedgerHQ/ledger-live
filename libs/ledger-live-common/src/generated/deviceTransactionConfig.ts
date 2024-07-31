@@ -19,6 +19,7 @@ import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";
 import tron from "@ledgerhq/coin-tron/deviceTransactionConfig";
 import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
+import ton from "@ledgerhq/coin-ton/deviceTransactionConfig";
 
 export default {
   casper,
@@ -42,6 +43,7 @@ export default {
   tron,
   xrp,
   icon,
+  ton,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
