@@ -2,6 +2,11 @@ import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import { JWT } from "./types";
 
+export type StatusAPIResponse = {
+  name: string;
+  version: string;
+};
+
 export type APIJWT = {
   access_token: string;
   permissions: {
@@ -172,6 +177,14 @@ async function deleteTrustchain(jwt: JWT, trustchain_id: string): Promise<void> 
   });
 }
 
+async function fetchStatus(): Promise<StatusAPIResponse> {
+  const { data } = await network<StatusAPIResponse>({
+    url: `${getEnv("TRUSTCHAIN_API")}/_info`,
+    method: "GET",
+  });
+  return data;
+}
+
 export default {
   getAuthenticationChallenge,
   postChallengeResponse,
@@ -182,4 +195,5 @@ export default {
   postSeed,
   putCommands,
   deleteTrustchain,
+  fetchStatus,
 };

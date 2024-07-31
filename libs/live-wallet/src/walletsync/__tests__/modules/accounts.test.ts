@@ -36,6 +36,13 @@ function convertAccountToDescriptor(account: Account): AccountDescriptor {
   };
 }
 
+function unmigrate(account: Account): Account {
+  return {
+    ...account,
+    id: account.id.replace("mock:1", "mock:0"),
+  };
+}
+
 function placeholderAccountFromDescriptor(descriptor: AccountDescriptor): Account {
   // NB: this is the current implementation of the module giving the account state before it has opportunity to update, may change over time
   return accountDataToAccount({ ...descriptor, balance: "0", name: "" })[0];
@@ -46,7 +53,10 @@ const dummyContext: WalletSyncDataManagerResolutionContext = {
     sync: (initial: Account) =>
       initial.id === account4unsupported.id
         ? throwError(() => new Error("simulate sync failure"))
-        : of(acc => acc),
+        : // this mock bridge will migrate 0->1 on versions
+          initial.id.startsWith("mock:0")
+          ? of(acc => ({ ...acc, id: acc.id.replace("mock:0", "mock:1") }))
+          : of(acc => acc),
     receive: () => {
       throw new Error("not implemented");
     },
@@ -305,5 +315,24 @@ describe("accountNames' WalletSyncDataManager", () => {
     };
     const result = manager.applyUpdate(localData, update);
     expect(result).toEqual({ list: [account1], nonImportedAccountInfos: [] });
+  });
+
+  it("dedup account that could be implicitely migrated by coin implementations", async () => {
+    const account2unmigrated = unmigrate(account2);
+    const account3unmigrated = unmigrate(account3);
+    const localData = { list: [account1, account2], nonImportedAccountInfos: [] };
+    const latestState = localData.list.map(convertAccountToDescriptor);
+    const incomingState = [account1, account2unmigrated, account3unmigrated].map(
+      convertAccountToDescriptor,
+    );
+    const diff = await manager.resolveIncrementalUpdate(
+      dummyContext,
+      localData,
+      latestState,
+      incomingState,
+    );
+    if (!diff.hasChanges) throw new Error("unexpected");
+    const result = manager.applyUpdate(localData, diff.update);
+    expect(result.list.map(l => l.id)).toEqual([account1, account2, account3].map(l => l.id));
   });
 });
