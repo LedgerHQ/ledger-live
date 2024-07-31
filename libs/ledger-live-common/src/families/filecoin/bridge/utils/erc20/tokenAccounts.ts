@@ -8,7 +8,7 @@ import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { convertAddressFilToEthAsync } from "../addresses";
+import { convertAddressFilToEth } from "../addresses";
 import { ethers } from "ethers";
 import contractABI from "./ERC20.json";
 import { RecipientRequired } from "@ledgerhq/errors";
@@ -84,8 +84,7 @@ export async function buildTokenAccounts(
   initialAccount?: Account,
 ): Promise<TokenAccount[]> {
   try {
-    const nativeEthAddr = await convertAddressFilToEthAsync(filAddr);
-    const transfers = await fetchERC20Transactions(nativeEthAddr);
+    const transfers = await fetchERC20Transactions(filAddr);
     const transfersUntangled: { [addr: string]: ERC20Transfer[] } = transfers.reduce(
       (prev, curr) => {
         curr.contract_address = curr.contract_address.toLowerCase();
@@ -107,12 +106,12 @@ export async function buildTokenAccounts(
         continue;
       }
 
-      const balance = await fetchERC20TokenBalance(nativeEthAddr, cAddr);
+      const balance = await fetchERC20TokenBalance(filAddr, cAddr);
       const bnBalance = new BigNumber(balance.toString());
       const tokenAccountId = encodeTokenAccountId(parentAccountId, token);
 
       const operations = txns
-        .flatMap(txn => erc20TxnToOperation(txn, nativeEthAddr, tokenAccountId, token.units[0]))
+        .flatMap(txn => erc20TxnToOperation(txn, filAddr, tokenAccountId, token.units[0]))
         .flat();
 
       if (operations.length === 0 && bnBalance.isZero()) {
@@ -174,7 +173,7 @@ export const generateTokenTxnParams = async (recipient: string, amount: BigNumbe
     throw new RecipientRequired();
   }
 
-  recipient = await convertAddressFilToEthAsync(recipient);
+  recipient = convertAddressFilToEth(recipient);
 
   return abiEncodeTransferParams(recipient, amount.toString());
 };

@@ -7,7 +7,6 @@ import {
 } from "iso-filecoin/address";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { fetchEthAddrForF1Fil } from "./api";
 
 export type ValidateAddressResult =
   | {
@@ -76,7 +75,7 @@ export const isRecipientValidForTokenTransfer = (addr: string): boolean => {
   return false;
 };
 
-export const convertAddressFilToEthSync = (addr: string): string => {
+export const convertAddressFilToEth = (addr: string): string => {
   const recipientAddressProtocol = addr.slice(0, 2);
 
   switch (recipientAddressProtocol) {
@@ -88,28 +87,5 @@ export const convertAddressFilToEthSync = (addr: string): string => {
       return addr;
     default:
       throw new Error("supported address protocols are f0, f4");
-  }
-};
-
-export const convertAddressFilToEthAsync = async (addr: string): Promise<string> => {
-  if (addr.length > 0 && addr.slice(0, 2) === "t1") {
-    addr = `f${addr.slice(1)}`;
-  }
-  const recipientAddressProtocol = addr.slice(0, 2);
-
-  switch (recipientAddressProtocol) {
-    case "f1": {
-      const res = await fetchEthAddrForF1Fil(addr);
-      if (!res) {
-        throw new Error("recipient account id not available on the network");
-      }
-      return res;
-    }
-    case "f0":
-    case "f4":
-    case "0x":
-      return convertAddressFilToEthSync(addr);
-    default:
-      throw new Error("supported address protocols are f0, f1, f4, 0x");
   }
 };

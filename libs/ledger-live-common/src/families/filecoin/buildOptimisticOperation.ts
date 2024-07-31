@@ -3,7 +3,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Transaction } from "./types";
 import { toCBORResponse } from "./bridge/utils/serializer";
 import { calculateEstimatedFees } from "./utils";
-import { convertAddressFilToEthAsync } from "./bridge/utils/addresses";
+import { convertAddressFilToEth } from "./bridge/utils/addresses";
 import { getSubAccount } from "./bridge/utils/utils";
 
 export const buildOptimisticOperation = async (
@@ -22,8 +22,8 @@ export const buildOptimisticOperation = async (
 
   let operation: Operation;
   if (subAccount) {
-    const senderEthAddr = await convertAddressFilToEthAsync(parsedSender);
-    const recipientEthAddr = await convertAddressFilToEthAsync(transaction.recipient);
+    const senderEthAddr = convertAddressFilToEth(parsedSender);
+    const recipientEthAddr = convertAddressFilToEth(transaction.recipient);
     operation = {
       id: encodeOperationId(subAccount.id, txHash, "OUT"),
       hash: txHash,

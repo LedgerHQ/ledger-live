@@ -118,11 +118,3 @@ export const fetchERC20Transactions = async (ethAddr: string): Promise<ERC20Tran
   );
   return res.txs.sort((a, b) => b.timestamp - a.timestamp);
 };
-
-export const fetchEthAddrForF1Fil = async (filAddr: string): Promise<string> => {
-  const response = await fetch<ConvertFilToEthResponse>(`/convert/address/${filAddr}/eth`);
-  if (!response) {
-    return "";
-  }
-  return response.address;
-};
