@@ -3,6 +3,7 @@ import {
   SwapSelectorStateType,
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
+import BigNumber from "bignumber.js";
 import React from "react";
 import styled from "styled-components";
 import { track } from "~/renderer/analytics/segment";
@@ -32,6 +33,7 @@ type FormInputsProps = {
   loadingRates: boolean;
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
+  counterValue?: BigNumber;
 };
 
 type SwapButtonProps = {
@@ -84,6 +86,7 @@ export default function FormInputs({
   loadingRates,
   isSendMaxLoading,
   updateSelectedRate,
+  counterValue,
 }: FormInputsProps) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const reverseSwapAndTrack = () => {
@@ -129,6 +132,7 @@ export default function FormInputs({
           toAccount={toAccount}
           loadingRates={loadingRates}
           updateSelectedRate={updateSelectedRate}
+          counterValue={counterValue}
         />
       </Box>
     </Main>

@@ -164,6 +164,7 @@ const SwapWebView = ({
       "custom.setQuote": (quote: {
         params?: {
           amountTo?: number;
+          amountToCounterValue?: { value: number; fiat: string };
           code?: string;
           parameter: { minAmount: string; maxAmount: string };
         };
@@ -175,6 +176,7 @@ const SwapWebView = ({
           setQuoteState({
             amountTo: undefined,
             swapError: undefined,
+            counterValue: undefined,
           });
           return Promise.resolve();
         }
@@ -184,6 +186,7 @@ const SwapWebView = ({
             case "minAmountError":
               setQuoteState({
                 amountTo: undefined,
+                counterValue: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
                   minAmountFromFormatted: formatCurrencyUnit(
                     fromUnit,
@@ -200,6 +203,7 @@ const SwapWebView = ({
             case "maxAmountError":
               setQuoteState({
                 amountTo: undefined,
+                counterValue: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
                   minAmountFromFormatted: formatCurrencyUnit(
                     fromUnit,
@@ -218,7 +222,17 @@ const SwapWebView = ({
 
         if (toUnit && quote?.params?.amountTo) {
           const amountTo = BigNumber(quote?.params?.amountTo).times(10 ** toUnit.magnitude);
-          setQuoteState({ amountTo, swapError: undefined });
+          const counterValue = quote?.params?.amountToCounterValue?.value
+            ? BigNumber(quote.params.amountToCounterValue.value).times(
+                10 ** fiatCurrency.units[0].magnitude,
+              )
+            : undefined;
+
+          setQuoteState({
+            amountTo,
+            counterValue: counterValue,
+            swapError: undefined,
+          });
         }
 
         return Promise.resolve();
@@ -447,6 +461,7 @@ const SwapWebView = ({
     // Determine the new quote state based on network status
     setQuoteState({
       amountTo: undefined,
+      counterValue: undefined,
       ...{
         swapError: isOffline ? new NetworkDown() : undefined,
       },
