@@ -4,22 +4,18 @@ import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError, Subscription } from "rxjs";
 import { App, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
-import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "../types";
-import hwListApps from "../../hw/listApps";
-import customLockScreenFetchSize from "../../hw/customLockScreenFetchSize";
-import {
-  listCryptoCurrencies,
-  currenciesByMarketcap,
-  findCryptoCurrencyById,
-} from "../../currencies";
-import ManagerAPI from "../../manager/api";
+import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "./types";
+import hwListApps from "../hw/listApps";
+import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
+import { listCryptoCurrencies, currenciesByMarketcap, findCryptoCurrencyById } from "../currencies";
+import ManagerAPI from "../manager/api";
 
-import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
-import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
-import { getProviderIdUseCase } from "../../device/use-cases/getProviderIdUseCase";
-import { mapApplicationV2ToApp } from "../polyfill";
-import { ManagerApiRepository } from "../../device/factories/HttpManagerApiRepositoryFactory";
-import { isCustomLockScreenSupported } from "../../device/use-cases/isCustomLockScreenSupported";
+import { getDeviceName } from "../device/use-cases/getDeviceNameUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getProviderIdUseCase } from "../device/use-cases/getProviderIdUseCase";
+import { calculateDependencies, mapApplicationV2ToApp } from "./polyfill";
+import { ManagerApiRepository } from "../device/factories/HttpManagerApiRepositoryFactory";
+import { isCustomLockScreenSupported } from "../device/use-cases/isCustomLockScreenSupported";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.
@@ -191,6 +187,7 @@ export const listApps = ({
           sortedCryptoCurrenciesPromise,
           languagePackForDevicePromise,
         ]);
+      calculateDependencies();
 
       /**
        * Associate a market cap sorting index to each app of the catalog of

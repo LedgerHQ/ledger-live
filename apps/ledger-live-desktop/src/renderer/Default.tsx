@@ -40,7 +40,6 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
-import { enableListAppsV2 } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
@@ -199,7 +198,6 @@ export default function Default() {
   useRecoverRestoreOnboarding();
   useAutoDismissPostOnboardingEntryPoint();
 
-  const listAppsV2 = useFeature("listAppsV2minor1");
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const isLocked = useSelector(isLockedSelector);
@@ -217,11 +215,6 @@ export default function Default() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLocked]);
-
-  useEffect(() => {
-    if (!listAppsV2) return;
-    enableListAppsV2(listAppsV2.enabled);
-  }, [listAppsV2]);
 
   useEffect(() => {
     const userIsOnboardingOrSettingUp =
