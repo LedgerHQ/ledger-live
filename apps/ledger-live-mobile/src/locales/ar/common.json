@@ -919,6 +919,9 @@
     "InvalidMemoICP" : {
       "title" : "الملاحظة يجب أن تكون رقماً"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "المستلم لتحويل رمز التوكن غير صالح، أنواع الحساب المدعومة لتحويل رموز التوكن: [f0, f4, 0x]"
+    },
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
@@ -929,6 +932,11 @@
     },
     "TezosUnrevealedAccount" : {
       "title" : "المبادلة غير متوفرة: الإرسال/التفويض الأولي مطلوب مع حساب Tezos أو زوج الاستبدال."
+    },
+    "CustomError" : {
+      "title" : "عذراً، حاول مرة أخرى.",
+      "description" : "لم يتمكن الخادم من معالجة طلبك. يرجى إعادة المحاولة مرة أخرى لاحقاً أو التواصل مع دعم Ledger.",
+      "errorCode" : "الكود: {{errorCode}}"
     }
   },
   "crash" : {
@@ -6685,12 +6693,56 @@
     }
   },
   "walletSync" : {
+    "title" : "مزامنة Ledger",
     "activation" : {
       "screen" : {
         "title" : "قم بمزامنة حساباتك عبر جميع المنصات",
         "description" : "جهازك Ledger سيقوم بإنشاء مفتاح تشفير، مما يضمن أن بياناتك تظل خاصةً وقابلة للاستعادة بواسطتك أنت وحدك.",
         "mainCta" : "مزامنة حساباتك",
         "secondCta" : "أنشأت مفتاحاً بالفعل؟"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "اختر جهاز Ledger الذي ستستخدمه في تأمين نسخك الاحتياطي",
+      "description" : "يمكنك استرداد نسخك الاحتياطي ببساطة بتوصيل جهازك Ledger بتطبيقات Ledger Live للجوّال وسطح المكتب."
+    },
+    "deviceAction" : {
+      "title" : "تابع على جهازك Ledger {{wording}}",
+      "description" : "اتبع التعليمات التي تظهر على الشاشة الموثوقة (Trusted Display) لجهازك Ledger."
+    },
+    "success" : {
+      "sync" : "تمت المزامنة بنجاح!",
+      "syncDesc" : "التغييرات في حساباتك ستظهر الآن تلقائياً عبر كل التطبيقات والمنصات.",
+      "activation" : "تم بنجاح!",
+      "activationDesc" : "لقد مكّنت مزامنة Ledger بنجاح.",
+      "syncAnother" : "المزامنة مع تطبيق Ledger Live آخر",
+      "close" : "إغلاق"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "مزامنة",
+        "description" : "قم بمزامنة بيانات التطبيق لديك مع تطبيق Ledger Live آخر من أجل تجربة سلسة. "
+      },
+      "manageKey" : {
+        "title" : "إدارة المفتاح",
+        "description" : "قم بتأمين أو حذف مفتاح التشفير الخاص بك عبر جهاز Ledger آخر. "
+      },
+      "synchronizedInstances" : {
+        "cta" : "قم بالإدارة الآن",
+        "title" : "{{count}} حالة تمت مزامنتها",
+        "title_plural" : "{{count}} حالة تمت مزامنتها"
+      }
+    }
+  },
+  "web3hub" : {
+    "manifestsList" : {
+      "title" : "استكشف",
+      "description" : "اكتشف أفضل ما في ويب 3.0 مُنسّقاً بواسطة Ledger"
+    },
+    "main" : {
+      "header" : {
+        "title" : "استكشف ويب 3.0",
+        "placeholder" : "ابحث أو اكتب عنوان URL"
       }
     }
   }
