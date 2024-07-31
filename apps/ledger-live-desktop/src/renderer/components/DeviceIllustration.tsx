@@ -1,49 +1,38 @@
 import React from "react";
-import styled, { DefaultTheme, StyledComponent, ThemeProps } from "styled-components";
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import stax from "~/renderer/images/stax.svg";
-import staxDark from "~/renderer/images/staxDark.svg";
 import europa from "~/renderer/images/europa.svg";
-import europaDark from "~/renderer/images/europaDark.svg";
-import nanoX from "~/renderer/images/nanoX.v3.svg";
-import nanoS from "~/renderer/images/nanoS.v3.svg";
-import nanoS2 from "~/renderer/images/nanoS2.v3.svg";
-import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
-import nanoSDark from "~/renderer/images/nanoSDark.v3.svg";
-import nanoS2Dark from "~/renderer/images/nanoS2Dark.v3.svg";
+import nanoX from "~/renderer/images/nanoX.svg";
+import nanoS from "~/renderer/images/nanoS.svg";
+import nanoSP from "~/renderer/images/nanoSP.svg";
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { DeviceModelId } from "@ledgerhq/devices";
 
-registerAssets([nanoX, nanoS, nanoS2, nanoXDark, nanoSDark, nanoS2Dark, stax, staxDark]);
-
-const makeAssetSelector =
-  (lightAsset: string, darkAsset: string) => (p: ThemeProps<DefaultTheme>) =>
-    p.theme.colors.palette.type === "light" ? lightAsset : darkAsset;
+registerAssets([nanoX, nanoS, nanoSP, stax, europa]);
 
 const NanoS = styled.div`
-  // TODO: rendering issue in the SVG in the "hole"
   // prettier-ignore
-  background: url('${p => makeAssetSelector(nanoS, nanoSDark)(p)}') no-repeat center;
+  background: url('${nanoS}') no-repeat center;
 `;
 
 const NanoSP = styled.div`
-  // TODO: rendering issue in the SVG in the "hole"
   // prettier-ignore
-  background: url('${p => makeAssetSelector(nanoS2, nanoS2Dark)(p)}') no-repeat center;
+  background: url('${nanoSP}') no-repeat center;
 `;
 
 const NanoX = styled.div`
   // prettier-ignore
-  background: url('${p => makeAssetSelector(nanoX, nanoXDark)(p)}') no-repeat center;
+  background: url('${nanoX}') no-repeat center;
 `;
 
 const Stax = styled.div`
   // prettier-ignore
-  background: url('${p => makeAssetSelector(stax, staxDark)(p)}') no-repeat center;
+  background: url('${stax}') no-repeat center;
 `;
 
 const Europa = styled.div`
   // prettier-ignore
-  background: url('${p => makeAssetSelector(europa, europaDark)(p)}') no-repeat center;
+  background: url('${europa}') no-repeat center;
 `;
 
 type Illustration = {
@@ -55,33 +44,33 @@ type Illustration = {
 const illustrations: { [key in DeviceModelId]: Illustration } = {
   nanoS: {
     Illustration: NanoS,
-    width: 49.2,
-    height: 250.1,
+    width: 200,
+    height: 200,
   },
   nanoSP: {
     Illustration: NanoSP,
-    width: 49.93,
-    height: 250.33,
+    width: 200,
+    height: 200,
   },
   nanoX: {
     Illustration: NanoX,
-    width: 53.83,
-    height: 250.87,
+    width: 200,
+    height: 200,
   },
   stax: {
     Illustration: Stax,
-    width: 240,
-    height: 240,
+    width: 200,
+    height: 200,
   },
   europa: {
     Illustration: Europa,
-    width: 240,
-    height: 240,
+    width: 200,
+    height: 200,
   },
   blue: {
     Illustration: NanoS,
-    width: 49.2,
-    height: 250.1,
+    width: 200,
+    height: 200,
   },
 };
 

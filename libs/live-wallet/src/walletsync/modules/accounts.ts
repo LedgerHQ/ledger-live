@@ -18,28 +18,37 @@ type AccountDescriptor = z.infer<typeof accountDescriptorSchema>;
 
 const schema = z.array(accountDescriptorSchema);
 
+export type NonImportedAccountInfo = {
+  id: string;
+  attempts: number;
+  attemptsLastTimestamp: number;
+  error?: {
+    name: string;
+    message: string;
+  };
+};
+
 const manager: WalletSyncDataManager<
   {
     list: Account[];
-    // TODO there remain a case to solve: when an account failed to be resolved in the past, we would need to eventually retry it. we could do this basically by adding in the resolved the failed
-    // wsStateNonImportedAccountIds: string[]; // TODO
+    nonImportedAccountInfos: NonImportedAccountInfo[];
   },
   {
     removed: string[];
     added: Account[];
-    // wsStateNonImportedAccountIds // TODO
+    nonImportedAccountInfos: NonImportedAccountInfo[];
   },
   typeof schema
 > = {
   schema,
 
-  diffLocalToDistant(localAccounts, latestState) {
+  diffLocalToDistant(localData, latestState) {
     let hasChanges = false;
 
     // let's figure out the new local accounts
     const added: AccountDescriptor[] = [];
     const distantServerAccountIds = new Set<string>(latestState?.map(a => a.id) || []);
-    for (const account of localAccounts.list) {
+    for (const account of localData.list) {
       const id = account.id;
       if (!distantServerAccountIds.has(id)) {
         added.push({
@@ -56,9 +65,10 @@ const manager: WalletSyncDataManager<
 
     // let's figure out the locally deleted accounts that we will need to take into account
     const removed = new Set();
-    const localAccountIds = new Set(localAccounts.list.map(a => a.id));
+    const localAccountIds = new Set(localData.list.map(a => a.id));
+    const nonImportedAccountInfos = new Set(localData.nonImportedAccountInfos.map(a => a.id));
     for (const id of distantServerAccountIds) {
-      if (!localAccountIds.has(id)) {
+      if (!localAccountIds.has(id) && !nonImportedAccountInfos.has(id)) {
         removed.add(id);
         hasChanges = true;
       }
@@ -86,32 +96,74 @@ const manager: WalletSyncDataManager<
     };
   },
 
-  async resolveIncomingDistantState(ctx, localData, latestState, incomingState) {
+  async resolveIncrementalUpdate(ctx, localData, latestState, incomingState) {
     if (!incomingState) {
       return { hasChanges: false }; // nothing to do, the data is no longer available
     }
-    // TODO there remain a case to solve: when an account failed to be resolved in the past, we would need to eventually retry it. we could do this basically by adding in the resolved the failed
 
     const diff = diffWalletSyncState(latestState, incomingState);
 
-    // filter out accounts we may already have
     const existingIds = new Set(localData.list.map(a => a.id));
+
+    let hasChanges = false;
+
+    // non imported accounts are considered as "added" so we have opportunity to recheck them
+    const nonImportedById = new Map<string, NonImportedAccountInfo>();
+    const nextNonImportedById = new Map<string, NonImportedAccountInfo>();
+    for (const nonImported of localData.nonImportedAccountInfos) {
+      nonImportedById.set(nonImported.id, nonImported);
+      const { id, attempts, attemptsLastTimestamp } = nonImported;
+      if (existingIds.has(id)) {
+        hasChanges = true; // at least we need to save the deletion
+        continue; // we actually have the account. ignore.
+      }
+      const accountDescriptor = incomingState.find(a => a.id === id);
+      if (!accountDescriptor) {
+        hasChanges = true; // at least we need to save the deletion
+        // we don't have the account anymore in the distant state. ignore.
+        continue;
+      }
+      const now = Date.now();
+      const shouldRetry = shouldRetryImportAccount(now - attemptsLastTimestamp, attempts);
+      if (shouldRetry) {
+        diff.added.push(accountDescriptor);
+      } else {
+        // we don't retry so we preserve the non imported account for the future
+        nextNonImportedById.set(id, nonImported);
+      }
+    }
+
+    // filter out accounts we may already have
     diff.added = diff.added.filter(a => !existingIds.has(a.id));
 
-    const resolved = await resolveWalletSyncDiffIntoSyncUpdate(diff, ctx);
+    const resolved = await resolveWalletSyncDiffIntoSyncUpdate(existingIds, diff, ctx);
 
-    if (
-      resolved.added.length === 0 &&
-      resolved.removed.length === 0
-      // NB at the moment we don't care about failures, when we preserve it, this needs to be a change
-      /*&&
-      Object.keys(resolved.failures).length === 0
-      */
-    ) {
+    for (const failedId in resolved.failures) {
+      const nonImported = nonImportedById.get(failedId);
+      const { error } = resolved.failures[failedId];
+      hasChanges = true;
+      nextNonImportedById.set(failedId, {
+        id: failedId,
+        attempts: (nonImported?.attempts || 0) + 1,
+        attemptsLastTimestamp: Date.now(),
+        error: {
+          name: error.name,
+          message: error.message,
+        },
+      });
+    }
+
+    if (!hasChanges) {
+      if (resolved.added.length > 0) {
+        hasChanges = true;
+      } else if (resolved.removed.length > 0) {
+        hasChanges = true;
+      }
+    }
+
+    if (!hasChanges) {
       // nothing to do
-      return {
-        hasChanges: false,
-      };
+      return { hasChanges };
     }
 
     return {
@@ -119,6 +171,7 @@ const manager: WalletSyncDataManager<
       update: {
         removed: resolved.removed,
         added: resolved.added,
+        nonImportedAccountInfos: Array.from(nextNonImportedById.values()),
       },
     };
   },
@@ -131,8 +184,8 @@ const manager: WalletSyncDataManager<
       // filter out data we already have typically if they were added at same time
       ...update.added.filter(a => !existingIds.has(a.id)),
     ];
-    // const wsStateNonImportedAccountIds = [];
-    return { list }; // , wsStateNonImportedAccountIds };
+    const nonImportedAccountInfos = update.nonImportedAccountInfos;
+    return { list, nonImportedAccountInfos };
   },
 };
 
@@ -220,12 +273,13 @@ export type WalletSyncAccountsUpdate = {
  * logic related to {wallet sync data update -> local state} management
  */
 export async function resolveWalletSyncDiffIntoSyncUpdate(
+  existingIds: Set<string>,
   diff: WalletSyncDiff,
   { getAccountBridge, bridgeCache, blacklistedTokenIds }: WalletSyncDataManagerResolutionContext,
 ): Promise<WalletSyncAccountsUpdate> {
   const failures: WalletSyncAccountsUpdate["failures"] = {};
 
-  const added = (
+  let added = (
     await promiseAllBatched(3, diff.added, async descriptor => {
       try {
         const account = await integrateNewAccountDescriptor(
@@ -244,11 +298,27 @@ export async function resolveWalletSyncDiffIntoSyncUpdate(
     })
   ).filter(Boolean) as Account[];
 
-  return {
-    removed: diff.removed,
-    added,
-    failures,
-  };
+  const addedIds = new Set(added.map(a => a.id));
+
+  // if some of the account ends up resolving one of the removed, we need to clean it up, this is the case if there were an implicit migration of account ids
+  const removed = diff.removed.filter(id => !addedIds.has(id));
+
+  // if some of the resolved are converging to the same account.id, we also remove them out
+  added = added.filter(a => !existingIds.has(a.id));
+
+  return { removed, added, failures };
+}
+
+const MINUTE = 60 * 1000;
+const backoffFactor = 1.3;
+const baseWaitTime = 0.5 * MINUTE; // Base wait time in milliseconds
+const maxWaitTime = 120 * MINUTE; // Maximum wait time in milliseconds
+export function shouldRetryImportAccount(elapsedMs: number, attempts: number) {
+  // Calculate the wait time using exponential backoff
+  let waitTime = baseWaitTime * Math.pow(backoffFactor, attempts - 1);
+  // Clamp the wait time to the maximum value
+  waitTime = Math.min(waitTime, maxWaitTime);
+  return elapsedMs > waitTime;
 }
 
 export default manager;

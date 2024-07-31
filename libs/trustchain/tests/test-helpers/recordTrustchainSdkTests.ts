@@ -24,6 +24,7 @@ export async function recordTestTrustchainSdk(
   const approveOnceOnText = config.approveOnceOnText || [];
   const approveOnText = config.approveOnText || recorderConfigDefaults.approveOnText;
 
+  const buttonClicksPromises: Array<Promise<void>> = [];
   const recordStore = new RecordStore();
 
   const createDeviceWithSeed = async (seed: string) => {
@@ -38,15 +39,15 @@ export async function recordTestTrustchainSdk(
     });
 
     // passthrough all success cases for the Ledger Sync coin app to accept all.
-    device.transport.automationEvents.subscribe(event => {
+    const sub = device.transport.automationEvents.subscribe(event => {
       const approveOnceIndex = approveOnceOnText.findIndex(t => event.text.includes(t));
       if (approveOnceIndex > -1) {
         approveOnceOnText.splice(approveOnceIndex, 1);
-        device.transport.button("both");
+        buttonClicksPromises.push(device.transport.button("both"));
       } else if (goNextOnText.some(t => event.text.includes(t))) {
-        device.transport.button("right");
+        buttonClicksPromises.push(device.transport.button("right"));
       } else if (approveOnText.some(t => event.text.includes(t))) {
-        device.transport.button("both");
+        buttonClicksPromises.push(device.transport.button("both"));
       }
     });
 
@@ -59,7 +60,7 @@ export async function recordTestTrustchainSdk(
       return out;
     };
 
-    return device;
+    return { device, sub };
   };
 
   // listen to network with msw to be able to replay in our future tests
@@ -109,7 +110,7 @@ export async function recordTestTrustchainSdk(
     return keypair;
   };
 
-  let device = await createDeviceWithSeed(seed);
+  let { device, sub } = await createDeviceWithSeed(seed);
   const options: ScenarioOptions = {
     sdkForName: name => getSdk(!!getEnv("MOCK"), { applicationId: 16, name }),
     pauseRecorder: async (milliseconds: number) => {
@@ -118,7 +119,9 @@ export async function recordTestTrustchainSdk(
     switchDeviceSeed: async (newSeed?: string) => {
       // release and replace previous device
       await releaseSpeculosDevice(device.id);
-      device = await createDeviceWithSeed(newSeed || genSeed());
+      const res = await createDeviceWithSeed(newSeed || genSeed());
+      device = res.device;
+      sub = res.sub;
       return device.transport;
     },
   };
@@ -128,6 +131,8 @@ export async function recordTestTrustchainSdk(
   try {
     await scenario(device.transport, options);
   } finally {
+    sub.unsubscribe();
+    await Promise.all(buttonClicksPromises);
     await releaseSpeculosDevice(device.id);
   }
   server.close();

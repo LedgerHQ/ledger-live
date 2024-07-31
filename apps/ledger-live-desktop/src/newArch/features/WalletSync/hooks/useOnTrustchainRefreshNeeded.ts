@@ -16,7 +16,7 @@ export function useOnTrustchainRefreshNeeded(
         if (!memberCredentials) return;
         log("walletsync", "onTrustchainRefreshNeeded " + trustchain.rootId);
         const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
-        setTrustchain(newTrustchain);
+        dispatch(setTrustchain(newTrustchain));
       } catch (e) {
         if (e instanceof TrustchainEjected) {
           dispatch(resetTrustchainStore());

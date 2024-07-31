@@ -127,6 +127,9 @@
       "title" : "抱歉，蓝牙已禁用",
       "description" : "请在您的手机设置中启用蓝牙。({{state}} 状态)"
     },
+    "BitcoinInfrastructureError" : {
+      "title" : "我们的比特币基础设施遇到了问题。请稍后重试。"
+    },
     "CantOpenDevice" : {
       "title" : "抱歉，连接失败",
       "description" : "您的 Ledger 设备必须解锁并在范围内才能使用蓝牙。"
@@ -369,6 +372,9 @@
     "InvalidRecipient" : {
       "title" : "无效的接收方"
     },
+    "InvalidExplorerResponse" : {
+      "title" : "{{currencyName}} 浏览器的响应无效"
+    },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "语言安装被设备端拒绝",
       "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
@@ -485,6 +491,10 @@
       "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
     },
     "NotEnoughBalance" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额。",
       "description" : "请确保该账户资金充足。"
     },
@@ -1335,7 +1345,8 @@
       "title" : "欢迎回来",
       "subtitle" : "选择您想要访问钱包的方式：",
       "connect" : "连接 Ledger 设备",
-      "sync" : "与 Ledger Live 桌面版同步"
+      "sync" : "与 Ledger Live 桌面版同步",
+      "walletSync" : "与另一个 Ledger Live 应用程序同步"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "不使用设备探索",
@@ -2287,6 +2298,22 @@
     "import" : {
       "title" : "从桌面程序导入",
       "description" : "从 Ledger Live 桌面版导入资产"
+    },
+    "drawer" : {
+      "drawerTitleHasAccount" : "添加另一个账户",
+      "drawerSubTitle" : "使用 Ledger 设备添加您的资产，或直接从 Ledger Live™ 桌面版应用程序导入资产。",
+      "import" : {
+        "title" : "从桌面程序导入",
+        "description" : "从 Ledger Live 桌面版导入资产"
+      },
+      "add" : {
+        "title" : "使用 Ledger 设备添加",
+        "description" : "使用 Ledger 设备创建或导入您的资产"
+      },
+      "walletSync" : {
+        "title" : "通过另一个 Ledger Live™ 应用程序导入",
+        "description" : "激活 Ledger Sync"
+      }
     }
   },
   "byteSize" : {
@@ -2404,6 +2431,7 @@
       "delegated" : "已委托 ({{amount}})",
       "delegatedTo" : "已委托给",
       "delegatedAmount" : "已委托数额",
+      "deposit" : "存款",
       "redelegated" : "已重新委托 ({{amount}})",
       "redelegatedFrom" : "已重新委托自",
       "redelegatedTo" : "已重新委托至",
@@ -2723,8 +2751,8 @@
       "languageDesc" : "设置 Ledger Live 显示的语言。",
       "dateFormat" : "日期格式",
       "dateFormatDesc" : "设置 Ledger Live 的日期格式",
-      "walletSync" : "Ledger  Sync",
-      "walletSyncDesc" : "备份您的应用程序数据并顺畅同步多个 Ledger Live 实例",
+      "walletSync" : "Ledger Sync",
+      "walletSyncDesc" : "轻松安全保管您的应用程序数据并同步多个 Ledger Live™ 实例。",
       "region" : "地区",
       "regionDesc" : "选择您所在的地区来更新日期、时间和货币的格式。",
       "password" : "应用程序锁",
@@ -2749,9 +2777,9 @@
       "developerMode" : "开发者模式",
       "developerModeDesc" : "在“我的 Ledger”中显示开发者应用程序并启用测试网应用程序。",
       "analytics" : "数据分析",
-      "analyticsDesc" : "允许数据分析以帮助 Ledger 改善用户体验。",
+      "analyticsDesc" : "允许 Ledger 跟踪应用程序使用数据，以便我们衡量 Ledger Live 的性能，优化应用程序并提升您的体验。",
       "personalizedRecommendations" : "个性化体验",
-      "personalizedRecommendationsDesc" : "接收符合您偏好的个性化推荐。",
+      "personalizedRecommendationsDesc" : "允许 Ledger 跟踪应用程序使用数据，以便我们提供符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果。",
       "analyticsModal" : {
         "title" : "分享数据分析",
         "desc" : "允许数据分析以帮助 Ledger 改善用户体验",
@@ -3058,7 +3086,8 @@
       "addAccount" : {
         "title" : "正在检查账户……",
         "subtitle" : "检查您在区块链上是否已经有 {{currencyName}} 账户。",
-        "foundAccounts" : "已找到 {{count}} 个账户",
+        "foundAccount" : "已找到 {{count}} 个账户",
+        "foundAccount_plural" : "已找到 {{count}} 个账户",
         "stopSynchronization" : "停止同步",
         "addingAccount" : "未找到账户。正在创建新的 {{currencyName}} 账户……"
       },
@@ -3128,7 +3157,7 @@
     },
     "stake" : {
       "title" : "权益质押",
-      "description" : "增长您的加密资产持有量。"
+      "description" : "权益质押您持有的加密货币。"
     },
     "swap" : {
       "title" : "互换",
@@ -6573,18 +6602,18 @@
     "variantA" : {
       "main" : {
         "title" : "请帮助我们改进并提供个性化体验",
-        "subtitle" : "分享您的 Ledger Live 数据有助于我们了解您的偏好，为您展示更相关的内容，以及解决技术问题。",
+        "subtitle" : "分享您的 Ledger Live 数据有助于我们了解您的偏好，为您展示更相关的内容。",
         "content" : {
           "able" : {
-            "title" : "获得您的同意后，Ledger 将能够跟踪：",
-            "diagAndUsage" : "分析数据，包括页面访问量、点击量。",
-            "personnalizationData" : "个性化数据，包括点击量、页面访问量、转化数据。"
+            "title" : "获得您的同意后，Ledger 将会跟踪有关您如何使用 Ledger Live 的数据（包括页面访问量和点击量）：",
+            "diagAndUsage" : "衡量 Ledger Live 的性能，优化应用程序并提升您的体验（数据分析）。",
+            "personnalizationData" : "为您提供根据您的偏好定制的个性化推荐及内容，帮助我们衡量营销活动的效果（个性化）。"
           },
           "unable" : {
-            "title" : "Ledger 绝不会跟踪以下相关信息：",
+            "title" : "Ledger Live 绝不会跟踪以下相关信息：",
             "adresses" : "您的资产。",
             "balance" : "您的资产组合。",
-            "personnalInfos" : "您的个人身份信息。"
+            "personnalInfos" : "您的个人身份信息（例如您的姓名或电子邮件地址）。"
           },
           "moreOptions" : "管理您的偏好",
           "ctas" : {
@@ -6600,12 +6629,12 @@
       "details" : {
         "title" : "管理您的偏好",
         "analytics" : {
-          "title" : "分析数据",
-          "description" : "分享应用程序的分析数据，包括页面访问量、点击量，帮助改进 Ledger Live。"
+          "title" : "数据分析",
+          "description" : "为了衡量 Ledger Live 的性能，优化应用程序并提升您的体验，我们会分享使用数据，包括页面访问量和点击量。"
         },
         "personalizedExp" : {
-          "title" : "个性化数据",
-          "description" : "分享应用程序的个性化数据，包括转化数据、点击量、页面访问量，获得个性化推荐。"
+          "title" : "个性化",
+          "description" : "为了接收符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果，我们会分享应用程序使用数据，包括点击量、页面访问量和转化数据。"
         },
         "ctas" : {
           "notNow" : "以后再说",
@@ -6652,6 +6681,16 @@
           "info" : "您可以随时在应用程序设置中撤回您的同意。",
           "link" : "详细了解我们的《跟踪政策》"
         }
+      }
+    }
+  },
+  "walletSync" : {
+    "activation" : {
+      "screen" : {
+        "title" : "在所有平台上同步您的账户",
+        "description" : "Ledger 设备将生成一个加密密钥，确保您的数据私密性且只有您可以找回。",
+        "mainCta" : "同步您的账户",
+        "secondCta" : "已创建了密钥？"
       }
     }
   }

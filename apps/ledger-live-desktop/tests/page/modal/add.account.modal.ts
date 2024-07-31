@@ -25,10 +25,28 @@ export class AddAccountModal extends Modal {
   async selectToken(token: Token) {
     await this.selectAccount.click();
     await this.selectAccountInput.fill(token.tokenName);
-    await this.selectTokenNetwork(token).click();
+    if (await this.selectTokenNetwork(token).isVisible()) {
+      await this.selectTokenNetwork(token).click();
+    } else {
+      await this.selectAccountByScrolling(token);
+      await this.dropdownOptions
+        .locator(
+          this.optionWithTextAndFollowingText(token.tokenTicker.toUpperCase(), token.tokenNetwork),
+        )
+        .click();
+    }
     await expect(this.closeButton).toBeVisible();
     await expect(this.infoBox).toBeVisible();
     await this.continueButton.click();
+  }
+
+  @step("Select account by scrolling: {0}")
+  async selectAccountByScrolling(token: Token) {
+    await this.scrollUntilOptionIsDisplayed(
+      this.dropdownOptionsList,
+      this.selectTokenNetwork(token),
+    );
+    await this.selectTokenNetwork(token).isVisible();
   }
 
   @step("Select currency $0")

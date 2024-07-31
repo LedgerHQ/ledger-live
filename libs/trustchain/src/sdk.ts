@@ -34,7 +34,7 @@ import {
   TransportStatusError,
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
-import { TrustchainEjected, TrustchainNotAllowed } from "./errors";
+import { TrustchainEjected, TrustchainNotAllowed, TrustchainOutdated } from "./errors";
 
 export class SDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
@@ -52,6 +52,7 @@ export class SDK implements TrustchainSDK {
     memberCredentials: MemberCredentials,
     job: (jwt: JWT) => Promise<T>,
     policy?: AuthCachePolicy,
+    ignorePermissionsChecks?: boolean,
   ): Promise<T> {
     const hash = trustchain.rootId + " " + memberCredentials.pubkey;
     if (this.jwtHash !== hash) {
@@ -61,6 +62,18 @@ export class SDK implements TrustchainSDK {
     return genericWithJWT(
       jwt => {
         this.jwt = jwt;
+        if (!ignorePermissionsChecks) {
+          const permissions = jwt.permissions[trustchain.rootId];
+          if (!permissions) {
+            throw new TrustchainNotAllowed("permissions not available for current trustchain");
+          }
+          // check if the application path is allowed
+          if (!permissions[trustchain.applicationPath]) {
+            throw new TrustchainOutdated(
+              `expected ${trustchain.applicationPath}, got: ${Object.keys(permissions)[0]}`,
+            );
+          }
+        }
         return job(jwt);
       },
       this.jwt,
@@ -134,13 +147,14 @@ export class SDK implements TrustchainSDK {
 
     // make a stream tree from all the trustchains associated to this root id
     let { streamTree } = await withJwt(jwt => fetchTrustchain(jwt, trustchainRootId));
-
     const path = streamTree.getApplicationRootPath(this.context.applicationId);
     const child = streamTree.getChild(path);
     let shouldShare = true;
+
     if (child) {
       const resolved = await child.resolve();
       const members = resolved.getMembers();
+
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
     if (shouldShare) {
@@ -175,6 +189,7 @@ export class SDK implements TrustchainSDK {
       memberCredentials,
       jwt => fetchTrustchainAndResolve(jwt, trustchain.rootId, this.context.applicationId),
       "refresh",
+      true,
     );
     const walletSyncEncryptionKey = await extractEncryptionKey(
       streamTree,
@@ -275,6 +290,14 @@ export class SDK implements TrustchainSDK {
 
     if (afterRotation) await afterRotation(newTrustchain);
 
+    // refresh the jwt with the new trustchain
+    this.jwt = await this.withAuth(
+      newTrustchain,
+      memberCredentials,
+      jwt => Promise.resolve(jwt),
+      "refresh",
+    );
+
     return newTrustchain;
   }
 
@@ -328,12 +351,14 @@ type JwtExpirationCheck = {
   hasExpired: boolean;
   canBeRefreshed: boolean;
   isNotPermitted: boolean;
+  isTrustchainOutdated: boolean;
 };
 
 function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
   let hasExpired = false;
   let canBeRefreshed = false;
   let isNotPermitted = false;
+  let isTrustchainOutdated = false;
   // this assume live-network is used and we adapt to its error's format
   if (error instanceof LedgerAPI4xx) {
     if (error.message.includes("JWT is expired")) {
@@ -341,9 +366,11 @@ function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
       canBeRefreshed = error.message.includes("/refresh");
     } else if (error.message.includes("JWT contains no permission")) {
       isNotPermitted = true;
+    } else if (error.message.includes("path does not match")) {
+      isTrustchainOutdated = true;
     }
   }
-  return { hasExpired, canBeRefreshed, isNotPermitted };
+  return { hasExpired, canBeRefreshed, isNotPermitted, isTrustchainOutdated };
 }
 
 async function genericWithJWT<T>(
@@ -355,9 +382,12 @@ async function genericWithJWT<T>(
   function refresh(jwt: JWT) {
     return api.refreshAuth(jwt).catch(e => {
       log("trustchain", "JWT refresh failed, reauthenticating", e);
-      const { hasExpired, isNotPermitted } = networkCheckJwtExpiration(e);
+      const { hasExpired, isNotPermitted, isTrustchainOutdated } = networkCheckJwtExpiration(e);
       if (isNotPermitted) {
         throw new TrustchainNotAllowed();
+      }
+      if (isTrustchainOutdated) {
+        throw new TrustchainOutdated();
       }
       if (hasExpired) {
         return auth();
@@ -376,9 +406,13 @@ async function genericWithJWT<T>(
 
   return job(jwt).catch(async e => {
     // JWT expiration handling: if the function fails, we will recover a valid jwt accordingly to spec. https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/4207083687/TCH+Usage+documentation#JWT-expiration-handling
-    const { hasExpired, canBeRefreshed, isNotPermitted } = networkCheckJwtExpiration(e);
+    const { hasExpired, canBeRefreshed, isNotPermitted, isTrustchainOutdated } =
+      networkCheckJwtExpiration(e);
     if (isNotPermitted) {
       throw new TrustchainNotAllowed();
+    }
+    if (isTrustchainOutdated) {
+      throw new TrustchainOutdated();
     }
     if (hasExpired) {
       log("trustchain", "JWT expired -> " + (canBeRefreshed ? "refreshing" : "reauthenticating"));
@@ -396,6 +430,7 @@ async function authWithDevice(
   const hw = device.apdu(transport);
   const challenge = await api.getAuthenticationChallenge();
   const data = crypto.from_hex(challenge.tlv);
+
   const seedId = await remapUserInteractions(hw.getSeedId(data), callbacks);
   const signature = crypto.to_hex(seedId.signature);
   const response = await api.postChallengeResponse({

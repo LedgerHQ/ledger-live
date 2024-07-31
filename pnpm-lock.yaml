@@ -27,12 +27,18 @@ patchedDependencies:
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
+  buffer@6.0.3:
+    hash: 2xnca52oxhztvr7iaoovwclcze
+    path: patches/buffer@6.0.3.patch
   detox@20.23.0:
     hash: yanhspfjw3apvvf4gev5ovygia
     path: patches/detox@20.23.0.patch
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
+  react-native-fast-pbkdf2@0.3.1:
+    hash: ykj6nejfmobcfk2ww7pwsfjwje
+    path: patches/react-native-fast-pbkdf2@0.3.1.patch
   react-native-image-crop-tools@1.6.4:
     hash: p6wzwon3gzjcspjalwhmuroog4
     path: patches/react-native-image-crop-tools@1.6.4.patch
@@ -853,6 +859,9 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
+      '@ledgerhq/trustchain':
+        specifier: workspace:^
+        version: link:../../libs/trustchain
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
@@ -948,7 +957,7 @@ importers:
         version: 9.1.2
       buffer:
         specifier: 6.0.3
-        version: 6.0.3
+        version: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       color:
         specifier: ^4.0.0
         version: 4.2.3
@@ -991,6 +1000,9 @@ importers:
       expo-modules-core:
         specifier: ^1.11.8
         version: 1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+      expo-random:
+        specifier: ^13.6.0
+        version: 13.6.0(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo@50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       fuse.js:
         specifier: ^6.4.6
         version: 6.6.2
@@ -1069,6 +1081,9 @@ importers:
       react-native-fast-image:
         specifier: ^8.5.11
         version: 8.6.3(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+      react-native-fast-pbkdf2:
+        specifier: ^0.3.1
+        version: 0.3.1(patch_hash=ykj6nejfmobcfk2ww7pwsfjwje)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       react-native-gesture-handler:
         specifier: ^2.9.0
         version: 2.16.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
@@ -1190,8 +1205,8 @@ importers:
         specifier: ^7.3.7
         version: 7.5.4
       storyly-react-native:
-        specifier: 2.0.1
-        version: 2.0.1(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+        specifier: 2.18.1
+        version: 2.18.1(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       styled-components:
         specifier: ^5.3.3
         version: 5.3.11(@babel/core@7.24.3)(react-is@18.2.0)(react@18.2.0)
@@ -2602,6 +2617,79 @@ importers:
         specifier: ^29.1.4
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
 
+  libs/coin-modules/coin-ton:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      '@ton/core':
+        specifier: ^0.56.1
+        version: 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto':
+        specifier: ^3.2.0
+        version: 3.2.0
+      '@ton/ton':
+        specifier: ^13.11.1
+        version: 13.11.2(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      msw:
+        specifier: ^2.0.11
+        version: 2.3.1(typescript@5.4.3)
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.4
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
   libs/coin-modules/coin-tron:
     dependencies:
       '@ledgerhq/coin-framework':
@@ -3046,15 +3134,15 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:*
         version: link:../ledgerjs/packages/logs
-      '@noble/secp256k1':
-        specifier: ^1.7.1
-        version: 1.7.1
       bip32:
         specifier: ^4.0.0
         version: 4.0.0
       create-hmac:
         specifier: ^1.1.7
         version: 1.1.7
+      secp256k1:
+        specifier: ^5.0.0
+        version: 5.0.0
       tiny-secp256k1:
         specifier: '1'
         version: 1.1.6
@@ -3065,6 +3153,9 @@ importers:
       '@types/lodash':
         specifier: '4'
         version: 4.17.0
+      '@types/secp256k1':
+        specifier: ^4.0.6
+        version: 4.0.6
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -3161,6 +3252,9 @@ importers:
       '@ledgerhq/coin-tezos':
         specifier: workspace:^
         version: link:../coin-modules/coin-tezos
+      '@ledgerhq/coin-ton':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-ton
       '@ledgerhq/coin-tron':
         specifier: workspace:^
         version: link:../coin-modules/coin-tron
@@ -3290,6 +3384,15 @@ importers:
       '@taquito/ledger-signer':
         specifier: ^20.0.0
         version: 20.0.0
+      '@ton-community/ton-ledger':
+        specifier: ^7.0.1
+        version: 7.0.1(@ton/core@0.56.3(@ton/crypto@3.2.0))
+      '@ton/core':
+        specifier: ^0.56.1
+        version: 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto':
+        specifier: ^3.2.0
+        version: 3.2.0
       '@types/bchaddrjs':
         specifier: ^0.4.0
         version: 0.4.3
@@ -6597,7 +6700,7 @@ importers:
         version: 9.1.2
       buffer:
         specifier: ^6.0.3
-        version: 6.0.3
+        version: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -13042,7 +13145,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '5'
+      webpack: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -13709,6 +13812,28 @@ packages:
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
+
+  '@ton-community/ton-ledger@7.0.1':
+    resolution: {integrity: sha512-4QDjG9D/c3vKyApKa36KfqyE0UcPn/ExSJvCb8Cd03BdhMiZQNvm7tJsKg12lslPCIbl1dW9ZC6fg1RvqAAqnQ==}
+    peerDependencies:
+      '@ton/core': '>=0.52.2'
+
+  '@ton/core@0.56.3':
+    resolution: {integrity: sha512-HVkalfqw8zqLLPehtq0CNhu5KjVzc7IrbDwDHPjGoOSXmnqSobiWj8a5F+YuWnZnEbQKtrnMGNOOjVw4LG37rg==}
+    peerDependencies:
+      '@ton/crypto': '>=3.2.0'
+
+  '@ton/crypto-primitives@2.0.0':
+    resolution: {integrity: sha512-wttiNClmGbI6Dfy/8oyNnsIV0b/qYkCJz4Gn4eP62lJZzMtVQ94Ko7nikDX1EfYHkLI1xpOitWpW+8ZuG6XtDg==}
+
+  '@ton/crypto@3.2.0':
+    resolution: {integrity: sha512-50RkwReEuV2FkxSZ8ht/x9+n0ZGtwRKGsJ0ay4I/HFhkYVG/awIIBQeH0W4j8d5lADdO5h01UtX8PJ8AjiejjA==}
+
+  '@ton/ton@13.11.2':
+    resolution: {integrity: sha512-EPqW+ZTe0MmfqguJEIGMuAqTAFRKMEce95HlDx8h6CGn2y3jiMgV1/oO+WpDIOiX+1wnTu+xtajk8JTWr8nKRQ==}
+    peerDependencies:
+      '@ton/core': '>=0.56.0'
+      '@ton/crypto': '>=3.2.0'
 
   '@tootallnate/once@1.1.2':
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
@@ -15156,7 +15281,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -17443,6 +17568,9 @@ packages:
   dataloader@1.4.0:
     resolution: {integrity: sha512-68s5jYdlvasItOJnCuI2Q9s4q98g0pCyL3HrcKJu8KNugUl8ahgmZYg38ysLTgQjjXX3H8CJLkAvWrclWfcalw==}
 
+  dataloader@2.2.2:
+    resolution: {integrity: sha512-8YnDaaf7N3k/q5HnTJVuzSyLETjoZjVmHc4AeKAzOvKHEFQKcn64OKBfzHYtE9zGjctNM7V9I0MfnUVLpi7M5g==}
+
   date-fns@1.30.1:
     resolution: {integrity: sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==}
 
@@ -18374,7 +18502,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -19114,13 +19242,31 @@ packages:
       react-native:
         optional: true
 
+  expo-random@13.6.0:
+    resolution: {integrity: sha512-c4Ikio+a2sUyJC0386K6JplqjVDelsyqQfjiy4yCx+0epEu44AP99ipF+HsmZVOvsWsWkd/lkpq5kGnJON5EfA==}
+    peerDependencies:
+      expo: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+
   expo@49.0.23:
     resolution: {integrity: sha512-mFdBpWisPXBuocRGywC14nDai5vSUmvEyQpwvKH/xUo+m5/TUvfqV6YIewFpW22zn5WFGFiuJPhzNrqhBBinIw==}
     hasBin: true
     peerDependencies:
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.72.10
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-core:
         optional: true
@@ -19135,8 +19281,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.73.6
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -21788,6 +21934,9 @@ packages:
 
   jsqr@1.4.0:
     resolution: {integrity: sha512-dxLob7q65Xg2DvstYkRpkYtmKm2sPJ9oFhrhmudT1dZvNFFTlroai3AWSpLey/w5vMcLBXRgOJsbXpdN9HzU/A==}
+
+  jssha@3.2.0:
+    resolution: {integrity: sha512-QuruyBENDWdN4tZwJbQq7/eAK85FqrI4oDbXjy5IBhYD+2pTJyBUWZe8ctWaCkrV0gy6AaelgOZZBMeswEa/6Q==}
 
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
@@ -25153,7 +25302,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: ^15.6.1
+      prop-types: '*'
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -25180,8 +25329,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: 16.9.0
-      react-native: 0.61.2
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -25191,8 +25340,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: 18.2.0
-      react-native: 0.72.6
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -25257,6 +25406,12 @@ packages:
     peerDependencies:
       react: ^17 || ^18
       react-native: '>=0.60.0'
+
+  react-native-fast-pbkdf2@0.3.1:
+    resolution: {integrity: sha512-G+1EdQs+w7RhgZKXbodbGPy6zKxX3qdSe1YSh9B7x6qZLTd3dDI15R33faWoiQjrESepbfvX3M64UevBT6SDDA==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   react-native-flipper-performance-plugin@0.4.0:
     resolution: {integrity: sha512-D9Z5VrktJjUenYB4X9qfKcqg9YSyQWOD7fKoxkzXoKxbyalGoWib79iD3OBHOBZEsk5RbQ006zYL7VQwA3D4Wg==}
@@ -26791,8 +26946,8 @@ packages:
     resolution: {integrity: sha512-8+EIo91bwmeFWPg1eysrxXlhIYv3OsXrznTr4+4Eq0NikqAoq6oBhtlN5K2RGS2lBVF537eN+9jTCNbR+WrzDA==}
     hasBin: true
 
-  storyly-react-native@2.0.1:
-    resolution: {integrity: sha512-UFJBNjrpcrOyC2lpDv/+Bz48PjST10AlnlZbqrN7TrPf2bDpKQ3LwWYU3QiGBXa6yoFXMEuR6NSc/vg1rKynRg==}
+  storyly-react-native@2.18.1:
+    resolution: {integrity: sha512-obmcEiqaMk6MRHg8kaN7AV2bKqOAMFEwC3dFmTbEsfPVCt5IEnSjhtzZ9kYkfndjPiEzvq1ySiZ9GUysxL83NQ==}
     peerDependencies:
       prop-types: '*'
       react: ^18.0.0
@@ -27210,6 +27365,9 @@ packages:
   symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
 
+  symbol.inspect@1.0.1:
+    resolution: {integrity: sha512-YQSL4duoHmLhsTD1Pw8RW6TZ5MaTX5rXJnqacJottr2P2LZBF/Yvrc3ku4NUpMOm8aM0KOCqM+UAkMA5HWQCzQ==}
+
   symbol.prototype.description@1.0.6:
     resolution: {integrity: sha512-VgVgtEabORsQtmuindtO7v8fF+bsKxUkvEMFj+ecBK6bomrwv5JUSWdMoC3ypa9+Jaqp/wOzkWk4f6I+p5GzyA==}
     engines: {node: '>= 0.4'}
@@ -27339,6 +27497,9 @@ packages:
     resolution: {integrity: sha512-Y/SblUl5kEyEFzhMAQdsxVHh+utAxd4IuRNJzKywY/4uzSogh3G219jqbDDxYu4MXO9CzY3tSEqmZvW6AoEDJw==}
     engines: {node: '>=10'}
     hasBin: true
+
+  teslabot@1.5.0:
+    resolution: {integrity: sha512-e2MmELhCgrgZEGo7PQu/6bmYG36IDH+YrBI1iGm6jovXkeDIGa3pZ2WSqRjzkuw2vt1EqfkZoV5GpXgqL8QJVg==}
 
   test-exclude@6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
@@ -32342,7 +32503,7 @@ snapshots:
       '@noble/hashes': 1.4.0
       base64-arraybuffer: 0.2.0
       borc: 2.1.2
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       simple-cbor: 0.4.1
 
   '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))':
@@ -32430,7 +32591,7 @@ snapshots:
       axios: 0.24.0
       bech32: 1.1.4
       bignumber.js: 9.0.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       json-bigint: 1.0.0
 
   '@elrondnetwork/erdjs@11.0.0':
@@ -32439,7 +32600,7 @@ snapshots:
       bech32: 1.1.4
       bignumber.js: 9.0.1
       blake2b: 2.1.3
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       json-duplicate-key-handle: 1.0.0
       keccak: 3.0.2
       protobufjs: 6.11.3
@@ -35027,7 +35188,7 @@ snapshots:
     dependencies:
       '@jest/types': 27.5.1
       '@sinonjs/fake-timers': 8.1.0
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
       jest-message-util: 27.5.1
       jest-mock: 27.5.1
       jest-util: 27.5.1
@@ -35338,7 +35499,7 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
       '@types/yargs': 16.0.9
       chalk: 4.1.2
 
@@ -35401,7 +35562,7 @@ snapshots:
       '@keplr-wallet/unit': 0.9.12
       axios: 0.21.4
       bech32: 1.1.4
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       long: 4.0.0
       protobufjs: 6.11.4
 
@@ -35409,7 +35570,7 @@ snapshots:
     dependencies:
       bip32: 2.0.6
       bip39: 3.1.0
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       crypto-js: 4.2.0
       elliptic: 6.5.5
       sha.js: 2.4.11
@@ -39128,14 +39289,14 @@ snapshots:
 
   '@solana/buffer-layout@4.0.1':
     dependencies:
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
   '@solana/spl-token@0.3.8(@solana/web3.js@1.77.3)':
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/buffer-layout-utils': 0.2.0
       '@solana/web3.js': 1.77.3
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -39152,7 +39313,7 @@ snapshots:
       bn.js: 5.2.1
       borsh: 0.7.0
       bs58: 4.0.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       fast-stable-stringify: 1.0.0
       jayson: 4.1.0
       node-fetch: 2.7.0
@@ -39200,7 +39361,7 @@ snapshots:
     dependencies:
       '@types/bn.js': 5.1.5
       '@types/node': 18.19.39
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
   '@stacks/common@6.13.0':
     dependencies:
@@ -39873,7 +40034,7 @@ snapshots:
       '@stellar/js-xdr': 3.1.1
       base32.js: 0.1.0
       bignumber.js: 9.1.2
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       sha.js: 2.4.11
       tweetnacl: 1.0.3
     optionalDependencies:
@@ -40703,7 +40864,7 @@ snapshots:
       '@storybook/core-common': 7.6.17
       '@storybook/node-logger': 7.6.17
       '@storybook/types': 7.6.17
-      '@types/node': 18.19.26
+      '@types/node': 18.19.39
       ts-dedent: 2.2.0
     transitivePeerDependencies:
       - encoding
@@ -40931,7 +41092,7 @@ snapshots:
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       react-docgen-typescript: 2.2.2(typescript@5.4.3)
       tslib: 2.6.2
       typescript: 5.4.3
@@ -40945,7 +41106,7 @@ snapshots:
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       react-docgen-typescript: 2.2.2(typescript@5.4.3)
       tslib: 2.6.2
       typescript: 5.4.3
@@ -41207,7 +41368,7 @@ snapshots:
     dependencies:
       blakejs: 1.2.1
       bn.js: 5.2.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       chai: 4.4.1
       elliptic: 6.5.4
       hash.js: 1.1.7
@@ -41216,7 +41377,7 @@ snapshots:
   '@stricahq/cbors@1.0.2':
     dependencies:
       bignumber.js: 9.1.2
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
   '@stricahq/typhonjs@1.2.8':
     dependencies:
@@ -41225,7 +41386,7 @@ snapshots:
       bignumber.js: 9.1.2
       blakejs: 1.2.1
       bs58: 5.0.0
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       lodash: 4.17.21
 
   '@styled-system/background@5.1.2':
@@ -41511,7 +41672,7 @@ snapshots:
       '@taquito/core': 20.0.0
       '@taquito/taquito': 20.0.0
       '@taquito/utils': 20.0.0
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
     transitivePeerDependencies:
       - encoding
 
@@ -41567,7 +41728,7 @@ snapshots:
       bignumber.js: 9.1.2
       blakejs: 1.2.1
       bs58check: 3.0.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       elliptic: 6.5.5
       typedarray-to-buffer: 4.0.0
 
@@ -41684,6 +41845,38 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       tippy.js: 6.3.7
 
+  '@ton-community/ton-ledger@7.0.1(@ton/core@0.56.3(@ton/crypto@3.2.0))':
+    dependencies:
+      '@ledgerhq/hw-transport': 6.30.6
+      '@ton/core': 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto': 3.2.0
+      teslabot: 1.5.0
+
+  '@ton/core@0.56.3(@ton/crypto@3.2.0)':
+    dependencies:
+      '@ton/crypto': 3.2.0
+      symbol.inspect: 1.0.1
+
+  '@ton/crypto-primitives@2.0.0':
+    dependencies:
+      jssha: 3.2.0
+
+  '@ton/crypto@3.2.0':
+    dependencies:
+      '@ton/crypto-primitives': 2.0.0
+      jssha: 3.2.0
+      tweetnacl: 1.0.3
+
+  '@ton/ton@13.11.2(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)':
+    dependencies:
+      '@ton/core': 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto': 3.2.0
+      axios: 1.6.8
+      dataloader: 2.2.2
+      symbol.inspect: 1.0.1
+      teslabot: 1.5.0
+      zod: 3.22.4
+
   '@tootallnate/once@1.1.2': {}
 
   '@tootallnate/once@2.0.0': {}
@@ -41710,7 +41903,7 @@ snapshots:
 
   '@types/accepts@1.3.7':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   '@types/acorn@4.0.6':
     dependencies:
@@ -41813,7 +42006,7 @@ snapshots:
 
   '@types/connect@3.4.36':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   '@types/connect@3.4.38':
     dependencies:
@@ -41828,7 +42021,7 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/express': 4.17.21
       '@types/keygrip': 1.0.6
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   '@types/create-hmac@1.1.3':
     dependencies:
@@ -41836,7 +42029,7 @@ snapshots:
 
   '@types/cross-spawn@6.0.6':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   '@types/crypto-js@4.2.2': {}
 
@@ -41943,7 +42136,7 @@ snapshots:
 
   '@types/graceful-fs@4.1.9':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   '@types/hammerjs@2.0.45': {}
 
@@ -42053,7 +42246,7 @@ snapshots:
       '@types/http-errors': 2.0.4
       '@types/keygrip': 1.0.6
       '@types/koa-compose': 3.2.8
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   '@types/koa__router@12.0.3':
     dependencies:
@@ -42108,7 +42301,7 @@ snapshots:
 
   '@types/mysql@2.15.22':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   '@types/node-fetch@2.6.11':
     dependencies:
@@ -42171,7 +42364,7 @@ snapshots:
 
   '@types/pbkdf2@3.1.2':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   '@types/pg-pool@2.0.4':
     dependencies:
@@ -42179,7 +42372,7 @@ snapshots:
 
   '@types/pg@8.6.1':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
       pg-protocol: 1.6.1
       pg-types: 2.2.0
 
@@ -42351,7 +42544,7 @@ snapshots:
 
   '@types/secp256k1@4.0.6':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   '@types/semver@7.5.7': {}
 
@@ -42511,7 +42704,7 @@ snapshots:
       graphemer: 1.4.0
       ignore: 5.3.1
       natural-compare-lite: 1.4.0
-      semver: 7.5.4
+      semver: 7.6.2
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
       typescript: 5.4.3
@@ -43256,7 +43449,7 @@ snapshots:
       '@vue/cli-plugin-typescript': 5.0.8(@vue/cli-service@5.0.8(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@8.57.0)(typescript@5.1.3)(vue-template-compiler@2.7.16)(vue@2.7.16)
       '@vue/cli-service': 5.0.8(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(vue-template-compiler@2.7.16)(vue@2.7.16)
       bech32: 1.1.4
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       crypto-browserify: 3.12.0
       ripemd160: 2.0.2
       stream-browserify: 3.0.0
@@ -43529,7 +43722,7 @@ snapshots:
   algosdk@1.13.1:
     dependencies:
       algo-msgpack-with-bigint: 2.1.1
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       hi-base32: 0.5.1
       js-sha256: 0.9.0
       js-sha3: 0.8.0
@@ -44494,7 +44687,7 @@ snapshots:
   bchaddrjs@0.5.2:
     dependencies:
       bs58check: 2.1.2
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       cashaddrjs: 0.4.4
       stream-browserify: 3.0.0
 
@@ -44891,7 +45084,7 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
-  buffer@6.0.3:
+  buffer@6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze):
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
@@ -45655,7 +45848,7 @@ snapshots:
       dot-prop: 8.0.2
       env-paths: 3.0.0
       json-schema-typed: 8.0.1
-      semver: 7.5.4
+      semver: 7.6.2
       uint8array-extras: 0.3.0
 
   config-file-ts@0.2.6:
@@ -46583,6 +46776,8 @@ snapshots:
       is-data-view: 1.0.1
 
   dataloader@1.4.0: {}
+
+  dataloader@2.2.2: {}
 
   date-fns@1.30.1: {}
 
@@ -48874,6 +49069,15 @@ snapshots:
       react: 18.2.0
       react-native: 0.73.6(react@18.2.0)
 
+  expo-random@13.6.0(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo@50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
+    dependencies:
+      base64-js: 1.5.1
+      expo: 50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+    optionalDependencies:
+      expo-modules-core: 1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+      react: 18.2.0
+      react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
+
   expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0):
     dependencies:
       '@babel/runtime': 7.24.1
@@ -49055,7 +49259,7 @@ snapshots:
       '@nodelib/fs.walk': 1.2.8
       glob-parent: 5.1.2
       merge2: 1.4.1
-      micromatch: 4.0.5
+      micromatch: 4.0.7
 
   fast-json-parse@1.0.3: {}
 
@@ -49798,7 +50002,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.5.4
+      semver: 7.6.2
       serialize-error: 7.0.1
     optional: true
 
@@ -50442,7 +50646,7 @@ snapshots:
       http-proxy: 1.18.1
       is-glob: 4.0.3
       is-plain-obj: 3.0.0
-      micromatch: 4.0.5
+      micromatch: 4.0.7
     optionalDependencies:
       '@types/express': 4.17.21
 
@@ -50526,7 +50730,7 @@ snapshots:
       '@babel/runtime-corejs3': 7.24.7
       bignumber.js: 9.1.2
       bip66: 1.1.5
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       bufferutil: 4.0.8
       core-js: 3.36.1
       crypto-browserify: 3.12.0
@@ -52371,7 +52575,7 @@ snapshots:
       '@types/stack-utils': 2.0.3
       chalk: 4.1.2
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       pretty-format: 27.5.1
       slash: 3.0.0
       stack-utils: 2.0.6
@@ -52421,7 +52625,7 @@ snapshots:
   jest-mock@27.5.1:
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
 
   jest-mock@28.1.3:
     dependencies:
@@ -52690,7 +52894,7 @@ snapshots:
 
   jest-serializer@27.5.1:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.14.10
       graceful-fs: 4.2.11
 
   jest-snapshot@27.5.1:
@@ -52716,7 +52920,7 @@ snapshots:
       jest-util: 27.5.1
       natural-compare: 1.4.0
       pretty-format: 27.5.1
-      semver: 7.5.4
+      semver: 7.6.2
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -53230,7 +53434,7 @@ snapshots:
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.7
       neo-async: 2.6.2
       node-dir: 0.1.17
       recast: 0.23.6
@@ -53502,6 +53706,8 @@ snapshots:
       verror: 1.10.0
 
   jsqr@1.4.0: {}
+
+  jssha@3.2.0: {}
 
   jsx-ast-utils@3.3.5:
     dependencies:
@@ -55990,7 +56196,7 @@ snapshots:
       assert: 1.5.1
       base-64: 0.1.0
       browserify-zlib: 0.2.0
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       console-browserify: 1.2.0
       constants-browserify: 1.0.0
       domain-browser: 1.2.0
@@ -57047,7 +57253,7 @@ snapshots:
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.32)
       postcss-normalize: 10.0.1(browserslist@4.23.0)(postcss@8.4.32)
       postcss-preset-env: 7.8.3(postcss@8.4.32)
-      semver: 7.5.4
+      semver: 7.6.2
       webpack: 5.89.0
     transitivePeerDependencies:
       - browserslist
@@ -57060,7 +57266,7 @@ snapshots:
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.38)
       postcss-normalize: 10.0.1(browserslist@4.23.0)(postcss@8.4.38)
       postcss-preset-env: 7.8.3(postcss@8.4.38)
-      semver: 7.5.4
+      semver: 7.6.2
       webpack: 5.89.0
     transitivePeerDependencies:
       - browserslist
@@ -57830,7 +58036,7 @@ snapshots:
 
   qrloop@1.4.1:
     dependencies:
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       md5: 2.3.0
 
   qs@6.11.0:
@@ -58200,6 +58406,11 @@ snapshots:
       rfc4648: 1.5.3
 
   react-native-fast-image@8.6.3(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+      react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
+
+  react-native-fast-pbkdf2@0.3.1(patch_hash=ykj6nejfmobcfk2ww7pwsfjwje)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
     dependencies:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
@@ -58993,7 +59204,7 @@ snapshots:
   readable-stream@4.5.2:
     dependencies:
       abort-controller: 3.0.0
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       events: 3.3.0
       process: 0.11.10
       string_decoder: 1.3.0
@@ -59498,7 +59709,7 @@ snapshots:
     dependencies:
       assert: 2.1.0
       big-integer: 1.6.52
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       create-hash: 1.2.0
       decimal.js: 10.4.3
       ripple-address-codec: 4.3.1
@@ -59926,7 +60137,7 @@ snapshots:
 
   sha3@2.1.4:
     dependencies:
-      buffer: 6.0.3
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
   shaka-player@2.5.23:
     dependencies:
@@ -60345,7 +60556,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  storyly-react-native@2.0.1(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
+  storyly-react-native@2.18.1(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
     dependencies:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
@@ -60984,6 +61195,8 @@ snapshots:
 
   symbol-tree@3.2.4: {}
 
+  symbol.inspect@1.0.1: {}
+
   symbol.prototype.description@1.0.6:
     dependencies:
       call-bind: 1.0.7
@@ -61268,6 +61481,8 @@ snapshots:
       acorn: 8.11.3
       commander: 2.20.3
       source-map-support: 0.5.21
+
+  teslabot@1.5.0: {}
 
   test-exclude@6.0.0:
     dependencies:

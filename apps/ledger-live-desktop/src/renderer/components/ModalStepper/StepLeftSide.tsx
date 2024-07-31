@@ -59,7 +59,7 @@ const StepLeftSide = ({
       <Flex flexDirection="column">
         {!hideContinueButton && (
           <Button
-            data-test-id={dataTestId}
+            data-testid={dataTestId}
             disabled={continueDisabled}
             variant="main"
             Icon={IconsLegacy.ArrowRightMedium}

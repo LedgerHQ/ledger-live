@@ -7,6 +7,10 @@ export interface SimpleHashSpamReportResponse {
   readonly message: string;
 }
 
+export interface SimpleHashRefreshResponse {
+  readonly message: string;
+}
+
 export interface SimpleHashNft {
   readonly nft_id: string;
   readonly chain: string;
@@ -18,6 +22,7 @@ export interface SimpleHashNft {
   readonly token_count: number;
   readonly collection: {
     readonly name: string;
+    readonly spam_score: number;
   };
   readonly contract: {
     readonly type: string;

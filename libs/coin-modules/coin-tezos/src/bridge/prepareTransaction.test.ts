@@ -2,6 +2,8 @@ import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import prepareTransaction from "./prepareTransaction";
 import { faker } from "@faker-js/faker";
+import coinConfig, { TezosCoinConfig } from "../config";
+import { mockConfig } from "../test/config";
 
 const mockTezosEstimate = jest.fn();
 jest.mock("../logic/tezosToolkit", () => ({
@@ -14,6 +16,10 @@ jest.mock("../logic/tezosToolkit", () => ({
 }));
 
 describe("prepareTransaction", () => {
+  beforeAll(() => {
+    coinConfig.setCoinConfig((): TezosCoinConfig => mockConfig as TezosCoinConfig);
+  });
+
   beforeEach(() => {
     mockTezosEstimate.mockReset();
   });

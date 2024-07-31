@@ -63,7 +63,7 @@ for (let i = 0; i < expected.length; i += pagedBy) {
       name: "",
       description: "",
       token_count: 1,
-      collection: { name: "" },
+      collection: { name: "", spam_score: 0 },
       contract: { type: "ERC721" },
       extra_metadata: {
         image_original_url: "",

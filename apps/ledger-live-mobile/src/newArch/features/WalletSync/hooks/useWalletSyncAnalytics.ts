@@ -15,6 +15,7 @@ export enum AnalyticsPage {
   ManageBackup = "Manage backup",
   ConfirmDeleteBackup = "Confirm delete backup",
   SyncWithNoKey = "Sync with no key",
+  WalletSyncActivated = "Wallet Sync activated",
 }
 
 export enum AnalyticsFlow {
@@ -31,8 +32,8 @@ export enum AnalyticsButton {
   ShowQRCode = "Show QR",
   TryAgain = "Try again",
   Synchronize = "Synchronize",
+  ManageKey = "Manage key",
   ManageSynchronizations = "Manage Synchronizations",
-  ManageInstance = "Manage instance",
   RemoveInstance = "Remove instance",
   ConnectAnotherLedger = "Connect another Ledger",
   DeleteKey = "Delete key",

@@ -103,7 +103,7 @@ export function BalanceTotal({
               showCode
               val={totalBalance}
               dynamicSignificantDigits={dynamicSignificantDigits}
-              data-test-id="total-balance"
+              data-testid="total-balance"
             />
           )}
           {withTransactionsPendingConfirmationWarning ? (
@@ -160,11 +160,11 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
 
         {!portfolioExchangeBanner?.enabled && (
           <>
-            <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
+            <Button data-testid="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
               {t("accounts.contextMenu.buy")}
             </Button>
             <Button
-              data-test-id="portfolio-swap-button"
+              data-testid="portfolio-swap-button"
               variant="color"
               event="button_clicked2"
               eventProperties={{

@@ -2,7 +2,6 @@ import { memberCredentialsSelector, trustchainSelector } from "@ledgerhq/trustch
 import { useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { QueryKey } from "./type.hooks";
-import { Trustchain, MemberCredentials } from "@ledgerhq/trustchain/types";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useLifeCycle } from "./walletSync.hooks";
@@ -13,6 +12,14 @@ export function useGetMembers() {
   const memberCredentials = useSelector(memberCredentialsSelector);
   const errorHandler = useLifeCycle();
 
+  function fetchMembers() {
+    if (!trustchain || !memberCredentials) {
+      throw new Error("Trustchain or MemberCredentials is falsy");
+    }
+
+    return sdk.getMembers(trustchain, memberCredentials);
+  }
+
   const {
     isLoading: isMembersLoading,
     data: instances,
@@ -20,7 +27,7 @@ export function useGetMembers() {
     error: getMembersError,
   } = useQuery({
     queryKey: [QueryKey.getMembers, trustchain],
-    queryFn: () => sdk.getMembers(trustchain as Trustchain, memberCredentials as MemberCredentials),
+    queryFn: () => fetchMembers(),
     refetchOnMount: true,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
@@ -37,5 +44,6 @@ export function useGetMembers() {
     isMembersLoading: isMembersLoading,
     instances,
     isError: isErrorGetMembers,
+    error: getMembersError,
   };
 }

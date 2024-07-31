@@ -118,6 +118,7 @@ export type CurrencyFeatures = {
   currencyScroll: DefaultFeature;
   currencyScrollSepolia: DefaultFeature;
   currencyIcon: DefaultFeature;
+  currencyTon: DefaultFeature;
 };
 
 /**
@@ -184,6 +185,7 @@ export type Features = CurrencyFeatures & {
   lldWalletSync: Feature_LldWalletSync;
   llmWalletSync: Feature_LlmWalletSync;
   lldNftsGalleryNewArch: DefaultFeature;
+  lldnewArchOrdinals: DefaultFeature;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
 };
@@ -501,6 +503,8 @@ export type Feature_LlmWalletSync = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;
+export type Feature_lldNftsGalleryNewArch = DefaultFeature;
+export type Feature_lldnewArchOrdinals = DefaultFeature;
 
 /**
  * Utils types.

@@ -14,9 +14,9 @@ export class LiveAppWebview {
   constructor(page: Page) {
     this.page = page;
     this.webview = page.locator("webview");
-    this.liveAppTitle = page.locator("data-test-id=live-app-title");
-    this.liveAppLoadingSpinner = page.locator("data-test-id=live-app-loading-spinner");
-    this.selectAssetSearchBar = page.locator("data-test-id=select-asset-drawer-search-input");
+    this.liveAppTitle = page.getByTestId("live-app-title");
+    this.liveAppLoadingSpinner = page.getByTestId("live-app-loading-spinner");
+    this.selectAssetSearchBar = page.getByTestId("select-asset-drawer-search-input");
   }
 
   static async startLiveApp(
@@ -69,27 +69,27 @@ export class LiveAppWebview {
   }
 
   async getAccountsList() {
-    await this.clickWebviewElement("[data-test-id=get-all-accounts-button]");
+    await this.clickWebviewElement("[data-testid=get-all-accounts-button]");
   }
 
   async requestAsset() {
-    await this.clickWebviewElement("[data-test-id=request-single-account-button]");
+    await this.clickWebviewElement("[data-testid=request-single-account-button]");
   }
 
   async verifyAddress() {
-    await this.clickWebviewElement("[data-test-id=verify-address-button]");
+    await this.clickWebviewElement("[data-testid=verify-address-button]");
   }
 
   async listCurrencies() {
-    await this.clickWebviewElement("[data-test-id=list-currencies-button]");
+    await this.clickWebviewElement("[data-testid=list-currencies-button]");
   }
 
   async signBitcoinTransaction() {
-    await this.clickWebviewElement("[data-test-id=sign-bitcoin-transaction-button]");
+    await this.clickWebviewElement("[data-testid=sign-bitcoin-transaction-button]");
   }
 
   async signEthereumTransaction() {
-    await this.clickWebviewElement("[data-test-id=sign-ethereum-transaction-button]");
+    await this.clickWebviewElement("[data-testid=sign-ethereum-transaction-button]");
   }
 
   async clickWebviewElement(elementName: string) {

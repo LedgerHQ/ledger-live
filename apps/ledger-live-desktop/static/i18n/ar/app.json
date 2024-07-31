@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "شراء / بيع",
-        "description" : "الشراء والبيع عن طريق مزودين موثوقين"
+        "description" : "قم بالشراء والبيع عن طريق مزودينا الموثوقين"
       },
       "swap" : {
         "title" : "مبادلة",
-        "description" : "قم بالتحويل بين الأصول المشفرة بأمان",
+        "description" : "قم بالتحويل بين الأصول المشفرة",
         "label" : "شائع"
       },
       "earn" : {
         "title" : "تكديس",
-        "description" : "قم بتنمية أصولك المشفرة مع Ledger"
+        "description" : "كدّس أصولك المشفرة مع Ledger"
       }
     },
     "recoverBanner" : {
@@ -5493,6 +5493,10 @@
       "description" : "من المستحيل حساب المبلغ والرسوم"
     },
     "NotEnoughBalance" : {
+      "title" : "عفواً، الأموال المتوفرة غير كافية",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية."
+    },
+    "NotEnoughBalanceSwap" : {
       "title" : "عذراً، الرصيد غير كافٍ شاملاً رسوم الشبكة. قم بتعديل المبلغ أو تحقق من الرصيد.",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
@@ -5504,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "أنت بحاجة إلى {{ticker}} {{fees}} لرسوم الشبكة من أجل المبادلة حيث أنك على شبكة {{cryptoName}}. <link0>شراء {{ticker}}</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتمكين تلقي رمز TRC20. <link0>تعرّف على المزيد </link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "تحتاج على الأقل إلى 0.1 TRX لإبقاء حساب ترون (Tron) هذا نشطاً و 1.1 TRX لرسوم الشبكة.<link0>تعرّف على المزيد </link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "إصدار نظام التشغيل لديك قديم",
@@ -6088,6 +6098,9 @@
     },
     "newAddressTRC20" : {
       "title" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "نحن نواجه مشكلة في بنيتنا التحتية لبيتكوين. يُرجى إعادة المحاولة لاحقاً."
     }
   },
   "cryptoOrg" : {

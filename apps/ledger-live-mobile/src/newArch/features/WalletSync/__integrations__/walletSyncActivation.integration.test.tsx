@@ -18,7 +18,7 @@ const DEVICE = {
 } as DeviceLike;
 
 describe("WalletSyncActivation", () => {
-  it("Should WalletSyncActivation Flow and go through device selection", async () => {
+  it("Should open WalletSyncActivation Flow and go through device selection", async () => {
     setEnv("MOCK", "1");
 
     const { user } = render(<WalletSyncSharedNavigator />, {
@@ -47,8 +47,10 @@ describe("WalletSyncActivation", () => {
       }),
     );
 
+    await user.press(screen.getByText(/use your ledger/i));
+
     expect(
-      await screen.findByText(/Choose the Ledger device you will use to secure your backup/i),
+      await screen.findByText(/choose the Ledger device you will use to secure your backup/i),
     ).toBeVisible();
 
     await user.press(

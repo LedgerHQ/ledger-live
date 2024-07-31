@@ -1,5 +1,29 @@
 # @ledgerhq/errors
 
+## 6.18.0
+
+### Minor Changes
+
+- [#7124](https://github.com/LedgerHQ/ledger-live/pull/7124) [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Implement App data backup relative commands
+
+### Patch Changes
+
+- [#7286](https://github.com/LedgerHQ/ledger-live/pull/7286) [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: tron max value computation
+
+- [#7202](https://github.com/LedgerHQ/ledger-live/pull/7202) [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4) Thanks [@CremaFR](https://github.com/CremaFR)! - feat transform NotEnoughBalance into specific error for swap to have different error messages
+
+## 6.18.0-next.0
+
+### Minor Changes
+
+- [#7124](https://github.com/LedgerHQ/ledger-live/pull/7124) [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Implement App data backup relative commands
+
+### Patch Changes
+
+- [#7286](https://github.com/LedgerHQ/ledger-live/pull/7286) [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: tron max value computation
+
+- [#7202](https://github.com/LedgerHQ/ledger-live/pull/7202) [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4) Thanks [@CremaFR](https://github.com/CremaFR)! - feat transform NotEnoughBalance into specific error for swap to have different error messages
+
 ## 6.17.0
 
 ### Minor Changes

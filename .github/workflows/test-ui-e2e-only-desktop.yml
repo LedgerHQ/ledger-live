@@ -299,7 +299,6 @@ jobs:
             if (${{ !inputs.slack_notif && github.event_name == 'workflow_dispatch' }}) return;
 
             const slackPayload = {
-              "text": "Ledger Live Desktop tests results on ${{github.ref_name}}",
               "attachments": [
                 {
                   "color": "${{ env.STATUS_COLOR }}",
@@ -308,19 +307,12 @@ jobs:
                       "type": "header",
                       "text": {
                         "type": "plain_text",
-                        "text": ":ledger-logo: Ledger Live Desktop tests results on ${{ github.ref_name }}",
+                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }}",
                         "emoji": true
                       }
                     },
                     {
                       "type": "divider"
-                    },
-                    {
-                      "type": "header",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "E2E Tests"
-                      }
                     },
                     {
                       "type": "section",

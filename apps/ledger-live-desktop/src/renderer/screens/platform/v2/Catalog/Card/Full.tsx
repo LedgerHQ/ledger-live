@@ -38,7 +38,7 @@ export function FullCard(props: PropsCard<LiveAppManifest>) {
 
   return (
     <Container
-      data-test-id={`platform-catalog-app-${manifest.id}`}
+      data-testid={`platform-catalog-app-${manifest.id}`}
       highlighted={highlighted}
       disabled={disabled}
       onClick={onClick}

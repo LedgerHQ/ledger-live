@@ -5,6 +5,11 @@ import Transport from "@ledgerhq/hw-transport";
  */
 export type JWT = {
   accessToken: string;
+  permissions: {
+    [trustchainId: string]: {
+      [path: string]: string[];
+    };
+  };
 };
 
 /**
@@ -145,6 +150,7 @@ export interface TrustchainSDK {
     memberCredentials: MemberCredentials,
     f: (jwt: JWT) => Promise<T>,
     policy?: AuthCachePolicy,
+    ignorePermissionsChecks?: boolean,
   ): Promise<T>;
 
   withDeviceAuth<T>(

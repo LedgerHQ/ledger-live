@@ -112,7 +112,7 @@ const TargetAccount = memo(function TargetAccount({
       justifyContent="space-between"
       selected={selected}
       onClick={onClick}
-      data-test-id={`target-account-container-${getDefaultAccountName(account) || ""}`}
+      data-testid={`target-account-container-${getDefaultAccountName(account) || ""}`}
     >
       <AccountBox horizontal alignItems="center" pl={isChild ? "8px" : 0}>
         {isChild && (

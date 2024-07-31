@@ -77,6 +77,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyScroll: DEFAULT_FEATURE,
   currencyScrollSepolia: DEFAULT_FEATURE,
   currencyIcon: DEFAULT_FEATURE,
+  currencyTon: DEFAULT_FEATURE,
 };
 
 /**
@@ -470,6 +471,7 @@ export const DEFAULT_FEATURES: Features = {
   lldWalletSync: DEFAULT_FEATURE,
   llmWalletSync: DEFAULT_FEATURE,
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
+  lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
 };

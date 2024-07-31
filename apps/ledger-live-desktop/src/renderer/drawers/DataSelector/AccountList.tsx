@@ -112,7 +112,7 @@ function Row({
   return (
     <RowContainer
       id={`account-${accountCurrency.name}-${index}`}
-      data-test-id={`account-row-${accountCurrency.name.toLowerCase()}-${index}`}
+      data-testid={`account-row-${accountCurrency.name.toLowerCase()}-${index}`}
       onClick={() => {
         if (subAccount) {
           onAccountSelect(subAccount, account);

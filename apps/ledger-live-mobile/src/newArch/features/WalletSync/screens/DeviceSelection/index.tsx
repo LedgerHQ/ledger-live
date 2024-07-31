@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState, memo } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -13,7 +13,6 @@ import {
   ReactNavigationHeaderOptions,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
-
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
@@ -35,38 +34,32 @@ type ChooseDeviceProps = Props & {
   goToFollowInstructions: (device: Device) => void;
 };
 
-const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused, goToFollowInstructions }) => {
-  const request = useMemo(
-    () => ({
-      appName: TRUSTCHAIN_APP_NAME,
-    }),
-    [],
-  );
+const request = {
+  appName: TRUSTCHAIN_APP_NAME,
+};
+
+const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
+  goToFollowInstructions,
+}) => {
+  const isFocused = useIsFocused();
   const action = useAppDeviceAction();
   const [device, setDevice] = useState<Device | null>();
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
-  const onSelectDevice = (device?: Device) => {
-    if (device) setDevice(device);
-  };
+  const onSelectDevice = useCallback((device: Device) => {
+    setDevice(device);
+  }, []);
+
+  const onClose = () => setDevice(null);
 
   const onResult = useCallback(
     (payload: AppResult) => {
-      setDevice(undefined);
-
-      // Nb Unsetting device here caused the scanning to start again,
-      // scanning causes a disconnect, which throws an error when we try to talk
-      // to the device on the next step.
       goToFollowInstructions(payload.device);
     },
     [goToFollowInstructions],
   );
-
-  const onModalHide = () => {
-    setDevice(undefined);
-  };
 
   const onError = (error: Error) => {
     // Both the old (SelectDevice) and new (SelectDevice2) device selection components handle the bluetooth requirements with a hook + bottom drawer.
@@ -120,15 +113,14 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused, goToFollowInstru
       <Flex flex={1} mb={8}>
         <SelectDevice2
           onSelect={onSelectDevice}
-          stopBleScanning={!!device}
+          stopBleScanning={!!device || !isFocused}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
       </Flex>
       <DeviceActionModal
-        onClose={() => onSelectDevice()}
+        onClose={onClose}
         device={device}
         onResult={onResult}
-        onModalHide={onModalHide}
         action={action}
         request={request}
         onError={onError}
@@ -137,7 +129,4 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused, goToFollowInstru
   );
 };
 
-export default function WalletSyncActivationDeviceSelection(props: ChooseDeviceProps) {
-  const isFocused = useIsFocused();
-  return <ChooseDevice {...props} isFocused={isFocused} />;
-}
+export default memo(WalletSyncActivationDeviceSelection);
