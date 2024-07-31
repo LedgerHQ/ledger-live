@@ -1,5 +1,18 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.1
+
+### Patch Changes
+
+- [#7406](https://github.com/LedgerHQ/ledger-live/pull/7406) [`c433193`](https://github.com/LedgerHQ/ledger-live/commit/c433193298e86d758d727296bf51271e7d3a5871) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - set tezos gasfeeslimit minvalue
+
+- [#7462](https://github.com/LedgerHQ/ledger-live/pull/7462) [`cd1fee0`](https://github.com/LedgerHQ/ledger-live/commit/cd1fee0030a588a385ca4f58864eebbcf788b795) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add restore app data use case.
+
+- Updated dependencies [[`555d61f`](https://github.com/LedgerHQ/ledger-live/commit/555d61fae0faa823fcbb210e7ea2c69818d849fd), [`ecc3ee4`](https://github.com/LedgerHQ/ledger-live/commit/ecc3ee46b8d5bf5631bcbcf73b3c3a2fb1a8964d), [`c433193`](https://github.com/LedgerHQ/ledger-live/commit/c433193298e86d758d727296bf51271e7d3a5871)]:
+  - @ledgerhq/coin-cardano@0.1.4-nightly.1
+  - @ledgerhq/live-wallet@0.4.2-nightly.1
+  - @ledgerhq/coin-tezos@0.5.2-nightly.1
+
 ## 34.7.0-nightly.0
 
 ### Minor Changes

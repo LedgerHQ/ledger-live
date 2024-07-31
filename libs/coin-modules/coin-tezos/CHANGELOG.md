@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 0.5.2-nightly.1
+
+### Patch Changes
+
+- [#7406](https://github.com/LedgerHQ/ledger-live/pull/7406) [`c433193`](https://github.com/LedgerHQ/ledger-live/commit/c433193298e86d758d727296bf51271e7d3a5871) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - set tezos gasfeeslimit minvalue
+
 ## 0.5.2-nightly.0
 
 ### Patch Changes

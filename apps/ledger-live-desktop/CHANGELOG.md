@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.1
+
+### Patch Changes
+
+- [#7443](https://github.com/LedgerHQ/ledger-live/pull/7443) [`69916b0`](https://github.com/LedgerHQ/ledger-live/commit/69916b07c26d33a79a124dd0b1edc1fd1b6c1f80) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add exodus config
+
+- [#7435](https://github.com/LedgerHQ/ledger-live/pull/7435) [`ecc3ee4`](https://github.com/LedgerHQ/ledger-live/commit/ecc3ee46b8d5bf5631bcbcf73b3c3a2fb1a8964d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Ledger Sync check status
+
+- Updated dependencies [[`ecc3ee4`](https://github.com/LedgerHQ/ledger-live/commit/ecc3ee46b8d5bf5631bcbcf73b3c3a2fb1a8964d), [`c433193`](https://github.com/LedgerHQ/ledger-live/commit/c433193298e86d758d727296bf51271e7d3a5871), [`cd1fee0`](https://github.com/LedgerHQ/ledger-live/commit/cd1fee0030a588a385ca4f58864eebbcf788b795)]:
+  - @ledgerhq/react-ui@0.15.4-nightly.1
+  - @ledgerhq/live-wallet@0.4.2-nightly.1
+  - @ledgerhq/trustchain@0.1.4-nightly.1
+  - @ledgerhq/live-common@34.7.0-nightly.1
+
 ## 2.85.0-nightly.0
 
 ### Minor Changes

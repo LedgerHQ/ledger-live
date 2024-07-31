@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.48.0-nightly.1
+
+### Minor Changes
+
+- [#7113](https://github.com/LedgerHQ/ledger-live/pull/7113) [`e6d9fd6`](https://github.com/LedgerHQ/ledger-live/commit/e6d9fd6545fb3a8d80bb701ce2a0ba5ca6b64a18) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix select a new account created during the receive when returning to the previous page
+
+### Patch Changes
+
+- [#7465](https://github.com/LedgerHQ/ledger-live/pull/7465) [`72dadfb`](https://github.com/LedgerHQ/ledger-live/commit/72dadfb2ea5ae1c746295ebb8325c4bb719020a5) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): bring back bypass in account receive for wallet-api
+
+- [#7452](https://github.com/LedgerHQ/ledger-live/pull/7452) [`ddccd52`](https://github.com/LedgerHQ/ledger-live/commit/ddccd52c58afd4ed85b35452f687229c274c9841) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Mange Key flow
+
+- [#7454](https://github.com/LedgerHQ/ledger-live/pull/7454) [`c4d6cc7`](https://github.com/LedgerHQ/ledger-live/commit/c4d6cc7b17d159273868340b91eaae3e3ceecb5b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add choose sync method drawer for wallet sync
+
+- [#7431](https://github.com/LedgerHQ/ledger-live/pull/7431) [`4246726`](https://github.com/LedgerHQ/ledger-live/commit/4246726921cff22c44c88033987ca4dab77973d1) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix installing app untracked bug
+
+- Updated dependencies [[`ecc3ee4`](https://github.com/LedgerHQ/ledger-live/commit/ecc3ee46b8d5bf5631bcbcf73b3c3a2fb1a8964d), [`c433193`](https://github.com/LedgerHQ/ledger-live/commit/c433193298e86d758d727296bf51271e7d3a5871), [`cd1fee0`](https://github.com/LedgerHQ/ledger-live/commit/cd1fee0030a588a385ca4f58864eebbcf788b795)]:
+  - @ledgerhq/live-wallet@0.4.2-nightly.1
+  - @ledgerhq/trustchain@0.1.4-nightly.1
+  - @ledgerhq/live-common@34.7.0-nightly.1
+
 ## 3.48.0-nightly.0
 
 ### Minor Changes

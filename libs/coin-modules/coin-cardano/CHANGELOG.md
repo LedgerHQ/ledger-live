@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cardano
 
+## 0.1.4-nightly.1
+
+### Patch Changes
+
+- [#7445](https://github.com/LedgerHQ/ledger-live/pull/7445) [`555d61f`](https://github.com/LedgerHQ/ledger-live/commit/555d61fae0faa823fcbb210e7ea2c69818d849fd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update cardano ledger pool
+
 ## 0.1.4-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.1.4-nightly.1
+
+### Patch Changes
+
+- [#7435](https://github.com/LedgerHQ/ledger-live/pull/7435) [`ecc3ee4`](https://github.com/LedgerHQ/ledger-live/commit/ecc3ee46b8d5bf5631bcbcf73b3c3a2fb1a8964d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Ledger Sync check status
+
 ## 0.1.4-nightly.0
 
 ### Patch Changes
