@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "Swappen",
     "tabs" : {
-      "exchange" : "Umtauschen",
+      "exchange" : "Swappen",
       "history" : "Verlauf"
     },
     "form" : {
@@ -385,6 +385,7 @@
         "title" : "Transaktion erfolgreich gesendet",
         "description" : "Dein Swap wurde zur Bestätigung an das Netzwerk gesendet. Bitte warte, bis deine Transaktion bestätigt wurde und der Anbieter deine {{targetCurrency}} verarbeiten und senden kann.",
         "disclaimer" : "Notiere dir die Swap-ID für den Fall, dass du Hilfe vom <0><0>{{provider}}<0>-Support<0> benötigst.",
+        "tellAboutYourExperience" : "Erzähl uns von deinen Erfahrungen",
         "seeDetails" : "Details ansehen"
       }
     },
@@ -4197,8 +4198,7 @@
           "modal" : {
             "flow" : "Ablauf auswählen",
             "step" : "Schritt auswählen",
-            "activated" : "Zum Erstellen einer Sicherheitskopie aktivieren; bei Deaktivierung wird keine Sicherheitskopie erstellt",
-            "instance" : "Instanzen erzeugen",
+            "instance" : "Mitglieder generieren",
             "cta" : "Anwenden"
           }
         }
@@ -5492,6 +5492,9 @@
       "title" : "Berechnung von Betrag und Gebühren nicht möglich",
       "description" : "Berechnung von Betrag und Gebühren nicht möglich"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Ungültiger Empfänger für Tokenübertragung; unterstützte Kontotypen für Tokenübertragung: [f0, f4, 0x]"
+    },
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
@@ -6313,7 +6316,7 @@
         "description" : "Schütze oder lösche deinen Verschlüsselungsschlüssel mit einem anderen Ledger-Gerät."
       },
       "instance" : {
-        "label_one" : "1 synchronisierte Instanz",
+        "label" : "1 synchronisierte Instanz",
         "label_other" : "{{count}} synchronisierte Instanzen",
         "cta" : "Verwalten"
       }
@@ -6326,7 +6329,8 @@
     "error" : {
       "title" : "Etwas ist schief gelaufen",
       "description" : "Versuche es bitte später noch einmal.",
-      "cta" : "Wiederholen"
+      "cta" : "Wiederholen",
+      "fetching" : "Beim Abrufen deiner Daten ist ein Problem aufgetreten."
     },
     "unsecuredError" : {
       "title" : "Die Synchronisierung wird nicht durch dieses Ledger-Gerät abgesichert",
@@ -6335,18 +6339,26 @@
       "cta" : "Anderes Ledger-Gerät verbinden",
       "ctaDelete" : "Meinen Verschlüsselungsschlüssel löschen"
     },
+    "autoRemoveError" : {
+      "title" : "Du kannst die aktuelle Instanz nicht entfernen",
+      "description" : "Aus Sicherheitsgründen kannst du die Instanz, die du gerade benutzt, nicht entfernen, ohne deinen Verschlüsselungsschlüssel zu löschen.",
+      "info" : "Wenn du jedoch deinen Verschlüsselungsschlüssel löschst, werden deine Geräte nicht mehr synchronisiert, und alle synchronisierten Daten werden gelöscht. Allerdings hat dies keine Auswirkungen auf dein Vermögen. Du kannst deine Konten jederzeit neu synchronisieren.",
+      "cta" : "Verstanden",
+      "ctaDelete" : "Meinen Verschlüsselungsschlüssel löschen"
+    },
     "success" : {
       "backup" : {
         "title" : "Erfolgreich",
-        "desc" : "Du hast Ledger Sync erfolgreich aktiviert. ",
-        "synchAnother" : "Mit einer anderen Ledger Live-App synchronisieren"
+        "desc" : "Du hast Ledger Sync erfolgreich aktiviert."
       },
       "synch" : {
         "title" : "Synchronisierung erfolgreich!",
         "desc" : "Änderungen bei deinen Konten werden jetzt automatisch in allen Apps und auf allen Plattformen angezeigt."
-      }
+      },
+      "synchAnother" : "Mit einer anderen Ledger Live-App synchronisieren",
+      "close" : "Schließen"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Deinen Schlüssel verwalten",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6412,10 @@
       "remove" : "Entfernen",
       "deleteInstanceSuccess" : "Deine {{instanceName}} ist nicht mehr synchronisiert",
       "deleteInstanceError" : "Beim Desynchronisieren von {{instanceName}} ist ein Problem aufgetreten"
+    },
+    "deviceAction" : {
+      "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+      "description" : "Befolge die Anweisungen, die auf dem Trusted Display deines Ledger-Geräts erscheinen."
     }
   }
 }
