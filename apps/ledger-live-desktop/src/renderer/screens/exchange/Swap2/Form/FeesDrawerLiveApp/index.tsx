@@ -1,10 +1,7 @@
 import React, { useCallback, useState } from "react";
 import Box from "~/renderer/components/Box";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
-import {
-  SwapTransactionType,
-  SwapSelectorStateType,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
@@ -12,11 +9,12 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider } from "@ledgerhq/react-ui";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
-  mainAccount: SwapSelectorStateType["account"];
-  parentAccount: SwapSelectorStateType["parentAccount"];
+  mainAccount: Account;
+  parentAccount: Account;
   status: SwapTransactionType["status"];
   disableSlowStrategy?: boolean;
   provider: string | undefined | null;
@@ -38,6 +36,7 @@ export default function FeesDrawerLiveApp({
 
   const [isOpen, setIsOpen] = useState(true);
   const [transaction, setTransactionState] = useState(initialTransaction);
+  const [transactionStatus, setTransactionStatus] = useState(status);
 
   const handleSetTransaction = useCallback(
     (transaction: Transaction) => {
@@ -47,15 +46,19 @@ export default function FeesDrawerLiveApp({
     [setTransaction],
   );
 
+  const bridge = getAccountBridge(mainAccount, parentAccount);
+
   const handleUpdateTransaction = useCallback(
     (updater: (arg0: Transaction) => Transaction) => {
       setTransactionState(prevTransaction => {
         const updatedTransaction = updater(prevTransaction);
         setTransaction(updatedTransaction);
+        bridge.getTransactionStatus(mainAccount, transaction).then(setTransactionStatus);
+
         return updatedTransaction;
       });
     },
-    [setTransaction],
+    [setTransaction, bridge, mainAccount, transaction],
   );
 
   const mapStrategies = useCallback(
@@ -101,7 +104,7 @@ export default function FeesDrawerLiveApp({
             <SendAmountFields
               account={parentAccount || (mainAccount as Account)}
               parentAccount={parentAccount}
-              status={status}
+              status={transactionStatus}
               transaction={transaction}
               onChange={handleSetTransaction}
               updateTransaction={handleUpdateTransaction}
@@ -121,6 +124,7 @@ export default function FeesDrawerLiveApp({
             outline
             borderRadius={48}
             onClick={() => handleRequestClose(true)}
+            disabled={Boolean(transactionStatus.errors?.gasPrice ?? false)}
           >
             {t("common.continue")}
           </Button>
