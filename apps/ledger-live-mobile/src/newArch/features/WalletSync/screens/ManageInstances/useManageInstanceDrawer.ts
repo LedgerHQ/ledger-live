@@ -25,7 +25,7 @@ export type HookResult = {
   onClickInstance: (device: Device) => void;
   handleClose: () => void;
   onClickDelete: (scene: Scene) => void;
-  memberHook: UseQueryResult<TrustchainMember[], Error>;
+  memberHook: UseQueryResult<TrustchainMember[] | undefined, Error>;
   scene: Scene;
   device: Device | null;
   memberCredentials: MemberCredentials | null;

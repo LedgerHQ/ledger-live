@@ -23,7 +23,7 @@ export default function WalletSyncNavigator() {
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
-        name={ScreenName.WalletSyncActivationSettings}
+        name={ScreenName.WalletSyncActivationInit}
         component={WalletSyncActivation}
         options={{
           title: "",

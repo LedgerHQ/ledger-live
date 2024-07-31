@@ -1,7 +1,7 @@
 import { ScreenName } from "~/const";
 
 export type WalletSyncNavigatorStackParamList = {
-  [ScreenName.WalletSyncActivationSettings]: undefined;
+  [ScreenName.WalletSyncActivationInit]: undefined;
 
   [ScreenName.WalletSyncSuccess]: {
     created: boolean;
