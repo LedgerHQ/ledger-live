@@ -1991,7 +1991,8 @@
       "updateBtn": "Update firmware",
       "installUpdate": "Install update",
       "banner": {
-        "warning": "Update Firmware to {{latestFirmware}} is available",
+        "warning": "OS update available",
+        "version": "Version {{latestFirmware}}",
         "cta": "Go to My Ledger",
         "old": {
           "warning": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
