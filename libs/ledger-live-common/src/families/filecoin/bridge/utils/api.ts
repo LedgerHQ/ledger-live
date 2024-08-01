@@ -17,7 +17,6 @@ import {
   FetchERC20TransactionsResponse,
   ERC20Transfer,
   ERC20BalanceResponse,
-  ConvertFilToEthResponse,
 } from "./types";
 
 const getFilecoinURL = (path?: string): string => {

@@ -40,12 +40,16 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
       const validatedContractAddress = validateAddress(subAccount?.token.contractAddress ?? "");
       let finalRecipient = recipientValidation;
       let params: string | undefined = undefined;
+      // used as fallback only for estimation of fees
       let fallbackParams: string = "";
       if (tokenAccountTxn && validatedContractAddress.isValid) {
         finalRecipient = validatedContractAddress;
         // If token transfer, the evm payload is required to estimate fees
         if (isEthereumConvertableAddr(recipientValidation.parsedAddress)) {
-          params = generateTokenTxnParams(recipient, transaction.amount);
+          params = generateTokenTxnParams(
+            recipient,
+            transaction.amount.isZero() ? BigNumber(1) : transaction.amount,
+          );
         } else {
           fallbackParams = generateTokenTxnParams(subAccount.token.contractAddress, BigNumber(1));
         }
