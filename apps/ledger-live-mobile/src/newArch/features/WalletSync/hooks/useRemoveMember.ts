@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
 import { TrustchainMember, Trustchain } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useState } from "react";
-import { TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
@@ -32,6 +31,11 @@ export function useRemoveMember({ device, member }: Props) {
   // eslint-disable-next-line no-console
   const onRetry = useCallback(() => console.log("onRetry"), []);
   // () => dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance })),
+
+  const goToDelete = useCallback(
+    () => navigation.navigate(ScreenName.WalletSyncActivated),
+    [navigation],
+  );
 
   // eslint-disable-next-line no-console
   const onResetFlow = useCallback(() => console.log("onResetFlow"), []);
@@ -71,9 +75,6 @@ export function useRemoveMember({ device, member }: Props) {
         });
       } catch (error) {
         if (error instanceof Error) setError(error);
-        if (error instanceof TrustchainNotAllowed) {
-          //showUnsecured();
-        }
       }
     },
     [device, memberCredentials, sdk, transitionToNextScreen, trustchain],
@@ -93,5 +94,6 @@ export function useRemoveMember({ device, member }: Props) {
     error,
     onRetry,
     userDeviceInteraction,
+    goToDelete,
   };
 }

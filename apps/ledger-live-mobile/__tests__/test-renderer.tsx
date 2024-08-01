@@ -26,6 +26,8 @@ import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/wallet
 import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as NFT_INITIAL_STATE } from "~/reducers/nft";
 import { INITIAL_STATE as MARKET_INITIAL_STATE } from "~/reducers/market";
+import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
+
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
 import QueuedDrawersContextProvider from "~/newArch/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/trustchain/store";
@@ -47,6 +49,7 @@ const initialState = {
   market: MARKET_INITIAL_STATE,
   wallet: WALLET_INITIAL_STATE,
   trustchain: TRUSTCHAIN_INITIAL_STATE,
+  walletSync: WALLETSYNC_INITIAL_STATE,
 };
 
 type ExtraOptions = RenderOptions & {

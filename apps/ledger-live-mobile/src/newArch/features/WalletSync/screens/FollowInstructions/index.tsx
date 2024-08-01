@@ -6,6 +6,8 @@ import FollowInstructions from "../../components/FollowInstructions";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
+import { DeletionError, ErrorReason } from "../../components/ManageInstances/DeletionError";
 
 type Props = {
   isOpen: boolean;
@@ -13,6 +15,7 @@ type Props = {
   device: Device | null;
   userDeviceInteraction: boolean;
   error: Error | null;
+  goToDelete?: () => void;
 };
 
 const GenericFollowInstructionsDrawer = ({
@@ -21,13 +24,22 @@ const GenericFollowInstructionsDrawer = ({
   device,
   error,
   userDeviceInteraction,
+  goToDelete,
 }: Props) => {
   return (
     <>
       <TrackScreen />
       <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
         {error ? (
-          <GenericErrorView error={error} withDescription withHelp hasExportLogButton />
+          error instanceof TrustchainNotAllowed ? (
+            <DeletionError
+              error={ErrorReason.UNSECURED}
+              tryAgain={handleClose}
+              goToDelete={goToDelete}
+            />
+          ) : (
+            <GenericErrorView error={error} withDescription withHelp hasExportLogButton />
+          )
         ) : userDeviceInteraction && device ? (
           <FollowInstructions device={device} />
         ) : (
