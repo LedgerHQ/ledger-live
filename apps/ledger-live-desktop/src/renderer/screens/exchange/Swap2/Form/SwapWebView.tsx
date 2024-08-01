@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/live-common/account/helpers";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { SubAccount } from "@ledgerhq/types-live";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 import { SwapOperation } from "@ledgerhq/types-live/lib/swap";
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -371,7 +371,7 @@ const SwapWebView = ({
         }>(resolve => {
           setDrawer(FeesDrawerLiveApp, {
             setTransaction,
-            mainAccount: fromAccount,
+            mainAccount: fromAccount as Account,
             parentAccount: fromParentAccount,
             status: status,
             provider: undefined,
