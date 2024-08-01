@@ -6,6 +6,11 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
+import {
+  useWalletSyncAnalytics,
+  AnalyticsButton,
+  AnalyticsPage,
+} from "../../hooks/useWalletSyncAnalytics";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
@@ -18,8 +23,10 @@ type Props = {
 const ChooseSyncMethod = ({ onScanMethodPress }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProps["navigation"]>();
+  const { onClickTrack } = useWalletSyncAnalytics();
 
   const onConnectDeviceMethodPress = () => {
+    onClickTrack({ button: AnalyticsButton.UseYourLedger, page: AnalyticsPage.ChooseSyncMethod });
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });

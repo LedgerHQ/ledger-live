@@ -4,6 +4,11 @@ import { TrackScreen } from "~/analytics";
 import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "../../screens/Synchronize/QrCodeMethod";
 import { Steps } from "../../types/Activation";
+import {
+  AnalyticsButton,
+  AnalyticsPage,
+  useWalletSyncAnalytics,
+} from "../../hooks/useWalletSyncAnalytics";
 
 type Props = {
   startingStep: Steps;
@@ -13,13 +18,21 @@ type Props = {
 
 const ActivationFlow = ({ startingStep, onStepChange, onGoBack }: Props) => {
   const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
+  const { onClickTrack } = useWalletSyncAnalytics();
 
   useEffect(() => {
     if (onStepChange) onStepChange(currentStep);
   }, [currentStep, onStepChange]);
 
   const navigateToChooseSyncMethod = () => setCurrentStep(Steps.ChooseSyncMethod);
-  const navigateToQrCodeMethod = () => setCurrentStep(Steps.QrCodeMethod);
+
+  const navigateToQrCodeMethod = () => {
+    onClickTrack({
+      button: AnalyticsButton.ScanQRCode,
+      page: AnalyticsPage.ChooseSyncMethod,
+    });
+    setCurrentStep(Steps.QrCodeMethod);
+  };
 
   const getPreviousStep = useCallback(
     (step: Steps): Steps => {
@@ -39,21 +52,30 @@ const ActivationFlow = ({ startingStep, onStepChange, onGoBack }: Props) => {
     if (onGoBack) onGoBack(() => setCurrentStep(prevStep => getPreviousStep(prevStep)));
   }, [getPreviousStep, onGoBack]);
 
-  switch (currentStep) {
-    case Steps.Activation:
-      return <Activation onSyncMethodPress={navigateToChooseSyncMethod} />;
-    case Steps.ChooseSyncMethod:
-      return (
-        <>
-          <TrackScreen category="Choose sync method" type="drawer" />
-          <ChooseSyncMethod onScanMethodPress={navigateToQrCodeMethod} />
-        </>
-      );
-    case Steps.QrCodeMethod:
-      return <QrCodeMethod />;
-    default:
-      return null;
-  }
+  const getScene = () => {
+    switch (currentStep) {
+      case Steps.Activation:
+        return (
+          <>
+            <TrackScreen category={AnalyticsPage.ActivateWalletSync} />
+            <Activation onSyncMethodPress={navigateToChooseSyncMethod} />
+          </>
+        );
+      case Steps.ChooseSyncMethod:
+        return (
+          <>
+            <TrackScreen category={AnalyticsPage.ChooseSyncMethod} />
+            <ChooseSyncMethod onScanMethodPress={navigateToQrCodeMethod} />
+          </>
+        );
+      case Steps.QrCodeMethod:
+        return <QrCodeMethod />;
+      default:
+        return null;
+    }
+  };
+
+  return getScene();
 };
 
 export default ActivationFlow;

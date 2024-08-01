@@ -106,13 +106,12 @@ function AccessExistingWallet() {
               ]),
         ]}
       />
-      {isDrawerVisible && (
-        <ActivationDrawer
-          startingStep={Steps.Activation}
-          isOpen={isDrawerVisible}
-          handleClose={closeDrawer}
-        />
-      )}
+
+      <ActivationDrawer
+        startingStep={Steps.Activation}
+        isOpen={isDrawerVisible}
+        handleClose={closeDrawer}
+      />
     </OnboardingView>
   );
 }

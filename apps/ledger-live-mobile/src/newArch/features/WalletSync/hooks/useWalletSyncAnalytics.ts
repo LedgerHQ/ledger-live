@@ -5,6 +5,7 @@ export enum AnalyticsPage {
   ChooseSyncMethod = "Choose sync method",
   BackupCreationSuccess = "Backup creation success",
   ScanQRCode = "Scan QR code",
+  ShowQRCode = "Show QR code",
   SyncWithQrCode = "Sync with QR code",
   PinCode = "Pin code",
   PinCodesDoNotMatch = "Pin codes don't match",
@@ -53,7 +54,7 @@ type OnClickTrack = {
 };
 
 export function useWalletSyncAnalytics() {
-  const onClickTrack = ({ button, page, flow }: OnClickTrack) => {
+  const onClickTrack = ({ button, page, flow = AnalyticsFlow.WalletSync }: OnClickTrack) => {
     track("button_clicked", { button, page, flow });
   };
 

@@ -3,30 +3,51 @@ import { Flex, TabSelector } from "@ledgerhq/native-ui";
 import QrCode from "LLM/features/WalletSync/components/Synchronize/QrCode";
 import { Options, OptionsType } from "LLM/features/WalletSync/types/Activation";
 import { useTranslation } from "react-i18next";
+import {
+  useWalletSyncAnalytics,
+  AnalyticsPage,
+  AnalyticsButton,
+} from "../../hooks/useWalletSyncAnalytics";
+import { TrackScreen } from "~/analytics";
 
 const QrCodeMethod = () => {
   const [selectedOption, setSelectedOption] = useState<OptionsType>(Options.SCAN);
+  const { onClickTrack } = useWalletSyncAnalytics();
   const { t } = useTranslation();
 
   const handleSelectOption = (option: OptionsType) => {
     setSelectedOption(option);
+    const button =
+      option === Options.SCAN ? AnalyticsButton.ScanQRCode : AnalyticsButton.ShowQRCode;
+    onClickTrack({
+      button,
+      page: AnalyticsPage.ScanQRCode,
+    });
   };
 
   const renderSwitch = () => {
     switch (selectedOption) {
       case Options.SCAN:
         return (
-          <Flex
-            flexDirection={"column"}
-            rowGap={24}
-            alignItems={"center"}
-            width={100}
-            height={100}
-            bg={"red"}
-          />
+          <>
+            <TrackScreen category={AnalyticsPage.ScanQRCode} />
+            <Flex
+              flexDirection={"column"}
+              rowGap={24}
+              alignItems={"center"}
+              width={100}
+              height={100}
+              bg={"red"}
+            />
+          </>
         );
       case Options.SHOW_QR:
-        return <QrCode qrCodeValue="ledger.com" />;
+        return (
+          <>
+            <TrackScreen category={AnalyticsPage.ShowQRCode} />
+            <QrCode qrCodeValue="ledger.com" />
+          </>
+        );
     }
   };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import useAddAccountViewModel from "./useAddAccountViewModel";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -26,7 +26,7 @@ function View({
   currency,
   onCloseAddAccountDrawer,
 }: ViewProps) {
-  const [currentStep, setCurrentStep] = React.useState<Steps>(StartingStep);
+  const [currentStep, setCurrentStep] = useState<Steps>(StartingStep);
   const { height } = useWindowDimensions();
   const maxDrawerHeight = height - 180;
 

@@ -47,13 +47,12 @@ const WalletSyncRow = () => {
         onPress={navigateToWalletSyncActivationScreen}
         testID="wallet-sync-button"
       />
-      {isDrawerVisible && (
-        <ActivationDrawer
-          startingStep={Steps.Activation}
-          isOpen={isDrawerVisible}
-          handleClose={closeDrawer}
-        />
-      )}
+
+      <ActivationDrawer
+        startingStep={Steps.Activation}
+        isOpen={isDrawerVisible}
+        handleClose={closeDrawer}
+      />
     </>
   );
 };

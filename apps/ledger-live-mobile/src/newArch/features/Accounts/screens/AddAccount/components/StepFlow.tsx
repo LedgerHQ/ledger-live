@@ -5,6 +5,7 @@ import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMeth
 import { TrackScreen } from "~/analytics";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Steps } from "../../../types/enum/addAccount";
+import { AnalyticsPage } from "LLM/features/WalletSync/hooks/useWalletSyncAnalytics";
 
 type Props = {
   startingStep: Steps;
@@ -48,30 +49,34 @@ const StepFlow = ({
     if (onGoBack) onGoBack(() => setCurrentStep(prevStep => getPreviousStep(prevStep)));
   }, [getPreviousStep, onGoBack]);
 
-  switch (currentStep) {
-    case Steps.AddAccountMethod:
-      return (
-        <>
-          <TrackScreen category="Add/Import accounts" type="drawer" />
-          <SelectAddAccountMethod
-            doesNotHaveAccount={doesNotHaveAccount}
-            currency={currency}
-            setWalletSyncDrawerVisible={navigateToChooseSyncMethod}
-          />
-        </>
-      );
-    case Steps.ChooseSyncMethod:
-      return (
-        <>
-          <TrackScreen category="Choose sync method" type="drawer" />
-          <ChooseSyncMethod onScanMethodPress={navigateToQrCodeMethod} />
-        </>
-      );
-    case Steps.QrCodeMethod:
-      return <QrCodeMethod />;
-    default:
-      return null;
-  }
+  const getScene = () => {
+    switch (currentStep) {
+      case Steps.AddAccountMethod:
+        return (
+          <>
+            <TrackScreen category="Add/Import accounts" type="drawer" />
+            <SelectAddAccountMethod
+              doesNotHaveAccount={doesNotHaveAccount}
+              currency={currency}
+              setWalletSyncDrawerVisible={navigateToChooseSyncMethod}
+            />
+          </>
+        );
+      case Steps.ChooseSyncMethod:
+        return (
+          <>
+            <TrackScreen category={AnalyticsPage.ChooseSyncMethod} type="drawer" />
+            <ChooseSyncMethod onScanMethodPress={navigateToQrCodeMethod} />
+          </>
+        );
+      case Steps.QrCodeMethod:
+        return <QrCodeMethod />;
+      default:
+        return null;
+    }
+  };
+
+  return getScene();
 };
 
 export default StepFlow;

@@ -28,12 +28,19 @@ const ActivationDrawer = ({ isOpen, startingStep, handleClose }: Props) => {
 
   const canGoBack = currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation;
 
+  const resetStep = () => setCurrentStep(startingStep);
+
+  const onClose = () => {
+    resetStep;
+    handleClose();
+  };
+
   return (
     <>
       <TrackScreen />
       <QueuedDrawer
         isRequestingToBeOpened={isOpen}
-        onClose={handleClose}
+        onClose={onClose}
         CustomHeader={hasCustomHeader ? CustomDrawerHeader : undefined}
         hasBackButton={canGoBack}
         onBack={() => goBackCallback()}

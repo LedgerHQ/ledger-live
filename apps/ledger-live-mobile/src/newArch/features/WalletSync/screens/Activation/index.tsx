@@ -22,13 +22,12 @@ function View() {
       }}
     >
       <Activation onSyncMethodPress={onOpenDrawer} />
-      {showDrawer && (
-        <ActivationDrawer
-          startingStep={Steps.ChooseSyncMethod}
-          isOpen={showDrawer}
-          handleClose={onCloseDrawer}
-        />
-      )}
+
+      <ActivationDrawer
+        startingStep={Steps.ChooseSyncMethod}
+        isOpen={showDrawer}
+        handleClose={onCloseDrawer}
+      />
     </SafeAreaView>
   );
 }
