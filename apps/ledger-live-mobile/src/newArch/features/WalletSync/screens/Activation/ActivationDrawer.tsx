@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
 import { useWindowDimensions } from "react-native";
