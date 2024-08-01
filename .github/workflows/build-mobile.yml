@@ -111,6 +111,7 @@ jobs:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          skip-pnpm-cache: "true"
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: bundle ios and android js

@@ -60,6 +60,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          skip-pnpm-cache: "true"
       - name: Cache LLM pods
         uses: actions/cache@v3
         with:
