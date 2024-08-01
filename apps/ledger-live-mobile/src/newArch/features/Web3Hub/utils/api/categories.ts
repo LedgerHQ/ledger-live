@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network/network";
+import { URL_ORIGIN } from "LLM/features/Web3Hub/constants";
 import { mocks } from "./mocks/categories";
 
 const MOCK_DELAY = 500;
@@ -9,8 +10,10 @@ export const fetchCategoriesMock = async () => {
 };
 
 export const fetchCategories = async () => {
+  const url = new URL(`${URL_ORIGIN}/api/v2/categories`);
+
   const res = await network<{ categories: string[] }>({
-    url: "https://manifest-api-git-feat-v2-search-ledgerhq.vercel.app/api/v2/categories",
+    url: url.toString(),
   });
   return res.data.categories;
 };
