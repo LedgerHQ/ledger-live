@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import SelectAddAccountMethod from "./components/SelectAddAccountMethod";
 import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
@@ -11,9 +11,16 @@ type Props = {
   currency?: CryptoCurrency | TokenCurrency | null;
   doesNotHaveAccount?: boolean;
   onStepChange?: (step: Steps) => void;
+  onGoBack?: (callback: () => void) => void;
 };
 
-const StepFlow = ({ startingStep, doesNotHaveAccount, currency, onStepChange }: Props) => {
+const StepFlow = ({
+  startingStep,
+  doesNotHaveAccount,
+  currency,
+  onGoBack,
+  onStepChange,
+}: Props) => {
   const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
 
   useEffect(() => {
@@ -22,6 +29,24 @@ const StepFlow = ({ startingStep, doesNotHaveAccount, currency, onStepChange }: 
 
   const navigateToChooseSyncMethod = () => setCurrentStep(Steps.ChooseSyncMethod);
   const navigateToQrCodeMethod = () => setCurrentStep(Steps.QrCodeMethod);
+
+  const getPreviousStep = useCallback(
+    (step: Steps): Steps => {
+      switch (step) {
+        case Steps.QrCodeMethod:
+          return Steps.ChooseSyncMethod;
+        case Steps.ChooseSyncMethod:
+          return Steps.AddAccountMethod;
+        default:
+          return startingStep;
+      }
+    },
+    [startingStep],
+  );
+
+  useEffect(() => {
+    if (onGoBack) onGoBack(() => setCurrentStep(prevStep => getPreviousStep(prevStep)));
+  }, [getPreviousStep, onGoBack]);
 
   switch (currentStep) {
     case Steps.AddAccountMethod:
