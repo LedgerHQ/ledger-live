@@ -1,5 +1,15 @@
 # @ledgerhq/coin-polkadot
 
+## 1.1.2-nightly.1
+
+### Patch Changes
+
+- [#7212](https://github.com/LedgerHQ/ledger-live/pull/7212) [`c540b7a`](https://github.com/LedgerHQ/ledger-live/commit/c540b7a4450e52c0d2ac00afd8f081c9fa650ec4) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix polkadot active nomination
+
+- Updated dependencies [[`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f)]:
+  - @ledgerhq/types-live@6.50.0-nightly.2
+  - @ledgerhq/coin-framework@0.17.0-nightly.1
+
 ## 1.1.2-nightly.0
 
 ### Patch Changes

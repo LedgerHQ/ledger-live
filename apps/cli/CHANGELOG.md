@@ -1,5 +1,18 @@
 # @ledgerhq/live-cli
 
+## 24.5.0-nightly.3
+
+### Patch Changes
+
+- [#7453](https://github.com/LedgerHQ/ledger-live/pull/7453) [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove listAppsV2minor1 feature flag and all code associated to list apps v1
+
+- Updated dependencies [[`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f)]:
+  - @ledgerhq/live-common@34.7.0-nightly.3
+  - @ledgerhq/coin-framework@0.17.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.1
+  - @ledgerhq/live-countervalues@0.2.4-nightly.1
+  - @ledgerhq/live-wallet@0.4.2-nightly.2
+
 ## 24.5.0-nightly.2
 
 ### Patch Changes

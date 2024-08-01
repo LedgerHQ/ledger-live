@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.3
+
+### Minor Changes
+
+- [#7475](https://github.com/LedgerHQ/ledger-live/pull/7475) [`123dea0`](https://github.com/LedgerHQ/ledger-live/commit/123dea0d88f2ec1482b92178d1a71fdc77e47afa) Thanks [@KVNLS](https://github.com/KVNLS)! - Pull Feature Flags every hour
+
+### Patch Changes
+
+- [#7469](https://github.com/LedgerHQ/ledger-live/pull/7469) [`c3ead16`](https://github.com/LedgerHQ/ledger-live/commit/c3ead16ba03e139658c47e7576f9dae5c8f10447) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - fix capitalise network fees text
+
+- [#7453](https://github.com/LedgerHQ/ledger-live/pull/7453) [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove listAppsV2minor1 feature flag and all code associated to list apps v1
+
+- Updated dependencies [[`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f)]:
+  - @ledgerhq/types-live@6.50.0-nightly.2
+  - @ledgerhq/live-common@34.7.0-nightly.3
+  - @ledgerhq/coin-framework@0.17.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.1
+  - @ledgerhq/coin-evm@2.1.4-nightly.1
+  - @ledgerhq/domain-service@1.2.3-nightly.2
+  - @ledgerhq/live-countervalues@0.2.4-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.1
+  - @ledgerhq/live-nft@0.4.4-nightly.1
+  - @ledgerhq/live-nft-react@0.4.4-nightly.1
+  - @ledgerhq/live-wallet@0.4.2-nightly.2
+
 ## 2.85.0-nightly.2
 
 ### Patch Changes

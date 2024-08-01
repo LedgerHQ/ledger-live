@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.50.0-nightly.2
+
+### Patch Changes
+
+- [#7453](https://github.com/LedgerHQ/ledger-live/pull/7453) [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove listAppsV2minor1 feature flag and all code associated to list apps v1
+
 ## 6.50.0-nightly.1
 
 ### Minor Changes
