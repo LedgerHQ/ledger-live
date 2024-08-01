@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import SelectAddAccountMethod from "./components/SelectAddAccountMethod";
+import SelectAddAccountMethod from "./SelectAddAccountMethod";
 import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
 import { TrackScreen } from "~/analytics";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Steps } from "../../types/enum/addAccount";
+import { Steps } from "../../../types/enum/addAccount";
 
 type Props = {
   startingStep: Steps;

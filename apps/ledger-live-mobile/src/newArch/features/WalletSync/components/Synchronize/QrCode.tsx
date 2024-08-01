@@ -24,7 +24,13 @@ const QrCode = ({ qrCodeValue }: Props) => {
   const QRCodeSize = Math.min(QRSize - 15.36, maxQRCodeSize);
 
   const steps = [
-    { description: t("walletSync.synchronize.qrCode.show.explanation.steps.step1") },
+    {
+      description: (
+        <Text variant="body" flex={1} ml={12} fontSize={14} color={colors.opacityDefault.c70}>
+          {t("walletSync.synchronize.qrCode.show.explanation.steps.step1")}
+        </Text>
+      ),
+    },
     {
       description: (
         <Text variant="body" flex={1} ml={12} fontSize={14} color={colors.opacityDefault.c70}>
@@ -38,7 +44,13 @@ const QrCode = ({ qrCodeValue }: Props) => {
         </Text>
       ),
     },
-    { description: t("walletSync.synchronize.qrCode.show.explanation.steps.step3") },
+    {
+      description: (
+        <Text variant="body" flex={1} ml={12} fontSize={14} color={colors.opacityDefault.c70}>
+          {t("walletSync.synchronize.qrCode.show.explanation.steps.step3")}
+        </Text>
+      ),
+    },
   ];
 
   return (
@@ -53,7 +65,12 @@ const QrCode = ({ qrCodeValue }: Props) => {
         background={"#fff"}
         justifyContent={"center"}
       >
-        <QRCode value={qrCodeValue} logo={require("./logo.png")} logoSize={65} size={QRCodeSize} />
+        <QRCode
+          value={qrCodeValue}
+          logo={require("~/images/bigSquareLogo.png")}
+          logoSize={65}
+          size={QRCodeSize}
+        />
       </Flex>
       <Box
         px={16}

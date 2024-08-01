@@ -1,67 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
-import Activation from "../../components/Activation";
 import { TrackScreen } from "~/analytics";
-import ChooseSyncMethod from "../Synchronize/ChooseMethod";
-import QrCodeMethod from "../Synchronize/QrCodeMethod";
-import DrawerHeader from "../../components/Synchronize/DrawerHeader";
 import { useWindowDimensions } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
+import ActivationFlow from "../../components/Activation/ActivationFlow";
+import { Steps } from "../../types/Activation";
+import DrawerHeader from "../../components/Synchronize/DrawerHeader";
 
 type Props = {
   isOpen: boolean;
-  reopenDrawer: () => void;
+  startingStep: Steps;
   handleClose: () => void;
 };
 
-const ActivationDrawer = ({ isOpen, handleClose, reopenDrawer }: Props) => {
-  const [isSyncMethodDrawerOpen, setIsSyncMethodDrawerOpen] = React.useState(false);
-  const [isQrCodeDrawerOpen, setIsQrCodeDrawerOpen] = React.useState(false);
+const ActivationDrawer = ({ isOpen, startingStep, handleClose }: Props) => {
+  const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
   const { height } = useWindowDimensions();
   const maxDrawerHeight = height - 180;
 
-  const onPressCloseDrawer = () => {
-    setIsSyncMethodDrawerOpen(false);
-    reopenDrawer();
-  };
+  const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
 
-  const openSyncMethodDrawer = () => {
-    setIsSyncMethodDrawerOpen(true);
-    handleClose();
-  };
+  const handleStepChange = (step: Steps) => setCurrentStep(step);
 
-  const onCloseQrCodeDrawer = () => {
-    setIsQrCodeDrawerOpen(false);
-    setIsSyncMethodDrawerOpen(true);
-  };
+  let goBackCallback: () => void;
 
-  const onScanMethodPress = () => {
-    setIsSyncMethodDrawerOpen(false);
-    setIsQrCodeDrawerOpen(true);
-  };
+  const hasCustomHeader = currentStep === Steps.QrCodeMethod && startingStep === Steps.Activation;
 
-  const CustomDrawerHeader = () => {
-    return <DrawerHeader onClose={onCloseQrCodeDrawer} />;
-  };
+  const canGoBack = currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation;
 
   return (
     <>
       <TrackScreen />
-      <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
-        <Activation isInsideDrawer openSyncMethodDrawer={openSyncMethodDrawer} />
-      </QueuedDrawer>
-
-      <QueuedDrawer isRequestingToBeOpened={isSyncMethodDrawerOpen} onClose={onPressCloseDrawer}>
-        <ChooseSyncMethod onScanMethodPress={onScanMethodPress} />
-      </QueuedDrawer>
-
       <QueuedDrawer
-        isRequestingToBeOpened={isQrCodeDrawerOpen}
-        onClose={onCloseQrCodeDrawer}
-        CustomHeader={CustomDrawerHeader}
+        isRequestingToBeOpened={isOpen}
+        onClose={handleClose}
+        CustomHeader={hasCustomHeader ? CustomDrawerHeader : undefined}
+        hasBackButton={canGoBack}
+        onBack={() => goBackCallback()}
       >
         <Flex maxHeight={maxDrawerHeight}>
-          <QrCodeMethod />
+          <ActivationFlow
+            startingStep={currentStep}
+            onStepChange={handleStepChange}
+            onGoBack={callback => (goBackCallback = callback)}
+          />
         </Flex>
       </QueuedDrawer>
     </>

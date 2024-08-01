@@ -5,7 +5,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import DrawerHeader from "LLM/features/WalletSync/components/Synchronize/DrawerHeader";
 import { Flex } from "@ledgerhq/native-ui";
 import { useWindowDimensions } from "react-native";
-import StepFlow from "./StepFlow";
+import StepFlow from "./components/StepFlow";
 import { Steps } from "../../types/enum/addAccount";
 
 type ViewProps = ReturnType<typeof useAddAccountViewModel> & AddAccountProps;
@@ -42,9 +42,7 @@ function View({
       onClose={onCloseAddAccountDrawer}
       CustomHeader={currentStep === Steps.QrCodeMethod ? CustomDrawerHeader : undefined}
       hasBackButton={currentStep === Steps.ChooseSyncMethod}
-      onBack={() => {
-        if (goBackCallback) goBackCallback();
-      }}
+      onBack={() => goBackCallback()}
     >
       <Flex maxHeight={maxDrawerHeight}>
         <StepFlow
@@ -52,9 +50,7 @@ function View({
           doesNotHaveAccount={doesNotHaveAccount}
           currency={currency}
           onStepChange={handleStepChange}
-          onGoBack={callback => {
-            goBackCallback = callback;
-          }}
+          onGoBack={callback => (goBackCallback = callback)}
         />
       </Flex>
     </QueuedDrawer>
