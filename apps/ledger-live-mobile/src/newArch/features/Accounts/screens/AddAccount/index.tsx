@@ -34,11 +34,17 @@ function View({
 
   const handleStepChange = (step: Steps) => setCurrentStep(step);
 
+  let goBackCallback: () => void;
+
   return (
     <QueuedDrawer
       isRequestingToBeOpened={isAddAccountDrawerVisible}
       onClose={onCloseAddAccountDrawer}
       CustomHeader={currentStep === Steps.QrCodeMethod ? CustomDrawerHeader : undefined}
+      hasBackButton={currentStep === Steps.ChooseSyncMethod}
+      onBack={() => {
+        if (goBackCallback) goBackCallback();
+      }}
     >
       <Flex maxHeight={maxDrawerHeight}>
         <StepFlow
@@ -46,6 +52,9 @@ function View({
           doesNotHaveAccount={doesNotHaveAccount}
           currency={currency}
           onStepChange={handleStepChange}
+          onGoBack={callback => {
+            goBackCallback = callback;
+          }}
         />
       </Flex>
     </QueuedDrawer>
