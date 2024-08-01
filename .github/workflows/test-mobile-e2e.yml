@@ -54,7 +54,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          skip-pod-cache: "false"
+          skip-pod-cache: "true"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
