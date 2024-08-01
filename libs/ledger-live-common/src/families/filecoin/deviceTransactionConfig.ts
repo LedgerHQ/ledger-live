@@ -61,7 +61,7 @@ function getDeviceTransactionConfig(input: {
     fields.push({
       type: "filecoin.recipient",
       label: "To",
-      value: input.transaction.recipient,
+      value: expectedToFieldForTokenTransfer(input.transaction.recipient),
     });
   } else {
     const recipient = input.transaction.recipient;
