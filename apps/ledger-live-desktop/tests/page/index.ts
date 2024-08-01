@@ -8,9 +8,11 @@ import { Modal } from "../component/modal.component";
 import { ReceiveModal } from "../page/modal/receive.modal";
 import { SpeculosPage } from "tests/page/speculos.page";
 import { SendModal } from "tests/page/modal/send.modal";
+import { Drawer } from "tests/page/drawer/drawer";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
+  public drawer = new Drawer(this.page);
   public accounts = new AccountsPage(this.page);
   public portfolio = new PortfolioPage(this.page);
   public addAccount = new AddAccountModal(this.page);

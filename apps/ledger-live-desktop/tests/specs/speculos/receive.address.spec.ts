@@ -22,13 +22,13 @@ for (const [i, account] of accounts.entries()) {
   test.describe("Receive", () => {
     test.use({
       userdata: "speculos-tests-app",
-      testName: `receiveSpeculos_${account.currency.uiName}`,
+      testName: `receiveSpeculos_${account.currency.name}`,
       speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
       speculosOffset: i,
     });
 
     test(
-      `[${account.currency.uiName}] Receive`,
+      `[${account.currency.name}] Receive`,
       {
         annotation: {
           type: "TMS",

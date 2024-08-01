@@ -98,7 +98,6 @@ export const DEFAULT_FEATURES: Features = {
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
-  listAppsV2minor1: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   newsfeedPage: initFeature(),
