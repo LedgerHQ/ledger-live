@@ -50,7 +50,7 @@ for (const [i, transaction] of transactionE2E.entries()) {
     });
 
     test(
-      `Send [${transaction.accountToDebit.accountName}] to [${transaction.accountToCredit.accountName}]`,
+      `Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`,
       {
         annotation: {
           type: "TMS",
@@ -101,7 +101,7 @@ test.describe("Send token (subAccount) - invalid input", () => {
   });
 
   test(
-    `Send [${tokenTransactionInvalid.transaction.accountToCredit.accountName}] to [${tokenTransactionInvalid.transaction.accountToCredit.accountName}] - invalid input`,
+    `Send from ${tokenTransactionInvalid.transaction.accountToDebit.accountName} to ${tokenTransactionInvalid.transaction.accountToCredit.accountName} - invalid input`,
     {
       annotation: {
         type: "TMS",
@@ -141,7 +141,7 @@ test.describe("Send token (subAccount) - valid input", () => {
   });
 
   test(
-    `Send [${tokenTransactionValid.accountToCredit.accountName}] to [${tokenTransactionValid.accountToCredit.accountName}] - valid input`,
+    `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid input`,
     {
       annotation: {
         type: "TMS",
@@ -177,7 +177,7 @@ test.describe("Check invalid address input error", () => {
   });
 
   test(
-    `Check [${transactionInvalidAddress.accountToDebit.currency}] invalid address input error`,
+    `Check invalid address input error for ${transactionInvalidAddress.accountToDebit.currency.name}`,
     {
       annotation: {
         type: "TMS",
@@ -208,7 +208,7 @@ for (const [i, transaction] of transactionsInputsInvalid.entries()) {
     });
 
     test(
-      `Check [${transaction.expectedErrorMessage}] for [${transaction.transaction.accountToDebit.currency.name}] - invalid amount input error - ${i} `,
+      `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount input error - ${i} `,
       {
         annotation: {
           type: "TMS",
@@ -249,7 +249,7 @@ test.describe("Verify send max user flow", () => {
   });
 
   test(
-    `Check Valid amount input [${transactionInputValid.amount}] for send tests`,
+    `Check Valid amount input (${transactionInputValid.amount})`,
     {
       annotation: {
         type: "TMS",
