@@ -6774,6 +6774,10 @@
         },
         "scan": {
           "title": "Scan"
+        },
+        "pinCode": {
+          "title": "Enter your code",
+          "desc": "Type the code displayed on the Ledger Live you want to sync with."
         }
       }
     }
