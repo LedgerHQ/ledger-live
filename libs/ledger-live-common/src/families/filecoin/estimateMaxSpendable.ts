@@ -74,7 +74,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   // If token transfer, the evm payload is required to estimate fees
   const params =
     tokenAccountTxn && transaction
-      ? await generateTokenTxnParams(contractAddress, transaction.amount)
+      ? generateTokenTxnParams(contractAddress, transaction.amount)
       : undefined;
 
   const result = await fetchEstimatedFees({

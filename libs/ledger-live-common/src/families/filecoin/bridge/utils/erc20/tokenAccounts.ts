@@ -166,7 +166,7 @@ export const abiEncodeTransferParams = (recipient: string, amount: string) => {
   return data;
 };
 
-export const generateTokenTxnParams = async (recipient: string, amount: BigNumber) => {
+export const generateTokenTxnParams = (recipient: string, amount: BigNumber) => {
   log("debug", "generateTokenTxnParams", { recipient, amount: amount.toString() });
 
   if (!recipient) {

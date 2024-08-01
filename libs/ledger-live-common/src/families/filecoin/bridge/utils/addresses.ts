@@ -84,7 +84,7 @@ export const convertAddressFilToEth = (addr: string): string => {
   if (isEthereumConvertableAddr(parsed)) {
     return toEthAddress(parsed);
   }
-  throw new Error("address type not supported");
+  throw new Error("address is not convertible to ethereum address");
 };
 
 export const convertAddressEthToFil = (addr: string): string => {
