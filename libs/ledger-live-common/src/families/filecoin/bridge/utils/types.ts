@@ -90,6 +90,7 @@ export interface ERC20Transfer {
   id: string;
   height: number;
   type: string;
+  status: string;
   to: string;
   from: string;
   amount: string;

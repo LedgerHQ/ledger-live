@@ -2,7 +2,7 @@ import cbor from "@zondax/cbor";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { fetchERC20TokenBalance, fetchERC20Transactions } from "../api";
 import invariant from "invariant";
-import { ERC20Transfer } from "../types";
+import { ERC20Transfer, TxStatus } from "../types";
 import { emptyHistoryCache, encodeTokenAccountId } from "../../../../../account";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { log } from "@ledgerhq/logs";
@@ -23,7 +23,7 @@ export const erc20TxnToOperation = (
   unit: Unit,
 ): Operation[] => {
   try {
-    const { to, from, timestamp, tx_hash, tx_cid, amount, height } = tx;
+    const { to, from, timestamp, tx_hash, tx_cid, amount, height, status } = tx;
     const value = valueFromUnit(new BigNumber(amount), unit);
 
     const isSending = address.toLowerCase() === from.toLowerCase();
@@ -33,6 +33,7 @@ export const erc20TxnToOperation = (
 
     const date = new Date(timestamp * 1000);
     const hash = tx_cid ?? tx_hash;
+    const hasFailed = status !== TxStatus.Ok;
 
     const ops: Operation[] = [];
     if (isSending) {
@@ -48,6 +49,7 @@ export const erc20TxnToOperation = (
         senders: [from],
         recipients: [to],
         date,
+        hasFailed,
         extra: {},
       });
     }
@@ -65,6 +67,7 @@ export const erc20TxnToOperation = (
         senders: [from],
         recipients: [to],
         date,
+        hasFailed,
         extra: {},
       });
     }
