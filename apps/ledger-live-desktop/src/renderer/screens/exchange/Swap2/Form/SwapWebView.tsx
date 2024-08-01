@@ -47,6 +47,7 @@ import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { captureException } from "~/sentry/renderer";
 import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
+import { useTranslation } from "react-i18next";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -116,6 +117,7 @@ const SwapWebView = ({
     },
   } = useTheme();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
   const accounts = useSelector(flattenAccountsSelector);
@@ -369,40 +371,50 @@ const SwapWebView = ({
           warnings: object;
           customFeeConfig: object;
         }>(resolve => {
-          setDrawer(FeesDrawerLiveApp, {
-            setTransaction,
-            mainAccount: fromAccount,
-            parentAccount: fromParentAccount,
-            status: status,
-            provider: undefined,
-            disableSlowStrategy: true,
-            transaction: preparedTransaction,
-            onRequestClose: (save: boolean) => {
-              setDrawer(undefined);
-              if (!save) {
-                resolve({
-                  feesStrategy: params.feeStrategy,
-                  estimatedFees: convertToNonAtomicUnit({
-                    amount: statusInit.estimatedFees,
-                    account: mainAccount,
-                  }),
-                  errors: statusInit.errors,
-                  warnings: statusInit.warnings,
-                  customFeeConfig,
-                });
-              }
+          const performClose = (save: boolean) => {
+            setDrawer(undefined);
+            if (!save) {
               resolve({
-                feesStrategy: finalTx.feesStrategy,
+                feesStrategy: params.feeStrategy,
                 estimatedFees: convertToNonAtomicUnit({
-                  amount: status.estimatedFees,
+                  amount: statusInit.estimatedFees,
                   account: mainAccount,
                 }),
-                errors: status.errors,
-                warnings: status.warnings,
+                errors: statusInit.errors,
+                warnings: statusInit.warnings,
                 customFeeConfig,
               });
+            }
+            resolve({
+              feesStrategy: finalTx.feesStrategy,
+              estimatedFees: convertToNonAtomicUnit({
+                amount: status.estimatedFees,
+                account: mainAccount,
+              }),
+              errors: status.errors,
+              warnings: status.warnings,
+              customFeeConfig,
+            });
+          };
+
+          setDrawer(
+            FeesDrawerLiveApp,
+            {
+              setTransaction,
+              mainAccount: fromAccount,
+              parentAccount: fromParentAccount,
+              status: status,
+              provider: undefined,
+              disableSlowStrategy: true,
+              transaction: preparedTransaction,
+              onRequestClose: (save: boolean) => performClose(save),
             },
-          });
+            {
+              title: t("swap2.form.details.label.fees"),
+              preventBackdropClick: true,
+              onRequestClose: () => performClose(false),
+            },
+          );
         });
       },
     };
