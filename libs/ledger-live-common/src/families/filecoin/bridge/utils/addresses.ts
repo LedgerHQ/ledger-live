@@ -34,8 +34,6 @@ export const validateAddress = (input: string): ValidateAddressResult => {
   }
 
   try {
-    // allow non 0x starting eth addresses as well
-    if (!input.startsWith("0x")) input = "0x" + input;
     const parsedAddress = fromEthAddress(input, "mainnet");
     return { isValid: true, parsedAddress };
   } catch (error) {
@@ -64,7 +62,6 @@ export const isRecipientValidForTokenTransfer = (addr: string): boolean => {
 
 export const getEquivalentAddress = (addr: string): string => {
   if (isEthAddress(addr)) {
-    if (!addr.startsWith("0x")) addr = "0x" + addr;
     return fromEthAddress(addr, "mainnet").toString();
   } else {
     const parsed = fromString(addr);
@@ -92,6 +89,5 @@ export const convertAddressEthToFil = (addr: string): string => {
     return addr;
   }
 
-  if (!addr.startsWith("0x")) addr = "0x" + addr;
   return fromEthAddress(addr, "mainnet").toString();
 };
