@@ -1,31 +1,31 @@
 import { from } from "rxjs";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
-import { listApps } from "./v2";
-import ManagerAPI from "../../manager/api";
-import { aDeviceInfoBuilder } from "../../mock/fixtures/aDeviceInfo";
+import { listApps } from "./listApps";
+import ManagerAPI from "../manager/api";
+import { aDeviceInfoBuilder } from "../mock/fixtures/aDeviceInfo";
 import {
   ManagerApiRepository,
   StubManagerApiRepository,
-} from "../../device/factories/HttpManagerApiRepositoryFactory";
-import { supportedDeviceModelIds as clsSupportedDeviceModelIds } from "../../device/use-cases/isCustomLockScreenSupported";
+} from "../device/factories/HttpManagerApiRepositoryFactory";
+import { supportedDeviceModelIds as clsSupportedDeviceModelIds } from "../device/use-cases/isCustomLockScreenSupported";
 import { DeviceModel } from "@ledgerhq/devices";
-import customLockScreenFetchSize from "../../hw/customLockScreenFetchSize";
-import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
-import { currenciesByMarketcap, listCryptoCurrencies } from "../../currencies";
-import { makeAppV2Mock } from "../mock";
+import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
+import { getDeviceName } from "../device/use-cases/getDeviceNameUseCase";
+import { currenciesByMarketcap, listCryptoCurrencies } from "../currencies";
+import { makeAppV2Mock } from "./mock";
 
 jest.useFakeTimers();
-jest.mock("../../hw/customLockScreenFetchSize");
-jest.mock("../../device/use-cases/getDeviceNameUseCase");
-jest.mock("../../currencies");
+jest.mock("../hw/customLockScreenFetchSize");
+jest.mock("../device/use-cases/getDeviceNameUseCase");
+jest.mock("../currencies");
 
 const mockedCustomLockScreenFetchSize = jest.mocked(customLockScreenFetchSize);
 const mockedGetDeviceName = jest.mocked(getDeviceName);
 const mockedListCryptoCurrencies = jest.mocked(listCryptoCurrencies);
 const mockedCurrenciesByMarketCap = jest.mocked(currenciesByMarketcap);
 
-describe("listApps v2", () => {
+describe("listApps", () => {
   let mockedManagerApiRepository: ManagerApiRepository;
   let listAppsCommandSpy: jest.SpyInstance;
   let listInstalledAppsSpy: jest.SpyInstance;
@@ -33,7 +33,7 @@ describe("listApps v2", () => {
   beforeEach(() => {
     jest
       .spyOn(
-        jest.requireActual("../../device/use-cases/getLatestFirmwareForDeviceUseCase"),
+        jest.requireActual("../device/use-cases/getLatestFirmwareForDeviceUseCase"),
         "getLatestFirmwareForDeviceUseCase",
       )
       .mockReturnValue(Promise.resolve(null));
@@ -43,7 +43,7 @@ describe("listApps v2", () => {
     mockedListCryptoCurrencies.mockReturnValue([]);
 
     listAppsCommandSpy = jest
-      .spyOn(jest.requireActual("../../hw/listApps"), "default")
+      .spyOn(jest.requireActual("../hw/listApps"), "default")
       .mockReturnValue(Promise.resolve([]));
 
     listInstalledAppsSpy = jest.spyOn(ManagerAPI, "listInstalledApps").mockReturnValue(from([]));
