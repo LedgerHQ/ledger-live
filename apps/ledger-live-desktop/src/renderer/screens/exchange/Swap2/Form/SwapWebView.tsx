@@ -24,7 +24,11 @@ import {
   enablePlatformDevToolsSelector,
   languageSelector,
 } from "~/renderer/reducers/settings";
-import { transformToBigNumbers, useRedirectToSwapHistory } from "../utils/index";
+import {
+  transformToBigNumbers,
+  useGetSwapTrackingProperties,
+  useRedirectToSwapHistory,
+} from "../utils/index";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
@@ -47,6 +51,7 @@ import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { captureException } from "~/sentry/renderer";
 import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
+import { track } from "~/renderer/analytics/segment";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -127,6 +132,7 @@ const SwapWebView = ({
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
@@ -299,6 +305,7 @@ const SwapWebView = ({
           feeStrategy: string;
           openDrawer: boolean;
           customFeeConfig: object;
+          SWAP_VERSION: string;
         };
       }): Promise<{
         feesStrategy: string;
@@ -378,6 +385,13 @@ const SwapWebView = ({
             disableSlowStrategy: true,
             transaction: preparedTransaction,
             onRequestClose: (save: boolean) => {
+              track("button_clicked2", {
+                button: save ? "continueNetworkFees" : "closeNetworkFees",
+                page: "quoteSwap",
+                ...swapDefaultTrack,
+                swapVersion: params.SWAP_VERSION,
+                value: finalTx.feesStrategy,
+              });
               setDrawer(undefined);
               if (!save) {
                 resolve({
