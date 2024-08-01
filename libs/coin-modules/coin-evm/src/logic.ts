@@ -374,7 +374,7 @@ export const getMessageProperties = async (
   messageData: AnyMessage,
 ): Promise<MessageProperties | null> => {
   if (messageData.standard === "EIP712") {
-    return getEIP712FieldsDisplayedOnNano(messageData.message, getEnv("DYNAMIC_CAL_BASE_URL"));
+    return getEIP712FieldsDisplayedOnNano(messageData.message, getEnv("CAL_SERVICE_URL"));
   }
 
   return null;

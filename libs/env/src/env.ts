@@ -773,6 +773,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
+  CAL_SERVICE_URL: {
+    def: "https://crypto-assets-service.api.ledger.com",
+    parser: stringParser,
+    desc: "Cryptoassets list service url",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,

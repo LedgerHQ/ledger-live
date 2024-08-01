@@ -131,7 +131,7 @@ const getValueFromPath = (path: string, eip721Message: EIP712Message): string | 
  */
 export const getEIP712FieldsDisplayedOnNano = async (
   messageData: EIP712Message,
-  remoteCryptoAssetsListURI: string = getEnv("DYNAMIC_CAL_BASE_URL"),
+  calServiceURL: string = getEnv("CAL_SERVICE_URL"),
 ): Promise<{ label: string; value: string | string[] }[] | null> => {
   if (!isEIP712Message(messageData)) {
     return null;
