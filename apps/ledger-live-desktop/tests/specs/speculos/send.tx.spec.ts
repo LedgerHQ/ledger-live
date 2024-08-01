@@ -33,52 +33,56 @@ const transactionsInputsInvalid = [
   },
 ];
 
+const transactionE2E = [
+  new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
+  new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
+];
+
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 
-test.describe("Send from 1 account to another", () => {
-  const transaction = new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.MEDIUM);
+for (const [i, transaction] of transactionE2E.entries()) {
+  test.describe("Send from 1 account to another", () => {
+    test.use({
+      userdata: "speculos-tests-app",
+      testName: `sendApprove_${transaction.accountToDebit.currency.name}`,
+      speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
+      speculosOffset: i,
+    });
 
-  test.use({
-    userdata: "speculos-tests-app",
-    testName: `sendApprove_${transaction.accountToDebit.currency.name}`,
-    speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-    speculosOffset: 0,
-  });
-
-  test(
-    `Send [${transaction.accountToDebit.accountName}] to [${transaction.accountToCredit.accountName}]`,
-    {
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-473",
+    test(
+      `Send [${transaction.accountToDebit.accountName}] to [${transaction.accountToCredit.accountName}]`,
+      {
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-473",
+        },
       },
-    },
-    async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
 
-      await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
 
-      await app.account.clickSend();
-      await app.send.fillTxInfo(transaction);
-      await app.send.expectTxInfoValidity(transaction);
-      await app.send.clickContinueToDevice();
+        await app.account.clickSend();
+        await app.send.fillTxInfo(transaction);
+        await app.send.expectTxInfoValidity(transaction);
+        await app.send.clickContinueToDevice();
 
-      await app.speculos.expectValidTxInfo(transaction);
-      await app.send.expectTxSent();
-      await app.account.navigateToViewDetails();
-      await app.drawer.addressValueIsVisible(transaction.accountToDebit.address);
-      await app.drawer.addressValueIsVisible(transaction.accountToCredit.address);
-      await app.drawer.close();
+        await app.speculos.expectValidTxInfo(transaction);
+        await app.send.expectTxSent();
+        await app.account.navigateToViewDetails();
+        await app.drawer.addressValueIsVisible(transaction.accountToCredit.address);
+        await app.drawer.close();
 
-      await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(transaction.accountToCredit.accountName);
-      await app.layout.syncAccounts();
-      await app.account.clickOnLastOperation();
-      await app.drawer.expectReceiverInfos(transaction);
-    },
-  );
-});
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(transaction.accountToCredit.accountName);
+        await app.layout.syncAccounts();
+        await app.account.clickOnLastOperation();
+        await app.drawer.expectReceiverInfos(transaction);
+      },
+    );
+  });
+}
 
 test.describe("Send token (subAccount) - invalid input", () => {
   const tokenTransactionInvalid = {
