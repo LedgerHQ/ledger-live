@@ -16,6 +16,7 @@ export class SendModal extends Modal {
   private amountDisplayedValue = this.page.getByTestId("transaction-amount");
   private invalidAddressErrorMessage = (network: string) =>
     this.page.getByText(`This is not a valid ${network} address`);
+  private feeStrategy = (fee: string) => this.page.getByText(fee);
 
   async selectAccount(name: string) {
     await this.drowdownAccount.click();
@@ -43,6 +44,7 @@ export class SendModal extends Modal {
     await this.fillRecipient(tx.accountToCredit.address);
     await this.continueButton.click();
     await this.cryptoAmountField.fill(tx.amount);
+    await this.feeStrategy(tx.speed).click();
     await this.countinueSendAmount();
   }
 
