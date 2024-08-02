@@ -58,12 +58,14 @@ export type AccountsUpdateAccountWithUpdaterPayload = {
   updater: (arg0: Account) => Account;
 };
 export type AccountsDeleteAccountPayload = Account;
+export type AccountsReplacePayload = Account[];
 export type AccountsPayload =
   | HandlersPayloads["INIT_ACCOUNTS"]
   | AccountsReorderPayload
   | AccountsImportAccountsPayload
   | AccountsUpdateAccountWithUpdaterPayload
   | AccountsDeleteAccountPayload
+  | AccountsReplacePayload
   | Account;
 
 // === APPSTATE ACTIONS ===

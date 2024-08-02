@@ -13,6 +13,7 @@ import {
   getProtect,
   getMarketState,
   getTrustchainState,
+  getWalletExportState,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
@@ -23,6 +24,7 @@ import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common/currencies/index";
 import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/trustchain/store";
+import { importWalletState } from "@ledgerhq/live-wallet/store";
 
 export default class LedgerStoreProvider extends Component<
   {
@@ -118,6 +120,11 @@ export default class LedgerStoreProvider extends Component<
     const trustchainStore = await getTrustchainState();
     if (trustchainStore) {
       this.props.store.dispatch(importTrustchainStoreState(trustchainStore));
+    }
+
+    const walletStore = await getWalletExportState();
+    if (walletStore) {
+      this.props.store.dispatch(importWalletState(walletStore));
     }
 
     const protect = await getProtect();

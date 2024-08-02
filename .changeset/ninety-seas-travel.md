@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-Mange Key flow
+Manage Key flow

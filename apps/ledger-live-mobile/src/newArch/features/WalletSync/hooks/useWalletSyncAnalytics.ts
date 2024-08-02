@@ -16,6 +16,7 @@ export enum AnalyticsPage {
   ConfirmDeleteBackup = "Confirm delete backup",
   SyncWithNoKey = "Sync with no key",
   WalletSyncActivated = "Wallet Sync activated",
+  AutoRemove = "Remove current instance",
 }
 
 export enum AnalyticsFlow {
@@ -41,6 +42,8 @@ export enum AnalyticsButton {
   Cancel = "Cancel",
   CreateYourKey = "Create your key",
   LedgerSync = "Ledger Sync",
+  UseAnother = "Connect new ledger",
+  Understand = "I understand",
 }
 
 type OnClickTrack = {

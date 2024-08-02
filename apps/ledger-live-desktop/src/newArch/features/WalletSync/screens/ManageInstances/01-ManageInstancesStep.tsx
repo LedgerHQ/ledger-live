@@ -54,7 +54,7 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
             text={instance.name}
             cta={t("walletSync.manageInstances.remove")}
             onClick={
-              memberCredentials?.pubkey == instance.id
+              memberCredentials?.pubkey === instance.id
                 ? handleAutoRemove
                 : () => handleGoDeleteInstance(instance)
             }
