@@ -92,7 +92,7 @@ export class Currency {
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.CANCEL],
   );
   static readonly XRP = new Currency(
-    "Ripple",
+    "XRP",
     "XRP",
     "Ripple",
     [DeviceLabels.AMOUT, DeviceLabels.DESTINATION, DeviceLabels.SIGN, DeviceLabels.REJECT],
@@ -157,6 +157,13 @@ export class Currency {
     "BNB",
     "Binance Smart Chain",
     [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
+  static readonly TON = new Currency(
+    "Ton",
+    "TON",
+    "Ton",
+    [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.APPROVE, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
   static readonly ETH_USDT = new Currency(

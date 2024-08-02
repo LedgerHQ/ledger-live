@@ -16,6 +16,8 @@ const currencies: Currency[] = [
   Currency.ALGO,
   Currency.ATOM,
   Currency.XTZ,
+  Currency.SOL,
+  Currency.TON,
 ];
 
 for (const currency of currencies) {
@@ -39,7 +41,7 @@ for (const currency of currencies) {
 
         await app.portfolio.openAddAccountModal();
         await app.addAccount.expectModalVisiblity();
-        await app.addAccount.selectCurrency(currency.name);
+        await app.addAccount.selectCurrency(currency);
         firstAccountName = await app.addAccount.getFirstAccountName();
 
         await app.addAccount.addAccounts();
