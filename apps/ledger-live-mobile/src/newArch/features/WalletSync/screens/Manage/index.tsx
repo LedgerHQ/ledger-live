@@ -10,14 +10,19 @@ import {
 } from "../../hooks/useWalletSyncAnalytics";
 import { Separator } from "../../components/Separator";
 import { TouchableOpacity } from "react-native";
-import { TrustchainNotFound, useGetMembers } from "../../hooks/useGetMembers";
+import { TrustchainNotFound } from "../../hooks/useGetMembers";
 import ManageKeyDrawer from "../ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
+import ManageInstanceDrawer from "../ManageInstances/ManageInstancesDrawer";
+import { useManageInstancesDrawer } from "../ManageInstances/useManageInstanceDrawer";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
-  const { isDrawerVisible, closeDrawer, openDrawer } = useManageKeyDrawer();
-  const { data, isLoading, isError, error } = useGetMembers();
+
+  const manageKeyHook = useManageKeyDrawer();
+  const manageInstancesHook = useManageInstancesDrawer();
+
+  const { data, isLoading, isError, error } = manageInstancesHook.memberHook;
 
   const { onClickTrack } = useWalletSyncAnalytics();
 
@@ -28,14 +33,17 @@ const WalletSyncManage = () => {
   };
 
   const goToManageBackup = () => {
-    openDrawer();
+    manageKeyHook.openDrawer();
     onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.WalletSyncActivated });
   };
 
-  // const goToManageInstances = () => {
-  //   dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.SynchronizedInstances }));
-  //   onClickTrack({ button: "Manage Instances", page: AnalyticsPage.WalletSyncSettings });
-  // };
+  const goToManageInstances = () => {
+    manageInstancesHook.openDrawer();
+    onClickTrack({
+      button: AnalyticsButton.ManageSynchronizations,
+      page: AnalyticsPage.WalletSyncActivated,
+    });
+  };
 
   const Options: OptionProps[] = [
     {
@@ -72,7 +80,7 @@ const WalletSyncManage = () => {
           key={index}
           disabled={
             props.id === "manageKey"
-              ? error instanceof TrustchainNotFound
+              ? isError && error instanceof TrustchainNotFound
                 ? false
                 : isError
               : isError
@@ -80,7 +88,7 @@ const WalletSyncManage = () => {
         />
       ))}
 
-      <InstancesRow disabled={isError}>
+      <InstancesRow disabled={isError} onPress={isError ? undefined : goToManageInstances}>
         <Container
           flexDirection="row"
           justifyContent="space-between"
@@ -112,7 +120,8 @@ const WalletSyncManage = () => {
       {/**
        * DRAWERS
        */}
-      <ManageKeyDrawer isOpen={isDrawerVisible} handleClose={closeDrawer} />
+      <ManageKeyDrawer {...manageKeyHook} />
+      <ManageInstanceDrawer {...manageInstancesHook} />
     </Box>
   );
 };

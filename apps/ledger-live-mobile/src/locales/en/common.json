@@ -6751,11 +6751,29 @@
           }
         }
       },
+      "manageInstances": {
+        "title": "Manage synchronized instances",
+        "remove": "Remove"
+      },
       "synchronizedInstances": {
         "cta": "Manage now",
         "title": "{{count}} Synchronized Instance",
         "title_plural": "{{count}} Synchronized Instances",
-        "error": "Instances"
+        "error": "Instances",
+        "unsecuredError": {
+          "title": "The synchronization isn't secured by this Ledger",
+          "description": "Please connect the Ledger device you used to create your encryption key.",
+          "info": "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+          "cta": "Connect another Ledger",
+          "ctaDelete": "Delete my encryption key"
+        },
+        "autoRemoveError": {
+          "title": "You can’t remove the current instance",
+          "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
+          "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
+          "cta": "I understand",
+          "ctaDelete": "Delete my encryption key"
+        }
       },
       "errors": {
         "fetching": "Something went wrong while fetching your synchronized instances.",
