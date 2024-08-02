@@ -1,5 +1,5 @@
-import { http, HttpResponse } from "msw";
-import { setupServer, SetupServerApi } from "msw/node";
+import { http, HttpResponse, PathParams, StrictRequest } from "msw";
+import { setupServer } from "msw/node";
 import { crypto, Device, Permissions, SoftwareDevice, StreamTree } from "@ledgerhq/hw-trustchain";
 import { getEnv } from "@ledgerhq/live-env";
 import { PutCommandsRequest } from "../../api";
@@ -8,35 +8,50 @@ import { convertLiveCredentialsToKeyPair, SDK } from "../../sdk";
 import { TrustchainResultType } from "../../types";
 
 describe("Trustchain SDK", () => {
+  // Setup API calls mocks
+  const apiMocks = {
+    getTrustchainsMock: jest.fn(),
+    getTrustchainByIdMock: jest.fn(),
+    getChalenge: jest.fn(),
+    postAuthenticate: jest.fn(),
+    putCommands: jest.fn<object, [StrictRequest<PutCommandsRequest>]>(),
+  };
+  const mswServer = setupServer(
+    http.get("*/v1/trustchains", () => HttpResponse.json(apiMocks.getTrustchainsMock())),
+    http.get("*/v1/trustchain/ROOTID", () => HttpResponse.json(apiMocks.getTrustchainByIdMock())),
+    http.put<PathParams, PutCommandsRequest>("*/v1/trustchain/ROOTID/commands", ({ request }) =>
+      HttpResponse.json(apiMocks.putCommands(request)),
+    ),
+    http.get("*/v1/challenge", () => HttpResponse.json(apiMocks.getChalenge())),
+    http.post("*/v1/authenticate", () => HttpResponse.json(apiMocks.postAuthenticate())),
+    http.all("*", () => HttpResponse.json({})),
+  );
+  mswServer.listen();
+
+  // Setup APDU device interactions mocks
   const HWDeviceProviderMethodsMocks = {
     withJwt: jest.fn(),
     withHw: jest.fn(),
     refreshJwt: jest.fn(),
     clearJwt: jest.fn(),
   } satisfies Partial<HWDeviceProvider>;
-
+  const hwDeviceProviderMock = HWDeviceProviderMethodsMocks as unknown as HWDeviceProvider;
   const deviceCallbacks = {
     onStartRequestUserInteraction: jest.fn(),
     onEndRequestUserInteraction: jest.fn(),
   };
 
-  const hwDeviceProviderMock = HWDeviceProviderMethodsMocks as unknown as HWDeviceProvider;
-
-  let mswServer: SetupServerApi | undefined;
+  afterAll(() => {
+    mswServer.close();
+  });
 
   const apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING");
   const sdkContext = { applicationId: 16, name: "Foo", apiBaseUrl };
 
   beforeEach(() => {
-    mswServer?.close();
-    HWDeviceProviderMethodsMocks.withHw.mockClear();
-    HWDeviceProviderMethodsMocks.refreshJwt.mockClear();
-    HWDeviceProviderMethodsMocks.clearJwt.mockClear();
-    HWDeviceProviderMethodsMocks.withJwt
-      .mockClear()
-      .mockImplementation(async (deviceId, job) => job({ accessToken: "ACCESS TOKEN" }));
-    deviceCallbacks.onStartRequestUserInteraction.mockClear();
-    deviceCallbacks.onEndRequestUserInteraction.mockClear();
+    Object.values(apiMocks).forEach(mock => mock.mockClear());
+    Object.values(HWDeviceProviderMethodsMocks).forEach(mock => mock.mockClear());
+    Object.values(deviceCallbacks).forEach(mock => mock.mockClear());
   });
 
   it("should create Trustchain", async () => {
@@ -46,31 +61,23 @@ describe("Trustchain SDK", () => {
     const oneMemberTree = await addMember(device, "m/0'/16'/0'", "alice")(initialTree);
 
     // Mock API calls:
-    const reqCount = { trustchains: 0 };
-    mswServer = setupServer(
-      http.get("*/v1/trustchains", () => {
-        switch (reqCount.trustchains++) {
-          case 0:
-            return HttpResponse.json({});
-          case 1:
-            return HttpResponse.json({ ROOTID: { "m/": [] } });
-        }
-      }),
-      http.get("*/v1/trustchain/ROOTID", () => HttpResponse.json(initialTree.serialize())),
-      http.all("*", () => HttpResponse.json({})),
-    );
-    mswServer.listen();
+    apiMocks.getTrustchainsMock.mockReturnValueOnce({});
+    apiMocks.getTrustchainsMock.mockReturnValueOnce({ ROOTID: { "m/": [] } });
+    apiMocks.getTrustchainByIdMock.mockReturnValue(initialTree.serialize());
 
-    // Mock HW device interactions
+    // Mock APDU device interactions:
+    HWDeviceProviderMethodsMocks.withJwt.mockImplementation(async (deviceId, job) =>
+      job({ accessToken: "ACCESS TOKEN" }),
+    );
     HWDeviceProviderMethodsMocks.withHw.mockResolvedValueOnce(initialTree);
     HWDeviceProviderMethodsMocks.withHw.mockResolvedValueOnce(oneMemberTree);
 
-    // Run the test
+    // Run the test:
     const sdk = new SDK(sdkContext, hwDeviceProviderMock);
     const { alice } = MOCK_DATA.members;
     const { type, trustchain } = await sdk.getOrCreateTrustchain("foo", alice, deviceCallbacks);
 
-    // Check expectations
+    // Check expectations:
     expect(type).toBe(TrustchainResultType.created);
     expect(trustchain).toEqual({
       applicationPath: "m/0'/16'/0'",
@@ -89,36 +96,22 @@ describe("Trustchain SDK", () => {
       .then(addMember(device, "m/0'/16'/0'", "charlie"));
     const rmMembersTree = await addMember(device, "m/0'/16'/1'", "alice")(threeMembersTree);
 
-    // Mock API calls
-    const pushedCommands: PutCommandsRequest[] = [];
-    mswServer = setupServer(
-      http.get("*/v1/trustchain/ROOTID", () => HttpResponse.json(threeMembersTree.serialize())),
-      http.get("*/v1/challenge", () =>
-        HttpResponse.json({ json: {}, tlv: MOCK_DATA.challengeTlv }),
-      ),
+    // Mock API calls:
+    apiMocks.getTrustchainByIdMock.mockReturnValue(threeMembersTree.serialize());
+    apiMocks.getChalenge.mockReturnValue({ json: {}, tlv: MOCK_DATA.challengeTlv });
+    apiMocks.postAuthenticate.mockReturnValue({
+      accessToken: "BACKEND JWT",
+      permissions: { ROOTID: { "m/0'/16'/1'": ["owner"] } },
+    });
 
-      http.post("*/v1/authenticate", () =>
-        HttpResponse.json({
-          accessToken: "BACKEND JWT",
-          permissions: { ROOTID: { "m/0'/16'/1'": ["owner"] } },
-        }),
-      ),
-
-      http.put("*/v1/trustchain/ROOTID/commands", async ({ request }) => {
-        const content = await request.json();
-        pushedCommands.push(content as PutCommandsRequest);
-        return HttpResponse.json({});
-      }),
-
-      http.all("*", async () => HttpResponse.json({})),
+    // Mock APDU device interactions:
+    HWDeviceProviderMethodsMocks.withJwt.mockImplementation(async (deviceId, job) =>
+      job({ accessToken: "ACCESS TOKEN" }),
     );
-    mswServer.listen();
-
-    // Mock HW device interactions
     HWDeviceProviderMethodsMocks.withHw.mockResolvedValueOnce(threeMembersTree);
     HWDeviceProviderMethodsMocks.withHw.mockResolvedValueOnce(rmMembersTree);
 
-    // Run the test
+    // Run the test:
     const sdk = new SDK(sdkContext, hwDeviceProviderMock);
 
     const { alice, bob, charlie } = MOCK_DATA.members;
@@ -134,15 +127,16 @@ describe("Trustchain SDK", () => {
     };
     const res = await sdk.removeMember("foo", trustchain, alice, memberToRemove, deviceCallbacks);
 
-    // Check expectations
+    // Check expectations:
     expect(res).toEqual({
       applicationPath: "m/0'/16'/1'",
       rootId: "ROOTID",
       walletSyncEncryptionKey: expect.stringMatching(/^[0-9a-f]{64}$/),
     });
 
-    const lastCommand = pushedCommands.filter(({ path }) => path === "m/0'/16'/1'").at(-1)
-      ?.blocks[0];
+    const lastCommand = await Promise.all(
+      apiMocks.putCommands.mock.calls.map(([request]) => request.json()),
+    ).then(commands => commands.filter(({ path }) => path === "m/0'/16'/1'").at(-1)?.blocks[0]);
     expect(lastCommand).toContain(alice.pubkey);
     expect(lastCommand).not.toContain(bob.pubkey);
     expect(lastCommand).toContain(charlie.pubkey);
