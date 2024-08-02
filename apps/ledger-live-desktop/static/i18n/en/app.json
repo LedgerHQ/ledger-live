@@ -5636,6 +5636,9 @@
       "title": "Rate Expired",
       "description": "The exchange transaction could not be completed as the rate has expired. Please refresh the rates and try your swap again."
     },
+    "PayinExtraIdError": {
+      "message": "Missing required extraId required for swap"
+    },
     "SwapGenericAPIError": {
       "title": "Something went wrong",
       "description": "The exchange transaction did not go through. Please try again or contact support."
