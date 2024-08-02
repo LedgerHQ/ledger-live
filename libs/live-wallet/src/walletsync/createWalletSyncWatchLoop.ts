@@ -4,17 +4,14 @@ import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { WalletSyncDataManager } from "./types";
 import { log } from "@ledgerhq/logs";
 import { TrustchainEjected, TrustchainOutdated } from "@ledgerhq/trustchain/errors";
+import { Subscription } from "rxjs";
 
-export type WatchConfig =
-  | {
-      type: "polling";
-      pollingInterval?: number;
-      initialTimeout?: number;
-      userIntentDebounce?: number;
-    }
-  | {
-      type: "notifications";
-    };
+export type WatchConfig = {
+  notificationsEnabled?: boolean;
+  pollingInterval?: number;
+  initialTimeout?: number;
+  userIntentDebounce?: number;
+};
 
 export type VisualConfig = {
   visualPendingTimeout: number;
@@ -171,31 +168,40 @@ export function createWalletSyncWatchLoop<
     }
   }
 
-  if (watchConfig?.type === "notifications") {
-    throw new Error("notifications not implemented yet");
-  } else {
-    const pollingInterval = watchConfig?.pollingInterval || 30000;
-    const initialTimeout = watchConfig?.initialTimeout || 5000;
-    const userIntentDebounce = watchConfig?.userIntentDebounce || 1000;
+  const notificationsEnabled = watchConfig?.notificationsEnabled || false;
+  const pollingInterval = watchConfig?.pollingInterval || 10000;
+  const initialTimeout = watchConfig?.initialTimeout || 5000;
+  const userIntentDebounce = watchConfig?.userIntentDebounce || 1000;
 
-    // main loop
-    const callback = () => {
-      timeout = setTimeout(callback, pollingInterval);
-      loop();
-    };
-    let timeout = setTimeout(callback, initialTimeout);
+  // main loop
+  const callback = () => {
+    timeout = setTimeout(callback, pollingInterval);
+    loop();
+  };
+  let timeout = setTimeout(callback, initialTimeout);
 
-    return {
-      onUserRefreshIntent: () => {
-        if (unsubscribed) return;
-        // user intent will cancel the next loop call and reschedule one in a short time
-        clearTimeout(timeout);
-        timeout = setTimeout(callback, userIntentDebounce);
-      },
-      unsubscribe: () => {
-        unsubscribed = true;
-        clearInterval(timeout);
-      },
-    };
+  let notificationsSub: Subscription | null = null;
+  if (notificationsEnabled) {
+    // minimal implementation that do not handle any retry in case the notification stream is lost.
+    notificationsSub = walletSyncSdk
+      .listenNotifications(trustchain, memberCredentials)
+      .subscribe(() => {
+        log("walletsync", "notification");
+        loop();
+      });
   }
+
+  return {
+    onUserRefreshIntent: () => {
+      if (unsubscribed) return;
+      // user intent will cancel the next loop call and reschedule one in a short time
+      clearTimeout(timeout);
+      timeout = setTimeout(callback, userIntentDebounce);
+    },
+    unsubscribe: () => {
+      unsubscribed = true;
+      clearInterval(timeout);
+      if (notificationsSub) notificationsSub.unsubscribe();
+    },
+  };
 }
