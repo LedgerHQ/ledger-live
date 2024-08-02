@@ -1,5 +1,4 @@
 import { test } from "../../fixtures/common";
-import { specs } from "../../utils/speculos";
 import { Account } from "../../enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
@@ -19,13 +18,11 @@ const accounts: Account[] = [
   Account.XTZ_1,
 ];
 
-for (const [i, account] of accounts.entries()) {
+for (const account of accounts) {
   test.describe("Delete Accounts", () => {
     test.use({
       userdata: "speculos-tests-app",
-      testName: `deleteAccount_${account.currency.name}`,
-      speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosCurrency: account.currency,
     });
 
     test(

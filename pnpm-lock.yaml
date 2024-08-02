@@ -408,6 +408,9 @@ importers:
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
+      get-port:
+        specifier: ^7.1.0
+        version: 7.1.0
       i18next:
         specifier: ^23.4.4
         version: 23.10.1
@@ -19852,6 +19855,10 @@ packages:
   get-port@5.1.1:
     resolution: {integrity: sha512-g/Q1aTSDOxFpchXC4i8ZWvxA1lnPqx/JHqcpIw0/LX9T8x/GBbi6YnlN5nhaKIFkT8oFsscUKgDJYxfwfS6QsQ==}
     engines: {node: '>=8'}
+
+  get-port@7.1.0:
+    resolution: {integrity: sha512-QB9NKEeDg3xxVwCCwJQ9+xycaz6pBB6iQ76wiWMl1927n0Kir6alPiP+yuiICLLU4jpMe08dXfpebuQppFA2zw==}
+    engines: {node: '>=16'}
 
   get-size@2.0.3:
     resolution: {integrity: sha512-lXNzT/h/dTjTxRbm9BXb+SGxxzkm97h/PCIKtlN/CBCxxmkkIVV21udumMS93MuVTDX583gqc94v3RjuHmI+2Q==}
@@ -49847,6 +49854,8 @@ snapshots:
   get-port@3.2.0: {}
 
   get-port@5.1.1: {}
+
+  get-port@7.1.0: {}
 
   get-size@2.0.3: {}
 

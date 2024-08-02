@@ -102,6 +102,7 @@
     "firebase": "^9.6.6",
     "focus-trap": "^6.6.1",
     "fuse.js": "^6.6.2",
+    "get-port": "^7.1.0",
     "i18next": "^23.4.4",
     "invariant": "^2.2.4",
     "json-rpc-2.0": "^0.2.19",

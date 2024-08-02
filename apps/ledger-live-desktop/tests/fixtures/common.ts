@@ -3,19 +3,19 @@ import fsPromises from "fs/promises";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos, Spec } from "../utils/speculos";
+import { startSpeculos, stopSpeculos, specs } from "../utils/speculos";
+import getPort from "get-port";
 
 import { Application } from "tests/page";
 import { generateUUID, safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
+import { Currency } from "tests/enum/Currency";
 
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
-  speculosCurrency: Spec;
-  speculosOffset: number;
-  testName: string;
+  speculosCurrency: Currency;
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
@@ -24,7 +24,6 @@ type TestFixtures = {
   electronApp: ElectronApplication;
   page: Page;
   featureFlags: OptionalFeatureMap;
-  recordTestNamesForApiResponseLogging: void;
   simulateCamera: string;
   app: Application;
 };
@@ -41,8 +40,6 @@ export const test = base.extend<TestFixtures>({
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosCurrency: undefined,
-  speculosOffset: undefined,
-  testName: undefined,
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -70,10 +67,9 @@ export const test = base.extend<TestFixtures>({
       featureFlags,
       simulateCamera,
       speculosCurrency,
-      speculosOffset,
-      testName,
     },
     use,
+    testInfo,
   ) => {
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
@@ -84,11 +80,11 @@ export const test = base.extend<TestFixtures>({
 
     let device: any | undefined;
     if (IS_NOT_MOCK && speculosCurrency) {
-      setEnv(
-        "SPECULOS_PID_OFFSET",
-        speculosOffset * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+      setEnv("SPECULOS_PID_OFFSET", await getPort());
+      device = await startSpeculos(
+        testInfo.title.replace(/ /g, "_"),
+        specs[speculosCurrency.deviceLabel.replace(/ /g, "_")],
       );
-      device = await startSpeculos(testName, speculosCurrency);
       setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
     }
 

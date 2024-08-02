@@ -2,7 +2,6 @@ import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { Fee } from "../../enum/Fee";
 import { Transaction } from "../../models/Transaction";
-import { specs } from "../../utils/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
@@ -40,13 +39,11 @@ const transactionE2E = [
 
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 
-for (const [i, transaction] of transactionE2E.entries()) {
+for (const transaction of transactionE2E) {
   test.describe("Send from 1 account to another", () => {
     test.use({
       userdata: "speculos-tests-app",
-      testName: `sendApprove_${transaction.accountToDebit.currency.name}`,
-      speculosCurrency: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosCurrency: transaction.accountToDebit.currency,
     });
 
     test(
@@ -92,12 +89,7 @@ test.describe("Send token (subAccount) - invalid input", () => {
 
   test.use({
     userdata: "speculos-subAccount",
-    testName: `sendToken_invalid_input_${tokenTransactionInvalid.transaction.accountToDebit.currency.name}`,
-    speculosCurrency:
-      specs[
-        tokenTransactionInvalid.transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")
-      ],
-    speculosOffset: 0,
+    speculosCurrency: tokenTransactionInvalid.transaction.accountToDebit.currency,
   });
 
   test(
@@ -134,10 +126,7 @@ test.describe("Send token (subAccount) - valid input", () => {
 
   test.use({
     userdata: "speculos-subAccount",
-    testName: `sendToken_valid_input_${tokenTransactionValid.accountToDebit.currency.name}`,
-    speculosCurrency:
-      specs[tokenTransactionValid.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-    speculosOffset: 0,
+    speculosCurrency: tokenTransactionValid.accountToDebit.currency,
   });
 
   test(
@@ -170,10 +159,7 @@ test.describe("Check invalid address input error", () => {
 
   test.use({
     userdata: "speculos-tests-app",
-    testName: `Invalid_address_input_error_${transactionInvalidAddress.accountToDebit.currency.name}`,
-    speculosCurrency:
-      specs[transactionInvalidAddress.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-    speculosOffset: 0,
+    speculosCurrency: transactionInvalidAddress.accountToDebit.currency,
   });
 
   test(
@@ -197,18 +183,15 @@ test.describe("Check invalid address input error", () => {
   );
 });
 
-for (const [i, transaction] of transactionsInputsInvalid.entries()) {
+for (const transaction of transactionsInputsInvalid) {
   test.describe("Check invalid amount input error", () => {
     test.use({
       userdata: "speculos-tests-app",
-      testName: `Invalid_amount_input_error_${transaction.transaction.accountToDebit.currency.name}`,
-      speculosCurrency:
-        specs[transaction.transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosCurrency: transaction.transaction.accountToDebit.currency,
     });
 
     test(
-      `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount input error - ${i} `,
+      `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount input error`,
       {
         annotation: {
           type: "TMS",
@@ -242,10 +225,7 @@ test.describe("Verify send max user flow", () => {
 
   test.use({
     userdata: "speculos-tests-app",
-    testName: `Verify_send_max_user_flow_${transactionInputValid.accountToDebit.currency.name}`,
-    speculosCurrency:
-      specs[transactionInputValid.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
-    speculosOffset: 0,
+    speculosCurrency: transactionInputValid.accountToDebit.currency,
   });
 
   test(
