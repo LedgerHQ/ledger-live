@@ -12,10 +12,7 @@ import walletsync, {
   makeLocalIncrementalUpdate,
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { walletSelector } from "~/renderer/reducers/wallet";
 import { memberCredentialsSelector, trustchainSelector } from "@ledgerhq/trustchain/store";
-import { State } from "~/renderer/reducers";
-import { cache as bridgeCache } from "~/renderer/bridge/cache";
 import {
   setAccountNames,
   setNonImportedAccounts,
@@ -23,11 +20,14 @@ import {
   walletSyncUpdate,
   WSState,
 } from "@ledgerhq/live-wallet/store";
-import { replaceAccounts } from "~/renderer/actions/accounts";
-import { latestDistantStateSelector } from "~/renderer/reducers/wallet";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
+import { walletSelector } from "~/reducers/wallet";
+import { State } from "~/reducers/types";
+import { bridgeCache } from "~/bridge/cache";
+import { replaceAccounts } from "~/actions/accounts";
+import { latestDistantStateSelector } from "~/reducers/wallet";
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
 
@@ -35,7 +35,7 @@ function localStateSelector(state: State): LocalState {
   // READ. connect the redux state to the walletsync modules
   return {
     accounts: {
-      list: state.accounts,
+      list: state.accounts.active,
       nonImportedAccountInfos: state.wallet.nonImportedAccountInfos,
     },
     accountNames: state.wallet.accountNames,
