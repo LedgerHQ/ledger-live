@@ -88,12 +88,6 @@ export default function FeesDrawerLiveApp({
   if (!mainAccount) return;
   if (!isOpen) return null;
 
-  console.log(
-    "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/FeesDrawerLiveApp/index.tsx:91 transactionStatus.errors",
-    "color: #007acc;",
-    transactionStatus.errors,
-  );
-
   return (
     <Box height="100%" display="flex" flexDirection="column">
       <Divider />
