@@ -127,7 +127,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   }, [setAddModalOpened]);
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
-  const reopenAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
@@ -227,7 +226,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       <AddAccountDrawer
         isOpened={isAddModalOpened}
         onClose={closeAddModal}
-        reopenDrawer={reopenAddModal}
         doesNotHaveAccount={!showAssets}
       />
     </ReactNavigationPerformanceView>

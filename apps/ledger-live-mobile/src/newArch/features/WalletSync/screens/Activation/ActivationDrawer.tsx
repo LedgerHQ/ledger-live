@@ -31,7 +31,7 @@ const ActivationDrawer = ({ isOpen, startingStep, handleClose }: Props) => {
   const resetStep = () => setCurrentStep(startingStep);
 
   const onClose = () => {
-    resetStep;
+    resetStep();
     handleClose();
   };
 

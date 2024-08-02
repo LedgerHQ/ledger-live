@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import Activation from ".";
 import { TrackScreen } from "~/analytics";
 import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "../../screens/Synchronize/QrCodeMethod";
 import { Steps } from "../../types/Activation";
-import {
-  AnalyticsButton,
-  AnalyticsPage,
-  useWalletSyncAnalytics,
-} from "../../hooks/useWalletSyncAnalytics";
+import useActivationFlowModel from "./useActivationFlowModel";
+import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
+
+type ViewProps = ReturnType<typeof useActivationFlowModel>;
 
 type Props = {
   startingStep: Steps;
@@ -16,42 +15,7 @@ type Props = {
   onGoBack?: (callback: () => void) => void;
 };
 
-const ActivationFlow = ({ startingStep, onStepChange, onGoBack }: Props) => {
-  const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
-  const { onClickTrack } = useWalletSyncAnalytics();
-
-  useEffect(() => {
-    if (onStepChange) onStepChange(currentStep);
-  }, [currentStep, onStepChange]);
-
-  const navigateToChooseSyncMethod = () => setCurrentStep(Steps.ChooseSyncMethod);
-
-  const navigateToQrCodeMethod = () => {
-    onClickTrack({
-      button: AnalyticsButton.ScanQRCode,
-      page: AnalyticsPage.ChooseSyncMethod,
-    });
-    setCurrentStep(Steps.QrCodeMethod);
-  };
-
-  const getPreviousStep = useCallback(
-    (step: Steps): Steps => {
-      switch (step) {
-        case Steps.ChooseSyncMethod:
-          return Steps.Activation;
-        case Steps.QrCodeMethod:
-          return Steps.ChooseSyncMethod;
-        default:
-          return startingStep;
-      }
-    },
-    [startingStep],
-  );
-
-  useEffect(() => {
-    if (onGoBack) onGoBack(() => setCurrentStep(prevStep => getPreviousStep(prevStep)));
-  }, [getPreviousStep, onGoBack]);
-
+function View({ currentStep, navigateToChooseSyncMethod, navigateToQrCodeMethod }: ViewProps) {
   const getScene = () => {
     switch (currentStep) {
       case Steps.Activation:
@@ -76,6 +40,10 @@ const ActivationFlow = ({ startingStep, onStepChange, onGoBack }: Props) => {
   };
 
   return getScene();
+}
+
+const ActivationFlow = (props: Props) => {
+  return <View {...useActivationFlowModel(props)} />;
 };
 
 export default ActivationFlow;

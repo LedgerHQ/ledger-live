@@ -15,7 +15,6 @@ type AddAccountProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
   doesNotHaveAccount?: boolean;
   onClose: () => void;
-  reopenDrawer: () => void;
 };
 
 const StartingStep = Steps.AddAccountMethod;
