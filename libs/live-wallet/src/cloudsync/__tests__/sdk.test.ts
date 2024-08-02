@@ -19,6 +19,8 @@ describe("CloudSyncSDK basics", () => {
   let storedData: string | null = null;
   let storedVersion = 0;
 
+  let postCounter = 0;
+
   const handlers = [
     http.get(base + "/atomic/v1/:slug", ({ request }) => {
       if (request.headers.get("Authorization") !== "Bearer mock-live-jwt") {
@@ -39,6 +41,7 @@ describe("CloudSyncSDK basics", () => {
       }
     }),
     http.post(base + "/atomic/v1/:slug", async ({ request }) => {
+      ++postCounter;
       if (request.headers.get("Authorization") !== "Bearer mock-live-jwt") {
         return HttpResponse.json({}, { status: 401 });
       }
@@ -46,11 +49,19 @@ describe("CloudSyncSDK basics", () => {
       const json = await request.json();
       const { payload } = json as { payload: string };
       if (version !== storedVersion + 1) {
+        // to cover different accepted payloads, we sometimes returns info or not
+        const extra =
+          postCounter % 3 === 0
+            ? {}
+            : postCounter % 3 === 1
+              ? { info: "lld/0.0.0" }
+              : { info: null };
         return HttpResponse.json({
           status: "out-of-sync",
           version: storedVersion,
           payload: storedData,
           date: new Date().toISOString(),
+          ...extra,
         });
       }
       storedVersion = version;

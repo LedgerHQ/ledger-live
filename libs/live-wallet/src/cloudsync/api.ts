@@ -42,7 +42,7 @@ const schemaAtomicPostOutOfSync = z.object({
   version: z.number(),
   payload: z.string(),
   date: z.string(),
-  info: z.string().optional(),
+  info: z.string().nullable().optional(),
 });
 const schemaAtomicPostResponse = z.discriminatedUnion("status", [
   schemaAtomicPostUpdated,
