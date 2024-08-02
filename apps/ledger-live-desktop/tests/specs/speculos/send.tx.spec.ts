@@ -34,7 +34,7 @@ const transactionsInputsInvalid = [
 
 const transactionE2E = [
   new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
-  //new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
+  new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
 ];
 
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
@@ -191,7 +191,7 @@ for (const transaction of transactionsInputsInvalid) {
     });
 
     test(
-      `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount input error`,
+      `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
       {
         annotation: {
           type: "TMS",

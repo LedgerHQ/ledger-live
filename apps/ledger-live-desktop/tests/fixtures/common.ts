@@ -4,7 +4,6 @@ import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startSpeculos, stopSpeculos, specs } from "../utils/speculos";
-import getPort from "get-port";
 
 import { Application } from "tests/page";
 import { generateUUID, safeAppendFile } from "tests/utils/fileUtils";
@@ -31,6 +30,9 @@ type TestFixtures = {
 const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+const BASE_PORT = 30000;
+const MAX_PORT = 65535;
+let portCounter = BASE_PORT; // Counter for generating unique ports
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -79,8 +81,17 @@ export const test = base.extend<TestFixtures>({
     }
 
     let device: any | undefined;
+
     if (IS_NOT_MOCK && speculosCurrency) {
-      setEnv("SPECULOS_PID_OFFSET", await getPort());
+      // Ensure the portCounter stays within the valid port range
+      if (portCounter > MAX_PORT) {
+        portCounter = BASE_PORT;
+      }
+      const speculosPort = portCounter++;
+      setEnv(
+        "SPECULOS_PID_OFFSET",
+        (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+      );
       device = await startSpeculos(
         testInfo.title.replace(/ /g, "_"),
         specs[speculosCurrency.deviceLabel.replace(/ /g, "_")],
