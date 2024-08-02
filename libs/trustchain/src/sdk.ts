@@ -14,9 +14,7 @@ import {
 import {
   crypto,
   Challenge,
-  CommandStream,
   CommandStreamEncoder,
-  CommandStreamDecoder,
   StreamTree,
   Permissions,
   DerivationPath,
@@ -337,10 +335,7 @@ export class SDK implements TrustchainSDK {
 
   private async fetchTrustchain(jwt: JWT, trustchainId: string) {
     const trustchainData = await this.api.getTrustchain(jwt, trustchainId);
-    const streams = Object.values(trustchainData).map(
-      data => new CommandStream(CommandStreamDecoder.decode(crypto.from_hex(data))),
-    );
-    const streamTree = StreamTree.from(...streams);
+    const streamTree = StreamTree.deserialize(trustchainData);
     return { streamTree };
   }
 
