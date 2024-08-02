@@ -159,6 +159,13 @@ export class Currency {
     [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
+  static readonly TON = new Currency(
+    "TON",
+    "TON",
+    "TON",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT], //todo: check on nano
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT], //todo: check on nano
+  );
   static readonly ETH_USDT = new Currency(
     "Tether USD",
     "USDT",

@@ -189,6 +189,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Ton: {
+    currency: getCryptoCurrencyById("ton"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "TON",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(

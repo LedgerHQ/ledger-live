@@ -17,6 +17,8 @@ const currencies: Currency[] = [
   Currency.ALGO,
   Currency.ATOM,
   Currency.XTZ,
+  Currency.SOL,
+  //Currency.TON,
 ];
 
 for (const [i, currency] of currencies.entries()) {
