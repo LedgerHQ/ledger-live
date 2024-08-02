@@ -1,6 +1,5 @@
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import api from "./api";
 import { AuthCachePolicy, JWT } from "./types";
 import { TrustchainNotAllowed, TrustchainOutdated } from "./errors";
 
@@ -8,10 +7,11 @@ export async function genericWithJWT<T>(
   job: (jwt: JWT) => Promise<T>,
   initialJWT: JWT | undefined,
   auth: () => Promise<JWT>,
+  refreshAuth: (jw: JWT) => Promise<JWT>,
   policy: AuthCachePolicy = "cache",
 ): Promise<T> {
   function refresh(jwt: JWT) {
-    return api.refreshAuth(jwt).catch(e => {
+    return refreshAuth(jwt).catch(e => {
       log("trustchain", "JWT refresh failed, reauthenticating", e);
       const { hasExpired, isNotPermitted, isTrustchainOutdated } = networkCheckJwtExpiration(e);
       if (isNotPermitted) {

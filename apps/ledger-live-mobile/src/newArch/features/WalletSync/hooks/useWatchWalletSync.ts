@@ -28,6 +28,8 @@ import { State } from "~/reducers/types";
 import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
 import { latestDistantStateSelector } from "~/reducers/wallet";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
 
@@ -60,6 +62,10 @@ async function save(
 const ctx = { getAccountBridge, bridgeCache, blacklistedTokenIds: [] };
 
 export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
+  const featureWalletSync = useFeature("llmWalletSync");
+  const { cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
+    featureWalletSync?.params?.environment,
+  );
   const trustchainSdk = useTrustchainSdk();
   const getState = useGetState();
   const getCurrentVersion = useCallback(
@@ -83,13 +89,14 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
   const cloudSyncSDK = useMemo(
     () =>
       new CloudSyncSDK({
+        apiBaseUrl: cloudSyncApiBaseUrl,
         slug: liveSlug,
         schema: walletsync.schema,
         trustchainSdk,
         getCurrentVersion,
         saveNewUpdate,
       }),
-    [trustchainSdk, getCurrentVersion, saveNewUpdate],
+    [cloudSyncApiBaseUrl, trustchainSdk, getCurrentVersion, saveNewUpdate],
   );
 
   return cloudSyncSDK;
@@ -102,6 +109,7 @@ export type WalletSyncUserState = {
 };
 
 export function useWatchWalletSync(): WalletSyncUserState {
+  const featureWalletSync = useFeature("llmWalletSync");
   const saveUpdate = useSaveUpdate();
   const getState = useGetState();
   const memberCredentials = useSelector(memberCredentialsSelector);
@@ -137,6 +145,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
     const { unsubscribe, onUserRefreshIntent } = walletSyncWatchLoop({
       walletSyncSdk,
+      watchConfig: featureWalletSync?.params?.watchConfig,
       localIncrementUpdate,
       trustchain,
       memberCredentials,
@@ -153,6 +162,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
     return unsubscribe;
   }, [
+    featureWalletSync?.params?.watchConfig,
     getState,
     trustchainSdk,
     walletSyncSdk,

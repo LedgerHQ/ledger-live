@@ -68,6 +68,7 @@ export type TrustchainMember = {
 export type TrustchainSDKContext = {
   applicationId: number;
   name: string;
+  apiBaseUrl: string;
 };
 
 /**

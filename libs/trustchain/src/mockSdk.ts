@@ -13,6 +13,7 @@ import {
 import Transport from "@ledgerhq/hw-transport";
 import { Permissions } from "@ledgerhq/hw-trustchain";
 import { TrustchainEjected } from "./errors";
+import getApi from "./api";
 
 const mockedLiveCredentialsPrivateKey = "mock-private-key";
 
@@ -59,10 +60,12 @@ const applyXor = (a: Uint8Array) => {
 export class MockSDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
   private lifecyle?: TrustchainLifecycle;
+  private api: ReturnType<typeof getApi>;
 
   constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
     this.context = context;
     this.lifecyle = lifecyle;
+    this.api = getApi(context.apiBaseUrl);
   }
 
   private deviceJwtAcquired = false;

@@ -28,7 +28,12 @@ fs.readdirSync(scenarioFolder).forEach(file => {
       const scenario = mod.scenario;
       const transport = new TransportReplayer(new RecordStore());
       const options: ScenarioOptions = {
-        sdkForName: name => getSdk(!!getEnv("MOCK"), { applicationId: 16, name }),
+        sdkForName: name =>
+          getSdk(!!getEnv("MOCK"), {
+            applicationId: 16,
+            name,
+            apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+          }),
         pauseRecorder: () => Promise.resolve(), // replayer don't need to pause
         switchDeviceSeed: async () => transport, // nothing to actually do, we will continue replaying
       };

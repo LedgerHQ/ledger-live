@@ -466,8 +466,20 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   spamReportNfts: DEFAULT_FEATURE,
-  lldWalletSync: DEFAULT_FEATURE,
-  llmWalletSync: DEFAULT_FEATURE,
+  lldWalletSync: {
+    ...DEFAULT_FEATURE,
+    params: {
+      environment: "STAGING",
+      watchConfig: {},
+    },
+  },
+  llmWalletSync: {
+    ...DEFAULT_FEATURE,
+    params: {
+      environment: "STAGING",
+      watchConfig: {},
+    },
+  },
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
   lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
