@@ -6777,7 +6777,12 @@
         },
         "pinCode": {
           "title": "Enter your code",
-          "desc": "Type the code displayed on the Ledger Live you want to sync with."
+          "desc": "Type the code displayed on the Ledger Live you want to sync with.",
+          "error": {
+            "title": "Codes do not match",
+            "desc": "Make sure the code you type is the one displayed on the other Ledger Live instance.",
+            "tryAgain": "Try again"
+          }
         }
       }
     }
