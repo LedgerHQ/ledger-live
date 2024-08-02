@@ -88,6 +88,12 @@ export default function FeesDrawerLiveApp({
   if (!mainAccount) return;
   if (!isOpen) return null;
 
+  console.log(
+    "%capps/ledger-live-desktop/src/renderer/screens/exchange/Swap2/Form/FeesDrawerLiveApp/index.tsx:91 transactionStatus.errors",
+    "color: #007acc;",
+    transactionStatus.errors,
+  );
+
   return (
     <Box height="100%" display="flex" flexDirection="column">
       <Divider />
@@ -123,7 +129,13 @@ export default function FeesDrawerLiveApp({
       )}
 
       <Box mt={3} mx={3} alignSelf="flex-end">
-        <Button variant={"main"} outline borderRadius={48} onClick={() => handleRequestClose(true)}>
+        <Button
+          disabled={!!transactionStatus.errors?.amount}
+          variant={"main"}
+          outline
+          borderRadius={48}
+          onClick={() => handleRequestClose(true)}
+        >
           {t("common.continue")}
         </Button>
       </Box>
