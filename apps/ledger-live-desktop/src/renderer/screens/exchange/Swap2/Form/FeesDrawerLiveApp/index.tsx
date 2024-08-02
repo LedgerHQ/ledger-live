@@ -1,13 +1,10 @@
 import React, { useCallback, useState } from "react";
 import Box from "~/renderer/components/Box";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
-import {
-  SwapSelectorStateType,
-  SwapTransactionType,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { Account, FeeStrategy } from "@ledgerhq/types-live";
+import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider } from "@ledgerhq/react-ui";
@@ -16,7 +13,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
-  mainAccount: Account;
+  mainAccount: AccountLike;
   parentAccount: Account;
   status: SwapTransactionType["status"];
   disableSlowStrategy?: boolean;
@@ -56,12 +53,17 @@ export default function FeesDrawerLiveApp({
       setTransactionState(prevTransaction => {
         const updatedTransaction = updater(prevTransaction);
         setTransaction(updatedTransaction);
-        bridge.getTransactionStatus(mainAccount, transaction).then(setTransactionStatus);
+        bridge
+          .getTransactionStatus(
+            mainAccount.type === "TokenAccount" ? parentAccount : mainAccount,
+            transaction,
+          )
+          .then(setTransactionStatus);
 
         return updatedTransaction;
       });
     },
-    [setTransaction, bridge, mainAccount, transaction],
+    [setTransaction, bridge, mainAccount, transaction, parentAccount],
   );
 
   const mapStrategies = useCallback(
@@ -114,11 +116,11 @@ export default function FeesDrawerLiveApp({
         )}
       </Box>
       <Divider />
-              {transactionStatus.errors?.amount && (
-          <Box>
-            <ErrorBanner error={transactionStatus.errors?.amount} />
-          </Box>
-        )}
+      {transactionStatus.errors?.amount && (
+        <Box>
+          <ErrorBanner error={transactionStatus.errors?.amount} />
+        </Box>
+      )}
 
       <Box mt={3} mx={3} alignSelf="flex-end">
         <Button variant={"main"} outline borderRadius={48} onClick={() => handleRequestClose(true)}>

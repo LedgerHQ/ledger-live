@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/live-common/account/helpers";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import { SwapOperation } from "@ledgerhq/types-live/lib/swap";
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
