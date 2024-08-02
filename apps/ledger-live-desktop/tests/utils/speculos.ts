@@ -45,6 +45,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Dogecoin: {
+    currency: getCryptoCurrencyById("dogecoin"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Dogecoin",
+    },
+    dependency: "",
+  },
   Ethereum: {
     currency: getCryptoCurrencyById("ethereum"),
     appQuery: {
