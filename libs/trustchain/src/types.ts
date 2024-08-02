@@ -153,12 +153,6 @@ export interface TrustchainSDK {
     ignorePermissionsChecks?: boolean,
   ): Promise<T>;
 
-  withDeviceAuth<T>(
-    transport: Transport,
-    f: (jwt: JWT) => Promise<T>,
-    policy?: AuthCachePolicy,
-  ): Promise<T>;
-
   /**
    * This method will either create the required trustchains (root and application) or restore them.
    * The returned trustchain will be initialized on the root level and also will have the branch derivation corresponding to the contextual applicationId.

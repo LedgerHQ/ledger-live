@@ -41,11 +41,6 @@ const mockedLiveJWT = {
   permissions: {},
 };
 
-const mockedDeviceJWT = {
-  accessToken: "mock-device-jwt",
-  permissions: {},
-};
-
 // global states in memory
 const trustchains = new Map<string, Trustchain>();
 const trustchainMembers = new Map<string, TrustchainMember[]>();
@@ -89,11 +84,6 @@ export class MockSDK implements TrustchainSDK {
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
     return job(mockedLiveJWT);
-  }
-
-  withDeviceAuth<T>(transport: Transport, job: (jwt: JWT) => Promise<T>): Promise<T> {
-    void transport;
-    return job(mockedDeviceJWT);
   }
 
   async getOrCreateTrustchain(

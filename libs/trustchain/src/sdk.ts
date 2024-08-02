@@ -13,7 +13,6 @@ import {
 } from "./types";
 import {
   crypto,
-  device,
   Challenge,
   CommandStream,
   CommandStreamEncoder,
@@ -25,23 +24,26 @@ import {
   Device,
 } from "@ledgerhq/hw-trustchain";
 import Transport from "@ledgerhq/hw-transport";
-import api from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
 import { log } from "@ledgerhq/logs";
-import {
-  LedgerAPI4xx,
-  StatusCodes,
-  TransportStatusError,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
+import api from "./api";
+import { genericWithJWT } from "./auth";
 import { TrustchainEjected, TrustchainNotAllowed, TrustchainOutdated } from "./errors";
+import { HWDeviceProvider } from "./HWDeviceProvider";
 
 export class SDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
+  private hwDeviceProvider: HWDeviceProvider;
   private lifecycle?: TrustchainLifecycle;
 
-  constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
+  constructor(
+    context: TrustchainSDKContext,
+    hwDeviceProvider: HWDeviceProvider,
+    lifecyle?: TrustchainLifecycle,
+  ) {
     this.context = context;
+    this.hwDeviceProvider = hwDeviceProvider;
     this.lifecycle = lifecyle;
   }
 
@@ -82,24 +84,6 @@ export class SDK implements TrustchainSDK {
     );
   }
 
-  private deviceJwt: JWT | undefined = undefined;
-  withDeviceAuth<T>(
-    transport: Transport,
-    job: (jwt: JWT) => Promise<T>,
-    policy?: AuthCachePolicy,
-    callbacks?: TrustchainDeviceCallbacks,
-  ): Promise<T> {
-    return genericWithJWT(
-      jwt => {
-        this.deviceJwt = jwt;
-        return job(jwt);
-      },
-      this.deviceJwt,
-      () => authWithDevice(transport, callbacks),
-      policy,
-    );
-  }
-
   async initMemberCredentials(): Promise<MemberCredentials> {
     const kp = await crypto.randomKeypair();
     return convertKeyPairToLiveCredentials(kp);
@@ -113,21 +97,22 @@ export class SDK implements TrustchainSDK {
   ): Promise<TrustchainResult> {
     let type = TrustchainResultType.restored;
 
-    const hw = device.apdu(transport);
-
-    const withJwt: WithJwt = f => this.withDeviceAuth(transport, f, undefined, callbacks);
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(transport, job, undefined, callbacks);
 
     let trustchains = await withJwt(api.getTrustchains);
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
       type = TrustchainResultType.created;
-      const streamTree = await StreamTree.createNewTree(hw, { topic });
+      const streamTree = await this.hwDeviceProvider.withHw(transport, hw =>
+        StreamTree.createNewTree(hw, { topic }),
+      );
       await streamTree.getRoot().resolve(); // double checks the signatures are correct before sending to the backend
       const commandStream = CommandStreamEncoder.encode(streamTree.getRoot().blocks);
       await withJwt(jwt => api.postSeed(jwt, crypto.to_hex(commandStream)));
       // deviceJwt have changed, proactively refresh it
-      this.deviceJwt = await withJwt(api.refreshAuth);
+      await this.hwDeviceProvider.refreshJwt(transport, callbacks);
       trustchains = await withJwt(api.getTrustchains);
     }
 
@@ -159,12 +144,14 @@ export class SDK implements TrustchainSDK {
     }
     if (shouldShare) {
       if (type === TrustchainResultType.restored) type = TrustchainResultType.updated;
-      streamTree = await remapUserInteractions(
-        pushMember(streamTree, path, trustchainRootId, withJwt, hw, {
-          id: memberCredentials.pubkey,
-          name: this.context.name,
-          permissions: Permissions.OWNER,
-        }),
+      streamTree = await this.hwDeviceProvider.withHw(
+        transport,
+        hw =>
+          pushMember(streamTree, path, trustchainRootId, withJwt, hw, {
+            id: memberCredentials.pubkey,
+            name: this.context.name,
+            permissions: Permissions.OWNER,
+          }),
         callbacks,
       );
     }
@@ -221,7 +208,8 @@ export class SDK implements TrustchainSDK {
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
-    const withJwt: WithJwt = f => this.withDeviceAuth(transport, f, undefined, callbacks);
+    const withJwt: WithJwt = job =>
+      this.hwDeviceProvider.withJwt(transport, job, undefined, callbacks);
 
     // invariant because the sdk does not support this case, and the UI should not allows it.
     invariant(
@@ -235,7 +223,6 @@ export class SDK implements TrustchainSDK {
       memberCredentials,
     );
 
-    const hw = device.apdu(transport);
     const applicationId = this.context.applicationId;
     const trustchainId = trustchain.rootId;
     // eslint-disable-next-line prefer-const
@@ -251,18 +238,21 @@ export class SDK implements TrustchainSDK {
     const newPath = streamTree.getApplicationRootPath(applicationId, 1);
 
     // We close the current trustchain with the hardware wallet in order to get a user confirmation of the action
-    const sendCloseStreamToAPI = await remapUserInteractions(
-      closeStream(streamTree, applicationRootPath, trustchainId, withJwt, hw),
+    const sendCloseStreamToAPI = await await this.hwDeviceProvider.withHw(
+      transport,
+      hw => closeStream(streamTree, applicationRootPath, trustchainId, withJwt, hw),
       callbacks,
     );
 
     // derive a new branch of the tree on the new path
-    streamTree = await remapUserInteractions(
-      pushMember(streamTree, newPath, trustchainId, withJwt, hw, {
-        id: memberCredentials.pubkey,
-        name: this.context.name,
-        permissions: Permissions.OWNER,
-      }),
+    streamTree = await this.hwDeviceProvider.withHw(
+      transport,
+      hw =>
+        pushMember(streamTree, newPath, trustchainId, withJwt, hw, {
+          id: memberCredentials.pubkey,
+          name: this.context.name,
+          permissions: Permissions.OWNER,
+        }),
       callbacks,
     );
 
@@ -280,7 +270,7 @@ export class SDK implements TrustchainSDK {
     await sendCloseStreamToAPI();
 
     // deviceJwt have changed, proactively refresh it
-    this.deviceJwt = await withJwt(api.refreshAuth);
+    await this.hwDeviceProvider.refreshJwt(transport, callbacks);
 
     const newTrustchain: Trustchain = {
       rootId: trustchainId,
@@ -329,7 +319,7 @@ export class SDK implements TrustchainSDK {
       api.deleteTrustchain(jwt, trustchain.rootId),
     );
     this.jwt = undefined;
-    this.deviceJwt = undefined;
+    this.hwDeviceProvider.clearJwt();
   }
 
   async encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array> {
@@ -346,103 +336,6 @@ export class SDK implements TrustchainSDK {
 }
 
 type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
-
-type JwtExpirationCheck = {
-  hasExpired: boolean;
-  canBeRefreshed: boolean;
-  isNotPermitted: boolean;
-  isTrustchainOutdated: boolean;
-};
-
-function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
-  let hasExpired = false;
-  let canBeRefreshed = false;
-  let isNotPermitted = false;
-  let isTrustchainOutdated = false;
-  // this assume live-network is used and we adapt to its error's format
-  if (error instanceof LedgerAPI4xx) {
-    if (error.message.includes("JWT is expired")) {
-      hasExpired = true;
-      canBeRefreshed = error.message.includes("/refresh");
-    } else if (error.message.includes("JWT contains no permission")) {
-      isNotPermitted = true;
-    } else if (error.message.includes("path does not match")) {
-      isTrustchainOutdated = true;
-    }
-  }
-  return { hasExpired, canBeRefreshed, isNotPermitted, isTrustchainOutdated };
-}
-
-async function genericWithJWT<T>(
-  job: (jwt: JWT) => Promise<T>,
-  initialJWT: JWT | undefined,
-  auth: () => Promise<JWT>,
-  policy: AuthCachePolicy = "cache",
-): Promise<T> {
-  function refresh(jwt: JWT) {
-    return api.refreshAuth(jwt).catch(e => {
-      log("trustchain", "JWT refresh failed, reauthenticating", e);
-      const { hasExpired, isNotPermitted, isTrustchainOutdated } = networkCheckJwtExpiration(e);
-      if (isNotPermitted) {
-        throw new TrustchainNotAllowed();
-      }
-      if (isTrustchainOutdated) {
-        throw new TrustchainOutdated();
-      }
-      if (hasExpired) {
-        return auth();
-      }
-      throw e;
-    });
-  }
-
-  // initial jwt depending on the policy
-  let jwt =
-    policy === "no-cache" || !initialJWT
-      ? await auth()
-      : policy === "refresh"
-        ? await refresh(initialJWT)
-        : initialJWT;
-
-  return job(jwt).catch(async e => {
-    // JWT expiration handling: if the function fails, we will recover a valid jwt accordingly to spec. https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/4207083687/TCH+Usage+documentation#JWT-expiration-handling
-    const { hasExpired, canBeRefreshed, isNotPermitted, isTrustchainOutdated } =
-      networkCheckJwtExpiration(e);
-    if (isNotPermitted) {
-      throw new TrustchainNotAllowed();
-    }
-    if (isTrustchainOutdated) {
-      throw new TrustchainOutdated();
-    }
-    if (hasExpired) {
-      log("trustchain", "JWT expired -> " + (canBeRefreshed ? "refreshing" : "reauthenticating"));
-      jwt = await (jwt && canBeRefreshed ? refresh(jwt) : auth());
-      return job(jwt);
-    }
-    throw e;
-  });
-}
-
-async function authWithDevice(
-  transport: Transport,
-  callbacks?: TrustchainDeviceCallbacks,
-): Promise<JWT> {
-  const hw = device.apdu(transport);
-  const challenge = await api.getAuthenticationChallenge();
-  const data = crypto.from_hex(challenge.tlv);
-
-  const seedId = await remapUserInteractions(hw.getSeedId(data), callbacks);
-  const signature = crypto.to_hex(seedId.signature);
-  const response = await api.postChallengeResponse({
-    challenge: challenge.json,
-    signature: {
-      credential: seedId.pubkeyCredential.toJSON(),
-      signature,
-      attestation: crypto.to_hex(seedId.attestationResult),
-    },
-  });
-  return response;
-}
 
 async function auth(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<JWT> {
   const challenge = await api.getAuthenticationChallenge();
@@ -580,31 +473,6 @@ async function extractEncryptionKey(
     }
     throw e;
   }
-}
-
-/**
- * remap device errors related to user interactions (error when user refuses,...)
- */
-function remapUserInteractions<T>(
-  promise: Promise<T>,
-  callbacks?: TrustchainDeviceCallbacks,
-): Promise<T> {
-  callbacks?.onStartRequestUserInteraction();
-  return promise
-    .catch(error => {
-      if (
-        error instanceof TransportStatusError &&
-        [StatusCodes.USER_REFUSED_ON_DEVICE, StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED].includes(
-          error.statusCode,
-        )
-      ) {
-        throw new UserRefusedOnDevice();
-      }
-      throw error;
-    })
-    .finally(() => {
-      callbacks?.onEndRequestUserInteraction();
-    });
 }
 
 // spec https://ledgerhq.atlassian.net/wiki/spaces/TA/pages/4335960138/ARCH+LedgerLive+Auth+specifications
