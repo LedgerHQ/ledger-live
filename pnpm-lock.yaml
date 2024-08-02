@@ -2650,7 +2650,7 @@ importers:
         specifier: ^0.56.1
         version: 0.56.3(@ton/crypto@3.2.0)
       '@ton/crypto':
-        specifier: ^3.2.0
+        specifier: 3.2.0
         version: 3.2.0
       '@ton/ton':
         specifier: ^13.11.1
@@ -3391,7 +3391,7 @@ importers:
         specifier: ^0.56.1
         version: 0.56.3(@ton/crypto@3.2.0)
       '@ton/crypto':
-        specifier: ^3.2.0
+        specifier: 3.2.0
         version: 3.2.0
       '@types/bchaddrjs':
         specifier: ^0.4.0
