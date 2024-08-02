@@ -1,5 +1,13 @@
-import React, { useState, useCallback, useMemo, memo } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import React, { useState, useCallback, useMemo, memo, useRef, useEffect } from "react";
+import {
+  Keyboard,
+  LayoutChangeEvent,
+  LayoutRectangle,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  SectionList,
+  StyleSheet,
+} from "react-native";
 import { useSelector } from "react-redux";
 import { listTokens, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -45,6 +53,7 @@ import ProviderWarning from "./ProviderWarning";
 import { UpdateStep } from "../FirmwareUpdate";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import camelCase from "lodash/camelCase";
+import { useTheme } from "styled-components/native";
 import KeyboardView from "~/components/KeyboardView";
 
 type NavigationProps = BaseComposite<
@@ -158,66 +167,81 @@ const AppsScreen = ({
     [found, apps],
   );
 
-  const renderNoResults = useCallback(
-    () =>
-      found && parent ? (
-        <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
-          <Flex position="relative">
-            <AppIcon app={parent} size={48} radius={100} />
-            <Flex
-              position="absolute"
-              bottom={-2}
-              right={-2}
-              borderWidth={2}
-              borderRadius={100}
-              borderColor="background.main"
-            >
-              <AppIcon app={parent} size={18} radius={100} />
+  const renderFooter = useCallback(
+    (items?: App[]) => (
+      <Flex>
+        {items ? null : found && parent ? (
+          <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
+            <Flex position="relative">
+              <AppIcon app={parent} size={48} radius={100} />
+              <Flex
+                position="absolute"
+                bottom={-2}
+                right={-2}
+                borderWidth={2}
+                borderRadius={100}
+                borderColor="background.main"
+              >
+                <AppIcon app={parent} size={18} radius={100} />
+              </Flex>
+            </Flex>
+            <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
+              <Trans
+                i18nKey="manager.token.title"
+                values={{
+                  appName: parent.name,
+                }}
+              />
+            </Text>
+            <Flex>
+              <Text
+                color="neutral.c80"
+                fontWeight="medium"
+                variant="body"
+                pt={6}
+                textAlign="center"
+              >
+                {parentInstalled ? (
+                  <Trans
+                    i18nKey="manager.token.noAppNeeded"
+                    values={{
+                      appName: parent.name,
+                      tokenName: found.name,
+                    }}
+                  />
+                ) : (
+                  <Trans
+                    i18nKey="manager.token.installApp"
+                    values={{
+                      appName: parent.name,
+                      tokenName: found.name,
+                    }}
+                  />
+                )}
+              </Text>
             </Flex>
           </Flex>
-          <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
-            <Trans
-              i18nKey="manager.token.title"
-              values={{
-                appName: parent.name,
-              }}
-            />
-          </Text>
-          <Flex>
-            <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
-              {parentInstalled ? (
-                <Trans
-                  i18nKey="manager.token.noAppNeeded"
-                  values={{
-                    appName: parent.name,
-                    tokenName: found.name,
-                  }}
-                />
-              ) : (
-                <Trans
-                  i18nKey="manager.token.installApp"
-                  values={{
-                    appName: parent.name,
-                    tokenName: found.name,
-                  }}
-                />
-              )}
+        ) : (
+          <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
+            <NoResultsFound />
+            <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
+              <Trans i18nKey="manager.appList.noResultsFound" />
             </Text>
+            <Flex>
+              <Text
+                color="neutral.c80"
+                fontWeight="medium"
+                variant="body"
+                pt={6}
+                textAlign="center"
+              >
+                <Trans i18nKey="manager.appList.noResultsDesc" />
+              </Text>
+            </Flex>
           </Flex>
-        </Flex>
-      ) : (
-        <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
-          <NoResultsFound />
-          <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
-            <Trans i18nKey="manager.appList.noResultsFound" />
-          </Text>
-          <Flex>
-            <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
-              <Trans i18nKey="manager.appList.noResultsDesc" />
-            </Text>
-          </Flex>
-        </Flex>
-      ),
+        )}
+      </Flex>
+    ),
     [found, parent, parentInstalled],
   );
 
@@ -238,101 +262,144 @@ const AppsScreen = ({
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
   const showFwUpdateBanner = Boolean(latestFirmware);
 
+  const sectionListRef = useRef<SectionList>(null);
+
+  const { space } = useTheme();
+
+  const headerLayoutRef = useRef<LayoutRectangle | null>(null);
+
+  const onHeaderLayout = useCallback((event: LayoutChangeEvent) => {
+    headerLayoutRef.current = event.nativeEvent.layout;
+  }, []);
+
+  const scrollOffset = useRef(0);
+  const onScroll = useCallback(
+    ({ nativeEvent: { contentOffset } }: NativeSyntheticEvent<NativeScrollEvent>) => {
+      scrollOffset.current = contentOffset.y;
+    },
+    [scrollOffset],
+  );
+
+  const scrollToSearchBar = useCallback(() => {
+    const minScrollOffset = headerLayoutRef.current?.height ?? 0;
+    if (scrollOffset.current > minScrollOffset) return; // avoid scrolling past the search bar if it's already visible
+    sectionListRef.current
+      ?.getScrollResponder()
+      ?.scrollTo({ y: headerLayoutRef.current?.height, animated: true });
+  }, []);
+
+  useEffect(() => {
+    if (query !== "") scrollToSearchBar();
+  }, [query, scrollToSearchBar]);
+
+  useEffect(() => {
+    const listener = Keyboard.addListener("keyboardDidShow", scrollToSearchBar);
+    return () => listener.remove();
+  }, [scrollToSearchBar]);
+
+  const listHeader = useMemo(
+    () => (
+      <Flex pt={4} pb={8} onLayout={onHeaderLayout} backgroundColor="background.main">
+        <DeviceCard
+          distribution={distribution}
+          state={state}
+          result={result}
+          deviceId={deviceId}
+          initialDeviceName={initialDeviceName}
+          pendingInstalls={pendingInstalls}
+          deviceInfo={deviceInfo}
+          dispatch={dispatch}
+          device={device}
+          appList={deviceApps}
+          onLanguageChange={onLanguageChange}
+        >
+          {showFwUpdateBanner ? (
+            <Flex p={6} pb={0}>
+              <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+            </Flex>
+          ) : null}
+        </DeviceCard>
+        <ProviderWarning />
+        <Benchmarking state={state} />
+        {
+          <AppUpdateAll
+            state={state}
+            appsToUpdate={update}
+            dispatch={dispatch}
+            isModalOpened={updateModalOpened}
+          />
+        }
+      </Flex>
+    ),
+    [
+      device,
+      deviceApps,
+      deviceId,
+      deviceInfo,
+      dispatch,
+      distribution,
+      initialDeviceName,
+      onBackFromUpdate,
+      onHeaderLayout,
+      onLanguageChange,
+      pendingInstalls,
+      result,
+      showFwUpdateBanner,
+      state,
+      update,
+      updateModalOpened,
+    ],
+  );
+
+  const renderSearchBar = useCallback(
+    () => (
+      <Flex flexDirection="row" pb={6} backgroundColor="background.main" columnGap={space[6]}>
+        <Searchbar searchQuery={query} onQueryUpdate={setQuery} onFocus={scrollToSearchBar} />
+        <AppFilter
+          filter={appFilter}
+          setFilter={setFilter}
+          sort={sort}
+          setSort={setSort}
+          order={order}
+          setOrder={setOrder}
+        />
+      </Flex>
+    ),
+    [appFilter, order, query, scrollToSearchBar, sort, space],
+  );
+
   const renderList = useCallback(
     (items?: App[]) => (
-      <KeyboardView style={{ flex: 1 }} behavior="padding">
-        <FlatList
+      <KeyboardView behavior="padding">
+        <SectionList
+          style={{ width: "100%", height: "100%" }}
+          ref={sectionListRef}
           testID="manager-deviceInfo-scrollView"
-          data={items}
-          ListHeaderComponent={
-            <Flex mt={4}>
-              <DeviceCard
-                distribution={distribution}
-                state={state}
-                result={result}
-                deviceId={deviceId}
-                initialDeviceName={initialDeviceName}
-                pendingInstalls={pendingInstalls}
-                deviceInfo={deviceInfo}
-                dispatch={dispatch}
-                device={device}
-                appList={deviceApps}
-                onLanguageChange={onLanguageChange}
-              >
-                {showFwUpdateBanner ? (
-                  <Flex p={6} pb={0}>
-                    <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-                  </Flex>
-                ) : null}
-              </DeviceCard>
-              <ProviderWarning />
-              <Benchmarking state={state} />
-              {
-                <AppUpdateAll
-                  state={state}
-                  appsToUpdate={update}
-                  dispatch={dispatch}
-                  isModalOpened={updateModalOpened}
-                />
-              }
-              <Flex flexDirection="row" mt={8} mb={6} backgroundColor="background.main">
-                <Searchbar searchQuery={query} onQueryUpdate={setQuery} />
-                <Flex ml={6}>
-                  <AppFilter
-                    filter={appFilter}
-                    setFilter={setFilter}
-                    sort={sort}
-                    setSort={setSort}
-                    order={order}
-                    setOrder={setOrder}
-                  />
-                </Flex>
-              </Flex>
-            </Flex>
-          }
+          sections={[{ data: items ?? [], title: "" }]}
           renderItem={renderRow}
-          ListEmptyComponent={renderNoResults}
+          renderSectionHeader={renderSearchBar}
+          stickySectionHeadersEnabled
+          onScroll={onScroll}
+          ListHeaderComponent={listHeader}
+          ListFooterComponent={renderFooter(items)}
           keyExtractor={item => item.name}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.list}
         />
       </KeyboardView>
     ),
-
-    [
-      showFwUpdateBanner,
-      onBackFromUpdate,
-      distribution,
-      state,
-      result,
-      deviceId,
-      initialDeviceName,
-      pendingInstalls,
-      deviceInfo,
-      dispatch,
-      device,
-      deviceApps,
-      onLanguageChange,
-      update,
-      updateModalOpened,
-      query,
-      appFilter,
-      sort,
-      order,
-      renderRow,
-      renderNoResults,
-    ],
+    [listHeader, onScroll, renderFooter, renderRow, renderSearchBar],
   );
 
-  const { getFeature } = useFeatureFlags();
+  const { getFeature, isFeature } = useFeatureFlags();
   const enabledApps = useMemo(
     () =>
       catalog.filter(({ currencyId }: App) => {
         if (!currencyId) return true;
         const currencyFeatureKey = camelCase(`currency_${currencyId}`) as FeatureId;
-        return getFeature(currencyFeatureKey)?.enabled ?? true;
+        return isFeature(currencyFeatureKey) ? getFeature(currencyFeatureKey)?.enabled : true;
       }),
-    [catalog, getFeature],
+    [catalog, getFeature, isFeature],
   );
 
   return (

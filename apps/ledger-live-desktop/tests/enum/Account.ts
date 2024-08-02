@@ -31,6 +31,18 @@ export class Account {
     "tb1qyjr6hsx3wvsdq998zvn5cusqkdyfvvnpnsz6a5",
   );
 
+  static readonly DOGE_1 = new Account(
+    Currency.DOGE,
+    "Dogecoin 1",
+    "DTWxYBoP319u1KBUFE9Z6FQxMKJRT1U7tQ",
+  );
+
+  static readonly DOGE_2 = new Account(
+    Currency.DOGE,
+    "Dogecoin 2",
+    "DKbRbGP5spDCaRSGLjWGWZGbhE19nQ1LoK",
+  );
+
   static readonly ETH_1 = new Account(
     Currency.ETH,
     "Ethereum 1",

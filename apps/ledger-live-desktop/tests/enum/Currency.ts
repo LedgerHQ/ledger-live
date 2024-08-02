@@ -34,6 +34,13 @@ export class Currency {
     ],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
+  static readonly DOGE = new Currency(
+    "Dogecoin",
+    "DOGE",
+    "Dogecoin",
+    [DeviceLabels.AMOUT, DeviceLabels.ADDRESS, DeviceLabels.ACCEPT, DeviceLabels.REJECT],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
   static readonly ETH = new Currency(
     "Ethereum",
     "ETH",

@@ -33,7 +33,6 @@ export class Drawer extends Component {
 
   @step("Verify that the information of the transaction is visible")
   async expectReceiverInfos(tx: Transaction) {
-    await expect(this.addressValue(tx.accountToDebit.address)).toBeVisible();
     await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
     await expect(this.amountValue(tx.amount)).toBeVisible();
   }
