@@ -6,8 +6,8 @@ import styled from "styled-components";
 import {
   AnalyticsButton,
   AnalyticsPage,
-  useWalletSyncAnalytics,
-} from "../../hooks/useWalletSyncAnalytics";
+  useLedgerSyncAnalytics,
+} from "../../hooks/useLedgerSyncAnalytics";
 import { Separator } from "../../components/Separator";
 import { TouchableOpacity } from "react-native";
 import { TrustchainNotFound } from "../../hooks/useGetMembers";
@@ -24,24 +24,24 @@ const WalletSyncManage = () => {
 
   const { data, isLoading, isError, error } = manageInstancesHook.memberHook;
 
-  const { onClickTrack } = useWalletSyncAnalytics();
-
-  const goToManageBackup = useCallback(() => {
-    manageKeyHook.openDrawer();
-    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.WalletSyncActivated });
-  }, [manageKeyHook, onClickTrack]);
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const goToSync = () => {
     //dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
 
-    onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.WalletSyncActivated });
+    onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.LedgerSyncActivated });
+  };
+
+  const goToManageBackup = () => {
+    manageKeyHook.openDrawer();
+    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.LedgerSyncActivated });
   };
 
   const goToManageInstances = () => {
     manageInstancesHook.openDrawer();
     onClickTrack({
       button: AnalyticsButton.ManageSynchronizations,
-      page: AnalyticsPage.WalletSyncActivated,
+      page: AnalyticsPage.LedgerSyncActivated,
     });
   };
 

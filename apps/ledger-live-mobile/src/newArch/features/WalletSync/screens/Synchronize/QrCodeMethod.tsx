@@ -4,15 +4,15 @@ import QrCode from "LLM/features/WalletSync/components/Synchronize/QrCode";
 import { Options, OptionsType } from "LLM/features/WalletSync/types/Activation";
 import { useTranslation } from "react-i18next";
 import {
-  useWalletSyncAnalytics,
+  useLedgerSyncAnalytics,
   AnalyticsPage,
   AnalyticsButton,
-} from "../../hooks/useWalletSyncAnalytics";
+} from "../../hooks/useLedgerSyncAnalytics";
 import { TrackScreen } from "~/analytics";
 
 const QrCodeMethod = () => {
   const [selectedOption, setSelectedOption] = useState<OptionsType>(Options.SCAN);
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
   const { t } = useTranslation();
 
   const handleSelectOption = (option: OptionsType) => {

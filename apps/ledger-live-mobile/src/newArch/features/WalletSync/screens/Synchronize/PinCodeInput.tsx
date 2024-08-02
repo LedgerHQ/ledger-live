@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useState } from "react"
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import TrackScreen from "~/analytics/TrackScreen";
 import { NativeSyntheticEvent, TextInput, TextInputKeyPressEventData } from "react-native";
 

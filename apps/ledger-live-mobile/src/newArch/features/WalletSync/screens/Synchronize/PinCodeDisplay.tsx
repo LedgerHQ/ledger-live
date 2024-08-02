@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
-import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import TrackScreen from "~/analytics/TrackScreen";
 
 type Props = {

@@ -7,10 +7,10 @@ import { NavigatorName, ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import {
-  useWalletSyncAnalytics,
+  useLedgerSyncAnalytics,
   AnalyticsButton,
   AnalyticsPage,
-} from "../../hooks/useWalletSyncAnalytics";
+} from "../../hooks/useLedgerSyncAnalytics";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
@@ -23,7 +23,7 @@ type Props = {
 const ChooseSyncMethod = ({ onScanMethodPress }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProps["navigation"]>();
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const onConnectDeviceMethodPress = () => {
     onClickTrack({ button: AnalyticsButton.UseYourLedger, page: AnalyticsPage.ChooseSyncMethod });

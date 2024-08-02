@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
 import { useWindowDimensions } from "react-native";
@@ -6,6 +6,9 @@ import { Flex } from "@ledgerhq/native-ui";
 import ActivationFlow from "../../components/Activation/ActivationFlow";
 import { Steps } from "../../types/Activation";
 import DrawerHeader from "../../components/Synchronize/DrawerHeader";
+import useActivationDrawerModel from "./useActivationDrawerModel";
+
+type ViewProps = ReturnType<typeof useActivationDrawerModel>;
 
 type Props = {
   isOpen: boolean;
@@ -13,48 +16,45 @@ type Props = {
   handleClose: () => void;
 };
 
-const ActivationDrawer = ({ isOpen, startingStep, handleClose }: Props) => {
-  const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
+function View({
+  isOpen,
+  currentStep,
+  hasCustomHeader,
+  canGoBack,
+  navigateToChooseSyncMethod,
+  navigateToQrCodeMethod,
+  goBackToPreviousStep,
+  handleClose,
+  onCloseDrawer,
+}: ViewProps) {
   const { height } = useWindowDimensions();
   const maxDrawerHeight = height - 180;
-
   const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
-
-  const handleStepChange = (step: Steps) => setCurrentStep(step);
-
-  let goBackCallback: () => void;
-
-  const hasCustomHeader = currentStep === Steps.QrCodeMethod && startingStep === Steps.Activation;
-
-  const canGoBack = currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation;
-
-  const resetStep = () => setCurrentStep(startingStep);
-
-  const onClose = () => {
-    resetStep();
-    handleClose();
-  };
 
   return (
     <>
       <TrackScreen />
       <QueuedDrawer
         isRequestingToBeOpened={isOpen}
-        onClose={onClose}
+        onClose={onCloseDrawer}
         CustomHeader={hasCustomHeader ? CustomDrawerHeader : undefined}
         hasBackButton={canGoBack}
-        onBack={() => goBackCallback()}
+        onBack={goBackToPreviousStep}
       >
         <Flex maxHeight={maxDrawerHeight}>
           <ActivationFlow
-            startingStep={currentStep}
-            onStepChange={handleStepChange}
-            onGoBack={callback => (goBackCallback = callback)}
+            currentStep={currentStep}
+            navigateToChooseSyncMethod={navigateToChooseSyncMethod}
+            navigateToQrCodeMethod={navigateToQrCodeMethod}
           />
         </Flex>
       </QueuedDrawer>
     </>
   );
+}
+
+const ActivationDrawer = (props: Props) => {
+  return <View {...useActivationDrawerModel(props)} />;
 };
 
 export default ActivationDrawer;

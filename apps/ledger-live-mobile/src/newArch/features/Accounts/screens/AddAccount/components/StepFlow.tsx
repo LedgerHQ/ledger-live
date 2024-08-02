@@ -5,7 +5,7 @@ import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMeth
 import { TrackScreen } from "~/analytics";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Steps } from "../../../types/enum/addAccount";
-import { AnalyticsPage } from "LLM/features/WalletSync/hooks/useWalletSyncAnalytics";
+import { AnalyticsPage } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 type Props = {
   startingStep: Steps;

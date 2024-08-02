@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import {
-  useWalletSyncAnalytics,
+  useLedgerSyncAnalytics,
   AnalyticsPage,
   AnalyticsButton,
-} from "LLM/features/WalletSync/hooks/useWalletSyncAnalytics";
+} from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { useSelector } from "react-redux";
 import { trustchainSelector } from "@ledgerhq/trustchain/store";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
@@ -15,7 +15,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 
 const WalletSyncRow = () => {
   const { t } = useTranslation();
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
   const navigation = useNavigation();
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
 
