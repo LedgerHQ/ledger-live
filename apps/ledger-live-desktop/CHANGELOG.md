@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.4
+
+### Patch Changes
+
+- [#7483](https://github.com/LedgerHQ/ledger-live/pull/7483) [`03766ae`](https://github.com/LedgerHQ/ledger-live/commit/03766aeb278cf7bf6efd3249254e3ec3cc59478f) Thanks [@valpinkman](https://github.com/valpinkman)! - Update Firmware update banner
+
+- [#7471](https://github.com/LedgerHQ/ledger-live/pull/7471) [`77c1f29`](https://github.com/LedgerHQ/ledger-live/commit/77c1f2918529a03d8f3b08403f9373b868a17b89) Thanks [@CremaFR](https://github.com/CremaFR)! - track returned value when closing fee drawer
+
+- [#7487](https://github.com/LedgerHQ/ledger-live/pull/7487) [`451f000`](https://github.com/LedgerHQ/ledger-live/commit/451f0002505532e4c65def881d3b6db1ffb7b1fa) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - fix network fees drawer animation
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.7.0-nightly.4
+
 ## 2.85.0-nightly.3
 
 ### Minor Changes

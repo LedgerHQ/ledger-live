@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 0.0.4-nightly.2
+
+### Patch Changes
+
+- [#7488](https://github.com/LedgerHQ/ledger-live/pull/7488) [`4179bb8`](https://github.com/LedgerHQ/ledger-live/commit/4179bb89a316843a869bd485157ed141d9d9c84e) Thanks [@CremaFR](https://github.com/CremaFR)! - tron fee estimation check against spendable balance
+
 ## 0.0.4-nightly.1
 
 ### Patch Changes

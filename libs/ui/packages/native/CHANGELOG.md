@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.23.3-nightly.1
+
+### Patch Changes
+
+- [#7429](https://github.com/LedgerHQ/ledger-live/pull/7429) [`1100b21`](https://github.com/LedgerHQ/ledger-live/commit/1100b21581323317fb6c397019c4045edfe7954b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - UI - Banner component title now limited to two lines
+
 ## 0.23.3-nightly.0
 
 ### Patch Changes

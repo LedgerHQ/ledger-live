@@ -1,5 +1,12 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`4179bb8`](https://github.com/LedgerHQ/ledger-live/commit/4179bb89a316843a869bd485157ed141d9d9c84e)]:
+  - @ledgerhq/coin-tron@0.0.4-nightly.2
+
 ## 34.7.0-nightly.3
 
 ### Patch Changes

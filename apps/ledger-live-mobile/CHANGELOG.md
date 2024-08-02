@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.48.0-nightly.4
+
+### Patch Changes
+
+- [#7484](https://github.com/LedgerHQ/ledger-live/pull/7484) [`798e2c9`](https://github.com/LedgerHQ/ledger-live/commit/798e2c9c23b1536df1d7ad9aedd1ec6d9afdacfb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - My Ledger: make search bar sticky
+
+- Updated dependencies [[`1100b21`](https://github.com/LedgerHQ/ledger-live/commit/1100b21581323317fb6c397019c4045edfe7954b)]:
+  - @ledgerhq/native-ui@0.23.3-nightly.1
+  - @ledgerhq/live-common@34.7.0-nightly.4
+
 ## 3.48.0-nightly.3
 
 ### Minor Changes
