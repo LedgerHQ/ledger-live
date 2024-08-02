@@ -1,9 +1,11 @@
 import z from "zod";
 import network from "@ledgerhq/live-network";
 import WS from "isomorphic-ws";
+import querystring from "querystring";
 import type { WebSocket } from "ws";
 import { getEnv } from "@ledgerhq/live-env";
 import { Observable } from "rxjs";
+import { Trustchain } from "@ledgerhq/trustchain/types";
 
 export type JWT = {
   accessToken: string;
@@ -56,10 +58,14 @@ async function fetchData(
   jwt: JWT,
   datatype: string,
   version: number | undefined,
-  applicationPath: string,
+  trustchain: Trustchain,
 ): Promise<APISyncResponse> {
+  const query = {
+    path: trustchain.applicationPath,
+    id: trustchain.rootId,
+  };
   const { data } = await network<unknown>({
-    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?path=${encodeURIComponent(applicationPath)}`,
+    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?${querystring.stringify(query)}`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -75,10 +81,15 @@ async function uploadData(
   datatype: string,
   version: number,
   payload: string,
-  applicationPath: string,
+  trustchain: Trustchain,
 ): Promise<APISyncUpdateResponse> {
+  const query = {
+    version,
+    path: trustchain.applicationPath,
+    id: trustchain.rootId,
+  };
   const { data } = await network<unknown>({
-    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?version=${version}&path=${encodeURIComponent(applicationPath)}`,
+    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?${querystring.stringify(query)}`,
     method: "POST",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
@@ -92,9 +103,13 @@ async function uploadData(
 }
 
 // Delete data from cloud
-async function deleteData(jwt: JWT, datatype: string, applicationPath: string): Promise<void> {
+async function deleteData(jwt: JWT, datatype: string, trustchain: Trustchain): Promise<void> {
+  const query = {
+    path: trustchain.applicationPath,
+    id: trustchain.rootId,
+  };
   await network<void>({
-    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?path=${encodeURIComponent(applicationPath)}`,
+    url: `${getEnv("CLOUD_SYNC_API")}/atomic/v1/${datatype}?${querystring.stringify(query)}`,
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${jwt.accessToken}`,
