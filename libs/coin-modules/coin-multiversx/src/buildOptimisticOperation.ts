@@ -3,7 +3,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Address } from "@elrondnetwork/erdjs/out";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BinaryUtils } from "./utils/binary.utils";
-import { encodeOperationId } from "../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   ElrondAccount,
   ElrondProtocolTransaction,

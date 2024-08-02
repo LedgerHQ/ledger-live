@@ -10,6 +10,7 @@ import {
   ElrondTransferOptions,
   NetworkInfo,
 } from "../types";
+import { MultiversXAccount } from "./dtos/multiversx-account";
 
 const decodeTransactionMode = (action: ElrondTransactionAction): string => {
   if (!action) {
@@ -41,7 +42,7 @@ export default class ElrondApi {
   async getAccountDetails(addr: string) {
     const {
       data: { balance, nonce, isGuarded },
-    } = await network({
+    } = await network<MultiversXAccount>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}?withGuardianInfo=true`,
     });

@@ -1,12 +1,26 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-export const elrondConfig: Record<string, ConfigInfo> = {
+export type ElrondCoinConfig = () => CurrencyConfig & {
   config_currency_elrond: {
-    type: "object",
+    type: "object";
     default: {
       status: {
-        type: "active",
-      },
-    },
-  },
+        type: "active";
+      };
+    };
+  };
+};
+
+let coinConfig: ElrondCoinConfig | undefined;
+
+export const setCoinConfig = (config: ElrondCoinConfig): void => {
+  coinConfig = config;
+};
+
+export const getCoinConfig = (): ReturnType<ElrondCoinConfig> => {
+  if (!coinConfig?.()) {
+    throw new Error("Elrond module config not set");
+  }
+
+  return coinConfig();
 };

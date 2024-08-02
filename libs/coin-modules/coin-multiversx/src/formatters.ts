@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import type { Operation } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { ElrondAccount, ElrondOperation } from "./types";
 import BigNumber from "bignumber.js";

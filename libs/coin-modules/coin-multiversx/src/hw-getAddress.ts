@@ -1,13 +1,16 @@
-import type { Resolver } from "../../hw/getAddress/types";
-import Elrond from "./hw-app-elrond";
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { ElrondSigner } from "./signer";
 
-const resolver: Resolver = async (transport, { path, verify }) => {
-  const elrond = new Elrond(transport);
-  const { address } = await elrond.getAddress(path, verify);
-  return {
-    address,
-    path,
-    publicKey: "",
+const resolver = (signerContext: SignerContext<ElrondSigner>): GetAddressFn => {
+  return async (deviceId: string, { path, verify }: GetAddressOptions) => {
+    const r = await signerContext(deviceId, signer => signer.getAddress(path, verify || false));
+    return {
+      address: r.address,
+      publicKey: r.publicKey,
+      path,
+    };
   };
 };
 
