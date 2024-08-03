@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.5
+
+### Patch Changes
+
+- [#7490](https://github.com/LedgerHQ/ledger-live/pull/7490) [`03711d5`](https://github.com/LedgerHQ/ledger-live/commit/03711d54b37e7dc613091bb4eb2b150549ae370a) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - replace static data by cdn data
+
+- [#7491](https://github.com/LedgerHQ/ledger-live/pull/7491) [`d05495c`](https://github.com/LedgerHQ/ledger-live/commit/d05495ccea6b10c7fb9fe7fb19cab799c7733844) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sync onboarding: fix text not wrapping in "install apps" step
+
+- [#7485](https://github.com/LedgerHQ/ledger-live/pull/7485) [`1c8ec95`](https://github.com/LedgerHQ/ledger-live/commit/1c8ec958fe24f4d29ff08d0cec78e799805ebfac) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handle TrustchainOutdated Error
+
+- [#7501](https://github.com/LedgerHQ/ledger-live/pull/7501) [`7bb5805`](https://github.com/LedgerHQ/ledger-live/commit/7bb58057c7ff253ca84afe5e25f6c4127a866690) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix unstable integration test
+
+- Updated dependencies [[`1440323`](https://github.com/LedgerHQ/ledger-live/commit/144032348fcac45eb797c5e724cf5f654c9d3527), [`03711d5`](https://github.com/LedgerHQ/ledger-live/commit/03711d54b37e7dc613091bb4eb2b150549ae370a), [`c94d878`](https://github.com/LedgerHQ/ledger-live/commit/c94d878056f7ddace40cee1dae863f7080ec10d9), [`22ed462`](https://github.com/LedgerHQ/ledger-live/commit/22ed4624837be92a45c8b32ee6a76eedb094e937), [`506a3c3`](https://github.com/LedgerHQ/ledger-live/commit/506a3c33f59acf0afc9350e4f36f22f11cf7da26)]:
+  - @ledgerhq/live-wallet@0.4.2-nightly.3
+  - @ledgerhq/live-common@34.7.0-nightly.5
+  - @ledgerhq/trustchain@0.1.4-nightly.2
+
 ## 2.85.0-nightly.4
 
 ### Patch Changes

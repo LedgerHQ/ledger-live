@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.1.4-nightly.2
+
+### Patch Changes
+
+- [#7388](https://github.com/LedgerHQ/ledger-live/pull/7388) [`506a3c3`](https://github.com/LedgerHQ/ledger-live/commit/506a3c33f59acf0afc9350e4f36f22f11cf7da26) Thanks [@thesan](https://github.com/thesan)! - Factor device interactions out of the Trustchain SDK
+
 ## 0.1.4-nightly.1
 
 ### Patch Changes

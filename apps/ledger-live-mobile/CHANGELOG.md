@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.48.0-nightly.5
+
+### Minor Changes
+
+- [#7493](https://github.com/LedgerHQ/ledger-live/pull/7493) [`027a6f6`](https://github.com/LedgerHQ/ledger-live/commit/027a6f6551e06adc1bfe10f5a4aa70b2bcc956ab) Thanks [@Justkant](https://github.com/Justkant)! - feat(web3hub): add confirmation bottom modal before opening app
+
+- [#7473](https://github.com/LedgerHQ/ledger-live/pull/7473) [`00836ec`](https://github.com/LedgerHQ/ledger-live/commit/00836ecd31344ff4107ded1923b3e72eeb247340) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added wallet sync accounts synchronisation
+
+### Patch Changes
+
+- [#7463](https://github.com/LedgerHQ/ledger-live/pull/7463) [`fe3b075`](https://github.com/LedgerHQ/ledger-live/commit/fe3b0755660ada64c0eb1e24e598241fb4126aec) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Manage Synchronized Intances (Step 1)
+
+- Updated dependencies [[`1440323`](https://github.com/LedgerHQ/ledger-live/commit/144032348fcac45eb797c5e724cf5f654c9d3527), [`03711d5`](https://github.com/LedgerHQ/ledger-live/commit/03711d54b37e7dc613091bb4eb2b150549ae370a), [`c94d878`](https://github.com/LedgerHQ/ledger-live/commit/c94d878056f7ddace40cee1dae863f7080ec10d9), [`22ed462`](https://github.com/LedgerHQ/ledger-live/commit/22ed4624837be92a45c8b32ee6a76eedb094e937), [`506a3c3`](https://github.com/LedgerHQ/ledger-live/commit/506a3c33f59acf0afc9350e4f36f22f11cf7da26)]:
+  - @ledgerhq/live-wallet@0.4.2-nightly.3
+  - @ledgerhq/live-common@34.7.0-nightly.5
+  - @ledgerhq/trustchain@0.1.4-nightly.2
+
 ## 3.48.0-nightly.4
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.5
+
+### Patch Changes
+
+- [#7490](https://github.com/LedgerHQ/ledger-live/pull/7490) [`03711d5`](https://github.com/LedgerHQ/ledger-live/commit/03711d54b37e7dc613091bb4eb2b150549ae370a) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - replace static data by cdn data
+
+- [#7504](https://github.com/LedgerHQ/ledger-live/pull/7504) [`22ed462`](https://github.com/LedgerHQ/ledger-live/commit/22ed4624837be92a45c8b32ee6a76eedb094e937) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force version 3.2.0 of @ton/crypto because 3.3.0 is bugged in the RN context
+
+- Updated dependencies [[`1440323`](https://github.com/LedgerHQ/ledger-live/commit/144032348fcac45eb797c5e724cf5f654c9d3527), [`c94d878`](https://github.com/LedgerHQ/ledger-live/commit/c94d878056f7ddace40cee1dae863f7080ec10d9), [`22ed462`](https://github.com/LedgerHQ/ledger-live/commit/22ed4624837be92a45c8b32ee6a76eedb094e937)]:
+  - @ledgerhq/live-wallet@0.4.2-nightly.3
+  - @ledgerhq/coin-ton@0.3.12-nightly.2
+
 ## 34.7.0-nightly.4
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/live-wallet
 
+## 0.4.2-nightly.3
+
+### Patch Changes
+
+- [#7502](https://github.com/LedgerHQ/ledger-live/pull/7502) [`1440323`](https://github.com/LedgerHQ/ledger-live/commit/144032348fcac45eb797c5e724cf5f654c9d3527) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Live-Wallet - Sending trustchain id to cloudsync api
+
+- [#7499](https://github.com/LedgerHQ/ledger-live/pull/7499) [`c94d878`](https://github.com/LedgerHQ/ledger-live/commit/c94d878056f7ddace40cee1dae863f7080ec10d9) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Live-Wallet - Fix a wallet sync parser issue happening when the info field was null
+
+- Updated dependencies [[`506a3c3`](https://github.com/LedgerHQ/ledger-live/commit/506a3c33f59acf0afc9350e4f36f22f11cf7da26)]:
+  - @ledgerhq/trustchain@0.1.4-nightly.2
+
 ## 0.4.2-nightly.2
 
 ### Patch Changes

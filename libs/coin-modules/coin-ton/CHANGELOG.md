@@ -1,5 +1,11 @@
 # @ledgerhq/coin-ton
 
+## 0.3.12-nightly.2
+
+### Patch Changes
+
+- [#7504](https://github.com/LedgerHQ/ledger-live/pull/7504) [`22ed462`](https://github.com/LedgerHQ/ledger-live/commit/22ed4624837be92a45c8b32ee6a76eedb094e937) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force version 3.2.0 of @ton/crypto because 3.3.0 is bugged in the RN context
+
 ## 0.3.12-nightly.1
 
 ### Patch Changes
