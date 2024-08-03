@@ -16,15 +16,29 @@ describe("CloudSyncSDK basics", () => {
 
   setEnv("CLOUD_SYNC_API", base);
 
+  let expectedBackendTrustchain: Trustchain;
+  function verifyTrustchainParams(params: URLSearchParams) {
+    if (params.get("id") !== expectedBackendTrustchain.rootId) {
+      throw new Error("wrong params.id");
+    }
+    if (params.get("path") !== expectedBackendTrustchain.applicationPath) {
+      throw new Error("wrong params.path");
+    }
+  }
+
   let storedData: string | null = null;
   let storedVersion = 0;
+
+  let postCounter = 0;
 
   const handlers = [
     http.get(base + "/atomic/v1/:slug", ({ request }) => {
       if (request.headers.get("Authorization") !== "Bearer mock-live-jwt") {
         return HttpResponse.json({}, { status: 401 });
       }
-      const version = parseInt(new URL(request.url).searchParams.get("version") || "0", 10);
+      const params = new URL(request.url).searchParams;
+      verifyTrustchainParams(params);
+      const version = parseInt(params.get("version") || "0", 10);
       if (!storedData) {
         return HttpResponse.json({ status: "no-data" });
       } else if (storedVersion <= version) {
@@ -39,18 +53,29 @@ describe("CloudSyncSDK basics", () => {
       }
     }),
     http.post(base + "/atomic/v1/:slug", async ({ request }) => {
+      ++postCounter;
       if (request.headers.get("Authorization") !== "Bearer mock-live-jwt") {
         return HttpResponse.json({}, { status: 401 });
       }
-      const version = parseInt(new URL(request.url).searchParams.get("version") || "0", 10);
+      const params = new URL(request.url).searchParams;
+      verifyTrustchainParams(params);
+      const version = parseInt(params.get("version") || "0", 10);
       const json = await request.json();
       const { payload } = json as { payload: string };
       if (version !== storedVersion + 1) {
+        // to cover different accepted payloads, we sometimes returns info or not
+        const extra =
+          postCounter % 3 === 0
+            ? {}
+            : postCounter % 3 === 1
+              ? { info: "lld/0.0.0" }
+              : { info: null };
         return HttpResponse.json({
           status: "out-of-sync",
           version: storedVersion,
           payload: storedData,
           date: new Date().toISOString(),
+          ...extra,
         });
       }
       storedVersion = version;
@@ -58,6 +83,8 @@ describe("CloudSyncSDK basics", () => {
       return HttpResponse.json({ status: "updated" });
     }),
     http.delete(base + "/atomic/v1/:slug", ({ request }) => {
+      const params = new URL(request.url).searchParams;
+      verifyTrustchainParams(params);
       if (request.headers.get("Authorization") !== "Bearer mock-live-jwt") {
         return HttpResponse.json({}, { status: 401 });
       }
@@ -101,6 +128,7 @@ describe("CloudSyncSDK basics", () => {
 
     const result = await trustchainSdk.getOrCreateTrustchain(transport, creds);
     trustchain = result.trustchain;
+    expectedBackendTrustchain = trustchain;
 
     const getCurrentVersion = () => version;
 

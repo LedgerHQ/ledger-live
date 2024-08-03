@@ -5,6 +5,7 @@ import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { SYNC_DELAY } from "~/utils/constants";
 import { track } from "~/analytics";
+import { useWalletSyncUserState } from "~/newArch/features/WalletSync/components/WalletSyncContext";
 
 type Props = {
   error?: Error;
@@ -19,6 +20,7 @@ export default <P,>(
     const { colors, dark } = useTheme();
     const [refreshing, setRefreshing] = useState(false);
     const setSyncBehavior = useBridgeSync();
+    const { onUserRefresh } = useWalletSyncUserState();
     const { poll } = useCountervaluesPolling();
     const IsFocused = useIsFocused();
     function onRefresh() {
@@ -30,6 +32,7 @@ export default <P,>(
       });
       setRefreshing(true);
       track("buttonClicked", { button: "pull to refresh" });
+      onUserRefresh();
     }
 
     useEffect(() => {

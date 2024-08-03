@@ -3,10 +3,17 @@ import { useDispatch } from "react-redux";
 import { ErrorType } from "./type.hooks";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
+import {
+  TrustchainEjected,
+  TrustchainNotAllowed,
+  TrustchainOutdated,
+} from "@ledgerhq/trustchain/errors";
+import { useRestoreTrustchain } from "./useRestoreTrustchain";
 
 export const useLifeCycle = () => {
   const dispatch = useDispatch();
+
+  const { refetch: restoreTrustchain } = useRestoreTrustchain();
 
   function reset() {
     dispatch(resetTrustchainStore());
@@ -22,6 +29,8 @@ export const useLifeCycle = () => {
 
     if (error instanceof TrustchainEjected) reset();
     if (error instanceof TrustchainNotAllowed) reset();
+
+    if (error instanceof TrustchainOutdated) restoreTrustchain();
 
     const errorToHandle = Object.entries(includesErrorActions).find(([err, _action]) =>
       error.message.includes(err),

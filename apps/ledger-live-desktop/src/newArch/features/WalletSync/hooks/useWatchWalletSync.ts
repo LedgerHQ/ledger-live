@@ -122,6 +122,8 @@ export function useWatchWalletSync(): WalletSyncUserState {
   useEffect(() => {
     if (!trustchain || !memberCredentials) {
       setOnUserRefresh(() => noop);
+      setVisualPending(false);
+      setWalletSyncError(null);
       return;
     }
 

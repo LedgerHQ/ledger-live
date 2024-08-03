@@ -34,6 +34,7 @@ import { Loading } from "./Loading";
 import { TrustchainEjected } from "@ledgerhq/trustchain/lib-es/errors";
 import { Tick } from "./Tick";
 import { State } from "./types";
+import { Actionable } from "./Actionable";
 
 /*
 import * as icons from "@ledgerhq/crypto-icons-ui/react";
@@ -176,6 +177,8 @@ export default function AppAccountsSync({
   const [timestamp, setTimestamp] = useState(0);
   const [onUserRefresh, setOnUserRefresh] = useState<() => void>(() => () => {});
 
+  const [watchConfig, setWatchConfig] = useState({ notificationsEnabled: false });
+
   // pull and push wallet sync loop
   useEffect(() => {
     const localIncrementUpdate = makeLocalIncrementalUpdate({
@@ -187,6 +190,7 @@ export default function AppAccountsSync({
     });
 
     const { unsubscribe, onUserRefreshIntent } = walletSyncWatchLoop({
+      watchConfig,
       walletSyncSdk,
       localIncrementUpdate,
       trustchain,
@@ -214,6 +218,7 @@ export default function AppAccountsSync({
     getState,
     saveUpdate,
     ctx,
+    watchConfig,
   ]);
 
   const setAccounts = useCallback(
@@ -263,6 +268,17 @@ export default function AppAccountsSync({
         deviceId={deviceId}
         bridgeCache={bridgeCache}
         setAccounts={setAccounts}
+      />
+
+      <Actionable
+        buttonTitle="Toggle WebSocket notifications"
+        inputs={[watchConfig.notificationsEnabled]}
+        action={enabled => !enabled}
+        value={watchConfig.notificationsEnabled}
+        setValue={notificationsEnabled =>
+          typeof notificationsEnabled === "boolean" && setWatchConfig({ notificationsEnabled })
+        }
+        valueDisplay={v => (v ? "Listening" : "Not listening")}
       />
     </div>
   );
