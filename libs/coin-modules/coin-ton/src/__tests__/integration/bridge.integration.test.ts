@@ -88,8 +88,8 @@ const ton: CurrenciesData<Transaction> = {
           transaction: fromTransactionRaw({
             family: "ton",
             recipient: ADDRESS_2,
-            fees: "10000000",
-            amount: (1 * 1e9).toString(),
+            fees: "1",
+            amount: (1 * 1e2).toString(),
             comment: { isEncrypted: false, text: "😀" },
           }),
           expectedStatus: {

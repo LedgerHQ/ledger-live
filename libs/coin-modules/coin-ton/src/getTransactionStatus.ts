@@ -19,7 +19,7 @@ import {
 import { Transaction, TransactionStatus } from "./types";
 import { addressesAreEqual, commentIsValid, isAddressValid } from "./utils";
 
-type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "transaction";
+type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "comment";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 /**
@@ -110,7 +110,7 @@ const validateComment = (transaction: Transaction): Array<ValidationIssues> => {
 
   // if the comment isn'transaction encrypted, it should be valid
   if (transaction.comment.isEncrypted || !commentIsValid(transaction.comment)) {
-    errors.transaction = new TonCommentInvalid();
+    errors.comment = new TonCommentInvalid();
   }
   return [errors];
 };
