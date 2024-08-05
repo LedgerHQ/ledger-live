@@ -1,6 +1,13 @@
-import { http, HttpResponse, PathParams, StrictRequest } from "msw";
+import { DefaultBodyType, http, HttpResponse, PathParams, StrictRequest } from "msw";
 import { setupServer } from "msw/node";
-import { crypto, Device, Permissions, SoftwareDevice, StreamTree } from "@ledgerhq/hw-trustchain";
+import {
+  CommandBlock,
+  crypto,
+  Device,
+  Permissions,
+  SoftwareDevice,
+  StreamTree,
+} from "@ledgerhq/hw-trustchain";
 import { getEnv } from "@ledgerhq/live-env";
 import { PutCommandsRequest } from "../../api";
 import { HWDeviceProvider } from "../../HWDeviceProvider";
@@ -14,16 +21,24 @@ describe("Trustchain SDK", () => {
     getTrustchainByIdMock: jest.fn(),
     getChalenge: jest.fn(),
     postAuthenticate: jest.fn(),
+    postSeed: jest.fn<object, [StrictRequest<CommandBlock[]>]>(),
+    postDerivation: jest.fn<object, [StrictRequest<CommandBlock[]>]>(),
     putCommands: jest.fn<object, [StrictRequest<PutCommandsRequest>]>(),
   };
   const mswServer = setupServer(
     http.get("*/v1/trustchains", () => HttpResponse.json(apiMocks.getTrustchainsMock())),
     http.get("*/v1/trustchain/ROOTID", () => HttpResponse.json(apiMocks.getTrustchainByIdMock())),
+    http.get("*/v1/challenge", () => HttpResponse.json(apiMocks.getChalenge())),
+    http.post("*/v1/authenticate", () => HttpResponse.json(apiMocks.postAuthenticate())),
+    http.post<PathParams, CommandBlock[]>("*/v1/seed", ({ request }) =>
+      HttpResponse.json(apiMocks.postSeed(request)),
+    ),
+    http.post<PathParams, CommandBlock[]>("*/v1/trustchain/ROOTID/derivation", ({ request }) =>
+      HttpResponse.json(apiMocks.postDerivation(request)),
+    ),
     http.put<PathParams, PutCommandsRequest>("*/v1/trustchain/ROOTID/commands", ({ request }) =>
       HttpResponse.json(apiMocks.putCommands(request)),
     ),
-    http.get("*/v1/challenge", () => HttpResponse.json(apiMocks.getChalenge())),
-    http.post("*/v1/authenticate", () => HttpResponse.json(apiMocks.postAuthenticate())),
     http.all("*", () => HttpResponse.json({})),
   );
   mswServer.listen();
@@ -36,10 +51,6 @@ describe("Trustchain SDK", () => {
     clearJwt: jest.fn(),
   } satisfies Partial<HWDeviceProvider>;
   const hwDeviceProviderMock = HWDeviceProviderMethodsMocks as unknown as HWDeviceProvider;
-  const deviceCallbacks = {
-    onStartRequestUserInteraction: jest.fn(),
-    onEndRequestUserInteraction: jest.fn(),
-  };
 
   afterAll(() => {
     mswServer.close();
@@ -51,11 +62,10 @@ describe("Trustchain SDK", () => {
   beforeEach(() => {
     Object.values(apiMocks).forEach(mock => mock.mockClear());
     Object.values(HWDeviceProviderMethodsMocks).forEach(mock => mock.mockClear());
-    Object.values(deviceCallbacks).forEach(mock => mock.mockClear());
   });
 
   it("encryptUserData + decryptUserData", async () => {
-    const sdk = new SDK({ applicationId: 16, name: "test" }, hwDeviceProviderMock);
+    const sdk = new SDK(sdkContext, hwDeviceProviderMock);
     const obj = new Uint8Array([1, 2, 3, 4, 5]);
     const keypair = await crypto.randomKeypair();
     const trustchain = {
@@ -69,14 +79,16 @@ describe("Trustchain SDK", () => {
   });
 
   it("should create Trustchain", async () => {
+    const { alice } = MOCK_DATA.members;
+
     // Mock trustchain states:
-    const device = new SoftwareDevice(convertLiveCredentialsToKeyPair(MOCK_DATA.members.alice));
+    const device = new SoftwareDevice(convertLiveCredentialsToKeyPair(alice));
     const initialTree = await createTrustChain(device);
     const oneMemberTree = await addMember(device, "m/0'/16'/0'", "alice")(initialTree);
 
     // Mock API calls:
     apiMocks.getTrustchainsMock.mockReturnValueOnce({});
-    apiMocks.getTrustchainsMock.mockReturnValueOnce({ ROOTID: { "m/": [] } });
+    apiMocks.getTrustchainsMock.mockReturnValueOnce({ ROOTID: initialTree.serialize() });
     apiMocks.getTrustchainByIdMock.mockReturnValue(initialTree.serialize());
 
     // Mock APDU device interactions:
@@ -88,8 +100,7 @@ describe("Trustchain SDK", () => {
 
     // Run the test:
     const sdk = new SDK(sdkContext, hwDeviceProviderMock);
-    const { alice } = MOCK_DATA.members;
-    const { type, trustchain } = await sdk.getOrCreateTrustchain("foo", alice, deviceCallbacks);
+    const { type, trustchain } = await sdk.getOrCreateTrustchain("foo", alice);
 
     // Check expectations:
     expect(type).toBe(TrustchainResultType.created);
@@ -98,20 +109,31 @@ describe("Trustchain SDK", () => {
       rootId: "ROOTID",
       walletSyncEncryptionKey: expect.stringMatching(/^[0-9a-f]{64}$/),
     });
-    // TODO add more expectations
+
+    expect(await jsonRequestContent(apiMocks.postSeed)).toEqual([oneMemberTree.serialize()["m/"]]);
+    expect(await jsonRequestContent(apiMocks.postDerivation)).toEqual([
+      oneMemberTree.serialize()["m/0'/16'/0'"],
+    ]);
+    expect(await jsonRequestContent(apiMocks.putCommands)).toEqual([]);
+
+    expect(HWDeviceProviderMethodsMocks.withJwt).toHaveBeenCalled();
+    expect(HWDeviceProviderMethodsMocks.withHw).toHaveBeenCalledTimes(2);
   });
 
   it("should remove a member from the Trustchain", async () => {
+    const { alice, bob, charlie } = MOCK_DATA.members;
+
     // Mock trustchain states:
-    const device = new SoftwareDevice(convertLiveCredentialsToKeyPair(MOCK_DATA.members.alice));
-    const threeMembersTree = await createTrustChain(device)
+    const device = new SoftwareDevice(convertLiveCredentialsToKeyPair(alice));
+    const closedStreamTree = await createTrustChain(device)
       .then(addMember(device, "m/0'/16'/0'", "alice"))
       .then(addMember(device, "m/0'/16'/0'", "bob"))
-      .then(addMember(device, "m/0'/16'/0'", "charlie"));
-    const rmMembersTree = await addMember(device, "m/0'/16'/1'", "alice")(threeMembersTree);
+      .then(addMember(device, "m/0'/16'/0'", "charlie"))
+      .then(tree => tree.close("m/0'/16'/0'", device));
+    const rmMembersTree = await addMember(device, "m/0'/16'/1'", "alice")(closedStreamTree);
 
     // Mock API calls:
-    apiMocks.getTrustchainByIdMock.mockReturnValue(threeMembersTree.serialize());
+    apiMocks.getTrustchainByIdMock.mockReturnValue(closedStreamTree.serialize());
     apiMocks.getChalenge.mockReturnValue({ json: {}, tlv: MOCK_DATA.challengeTlv });
     apiMocks.postAuthenticate.mockReturnValue({
       accessToken: "BACKEND JWT",
@@ -122,13 +144,17 @@ describe("Trustchain SDK", () => {
     HWDeviceProviderMethodsMocks.withJwt.mockImplementation(async (deviceId, job) =>
       job({ accessToken: "ACCESS TOKEN" }),
     );
-    HWDeviceProviderMethodsMocks.withHw.mockResolvedValueOnce(threeMembersTree);
+    HWDeviceProviderMethodsMocks.withHw.mockResolvedValueOnce(closedStreamTree);
     HWDeviceProviderMethodsMocks.withHw.mockResolvedValueOnce(rmMembersTree);
 
-    // Run the test:
-    const sdk = new SDK(sdkContext, hwDeviceProviderMock);
+    // Mock the lifecycle callback:
+    const afterRotation = jest.fn();
+    const onTrustchainRotation = jest.fn();
+    onTrustchainRotation.mockResolvedValueOnce(afterRotation);
 
-    const { alice, bob, charlie } = MOCK_DATA.members;
+    // Run the test:
+    const sdk = new SDK(sdkContext, hwDeviceProviderMock, { onTrustchainRotation });
+
     const trustchain = {
       applicationPath: "m/0'/16'/0'",
       rootId: "ROOTID",
@@ -139,22 +165,36 @@ describe("Trustchain SDK", () => {
       id: bob.pubkey,
       permissions: Permissions.OWNER,
     };
-    const res = await sdk.removeMember("foo", trustchain, alice, memberToRemove, deviceCallbacks);
+    const newTrustchain = await sdk.removeMember("foo", trustchain, alice, memberToRemove);
 
     // Check expectations:
-    expect(res).toEqual({
+    expect(newTrustchain).toEqual({
       applicationPath: "m/0'/16'/1'",
       rootId: "ROOTID",
       walletSyncEncryptionKey: expect.stringMatching(/^[0-9a-f]{64}$/),
     });
 
-    const lastCommand = await Promise.all(
-      apiMocks.putCommands.mock.calls.map(([request]) => request.json()),
-    ).then(commands => commands.filter(({ path }) => path === "m/0'/16'/1'").at(-1)?.blocks[0]);
-    expect(lastCommand).toContain(alice.pubkey);
-    expect(lastCommand).not.toContain(bob.pubkey);
-    expect(lastCommand).toContain(charlie.pubkey);
-    // TODO add more expectations
+    expect(await jsonRequestContent(apiMocks.postDerivation)).toEqual([
+      rmMembersTree.serialize()["m/0'/16'/1'"],
+    ]);
+
+    const putCommands = await jsonRequestContent(apiMocks.putCommands);
+    expect(putCommands).toEqual([
+      { path: "m/0'/16'/1'", blocks: [expect.any(String)] },
+      { path: "m/0'/16'/0'", blocks: [expect.any(String)] }, // The closed stream is sent last
+    ]);
+    const closeStreamBlock = putCommands.find(({ path }) => path === "m/0'/16'/0'")?.blocks[0];
+    expect(closedStreamTree.serialize()["m/0'/16'/0'"]).toContain(closeStreamBlock);
+    const pushMemberBlock = putCommands.find(({ path }) => path === "m/0'/16'/1'")?.blocks[0];
+    expect(pushMemberBlock).not.toContain(bob.pubkey);
+    expect(pushMemberBlock).toContain(charlie.pubkey);
+
+    expect(HWDeviceProviderMethodsMocks.withJwt).toHaveBeenCalled();
+    expect(HWDeviceProviderMethodsMocks.withHw).toHaveBeenCalledTimes(2);
+    expect(HWDeviceProviderMethodsMocks.refreshJwt).toHaveBeenCalledTimes(1);
+
+    expect(onTrustchainRotation).toHaveBeenCalledWith(sdk, trustchain, alice);
+    expect(afterRotation).toHaveBeenCalledWith(newTrustchain);
   });
 });
 
@@ -187,4 +227,10 @@ function addMember(
 ): (tree: StreamTree) => Promise<StreamTree> {
   const memberId = crypto.from_hex(MOCK_DATA.members[name].pubkey);
   return (tree: StreamTree) => tree.share(path, device, memberId, name, Permissions.OWNER);
+}
+
+function jsonRequestContent<T extends DefaultBodyType>(
+  mock: jest.Mock<object, [StrictRequest<T>]>,
+): Promise<T[]> {
+  return Promise.all(mock.mock.calls.map(([request]) => request.json()));
 }
