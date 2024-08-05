@@ -16,7 +16,7 @@ type Props = {
   member: TrustchainMember | null;
 };
 
-export function useRemoveMembers({ device, member }: Props) {
+export function useRemoveMember({ device, member }: Props) {
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);

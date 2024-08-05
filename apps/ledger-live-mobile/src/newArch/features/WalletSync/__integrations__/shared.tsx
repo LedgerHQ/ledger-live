@@ -31,7 +31,7 @@ export function WalletSyncSettingsNavigator() {
 export function WalletSyncSharedNavigator() {
   return (
     <QueryClientProvider client={new QueryClient()}>
-      <Stack.Navigator initialRouteName={ScreenName.WalletSyncActivationSettings}>
+      <Stack.Navigator initialRouteName={ScreenName.WalletSyncActivationInit}>
         <Stack.Screen
           name={NavigatorName.WalletSync}
           component={WalletSyncNavigator}

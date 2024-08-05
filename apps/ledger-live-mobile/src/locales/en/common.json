@@ -6773,7 +6773,8 @@
           "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
           "cta": "I understand",
           "ctaDelete": "Delete my encryption key"
-        }
+        },
+        "success": "Your {{member}} is no longer synchronized"
       },
       "errors": {
         "fetching": "Something went wrong while fetching your synchronized instances.",

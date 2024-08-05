@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Icons, InfiniteLoader, Alert } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
@@ -26,15 +26,15 @@ const WalletSyncManage = () => {
 
   const { onClickTrack } = useWalletSyncAnalytics();
 
+  const goToManageBackup = useCallback(() => {
+    manageKeyHook.openDrawer();
+    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.WalletSyncActivated });
+  }, [manageKeyHook, onClickTrack]);
+
   const goToSync = () => {
     //dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
 
     onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.WalletSyncActivated });
-  };
-
-  const goToManageBackup = () => {
-    manageKeyHook.openDrawer();
-    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.WalletSyncActivated });
   };
 
   const goToManageInstances = () => {
