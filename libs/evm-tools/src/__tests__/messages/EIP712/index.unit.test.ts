@@ -13,6 +13,7 @@ const CAL = jest.requireActual("../../fixtures/CAL").default;
 
 jest.mock("axios");
 jest.mock("@ledgerhq/cryptoassets/data/eip712", () => require("../../fixtures/CAL"));
+jest.mock("@ledgerhq/cryptoassets/data/eip712_v2", () => require("../../fixtures/CAL"));
 
 describe("evm-tools", () => {
   describe("message", () => {
@@ -128,13 +129,13 @@ describe("evm-tools", () => {
             data: dynamicCAL,
           });
 
-          const result = await getFiltersForMessage(messageNotInCAL, "http://CAL-ADDRESS");
+          const result = await getFiltersForMessage(messageNotInCAL, false, "http://CAL-ADDRESS");
           expect(result).toEqual("found");
         });
 
         it("should find the filters for a message in static CAL if the message is not in dynamic CAL return", async () => {
           (axios.get as jest.Mock).mockReturnValueOnce({
-            data: {},
+            data: [],
           });
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
 
@@ -153,7 +154,7 @@ describe("evm-tools", () => {
           (axios.get as jest.Mock).mockRejectedValue(new Error());
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
 
-          const result = await getFiltersForMessage(messageInCAL, "http://CAL-ADDRESS");
+          const result = await getFiltersForMessage(messageInCAL, false, "http://CAL-ADDRESS");
           expect(result).toEqual(CAL[`1:0x7f268357a8c2552623316e2562d90e642bb538e5:${schemaHash}`]);
         });
       });
