@@ -58,24 +58,23 @@ function getDeviceTransactionConfig(input: {
   };
 
   if (subAccount) {
-    const value = expectedToFieldForTokenTransfer(input.transaction.recipient);
     fields.push({
       type: "filecoin.recipient",
       label: "To",
-      value,
+      value: expectedToFieldForTokenTransfer(input.transaction.recipient),
     });
-  }
-
-  const recipient = input.transaction.recipient;
-  if (recipient.length >= 4 && recipient.substring(0, 4) === "0xff") {
-    const validated = validateAddress(recipient);
-    if (validated.isValid) {
-      const value = validated.parsedAddress.toString();
-      fields.push({
-        type: "filecoin.recipient",
-        label: "To",
-        value,
-      });
+  } else {
+    const recipient = input.transaction.recipient;
+    if (recipient.length >= 4 && recipient.substring(0, 4) === "0xff") {
+      const validated = validateAddress(recipient);
+      if (validated.isValid) {
+        const value = validated.parsedAddress.toString();
+        fields.push({
+          type: "filecoin.recipient",
+          label: "To",
+          value,
+        });
+      }
     }
   }
 

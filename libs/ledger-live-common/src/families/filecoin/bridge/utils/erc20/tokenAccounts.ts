@@ -2,13 +2,13 @@ import cbor from "@zondax/cbor";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { fetchERC20TokenBalance, fetchERC20Transactions } from "../api";
 import invariant from "invariant";
-import { ERC20Transfer } from "../types";
+import { ERC20Transfer, TxStatus } from "../types";
 import { emptyHistoryCache, encodeTokenAccountId } from "../../../../../account";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { convertAddressFilToEthAsync } from "../addresses";
+import { convertAddressFilToEth } from "../addresses";
 import { ethers } from "ethers";
 import contractABI from "./ERC20.json";
 import { RecipientRequired } from "@ledgerhq/errors";
@@ -23,7 +23,7 @@ export const erc20TxnToOperation = (
   unit: Unit,
 ): Operation[] => {
   try {
-    const { to, from, timestamp, tx_hash, tx_cid, amount, height } = tx;
+    const { to, from, timestamp, tx_hash, tx_cid, amount, height, status } = tx;
     const value = valueFromUnit(new BigNumber(amount), unit);
 
     const isSending = address.toLowerCase() === from.toLowerCase();
@@ -33,6 +33,7 @@ export const erc20TxnToOperation = (
 
     const date = new Date(timestamp * 1000);
     const hash = tx_cid ?? tx_hash;
+    const hasFailed = status !== TxStatus.Ok;
 
     const ops: Operation[] = [];
     if (isSending) {
@@ -48,6 +49,7 @@ export const erc20TxnToOperation = (
         senders: [from],
         recipients: [to],
         date,
+        hasFailed,
         extra: {},
       });
     }
@@ -65,6 +67,7 @@ export const erc20TxnToOperation = (
         senders: [from],
         recipients: [to],
         date,
+        hasFailed,
         extra: {},
       });
     }
@@ -84,8 +87,7 @@ export async function buildTokenAccounts(
   initialAccount?: Account,
 ): Promise<TokenAccount[]> {
   try {
-    const nativeEthAddr = await convertAddressFilToEthAsync(filAddr);
-    const transfers = await fetchERC20Transactions(nativeEthAddr);
+    const transfers = await fetchERC20Transactions(filAddr);
     const transfersUntangled: { [addr: string]: ERC20Transfer[] } = transfers.reduce(
       (prev, curr) => {
         curr.contract_address = curr.contract_address.toLowerCase();
@@ -107,12 +109,12 @@ export async function buildTokenAccounts(
         continue;
       }
 
-      const balance = await fetchERC20TokenBalance(nativeEthAddr, cAddr);
+      const balance = await fetchERC20TokenBalance(filAddr, cAddr);
       const bnBalance = new BigNumber(balance.toString());
       const tokenAccountId = encodeTokenAccountId(parentAccountId, token);
 
       const operations = txns
-        .flatMap(txn => erc20TxnToOperation(txn, nativeEthAddr, tokenAccountId, token.units[0]))
+        .flatMap(txn => erc20TxnToOperation(txn, filAddr, tokenAccountId, token.units[0]))
         .flat();
 
       if (operations.length === 0 && bnBalance.isZero()) {
@@ -167,14 +169,14 @@ export const abiEncodeTransferParams = (recipient: string, amount: string) => {
   return data;
 };
 
-export const generateTokenTxnParams = async (recipient: string, amount: BigNumber) => {
+export const generateTokenTxnParams = (recipient: string, amount: BigNumber) => {
   log("debug", "generateTokenTxnParams", { recipient, amount: amount.toString() });
 
   if (!recipient) {
     throw new RecipientRequired();
   }
 
-  recipient = await convertAddressFilToEthAsync(recipient);
+  recipient = convertAddressFilToEth(recipient);
 
   return abiEncodeTransferParams(recipient, amount.toString());
 };

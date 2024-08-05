@@ -17,7 +17,6 @@ import {
   FetchERC20TransactionsResponse,
   ERC20Transfer,
   ERC20BalanceResponse,
-  ConvertFilToEthResponse,
 } from "./types";
 
 const getFilecoinURL = (path?: string): string => {
@@ -117,12 +116,4 @@ export const fetchERC20Transactions = async (ethAddr: string): Promise<ERC20Tran
     `/addresses/${ethAddr}/transactions/erc20`,
   );
   return res.txs.sort((a, b) => b.timestamp - a.timestamp);
-};
-
-export const fetchEthAddrForF1Fil = async (filAddr: string): Promise<string> => {
-  const response = await fetch<ConvertFilToEthResponse>(`/convert/address/${filAddr}/eth`);
-  if (!response) {
-    return "";
-  }
-  return response.address;
 };
