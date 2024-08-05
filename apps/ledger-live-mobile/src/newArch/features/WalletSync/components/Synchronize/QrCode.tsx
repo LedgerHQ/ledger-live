@@ -71,6 +71,7 @@ const QrCode = ({ qrCodeValue }: Props) => {
         borderRadius={11.52}
         background={"#fff"}
         justifyContent={"center"}
+        testID="ws-show-qr-code"
       >
         <QRCode
           value={qrCodeValue}
