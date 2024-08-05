@@ -14,7 +14,7 @@ export class ReceiveModal extends Modal {
   private selectAccount = this.page.getByText("Choose a crypto asset");
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
 
-  @step("Select token $0")
+  @step("Select token")
   async selectToken(SubAccount: Account) {
     await this.selectAccount.click();
     await this.selectAccountInput.fill(SubAccount.currency.name);
