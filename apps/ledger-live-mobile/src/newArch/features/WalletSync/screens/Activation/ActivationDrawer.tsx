@@ -1,7 +1,7 @@
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
-import { useWindowDimensions } from "react-native";
+
 import { Flex } from "@ledgerhq/native-ui";
 import ActivationFlow from "../../components/Activation/ActivationFlow";
 import { Steps } from "../../types/Activation";
@@ -23,12 +23,11 @@ function View({
   canGoBack,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
+  onQrCodeScanned,
   goBackToPreviousStep,
   handleClose,
   onCloseDrawer,
 }: ViewProps) {
-  const { height } = useWindowDimensions();
-  const maxDrawerHeight = height - 180;
   const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
 
   return (
@@ -41,11 +40,12 @@ function View({
         hasBackButton={canGoBack}
         onBack={goBackToPreviousStep}
       >
-        <Flex maxHeight={maxDrawerHeight}>
+        <Flex maxHeight={"90%"}>
           <ActivationFlow
             currentStep={currentStep}
             navigateToChooseSyncMethod={navigateToChooseSyncMethod}
             navigateToQrCodeMethod={navigateToQrCodeMethod}
+            onQrCodeScanned={onQrCodeScanned}
           />
         </Flex>
       </QueuedDrawer>

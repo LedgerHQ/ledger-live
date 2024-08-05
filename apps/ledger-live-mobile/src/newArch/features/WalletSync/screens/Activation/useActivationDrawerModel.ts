@@ -43,6 +43,12 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     setCurrentStep(Steps.QrCodeMethod);
   };
 
+  // Here we retrieve the url of the trustchain from the scanned QR code on LLD
+  const onQrCodeScanned = (data: string) => {
+    console.log("QR code scanned", data);
+    //setCurrentStep(Steps.PinCodeInput);
+  };
+
   const resetStep = () => setCurrentStep(startingStep);
   const goBackToPreviousStep = () => setCurrentStep(getPreviousStep(currentStep));
 
@@ -58,6 +64,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     canGoBack,
     navigateToChooseSyncMethod,
     navigateToQrCodeMethod,
+    onQrCodeScanned,
     onCloseDrawer,
     handleClose,
     goBackToPreviousStep,

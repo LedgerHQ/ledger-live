@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import SelectAddAccountMethod from "./SelectAddAccountMethod";
 import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
+import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
 import { TrackScreen } from "~/analytics";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Steps } from "../../../types/enum/addAccount";
@@ -49,6 +50,12 @@ const StepFlow = ({
     if (onGoBack) onGoBack(() => setCurrentStep(prevStep => getPreviousStep(prevStep)));
   }, [getPreviousStep, onGoBack]);
 
+  // Here we retrieve the url of the trustchain from the scanned QR code on LLD
+  const onQrCodeScanned = (data: string) => {
+    console.log(data);
+    // setCurrentStep(Steps.PinCodeInput);
+  };
+
   const getScene = () => {
     switch (currentStep) {
       case Steps.AddAccountMethod:
@@ -70,7 +77,9 @@ const StepFlow = ({
           </>
         );
       case Steps.QrCodeMethod:
-        return <QrCodeMethod />;
+        return <QrCodeMethod onQrCodeScanned={onQrCodeScanned} />;
+      case Steps.PinCodeInput:
+        return <PinCodeInput />;
       default:
         return null;
     }

@@ -9,4 +9,6 @@ export enum Steps {
   Activation = "Activation",
   ChooseSyncMethod = "ChooseSyncMethod",
   QrCodeMethod = "QrCodeMethod",
+  PinCodeInput = "PinCodeInput",
+  PinCodeDisplay = "PinCodeDisplay",
 }

@@ -1,9 +1,10 @@
 import React from "react";
-import { Flex, Text, NumberedList, ScrollContainer } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import QRCode from "react-native-qrcode-svg";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Trans, useTranslation } from "react-i18next";
+import BottomContainer from "./BottomContainer";
 
 const Italic = styled(Text)`
   font-style: italic;
@@ -26,14 +27,14 @@ const QrCode = ({ qrCodeValue }: Props) => {
   const steps = [
     {
       description: (
-        <Text variant="body" flex={1} ml={12} fontSize={14} color={colors.opacityDefault.c70}>
+        <Text variant="body" flex={1} fontSize={14} color={colors.opacityDefault.c70}>
           {t("walletSync.synchronize.qrCode.show.explanation.steps.step1")}
         </Text>
       ),
     },
     {
       description: (
-        <Text variant="body" flex={1} ml={12} fontSize={14} color={colors.opacityDefault.c70}>
+        <Text variant="body" flex={1} fontSize={14} color={colors.opacityDefault.c70}>
           <Trans
             i18nKey="walletSync.synchronize.qrCode.show.explanation.steps.step2"
             components={[
@@ -46,7 +47,7 @@ const QrCode = ({ qrCodeValue }: Props) => {
     },
     {
       description: (
-        <Text variant="body" flex={1} ml={12} fontSize={14} color={colors.opacityDefault.c70}>
+        <Text variant="body" flex={1} fontSize={14} color={colors.opacityDefault.c70}>
           {t("walletSync.synchronize.qrCode.show.explanation.steps.step3")}
         </Text>
       ),
@@ -80,20 +81,7 @@ const QrCode = ({ qrCodeValue }: Props) => {
           size={QRCodeSize}
         />
       </Flex>
-      <ScrollContainer
-        px={16}
-        mb={10}
-        width={"100%"}
-        maxHeight={280}
-        background={colors.opacityDefault.c05}
-        borderRadius={24}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text variant="h4" fontSize={18} color={colors.neutral.c100} my={24}>
-          {t("walletSync.synchronize.qrCode.show.explanation.title")}
-        </Text>
-        <NumberedList items={steps} />
-      </ScrollContainer>
+      <BottomContainer steps={steps} />
     </Flex>
   );
 };
