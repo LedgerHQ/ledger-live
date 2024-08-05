@@ -5,6 +5,9 @@ import { getSdk } from "@ledgerhq/trustchain/index";
 import Transport from "@ledgerhq/hw-transport";
 import { Platform } from "react-native";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import { TrustchainSDK } from "@ledgerhq/trustchain/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
 export function runWithDevice<T>(
   deviceId: string,
@@ -18,7 +21,12 @@ const platformMap: Record<string, string | undefined> = {
   android: "Android",
 };
 
+let sdkInstance: TrustchainSDK | null = null;
+
 export function useTrustchainSdk() {
+  const featureWalletSync = useFeature("llmWalletSync");
+  const environment = featureWalletSync?.params?.environment;
+  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(environment);
   const isMockEnv = !!getEnv("MOCK");
 
   const defaultContext = useMemo(() => {
@@ -26,11 +34,12 @@ export function useTrustchainSdk() {
     const hash = getEnv("USER_ID").slice(0, 5);
 
     const name = `${platformMap[Platform.OS] ?? Platform.OS} ${Platform.Version} ${hash ? " " + hash : ""}`;
+    return { applicationId, name, apiBaseUrl: trustchainApiBaseUrl };
+  }, [trustchainApiBaseUrl]);
 
-    return { applicationId, name };
-  }, []);
+  if (sdkInstance === null) {
+    sdkInstance = getSdk(isMockEnv, defaultContext);
+  }
 
-  const sdk = useMemo(() => getSdk(isMockEnv, defaultContext), [isMockEnv, defaultContext]);
-
-  return sdk;
+  return sdkInstance;
 }

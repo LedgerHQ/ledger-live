@@ -82,9 +82,9 @@ const NftItem = ({ id, onItemClick, selected, testId, index }: Props) => {
       selected={selected}
       className={show || process.env.ALWAYS_SHOW_SKELETONS ? "disabled" : ""}
       onClick={handleClick}
-      data-test-id={testId}
+      data-testid={testId}
     >
-      <Flex flex={1} width="100%" data-test-id={`custom-image-nft-card-media-${index}`}>
+      <Flex flex={1} width="100%" data-testid={`custom-image-nft-card-media-${index}`}>
         <Skeleton width={40} minHeight={40} full={isGrid} show={show}>
           <Media
             metadata={metadata as NFTMetadata}
@@ -99,7 +99,7 @@ const NftItem = ({ id, onItemClick, selected, testId, index }: Props) => {
         <EllipsizedText
           variant="small"
           fontWeight="medium"
-          data-test-id={`custom-image-nft-card-name-${index}`}
+          data-testid={`custom-image-nft-card-name-${index}`}
         >
           {nftName || "-"}
         </EllipsizedText>
@@ -107,7 +107,7 @@ const NftItem = ({ id, onItemClick, selected, testId, index }: Props) => {
           variant="small"
           fontWeight="medium"
           color="neutral.c60"
-          data-test-id={`custom-image-nft-card-id-${index}`}
+          data-testid={`custom-image-nft-card-id-${index}`}
         >
           <Trans i18nKey="NFT.gallery.tokensList.item.tokenId" values={{ tokenId: nft.tokenId }} />
         </EllipsizedText>

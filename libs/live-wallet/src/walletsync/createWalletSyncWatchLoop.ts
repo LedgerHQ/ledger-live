@@ -4,17 +4,14 @@ import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { WalletSyncDataManager } from "./types";
 import { log } from "@ledgerhq/logs";
 import { TrustchainEjected, TrustchainOutdated } from "@ledgerhq/trustchain/errors";
+import { Subscription } from "rxjs";
 
-export type WatchConfig =
-  | {
-      type: "polling";
-      pollingInterval?: number;
-      initialTimeout?: number;
-      userIntentDebounce?: number;
-    }
-  | {
-      type: "notifications";
-    };
+export type WatchConfig = {
+  notificationsEnabled?: boolean;
+  pollingInterval?: number;
+  initialTimeout?: number;
+  userIntentDebounce?: number;
+};
 
 export type VisualConfig = {
   visualPendingTimeout: number;
@@ -44,6 +41,7 @@ export function createWalletSyncWatchLoop<
   getState,
   localStateSelector,
   latestDistantStateSelector,
+  localIncrementUpdate,
 }: {
   /**
    * the configuration to use to watch for changes.
@@ -108,6 +106,10 @@ export function createWalletSyncWatchLoop<
    * yield the latest DistantState that was fetched from the cloud sync backend. It is normally stored by the walletsync/store.ts
    */
   latestDistantStateSelector: (state: UserState) => DistantState | null;
+  /**
+   * a function we need to regularly call to also resolve possible local state updates. (see incrementalUpdates.ts)
+   */
+  localIncrementUpdate: () => Promise<void>;
 }): {
   onUserRefreshIntent: () => void;
   unsubscribe: () => void;
@@ -129,7 +131,11 @@ export function createWalletSyncWatchLoop<
       if (onStartPolling) onStartPolling();
 
       // check if there is a pull to do
+      // TODO this needs to be called separately, probably more often than the rest of this logic.
       await walletSyncSdk.pull(trustchain, memberCredentials);
+      if (unsubscribed) return;
+
+      await localIncrementUpdate();
       if (unsubscribed) return;
 
       // is there new changes to push?
@@ -162,31 +168,40 @@ export function createWalletSyncWatchLoop<
     }
   }
 
-  if (watchConfig?.type === "notifications") {
-    throw new Error("notifications not implemented yet");
-  } else {
-    const pollingInterval = watchConfig?.pollingInterval || 30000;
-    const initialTimeout = watchConfig?.initialTimeout || 5000;
-    const userIntentDebounce = watchConfig?.userIntentDebounce || 1000;
+  const notificationsEnabled = watchConfig?.notificationsEnabled || false;
+  const pollingInterval = watchConfig?.pollingInterval || 10000;
+  const initialTimeout = watchConfig?.initialTimeout || 5000;
+  const userIntentDebounce = watchConfig?.userIntentDebounce || 1000;
 
-    // main loop
-    const callback = () => {
-      timeout = setTimeout(callback, pollingInterval);
-      loop();
-    };
-    let timeout = setTimeout(callback, initialTimeout);
+  // main loop
+  const callback = () => {
+    timeout = setTimeout(callback, pollingInterval);
+    loop();
+  };
+  let timeout = setTimeout(callback, initialTimeout);
 
-    return {
-      onUserRefreshIntent: () => {
-        if (unsubscribed) return;
-        // user intent will cancel the next loop call and reschedule one in a short time
-        clearTimeout(timeout);
-        timeout = setTimeout(callback, userIntentDebounce);
-      },
-      unsubscribe: () => {
-        unsubscribed = true;
-        clearInterval(timeout);
-      },
-    };
+  let notificationsSub: Subscription | null = null;
+  if (notificationsEnabled) {
+    // minimal implementation that do not handle any retry in case the notification stream is lost.
+    notificationsSub = walletSyncSdk
+      .listenNotifications(trustchain, memberCredentials)
+      .subscribe(() => {
+        log("walletsync", "notification");
+        loop();
+      });
   }
+
+  return {
+    onUserRefreshIntent: () => {
+      if (unsubscribed) return;
+      // user intent will cancel the next loop call and reschedule one in a short time
+      clearTimeout(timeout);
+      timeout = setTimeout(callback, userIntentDebounce);
+    },
+    unsubscribe: () => {
+      unsubscribed = true;
+      clearInterval(timeout);
+      if (notificationsSub) notificationsSub.unsubscribe();
+    },
+  };
 }

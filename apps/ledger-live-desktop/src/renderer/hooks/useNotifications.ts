@@ -88,10 +88,8 @@ export function useNotifications() {
       if (currentCard) {
         // For some reason braze won't log the click event if the card url is empty
         // Setting it as the card id just to have a dummy non empty value
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        currentCard.url = currentCard.id;
-        isTrackedUser && braze.logContentCardClick(currentCard);
+        isTrackedUser &&
+          braze.logContentCardClick({ ...currentCard, url: currentCard.id } as braze.ClassicCard);
       }
 
       track("contentcard_clicked", {

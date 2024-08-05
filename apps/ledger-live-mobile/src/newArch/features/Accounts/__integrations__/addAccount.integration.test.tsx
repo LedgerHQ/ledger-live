@@ -13,7 +13,19 @@ describe("AddAccount", () => {
         settings: {
           ...state.settings,
           readOnlyModeEnabled: false,
-          overriddenFeatureFlags: { llmWalletSync: { enabled: true } },
+          overriddenFeatureFlags: {
+            llmWalletSync: {
+              enabled: true,
+              params: {
+                environment: "STAGING",
+                watchConfig: {
+                  pollingInterval: 10000,
+                  initialTimeout: 5000,
+                  userIntentDebounce: 1000,
+                },
+              },
+            },
+          },
         },
       }),
     });
@@ -50,7 +62,19 @@ describe("AddAccount", () => {
         settings: {
           ...state.settings,
           readOnlyModeEnabled: false,
-          overriddenFeatureFlags: { llmWalletSync: { enabled: true } },
+          overriddenFeatureFlags: {
+            llmWalletSync: {
+              enabled: true,
+              params: {
+                environment: "STAGING",
+                watchConfig: {
+                  pollingInterval: 10000,
+                  initialTimeout: 5000,
+                  userIntentDebounce: 1000,
+                },
+              },
+            },
+          },
         },
       }),
     });
@@ -70,7 +94,7 @@ describe("AddAccount", () => {
     await act(async () => {
       await user.press(await screen.getByText(/import via another ledger live app/i));
     });
-    await expect(await screen.findByText(/dummy drawer/i)).toBeVisible();
+    await expect(await screen.findByText(/choose your sync method/i)).toBeVisible();
   });
 
   /**====== Import from desktop Test =======*/

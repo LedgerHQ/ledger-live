@@ -184,7 +184,7 @@ const OnboardingAppInstallStep = ({
               outline
               flex={1}
               onClick={handlePressSkip}
-              data-test-id="skip-cta-button"
+              data-testid="skip-cta-button"
             >
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.skipCTA`)}
             </Button>
@@ -193,7 +193,7 @@ const OnboardingAppInstallStep = ({
               flex={1}
               variant="main"
               onClick={handlePressInstall}
-              data-test-id="install-cta-button"
+              data-testid="install-cta-button"
             >
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.installCTA`)}
             </Button>

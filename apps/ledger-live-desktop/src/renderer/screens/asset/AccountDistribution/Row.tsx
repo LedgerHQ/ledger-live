@@ -64,7 +64,7 @@ export default function Row({
     <AccountContextMenu account={account} parentAccount={parentAccount} withStar>
       <Wrapper
         onClick={() => onAccountClick(account)}
-        data-test-id={`account-row-${currency.name.toLowerCase()}`}
+        data-testid={`account-row-${currency.name.toLowerCase()}`}
       >
         <AccountWrapper>
           {icon}

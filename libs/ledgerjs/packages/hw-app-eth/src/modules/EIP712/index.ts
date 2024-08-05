@@ -1,10 +1,5 @@
-/* eslint @typescript-eslint/no-duplicate-enum-values: 1 */
-import {
-  FilteringInfoContractName,
-  FilteringInfoShowField,
-  StructImplemData,
-  StructDefData,
-} from "./types";
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
+import semver from "semver";
 import type {
   EIP712Message,
   EIP712MessageTypes,
@@ -16,6 +11,7 @@ import {
   sortObjectAlphabetically,
 } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { MessageFilters } from "@ledgerhq/evm-tools/message/EIP712/types";
+import { byContractAddressAndChainId, findERC20SignaturesInfo } from "../../services/ledger/erc20";
 import { hexBuffer, intAsHexBytes, splitPath } from "../../utils";
 import { getLoadConfig } from "../../services/ledger/loadConfig";
 import { LoadConfig } from "../../services/types";
@@ -23,24 +19,50 @@ import {
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
   EIP712_TYPE_PROPERTIES,
+  getAppAndVersion,
+  getCoinRefTokensMap,
+  getFilterDisplayNameAndSigBuffers,
+  getPayloadForFilterV2,
   makeTypeEntryStructBuffer,
 } from "./utils";
+import {
+  FilteringInfoContractName,
+  FilteringInfoShowField,
+  StructImplemData,
+  StructDefData,
+} from "./types";
+
+type MakeRecursiveFieldStructImplemParams = {
+  transport: Transport;
+  loadConfig: LoadConfig;
+  chainId: number;
+  erc20SignaturesBlob: string | null | undefined;
+  types: EIP712MessageTypes;
+  filters: MessageFilters | undefined;
+  shouldUseV1Filters: boolean;
+  coinRefsTokensMap: Record<number, { token: string; coinRefMemorySlot?: number }>;
+};
 
 /**
  * @ignore for the README
  *
  * Factory to create the recursive function that will pass on each
- * field level and APDUs to describe its structure implementation
+ * field level and APDUs to describe its struct implementation
  *
  * @param {Eth["sendStructImplem"]} sendStructImplem
  * @param {EIP712MessageTypes} types
  * @returns {void}
  */
-const makeRecursiveFieldStructImplem = (
-  transport: Transport,
-  types: EIP712MessageTypes,
-  filters?: MessageFilters,
-): ((
+const makeRecursiveFieldStructImplem = ({
+  transport,
+  loadConfig,
+  chainId,
+  erc20SignaturesBlob,
+  types,
+  filters,
+  shouldUseV1Filters,
+  coinRefsTokensMap,
+}: MakeRecursiveFieldStructImplemParams): ((
   destructedType: ReturnType<typeof destructTypeFromString>,
   data: unknown,
   path?: string,
@@ -85,9 +107,15 @@ const makeRecursiveFieldStructImplem = (
       const filter = filters?.fields.find(f => path === f.path);
 
       if (filter) {
-        await sendFilteringInfo(transport, "showField", {
+        await sendFilteringInfo(transport, "showField", loadConfig, {
           displayName: filter.label,
           sig: filter.signature,
+          format: filter.format,
+          coinRef: filter.coin_ref,
+          chainId,
+          erc20SignaturesBlob,
+          shouldUseV1Filters,
+          coinRefsTokensMap,
         });
       }
 
@@ -216,7 +244,7 @@ const sendStructImplem = async (
 
       const bufferSlices = new Array(Math.ceil(data.length / 256))
         .fill(null)
-        .map((_, i) => data.slice(i * 255, (i + 1) * 255));
+        .map((_, i) => data.subarray(i * 255, (i + 1) * 255));
 
       for (const bufferSlice of bufferSlices) {
         await transport.send(
@@ -235,20 +263,27 @@ const sendStructImplem = async (
   return Promise.resolve();
 };
 
-async function sendFilteringInfo(transport: Transport, type: "activate"): Promise<Buffer>;
+async function sendFilteringInfo(
+  transport: Transport,
+  type: "activate",
+  loadConfig: LoadConfig,
+): Promise<Buffer>;
 async function sendFilteringInfo(
   transport: Transport,
   type: "contractName",
+  loadConfig: LoadConfig,
   data: FilteringInfoContractName,
 ): Promise<Buffer>;
 async function sendFilteringInfo(
   transport: Transport,
   type: "showField",
+  loadConfig: LoadConfig,
   data: FilteringInfoShowField,
 ): Promise<Buffer>;
 async function sendFilteringInfo(
   transport: Transport,
   type: "activate" | "contractName" | "showField",
+  loadConfig: LoadConfig,
   data?: FilteringInfoContractName | FilteringInfoShowField,
 ): Promise<Buffer | void> {
   enum APDU_FIELDS {
@@ -256,8 +291,12 @@ async function sendFilteringInfo(
     INS = 0x1e,
     P1 = 0x00,
     P2_activate = 0x00,
-    P2_contract_name = 0x0f, // officially named "message info"
-    P2_show_field = 0xff,
+    P2_show_field = 0xff, // for v1 of filters
+    P2_message_info = 0x0f,
+    P2_datetime = 0xfc,
+    P2_amount_join_token = 0xfd,
+    P2_amount_join_value = 0xfe,
+    P2_raw = 0xff,
   }
 
   switch (type) {
@@ -271,49 +310,107 @@ async function sendFilteringInfo(
 
     case "contractName": {
       const { displayName, filtersCount, sig } = data as FilteringInfoContractName;
-      const displayNameLengthBuffer = Buffer.from(intAsHexBytes(displayName.length, 1), "hex");
-      const displayNameBuffer = Buffer.from(displayName);
+      const { displayNameBuffer, sigBuffer } = getFilterDisplayNameAndSigBuffers(displayName, sig);
       const filtersCountBuffer = Buffer.from(intAsHexBytes(filtersCount, 1), "hex");
-      const sigLengthBuffer = Buffer.from(intAsHexBytes(sig.length / 2, 1), "hex");
-      const sigBuffer = Buffer.from(sig, "hex");
 
-      const callData = Buffer.concat([
-        displayNameLengthBuffer,
-        displayNameBuffer,
-        filtersCountBuffer,
-        sigLengthBuffer,
-        sigBuffer,
-      ]);
-
+      const payload = Buffer.concat([displayNameBuffer, filtersCountBuffer, sigBuffer]);
       return transport.send(
         APDU_FIELDS.CLA,
         APDU_FIELDS.INS,
         APDU_FIELDS.P1,
-        APDU_FIELDS.P2_contract_name,
-        callData,
+        APDU_FIELDS.P2_message_info,
+        payload,
       );
     }
 
     case "showField": {
-      const { displayName, sig } = data as FilteringInfoShowField;
-      const displayNameLengthBuffer = Buffer.from(intAsHexBytes(displayName.length, 1), "hex");
-      const displayNameBuffer = Buffer.from(displayName);
-      const sigLengthBuffer = Buffer.from(intAsHexBytes(sig.length / 2, 1), "hex");
-      const sigBuffer = Buffer.from(sig, "hex");
+      const {
+        displayName,
+        sig,
+        format,
+        coinRef,
+        chainId,
+        coinRefsTokensMap,
+        shouldUseV1Filters,
+        erc20SignaturesBlob,
+      } = data as FilteringInfoShowField;
+      const { displayNameBuffer, sigBuffer } = getFilterDisplayNameAndSigBuffers(displayName, sig);
 
-      const callData = Buffer.concat([
-        displayNameLengthBuffer,
+      if (shouldUseV1Filters) {
+        const payload = Buffer.concat([displayNameBuffer, sigBuffer]);
+        return transport.send(
+          APDU_FIELDS.CLA,
+          APDU_FIELDS.INS,
+          APDU_FIELDS.P1,
+          APDU_FIELDS.P2_show_field,
+          payload,
+        );
+      }
+
+      const isTokenAddress = format === "token";
+      if (isTokenAddress && coinRef !== undefined) {
+        const { token, deviceTokenIndex } = coinRefsTokensMap[coinRef];
+        if (deviceTokenIndex === undefined) {
+          const payload = await byContractAddressAndChainId(token, chainId, erc20SignaturesBlob);
+          if (payload) {
+            enum PROVIDE_TOKEN_INFOS_APDU_FIELDS {
+              CLA = 0xe0,
+              INS = 0x0a,
+              P1 = 0x00,
+              P2 = 0x00,
+            }
+
+            const response = await transport.send(
+              PROVIDE_TOKEN_INFOS_APDU_FIELDS.CLA,
+              PROVIDE_TOKEN_INFOS_APDU_FIELDS.INS,
+              PROVIDE_TOKEN_INFOS_APDU_FIELDS.P1,
+              PROVIDE_TOKEN_INFOS_APDU_FIELDS.P2,
+              payload.data,
+            );
+            coinRefsTokensMap[coinRef].deviceTokenIndex = response[0];
+          }
+        }
+      }
+
+      // For some messages like a Permit has no token address in its message, only the amount is provided.
+      // In those cases, we'll need to provide the verifying contract contained in the EIP712 domain
+      // The verifying contract is refrerenced by the coinRef 255 (0xff) in CAL and in the device
+      // independently of the token index returned by the app after a providerERC20TokenInfo
+      const shouldUseVerifyingContract = format === "amount" && coinRef === 255;
+      if (shouldUseVerifyingContract) {
+        const { token } = coinRefsTokensMap[255];
+        const payload = await byContractAddressAndChainId(token, chainId, erc20SignaturesBlob);
+
+        if (payload) {
+          await transport.send(0xe0, 0x0a, 0x00, 0x00, payload.data);
+          coinRefsTokensMap[255].deviceTokenIndex = 255;
+        }
+      }
+
+      if (!format) {
+        throw new Error("Missing format");
+      }
+
+      const P2FormatMap: Record<NonNullable<FilteringInfoShowField["format"]>, APDU_FIELDS> = {
+        raw: APDU_FIELDS.P2_raw,
+        datetime: APDU_FIELDS.P2_datetime,
+        token: APDU_FIELDS.P2_amount_join_token,
+        amount: APDU_FIELDS.P2_amount_join_value,
+      };
+
+      const payload = getPayloadForFilterV2(
+        format,
+        coinRef,
+        coinRefsTokensMap,
         displayNameBuffer,
-        sigLengthBuffer,
         sigBuffer,
-      ]);
-
+      );
       return transport.send(
         APDU_FIELDS.CLA,
         APDU_FIELDS.INS,
         APDU_FIELDS.P1,
-        APDU_FIELDS.P2_show_field,
-        callData,
+        P2FormatMap[format],
+        payload,
       );
     }
   }
@@ -348,14 +445,14 @@ async function sendFilteringInfo(
   })
  *
  * @param {String} path derivationPath
- * @param {Object} jsonMessage message to sign
+ * @param {Object} typedMessage message to sign
  * @param {Boolean} fullImplem use the legacy implementation
  * @returns {Promise}
  */
 export const signEIP712Message = async (
   transport: Transport,
   path: string,
-  jsonMessage: EIP712Message,
+  typedMessage: EIP712Message,
   fullImplem = false,
   loadConfig: LoadConfig,
 ): Promise<{
@@ -370,17 +467,21 @@ export const signEIP712Message = async (
     P2_v0 = 0x00,
     P2_full = 0x01,
   }
-  const { primaryType, types: unsortedTypes, domain, message } = jsonMessage;
-  const { cryptoassetsBaseURL } = getLoadConfig(loadConfig);
+  const { primaryType, types: unsortedTypes, domain, message } = typedMessage;
+  const { calServiceURL } = getLoadConfig(loadConfig);
   // Types are sorted by alphabetical order in order to get the same schema hash no matter the JSON format
   const types = sortObjectAlphabetically(unsortedTypes) as EIP712MessageTypes;
-  const filters = await getFiltersForMessage(jsonMessage, cryptoassetsBaseURL);
+
+  const { version } = await getAppAndVersion(transport);
+  const shouldUseV1Filters = !semver.gte(version, "1.11.1-0", { includePrerelease: true });
+  const filters = await getFiltersForMessage(typedMessage, shouldUseV1Filters, calServiceURL);
+  const coinRefsTokensMap = getCoinRefTokensMap(filters, shouldUseV1Filters, typedMessage);
 
   const typeEntries = Object.entries(types) as [
     keyof EIP712MessageTypes,
     EIP712MessageTypesEntry[],
   ][];
-  // Looping on all types entries and fields to send structures' definitions
+  // Looping on all types entries and fields to send structs' definitions
   for (const [typeName, entries] of typeEntries) {
     await sendStructDef(transport, {
       structType: "name",
@@ -397,14 +498,27 @@ export const signEIP712Message = async (
   }
 
   if (filters) {
-    await sendFilteringInfo(transport, "activate");
+    await sendFilteringInfo(transport, "activate", loadConfig);
   }
+
+  const erc20SignaturesBlob = !shouldUseV1Filters
+    ? await findERC20SignaturesInfo(loadConfig, domain.chainId || 0)
+    : undefined;
   // Create the recursion that should pass on each entry
   // of the domain fields and primaryType fields
-  const recursiveFieldStructImplem = makeRecursiveFieldStructImplem(transport, types, filters);
+  const recursiveFieldStructImplem = makeRecursiveFieldStructImplem({
+    transport,
+    loadConfig,
+    chainId: domain.chainId || 0,
+    erc20SignaturesBlob,
+    types,
+    filters,
+    shouldUseV1Filters,
+    coinRefsTokensMap,
+  });
 
   // Looping on all domain type's entries and fields to send
-  // structures' implementations
+  // structs' implementations
   const domainName = "EIP712Domain";
   await sendStructImplem(transport, {
     structType: "root",
@@ -423,11 +537,11 @@ export const signEIP712Message = async (
       filtersCount: fields.length,
       sig: contractName.signature,
     };
-    await sendFilteringInfo(transport, "contractName", contractNameInfos);
+    await sendFilteringInfo(transport, "contractName", loadConfig, contractNameInfos);
   }
 
   // Looping on all primaryType type's entries and fields to send
-  // structures' implementations
+  // struct' implementations
   await sendStructImplem(transport, {
     structType: "root",
     value: primaryType,
@@ -460,8 +574,8 @@ export const signEIP712Message = async (
     )
     .then(response => {
       const v = response[0];
-      const r = response.slice(1, 1 + 32).toString("hex");
-      const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+      const r = response.subarray(1, 1 + 32).toString("hex");
+      const s = response.subarray(1 + 32, 1 + 32 + 32).toString("hex");
 
       return {
         v,
@@ -510,8 +624,8 @@ export const signEIP712HashedMessage = (
 
   return transport.send(0xe0, 0x0c, 0x00, 0x00, buffer).then(response => {
     const v = response[0];
-    const r = response.slice(1, 1 + 32).toString("hex");
-    const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+    const r = response.subarray(1, 1 + 32).toString("hex");
+    const s = response.subarray(1 + 32, 1 + 32 + 32).toString("hex");
     return {
       v,
       r,

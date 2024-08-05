@@ -1569,6 +1569,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "osmo",
   "shyft",
   "stride",
+  "ton",
   "umee",
   "internet_computer",
   "injective",

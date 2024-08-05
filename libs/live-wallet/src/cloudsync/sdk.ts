@@ -1,6 +1,6 @@
 import { MemberCredentials, Trustchain, TrustchainSDK } from "@ledgerhq/trustchain/types";
 import { TrustchainOutdated } from "@ledgerhq/trustchain/errors";
-import api, { JWT } from "./api";
+import getApi, { JWT } from "./api";
 import { Observable } from "rxjs";
 import { z, ZodType } from "zod";
 import { Cipher, makeCipher } from "./cipher";
@@ -27,14 +27,20 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
   private getCurrentVersion: () => number | undefined;
   private saveNewUpdate: (updateEvent: UpdateEvent<Data>) => Promise<void>;
   private cipher: Cipher<Data>;
+  private api: ReturnType<typeof getApi>;
 
   constructor({
+    apiBaseUrl,
     slug,
     schema,
     trustchainSdk,
     getCurrentVersion,
     saveNewUpdate,
   }: {
+    /**
+     * base URL of the cloud sync API
+     */
+    apiBaseUrl: string;
     /**
      * slug used with cloud sync API ((example "live")
      */
@@ -66,6 +72,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     this.push = this.decorateMethod("push", this.push);
     this.pull = this.decorateMethod("pull", this.pull);
     this.destroy = this.decorateMethod("destroy", this.destroy);
+    this.api = getApi(apiBaseUrl);
   }
 
   /**
@@ -82,7 +89,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
     const base64 = await this.cipher.encrypt(trustchain, validated);
     const version = (this.getCurrentVersion() || 0) + 1;
     const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
-      api.uploadData(jwt, this.slug, version, base64),
+      this.api.uploadData(jwt, this.slug, version, base64, trustchain),
     );
     switch (response.status) {
       case "updated": {
@@ -102,7 +109,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
    */
   async pull(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void> {
     const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
-      api.fetchData(jwt, this.slug, this.getCurrentVersion()),
+      this.api.fetchData(jwt, this.slug, this.getCurrentVersion(), trustchain),
     );
     switch (response.status) {
       case "no-data": {
@@ -131,7 +138,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
 
   async destroy(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void> {
     await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
-      api.deleteData(jwt, this.slug),
+      this.api.deleteData(jwt, this.slug, trustchain),
     );
     await this.saveNewUpdate({ type: "deleted-data" });
   }
@@ -152,7 +159,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
         jwt => Promise.resolve(jwt),
         "refresh",
       );
-    return api.listenNotifications(getFreshJwt, this.slug);
+    return this.api.listenNotifications(getFreshJwt, this.slug);
   }
 
   private lock: string | null = null;

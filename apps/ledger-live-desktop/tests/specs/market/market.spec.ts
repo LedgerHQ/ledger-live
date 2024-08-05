@@ -38,10 +38,10 @@ test("Market", async ({ page }) => {
 
   const maskItems = {
     mask: [
-      page.locator("data-test-id=market-small-graph"),
-      page.locator("data-test-id=market-coin-price"),
-      page.locator("data-test-id=market-cap"),
-      page.locator("data-test-id=market-price-change"),
+      page.getByTestId("market-small-graph"),
+      page.getByTestId("market-coin-price"),
+      page.getByTestId("market-cap"),
+      page.getByTestId("market-price-change"),
       page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
       //Fix for Test App (external) workflow
       page.getByRole("row").nth(6),
@@ -175,9 +175,9 @@ test("Market", async ({ page }) => {
     await marketPage.openCoinPage("btc");
     await expect.soft(page).toHaveScreenshot("market-btc-page.png", {
       mask: [
-        page.locator("data-test-id=chart-container"),
-        page.locator("data-test-id=market-price-delta"),
-        page.locator("data-test-id= market-price"),
+        page.getByTestId("chart-container"),
+        page.getByTestId("market-price-delta"),
+        page.getByTestId("market-price"),
       ],
     });
   });

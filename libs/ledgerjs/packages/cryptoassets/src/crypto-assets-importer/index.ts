@@ -1,6 +1,6 @@
 import path from "path";
 
-import { importEIP712 } from "./importers/eip712";
+import { importEIP712, importEIP712v2 } from "./importers/eip712";
 import { importERC20 } from "./importers/erc20";
 import { importEVMTokens } from "./importers/evm";
 import { importBEP20 } from "./importers/bep20";
@@ -26,6 +26,7 @@ const outputFolder = path.join(__dirname, "../data");
 const importTokens = async () => {
   const promises = [
     importEIP712(outputFolder),
+    importEIP712v2(outputFolder),
     importERC20(outputFolder),
     importEVMTokens(outputFolder),
     importBEP20(outputFolder),

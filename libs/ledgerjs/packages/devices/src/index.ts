@@ -22,12 +22,18 @@ export const IICCID = 0x08;
 export const IIWebUSB = 0x10;
 
 export enum DeviceModelId {
+  /** Ledger Blue */
   blue = "blue",
+  /** Ledger Nano S */
   nanoS = "nanoS",
+  /** Ledger Nano S Plus */
   nanoSP = "nanoSP",
+  /** Ledger Nano X */
   nanoX = "nanoX",
+  /** Ledger Stax */
   stax = "stax",
-  europa = "europa",
+  /** Ledger Flex ("europa" is the internal name) */
+  europa = "europa", // DO NOT CHANGE TO FLEX or handle all migration issues, things will break
 }
 
 const devices: { [key in DeviceModelId]: DeviceModel } = {
@@ -99,8 +105,8 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     ],
   },
   [DeviceModelId.europa]: {
-    id: DeviceModelId.europa, // TODO: change to the real product's name one day
-    productName: "Ledger Europa", // TODO: change to the real product's name one day
+    id: DeviceModelId.europa,
+    productName: "Ledger Flex",
     productIdMM: 0x70,
     legacyUsbProductId: 0x0007,
     usbOnly: false,

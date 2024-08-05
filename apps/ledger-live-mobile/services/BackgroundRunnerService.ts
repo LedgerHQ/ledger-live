@@ -27,7 +27,7 @@ const BackgroundRunnerService = async ({
 }: {
   deviceId: string;
   firmwareSerializedJson: string;
-}): Promise<void> => {
+}) => {
   const emitEvent = (event: FwUpdateBackgroundEvent) =>
     store.dispatch(addBackgroundEvent({ event }));
   const latestFirmware = JSON.parse(firmwareSerializedJson) as
@@ -37,7 +37,7 @@ const BackgroundRunnerService = async ({
 
   if (!latestFirmware) {
     log(TAG, "no need to update");
-    return;
+    return 0;
   }
 
   const onError = (error: Error) => {
@@ -101,6 +101,8 @@ const BackgroundRunnerService = async ({
       }
     },
   });
+
+  return null;
 };
 
 export default BackgroundRunnerService;

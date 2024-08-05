@@ -1,5 +1,5 @@
 import { TrustchainLifecycle } from "@ledgerhq/trustchain/types";
-import api from "../cloudsync/api";
+import getCloudSyncApi from "../cloudsync/api";
 import { liveSlug } from ".";
 import { WSState } from "../store";
 import { makeCipher } from "../cloudsync/cipher";
@@ -8,8 +8,10 @@ import { makeCipher } from "../cloudsync/cipher";
  * implements to provide to TrustchainSdk the glue with cloudsync/walletsync
  */
 export function trustchainLifecycle({
+  cloudSyncApiBaseUrl,
   getCurrentWSState,
 }: {
+  cloudSyncApiBaseUrl: string;
   getCurrentWSState: () => WSState;
 }): TrustchainLifecycle {
   return {
@@ -21,8 +23,9 @@ export function trustchainLifecycle({
         "refresh",
       );
       return async newTrustchain => {
+        const api = getCloudSyncApi(cloudSyncApiBaseUrl);
         // when trustchain rotates, we need to delete old data to inform members still on the old id
-        await api.deleteData(oldJwt, liveSlug);
+        await api.deleteData(oldJwt, liveSlug, oldTrustchain);
         const newJwt = await trustchainSdk.withAuth(
           newTrustchain,
           memberCredentials,
@@ -34,7 +37,7 @@ export function trustchainLifecycle({
         if (!data) return;
         const cipher = makeCipher(trustchainSdk);
         const payload = await cipher.encrypt(newTrustchain, data);
-        await api.uploadData(newJwt, liveSlug, version, payload);
+        await api.uploadData(newJwt, liveSlug, version, payload, newTrustchain);
       };
     },
   };

@@ -1,3 +1,4 @@
+/* istanbul ignore file: pure exports */
 /**
  * List of selectors (hexadecimal representation of the used method's signature) related to
  * ERC20 (Tokens), ERC721/ERC1155 (NFT).

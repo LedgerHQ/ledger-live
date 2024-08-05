@@ -62,7 +62,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
       overflowY="hidden"
       width="100%"
       flex={1}
-      data-test-id="device-remove-image-container"
+      data-testid="device-remove-image-container"
     >
       <Text alignSelf="center" variant="h5Inter" mb={3}>
         {t("removeCustomLockscreen.title")}
@@ -80,7 +80,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            data-test-id="custom-image-removed"
+            data-testid="custom-image-removed"
           >
             <BoxedIcon
               Icon={IconsLegacy.CheckAloneMedium}
@@ -117,7 +117,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
           >
             {showRetry ? (
               <Button
-                data-test-id="retry-device-custom-image-removal-button"
+                data-testid="retry-device-custom-image-removal-button"
                 variant="main"
                 outline
                 onClick={onRetry}
@@ -130,7 +130,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
             )}
             <Button
               variant="main"
-              data-test-id="close-device-custom-image-removal-button"
+              data-testid="close-device-custom-image-removal-button"
               onClick={onClose}
               disabled={running && !error}
             >

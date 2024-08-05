@@ -1,21 +1,25 @@
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Observable, concat, find, from, ignoreElements, mergeMap, tap } from "rxjs";
-import { JWT, MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
+import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { useTrustchainSDK } from "../context";
-import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
+import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
 import {
   WalletState,
-  handlers as walletH,
+  handlers as walletHandlers,
   accountNameWithDefaultSelector,
   setAccountName as setAccountNameAction,
   WSState,
   setAccountNames,
   walletSyncUpdate,
+  walletSyncStateSelector,
 } from "@ledgerhq/live-wallet/store";
 import walletsync, {
   liveSlug,
   DistantState,
   walletSyncWatchLoop,
+  makeSaveNewUpdate,
+  LocalState,
+  makeLocalIncrementalUpdate,
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Account, BridgeCacheSystem } from "@ledgerhq/types-live";
@@ -28,20 +32,22 @@ import { listSupportedCurrencies } from "@ledgerhq/coin-framework/lib-es/currenc
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { Loading } from "./Loading";
 import { TrustchainEjected } from "@ledgerhq/trustchain/lib-es/errors";
+import { Tick } from "./Tick";
+import { State } from "./types";
+import { Actionable } from "./Actionable";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
 /*
 import * as icons from "@ledgerhq/crypto-icons-ui/react";
 import { inferCryptoCurrencyIcon } from "@ledgerhq/live-common/currencies/cryptoIcons";
 */
 
-type State = {
-  accounts: Account[];
-  walletState: WalletState;
-};
+const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(s.walletState);
 
 const localStateSelector = (state: State) => ({
   accounts: {
     list: state.accounts,
+    nonImportedAccountInfos: state.nonImportedAccounts,
   },
   accountNames: state.walletState.accountNames,
 });
@@ -70,6 +76,7 @@ export default function AppAccountsSync({
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
+  const getState = useCallback(() => stateRef.current, []);
 
   const getCurrentVersion = useCallback(
     () => stateRef.current.walletState.walletSyncState.version,
@@ -92,75 +99,52 @@ export default function AppAccountsSync({
   }, []);
 
   // saveNewUpdate implements the state update logic
-  const saveNewUpdate = useCallback(
-    async (event: UpdateEvent<DistantState>) => {
-      switch (event.type) {
-        case "new-data": {
-          const state = stateRef.current;
-          const version = event.version;
-          const data = event.data;
-          const walletSyncState = state.walletState.walletSyncState;
-          const localState = localStateSelector(state);
-          const ctx = { getAccountBridge, bridgeCache, blacklistedTokenIds: [] };
+  const ctx = useMemo(
+    () => ({ getAccountBridge, bridgeCache, blacklistedTokenIds: [] }),
+    [bridgeCache],
+  );
 
-          console.log("<- incoming data to resolve", data);
-          const resolved = await walletsync.resolveIncomingDistantState(
-            ctx,
-            localState,
-            walletSyncState.data,
-            data,
+  const saveUpdate = useCallback(
+    async (data: DistantState | null, version: number, newLocalState: LocalState | null) => {
+      setState(s => {
+        // we now need to "reverse" the localStateSelector back into our own internal state
+        let walletState = s.walletState;
+        if (newLocalState) {
+          walletState = walletHandlers.BULK_SET_ACCOUNT_NAMES(
+            walletState,
+            setAccountNames(newLocalState.accountNames),
           );
-
-          if (resolved.hasChanges) {
-            console.log("resolved as", resolved);
-            // the important part is to keep one atomic update for all the states
-            setState(s => {
-              const localState = localStateSelector(s);
-              const newLocalState = walletsync.applyUpdate(localState, resolved.update);
-              console.log("new update applied as", newLocalState);
-
-              // we now need to "reverse" the localStateSelector back into our own internal state
-              let walletState = s.walletState;
-              walletState = walletH.BULK_SET_ACCOUNT_NAMES(
-                walletState,
-                setAccountNames(newLocalState.accountNames),
-              );
-              walletState = walletH.WALLET_SYNC_UPDATE(
-                walletState,
-                walletSyncUpdate(data, version),
-              );
-              return {
-                accounts: newLocalState.accounts.list, // save new accounts
-                walletState,
-              };
-            });
-          } else {
-            console.log("resolved. no changes to apply.");
-          }
-          break;
         }
-        case "pushed-data": {
-          // when we push the state, we also need to implement the update on the local state
-          setState(s => ({
-            ...s,
-            walletState: walletH.WALLET_SYNC_UPDATE(
-              s.walletState,
-              walletSyncUpdate(event.data, event.version),
-            ),
-          }));
-          break;
+        walletState = walletHandlers.WALLET_SYNC_UPDATE(
+          walletState,
+          walletSyncUpdate(data, version),
+        );
+        if (newLocalState) {
+          return {
+            accounts: newLocalState.accounts.list, // save new accounts
+            nonImportedAccounts: newLocalState.accounts.nonImportedAccountInfos,
+            walletState,
+          };
         }
-        case "deleted-data": {
-          console.log("deleted data");
-          setState(s => ({
-            ...s,
-            walletState: walletH.WALLET_SYNC_UPDATE(s.walletState, walletSyncUpdate(null, 0)),
-          }));
-          break;
-        }
-      }
+        return {
+          ...s,
+          walletState,
+        };
+      });
     },
-    [bridgeCache, setState],
+    [setState],
+  );
+
+  const saveNewUpdate = useMemo(
+    () =>
+      makeSaveNewUpdate({
+        ctx,
+        getState,
+        latestDistantStateSelector,
+        localStateSelector,
+        saveUpdate,
+      }),
+    [ctx, getState, saveUpdate],
   );
 
   const onTrustchainRefreshNeeded = useCallback(
@@ -180,6 +164,7 @@ export default function AppAccountsSync({
   const walletSyncSdk = useMemo(
     () =>
       new CloudSyncSDK({
+        apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").cloudSyncApiBaseUrl,
         slug: liveSlug,
         schema: walletsync.schema,
         trustchainSdk,
@@ -190,22 +175,53 @@ export default function AppAccountsSync({
   );
 
   const [visualPending, setVisualPending] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const [timestamp, setTimestamp] = useState(0);
+  const [onUserRefresh, setOnUserRefresh] = useState<() => void>(() => () => {});
+
+  const [watchConfig, setWatchConfig] = useState({ notificationsEnabled: false });
 
   // pull and push wallet sync loop
   useEffect(() => {
-    const { unsubscribe } = walletSyncWatchLoop({
+    const localIncrementUpdate = makeLocalIncrementalUpdate({
+      ctx,
+      getState,
+      latestWalletStateSelector,
+      localStateSelector,
+      saveUpdate,
+    });
+
+    const { unsubscribe, onUserRefreshIntent } = walletSyncWatchLoop({
+      watchConfig,
       walletSyncSdk,
+      localIncrementUpdate,
       trustchain,
       memberCredentials,
       setVisualPending,
-      getState: () => stateRef.current,
+      getState,
       localStateSelector,
       latestDistantStateSelector,
       onTrustchainRefreshNeeded,
+      onError: e => setError(e && e instanceof Error ? e : new Error(String(e))),
+      onStartPolling: () => {
+        setError(null);
+        setTimestamp(Date.now());
+      },
     });
+    setOnUserRefresh(() => onUserRefreshIntent);
 
     return unsubscribe;
-  }, [trustchainSdk, walletSyncSdk, trustchain, memberCredentials, onTrustchainRefreshNeeded]);
+  }, [
+    trustchainSdk,
+    walletSyncSdk,
+    trustchain,
+    memberCredentials,
+    onTrustchainRefreshNeeded,
+    getState,
+    saveUpdate,
+    ctx,
+    watchConfig,
+  ]);
 
   const setAccounts = useCallback(
     (fn: (_: Account[]) => Account[]) => {
@@ -218,7 +234,7 @@ export default function AppAccountsSync({
     (id: string, name: string) => {
       setState(s => ({
         ...s,
-        walletState: walletH.SET_ACCOUNT_NAME(s.walletState, setAccountNameAction(id, name)),
+        walletState: walletHandlers.SET_ACCOUNT_NAME(s.walletState, setAccountNameAction(id, name)),
       }));
     },
     [setState],
@@ -226,6 +242,18 @@ export default function AppAccountsSync({
 
   return (
     <div>
+      {error ? (
+        <div style={{ padding: 10, color: "red" }}>{error.message}</div>
+      ) : timestamp ? (
+        <div
+          style={{
+            textAlign: "center",
+          }}
+        >
+          Synced <Tick timestamp={timestamp} />.{" "}
+          <button onClick={() => onUserRefresh()}>Refresh</button>
+        </div>
+      ) : null}
       <HeadlessShowAccounts
         walletState={state.walletState}
         accounts={state.accounts}
@@ -233,10 +261,26 @@ export default function AppAccountsSync({
         setAccountName={setAccountName}
         loading={visualPending}
       />
+      {state.nonImportedAccounts.length > 0 ? (
+        <div style={{ padding: 10, textAlign: "center", color: "#fa0" }}>
+          ⚠️ {state.nonImportedAccounts.length} non-imported accounts
+        </div>
+      ) : null}
       <HeadlessAddAccounts
         deviceId={deviceId}
         bridgeCache={bridgeCache}
         setAccounts={setAccounts}
+      />
+
+      <Actionable
+        buttonTitle="Toggle WebSocket notifications"
+        inputs={[watchConfig.notificationsEnabled]}
+        action={enabled => !enabled}
+        value={watchConfig.notificationsEnabled}
+        setValue={notificationsEnabled =>
+          typeof notificationsEnabled === "boolean" && setWatchConfig({ notificationsEnabled })
+        }
+        valueDisplay={v => (v ? "Listening" : "Not listening")}
       />
     </div>
   );
