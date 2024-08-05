@@ -5518,6 +5518,10 @@
     "InvalidRecipientForTokenTransfer": {
       "title": "Invalid recipient for token transfer, supported account types for token transfer: [f0, f4, 0x]"
     },
+    "FilecoinFeeEstimationFailed": {
+      "title": "Sorry, fee estimation failed",
+      "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."

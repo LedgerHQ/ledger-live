@@ -18,6 +18,7 @@ import {
   ERC20Transfer,
   ERC20BalanceResponse,
 } from "./types";
+import { FilecoinFeeEstimationFailed } from "../../errors";
 
 const getFilecoinURL = (path?: string): string => {
   const baseUrl = getEnv("API_FILECOIN_ENDPOINT");
@@ -70,8 +71,13 @@ export const fetchBalances = async (addr: string): Promise<BalanceResponse> => {
 
 export const fetchEstimatedFees = makeLRUCache(
   async (request: EstimatedFeesRequest): Promise<EstimatedFeesResponse> => {
-    const data = await send<EstimatedFeesResponse>(`/fees/estimate`, request);
-    return data; // TODO Validate if the response fits this interface
+    try {
+      const data = await send<EstimatedFeesResponse>(`/fees/estimate`, request);
+      return data; // TODO Validate if the response fits this interface
+    } catch (e: any) {
+      log("error", "filecoin fetchEstimatedFees", e);
+      throw new FilecoinFeeEstimationFailed();
+    }
   },
   request => `${request.from}-${request.to}`,
   {

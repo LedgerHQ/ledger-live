@@ -6,3 +6,8 @@ import { createCustomErrorClass } from "@ledgerhq/errors";
 export const InvalidRecipientForTokenTransfer = createCustomErrorClass(
   "InvalidRecipientForTokenTransfer",
 );
+
+/*
+ * When the fee estimation endpoint fails
+ */
+export const FilecoinFeeEstimationFailed = createCustomErrorClass("FilecoinFeeEstimationFailed");
