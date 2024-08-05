@@ -17,6 +17,7 @@ import { importBEP20Exchange } from "./exchange/bep20";
 import { importERC20Exchange } from "./exchange/erc20";
 import { importCoinsExchange } from "./exchange/coins";
 import { importTRC20Exchange } from "./exchange/trc20";
+import { importERC20POLYGONExchange } from "./exchange/erc20polygon";
 
 import { importERC20Signatures } from "./importers/erc20-signature";
 
@@ -47,6 +48,7 @@ const importExchangeTokens = async () => {
     importERC20Exchange(outputFolder),
     importCoinsExchange(outputFolder),
     importTRC20Exchange(outputFolder),
+    importERC20POLYGONExchange(outputFolder),
   ];
 
   await Promise.allSettled(promises);
