@@ -14,7 +14,7 @@ import { DeviceLabels } from "tests/enum/DeviceLabels";
 import { Currency } from "tests/enum/Currency";
 
 export class SpeculosPage extends AppPage {
-  @step("Verify receive address correctness $0")
+  @step("Verify receive address correctness")
   async expectValidReceiveAddress(account: Account) {
     await waitFor(account.currency.receivePattern[0]);
     const actualAddress = await pressRightUntil(account.currency.receivePattern[0]);
