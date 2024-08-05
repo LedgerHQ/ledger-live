@@ -37,13 +37,18 @@ export function DrawerFooter({ provider }: { provider: string }) {
     return null;
   }
   const providerName = getProviderName(provider);
+  const acceptTerms =
+    providerName === "Exodus"
+      ? "DeviceAction.swap.exodusAcceptTerms"
+      : "DeviceAction.swap.acceptTerms";
+
   return (
     <>
       <Separator />
       <Box mx="22px" mb="7px">
         <Terms>
           <Trans
-            i18nKey={"DeviceAction.swap.acceptTerms"}
+            i18nKey={acceptTerms}
             values={{
               provider: providerName,
             }}
