@@ -95,10 +95,11 @@ export const mapTxToOps =
     const hasFailed = status !== TxStatus.Ok;
 
     if (isSending) {
+      const type = value.eq(0) ? "FEES" : "OUT";
       ops.push({
-        id: encodeOperationId(accountId, hash, "OUT"),
+        id: encodeOperationId(accountId, hash, type),
         hash,
-        type: "OUT",
+        type,
         value: value.plus(feeToUse),
         fee: feeToUse,
         blockHeight: tx.height,
@@ -113,10 +114,11 @@ export const mapTxToOps =
     }
 
     if (isReceiving) {
+      const type = value.eq(0) ? "FEES" : "IN";
       ops.push({
-        id: encodeOperationId(accountId, hash, "IN"),
+        id: encodeOperationId(accountId, hash, type),
         hash,
-        type: "IN",
+        type,
         value,
         fee: feeToUse,
         blockHeight: tx.height,
