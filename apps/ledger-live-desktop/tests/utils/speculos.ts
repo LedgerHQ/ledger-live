@@ -5,7 +5,7 @@ import {
   createSpeculosDevice,
   releaseSpeculosDevice,
   findLatestAppCandidate,
-  SpeculosTransport,
+  SpeculosTransport, AppSearch
 } from "@ledgerhq/live-common/load/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
@@ -17,14 +17,18 @@ import { getEnv } from "@ledgerhq/live-env";
 import { waitForTimeOut } from "./waitFor";
 
 export type Spec = {
-  currency: CryptoCurrency;
+  currency?: CryptoCurrency;
   appQuery: {
     model: DeviceModelId;
     appName: string;
   };
-  dependency: string;
+  /** @deprecated */
+  dependency?: string;
+  dependencies?: Dependency[];
   onSpeculosDeviceCreated?: (device: Device) => Promise<void>;
 };
+
+export type Dependency = { name: string; appVersion?: string };
 
 type Specs = {
   [key: string]: Spec;
@@ -35,6 +39,10 @@ export type Device = {
   id: string;
   appPath: string;
 };
+
+export function setExchangeDependencies(dependencies: Dependency[]) {
+  specs["Exchange"].dependencies = dependencies;
+}
 
 export const specs: Specs = {
   Bitcoin: {
@@ -84,6 +92,13 @@ export const specs: Specs = {
       appName: "Ethereum Classic",
     },
     dependency: "Ethereum",
+  },
+  Exchange: {
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Exchange",
+    },
+    dependencies: [],
   },
   Bitcoin_Testnet: {
     currency: getCryptoCurrencyById("bitcoin_testnet"),
@@ -211,6 +226,22 @@ export async function startSpeculos(
 
   const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
   const appCandidate = findLatestAppCandidate(appCandidates, appQuery);
+  const { model } = appQuery;
+  const { dependencies } = spec;
+  const newAppQuery = dependencies?.map(appName => ({
+    model,
+    appName,
+  }));
+  /*const depsCandidates = dependencies?.forEach(dependency => {
+    dependency.appVersion =
+      findLatestAppCandidate(appCandidates, newAppQuery as AppSearch).appVersion !== null
+      findLatestAppCandidate(appCandidates, newAppQuery as AppSearch)?.appVersion : "1.1.1";
+  });*/
+  dependencies?.forEach(dependency => {
+    const latestAppCandidate = findLatestAppCandidate(appCandidates, newAppQuery as AppSearch);
+    dependency.appVersion = latestAppCandidate?.appVersion ?? "1.1.1";
+  });
+  console.log("appquery json" + JSON.stringify(newAppQuery));
   if (!appCandidate) {
     console.warn("no app found for " + testName);
     console.warn(appQuery);
@@ -226,11 +257,13 @@ export async function startSpeculos(
     "engine",
     `test ${testName} will use ${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`,
   );
+  console.log("appCandidate" + JSON.stringify(appCandidate));
   const deviceParams = {
     ...(appCandidate as AppCandidate),
-    appName: spec.currency.managerAppName,
+    appName: spec.currency ? spec.currency.managerAppName : spec.appQuery.appName,
     seed,
     dependency,
+    dependencies,
     coinapps,
     onSpeculosDeviceCreated,
   };

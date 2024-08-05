@@ -114,6 +114,11 @@ function conventionalAppSubpath(
   return `${reverseModelMap[model]}/${firmware}/${appName.replace(/ /g, "")}/app_${appVersion}.elf`;
 }
 
+interface Dependency {
+  name: string;
+  appVersion?: string;
+}
+
 /**
  * instanciate a speculos device that runs through docker
  */
@@ -124,6 +129,7 @@ export async function createSpeculosDevice(
     appName: string;
     appVersion: string;
     dependency?: string;
+    dependencies?: Dependency[];
     seed: string;
     // Root folder from which you need to lookup app binaries
     coinapps: string;
@@ -133,17 +139,30 @@ export async function createSpeculosDevice(
   },
   maxRetry = 3,
 ): Promise<SpeculosDevice> {
-  const { overridesAppPath, model, firmware, appName, appVersion, seed, coinapps, dependency } =
-    arg;
+  const {
+    overridesAppPath,
+    model,
+    firmware,
+    appName,
+    appVersion,
+    seed,
+    coinapps,
+    dependency,
+    dependencies,
+  } = arg;
   idCounter = idCounter ?? getEnv("SPECULOS_PID_OFFSET");
   const speculosID = `speculosID-${++idCounter}`;
   const ports = getPorts(idCounter, isSpeculosWebsocket);
 
   const sdk = inferSDK(firmware, model);
+  dependencies?.forEach(dep => {
+    if (!dep.appVersion) {
+      dep.appVersion = "1.1.0";
+    }
+  });
 
   const subpath = overridesAppPath || conventionalAppSubpath(model, firmware, appName, appVersion);
   const appPath = `./apps/${subpath}`;
-
   const params = [
     "run",
     "-v",
@@ -181,6 +200,12 @@ export async function createSpeculosDevice(
           `${dependency}:./apps/${conventionalAppSubpath(model, firmware, dependency, appVersion)}`,
         ]
       : []),
+    ...(dependencies !== undefined
+      ? dependencies.flatMap(dependency => [
+          "-l",
+          `${dependency.name}:./apps/${conventionalAppSubpath(model, firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.1.0")}`,
+        ])
+      : []),
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
@@ -201,6 +226,7 @@ export async function createSpeculosDevice(
           "40000",
         ]),
   ];
+  console.log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
 

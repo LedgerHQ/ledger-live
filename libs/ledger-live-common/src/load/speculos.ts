@@ -14,6 +14,7 @@ import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
 import { formatAppCandidate } from "../bot/formatters";
 import { mustUpgrade, shouldUpgrade } from "../apps";
+import * as fs from "fs";
 
 import {
   closeAllSpeculosDevices,
