@@ -1,19 +1,5 @@
-export type PolygonERC20Token = [
-  string, // parent currency id
-  string, // token
-  string, // ticker
-  number, // precision
-  string, // name
-  string, // ledgerSignature
-  string, // contract address
-  boolean, // disabled counter value
-  boolean, // delisted
-  (string | null)?, // legacy
-  (string | null)?, // legacy
-];
+export type PolygonERC20Exchange = [string, string, string];
 
-import tokens from "./polygon-erc20.json";
+import exchanges from "./polygon-erc20.json";
 
-export { default as hash } from "./polygon-erc20-hash.json";
-
-export default tokens as PolygonERC20Token[];
+export default exchanges as PolygonERC20Exchange[];
