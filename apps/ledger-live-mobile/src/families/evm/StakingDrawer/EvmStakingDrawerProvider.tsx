@@ -53,14 +53,14 @@ export function EvmStakingDrawerProvider({
     }
   }, [manifest, provider, redirectIfOneProvider]);
 
-  const staderEthPromotionEndTime = new Date("2024-11-01").getMilliseconds(); //Promo ends October 31, 2024
+  const staderEthPromotionEndTime = new Date("2024-11-01").valueOf(); //Promo ends October 31, 2024
+  const isStaderEthPromotionValid =
+    provider.id === "stader-eth" && Date.now().valueOf() < staderEthPromotionEndTime;
 
-  const isStaederEthPromotionValid =
-    provider.id === "stader-eth" && new Date().getMilliseconds() < staderEthPromotionEndTime;
-
-  const description = isStaederEthPromotionValid
-    ? t(`stake.ethereum.providers.${provider.id}.promo`)
-    : t(`stake.ethereum.providers.${provider.id}.description`);
+  const description =
+    isStaderEthPromotionValid && i18n.exists(`stake.ethereum.providers.${provider.id}.promo`)
+      ? t(`stake.ethereum.providers.${provider.id}.promo`)
+      : t(`stake.ethereum.providers.${provider.id}.description`);
 
   return (
     <TouchableOpacity onPress={providerPress}>
