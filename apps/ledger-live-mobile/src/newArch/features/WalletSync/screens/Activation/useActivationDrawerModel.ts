@@ -16,7 +16,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   const { onClickTrack } = useLedgerSyncAnalytics();
   const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
 
-  const hasCustomHeader = currentStep === Steps.QrCodeMethod && startingStep === Steps.Activation;
+  const hasCustomHeader = currentStep === Steps.QrCodeMethod;
   const canGoBack = currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation;
 
   const getPreviousStep = useCallback(

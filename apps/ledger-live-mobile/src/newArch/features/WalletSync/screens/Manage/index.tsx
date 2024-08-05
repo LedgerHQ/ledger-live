@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Icons, InfiniteLoader, Alert } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
@@ -15,6 +15,8 @@ import ManageKeyDrawer from "../ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 import ManageInstanceDrawer from "../ManageInstances/ManageInstancesDrawer";
 import { useManageInstancesDrawer } from "../ManageInstances/useManageInstanceDrawer";
+import ActivationDrawer from "../Activation/ActivationDrawer";
+import { Steps } from "../../types/Activation";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
@@ -26,14 +28,18 @@ const WalletSyncManage = () => {
 
   const { onClickTrack } = useLedgerSyncAnalytics();
 
-  const goToSync = () => {
-    //dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
+  const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
 
+  const goToSync = () => {
+    setIsSyncDrawerOpen(true);
     onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.LedgerSyncActivated });
   };
 
+  const closeSyncDrawer = () => setIsSyncDrawerOpen(false);
+
   const goToManageBackup = () => {
     manageKeyHook.openDrawer();
+    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.LedgerSyncActivated });
     onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.LedgerSyncActivated });
   };
 
@@ -117,9 +123,11 @@ const WalletSyncManage = () => {
         </Container>
       </InstancesRow>
 
-      {/**
-       * DRAWERS
-       */}
+      <ActivationDrawer
+        startingStep={Steps.QrCodeMethod}
+        isOpen={isSyncDrawerOpen}
+        handleClose={closeSyncDrawer}
+      />
       <ManageKeyDrawer {...manageKeyHook} />
       <ManageInstanceDrawer {...manageInstancesHook} />
     </Box>

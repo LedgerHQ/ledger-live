@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Box, Text, NumberedList } from "@ledgerhq/native-ui";
+import { Flex, Text, NumberedList, ScrollContainer } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import QRCode from "react-native-qrcode-svg";
 import getWindowDimensions from "~/logic/getWindowDimensions";
@@ -54,7 +54,14 @@ const QrCode = ({ qrCodeValue }: Props) => {
   ];
 
   return (
-    <Flex flexDirection={"column"} rowGap={50} alignItems={"center"} width={"100%"}>
+    <Flex
+      flexDirection={"column"}
+      rowGap={24}
+      alignItems={"center"}
+      marginBottom={20}
+      width={"100%"}
+      height={"100%"}
+    >
       <Flex
         alignItems={"center"}
         width={QRSize}
@@ -72,21 +79,20 @@ const QrCode = ({ qrCodeValue }: Props) => {
           size={QRCodeSize}
         />
       </Flex>
-      <Box
+      <ScrollContainer
         px={16}
-        pt={24}
+        mb={10}
         width={"100%"}
+        maxHeight={280}
         background={colors.opacityDefault.c05}
         borderRadius={24}
-        display={"flex"}
-        flexDirection={"column"}
-        rowGap={24}
+        showsVerticalScrollIndicator={false}
       >
-        <Text variant="h4" fontSize={18} color={colors.neutral.c100}>
+        <Text variant="h4" fontSize={18} color={colors.neutral.c100} my={24}>
           {t("walletSync.synchronize.qrCode.show.explanation.title")}
         </Text>
-        <NumberedList maxHeight={180} items={steps} />
-      </Box>
+        <NumberedList items={steps} />
+      </ScrollContainer>
     </Flex>
   );
 };
