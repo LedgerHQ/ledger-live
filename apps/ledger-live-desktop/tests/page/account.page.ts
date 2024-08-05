@@ -112,6 +112,11 @@ export class AccountPage extends AppPage {
     await this.settingsButton.waitFor({ state: "visible" });
   }
 
+  @step("Wait for account $0 not to be visible")
+  async expectAccountNonVisibility(accountName: string) {
+    await expect(this.accountName(accountName)).not.toBeVisible();
+  }
+
   @step("Expect account to be not null")
   async expectAccountBalance() {
     expect(this.accountBalance).toBeTruthy();
