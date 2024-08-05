@@ -209,7 +209,11 @@ function transactionToEGLDOperation(
     ? inferSubOperations(transaction.txHash ?? "", subAccounts)
     : undefined;
 
-  return {
+  const contract = new Address(transaction.receiver).isContractAddress()
+    ? transaction.receiver
+    : undefined;
+
+  const operation: ElrondOperation = {
     id: encodeOperationId(accountId, transaction.txHash ?? "", type),
     accountId,
     fee,
@@ -219,7 +223,6 @@ function transactionToEGLDOperation(
     blockHash: transaction.miniBlockHash,
     blockHeight: transaction.round,
     date: new Date(transaction.timestamp ? transaction.timestamp * 1000 : 0),
-    subOperations,
     extra: {
       amount: delegationAmount,
     },
@@ -228,10 +231,17 @@ function transactionToEGLDOperation(
       (type == "OUT" || type == "IN") && transaction.receiver ? [transaction.receiver] : [],
     transactionSequenceNumber: isSender(transaction, addr) ? transaction.nonce : undefined,
     hasFailed,
-    contract: new Address(transaction.receiver).isContractAddress()
-      ? transaction.receiver
-      : undefined,
   };
+
+  if (subOperations) {
+    operation.subOperations = subOperations;
+  }
+
+  if (contract) {
+    operation.contract = contract;
+  }
+
+  return operation;
 }
 
 const getESDTOperationType = (

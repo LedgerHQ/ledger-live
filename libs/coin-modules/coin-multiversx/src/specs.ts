@@ -150,7 +150,7 @@ function expectCorrectBalanceFeeChange(input: TransactionTestInput<Transaction>)
   );
 }
 
-const elrondSpec: AppSpec<Transaction> = {
+const elrond: AppSpec<Transaction> = {
   name: "Elrond",
   currency: getCryptoCurrencyById("elrond"),
   appQuery: {
@@ -372,5 +372,5 @@ const elrondSpec: AppSpec<Transaction> = {
 };
 
 export default {
-  elrondSpec,
+  elrond,
 };

@@ -1,7 +1,6 @@
 import celo from "../families/celo/cli-transaction";
 import cosmos from "../families/cosmos/cli-transaction";
 import crypto_org from "../families/crypto_org/cli-transaction";
-import elrond from "../families/elrond/cli-transaction";
 import filecoin from "../families/filecoin/cli-transaction";
 import hedera from "../families/hedera/cli-transaction";
 import stacks from "../families/stacks/cli-transaction";
@@ -18,6 +17,7 @@ import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as tron } from "../families/tron/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
 import { cliTools as icon } from "../families/icon/setup";
+import { cliTools as elrond } from "../families/elrond/setup";
 
 export default {
   celo,

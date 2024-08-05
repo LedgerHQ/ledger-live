@@ -25,7 +25,7 @@ export function reconciliateSubAccounts(
 
         if (existingTokenAccount !== ta) {
           for (const property in existingTokenAccount) {
-            if (existingTokenAccount[property] !== ta[property]) {
+            if ((existingTokenAccount as any)[property] !== (ta as any)[property]) {
               sameProperties = false;
               stats.push(`field ${property} changed for ${ta.id}`);
               break;

@@ -70,6 +70,9 @@ export const buildOptimisticOperation = (
       : transaction.amount.plus(transaction.fees || new BigNumber(0));
 
   const delegationAmount = getOptimisticOperationDelegationAmount(transaction);
+  const contract = new Address(transaction.recipient).isContractAddress()
+    ? transaction.recipient
+    : undefined;
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
@@ -84,13 +87,14 @@ export const buildOptimisticOperation = (
     accountId: account.id,
     transactionSequenceNumber: unsignedTx.nonce,
     date: new Date(),
-    contract: new Address(transaction.recipient).isContractAddress()
-      ? transaction.recipient
-      : undefined,
     extra: {
       amount: delegationAmount,
     },
   };
+
+  if (contract) {
+    operation.contract = contract;
+  }
 
   if (tokenAccount && subAccountId) {
     operation.subOperations = [

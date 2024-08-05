@@ -139,7 +139,7 @@ export const dataset: DatasetTest<Transaction> = {
   },
 };
 
-describe("XXX bridge", () => {
+describe("Elrond bridge", () => {
   test.todo(
     "This is an empty test to make jest command pass. Remove it once there is a real test.",
   );

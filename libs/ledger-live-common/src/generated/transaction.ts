@@ -2,7 +2,6 @@ import casper from "../families/casper/transaction";
 import celo from "../families/celo/transaction";
 import cosmos from "../families/cosmos/transaction";
 import crypto_org from "../families/crypto_org/transaction";
-import elrond from "../families/elrond/transaction";
 import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
 import internet_computer from "../families/internet_computer/transaction";
@@ -20,6 +19,7 @@ import tezos from "@ledgerhq/coin-tezos/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
 import icon from "@ledgerhq/coin-icon/transaction";
+import elrond from "@ledgerhq/coin-multiversx/transaction";
 
 export default {
   casper,
