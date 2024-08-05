@@ -112,7 +112,12 @@ export async function recordTestTrustchainSdk(
 
   let { device, sub } = await createDeviceWithSeed(seed);
   const options: ScenarioOptions = {
-    sdkForName: name => getSdk(!!getEnv("MOCK"), { applicationId: 16, name }),
+    sdkForName: name =>
+      getSdk(!!getEnv("MOCK"), {
+        applicationId: 16,
+        name,
+        apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+      }),
     pauseRecorder: async (milliseconds: number) => {
       await new Promise(resolve => setTimeout(resolve, milliseconds));
     },

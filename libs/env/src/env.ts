@@ -663,10 +663,15 @@ const envDefinitions = {
     parser: boolParser,
     desc: "is walletconnect enabled",
   },
-  CLOUD_SYNC_API: {
+  CLOUD_SYNC_API_STAGING: {
     def: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
     parser: stringParser,
-    desc: "wallet sync api base url",
+    desc: "wallet sync api staging base url",
+  },
+  CLOUD_SYNC_API_PROD: {
+    def: "https://cloud-sync.api.live.ledger.com",
+    parser: stringParser,
+    desc: "wallet sync api production base url",
   },
   WITH_DEVICE_POLLING_DELAY: {
     def: 500,
@@ -698,10 +703,15 @@ const envDefinitions = {
     parser: intParser,
     desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
-  TRUSTCHAIN_API: {
+  TRUSTCHAIN_API_STAGING: {
     def: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
     parser: stringParser,
-    desc: "Trustchain API",
+    desc: "Trustchain API Staging",
+  },
+  TRUSTCHAIN_API_PROD: {
+    def: "https://trustchain.api.live.ledger.com",
+    parser: stringParser,
+    desc: "Trustchain API Prod",
   },
   PLATFORM_DEBUG: {
     def: false,

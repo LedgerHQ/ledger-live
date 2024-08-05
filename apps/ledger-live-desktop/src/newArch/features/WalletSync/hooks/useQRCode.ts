@@ -6,12 +6,18 @@ import { setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { trustchainSelector, memberCredentialsSelector } from "@ledgerhq/trustchain/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
 export function useQRCode() {
   const dispatch = useDispatch();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const sdk = useTrustchainSdk();
+  const featureWalletSync = useFeature("lldWalletSync");
+  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
+    featureWalletSync?.params?.environment,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -26,6 +32,7 @@ export function useQRCode() {
     setError(null);
     setIsLoading(true);
     createQRCodeHostInstance({
+      trustchainApiBaseUrl,
       onDisplayQRCode: url => {
         setUrl(url);
         setIsLoading(false);
@@ -52,7 +59,7 @@ export function useQRCode() {
         setIsLoading(false);
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
       });
-  }, [trustchain, memberCredentials, dispatch, sdk]);
+  }, [trustchainApiBaseUrl, trustchain, memberCredentials, dispatch, sdk]);
 
   return {
     url,

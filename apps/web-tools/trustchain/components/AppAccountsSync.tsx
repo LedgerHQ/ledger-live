@@ -35,6 +35,7 @@ import { TrustchainEjected } from "@ledgerhq/trustchain/lib-es/errors";
 import { Tick } from "./Tick";
 import { State } from "./types";
 import { Actionable } from "./Actionable";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
 /*
 import * as icons from "@ledgerhq/crypto-icons-ui/react";
@@ -163,6 +164,7 @@ export default function AppAccountsSync({
   const walletSyncSdk = useMemo(
     () =>
       new CloudSyncSDK({
+        apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").cloudSyncApiBaseUrl,
         slug: liveSlug,
         schema: walletsync.schema,
         trustchainSdk,

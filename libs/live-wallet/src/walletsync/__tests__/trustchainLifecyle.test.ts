@@ -3,14 +3,12 @@ import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 import { emptyState, convertLocalToDistantState } from "../__mocks__";
 import { trustchainLifecycle } from "..";
-import { setEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@ledgerhq/live-env";
 
 describe("trustchainLifecycle", () => {
   let removedCount = 0;
   let storedData: string | null = null;
   let storedVersion = 0;
-
-  setEnv("CLOUD_SYNC_API", "http://localhost");
 
   const handlers = [
     http.delete("http://localhost/atomic/v1/:slug", ({ request }) => {
@@ -53,10 +51,15 @@ describe("trustchainLifecycle", () => {
       data: convertLocalToDistantState(emptyState),
     });
 
-    const mockTrustchainSdk = new MockSDK({ applicationId: 16, name: "user" });
+    const mockTrustchainSdk = new MockSDK({
+      applicationId: 16,
+      name: "user",
+      apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+    });
     const creds = await mockTrustchainSdk.initMemberCredentials();
 
     const lifecycle = trustchainLifecycle({
+      cloudSyncApiBaseUrl: "http://localhost",
       getCurrentWSState: mockGetCurrentWSState,
     });
 
