@@ -359,6 +359,8 @@ const SwapWebView = ({
         };
 
         if (!params.openDrawer) {
+          // filters out the custom fee config for chains without drawer
+          const config = ["evm", "bitcoin"].includes(transaction.family) ? customFeeConfig : {};
           return {
             feesStrategy: finalTx.feesStrategy,
             estimatedFees: convertToNonAtomicUnit({
@@ -367,7 +369,7 @@ const SwapWebView = ({
             }),
             errors: status.errors,
             warnings: status.warnings,
-            customFeeConfig,
+            customFeeConfig: config,
           };
         }
 
