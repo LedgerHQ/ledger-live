@@ -1,3 +1,4 @@
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
 import { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -9,6 +10,8 @@ const PUBKEY = "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060
 const ADDRESS = "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4";
 const ADDRESS_2 = "UQAui6M4jOYOezUGfmeONA22Ars9yjd34YIGdAR1Pcpp4sgR";
 const PATH = "44'/607'/0'/0'/0'/0'";
+const SUBACCOUNT =
+  "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua";
 
 const ton: CurrenciesData<Transaction> = {
   scanAccounts: [
@@ -109,6 +112,77 @@ const ton: CurrenciesData<Transaction> = {
             amount: new BigNumber("10000000"),
             errors: {},
             warnings: {},
+          },
+        },
+        // sub account tests
+        {
+          name: "Subaccount Not a valid address",
+          transaction: fromTransactionRaw({
+            family: "ton",
+            recipient: "novalidaddress",
+            fees: "10000000",
+            amount: "1000",
+            comment: { isEncrypted: false, text: "" },
+            subAccountId: SUBACCOUNT,
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new InvalidAddress(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Subaccount Not enough balance",
+          transaction: fromTransactionRaw({
+            family: "ton",
+            recipient: ADDRESS_2,
+            fees: "10000000",
+            amount: (300 * 1e9).toString(),
+            comment: { isEncrypted: false, text: "" },
+            subAccountId: SUBACCOUNT,
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new NotEnoughBalance(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Subaccount New account and sufficient amount",
+          transaction: fromTransactionRaw({
+            family: "ton",
+            recipient: ADDRESS_2,
+            fees: "10000000",
+            amount: "10000000",
+            comment: { isEncrypted: false, text: "Valid" },
+            subAccountId: SUBACCOUNT,
+          }),
+          expectedStatus: {
+            amount: new BigNumber("10000000"),
+            errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "Subaccount Send max",
+          transaction: fromTransactionRaw({
+            family: "ton",
+            recipient: ADDRESS_2,
+            fees: "10000000",
+            amount: "10000000",
+            comment: { isEncrypted: false, text: "Valid" },
+            useAllAmount: true,
+            subAccountId: SUBACCOUNT,
+          }),
+          expectedStatus: (account, tx) => {
+            const subAccount = findSubAccountById(account, tx.subAccountId ?? "");
+            return {
+              amount: subAccount?.spendableBalance,
+              errors: {},
+              warnings: {},
+            };
           },
         },
       ],
