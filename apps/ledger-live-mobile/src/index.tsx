@@ -123,7 +123,7 @@ function App() {
   useEffect(() => {
     if (
       !analyticsFF?.enabled ||
-      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints.includes("Portfolio")) ||
+      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints?.includes?.("Portfolio")) ||
       hasSeenAnalyticsOptInPrompt
     )
       return;
