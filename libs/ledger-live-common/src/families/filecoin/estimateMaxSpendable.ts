@@ -65,10 +65,13 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   const amount = transaction?.amount;
 
   const validatedContractAddress = validateAddress(subAccount?.token.contractAddress ?? "");
-  if (!validatedContractAddress.isValid) {
+  if (tokenAccountTxn && !validatedContractAddress.isValid) {
     throw invalidAddressErr;
   }
-  const contractAddress = validatedContractAddress.parsedAddress.toString();
+  const contractAddress =
+    tokenAccountTxn && validatedContractAddress.isValid
+      ? validatedContractAddress.parsedAddress.toString()
+      : "";
   const finalRecipient = tokenAccountTxn ? contractAddress : recipient;
 
   // If token transfer, the evm payload is required to estimate fees
@@ -103,5 +106,5 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   }
   // log("debug", "[estimateMaxSpendable] finish fn");
 
-  return balance;
+  return balance.gt(0) ? balance : new BigNumber(0);
 };
