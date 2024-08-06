@@ -50,9 +50,8 @@ const StepFlow = ({
     if (onGoBack) onGoBack(() => setCurrentStep(prevStep => getPreviousStep(prevStep)));
   }, [getPreviousStep, onGoBack]);
 
-  // Here we retrieve the url of the trustchain from the scanned QR code on LLD
-  const onQrCodeScanned = (data: string) => {
-    console.log(data);
+  // That means the url as be stored in the store
+  const onQrCodeScanned = () => {
     // setCurrentStep(Steps.PinCodeInput);
   };
 

@@ -43,9 +43,8 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     setCurrentStep(Steps.QrCodeMethod);
   };
 
-  // Here we retrieve the url of the trustchain from the scanned QR code on LLD
-  const onQrCodeScanned = (data: string) => {
-    console.log("QR code scanned", data);
+  // That means the url as be stored in the store
+  const onQrCodeScanned = () => {
     //setCurrentStep(Steps.PinCodeInput);
   };
 
