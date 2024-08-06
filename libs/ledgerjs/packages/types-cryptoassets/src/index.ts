@@ -221,7 +221,7 @@ type CurrencyCommon = {
   units: Unit[];
   // a shorter version of code using the symbol of the currency. like Ƀ . not all cryptocurrencies have a symbol
   symbol?: string;
-  /*
+  /**
    * tells if countervalue need to be disabled (typically because colliding with other coins)
    * @deprecated this field will soon be dropped. this is the API that drives this dynamically.
    */
