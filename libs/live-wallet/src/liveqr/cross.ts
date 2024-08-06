@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import { decodeAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { Account, AccountUserData, CryptoCurrencyIds } from "@ledgerhq/types-live";
+import type { Account, AccountUserData, CryptoCurrencyIds, Language } from "@ledgerhq/types-live";
 import { WalletState, accountUserDataExportSelector } from "../store";
 
 export type AccountData = {
@@ -35,6 +35,9 @@ export type Settings = {
   pairExchanges: Record<string, string | null | undefined>;
   blacklistedTokenIds?: string[];
   hideEmptyTokenAccounts?: boolean;
+  theme?: string | null;
+  language?: string | null;
+  languageIsSetByUser?: boolean;
 };
 
 export type DataIn = {
@@ -228,6 +231,8 @@ const asResultSettings = (unsafe: Record<string, any>): Settings => {
     pairExchanges,
     blacklistedTokenIds,
     hideEmptyTokenAccounts,
+    theme,
+    language,
   } = unsafe;
   const currenciesSettingsSafe: Record<CryptoCurrencyIds, CryptoSettings> = {};
 
@@ -258,6 +263,13 @@ const asResultSettings = (unsafe: Record<string, any>): Settings => {
     res.counterValue = counterValue;
   }
 
+  if (theme && typeof theme === "string") {
+    res.theme = theme;
+  }
+  if (language && typeof language === "string") {
+    res.language = language as Language;
+    res.languageIsSetByUser = true;
+  }
   if (hideEmptyTokenAccounts && typeof hideEmptyTokenAccounts === "boolean") {
     res.hideEmptyTokenAccounts = hideEmptyTokenAccounts;
   }
