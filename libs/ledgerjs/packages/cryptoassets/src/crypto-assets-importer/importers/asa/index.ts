@@ -8,7 +8,6 @@ type AlgorandASAToken = [
   string, // name
   string, // contractAddress
   number, // precision
-  true, // [deprecated] enableCountervalues
 ];
 
 export const importAsaTokens = async (outputDir: string) => {
@@ -26,7 +25,6 @@ export const importAsaTokens = async (outputDir: string) => {
       token.name,
       token.contract_address,
       token.decimals,
-      true,
     ]);
 
     const filePath = path.join(outputDir, "asa");
@@ -43,7 +41,6 @@ export const importAsaTokens = async (outputDir: string) => {
   string, // name
   string, // contractAddress
   number, // precision
-  boolean?, // enableCountervalues
 ];
 
 import tokens from "./asa.json";
