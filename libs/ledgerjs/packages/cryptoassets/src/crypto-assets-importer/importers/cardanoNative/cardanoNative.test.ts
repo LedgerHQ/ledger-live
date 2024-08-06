@@ -43,7 +43,6 @@ describe("import Cardano Native tokens", () => {
   string, // ticker
   number, // decimals
   boolean, // delisted
-  false, // [deprecated] disableCountervalue
 ];
 
 import tokens from "./cardanoNative.json";
@@ -77,7 +76,6 @@ export default tokens as CardanoNativeToken[];
           "iUSD",
           "iUSD",
           6,
-          false,
           false,
         ],
       ]),

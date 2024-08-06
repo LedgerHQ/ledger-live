@@ -10,7 +10,6 @@ type CardanoNativeToken = [
   string, // ticker
   number, // decimals
   boolean, // delisted
-  false, // [deprecated] disableCountervalue
 ];
 
 export const importCardanoNativeTokens = async (outputDir: string) => {
@@ -32,7 +31,6 @@ export const importCardanoNativeTokens = async (outputDir: string) => {
       token.ticker,
       token.decimals,
       token.delisted,
-      false,
     ]);
 
     const filePath = path.join(outputDir, "cardanoNative");
@@ -49,7 +47,6 @@ export const importCardanoNativeTokens = async (outputDir: string) => {
   string, // ticker
   number, // decimals
   boolean, // delisted
-  false, // [deprecated] disableCountervalue
 ];`;
 
     fs.writeFileSync(
