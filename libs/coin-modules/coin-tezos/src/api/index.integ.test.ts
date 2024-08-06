@@ -22,6 +22,7 @@ describe("Tezos Api", () => {
       },
       fees: {
         minGasLimit: 600,
+        minRevealGasLimit: 300,
         minStorageLimit: 0,
         minFees: 500,
         minEstimatedFees: 500,
