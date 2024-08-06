@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.48.0-next.2
+
+### Patch Changes
+
+- [#7524](https://github.com/LedgerHQ/ledger-live/pull/7524) [`af769a6`](https://github.com/LedgerHQ/ledger-live/commit/af769a6072178a01282b32b8b5fd1aaa7bb58f67) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix android build react-native-fast-pbkdf2
+
 ## 3.48.0-next.1
 
 ### Patch Changes
