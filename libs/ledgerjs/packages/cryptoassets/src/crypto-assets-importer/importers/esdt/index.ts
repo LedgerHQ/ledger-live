@@ -8,7 +8,6 @@ type ElrondESDTToken = [
   number, // decimals
   string, // signature
   string, // name
-  false, // [deprecated] disableCountervalue
 ];
 
 export const importESDTTokens = async (outputDir: string) => {
@@ -27,14 +26,7 @@ export const importESDTTokens = async (outputDir: string) => {
       // with the content of the CDN (which should be removed soon)
       const [, , tokenIdentifier] = token.id.split("/");
 
-      return [
-        token.ticker,
-        tokenIdentifier,
-        token.decimals,
-        token.live_signature,
-        token.name,
-        false,
-      ];
+      return [token.ticker, tokenIdentifier, token.decimals, token.live_signature, token.name];
     });
 
     const filePath = path.join(outputDir, "esdt");
@@ -44,7 +36,6 @@ export const importESDTTokens = async (outputDir: string) => {
   number, // decimals
   string, // signature
   string, // name
-  boolean, // disableCountervalue
 ];`;
 
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(esdtTokens));

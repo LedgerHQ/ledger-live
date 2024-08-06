@@ -415,7 +415,6 @@ function convertElrondESDTTokens([
   decimals,
   signature,
   name,
-  disableCountervalue,
 ]: ElrondESDTToken): TokenCurrency {
   const ELROND_ESDT_CONTRACT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
   const parentCurrency = getCryptoCurrencyById("elrond");
@@ -427,7 +426,7 @@ function convertElrondESDTTokens([
     ledgerSignature: signature,
     parentCurrency,
     tokenType: "esdt",
-    disableCountervalue,
+    disableCountervalue: false,
     name,
     ticker,
     units: [

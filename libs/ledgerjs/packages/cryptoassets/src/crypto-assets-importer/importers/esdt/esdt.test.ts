@@ -36,7 +36,6 @@ describe("import ESDT tokens", () => {
   number, // decimals
   string, // signature
   string, // name
-  boolean, // disableCountervalue
 ];
 
 import tokens from "./esdt.json";
@@ -69,7 +68,6 @@ export default tokens as ElrondESDTToken[];
           6,
           "3045022100f03b1ec0d83d8d75d436f688c2007ffb0c71b39a4f72aba036062ea8d7ade99402203449426b83203617279c04ccb00387a77deffc468c27015bfc1590f1950edde9",
           "WrappedUSDC",
-          false,
         ],
       ]),
     );
