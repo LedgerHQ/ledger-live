@@ -56,13 +56,13 @@ const ProviderItem = ({ provider, stakeOnClick, redirectIfOnlyProvider }: Props)
   }, [provider, stakeOnClick, manifest]);
 
   const staderEthPromotionEndTime = new Date("2024-11-01").valueOf(); //Promo ends October 31, 2024
-  const isStaderEthPromotionValid =
+  const isEthPromotionValid =
     provider.id === "stader-eth" && Date.now().valueOf() < staderEthPromotionEndTime;
 
   const description =
-    isStaderEthPromotionValid && i18n.exists(`stake.ethereum.providers.${provider.id}.promo`)
-      ? t(`stake.ethereum.providers.${provider.id}.promo`)
-      : t(`stake.ethereum.providers.${provider.id}.description`);
+    isEthPromotionValid && i18n.exists(`ethereum.stake.${provider.id}.promo`)
+      ? t(`ethereum.stake.${provider.id}.promo`)
+      : t(`ethereum.stake.${provider.id}.description`);
 
   return (
     <Container
