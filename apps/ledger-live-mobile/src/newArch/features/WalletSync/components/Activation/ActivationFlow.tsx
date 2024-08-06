@@ -11,7 +11,7 @@ type Props = {
   currentStep: Steps;
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
-  onQrCodeScanned: () => void;
+  onQrCodeScanned: (data: string) => void;
 };
 
 const ActivationFlow = ({

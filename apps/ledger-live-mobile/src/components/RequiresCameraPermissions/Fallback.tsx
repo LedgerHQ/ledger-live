@@ -12,7 +12,7 @@ type Props = {
   buttonTitle: string;
   onPress: () => void;
   event: string;
-  hasNotBackground?: boolean;
+  hasNoBackground?: boolean;
 };
 
 const IconSettings = () => <Icon name="settings" size={16} color="neutral.c100" />;
@@ -23,12 +23,12 @@ const FallbackCameraBody: React.FC<Props> = ({
   buttonTitle,
   onPress,
   event,
-  hasNotBackground,
+  hasNoBackground,
 }: Props) => {
   const { colors } = useTheme();
 
   return (
-    <Flex flex={1} bg={hasNotBackground ? null : "background.main"} px={6}>
+    <Flex flex={1} bg={hasNoBackground ? null : "background.main"} px={6}>
       <Flex flex={1} alignItems="center" justifyContent="center">
         <FallbackCamera color={colors.constant.white} />
         <Text variant="paragraph" mt={9} mb={3} fontSize={6}>

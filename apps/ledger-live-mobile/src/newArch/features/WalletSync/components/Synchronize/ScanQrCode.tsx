@@ -7,11 +7,9 @@ import { BarCodeScanningResult, Camera, CameraType } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import ScanTargetSvg from "./ScanTargetSvg";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
-import { useDispatch } from "react-redux";
-import { setWalletSyncQrCodeUrl } from "~/actions/walletSync";
 
 type Props = {
-  onQrCodeScanned: () => void;
+  onQrCodeScanned: (data: string) => void;
 };
 
 const Italic = styled(Text)`
@@ -22,11 +20,9 @@ const Italic = styled(Text)`
 const ScanQrCode = ({ onQrCodeScanned }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const dispatch = useDispatch();
 
   const onBarCodeScanned = ({ data }: BarCodeScanningResult) => {
-    dispatch(setWalletSyncQrCodeUrl(data));
-    onQrCodeScanned;
+    onQrCodeScanned(data);
   };
 
   const steps = [

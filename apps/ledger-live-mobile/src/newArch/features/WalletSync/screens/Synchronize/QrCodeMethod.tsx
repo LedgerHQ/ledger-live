@@ -12,7 +12,7 @@ import {
 import { TrackScreen } from "~/analytics";
 
 type Props = {
-  onQrCodeScanned: () => void;
+  onQrCodeScanned: (data: string) => void;
 };
 
 const QrCodeMethod = ({ onQrCodeScanned }: Props) => {

@@ -61,7 +61,7 @@ const RequiresCameraPermissions: React.FC<Props> = ({
       <Fallback
         event="CameraPressAuthorize"
         onPress={requestPermission}
-        hasNotBackground={fallBackHasNoBackground}
+        hasNoBackground={fallBackHasNoBackground}
         title={t("permissions.camera.title")}
         description={t("permissions.camera.authorizeDescription")}
         buttonTitle={t("permissions.camera.authorizeButtonTitle")}
@@ -71,7 +71,7 @@ const RequiresCameraPermissions: React.FC<Props> = ({
     <Fallback
       event="CameraOpenSettings"
       onPress={openAppSettings}
-      hasNotBackground={fallBackHasNoBackground}
+      hasNoBackground={fallBackHasNoBackground}
       title={t("permissions.camera.title")}
       description={t("permissions.camera.goToSettingsDescription")}
       buttonTitle={t("permissions.camera.goToSettingsButtonTitle")}

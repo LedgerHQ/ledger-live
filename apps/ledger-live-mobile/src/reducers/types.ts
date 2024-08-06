@@ -345,8 +345,6 @@ export type MarketState = {
 
 export type WalletSyncState = {
   isManageKeyDrawerOpen: boolean;
-  qrCodePinCode: string | null;
-  qrCodeUrl: string | null;
 };
 
 // === ROOT STATE ===

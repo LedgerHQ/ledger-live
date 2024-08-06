@@ -526,17 +526,10 @@ export type MarketPayload =
 // === WALLETSYNC ACTIONS ===
 export enum WalletSyncActionTypes {
   WALLET_SYNC_SET_MANAGE_KEY_DRAWER = "WALLET_SYNC_SET_MANAGE_KEY_DRAWER",
-  WALLET_SYNC_CHANGE_QRCODE_URL = "WALLET_SYNC_CHANGE_QRCODE_URL",
-  WALLET_SYNC_CHANGE_QRCODE_PINCODE = "WALLET_SYNC_CHANGE_QRCODE_PINCODE",
 }
 
 export type WalletSyncSetManageKeyDrawerPayload = boolean;
-export type WalletSyncQrCodeUrlPayload = string;
-export type WalletSyncChangeQrCodePinCodePayload = string;
-export type WalletSyncPayload =
-  | WalletSyncSetManageKeyDrawerPayload
-  | WalletSyncQrCodeUrlPayload
-  | WalletSyncChangeQrCodePinCodePayload;
+export type WalletSyncPayload = WalletSyncSetManageKeyDrawerPayload;
 
 // === PAYLOADS ===
 
