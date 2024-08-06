@@ -37,7 +37,6 @@ describe("import Stellar tokens", () => {
   "stellar", // assetType (note: only used in Receive asset message and always should be "Stellar")
   string, // name
   number, // precision
-  true, // [deprecated] enableCountervalues
 ];
 
 import tokens from "./stellar.json";
@@ -59,14 +58,7 @@ export default tokens as StellarToken[];
       1,
       "stellar.json",
       JSON.stringify([
-        [
-          "usdc",
-          "ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn",
-          "stellar",
-          "USDC",
-          7,
-          true,
-        ],
+        ["usdc", "ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn", "stellar", "USDC", 7],
       ]),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(2, "stellar-hash.json", JSON.stringify("commitHash"));

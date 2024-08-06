@@ -484,7 +484,6 @@ function convertStellarTokens([
   assetType,
   name,
   precision,
-  enableCountervalues,
 ]: StellarToken): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById("stellar");
 
@@ -497,7 +496,7 @@ function convertStellarTokens([
     tokenType: assetType,
     name,
     ticker: assetCode,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     units: [
       {
         name,

@@ -8,7 +8,6 @@ type StellarToken = [
   "stellar", // assetType (note: only used in Receive asset message and always should be "Stellar")
   string, // name
   number, // precision
-  true, // [deprecated] enableCountervalues
 ];
 
 export const importStellarTokens = async (outputDir: string) => {
@@ -26,7 +25,6 @@ export const importStellarTokens = async (outputDir: string) => {
       "stellar",
       token.name,
       token.decimals,
-      true,
     ]);
 
     const filePath = path.join(outputDir, "stellar");
@@ -36,7 +34,6 @@ export const importStellarTokens = async (outputDir: string) => {
   "stellar", // assetType (note: only used in Receive asset message and always should be "Stellar")
   string, // name
   number, // precision
-  true, // [deprecated] enableCountervalues
 ];`;
 
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(stellarTokens));
