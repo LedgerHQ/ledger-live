@@ -2,7 +2,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import cardanoNativeTokens, { CardanoNativeToken } from "./data/cardanoNative";
 import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
 import stellarTokens, { StellarToken } from "./data/stellar";
-import vechainTokens, { vip180Token } from "./data/vip180";
+import vechainTokens, { Vip180Token } from "./data/vip180";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
 import casperTokens, { CasperToken } from "./data/casper";
 import asatokens, { AlgorandASAToken } from "./data/asa";
@@ -347,21 +347,21 @@ function convertAlgorandASATokens([
 }
 
 function convertVechainToken([
+  tokenIdenfitier,
   ticker,
   name,
   contractAddress,
   precision,
-  enableCountervalues,
-]: vip180Token): TokenCurrency {
+]: Vip180Token): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id: "vechain/vip180/vtho",
+    id: `vechain/vip180/${tokenIdenfitier}`,
     contractAddress: contractAddress,
     parentCurrency: getCryptoCurrencyById("vechain"),
     tokenType: "vip180",
     name,
     ticker,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     units: [
       {
         name,

@@ -1,7 +1,13 @@
-export type vip180Token = [string, string, string, number, boolean?];
-
-const vechainTokens: vip180Token[] = [
-  ["VTHO", "Vethor", "0x0000000000000000000000000000456E65726779", 18, true],
+export type Vip180Token = [
+  string, // token identifier
+  string, // ticker
+  string, // name
+  string, // contract address
+  number, // decimals
 ];
 
-export default vechainTokens;
+import tokens from "./vip180.json";
+
+export { default as hash } from "./vip180-hash.json";
+
+export default tokens as Vip180Token[];

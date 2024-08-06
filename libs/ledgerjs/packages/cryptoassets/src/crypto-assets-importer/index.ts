@@ -14,6 +14,7 @@ import { importBEP20Exchange } from "./exchange/bep20";
 import { importERC20Exchange } from "./exchange/erc20";
 import { importCoinsExchange } from "./exchange/coins";
 import { importTRC20Exchange } from "./exchange/trc20";
+import { importVip180Tokens } from "./importers/vip180";
 
 const outputFolder = path.join(__dirname, "../data");
 
@@ -28,6 +29,7 @@ const importTokens = async () => {
     importStellarTokens(outputFolder),
     importTRC10Tokens(outputFolder),
     importTRC20Tokens(outputFolder),
+    importVip180Tokens(outputFolder),
   ];
 
   await Promise.allSettled(promises);
