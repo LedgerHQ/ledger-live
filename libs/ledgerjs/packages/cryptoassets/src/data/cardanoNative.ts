@@ -6,7 +6,6 @@ export type CardanoNativeToken = [
   string, // ticker
   number, // decimals
   boolean, // delisted
-  false, // [deprecated] disableCountervalue
 ];
 
 import tokens from "./cardanoNative.json";
