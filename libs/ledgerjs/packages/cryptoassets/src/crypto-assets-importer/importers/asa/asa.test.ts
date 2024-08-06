@@ -37,7 +37,6 @@ describe("import ASA tokens", () => {
   string, // name
   string, // contractAddress
   number, // precision
-  boolean?, // enableCountervalues
 ];
 
 import tokens from "./asa.json";
@@ -66,14 +65,7 @@ export default tokens as AlgorandASAToken[];
       1,
       "asa.json",
       JSON.stringify([
-        [
-          null,
-          "USDC",
-          "USDC",
-          "2UEQTE5QDNXPI7M3TU44G6SYKLFWLPQO7EBZM7K7MHMQQMFI4QJPLHQFHM",
-          6,
-          true,
-        ],
+        [null, "USDC", "USDC", "2UEQTE5QDNXPI7M3TU44G6SYKLFWLPQO7EBZM7K7MHMQQMFI4QJPLHQFHM", 6],
       ]),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(2, "asa-hash.json", JSON.stringify("commitHash"));

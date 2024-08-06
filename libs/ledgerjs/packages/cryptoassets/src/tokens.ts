@@ -333,7 +333,6 @@ function convertAlgorandASATokens([
   name,
   contractAddress,
   precision,
-  enableCountervalues,
 ]: AlgorandASAToken): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById("algorand");
 
@@ -345,7 +344,7 @@ function convertAlgorandASATokens([
     tokenType: "asa",
     name,
     ticker: abbr,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     units: [
       {
         name,
