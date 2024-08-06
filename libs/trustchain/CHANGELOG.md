@@ -1,5 +1,19 @@
 # @ledgerhq/live-wallet
 
+## 0.2.0-nightly.3
+
+### Minor Changes
+
+- [#7497](https://github.com/LedgerHQ/ledger-live/pull/7497) [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Added parameters to lldWalletSync and llmWalletSync to be able to configure the wallet sync feature remotely
+
+### Patch Changes
+
+- Updated dependencies [[`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/live-env@2.2.0-nightly.1
+  - @ledgerhq/hw-trustchain@0.1.4-nightly.1
+  - @ledgerhq/live-network@1.3.2-nightly.1
+  - @ledgerhq/speculos-transport@0.1.4-nightly.1
+
 ## 0.1.4-nightly.2
 
 ### Patch Changes

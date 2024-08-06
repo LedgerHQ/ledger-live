@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-eth
 
+## 6.38.0-nightly.2
+
+### Minor Changes
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for filters v2 for EIP712 messages
+
+### Patch Changes
+
+- Updated dependencies [[`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/types-live@6.50.0-nightly.3
+  - @ledgerhq/evm-tools@1.2.0-nightly.2
+  - @ledgerhq/cryptoassets@13.3.0-nightly.2
+  - @ledgerhq/domain-service@1.2.3-nightly.3
+
 ## 6.37.4-nightly.1
 
 ### Patch Changes

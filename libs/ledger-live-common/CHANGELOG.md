@@ -1,5 +1,40 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.6
+
+### Minor Changes
+
+- [#7497](https://github.com/LedgerHQ/ledger-live/pull/7497) [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Added parameters to lldWalletSync and llmWalletSync to be able to configure the wallet sync feature remotely
+
+### Patch Changes
+
+- Updated dependencies [[`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/live-wallet@0.5.0-nightly.4
+  - @ledgerhq/live-env@2.2.0-nightly.1
+  - @ledgerhq/coin-evm@2.1.4-nightly.2
+  - @ledgerhq/cryptoassets@13.3.0-nightly.2
+  - @ledgerhq/hw-app-eth@6.38.0-nightly.2
+  - @ledgerhq/coin-framework@0.17.0-nightly.2
+  - @ledgerhq/coin-algorand@0.5.4-nightly.2
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.2
+  - @ledgerhq/coin-cardano@0.1.4-nightly.3
+  - @ledgerhq/coin-icon@0.4.1-nightly.5
+  - @ledgerhq/coin-near@0.5.4-nightly.2
+  - @ledgerhq/coin-polkadot@1.1.2-nightly.2
+  - @ledgerhq/coin-solana@0.7.4-nightly.2
+  - @ledgerhq/coin-stellar@0.2.2-nightly.2
+  - @ledgerhq/coin-tezos@0.5.2-nightly.3
+  - @ledgerhq/coin-ton@0.3.12-nightly.3
+  - @ledgerhq/coin-tron@0.0.4-nightly.3
+  - @ledgerhq/coin-xrp@0.4.2-nightly.2
+  - @ledgerhq/device-core@0.3.2-nightly.2
+  - @ledgerhq/live-countervalues@0.2.4-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.2
+  - @ledgerhq/live-nft@0.4.4-nightly.2
+  - @ledgerhq/live-network@1.3.2-nightly.1
+  - @ledgerhq/speculos-transport@0.1.4-nightly.1
+  - @ledgerhq/hw-app-vet@0.2.4-nightly.1
+
 ## 34.7.0-nightly.5
 
 ### Patch Changes

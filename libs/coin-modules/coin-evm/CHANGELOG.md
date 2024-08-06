@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 2.1.4-nightly.2
+
+### Patch Changes
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update env variable for CAL_SERVICE
+
+- Updated dependencies [[`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/live-env@2.2.0-nightly.1
+  - @ledgerhq/evm-tools@1.2.0-nightly.2
+  - @ledgerhq/cryptoassets@13.3.0-nightly.2
+  - @ledgerhq/coin-framework@0.17.0-nightly.2
+  - @ledgerhq/domain-service@1.2.3-nightly.3
+  - @ledgerhq/live-network@1.3.2-nightly.1
+
 ## 2.1.4-nightly.1
 
 ### Patch Changes

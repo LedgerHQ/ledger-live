@@ -1,5 +1,16 @@
 # @ledgerhq/live-countervalues
 
+## 0.2.4-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/types-live@6.50.0-nightly.3
+  - @ledgerhq/live-env@2.2.0-nightly.1
+  - @ledgerhq/cryptoassets@13.3.0-nightly.2
+  - @ledgerhq/coin-framework@0.17.0-nightly.2
+  - @ledgerhq/live-network@1.3.2-nightly.1
+
 ## 0.2.4-nightly.1
 
 ### Patch Changes
