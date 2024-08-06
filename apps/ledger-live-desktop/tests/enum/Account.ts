@@ -205,10 +205,16 @@ export class Account {
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
 
-  static readonly ETH_USDT = new Account(
+  static readonly ETH_USDT_1 = new Account(
     Currency.ETH_USDT,
     "Ethereum 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly ETH_USDT_2 = new Account(
+    Currency.ETH_USDT,
+    "Ethereum 2",
+    "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
   );
 
   static readonly ETH_LIDO = new Account(
@@ -253,10 +259,16 @@ export class Account {
     "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
   );
 
-  static readonly BSC_BUSD = new Account(
+  static readonly BSC_BUSD_1 = new Account(
     Currency.BSC_BUSD,
     "Binance Smart Chain 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
+  );
+
+  static readonly BSC_BUSD_2 = new Account(
+    Currency.BSC_BUSD,
+    "Binance Smart Chain 2",
+    "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
   );
 
   static readonly BSC_SHIBA = new Account(
@@ -265,7 +277,7 @@ export class Account {
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
 
-  static readonly MATIC_DAI = new Account(
+  static readonly MATIC_DAI_1 = new Account(
     Currency.MATIC_DAI,
     "Polygon 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",

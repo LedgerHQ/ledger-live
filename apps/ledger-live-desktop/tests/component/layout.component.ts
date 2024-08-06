@@ -34,6 +34,7 @@ export class Layout extends Component {
 
   // general
   readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
+  readonly inputWarning = this.page.getByTestId("alert-insufficient-warning");
   private loadingSpinner = this.page.getByTestId("loading-spinner");
   readonly logo = this.page.getByTestId("logo");
 
@@ -95,6 +96,15 @@ export class Layout extends Component {
 
   async goToSettings() {
     await this.topbarSettingsButton.click();
+  }
+
+  @step("Check warning message")
+  async checkWarningMessage(feeAmount: number) {
+    await this.inputWarning.waitFor({ state: "visible" });
+    const warningText: any = await this.inputWarning.textContent();
+    expect(warningText).toContain(
+      `You need ${feeAmount} ETH in your account to pay for transaction fees on the Ethereum network.`,
+    );
   }
 
   @step("Check if the error message is the same as expected")

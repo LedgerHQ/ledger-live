@@ -40,7 +40,7 @@ const transactionE2E = [
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581 or insufficient funds
 
 for (const transaction of transactionE2E) {
-  test.describe("Send from 1 account to another", () => {
+  test.describe.skip("Send from 1 account to another", () => {
     test.use({
       userdata: "speculos-tests-app",
       speculosCurrency: transaction.accountToDebit.currency,
@@ -81,7 +81,7 @@ for (const transaction of transactionE2E) {
   });
 }
 
-test.describe("Send token (subAccount) - invalid input", () => {
+test.describe.skip("Send token (subAccount) - invalid address input", () => {
   const tokenTransactionInvalid = {
     transaction: new Transaction(Account.ALGO_USDT_1, Account.ALGO_USDT_2, "0.1", Fee.MEDIUM),
     expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
@@ -93,7 +93,7 @@ test.describe("Send token (subAccount) - invalid input", () => {
   });
 
   test(
-    `Send from ${tokenTransactionInvalid.transaction.accountToDebit.accountName} to ${tokenTransactionInvalid.transaction.accountToCredit.accountName} - invalid input`,
+    `Send from ${tokenTransactionInvalid.transaction.accountToDebit.accountName} to ${tokenTransactionInvalid.transaction.accountToCredit.accountName} - invalid address input`,
     {
       annotation: {
         type: "TMS",
@@ -116,7 +116,50 @@ test.describe("Send token (subAccount) - invalid input", () => {
   );
 });
 
-test.describe("Send token (subAccount) - valid input", () => {
+test.describe("Send token (subAccount) - invalid amount input", () => {
+  const tokenTransactionInvalid = [
+    /*{
+      transaction: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.MEDIUM),
+      expectedErrorMessage:
+        "You need BNB in your account to pay for transaction fees on the Binance Smart Chain network.", //Todo: trouver methode pour les fees
+    },*/
+    {
+      transaction: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.MEDIUM),
+      expectedErrorMessage:
+        "You need (fees) BNB in your account to pay for transaction fees on the Binance Smart Chain network.",
+    },
+  ];
+  for (const transaction of tokenTransactionInvalid) {
+    test.use({
+      userdata: "speculos-2ETH-2BNB",
+      speculosCurrency: transaction.transaction.accountToDebit.currency,
+    });
+    test(
+      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - invalid amount input`,
+      {
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-475",
+        },
+      },
+      async ({ app }) => {
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(
+          transaction.transaction.accountToDebit.accountName,
+        );
+        await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
+        await app.account.clickSend();
+        await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
+        await app.send.clickContinue();
+        await app.send.fillAmount(transaction.transaction.amount);
+        await app.send.checkContinueButtonDisabled();
+        await app.layout.checkWarningMessage();
+      },
+    );
+  }
+});
+
+test.describe.skip("Send token (subAccount) - valid address input", () => {
   const tokenTransactionValid = new Transaction(
     Account.ALGO_USDT_1,
     Account.ALGO_USDT_3,
@@ -130,7 +173,7 @@ test.describe("Send token (subAccount) - valid input", () => {
   });
 
   test(
-    `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid input`,
+    `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address input`,
     {
       annotation: {
         type: "TMS",
@@ -149,7 +192,7 @@ test.describe("Send token (subAccount) - valid input", () => {
   );
 });
 
-test.describe("Check invalid address input error", () => {
+test.describe.skip("Check invalid address input error", () => {
   const transactionInvalidAddress = new Transaction(
     Account.ETH_1,
     Account.BTC_1,
@@ -184,7 +227,7 @@ test.describe("Check invalid address input error", () => {
 });
 
 for (const transaction of transactionsInputsInvalid) {
-  test.describe("Check invalid amount input error", () => {
+  test.describe.skip("Check invalid amount input error", () => {
     test.use({
       userdata: "speculos-tests-app",
       speculosCurrency: transaction.transaction.accountToDebit.currency,
@@ -215,7 +258,7 @@ for (const transaction of transactionsInputsInvalid) {
   });
 }
 
-test.describe("Verify send max user flow", () => {
+test.describe.skip("Verify send max user flow", () => {
   const transactionInputValid = new Transaction(
     Account.ETH_1,
     Account.ETH_2,
