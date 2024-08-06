@@ -1,5 +1,13 @@
 # @ledgerhq/keyring-eth
 
+## 0.2.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.1.4-next.1
+  - @ledgerhq/hw-app-eth@6.38.0-next.1
+
 ## 0.2.2-next.0
 
 ### Patch Changes

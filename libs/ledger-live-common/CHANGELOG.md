@@ -1,5 +1,32 @@
 ## 34.5.0-next.4
 
+## 34.7.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297)]:
+  - @ledgerhq/cryptoassets@13.3.0-next.1
+  - @ledgerhq/coin-framework@0.17.0-next.1
+  - @ledgerhq/coin-algorand@0.5.4-next.1
+  - @ledgerhq/coin-bitcoin@0.7.2-next.1
+  - @ledgerhq/coin-cardano@0.1.4-next.1
+  - @ledgerhq/coin-evm@2.1.4-next.1
+  - @ledgerhq/coin-icon@0.4.1-next.1
+  - @ledgerhq/coin-near@0.5.4-next.1
+  - @ledgerhq/coin-polkadot@1.2.0-next.1
+  - @ledgerhq/coin-solana@0.7.4-next.1
+  - @ledgerhq/coin-stellar@0.2.2-next.1
+  - @ledgerhq/coin-tezos@0.6.0-next.1
+  - @ledgerhq/coin-ton@0.3.12-next.1
+  - @ledgerhq/coin-tron@0.0.4-next.1
+  - @ledgerhq/coin-xrp@0.5.0-next.1
+  - @ledgerhq/hw-app-eth@6.38.0-next.1
+  - @ledgerhq/hw-app-vet@0.2.4-next.1
+  - @ledgerhq/live-countervalues@0.2.4-next.1
+  - @ledgerhq/live-countervalues-react@0.2.4-next.1
+  - @ledgerhq/live-nft@0.4.4-next.1
+  - @ledgerhq/live-wallet@0.5.0-next.1
+
 ## 34.7.0-next.0
 
 ### Minor Changes
