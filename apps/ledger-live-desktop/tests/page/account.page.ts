@@ -32,7 +32,7 @@ export class AccountPage extends AppPage {
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
   private viewDetailsButton = this.page.getByText("View details");
 
-  @step("Navigate to token $0")
+  @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
     if (SubAccount.currency.name) {
       await expect(this.tokenValue(SubAccount.currency.name)).toBeVisible();
@@ -45,7 +45,7 @@ export class AccountPage extends AppPage {
     await this.receiveButton.click();
   }
 
-  @step("click on add token button")
+  @step("Click on add token button")
   async clickAddToken() {
     await this.addTokenButton.click();
   }
@@ -157,7 +157,7 @@ export class AccountPage extends AppPage {
     expect(tokenInfos).toContain(SubAccount.currency.ticker);
   }
 
-  @step("navigate to token in account")
+  @step("Navigate to token in account")
   async navigateToTokenInAccount(SubAccount: Account) {
     await this.tokenRow(SubAccount.currency.ticker).click();
   }

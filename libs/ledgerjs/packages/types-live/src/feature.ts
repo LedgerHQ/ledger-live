@@ -1,6 +1,7 @@
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
+import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
 /**
  * Feature type.
@@ -474,6 +475,15 @@ export type Feature_BuySellUiManifest = Feature<{
   manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "multibuy-v2"
 }>;
 
+export type Feature_LldWalletSync = Feature<{
+  environment: WalletSyncEnvironment;
+  watchConfig: WalletSyncWatchConfig;
+}>;
+export type Feature_LlmWalletSync = Feature<{
+  environment: WalletSyncEnvironment;
+  watchConfig: WalletSyncWatchConfig;
+}>;
+
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
@@ -494,8 +504,6 @@ export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
-export type Feature_LldWalletSync = DefaultFeature;
-export type Feature_LlmWalletSync = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;

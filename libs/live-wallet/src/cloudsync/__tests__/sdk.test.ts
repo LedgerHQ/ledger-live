@@ -4,7 +4,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { CloudSyncSDK, UpdateEvent } from "../sdk";
 import { MockSDK } from "@ledgerhq/trustchain/mockSdk";
-import { setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTransportReplayer";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
@@ -14,7 +14,7 @@ describe("CloudSyncSDK basics", () => {
   const port = 54034;
   const base = "http://localhost:" + port;
 
-  setEnv("CLOUD_SYNC_API", base);
+  setEnv("CLOUD_SYNC_API_STAGING", base);
 
   let expectedBackendTrustchain: Trustchain;
   function verifyTrustchainParams(params: URLSearchParams) {
@@ -120,7 +120,11 @@ describe("CloudSyncSDK basics", () => {
   let data: Data | null = null;
 
   it("init", async () => {
-    trustchainSdk = new MockSDK({ applicationId: 16, name: "user" });
+    trustchainSdk = new MockSDK({
+      applicationId: 16,
+      name: "user",
+      apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+    });
 
     creds = await trustchainSdk.initMemberCredentials();
 
@@ -148,6 +152,7 @@ describe("CloudSyncSDK basics", () => {
     };
 
     sdk = new CloudSyncSDK({
+      apiBaseUrl: getEnv("CLOUD_SYNC_API_STAGING"),
       slug: "test",
       schema: z.object({
         value: z.string(),
@@ -241,7 +246,11 @@ describe("CloudSyncSDK basics", () => {
     let version2 = 0;
     let data2: Data | null = null;
 
-    const trustchainSdk = new MockSDK({ applicationId: 16, name: "user" });
+    const trustchainSdk = new MockSDK({
+      applicationId: 16,
+      name: "user",
+      apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+    });
 
     const getCurrentVersion = () => version2;
 
@@ -261,6 +270,7 @@ describe("CloudSyncSDK basics", () => {
     };
 
     const sdk2 = new CloudSyncSDK({
+      apiBaseUrl: getEnv("CLOUD_SYNC_API_STAGING"),
       slug: "test",
       schema: z.object({
         value: z.string(),

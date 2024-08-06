@@ -523,6 +523,14 @@ export type MarketPayload =
   | MarketSetCurrentPagePayload
   | MarketImportPayload;
 
+// === WALLETSYNC ACTIONS ===
+export enum WalletSyncActionTypes {
+  WALLET_SYNC_SET_MANAGE_KEY_DRAWER = "WALLET_SYNC_SET_MANAGE_KEY_DRAWER",
+}
+
+export type WalletSyncSetManageKeyDrawerPayload = boolean;
+export type WalletSyncPayload = WalletSyncSetManageKeyDrawerPayload;
+
 // === PAYLOADS ===
 
 export type ActionsPayload =

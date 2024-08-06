@@ -49,6 +49,7 @@ export class Drawer extends Component {
     await this.drawerOverlay.waitFor({ state: "detached" });
   }
 
+  @step("Close drawer")
   async close() {
     await this.closeButton.click();
   }

@@ -1856,7 +1856,8 @@
       "provider": "Provider",
       "payoutNetworkFees": "Payout fees",
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-      "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
+      "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>"
     },
     "swap2": {
       "amountSent": "Amount to send",
@@ -5635,6 +5636,9 @@
     "SwapRateExpiredError": {
       "title": "Rate Expired",
       "description": "The exchange transaction could not be completed as the rate has expired. Please refresh the rates and try your swap again."
+    },
+    "PayinExtraIdError": {
+      "message": "Missing required extraId required for swap"
     },
     "SwapGenericAPIError": {
       "title": "Something went wrong",

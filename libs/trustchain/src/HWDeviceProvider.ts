@@ -2,13 +2,18 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { ApduDevice } from "@ledgerhq/hw-trustchain/ApduDevice";
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { crypto, device } from "@ledgerhq/hw-trustchain";
-import api from "./api";
+import getApi from "./api";
 import { genericWithJWT } from "./auth";
 import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks } from "./types";
 
 export class HWDeviceProvider {
   private jwt?: JWT;
   private hw?: ApduDevice;
+  private api: ReturnType<typeof getApi>;
+
+  constructor(apiBaseURL: string) {
+    this.api = getApi(apiBaseURL);
+  }
 
   public withJwt<T>(
     transport: Transport,
@@ -23,6 +28,7 @@ export class HWDeviceProvider {
       },
       this.jwt,
       () => this._authWithDevice(transport, callbacks),
+      (jwt: JWT) => this.api.refreshAuth(jwt),
       policy,
     );
   }
@@ -54,7 +60,7 @@ export class HWDeviceProvider {
     transport: Transport,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<void> {
-    this.jwt = await this.withJwt(transport, api.refreshAuth, undefined, callbacks);
+    this.jwt = await this.withJwt(transport, this.api.refreshAuth, undefined, callbacks);
   }
 
   public clearJwt() {
@@ -65,11 +71,11 @@ export class HWDeviceProvider {
     transport: Transport,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<JWT> {
-    const challenge = await api.getAuthenticationChallenge();
+    const challenge = await this.api.getAuthenticationChallenge();
     const data = crypto.from_hex(challenge.tlv);
     const seedId = await this.withHw(transport, hw => hw.getSeedId(data), callbacks);
     const signature = crypto.to_hex(seedId.signature);
-    return api.postChallengeResponse({
+    return this.api.postChallengeResponse({
       challenge: challenge.json,
       signature: {
         credential: seedId.pubkeyCredential.toJSON(),

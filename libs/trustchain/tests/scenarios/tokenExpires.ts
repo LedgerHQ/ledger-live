@@ -2,11 +2,13 @@ import Transport from "@ledgerhq/hw-transport";
 import { ScenarioOptions } from "../test-helpers/types";
 import { HWDeviceProvider } from "../../src/HWDeviceProvider";
 import { SDK } from "../../src/sdk";
+import { getEnv } from "@ledgerhq/live-env";
 
 export async function scenario(transport: Transport, { pauseRecorder }: ScenarioOptions) {
-  const hwDeviceProvider = new HWDeviceProvider();
+  const apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING");
+  const hwDeviceProvider = new HWDeviceProvider(apiBaseUrl);
   const applicationId = 16;
-  const sdk = new SDK({ applicationId, name: "Foo" }, hwDeviceProvider);
+  const sdk = new SDK({ applicationId, name: "Foo", apiBaseUrl }, hwDeviceProvider);
   const creds = await sdk.initMemberCredentials();
 
   const jwt1 = await hwDeviceProvider.withJwt(transport, jwt => Promise.resolve(jwt));

@@ -1,6 +1,5 @@
 import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
-import { specs } from "../../utils/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
@@ -24,13 +23,11 @@ const subAccountReceive: Account[] = [
   Account.MATIC_UNI,
 ];
 
-for (const [i, token] of subAccounts.entries()) {
+for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
     test.use({
       userdata: "skip-onboarding",
-      testName: `add subAccount without parent (${token.currency.name})`,
-      speculosCurrency: specs[token.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosCurrency: token.currency,
     });
 
     test(
@@ -62,13 +59,11 @@ for (const [i, token] of subAccounts.entries()) {
 }
 
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
-for (const [i, token] of subAccountReceive.entries()) {
+for (const token of subAccountReceive) {
   test.describe("Add subAccount when parent exists", () => {
     test.use({
       userdata: "speculos-subAccount",
-      testName: `Add subAccount when parent exists (${token.currency.name})`,
-      speculosCurrency: specs[token.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosCurrency: token.currency,
     });
 
     test(
@@ -99,13 +94,11 @@ for (const [i, token] of subAccountReceive.entries()) {
   });
 }
 
-for (const [i, token] of subAccounts.entries()) {
+for (const token of subAccounts) {
   test.describe("Token visible in parent account", () => {
     test.use({
       userdata: "speculos-subAccount",
-      testName: `Token visible in parent account (${token.currency.name})`,
-      speculosCurrency: specs[token.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosCurrency: token.currency,
     });
 
     test(

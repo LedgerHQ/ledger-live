@@ -11,4 +11,6 @@ export const getSdk = (
   context: TrustchainSDKContext,
   lifecycle?: TrustchainLifecycle,
 ): TrustchainSDK =>
-  isMockEnv ? new MockSDK(context, lifecycle) : new SDK(context, new HWDeviceProvider(), lifecycle);
+  isMockEnv
+    ? new MockSDK(context, lifecycle)
+    : new SDK(context, new HWDeviceProvider(context.apiBaseUrl), lifecycle);

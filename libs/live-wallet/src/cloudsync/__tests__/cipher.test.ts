@@ -1,8 +1,10 @@
+import { getEnv } from "@ledgerhq/live-env";
 import { makeCipher } from "../cipher";
 import { MockSDK } from "@ledgerhq/trustchain/mockSdk";
 
 describe("makeCipher on static data set", () => {
   const trustchainSdk = new MockSDK({
+    apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
     applicationId: 16,
     name: "test",
   });

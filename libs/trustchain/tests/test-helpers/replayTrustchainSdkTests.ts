@@ -80,7 +80,12 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
     // This replays, in order, all APDUs we have saved in json records
     const transport = await openTransportReplayer(recordStore);
     const options: ScenarioOptions = {
-      sdkForName: name => getSdk(!!getEnv("MOCK"), { applicationId: 16, name }),
+      sdkForName: name =>
+        getSdk(!!getEnv("MOCK"), {
+          applicationId: 16,
+          name,
+          apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+        }),
       pauseRecorder: () => Promise.resolve(), // replayer don't need to pause
       switchDeviceSeed: async () => transport, // nothing to actually do, we will continue replaying
     };

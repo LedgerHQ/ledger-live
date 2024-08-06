@@ -1,4 +1,4 @@
-import { Device } from "@ledgerhq/types-devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useState, useCallback } from "react";
 import { logDrawer } from "~/newArch/components/QueuedDrawer/utils/logDrawer";
 
@@ -6,7 +6,7 @@ const messageLog = "Follow Steps on device";
 
 export const useFollowInstructions = () => {
   const [isDrawerInstructionsVisible, setIsDrawerInstructionsVisible] = useState(false);
-  const [device, setDevice] = useState<Device>(null);
+  const [device, setDevice] = useState<Device | null>(null);
 
   const openDrawer = useCallback((device: Device) => {
     setIsDrawerInstructionsVisible(true);

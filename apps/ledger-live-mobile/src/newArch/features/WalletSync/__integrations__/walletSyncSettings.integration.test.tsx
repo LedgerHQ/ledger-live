@@ -12,7 +12,15 @@ describe("WalletSyncSettings", () => {
         settings: {
           ...state.settings,
           readOnlyModeEnabled: false,
-          overriddenFeatureFlags: { llmWalletSync: { enabled: true } },
+          overriddenFeatureFlags: {
+            llmWalletSync: {
+              enabled: true,
+              params: {
+                environment: "STAGING",
+                watchConfig: {},
+              },
+            },
+          },
         },
       }),
     });

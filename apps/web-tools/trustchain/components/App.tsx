@@ -57,6 +57,7 @@ const App = () => {
       setTrustchainState(s => ({ jwt: null, trustchain: null, memberCredentials })),
     [],
   );
+  const cloudSyncApiBaseUrl = useEnv("CLOUD_SYNC_API_STAGING");
   const setTrustchain = useCallback(
     (trustchain: Trustchain | null) => setTrustchainState(s => ({ ...s, trustchain })),
     [],
@@ -105,9 +106,10 @@ const App = () => {
   const lifecycle = useMemo(
     () =>
       trustchainLifecycle({
+        cloudSyncApiBaseUrl,
         getCurrentWSState: () => wsStateRef.current,
       }),
-    [],
+    [cloudSyncApiBaseUrl],
   );
 
   const sdk = useMemo(
@@ -120,8 +122,8 @@ const App = () => {
       memberCredentials,
     ],
   );
-  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API").includes("stg");
-  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API").includes("stg");
+  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API_STAGING").includes("stg");
+  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API_STAGING").includes("stg");
   const envSummary = mockEnv
     ? "MOCK"
     : envTrustchainApiIsStg && envWalletSyncApiIsStg

@@ -8,20 +8,21 @@ import { TinyCard } from "../TinyCard";
 import { Scene } from "../../screens/ManageInstances/useManageInstanceDrawer";
 
 type Props = {
-  onClickDelete: (scene: Scene) => void;
+  onClickInstance: (member: TrustchainMember) => void;
   members?: TrustchainMember[];
   currentInstance?: string;
+  changeScene: (scene: Scene) => void;
 };
 
-export function ListInstances({ onClickDelete, members, currentInstance }: Props) {
+export function ListInstances({ onClickInstance, changeScene, members, currentInstance }: Props) {
   const { t } = useTranslation();
 
-  const handleAutoRemove = () => onClickDelete(Scene.AutoRemove);
+  const handleAutoRemove = () => changeScene(Scene.AutoRemove);
 
   const handleGoDeleteInstance = (instance: TrustchainMember) => {
     // eslint-disable-next-line no-console
     console.log("delete instance IMPLEMENTED IN NEXT PR", instance);
-    onClickDelete(Scene.DeviceAction);
+    onClickInstance(instance);
   };
 
   const renderItem = ({ item }: ListRenderItemInfo<TrustchainMember>) => {

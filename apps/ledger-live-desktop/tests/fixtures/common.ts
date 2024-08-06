@@ -3,19 +3,18 @@ import fsPromises from "fs/promises";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos, Spec } from "../utils/speculos";
+import { startSpeculos, stopSpeculos, specs } from "../utils/speculos";
 
 import { Application } from "tests/page";
 import { generateUUID, safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
+import { Currency } from "tests/enum/Currency";
 
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
-  speculosCurrency: Spec;
-  speculosOffset: number;
-  testName: string;
+  speculosCurrency: Currency;
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
@@ -24,7 +23,6 @@ type TestFixtures = {
   electronApp: ElectronApplication;
   page: Page;
   featureFlags: OptionalFeatureMap;
-  recordTestNamesForApiResponseLogging: void;
   simulateCamera: string;
   app: Application;
 };
@@ -32,6 +30,9 @@ type TestFixtures = {
 const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+const BASE_PORT = 30000;
+const MAX_PORT = 65535;
+let portCounter = BASE_PORT; // Counter for generating unique ports
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -41,8 +42,6 @@ export const test = base.extend<TestFixtures>({
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosCurrency: undefined,
-  speculosOffset: undefined,
-  testName: undefined,
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -70,10 +69,9 @@ export const test = base.extend<TestFixtures>({
       featureFlags,
       simulateCamera,
       speculosCurrency,
-      speculosOffset,
-      testName,
     },
     use,
+    testInfo,
   ) => {
     // create userdata path
     await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
@@ -83,12 +81,21 @@ export const test = base.extend<TestFixtures>({
     }
 
     let device: any | undefined;
+
     if (IS_NOT_MOCK && speculosCurrency) {
+      // Ensure the portCounter stays within the valid port range
+      if (portCounter > MAX_PORT) {
+        portCounter = BASE_PORT;
+      }
+      const speculosPort = portCounter++;
       setEnv(
         "SPECULOS_PID_OFFSET",
-        speculosOffset * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+        (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
       );
-      device = await startSpeculos(testName, speculosCurrency);
+      device = await startSpeculos(
+        testInfo.title.replace(/ /g, "_"),
+        specs[speculosCurrency.deviceLabel.replace(/ /g, "_")],
+      );
       setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
     }
 

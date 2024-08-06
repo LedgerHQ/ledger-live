@@ -28,7 +28,7 @@ const WalletSyncRow = () => {
       });
     } else {
       navigation.navigate(NavigatorName.WalletSync, {
-        screen: ScreenName.WalletSyncActivationSettings,
+        screen: ScreenName.WalletSyncActivationInit,
       });
     }
   }, [navigation, onClickTrack, trustchain?.rootId]);
