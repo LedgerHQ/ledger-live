@@ -1,10 +1,9 @@
-import Transport from "@ledgerhq/hw-transport";
 import { ScenarioOptions } from "../test-helpers/types";
 
 /**
  * a complete scenario with 3 members and various sdk successful interactions.
  */
-export async function scenario(transport: Transport, { sdkForName }: ScenarioOptions) {
+export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions) {
   // members
   const name1 = "Member 1";
   const sdk1 = sdkForName(name1);
@@ -25,7 +24,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const member4creds = await sdk4.initMemberCredentials();
 
   // auth with the device and init the first trustchain
-  const { trustchain } = await sdk1.getOrCreateTrustchain("foo", member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(deviceId, member1creds);
 
   // member 1 adds member 2
   await sdk1.addMember(trustchain, member1creds, member2);
@@ -34,7 +33,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   await sdk1.addMember(trustchain, member1creds, member3);
 
   // member 4 implicits add itself with device auth
-  const { trustchain: trustchain4 } = await sdk4.getOrCreateTrustchain("foo", member4creds);
+  const { trustchain: trustchain4 } = await sdk4.getOrCreateTrustchain(deviceId, member4creds);
   expect(trustchain).toEqual(trustchain4);
 
   // list members

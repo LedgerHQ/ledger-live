@@ -1,7 +1,6 @@
-import Transport from "@ledgerhq/hw-transport";
 import { ScenarioOptions } from "../test-helpers/types";
 
-export async function scenario(transport: Transport, { sdkForName }: ScenarioOptions) {
+export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions) {
   /**
    * Edit this code to the test you want.
    * This script will be used both as a end-to-end tests and unit tests.
@@ -10,7 +9,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const name1 = "cli-member1";
   const sdk1 = sdkForName(name1);
   const memberCredentials = await sdk1.initMemberCredentials();
-  const { trustchain } = await sdk1.getOrCreateTrustchain("foo", memberCredentials);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(deviceId, memberCredentials);
 
   await sdk1.destroyTrustchain(trustchain, memberCredentials);
 }

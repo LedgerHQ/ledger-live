@@ -1,17 +1,16 @@
-import Transport from "@ledgerhq/hw-transport";
 import { ScenarioOptions } from "../test-helpers/types";
 
 /**
  * a complete scenario with 3 members and various sdk successful interactions.
  */
-export async function scenario(transport: Transport, { sdkForName }: ScenarioOptions) {
+export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions) {
   // first member initializes itself
   const name1 = "Member 1";
   const sdk1 = sdkForName(name1);
   const member1creds = await sdk1.initMemberCredentials();
 
   // auth with the device and init the first trustchain
-  const { trustchain } = await sdk1.getOrCreateTrustchain("foo", member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(deviceId, member1creds);
 
   // verify we have member 1 in the trustchain
   const members = await sdk1.getMembers(trustchain, member1creds);
@@ -76,7 +75,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   expect(await sdk3.getMembers(trustchain, member3creds)).toEqual(expectedMembers);
 
   // member1 removes member2
-  const newTrustchain = await sdk1.removeMember("foo", trustchain, member1creds, members2[1]);
+  const newTrustchain = await sdk1.removeMember(deviceId, trustchain, member1creds, members2[1]);
   expectedMembers.splice(1, 1);
 
   // verify the trustchain has rotated

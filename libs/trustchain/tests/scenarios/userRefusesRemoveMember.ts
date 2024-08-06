@@ -1,8 +1,7 @@
-import Transport from "@ledgerhq/hw-transport";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { RecorderConfig, ScenarioOptions } from "../test-helpers/types";
 
-export async function scenario(transport: Transport, { sdkForName }: ScenarioOptions) {
+export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions) {
   // first member initializes itself
   const name1 = "Member 1";
   const sdk1 = sdkForName(name1);
@@ -10,7 +9,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const member1 = { id: member1creds.pubkey, name: name1, permissions: 0xffffffff };
 
   // auth with the device and init the first trustchain
-  const { trustchain } = await sdk1.getOrCreateTrustchain("foo", member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(deviceId, member1creds);
 
   // second member initializes itself
   const name2 = "Member 2";
@@ -37,7 +36,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
     },
   };
   await expect(
-    sdk1.removeMember("foo", trustchain, member1creds, member2, callbacks),
+    sdk1.removeMember(deviceId, trustchain, member1creds, member2, callbacks),
   ).rejects.toThrow(UserRefusedOnDevice);
   expect(interactionCounter).toBe(0);
   expect(totalInteractionCounter).toBe(2);

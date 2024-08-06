@@ -3,15 +3,15 @@ import { setupServer } from "msw/node";
 import { crypto } from "@ledgerhq/hw-trustchain";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import Transport from "@ledgerhq/hw-transport";
 import { ScenarioOptions } from "./types";
 import { getSdk } from "../../src";
+import { WithDevice } from "../../src/types";
 
 setEnv("GET_CALLS_RETRY", 0);
 
 export async function replayTrustchainSdkTests<Json extends JsonShape>(
   json: Json,
-  scenario: (transport: Transport, scenarioOptions: ScenarioOptions) => Promise<void>,
+  scenario: (deviceId: string, scenarioOptions: ScenarioOptions) => Promise<void>,
 ) {
   // This replays, in order, all HTTP queries we have saved in json records
   let httpTransactionIndex = 0;
@@ -79,17 +79,20 @@ export async function replayTrustchainSdkTests<Json extends JsonShape>(
   try {
     // This replays, in order, all APDUs we have saved in json records
     const transport = await openTransportReplayer(recordStore);
+    const device = { id: "", transport };
+    const withDevice: WithDevice = () => fn => fn(device.transport);
     const options: ScenarioOptions = {
+      withDevice,
       sdkForName: name =>
         getSdk(
           !!getEnv("MOCK"),
           { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
-          () => fn => fn(transport),
+          withDevice,
         ),
       pauseRecorder: () => Promise.resolve(), // replayer don't need to pause
-      switchDeviceSeed: async () => {}, // nothing to actually do, we will continue replaying
+      switchDeviceSeed: async () => device, // nothing to actually do, we will continue replaying
     };
-    await scenario(transport, options);
+    await scenario(device.id, options);
   } finally {
     mockServer.close();
   }
