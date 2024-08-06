@@ -44,7 +44,7 @@ describe("signMessage", () => {
   });
 });
 
-function createFixtureAccount(account?: Partial<BitcoinAccount>): BitcoinAccount {
+export function createFixtureAccount(account?: Partial<BitcoinAccount>): BitcoinAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
 
   const bitcoinResources: BitcoinResources = account?.bitcoinResources || {
