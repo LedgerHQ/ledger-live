@@ -5,7 +5,7 @@ import {
   createSpeculosDevice,
   releaseSpeculosDevice,
   findLatestAppCandidate,
-  SpeculosTransport, AppSearch
+  SpeculosTransport,
 } from "@ledgerhq/live-common/load/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
@@ -223,25 +223,17 @@ export async function startSpeculos(
   if (!appCandidates) {
     appCandidates = await listAppCandidates(coinapps);
   }
-
   const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
   const appCandidate = findLatestAppCandidate(appCandidates, appQuery);
   const { model } = appQuery;
   const { dependencies } = spec;
-  const newAppQuery = dependencies?.map(appName => ({
-    model,
-    appName,
-  }));
-  /*const depsCandidates = dependencies?.forEach(dependency => {
-    dependency.appVersion =
-      findLatestAppCandidate(appCandidates, newAppQuery as AppSearch).appVersion !== null
-      findLatestAppCandidate(appCandidates, newAppQuery as AppSearch)?.appVersion : "1.1.1";
-  });*/
-  dependencies?.forEach(dependency => {
-    const latestAppCandidate = findLatestAppCandidate(appCandidates, newAppQuery as AppSearch);
-    dependency.appVersion = latestAppCandidate?.appVersion ?? "1.1.1";
+  const newAppQuery = dependencies?.map(dep => {
+    return findLatestAppCandidate(appCandidates, { model, appName: dep.name });
   });
-  console.log("appquery json" + JSON.stringify(newAppQuery));
+  const appVersionMap = new Map(newAppQuery?.map(app => [app?.appName, app?.appVersion]));
+  dependencies?.forEach(dependency => {
+    dependency.appVersion = appVersionMap.get(dependency.name) || "1.1.1";
+  });
   if (!appCandidate) {
     console.warn("no app found for " + testName);
     console.warn(appQuery);

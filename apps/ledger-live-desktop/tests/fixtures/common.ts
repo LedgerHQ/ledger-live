@@ -3,18 +3,17 @@ import fsPromises from "fs/promises";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos, specs } from "../utils/speculos";
+import { startSpeculos, stopSpeculos, specs, Spec } from "../utils/speculos";
 
 import { Application } from "tests/page";
 import { generateUUID, safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
-import { Currency } from "tests/enum/Currency";
 
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
-  speculosCurrency: Currency;
+  speculosApp: Spec;
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
@@ -41,7 +40,7 @@ export const test = base.extend<TestFixtures>({
   userdata: undefined,
   featureFlags: undefined,
   simulateCamera: undefined,
-  speculosCurrency: undefined,
+  speculosApp: undefined,
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -68,7 +67,7 @@ export const test = base.extend<TestFixtures>({
       env,
       featureFlags,
       simulateCamera,
-      speculosCurrency,
+      speculosApp,
     },
     use,
     testInfo,
@@ -82,7 +81,7 @@ export const test = base.extend<TestFixtures>({
 
     let device: any | undefined;
 
-    if (IS_NOT_MOCK && speculosCurrency) {
+    if (IS_NOT_MOCK && speculosApp) {
       // Ensure the portCounter stays within the valid port range
       if (portCounter > MAX_PORT) {
         portCounter = BASE_PORT;
@@ -92,10 +91,7 @@ export const test = base.extend<TestFixtures>({
         "SPECULOS_PID_OFFSET",
         (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
       );
-      device = await startSpeculos(
-        testInfo.title.replace(/ /g, "_"),
-        specs[speculosCurrency.deviceLabel.replace(/ /g, "_")],
-      );
+      device = await startSpeculos(testInfo.title.replace(/ /g, "_"), specs[speculosApp]);
       setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
     }
 
