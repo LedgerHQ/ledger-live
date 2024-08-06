@@ -12,7 +12,7 @@ describe("decodePayloadProtobuf function", () => {
     );
     expect(decodedPayload).toHaveProperty(
       "payoutAddress",
-      "bc1qqdykdw8u36yhdsletwsyv4xe95s375qjjy4gk0", 
+      "bc1qqdykdw8u36yhdsletwsyv4xe95s375qjjy4gk0",
     );
     expect(decodedPayload).toHaveProperty(
       "refundAddress",
