@@ -179,13 +179,13 @@ describe("Trustchain SDK", () => {
     ]);
 
     const putCommands = await jsonRequestContent(apiMocks.putCommands);
+    const closeBlock = putCommands.find(_ => _.path === "m/0'/16'/0'")?.blocks[0] ?? "";
+    const pushMemberBlock = putCommands.find(_ => _.path === "m/0'/16'/1'")?.blocks[0] ?? "";
     expect(putCommands).toEqual([
-      { path: "m/0'/16'/1'", blocks: [expect.any(String)] },
-      { path: "m/0'/16'/0'", blocks: [expect.any(String)] }, // The closed stream is sent last
+      { path: "m/0'/16'/1'", blocks: [pushMemberBlock] },
+      { path: "m/0'/16'/0'", blocks: [closeBlock] }, // The closed stream command is sent last
     ]);
-    const closeStreamBlock = putCommands.find(({ path }) => path === "m/0'/16'/0'")?.blocks[0];
-    expect(closedStreamTree.serialize()["m/0'/16'/0'"]).toContain(closeStreamBlock);
-    const pushMemberBlock = putCommands.find(({ path }) => path === "m/0'/16'/1'")?.blocks[0];
+    expect(closeBlock).toBe(closedStreamTree.serialize()["m/0'/16'/0'"].slice(-closeBlock.length));
     expect(pushMemberBlock).not.toContain(bob.pubkey);
     expect(pushMemberBlock).toContain(charlie.pubkey);
 
