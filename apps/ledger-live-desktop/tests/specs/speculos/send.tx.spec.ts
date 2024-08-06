@@ -4,6 +4,7 @@ import { Fee } from "../../enum/Fee";
 import { Transaction } from "../../models/Transaction";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { specs } from "tests/utils/speculos";
 
 const transactionsInputsInvalid = [
   {
@@ -43,7 +44,7 @@ for (const transaction of transactionE2E) {
   test.describe("Send from 1 account to another", () => {
     test.use({
       userdata: "speculos-tests-app",
-      speculosCurrency: transaction.accountToDebit.currency,
+      speculosApp: specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
     });
 
     test(
@@ -89,7 +90,10 @@ test.describe("Send token (subAccount) - invalid input", () => {
 
   test.use({
     userdata: "speculos-subAccount",
-    speculosCurrency: tokenTransactionInvalid.transaction.accountToDebit.currency,
+    speculosApp:
+      specs[
+        tokenTransactionInvalid.transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")
+      ],
   });
 
   test(
@@ -126,7 +130,8 @@ test.describe("Send token (subAccount) - valid input", () => {
 
   test.use({
     userdata: "speculos-subAccount",
-    speculosCurrency: tokenTransactionValid.accountToDebit.currency,
+    speculosApp:
+      specs[tokenTransactionValid.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
   });
 
   test(
@@ -159,7 +164,8 @@ test.describe("Check invalid address input error", () => {
 
   test.use({
     userdata: "speculos-tests-app",
-    speculosCurrency: transactionInvalidAddress.accountToDebit.currency,
+    speculosApp:
+      specs[transactionInvalidAddress.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
   });
 
   test(
@@ -187,7 +193,8 @@ for (const transaction of transactionsInputsInvalid) {
   test.describe("Check invalid amount input error", () => {
     test.use({
       userdata: "speculos-tests-app",
-      speculosCurrency: transaction.transaction.accountToDebit.currency,
+      speculosApp:
+        specs[transaction.transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
     });
 
     test(
@@ -225,7 +232,8 @@ test.describe("Verify send max user flow", () => {
 
   test.use({
     userdata: "speculos-tests-app",
-    speculosCurrency: transactionInputValid.accountToDebit.currency,
+    speculosApp:
+      specs[transactionInputValid.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
   });
 
   test(

@@ -2,6 +2,7 @@ import { test } from "../../fixtures/common";
 import { Currency } from "../../enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { specs } from "../../utils/speculos";
 
 const currencies: Currency[] = [
   Currency.BTC,
@@ -22,7 +23,7 @@ for (const currency of currencies) {
   test.describe("Add Accounts", () => {
     test.use({
       userdata: "skip-onboarding",
-      speculosCurrency: currency,
+      speculosApp: specs[currency.deviceLabel.replace(/ /g, "_")],
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
 

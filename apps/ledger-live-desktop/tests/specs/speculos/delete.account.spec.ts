@@ -2,6 +2,7 @@ import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { specs } from "../../utils/speculos";
 
 const accounts: Account[] = [
   Account.BTC_1,
@@ -22,7 +23,7 @@ for (const account of accounts) {
   test.describe("Delete Accounts", () => {
     test.use({
       userdata: "speculos-tests-app",
-      speculosCurrency: account.currency,
+      speculosApp: specs[account.currency.deviceLabel.replace(/ /g, "_")],
     });
 
     test(

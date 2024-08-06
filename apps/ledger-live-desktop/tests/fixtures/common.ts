@@ -3,7 +3,7 @@ import fsPromises from "fs/promises";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, stopSpeculos, specs, Spec } from "../utils/speculos";
+import { startSpeculos, stopSpeculos, Spec } from "../utils/speculos";
 
 import { Application } from "tests/page";
 import { generateUUID, safeAppendFile } from "tests/utils/fileUtils";
@@ -91,7 +91,7 @@ export const test = base.extend<TestFixtures>({
         "SPECULOS_PID_OFFSET",
         (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
       );
-      device = await startSpeculos(testInfo.title.replace(/ /g, "_"), specs[speculosApp]);
+      device = await startSpeculos(testInfo.title.replace(/ /g, "_"), speculosApp);
       setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
     }
 

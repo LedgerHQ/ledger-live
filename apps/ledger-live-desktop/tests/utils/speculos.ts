@@ -249,7 +249,6 @@ export async function startSpeculos(
     "engine",
     `test ${testName} will use ${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`,
   );
-  console.log("appCandidate" + JSON.stringify(appCandidate));
   const deviceParams = {
     ...(appCandidate as AppCandidate),
     appName: spec.currency ? spec.currency.managerAppName : spec.appQuery.appName,

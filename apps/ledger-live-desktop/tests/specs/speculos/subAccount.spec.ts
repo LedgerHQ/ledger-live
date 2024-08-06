@@ -2,6 +2,7 @@ import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { specs } from "tests/utils/speculos";
 
 const subAccounts: Account[] = [
   Account.ETH_USDT,
@@ -27,7 +28,7 @@ for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
     test.use({
       userdata: "skip-onboarding",
-      speculosCurrency: token.currency,
+      speculosApp: specs[token.currency.deviceLabel.replace(/ /g, "_")],
     });
 
     test(
@@ -63,7 +64,7 @@ for (const token of subAccountReceive) {
   test.describe("Add subAccount when parent exists", () => {
     test.use({
       userdata: "speculos-subAccount",
-      speculosCurrency: token.currency,
+      speculosApp: specs[token.currency.deviceLabel.replace(/ /g, "_")],
     });
 
     test(
@@ -98,7 +99,7 @@ for (const token of subAccounts) {
   test.describe("Token visible in parent account", () => {
     test.use({
       userdata: "speculos-subAccount",
-      speculosCurrency: token.currency,
+      speculosApp: specs[token.currency.deviceLabel.replace(/ /g, "_")],
     });
 
     test(
