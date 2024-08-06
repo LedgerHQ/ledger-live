@@ -69,7 +69,7 @@ const QrCode = ({ qrCodeValue }: Props) => {
         maxWidth={280}
         maxHeight={280}
         borderRadius={11.52}
-        background={"#fff"}
+        background={colors.constant.white}
         justifyContent={"center"}
         testID="ws-show-qr-code"
       >
