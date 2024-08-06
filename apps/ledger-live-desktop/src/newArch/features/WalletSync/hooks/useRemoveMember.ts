@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import { TrustchainMember, Trustchain, MemberCredentials } from "@ledgerhq/trustchain/types";
+import { TrustchainMember, Trustchain } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
 
@@ -54,10 +54,13 @@ export function useRemoveMember({ device, member }: Props) {
         if (!deviceRef.current) {
           throw new Error("Device not found");
         }
+        if (!trustchainRef.current || !memberCredentialsRef.current) {
+          throw new Error("trustchain or memberCredentials is not set");
+        }
         const newTrustchain = await sdkRef.current.removeMember(
-          deviceRef.current?.deviceId,
-          trustchainRef.current as Trustchain,
-          memberCredentialsRef.current as MemberCredentials,
+          deviceRef.current.deviceId,
+          trustchainRef.current,
+          memberCredentialsRef.current,
           member,
           {
             onStartRequestUserInteraction: () => setUserDeviceInteraction(true),

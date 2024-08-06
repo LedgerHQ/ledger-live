@@ -54,11 +54,11 @@ export function useRemoveMember({ device, member }: Props) {
 
   const removeMember = useCallback(
     async (member: TrustchainMember) => {
-      if (!device) return;
-      if (!trustchain || !memberCredentials) {
-        throw new Error("trustchain or memberCredentials is not set");
-      }
       try {
+        if (!device) return;
+        if (!trustchain || !memberCredentials) {
+          throw new Error("trustchain or memberCredentials is not set");
+        }
         const newTrustchain = await sdk.removeMember(
           device.deviceId,
           trustchain,

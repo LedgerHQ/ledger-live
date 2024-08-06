@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import {
-  MemberCredentials,
-  TrustchainResult,
-  TrustchainResultType,
-} from "@ledgerhq/trustchain/types";
+import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useAddMember({ device }: { device: Device | null }) {
@@ -57,9 +53,12 @@ export function useAddMember({ device }: { device: Device | null }) {
         if (!deviceRef.current) {
           return handleMissingDevice();
         }
+        if (!memberCredentialsRef.current) {
+          throw new Error("memberCredentials is not set");
+        }
         const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
           deviceRef.current.deviceId,
-          memberCredentialsRef.current as MemberCredentials,
+          memberCredentialsRef.current,
           {
             onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
             onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
