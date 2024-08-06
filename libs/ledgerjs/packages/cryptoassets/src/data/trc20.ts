@@ -1,12 +1,11 @@
 export type TRC20Token = [
   string, // id
-  string, // abbr
+  string, // ticker
   string, // name
   string, // contractAddress
-  number, // precision
+  number, // decimals
   boolean?, // delisted
-  string?, // ledgerSignature
-  boolean?, // enableCountervalues
+  string?, // live signature
 ];
 
 import tokens from "./trc20.json";

@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../../fetch";
+import { fetchTokensFromCDN } from "../../fetch";
 
 type EIP712 = {
   [key: string]: {
@@ -13,7 +13,7 @@ type EIP712 = {
 export const importEIP712 = async (outputDir: string) => {
   console.log("importing ERC712 tokens....");
   try {
-    const [eip712, hash] = await fetchTokens<EIP712>("eip712.json");
+    const [eip712, hash] = await fetchTokensFromCDN<EIP712>("eip712.json");
     if (eip712) {
       const filePath = path.join(outputDir, "eip712");
       fs.writeFileSync(`${filePath}.json`, JSON.stringify(eip712));

@@ -1,10 +1,7 @@
 import path from "path";
 
 import { importEIP712 } from "./importers/eip712";
-import { importERC20 } from "./importers/erc20";
 import { importEVMTokens } from "./importers/evm";
-import { importBEP20 } from "./importers/bep20";
-import { importPolygonTokens } from "./importers/polygon";
 import { importAsaTokens } from "./importers/asa";
 import { importCardanoNativeTokens } from "./importers/cardanoNative";
 import { importESDTTokens } from "./importers/esdt";
@@ -18,17 +15,12 @@ import { importERC20Exchange } from "./exchange/erc20";
 import { importCoinsExchange } from "./exchange/coins";
 import { importTRC20Exchange } from "./exchange/trc20";
 
-import { importERC20Signatures } from "./importers/erc20-signature";
-
 const outputFolder = path.join(__dirname, "../data");
 
 const importTokens = async () => {
   const promises = [
     importEIP712(outputFolder),
-    importERC20(outputFolder),
     importEVMTokens(outputFolder),
-    importBEP20(outputFolder),
-    importPolygonTokens(outputFolder),
     importAsaTokens(outputFolder),
     importCardanoNativeTokens(outputFolder),
     importESDTTokens(outputFolder),
@@ -52,18 +44,11 @@ const importExchangeTokens = async () => {
   await Promise.allSettled(promises);
 };
 
-const importSignatures = async () => {
-  const promises = [importERC20Signatures(outputFolder)];
-
-  await Promise.allSettled(promises);
-};
-
 const main = async () => {
   console.log("Starting importing cryptoassets from CDN...");
 
   await importTokens();
   await importExchangeTokens();
-  await importSignatures();
 
   console.log("Import of cryptoassets finished successfully");
 };

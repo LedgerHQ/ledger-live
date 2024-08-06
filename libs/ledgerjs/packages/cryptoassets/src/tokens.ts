@@ -1,16 +1,15 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
-import asatokens, { AlgorandASAToken } from "./data/asa";
-import bep20tokens, { BEP20Token } from "./data/bep20";
 import cardanoNativeTokens, { CardanoNativeToken } from "./data/cardanoNative";
-import casperTokens, { CasperToken } from "./data/casper";
-import erc20tokens, { ERC20Token } from "./data/erc20";
-import esdttokens, { ElrondESDTToken } from "./data/esdt";
-import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
+import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
 import stellarTokens, { StellarToken } from "./data/stellar";
+import vechainTokens, { vip180Token } from "./data/vip180";
+import esdttokens, { ElrondESDTToken } from "./data/esdt";
+import casperTokens, { CasperToken } from "./data/casper";
+import asatokens, { AlgorandASAToken } from "./data/asa";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
-import vechainTokens, { vip180Token } from "./data/vip180";
+import { tokens as ERC20Tokens } from "./data/evm";
+import { ERC20Token } from "./types";
 
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -23,16 +22,28 @@ const tokensByAddress: Record<string, TokenCurrency> = {};
 const tokensByCurrencyAddress: Record<string, TokenCurrency> = {};
 const tokenListHashes = new Set();
 
-addTokens(erc20tokens.map(convertERC20));
-addTokens(polygonTokens.map(convertERC20));
+// Ethereum mainnet tokens
+addTokens(ERC20Tokens[1].map(convertERC20));
+// Ethereum Sepolia testnet tokens
+addTokens(ERC20Tokens[11155111].map(convertERC20));
+// Polygon tokens
+addTokens(ERC20Tokens[137].map(convertERC20));
+// Binance Smart Chain tokens
+addTokens(ERC20Tokens[56].map(convertBEP20));
+// Tron tokens
 addTokens(trc10tokens.map(convertTRONTokens("trc10")));
 addTokens(trc20tokens.map(convertTRONTokens("trc20")));
-addTokens(bep20tokens.map(convertBEP20));
+// Algoland tokens
 addTokens(asatokens.map(convertAlgorandASATokens));
+// Elrond tokens
 addTokens(esdttokens.map(convertElrondESDTTokens));
+// Cardano tokens
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
+// Stellar tokens
 addTokens(stellarTokens.map(convertStellarTokens));
+// Casper tokens
 addTokens(casperTokens.map(convertCasperTokens));
+// VeChain tokens
 addTokens(vechainTokens.map(convertVechainToken));
 
 type TokensListOptions = {
@@ -241,7 +252,7 @@ export function convertERC20([
   contractAddress,
   disableCountervalue,
   delisted,
-]: ERC20Token | PolygonERC20Token): TokenCurrency | undefined {
+]: ERC20Token): TokenCurrency | undefined {
   const parentCurrency = findCryptoCurrencyById(parentCurrencyId);
 
   if (!parentCurrency) {
@@ -279,7 +290,7 @@ export function convertBEP20([
   contractAddress,
   disableCountervalue,
   delisted,
-]: BEP20Token): TokenCurrency | undefined {
+]: ERC20Token): TokenCurrency | undefined {
   const parentCurrency = findCryptoCurrencyById(parentCurrencyId);
 
   if (!parentCurrency) {
