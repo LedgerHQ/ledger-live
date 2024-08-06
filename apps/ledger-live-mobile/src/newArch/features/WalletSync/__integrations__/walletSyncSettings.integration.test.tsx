@@ -52,7 +52,8 @@ describe("WalletSyncSettings", () => {
     await user.press(await screen.findByText(/ledger sync/i));
     await user.press(await screen.findByText(/already created a key?/i));
     await user.press(await screen.findByText(/scan a qr code/i));
-    await expect(await screen.findByText(/show qr/i)).toBeVisible();
+    await expect(screen.queryAllByText(/scan qr code/i)).toHaveLength(2);
+    await expect(screen.getByTestId("scan-ws-camera")).toBeVisible();
   });
 
   it("Should display the QR code when 'show qr' toggle is pressed", async () => {
@@ -62,7 +63,7 @@ describe("WalletSyncSettings", () => {
     await user.press(await screen.findByText(/ledger sync/i));
     await user.press(await screen.findByText(/already created a key?/i));
     await user.press(await screen.findByText(/scan a qr code/i));
-    await user.press(await screen.findByText(/show qr/i));
+    await user.press(await screen.queryAllByText(/show qr/i)[0]);
     await expect(await screen.getByTestId("ws-show-qr-code")).toBeVisible();
   });
 });

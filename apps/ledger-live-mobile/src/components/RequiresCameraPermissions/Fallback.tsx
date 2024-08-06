@@ -28,7 +28,7 @@ const FallbackCameraBody: React.FC<Props> = ({
   const { colors } = useTheme();
 
   return (
-    <Flex flex={1} bg={hasNoBackground ? null : "background.main"} px={6}>
+    <Flex flex={1} bg={hasNoBackground ? "transparent" : "background.main"} px={6}>
       <Flex flex={1} alignItems="center" justifyContent="center">
         <FallbackCamera color={colors.constant.white} />
         <Text variant="paragraph" mt={9} mb={3} fontSize={6}>

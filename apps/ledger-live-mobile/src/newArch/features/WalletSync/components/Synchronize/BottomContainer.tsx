@@ -34,6 +34,7 @@ const BottomContainer = ({ steps }: Props) => {
     <ScrollContainer
       px={16}
       py={24}
+      maxHeight={220}
       background={colors.opacityDefault.c05}
       borderRadius={24}
       showsVerticalScrollIndicator={false}

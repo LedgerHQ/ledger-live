@@ -56,7 +56,13 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
   ];
 
   return (
-    <Flex minHeight={400} justifyContent={"center"} alignItems={"center"} rowGap={24}>
+    <Flex
+      minHeight={400}
+      justifyContent={"center"}
+      alignItems={"center"}
+      rowGap={24}
+      testID={"scan-ws-camera"}
+    >
       <RequiresCameraPermissions optimisticallyMountChildren fallBackHasNoBackground>
         <Flex>
           <Camera
