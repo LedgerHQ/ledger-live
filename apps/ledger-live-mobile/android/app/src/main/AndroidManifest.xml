@@ -32,7 +32,7 @@
     <uses-sdk
         android:minSdkVersion="21"
         android:targetSdkVersion="27"
-        tools:overrideLibrary="com.ledger.reactnative, ca.jaysoo.extradimensions" />
+        tools:overrideLibrary="com.ledger.reactnative, ca.jaysoo.extradimensions, com.reactnativepbkdf2" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"

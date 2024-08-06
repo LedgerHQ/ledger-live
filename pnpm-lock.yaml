@@ -36,9 +36,6 @@ patchedDependencies:
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
-  react-native-fast-pbkdf2@0.3.1:
-    hash: ykj6nejfmobcfk2ww7pwsfjwje
-    path: patches/react-native-fast-pbkdf2@0.3.1.patch
   react-native-image-crop-tools@1.6.4:
     hash: p6wzwon3gzjcspjalwhmuroog4
     path: patches/react-native-image-crop-tools@1.6.4.patch
@@ -1083,7 +1080,7 @@ importers:
         version: 8.6.3(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       react-native-fast-pbkdf2:
         specifier: ^0.3.1
-        version: 0.3.1(patch_hash=ykj6nejfmobcfk2ww7pwsfjwje)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+        version: 0.3.1(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       react-native-gesture-handler:
         specifier: ^2.9.0
         version: 2.16.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
@@ -58424,7 +58421,7 @@ snapshots:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
 
-  react-native-fast-pbkdf2@0.3.1(patch_hash=ykj6nejfmobcfk2ww7pwsfjwje)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
+  react-native-fast-pbkdf2@0.3.1(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
     dependencies:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
