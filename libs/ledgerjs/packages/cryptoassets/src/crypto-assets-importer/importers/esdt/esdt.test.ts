@@ -34,7 +34,6 @@ describe("import ESDT tokens", () => {
   number, // decimals
   string, // signature
   string, // name
-  boolean, // disableCountervalue
 ];
 
 import tokens from "./esdt.json";
@@ -66,7 +65,6 @@ export default tokens as ElrondESDTToken[];
         6,
         "⚠⚠⚠ THIS SHOULD BE A SIGNATURE ⚠⚠⚠",
         "WrappedUSDC",
-        false,
       ]),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(2, "esdt-hash.json", JSON.stringify("etagHash"));
