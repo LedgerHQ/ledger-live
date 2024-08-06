@@ -23,6 +23,7 @@ import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import WalletSyncTester from "./WalletSync/WalletSyncTester";
 import SimpleHashTools from "./SimpleHashTools/SimpleHashTools";
+import MockAppUpdate from "./MockAppUpdate";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -47,6 +48,13 @@ const Default = () => {
         desc={t("settings.developer.experimentalAppsDesc")}
       >
         <AllowExperimentalAppsToggle />
+      </Row>
+
+      <Row
+        title={t("settings.developer.mockAppUpdate")}
+        desc={t("settings.developer.mockAppUpdateDesc")}
+      >
+        <MockAppUpdate />
       </Row>
 
       <Row title={t("settings.developer.catalogUrl")} desc={t("settings.developer.catalogUrlDesc")}>

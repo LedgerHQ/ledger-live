@@ -2993,6 +2993,10 @@
         },
         "platformManifest": {
           "title": "Load Platform Manifest"
+        },
+        "mockAppUpdate": {
+          "title": "Mock app update",
+          "description": "Display available app update in My Ledger, it will reinstall the same app version"
         }
       }
     },

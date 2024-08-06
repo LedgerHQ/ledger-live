@@ -4,6 +4,7 @@ import { allowDebugAppsSelector } from "~/renderer/reducers/settings";
 import { setAllowDebugApps } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
+
 const AllowDebugAppsToggle = () => {
   const dispatch = useDispatch();
   const allowDebugApps = useSelector(allowDebugAppsSelector);
