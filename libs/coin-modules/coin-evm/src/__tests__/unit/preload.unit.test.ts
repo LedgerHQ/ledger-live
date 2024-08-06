@@ -2,7 +2,7 @@
 jest.useFakeTimers();
 
 import axios from "axios";
-import { BEP20Token, ERC20Token } from "@ledgerhq/cryptoassets/types";
+import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { fetchERC20Tokens, hydrate, preload } from "../../preload";
@@ -18,8 +18,6 @@ const usdcDefinition: ERC20Token = [
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   false,
   false,
-  null,
-  null,
 ];
 const usdtDefinition: ERC20Token = [
   "ethereum",
@@ -31,10 +29,8 @@ const usdtDefinition: ERC20Token = [
   "0xdAC17F958D2ee523a2206206994597C13D831ec7",
   false,
   false,
-  null,
-  null,
 ];
-const binanceDaiDefinition: BEP20Token = [
+const binanceDaiDefinition: ERC20Token = [
   "bsc",
   "binance-peg_dai_token",
   "DAI",
@@ -42,10 +38,10 @@ const binanceDaiDefinition: BEP20Token = [
   "Binance-Peg Dai Token",
   "3044022032f0a880722af8c9e2196b5c0fc5273e2088f23692bdd2b35f6cf41c4001213f02205226e2023e409c73b031c790c64ae24db67c04b0aefd0d979b8c5002ca969b7b",
   "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3",
-  true,
+  false,
   false,
 ];
-const wethDefinition: BEP20Token = [
+const wethDefinition: ERC20Token = [
   "bsc",
   "wrapped_ether_wormhole",
   "WETH",
@@ -55,7 +51,6 @@ const wethDefinition: BEP20Token = [
   "0x4DB5a66E937A9F4473fA95b1cAF1d1E1D62E29EA",
   false,
   false,
-  null,
 ];
 
 const currency1 = getCryptoCurrencyById("ethereum"); // chain id 1
@@ -66,7 +61,7 @@ jest.mock("axios");
 jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
   get tokens(): {
     1: ERC20Token[];
-    56: BEP20Token[];
+    56: ERC20Token[];
     8453: ERC20Token[];
   } {
     return {

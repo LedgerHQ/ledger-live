@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../../fetch";
+import { fetchTokensFromCALService } from "../../fetch";
 
 type TonJettonToken = [
   string, // contractAddress
@@ -14,9 +14,24 @@ type TonJettonToken = [
 export const importTonJettonTokens = async (outputDir: string) => {
   try {
     console.log("importing ton jetton tokens...");
-    const [jettontokens, hash] = await fetchTokens<TonJettonToken[]>("jetton.json");
+    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "ton" }, [
+      "contract_address",
+      "name",
+      "ticker",
+      "decimals",
+      "delisted",
+    ]);
+    const jettonTokens: TonJettonToken[] = tokens.map(token => [
+      token.contract_address,
+      token.name,
+      token.ticker,
+      token.decimals,
+      token.delisted,
+      true,
+    ]);
+
     const filePath = path.join(outputDir, "ton-jetton");
-    fs.writeFileSync(`${filePath}.json`, JSON.stringify(jettontokens));
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(jettonTokens));
     if (hash) {
       fs.writeFileSync(`${filePath}-hash.json`, JSON.stringify(hash));
     }

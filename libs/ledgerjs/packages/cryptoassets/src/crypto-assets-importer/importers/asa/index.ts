@@ -1,20 +1,34 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../../fetch";
+import { fetchTokensFromCALService } from "../../fetch";
 
 type AlgorandASAToken = [
   string, // id
-  string, // abbr
+  string, // ticker
   string, // name
   string, // contractAddress
   number, // precision
-  boolean?, // enableCountervalues
+  true, // [deprecated] enableCountervalues
 ];
 
 export const importAsaTokens = async (outputDir: string) => {
   try {
     console.log("importing asa tokens...");
-    const [asaTokens, hash] = await fetchTokens<AlgorandASAToken[]>("asa.json");
+    const { tokens, hash } = await fetchTokensFromCALService(
+      {
+        blockchain_name: "algorand",
+      },
+      ["contract_address", "token_identifier", "decimals", "name", "ticker", "live_signature"],
+    );
+    const asaTokens: AlgorandASAToken[] = tokens.map(token => [
+      token.token_identifier,
+      token.ticker,
+      token.name,
+      token.contract_address,
+      token.decimals,
+      true,
+    ]);
+
     const filePath = path.join(outputDir, "asa");
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(asaTokens));
     if (hash) {

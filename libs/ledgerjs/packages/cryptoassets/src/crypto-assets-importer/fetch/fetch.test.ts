@@ -1,5 +1,5 @@
 import axios from "axios";
-import { fetchTokens } from ".";
+import { fetchTokensFromCDN } from ".";
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -14,7 +14,7 @@ describe("fetcher", () => {
     mockedAxios.get.mockImplementation(() =>
       Promise.resolve({ data: response, headers: { etag: "hash" } }),
     );
-    const [tokens, hash] = await fetchTokens("tokens.json");
+    const [tokens, hash] = await fetchTokensFromCDN("tokens.json");
     expect(tokens).toBe(response);
     expect(hash).toBe("hash");
   });
@@ -22,7 +22,7 @@ describe("fetcher", () => {
   it("should throw error if fetch failed", async () => {
     mockedAxios.get.mockImplementation(() => Promise.reject({ message: "could not fetch" }));
     expect(async () => {
-      await fetchTokens("tokens.json");
+      await fetchTokensFromCDN("tokens.json");
     }).rejects.toThrow();
   });
 });

@@ -1,29 +1,42 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../../fetch";
+import { fetchTokensFromCALService } from "../../fetch";
 
 type StellarToken = [
   string, // assetCode
   string, // assetIssuer
-  string, // assetType (note: only used in Receive asset message and always should be "Stellar")
+  "stellar", // assetType (note: only used in Receive asset message and always should be "Stellar")
   string, // name
   number, // precision
-  boolean, // enableCountervalues
+  true, // [deprecated] enableCountervalues
 ];
 
 export const importStellarTokens = async (outputDir: string) => {
   try {
     console.log("importing stellar tokens...");
-    const [stellarTokens, hash] = await fetchTokens<StellarToken[]>("stellar.json");
-    const filePath = path.join(outputDir, "stellar");
+    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "stellar" }, [
+      "ticker",
+      "contract_address",
+      "name",
+      "decimals",
+    ]);
+    const stellarTokens: StellarToken[] = tokens.map(token => [
+      token.ticker.toLowerCase(),
+      token.contract_address.toLowerCase(),
+      "stellar",
+      token.name,
+      token.decimals,
+      true,
+    ]);
 
+    const filePath = path.join(outputDir, "stellar");
     const stellarTypeStringified = `export type StellarToken = [
   string, // assetCode
   string, // assetIssuer
-  string, // assetType (note: only used in Receive asset message and always should be "Stellar")
+  "stellar", // assetType (note: only used in Receive asset message and always should be "Stellar")
   string, // name
   number, // precision
-  boolean, // enableCountervalues
+  true, // [deprecated] enableCountervalues
 ];`;
 
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(stellarTokens));
@@ -37,7 +50,7 @@ export const importStellarTokens = async (outputDir: string) => {
 
 import tokens from "./stellar.json";
 
-${hash ? `export { default as hash } from "./stellar-hash.json";` : null}
+${hash ? `export { default as hash } from "./stellar-hash.json";` : ""}
 
 export default tokens as StellarToken[];
 `,

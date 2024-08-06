@@ -2,14 +2,27 @@ import axios from "axios";
 import { importStellarTokens } from ".";
 import fs from "fs";
 
-const stellarTokens = [["USDC", "id", "stellar", "USDC", 7, true]];
+const stellarTokens = [
+  {
+    id: "stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn",
+    blockchain_name: "stellar",
+    contract_address: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+    decimals: 7,
+    delisted: false,
+    name: "USDC",
+    ticker: "USDC",
+  },
+];
 
 const mockedAxios = jest.spyOn(axios, "get");
 
-describe("import ESDT tokens", () => {
+describe("import Stellar tokens", () => {
   beforeEach(() => {
     mockedAxios.mockImplementation(() =>
-      Promise.resolve({ data: stellarTokens, headers: { etag: "etagHash" } }),
+      Promise.resolve({
+        data: stellarTokens,
+        headers: { ["etag"]: "commitHash" },
+      }),
     );
   });
 
@@ -21,10 +34,10 @@ describe("import ESDT tokens", () => {
     const expectedFile = `export type StellarToken = [
   string, // assetCode
   string, // assetIssuer
-  string, // assetType (note: only used in Receive asset message and always should be "Stellar")
+  "stellar", // assetType (note: only used in Receive asset message and always should be "Stellar")
   string, // name
   number, // precision
-  boolean, // enableCountervalues
+  true, // [deprecated] enableCountervalues
 ];
 
 import tokens from "./stellar.json";
@@ -38,9 +51,25 @@ export default tokens as StellarToken[];
 
     await importStellarTokens(".");
 
-    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/stellar.json/));
-    expect(mockedFs).toHaveBeenNthCalledWith(1, "stellar.json", JSON.stringify(stellarTokens));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "stellar-hash.json", JSON.stringify("etagHash"));
+    expect(mockedAxios).toHaveBeenCalledWith(
+      "https://crypto-assets-service.api.ledger.com/v1/tokens",
+      { params: { blockchain_name: "stellar", output: "ticker,contract_address,name,decimals" } },
+    );
+    expect(mockedFs).toHaveBeenNthCalledWith(
+      1,
+      "stellar.json",
+      JSON.stringify([
+        [
+          "usdc",
+          "ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn",
+          "stellar",
+          "USDC",
+          7,
+          true,
+        ],
+      ]),
+    );
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "stellar-hash.json", JSON.stringify("commitHash"));
     expect(mockedFs).toHaveBeenNthCalledWith(3, "stellar.ts", expectedFile);
   });
 });
