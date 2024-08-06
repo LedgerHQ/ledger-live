@@ -4,7 +4,7 @@ import {
   trustchainSelector,
 } from "@ledgerhq/trustchain/store";
 import { useDispatch, useSelector } from "react-redux";
-import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
+import { useTrustchainSdk } from "./useTrustchainSdk";
 import { TrustchainMember, Trustchain } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useState } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -59,20 +59,18 @@ export function useRemoveMember({ device, member }: Props) {
         throw new Error("trustchain or memberCredentials is not set");
       }
       try {
-        await runWithDevice(device.deviceId, async transport => {
-          const newTrustchain = await sdk.removeMember(
-            transport,
-            trustchain,
-            memberCredentials,
-            member,
-            {
-              onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-              onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-            },
-          );
+        const newTrustchain = await sdk.removeMember(
+          device.deviceId,
+          trustchain,
+          memberCredentials,
+          member,
+          {
+            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+          },
+        );
 
-          transitionToNextScreen(newTrustchain);
-        });
+        transitionToNextScreen(newTrustchain);
       } catch (error) {
         if (error instanceof Error) setError(error);
       }
