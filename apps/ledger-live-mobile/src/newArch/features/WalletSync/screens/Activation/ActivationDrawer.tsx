@@ -26,6 +26,9 @@ function View({
   goBackToPreviousStep,
   handleClose,
   onCloseDrawer,
+  qrProcess,
+  currentOption,
+  setCurrentOption,
 }: ViewProps) {
   const { height } = useWindowDimensions();
   const maxDrawerHeight = height - 180;
@@ -46,6 +49,9 @@ function View({
             currentStep={currentStep}
             navigateToChooseSyncMethod={navigateToChooseSyncMethod}
             navigateToQrCodeMethod={navigateToQrCodeMethod}
+            qrProcess={qrProcess}
+            currentOption={currentOption}
+            setOption={setCurrentOption}
           />
         </Flex>
       </QueuedDrawer>

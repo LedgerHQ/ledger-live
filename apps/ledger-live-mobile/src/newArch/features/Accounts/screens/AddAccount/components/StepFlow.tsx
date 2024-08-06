@@ -1,54 +1,42 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import SelectAddAccountMethod from "./SelectAddAccountMethod";
 import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
 import { TrackScreen } from "~/analytics";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Steps } from "../../../types/enum/addAccount";
 import { AnalyticsPage } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
+import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
+import SyncError from "LLM/features/WalletSync/screens/Synchronize/SyncError";
+import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeDisplay";
+import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
 
 type Props = {
-  startingStep: Steps;
+  currentStep: Steps;
   currency?: CryptoCurrency | TokenCurrency | null;
   doesNotHaveAccount?: boolean;
-  onStepChange?: (step: Steps) => void;
-  onGoBack?: (callback: () => void) => void;
+  setCurrentStep: (step: Steps) => void;
+  setCurrentOption: (option: Options) => void;
+  currentOption: Options;
+  navigateToChooseSyncMethod: () => void;
+  navigateToQrCodeMethod: () => void;
+  qrProcess: {
+    url: string | null;
+    error: Error | null;
+    isLoading: boolean;
+    pinCode: string | null;
+  };
 };
 
 const StepFlow = ({
-  startingStep,
   doesNotHaveAccount,
   currency,
-  onGoBack,
-  onStepChange,
+  currentStep,
+  setCurrentOption,
+  currentOption,
+  navigateToChooseSyncMethod,
+  navigateToQrCodeMethod,
+  qrProcess,
 }: Props) => {
-  const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
-
-  useEffect(() => {
-    if (onStepChange) onStepChange(currentStep);
-  }, [currentStep, onStepChange]);
-
-  const navigateToChooseSyncMethod = () => setCurrentStep(Steps.ChooseSyncMethod);
-  const navigateToQrCodeMethod = () => setCurrentStep(Steps.QrCodeMethod);
-
-  const getPreviousStep = useCallback(
-    (step: Steps): Steps => {
-      switch (step) {
-        case Steps.QrCodeMethod:
-          return Steps.ChooseSyncMethod;
-        case Steps.ChooseSyncMethod:
-          return Steps.AddAccountMethod;
-        default:
-          return startingStep;
-      }
-    },
-    [startingStep],
-  );
-
-  useEffect(() => {
-    if (onGoBack) onGoBack(() => setCurrentStep(prevStep => getPreviousStep(prevStep)));
-  }, [getPreviousStep, onGoBack]);
-
   const getScene = () => {
     switch (currentStep) {
       case Steps.AddAccountMethod:
@@ -70,7 +58,17 @@ const StepFlow = ({
           </>
         );
       case Steps.QrCodeMethod:
-        return <QrCodeMethod />;
+        return <QrCodeMethod currentOption={currentOption} setSelectedOption={setCurrentOption} />;
+
+      case Steps.PinDisplay:
+        return qrProcess.pinCode ? <PinCodeDisplay pinCode={qrProcess.pinCode} /> : null;
+
+      case Steps.PinInput:
+        return <PinCodeInput />;
+
+      case Steps.SyncError:
+        return <SyncError tryAgain={navigateToQrCodeMethod} />;
+
       default:
         return null;
     }

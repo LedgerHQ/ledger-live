@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Flex, TabSelector } from "@ledgerhq/native-ui";
 import QrCode from "LLM/features/WalletSync/components/Synchronize/QrCode";
 import { Options, OptionsType } from "LLM/features/WalletSync/types/Activation";
@@ -10,8 +10,12 @@ import {
 } from "../../hooks/useLedgerSyncAnalytics";
 import { TrackScreen } from "~/analytics";
 
-const QrCodeMethod = () => {
-  const [selectedOption, setSelectedOption] = useState<OptionsType>(Options.SCAN);
+interface Props {
+  setSelectedOption: (option: OptionsType) => void;
+  currentOption: Options;
+}
+
+const QrCodeMethod = ({ currentOption, setSelectedOption }: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { t } = useTranslation();
 
@@ -26,7 +30,7 @@ const QrCodeMethod = () => {
   };
 
   const renderSwitch = () => {
-    switch (selectedOption) {
+    switch (currentOption) {
       case Options.SCAN:
         return (
           <>
@@ -55,7 +59,7 @@ const QrCodeMethod = () => {
     <Flex flexDirection={"column"} alignItems={"center"} rowGap={24} pt={16} width={"100%"}>
       <TabSelector
         options={[Options.SCAN, Options.SHOW_QR]}
-        selectedOption={selectedOption}
+        selectedOption={currentOption}
         handleSelectOption={handleSelectOption}
         labels={{
           [Options.SCAN]: t("walletSync.synchronize.qrCode.scan.title"),

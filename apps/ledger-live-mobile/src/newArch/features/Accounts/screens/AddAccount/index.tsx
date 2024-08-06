@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import useAddAccountViewModel from "./useAddAccountViewModel";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import DrawerHeader from "LLM/features/WalletSync/components/Synchronize/DrawerHeader";
 import { Flex } from "@ledgerhq/native-ui";
 import StepFlow from "./components/StepFlow";
-import { Steps } from "../../types/enum/addAccount";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
 
 type ViewProps = ReturnType<typeof useAddAccountViewModel> & AddAccountProps;
 
@@ -16,21 +16,21 @@ type AddAccountProps = {
   onClose: () => void;
 };
 
-const StartingStep = Steps.AddAccountMethod;
-
 function View({
   isAddAccountDrawerVisible,
   doesNotHaveAccount,
   currency,
   onCloseAddAccountDrawer,
+  currentStep,
+  onGoBack,
+  currentOption,
+  setCurrentStep,
+  setCurrentOption,
+  navigateToChooseSyncMethod,
+  navigateToQrCodeMethod,
+  qrProcess,
 }: ViewProps) {
-  const [currentStep, setCurrentStep] = useState<Steps>(StartingStep);
-
   const CustomDrawerHeader = () => <DrawerHeader onClose={onCloseAddAccountDrawer} />;
-
-  const handleStepChange = (step: Steps) => setCurrentStep(step);
-
-  let goBackCallback: () => void;
 
   return (
     <QueuedDrawer
@@ -38,15 +38,19 @@ function View({
       onClose={onCloseAddAccountDrawer}
       CustomHeader={currentStep === Steps.QrCodeMethod ? CustomDrawerHeader : undefined}
       hasBackButton={currentStep === Steps.ChooseSyncMethod}
-      onBack={() => goBackCallback()}
+      onBack={onGoBack}
     >
       <Flex maxHeight={"90%"}>
         <StepFlow
-          startingStep={StartingStep}
           doesNotHaveAccount={doesNotHaveAccount}
           currency={currency}
-          onStepChange={handleStepChange}
-          onGoBack={callback => (goBackCallback = callback)}
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
+          setCurrentOption={setCurrentOption}
+          currentOption={currentOption}
+          navigateToChooseSyncMethod={navigateToChooseSyncMethod}
+          navigateToQrCodeMethod={navigateToQrCodeMethod}
+          qrProcess={qrProcess}
         />
       </Flex>
     </QueuedDrawer>

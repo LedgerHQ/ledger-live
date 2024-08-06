@@ -1,33 +1,40 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
 import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
-import { useDispatch, useSelector } from "react-redux";
-import { setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
-import { Flow, Step } from "~/renderer/reducers/walletSync";
+import { useSelector } from "react-redux";
 import { trustchainSelector, memberCredentialsSelector } from "@ledgerhq/trustchain/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
+import { Options, Steps } from "../types/Activation";
+import { useNavigation } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "~/const";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
-export function useQRCode() {
-  const dispatch = useDispatch();
+interface Props {
+  setCurrentStep: (step: Steps) => void;
+  currentStep: Steps;
+  currentOption: Options;
+}
+
+export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Props) {
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const sdk = useTrustchainSdk();
-  const featureWalletSync = useFeature("lldWalletSync");
+
+  const featureWalletSync = useFeature("llmWalletSync");
   const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
     featureWalletSync?.params?.environment,
   );
+
   const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [pinCode, setPinCode] = useState<string | null>(null);
 
-  const goToActivation = useCallback(() => {
-    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
-  }, [dispatch]);
+  const navigation = useNavigation();
 
   const startQRCodeProcessing = useCallback(() => {
-    if (!trustchain || !memberCredentials) return;
+    if (!trustchain || !memberCredentials || isLoading) return;
 
     let hasCompleted = false;
 
@@ -37,10 +44,14 @@ export function useQRCode() {
       trustchainApiBaseUrl,
       onDisplayQRCode: url => {
         setUrl(url);
+
+        //TODO-remove when clearing code, used to test behavior with webTool
+        // eslint-disable-next-line no-console
+        console.log("onDisplayQRCode", url);
       },
       onDisplayDigits: digits => {
-        dispatch(setQrCodePinCode(digits));
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCode }));
+        setPinCode(digits);
+        setCurrentStep(Steps.PinDisplay);
       },
       addMember: async member => {
         await sdk.addMember(trustchain, memberCredentials, member);
@@ -50,26 +61,47 @@ export function useQRCode() {
     })
       .catch(e => {
         if (e instanceof InvalidDigitsError) {
+          setCurrentStep(Steps.SyncError);
           return;
         }
         setError(e);
       })
       .then(() => {
-        if (hasCompleted) dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
+        if (!error && hasCompleted)
+          navigation.navigate(NavigatorName.WalletSync, {
+            screen: ScreenName.WalletSyncSuccess,
+            params: {
+              created: false,
+            },
+          });
       })
       .finally(() => {
         setUrl(null);
-        dispatch(setQrCodePinCode(null));
+        setPinCode(null);
         setIsLoading(false);
-        setError(null);
       });
-  }, [trustchain, memberCredentials, trustchainApiBaseUrl, dispatch, sdk]);
+  }, [
+    trustchain,
+    memberCredentials,
+    isLoading,
+    trustchainApiBaseUrl,
+    setCurrentStep,
+    sdk,
+    error,
+    navigation,
+  ]);
+
+  useEffect(() => {
+    if (currentStep === Steps.QrCodeMethod && currentOption === Options.SHOW_QR) {
+      startQRCodeProcessing();
+    }
+  }, [currentOption, currentStep, startQRCodeProcessing]);
 
   return {
     url,
     error,
     isLoading,
     startQRCodeProcessing,
-    goToActivation,
+    pinCode,
   };
 }
