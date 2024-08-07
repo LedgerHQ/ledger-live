@@ -59,7 +59,9 @@ jobs:
   e2e-tests-linux:
     name: "Desktop Tests E2E (Ubuntu)"
     outputs:
-      status: ${{ steps.tests.outcome }}
+      shard_outcome_1: ${{ steps.collect-outcomes.outputs.shard_outcome_1 }}
+      shard_outcome_2: ${{ steps.collect-outcomes.outputs.shard_outcome_2 }}
+      shard_outcome_3: ${{ steps.collect-outcomes.outputs.shard_outcome_3 }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -215,10 +217,13 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: |
-          if [ "${{ needs.e2e-tests-linux.outputs.shard_outcomes }}" == *failure* ]; then
-            echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV
-          else
+          echo "shard_outcome_1: ${{ needs.e2e-tests-linux.outputs.shard_outcome_1 }}"
+          echo "shard_outcome_2: ${{ needs.e2e-tests-linux.outputs.shard_outcome_2 }}"
+          echo "shard_outcome_3: ${{ needs.e2e-tests-linux.outputs.shard_outcome_3 }}"
+          if [[ "${{ needs.e2e-tests-linux.outputs.shard_outcome_1 }}" == *success* && "${{ needs.e2e-tests-linux.outputs.shard_outcome_2 }}" == *success* && "${{ needs.e2e-tests-linux.outputs.shard_outcome_3 }}" == *success* ]]; then
             echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV
+          else
+            echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV
           fi
         
       - uses: actions/github-script@v6
