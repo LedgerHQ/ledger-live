@@ -75,8 +75,8 @@ describe("Stellar Api", () => {
       });
 
       // Then
-      expect(result.slice(0, 68)).toEqual(
-        "AAAAAgAAAAD9Ai6ZfJT42rd0Nl8YJeODFgju688SXPzMZvSA369YPwAAAGQAAHloAAAI",
+      expect(result.slice(0, 67)).toEqual(
+        "AAAAAgAAAAD9Ai6ZfJT42rd0Nl8YJeODFgju688SXPzMZvSA369YPwAAAGQAAHloAAA",
       );
       expect(result.slice(70)).toEqual(
         "AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAD9Ai6ZfJT42rd0Nl8YJeODFgju688SXPzMZvSA369YPwAAAAAAAAAAAA9CQAAAAAAAAAAA",

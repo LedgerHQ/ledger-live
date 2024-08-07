@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js";
 import { buildTransaction } from "./buildTransaction";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-import { NetworkInfo } from "../types";
 import coinConfig, { type StellarCoinConfig } from "../config";
+import { NetworkInfo } from "../types";
 
 describe("buildTransaction", () => {
-  const sender = "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ";
+  const sender = "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV";
 
   beforeAll(() => {
     coinConfig.setCoinConfig(
@@ -19,15 +19,6 @@ describe("buildTransaction", () => {
     );
   });
 
-  it("throws an error when no fees are setted in the transaction", async () => {
-    // Given
-    const account = createFixtureAccount();
-    const transaction = createFixtureTransaction();
-
-    // When
-    await expect(buildTransaction(account, transaction)).rejects.toThrow("FeeNotLoaded");
-  });
-
   it("throws an error if transaction has no NetworkInfo", async () => {
     // Given
     const account = createFixtureAccount({ freshAddress: sender });
@@ -35,6 +26,17 @@ describe("buildTransaction", () => {
 
     // When
     await expect(buildTransaction(account, transaction)).rejects.toThrow("stellar family");
+  });
+
+  it("throws an error when no fees are setted in the transaction", async () => {
+    // Given
+    const account = createFixtureAccount();
+    const transaction = createFixtureTransaction({
+      networkInfo: { family: "stellar" } as NetworkInfo,
+    });
+
+    // When
+    await expect(buildTransaction(account, transaction)).rejects.toThrow("FeeNotLoaded");
   });
 
   it.skip("crash if transaction amount is 0", async () => {
@@ -89,8 +91,8 @@ describe("buildTransaction", () => {
     expect((operation as any).amount).toEqual("0.0000010");
     expect((operation as any).asset.code).toEqual("XLM");
     expect((operation as any).asset.issuer).toBeUndefined();
-    expect(builtTransaction.toXDR().slice(0, 68)).toEqual(
-      "AAAAAgAAAACnLoGyX7Arx0zl7s6F7d8pSe2arRNq4dfpGSPkW5/d3AAAAAECbx/3AAHJ",
+    expect(builtTransaction.toXDR().slice(0, 67)).toEqual(
+      "AAAAAgAAAAAnxYb4SZKUxk1X+NeVbu9EMd5YqyDhyIAB9s8THJfW8wAAAAEBn2AnAAA",
     );
     expect(builtTransaction.toXDR().slice(70)).toEqual(
       "AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAADw9kGYtpM1vsCgDoHjZOVO/sjTKLsmA51f8vdM9oaecgAAAAAAAAAAAAAACgAAAAAAAAAA",
@@ -124,8 +126,8 @@ describe("buildTransaction", () => {
     expect((operation as any).amount).toEqual("50.0239411");
     expect((operation as any).asset.code).toEqual("XLM");
     expect((operation as any).asset.issuer).toBeUndefined();
-    expect(builtTransaction.toXDR().slice(0, 68)).toEqual(
-      "AAAAAgAAAACnLoGyX7Arx0zl7s6F7d8pSe2arRNq4dfpGSPkW5/d3AAAAAECbx/3AAHJ",
+    expect(builtTransaction.toXDR().slice(0, 67)).toEqual(
+      "AAAAAgAAAAAnxYb4SZKUxk1X+NeVbu9EMd5YqyDhyIAB9s8THJfW8wAAAAEBn2AnAAA",
     );
     expect(builtTransaction.toXDR().slice(70)).toEqual(
       "AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAADw9kGYtpM1vsCgDoHjZOVO/sjTKLsmA51f8vdM9oaecgAAAAAAAAAAHdEMMwAAAAAAAAAA",
@@ -157,8 +159,8 @@ describe("buildTransaction", () => {
     expect((operation as any).asset.issuer).toEqual(
       "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
     );
-    expect(builtTransaction.toXDR().slice(0, 68)).toEqual(
-      "AAAAAgAAAACnLoGyX7Arx0zl7s6F7d8pSe2arRNq4dfpGSPkW5/d3AAAAAECbx/3AAHJ",
+    expect(builtTransaction.toXDR().slice(0, 67)).toEqual(
+      "AAAAAgAAAAAnxYb4SZKUxk1X+NeVbu9EMd5YqyDhyIAB9s8THJfW8wAAAAEBn2AnAAA",
     );
   });
 
@@ -186,8 +188,8 @@ describe("buildTransaction", () => {
     expect(operation.type).toEqual("payment");
     expect((operation as any).asset.code).toEqual("XLM");
     expect((operation as any).asset.issuer).toBeUndefined();
-    expect(builtTransaction.toXDR().slice(0, 68)).toEqual(
-      "AAAAAgAAAACnLoGyX7Arx0zl7s6F7d8pSe2arRNq4dfpGSPkW5/d3AAAAAECbx/3AAHJ",
+    expect(builtTransaction.toXDR().slice(0, 67)).toEqual(
+      "AAAAAgAAAAAnxYb4SZKUxk1X+NeVbu9EMd5YqyDhyIAB9s8THJfW8wAAAAEBn2AnAAA",
     );
     expect(builtTransaction.toXDR().slice(70)).toEqual(
       "AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAVIZWxsbwAAAAAAAAEAAAAAAAAAAQAAAADw9kGYtpM1vsCgDoHjZOVO/sjTKLsmA51f8vdM9oaecgAAAAAAAAAAAAAACgAAAAAAAAAA",

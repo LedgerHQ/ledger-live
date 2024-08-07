@@ -1,9 +1,9 @@
 import { firstValueFrom, reduce } from "rxjs";
 import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
-import type { StellarCoinConfig } from "./config";
-import { Transaction, StellarAccount } from "./types";
-import { createBridges } from "./bridge/index";
-import { createFixtureAccount } from "./types/bridge.fixture";
+import type { StellarCoinConfig } from "../config";
+import { Transaction, StellarAccount } from "../types";
+import { createBridges } from "../bridge/index";
+import { createFixtureAccount } from "../types/bridge.fixture";
 
 const defaultSyncConfig = {
   paginationConfig: {},
