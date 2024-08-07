@@ -14,7 +14,6 @@ const MockComponent = () => {
 
   const openAddModal = () => setAddModalOpened(true);
   const closeAddModal = () => setAddModalOpened(false);
-  const reopenAddModal = () => setAddModalOpened(true);
 
   return (
     <>
@@ -30,11 +29,7 @@ const MockComponent = () => {
       >
         {t("portfolio.emptyState.buttons.import")}
       </Button>
-      <AddAccountDrawer
-        isOpened={isAddModalOpened}
-        onClose={closeAddModal}
-        reopenDrawer={reopenAddModal}
-      />
+      <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} />
     </>
   );
 };

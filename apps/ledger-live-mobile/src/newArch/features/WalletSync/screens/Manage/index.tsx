@@ -1,13 +1,13 @@
 import { Box, Flex, Text, Icons, InfiniteLoader, Alert } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
 import {
   AnalyticsButton,
   AnalyticsPage,
-  useWalletSyncAnalytics,
-} from "../../hooks/useWalletSyncAnalytics";
+  useLedgerSyncAnalytics,
+} from "../../hooks/useLedgerSyncAnalytics";
 import { Separator } from "../../components/Separator";
 import { TouchableOpacity } from "react-native";
 import { TrustchainNotFound } from "../../hooks/useGetMembers";
@@ -15,6 +15,8 @@ import ManageKeyDrawer from "../ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 import ManageInstanceDrawer from "../ManageInstances/ManageInstancesDrawer";
 import { useManageInstancesDrawer } from "../ManageInstances/useManageInstanceDrawer";
+import ActivationDrawer from "../Activation/ActivationDrawer";
+import { Steps } from "../../types/Activation";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
@@ -24,24 +26,27 @@ const WalletSyncManage = () => {
 
   const { data, isLoading, isError, error } = manageInstancesHook.memberHook;
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
-  const goToManageBackup = useCallback(() => {
-    manageKeyHook.openDrawer();
-    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.WalletSyncActivated });
-  }, [manageKeyHook, onClickTrack]);
+  const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
 
   const goToSync = () => {
-    //dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
+    setIsSyncDrawerOpen(true);
+    onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.LedgerSyncActivated });
+  };
 
-    onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.WalletSyncActivated });
+  const closeSyncDrawer = () => setIsSyncDrawerOpen(false);
+
+  const goToManageBackup = () => {
+    manageKeyHook.openDrawer();
+    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.LedgerSyncActivated });
   };
 
   const goToManageInstances = () => {
     manageInstancesHook.openDrawer();
     onClickTrack({
       button: AnalyticsButton.ManageSynchronizations,
-      page: AnalyticsPage.WalletSyncActivated,
+      page: AnalyticsPage.LedgerSyncActivated,
     });
   };
 
@@ -117,9 +122,11 @@ const WalletSyncManage = () => {
         </Container>
       </InstancesRow>
 
-      {/**
-       * DRAWERS
-       */}
+      <ActivationDrawer
+        startingStep={Steps.QrCodeMethod}
+        isOpen={isSyncDrawerOpen}
+        handleClose={closeSyncDrawer}
+      />
       <ManageKeyDrawer {...manageKeyHook} />
       <ManageInstanceDrawer {...manageInstancesHook} />
     </Box>
