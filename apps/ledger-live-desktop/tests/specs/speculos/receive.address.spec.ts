@@ -21,7 +21,7 @@ for (const account of accounts) {
   test.describe("Receive", () => {
     test.use({
       userdata: "speculos-tests-app",
-      speculosCurrency: account.currency,
+      speculosApp: account.currency.speculosApp,
     });
 
     test(

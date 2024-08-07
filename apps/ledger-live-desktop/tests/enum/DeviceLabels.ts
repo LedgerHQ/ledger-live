@@ -23,4 +23,5 @@ export enum DeviceLabels {
   TRANSACTION_FEE = "Transaction fee",
   FINALIZE = "Finalize",
   RECEIVER = "Receiver",
+  LOGIN_LEDGER_SYNC = "Log in to Ledger Sync",
 }

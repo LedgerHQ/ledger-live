@@ -27,11 +27,11 @@ for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
     test.use({
       userdata: "skip-onboarding",
-      speculosCurrency: token.currency,
+      speculosApp: token.currency.speculosApp,
     });
 
     test(
-      `Add Sub Account without parent (${token.currency.speculosApp}) - ${token.currency.ticker}`,
+      `Add Sub Account without parent (${token.currency.speculosApp.name}) - ${token.currency.ticker}`,
       {
         annotation: {
           type: "TMS",
@@ -63,11 +63,11 @@ for (const token of subAccountReceive) {
   test.describe("Add subAccount when parent exists", () => {
     test.use({
       userdata: "speculos-subAccount",
-      speculosCurrency: token.currency,
+      speculosApp: token.currency.speculosApp,
     });
 
     test(
-      `[${token.currency.speculosApp}] Add subAccount when parent exists (${token.currency.ticker})`,
+      `[${token.currency.speculosApp.name}] Add subAccount when parent exists (${token.currency.ticker})`,
       {
         annotation: {
           type: "TMS",
@@ -98,11 +98,11 @@ for (const token of subAccounts) {
   test.describe("Token visible in parent account", () => {
     test.use({
       userdata: "speculos-subAccount",
-      speculosCurrency: token.currency,
+      speculosApp: token.currency.speculosApp,
     });
 
     test(
-      `Token visible in parent account (${token.currency.speculosApp}) - ${token.currency.ticker}`,
+      `Token visible in parent account (${token.currency.speculosApp.name}) - ${token.currency.ticker}`,
       {
         annotation: {
           type: "TMS",

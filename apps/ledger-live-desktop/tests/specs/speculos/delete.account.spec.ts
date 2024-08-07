@@ -22,7 +22,7 @@ for (const account of accounts) {
   test.describe("Delete Accounts", () => {
     test.use({
       userdata: "speculos-tests-app",
-      speculosCurrency: account.currency,
+      speculosApp: account.currency.speculosApp,
     });
 
     test(

@@ -2,12 +2,14 @@ import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 
 export class SettingsPage extends AppPage {
+  private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
   private aboutTab = this.page.getByTestId("settings-about-tab");
   private helpTab = this.page.getByTestId("settings-help-tab");
   readonly experimentalTab = this.page.getByTestId("settings-experimental-tab");
   private developerTab = this.page.getByTestId("settings-developer-tab");
   private experimentalDevModeToggle = this.page.getByTestId("MANAGER_DEV_MODE-button");
+
   readonly counterValueSelector = this.page.locator(
     "[data-testid='setting-countervalue-dropDown'] .select__value-container",
   );
@@ -84,4 +86,10 @@ export class SettingsPage extends AppPage {
   async clickHideEmptyTokenAccountsToggle() {
     await this.hideEmptyTokenAccountsToggle.click();
   }
+
+  @step("Open Ledger Sync Manager")
+  async openManageLedgerSync() {
+    await this.manageLedgerSyncButton.click();
+  }
+
 }
