@@ -202,7 +202,7 @@ describe("EVM Family", () => {
 
         expect(tokens).toEqual([wethDefinition]);
         expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertBEP20(wethDefinition),
+          CALTokensAPI.convertERC20(wethDefinition),
         ]);
       });
     });
@@ -233,7 +233,7 @@ describe("EVM Family", () => {
         await hydrate([binanceDaiDefinition], currency2);
 
         expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertBEP20(binanceDaiDefinition),
+          CALTokensAPI.convertERC20(binanceDaiDefinition),
         ]);
       });
     });

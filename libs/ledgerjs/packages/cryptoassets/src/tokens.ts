@@ -34,7 +34,7 @@ addTokens(sepoliaTokens.map(convertERC20));
 // Polygon tokens
 addTokens(polygonTokens.map(convertERC20));
 // Binance Smart Chain tokens
-addTokens(bnbTokens.map(convertBEP20));
+addTokens(bnbTokens.map(convertERC20));
 // Tron tokens
 addTokens(trc10tokens.map(convertTRONTokens("trc10")));
 addTokens(trc20tokens.map(convertTRONTokens("trc20")));
@@ -268,51 +268,15 @@ export function convertERC20([
     return;
   }
 
-  return {
-    type: "TokenCurrency",
-    id: parentCurrencyId + "/erc20/" + token,
-    ledgerSignature,
-    contractAddress,
-    parentCurrency,
-    tokenType: "erc20",
-    name,
-    ticker,
-    delisted,
-    disableCountervalue: !!parentCurrency.isTestnetFor || !!disableCountervalue,
-    units: [
-      {
-        name,
-        code: ticker,
-        magnitude,
-      },
-    ],
-  };
-}
-
-export function convertBEP20([
-  parentCurrencyId,
-  token,
-  ticker,
-  magnitude,
-  name,
-  ledgerSignature,
-  contractAddress,
-  disableCountervalue,
-  delisted,
-]: ERC20Token): TokenCurrency | undefined {
-  const parentCurrency = findCryptoCurrencyById(parentCurrencyId);
-
-  if (!parentCurrency) {
-    return;
-  }
+  const tokenType = parentCurrencyId === "bsc" ? "bep20" : "erc20";
 
   return {
     type: "TokenCurrency",
-    id: parentCurrencyId + "/bep20/" + token,
+    id: `${parentCurrencyId}/${tokenType}/${token}`,
     ledgerSignature,
     contractAddress,
     parentCurrency,
-    tokenType: "bep20",
+    tokenType,
     name,
     ticker,
     delisted,
