@@ -922,6 +922,10 @@
     "InvalidRecipientForTokenTransfer": {
       "title": "Invalid recipient for token transfer, supported account types for token transfer: [f0, f4, 0x]"
     },
+    "FilecoinFeeEstimationFailed": {
+      "title": "Sorry, fee estimation failed",
+      "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
+    },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."

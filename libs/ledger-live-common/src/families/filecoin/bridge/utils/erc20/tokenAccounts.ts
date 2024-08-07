@@ -115,7 +115,8 @@ export async function buildTokenAccounts(
 
       const operations = txns
         .flatMap(txn => erc20TxnToOperation(txn, filAddr, tokenAccountId, token.units[0]))
-        .flat();
+        .flat()
+        .sort((a, b) => b.date.getTime() - a.date.getTime());
 
       if (operations.length === 0 && bnBalance.isZero()) {
         continue;
