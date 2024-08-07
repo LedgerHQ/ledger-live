@@ -53,6 +53,7 @@ import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { track } from "~/renderer/analytics/segment";
 import { useTranslation } from "react-i18next";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -135,6 +136,7 @@ const SwapWebView = ({
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const ptxSwapExodusProviderFlag = useFeature("ptxSwapExodusProvider");
 
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
@@ -465,6 +467,7 @@ const SwapWebView = ({
       toNewTokenId: swapState?.toNewTokenId,
       feeStrategy: swapState?.feeStrategy,
       customFeeConfig: swapState?.customFeeConfig,
+      exodusFF: !!ptxSwapExodusProviderFlag?.enabled, // TODO remove when we implement UI for setting FF inside live app
     };
 
     Object.entries(swapParams).forEach(([key, value]) => {
