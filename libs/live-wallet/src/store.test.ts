@@ -15,7 +15,7 @@ import {
   setAccountStarred,
   walletStateExportShouldDiffer,
   walletSyncUpdate,
-  wsStateSelector,
+  walletSyncStateSelector,
 } from "./store";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
@@ -176,38 +176,40 @@ describe("Wallet store", () => {
 
   it("can update the wallet sync state", () => {
     const result = handlers.WALLET_SYNC_UPDATE(initialState, walletSyncUpdate({}, 42));
-    expect(result.wsState).toEqual({
+    expect(result.walletSyncState).toEqual({
       data: {},
       version: 42,
     });
   });
 
+  const exportedState = {
+    walletSyncState: { data: {}, version: 42 },
+    nonImportedAccountInfos: [],
+  };
+
+  it("allows partial wallet state", () => {
+    const result = handlers.IMPORT_WALLET_SYNC(
+      initialState,
+      importWalletState({
+        walletSyncState: { version: 42, data: {} },
+      }),
+    );
+    expect(result.nonImportedAccountInfos).toEqual([]);
+  });
+
   it("can import the wallet state", () => {
-    const exportedState = {
-      wsState: { data: {}, version: 42 },
-    };
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
-    expect(wsStateSelector(result)).toEqual({ data: {}, version: 42 });
+    expect(walletSyncStateSelector(result)).toEqual({ data: {}, version: 42 });
   });
 
   it("can export the wallet state", () => {
-    const exportedState = {
-      wsState: { data: {}, version: 42 },
-    };
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
-    expect(exportWalletState(result)).toEqual({
-      wsState: { data: {}, version: 42 },
-    });
+    expect(exportWalletState(result)).toEqual(exportedState);
   });
 
   it("walletStateExportShouldDiffer", () => {
-    const exportedState = {
-      wsState: { data: {}, version: 42 },
-    };
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
-    expect(exportWalletState(result)).toEqual({
-      wsState: { data: {}, version: 42 },
-    });
+    expect(exportWalletState(result)).toEqual(exportedState);
     expect(walletStateExportShouldDiffer(initialState, result)).toBe(true);
     expect(walletStateExportShouldDiffer(initialState, initialState)).toBe(false);
     expect(walletStateExportShouldDiffer(result, result)).toBe(false);

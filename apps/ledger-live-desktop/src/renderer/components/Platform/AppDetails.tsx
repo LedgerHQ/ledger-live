@@ -87,7 +87,7 @@ export function AppDetails({ manifest }: Props) {
   return (
     <>
       <HeaderContainer>
-        <IconContainer data-test-id="live-icon-container">
+        <IconContainer data-testid="live-icon-container">
           <LiveAppIcon icon={manifest.icon || undefined} name={manifest.name} size={48} />
         </IconContainer>
         <TitleContainer>

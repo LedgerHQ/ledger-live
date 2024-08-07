@@ -26,10 +26,10 @@ import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
-import { Account } from "@ledgerhq/types-live";
-import { WalletState, initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
+import { initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
 import { DistantState, trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";
 import { Loading } from "./Loading";
+import { State } from "./types";
 
 const Container = styled.div`
   padding: 0 10px 50px 0;
@@ -39,8 +39,9 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const initialState = {
+const initialState: State = {
   accounts: [],
+  nonImportedAccounts: [],
   walletState: walletInitialState,
 };
 
@@ -56,6 +57,7 @@ const App = () => {
       setTrustchainState(s => ({ jwt: null, trustchain: null, memberCredentials })),
     [],
   );
+  const cloudSyncApiBaseUrl = useEnv("CLOUD_SYNC_API_STAGING");
   const setTrustchain = useCallback(
     (trustchain: Trustchain | null) => setTrustchainState(s => ({ ...s, trustchain })),
     [],
@@ -72,18 +74,20 @@ const App = () => {
     setAccountsSync(false);
   }, [setAccountsSync]);
 
+  /*
   // turning accounts sync off will cascade to state reset
   useEffect(() => {
     if (!accountsSync) {
       setState(initialState);
     }
   }, [accountsSync]);
+  */
 
   const [wssdkHandledVersion, setWssdkHandledVersion] = useState(0);
   const [wssdkHandledData, setWssdkHandledData] = useState<DistantState | null>(null);
 
-  const version = state.walletState.wsState.version || wssdkHandledVersion;
-  const data = state.walletState.wsState.data || wssdkHandledData;
+  const version = state.walletState.walletSyncState.version || wssdkHandledVersion;
+  const data = state.walletState.walletSyncState.data || wssdkHandledData;
 
   const wsStateRef = useRef({ version, data });
   useEffect(() => {
@@ -102,9 +106,10 @@ const App = () => {
   const lifecycle = useMemo(
     () =>
       trustchainLifecycle({
+        cloudSyncApiBaseUrl,
         getCurrentWSState: () => wsStateRef.current,
       }),
-    [],
+    [cloudSyncApiBaseUrl],
   );
 
   const sdk = useMemo(
@@ -117,8 +122,8 @@ const App = () => {
       memberCredentials,
     ],
   );
-  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API").includes("stg");
-  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API").includes("stg");
+  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API_STAGING").includes("stg");
+  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API_STAGING").includes("stg");
   const envSummary = mockEnv
     ? "MOCK"
     : envTrustchainApiIsStg && envWalletSyncApiIsStg
@@ -282,7 +287,7 @@ const App = () => {
               data={data}
               setVersion={setWssdkHandledVersion}
               setData={setWssdkHandledData}
-              forceReadOnlyData={state.walletState.wsState.data}
+              forceReadOnlyData={state.walletState.walletSyncState.data}
               readOnly={accountsSync}
               takeControl={takeControl}
             />
@@ -310,11 +315,6 @@ const App = () => {
       </Container>
     </TrustchainSDKContext.Provider>
   );
-};
-
-type State = {
-  accounts: Account[];
-  walletState: WalletState;
 };
 
 const AppAccountsSync = dynamic<{

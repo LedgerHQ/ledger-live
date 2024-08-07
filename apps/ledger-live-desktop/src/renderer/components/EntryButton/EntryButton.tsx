@@ -108,7 +108,7 @@ const EntryButton: React.FC<EntryButtonProps> = ({
   entryButtonTestId,
 }) => {
   return (
-    <EntryButtonContainer onClick={onClick} disabled={disabled} data-test-id={entryButtonTestId}>
+    <EntryButtonContainer onClick={onClick} disabled={disabled} data-testid={entryButtonTestId}>
       <Box horizontal shrink alignItems="center">
         {Icon && (
           <IconWrapper>

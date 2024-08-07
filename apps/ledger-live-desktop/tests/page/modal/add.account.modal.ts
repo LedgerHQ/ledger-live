@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
-import { Token } from "tests/enum/Tokens";
+import { Account } from "tests/enum/Account";
 
 export class AddAccountModal extends Modal {
   private selectAccount = this.page.locator("text=Choose a crypto asset"); // FIXME: I need an id
@@ -13,22 +13,43 @@ export class AddAccountModal extends Modal {
   readonly closeButton = this.page.getByTestId("modal-close-button");
   private infoBox = this.page.getByTestId("add-token-infoBox");
   private successAddLabel = this.page.locator("text=Account added successfully");
-  private selectTokenNetwork = (token: Token) =>
+  private selectTokenNetwork = (SubAccount: Account) =>
     this.page
       .getByRole("option", {
-        name: `${token.tokenName} (${token.tokenTicker}) ${token.tokenNetwork}`,
+        name: `${SubAccount.currency.name} (${SubAccount.currency.ticker}) ${SubAccount.currency.deviceLabel}`,
       })
       .locator("span");
   readonly continueButton = this.page.getByTestId("modal-continue-button");
 
-  @step("Select token $0")
-  async selectToken(token: Token) {
+  @step("Select token")
+  async selectToken(SubAccount: Account) {
     await this.selectAccount.click();
-    await this.selectAccountInput.fill(token.tokenName);
-    await this.selectTokenNetwork(token).click();
+    await this.selectAccountInput.fill(SubAccount.currency.name);
+    if (await this.selectTokenNetwork(SubAccount).isVisible()) {
+      await this.selectTokenNetwork(SubAccount).click();
+    } else {
+      await this.selectAccountByScrolling(SubAccount);
+      await this.dropdownOptions
+        .locator(
+          this.optionWithTextAndFollowingText(
+            SubAccount.currency.ticker?.toUpperCase(),
+            SubAccount.currency.deviceLabel,
+          ),
+        )
+        .click();
+    }
     await expect(this.closeButton).toBeVisible();
     await expect(this.infoBox).toBeVisible();
     await this.continueButton.click();
+  }
+
+  @step("Select account by scrolling: {0}")
+  async selectAccountByScrolling(SubAccount: Account) {
+    await this.scrollUntilOptionIsDisplayed(
+      this.dropdownOptionsList,
+      this.selectTokenNetwork(SubAccount),
+    );
+    await this.selectTokenNetwork(SubAccount).isVisible();
   }
 
   @step("Select currency $0")

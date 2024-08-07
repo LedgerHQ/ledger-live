@@ -1,22 +1,13 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useMemo } from "react";
-import { TouchableOpacity } from "react-native";
-import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { TouchableOpacity } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AppBranch, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import { AppIcon } from "~/screens/Platform/v2/AppIcon";
-import { ScreenName } from "~/const";
+import type { MainProps, SearchProps } from "LLM/features/Web3Hub/types";
+import AppIcon from "LLM/features/Web3Hub/components/AppIcon";
 import { Theme } from "~/colors";
-import type { Web3HubStackParamList } from "LLM/features/Web3Hub/Navigator";
 
-type MainProps = BaseComposite<
-  NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubMain>
->;
-type SearchProps = BaseComposite<
-  NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubSearch>
->;
 export type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
@@ -57,10 +48,10 @@ function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
 
 export default function ManifestItem({
   manifest,
-  navigation,
+  onPress,
 }: {
   manifest: AppManifest;
-  navigation: NavigationProp;
+  onPress: (manifest: AppManifest) => void;
 }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -70,10 +61,8 @@ export default function ManifestItem({
     if (isDisabled) {
       return;
     }
-    navigation.push(ScreenName.Web3HubApp, {
-      manifestId: manifest.id,
-    });
-  }, [isDisabled, navigation, manifest.id]);
+    onPress(manifest);
+  }, [isDisabled, onPress, manifest]);
 
   const { color, badgeColor, borderColor, backgroundColor } = useMemo(
     () => getBranchStyle(manifest.branch, colors),
@@ -84,17 +73,15 @@ export default function ManifestItem({
     return new URL(manifest.url).origin;
   }, [manifest.url]);
 
+  const icon = useMemo(() => {
+    // RN tries to load file locally if there is a space in front of the file url
+    return manifest.icon?.trim();
+  }, [manifest.icon]);
+
   return (
     <TouchableOpacity disabled={isDisabled} onPress={handlePress}>
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        height={72}
-        backgroundColor={colors.background}
-        paddingX={4}
-        paddingY={2}
-      >
-        <AppIcon isDisabled={isDisabled} size={48} name={manifest.name} icon={manifest.icon} />
+      <Flex flexDirection="row" alignItems="center" height={72} paddingX={4} paddingY={2}>
+        <AppIcon isDisabled={isDisabled} size={48} name={manifest.name} icon={icon} />
         <Flex marginX={16} height="100%" flexGrow={1} flexShrink={1} justifyContent={"center"}>
           <Flex flexDirection="row" alignItems={"center"} mb={2}>
             <Text variant="large" color={color} numberOfLines={1} fontWeight="semiBold">

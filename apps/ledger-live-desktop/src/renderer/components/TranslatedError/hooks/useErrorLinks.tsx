@@ -24,7 +24,7 @@ export function useErrorLinks(error?: Error | null) {
           return {
             ...prev,
             [`link${index}`]: (
-              <a onClick={() => openURL(curr)} data-test-id={`translated-error-link-${index}`} />
+              <a onClick={() => openURL(curr)} data-testid={`translated-error-link-${index}`} />
             ),
           };
         }
@@ -43,7 +43,7 @@ export function useErrorLinks(error?: Error | null) {
                   state: Object.fromEntries(searchParams.entries()),
                 })
               }
-              data-test-id={`translated-error-link-${index}`}
+              data-testid={`translated-error-link-${index}`}
             />
           ),
         };

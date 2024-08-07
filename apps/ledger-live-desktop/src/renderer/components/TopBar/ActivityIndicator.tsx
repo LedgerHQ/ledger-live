@@ -14,18 +14,23 @@ import Tooltip from "../Tooltip";
 import TranslatedError from "../TranslatedError";
 import Box from "../Box";
 import { ItemContainer } from "./shared";
+import { useWalletSyncUserState } from "~/newArch/features/WalletSync/components/WalletSyncContext";
+
 export default function ActivityIndicatorInner() {
+  const wsUserState = useWalletSyncUserState();
   const bridgeSync = useBridgeSync();
   const globalSyncState = useGlobalSyncState();
   const isUpToDate = useSelector(isUpToDateSelector);
   const cvPolling = useCountervaluesPolling();
-  const isPending = cvPolling.pending || globalSyncState.pending;
-  const syncError = !isPending && (cvPolling.error || globalSyncState.error);
+  const isPending = cvPolling.pending || globalSyncState.pending || wsUserState.visualPending;
+  const syncError =
+    !isPending && (cvPolling.error || globalSyncState.error || wsUserState.walletSyncError);
   // we only show error if it's not up to date. this hide a bit error that happen from time to time
-  const isError = !!syncError && !isUpToDate;
-  const error = syncError ? globalSyncState.error : null;
+  const isError = (!!syncError && !isUpToDate) || !!wsUserState.walletSyncError;
+  const error = (syncError ? globalSyncState.error : null) || wsUserState.walletSyncError;
   const [lastClickTime, setLastclickTime] = useState(0);
   const onClick = useCallback(() => {
+    wsUserState.onUserRefresh();
     cvPolling.poll();
     bridgeSync({
       type: "SYNC_ALL_ACCOUNTS",
@@ -34,7 +39,7 @@ export default function ActivityIndicatorInner() {
     });
     setLastclickTime(Date.now());
     track("SyncRefreshClick");
-  }, [cvPolling, bridgeSync]);
+  }, [cvPolling, bridgeSync, wsUserState]);
   const isSpectronRun = getEnv("PLAYWRIGHT_RUN"); // we will keep 'spinning' in spectron case
   const userClickTime = isSpectronRun ? 10000 : 1000;
   const isUserClick = Date.now() - lastClickTime < userClickTime; // time to keep display the spinning on a UI click.
@@ -42,7 +47,7 @@ export default function ActivityIndicatorInner() {
   const isDisabled = isError || isRotating;
   const content = (
     <ItemContainer
-      data-test-id="topbar-synchronize-button"
+      data-testid="topbar-synchronize-button"
       disabled={isDisabled}
       onClick={isDisabled ? undefined : onClick}
       isInteractive
@@ -98,7 +103,7 @@ export default function ActivityIndicatorInner() {
             </Box>
           </>
         ) : isUpToDate ? (
-          <span data-test-id="topbar-synchronized">
+          <span data-testid="topbar-synchronized">
             <Trans i18nKey="common.sync.upToDate" />
           </span>
         ) : (

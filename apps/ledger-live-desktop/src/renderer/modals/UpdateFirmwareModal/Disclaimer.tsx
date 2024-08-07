@@ -44,7 +44,7 @@ export default function Disclaimer({ firmware, onContinue }: Props) {
           pb={1}
         >
           <Flex flex={1} />
-          <Button data-test-id="modal-continue-button" variant="main" onClick={onContinue}>
+          <Button data-testid="modal-continue-button" variant="main" onClick={onContinue}>
             {t("manager.firmware.installUpdate")}
           </Button>
         </Flex>

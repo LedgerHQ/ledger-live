@@ -1,3 +1,19 @@
+# 2.84.1
+
+### 🐛 Fix
+
+Some users reported issues when trying to top up their CL Card. This has been fixed.
+
+# 2.84.0
+
+### 🗑 Removed features
+
+Viacoin (VIA), Peercoin (PPC), and Vertcoin (VTC) are no longer supported.
+
+### 🐛 Fix
+
+We fixed a bug that caused an error when trying to send or stake Injective (INJ).
+
 # 2.83.0
 
 ### 🚀 Features

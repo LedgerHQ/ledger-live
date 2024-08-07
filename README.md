@@ -58,6 +58,20 @@ pnpm i
 > Note: multiple postinstall steps will be triggered and fail if the applications prerequisites are not met.
 > You can safely ignore the errors if you do not plan to work on those apps.
 
+## Common setup errors
+
+### Out of sync Podfile.lock
+
+You may encounter this error when running `pnpm i`. Try:
+
+```sh
+rm -rf ~/.cocoapods/
+pnpm clean && pnpm store prune && proto use && pnpm i && pnpm build:llm:deps
+pnpm mobile pod
+```
+
+> Note: If prompted to run `bundle install` do this in the [ledger-live-mobile](apps/ledger-live-mobile) directory. Restart terminal if the error persists.
+
 ## Usage
 
 **Important: All the commands should be run at the root of the monorepo.**

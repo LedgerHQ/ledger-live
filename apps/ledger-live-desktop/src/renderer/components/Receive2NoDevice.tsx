@@ -20,12 +20,12 @@ const Receive2NoDevice = ({
         justifyContent="flex-end"
       >
         {onVerify ? (
-          <Button outlineGrey onClick={onVerify} data-test-id="receive-verify-address-button">
+          <Button outlineGrey onClick={onVerify} data-testid="receive-verify-address-button">
             <Trans i18nKey="common.verifyMyAddress" />
           </Button>
         ) : null}
         {onContinue ? (
-          <Button ml={2} primary onClick={onContinue} data-test-id="modal-continue-button">
+          <Button ml={2} primary onClick={onContinue} data-testid="modal-continue-button">
             <Trans i18nKey="common.continue" />
           </Button>
         ) : null}

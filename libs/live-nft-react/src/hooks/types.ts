@@ -1,5 +1,9 @@
-import { NftSpamReportOpts } from "@ledgerhq/live-nft/api/simplehash";
-import { SimpleHashResponse, SimpleHashSpamReportResponse } from "@ledgerhq/live-nft/api/types";
+import { NftSpamReportOpts, RefreshOpts } from "@ledgerhq/live-nft/api/simplehash";
+import {
+  SimpleHashResponse,
+  SimpleHashSpamReportResponse,
+  SimpleHashRefreshResponse,
+} from "@ledgerhq/live-nft/api/types";
 import { ProtoNFT, FloorPrice } from "@ledgerhq/types-live";
 import {
   UseInfiniteQueryResult,
@@ -35,3 +39,14 @@ export type SpamReportNftResult = UseMutationResult<
 
 // FloorPrice
 export type FloorPriceResult = UseQueryResult<FloorPrice, Error>;
+
+// Refresh Metadata Contract or NFT
+export type RefreshMetadataResult = UseMutationResult<
+  SimpleHashRefreshResponse,
+  Error,
+  RefreshOpts,
+  unknown
+>;
+
+// Check Spam Score Contract or NFT
+export type CheckSpamScoreResult = UseQueryResult<SimpleHashResponse, Error>;

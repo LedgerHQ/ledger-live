@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Linking } from "react-native";
 import HorizontalCard from "../../contentCards/cards/horizontal";
 import {
@@ -67,8 +67,15 @@ type LayoutProps = {
 };
 
 const Layout = ({ category, cards }: LayoutProps) => {
-  // TODO : handle cards impressions with logImpressionCard
-  const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
+  const { logClickCard, dismissCard, trackContentCardEvent, logImpressionCard } =
+    useDynamicContent();
+
+  useEffect(() => {
+    logImpressionCard(category.id);
+    for (const card of cards) {
+      logImpressionCard(card.id);
+    }
+  }, [cards, category.id, logImpressionCard]);
 
   const onCardCick = (card: AnyContentCard) => {
     trackContentCardEvent("contentcard_clicked", {

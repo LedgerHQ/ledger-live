@@ -19,6 +19,21 @@ describe("Wallet API methods", () => {
     await app.dummyWalletApp.expectResponse(id, response);
   });
 
+  it("account.request", async () => {
+    const { id, response } = await app.dummyWalletApp.sendAccountReceive();
+    await app.walletAPIReceive.continueWithoutDevice();
+    await app.walletAPIReceive.cancelNoDevice();
+    await app.walletAPIReceive.continueWithoutDevice();
+    await app.walletAPIReceive.confirmNoDevice();
+    await expect(response).resolves.toMatchObject({
+      jsonrpc: "2.0",
+      id,
+      result: {
+        address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+      },
+    });
+  });
+
   afterAll(async () => {
     await app.dummyWalletApp.stopApp();
   });

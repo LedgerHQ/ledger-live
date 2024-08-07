@@ -35,4 +35,5 @@ export type DerivationMode =
   | "vechain"
   | "internet_computer"
   | "stacks_wallet"
-  | "icon";
+  | "icon"
+  | "ton";

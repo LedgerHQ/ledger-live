@@ -3,10 +3,9 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AmountRequired,
   FeeNotLoaded,
+  NotEnoughBalanceSwap,
   NotEnoughGas,
   NotEnoughGasSwap,
-  NotEnoughBalanceSwap,
-  NotEnoughBalance,
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
@@ -62,11 +61,9 @@ export const useFromAmountStatusMessage = (
     if (transaction?.amount.lte(0)) return undefined;
 
     const [relevantStatus] = statusEntries
-      .filter(Boolean)
+      .filter(maybeError => maybeError instanceof Error)
       .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
-    const isRelevantStatus =
-      (relevantStatus as Error) instanceof NotEnoughGas ||
-      (relevantStatus as Error) instanceof NotEnoughBalance;
+    const isRelevantStatus = (relevantStatus as Error) instanceof NotEnoughGas;
 
     if (isRelevantStatus && currency && estimatedFees) {
       const query = new URLSearchParams({
@@ -174,6 +171,11 @@ export const useSwapTransaction = ({
     isEnabled,
   });
 
+  // libs/coin-modules/coin-evm/src/prepareTransaction.ts L47
+  // returns 0 if the balance - fees is less than 0
+  const maxAmountLowerThanBallanceError =
+    isMaxEnabled && fromState.amount?.eq(0) ? new NotEnoughBalanceSwap() : undefined;
+
   return {
     ...bridgeTransaction,
     swap: {
@@ -196,7 +198,7 @@ export const useSwapTransaction = ({
     },
     setFromAmount,
     toggleMax,
-    fromAmountError,
+    fromAmountError: maxAmountLowerThanBallanceError || fromAmountError,
     fromAmountWarning,
     setToAccount,
     setToCurrency,

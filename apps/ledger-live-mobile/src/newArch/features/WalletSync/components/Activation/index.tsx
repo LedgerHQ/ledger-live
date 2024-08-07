@@ -4,43 +4,22 @@ import IconsHeader from "./IconsHeader";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { TrackScreen } from "~/analytics";
-import Drawer from "LLM/components/Dummy/Drawer";
-import { useNavigation } from "@react-navigation/native";
-import { ScreenName } from "~/const";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
+import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
->;
+type Props = { onSyncMethodPress: () => void };
 
-type Props<T extends boolean> = T extends true
-  ? { isInsideDrawer: T; openSyncMethodDrawer: () => void }
-  : { isInsideDrawer?: T; openSyncMethodDrawer?: undefined };
-
-const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDrawer }) => {
+const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const navigation = useNavigation<NavigationProps["navigation"]>();
+  useInitMemberCredentials();
 
-  const onPressSyncAccounts = () => {
-    navigation.navigate(ScreenName.WalletSyncActivationProcess);
-  };
+  const onPressSyncAccounts = () => onSyncMethodPress();
 
-  const onPressHasAlreadyCreatedAKey = () => {
-    isInsideDrawer ? openSyncMethodDrawer() : setIsDrawerOpen(true);
-  };
-
-  const onPressCloseDrawer = () => {
-    setIsDrawerOpen(false);
-  };
+  const onPressHasAlreadyCreatedAKey = () => onSyncMethodPress();
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={24}>
-      <TrackScreen />
       <IconsHeader />
       <Flex justifyContent="center" alignItems="center" flexDirection="column" rowGap={16}>
         <Text variant="h4" textAlign="center" lineHeight="32.4px">
@@ -61,7 +40,6 @@ const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDr
         onPressHasAlreadyCreatedAKey={onPressHasAlreadyCreatedAKey}
         onPressSyncAccounts={onPressSyncAccounts}
       />
-      {!isInsideDrawer && <Drawer isOpen={isDrawerOpen} handleClose={onPressCloseDrawer} />}
     </Flex>
   );
 };

@@ -1,17 +1,12 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { track } from "~/analytics";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 type AddAccountDrawerProps = {
   isOpened: boolean;
-  currency?: CryptoCurrency | TokenCurrency | null;
   onClose: () => void;
-  reopenDrawer: () => void;
 };
 
-const useAddAccountViewModel = ({ isOpened, onClose, reopenDrawer }: AddAccountDrawerProps) => {
-  const [isWalletSyncDrawerVisible, setWalletSyncDrawerVisible] = useState(false);
-
+const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) => {
   const trackButtonClick = useCallback((button: string) => {
     track("button_clicked", {
       button,
@@ -24,22 +19,9 @@ const useAddAccountViewModel = ({ isOpened, onClose, reopenDrawer }: AddAccountD
     onClose();
   }, [trackButtonClick, onClose]);
 
-  const onCloseWalletSyncDrawer = () => {
-    setWalletSyncDrawerVisible(false);
-    reopenDrawer();
-  };
-
-  const onRequestToOpenWalletSyncDrawer = () => {
-    onCloseAddAccountDrawer();
-    setWalletSyncDrawerVisible(true);
-  };
-
   return {
     isAddAccountDrawerVisible: isOpened,
-    isWalletSyncDrawerVisible,
     onCloseAddAccountDrawer,
-    onCloseWalletSyncDrawer,
-    onRequestToOpenWalletSyncDrawer,
   };
 };
 

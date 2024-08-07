@@ -18,7 +18,7 @@ const Footer = ({ onClose, collectionId }: { onClose: () => void; collectionId: 
         <Trans i18nKey="common.cancel" />
       </Button>
       <Button
-        data-test-id="modal-confirm-button"
+        data-testid="modal-confirm-button"
         onClick={() => {
           confirmHideNftCollection(collectionId);
           onClose();

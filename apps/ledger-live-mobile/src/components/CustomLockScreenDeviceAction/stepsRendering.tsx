@@ -1,10 +1,8 @@
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Text, Flex } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
-import staxAllowConnection from "~/animations/stax/customimage/allowConnection.json";
-import staxConfirmLockscreen from "~/animations/stax/customimage/confirmLockscreen.json";
 import { FramedImageWithContext } from "../CustomImage/FramedPicture";
 import { getFramedPictureConfig } from "../CustomImage/framedPictureConfigs";
 import {
@@ -14,6 +12,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useTheme } from "styled-components/native";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import AnimatedLottieView from "lottie-react-native";
 
 const ImageLoadingGeneric: React.FC<{
   title: string;
@@ -23,6 +24,7 @@ const ImageLoadingGeneric: React.FC<{
   lottieSource?: FramedImageWithLottieProps["lottieSource"];
   deviceModelId: CLSSupportedDeviceModelId;
 }> = ({ title, fullScreen = true, children, progress, lottieSource, deviceModelId }) => {
+  const { colors } = useTheme();
   return (
     <Flex
       flexDirection="column"
@@ -48,7 +50,11 @@ const ImageLoadingGeneric: React.FC<{
         ) : (
           <FramedImageWithContext
             loadingProgress={progress}
-            framedPictureConfig={getFramedPictureConfig("transfer", deviceModelId)}
+            framedPictureConfig={getFramedPictureConfig(
+              "transfer",
+              deviceModelId,
+              colors.type as "light" | "dark",
+            )}
           >
             {children}
           </FramedImageWithContext>
@@ -70,16 +76,48 @@ export const RenderImageLoadRequested = ({
   wording?: string;
 }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const theme = colors.type as "dark" | "light";
+  const framedPictureConfig = useMemo(
+    () => getFramedPictureConfig("transfer", deviceModelId, colors.type as "light" | "dark"),
+    [deviceModelId, colors.type],
+  );
+  const lottieStyle = useMemo(
+    () => ({
+      width: framedPictureConfig.frameWidth / 3,
+      height: framedPictureConfig.frameHeight / 3,
+    }),
+    [framedPictureConfig],
+  );
+  const lottieSource = useMemo(
+    () => getDeviceAnimation({ theme, key: "allowCustomLockScreen", device }),
+    [theme, device],
+  );
+  const title = useMemo(
+    () =>
+      wording ??
+      t("customImage.allowPreview", {
+        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+      }),
+    [device.deviceName, device.modelId, t, wording],
+  );
+  if (deviceModelId === DeviceModelId.europa) {
+    return (
+      <>
+        <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={8} alignSelf="stretch">
+          {title}
+        </Text>
+        <Flex flexDirection="column" justifyContent="center" alignItems="center" flex={1}>
+          <AnimatedLottieView autoPlay loop style={lottieStyle} source={lottieSource} />
+        </Flex>
+      </>
+    );
+  }
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
-      title={
-        wording ??
-        t("customImage.allowPreview", {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        })
-      }
-      lottieSource={staxAllowConnection}
+      title={title}
+      lottieSource={lottieSource}
       progress={0}
       deviceModelId={deviceModelId}
     />
@@ -113,7 +151,7 @@ export const RenderLoadingImage = ({
 /** hardcoded values to not have the image overflowing the "confirm button" in the lottie */
 const maxProgressWithConfirmButton: Record<CLSSupportedDeviceModelId, number> = {
   [DeviceModelId.stax]: 0.89,
-  [DeviceModelId.europa]: 0.89, // TODO: TBD
+  [DeviceModelId.europa]: 0.85, // TODO: TBD
 };
 
 export const RenderImageCommitRequested = ({
@@ -128,6 +166,8 @@ export const RenderImageCommitRequested = ({
   wording?: string;
 }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const theme = colors.type as "dark" | "light";
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
@@ -137,9 +177,59 @@ export const RenderImageCommitRequested = ({
           productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
         })
       }
-      lottieSource={staxConfirmLockscreen}
+      lottieSource={
+        deviceModelId === DeviceModelId.stax
+          ? getDeviceAnimation({ theme, key: "confirmCustomLockScreen", device })
+          : undefined
+      }
       progress={maxProgressWithConfirmButton[deviceModelId]}
       deviceModelId={deviceModelId}
-    />
+    >
+      <Flex
+        flex={1}
+        style={{
+          position: "absolute",
+          bottom: -48,
+          left: 58,
+          width: 448,
+          height: 75,
+        }}
+      >
+        <Flex flexDirection="row" flex={2}>
+          <Flex
+            flexDirection="column"
+            flex={1}
+            alignItems="center"
+            justifyContent="center"
+            backgroundColor={colors.palette.constant.white}
+          >
+            <Text
+              textAlign="center"
+              variant="h4"
+              fontWeight="semiBold"
+              color={colors.palette.constant.black}
+            >
+              {t("customImage.discardOnDevice")}
+            </Text>
+          </Flex>
+          <Flex
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            flex={1}
+            backgroundColor={colors.palette.constant.black}
+          >
+            <Text
+              textAlign="center"
+              variant="h4"
+              fontWeight="semiBold"
+              color={colors.palette.constant.white}
+            >
+              {t("customImage.keepOnDevice")}
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
+    </ImageLoadingGeneric>
   );
 };

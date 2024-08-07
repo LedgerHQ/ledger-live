@@ -7,7 +7,7 @@ import { setEncryptionKey, isEncryptionKeyCorrect, hasBeenDecrypted } from "~/re
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import { useHardReset } from "~/renderer/reset";
 import { fetchAccounts } from "~/renderer/actions/accounts";
-import { fetchTrustchain } from "~/renderer/reducers/trustchain";
+import { fetchTrustchain } from "~/renderer/actions/trustchain";
 import { unlock } from "~/renderer/actions/application";
 import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import Box from "~/renderer/components/Box";
@@ -17,6 +17,7 @@ import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import IconArrowRight from "~/renderer/icons/ArrowRight";
 import Logo from "~/renderer/icons/Logo";
+import { fetchWallet } from "../actions/wallet";
 
 export default function IsUnlocked({ children }: { children: React.ReactNode }): JSX.Element {
   const dispatch = useDispatch();
@@ -52,6 +53,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
           await setEncryptionKey(inputValue.password);
           await dispatch(fetchAccounts());
           await dispatch(fetchTrustchain());
+          await dispatch(fetchWallet());
         } else if (!(await isEncryptionKeyCorrect(inputValue.password))) {
           throw new PasswordIncorrectError();
         }
@@ -104,7 +106,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
   }, [isLocked]);
   if (isLocked) {
     return (
-      <Box sticky alignItems="center" justifyContent="center" data-test-id="lockscreen-container">
+      <Box sticky alignItems="center" justifyContent="center" data-testid="lockscreen-container">
         <form onSubmit={handleSubmit}>
           <Box alignItems="center">
             <LedgerLiveLogo
@@ -130,7 +132,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
                   value={inputValue.password}
                   error={incorrectPassword}
                   id="lockscreen-password-input"
-                  data-test-id="lockscreen-password-input"
+                  data-testid="lockscreen-password-input"
                 />
               </Box>
               <Box ml={2}>
@@ -144,7 +146,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
                     padding: 0,
                     justifyContent: "center",
                   }}
-                  data-test-id="lockscreen-login-button"
+                  data-testid="lockscreen-login-button"
                 >
                   <Box alignItems="center">
                     <IconArrowRight size={20} />
@@ -157,7 +159,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
               mt={3}
               small
               onClick={handleOpenHardResetModal}
-              data-test-id="lockscreen-forgotten-button"
+              data-testid="lockscreen-forgotten-button"
             >
               {t("common.lockScreen.lostPassword")}
             </Button>

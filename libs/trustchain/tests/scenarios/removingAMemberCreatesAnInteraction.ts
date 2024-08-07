@@ -28,10 +28,16 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
 
   await sdk1.addMember(trustchain, member1creds, member2);
 
-  await sdk1.removeMember(transport, trustchain, member1creds, member2, callbacks);
-  expect(totalInteractionCounter).toBe(3); // there are 1 interaction for trustchain addition
+  const newTrustchain = await sdk1.removeMember(
+    transport,
+    trustchain,
+    member1creds,
+    member2,
+    callbacks,
+  );
+  expect(totalInteractionCounter).toBe(4); // there are 2 interactions for trustchain addition
 
   // destroy the trustchain
-  await sdk1.destroyTrustchain(trustchain, member1creds);
+  await sdk1.destroyTrustchain(newTrustchain, member1creds);
   expect(interactionCounter).toBe(0); // the start/stop is coherent
 }

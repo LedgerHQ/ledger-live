@@ -6,6 +6,11 @@ export const setFlow = (payload: { flow: Flow; step: Step }) => ({
   payload,
 });
 
+export const setDrawerVisibility = (payload: boolean) => ({
+  type: "WALLET_SYNC_CHANGE_DRAWER_VISIBILITY",
+  payload,
+});
+
 export const setFaked = (payload: boolean) => ({
   type: "WALLET_SYNC_FAKED",
   payload,

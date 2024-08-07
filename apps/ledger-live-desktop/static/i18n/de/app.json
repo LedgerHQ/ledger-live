@@ -1457,16 +1457,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Kaufen & Verkaufen",
-        "description" : "Bei vertrauenswürdigen Anbietern kaufen und verkaufen"
+        "description" : "Bei unseren vertrauenswürdigen Anbietern kaufen und verkaufen"
       },
       "swap" : {
         "title" : "Swappen",
-        "description" : "Sicheres Konvertieren von Kryptos in andere Kryptos",
+        "description" : "Kryptos in andere Kryptos konvertieren",
         "label" : "beliebt"
       },
       "earn" : {
         "title" : "Staken",
-        "description" : "Dein Kryptovermögen mit Ledger vermehren"
+        "description" : "Krypto mit Ledger staken"
       }
     },
     "recoverBanner" : {
@@ -5493,8 +5493,12 @@
       "description" : "Berechnung von Betrag und Gebühren nicht möglich"
     },
     "NotEnoughBalance" : {
-      "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
+    },
+    "NotEnoughBalanceSwap" : {
+      "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
+      "description" : "Bitte vergewissere dich, dass das Konto über ausreichende Deckung verfügt."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
       "title" : "Die Adresse des Empfängers ist inaktiv. Senden Sie mindestens {{minimalAmount}}, um sie zu aktivieren"
@@ -5504,6 +5508,12 @@
     },
     "NotEnoughGasSwap" : {
       "title" : "Zum Swappen benötigst du {{fees}} {{ticker}} für Netzwerkgebühren, da du dich im {{cryptoName}}-Netzwerk befindest. <link0>{{ticker}} kaufen</link0>"
+    },
+    "TronEmptyAccount" : {
+      "title" : "Du musst zuerst mindestens 0,1 TRX an diese Adresse senden, um den Empfang von TRC20-Token zu ermöglichen. <link0>Weitere Informationen</link0>"
+    },
+    "MaybeKeepTronAccountAlive" : {
+      "title" : "Du brauchst mindestens 0,1 TRX, um dieses Tron-Konto aktiv zu halten, sowie 1,1 TRX für Netzwerkgebühren. <link0>Weitere Informationen</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "Die Version Ihres Betriebssystems ist veraltet",
@@ -6088,6 +6098,9 @@
     },
     "newAddressTRC20" : {
       "title" : "Du musst zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
+    },
+    "BitcoinInfrastructureError" : {
+      "title" : "Bei unserer Bitcoin-Infrastruktur ist ein Problem aufgetreten. Versuche es bitte später noch einmal."
     }
   },
   "cryptoOrg" : {

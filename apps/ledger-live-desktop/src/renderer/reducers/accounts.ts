@@ -38,6 +38,7 @@ type HandlersPayloads = {
   REMOVE_ACCOUNT: Account;
   CLEAN_FULLNODE_DISCONNECT: never;
   CLEAN_ACCOUNTS_CACHE: never;
+  REPLACE_ACCOUNTS: Account[];
 };
 
 type AccountsHandlers<PreciseKey = true> = Handlers<AccountsState, HandlersPayloads, PreciseKey>;
@@ -56,6 +57,7 @@ const handlers: AccountsHandlers = {
   REMOVE_ACCOUNT: (state, { payload: account }) => state.filter(acc => acc.id !== account.id),
   CLEAN_FULLNODE_DISCONNECT: state => state.filter(acc => acc.currency.id !== "bitcoin"),
   CLEAN_ACCOUNTS_CACHE: state => state.map(clearAccount),
+  REPLACE_ACCOUNTS: (state, { payload }) => payload,
 };
 
 export default handleActions<AccountsState, HandlersPayloads[keyof HandlersPayloads]>(

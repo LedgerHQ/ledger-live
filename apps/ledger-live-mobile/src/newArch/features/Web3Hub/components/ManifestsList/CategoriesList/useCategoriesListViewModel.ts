@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCategoriesMock, selectCategories } from "LLM/features/Web3Hub/utils/api/categories";
+import {
+  fetchCategories,
+  fetchCategoriesMock,
+  selectCategories,
+} from "LLM/features/Web3Hub/utils/api/categories";
 
 export type useCategoriesListViewModelProps = {
   selectedCategory: string;
@@ -9,13 +13,16 @@ export type useCategoriesListViewModelProps = {
 
 export const queryKey = ["web3hub/categories"];
 
+const isInTest = process.env.NODE_ENV === "test" || !!process.env.MOCK_WEB3HUB;
+const queryFn = isInTest ? fetchCategoriesMock : fetchCategories;
+
 export default function useCategoriesListViewModel({
   selectedCategory,
   selectCategory,
 }: useCategoriesListViewModelProps) {
   const categoriesQuery = useQuery({
     queryKey,
-    queryFn: fetchCategoriesMock,
+    queryFn: queryFn,
     select: selectCategories,
   });
 

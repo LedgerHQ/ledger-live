@@ -13,14 +13,12 @@ export const ImageStyles: {
     flex: 1,
     width: "100%",
     maxHeight: 260,
-    marginBottom: 32,
     marginTop: 24,
   },
   M: {
     flex: 1,
     aspectRatio: 1,
     maxHeight: 160,
-    marginBottom: 32,
     marginTop: 24,
   },
   S: {
@@ -40,8 +38,9 @@ type ImageProps = {
 export const Image = ({ uri, size, filledImage }: ImageProps) => {
   const isBigCardAndFilled = (size === "L" && filledImage) || false;
   const stylesBigCard = isBigCardAndFilled
-    ? { marginBottom: 24, marginTop: 0, borderTopLeftRadius: 12, borderTopRightRadius: 12 }
+    ? { marginBottom: 0, marginTop: 0, borderTopLeftRadius: 12, borderTopRightRadius: 12 }
     : { aspectRatio: 1 };
+
   return (
     <NativeImage
       source={{ uri }}
@@ -92,7 +91,6 @@ export const TitleStyles: {
   L: {
     variant: "large",
     fontWeight: "medium",
-    numberOfLine: 1,
     paddingBottom: 2,
     textAlign: "center",
   },
@@ -121,13 +119,12 @@ export const SubtitleStyles: {
   L: {
     variant: "body",
     fontWeight: "medium",
-    numberOfLine: 1,
     textAlign: "center",
   },
   M: {
     variant: "paragraph",
     fontWeight: "medium",
-    numberOfLine: 1,
+    numberOfLines: 1,
     textAlign: "center",
   },
   S: {
@@ -140,7 +137,7 @@ export const Subtitle = ({ label, size }: LabelProps) => {
 
   return (
     <Text {...SubtitleStyles[size]} color={colors.neutral.c70}>
-      {label}
+      {label.replace(/\\n/g, "\n")}
     </Text>
   );
 };
@@ -151,21 +148,21 @@ export const PriceStyles: {
   L: {
     variant: "large",
     fontWeight: "medium",
-    numberOfLine: 1,
+    numberOfLines: 1,
     paddingTop: 12,
     textAlign: "center",
   },
   M: {
     variant: "paragraph",
     fontWeight: "medium",
-    numberOfLine: 1,
+    numberOfLines: 1,
     paddingTop: 12,
     textAlign: "center",
   },
   S: {
     variant: "paragraph",
     fontWeight: "medium",
-    numberOfLine: 1,
+    numberOfLines: 1,
     paddingTop: 4,
     textAlign: "center",
   },
@@ -205,17 +202,17 @@ export const ButtonlabelStyles: {
   L: {
     variant: "paragraph",
     fontWeight: "semiBold",
-    numberOfLine: 1,
+    numberOfLines: 1,
   },
   M: {
     variant: "paragraph",
     fontWeight: "semiBold",
-    numberOfLine: 1,
+    numberOfLines: 1,
   },
   S: {
     variant: "paragraph",
     fontWeight: "semiBold",
-    numberOfLine: 1,
+    numberOfLines: 1,
   },
 };
 
@@ -229,11 +226,16 @@ export const Button = ({ label, size, action }: LabelProps & { action?: () => vo
   );
 };
 
-export const ContainerStyles = (size: Size, widthFactor: WidthFactor): object => {
+export const ContainerStyles = (
+  size: Size,
+  widthFactor: WidthFactor,
+  isOnlyImage?: boolean,
+): object => {
   const styles = {
     L: {
-      height: 406,
-      paddingBottom: 24,
+      height: isOnlyImage ? 282 : 406,
+      paddingBottom: isOnlyImage ? 0 : 24,
+      justifyContent: isOnlyImage ? "center" : "space-between",
       borderRadius: 12,
     },
     M: {
@@ -255,11 +257,15 @@ export const Container = ({
   size,
   children,
   widthFactor,
-}: { size: Size } & PropsWithChildren & { widthFactor: WidthFactor }) => {
+  isOnlyImage,
+}: { size: Size; isOnlyImage?: boolean } & PropsWithChildren & { widthFactor: WidthFactor }) => {
   const { colors } = useTheme();
-  const styles = ContainerStyles(size, widthFactor);
+  const styles = ContainerStyles(size, widthFactor, isOnlyImage);
   return (
-    <View
+    <Flex
+      alignItems="center"
+      width={"100%"}
+      height={"100%"}
       style={{
         position: "relative",
         justifyContent: "space-between",
@@ -269,6 +275,6 @@ export const Container = ({
       }}
     >
       {children}
-    </View>
+    </Flex>
   );
 };

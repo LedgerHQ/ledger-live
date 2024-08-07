@@ -29,7 +29,7 @@ const VaultSigner = () => {
       title={t("settings.experimental.features.vaultSigner.title")}
       desc={t("settings.experimental.features.vaultSigner.description")}
     >
-      <Switch isChecked={enabled} onChange={handleChange} data-test-id={`enable-vault-signer`} />
+      <Switch isChecked={enabled} onChange={handleChange} data-testid={`enable-vault-signer`} />
     </SettingsSectionRow>
   );
 };

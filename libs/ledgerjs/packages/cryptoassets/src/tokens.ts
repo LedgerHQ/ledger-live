@@ -3,11 +3,11 @@ import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import bep20tokens, { BEP20Token } from "./data/bep20";
 import cardanoNativeTokens, { CardanoNativeToken } from "./data/cardanoNative";
+import casperTokens, { CasperToken } from "./data/casper";
 import erc20tokens, { ERC20Token } from "./data/erc20";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
 import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
 import stellarTokens, { StellarToken } from "./data/stellar";
-import casperTokens, { CasperToken } from "./data/casper";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 import vechainTokens, { vip180Token } from "./data/vip180";
@@ -89,7 +89,6 @@ export function listTokensForCryptoCurrency(
   options?: Partial<TokensListOptions>,
 ): TokenCurrency[] {
   const { withDelisted } = { ...defaultTokenListOptions, ...options };
-
   if (withDelisted) {
     return tokensByCryptoCurrencyWithDelisted[currency.id] || emptyArray;
   }

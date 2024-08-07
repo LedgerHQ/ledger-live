@@ -8,6 +8,7 @@ import { getDefaultAccountName, getDefaultAccountNameForCurrencyIndex } from "./
 import { AddAccountsAction } from "./addAccounts";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DistantState } from "./walletsync";
+import { NonImportedAccountInfo } from "./walletsync/modules/accounts";
 
 export type WSState = {
   data: DistantState | null;
@@ -21,18 +22,22 @@ export type WalletState = {
   // a set of all the account ids that are starred (NB: token accounts can also be starred)
   starredAccountIds: Set<string>;
 
+  nonImportedAccountInfos: NonImportedAccountInfo[];
+
   // local copy of the wallet sync data last synchronized with the backend of wallet sync, in order to be able to diff what we need to do when we apply an incremental update
-  wsState: WSState;
+  walletSyncState: WSState;
 };
 
 export type ExportedWalletState = {
-  wsState: WSState;
+  walletSyncState: WSState;
+  nonImportedAccountInfos: NonImportedAccountInfo[];
 };
 
 export const initialState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
-  wsState: { data: null, version: 0 },
+  nonImportedAccountInfos: [],
+  walletSyncState: { data: null, version: 0 },
 };
 
 export enum WalletHandlerType {
@@ -43,6 +48,7 @@ export enum WalletHandlerType {
   ADD_ACCOUNTS = "ADD_ACCOUNTS",
   WALLET_SYNC_UPDATE = "WALLET_SYNC_UPDATE",
   IMPORT_WALLET_SYNC = "IMPORT_WALLET_SYNC",
+  SET_NON_IMPORTED_ACCOUNTS = "SET_NON_IMPORTED_ACCOUNTS",
 }
 
 export type HandlersPayloads = {
@@ -55,7 +61,8 @@ export type HandlersPayloads = {
     data: DistantState | null;
     version: number;
   };
-  IMPORT_WALLET_SYNC: ExportedWalletState;
+  IMPORT_WALLET_SYNC: Partial<ExportedWalletState>;
+  SET_NON_IMPORTED_ACCOUNTS: NonImportedAccountInfo[];
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -121,10 +128,16 @@ export const handlers: WalletHandlers = {
     return { ...state, accountNames };
   },
   WALLET_SYNC_UPDATE: (state, { payload }) => {
-    return { ...state, wsState: payload };
+    return { ...state, walletSyncState: payload };
   },
   IMPORT_WALLET_SYNC: (state, { payload }) => {
-    return { ...state, wsState: payload.wsState };
+    return {
+      ...state,
+      ...payload,
+    };
+  },
+  SET_NON_IMPORTED_ACCOUNTS: (state, { payload }) => {
+    return { ...state, nonImportedAccountInfos: payload };
   },
 };
 
@@ -153,7 +166,7 @@ export const initAccounts = (accounts: Account[], accountsUserData: AccountUserD
 /**
  * action to import back the wallet state. opposite of exportWalletState
  */
-export const importWalletState = (payload: ExportedWalletState) => ({
+export const importWalletState = (payload: Partial<ExportedWalletState>) => ({
   type: "IMPORT_WALLET_SYNC",
   payload,
 });
@@ -161,6 +174,11 @@ export const importWalletState = (payload: ExportedWalletState) => ({
 export const walletSyncUpdate = (data: DistantState | null, version: number) => ({
   type: "WALLET_SYNC_UPDATE",
   payload: { data, version },
+});
+
+export const setNonImportedAccounts = (payload: NonImportedAccountInfo[]) => ({
+  type: "SET_NON_IMPORTED_ACCOUNTS",
+  payload,
 });
 
 // Local Selectors
@@ -225,11 +243,15 @@ export const accountRawToAccountUserData = (raw: AccountRaw): AccountUserData =>
  * call this selector to save the store state
  */
 export const exportWalletState = (state: WalletState): ExportedWalletState => ({
-  wsState: state.wsState,
+  walletSyncState: state.walletSyncState,
+  nonImportedAccountInfos: state.nonImportedAccountInfos,
 });
 
 export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean => {
-  return a.wsState !== b.wsState;
+  return (
+    a.walletSyncState !== b.walletSyncState ||
+    a.nonImportedAccountInfos !== b.nonImportedAccountInfos
+  );
 };
 
-export const wsStateSelector = (state: WalletState): WSState => state.wsState;
+export const walletSyncStateSelector = (state: WalletState): WSState => state.walletSyncState;

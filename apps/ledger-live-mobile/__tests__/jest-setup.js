@@ -27,6 +27,20 @@ NativeModules.RNAnalytics = {};
 
 const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 
+// Overriding the default RNGH mocks
+// to replace TouchableNativeFeedback with TouchableOpacity
+// as the former breaks tests trying to press buttons
+jest.mock("react-native-gesture-handler", () => {
+  const TouchableOpacity = require("react-native").TouchableOpacity;
+  return {
+    ...require("react-native-gesture-handler/lib/commonjs/mocks").default,
+    RawButton: TouchableOpacity,
+    BaseButton: TouchableOpacity,
+    RectButton: TouchableOpacity,
+    BorderlessButton: TouchableOpacity,
+  };
+});
+
 jest.mock("@segment/analytics-react-native", () => mockAnalytics);
 
 jest.mock("react-native-launch-arguments", () => ({}));
@@ -69,10 +83,9 @@ jest.mock("react-native-localize", () => ({
   findBestAvailableLanguage: jest.fn(),
 }));
 
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-}));
+jest.mock("@react-native-async-storage/async-storage", () =>
+  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
+);
 
 jest.mock("react-native-version-number", () => ({
   appVersion: "1.0.0",
@@ -116,6 +129,8 @@ jest.mock("@react-native-firebase/messaging", () => ({
 }));
 
 jest.mock("@braze/react-native-sdk", () => ({}));
+
+jest.mock("react-native-webview", () => jest.fn());
 
 const originalError = console.error;
 const originalWarn = console.warn;

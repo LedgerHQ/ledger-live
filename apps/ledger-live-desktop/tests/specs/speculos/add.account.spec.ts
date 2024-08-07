@@ -1,5 +1,4 @@
 import { test } from "../../fixtures/common";
-import { specs } from "../../utils/speculos";
 import { Currency } from "../../enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
@@ -19,18 +18,16 @@ const currencies: Currency[] = [
   Currency.XTZ,
 ];
 
-for (const [i, currency] of currencies.entries()) {
+for (const currency of currencies) {
   test.describe("Add Accounts", () => {
     test.use({
       userdata: "skip-onboarding",
-      testName: `addAccount_${currency.uiName}`,
-      speculosCurrency: specs[currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosCurrency: currency,
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
 
     test(
-      `[${currency.uiName}] Add account`,
+      `[${currency.name}] Add account`,
       {
         annotation: {
           type: "TMS",
@@ -42,7 +39,7 @@ for (const [i, currency] of currencies.entries()) {
 
         await app.portfolio.openAddAccountModal();
         await app.addAccount.expectModalVisiblity();
-        await app.addAccount.selectCurrency(currency.uiName);
+        await app.addAccount.selectCurrency(currency.name);
         firstAccountName = await app.addAccount.getFirstAccountName();
 
         await app.addAccount.addAccounts();

@@ -159,23 +159,6 @@ export const urls = {
     info: "https://www.ledger.com/swap?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=swap_intro",
     learnMore:
       "https://www.ledger.com/swap?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=swap_footer",
-    providers: {
-      changelly: {
-        main: "https://changelly.com/",
-        tos: "https://changelly.com/terms-of-use",
-        support: "https://support.changelly.com/en/support/tickets/new",
-      },
-      cic: {
-        main: "https://criptointercambio.com/",
-        tos: "https://criptointercambio.com/terms-of-use",
-        support: "https://criptointercambio.com/en/about",
-      },
-      moonpay: {
-        main: "https://www.moonpay.com/",
-        tos: "https://www.moonpay.com/legal/terms_of_use",
-        support: "https://support.moonpay.com",
-      },
-    },
   },
   exchange: {
     learnMore:

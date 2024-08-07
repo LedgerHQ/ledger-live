@@ -193,7 +193,7 @@ const StepFlashMcu = ({
   }
 
   return (
-    <Container data-test-id="firmware-update-flash-mcu-progress">
+    <Container data-testid="firmware-update-flash-mcu-progress">
       <TrackPage category="Manager" name="FlashMCU" />
       <Body
         deviceModelId={deviceModelId}

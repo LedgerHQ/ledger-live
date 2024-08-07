@@ -52,7 +52,7 @@ const Swap = () => {
     // TODO: Remove @ts-ignore after Card component be compatible with TS
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    <Card grow style={{ overflow: "hidden" }} data-test-id="swap-app-container">
+    <Card grow style={{ overflow: "hidden" }} data-testid="swap-app-container">
       {manifest ? (
         <WebPlatformPlayer
           config={{

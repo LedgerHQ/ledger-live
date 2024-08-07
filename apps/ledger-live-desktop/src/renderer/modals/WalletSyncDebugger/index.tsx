@@ -7,7 +7,6 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import Switch from "~/renderer/components/Switch";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { FlowOptions } from "~/newArch/WalletSync/Flows/useFlows";
 import { useDispatch } from "react-redux";
 import {
   addInstance,
@@ -19,6 +18,7 @@ import {
 import { useHistory } from "react-router";
 import styled, { useTheme } from "styled-components";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { FlowOptions } from "LLD/features/WalletSync/hooks/useFlows";
 
 type State = {
   flow: Flow;

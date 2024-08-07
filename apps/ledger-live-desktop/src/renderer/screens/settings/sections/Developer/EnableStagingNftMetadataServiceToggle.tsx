@@ -29,7 +29,7 @@ const EnableStagingNftMetadataServiceToggle = () => {
       <Switch
         isChecked={stagingNftMetadataService}
         onChange={handleChange}
-        data-test-id="settings-enable-staging-nft-metadata-service"
+        data-testid="settings-enable-staging-nft-metadata-service"
       />
     </>
   );

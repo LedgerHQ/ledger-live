@@ -190,7 +190,7 @@ function FromRow({
             isChecked={isMaxEnabled}
             onChange={toggleMaxAndTrack}
             disabled={!fromAccount}
-            data-test-id="swap-max-spendable-toggle"
+            data-testid="swap-max-spendable-toggle"
           />
         </Box>
       </Box>

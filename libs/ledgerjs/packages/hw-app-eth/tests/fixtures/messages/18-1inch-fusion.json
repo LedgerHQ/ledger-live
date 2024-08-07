@@ -1,0 +1,73 @@
+{
+  "domain": {
+    "name": "1inch Aggregation Router",
+    "version": "6",
+    "chainId": 137,
+    "verifyingContract": "0x111111125421ca6dc452d289314280a0f8842a65"
+  },
+  "primaryType": "Order",
+  "message": {
+    "maker": "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+    "makerAsset": "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+    "takerAsset": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+    "makerTraits": "62645329528782394789705396186445553993652106036464673180170288481221805604864",
+    "salt": "102412815608494630857823958083264479936169442601352546394025598722002601410760",
+    "makingAmount": "400000000",
+    "takingAmount": "694455056739513017000",
+    "receiver": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
+  },
+  "types": {
+    "EIP712Domain": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "name": "chainId",
+        "type": "uint256"
+      },
+      {
+        "name": "verifyingContract",
+        "type": "address"
+      }
+    ],
+    "Order": [
+      {
+        "name": "salt",
+        "type": "uint256"
+      },
+      {
+        "name": "maker",
+        "type": "address"
+      },
+      {
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "name": "makerAsset",
+        "type": "address"
+      },
+      {
+        "name": "takerAsset",
+        "type": "address"
+      },
+      {
+        "name": "makingAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "takingAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "makerTraits",
+        "type": "uint256"
+      }
+    ]
+  }
+}

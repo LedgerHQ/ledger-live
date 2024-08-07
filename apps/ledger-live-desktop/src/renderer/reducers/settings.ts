@@ -29,7 +29,7 @@ import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
 import { Handlers } from "./types";
-import { Layout, LayoutKey } from "LLD/Collectibles/types/Layouts";
+import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
 
 /* Initial state */
 

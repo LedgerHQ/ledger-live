@@ -4,15 +4,18 @@ import { useCallback, useState } from "react";
 export type CustomSwapQuotesState = {
   amountTo: BigNumber | undefined;
   swapError: Error | undefined;
+  counterValue: BigNumber | undefined;
 };
 
 export function useSwapLiveAppQuoteState({
   amountTo,
   swapError,
+  counterValue,
 }: CustomSwapQuotesState): [CustomSwapQuotesState, (next: CustomSwapQuotesState) => void] {
   const [state, setQuoteState] = useState({
     amountTo,
     swapError,
+    counterValue,
   });
 
   const updateQuoteState = useCallback(

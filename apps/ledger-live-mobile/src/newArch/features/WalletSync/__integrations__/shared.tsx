@@ -15,21 +15,23 @@ const Stack = createStackNavigator<
 
 export function WalletSyncSettingsNavigator() {
   return (
-    <Stack.Navigator initialRouteName={ScreenName.GeneralSettings}>
-      <Stack.Screen name={ScreenName.GeneralSettings} component={GeneralSettings} />
-      <Stack.Screen
-        name={NavigatorName.WalletSync}
-        component={WalletSyncNavigator}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
+    <QueryClientProvider client={new QueryClient()}>
+      <Stack.Navigator initialRouteName={ScreenName.GeneralSettings}>
+        <Stack.Screen name={ScreenName.GeneralSettings} component={GeneralSettings} />
+        <Stack.Screen
+          name={NavigatorName.WalletSync}
+          component={WalletSyncNavigator}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </QueryClientProvider>
   );
 }
 
 export function WalletSyncSharedNavigator() {
   return (
     <QueryClientProvider client={new QueryClient()}>
-      <Stack.Navigator initialRouteName={ScreenName.WalletSyncActivationSettings}>
+      <Stack.Navigator initialRouteName={ScreenName.WalletSyncActivationInit}>
         <Stack.Screen
           name={NavigatorName.WalletSync}
           component={WalletSyncNavigator}

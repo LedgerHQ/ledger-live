@@ -408,7 +408,7 @@ export const InstallingApp = ({
     track("In-line app install", { appName: appNameToTrack, flow: analyticsPropertyFlow });
   }, [appNameToTrack, analyticsPropertyFlow]);
   return (
-    <Wrapper data-test-id="device-action-loader">
+    <Wrapper data-testid="device-action-loader">
       <Header />
       <AnimationWrapper>
         <Animation animation={getDeviceAnimation(modelId, type, "installLoading")} />
@@ -433,7 +433,7 @@ export const renderInstallingLanguage = ({ progress, t }: { progress: number; t:
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
-      data-test-id="installing-language-progress"
+      data-testid="installing-language-progress"
     >
       <Box my={5} alignItems="center">
         <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
@@ -451,7 +451,7 @@ export const renderInstallingLanguage = ({ progress, t }: { progress: number; t:
 };
 
 export const renderListingApps = () => (
-  <Wrapper data-test-id="device-action-loader">
+  <Wrapper data-testid="device-action-loader">
     <Header />
     <ProgressWrapper>
       <Rotating size={58}>
@@ -513,7 +513,7 @@ export const renderAllowLanguageInstallation = ({
     flexDirection="column"
     justifyContent="center"
     alignItems="center"
-    data-test-id="allow-language-installation"
+    data-testid="allow-language-installation"
   >
     <DeviceBlocker />
     <AnimationWrapper>
@@ -1112,7 +1112,7 @@ export const renderSwapDeviceConfirmation = ({
           </Alert>
         </Box>
 
-        <DeviceSwapSummaryStyled data-test-id="device-swap-summary">
+        <DeviceSwapSummaryStyled data-testid="device-swap-summary">
           {deviceSwapSummaryFields.map(([key, value]) => (
             <Fragment key={key}>
               <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
@@ -1157,7 +1157,7 @@ export const renderSecureTransferDeviceConfirmation = ({
 );
 
 export const renderLoading = ({ children }: { children?: React.ReactNode } = {}) => (
-  <Wrapper data-test-id="device-action-loader">
+  <Wrapper data-testid="device-action-loader">
     <Header />
     <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
       <InfiniteLoader size={58} />

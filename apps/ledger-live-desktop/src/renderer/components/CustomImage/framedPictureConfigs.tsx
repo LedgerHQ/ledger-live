@@ -1,10 +1,16 @@
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import staxTransferBackground from "./assets/transferBackground.png";
+import staxTransferBackgroundLight from "./assets/staxTransferBackgroundLight.png";
+import staxTransferBackgroundDark from "./assets/staxTransferBackgroundDark.png";
+import europaTransferBackgroundLight from "./assets/europaTransferBackgroundLight.png";
+import europaTransferBackgroundDark from "./assets/europaTransferBackgroundDark.png";
 import { FramedPictureConfig } from "./FramedPicture";
 
-export const staxTransferConfig: FramedPictureConfig = {
-  frameHeight: 236,
-  frameWidth: 150,
+const STAX_FRAME_HEIGHT = 944;
+const STAX_FRAME_WIDTH = 600;
+
+export const staxTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
+  frameHeight: STAX_FRAME_HEIGHT / 4,
+  frameWidth: STAX_FRAME_WIDTH / 4,
   innerHeight: 223,
   innerWidth: 140.5,
   innerRight: 8,
@@ -12,32 +18,88 @@ export const staxTransferConfig: FramedPictureConfig = {
   innerLeft: 1.5,
   innerBottomHeight: 27,
   borderRightRadius: 6.5,
-  backgroundSource: staxTransferBackground,
 };
 
-export const europaTransferConfig: FramedPictureConfig = {
-  frameHeight: 236, // TODO:TBD
-  frameWidth: 150, // TODO:TBD
-  innerHeight: 223, // TODO:TBD
-  innerWidth: 140.5, // TODO:TBD
-  innerRight: 8, // TODO:TBD
-  innerTop: 7, // TODO:TBD
-  innerLeft: 1.5, // TODO:TBD
-  innerBottomHeight: 27, // TODO:TBD
-  borderRightRadius: 6.5, // TODO:TBD
-  backgroundSource: staxTransferBackground, // TODO: replace by europaTransferBackground when it exists
+const EUROPA_FRAME_WIDTH = 572;
+const EUROPA_FRAME_HEIGHT = 784;
+
+export const europaTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
+  frameWidth: EUROPA_FRAME_WIDTH / 2,
+  frameHeight: EUROPA_FRAME_HEIGHT / 2,
+  innerWidth: 224,
+  innerHeight: 282,
+  innerRight: 40,
+  innerTop: 30,
+  innerLeft: 29,
+  innerBottomHeight: 40,
+  borderRightRadius: 4,
+  borderLeftRadius: 4,
+};
+
+export const europaPreviewConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
+  frameWidth: EUROPA_FRAME_WIDTH / 4,
+  frameHeight: EUROPA_FRAME_HEIGHT / 4,
+  innerWidth: 90.5,
+  innerHeight: 136.5,
+  innerRight: 21,
+  innerTop: 27.5,
+  innerLeft: 28,
+  innerBottomHeight: 20,
+  borderRightRadius: 5,
+  borderLeftRadius: 5,
 };
 
 const configs = {
   transfer: {
-    stax: staxTransferConfig,
-    europa: europaTransferConfig,
+    stax: {
+      light: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundLight,
+      },
+      dark: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundDark,
+      },
+    },
+    europa: {
+      light: {
+        ...europaTransferConfig,
+        backgroundSource: europaTransferBackgroundLight,
+      },
+      dark: {
+        ...europaTransferConfig,
+        backgroundSource: europaTransferBackgroundDark,
+      },
+    },
+  },
+  preview: {
+    stax: {
+      light: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundLight,
+      },
+      dark: {
+        ...staxTransferConfig,
+        backgroundSource: staxTransferBackgroundDark,
+      },
+    },
+    europa: {
+      light: {
+        ...europaPreviewConfig,
+        backgroundSource: europaTransferBackgroundLight,
+      },
+      dark: {
+        ...europaPreviewConfig,
+        backgroundSource: europaTransferBackgroundDark,
+      },
+    },
   },
 };
 
 export function getFramedPictureConfig(
-  type: "transfer", // later on, there will be more types (like "preview" on LLM)
+  type: "transfer" | "preview", // later on, there will be more types (like "preview" on LLM)
   deviceModelId: CLSSupportedDeviceModelId,
+  theme: "dark" | "light",
 ): FramedPictureConfig {
-  return configs[type][deviceModelId];
+  return configs[type][deviceModelId][theme];
 }

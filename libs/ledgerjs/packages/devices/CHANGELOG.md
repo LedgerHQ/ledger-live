@@ -1,5 +1,31 @@
 # @ledgerhq/devices
 
+## 8.4.2
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Rename Ledger Europa
+
+## 8.4.2-hotfix.0
+
+### Patch Changes
+
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Rename Ledger Europa
+
+## 8.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0
+
+## 8.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0-next.0
+
 ## 8.4.0
 
 ### Minor Changes

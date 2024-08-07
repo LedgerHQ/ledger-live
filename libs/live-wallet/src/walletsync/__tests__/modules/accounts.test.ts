@@ -36,6 +36,13 @@ function convertAccountToDescriptor(account: Account): AccountDescriptor {
   };
 }
 
+function unmigrate(account: Account): Account {
+  return {
+    ...account,
+    id: account.id.replace("mock:1", "mock:0"),
+  };
+}
+
 function placeholderAccountFromDescriptor(descriptor: AccountDescriptor): Account {
   // NB: this is the current implementation of the module giving the account state before it has opportunity to update, may change over time
   return accountDataToAccount({ ...descriptor, balance: "0", name: "" })[0];
@@ -46,7 +53,10 @@ const dummyContext: WalletSyncDataManagerResolutionContext = {
     sync: (initial: Account) =>
       initial.id === account4unsupported.id
         ? throwError(() => new Error("simulate sync failure"))
-        : of(acc => acc),
+        : // this mock bridge will migrate 0->1 on versions
+          initial.id.startsWith("mock:0")
+          ? of(acc => ({ ...acc, id: acc.id.replace("mock:0", "mock:1") }))
+          : of(acc => acc),
     receive: () => {
       throw new Error("not implemented");
     },
@@ -87,27 +97,27 @@ describe("accountNames' WalletSyncDataManager", () => {
     expect(() => manager.schema.parse([account1])).toThrow();
   });
   it("should find no diff on non initialized state vs empty accounts", () => {
-    const localData = { list: [] };
+    const localData = { list: [], nonImportedAccountInfos: [] };
     const latestState = null;
     const diff = manager.diffLocalToDistant(localData, latestState);
     expect(diff).toEqual({ hasChanges: false, nextState: [] });
   });
 
   it("should find no diff on empty state change", () => {
-    const localData = { list: [] };
+    const localData = { list: [], nonImportedAccountInfos: [] };
     const diff = manager.diffLocalToDistant(localData, []);
     expect(diff).toEqual({ hasChanges: false, nextState: [] });
   });
 
   it("should find no diff on same accounts", () => {
-    const localData = { list: [account1, account2] };
+    const localData = { list: [account1, account2], nonImportedAccountInfos: [] };
     const latestState = [account1, account2].map(convertAccountToDescriptor);
     const diff = manager.diffLocalToDistant(localData, latestState);
     expect(diff).toEqual({ hasChanges: false, nextState: latestState });
   });
 
   it("should find diff on added account", () => {
-    const localData = { list: [account1, account2] };
+    const localData = { list: [account1, account2], nonImportedAccountInfos: [] };
     const latestState = [account1].map(convertAccountToDescriptor);
     const diff = manager.diffLocalToDistant(localData, latestState);
     expect(diff).toEqual({
@@ -117,7 +127,7 @@ describe("accountNames' WalletSyncDataManager", () => {
   });
 
   it("should find diff on removed account", () => {
-    const localData = { list: [account1] };
+    const localData = { list: [account1], nonImportedAccountInfos: [] };
     const latestState = [account1, account2].map(convertAccountToDescriptor);
     const diff = manager.diffLocalToDistant(localData, latestState);
     expect(diff).toEqual({
@@ -127,10 +137,10 @@ describe("accountNames' WalletSyncDataManager", () => {
   });
 
   it("should find no diff on non initialized state vs empty accounts", async () => {
-    const localData = { list: [] };
+    const localData = { list: [], nonImportedAccountInfos: [] };
     const latestState = null;
     const incomingState: AccountDescriptor[] = [];
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
@@ -140,22 +150,17 @@ describe("accountNames' WalletSyncDataManager", () => {
   });
 
   it("should find no diff on empty state change", async () => {
-    const localData = { list: [] };
+    const localData = { list: [], nonImportedAccountInfos: [] };
     const incomingState: AccountDescriptor[] = [];
-    const diff = await manager.resolveIncomingDistantState(
-      dummyContext,
-      localData,
-      [],
-      incomingState,
-    );
+    const diff = await manager.resolveIncrementalUpdate(dummyContext, localData, [], incomingState);
     expect(diff).toEqual({ hasChanges: false });
   });
 
   it("should find no diff on same accounts", async () => {
-    const localData = { list: [account1, account2] };
+    const localData = { list: [account1, account2], nonImportedAccountInfos: [] };
     const latestState = [account1, account2].map(convertAccountToDescriptor);
     const incomingState = [account1, account2].map(convertAccountToDescriptor);
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
@@ -165,10 +170,10 @@ describe("accountNames' WalletSyncDataManager", () => {
   });
 
   it("should find no diff on added account but the account already is here", async () => {
-    const localData = { list: [account1, account2] };
+    const localData = { list: [account1, account2], nonImportedAccountInfos: [] };
     const latestState = [account1].map(convertAccountToDescriptor);
     const incomingState = [account1, account2].map(convertAccountToDescriptor);
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
@@ -180,10 +185,10 @@ describe("accountNames' WalletSyncDataManager", () => {
   });
 
   it("should find diff on added account", async () => {
-    const localData = { list: [account1] };
+    const localData = { list: [account1], nonImportedAccountInfos: [] };
     const latestState = [account1].map(convertAccountToDescriptor);
     const incomingState = [account1, account2].map(convertAccountToDescriptor);
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
@@ -194,14 +199,15 @@ describe("accountNames' WalletSyncDataManager", () => {
       update: {
         added: [placeholderAccountFromDescriptor(incomingState[1])],
         removed: [],
+        nonImportedAccountInfos: [],
       },
     });
   });
   it("should find diff on added account from no existing state", async () => {
-    const localData = { list: [] };
+    const localData = { list: [], nonImportedAccountInfos: [] };
     const latestState = null;
     const incomingState = [account1, account2].map(convertAccountToDescriptor);
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
@@ -215,15 +221,16 @@ describe("accountNames' WalletSyncDataManager", () => {
           placeholderAccountFromDescriptor(incomingState[1]),
         ],
         removed: [],
+        nonImportedAccountInfos: [],
       },
     });
   });
 
   it("should find diff on removed account", async () => {
-    const localData = { list: [account1, account2] };
+    const localData = { list: [account1, account2], nonImportedAccountInfos: [] };
     const latestState = [account1, account2].map(convertAccountToDescriptor);
     const incomingState = [account1].map(convertAccountToDescriptor);
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
@@ -234,15 +241,16 @@ describe("accountNames' WalletSyncDataManager", () => {
       update: {
         added: [],
         removed: [account2.id],
+        nonImportedAccountInfos: [],
       },
     });
   });
 
   it("should find both a added and removed account", async () => {
-    const localData = { list: [account1, account2] };
+    const localData = { list: [account1, account2], nonImportedAccountInfos: [] };
     const latestState = [account1, account2].map(convertAccountToDescriptor);
     const incomingState = [account2, account3].map(convertAccountToDescriptor);
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
@@ -253,42 +261,78 @@ describe("accountNames' WalletSyncDataManager", () => {
       update: {
         added: [placeholderAccountFromDescriptor(incomingState[1])],
         removed: [account1.id],
+        nonImportedAccountInfos: [],
       },
     });
   });
 
-  it("should resolve nothing if sync fails", async () => {
-    const localData = { list: [account1] };
+  it("should find non imported account ids on fail sync", async () => {
+    const localData = { list: [account1], nonImportedAccountInfos: [] };
     const latestState = [account1].map(convertAccountToDescriptor);
     const incomingState = [account1, account4unsupported].map(convertAccountToDescriptor);
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
       incomingState,
     );
-    expect(diff).toEqual({
-      hasChanges: false,
+    expect(diff).toMatchObject({
+      hasChanges: true,
+      update: {
+        added: [],
+        removed: [],
+        nonImportedAccountInfos: [
+          {
+            id: account4unsupported.id,
+            attempts: 1,
+            error: {
+              name: "Error",
+              message: "simulate sync failure",
+            },
+          },
+        ],
+      },
     });
   });
 
   it("should apply added account", () => {
-    const localData = { list: [account1] };
+    const localData = { list: [account1], nonImportedAccountInfos: [] };
     const update = {
       added: [account2],
       removed: [],
+      nonImportedAccountInfos: [],
     };
     const result = manager.applyUpdate(localData, update);
-    expect(result).toEqual({ list: [account1, account2] });
+    expect(result).toEqual({ list: [account1, account2], nonImportedAccountInfos: [] });
   });
 
   it("should apply removed account", () => {
-    const localData = { list: [account1, account2] };
+    const localData = { list: [account1, account2], nonImportedAccountInfos: [] };
     const update = {
       added: [],
       removed: [account2.id],
+      nonImportedAccountInfos: [],
     };
     const result = manager.applyUpdate(localData, update);
-    expect(result).toEqual({ list: [account1] });
+    expect(result).toEqual({ list: [account1], nonImportedAccountInfos: [] });
+  });
+
+  it("dedup account that could be implicitely migrated by coin implementations", async () => {
+    const account2unmigrated = unmigrate(account2);
+    const account3unmigrated = unmigrate(account3);
+    const localData = { list: [account1, account2], nonImportedAccountInfos: [] };
+    const latestState = localData.list.map(convertAccountToDescriptor);
+    const incomingState = [account1, account2unmigrated, account3unmigrated].map(
+      convertAccountToDescriptor,
+    );
+    const diff = await manager.resolveIncrementalUpdate(
+      dummyContext,
+      localData,
+      latestState,
+      incomingState,
+    );
+    if (!diff.hasChanges) throw new Error("unexpected");
+    const result = manager.applyUpdate(localData, diff.update);
+    expect(result.list.map(l => l.id)).toEqual([account1, account2, account3].map(l => l.id));
   });
 });

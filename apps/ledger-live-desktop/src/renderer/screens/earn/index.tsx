@@ -28,7 +28,7 @@ const Earn = () => {
   useDeepLinkListener();
 
   return (
-    <Card grow style={{ overflow: "hidden" }} data-test-id="earn-app-container">
+    <Card grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
       {manifest ? (
         <WebPlatformPlayer
           config={{

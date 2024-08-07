@@ -1,8 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import { Token } from "tests/enum/Tokens";
-
+import { Account } from "tests/enum/Account";
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.getByTestId("account-settings-button");
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
@@ -25,17 +24,20 @@ export class AccountPage extends AppPage {
   private showMoreButton = this.page.getByText("Show more");
   private advancedButton = this.page.getByText("Advanced");
   private accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
-  private operationRows = this.page.locator("[data-test-id^='operation-row-']");
+  private operationRows = this.page.locator("[data-testid^='operation-row-']");
   private closeModal = this.page.getByTestId("modal-close-button");
   private accountbutton = (accountName: string) =>
     this.page.getByRole("button", { name: `${accountName}` });
   private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
+  private viewDetailsButton = this.page.getByText("View details");
 
-  @step("Navigate to token $0")
-  async navigateToToken(token: Token) {
-    await expect(this.tokenValue(token.tokenName)).toBeVisible();
-    await this.tokenValue(token.tokenName).click();
+  @step("Navigate to token")
+  async navigateToToken(SubAccount: Account) {
+    if (SubAccount.currency.name) {
+      await expect(this.tokenValue(SubAccount.currency.name)).toBeVisible();
+      await this.tokenValue(SubAccount.currency.name).click();
+    }
   }
 
   @step("Click `Receive` button")
@@ -43,7 +45,7 @@ export class AccountPage extends AppPage {
     await this.receiveButton.click();
   }
 
-  @step("click on add token button")
+  @step("Click on add token button")
   async clickAddToken() {
     await this.addTokenButton.click();
   }
@@ -67,6 +69,16 @@ export class AccountPage extends AppPage {
 
   async startStakingFlowFromMainStakeButton() {
     await this.stakeButton.click();
+  }
+
+  @step("Click on View Details button")
+  async navigateToViewDetails() {
+    await this.viewDetailsButton.click();
+  }
+
+  @step("Click on last operation")
+  async clickOnLastOperation() {
+    await this.operationRows.first().click();
   }
 
   async clickBannerCTA() {
@@ -113,8 +125,8 @@ export class AccountPage extends AppPage {
   }
 
   @step("Expect token Account to be visible")
-  async expectTokenAccount(token: Token) {
-    await expect(this.accountbutton(token.parentAccount.accountName)).toBeVisible();
+  async expectTokenAccount(Account: Account) {
+    await expect(this.accountbutton(Account.accountName)).toBeVisible();
   }
 
   @step("Expect `show more` button to show more operations")
@@ -138,10 +150,15 @@ export class AccountPage extends AppPage {
   }
 
   @step("Expect token to be present")
-  async expectTokenToBePresent(token: Token) {
-    await expect(this.tokenRow(token.tokenTicker)).toBeVisible();
-    const tokenInfos = await this.tokenRow(token.tokenTicker).innerText();
-    expect(tokenInfos).toContain(token.tokenName);
-    expect(tokenInfos).toContain(token.tokenTicker);
+  async expectTokenToBePresent(SubAccount: Account) {
+    await expect(this.tokenRow(SubAccount.currency.ticker)).toBeVisible();
+    const tokenInfos = await this.tokenRow(SubAccount.currency.ticker).innerText();
+    expect(tokenInfos).toContain(SubAccount.currency.name);
+    expect(tokenInfos).toContain(SubAccount.currency.ticker);
+  }
+
+  @step("Navigate to token in account")
+  async navigateToTokenInAccount(SubAccount: Account) {
+    await this.tokenRow(SubAccount.currency.ticker).click();
   }
 }

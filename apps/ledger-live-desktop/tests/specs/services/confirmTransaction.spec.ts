@@ -124,7 +124,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     ).toBeVisible();
 
     // Displays TOC in footer
-    const operationList = page.locator("data-test-id=confirm-footer-toc");
+    const operationList = page.getByTestId("confirm-footer-toc");
     await operationList.scrollIntoViewIfNeeded();
     await expect(page.getByText(`${MANIFEST_NAME}'s terms of use.`)).toBeVisible();
 
@@ -184,7 +184,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     ).toBeVisible();
 
     // Displays TOC in footer
-    const operationList = page.locator("data-test-id=confirm-footer-toc");
+    const operationList = page.getByTestId("confirm-footer-toc");
     await operationList.scrollIntoViewIfNeeded();
     await expect(page.getByText(`${MANIFEST_NAME}'s terms of use.`)).toBeVisible();
 

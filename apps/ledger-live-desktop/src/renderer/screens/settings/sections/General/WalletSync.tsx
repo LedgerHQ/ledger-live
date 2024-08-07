@@ -1,17 +1,21 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef } from "react";
 import Button from "~/renderer/components/Button";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { walletSyncFakedSelector, walletSyncStepSelector } from "~/renderer/reducers/walletSync";
-import { resetWalletSync } from "~/renderer/actions/walletSync";
-import { BackRef, WalletSyncRouter } from "LLD/WalletSync/Flows/router";
-import { STEPS_WITH_BACK, useFlows } from "LLD/WalletSync/Flows/useFlows";
+import {
+  walletSyncDrawerVisibilitySelector,
+  walletSyncFakedSelector,
+  walletSyncStepSelector,
+} from "~/renderer/reducers/walletSync";
+import { resetWalletSync, setDrawerVisibility } from "~/renderer/actions/walletSync";
 import { trustchainSelector } from "@ledgerhq/trustchain/store";
 import {
-  AnalyticsPage,
   useWalletSyncAnalytics,
-} from "~/newArch/WalletSync/hooks/useWalletSyncAnalytics";
+  AnalyticsPage,
+} from "LLD/features/WalletSync/hooks/useWalletSyncAnalytics";
+import { BackRef, WalletSyncRouter } from "LLD/features/WalletSync/screens/router";
+import { useFlows, STEPS_WITH_BACK } from "~/newArch/features/WalletSync/hooks/useFlows";
 
 /**
  *
@@ -25,9 +29,10 @@ import {
 const WalletSyncRow = () => {
   const { goToWelcomeScreenWalletSync } = useFlows();
   const childRef = useRef<BackRef>(null);
-  const [open, setOpen] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const isOpen = useSelector(walletSyncDrawerVisibilitySelector);
 
   const currentStep = useSelector(walletSyncStepSelector);
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
@@ -49,7 +54,7 @@ const WalletSyncRow = () => {
     } else {
       onActionTrack({ button: "Close", step: currentStep, flow: "Wallet Sync" });
     }
-    setOpen(false);
+    dispatch(setDrawerVisibility(false));
   };
 
   const openDrawer = () => {
@@ -57,13 +62,13 @@ const WalletSyncRow = () => {
       goToWelcomeScreenWalletSync(!!trustchain?.rootId);
       onClickTrack({ button: "Wallet Sync", page: AnalyticsPage.SettingsGeneral });
     }
-    setOpen(true);
+    dispatch(setDrawerVisibility(true));
   };
 
   return (
     <>
       <SideDrawer
-        isOpen={open}
+        isOpen={isOpen}
         onRequestClose={closeDrawer}
         onRequestBack={hasBack ? handleBack : undefined}
         direction="left"
