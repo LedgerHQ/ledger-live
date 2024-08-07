@@ -150,6 +150,13 @@ jobs:
           retention-days: 1
           name: xray-reports-${{ matrix.shardIndex }}
           path: apps/ledger-live-desktop/tests/artifacts/xray/xray-report.json
+      
+      - name: Print e2e-tests-linux status
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          echo "Status of e2e-tests-linux: ${{ needs.e2e-tests-linux.outputs.status }}"
+
 
   report-and-notify:
     name: "Report and Notify"
