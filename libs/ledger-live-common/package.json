@@ -190,7 +190,7 @@
     "@ledgerhq/wallet-api-server": "^1.5.10",
     "@stacks/network": "6.10.0",
     "@stacks/transactions": "6.11.0",
-    "@stricahq/typhonjs": "^1.2.6",
+    "@stricahq/typhonjs": "^2.0.0",
     "@taquito/ledger-signer": "^20.0.0",
     "@ton-community/ton-ledger": "^7.0.1",
     "@ton/core": "^0.56.1",

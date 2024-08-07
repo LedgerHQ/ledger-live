@@ -27,6 +27,7 @@ import type {
   Transaction,
   TransactionStatus,
 } from "./types";
+import { CARDANO_MAX_SUPPLY } from "./constants";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -84,7 +85,8 @@ async function getSendTransactionStatus(
       : undefined;
 
   let tokensToSend: Array<Token> = [];
-  if (transaction.subAccountId) {
+  const isTokenTx = !!transaction.subAccountId;
+  if (isTokenTx) {
     // Token transaction
     if (!tokenAccount || tokenAccount.type !== "TokenAccount") {
       throw new Error("TokenAccount not found");
@@ -108,11 +110,7 @@ async function getSendTransactionStatus(
     totalSpent = amount.plus(estimatedFees);
   }
 
-  const minTransactionAmount = TyphonUtils.calculateMinUtxoAmount(
-    tokensToSend,
-    new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
-    false,
-  );
+  let minTransactionAmount = new BigNumber(0);
 
   if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
@@ -124,11 +122,22 @@ async function getSendTransactionStatus(
     errors.recipient = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
+  } else {
+    // minTransactionAmount can only be calculated with valid recipient
+    const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
+    minTransactionAmount = TyphonUtils.calculateMinUtxoAmountBabbage(
+      {
+        address: recipient,
+        amount: new BigNumber(CARDANO_MAX_SUPPLY),
+        tokens: tokensToSend,
+      },
+      new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
+    );
   }
 
   if (!amount.gt(0)) {
     errors.amount = useAllAmount ? new CardanoNotEnoughFunds() : new AmountRequired();
-  } else if (!transaction.subAccountId && amount.lt(minTransactionAmount)) {
+  } else if (!isTokenTx && amount.lt(minTransactionAmount)) {
     errors.amount = new CardanoMinAmountError("", {
       amount: minTransactionAmount.div(1e6).toString(),
     });
