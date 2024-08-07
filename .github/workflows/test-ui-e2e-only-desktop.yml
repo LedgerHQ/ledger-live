@@ -134,6 +134,11 @@ jobs:
           XRAY: ${{ inputs.export_to_xray }}
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
+        continue-on-error: true
+
+      - name: Collect outcomes
+        id: collect-outcomes
+        run: echo "shard_outcome_${{ matrix.shardIndex }}=${{ steps.tests.outcome }}" >> $GITHUB_ENV
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
@@ -151,13 +156,6 @@ jobs:
           name: xray-reports-${{ matrix.shardIndex }}
           path: apps/ledger-live-desktop/tests/artifacts/xray/xray-report.json
       
-      - name: Print e2e-tests-linux status
-        if: ${{ !cancelled() }}
-        shell: bash
-        run: |
-          echo "Status of e2e-tests-linux: ${{ steps.tests.outcome }}"
-
-
   report-and-notify:
     name: "Report and Notify"
     runs-on: [ledger-live-medium]
@@ -216,14 +214,13 @@ jobs:
       - name: Get status color
         if: ${{ !cancelled() }}
         shell: bash
-        run: >
-          if ${{ needs.e2e-tests-linux.outputs.status == 'success' }};
-          then echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
-          elif ${{ needs.e2e-tests-linux.outputs.status == 'failure' }};
-          then echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
-          else echo "STATUS_COLOR=#F3FF33" >> $GITHUB_ENV;
+        run: |
+          if [ "${{ needs.e2e-tests-linux.outputs.shard_outcomes }}" == *failure* ]; then
+            echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV
+          else
+            echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV
           fi
-
+        
       - uses: actions/github-script@v6
         if: ${{ !cancelled() }}
         name: prepare status
