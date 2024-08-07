@@ -1,6 +1,4 @@
 import { makeGetAccountShape } from "./synchronisation";
-import { BigNumber } from "bignumber.js";
-import MockBtcSigner from "./mockBtcSigner";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   AddressFormat,
@@ -11,7 +9,6 @@ import {
   CreateTransaction,
   SignerTransaction,
 } from "./signer";
-import { DerivationModes } from "./wallet-btc";
 import { createFixtureAccount } from "./hw-signMessage.test";
 
 // jest.mock("@ledgerhq/live-common/lib/account", () => ({
@@ -181,7 +178,7 @@ describe("synchronisation", () => {
         index: 1,
         derivationPath: "m/44'/0'/0'/0/1",
         derivationMode: "taproot",
-        initialAccount: mockAccount, // { id:  },
+        initialAccount: mockAccount,
       },
       { paginationConfig: {} },
     );
