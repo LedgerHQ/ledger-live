@@ -40,7 +40,6 @@ const WalletSyncManage = () => {
   const goToManageBackup = () => {
     manageKeyHook.openDrawer();
     onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.LedgerSyncActivated });
-    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.LedgerSyncActivated });
   };
 
   const goToManageInstances = () => {

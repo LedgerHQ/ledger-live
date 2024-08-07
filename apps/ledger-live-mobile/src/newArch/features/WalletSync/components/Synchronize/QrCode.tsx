@@ -19,9 +19,14 @@ const QrCode = ({ qrCodeValue }: Props) => {
   const { width } = getWindowDimensions();
   const { t } = useTranslation();
 
-  const QRSize = Math.round(width - 48);
-  const maxQRCodeSize = 280 - 15.36 * 2;
-  const QRCodeSize = Math.min(QRSize - 15.36, maxQRCodeSize);
+  const backgroundBorderRadius = 23;
+  const backgroundPadding = 15.36;
+  const backgroundSize = 280;
+  const distanceBetweenQRCodeAndScreenBorder = 48;
+
+  const QRSize = Math.round(width - distanceBetweenQRCodeAndScreenBorder);
+  const maxQRCodeSize = backgroundSize - backgroundPadding * 2;
+  const QRCodeSize = Math.min(QRSize - backgroundPadding, maxQRCodeSize);
 
   const steps = [
     {
@@ -66,9 +71,9 @@ const QrCode = ({ qrCodeValue }: Props) => {
         alignItems={"center"}
         width={QRSize}
         height={QRSize}
-        maxWidth={280}
-        maxHeight={280}
-        borderRadius={11.52}
+        maxWidth={backgroundSize}
+        maxHeight={backgroundSize}
+        borderRadius={backgroundBorderRadius}
         background={colors.constant.white}
         justifyContent={"center"}
         testID="ws-show-qr-code"
