@@ -80,7 +80,6 @@ jest.mock("./wallet-btc", () => ({
 describe("buildTransaction", () => {
   const mockAccount = createFixtureAccount();
   const maxSpendable = 100000;
-  console.log({ mockAccount });
 
   beforeEach(() => {
     jest.clearAllMocks();

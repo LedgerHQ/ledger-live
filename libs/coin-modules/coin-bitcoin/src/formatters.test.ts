@@ -3,9 +3,6 @@ import { BitcoinAccount, BitcoinOutput, BitcoinResources, NetworkInfoRaw } from 
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
-import { Bitcoin } from "./wallet-btc/crypto";
-
-// const mockGetEnv = jest.fn();
 
 jest.mock("@ledgerhq/live-env", () => ({
   getEnv: jest.fn().mockReturnValue(3),
@@ -47,12 +44,9 @@ const networkInfo: NetworkInfoRaw = {
 };
 export function createFixtureAccount(account?: Partial<BitcoinAccount>): BitcoinAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
-  // const wallet = new BitcoinLikeWallet();
 
   const bitcoinResources: BitcoinResources = account?.bitcoinResources || {
     utxos: [],
-    // walletAccount:
-    // walletAccount: mockWalletAccount,
   };
 
   const freshAddress = {
