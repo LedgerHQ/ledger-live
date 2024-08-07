@@ -155,7 +155,7 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: |
-          echo "Status of e2e-tests-linux: ${{ needs.e2e-tests-linux.outputs.status }}"
+          echo "Status of e2e-tests-linux: ${{ steps.tests.outcome }}"
 
 
   report-and-notify:
