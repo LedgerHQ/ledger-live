@@ -1,3 +1,5 @@
+// TODO: will be replaced with a mock
+
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { ElrondAccount, Transaction, TransactionStatus } from "../types";

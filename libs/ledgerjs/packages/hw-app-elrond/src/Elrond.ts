@@ -1,5 +1,7 @@
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
+import { Address } from "@multiversx/sdk-core";
+
 const CHUNK_SIZE = 150;
 const CURVE_MASK = 0x80;
 const CLA = 0xed;
@@ -9,12 +11,10 @@ const INS = {
   SET_ADDRESS: 0x05,
   PROVIDE_ESDT_INFO: 0x08,
 };
-const SIGN_RAW_TX_INS = 0x04;
 const SIGN_HASH_TX_INS = 0x07;
-const SIGN_MESSAGE_INS = 0x06;
-const ACTIVE_SIGNERS = [SIGN_RAW_TX_INS, SIGN_HASH_TX_INS, SIGN_MESSAGE_INS];
 const SW_OK = 0x9000;
 const SW_CANCEL = 0x6986;
+
 export default class Elrond {
   transport: Transport;
 
@@ -63,16 +63,17 @@ export default class Elrond {
    * Get Elrond address for a given BIP 32 path.
    *
    * @param path a path in BIP 32 format
-   * @param display optionally enable or not the display
+   * @param boolDisplay optionally enable or not the display
    * @return an object with a address
    * @example
    * const result = await elrond.getAddress("44'/508'/0'/0'/0'");
-   * const { address, returnCode } = result;
+   * const { publicKey, address } = result;
    */
   async getAddress(
     path: string,
-    display?: boolean,
+    boolDisplay?: boolean,
   ): Promise<{
+    publicKey: string;
     address: string;
   }> {
     const bipPath = BIPPath.fromString(path).toPathArray();
@@ -80,15 +81,18 @@ export default class Elrond {
     const response = await this.transport.send(
       CLA,
       INS.GET_ADDRESS,
-      display ? 0x01 : 0x00,
+      boolDisplay ? 0x01 : 0x00,
       0x00,
       data,
       [SW_OK, SW_CANCEL],
     );
+
     const addressLength = response[0];
-    const address = response.slice(1, 1 + addressLength).toString("ascii");
+    const address = new Address(response.slice(1, 1 + addressLength));
+
     return {
-      address,
+      publicKey: address.toHex(),
+      address: address.toBech32(),
     };
   }
 
@@ -111,9 +115,24 @@ export default class Elrond {
     ]);
   }
 
-  async signTransaction(path: string, message: string, usingHash: boolean): Promise<string> {
+  // kept 'usingHash' for compatibility reasons, siging by hash is the only supported way
+  async signTransaction(path: string, message: string, _usingHash?: boolean): Promise<string> {
+    const { signature } = await this.sign(path, message);
+
+    if (signature === null) {
+      throw new Error("null signature received");
+    }
+
+    return signature.toString("hex");
+  }
+
+  async sign(path: string, message: string): Promise<{ signature: null | Buffer }> {
+    const bipPath = BIPPath.fromString(path).toPathArray();
+    const buf = Buffer.alloc(4);
+    buf.writeUInt32BE(bipPath[2], 0);
+
     const chunks: Buffer[] = [];
-    const buffer: Buffer = Buffer.from(message);
+    const buffer = Buffer.concat([buf, Buffer.from(message, "hex")]);
 
     for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
       let end = i + CHUNK_SIZE;
@@ -125,31 +144,19 @@ export default class Elrond {
       chunks.push(buffer.slice(i, end));
     }
 
-    return usingHash ? this.sign(chunks, SIGN_HASH_TX_INS) : this.sign(chunks, SIGN_RAW_TX_INS);
-  }
-
-  async signMessage(message: Buffer[]): Promise<string> {
-    return this.sign(message, SIGN_MESSAGE_INS);
-  }
-
-  async sign(message: Buffer[], type: number): Promise<string> {
-    if (!ACTIVE_SIGNERS.includes(type)) {
-      throw new Error(`invalid sign instruction called: ${type}`);
-    }
-
     const apdus: any[] = [];
-    message.forEach((data, index) => {
+    chunks.forEach((data, index) => {
       const apdu: any = {
         cla: CLA,
-        ins: type,
+        ins: SIGN_HASH_TX_INS,
         p1: index === 0 ? 0x00 : CURVE_MASK,
         p2: CURVE_MASK,
         data,
       };
       apdus.push(apdu);
     });
-    let response: any = {};
 
+    let response: any = {};
     for (const apdu of apdus) {
       response = await this.transport.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data);
     }
@@ -159,7 +166,7 @@ export default class Elrond {
     }
 
     const signature = response.slice(1, response.length - 2).toString("hex");
-    return signature;
+    return { signature };
   }
 
   serializeESDTInfo(
