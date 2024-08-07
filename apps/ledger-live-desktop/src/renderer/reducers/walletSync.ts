@@ -29,6 +29,7 @@ export enum Step {
   SynchronizeMode = "SynchronizeMode",
   SynchronizeWithQRCode = "SynchronizeWithQRCode",
   PinCode = "PinCode",
+  PinCodeError = "PinCodeError",
   Synchronized = "Synchronized",
 
   //ManageInstances

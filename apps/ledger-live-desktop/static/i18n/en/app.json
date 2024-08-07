@@ -6483,7 +6483,11 @@
       },
       "pinCode": {
         "title": "Enter the code",
-        "description": "Type the code displayed on the other Ledger Live you want to sync with."
+        "description": "Type the code displayed on the other Ledger Live you want to sync with.",
+        "error": {
+          "title": "Codes do not match",
+          "description": "Make sure the code you type is the one displayed on the other Ledger Live instance."
+        }
       }
     },
     "manageInstances": {
