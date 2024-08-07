@@ -50,7 +50,7 @@ export function useQRCode() {
     })
       .catch(e => {
         if (e instanceof InvalidDigitsError) {
-          return;
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
         }
         setError(e);
       })
