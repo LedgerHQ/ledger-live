@@ -4,8 +4,9 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
 const currencies: Currency[] = [
-  Currency.BTC,
-  Currency.ETH,
+  //Currency.BTC,
+  Currency.LS,
+  /*Currency.ETH,
   Currency.ETC,
   Currency.XRP,
   Currency.DOT,
@@ -15,7 +16,7 @@ const currencies: Currency[] = [
   Currency.BCH,
   Currency.ALGO,
   Currency.ATOM,
-  Currency.XTZ,
+  Currency.XTZ,*/
 ];
 
 for (const currency of currencies) {

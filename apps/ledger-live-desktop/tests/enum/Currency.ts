@@ -21,6 +21,19 @@ export class Currency {
     ],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
+  static readonly LS = new Currency(
+    "Ledger Sync",
+    "LS",
+    "LedgerSync",
+    [
+      DeviceLabels.AMOUT,
+      DeviceLabels.ADDRESS,
+      DeviceLabels.CONTINUE,
+      DeviceLabels.REJECT,
+      DeviceLabels.SIGN,
+    ],
+    [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
+  );
   static readonly tBTC = new Currency(
     "Bitcoin Testnet",
     "𝚝BTC",
