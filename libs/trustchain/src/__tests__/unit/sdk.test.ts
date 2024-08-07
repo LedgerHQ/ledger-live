@@ -57,7 +57,7 @@ describe("Trustchain SDK", () => {
   });
 
   const apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING");
-  const sdkContext = { applicationId: 16, name: "Foo", apiBaseUrl };
+  const sdkContext = { applicationId: 16, name: "alice", apiBaseUrl };
 
   beforeEach(() => {
     Object.values(apiMocks).forEach(mock => mock.mockClear());
@@ -100,7 +100,7 @@ describe("Trustchain SDK", () => {
 
     // Run the test:
     const sdk = new SDK(sdkContext, hwDeviceProviderMock);
-    const { type, trustchain } = await sdk.getOrCreateTrustchain("foo", alice);
+    const { type, trustchain } = await sdk.getOrCreateTrustchain("", alice);
 
     // Check expectations:
     expect(type).toBe(TrustchainResultType.created);
@@ -165,7 +165,7 @@ describe("Trustchain SDK", () => {
       id: bob.pubkey,
       permissions: Permissions.OWNER,
     };
-    const newTrustchain = await sdk.removeMember("foo", trustchain, alice, memberToRemove);
+    const newTrustchain = await sdk.removeMember("", trustchain, alice, memberToRemove);
 
     // Check expectations:
     expect(newTrustchain).toEqual({
