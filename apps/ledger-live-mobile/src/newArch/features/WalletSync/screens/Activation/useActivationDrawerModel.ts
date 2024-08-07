@@ -44,10 +44,8 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   };
 
   // That means the url as be stored in the store
-  const onQrCodeScanned = (data: string) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    //setCurrentStep(Steps.PinCodeInput);
+  const onQrCodeScanned = () => {
+    setCurrentStep(Steps.PinCodeInput);
   };
 
   const resetStep = () => setCurrentStep(startingStep);
