@@ -1,25 +1,10 @@
-import { TaprootNotActivated } from "./errors";
-import { getTransactionStatus } from "./getTransactionStatus";
 import { BigNumber } from "bignumber.js";
-// import { createFixtureAccount } from './hw-signMessage.test';
-import { DatasetTest } from "@ledgerhq/types-live";
 import { BitcoinAccount, BitcoinResources, NetworkInfoRaw, Transaction, bitcoinPickingStrategy } from "./types";
-import wallet, {
-  Account,
-  BitcoinLikeWallet,
-  DerivationModes,
-  getWalletAccount,
-} from "./wallet-btc";
+import wallet from "./wallet-btc";
 
-import bitcoin from "./datasets/bitcoin";
 import { fromTransactionRaw } from "./transaction";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import Xpub from "./wallet-btc/xpub";
-import BitcoinLikeStorage from "./wallet-btc/storage";
-import BitcoinLikeExplorer from "./wallet-btc/explorer";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { ICrypto } from "./wallet-btc/crypto/types";
 import { buildTransaction } from "./buildTransaction";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
@@ -48,12 +33,9 @@ const networkInfo: NetworkInfoRaw = {
 };
 export function createFixtureAccount(account?: Partial<BitcoinAccount>): BitcoinAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
-  // const wallet = new BitcoinLikeWallet();
 
   const bitcoinResources: BitcoinResources = account?.bitcoinResources || {
     utxos: [],
-    // walletAccount:
-    // walletAccount: mockWalletAccount,
   };
 
   const freshAddress = {
@@ -106,7 +88,6 @@ describe("buildTransaction", () => {
     wallet.estimateAccountMaxSpendable = jest.fn().mockResolvedValue(maxSpendable);
     wallet.buildAccountTx = jest.fn().mockResolvedValue({});
   });
-  // console.log({ dataset, btc: dataset.currencies.bitcoin?.accounts?.[0].transactions?.[0] });
   it("should throw FeeNotLoaded if feePerByte is not provided", async () => {
     const transaction = fromTransactionRaw({
       family: "bitcoin",
