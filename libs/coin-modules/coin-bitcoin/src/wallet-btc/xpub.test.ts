@@ -10,9 +10,6 @@ jest.mock("./utils", () => ({
   computeDustAmount: jest.fn().mockReturnValue(50), //new BigNumber(50)),
 }));
 
-// jest.mock('bignumber.js'); // Add this line to mock the 'bignumber.js' library
-
-// Mocks
 const mockStorage = {
   addAddress: jest.fn(),
   hasPendingTx: jest.fn().mockReturnValue(false),
@@ -33,7 +30,7 @@ const mockStorage = {
 } as unknown as jest.Mocked<IStorage>;
 
 const mockExplorer = {
-  baseUrl: 'mockBaseUrl',
+  baseUrl: "mockBaseUrl",
   getFees: jest.fn(),
   getCurrentBlock: jest.fn(),
   getPendings: jest.fn(),
@@ -82,7 +79,6 @@ describe("Xpub", () => {
     mockStorage.hasTx.mockReturnValue(true);
 
     const result = await xpub.syncAddress(0, 0, false);
-    console.log({result})
 
     expect(mockCrypto.getAddress).toHaveBeenCalledWith(DERIVATION_MODE, "test-xpub", 0, 0);
     expect(mockStorage.addAddress).toHaveBeenCalled();
@@ -176,16 +172,16 @@ describe("Xpub", () => {
     expect(newAddress.index).toBe(1);
   });
 
-  it('should build transaction correctly', async () => {
-    mockCrypto.toOutputScript = jest.fn().mockReturnValue('outputScript');
-    mockExplorer.getTxHex = jest.fn().mockResolvedValue('txHex');
+  it("should build transaction correctly", async () => {
+    mockCrypto.toOutputScript = jest.fn().mockReturnValue("outputScript");
+    mockExplorer.getTxHex = jest.fn().mockResolvedValue("txHex");
     mockStorage.getTx = jest.fn().mockResolvedValue({ account: 0, index: 0 });
 
     const tx = await xpub.buildTx({
-      destAddress: 'destinationAddress',
+      destAddress: "destinationAddress",
       amount: new BigNumber(1000),
       feePerByte: 1,
-      changeAddress: { address: 'changeAddress', account: 0, index: 0 },
+      changeAddress: { address: "changeAddress", account: 0, index: 0 },
       utxoPickingStrategy: {
         crypto: mockCrypto,
         derivationMode: DERIVATION_MODE,
@@ -193,7 +189,12 @@ describe("Xpub", () => {
         selectUnspentUtxosToUse: jest.fn().mockResolvedValue({
           totalValue: new BigNumber(2000),
           unspentUtxos: [
-            { output_hash: 'hash2', value: new BigNumber(1500), address: 'address1', output_index: 0 },
+            {
+              output_hash: "hash2",
+              value: new BigNumber(1500),
+              address: "address1",
+              output_index: 0,
+            },
           ],
           fee: new BigNumber(100),
           needChangeoutput: true,
@@ -204,10 +205,7 @@ describe("Xpub", () => {
     });
 
     expect(tx.inputs.length).toBe(1);
-    console.log({tx})
-    console.log({txinputs: tx.inputs})
-    console.log({txoutputs: tx.outputs})
     expect(tx.outputs.length).toBe(2); // one for destAddres, one for change
     expect(tx.fee).toBe(100);
-  })
+  });
 });

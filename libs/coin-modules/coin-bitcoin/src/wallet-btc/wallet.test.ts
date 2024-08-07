@@ -1,42 +1,19 @@
 import BitcoinLikeWallet from "./wallet";
-import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
-import { Account, SerializedAccount } from "./account";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "./account";
 import Xpub from "./xpub";
 import BitcoinLikeStorage from "./storage";
 import BitcoinLikeExplorer from "./explorer";
-import cryptoFactory from "./crypto/factory";
 import { PickingStrategy } from "./pickingstrategies/types";
 import BigNumber from "bignumber.js";
-import { TX, Address, Output, IStorage } from "./storage/types";
+import { TX, Address, Output } from "./storage/types";
 import { DerivationModes, TransactionInfo } from "./types";
-import { Currency, ICrypto } from "./crypto/types";
-// import { Currency } from '@ledgerhq/types';
+import { ICrypto } from "./crypto/types";
 
-// jest.mock('./xpub');
-// jest.mock('./storage');
 jest.mock("./explorer");
 jest.mock("./crypto/factory");
 
 const DERIVATION_MODE = DerivationModes.TAPROOT;
-
-// const mockStorage = {
-//   addAddress: jest.fn(),
-//   hasPendingTx: jest.fn().mockReturnValue(false),
-//   removePendingTxs: jest.fn(),
-//   appendTxs: jest.fn(),
-//   hasTx: jest.fn().mockReturnValue(true),
-//   getUniquesAddresses: jest.fn(),
-//   getAddressUnspentUtxos: jest.fn().mockReturnValue([]),
-//   getTx: jest.fn(),
-//   getLastConfirmedTxBlock: jest.fn(),
-//   removeTxs: jest.fn(),
-//   getHighestBlockHeightAndHash: jest.fn(),
-//   getLastUnconfirmedTx: jest.fn(),
-//   export: jest.fn(),
-//   load: jest.fn(),
-//   exportSync: jest.fn(),
-//   loadSync: jest.fn(),
-// } as unknown as jest.Mocked<IStorage>;
 
 const mockStorage = new BitcoinLikeStorage();
 
@@ -61,7 +38,6 @@ describe("BitcoinLikeWallet", () => {
       type: "CryptoCurrency",
       id: "bitcoin",
       name: "Bitcoin",
-      // other necessary properties
       family: "bitcoin",
       coinType: 0,
       scheme: "native_segwit",
@@ -89,23 +65,19 @@ describe("BitcoinLikeWallet", () => {
         xpub: "test-xpub",
         path: "test-path",
         index: 0,
-        currency: "bitcoin", //mockCryptoCurrency,
+        currency: "bitcoin",
         network: "mainnet",
         derivationMode: DERIVATION_MODE,
       },
-      // existing imports...
-
-      // existing code...
 
       xpub: new Xpub({
-        storage: mockStorage, //new BitcoinLikeStorage(),// mockStorage,
+        storage: mockStorage,
         explorer: new BitcoinLikeExplorer({ cryptoCurrency: mockCryptoCurrency }),
         crypto: mockCrypto,
         xpub: "test-xpub",
         derivationMode: DERIVATION_MODE,
       }),
     } as Account;
-    // console.log({mockAccountStart: mockAccount})
   });
 
   afterEach(() => {
@@ -164,7 +136,6 @@ describe("BitcoinLikeWallet", () => {
 
   test("getAccountTransactions", async () => {
     const txs = { txs: [{ hash: "tx1" }, { hash: "tx2" }] as TX[] };
-    console.log({ mockAccount: mockAccount });
     mockAccount.xpub.storage.export = jest.fn().mockResolvedValue(txs);
 
     const transactions = await wallet.getAccountTransactions(mockAccount);
@@ -218,7 +189,6 @@ describe("BitcoinLikeWallet", () => {
       .mockReturnValue(Buffer.from("op-return-script"));
 
     const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, 1, []);
-    console.log({maxSpendable})
 
     expect(mockAccount.xpub.getXpubAddresses).toHaveBeenCalled();
     expect(mockAccount.xpub.getAccountAddresses).toHaveBeenCalledWith(1);
@@ -288,6 +258,4 @@ describe("BitcoinLikeWallet", () => {
     });
     expect(transactionInfo).toEqual(txInfo);
   });
-
-  // Add similar tests for other methods...
 });
