@@ -114,7 +114,7 @@ describe("Trustchain SDK", () => {
     expect(await jsonRequestContent(apiMocks.postDerivation)).toEqual([
       oneMemberTree.serialize()["m/0'/16'/0'"],
     ]);
-    expect(await jsonRequestContent(apiMocks.putCommands)).toEqual([]);
+    expect(apiMocks.putCommands).not.toHaveBeenCalled();
 
     expect(HWDeviceProviderMethodsMocks.withJwt).toHaveBeenCalled();
     expect(HWDeviceProviderMethodsMocks.withHw).toHaveBeenCalledTimes(2);
