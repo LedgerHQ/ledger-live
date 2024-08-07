@@ -1,5 +1,15 @@
 # @ledgerhq/live-wallet
 
+## 0.5.0-nightly.5
+
+### Patch Changes
+
+- [#7517](https://github.com/LedgerHQ/ledger-live/pull/7517) [`277648c`](https://github.com/LedgerHQ/ledger-live/commit/277648cbc0b58694a49d8d929c8ec0b89986f4cf) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LIVE-WALLET - Added unit tests to cover the createWalletSyncWatchLoop
+
+- Updated dependencies [[`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f)]:
+  - @ledgerhq/cryptoassets@13.3.0-nightly.3
+  - @ledgerhq/coin-framework@0.17.0-nightly.3
+
 ## 0.5.0-nightly.4
 
 ### Minor Changes

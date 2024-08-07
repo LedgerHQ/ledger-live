@@ -1,5 +1,34 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.7
+
+### Patch Changes
+
+- [#7523](https://github.com/LedgerHQ/ledger-live/pull/7523) [`91374dd`](https://github.com/LedgerHQ/ledger-live/commit/91374dde37f0ec3b63817254b9e26c1eb02ed981) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - show error when balance minus network fees is a negative value
+
+- Updated dependencies [[`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`277648c`](https://github.com/LedgerHQ/ledger-live/commit/277648cbc0b58694a49d8d929c8ec0b89986f4cf)]:
+  - @ledgerhq/cryptoassets@13.3.0-nightly.3
+  - @ledgerhq/live-wallet@0.5.0-nightly.5
+  - @ledgerhq/coin-framework@0.17.0-nightly.3
+  - @ledgerhq/coin-algorand@0.5.4-nightly.3
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.3
+  - @ledgerhq/coin-cardano@0.1.4-nightly.4
+  - @ledgerhq/coin-evm@2.1.4-nightly.3
+  - @ledgerhq/coin-icon@0.4.1-nightly.6
+  - @ledgerhq/coin-near@0.5.4-nightly.3
+  - @ledgerhq/coin-polkadot@1.1.2-nightly.3
+  - @ledgerhq/coin-solana@0.7.4-nightly.3
+  - @ledgerhq/coin-stellar@0.2.2-nightly.3
+  - @ledgerhq/coin-tezos@0.5.2-nightly.4
+  - @ledgerhq/coin-ton@0.3.12-nightly.4
+  - @ledgerhq/coin-tron@0.0.4-nightly.4
+  - @ledgerhq/coin-xrp@0.4.2-nightly.3
+  - @ledgerhq/hw-app-eth@6.38.0-nightly.3
+  - @ledgerhq/hw-app-vet@0.2.4-nightly.2
+  - @ledgerhq/live-countervalues@0.2.4-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.3
+  - @ledgerhq/live-nft@0.4.4-nightly.3
+
 ## 34.7.0-nightly.6
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.3.0-nightly.3
+
+### Minor Changes
+
+- [#7507](https://github.com/LedgerHQ/ledger-live/pull/7507) [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding support for polygon ERC20 exchange importing
+
 ## 13.3.0-nightly.2
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/live-nft
 
+## 0.4.4-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f)]:
+  - @ledgerhq/cryptoassets@13.3.0-nightly.3
+  - @ledgerhq/coin-framework@0.17.0-nightly.3
+
 ## 0.4.4-nightly.2
 
 ### Patch Changes
