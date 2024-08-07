@@ -8,7 +8,6 @@ import {
   InvalidAddress,
   MaxFeeTooLow,
   NotEnoughBalance,
-  NotEnoughBalanceInParentAccount,
   NotEnoughGas,
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
@@ -242,18 +241,15 @@ describe("EVM Family", () => {
           );
         });
 
-        it("should detected parent account not having enough fund for a token transaction and have an error", async () => {
+        it("should detect token account not having enough balance for a tx and have an error", async () => {
           const res = await getTransactionStatus(
-            {
-              ...account,
-              balance: new BigNumber(0),
-            },
+            { ...account, subAccounts: [{ ...tokenAccount, balance: new BigNumber(0) }] },
             erc20Transaction,
           );
 
           expect(res.errors).toEqual(
             expect.objectContaining({
-              amount: new NotEnoughBalanceInParentAccount(),
+              amount: new NotEnoughBalance(),
             }),
           );
         });
