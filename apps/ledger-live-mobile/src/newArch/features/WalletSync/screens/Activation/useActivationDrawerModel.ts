@@ -1,10 +1,12 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Steps } from "../../types/Activation";
 import {
   AnalyticsButton,
   AnalyticsPage,
   useLedgerSyncAnalytics,
 } from "../../hooks/useLedgerSyncAnalytics";
+import { useQRCodeHost } from "../../hooks/useQRCodeHost";
+import { Options } from "LLM/features/WalletSync/types/Activation";
 
 type Props = {
   isOpen: boolean;
@@ -15,9 +17,13 @@ type Props = {
 const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
+  const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
 
-  const hasCustomHeader = currentStep === Steps.QrCodeMethod;
-  const canGoBack = currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation;
+  const hasCustomHeader = useMemo(() => currentStep === Steps.QrCodeMethod, [currentStep]);
+  const canGoBack = useMemo(
+    () => currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation,
+    [currentStep, startingStep],
+  );
 
   const getPreviousStep = useCallback(
     (step: Steps): Steps => {
@@ -44,12 +50,20 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   };
 
   const resetStep = () => setCurrentStep(startingStep);
+  const resetOption = () => setCurrentOption(Options.SCAN);
   const goBackToPreviousStep = () => setCurrentStep(getPreviousStep(currentStep));
 
   const onCloseDrawer = () => {
     resetStep();
+    resetOption();
     handleClose();
   };
+
+  const { url, error, isLoading, pinCode } = useQRCodeHost({
+    setCurrentStep,
+    currentStep,
+    currentOption,
+  });
 
   return {
     isOpen,
@@ -61,6 +75,9 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     onCloseDrawer,
     handleClose,
     goBackToPreviousStep,
+    qrProcess: { url, error, isLoading, pinCode },
+    currentOption,
+    setCurrentOption,
   };
 };
 

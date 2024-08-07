@@ -6,7 +6,12 @@ export enum Options {
 export type OptionsType = Options.SCAN | Options.SHOW_QR;
 
 export enum Steps {
+  AddAccountMethod = "AddAccountMethod",
+
   Activation = "Activation",
   ChooseSyncMethod = "ChooseSyncMethod",
   QrCodeMethod = "QrCodeMethod",
+  PinDisplay = "PinDisplay",
+  PinInput = "PinInput",
+  SyncError = "SyncError",
 }
