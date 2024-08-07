@@ -99,7 +99,6 @@ describe("buildTransaction", () => {
 
   it("returns a built transaction in Stellar format when useAllAmount", async () => {
     // Given
-    const sender = "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ";
     const account = createFixtureAccount({
       freshAddress: sender,
       balance: BigNumber(600239412),
@@ -150,9 +149,7 @@ describe("buildTransaction", () => {
 
     // Then
     expect(builtTransaction.fee).toEqual("1");
-    expect(builtTransaction.source).toEqual(
-      "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ",
-    );
+    expect(builtTransaction.source).toEqual(sender);
     expect(builtTransaction.operations).toHaveLength(1);
     const operation = builtTransaction.operations[0];
     expect(operation.type).toEqual("payment");
@@ -181,9 +178,7 @@ describe("buildTransaction", () => {
 
     // Then
     expect(builtTransaction.fee).toEqual("1");
-    expect(builtTransaction.source).toEqual(
-      "GCTS5ANSL6YCXR2M4XXM5BPN34UUT3M2VUJWVYOX5EMSHZC3T7O5Z6NZ",
-    );
+    expect(builtTransaction.source).toEqual(sender);
     expect(builtTransaction.operations).toHaveLength(1);
     expect(builtTransaction.memo.type).toEqual("text");
     expect(builtTransaction.memo.value).toEqual("Hello");
