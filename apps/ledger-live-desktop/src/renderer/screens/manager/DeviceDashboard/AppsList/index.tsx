@@ -27,6 +27,7 @@ import NoResults from "~/renderer/icons/NoResults";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import camelCase from "lodash/camelCase";
+import { getEnv } from "@ledgerhq/live-env";
 
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
@@ -168,6 +169,7 @@ const AppsList = ({
       addAccount,
     ],
   );
+
   return (
     <>
       <InstallSuccessBanner
@@ -177,7 +179,7 @@ const AppsList = ({
       />
       <UpdateAllApps
         optimisticState={optimisticState}
-        update={update}
+        update={getEnv("MOCK_APP_UPDATE") ? device : update}
         state={state}
         dispatch={dispatch}
         isIncomplete={isIncomplete}
