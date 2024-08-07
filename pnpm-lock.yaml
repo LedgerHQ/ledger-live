@@ -2522,6 +2522,9 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^8.4.1
+        version: 8.4.1
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -57280,7 +57283,7 @@ snapshots:
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.38)
       postcss-normalize: 10.0.1(browserslist@4.23.0)(postcss@8.4.38)
       postcss-preset-env: 7.8.3(postcss@8.4.38)
-      semver: 7.6.2
+      semver: 7.5.4
       webpack: 5.89.0
     transitivePeerDependencies:
       - browserslist
