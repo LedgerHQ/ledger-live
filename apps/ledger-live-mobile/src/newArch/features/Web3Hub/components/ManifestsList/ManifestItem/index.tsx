@@ -16,35 +16,40 @@ type ItemStyle = {
   backgroundColor: string;
 };
 
-function getItemStyle(key: AppBranch | "default", colors: Theme["colors"]) {
-  const styles: { [key: string]: ItemStyle } = {
-    soon: {
-      color: colors.grey,
-      badgeColor: colors.grey,
-      borderColor: colors.lightFog,
-      backgroundColor: colors.lightFog,
-    },
-    experimental: {
-      color: colors.darkBlue,
-      badgeColor: colors.orange,
-      borderColor: colors.orange,
-      backgroundColor: "transparent",
-    },
-    debug: {
-      color: colors.darkBlue,
-      badgeColor: colors.grey,
-      borderColor: colors.grey,
-      backgroundColor: "transparent",
-    },
-    default: {
-      color: colors.darkBlue,
-      badgeColor: colors.live,
-      borderColor: colors.live,
-      backgroundColor: "transparent",
-    },
-  };
+function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
+  switch (branch) {
+    case "soon":
+      return {
+        color: colors.grey,
+        badgeColor: colors.grey,
+        borderColor: colors.lightFog,
+        backgroundColor: colors.lightFog,
+      };
 
-  return styles[key] || styles.default;
+    case "experimental":
+      return {
+        color: colors.darkBlue,
+        badgeColor: colors.orange,
+        borderColor: colors.orange,
+        backgroundColor: "transparent",
+      };
+
+    case "debug":
+      return {
+        color: colors.darkBlue,
+        badgeColor: colors.grey,
+        borderColor: colors.grey,
+        backgroundColor: "transparent",
+      };
+
+    default:
+      return {
+        color: colors.darkBlue,
+        badgeColor: colors.live,
+        borderColor: colors.live,
+        backgroundColor: "transparent",
+      };
+  }
 }
 
 export default function ManifestItem({
@@ -66,7 +71,7 @@ export default function ManifestItem({
   }, [isDisabled, onPress, manifest]);
 
   const { color, badgeColor, borderColor, backgroundColor } = useMemo(
-    () => getItemStyle(manifest.branch, colors),
+    () => getBranchStyle(manifest.branch, colors),
     [colors, manifest.branch],
   );
 
@@ -119,14 +124,18 @@ export default function ManifestItem({
                   t(`platform.catalog.branch.${manifest.branch}`, {
                     defaultValue: manifest.branch,
                   }),
-                  getItemStyle(manifest.branch, colors),
+                  { badgeColor, borderColor, backgroundColor },
                 )}
               {manifest.categories.includes("clear signing") &&
                 label(
                   t(`web3hub.manifestsList.section.clearSigning`, {
                     defaultValue: "Clear Signing",
                   }),
-                  getItemStyle("default", colors),
+                  {
+                    badgeColor: colors.live,
+                    borderColor: colors.live,
+                    backgroundColor: "transparent",
+                  },
                 )}
             </Flex>
           </Flex>
