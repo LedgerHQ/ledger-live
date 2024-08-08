@@ -5,7 +5,7 @@ import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 import { useTranslation } from "react-i18next";
 
 export interface Props {
-  categories: Pick<Categories, "categories" | "setSelected">;
+  categories: Pick<Categories, "categories" | "setSelected" | "selected">;
   search: Pick<SearchType, "input" | "onChange">;
 }
 
@@ -21,6 +21,8 @@ export function Search({ categories, search }: Props) {
       })),
     [categories.categories, t],
   );
+
+  const selected = options.find(opt => opt.value === categories.selected);
 
   const onChange = useCallback(
     ({ value }: (typeof options)[number]) => {
@@ -44,7 +46,7 @@ export function Search({ categories, search }: Props) {
         <SelectInput
           isDisabled={!!search.input.length}
           options={options}
-          defaultValue={options[0]}
+          defaultValue={selected || options[0]}
           // @ts-expect-error another SelectInput hell
           onChange={onChange}
           styles={{ container: baseStyles => ({ ...baseStyles, width: 240 }) }}

@@ -10,6 +10,7 @@ import {
   useRecentlyUsed,
   RecentlyUsedDB,
   DisclaimerRaw,
+  Categories,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { SearchRaw, useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
@@ -23,10 +24,13 @@ import { closePlatformAppDrawer, openPlatformAppDisclaimerDrawer } from "~/rende
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
-export function useCatalog(recentlyUsedDB: RecentlyUsedDB) {
+export function useCatalog(
+  recentlyUsedDB: RecentlyUsedDB,
+  initialCategory?: Categories["categories"][number],
+) {
   const completeManifests = useManifests({ visibility: ["complete"] });
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
-  const categories = useCategories(completeManifests);
+  const categories = useCategories(completeManifests, initialCategory);
   const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
   const { state: localLiveApps } = useLocalLiveAppContext();
 
