@@ -3,7 +3,6 @@ import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import LoadingIndicator from "LLM/features/Web3Hub/components/ManifestsList/LoadingIndicator";
 import Disclaimer, { useDisclaimerViewModel } from "LLM/features/Web3Hub/components/Disclaimer";
@@ -39,7 +38,6 @@ const renderItem = ({
 
 export default function SearchList({ navigation, search, onScroll, pt = 0 }: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const { data, isLoading, onEndReached } = useSearchListViewModel(search);
 
   const goToApp = useCallback(
@@ -58,8 +56,7 @@ export default function SearchList({ navigation, search, onScroll, pt = 0 }: Pro
       <Disclaimer disclaimer={disclaimer} />
       <AnimatedFlashList
         contentContainerStyle={{
-          paddingTop: pt ? pt + insets.top : pt,
-          paddingBottom: insets.bottom,
+          paddingTop: pt,
         }}
         testID="web3hub-manifests-search-scroll"
         keyExtractor={keyExtractor}

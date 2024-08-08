@@ -35,7 +35,7 @@ export default function Disclaimer({
 
       {description ? (
         <Flex mt={6}>
-          <Text fontSize={14} lineHeight={"22px"} color="smoke">
+          <Text numberOfLines={12} fontSize={14} lineHeight={"22px"} color="smoke">
             {description}
           </Text>
         </Flex>

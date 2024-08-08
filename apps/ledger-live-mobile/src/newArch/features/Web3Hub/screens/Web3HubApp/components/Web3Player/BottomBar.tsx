@@ -1,15 +1,18 @@
-import React, { RefObject, useCallback, useContext } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import React, { RefObject, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
-import Animated, { useAnimatedStyle, interpolate, Extrapolation } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  Extrapolation,
+  SharedValue,
+} from "react-native-reanimated";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { HeaderContext } from "LLM/features/Web3Hub/HeaderContext";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import Button from "~/components/Button";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
@@ -18,7 +21,6 @@ import { useMaybeAccountName } from "~/reducers/wallet";
 
 const BAR_HEIGHT = 60;
 export const TOTAL_HEADER_HEIGHT = BAR_HEIGHT;
-
 const ANIMATION_HEIGHT = TOTAL_HEADER_HEIGHT;
 const LAYOUT_RANGE = [0, ANIMATION_HEIGHT];
 
@@ -27,6 +29,7 @@ type BottomBarProps = {
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
   currentAccountHistDb: CurrentAccountHistDB;
+  layoutY: SharedValue<number>;
 };
 
 function IconButton({
@@ -55,8 +58,8 @@ export function BottomBar({
   webviewAPIRef,
   webviewState,
   currentAccountHistDb,
+  layoutY,
 }: BottomBarProps) {
-  const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
   const shouldDisplaySelectAccount = !!manifest.dapp;
@@ -83,8 +86,6 @@ export function BottomBar({
 
   const currentAccountName = useMaybeAccountName(currentAccount);
 
-  const { layoutY } = useContext(HeaderContext);
-
   const heightStyle = useAnimatedStyle(() => {
     if (!layoutY) return {};
 
@@ -97,8 +98,7 @@ export function BottomBar({
 
     return {
       backgroundColor: colors.background,
-      paddingBottom: insets.bottom,
-      height: headerHeight + insets.bottom,
+      height: headerHeight,
     };
   });
 

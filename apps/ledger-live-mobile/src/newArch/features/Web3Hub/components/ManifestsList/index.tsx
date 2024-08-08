@@ -2,7 +2,6 @@ import React, { ComponentProps, useCallback, useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
@@ -42,7 +41,6 @@ const renderItem = ({
 
 export default function ManifestsList({ navigation, onScroll, title, pt = 0, pb = 0 }: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const [selectedCategory, selectCategory] = useState("all");
   const { data, isLoading, onEndReached } = useManifestsListViewModel(selectedCategory);
 
@@ -65,8 +63,8 @@ export default function ManifestsList({ navigation, onScroll, title, pt = 0, pb 
       <Disclaimer disclaimer={disclaimer} />
       <AnimatedFlashList
         contentContainerStyle={{
-          paddingTop: pt ? pt + insets.top : pt,
-          paddingBottom: pb + insets.bottom,
+          paddingTop: pt,
+          paddingBottom: pb,
         }}
         ListHeaderComponent={
           <>

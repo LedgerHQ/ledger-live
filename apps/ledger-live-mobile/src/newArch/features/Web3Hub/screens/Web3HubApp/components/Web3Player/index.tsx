@@ -1,5 +1,6 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View, BackHandler, Platform } from "react-native";
+import { SharedValue } from "react-native-reanimated";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -15,9 +16,10 @@ type Props = {
   manifest: AppManifest;
   inputs?: Record<string, string | undefined>;
   onScroll?: ComponentProps<typeof Web3AppWebview>["onScroll"];
+  layoutY: SharedValue<number>;
 };
 
-const WebPlatformPlayer = ({ manifest, inputs, onScroll }: Props) => {
+const WebPlatformPlayer = ({ manifest, inputs, onScroll, layoutY }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
@@ -71,6 +73,7 @@ const WebPlatformPlayer = ({ manifest, inputs, onScroll }: Props) => {
         currentAccountHistDb={currentAccountHistDb}
         webviewAPIRef={webviewAPIRef}
         webviewState={webviewState}
+        layoutY={layoutY}
       />
       <InfoPanel
         name={manifest.name}

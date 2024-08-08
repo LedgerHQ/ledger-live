@@ -120,7 +120,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             currencies: safeCurrencyIds,
             includeTokens,
           });
-          // handle no curencies selected case
+          // handle no currencies selected case
           const cryptoCurrencyIds =
             safeCurrencyIds && safeCurrencyIds.length > 0
               ? safeCurrencyIds
