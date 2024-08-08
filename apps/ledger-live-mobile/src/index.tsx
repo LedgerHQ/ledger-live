@@ -1,5 +1,3 @@
-import "./polyfill";
-import "./live-common-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
