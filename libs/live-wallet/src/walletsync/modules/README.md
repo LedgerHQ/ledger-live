@@ -40,7 +40,6 @@ const manager: WalletSyncDataManager<
       return { hasChanges: false };
     }
 
-    // TODO: we should implement a smarter diffing here
     // let hasChanges = false;
     // if (!hasChanges) {
     //   return { hasChanges: false };
