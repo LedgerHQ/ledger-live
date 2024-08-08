@@ -3,11 +3,13 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { QuickActionButtonProps, QuickActionList } from "@ledgerhq/native-ui";
+import { EntryOf } from "~/types/helpers";
 import useQuickActions from "../../hooks/useQuickActions";
+import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 
 export const MarketQuickActions = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
+  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const { quickActionsList } = useQuickActions();
 
   const quickActionsData: QuickActionButtonProps[] = useMemo(
@@ -21,7 +23,10 @@ export const MarketQuickActions = () => {
           textVariant: "small",
           Icon: action.icon,
           children: t(QUICK_ACTION_DATA[key].name),
-          onPress: () => navigation.navigate(...(action.route as [string, object?])),
+          onPress: () =>
+            navigation.navigate<keyof BaseNavigatorStackParamList>(
+              ...(action.route as EntryOf<BaseNavigatorStackParamList>),
+            ),
           disabled: action.disabled,
         };
       }),
