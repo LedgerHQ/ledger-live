@@ -7,6 +7,7 @@ import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import AddAccountsNavigator from "~/components/RootNavigator/AddAccountsNavigator";
 import ImportAccountsNavigator from "~/components/RootNavigator/ImportAccountsNavigator";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const MockComponent = () => {
   const { t } = useTranslation();
@@ -38,10 +39,12 @@ const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
 export function TestButtonPage() {
   return (
-    <Stack.Navigator initialRouteName={ScreenName.MockedAddAssetButton}>
-      <Stack.Screen name={ScreenName.MockedAddAssetButton} component={MockComponent} />
-      <Stack.Screen name={NavigatorName.AddAccounts} component={AddAccountsNavigator} />
-      <Stack.Screen name={NavigatorName.ImportAccounts} component={ImportAccountsNavigator} />
-    </Stack.Navigator>
+    <QueryClientProvider client={new QueryClient()}>
+      <Stack.Navigator initialRouteName={ScreenName.MockedAddAssetButton}>
+        <Stack.Screen name={ScreenName.MockedAddAssetButton} component={MockComponent} />
+        <Stack.Screen name={NavigatorName.AddAccounts} component={AddAccountsNavigator} />
+        <Stack.Screen name={NavigatorName.ImportAccounts} component={ImportAccountsNavigator} />
+      </Stack.Navigator>
+    </QueryClientProvider>
   );
 }

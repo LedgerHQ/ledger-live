@@ -9,6 +9,8 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKey } from "./type.hooks";
 
 interface Props {
   setCurrentStep: (step: Steps) => void;
@@ -17,6 +19,7 @@ interface Props {
 }
 
 export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Props) {
+  const queryClient = useQueryClient();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const sdk = useTrustchainSdk();
@@ -36,8 +39,6 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
   const startQRCodeProcessing = useCallback(() => {
     if (!trustchain || !memberCredentials || isLoading) return;
 
-    let hasCompleted = false;
-
     setError(null);
     setIsLoading(true);
     createQRCodeHostInstance({
@@ -55,7 +56,6 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
       },
       addMember: async member => {
         await sdk.addMember(trustchain, memberCredentials, member);
-        hasCompleted = true;
         return trustchain;
       },
     })
@@ -65,17 +65,17 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
           return;
         }
         setError(e);
+        throw e;
       })
       .then(() => {
-        if (!error && hasCompleted)
-          navigation.navigate(NavigatorName.WalletSync, {
-            screen: ScreenName.WalletSyncSuccess,
-            params: {
-              created: false,
-            },
-          });
-      })
-      .finally(() => {
+        queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
+        navigation.navigate(NavigatorName.WalletSync, {
+          screen: ScreenName.WalletSyncSuccess,
+          params: {
+            created: false,
+          },
+        });
+
         setUrl(null);
         setPinCode(null);
         setIsLoading(false);
@@ -87,7 +87,7 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
     trustchainApiBaseUrl,
     setCurrentStep,
     sdk,
-    error,
+    queryClient,
     navigation,
   ]);
 

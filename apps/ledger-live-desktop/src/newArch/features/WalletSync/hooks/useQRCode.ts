@@ -8,8 +8,11 @@ import { trustchainSelector, memberCredentialsSelector } from "@ledgerhq/trustch
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKey } from "./type.hooks";
 
 export function useQRCode() {
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
@@ -29,8 +32,6 @@ export function useQRCode() {
   const startQRCodeProcessing = useCallback(() => {
     if (!trustchain || !memberCredentials) return;
 
-    let hasCompleted = false;
-
     setError(null);
     setIsLoading(true);
     createQRCodeHostInstance({
@@ -44,7 +45,6 @@ export function useQRCode() {
       },
       addMember: async member => {
         await sdk.addMember(trustchain, memberCredentials, member);
-        hasCompleted = true;
         return trustchain;
       },
     })
@@ -53,17 +53,17 @@ export function useQRCode() {
           dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
         }
         setError(e);
+        throw e;
       })
       .then(() => {
-        if (hasCompleted) dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
-      })
-      .finally(() => {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
+        queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
         setUrl(null);
         dispatch(setQrCodePinCode(null));
         setIsLoading(false);
         setError(null);
       });
-  }, [trustchain, memberCredentials, trustchainApiBaseUrl, dispatch, sdk]);
+  }, [trustchain, memberCredentials, trustchainApiBaseUrl, dispatch, sdk, queryClient]);
 
   return {
     url,
