@@ -49,6 +49,13 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     setCurrentStep(Steps.QrCodeMethod);
   };
 
+  // That means the url as be stored in the store
+  const onQrCodeScanned = (data: string) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
+    //setCurrentStep(Steps.PinCodeInput);
+  };
+
   const resetStep = () => setCurrentStep(startingStep);
   const resetOption = () => setCurrentOption(Options.SCAN);
   const goBackToPreviousStep = () => setCurrentStep(getPreviousStep(currentStep));
@@ -72,6 +79,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     canGoBack,
     navigateToChooseSyncMethod,
     navigateToQrCodeMethod,
+    onQrCodeScanned,
     onCloseDrawer,
     handleClose,
     goBackToPreviousStep,

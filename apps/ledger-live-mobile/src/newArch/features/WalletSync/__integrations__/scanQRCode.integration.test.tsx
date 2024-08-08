@@ -11,6 +11,7 @@ describe("scanQRCode", () => {
     await user.press(await screen.findByText(/ledger sync/i));
     await user.press(await screen.findByText(/already created a key?/i));
     await user.press(await screen.findByText(/scan a qr code/i));
-    await expect(await screen.findByText(/show qr/i)).toBeVisible();
+    await expect(screen.queryAllByText(/show qr/i)).toHaveLength(2);
+    await expect(screen.getByTestId("ws-scan-camera")).toBeVisible();
   });
 });

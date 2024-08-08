@@ -6810,7 +6810,16 @@
           }
         },
         "scan": {
-          "title": "Scan"
+          "title": "Scan",
+          "description": "Scan QR code",
+          "explanation": {
+            "title": "Scan and synchronize your accounts using another Ledger Live app",
+            "steps": {
+              "step1": "Open the Ledger Live app you want to sync",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0> <1>></1> <0>Show QR</0>",
+              "step3": "Scan QR code until loader hits 100%."
+            }
+          }
         },
         "pinCode": {
           "title": "Enter your code",

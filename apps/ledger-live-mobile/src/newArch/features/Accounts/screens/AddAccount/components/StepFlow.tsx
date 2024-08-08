@@ -2,13 +2,13 @@ import React from "react";
 import SelectAddAccountMethod from "./SelectAddAccountMethod";
 import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
+import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
 import { TrackScreen } from "~/analytics";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AnalyticsPage } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 import SyncError from "LLM/features/WalletSync/screens/Synchronize/SyncError";
 import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeDisplay";
-import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
 
 type Props = {
   currentStep: Steps;
@@ -19,6 +19,7 @@ type Props = {
   currentOption: Options;
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
+  onQrCodeScanned: (data: string) => void;
   qrProcess: {
     url: string | null;
     error: Error | null;
@@ -35,6 +36,7 @@ const StepFlow = ({
   currentOption,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
+  onQrCodeScanned,
   qrProcess,
 }: Props) => {
   const getScene = () => {
@@ -58,7 +60,13 @@ const StepFlow = ({
           </>
         );
       case Steps.QrCodeMethod:
-        return <QrCodeMethod currentOption={currentOption} setSelectedOption={setCurrentOption} />;
+        return (
+          <QrCodeMethod
+            onQrCodeScanned={onQrCodeScanned}
+            currentOption={currentOption}
+            setSelectedOption={setCurrentOption}
+          />
+        );
 
       case Steps.PinDisplay:
         return qrProcess.pinCode ? <PinCodeDisplay pinCode={qrProcess.pinCode} /> : null;
