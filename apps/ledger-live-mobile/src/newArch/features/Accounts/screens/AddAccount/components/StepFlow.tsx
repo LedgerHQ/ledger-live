@@ -9,8 +9,8 @@ import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 import SyncError from "LLM/features/WalletSync/screens/Synchronize/SyncError";
 import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeDisplay";
 import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
-import { useInitMemberCredentials } from "~/newArch/features/WalletSync/hooks/useInitMemberCredentials";
-import { useSyncWithQrCode } from "~/newArch/features/WalletSync/hooks/useSyncWithQrCode";
+import { useInitMemberCredentials } from "LLM/features/WalletSync/hooks/useInitMemberCredentials";
+import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCode";
 
 type Props = {
   currentStep: Steps;

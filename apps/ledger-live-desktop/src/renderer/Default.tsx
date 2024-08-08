@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
-import { WalletSyncProvider } from "~/newArch/features/WalletSync/components/WalletSyncContext";
+import { WalletSyncProvider } from "LLD/features/WalletSync/components/WalletSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
 import Box from "~/renderer/components/Box/Box";
 import { useListenToHidDevices } from "./hooks/useListenToHidDevices";

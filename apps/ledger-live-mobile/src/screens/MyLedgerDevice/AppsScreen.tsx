@@ -43,7 +43,7 @@ import NoResultsFound from "~/icons/NoResultsFound";
 import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "~/components/Search";
-import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdate/components/UpdateBanner";
+import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";

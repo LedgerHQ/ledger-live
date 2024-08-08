@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { logDrawer } from "~/newArch/components/QueuedDrawer/utils/logDrawer";
+import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useGetMembers } from "../../hooks/useGetMembers";
 import { UseQueryResult } from "@tanstack/react-query";
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/trustchain/types";
