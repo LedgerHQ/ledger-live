@@ -12,6 +12,7 @@ import ManifestItem from "./ManifestItem";
 import CategoriesList from "./CategoriesList";
 import LoadingIndicator from "./LoadingIndicator";
 import useManifestsListViewModel from "./useManifestsListViewModel";
+import HorizontalList from "./HorizontalList";
 
 type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
 
@@ -43,6 +44,8 @@ export default function ManifestsList({ navigation, onScroll, title, pt = 0, pb 
   const { t } = useTranslation();
   const [selectedCategory, selectCategory] = useState("all");
   const { data, isLoading, onEndReached } = useManifestsListViewModel(selectedCategory);
+  const { data: clearSigningApps, isLoading: isCSAppsLoading, onEndReached: onEndReachedCSApps } = useManifestsListViewModel("clear signing");
+
 
   const goToApp = useCallback(
     (manifestId: string) => {
@@ -68,13 +71,25 @@ export default function ManifestsList({ navigation, onScroll, title, pt = 0, pb 
         }}
         ListHeaderComponent={
           <>
+          {
+            clearSigningApps && clearSigningApps.length > 0 ?
+            <HorizontalList
+              title={t(`web3hub.manifestsList.label.clearSigning`, {
+                defaultValue: "Clear Signing",
+              })}
+              data={clearSigningApps} 
+              extraData={{ onPress: goToApp }} 
+              isLoading={isCSAppsLoading} 
+              onEndReached={onEndReachedCSApps}            
+            /> 
+            : null
+          }
             <Text mt={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
               {title ?? t("web3hub.components.manifestsList.title")}
             </Text>
             <Text mt={2} mb={5} numberOfLines={1} variant="body" mx={5} accessibilityRole="header">
               {t("web3hub.components.manifestsList.description")}
             </Text>
-
             <View style={{ height: 32, marginBottom: 2 }}>
               <CategoriesList selectedCategory={selectedCategory} selectCategory={selectCategory} />
             </View>

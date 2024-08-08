@@ -116,7 +116,9 @@ export default function ManifestItem({
               )}
               {manifest.categories.includes("clear signing") &&
               label(
-                "clear signing",
+                t(`web3hub.manifestsList.label.clearSigning`, {
+                  defaultValue: "Clear Signing",
+                }),
                 getItemStyle("default", colors)
               )}
           </Flex>
