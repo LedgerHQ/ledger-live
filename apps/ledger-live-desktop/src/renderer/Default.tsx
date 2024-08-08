@@ -333,6 +333,11 @@ export default function Default() {
                                 render={withSuspense(PlatformCatalog)}
                                 exact
                               />
+                              <Route
+                                path="/platform?category=:category"
+                                render={withSuspense(PlatformCatalog)}
+                                exact
+                              />
                               <Route path="/platform/:appId?" component={LiveApp} />
                               <Route path="/earn" render={withSuspense(Earn)} />
                               <Route
