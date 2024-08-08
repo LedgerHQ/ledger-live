@@ -123,7 +123,7 @@ export default function ManifestItem({
                 )}
               {manifest.categories.includes("clear signing") &&
                 label(
-                  t(`web3hub.manifestsList.label.clearSigning`, {
+                  t(`web3hub.manifestsList.section.clearSigning`, {
                     defaultValue: "Clear Signing",
                   }),
                   getItemStyle("default", colors),
