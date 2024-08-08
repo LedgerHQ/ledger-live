@@ -53,6 +53,15 @@ export function EvmStakingDrawerProvider({
     }
   }, [manifest, provider, redirectIfOneProvider]);
 
+  const staderEthPromotionEndTime = new Date("2024-11-01").valueOf(); //Promo ends October 31, 2024
+  const isStaderEthPromotionValid =
+    provider.id === "stader-eth" && Date.now().valueOf() < staderEthPromotionEndTime;
+
+  const description =
+    isStaderEthPromotionValid && i18n.exists(`stake.ethereum.providers.${provider.id}.promo`)
+      ? t(`stake.ethereum.providers.${provider.id}.promo`)
+      : t(`stake.ethereum.providers.${provider.id}.description`);
+
   return (
     <TouchableOpacity onPress={providerPress}>
       <Flex flexDirection="row" columnGap={16}>
@@ -66,7 +75,7 @@ export function EvmStakingDrawerProvider({
           </Flex>
           <Flex rowGap={12}>
             <Text variant="paragraph" lineHeight="20px" color="neutral.c70">
-              {t(`stake.ethereum.providers.${provider.id}.description`)}
+              {description}
             </Text>
           </Flex>
         </Flex>

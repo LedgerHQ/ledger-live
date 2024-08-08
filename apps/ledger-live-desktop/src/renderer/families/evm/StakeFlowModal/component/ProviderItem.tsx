@@ -55,6 +55,15 @@ const ProviderItem = ({ provider, stakeOnClick, redirectIfOnlyProvider }: Props)
     if (manifest) stakeOnClick({ provider, manifest });
   }, [provider, stakeOnClick, manifest]);
 
+  const staderEthPromotionEndTime = new Date("2024-11-01").valueOf(); //Promo ends October 31, 2024
+  const isEthPromotionValid =
+    provider.id === "stader-eth" && Date.now().valueOf() < staderEthPromotionEndTime;
+
+  const description =
+    isEthPromotionValid && i18n.exists(`ethereum.stake.${provider.id}.promo`)
+      ? t(`ethereum.stake.${provider.id}.promo`)
+      : t(`ethereum.stake.${provider.id}.description`);
+
   return (
     <Container
       pl={3}
@@ -81,7 +90,7 @@ const ProviderItem = ({ provider, stakeOnClick, redirectIfOnlyProvider }: Props)
         </Flex>
 
         <Text variant="paragraph" fontSize={13} color="neutral.c70">
-          {t(`ethereum.stake.${provider.id}.description`)}
+          {description}
         </Text>
       </Flex>
       <Flex width={40} justifyContent="center" alignItems="center">
