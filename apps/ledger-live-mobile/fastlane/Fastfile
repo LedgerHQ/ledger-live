@@ -483,8 +483,8 @@ platform :android do
   desc "build APK (local) (cannot be uploaded to Play Store)"
   lane :apk_local do
     build(
-      type: "StagingRelease",
-      apk: true,
+      type: "Release",
+      apk_and_aab: true,
       local: true
     )
   end

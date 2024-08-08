@@ -14,7 +14,7 @@ The following script will ensure a clean local environment for running detox tes
 
 ```bash
 pnpm clean
-pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+pnpm i --filter="live-mobile..." --filter="ledger-live*" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
 pnpm build:llm:deps
 pnpm mobile exec detox clean-framework-cache && pnpm mobile exec detox build-framework-cache
 pnpm mobile e2e:build -c android.emu.debug
@@ -80,7 +80,7 @@ Install dependencies:
 pnpm i
 ```
 
-> There is a filtered version of this command which should be quicker and includes only dependencies needed for LLM: `pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-\*-app..."`.
+> There is a filtered version of this command which should be quicker and includes only dependencies needed for LLM: `pnpm i --filter="live-mobile..." --filter="ledger-live*" --filter="@ledgerhq/dummy-\*-app..."`.
 
 Build dependencies for the mobile app:
 

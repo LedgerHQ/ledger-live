@@ -56,7 +56,7 @@ runs:
       shell: bash
     - name: install and build
       run: |
-        pnpm i --filter="live-cli..." --filter="ledger-live"
+        pnpm i --filter="@ledgerhq/live-cli..." --filter="ledger-live*"
         pnpm build:llc
       shell: bash
     - uses: 8BitJonny/gh-get-current-pr@v2.1.3

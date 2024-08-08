@@ -56,7 +56,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live*" --no-frozen-lockfile --unsafe-perm
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:
@@ -112,7 +112,7 @@ jobs:
           skip-turbo-cache: "false"
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live*" --no-frozen-lockfile --unsafe-perm
       - name: bundle ios and android js
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"

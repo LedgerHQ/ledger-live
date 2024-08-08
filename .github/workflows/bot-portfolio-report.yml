@@ -48,7 +48,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
       - name: install and build
         run: |
-          pnpm i --filter="live-cli..." --filter="ledger-live"
+          pnpm i --filter="@ledgerhq/live-cli..." --filter="ledger-live*"
           pnpm build:llc
         shell: bash
       - name: portfolio

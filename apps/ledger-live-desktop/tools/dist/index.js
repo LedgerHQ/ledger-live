@@ -39,8 +39,8 @@ const rmDir = dir => {
 
 const cleaningTasks = _args => [
   {
-    title: "Remove `node_modules/.cache` folder",
-    task: () => rmDir("node_modules/.cache"),
+    title: "Remove `.turbo/cache` folder",
+    task: () => rmDir(".turbo/cache"),
   },
   {
     title: "Remove `.webpack` folder",

@@ -50,7 +50,7 @@ jobs:
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.10
       - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live*" --no-frozen-lockfile --unsafe-perm
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:
@@ -102,7 +102,7 @@ jobs:
         with:
           ruby-version: 3.3.0
       - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live*" --no-frozen-lockfile --unsafe-perm
 
   report:
     runs-on: ubuntu-latest

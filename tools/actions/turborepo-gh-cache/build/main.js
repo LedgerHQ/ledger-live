@@ -21917,7 +21917,7 @@ var fs = __toESM(require_lib2());
 // src/utils/constants.ts
 var path = __toESM(require("path"));
 var rootDirectory = process.env.GITHUB_WORKSPACE;
-var cacheDirectory = "node_modules/.cache/turbo";
+var cacheDirectory = ".turbo/cache";
 var absoluteCacheDirectory = path.resolve(rootDirectory, cacheDirectory);
 var logFileName = "__turbo_server.log";
 var portFileName = "__turbo_port.txt";
