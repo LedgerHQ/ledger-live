@@ -2,12 +2,8 @@ import { memberCredentialsSelector, setTrustchain } from "@ledgerhq/trustchain/s
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
-import {
-  MemberCredentials,
-  TrustchainResult,
-  TrustchainResultType,
-} from "@ledgerhq/trustchain/types";
+import { useTrustchainSdk } from "./useTrustchainSdk";
+import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export function useAddMember({ device }: { device: Device | null }) {
@@ -52,24 +48,24 @@ export function useAddMember({ device }: { device: Device | null }) {
   };
 
   useEffect(() => {
-    if (!deviceRef.current) {
-      handleMissingDevice();
-    }
-
     const addMember = async () => {
       try {
-        await runWithDevice(deviceRef.current?.deviceId, async transport => {
-          const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
-            transport,
-            memberCredentialsRef.current as MemberCredentials,
-            {
-              onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-              onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-            },
-          );
+        if (!deviceRef.current) {
+          return handleMissingDevice();
+        }
+        if (!memberCredentialsRef.current) {
+          throw new Error("memberCredentials is not set");
+        }
+        const trustchainResult = await sdkRef.current.getOrCreateTrustchain(
+          deviceRef.current.deviceId,
+          memberCredentialsRef.current,
+          {
+            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+          },
+        );
 
-          transitionToNextScreen(trustchainResult);
-        });
+        transitionToNextScreen(trustchainResult);
       } catch (error) {
         setError(error as Error);
       }

@@ -6,8 +6,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
-import { TrustchainMember, Trustchain, MemberCredentials } from "@ledgerhq/trustchain/types";
+import { useTrustchainSdk } from "./useTrustchainSdk";
+import { TrustchainMember, Trustchain } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
 
@@ -51,20 +51,24 @@ export function useRemoveMember({ device, member }: Props) {
   const removeMember = useCallback(
     async (member: TrustchainMember) => {
       try {
-        await runWithDevice(deviceRef.current?.deviceId, async transport => {
-          const newTrustchain = await sdkRef.current.removeMember(
-            transport,
-            trustchainRef.current as Trustchain,
-            memberCredentialsRef.current as MemberCredentials,
-            member,
-            {
-              onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-              onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-            },
-          );
+        if (!deviceRef.current) {
+          throw new Error("Device not found");
+        }
+        if (!trustchainRef.current || !memberCredentialsRef.current) {
+          throw new Error("trustchain or memberCredentials is not set");
+        }
+        const newTrustchain = await sdkRef.current.removeMember(
+          deviceRef.current.deviceId,
+          trustchainRef.current,
+          memberCredentialsRef.current,
+          member,
+          {
+            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+          },
+        );
 
-          transitionToNextScreen(newTrustchain);
-        });
+        transitionToNextScreen(newTrustchain);
       } catch (error) {
         if (error instanceof Error) setError(error);
         if (error instanceof TrustchainNotAllowed) {

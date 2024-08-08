@@ -1,13 +1,18 @@
+import { EMPTY } from "rxjs";
 import { crypto } from "@ledgerhq/hw-trustchain";
 import { getSdk } from ".";
 import { getEnv } from "@ledgerhq/live-env";
 
 test("encryptUserData + decryptUserData", async () => {
-  const sdk = getSdk(false, {
-    applicationId: 16,
-    name: "test",
-    apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
-  });
+  const sdk = getSdk(
+    false,
+    {
+      applicationId: 16,
+      name: "test",
+      apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+    },
+    () => () => EMPTY,
+  );
   const obj = new Uint8Array([1, 2, 3, 4, 5]);
   const keypair = await crypto.randomKeypair();
   const trustchain = {
