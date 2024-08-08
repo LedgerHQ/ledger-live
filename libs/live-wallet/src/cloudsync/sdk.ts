@@ -109,7 +109,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>>
         break;
       }
       case "out-of-sync": {
-        // TODO: LIVE-13634
+        // nothing to do. we will just eventually retry in the watch loop.
       }
     }
   }
