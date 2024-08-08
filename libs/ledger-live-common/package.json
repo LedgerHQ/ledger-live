@@ -148,7 +148,7 @@
     "@ledgerhq/coin-tezos": "workspace:^",
     "@ledgerhq/coin-tron": "workspace:^",
     "@ledgerhq/coin-xrp": "workspace:^",
-    "@ledgerhq/coin-multiversx": "workspace:^",
+    "@ledgerhq/coin-elrond": "workspace:^",
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",

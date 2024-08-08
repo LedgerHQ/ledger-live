@@ -1,5 +1,5 @@
 {
-  "name": "@ledgerhq/coin-multiversx",
+  "name": "@ledgerhq/coin-elrond",
   "version": "0.1.0",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-multiversx",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-elrond",
   "publishConfig": {
     "access": "public"
   },

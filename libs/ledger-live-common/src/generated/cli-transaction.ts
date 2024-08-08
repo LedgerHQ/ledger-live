@@ -23,7 +23,6 @@ export default {
   celo,
   cosmos,
   crypto_org,
-  elrond,
   filecoin,
   hedera,
   stacks,
@@ -40,4 +39,5 @@ export default {
   tron,
   xrp,
   icon,
+  elrond,
 };

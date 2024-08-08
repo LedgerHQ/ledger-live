@@ -19,14 +19,13 @@ import tezos from "@ledgerhq/coin-tezos/specs";
 import tron from "@ledgerhq/coin-tron/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
 import icon from "@ledgerhq/coin-icon/specs";
-import elrond from "@ledgerhq/coin-multiversx/specs";
+import elrond from "@ledgerhq/coin-elrond/specs";
 
 export default {
   casper,
   celo,
   cosmos,
   crypto_org,
-  elrond,
   filecoin,
   hedera,
   internet_computer,
@@ -44,4 +43,5 @@ export default {
   tron,
   xrp,
   icon,
+  elrond,
 };

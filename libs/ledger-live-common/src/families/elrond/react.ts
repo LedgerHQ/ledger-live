@@ -3,8 +3,8 @@ import { useState, useMemo, useEffect } from "react";
 import {
   getCurrentElrondPreloadData,
   getElrondPreloadDataUpdates,
-} from "@ledgerhq/coin-multiversx/preload";
-import { randomizeProviders } from "@ledgerhq/coin-multiversx/helpers/randomizeProviders";
+} from "@ledgerhq/coin-elrond/preload";
+import { randomizeProviders } from "@ledgerhq/coin-elrond/helpers/randomizeProviders";
 import type { ElrondProvider } from "./types";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS, MIN_DELEGATION_AMOUNT } from "./constants";
 

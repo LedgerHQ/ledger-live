@@ -18,15 +18,14 @@ import { resolver as stellar } from "../families/stellar/setup";
 import { resolver as tezos } from "../families/tezos/setup";
 import { resolver as tron } from "../families/tron/setup";
 import { resolver as xrp } from "../families/xrp/setup";
-import { resolver as elrond } from "../families/elrond/setup";
 import { resolver as icon } from "../families/icon/setup";
+import { resolver as elrond } from "../families/elrond/setup";
 
 export default {
   casper,
   celo,
   cosmos,
   crypto_org,
-  elrond,
   filecoin,
   hedera,
   internet_computer,
@@ -44,4 +43,5 @@ export default {
   tron,
   xrp,
   icon,
+  elrond,
 };
