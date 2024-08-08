@@ -2,13 +2,15 @@ import React from "react";
 import SelectAddAccountMethod from "./SelectAddAccountMethod";
 import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
-import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
 import { TrackScreen } from "~/analytics";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AnalyticsPage } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 import SyncError from "LLM/features/WalletSync/screens/Synchronize/SyncError";
 import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeDisplay";
+import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
+import { useInitMemberCredentials } from "~/newArch/features/WalletSync/hooks/useInitMemberCredentials";
+import { useSyncWithQrCode } from "~/newArch/features/WalletSync/hooks/useSyncWithQrCode";
 
 type Props = {
   currentStep: Steps;
@@ -19,7 +21,7 @@ type Props = {
   currentOption: Options;
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
-  onQrCodeScanned: (data: string) => void;
+  onQrCodeScanned: () => void;
   qrProcess: {
     url: string | null;
     error: Error | null;
@@ -38,7 +40,21 @@ const StepFlow = ({
   navigateToQrCodeMethod,
   onQrCodeScanned,
   qrProcess,
+  setCurrentStep,
 }: Props) => {
+  const { memberCredentials } = useInitMemberCredentials();
+
+  const { handleStart, handleSendDigits, inputCallback, digits } = useSyncWithQrCode();
+
+  const handleQrCodeScanned = (data: string) => {
+    onQrCodeScanned();
+    if (memberCredentials) handleStart(data, memberCredentials, setCurrentStep);
+  };
+
+  const handlePinCodeSubmit = (input: string) => {
+    if (input && inputCallback && digits === input.length) handleSendDigits(inputCallback, input);
+  };
+
   const getScene = () => {
     switch (currentStep) {
       case Steps.AddAccountMethod:
@@ -62,7 +78,7 @@ const StepFlow = ({
       case Steps.QrCodeMethod:
         return (
           <QrCodeMethod
-            onQrCodeScanned={onQrCodeScanned}
+            onQrCodeScanned={handleQrCodeScanned}
             currentOption={currentOption}
             setSelectedOption={setCurrentOption}
           />
@@ -72,7 +88,7 @@ const StepFlow = ({
         return qrProcess.pinCode ? <PinCodeDisplay pinCode={qrProcess.pinCode} /> : null;
 
       case Steps.PinInput:
-        return <PinCodeInput />;
+        return <PinCodeInput handleSendDigits={handlePinCodeSubmit} />;
 
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;

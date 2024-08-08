@@ -49,12 +49,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     setCurrentStep(Steps.QrCodeMethod);
   };
 
-  // That means the url as be stored in the store
-  const onQrCodeScanned = (data: string) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    //setCurrentStep(Steps.PinCodeInput);
-  };
+  const onQrCodeScanned = () => setCurrentStep(Steps.PinInput);
 
   const resetStep = () => setCurrentStep(startingStep);
   const resetOption = () => setCurrentOption(Options.SCAN);
@@ -86,6 +81,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     qrProcess: { url, error, isLoading, pinCode },
     currentOption,
     setCurrentOption,
+    setCurrentStep,
   };
 };
 
