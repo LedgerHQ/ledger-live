@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
+import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, FlashListProps } from "@shopify/flash-list";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
@@ -12,6 +13,15 @@ import useSearchListViewModel from "./useSearchListViewModel";
 import SearchItem from "./SearchItem";
 
 type NavigationProp = SearchProps["navigation"];
+
+type Props = {
+  navigation: NavigationProp;
+  search: string;
+  onScroll?: FlashListProps<AppManifest>["onScroll"];
+  pt?: number;
+};
+
+const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<AppManifest>>(FlashList);
 
 const keyExtractor = (item: AppManifest) => item.id;
 
@@ -27,13 +37,7 @@ const renderItem = ({
   return <SearchItem manifest={item} onPress={extraData} />;
 };
 
-export default function SearchList({
-  navigation,
-  search,
-}: {
-  navigation: NavigationProp;
-  search: string;
-}) {
+export default function SearchList({ navigation, search, onScroll, pt = 0 }: Props) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { data, isLoading, onEndReached } = useSearchListViewModel(search);
@@ -52,8 +56,9 @@ export default function SearchList({
   return (
     <>
       <Disclaimer disclaimer={disclaimer} />
-      <FlashList
+      <AnimatedFlashList
         contentContainerStyle={{
+          paddingTop: pt ? pt + insets.top : pt,
           paddingBottom: insets.bottom,
         }}
         testID="web3hub-manifests-search-scroll"
@@ -71,6 +76,8 @@ export default function SearchList({
         data={data}
         extraData={disclaimer.onPressItem}
         onEndReached={onEndReached}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
       />
     </>
   );

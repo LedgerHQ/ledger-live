@@ -6844,6 +6844,9 @@
       "description": "Discover the best of web3 curated by Ledger"
     },
     "main": {
+      "manifestsList": {
+        "title": "Discover"
+      },
       "header": {
         "title": "Explore web3",
         "placeholder": "Search or type a URL"

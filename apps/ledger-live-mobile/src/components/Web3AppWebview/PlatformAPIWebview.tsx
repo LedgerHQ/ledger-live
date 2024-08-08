@@ -58,7 +58,7 @@ function renderLoading() {
   );
 }
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
+  ({ manifest, inputs = {}, onStateChange, onScroll }, ref) => {
     const tracking = useMemo(
       () =>
         trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
@@ -527,6 +527,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     return (
       <RNWebView
         ref={webviewRef}
+        onScroll={onScroll}
+        decelerationRate="normal"
         allowsBackForwardNavigationGestures
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}

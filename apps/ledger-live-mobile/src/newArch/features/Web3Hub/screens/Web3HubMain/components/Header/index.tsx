@@ -15,10 +15,10 @@ import { NavigatorName, ScreenName } from "~/const";
 
 const TITLE_HEIGHT = 50;
 const SEARCH_HEIGHT = 60;
-const TOTAL_HEADER_HEIGHT = TITLE_HEIGHT + SEARCH_HEIGHT;
+export const TOTAL_HEADER_HEIGHT = TITLE_HEIGHT + SEARCH_HEIGHT;
 
-const ANIMATION_HEIGHT = TITLE_HEIGHT - 5;
-const LAYOUT_RANGE = [0, 35];
+export const ANIMATION_HEIGHT = TITLE_HEIGHT - 5;
+const LAYOUT_RANGE = [0, ANIMATION_HEIGHT];
 
 type Props = {
   title?: string;
@@ -31,19 +31,26 @@ export default function Web3HubMainHeader({ title, navigation }: Props) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
 
+  // Using a const here to avoid serializing colors in the worklet
+  const backgroundColor = colors.background;
+
   const heightStyle = useAnimatedStyle(() => {
     if (!layoutY) return {};
 
+    const headerHeight = interpolate(
+      layoutY.value,
+      LAYOUT_RANGE,
+      [TOTAL_HEADER_HEIGHT, TOTAL_HEADER_HEIGHT - ANIMATION_HEIGHT],
+      Extrapolation.CLAMP,
+    );
+
     return {
-      backgroundColor: colors.background,
+      zIndex: 1,
+      position: "absolute",
+      width: "100%",
+      backgroundColor: backgroundColor,
       paddingTop: insets.top,
-      height:
-        interpolate(
-          layoutY.value,
-          LAYOUT_RANGE,
-          [TOTAL_HEADER_HEIGHT, TOTAL_HEADER_HEIGHT - ANIMATION_HEIGHT],
-          Extrapolation.CLAMP,
-        ) + insets.top,
+      height: headerHeight + insets.top,
     };
   });
 
@@ -71,7 +78,7 @@ export default function Web3HubMainHeader({ title, navigation }: Props) {
 
     return {
       height: TITLE_HEIGHT,
-      opacity: interpolate(layoutY.value, [0, 35], [1, 0], Extrapolation.CLAMP),
+      opacity: interpolate(layoutY.value, [0, ANIMATION_HEIGHT], [1, 0], Extrapolation.CLAMP),
     };
   });
 
