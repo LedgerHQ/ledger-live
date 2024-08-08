@@ -21,7 +21,7 @@ const listSupported = listSupportedCurrencies();
 listSupported.push(getCryptoCurrencyById("vechain"));
 setSupportedCurrencies(listSupported.map(c => c.id) as CryptoCurrencyId[]);
 
-export const dataset: DatasetTest<Transaction> = {
+const dataset: DatasetTest<Transaction> = {
   implementations: ["js", "mock"],
   currencies: {
     vechain: {
@@ -257,3 +257,5 @@ export const dataset: DatasetTest<Transaction> = {
 describe("VeChain Bridge", () => {
   test.todo("sample test");
 });
+
+export default dataset;
