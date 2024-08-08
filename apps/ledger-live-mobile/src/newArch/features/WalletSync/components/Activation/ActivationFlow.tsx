@@ -8,6 +8,8 @@ import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import PinCodeDisplay from "../../screens/Synchronize/PinCodeDisplay";
 import PinCodeInput from "../../screens/Synchronize/PinCodeInput";
 import SyncError from "../../screens/Synchronize/SyncError";
+import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
+import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
 
 type Props = {
   currentStep: Steps;
@@ -19,9 +21,10 @@ type Props = {
     isLoading: boolean;
     pinCode: string | null;
   };
-  onQrCodeScanned: (data: string) => void;
+  onQrCodeScanned: () => void;
   currentOption: Options;
   setOption: (option: Options) => void;
+  setCurrentStep: (step: Steps) => void;
 };
 
 const ActivationFlow = ({
@@ -32,7 +35,21 @@ const ActivationFlow = ({
   currentOption,
   setOption,
   onQrCodeScanned,
+  setCurrentStep,
 }: Props) => {
+  const { memberCredentials } = useInitMemberCredentials();
+
+  const { handleStart, handleSendDigits, inputCallback, digits } = useSyncWithQrCode();
+
+  const handleQrCodeScanned = (data: string) => {
+    onQrCodeScanned();
+    if (memberCredentials) handleStart(data, memberCredentials, setCurrentStep);
+  };
+
+  const handlePinCodeSubmit = (input: string) => {
+    if (input && inputCallback && digits === input.length) handleSendDigits(inputCallback, input);
+  };
+
   const getScene = () => {
     switch (currentStep) {
       case Steps.Activation:
@@ -52,7 +69,7 @@ const ActivationFlow = ({
       case Steps.QrCodeMethod:
         return (
           <QrCodeMethod
-            onQrCodeScanned={onQrCodeScanned}
+            onQrCodeScanned={handleQrCodeScanned}
             currentOption={currentOption}
             setSelectedOption={setOption}
           />
@@ -62,7 +79,7 @@ const ActivationFlow = ({
         return qrProcess.pinCode ? <PinCodeDisplay pinCode={qrProcess.pinCode} /> : null;
 
       case Steps.PinInput:
-        return <PinCodeInput />;
+        return <PinCodeInput handleSendDigits={handlePinCodeSubmit} />;
 
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;

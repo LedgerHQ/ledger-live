@@ -29,6 +29,7 @@ function View({
   qrProcess,
   currentOption,
   setCurrentOption,
+  setCurrentStep,
 }: ViewProps) {
   const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
 
@@ -51,6 +52,7 @@ function View({
             currentOption={currentOption}
             setOption={setCurrentOption}
             onQrCodeScanned={onQrCodeScanned}
+            setCurrentStep={setCurrentStep}
           />
         </Flex>
       </QueuedDrawer>

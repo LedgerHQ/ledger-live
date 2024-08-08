@@ -54,11 +54,7 @@ const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) =>
     currentOption,
   });
 
-  const onQrCodeScanned = (data: string) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    //setCurrentStep(Steps.PinCodeInput);
-  };
+  const onQrCodeScanned = () => setCurrentStep(Steps.PinInput);
 
   return {
     isAddAccountDrawerVisible: isOpened,
@@ -69,8 +65,8 @@ const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) =>
     setCurrentOption,
     currentOption,
     setCurrentStep,
-    onGoBack,
     onQrCodeScanned,
+    onGoBack,
     qrProcess: {
       url,
       error,
