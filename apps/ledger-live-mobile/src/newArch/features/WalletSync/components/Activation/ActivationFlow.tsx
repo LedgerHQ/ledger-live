@@ -39,7 +39,7 @@ const ActivationFlow = ({
 }: Props) => {
   const { memberCredentials } = useInitMemberCredentials();
 
-  const { handleStart, handleSendDigits, inputCallback, digits } = useSyncWithQrCode();
+  const { handleStart, handleSendDigits, inputCallback, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
@@ -47,7 +47,7 @@ const ActivationFlow = ({
   };
 
   const handlePinCodeSubmit = (input: string) => {
-    if (input && inputCallback && digits === input.length) handleSendDigits(inputCallback, input);
+    if (input && inputCallback && nbDigits === input.length) handleSendDigits(inputCallback, input);
   };
 
   const getScene = () => {
@@ -79,7 +79,9 @@ const ActivationFlow = ({
         return qrProcess.pinCode ? <PinCodeDisplay pinCode={qrProcess.pinCode} /> : null;
 
       case Steps.PinInput:
-        return <PinCodeInput handleSendDigits={handlePinCodeSubmit} />;
+        return nbDigits ? (
+          <PinCodeInput handleSendDigits={handlePinCodeSubmit} nbDigits={nbDigits} />
+        ) : null;
 
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;

@@ -10,7 +10,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useInstanceName } from "./useInstanceName";
 
 export const useSyncWithQrCode = () => {
-  const [digits, setDigits] = useState<number | null>(null);
+  const [nbDigits, setDigits] = useState<number | null>(null);
   const [input, setInput] = useState<string | null>(null);
   const instanceName = useInstanceName();
 
@@ -71,5 +71,5 @@ export const useSyncWithQrCode = () => {
     [],
   );
 
-  return { digits, input, handleStart, handleSendDigits, setInput, inputCallback };
+  return { nbDigits, input, handleStart, handleSendDigits, setInput, inputCallback };
 };
