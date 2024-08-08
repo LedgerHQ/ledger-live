@@ -2993,6 +2993,10 @@
         },
         "platformManifest": {
           "title": "Load Platform Manifest"
+        },
+        "mockAppUpdate": {
+          "title": "Mock app update",
+          "description": "Display available app update in My Ledger, it will reinstall the same app version"
         }
       }
     },
@@ -6791,6 +6795,31 @@
         },
         "connectDevice": {
           "title": "Use your Ledger"
+        }
+      },
+      "qrCode": {
+        "show": {
+          "title": "Show QR",
+          "explanation": {
+            "title": "Scan and synchronize your accounts using another Ledger Live app",
+            "steps": {
+              "step1": "Open the Ledger Live app you want to sync",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0>",
+              "step3": "Scan QR code until loader hits 100%."
+            }
+          }
+        },
+        "scan": {
+          "title": "Scan"
+        },
+        "pinCode": {
+          "title": "Enter your code",
+          "desc": "Type the code displayed on the Ledger Live you want to sync with.",
+          "error": {
+            "title": "Codes do not match",
+            "desc": "Make sure the code you type is the one displayed on the other Ledger Live instance.",
+            "tryAgain": "Try again"
+          }
         }
       }
     }

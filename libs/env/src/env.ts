@@ -507,6 +507,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the countervalues resolution into a MOCK mode for test purpose",
   },
+  MOCK_APP_UPDATE: {
+    def: false,
+    parser: boolParser,
+    desc: "Always shows app update in the manager",
+  },
   /**
    * Note: the mocked cryptoassets config and test partner are signed with the
    * Ledger test private key

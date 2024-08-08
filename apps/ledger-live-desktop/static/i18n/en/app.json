@@ -4086,6 +4086,8 @@
       },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
+      "mockAppUpdate": "Mock app update",
+      "mockAppUpdateDesc": "Display available app update in My Ledger, it will reinstall the same app version",
       "catalogUrl": "Set the catalog apps provider",
       "catalogUrlDesc": "Enter your custom catalog provider URL",
       "enablePlatformDevTools": "Enable platform dev tools",
@@ -6483,7 +6485,11 @@
       },
       "pinCode": {
         "title": "Enter the code",
-        "description": "Type the code displayed on the other Ledger Live you want to sync with."
+        "description": "Type the code displayed on the other Ledger Live you want to sync with.",
+        "error": {
+          "title": "Codes do not match",
+          "description": "Make sure the code you type is the one displayed on the other Ledger Live instance."
+        }
       }
     },
     "manageInstances": {

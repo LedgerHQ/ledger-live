@@ -1,10 +1,11 @@
 import { track } from "~/analytics";
 
 export enum AnalyticsPage {
-  ActivateWalletSync = "Activate Wallet Sync",
+  ActivateLedgerSync = "Activate Ledger Sync",
   ChooseSyncMethod = "Choose sync method",
   BackupCreationSuccess = "Backup creation success",
   ScanQRCode = "Scan QR code",
+  ShowQRCode = "Show QR code",
   SyncWithQrCode = "Sync with QR code",
   PinCode = "Pin code",
   PinCodesDoNotMatch = "Pin codes don't match",
@@ -15,12 +16,12 @@ export enum AnalyticsPage {
   ManageBackup = "Manage backup",
   ConfirmDeleteBackup = "Confirm delete backup",
   SyncWithNoKey = "Sync with no key",
-  WalletSyncActivated = "Wallet Sync activated",
+  LedgerSyncActivated = "Ledger Sync activated",
   AutoRemove = "Remove current instance",
 }
 
 export enum AnalyticsFlow {
-  WalletSync = "Wallet Sync",
+  LedgerSync = "Ledger Sync",
 }
 
 export enum AnalyticsButton {
@@ -52,8 +53,8 @@ type OnClickTrack = {
   flow?: (typeof AnalyticsFlow)[keyof typeof AnalyticsFlow];
 };
 
-export function useWalletSyncAnalytics() {
-  const onClickTrack = ({ button, page, flow }: OnClickTrack) => {
+export function useLedgerSyncAnalytics() {
+  const onClickTrack = ({ button, page, flow = AnalyticsFlow.LedgerSync }: OnClickTrack) => {
     track("button_clicked", { button, page, flow });
   };
 

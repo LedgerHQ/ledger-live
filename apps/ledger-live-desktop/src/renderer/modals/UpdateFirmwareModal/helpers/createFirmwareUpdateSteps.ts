@@ -10,6 +10,16 @@ import { Step, StepId, STEPS } from "../types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device/use-cases/isDeviceLocalizationSupported";
 import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
+export function isRestoreStepEnabled(
+  deviceModelId: DeviceModelId,
+  firmware: FirmwareUpdateContext,
+): boolean {
+  return (
+    isCustomLockScreenSupported(deviceModelId) ||
+    isDeviceLocalizationSupported(firmware.final.name, deviceModelId)
+  );
+}
+
 export const createFirmwareUpdateSteps = ({
   firmware,
   withFinal,
@@ -17,15 +27,13 @@ export const createFirmwareUpdateSteps = ({
   deviceModelId,
   stateStepId,
 }: {
-  firmware?: FirmwareUpdateContext;
+  firmware: FirmwareUpdateContext;
   withFinal: boolean;
   withResetStep: boolean;
   deviceModelId: DeviceModelId;
   stateStepId: StepId;
 }) => {
-  const hasRestoreStep =
-    isCustomLockScreenSupported(deviceModelId) ||
-    (firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId));
+  const hasRestoreStep = isRestoreStepEnabled(deviceModelId, firmware);
 
   const restoreStepLabel =
     stateStepId === STEPS.FINISH

@@ -1,13 +1,13 @@
 import { Box, Flex, Text, Icons, InfiniteLoader, Alert } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
 import {
   AnalyticsButton,
   AnalyticsPage,
-  useWalletSyncAnalytics,
-} from "../../hooks/useWalletSyncAnalytics";
+  useLedgerSyncAnalytics,
+} from "../../hooks/useLedgerSyncAnalytics";
 import { Separator } from "../../components/Separator";
 import { TouchableOpacity } from "react-native";
 import { TrustchainNotFound } from "../../hooks/useGetMembers";
@@ -15,6 +15,11 @@ import ManageKeyDrawer from "../ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 import ManageInstanceDrawer from "../ManageInstances/ManageInstancesDrawer";
 import { useManageInstancesDrawer } from "../ManageInstances/useManageInstanceDrawer";
+import ActivationDrawer from "../Activation/ActivationDrawer";
+import { Steps } from "../../types/Activation";
+import { TrackScreen } from "~/analytics";
+import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
+import { useLedgerSyncStatus } from "../../hooks/useLedgerSyncStatus";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
@@ -22,26 +27,31 @@ const WalletSyncManage = () => {
   const manageKeyHook = useManageKeyDrawer();
   const manageInstancesHook = useManageInstancesDrawer();
 
-  const { data, isLoading, isError, error } = manageInstancesHook.memberHook;
+  const { error: ledgerSyncError, isError: isLedgerSyncError } = useLedgerSyncStatus();
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { data, isLoading, isError, error: manageInstancesError } = manageInstancesHook.memberHook;
 
-  const goToManageBackup = useCallback(() => {
-    manageKeyHook.openDrawer();
-    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.WalletSyncActivated });
-  }, [manageKeyHook, onClickTrack]);
+  const { onClickTrack } = useLedgerSyncAnalytics();
+
+  const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
 
   const goToSync = () => {
-    //dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
+    setIsSyncDrawerOpen(true);
+    onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.LedgerSyncActivated });
+  };
 
-    onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.WalletSyncActivated });
+  const closeSyncDrawer = () => setIsSyncDrawerOpen(false);
+
+  const goToManageBackup = () => {
+    manageKeyHook.openDrawer();
+    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.LedgerSyncActivated });
   };
 
   const goToManageInstances = () => {
     manageInstancesHook.openDrawer();
     onClickTrack({
       button: AnalyticsButton.ManageSynchronizations,
-      page: AnalyticsPage.WalletSyncActivated,
+      page: AnalyticsPage.LedgerSyncActivated,
     });
   };
 
@@ -62,17 +72,29 @@ const WalletSyncManage = () => {
     },
   ];
 
-  function getError(error: Error) {
-    // if (error instanceof UnavailableServerError) { DO SOMETHING}
+  const error = useMemo(
+    () => ledgerSyncError || manageInstancesError,
+    [ledgerSyncError, manageInstancesError],
+  );
 
-    return <Alert type="error" title={error.message} />;
-  }
+  const getTopContent = () => {
+    if (error) {
+      if (isLedgerSyncError) {
+        return <AlertLedgerSyncDown />;
+      }
+      return <Alert type="error" title={error.message} />;
+    } else {
+      return <Separator />;
+    }
+  };
+
+  const hasError = isLedgerSyncError || isError;
 
   return (
     <Box height="100%" paddingX="16px">
-      {/* <TrackPage category={AnalyticsPage.WalletSyncSettings} /> */}
+      <TrackScreen category={AnalyticsPage.LedgerSyncSettings} />
 
-      {isError ? getError(error) : <Separator />}
+      {getTopContent()}
 
       {Options.map((props, index) => (
         <Option
@@ -80,21 +102,21 @@ const WalletSyncManage = () => {
           key={index}
           disabled={
             props.id === "manageKey"
-              ? isError && error instanceof TrustchainNotFound
+              ? hasError && error instanceof TrustchainNotFound
                 ? false
-                : isError
-              : isError
+                : hasError
+              : hasError
           }
         />
       ))}
 
-      <InstancesRow disabled={isError} onPress={isError ? undefined : goToManageInstances}>
+      <InstancesRow disabled={hasError} onPress={isError ? undefined : goToManageInstances}>
         <Container
           flexDirection="row"
           justifyContent="space-between"
           paddingTop={24}
           alignItems="center"
-          disabled={isError}
+          disabled={hasError}
         >
           {isLoading ? (
             <InfiniteLoader size={16} />
@@ -117,9 +139,11 @@ const WalletSyncManage = () => {
         </Container>
       </InstancesRow>
 
-      {/**
-       * DRAWERS
-       */}
+      <ActivationDrawer
+        startingStep={Steps.QrCodeMethod}
+        isOpen={isSyncDrawerOpen}
+        handleClose={closeSyncDrawer}
+      />
       <ManageKeyDrawer {...manageKeyHook} />
       <ManageInstanceDrawer {...manageInstancesHook} />
     </Box>

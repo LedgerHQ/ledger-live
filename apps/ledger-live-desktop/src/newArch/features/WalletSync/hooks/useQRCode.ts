@@ -29,13 +29,14 @@ export function useQRCode() {
   const startQRCodeProcessing = useCallback(() => {
     if (!trustchain || !memberCredentials) return;
 
+    let hasCompleted = false;
+
     setError(null);
     setIsLoading(true);
     createQRCodeHostInstance({
       trustchainApiBaseUrl,
       onDisplayQRCode: url => {
         setUrl(url);
-        setIsLoading(false);
       },
       onDisplayDigits: digits => {
         dispatch(setQrCodePinCode(digits));
@@ -43,23 +44,26 @@ export function useQRCode() {
       },
       addMember: async member => {
         await sdk.addMember(trustchain, memberCredentials, member);
+        hasCompleted = true;
         return trustchain;
       },
     })
       .catch(e => {
         if (e instanceof InvalidDigitsError) {
-          return;
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
         }
         setError(e);
-        setIsLoading(false);
       })
       .then(() => {
+        if (hasCompleted) dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
+      })
+      .finally(() => {
         setUrl(null);
         dispatch(setQrCodePinCode(null));
         setIsLoading(false);
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
+        setError(null);
       });
-  }, [trustchainApiBaseUrl, trustchain, memberCredentials, dispatch, sdk]);
+  }, [trustchain, memberCredentials, trustchainApiBaseUrl, dispatch, sdk]);
 
   return {
     url,

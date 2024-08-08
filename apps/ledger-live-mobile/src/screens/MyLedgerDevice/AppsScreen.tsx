@@ -55,6 +55,7 @@ import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import camelCase from "lodash/camelCase";
 import { useTheme } from "styled-components/native";
 import KeyboardView from "~/components/KeyboardView";
+import { getEnv } from "@ledgerhq/live-env";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
@@ -324,7 +325,7 @@ const AppsScreen = ({
         {
           <AppUpdateAll
             state={state}
-            appsToUpdate={update}
+            appsToUpdate={getEnv("MOCK_APP_UPDATE") ? deviceApps : update}
             dispatch={dispatch}
             isModalOpened={updateModalOpened}
           />

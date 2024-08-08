@@ -1979,8 +1979,8 @@ importers:
         specifier: ^1.0.3
         version: 1.0.4
       '@stricahq/typhonjs':
-        specifier: ^1.2.6
-        version: 1.2.8
+        specifier: ^2.0.0
+        version: 2.0.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -2522,6 +2522,9 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^8.4.1
+        version: 8.4.1
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -3379,8 +3382,8 @@ importers:
         specifier: 6.11.0
         version: 6.11.0
       '@stricahq/typhonjs':
-        specifier: ^1.2.6
-        version: 1.2.8
+        specifier: ^2.0.0
+        version: 2.0.0
       '@taquito/ledger-signer':
         specifier: ^20.0.0
         version: 20.0.0
@@ -13462,8 +13465,8 @@ packages:
   '@stricahq/cbors@1.0.2':
     resolution: {integrity: sha512-6ePsEiq7EGHA5IiPn9poA7sF5iXPqt30kKw3pjR/BhP7S+XHZNu/OPumESWnVl4AM+IEYC2x9eL+4qRPsTPVww==}
 
-  '@stricahq/typhonjs@1.2.8':
-    resolution: {integrity: sha512-JPr5N8KZ/ipTPemhqieFgmibnnXT/E+EtrROCJ78IvBwZx1FpAxpLRMA7vf142IfXz9ZYREc1l9KQzKq2xaAbw==}
+  '@stricahq/typhonjs@2.0.0':
+    resolution: {integrity: sha512-4EdoVAht+hKDaBT1m0qCBQsi5unP9ghM4eUUKGcQcQQiEUZGsP8CgxcGuQbsXL1/LU5wNKoBnxWXUiylZD9uRQ==}
 
   '@styled-system/background@5.1.2':
     resolution: {integrity: sha512-jtwH2C/U6ssuGSvwTN3ri/IyjdHb8W9X/g8Y0JLcrH02G+BW3OS8kZdHphF1/YyRklnrKrBT2ngwGUK6aqqV3A==}
@@ -41376,7 +41379,7 @@ snapshots:
       bignumber.js: 9.1.2
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
-  '@stricahq/typhonjs@1.2.8':
+  '@stricahq/typhonjs@2.0.0':
     dependencies:
       '@stricahq/cbors': 1.0.2
       bech32: 2.0.0
@@ -57280,7 +57283,7 @@ snapshots:
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.38)
       postcss-normalize: 10.0.1(browserslist@4.23.0)(postcss@8.4.38)
       postcss-preset-env: 7.8.3(postcss@8.4.38)
-      semver: 7.6.2
+      semver: 7.5.4
       webpack: 5.89.0
     transitivePeerDependencies:
       - browserslist
