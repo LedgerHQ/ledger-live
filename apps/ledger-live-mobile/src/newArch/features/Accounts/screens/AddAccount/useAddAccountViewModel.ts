@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { track } from "~/analytics";
-import { useQRCodeHost } from "~/newArch/features/WalletSync/hooks/useQRCodeHost";
-import { Options, Steps } from "~/newArch/features/WalletSync/types/Activation";
+import { useQRCodeHost } from "LLM/features/WalletSync/hooks/useQRCodeHost";
+import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 
 type AddAccountDrawerProps = {
   isOpened: boolean;
