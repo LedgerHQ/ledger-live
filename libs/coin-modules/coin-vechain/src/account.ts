@@ -1,6 +1,6 @@
+import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
 
 function formatAccountSpecifics(account: Account): string {
   const unit = getAccountCurrency(account).units[0];

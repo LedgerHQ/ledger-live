@@ -1,6 +1,5 @@
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "../../generated/types";
-import { Transaction as VechainTransaction } from "./types";
+import { Transaction, Transaction as VechainTransaction } from "./types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";

@@ -1,6 +1,5 @@
-import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { BigNumber } from "bignumber.js";
-import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
+
 import eip55 from "eip55";
 import {
   emptyHistoryCache,
@@ -11,8 +10,10 @@ import {
 import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "./api";
 import { findTokenById, getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { VTHO_ADDRESS } from "./contracts/constants";
+import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/lib/bridge/jsHelpers";
+import { Account } from "@ledgerhq/types-live";
 
-const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape<Account> = async info => {
   const { initialAccount, currency, derivationMode } = info;
   const address = eip55.encode(info.address);
 
@@ -83,6 +84,3 @@ const getAccountShape: GetAccountShape = async info => {
 
   return shape;
 };
-
-export const scanAccounts = makeScanAccounts({ getAccountShape });
-export const sync = makeSync({ getAccountShape });

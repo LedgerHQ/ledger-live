@@ -3224,6 +3224,139 @@ importers:
         specifier: ^5.4.5
         version: 5.6.3
 
+  libs/coin-modules/coin-vechain:
+    dependencies:
+      '@ethersproject/shims':
+        specifier: ^5.7.0
+        version: 5.7.0
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/domain-service':
+        specifier: workspace:^
+        version: link:../../domain-service
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/evm-tools':
+        specifier: workspace:^
+        version: link:../../evm-tools
+      '@ledgerhq/live-config':
+        specifier: ^3.0.0
+        version: 3.0.0
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../../promise
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      axios:
+        specifier: 0.26.1
+        version: 0.26.1
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      eip55:
+        specifier: ^2.1.1
+        version: 2.1.1
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      imurmurhash:
+        specifier: ^0.1.4
+        version: 0.1.4
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      react-native-get-random-values:
+        specifier: ^1.8.0
+        version: 1.11.0
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      thor-devkit:
+        specifier: ^2.0.6
+        version: 2.0.9
+    devDependencies:
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../../coin-tester
+      '@ledgerhq/hw-app-eth':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      '@types/bluebird':
+        specifier: ^3.5.42
+        version: 3.5.42
+      '@types/imurmurhash':
+        specifier: ^0.1.4
+        version: 0.1.4
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.4
+      bluebird:
+        specifier: ^3.7.2
+        version: 3.7.2
+      chalk:
+        specifier: ^4.1.2
+        version: 4.1.2
+      docker-compose:
+        specifier: ^0.24.2
+        version: 0.24.8
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      eslint-plugin-import:
+        specifier: ^2.28.1
+        version: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)
+      fast-check:
+        specifier: ^3.12.0
+        version: 3.17.1
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      jest-expect-message:
+        specifier: ^1.1.3
+        version: 1.1.3
+      msw:
+        specifier: ^2.2.12
+        version: 2.3.4(typescript@5.4.3)
+      prando:
+        specifier: ^6.0.1
+        version: 6.0.1
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.4(jest@29.7.0)(typescript@5.4.3)
+
   libs/coin-modules/coin-xrp:
     dependencies:
       '@ledgerhq/coin-framework':
@@ -3774,6 +3907,9 @@ importers:
       '@ledgerhq/coin-tron':
         specifier: workspace:^
         version: link:../coin-modules/coin-tron
+      '@ledgerhq/coin-vechain':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: workspace:^
         version: link:../coin-modules/coin-xrp
@@ -4041,9 +4177,6 @@ importers:
       simple-cbor:
         specifier: ^0.4.1
         version: 0.4.1
-      thor-devkit:
-        specifier: ^2.0.6
-        version: 2.0.9
       triple-beam:
         specifier: ^1.3.0
         version: 1.4.1
@@ -10915,6 +11048,9 @@ packages:
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
+  '@ledgerhq/live-config@3.0.0':
+    resolution: {integrity: sha512-iisns2TFXHLPAYAgpXF/wggvcSscPaxZnMgixRsZho35tL0Dap4hhIT/35f3VuYS/dKDmahTrNjJzeIYEDJ7/Q==}
+
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
 
@@ -16519,6 +16655,9 @@ packages:
 
   axios@0.24.0:
     resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
+
+  axios@0.26.1:
+    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
 
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
@@ -36114,6 +36253,10 @@ snapshots:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
 
+  '@ledgerhq/live-config@3.0.0':
+    dependencies:
+      lodash: 4.17.21
+
   '@ledgerhq/logs@5.50.0': {}
 
   '@ledgerhq/logs@6.12.0': {}
@@ -45166,6 +45309,10 @@ snapshots:
       follow-redirects: 1.15.6
 
   axios@0.24.0:
+    dependencies:
+      follow-redirects: 1.15.6
+
+  axios@0.26.1:
     dependencies:
       follow-redirects: 1.15.6
 

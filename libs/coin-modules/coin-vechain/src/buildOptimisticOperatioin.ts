@@ -1,7 +1,7 @@
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
-import { encodeOperationId } from "../../operation";
 import BigNumber from "bignumber.js";
+import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
 
 export const buildOptimisticOperation = async (
   account: Account,
