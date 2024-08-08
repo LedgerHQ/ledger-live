@@ -31,7 +31,7 @@ import {
 } from "./utils";
 import { domainResolutionFlow } from "./modules/Domains";
 import ledgerService from "./services/ledger";
-import { EthAppNftNotSupported, EthAppPleaseEnableContractData } from "./errors";
+import { EthAppNftNotSupported, EthAppOperationDenied } from "./errors";
 import { signEIP712HashedMessage, signEIP712Message } from "./modules/EIP712";
 import { EIP712Message } from "@ledgerhq/types-live";
 
@@ -49,9 +49,7 @@ const starkQuantizationTypeMap = {
 
 const remapTransactionRelatedErrors = e => {
   if (e && e.statusCode === 0x6a80) {
-    return new EthAppPleaseEnableContractData(
-      "Please enable Blind signing or Contract data in the Ethereum app Settings",
-    );
+    return new EthAppOperationDenied();
   }
 
   return e;
