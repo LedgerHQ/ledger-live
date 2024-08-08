@@ -1,5 +1,40 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.8
+
+### Minor Changes
+
+- [#7213](https://github.com/LedgerHQ/ledger-live/pull/7213) [`354d913`](https://github.com/LedgerHQ/ledger-live/commit/354d9138a4bd9b54001ff1330a8000ee94aea008) Thanks [@pavanvora](https://github.com/pavanvora)! - Add babbage support to Cardano with typhonjs v2
+
+### Patch Changes
+
+- [#7525](https://github.com/LedgerHQ/ledger-live/pull/7525) [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576) Thanks [@valpinkman](https://github.com/valpinkman)! - Use MOCK_APP_UPDATE to fake app updates
+
+- Updated dependencies [[`354d913`](https://github.com/LedgerHQ/ledger-live/commit/354d9138a4bd9b54001ff1330a8000ee94aea008), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`d213d81`](https://github.com/LedgerHQ/ledger-live/commit/d213d8122647d559b7a0f44e2beffa5e39c3249b)]:
+  - @ledgerhq/coin-cardano@0.2.0-nightly.5
+  - @ledgerhq/live-env@2.2.0-nightly.2
+  - @ledgerhq/coin-evm@2.1.4-nightly.4
+  - @ledgerhq/coin-framework@0.17.0-nightly.4
+  - @ledgerhq/coin-algorand@0.5.4-nightly.4
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.4
+  - @ledgerhq/coin-icon@0.4.1-nightly.7
+  - @ledgerhq/coin-polkadot@1.1.2-nightly.4
+  - @ledgerhq/coin-solana@0.7.4-nightly.4
+  - @ledgerhq/coin-stellar@0.2.2-nightly.4
+  - @ledgerhq/coin-ton@0.3.12-nightly.5
+  - @ledgerhq/coin-tron@0.0.4-nightly.5
+  - @ledgerhq/live-countervalues@0.2.4-nightly.4
+  - @ledgerhq/live-network@1.3.2-nightly.2
+  - @ledgerhq/live-nft@0.4.4-nightly.4
+  - @ledgerhq/live-wallet@0.5.0-nightly.6
+  - @ledgerhq/speculos-transport@0.1.4-nightly.2
+  - @ledgerhq/coin-near@0.5.4-nightly.4
+  - @ledgerhq/coin-tezos@0.5.2-nightly.5
+  - @ledgerhq/coin-xrp@0.4.2-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.4
+  - @ledgerhq/hw-app-eth@6.38.0-nightly.4
+  - @ledgerhq/device-core@0.3.2-nightly.3
+
 ## 34.7.0-nightly.7
 
 ### Patch Changes

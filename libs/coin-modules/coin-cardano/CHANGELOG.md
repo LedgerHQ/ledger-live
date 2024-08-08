@@ -1,5 +1,18 @@
 # @ledgerhq/coin-cardano
 
+## 0.2.0-nightly.5
+
+### Minor Changes
+
+- [#7213](https://github.com/LedgerHQ/ledger-live/pull/7213) [`354d913`](https://github.com/LedgerHQ/ledger-live/commit/354d9138a4bd9b54001ff1330a8000ee94aea008) Thanks [@pavanvora](https://github.com/pavanvora)! - Add babbage support to Cardano with typhonjs v2
+
+### Patch Changes
+
+- Updated dependencies [[`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576)]:
+  - @ledgerhq/live-env@2.2.0-nightly.2
+  - @ledgerhq/coin-framework@0.17.0-nightly.4
+  - @ledgerhq/live-network@1.3.2-nightly.2
+
 ## 0.1.4-nightly.4
 
 ### Patch Changes

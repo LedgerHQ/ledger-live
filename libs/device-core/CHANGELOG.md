@@ -1,5 +1,12 @@
 # @ledgerhq/device-core
 
+## 0.3.2-nightly.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@1.3.2-nightly.2
+
 ## 0.3.2-nightly.2
 
 ### Patch Changes

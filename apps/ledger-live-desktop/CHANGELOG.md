@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.8
+
+### Patch Changes
+
+- [#7541](https://github.com/LedgerHQ/ledger-live/pull/7541) [`7f588f3`](https://github.com/LedgerHQ/ledger-live/commit/7f588f36ff95a6c05fac4c971bf432fcc0101fcc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Error screen when PinCode doesn't match
+
+- [#7525](https://github.com/LedgerHQ/ledger-live/pull/7525) [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new developer setting to mock app update in the manager
+
+- [#7527](https://github.com/LedgerHQ/ledger-live/pull/7527) [`c7b5135`](https://github.com/LedgerHQ/ledger-live/commit/c7b5135a2a81311fba8a706790ae3c7dadd4a32a) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix firmware update for old firmware versions
+
+- Updated dependencies [[`354d913`](https://github.com/LedgerHQ/ledger-live/commit/354d9138a4bd9b54001ff1330a8000ee94aea008), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`d213d81`](https://github.com/LedgerHQ/ledger-live/commit/d213d8122647d559b7a0f44e2beffa5e39c3249b)]:
+  - @ledgerhq/live-common@34.7.0-nightly.8
+  - @ledgerhq/live-env@2.2.0-nightly.2
+  - @ledgerhq/coin-evm@2.1.4-nightly.4
+  - @ledgerhq/coin-framework@0.17.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.4
+  - @ledgerhq/hw-trustchain@0.1.4-nightly.2
+  - @ledgerhq/live-countervalues@0.2.4-nightly.4
+  - @ledgerhq/live-network@1.3.2-nightly.2
+  - @ledgerhq/live-nft@0.4.4-nightly.4
+  - @ledgerhq/live-wallet@0.5.0-nightly.6
+  - @ledgerhq/trustchain@0.2.0-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.4
+  - @ledgerhq/live-nft-react@0.4.4-nightly.4
+
 ## 2.85.0-nightly.7
 
 ### Patch Changes

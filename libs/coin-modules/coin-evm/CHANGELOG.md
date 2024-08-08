@@ -1,5 +1,17 @@
 # @ledgerhq/coin-evm
 
+## 2.1.4-nightly.4
+
+### Patch Changes
+
+- [#7531](https://github.com/LedgerHQ/ledger-live/pull/7531) [`d213d81`](https://github.com/LedgerHQ/ledger-live/commit/d213d8122647d559b7a0f44e2beffa5e39c3249b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove `NotEnoughBalanceInParentAccount` error from `validateAmount` check in `getTransactionStatus` as it was redundant with a `validateGas` test
+
+- Updated dependencies [[`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576)]:
+  - @ledgerhq/live-env@2.2.0-nightly.2
+  - @ledgerhq/coin-framework@0.17.0-nightly.4
+  - @ledgerhq/evm-tools@1.2.0-nightly.4
+  - @ledgerhq/live-network@1.3.2-nightly.2
+
 ## 2.1.4-nightly.3
 
 ### Patch Changes

@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.48.0-nightly.8
+
+### Patch Changes
+
+- [#7520](https://github.com/LedgerHQ/ledger-live/pull/7520) [`641cc17`](https://github.com/LedgerHQ/ledger-live/commit/641cc17c1e75918f2696c666fa0366ddd8902e38) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add trustchain & createQRCodeHostInstance flow
+
+- [#7525](https://github.com/LedgerHQ/ledger-live/pull/7525) [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new developer setting to mock app update in the manager
+
+- [#7467](https://github.com/LedgerHQ/ledger-live/pull/7467) [`3de93cc`](https://github.com/LedgerHQ/ledger-live/commit/3de93cc5597e0f87a70b9c728589a2ef363ac65d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the show qr code implementation for WS flow. Create tabSelector in RN UI Lib
+
+- [#7538](https://github.com/LedgerHQ/ledger-live/pull/7538) [`4dad5d0`](https://github.com/LedgerHQ/ledger-live/commit/4dad5d0cb3bbe3ea31635ab13fc387fc8a0ec5e2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add LedgerSync status banner + hook
+
+- Updated dependencies [[`354d913`](https://github.com/LedgerHQ/ledger-live/commit/354d9138a4bd9b54001ff1330a8000ee94aea008), [`3de93cc`](https://github.com/LedgerHQ/ledger-live/commit/3de93cc5597e0f87a70b9c728589a2ef363ac65d), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`d213d81`](https://github.com/LedgerHQ/ledger-live/commit/d213d8122647d559b7a0f44e2beffa5e39c3249b)]:
+  - @ledgerhq/live-common@34.7.0-nightly.8
+  - @ledgerhq/native-ui@0.23.3-nightly.2
+  - @ledgerhq/live-env@2.2.0-nightly.2
+  - @ledgerhq/coin-evm@2.1.4-nightly.4
+  - @ledgerhq/coin-framework@0.17.0-nightly.4
+  - @ledgerhq/hw-trustchain@0.1.4-nightly.2
+  - @ledgerhq/live-countervalues@0.2.4-nightly.4
+  - @ledgerhq/live-network@1.3.2-nightly.2
+  - @ledgerhq/live-nft@0.4.4-nightly.4
+  - @ledgerhq/live-wallet@0.5.0-nightly.6
+  - @ledgerhq/trustchain@0.2.0-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.4
+  - @ledgerhq/live-nft-react@0.4.4-nightly.4
+
 ## 3.48.0-nightly.7
 
 ### Patch Changes

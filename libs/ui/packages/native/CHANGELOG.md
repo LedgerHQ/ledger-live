@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.23.3-nightly.2
+
+### Patch Changes
+
+- [#7467](https://github.com/LedgerHQ/ledger-live/pull/7467) [`3de93cc`](https://github.com/LedgerHQ/ledger-live/commit/3de93cc5597e0f87a70b9c728589a2ef363ac65d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the show qr code implementation for WS flow. Create tabSelector in RN UI Lib
+
 ## 0.23.3-nightly.1
 
 ### Patch Changes

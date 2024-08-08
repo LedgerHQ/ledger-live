@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.2.0-nightly.2
+
+### Patch Changes
+
+- [#7525](https://github.com/LedgerHQ/ledger-live/pull/7525) [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new MOCK_APP_UPDATE env
+
 ## 2.2.0-nightly.1
 
 ### Minor Changes
