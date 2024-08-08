@@ -12,17 +12,17 @@ export const MarketQuickActions = () => {
 
   const quickActionsData: QuickActionButtonProps[] = useMemo(
     () =>
-      QUICK_ACTIONS.flatMap(action => {
-        if (!quickActionsList[action]) return [];
+      QUICK_ACTIONS.flatMap(key => {
+        const action = quickActionsList[key];
+        if (!action) return [];
 
-        const { icon, route, disabled } = quickActionsList[action];
         return {
           variant: "small",
           textVariant: "small",
-          Icon: icon,
-          children: t(QUICK_ACTION_DATA[action].name),
-          onPress: () => navigation.navigate(...(route as [string, object?])),
-          disabled,
+          Icon: action.icon,
+          children: t(QUICK_ACTION_DATA[key].name),
+          onPress: () => navigation.navigate(...(action.route as [string, object?])),
+          disabled: action.disabled,
         };
       }),
     [quickActionsList, t, navigation],
