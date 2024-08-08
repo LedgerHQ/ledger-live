@@ -768,18 +768,24 @@ export const exportSettingsSelector = createSelector(
   (state: State) => state.settings.pairExchanges,
   developerModeSelector,
   blacklistedTokenIdsSelector,
+  (state: State) => state.settings.theme,
+  (state: State) => state.settings.language,
   (
     counterValueCurrency,
     currenciesSettings,
     pairExchanges,
     developerModeEnabled,
     blacklistedTokenIds,
+    theme,
+    language,
   ) => ({
     counterValue: counterValueCurrency.ticker,
     currenciesSettings,
     pairExchanges,
     developerModeEnabled,
     blacklistedTokenIds,
+    theme,
+    language,
   }),
 );
 export const overriddenFeatureFlagsSelector = (state: State) =>
