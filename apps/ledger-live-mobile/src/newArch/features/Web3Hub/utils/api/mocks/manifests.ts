@@ -90,7 +90,6 @@ export const mocks: AppManifest[] = [
       "qtum",
       "bitcoin_gold",
       "komodo",
-      "pivx",
       "zencash",
       "vertcoin",
       "peercoin",

@@ -394,20 +394,6 @@ const bitcoinCash: AppSpec<Transaction> = {
   minViableAmount: genericMinimalAmount,
 };
 
-const pivx: AppSpec<Transaction> = {
-  name: "PivX",
-  currency: getCryptoCurrencyById("pivx"),
-  dependency: "Bitcoin Legacy",
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "PivX",
-    appVersion: "2.1.0-rc",
-  },
-  genericDeviceAction: acceptTransaction,
-  test: genericTest,
-  mutations: bitcoinLikeMutations(),
-  minViableAmount: genericMinimalAmount,
-};
 const minQtum = parseCurrencyUnit(getCryptoCurrencyById("qtum").units[0], "0.001");
 const qtum: AppSpec<Transaction> = {
   name: "Qtum",
@@ -573,7 +559,6 @@ export default {
   dogecoin,
   komodo,
   litecoin,
-  pivx,
   qtum,
   zcash,
   zencash,

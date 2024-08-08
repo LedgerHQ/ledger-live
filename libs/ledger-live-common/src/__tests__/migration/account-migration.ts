@@ -45,7 +45,6 @@ setSupportedCurrencies([
   "qtum",
   "bitcoin_gold",
   "komodo",
-  "pivx",
   "zencash",
   "crypto_org",
   "crypto_org_croeseid",
