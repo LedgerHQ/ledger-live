@@ -14,7 +14,7 @@ export const MarketQuickActions = () => {
 
   const quickActionsData: QuickActionButtonProps[] = useMemo(
     () =>
-      QUICK_ACTIONS.flatMap(key => {
+      (Object.entries(QUICK_ACTIONS) as EntryOf<typeof QUICK_ACTIONS>[]).flatMap(([key, prop]) => {
         const action = quickActionsList[key];
         if (!action) return [];
 
@@ -22,7 +22,7 @@ export const MarketQuickActions = () => {
           variant: "small",
           textVariant: "small",
           Icon: action.icon,
-          children: t(QUICK_ACTION_DATA[key].name),
+          children: t(prop.name),
           onPress: () =>
             navigation.navigate<keyof BaseNavigatorStackParamList>(
               ...(action.route as EntryOf<BaseNavigatorStackParamList>),
@@ -36,8 +36,7 @@ export const MarketQuickActions = () => {
   return <QuickActionList data={quickActionsData} numColumns={5} id="asset_five_columns" />;
 };
 
-const QUICK_ACTIONS = ["SEND", "RECEIVE", "BUY", "SWAP", "STAKE"] as const;
-const QUICK_ACTION_DATA = {
+const QUICK_ACTIONS = {
   SEND: {
     name: "portfolio.quickActions.send",
   },
