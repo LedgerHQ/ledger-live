@@ -30,7 +30,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "^0.26.1",
+    "axios": "^0.28.0",
     "ws": "^7.5.2"
   },
   "scripts": {
