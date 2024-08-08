@@ -937,6 +937,10 @@
       "title": "Sorry, try again.",
       "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
       "errorCode": "Code: {{errorCode}}"
+    },
+    "TrustchainNotFound": {
+      "title": "Something went wrong while fetching your data",
+      "description": "Please try again or contact Ledger Support."
     }
   },
   "crash": {
