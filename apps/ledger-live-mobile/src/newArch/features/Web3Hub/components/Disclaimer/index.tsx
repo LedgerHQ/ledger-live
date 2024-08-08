@@ -42,16 +42,17 @@ export default function Disclaimer({
       ) : null}
 
       <Box mt={6} height="1px" width="100%" backgroundColor={"translucentGrey"} />
-      
-      {manifest?.categories.includes("clear signing") &&
-      <Flex mt={6} flexDirection={"row"} alignItems={"center"}>
-        <Box mr={2}>
-          <Icons.Eye color={"smoke"} />
-        </Box>
-        <Text fontSize={14} color="smoke">
-          {t("web3hub.components.disclaimer.clearSigningEnabled")}
-        </Text>
-      </Flex>}
+
+      {manifest?.categories.includes("clear signing") && (
+        <Flex mt={6} flexDirection={"row"} alignItems={"center"}>
+          <Box mr={2}>
+            <Icons.Eye color={"smoke"} />
+          </Box>
+          <Text fontSize={14} color="smoke">
+            {t("web3hub.components.disclaimer.clearSigningEnabled")}
+          </Text>
+        </Flex>
+      )}
 
       <Flex mt={6}>
         <Checkbox

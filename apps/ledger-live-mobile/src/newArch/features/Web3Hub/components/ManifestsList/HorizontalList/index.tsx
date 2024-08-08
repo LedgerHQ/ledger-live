@@ -7,11 +7,11 @@ import MinimalAppCard from "./MinimalAppCard";
 import LoadingIndicator from "../LoadingIndicator";
 
 type Props = {
-    title: string;
-    isLoading: boolean;
-    data: AppManifest[];
-    onEndReached?: () => void;
-    extraData: { onPress: (manifest: string) => void };
+  title: string;
+  isLoading: boolean;
+  data: AppManifest[];
+  onEndReached?: () => void;
+  extraData: { onPress: (manifest: string) => void };
 };
 
 type PropRenderItem = {
@@ -26,8 +26,8 @@ const renderItem = ({ item, extraData }: PropRenderItem) => {
 };
 
 export default function HorizontalList({ title, isLoading, data, onEndReached, extraData }: Props) {
-
-    return <>
+  return (
+    <>
       <Text mt={2} mb={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
         {title}
       </Text>
@@ -53,6 +53,7 @@ export default function HorizontalList({ title, isLoading, data, onEndReached, e
         />
       </View>
     </>
+  );
 }
 
 const styles = StyleSheet.create({
