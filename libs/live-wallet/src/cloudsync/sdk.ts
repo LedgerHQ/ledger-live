@@ -109,8 +109,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>>
         break;
       }
       case "out-of-sync": {
-        // WHAT TO DO? maybe we ignore because in this case we just wait for a pull?
-        console.warn("out-of-sync", response);
+        // TODO: LIVE-13634
       }
     }
   }

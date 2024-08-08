@@ -133,7 +133,6 @@ export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema 
       if (onStartPolling) onStartPolling();
 
       // check if there is a pull to do
-      // TODO this needs to be called separately, probably more often than the rest of this logic.
       await walletSyncSdk.pull(trustchain, memberCredentials);
       if (unsubscribed) return;
 
