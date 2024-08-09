@@ -9,17 +9,17 @@ import { LocalLiveAppSection } from "./LocalLiveAppSection";
 import { useLocation } from "react-router-dom";
 import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 
-function useSearchQuery(key: string) {
-  const { search } = useLocation();
-  return React.useMemo(() => new URLSearchParams(search).get(key), [key, search]);
-}
-
 export function Catalog() {
   const recentlyUsedDB = useRecentlyUsedDB();
 
   const { t } = useTranslation();
 
-  const deeplinkCategory: Categories["categories"][number] | null = useSearchQuery("category");
+  const { state } = useLocation() as ReturnType<typeof useLocation> & {
+    state?: {
+      category?: Categories["selected"];
+    };
+  };
+  const deeplinkInitialCategory = state?.category;
 
   const {
     categories,
@@ -27,7 +27,7 @@ export function Catalog() {
     disclaimer,
     search: searchInput,
     localLiveApps,
-  } = useCatalog(recentlyUsedDB, deeplinkCategory ?? undefined);
+  } = useCatalog(recentlyUsedDB, deeplinkInitialCategory ?? undefined);
 
   return (
     <Flex flexDirection="column" paddingBottom={100}>

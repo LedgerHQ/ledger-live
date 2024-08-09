@@ -310,7 +310,7 @@ export function useDeepLinkHandler() {
           if (path?.startsWith("protect")) {
             navigate(`/recover/${path}`, undefined, search);
           } else {
-            navigate(`/platform/${path ?? ""}`, query, search);
+            navigate(`/platform/${path ?? ""}`, query);
           }
           break;
         case "wc": {
