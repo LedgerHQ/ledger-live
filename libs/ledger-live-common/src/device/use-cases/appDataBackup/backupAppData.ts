@@ -1,6 +1,11 @@
-import { AppStorageInfo, backupAppStorage, getAppStorageInfo } from "@ledgerhq/device-core";
+import {
+  AppNotFound,
+  AppStorageInfo,
+  backupAppStorage,
+  getAppStorageInfo,
+} from "@ledgerhq/device-core";
 import Transport from "@ledgerhq/hw-transport";
-import { Observable, from, switchMap } from "rxjs";
+import { Observable, catchError, from, of, switchMap } from "rxjs";
 import { AppName, BackupAppDataError, BackupAppDataEvent, BackupAppDataEventType } from "./types";
 
 /**
@@ -57,6 +62,15 @@ export function backupAppData(
             data: appData.toString("base64"),
           });
           subscriber.complete();
+        }),
+        catchError(e => {
+          if (e instanceof AppNotFound) {
+            subscriber.next({ type: BackupAppDataEventType.NoAppDataToBackup });
+            subscriber.complete();
+            return of(null);
+          }
+
+          throw e;
         }),
       )
       .subscribe();

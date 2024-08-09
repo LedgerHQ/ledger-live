@@ -193,7 +193,7 @@ export function mockListAppsResult(
 
 export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]): Exec => {
   let installed = installedInitial.slice(0);
-  return (appOp: AppOp, targetId: string | number, app: App) => {
+  return ({ appOp, app }: { appOp: AppOp; targetId: string | number; app: App }) => {
     if (appOp.name !== app.name) {
       throw new Error("appOp.name must match app.name");
     }

@@ -58,7 +58,6 @@ export async function restoreAppStorageInit(
   tracer.trace("Start");
 
   const params: Buffer = Buffer.concat([
-    Buffer.from([appName.length + 4]), // LC
     Buffer.from(backupSize.toString(16).padStart(8, "0"), "hex"), // BACKUP_LEN
     Buffer.from(appName, "ascii"), // APP_NAME
   ]);

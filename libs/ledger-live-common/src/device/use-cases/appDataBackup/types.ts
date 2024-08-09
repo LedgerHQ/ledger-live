@@ -105,6 +105,11 @@ export enum RestoreAppDataEventType {
    * The application data has been restored.
    */
   AppDataRestored = "appDataRestored",
+
+  /**
+   * There is no application data to restore.
+   */
+  NoAppDataToRestore = "noAppDataToRestore",
 }
 
 export type RestoreAppDataEvent =
@@ -120,6 +125,9 @@ export type RestoreAppDataEvent =
     }
   | {
       type: RestoreAppDataEventType.AppDataRestored;
+    }
+  | {
+      type: RestoreAppDataEventType.NoAppDataToRestore;
     };
 
 /**

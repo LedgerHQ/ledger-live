@@ -54,7 +54,7 @@ export async function backupAppStorage(transport: Transport): Promise<Buffer> {
   });
   tracer.trace("Start");
 
-  const apdu: Readonly<APDU> = [...BACKUP_APP_STORAGE, Buffer.from([0x00])];
+  const apdu: Readonly<APDU> = [...BACKUP_APP_STORAGE, Buffer.from([])];
 
   const response = await transport.send(...apdu, RESPONSE_STATUS_SET);
 
