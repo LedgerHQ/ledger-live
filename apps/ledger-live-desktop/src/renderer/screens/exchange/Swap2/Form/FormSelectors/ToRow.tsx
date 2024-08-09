@@ -1,29 +1,30 @@
-import React from "react";
-import { Trans } from "react-i18next";
-import Box from "~/renderer/components/Box/Box";
-import InputCurrency from "~/renderer/components/InputCurrency";
-import SelectCurrency from "~/renderer/components/SelectCurrency";
-import { amountInputContainerProps, renderCurrencyValue, selectRowStylesMap } from "./utils";
-import { FormLabel } from "./FormLabel";
 import {
   useFetchCurrencyTo,
   usePickDefaultCurrency,
   useSelectableCurrencies,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
+  SwapDataType,
   SwapSelectorStateType,
   SwapTransactionType,
-  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  Container as InputContainer,
-  BaseContainer as BaseInputContainer,
-} from "~/renderer/components/Input";
-import styled from "styled-components";
-import CounterValue from "~/renderer/components/CounterValue";
-import { track } from "~/renderer/analytics/segment";
-import { useGetSwapTrackingProperties } from "../../utils/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import React from "react";
+import { Trans } from "react-i18next";
+import styled from "styled-components";
+import { track } from "~/renderer/analytics/segment";
+import Box from "~/renderer/components/Box/Box";
+import CounterValue from "~/renderer/components/CounterValue";
+import {
+  BaseContainer as BaseInputContainer,
+  Container as InputContainer,
+} from "~/renderer/components/Input";
+import InputCurrency from "~/renderer/components/InputCurrency";
+import SelectCurrency from "~/renderer/components/SelectCurrency";
+import { useGetSwapTrackingProperties } from "../../utils/index";
+import { FormLabel } from "./FormLabel";
+import { amountInputContainerProps, renderCurrencyValue, selectRowStylesMap } from "./utils";
 
 type Props = {
   fromAccount: SwapSelectorStateType["account"];
@@ -34,6 +35,7 @@ type Props = {
   provider: string | undefined | null;
   loadingRates: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
+  counterValue?: BigNumber;
 };
 
 const InputCurrencyContainer = styled(Box)`
@@ -57,6 +59,7 @@ function ToRow({
   fromAccount,
   loadingRates,
   updateSelectedRate,
+  counterValue,
 }: Props) {
   const { data: currenciesTo, isLoading: currenciesToIsLoading } = useFetchCurrencyTo({
     fromCurrencyAccount: fromAccount,
@@ -92,7 +95,7 @@ function ToRow({
         </FormLabel>
       </Box>
       <Box horizontal>
-        <Box flex="1" data-test-id="destination-currency-dropdown">
+        <Box flex="1" data-testid="destination-currency-dropdown">
           <SelectCurrency
             currencies={currencies}
             onChange={setCurrencyAndTrack}
@@ -123,6 +126,7 @@ function ToRow({
               !loadingRates && (
                 <CounterValue
                   currency={toCurrency}
+                  counterValue={counterValue}
                   value={toAmount}
                   color="palette.text.shade40"
                   ff="Inter|Medium"

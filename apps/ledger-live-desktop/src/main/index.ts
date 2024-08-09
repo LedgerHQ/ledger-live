@@ -100,20 +100,20 @@ app.on("ready", async () => {
   ipcMain.handle("setKey", (event, { ns, keyPath, value }) => {
     return db.setKey(ns, keyPath, value);
   });
-  ipcMain.handle("hasEncryptionKey", (event, { ns, keyPath }) => {
-    return db.hasEncryptionKey(ns, keyPath);
+  ipcMain.handle("hasEncryptionKey", () => {
+    return db.hasEncryptionKey();
   });
-  ipcMain.handle("setEncryptionKey", (event, { ns, keyPath, encryptionKey }) => {
-    return db.setEncryptionKey(ns, keyPath, encryptionKey);
+  ipcMain.handle("setEncryptionKey", (event, { encryptionKey }) => {
+    return db.setEncryptionKey(encryptionKey);
   });
-  ipcMain.handle("removeEncryptionKey", (event, { ns, keyPath }) => {
-    return db.removeEncryptionKey(ns, keyPath);
+  ipcMain.handle("removeEncryptionKey", () => {
+    return db.removeEncryptionKey();
   });
-  ipcMain.handle("isEncryptionKeyCorrect", (event, { ns, keyPath, encryptionKey }) => {
-    return db.isEncryptionKeyCorrect(ns, keyPath, encryptionKey);
+  ipcMain.handle("isEncryptionKeyCorrect", (event, { encryptionKey }) => {
+    return db.isEncryptionKeyCorrect(encryptionKey);
   });
-  ipcMain.handle("hasBeenDecrypted", (event, { ns, keyPath }) => {
-    return db.hasBeenDecrypted(ns, keyPath);
+  ipcMain.handle("hasBeenDecrypted", () => {
+    return db.hasBeenDecrypted();
   });
   ipcMain.handle("resetAll", () => {
     return db.resetAll();

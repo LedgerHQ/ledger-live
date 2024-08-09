@@ -20,7 +20,7 @@ export function makeCipher(sessionEncryptionKey: Uint8Array): Cipher {
     const plaintext = JSON.stringify(obj);
     const data = new TextEncoder().encode(plaintext);
     const nonce = await crypto.randomBytes(16);
-    const ciphertext = await crypto.encryptUsingAesGcm(sessionEncryptionKey, nonce, data);
+    const ciphertext = await crypto.encrypt(sessionEncryptionKey, nonce, data);
     const blob = new Uint8Array(nonce.length + ciphertext.length);
     blob.set(nonce);
     blob.set(ciphertext, nonce.length);
@@ -32,7 +32,7 @@ export function makeCipher(sessionEncryptionKey: Uint8Array): Cipher {
     const nonce = blob.slice(0, 16);
     const ciphertext = blob.slice(16);
     try {
-      const plaintext = await crypto.decryptUsingAesGcm(sessionEncryptionKey, nonce, ciphertext);
+      const plaintext = await crypto.decrypt(sessionEncryptionKey, nonce, ciphertext);
       const text = new TextDecoder().decode(plaintext);
       return JSON.parse(text);
     } catch (e) {

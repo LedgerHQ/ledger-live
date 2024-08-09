@@ -45,9 +45,10 @@ function AccessExistingWallet() {
   }, [navigation]);
 
   const openDrawer = useCallback(() => {
+    dispatch(setOnboardingType(OnboardingType.walletSync));
     setIsDrawerVisible(true);
     logDrawer("Wallet Sync Welcome back", "open");
-  }, []);
+  }, [dispatch]);
 
   const closeDrawer = useCallback(() => {
     setIsDrawerVisible(false);

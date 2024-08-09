@@ -38,3 +38,17 @@ export const convertToNonAtomicUnit = ({
       : account.currency?.units[0].magnitude || 0;
   return amount?.shiftedBy(-fromMagnitude);
 };
+
+export const convertToAtomicUnit = ({
+  amount,
+  account,
+}: {
+  amount?: BigNumber;
+  account: AccountLike;
+}) => {
+  const fromMagnitude =
+    account.type === "TokenAccount"
+      ? account.token.units[0].magnitude || 0
+      : account.currency?.units[0].magnitude || 0;
+  return amount?.shiftedBy(fromMagnitude);
+};

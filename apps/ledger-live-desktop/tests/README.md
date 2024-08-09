@@ -127,16 +127,16 @@ pnpm desktop test:playwright:recorder
 
 <u>Path:</u> `src/...`
 
-To interact with web elements (buttons, input fields, images, …), they should be identified using a [_data-test-id_](https://playwright.dev/docs/selectors#id-data-testid-data-test-id-data-test-selectors) for unique elements or a [_class_](https://developer.mozilla.org/en-US/docs/Web/CSS/Class_selectors) for multiple elements.
+To interact with web elements (buttons, input fields, images, …), they should be identified using a [_data-testid_](https://playwright.dev/docs/selectors#id-data-testid-data-testid-data-test-selectors) for unique elements or a [_class_](https://developer.mozilla.org/en-US/docs/Web/CSS/Class_selectors) for multiple elements.
 
 > :information_source: As a convention, this is the pattern we must use: `<context>-<text or purpose>-<element type>`.
 
 _I want to identify the Get started CTA button in onboarding flow._
 
-Look for your element in `src/renderer/...` and give it a `data-test-id` attribute.
+Look for your element in `src/renderer/...` and give it a `data-testid` attribute.
 
 ```html
-<button data-test-id="”onboarding-getstarted-button”">Get started</button>
+<button data-testid="”onboarding-getstarted-button”">Get started</button>
 ```
 
 > :x: Don’t use a className in this case because the element is unique.
@@ -162,7 +162,7 @@ Declare your element
 ```javascript
 constructor(page: Page) {
   this.page = page;
-  this.getStartedButton = page.locator("data-test-id=onboarding-getstarted-button");
+  this.getStartedButton = page.getByTestId("onboarding-getstarted-button");
 }
 ```
 
@@ -194,7 +194,7 @@ export class OnboardingPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.getStartedButton = page.locator("data-test-id=onboarding-get-started-button");
+    this.getStartedButton = page.getByTestId("onboarding-get-started-button");
   }
 
   async getStarted() {

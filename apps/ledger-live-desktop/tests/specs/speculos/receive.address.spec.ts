@@ -1,7 +1,7 @@
-import test from "../../fixtures/common";
+import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
-import { specs } from "../../utils/speculos";
-import { addTmsLink } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "../../utils/customJsonReporter";
 
 const accounts: Account[] = [
   // Derivation path is updated when account receive money
@@ -16,29 +16,36 @@ const accounts: Account[] = [
   Account.XTZ_1,
 ];
 
-//Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
-for (const [i, account] of accounts.entries()) {
-  test.describe.skip("Receive", () => {
+//Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
+for (const account of accounts) {
+  test.describe("Receive", () => {
     test.use({
       userdata: "speculos-tests-app",
-      testName: `receiveSpeculos_${account.currency.uiName}`,
-      speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosCurrency: account.currency,
     });
 
-    test(`[${account.currency.uiName}] Receive`, async ({ app }) => {
-      addTmsLink(["B2CQA-249"]);
+    test(
+      `[${account.currency.name}] Receive`,
+      {
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-249, B2CQA-651",
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations).split(", "));
 
-      await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(account.accountName);
-      await app.account.expectAccountVisibility(account.accountName);
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(account.accountName);
+        await app.account.expectAccountVisibility(account.accountName);
 
-      await app.account.clickReceive();
-      await app.modal.continue();
-      await app.receive.expectValidReceiveAddress(account.address);
+        await app.account.clickReceive();
+        await app.modal.continue();
+        await app.receive.expectValidReceiveAddress(account.address);
 
-      await app.speculos.expectValidReceiveAddress(account);
-      await app.receive.expectApproveLabel();
-    });
+        await app.speculos.expectValidReceiveAddress(account);
+        await app.receive.expectApproveLabel();
+      },
+    );
   });
 }

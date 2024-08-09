@@ -54,7 +54,7 @@ const SideDrawerHeader = ({ title, onRequestClose, onRequestBack }: Props) => {
             <Button
               onClick={onRequestBack}
               className="sidedrawer-close"
-              data-test-id="drawer-close-button"
+              data-testid="drawer-close-button"
             >
               <IconAngleLeft size={12} />
               <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
@@ -72,7 +72,7 @@ const SideDrawerHeader = ({ title, onRequestClose, onRequestBack }: Props) => {
           )}
 
           {onRequestClose && !blocked ? (
-            <TouchButton onClick={onRequestClose} data-test-id="drawer-close-button">
+            <TouchButton onClick={onRequestClose} data-testid="drawer-close-button">
               <IconCross size={16} />
             </TouchButton>
           ) : (

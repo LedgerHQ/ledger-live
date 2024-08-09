@@ -147,6 +147,15 @@ ipcMain.handle("deactivate-keep-screen-awake", (_ev, id?: number) => {
 
 process.setMaxListeners(0);
 
+// In production mode, we do not want Electron's default GUI to show the error. Instead we will output to the console.
+if (!__DEV__) {
+  process.on("uncaughtException", function (error) {
+    const stack = error.stack ? error.stack : `${error.name}: ${error.message}`;
+    const message = "Uncaught Exception:\n" + stack;
+    console.error(message);
+  });
+}
+
 // eslint-disable-next-line no-console
 console.log(`Ledger Live ${__APP_VERSION__}`);
 contextMenu({

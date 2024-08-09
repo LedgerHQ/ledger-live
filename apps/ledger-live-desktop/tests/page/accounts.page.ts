@@ -11,7 +11,7 @@ export class AccountsPage extends AppPage {
   private contextMenuEdit = this.page.getByTestId("accounts-context-menu-edit");
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
   private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
-  private accountListNumber = this.page.locator(`[data-test-id^="account-component-"]`);
+  private accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
 
   async openAddAccountModal() {
     await this.addAccountButton.click();
@@ -46,7 +46,7 @@ export class AccountsPage extends AppPage {
     const accountElements = await this.accountListNumber.all();
     const accountNames = [];
     for (const element of accountElements) {
-      let accountName = await element.getAttribute("data-test-id");
+      let accountName = await element.getAttribute("data-testid");
       if (accountName) {
         accountName = accountName.replace("account-component-", "");
         accountNames.push(accountName);

@@ -31,7 +31,7 @@ export class OnboardingPage extends AppPage {
   }
 
   async waitForPedagogyModal() {
-    await this.page.waitForSelector("data-test-id=v3-onboarding-pedagogy-modal");
+    await this.page.waitForSelector("data-testid=v3-onboarding-pedagogy-modal");
   }
 
   async getStarted() {
@@ -39,7 +39,7 @@ export class OnboardingPage extends AppPage {
   }
 
   async hoverDevice(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
-    await this.page.hover(`[data-test-id=v3-container-device-${device}]`);
+    await this.page.hover(`[data-testid=v3-container-device-${device}]`);
   }
 
   async selectDevice(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {

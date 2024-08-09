@@ -13,12 +13,12 @@ import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
-import { FakeLink } from "~/renderer/components/TopBanner";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { LocalTracer } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
+import { Button } from "@ledgerhq/react-ui";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -168,9 +168,9 @@ const FirmwareUpdate = (props: Props) => {
       <FirmwareUpdateBanner
         old
         right={
-          <FakeLink onClick={() => openURL(contactSupportUrl)}>
+          <Button variant="main" onClick={() => openURL(contactSupportUrl)}>
             <Trans i18nKey="manager.firmware.banner.old.cta" />
-          </FakeLink>
+          </Button>
         }
       />
     );
@@ -194,8 +194,9 @@ const FirmwareUpdate = (props: Props) => {
               </Text>
             </Box>
           )}
-          <FakeLink
-            data-test-id="manager-update-firmware-button"
+          <Button
+            variant="main"
+            data-testid="manager-update-firmware-button"
             disabled={!!disableFirmwareUpdate}
             onClick={() => {
               track("Manager Firmware Update Click", {
@@ -205,7 +206,7 @@ const FirmwareUpdate = (props: Props) => {
             }}
           >
             <Trans i18nKey="manager.firmware.banner.cta2" />
-          </FakeLink>
+          </Button>
         </Box>
       }
     />

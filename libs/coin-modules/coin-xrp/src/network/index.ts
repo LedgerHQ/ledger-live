@@ -1,32 +1,20 @@
 import network from "@ledgerhq/live-network";
-import { NEW_ACCOUNT_ERROR_MESSAGE } from "../logic";
 import coinConfig from "../config";
 import {
-  AccountInfoResponse,
-  AccountTxResponse,
-  LedgerResponse,
-  ServerInfoResponse,
-  SubmitReponse,
+  isResponseStatus,
+  type AccountInfoResponse,
+  type AccountTxResponse,
+  type LedgerResponse,
+  type ServerInfoResponse,
+  type SubmitReponse,
 } from "./types";
 
 const getNodeUrl = () => coinConfig.getCoinConfig().node;
 
+export const NEW_ACCOUNT_ERROR_MESSAGE = "actNotFound";
+
 export const submit = async (signature: string): Promise<SubmitReponse> => {
-  const {
-    data: { result },
-  } = await network<{ result: SubmitReponse }>({
-    method: "POST",
-    url: getNodeUrl(),
-    data: {
-      method: "submit",
-      params: [
-        {
-          tx_blob: signature,
-        },
-      ],
-    },
-  });
-  return result;
+  return rpcCall<SubmitReponse>("submit", { tx_blob: signature });
 };
 
 export const getAccountInfo = async (
@@ -57,75 +45,54 @@ export const getAccountInfo = async (
 };
 
 export const getServerInfos = async (): Promise<ServerInfoResponse> => {
-  const {
-    data: { result },
-  } = await network<{ result: ServerInfoResponse }>({
-    method: "POST",
-    url: getNodeUrl(),
-    data: {
-      method: "server_info",
-      params: [
-        {
-          ledger_index: "validated",
-        },
-      ],
-    },
-  });
-
-  if (result.status !== "success") {
-    throw new Error(`couldn't fetch server info`);
-  }
-
-  return result;
+  return rpcCall<ServerInfoResponse>("server_info", { ledger_index: "validated" });
 };
 
 export const getTransactions = async (
   address: string,
   options: { ledger_index_min?: number; ledger_index_max?: number } | undefined,
 ): Promise<AccountTxResponse["transactions"]> => {
-  const {
-    data: { result },
-  } = await network<{ result: AccountTxResponse }>({
-    method: "POST",
-    url: getNodeUrl(),
-    data: {
-      method: "account_tx",
-      params: [
-        {
-          account: address,
-          ledger_index: "validated",
-          ...options,
-        },
-      ],
-    },
+  const result = await rpcCall<AccountTxResponse>("account_tx", {
+    account: address,
+    ledger_index: "validated",
+    ...options,
   });
-
-  if (result.status !== "success") {
-    throw new Error(`couldn't getTransactions for ${address}`);
-  }
 
   return result.transactions;
 };
 
+export async function getLedger(): Promise<LedgerResponse> {
+  return rpcCall<LedgerResponse>("ledger", { ledger_index: "validated" });
+}
+
 export async function getLedgerIndex(): Promise<number> {
+  const result = await getLedger();
+
+  return result.ledger_index;
+}
+
+async function rpcCall<T extends object>(
+  method: string,
+  params: Record<string, string | number>,
+): Promise<T> {
   const {
     data: { result },
-  } = await network<{ result: LedgerResponse }>({
+  } = await network<{ result: T }>({
     method: "POST",
     url: getNodeUrl(),
     data: {
-      method: "ledger",
+      method,
       params: [
         {
-          ledger_index: "validated",
+          ...params,
         },
       ],
     },
   });
 
-  if (result.status !== "success") {
-    throw new Error(`couldn't fetch getLedgerIndex`);
+  if (isResponseStatus(result) && result.status !== "success") {
+    throw new Error(`couldn't fetch ${method} with params ${params}`);
   }
 
-  return result.ledger_index;
+  return result;
 }

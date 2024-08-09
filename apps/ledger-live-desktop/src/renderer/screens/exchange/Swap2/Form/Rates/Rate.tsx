@@ -59,7 +59,7 @@ function Rate({
       fontWeight="500"
       selected={selected}
       onClick={handleSelection}
-      data-test-id={`quote-container-${value.provider}-${value.tradeMethod}`}
+      data-testid={`quote-container-${value.provider}-${value.tradeMethod}`}
     >
       {icon && (
         <Box mr={2}>

@@ -280,7 +280,7 @@ const AppActions = React.memo(
                     appName: name,
                     appVersion: app.version,
                   }}
-                  data-test-id={`manager-install-${name}-app-button`}
+                  data-testid={`manager-install-${name}-app-button`}
                 >
                   <IconArrowDown size={14} />
                   <Text
@@ -310,7 +310,7 @@ const AppActions = React.memo(
                     padding: 13,
                   }}
                   onClick={onUninstall}
-                  data-test-id={`manager-uninstall-${name}-app-button`}
+                  data-testid={`manager-uninstall-${name}-app-button`}
                   event="Manager Uninstall Click"
                   eventProperties={{
                     appName: name,

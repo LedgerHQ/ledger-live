@@ -3,6 +3,7 @@ import {
   MemberCredentials,
   Trustchain,
   TrustchainDeviceCallbacks,
+  TrustchainLifecycle,
   TrustchainMember,
   TrustchainResult,
   TrustchainResultType,
@@ -12,6 +13,7 @@ import {
 import Transport from "@ledgerhq/hw-transport";
 import { Permissions } from "@ledgerhq/hw-trustchain";
 import { TrustchainEjected } from "./errors";
+import getApi from "./api";
 
 const mockedLiveCredentialsPrivateKey = "mock-private-key";
 
@@ -35,17 +37,35 @@ function assertAllowedPermissions(trustchainId: string, memberId: string) {
   }
 }
 
-const mockedLiveJWT = { accessToken: "mock-live-jwt" };
-const mockedDeviceJWT = { accessToken: "mock-device-jwt" };
+const mockedLiveJWT = {
+  accessToken: "mock-live-jwt",
+  permissions: {},
+};
 
 // global states in memory
 const trustchains = new Map<string, Trustchain>();
 const trustchainMembers = new Map<string, TrustchainMember[]>();
 
+/**
+ * to mock the encryption/decryption, we just xor the data with 0xff
+ */
+const applyXor = (a: Uint8Array) => {
+  const b = new Uint8Array(a.length);
+  for (let i = 0; i < a.length; i++) {
+    b[i] = a[i] ^ 0xff;
+  }
+  return b;
+};
+
 export class MockSDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
-  constructor(context: TrustchainSDKContext) {
+  private lifecyle?: TrustchainLifecycle;
+  private api: ReturnType<typeof getApi>;
+
+  constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
     this.context = context;
+    this.lifecyle = lifecyle;
+    this.api = getApi(context.apiBaseUrl);
   }
 
   private deviceJwtAcquired = false;
@@ -69,11 +89,6 @@ export class MockSDK implements TrustchainSDK {
     return job(mockedLiveJWT);
   }
 
-  withDeviceAuth<T>(transport: Transport, job: (jwt: JWT) => Promise<T>): Promise<T> {
-    void transport;
-    return job(mockedDeviceJWT);
-  }
-
   async getOrCreateTrustchain(
     transport: Transport,
     memberCredentials: MemberCredentials,
@@ -88,7 +103,7 @@ export class MockSDK implements TrustchainSDK {
     const trustchain: Trustchain = trustchains.get("mock-root-id") || {
       rootId: "mock-root-id",
       walletSyncEncryptionKey: "mock-wallet-sync-encryption-key",
-      applicationPath: "0'/16'/0'",
+      applicationPath: "m/0'/16'/0'",
     };
     trustchains.set(trustchain.rootId, trustchain);
 
@@ -158,6 +173,15 @@ export class MockSDK implements TrustchainSDK {
     if (member.id === memberCredentials.pubkey) {
       throw new Error("cannot remove self");
     }
+    const afterRotation = await this.lifecyle?.onTrustchainRotation(
+      this,
+      trustchain,
+      memberCredentials,
+    );
+
+    callbacks?.onStartRequestUserInteraction();
+    // simulate device interaction
+    callbacks?.onEndRequestUserInteraction();
 
     callbacks?.onStartRequestUserInteraction();
     // simulate device interaction
@@ -168,13 +192,16 @@ export class MockSDK implements TrustchainSDK {
     );
     trustchainMembers.set(trustchain.rootId, currentMembers);
     // we extract the index part to increment it and recreate a path
-    const index = 1 + parseInt(trustchain.applicationPath.split("/")[2].split("'")[0]);
+    const index = 1 + parseInt(trustchain.applicationPath.split("/")[3].split("'")[0]);
     const newTrustchain = {
       rootId: trustchain.rootId,
       walletSyncEncryptionKey: "mock-wallet-sync-encryption-key-" + index,
-      applicationPath: "0'/16'/" + index + "'",
+      applicationPath: "m/0'/16'/" + index + "'",
     };
     trustchains.set(newTrustchain.rootId, newTrustchain);
+
+    if (afterRotation) await afterRotation(newTrustchain);
+
     return Promise.resolve(newTrustchain);
   }
 
@@ -209,11 +236,11 @@ export class MockSDK implements TrustchainSDK {
 
   encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array> {
     assertTrustchain(trustchain);
-    return Promise.resolve(input);
+    return Promise.resolve(applyXor(input));
   }
 
   decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array> {
     assertTrustchain(trustchain);
-    return Promise.resolve(data);
+    return Promise.resolve(applyXor(data));
   }
 }

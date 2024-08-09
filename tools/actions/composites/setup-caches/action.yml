@@ -5,6 +5,10 @@ inputs:
     description: "true to install proto, false by default"
     required: false
     default: "false"
+  upgrade-proto:
+    description: "true to upgrade proto, false by default"
+    required: false
+    default: "false"
   skip-pnpm-cache:
     description: "true to skip pnpm caching, false by default"
     required: false
@@ -45,6 +49,7 @@ runs:
       uses: moonrepo/setup-toolchain@v0
 
     - name: Update proto
+      if: inputs.upgrade-proto == 'true'
       run: proto upgrade
       shell: bash
 
@@ -58,7 +63,7 @@ runs:
         echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v3
+      uses: aws-actions/configure-aws-credentials@v4
       if: inputs.accountId != '' && inputs.roleName != ''
       id: aws
       with:

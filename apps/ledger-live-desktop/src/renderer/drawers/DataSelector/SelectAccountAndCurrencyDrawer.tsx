@@ -113,7 +113,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
           style={{
             textTransform: "uppercase",
           }}
-          data-test-id="select-asset-drawer-title"
+          data-testid="select-asset-drawer-title"
         >
           {t("drawers.selectCurrency.title")}
         </Text>
@@ -121,7 +121,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
       <SelectorContent>
         <SearchInputContainer>
           <SearchInput
-            data-test-id="select-asset-drawer-search-input"
+            data-testid="select-asset-drawer-search-input"
             value={searchValue}
             onChange={setSearchValue}
           />

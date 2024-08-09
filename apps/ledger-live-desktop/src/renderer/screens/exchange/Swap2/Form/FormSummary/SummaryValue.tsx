@@ -4,14 +4,15 @@ import styled from "styled-components";
 import ButtonBase from "~/renderer/components/Button";
 import TextBase from "~/renderer/components/Text";
 
-const Container = styled.div`
+export const Container = styled.div`
   display: flex;
   flex-direction: row;
   column-gap: 0.375rem;
   align-items: center;
   color: ${p => p.theme.colors.palette.text.shade100};
+  justify-content: flex-end;
 `;
-const Text = styled(TextBase).attrs(() => ({
+export const Text = styled(TextBase).attrs(() => ({
   ff: "Inter",
   fontSize: "13px",
   fontWeight: 600,
@@ -51,9 +52,9 @@ const SummaryValue = ({
   return (
     <Container>
       {children}
-      {value && <Text>{value}</Text>}
+      {value && <Text title={String(value ?? "")}>{value}</Text>}
       {handleChange ? (
-        <Button onClick={handleChange} data-test-id="change-exchange-details-button">
+        <Button onClick={handleChange} data-testid="change-exchange-details-button">
           {t("swap2.form.changeCTA")}
         </Button>
       ) : null}

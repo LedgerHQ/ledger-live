@@ -1,12 +1,11 @@
 import * as Sentry from "@sentry/electron/renderer";
-import { BrowserTracing } from "@sentry/tracing";
 import user from "./../helpers/user";
 import { init, setShouldSendCallback } from "./install";
 import { Primitive } from "@sentry/types";
 // @ts-expect-error The right type would be SentryMainModule from "@sentry/electron/main"…
 // …but we should avoid importing the whole module and blow the bundle size
 const available = init(Sentry, {
-  integrations: [new BrowserTracing()],
+  integrations: [Sentry.browserTracingIntegration()],
 });
 export default async (shouldSendCallback: () => boolean) => {
   if (!available) return;

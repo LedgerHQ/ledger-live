@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 const DeviceIllustrationContainer = styled(Flex)`
   transition: transform ease-out 150ms;
   will-change: transform;
+  height: 260px;
 `;
 
 type BorderProps = ThemeProps<DefaultTheme> & { isFirst: boolean; isLast: boolean };
@@ -62,6 +63,11 @@ const DeviceName = styled(Text).attrs({
   fontSize: 24,
   fontWeight: "semiBold",
   fontFamily: "Inter",
+  textAlign: "center",
+  paddingLeft: 4,
+  paddingRight: 4,
+  marginTop: 32,
+  height: 60,
 })``;
 
 interface DeviceSelectOptionProps {
@@ -83,11 +89,11 @@ export function DeviceSelectorOption({
 }: DeviceSelectOptionProps) {
   const { t } = useTranslation();
   return (
-    <Container data-test-id={`v3-container-${id}`} {...{ id, isFirst, isLast }}>
+    <Container data-testid={`v3-container-${id}`} {...{ id, isFirst, isLast }}>
       <ContentContainer>
         <DeviceIllustrationContainer>{Illu}</DeviceIllustrationContainer>
-        <DeviceName marginTop="32px">{label}</DeviceName>
-        <SelectButton data-test-id={`v3-${id}`} variant="main" onClick={onClick}>
+        <DeviceName>{label}</DeviceName>
+        <SelectButton data-testid={`v3-${id}`} variant="main" onClick={onClick}>
           {t("onboarding.screens.selectDevice.selectLabel")}
         </SelectButton>
       </ContentContainer>

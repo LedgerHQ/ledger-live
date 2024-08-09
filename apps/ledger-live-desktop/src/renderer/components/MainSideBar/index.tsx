@@ -182,7 +182,7 @@ const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const { t } = useTranslation();
   return isExperimental || hasFullNodeConfigured ? (
     <Tag
-      data-test-id="drawer-experimental-button"
+      data-testid="drawer-experimental-button"
       to={{
         pathname: "/settings/experimental",
       }}
@@ -199,7 +199,7 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
   const { t } = useTranslation();
   return isFeatureFlagsButtonVisible || Object.keys(overriddenFeatureFlags).length !== 0 ? (
     <Tag
-      data-test-id="drawer-feature-flags-button"
+      data-testid="drawer-feature-flags-button"
       to={{
         pathname: "/settings/developer",
         state: {
@@ -365,7 +365,7 @@ const MainSideBar = () => {
             <Collapser
               collapsed={collapsed}
               onClick={handleCollapse}
-              data-test-id="drawer-collapse-button"
+              data-testid="drawer-collapse-button"
             >
               <IconChevron size={16} />
             </Collapser>

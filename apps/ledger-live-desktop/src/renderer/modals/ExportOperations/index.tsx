@@ -169,7 +169,7 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
               disabled={!success && !checkedIds.length}
               onClick={handleButtonClick}
               event={!success ? "Operation history" : undefined}
-              data-test-id="export-operations-save-button"
+              data-testid="export-operations-save-button"
               primary
             >
               {success ? (

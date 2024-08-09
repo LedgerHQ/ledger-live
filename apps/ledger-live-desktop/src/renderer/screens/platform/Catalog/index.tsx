@@ -73,7 +73,7 @@ export function Catalog() {
     <>
       <TrackPage category="Platform" name="Catalog" />
       <Header>
-        <Title data-test-id="discover-title">{t("platform.catalog.title")}</Title>
+        <Title data-testid="discover-title">{t("platform.catalog.title")}</Title>
       </Header>
       <Banner />
       <TwitterBanner />

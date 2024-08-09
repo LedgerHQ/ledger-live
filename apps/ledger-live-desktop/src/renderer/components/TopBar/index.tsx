@@ -85,7 +85,7 @@ const TopBar = () => {
             </Box>
             <Tooltip content={t("settings.discreet")} placement="bottom">
               <ItemContainer
-                data-test-id="topbar-discreet-button"
+                data-testid="topbar-discreet-button"
                 isInteractive
                 onClick={handleDiscreet}
               >
@@ -101,7 +101,7 @@ const TopBar = () => {
             </Box>
             <Tooltip content={t("settings.helpButton")} placement="bottom">
               <ItemContainer
-                data-test-id="topbar-help-button"
+                data-testid="topbar-help-button"
                 isInteractive
                 onClick={() => setHelpSideBarVisible(true)}
               >
@@ -119,7 +119,7 @@ const TopBar = () => {
                 </Box>
                 <Tooltip content={t("common.lock")}>
                   <ItemContainer
-                    data-test-id="topbar-password-lock-button"
+                    data-testid="topbar-password-lock-button"
                     isInteractive
                     justifyContent="center"
                     onClick={handleLock}
@@ -134,7 +134,7 @@ const TopBar = () => {
             </Box>
             <Tooltip content={t("settings.title")} placement="bottom">
               <ItemContainer
-                data-test-id="topbar-settings-button"
+                data-testid="topbar-settings-button"
                 isInteractive
                 onClick={navigateToSettings}
               >

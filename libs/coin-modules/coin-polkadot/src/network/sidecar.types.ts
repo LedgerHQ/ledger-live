@@ -144,3 +144,106 @@ export interface SidecarRuntimeSpec {
   chainType: IChainType;
   properties: IChainProperties;
 }
+
+//BlockInfo
+export type BlockInfo = {
+  number: string;
+  hash: string;
+  parentHash: string;
+  stateRoot: string;
+  extrinsicsRoot: string;
+  authorId: string;
+  logs: Log[];
+  // onInitialize: OnInitialize;
+  extrinsics: Extrinsic[];
+  onFinalize: {
+    events: any[];
+  };
+  finalized: boolean;
+};
+type Log = {
+  type: string;
+  index: string;
+  value: string[];
+};
+type Extrinsic = {
+  method: Method;
+  signature: any;
+  nonce: any;
+  args: Args;
+  tip: any;
+  hash: string;
+  era: {
+    immortalEra: string;
+  };
+  events: {
+    method: Method;
+    data: any[];
+  }[];
+  success: boolean;
+  paysFee: boolean;
+};
+type Method = {
+  pallet: string;
+  method: string;
+};
+type Args = {
+  now?: string;
+  data?: Data;
+};
+type Data = {
+  bitfields: Bitfield[];
+  backedCandidates: BackedCandidate[];
+  disputes: any[];
+  parentHeader: ParentHeader;
+};
+type Bitfield = {
+  payload: string;
+  validatorIndex: string;
+  signature: string;
+};
+type BackedCandidate = {
+  candidate: Candidate;
+  validityVotes: {
+    explicit?: string;
+    implicit?: string;
+  }[];
+  validatorIndices: string;
+};
+type Candidate = {
+  descriptor: Descriptor;
+  commitments: Commitments;
+};
+type Descriptor = {
+  paraId: string;
+  relayParent: string;
+  collator: string;
+  persistedValidationDataHash: string;
+  povHash: string;
+  erasureRoot: string;
+  signature: string;
+  paraHead: string;
+  validationCodeHash: string;
+};
+type Commitments = {
+  upwardMessages: any[];
+  horizontalMessages: any[];
+  newValidationCode: any;
+  headData: string;
+  processedDownwardMessages: string;
+  hrmpWatermark: string;
+};
+type ParentHeader = {
+  parentHash: string;
+  number: string;
+  stateRoot: string;
+  extrinsicsRoot: string;
+  digest: Digest;
+};
+type Digest = {
+  logs: {
+    preRuntime?: string[];
+    consensus?: string[];
+    seal?: string[];
+  }[];
+};

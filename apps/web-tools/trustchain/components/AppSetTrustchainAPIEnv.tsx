@@ -5,7 +5,7 @@ import useEnv from "../useEnv";
 import { Input } from "./Input";
 
 export function AppSetTrustchainAPIEnv() {
-  const env = useEnv("TRUSTCHAIN_API");
+  const env = useEnv("TRUSTCHAIN_API_STAGING");
   const [localValue, setLocalValue] = useState(env);
   const action = useCallback(() => Promise.resolve(localValue), [localValue]);
   return (
@@ -14,7 +14,7 @@ export function AppSetTrustchainAPIEnv() {
       inputs={[]}
       action={action}
       value={env}
-      setValue={v => setEnv("TRUSTCHAIN_API", v || getEnvDefault("TRUSTCHAIN_API"))}
+      setValue={v => setEnv("TRUSTCHAIN_API_STAGING", v || getEnvDefault("TRUSTCHAIN_API_STAGING"))}
       valueDisplay={() => (
         <Input type="text" value={localValue} onChange={e => setLocalValue(e.target.value)} />
       )}

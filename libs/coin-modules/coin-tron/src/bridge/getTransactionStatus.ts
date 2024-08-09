@@ -251,7 +251,7 @@ const getTransactionStatus = async (
     });
   }
 
-  const parentAccountBalance = account.type === "Account" ? account.balance : acc.balance;
+  const parentAccountBalance = account.type === "Account" ? account.balance : acc.spendableBalance;
   //
   // Not enough gas check
   // PTX swap uses this to support deeplink to buy additional currency

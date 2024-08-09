@@ -1,55 +1,33 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
-import { FlashList } from "@shopify/flash-list";
-import SafeAreaView from "~/components/SafeAreaView";
-import { ScreenName } from "~/const";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import type { Web3HubStackParamList } from "../../Navigator";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import AppCard from "~/screens/Platform/Catalog/AppCard";
-// Temporary and will be replaced with proper mocks in hooks using tanstack query
-import { data } from "../../__integrations__/mocks/manifests";
+import React, { useContext } from "react";
+import { View } from "react-native";
+import { useAnimatedScrollHandler } from "react-native-reanimated";
+import type { MainProps } from "LLM/features/Web3Hub/types";
+import { HeaderContext } from "LLM/features/Web3Hub/HeaderContext";
+import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
+import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "~/components/TabBar/shared";
 
-type Props = BaseComposite<NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubMain>>;
+const PADDING_BOTTOM = MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM;
 
-function ManifestItem({
-  manifest,
-  navigation,
-}: {
-  manifest: AppManifest;
-  navigation: Props["navigation"];
-}) {
+export default function Web3HubMain({ navigation }: MainProps) {
+  const { layoutY } = useContext(HeaderContext);
+
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    if (!layoutY) return;
+    layoutY.value = event.contentOffset.y;
+  });
+
   return (
-    <AppCard
-      manifest={manifest}
-      onPress={() => {
-        navigation.push(ScreenName.Web3HubApp, {
-          manifestId: manifest.id,
-        });
-      }}
-    />
-  );
-}
-
-export default function Web3HubMain({ navigation }: Props) {
-  return (
-    <SafeAreaView
-      edges={["top", "left", "right"]}
-      isFlex
+    <View
       style={{
-        flexDirection: "column",
-        gap: 26,
-        marginHorizontal: 24,
-        marginTop: 114,
+        flex: 1,
       }}
     >
-      <FlashList
-        renderItem={({ item }) => {
-          return <ManifestItem manifest={item} navigation={navigation} />;
-        }}
-        estimatedItemSize={50}
-        data={data}
+      <ManifestsList
+        navigation={navigation}
+        onScroll={scrollHandler}
+        // Using this padding to keep the view visible under the tab button
+        pb={PADDING_BOTTOM}
       />
-    </SafeAreaView>
+    </View>
   );
 }

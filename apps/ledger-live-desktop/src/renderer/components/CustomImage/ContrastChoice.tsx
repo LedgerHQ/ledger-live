@@ -42,7 +42,7 @@ const ContrastChoice: React.FC<Props> = ({ selected, color, onClick, index }) =>
   <Container
     selected={selected}
     onClick={onClick}
-    data-test-id={`custom-image-contrast-option-${index}-button`}
+    data-testid={`custom-image-contrast-option-${index}-button`}
   >
     <ContrastOption colors={color} />
   </Container>

@@ -2,7 +2,7 @@ import { Transaction, ethers } from "ethers";
 import { DefaultKeyringEth } from "../src/DefaultKeyringEth";
 import AppBinding from "@ledgerhq/hw-app-eth";
 import TransportNodeHid from "../../hw-transport-node-hid/src/TransportNodeHid";
-import { DefaultContextModule } from "@ledgerhq/context-module";
+import { ContextModuleBuilder } from "@ledgerhq/context-module";
 import { SignTransactionOptions } from "../src/KeyringEth";
 import dotenv from "dotenv";
 
@@ -18,11 +18,7 @@ if (!provider) {
 const hash = process.argv[2];
 const domain = process.argv?.[3];
 
-const options: SignTransactionOptions = domain
-  ? {
-      forwardDomain: { domain, registry: "ens" },
-    }
-  : {};
+const options: SignTransactionOptions = domain ? { domain } : {};
 
 console.log(`transaction hash: ${hash} on provider: ${provider}`);
 
@@ -46,7 +42,7 @@ const unsignTransaction = (transaction: Transaction) => {
 
   const transport = await TransportNodeHid.create(100, 1000);
   const appBinding = new AppBinding(transport);
-  const contextModule = new DefaultContextModule(undefined);
+  const contextModule = new ContextModuleBuilder().build();
   const keyring = new DefaultKeyringEth(appBinding, contextModule);
 
   const result = await keyring.signTransaction("44'/60'/0'/0/0", unsignedTransaction, options);

@@ -48,7 +48,7 @@ const CustomImageManagerButton = (props: Props) => {
             : IconsLegacy.ChevronRightMedium
         }
         disabled={disabled}
-        data-test-id="manager-custom-image-button"
+        data-testid="manager-custom-image-button"
       >
         {lastSeenCustomImage.size ? t("changeCustomLockscreen.cta") : t("common.add")}
       </Link>

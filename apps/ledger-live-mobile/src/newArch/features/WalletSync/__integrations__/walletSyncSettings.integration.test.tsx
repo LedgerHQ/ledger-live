@@ -12,7 +12,15 @@ describe("WalletSyncSettings", () => {
         settings: {
           ...state.settings,
           readOnlyModeEnabled: false,
-          overriddenFeatureFlags: { llmWalletSync: { enabled: true } },
+          overriddenFeatureFlags: {
+            llmWalletSync: {
+              enabled: true,
+              params: {
+                environment: "STAGING",
+                watchConfig: {},
+              },
+            },
+          },
         },
       }),
     });
@@ -31,6 +39,6 @@ describe("WalletSyncSettings", () => {
     await user.press(await screen.findByText(/already created a key?/i));
 
     // Check if the drawer is visible
-    await expect(await screen.findByText(/dummy drawer/i)).toBeVisible();
+    await expect(await screen.findByText(/Choose your sync method/i)).toBeVisible();
   });
 });

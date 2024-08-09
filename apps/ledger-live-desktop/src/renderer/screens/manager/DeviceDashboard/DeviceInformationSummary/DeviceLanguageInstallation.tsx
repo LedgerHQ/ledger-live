@@ -92,7 +92,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
       overflowY="hidden"
       width="100%"
       flex={1}
-      data-test-id="device-language-installation-container"
+      data-testid="device-language-installation-container"
     >
       <Text alignSelf="center" variant="h5Inter" mb={12}>
         {t("deviceLocalization.deviceLanguage")}
@@ -126,7 +126,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
                       <Flex flex={1} justifyContent="space-between">
                         <Radio.ListElement.Label
                           checked={checked}
-                          data-test-id={`manager-language-option-${language}`}
+                          data-testid={`manager-language-option-${language}`}
                         >
                           {t(`deviceLocalization.languages.${language}`)}
                         </Radio.ListElement.Label>
@@ -165,7 +165,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
             <Flex flex={1} />
             {error ? (
               <Button
-                data-test-id="retry-language-installation-button"
+                data-testid="retry-language-installation-button"
                 variant="main"
                 onClick={onRetry}
                 disabled={!installing && currentLanguage === selectedLanguage}
@@ -174,7 +174,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
               </Button>
             ) : (
               <Button
-                data-test-id={
+                data-testid={
                   installed ? "close-language-installation-button" : "install-language-button"
                 }
                 variant="main"

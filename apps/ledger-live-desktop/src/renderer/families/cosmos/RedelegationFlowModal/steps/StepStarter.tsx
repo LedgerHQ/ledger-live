@@ -76,7 +76,7 @@ export function StepStarterFooter({ transitionTo, account, onClose }: StepProps)
           <Trans i18nKey="common.cancel" />
         </Button>
         <Button
-          data-test-id="modal-continue-button"
+          data-testid="modal-continue-button"
           primary
           onClick={() => transitionTo("validators")}
         >

@@ -103,7 +103,7 @@ const EditDeviceName: React.FC<Props> = ({
       overflowY="hidden"
       width="100%"
       flex={1}
-      data-test-id="device-rename-container"
+      data-testid="device-rename-container"
     >
       <Text alignSelf="center" variant="h5Inter" mb={3}>
         {t("deviceRename.title", { productName })}
@@ -121,7 +121,7 @@ const EditDeviceName: React.FC<Props> = ({
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            data-test-id="device-renamed"
+            data-testid="device-renamed"
           >
             <BoxedIcon
               Icon={IconsLegacy.CheckAloneMedium}
@@ -153,7 +153,7 @@ const EditDeviceName: React.FC<Props> = ({
                 {t("deviceRename.chooseName")}
               </Label>
               <Input
-                data-test-id="current-device-name-input"
+                data-testid="current-device-name-input"
                 onChange={onChangeText}
                 value={name}
                 placeholder={t("deviceRename.placeholder")}
@@ -178,7 +178,7 @@ const EditDeviceName: React.FC<Props> = ({
             <Flex flex={1} />
             {actionError ? (
               <Button
-                data-test-id="retry-device-rename-button"
+                data-testid="retry-device-rename-button"
                 variant="main"
                 onClick={onRetry}
                 disabled={!running}

@@ -17,7 +17,7 @@ const AllowDebugAppsToggle = () => {
       <Switch
         isChecked={allowDebugApps}
         onChange={onSetAllowDebugApps}
-        data-test-id="settings-allow-debug-apps"
+        data-testid="settings-allow-debug-apps"
       />
     </>
   );

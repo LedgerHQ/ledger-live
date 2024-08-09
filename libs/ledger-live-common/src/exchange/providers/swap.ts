@@ -9,11 +9,15 @@ export type SwapProviderConfig = {
 
 type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
 type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
-type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
+export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
   version?: number;
   needsBearerToken: boolean;
   needsKYC: boolean;
+  termsOfUseUrl: string;
+  supportUrl: string;
+  mainUrl: string;
 };
+
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
@@ -21,27 +25,51 @@ const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    termsOfUseUrl: "https://changelly.com/terms-of-use",
+    supportUrl: "https://support.changelly.com/en/support/home",
+    mainUrl: "https://changelly.com/",
+  },
+  exodus: {
+    type: "CEX",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://www.exodus.com/legal/exodus-tos-20240219-v29.pdf",
+    supportUrl: "https://www.exodus.com/contact-support/",
+    mainUrl: "https://www.exodus.com/",
+    needsKYC: false,
+    version: 2,
   },
   cic: {
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
+    supportUrl: "https://criptointercambio.com/en/about",
+    mainUrl: "https://criptointercambio.com/",
   },
   moonpay: {
     needsKYC: true,
     needsBearerToken: false,
     type: "CEX",
     version: 2,
+    termsOfUseUrl: "https://www.moonpay.com/legal/terms_of_use_row",
+    supportUrl: "https://support.moonpay.com/",
+    mainUrl: "https://www.moonpay.com/",
   },
   oneinch: {
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
+    termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+    supportUrl: "https://help.1inch.io/en/",
+    mainUrl: "https://1inch.io/",
   },
   paraswap: {
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
+    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+    supportUrl: "https://help.paraswap.io/en/",
+    mainUrl: "https://www.paraswap.io/",
   },
 };
 
@@ -62,6 +90,29 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    termsOfUseUrl: "https://changelly.com/terms-of-use",
+    supportUrl: "https://support.changelly.com/en/support/home",
+    mainUrl: "https://changelly.com/",
+  },
+  exodus: {
+    name: "exodus",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "04dbd3e4818b34bbf1f3642fc61f4f34e58e15888692b3d22c41e6169ec3e663851bacc656f1109b1441d0474130edcfe917a84b712fb8f2164835c55333b5620f",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "30450221009278b9a6d7b69e56a7f58004072bd4ec741f4c6134ac0a0b83d42e8d246159760220317b334a465d9b056e9da5bfbccbac31d36c0b564b06c60e28d6e8b010782c3e",
+      "hex",
+    ),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+    termsOfUseUrl: "https://www.exodus.com/legal/exodus-tos-20240219-v29.pdf",
+    supportUrl: "https://www.exodus.com/contact-support/",
+    mainUrl: "https://www.exodus.com/",
   },
   cic: {
     name: "CIC",
@@ -79,6 +130,9 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
+    supportUrl: "https://criptointercambio.com/en/about",
+    mainUrl: "https://criptointercambio.com/",
   },
   moonpay: {
     name: "moonpay",
@@ -97,16 +151,25 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     needsBearerToken: false,
     type: "CEX",
     version: 2,
+    termsOfUseUrl: "https://www.moonpay.com/legal/terms_of_use_row",
+    supportUrl: "https://support.moonpay.com/",
+    mainUrl: "https://www.moonpay.com/",
   },
   oneinch: {
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
+    termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+    supportUrl: "https://help.1inch.io/en/",
+    mainUrl: "https://1inch.io/",
   },
   paraswap: {
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
+    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+    supportUrl: "https://help.paraswap.io/en/",
+    mainUrl: "https://www.paraswap.io/",
   },
 };
 

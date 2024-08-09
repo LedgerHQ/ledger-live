@@ -237,7 +237,7 @@ const StepPrepare = ({
   if (!firmware) return null;
 
   return (
-    <Container data-test-id="firmware-update-download-progress">
+    <Container data-testid="firmware-update-download-progress">
       <TrackPage category="Manager" name="InstallFirmware" />
       <Body
         deviceModelId={deviceModelId}

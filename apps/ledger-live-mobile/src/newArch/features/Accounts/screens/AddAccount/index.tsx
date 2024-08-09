@@ -3,8 +3,8 @@ import useAddAccountViewModel from "./useAddAccountViewModel";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
 import SelectAddAccountMethod from "./components/SelectAddAccountMethod";
-import Drawer from "LLM/components/Dummy/Drawer";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
 
 type ViewProps = {
   isAddAccountDrawerVisible: boolean;
@@ -48,7 +48,12 @@ function View({
           setWalletSyncDrawerVisible={onRequestToOpenWalletSyncDrawer}
         />
       </QueuedDrawer>
-      <Drawer isOpen={isWalletSyncDrawerVisible} handleClose={onCloseWalletSyncDrawer} />
+      <QueuedDrawer
+        isRequestingToBeOpened={isWalletSyncDrawerVisible}
+        onClose={onCloseWalletSyncDrawer}
+      >
+        <ChooseSyncMethod />
+      </QueuedDrawer>
     </>
   );
 }

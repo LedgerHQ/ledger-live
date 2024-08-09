@@ -4,7 +4,6 @@ import {
   getElementByText,
   getTextOfElement,
   openDeeplink,
-  tapByElement,
   tapById,
   waitForElementById,
 } from "../../helpers";
@@ -24,7 +23,6 @@ export default class ReceivePage {
   currencyRowId = (t: string) => `big-currency-row-${t}`;
   currencyNameId = (t: string) => `big-currency-name-${t}`;
   currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
-  buttonCloseQrReceivePage = () => getElementById("NavigationHeaderCloseButton");
   buttonCreateAccountId = "button-create-account";
   buttonCreateAccount = () => getElementById(this.buttonCreateAccountId);
   buttonContinueId = "add-accounts-continue-button";
@@ -51,12 +49,17 @@ export default class ReceivePage {
     await expect(this.step1HeaderTitle()).toBeVisible();
   }
 
-  async expectSecondStep(networks: string[]) {
+  async expectSecondStepNetworks(networks: string[]) {
     await expect(this.step2HeaderTitle()).toBeVisible();
     await expect(this.step2Networks()).toBeVisible();
     for (const network of networks) {
       await expect(getElementById(this.currencyNameId(network))).toBeVisible();
     }
+  }
+
+  async expectSecoundStepAccounts() {
+    await expect(this.step2HeaderTitle()).toBeVisible();
+    await expect(this.step2Accounts()).toBeVisible();
   }
 
   async selectCurrency(currencyName: string) {
@@ -110,10 +113,6 @@ export default class ReceivePage {
           .withDescendant(by.id(accountCountID)),
       ),
     ).toBeVisible();
-  }
-
-  closeQrCodeReceivePage() {
-    return tapByElement(this.buttonCloseQrReceivePage());
   }
 
   async createAccount() {

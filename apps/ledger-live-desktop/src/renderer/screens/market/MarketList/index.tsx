@@ -62,7 +62,7 @@ function MarketList({
         <>
           {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
           <TableRow header>
-            <SortTableCell data-test-id="market-sort-button" onClick={toggleSortBy} order={order}>
+            <SortTableCell data-testid="market-sort-button" onClick={toggleSortBy} order={order}>
               #
             </SortTableCell>
             <TableCell disabled>{t("market.marketList.crypto")}</TableCell>
@@ -73,7 +73,7 @@ function MarketList({
 
             <TableCell disabled>{t("market.marketList.last7d")}</TableCell>
             <TableCell
-              data-test-id="market-star-button"
+              data-testid="market-star-button"
               disabled={starredMarketCoins.length <= 0 && (!starred || starred.length <= 0)}
               onClick={toggleFilterByStarredAccounts}
             >

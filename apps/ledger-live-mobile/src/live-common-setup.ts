@@ -90,6 +90,8 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "icon",
+  "icon_berlin_testnet",
   "optimism",
   "optimism_sepolia",
   "arbitrum",
@@ -123,6 +125,7 @@ setSupportedCurrencies([
   "blast_sepolia",
   "scroll",
   "scroll_sepolia",
+  "ton",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

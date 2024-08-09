@@ -50,7 +50,7 @@ class SideBarListItem extends PureComponent<Props> {
     return (
       <Tooltip content={renderedLabel} enabled={!!collapsed} placement="right">
         <Container
-          data-test-id={`drawer-${id}-button`}
+          data-testid={`drawer-${id}-button`}
           isActive={!disabled && isActive}
           iconActiveColor={iconActiveColor}
           onClick={disabled ? undefined : onClick}

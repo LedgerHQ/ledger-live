@@ -156,7 +156,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
               {backLabel || t("common.back")}
             </Button>
             <Button
-              data-test-id="v3-tutorial-continue"
+              data-testid="v3-tutorial-continue"
               onClick={handleContinue}
               disabled={continueLoading || continueDisabled}
               variant="main"

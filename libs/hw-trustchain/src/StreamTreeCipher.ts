@@ -71,7 +71,7 @@ export class StreamTreeCipher {
         break;
       }
       case StreamTreeCipherMode.AES_256_GCM: {
-        encrypted = await crypto.encryptUsingAesGcm(secret, nonce, message);
+        encrypted = await crypto.encrypt(secret, nonce, message);
         break;
       }
       default:
@@ -183,7 +183,7 @@ export class StreamTreeCipher {
         break;
       }
       case StreamTreeCipherMode.AES_256_GCM: {
-        decrypted = await crypto.decryptUsingAesGcm(secret, nonce, encryptedMessage);
+        decrypted = await crypto.decrypt(secret, nonce, encryptedMessage);
         break;
       }
       default:

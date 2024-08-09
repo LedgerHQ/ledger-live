@@ -43,6 +43,7 @@ const Actions = ({ onPressSyncAccounts, onPressHasAlreadyCreatedAKey }: Props) =
         minWidth={"100%"}
         size="large"
         onPress={onPressSync}
+        accessibilityRole="button"
       >
         {t("walletSync.activation.screen.mainCta")}
       </Button>

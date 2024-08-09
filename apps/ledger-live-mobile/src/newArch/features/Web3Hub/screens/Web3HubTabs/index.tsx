@@ -1,26 +1,17 @@
-import { Text } from "@ledgerhq/native-ui";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import SafeAreaView from "~/components/SafeAreaView";
-import { Web3HubStackParamList } from "../../Navigator";
+import { View } from "react-native";
+import { Text } from "@ledgerhq/native-ui";
+import type { TabsProps } from "LLM/features/Web3Hub/types";
 import { ScreenName } from "~/const";
 
-type Props = BaseComposite<NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubTabs>>;
-
-export default function Web3HubTabs(_: Props) {
+export default function Web3HubTabs(_: TabsProps) {
   return (
-    <SafeAreaView
-      edges={["top", "left", "right"]}
-      isFlex
+    <View
       style={{
-        flexDirection: "column",
-        gap: 26,
-        marginHorizontal: 24,
-        marginTop: 114,
+        flex: 1,
       }}
     >
       <Text>{ScreenName.Web3HubTabs}</Text>
-    </SafeAreaView>
+    </View>
   );
 }

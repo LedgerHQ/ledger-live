@@ -28,6 +28,7 @@ import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { TrustchainStore } from "@ledgerhq/trustchain/store";
 
 // === ACCOUNT STATE ===
 
@@ -156,6 +157,7 @@ export enum OnboardingType {
   restore = "restore",
   connect = "connect",
   setupNew = "setup new",
+  walletSync = "wallet sync",
 }
 
 export type CurrencySettings = {
@@ -339,6 +341,12 @@ export type MarketState = {
   marketCurrentPage: number;
 };
 
+// === WALLETSYNC STATE ===
+
+export type WalletSyncState = {
+  isManageKeyDrawerOpen: boolean;
+};
+
 // === ROOT STATE ===
 
 export type State = {
@@ -357,4 +365,6 @@ export type State = {
   nft: NftState;
   market: MarketState;
   wallet: WalletState;
+  trustchain: TrustchainStore;
+  walletSync: WalletSyncState;
 };

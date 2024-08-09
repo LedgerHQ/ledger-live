@@ -77,16 +77,11 @@ const CardContainer = (props: CardProps): React.ReactElement => {
         LeftElement
       )}
 
-      <Text
-        mx={4}
-        variant="large"
-        fontWeight="medium"
-        numberOfLines={3}
-        maxWidth={"70%"}
-        color="neutral.c100"
-      >
-        {title}
-      </Text>
+      <Flex flexShrink={1}>
+        <Text mx={4} variant="large" fontWeight="medium" numberOfLines={2} color="neutral.c100">
+          {title}
+        </Text>
+      </Flex>
       {typeOfRightIcon === "close" ? (
         <CloseButton onPressDismiss={onPressDismiss} />
       ) : (

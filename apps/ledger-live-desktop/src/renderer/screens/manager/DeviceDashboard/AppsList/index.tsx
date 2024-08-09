@@ -194,7 +194,7 @@ const AppsList = ({
       )}
       <Card mt={0}>
         {isDeviceTab && !installedApps.length ? (
-          <Box pb={6} pt={8} data-test-id="manager-no-apps-empty-state">
+          <Box pb={6} pt={8} data-testid="manager-no-apps-empty-state">
             <Box mb={4} mt={5} horizontal color="palette.text.shade30" justifyContent="center">
               <NoResults />
             </Box>

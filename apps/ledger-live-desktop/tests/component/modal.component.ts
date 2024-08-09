@@ -1,9 +1,10 @@
+import { Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 
 export class Modal extends Component {
   readonly container = this.page.locator(
-    '[data-test-id=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
+    '[data-testid=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
   );
   readonly title = this.page.getByTestId("modal-title");
   readonly content = this.page.getByTestId("modal-content");
@@ -30,6 +31,14 @@ export class Modal extends Component {
   protected confirmText = this.page.locator(
     "text=Please confirm the operation on your device to finalize it",
   );
+  protected optionWithTextAndFollowingText = (text: string, followingText: string) =>
+    this.page
+      .locator(
+        `//*[contains(text(),"${text}")]/following::span[contains(text(),"${followingText}")]`,
+      )
+      .first();
+  protected dropdownOptions = this.page.locator("div.select__option");
+  protected dropdownOptionsList = this.page.locator("div.select-options-list");
 
   @step("Click Continue button")
   async continue() {
@@ -116,5 +125,16 @@ export class Modal extends Component {
 
   async waitForConfirmationScreenToBeDisplayed() {
     await this.confirmText.waitFor({ state: "visible" });
+  }
+
+  async scrollUntilOptionIsDisplayed(dropdown: Locator, element: Locator) {
+    let isVisible = await element.isVisible();
+
+    while (!isVisible) {
+      await dropdown.evaluate(node => {
+        node.scrollBy(0, 50);
+      });
+      isVisible = await element.isVisible();
+    }
   }
 }

@@ -18,7 +18,23 @@ import { useIsSwapLiveFlagEnabled } from "../useIsSwapLiveFlagEnabled";
 import SectionInformative from "./SectionInformative";
 import SummaryLabel from "./SummaryLabel";
 import SummarySection from "./SummarySection";
-import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
+import SummaryValue, { Container, Text, NoValuePlaceholder } from "./SummaryValue";
+import styled from "styled-components";
+
+const AccountSectionContainer = styled(SummarySection)`
+  column-gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  ${Container}, ${Text} {
+    flex-shrink: 1;
+  }
+
+  ${Container} ${Text} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
 
 const AccountSection = ({
   account,
@@ -47,7 +63,7 @@ const AccountSection = ({
   }, [handleChange, swapDefaultTrack]);
 
   return (
-    <SummarySection>
+    <AccountSectionContainer>
       <SummaryLabel label={t("swap2.form.details.label.target")} />
       <SummaryValue
         value={accountName}
@@ -55,7 +71,7 @@ const AccountSection = ({
       >
         {currency ? <CryptoCurrencyIcon circle currency={currency} size={16} /> : null}
       </SummaryValue>
-    </SummarySection>
+    </AccountSectionContainer>
   );
 };
 

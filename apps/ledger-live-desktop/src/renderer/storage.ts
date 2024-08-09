@@ -22,7 +22,9 @@ import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/ty
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsExportSelector } from "./reducers/settings";
 import logger from "./logger";
+import { trustchainStoreSelector } from "@ledgerhq/trustchain/store";
 import { marketStoreSelector } from "./reducers/market";
+import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -42,6 +44,8 @@ export type PostOnboarding = ReturnType<typeof hubStateSelector>;
 export type Settings = ReturnType<typeof settingsExportSelector>;
 export type Market = ReturnType<typeof marketStoreSelector>;
 
+export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
+
 // The types seen from the user side.
 type DatabaseValues = {
   accounts: Account[];
@@ -54,6 +58,8 @@ type DatabaseValues = {
   countervalues: Countervalues;
   postOnboarding: PostOnboarding;
   settings: Settings;
+  trustchain: TrustchainStore;
+  wallet: ExportedWalletState;
   market: Market;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
@@ -166,39 +172,15 @@ export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
     keyPath,
   });
 
-export const setEncryptionKey = (
-  ns: string,
-  keyPath: keyof DatabaseValues,
-  encryptionKey: string,
-) =>
-  ipcRenderer.invoke("setEncryptionKey", {
-    ns,
-    keyPath,
-    encryptionKey,
-  });
+export const setEncryptionKey = (encryptionKey: string) =>
+  ipcRenderer.invoke("setEncryptionKey", { encryptionKey });
 
-export const removeEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
-  ipcRenderer.invoke("removeEncryptionKey", {
-    ns,
-    keyPath,
-  });
+export const removeEncryptionKey = () => ipcRenderer.invoke("removeEncryptionKey", {});
 
-export const isEncryptionKeyCorrect = (
-  ns: string,
-  keyPath: keyof DatabaseValues,
-  encryptionKey: string,
-) =>
-  ipcRenderer.invoke("isEncryptionKeyCorrect", {
-    ns,
-    keyPath,
-    encryptionKey,
-  });
+export const isEncryptionKeyCorrect = (encryptionKey: string) =>
+  ipcRenderer.invoke("isEncryptionKeyCorrect", { encryptionKey });
 
-export const hasBeenDecrypted = (ns: string, keyPath: keyof DatabaseValues) =>
-  ipcRenderer.invoke("hasBeenDecrypted", {
-    ns,
-    keyPath,
-  });
+export const hasBeenDecrypted = () => ipcRenderer.invoke("hasBeenDecrypted", {});
 
 export const resetAll = () => ipcRenderer.invoke("resetAll");
 

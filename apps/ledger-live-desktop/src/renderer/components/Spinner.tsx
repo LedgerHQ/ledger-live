@@ -35,7 +35,7 @@ export type SpinnerProps = {
 
 export default function Spinner({ size, ...props }: SpinnerProps) {
   return (
-    <Rotating size={size} data-test-id="loading-spinner" {...props}>
+    <Rotating size={size} data-testid="loading-spinner" {...props}>
       <IconLoader size={size} />
     </Rotating>
   );

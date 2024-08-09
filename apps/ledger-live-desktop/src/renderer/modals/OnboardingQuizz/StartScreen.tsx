@@ -29,7 +29,7 @@ const StartScreen = ({ onStart }: Props) => {
           {t("onboarding.quizz.descr")}
         </Text>
         <Button
-          data-test-id="v3-quiz-start-button"
+          data-testid="v3-quiz-start-button"
           variant="main"
           Icon={IconsLegacy.TrophyMedium}
           iconPosition="left"

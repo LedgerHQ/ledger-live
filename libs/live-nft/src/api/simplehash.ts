@@ -1,5 +1,9 @@
 import network from "@ledgerhq/live-network/network";
-import { SimpleHashResponse, SimpleHashSpamReportResponse } from "./types";
+import {
+  SimpleHashRefreshResponse,
+  SimpleHashResponse,
+  SimpleHashSpamReportResponse,
+} from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
 /**
@@ -127,6 +131,62 @@ export async function reportSpamNtf(
       collection_id: opts.collectionId,
       event_type: opts.eventType,
     }),
+  });
+
+  return data;
+}
+
+/**
+ * @contractAddress: The contract address of the NFT to be refreshed.
+ * @chainId: The chain of the contract / NFT to be refreshed
+ * @collectionId: The SimpleHash collection ID of the NFT refreshed.
+ * @tokenId: The token id of the NFT to be refreshed.
+ */
+
+export type RefreshOpts = {
+  contractAddress?: string;
+  chainId?: string;
+  tokenId?: string;
+  refreshType: "contract" | "nft";
+};
+/**
+ * Refresh Metada of Contract or Nft using SimpleHash API.
+ */
+export async function refreshMetadata(opts: RefreshOpts): Promise<SimpleHashRefreshResponse> {
+  const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/refresh/${opts.chainId}/${opts.contractAddress}`;
+  const { data } = await network<SimpleHashRefreshResponse>({
+    method: "POST",
+    url,
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+  });
+
+  return data;
+}
+
+/**
+ * @contractAddress: The contract address of the NFT to be checked.
+ * @chainId: The chain of the contract / NFT to be checked
+ */
+
+export type CheckSpamScoreOpts = {
+  contractAddress: string;
+  chainId: string;
+};
+/**
+ * Refresh Metada of Contract or Nft using SimpleHash API.
+ */
+export async function getSpamScore(opts: CheckSpamScoreOpts): Promise<SimpleHashRefreshResponse> {
+  const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/${opts.chainId}/${opts.contractAddress}`;
+  const { data } = await network<SimpleHashRefreshResponse>({
+    method: "GET",
+    url,
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
   });
 
   return data;

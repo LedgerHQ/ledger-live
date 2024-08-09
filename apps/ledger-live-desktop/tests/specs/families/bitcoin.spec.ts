@@ -22,7 +22,7 @@ test("Send flow", async ({ page }) => {
     await sendModal.container.waitFor({ state: "visible" });
     const sendButtonLoader = sendModal.container
       .locator("id=send-recipient-continue-button")
-      .locator("data-test-id=loading-spinner");
+      .getByTestId("loading-spinner");
     await sendButtonLoader.waitFor({ state: "detached" });
 
     await sendModal.selectAccount("Bitcoin 1");

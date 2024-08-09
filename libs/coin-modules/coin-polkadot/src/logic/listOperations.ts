@@ -14,10 +14,10 @@ export type Operation = {
   transactionSequenceNumber: number;
 };
 
-export async function listOperations(addr: string): Promise<Operation[]> {
+export async function listOperations(addr: string, startAt?: number): Promise<Operation[]> {
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
-  const operations = await network.getOperations(fakeAccountId, addr);
+  const operations = await network.getOperations(fakeAccountId, addr, startAt);
 
   return operations.map(convertToCoreOperation(addr));
 }

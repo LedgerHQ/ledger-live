@@ -303,7 +303,7 @@
   "swap2": {
     "title": "Swap",
     "tabs": {
-      "exchange": "Exchange",
+      "exchange": "Swap",
       "history": "History"
     },
     "form": {
@@ -335,7 +335,7 @@
         "label": {
           "provider": "provider",
           "rate": "rate",
-          "fees": "network fees",
+          "fees": "Network Fees",
           "target": "target account"
         },
         "tooltip": {
@@ -385,6 +385,7 @@
         "title": "Transaction broadcast successfully",
         "description": "Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your {{targetCurrency}}.",
         "disclaimer": "Take note of your Swap ID number in case you’d need assistance from <0><0>{{provider}}</0> support</0>.",
+        "tellAboutYourExperience": "Tell us about your experience",
         "seeDetails": "See details"
       }
     },
@@ -1855,7 +1856,8 @@
       "provider": "Provider",
       "payoutNetworkFees": "Payout fees",
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-      "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
+      "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>"
     },
     "swap2": {
       "amountSent": "Amount to send",
@@ -1990,7 +1992,8 @@
       "updateBtn": "Update firmware",
       "installUpdate": "Install update",
       "banner": {
-        "warning": "Update Firmware to {{latestFirmware}} is available",
+        "warning": "OS update available",
+        "version": "Version {{latestFirmware}}",
         "cta": "Go to My Ledger",
         "old": {
           "warning": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
@@ -4021,29 +4024,65 @@
         "desc": "Add exchange provider's info",
         "placeholder": "Exchange provider's info in CAL format"
       },
-      "debugSpamNft": {
-        "debugNFTSpamReport": "Allow NFT Spam Report (Beta)",
-        "debugNFTSpamReportDesc": "Display a form to report an NFT as spam or to stop it being displayed as spam",
-        "report": "Report",
-        "contractAddress": "Contract Address",
-        "contractAddressDesc": "contract_address of the NFT reported, or the contract itself",
-        "chainId": "Chain ID",
-        "chainIdDesc": "chain_id (e.g., ethereum) of the NFT or contract reported",
-        "collectionId": "Collection ID",
-        "collectionIdDesc": "SimpleHash collection id of the NFT reported",
-        "tokenId": "Token ID",
-        "tokenIdDesc": "token_id of the NFT reported",
-        "eventType": "Event Type",
-        "eventTypeDesc": "Type of report you want to make",
-        "success": "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
-        "error": "An error occurred while sending the report. Please try again later.",
-        "reportType": {
-          "title": "What would you like to report?",
-          "desc": "Select the type of report you want to make",
-          "individual": "Spam report for an individual NFT",
-          "contract": "Spam report for a contract",
-          "collection": "Spam report for a collection"
-        }
+      "debugSimpleHash": {
+        "debugSpamNft": {
+          "report": "Report",
+          "contractAddress": "Contract Address",
+          "contractAddressDesc": "contract_address of the NFT reported, or the contract itself",
+          "chainId": "Chain ID",
+          "chainIdDesc": "chain_id (e.g., ethereum) of the NFT or contract reported",
+          "collectionId": "Collection ID",
+          "collectionIdDesc": "SimpleHash collection id of the NFT reported",
+          "tokenId": "Token ID",
+          "tokenIdDesc": "token_id of the NFT reported",
+          "eventType": "Event Type",
+          "eventTypeDesc": "Type of report you want to make",
+          "success": "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+          "error": "An error occurred while sending the report. Please try again later.",
+          "reportType": {
+            "title": "What would you like to report?",
+            "desc": "Select the type of report you want to make",
+            "individual": "Spam report for an individual NFT",
+            "contract": "Spam report for a contract",
+            "collection": "Spam report for a collection"
+          }
+        },
+        "debugRefreshMetadata": {
+          "refresh": "Refresh",
+          "contractAddress": "Contract Address",
+          "contractAddressDesc": "contract_address of the NFT refreshed, or the contract itself",
+          "chainId": "Chain ID",
+          "chainIdDesc": "chain_id (e.g., ethereum) of the NFT or contract refreshed",
+          "tokenId": "Token ID",
+          "tokenIdDesc": "token_id of the NFT refreshed",
+          "success": "The refresh was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+          "error": "An error occurred while sending the refresh. Please try again later.",
+          "refreshType": {
+            "desc": "What would you like to refresh?",
+            "nft": "Refresh metadata for an individual NFT",
+            "contract": "Refresh metadata for a contract"
+          }
+        },
+        "debugCheckSpamScore": {
+          "check": "Check",
+          "contractAddress": "Contract Address",
+          "contractAddressDesc": "contract_address of the NFT checked, or the contract itself",
+          "chainId": "Chain ID",
+          "chainIdDesc": "chain_id (e.g., ethereum) of the NFT or contract checked",
+          "tokenId": "Token ID",
+          "tokenIdDesc": "token_id of the NFT checked",
+          "result": {
+            "title": "This contract has a spam score of {{score}}.",
+            "desc": "The score is a numeric value from 0 to 100, with 0 being deemed not spam, and 100 being deemed likely spam.\n If the response is null, the collection does not have sufficient information to be scored, or has not yet been assessed"
+          },
+          "error": "An error occurred while sending the request. Please try again later.",
+          "refreshType": {
+            "desc": "What would you like to check?",
+            "nft": "An individual NFT",
+            "contract": "A contract"
+          }
+        },
+        "back": "Go back"
       },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
@@ -4217,9 +4256,18 @@
           "modal": {
             "flow": "Select a Flow",
             "step": "Select a Step",
-            "activated": "Activate/deactivate to have a backup or not",
-            "instance": "Generate Instances",
+            "instance": "Generate Members",
             "cta": "Apply"
+          }
+        },
+        "testSimpleHash": {
+          "title": "SimpleHash Tools",
+          "description": "Provides some useful tools using SimpleHash",
+          "cta": "Open",
+          "tabs": {
+            "spam": "Spam Report",
+            "refresh": "Refresh Metadata",
+            "check": "Spam Score"
           }
         }
       }
@@ -5174,6 +5222,10 @@
       "memo": "Memo",
       "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
     },
+    "ton": {
+      "commentPlaceholder": "Optional",
+      "comment": "Comment"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
@@ -5585,6 +5637,9 @@
       "title": "Rate Expired",
       "description": "The exchange transaction could not be completed as the rate has expired. Please refresh the rates and try your swap again."
     },
+    "PayinExtraIdError": {
+      "message": "Missing required extraId required for swap"
+    },
     "SwapGenericAPIError": {
       "title": "Something went wrong",
       "description": "The exchange transaction did not go through. Please try again or contact support."
@@ -5719,6 +5774,9 @@
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
+    },
+    "TonCommentInvalid": {
+      "title": "Comment must not exceed 120 characters without special characters"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"
@@ -6336,7 +6394,7 @@
         "description": "Secure or delete your encryption key via another Ledger."
       },
       "instance": {
-        "label_one": "1 Synchronized instance",
+        "label": "1 Synchronized instance",
         "label_other": "{{count}} Synchronized instances",
         "cta": "Manage"
       }
@@ -6349,7 +6407,9 @@
     "error": {
       "title": "Something went wrong",
       "description": "Please try again later.",
-      "cta": "Try again"
+      "cta": "Try again",
+      "fetching": "Something went wrong while fetching your data.",
+      "ledgerSyncDown": "Ledger Sync is currently unavailable.<br/>This doesn’t have any impact on your assets."
     },
     "unsecuredError": {
       "title": "The synchronization isn't secured by this Ledger",
@@ -6358,18 +6418,26 @@
       "cta": "Connect another Ledger",
       "ctaDelete": "Delete my encryption key"
     },
+    "autoRemoveError": {
+      "title": "You can’t remove the current instance",
+      "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
+      "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
+      "cta": "I understand",
+      "ctaDelete": "Delete my encryption key"
+    },
     "success": {
       "backup": {
         "title": "Success",
-        "desc": "You successfully enabled Ledger Sync. ",
-        "synchAnother": "Sync with another Ledger Live app"
+        "desc": "You successfully enabled Ledger Sync."
       },
       "synch": {
         "title": "Synchronization successful!",
         "desc": "Changes in your accounts will now automatically appear across all apps and platforms."
-      }
+      },
+      "synchAnother": "Sync with another Ledger Live app",
+      "close": "Close"
     },
-    "manageBackups": {
+    "manageBackup": {
       "title": "Manage your key",
       "options": {
         "deleteBackup": {
@@ -6423,6 +6491,10 @@
       "remove": "Remove",
       "deleteInstanceSuccess": "Your {{instanceName}} is no longer synchronized",
       "deleteInstanceError": "Something went wrong with the desynchronization of {{instanceName}}"
+    },
+    "deviceAction": {
+      "title": "Continue on your Ledger {{wording}}",
+      "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
     }
   }
 }

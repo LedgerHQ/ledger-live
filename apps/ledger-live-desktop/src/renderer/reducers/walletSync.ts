@@ -1,12 +1,13 @@
 import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
 
 export enum Flow {
   Activation = "Activation",
   Synchronize = "Synchronize",
   ManageInstances = "ManageInstances",
-  ManageBackups = "ManageBackups",
-  walletSyncActivated = "walletSyncActivated",
+  ManageBackup = "ManageBackup",
+  WalletSyncActivated = "WalletSyncActivated",
 }
 
 export enum Step {
@@ -14,12 +15,15 @@ export enum Step {
   ManageBackup = "ManageBackup",
   DeleteBackup = "DeleteBackup",
   BackupDeleted = "BackupDeleted",
+  BackupDeletionError = "BackupDeletionError",
 
   //Activation
   CreateOrSynchronize = "CreateOrSynchronize",
   DeviceAction = "DeviceAction",
   CreateOrSynchronizeTrustChain = "CreateOrSynchronizeTrustChain",
   ActivationFinal = "ActivationFinal",
+  SynchronizationFinal = "SynchronizationFinal",
+  SynchronizationError = "SynchronizationError",
 
   //Synchronize
   SynchronizeMode = "SynchronizeMode",
@@ -34,42 +38,42 @@ export enum Step {
   InstanceSuccesfullyDeleted = "InstanceSuccesfullyDeleted",
   InstanceErrorDeletion = "InstanceErrorDeletion",
   UnsecuredLedger = "UnsecuredLedger",
+  AutoRemoveInstance = "AutoRemoveInstance",
 
   //walletSyncActivated
-  walletSyncActivated = "walletSyncActivated",
+  WalletSyncActivated = "WalletSyncActivated",
 }
 
-export type Instance = {
-  id: string;
-  name: string;
-  typeOfDevice: "mobile" | "desktop";
-};
-
 export type WalletSyncState = {
-  activated: boolean;
+  isDrawerOpen: boolean;
   flow: Flow;
   step: Step;
-  instances: Instance[];
+  instances: TrustchainMember[];
   hasBeenfaked: boolean;
+  qrCodeUrl: string | null;
+  qrCodePinCode: string | null;
 };
 
 export const initialStateWalletSync: WalletSyncState = {
-  activated: false,
+  isDrawerOpen: false,
   flow: Flow.Activation,
   step: Step.CreateOrSynchronize,
   instances: [],
   hasBeenfaked: false,
+  qrCodePinCode: null,
+  qrCodeUrl: null,
 };
 
 type HandlersPayloads = {
-  WALLET_SYNC_ACTIVATE: boolean;
-  WALLET_SYNC_DEACTIVATE: boolean;
+  WALLET_SYNC_CHANGE_DRAWER_VISIBILITY: boolean;
   WALLET_SYNC_CHANGE_FLOW: { flow: Flow; step: Step };
-  WALLET_SYNC_CHANGE_ADD_INSTANCE: Instance;
-  WALLET_SYNC_CHANGE_REMOVE_INSTANCE: Instance;
+  WALLET_SYNC_CHANGE_ADD_INSTANCE: TrustchainMember;
+  WALLET_SYNC_CHANGE_REMOVE_INSTANCE: TrustchainMember;
   WALLET_SYNC_CHANGE_CLEAN_INSTANCES: undefined;
   WALLET_SYNC_RESET: undefined;
   WALLET_SYNC_FAKED: boolean;
+  WALLET_SYNC_CHANGE_QRCODE_URL: string | null;
+  WALLET_SYNC_CHANGE_QRCODE_PINCODE: string | null;
 };
 
 type WalletSyncHandlers<PreciseKey = true> = Handlers<
@@ -79,13 +83,12 @@ type WalletSyncHandlers<PreciseKey = true> = Handlers<
 >;
 
 const handlers: WalletSyncHandlers = {
-  WALLET_SYNC_ACTIVATE: (state: WalletSyncState) => ({
+  WALLET_SYNC_CHANGE_DRAWER_VISIBILITY: (
+    state: WalletSyncState,
+    { payload }: { payload: boolean },
+  ) => ({
     ...state,
-    activated: true,
-  }),
-  WALLET_SYNC_DEACTIVATE: (state: WalletSyncState) => ({
-    ...state,
-    activated: false,
+    isDrawerOpen: payload,
   }),
   WALLET_SYNC_CHANGE_FLOW: (
     state: WalletSyncState,
@@ -97,14 +100,14 @@ const handlers: WalletSyncHandlers = {
   }),
   WALLET_SYNC_CHANGE_ADD_INSTANCE: (
     state: WalletSyncState,
-    { payload }: { payload: Instance },
+    { payload }: { payload: TrustchainMember },
   ) => ({
     ...state,
     instances: [...state.instances, payload],
   }),
   WALLET_SYNC_CHANGE_REMOVE_INSTANCE: (
     state: WalletSyncState,
-    { payload }: { payload: Instance },
+    { payload }: { payload: TrustchainMember },
   ) => ({
     ...state,
     instances: state.instances.filter(instance => instance !== payload),
@@ -118,23 +121,43 @@ const handlers: WalletSyncHandlers = {
     ...state,
     hasBeenfaked: payload,
   }),
+  WALLET_SYNC_CHANGE_QRCODE_URL: (
+    state: WalletSyncState,
+    { payload }: { payload: string | null },
+  ) => ({
+    ...state,
+    qrCodeUrl: payload,
+  }),
+  WALLET_SYNC_CHANGE_QRCODE_PINCODE: (
+    state: WalletSyncState,
+    { payload }: { payload: string | null },
+  ) => ({
+    ...state,
+    qrCodePinCode: payload,
+  }),
 };
 
 // Selectors
 export const walletSyncSelector = (state: { walletSync: WalletSyncState }) => state.walletSync;
 
+export const walletSyncDrawerVisibilitySelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.isDrawerOpen;
+
 export const walletSyncFlowSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.flow;
 export const walletSyncStepSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.step;
-export const walletSyncStateSelector = (state: { walletSync: WalletSyncState }) =>
-  state.walletSync.activated;
-
 export const walletSyncInstancesSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.instances;
 
 export const walletSyncFakedSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.hasBeenfaked;
+
+export const walletSyncQrCodeUrlSelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.qrCodeUrl;
+
+export const walletSyncQrCodePinCodeSelector = (state: { walletSync: WalletSyncState }) =>
+  state.walletSync.qrCodePinCode;
 
 export default handleActions<WalletSyncState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as WalletSyncHandlers<false>,

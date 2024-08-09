@@ -10,6 +10,7 @@
   "ignoreUnused": [
     "@ledgerhq/hw-transport-mocker",
     "@ledgerhq/speculos-transport",
-    "@ledgerhq/types-devices"
+    "@ledgerhq/types-devices",
+    "@ledgerhq/live-env"
   ]
 }

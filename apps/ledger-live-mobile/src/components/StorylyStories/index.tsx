@@ -136,7 +136,7 @@ const Stories: React.FC<Props> = props => {
       }
       if (event.event === "StoryCTAClicked" && event?.story?.media?.actionUrl) {
         Linking.openURL(event.story.media.actionUrl);
-        storylyRef.current?.close?.();
+        storylyRef.current?.closeStory?.();
       }
     },
     [storyGroupList],

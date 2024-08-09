@@ -18,7 +18,7 @@ export function SearchBar({
             flexGrow: 1,
             width: 100,
           }}
-          data-test-id="platform-catalog-search-input"
+          data-testid="platform-catalog-search-input"
           ref={inputRef}
           value={input}
           onChange={onChange}

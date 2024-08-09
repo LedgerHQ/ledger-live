@@ -7,6 +7,8 @@ import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 type Props = {
   searchQuery?: string;
   onQueryUpdate: (_: string) => void;
+  onFocus?(): void;
+  onBlur?(): void;
 };
 
 const SearchbarContainer = styled(Flex).attrs({
@@ -25,7 +27,7 @@ const SearchbarTextInput = styled(TextInput).attrs({
   flex: 1,
 })``;
 
-export default ({ searchQuery, onQueryUpdate }: Props) => {
+export default ({ searchQuery, onQueryUpdate, onFocus, onBlur }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const textInput = useRef<TextInput>(null);
@@ -40,6 +42,8 @@ export default ({ searchQuery, onQueryUpdate }: Props) => {
         returnKeyType="search"
         maxLength={50}
         onChangeText={onQueryUpdate}
+        onFocus={onFocus}
+        onBlur={onBlur}
         placeholder={t("manager.appList.searchApps")}
         placeholderTextColor={colors.neutral.c70}
         value={searchQuery}

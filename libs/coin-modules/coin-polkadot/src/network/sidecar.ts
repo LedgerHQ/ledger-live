@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import coinConfig from "../config";
 import type {
@@ -15,7 +15,6 @@ import type {
   SidecarAccountBalanceInfo,
   SidecarPalletStorageItem,
   SidecarStakingInfo,
-  SidecarNominations,
   SidecarValidatorsParamStatus,
   SidecarValidatorsParamAddresses,
   SidecarValidators,
@@ -25,8 +24,10 @@ import type {
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
   SidecarConstants,
+  BlockInfo,
 } from "./sidecar.types";
 import { createRegistryAndExtrinsics } from "./common";
+import node from "./node";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -123,25 +124,6 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
   }: {
     data: SidecarStakingInfo;
   } = await callSidecar(`/accounts/${addr}/staking-info`);
-  return data;
-};
-
-/**
- * Returns the list of nominations for an account, with status and associated stake if relevant.
- *
- * @async
- * @param {string} addr
- *
- * @returns {SidecarNominations}
- */
-const fetchNominations = async (addr: string): Promise<SidecarNominations> => {
-  //LIVE-13136: commented for the time being
-  // return node.fetchNominations(addr);
-  const {
-    data,
-  }: {
-    data: SidecarNominations;
-  } = await callSidecar(`/accounts/${addr}/nominations`);
   return data;
 };
 
@@ -450,7 +432,7 @@ export const getStakingInfo = async (addr: string) => {
  * @returns {PolkadotNomination[}
  */
 const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
-  const nominations = await fetchNominations(addr);
+  const nominations = await node.fetchNominations(addr);
 
   if (!nominations) {
     return [];
@@ -604,6 +586,14 @@ export const getRegistry = async (): Promise<{
     fetchChainSpec(),
   ]);
   return createRegistryAndExtrinsics(material, spec);
+};
+
+/**
+ * Get lastest block info
+ */
+export const getLastBlock = async (): Promise<{ hash: string; height: number; time: Date }> => {
+  const { data } = await callSidecar<BlockInfo>("/blocks/head");
+  return { hash: data.hash, height: parseInt(data.number), time: new Date() };
 };
 
 /*

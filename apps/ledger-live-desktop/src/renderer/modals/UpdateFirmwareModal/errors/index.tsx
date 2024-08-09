@@ -36,7 +36,7 @@ const UpdateFirmwareError = ({
         <Link onClick={onCancel}>{cancelLabel || t("manager.firmware.cancelUpdate")}</Link>
         <Flex flex={1} />
         {onContinue ? (
-          <Button data-test-id="modal-continue-button" variant="main" onClick={onContinue}>
+          <Button data-testid="modal-continue-button" variant="main" onClick={onContinue}>
             {continueLabel || t("manager.firmware.continueUpdate")}
           </Button>
         ) : null}

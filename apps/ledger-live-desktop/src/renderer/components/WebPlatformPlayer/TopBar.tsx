@@ -193,7 +193,7 @@ export const TopBar = ({
         <>
           <TitleContainer>
             <LiveAppIcon name={name} icon={icon || undefined} size={20} />
-            <ItemContent data-test-id="live-app-title">{name}</ItemContent>
+            <ItemContent data-testid="live-app-title">{name}</ItemContent>
           </TitleContainer>
           <Separator />
         </>
@@ -230,7 +230,7 @@ export const TopBar = ({
           <Spinner
             isRotating
             size={16}
-            data-test-id="web-platform-player-topbar-activity-indicator"
+            data-testid="web-platform-player-topbar-activity-indicator"
           />
         </ItemContainer>
         {shouldDisplaySelectAccount ? (
@@ -238,7 +238,7 @@ export const TopBar = ({
             <ItemContainer
               isInteractive
               onClick={onSelectAccount}
-              data-test-id="web-platform-player-topbar-selected-account"
+              data-testid="web-platform-player-topbar-selected-account"
             >
               {!currentAccount ? (
                 <>

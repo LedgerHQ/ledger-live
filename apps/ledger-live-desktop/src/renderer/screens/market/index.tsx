@@ -99,14 +99,14 @@ export default function Market() {
       <Flex flexDirection="row" pr="6px" my={2} alignItems="center" justifyContent="space-between">
         <SearchInputComponent search={search} updateSearch={updateSearch} />
         <SelectBarContainer flexDirection="row" alignItems="center" justifyContent="flex-end">
-          <Flex data-test-id="market-countervalue-select" justifyContent="flex-end" mx={4}>
+          <Flex data-testid="market-countervalue-select" justifyContent="flex-end" mx={4}>
             <CounterValueSelect
               counterCurrency={String(counterCurrency)}
               setCounterCurrency={setCounterCurrency}
               supportedCounterCurrencies={supportedCounterCurrencies}
             />
           </Flex>
-          <Flex data-test-id="market-range-select" mx={2}>
+          <Flex data-testid="market-range-select" mx={2}>
             <Dropdown
               label={t("common.range")}
               menuPortalTarget={document.body}

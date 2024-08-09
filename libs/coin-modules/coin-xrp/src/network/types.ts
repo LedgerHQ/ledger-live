@@ -48,13 +48,17 @@ export type XrplOperation = {
   validated: boolean;
 };
 
-type ResponseStatus =
+export type ResponseStatus =
   | { status: string; error?: never }
   | {
       status?: never;
       error: string;
     };
+export function isResponseStatus(obj: object): obj is ResponseStatus {
+  return "status" in obj || "error" in obj;
+}
 
+export type NewAccount = "NewAccount";
 export type AccountInfoResponse = {
   account_data: {
     Account: string;

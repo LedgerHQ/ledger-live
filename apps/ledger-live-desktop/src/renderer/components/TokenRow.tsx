@@ -44,7 +44,7 @@ function TokenRow(props: Props) {
   const Row = nested ? NestedRow : TableRow;
   return (
     <Row
-      data-test-id={`token-row-${currency.ticker}`}
+      data-testid={`token-row-${currency.ticker}`}
       className="token-row"
       onClick={onClickRow}
       tabIndex={-1}

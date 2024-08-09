@@ -51,7 +51,7 @@ export class StreamTree {
     const applicationIndex = child
       ? DerivationPath.reverseHardenedIndex(child.getHighestIndex())
       : 0;
-    return `${treeIndex}h/${applicationId}h/${applicationIndex + increment}h`;
+    return `m/${treeIndex}'/${applicationId}'/${applicationIndex + increment}'`;
   }
 
   public async getPublishKeyEvent(
@@ -141,15 +141,20 @@ export class StreamTree {
 
   public update(stream: CommandStream): StreamTree {
     const path = stream.getStreamPath();
+
     if (path === null) throw new Error("Stream path cannot be null");
     const indexes = DerivationPath.toIndexArray(path);
     const newTree = this.tree.updateChild(indexes, stream);
+
     return new StreamTree(newTree);
   }
 
   static async createNewTree(owner: Device, opts: StreamTreeCreateOpts = {}): Promise<StreamTree> {
     let stream = new CommandStream();
-    stream = await stream.edit().seed(opts.topic).issue(owner);
+    const streamToIssue = stream.edit().seed(opts.topic);
+
+    stream = await streamToIssue.issue(owner);
+
     const tree = new IndexedTree(stream);
     return new StreamTree(tree);
   }

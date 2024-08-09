@@ -41,9 +41,9 @@ export async function fetchList({
       pageSize: limit,
       to: counterCurrency,
       sort: getSortParam(order, range),
-      ...(search.length >= 1 && { filter: search }),
-      ...(starred.length > 0 && { ids: starred.join(",") }),
-      ...(liveCoinsList.length > 1 && { ids: liveCoinsList.join(",") }),
+      ...(search.length >= 2 && { filter: search }),
+      ...(starred.length > 0 && { ids: starred.sort().join(",") }),
+      ...(liveCoinsList.length > 1 && { ids: liveCoinsList.sort().join(",") }),
       ...([Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
     },
   });

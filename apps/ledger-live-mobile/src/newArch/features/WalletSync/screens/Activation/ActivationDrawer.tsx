@@ -1,8 +1,8 @@
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import Activation from "../../components/Activation";
-import Drawer from "LLM/components/Dummy/Drawer";
 import { TrackScreen } from "~/analytics";
+import ChooseSyncMethod from "../Synchronize/ChooseMethod";
 
 type Props = {
   isOpen: boolean;
@@ -30,7 +30,9 @@ const ActivationDrawer = ({ isOpen, handleClose, reopenDrawer }: Props) => {
         <Activation isInsideDrawer openSyncMethodDrawer={openSyncMethodDrawer} />
       </QueuedDrawer>
 
-      <Drawer isOpen={isSyncMethodDrawerOpen} handleClose={onPressCloseDrawer} />
+      <QueuedDrawer isRequestingToBeOpened={isSyncMethodDrawerOpen} onClose={onPressCloseDrawer}>
+        <ChooseSyncMethod />
+      </QueuedDrawer>
     </>
   );
 };

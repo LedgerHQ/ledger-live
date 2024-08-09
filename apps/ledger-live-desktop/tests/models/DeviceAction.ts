@@ -29,8 +29,8 @@ export class DeviceAction {
 
   constructor(page: Page) {
     this.page = page;
-    this.loader = page.locator("data-test-id=device-action-loader");
-    this.swapSummary = page.locator("data-test-id=device-swap-summary");
+    this.loader = page.getByTestId("device-action-loader");
+    this.swapSummary = page.getByTestId("device-swap-summary");
   }
 
   async openApp() {

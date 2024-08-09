@@ -1,13 +1,17 @@
-import { SwapTransactionType } from "./types";
 import { MaybeKeepTronAccountAlive } from "@ledgerhq/errors";
+import { SwapTransactionType } from "./types";
 export const maybeKeepTronAccountAlive = (
   swapTransaction: SwapTransactionType,
 ): Error | undefined => {
+  const isTron = swapTransaction?.swap?.from?.currency?.id === "tron";
+  const balance = swapTransaction.swap.from.account?.balance;
+  const swapAmount = swapTransaction.swap.from?.amount;
+
   if (
-    swapTransaction?.swap?.from?.currency?.id === "tron" &&
-    swapTransaction.swap.from.account?.balance
-      .minus(swapTransaction.swap.from?.amount || 0)
-      .lt(1_200_000) // keep 1.1 TRX for fees and 0.1 TRX for keeping the account alive
+    isTron &&
+    balance &&
+    swapAmount?.lte(balance) &&
+    balance.minus(swapAmount || 0).lt(1_200_000) // keep 1.1 TRX for fees and 0.1 TRX for keeping the account alive
   ) {
     return new MaybeKeepTronAccountAlive("PREVENT_RECEIVING_TRC20_ON_EMPTY_ACCOUNT", {
       links: [

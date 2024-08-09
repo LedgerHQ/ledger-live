@@ -5,7 +5,9 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
-import Drawer from "LLM/components/Dummy/Drawer";
+import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
 
 type Props<T extends boolean> = T extends true
   ? { isInsideDrawer: T; openSyncMethodDrawer: () => void }
@@ -14,19 +16,19 @@ type Props<T extends boolean> = T extends true
 const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDrawer }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
-
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  useInitMemberCredentials();
+  const [isChooseMethodDrawerOpen, setIsChooseMethodDrawerOpen] = React.useState(false);
 
   const onPressSyncAccounts = () => {
-    // do nothing for the moment
+    isInsideDrawer ? openSyncMethodDrawer() : setIsChooseMethodDrawerOpen(true);
   };
 
   const onPressHasAlreadyCreatedAKey = () => {
-    isInsideDrawer ? openSyncMethodDrawer() : setIsDrawerOpen(true);
+    isInsideDrawer ? openSyncMethodDrawer() : setIsChooseMethodDrawerOpen(true);
   };
 
   const onPressCloseDrawer = () => {
-    setIsDrawerOpen(false);
+    setIsChooseMethodDrawerOpen(false);
   };
 
   return (
@@ -52,7 +54,14 @@ const Activation: React.FC<Props<boolean>> = ({ isInsideDrawer, openSyncMethodDr
         onPressHasAlreadyCreatedAKey={onPressHasAlreadyCreatedAKey}
         onPressSyncAccounts={onPressSyncAccounts}
       />
-      {!isInsideDrawer && <Drawer isOpen={isDrawerOpen} handleClose={onPressCloseDrawer} />}
+      {!isInsideDrawer && (
+        <QueuedDrawer
+          isRequestingToBeOpened={isChooseMethodDrawerOpen}
+          onClose={onPressCloseDrawer}
+        >
+          <ChooseSyncMethod />
+        </QueuedDrawer>
+      )}
     </Flex>
   );
 };

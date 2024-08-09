@@ -9,6 +9,7 @@ import BigNumber from "bignumber.js";
 import { debounce } from "../utils/debounce";
 import { useFetchCurrencyFrom } from "./v5/useFetchCurrencyFrom";
 
+export { getAbandonSeedAddress };
 export const useFromState = ({
   accounts,
   defaultCurrency,

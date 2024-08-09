@@ -74,7 +74,7 @@ function OperationComponent({
       className="operation-row"
       isOptimistic={isOptimistic}
       onClick={onClickOnOperation}
-      data-test-id={`operation-row-${operation.id}`}
+      data-testid={`operation-row-${operation.id}`}
     >
       <ConfirmationCell
         operation={operation}

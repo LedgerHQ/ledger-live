@@ -61,7 +61,7 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
 
   const nativeExchangeButtonUI = (
     <Box width="100%">
-      <Button primary disabled={disabled} onClick={onClick} data-test-id="exchange-button">
+      <Button primary disabled={disabled} onClick={onClick} data-testid="exchange-button">
         {t("common.exchange")}
       </Button>
     </Box>

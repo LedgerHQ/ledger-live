@@ -21,8 +21,8 @@ import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
 import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
-import SpamReportNtf from "./SpamReportNtf";
 import WalletSyncTester from "./WalletSync/WalletSyncTester";
+import SimpleHashTools from "./SimpleHashTools/SimpleHashTools";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -91,6 +91,8 @@ const Default = () => {
         <WalletSyncTester />
       </FeatureToggle>
 
+      <SimpleHashTools />
+
       {__DEV__ && (
         <Row
           title={t("settings.developer.debugReactQuery")}
@@ -99,10 +101,6 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
-
-      <FeatureToggle featureId="spamReportNfts">
-        <SpamReportNtf />
-      </FeatureToggle>
     </Body>
   );
 };

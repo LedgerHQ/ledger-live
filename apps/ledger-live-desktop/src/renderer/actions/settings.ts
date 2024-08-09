@@ -24,7 +24,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
-import { Layout } from "LLD/Collectibles/types/Layouts";
+import { Layout } from "LLD/features/Collectibles/types/Layouts";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;

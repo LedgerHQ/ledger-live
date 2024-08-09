@@ -161,7 +161,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
       {account.type === "Account" ? (
         <Tooltip content={t("account.settings.title")}>
           <ButtonSettings
-            data-test-id="account-settings-button"
+            data-testid="account-settings-button"
             onClick={() =>
               openModal("MODAL_SETTINGS_ACCOUNT", {
                 parentAccount,
@@ -296,7 +296,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   ));
 
   const NonEmptyAccountHeader = (
-    <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>
+    <FadeInButtonsContainer data-testid="account-buttons-group" show={showButtons}>
       {manageActions.length > 0 ? manageActionsHeader : null}
       {availableOnSwap ? swapHeader : null}
       {availableOnBuy ? buyHeader : null}

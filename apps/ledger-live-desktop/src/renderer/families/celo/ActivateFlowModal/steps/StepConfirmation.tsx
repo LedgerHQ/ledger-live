@@ -31,7 +31,7 @@ export const StepConfirmationFooter = ({
        * before a future operation/transaction can be created.
        */}
       <SyncOneAccountOnMount priority={10} accountId={account.id} />
-      <Button data-test-id="modal-close-button" ml={2} onClick={onClose}>
+      <Button data-testid="modal-close-button" ml={2} onClick={onClose}>
         <Trans i18nKey="common.close" />
       </Button>
       {optimisticOperation ? (

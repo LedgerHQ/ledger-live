@@ -234,7 +234,7 @@ const ImageCropper: React.FC<Props> = props => {
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center">
-      <Flex position="relative" height={330} width={330} data-test-id="custom-image-crop-view">
+      <Flex position="relative" height={330} width={330} data-testid="custom-image-crop-view">
         <img
           src={imageBase64DataUri}
           ref={imageRef}
@@ -265,7 +265,7 @@ const ImageCropper: React.FC<Props> = props => {
           backgroundColor="transparent"
           onClick={rotateCounterClockwise}
           Icon={IconsLegacy.ReverseMedium}
-          data-test-id="custom-image-crop-rotate-button"
+          data-testid="custom-image-crop-rotate-button"
         >
           Rotate
         </Button>

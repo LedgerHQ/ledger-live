@@ -37,7 +37,7 @@ const PostOnboardingHubTester = () => {
           >
             <Flex flexDirection={"row"} columnGap={3}>
               <Button
-                data-test-id={dataTestId}
+                data-testid={dataTestId}
                 onClick={() =>
                   handleInitPostOnboarding({
                     deviceModelId,

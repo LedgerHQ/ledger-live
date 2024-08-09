@@ -158,7 +158,7 @@ const RecoverRestore = () => {
             variant="h3Inter"
             color="neutral.c100"
             mt={16}
-            data-test-id="recover-restore-connect-text"
+            data-testid="recover-restore-connect-text"
           >
             {t("recoverRestore.title")}
           </Text>

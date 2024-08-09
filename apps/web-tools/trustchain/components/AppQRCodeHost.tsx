@@ -5,6 +5,7 @@ import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { RenderActionable } from "./Actionable";
 import QRCode from "./QRCode";
 import { useTrustchainSDK } from "../context";
+import { getEnv } from "@ledgerhq/live-env";
 
 export function AppQRCodeHost({
   trustchain,
@@ -21,6 +22,7 @@ export function AppQRCodeHost({
     if (!trustchain || !memberCredentials) return;
     setError(null);
     createQRCodeHostInstance({
+      trustchainApiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
       onDisplayQRCode: url => {
         setUrl(url);
       },

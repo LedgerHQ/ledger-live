@@ -1,14 +1,14 @@
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import React from "react";
-import { useSelector } from "react-redux";
-import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import FormattedVal, { OwnProps as FormattedValProps } from "~/renderer/components/FormattedVal";
-import ToolTip from "./Tooltip";
 import { Trans } from "react-i18next";
+import { useSelector } from "react-redux";
+import FormattedVal, { OwnProps as FormattedValProps } from "~/renderer/components/FormattedVal";
 import useTheme from "~/renderer/hooks/useTheme";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useOnDemandCurrencyCountervalues } from "../actions/deprecated/ondemand-countervalues";
+import ToolTip from "./Tooltip";
 
 type Props = {
   // wich market to query
@@ -27,6 +27,7 @@ type Props = {
   placeholderStyle?: {
     [key: string]: string | number;
   };
+  counterValue?: BigNumber;
 } & Partial<FormattedValProps>;
 
 export const NoCountervaluePlaceholder = ({
@@ -56,6 +57,7 @@ export const NoCountervaluePlaceholder = ({
   );
 };
 export default function CounterValue({
+  counterValue,
   value: valueProp,
   date,
   currency,
@@ -72,22 +74,23 @@ export default function CounterValue({
 
   useOnDemandCurrencyCountervalues(currency, counterValueCurrency);
 
-  const countervalue = useCalculate({
+  const calculatedCounterValue = useCalculate({
     from: currency,
     to: counterValueCurrency,
     value,
     disableRounding: true,
     date,
   });
-  if (typeof countervalue !== "number") {
+  if (typeof calculatedCounterValue !== "number") {
     return <NoCountervaluePlaceholder placeholder={placeholder} style={placeholderStyle} />;
   }
+
   return (
     <>
       {prefix || null}
       <FormattedVal
         {...props}
-        val={countervalue}
+        val={counterValue || calculatedCounterValue}
         currency={currency}
         unit={counterValueCurrency.units[0]}
         showCode

@@ -20,7 +20,7 @@ const DeviceLanguageInstalled = ({ language }: { language: Language }) => {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      data-test-id="language-installed"
+      data-testid="language-installed"
     >
       <BoxedIcon
         Icon={IconsLegacy.CheckAloneMedium}

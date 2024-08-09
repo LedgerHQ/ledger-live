@@ -72,7 +72,7 @@ export default function MarketCoinScreen() {
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
   return (
-    <Container data-test-id="market-coin-page-container">
+    <Container data-testid="market-coin-page-container">
       <TrackPage
         category="Page Market Coin"
         currencyName={name}
@@ -101,7 +101,7 @@ export default function MarketCoinScreen() {
           <Flex pl={3} flexDirection="column" alignItems="left" pr={16}>
             <Flex flexDirection="row" alignItems="center" justifyContent={"center"}>
               <Title>{name}</Title>
-              <StarContainer data-test-id="market-coin-star-button" onClick={toggleStar}>
+              <StarContainer data-testid="market-coin-star-button" onClick={toggleStar}>
                 <Icon name={isStarred ? "StarSolid" : "Star"} size={28} />
               </StarContainer>
             </Flex>
@@ -114,18 +114,13 @@ export default function MarketCoinScreen() {
           {internalCurrency && (
             <>
               {availableOnBuy && (
-                <Button
-                  data-test-id="market-coin-buy-button"
-                  variant="color"
-                  mr={1}
-                  onClick={onBuy}
-                >
+                <Button data-testid="market-coin-buy-button" variant="color" mr={1} onClick={onBuy}>
                   {t("accounts.contextMenu.buy")}
                 </Button>
               )}
               {availableOnSwap && (
                 <Button
-                  data-test-id="market-coin-swap-button"
+                  data-testid="market-coin-swap-button"
                   variant="color"
                   onClick={onSwap}
                   mr={1}
@@ -134,7 +129,7 @@ export default function MarketCoinScreen() {
                 </Button>
               )}
               {availableOnStake && (
-                <Button variant="color" onClick={onStake} data-test-id="market-coin-stake-button">
+                <Button variant="color" onClick={onStake} data-testid="market-coin-stake-button">
                   {t("accounts.contextMenu.stake")}
                 </Button>
               )}

@@ -1,11 +1,12 @@
 import DeviceAction from "../../models/DeviceAction";
-import { knownDevice } from "../../models/devices";
+import { knownDevices } from "../../models/devices";
 import { Application } from "../../page";
 
 let app: Application;
 let deviceAction: DeviceAction;
 const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
 let first = true;
+const knownDevice = knownDevices.nanoX;
 
 describe("Receive Flow", () => {
   beforeAll(async () => {
@@ -23,8 +24,8 @@ describe("Receive Flow", () => {
 
   $TmsLink("B2CQA-1864");
   it("Should verify the address after importing an account working on a single network", async () => {
-    await app.portfolio.openTransferMenu();
-    await app.portfolio.navigateToReceiveFromTransferMenu();
+    await app.transfertMenu.open();
+    await app.transfertMenu.navigateToReceive();
     await app.common.performSearch("Bitcoin");
     await app.receive.selectAsset("BTC");
     first && (await deviceAction.selectMockDevice(), (first = false));

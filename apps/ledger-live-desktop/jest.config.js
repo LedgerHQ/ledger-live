@@ -39,6 +39,19 @@ const commonConfig = {
   testPathIgnorePatterns,
   setupFiles: ["jest-canvas-mock"],
   setupFilesAfterEnv: ["<rootDir>/tests/jestSetup.js"],
+  extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
+  transform: {
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+      "<rootDir>/tests/fileTransformer.js",
+  },
   globalSetup: "<rootDir>/tests/setup.ts",
   moduleDirectories: ["node_modules", "./tests"],
   modulePaths: [compilerOptions.baseUrl],
@@ -52,41 +65,14 @@ module.exports = {
     {
       ...commonConfig,
       displayName: "default",
-      extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
       testPathIgnorePatterns: [
         ...testPathIgnorePatterns,
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
-      transform: {
-        "^.+\\.(t|j)sx?$": [
-          "@swc/jest",
-          {
-            jsc: {
-              target: "esnext",
-            },
-          },
-        ],
-        "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-          "<rootDir>/tests/fileTransformer.js",
-      },
     },
     {
       ...commonConfig,
       displayName: "dom",
-      extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
-      setupFiles: [...commonConfig.setupFiles],
-      transform: {
-        "^.+\\.(t|j)sx?$": [
-          "@swc/jest",
-          {
-            jsc: {
-              target: "esnext",
-            },
-          },
-        ],
-        "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-          "<rootDir>/tests/fileTransformer.js",
-      },
       testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
     },
   ],

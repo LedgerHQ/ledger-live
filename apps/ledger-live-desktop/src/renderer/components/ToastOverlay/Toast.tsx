@@ -132,7 +132,7 @@ export function Toast({
     <>
       {transitions.map(({ key, props }) => (
         <Wrapper key={key} style={props} onClick={onClick}>
-          <Content data-test-id="toaster">
+          <Content data-testid="toaster">
             <IconContainer color={defaultIconColor}>
               <Icon size={19} />
             </IconContainer>

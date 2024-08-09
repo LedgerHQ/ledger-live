@@ -175,6 +175,10 @@ export type LiveNetworkResponse<T> = {
   data: T;
   status: number;
 };
+
+// inspired by https://github.com/sindresorhus/got/blob/main/documentation/7-retry.md#retry
+const retryableHttpStatusCodes = [408, 413, 429, 500, 502, 503, 504, 521, 522, 524];
+
 /**
  * Network call
  * @param request
@@ -198,9 +202,8 @@ export const newImplementation = async <T = unknown, U = unknown>(
       maxRetry: getEnv("GET_CALLS_RETRY"),
       retryCondition: error => {
         if (error && error.status) {
-          // A 422 shouldn't be retried without change as explained in this documentation
-          // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422
-          return error.status !== 422;
+          // not all status codes are retryable
+          return retryableHttpStatusCodes.includes(error.status);
         }
         return true;
       },

@@ -12,7 +12,7 @@ notifyManager.setScheduler(cb => cb());
 const ERROR_MESSAGE = "Missing required fields";
 jest.mock("@ledgerhq/live-nft/api/simplehash", () => ({
   reportSpamNtf: jest.fn().mockImplementation((opts: NftSpamReportOpts) => {
-    if (!opts.contractAddress && !opts.chainId && !opts.tokenId && !opts.tokenId) {
+    if (!opts.contractAddress && !opts.chainId && !opts.tokenId) {
       return Promise.reject(new Error(ERROR_MESSAGE));
     }
 

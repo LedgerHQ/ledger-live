@@ -1,10 +1,10 @@
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
-import { CollectibleType, CollectibleTypeEnum } from "../../Collectibles/types/Collectibles";
 import { Account } from "@ledgerhq/types-live";
 import { Dispatch } from "redux";
 import { TFunction } from "i18next";
 import { RouteComponentProps } from "react-router-dom";
+import { CollectibleType, CollectibleTypeEnum } from "LLD/features/Collectibles/types/Collectibles";
 
 type Props = {
   account: Account;

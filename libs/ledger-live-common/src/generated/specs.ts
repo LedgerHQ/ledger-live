@@ -19,6 +19,8 @@ import stellar from "@ledgerhq/coin-stellar/specs";
 import tezos from "@ledgerhq/coin-tezos/specs";
 import tron from "@ledgerhq/coin-tron/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
+import icon from "@ledgerhq/coin-icon/specs";
+import ton from "@ledgerhq/coin-ton/specs";
 
 export default {
   casper,
@@ -42,4 +44,6 @@ export default {
   tezos,
   tron,
   xrp,
+  icon,
+  ton,
 };

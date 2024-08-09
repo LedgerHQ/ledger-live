@@ -4,9 +4,8 @@ import SHA224 from "crypto-js/sha224";
 import { getEnv } from "@ledgerhq/live-env";
 import { EIP712Message } from "@ledgerhq/types-live";
 import EIP712CAL from "@ledgerhq/cryptoassets/data/eip712";
-import { MessageFilters } from "./types";
-
-const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
+import EIP712CALV2 from "@ledgerhq/cryptoassets/data/eip712_v2";
+import { CALServiceEIP712Response, MessageFilters } from "./types";
 
 // As defined in [spec](https://eips.ethereum.org/EIPS/eip-712), the properties below are all required.
 export function isEIP712Message(message: unknown): message is EIP712Message {
@@ -54,24 +53,40 @@ export const getSchemaHashForMessage = (message: EIP712Message): string => {
  */
 export const getFiltersForMessage = async (
   message: EIP712Message,
-  remoteCryptoAssetsListURI?: string | null,
+  shouldUseV1Filters?: boolean,
+  calServiceURL?: string | null,
 ): Promise<MessageFilters | undefined> => {
   const schemaHash = getSchemaHashForMessage(message);
-  const messageId = `${message.domain?.chainId ?? 0}:${
-    message.domain?.verifyingContract ?? NULL_ADDRESS
-  }:${schemaHash}`;
-
+  const verifyingContract =
+    message.domain?.verifyingContract?.toLowerCase() || ethers.constants.AddressZero;
   try {
-    if (remoteCryptoAssetsListURI) {
-      const { data: dynamicCAL } = await axios.get<Record<string, MessageFilters>>(
-        `${remoteCryptoAssetsListURI}/eip712.json`,
-      );
+    if (calServiceURL) {
+      const { data } = await axios.get<CALServiceEIP712Response>(`${calServiceURL}/v1/dapps`, {
+        params: {
+          output: "eip712_signatures",
+          eip712_signatures_version: shouldUseV1Filters ? "v1" : "v2",
+          chain_id: message.domain?.chainId,
+          contracts: verifyingContract,
+        },
+      });
 
-      return dynamicCAL[messageId] || EIP712CAL[messageId as keyof typeof EIP712CAL];
+      const filters = data?.[0]?.eip712_signatures?.[verifyingContract]?.[schemaHash];
+      if (!filters) {
+        // Fallback to catch
+        throw new Error("Fallback to static file");
+      }
+
+      return filters;
     }
-    throw new Error();
+    // Fallback to catch
+    throw new Error("Fallback to static file");
   } catch (e) {
-    return EIP712CAL[messageId as keyof typeof EIP712CAL];
+    const messageId = `${message.domain?.chainId ?? 0}:${verifyingContract}:${schemaHash}`;
+
+    if (shouldUseV1Filters) {
+      return EIP712CAL[messageId as keyof typeof EIP712CAL];
+    }
+    return EIP712CALV2[messageId as keyof typeof EIP712CALV2] as MessageFilters;
   }
 };
 
@@ -92,7 +107,7 @@ const getValue = (
 
     /* istanbul ignore if : unecessary test of a throw */
     if (!(path in value)) {
-      throw new Error(`Could not find key ${value} in ${path}`);
+      throw new Error(`Could not find key ${path} in ${JSON.stringify(value)} `);
     }
     const result = value[path];
     return typeof result === "object" ? result : result.toString();
@@ -105,7 +120,7 @@ const getValue = (
  * Using a path as a string, returns the value(s) of a json key without worrying about depth or arrays
  * (e.g: 'to.wallets.[]' => ["0x123", "0x456"])
  */
-const getValueFromPath = (path: string, eip721Message: EIP712Message): string | string[] => {
+export const getValueFromPath = (path: string, eip721Message: EIP712Message): string | string[] => {
   const splittedPath = path.split(".");
   const { message } = eip721Message;
 
@@ -131,7 +146,7 @@ const getValueFromPath = (path: string, eip721Message: EIP712Message): string | 
  */
 export const getEIP712FieldsDisplayedOnNano = async (
   messageData: EIP712Message,
-  remoteCryptoAssetsListURI: string = getEnv("DYNAMIC_CAL_BASE_URL"),
+  calServiceURL: string = getEnv("CAL_SERVICE_URL"),
 ): Promise<{ label: string; value: string | string[] }[] | null> => {
   if (!isEIP712Message(messageData)) {
     return null;
@@ -139,7 +154,7 @@ export const getEIP712FieldsDisplayedOnNano = async (
 
   const { EIP712Domain, ...otherTypes } = messageData.types;
   const displayedInfos: { label: string; value: string | string[] }[] = [];
-  const filters = await getFiltersForMessage(messageData, remoteCryptoAssetsListURI);
+  const filters = await getFiltersForMessage(messageData, false, calServiceURL);
 
   if (!filters) {
     const { types } = messageData;

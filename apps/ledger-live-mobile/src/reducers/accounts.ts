@@ -35,6 +35,7 @@ import type {
   AccountsUpdateAccountWithUpdaterPayload,
   SettingsBlacklistTokenPayload,
   DangerouslyOverrideStatePayload,
+  AccountsReplacePayload,
 } from "../actions/types";
 import { AccountsActionTypes } from "../actions/types";
 import accountModel from "../logic/accountModel";
@@ -103,6 +104,10 @@ const handlers: ReducerMap<AccountsState, Payload> = {
     active: state.active.filter(
       acc => acc.id !== (action as Action<AccountsDeleteAccountPayload>).payload.id,
     ),
+  }),
+
+  [AccountsActionTypes.SET_ACCOUNTS]: (state, action) => ({
+    active: (action as Action<AccountsReplacePayload>).payload,
   }),
 
   [AccountsActionTypes.CLEAN_CACHE]: (state: AccountsState) => ({

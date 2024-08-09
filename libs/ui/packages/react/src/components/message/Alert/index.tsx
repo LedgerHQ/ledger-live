@@ -3,10 +3,10 @@ import styled, { useTheme, DefaultTheme } from "styled-components";
 import Text from "../../asorted/Text";
 import { TextVariants } from "../../../styles/theme";
 import Flex from "../../layout/Flex";
-import InfoAltFillMedium from "@ledgerhq/icons-ui/reactLegacy/InfoAltFillMedium";
-import CircledCheckSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCheckSolidMedium";
-import WarningSolidMedium from "@ledgerhq/icons-ui/reactLegacy/WarningSolidMedium";
-import CircledCrossSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCrossSolidMedium";
+import WarningFill from "@ledgerhq/icons-ui/react/WarningFill";
+import InformationFill from "@ledgerhq/icons-ui/react/InformationFill";
+import CheckmarkCircleFill from "@ledgerhq/icons-ui/react/CheckmarkCircleFill";
+import DeleteCircleFill from "@ledgerhq/icons-ui/react/DeleteCircleFill";
 
 type AlertType = "info" | "secondary" | "success" | "warning" | "error";
 
@@ -51,11 +51,11 @@ const StyledIconContainer = styled.div`
 `;
 
 const icons = {
-  info: <InfoAltFillMedium size={24} />,
-  secondary: <InfoAltFillMedium size={24} />,
-  success: <CircledCheckSolidMedium size={24} />,
-  warning: <WarningSolidMedium size={24} />,
-  error: <CircledCrossSolidMedium size={24} />,
+  info: <InformationFill size="M" />,
+  secondary: <InformationFill size="M" />,
+  success: <CheckmarkCircleFill size="M" />,
+  warning: <WarningFill size="M" />,
+  error: <DeleteCircleFill size="M" />,
 };
 
 const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) => {
@@ -72,8 +72,9 @@ const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) =
       };
     case "warning":
       return {
-        background: theme.colors.warning.c10,
-        iconColor: theme.colors.warning.c70,
+        // FIX_ME When removing colors.warning in old theme"
+        background: theme.colors.palette.warning.c10,
+        iconColor: theme.colors.palette.warning.c70,
       };
     case "error":
       return {

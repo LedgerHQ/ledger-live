@@ -61,7 +61,7 @@ export function AppCard({ manifest, onClick, id }: Props) {
   }, [onClick, isDisabled]);
 
   return (
-    <Container data-test-id={id} onClick={handleClick} disabled={isDisabled}>
+    <Container data-testid={id} onClick={handleClick} disabled={isDisabled}>
       <AppDetails manifest={manifest} />
     </Container>
   );

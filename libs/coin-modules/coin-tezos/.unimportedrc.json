@@ -31,9 +31,17 @@
     "src/types/model.ts",
     "src/types/signer.ts"
   ],
-  "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.{js,jsx,ts,tsx}"],
-  "ignoreUnimported": [],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnimported": [
+    "src/test/config.ts"
+  ],
   "ignoreUnused": [
     "@ledgerhq/cryptoassets"
-  ]
+  ],
+  "ignoreUnresolved": []
 }

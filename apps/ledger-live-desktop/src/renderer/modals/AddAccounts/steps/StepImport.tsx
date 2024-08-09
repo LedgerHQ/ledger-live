@@ -323,7 +323,7 @@ class StepImport extends PureComponent<
     return (
       <>
         <TrackPage category="AddAccounts" name="Step3" currencyName={currencyName} />
-        <Box data-test-id={"add-accounts-step-import-accounts-list"} mt={-4}>
+        <Box data-testid={"add-accounts-step-import-accounts-list"} mt={-4}>
           {sections.map(({ id, selectable, defaultSelected, data, supportLink }, i) => {
             const hasMultipleSchemes =
               id === "creatable" &&
@@ -416,13 +416,13 @@ export const StepImportFooter = ({
       <Box grow>{currency && <CurrencyBadge currency={currency} />}</Box>
       {scanStatus === "error" &&
         (isHandledError ? (
-          <Button data-test-id={"add-accounts-full-node-reconfigure"} primary onClick={goFullNode}>
+          <Button data-testid={"add-accounts-full-node-reconfigure"} primary onClick={goFullNode}>
             {t("addAccounts.fullNodeConfigure")}
           </Button>
         ) : (
           <>
             <RetryButton
-              data-test-id={"add-accounts-import-retry-button"}
+              data-testid={"add-accounts-import-retry-button"}
               primary
               onClick={() => setScanStatus("scanning")}
             />
@@ -430,7 +430,7 @@ export const StepImportFooter = ({
         ))}
       {scanStatus === "scanning" && (
         <Button
-          data-test-id={"add-accounts-import-stop-button"}
+          data-testid={"add-accounts-import-stop-button"}
           onClick={() => setScanStatus("finished")}
         >
           {t("common.stop")}
@@ -439,7 +439,7 @@ export const StepImportFooter = ({
 
       {isHandledError || scanStatus === "error" ? null : (
         <Button
-          data-test-id={"add-accounts-import-add-button"}
+          data-testid={"add-accounts-import-add-button"}
           primary
           disabled={scanStatus !== "finished"}
           onClick={onClick}

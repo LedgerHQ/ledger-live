@@ -18,6 +18,12 @@ export const tezosConfig: Record<string, ConfigInfo> = {
       node: {
         url: getEnv("API_TEZOS_NODE"),
       },
+      fees: {
+        minGasLimit: 600,
+        minStorageLimit: 0,
+        minFees: 500,
+        minEstimatedFees: 500,
+      },
     },
   },
 };

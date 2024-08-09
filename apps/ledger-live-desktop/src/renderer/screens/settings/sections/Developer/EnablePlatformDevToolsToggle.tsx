@@ -17,7 +17,7 @@ const EnablePlatformDevToolsToggle = () => {
       <Switch
         isChecked={enablePlatformDevTools}
         onChange={onSetEnablePlatformDevTools}
-        data-test-id="settings-enable-platform-dev-tools-apps"
+        data-testid="settings-enable-platform-dev-tools-apps"
       />
     </>
   );

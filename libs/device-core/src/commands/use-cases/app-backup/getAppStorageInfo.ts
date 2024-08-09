@@ -82,10 +82,15 @@ export function parseResponse(data: Buffer): AppStorageInfo {
       offset += 4;
       const dataVersion = data.subarray(offset, offset + 4).toString(); // Len = 4
       offset += 4;
-      const hasSettings = data.readUIntBE(offset, 1) === 1; // Len = 1
-      offset += 1;
-      const hasData = data.readUIntBE(offset, 1) === 1; // Len = 1
-      offset += 1;
+      const properties = data.readUInt16BE(offset);
+      offset += 2;
+      /**
+       * The properties byte is a bitfield with the following structure:
+       * - Bit 0: hasSettings
+       * - Bit 1: hasData
+       */
+      const hasSettings = (properties & 1) === 1;
+      const hasData = (properties & 2) === 2;
       const hash = data.subarray(offset, offset + 32).toString(); // Len = 32
 
       return { size, dataVersion, hasSettings, hasData, hash };

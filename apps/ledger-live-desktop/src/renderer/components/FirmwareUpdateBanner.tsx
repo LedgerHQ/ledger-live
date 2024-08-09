@@ -2,13 +2,18 @@ import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useLocation, useHistory } from "react-router-dom";
+import { useTheme } from "styled-components";
 import { getEnv } from "@ledgerhq/live-env";
+import { Button, Text } from "@ledgerhq/react-ui";
 import { latestFirmwareSelector } from "~/renderer/reducers/settings";
-import TopBanner, { FakeLink } from "~/renderer/components/TopBanner";
+import TopBanner from "~/renderer/components/TopBanner";
 import getCleanVersion from "~/renderer/screens/manager/FirmwareUpdate/getCleanVersion";
 import { UpdaterContext } from "~/renderer/components/Updater/UpdaterContext";
+import { radii } from "~/renderer/styles/theme";
 import { VISIBLE_STATUS } from "./Updater/Banner";
-import { IconsLegacy, Text } from "@ledgerhq/react-ui";
+import Box from "./Box";
+import StyleProvider from "../styles/StyleProvider";
+
 const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
   const history = useHistory();
   const { t } = useTranslation();
@@ -17,6 +22,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
   const visibleFirmwareVersion =
     process.env.DEBUG_FW_VERSION ??
     (latestFirmware ? getCleanVersion(latestFirmware.final.name) : "");
+  const { colors } = useTheme();
 
   // The 2.1.0-rc2 release caused issues with localization e2e tests because it
   // displayed a banner for updating the FW, which would continue to show with
@@ -41,27 +47,48 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
   return (
     <TopBanner
       id={"fw-update-banner"}
-      content={{
-        Icon: IconsLegacy.NanoFoldedMedium,
-        message: (
-          <Text color="neutral.c00">
-            {t(old ? "manager.firmware.banner.old.warning" : "manager.firmware.banner.warning", {
-              latestFirmware: visibleFirmwareVersion,
-            })}
-          </Text>
-        ),
-        right: right || <FakeLink onClick={onClick}>{t("manager.firmware.banner.cta")}</FakeLink>,
+      containerStyle={{
+        background: `linear-gradient(to left, ${colors.primary.c70}, ${colors.primary.c60})`,
+        borderRadius: radii[2],
+        padding: "12px 16px",
       }}
-      status={"warning"}
+      content={{
+        message: (
+          <Box>
+            <Text fontFamily="Inter|Bold" fontSize={5} color="neutral.c100">
+              {t(old ? "manager.firmware.banner.old.warning" : "manager.firmware.banner.warning")}
+            </Text>
+            {old ? null : (
+              <Text color="neutral.c90">
+                {t("manager.firmware.banner.version", {
+                  latestFirmware: visibleFirmwareVersion,
+                })}
+              </Text>
+            )}
+          </Box>
+        ),
+        right: right || (
+          <Button variant="main" onClick={onClick}>
+            {t("manager.firmware.banner.cta")}
+          </Button>
+        ),
+      }}
     />
   );
 };
+
 const FirmwareUpdateBannerEntry = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
   const context = useContext(UpdaterContext);
   if (context && context.version) {
     const { status } = context;
     if (VISIBLE_STATUS.includes(status)) return null;
   }
-  return <FirmwareUpdateBanner old={old} right={right} />;
+
+  return (
+    <StyleProvider selectedPalette="dark">
+      <FirmwareUpdateBanner old={old} right={right} />
+    </StyleProvider>
+  );
 };
+
 export default FirmwareUpdateBannerEntry;

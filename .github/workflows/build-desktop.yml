@@ -57,15 +57,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
@@ -97,17 +92,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
         with:
           os: ${{ matrix.config.name }}
-      - name: Retrieving internal assets
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          repository: LedgerHQ/ledger-live-internal-assets
-          token: ${{ steps.generate-token.outputs.token }}
-          path: ledger-live-internal-assets
-
-      - name: Replace assets
-        id: assets
-        run: pnpm desktop assets:replace
 
       - name: Build the app
         id: build-app

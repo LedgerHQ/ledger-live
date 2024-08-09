@@ -22,6 +22,7 @@ import { accountsSelector } from "~/reducers/accounts";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/reducers/wallet";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 export type Props = StackNavigatorProps<
   ExchangeNavigatorParamList,
@@ -32,6 +33,7 @@ const appManifestNotFoundError = new Error("App not found"); // FIXME move this 
 
 export function BuyAndSellScreen({ route }: Props) {
   const accounts = useSelector(accountsSelector);
+  const devMode = useEnv("MANAGER_DEV_MODE").toString();
   const { theme } = useTheme();
   const { platform, ...params } = route.params || {};
   const searchParams = route.path
@@ -94,6 +96,7 @@ export function BuyAndSellScreen({ route }: Props) {
         inputs={{
           theme,
           lang: locale,
+          devMode,
           ...customParams,
           ...Object.fromEntries(searchParams.entries()),
         }}

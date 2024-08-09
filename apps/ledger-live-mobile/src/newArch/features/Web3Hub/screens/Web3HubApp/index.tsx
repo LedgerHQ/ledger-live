@@ -1,28 +1,35 @@
-import { Text } from "@ledgerhq/native-ui";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import SafeAreaView from "~/components/SafeAreaView";
-import { ScreenName } from "~/const";
-import { Web3HubStackParamList } from "../../Navigator";
+import React, { useMemo } from "react";
+import { useTheme } from "styled-components/native";
+import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import type { AppProps } from "LLM/features/Web3Hub/types";
+import WebPlatformPlayer from "./components/Web3Player";
+import GenericErrorView from "~/components/GenericErrorView";
+import { useLocale } from "~/context/Locale";
+import useWeb3HubAppViewModel from "./useWeb3HubAppViewModel";
 
-type Props = BaseComposite<NativeStackScreenProps<Web3HubStackParamList, ScreenName.Web3HubApp>>;
+const appManifestNotFoundError = new Error("App not found");
 
-export default function Web3HubApp({ route }: Props) {
-  const { manifestId } = route.params;
-  return (
-    <SafeAreaView
-      edges={["top", "left", "right"]}
-      isFlex
-      style={{
-        flexDirection: "column",
-        gap: 26,
-        marginHorizontal: 24,
-        marginTop: 114,
-      }}
-    >
-      <Text>{ScreenName.Web3HubApp}</Text>
-      <Text>{manifestId}</Text>
-    </SafeAreaView>
+// TODO local manifests ?
+export default function Web3HubApp({ route }: AppProps) {
+  const { manifestId, queryParams } = route.params;
+  const { theme } = useTheme();
+  const { locale } = useLocale();
+
+  const { manifest, isLoading } = useWeb3HubAppViewModel(manifestId);
+
+  const inputs = useMemo(() => {
+    return {
+      theme,
+      lang: locale,
+      ...queryParams,
+    };
+  }, [locale, queryParams, theme]);
+
+  return manifest ? (
+    <WebPlatformPlayer manifest={manifest} inputs={inputs} />
+  ) : (
+    <Flex flex={1} p={10} justifyContent="center" alignItems="center">
+      {isLoading ? <InfiniteLoader /> : <GenericErrorView error={appManifestNotFoundError} />}
+    </Flex>
   );
 }

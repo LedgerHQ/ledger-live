@@ -115,6 +115,7 @@ export function IdentityManager({
       setContext({
         applicationId: defaultContext.applicationId,
         name: memberNameForPubKey(currentIdentityKey),
+        apiBaseUrl: defaultContext.apiBaseUrl,
       });
     } else {
       setContext(defaultContext);

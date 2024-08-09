@@ -1,19 +1,7 @@
+import type { Operation } from "@ledgerhq/coin-framework/api/index";
 import { getServerInfos, getTransactions } from "../network";
 import type { XrplOperation } from "../network/types";
 import { RIPPLE_EPOCH } from "./utils";
-
-export type Operation = {
-  hash: string;
-  address: string;
-  type: string;
-  value: bigint;
-  fee: bigint;
-  blockHeight: number;
-  senders: string[];
-  recipients: string[];
-  date: Date;
-  transactionSequenceNumber: number;
-};
 
 /**
  * Returns list of operations associated to an account.

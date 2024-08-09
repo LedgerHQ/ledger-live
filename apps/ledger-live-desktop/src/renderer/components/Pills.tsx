@@ -66,7 +66,7 @@ function Pills<V, I extends Item<V>>(props: Props<V, I>) {
             onClick={() => onChange(item)}
             key={item.key}
             bordered={bordered}
-            data-test-id={`settings-${item.key}-tab`}
+            data-testid={`settings-${item.key}-tab`}
           >
             {item.label}
           </Pill>

@@ -43,7 +43,7 @@ const StepConfirmation = ({ deviceModelId, appsToBeReinstalled }: StepProps) => 
   useEffect(() => () => log("firmware-record-end"), []);
 
   return (
-    <Container data-test-id="firmware-update-done">
+    <Container data-testid="firmware-update-done">
       <TrackPage category="Manager" name="FirmwareConfirmation" />
       <BoxedIcon
         Icon={IconsLegacy.CheckAloneMedium}

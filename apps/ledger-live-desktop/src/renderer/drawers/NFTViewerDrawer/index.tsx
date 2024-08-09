@@ -48,7 +48,7 @@ const Pre = styled.span`
   white-space: pre-line;
   display: block;
   unicode-bidi: embed;
-  line-break: anywhere;
+  word-break: break-word;
   line-height: 15px;
 `;
 

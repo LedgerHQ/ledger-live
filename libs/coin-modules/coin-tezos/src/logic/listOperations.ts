@@ -1,4 +1,5 @@
-import { APIOperation, fetchAllTransactions } from "../network";
+import { fetchAllTransactions } from "../network";
+import type { APIOperation } from "../network/types";
 
 export type Operation = {
   hash: string;

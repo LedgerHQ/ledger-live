@@ -42,7 +42,7 @@ describe("Encode/Decode command stream tester", () => {
     let buffer = new Uint8Array();
     buffer = TLV.pushHash(buffer, hash);
     const decoded = TLV.readHash(TLV.readTLV(buffer, 0));
-    expect(decoded.value).toEqual(hash);
+    expect(crypto.to_hex(decoded.value)).toEqual(crypto.to_hex(hash));
   });
 
   it("should encode and decode bytes", async () => {
