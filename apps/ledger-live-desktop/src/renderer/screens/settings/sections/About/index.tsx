@@ -55,12 +55,14 @@ const SectionHelp = () => {
         <RowItem
           title={t("settings.help.terms")}
           desc={t("settings.help.termsDesc")}
+          dataTestId="terms-of-use"
           url={urlTerms}
         />
 
         <RowItem
           title={t("settings.help.privacy")}
           desc={t("settings.help.privacyDesc")}
+          dataTestId="privacy-policy"
           url={privacyPolicyUrl}
         />
       </Body>

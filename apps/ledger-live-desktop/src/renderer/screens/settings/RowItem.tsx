@@ -7,11 +7,12 @@ type Props = {
   url: string;
   title: string;
   desc: string;
+  dataTestId?: string;
 };
-const AboutRowItem = ({ url, title, desc }: Props) => {
+const AboutRowItem = ({ url, title, desc, dataTestId }: Props) => {
   const onClick = useCallback(() => openURL(url), [url]);
   return (
-    <SettingsSectionRow title={title} desc={desc}>
+    <SettingsSectionRow title={title} desc={desc} dataTestId={dataTestId}>
       <Tabbable
         p={2}
         borderRadius={1}
@@ -20,7 +21,7 @@ const AboutRowItem = ({ url, title, desc }: Props) => {
           cursor: "pointer",
         }}
       >
-        <IconExternalLink size={16} />
+        <IconExternalLink size={16} dataTestId={`${dataTestId}-link`} />
       </Tabbable>
     </SettingsSectionRow>
   );
