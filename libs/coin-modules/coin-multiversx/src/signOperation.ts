@@ -53,7 +53,6 @@ export const buildSignOperation =
           type: "device-signature-requested",
         });
 
-        // const r = await elrond.signTransaction(account.freshAddressPath, unsignedTx, true);
         const { signature } = await signerContext(deviceId, signer =>
           signer.sign(account.freshAddressPath, unsignedTx),
         );
