@@ -7,6 +7,7 @@ import casperTokens, { CasperToken } from "./data/casper";
 import erc20tokens, { ERC20Token } from "./data/erc20";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
 import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
+import filecoinTokens, { FilecoinERC20Token } from "./data/filecoin-erc20";
 import stellarTokens, { StellarToken } from "./data/stellar";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
@@ -25,6 +26,7 @@ const tokenListHashes = new Set();
 
 addTokens(erc20tokens.map(convertERC20));
 addTokens(polygonTokens.map(convertERC20));
+addTokens(filecoinTokens.map(convertERC20));
 addTokens(trc10tokens.map(convertTRONTokens("trc10")));
 addTokens(trc20tokens.map(convertTRONTokens("trc20")));
 addTokens(bep20tokens.map(convertBEP20));
@@ -241,7 +243,7 @@ export function convertERC20([
   contractAddress,
   disableCountervalue,
   delisted,
-]: ERC20Token | PolygonERC20Token): TokenCurrency | undefined {
+]: ERC20Token | PolygonERC20Token | FilecoinERC20Token): TokenCurrency | undefined {
   const parentCurrency = findCryptoCurrencyById(parentCurrencyId);
 
   if (!parentCurrency) {
