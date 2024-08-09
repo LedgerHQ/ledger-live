@@ -49,6 +49,8 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     setCurrentStep(Steps.QrCodeMethod);
   };
 
+  const onQrCodeScanned = () => setCurrentStep(Steps.PinInput);
+
   const resetStep = () => setCurrentStep(startingStep);
   const resetOption = () => setCurrentOption(Options.SCAN);
   const goBackToPreviousStep = () => setCurrentStep(getPreviousStep(currentStep));
@@ -72,12 +74,14 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     canGoBack,
     navigateToChooseSyncMethod,
     navigateToQrCodeMethod,
+    onQrCodeScanned,
     onCloseDrawer,
     handleClose,
     goBackToPreviousStep,
     qrProcess: { url, error, isLoading, pinCode },
     currentOption,
     setCurrentOption,
+    setCurrentStep,
   };
 };
 

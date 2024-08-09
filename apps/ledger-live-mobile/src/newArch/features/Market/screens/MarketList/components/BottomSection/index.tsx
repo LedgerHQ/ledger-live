@@ -9,7 +9,7 @@ import { ScreenName } from "~/const";
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 import TrackScreen from "~/analytics/TrackScreen";
 import useBottomSectionViewModel from "./useBottomSectionViewModel";
-import { RANGES } from "~/newArch/features/Market/utils";
+import { RANGES } from "LLM/features/Market/utils";
 import { LIMIT } from "~/reducers/market";
 
 const SORT_OPTIONS = {

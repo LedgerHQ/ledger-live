@@ -5,7 +5,7 @@ import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { SYNC_DELAY } from "~/utils/constants";
 import { track } from "~/analytics";
-import { useWalletSyncUserState } from "~/newArch/features/WalletSync/components/WalletSyncContext";
+import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
 
 type Props = {
   error?: Error;

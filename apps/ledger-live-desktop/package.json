@@ -25,7 +25,7 @@
     "lint:ci": "zx scripts/ci-lint.mjs",
     "lint:fix": "eslint src tools static tests --ext .js,.jsx,.json,.ts,.tsx --fix",
     "prettier": "prettier --write \"{src,tools,tests}/**/*.{js,jsx,json,ts,tsx}\"",
-    "prettier:check": "prettier -c \"{src,tools}/**/*.{js,jsx,json,ts,tsx}\"",
+    "prettier:check": "prettier -c \"{src,tools,tests}/**/*.{js,jsx,json,ts,tsx}\"",
     "preinstall-deps": "rimraf node_modules/paralleljs/package.json",
     "install-deps": "electron-builder install-app-deps",
     "postinstall": "node ./scripts/post-install.js",

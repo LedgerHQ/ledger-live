@@ -9,6 +9,8 @@ import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 import SyncError from "LLM/features/WalletSync/screens/Synchronize/SyncError";
 import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeDisplay";
 import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
+import { useInitMemberCredentials } from "LLM/features/WalletSync/hooks/useInitMemberCredentials";
+import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCode";
 
 type Props = {
   currentStep: Steps;
@@ -19,6 +21,7 @@ type Props = {
   currentOption: Options;
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
+  onQrCodeScanned: () => void;
   qrProcess: {
     url: string | null;
     error: Error | null;
@@ -35,8 +38,23 @@ const StepFlow = ({
   currentOption,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
+  onQrCodeScanned,
   qrProcess,
+  setCurrentStep,
 }: Props) => {
+  const { memberCredentials } = useInitMemberCredentials();
+
+  const { handleStart, handleSendDigits, inputCallback, nbDigits } = useSyncWithQrCode();
+
+  const handleQrCodeScanned = (data: string) => {
+    onQrCodeScanned();
+    if (memberCredentials) handleStart(data, memberCredentials, setCurrentStep);
+  };
+
+  const handlePinCodeSubmit = (input: string) => {
+    if (input && inputCallback && nbDigits === input.length) handleSendDigits(inputCallback, input);
+  };
+
   const getScene = () => {
     switch (currentStep) {
       case Steps.AddAccountMethod:
@@ -58,13 +76,21 @@ const StepFlow = ({
           </>
         );
       case Steps.QrCodeMethod:
-        return <QrCodeMethod currentOption={currentOption} setSelectedOption={setCurrentOption} />;
+        return (
+          <QrCodeMethod
+            onQrCodeScanned={handleQrCodeScanned}
+            currentOption={currentOption}
+            setSelectedOption={setCurrentOption}
+          />
+        );
 
       case Steps.PinDisplay:
         return qrProcess.pinCode ? <PinCodeDisplay pinCode={qrProcess.pinCode} /> : null;
 
       case Steps.PinInput:
-        return <PinCodeInput />;
+        return nbDigits ? (
+          <PinCodeInput handleSendDigits={handlePinCodeSubmit} nbDigits={nbDigits} />
+        ) : null;
 
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;

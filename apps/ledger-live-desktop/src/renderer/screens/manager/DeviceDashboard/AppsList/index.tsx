@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useState, memo, useCallback, useEffect, useRef } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -21,12 +21,10 @@ import { openModal } from "~/renderer/actions/modals";
 import debounce from "lodash/debounce";
 import InstallSuccessBanner from "./InstallSuccessBanner";
 import SearchBox from "../../../accounts/AccountList/SearchBox";
-import { App, FeatureId } from "@ledgerhq/types-live";
+import { App } from "@ledgerhq/types-live";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import NoResults from "~/renderer/icons/NoResults";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import camelCase from "lodash/camelCase";
 import { getEnv } from "@ledgerhq/live-env";
 
 // sticky top bar with extra width to cover card boxshadow underneath
@@ -128,17 +126,6 @@ const AppsList = ({
 
   const displayedAppList = isDeviceTab ? device : catalog;
 
-  const { getFeature } = useFeatureFlags();
-  const enabledAppList = useMemo(
-    () =>
-      displayedAppList.filter(({ currencyId }: App) => {
-        if (!currencyId) return true;
-        const currencyFeatureKey = camelCase(`currency_${currencyId}`) as FeatureId;
-        return getFeature(currencyFeatureKey)?.enabled ?? true;
-      }),
-    [displayedAppList, getFeature],
-  );
-
   const mapApp = useCallback(
     (app: App, appStoreView: boolean, onlyUpdate?: boolean, showActions?: boolean) => {
       return (
@@ -238,8 +225,8 @@ const AppsList = ({
                 />
               )}
             </FilterHeader>
-            {enabledAppList.length ? (
-              enabledAppList.map((app: App) => mapApp(app, !isDeviceTab))
+            {displayedAppList.length ? (
+              displayedAppList.map((app: App) => mapApp(app, !isDeviceTab))
             ) : (
               <Placeholder
                 query={query}

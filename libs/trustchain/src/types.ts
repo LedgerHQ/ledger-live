@@ -1,3 +1,4 @@
+import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 
 /**
@@ -11,6 +12,14 @@ export type JWT = {
     };
   };
 };
+
+/**
+ * A function which allow all interactions with the hardware device.
+ */
+export type WithDevice = (
+  deviceId: string,
+  options?: { openTimeoutMs?: number },
+) => <T>(fn: (transport: Transport) => Observable<T>) => Observable<T>;
 
 /**
  * A Trustchain contains the identifier and the contextual data we need to manage members and encrypt/decrypt data.
@@ -132,7 +141,7 @@ export type AuthCachePolicy = "no-cache" | "refresh" | "cache";
  *
  * import { sdk } from "@ledgerhq/trustchain";
  *
- * sdk.authWithDevice(transport).then(jwt => console.log(jwt));
+ * sdk.getOrCreateTrustchain(deviceId, memberCredentials).then(trustchain => console.log(trustchain));
  */
 export interface TrustchainSDK {
   /**
@@ -161,7 +170,7 @@ export interface TrustchainSDK {
    * The latest jwt is also returned because it was potentially updated during the process.
    */
   getOrCreateTrustchain(
-    transport: Transport,
+    deviceId: string,
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
@@ -187,7 +196,7 @@ export interface TrustchainSDK {
    * remove a member from the application trustchain
    */
   removeMember(
-    transport: Transport,
+    deviceId: string,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,

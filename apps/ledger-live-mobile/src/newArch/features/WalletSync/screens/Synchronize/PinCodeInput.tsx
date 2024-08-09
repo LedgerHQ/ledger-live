@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
@@ -6,24 +6,37 @@ import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import TrackScreen from "~/analytics/TrackScreen";
 import { NativeSyntheticEvent, TextInput, TextInputKeyPressEventData } from "react-native";
 
-export default function PinCodeInput() {
+type Props = {
+  handleSendDigits: (input: string) => void;
+  nbDigits: number;
+};
+
+export default function PinCodeInput({ nbDigits, handleSendDigits }: Props) {
   const { t } = useTranslation();
-  const inputRefs = [useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null)];
-  const [digits, setDigits] = useState<string[]>(["", "", ""]);
+
+  // Dynamically create refs based on the number of digits
+  const inputRefs = useRef<(TextInput | null)[]>(Array(nbDigits).fill(null));
+  const [digits, setDigits] = useState<string[]>(Array(nbDigits).fill(""));
+
+  useEffect(() => {
+    if (digits.every(digit => digit)) {
+      handleSendDigits(digits.join(""));
+    }
+  }, [digits, handleSendDigits]);
 
   const handleChange = (value: string, index: number) => {
     const newDigits = [...digits];
     newDigits[index] = value;
     setDigits(newDigits);
-    if (value && index < digits.length - 1) {
-      inputRefs[index + 1].current?.focus();
+    if (value && index < nbDigits - 1) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
     if (e.nativeEvent.key === "Backspace") {
       if (!digits[index] && index > 0) {
-        inputRefs[index - 1].current?.focus();
+        inputRefs.current[index - 1]?.focus();
       } else {
         const newDigits = [...digits];
         newDigits[index] = "";
@@ -49,7 +62,7 @@ export default function PinCodeInput() {
             onChange={value => handleChange(value, index)}
             onKeyPress={e => handleKeyPress(e, index)}
             index={index}
-            ref={inputRefs[index]}
+            ref={el => (inputRefs.current[index] = el)}
           />
         ))}
       </Flex>
@@ -64,18 +77,12 @@ interface DigitInputProps {
   index: number;
 }
 
-interface TextInputRef {
-  focus: () => void;
-}
-
-const DigitInput = forwardRef<TextInputRef, DigitInputProps>(
+const DigitInput = forwardRef<TextInput, DigitInputProps>(
   ({ value, onChange, onKeyPress, index }, forwardedRef) => {
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<TextInput>(null);
 
-    useImperativeHandle(forwardedRef, () => ({
-      focus: () => inputRef.current?.focus(),
-    }));
+    useImperativeHandle(forwardedRef, () => inputRef.current as TextInput);
 
     const handleChange = (text: string) => {
       if (text.length <= 1 && /^\d*$/.test(text)) {

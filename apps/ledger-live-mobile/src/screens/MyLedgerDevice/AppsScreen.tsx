@@ -17,7 +17,7 @@ import {
   predictOptimisticState,
   reducer,
 } from "@ledgerhq/live-common/apps/index";
-import { App, DeviceInfo, FeatureId } from "@ledgerhq/types-live";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
 import { Text, Flex } from "@ledgerhq/native-ui";
@@ -43,7 +43,7 @@ import NoResultsFound from "~/icons/NoResultsFound";
 import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "~/components/Search";
-import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdate/components/UpdateBanner";
+import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
@@ -51,8 +51,6 @@ import { ScreenName } from "~/const";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import ProviderWarning from "./ProviderWarning";
 import { UpdateStep } from "../FirmwareUpdate";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import camelCase from "lodash/camelCase";
 import { useTheme } from "styled-components/native";
 import KeyboardView from "~/components/KeyboardView";
 import { getEnv } from "@ledgerhq/live-env";
@@ -392,17 +390,6 @@ const AppsScreen = ({
     [listHeader, onScroll, renderFooter, renderRow, renderSearchBar],
   );
 
-  const { getFeature, isFeature } = useFeatureFlags();
-  const enabledApps = useMemo(
-    () =>
-      catalog.filter(({ currencyId }: App) => {
-        if (!currencyId) return true;
-        const currencyFeatureKey = camelCase(`currency_${currencyId}`) as FeatureId;
-        return isFeature(currencyFeatureKey) ? getFeature(currencyFeatureKey)?.enabled : true;
-      }),
-    [catalog, getFeature, isFeature],
-  );
-
   return (
     <Flex flex={1} bg="background.main" px={6}>
       <Search
@@ -412,7 +399,7 @@ const AppsScreen = ({
           shouldSort: false,
         }}
         value={query.trim()}
-        items={enabledApps}
+        items={catalog}
         render={renderList}
         renderEmptySearch={renderList}
       />
