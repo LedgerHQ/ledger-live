@@ -800,7 +800,7 @@ export interface Categories {
 /** e.g. "all", "restaking", "services", etc */
 export type CategoryId = Categories["selected"];
 
-export function useCategories(manifests, initialCategory?: CategoryId): Categories {
+export function useCategories(manifests, initialCategory?: CategoryId | null): Categories {
   const [selected, setSelected] = useState(initialCategory || DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
