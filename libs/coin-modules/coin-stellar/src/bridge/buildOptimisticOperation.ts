@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { StellarOperation, Transaction } from "./types";
+import { StellarOperation, Transaction } from "../types";
 import { getAmountValue } from "./logic";
-import { fetchSequence } from "./network";
+import { fetchSequence } from "../network";
 
 export async function buildOptimisticOperation(
   account: Account,

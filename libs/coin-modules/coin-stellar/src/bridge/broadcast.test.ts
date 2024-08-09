@@ -1,8 +1,8 @@
 import { broadcast } from "./broadcast";
-import { createFixtureAccount, createFixtureOperation } from "./types/bridge.fixture";
+import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
 
 const mockBroadcast = jest.fn();
-jest.mock("./network", () => ({
+jest.mock("../network", () => ({
   broadcastTransaction: (sig: unknown) => mockBroadcast(sig),
 }));
 

@@ -6,8 +6,8 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types/index";
-import transactionTransformer from "../transaction";
-import { StellarWrongMemoFormat } from "../errors";
+import transactionTransformer from "../bridge/transaction";
+import { StellarWrongMemoFormat } from "../types";
 
 export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
@@ -365,9 +365,3 @@ export const dataset: DatasetTest<Transaction> = {
     },
   },
 };
-
-describe("Stellar bridge", () => {
-  test.todo(
-    "This is an empty test to make jest command pass. Remove it once there is a real test.",
-  );
-});

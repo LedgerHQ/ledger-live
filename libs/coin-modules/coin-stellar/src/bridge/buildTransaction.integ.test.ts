@@ -1,14 +1,14 @@
 import BigNumber from "bignumber.js";
 import { buildTransaction } from "./buildTransaction";
-import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
-import { setCoinConfig, type StellarCoinConfig } from "./config";
-import { NetworkInfo } from "./types";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import coinConfig, { type StellarCoinConfig } from "../config";
+import { NetworkInfo } from "../types";
 
 describe("buildTransaction", () => {
   const sender = "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV";
 
   beforeAll(() => {
-    setCoinConfig(
+    coinConfig.setCoinConfig(
       (): StellarCoinConfig => ({
         status: { type: "active" },
         explorer: {
@@ -19,15 +19,6 @@ describe("buildTransaction", () => {
     );
   });
 
-  it("throws an error when no fees are setted in the transaction", async () => {
-    // Given
-    const account = createFixtureAccount();
-    const transaction = createFixtureTransaction();
-
-    // When
-    await expect(buildTransaction(account, transaction)).rejects.toThrow("FeeNotLoaded");
-  });
-
   it("throws an error if transaction has no NetworkInfo", async () => {
     // Given
     const account = createFixtureAccount({ freshAddress: sender });
@@ -35,6 +26,17 @@ describe("buildTransaction", () => {
 
     // When
     await expect(buildTransaction(account, transaction)).rejects.toThrow("stellar family");
+  });
+
+  it("throws an error when no fees are setted in the transaction", async () => {
+    // Given
+    const account = createFixtureAccount();
+    const transaction = createFixtureTransaction({
+      networkInfo: { family: "stellar" } as NetworkInfo,
+    });
+
+    // When
+    await expect(buildTransaction(account, transaction)).rejects.toThrow("FeeNotLoaded");
   });
 
   it.skip("crash if transaction amount is 0", async () => {

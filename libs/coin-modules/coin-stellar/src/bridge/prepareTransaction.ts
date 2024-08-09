@@ -1,9 +1,9 @@
 import invariant from "invariant";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { fetchAccountNetworkInfo } from "./network";
+import { fetchAccountNetworkInfo } from "../network";
 import { getAssetCodeIssuer } from "./logic";
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,

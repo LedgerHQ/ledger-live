@@ -1,13 +1,13 @@
-import BigNumber from "bignumber.js";
 import { SignOperationEvent } from "@ledgerhq/types-live";
-import { buildSignOperation } from "./signOperation";
-import { setCoinConfig, type StellarCoinConfig } from "./config";
-import { StellarSigner } from "./types/signer";
-import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
-import { NetworkInfo } from "./types";
 import { Keypair } from "@stellar/stellar-sdk";
-import buildTransaction from "./buildTransaction";
+import BigNumber from "bignumber.js";
 import { subtle } from "crypto";
+import coinConfig, { type StellarCoinConfig } from "../config";
+import { NetworkInfo } from "../types";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import { StellarSigner } from "../types/signer";
+import buildTransaction from "./buildTransaction";
+import { buildSignOperation } from "./signOperation";
 
 const stellarKp = Keypair.random();
 const mockLoadAccount = jest.fn().mockResolvedValue(
@@ -28,8 +28,8 @@ const mockLoadAccount = jest.fn().mockResolvedValue(
     incrementSequenceNumber: () => "1",
   },
 );
-jest.mock("./network", () => ({
-  ...jest.requireActual("./network"),
+jest.mock("../network", () => ({
+  ...jest.requireActual("../network"),
   loadAccount: () => mockLoadAccount(),
   fetchSequence: jest.fn(),
 }));
@@ -46,9 +46,12 @@ describe.skip("signOperation", () => {
   const deviceId = "dummyDeviceId";
 
   beforeAll(() => {
-    setCoinConfig(
+    coinConfig.setCoinConfig(
       (): StellarCoinConfig => ({
         status: { type: "active" },
+        explorer: {
+          url: "https://localhost",
+        },
       }),
     );
   });
