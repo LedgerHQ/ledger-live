@@ -26,7 +26,7 @@ export function Catalog() {
     disclaimer,
     search: searchInput,
     localLiveApps,
-  } = useCatalog(recentlyUsedDB, deeplinkInitialCategory ?? undefined);
+  } = useCatalog(recentlyUsedDB, deeplinkInitialCategory);
 
   return (
     <Flex flexDirection="column" paddingBottom={100}>

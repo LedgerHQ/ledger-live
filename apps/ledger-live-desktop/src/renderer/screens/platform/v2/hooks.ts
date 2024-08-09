@@ -26,7 +26,7 @@ import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLi
 
 export function useCatalog(
   recentlyUsedDB: RecentlyUsedDB,
-  initialCategory?: Categories["categories"][number],
+  initialCategory?: Categories["selected"] | null,
 ) {
   const completeManifests = useManifests({ visibility: ["complete"] });
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
