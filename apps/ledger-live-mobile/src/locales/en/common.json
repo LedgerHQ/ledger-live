@@ -6847,6 +6847,9 @@
       "title": "Explore",
       "description": "Discover the best of web3 curated by Ledger"
     },
+    "section": {
+      "clearSigning": "Clear signing"
+    },
     "main": {
       "header": {
         "title": "Explore web3",

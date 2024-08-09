@@ -9,6 +9,12 @@ import AppIcon from "LLM/features/Web3Hub/components/AppIcon";
 import { Theme } from "~/colors";
 
 export type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
+type ItemStyle = {
+  color: string;
+  badgeColor: string;
+  borderColor: string;
+  backgroundColor: string;
+};
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {
@@ -69,6 +75,31 @@ export default function ManifestItem({
     [colors, manifest.branch],
   );
 
+  const label = (text: string, style: Omit<ItemStyle, "color">) => {
+    const { badgeColor, borderColor, backgroundColor } = style;
+    return (
+      <Text
+        fontSize="9px"
+        width="auto"
+        paddingX={2}
+        paddingY={1}
+        borderWidth={1}
+        borderRadius={3}
+        borderStyle={"solid"}
+        flexGrow={0}
+        flexShrink={0}
+        overflow={"hidden"}
+        textTransform="uppercase"
+        color={badgeColor}
+        borderColor={borderColor}
+        backgroundColor={backgroundColor}
+        fontWeight="semiBold"
+      >
+        {text}
+      </Text>
+    );
+  };
+
   const url = useMemo(() => {
     return new URL(manifest.url).origin;
   }, [manifest.url]);
@@ -83,35 +114,32 @@ export default function ManifestItem({
       <Flex flexDirection="row" alignItems="center" height={72} paddingX={4} paddingY={2}>
         <AppIcon isDisabled={isDisabled} size={48} name={manifest.name} icon={icon} />
         <Flex marginX={16} height="100%" flexGrow={1} flexShrink={1} justifyContent={"center"}>
-          <Flex flexDirection="row" alignItems={"center"} mb={2}>
+          <Flex flexDirection="row" alignItems={"center"} mb={2} columnGap={4}>
             <Text variant="large" color={color} numberOfLines={1} fontWeight="semiBold">
               {manifest.name}
             </Text>
-            {manifest.branch !== "stable" && (
-              <Text
-                fontSize="9px"
-                width="auto"
-                paddingX={2}
-                paddingY={1}
-                borderWidth={1}
-                borderRadius={3}
-                borderStyle={"solid"}
-                flexGrow={0}
-                flexShrink={0}
-                marginLeft={3}
-                overflow={"hidden"}
-                textTransform="uppercase"
-                color={badgeColor}
-                borderColor={borderColor}
-                backgroundColor={backgroundColor}
-                fontWeight="semiBold"
-              >
-                {t(`platform.catalog.branch.${manifest.branch}`, {
-                  defaultValue: manifest.branch,
-                })}
-              </Text>
-            )}
+            <Flex flexDirection="row" alignItems={"center"} columnGap={4}>
+              {manifest.branch !== "stable" &&
+                label(
+                  t(`platform.catalog.branch.${manifest.branch}`, {
+                    defaultValue: manifest.branch,
+                  }),
+                  { badgeColor, borderColor, backgroundColor },
+                )}
+              {manifest.categories.includes("clear signing") &&
+                label(
+                  t(`web3hub.manifestsList.section.clearSigning`, {
+                    defaultValue: "Clear Signing",
+                  }),
+                  {
+                    badgeColor: colors.live,
+                    borderColor: colors.live,
+                    backgroundColor: "transparent",
+                  },
+                )}
+            </Flex>
           </Flex>
+
           <Text fontSize={13} color={colors.smoke} numberOfLines={1}>
             {url}
           </Text>
