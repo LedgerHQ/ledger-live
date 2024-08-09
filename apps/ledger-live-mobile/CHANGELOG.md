@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.48.0-nightly.9
+
+### Minor Changes
+
+- [#7440](https://github.com/LedgerHQ/ledger-live/pull/7440) [`bc044e4`](https://github.com/LedgerHQ/ledger-live/commit/bc044e482ea2827dca281c44ec36526d63da5194) Thanks [@thesan](https://github.com/thesan)! - Request device access within `HWDeviceProvider`
+
+### Patch Changes
+
+- [#7512](https://github.com/LedgerHQ/ledger-live/pull/7512) [`7781e20`](https://github.com/LedgerHQ/ledger-live/commit/7781e20bf484d8e6dcc3375ed0f32a65c1fd5eb5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add WS scan qr code
+
+- [#7542](https://github.com/LedgerHQ/ledger-live/pull/7542) [`313d0e4`](https://github.com/LedgerHQ/ledger-live/commit/313d0e42b81b69b57aa81a760465a414e6afd7f7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - My Ledger: fix & refactor logic of "is app supported by Ledger Live" depending on feature flags, and associated filters in apps catalog. Now this logic is in one single place and fully unit tested.
+
+- [#7556](https://github.com/LedgerHQ/ledger-live/pull/7556) [`ebbbe52`](https://github.com/LedgerHQ/ledger-live/commit/ebbbe521b62c91be646925ff6c87fd79357cff82) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Throw errors to avoid rejection on QRCode
+
+- [#7553](https://github.com/LedgerHQ/ledger-live/pull/7553) [`0407529`](https://github.com/LedgerHQ/ledger-live/commit/04075299b5291a93d34f507f0bd8cde43f4d745a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Set nbDigits dynamic for PinCodeInput
+
+- [#7545](https://github.com/LedgerHQ/ledger-live/pull/7545) [`10deab9`](https://github.com/LedgerHQ/ledger-live/commit/10deab9a5a60c5983b68e29c1561527e55342bff) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Trustchain integration on LLM scan qr code. We can now join a trustchain scanning a qr code
+
+- Updated dependencies [[`b97b76c`](https://github.com/LedgerHQ/ledger-live/commit/b97b76cc99845b0240426f5ca75c765b615ccec5), [`313d0e4`](https://github.com/LedgerHQ/ledger-live/commit/313d0e42b81b69b57aa81a760465a414e6afd7f7), [`bc044e4`](https://github.com/LedgerHQ/ledger-live/commit/bc044e482ea2827dca281c44ec36526d63da5194)]:
+  - @ledgerhq/live-common@34.7.0-nightly.9
+  - @ledgerhq/trustchain@0.2.0-nightly.5
+  - @ledgerhq/live-wallet@0.5.0-nightly.7
+
 ## 3.48.0-nightly.8
 
 ### Patch Changes

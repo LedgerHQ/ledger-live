@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.2.0-nightly.5
+
+### Minor Changes
+
+- [#7440](https://github.com/LedgerHQ/ledger-live/pull/7440) [`bc044e4`](https://github.com/LedgerHQ/ledger-live/commit/bc044e482ea2827dca281c44ec36526d63da5194) Thanks [@thesan](https://github.com/thesan)! - Request device access within `HWDeviceProvider`
+
 ## 0.2.0-nightly.4
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.9
+
+### Patch Changes
+
+- [#7532](https://github.com/LedgerHQ/ledger-live/pull/7532) [`b97b76c`](https://github.com/LedgerHQ/ledger-live/commit/b97b76cc99845b0240426f5ca75c765b615ccec5) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix tezos min reveal gaslimit
+
+- [#7542](https://github.com/LedgerHQ/ledger-live/pull/7542) [`313d0e4`](https://github.com/LedgerHQ/ledger-live/commit/313d0e42b81b69b57aa81a760465a414e6afd7f7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - My Ledger: fix & refactor logic of "is app supported by Ledger Live" depending on feature flags, and associated filters in apps catalog. Now this logic is in one single place and fully unit tested.
+
+- Updated dependencies [[`b97b76c`](https://github.com/LedgerHQ/ledger-live/commit/b97b76cc99845b0240426f5ca75c765b615ccec5)]:
+  - @ledgerhq/coin-tezos@0.5.2-nightly.6
+  - @ledgerhq/live-wallet@0.5.0-nightly.7
+
 ## 34.7.0-nightly.8
 
 ### Minor Changes

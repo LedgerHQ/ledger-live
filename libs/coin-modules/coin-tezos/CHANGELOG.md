@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 0.5.2-nightly.6
+
+### Patch Changes
+
+- [#7532](https://github.com/LedgerHQ/ledger-live/pull/7532) [`b97b76c`](https://github.com/LedgerHQ/ledger-live/commit/b97b76cc99845b0240426f5ca75c765b615ccec5) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix tezos min reveal gaslimit
+
 ## 0.5.2-nightly.5
 
 ### Patch Changes

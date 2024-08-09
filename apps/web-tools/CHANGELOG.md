@@ -1,5 +1,18 @@
 # web-tools
 
+## 0.8.0-nightly.9
+
+### Minor Changes
+
+- [#7440](https://github.com/LedgerHQ/ledger-live/pull/7440) [`bc044e4`](https://github.com/LedgerHQ/ledger-live/commit/bc044e482ea2827dca281c44ec36526d63da5194) Thanks [@thesan](https://github.com/thesan)! - Request device access within `HWDeviceProvider`
+
+### Patch Changes
+
+- Updated dependencies [[`b97b76c`](https://github.com/LedgerHQ/ledger-live/commit/b97b76cc99845b0240426f5ca75c765b615ccec5), [`313d0e4`](https://github.com/LedgerHQ/ledger-live/commit/313d0e42b81b69b57aa81a760465a414e6afd7f7), [`bc044e4`](https://github.com/LedgerHQ/ledger-live/commit/bc044e482ea2827dca281c44ec36526d63da5194)]:
+  - @ledgerhq/live-common@34.7.0-nightly.9
+  - @ledgerhq/trustchain@0.2.0-nightly.5
+  - @ledgerhq/live-wallet@0.5.0-nightly.7
+
 ## 0.8.0-nightly.8
 
 ### Patch Changes
