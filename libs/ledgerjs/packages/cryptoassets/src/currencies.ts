@@ -3670,7 +3670,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Ethereum",
     ticker: "GLMR",
     scheme: "moonbeam",
-    color: "#5FC0C1",
+    color: "#958FDC",
     family: "evm",
     units: [
       {
@@ -3876,7 +3876,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Ethereum",
     ticker: "MOVR",
     scheme: "moonriver",
-    color: "#F2B705",
+    color: "#95F921",
     family: "evm",
     units: ethereumUnits("MOVR", "MOVR"),
     ethereumLikeInfo: {
