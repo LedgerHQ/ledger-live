@@ -43,6 +43,7 @@ type Props = {
   isFromPostOnboardingEntryPoint?: boolean;
   reopenPreviousDrawer?: () => void;
   deviceModelId: DeviceModelId | null;
+  hasCustomLockScreen?: boolean;
 };
 
 const orderedSteps: Step[] = [
@@ -55,8 +56,13 @@ const orderedSteps: Step[] = [
 const ErrorDisplayV2 = withV2StyleProvider(ErrorDisplay);
 
 const CustomImage: React.FC<Props> = props => {
-  const { imageUri, isFromNFTEntryPoint, reopenPreviousDrawer, isFromPostOnboardingEntryPoint } =
-    props;
+  const {
+    imageUri,
+    isFromNFTEntryPoint,
+    reopenPreviousDrawer,
+    isFromPostOnboardingEntryPoint,
+    hasCustomLockScreen,
+  } = props;
   const { t } = useTranslation();
   const track = useTrack();
   const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
@@ -264,6 +270,7 @@ const CustomImage: React.FC<Props> = props => {
               setLoading={setSourceLoading}
               isShowingNftGallery={isShowingNftGallery}
               setIsShowingNftGallery={setIsShowingNftGallery}
+              hasCustomLockScreen={hasCustomLockScreen}
             />
           </FlowStepper.Indexed.Step>
           <FlowStepper.Indexed.Step
