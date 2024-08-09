@@ -13,7 +13,6 @@ import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
-import { useLocale } from "~/context/Locale";
 import { WebPTXPlayer } from "~/components/WebPTXPlayer";
 import { ExchangeNavigatorParamList } from "~/components/RootNavigator/types/ExchangeNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -23,6 +22,8 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/reducers/wallet";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { useSettings } from "~/hooks";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 
 export type Props = StackNavigatorProps<
   ExchangeNavigatorParamList,
@@ -35,6 +36,8 @@ export function BuyAndSellScreen({ route }: Props) {
   const accounts = useSelector(accountsSelector);
   const devMode = useEnv("MANAGER_DEV_MODE").toString();
   const { theme } = useTheme();
+  const { language, locale } = useSettings();
+  const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const { platform, ...params } = route.params || {};
   const searchParams = route.path
     ? new URL("ledgerlive://" + route.path).searchParams
@@ -42,7 +45,6 @@ export function BuyAndSellScreen({ route }: Props) {
   const localManifest = useLocalLiveAppManifest(platform);
   const remoteManifest = useRemoteLiveAppManifest(platform);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
-  const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);
@@ -95,7 +97,9 @@ export function BuyAndSellScreen({ route }: Props) {
         manifest={manifest}
         inputs={{
           theme,
-          lang: locale,
+          lang: language,
+          locale,
+          currencyTicker,
           devMode,
           ...customParams,
           ...Object.fromEntries(searchParams.entries()),

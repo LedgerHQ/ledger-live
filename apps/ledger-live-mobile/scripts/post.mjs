@@ -168,6 +168,7 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
             \\___/
         `;
       echo(chalk.red(str));
+      echo("error", error);
       await $`exit 1`;
     }
   }
