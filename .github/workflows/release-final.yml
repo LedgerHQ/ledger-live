@@ -120,7 +120,7 @@ jobs:
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         run: |
           gh release create live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         name: trigger release build for desktop
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
         with:
@@ -135,7 +135,7 @@ jobs:
                 branch: "main"
               }
             });
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         name: trigger release build for mobile
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         with:

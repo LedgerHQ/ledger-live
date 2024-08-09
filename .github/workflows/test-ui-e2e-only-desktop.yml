@@ -211,7 +211,7 @@ jobs:
           else echo "STATUS_COLOR=#F3FF33" >> $GITHUB_ENV;
           fi
 
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         if: ${{ !cancelled() }}
         name: prepare status
         id: status
@@ -380,8 +380,7 @@ jobs:
           merge-multiple: false
 
       - name: Extract and Aggregate Xray results
-        run:
-          ./aggregate-xray-reports.sh
+        run: ./aggregate-xray-reports.sh
 
       - name: Upload aggregated xray results
         uses: actions/upload-artifact@v4.3.0

@@ -23,6 +23,7 @@
     "build:staging": "cross-env NODE_ENV=production STAGING=1 node ./tools/main.js build",
     "lint": "eslint src static tools tests --ext .js,.jsx,.json,.ts,.tsx --cache",
     "lint:ci": "zx scripts/ci-lint.mjs",
+    "lint:ci:external": "zx scripts/ci-lint.mjs --external",
     "lint:fix": "eslint src tools static tests --ext .js,.jsx,.json,.ts,.tsx --fix",
     "prettier": "prettier --write \"{src,tools,tests}/**/*.{js,jsx,json,ts,tsx}\"",
     "prettier:check": "prettier -c \"{src,tools,tests}/**/*.{js,jsx,json,ts,tsx}\"",

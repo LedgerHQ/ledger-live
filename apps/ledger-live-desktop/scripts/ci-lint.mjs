@@ -7,7 +7,7 @@ const usage = () => {
   process.exit(1);
 };
 
-let port, token;
+let port, token, external;
 
 for (const arg in argv) {
   switch (arg) {
@@ -20,6 +20,9 @@ for (const arg in argv) {
     case "t":
       token = argv[arg];
       break;
+    case "external":
+      external = true;
+      break;
     case "_":
       break;
     default:
@@ -28,6 +31,7 @@ for (const arg in argv) {
   }
 }
 
+const output = external ? "lint-desktop-external.json" : "lint-desktop.json";
 const lint = async () => {
   cd("../../");
   if (typeof port === "string" && typeof token !== "string") {
@@ -37,15 +41,15 @@ const lint = async () => {
       --token=${token} \\
       --team="foo" \\
       -- --format="json" \\
-      -o="lint.json"`;
+      -o="${output}"`;
   } else {
     await $`pnpm lint \\
       --filter="ledger-live-desktop" \\
       -- --format="json" \\
-      -o="lint.json"`;
+      -o="${output}"`;
   }
 
-  const lintJson = require("../lint.json");
+  const lintJson = require(`../${output}`);
   stylish(lintJson);
 };
 

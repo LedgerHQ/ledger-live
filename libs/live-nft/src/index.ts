@@ -16,6 +16,7 @@ export const nftsByCollections = (
   nfts: Array<ProtoNFT | NFT> = [],
   collectionAddress?: string,
 ): Record<string, Array<ProtoNFT | NFT>> | Array<ProtoNFT | NFT> => {
+  console.log("change live nft");
   return collectionAddress
     ? nfts.filter(n => n.contract === collectionAddress)
     : nfts.reduce((acc: Record<string, Array<ProtoNFT | NFT>>, nft) => {

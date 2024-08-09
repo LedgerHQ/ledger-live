@@ -80,7 +80,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           git push origin nightly --follow-tags
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         name: trigger nightly build of desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
         with:
@@ -92,7 +92,7 @@ jobs:
               ref: "main",
               workflow_id: "nightly-desktop.yml",
             });
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         name: trigger nightly build of mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         with:

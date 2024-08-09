@@ -1,0 +1,111 @@
+name: Build and Test
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - release
+      - hotfix
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  determine-affected:
+    name: "Turbo Affected"
+    uses: ./.github/workflows/turbo-affected-reusable.yml
+    with:
+      head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+      base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+
+  # LLD
+  build-desktop:
+    name: "Build Desktop"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name == github.repository }}
+    uses: ./.github/workflows/build-desktop-reusable.yml
+
+  test-desktop:
+    name: "Test Desktop"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.full_name == github.repository}}
+    uses: ./.github/workflows/test-desktop-reusable.yml
+    secrets: inherit
+
+  # LLM
+  build-mobile:
+    name: "Build Mobile"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.full_name == github.repository}}
+    uses: ./.github/workflows/build-mobile-reusable.yml
+
+  test-mobile:
+    name: "Test Mobile"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.full_name == github.repository}}
+    uses: ./.github/workflows/test-mobile-reusable.yml
+
+  test-mobile-e2e:
+    name: "Test Mobile E2E"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.full_name == github.repository}}
+    uses: ./.github/workflows/test-mobile-e2e-reusable.yml
+    secrets: inherit
+
+  # Tests
+  test-libraries:
+    name: "Test Libraries"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && github.event.pull_request.head.repo.full_name == github.repository}}
+    uses: ./.github/workflows/test-libs-reusable.yml
+
+  test-design-system:
+    name: "Test Design System"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && github.event.pull_request.head.repo.full_name == github.repository}}
+    uses: ./.github/workflows/test-design-system-reusable.yml
+
+  # Final Check required
+  ok:
+    name: "OK"
+    needs:
+      - build-desktop
+      - test-desktop
+      - build-mobile
+      - test-mobile
+      - test-mobile-e2e
+      - test-libraries
+      - test-design-system
+    runs-on: ubuntu-22.04
+    if: always()
+    steps:
+      - name: Compute info
+        id: info
+        if: always()
+        run: |
+          failure=false
+          for job in $(echo ${{ toJson(needs) }} | jq -r 'keys[]'); do
+            result=$(echo ${{ toJson(needs) }} | jq -r --arg job "$job" '.[$job].result')
+            if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+              failure=true
+              break
+            fi
+          done
+          if [ "$failure" = "true" ]; then
+            echo "failure=true" >> $GITHUB_OUTPUT
+          else
+            echo "success=true" >> $GITHUB_OUTPUT
+          fi
+      - name: It's not fine
+        if: steps.info.outputs.failure == 'true'
+        run: exit 1
+      - name: It's fine
+        if: steps.info.outputs.success == 'true'
+        run: echo Ok
