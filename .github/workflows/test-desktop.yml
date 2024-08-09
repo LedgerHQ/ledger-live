@@ -97,7 +97,44 @@ jobs:
           skip_builds: true
           turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run unit tests
-        run: pnpm desktop test:jest:coverage
+        id: run_tests
+        run: pnpm desktop test:jest:coverage --json --outputFile=test-results.json
+        continue-on-error: true
+      - name: Parse test results
+        id: parse_results
+        run: |
+          failed_tests=$(jq '.testResults[] | select(.status == "failed") | .fullName' apps/ledger-live-desktop/test-results.json)
+          succeeded_tests=$(jq '.testResults[] | select(.status == "passed") | .fullName' apps/ledger-live-desktop/test-results.json)
+          echo "::set-output name=failed_tests::$failed_tests"
+          echo "::set-output name=succeeded_tests::$succeeded_tests"
+      - name: Comment on PR with test results
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const failedTests = `{{ steps.parse_results.outputs.failed_tests }}`.split('\n').filter(Boolean);
+            const succeededTests = `{{ steps.parse_results.outputs.succeeded_tests }}`.split('\n').filter(Boolean);
+            let body = '';
+
+            if (failedTests.length > 0) {
+              body += '### ❌ Failed Tests:\n';
+              body += failedTests.map(test => `- ${test}`).join('\n');
+              body += '\n\n';
+            } else {
+              body += '### ✅ All tests passed!\n\n';
+            }
+
+            if (succeededTests.length > 0) {
+              body += '### ✅ Succeeded Tests:\n';
+              body += succeededTests.map(test => `- ${test}`).join('\n');
+            }
+
+            github.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
 
   e2e-tests-linux:
     name: "Desktop Tests E2E (Ubuntu)"
