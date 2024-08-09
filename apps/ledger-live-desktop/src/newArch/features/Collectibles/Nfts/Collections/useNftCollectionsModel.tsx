@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Account } from "@ledgerhq/types-live";
+import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { openModal } from "~/renderer/actions/modals";
@@ -7,15 +7,24 @@ import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { nftsByCollections } from "@ledgerhq/live-nft/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
-import { NftsInTheCollections as NftsInTheCollectionsType } from "./index";
-import { filterHiddenCollections, mapCollectionsToStructure } from "../../utils/collectionUtils";
+import {
+  filterHiddenCollections,
+  mapCollectionsToStructure,
+} from "LLD/features/Collectibles/utils/collectionUtils";
+
+type NftsInTheCollections = {
+  contract: string;
+  nft: ProtoNFT;
+  nftsNumber: number;
+  onClick: (collectionAddress: string) => void;
+};
 
 type Props = {
   account: Account;
 };
 const INCREMENT = 5;
 
-export const useNftCollectionModel = ({ account }: Props) => {
+export const useNftCollectionsModel = ({ account }: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
@@ -70,7 +79,7 @@ export const useNftCollectionModel = ({ account }: Props) => {
     [account.id, collections, hiddenNftCollections],
   );
 
-  const nftsInTheCollection: NftsInTheCollectionsType[] = useMemo(
+  const nftsInTheCollection: NftsInTheCollections[] = useMemo(
     () =>
       mapCollectionsToStructure(filteredCollections, numberOfVisibleCollections, onOpenCollection),
     [filteredCollections, numberOfVisibleCollections, onOpenCollection],

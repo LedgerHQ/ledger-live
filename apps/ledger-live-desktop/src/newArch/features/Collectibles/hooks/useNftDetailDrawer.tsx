@@ -11,7 +11,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { createDetails } from "LLD/features/Collectibles/utils/createNftDetailsArrays";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import isEmpty from "lodash/isEmpty";
-import { FieldStatus } from "LLD/features/Collectibles/types/DetailDrawer";
+import { FieldStatus } from "LLD/features/Collectibles/types/enum/DetailDrawer";
 import { useNftFloorPrice } from "@ledgerhq/live-nft-react";
 
 const useNftDetailDrawer = (account: Account, nftId: string) => {

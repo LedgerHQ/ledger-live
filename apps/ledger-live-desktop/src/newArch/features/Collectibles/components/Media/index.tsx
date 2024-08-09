@@ -15,7 +15,7 @@ const MediaComponent: React.FC<MediaProps> = props => {
       setUseFallback={props.setUseFallback}
     />
   ) : (
-    <Placeholder size={props.size} />
+    <Placeholder size={props.size} backgroundSize={props.backgroundSize} />
   );
 };
 

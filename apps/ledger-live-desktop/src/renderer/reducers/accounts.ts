@@ -187,6 +187,20 @@ export const getNFTById = createSelector(
   ) => nftId,
   (nfts, nftId) => nfts.find(nft => nft?.id === nftId),
 );
+
+export const getNFTsByListOfIds = createSelector(
+  getAllNFTs,
+  (
+    _: State,
+    {
+      nftIds,
+    }: {
+      nftIds: string[];
+    },
+  ) => nftIds,
+  (nfts, nftIds) => nfts.filter(nft => nft && nft.id && nftIds.includes(nft.id)),
+);
+
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
 
 /**
