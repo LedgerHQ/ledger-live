@@ -310,11 +310,7 @@ export function useDeepLinkHandler() {
           if (path?.startsWith("protect")) {
             navigate(`/recover/${path}`, undefined, search);
           } else {
-            // load discover section wtih an initial category filter parameter, e.g. /discover?category=staking
-            if (!path && query.category) {
-              navigate(`/platform`, query);
-            }
-            navigate(`/platform/${path ?? ""}`, query);
+            navigate(`/platform/${path ?? ""}`, query, search);
           }
           break;
         case "wc": {

@@ -22,7 +22,10 @@ export function Search({ categories, search }: Props) {
     [categories.categories, t],
   );
 
-  const selected = options.find(opt => opt.value === categories.selected);
+  const defaultOption = useMemo(
+    () => options.find(opt => opt.value === categories.selected) || options[0],
+    [categories.selected, options],
+  );
 
   const onChange = useCallback(
     ({ value }: (typeof options)[number]) => {
@@ -46,7 +49,7 @@ export function Search({ categories, search }: Props) {
         <SelectInput
           isDisabled={!!search.input.length}
           options={options}
-          defaultValue={selected || options[0]}
+          defaultValue={defaultOption}
           // @ts-expect-error another SelectInput hell
           onChange={onChange}
           styles={{ container: baseStyles => ({ ...baseStyles, width: 240 }) }}
