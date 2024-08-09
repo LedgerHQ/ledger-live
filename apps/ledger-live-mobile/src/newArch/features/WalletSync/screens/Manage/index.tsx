@@ -10,7 +10,6 @@ import {
 } from "../../hooks/useLedgerSyncAnalytics";
 import { Separator } from "../../components/Separator";
 import { TouchableOpacity } from "react-native";
-import { TrustchainNotFound } from "../../hooks/useGetMembers";
 import ManageKeyDrawer from "../ManageKey/ManageKeyDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
 import ManageInstanceDrawer from "../ManageInstances/ManageInstancesDrawer";
@@ -20,6 +19,7 @@ import { Steps } from "../../types/Activation";
 import { TrackScreen } from "~/analytics";
 import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
 import { useLedgerSyncStatus } from "../../hooks/useLedgerSyncStatus";
+import { TrustchainNotFound } from "@ledgerhq/trustchain/errors";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();

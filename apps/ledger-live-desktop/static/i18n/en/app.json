@@ -5670,6 +5670,10 @@
       "title": "Something went wrong. Please reconnect your device",
       "description": "{{message}}"
     },
+    "TrustchainNotFound": {
+      "title": "Something went wrong while fetching your data",
+      "description": "Please try again or contact Ledger Support."
+    },
     "DeviceShouldStayInApp": {
       "title": "Please open the {{appName}} app",
       "description": "Keep the {{appName}} app open while we find your accounts"
