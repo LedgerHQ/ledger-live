@@ -14,11 +14,10 @@ export function Catalog() {
 
   const { t } = useTranslation();
 
-  const { state } = useLocation() as ReturnType<typeof useLocation> & {
-    state?: {
-      category?: Categories["selected"];
-    };
-  };
+  const { state } = useLocation<{
+    category?: Categories["selected"];
+  }>();
+
   const deeplinkInitialCategory = state?.category;
 
   const {
