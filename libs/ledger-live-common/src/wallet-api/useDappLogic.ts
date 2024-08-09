@@ -329,11 +329,11 @@ export function useDappLogic({
         // https://docs.metamask.io/guide/rpc-api.html#eth-requestaccounts
         case "eth_requestAccounts":
         // legacy method, cf. https://docs.metamask.io/guide/ethereum-provider.html#legacy-methods
-        // eslint-disbale-next-line eslintno-fallthrough
+        // eslint-disable-next-line no-fallthrough
         case "enable":
         // https://eips.ethereum.org/EIPS/eip-1474#eth_accounts
         // https://eth.wiki/json-rpc/API#eth_accounts
-        // eslint-disbale-next-line eslintno-fallthrough
+        // eslint-disable-next-line no-fallthrough
         case "eth_accounts": {
           const address =
             currentAccount.type === "Account"
