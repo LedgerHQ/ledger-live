@@ -343,15 +343,6 @@
   },
   {
     "type": "CryptoCurrency",
-    "id": "pivx",
-    "ticker": "PIVX",
-    "name": "PivX",
-    "family": "bitcoin",
-    "color": "#46385d",
-    "decimals": 8
-  },
-  {
-    "type": "CryptoCurrency",
     "id": "zencash",
     "ticker": "ZEN",
     "name": "Horizen",

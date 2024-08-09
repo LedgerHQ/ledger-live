@@ -55,11 +55,6 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       res = new crypto.Komodo({ network });
       break;
     }
-    case "pivx": {
-      const network = coininfo.bitcoin.main.toBitcoinJS();
-      res = new crypto.Pivx({ network });
-      break;
-    }
     case "zencash": {
       const network = coininfo.zcash.main.toBitcoinJS();
       res = new crypto.Zen({ network });

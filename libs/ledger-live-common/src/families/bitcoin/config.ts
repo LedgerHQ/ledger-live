@@ -129,14 +129,6 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
       },
     },
   },
-  config_currency_pivx: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-      },
-    },
-  },
   config_currency_poswallet: {
     type: "object",
     default: {
