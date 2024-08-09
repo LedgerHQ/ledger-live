@@ -55,8 +55,7 @@ export async function restoreAppStorage(transport: Transport, chunk: Buffer): Pr
   });
   tracer.trace("Start");
 
-  const params = Buffer.concat([Buffer.from([chunk.length]), chunk]);
-  const apdu: Readonly<APDU> = [...RESTORE_APP_STORAGE, params];
+  const apdu: Readonly<APDU> = [...RESTORE_APP_STORAGE, chunk];
 
   const response = await transport.send(...apdu, RESPONSE_STATUS_SET);
 

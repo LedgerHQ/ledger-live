@@ -1,10 +1,11 @@
 import {
+  AppNotFound,
   restoreAppStorage,
   restoreAppStorageCommit,
   restoreAppStorageInit,
 } from "@ledgerhq/device-core";
 import Transport from "@ledgerhq/hw-transport";
-import { Observable, from, switchMap } from "rxjs";
+import { Observable, catchError, from, of, switchMap } from "rxjs";
 import { AppName, RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
 
 /**
@@ -53,6 +54,16 @@ export function restoreAppData(
             type: RestoreAppDataEventType.AppDataRestored,
           });
           subscriber.complete();
+        }),
+        catchError(e => {
+          if (e instanceof AppNotFound) {
+            subscriber.next({
+              type: RestoreAppDataEventType.NoAppDataToRestore,
+            });
+            return of(null);
+          }
+
+          throw e;
         }),
       )
       .subscribe();

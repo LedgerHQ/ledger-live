@@ -13,6 +13,7 @@ import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboarding
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react/index";
 import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
+import { StorageProvider } from "~/hooks/storageProvider/useStorage";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
@@ -29,18 +30,20 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
           <CountervaluesMarketcap>
             <CounterValuesProvider initialState={initialCountervalues}>
               <ButtonUseTouchableContext.Provider value={true}>
-                <OnboardingContextProvider>
-                  <PostOnboardingProviderWrapped>
-                    <ToastProvider>
-                      <NotificationsProvider>
-                        <SnackbarContainer />
-                        <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                          {children}
-                        </NftMetadataProvider>
-                      </NotificationsProvider>
-                    </ToastProvider>
-                  </PostOnboardingProviderWrapped>
-                </OnboardingContextProvider>
+                <StorageProvider>
+                  <OnboardingContextProvider>
+                    <PostOnboardingProviderWrapped>
+                      <ToastProvider>
+                        <NotificationsProvider>
+                          <SnackbarContainer />
+                          <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                            {children}
+                          </NftMetadataProvider>
+                        </NotificationsProvider>
+                      </ToastProvider>
+                    </PostOnboardingProviderWrapped>
+                  </OnboardingContextProvider>
+                </StorageProvider>
               </ButtonUseTouchableContext.Provider>
             </CounterValuesProvider>
           </CountervaluesMarketcap>

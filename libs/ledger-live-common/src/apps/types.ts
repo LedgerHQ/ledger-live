@@ -2,13 +2,20 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { App, DeviceInfo, FinalFirmware, LanguagePackage } from "@ledgerhq/types-live";
 import type { Observable, Subject } from "rxjs";
-export type Exec = (
-  appOp: AppOp,
-  targetId: string | number,
-  app: App,
-) => Observable<{
+import { AppStorageType, StorageProvider } from "../device/use-cases/appDataBackup/types";
+
+export type ExecArgs = {
+  appOp: AppOp;
+  targetId: string | number;
+  app: App;
+  modelId?: DeviceModelId;
+  storage?: StorageProvider<AppStorageType>;
+};
+
+export type Exec = (args: ExecArgs) => Observable<{
   progress: number;
 }>;
+
 export type InstalledItem = {
   name: string;
   updated: boolean;

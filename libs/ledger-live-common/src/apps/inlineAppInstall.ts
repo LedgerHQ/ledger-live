@@ -8,6 +8,7 @@ import { runAllWithProgress } from "./runner";
 import { InlineAppInstallEvent } from "./types";
 import { mergeMap, map, throttleTime } from "rxjs/operators";
 import { LocalTracer } from "@ledgerhq/logs";
+import { AppStorageType, StorageProvider } from "../device/use-cases/appDataBackup/types";
 
 /**
  * Tries to install a list of apps
@@ -24,11 +25,13 @@ const inlineAppInstall = ({
   appNames,
   onSuccessObs,
   allowPartialDependencies = false,
+  storage,
 }: {
   transport: Transport;
   appNames: string[];
   onSuccessObs?: () => Observable<any>;
   allowPartialDependencies?: boolean;
+  storage?: StorageProvider<AppStorageType>;
 }): Observable<InlineAppInstallEvent | ConnectAppEvent> => {
   const tracer = new LocalTracer("hw", {
     ...transport.getTraceContext(),
@@ -101,7 +104,7 @@ const inlineAppInstall = ({
               installQueue: state.installQueue,
             }),
             maybeSkippedEvent,
-            runAllWithProgress(state, exec).pipe(
+            runAllWithProgress(state, exec, storage).pipe(
               throttleTime(100),
               map(({ globalProgress, itemProgress, installQueue, currentAppOp }) => ({
                 type: "inline-install",
