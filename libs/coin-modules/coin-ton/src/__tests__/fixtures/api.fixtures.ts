@@ -1,6 +1,8 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import {
+  jettonTransferResponse,
+  jettonWallets,
   lastBlockNumber,
   tonAccount,
   tonEstimateFee,
@@ -29,6 +31,11 @@ const handlers = [
   http.get(`${API_TON_ENDPOINT}/wallet`, () => {
     return HttpResponse.json(tonWallet);
   }),
+  // Handle GET request for jetton transfers endpoint
+  http.get(`${API_TON_ENDPOINT}/jetton/transfers`, () => HttpResponse.json(jettonTransferResponse)),
+  // Handle GET request for jetton wallets endpoint
+  http.get(`${API_TON_ENDPOINT}/jetton/wallets`, () => HttpResponse.json(jettonWallets)),
+
   // Handle POST request for estimate fee endpoint
   http.post(`${API_TON_ENDPOINT}/estimateFee`, () => HttpResponse.json(tonEstimateFee)),
 ];
