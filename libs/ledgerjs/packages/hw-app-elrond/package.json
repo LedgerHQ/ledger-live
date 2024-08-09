@@ -29,7 +29,8 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
     "bip32-path": "^0.4.2",
-    "@multiversx/sdk-core": "^13.3.0"
+    "@multiversx/sdk-core": "^13.3.0",
+    "bignumber.js": "^9.0.1"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
