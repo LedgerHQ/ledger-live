@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tezos
 
+## 0.5.2-nightly.7
+
+### Patch Changes
+
+- [#7268](https://github.com/LedgerHQ/ledger-live/pull/7268) [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Prepare CoinModule Stellar for Alpaca
+
+- Updated dependencies [[`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/coin-framework@0.17.0-nightly.5
+  - @ledgerhq/types-live@6.50.0-nightly.4
+
 ## 0.5.2-nightly.6
 
 ### Patch Changes

@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.10
+
+### Patch Changes
+
+- [#7561](https://github.com/LedgerHQ/ledger-live/pull/7561) [`1fb2b90`](https://github.com/LedgerHQ/ledger-live/commit/1fb2b909c5d97e373a0f72baa37578132bd8b24a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix get Members errors GetMember :Error: ["useGetMembers", null] data is undefined
+
+- [#7555](https://github.com/LedgerHQ/ledger-live/pull/7555) [`aa9110f`](https://github.com/LedgerHQ/ledger-live/commit/aa9110feeb862d4c340e698950d0133d0eb1efb1) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Custom lock screen: disallow selection of gifs
+
+- Updated dependencies [[`1fb2b90`](https://github.com/LedgerHQ/ledger-live/commit/1fb2b909c5d97e373a0f72baa37578132bd8b24a), [`1353e7a`](https://github.com/LedgerHQ/ledger-live/commit/1353e7ae02f22e8f9194a1e3c34f9444785b6fb6), [`cd440bb`](https://github.com/LedgerHQ/ledger-live/commit/cd440bbd647633278d983a15803032c1e676d4fe), [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/trustchain@0.2.0-nightly.6
+  - @ledgerhq/live-wallet@0.5.0-nightly.8
+  - @ledgerhq/live-common@34.7.0-nightly.10
+  - @ledgerhq/coin-framework@0.17.0-nightly.5
+  - @ledgerhq/types-live@6.50.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.5
+  - @ledgerhq/coin-evm@2.1.4-nightly.5
+  - @ledgerhq/live-countervalues@0.2.4-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.5
+  - @ledgerhq/live-nft@0.4.4-nightly.5
+  - @ledgerhq/live-nft-react@0.4.4-nightly.5
+  - @ledgerhq/domain-service@1.2.3-nightly.4
+
 ## 2.85.0-nightly.9
 
 ### Minor Changes

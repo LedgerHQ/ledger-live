@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.50.0-nightly.4
+
+### Minor Changes
+
+- [#7558](https://github.com/LedgerHQ/ledger-live/pull/7558) [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451) Thanks [@thesan](https://github.com/thesan)! - Create the llmMarketQuickActions feature flag
+
 ## 6.50.0-nightly.3
 
 ### Minor Changes

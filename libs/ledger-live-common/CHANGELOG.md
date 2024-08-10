@@ -1,5 +1,39 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.10
+
+### Minor Changes
+
+- [#7268](https://github.com/LedgerHQ/ledger-live/pull/7268) [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Prepare CoinModule Stellar for Alpaca
+
+- [#7558](https://github.com/LedgerHQ/ledger-live/pull/7558) [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451) Thanks [@thesan](https://github.com/thesan)! - Create the llmMarketQuickActions feature flag
+
+### Patch Changes
+
+- [#7550](https://github.com/LedgerHQ/ledger-live/pull/7550) [`cd440bb`](https://github.com/LedgerHQ/ledger-live/commit/cd440bbd647633278d983a15803032c1e676d4fe) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Change to spendable balance tron
+
+- Updated dependencies [[`1353e7a`](https://github.com/LedgerHQ/ledger-live/commit/1353e7ae02f22e8f9194a1e3c34f9444785b6fb6), [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae)]:
+  - @ledgerhq/live-wallet@0.5.0-nightly.8
+  - @ledgerhq/coin-stellar@0.3.0-nightly.5
+  - @ledgerhq/coin-framework@0.17.0-nightly.5
+  - @ledgerhq/coin-polkadot@1.1.2-nightly.5
+  - @ledgerhq/coin-tezos@0.5.2-nightly.7
+  - @ledgerhq/coin-xrp@0.4.2-nightly.5
+  - @ledgerhq/coin-algorand@0.5.4-nightly.5
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.5
+  - @ledgerhq/coin-cardano@0.2.0-nightly.6
+  - @ledgerhq/coin-evm@2.1.4-nightly.5
+  - @ledgerhq/coin-icon@0.4.1-nightly.8
+  - @ledgerhq/coin-near@0.5.4-nightly.5
+  - @ledgerhq/coin-solana@0.7.4-nightly.5
+  - @ledgerhq/coin-ton@0.3.12-nightly.6
+  - @ledgerhq/coin-tron@0.0.4-nightly.6
+  - @ledgerhq/live-countervalues@0.2.4-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.5
+  - @ledgerhq/live-nft@0.4.4-nightly.5
+  - @ledgerhq/device-core@0.3.2-nightly.4
+  - @ledgerhq/hw-app-eth@6.38.0-nightly.5
+
 ## 34.7.0-nightly.9
 
 ### Patch Changes

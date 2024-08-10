@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.48.0-nightly.10
+
+### Minor Changes
+
+- [#7558](https://github.com/LedgerHQ/ledger-live/pull/7558) [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451) Thanks [@thesan](https://github.com/thesan)! - Create the llmMarketQuickActions feature flag
+
+### Patch Changes
+
+- [#7561](https://github.com/LedgerHQ/ledger-live/pull/7561) [`1fb2b90`](https://github.com/LedgerHQ/ledger-live/commit/1fb2b909c5d97e373a0f72baa37578132bd8b24a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix get Members errors GetMember :Error: ["useGetMembers", null] data is undefined
+
+- [#7562](https://github.com/LedgerHQ/ledger-live/pull/7562) [`bd1b099`](https://github.com/LedgerHQ/ledger-live/commit/bd1b09970f2f5a27eb08352a67a73dfa2fce29f6) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added navigation to the manage key screen
+
+- [#7570](https://github.com/LedgerHQ/ledger-live/pull/7570) [`3c19077`](https://github.com/LedgerHQ/ledger-live/commit/3c19077f647b3499402de168070215885154f4fa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix color PinCodeInput
+
+- Updated dependencies [[`1fb2b90`](https://github.com/LedgerHQ/ledger-live/commit/1fb2b909c5d97e373a0f72baa37578132bd8b24a), [`1353e7a`](https://github.com/LedgerHQ/ledger-live/commit/1353e7ae02f22e8f9194a1e3c34f9444785b6fb6), [`cd440bb`](https://github.com/LedgerHQ/ledger-live/commit/cd440bbd647633278d983a15803032c1e676d4fe), [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/trustchain@0.2.0-nightly.6
+  - @ledgerhq/live-wallet@0.5.0-nightly.8
+  - @ledgerhq/live-common@34.7.0-nightly.10
+  - @ledgerhq/coin-framework@0.17.0-nightly.5
+  - @ledgerhq/types-live@6.50.0-nightly.4
+  - @ledgerhq/coin-evm@2.1.4-nightly.5
+  - @ledgerhq/live-countervalues@0.2.4-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.5
+  - @ledgerhq/live-nft@0.4.4-nightly.5
+  - @ledgerhq/live-nft-react@0.4.4-nightly.5
+  - @ledgerhq/domain-service@1.2.3-nightly.4
+
 ## 3.48.0-nightly.9
 
 ### Minor Changes

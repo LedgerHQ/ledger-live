@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.2.0-nightly.6
+
+### Patch Changes
+
+- [#7561](https://github.com/LedgerHQ/ledger-live/pull/7561) [`1fb2b90`](https://github.com/LedgerHQ/ledger-live/commit/1fb2b909c5d97e373a0f72baa37578132bd8b24a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix get Members errors GetMember :Error: ["useGetMembers", null] data is undefined
+
 ## 0.2.0-nightly.5
 
 ### Minor Changes

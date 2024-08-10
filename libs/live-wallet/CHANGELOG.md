@@ -1,5 +1,16 @@
 # @ledgerhq/live-wallet
 
+## 0.5.0-nightly.8
+
+### Patch Changes
+
+- [#7528](https://github.com/LedgerHQ/ledger-live/pull/7528) [`1353e7a`](https://github.com/LedgerHQ/ledger-live/commit/1353e7ae02f22e8f9194a1e3c34f9444785b6fb6) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LIVE-WALLET - Test non imported accounts
+
+- Updated dependencies [[`1fb2b90`](https://github.com/LedgerHQ/ledger-live/commit/1fb2b909c5d97e373a0f72baa37578132bd8b24a), [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/trustchain@0.2.0-nightly.6
+  - @ledgerhq/coin-framework@0.17.0-nightly.5
+  - @ledgerhq/types-live@6.50.0-nightly.4
+
 ## 0.5.0-nightly.7
 
 ### Patch Changes
