@@ -28,6 +28,7 @@ export function createApi(config: XrpConfig): Api {
 async function craft(
   address: string,
   transaction: {
+    mode: string;
     recipient: string;
     amount: bigint;
     fee: bigint;
