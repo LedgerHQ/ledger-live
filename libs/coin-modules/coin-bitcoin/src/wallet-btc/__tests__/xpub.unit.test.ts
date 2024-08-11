@@ -5,8 +5,8 @@ import { IExplorer } from "../explorer/types";
 import { ICrypto } from "../crypto/types";
 import { DerivationModes } from "../types";
 
-jest.mock("./utils", () => ({
-  ...jest.requireActual("./utils"),
+jest.mock("../utils", () => ({
+  ...jest.requireActual("../utils"),
   computeDustAmount: jest.fn().mockReturnValue(50), //new BigNumber(50)),
 }));
 

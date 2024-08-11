@@ -10,8 +10,8 @@ import { TX, Address, Output } from "../storage/types";
 import { DerivationModes, TransactionInfo } from "../types";
 import { ICrypto } from "../crypto/types";
 
-jest.mock("./explorer");
-jest.mock("./crypto/factory");
+jest.mock("../explorer");
+jest.mock("../crypto/factory");
 
 const DERIVATION_MODE = DerivationModes.TAPROOT;
 

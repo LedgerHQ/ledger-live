@@ -11,8 +11,8 @@ jest.mock("@ledgerhq/live-env", () => ({
     subscribe: jest.fn(),
   },
 }));
-jest.mock("./wallet-btc", () => ({
-  ...jest.requireActual("./wallet-btc"),
+jest.mock("../../wallet-btc", () => ({
+  ...jest.requireActual("../../wallet-btc"),
   getWalletAccount: jest.fn().mockReturnValue({
     xpub: {
       crypto: "bitcoin",

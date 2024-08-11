@@ -7,8 +7,8 @@ import { buildTransaction } from "../../buildTransaction";
 
 import { createFixtureAccount, networkInfo } from "../fixtures/common.fixtures";
 
-jest.mock("./wallet-btc", () => ({
-  ...jest.requireActual("./wallet-btc"),
+jest.mock("../../wallet-btc", () => ({
+  ...jest.requireActual("../../wallet-btc"),
   getWalletAccount: jest.fn().mockReturnValue({
     xpub: {
       crypto: "bitcoin",
@@ -60,6 +60,6 @@ describe("buildTransaction", () => {
 
     await buildTransaction(mockAccount, transaction);
 
-    expect(require("./wallet-btc").getWalletAccount).toHaveBeenCalledWith(mockAccount);
+    expect(require("../../wallet-btc").getWalletAccount).toHaveBeenCalledWith(mockAccount);
   });
 });
