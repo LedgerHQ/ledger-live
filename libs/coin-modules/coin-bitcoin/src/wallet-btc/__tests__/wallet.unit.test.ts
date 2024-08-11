@@ -1,14 +1,14 @@
-import BitcoinLikeWallet from "./wallet";
+import BitcoinLikeWallet from "../wallet";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "./account";
-import Xpub from "./xpub";
-import BitcoinLikeStorage from "./storage";
-import BitcoinLikeExplorer from "./explorer";
-import { PickingStrategy } from "./pickingstrategies/types";
+import { Account } from "../account";
+import Xpub from "../xpub";
+import BitcoinLikeStorage from "../storage";
+import BitcoinLikeExplorer from "../explorer";
+import { PickingStrategy } from "../pickingstrategies/types";
 import BigNumber from "bignumber.js";
-import { TX, Address, Output } from "./storage/types";
-import { DerivationModes, TransactionInfo } from "./types";
-import { ICrypto } from "./crypto/types";
+import { TX, Address, Output } from "../storage/types";
+import { DerivationModes, TransactionInfo } from "../types";
+import { ICrypto } from "../crypto/types";
 
 jest.mock("./explorer");
 jest.mock("./crypto/factory");

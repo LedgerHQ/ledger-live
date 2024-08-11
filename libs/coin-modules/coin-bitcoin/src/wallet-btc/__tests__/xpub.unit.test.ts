@@ -1,9 +1,9 @@
-import Xpub from "./xpub";
+import Xpub from "../xpub";
 import { BigNumber } from "bignumber.js";
-import { IStorage, Output } from "./storage/types";
-import { IExplorer } from "./explorer/types";
-import { ICrypto } from "./crypto/types";
-import { DerivationModes } from "./types";
+import { IStorage, Output } from "../storage/types";
+import { IExplorer } from "../explorer/types";
+import { ICrypto } from "../crypto/types";
+import { DerivationModes } from "../types";
 
 jest.mock("./utils", () => ({
   ...jest.requireActual("./utils"),
