@@ -4,6 +4,7 @@ import { IStorage, Output } from "../storage/types";
 import { IExplorer } from "../explorer/types";
 import { ICrypto } from "../crypto/types";
 import { DerivationModes } from "../types";
+import { mockCrypto } from "./fixtures/common.fixtures";
 
 jest.mock("../utils", () => ({
   ...jest.requireActual("../utils"),
@@ -39,15 +40,6 @@ const mockExplorer = {
   broadcast: jest.fn(),
   getTxsSinceBlockheight: jest.fn().mockReturnValue({ txs: [], nextPageToken: null }),
 } as unknown as jest.Mocked<IExplorer>;
-
-const mockCrypto = {
-  getAddress: jest.fn(),
-  toOutputScript: jest.fn(),
-  toOpReturnOutputScript: jest.fn(),
-  network: {
-    name: "testnet",
-  },
-} as unknown as jest.Mocked<ICrypto>;
 
 describe("Xpub", () => {
   let xpub: Xpub;

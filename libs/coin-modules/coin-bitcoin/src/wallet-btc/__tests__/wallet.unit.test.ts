@@ -8,7 +8,7 @@ import { PickingStrategy } from "../pickingstrategies/types";
 import BigNumber from "bignumber.js";
 import { TX, Address, Output } from "../storage/types";
 import { DerivationModes, TransactionInfo } from "../types";
-import { ICrypto } from "../crypto/types";
+import { mockCrypto } from "./fixtures/common.fixtures";
 
 jest.mock("../explorer");
 jest.mock("../crypto/factory");
@@ -16,15 +16,6 @@ jest.mock("../crypto/factory");
 const DERIVATION_MODE = DerivationModes.TAPROOT;
 
 const mockStorage = new BitcoinLikeStorage();
-
-const mockCrypto = {
-  getAddress: jest.fn(),
-  toOutputScript: jest.fn(),
-  toOpReturnOutputScript: jest.fn(),
-  network: {
-    name: "testnet",
-  },
-} as unknown as jest.Mocked<ICrypto>;
 
 describe("BitcoinLikeWallet", () => {
   let wallet: BitcoinLikeWallet;
