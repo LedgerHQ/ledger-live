@@ -1,5 +1,5 @@
-import { makeGetAccountShape } from "../../synchronisation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 import {
   AddressFormat,
   BitcoinAddress,
@@ -9,7 +9,9 @@ import {
   CreateTransaction,
   SignerTransaction,
 } from "../../signer";
-import { createFixtureAccount } from "../../hw-signMessage.test";
+import { makeGetAccountShape } from "../../synchronisation";
+
+import { createFixtureAccount } from "../fixtures/common.fixtures";
 
 // jest.mock("@ledgerhq/live-common/lib/account", () => ({
 //   getAccountCurrency: jest.fn(),
