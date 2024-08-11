@@ -1,5 +1,5 @@
-import formatters from "./formatters";
-import { BitcoinAccount, BitcoinOutput, BitcoinResources, NetworkInfoRaw } from "./types";
+import formatters from "../../formatters";
+import { BitcoinAccount, BitcoinOutput, BitcoinResources, NetworkInfoRaw } from "../../types";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";

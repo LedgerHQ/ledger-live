@@ -1,11 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import { BitcoinAccount, BitcoinResources, NetworkInfoRaw, Transaction, bitcoinPickingStrategy } from "./types";
-import wallet from "./wallet-btc";
+import { BitcoinAccount, BitcoinResources, NetworkInfoRaw, Transaction, bitcoinPickingStrategy } from "../../types";
+import wallet from "../../wallet-btc";
 
-import { fromTransactionRaw } from "./transaction";
+import { fromTransactionRaw } from "../../transaction";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { buildTransaction } from "./buildTransaction";
+import { buildTransaction } from "../../buildTransaction";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
 const networkInfo: NetworkInfoRaw = {
