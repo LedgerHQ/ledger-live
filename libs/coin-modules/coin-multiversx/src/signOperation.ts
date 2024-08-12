@@ -2,7 +2,7 @@ import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { buildTransactionToSign, provideESDTInfo } from "./buildTransaction";
+import { buildTransactionToSign } from "./buildTransaction";
 import type { ElrondAccount, Transaction } from "./types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { extractTokenId } from "./logic";
@@ -25,6 +25,7 @@ export const buildSignOperation =
         if (!transaction.fees) {
           throw new FeeNotLoaded();
         }
+
         // Collect data for an ESDT transfer
         const { subAccounts } = account;
         const { subAccountId } = transaction;
@@ -32,18 +33,22 @@ export const buildSignOperation =
           ? null
           : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
 
+        await signerContext(deviceId, signer => signer.setAddress(account.freshAddressPath));
+
         if (tokenAccount) {
           const { token } = decodeTokenAccountId(tokenAccount.id);
           if (token == null) {
             throw new Error("Invalid token");
           }
 
-          await provideESDTInfo(
-            token.ticker,
-            extractTokenId(token.id),
-            token.units[0].magnitude,
-            CHAIN_ID,
-            token.ledgerSignature,
+          await signerContext(deviceId, signer =>
+            signer.provideESDTInfo(
+              token.ticker,
+              extractTokenId(token.id),
+              token.units[0].magnitude,
+              CHAIN_ID,
+              token.ledgerSignature,
+            ),
           );
         }
 

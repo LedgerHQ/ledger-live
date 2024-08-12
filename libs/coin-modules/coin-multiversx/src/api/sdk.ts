@@ -205,14 +205,6 @@ function transactionToEGLDOperation(
       ? delegationAmount.minus(fee)
       : getEGLDOperationValue(transaction, addr);
 
-  const subOperations = subAccounts
-    ? inferSubOperations(transaction.txHash ?? "", subAccounts)
-    : undefined;
-
-  const contract = new Address(transaction.receiver).isContractAddress()
-    ? transaction.receiver
-    : undefined;
-
   const operation: ElrondOperation = {
     id: encodeOperationId(accountId, transaction.txHash ?? "", type),
     accountId,
@@ -233,9 +225,17 @@ function transactionToEGLDOperation(
     hasFailed,
   };
 
+  const subOperations = subAccounts
+    ? inferSubOperations(transaction.txHash ?? "", subAccounts)
+    : undefined;
+
   if (subOperations) {
     operation.subOperations = subOperations;
   }
+
+  const contract = new Address(transaction.receiver).isContractAddress()
+    ? transaction.receiver
+    : undefined;
 
   if (contract) {
     operation.contract = contract;

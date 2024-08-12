@@ -15,22 +15,20 @@ import { MultiversXAccount } from "./dtos/multiversx-account";
 
 interface NetworkInfoResponse {
   data: {
-    data: {
-      config: {
-        erd_chain_id: string;
-        erd_denomination: number;
-        erd_min_gas_limit: number;
-        erd_min_gas_price: number;
-        erd_gas_per_data_byte: number;
-        erd_gas_price_modifier: string;
-      };
+    config: {
+      erd_chain_id: string;
+      erd_denomination: number;
+      erd_min_gas_limit: number;
+      erd_min_gas_price: number;
+      erd_gas_per_data_byte: number;
+      erd_gas_price_modifier: string;
     };
   };
 }
 
 interface SubmitTransactionResponse {
   data: {
-    data: { txHash: string };
+    txHash: string;
   };
 }
 
@@ -93,15 +91,13 @@ export default class ElrondApi {
     const {
       data: {
         data: {
-          data: {
-            config: {
-              erd_chain_id: chainId,
-              erd_denomination: denomination,
-              erd_min_gas_limit: gasLimit,
-              erd_min_gas_price: gasPrice,
-              erd_gas_per_data_byte: gasPerByte,
-              erd_gas_price_modifier: gasPriceModifier,
-            },
+          config: {
+            erd_chain_id: chainId,
+            erd_denomination: denomination,
+            erd_min_gas_limit: gasLimit,
+            erd_min_gas_price: gasPrice,
+            erd_gas_per_data_byte: gasPerByte,
+            erd_gas_price_modifier: gasPriceModifier,
           },
         },
       },
@@ -128,9 +124,7 @@ export default class ElrondApi {
 
     const {
       data: {
-        data: {
-          data: { txHash: hash },
-        },
+        data: { txHash: hash },
       },
     } = await network<SubmitTransactionResponse>({
       method: "POST",
