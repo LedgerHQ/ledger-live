@@ -797,8 +797,10 @@ export interface Categories {
   reset: () => void;
 }
 
-export function useCategories(manifests): Categories {
-  const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
+export type CategoryId = Categories["selected"];
+
+export function useCategories(manifests, initialCategory?: CategoryId | null): Categories {
+  const [selected, setSelected] = useState(initialCategory || DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
     setSelected(DISCOVER_INITIAL_CATEGORY);
