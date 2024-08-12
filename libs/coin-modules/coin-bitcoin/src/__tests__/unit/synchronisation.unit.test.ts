@@ -1,6 +1,7 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { makeGetAccountShape } from "../../synchronisation";
 
-import { createFixtureAccount, mockCryptoCurrency, mockSignerContext } from "../fixtures/common.fixtures";
+import { createFixtureAccount, mockSignerContext } from "../fixtures/common.fixtures";
 
 // jest.mock("@ledgerhq/live-common/lib/account", () => ({
 //   getAccountCurrency: jest.fn(),
@@ -25,7 +26,7 @@ describe("synchronisation", () => {
       "js:2:bitcoin:xpub6DM4oxVnZiePFvQMu1RJLQwWUzZQP3UNaLqrGcbJQkAJZYdiRoRivHULWoYN3zBYU4mJRpM3WrGaqo1kS8Q2XFfd9E3QEc9P3MKHwbHz9LB:native_segwit";
     const result = await getAccountShape(
       {
-        currency: mockCryptoCurrency,
+        currency: getCryptoCurrencyById("bitcoin"),
         address: "0x123",
         index: 1,
         derivationPath: "m/44'/0'/0'/0/1",
@@ -34,7 +35,6 @@ describe("synchronisation", () => {
       },
       { paginationConfig: {} },
     );
-    console.log({ result });
     expect(result).toMatchObject({
       // balance: "0",
       bitcoinResources: {
