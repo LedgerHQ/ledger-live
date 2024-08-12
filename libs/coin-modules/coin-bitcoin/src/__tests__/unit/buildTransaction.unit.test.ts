@@ -1,7 +1,7 @@
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
 import { bitcoinPickingStrategy } from "../../types";
-import wallet from "../../wallet-btc";
+import wallet, { TransactionInfo } from "../../wallet-btc";
 import { fromTransactionRaw } from "../../transaction";
 import { buildTransaction } from "../../buildTransaction";
 
@@ -16,16 +16,21 @@ jest.mock("../../wallet-btc", () => ({
   }),
 }));
 
-
 describe("buildTransaction", () => {
   const mockAccount = createFixtureAccount();
   const maxSpendable = 100000;
+  const txInfo = {
+    inputs: [],
+    outputs: [],
+    fee: 0,
+    associatedDerivations: [],
+    changeAddress: { address: "change-address", account: 1, index: 1 },
+  } as TransactionInfo;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // getWalletAccount.mockReturnValue(walletAccount);
     wallet.estimateAccountMaxSpendable = jest.fn().mockResolvedValue(maxSpendable);
-    wallet.buildAccountTx = jest.fn().mockResolvedValue({});
+    wallet.buildAccountTx = jest.fn().mockResolvedValue(txInfo);
   });
   it("should throw FeeNotLoaded if feePerByte is not provided", async () => {
     const transaction = fromTransactionRaw({
@@ -58,8 +63,9 @@ describe("buildTransaction", () => {
       },
     });
 
-    await buildTransaction(mockAccount, transaction);
+    const res = await buildTransaction(mockAccount, transaction);
 
     expect(require("../../wallet-btc").getWalletAccount).toHaveBeenCalledWith(mockAccount);
+    expect(res).toEqual(txInfo);
   });
 });
