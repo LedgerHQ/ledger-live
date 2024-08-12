@@ -1,24 +1,24 @@
+import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
+import { getEnv } from "@ledgerhq/live-env";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { context } from "~/renderer/drawers/Provider";
-import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
-import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/Web3AppWebview/types";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
+import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
+import { context } from "~/renderer/drawers/Provider";
 import useTheme from "~/renderer/hooks/useTheme";
 import {
   counterValueCurrencySelector,
   enablePlatformDevToolsSelector,
   languageSelector,
 } from "~/renderer/reducers/settings";
-import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
-import { captureException } from "~/sentry/internal";
-import { getEnv } from "@ledgerhq/live-env";
+import { captureException } from "~/sentry/renderer";
+import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
