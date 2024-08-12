@@ -385,6 +385,7 @@
         "title" : "Transaction bien émise",
         "description" : "Votre opération de swap a été envoyée au réseau pour confirmation. Veuillez attendre que votre transaction soit confirmée, puis que le prestataire traite et vous envoie vos {{targetCurrency}}.",
         "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
+        "tellAboutYourExperience" : "Faites-nous part de votre expérience",
         "seeDetails" : "Voir les détails"
       }
     },
@@ -1855,7 +1856,8 @@
       "provider" : "Prestataire",
       "payoutNetworkFees" : "Frais de réception",
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
-      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>."
+      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>.",
+      "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>."
     },
     "swap2" : {
       "amountSent" : "Montant à envoyer",
@@ -1990,7 +1992,8 @@
       "updateBtn" : "Mettre à jour le micrologiciel",
       "installUpdate" : "Installation",
       "banner" : {
-        "warning" : "Mise à jour {{latestFirmware}} du micrologiciel disponible",
+        "warning" : "Mise à jour du système d’exploitation disponible",
+        "version" : "Version {{latestFirmware}}",
         "cta" : "Accéder à My Ledger",
         "old" : {
           "warning" : "La version du micrologiciel de l’appareil est trop ancienne pour être mise à jour. Contactez l’Assistance Ledger pour le remplacer.",
@@ -2019,7 +2022,7 @@
         "prepareDone" : "Mise à jour prête\nà être installée",
         "install" : "Installation",
         "installDone" : "Mise à jour\ninstallée",
-        "restore" : "Restauration réglages",
+        "restore" : "Restauration des réglages",
         "restoreDone" : "Paramètres restaurés",
         "apps" : "Restauration apps",
         "updateMCU" : "Mise à jour du micrologiciel",
@@ -4001,29 +4004,65 @@
         "desc" : "Ajoutez les informations sur le prestataire d’Exchange.",
         "placeholder" : "Infos prestataire Exchange (CAL)"
       },
-      "debugSpamNft" : {
-        "debugNFTSpamReport" : "Autoriser le signalement d’un NFT comme spam (Bêta)",
-        "debugNFTSpamReportDesc" : "Signalez un NFT comme spam ou empêchez qu’il soit traité comme spam à l’aide d’un formulaire.",
-        "report" : "Signaler",
-        "contractAddress" : "Adresse du contrat",
-        "contractAddressDesc" : "contract_address du NFT signalé ou de son contrat",
-        "chainId" : "Identifiant de chaîne",
-        "chainIdDesc" : "chain_id (par ex. Ethereum) du NFT signalé ou de son contrat",
-        "collectionId" : "Identifiant de la collection",
-        "collectionIdDesc" : "Identifiant (ID) SimpleHash de la collection du NFT signalé",
-        "tokenId" : "Identifiant du token",
-        "tokenIdDesc" : "token_id du NFT signalé",
-        "eventType" : "Type d’événement",
-        "eventTypeDesc" : "Type de signalement à faire",
-        "success" : "Votre signalement a bien été envoyé. Il prendra effet dans un délai de 5 à 10 minutes.",
-        "error" : "Une erreur est survenue lors de l’envoi du signalement. Veuillez réessayer plus tard.",
-        "reportType" : {
-          "title" : "Que souhaiteriez-vous signaler ?",
-          "desc" : "Sélectionnez le type de signalement à faire",
-          "individual" : "Signaler un NFT comme spam",
-          "contract" : "Signaler un contrat comme spam",
-          "collection" : "Signaler une collection comme spam"
-        }
+      "debugSimpleHash" : {
+        "debugSpamNft" : {
+          "report" : "Signaler",
+          "contractAddress" : "Adresse du contrat",
+          "contractAddressDesc" : "contract_address du NFT signalé ou de son contrat",
+          "chainId" : "Identifiant de chaîne",
+          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT signalé ou de son contrat",
+          "collectionId" : "Identifiant de la collection",
+          "collectionIdDesc" : "Identifiant (ID) SimpleHash de la collection du NFT signalé",
+          "tokenId" : "Identifiant du token",
+          "tokenIdDesc" : "token_id du NFT signalé",
+          "eventType" : "Type d’événement",
+          "eventTypeDesc" : "Type de signalement à faire",
+          "success" : "Votre signalement a bien été envoyé. Il prendra effet dans un délai de 5 à 10 minutes.",
+          "error" : "Une erreur est survenue lors de l’envoi du signalement. Veuillez réessayer plus tard.",
+          "reportType" : {
+            "title" : "Que souhaiteriez-vous signaler ?",
+            "desc" : "Sélectionnez le type de signalement à faire",
+            "individual" : "Signaler un NFT comme spam",
+            "contract" : "Signaler un contrat comme spam",
+            "collection" : "Signaler une collection comme spam"
+          }
+        },
+        "debugRefreshMetadata" : {
+          "refresh" : "Actualiser",
+          "contractAddress" : "Adresse du contrat",
+          "contractAddressDesc" : "contract_address du NFT à actualiser, ou de son contrat",
+          "chainId" : "Identifiant de chaîne",
+          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à actualiser, ou de son contrat",
+          "tokenId" : "Identifiant du token",
+          "tokenIdDesc" : "token_id du NFT à actualiser",
+          "success" : "Votre actualisation a bien été envoyée. Elle prendra effet dans un délai de 5 à 10 minutes.",
+          "error" : "Une erreur est survenue lors de l’envoi de l’actualisation. Veuillez réessayer plus tard.",
+          "refreshType" : {
+            "desc" : "Que souhaiteriez-vous actualiser ?",
+            "nft" : "Actualiser les métadonnées d’un NFT",
+            "contract" : "Actualiser les métadonnées d’un contrat"
+          }
+        },
+        "debugCheckSpamScore" : {
+          "check" : "Consulter",
+          "contractAddress" : "Adresse du contrat",
+          "contractAddressDesc" : "contract_address du NFT à consulter, ou de son contrat",
+          "chainId" : "Identifiant de chaîne",
+          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à consulter, ou de son contrat",
+          "tokenId" : "Identifiant du token",
+          "tokenIdDesc" : "token_id du NFT à consulter",
+          "result" : {
+            "title" : "Le score de spam de ce contrat est de : {{score}}.",
+            "desc" : "Le score est une valeur numérique comprise entre 0 et 100. 0 indique l’absence de spam et 100 est associé à un spam probable.\n Si la réponse est \"null\", c’est que la collection ne dispose pas d’informations suffisantes pour être évaluée ou n’a pas encore été évaluée."
+          },
+          "error" : "Une erreur est survenue lors de l’envoi de la demande. Veuillez réessayer plus tard.",
+          "refreshType" : {
+            "desc" : "Que souhaiteriez-vous consulter ?",
+            "nft" : "Un NFT",
+            "contract" : "Un contrat"
+          }
+        },
+        "back" : "Retour"
       },
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
@@ -4197,9 +4236,18 @@
           "modal" : {
             "flow" : "Sélectionner un processus",
             "step" : "Sélectionner une étape",
-            "activated" : "Activer/désactiver pour générer une synchronisation (ou non)",
-            "instance" : "Créer une synchronisation",
+            "instance" : "Créer des membres",
             "cta" : "Appliquer"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "Outils SimpleHash",
+          "description" : "Utilisez quelques outils pratiques avec SimpleHash.",
+          "cta" : "Ouvrir",
+          "tabs" : {
+            "spam" : "Signalement de spam",
+            "refresh" : "Actualiser métadonnées",
+            "check" : "Score de spam"
           }
         }
       }
@@ -5151,6 +5199,10 @@
       "memo" : "Mémo",
       "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire."
     },
+    "ton" : {
+      "commentPlaceholder" : "Facultatif",
+      "comment" : "Commentaire"
+    },
     "stellar" : {
       "memo" : "Mémo",
       "memoType" : {
@@ -5562,6 +5614,9 @@
       "title" : "Taux expiré",
       "description" : "L’échange n’a pas pu être réalisé car le taux a expiré. Veuillez actualiser les taux et réessayer votre échange."
     },
+    "PayinExtraIdError" : {
+      "message" : "ExtraId manquant et requis pour l’échange"
+    },
     "SwapGenericAPIError" : {
       "title" : "Une erreur est survenue.",
       "description" : "L’échange n’a pas été effectué. Veuillez réessayer ou contacter l’Assistance."
@@ -5696,6 +5751,9 @@
     "SequenceNumberError" : {
       "title" : "Erreur dans le numéro de séquence",
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
+    },
+    "TonCommentInvalid" : {
+      "title" : "Le commentaire ne doit ni dépasser 120 caractères ni contenir de caractères spéciaux"
     },
     "CantScanQRCode" : {
       "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
@@ -6313,7 +6371,7 @@
         "description" : "Protégez ou supprimez votre clé de chiffrement via un autre appareil Ledger."
       },
       "instance" : {
-        "label_one" : "1 synchronisation",
+        "label" : "1 synchronisation",
         "label_other" : "{{count}} synchronisations",
         "cta" : "Gérer"
       }
@@ -6326,7 +6384,9 @@
     "error" : {
       "title" : "Une erreur est survenue",
       "description" : "Veuillez réessayer plus tard.",
-      "cta" : "Réessayer"
+      "cta" : "Réessayer",
+      "fetching" : "Une erreur est survenue lors de la récupération de vos données.",
+      "ledgerSyncDown" : "Ledger Sync n’est actuellement pas disponible.<br/>Cela n’a aucune incidence sur vos actifs."
     },
     "unsecuredError" : {
       "title" : "La synchronisation n’est pas protégée par cet appareil Ledger",
@@ -6335,18 +6395,26 @@
       "cta" : "Connecter un autre appareil Ledger",
       "ctaDelete" : "Supprimer ma clé de chiffrement"
     },
+    "autoRemoveError" : {
+      "title" : "Suppression de la synchronisation impossible",
+      "description" : "Pour des raisons de sécurité, vous ne pouvez pas supprimer la synchronisation que vous utilisez actuellement sans supprimer votre clé de chiffrement.",
+      "info" : "En supprimant vote clé de chiffrement, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
+      "cta" : "Compris",
+      "ctaDelete" : "Supprimer ma clé de chiffrement"
+    },
     "success" : {
       "backup" : {
         "title" : "Succès",
-        "desc" : "Activation de Ledger Sync réussie. ",
-        "synchAnother" : "Synchroniser avec une autre application Ledger Live"
+        "desc" : "Activation de Ledger Sync réussie."
       },
       "synch" : {
         "title" : "Synchronisation réussie !",
         "desc" : "Les modifications apportées à vos comptes apparaîtront automatiquement, dans toutes les apps et sur toutes les plateformes."
-      }
+      },
+      "synchAnother" : "Synchroniser avec une autre application Ledger Live",
+      "close" : "Fermer"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Gérer votre clé",
       "options" : {
         "deleteBackup" : {
@@ -6398,8 +6466,12 @@
     "manageInstances" : {
       "title" : "Gérer les synchronisations",
       "remove" : "Retirer",
-      "deleteInstanceSuccess" : "Votre {{instanceName}} n’est plus synchronisée.",
+      "deleteInstanceSuccess" : "Votre {{instanceName}} n’est plus synchronisé.",
       "deleteInstanceError" : "Une erreur s’est produite lors de la désynchronisation de {{instanceName}}"
+    },
+    "deviceAction" : {
+      "title" : "Continuez sur votre Ledger {{wording}}",
+      "description" : "Suivez les instructions sur l’écran de confiance de votre appareil Ledger."
     }
   }
 }
