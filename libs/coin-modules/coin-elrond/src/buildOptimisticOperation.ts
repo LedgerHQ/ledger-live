@@ -70,9 +70,6 @@ export const buildOptimisticOperation = (
       : transaction.amount.plus(transaction.fees || new BigNumber(0));
 
   const delegationAmount = getOptimisticOperationDelegationAmount(transaction);
-  const contract = new Address(transaction.recipient).isContractAddress()
-    ? transaction.recipient
-    : undefined;
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
@@ -91,6 +88,10 @@ export const buildOptimisticOperation = (
       amount: delegationAmount,
     },
   };
+
+  const contract = new Address(transaction.recipient).isContractAddress()
+    ? transaction.recipient
+    : undefined;
 
   if (contract) {
     operation.contract = contract;

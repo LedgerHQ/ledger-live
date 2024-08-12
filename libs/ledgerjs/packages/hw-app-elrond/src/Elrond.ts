@@ -115,8 +115,7 @@ export default class Elrond {
     ]);
   }
 
-  // kept 'usingHash' for compatibility reasons, siging by hash is the only supported way
-  async signTransaction(path: string, message: string, _usingHash?: boolean): Promise<string> {
+  async signTransaction(path: string, message: string): Promise<string> {
     const { signature } = await this.sign(path, message);
 
     if (signature === null) {
