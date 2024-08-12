@@ -32,6 +32,6 @@ describe("Rendering", () => {
       expect(screen.getByRole("button", { name: "Sync your accounts" })).toBeDefined(),
     );
 
-    expect(screen.getByText("Already created a key?")).toBeDefined();
+    expect(screen.getByText("Already synced a Ledger Live app?")).toBeDefined();
   });
 });
