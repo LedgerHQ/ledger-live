@@ -133,29 +133,3 @@ export const mockSignerContext = <T>(
     }),
     createPaymentTransaction: (_arg: CreateTransaction): Promise<string> => Promise.resolve(""),
   });
-
-export const mockCryptoCurrency = {
-  type: "CryptoCurrency",
-  id: "bitcoin",
-  name: "Bitcoin",
-  family: "bitcoin",
-  coinType: 0,
-  scheme: "native_segwit",
-  units: [
-    {
-      name: "BTC",
-      code: "BTC",
-      magnitude: 8,
-    },
-  ],
-  explorerViews: [
-    {
-      tx: "https://blockchain.info/tx/{txid}",
-      address: "https://blockchain.info/address/{address}",
-    },
-  ],
-  ticker: "BTC",
-  explorerId: "btc",
-  color: "#FF0000",
-  managerAppName: "Bitcoin",
-} as CryptoCurrency;

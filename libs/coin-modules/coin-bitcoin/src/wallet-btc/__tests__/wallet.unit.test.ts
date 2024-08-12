@@ -7,7 +7,8 @@ import { PickingStrategy } from "../pickingstrategies/types";
 import BigNumber from "bignumber.js";
 import { TX, Address, Output } from "../storage/types";
 import { DerivationModes, TransactionInfo } from "../types";
-import { mockCrypto, mockCryptoCurrency } from "./fixtures/common.fixtures";
+import { mockCrypto } from "./fixtures/common.fixtures";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("../explorer");
 jest.mock("../crypto/factory");
@@ -15,6 +16,7 @@ jest.mock("../crypto/factory");
 const DERIVATION_MODE = DerivationModes.TAPROOT;
 
 const mockStorage = new BitcoinLikeStorage();
+const bitcoinCryptoCurrency = getCryptoCurrencyById("bitcoin");
 
 describe("BitcoinLikeWallet", () => {
   let wallet: BitcoinLikeWallet;
@@ -35,7 +37,7 @@ describe("BitcoinLikeWallet", () => {
 
       xpub: new Xpub({
         storage: mockStorage,
-        explorer: new BitcoinLikeExplorer({ cryptoCurrency: mockCryptoCurrency }),
+        explorer: new BitcoinLikeExplorer({ cryptoCurrency: bitcoinCryptoCurrency}),
         crypto: mockCrypto,
         xpub: "test-xpub",
         derivationMode: DERIVATION_MODE,
@@ -57,7 +59,7 @@ describe("BitcoinLikeWallet", () => {
       derivationMode: DERIVATION_MODE,
     } as const;
 
-    const account = await wallet.generateAccount(params, mockCryptoCurrency);
+    const account = await wallet.generateAccount(params, bitcoinCryptoCurrency);
 
     expect(account.params).toEqual(params);
     expect(account.xpub).toBeInstanceOf(Xpub);
