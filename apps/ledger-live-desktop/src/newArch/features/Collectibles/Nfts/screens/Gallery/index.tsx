@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import useNftGalleryModel from "./useNftGalleryModel";
 import Box from "~/renderer/components/Box";
@@ -24,7 +24,7 @@ function View({
   onSend,
 }: ViewProps) {
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <Flex pb={16} flexDirection={"column"}>

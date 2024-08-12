@@ -23,6 +23,8 @@ const moduleNameMapper = {
   uuid: require.resolve("uuid"),
   "react-spring": require.resolve("react-spring"),
   "@braze/web-sdk": require.resolve("@braze/web-sdk"),
+  "@polkadot/x-fetch": "<rootDir>/__mocks__/x-fetch.js",
+  "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",
 };
 
 const commonConfig = {

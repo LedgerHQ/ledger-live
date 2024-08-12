@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, useState } from "react";
 import useNftCollectionModel from "./useNftCollectionModel";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -28,7 +28,7 @@ function View({
   onSend,
 }: ViewProps) {
   const { t } = useTranslation();
-  const [areItemsLoading, setAreItemsLoading] = React.useState(false);
+  const [areItemsLoading, setAreItemsLoading] = useState(false);
 
   useEffect(() => {
     setAreItemsLoading(maxVisibleNFTs < nfts.length);
