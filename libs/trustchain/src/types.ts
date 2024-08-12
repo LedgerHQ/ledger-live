@@ -5,6 +5,11 @@ import Transport from "@ledgerhq/hw-transport";
  */
 export type JWT = {
   accessToken: string;
+  permissions: {
+    [trustchainId: string]: {
+      [path: string]: string[];
+    };
+  };
 };
 
 /**
@@ -63,6 +68,28 @@ export type TrustchainMember = {
 export type TrustchainSDKContext = {
   applicationId: number;
   name: string;
+  apiBaseUrl: string;
+};
+
+/**
+ * provide global callbacks for specific lifecycles.
+ * this allows us to decouple trustchain with the rest of Ledger Live.
+ * For now, we only introduce very specific hooks we need.
+ */
+export type TrustchainLifecycle = {
+  /**
+   * called when a trustchain rotation is occuring
+   * the first function is called when the rotation is starting
+   * the second function is called when the rotation is done.
+   *
+   * in that case, we typically want to delete all other resources depending on it.
+   * we do this with the existing jwt token before refreshing it.
+   */
+  onTrustchainRotation: (
+    trustchainSdk: TrustchainSDK,
+    oldTrustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ) => Promise<(newTrustchain: Trustchain) => Promise<void>>;
 };
 
 export enum TrustchainResultType {
@@ -124,12 +151,7 @@ export interface TrustchainSDK {
     memberCredentials: MemberCredentials,
     f: (jwt: JWT) => Promise<T>,
     policy?: AuthCachePolicy,
-  ): Promise<T>;
-
-  withDeviceAuth<T>(
-    transport: Transport,
-    f: (jwt: JWT) => Promise<T>,
-    policy?: AuthCachePolicy,
+    ignorePermissionsChecks?: boolean,
   ): Promise<T>;
 
   /**

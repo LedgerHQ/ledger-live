@@ -1,25 +1,29 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import React, { useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Select from "~/renderer/components/Select";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { Flow, Instance, Step } from "~/renderer/reducers/walletSync";
+import { Flow, Step } from "~/renderer/reducers/walletSync";
 import Switch from "~/renderer/components/Switch";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { FlowOptions } from "~/newArch/WalletSync/Flows/useFlows";
 import { useDispatch } from "react-redux";
-import { addInstance, setFaked, setFlow, setWalletSync } from "~/renderer/actions/walletSync";
+import {
+  addInstance,
+  setFaked,
+  setFlow,
+  setQrCodePinCode,
+  setQrCodeUrl,
+} from "~/renderer/actions/walletSync";
 import { useHistory } from "react-router";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
+import { TrustchainMember } from "@ledgerhq/trustchain/types";
+import { FlowOptions } from "LLD/features/WalletSync/hooks/useFlows";
 
 type State = {
   flow: Flow;
   step: Step | null;
-  activated: boolean;
-  instances: Instance[];
+  instances: TrustchainMember[];
 };
 
 const WalletSyncDebugger = () => {
@@ -31,7 +35,6 @@ const WalletSyncDebugger = () => {
   const [state, setState] = useState<State>({
     flow: Flow.Activation,
     step: Step.CreateOrSynchronize,
-    activated: false,
     instances: [],
   });
 
@@ -51,8 +54,10 @@ const WalletSyncDebugger = () => {
   const apply = () => {
     if (state.flow && state.step) {
       dispatch(setFlow({ flow: state.flow, step: state.step }));
-      dispatch(setWalletSync(state.activated));
       dispatch(setFaked(true));
+
+      dispatch(setQrCodePinCode("392"));
+      dispatch(setQrCodeUrl("url"));
 
       if (state.instances.length > 0)
         state.instances.forEach(instance => dispatch(addInstance(instance)));
@@ -75,9 +80,9 @@ const WalletSyncDebugger = () => {
       (_, index) =>
         ({
           id: String(index),
-          typeOfDevice: index % 2 === 0 ? "mobile" : "desktop",
           name: index % 2 === 0 ? `Iphone ${index + 1}` : "macOS",
-        }) as Instance,
+          permissions: index % 2 === 0 ? 1 : 2,
+        }) as TrustchainMember,
     );
 
     setState({ ...state, instances });
@@ -128,20 +133,11 @@ const WalletSyncDebugger = () => {
                 </Flex>
 
                 <Flex justifyContent="space-between" alignItems="center">
-                  <Text>{t("settings.experimental.features.testWalletSync.modal.activated")}</Text>
-                  <Switch
-                    isChecked={state.activated}
-                    onChange={() => setState({ ...state, activated: !state.activated })}
-                  />
-                </Flex>
-
-                <Flex justifyContent="space-between" alignItems="center">
                   <Text>{t("settings.experimental.features.testWalletSync.modal.instance")}</Text>
                   <Switch isChecked={state.instances.length > 0} onChange={generateInstances} />
                 </Flex>
 
-                <Flex
-                  justifyContent="center"
+                <StingifyComponent
                   flexDirection="column"
                   backgroundColor={colors.opacityDefault.c05}
                   p={3}
@@ -149,10 +145,12 @@ const WalletSyncDebugger = () => {
                 >
                   {Object.entries(state).map(([key, value]) => (
                     <Text fontSize={11} key={key}>
-                      {`"${key}"`} : {JSON.stringify(value, null, 2)}
+                      <pre>
+                        {`"${key}"`} : {JSON.stringify(value, null, 2)}
+                      </pre>
                     </Text>
                   ))}
-                </Flex>
+                </StingifyComponent>
 
                 <ButtonV3
                   variant="main"
@@ -173,3 +171,17 @@ const WalletSyncDebugger = () => {
   );
 };
 export default WalletSyncDebugger;
+
+const StingifyComponent = styled(Flex)`
+  max-height: 300px;
+  overflow-y: auto;
+
+  ::-webkit-scrollbar-thumb {
+    background-color: ${p => p.theme.colors.opacityDefault.c20};
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: ${p => p.theme.colors.opacityDefault.c10};
+    border-radius: 8px;
+  }
+`;

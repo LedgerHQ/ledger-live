@@ -79,6 +79,20 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   const marketCoinPage = new MarketCoinPage(page);
   const analytics = new Analytics(page);
 
+  const maskItemsInMarket = {
+    mask: [
+      page.getByTestId("market-small-graph"),
+      page.getByTestId("market-coin-price"),
+      page.getByTestId("market-cap"),
+      page.getByTestId("market-price-change"),
+      page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
+    ],
+  };
+
+  const maskPartOfItemsInMarket = {
+    mask: [page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") })],
+  };
+
   await test.step("Entry buttons load with feature flag enabled", async () => {
     await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png", {
       mask: [layout.marketPerformanceWidget],
@@ -150,16 +164,6 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   });
 
   await test.step("Market page loads with ETH staking available", async () => {
-    const maskItemsInMarket = {
-      mask: [
-        page.locator("data-test-id=market-small-graph"),
-        page.locator("data-test-id=market-coin-price"),
-        page.locator("data-test-id=market-cap"),
-        page.locator("data-test-id=market-price-change"),
-        page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
-      ],
-    };
-
     await layout.goToMarket();
     await marketPage.waitForLoading();
     await expect
@@ -170,7 +174,9 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("start stake flow via Stake entry button", async () => {
     await marketPage.startStakeFlowByTicker("eth");
     await drawer.waitForDrawerToBeVisible();
-    await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-page.png");
+    await expect
+      .soft(page)
+      .toHaveScreenshot("stake-drawer-opened-from-market-page.png", maskPartOfItemsInMarket);
     await drawer.close();
   });
 

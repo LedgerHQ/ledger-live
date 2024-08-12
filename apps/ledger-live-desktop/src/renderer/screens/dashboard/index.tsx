@@ -32,8 +32,8 @@ import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards"
 import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
-import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
-import { useDisplayOnPortfolioAnalytics } from "LLD/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
+import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
+import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import Carousel from "~/renderer/components/Carousel";
 import useActionCards from "~/renderer/hooks/useActionCards";
 
@@ -113,7 +113,7 @@ export default function DashboardPage() {
         totalCurrencies={totalCurrencies}
         hasExchangeBannerCTA={!!portfolioExchangeBanner?.enabled}
       />
-      <Box flow={7} id="portfolio-container" data-test-id="portfolio-container">
+      <Box flow={7} id="portfolio-container" data-testid="portfolio-container">
         {!hasInstalledApps ? (
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (

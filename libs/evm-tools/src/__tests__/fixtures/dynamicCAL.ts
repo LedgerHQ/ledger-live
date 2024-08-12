@@ -24,6 +24,12 @@ export const messageNotInCAL = {
 
 export const messageNotInCALSchemaHash = "7f5ab7ce66fbfb21beb6189a02b44bb141b5fb2008e3d0c1e83351e7";
 
-export const dynamicCAL = {
-  [`1:0xd007d007A0D06D4fbbF627410eADE051FD66FC59:${messageNotInCALSchemaHash}`]: "found",
-};
+export const dynamicCAL = [
+  {
+    eip712_signatures: {
+      ["0xd007d007a0d06d4fbbf627410eade051fd66fc59"]: {
+        [messageNotInCALSchemaHash]: "found",
+      },
+    },
+  },
+];

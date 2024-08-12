@@ -35,6 +35,15 @@ const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
 `;
 
+const ContentWrapper = styled.main`
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - 62px);
+  overflow: auto;
+  flex: 1;
+  justify-content: space-between;
+`;
+
 export type StartExchangeData = {
   onCancel?: (startExchangeError: StartExchangeErrorResult) => void;
   exchangeType: ExchangeType;
@@ -121,10 +130,7 @@ export const LiveAppDrawer = () => {
                     cursor: "pointer",
                   }}
                 >
-                  <CheckBox
-                    isChecked={dismissDisclaimerChecked}
-                    data-test-id="dismiss-disclaimer"
-                  />
+                  <CheckBox isChecked={dismissDisclaimerChecked} data-testid="dismiss-disclaimer" />
                   <Text
                     ff="Inter|SemiBold"
                     fontSize={4}
@@ -138,7 +144,7 @@ export const LiveAppDrawer = () => {
                   </Text>
                 </Box>
 
-                <Button primary onClick={onContinue} data-test-id="drawer-continue-button">
+                <Button primary onClick={onContinue} data-testid="drawer-continue-button">
                   {t("platform.disclaimer.CTA")}
                 </Button>
               </Box>
@@ -147,21 +153,19 @@ export const LiveAppDrawer = () => {
         );
       case "EXCHANGE_START":
         return data && isStartExchangeData(data) ? (
-          <Box alignItems={"center"} height={"100%"} px={32}>
-            <DeviceAction
-              action={action}
-              request={data}
-              onResult={result => {
-                if ("startExchangeResult" in result) {
-                  data.onResult(result.startExchangeResult);
-                }
-                if ("startExchangeError" in result) {
-                  data.onCancel?.(result.startExchangeError);
-                  dispatch(closePlatformAppDrawer());
-                }
-              }}
-            />
-          </Box>
+          <DeviceAction
+            action={action}
+            request={data}
+            onResult={result => {
+              if ("startExchangeResult" in result) {
+                data.onResult(result.startExchangeResult);
+              }
+              if ("startExchangeError" in result) {
+                data.onCancel?.(result.startExchangeError);
+                dispatch(closePlatformAppDrawer());
+              }
+            }}
+          />
         ) : null;
       case "EXCHANGE_COMPLETE":
         return data && isCompleteExchangeData(data) ? (
@@ -186,9 +190,7 @@ export const LiveAppDrawer = () => {
       }}
       direction="left"
     >
-      <Box flex="1" justifyContent="space-between">
-        {drawerContent}
-      </Box>
+      <ContentWrapper>{drawerContent}</ContentWrapper>
     </SideDrawer>
   );
 };

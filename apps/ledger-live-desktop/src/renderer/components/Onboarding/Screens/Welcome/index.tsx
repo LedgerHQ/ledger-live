@@ -12,9 +12,9 @@ import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
-import { useAnalyticsOptInPrompt } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
-import { EntryPoint } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
+import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
+import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -176,7 +176,7 @@ export function Welcome() {
             </Button>
           )}
           <Button
-            data-test-id="v3-onboarding-get-started-button"
+            data-testid="v3-onboarding-get-started-button"
             iconPosition="right"
             Icon={IconsLegacy.ArrowRightMedium}
             variant="main"

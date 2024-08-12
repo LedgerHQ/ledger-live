@@ -1,9 +1,18 @@
-export * from "./broadcast";
-export * from "./combine";
-export * from "./craftTransaction";
-export * from "./estimateFees";
-export * from "./getBalance";
-export * from "./listOperations";
-export * from "./utils";
+export { broadcast } from "./broadcast";
+export { combine } from "./combine";
+export { craftTransaction } from "./craftTransaction";
+export { estimateFees } from "./estimateFees";
+export { getBalance } from "./getBalance";
+export { lastBlock } from "./lastBlock";
+export { listOperations } from "./listOperations";
+export {
+  RIPPLE_EPOCH,
+  cachedRecipientIsNew,
+  getNextValidSequence,
+  removeCachedRecipientIsNew,
+} from "./utils";
 
 export { parseAPIValue } from "./common";
+
+//FIXME
+export { NEW_ACCOUNT_ERROR_MESSAGE } from "../network";

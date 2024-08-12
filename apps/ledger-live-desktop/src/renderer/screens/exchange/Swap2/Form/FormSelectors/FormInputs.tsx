@@ -1,17 +1,18 @@
+import {
+  SwapDataType,
+  SwapSelectorStateType,
+  SwapTransactionType,
+} from "@ledgerhq/live-common/exchange/swap/types";
+import BigNumber from "bignumber.js";
 import React from "react";
+import styled from "styled-components";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ArrowsUpDown from "~/renderer/icons/ArrowsUpDown";
-import styled from "styled-components";
-import { track } from "~/renderer/analytics/segment";
+import { useGetSwapTrackingProperties } from "../../utils/index";
 import FromRow from "./FromRow";
 import ToRow from "./ToRow";
-import {
-  SwapSelectorStateType,
-  SwapTransactionType,
-  SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/types";
-import { useGetSwapTrackingProperties } from "../../utils/index";
 
 type FormInputsProps = {
   fromAccount: SwapSelectorStateType["account"];
@@ -32,6 +33,7 @@ type FormInputsProps = {
   loadingRates: boolean;
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
+  counterValue?: BigNumber;
 };
 
 type SwapButtonProps = {
@@ -49,10 +51,7 @@ const Main = styled.section`
   display: flex;
   flex-direction: column;
   margin-bottom: 5px;
-  row-gap: 5px;
-  @media screen and (min-height: 800px) {
-    row-gap: 12px;
-  }
+  row-gap: 12px;
 `;
 
 function SwapButton({ onClick, disabled }: SwapButtonProps): JSX.Element {
@@ -61,7 +60,7 @@ function SwapButton({ onClick, disabled }: SwapButtonProps): JSX.Element {
       lighterPrimary
       disabled={disabled}
       onClick={onClick}
-      data-test-id="swap-reverse-pair-button"
+      data-testid="swap-reverse-pair-button"
     >
       <ArrowsUpDown size={14} />
     </RoundButton>
@@ -87,6 +86,7 @@ export default function FormInputs({
   loadingRates,
   isSendMaxLoading,
   updateSelectedRate,
+  counterValue,
 }: FormInputsProps) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const reverseSwapAndTrack = () => {
@@ -132,6 +132,7 @@ export default function FormInputs({
           toAccount={toAccount}
           loadingRates={loadingRates}
           updateSelectedRate={updateSelectedRate}
+          counterValue={counterValue}
         />
       </Box>
     </Main>

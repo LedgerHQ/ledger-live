@@ -311,6 +311,9 @@ export enum ScreenName {
   // internet_computer
   InternetComputerEditMemo = "InternetComputerEditMemo",
 
+  // ton
+  TonEditComment = "TonEditComment",
+
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
 
@@ -431,6 +434,7 @@ export enum ScreenName {
   VerifyAccount = "VerifyAccount",
   AnalyticsAllocation = "AnalyticsAllocation",
   AnalyticsOperations = "AnalyticsOperations",
+  CustomErrorScreen = "CustomErrorScreen",
   // solana
   SolanaEditMemo = "SolanaEditMemo",
   SolanaEditAmount = "SolanaEditAmount",
@@ -507,7 +511,15 @@ export enum ScreenName {
   AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
 
-  WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  WalletSyncActivationInit = "WalletSyncActivationInit",
+  WalletSyncActivationProcess = "WalletSyncActivationProcess",
+  WalletSyncSuccess = "WalletSyncSuccess",
+  WalletSyncActivated = "WalletSyncActivated",
+  WalletSyncManageKeyDeleteSuccess = "WalletSyncManageKeyDeleteSuccess",
+  WalletSyncUnSynchSuccess = "WalletSyncUnSynchSuccess",
+  WalletSyncManageInstancesProcess = "WalletSyncManageInstancesProcess",
+  WalletSyncManageInstancesSuccess = "WalletSyncManageInstancesSuccess",
+
   MockedAddAssetButton = "MockedAddAssetButton",
   GenericLandingPage = "GenericLandingPage",
 
@@ -569,6 +581,7 @@ export enum NavigatorName {
   Unfreeze = "Unfreeze",
   NoFundsFlow = "NoFundsFlow",
   StakeFlow = "StakeFlow",
+  CustomError = "CustomError",
 
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",
@@ -624,9 +637,12 @@ export enum NavigatorName {
   SyncOnboarding = "SyncOnboarding",
 
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
-  WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  WalletSyncActivationInit = "WalletSyncActivationInit",
   LandingPages = "LandingPages",
 
   // Web3Hub
   Web3Hub = "Web3Hub",
+  Web3HubTab = "Web3HubTab",
+
+  WalletSync = "WalletSync",
 }

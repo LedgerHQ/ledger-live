@@ -1,5 +1,29 @@
 # @ledgerhq/native-ui
 
+## 0.23.3
+
+### Patch Changes
+
+- [#7307](https://github.com/LedgerHQ/ledger-live/pull/7307) [`77bcd53`](https://github.com/LedgerHQ/ledger-live/commit/77bcd539ad23daf7abc81e202665f6b9ab45c437) Thanks [@Justkant](https://github.com/Justkant)! - fix: use auto instead of fit-content that does not exist on RN
+
+- [#7429](https://github.com/LedgerHQ/ledger-live/pull/7429) [`1100b21`](https://github.com/LedgerHQ/ledger-live/commit/1100b21581323317fb6c397019c4045edfe7954b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - UI - Banner component title now limited to two lines
+
+- Updated dependencies [[`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545)]:
+  - @ledgerhq/crypto-icons-ui@1.4.0
+  - @ledgerhq/icons-ui@0.7.2
+
+## 0.23.3-next.0
+
+### Patch Changes
+
+- [#7307](https://github.com/LedgerHQ/ledger-live/pull/7307) [`77bcd53`](https://github.com/LedgerHQ/ledger-live/commit/77bcd539ad23daf7abc81e202665f6b9ab45c437) Thanks [@Justkant](https://github.com/Justkant)! - fix: use auto instead of fit-content that does not exist on RN
+
+- [#7429](https://github.com/LedgerHQ/ledger-live/pull/7429) [`1100b21`](https://github.com/LedgerHQ/ledger-live/commit/1100b21581323317fb6c397019c4045edfe7954b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - UI - Banner component title now limited to two lines
+
+- Updated dependencies [[`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545)]:
+  - @ledgerhq/crypto-icons-ui@1.4.0-next.0
+  - @ledgerhq/icons-ui@0.7.2-next.0
+
 ## 0.23.2
 
 ### Patch Changes

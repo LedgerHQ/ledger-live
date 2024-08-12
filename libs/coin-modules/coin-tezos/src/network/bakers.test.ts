@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network/network";
 import { asBaker, cache, type TezosApiBaker } from "./bakers";
 import coinConfig, { TezosCoinConfig } from "../config";
+import { mockConfig } from "../test/config";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
@@ -97,21 +98,7 @@ const data: TezosApiBaker[] = [
 
 describe("Tezos Baker", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(
-      (): TezosCoinConfig => ({
-        status: { type: "active" },
-        baker: {
-          url: "https://httpbin.org",
-        },
-        explorer: {
-          url: "https://httpbin.org",
-          maxTxQuery: 100,
-        },
-        node: {
-          url: "https://httpbin.org",
-        },
-      }),
-    );
+    coinConfig.setCoinConfig((): TezosCoinConfig => mockConfig as TezosCoinConfig);
   });
 
   afterEach(() => {

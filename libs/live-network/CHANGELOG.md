@@ -1,5 +1,27 @@
 # @ledgerhq/live-network
 
+## 1.4.0
+
+### Minor Changes
+
+- [#7334](https://github.com/LedgerHQ/ledger-live/pull/7334) [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978) Thanks [@gre](https://github.com/gre)! - live-network no longer retry network calls on HTTP status code that shouldn't be retried like 401 & some others.
+
+### Patch Changes
+
+- Updated dependencies [[`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/live-env@2.2.0
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#7334](https://github.com/LedgerHQ/ledger-live/pull/7334) [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978) Thanks [@gre](https://github.com/gre)! - live-network no longer retry network calls on HTTP status code that shouldn't be retried like 401 & some others.
+
+### Patch Changes
+
+- Updated dependencies [[`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/live-env@2.2.0-next.0
+
 ## 1.3.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "private": true,
   "browser": {
     "fs": false,

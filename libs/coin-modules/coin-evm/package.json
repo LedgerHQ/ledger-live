@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",

@@ -1,5 +1,23 @@
 # @ledgerhq/live-wallet
 
+## 0.1.4
+
+### Patch Changes
+
+- [#7131](https://github.com/LedgerHQ/ledger-live/pull/7131) [`08e85c3`](https://github.com/LedgerHQ/ledger-live/commit/08e85c3fbaf5e27b072e39730f9ceb4135a59d1e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove JWT
+
+- Updated dependencies [[`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/live-env@2.2.0
+
+## 0.1.4-next.0
+
+### Patch Changes
+
+- [#7131](https://github.com/LedgerHQ/ledger-live/pull/7131) [`08e85c3`](https://github.com/LedgerHQ/ledger-live/commit/08e85c3fbaf5e27b072e39730f9ceb4135a59d1e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove JWT
+
+- Updated dependencies [[`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/live-env@2.2.0-next.0
+
 ## 0.1.3
 
 ### Patch Changes

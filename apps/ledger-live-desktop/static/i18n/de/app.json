@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "Swappen",
     "tabs" : {
-      "exchange" : "Umtauschen",
+      "exchange" : "Swappen",
       "history" : "Verlauf"
     },
     "form" : {
@@ -385,6 +385,7 @@
         "title" : "Transaktion erfolgreich gesendet",
         "description" : "Dein Swap wurde zur Bestätigung an das Netzwerk gesendet. Bitte warte, bis deine Transaktion bestätigt wurde und der Anbieter deine {{targetCurrency}} verarbeiten und senden kann.",
         "disclaimer" : "Notiere dir die Swap-ID für den Fall, dass du Hilfe vom <0><0>{{provider}}<0>-Support<0> benötigst.",
+        "tellAboutYourExperience" : "Erzähl uns von deinen Erfahrungen",
         "seeDetails" : "Details ansehen"
       }
     },
@@ -1855,7 +1856,8 @@
       "provider" : "Anbieter",
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
-      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu."
+      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu.",
+      "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu."
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -1990,7 +1992,8 @@
       "updateBtn" : "Firmware aktualisieren",
       "installUpdate" : "Update installieren",
       "banner" : {
-        "warning" : "Update-Firmware zu {{latestFirmware}} ist verfügbar",
+        "warning" : "Betriebssystem-Update verfügbar",
+        "version" : "Version {{latestFirmware}}",
         "cta" : "Zu My Ledger wechseln",
         "old" : {
           "warning" : "Die Version der Geräte-Firmware ist für ein Update zu alt. Kontaktiere den Ledger-Support für einen Ersatz.",
@@ -4001,29 +4004,65 @@
         "desc" : "Info des Börsenanbieters hinzufügen",
         "placeholder" : "Info des Börsenanbieters im CAL-Format"
       },
-      "debugSpamNft" : {
-        "debugNFTSpamReport" : "Spam-Meldung für NFTs zulassen (Beta-Version)",
-        "debugNFTSpamReportDesc" : "Formular zum Melden oder Ignorieren von NFT-Spam anzeigen",
-        "report" : "Melden",
-        "contractAddress" : "Vertragsadresse",
-        "contractAddressDesc" : "Vertragsadresse des gemeldeten NFTs oder der Vertrag selbst",
-        "chainId" : "Chain-ID",
-        "chainIdDesc" : "Chain-ID (beispielsweise Ethereum) des gemeldeten NFTs oder Vertrags",
-        "collectionId" : "Sammlungs-ID",
-        "collectionIdDesc" : "SimpleHash-Sammlungs-ID des gemeldeten NFTs",
-        "tokenId" : "Token-ID",
-        "tokenIdDesc" : "Token-ID des gemeldeten NFTs",
-        "eventType" : "Art des Ereignisses",
-        "eventTypeDesc" : "Art der Meldung, die du machen möchtest",
-        "success" : "Meldung erfolgreich gesendet. Die Umsetzung dauert möglicherweise 5 bis 10 Minuten.",
-        "error" : "Beim Senden der Meldung ist ein Fehler aufgetreten. Versuche es bitte später noch einmal.",
-        "reportType" : {
-          "title" : "Was möchtest du melden?",
-          "desc" : "Art der Meldung wählen",
-          "individual" : "Spam-Meldung für ein einzelnes NFT",
-          "contract" : "Spam-Meldung für einen Vertrag",
-          "collection" : "Spam-Meldung für eine Kollektion"
-        }
+      "debugSimpleHash" : {
+        "debugSpamNft" : {
+          "report" : "Melden",
+          "contractAddress" : "Vertragsadresse",
+          "contractAddressDesc" : "Vertragsadresse des gemeldeten NFTs oder der Vertrag selbst",
+          "chainId" : "Chain-ID",
+          "chainIdDesc" : "Chain-ID (beispielsweise Ethereum) des gemeldeten NFTs oder Vertrags",
+          "collectionId" : "Sammlungs-ID",
+          "collectionIdDesc" : "SimpleHash-Sammlungs-ID des gemeldeten NFTs",
+          "tokenId" : "Token-ID",
+          "tokenIdDesc" : "Token-ID des gemeldeten NFTs",
+          "eventType" : "Art des Ereignisses",
+          "eventTypeDesc" : "Art der Meldung, die du machen möchtest",
+          "success" : "Meldung erfolgreich gesendet. Die Umsetzung dauert möglicherweise 5 bis 10 Minuten.",
+          "error" : "Beim Senden der Meldung ist ein Fehler aufgetreten. Versuche es bitte später noch einmal.",
+          "reportType" : {
+            "title" : "Was möchtest du melden?",
+            "desc" : "Art der Meldung wählen",
+            "individual" : "Spam-Meldung für ein einzelnes NFT",
+            "contract" : "Spam-Meldung für einen Vertrag",
+            "collection" : "Spam-Meldung für eine Kollektion"
+          }
+        },
+        "debugRefreshMetadata" : {
+          "refresh" : "Neu laden",
+          "contractAddress" : "Vertragsadresse",
+          "contractAddressDesc" : "Vertragsadresse des aktualisierten NFT oder der Vertrag selbst",
+          "chainId" : "Chain-ID",
+          "chainIdDesc" : "Chain-ID (beispielsweise Ethereum) des aktualisierten NFT oder Vertrags",
+          "tokenId" : "Token-ID",
+          "tokenIdDesc" : "Token-ID des aktualisierten NFT",
+          "success" : "Die Aktualisierung wurde erfolgreich gesendet. Die Umsetzung kann zwischen 5 und 10 Minuten dauern.",
+          "error" : "Beim Senden der Aktualisierung ist ein Fehler aufgetreten. Versuche es bitte später noch einmal.",
+          "refreshType" : {
+            "desc" : "Was möchtest du aktualisieren?",
+            "nft" : "Metadaten für ein einzelnes NFT aktualisieren",
+            "contract" : "Metadaten für einen Vertrag aktualisieren"
+          }
+        },
+        "debugCheckSpamScore" : {
+          "check" : "Prüfen",
+          "contractAddress" : "Vertragsadresse",
+          "contractAddressDesc" : "Vertragsadresse des geprüften NFT oder der Vertrag selbst",
+          "chainId" : "Chain-ID",
+          "chainIdDesc" : "Chain-ID (beispielsweise Ethereum) des geprüften NFT oder Vertrags",
+          "tokenId" : "Token-ID",
+          "tokenIdDesc" : "Token-ID des geprüften NFT",
+          "result" : {
+            "title" : "Dieser Vertrag hat eine Spam-Bewertung von {{score}}.",
+            "desc" : "Die Bewertung ist ein numerischer Wert zwischen 0 und 100, wobei 0 als kein Spam und 100 als höchstwahrscheinlich Spam angesehen wird.\n Wenn als Antwort NULL zurückgegeben wird, bietet die Sammlung nicht genügend Informationen für eine Bewertung oder wurde noch nicht bewertet."
+          },
+          "error" : "Beim Senden der Anfrage ist ein Fehler aufgetreten. Versuche es bitte später noch einmal.",
+          "refreshType" : {
+            "desc" : "Was möchtest du prüfen?",
+            "nft" : "Einzelnes NFT",
+            "contract" : "Vertrag"
+          }
+        },
+        "back" : "Zurückgehen"
       },
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
@@ -4197,9 +4236,18 @@
           "modal" : {
             "flow" : "Ablauf auswählen",
             "step" : "Schritt auswählen",
-            "activated" : "Zum Erstellen einer Sicherheitskopie aktivieren; bei Deaktivierung wird keine Sicherheitskopie erstellt",
-            "instance" : "Instanzen erzeugen",
+            "instance" : "Mitglieder generieren",
             "cta" : "Anwenden"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash-Tools",
+          "description" : "Bietet einige nützliche Tools mit SimpleHash",
+          "cta" : "Öffnen",
+          "tabs" : {
+            "spam" : "Spam-Bericht",
+            "refresh" : "Metadaten aktualisieren",
+            "check" : "Spam-Bewertung"
           }
         }
       }
@@ -5151,6 +5199,10 @@
       "memo" : "Memo",
       "memoWarningText" : "Wenn du ein Memo verwendest, überprüfe den beim Empfänger verwendeten Typ sorgfältig"
     },
+    "ton" : {
+      "commentPlaceholder" : "Optional",
+      "comment" : "Kommentar"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5562,6 +5614,9 @@
       "title" : "Wechselkurs abgelaufen",
       "description" : "Die Umtauschtransaktion konnte nicht durchgeführt werden, weil der Wechselkurs abgelaufen war. Bitte lade die Wechselkurse neu und wiederhole den Swapping-Versuch."
     },
+    "PayinExtraIdError" : {
+      "message" : "Für Swap obligatorische extraID fehlt"
+    },
     "SwapGenericAPIError" : {
       "title" : "Etwas ist schief gelaufen",
       "description" : "Der Umtauschvorgang wurde nicht durchgeführt. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support."
@@ -5696,6 +5751,9 @@
     "SequenceNumberError" : {
       "title" : "Fehler in der Sequenznummer",
       "description" : "Bitte schließe das Fenster und versuche es später noch einmal"
+    },
+    "TonCommentInvalid" : {
+      "title" : "Der Kommentar darf eine Länge von 120 Zeichen nicht überschreiten und keine Sonderzeichen enthalten"
     },
     "CantScanQRCode" : {
       "title" : "Dieser QR-Code konnte nicht gescannt werden: Auto-Verifizierung wird von dieser Adresse nicht unterstützt"
@@ -6313,7 +6371,7 @@
         "description" : "Schütze oder lösche deinen Verschlüsselungsschlüssel mit einem anderen Ledger-Gerät."
       },
       "instance" : {
-        "label_one" : "1 synchronisierte Instanz",
+        "label" : "1 synchronisierte Instanz",
         "label_other" : "{{count}} synchronisierte Instanzen",
         "cta" : "Verwalten"
       }
@@ -6326,7 +6384,9 @@
     "error" : {
       "title" : "Etwas ist schief gelaufen",
       "description" : "Versuche es bitte später noch einmal.",
-      "cta" : "Wiederholen"
+      "cta" : "Wiederholen",
+      "fetching" : "Beim Abrufen deiner Daten ist ein Problem aufgetreten.",
+      "ledgerSyncDown" : "Ledger Sync ist derzeit nicht verfügbar.<br/>Dies hat keine Auswirkung auf deine Vermögenswerte."
     },
     "unsecuredError" : {
       "title" : "Die Synchronisierung wird nicht durch dieses Ledger-Gerät abgesichert",
@@ -6335,18 +6395,26 @@
       "cta" : "Anderes Ledger-Gerät verbinden",
       "ctaDelete" : "Meinen Verschlüsselungsschlüssel löschen"
     },
+    "autoRemoveError" : {
+      "title" : "Du kannst die aktuelle Instanz nicht entfernen",
+      "description" : "Aus Sicherheitsgründen kannst du die Instanz, die du gerade benutzt, nicht entfernen, ohne deinen Verschlüsselungsschlüssel zu löschen.",
+      "info" : "Wenn du jedoch deinen Verschlüsselungsschlüssel löschst, werden deine Geräte nicht mehr synchronisiert, und alle synchronisierten Daten werden gelöscht. Allerdings hat dies keine Auswirkungen auf dein Vermögen. Du kannst deine Konten jederzeit neu synchronisieren.",
+      "cta" : "Verstanden",
+      "ctaDelete" : "Meinen Verschlüsselungsschlüssel löschen"
+    },
     "success" : {
       "backup" : {
         "title" : "Erfolgreich",
-        "desc" : "Du hast Ledger Sync erfolgreich aktiviert. ",
-        "synchAnother" : "Mit einer anderen Ledger Live-App synchronisieren"
+        "desc" : "Du hast Ledger Sync erfolgreich aktiviert."
       },
       "synch" : {
         "title" : "Synchronisierung erfolgreich!",
         "desc" : "Änderungen bei deinen Konten werden jetzt automatisch in allen Apps und auf allen Plattformen angezeigt."
-      }
+      },
+      "synchAnother" : "Mit einer anderen Ledger Live-App synchronisieren",
+      "close" : "Schließen"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Deinen Schlüssel verwalten",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6468,10 @@
       "remove" : "Entfernen",
       "deleteInstanceSuccess" : "Deine {{instanceName}} ist nicht mehr synchronisiert",
       "deleteInstanceError" : "Beim Desynchronisieren von {{instanceName}} ist ein Problem aufgetreten"
+    },
+    "deviceAction" : {
+      "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+      "description" : "Befolge die Anweisungen, die auf dem Trusted Display deines Ledger-Geräts erscheinen."
     }
   }
 }

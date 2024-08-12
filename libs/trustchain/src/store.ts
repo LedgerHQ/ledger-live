@@ -11,23 +11,29 @@ export type TrustchainStore = {
   memberCredentials: MemberCredentials | null;
 };
 
-export const getInitialStore = (): TrustchainStore => {
-  return {
-    trustchain: null,
-    memberCredentials: null,
-  };
+export const INITIAL_STATE: TrustchainStore = {
+  trustchain: null,
+  memberCredentials: null,
 };
 
-export enum WalletHandlerType {
-  RESET_TRUSTCHAIN_STORE = "RESET_TRUSTCHAIN_STORE",
-  SET_TRUSTCHAIN = "SET_TRUSTCHAIN",
-  SET_MEMBER_CREDENTIALS = "SET_MEMBER_CREDENTIALS",
+export const getInitialStore = (): TrustchainStore => {
+  return INITIAL_STATE;
+};
+
+export const trustchainStoreActionTypePrefix = "TRUSTCHAIN_STORE_";
+
+export enum TrustchainHandlerType {
+  TRUSTCHAIN_STORE_IMPORT_STATE = `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
+  TRUSTCHAIN_STORE_RESET = `${trustchainStoreActionTypePrefix}RESET`,
+  TRUSTCHAIN_STORE_SET_TRUSTCHAIN = `${trustchainStoreActionTypePrefix}SET_TRUSTCHAIN`,
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS = `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
 }
 
-export type HandlersPayloads = {
-  RESET_TRUSTCHAIN_STORE: never;
-  SET_TRUSTCHAIN: { trustchain: Trustchain };
-  SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
+export type TrustchainHandlersPayloads = {
+  TRUSTCHAIN_STORE_IMPORT_STATE: { trustchain: TrustchainStore };
+  TRUSTCHAIN_STORE_RESET: never;
+  TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
 };
 
 type Handlers<State, Types, PreciseKey = true> = {
@@ -37,43 +43,57 @@ type Handlers<State, Types, PreciseKey = true> = {
   ) => State;
 };
 
-export type WalletHandlers<PreciseKey = true> = Handlers<
+export type TrustchainHandlers<PreciseKey = true> = Handlers<
   TrustchainStore,
-  HandlersPayloads,
+  TrustchainHandlersPayloads,
   PreciseKey
 >;
 
-export const handlers: WalletHandlers = {
-  RESET_TRUSTCHAIN_STORE: (): TrustchainStore => {
+export const trustchainHandlers: TrustchainHandlers = {
+  TRUSTCHAIN_STORE_IMPORT_STATE: (_, { payload: { trustchain } }) => {
+    return trustchain;
+  },
+  TRUSTCHAIN_STORE_RESET: (): TrustchainStore => {
     return { ...getInitialStore() };
   },
-  SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
+  TRUSTCHAIN_STORE_SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
     return { ...state, trustchain };
   },
-  SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
+  TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: (state, { payload: { memberCredentials } }) => {
     return { ...state, memberCredentials };
   },
 };
 
 // actions
 
+export const importTrustchainStoreState = (trustchain: TrustchainStore) => ({
+  type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
+  payload: { trustchain },
+});
+
 export const resetTrustchainStore = () => ({
-  type: "RESET_TRUSTCHAIN_STORE",
+  type: `${trustchainStoreActionTypePrefix}RESET`,
 });
 
 export const setTrustchain = (trustchain: Trustchain) => ({
-  type: "SET_TRUSTCHAIN",
+  type: `${trustchainStoreActionTypePrefix}SET_TRUSTCHAIN`,
   payload: { trustchain },
 });
 
 export const setMemberCredentials = (memberCredentials: MemberCredentials) => ({
-  type: "SET_MEMBER_CREDENTIALS",
+  type: `${trustchainStoreActionTypePrefix}SET_MEMBER_CREDENTIALS`,
   payload: { memberCredentials },
 });
 
 // Local Selectors
+// FIXME: these are not actually local Selector, a localSelector takes a TrustchainStore in param. we will need to rework this.
 
-export const trustchainSelector = (state: TrustchainStore): Trustchain | null => state.trustchain;
+export const trustchainStoreSelector = (state: { trustchain: TrustchainStore }): TrustchainStore =>
+  state.trustchain;
 
-export const liveCredentialsSelector = (state: TrustchainStore): MemberCredentials | null =>
-  state.memberCredentials;
+export const trustchainSelector = (state: { trustchain: TrustchainStore }): Trustchain | null =>
+  state.trustchain.trustchain;
+
+export const memberCredentialsSelector = (state: {
+  trustchain: TrustchainStore;
+}): MemberCredentials | null => state.trustchain.memberCredentials;

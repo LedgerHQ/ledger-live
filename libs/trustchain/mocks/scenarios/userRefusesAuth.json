@@ -1,0 +1,39 @@
+{
+  "apdus": "=> e0050000c30101070201001210894b3e832dc5b737038102092e6898ca1401011547304502202df650fd3cd053727a47b2b5f508d06724bc6e710bf53bff0fbcfc24d6f0d3ae02210082986b18627daa563d4e883babf855ca39d3720a359ec81614554c00fd8bbdc7160466a911ff202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\n<= 6985\n",
+  "crypto": {
+    "randomBytesOutputs": [],
+    "randomKeypairOutputs": [
+      "e93cdbdcf80987a7ffad6dbdb78cf17474de1db597c718c90c8774284e50e7ba",
+      "2fbff08b58cbe2cd40937dd0c4ed76614adfcbf0e8c8f27fee501a8568564c0c"
+    ]
+  },
+  "http": {
+    "transactions": [
+      {
+        "request": {
+          "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/challenge",
+          "method": "GET",
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
+            "user-agent": "axios/0.26.1"
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "cache-control": "no-store, no-cache, max-age=0",
+            "connection": "keep-alive",
+            "content-length": "917",
+            "content-type": "application/json",
+            "date": "Tue, 30 Jul 2024 15:47:02 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "pragma": "no-cache",
+            "strict-transport-security": "max-age=31536000; includeSubDomains"
+          },
+          "body": "{\"json\":{\"version\":0,\"challenge\":{\"data\":\"894b3e832dc5b737038102092e6898ca\",\"expiry\":\"2024-07-30T16:17:03Z\"},\"host\":\"trustchain-backend.api.aws.stg.ldg-tech.com\",\"rp\":[{\"credential\":{\"version\":0,\"curveId\":33,\"signAlgorithm\":1,\"publicKey\":\"03cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2\"},\"signature\":\"304502202df650fd3cd053727a47b2b5f508d06724bc6e710bf53bff0fbcfc24d6f0d3ae02210082986b18627daa563d4e883babf855ca39d3720a359ec81614554c00fd8bbdc7\"}],\"protocolVersion\":{\"major\":1,\"minor\":0,\"patch\":0}},\"tlv\":\"0101070201001210894b3e832dc5b737038102092e6898ca1401011547304502202df650fd3cd053727a47b2b5f508d06724bc6e710bf53bff0fbcfc24d6f0d3ae02210082986b18627daa563d4e883babf855ca39d3720a359ec81614554c00fd8bbdc7160466a911ff202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000\"}"
+        }
+      }
+    ]
+  }
+}

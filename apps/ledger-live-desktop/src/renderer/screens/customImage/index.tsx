@@ -238,7 +238,7 @@ const CustomImage: React.FC<Props> = props => {
       overflowY="hidden"
       width="100%"
       flex={1}
-      data-test-id="custom-image-container"
+      data-testid="custom-image-container"
     >
       <Text alignSelf="center" variant="h5Inter">
         {t("customImage.title")}

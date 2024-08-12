@@ -4,7 +4,7 @@ import {
   listAppCandidates,
   createSpeculosDevice,
   releaseSpeculosDevice,
-  findAppCandidate,
+  findLatestAppCandidate,
   SpeculosTransport,
 } from "@ledgerhq/live-common/load/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
@@ -21,7 +21,6 @@ export type Spec = {
   appQuery: {
     model: DeviceModelId;
     appName: string;
-    appVersion: string;
   };
   dependency: string;
   onSpeculosDeviceCreated?: (device: Device) => Promise<void>;
@@ -43,7 +42,14 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Bitcoin",
-      appVersion: "2.2.2",
+    },
+    dependency: "",
+  },
+  Dogecoin: {
+    currency: getCryptoCurrencyById("dogecoin"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Dogecoin",
     },
     dependency: "",
   },
@@ -52,7 +58,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Ethereum",
-      appVersion: "1.10.4",
     },
     dependency: "",
   },
@@ -61,7 +66,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Ethereum",
-      appVersion: "1.10.4",
     },
     dependency: "",
   },
@@ -70,7 +74,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Ethereum",
-      appVersion: "1.10.4",
     },
     dependency: "",
   },
@@ -79,7 +82,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Ethereum Classic",
-      appVersion: "1.10.4",
     },
     dependency: "Ethereum",
   },
@@ -88,7 +90,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Bitcoin Test",
-      appVersion: "2.2.2",
     },
     dependency: "",
   },
@@ -97,7 +98,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Solana",
-      appVersion: "1.4.1",
     },
     dependency: "",
   },
@@ -106,7 +106,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "CardanoADA",
-      appVersion: "6.1.2",
     },
     dependency: "",
   },
@@ -115,7 +114,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Polkadot",
-      appVersion: "100.0.5",
     },
     dependency: "",
   },
@@ -124,7 +122,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Tron",
-      appVersion: "0.5.0",
     },
     dependency: "",
   },
@@ -133,7 +130,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "XRP",
-      appVersion: "2.2.3",
     },
     dependency: "",
   },
@@ -142,7 +138,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Stellar",
-      appVersion: "5.0.3",
     },
     dependency: "",
   },
@@ -151,7 +146,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Bitcoin Cash",
-      appVersion: "2.4.1",
     },
     dependency: "",
   },
@@ -160,7 +154,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Algorand",
-      appVersion: "2.1.11",
     },
     dependency: "",
   },
@@ -169,7 +162,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Cosmos",
-      appVersion: "2.35.22",
     },
     dependency: "",
   },
@@ -178,7 +170,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "TezosWallet",
-      appVersion: "2.4.5",
     },
     dependency: "",
   },
@@ -187,7 +178,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Polygon",
-      appVersion: "1.10.4",
     },
     dependency: "",
   },
@@ -196,7 +186,6 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Binance Smart Chain",
-      appVersion: "1.10.4",
     },
     dependency: "",
   },
@@ -221,7 +210,7 @@ export async function startSpeculos(
   }
 
   const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
-  const appCandidate = findAppCandidate(appCandidates, appQuery);
+  const appCandidate = findLatestAppCandidate(appCandidates, appQuery);
   if (!appCandidate) {
     console.warn("no app found for " + testName);
     console.warn(appQuery);

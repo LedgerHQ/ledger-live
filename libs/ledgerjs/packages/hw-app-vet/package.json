@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-vet",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Ledger Hardware Wallet VeChain Application API",
   "keywords": [
     "Ledger",

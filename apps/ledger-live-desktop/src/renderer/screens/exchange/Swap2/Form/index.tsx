@@ -8,9 +8,9 @@ import {
   useSwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
+  maybeKeepTronAccountAlive,
   maybeTezosAccountUnrevealedAccount,
   maybeTronEmptyAccount,
-  maybeKeepTronAccountAlive,
 } from "@ledgerhq/live-common/exchange/swap/index";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -52,12 +52,11 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 37rem;
-  padding: ${({ theme }) => theme.space[2]}px ${({ theme }) => theme.space[4]}px 0;
-  row-gap: 0.5rem;
-  @media screen and (min-height: 800px) {
-    row-gap: 2rem;
-    margin-top: 12px;
-    padding: ${({ theme }) => theme.space[4]}px;
+  padding: 0.75rem ${({ theme }) => theme.space[4]}px 0;
+  row-gap: 1rem;
+  @media screen and (min-height: 1200px) {
+    padding-top: 1rem;
+    row-gap: 1.5rem;
   }
 `;
 
@@ -124,17 +123,19 @@ const SwapForm = () => {
   }, []);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const swapError =
-    swapTransaction.fromAmountError instanceof NotEnoughBalance
-      ? new NotEnoughBalanceSwap(swapTransaction.fromAmountError.message)
+  const keepTronAccountAliveError = maybeKeepTronAccountAlive(swapTransaction);
+  const swapError = keepTronAccountAliveError
+    ? keepTronAccountAliveError
+    : swapTransaction.fromAmountError instanceof NotEnoughBalance
+      ? new NotEnoughBalanceSwap(swapTransaction.fromAmountError?.message)
       : swapTransaction.fromAmountError ||
         exchangeRatesState?.error ||
         maybeTezosAccountUnrevealedAccount(swapTransaction) ||
         (ptxSwapReceiveTRC20WithoutTrx?.enabled
           ? undefined
           : maybeTronEmptyAccount(swapTransaction));
-  const swapWarning =
-    swapTransaction.fromAmountWarning || maybeKeepTronAccountAlive(swapTransaction);
+
+  const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();
@@ -466,6 +467,7 @@ const SwapForm = () => {
   const [quoteState, setQuoteState] = useSwapLiveAppQuoteState({
     amountTo: exchangeRate?.toAmount,
     swapError,
+    counterValue: undefined,
   });
 
   return (
@@ -483,6 +485,7 @@ const SwapForm = () => {
         isMaxEnabled={swapTransaction.swap.isMaxEnabled}
         toggleMax={toggleMax}
         fromAmountError={!isDemo1Enabled ? swapError : quoteState.swapError}
+        counterValue={isDemo1Enabled ? quoteState.counterValue : undefined}
         fromAmountWarning={swapWarning}
         isSwapReversable={swapTransaction.swap.isSwapReversable}
         reverseSwap={reverseSwap}

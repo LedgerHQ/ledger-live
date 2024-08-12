@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "スワップ",
     "tabs" : {
-      "exchange" : "取引",
+      "exchange" : "スワップ",
       "history" : "履歴"
     },
     "form" : {
@@ -385,6 +385,7 @@
         "title" : "トランザクションのブロードキャスト成功",
         "description" : "承認のため、スワップオペレーションがネットワークに送信されました。取引が確認され、プロバイダーが{{targetCurrency}}を処理・送信するまでお待ちください。",
         "disclaimer" : "<0><0>{{provider}}</0>サポート</0>が必要な場合に備えて、スワップID番号を書き留めてください。",
+        "tellAboutYourExperience" : "お客様のご体験についてお聞かせください",
         "seeDetails" : "詳細を表示"
       }
     },
@@ -1855,7 +1856,8 @@
       "provider" : "プロバイダー",
       "payoutNetworkFees" : "ペイアウト手数料",
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
-      "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します"
+      "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
+      "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します"
     },
     "swap2" : {
       "amountSent" : "送付額",
@@ -1990,7 +1992,8 @@
       "updateBtn" : "ファームウェアをアップデート",
       "installUpdate" : "アップデートをインストール",
       "banner" : {
-        "warning" : "ファームウェアを{{latestFirmware}}にアップデートできます",
+        "warning" : "OSアップデートをご利用いただけます",
+        "version" : "バージョン{{latestFirmware}}",
         "cta" : "My Ledgerに移動",
         "old" : {
           "warning" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
@@ -4001,29 +4004,65 @@
         "desc" : "Exchangeプロバイダーの情報を追加する",
         "placeholder" : "CAL形式のExchangeプロバイダー情報"
       },
-      "debugSpamNft" : {
-        "debugNFTSpamReport" : "NFTスパム報告を許可する（ベータ版）",
-        "debugNFTSpamReportDesc" : "NFTをスパムとして報告する、またはスパムとして表示を停止するためのフォームを表示します",
-        "report" : "報告",
-        "contractAddress" : "コントラクトアドレス",
-        "contractAddressDesc" : "報告するNFTのコントラクトアドレス、またはコントラクト自体",
-        "chainId" : "チェーンID",
-        "chainIdDesc" : "報告するNFTまたはコントラクトのチェーンID（例：ethereum）",
-        "collectionId" : "コレクションID",
-        "collectionIdDesc" : "報告するNFTのSimpleHashコレクションID",
-        "tokenId" : "トークンID",
-        "tokenIdDesc" : "報告するNFTのトークンID",
-        "eventType" : "イベントタイプ",
-        "eventTypeDesc" : "作成したい報告の種類",
-        "success" : "報告は正常に送信されました。有効になるまでに5～10分かかる場合があります。",
-        "error" : "報告の送信中にエラーが発生しました。後でもう一度お試しください。",
-        "reportType" : {
-          "title" : "何を報告しますか？",
-          "desc" : "報告内容の種類を選択してください",
-          "individual" : "個々のNFTのスパム報告",
-          "contract" : "コントラクトのスパム報告",
-          "collection" : "コレクションのスパム報告"
-        }
+      "debugSimpleHash" : {
+        "debugSpamNft" : {
+          "report" : "報告",
+          "contractAddress" : "コントラクトアドレス",
+          "contractAddressDesc" : "報告するNFTのコントラクトアドレス、またはコントラクト自体",
+          "chainId" : "チェーンID",
+          "chainIdDesc" : "報告するNFTまたはコントラクトのチェーンID（例：ethereum）",
+          "collectionId" : "コレクションID",
+          "collectionIdDesc" : "報告するNFTのSimpleHashコレクションID",
+          "tokenId" : "トークンID",
+          "tokenIdDesc" : "報告するNFTのトークンID",
+          "eventType" : "イベントタイプ",
+          "eventTypeDesc" : "作成したい報告の種類",
+          "success" : "報告は正常に送信されました。有効になるまでに5～10分かかる場合があります。",
+          "error" : "報告の送信中にエラーが発生しました。後でもう一度お試しください。",
+          "reportType" : {
+            "title" : "何を報告しますか？",
+            "desc" : "報告内容の種類を選択してください",
+            "individual" : "個々のNFTのスパム報告",
+            "contract" : "コントラクトのスパム報告",
+            "collection" : "コレクションのスパム報告"
+          }
+        },
+        "debugRefreshMetadata" : {
+          "refresh" : "更新",
+          "contractAddress" : "コントラクトアドレス",
+          "contractAddressDesc" : "更新されたNFTのcontract_address、またはコントラクト自体",
+          "chainId" : "チェーンID",
+          "chainIdDesc" : "更新されたNFTまたはコントラクトのチェーンID（例：ethereum）",
+          "tokenId" : "トークンID",
+          "tokenIdDesc" : "更新されたNFTのトークンID",
+          "success" : "更新は正常に送信されました。有効になるまでに5～10分かかる場合があります。",
+          "error" : "更新の送信中にエラーが発生しました。後でもう一度お試しください。",
+          "refreshType" : {
+            "desc" : "何を更新しますか？",
+            "nft" : "個々のNFTのメタデータを更新する",
+            "contract" : "コントラクトのメタデータを更新する"
+          }
+        },
+        "debugCheckSpamScore" : {
+          "check" : "チェック",
+          "contractAddress" : "コントラクトアドレス",
+          "contractAddressDesc" : "チェックされたNFTのコントラクトアドレス、またはコントラクト自体",
+          "chainId" : "チェーンID",
+          "chainIdDesc" : "チェックされたNFTまたはコントラクトのチェーンID（例：ethereum）",
+          "tokenId" : "トークンID",
+          "tokenIdDesc" : "チェックされたNFTのtoken_id",
+          "result" : {
+            "title" : "このコントラクトのスパムスコアは {{score}}です。",
+            "desc" : "スコアは0～100の数値で、0はスパムではないとみなされ、100はスパムである可能性があるとみなされます。\n応答がnullの場合、コレクションにはスコア付けするのに十分な情報がないか、まだ評価されていません。"
+          },
+          "error" : "リクエストの送信中にエラーが発生しました。後でもう一度お試しください。",
+          "refreshType" : {
+            "desc" : "何をチェックしますか？",
+            "nft" : "個別のNFT",
+            "contract" : "コントラクト"
+          }
+        },
+        "back" : "戻る"
       },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
@@ -4197,9 +4236,18 @@
           "modal" : {
             "flow" : "フローを選択",
             "step" : "ステップを選択",
-            "activated" : "有効化/無効化してバックアップを取得/非取得",
-            "instance" : "インスタンスの生成",
+            "instance" : "メンバーの生成",
             "cta" : "適用"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHashツール",
+          "description" : "SimpleHashを使用した便利なツールをいくつか利用できます",
+          "cta" : "開く",
+          "tabs" : {
+            "spam" : "スパム報告",
+            "refresh" : "メタデータを更新",
+            "check" : "スパムスコア"
           }
         }
       }
@@ -5151,6 +5199,10 @@
       "memo" : "メモ",
       "memoWarningText" : "メモを使用する場合は、受取先とタイプを確認してください。"
     },
+    "ton" : {
+      "commentPlaceholder" : "任意",
+      "comment" : "コメント"
+    },
     "stellar" : {
       "memo" : "メモ",
       "memoType" : {
@@ -5562,6 +5614,9 @@
       "title" : "レートの有効期限切れ",
       "description" : "レートの有効期限が切れたため、取引のトランザクションを完了できませんでした。レートを更新してスワップを再試行してください。"
     },
+    "PayinExtraIdError" : {
+      "message" : "スワップに必要なextraIdがありません"
+    },
     "SwapGenericAPIError" : {
       "title" : "問題が発生しました。",
       "description" : "トランザクションが成立しませんでした。もう一度お試しいただくか、サポートまでご連絡ください。"
@@ -5696,6 +5751,9 @@
     "SequenceNumberError" : {
       "title" : "シーケンス番号エラー",
       "description" : "ウィンドウを閉じて、後でもう一度お試しください"
+    },
+    "TonCommentInvalid" : {
+      "title" : "コメントは特殊文字を除いて、120文字を超えてはなりません"
     },
     "CantScanQRCode" : {
       "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"
@@ -6313,7 +6371,7 @@
         "description" : "別のLedgerを使用して暗号化キーを保護または削除する。"
       },
       "instance" : {
-        "label_one" : "1個の同期されたインスタンス",
+        "label" : "1個の同期されたインスタンス",
         "label_other" : "{{count}}個の同期されたインスタンス",
         "cta" : "管理"
       }
@@ -6326,7 +6384,9 @@
     "error" : {
       "title" : "問題が発生しました。",
       "description" : "後でもう一度お試しください。",
-      "cta" : "再試行"
+      "cta" : "再試行",
+      "fetching" : "データの取得中に問題が発生しました。",
+      "ledgerSyncDown" : "Ledger Syncは現在利用できません。<br/>これはお客様の資産には影響しません。"
     },
     "unsecuredError" : {
       "title" : "同期はこのLedgerによって保護されていません",
@@ -6335,18 +6395,26 @@
       "cta" : "別のLedgerを接続する",
       "ctaDelete" : "暗号化キーを削除する"
     },
+    "autoRemoveError" : {
+      "title" : "現在のインスタンスは削除できません",
+      "description" : "セキュリティ上の理由から、暗号化キーを削除せずに現在使用しているインスタンスを削除することはできません。",
+      "info" : "暗号化キーを削除するとデバイスの同期が解除され、同期されたデータはすべて削除されます。ただし、これはお客様の資金には影響しません。アカウントはいつでも再同期できます。",
+      "cta" : "わかりました",
+      "ctaDelete" : "暗号化キーを削除する"
+    },
     "success" : {
       "backup" : {
         "title" : "成功",
-        "desc" : "Ledger Syncが正常に有効になりました。 ",
-        "synchAnother" : "別のLedger Liveアプリと同期する"
+        "desc" : "Ledger Syncが正常に有効になりました。"
       },
       "synch" : {
         "title" : "同期が成功しました",
         "desc" : "アカウントの変更が、すべてのアプリとプラットフォームに自動的に反映されるようになります。"
-      }
+      },
+      "synchAnother" : "別のLedger Liveアプリと同期する",
+      "close" : "閉じる"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "キーの管理",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6468,10 @@
       "remove" : "削除",
       "deleteInstanceSuccess" : "{{instanceName}}の同期は解除されています",
       "deleteInstanceError" : "{{instanceName}}の同期解除で問題が発生しました"
+    },
+    "deviceAction" : {
+      "title" : "Ledger{{wording}}で続ける",
+      "description" : "Ledgerの信頼できるディスプレイに表示される指示に従ってください。"
     }
   }
 }

@@ -4,7 +4,7 @@ import { RouteComponentProps, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import Card from "~/renderer/components/Box/Card";
-import { languageSelector } from "~/renderer/reducers/settings";
+import { developerModeSelector, languageSelector } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -35,6 +35,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { state: urlParams, search } = useLocation<ExchangeState>();
   const searchParams = new URLSearchParams(search);
   const locale = useSelector(languageSelector);
+  const devMode = useSelector(developerModeSelector);
   const accounts = useSelector(accountsSelector);
 
   const mockManifest: LiveAppManifest | undefined =
@@ -96,6 +97,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
             theme: themeType,
             ...customUrlParams,
             lang: locale,
+            devMode,
             ...Object.fromEntries(searchParams.entries()),
           }}
         />

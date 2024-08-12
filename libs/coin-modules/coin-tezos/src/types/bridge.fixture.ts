@@ -54,6 +54,7 @@ export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction
   return {
     amount: tx?.amount || new BigNumber(0),
     recipient: tx?.recipient || getAbandonSeedAddress("tezos"),
+    useAllAmount: tx?.useAllAmount || false,
 
     family: "tezos",
     mode: tx?.mode || "send",

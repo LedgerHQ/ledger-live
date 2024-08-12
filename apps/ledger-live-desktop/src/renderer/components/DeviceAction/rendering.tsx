@@ -1,6 +1,5 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { Fragment, useCallback, useContext, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import map from "lodash/map";
 import { TFunction } from "i18next";
 import { Trans, useTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
@@ -10,21 +9,21 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
-  WrongDeviceForAccount,
-  UpdateYourApp,
-  LockedDeviceError,
   FirmwareNotRecognized,
+  LockedDeviceError,
+  UpdateYourApp,
+  WrongDeviceForAccount,
 } from "@ledgerhq/errors";
 import {
-  LatestFirmwareVersionRequired,
   DeviceNotOnboarded,
+  LatestFirmwareVersionRequired,
   TransactionRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
@@ -49,13 +48,13 @@ import { context, setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
 import {
-  Theme,
   Button as ButtonV3,
   Flex,
-  Text,
-  ProgressLoader,
-  InfiniteLoader,
   IconsLegacy,
+  InfiniteLoader,
+  ProgressLoader,
+  Text,
+  Theme,
 } from "@ledgerhq/react-ui";
 import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -74,11 +73,12 @@ import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-case
 export const AnimationWrapper = styled.div`
   width: 600px;
   max-width: 100%;
-  padding-bottom: 20px;
+  padding-bottom: 12px;
   align-self: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 8px;
 `;
 
 const ProgressWrapper = styled.div`
@@ -218,6 +218,33 @@ const Separator = styled.div`
   height: 1px;
   background-color: ${({ theme }) => theme.colors.palette.text.shade10};
   margin: 24px -30px;
+`;
+
+const DeviceSwapSummaryStyled = styled.section`
+  margin: ${({ theme }) => theme.space[3]}px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: ${({ theme }) => theme.space[4]}px;
+`;
+
+const DeviceSwapSummaryValueStyled = styled.div`
+  font-weight: ${({ theme }) => theme.fontWeights.semiBold};
+  color: ${({ theme }) => theme.colors.palette.text.shade100};
+  font-size: 14px;
+  justify-self: flex-end;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.space[1]}px;
+`;
+
+const EllipsesTextStyled = styled(Text)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+  display: inline-block;
+  max-width: 100%;
 `;
 
 // these are not components because we want reconciliation to not remount the sub elements
@@ -381,7 +408,7 @@ export const InstallingApp = ({
     track("In-line app install", { appName: appNameToTrack, flow: analyticsPropertyFlow });
   }, [appNameToTrack, analyticsPropertyFlow]);
   return (
-    <Wrapper data-test-id="device-action-loader">
+    <Wrapper data-testid="device-action-loader">
       <Header />
       <AnimationWrapper>
         <Animation animation={getDeviceAnimation(modelId, type, "installLoading")} />
@@ -406,7 +433,7 @@ export const renderInstallingLanguage = ({ progress, t }: { progress: number; t:
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
-      data-test-id="installing-language-progress"
+      data-testid="installing-language-progress"
     >
       <Box my={5} alignItems="center">
         <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
@@ -424,7 +451,7 @@ export const renderInstallingLanguage = ({ progress, t }: { progress: number; t:
 };
 
 export const renderListingApps = () => (
-  <Wrapper data-test-id="device-action-loader">
+  <Wrapper data-testid="device-action-loader">
     <Header />
     <ProgressWrapper>
       <Rotating size={58}>
@@ -486,7 +513,7 @@ export const renderAllowLanguageInstallation = ({
     flexDirection="column"
     justifyContent="center"
     alignItems="center"
-    data-test-id="allow-language-installation"
+    data-testid="allow-language-installation"
   >
     <DeviceBlocker />
     <AnimationWrapper>
@@ -997,6 +1024,74 @@ export const renderSwapDeviceConfirmation = ({
     getMainAccount(exchange.fromAccount, exchange.fromParentAccount).currency,
   ).unit;
 
+  const deviceSwapSummaryFields = Object.entries({
+    amountSent: (
+      <CurrencyUnitValue
+        unit={unitFromExchange}
+        value={transaction.amount}
+        disableRounding
+        showCode
+        component={({ children }) => (
+          <EllipsesTextStyled title={typeof children === "string" ? children : ""}>
+            {children}
+          </EllipsesTextStyled>
+        )}
+      />
+    ),
+    amountReceived: (
+      <CurrencyUnitValue
+        unit={unitToExchange}
+        value={amountExpectedTo ? BigNumber(amountExpectedTo) : exchangeRate.toAmount}
+        disableRounding
+        showCode
+        component={({ children }) => (
+          <EllipsesTextStyled title={typeof children === "string" ? children : ""}>
+            {children}
+          </EllipsesTextStyled>
+        )}
+      />
+    ),
+    provider: (
+      <>
+        <ProviderIcon size="XXS" name={exchangeRate.provider} />
+        <EllipsesTextStyled title={providerName}>{providerName}</EllipsesTextStyled>
+      </>
+    ),
+    fees: (
+      <CurrencyUnitValue
+        unit={unitMainAccount}
+        value={BigNumber(estimatedFees || 0)}
+        disableRounding
+        showCode
+        component={({ children }) => (
+          <EllipsesTextStyled title={typeof children === "string" ? children : ""}>
+            {children}
+          </EllipsesTextStyled>
+        )}
+      />
+    ),
+    sourceAccount: (
+      <>
+        {sourceAccountCurrency && (
+          <CryptoCurrencyIcon circle currency={sourceAccountCurrency} size={18} />
+        )}
+        <EllipsesTextStyled textTransform={"capitalize"} title={sourceAccountName}>
+          {sourceAccountName}
+        </EllipsesTextStyled>
+      </>
+    ),
+    targetAccount: (
+      <>
+        {targetAccountCurrency && (
+          <CryptoCurrencyIcon circle currency={targetAccountCurrency} size={18} />
+        )}
+        <EllipsesTextStyled textTransform={"capitalize"} title={targetAccountName}>
+          {targetAccountName}
+        </EllipsesTextStyled>
+      </>
+    ),
+  });
+
   return (
     <>
       <ConfirmWrapper>
@@ -1009,77 +1104,24 @@ export const renderSwapDeviceConfirmation = ({
           {...swapDefaultTrack}
         />
         <Box flex={0}>
-          <Alert type="primary" {...alertProperties} mb={7} mx={4}>
+          <Alert type="primary" {...alertProperties} mb={5} mx={4}>
             <Trans
               i18nKey={`DeviceAction.swap.notice.${noticeType.message}`}
               values={{ providerName: getProviderName(exchangeRate.provider) }}
             />
           </Alert>
         </Box>
-        <Box mx={3} data-test-id="device-swap-summary">
-          {map(
-            {
-              amountSent: (
-                <CurrencyUnitValue
-                  unit={unitFromExchange}
-                  value={transaction.amount}
-                  disableRounding
-                  showCode
-                />
-              ),
-              amountReceived: (
-                <CurrencyUnitValue
-                  unit={unitToExchange}
-                  value={amountExpectedTo ? BigNumber(amountExpectedTo) : exchangeRate.toAmount}
-                  disableRounding
-                  showCode
-                />
-              ),
-              provider: (
-                <Box horizontal alignItems="center" style={{ gap: "6px" }}>
-                  <ProviderIcon size="XXS" name={exchangeRate.provider} />
-                  <Text>{providerName}</Text>
-                </Box>
-              ),
-              fees: (
-                <CurrencyUnitValue
-                  unit={unitMainAccount}
-                  value={BigNumber(estimatedFees || 0)}
-                  disableRounding
-                  showCode
-                />
-              ),
-              sourceAccount: (
-                <Box horizontal alignItems="center" style={{ gap: "6px" }}>
-                  {sourceAccountCurrency && (
-                    <CryptoCurrencyIcon circle currency={sourceAccountCurrency} size={18} />
-                  )}
-                  <Text style={{ textTransform: "capitalize" }}>{sourceAccountName}</Text>
-                </Box>
-              ),
-              targetAccount: (
-                <Box horizontal alignItems="center" style={{ gap: "6px" }}>
-                  {targetAccountCurrency && (
-                    <CryptoCurrencyIcon circle currency={targetAccountCurrency} size={18} />
-                  )}
-                  <Text style={{ textTransform: "capitalize" }}>{targetAccountName}</Text>
-                </Box>
-              ),
-            },
-            (value, key) => {
-              return (
-                <Box horizontal justifyContent="space-between" key={key} mb={4}>
-                  <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
-                    <Trans i18nKey={`DeviceAction.swap2.${key}`} />
-                  </Text>
-                  <Text fontWeight="semiBold" color="palette.text.shade100" fontSize="14px">
-                    {value}
-                  </Text>
-                </Box>
-              );
-            },
-          )}
-        </Box>
+
+        <DeviceSwapSummaryStyled data-testid="device-swap-summary">
+          {deviceSwapSummaryFields.map(([key, value]) => (
+            <Fragment key={key}>
+              <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
+                <Trans i18nKey={`DeviceAction.swap2.${key}`} />
+              </Text>
+              <DeviceSwapSummaryValueStyled>{value}</DeviceSwapSummaryValueStyled>
+            </Fragment>
+          ))}
+        </DeviceSwapSummaryStyled>
         {renderVerifyUnwrapped({ modelId, type })}
       </ConfirmWrapper>
       <Separator />
@@ -1115,7 +1157,7 @@ export const renderSecureTransferDeviceConfirmation = ({
 );
 
 export const renderLoading = ({ children }: { children?: React.ReactNode } = {}) => (
-  <Wrapper data-test-id="device-action-loader">
+  <Wrapper data-testid="device-action-loader">
     <Header />
     <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
       <InfiniteLoader size={58} />

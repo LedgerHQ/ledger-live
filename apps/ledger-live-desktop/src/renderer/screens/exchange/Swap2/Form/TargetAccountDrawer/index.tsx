@@ -23,8 +23,13 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useAccountName, useMaybeAccountName } from "~/renderer/reducers/wallet";
 
+const NonSelectableAccountWrapper = styled(Box)`
+  column-gap: 8px;
+`;
+
 const AccountWrapper = styled(Tabbable)<{ selected?: boolean }>`
   cursor: pointer;
+  column-gap: 8px;
   &:hover {
     background-color: ${p => p.theme.colors.palette.text.shade10};
   }
@@ -40,6 +45,18 @@ const AddAccountIconContainer = styled(Tabbable)`
   border-radius: 9999px;
   color: ${p => p.theme.colors.palette.primary.main};
   background: ${p => rgba(p.theme.colors.palette.primary.main, 0.2)};
+`;
+
+const AccountBox = styled(Box)`
+  &,
+  ${Text} {
+    flex-shrink: 1;
+  }
+
+  ${Text} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 function AddAccountIcon() {
@@ -86,7 +103,7 @@ const TargetAccount = memo(function TargetAccount({
 
   const Wrapper: React.ComponentType<
     React.ComponentProps<typeof Box> & React.ComponentProps<typeof AccountWrapper>
-  > = setAccount ? AccountWrapper : Box;
+  > = setAccount ? AccountWrapper : NonSelectableAccountWrapper;
 
   return (
     <Wrapper
@@ -95,9 +112,9 @@ const TargetAccount = memo(function TargetAccount({
       justifyContent="space-between"
       selected={selected}
       onClick={onClick}
-      data-test-id={`target-account-container-${getDefaultAccountName(account) || ""}`}
+      data-testid={`target-account-container-${getDefaultAccountName(account) || ""}`}
     >
-      <Box horizontal alignItems="center" pl={isChild ? "8px" : 0}>
+      <AccountBox horizontal alignItems="center" pl={isChild ? "8px" : 0}>
         {isChild && (
           <Box
             pr={3}
@@ -113,7 +130,7 @@ const TargetAccount = memo(function TargetAccount({
         <Text ff="Inter|SemiBold" fontSize={5}>
           {name}
         </Text>
-      </Box>
+      </AccountBox>
       <Box position="relative" pr={5}>
         <FormattedVal
           color="palette.text.shade50"

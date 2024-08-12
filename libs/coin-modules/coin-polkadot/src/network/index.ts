@@ -14,6 +14,7 @@ import {
   paymentInfo as sidecarPaymentInfo,
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
+  getLastBlock,
 } from "./sidecar";
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
@@ -109,6 +110,7 @@ export default {
   getBalances: async (address: string): Promise<PolkadotAPIBalanceInfo> =>
     sidecardGetBalances(address),
   getOperations: bisonGetOperations,
+  getLastBlock,
   getMinimumBondBalance,
   getRegistry,
   getStakingProgress: sidecarGetStakingProgress,

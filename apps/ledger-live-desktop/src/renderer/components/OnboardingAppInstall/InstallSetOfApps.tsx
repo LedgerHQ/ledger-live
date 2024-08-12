@@ -98,8 +98,8 @@ const InstallSetOfApps = ({
       />
       <Flex height="100%">
         <Flex flex={1} alignItems="flex-start" flexDirection="column">
-          <Flex style={{ width: "100%" }} flexDirection="row" justifyContent="space-between" mb={6}>
-            <Text data-test-id="installing-text">
+          <Flex flexDirection="row" justifyContent="space-between" mb={6}>
+            <Text flex={1} data-testid="installing-text">
               {t("onboardingAppInstall.progress.progress")}
             </Text>
           </Flex>

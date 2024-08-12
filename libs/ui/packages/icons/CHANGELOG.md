@@ -1,5 +1,17 @@
 # @ledgerhq/icons-ui
 
+## 0.7.2
+
+### Patch Changes
+
+- [#7264](https://github.com/LedgerHQ/ledger-live/pull/7264) [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545) Thanks [@thesan](https://github.com/thesan)! - Fix generated icons attributes case
+
+## 0.7.2-next.0
+
+### Patch Changes
+
+- [#7264](https://github.com/LedgerHQ/ledger-live/pull/7264) [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545) Thanks [@thesan](https://github.com/thesan)! - Fix generated icons attributes case
+
 ## 0.7.1
 
 ### Patch Changes

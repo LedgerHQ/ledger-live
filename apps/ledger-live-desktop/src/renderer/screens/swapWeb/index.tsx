@@ -8,7 +8,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { useHistory, useLocation } from "react-router-dom";
 import { WebviewProps } from "~/renderer/components/Web3AppWebview/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { captureException } from "~/sentry/internal";
+import { captureException } from "~/sentry/renderer";
 import { UnableToLoadSwapLiveError } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
@@ -52,7 +52,7 @@ const Swap = () => {
     // TODO: Remove @ts-ignore after Card component be compatible with TS
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    <Card grow style={{ overflow: "hidden" }} data-test-id="swap-app-container">
+    <Card grow style={{ overflow: "hidden" }} data-testid="swap-app-container">
       {manifest ? (
         <WebPlatformPlayer
           config={{

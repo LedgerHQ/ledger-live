@@ -7,6 +7,7 @@ import {
   estimateFees,
   getBalance,
   getNextValidSequence,
+  lastBlock,
   listOperations,
 } from "../logic";
 
@@ -19,6 +20,7 @@ export function createApi(config: XrpConfig): Api {
     craftTransaction: craft,
     estimateFees: estimate,
     getBalance,
+    lastBlock,
     listOperations,
   };
 }

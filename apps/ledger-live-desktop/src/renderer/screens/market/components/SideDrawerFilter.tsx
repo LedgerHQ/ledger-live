@@ -41,7 +41,7 @@ export default function SideDrawerFilter({
   return (
     <>
       <Dropdown
-        data-test-id="market-filter-drawer-button"
+        data-testid="market-filter-drawer-button"
         label={t("market.filters.show")}
         menuPortalTarget={document.body}
         onChange={onChange}

@@ -1,4 +1,4 @@
-import { knownDevice } from "../../models/devices";
+import { knownDevices } from "../../models/devices";
 import {
   COSMOS_MIN_FEES,
   COSMOS_MIN_SAFE,
@@ -15,6 +15,7 @@ let deviceAction: DeviceAction;
 const testedCurrency = "cosmos";
 const defaultValidator = "Ledger";
 const testAccount = initTestAccounts([testedCurrency])[0];
+const knownDevice = knownDevices.nanoX;
 
 describe("Cosmos delegate flow", () => {
   beforeAll(async () => {
@@ -26,8 +27,8 @@ describe("Cosmos delegate flow", () => {
 
   $TmsLink("B2CQA-384");
   it("open account stake flow", async () => {
-    await app.portfolio.openTransferMenu();
-    await app.portfolio.navigateToStakeFromTransferMenu();
+    await app.transfertMenu.open();
+    await app.transfertMenu.navigateToStake();
   });
 
   $TmsLink("B2CQA-387");

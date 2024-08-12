@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-wallet",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Ledger Live wallet",
   "keywords": [
     "Ledger"
@@ -34,18 +34,23 @@
     "@ledgerhq/types-live": "workspace:*",
     "base64-js": "1",
     "bignumber.js": "9",
-    "fflate": "^0.8.2",
     "isomorphic-ws": "^5.0.0",
     "lodash": "4",
+    "pako": "^2.0.4",
     "rxjs": "7",
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@types/jest": "^29.5.10",
     "@types/lodash": "4",
+    "@types/pako": "^2.0.0",
+    "@types/ws": "^8.5.3",
     "jest": "^29.7.0",
+    "msw": "^2.3.1",
+    "timemachine": "^0.3.2",
     "ts-jest": "^29.1.1",
-    "ws": "8"
+    "ws": "^8.16.0"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

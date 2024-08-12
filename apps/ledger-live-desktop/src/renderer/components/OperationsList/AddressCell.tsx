@@ -39,6 +39,7 @@ export const Address = ({ value }: { value: string }) => (
 );
 const Left = styled.div`
   overflow: hidden;
+  max-width: calc(100% - 50px);
   white-space: nowrap;
   font-kerning: none;
   letter-spacing: 0px;

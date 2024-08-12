@@ -927,8 +927,16 @@
       "title" : "Erro do número de sequência",
       "description" : "Feche a janela e tente novamente mais tarde"
     },
+    "TonCommentInvalid" : {
+      "title" : "O comentário não deve exceder 120 caracteres sem caracteres especiais"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
+    },
+    "CustomError" : {
+      "title" : "Tente novamente.",
+      "description" : "O servidor não conseguiu processar sua solicitação. Tente novamente mais tarde ou fale com o Suporte Ledger.",
+      "errorCode" : "Código: {{errorCode}}"
     }
   },
   "crash" : {
@@ -1294,7 +1302,7 @@
     },
     "ongoing" : {
       "resolving" : "Resolvendo dependências",
-      "progress" : "Permaneça no Ledger Live enquanto os aplicativos estão sendo instalados.",
+      "progress" : "Não saia do Ledger Live enquanto os aplicativos são instalados.",
       "skippedInfo" : "Alguns aplicativos não estão disponíveis. Eles ainda serão desenvolvidos para {{ productName }}.",
       "skipped" : "Ainda não estão disponíveis para {{ productName }}"
     }
@@ -2186,7 +2194,7 @@
       }
     },
     "appsStep" : {
-      "title" : "Instalando aplicativos em {{productName}}"
+      "title" : "Instalando aplicativos na {{productName}}"
     },
     "readyStep" : {
       "title" : "Fim da configuração",
@@ -3647,6 +3655,8 @@
         "value" : "Valor do memo"
       },
       "validateMemo" : "Validar Memo",
+      "comment" : "Comentários",
+      "validateComment" : "Validar comentários",
       "quantity" : "Quantidade"
     },
     "validation" : {
@@ -4166,7 +4176,7 @@
       "modalDesc" : "Baixar o Ledger Live em seu computador para atualizar o firmware do dispositivo.",
       "contactUs" : "Entre em contato"
     },
-    "myApps" : "Meus aplicativos em blockchain",
+    "myApps" : "Meus aplicativos de blockchain",
     "token" : {
       "title" : "Tokens {{appName}}",
       "noAppNeeded" : "{{tokenName}} é um token que utiliza o aplicativo {{appName}}. Nenhum aplicativo a ser instalado.",
@@ -6382,7 +6392,7 @@
   },
   "customImage" : {
     "title" : "Imagem da tela de bloqueio",
-    "replace" : "Substituir",
+    "change" : "Variação",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Escolher na minha galeria de imagens",
@@ -6406,13 +6416,15 @@
     },
     "confirmCrop" : "Confirmar corte",
     "confirmContrast" : "Confirmar contraste",
+    "keepOnDevice" : "Manter",
+    "discardOnDevice" : "Descartar",
     "nftEntryPointButtonLabel" : "Definir como imagem da tela de bloqueio",
     "customImage" : "Imagem personalizada",
     "doThisLater" : "Talvez mais tarde",
     "preview" : {
       "title" : "Pré-visualizar",
       "loading" : "Carregando pré-visualização",
-      "setPicture" : "Definida como tela de bloqueio",
+      "setPicture" : "Definir como tela de bloqueio",
       "editPicture" : "Editar imagem",
       "pickDeviceModel" : "Escolha um dispositivo"
     },
@@ -6685,12 +6697,112 @@
     }
   },
   "walletSync" : {
+    "title" : "Ledger Sync",
     "activation" : {
       "screen" : {
         "title" : "Sincronize suas contas em todas as plataformas",
         "description" : "Sua Ledger vai gerar uma chave de encriptação garantindo que seus dados permaneçam privados e só possam ser recuperados por você.",
         "mainCta" : "Sincronize suas contas",
         "secondCta" : "Já criou uma chave?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "Escolha o dispositivo da Ledger que você usará para proteger seu backup",
+      "description" : "Você pode recuperar seu backup simplesmente conectando sua Ledger aos aplicativos Ledger Live móvel e desktop."
+    },
+    "deviceAction" : {
+      "title" : "Continuar em sua Ledger {{wording}}",
+      "description" : "Siga as instruções que aparecem na Tela Confiável da sua Ledger."
+    },
+    "success" : {
+      "sync" : "Sincronização bem-sucedida!",
+      "syncDesc" : "As alterações em suas contas agora aparecerão automaticamente em todos os aplicativos e plataformas.",
+      "activation" : "Sucesso!",
+      "activationDesc" : "Você ativou o Ledger Sync com sucesso.",
+      "syncAnother" : "Sincronizar com outro aplicativo Ledger Live",
+      "close" : "Fechar"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "Sincronizar",
+        "description" : "Sincronize os dados do seu aplicativo com outro aplicativo Ledger Live para ter uma experiência perfeita. "
+      },
+      "manageKey" : {
+        "title" : "Gerenciar Chave",
+        "description" : "Proteja ou exclua sua chave de encriptação com outra Ledger.",
+        "success" : "Seus dispositivos foram dessincronizados e sua chave foi excluída",
+        "drawer" : {
+          "step1" : {
+            "title" : "Gerenciar sua chave",
+            "titleCta" : "Excluir sua chave",
+            "descCta" : "Todos os dados sincronizados serão excluídos."
+          },
+          "step2" : {
+            "delete" : "Excluir",
+            "cancel" : "Cancelar",
+            "title" : "Deseja realmente excluir sua chave criptográfica?",
+            "desc" : "Ao clicar em excluir, seus dispositivos serão dessincronizados e todos os dados sincronizados serão excluídos. Pode ter certeza de que essa ação não afetará seus fundos. Você pode sincronizar suas contas novamente a qualquer momento."
+          }
+        }
+      },
+      "manageInstances" : {
+        "title" : "Gerenciar instâncias sincronizadas",
+        "remove" : "Remover"
+      },
+      "synchronizedInstances" : {
+        "cta" : "Gerencie agora",
+        "title" : "{{count}} instâncias sincronizadas",
+        "title_plural" : "{{count}} instâncias sincronizadas",
+        "error" : "Instâncias",
+        "unsecuredError" : {
+          "title" : "A sincronização não é protegida por esta Ledger",
+          "description" : "Conecte o dispositivo Ledger que você usou para criar sua chave criptográfica.",
+          "info" : "Se você perdeu sua Ledger, não se preocupe! Você ainda pode excluir sua chave. Essa medida excluirá seus dados e cancelará a sincronização de todas as instâncias sincronizadas no momento.",
+          "cta" : "Conectar outra Ledger",
+          "ctaDelete" : "Excluir minha chave criptográfica"
+        },
+        "autoRemoveError" : {
+          "title" : "Não é possível remover a instância atual",
+          "description" : "Por motivos de segurança, não é possível remover a instância que você está usando no momento sem excluir sua chave criptográfica.",
+          "info" : "Excluir a chave criptográfica resultará na dessincronização dos dispositivos e todos os dados sincronizados serão excluídos. No entanto, isso não afetará seus fundos. Você pode sincronizar suas contas novamente a qualquer momento.",
+          "cta" : "Eu entendo",
+          "ctaDelete" : "Excluir minha chave criptográfica"
+        },
+        "success" : "Seu {{member}} não está mais sincronizado"
+      },
+      "errors" : {
+        "fetching" : "Algo deu errado durante a busca por suas instâncias sincronizadas.",
+        "trustchain" : "Trustchain Falsy inesperada",
+        "memberCredentials" : "Credenciais de membro Falsy inesperadas",
+        "ledgerSyncUnavailable" : "O Ledger Sync está indisponível no momento. Isso não tem nenhum impacto sobre seus ativos."
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Escolha seu método de sincronização",
+        "scan" : {
+          "title" : "Escanear um QR code"
+        },
+        "connectDevice" : {
+          "title" : "Use sua Ledger"
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "disclaimer" : {
+      "clearSigningEnabled" : "Assinatura transparente habilitada",
+      "checkbox" : "Não me lembre de novo.",
+      "CTA" : "Abrir no {{app}}"
+    },
+    "manifestsList" : {
+      "title" : "Explorar",
+      "description" : "Explore o melhor da web3 com a curadoria da Ledger"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Explore a web3",
+        "placeholder" : "Pesquise ou digite uma URL"
       }
     }
   }

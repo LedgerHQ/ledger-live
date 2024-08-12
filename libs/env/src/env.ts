@@ -232,6 +232,36 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cardano API url",
   },
+  ICON_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v3",
+    desc: "ICON RPC url",
+  },
+  ICON_DEBUG_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v3d",
+    desc: "ICON debug RPC url",
+  },
+  ICON_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v1",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
+  ICON_TESTNET_DEBUG_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3d",
+    desc: "ICON Berlin Testnet debug",
+  },
+  ICON_TESTNET_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://tracker.berlin.icon.community/api/v1",
+    desc: "ICON Berlin Testnet API url",
+  },
   COINAPPS: {
     def: "",
     parser: stringParser,
@@ -633,10 +663,15 @@ const envDefinitions = {
     parser: boolParser,
     desc: "is walletconnect enabled",
   },
-  CLOUD_SYNC_API: {
+  CLOUD_SYNC_API_STAGING: {
     def: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
     parser: stringParser,
-    desc: "wallet sync api base url",
+    desc: "wallet sync api staging base url",
+  },
+  CLOUD_SYNC_API_PROD: {
+    def: "https://cloud-sync.api.live.ledger.com",
+    parser: stringParser,
+    desc: "wallet sync api production base url",
   },
   WITH_DEVICE_POLLING_DELAY: {
     def: 500,
@@ -668,10 +703,15 @@ const envDefinitions = {
     parser: intParser,
     desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
-  TRUSTCHAIN_API: {
+  TRUSTCHAIN_API_STAGING: {
     def: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
     parser: stringParser,
-    desc: "Trustchain API",
+    desc: "Trustchain API Staging",
+  },
+  TRUSTCHAIN_API_PROD: {
+    def: "https://trustchain.api.live.ledger.com",
+    parser: stringParser,
+    desc: "Trustchain API Prod",
   },
   PLATFORM_DEBUG: {
     def: false,
@@ -742,6 +782,11 @@ const envDefinitions = {
     def: "https://cdn.live.ledger.com/cryptoassets",
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
+  },
+  CAL_SERVICE_URL: {
+    def: "https://crypto-assets-service.api.ledger.com",
+    parser: stringParser,
+    desc: "Cryptoassets list service url",
   },
   FEATURE_FLAGS: {
     def: "{}",

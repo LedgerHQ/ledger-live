@@ -31,14 +31,16 @@ enum OutputDataMode {
   TrustedParam = 0x01,
 }
 
+const TP_ENCRYPT = 1 << 7;
+
 enum TrustedPropertiesTLV {
   IV = 0x00,
-  IssuerPublicKey = 0x01,
-  Xpriv = 0x02,
+  IssuerPublicKey = 0x01 | TP_ENCRYPT,
+  Xpriv = 0x02 | TP_ENCRYPT,
   EphemeralPublicKey = 0x03,
   CommandIV = 0x04,
   GroupKey = 0x05,
-  TrustedMember = 0x06,
+  TrustedMember = 0x06 | TP_ENCRYPT,
 }
 
 interface TrustedMember {
@@ -401,21 +403,9 @@ async function injectTrustedProperties(
         seedProperties.iv,
         seedProperties.xpriv,
       );
-      seedCommand.ephemeralPublicKey = await crypto.decrypt(
-        secret,
-        seedProperties.iv,
-        seedProperties.ephemeralPublicKey,
-      );
-      seedCommand.initializationVector = await crypto.decrypt(
-        secret,
-        seedProperties.iv,
-        seedProperties.commandIv,
-      );
-      seedCommand.groupKey = await crypto.decrypt(
-        secret,
-        seedProperties.iv,
-        seedProperties.groupKey,
-      );
+      seedCommand.ephemeralPublicKey = seedProperties.ephemeralPublicKey;
+      seedCommand.initializationVector = seedProperties.commandIv;
+      seedCommand.groupKey = seedProperties.groupKey;
       return seedCommand;
     }
     case CommandType.Derive: {
@@ -426,21 +416,9 @@ async function injectTrustedProperties(
         deriveProperties.iv,
         deriveProperties.xpriv,
       );
-      deriveCommand.ephemeralPublicKey = await crypto.decrypt(
-        secret,
-        deriveProperties.iv,
-        deriveProperties.ephemeralPublicKey,
-      );
-      deriveCommand.initializationVector = await crypto.decrypt(
-        secret,
-        deriveProperties.iv,
-        deriveProperties.commandIv,
-      );
-      deriveCommand.groupKey = await crypto.decrypt(
-        secret,
-        deriveProperties.iv,
-        deriveProperties.groupKey,
-      );
+      deriveCommand.ephemeralPublicKey = deriveProperties.ephemeralPublicKey;
+      deriveCommand.initializationVector = deriveProperties.commandIv;
+      deriveCommand.groupKey = deriveProperties.groupKey;
       return deriveCommand;
     }
     case CommandType.AddMember:
@@ -448,16 +426,8 @@ async function injectTrustedProperties(
     case CommandType.PublishKey: {
       const publishKeyCommand = command as PublishKey;
       const publishKeyProperties = properties as PublishKeyCommandResponse;
-      publishKeyCommand.ephemeralPublicKey = await crypto.decrypt(
-        secret,
-        publishKeyProperties.iv,
-        publishKeyProperties.ephemeralPublicKey,
-      );
-      publishKeyCommand.initializationVector = await crypto.decrypt(
-        secret,
-        publishKeyProperties.iv,
-        publishKeyProperties.commandIv,
-      );
+      publishKeyCommand.ephemeralPublicKey = publishKeyProperties.ephemeralPublicKey;
+      publishKeyCommand.initializationVector = publishKeyProperties.commandIv;
       publishKeyCommand.encryptedXpriv = await crypto.decrypt(
         secret,
         publishKeyProperties.iv,

@@ -94,6 +94,7 @@ libs/ledger-live-common/src/wallet-api/                  @ledgerhq/wallet-api
 **/wallet-api.spec.ts-snapshots/                         @ledgerhq/wallet-api
 **/dapp.spec.ts                                          @ledgerhq/wallet-api
 libs/test-utils/                                         @ledgerhq/wallet-api
+apps/ledger-live-mobile/src/newArch/features/Web3Hub/    @ledgerhq/wallet-api
 
 # Devices team
 apps/cli/src/commands/devices                                      @ledgerhq/live-devices
@@ -101,6 +102,7 @@ apps/cli/src/commands/devices                                      @ledgerhq/liv
 **/screens/CustomImage                                             @ledgerhq/live-devices
 **/components/CustomImage                                          @ledgerhq/live-devices
 **/SyncOnboarding/**                                               @ledgerhq/live-devices
+**/OnboardingAppInstall/**																				 @ledgerhq/live-devices
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/       @ledgerhq/live-devices

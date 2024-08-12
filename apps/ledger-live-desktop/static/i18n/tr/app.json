@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "Takas edin",
     "tabs" : {
-      "exchange" : "Takas edin",
+      "exchange" : "Takas et",
       "history" : "Geçmiş"
     },
     "form" : {
@@ -335,7 +335,7 @@
         "label" : {
           "provider" : "sağlayıcı",
           "rate" : "kur",
-          "fees" : "ağ ücretleri",
+          "fees" : "Ağ Ücretleri",
           "target" : "hedef hesap"
         },
         "tooltip" : {
@@ -385,6 +385,7 @@
         "title" : "İşlem başarıyla yayınlandı",
         "description" : "Takas işleminiz onaylanmak üzere ağa gönderildi. İşleminizin onaylanması ve sağlayıcının {{targetCurrency}} gönderme işlemini gerçekleştirmesi için bekleyin.",
         "disclaimer" : "<0><0>{{provider}}</0> desteğinden</0> yardıma ihtiyacınız olursa gerekli olacak Swap ID'nizi (Takas Kimliği) not edin.",
+        "tellAboutYourExperience" : "Bize deneyiminizden bahsedin",
         "seeDetails" : "Ayrıntıları gör"
       }
     },
@@ -1855,7 +1856,8 @@
       "provider" : "Sağlayıcı",
       "payoutNetworkFees" : "Ödeme ücretleri",
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
-      "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum."
+      "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
+      "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum."
     },
     "swap2" : {
       "amountSent" : "Gönderilecek tutar",
@@ -1990,7 +1992,8 @@
       "updateBtn" : "Donanım yazılımını güncelle",
       "installUpdate" : "Güncellemeyi yükle",
       "banner" : {
-        "warning" : "Donanım yazılımının {{latestFirmware}} güncellemesi mevcut",
+        "warning" : "İşletim sistemi güncellemesi mevcut",
+        "version" : "Sürüm {{latestFirmware}}",
         "cta" : "My Ledger'a Git",
         "old" : {
           "warning" : "Cihazın yazılım sürümü güncellenemeyecek kadar eski. Değiştirmek için Ledger Destek ekibiyle iletişime geçin.",
@@ -4001,35 +4004,71 @@
         "desc" : "Exchange sağlayıcısı bilgilerini ekleyin",
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri"
       },
-      "debugSpamNft" : {
-        "debugNFTSpamReport" : "NFT Spam İhbarı (Beta) özelliğine izin verin",
-        "debugNFTSpamReportDesc" : "Bir NFT'yi spam olarak ihbar etmek veya artık spam olarak görüntülenmemesi için bir forma erişin",
-        "report" : "İhbar et",
-        "contractAddress" : "Sözleşme Adresi",
-        "contractAddressDesc" : "İhbar edilen NFT'ye veya sözleşmenin kendisine ait contract_address bilgisi",
-        "chainId" : "Zincir Kimliği",
-        "chainIdDesc" : "İhbar edilen NFT'ye veya sözleşmeye ait chain_id bilgisi (ör. ethereum)",
-        "collectionId" : "Koleksiyon Kimliği",
-        "collectionIdDesc" : "İhbar edilen NFT'nin SimpleHash koleksiyon kimliği",
-        "tokenId" : "Token Kimliği (Token ID)",
-        "tokenIdDesc" : "İhbar edilen NFT'ye ait token_id",
-        "eventType" : "Olay Türü",
-        "eventTypeDesc" : "Göndermek istediğiniz ihbarın türü",
-        "success" : "İhbar başarıyla gönderildi. Geçerlilik kazanması 5 ila 10 dakika sürebilir.",
-        "error" : "İhbar gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
-        "reportType" : {
-          "title" : "Neyi ihbar etmek istiyorsunuz?",
-          "desc" : "Göndermek istediğiniz ihbarın türünü seçin",
-          "individual" : "Tek bir NFT için spam ihbarı",
-          "contract" : "Bir sözleşme için spam ihbarı",
-          "collection" : "Bir koleksiyon için spam ihbarı"
-        }
+      "debugSimpleHash" : {
+        "debugSpamNft" : {
+          "report" : "İhbar et",
+          "contractAddress" : "Sözleşme Adresi",
+          "contractAddressDesc" : "İhbar edilen NFT'ye veya sözleşmenin kendisine ait contract_address bilgisi",
+          "chainId" : "Zincir Kimliği",
+          "chainIdDesc" : "İhbar edilen NFT'ye veya sözleşmeye ait chain_id bilgisi (ör. ethereum)",
+          "collectionId" : "Koleksiyon Kimliği",
+          "collectionIdDesc" : "İhbar edilen NFT'nin SimpleHash koleksiyon kimliği",
+          "tokenId" : "Token Kimliği (Token ID)",
+          "tokenIdDesc" : "İhbar edilen NFT'ye ait token_id",
+          "eventType" : "Olay Türü",
+          "eventTypeDesc" : "Göndermek istediğiniz ihbarın türü",
+          "success" : "İhbar başarıyla gönderildi. Geçerlilik kazanması 5 ila 10 dakika sürebilir.",
+          "error" : "İhbar gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
+          "reportType" : {
+            "title" : "Neyi ihbar etmek istiyorsunuz?",
+            "desc" : "Göndermek istediğiniz ihbarın türünü seçin",
+            "individual" : "Tek bir NFT için spam ihbarı",
+            "contract" : "Bir sözleşme için spam ihbarı",
+            "collection" : "Bir koleksiyon için spam ihbarı"
+          }
+        },
+        "debugRefreshMetadata" : {
+          "refresh" : "Yenile",
+          "contractAddress" : "Sözleşme Adresi",
+          "contractAddressDesc" : "Yenilenen NFT'ye ait contract_address bilgisi veya sözleşmenin kendisi",
+          "chainId" : "Zincir Kimliği",
+          "chainIdDesc" : "Yenilenen NFT'ye veya sözleşmeye ait chain_id bilgisi (ör. ethereum)",
+          "tokenId" : "Token Kimliği (Token ID)",
+          "tokenIdDesc" : "Yenilenen NFT'ye ait token_id",
+          "success" : "Yenileme başarıyla gönderildi. Geçerlilik kazanması 5 ila 10 dakika sürebilir.",
+          "error" : "Yenileme gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
+          "refreshType" : {
+            "desc" : "Neyi yenilemek istiyorsunuz?",
+            "nft" : "Tek bir NFT için metaverileri yenilemek",
+            "contract" : "Bir sözleşme için metaverileri yenilemek"
+          }
+        },
+        "debugCheckSpamScore" : {
+          "check" : "Şunu kontrol edin:",
+          "contractAddress" : "Sözleşme Adresi",
+          "contractAddressDesc" : "Kontrol edilen NFT'ye ait contract_address bilgisi veya sözleşmenin kendisi",
+          "chainId" : "Zincir Kimliği",
+          "chainIdDesc" : "Kontrol edilen NFT'ye veya sözleşmeye ait chain_id bilgisi (ör. ethereum)",
+          "tokenId" : "Token Kimliği (Token ID)",
+          "tokenIdDesc" : "Kontrol edilen NFT'ye ait token_id",
+          "result" : {
+            "title" : "Bu sözleşmenin spam puanı: {{score}}.",
+            "desc" : "Puan, 0 ile 100 arasında sayısal bir değer olup 0 spam değil, 100 ise muhtemelen spam addedildiği anlamına gelir.\n Yanıtın null olması, koleksiyonun puanlandırılması için yeterli bilgi bulunmadığı veya koleksiyonun henüz değerlendirilmediği anlamına gelir"
+          },
+          "error" : "Talep gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
+          "refreshType" : {
+            "desc" : "Neyi kontrol etmek istiyorsunuz?",
+            "nft" : "Tek bir NFT",
+            "contract" : "Bir sözleşme"
+          }
+        },
+        "back" : "Geri dön"
       },
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "catalogUrl" : "Katalog uygulama sağlayıcısını belirle",
       "catalogUrlDesc" : "Özel katalog sağlayıcınızın URL'sini girin",
-      "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
+      "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştir",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
       "customLockScreen" : "Özel kilitli ekran varlıkları",
       "customLockScreenDesc" : "Özel kilitli ekran grafik varlıklarında hata ayıklayın",
@@ -4171,7 +4210,7 @@
           "description" : "Europa cihazınızda ilk kurulum sonrası tüm özellikleri test edin"
         },
         "1559DeactivateGate" : {
-          "title" : "EIP1559 minimum öncelik ücreti kapısını devre dışı bırakın",
+          "title" : "EIP1559 minimum öncelik ücreti kapısını devre dışı bırak",
           "description" : "Bu, bir işlemin herhangi bir minimum öncelik ücreti beklenmeden gönderilmesini sağlar. İşlemin mempool'da sonsuza dek takılı kalmasına da yol açabilir."
         },
         "vaultSigner" : {
@@ -4187,7 +4226,7 @@
           "description" : "EIP1559 işleminin maxFeePerGas ücretini düzenleyerek taban ücret için kullanılan çarpan değerini özelleştirin"
         },
         "enableNetworkLogs" : {
-          "title" : "Ağ log'larını etkinleştirin",
+          "title" : "Ağ log'larını etkinleştir",
           "description" : "Konsolda ağ log'larını etkinleştirin (hata log'ları her zaman etkindir)"
         },
         "testWalletSync" : {
@@ -4197,9 +4236,18 @@
           "modal" : {
             "flow" : "Bir Akış seçin",
             "step" : "Bir Adım seçin",
-            "activated" : "Bir yedeklemenizin olması veya olmaması için etkinleştirin/devre dışı bırakın",
-            "instance" : "Oturumlar Oluştur",
+            "instance" : "Üye Oluştur",
             "cta" : "Uygula"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash Araçları",
+          "description" : "SimpleHash kullanan bazı faydalı araçlar sağlar",
+          "cta" : "Aç",
+          "tabs" : {
+            "spam" : "Spam İhbarı",
+            "refresh" : "Metaverileri Yenile",
+            "check" : "Spam Puanı"
           }
         }
       }
@@ -5151,6 +5199,10 @@
       "memo" : "Memo",
       "memoWarningText" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın"
     },
+    "ton" : {
+      "commentPlaceholder" : "Tercihe bağlı",
+      "comment" : "Yorum"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5562,6 +5614,9 @@
       "title" : "Kurun Süresi Doldu",
       "description" : "Kurun süresi dolduğundan takas işlemi tamamlanamadı. Lütfen kurları yenileyin ve takas işleminizi yeniden deneyin."
     },
+    "PayinExtraIdError" : {
+      "message" : "Takas için gerekli extraId eksik"
+    },
     "SwapGenericAPIError" : {
       "title" : "Bir hata oluştu",
       "description" : "Takas işlemi gerçekleştirilemedi. Lütfen tekrar deneyin veya destek ekibiyle iletişime geçin."
@@ -5696,6 +5751,9 @@
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
+    },
+    "TonCommentInvalid" : {
+      "title" : "Yorum, özel karakterler içermemeli ve 120 karakteri aşmamalıdır"
     },
     "CantScanQRCode" : {
       "title" : "Bu karekod okunamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"
@@ -6313,7 +6371,7 @@
         "description" : "Şifreleme anahtarınızı başka bir Ledger cihazıyla güvence altına alın veya silin."
       },
       "instance" : {
-        "label_one" : "1 senkronize oturum",
+        "label" : "1 senkronize oturum",
         "label_other" : "{{count}} senkronize oturum",
         "cta" : "Yönet"
       }
@@ -6326,7 +6384,9 @@
     "error" : {
       "title" : "Bir hata oluştu",
       "description" : "Lütfen daha sonra tekrar deneyin.",
-      "cta" : "Tekrar dene"
+      "cta" : "Tekrar dene",
+      "fetching" : "Verileriniz alınırken bir sorun oluştu.",
+      "ledgerSyncDown" : "Ledger Sync şu anda kullanılamıyor.<br/>Bunun varlıklarınız üzerinde hiçbir etkisi yoktur."
     },
     "unsecuredError" : {
       "title" : "Senkronizasyon bu Ledger cihazı tarafından güvence altına alınmamış durumda",
@@ -6335,18 +6395,26 @@
       "cta" : "Başka Ledger bağla",
       "ctaDelete" : "Şifreleme anahtarımı sil"
     },
+    "autoRemoveError" : {
+      "title" : "Mevcut oturumu kaldıramazsınız",
+      "description" : "Güvenlik nedeniyle şu anda kullandığınız oturumu, şifreleme anahtarını silmeden kaldıramazsınız.",
+      "info" : "Şifreleme anahtarınızı sildiğinizde cihazlarınızın senkronizasyonu kaldırılır ve tüm senkronize verileriniz silinir. Ancak bu işlem, fonlarınızı etkilemez. Hesaplarınızı istediğiniz zaman yeniden senkronize edebilirsiniz.",
+      "cta" : "Anladım",
+      "ctaDelete" : "Şifreleme anahtarımı sil"
+    },
     "success" : {
       "backup" : {
         "title" : "Başarılı",
-        "desc" : "Ledger Sync'i başarıyla etkinleştirdiniz. ",
-        "synchAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et"
+        "desc" : "Ledger Sync'i başarıyla etkinleştirdiniz."
       },
       "synch" : {
         "title" : "Senkronizasyon başarılı!",
         "desc" : "Artık hesaplarınızdaki değişiklikler otomatik olarak tüm uygulamalarda ve platformlarda görünecektir."
-      }
+      },
+      "synchAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et",
+      "close" : "Kapat"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "Anahtarınızı yönetin",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6468,10 @@
       "remove" : "Kaldır",
       "deleteInstanceSuccess" : "{{instanceName}} oturumunuz artık senkronize değil",
       "deleteInstanceError" : "{{instanceName}} oturumunun desenkronizasyonu sırasında bir sorun oluştu"
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}} üzerinde devam edin",
+      "description" : "Ledger cihazınızın Güvenilir Ekranında gösterilen talimatları izleyin."
     }
   }
 }
