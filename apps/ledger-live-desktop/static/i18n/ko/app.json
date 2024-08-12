@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "스왑",
     "tabs" : {
-      "exchange" : "교환",
+      "exchange" : "스왑",
       "history" : "내역"
     },
     "form" : {
@@ -385,6 +385,7 @@
         "title" : "트랜잭션 브로드캐스트 성공",
         "description" : "확인을 위해 귀하의 스왑 거래를 네트워크로 전송했습니다. 귀하의 스왑 작업이 확인을 위해 네트워크로 전송되었습니다. 거래가 확인되고 공급자가 귀하의 {{targetCurrency}}을 처리하고 보낼 때까지 기다려 주세요.",
         "disclaimer" : "<0><0>{{provider}}</0> 지원</0>의 도움이 필요한 경우를 대비하여 스왑 ID 번호를 기록해 두세요.",
+        "tellAboutYourExperience" : "귀하의 경험을 공유해 주세요",
         "seeDetails" : "세부사항 확인"
       }
     },
@@ -1855,7 +1856,8 @@
       "provider" : "공급자",
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
-      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다."
+      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
+      "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다."
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -1990,7 +1992,8 @@
       "updateBtn" : "펌웨어를 업데이트하세요",
       "installUpdate" : "업데이트 설치",
       "banner" : {
-        "warning" : "펌웨어 {{latestFirmware}}으로 업데이트하실 수 있습니다",
+        "warning" : "OS 업데이트 사용 가능",
+        "version" : "버전 {{latestFirmware}}",
         "cta" : "내 Ledger로 이동",
         "old" : {
           "warning" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
@@ -4001,29 +4004,65 @@
         "desc" : "거래소 공급자 정보 추가",
         "placeholder" : "CAL 형식의 거래소 공급자 정보"
       },
-      "debugSpamNft" : {
-        "debugNFTSpamReport" : "NFT 스팸 신고 허용(베타)",
-        "debugNFTSpamReportDesc" : "NFT를 스팸 신고 양식 또는 스팸 표시 중단 양식(스팸으로 표시되지 않게)을 표시하세요.",
-        "report" : "신고하기",
-        "contractAddress" : "계약 주소",
-        "contractAddressDesc" : "보고된 NFT의 contract_address 또는 계약 자체",
-        "chainId" : "체인 ID",
-        "chainIdDesc" : "보고된 NFT 또는 계약의 chain_id(예: 이더리움)",
-        "collectionId" : "컬렉션 ID",
-        "collectionIdDesc" : "보고된 NFT의 SimpleHash 컬렉션 ID",
-        "tokenId" : "토큰 ID",
-        "tokenIdDesc" : "보고된 NFT의 token_id",
-        "eventType" : "이벤트 유형",
-        "eventTypeDesc" : "작성하려는 보고서 유형",
-        "success" : "보고서가 성공적으로 전송되었습니다. 적용되는 데 5~10분 정도 걸릴 수 있습니다.",
-        "error" : "보고서를 보내는 동안 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
-        "reportType" : {
-          "title" : "무엇을 신고하시겠습니까?",
-          "desc" : "작성하려는 보고서 유형을 선택하세요.",
-          "individual" : "개별 NFT에 대한 스팸 신고",
-          "contract" : "계약에 대한 스팸 신고",
-          "collection" : "컬렉션에 대한 스팸 신고"
-        }
+      "debugSimpleHash" : {
+        "debugSpamNft" : {
+          "report" : "신고하기",
+          "contractAddress" : "계약 주소",
+          "contractAddressDesc" : "보고된 NFT의 contract_address 또는 계약 자체",
+          "chainId" : "체인 ID",
+          "chainIdDesc" : "보고된 NFT 또는 계약의 chain_id(예: 이더리움)",
+          "collectionId" : "컬렉션 ID",
+          "collectionIdDesc" : "보고된 NFT의 SimpleHash 컬렉션 ID",
+          "tokenId" : "토큰 ID",
+          "tokenIdDesc" : "보고된 NFT의 token_id",
+          "eventType" : "이벤트 유형",
+          "eventTypeDesc" : "작성하려는 보고서 유형",
+          "success" : "보고서가 성공적으로 전송되었습니다. 적용되는 데 5~10분 정도 걸릴 수 있습니다.",
+          "error" : "보고서를 보내는 동안 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
+          "reportType" : {
+            "title" : "무엇을 신고하시겠습니까?",
+            "desc" : "작성하려는 보고서 유형을 선택하세요.",
+            "individual" : "개별 NFT에 대한 스팸 신고",
+            "contract" : "계약에 대한 스팸 신고",
+            "collection" : "컬렉션에 대한 스팸 신고"
+          }
+        },
+        "debugRefreshMetadata" : {
+          "refresh" : "새로고침",
+          "contractAddress" : "계약 주소",
+          "contractAddressDesc" : "갱신된 NFT의 contract_address 또는 계약 자체",
+          "chainId" : "체인 ID",
+          "chainIdDesc" : "갱신된 NFT 또는 계약의 chain_id(예: 이더리움)",
+          "tokenId" : "토큰 ID",
+          "tokenIdDesc" : "갱신된 NFT의 token_id",
+          "success" : "갱신 내용이 성공적으로 전송되었습니다. 적용되는 데 5~10분 정도 걸릴 수 있습니다.",
+          "error" : "갱신 내용을 전송하는 중에 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
+          "refreshType" : {
+            "desc" : "무엇을 갱신하시겠습니까?",
+            "nft" : "개별 NFT에 대한 메타데이터 갱신",
+            "contract" : "계약에 대한 메타데이터 갱신"
+          }
+        },
+        "debugCheckSpamScore" : {
+          "check" : "점검",
+          "contractAddress" : "계약 주소",
+          "contractAddressDesc" : "점검된 NFT의 contract_address 또는 계약 자체",
+          "chainId" : "체인 ID",
+          "chainIdDesc" : "점검된 NFT 또는 계약의 chain_id(예: 이더리움)",
+          "tokenId" : "토큰 ID",
+          "tokenIdDesc" : "점검된 NFT의 token_id",
+          "result" : {
+            "title" : "이 계약의 스팸 점수는 {{score}}입니다.",
+            "desc" : "점수는 0부터 100까지의 숫자 값으로, 0은 스팸이 아님을 뜻하고, 100은 스팸 가능성이 있음을 뜻합니다.\n 응답이 null인 경우, 컬렉션에 점수를 매기기에 충분한 정보가 없거나, 해당 컬렉션 평가가 완료되지 않은 것입니다."
+          },
+          "error" : "요청을 보내는 동안 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
+          "refreshType" : {
+            "desc" : "무엇을 점검하시겠습니까?",
+            "nft" : "개별 NFT",
+            "contract" : "계약"
+          }
+        },
+        "back" : "돌아가기"
       },
       "experimentalApps" : "실험적 앱 허용",
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
@@ -4197,9 +4236,18 @@
           "modal" : {
             "flow" : "플로우 선택",
             "step" : "단계 선택",
-            "activated" : "백업 여부 활성화/비활성화",
-            "instance" : "인스턴스 생성",
+            "instance" : "멤버 생성",
             "cta" : "적용"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash 도구",
+          "description" : "SimpleHash를 사용해 유용한 도구 제공",
+          "cta" : "열기",
+          "tabs" : {
+            "spam" : "스팸 신고",
+            "refresh" : "메타데이터 갱신",
+            "check" : "스팸 점수"
           }
         }
       }
@@ -5151,6 +5199,10 @@
       "memo" : "메모",
       "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요"
     },
+    "ton" : {
+      "commentPlaceholder" : "선택 사항",
+      "comment" : "코멘트"
+    },
     "stellar" : {
       "memo" : "메모",
       "memoType" : {
@@ -5562,6 +5614,9 @@
       "title" : "요율 만료",
       "description" : "해당 요율이 만료되어 트랜잭션을 완료할 수 없습니다. 요율을 새로고침하고 다시 스왑해 보세요."
     },
+    "PayinExtraIdError" : {
+      "message" : "스왑에 필요한 추가 ID를 찾을 수 없습니다"
+    },
     "SwapGenericAPIError" : {
       "title" : "문제가 발생했습니다",
       "description" : "교환 트랜잭션이 완료되지 않았습니다. 다시 시도하거나 지원에 연락하세요."
@@ -5696,6 +5751,9 @@
     "SequenceNumberError" : {
       "title" : "시퀀스 번호 오류",
       "description" : "창을 닫고 나중에 다시 시도하세요"
+    },
+    "TonCommentInvalid" : {
+      "title" : "코멘트는 120자를 초과할 수 없으며, 특수문자를 사용해서는 안 됩니다."
     },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
@@ -6313,7 +6371,7 @@
         "description" : "다른 Ledger 장치를 통해 암호화 키를 보호하거나 삭제하세요."
       },
       "instance" : {
-        "label_one" : "동기화된 인스턴스 1개",
+        "label" : "동기화된 인스턴스 1개",
         "label_other" : "{{count}} 동기화된 인스턴스",
         "cta" : "관리"
       }
@@ -6326,7 +6384,9 @@
     "error" : {
       "title" : "문제가 발생했습니다",
       "description" : "나중에 다시 시도해 주세요.",
-      "cta" : "다시 시도하세요"
+      "cta" : "다시 시도하세요",
+      "fetching" : "데이터를 가져오는 중에 문제가 발생했습니다.",
+      "ledgerSyncDown" : "현재 Ledger 동기화를 사용할 수 없습니다.<br/>이는 귀하의 자산에 아무런 영향을 미치지 않습니다."
     },
     "unsecuredError" : {
       "title" : "이 Ledger 장치는 동기화를 보호하지 않습니다",
@@ -6335,18 +6395,26 @@
       "cta" : "다른 Ledger 장치 연결하기",
       "ctaDelete" : "내 암호화 키 삭제"
     },
+    "autoRemoveError" : {
+      "title" : "현재 인스턴스를 제거할 수 없습니다.",
+      "description" : "보안상의 이유로 암호화 키를 삭제하지 않으면 현재 사용 중인 인스턴스를 제거할 수 없습니다.",
+      "info" : "암호화 키를 삭제하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 그러나 이는 귀하의 자금에 영향을 미치지 않습니다. 언제든지 계정을 다시 동기화할 수 있습니다.",
+      "cta" : "이해합니다",
+      "ctaDelete" : "내 암호화 키 삭제"
+    },
     "success" : {
       "backup" : {
         "title" : "완료",
-        "desc" : "Ledger 동기화를 성공적으로 활성화했습니다. ",
-        "synchAnother" : "다른 Ledger Live 앱과 동기화"
+        "desc" : "Ledger 동기화를 성공적으로 활성화했습니다."
       },
       "synch" : {
         "title" : "동기화 성공!",
         "desc" : "이제 계정 변경사항이 모든 앱과 플랫폼에 자동으로 표시됩니다."
-      }
+      },
+      "synchAnother" : "다른 Ledger Live 앱과 동기화",
+      "close" : "닫기"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "키 관리",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6468,10 @@
       "remove" : "제거",
       "deleteInstanceSuccess" : "귀하의 {{instanceName}} 동기화가 중단되었습니다",
       "deleteInstanceError" : "{{instanceName}} 장치에 동기화 해제 관련 문제가 발생했습니다"
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}}에서 계속하세요",
+      "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
     }
   }
 }
