@@ -87,6 +87,49 @@ export const mockXpubPubKey = {
     },
   ],
 };
+
+export const mockSigner: BitcoinSigner = {
+  getWalletXpub: (_arg: { path: string; xpubVersion: number }): Promise<BitcoinXPub> =>
+    Promise.resolve(""),
+  getWalletPublicKey: (
+    _path: string,
+    _opts?: {
+      verify?: boolean;
+      format?: AddressFormat;
+    },
+  ): Promise<BitcoinAddress> => {
+    return Promise.resolve(
+      {
+        publicKey: "",
+        bitcoinAddress: "",
+        chainCode: "",
+      },
+    );
+  },
+  signMessage: (_path: string, _messageHex: string): Promise<BitcoinSignature> =>
+    Promise.resolve({
+      v: 0,
+      r: "123",
+      s: "456",
+    }),
+  splitTransaction: (
+    _transactionHex: string,
+    _isSegwitSupported: boolean | null | undefined,
+    _hasExtraData: boolean | null | undefined,
+    _additionals: Array<string> | null | undefined,
+  ): SignerTransaction => ({
+    version: Buffer.from(""),
+    inputs: [
+      {
+        prevout: Buffer.from(""),
+        script: Buffer.from(""),
+        sequence: Buffer.from(""),
+      },
+    ],
+  }),
+  createPaymentTransaction: (_arg: CreateTransaction): Promise<string> => Promise.resolve("createPaymentTransactionReturn"),
+}
+
 export const mockSignerContext = <T>(
   _deviceId: string,
   _crypto: CryptoCurrency,
