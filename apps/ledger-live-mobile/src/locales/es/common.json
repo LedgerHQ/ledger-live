@@ -927,8 +927,16 @@
       "title" : "Error de número de secuencia",
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
     },
+    "TonCommentInvalid" : {
+      "title" : "El comentario no debe superar los 120 caracteres y no debe incluir caracteres especiales"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "Permuta no disponible: es necesario un envío o delegación inicial con la cuenta de Tezos o el cambio de par."
+    },
+    "CustomError" : {
+      "title" : "Inténtalo de nuevo.",
+      "description" : "El servidor no ha podido gestionar tu solicitud. Inténtalo de nuevo o contacta al Soporte de Ledger.",
+      "errorCode" : "Código: {{errorCode}}"
     }
   },
   "crash" : {
@@ -3647,6 +3655,8 @@
         "value" : "Valor de Memo"
       },
       "validateMemo" : "Validar Memo",
+      "comment" : "Comentario",
+      "validateComment" : "Validar comentario",
       "quantity" : "Cantidad"
     },
     "validation" : {
@@ -4085,7 +4095,7 @@
       "addALedger" : "Agregar un Ledger",
       "addWithBluetooth" : "Agregar con Bluetooth",
       "addNewCTA" : "Agregar nueva",
-      "showAllCTA" : "Mostrar todos los {{count}} Ledgers",
+      "showAllCTA" : "Mostrar todos los {{count}} Ledger",
       "showLessCTA" : "Mostrar menos",
       "otgBanner" : "Para usar un Ledger Nano S o Ledger Nano S Plus, conéctalo con el cable USB.",
       "connectExistingLedger" : "Conectar un Ledger existente",
@@ -6382,7 +6392,7 @@
   },
   "customImage" : {
     "title" : "Imagen de pantalla de bloqueo",
-    "replace" : "Sustituir",
+    "change" : "Cambiar",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Elegir de la galería de imágenes",
@@ -6406,6 +6416,8 @@
     },
     "confirmCrop" : "Confirmar recorte",
     "confirmContrast" : "Confirmar contraste",
+    "keepOnDevice" : "Conservar",
+    "discardOnDevice" : "Descartar",
     "nftEntryPointButtonLabel" : "Definir como imagen de pantalla de bloqueo",
     "customImage" : "Imagen personalizada",
     "doThisLater" : "Quizás más tarde",
@@ -6685,12 +6697,112 @@
     }
   },
   "walletSync" : {
+    "title" : "Ledger Sync",
     "activation" : {
       "screen" : {
         "title" : "Sincroniza tus cuentas en todas las plataformas",
         "description" : "Tu Ledger generará una clave de cifrado, para garantizar la privacidad de tus datos, que solo tú podrás recuperar.",
         "mainCta" : "Sincroniza tus cuentas",
         "secondCta" : "¿Ya has creado una clave?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "Elige el dispositivo Ledger que vas a usar para proteger tu copia de respaldo",
+      "description" : "Para recuperar tu copia de respaldo, sólo tienes que conectar tu Ledger a las aplicaciones Ledger Live Mobile y Desktop."
+    },
+    "deviceAction" : {
+      "title" : "Continúa en tu Ledger {{wording}}",
+      "description" : "Sigue las instrucciones que aparecen en la pantalla confiable de tu Ledger."
+    },
+    "success" : {
+      "sync" : "Sincronización correcta",
+      "syncDesc" : "Ahora, los cambios de tus cuentas aparecerán automáticamente en todas las aplicaciones y plataformas.",
+      "activation" : "¡Completado!",
+      "activationDesc" : "Has activado correctamente Ledger Sync.",
+      "syncAnother" : "Sincronizar con otra aplicación Ledger Live",
+      "close" : "Cerrar"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "Sincronizar",
+        "description" : "Sincroniza los datos de tu aplicación con otra aplicación Ledger Live para disfrutar de una experiencia sin fisuras. "
+      },
+      "manageKey" : {
+        "title" : "Administra la clave",
+        "description" : "Protege o elimina tu clave de cifrado con otro Ledger.",
+        "success" : "Se ha anulado la sincronización de tus dispositivos y se ha eliminado tu clave",
+        "drawer" : {
+          "step1" : {
+            "title" : "Administra tu clave",
+            "titleCta" : "Eliminar tu clave",
+            "descCta" : "Se eliminarán todos tus datos sincronizados."
+          },
+          "step2" : {
+            "delete" : "Borrar",
+            "cancel" : "Cancelar",
+            "title" : "¿Seguro que quieres eliminar tu clave de cifrado?",
+            "desc" : "Si haces clic en Eliminar, se anulará la sincronización de tus dispositivos y se eliminarán todos los datos sincronizados. Esta acción no afecta a tus fondos. Puedes volver a sincronizar tus cuentas en cualquier momento."
+          }
+        }
+      },
+      "manageInstances" : {
+        "title" : "Gestionar instancias sincronizadas",
+        "remove" : "Eliminar"
+      },
+      "synchronizedInstances" : {
+        "cta" : "Gestionar ahora",
+        "title" : "{{count}} instancia sincronizada",
+        "title_plural" : "{{count}} instancias sincronizadas",
+        "error" : "Instancias",
+        "unsecuredError" : {
+          "title" : "Este Ledger no protege la sincronización",
+          "description" : "Conecta el dispositivo Ledger utilizado para crear tu clave de cifrado.",
+          "info" : "Si has perdido tu Ledger, no te preocupes. Puedes eliminar tu clave de todos modos. Esta acción eliminará tus datos y, simultáneamente, anulará la sincronización de todas las instancias sincronizadas.",
+          "cta" : "Conectar otro Ledger",
+          "ctaDelete" : "Eliminar mi clave de cifrado"
+        },
+        "autoRemoveError" : {
+          "title" : "No puedes quitar la instancia actual",
+          "description" : "Por motivos de seguridad, no puedes quitar la instancia que estás usando sin eliminar tu clave de cifrado.",
+          "info" : "Si eliminas tu clave de cifrado, tus dispositivos dejarán de estar sincronizados y se eliminarán todos los datos sincronizados. Sin embargo, esto no afecta a tus fondos. Puedes volver a sincronizar tus cuentas en cualquier momento.",
+          "cta" : "Entiendo",
+          "ctaDelete" : "Eliminar mi clave de cifrado"
+        },
+        "success" : "Tu {{member}} ya no está sincronizado"
+      },
+      "errors" : {
+        "fetching" : "Se ha producido un error al recuperar tus instancias sincronizadas.",
+        "trustchain" : "Unexpected falsy trustchain",
+        "memberCredentials" : "Unexpected falsy member credentials",
+        "ledgerSyncUnavailable" : "Ledger Sync no está disponible en este momento. Esto no afecta de ninguna manera a tus activos."
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Elige tu método de sincronización",
+        "scan" : {
+          "title" : "Escanear un código QR"
+        },
+        "connectDevice" : {
+          "title" : "Usa tu Ledger"
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "disclaimer" : {
+      "clearSigningEnabled" : "Firma visible activada",
+      "checkbox" : "No recordarme de nuevo.",
+      "CTA" : "Abrir {{app}}"
+    },
+    "manifestsList" : {
+      "title" : "Explorar",
+      "description" : "Descubre lo mejor de la web3 seleccionado por Ledger"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Explora la web3",
+        "placeholder" : "Busca o escribe una URL"
       }
     }
   }

@@ -927,8 +927,16 @@
       "title" : "シーケンス番号エラー",
       "description" : "ウィンドウを閉じて、後でもう一度お試しください"
     },
+    "TonCommentInvalid" : {
+      "title" : "コメントは特殊文字を除いて、120文字を超えてはなりません"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "スワップ利用不可：Tezosアカウントで最初の送付/デリゲートを行うか、ペアを変更する必要があります。"
+    },
+    "CustomError" : {
+      "title" : "再試行してください。",
+      "description" : "サーバーはリクエストを処理できませんでした。再試行するか、Ledgerサポートにお問い合わせください。",
+      "errorCode" : "コード：{{errorCode}}"
     }
   },
   "crash" : {
@@ -3647,6 +3655,8 @@
         "value" : "メモの値"
       },
       "validateMemo" : "メモの確認",
+      "comment" : "コメント",
+      "validateComment" : "コメントを検証する",
       "quantity" : "数量"
     },
     "validation" : {
@@ -6382,7 +6392,7 @@
   },
   "customImage" : {
     "title" : "画面写真をロック",
-    "replace" : "置き換える",
+    "change" : "変更",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "画像ギャラリーから選択",
@@ -6406,6 +6416,8 @@
     },
     "confirmCrop" : "トリミングを確定",
     "confirmContrast" : "コントラストを確定",
+    "keepOnDevice" : "保持",
+    "discardOnDevice" : "破棄",
     "nftEntryPointButtonLabel" : "ロック画面画像を設定する",
     "customImage" : "画像をカスタマイズ",
     "doThisLater" : "後で",
@@ -6685,12 +6697,112 @@
     }
   },
   "walletSync" : {
+    "title" : "Ledger同期",
     "activation" : {
       "screen" : {
         "title" : "すべてのプラットフォーム間でアカウントを同期",
         "description" : "Ledgerは暗号化キーを生成してデータのプライバシーを確保し、あなただけが取得可能にします。",
         "mainCta" : "アカウントを同期する",
         "secondCta" : "キーを作成済みですか？"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "バックアップの保護に使用するLedgerデバイスを選択",
+      "description" : "LedgerをLedger Liveモバイル＆デスクトップアプリに接続するだけで、バックアップを取得できます。"
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}}で続ける",
+      "description" : "Ledgerの信頼できるディスプレイに表示される指示に従ってください。"
+    },
+    "success" : {
+      "sync" : "同期成功！",
+      "syncDesc" : "アカウントの変更が、すべてのアプリとプラットフォームに自動的に反映されるようになります。",
+      "activation" : "成功！",
+      "activationDesc" : "Ledger Syncが正常に有効になりました。",
+      "syncAnother" : "別のLedger Liveアプリと同期する",
+      "close" : "閉じる"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "同期する",
+        "description" : "アプリのデータを別のLedger Liveアプリと同期して、シームレスな体験を実現します。 "
+      },
+      "manageKey" : {
+        "title" : "キーの管理",
+        "description" : "別のLedgerを使用して暗号化キーを保護または削除する。",
+        "success" : "デバイスの同期が解除され、キーが削除されました",
+        "drawer" : {
+          "step1" : {
+            "title" : "キーの管理",
+            "titleCta" : "鍵を削除",
+            "descCta" : "同期されたデータはすべて削除されます。"
+          },
+          "step2" : {
+            "delete" : "削除",
+            "cancel" : "キャンセル",
+            "title" : "本当に暗号化キーを削除してもよろしいですか？",
+            "desc" : "「削除」をクリックすると、デバイスの同期が解除され、同期されたデータがすべて削除されます。この操作を実行しても資金には影響しませんので、ご安心ください。アカウントはいつでも再同期できます。"
+          }
+        }
+      },
+      "manageInstances" : {
+        "title" : "同期されたインスタンスの管理",
+        "remove" : "削除"
+      },
+      "synchronizedInstances" : {
+        "cta" : "今すぐ管理",
+        "title" : "{{count}}個の同期されたインスタンス",
+        "title_plural" : "{{count}}個の同期されたインスタンス",
+        "error" : "インスタンス",
+        "unsecuredError" : {
+          "title" : "同期はこのLedgerによって保護されていません",
+          "description" : "暗号化キーの作成に使用されたLedgerデバイスを接続してください。",
+          "info" : "Ledgerを紛失しても、心配いりません。その場合でも、キーは削除できます。この操作により同時にデータを削除し、現在同期されているすべてのインスタンスの同期を解除します。",
+          "cta" : "別のLedgerを接続する",
+          "ctaDelete" : "暗号化キーを削除する"
+        },
+        "autoRemoveError" : {
+          "title" : "現在のインスタンスは削除できません",
+          "description" : "セキュリティ上の理由から、暗号化キーを削除せずに現在使用しているインスタンスを削除することはできません。",
+          "info" : "暗号化キーを削除するとデバイスの同期が解除され、同期されたデータはすべて削除されます。ただし、これはお客様の資金には影響しません。アカウントはいつでも再同期できます。",
+          "cta" : "わかりました",
+          "ctaDelete" : "暗号化キーを削除する"
+        },
+        "success" : "{{member}}の同期は解除されています"
+      },
+      "errors" : {
+        "fetching" : "同期されたインスタンスを取得中に問題が発生しました。",
+        "trustchain" : "予期しない偽のトラストチェーン",
+        "memberCredentials" : "予期しない偽のメンバー認証情報",
+        "ledgerSyncUnavailable" : "Ledger Syncは現在利用できません。これはお客様の資産には影響しません。"
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "同期方法を選択",
+        "scan" : {
+          "title" : "QRコードをスキャン"
+        },
+        "connectDevice" : {
+          "title" : "Ledgerを使用"
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "disclaimer" : {
+      "clearSigningEnabled" : "クリア署名有効",
+      "checkbox" : "今後、このメッセージを表示しない。",
+      "CTA" : "{{app}}を開く"
+    },
+    "manifestsList" : {
+      "title" : "探索",
+      "description" : "Ledgerが厳選するWeb3の世界をチェック"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Web3を探索",
+        "placeholder" : "検索またはURLを入力"
       }
     }
   }
