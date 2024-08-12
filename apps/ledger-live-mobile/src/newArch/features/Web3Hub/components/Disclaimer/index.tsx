@@ -25,6 +25,10 @@ export default function Disclaimer({
       : undefined;
   }, [locale, manifest?.content.description]);
 
+  const clearSigningEnabled = useMemo(() => {
+    return manifest?.categories.includes("clear signing");
+  }, [manifest?.categories]);
+
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       {manifest ? (
@@ -43,7 +47,7 @@ export default function Disclaimer({
 
       <Box mt={6} height="1px" width="100%" backgroundColor={"translucentGrey"} />
 
-      {manifest?.categories.includes("clear signing") && (
+      {clearSigningEnabled && (
         <Flex mt={6} flexDirection={"row"} alignItems={"center"}>
           <Box mr={2}>
             <Icons.Eye color={"smoke"} />

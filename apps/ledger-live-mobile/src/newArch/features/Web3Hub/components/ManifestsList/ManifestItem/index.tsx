@@ -7,14 +7,9 @@ import { AppBranch, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import type { MainProps, SearchProps } from "LLM/features/Web3Hub/types";
 import AppIcon from "LLM/features/Web3Hub/components/AppIcon";
 import { Theme } from "~/colors";
+import Label from "./Label";
 
 export type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
-type ItemStyle = {
-  color: string;
-  badgeColor: string;
-  borderColor: string;
-  backgroundColor: string;
-};
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {
@@ -51,7 +46,6 @@ function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
       };
   }
 }
-
 export default function ManifestItem({
   manifest,
   onPress,
@@ -75,31 +69,6 @@ export default function ManifestItem({
     [colors, manifest.branch],
   );
 
-  const label = (text: string, style: Omit<ItemStyle, "color">) => {
-    const { badgeColor, borderColor, backgroundColor } = style;
-    return (
-      <Text
-        fontSize="9px"
-        width="auto"
-        paddingX={2}
-        paddingY={1}
-        borderWidth={1}
-        borderRadius={3}
-        borderStyle={"solid"}
-        flexGrow={0}
-        flexShrink={0}
-        overflow={"hidden"}
-        textTransform="uppercase"
-        color={badgeColor}
-        borderColor={borderColor}
-        backgroundColor={backgroundColor}
-        fontWeight="semiBold"
-      >
-        {text}
-      </Text>
-    );
-  };
-
   const url = useMemo(() => {
     return new URL(manifest.url).origin;
   }, [manifest.url]);
@@ -108,6 +77,10 @@ export default function ManifestItem({
     // RN tries to load file locally if there is a space in front of the file url
     return manifest.icon?.trim();
   }, [manifest.icon]);
+
+  const clearSigningEnabled = useMemo(() => {
+    return manifest?.categories.includes("clear signing");
+  }, [manifest?.categories]);
 
   return (
     <TouchableOpacity disabled={isDisabled} onPress={handlePress}>
@@ -119,24 +92,27 @@ export default function ManifestItem({
               {manifest.name}
             </Text>
             <Flex flexDirection="row" alignItems={"center"} columnGap={4}>
-              {manifest.branch !== "stable" &&
-                label(
-                  t(`platform.catalog.branch.${manifest.branch}`, {
+              {manifest.branch !== "stable" && (
+                <Label
+                  text={t(`platform.catalog.branch.${manifest.branch}`, {
                     defaultValue: manifest.branch,
-                  }),
-                  { badgeColor, borderColor, backgroundColor },
-                )}
-              {manifest.categories.includes("clear signing") &&
-                label(
-                  t(`web3hub.manifestsList.section.clearSigning`, {
+                  })}
+                  style={{ badgeColor, borderColor, backgroundColor }}
+                />
+              )}
+
+              {clearSigningEnabled && (
+                <Label
+                  text={t(`web3hub.manifestsList.section.clearSigning`, {
                     defaultValue: "Clear Signing",
-                  }),
-                  {
+                  })}
+                  style={{
                     badgeColor: colors.live,
                     borderColor: colors.live,
                     backgroundColor: "transparent",
-                  },
-                )}
+                  }}
+                />
+              )}
             </Flex>
           </Flex>
 
