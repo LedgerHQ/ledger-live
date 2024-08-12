@@ -1,5 +1,13 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { ICrypto } from "../../crypto/types";
+import { DerivationMode } from "@ledgerhq/types-live";
+
+import { Account } from "../../account";
+import Xpub from "../../xpub";
+import BitcoinLikeStorage from "../../storage";
+import BitcoinLikeExplorer from "../../explorer";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { IStorage } from "../../storage/types";
 
 export const mockCrypto = {
   getAddress: jest.fn(),
@@ -35,3 +43,46 @@ export const mockCryptoCurrency = {
   color: "#FF0000",
   managerAppName: "Bitcoin",
 } as CryptoCurrency;
+
+export const getMockAccount = (derivationMode: string) => {
+  const bitcoinCryptoCurrency = getCryptoCurrencyById("bitcoin");
+  const mockStorage = new BitcoinLikeStorage();
+
+  return {
+    params: {
+      xpub: "test-xpub",
+      path: "test-path",
+      index: 0,
+      currency: "bitcoin",
+      network: "mainnet",
+      derivationMode,
+    },
+    xpub: new Xpub({
+      storage: mockStorage,
+      explorer: new BitcoinLikeExplorer({ cryptoCurrency: bitcoinCryptoCurrency }),
+      crypto: mockCrypto,
+      xpub: "test-xpub",
+      derivationMode,
+    }),
+  } as Account;
+};
+
+
+export const mockStorage = {
+  addAddress: jest.fn(),
+  hasPendingTx: jest.fn().mockReturnValue(false),
+  removePendingTxs: jest.fn(),
+  appendTxs: jest.fn(),
+  hasTx: jest.fn().mockReturnValue(true),
+  getUniquesAddresses: jest.fn(),
+  getAddressUnspentUtxos: jest.fn().mockReturnValue([]),
+  getTx: jest.fn(),
+  getLastConfirmedTxBlock: jest.fn(),
+  removeTxs: jest.fn(),
+  getHighestBlockHeightAndHash: jest.fn(),
+  getLastUnconfirmedTx: jest.fn(),
+  export: jest.fn(),
+  load: jest.fn(),
+  exportSync: jest.fn(),
+  loadSync: jest.fn(),
+} as unknown as jest.Mocked<IStorage>;

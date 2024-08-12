@@ -1,14 +1,15 @@
+import BigNumber from "bignumber.js";
+
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+
 import BitcoinLikeWallet from "../wallet";
 import { Account } from "../account";
 import Xpub from "../xpub";
-import BitcoinLikeStorage from "../storage";
-import BitcoinLikeExplorer from "../explorer";
 import { PickingStrategy } from "../pickingstrategies/types";
-import BigNumber from "bignumber.js";
 import { TX, Address, Output } from "../storage/types";
 import { DerivationModes, TransactionInfo } from "../types";
-import { mockCrypto } from "./fixtures/common.fixtures";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+
+import { getMockAccount } from "./fixtures/common.fixtures";
 import { mockSigner } from "../../__tests__/fixtures/common.fixtures";
 
 jest.mock("../explorer");
@@ -16,7 +17,6 @@ jest.mock("../crypto/factory");
 
 const DERIVATION_MODE = DerivationModes.TAPROOT;
 
-const mockStorage = new BitcoinLikeStorage();
 const bitcoinCryptoCurrency = getCryptoCurrencyById("bitcoin");
 
 describe("BitcoinLikeWallet", () => {
@@ -25,25 +25,7 @@ describe("BitcoinLikeWallet", () => {
 
   beforeEach(() => {
     wallet = new BitcoinLikeWallet();
-
-    mockAccount = {
-      params: {
-        xpub: "test-xpub",
-        path: "test-path",
-        index: 0,
-        currency: "bitcoin",
-        network: "mainnet",
-        derivationMode: DERIVATION_MODE,
-      },
-
-      xpub: new Xpub({
-        storage: mockStorage,
-        explorer: new BitcoinLikeExplorer({ cryptoCurrency: bitcoinCryptoCurrency }),
-        crypto: mockCrypto,
-        xpub: "test-xpub",
-        derivationMode: DERIVATION_MODE,
-      }),
-    } as Account;
+    mockAccount = getMockAccount(DERIVATION_MODE);
   });
 
   afterEach(() => {

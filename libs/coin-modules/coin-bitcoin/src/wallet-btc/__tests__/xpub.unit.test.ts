@@ -1,48 +1,25 @@
-import Xpub from "../xpub";
 import { BigNumber } from "bignumber.js";
-import { IStorage, Output } from "../storage/types";
-import { IExplorer } from "../explorer/types";
+
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+
+import Xpub from "../xpub";
+import { Output } from "../storage/types";
 import { DerivationModes } from "../types";
-import { mockCrypto } from "./fixtures/common.fixtures";
+import BitcoinLikeExplorer from "../explorer";
+
+import { mockCrypto, mockStorage } from "./fixtures/common.fixtures";
 
 jest.mock("../utils", () => ({
   ...jest.requireActual("../utils"),
-  computeDustAmount: jest.fn().mockReturnValue(50), //new BigNumber(50)),
+  computeDustAmount: jest.fn().mockReturnValue(50),
 }));
 
-const mockStorage = {
-  addAddress: jest.fn(),
-  hasPendingTx: jest.fn().mockReturnValue(false),
-  removePendingTxs: jest.fn(),
-  appendTxs: jest.fn(),
-  hasTx: jest.fn().mockReturnValue(true),
-  getUniquesAddresses: jest.fn(),
-  getAddressUnspentUtxos: jest.fn().mockReturnValue([]),
-  getTx: jest.fn(),
-  getLastConfirmedTxBlock: jest.fn(),
-  removeTxs: jest.fn(),
-  getHighestBlockHeightAndHash: jest.fn(),
-  getLastUnconfirmedTx: jest.fn(),
-  export: jest.fn(),
-  load: jest.fn(),
-  exportSync: jest.fn(),
-  loadSync: jest.fn(),
-} as unknown as jest.Mocked<IStorage>;
-
-const mockExplorer = {
-  baseUrl: "mockBaseUrl",
-  getFees: jest.fn(),
-  getCurrentBlock: jest.fn(),
-  getPendings: jest.fn(),
-  getBlockByHeight: jest.fn(),
-  getTxHex: jest.fn(),
-  broadcast: jest.fn(),
-  getTxsSinceBlockheight: jest.fn().mockReturnValue({ txs: [], nextPageToken: null }),
-} as unknown as jest.Mocked<IExplorer>;
 
 describe("Xpub", () => {
   let xpub: Xpub;
   const DERIVATION_MODE = DerivationModes.TAPROOT;
+  const bitcoinCryptoCurrency = getCryptoCurrencyById("bitcoin");
+  const mockExplorer = new BitcoinLikeExplorer({ cryptoCurrency: bitcoinCryptoCurrency })
 
   beforeEach(() => {
     xpub = new Xpub({
@@ -50,14 +27,8 @@ describe("Xpub", () => {
       explorer: mockExplorer,
       crypto: mockCrypto,
       xpub: "test-xpub",
-      derivationMode: DERIVATION_MODE, //'mockMode',
+      derivationMode: DERIVATION_MODE,
     });
-    // xpubInstance = new Xpub({
-    //   storage: storageMock,
-    //   explorer: explorerMock,
-    //   crypto: cryptoMock,
-    //   xpub: 'mockXpub',
-    // });
   });
 
   afterEach(() => {
