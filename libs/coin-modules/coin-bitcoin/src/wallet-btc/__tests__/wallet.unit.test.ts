@@ -9,7 +9,7 @@ import { TX, Address, Output } from "../storage/types";
 import { DerivationModes, TransactionInfo } from "../types";
 import { mockCrypto } from "./fixtures/common.fixtures";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { createFixtureAccount, mockSigner, mockSignerContext } from "../../__tests__/fixtures/common.fixtures";
+import { mockSigner } from "../../__tests__/fixtures/common.fixtures";
 
 jest.mock("../explorer");
 jest.mock("../crypto/factory");
@@ -38,7 +38,7 @@ describe("BitcoinLikeWallet", () => {
 
       xpub: new Xpub({
         storage: mockStorage,
-        explorer: new BitcoinLikeExplorer({ cryptoCurrency: bitcoinCryptoCurrency}),
+        explorer: new BitcoinLikeExplorer({ cryptoCurrency: bitcoinCryptoCurrency }),
         crypto: mockCrypto,
         xpub: "test-xpub",
         derivationMode: DERIVATION_MODE,
@@ -224,58 +224,15 @@ describe("BitcoinLikeWallet", () => {
     });
     expect(transactionInfo).toEqual(txInfo);
   });
-  
-  /*
-  it('should call the sign method of the BitcoinSigner with the correct parameters', async () => {
-    const mockSign = jest.fn().mockResolvedValue('mockSignature');
-    // BitcoinSigner.mockImplementation(() => ({
-    //   sign: mockSign,
-    // }));
 
-    const btc = new BitcoinSigner();
-    const fromAccount = new Account();
-    const txInfo = new TransactionInfo();
-
-    // const wallet = new Wallet();V
-    await wallet.signAccountTx({
-      btc,
-      fromAccount,
-      txInfo,
-      lockTime: 0,
-      sigHashType: 1,
-      segwit: true,
-      additionals: [],
-      expiryHeight: Buffer.from([0]),
-      hasExtraData: false,
-      onDeviceSignatureRequested: jest.fn(),
-      onDeviceSignatureGranted: jest.fn(),
-      onDeviceStreaming: jest.fn(),
-    });
-
-    expect(mockSign).toHaveBeenCalledWith({
-      account: fromAccount,
-      transaction: txInfo,
-      lockTime: 0,
-      sigHashType: 1,
-      segwit: true,
-      additionals: [],
-      expiryHeight: Buffer.from([0]),
-      hasExtraData: false,
-      onDeviceSignatureRequested: expect.any(Function),
-      onDeviceSignatureGranted: expect.any(Function),
-      onDeviceStreaming: expect.any(Function),
-    });
-  });
-  */
-
-  it('should return the signature', async () => {
-  const txInfo = {
-    inputs: [],
-    outputs: [],
-    fee: 0,
-    associatedDerivations: [],
-    changeAddress: { address: "change-address", account: 1, index: 1 },
-  } as TransactionInfo;
+  it("should return the signature", async () => {
+    const txInfo = {
+      inputs: [],
+      outputs: [],
+      fee: 0,
+      associatedDerivations: [],
+      changeAddress: { address: "change-address", account: 1, index: 1 },
+    } as TransactionInfo;
 
     const signature = await wallet.signAccountTx({
       btc: mockSigner,
@@ -283,6 +240,6 @@ describe("BitcoinLikeWallet", () => {
       txInfo,
     });
 
-    expect(signature).toBe('createPaymentTransactionReturn');
+    expect(signature).toBe("createPaymentTransactionReturn");
   });
 });
