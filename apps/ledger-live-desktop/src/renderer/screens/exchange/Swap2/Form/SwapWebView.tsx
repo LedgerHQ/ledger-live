@@ -488,7 +488,7 @@ const SwapWebView = ({
 
   useEffect(() => {
     // Determine the new quote state based on network status
-    setQuoteState({
+    setQuoteState?.({
       amountTo: undefined,
       counterValue: undefined,
       ...{
