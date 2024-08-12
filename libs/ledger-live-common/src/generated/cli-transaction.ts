@@ -17,13 +17,11 @@ import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as tron } from "../families/tron/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
 import { cliTools as icon } from "../families/icon/setup";
-import { cliTools as elrond } from "../families/elrond/setup";
 
 export default {
   celo,
   cosmos,
   crypto_org,
-  elrond,
   filecoin,
   hedera,
   stacks,

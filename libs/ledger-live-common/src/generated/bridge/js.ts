@@ -19,14 +19,12 @@ import { bridge as tezos } from "../../families/tezos/setup";
 import { bridge as tron } from "../../families/tron/setup";
 import { bridge as xrp } from "../../families/xrp/setup";
 import { bridge as icon } from "../../families/icon/setup";
-import { bridge as elrond } from "../../families/elrond/setup";
 
 export default {
   casper,
   celo,
   cosmos,
   crypto_org,
-  elrond,
   filecoin,
   hedera,
   internet_computer,

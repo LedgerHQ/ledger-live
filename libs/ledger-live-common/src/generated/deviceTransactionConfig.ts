@@ -18,14 +18,12 @@ import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";
 import tron from "@ledgerhq/coin-tron/deviceTransactionConfig";
 import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
-import elrond from "@ledgerhq/coin-multiversx/deviceTransactionConfig";
 
 export default {
   casper,
   celo,
   cosmos,
   crypto_org,
-  elrond,
   filecoin,
   hedera,
   internet_computer,
