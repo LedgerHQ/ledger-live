@@ -1,8 +1,8 @@
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { BitcoinAccount, BitcoinResources, NetworkInfoRaw } from "../../types";
 import BigNumber from "bignumber.js";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BitcoinAccount, BitcoinResources, NetworkInfoRaw } from "../../types";
 import {
   AddressFormat,
   BitcoinAddress,
