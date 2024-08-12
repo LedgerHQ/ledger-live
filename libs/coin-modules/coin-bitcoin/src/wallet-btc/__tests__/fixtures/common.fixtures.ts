@@ -67,7 +67,6 @@ export const getMockAccount = (derivationMode: string) => {
   } as Account;
 };
 
-
 export const mockStorage = {
   addAddress: jest.fn(),
   hasPendingTx: jest.fn().mockReturnValue(false),

@@ -98,13 +98,11 @@ export const mockSigner: BitcoinSigner = {
       format?: AddressFormat;
     },
   ): Promise<BitcoinAddress> => {
-    return Promise.resolve(
-      {
-        publicKey: "",
-        bitcoinAddress: "",
-        chainCode: "",
-      },
-    );
+    return Promise.resolve({
+      publicKey: "",
+      bitcoinAddress: "",
+      chainCode: "",
+    });
   },
   signMessage: (_path: string, _messageHex: string): Promise<BitcoinSignature> =>
     Promise.resolve({
@@ -127,8 +125,9 @@ export const mockSigner: BitcoinSigner = {
       },
     ],
   }),
-  createPaymentTransaction: (_arg: CreateTransaction): Promise<string> => Promise.resolve("createPaymentTransactionReturn"),
-}
+  createPaymentTransaction: (_arg: CreateTransaction): Promise<string> =>
+    Promise.resolve("createPaymentTransactionReturn"),
+};
 
 export const mockSignerContext = <T>(
   _deviceId: string,
@@ -145,13 +144,11 @@ export const mockSignerContext = <T>(
         format?: AddressFormat;
       },
     ): Promise<BitcoinAddress> => {
-      return Promise.resolve(
-        {
-          publicKey: "",
-          bitcoinAddress: "",
-          chainCode: "",
-        },
-      );
+      return Promise.resolve({
+        publicKey: "",
+        bitcoinAddress: "",
+        chainCode: "",
+      });
     },
     signMessage: (_path: string, _messageHex: string): Promise<BitcoinSignature> =>
       Promise.resolve({

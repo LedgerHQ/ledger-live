@@ -14,12 +14,11 @@ jest.mock("../utils", () => ({
   computeDustAmount: jest.fn().mockReturnValue(50),
 }));
 
-
 describe("Xpub", () => {
   let xpub: Xpub;
   const DERIVATION_MODE = DerivationModes.TAPROOT;
   const bitcoinCryptoCurrency = getCryptoCurrencyById("bitcoin");
-  const mockExplorer = new BitcoinLikeExplorer({ cryptoCurrency: bitcoinCryptoCurrency })
+  const mockExplorer = new BitcoinLikeExplorer({ cryptoCurrency: bitcoinCryptoCurrency });
 
   beforeEach(() => {
     xpub = new Xpub({
