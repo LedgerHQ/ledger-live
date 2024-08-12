@@ -1,12 +1,11 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { ICrypto } from "../../crypto/types";
-import { DerivationMode } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 import { Account } from "../../account";
+import { ICrypto } from "../../crypto/types";
 import Xpub from "../../xpub";
 import BitcoinLikeStorage from "../../storage";
 import BitcoinLikeExplorer from "../../explorer";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { IStorage } from "../../storage/types";
 
 export const mockCrypto = {

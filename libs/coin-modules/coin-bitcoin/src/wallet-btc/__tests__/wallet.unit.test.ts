@@ -107,7 +107,6 @@ describe("BitcoinLikeWallet", () => {
 
   test("estimateAccountMaxSpendable", async () => {
     const addresses = [{ address: "address1", account: 0, index: 0 }] as Address[];
-    const changeAddresses = ["address2"];
     const utxos = [
       {
         value: "500",

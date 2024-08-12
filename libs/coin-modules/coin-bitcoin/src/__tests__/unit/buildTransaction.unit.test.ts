@@ -65,6 +65,7 @@ describe("buildTransaction", () => {
 
     const res = await buildTransaction(mockAccount, transaction);
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     expect(require("../../wallet-btc").getWalletAccount).toHaveBeenCalledWith(mockAccount);
     expect(res).toEqual(txInfo);
   });
