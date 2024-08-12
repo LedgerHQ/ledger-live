@@ -6834,14 +6834,16 @@
     }
   },
   "web3hub": {
-    "disclaimer": {
-      "clearSigningEnabled": "Clear signing enabled",
-      "checkbox": "Do not remind me again.",
-      "CTA": "Open {{app}}"
-    },
-    "manifestsList": {
-      "title": "Explore",
-      "description": "Discover the best of web3 curated by Ledger"
+    "components": {
+      "disclaimer": {
+        "clearSigningEnabled": "Clear signing enabled",
+        "checkbox": "Do not remind me again.",
+        "CTA": "Open {{app}}"
+      },
+      "manifestsList": {
+        "title": "Explore",
+        "description": "Discover the best of web3 curated by Ledger"
+      }
     },
     "main": {
       "manifestsList": {

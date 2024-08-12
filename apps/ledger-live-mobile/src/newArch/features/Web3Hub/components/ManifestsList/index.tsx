@@ -69,10 +69,10 @@ export default function ManifestsList({ navigation, onScroll, title, pt = 0, pb 
         ListHeaderComponent={
           <>
             <Text mt={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
-              {title ?? t("web3hub.manifestsList.title")}
+              {title ?? t("web3hub.components.manifestsList.title")}
             </Text>
             <Text mt={2} mb={5} numberOfLines={1} variant="body" mx={5} accessibilityRole="header">
-              {t("web3hub.manifestsList.description")}
+              {t("web3hub.components.manifestsList.description")}
             </Text>
 
             <View style={{ height: 32, marginBottom: 2 }}>
