@@ -12,6 +12,7 @@ import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { context } from "~/renderer/drawers/Provider";
 import useTheme from "~/renderer/hooks/useTheme";
+import logger from "~/renderer/logger";
 import {
   counterValueCurrencySelector,
   enablePlatformDevToolsSelector,
@@ -90,6 +91,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
     console.error("onSwapWebviewError", error);
+    logger.critical(error);
     setDrawer(WebviewErrorDrawer, error);
   };
 
