@@ -245,6 +245,32 @@ describe("Web3Hub integration test", () => {
     expect(screen.getByRole("searchbox")).toBeDisabled();
   });
 
+  it("Should be able to see Clear Signing section and label on disclaimer", async () => {
+    const { user } = render(<Web3HubTest />);
+    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+    await waitForLoader();
+
+    expect((await screen.findAllByText("Clear Signing"))[0]).toBeOnTheScreen();
+    expect((await screen.findAllByRole("banner", { name: /clear signing/i }))[0]).toBeOnTheScreen();
+
+    expect((await screen.findAllByText("Clear-signing"))[0]).toBeOnTheScreen();
+    await user.press(screen.getAllByText("Clear-signing")[0]);
+    expect(await screen.findByText("Clear signing enabled")).toBeOnTheScreen();
+
+    expect(await screen.findByText("Open Clear-signing")).toBeOnTheScreen();
+    await user.press(screen.getByText("Open Clear-signing"));
+    expect(await screen.findByText("clear-signing-0")).toBeOnTheScreen();
+    expect(await screen.findByText("Clear-signing")).toBeOnTheScreen();
+
+    expect(await screen.findByRole("button", { name: /back/i })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: /back/i }));
+    expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
+
+    expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
+    await user.press(screen.getAllByText("Dummy Wallet App")[0]);
+    expect(await screen.findByText("Clear signing disabled")).toBeOnTheScreen();
+  });
+
   it("Should only show the confirmation bottom modal if not dismissed previously", async () => {
     const { user } = render(<Web3HubTest />);
 
