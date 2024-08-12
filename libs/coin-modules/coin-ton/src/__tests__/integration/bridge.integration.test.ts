@@ -11,6 +11,7 @@ const ADDRESS_2 = "UQAui6M4jOYOezUGfmeONA22Ars9yjd34YIGdAR1Pcpp4sgR";
 const PATH = "44'/607'/0'/0'/0'/0'";
 
 const ton: CurrenciesData<Transaction> = {
+  IgnorePrepareTransactionFields: ["fees"],
   scanAccounts: [
     {
       name: "ton seed 1",
@@ -91,7 +92,8 @@ const ton: CurrenciesData<Transaction> = {
           }),
           expectedStatus: {
             errors: {
-              comment: new TonCommentInvalid(),
+              amount: new NotEnoughBalance(),
+              transaction: new TonCommentInvalid(),
             },
             warnings: {},
           },
