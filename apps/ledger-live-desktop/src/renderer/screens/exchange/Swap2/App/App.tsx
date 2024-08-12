@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import SwapWebView from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
 import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import React, { useState } from "react";
 import styled from "styled-components";
+import SwapWebView from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
 
 const Root = styled.div`
   display: flex;
@@ -42,7 +42,7 @@ export function SwapApp() {
 
   if (unavailable) {
     // TODO: fix with proper error handling
-    return <ErrorWrapper>Unable to load application: unavailable</ErrorWrapper>;
+    return <ErrorWrapper>Unable to load application: Unavailable</ErrorWrapper>;
   }
 
   return (
