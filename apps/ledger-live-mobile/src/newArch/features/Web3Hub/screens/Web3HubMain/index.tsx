@@ -7,6 +7,7 @@ import useScrollHandler from "LLM/features/Web3Hub/hooks/useScrollHandler";
 import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
 import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "~/components/TabBar/shared";
 import Header, { ANIMATION_HEIGHT, TOTAL_HEADER_HEIGHT } from "./components/Header";
+import ManifestsCategoryList from "./components/ManifestsCategoryList";
 
 const PADDING_BOTTOM = MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM;
 
@@ -32,6 +33,15 @@ export default function Web3HubMain({ navigation }: MainProps) {
           pt={TOTAL_HEADER_HEIGHT}
           // Using this padding to keep the view visible under the tab button
           pb={PADDING_BOTTOM}
+          headerComponent={
+            <ManifestsCategoryList
+              title={t(`web3hub.manifestsList.section.clearSigning`, {
+                defaultValue: "Clear Signing",
+              })}
+              navigation={navigation}
+              categoryId={"clear signing"}
+            />
+          }
         />
       </View>
     </SafeAreaView>

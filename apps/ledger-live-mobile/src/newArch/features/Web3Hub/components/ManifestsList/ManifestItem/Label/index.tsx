@@ -16,6 +16,7 @@ const Label: React.FC<Props> = ({ text, style }) => {
   const { badgeColor, borderColor, backgroundColor } = style;
   return (
     <Text
+      role="banner"
       fontSize="9px"
       width="auto"
       paddingX={2}
