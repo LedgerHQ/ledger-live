@@ -99,7 +99,7 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     publicKey: {
       curve: "secp256k1",
       data: Buffer.from(
-        "04dbd3e4818b34bbf1f3642fc61f4f34e58e15888692b3d22c41e6169ec3e663851bacc656f1109b1441d0474130edcfe917a84b712fb8f2164835c55333b5620f",
+        "048abacf1b1027b7c5f96d77826eada263e21d2ba8a2a037a84e0679e05d997a91ff34df181f88bdaf3521c26fb70eb028622f3afd66d0c282d5bb61da38ad76c1",
         "hex",
       ),
     },

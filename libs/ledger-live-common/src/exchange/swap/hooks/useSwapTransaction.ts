@@ -3,9 +3,9 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   AmountRequired,
   FeeNotLoaded,
+  NotEnoughBalanceSwap,
   NotEnoughGas,
   NotEnoughGasSwap,
-  NotEnoughBalanceSwap,
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { useMemo } from "react";
@@ -171,6 +171,11 @@ export const useSwapTransaction = ({
     isEnabled,
   });
 
+  // libs/coin-modules/coin-evm/src/prepareTransaction.ts L47
+  // returns 0 if the balance - fees is less than 0
+  const maxAmountLowerThanBallanceError =
+    isMaxEnabled && fromState.amount?.eq(0) ? new NotEnoughBalanceSwap() : undefined;
+
   return {
     ...bridgeTransaction,
     swap: {
@@ -193,7 +198,7 @@ export const useSwapTransaction = ({
     },
     setFromAmount,
     toggleMax,
-    fromAmountError,
+    fromAmountError: maxAmountLowerThanBallanceError || fromAmountError,
     fromAmountWarning,
     setToAccount,
     setToCurrency,

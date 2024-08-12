@@ -20,7 +20,19 @@ export type UpdateEvent<Data> =
       type: "deleted-data";
     };
 
-export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
+export interface CloudSyncSDKInterface<Data> {
+  push(trustchain: Trustchain, memberCredentials: MemberCredentials, data: Data): Promise<void>;
+  pull(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void>;
+  destroy(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void>;
+  listenNotifications(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ): Observable<number>;
+}
+
+export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>>
+  implements CloudSyncSDKInterface<Data>
+{
   private slug: string;
   private schema: Schema;
   private trustchainSdk: TrustchainSDK;
@@ -97,8 +109,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>> {
         break;
       }
       case "out-of-sync": {
-        // WHAT TO DO? maybe we ignore because in this case we just wait for a pull?
-        console.warn("out-of-sync", response);
+        // nothing to do. we will just eventually retry in the watch loop.
       }
     }
   }

@@ -2,10 +2,10 @@ import React from "react";
 import { Box, Icons, Flex, Text, Button, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import {
-  useWalletSyncAnalytics,
+  useLedgerSyncAnalytics,
   AnalyticsButton,
   AnalyticsPage,
-} from "../../hooks/useWalletSyncAnalytics";
+} from "../../hooks/useLedgerSyncAnalytics";
 import styled, { useTheme } from "styled-components/native";
 import TrackScreen from "~/analytics/TrackScreen";
 
@@ -32,7 +32,7 @@ type Props = {
 };
 
 export const DeletionError = ({ error, tryAgain, goToDelete, understood }: Props) => {
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const onTryAgain = () => {
     tryAgain?.();

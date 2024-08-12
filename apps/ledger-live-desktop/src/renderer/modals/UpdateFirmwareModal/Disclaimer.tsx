@@ -6,7 +6,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
 
 type Props = {
-  firmware?: FirmwareUpdateContext;
+  firmware: FirmwareUpdateContext;
   onContinue(): void;
 };
 

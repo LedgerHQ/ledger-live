@@ -1,6 +1,6 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useState, useCallback } from "react";
-import { logDrawer } from "~/newArch/components/QueuedDrawer/utils/logDrawer";
+import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 
 const messageLog = "Follow Steps on device";
 

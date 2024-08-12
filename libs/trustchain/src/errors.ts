@@ -5,3 +5,4 @@ export const InvalidEncryptionKeyError = createCustomErrorClass("InvalidEncrypti
 export const TrustchainEjected = createCustomErrorClass("TrustchainEjected");
 export const TrustchainNotAllowed = createCustomErrorClass("TrustchainNotAllowed");
 export const TrustchainOutdated = createCustomErrorClass("TrustchainOutdated");
+export const TrustchainNotFound = createCustomErrorClass("TrustchainNotFound");

@@ -4,6 +4,7 @@ import { MemberCredentials, Trustchain, TrustchainMember } from "../types";
 import { makeCipher, makeMessageCipher } from "./cipher";
 import { Message } from "./types";
 import { InvalidDigitsError } from "../errors";
+import { log } from "@ledgerhq/logs";
 
 const version = 1;
 
@@ -109,7 +110,6 @@ export async function createQRCodeHostInstance({
           }
           case "Failure": {
             finished = true;
-            console.error(data);
             const error = fromErrorMessage(data.payload);
             reject(error);
             ws.close();
@@ -120,7 +120,6 @@ export async function createQRCodeHostInstance({
           }
         }
       } catch (e) {
-        console.error(e);
         ws.close();
         reject(e);
       }
@@ -214,7 +213,7 @@ export async function createQRCodeCandidateInstance({
           }
           case "Failure": {
             finished = true;
-            console.error(data);
+            log("trustchain/qrcode", "Failure", { data });
             const error = fromErrorMessage(data.payload);
             reject(error);
             ws.close();
@@ -224,7 +223,6 @@ export async function createQRCodeCandidateInstance({
             throw new Error("unexpected message");
         }
       } catch (e) {
-        console.error(e);
         ws.close();
         reject(e);
       }

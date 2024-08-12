@@ -8,6 +8,7 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 import WalletSyncNavigator from "../WalletSyncNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { State } from "~/reducers/types";
 
 const Stack = createStackNavigator<
   BaseNavigatorStackParamList & SettingsNavigatorStackParamList & WalletSyncNavigatorStackParamList
@@ -41,3 +42,20 @@ export function WalletSyncSharedNavigator() {
     </QueryClientProvider>
   );
 }
+
+export const INITIAL_TEST = (state: State) => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    readOnlyModeEnabled: false,
+    overriddenFeatureFlags: {
+      llmWalletSync: {
+        enabled: true,
+        params: {
+          environment: "STAGING",
+          watchConfig: {},
+        },
+      },
+    },
+  },
+});
