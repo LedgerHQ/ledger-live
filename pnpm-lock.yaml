@@ -989,8 +989,8 @@ importers:
         specifier: 14.1.3
         version: 14.1.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo@50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       expo-crypto:
-        specifier: ^13.0.2
-        version: 13.0.2(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo@50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
+        specifier: ^12.8.1
+        version: 12.8.1(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo@50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
       expo-file-system:
         specifier: ~16.0.5
         version: 16.0.8(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo@50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
@@ -1462,7 +1462,7 @@ importers:
         version: 2.6.2
       ws:
         specifier: ^7.5.2
-        version: 8.17.1
+        version: 7.5.10
 
   apps/web-tools:
     dependencies:
@@ -3494,7 +3494,7 @@ importers:
         version: 4.0.3
       isomorphic-ws:
         specifier: ^4.0.1
-        version: 4.0.1(ws@8.17.1)
+        version: 4.0.1(ws@7.5.10)
       jotai:
         specifier: ^2.7.0
         version: 2.7.1(@types/react@18.2.73)(react@18.2.0)
@@ -3708,7 +3708,7 @@ importers:
         version: 8.3.2
       ws:
         specifier: '7'
-        version: 8.17.1
+        version: 7.5.10
 
   libs/ledgerjs:
     dependencies:
@@ -4655,7 +4655,7 @@ importers:
         version: 0.26.1
       ws:
         specifier: ^7.5.2
-        version: 8.17.1
+        version: 7.5.10
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
@@ -13167,7 +13167,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '5'
+      webpack: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -15297,7 +15297,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -18513,7 +18513,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -18996,8 +18996,8 @@ packages:
       react-native:
         optional: true
 
-  expo-crypto@13.0.2:
-    resolution: {integrity: sha512-7f/IMPYJZkBM21LNEMXGrNo/0uXSVfZTwufUdpNKedJR0fm5fH4DCSN79ZddlV26nF90PuXjK2inIbI6lb0qRA==}
+  expo-crypto@12.8.1:
+    resolution: {integrity: sha512-EJEzmfBUSkGfALTlZRKUbh1RMKF7mWI12vkhO2w6bhGO4bjgGB8XzUHgLfrvSjphDFMx/lwaR6bAQDmXKO9UkQ==}
     peerDependencies:
       expo: '*'
       expo-constants: '*'
@@ -19276,8 +19276,8 @@ packages:
     hasBin: true
     peerDependencies:
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.72.10
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-core:
         optional: true
@@ -19292,8 +19292,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: 18.2.0
-      react-native: 0.73.6
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -25313,7 +25313,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: ^15.6.1
+      prop-types: '*'
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -25340,8 +25340,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: 16.9.0
-      react-native: 0.61.2
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -25351,8 +25351,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: 18.2.0
-      react-native: 0.72.6
+      react: '*'
+      react-native: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -33720,7 +33720,7 @@ snapshots:
       text-table: 0.2.0
       url-join: 4.0.0
       wrap-ansi: 7.0.0
-      ws: 8.17.1
+      ws: 8.18.0
     transitivePeerDependencies:
       - '@react-native/babel-preset'
       - bluebird
@@ -38214,7 +38214,7 @@ snapshots:
       open: 7.4.2
       serve-static: 1.15.0
       temp-dir: 2.0.0
-      ws: 8.17.1
+      ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -48958,7 +48958,7 @@ snapshots:
       react: 18.2.0
       react-native: 0.73.6(react@18.2.0)
 
-  expo-crypto@13.0.2(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo@50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
+  expo-crypto@12.8.1(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo@50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0):
     dependencies:
       base64-js: 1.5.1
       expo: 50.0.14(@babel/core@7.24.3)(@react-native/babel-preset@0.73.19(@babel/core@7.24.3))(expo-modules-autolinking@1.10.3(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.11.12(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))(react@18.2.0)
@@ -51348,10 +51348,6 @@ snapshots:
   isomorphic-ws@4.0.1(ws@7.5.10):
     dependencies:
       ws: 7.5.10
-
-  isomorphic-ws@4.0.1(ws@8.17.1):
-    dependencies:
-      ws: 8.17.1
 
   isomorphic-ws@5.0.0(ws@7.5.10):
     dependencies:
