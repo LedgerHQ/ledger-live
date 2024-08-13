@@ -54,12 +54,12 @@ const getTransactionStatus = (account: ElrondAccount, transaction: Transaction) 
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  // Fill up transaction errors...
+  // Fill up transaction errors
   if (totalSpent.gt(account.balance)) {
     errors.amount = new NotEnoughBalance();
   }
 
-  // Fill up recipient errors...
+  // Fill up recipient errors
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired("");
   } else if (isInvalidRecipient(transaction.recipient)) {
