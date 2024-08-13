@@ -146,7 +146,7 @@
     "expo-keep-awake": "~12.8.2",
     "expo-modules-autolinking": "^1.10.2",
     "expo-modules-core": "^1.11.8",
-    "expo-crypto": "^12.8.1",
+    "expo-crypto": "^13.0.2",
     "fuse.js": "^6.4.6",
     "hoist-non-react-statics": "3.3.2",
     "i18next": "20.6.1",
