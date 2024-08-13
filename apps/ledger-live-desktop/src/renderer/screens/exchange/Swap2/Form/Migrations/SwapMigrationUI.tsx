@@ -10,7 +10,7 @@ import SwapFormRates from "../FormRates";
 import SwapFormSummary from "../FormSummary";
 import LoadingState from "../Rates/LoadingState";
 import { SwapWebManifestIDs } from "../SwapWebView";
-import { useIsSwapLiveFlagEnabled } from "../useIsSwapLiveFlagEnabled";
+import { useIsSwapLiveFlagEnabled } from "../../hooks/useIsSwapLiveFlagEnabled";
 
 const Button = styled(ButtonBase)`
   width: 100%;

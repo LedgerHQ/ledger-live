@@ -6,6 +6,8 @@ import SwapForm from "./Form";
 import SwapHistory from "./History";
 import SwapNavbar from "./Navbar";
 
+import { SwapApp } from "./App";
+import { useIsSwapLiveFlagEnabled } from "./hooks/useIsSwapLiveFlagEnabled";
 const Body = styled(Box)`
   flex: 1;
 `;
@@ -45,17 +47,20 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-function Swap2() {
+const Swap2 = () => {
+  const isDemo3Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoThree");
+  const SwapPage = isDemo3Enabled ? SwapApp : SwapForm;
+
   return (
     <Body>
       <GlobalStyle />
       <SwapNavbar />
       <Main>
-        <Route path="/swap" component={SwapForm} exact />
+        <Route path="/swap" component={SwapPage} exact />
         <Route path="/swap/history" component={SwapHistory} exact />
       </Main>
     </Body>
   );
-}
+};
 
 export default Swap2;
