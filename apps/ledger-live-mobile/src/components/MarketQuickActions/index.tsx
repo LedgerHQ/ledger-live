@@ -3,31 +3,34 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { QuickActionButtonProps, QuickActionList } from "@ledgerhq/native-ui";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { EntryOf } from "~/types/helpers";
 import useQuickActions from "../../hooks/useQuickActions";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 
-export const MarketQuickActions = () => {
+type Props = { currency: CryptoOrTokenCurrency };
+
+export const MarketQuickActions = ({ currency }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
-  const { quickActionsList } = useQuickActions();
+  const { quickActionsList } = useQuickActions({ currency });
 
   const quickActionsData: QuickActionButtonProps[] = useMemo(
     () =>
       (Object.entries(QUICK_ACTIONS) as EntryOf<typeof QUICK_ACTIONS>[]).flatMap(([key, prop]) => {
-        const action = quickActionsList[key];
-        if (!action) return [];
+        const quickActionsItem = quickActionsList[key];
+        if (!quickActionsItem) return [];
 
         return {
           variant: "small",
           textVariant: "small",
-          Icon: action.icon,
+          Icon: quickActionsItem.icon,
           children: t(prop.name),
           onPress: () =>
             navigation.navigate<keyof BaseNavigatorStackParamList>(
-              ...(action.route as EntryOf<BaseNavigatorStackParamList>),
+              ...(quickActionsItem.route as EntryOf<BaseNavigatorStackParamList>),
             ),
-          disabled: action.disabled,
+          disabled: quickActionsItem.disabled,
         };
       }),
     [quickActionsList, t, navigation],
@@ -45,6 +48,9 @@ const QUICK_ACTIONS = {
   },
   BUY: {
     name: "portfolio.quickActions.buy",
+  },
+  SELL: {
+    name: "portfolio.quickActions.sell",
   },
   SWAP: {
     name: "portfolio.quickActions.swap",

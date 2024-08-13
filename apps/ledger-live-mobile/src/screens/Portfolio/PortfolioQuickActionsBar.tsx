@@ -32,44 +32,42 @@ function PortfolioQuickActionsBar() {
   );
 
   const quickActionsData: QuickActionButtonProps[] = [
-    {
+    BUY && {
       ...SHARED_CONFIG,
       Icon: BUY.icon,
       children: t("portfolio.quickActions.buy"),
       onPress: () => onNavigate(...BUY.route, "quick_action_buy"),
       disabled: BUY.disabled,
     },
-    {
+    SWAP && {
       ...SHARED_CONFIG,
       Icon: SWAP.icon,
       children: t("portfolio.quickActions.swap"),
       onPress: () => onNavigate(...SWAP.route, "quick_action_swap"),
       disabled: SWAP.disabled,
     },
-    {
+    SEND && {
       ...SHARED_CONFIG,
       Icon: SEND.icon,
       children: t("portfolio.quickActions.send"),
       onPress: () => onNavigate(...SEND.route, "quick_action_send"),
       disabled: SEND.disabled,
     },
-    {
+    RECEIVE && {
       ...SHARED_CONFIG,
       Icon: RECEIVE.icon,
       children: t("portfolio.quickActions.deposit"),
       onPress: () => onNavigate(...RECEIVE.route, "quick_action_receive"),
       disabled: RECEIVE.disabled,
     },
-  ];
-  if (STAKE) {
-    quickActionsData.push({
+    STAKE && {
       ...SHARED_CONFIG,
       Icon: STAKE.icon,
       children: t("portfolio.quickActions.stake"),
       onPress: () => onNavigate(...STAKE.route, "quick_action_stake"),
       disabled: STAKE.disabled,
-    });
-  }
+    },
+  ].filter(action => !!action);
 
   return <QuickActionList data={quickActionsData} numColumns={5} id="asset_five_columns" />;
 }

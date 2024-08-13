@@ -77,7 +77,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   }, [onClose, quickAccessURI]);
 
   const buttonsList: ButtonItem[] = [
-    {
+    SEND && {
       eventProperties: {
         button: "transfer_send",
         page,
@@ -90,7 +90,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: SEND.disabled,
       testID: "transfer-send-button",
     },
-    {
+    RECEIVE && {
       eventProperties: {
         button: "transfer_receive",
         page,
@@ -103,7 +103,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: RECEIVE.disabled,
       testID: "transfer-receive-button",
     },
-    {
+    BUY && {
       eventProperties: {
         button: "transfer_buy",
         page,
@@ -128,7 +128,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: BUY.disabled,
       testID: "transfer-buy-button",
     },
-    {
+    SELL && {
       eventProperties: {
         button: "transfer_sell",
         page,
@@ -153,25 +153,20 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: SELL.disabled,
       testID: "transfer-sell-button",
     },
-
-    ...(STAKE
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_stake",
-              page,
-              drawer: "stake",
-            },
-            title: t("transfer.stake.title"),
-            description: t("transfer.stake.description"),
-            Icon: STAKE.icon,
-            onPress: () => onNavigate(...STAKE.route),
-            disabled: STAKE.disabled,
-            testID: "transfer-stake-button",
-          },
-        ]
-      : []),
-    {
+    STAKE && {
+      eventProperties: {
+        button: "transfer_stake",
+        page,
+        drawer: "stake",
+      },
+      title: t("transfer.stake.title"),
+      description: t("transfer.stake.description"),
+      Icon: STAKE.icon,
+      onPress: () => onNavigate(...STAKE.route),
+      disabled: STAKE.disabled,
+      testID: "transfer-stake-button",
+    },
+    SWAP && {
       eventProperties: {
         button: "transfer_swap",
         page,
@@ -196,26 +191,21 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: SWAP.disabled,
       testID: "swap-transfer-button",
     },
-
-    ...(RECOVER
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_recover",
-              page,
-              drawer: "trade",
-            },
-            tag: t("transfer.recover.tag"),
-            title: t("transfer.recover.title"),
-            description: t("transfer.recover.description"),
-            Icon: RECOVER.icon,
-            onPress: () => onNavigateRecover(),
-            disabled: RECOVER.disabled,
-            testID: "transfer-recover-button",
-          },
-        ]
-      : []),
-  ];
+    RECOVER && {
+      eventProperties: {
+        button: "transfer_recover",
+        page,
+        drawer: "trade",
+      },
+      tag: t("transfer.recover.tag"),
+      title: t("transfer.recover.title"),
+      description: t("transfer.recover.description"),
+      Icon: RECOVER.icon,
+      onPress: () => onNavigateRecover(),
+      disabled: RECOVER.disabled,
+      testID: "transfer-recover-button",
+    },
+  ].filter(action => !!action);
 
   const bannerEventProperties = useMemo(
     () => ({

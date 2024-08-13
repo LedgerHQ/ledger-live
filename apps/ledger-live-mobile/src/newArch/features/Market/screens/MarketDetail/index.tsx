@@ -173,9 +173,11 @@ function View({
           currency={internalCurrency}
         />
 
-        <FeatureToggle featureId="llmMarketQuickActions">
-          <MarketQuickActions />
-        </FeatureToggle>
+        {internalCurrency && (
+          <FeatureToggle featureId="llmMarketQuickActions">
+            <MarketQuickActions currency={internalCurrency} />
+          </FeatureToggle>
+        )}
 
         {accounts?.length > 0 ? (
           <Flex mx={6} mt={8}>
