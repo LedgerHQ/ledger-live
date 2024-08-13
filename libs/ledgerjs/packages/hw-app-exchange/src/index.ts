@@ -8,6 +8,7 @@ import Exchange, {
   PayloadSignatureComputedFormat,
 } from "./Exchange";
 import { decodePayloadProtobuf } from "./SwapUtils";
+import { decodeSellPayload } from "./SellUtils";
 
 export {
   createExchange,
@@ -18,6 +19,7 @@ export {
   PartnerKeyInfo,
   isExchangeTypeNg,
   PayloadSignatureComputedFormat,
+  decodeSellPayload,
 };
 
 export default Exchange;

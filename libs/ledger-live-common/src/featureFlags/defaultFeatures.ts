@@ -406,6 +406,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxSwapLiveAppDemoThree: {
+    enabled: false,
+    params: {
+      manifest_id: "swap-live-app-demo-3",
+    },
+  },
+
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
   ptxSwapExodusProvider: DEFAULT_FEATURE,
   ptxSwapThorswapProvider: DEFAULT_FEATURE,
@@ -484,6 +491,7 @@ export const DEFAULT_FEATURES: Features = {
   lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
+  llmMarketQuickActions: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

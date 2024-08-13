@@ -944,6 +944,10 @@
       "title": "Sorry, try again.",
       "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
       "errorCode": "Code: {{errorCode}}"
+    },
+    "TrustchainNotFound": {
+      "title": "Something went wrong while fetching your data",
+      "description": "Please try again or contact Ledger Support."
     }
   },
   "crash": {
@@ -3000,6 +3004,10 @@
         },
         "platformManifest": {
           "title": "Load Platform Manifest"
+        },
+        "mockAppUpdate": {
+          "title": "Mock app update",
+          "description": "Display available app update in My Ledger, it will reinstall the same app version"
         }
       }
     },
@@ -6799,20 +6807,59 @@
         "connectDevice": {
           "title": "Use your Ledger"
         }
+      },
+      "qrCode": {
+        "show": {
+          "title": "Show QR",
+          "explanation": {
+            "title": "Scan and synchronize your accounts using another Ledger Live app",
+            "steps": {
+              "step1": "Open the Ledger Live app you want to sync",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0>",
+              "step3": "Scan QR code until loader hits 100%."
+            }
+          }
+        },
+        "scan": {
+          "title": "Scan",
+          "description": "Scan QR code",
+          "explanation": {
+            "title": "Scan and synchronize your accounts using another Ledger Live app",
+            "steps": {
+              "step1": "Open the Ledger Live app you want to sync",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0> <1>></1> <0>Show QR</0>",
+              "step3": "Scan QR code until loader hits 100%."
+            }
+          }
+        },
+        "pinCode": {
+          "title": "Enter your code",
+          "desc": "Type the code displayed on the Ledger Live you want to sync with.",
+          "error": {
+            "title": "Codes do not match",
+            "desc": "Make sure the code you type is the one displayed on the other Ledger Live instance.",
+            "tryAgain": "Try again"
+          }
+        }
       }
     }
   },
   "web3hub": {
-    "disclaimer": {
-      "clearSigningEnabled": "Clear signing enabled",
-      "checkbox": "Do not remind me again.",
-      "CTA": "Open {{app}}"
-    },
-    "manifestsList": {
-      "title": "Explore",
-      "description": "Discover the best of web3 curated by Ledger"
+    "components": {
+      "disclaimer": {
+        "clearSigningEnabled": "Clear signing enabled",
+        "checkbox": "Do not remind me again.",
+        "CTA": "Open {{app}}"
+      },
+      "manifestsList": {
+        "title": "Explore",
+        "description": "Discover the best of web3 curated by Ledger"
+      }
     },
     "main": {
+      "manifestsList": {
+        "title": "Discover"
+      },
       "header": {
         "title": "Explore web3",
         "placeholder": "Search or type a URL"

@@ -2,7 +2,7 @@ import React from "react";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { DropDownItemType } from "~/renderer/components/DropDownSelector";
 import { Check, Item } from "LLD/components/BreadCrumb/common";
-import { CollectionName } from "../../components";
+import { CollectionName } from "LLD/features/Collectibles/components";
 import Text from "~/renderer/components/Text";
 import { Icons } from "@ledgerhq/react-ui";
 

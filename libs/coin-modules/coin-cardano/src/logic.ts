@@ -131,13 +131,13 @@ export function getBaseAddress({
   stakeCred: StakeCredential;
 }): TyphonAddress.BaseAddress {
   const paymentCredential: TyphonTypes.HashCredential = {
-    hash: paymentCred.key,
+    hash: Buffer.from(paymentCred.key, "hex"),
     type: TyphonTypes.HashType.ADDRESS,
     bipPath: paymentCred.path,
   };
 
   const stakeCredential: TyphonTypes.HashCredential = {
-    hash: stakeCred.key,
+    hash: Buffer.from(stakeCred.key, "hex"),
     type: TyphonTypes.HashType.ADDRESS,
     bipPath: stakeCred.path,
   };
@@ -153,7 +153,7 @@ export const isValidAddress = (address: string, networkId: number): boolean => {
   if (!address) return false;
 
   try {
-    const cardanoAddress = TyphonUtils.getAddressFromBech32(address);
+    const cardanoAddress = TyphonUtils.getAddressFromString(address);
     if (cardanoAddress instanceof ShelleyTypeAddress) {
       const addressNetworkId = Number(cardanoAddress.getHex().toLowerCase().charAt(1));
       if (addressNetworkId !== networkId) {

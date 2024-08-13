@@ -10,7 +10,6 @@ import {
   TrustchainSDK,
   TrustchainSDKContext,
 } from "./types";
-import Transport from "@ledgerhq/hw-transport";
 import { Permissions } from "@ledgerhq/hw-trustchain";
 import { TrustchainEjected } from "./errors";
 import getApi from "./api";
@@ -90,11 +89,10 @@ export class MockSDK implements TrustchainSDK {
   }
 
   async getOrCreateTrustchain(
-    transport: Transport,
+    deviceId: string,
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<TrustchainResult> {
-    void transport;
     assertLiveCredentials(memberCredentials);
     let type = trustchains.has("mock-root-id")
       ? TrustchainResultType.restored
@@ -160,13 +158,12 @@ export class MockSDK implements TrustchainSDK {
   }
 
   async removeMember(
-    transport: Transport,
+    deviceId: string,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
-    void transport;
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
     assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);

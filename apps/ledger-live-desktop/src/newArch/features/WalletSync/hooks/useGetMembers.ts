@@ -5,6 +5,7 @@ import { QueryKey } from "./type.hooks";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useLifeCycle } from "./walletSync.hooks";
+import { TrustchainNotFound } from "@ledgerhq/trustchain/errors";
 
 export function useGetMembers() {
   const sdk = useTrustchainSdk();
@@ -13,8 +14,11 @@ export function useGetMembers() {
   const errorHandler = useLifeCycle();
 
   function fetchMembers() {
-    if (!trustchain || !memberCredentials) {
-      throw new Error("Trustchain or MemberCredentials is falsy");
+    if (!memberCredentials) {
+      return;
+    }
+    if (!trustchain) {
+      throw new TrustchainNotFound();
     }
 
     return sdk.getMembers(trustchain, memberCredentials);
@@ -32,6 +36,7 @@ export function useGetMembers() {
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
     retry: false,
+    enabled: !!trustchain && !!memberCredentials,
   });
 
   useEffect(() => {
