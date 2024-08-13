@@ -197,7 +197,11 @@ export class SDK implements TrustchainSDK {
     const { resolved } = await this.withAuth(trustchain, memberCredentials, jwt =>
       this.fetchTrustchainAndResolve(jwt, trustchain.rootId, this.context.applicationId),
     );
-    return resolved.getMembersData();
+    const members = resolved.getMembersData();
+    if (!members.some(m => m.id === memberCredentials.pubkey)) {
+      throw new TrustchainEjected("Not a member of trustchain");
+    }
+    return members;
   }
 
   async removeMember(
