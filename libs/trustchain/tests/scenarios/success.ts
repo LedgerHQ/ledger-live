@@ -92,9 +92,3 @@ export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions
   // member2 destroy the trustchain
   await sdk2.destroyTrustchain(trustchain, member2creds);
 }
-
-// this can overrides the default config used by the recorder
-export const recorderConfig = {
-  goNextOnText: ["Login request", "Identify with your", "request?", "Ensure you trust the"],
-  approveOnText: ["Log in to", "Enable"],
-};
