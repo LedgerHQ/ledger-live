@@ -3,7 +3,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Address } from "@elrondnetwork/erdjs/out";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BinaryUtils } from "./utils/binary.utils";
-import { encodeOperationId } from "../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   ElrondAccount,
   ElrondProtocolTransaction,
@@ -84,13 +84,18 @@ export const buildOptimisticOperation = (
     accountId: account.id,
     transactionSequenceNumber: unsignedTx.nonce,
     date: new Date(),
-    contract: new Address(transaction.recipient).isContractAddress()
-      ? transaction.recipient
-      : undefined,
     extra: {
       amount: delegationAmount,
     },
   };
+
+  const contract = new Address(transaction.recipient).isContractAddress()
+    ? transaction.recipient
+    : undefined;
+
+  if (contract) {
+    operation.contract = contract;
+  }
 
   if (tokenAccount && subAccountId) {
     operation.subOperations = [

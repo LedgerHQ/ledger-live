@@ -42950,9 +42950,9 @@ var require_builder = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/sax@1.2.4/node_modules/sax/lib/sax.js
+// ../../../node_modules/.pnpm/sax@1.4.1/node_modules/sax/lib/sax.js
 var require_sax = __commonJS({
-  "../../../node_modules/.pnpm/sax@1.2.4/node_modules/sax/lib/sax.js"(exports2) {
+  "../../../node_modules/.pnpm/sax@1.4.1/node_modules/sax/lib/sax.js"(exports2) {
     "use strict";
     (function(sax) {
       sax.parser = function(strict, opt) {
@@ -43018,6 +43018,9 @@ var require_sax = __commonJS({
         parser.attribList = [];
         if (parser.opt.xmlns) {
           parser.ns = Object.create(rootNS);
+        }
+        if (parser.opt.unquotedAttributeValues === void 0) {
+          parser.opt.unquotedAttributeValues = !strict;
         }
         parser.trackPosition = parser.opt.position !== false;
         if (parser.trackPosition) {
@@ -43109,6 +43112,9 @@ var require_sax = __commonJS({
         Stream2 = function() {
         };
       }
+      if (!Stream2)
+        Stream2 = function() {
+        };
       var streamWraps = sax.EVENTS.filter(function(ev) {
         return ev !== "error" && ev !== "end";
       });
@@ -43955,15 +43961,21 @@ var require_sax = __commonJS({
               }
               continue;
             case S.SGML_DECL:
-              if ((parser.sgmlDecl + c).toUpperCase() === CDATA) {
+              if (parser.sgmlDecl + c === "--") {
+                parser.state = S.COMMENT;
+                parser.comment = "";
+                parser.sgmlDecl = "";
+                continue;
+              }
+              if (parser.doctype && parser.doctype !== true && parser.sgmlDecl) {
+                parser.state = S.DOCTYPE_DTD;
+                parser.doctype += "<!" + parser.sgmlDecl + c;
+                parser.sgmlDecl = "";
+              } else if ((parser.sgmlDecl + c).toUpperCase() === CDATA) {
                 emitNode(parser, "onopencdata");
                 parser.state = S.CDATA;
                 parser.sgmlDecl = "";
                 parser.cdata = "";
-              } else if (parser.sgmlDecl + c === "--") {
-                parser.state = S.COMMENT;
-                parser.comment = "";
-                parser.sgmlDecl = "";
               } else if ((parser.sgmlDecl + c).toUpperCase() === DOCTYPE) {
                 parser.state = S.DOCTYPE;
                 if (parser.doctype || parser.sawRoot) {
@@ -44015,12 +44027,18 @@ var require_sax = __commonJS({
               }
               continue;
             case S.DOCTYPE_DTD:
-              parser.doctype += c;
               if (c === "]") {
+                parser.doctype += c;
                 parser.state = S.DOCTYPE;
+              } else if (c === "<") {
+                parser.state = S.OPEN_WAKA;
+                parser.startTagPosition = parser.position;
               } else if (isQuote(c)) {
+                parser.doctype += c;
                 parser.state = S.DOCTYPE_DTD_QUOTED;
                 parser.q = c;
+              } else {
+                parser.doctype += c;
               }
               continue;
             case S.DOCTYPE_DTD_QUOTED:
@@ -44055,6 +44073,8 @@ var require_sax = __commonJS({
                 strictFail(parser, "Malformed comment");
                 parser.comment += "--" + c;
                 parser.state = S.COMMENT;
+              } else if (parser.doctype && parser.doctype !== true) {
+                parser.state = S.DOCTYPE_DTD;
               } else {
                 parser.state = S.TEXT;
               }
@@ -44209,7 +44229,9 @@ var require_sax = __commonJS({
                 parser.q = c;
                 parser.state = S.ATTRIB_VALUE_QUOTED;
               } else {
-                strictFail(parser, "Unquoted attribute value");
+                if (!parser.opt.unquotedAttributeValues) {
+                  error(parser, "Unquoted attribute value");
+                }
                 parser.state = S.ATTRIB_VALUE_UNQUOTED;
                 parser.attribValue = c;
               }
@@ -44318,9 +44340,16 @@ var require_sax = __commonJS({
                   break;
               }
               if (c === ";") {
-                parser[buffer] += parseEntity(parser);
-                parser.entity = "";
-                parser.state = returnState;
+                var parsedEntity = parseEntity(parser);
+                if (parser.opt.unparsedEntities && !Object.values(sax.XML_ENTITIES).includes(parsedEntity)) {
+                  parser.entity = "";
+                  parser.state = returnState;
+                  parser.write(parsedEntity);
+                } else {
+                  parser[buffer] += parsedEntity;
+                  parser.entity = "";
+                  parser.state = returnState;
+                }
               } else if (isMatch(parser.entity.length ? entityBody : entityStart, c)) {
                 parser.entity += c;
               } else {
@@ -44330,8 +44359,9 @@ var require_sax = __commonJS({
                 parser.state = returnState;
               }
               continue;
-            default:
+            default: {
               throw new Error(parser, "Unknown state: " + parser.state);
+            }
           }
         }
         if (parser.position >= parser.bufferCheckPosition) {
@@ -46407,41 +46437,41 @@ var init_throttlingRetryPolicy = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js
 var _globalThis;
 var init_globalThis = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js"() {
     "use strict";
     _globalThis = typeof globalThis === "object" ? globalThis : global;
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/platform/node/index.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/platform/node/index.js
 var init_node = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/platform/node/index.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/platform/node/index.js"() {
     "use strict";
     init_globalThis();
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/platform/index.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/platform/index.js
 var init_platform = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/platform/index.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/platform/index.js"() {
     "use strict";
     init_node();
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/version.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/version.js
 var VERSION;
 var init_version2 = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/version.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/version.js"() {
     "use strict";
-    VERSION = "1.8.0";
+    VERSION = "1.9.0";
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/internal/semver.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/internal/semver.js
 function _makeCompatibilityCheck(ownVersion) {
   var acceptedVersions = /* @__PURE__ */ new Set([ownVersion]);
   var rejectedVersions = /* @__PURE__ */ new Set();
@@ -46507,7 +46537,7 @@ function _makeCompatibilityCheck(ownVersion) {
 }
 var re, isCompatible;
 var init_semver = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/internal/semver.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/internal/semver.js"() {
     "use strict";
     init_version2();
     re = /^(\d+)\.(\d+)\.(\d+)(-(.+))?$/;
@@ -46515,7 +46545,7 @@ var init_semver = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js
 function registerGlobal(type3, instance, diag, allowOverride) {
   var _a4;
   if (allowOverride === void 0) {
@@ -46555,7 +46585,7 @@ function unregisterGlobal(type3, diag) {
 }
 var major, GLOBAL_OPENTELEMETRY_API_KEY, _global;
 var init_global_utils = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js"() {
     "use strict";
     init_platform();
     init_version2();
@@ -46566,7 +46596,7 @@ var init_global_utils = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js
 function logProxy(funcName, namespace, args) {
   var logger4 = getGlobal("diag");
   if (!logger4) {
@@ -46577,7 +46607,7 @@ function logProxy(funcName, namespace, args) {
 }
 var __read, __spreadArray, DiagComponentLogger;
 var init_ComponentLogger = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js"() {
     "use strict";
     init_global_utils();
     __read = function(o, n) {
@@ -46657,10 +46687,10 @@ var init_ComponentLogger = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/diag/types.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/types.js
 var DiagLogLevel;
 var init_types = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/diag/types.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/types.js"() {
     "use strict";
     (function(DiagLogLevel2) {
       DiagLogLevel2[DiagLogLevel2["NONE"] = 0] = "NONE";
@@ -46674,7 +46704,7 @@ var init_types = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js
 function createLogLevelDiagLogger(maxLevel, logger4) {
   if (maxLevel < DiagLogLevel.NONE) {
     maxLevel = DiagLogLevel.NONE;
@@ -46699,16 +46729,16 @@ function createLogLevelDiagLogger(maxLevel, logger4) {
   };
 }
 var init_logLevelLogger = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js"() {
     "use strict";
     init_types();
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/api/diag.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/diag.js
 var __read2, __spreadArray2, API_NAME, DiagAPI;
 var init_diag = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/api/diag.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/diag.js"() {
     "use strict";
     init_ComponentLogger();
     init_logLevelLogger();
@@ -46811,13 +46841,13 @@ var init_diag = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/context/context.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context/context.js
 function createContextKey(description) {
   return Symbol.for(description);
 }
 var BaseContext, ROOT_CONTEXT;
 var init_context = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/context/context.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context/context.js"() {
     "use strict";
     BaseContext = /** @class */
     /* @__PURE__ */ function() {
@@ -46844,10 +46874,10 @@ var init_context = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js
 var __read3, __spreadArray3, NoopContextManager;
 var init_NoopContextManager = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js"() {
     "use strict";
     init_context();
     __read3 = function(o, n) {
@@ -46910,10 +46940,10 @@ var init_NoopContextManager = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/api/context.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/context.js
 var __read4, __spreadArray4, API_NAME2, NOOP_CONTEXT_MANAGER, ContextAPI;
 var init_context2 = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/api/context.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/context.js"() {
     "use strict";
     init_NoopContextManager();
     init_global_utils();
@@ -46991,10 +47021,10 @@ var init_context2 = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js
 var TraceFlags;
 var init_trace_flags = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js"() {
     "use strict";
     (function(TraceFlags2) {
       TraceFlags2[TraceFlags2["NONE"] = 0] = "NONE";
@@ -47003,10 +47033,10 @@ var init_trace_flags = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js
 var INVALID_SPANID, INVALID_TRACEID, INVALID_SPAN_CONTEXT;
 var init_invalid_span_constants = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js"() {
     "use strict";
     init_trace_flags();
     INVALID_SPANID = "0000000000000000";
@@ -47019,10 +47049,10 @@ var init_invalid_span_constants = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js
 var NonRecordingSpan;
 var init_NonRecordingSpan = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js"() {
     "use strict";
     init_invalid_span_constants();
     NonRecordingSpan = /** @class */
@@ -47045,6 +47075,12 @@ var init_NonRecordingSpan = __esm({
       NonRecordingSpan2.prototype.addEvent = function(_name, _attributes) {
         return this;
       };
+      NonRecordingSpan2.prototype.addLink = function(_link) {
+        return this;
+      };
+      NonRecordingSpan2.prototype.addLinks = function(_links) {
+        return this;
+      };
       NonRecordingSpan2.prototype.setStatus = function(_status) {
         return this;
       };
@@ -47063,7 +47099,7 @@ var init_NonRecordingSpan = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js
 function getSpan(context3) {
   return context3.getValue(SPAN_KEY) || void 0;
 }
@@ -47085,7 +47121,7 @@ function getSpanContext(context3) {
 }
 var SPAN_KEY;
 var init_context_utils = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js"() {
     "use strict";
     init_context();
     init_NonRecordingSpan();
@@ -47094,7 +47130,7 @@ var init_context_utils = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js
 function isValidTraceId(traceId) {
   return VALID_TRACEID_REGEX.test(traceId) && traceId !== INVALID_TRACEID;
 }
@@ -47109,7 +47145,7 @@ function wrapSpanContext(spanContext) {
 }
 var VALID_TRACEID_REGEX, VALID_SPANID_REGEX;
 var init_spancontext_utils = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js"() {
     "use strict";
     init_invalid_span_constants();
     init_NonRecordingSpan();
@@ -47118,13 +47154,13 @@ var init_spancontext_utils = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js
 function isSpanContext(spanContext) {
   return typeof spanContext === "object" && typeof spanContext["spanId"] === "string" && typeof spanContext["traceId"] === "string" && typeof spanContext["traceFlags"] === "number";
 }
 var contextApi, NoopTracer;
 var init_NoopTracer = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js"() {
     "use strict";
     init_context2();
     init_context_utils();
@@ -47176,10 +47212,10 @@ var init_NoopTracer = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js
 var NOOP_TRACER, ProxyTracer;
 var init_ProxyTracer = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js"() {
     "use strict";
     init_NoopTracer();
     NOOP_TRACER = new NoopTracer();
@@ -47214,10 +47250,10 @@ var init_ProxyTracer = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js
 var NoopTracerProvider;
 var init_NoopTracerProvider = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js"() {
     "use strict";
     init_NoopTracer();
     NoopTracerProvider = /** @class */
@@ -47232,10 +47268,10 @@ var init_NoopTracerProvider = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js
 var NOOP_TRACER_PROVIDER, ProxyTracerProvider;
 var init_ProxyTracerProvider = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js"() {
     "use strict";
     init_ProxyTracer();
     init_NoopTracerProvider();
@@ -47264,20 +47300,20 @@ var init_ProxyTracerProvider = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/context-api.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context-api.js
 var context;
 var init_context_api = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/context-api.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context-api.js"() {
     "use strict";
     init_context2();
     context = ContextAPI.getInstance();
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/api/trace.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/trace.js
 var API_NAME3, TraceAPI;
 var init_trace = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/api/trace.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/trace.js"() {
     "use strict";
     init_global_utils();
     init_ProxyTracerProvider();
@@ -47326,19 +47362,19 @@ var init_trace = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace-api.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace-api.js
 var trace;
 var init_trace_api = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/trace-api.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace-api.js"() {
     "use strict";
     init_trace();
     trace = TraceAPI.getInstance();
   }
 });
 
-// ../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/index.js
+// ../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/index.js
 var init_esm5 = __esm({
-  "../../../node_modules/.pnpm/@opentelemetry+api@1.8.0/node_modules/@opentelemetry/api/build/esm/index.js"() {
+  "../../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/index.js"() {
     "use strict";
     init_invalid_span_constants();
     init_context_api();

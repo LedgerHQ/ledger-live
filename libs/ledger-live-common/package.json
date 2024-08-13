@@ -168,6 +168,7 @@
     "@ledgerhq/hw-app-vet": "workspace:^",
     "@ledgerhq/hw-app-xrp": "workspace:^",
     "@ledgerhq/hw-app-icon": "workspace:^",
+    "@ledgerhq/hw-app-elrond": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",

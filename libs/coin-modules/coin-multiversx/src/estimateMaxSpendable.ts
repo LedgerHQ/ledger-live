@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { findSubAccountById, getMainAccount } from "../../account";
+import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/account";
 import type { Transaction } from "./types";
 import { getFees } from "./api";
 import { createTransaction } from "./createTransaction";

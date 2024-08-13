@@ -2,7 +2,6 @@ import casper from "../families/casper/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
 import cosmos from "../families/cosmos/hw-getAddress";
 import crypto_org from "../families/crypto_org/hw-getAddress";
-import elrond from "../families/elrond/hw-getAddress";
 import filecoin from "../families/filecoin/hw-getAddress";
 import hedera from "../families/hedera/hw-getAddress";
 import internet_computer from "../families/internet_computer/hw-getAddress";
@@ -26,7 +25,6 @@ export default {
   celo,
   cosmos,
   crypto_org,
-  elrond,
   filecoin,
   hedera,
   internet_computer,

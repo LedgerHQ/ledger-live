@@ -2,7 +2,6 @@ import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
 import cosmos from "../families/cosmos/specs";
 import crypto_org from "../families/crypto_org/specs";
-import elrond from "../families/elrond/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import internet_computer from "../families/internet_computer/specs";
@@ -26,7 +25,6 @@ export default {
   celo,
   cosmos,
   crypto_org,
-  elrond,
   filecoin,
   hedera,
   internet_computer,

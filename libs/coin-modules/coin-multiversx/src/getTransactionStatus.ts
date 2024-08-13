@@ -8,8 +8,8 @@ import {
   FeeTooHigh,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { formatCurrencyUnit } from "../../currencies";
-import { getAccountCurrency } from "../../account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { DECIMALS_LIMIT, MIN_DELEGATION_AMOUNT } from "./constants";
 import type { ElrondAccount, Transaction, TransactionStatus } from "./types";
 import { isValidAddress, isSelfTransaction, isAmountSpentFromBalance } from "./logic";

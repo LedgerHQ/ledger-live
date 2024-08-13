@@ -33,10 +33,13 @@ export const buildTransactionToSign = async (
     sender: address,
     gasPrice: GAS_PRICE,
     gasLimit: transaction.gasLimit || networkConfig.MinGasLimit.valueOf(),
-    data: transaction.data,
     chainID,
     ...HASH_TRANSACTION,
   };
+
+  if (transaction.data) {
+    unsigned.data = transaction.data;
+  }
 
   // Will likely be a call to Elrond SDK
   return JSON.stringify(unsigned);

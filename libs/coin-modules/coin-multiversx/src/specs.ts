@@ -1,14 +1,10 @@
-import type {
-  ElrondAccount,
-  ElrondOperation,
-  ElrondOperationRaw,
-  Transaction,
-} from "../../families/elrond/types";
+import type { ElrondAccount, ElrondOperation, ElrondOperationRaw, Transaction } from "./types";
 import invariant from "invariant";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings, genericTestDestination } from "../../bot/specs";
-import type { AppSpec, TransactionTestInput } from "../../bot/types";
-import { toOperationRaw } from "../../account";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { botTest, pickSiblings, genericTestDestination } from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec, TransactionTestInput } from "@ledgerhq/coin-framework/bot/types";
+import { toOperationRaw } from "@ledgerhq/coin-framework/serialization";
 import { DeviceModelId } from "@ledgerhq/devices";
 import expect from "expect";
 import {
@@ -154,7 +150,7 @@ function expectCorrectBalanceFeeChange(input: TransactionTestInput<Transaction>)
   );
 }
 
-const elrondSpec: AppSpec<Transaction> = {
+const elrond: AppSpec<Transaction> = {
   name: "Elrond",
   currency: getCryptoCurrencyById("elrond"),
   appQuery: {
@@ -376,5 +372,5 @@ const elrondSpec: AppSpec<Transaction> = {
 };
 
 export default {
-  elrondSpec,
+  elrond,
 };

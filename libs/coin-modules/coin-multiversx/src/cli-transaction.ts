@@ -1,8 +1,7 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "../../generated/types";
-import type { ElrondAccount } from "./types";
+import type { ElrondAccount, Transaction } from "./types";
 const options = [
   {
     name: "mode",
@@ -34,7 +33,9 @@ function inferTransactions(
   });
 }
 
-export default {
-  options,
-  inferTransactions,
-};
+export default function makeCliTools() {
+  return {
+    options,
+    inferTransactions,
+  };
+}

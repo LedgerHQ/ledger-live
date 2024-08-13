@@ -1,12 +1,9 @@
-import "../../__tests__/test-helpers/setup";
-
 import { BigNumber } from "bignumber.js";
 import { InvalidAddressBecauseDestinationIsAlsoSource, NotEnoughBalance } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 
 import type { Transaction } from "./types";
-import { testBridge } from "../../__tests__/test-helpers/bridge";
-import { fromTransactionRaw } from "../elrond/transaction";
+import { fromTransactionRaw } from "./transaction";
 
 const TEST_ADDRESS = "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
 
@@ -135,11 +132,15 @@ const elrond: CurrenciesData<Transaction> = {
   ],
 };
 
-const dataset: DatasetTest<Transaction> = {
+export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     elrond,
   },
 };
 
-testBridge(dataset);
+describe("Elrond bridge", () => {
+  test.todo(
+    "This is an empty test to make jest command pass. Remove it once there is a real test.",
+  );
+});

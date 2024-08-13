@@ -220,6 +220,7 @@ export type ElrondOperationRaw = OperationRaw<ElrondOperationExtraRaw>;
 export type ElrondOperationExtra = {
   amount?: BigNumber;
 };
+
 export function isElrondOperationExtra(op: OperationExtra): op is ElrondOperationExtra {
   return op !== null && typeof op === "object" && "amount" in op;
 }

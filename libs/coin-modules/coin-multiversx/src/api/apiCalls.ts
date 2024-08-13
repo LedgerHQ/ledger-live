@@ -7,11 +7,36 @@ import {
   ElrondDelegation,
   ElrondProvider,
   ElrondTransactionAction,
+  ElrondTransactionMode,
   ElrondTransferOptions,
   NetworkInfo,
 } from "../types";
+import { MultiversXAccount } from "./dtos/multiversx-account";
 
-const decodeTransactionMode = (action: ElrondTransactionAction): string => {
+interface NetworkInfoResponse {
+  data: {
+    config: {
+      erd_chain_id: string;
+      erd_denomination: number;
+      erd_min_gas_limit: number;
+      erd_min_gas_price: number;
+      erd_gas_per_data_byte: number;
+      erd_gas_price_modifier: string;
+    };
+  };
+}
+
+interface SubmitTransactionResponse {
+  data: {
+    txHash: string;
+  };
+}
+
+interface BlockRoundResponse {
+  round: number;
+}
+
+const decodeTransactionMode = (action?: ElrondTransactionAction): string => {
   if (!action) {
     return "send";
   }
@@ -41,7 +66,7 @@ export default class ElrondApi {
   async getAccountDetails(addr: string) {
     const {
       data: { balance, nonce, isGuarded },
-    } = await network({
+    } = await network<MultiversXAccount>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}?withGuardianInfo=true`,
     });
@@ -54,7 +79,7 @@ export default class ElrondApi {
   }
 
   async getProviders(): Promise<ElrondProvider[]> {
-    const { data: providers } = await network({
+    const { data: providers } = await network<ElrondProvider[]>({
       method: "GET",
       url: `${this.DELEGATION_API_URL}/providers`,
     });
@@ -76,7 +101,7 @@ export default class ElrondApi {
           },
         },
       },
-    } = await network({
+    } = await network<NetworkInfoResponse>({
       method: "GET",
       url: `${this.API_URL}/network/config`,
     });
@@ -101,7 +126,7 @@ export default class ElrondApi {
       data: {
         data: { txHash: hash },
       },
-    } = await network({
+    } = await network<SubmitTransactionResponse>({
       method: "POST",
       url: `${this.API_URL}/transaction/send`,
       data: transaction,
@@ -111,7 +136,7 @@ export default class ElrondApi {
   }
 
   async getHistory(addr: string, startAt: number): Promise<ElrondApiTransaction[]> {
-    const { data: transactionsCount } = await network({
+    const { data: transactionsCount } = await network<number>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${startAt}`,
     });
@@ -119,13 +144,13 @@ export default class ElrondApi {
     let allTransactions: ElrondApiTransaction[] = [];
     let from = 0;
     while (from < transactionsCount) {
-      const { data: transactions } = await network({
+      const { data: transactions } = await network<ElrondApiTransaction[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/transactions?after=${startAt}&from=${from}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
       });
 
       for (const transaction of transactions) {
-        transaction.mode = decodeTransactionMode(transaction.action);
+        transaction.mode = decodeTransactionMode(transaction.action) as ElrondTransactionMode;
       }
 
       allTransactions = [...allTransactions, ...transactions];
@@ -137,7 +162,7 @@ export default class ElrondApi {
   }
 
   async getAccountDelegations(addr: string): Promise<ElrondDelegation[]> {
-    const { data: delegations } = await network({
+    const { data: delegations } = await network<ElrondDelegation[]>({
       method: "GET",
       url: `${this.DELEGATION_API_URL}/accounts/${addr}/delegations`,
     });
@@ -150,7 +175,7 @@ export default class ElrondApi {
     token: string,
     startAt: number,
   ): Promise<ElrondApiTransaction[]> {
-    const { data: tokenTransactionsCount } = await network({
+    const { data: tokenTransactionsCount } = await network<number>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}&after=${startAt}`,
     });
@@ -158,7 +183,7 @@ export default class ElrondApi {
     let allTokenTransactions: ElrondApiTransaction[] = [];
     let from = 0;
     while (from < tokenTransactionsCount) {
-      const { data: tokenTransactions } = await network({
+      const { data: tokenTransactions } = await network<ElrondApiTransaction[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&from=${from}&after=${startAt}&size=${MAX_PAGINATION_SIZE}`,
       });
@@ -176,7 +201,7 @@ export default class ElrondApi {
   }
 
   async getESDTTokensForAddress(addr: string): Promise<ESDTToken[]> {
-    const { data: tokensCount } = await network({
+    const { data: tokensCount } = await network<number>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/tokens/count`,
     });
@@ -184,7 +209,7 @@ export default class ElrondApi {
     let allTokens: ESDTToken[] = [];
     let from = 0;
     while (from < tokensCount) {
-      const { data: tokens } = await network({
+      const { data: tokens } = await network<ESDTToken[]>({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/tokens?from=${from}&size=${MAX_PAGINATION_SIZE}`,
       });
@@ -198,7 +223,7 @@ export default class ElrondApi {
   }
 
   async getESDTTokensCountForAddress(addr: string): Promise<number> {
-    const { data: tokensCount } = await network({
+    const { data: tokensCount } = await network<number>({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/tokens/count`,
     });
@@ -209,7 +234,7 @@ export default class ElrondApi {
   async getBlockchainBlockHeight(): Promise<number> {
     const {
       data: [{ round: blockHeight }],
-    } = await network({
+    } = await network<BlockRoundResponse[]>({
       method: "GET",
       url: `${this.API_URL}/blocks?shard=${METACHAIN_SHARD}&fields=round`,
     });

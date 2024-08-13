@@ -1,5 +1,5 @@
 import { SubAccount } from "@ledgerhq/types-live";
-import { decodeTokenAccountId } from "../../account";
+import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import type { Transaction } from "./types";
 import { extractTokenId } from "./logic";
 
