@@ -68,6 +68,7 @@ export enum CoinType {
   ONTOLOGY = 1024,
   PARTICL = 44,
   PIRL = 164,
+  PIVX = 77,
   POA = 178,
   POLKADOT = 354,
   POSWALLET = 47,
