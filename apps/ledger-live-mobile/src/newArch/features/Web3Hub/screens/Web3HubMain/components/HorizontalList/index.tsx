@@ -48,12 +48,12 @@ export default function HorizontalList({
           renderItem={renderItem}
           ListFooterComponent={
             isLoading ? (
-              <Flex marginX={3} justifyContent={"center"} height={"50"}>
+              <Flex marginX={3} justifyContent={"center"} paddingTop={3}>
                 <LoadingIndicator />
               </Flex>
             ) : null
           }
-          estimatedItemSize={75}
+          estimatedItemSize={50}
           data={data}
           showsHorizontalScrollIndicator={false}
           extraData={extraData}

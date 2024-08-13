@@ -62,7 +62,7 @@ export default function Disclaimer({
             <Icons.EyeCross color={"smoke"} />
           </Box>
           <Text fontSize={14} color="smoke">
-            {t("web3hub.disclaimer.clearSigningDisabled")}
+            {t("web3hub.components.disclaimer.clearSigningDisabled")}
           </Text>
         </Flex>
       )}

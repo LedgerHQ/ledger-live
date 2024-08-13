@@ -250,7 +250,7 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
     await waitForLoader();
 
-    expect((await screen.findAllByText("Clear Signing"))[0]).toBeOnTheScreen();
+    expect((await screen.findAllByText("Clear signing"))[0]).toBeOnTheScreen();
     expect((await screen.findAllByRole("banner", { name: /clear signing/i }))[0]).toBeOnTheScreen();
 
     expect((await screen.findAllByText("Clear-signing"))[0]).toBeOnTheScreen();

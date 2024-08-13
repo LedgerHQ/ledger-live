@@ -6848,12 +6848,16 @@
     "components": {
       "disclaimer": {
         "clearSigningEnabled": "Clear signing enabled",
+        "clearSigningDisabled": "Clear signing disabled",
         "checkbox": "Do not remind me again.",
         "CTA": "Open {{app}}"
       },
       "manifestsList": {
         "title": "Explore",
         "description": "Discover the best of web3 curated by Ledger"
+      },
+      "label": {
+        "clearSigning": "clear signing"
       }
     },
     "main": {
@@ -6863,6 +6867,10 @@
       "header": {
         "title": "Explore web3",
         "placeholder": "Search or type a URL"
+      },
+      "clearSigning": {
+        "title": "Clear signing",
+        "description": "Clear signing allows you to sign a message without revealing the content of the message to the app. This is useful for privacy and security reasons."
       }
     }
   }

@@ -103,7 +103,7 @@ export default function ManifestItem({
 
               {clearSigningEnabled && (
                 <Label
-                  text={t(`web3hub.manifestsList.section.clearSigning`, {
+                  text={t(`web3hub.components.label.clearSigning`, {
                     defaultValue: "Clear Signing",
                   })}
                   style={{

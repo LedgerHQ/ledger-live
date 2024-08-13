@@ -35,8 +35,8 @@ export default function Web3HubMain({ navigation }: MainProps) {
           pb={PADDING_BOTTOM}
           headerComponent={
             <ManifestsCategoryList
-              title={t(`web3hub.manifestsList.section.clearSigning`, {
-                defaultValue: "Clear Signing",
+              title={t(`web3hub.main.clearSigning.title`, {
+                defaultValue: "clear Signing",
               })}
               navigation={navigation}
               categoryId={"clear signing"}

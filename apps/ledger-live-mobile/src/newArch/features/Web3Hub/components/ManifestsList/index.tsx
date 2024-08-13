@@ -40,7 +40,14 @@ const renderItem = ({
   return <ManifestItem manifest={item} onPress={extraData} />;
 };
 
-export default function ManifestsList({ navigation, onScroll, title, pt = 0, pb = 0 }: Props) {
+export default function ManifestsList({
+  navigation,
+  onScroll,
+  title,
+  pt = 0,
+  pb = 0,
+  headerComponent,
+}: Props) {
   const { t } = useTranslation();
   const [selectedCategory, selectCategory] = useState("all");
   const { data, isLoading, onEndReached } = useManifestsListViewModel(selectedCategory);
