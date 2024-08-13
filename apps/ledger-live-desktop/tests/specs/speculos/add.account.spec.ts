@@ -46,8 +46,10 @@ for (const currency of currencies) {
 
         await app.addAccount.addAccounts();
         await app.addAccount.done();
-        await app.layout.expectBalanceVisibility();
-
+        // Todo: Remove 'if' when CounterValue is fixed for $TON - LIVE-13685
+        if (currency.name !== Currency.TON.name) {
+          await app.layout.expectBalanceVisibility();
+        }
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(firstAccountName);
         await app.account.expectAccountVisibility(firstAccountName);
