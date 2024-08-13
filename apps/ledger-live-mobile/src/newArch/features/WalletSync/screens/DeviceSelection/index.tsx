@@ -19,7 +19,10 @@ import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/ty
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-trustchain";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
+  StackNavigatorProps<
+    WalletSyncNavigatorStackParamList,
+    ScreenName.WalletSyncActivationProcess | ScreenName.WalletSyncManageInstancesProcess
+  >
 >;
 
 type Props = NavigationProps;

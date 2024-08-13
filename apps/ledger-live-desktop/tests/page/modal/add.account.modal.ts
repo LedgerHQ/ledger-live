@@ -21,7 +21,7 @@ export class AddAccountModal extends Modal {
       .locator("span");
   readonly continueButton = this.page.getByTestId("modal-continue-button");
 
-  @step("Select token $0")
+  @step("Select token")
   async selectToken(SubAccount: Account) {
     await this.selectAccount.click();
     await this.selectAccountInput.fill(SubAccount.currency.name);

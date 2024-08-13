@@ -1,10 +1,17 @@
 import { getSdk } from "@ledgerhq/trustchain/index";
+import { EMPTY } from "rxjs";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
-export const mockedSdk = getSdk(true, {
-  applicationId: 12,
-  name: "LLD Integration",
-});
+export const mockedSdk = getSdk(
+  true,
+  {
+    applicationId: 12,
+    name: "LLD Integration",
+    apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
+  },
+  () => () => EMPTY,
+);
 
 export const walletSyncActivatedState = {
   ...initialStateWalletSync,

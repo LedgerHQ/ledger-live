@@ -15,7 +15,7 @@ import {
   AnalyticsPage,
 } from "LLD/features/WalletSync/hooks/useWalletSyncAnalytics";
 import { BackRef, WalletSyncRouter } from "LLD/features/WalletSync/screens/router";
-import { useFlows, STEPS_WITH_BACK } from "~/newArch/features/WalletSync/hooks/useFlows";
+import { useFlows, STEPS_WITH_BACK } from "LLD/features/WalletSync/hooks/useFlows";
 
 /**
  *

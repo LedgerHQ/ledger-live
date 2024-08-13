@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
 
@@ -8,6 +8,12 @@ import { ListInstances } from "../../components/ManageInstances/ListInstances";
 import { DeletionError, ErrorReason } from "../../components/ManageInstances/DeletionError";
 
 import { HookResult, Scene } from "./useManageInstanceDrawer";
+import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
+import {
+  AnalyticsButton,
+  AnalyticsPage,
+  useLedgerSyncAnalytics,
+} from "../../hooks/useLedgerSyncAnalytics";
 
 const ManageInstancesDrawer = ({
   isDrawerVisible,
@@ -15,10 +21,18 @@ const ManageInstancesDrawer = ({
   memberCredentials,
   memberHook,
   scene,
-  onClickDelete,
   changeScene,
+  onClickInstance,
 }: HookResult) => {
   const { error, isError, isLoading, data } = memberHook;
+  const manageKeyHook = useManageKeyDrawer();
+  const { onClickTrack } = useLedgerSyncAnalytics();
+
+  const goToManageBackup = useCallback(() => {
+    handleClose();
+    manageKeyHook.openDrawer();
+    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.AutoRemove });
+  }, [manageKeyHook, onClickTrack, handleClose]);
 
   const getScene = () => {
     if (isError) {
@@ -35,7 +49,8 @@ const ManageInstancesDrawer = ({
     if (scene === Scene.List) {
       return (
         <ListInstances
-          onClickDelete={onClickDelete}
+          changeScene={changeScene}
+          onClickInstance={onClickInstance}
           members={data}
           currentInstance={memberCredentials?.pubkey}
         />
@@ -46,18 +61,10 @@ const ManageInstancesDrawer = ({
       return (
         <DeletionError
           error={ErrorReason.AUTO_REMOVE}
-          // eslint-disable-next-line no-console
-          goToDelete={() => console.log("gotoDelete")}
+          goToDelete={goToManageBackup}
           understood={() => changeScene(Scene.List)}
         />
       );
-    }
-
-    if (scene === Scene.DeviceAction) {
-      return null;
-    }
-    if (scene === Scene.Instructions) {
-      return null;
     }
   };
 

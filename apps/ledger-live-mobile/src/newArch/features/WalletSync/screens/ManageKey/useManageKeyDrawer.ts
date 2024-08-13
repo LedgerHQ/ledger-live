@@ -3,9 +3,12 @@ import { useState, useCallback } from "react";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
-import { logDrawer } from "~/newArch/components/QueuedDrawer/utils/logDrawer";
+import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import { useDestroyTrustchain } from "../../hooks/useDestroyTrustchain";
 import { UseMutationResult } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { setWallectSyncManageKeyDrawer } from "~/actions/walletSync";
+import { manageKeyDrawerSelector } from "~/reducers/walletSync";
 
 const messageLog = "Follow Steps on device";
 
@@ -28,22 +31,24 @@ export type HookResult = {
 export const useManageKeyDrawer = () => {
   const { deleteMutation } = useDestroyTrustchain();
 
-  const [isDrawerVisible, setIsDrawerInstructionsVisible] = useState(false);
+  const isDrawerVisible = useSelector(manageKeyDrawerSelector);
+
+  const dispatch = useDispatch();
 
   const [scene, setScene] = useState(Scene.Manage);
 
   const onClickDelete = () => setScene(Scene.Confirm);
 
   const openDrawer = useCallback(() => {
-    setIsDrawerInstructionsVisible(true);
+    dispatch(setWallectSyncManageKeyDrawer(true));
 
     logDrawer(messageLog, "open");
-  }, []);
+  }, [dispatch]);
 
   const closeDrawer = useCallback(() => {
-    setIsDrawerInstructionsVisible(false);
+    dispatch(setWallectSyncManageKeyDrawer(false));
     logDrawer(messageLog, "close");
-  }, []);
+  }, [dispatch]);
 
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
 

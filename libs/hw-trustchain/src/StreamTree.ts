@@ -1,5 +1,5 @@
-import { CommandStream, Device } from ".";
-import { DerivationPath } from "./Crypto";
+import { CommandStream, CommandStreamDecoder, CommandStreamEncoder, Device } from ".";
+import { crypto, DerivationPath } from "./Crypto";
 import { IndexedTree } from "./IndexedTree";
 
 /**
@@ -147,6 +147,36 @@ export class StreamTree {
     const newTree = this.tree.updateChild(indexes, stream);
 
     return new StreamTree(newTree);
+  }
+
+  public serialize(): Record<string, string> {
+    const streamEntries = serializeTree(this.tree, []);
+    const entries = streamEntries.flatMap(([path, stream]) =>
+      stream ? [[path, crypto.to_hex(CommandStreamEncoder.encode(stream.blocks))]] : [],
+    );
+    return Object.fromEntries(entries);
+
+    function serializeTree(
+      tree: IndexedTree<CommandStream>,
+      path: number[],
+    ): [string, CommandStream | null][] {
+      const stream = tree.getValue();
+      const childrens = tree.getChildren();
+
+      return [
+        [DerivationPath.toString(path), stream],
+        ...Array.from(childrens.entries()).flatMap(([index, child]) =>
+          serializeTree(child, [...path, index]),
+        ),
+      ];
+    }
+  }
+
+  static deserialize(data: Record<string, string>): StreamTree {
+    const streams = Object.values(data).map(
+      data => new CommandStream(CommandStreamDecoder.decode(crypto.from_hex(data))),
+    );
+    return StreamTree.from(...streams);
   }
 
   static async createNewTree(owner: Device, opts: StreamTreeCreateOpts = {}): Promise<StreamTree> {

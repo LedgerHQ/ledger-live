@@ -74,11 +74,12 @@ const manager: WalletSyncDataManager<
       }
     }
 
-    let nextState = latestState || [];
+    const latestOrEmpty = latestState || [];
+    let nextState = latestOrEmpty;
     if (hasChanges) {
       // we can now build the new state. we apply the diff on top of the previous state
       nextState = [];
-      for (const account of latestState || []) {
+      for (const account of latestOrEmpty) {
         if (removed.has(account.id)) {
           continue;
         }
@@ -113,7 +114,7 @@ const manager: WalletSyncDataManager<
     for (const nonImported of localData.nonImportedAccountInfos) {
       nonImportedById.set(nonImported.id, nonImported);
       const { id, attempts, attemptsLastTimestamp } = nonImported;
-      if (existingIds.has(id)) {
+      if (existingIds.has(id) || diff.added.some(a => a.id === id)) {
         hasChanges = true; // at least we need to save the deletion
         continue; // we actually have the account. ignore.
       }

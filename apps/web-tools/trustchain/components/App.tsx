@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { Tooltip } from "react-tooltip";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { getInitialStore } from "@ledgerhq/trustchain/store";
 import useEnv from "../useEnv";
@@ -57,6 +58,7 @@ const App = () => {
       setTrustchainState(s => ({ jwt: null, trustchain: null, memberCredentials })),
     [],
   );
+  const cloudSyncApiBaseUrl = useEnv("CLOUD_SYNC_API_STAGING");
   const setTrustchain = useCallback(
     (trustchain: Trustchain | null) => setTrustchainState(s => ({ ...s, trustchain })),
     [],
@@ -105,13 +107,14 @@ const App = () => {
   const lifecycle = useMemo(
     () =>
       trustchainLifecycle({
+        cloudSyncApiBaseUrl,
         getCurrentWSState: () => wsStateRef.current,
       }),
-    [],
+    [cloudSyncApiBaseUrl],
   );
 
   const sdk = useMemo(
-    () => getSdk(!!mockEnv, context, lifecycle),
+    () => getSdk(!!mockEnv, context, withDevice, lifecycle),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       mockEnv,
@@ -120,8 +123,8 @@ const App = () => {
       memberCredentials,
     ],
   );
-  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API").includes("stg");
-  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API").includes("stg");
+  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API_STAGING").includes("stg");
+  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API_STAGING").includes("stg");
   const envSummary = mockEnv
     ? "MOCK"
     : envTrustchainApiIsStg && envWalletSyncApiIsStg

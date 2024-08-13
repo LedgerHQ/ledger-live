@@ -68,6 +68,7 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
 
 const List = styled(Flex)`
   overflow-y: auto;
+  padding-bottom: 12%;
   max-height: calc(100vh - 12%);
   ::-webkit-scrollbar {
     width: 0;

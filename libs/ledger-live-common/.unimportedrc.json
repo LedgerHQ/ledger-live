@@ -335,7 +335,8 @@
     "src/market/hooks/useMarketPerformers.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
-    "src/rxjs/operators/throwIf.ts"
+    "src/rxjs/operators/throwIf.ts",
+    "src/walletSync/getEnvironmentParams.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-transport-mocker",

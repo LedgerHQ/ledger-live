@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network/network";
 import { GetNextPageParamFunction, InfiniteData, QueryFunction } from "@tanstack/react-query";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { URL_ORIGIN } from "LLM/features/Web3Hub/constants";
 import { manifests } from "./mocks/manifests";
 
 const MOCK_DELAY = 1000;
@@ -36,8 +37,19 @@ export const fetchManifests: (
 ) => QueryFunction<LiveAppManifest[], string[], number> =
   (category, search) =>
   async ({ pageParam }) => {
+    const url = new URL(`${URL_ORIGIN}/api/v2/apps`);
+    url.searchParams.set("resultsPerPage", `${PAGE_SIZE}`);
+    url.searchParams.set("page", `${pageParam}`);
+    if (category !== "all") {
+      url.searchParams.set("categories", category);
+    }
+    // TODO: make sure to trim search
+    if (search) {
+      url.searchParams.set("search", search);
+    }
+
     const res = await network<LiveAppManifest[]>({
-      url: `https://manifest-api-git-feat-v2-search-ledgerhq.vercel.app/api/v2/apps?resultsPerPage=${PAGE_SIZE}&page=${pageParam}&categories=${category === "all" ? "" : category}&search=${search}`,
+      url: url.toString(),
     });
     return res.data;
   };
@@ -67,8 +79,10 @@ export const fetchManifestByIdMock = (manifestId: string) => async () => {
 };
 
 export const fetchManifestById = (manifestId: string) => async () => {
+  const url = new URL(`${URL_ORIGIN}/api/v2/apps/${manifestId}`);
+
   const res = await network<LiveAppManifest>({
-    url: `https://manifest-api-git-feat-v2-search-ledgerhq.vercel.app/api/v2/apps/${manifestId}`,
+    url: url.toString(),
   });
   return res.data;
 };

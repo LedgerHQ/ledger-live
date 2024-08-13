@@ -17,8 +17,8 @@ export class AccountPage extends AppPage {
   private sendButton = this.page.getByRole("button", { name: "Send" });
   private accountName = (name: string) => this.page.locator(`text=${name}`);
   private lastOperation = this.page.locator("text=Latest operations");
-  private tokenValue = (tokenName: string) =>
-    this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`);
+  private tokenValue = (tokenName: string, accountName: string) =>
+    this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`).getByText(`${accountName}`);
   private accountBalance = this.page.getByTestId("total-balance");
   private operationList = this.page.locator("id=operation-list");
   private showMoreButton = this.page.getByText("Show more");
@@ -32,11 +32,11 @@ export class AccountPage extends AppPage {
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
   private viewDetailsButton = this.page.getByText("View details");
 
-  @step("Navigate to token $0")
+  @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
     if (SubAccount.currency.name) {
-      await expect(this.tokenValue(SubAccount.currency.name)).toBeVisible();
-      await this.tokenValue(SubAccount.currency.name).click();
+      await expect(this.tokenValue(SubAccount.currency.name, SubAccount.accountName)).toBeVisible();
+      await this.tokenValue(SubAccount.currency.name, SubAccount.accountName).click();
     }
   }
 
@@ -45,7 +45,7 @@ export class AccountPage extends AppPage {
     await this.receiveButton.click();
   }
 
-  @step("click on add token button")
+  @step("Click on add token button")
   async clickAddToken() {
     await this.addTokenButton.click();
   }
@@ -157,7 +157,7 @@ export class AccountPage extends AppPage {
     expect(tokenInfos).toContain(SubAccount.currency.ticker);
   }
 
-  @step("navigate to token in account")
+  @step("Navigate to token in account")
   async navigateToTokenInAccount(SubAccount: Account) {
     await this.tokenRow(SubAccount.currency.ticker).click();
   }

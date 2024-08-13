@@ -1,10 +1,10 @@
 import { Permissions, crypto } from "@ledgerhq/hw-trustchain";
-import { getEnv } from "@ledgerhq/live-env";
 import WebSocket from "isomorphic-ws";
 import { MemberCredentials, Trustchain, TrustchainMember } from "../types";
 import { makeCipher, makeMessageCipher } from "./cipher";
 import { Message } from "./types";
 import { InvalidDigitsError } from "../errors";
+import { log } from "@ledgerhq/logs";
 
 const version = 1;
 
@@ -15,10 +15,15 @@ const CLOSE_TIMEOUT = 100; // just enough time for the onerror to appear before 
  * @returns a promise that resolves when this is done
  */
 export async function createQRCodeHostInstance({
+  trustchainApiBaseUrl,
   onDisplayQRCode,
   onDisplayDigits,
   addMember,
 }: {
+  /**
+   * the base URL of the trustchain API
+   */
+  trustchainApiBaseUrl: string;
   /**
    * this function will need to display a UI to show the QR Code
    */
@@ -34,7 +39,7 @@ export async function createQRCodeHostInstance({
 }): Promise<void> {
   const ephemeralKey = await crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
-  const url = `${getEnv("TRUSTCHAIN_API").replace("http", "ws")}/v1/qr?host=${publisher}`;
+  const url = `${trustchainApiBaseUrl.replace("http", "ws")}/v1/qr?host=${publisher}`;
   const ws = new WebSocket(url);
   function send(message: Message) {
     ws.send(JSON.stringify(message));
@@ -105,7 +110,6 @@ export async function createQRCodeHostInstance({
           }
           case "Failure": {
             finished = true;
-            console.error(data);
             const error = fromErrorMessage(data.payload);
             reject(error);
             ws.close();
@@ -116,7 +120,6 @@ export async function createQRCodeHostInstance({
           }
         }
       } catch (e) {
-        console.error(e);
         ws.close();
         reject(e);
       }
@@ -210,7 +213,7 @@ export async function createQRCodeCandidateInstance({
           }
           case "Failure": {
             finished = true;
-            console.error(data);
+            log("trustchain/qrcode", "Failure", { data });
             const error = fromErrorMessage(data.payload);
             reject(error);
             ws.close();
@@ -220,7 +223,6 @@ export async function createQRCodeCandidateInstance({
             throw new Error("unexpected message");
         }
       } catch (e) {
-        console.error(e);
         ws.close();
         reject(e);
       }
