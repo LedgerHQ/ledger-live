@@ -4,6 +4,11 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { deviceOpt } from "../../scan";
+import { ListAppsEvent, ListAppsResult } from "@ledgerhq/live-common/apps/types";
+
+function isResultEvent(event: ListAppsEvent): event is { type: "result"; result: ListAppsResult } {
+  return event.type === "result";
+}
 export default {
   description: "List apps that can be installed on the device",
   args: [
@@ -37,8 +42,7 @@ export default {
       from(getDeviceInfo(t)).pipe(
         mergeMap(deviceInfo =>
           listAppsUseCase(t, deviceInfo).pipe(
-            filter(e => e.type === "result"),
-            // @ts-expect-error we need better typings and safe guard to infer types
+            filter(isResultEvent),
             map(e => e.result),
             repeat(benchmark ? 5 : 1),
           ),

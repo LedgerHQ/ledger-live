@@ -24,22 +24,23 @@
     "react": ">=16"
   },
   "dependencies": {
-    "@ledgerhq/types-live": "workspace:*",
-    "@ledgerhq/types-cryptoassets": "workspace:*",
-    "@ledgerhq/cryptoassets": "workspace:*",
-    "@ledgerhq/logs": "workspace:*",
-    "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/coin-framework": "workspace:*",
+    "@ledgerhq/cryptoassets": "workspace:*",
+    "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/live-hooks": "workspace:*",
+    "@ledgerhq/logs": "workspace:*",
+    "@ledgerhq/types-cryptoassets": "workspace:*",
+    "@ledgerhq/types-live": "workspace:*",
     "bignumber.js": "9"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.10",
     "@testing-library/react": "14",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.2.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "ts-jest": "^29.1.1"
   },
   "scripts": {

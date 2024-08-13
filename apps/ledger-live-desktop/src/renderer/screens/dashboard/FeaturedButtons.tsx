@@ -24,7 +24,7 @@ const FeaturedButtons = () => {
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const { enabled: bannerEnabled } = bannerFeatureFlag || { enabled: false };
 
-  const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0 ?? true;
+  const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0 || true;
   const startStakeFlow = useStakeFlow();
 
   const handleClickExchange = useCallback(() => {

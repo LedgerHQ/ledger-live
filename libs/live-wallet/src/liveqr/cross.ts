@@ -126,7 +126,7 @@ const asResultMeta = (unsafe: Record<string, unknown>): Meta => {
       Array.isArray(modelIdList) &&
       modelIdList.every(id => typeof id === "string")
     ) {
-      resultModelIdList = modelIdList;
+      resultModelIdList = modelIdList as DeviceModelId[];
     } else {
       throw new Error("invalid meta.modelIdList");
     }

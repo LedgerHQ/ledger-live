@@ -29,11 +29,11 @@
     "build:network": "pnpm turbo build --no-daemon --filter=live-network",
     "build:config": "pnpm turbo build --no-daemon --filter=live-config",
     "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",
-    "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo build --no-daemon --filter=\"ledger-live-desktop^...\"",
+    "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
+    "build:llm:deps": "pnpm turbo build --no-daemon --filter=\"live-mobile^...\"",
     "build:llm:android": "pnpm turbo android:apk:local --no-daemon --filter=live-mobile",
     "build:llm:ios": "pnpm turbo ios:local:ipa --no-daemon --filter=live-mobile",
-    "build:llm:deps": "pnpm turbo build --no-daemon --filter=\"live-mobile^...\"",
     "build:ljs": "pnpm turbo build --no-daemon --filter=\"./libs/ledgerjs/**\"",
     "build:web-tools": "pnpm turbo build --no-daemon --filter=web-tools",
     "build-ci:llm:ios": "pnpm turbo ios:ci:adhoc --no-daemon --filter=live-mobile",
@@ -177,6 +177,10 @@
     "unimported": "1.30.0",
     "zx": "^7.2.2"
   },
+  "engines": {
+    "pnpm": "9.7.0"
+  },
+  "engine-strict": true,
   "pnpm": {
     "neverBuiltDependencies": [
       "blake2"

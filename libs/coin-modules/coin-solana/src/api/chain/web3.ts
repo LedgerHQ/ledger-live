@@ -334,25 +334,29 @@ export function buildStakeWithdrawInstructions({
   return tx.instructions;
 }
 
-export function buildStakeSplitInstructions({
-  authorizedAccAddr,
-  stakeAccAddr,
-  seed,
-  amount,
-  splitStakeAccAddr,
-}: StakeSplitCommand): TransactionInstruction[] {
-  // HACK: switch to split_with_seed when supported by @solana/web3.js
-  const splitIx = StakeProgram.split({
-    authorizedPubkey: new PublicKey(authorizedAccAddr),
-    lamports: amount,
-    stakePubkey: new PublicKey(stakeAccAddr),
-    splitStakePubkey: new PublicKey(splitStakeAccAddr),
-  }).instructions[1];
+export async function buildStakeSplitInstructions(
+  { authorizedAccAddr, stakeAccAddr, seed, amount, splitStakeAccAddr }: StakeSplitCommand,
+  api: ChainAPI,
+): Promise<TransactionInstruction[]> {
+  // Fetch the minimum balance required for rent exemption using the ChainAPI
+  const rentExemptReserve = await api.getMinimumBalanceForRentExemption(StakeProgram.space);
+
+  // Create the split instruction with the rentExemptReserve
+  const splitIx = StakeProgram.split(
+    {
+      authorizedPubkey: new PublicKey(authorizedAccAddr),
+      lamports: amount,
+      stakePubkey: new PublicKey(stakeAccAddr),
+      splitStakePubkey: new PublicKey(splitStakeAccAddr),
+    },
+    rentExemptReserve,
+  ).instructions[1];
 
   if (splitIx === undefined) {
     throw new Error("expected split instruction");
   }
 
+  // Create the allocate instruction
   const allocateIx = SystemProgram.allocate({
     accountPubkey: new PublicKey(splitStakeAccAddr),
     basePubkey: new PublicKey(authorizedAccAddr),

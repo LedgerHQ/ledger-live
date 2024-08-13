@@ -168,7 +168,6 @@ const LLDSignature = () => {
         )
         .filter(v => !excludes.includes(v));
 
-      // @ts-expect-error we use this to dedup things. TBD how to do it more natively
       const v = [...new Set(res)]
         .sort((a, b) => (semver.gt(a, b) ? -1 : 1))
         .map(el => ({ value: el, label: el }));

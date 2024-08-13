@@ -9,7 +9,8 @@
     "downlevelIteration": true,
     "jsx": "react",
     "lib": ["es2020", "dom"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

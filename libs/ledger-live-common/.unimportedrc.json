@@ -407,15 +407,12 @@
     "@noble/curves/ed25519",
     "@noble/hashes/sha256",
     "@noble/hashes/sha3",
-    "@noble/curves/secp256k1",
     "@solana/buffer-layout",
     "bn.js",
     "borsh",
     "bigint-buffer",
     "jayson/lib/client/browser",
     "node-fetch",
-    "rpc-websockets/dist/lib/client",
-    "rpc-websockets/dist/lib/client/websocket",
     "superstruct"
   ]
 }
