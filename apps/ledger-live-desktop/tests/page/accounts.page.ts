@@ -43,7 +43,7 @@ export class AccountsPage extends AppPage {
     await expect(this.showTokensButton(parentName)).not.toBeVisible();
   }
 
-  @step("Verify token visibility $1 having parent $0")
+  @step("Verify token visibility having parent $0")
   async verifyTokenVisibility(parentName: string, childCurrency: Currency) {
     await expect(this.tokenRow(parentName, childCurrency)).toBeVisible();
   }
