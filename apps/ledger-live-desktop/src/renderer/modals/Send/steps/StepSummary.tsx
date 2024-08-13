@@ -57,7 +57,7 @@ const WARN_FROM_UTXO_COUNT = 50;
 const StepSummary = (props: StepProps) => {
   const { account, parentAccount, transaction, status, currencyName, isNFTSend } = props;
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const unit = useMaybeAccountUnit(mainAccount);
+  const unit = useMaybeAccountUnit(account);
   const accountName = useMaybeAccountName(account);
 
   if (!account || !mainAccount || !transaction) {
