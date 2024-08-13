@@ -11,6 +11,7 @@ import { isRecipientValidForTokenTransfer, validateAddress } from "./bridge/util
 import { getAddress, getSubAccount } from "./bridge/utils/utils";
 import { calculateEstimatedFees } from "./utils";
 import { InvalidRecipientForTokenTransfer } from "./errors";
+import BigNumber from "bignumber.js";
 
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = async (
   account: Account,
@@ -21,6 +22,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   const warnings: TransactionStatus["warnings"] = {};
   const { balance } = account;
   const { address } = getAddress(account);
+  const subAccount = getSubAccount(account, transaction);
   const { recipient, useAllAmount, gasPremium, gasFeeCap, gasLimit } = transaction;
   let { amount } = transaction;
   const invalidAddressErr = new InvalidAddress(undefined, {
@@ -32,13 +34,18 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
   if (gasFeeCap.eq(0) || gasPremium.eq(0) || gasLimit.eq(0)) errors.gas = new FeeNotLoaded();
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
-  let totalSpent;
-  if (useAllAmount) {
+  let totalSpent: BigNumber;
+  if (useAllAmount && !subAccount) {
     totalSpent = account.spendableBalance;
     amount = totalSpent.minus(estimatedFees);
     if (amount.lte(0) || totalSpent.gt(balance)) {
       errors.amount = new NotEnoughBalance();
     }
+  }
+
+  if (subAccount) {
+    totalSpent = estimatedFees;
+    if (totalSpent.gt(account.spendableBalance)) errors.amount = new NotEnoughBalance();
   } else {
     totalSpent = amount.plus(estimatedFees);
     if (amount.eq(0)) {
@@ -46,7 +53,6 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     } else if (totalSpent.gt(account.spendableBalance)) errors.amount = new NotEnoughBalance();
   }
 
-  const subAccount = getSubAccount(account, transaction);
   if (subAccount) {
     const spendable = subAccount.spendableBalance;
     if (transaction.amount.gt(spendable)) {
