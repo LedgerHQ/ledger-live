@@ -46,12 +46,19 @@ export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions
 }
 
 export const recorderConfig: RecorderConfig = {
-  approveOnceOnText: ["Enable"], // Approve the first interaction (After login)
+  approveOnceOnText: ["Enable", "Confirm"], // Approve the first interaction (After login)
   approveOnText: ["Log in to", "Don't enable"],
 
   goNextOnText: [
     // Login:
-    ...["Login request", "Identify with your", "request?", "Ensure you trust the"],
+    ...[
+      "Login request",
+      "Identify with your",
+      "request",
+      "Ensure you trust the",
+      "update request",
+      "keep",
+    ],
 
     // Refuse the second interaction (remove member):
     "Enable",

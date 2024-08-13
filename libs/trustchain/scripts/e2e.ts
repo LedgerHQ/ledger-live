@@ -8,6 +8,13 @@ import expect from "expect";
 // we force inject expect to allow us to have expect() code in the test-scenarios
 (global as any).expect = expect;
 
+const coinapps = process.env.COIN_APPS;
+if (!coinapps) {
+  throw new Error(
+    "COIN_APPS env is required. it should be the path to the coinapps folder ( cloned from https://github.com/LedgerHQ/coin-apps )",
+  );
+}
+
 async function main() {
   const scenarioFolder = path.join(__dirname, "../tests/scenarios");
   const mockFolder = path.join(__dirname, "../mocks/scenarios");
@@ -27,8 +34,7 @@ async function main() {
       console.log("RUNNING E2E ON TEST SCENARIO", slug);
       // otherwise we always run the e2e but don't touch existing snapshots
       await recordTestTrustchainSdk(snapshotFileExists ? null : snapshotFile, scenario, {
-        coinapps: __dirname,
-        overridesAppPath: "app.elf",
+        coinapps,
         ...mod.recorderConfig,
       });
     }
