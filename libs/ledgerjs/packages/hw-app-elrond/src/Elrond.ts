@@ -88,7 +88,7 @@ export default class Elrond {
     );
 
     const addressLength = response[0];
-    const address = Address.newFromBech32(response.slice(1, 1 + addressLength).toString());
+    const address = Address.newFromBech32(response.slice(1, 1 + addressLength).toString("ascii"));
 
     return {
       publicKey: address.toHex(),
