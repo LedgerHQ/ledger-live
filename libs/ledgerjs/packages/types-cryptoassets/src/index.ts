@@ -81,6 +81,7 @@ export type CryptoCurrencyId =
   | "particl"
   | "persistence"
   | "pirl"
+  | "pivx"
   | "poa"
   | "polkadot"
   | "polygon"
