@@ -3,7 +3,11 @@ import { Transaction } from "./types";
 import { getMainAccount } from "../../account";
 import { getAddress, getSubAccount } from "./bridge/utils/utils";
 import { AccountType, Methods, calculateEstimatedFees } from "./utils";
-import { InvalidAddress } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  NotEnoughBalanceInParentAccount,
+  NotEnoughSpendableBalance,
+} from "@ledgerhq/errors";
 import { isFilEthAddress, validateAddress } from "./bridge/utils/addresses";
 import { fetchBalances, fetchEstimatedFees } from "./bridge/utils/api";
 import BigNumber from "bignumber.js";
@@ -62,8 +66,6 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 
   if (balance.eq(0)) return balance;
 
-  const amount = transaction?.amount;
-
   const validatedContractAddress = validateAddress(subAccount?.token.contractAddress ?? "");
   if (tokenAccountTxn && !validatedContractAddress.isValid) {
     throw invalidAddressErr;
@@ -96,15 +98,23 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   const gasLimit = new BigNumber(result.gas_limit);
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
 
-  if (balance.lte(estimatedFees)) return new BigNumber(0);
+  if (balance.lte(estimatedFees)) {
+    if (tokenAccountTxn) {
+      throw new NotEnoughBalanceInParentAccount(undefined, {
+        currencyName: a.currency.name,
+      });
+    }
 
+    throw new NotEnoughSpendableBalance(undefined, {
+      currencyName: a.currency.name,
+    });
+  }
   balance = balance.minus(estimatedFees);
-  if (amount) balance = balance.minus(amount);
 
   if (tokenAccountTxn && subAccount) {
-    return subAccount.spendableBalance.minus(amount ?? 0);
+    return subAccount.spendableBalance;
   }
   // log("debug", "[estimateMaxSpendable] finish fn");
 
-  return balance.gt(0) ? balance : new BigNumber(0);
+  return balance;
 };
