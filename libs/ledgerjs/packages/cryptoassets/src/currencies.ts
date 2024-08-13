@@ -2121,8 +2121,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://chainz.cryptoid.info/pivx/tx.dws?$hash.htm",
         address: "https://chainz.cryptoid.info/pivx/address.dws?$address.htm",
       },
-    ],
-    explorerId: "pivx",
+    ]
   },
   poa: {
     type: "CryptoCurrency",
