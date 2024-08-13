@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.48.0-nightly.11
+
+### Minor Changes
+
+- [#7559](https://github.com/LedgerHQ/ledger-live/pull/7559) [`6ebea98`](https://github.com/LedgerHQ/ledger-live/commit/6ebea98ccd5c675cacc3e6c8eb29a8e53842c27b) Thanks [@Justkant](https://github.com/Justkant)! - feat: add header and bottom bar animations on webview scroll
+
 ## 3.48.0-nightly.10
 
 ### Minor Changes
