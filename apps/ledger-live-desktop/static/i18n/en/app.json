@@ -6388,7 +6388,7 @@
       "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
       "cta": "Sync your accounts"
     },
-    "alreadySync": "Already created a key?",
+    "alreadySync": "Already synced a Ledger Live app?",
     "manage": {
       "cta": "Manage",
       "synchronize": {

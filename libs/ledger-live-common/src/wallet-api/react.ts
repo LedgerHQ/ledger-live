@@ -797,6 +797,7 @@ export interface Categories {
   reset: () => void;
 }
 
+/** e.g. "all", "restaking", "services", etc */
 export type CategoryId = Categories["selected"];
 
 export function useCategories(manifests, initialCategory?: CategoryId | null): Categories {

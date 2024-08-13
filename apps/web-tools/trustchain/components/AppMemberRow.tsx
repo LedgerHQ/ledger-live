@@ -49,7 +49,7 @@ export function AppMemberRow({
         inputs={trustchain && memberCredentials ? [trustchain, memberCredentials] : null}
         action={action}
         value={member}
-        valueDisplay={member => <DisplayName pubkey={member.id} />}
+        valueDisplay={member => <DisplayName pubkey={member.id} overridesName={member.name} />}
         buttonProps={{
           "data-tooltip-id": "tooltip",
           "data-tooltip-content":

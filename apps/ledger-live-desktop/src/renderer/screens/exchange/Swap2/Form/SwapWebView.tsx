@@ -45,14 +45,14 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useTranslation } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { captureException } from "~/sentry/renderer";
 import { CustomSwapQuotesState } from "../hooks/useSwapLiveAppQuoteState";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
-import { track } from "~/renderer/analytics/segment";
-import { useTranslation } from "react-i18next";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -86,18 +86,19 @@ export type SwapProps = {
 
 export type SwapWebProps = {
   manifest: LiveAppManifest;
+  liveAppUnavailable: () => void;
+  setQuoteState?: (next: CustomSwapQuotesState) => void;
   swapState?: Partial<SwapProps>;
-  liveAppUnavailable(): void;
   isMaxEnabled?: boolean;
   sourceCurrency?: TokenCurrency | CryptoCurrency;
   targetCurrency?: TokenCurrency | CryptoCurrency;
-  setQuoteState: (next: CustomSwapQuotesState) => void;
 };
 let lastGasOptions: GasOptions;
 
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
   Demo1: "swap-live-app-demo-1",
+  Demo3: "swap-live-app-demo-3",
 };
 
 const SwapWebAppWrapper = styled.div`
@@ -181,7 +182,7 @@ const SwapWebView = ({
         const fromUnit = sourceCurrency?.units[0];
 
         if (!quote.params) {
-          setQuoteState({
+          setQuoteState?.({
             amountTo: undefined,
             swapError: undefined,
             counterValue: undefined,
@@ -192,7 +193,7 @@ const SwapWebView = ({
         if (quote.params?.code && fromUnit) {
           switch (quote.params.code) {
             case "minAmountError":
-              setQuoteState({
+              setQuoteState?.({
                 amountTo: undefined,
                 counterValue: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
@@ -209,7 +210,7 @@ const SwapWebView = ({
               });
               return Promise.resolve();
             case "maxAmountError":
-              setQuoteState({
+              setQuoteState?.({
                 amountTo: undefined,
                 counterValue: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
@@ -236,7 +237,7 @@ const SwapWebView = ({
               )
             : undefined;
 
-          setQuoteState({
+          setQuoteState?.({
             amountTo,
             counterValue: counterValue,
             swapError: undefined,
@@ -487,7 +488,7 @@ const SwapWebView = ({
 
   useEffect(() => {
     // Determine the new quote state based on network status
-    setQuoteState({
+    setQuoteState?.({
       amountTo: undefined,
       counterValue: undefined,
       ...{
