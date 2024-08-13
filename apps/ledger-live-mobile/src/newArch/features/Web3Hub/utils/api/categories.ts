@@ -9,15 +9,20 @@ export const fetchCategoriesMock = async () => {
   return mocks;
 };
 
+export type Category = {
+  id: string;
+  name: string;
+};
+
 export const fetchCategories = async () => {
   const url = new URL(`${URL_ORIGIN}/api/v2/categories`);
 
-  const res = await network<{ categories: string[] }>({
+  const res = await network<Category[]>({
     url: url.toString(),
   });
-  return res.data.categories;
+  return res.data;
 };
 
-export const selectCategories = (data: string[]) => {
-  return ["all", ...data];
+export const selectCategories = (data: Category[]) => {
+  return [{ id: "all", name: "all" }, ...data];
 };

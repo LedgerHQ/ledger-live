@@ -35,7 +35,7 @@ export default function Disclaimer({
 
       {description ? (
         <Flex mt={6}>
-          <Text fontSize={14} lineHeight={"22px"} color="smoke">
+          <Text numberOfLines={12} fontSize={14} lineHeight={"22px"} color="smoke">
             {description}
           </Text>
         </Flex>
@@ -48,13 +48,13 @@ export default function Disclaimer({
           <Icons.Eye color={"smoke"} />
         </Box>
         <Text fontSize={14} color="smoke">
-          {t("web3hub.disclaimer.clearSigningEnabled")}
+          {t("web3hub.components.disclaimer.clearSigningEnabled")}
         </Text>
       </Flex>
 
       <Flex mt={6}>
         <Checkbox
-          label={"  " + t("web3hub.disclaimer.checkbox")}
+          label={"  " + t("web3hub.components.disclaimer.checkbox")}
           checked={isChecked}
           onChange={toggleCheck}
         />
@@ -62,7 +62,7 @@ export default function Disclaimer({
 
       <Flex mt={6}>
         <Button type="main" onPress={onConfirm}>
-          {t("web3hub.disclaimer.CTA", { app: manifest?.name })}
+          {t("web3hub.components.disclaimer.CTA", { app: manifest?.name })}
         </Button>
       </Flex>
     </QueuedDrawer>

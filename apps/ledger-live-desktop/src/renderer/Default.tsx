@@ -76,7 +76,9 @@ const SyncOnboarding = lazy(() => import("./components/SyncOnboarding"));
 const RecoverPlayer = lazy(() => import("~/renderer/screens/recover/Player"));
 
 const NFTGallery = lazy(() => import("~/renderer/screens/nft/Gallery"));
+const NFTGalleryNew = lazy(() => import("LLD/features/Collectibles/Nfts/screens/Gallery"));
 const NFTCollection = lazy(() => import("~/renderer/screens/nft/Gallery/Collection"));
+const NFTCollectionNew = lazy(() => import("LLD/features/Collectibles/Nfts/screens/Collection"));
 const RecoverRestore = lazy(() => import("~/renderer/components/RecoverRestore"));
 const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
@@ -200,9 +202,10 @@ export default function Default() {
 
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const nftReworked = useFeature("lldNftsGalleryNewArch");
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
-
+  const isNftReworkedEnabled = nftReworked?.enabled;
   useEffect(() => {
     if (
       !isLocked &&
@@ -343,12 +346,16 @@ export default function Default() {
                               <Route
                                 exact
                                 path="/account/:id/nft-collection"
-                                render={withSuspense(NFTGallery)}
+                                render={withSuspense(
+                                  isNftReworkedEnabled ? NFTGalleryNew : NFTGallery,
+                                )}
                               />
                               <Route path="/swap-web" render={withSuspense(SwapWeb)} />
                               <Route
                                 path="/account/:id/nft-collection/:collectionAddress?"
-                                render={withSuspense(NFTCollection)}
+                                render={withSuspense(
+                                  isNftReworkedEnabled ? NFTCollectionNew : NFTCollection,
+                                )}
                               />
                               <Route path="/account/:parentId/:id" render={withSuspense(Account)} />
                               <Route path="/account/:id" render={withSuspense(Account)} />

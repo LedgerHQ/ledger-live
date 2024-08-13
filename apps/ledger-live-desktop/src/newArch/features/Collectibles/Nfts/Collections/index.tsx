@@ -1,37 +1,25 @@
 import React, { useMemo } from "react";
-import { useNftCollectionModel } from "./useNftCollectionModel";
+import { useNftCollectionsModel } from "./useNftCollectionsModel";
 import { Box, Icons, Flex } from "@ledgerhq/react-ui";
 import TableContainer from "~/renderer/components/TableContainer";
-import TableHeader from "../../components/Collection/TableHeader";
-import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import TableHeader from "LLD/features/Collectibles/components/Collection/TableHeader";
+import { Account } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-nft-react";
-import TableRow from "../../components/Collection/TableRow";
-import EmptyCollection from "../../components/Collection/EmptyCollection";
-import { CollectibleTypeEnum } from "../../types/Collectibles";
+import TableRow from "LLD/features/Collectibles/components/Collection/TableRow";
+import EmptyCollection from "LLD/features/Collectibles/components/Collection/EmptyCollection";
+import { CollectibleTypeEnum } from "LLD/features/Collectibles/types/enum/Collectibles";
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
-import ShowMore from "../../components/Collection/ShowMore";
-import { FieldStatus } from "../../types/DetailDrawer";
+import ShowMore from "LLD/features/Collectibles/components/Collection/ShowMore";
+import { FieldStatus } from "LLD/features/Collectibles/types/enum/DetailDrawer";
 import CollectionContextMenu from "LLD/components/ContextMenu/CollectibleContextMenu";
-import HeaderActions from "../../components/Collection/HeaderActions";
-import { TableHeaderProps, TableHeaderTitleKey as TitleKey } from "../../types/Collection";
+import HeaderActions from "LLD/features/Collectibles/components/Collection/HeaderActions";
+import {
+  TableHeaderProps,
+  TableHeaderTitleKey as TitleKey,
+} from "LLD/features/Collectibles/types/Collection";
 
-export type NftsInTheCollections = {
-  contract: string;
-  nft: ProtoNFT;
-  nftsNumber: number;
-  onClick: (collectionAddress: string) => void;
-};
-
-type ViewProps = {
-  nftsInTheCollection: NftsInTheCollections[];
-  account: Account;
-  displayShowMore: boolean;
-  onOpenGallery: () => void;
-  onReceive: () => void;
-  onOpenCollection: (collectionAddress: string) => void;
-  onShowMore: () => void;
-};
+type ViewProps = ReturnType<typeof useNftCollectionsModel>;
 
 type NftItemProps = {
   contract: string;
@@ -66,7 +54,7 @@ const NftItem: React.FC<NftItemProps> = ({
     >
       <TableRow
         isLoading={isLoading}
-        tokenName={metadata?.tokenName || contract}
+        tokenName={metadata?.tokenName || metadata?.nftName || ""}
         numberOfNfts={numberOfNfts}
         onClick={() => onClick(contract)}
         media={{
@@ -152,8 +140,8 @@ function View({
   );
 }
 
-const NftCollection: React.FC<Props> = ({ account }) => {
-  return <View {...useNftCollectionModel({ account })} account={account} />;
+const NftCollections: React.FC<Props> = ({ account }) => {
+  return <View {...useNftCollectionsModel({ account })} account={account} />;
 };
 
-export default NftCollection;
+export default NftCollections;
