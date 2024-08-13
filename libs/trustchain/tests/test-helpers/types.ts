@@ -31,8 +31,15 @@ export type RecorderConfig = {
 };
 
 export const recorderConfigDefaults = {
-  goNextOnText: ["Login request", "Identify with your", "request?", "Ensure you trust the"],
-  approveOnText: ["Log in to", "Enable"],
+  goNextOnText: [
+    "Login request",
+    "Identify with your",
+    "request",
+    "Ensure you trust the",
+    "keep",
+    "update request",
+  ],
+  approveOnText: ["Log in to", "Enable", "Confirm"],
 };
 
 export const genSeed = () => generateMnemonic(256);

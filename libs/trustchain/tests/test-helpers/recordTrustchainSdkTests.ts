@@ -19,7 +19,7 @@ export async function recordTestTrustchainSdk(
   const seed = config.seed || genSeed();
   const coinapps = config.coinapps;
   if (!coinapps) throw new Error("coinapps is required"); // it's completed by e2e script
-  const overridesAppPath = config.overridesAppPath;
+
   const goNextOnText = config.goNextOnText || recorderConfigDefaults.goNextOnText;
   const approveOnceOnText = config.approveOnceOnText || [];
   const approveOnText = config.approveOnText || recorderConfigDefaults.approveOnText;
@@ -30,23 +30,22 @@ export async function recordTestTrustchainSdk(
   const createDeviceWithSeed = async (seed: string) => {
     const device = await createSpeculosDevice({
       model: DeviceModelId.nanoSP,
-      firmware: "2.1.0",
+      firmware: "1.1.2",
       appName: TRUSTCHAIN_APP_NAME,
-      appVersion: "0.0.1",
+      appVersion: "1.0.1",
       seed,
       coinapps, // folder where there is the Ledger Sync coin app
-      overridesAppPath,
     });
 
     // passthrough all success cases for the Ledger Sync coin app to accept all.
     const sub = device.transport.automationEvents.subscribe(event => {
-      const approveOnceIndex = approveOnceOnText.findIndex(t => event.text.includes(t));
+      const approveOnceIndex = approveOnceOnText.findIndex(t => event.text.trim() == t);
       if (approveOnceIndex > -1) {
         approveOnceOnText.splice(approveOnceIndex, 1);
         buttonClicksPromises.push(device.transport.button("both"));
-      } else if (goNextOnText.some(t => event.text.includes(t))) {
+      } else if (goNextOnText.some(t => event.text.trim() == t)) {
         buttonClicksPromises.push(device.transport.button("right"));
-      } else if (approveOnText.some(t => event.text.includes(t))) {
+      } else if (approveOnText.some(t => event.text.trim() == t)) {
         buttonClicksPromises.push(device.transport.button("both"));
       }
     });
