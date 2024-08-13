@@ -1564,6 +1564,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "nyx",
   "onomy",
   "persistence",
+  "pivx",
   "quicksilver",
   "reosc",
   "resistance",
