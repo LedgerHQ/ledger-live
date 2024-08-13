@@ -2,12 +2,15 @@ import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import styled, { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
+import { AnalyticsPage } from "../hooks/useWalletSyncAnalytics";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 type Props = {
   title?: string;
   description?: string;
   cta?: string;
   onClick?: () => void;
+  analyticsPage?: AnalyticsPage;
 };
 
 const Container = styled(Box)`
@@ -20,10 +23,11 @@ const Container = styled(Box)`
   justify-content: center;
 `;
 
-export const Error = ({ title, description, cta, onClick }: Props) => {
+export const Error = ({ title, description, cta, onClick, analyticsPage }: Props) => {
   const { colors } = useTheme();
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
+      <TrackPage category={String(analyticsPage)} />
       <Container>
         <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />
       </Container>

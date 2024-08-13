@@ -69,6 +69,7 @@ describe("Xrp Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction(address, {
+        mode: "send",
         recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
         amount: BigInt(10),
         fee: BigInt(1),

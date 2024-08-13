@@ -33,10 +33,6 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
 
-  const reopenAddModal = useCallback(() => {
-    setAddModalOpened(true);
-  }, [setAddModalOpened]);
-
   const navigateToManager = useCallback(() => {
     navigation.navigate(NavigatorName.MyLedger);
   }, [navigation]);
@@ -100,7 +96,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
           <AddAccountDrawer
             isOpened={isAddModalOpened}
             onClose={closeAddModal}
-            reopenDrawer={reopenAddModal}
+            doesNotHaveAccount={true}
           />
         </Box>
       </Flex>

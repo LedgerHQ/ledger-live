@@ -16,6 +16,7 @@ type Props = {
    * context, rather than directly showing an error screen.
    * */
   optimisticallyMountChildren?: boolean;
+  fallBackHasNoBackground?: boolean;
 };
 
 /**
@@ -38,6 +39,7 @@ type Props = {
 const RequiresCameraPermissions: React.FC<Props> = ({
   children,
   optimisticallyMountChildren = false,
+  fallBackHasNoBackground = false,
 }) => {
   const { t } = useTranslation();
   const {
@@ -59,6 +61,7 @@ const RequiresCameraPermissions: React.FC<Props> = ({
       <Fallback
         event="CameraPressAuthorize"
         onPress={requestPermission}
+        hasNoBackground={fallBackHasNoBackground}
         title={t("permissions.camera.title")}
         description={t("permissions.camera.authorizeDescription")}
         buttonTitle={t("permissions.camera.authorizeButtonTitle")}
@@ -68,6 +71,7 @@ const RequiresCameraPermissions: React.FC<Props> = ({
     <Fallback
       event="CameraOpenSettings"
       onPress={openAppSettings}
+      hasNoBackground={fallBackHasNoBackground}
       title={t("permissions.camera.title")}
       description={t("permissions.camera.goToSettingsDescription")}
       buttonTitle={t("permissions.camera.goToSettingsButtonTitle")}

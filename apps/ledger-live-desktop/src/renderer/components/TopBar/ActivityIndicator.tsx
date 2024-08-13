@@ -14,7 +14,7 @@ import Tooltip from "../Tooltip";
 import TranslatedError from "../TranslatedError";
 import Box from "../Box";
 import { ItemContainer } from "./shared";
-import { useWalletSyncUserState } from "~/newArch/features/WalletSync/components/WalletSyncContext";
+import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
 
 export default function ActivityIndicatorInner() {
   const wsUserState = useWalletSyncUserState();

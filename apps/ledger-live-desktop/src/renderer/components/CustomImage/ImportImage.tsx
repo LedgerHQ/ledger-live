@@ -16,9 +16,20 @@ type Props = {
   onClick: () => void;
 };
 
+const acceptedMimeTypes = [
+  "image/jpeg",
+  "image/png",
+  "image/bmp",
+  "image/webp",
+  "image/tiff",
+  "image/heif",
+  "image/heic",
+];
+const acceptedMimeTypesString = acceptedMimeTypes.join(", ");
+
 const ImageInput = styled.input.attrs({
   type: "file",
-  accept: "image/*",
+  accept: acceptedMimeTypesString,
   title: "",
   value: "",
 })`
@@ -40,7 +51,7 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }
       try {
         const reader = new FileReader();
         if (!file) return;
-        if (!file.type.startsWith("image/")) {
+        if (!acceptedMimeTypes.includes(file.type)) {
           onError(new ImageIncorrectFileTypeError());
           return;
         }

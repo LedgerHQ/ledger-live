@@ -59,7 +59,7 @@ export type TrustchainResponse = {
   [key: string]: string;
 };
 
-type PutCommandsRequest = {
+export type PutCommandsRequest = {
   path: string;
   blocks: string[];
 };

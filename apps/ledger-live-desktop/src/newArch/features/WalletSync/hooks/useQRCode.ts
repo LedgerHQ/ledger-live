@@ -8,8 +8,11 @@ import { trustchainSelector, memberCredentialsSelector } from "@ledgerhq/trustch
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKey } from "./type.hooks";
 
 export function useQRCode() {
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
@@ -35,7 +38,6 @@ export function useQRCode() {
       trustchainApiBaseUrl,
       onDisplayQRCode: url => {
         setUrl(url);
-        setIsLoading(false);
       },
       onDisplayDigits: digits => {
         dispatch(setQrCodePinCode(digits));
@@ -48,18 +50,20 @@ export function useQRCode() {
     })
       .catch(e => {
         if (e instanceof InvalidDigitsError) {
-          return;
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
         }
         setError(e);
-        setIsLoading(false);
+        throw e;
       })
       .then(() => {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
+        queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
         setUrl(null);
         dispatch(setQrCodePinCode(null));
         setIsLoading(false);
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
+        setError(null);
       });
-  }, [trustchainApiBaseUrl, trustchain, memberCredentials, dispatch, sdk]);
+  }, [trustchain, memberCredentials, trustchainApiBaseUrl, dispatch, sdk, queryClient]);
 
   return {
     url,
