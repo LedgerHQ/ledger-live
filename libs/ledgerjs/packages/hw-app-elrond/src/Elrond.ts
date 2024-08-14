@@ -126,12 +126,8 @@ export default class Elrond {
   }
 
   async sign(path: string, message: string): Promise<{ signature: null | Buffer }> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
-    const buf = Buffer.alloc(4);
-    buf.writeUInt32BE(bipPath[2], 0);
-
     const chunks: Buffer[] = [];
-    const buffer = Buffer.concat([buf, Buffer.from(message, "hex")]);
+    const buffer: Buffer = Buffer.from(message);
 
     for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
       let end = i + CHUNK_SIZE;

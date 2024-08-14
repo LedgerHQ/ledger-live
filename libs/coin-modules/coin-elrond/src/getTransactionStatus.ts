@@ -53,7 +53,7 @@ export const getTransactionStatus: AccountBridge<
     errors.amount = new AmountRequired();
   }
 
-  let totalSpent = new BigNumber(0); // Will be in token amount for token transacations
+  let totalSpent = new BigNumber(0); // Will be in token amount for token transactions
   let totalSpentEgld = new BigNumber(0); // Amount spent in main currency (EGLD)
 
   const tokenAccount =
