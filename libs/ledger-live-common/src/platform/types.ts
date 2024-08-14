@@ -126,6 +126,7 @@ export type LiveAppManifest = {
   currencies: string[] | "*";
   visibility: Visibility;
   highlight?: boolean;
+  providerTestBaseUrl?: string;
   content: {
     cta?: TranslatableString;
     subtitle?: TranslatableString;
