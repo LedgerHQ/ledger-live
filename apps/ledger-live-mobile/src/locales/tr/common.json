@@ -919,6 +919,13 @@
     "InvalidMemoICP" : {
       "title" : "Memo bir sayı olmak zorunda"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Token transferi için geçersiz alıcı; token transferi için desteklenen hesap türleri şunlardır: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "Üzgünüz, ücret tahmini başarısız oldu",
+      "description" : "Ağda ücret hesaplama başarısız oldu. Girilen bilgileri kontrol edin, işlem muhtemelen başarısız olacak"
+    },
     "FirmwareNotRecognized" : {
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
@@ -927,8 +934,20 @@
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
     },
+    "TonCommentInvalid" : {
+      "title" : "Yorum, özel karakterler içermemeli ve 120 karakteri aşmamalıdır"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
+    },
+    "CustomError" : {
+      "title" : "Üzgünüz, tekrar deneyin.",
+      "description" : "Sunucu, talebinizi işleme koyamadı. Lütfen daha sonra tekrar deneyin veya Ledger Destek ile iletişime geçin.",
+      "errorCode" : "Kod: {{errorCode}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "Verileriniz alınırken bir sorun oluştu",
+      "description" : "Lütfen tekrar deneyin veya Ledger Destek ekibiyle iletişime geçin."
     }
   },
   "crash" : {
@@ -2946,7 +2965,7 @@
           "description" : "Ledger'ın blok zinciri tarayıcılarının gelecek bir sürümünü deneyin. Bu ayarın değiştirilmesi, hesap bakiyesi ve senkronizasyonun yanı sıra gönderme özelliğini de etkileyebilir."
         },
         "1559DeactivateGate" : {
-          "title" : "EIP1559 minimum öncelik ücreti kapısını devre dışı bırakın",
+          "title" : "EIP1559 minimum öncelik ücreti kapısını devre dışı bırak",
           "description" : "Bu, bir işlemin herhangi bir minimum öncelik ücreti beklenmeden gönderilmesini sağlar. İşlemin mempool'da sonsuza dek takılı kalmasına da yol açabilir."
         },
         "1559CustomPriorityLowerGate" : {
@@ -2966,7 +2985,7 @@
           "description" : "Yeni ve deneysel takas arayüzünü kullanın"
         },
         "experimentalEnableNetworkLogs" : {
-          "title" : "Ağ log'larını etkinleştirin",
+          "title" : "Ağ log'larını etkinleştir",
           "description" : "Konsolda ağ log'larını etkinleştirin (hata log'ları her zaman etkindir)"
         }
       },
@@ -2985,6 +3004,10 @@
         },
         "platformManifest" : {
           "title" : "Platform Manifest Dosyasını Yükleyin"
+        },
+        "mockAppUpdate" : {
+          "title" : "Test uygulama güncellemesi",
+          "description" : "My Ledger'da mevcut uygulama güncellemelerini göster, aynı uygulama sürümü yeniden yüklenecektir"
         }
       }
     },
@@ -3647,6 +3670,8 @@
         "value" : "Memo değeri"
       },
       "validateMemo" : "Memo'yu onayla",
+      "comment" : "Yorum",
+      "validateComment" : "Yorumu onayla",
       "quantity" : "Miktar"
     },
     "validation" : {
@@ -6382,7 +6407,7 @@
   },
   "customImage" : {
     "title" : "Kilit ekranı resmi",
-    "replace" : "Değiştir",
+    "change" : "Değiştir",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Resim galerimden seç",
@@ -6405,7 +6430,9 @@
       "choosePicture" : "Bir resim seçin"
     },
     "confirmCrop" : "Kırpmayı onayla",
-    "confirmContrast" : "Zıtlığı onayla",
+    "confirmContrast" : "Kontrastı onayla",
+    "keepOnDevice" : "Tut",
+    "discardOnDevice" : "At",
     "nftEntryPointButtonLabel" : "Kilitli ekran resmi olarak belirleyin",
     "customImage" : "Özel resim",
     "doThisLater" : "Belki sonra",
@@ -6685,12 +6712,151 @@
     }
   },
   "walletSync" : {
+    "title" : "Ledger Sync",
     "activation" : {
       "screen" : {
         "title" : "Hesaplarınızı tüm platformlar genelinde senkronize edin",
         "description" : "Ledger cihazınız bir şifreleme anahtarı oluşturarak verilerinizin gizli kalmasını ve sadece sizin tarafınızdan alınabilmesini sağlar.",
         "mainCta" : "Hesaplarınızı senkronize edin",
         "secondCta" : "Zaten bir anahtar oluşturdunuz mu?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "Yedeklemenizi güvence altına almak için kullanacağınız Ledger cihazını seçin",
+      "description" : "Ledger cihazınızı Ledger Live mobil ve masaüstü sürümlerine bağlayarak yedeklemenize erişebilirsiniz."
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}} üzerinde devam edin",
+      "description" : "Ledger cihazınızın Güvenilir Ekranında gösterilen talimatları izleyin."
+    },
+    "success" : {
+      "sync" : "Senkronizasyon başarılı!",
+      "syncDesc" : "Artık hesaplarınızdaki değişiklikler otomatik olarak tüm uygulamalarda ve platformlarda görünecektir.",
+      "activation" : "Başarılı!",
+      "activationDesc" : "Ledger Sync'i başarıyla etkinleştirdiniz.",
+      "syncAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et",
+      "close" : "Kapat"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "Senkronize et",
+        "description" : "Sorunsuz bir deneyim için uygulama verilerini başka bir Ledger Live uygulamasıyla senkronize edin. "
+      },
+      "manageKey" : {
+        "title" : "Anahtarı Yönet",
+        "description" : "Şifreleme anahtarınızı başka bir Ledger cihazıyla güvence altına alın veya silin.",
+        "success" : "Cihazlarınızın senkronizasyonu kaldırıldı ve anahtarınız silindi",
+        "drawer" : {
+          "step1" : {
+            "title" : "Anahtarınızı yönetin",
+            "titleCta" : "Anahtarınızı silin",
+            "descCta" : "Tüm senkronize verileriniz silinecektir."
+          },
+          "step2" : {
+            "delete" : "Sil",
+            "cancel" : "İptal et",
+            "title" : "Şifreleme anahtarınızı gerçekten de silmek istiyor musunuz?",
+            "desc" : "Sil düğmesine tıkladığınızda cihazlarınızın senkronizasyonu kaldırılır ve tüm senkronize verileriniz silinir. Bu eylemin fonlarınızı etkilemeyeceğinden emin olabilirsiniz. Hesaplarınızı istediğiniz zaman yeniden senkronize edebilirsiniz."
+          }
+        }
+      },
+      "manageInstances" : {
+        "title" : "Senkronize oturumları yönet",
+        "remove" : "Kaldır"
+      },
+      "synchronizedInstances" : {
+        "cta" : "Şimdi yönet",
+        "title" : "{{count}} Senkronize Oturum",
+        "title_plural" : "{{count}} senkronize oturum",
+        "error" : "Oturumlar",
+        "unsecuredError" : {
+          "title" : "Senkronizasyon bu Ledger cihazı tarafından güvence altına alınmamış durumda",
+          "description" : "Şifreleme anahtarınızı oluşturmak için kullandığınız Ledger cihazını lütfen bağlayın.",
+          "info" : "Ledger cihazınızı kaybettiyseniz endişelenmeyin! Anahtarınızı yine de silebilirsiniz. Bunu yaptığınızda hem verileriniz silinir hem de hâlihazırda senkronize edilmiş tüm oturumlarınızın senkronizasyonu kaldırılır.",
+          "cta" : "Başka Ledger bağla",
+          "ctaDelete" : "Şifreleme anahtarımı sil"
+        },
+        "autoRemoveError" : {
+          "title" : "Mevcut oturumu kaldıramazsınız",
+          "description" : "Güvenlik nedeniyle şu anda kullandığınız oturumu, şifreleme anahtarını silmeden kaldıramazsınız.",
+          "info" : "Şifreleme anahtarınızı sildiğinizde cihazlarınızın senkronizasyonu kaldırılır ve tüm senkronize verileriniz silinir. Ancak bu işlem, fonlarınızı etkilemez. Hesaplarınızı istediğiniz zaman yeniden senkronize edebilirsiniz.",
+          "cta" : "Anladım",
+          "ctaDelete" : "Şifreleme anahtarımı sil"
+        },
+        "success" : "{{member}} oturumunuz artık senkronize değil"
+      },
+      "errors" : {
+        "fetching" : "Senkronize oturumlarınız alınırken bir sorun oluştu.",
+        "trustchain" : "Beklenmedik hatalı trustchain",
+        "memberCredentials" : "Beklenmedik hatalı üye kimlik bilgileri",
+        "ledgerSyncUnavailable" : "Ledger Sync şu anda kullanılamıyor. Bunun varlıklarınız üzerinde hiçbir etkisi yoktur."
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Senkronizasyon yönteminizi seçin",
+        "scan" : {
+          "title" : "Bir karekodu okutun"
+        },
+        "connectDevice" : {
+          "title" : "Ledger cihazınızı kullanın"
+        }
+      },
+      "qrCode" : {
+        "show" : {
+          "title" : "Karekodu göster",
+          "explanation" : {
+            "title" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasını kullanarak senkronize edin",
+            "steps" : {
+              "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
+              "step2" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Senkronize Et</0> adımlarını izleyin",
+              "step3" : "Yükleyici %100 olana kadar karekodu tarayın."
+            }
+          }
+        },
+        "scan" : {
+          "title" : "Tara",
+          "description" : "Scan QR code",
+          "explanation" : {
+            "title" : "Scan and synchronize your accounts using another Ledger Live app",
+            "steps" : {
+              "step1" : "Open the Ledger Live app you want to sync",
+              "step2" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0> <1>></1> <0>Show QR</0>",
+              "step3" : "Scan QR code until loader hits 100%."
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "Kodunuzu girin",
+          "desc" : "Senkronize etmek istediğiniz Ledger Live uygulamasında görüntülenen kodu yazın.",
+          "error" : {
+            "title" : "Kodlar eşleşmiyor",
+            "desc" : "Girdiğiniz kodun, diğer Ledger Live oturumunda gösterilen kodla aynı olduğundan emin olun.",
+            "tryAgain" : "Tekrar dene"
+          }
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "Şeffaf imzalama etkin",
+        "checkbox" : "Tekrar hatırlatma.",
+        "CTA" : "{{app}} uygulamasını aç"
+      },
+      "manifestsList" : {
+        "title" : "Keşfedin",
+        "description" : "Ledger tarafından derlenen, Web3'ün en iyilerini keşfedin"
+      }
+    },
+    "main" : {
+      "manifestsList" : {
+        "title" : "Keşfet"
+      },
+      "header" : {
+        "title" : "Web3'ü keşfedin",
+        "placeholder" : "Arama yapın veya bir URL yazın"
       }
     }
   }
