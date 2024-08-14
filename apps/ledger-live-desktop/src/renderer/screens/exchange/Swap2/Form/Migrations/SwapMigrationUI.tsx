@@ -102,6 +102,7 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
       );
 
     case manifestID?.startsWith(SwapWebManifestIDs.Demo1):
+    case manifestID?.startsWith(SwapWebManifestIDs.Demo3):
       /**
        * Demo 1 live app should contain:
        *  - Exchange Button
