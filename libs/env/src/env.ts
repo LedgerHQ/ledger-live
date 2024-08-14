@@ -413,7 +413,7 @@ const envDefinitions = {
     desc: "comma-separated list of excluded log types for exported logs",
   },
   EXPORT_MAX_LOGS: {
-    def: 5000,
+    def: 100000,
     parser: intParser,
     desc: "maximum logs to keep for export",
   },
