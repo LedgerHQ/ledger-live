@@ -1,5 +1,35 @@
 # @ledgerhq/keyring-eth
 
+## 0.2.2
+
+### Patch Changes
+
+- [#7447](https://github.com/LedgerHQ/ledger-live/pull/7447) [`802e44d`](https://github.com/LedgerHQ/ledger-live/commit/802e44dca14c9fbdaa250ad881e504b9f926771e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update test-sign-transaction script
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/types-live@6.50.0
+  - @ledgerhq/coin-evm@2.1.4
+  - @ledgerhq/hw-app-eth@6.38.0
+
+## 0.2.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.1.4-next.1
+  - @ledgerhq/hw-app-eth@6.38.0-next.1
+
+## 0.2.2-next.0
+
+### Patch Changes
+
+- [#7447](https://github.com/LedgerHQ/ledger-live/pull/7447) [`802e44d`](https://github.com/LedgerHQ/ledger-live/commit/802e44dca14c9fbdaa250ad881e504b9f926771e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update test-sign-transaction script
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/types-live@6.50.0-next.0
+  - @ledgerhq/coin-evm@2.1.4-next.0
+  - @ledgerhq/hw-app-eth@6.38.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

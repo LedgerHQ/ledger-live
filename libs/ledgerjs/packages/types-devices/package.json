@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-devices",
-  "version": "6.25.2",
+  "version": "6.25.3",
   "description": "Ledger types for devices and transport.",
   "keywords": [
     "Ledger"

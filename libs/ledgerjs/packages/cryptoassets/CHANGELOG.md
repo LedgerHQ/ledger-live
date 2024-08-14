@@ -1,5 +1,41 @@
 # @ledgerhq/cryptoassets
 
+## 13.3.0
+
+### Minor Changes
+
+- [#7075](https://github.com/LedgerHQ/ledger-live/pull/7075) [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Sync, Send, Receive, Create Account for Icon network
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712_v2 importer
+
+- [#7515](https://github.com/LedgerHQ/ledger-live/pull/7515) [`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding support for polygon ERC20 exchange importing
+
+### Patch Changes
+
+- [#7232](https://github.com/LedgerHQ/ledger-live/pull/7232) [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: rename crypto.org to cronos POS chain
+
+## 13.3.0-next.1
+
+### Minor Changes
+
+- [#7515](https://github.com/LedgerHQ/ledger-live/pull/7515) [`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding support for polygon ERC20 exchange importing
+
+## 13.3.0-next.0
+
+### Minor Changes
+
+- [#7075](https://github.com/LedgerHQ/ledger-live/pull/7075) [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Sync, Send, Receive, Create Account for Icon network
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712_v2 importer
+
+### Patch Changes
+
+- [#7232](https://github.com/LedgerHQ/ledger-live/pull/7232) [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: rename crypto.org to cronos POS chain
+
 ## 13.2.0
 
 ### Minor Changes
