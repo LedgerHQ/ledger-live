@@ -33,6 +33,8 @@ PODS:
     - ExpoModulesCore
     - ZXingObjC/OneD
     - ZXingObjC/PDF417
+  - ExpoCrypto (12.8.1):
+    - ExpoModulesCore
   - ExpoFileSystem (16.0.8):
     - ExpoModulesCore
   - ExpoImageManipulator (11.8.0):
@@ -47,8 +49,6 @@ PODS:
     - React-NativeModulesApple
     - React-RCTAppDelegate
     - ReactCommon/turbomodule/core
-  - ExpoRandom (13.6.0):
-    - ExpoModulesCore
   - FBLazyVector (0.73.6)
   - FBReactNativeSpec (0.73.6):
     - RCT-Folly (= 2022.05.16.00)
@@ -1418,11 +1418,11 @@ DEPENDENCIES:
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@4.6.0_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_reac_wajnkpyn453mstvl5ptvmgckqi/node_modules/expo-image-loader/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@50.0.14_@babel+core@7.24.3_@react-native+babel-preset@0.73.19_@babel+core@7.24.3__expo-m_x6ekalzt4c5scoc72n5xqrun6q/node_modules/expo`)"
   - "ExpoCamera (from `../../../node_modules/.pnpm/expo-camera@14.1.3_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react@18._7axu465aov6jwcuohjxifpffzu/node_modules/expo-camera/ios`)"
+  - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@12.8.1_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react@18._f3pw2vhdzqwifnm4jdvwei6rie/node_modules/expo-crypto/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@16.0.8_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_reac_f2vophyguewptethhwrvhw6jze/node_modules/expo-file-system/ios`)"
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@11.8.0_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24._sgbzbk7nfhtlihtns5cja4huei/node_modules/expo-image-manipulator/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@12.8.2_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react_gqhplzyroote7enqgwhytprwhq/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react@18.2.0__react@18.2.0/node_modules/expo-modules-core`)"
-  - "ExpoRandom (from `../../../node_modules/.pnpm/expo-random@13.6.0_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react@18._74hzmsxcfy4hq2gp3ztpqsecuu/node_modules/expo-random/ios`)"
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - Flipper (= 0.201.0)
@@ -1605,6 +1605,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo@50.0.14_@babel+core@7.24.3_@react-native+babel-preset@0.73.19_@babel+core@7.24.3__expo-m_x6ekalzt4c5scoc72n5xqrun6q/node_modules/expo"
   ExpoCamera:
     :path: "../../../node_modules/.pnpm/expo-camera@14.1.3_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react@18._7axu465aov6jwcuohjxifpffzu/node_modules/expo-camera/ios"
+  ExpoCrypto:
+    :path: "../../../node_modules/.pnpm/expo-crypto@12.8.1_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react@18._f3pw2vhdzqwifnm4jdvwei6rie/node_modules/expo-crypto/ios"
   ExpoFileSystem:
     :path: "../../../node_modules/.pnpm/expo-file-system@16.0.8_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_reac_f2vophyguewptethhwrvhw6jze/node_modules/expo-file-system/ios"
   ExpoImageManipulator:
@@ -1613,8 +1615,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-keep-awake@12.8.2_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react_gqhplzyroote7enqgwhytprwhq/node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react@18.2.0__react@18.2.0/node_modules/expo-modules-core"
-  ExpoRandom:
-    :path: "../../../node_modules/.pnpm/expo-random@13.6.0_expo-modules-core@1.11.12_react-native@0.73.6_@babel+core@7.24.3_react@18._74hzmsxcfy4hq2gp3ztpqsecuu/node_modules/expo-random/ios"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
@@ -1824,11 +1824,11 @@ SPEC CHECKSUMS:
   EXImageLoader: 55080616b2fe9da19ef8c7f706afd9814e279b6b
   Expo: e01a77c6fa4bc80a6d1bb949cda1d12d21044abd
   ExpoCamera: f3f157db67e5a491e1104a2c0018c240242936e7
+  ExpoCrypto: b6428f48599c007676dc81a9b5f72c07e62fdccc
   ExpoFileSystem: eecaf6796aed0f4dd20042dc2ca2cac6c4bc1185
   ExpoImageManipulator: c1d7cb865eacd620a35659f3da34c70531f10b59
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
   ExpoModulesCore: 61dc57c6e2a35f2f84baf488146db624e03af4cd
-  ExpoRandom: f0cd58e154e463d913462f3b445870b12d1c2f12
   FBLazyVector: f64d1e2ea739b4d8f7e4740cde18089cd97fe864
   FBReactNativeSpec: 7351d9daa8a692bc3af6eb00a56e4cdb07403431
   Firebase: 5f8193dff4b5b7c5d5ef72ae54bb76c08e2b841d
