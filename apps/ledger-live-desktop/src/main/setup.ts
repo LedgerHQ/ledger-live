@@ -8,7 +8,7 @@ import fs from "fs/promises";
 import updater from "./updater";
 import path from "path";
 import { InMemoryLogger } from "./logger";
-import { setEnvUnsafe } from "@ledgerhq/live-env";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 
 /**
  * Sets env variables for the main process.
@@ -28,6 +28,37 @@ ipcMain.on("updater", (e, type) => {
   updater(type);
 });
 
+function customStringify(obj: unknown) {
+  const orderedKeys = ["logIndex", "date", "process", "type", "level", "id"];
+
+  return JSON.stringify(
+    obj,
+    (_, value) => {
+      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        const orderedObject: Record<string, unknown> = {};
+
+        // Add the keys in the specified order
+        for (const key of orderedKeys) {
+          if (key in value) {
+            orderedObject[key] = value[key];
+          }
+        }
+
+        // Add the remaining keys
+        for (const key in value) {
+          if (!(key in orderedObject)) {
+            orderedObject[key] = value[key];
+          }
+        }
+
+        return orderedObject;
+      }
+      return value;
+    },
+    2,
+  );
+}
+
 /**
  * Saves logs from the renderer process and logs recorded from the internal process to a file.
  */
@@ -38,11 +69,13 @@ ipcMain.handle(
       const inMemoryLogger = InMemoryLogger.getLogger();
       const internalLogs = inMemoryLogger.getLogs();
 
+      const maxLogCount = getEnv("EXPORT_MAX_LOGS");
+
       // The deserialization would have been done internally by electron if `rendererLogs` was passed directly as a JS object/array.
       // But it avoids certain issues with the serialization/deserialization done by electron.
-      let rendererLogs: unknown[] = [];
+      let rendererLogs: Array<{ timestamp: string }> = [];
       try {
-        rendererLogs = JSON.parse(rendererLogsStr) as unknown[];
+        rendererLogs = JSON.parse(rendererLogsStr); // TODO: typeguard this sh
       } catch (error) {
         console.error("Error while parsing logs from the renderer process", error);
         return;
@@ -52,15 +85,50 @@ ipcMain.handle(
         `Saving ${rendererLogs.length} logs from the renderer process and ${internalLogs.length} logs from the internal process`,
       );
 
-      // Merging according to a `date` (internal logs) / `timestamp` (most of renderer logs) does not seem necessary.
-      // Simply pushes all the internal logs after the renderer logs.
-      // Note: this is not respecting the `EXPORT_MAX_LOGS` env var, but this is fine.
-      rendererLogs.push(
-        { type: "logs-separator", message: "Logs coming from the internal process" },
-        ...internalLogs,
-      );
+      // function that compares a date in the format "2024-08-13T15:14:38.335Z" and a second param date of type Date
+      function compareLogs(
+        a: { date: string; process: string; internalIndex: number },
+        b: { date: string; process: string; internalIndex: number },
+      ) {
+        const dateCompared = a.date.localeCompare(b.date);
+        if (dateCompared !== 0 || a.process !== b.process) return dateCompared;
+        return a.internalIndex - b.internalIndex;
+      }
 
-      fs.writeFile(path.filePath, JSON.stringify(rendererLogs, null, 2));
+      const allLogs = [
+        // Reverse the logs to have the oldest logs first
+        ...rendererLogs.reverse().map((log, index) => {
+          const { timestamp, ...rest } = log;
+          return {
+            ...rest,
+            process: "electron-renderer",
+            date: log.timestamp,
+            internalIndex: index,
+          };
+        }),
+        // Reverse the logs to have the oldest logs first
+        ...internalLogs.reverse().map((log, index) => ({
+          ...log,
+          process: "electron-internal",
+          date: typeof log.date === "string" ? log.date : log.date.toISOString(),
+          internalIndex: index,
+        })),
+      ]
+        .sort(compareLogs)
+        .map((log, index) => {
+          const { internalIndex, ...rest } = log;
+          return { ...rest, logIndex: index };
+        })
+        .slice(-maxLogCount);
+
+      if (rendererLogs.length + internalLogs.length > maxLogCount) {
+        allLogs.unshift(
+          // @ts-expect-error we don't care
+          `Exporting logs: Only the last ${maxLogCount} logs are saved. To change this limit, set the EXPORT_MAX_LOGS env variable.`,
+        );
+      }
+
+      fs.writeFile(path.filePath, customStringify(allLogs));
     } else {
       console.warn("No path given to save logs");
     }
