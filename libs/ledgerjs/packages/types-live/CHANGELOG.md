@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.50.0-nightly.5
+
+### Patch Changes
+
+- [#7573](https://github.com/LedgerHQ/ledger-live/pull/7573) [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [swap] setup demo3 flag and routes
+
 ## 6.50.0-nightly.4
 
 ### Minor Changes

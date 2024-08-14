@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.6.0-nightly.0
+
+### Minor Changes
+
+- [#7521](https://github.com/LedgerHQ/ledger-live/pull/7521) [`16aee39`](https://github.com/LedgerHQ/ledger-live/commit/16aee39a3b8c33d5b3680a9d7045cd11a3863b9a) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds sell utils
+
 ## 0.5.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.2.0-nightly.7
+
+### Patch Changes
+
+- [#7588](https://github.com/LedgerHQ/ledger-live/pull/7588) [`d60a022`](https://github.com/LedgerHQ/ledger-live/commit/d60a02238db9ed16142de4c1874e26d27aaaa98c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Trustchain - Removed member ejected on get members
+
 ## 0.2.0-nightly.6
 
 ### Patch Changes

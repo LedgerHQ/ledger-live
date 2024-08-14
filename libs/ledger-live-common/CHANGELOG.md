@@ -1,5 +1,34 @@
 ## 34.5.0-next.4
 
+## 34.7.0-nightly.11
+
+### Patch Changes
+
+- [#7573](https://github.com/LedgerHQ/ledger-live/pull/7573) [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [swap] setup demo3 flag and routes
+
+- Updated dependencies [[`16aee39`](https://github.com/LedgerHQ/ledger-live/commit/16aee39a3b8c33d5b3680a9d7045cd11a3863b9a)]:
+  - @ledgerhq/hw-app-exchange@0.6.0-nightly.0
+  - @ledgerhq/live-wallet@0.5.0-nightly.9
+  - @ledgerhq/coin-framework@0.17.0-nightly.6
+  - @ledgerhq/coin-algorand@0.5.4-nightly.6
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.6
+  - @ledgerhq/coin-cardano@0.2.0-nightly.7
+  - @ledgerhq/coin-evm@2.1.4-nightly.6
+  - @ledgerhq/coin-icon@0.4.1-nightly.9
+  - @ledgerhq/coin-near@0.5.4-nightly.6
+  - @ledgerhq/coin-polkadot@1.1.2-nightly.6
+  - @ledgerhq/coin-solana@0.7.4-nightly.6
+  - @ledgerhq/coin-stellar@0.3.0-nightly.6
+  - @ledgerhq/coin-tezos@0.5.2-nightly.8
+  - @ledgerhq/coin-ton@0.3.12-nightly.7
+  - @ledgerhq/coin-tron@0.0.4-nightly.7
+  - @ledgerhq/coin-xrp@0.4.2-nightly.6
+  - @ledgerhq/device-core@0.3.2-nightly.5
+  - @ledgerhq/hw-app-eth@6.38.0-nightly.6
+  - @ledgerhq/live-countervalues@0.2.4-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.6
+  - @ledgerhq/live-nft@0.4.4-nightly.6
+
 ## 34.7.0-nightly.10
 
 ### Minor Changes

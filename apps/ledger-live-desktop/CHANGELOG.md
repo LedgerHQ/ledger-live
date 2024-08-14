@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.85.0-nightly.12
+
+### Patch Changes
+
+- [#7565](https://github.com/LedgerHQ/ledger-live/pull/7565) [`6449fc7`](https://github.com/LedgerHQ/ledger-live/commit/6449fc7651cb327b3acf29f43fe13a170acde604) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add discover section deep link initial category filter to enable links like ledgerlive://discover?category=restaking to load the discover section with an initial category pre-selected.
+
+- [#7573](https://github.com/LedgerHQ/ledger-live/pull/7573) [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [swap] setup demo3 flag and routes
+
+- Updated dependencies [[`d60a022`](https://github.com/LedgerHQ/ledger-live/commit/d60a02238db9ed16142de4c1874e26d27aaaa98c), [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752)]:
+  - @ledgerhq/trustchain@0.2.0-nightly.7
+  - @ledgerhq/types-live@6.50.0-nightly.5
+  - @ledgerhq/live-common@34.7.0-nightly.11
+  - @ledgerhq/live-wallet@0.5.0-nightly.9
+  - @ledgerhq/coin-framework@0.17.0-nightly.6
+  - @ledgerhq/coin-bitcoin@0.7.2-nightly.6
+  - @ledgerhq/coin-evm@2.1.4-nightly.6
+  - @ledgerhq/domain-service@1.2.3-nightly.5
+  - @ledgerhq/live-countervalues@0.2.4-nightly.6
+  - @ledgerhq/live-countervalues-react@0.2.4-nightly.6
+  - @ledgerhq/live-nft@0.4.4-nightly.6
+  - @ledgerhq/live-nft-react@0.4.4-nightly.6
+
 ## 2.85.0-nightly.11
 
 ### Patch Changes
