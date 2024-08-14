@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
 import { Account } from "tests/enum/Account";
+import { Currency } from "tests/enum/Currency";
 
 export class AddAccountModal extends Modal {
   private selectAccount = this.page.locator("text=Choose a crypto asset"); // FIXME: I need an id
@@ -13,6 +14,10 @@ export class AddAccountModal extends Modal {
   readonly closeButton = this.page.getByTestId("modal-close-button");
   private infoBox = this.page.getByTestId("add-token-infoBox");
   private successAddLabel = this.page.locator("text=Account added successfully");
+  private selectAccountInList = (Currency: Currency) =>
+    this.page.getByRole("option", {
+      name: `${Currency.name} (${Currency.ticker})`,
+    });
   private selectTokenNetwork = (SubAccount: Account) =>
     this.page
       .getByRole("option", {
@@ -28,7 +33,7 @@ export class AddAccountModal extends Modal {
     if (await this.selectTokenNetwork(SubAccount).isVisible()) {
       await this.selectTokenNetwork(SubAccount).click();
     } else {
-      await this.selectAccountByScrolling(SubAccount);
+      await this.selectSubAccountByScrolling(SubAccount);
       await this.dropdownOptions
         .locator(
           this.optionWithTextAndFollowingText(
@@ -44,7 +49,16 @@ export class AddAccountModal extends Modal {
   }
 
   @step("Select account by scrolling: {0}")
-  async selectAccountByScrolling(SubAccount: Account) {
+  async selectAccountByScrolling(Currency: Currency) {
+    await this.scrollUntilOptionIsDisplayed(
+      this.dropdownOptionsList,
+      this.selectAccountInList(Currency),
+    );
+    await this.selectAccountInList(Currency).isVisible();
+  }
+
+  @step("Select account by scrolling: {0}")
+  async selectSubAccountByScrolling(SubAccount: Account) {
     await this.scrollUntilOptionIsDisplayed(
       this.dropdownOptionsList,
       this.selectTokenNetwork(SubAccount),
@@ -60,9 +74,21 @@ export class AddAccountModal extends Modal {
     await this.page.mouse.move(0, 0);
   }
 
-  async selectCurrency(currency: string) {
-    await this.select(currency);
-    await this.continue();
+  async selectCurrency(currency: Currency) {
+    await this.selectAccount.click();
+    await this.selectAccountInput.fill(currency.name);
+    if (await this.selectAccountInList(currency).isVisible()) {
+      await this.selectAccountInList(currency).click();
+    } else {
+      await this.selectAccountByScrolling(currency);
+      await this.dropdownOptions
+        .locator(
+          this.optionWithTextAndFollowingText(currency.ticker?.toUpperCase(), currency.deviceLabel),
+        )
+        .click();
+    }
+    await expect(this.closeButton).toBeVisible();
+    await this.continueButton.click();
     await this.waitForSync();
   }
 

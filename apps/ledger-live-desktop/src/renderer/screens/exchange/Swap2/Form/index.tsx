@@ -37,6 +37,7 @@ import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLive
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { useIsSwapLiveFlagEnabled } from "../hooks/useIsSwapLiveFlagEnabled";
 import { useSwapLiveAppQuoteState } from "../hooks/useSwapLiveAppQuoteState";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
@@ -44,7 +45,6 @@ import SwapFormSelectors from "./FormSelectors";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import EmptyState from "./Rates/EmptyState";
 import SwapWebView, { SwapWebProps } from "./SwapWebView";
-import { useIsSwapLiveFlagEnabled } from "./useIsSwapLiveFlagEnabled";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
