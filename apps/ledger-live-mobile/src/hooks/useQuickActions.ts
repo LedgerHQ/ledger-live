@@ -2,18 +2,19 @@ import { useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { type ParamListBase } from "@react-navigation/native";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "~/const";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { EntryOf } from "~/types/helpers";
 import { accountsCountSelector, areAccountsEmptySelector } from "../reducers/accounts";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 
 export type QuickAction = {
   disabled: boolean;
-  route: [NavigatorName, { screen: ScreenName; params?: ParamListBase }];
+  route: EntryOf<BaseNavigatorStackParamList>;
   icon: IconType;
 };
 
@@ -86,7 +87,7 @@ function useQuickActions({ currency }: Props = {}) {
           NavigatorName.Exchange,
           {
             screen: ScreenName.ExchangeBuy,
-            params: { defaultCurrency: currency },
+            params: { mode: "buy", defaultCurrencyId: currency?.id },
           },
         ],
         icon: IconsLegacy.PlusMedium,
@@ -104,7 +105,7 @@ function useQuickActions({ currency }: Props = {}) {
           NavigatorName.Exchange,
           {
             screen: ScreenName.ExchangeSell,
-            params: { defaultCurrency: currency },
+            params: { mode: "sell", defaultCurrencyId: currency?.id },
           },
         ],
         icon: IconsLegacy.MinusMedium,
@@ -120,8 +121,8 @@ function useQuickActions({ currency }: Props = {}) {
       route: [
         NavigatorName.Swap,
         {
-          screen: ScreenName.SwapForm,
-          params: { defaultCurrency: currency },
+          screen: ScreenName.SwapTab,
+          params: { currency },
         },
       ],
       icon: IconsLegacy.BuyCryptoMedium,
@@ -150,6 +151,7 @@ function useQuickActions({ currency }: Props = {}) {
         NavigatorName.WalletConnect,
         {
           screen: ScreenName.WalletConnectConnect,
+          params: {},
         },
       ],
       icon: IconsLegacy.WalletConnectMedium,
@@ -159,9 +161,10 @@ function useQuickActions({ currency }: Props = {}) {
       list.RECOVER = {
         disabled: readOnlyModeEnabled,
         route: [
-          NavigatorName.Base,
+          NavigatorName.Main,
           {
-            screen: ScreenName.MyLedgerChooseDevice,
+            screen: NavigatorName.MyLedger,
+            params: { screen: ScreenName.MyLedgerChooseDevice },
           },
         ],
         icon: IconsLegacy.ShieldCheckMedium,

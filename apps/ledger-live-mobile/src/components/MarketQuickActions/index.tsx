@@ -27,9 +27,7 @@ export const MarketQuickActions = ({ currency }: Props) => {
           Icon: quickActionsItem.icon,
           children: t(prop.name),
           onPress: () =>
-            navigation.navigate<keyof BaseNavigatorStackParamList>(
-              ...(quickActionsItem.route as EntryOf<BaseNavigatorStackParamList>),
-            ),
+            navigation.navigate<keyof BaseNavigatorStackParamList>(...quickActionsItem.route),
           disabled: quickActionsItem.disabled,
         };
       }),
