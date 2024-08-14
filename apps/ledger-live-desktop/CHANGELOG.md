@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.85.1-nightly.0
+
+### Patch Changes
+
+- [#7602](https://github.com/LedgerHQ/ledger-live/pull/7602) [`e8db656`](https://github.com/LedgerHQ/ledger-live/commit/e8db656c625d0bf6a00ab340af6e3b9d4d79498d) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add demo3 manifest ids
+
+- Updated dependencies [[`d2f7d9b`](https://github.com/LedgerHQ/ledger-live/commit/d2f7d9b418c374bd6b87927c1f67d58c118b556d), [`6417959`](https://github.com/LedgerHQ/ledger-live/commit/641795937e14908ba9632a7b9744563b7e206be7), [`94bf322`](https://github.com/LedgerHQ/ledger-live/commit/94bf322023cf497b19399be8abcf54a57ea740d1)]:
+  - @ledgerhq/coin-bitcoin@0.7.3-nightly.0
+  - @ledgerhq/live-common@34.8.0-nightly.0
+
 ## 2.85.0
 
 ### Minor Changes

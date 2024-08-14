@@ -1,5 +1,11 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.7.3-nightly.0
+
+### Patch Changes
+
+- [#7536](https://github.com/LedgerHQ/ledger-live/pull/7536) [`d2f7d9b`](https://github.com/LedgerHQ/ledger-live/commit/d2f7d9b418c374bd6b87927c1f67d58c118b556d) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds some unit tests in coin-bitcoin coin-module
+
 ## 0.7.2
 
 ### Patch Changes

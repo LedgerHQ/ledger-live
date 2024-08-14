@@ -1,5 +1,11 @@
 # @ledgerhq/coin-ton
 
+## 0.3.13-nightly.0
+
+### Patch Changes
+
+- [#7586](https://github.com/LedgerHQ/ledger-live/pull/7586) [`94bf322`](https://github.com/LedgerHQ/ledger-live/commit/94bf322023cf497b19399be8abcf54a57ea740d1) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: replace expo-random lib with expo-crypto
+
 ## 0.3.12
 
 ### Patch Changes
