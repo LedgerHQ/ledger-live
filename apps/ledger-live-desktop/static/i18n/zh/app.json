@@ -303,7 +303,7 @@
   "swap2" : {
     "title" : "互换",
     "tabs" : {
-      "exchange" : "兑换",
+      "exchange" : "互换",
       "history" : "历史记录"
     },
     "form" : {
@@ -385,6 +385,7 @@
         "title" : "交易播送成功",
         "description" : "您的互换操作已经发送到网络上确认。请等待您的交易被确认，并等待供应方处理和发送您的 {{targetCurrency}}。",
         "disclaimer" : "记下您的互换 ID 号码，以防您需要来自 <0><0> {{provider}}</0> 支持</0> 的协助。",
+        "tellAboutYourExperience" : "请告诉我们您的体验如何",
         "seeDetails" : "查看详情"
       }
     },
@@ -1855,7 +1856,8 @@
       "provider" : "提供方",
       "payoutNetworkFees" : "支出费用",
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
-      "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>"
+      "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
+      "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>"
     },
     "swap2" : {
       "amountSent" : "发送数额",
@@ -1990,7 +1992,8 @@
       "updateBtn" : "更新固件",
       "installUpdate" : "安装更新",
       "banner" : {
-        "warning" : "可将固件更新到 {{latestFirmware}} 版本",
+        "warning" : "操作系统有更新",
+        "version" : "版本 {{latestFirmware}}",
         "cta" : "前往 My Ledger（我的 Ledger）",
         "old" : {
           "warning" : "设备固件版本太旧而无法更新。请联系 Ledger 客服以获取替代版本。",
@@ -4001,29 +4004,65 @@
         "desc" : "添加兑换提供商的信息",
         "placeholder" : "CAL 格式的兑换提供商信息"
       },
-      "debugSpamNft" : {
-        "debugNFTSpamReport" : "允许报告垃圾 NFT（测试版）",
-        "debugNFTSpamReportDesc" : "显示一个表单以将某一 NFT 报告为垃圾，或停止将其显示为垃圾",
-        "report" : "报告",
-        "contractAddress" : "合约地址",
-        "contractAddressDesc" : "被报告的 NFT 合约地址或合约本身",
-        "chainId" : "链 ID",
-        "chainIdDesc" : "被报告的 NFT 或合约的链 ID（例如：以太坊）",
-        "collectionId" : "藏品 ID",
-        "collectionIdDesc" : "被报告的 NFT 的 SimpleHash 藏品 ID",
-        "tokenId" : "代币 ID",
-        "tokenIdDesc" : "被报告的 NFT 的代币 ID",
-        "eventType" : "事件类型",
-        "eventTypeDesc" : "您想发送的报告类型",
-        "success" : "报告发送成功。可能需要 5 至 10 分钟才能生效。",
-        "error" : "发送报告时出错。请稍后重试。",
-        "reportType" : {
-          "title" : "您想报告什么问题？",
-          "desc" : "选择您想发送的报告类型",
-          "individual" : "将单个 NFT 报告为垃圾",
-          "contract" : "将合约报告为垃圾",
-          "collection" : "将藏品报告为垃圾"
-        }
+      "debugSimpleHash" : {
+        "debugSpamNft" : {
+          "report" : "报告",
+          "contractAddress" : "合约地址",
+          "contractAddressDesc" : "被报告的 NFT 合约地址或合约本身",
+          "chainId" : "链 ID",
+          "chainIdDesc" : "被报告的 NFT 或合约的链 ID（例如：以太坊）",
+          "collectionId" : "藏品 ID",
+          "collectionIdDesc" : "被报告的 NFT 的 SimpleHash 藏品 ID",
+          "tokenId" : "代币 ID",
+          "tokenIdDesc" : "被报告的 NFT 的代币 ID",
+          "eventType" : "事件类型",
+          "eventTypeDesc" : "您想发送的报告类型",
+          "success" : "报告发送成功。可能需要 5 至 10 分钟才能生效。",
+          "error" : "发送报告时出错。请稍后重试。",
+          "reportType" : {
+            "title" : "您想报告什么问题？",
+            "desc" : "选择您想发送的报告类型",
+            "individual" : "将单个 NFT 报告为垃圾",
+            "contract" : "将合约报告为垃圾",
+            "collection" : "将藏品报告为垃圾"
+          }
+        },
+        "debugRefreshMetadata" : {
+          "refresh" : "刷新",
+          "contractAddress" : "合约地址",
+          "contractAddressDesc" : "已刷新的 NFT 合约地址或合约本身",
+          "chainId" : "链 ID",
+          "chainIdDesc" : "已刷新的 NFT 或合约的链 ID（例如：以太坊）",
+          "tokenId" : "代币 ID",
+          "tokenIdDesc" : "已刷新的 NFT 的代币 ID",
+          "success" : "刷新发送成功。可能需要 5 至 10 分钟才能生效。",
+          "error" : "发送刷新时出错。请稍后重试。",
+          "refreshType" : {
+            "desc" : "您想刷新什么？",
+            "nft" : "刷新单个 NFT 的元数据",
+            "contract" : "刷新合约的元数据"
+          }
+        },
+        "debugCheckSpamScore" : {
+          "check" : "检查",
+          "contractAddress" : "合约地址",
+          "contractAddressDesc" : "已检查的 NFT 合约地址或合约本身",
+          "chainId" : "链 ID",
+          "chainIdDesc" : "已检查的 NFT 或合约的链 ID（例如：以太坊）",
+          "tokenId" : "代币 ID",
+          "tokenIdDesc" : "已检查的 NFT 的代币 ID",
+          "result" : {
+            "title" : "此合约的垃圾邮件评分为 {{score}}。",
+            "desc" : "评分为从 0 到 100 的数值，其中 0 表示不是垃圾邮件，100 表示可能是垃圾邮件。\n如果响应为空，则表示该收藏没有足够信息进行评分，或者尚未经过评估"
+          },
+          "error" : "发送请求时出错。请稍后重试。",
+          "refreshType" : {
+            "desc" : "您想检查什么？",
+            "nft" : "单个 NFT",
+            "contract" : "合约"
+          }
+        },
+        "back" : "返回"
       },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
@@ -4197,9 +4236,18 @@
           "modal" : {
             "flow" : "选择流程",
             "step" : "选择步骤",
-            "activated" : "通过启用/停用以进行备份或不进行备份",
-            "instance" : "生成实例",
+            "instance" : "生成成员",
             "cta" : "应用"
+          }
+        },
+        "testSimpleHash" : {
+          "title" : "SimpleHash 工具",
+          "description" : "提供一些使用 SimpleHash 的实用工具",
+          "cta" : "打开",
+          "tabs" : {
+            "spam" : "垃圾邮件报告",
+            "refresh" : "刷新元数据",
+            "check" : "垃圾邮件评分"
           }
         }
       }
@@ -5151,6 +5199,10 @@
       "memo" : "Memo",
       "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的类型。"
     },
+    "ton" : {
+      "commentPlaceholder" : "可选",
+      "comment" : "备注"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5562,6 +5614,9 @@
       "title" : "费率已过期",
       "description" : "费率已过期，兑换交易无法完成。请刷新费率后再重试互换。"
     },
+    "PayinExtraIdError" : {
+      "message" : "缺少互换所需的 extraId"
+    },
     "SwapGenericAPIError" : {
       "title" : "出错了",
       "description" : "兑换交易没有通过。请再试一次或联系客服。"
@@ -5696,6 +5751,9 @@
     "SequenceNumberError" : {
       "title" : "序列号错误",
       "description" : "请关闭窗口，稍后再重试"
+    },
+    "TonCommentInvalid" : {
+      "title" : "备注不得超过 120 个字符，不包含特殊字符"
     },
     "CantScanQRCode" : {
       "title" : "无法扫描此二维码：此地址不支持自动验证"
@@ -6313,7 +6371,7 @@
         "description" : "使用另一台 Ledger 设备保护或删除您的加密密钥。"
       },
       "instance" : {
-        "label_one" : "1 个已同步实例",
+        "label" : "1 个已同步实例",
         "label_other" : "{{count}} 个已同步实例",
         "cta" : "管理"
       }
@@ -6326,7 +6384,9 @@
     "error" : {
       "title" : "出错了",
       "description" : "请稍后重试。",
-      "cta" : "请重试"
+      "cta" : "请重试",
+      "fetching" : "提取您的数据时出现错误。",
+      "ledgerSyncDown" : "Ledger Sync 目前无法使用。<br/>这不会对您的资产产生影响。"
     },
     "unsecuredError" : {
       "title" : "同步不受此 Ledger 设备保护",
@@ -6335,18 +6395,26 @@
       "cta" : "连接另一个 Ledger 设备",
       "ctaDelete" : "删除我的加密密钥"
     },
+    "autoRemoveError" : {
+      "title" : "您无法删除当前实例",
+      "description" : "出于安全原因，如果不删除加密密钥，则无法删除当前正在使用的实例。",
+      "info" : "删除加密密钥将导致您的设备取消同步，所有已同步数据都将删除。但是，这不会对您的资金产生影响。您可以随时重新同步自己的账户。",
+      "cta" : "我了解",
+      "ctaDelete" : "删除我的加密密钥"
+    },
     "success" : {
       "backup" : {
         "title" : "成功",
-        "desc" : "您已成功启用 Ledger Sync。 ",
-        "synchAnother" : "与另一个 Ledger Live 应用程序同步"
+        "desc" : "您已成功启用 Ledger Sync。"
       },
       "synch" : {
         "title" : "同步成功！",
         "desc" : "您的账户更改将自动显示在所有应用程序和平台上。"
-      }
+      },
+      "synchAnother" : "与另一个 Ledger Live 应用程序同步",
+      "close" : "关闭"
     },
-    "manageBackups" : {
+    "manageBackup" : {
       "title" : "管理您的密钥",
       "options" : {
         "deleteBackup" : {
@@ -6400,6 +6468,10 @@
       "remove" : "删除",
       "deleteInstanceSuccess" : "您的 {{instanceName}} 已不再同步",
       "deleteInstanceError" : "取消同步 {{instanceName}} 时出现问题"
+    },
+    "deviceAction" : {
+      "title" : "继续在您的 Ledger {{wording}} 上操作",
+      "description" : "按照 Ledger 设备可信任显示屏上的指示进行操作。"
     }
   }
 }

@@ -1,5 +1,17 @@
 # @ledgerhq/types-devices
 
+## 6.25.3
+
+### Patch Changes
+
+- [#7327](https://github.com/LedgerHQ/ledger-live/pull/7327) [`8dd0fb1`](https://github.com/LedgerHQ/ledger-live/commit/8dd0fb195525eef4600a8ecbca2a80a1899de321) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Rename QRCodeDevices by DevicesWithTouchScreen
+
+## 6.25.3-next.0
+
+### Patch Changes
+
+- [#7327](https://github.com/LedgerHQ/ledger-live/pull/7327) [`8dd0fb1`](https://github.com/LedgerHQ/ledger-live/commit/8dd0fb195525eef4600a8ecbca2a80a1899de321) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Rename QRCodeDevices by DevicesWithTouchScreen
+
 ## 6.25.2
 
 ### Patch Changes

@@ -1,78 +1,41 @@
 # @ledgerhq/coin-evm
 
-## 2.1.4-nightly.6
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.17.0-nightly.6
-  - @ledgerhq/domain-service@1.2.3-nightly.5
-  - @ledgerhq/evm-tools@1.2.0-nightly.4
-
-## 2.1.4-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae)]:
-  - @ledgerhq/coin-framework@0.17.0-nightly.5
-  - @ledgerhq/domain-service@1.2.3-nightly.4
-  - @ledgerhq/evm-tools@1.2.0-nightly.4
-
-## 2.1.4-nightly.4
-
-### Patch Changes
-
-- [#7531](https://github.com/LedgerHQ/ledger-live/pull/7531) [`d213d81`](https://github.com/LedgerHQ/ledger-live/commit/d213d8122647d559b7a0f44e2beffa5e39c3249b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove `NotEnoughBalanceInParentAccount` error from `validateAmount` check in `getTransactionStatus` as it was redundant with a `validateGas` test
-
-- Updated dependencies [[`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576)]:
-  - @ledgerhq/live-env@2.2.0-nightly.2
-  - @ledgerhq/coin-framework@0.17.0-nightly.4
-  - @ledgerhq/evm-tools@1.2.0-nightly.4
-  - @ledgerhq/live-network@1.3.2-nightly.2
-
-## 2.1.4-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f)]:
-  - @ledgerhq/cryptoassets@13.3.0-nightly.3
-  - @ledgerhq/coin-framework@0.17.0-nightly.3
-  - @ledgerhq/evm-tools@1.2.0-nightly.3
-
-## 2.1.4-nightly.2
+## 2.1.4
 
 ### Patch Changes
 
 - [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update env variable for CAL_SERVICE
 
-- Updated dependencies [[`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
-  - @ledgerhq/live-env@2.2.0-nightly.1
-  - @ledgerhq/evm-tools@1.2.0-nightly.2
-  - @ledgerhq/cryptoassets@13.3.0-nightly.2
-  - @ledgerhq/coin-framework@0.17.0-nightly.2
-  - @ledgerhq/domain-service@1.2.3-nightly.3
-  - @ledgerhq/live-network@1.3.2-nightly.1
+- Updated dependencies [[`afa03ae`](https://github.com/LedgerHQ/ledger-live/commit/afa03ae921ad1ca7df83dc0ba717c1cc27cb08cd), [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978), [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297)]:
+  - @ledgerhq/coin-framework@0.17.0
+  - @ledgerhq/cryptoassets@13.3.0
+  - @ledgerhq/live-env@2.2.0
+  - @ledgerhq/live-network@1.4.0
+  - @ledgerhq/evm-tools@1.2.0
+  - @ledgerhq/domain-service@1.2.3
 
-## 2.1.4-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.17.0-nightly.1
-  - @ledgerhq/domain-service@1.2.3-nightly.2
-  - @ledgerhq/evm-tools@1.1.3-nightly.1
-
-## 2.1.4-nightly.0
+## 2.1.4-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf)]:
-  - @ledgerhq/cryptoassets@13.3.0-nightly.1
-  - @ledgerhq/coin-framework@0.17.0-nightly.0
-  - @ledgerhq/live-env@2.2.0-nightly.0
-  - @ledgerhq/domain-service@1.2.3-nightly.1
-  - @ledgerhq/evm-tools@1.1.3-nightly.1
-  - @ledgerhq/live-network@1.3.2-nightly.0
+- Updated dependencies [[`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297)]:
+  - @ledgerhq/cryptoassets@13.3.0-next.1
+  - @ledgerhq/coin-framework@0.17.0-next.1
+  - @ledgerhq/evm-tools@1.2.0-next.1
+
+## 2.1.4-next.0
+
+### Patch Changes
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update env variable for CAL_SERVICE
+
+- Updated dependencies [[`afa03ae`](https://github.com/LedgerHQ/ledger-live/commit/afa03ae921ad1ca7df83dc0ba717c1cc27cb08cd), [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978), [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/coin-framework@0.17.0-next.0
+  - @ledgerhq/cryptoassets@13.3.0-next.0
+  - @ledgerhq/live-env@2.2.0-next.0
+  - @ledgerhq/live-network@1.4.0-next.0
+  - @ledgerhq/evm-tools@1.2.0-next.0
+  - @ledgerhq/domain-service@1.2.3-next.0
 
 ## 2.1.3
 
