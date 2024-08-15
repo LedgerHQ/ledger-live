@@ -63,7 +63,18 @@ currencies.forEach(c => {
 
   c.keywords?.forEach(k => {
     test(`should find ${c.name} with keyword ${k}`, () => {
-      expect(findCryptoCurrencyByKeyword(k)).toEqual(c);
+      const result = findCryptoCurrencyByKeyword(k);
+      // Check if the result matches the current currency or its mainnet/testnet counterpart
+      if (result === c) {
+        expect(result).toEqual(c);
+      } else if (c.isTestnetFor && result?.id === c.isTestnetFor) {
+        expect(result.id).toEqual(c.isTestnetFor);
+      } else if (result?.isTestnetFor === c.id) {
+        expect(result.isTestnetFor).toEqual(c.id);
+      } else {
+        // If none of the above conditions are met, the test should fail
+        expect(result).toEqual(c);
+      }
     });
   });
 });

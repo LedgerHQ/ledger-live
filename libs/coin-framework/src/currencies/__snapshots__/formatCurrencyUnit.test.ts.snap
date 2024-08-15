@@ -238,6 +238,10 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format PosW unit (posw) 1`] = `"123.456.789,00000000- -POSW"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0,012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format PulseChain unit (Pulse) 1`] = `"0,012345678900000000- -PLS"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format QRL unit (QRL) 1`] = `"123.456.789,00000000- -QRL"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Qtum unit (qtum) 1`] = `"123.456.789,00000000- -QTUM"`;
@@ -563,6 +567,10 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon zkEVM unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format PosW unit (posw) 1`] = `"123,456,789.00000000- -POSW"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0.012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format PulseChain unit (Pulse) 1`] = `"0.012345678900000000- -PLS"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format QRL unit (QRL) 1`] = `"123,456,789.00000000- -QRL"`;
 
@@ -890,6 +898,10 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format PosW unit (posw) 1`] = `"123.456.789,00000000- -POSW"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0,012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format PulseChain unit (Pulse) 1`] = `"0,012345678900000000- -PLS"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format QRL unit (QRL) 1`] = `"123.456.789,00000000- -QRL"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Qtum unit (qtum) 1`] = `"123.456.789,00000000- -QTUM"`;
@@ -1215,6 +1227,10 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon zkEVM unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format PosW unit (posw) 1`] = `"123 456 789,00000000- -POSW"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0,012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format PulseChain unit (Pulse) 1`] = `"0,012345678900000000- -PLS"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format QRL unit (QRL) 1`] = `"123 456 789,00000000- -QRL"`;
 
@@ -1542,6 +1558,10 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format PosW unit (posw) 1`] = `"123,456,789.00000000- -POSW"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0.012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format PulseChain unit (Pulse) 1`] = `"0.012345678900000000- -PLS"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format QRL unit (QRL) 1`] = `"123,456,789.00000000- -QRL"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Qtum unit (qtum) 1`] = `"123,456,789.00000000- -QTUM"`;
@@ -1867,6 +1887,10 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon zkEVM unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format PosW unit (posw) 1`] = `"123,456,789.00000000- -POSW"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0.012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format PulseChain unit (Pulse) 1`] = `"0.012345678900000000- -PLS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format QRL unit (QRL) 1`] = `"123,456,789.00000000- -QRL"`;
 
@@ -2194,6 +2218,10 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format PosW unit (posw) 1`] = `"123.456.789,00000000- -POSW"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0,012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format PulseChain unit (Pulse) 1`] = `"0,012345678900000000- -PLS"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format QRL unit (QRL) 1`] = `"123.456.789,00000000- -QRL"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Qtum unit (qtum) 1`] = `"123.456.789,00000000- -QTUM"`;
@@ -2519,6 +2547,10 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon zkEVM unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format PosW unit (posw) 1`] = `"123 456 789,00000000- -POSW"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0,012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format PulseChain unit (Pulse) 1`] = `"0,012345678900000000- -PLS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format QRL unit (QRL) 1`] = `"123 456 789,00000000- -QRL"`;
 
@@ -2846,6 +2878,10 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format PosW unit (posw) 1`] = `"123.456.789,00000000- -POSW"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0,012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format PulseChain unit (Pulse) 1`] = `"0,012345678900000000- -PLS"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format QRL unit (QRL) 1`] = `"123.456.789,00000000- -QRL"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Qtum unit (qtum) 1`] = `"123.456.789,00000000- -QTUM"`;
@@ -3172,6 +3208,10 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format PosW unit (posw) 1`] = `"123,456,789.00000000- -POSW"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0.012345678900000000- -tPLS"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format PulseChain unit (Pulse) 1`] = `"0.012345678900000000- -PLS"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format QRL unit (QRL) 1`] = `"123,456,789.00000000- -QRL"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Qtum unit (qtum) 1`] = `"123,456,789.00000000- -QTUM"`;
@@ -3497,6 +3537,10 @@ exports[`formatCurrencyUnit with default options should correctly format Polygon
 exports[`formatCurrencyUnit with default options should correctly format Polygon zkEVM unit (ETH) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format PosW unit (posw) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format PulseChain Testnet unit (Test Pulse) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format PulseChain unit (Pulse) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format QRL unit (QRL) 1`] = `"123,456,789"`;
 

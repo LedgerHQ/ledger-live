@@ -81,6 +81,8 @@ setSupportedCurrencies([
   "klaytn",
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
+  "pulsechain",
+  "pulsechain_testnet",
   "base",
   "base_sepolia",
   "stacks",

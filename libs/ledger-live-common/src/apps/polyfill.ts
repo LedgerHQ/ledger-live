@@ -62,6 +62,7 @@ function declareDep(name: string, dep: string): void {
   ["Paraswap", "Ethereum"],
   ["POAP", "Ethereum"],
   ["Polygon", "Ethereum"],
+  ["PulseChain", "Ethereum"],
   ["Rarible", "Ethereum"],
   ["Ricochet", "Ethereum"],
   ["RocketPool", "Ethereum"],
