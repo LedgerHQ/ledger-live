@@ -98,8 +98,8 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
             ...customUrlParams,
             lang: locale,
             devMode,
-            ...(manifest?.providerTestBaseUrl && {
-              providerTestBaseUrl: manifest?.providerTestBaseUrl,
+            ...(localManifest?.providerTestBaseUrl && {
+              providerTestBaseUrl: localManifest?.providerTestBaseUrl,
             }),
 
             ...Object.fromEntries(searchParams.entries()),
