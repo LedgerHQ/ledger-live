@@ -16,6 +16,7 @@ import {
   MAX_COMMENT_BYTES,
   TOKEN_TRANSFER_FORWARD_AMOUNT,
   TOKEN_TRANSFER_MAX_FEE,
+  TOKEN_TRANSFER_QUERY_ID,
 } from "./constants";
 import {
   TonCell,
@@ -104,7 +105,7 @@ export const buildTonTransaction = (
 
     tonTransaction.payload = {
       type: "jetton-transfer",
-      queryId: BigInt(0),
+      queryId: BigInt(TOKEN_TRANSFER_QUERY_ID),
       amount: BigInt(amount.toFixed()),
       destination: TonAddress.parse(recipientParsed),
       responseDestination: TonAddress.parse(account.freshAddress),
@@ -173,7 +174,6 @@ export const getTonEstimatedFees = async (
     initCode,
     initData,
   );
-
   return BigNumber(fee.fwd_fee + fee.gas_fee + fee.in_fwd_fee + fee.storage_fee);
 };
 
@@ -294,4 +294,9 @@ function packBytesAsSnakeCell(bytes: Uint8Array): TonCell {
   }
 
   return mainBuilder.asCell();
+}
+
+export enum BotScenario {
+  DEFAULT = "default",
+  TOKEN_TRANSFER = "token-transfer",
 }
