@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.85.1-nightly.1
+
+### Patch Changes
+
+- [#7569](https://github.com/LedgerHQ/ledger-live/pull/7569) [`fc6a11a`](https://github.com/LedgerHQ/ledger-live/commit/fc6a11ab619ca6c4ec9e69b5239f99ec28c9e734) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix existing custom lock screen not being recognized in My Ledger ("Add" displayed instead of "Change" and no option to delete the current lock screen picture)
+
 ## 2.85.1-nightly.0
 
 ### Patch Changes
