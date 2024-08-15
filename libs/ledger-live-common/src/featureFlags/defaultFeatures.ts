@@ -58,6 +58,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyPersistence: DEFAULT_FEATURE,
   currencyPolygonZkEvm: DEFAULT_FEATURE,
   currencyPolygonZkEvmTestnet: DEFAULT_FEATURE,
+  currencyPulseChain: DEFAULT_FEATURE,
+  currencyPulseChainTestnet: DEFAULT_FEATURE,
   currencyQuicksilver: DEFAULT_FEATURE,
   currencyRsk: DEFAULT_FEATURE,
   currencySecretNetwork: DEFAULT_FEATURE,

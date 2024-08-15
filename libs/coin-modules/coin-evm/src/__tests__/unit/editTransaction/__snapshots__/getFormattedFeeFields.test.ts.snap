@@ -432,6 +432,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0,0105 REOSC",
@@ -987,6 +1005,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
 }
 `;
 
@@ -1548,6 +1584,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0,0105 REOSC",
@@ -2103,6 +2157,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
 }
 `;
 
@@ -2664,6 +2736,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0.0105 REOSC",
@@ -3219,6 +3309,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
 }
 `;
 
@@ -3780,6 +3888,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0,0105 REOSC",
@@ -4335,6 +4461,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
 }
 `;
 
@@ -4896,6 +5040,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0,0105 REOSC",
@@ -5451,6 +5613,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 tPLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 PLS",
+  "formattedGasPrice": "5 beat",
+  "formattedMaxFeePerGas": "0 beat",
+  "formattedMaxPriorityFeePerGas": "0 beat",
 }
 `;
 
@@ -6012,6 +6192,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0,0042 REOSC",
@@ -6567,6 +6765,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
 }
 `;
 
@@ -7128,6 +7344,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0,0042 REOSC",
@@ -7683,6 +7917,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
 }
 `;
 
@@ -8244,6 +8496,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0.0042 REOSC",
@@ -8799,6 +9069,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
 }
 `;
 
@@ -9360,6 +9648,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0,0042 REOSC",
@@ -9915,6 +10221,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
 }
 `;
 
@@ -10476,6 +10800,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for REOSC unit 1`] = `
 {
   "formattedFeeValue": "0,0042 REOSC",
@@ -11031,6 +11373,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for PulseChain Testnet unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 tPLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for PulseChain unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 PLS",
+  "formattedGasPrice": "0 beat",
+  "formattedMaxFeePerGas": "2 beat",
+  "formattedMaxPriorityFeePerGas": "1 beat",
 }
 `;
 
