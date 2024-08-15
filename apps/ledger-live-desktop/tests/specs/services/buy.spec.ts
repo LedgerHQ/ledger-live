@@ -58,7 +58,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
     await liveAppWebview.waitForLoaded();
     expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en_US")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(true);
     await expect
       .soft(page)
@@ -76,7 +76,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
     ).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en_US")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(true);
   });
 
@@ -87,7 +87,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
 
     expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en_US")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("currency: ethereum")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
@@ -104,7 +104,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
       await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
     ).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en_US")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
   });
@@ -120,7 +120,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
       await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
     ).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en_US")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("mode: sell")).toBe(true);
   });
@@ -133,7 +133,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
 
     expect(await liveAppWebview.waitForCorrectTextInWebview("theme: light")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: fr")).toBe(true);
-    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en_US")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(true);
   });
 });
