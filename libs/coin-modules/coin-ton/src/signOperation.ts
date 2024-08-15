@@ -112,7 +112,7 @@ export const buildOptimisticOperation = (
       // we don't know yet, will be patched in final operation
       lt: "",
       explorerHash: "",
-      comment: comment,
+      comment,
     },
   };
   if (tokenTransfer && subAccount) {
@@ -132,7 +132,7 @@ export const buildOptimisticOperation = (
         extra: {
           lt: "",
           explorerHash: "",
-          comment: comment,
+          comment,
         },
         contract: subAccount.token.contractAddress,
       },

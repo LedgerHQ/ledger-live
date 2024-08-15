@@ -16,6 +16,11 @@ export const MINIMUM_REQUIRED_BALANCE = "0.02"; // 0.02 TON
 export const TOKEN_TRANSFER_FORWARD_AMOUNT = 1; // 0.000000001 TON
 
 /**
+ * Query ID for token transfers.
+ */
+export const TOKEN_TRANSFER_QUERY_ID = 0;
+
+/**
  * Maximum allowed bytes for a comment in a transaction.
  * Comments exceeding this limit will be considered invalid.
  */

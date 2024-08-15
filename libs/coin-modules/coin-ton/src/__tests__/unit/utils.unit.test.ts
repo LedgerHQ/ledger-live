@@ -1,5 +1,9 @@
 import { Address, toNano } from "@ton/core";
-import { TOKEN_TRANSFER_MAX_FEE } from "../../constants";
+import {
+  TOKEN_TRANSFER_FORWARD_AMOUNT,
+  TOKEN_TRANSFER_MAX_FEE,
+  TOKEN_TRANSFER_QUERY_ID,
+} from "../../constants";
 import { TonComment, TonPayloadFormat, TonPayloadJettonTransfer } from "../../types";
 import {
   addressesAreEqual,
@@ -147,9 +151,11 @@ describe("Build TON transaction", () => {
   });
 
   test("Build TON transaction when useAllAmount is true and there is a comment", () => {
-    const transaction = { ...baseTransaction };
-    transaction.useAllAmount = true;
-    transaction.comment.text = "valid coment";
+    const transaction = {
+      ...baseTransaction,
+      comment: { text: "valid comment", isEncrypted: false },
+      useAllAmount: true,
+    };
     const tonTransaction = buildTonTransaction(transaction, seqno, account);
 
     // Convert the Address to string to compare
@@ -190,14 +196,17 @@ describe("Build TON transaction", () => {
       responseDestination: (
         jettonTransfer.payload as TonPayloadJettonTransfer
       ).responseDestination.toString(),
+      queryId: (jettonTransfer.payload as TonPayloadJettonTransfer).queryId?.toString(),
+      amount: (jettonTransfer.payload as TonPayloadJettonTransfer).amount.toString(),
+      forwardAmount: (jettonTransfer.payload as TonPayloadJettonTransfer).forwardAmount.toString(),
     }).toStrictEqual({
       type: "jetton-transfer",
-      queryId: BigInt(1),
-      amount: BigInt(jettonTransaction.amount.toFixed()),
+      queryId: TOKEN_TRANSFER_QUERY_ID.toString(),
+      amount: jettonTransaction.amount.toFixed(),
       destination: Address.parse(jettonTransaction.recipient).toString(),
       responseDestination: Address.parse(account.freshAddress).toString(),
       customPayload: null,
-      forwardAmount: BigInt(1),
+      forwardAmount: TOKEN_TRANSFER_FORWARD_AMOUNT.toString(),
       forwardPayload: null,
     });
   });

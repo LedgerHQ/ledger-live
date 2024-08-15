@@ -1,7 +1,4 @@
-import { toNano } from "@ton/core";
-import BigNumber from "bignumber.js";
 import { estimateFee, fetchAccountInfo } from "../../bridge/bridgeHelpers/api";
-import { TOKEN_TRANSFER_MAX_FEE } from "../../constants";
 import prepareTransaction from "../../prepareTransaction";
 import {
   account,
@@ -60,7 +57,7 @@ describe("prepareTransaction", () => {
 
       expect(transaction).toEqual({
         ...jettonTransaction,
-        fees: new BigNumber(toNano(TOKEN_TRANSFER_MAX_FEE).toString()),
+        fees: totalFees,
       });
     });
 
@@ -80,7 +77,7 @@ describe("prepareTransaction", () => {
       expect(transaction).toEqual({
         ...jettonTransaction,
         useAllAmount: true,
-        fees: new BigNumber(toNano(TOKEN_TRANSFER_MAX_FEE).toString()),
+        fees: totalFees,
         amount: account.subAccounts?.[0].spendableBalance,
       });
     });
