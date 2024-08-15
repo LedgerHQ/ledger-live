@@ -555,6 +555,22 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
     },
   },
+  config_currency_pulsechain: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.pulsechain.com",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://api.scan.pulsechain.com/api",
+      },
+    },
+  },
   config_currency_base: {
     type: "object",
     default: {
@@ -667,6 +683,22 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       status: { type: "active" },
       node: { type: "external", uri: "https://rpc.public.zkevm-test.net" },
       explorer: { type: "etherscan", uri: "https://api-testnet-zkevm.polygonscan.com/api" },
+    },
+  },
+  config_currency_pulsechain_testnet: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.v4.testnet.pulsechain.com",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://api.scan.v4.testnet.pulsechain.com/api",
+      },
     },
   },
   config_currency_base_sepolia: {
