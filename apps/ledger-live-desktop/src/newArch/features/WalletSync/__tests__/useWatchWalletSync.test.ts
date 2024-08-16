@@ -45,8 +45,7 @@ describe("useWatchWalletSync", () => {
     expect(result.current.onUserRefresh).not.toThrow();
   });
 
-  // TODO: FIXME - This test is skipped because it's looping infinitely
-  it.skip("should run ledger sync watch loop when ff is enabled", async () => {
+  it("should run ledger sync watch loop when ff is enabled", async () => {
     const { result, store } = renderHook(() => useWatchWalletSync(), {
       initialState: INITIAL_STATE,
     });

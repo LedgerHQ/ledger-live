@@ -45,13 +45,10 @@ describe("useWatchWalletSync", () => {
     expect(result.current.onUserRefresh).not.toThrow();
   });
 
-  // TODO: FIXME - This test is skipped because it's looping infinitely
-  it.skip("should run ledger sync watch loop when ff is enabled", async () => {
+  it("should run ledger sync watch loop when ff is enabled", async () => {
     const { result, store } = renderHook(() => useWatchWalletSync(), {
       overrideInitialState: INITIAL_STATE,
     });
-
-    console.log("store", store?.getState()?.settings.overriddenFeatureFlags.llmWalletSync?.enabled);
 
     expect(store?.getState()?.settings.overriddenFeatureFlags.llmWalletSync?.enabled).toBe(true);
     expect(result.current.visualPending).toBe(true);
