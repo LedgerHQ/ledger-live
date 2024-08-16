@@ -32,6 +32,7 @@ const Label: React.FC<Props> = ({ text, style }) => {
       borderColor={borderColor}
       backgroundColor={backgroundColor}
       fontWeight="semiBold"
+      marginLeft={3}
     >
       {text}
     </Text>

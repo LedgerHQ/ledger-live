@@ -7,14 +7,16 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 export default function MinimalAppCard({
   item,
   onPress,
+  disabled
 }: {
   item: AppManifest;
   onPress: () => void;
+  disabled?: boolean;
 }) {
   return (
-    <TouchableOpacity disabled={item.branch === "soon"} onPress={onPress}>
+    <TouchableOpacity disabled={ disabled } onPress={onPress}>
       <Flex rowGap={6} marginRight={3} width={70} alignItems={"center"}>
-        <AppIcon isDisabled={item.branch === "soon"} size={48} name={item.name} icon={item.icon} />
+        <AppIcon isDisabled={disabled} size={48} name={item.name} icon={item.icon} />
         <Text numberOfLines={1}>{item.name}</Text>
       </Flex>
     </TouchableOpacity>

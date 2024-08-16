@@ -34,7 +34,7 @@ const ManifestsCategoryList = ({ title, categoryId, navigation }: Props) => {
       <HorizontalList
         title={title}
         data={data}
-        extraData={{ onPress: disclaimer.onPressItem }}
+        extraData={disclaimer.onPressItem}
         isLoading={isLoading}
         onEndReached={onEndReached}
         testID="web3hub-clear-signing-scroll"
