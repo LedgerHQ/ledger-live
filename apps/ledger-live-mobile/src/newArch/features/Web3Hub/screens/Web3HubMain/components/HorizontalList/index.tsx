@@ -19,8 +19,7 @@ type PropRenderItem = {
   extraData?: (manifest: AppManifest) => void;
 };
 
-const identityFn = (item: AppManifest) => item.id
-
+const identityFn = (item: AppManifest) => item.id;
 
 export default function HorizontalList({
   title,
@@ -30,21 +29,17 @@ export default function HorizontalList({
   extraData,
   testID,
 }: Props) {
+  const renderItem = useCallback(({ item, extraData = () => {} }: PropRenderItem) => {
+    const disabled = item.branch === "soon";
+    const handlePress = () => {
+      if (!disabled) {
+        extraData(item);
+      }
+    };
 
-  const renderItem =  useCallback(
-    ({ item, extraData = () => {} }: PropRenderItem) => {
-      const disabled = item.branch === "soon"
-      const handlePress = () => {
-        if (!disabled) {
-          extraData(item);
-        }
-      };
-  
-      return <MinimalAppCard key={item.id} disabled={disabled} item={item} onPress={handlePress} />;
-    },
-    []
-  );
-  
+    return <MinimalAppCard key={item.id} disabled={disabled} item={item} onPress={handlePress} />;
+  }, []);
+
   return (
     <>
       <Text mt={2} mb={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
@@ -60,7 +55,7 @@ export default function HorizontalList({
           ListFooterComponent={
             isLoading ? (
               <Flex marginRight={4} justifyContent={"center"} paddingTop={3}>
-                  <InfiniteLoader size={30}  />
+                <InfiniteLoader size={30} />
               </Flex>
             ) : null
           }

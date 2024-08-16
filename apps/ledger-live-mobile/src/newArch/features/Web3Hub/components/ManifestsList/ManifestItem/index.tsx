@@ -91,7 +91,7 @@ export default function ManifestItem({
             <Text variant="large" color={color} numberOfLines={1} fontWeight="semiBold">
               {manifest.name}
             </Text>
-            <Flex flexDirection="row" alignItems={"center"} >
+            <Flex flexDirection="row" alignItems={"center"}>
               {manifest.branch !== "stable" && (
                 <Label
                   text={t(`platform.catalog.branch.${manifest.branch}`, {
