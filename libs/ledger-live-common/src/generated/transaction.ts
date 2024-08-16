@@ -19,6 +19,7 @@ import tezos from "@ledgerhq/coin-tezos/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
 import icon from "@ledgerhq/coin-icon/transaction";
+import elrond from "@ledgerhq/coin-elrond/transaction";
 
 export default {
   casper,
@@ -42,4 +43,5 @@ export default {
   tron,
   xrp,
   icon,
+  elrond,
 };

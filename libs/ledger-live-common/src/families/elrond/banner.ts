@@ -1,7 +1,7 @@
 import type { ElrondAccount, ElrondProvider } from "./types";
 import { ElrondDelegation, ElrondPreloadData } from "./types";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "./constants";
-import { hasMinimumDelegableBalance } from "@ledgerhq/coin-multiversx/helpers/hasMinimumDelegableBalance";
+import { hasMinimumDelegableBalance } from "@ledgerhq/coin-elrond/helpers/hasMinimumDelegableBalance";
 
 interface AccountBannerHiddenState {
   bannerType: "hidden";

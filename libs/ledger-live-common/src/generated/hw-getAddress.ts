@@ -19,6 +19,7 @@ import { resolver as tezos } from "../families/tezos/setup";
 import { resolver as tron } from "../families/tron/setup";
 import { resolver as xrp } from "../families/xrp/setup";
 import { resolver as icon } from "../families/icon/setup";
+import { resolver as elrond } from "../families/elrond/setup";
 
 export default {
   casper,
@@ -42,4 +43,5 @@ export default {
   tron,
   xrp,
   icon,
+  elrond,
 };

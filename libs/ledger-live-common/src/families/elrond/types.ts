@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-multiversx/types";
+export * from "@ledgerhq/coin-elrond/types";

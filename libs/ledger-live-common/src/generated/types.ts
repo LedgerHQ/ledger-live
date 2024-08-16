@@ -45,7 +45,7 @@ import type {
   TransactionRaw as elrondTransactionRaw,
   TransactionStatus as elrondTransactionStatus,
   TransactionStatusRaw as elrondTransactionStatusRaw,
-} from "../families/elrond/types";
+} from "@ledgerhq/coin-elrond/types";
 import type {
   Transaction as evmTransaction,
   TransactionRaw as evmTransactionRaw,
