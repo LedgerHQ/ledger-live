@@ -3480,6 +3480,9 @@ importers:
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1
@@ -3490,8 +3493,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.4
       iso-filecoin:
-        specifier: ^4.0.3
-        version: 4.0.3
+        specifier: ^4.1.0
+        version: 4.1.0
       isomorphic-ws:
         specifier: ^4.0.1
         version: 4.0.1(ws@7.5.10)
@@ -9915,8 +9918,8 @@ packages:
   '@iov/utils@2.0.2':
     resolution: {integrity: sha512-4D8MEvTcFc/DVy5q25vHxRItmgJyeX85dixMH+MxdKr+yy71h3sYk+sVBEIn70uqGP7VqAJkGOPNFs08/XYELw==}
 
-  '@ipld/dag-cbor@9.2.0':
-    resolution: {integrity: sha512-N14oMy0q4gM6OuZkIpisKe0JBSjf1Jb39VI+7jMLiWX9124u1Z3Fdj/Tag1NA0cVxxqWDh0CqsjcVfOKtelPDA==}
+  '@ipld/dag-cbor@9.2.1':
+    resolution: {integrity: sha512-nyY48yE7r3dnJVlxrdaimrbloh4RokQaNRdI//btfTkcTEZbpmSrbYcBQ4VKTf8ZxXAOUJy4VsRpkJo+y9RTnA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
   '@isaacs/cliui@8.0.2':
@@ -21066,21 +21069,21 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  iso-base@2.0.1:
-    resolution: {integrity: sha512-ip0nUW9oZP+LG6mslSgdJPt9NWZOq1qIOKpoUIdm8sq/87VwY8WZXw9ptCkhdJclY+r4feFbZuu9P/OFDqCvkQ==}
+  iso-base@4.0.0:
+    resolution: {integrity: sha512-Vf+6r7XlP+LQD0HSR0ZBLSj/mwuP+59ElbgMKT+iFSnkBW2RzRohQScgKfPCYbaGZAjEdbi40eYq28E/RAnrVA==}
 
-  iso-filecoin@4.0.3:
-    resolution: {integrity: sha512-JVEHvEoDs+Gz4uEvMo9wociX5LgUBxe84rXMoRtBwwXR2kjb1CeWbEiY8BeVzKOAiucy9vmFeYMdSqbxbvO9zA==}
+  iso-filecoin@4.1.0:
+    resolution: {integrity: sha512-jUtgWHC2I0j+0WtjhoRc321Mdo54/ntKbLZ1Ad1Ptq55N6RoHL2rJHp0RvPmjtCHlKc++DfMJnO4nWLwFVFr2g==}
 
-  iso-kv@3.0.2:
-    resolution: {integrity: sha512-DL4TNf1SRVskOKRsEk2QjMHsLUWh1H+iV4LPc9dMDfi1wcb/HlkGl+9ETphk3FN5ToL6l6CUKdeHGYyOPdmMHg==}
+  iso-kv@3.0.3:
+    resolution: {integrity: sha512-NVW7TJGiTbDlfBclLJeGqGLvZhgMu02tPId6ghLEygCVgitp3946TM6HJordcSbyJbD0wRzByilRYK/GY8dKlw==}
 
   iso-url@0.4.7:
     resolution: {integrity: sha512-27fFRDnPAMnHGLq36bWTpKET+eiXct3ENlCcdcMdk+mjXrb2kw3mhBUg1B7ewAC0kVzlOPhADzQgz1SE6Tglog==}
     engines: {node: '>=10'}
 
-  iso-web@1.0.5:
-    resolution: {integrity: sha512-ZRZ5BgGAvwau+WtNLZXp1byawaMPFUFnTwVHLXKFXIKxz0CD9hkEkSe505kxcNEui0TqVEQBOwg4806au1djGg==}
+  iso-web@1.0.6:
+    resolution: {integrity: sha512-aPG6UoEoUSecDAArSilUcmAlt4sW0eROQhDgvSC0yTWzh/RrhEwM3VIgrv2cTV0oXZiMpzmpLb4bNWT3ea7CzQ==}
 
   isobject@3.0.1:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
@@ -29591,6 +29594,9 @@ packages:
   zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
 
+  zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -34779,7 +34785,7 @@ snapshots:
 
   '@iov/utils@2.0.2': {}
 
-  '@ipld/dag-cbor@9.2.0':
+  '@ipld/dag-cbor@9.2.1':
     dependencies:
       cborg: 4.1.4
       multiformats: 13.1.0
@@ -45901,7 +45907,7 @@ snapshots:
 
   conf@12.0.0:
     dependencies:
-      ajv: 8.12.0
+      ajv: 8.16.0
       ajv-formats: 2.1.1
       atomically: 2.0.2
       debounce-fn: 5.1.2
@@ -51303,24 +51309,24 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  iso-base@2.0.1:
+  iso-base@4.0.0:
     dependencies:
       base-x: 4.0.0
       bigint-mod-arith: 3.3.1
 
-  iso-filecoin@4.0.3:
+  iso-filecoin@4.1.0:
     dependencies:
-      '@ipld/dag-cbor': 9.2.0
+      '@ipld/dag-cbor': 9.2.1
       '@noble/curves': 1.4.0
-      '@noble/hashes': 1.3.3
+      '@noble/hashes': 1.4.0
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.3.0
       bignumber.js: 9.1.2
-      iso-base: 2.0.1
-      iso-web: 1.0.5
-      zod: 3.22.4
+      iso-base: 4.0.0
+      iso-web: 1.0.6
+      zod: 3.23.8
 
-  iso-kv@3.0.2:
+  iso-kv@3.0.3:
     dependencies:
       conf: 12.0.0
       idb-keyval: 6.2.1
@@ -51328,10 +51334,10 @@ snapshots:
 
   iso-url@0.4.7: {}
 
-  iso-web@1.0.5:
+  iso-web@1.0.6:
     dependencies:
       delay: 6.0.0
-      iso-kv: 3.0.2
+      iso-kv: 3.0.3
       p-retry: 6.2.0
 
   isobject@3.0.1: {}
@@ -64644,6 +64650,8 @@ snapshots:
       readable-stream: 3.6.2
 
   zod@3.22.4: {}
+
+  zod@3.23.8: {}
 
   zwitch@2.0.4: {}
 
