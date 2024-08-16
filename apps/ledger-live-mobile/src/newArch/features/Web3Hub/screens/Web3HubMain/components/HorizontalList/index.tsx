@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import MinimalAppCard from "./MinimalAppCard";
 
@@ -50,7 +50,7 @@ export default function HorizontalList({
       <Text mt={2} mb={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
         {title}
       </Text>
-      <View style={{ marginBottom: 2 }}>
+      <Box mb={2}>
         <FlashList
           testID={testID}
           horizontal
@@ -64,13 +64,13 @@ export default function HorizontalList({
               </Flex>
             ) : null
           }
-          estimatedItemSize={75}
+          estimatedItemSize={70}
           data={data}
           showsHorizontalScrollIndicator={false}
           extraData={extraData}
           onEndReached={onEndReached}
         />
-      </View>
+      </Box>
     </>
   );
 }
