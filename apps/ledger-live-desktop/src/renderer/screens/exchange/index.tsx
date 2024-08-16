@@ -41,7 +41,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const searchParams = new URLSearchParams(search);
   const lang = useSelector(languageSelector);
   const locale = useSelector(localeSelector);
-  const fiatCurrency = useSelector(counterValueCurrencySelector);
+  const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const devMode = useSelector(developerModeSelector);
   const accounts = useSelector(accountsSelector);
 
@@ -105,7 +105,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
             ...customUrlParams,
             lang,
             locale,
-            currencyTicker: fiatCurrency.ticker,
+            currencyTicker,
             devMode,
             ...Object.fromEntries(searchParams.entries()),
           }}
