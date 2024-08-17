@@ -8,6 +8,8 @@ import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
 import { encodeAccountId } from "../../../../account";
 import { encodeOperationId } from "../../../../operation";
 import flatMap from "lodash/flatMap";
+import { buildTokenAccounts } from "./erc20/tokenAccounts";
+import { Transaction } from "../../types";
 
 type TxsById = {
   [id: string]:
@@ -93,10 +95,11 @@ export const mapTxToOps =
     const hasFailed = status !== TxStatus.Ok;
 
     if (isSending) {
+      const type = value.eq(0) ? "FEES" : "OUT";
       ops.push({
-        id: encodeOperationId(accountId, hash, "OUT"),
+        id: encodeOperationId(accountId, hash, type),
         hash,
-        type: "OUT",
+        type,
         value: value.plus(feeToUse),
         fee: feeToUse,
         blockHeight: tx.height,
@@ -111,10 +114,11 @@ export const mapTxToOps =
     }
 
     if (isReceiving) {
+      const type = value.eq(0) ? "FEES" : "IN";
       ops.push({
-        id: encodeOperationId(accountId, hash, "IN"),
+        id: encodeOperationId(accountId, hash, type),
         hash,
-        type: "IN",
+        type,
         value,
         fee: feeToUse,
         blockHeight: tx.height,
@@ -143,21 +147,32 @@ export const getTxToBroadcast = (
   signature: string,
   rawData: Record<string, any>,
 ): BroadcastTransactionRequest => {
-  const { senders, recipients, value, fee } = operation;
-  const { gasLimit, gasFeeCap, gasPremium, method, version, nonce, signatureType } = rawData;
+  const {
+    sender,
+    recipient,
+    gasLimit,
+    gasFeeCap,
+    gasPremium,
+    method,
+    version,
+    nonce,
+    signatureType,
+    params,
+    value,
+  } = rawData;
 
   return {
     message: {
       version,
       method,
       nonce,
-      params: "",
-      to: recipients[0],
-      from: senders[0],
+      params: params ?? "",
+      to: recipient,
+      from: sender,
       gaslimit: gasLimit.toNumber(),
       gaspremium: gasPremium.toString(),
       gasfeecap: gasFeeCap.toString(),
-      value: value.minus(fee).toFixed(),
+      value,
     },
     signature: {
       type: signatureType,
@@ -180,14 +195,27 @@ export const getAccountShape: GetAccountShape = async info => {
   const blockHeight = await fetchBlockHeight();
   const balance = await fetchBalances(address);
   const rawTxs = await fetchTxs(address);
+  const tokenAccounts = await buildTokenAccounts(address, accountId, info.initialAccount);
 
-  const result = {
+  const result: Partial<Account> = {
     id: accountId,
+    subAccounts: tokenAccounts,
     balance: new BigNumber(balance.total_balance),
     spendableBalance: new BigNumber(balance.spendable_balance),
-    operations: flatMap(processTxs(rawTxs), mapTxToOps(accountId, info)),
+    operations: flatMap(processTxs(rawTxs), mapTxToOps(accountId, info)).sort(
+      (a, b) => b.date.getTime() - a.date.getTime(),
+    ),
     blockHeight: blockHeight.current_block_identifier.index,
   };
 
   return result;
+};
+
+export const getSubAccount = (account: Account, tx: Transaction) => {
+  const subAccount =
+    tx.subAccountId && account.subAccounts
+      ? account.subAccounts.find(sa => sa.id === tx.subAccountId)
+      : null;
+
+  return subAccount;
 };
