@@ -1,5 +1,15 @@
 # @ledgerhq/coin-polkadot
 
+## 1.2.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.0
+  - @ledgerhq/live-env@2.3.0-nightly.0
+  - @ledgerhq/coin-framework@0.17.1-nightly.0
+  - @ledgerhq/live-network@1.4.1-nightly.0
+
 ## 1.2.0
 
 ### Minor Changes

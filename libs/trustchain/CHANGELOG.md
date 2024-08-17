@@ -1,5 +1,15 @@
 # @ledgerhq/live-wallet
 
+## 0.2.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
+  - @ledgerhq/live-env@2.3.0-nightly.0
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.0
+  - @ledgerhq/live-network@1.4.1-nightly.0
+  - @ledgerhq/speculos-transport@0.1.5-nightly.0
+
 ## 0.2.0
 
 ### Minor Changes

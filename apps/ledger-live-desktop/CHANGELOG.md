@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.2
+
+### Minor Changes
+
+- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
+
+### Patch Changes
+
+- [#7592](https://github.com/LedgerHQ/ledger-live/pull/7592) [`a354886`](https://github.com/LedgerHQ/ledger-live/commit/a354886e05e12b519f89d93cee079bbff3104723) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fixes display of account unit during send
+
+- Updated dependencies [[`f0eb405`](https://github.com/LedgerHQ/ledger-live/commit/f0eb405b52de5484ee98ac87e87522b33836224c), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
+  - @ledgerhq/live-common@34.8.0-nightly.1
+  - @ledgerhq/live-env@2.3.0-nightly.0
+  - @ledgerhq/coin-framework@0.17.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.7.3-nightly.1
+  - @ledgerhq/coin-evm@2.1.5-nightly.0
+  - @ledgerhq/live-countervalues@0.2.5-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.0
+  - @ledgerhq/live-nft@0.4.5-nightly.0
+  - @ledgerhq/live-nft-react@0.4.5-nightly.0
+  - @ledgerhq/live-wallet@0.5.1-nightly.0
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.0
+  - @ledgerhq/live-network@1.4.1-nightly.0
+  - @ledgerhq/trustchain@0.2.1-nightly.0
+
 ## 2.85.1-nightly.1
 
 ### Patch Changes

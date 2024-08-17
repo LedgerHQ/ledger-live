@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.4.0-nightly.0
+
+### Minor Changes
+
+- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
+
 ## 13.3.0
 
 ### Minor Changes

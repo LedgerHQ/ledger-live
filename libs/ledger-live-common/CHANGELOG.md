@@ -1,5 +1,42 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.1
+
+### Minor Changes
+
+- [#7613](https://github.com/LedgerHQ/ledger-live/pull/7613) [`f0eb405`](https://github.com/LedgerHQ/ledger-live/commit/f0eb405b52de5484ee98ac87e87522b33836224c) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds support for tBTC
+
+- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
+
+### Patch Changes
+
+- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.0
+  - @ledgerhq/live-env@2.3.0-nightly.0
+  - @ledgerhq/coin-framework@0.17.1-nightly.0
+  - @ledgerhq/coin-algorand@0.5.5-nightly.0
+  - @ledgerhq/coin-bitcoin@0.7.3-nightly.1
+  - @ledgerhq/coin-cardano@0.1.5-nightly.0
+  - @ledgerhq/coin-evm@2.1.5-nightly.0
+  - @ledgerhq/coin-icon@0.4.2-nightly.0
+  - @ledgerhq/coin-near@0.5.5-nightly.0
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.0
+  - @ledgerhq/coin-solana@0.7.5-nightly.0
+  - @ledgerhq/coin-stellar@0.2.3-nightly.0
+  - @ledgerhq/coin-tezos@0.6.1-nightly.0
+  - @ledgerhq/coin-ton@0.3.13-nightly.1
+  - @ledgerhq/coin-tron@0.0.5-nightly.0
+  - @ledgerhq/coin-xrp@0.5.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.5-nightly.0
+  - @ledgerhq/live-countervalues@0.2.5-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.0
+  - @ledgerhq/live-nft@0.4.5-nightly.0
+  - @ledgerhq/live-wallet@0.5.1-nightly.0
+  - @ledgerhq/live-network@1.4.1-nightly.0
+  - @ledgerhq/speculos-transport@0.1.5-nightly.0
+  - @ledgerhq/device-core@0.3.3-nightly.0
+
 ## 34.8.0-nightly.0
 
 ### Minor Changes
