@@ -3494,8 +3494,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://devnet.minaexplorer.com/transaction/$hash",
-        address: "https://devnet.minaexplorer.com/wallet/$address",
+        tx: "https://minascan.io/mainnet/tx/$hash/txInfo",
+        address: "https://minascan.io/mainnet/account/$address",
       },
     ],
   },

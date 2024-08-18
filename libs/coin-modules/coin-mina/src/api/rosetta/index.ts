@@ -40,7 +40,7 @@ export const fetchAccountTransactions = async (address: string) => {
   const { data } = await network<FetchAccountTransactionsResponse>({
     method: "POST",
     url: getRosettaUrl("/search/transactions"),
-    data: addNetworkIdentifier(buildAccountIdentifier(address)),
+    data: { ...addNetworkIdentifier(buildAccountIdentifier(address)), include_timestamp: true },
   });
 
   return data;
@@ -78,14 +78,4 @@ export const rosettaSubmitTransaction = async (blob: string) => {
     url: getRosettaUrl("/construction/submit"),
     data: addNetworkIdentifier({ signed_transaction: blob }),
   });
-};
-
-export const fetchBlockInfo = async (hash: string) => {
-  const res = await network<RosettaBlockInfoResponse>({
-    method: "POST",
-    url: getRosettaUrl("/block"),
-    data: addNetworkIdentifier({ block_identifier: { hash } }),
-  });
-
-  return res.data;
 };
