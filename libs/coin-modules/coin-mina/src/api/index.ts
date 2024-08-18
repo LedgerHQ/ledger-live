@@ -3,14 +3,13 @@ import { MinaAPIAccount, MinaSignedTransaction, Transaction } from "../types";
 import {
   fetchAccountBalance,
   fetchAccountTransactions,
-  fetchBlockInfo,
   fetchNetworkStatus,
   fetchTransactionMetadata,
   rosettaSubmitTransaction,
 } from "./rosetta";
-import { RosettaTransactionWithDate } from "./rosetta/types";
 import { MINA_TOKEN_ID } from "../consts";
 import { isValidAddress } from "../logic";
+import { RosettaTransaction } from "./rosetta/types";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   const networkStatus = await fetchNetworkStatus();
@@ -31,22 +30,9 @@ export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   };
 };
 
-export const getTransactions = async (address: string): Promise<RosettaTransactionWithDate[]> => {
-  const res = await fetchAccountTransactions(address);
-
-  const txns: RosettaTransactionWithDate[] = [];
-  for (const txn of res.transactions) {
-    const date = await getBlockDate(txn.block_identifier.hash);
-    txns.push({ ...txn, date: date });
-  }
-
-  return txns;
-};
-
-export const getBlockDate = async (hash: string): Promise<Date> => {
-  const res = await fetchBlockInfo(hash);
-
-  return new Date(res.block.timestamp);
+export const getTransactions = async (address: string): Promise<RosettaTransaction[]> => {
+  const txns = await fetchAccountTransactions(address);
+  return txns.transactions.sort((a, b) => b.timestamp - a.timestamp);
 };
 
 export const broadcastTransaction = async (txn: MinaSignedTransaction): Promise<string> => {
