@@ -4,22 +4,22 @@ import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers"
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getTransactions } from "./api";
 import { MinaAccount, MinaOperation } from "./types";
-import { RosettaTransactionWithDate } from "./api/rosetta/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
+import { RosettaTransaction } from "./api/rosetta/types";
 
 const mapRosettaTxnToOperation = (
   accountId: string,
   address: string,
-  txn: RosettaTransactionWithDate,
+  txn: RosettaTransaction,
 ): MinaOperation[] => {
   try {
     const hash = txn.transaction.transaction_identifier.hash;
     const blockHeight = txn.block_identifier.index;
     const blockHash = txn.block_identifier.hash;
-    const date = txn.date;
+    const date = new Date(txn.timestamp);
     const memo = txn.transaction.metadata?.memo || "";
 
     let value = new BigNumber(0);
@@ -33,7 +33,6 @@ const mapRosettaTxnToOperation = (
       switch (op.type) {
         case "fee_payment": {
           fee = fee.plus(opValue.times(-1));
-          value = value.plus(fee);
           continue;
         }
         case "payment_receiver_inc": {
@@ -49,7 +48,7 @@ const mapRosettaTxnToOperation = (
           continue;
         }
         case "account_creation_fee_via_payment": {
-          value = value.plus(opValue.times(-1));
+          fee = fee.plus(opValue.times(-1));
           continue;
         }
       }
