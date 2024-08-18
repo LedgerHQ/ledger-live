@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import type { MinaUnsignedTransaction, Transaction } from "./types";
-import { MINA_DEVNET_NETWORK_ID, MINA_PAYMENT_TYPE_ID } from "./consts";
+import { MINA_MAINNET_NETWORK_ID, MINA_PAYMENT_TYPE_ID } from "./consts";
 import { getAccountNumFromPath } from "./logic";
 import { getNonce } from "./api";
 import BigNumber from "bignumber.js";
@@ -25,7 +25,7 @@ export const buildTransaction = async (
       fee: t.fees.toNumber(),
       nonce: BigNumber(nonce).toNumber(),
       memo: t.memo ?? "",
-      networkId: MINA_DEVNET_NETWORK_ID,
+      networkId: MINA_MAINNET_NETWORK_ID,
     };
   } catch (e) {
     log("error", "mina: error building transaction", {

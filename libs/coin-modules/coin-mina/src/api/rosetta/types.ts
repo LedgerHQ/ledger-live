@@ -45,10 +45,6 @@ export type FetchAccountBalanceResponse = {
   };
 };
 
-export type RosettaTransactionWithDate = RosettaTransaction & {
-  date: Date;
-};
-
 export type RosettaTransaction = {
   block_identifier: {
     index: number;
@@ -90,6 +86,7 @@ export type RosettaTransaction = {
       memo: string;
     };
   };
+  timestamp: number;
 };
 
 export type FetchAccountTransactionsResponse = {
