@@ -19,7 +19,7 @@ import {
 import { Transaction, TransactionStatus } from "./types";
 import { addressesAreEqual, commentIsValid, isAddressValid } from "./utils";
 
-type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "comment";
+type ValidatedTransactionFields = "recipient" | "sender" | "amount" | "transaction";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 /**
@@ -110,7 +110,10 @@ const validateComment = (transaction: Transaction): Array<ValidationIssues> => {
 
   // if the comment isn'transaction encrypted, it should be valid
   if (transaction.comment.isEncrypted || !commentIsValid(transaction.comment)) {
-    errors.comment = new TonCommentInvalid();
+    // We use transaction as an error here.
+    // It will be usefull to block a memo wrong format
+    // on the ledger-live mobile
+    errors.transaction = new TonCommentInvalid();
   }
   return [errors];
 };

@@ -124,12 +124,12 @@ describe("getTransactionStatus", () => {
         const transaction = {
           ...baseTransaction,
           amount: new BigNumber("1"),
-          comment: { isEncrypted: false, text: "comment\nInvalid" },
+          transaction: { isEncrypted: false, text: "comment\nInvalid" },
         };
         const res = await getTransactionStatus(account, transaction);
         expect(res.errors).toEqual(
           expect.objectContaining({
-            comment: new TonCommentInvalid(),
+            transaction: new TonCommentInvalid(),
           }),
         );
       });
