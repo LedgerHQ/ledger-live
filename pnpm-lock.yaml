@@ -751,6 +751,9 @@ importers:
       listr-verbose-renderer:
         specifier: ^0.6.0
         version: 0.6.0
+      nock:
+        specifier: ^13.0.5
+        version: 13.5.4
       prebuild-install:
         specifier: ^7.1.1
         version: 7.1.2
