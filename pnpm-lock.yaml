@@ -16,7 +16,7 @@ overrides:
 
 packageExtensionsChecksum: bcc0ac67c2d7bcc88fe46412ebcf46be
 
-pnpmfileChecksum: ju3gjuq3tfou7jpj6cwyr6jtr4
+pnpmfileChecksum: 5u75dtojn5ihmrmct6hd2yqpdq
 
 patchedDependencies:
   '@changesets/get-github-info@0.6.0':
@@ -3488,20 +3488,20 @@ importers:
         specifier: ^7.1.2
         version: 7.1.2
       '@celo/connect':
-        specifier: ^3.0.1
-        version: 3.2.0
+        specifier: ^6.0.1
+        version: 6.0.1
       '@celo/contractkit':
-        specifier: ^3.0.1
-        version: 3.2.0
+        specifier: ^8.1.1
+        version: 8.1.1
       '@celo/utils':
-        specifier: ^3.0.1
-        version: 3.2.0
+        specifier: ^7.0.0
+        version: 7.0.0
       '@celo/wallet-base':
-        specifier: ^3.0.1
-        version: 3.2.0
+        specifier: ^6.0.1
+        version: 6.0.1
       '@celo/wallet-ledger':
-        specifier: ^3.0.1
-        version: 3.2.0
+        specifier: ^6.0.1
+        version: 6.0.1
       '@crypto-org-chain/chain-jslib':
         specifier: 1.1.2
         version: 1.1.2
@@ -8685,40 +8685,55 @@ packages:
   '@casperlabs/ts-results@3.3.5':
     resolution: {integrity: sha512-ymSQqqb4mOSet592li02u1Gd28LoOFJUm6R3jkdNQ+nqsnbHvN+izBigtP4aYmNwh6gFyCwDgjYporEJgDT4eA==}
 
-  '@celo/base@3.2.0':
-    resolution: {integrity: sha512-9wfZYiYv7dzt17a29fxU6sV7JssyXfpSQ9kPSpfOlsewPICXwfOMQ+25Jn6xZu20Vx9rmKebmLHiQyiuYEDOcQ==}
+  '@celo/abis@11.0.0':
+    resolution: {integrity: sha512-rPjHQxHbWaKQU3MX6hE3A3xRkBFBphjFvfCs4t+19dqPPys6Q+cneHmRWGBX4NLiBh5BLZcNZjQoMf2jxRLMpg==}
 
-  '@celo/connect@3.2.0':
-    resolution: {integrity: sha512-iLOLo8d1OqNcX827/iCfWCeWaewUl0kyhL1xgyXrf//YaPU+ljKtruJmiLLrxkfdB/etWUdcryrbmuUhjHZmKg==}
-    engines: {node: '>=8.13.0'}
-    deprecated: Versions less than 5.1 are deprecated and will no longer be able to submit transactions to celo in a future hardfork
+  '@celo/abis@12.0.0-canary.16':
+    resolution: {integrity: sha512-nbynuyhXUZKQTEUlkvQaWI7y4lPXa5xuVLJDLqzNfWbF27E6V1xGoMNUK4XxzmTC161VOPp18Guah2C49kXQ0w==}
+
+  '@celo/base@6.1.0':
+    resolution: {integrity: sha512-R6ko2QCfEU32akBsaSNsDYduktgwIKHcJ61SbR7EsXA1VE31/44Qh8kMzfgeahyk375DUCe3pJIKwx5zg1tFHg==}
+
+  '@celo/connect@6.0.1':
+    resolution: {integrity: sha512-nMWivxDeXSILRqsnFZNDz4Rv3eX3xj7++16LT03m5fa6GvlfLvxx1jQ1yv6Hf2Z8yvHEeL36zzBIfqyHOyF99Q==}
+    engines: {node: '>=8.14.2'}
     peerDependencies:
-      web3: 1.3.6
+      web3: 1.10.4
 
-  '@celo/contractkit@3.2.0':
-    resolution: {integrity: sha512-kt4ViBRMg7ezCPi2SdcrYdDorA1Meg/qk97/u4izEIthl9GM4QSRfhhHYsbXYm0NV/MZ2BkS0cCsQ/SHcILSaA==}
-    engines: {node: '>=8.13.0'}
-    deprecated: Versions less than 5.1 are deprecated and will no longer be able to submit transactions to celo in a future hardfork
+  '@celo/contractkit@8.1.1':
+    resolution: {integrity: sha512-EUZaoo8BQIkXKWF4h0UI9yNmVAsDSsDOjTB5C4RrdDkylzn7PGICPmUMq/9WU2QH1zFV9kf1JpGzxlA8Uci6MQ==}
+    engines: {node: '>=8.14.2'}
 
-  '@celo/utils@3.2.0':
-    resolution: {integrity: sha512-Om1mTzwsdV6FVPvraafcJeRnzz7Xv/lyGmyZaoEZ9fErRadu9ZrOsuDQniYe+lD78DQ0NATxJL04WjhEKVkn+A==}
+  '@celo/ledger-token-signer@0.4.0':
+    resolution: {integrity: sha512-8uedsklE2ygKnJiy/nbnNde3KHlhp0PaEyKTc2Eq/FFiIE6NfBosdvJbLQHemq15jJccPcJQohfSqbrfOpRyzg==}
 
-  '@celo/wallet-base@3.2.0':
-    resolution: {integrity: sha512-lwhesT2BkXIyPI/ox/QbVVCRtLzTAGO25M3TlWBfSCzkRAf/AiV41lzEf9J7A1ozDKXS9s7bj8odiRkMAcelyQ==}
-    engines: {node: '>=8.13.0'}
-    deprecated: Versions less than 5.1 are deprecated and will no longer be able to submit transactions to celo in a future hardfork
+  '@celo/utils@7.0.0':
+    resolution: {integrity: sha512-oxAMm19lMs3myhHt2BpuWm01mxZ9ZD73uydQFdgeVj5cNVRKumzMGSEfb0qCQ2hiCHL15R/lCtBqqiRy0wD1LA==}
 
-  '@celo/wallet-ledger@3.2.0':
-    resolution: {integrity: sha512-z/C+QPnZKdrgYgWCBf++bw9wVXcTgUBooHouWQgdCeyX12RHRJ9WpNOi5v0wx5YyG+M7aNAWHphOklA3e+XBQg==}
-    engines: {node: '>=8.13.0'}
+  '@celo/wallet-base@6.0.1':
+    resolution: {integrity: sha512-6vZxEkm6VcT/LmKDnyxmS6n8YWEUo20E5tccY8XrBxcLAPinaiLfcwEQsgvspIB6m4hG/AH3qtuKby5nC4T/6g==}
+    engines: {node: '>=8.14.2'}
 
-  '@celo/wallet-local@3.2.0':
-    resolution: {integrity: sha512-hR70gzNCDHgf/GskaaLtB7Jz4AqJEW0b+1jG1rsuAyaXLJomSRADGBwUUgMy1dKU87fcQ9h7Uh+AuRAP4/5COQ==}
-    engines: {node: '>=8.13.0'}
+  '@celo/wallet-ledger@6.0.1':
+    resolution: {integrity: sha512-gPUJX2zhtNT9xwVKyVjrMZR0cTgQceF+AUbgOYjigMEwctnjBtfxkmUAL12gmTNIF0j4nyPx7Gil8Le0aFNdfg==}
+    engines: {node: '>=8.14.2'}
 
-  '@celo/wallet-remote@3.2.0':
-    resolution: {integrity: sha512-ORT5PB1M5+wKg/LXcIy4hZ4X01qoMCYlKCH/5LuIMzMb/8IxsW7/9oPwdqutG7YaM9EJoNgOn1snkmAXPeE+hg==}
-    engines: {node: '>=8.13.0'}
+  '@celo/wallet-local@6.0.1':
+    resolution: {integrity: sha512-bSf7qxAs4ONEDrpdJZRqiayWWyKsO7fu2ai8PDQsICnLw8ZsyVP7+oNgr7zberHk6ghdmG1Qp957a0Myw7w6lA==}
+    engines: {node: '>=8.14.2'}
+
+  '@celo/wallet-remote@6.0.1':
+    resolution: {integrity: sha512-eQVyg11s8ncL+CC5R4aqisli8sPREyVJk6doh2DhUGoNbG0Opx8ZiEZ+z1QPDs1bX1U9zY61Jctpd8e7B9UrrQ==}
+    engines: {node: '>=8.14.2'}
+
+  '@chainsafe/as-sha256@0.3.1':
+    resolution: {integrity: sha512-hldFFYuf49ed7DAakWVXSJODuq3pzJEguD8tQ7h+sGkM18vja+OFoJI9krnGmgzyuZC2ETX0NOIcCTy31v2Mtg==}
+
+  '@chainsafe/persistent-merkle-tree@0.4.2':
+    resolution: {integrity: sha512-lLO3ihKPngXLTus/L7WHKaw9PnNJWizlOF1H9NNzHP6Xvh82vzg9F2bzkXhYIFshMZ2gTCEz8tq6STe7r5NDfQ==}
+
+  '@chainsafe/ssz@0.9.4':
+    resolution: {integrity: sha512-77Qtg2N1ayqs4Bg/wvnWfg5Bta7iy7IRh8XqXh7oNMeP2HBbBwx8m6yTpA8p0EHItWPEBkgZd5S5/LSlp3GXuQ==}
 
   '@changesets/apply-release-plan@7.0.4':
     resolution: {integrity: sha512-HLFwhKWayKinWAul0Vj+76jVx1Pc2v55MGPVjZ924Y/ROeSsBMFutv9heHmCUj48lJyRfOTJG5+ar+29FUky/A==}
@@ -9717,8 +9732,26 @@ packages:
   '@ethereumjs/common@2.6.5':
     resolution: {integrity: sha512-lRyVQOeCDaIVtgfbowla32pzeDv2Obr8oR8Put5RdUBNRGr1VGPGQNGP6elWIpgK3YdpzqTOh4GyUGOureVeeA==}
 
+  '@ethereumjs/rlp@4.0.1':
+    resolution: {integrity: sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw==}
+    engines: {node: '>=14'}
+    hasBin: true
+
+  '@ethereumjs/rlp@5.0.2':
+    resolution: {integrity: sha512-DziebCdg4JpGlEqEdGgXmjqcFoJi+JGulUXwEjsZGAscAQ7MyD/7LE/GVCP29vEQxKc7AAwjT3A2ywHp2xfoCA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   '@ethereumjs/tx@3.5.2':
     resolution: {integrity: sha512-gQDNJWKrSDGu2w7w0PzVXVBNMzb7wwdDOmOqczmhNjqFxFuIbhVJDwiGEnxFNC2/b8ifcZzY7MLcluizohRzNw==}
+
+  '@ethereumjs/util@8.0.5':
+    resolution: {integrity: sha512-259rXKK3b3D8HRVdRmlOEi6QFvwxdt304hhrEAmpZhsj7ufXEOTIc9JRZPMnXatKjECokdLNBcDOFBeBSzAIaw==}
+    engines: {node: '>=14'}
+
+  '@ethereumjs/util@8.1.0':
+    resolution: {integrity: sha512-zQ0IqbdX8FZ9aw11vP+dZkKDkS+kgIvQPHnSAXzP9pLu+Rfu3D3XEeLbicvoXJTYnhZiPmsZUxgdzXwNKxRPbA==}
+    engines: {node: '>=14'}
 
   '@ethersproject/abi@5.0.7':
     resolution: {integrity: sha512-Cqktk+hSIckwP/W8O47Eef60VwmoSC/L3lY0+dIBhQPCNn9E4V7rwmm2aFrNRRDJfFlGuZ1khkQUOc3oBX+niw==}
@@ -10635,21 +10668,31 @@ packages:
       '@types/react':
         optional: true
 
+  '@ledgerhq/cryptoassets@13.3.0':
+    resolution: {integrity: sha512-OeJ1fTd/vuSiwSBkgQTnTrp+VB1S3MsJRwQ2fxRD1eeqyRvmC0rzpklSlx0I3XVsGUU5MHxQ5anfceA6Mxkrrw==}
+
+  '@ledgerhq/domain-service@1.2.3':
+    resolution: {integrity: sha512-q46q4fxnZgS7Fn+4P+UKJD4ccSZftljq4Jj36J8dNhuj+fdi0JG1B2B1pk4HbfkaWPMcpbNLXx4NyriN7+ncEQ==}
+
   '@ledgerhq/errors@5.50.0':
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
 
   '@ledgerhq/errors@6.19.1':
     resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
 
-  '@ledgerhq/hw-app-eth@5.11.0':
-    resolution: {integrity: sha512-qgpPwZzM8UMHYMC5+9xYV2O+8kgkDAl9+38w9JiBksaGmUFqcS4najsB1nj6AWf2rGEuXdKMb2WEYRskVypJrA==}
+  '@ledgerhq/evm-tools@1.2.0':
+    resolution: {integrity: sha512-cuBcACAMyUqYcJGipFJJwTGtKn6mVHInLHgoXPhI+rtbCa89AgehDP+LTb4PiVn0kZQnK7JD1xn6Jyyr/r7gaw==}
+
+  '@ledgerhq/hw-app-eth@https://codeload.github.com/celo-org/ledgerjs-hw-app-eth/tar.gz/49bdd4f163f5ff73daa9f54f8e46aa2882b85f44':
+    resolution: {tarball: https://codeload.github.com/celo-org/ledgerjs-hw-app-eth/tar.gz/49bdd4f163f5ff73daa9f54f8e46aa2882b85f44}
+    version: 6.37.1
+
+  '@ledgerhq/hw-transport-mocker@6.29.2':
+    resolution: {integrity: sha512-s+YcMy0Bna6r1Sm6qiawrd8FBE6AJhUTIUqBxP9n7OuzaIGKdf/Y++16PWfNE1rBuzplbzBDRBLAa4XnQ8uCEA==}
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
     resolution: {integrity: sha512-T/+mGHIiUK/ZQATad6DMDmobCMZ1mVST952009jKzhaE1Et2Uy2secU+QhRkx3BfEAkvwa0zSRSYCL9d20Iqjg==}
     deprecated: '@ledgerhq/hw-transport-u2f is deprecated. Please use @ledgerhq/hw-transport-webusb or @ledgerhq/hw-transport-webhid. https://github.com/LedgerHQ/ledgerjs/blob/master/docs/migrate_webusb.md'
-
-  '@ledgerhq/hw-transport@5.11.0':
-    resolution: {integrity: sha512-z56iwv0DZZu20T5q9sNMHFQNVuRKYqzCuNFhY9woWSpmOQkyVHCRiEgOQbN5h6kVri6fkfPkDzqqcsYjJlnT9g==}
 
   '@ledgerhq/hw-transport@5.51.1':
     resolution: {integrity: sha512-6wDYdbWrw9VwHIcoDnqWBaDFyviyjZWv6H9vz9Vyhe4Qd7TIFmbTl/eWs6hZvtZBza9K8y7zD8ChHwRI4s9tSw==}
@@ -10684,11 +10727,23 @@ packages:
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
+  '@ledgerhq/live-env@2.2.0':
+    resolution: {integrity: sha512-8cNEk8nvHcgovyIFujPI7Ynr+eJvNwiOE0regn685i4ISK7T5MTQGoIhONYbBxorWRhQaxXWyT8svB8ZwPgKmQ==}
+
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
 
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
+
+  '@ledgerhq/types-cryptoassets@7.15.0':
+    resolution: {integrity: sha512-W+CUX9QFIDdwCQt7HNLdSjufAMipTVLGQtPgrw54oeLqWoE75My9/+JjnuZkZB8fBa052EF4pSBcg3YSUelg0g==}
+
+  '@ledgerhq/types-devices@6.25.3':
+    resolution: {integrity: sha512-AUThbVlRugs9sVJGbwQuZGXr0ZKDClQySFERhqCyeHKQAdO9TJ9pKFth/9wKKAo5i7fYRC9sx0P5CvPqOwLqIw==}
+
+  '@ledgerhq/types-live@6.50.0':
+    resolution: {integrity: sha512-6+PQ8/vG1inO0z1wauYdtyWZYKClm+rTigdFBrAuUBYkdkvf9j4TRR0Ekn98qXuWYwjq38rTY9M5C/q2L64oZw==}
 
   '@ledgerhq/wallet-api-client-react@1.3.12':
     resolution: {integrity: sha512-hf7OlhGtj6yuo42OGyKt0dMPNoIpBHm7u1vTH40yWfsabFaDtPzJFGSkWhBb19/zRtDGpbFr3Plo/WnBLFDfXQ==}
@@ -11033,6 +11088,9 @@ packages:
   '@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1':
     resolution: {integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg==}
 
+  '@noble/ciphers@0.4.1':
+    resolution: {integrity: sha512-QCOA9cgf3Rc33owG0AYBB9wszz+Ul2kramWN8tXG44Gyciud/tbkEqvxRF/IpqQaBpRBNi9f4jdNxqB2CQCIXg==}
+
   '@noble/curves@1.2.0':
     resolution: {integrity: sha512-oYclrNgRaM9SsBUBVbb8M6DTV7ZHRTKugureoYEncY5c65HOmRzvSiTE3y5CYaPYJA/GVkrhXEoF0M3Ya9PMnw==}
 
@@ -11047,6 +11105,9 @@ packages:
 
   '@noble/hashes@1.1.5':
     resolution: {integrity: sha512-LTMZiiLc+V4v1Yi16TD6aX2gmtKszNye0pQgbaLqkvhIqP7nVsSaJsWloGQjJfJ8offaoP5GtX3yY5swbcJxxQ==}
+
+  '@noble/hashes@1.2.0':
+    resolution: {integrity: sha512-FZfhjEDbT5GRswV3C6uvLPHMiVD6lQBmpoX5+eSiPaMTXte/IKqI5dykDxzZB/WBeK/CDuQRBWarPdi3FNY2zQ==}
 
   '@noble/hashes@1.3.2':
     resolution: {integrity: sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==}
@@ -12566,11 +12627,17 @@ packages:
   '@scure/base@1.1.6':
     resolution: {integrity: sha512-ok9AWwhcgYuGG3Zfhyqg+zwl+Wn5uE+dwC0NV/2qQkx4dABbb/bx96vWu8NSj+BNjjSjno+JRYRjle1jV08k3g==}
 
+  '@scure/bip32@1.1.5':
+    resolution: {integrity: sha512-XyNh1rB0SkEqd3tXcXMi+Xe1fvg+kUIcoRIEujP1Jgv7DqW2r9lg3Ah0NkFaCs9sTkQAQA8kw7xiRXzENi9Rtw==}
+
   '@scure/bip32@1.3.3':
     resolution: {integrity: sha512-LJaN3HwRbfQK0X1xFSi0Q9amqOgzQnnDngIt+ZlsBC3Bm7/nE7K0kwshZHyaru79yIVRv/e1mQAjZyuZG6jOFQ==}
 
   '@scure/bip32@1.4.0':
     resolution: {integrity: sha512-sVUpc0Vq3tXCkDGYVWGIZTRfnvu8LoTDaev7vbwh0omSvVORONr960MQWdKqJDCReIEmTj3PAr73O3aoxz7OPg==}
+
+  '@scure/bip39@1.1.1':
+    resolution: {integrity: sha512-t+wDck2rVkh65Hmv280fYdVdY25J9YeEUIgn2LG1WM6gxFkGzcksoDiUkWVpVp3Oex9xGC68JU2dSbUfwZ2jPg==}
 
   '@scure/bip39@1.2.2':
     resolution: {integrity: sha512-HYf9TUXG80beW+hGAt3TRM8wU6pQoYur9iNypTROm42dorCGmLnFe3eWjz3gOq6G62H2WRh0FCzAR1PI+29zIA==}
@@ -14679,6 +14746,10 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
+  '@szmarczak/http-timer@5.0.1':
+    resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
+    engines: {node: '>=14.16'}
+
   '@tanstack/query-core@5.28.9':
     resolution: {integrity: sha512-hNlfCiqZevr3GRVPXS3MhaGW5hjcxvCsIQ4q6ff7EPlvFwYZaS+0d9EIIgofnegDaU2BbCDlyURoYfRl5rmzow==}
 
@@ -15050,12 +15121,15 @@ packages:
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
+<<<<<<< HEAD
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
   '@types/ethereumjs-util@5.2.0':
     resolution: {integrity: sha512-qwQgQqXXTRv2h2AlJef+tMEszLFkCB9dWnrJYIdAwqjubERXEc/geB+S3apRw0yQyTVnsBf8r6BhlrE8vx+3WQ==}
 
+=======
+>>>>>>> d098269cea (chore: upgrade celo dependencies (closes https://github.com/LedgerHQ/ledger-live/issues/7551))
   '@types/events@3.0.3':
     resolution: {integrity: sha512-trOc4AAUThEz9hapPtSd7wf5tiQKvTtu5b371UxXdTuqzIh0ArcRspRP0i0Viu+LXstIQ1z96t1nsPxT9ol01g==}
 
@@ -16100,6 +16174,9 @@ packages:
   abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
     engines: {node: '>=6.5'}
+
+  abortcontroller-polyfill@1.7.5:
+    resolution: {integrity: sha512-JMJ5soJWP18htbbxJjG7bG6yuI6pRhgJ0scHHTfkUjf6wjP912xZWvM+A4sJK3gqd9E8fcPbDnOefbA9Th/FIQ==}
 
   abstract-leveldown@0.12.4:
     resolution: {integrity: sha512-TOod9d5RDExo6STLMGa+04HGkl+TlMfbDnTyN93/ETJ9DpQ0DaYLqcMZlbXvdc4W3vVo1Qrl+WhSp8zvDsJ+jA==}
@@ -17286,6 +17363,10 @@ packages:
     resolution: {integrity: sha512-2/kNscPhpcxrOigMZzbiWF7dz8ilhb/nIHU3EyZiXWXpeq/au8qJ8VhdftMkty3n7Gj6HIGalQG8oiBNB3AJgA==}
     engines: {node: '>=10.6.0'}
 
+  cacheable-lookup@6.1.0:
+    resolution: {integrity: sha512-KJ/Dmo1lDDhmW2XDPMo+9oiy/CeqosPguPCrgcVzKyZrL6pM1gU2GmPY/xo6OQPTUaA/c0kwHuywB4E6nmT9ww==}
+    engines: {node: '>=10.6.0'}
+
   cacheable-request@6.1.0:
     resolution: {integrity: sha512-Oj3cAGPCqOZX7Rz64Uny2GYAZNliQSqfbePrgAQ1wKAihYmCUnraBtJtKcGR4xz7wF+LoJC+ssFZvv5BgF9Igg==}
     engines: {node: '>=8'}
@@ -17362,6 +17443,10 @@ packages:
   case-sensitive-paths-webpack-plugin@2.4.0:
     resolution: {integrity: sha512-roIFONhcxog0JSSWbvVAh3OocukmSgpqOH6YpMkCvav/ySIV3JKg4Dc8vYtQjYi/UxpNE36r/9v+VqTQqgkYmw==}
     engines: {node: '>=4'}
+
+  case@1.6.3:
+    resolution: {integrity: sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==}
+    engines: {node: '>= 0.8.0'}
 
   caseless@0.12.0:
     resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
@@ -18185,8 +18270,14 @@ packages:
     engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
     hasBin: true
 
+  cross-fetch@3.1.5:
+    resolution: {integrity: sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==}
+
   cross-fetch@3.1.8:
     resolution: {integrity: sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==}
+
+  cross-fetch@4.0.0:
+    resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
 
   cross-sha256@1.2.0:
     resolution: {integrity: sha512-KViLNMDZKV7jwFqjFx+rNhG26amnFYYQ0S+VaFlVvpk8tM+2XbFia/don/SjGHg9WQxnFVi6z64CGPuF3T+nNw==}
@@ -19726,22 +19817,11 @@ packages:
   ethereum-cryptography@0.1.3:
     resolution: {integrity: sha512-w8/4x1SGGzc+tO97TASLja6SLd3fRIK2tLVcV2Gx4IB21hE19atll5Cq9o3d0ZmAYC/8aw0ipieTSiekAea4SQ==}
 
+  ethereum-cryptography@1.2.0:
+    resolution: {integrity: sha512-6yFQC9b5ug6/17CQpCyE3k9eKBMdhyVjzUy1WkiuY/E4vj/SXDBbCw8QEIaXqf0Mf2SnY6RmpDcwlUmBSS0EJw==}
+
   ethereum-cryptography@2.1.3:
     resolution: {integrity: sha512-BlwbIL7/P45W8FGW2r7LGuvoEZ+7PWsniMvQ4p5s2xCyw9tmaDlpfsN9HjAucbF+t/qpVHwZUisgfK24TCW8aA==}
-
-  ethereumjs-common@1.5.2:
-    resolution: {integrity: sha512-hTfZjwGX52GS2jcVO6E2sx4YuFnf0Fhp5ylo4pEPhEffNln7vS59Hr5sLnp3/QCazFLluuBZ+FZ6J5HTp0EqCA==}
-    deprecated: 'New package name format for new versions: @ethereumjs/common. Please update.'
-
-  ethereumjs-tx@2.1.2:
-    resolution: {integrity: sha512-zZEK1onCeiORb0wyCXUvg94Ve5It/K6GD1K+26KfFKodiBiS6d9lfCXlUKGBBdQ+bv7Day+JK0tj1K+BeNFRAw==}
-    deprecated: 'New package name format for new versions: @ethereumjs/tx. Please update.'
-
-  ethereumjs-util@5.2.1:
-    resolution: {integrity: sha512-v3kT+7zdyCm1HIqWlLNrHGqHGLpGYIhjeHxQjnDXjLT2FyGJDsd3LWMYUo7pAFRrk86CR3nUJfhC81CCoJNNGQ==}
-
-  ethereumjs-util@6.2.1:
-    resolution: {integrity: sha512-W2Ktez4L01Vexijrm5EB6w7dg4n/TgpoYU4avuT5T3Vmnw/eCRtiBrJfQYS/DCSvDIOLn2k57GcHdeBcgVxAqw==}
 
   ethereumjs-util@7.1.5:
     resolution: {integrity: sha512-SDl5kKrQAudFBUe5OJM9Ac6WmMyYmXX/6sTmLZ3ffG2eY6ZIGBes3pEDxNN6V72WyOw4CPD5RomKdsa8DAAwLg==}
@@ -19756,10 +19836,6 @@ packages:
 
   ethjs-unit@0.1.6:
     resolution: {integrity: sha512-/Sn9Y0oKl0uqQuvgFk/zQgR7aw1g36qX/jzSQ5lSwlO0GigPymk4eGQfeNTD03w1dPOqfz8V77Cy43jH56pagw==}
-    engines: {node: '>=6.5.0', npm: '>=3'}
-
-  ethjs-util@0.1.6:
-    resolution: {integrity: sha512-CUnVOQq7gSpDHZVVrQW8ExxUETWrnrvXYvYz55wOU8Uj4VCgw56XC2B/fVqQN+f7gmrnRHSLVnFAwsCuNwji8w==}
     engines: {node: '>=6.5.0', npm: '>=3'}
 
   event-emitter@0.3.5:
@@ -20714,6 +20790,9 @@ packages:
       typescript: '>3.6.0'
       webpack: ^5.11.0
 
+  form-data-encoder@1.7.1:
+    resolution: {integrity: sha512-EFRDrsMm/kyqbTQocNvRXMLjc7Es2Vk+IQFx/YW7hkUH1eBl4J1fqiP34l74Yt0pFLCNpc06fkbVk00008mzjg==}
+
   form-data@2.3.3:
     resolution: {integrity: sha512-1lLKB2Mu3aGP1Q/2eCOx0fNbRMe7XdwktwOruhfqqd0rIJWwN4Dh+E3hrPSlDCXnSR7UtZ1N38rVXm+6+MEhJQ==}
     engines: {node: '>= 0.12'}
@@ -20747,9 +20826,6 @@ packages:
 
   fp-ts@2.1.1:
     resolution: {integrity: sha512-YcWhMdDCFCja0MmaDroTgNu+NWWrrnUEn92nvDgrtVy9Z71YFnhNVIghoHPt8gs82ijoMzFGeWKvArbyICiJgw==}
-
-  fp-ts@2.16.5:
-    resolution: {integrity: sha512-N8T8PwMSeTKKtkm9lkj/zSTAnPC/aJIIrQhnHxxkL0KLsRCNUPANksJOlMXxcKKCo7H1ORP3No9EMD+fP0tsdA==}
 
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
@@ -21089,6 +21165,10 @@ packages:
   got@11.8.6:
     resolution: {integrity: sha512-6tfZ91bOr7bOXnK7PRDCGBLa1H4U080YHNaAQ2KsMGlLEzRbk44nsZF2E1IeRc3vtJHPVbKCYgdFbaGO2ljd8g==}
     engines: {node: '>=10.19.0'}
+
+  got@12.1.0:
+    resolution: {integrity: sha512-hBv2ty9QN2RdbJJMK3hesmSkFTjVIHyIDDbssCKnSmq62edGgImJWD10Eb1k77TiV1bxloxqcFAVK8+9pkhOig==}
+    engines: {node: '>=14.16'}
 
   got@9.6.0:
     resolution: {integrity: sha512-R7eWptXuGYxwijs0eV+v3o6+XH1IqVK8dJOEecQfTmkncw9AV4dcw/Dhxi8MdlqPthxxpZyizMzyg8RTmEsG+Q==}
@@ -21471,6 +21551,10 @@ packages:
 
   http2-wrapper@1.0.3:
     resolution: {integrity: sha512-V+23sDMr12Wnz7iTcDeJr3O6AIxlnvT/bmaAAAP/Xda35C90p9599p0F1eHR/N1KILWSoWVAiOMFjBBXaXSMxg==}
+    engines: {node: '>=10.19.0'}
+
+  http2-wrapper@2.2.1:
+    resolution: {integrity: sha512-V5nVw1PAOgfI3Lmeaj2Exmeg7fenjhRUgz1lPSezy1CuhPYbgQtbQj4jZfEAEMlaL+vupsvhjqCyjzob0yxsmQ==}
     engines: {node: '>=10.19.0'}
 
   https-browserify@1.0.0:
@@ -23562,6 +23646,10 @@ packages:
     resolution: {integrity: sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==}
     engines: {node: '>=8'}
 
+  lowercase-keys@3.0.0:
+    resolution: {integrity: sha512-ozCC6gdQ+glXOQsveKD0YsDy8DSQFjDTz4zyzEHNV5+JP5D62LmfDZ6o1cycFx9ouG940M5dE8C8CTewdj2YWQ==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
   lru-cache@10.2.0:
     resolution: {integrity: sha512-2bIM8x+VAf6JT4bKAljS1qUWgMsqZRPGJS6FSahIMPVvctcNhyVp7AJu7quxOW9jwkryBReKZY5tY5JYv2n/7Q==}
     engines: {node: 14 || >=16.14}
@@ -24050,6 +24138,9 @@ packages:
     resolution: {integrity: sha512-in7S0W11mg+RNmcXw+2d9S3zBGmCARDxIwoXJAmLUQOQoYsRP3cpGzyJtc7WOw8+FXfpgXvceD0u+PZIHXEL7g==}
     engines: {node: '>=18'}
     hasBin: true
+
+  micro-ftch@0.3.1:
+    resolution: {integrity: sha512-/0LLxhzP0tfiR5hcQebtudP56gUurs2CLkGarnCiB/OqEyUFQ6U3paQi/tgLv0hBJYt2rnr9MNpxz4fiiugstg==}
 
   micromark-core-commonmark@1.1.0:
     resolution: {integrity: sha512-BgHO1aRbolh2hcrzL2d1La37V0Aoz73ymF8rAcKnohLy93titmv62E0gP8Hrx9PKcKrqCZ1BbLGbP3bEhoXYlw==}
@@ -25091,6 +25182,10 @@ packages:
   p-cancelable@2.1.1:
     resolution: {integrity: sha512-BZOr3nRQHOntUjTrH8+Lh54smKHoHyur8We1V8DSMVrl5A2malOOwuJRnKRDjSnkoeBh4at6BwEnb5I7Jl31wg==}
     engines: {node: '>=8'}
+
+  p-cancelable@3.0.0:
+    resolution: {integrity: sha512-mlVgR3PGuzlo0MmTdk4cXqXWlwQDLnONTAg6sm62XkMJEiRxN3GL3SffkYvqwonbkJBcrI7Uvv5Zh9yjvn2iUw==}
+    engines: {node: '>=12.20'}
 
   p-filter@2.1.0:
     resolution: {integrity: sha512-ZBxxZ5sL2HghephhpGAQdoskxplTwr7ICaehZwLIlfL6acuVgZPm8yBNuRAFBGEqtD/hmUeq9eqLg2ys9Xr/yw==}
@@ -30033,168 +30128,168 @@ packages:
   web-worker@1.3.0:
     resolution: {integrity: sha512-BSR9wyRsy/KOValMgd5kMyr3JzpdeoR9KVId8u5GVlTTAtNChlsE4yTxeY7zMdNSyOmoKBv8NH2qeRY9Tg+IaA==}
 
-  web3-bzz@1.3.6:
-    resolution: {integrity: sha512-ibHdx1wkseujFejrtY7ZyC0QxQ4ATXjzcNUpaLrvM6AEae8prUiyT/OloG9FWDgFD2CPLwzKwfSQezYQlANNlw==}
+  web3-bzz@1.10.4:
+    resolution: {integrity: sha512-ZZ/X4sJ0Uh2teU9lAGNS8EjveEppoHNQiKlOXAjedsrdWuaMErBPdLQjXfcrYvN6WM6Su9PMsAxf3FXXZ+HwQw==}
     engines: {node: '>=8.0.0'}
 
   web3-bzz@1.5.2:
     resolution: {integrity: sha512-W/sPCdA+XQ9duUYKHAwf/g69cbbV8gTCRsa1MpZwU7spXECiyJ2EvD/QzAZ+UpJk3GELXFF/fUByeZ3VRQKF2g==}
     engines: {node: '>=8.0.0'}
 
-  web3-core-helpers@1.3.6:
-    resolution: {integrity: sha512-nhtjA2ZbkppjlxTSwG0Ttu6FcPkVu1rCN5IFAOVpF/L0SEt+jy+O5l90+cjDq0jAYvlBwUwnbh2mR9hwDEJCNA==}
+  web3-core-helpers@1.10.4:
+    resolution: {integrity: sha512-r+L5ylA17JlD1vwS8rjhWr0qg7zVoVMDvWhajWA5r5+USdh91jRUYosp19Kd1m2vE034v7Dfqe1xYRoH2zvG0g==}
     engines: {node: '>=8.0.0'}
 
   web3-core-helpers@1.5.2:
     resolution: {integrity: sha512-U7LJoeUdQ3aY9t5gU7t/1XpcApsWm+4AcW5qKl/44ZxD44w0Dmsq1c5zJm3GuLr/a9MwQfXK4lpmvxVQWHHQRg==}
     engines: {node: '>=8.0.0'}
 
-  web3-core-method@1.3.6:
-    resolution: {integrity: sha512-RyegqVGxn0cyYW5yzAwkPlsSEynkdPiegd7RxgB4ak1eKk2Cv1q2x4C7D2sZjeeCEF+q6fOkVmo2OZNqS2iQxg==}
+  web3-core-method@1.10.4:
+    resolution: {integrity: sha512-uZTb7flr+Xl6LaDsyTeE2L1TylokCJwTDrIVfIfnrGmnwLc6bmTWCCrm71sSrQ0hqs6vp/MKbQYIYqUN0J8WyA==}
     engines: {node: '>=8.0.0'}
 
   web3-core-method@1.5.2:
     resolution: {integrity: sha512-/mC5t9UjjJoQmJJqO5nWK41YHo+tMzFaT7Tp7jDCQsBkinE68KsUJkt0jzygpheW84Zra0DVp6q19gf96+cugg==}
     engines: {node: '>=8.0.0'}
 
-  web3-core-promievent@1.3.6:
-    resolution: {integrity: sha512-Z+QzfyYDTXD5wJmZO5wwnRO8bAAHEItT1XNSPVb4J1CToV/I/SbF7CuF8Uzh2jns0Cm1109o666H7StFFvzVKw==}
+  web3-core-promievent@1.10.4:
+    resolution: {integrity: sha512-2de5WnJQ72YcIhYwV/jHLc4/cWJnznuoGTJGD29ncFQHAfwW/MItHFSVKPPA5v8AhJe+r6y4Y12EKvZKjQVBvQ==}
     engines: {node: '>=8.0.0'}
 
   web3-core-promievent@1.5.2:
     resolution: {integrity: sha512-5DacbJXe98ozSor7JlkTNCy6G8945VunRRkPxMk98rUrg60ECVEM/vuefk1atACzjQsKx6tmLZuHxbJQ64TQeQ==}
     engines: {node: '>=8.0.0'}
 
-  web3-core-requestmanager@1.3.6:
-    resolution: {integrity: sha512-2rIaeuqeo7QN1Eex7aXP0ZqeteJEPWXYFS/M3r3LXMiV8R4STQBKE+//dnHJXoo2ctzEB5cgd+7NaJM8S3gPyA==}
+  web3-core-requestmanager@1.10.4:
+    resolution: {integrity: sha512-vqP6pKH8RrhT/2MoaU+DY/OsYK9h7HmEBNCdoMj+4ZwujQtw/Mq2JifjwsJ7gits7Q+HWJwx8q6WmQoVZAWugg==}
     engines: {node: '>=8.0.0'}
 
   web3-core-requestmanager@1.5.2:
     resolution: {integrity: sha512-oRVW9OrAsXN2JIZt68OEg1Mb1A9a/L3JAGMv15zLEFEnJEGw0KQsGK1ET2kvZBzvpFd5G0EVkYCnx7WDe4HSNw==}
     engines: {node: '>=8.0.0'}
 
-  web3-core-subscriptions@1.3.6:
-    resolution: {integrity: sha512-wi9Z9X5X75OKvxAg42GGIf81ttbNR2TxzkAsp1g+nnp5K8mBwgZvXrIsDuj7Z7gx72Y45mWJADCWjk/2vqNu8g==}
+  web3-core-subscriptions@1.10.4:
+    resolution: {integrity: sha512-o0lSQo/N/f7/L76C0HV63+S54loXiE9fUPfHFcTtpJRQNDBVsSDdWRdePbWwR206XlsBqD5VHApck1//jEafTw==}
     engines: {node: '>=8.0.0'}
 
   web3-core-subscriptions@1.5.2:
     resolution: {integrity: sha512-hapI4rKFk22yurtIv0BYvkraHsM7epA4iI8Np+HuH6P9DD0zj/llaps6TXLM9HyacLBRwmOLZmr+pHBsPopUnQ==}
     engines: {node: '>=8.0.0'}
 
-  web3-core@1.3.6:
-    resolution: {integrity: sha512-gkLDM4T1Sc0T+HZIwxrNrwPg0IfWI0oABSglP2X5ZbBAYVUeEATA0o92LWV8BeF+okvKXLK1Fek/p6axwM/h3Q==}
+  web3-core@1.10.4:
+    resolution: {integrity: sha512-B6elffYm81MYZDTrat7aEhnhdtVE3lDBUZft16Z8awYMZYJDbnykEbJVS+l3mnA7AQTnSDr/1MjWofGDLBJPww==}
     engines: {node: '>=8.0.0'}
 
   web3-core@1.5.2:
     resolution: {integrity: sha512-sebMpQbg3kbh3vHUbHrlKGKOxDWqjgt8KatmTBsTAWj/HwWYVDzeX+2Q84+swNYsm2DrTBVFlqTErFUwPBvyaA==}
     engines: {node: '>=8.0.0'}
 
-  web3-eth-abi@1.3.6:
-    resolution: {integrity: sha512-Or5cRnZu6WzgScpmbkvC6bfNxR26hqiKK4i8sMPFeTUABQcb/FU3pBj7huBLYbp9dH+P5W79D2MqwbWwjj9DoQ==}
+  web3-eth-abi@1.10.4:
+    resolution: {integrity: sha512-cZ0q65eJIkd/jyOlQPDjr8X4fU6CRL1eWgdLwbWEpo++MPU/2P4PFk5ZLAdye9T5Sdp+MomePPJ/gHjLMj2VfQ==}
     engines: {node: '>=8.0.0'}
 
   web3-eth-abi@1.5.2:
     resolution: {integrity: sha512-P3bJbDR5wib4kWGfVeBKBVi27T+AiHy4EJxYM6SMNbpm3DboLDdisu9YBd6INMs8rzxgnprBbGmmyn4jKIDKAA==}
     engines: {node: '>=8.0.0'}
 
-  web3-eth-accounts@1.3.6:
-    resolution: {integrity: sha512-Ilr0hG6ONbCdSlVKffasCmNwftD5HsNpwyQASevocIQwHdTlvlwO0tb3oGYuajbKOaDzNTwXfz25bttAEoFCGA==}
+  web3-eth-accounts@1.10.4:
+    resolution: {integrity: sha512-ysy5sVTg9snYS7tJjxVoQAH6DTOTkRGR8emEVCWNGLGiB9txj+qDvSeT0izjurS/g7D5xlMAgrEHLK1Vi6I3yg==}
     engines: {node: '>=8.0.0'}
 
   web3-eth-accounts@1.5.2:
     resolution: {integrity: sha512-F8mtzxgEhxfLc66vPi0Gqd6mpscvvk7Ua575bsJ1p9J2X/VtuKgDgpWcU4e4LKeROQ+ouCpAG9//0j9jQuij3A==}
     engines: {node: '>=8.0.0'}
 
-  web3-eth-contract@1.3.6:
-    resolution: {integrity: sha512-8gDaRrLF2HCg+YEZN1ov0zN35vmtPnGf3h1DxmJQK5Wm2lRMLomz9rsWsuvig3UJMHqZAQKD7tOl3ocJocQsmA==}
+  web3-eth-contract@1.10.4:
+    resolution: {integrity: sha512-Q8PfolOJ4eV9TvnTj1TGdZ4RarpSLmHnUnzVxZ/6/NiTfe4maJz99R0ISgwZkntLhLRtw0C7LRJuklzGYCNN3A==}
     engines: {node: '>=8.0.0'}
 
   web3-eth-contract@1.5.2:
     resolution: {integrity: sha512-4B8X/IPFxZCTmtENpdWXtyw5fskf2muyc3Jm5brBQRb4H3lVh1/ZyQy7vOIkdphyaXu4m8hBLHzeyKkd37mOUg==}
     engines: {node: '>=8.0.0'}
 
-  web3-eth-ens@1.3.6:
-    resolution: {integrity: sha512-n27HNj7lpSkRxTgSx+Zo7cmKAgyg2ElFilaFlUu/X2CNH23lXfcPm2bWssivH9z0ndhg0OyR4AYFZqPaqDHkJA==}
+  web3-eth-ens@1.10.4:
+    resolution: {integrity: sha512-LLrvxuFeVooRVZ9e5T6OWKVflHPFgrVjJ/jtisRWcmI7KN/b64+D/wJzXqgmp6CNsMQcE7rpmf4CQmJCrTdsgg==}
     engines: {node: '>=8.0.0'}
 
   web3-eth-ens@1.5.2:
     resolution: {integrity: sha512-/UrLL42ZOCYge+BpFBdzG8ICugaRS4f6X7PxJKO+zAt+TwNgBpjuWfW/ZYNcuqJun/ZyfcTuj03TXqA1RlNhZQ==}
     engines: {node: '>=8.0.0'}
 
-  web3-eth-iban@1.3.6:
-    resolution: {integrity: sha512-nfMQaaLA/zsg5W4Oy/EJQbs8rSs1vBAX6b/35xzjYoutXlpHMQadujDx2RerTKhSHqFXSJeQAfE+2f6mdhYkRQ==}
+  web3-eth-iban@1.10.4:
+    resolution: {integrity: sha512-0gE5iNmOkmtBmbKH2aTodeompnNE8jEyvwFJ6s/AF6jkw9ky9Op9cqfzS56AYAbrqEFuClsqB/AoRves7LDELw==}
     engines: {node: '>=8.0.0'}
 
   web3-eth-iban@1.5.2:
     resolution: {integrity: sha512-C04YDXuSG/aDwOHSX+HySBGb0KraiAVt+/l1Mw7y/fCUrKC/K0yYzMYqY/uYOcvLtepBPsC4ZfUYWUBZ2PO8Vg==}
     engines: {node: '>=8.0.0'}
 
-  web3-eth-personal@1.3.6:
-    resolution: {integrity: sha512-pOHU0+/h1RFRYoh1ehYBehRbcKWP4OSzd4F7mDljhHngv6W8ewMHrAN8O1ol9uysN2MuCdRE19qkRg5eNgvzFQ==}
+  web3-eth-personal@1.10.4:
+    resolution: {integrity: sha512-BRa/hs6jU1hKHz+AC/YkM71RP3f0Yci1dPk4paOic53R4ZZG4MgwKRkJhgt3/GPuPliwS46f/i5A7fEGBT4F9w==}
     engines: {node: '>=8.0.0'}
 
   web3-eth-personal@1.5.2:
     resolution: {integrity: sha512-nH5N2GiVC0C5XeMEKU16PeFP3Hb3hkPvlR6Tf9WQ+pE+jw1c8eaXBO1CJQLr15ikhUF3s94ICyHcfjzkDsmRbA==}
     engines: {node: '>=8.0.0'}
 
-  web3-eth@1.3.6:
-    resolution: {integrity: sha512-9+rnywRRpyX3C4hfsAQXPQh6vHh9XzQkgLxo3gyeXfbhbShUoq2gFVuy42vsRs//6JlsKdyZS7Z3hHPHz2wreA==}
+  web3-eth@1.10.4:
+    resolution: {integrity: sha512-Sql2kYKmgt+T/cgvg7b9ce24uLS7xbFrxE4kuuor1zSCGrjhTJ5rRNG8gTJUkAJGKJc7KgnWmgW+cOfMBPUDSA==}
     engines: {node: '>=8.0.0'}
 
   web3-eth@1.5.2:
     resolution: {integrity: sha512-DwWQ6TCOUqvYyo7T20S7HpQDPveNHNqOn2Q2F3E8ZFyEjmqT4XsGiwvm08kB/VgQ4e/ANyq/i8PPFSYMT8JKHg==}
     engines: {node: '>=8.0.0'}
 
-  web3-net@1.3.6:
-    resolution: {integrity: sha512-KhzU3wMQY/YYjyMiQzbaLPt2kut88Ncx2iqjy3nw28vRux3gVX0WOCk9EL/KVJBiAA/fK7VklTXvgy9dZnnipw==}
+  web3-net@1.10.4:
+    resolution: {integrity: sha512-mKINnhOOnZ4koA+yV2OT5s5ztVjIx7IY9a03w6s+yao/BUn+Luuty0/keNemZxTr1E8Ehvtn28vbOtW7Ids+Ow==}
     engines: {node: '>=8.0.0'}
 
   web3-net@1.5.2:
     resolution: {integrity: sha512-VEc9c+jfoERhbJIxnx0VPlQDot8Lm4JW/tOWFU+ekHgIiu2zFKj5YxhURIth7RAbsaRsqCb79aE+M0eI8maxVQ==}
     engines: {node: '>=8.0.0'}
 
-  web3-providers-http@1.3.6:
-    resolution: {integrity: sha512-OQkT32O1A06dISIdazpGLveZcOXhEo5cEX6QyiSQkiPk/cjzDrXMw4SKZOGQbbS1+0Vjizm1Hrp7O8Vp2D1M5Q==}
+  web3-providers-http@1.10.4:
+    resolution: {integrity: sha512-m2P5Idc8hdiO0l60O6DSCPw0kw64Zgi0pMjbEFRmxKIck2Py57RQMu4bxvkxJwkF06SlGaEQF8rFZBmuX7aagQ==}
     engines: {node: '>=8.0.0'}
 
   web3-providers-http@1.5.2:
     resolution: {integrity: sha512-dUNFJc9IMYDLZnkoQX3H4ZjvHjGO6VRVCqrBrdh84wPX/0da9dOA7DwIWnG0Gv3n9ybWwu5JHQxK4MNQ444lyA==}
     engines: {node: '>=8.0.0'}
 
-  web3-providers-ipc@1.3.6:
-    resolution: {integrity: sha512-+TVsSd2sSVvVgHG4s6FXwwYPPT91boKKcRuEFXqEfAbUC5t52XOgmyc2LNiD9LzPhed65FbV4LqICpeYGUvSwA==}
+  web3-providers-ipc@1.10.4:
+    resolution: {integrity: sha512-YRF/bpQk9z3WwjT+A6FI/GmWRCASgd+gC0si7f9zbBWLXjwzYAKG73bQBaFRAHex1hl4CVcM5WUMaQXf3Opeuw==}
     engines: {node: '>=8.0.0'}
 
   web3-providers-ipc@1.5.2:
     resolution: {integrity: sha512-SJC4Sivt4g9LHKlRy7cs1jkJgp7bjrQeUndE6BKs0zNALKguxu6QYnzbmuHCTFW85GfMDjhvi24jyyZHMnBNXQ==}
     engines: {node: '>=8.0.0'}
 
-  web3-providers-ws@1.3.6:
-    resolution: {integrity: sha512-bk7MnJf5or0Re2zKyhR3L3CjGululLCHXx4vlbc/drnaTARUVvi559OI5uLytc/1k5HKUUyENAxLvetz2G1dnQ==}
+  web3-providers-ws@1.10.4:
+    resolution: {integrity: sha512-j3FBMifyuFFmUIPVQR4pj+t5ILhAexAui0opgcpu9R5LxQrLRUZxHSnU+YO25UycSOa/NAX8A+qkqZNpcFAlxA==}
     engines: {node: '>=8.0.0'}
 
   web3-providers-ws@1.5.2:
     resolution: {integrity: sha512-xy9RGlyO8MbJDuKv2vAMDkg+en+OvXG0CGTCM2BTl6l1vIdHpCa+6A/9KV2rK8aU9OBZ7/Pf+Y19517kHVl9RA==}
     engines: {node: '>=8.0.0'}
 
-  web3-shh@1.3.6:
-    resolution: {integrity: sha512-9zRo415O0iBslxBnmu9OzYjNErzLnzOsy+IOvSpIreLYbbAw0XkDWxv3SfcpKnTIWIACBR4AYMIxmmyi5iB3jw==}
+  web3-shh@1.10.4:
+    resolution: {integrity: sha512-cOH6iFFM71lCNwSQrC3niqDXagMqrdfFW85hC9PFUrAr3PUrIem8TNstTc3xna2bwZeWG6OBy99xSIhBvyIACw==}
     engines: {node: '>=8.0.0'}
 
   web3-shh@1.5.2:
     resolution: {integrity: sha512-wOxOcYt4Sa0AHAI8gG7RulCwVuVjSRS/M/AbFsea3XfJdN6sU13/syY7OdZNjNYuKjYTzxKYrd3dU/K2iqffVw==}
     engines: {node: '>=8.0.0'}
 
-  web3-utils@1.3.6:
-    resolution: {integrity: sha512-hHatFaQpkQgjGVER17gNx8u1qMyaXFZtM0y0XLGH1bzsjMPlkMPLRcYOrZ00rOPfTEuYFOdrpGOqZXVmGrMZRg==}
+  web3-utils@1.10.4:
+    resolution: {integrity: sha512-tsu8FiKJLk2PzhDl9fXbGUWTkkVXYhtTA+SmEFkKft+9BgwLxfCRpU96sWv7ICC8zixBNd3JURVoiR3dUXgP8A==}
     engines: {node: '>=8.0.0'}
 
   web3-utils@1.5.2:
     resolution: {integrity: sha512-quTtTeQJHYSxAwIBOCGEcQtqdVcFWX6mCFNoqnp+mRbq+Hxbs8CGgO/6oqfBx4OvxIOfCpgJWYVHswRXnbEu9Q==}
     engines: {node: '>=8.0.0'}
 
-  web3@1.3.6:
-    resolution: {integrity: sha512-jEpPhnL6GDteifdVh7ulzlPrtVQeA30V9vnki9liYlUvLV82ZM7BNOQJiuzlDePuE+jZETZSP/0G/JlUVt6pOA==}
+  web3@1.10.4:
+    resolution: {integrity: sha512-kgJvQZjkmjOEKimx/tJQsqWfRDPTTcBfYPa9XletxuHLpHcXdx67w8EFn5AW3eVxCutE9dTVHgGa9VYe8vgsEA==}
     engines: {node: '>=8.0.0'}
 
   web3@1.5.2:
@@ -32998,146 +33093,175 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@celo/base@3.2.0': {}
+  '@celo/abis@11.0.0': {}
 
-  '@celo/connect@3.2.0':
+  '@celo/abis@12.0.0-canary.16': {}
+
+  '@celo/base@6.1.0': {}
+
+  '@celo/connect@6.0.1':
     dependencies:
-      '@celo/base': 3.2.0
-      '@celo/utils': 3.2.0
+      '@celo/base': 6.1.0
+      '@celo/utils': 7.0.0
+      '@ethereumjs/util': 8.0.5
       '@types/debug': 4.1.12
       '@types/utf8': 2.1.6
       bignumber.js: 9.1.2
       debug: 4.3.4
       utf8: 3.0.0
-      web3-eth-contract: 1.3.6
+      web3-core: 1.10.4
+      web3-eth: 1.10.4
+      web3-eth-contract: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
-  '@celo/connect@3.2.0(web3@1.3.6)':
+  '@celo/connect@6.0.1(web3@1.10.4)':
     dependencies:
-      '@celo/base': 3.2.0
-      '@celo/utils': 3.2.0
+      '@celo/base': 6.1.0
+      '@celo/utils': 7.0.0
+      '@ethereumjs/util': 8.0.5
       '@types/debug': 4.1.12
       '@types/utf8': 2.1.6
       bignumber.js: 9.1.2
       debug: 4.3.4
       utf8: 3.0.0
-      web3: 1.3.6
-      web3-eth-contract: 1.3.6
+      web3: 1.10.4
+      web3-core: 1.10.4
+      web3-eth: 1.10.4
+      web3-eth-contract: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
-  '@celo/contractkit@3.2.0':
+  '@celo/contractkit@8.1.1':
     dependencies:
-      '@celo/base': 3.2.0
-      '@celo/connect': 3.2.0(web3@1.3.6)
-      '@celo/utils': 3.2.0
-      '@celo/wallet-local': 3.2.0(web3@1.3.6)
+      '@celo/abis': 11.0.0
+      '@celo/abis-12': '@celo/abis@12.0.0-canary.16'
+      '@celo/base': 6.1.0
+      '@celo/connect': 6.0.1(web3@1.10.4)
+      '@celo/utils': 7.0.0
+      '@celo/wallet-local': 6.0.1(web3@1.10.4)
       '@types/bn.js': 5.1.5
       '@types/debug': 4.1.12
       bignumber.js: 9.1.2
-      cross-fetch: 3.1.8
+      cross-fetch: 3.1.5
       debug: 4.3.4
       fp-ts: 2.1.1
       io-ts: 2.0.1(fp-ts@2.1.1)
+<<<<<<< HEAD
       semver: 7.5.4
       web3: 1.3.6
       web3-utils: 1.3.6
+=======
+      semver: 7.6.3
+      web3: 1.10.4
+      web3-core-helpers: 1.10.4
+>>>>>>> 182ccc1655 (chore: upgrade celo dependencies (closes https://github.com/LedgerHQ/ledger-live/issues/7551))
     transitivePeerDependencies:
       - bufferutil
       - encoding
       - supports-color
       - utf-8-validate
 
-  '@celo/utils@3.2.0':
+  '@celo/ledger-token-signer@0.4.0': {}
+
+  '@celo/utils@7.0.0':
     dependencies:
-      '@celo/base': 3.2.0
+      '@celo/base': 6.1.0
+      '@ethereumjs/rlp': 5.0.2
+      '@ethereumjs/util': 8.0.5
+      '@noble/ciphers': 0.4.1
+      '@noble/curves': 1.3.0
+      '@noble/hashes': 1.3.3
       '@types/bn.js': 5.1.5
-      '@types/elliptic': 6.4.18
-      '@types/ethereumjs-util': 5.2.0
-      '@types/node': 10.17.60
+      '@types/node': 18.19.26
       bignumber.js: 9.1.2
-      elliptic: 6.5.5
-      ethereumjs-util: 5.2.1
-      fp-ts: 2.16.5
-      io-ts: 2.0.1(fp-ts@2.16.5)
-      rlp: 3.0.0
-      web3-eth-abi: 1.3.6
-      web3-utils: 1.3.6
+      fp-ts: 2.1.1
+      io-ts: 2.0.1(fp-ts@2.1.1)
+      web3-eth-abi: 1.10.4
+      web3-utils: 1.10.4
 
-  '@celo/wallet-base@3.2.0':
+  '@celo/wallet-base@6.0.1':
     dependencies:
-      '@celo/base': 3.2.0
-      '@celo/connect': 3.2.0
-      '@celo/utils': 3.2.0
+      '@celo/base': 6.1.0
+      '@celo/connect': 6.0.1(web3@1.10.4)
+      '@celo/utils': 7.0.0
+      '@ethereumjs/rlp': 5.0.2
+      '@ethereumjs/util': 8.0.5
+      '@noble/curves': 1.4.0
+      '@noble/hashes': 1.4.0
       '@types/debug': 4.1.12
-      '@types/ethereumjs-util': 5.2.0
       bignumber.js: 9.1.2
       debug: 4.3.4
-      eth-lib: 0.2.8
-      ethereumjs-util: 5.2.1
+      web3: 1.10.4
+      web3-eth-accounts: 1.10.4
     transitivePeerDependencies:
+      - bufferutil
+      - encoding
       - supports-color
-      - web3
+      - utf-8-validate
 
-  '@celo/wallet-base@3.2.0(web3@1.3.6)':
+  '@celo/wallet-ledger@6.0.1':
     dependencies:
-      '@celo/base': 3.2.0
-      '@celo/connect': 3.2.0(web3@1.3.6)
-      '@celo/utils': 3.2.0
-      '@types/debug': 4.1.12
-      '@types/ethereumjs-util': 5.2.0
-      bignumber.js: 9.1.2
+      '@celo/base': 6.1.0
+      '@celo/connect': 6.0.1
+      '@celo/ledger-token-signer': 0.4.0
+      '@celo/utils': 7.0.0
+      '@celo/wallet-base': 6.0.1
+      '@celo/wallet-remote': 6.0.1
+      '@ethereumjs/util': 8.0.5
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/hw-app-eth': https://codeload.github.com/celo-org/ledgerjs-hw-app-eth/tar.gz/49bdd4f163f5ff73daa9f54f8e46aa2882b85f44
+      '@ledgerhq/hw-transport': 6.30.6
       debug: 4.3.4
-      eth-lib: 0.2.8
-      ethereumjs-util: 5.2.1
+      semver: 7.6.3
     transitivePeerDependencies:
+      - bufferutil
+      - encoding
       - supports-color
+      - utf-8-validate
       - web3
 
-  '@celo/wallet-ledger@3.2.0':
+  '@celo/wallet-local@6.0.1(web3@1.10.4)':
     dependencies:
-      '@celo/base': 3.2.0
-      '@celo/connect': 3.2.0
-      '@celo/utils': 3.2.0
-      '@celo/wallet-base': 3.2.0
-      '@celo/wallet-remote': 3.2.0
-      '@ledgerhq/hw-app-eth': 5.11.0
-      '@ledgerhq/hw-transport': 5.11.0
-      '@types/ethereumjs-util': 5.2.0
-      debug: 4.3.4
-      eth-lib: 0.2.8
-      ethereumjs-util: 5.2.1
+      '@celo/base': 6.1.0
+      '@celo/connect': 6.0.1(web3@1.10.4)
+      '@celo/utils': 7.0.0
+      '@celo/wallet-base': 6.0.1
+      '@ethereumjs/util': 8.0.5
     transitivePeerDependencies:
+      - bufferutil
+      - encoding
       - supports-color
+      - utf-8-validate
       - web3
 
-  '@celo/wallet-local@3.2.0(web3@1.3.6)':
+  '@celo/wallet-remote@6.0.1':
     dependencies:
-      '@celo/base': 3.2.0
-      '@celo/connect': 3.2.0(web3@1.3.6)
-      '@celo/utils': 3.2.0
-      '@celo/wallet-base': 3.2.0(web3@1.3.6)
-      '@types/ethereumjs-util': 5.2.0
-      eth-lib: 0.2.8
-      ethereumjs-util: 5.2.1
-    transitivePeerDependencies:
-      - supports-color
-      - web3
-
-  '@celo/wallet-remote@3.2.0':
-    dependencies:
-      '@celo/base': 3.2.0
-      '@celo/connect': 3.2.0
-      '@celo/utils': 3.2.0
-      '@celo/wallet-base': 3.2.0
+      '@celo/connect': 6.0.1
+      '@celo/utils': 7.0.0
+      '@celo/wallet-base': 6.0.1
+      '@ethereumjs/util': 8.0.5
       '@types/debug': 4.1.12
-      '@types/ethereumjs-util': 5.2.0
-      eth-lib: 0.2.8
-      ethereumjs-util: 5.2.1
     transitivePeerDependencies:
+      - bufferutil
+      - encoding
       - supports-color
+      - utf-8-validate
       - web3
+
+  '@chainsafe/as-sha256@0.3.1': {}
+
+  '@chainsafe/persistent-merkle-tree@0.4.2':
+    dependencies:
+      '@chainsafe/as-sha256': 0.3.1
+
+  '@chainsafe/ssz@0.9.4':
+    dependencies:
+      '@chainsafe/as-sha256': 0.3.1
+      '@chainsafe/persistent-merkle-tree': 0.4.2
+      case: 1.6.3
 
   '@changesets/apply-release-plan@7.0.4':
     dependencies:
@@ -34504,10 +34628,26 @@ snapshots:
       crc-32: 1.2.2
       ethereumjs-util: 7.1.5
 
+  '@ethereumjs/rlp@4.0.1': {}
+
+  '@ethereumjs/rlp@5.0.2': {}
+
   '@ethereumjs/tx@3.5.2':
     dependencies:
       '@ethereumjs/common': 2.6.5
       ethereumjs-util: 7.1.5
+
+  '@ethereumjs/util@8.0.5':
+    dependencies:
+      '@chainsafe/ssz': 0.9.4
+      '@ethereumjs/rlp': 4.0.1
+      ethereum-cryptography: 1.2.0
+
+  '@ethereumjs/util@8.1.0':
+    dependencies:
+      '@ethereumjs/rlp': 4.0.1
+      ethereum-cryptography: 2.1.3
+      micro-ftch: 0.3.1
 
   '@ethersproject/abi@5.0.7':
     dependencies:
@@ -36924,14 +37064,62 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
+  '@ledgerhq/cryptoassets@13.3.0':
+    dependencies:
+      axios: 1.7.7
+      bs58check: 2.1.2
+      invariant: 2.2.4
+
+  '@ledgerhq/domain-service@1.2.3':
+    dependencies:
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/logs': 6.12.0
+      '@ledgerhq/types-live': 6.50.0
+      axios: 1.7.7
+      eip55: 2.1.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@ledgerhq/errors@5.50.0': {}
 
   '@ledgerhq/errors@6.19.1': {}
 
-  '@ledgerhq/hw-app-eth@5.11.0':
+  '@ledgerhq/evm-tools@1.2.0':
     dependencies:
-      '@ledgerhq/errors': 5.50.0
-      '@ledgerhq/hw-transport': 5.11.0
+      '@ledgerhq/cryptoassets': 13.3.0
+      '@ledgerhq/live-env': 2.2.0
+      axios: 1.7.7
+      crypto-js: 4.2.0
+      ethers: 5.7.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@ledgerhq/hw-app-eth@https://codeload.github.com/celo-org/ledgerjs-hw-app-eth/tar.gz/49bdd4f163f5ff73daa9f54f8e46aa2882b85f44':
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/rlp': 5.7.0
+      '@ledgerhq/cryptoassets': 13.3.0
+      '@ledgerhq/domain-service': 1.2.3
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/evm-tools': 1.2.0
+      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport-mocker': 6.29.2
+      '@ledgerhq/logs': 6.12.0
+      '@ledgerhq/types-cryptoassets': 7.15.0
+      '@ledgerhq/types-devices': 6.25.3
+      '@ledgerhq/types-live': 6.50.0
+      axios: 1.7.7
+      bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@ledgerhq/hw-transport-mocker@6.29.2':
+    dependencies:
+      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/logs': 6.12.0
+      rxjs: 7.8.1
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
     dependencies:
@@ -36939,12 +37127,6 @@ snapshots:
       '@ledgerhq/hw-transport': 5.51.1
       '@ledgerhq/logs': 5.50.0
       u2f-api: 0.2.7
-
-  '@ledgerhq/hw-transport@5.11.0':
-    dependencies:
-      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 5.50.0
-      events: 3.3.0
 
   '@ledgerhq/hw-transport@5.51.1':
     dependencies:
@@ -36998,11 +37180,29 @@ snapshots:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
 
+  '@ledgerhq/live-env@2.2.0':
+    dependencies:
+      rxjs: 7.8.1
+      utility-types: 3.11.0
+
   '@ledgerhq/logs@5.50.0': {}
 
   '@ledgerhq/logs@6.12.0': {}
 
+<<<<<<< HEAD
   '@ledgerhq/wallet-api-client-react@1.3.12(react@18.3.1)':
+=======
+  '@ledgerhq/types-cryptoassets@7.15.0': {}
+
+  '@ledgerhq/types-devices@6.25.3': {}
+
+  '@ledgerhq/types-live@6.50.0':
+    dependencies:
+      bignumber.js: 9.1.2
+      rxjs: 7.8.1
+
+  '@ledgerhq/wallet-api-client-react@1.3.12(react@18.2.0)':
+>>>>>>> d098269cea (chore: upgrade celo dependencies (closes https://github.com/LedgerHQ/ledger-live/issues/7551))
     dependencies:
       '@ledgerhq/wallet-api-client': 1.6.0
       react: 18.3.1
@@ -37402,6 +37602,8 @@ snapshots:
     dependencies:
       eslint-scope: 5.1.1
 
+  '@noble/ciphers@0.4.1': {}
+
   '@noble/curves@1.2.0':
     dependencies:
       '@noble/hashes': 1.3.2
@@ -37417,6 +37619,8 @@ snapshots:
   '@noble/ed25519@1.7.3': {}
 
   '@noble/hashes@1.1.5': {}
+
+  '@noble/hashes@1.2.0': {}
 
   '@noble/hashes@1.3.2': {}
 
@@ -39940,6 +40144,12 @@ snapshots:
 
   '@scure/base@1.1.6': {}
 
+  '@scure/bip32@1.1.5':
+    dependencies:
+      '@noble/hashes': 1.2.0
+      '@noble/secp256k1': 1.7.1
+      '@scure/base': 1.1.6
+
   '@scure/bip32@1.3.3':
     dependencies:
       '@noble/curves': 1.3.0
@@ -39950,6 +40160,11 @@ snapshots:
     dependencies:
       '@noble/curves': 1.4.0
       '@noble/hashes': 1.4.0
+      '@scure/base': 1.1.6
+
+  '@scure/bip39@1.1.1':
+    dependencies:
+      '@noble/hashes': 1.2.0
       '@scure/base': 1.1.6
 
   '@scure/bip39@1.2.2':
@@ -43843,6 +44058,10 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
+  '@szmarczak/http-timer@5.0.1':
+    dependencies:
+      defer-to-connect: 2.0.1
+
   '@tanstack/query-core@5.28.9': {}
 
   '@tanstack/query-devtools@5.28.10': {}
@@ -44323,6 +44542,7 @@ snapshots:
 
   '@types/estree@1.0.5': {}
 
+<<<<<<< HEAD
   '@types/estree@1.0.6': {}
 
   '@types/ethereumjs-util@5.2.0':
@@ -44330,6 +44550,8 @@ snapshots:
       '@types/bn.js': 5.1.5
       '@types/node': 20.12.12
 
+=======
+>>>>>>> d098269cea (chore: upgrade celo dependencies (closes https://github.com/LedgerHQ/ledger-live/issues/7551))
   '@types/events@3.0.3': {}
 
   '@types/express-serve-static-core@4.17.43':
@@ -45908,6 +46130,8 @@ snapshots:
   abort-controller@3.0.0:
     dependencies:
       event-target-shim: 5.0.1
+
+  abortcontroller-polyfill@1.7.5: {}
 
   abstract-leveldown@0.12.4:
     dependencies:
@@ -47563,6 +47787,8 @@ snapshots:
 
   cacheable-lookup@5.0.4: {}
 
+  cacheable-lookup@6.1.0: {}
+
   cacheable-request@6.1.0:
     dependencies:
       clone-response: 1.0.3
@@ -47647,6 +47873,8 @@ snapshots:
   canvas-confetti@1.9.2: {}
 
   case-sensitive-paths-webpack-plugin@2.4.0: {}
+
+  case@1.6.3: {}
 
   caseless@0.12.0: {}
 
@@ -48542,7 +48770,19 @@ snapshots:
     dependencies:
       cross-spawn: 7.0.3
 
+  cross-fetch@3.1.5:
+    dependencies:
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
+
   cross-fetch@3.1.8:
+    dependencies:
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
+
+  cross-fetch@4.0.0:
     dependencies:
       node-fetch: 2.7.0
     transitivePeerDependencies:
@@ -50778,39 +51018,19 @@ snapshots:
       secp256k1: 4.0.3
       setimmediate: 1.0.5
 
+  ethereum-cryptography@1.2.0:
+    dependencies:
+      '@noble/hashes': 1.2.0
+      '@noble/secp256k1': 1.7.1
+      '@scure/bip32': 1.1.5
+      '@scure/bip39': 1.1.1
+
   ethereum-cryptography@2.1.3:
     dependencies:
       '@noble/curves': 1.3.0
       '@noble/hashes': 1.3.3
       '@scure/bip32': 1.3.3
       '@scure/bip39': 1.2.2
-
-  ethereumjs-common@1.5.2: {}
-
-  ethereumjs-tx@2.1.2:
-    dependencies:
-      ethereumjs-common: 1.5.2
-      ethereumjs-util: 6.2.1
-
-  ethereumjs-util@5.2.1:
-    dependencies:
-      bn.js: 4.12.0
-      create-hash: 1.2.0
-      elliptic: 6.5.5
-      ethereum-cryptography: 0.1.3
-      ethjs-util: 0.1.6
-      rlp: 2.2.7
-      safe-buffer: 5.2.1
-
-  ethereumjs-util@6.2.1:
-    dependencies:
-      '@types/bn.js': 4.11.6
-      bn.js: 4.12.0
-      create-hash: 1.2.0
-      elliptic: 6.5.5
-      ethereum-cryptography: 0.1.3
-      ethjs-util: 0.1.6
-      rlp: 2.2.7
 
   ethereumjs-util@7.1.5:
     dependencies:
@@ -50873,11 +51093,6 @@ snapshots:
     dependencies:
       bn.js: 4.11.6
       number-to-bn: 1.7.0
-
-  ethjs-util@0.1.6:
-    dependencies:
-      is-hex-prefixed: 1.0.0
-      strip-hex-prefix: 1.0.0
 
   event-emitter@0.3.5:
     dependencies:
@@ -51885,6 +52100,8 @@ snapshots:
       typescript: 5.4.3
       webpack: 5.94.0(metro@0.80.12)
 
+  form-data-encoder@1.7.1: {}
+
   form-data@2.3.3:
     dependencies:
       asynckit: 0.4.0
@@ -51925,8 +52142,6 @@ snapshots:
   forwarded@0.2.0: {}
 
   fp-ts@2.1.1: {}
-
-  fp-ts@2.16.5: {}
 
   fraction.js@4.3.7: {}
 
@@ -52319,6 +52534,22 @@ snapshots:
       http2-wrapper: 1.0.3
       lowercase-keys: 2.0.0
       p-cancelable: 2.1.1
+      responselike: 2.0.1
+
+  got@12.1.0:
+    dependencies:
+      '@sindresorhus/is': 4.6.0
+      '@szmarczak/http-timer': 5.0.1
+      '@types/cacheable-request': 6.0.3
+      '@types/responselike': 1.0.3
+      cacheable-lookup: 6.1.0
+      cacheable-request: 7.0.4
+      decompress-response: 6.0.0
+      form-data-encoder: 1.7.1
+      get-stream: 6.0.1
+      http2-wrapper: 2.2.1
+      lowercase-keys: 3.0.0
+      p-cancelable: 3.0.0
       responselike: 2.0.1
 
   got@9.6.0:
@@ -52911,6 +53142,11 @@ snapshots:
       quick-lru: 5.1.1
       resolve-alpn: 1.2.1
 
+  http2-wrapper@2.2.1:
+    dependencies:
+      quick-lru: 5.1.1
+      resolve-alpn: 1.2.1
+
   https-browserify@1.0.0: {}
 
   https-proxy-agent@4.0.0:
@@ -53126,10 +53362,6 @@ snapshots:
   io-ts@2.0.1(fp-ts@2.1.1):
     dependencies:
       fp-ts: 2.1.1
-
-  io-ts@2.0.1(fp-ts@2.16.5):
-    dependencies:
-      fp-ts: 2.16.5
 
   ioredis@5.3.2:
     dependencies:
@@ -55779,7 +56011,7 @@ snapshots:
       parse5: 6.0.1
       saxes: 5.0.1
       symbol-tree: 3.2.4
-      tough-cookie: 4.1.3
+      tough-cookie: 4.1.4
       w3c-hr-time: 1.0.2
       w3c-xmlserializer: 3.0.0
       webidl-conversions: 7.0.0
@@ -56595,6 +56827,8 @@ snapshots:
   lowercase-keys@1.0.1: {}
 
   lowercase-keys@2.0.0: {}
+
+  lowercase-keys@3.0.0: {}
 
   lru-cache@10.2.0: {}
 
@@ -57588,6 +57822,8 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
+
+  micro-ftch@0.3.1: {}
 
   micromark-core-commonmark@1.1.0:
     dependencies:
@@ -59013,6 +59249,8 @@ snapshots:
   p-cancelable@1.1.0: {}
 
   p-cancelable@2.1.1: {}
+
+  p-cancelable@3.0.0: {}
 
   p-filter@2.1.0:
     dependencies:
@@ -65689,12 +65927,11 @@ snapshots:
 
   web-worker@1.3.0: {}
 
-  web3-bzz@1.3.6:
+  web3-bzz@1.10.4:
     dependencies:
       '@types/node': 12.20.55
-      got: 9.6.0
+      got: 12.1.0
       swarm-js: 0.1.42
-      underscore: 1.12.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -65710,25 +65947,23 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  web3-core-helpers@1.3.6:
+  web3-core-helpers@1.10.4:
     dependencies:
-      underscore: 1.12.1
-      web3-eth-iban: 1.3.6
-      web3-utils: 1.3.6
+      web3-eth-iban: 1.10.4
+      web3-utils: 1.10.4
 
   web3-core-helpers@1.5.2:
     dependencies:
       web3-eth-iban: 1.5.2
       web3-utils: 1.5.2
 
-  web3-core-method@1.3.6:
+  web3-core-method@1.10.4:
     dependencies:
       '@ethersproject/transactions': 5.7.0
-      underscore: 1.12.1
-      web3-core-helpers: 1.3.6
-      web3-core-promievent: 1.3.6
-      web3-core-subscriptions: 1.3.6
-      web3-utils: 1.3.6
+      web3-core-helpers: 1.10.4
+      web3-core-promievent: 1.10.4
+      web3-core-subscriptions: 1.10.4
+      web3-utils: 1.10.4
 
   web3-core-method@1.5.2:
     dependencies:
@@ -65739,7 +65974,7 @@ snapshots:
       web3-core-subscriptions: 1.5.2
       web3-utils: 1.5.2
 
-  web3-core-promievent@1.3.6:
+  web3-core-promievent@1.10.4:
     dependencies:
       eventemitter3: 4.0.4
 
@@ -65747,15 +65982,15 @@ snapshots:
     dependencies:
       eventemitter3: 4.0.4
 
-  web3-core-requestmanager@1.3.6:
+  web3-core-requestmanager@1.10.4:
     dependencies:
-      underscore: 1.12.1
       util: 0.12.5
-      web3-core-helpers: 1.3.6
-      web3-providers-http: 1.3.6
-      web3-providers-ipc: 1.3.6
-      web3-providers-ws: 1.3.6
+      web3-core-helpers: 1.10.4
+      web3-providers-http: 1.10.4
+      web3-providers-ipc: 1.10.4
+      web3-providers-ws: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
   web3-core-requestmanager@1.5.2:
@@ -65768,27 +66003,27 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-core-subscriptions@1.3.6:
+  web3-core-subscriptions@1.10.4:
     dependencies:
       eventemitter3: 4.0.4
-      underscore: 1.12.1
-      web3-core-helpers: 1.3.6
+      web3-core-helpers: 1.10.4
 
   web3-core-subscriptions@1.5.2:
     dependencies:
       eventemitter3: 4.0.4
       web3-core-helpers: 1.5.2
 
-  web3-core@1.3.6:
+  web3-core@1.10.4:
     dependencies:
-      '@types/bn.js': 4.11.6
+      '@types/bn.js': 5.1.5
       '@types/node': 12.20.55
       bignumber.js: 9.1.2
-      web3-core-helpers: 1.3.6
-      web3-core-method: 1.3.6
-      web3-core-requestmanager: 1.3.6
-      web3-utils: 1.3.6
+      web3-core-helpers: 1.10.4
+      web3-core-method: 1.10.4
+      web3-core-requestmanager: 1.10.4
+      web3-utils: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
   web3-core@1.5.2:
@@ -65803,31 +66038,30 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-eth-abi@1.3.6:
+  web3-eth-abi@1.10.4:
     dependencies:
-      '@ethersproject/abi': 5.0.7
-      underscore: 1.12.1
-      web3-utils: 1.3.6
+      '@ethersproject/abi': 5.7.0
+      web3-utils: 1.10.4
 
   web3-eth-abi@1.5.2:
     dependencies:
       '@ethersproject/abi': 5.0.7
       web3-utils: 1.5.2
 
-  web3-eth-accounts@1.3.6:
+  web3-eth-accounts@1.10.4:
     dependencies:
-      crypto-browserify: 3.12.0
+      '@ethereumjs/common': 2.6.5
+      '@ethereumjs/tx': 3.5.2
+      '@ethereumjs/util': 8.1.0
       eth-lib: 0.2.8
-      ethereumjs-common: 1.5.2
-      ethereumjs-tx: 2.1.2
       scrypt-js: 3.0.1
-      underscore: 1.12.1
-      uuid: 3.3.2
-      web3-core: 1.3.6
-      web3-core-helpers: 1.3.6
-      web3-core-method: 1.3.6
-      web3-utils: 1.3.6
+      uuid: 9.0.1
+      web3-core: 1.10.4
+      web3-core-helpers: 1.10.4
+      web3-core-method: 1.10.4
+      web3-utils: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
   web3-eth-accounts@1.5.2:
@@ -65846,18 +66080,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-eth-contract@1.3.6:
+  web3-eth-contract@1.10.4:
     dependencies:
-      '@types/bn.js': 4.11.6
-      underscore: 1.12.1
-      web3-core: 1.3.6
-      web3-core-helpers: 1.3.6
-      web3-core-method: 1.3.6
-      web3-core-promievent: 1.3.6
-      web3-core-subscriptions: 1.3.6
-      web3-eth-abi: 1.3.6
-      web3-utils: 1.3.6
+      '@types/bn.js': 5.1.5
+      web3-core: 1.10.4
+      web3-core-helpers: 1.10.4
+      web3-core-method: 1.10.4
+      web3-core-promievent: 1.10.4
+      web3-core-subscriptions: 1.10.4
+      web3-eth-abi: 1.10.4
+      web3-utils: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
   web3-eth-contract@1.5.2:
@@ -65873,18 +66107,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-eth-ens@1.3.6:
+  web3-eth-ens@1.10.4:
     dependencies:
       content-hash: 2.5.2
       eth-ens-namehash: 2.0.8
-      underscore: 1.12.1
-      web3-core: 1.3.6
-      web3-core-helpers: 1.3.6
-      web3-core-promievent: 1.3.6
-      web3-eth-abi: 1.3.6
-      web3-eth-contract: 1.3.6
-      web3-utils: 1.3.6
+      web3-core: 1.10.4
+      web3-core-helpers: 1.10.4
+      web3-core-promievent: 1.10.4
+      web3-eth-abi: 1.10.4
+      web3-eth-contract: 1.10.4
+      web3-utils: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
   web3-eth-ens@1.5.2:
@@ -65900,25 +66134,26 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-eth-iban@1.3.6:
+  web3-eth-iban@1.10.4:
     dependencies:
-      bn.js: 4.12.0
-      web3-utils: 1.3.6
+      bn.js: 5.2.1
+      web3-utils: 1.10.4
 
   web3-eth-iban@1.5.2:
     dependencies:
       bn.js: 4.12.0
       web3-utils: 1.5.2
 
-  web3-eth-personal@1.3.6:
+  web3-eth-personal@1.10.4:
     dependencies:
       '@types/node': 12.20.55
-      web3-core: 1.3.6
-      web3-core-helpers: 1.3.6
-      web3-core-method: 1.3.6
-      web3-net: 1.3.6
-      web3-utils: 1.3.6
+      web3-core: 1.10.4
+      web3-core-helpers: 1.10.4
+      web3-core-method: 1.10.4
+      web3-net: 1.10.4
+      web3-utils: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
   web3-eth-personal@1.5.2:
@@ -65932,22 +66167,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-eth@1.3.6:
+  web3-eth@1.10.4:
     dependencies:
-      underscore: 1.12.1
-      web3-core: 1.3.6
-      web3-core-helpers: 1.3.6
-      web3-core-method: 1.3.6
-      web3-core-subscriptions: 1.3.6
-      web3-eth-abi: 1.3.6
-      web3-eth-accounts: 1.3.6
-      web3-eth-contract: 1.3.6
-      web3-eth-ens: 1.3.6
-      web3-eth-iban: 1.3.6
-      web3-eth-personal: 1.3.6
-      web3-net: 1.3.6
-      web3-utils: 1.3.6
+      web3-core: 1.10.4
+      web3-core-helpers: 1.10.4
+      web3-core-method: 1.10.4
+      web3-core-subscriptions: 1.10.4
+      web3-eth-abi: 1.10.4
+      web3-eth-accounts: 1.10.4
+      web3-eth-contract: 1.10.4
+      web3-eth-ens: 1.10.4
+      web3-eth-iban: 1.10.4
+      web3-eth-personal: 1.10.4
+      web3-net: 1.10.4
+      web3-utils: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
   web3-eth@1.5.2:
@@ -65967,12 +66202,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-net@1.3.6:
+  web3-net@1.10.4:
     dependencies:
-      web3-core: 1.3.6
-      web3-core-method: 1.3.6
-      web3-utils: 1.3.6
+      web3-core: 1.10.4
+      web3-core-method: 1.10.4
+      web3-utils: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
   web3-net@1.5.2:
@@ -65983,32 +66219,34 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-providers-http@1.3.6:
+  web3-providers-http@1.10.4:
     dependencies:
-      web3-core-helpers: 1.3.6
-      xhr2-cookies: 1.1.0
+      abortcontroller-polyfill: 1.7.5
+      cross-fetch: 4.0.0
+      es6-promise: 4.2.8
+      web3-core-helpers: 1.10.4
+    transitivePeerDependencies:
+      - encoding
 
   web3-providers-http@1.5.2:
     dependencies:
       web3-core-helpers: 1.5.2
       xhr2-cookies: 1.1.0
 
-  web3-providers-ipc@1.3.6:
+  web3-providers-ipc@1.10.4:
     dependencies:
       oboe: 2.1.5
-      underscore: 1.12.1
-      web3-core-helpers: 1.3.6
+      web3-core-helpers: 1.10.4
 
   web3-providers-ipc@1.5.2:
     dependencies:
       oboe: 2.1.5
       web3-core-helpers: 1.5.2
 
-  web3-providers-ws@1.3.6:
+  web3-providers-ws@1.10.4:
     dependencies:
       eventemitter3: 4.0.4
-      underscore: 1.12.1
-      web3-core-helpers: 1.3.6
+      web3-core-helpers: 1.10.4
       websocket: 1.0.34
     transitivePeerDependencies:
       - supports-color
@@ -66021,13 +66259,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-shh@1.3.6:
+  web3-shh@1.10.4:
     dependencies:
-      web3-core: 1.3.6
-      web3-core-method: 1.3.6
-      web3-core-subscriptions: 1.3.6
-      web3-net: 1.3.6
+      web3-core: 1.10.4
+      web3-core-method: 1.10.4
+      web3-core-subscriptions: 1.10.4
+      web3-net: 1.10.4
     transitivePeerDependencies:
+      - encoding
       - supports-color
 
   web3-shh@1.5.2:
@@ -66039,15 +66278,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  web3-utils@1.3.6:
+  web3-utils@1.10.4:
     dependencies:
-      bn.js: 4.12.0
-      eth-lib: 0.2.8
+      '@ethereumjs/util': 8.1.0
+      bn.js: 5.2.1
       ethereum-bloom-filters: 1.0.10
+      ethereum-cryptography: 2.1.3
       ethjs-unit: 0.1.6
       number-to-bn: 1.7.0
       randombytes: 2.1.0
-      underscore: 1.12.1
       utf8: 3.0.0
 
   web3-utils@1.5.2:
@@ -66060,17 +66299,18 @@ snapshots:
       randombytes: 2.1.0
       utf8: 3.0.0
 
-  web3@1.3.6:
+  web3@1.10.4:
     dependencies:
-      web3-bzz: 1.3.6
-      web3-core: 1.3.6
-      web3-eth: 1.3.6
-      web3-eth-personal: 1.3.6
-      web3-net: 1.3.6
-      web3-shh: 1.3.6
-      web3-utils: 1.3.6
+      web3-bzz: 1.10.4
+      web3-core: 1.10.4
+      web3-eth: 1.10.4
+      web3-eth-personal: 1.10.4
+      web3-net: 1.10.4
+      web3-shh: 1.10.4
+      web3-utils: 1.10.4
     transitivePeerDependencies:
       - bufferutil
+      - encoding
       - supports-color
       - utf-8-validate
 
