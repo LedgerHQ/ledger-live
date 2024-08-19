@@ -67,7 +67,7 @@ export class SendModal extends Modal {
   async checkInvalidAddressError(tx: Transaction) {
     await this.checkContinueButtonDisabled();
     await expect(
-      this.invalidAddressErrorMessage(tx.accountToDebit.currency.deviceLabel),
+      this.invalidAddressErrorMessage(tx.accountToDebit.currency.speculosApp),
     ).toBeVisible();
   }
 
