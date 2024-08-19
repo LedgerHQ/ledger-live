@@ -136,7 +136,7 @@ function useQuickActions({ currency }: Props = {}) {
           {
             screen: ScreenName.Stake,
             params: {
-              currencies: currency ? [currency.id] : [],
+              currencies: currency ? [currency.id] : undefined,
               parentRoute: route,
             },
           },
