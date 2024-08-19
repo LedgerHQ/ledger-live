@@ -31,7 +31,7 @@ for (const token of subAccounts) {
     });
 
     test(
-      `Add Sub Account without parent (${token.currency.deviceLabel}) - ${token.currency.ticker}`,
+      `Add Sub Account without parent (${token.currency.speculosApp}) - ${token.currency.ticker}`,
       {
         annotation: {
           type: "TMS",
@@ -67,7 +67,7 @@ for (const token of subAccountReceive) {
     });
 
     test(
-      `[${token.currency.deviceLabel}] Add subAccount when parent exists (${token.currency.ticker})`,
+      `[${token.currency.speculosApp}] Add subAccount when parent exists (${token.currency.ticker})`,
       {
         annotation: {
           type: "TMS",
@@ -102,7 +102,7 @@ for (const token of subAccounts) {
     });
 
     test(
-      `Token visible in parent account (${token.currency.deviceLabel}) - ${token.currency.ticker}`,
+      `Token visible in parent account (${token.currency.speculosApp}) - ${token.currency.ticker}`,
       {
         annotation: {
           type: "TMS",
