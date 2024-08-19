@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
@@ -10,36 +10,29 @@ type Props = {
   isLoading: boolean;
   data: AppManifest[];
   onEndReached?: () => void;
-  extraData: (manifest: AppManifest) => void;
+  onPressItem: (manifest: AppManifest) => void;
   testID?: string;
 };
 
 type PropRenderItem = {
   item: AppManifest;
-  extraData?: (manifest: AppManifest) => void;
+  onPressItem?: (manifest: AppManifest) => void;
 };
 
 const identityFn = (item: AppManifest) => item.id;
+
+const renderItem = ({ item, onPressItem = () => {} }: PropRenderItem) => {
+  return <MinimalAppCard item={item} onPress={onPressItem} />;
+};
 
 export default function HorizontalList({
   title,
   isLoading,
   data,
   onEndReached,
-  extraData,
+  onPressItem,
   testID,
 }: Props) {
-  const renderItem = useCallback(({ item, extraData = () => {} }: PropRenderItem) => {
-    const disabled = item.branch === "soon";
-    const handlePress = () => {
-      if (!disabled) {
-        extraData(item);
-      }
-    };
-
-    return <MinimalAppCard key={item.id} disabled={disabled} item={item} onPress={handlePress} />;
-  }, []);
-
   return (
     <>
       <Text mt={2} mb={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
@@ -62,7 +55,7 @@ export default function HorizontalList({
           estimatedItemSize={70}
           data={data}
           showsHorizontalScrollIndicator={false}
-          extraData={extraData}
+          extraData={onPressItem}
           onEndReached={onEndReached}
         />
       </Box>
