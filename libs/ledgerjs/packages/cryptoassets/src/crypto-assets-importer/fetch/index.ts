@@ -38,6 +38,7 @@ export const fetchTokensFromCALService = async <T extends Array<keyof CALService
     blockchain_name?: CryptoCurrencyId;
   },
   output: T,
+  etag?: string | null,
   next?: { cursor: string; tokens: Pick<CALServiceOutput, T[number]>[] },
 ): Promise<{ tokens: Pick<CALServiceOutput, T[number]>[]; hash: string | undefined }> => {
   try {
@@ -51,6 +52,11 @@ export const fetchTokensFromCALService = async <T extends Array<keyof CALService
           blockchain_name: chainDetails.blockchain_name,
           output: output.join(),
         },
+        headers: etag
+          ? {
+              "If-None-Match": etag,
+            }
+          : undefined,
       },
     );
 
@@ -59,6 +65,7 @@ export const fetchTokensFromCALService = async <T extends Array<keyof CALService
       return fetchTokensFromCALService(
         { chainId: chainDetails.chainId, standard: chainDetails.standard },
         output,
+        etag,
         {
           tokens: next?.tokens ? [...next.tokens, ...data] : data,
           cursor,
@@ -69,7 +76,12 @@ export const fetchTokensFromCALService = async <T extends Array<keyof CALService
     const hash = headers["etag"];
     return next?.tokens ? { tokens: [...next.tokens, ...data], hash } : { tokens: data, hash };
   } catch (err) {
-    const error = err as AxiosError;
-    throw new Error(`${error.message} ${error.config?.url}`);
+    if (err instanceof AxiosError) {
+      if (err.response?.status === 304) {
+        throw err;
+      }
+      throw new Error(`${err?.message}: ${err?.config?.url}`);
+    }
+    throw err;
   }
 };
