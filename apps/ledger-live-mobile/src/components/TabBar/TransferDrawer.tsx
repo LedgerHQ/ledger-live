@@ -204,7 +204,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: RECOVER.disabled,
       testID: "transfer-recover-button",
     },
-  ].filter(action => !!action);
+  ].filter(<T extends ButtonItem>(v: T | undefined): v is T => !!v);
 
   const bannerEventProperties = useMemo(
     () => ({
