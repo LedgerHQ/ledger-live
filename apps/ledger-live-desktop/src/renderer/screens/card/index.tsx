@@ -56,7 +56,7 @@ const LiveAppCard = () => {
           manifest={manifest}
           inputs={{
             theme: themeType,
-            ...urlParams,
+            ...(urlParams as Record<string, string>),
             lang: language,
             locale: locale,
             devMode,
@@ -70,10 +70,10 @@ const LiveAppCard = () => {
 
 const CardDapp = () => {
   const ptxCardFlag = useFeature("ptxCard");
-  if (ptxCardFlag.enabled) {
+  if (ptxCardFlag?.enabled) {
     return <LiveAppCard />;
   } else {
-    return <CardPlatformApp />;
+    return <CardPlatformApp />; // Baanx card
   }
 };
 export default CardDapp;
