@@ -10,9 +10,9 @@ import {
   TrustchainSDK,
   TrustchainSDKContext,
 } from "./types";
-import Transport from "@ledgerhq/hw-transport";
 import { Permissions } from "@ledgerhq/hw-trustchain";
 import { TrustchainEjected } from "./errors";
+import getApi from "./api";
 
 const mockedLiveCredentialsPrivateKey = "mock-private-key";
 
@@ -41,11 +41,6 @@ const mockedLiveJWT = {
   permissions: {},
 };
 
-const mockedDeviceJWT = {
-  accessToken: "mock-device-jwt",
-  permissions: {},
-};
-
 // global states in memory
 const trustchains = new Map<string, Trustchain>();
 const trustchainMembers = new Map<string, TrustchainMember[]>();
@@ -64,10 +59,12 @@ const applyXor = (a: Uint8Array) => {
 export class MockSDK implements TrustchainSDK {
   private context: TrustchainSDKContext;
   private lifecyle?: TrustchainLifecycle;
+  private api: ReturnType<typeof getApi>;
 
   constructor(context: TrustchainSDKContext, lifecyle?: TrustchainLifecycle) {
     this.context = context;
     this.lifecyle = lifecyle;
+    this.api = getApi(context.apiBaseUrl);
   }
 
   private deviceJwtAcquired = false;
@@ -91,17 +88,11 @@ export class MockSDK implements TrustchainSDK {
     return job(mockedLiveJWT);
   }
 
-  withDeviceAuth<T>(transport: Transport, job: (jwt: JWT) => Promise<T>): Promise<T> {
-    void transport;
-    return job(mockedDeviceJWT);
-  }
-
   async getOrCreateTrustchain(
-    transport: Transport,
+    deviceId: string,
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<TrustchainResult> {
-    void transport;
     assertLiveCredentials(memberCredentials);
     let type = trustchains.has("mock-root-id")
       ? TrustchainResultType.restored
@@ -167,13 +158,12 @@ export class MockSDK implements TrustchainSDK {
   }
 
   async removeMember(
-    transport: Transport,
+    deviceId: string,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
-    void transport;
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
     assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);
@@ -232,9 +222,7 @@ export class MockSDK implements TrustchainSDK {
     assertLiveCredentials(memberCredentials);
     const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
     if (currentMembers.find(m => m.id === member.id)) {
-      throw new Error(
-        "member already exists. Please set a different context name value for different instances.",
-      );
+      return Promise.resolve();
     }
     currentMembers.push(member);
     trustchainMembers.set(trustchain.rootId, currentMembers);

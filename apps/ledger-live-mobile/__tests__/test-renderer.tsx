@@ -1,5 +1,10 @@
 import React from "react";
-import { render, RenderOptions, userEvent } from "@testing-library/react-native";
+import {
+  render as rntlRender,
+  RenderOptions,
+  userEvent,
+  renderHook as rntlRenderHook,
+} from "@testing-library/react-native";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
@@ -26,9 +31,12 @@ import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/wallet
 import { INITIAL_STATE as PROTECT_INITIAL_STATE } from "~/reducers/protect";
 import { INITIAL_STATE as NFT_INITIAL_STATE } from "~/reducers/nft";
 import { INITIAL_STATE as MARKET_INITIAL_STATE } from "~/reducers/market";
+import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
+
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
-import QueuedDrawersContextProvider from "~/newArch/components/QueuedDrawer/QueuedDrawersContextProvider";
+import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/trustchain/store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const initialState = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -47,6 +55,7 @@ const initialState = {
   market: MARKET_INITIAL_STATE,
   wallet: WALLET_INITIAL_STATE,
   trustchain: TRUSTCHAIN_INITIAL_STATE,
+  walletSync: WALLETSYNC_INITIAL_STATE,
 };
 
 type ExtraOptions = RenderOptions & {
@@ -90,8 +99,39 @@ const customRender = (
 
   return {
     user: userEvent.setup(userEventOptions),
-    ...render(ui, { wrapper: ProvidersWrapper, ...renderOptions }),
+    ...rntlRender(ui, { wrapper: ProvidersWrapper, ...renderOptions }),
   };
+};
+
+const customRenderHook = <Result,>(
+  hook: () => Result,
+  {
+    overrideInitialState: overrideInitialState = state => state,
+    ...renderOptions
+  }: ExtraOptions = {},
+) => {
+  const store = configureStore({
+    reducer: reducers,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
+    preloadedState: overrideInitialState(initialState),
+    devTools: false,
+  });
+
+  const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const queryClient = new QueryClient();
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+            <NavigationContainer>{children}</NavigationContainer>
+          </FirebaseFeatureFlagsProvider>
+        </Provider>
+      </QueryClientProvider>
+    );
+  };
+
+  return { store, ...rntlRenderHook(hook, { wrapper: ProvidersWrapper, ...renderOptions }) };
 };
 
 export const LONG_TIMEOUT = 30000;
@@ -100,4 +140,4 @@ export const LONG_TIMEOUT = 30000;
 export * from "@testing-library/react-native";
 
 // override render method
-export { customRender as render };
+export { customRender as render, customRenderHook as renderHook };

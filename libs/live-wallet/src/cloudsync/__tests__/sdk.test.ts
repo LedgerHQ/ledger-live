@@ -4,9 +4,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { CloudSyncSDK, UpdateEvent } from "../sdk";
 import { MockSDK } from "@ledgerhq/trustchain/mockSdk";
-import { setEnv } from "@ledgerhq/live-env";
-import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTransportReplayer";
-import { RecordStore } from "@ledgerhq/hw-transport-mocker";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { MemberCredentials, Trustchain } from "@ledgerhq/trustchain/types";
 import { TrustchainOutdated } from "@ledgerhq/trustchain/errors";
 
@@ -14,17 +12,31 @@ describe("CloudSyncSDK basics", () => {
   const port = 54034;
   const base = "http://localhost:" + port;
 
-  setEnv("CLOUD_SYNC_API", base);
+  setEnv("CLOUD_SYNC_API_STAGING", base);
+
+  let expectedBackendTrustchain: Trustchain;
+  function verifyTrustchainParams(params: URLSearchParams) {
+    if (params.get("id") !== expectedBackendTrustchain.rootId) {
+      throw new Error("wrong params.id");
+    }
+    if (params.get("path") !== expectedBackendTrustchain.applicationPath) {
+      throw new Error("wrong params.path");
+    }
+  }
 
   let storedData: string | null = null;
   let storedVersion = 0;
+
+  let postCounter = 0;
 
   const handlers = [
     http.get(base + "/atomic/v1/:slug", ({ request }) => {
       if (request.headers.get("Authorization") !== "Bearer mock-live-jwt") {
         return HttpResponse.json({}, { status: 401 });
       }
-      const version = parseInt(new URL(request.url).searchParams.get("version") || "0", 10);
+      const params = new URL(request.url).searchParams;
+      verifyTrustchainParams(params);
+      const version = parseInt(params.get("version") || "0", 10);
       if (!storedData) {
         return HttpResponse.json({ status: "no-data" });
       } else if (storedVersion <= version) {
@@ -39,18 +51,29 @@ describe("CloudSyncSDK basics", () => {
       }
     }),
     http.post(base + "/atomic/v1/:slug", async ({ request }) => {
+      ++postCounter;
       if (request.headers.get("Authorization") !== "Bearer mock-live-jwt") {
         return HttpResponse.json({}, { status: 401 });
       }
-      const version = parseInt(new URL(request.url).searchParams.get("version") || "0", 10);
+      const params = new URL(request.url).searchParams;
+      verifyTrustchainParams(params);
+      const version = parseInt(params.get("version") || "0", 10);
       const json = await request.json();
       const { payload } = json as { payload: string };
       if (version !== storedVersion + 1) {
+        // to cover different accepted payloads, we sometimes returns info or not
+        const extra =
+          postCounter % 3 === 0
+            ? {}
+            : postCounter % 3 === 1
+              ? { info: "lld/0.0.0" }
+              : { info: null };
         return HttpResponse.json({
           status: "out-of-sync",
           version: storedVersion,
           payload: storedData,
           date: new Date().toISOString(),
+          ...extra,
         });
       }
       storedVersion = version;
@@ -58,6 +81,8 @@ describe("CloudSyncSDK basics", () => {
       return HttpResponse.json({ status: "updated" });
     }),
     http.delete(base + "/atomic/v1/:slug", ({ request }) => {
+      const params = new URL(request.url).searchParams;
+      verifyTrustchainParams(params);
       if (request.headers.get("Authorization") !== "Bearer mock-live-jwt") {
         return HttpResponse.json({}, { status: 401 });
       }
@@ -93,14 +118,17 @@ describe("CloudSyncSDK basics", () => {
   let data: Data | null = null;
 
   it("init", async () => {
-    trustchainSdk = new MockSDK({ applicationId: 16, name: "user" });
+    trustchainSdk = new MockSDK({
+      applicationId: 16,
+      name: "user",
+      apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+    });
 
     creds = await trustchainSdk.initMemberCredentials();
 
-    const transport = new TransportReplayer(new RecordStore());
-
-    const result = await trustchainSdk.getOrCreateTrustchain(transport, creds);
+    const result = await trustchainSdk.getOrCreateTrustchain("foo", creds);
     trustchain = result.trustchain;
+    expectedBackendTrustchain = trustchain;
 
     const getCurrentVersion = () => version;
 
@@ -120,6 +148,7 @@ describe("CloudSyncSDK basics", () => {
     };
 
     sdk = new CloudSyncSDK({
+      apiBaseUrl: getEnv("CLOUD_SYNC_API_STAGING"),
       slug: "test",
       schema: z.object({
         value: z.string(),
@@ -213,7 +242,11 @@ describe("CloudSyncSDK basics", () => {
     let version2 = 0;
     let data2: Data | null = null;
 
-    const trustchainSdk = new MockSDK({ applicationId: 16, name: "user" });
+    const trustchainSdk = new MockSDK({
+      applicationId: 16,
+      name: "user",
+      apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+    });
 
     const getCurrentVersion = () => version2;
 
@@ -233,6 +266,7 @@ describe("CloudSyncSDK basics", () => {
     };
 
     const sdk2 = new CloudSyncSDK({
+      apiBaseUrl: getEnv("CLOUD_SYNC_API_STAGING"),
       slug: "test",
       schema: z.object({
         value: z.string(),

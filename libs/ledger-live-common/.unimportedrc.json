@@ -303,6 +303,9 @@
     "src/device/use-cases/appDataBackup/backupAppData.ts",
     "src/device/use-cases/appDataBackup/backupAppDataUseCase.ts",
     "src/device/use-cases/appDataBackup/backupAppDataUseCaseDI.ts",
+    "src/device/use-cases/appDataBackup/restoreAppData.ts",
+    "src/device/use-cases/appDataBackup/restoreAppDataUseCase.ts",
+    "src/device/use-cases/appDataBackup/restoreAppDataUseCaseDI.ts",
     "src/device/use-cases/appDataBackup/types.ts",
     "src/device/use-cases/isDeviceLocalizationSupported.ts",
     "src/device/use-cases/isEditDeviceNameSupported.ts",
@@ -332,7 +335,8 @@
     "src/market/hooks/useMarketPerformers.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
-    "src/rxjs/operators/throwIf.ts"
+    "src/rxjs/operators/throwIf.ts",
+    "src/walletSync/getEnvironmentParams.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-transport-mocker",

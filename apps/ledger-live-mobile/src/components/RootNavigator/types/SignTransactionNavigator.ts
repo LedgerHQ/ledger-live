@@ -52,6 +52,7 @@ export type SignTransactionNavigatorParamList = {
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     appName?: string;
+    dependencies?: string[];
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
@@ -69,6 +70,7 @@ export type SignTransactionNavigatorParamList = {
     transaction: Transaction;
     status: TransactionStatus;
     appName?: string;
+    dependencies?: string[];
     onSuccess: (payload: unknown) => void;
     onError: (_: Error) => void;
     analyticsPropertyFlow?: string;

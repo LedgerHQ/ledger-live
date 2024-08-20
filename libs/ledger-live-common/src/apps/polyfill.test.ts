@@ -1,29 +1,8 @@
-import { App, AppType, Application } from "@ledgerhq/types-live";
-import { getDependencies, polyfillApplication } from "./polyfill";
+import { App, AppType } from "@ledgerhq/types-live";
+import { getDependencies } from "./polyfill";
 import { calculateDependencies } from "./polyfill";
 
 calculateDependencies();
-
-test("polyfillApplication set ethereum currency for ethereum app", () => {
-  const app: Application = {
-    id: 1,
-    name: "Ethereum",
-    description: undefined,
-    application_versions: [],
-    providers: [],
-    category: 0,
-    date_creation: "",
-    date_last_modified: "",
-    publisher: undefined,
-    currencyId: undefined,
-    authorName: undefined,
-    supportURL: undefined,
-    contactURL: undefined,
-    sourceURL: undefined,
-  };
-  const polyfilledApp = polyfillApplication(app);
-  expect(polyfilledApp.currencyId).toEqual("ethereum");
-});
 
 const baseSampleApp: App = {
   id: 1,

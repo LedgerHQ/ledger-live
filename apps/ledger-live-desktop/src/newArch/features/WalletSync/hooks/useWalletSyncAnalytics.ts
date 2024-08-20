@@ -24,6 +24,7 @@ export enum AnalyticsPage {
 
   SyncWithQR = "Sync with QR code",
   PinCode = "Pin code",
+  PinCodeError = "Pin code error",
 
   SettingsGeneral = "Settings General",
   WalletSyncSettings = "Wallet Sync Settings",
@@ -61,6 +62,7 @@ export const StepMappedToAnalytics: Record<Step, string> = {
   [Step.SynchronizeMode]: AnalyticsPage.SyncMethod,
   [Step.SynchronizeWithQRCode]: AnalyticsPage.SyncWithQR,
   [Step.PinCode]: AnalyticsPage.PinCode,
+  [Step.PinCodeError]: AnalyticsPage.PinCodeError,
   [Step.Synchronized]: AnalyticsPage.KeyUpdated,
 
   //ManageInstances

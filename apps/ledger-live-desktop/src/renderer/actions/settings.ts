@@ -100,6 +100,7 @@ export const setAllowExperimentalApps = (allowExperimentalApps: boolean) =>
   saveSettings({
     allowExperimentalApps,
   });
+
 export const setEnablePlatformDevTools = (enablePlatformDevTools: boolean) =>
   saveSettings({
     enablePlatformDevTools,

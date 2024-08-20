@@ -10,7 +10,7 @@ import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { Actionable } from "./Actionable";
 import { JsonEditor } from "./JsonEditor";
-import { TrustchainEjected } from "@ledgerhq/trustchain/lib-es/errors";
+import useEnv from "../useEnv";
 
 const liveSchema = walletsync.schema;
 
@@ -37,6 +37,7 @@ export function AppWalletSync({
   takeControl?: () => void;
 }) {
   const trustchainSdk = useTrustchainSDK();
+  const cloudSyncApiBaseUrl = useEnv("CLOUD_SYNC_API_STAGING");
 
   const [json, setJson] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -98,13 +99,14 @@ export function AppWalletSync({
 
   const walletSyncSdk = useMemo(() => {
     return new CloudSyncSDK({
+      apiBaseUrl: cloudSyncApiBaseUrl,
       slug: liveSlug,
       schema: walletsync.schema,
       trustchainSdk,
       getCurrentVersion,
       saveNewUpdate,
     });
-  }, [trustchainSdk, getCurrentVersion, saveNewUpdate]);
+  }, [cloudSyncApiBaseUrl, trustchainSdk, getCurrentVersion, saveNewUpdate]);
 
   const onPull = useCallback(async () => {
     await walletSyncSdk.pull(trustchain, memberCredentials);

@@ -17,7 +17,7 @@ export default function HideEmptyTokenAccountsToggle() {
       <Switch
         isChecked={hideEmptyTokenAccounts}
         onChange={setHideEmptyTokenAccounts}
-        data-e2e="hideEmptyTokenAccounts_button"
+        data-testid="hideEmptyTokenAccounts"
       />
     </>
   );

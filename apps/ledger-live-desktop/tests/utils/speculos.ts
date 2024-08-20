@@ -45,6 +45,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Dogecoin: {
+    currency: getCryptoCurrencyById("dogecoin"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Dogecoin",
+    },
+    dependency: "",
+  },
   Ethereum: {
     currency: getCryptoCurrencyById("ethereum"),
     appQuery: {
@@ -178,6 +186,14 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Binance Smart Chain",
+    },
+    dependency: "",
+  },
+  Ton: {
+    currency: getCryptoCurrencyById("ton"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "TON",
     },
     dependency: "",
   },

@@ -10,6 +10,14 @@ import dbMiddleware from "../src/renderer/middlewares/db";
 import { I18nextProvider } from "react-i18next";
 import i18n from "~/renderer/i18n/init";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { config } from "react-transition-group";
+import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import DrawerProvider from "~/renderer/drawers/Provider";
+import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
+import { getFeature } from "./featureFlags";
+
+config.disabled = true;
 
 interface ChildrenProps {
   children: JSX.Element;
@@ -40,14 +48,21 @@ function render(
   }: ExtraOptions = {},
 ): RenderReturn {
   const queryClient = new QueryClient();
+
   function Wrapper({ children }: ChildrenProps): JSX.Element {
     return (
       <QueryClientProvider client={queryClient}>
         <I18nextProvider i18n={i18n}>
           <Provider store={store}>
-            <StyleProvider selectedPalette="dark">
-              <MemoryRouter>{children}</MemoryRouter>
-            </StyleProvider>
+            <DrawerProvider>
+              <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                <StyleProvider selectedPalette="dark">
+                  <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                    <MemoryRouter>{children}</MemoryRouter>
+                  </FirebaseFeatureFlagsProvider>
+                </StyleProvider>
+              </NftMetadataProvider>
+            </DrawerProvider>
           </Provider>
         </I18nextProvider>
       </QueryClientProvider>
@@ -74,7 +89,9 @@ function renderHook<Result>(
     return (
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
-          <MemoryRouter>{children}</MemoryRouter>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+            <MemoryRouter>{children}</MemoryRouter>
+          </FirebaseFeatureFlagsProvider>
         </Provider>
       </QueryClientProvider>
     );

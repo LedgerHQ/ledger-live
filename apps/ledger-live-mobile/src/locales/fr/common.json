@@ -927,8 +927,16 @@
       "title" : "Erreur dans le numéro de séquence",
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
     },
+    "TonCommentInvalid" : {
+      "title" : "Le commentaire ne doit ni dépasser 120 caractères ni contenir de caractères spéciaux"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "Swap indisponible : effectuez d’abord un envoi/délégation avec ce compte Tezos, ou changez la paire."
+    },
+    "CustomError" : {
+      "title" : "Veuillez réessayer.",
+      "description" : "Le serveur n’a pas pu traiter votre demande. Veuillez réessayer ultérieurement ou contacter l’Assistance Ledger.",
+      "errorCode" : "Code : {{errorCode}}"
     }
   },
   "crash" : {
@@ -3647,6 +3655,8 @@
         "value" : "Valeur du mémo"
       },
       "validateMemo" : "Valider le mémo",
+      "comment" : "Commentaire",
+      "validateComment" : "Valider le commentaire",
       "quantity" : "Montant"
     },
     "validation" : {
@@ -6382,7 +6392,7 @@
   },
   "customImage" : {
     "title" : "Fond d’écran",
-    "replace" : "Modifier",
+    "change" : "Modifier",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Choisir dans ma galerie d’images",
@@ -6406,6 +6416,8 @@
     },
     "confirmCrop" : "Confirmer le recadrage",
     "confirmContrast" : "Confirmer le contraste",
+    "keepOnDevice" : "Conserver",
+    "discardOnDevice" : "Rejeter",
     "nftEntryPointButtonLabel" : "Définir comme fond d’écran",
     "customImage" : "Fond d’écran personnalisé",
     "doThisLater" : "Plus tard",
@@ -6685,12 +6697,112 @@
     }
   },
   "walletSync" : {
+    "title" : "Ledger Sync",
     "activation" : {
       "screen" : {
         "title" : "Synchronisez vos comptes sur toutes les plateformes",
         "description" : "Votre appareil Ledger va générer une clé de chiffrement. Vos données restent privées, et vous seul(e) pouvez les récupérer.",
         "mainCta" : "Synchroniser les comptes",
         "secondCta" : "Vous avez déjà créé une clé ?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "Choisissez l’appareil Ledger à utiliser pour sécuriser votre synchronisation",
+      "description" : "Pour récupérer votre synchronisation, connectez votre appareil Ledger à Ledger Live sur votre mobile ou ordinateur."
+    },
+    "deviceAction" : {
+      "title" : "Continuez sur votre Ledger {{wording}}",
+      "description" : "Suivez les instructions sur l’écran de confiance de votre appareil Ledger."
+    },
+    "success" : {
+      "sync" : "Synchronisation réussie !",
+      "syncDesc" : "Les modifications apportées à vos comptes apparaîtront automatiquement, dans toutes les apps et sur toutes les plateformes.",
+      "activation" : "Félicitations !",
+      "activationDesc" : "Activation de Ledger Sync réussie.",
+      "syncAnother" : "Synchroniser avec une autre application Ledger Live",
+      "close" : "Fermer"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "Synchroniser",
+        "description" : "Synchronisez vos données Ledger Live avec celles d’un autre appareil pour une expérience fluide. "
+      },
+      "manageKey" : {
+        "title" : "Gérer votre clé",
+        "description" : "Protégez ou supprimez votre clé de chiffrement via un autre appareil Ledger.",
+        "success" : "Vos appareils ont été désynchronisés, et votre clé a été supprimée",
+        "drawer" : {
+          "step1" : {
+            "title" : "Gérer votre clé",
+            "titleCta" : "Supprimer votre clé",
+            "descCta" : "Toutes vos données synchronisées seront supprimées."
+          },
+          "step2" : {
+            "delete" : "Supprimer",
+            "cancel" : "Annuler",
+            "title" : "Voulez-vous vraiment supprimer votre clé de chiffrement ?",
+            "desc" : "En cliquant sur Supprimer, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment."
+          }
+        }
+      },
+      "manageInstances" : {
+        "title" : "Gérer les synchronisations",
+        "remove" : "Supprimer"
+      },
+      "synchronizedInstances" : {
+        "cta" : "Gérer",
+        "title" : "{{count}} synchronisation",
+        "title_plural" : "{{count}} synchronisations",
+        "error" : "Synchronisations",
+        "unsecuredError" : {
+          "title" : "La synchronisation n’est pas protégée par cet appareil Ledger",
+          "description" : "Veuillez connecter l’appareil Ledger que vous avez utilisé pour créer votre clé de chiffrement.",
+          "info" : "Si vous avez perdu votre appareil Ledger, ne vous inquiétez pas ! Vous pouvez quand même supprimer votre clé. En poursuivant, vos données et synchronisations seront supprimées.",
+          "cta" : "Connecter un autre appareil Ledger",
+          "ctaDelete" : "Supprimer ma clé de chiffrement"
+        },
+        "autoRemoveError" : {
+          "title" : "Suppression de la synchronisation impossible",
+          "description" : "Pour des raisons de sécurité, vous ne pouvez pas supprimer la synchronisation que vous utilisez actuellement sans supprimer votre clé de chiffrement.",
+          "info" : "En supprimant vote clé de chiffrement, vos appareils seront désynchronisés, et toutes les données synchronisées seront supprimées. Cette action n’a aucune répercussion sur vos actifs. Vous pouvez resynchroniser vos comptes à tout moment.",
+          "cta" : "Compris",
+          "ctaDelete" : "Supprimer ma clé de chiffrement"
+        },
+        "success" : "Votre {{member}} n’est plus synchronisé."
+      },
+      "errors" : {
+        "fetching" : "Une erreur est survenue lors de la récupération de vos synchronisations.",
+        "trustchain" : "Erreur : trustchain évaluée en false",
+        "memberCredentials" : "Erreur : identifiants membre évalués en false",
+        "ledgerSyncUnavailable" : "Ledger Sync n’est actuellement pas disponible. Cela n’a aucune incidence sur vos actifs."
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Choisissez votre méthode de synchronisation",
+        "scan" : {
+          "title" : "Scanner un code QR"
+        },
+        "connectDevice" : {
+          "title" : "Utiliser mon wallet Ledger"
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "disclaimer" : {
+      "clearSigningEnabled" : "Signature en clair activée",
+      "checkbox" : "Ne plus me le rappeler",
+      "CTA" : "Ouvrir {{app}}"
+    },
+    "manifestsList" : {
+      "title" : "Explorer",
+      "description" : "Ledger vous ouvre les portes du Web3"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Explorez le Web3",
+        "placeholder" : "Recherchez ou saisissez une URL"
       }
     }
   }

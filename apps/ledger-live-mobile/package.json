@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.47.2",
+  "version": "3.48.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -146,7 +146,7 @@
     "expo-keep-awake": "~12.8.2",
     "expo-modules-autolinking": "^1.10.2",
     "expo-modules-core": "^1.11.8",
-    "expo-random": "^13.6.0",
+    "expo-crypto": "^12.8.1",
     "fuse.js": "^6.4.6",
     "hoist-non-react-statics": "3.3.2",
     "i18next": "20.6.1",

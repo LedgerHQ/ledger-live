@@ -1,9 +1,8 @@
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Icon, Link } from "@ledgerhq/react-ui";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
@@ -15,6 +14,10 @@ import IconClock from "~/renderer/icons/Clock";
 import { openURL } from "~/renderer/linking";
 import { colors } from "~/renderer/styles/theme";
 import { track } from "~/renderer/analytics/segment";
+import {
+  getSwapProvider,
+  AdditionalProviderConfig,
+} from "@ledgerhq/live-common/exchange/providers/swap";
 
 const IconWrapper = styled(Box)`
   background: ${colors.lightGreen};
@@ -76,9 +79,19 @@ const SwapCompleted = ({
   provider: string;
   targetCurrency: string;
 }) => {
-  const openProviderSupport = useCallback(() => {
-    openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.support);
+  const [providerData, setproviderData] = useState<AdditionalProviderConfig>();
+
+  useEffect(() => {
+    const getProvideData = async () => {
+      const data = await getSwapProvider(provider);
+      setproviderData(data);
+    };
+    getProvideData();
   }, [provider]);
+
+  const openProviderSupport = useCallback(() => {
+    openURL(providerData!.supportUrl);
+  }, [providerData]);
 
   const openFeedbackFormTrack = () => {
     track("button_clicked", {

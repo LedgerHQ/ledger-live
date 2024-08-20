@@ -1,7 +1,6 @@
-import Transport from "@ledgerhq/hw-transport";
 import { ScenarioOptions } from "../test-helpers/types";
 
-export async function scenario(transport: Transport, { sdkForName }: ScenarioOptions) {
+export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions) {
   // first member initializes itself
   const name1 = "Member 1";
   const sdk1 = sdkForName(name1);
@@ -13,7 +12,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const member2 = { name: name2, id: member2creds.pubkey, permissions: 0xffffffff };
 
   // auth with the device and init the first trustchain
-  const { trustchain } = await sdk1.getOrCreateTrustchain(transport, member1creds);
+  const { trustchain } = await sdk1.getOrCreateTrustchain(deviceId, member1creds);
 
   // member 1 adds member 2 (= qr code flow)
   await sdk1.addMember(trustchain, member1creds, member2);

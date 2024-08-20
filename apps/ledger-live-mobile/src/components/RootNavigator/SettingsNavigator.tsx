@@ -71,7 +71,7 @@ import {
   MainTestScreen,
   TestScreenWithDrawerForcingToBeOpened,
   TestScreenWithDrawerRequestingToBeOpened,
-} from "~/newArch/components/QueuedDrawer/TestScreens";
+} from "LLM/components/QueuedDrawer/TestScreens";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 

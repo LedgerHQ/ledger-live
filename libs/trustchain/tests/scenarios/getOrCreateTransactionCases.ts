@@ -1,7 +1,6 @@
-import Transport from "@ledgerhq/hw-transport";
 import { ScenarioOptions } from "../test-helpers/types";
 
-export async function scenario(transport: Transport, { sdkForName }: ScenarioOptions) {
+export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions) {
   const name1 = "Member 1";
   const sdk1 = sdkForName(name1);
   const member1creds = await sdk1.initMemberCredentials();
@@ -20,14 +19,14 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
 
   // verify that getOrCreateTrustchain is idempotent
   const { trustchain: t1, type: type1 } = await sdk1.getOrCreateTrustchain(
-    transport,
+    deviceId,
     member1creds,
     callbacks,
   );
   expect(type1).toBe("created");
   expect(totalInteractionCounter).toBe(2); // there are two interaction: one for device auth, one for trustchain addition
   const { trustchain: t2, type: type2 } = await sdk1.getOrCreateTrustchain(
-    transport,
+    deviceId,
     member1creds,
     callbacks,
   );
@@ -40,7 +39,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
   const sdk2 = sdkForName(name2);
   const member2creds = await sdk2.initMemberCredentials();
   const { trustchain: t3, type: type3 } = await sdk2.getOrCreateTrustchain(
-    transport,
+    deviceId,
     member2creds,
     callbacks,
   );

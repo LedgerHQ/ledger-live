@@ -3,23 +3,23 @@ import { setupServer } from "msw/node";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { createSpeculosDevice, releaseSpeculosDevice } from "@ledgerhq/speculos-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import Transport from "@ledgerhq/hw-transport";
 import { crypto, TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-trustchain";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { RecorderConfig, ScenarioOptions, genSeed, recorderConfigDefaults } from "./types";
 import { getSdk } from "../../src";
+import { WithDevice } from "../../src/types";
 
 setEnv("GET_CALLS_RETRY", 0);
 
 export async function recordTestTrustchainSdk(
   file: string | null,
-  scenario: (transport: Transport, scenarioOptions: ScenarioOptions) => Promise<void>,
+  scenario: (deviceId: string, scenarioOptions: ScenarioOptions) => Promise<void>,
   config: RecorderConfig,
 ) {
   const seed = config.seed || genSeed();
   const coinapps = config.coinapps;
   if (!coinapps) throw new Error("coinapps is required"); // it's completed by e2e script
-  const overridesAppPath = config.overridesAppPath;
+
   const goNextOnText = config.goNextOnText || recorderConfigDefaults.goNextOnText;
   const approveOnceOnText = config.approveOnceOnText || [];
   const approveOnText = config.approveOnText || recorderConfigDefaults.approveOnText;
@@ -30,23 +30,22 @@ export async function recordTestTrustchainSdk(
   const createDeviceWithSeed = async (seed: string) => {
     const device = await createSpeculosDevice({
       model: DeviceModelId.nanoSP,
-      firmware: "2.1.0",
+      firmware: "1.1.2",
       appName: TRUSTCHAIN_APP_NAME,
-      appVersion: "0.0.1",
+      appVersion: "1.0.1",
       seed,
       coinapps, // folder where there is the Ledger Sync coin app
-      overridesAppPath,
     });
 
     // passthrough all success cases for the Ledger Sync coin app to accept all.
     const sub = device.transport.automationEvents.subscribe(event => {
-      const approveOnceIndex = approveOnceOnText.findIndex(t => event.text.includes(t));
+      const approveOnceIndex = approveOnceOnText.findIndex(t => event.text.trim() == t);
       if (approveOnceIndex > -1) {
         approveOnceOnText.splice(approveOnceIndex, 1);
         buttonClicksPromises.push(device.transport.button("both"));
-      } else if (goNextOnText.some(t => event.text.includes(t))) {
+      } else if (goNextOnText.some(t => event.text.trim() == t)) {
         buttonClicksPromises.push(device.transport.button("right"));
-      } else if (approveOnText.some(t => event.text.includes(t))) {
+      } else if (approveOnText.some(t => event.text.trim() == t)) {
         buttonClicksPromises.push(device.transport.button("both"));
       }
     });
@@ -111,8 +110,15 @@ export async function recordTestTrustchainSdk(
   };
 
   let { device, sub } = await createDeviceWithSeed(seed);
+  const withDevice: WithDevice = () => fn => fn(device.transport);
   const options: ScenarioOptions = {
-    sdkForName: name => getSdk(!!getEnv("MOCK"), { applicationId: 16, name }),
+    withDevice,
+    sdkForName: name =>
+      getSdk(
+        !!getEnv("MOCK"),
+        { applicationId: 16, name, apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING") },
+        withDevice,
+      ),
     pauseRecorder: async (milliseconds: number) => {
       await new Promise(resolve => setTimeout(resolve, milliseconds));
     },
@@ -122,14 +128,14 @@ export async function recordTestTrustchainSdk(
       const res = await createDeviceWithSeed(newSeed || genSeed());
       device = res.device;
       sub = res.sub;
-      return device.transport;
+      return device;
     },
   };
 
   // Run the scenario with speculos simulator and with all networking recorded.
   server.listen({ onUnhandledRequest: "bypass" });
   try {
-    await scenario(device.transport, options);
+    await scenario(device.id, options);
   } finally {
     sub.unsubscribe();
     await Promise.all(buttonClicksPromises);

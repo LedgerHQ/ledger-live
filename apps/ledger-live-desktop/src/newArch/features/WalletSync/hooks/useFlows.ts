@@ -1,3 +1,4 @@
+import { trustchainSelector } from "@ledgerhq/trustchain/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import {
@@ -70,11 +71,12 @@ export const STEPS_WITH_BACK: Step[] = [
   Step.ManageBackup,
   Step.DeleteBackup,
   Step.SynchronizedInstances,
+  Step.SynchronizeMode,
 ];
 
 export const useFlows = () => {
   const dispatch = useDispatch();
-
+  const trustchain = useSelector(trustchainSelector);
   const currentFlow = useSelector(walletSyncFlowSelector);
   const currentStep = useSelector(walletSyncStepSelector);
 
@@ -94,8 +96,8 @@ export const useFlows = () => {
     dispatch(setFlow({ flow: currentFlow, step: stepsRecord[newStep] }));
   };
 
-  const goToWelcomeScreenWalletSync = (isWalletSyncActivated: boolean) => {
-    if (isWalletSyncActivated) {
+  const goToWelcomeScreenWalletSync = () => {
+    if (trustchain?.rootId) {
       dispatch(setFlow({ flow: Flow.WalletSyncActivated, step: Step.WalletSyncActivated }));
     } else {
       dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));

@@ -1,5 +1,25 @@
 # @ledgerhq/icons-ui
 
+## 1.4.0
+
+### Minor Changes
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+### Patch Changes
+
+- [#7442](https://github.com/LedgerHQ/ledger-live/pull/7442) [`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change the size of polkadot icon that was bigger than others
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+### Patch Changes
+
+- [#7442](https://github.com/LedgerHQ/ledger-live/pull/7442) [`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change the size of polkadot icon that was bigger than others
+
 ## 1.3.0
 
 ### Minor Changes

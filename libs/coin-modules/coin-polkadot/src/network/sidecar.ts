@@ -15,7 +15,6 @@ import type {
   SidecarAccountBalanceInfo,
   SidecarPalletStorageItem,
   SidecarStakingInfo,
-  SidecarNominations,
   SidecarValidatorsParamStatus,
   SidecarValidatorsParamAddresses,
   SidecarValidators,
@@ -125,25 +124,6 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
   }: {
     data: SidecarStakingInfo;
   } = await callSidecar(`/accounts/${addr}/staking-info`);
-  return data;
-};
-
-/**
- * Returns the list of nominations for an account, with status and associated stake if relevant.
- *
- * @async
- * @param {string} addr
- *
- * @returns {SidecarNominations}
- */
-const fetchNominations = async (addr: string): Promise<SidecarNominations> => {
-  //LIVE-13136: commented for the time being
-  // return node.fetchNominations(addr);
-  const {
-    data,
-  }: {
-    data: SidecarNominations;
-  } = await callSidecar(`/accounts/${addr}/nominations`);
   return data;
 };
 
@@ -435,7 +415,7 @@ export const getStakingInfo = async (addr: string) => {
  * @returns {PolkadotNomination[}
  */
 const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
-  const nominations = await fetchNominations(addr);
+  const nominations = await node.fetchNominations(addr);
 
   if (!nominations) {
     return [];

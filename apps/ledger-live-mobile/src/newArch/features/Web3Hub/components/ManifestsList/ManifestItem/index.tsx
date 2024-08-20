@@ -1,12 +1,11 @@
 import React, { useCallback, useMemo } from "react";
-import { TouchableOpacity } from "react-native";
-import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { TouchableOpacity } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AppBranch, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import type { MainProps, SearchProps } from "LLM/features/Web3Hub/types";
 import AppIcon from "LLM/features/Web3Hub/components/AppIcon";
-import { NavigatorName, ScreenName } from "~/const";
 import { Theme } from "~/colors";
 
 export type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
@@ -49,10 +48,10 @@ function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
 
 export default function ManifestItem({
   manifest,
-  navigation,
+  onPress,
 }: {
   manifest: AppManifest;
-  navigation: NavigationProp;
+  onPress: (manifest: AppManifest) => void;
 }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -62,13 +61,8 @@ export default function ManifestItem({
     if (isDisabled) {
       return;
     }
-    navigation.push(NavigatorName.Web3Hub, {
-      screen: ScreenName.Web3HubApp,
-      params: {
-        manifestId: manifest.id,
-      },
-    });
-  }, [isDisabled, navigation, manifest.id]);
+    onPress(manifest);
+  }, [isDisabled, onPress, manifest]);
 
   const { color, badgeColor, borderColor, backgroundColor } = useMemo(
     () => getBranchStyle(manifest.branch, colors),
@@ -86,14 +80,7 @@ export default function ManifestItem({
 
   return (
     <TouchableOpacity disabled={isDisabled} onPress={handlePress}>
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        height={72}
-        backgroundColor={colors.background}
-        paddingX={4}
-        paddingY={2}
-      >
+      <Flex flexDirection="row" alignItems="center" height={72} paddingX={4} paddingY={2}>
         <AppIcon isDisabled={isDisabled} size={48} name={manifest.name} icon={icon} />
         <Flex marginX={16} height="100%" flexGrow={1} flexShrink={1} justifyContent={"center"}>
           <Flex flexDirection="row" alignItems={"center"} mb={2}>

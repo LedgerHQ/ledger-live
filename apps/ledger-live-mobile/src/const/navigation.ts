@@ -511,10 +511,14 @@ export enum ScreenName {
   AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
   AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
 
-  WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  WalletSyncActivationInit = "WalletSyncActivationInit",
   WalletSyncActivationProcess = "WalletSyncActivationProcess",
   WalletSyncSuccess = "WalletSyncSuccess",
   WalletSyncActivated = "WalletSyncActivated",
+  WalletSyncManageKeyDeleteSuccess = "WalletSyncManageKeyDeleteSuccess",
+  WalletSyncUnSynchSuccess = "WalletSyncUnSynchSuccess",
+  WalletSyncManageInstancesProcess = "WalletSyncManageInstancesProcess",
+  WalletSyncManageInstancesSuccess = "WalletSyncManageInstancesSuccess",
 
   MockedAddAssetButton = "MockedAddAssetButton",
   GenericLandingPage = "GenericLandingPage",
@@ -633,7 +637,7 @@ export enum NavigatorName {
   SyncOnboarding = "SyncOnboarding",
 
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
-  WalletSyncActivationSettings = "WalletSyncActivationSettings",
+  WalletSyncActivationInit = "WalletSyncActivationInit",
   LandingPages = "LandingPages",
 
   // Web3Hub

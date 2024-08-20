@@ -25,8 +25,15 @@ const SectionExport = () => {
       <Row
         title={t("settings.export.operations.title")}
         desc={t("settings.export.operations.desc")}
+        dataTestId="save-operation-history-row"
       >
-        <ExportOperationsBtn primary t={t} openModal={() => ""} accounts={[]} />
+        <ExportOperationsBtn
+          primary
+          t={t}
+          openModal={() => ""}
+          accounts={[]}
+          dataTestId="save-operation-history-btn"
+        />
       </Row>
     </>
   );

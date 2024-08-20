@@ -30,3 +30,18 @@ export type SearchProps = Web3HubScreenProps<ScreenName.Web3HubSearch>;
 export type AppProps = Web3HubScreenProps<ScreenName.Web3HubApp>;
 
 export type TabsProps = Web3HubScreenProps<ScreenName.Web3HubTabs>;
+
+export type Web3HubDB = {
+  recentlyUsed: RecentlyUsed[];
+  dismissedManifests: DismissedManifests;
+  // localLiveApp: LiveAppManifest[];
+};
+
+export type RecentlyUsed = {
+  id: string;
+  usedAt: string;
+};
+
+export type DismissedManifests = {
+  [id: string]: boolean;
+};

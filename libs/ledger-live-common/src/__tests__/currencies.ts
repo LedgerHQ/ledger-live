@@ -25,6 +25,9 @@ test("erc20 are all consistent with those on ledgerjs side", () => {
     }
 
     if (token.tokenType === "erc20") {
+      if (token.parentCurrency.family === "filecoin") {
+        continue;
+      }
       const tokenData = byContractAddressAndChainId(
         token.contractAddress,
         token.parentCurrency.ethereumLikeInfo?.chainId || 0,

@@ -48,15 +48,26 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   let titleKey = "swap2.webviewErrorDrawer.title";
   let descriptionKey = "swap2.webviewErrorDrawer.description";
-  let errorCodeSection = error?.cause?.swapCode ? (
-    <Trans
-      mr={2}
-      i18nKey="swap2.webviewErrorDrawer.code"
-      values={{
-        errorCode: error.cause.swapCode,
-      }}
-    />
-  ) : null;
+  let errorCodeSection = null;
+
+  if (error?.cause?.swapCode) {
+    switch (error.cause.swapCode) {
+      case "swap010":
+        errorCodeSection = <Trans i18nKey="errors.PayinExtraIdError.message" />;
+        break;
+      default:
+        errorCodeSection = (
+          <Trans
+            mr={2}
+            i18nKey="swap2.webviewErrorDrawer.defaultCode"
+            values={{
+              errorCode: error.cause.swapCode,
+            }}
+          />
+        );
+        break;
+    }
+  }
   switch (error?.cause?.response?.data?.error?.messageKey) {
     case "WRONG_OR_EXPIRED_RATE_ID":
       titleKey = "errors.SwapRateExpiredError.title";
@@ -77,7 +88,7 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
         </ErrorTitle>
         <ErrorDescription>
           <Trans i18nKey={descriptionKey} />
-          {errorCodeSection}
+          <div>{errorCodeSection} </div>
         </ErrorDescription>
       </Box>
     </ContentBox>

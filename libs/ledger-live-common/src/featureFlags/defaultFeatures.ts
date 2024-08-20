@@ -92,14 +92,12 @@ export const DEFAULT_FEATURES: Features = {
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
-  multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
-  listAppsV2minor1: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   newsfeedPage: initFeature(),
@@ -408,6 +406,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxSwapLiveAppDemoThree: {
+    enabled: false,
+    params: {
+      manifest_id: "swap-live-app-demo-3",
+    },
+  },
+
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
   ptxSwapExodusProvider: DEFAULT_FEATURE,
   ptxSwapThorswapProvider: DEFAULT_FEATURE,
@@ -468,12 +473,25 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   spamReportNfts: DEFAULT_FEATURE,
-  lldWalletSync: DEFAULT_FEATURE,
-  llmWalletSync: DEFAULT_FEATURE,
+  lldWalletSync: {
+    ...DEFAULT_FEATURE,
+    params: {
+      environment: "STAGING",
+      watchConfig: {},
+    },
+  },
+  llmWalletSync: {
+    ...DEFAULT_FEATURE,
+    params: {
+      environment: "STAGING",
+      watchConfig: {},
+    },
+  },
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
   lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
+  llmMarketQuickActions: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
