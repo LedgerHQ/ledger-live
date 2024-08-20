@@ -166,6 +166,7 @@ export const urls = {
   solana: {
     supportPage: "https://support.ledger.com",
     stakingPage: "https://support.ledger.com/article/4731749170461-zd",
+    splTokenInfo: "Solana spl tokens link TODO: to be defined",
   },
   resources: {
     gettingStarted:
