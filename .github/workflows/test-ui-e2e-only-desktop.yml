@@ -206,8 +206,10 @@ jobs:
 
           if [ "$failedTests" -gt 0 ] || [ "$brokenTests" -gt 0 ]; then
             echo "STATUS_COLOR=#FF333C" >> $GITHUB_ENV;
+            echo "STATUS_EMOJI=❌" >> $GITHUB_ENV;
           else
             echo "STATUS_COLOR=#33FF39" >> $GITHUB_ENV;
+            echo "STATUS_EMOJI=✅" >> $GITHUB_ENV;
           fi
 
       - uses: actions/github-script@v6
@@ -245,6 +247,7 @@ jobs:
                 status: "${{ needs.e2e-tests-linux.outputs.status }}",
               }
             };
+            const statusEmoji = process.env.STATUS_EMOJI;
 
             let summary = `### Playwright Tests
             `
@@ -269,7 +272,7 @@ jobs:
             |`;
 
             Object.entries(report).forEach(([os, values]) => {
-              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+              summary += ` ${values.pass ? statusEmoji : "❌"} (${values.status}) |`;
             });
 
             summary += `
@@ -317,7 +320,7 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"} ${process.env.TEST_RESULT || 'No test results'}`
+                        "text": `- 🐧 linux: ${statusEmoji} ${process.env.TEST_RESULT || 'No test results'}`
                       }
                     },
                     {

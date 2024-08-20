@@ -93,6 +93,7 @@ export class Layout extends Component {
     await this.discreetTooltip.waitFor({ state: "hidden" }); // makes sure the tooltip has disappeared to prevent flakiness
   }
 
+  @step("Go to Settings")
   async goToSettings() {
     await this.topbarSettingsButton.click();
   }
