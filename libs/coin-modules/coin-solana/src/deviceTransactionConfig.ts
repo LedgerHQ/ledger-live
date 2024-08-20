@@ -70,27 +70,8 @@ function fieldsForTransfer(_command: TransferCommand): DeviceTransactionField[] 
   return fields;
 }
 
-function fieldsForTokenTransfer(command: TokenTransferCommand): DeviceTransactionField[] {
+function fieldsForTokenTransfer(_command: TokenTransferCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
-
-  if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
-    fields.push({
-      type: "address",
-      label: "Create token acct",
-      address: command.recipientDescriptor.tokenAccAddress,
-    });
-
-    fields.push({
-      type: "address",
-      label: "From mint",
-      address: command.mintAddress,
-    });
-    fields.push({
-      type: "address",
-      label: "Funded by",
-      address: command.ownerAddress,
-    });
-  }
 
   fields.push({
     type: "amount",
@@ -98,27 +79,14 @@ function fieldsForTokenTransfer(command: TokenTransferCommand): DeviceTransactio
   });
 
   fields.push({
-    type: "address",
-    address: command.mintAddress,
-    label: "Mint",
+    type: "text",
+    value: "Solana",
+    label: "Network",
   });
 
   fields.push({
-    type: "address",
-    address: command.ownerAssociatedTokenAccountAddress,
-    label: "From",
-  });
-
-  fields.push({
-    type: "address",
-    address: command.ownerAddress,
-    label: "Owner",
-  });
-
-  fields.push({
-    type: "address",
-    address: command.ownerAddress,
-    label: "Fee payer",
+    type: "fees",
+    label: "Max network fees",
   });
 
   return fields;
