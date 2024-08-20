@@ -98,7 +98,8 @@
     "patterns": {
       "id": "ID {{ value }}",
       "times": "x{{ value }}"
-    }
+    },
+    "quote": "Quote"
   },
   "errors": {
     "ReplacementTransactionUnderpriced": {

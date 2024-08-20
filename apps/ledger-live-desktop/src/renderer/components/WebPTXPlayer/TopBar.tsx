@@ -1,6 +1,6 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import { useHistory, useRouteMatch } from "react-router";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { rgba } from "~/renderer/styles/helpers";
@@ -101,6 +101,7 @@ export type Props = {
 };
 
 export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
+  const { t } = useTranslation();
   const lastMatchingURL = useRef<string | null>(null);
   const history = useHistory();
   const match = useRouteMatch();
@@ -171,8 +172,8 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";
 
-    return lastScreen === "compare_providers" ? "Quote" : manifest.name;
-  }, [localStorage, manifest]);
+    return lastScreen == "compare_providers" ? t("common.quote") : manifest.name;
+  }, [localStorage, manifest, t]);
 
   const handleReload = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
