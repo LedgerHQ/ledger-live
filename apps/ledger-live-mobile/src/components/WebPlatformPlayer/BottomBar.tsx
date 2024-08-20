@@ -1,17 +1,12 @@
 import React, { RefObject, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
-import Button from "../Button";
-import { Trans } from "react-i18next";
-import CircleCurrencyIcon from "../CircleCurrencyIcon";
-import { useSelectAccount } from "../Web3AppWebview/helpers";
-import { useMaybeAccountName } from "~/reducers/wallet";
+import SelectAccountButton from "./SelectAccountButton";
 
 type BottomBarProps = {
   manifest: AppManifest;
@@ -48,7 +43,6 @@ export function BottomBar({
   currentAccountHistDb,
 }: BottomBarProps) {
   const { colors } = useTheme();
-  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
   const shouldDisplaySelectAccount = !!manifest.dapp;
 
   const handleForward = useCallback(() => {
@@ -69,10 +63,6 @@ export function BottomBar({
     webview.reload();
   }, [webviewAPIRef]);
 
-  const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
-
-  const currentAccountName = useMaybeAccountName(currentAccount);
-
   return (
     <Flex flexDirection="row" paddingY={4} paddingX={4} alignItems="center">
       <Flex flexDirection="row" flex={1}>
@@ -92,27 +82,7 @@ export function BottomBar({
       </Flex>
 
       {shouldDisplaySelectAccount ? (
-        <Button type="primary" onPress={onSelectAccount}>
-          {!currentAccount ? (
-            <Text>
-              <Trans i18nKey="common.selectAccount" />
-            </Text>
-          ) : (
-            <Flex flexDirection="row" height={50} alignItems="center" justifyContent="center">
-              <CircleCurrencyIcon
-                size={24}
-                currency={
-                  currentAccount.type === "TokenAccount"
-                    ? currentAccount.token
-                    : currentAccount.currency
-                }
-              />
-              <Text color={"neutral.c20"} ml={4}>
-                {currentAccountName}
-              </Text>
-            </Flex>
-          )}
-        </Button>
+        <SelectAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
       ) : null}
 
       <IconButton onPress={handleReload} alignSelf="flex-end">
