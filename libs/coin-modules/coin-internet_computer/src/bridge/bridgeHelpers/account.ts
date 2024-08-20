@@ -7,21 +7,19 @@ import BigNumber from "bignumber.js";
 import { ICP_FEES } from "../../consts";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { normalizeEpochTimestamp } from "../../common-logic/utils";
-import { InternetComputerOperation } from "../../types";
+import { TransactionWithId } from "@zondax/ledger-live-icp";
+import { ICPAccount, InternetComputerOperation } from "../../types";
 import invariant from "invariant";
-import {
-  deriveAddressFromPubkey,
-  hashTransaction,
-  TransactionWithId,
-} from "@zondax/ledger-live-icp";
+import { NeuronsData } from "@zondax/ledger-live-icp/neurons";
+import { hashTransaction, deriveAddressFromPubkey } from "@zondax/ledger-live-icp/utils";
 
-export const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape<ICPAccount> = async (info, _syncConfig) => {
   const { currency, derivationMode, rest = {}, initialAccount } = info;
   const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
   invariant(publicKey, "publicKey is required");
 
   // deriving address from public key
-  const address = await deriveAddressFromPubkey(publicKey);
+  const address = deriveAddressFromPubkey(publicKey);
   invariant(address, "address is required");
 
   const accountId = encodeAccountId({
@@ -36,21 +34,29 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const blockHeight = await fetchBlockHeight();
   const balance = await fetchBalance(address);
+
   const txns = await fetchTxns(
     address,
     BigInt(blockHeight.toString()),
-    initialAccount ? BigInt(initialAccount.blockHeight.toString()) : undefined,
+    initialAccount ? BigInt(initialAccount.blockHeight) : undefined,
   );
+  const neurons =
+    initialAccount && initialAccount.neurons ? initialAccount.neurons : NeuronsData.empty();
 
-  const result: Partial<Account> = {
+  const result: Partial<ICPAccount> = {
     id: accountId,
     balance,
     spendableBalance: balance,
     operations: flatMap<TransactionWithId, InternetComputerOperation>(
       txns,
-      mapTxToOps(accountId, address),
+      mapTxToOps(
+        accountId,
+        address,
+        neurons.fullNeurons.map(n => n.accountIdentifier),
+      ),
     ),
     blockHeight: blockHeight.toNumber(),
+    neurons,
     operationsCount: (initialAccount?.operations.length ?? 0) + txns.length,
     xpub: publicKey,
   };
@@ -67,7 +73,12 @@ function reconciliatePublicKey(publicKey?: string, initialAccount?: Account): st
   throw new Error("publicKey wasn't properly restored");
 }
 
-const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
+const mapTxToOps = (
+  accountId: string,
+  address: string,
+  neuronsAddresses: string[],
+  fee = ICP_FEES,
+) => {
   return (txInfo: TransactionWithId): InternetComputerOperation[] => {
     const { transaction: txn } = txInfo;
     const ops: InternetComputerOperation[] = [];
@@ -99,6 +110,7 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
       });
     }
 
+    // TODO: calculate block height, block hash
     const blockHeight = Number(txInfo.id);
     const blockHash = "";
 
@@ -116,6 +128,10 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
       type = "OUT";
     } else {
       type = "IN";
+    }
+
+    if (neuronsAddresses.includes(toAccount)) {
+      type = BigNumber(memo ?? "0").gt(0) ? "STAKE_NEURON" : "TOP_UP_NEURON";
     }
 
     if (isSending) {

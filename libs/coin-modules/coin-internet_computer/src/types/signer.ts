@@ -6,6 +6,15 @@ export type ICPSignature = {
   signatureDER?: Buffer;
 };
 
+export type ICPSignUpdateCall = {
+  returnCode: number;
+  errorMessage?: string;
+  RequestHash?: Buffer;
+  RequestSignatureRS?: Buffer;
+  StatusReadHash?: Buffer;
+  StatusReadSignatureRS?: Buffer;
+};
+
 export type ICPGetAddrResponse = {
   returnCode: number;
   errorMessage: string;
@@ -18,5 +27,11 @@ export type ICPGetAddrResponse = {
 export interface ICPSigner {
   showAddressAndPubKey(path: string): Promise<ICPGetAddrResponse>;
   getAddressAndPubKey(path: string): Promise<ICPGetAddrResponse>;
-  sign(path: string, message: Buffer): Promise<ICPSignature>;
+  sign(path: string, message: Buffer, txtype: 1 | 0): Promise<ICPSignature>;
+  signUpdateCall(
+    path: string,
+    message: Buffer,
+    readStateBody: Buffer,
+    stake: 1 | 0,
+  ): Promise<ICPSignUpdateCall>;
 }

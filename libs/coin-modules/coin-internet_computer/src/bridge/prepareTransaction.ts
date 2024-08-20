@@ -1,22 +1,32 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
+import {
+  ICPAccount,
+  ICPAccountRaw,
+  InternetComputerOperation,
+  Transaction,
+  TransactionStatus,
+} from "../types";
 import { getAddress } from "./bridgeHelpers/addresses";
-import { validateAddress } from "@zondax/ledger-live-icp";
+import invariant from "invariant";
+import { getSubAccountIdentifier, validateAddress } from "@zondax/ledger-live-icp/utils";
+import { MAINNET_GOVERNANCE_CANISTER_ID } from "../consts";
 
-export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
-  account,
-  transaction,
-) => {
-  // log("debug", "[prepareTransaction] start fn");
-
+export const prepareTransaction: AccountBridge<
+  Transaction,
+  ICPAccount,
+  TransactionStatus,
+  InternetComputerOperation,
+  ICPAccountRaw
+>["prepareTransaction"] = async (account, transaction) => {
   const { address } = getAddress(account);
   const { recipient } = transaction;
 
   let amount = transaction.amount;
   if (recipient && address) {
-    // log("debug", "[prepareTransaction] fetching estimated fees");
+    const recipientValidation = await validateAddress(recipient);
+    const addressValidation = await validateAddress(address);
 
-    if ((await validateAddress(recipient)).isValid && (await validateAddress(address)).isValid) {
+    if (recipientValidation.isValid && addressValidation.isValid) {
       if (transaction.useAllAmount) {
         amount = account.spendableBalance.minus(transaction.fees);
         return { ...transaction, amount };
@@ -24,6 +34,20 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     }
   }
 
-  // log("debug", "[prepareTransaction] finish fn");
+  if (transaction.neuronAccountIdentifier && transaction.type === "increase_stake") {
+    return { ...transaction, recipient: transaction.neuronAccountIdentifier };
+  }
+
+  if (transaction.type === "create_neuron" && transaction.recipient === "" && !transaction.memo) {
+    invariant(account.xpub, "[ICP](prepareTransaction) Xpub not found");
+
+    const { identifier, nonce } = await getSubAccountIdentifier(
+      MAINNET_GOVERNANCE_CANISTER_ID,
+      account.xpub,
+    );
+
+    return { ...transaction, recipient: identifier, memo: nonce.toString() };
+  }
+
   return transaction;
 };

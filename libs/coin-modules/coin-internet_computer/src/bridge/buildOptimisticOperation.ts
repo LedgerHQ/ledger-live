@@ -1,22 +1,26 @@
-import { Account, OperationType } from "@ledgerhq/types-live";
+import { OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { InternetComputerOperation, Transaction } from "../types";
-import { getAddress } from "./bridgeHelpers/addresses";
+import { ICPAccount, InternetComputerOperation, Transaction } from "../types";
+import { getAddress } from "../bridge/bridgeHelpers/addresses";
 
-export const buildOptimisticOperation = async (
-  account: Account,
+export const buildOptimisticSendOperation = async (
+  account: ICPAccount,
   transaction: Transaction,
-  hash: string,
+  hash: string = "",
   operationType: OperationType = "OUT",
 ): Promise<InternetComputerOperation> => {
   const { id: accountId } = account;
   const { recipient, amount } = transaction;
   const { address } = getAddress(account);
 
+  if (!["send", "increase_stake", "create_neuron"].includes(transaction.type)) {
+    operationType = "NONE";
+  }
+
   return {
     id: encodeOperationId(accountId, hash, operationType),
     hash,
-    type: "OUT",
+    type: operationType,
     senders: [address],
     recipients: [recipient],
     accountId,
@@ -27,6 +31,7 @@ export const buildOptimisticOperation = async (
     date: new Date(),
     extra: {
       memo: transaction.memo,
+      methodName: transaction.type,
     },
   };
 };
