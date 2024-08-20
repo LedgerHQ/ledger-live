@@ -37,8 +37,9 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const { isCurrencyAvailable } = useRampCatalog();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const hasAccounts = useSelector(accountsCountSelector) > 0;
-  const hasFunds = !useSelector(areAccountsEmptySelector) && hasAccounts;
+  const hasAnyAccounts = useSelector(accountsCountSelector) > 0;
+  const hasCurrencyAccounts = currency ? !!accounts?.length : hasAnyAccounts;
+  const hasFunds = !useSelector(areAccountsEmptySelector) && hasAnyAccounts;
   const hasCurrency = currency ? !!accounts?.some(({ balance }) => balance.gt(0)) : hasFunds;
 
   const recoverEntryPoint = useFeature("protectServicesMobile");
@@ -70,12 +71,16 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
         disabled: readOnlyModeEnabled,
         route: [
           NavigatorName.ReceiveFunds,
-          currency
-            ? {
-                screen: ScreenName.ReceiveSelectAccount,
-                params: { currency },
-              }
-            : { screen: ScreenName.ReceiveSelectCrypto },
+          !currency
+            ? { screen: ScreenName.ReceiveSelectCrypto }
+            : {
+                screen: hasCurrencyAccounts
+                  ? ScreenName.ReceiveSelectAccount
+                  : ScreenName.ReceiveAddAccountSelectDevice,
+                params: {
+                  currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
+                },
+              },
         ],
         icon: IconsLegacy.ArrowBottomMedium,
       },
@@ -166,6 +171,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     return list;
   }, [
     currency,
+    hasCurrencyAccounts,
     hasCurrency,
     hasFunds,
     isPtxServiceCtaExchangeDrawerDisabled,
