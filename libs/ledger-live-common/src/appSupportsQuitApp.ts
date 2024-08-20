@@ -1,9 +1,9 @@
 import semver from "semver";
 import type { AppAndVersion } from "./hw/connectApp";
 export const req = {
-  method: "POST",
-  url: "https://appstore.aws.prd.ldg-tech.com/api/get_apps",
-  data: {
+  method: "GET",
+  url: "https://manager.api.live.ledger.com/api/get_apps",
+  query: {
     current_se_firmware_final_version: 118,
     device_version: 10,
     provider: 1,
