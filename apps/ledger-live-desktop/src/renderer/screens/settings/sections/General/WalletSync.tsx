@@ -9,7 +9,7 @@ import {
   walletSyncStepSelector,
 } from "~/renderer/reducers/walletSync";
 import { resetWalletSync, setDrawerVisibility } from "~/renderer/actions/walletSync";
-import { trustchainSelector } from "@ledgerhq/trustchain/store";
+
 import {
   useWalletSyncAnalytics,
   AnalyticsPage,
@@ -37,7 +37,6 @@ const WalletSyncRow = () => {
   const currentStep = useSelector(walletSyncStepSelector);
   const hasBeenFaked = useSelector(walletSyncFakedSelector);
   const hasBack = useMemo(() => STEPS_WITH_BACK.includes(currentStep), [currentStep]);
-  const trustchain = useSelector(trustchainSelector);
 
   const { onClickTrack, onActionTrack } = useWalletSyncAnalytics();
 
@@ -59,7 +58,7 @@ const WalletSyncRow = () => {
 
   const openDrawer = () => {
     if (!hasBeenFaked) {
-      goToWelcomeScreenWalletSync(!!trustchain?.rootId);
+      goToWelcomeScreenWalletSync();
       onClickTrack({ button: "Wallet Sync", page: AnalyticsPage.SettingsGeneral });
     }
     dispatch(setDrawerVisibility(true));
