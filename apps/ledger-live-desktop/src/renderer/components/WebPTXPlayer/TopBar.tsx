@@ -172,7 +172,7 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";
 
-    return lastScreen == "compare_providers" ? t("common.quote") : manifest.name;
+    return lastScreen === "compare_providers" ? t("common.quote") : manifest.name;
   }, [localStorage, manifest, t]);
 
   const handleReload = useCallback(() => {
