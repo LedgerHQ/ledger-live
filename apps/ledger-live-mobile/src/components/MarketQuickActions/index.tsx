@@ -3,19 +3,16 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, QuickActionButtonProps, QuickActionList } from "@ledgerhq/native-ui";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { track } from "~/analytics";
 import { EntryOf } from "~/types/helpers";
-import useQuickActions from "../../hooks/useQuickActions";
+import useQuickActions, { QuickActionProps } from "../../hooks/useQuickActions";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 
-type Props = { currency: CryptoOrTokenCurrency };
-
-export const MarketQuickActions = ({ currency }: Props) => {
+export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>) => {
   const { t } = useTranslation();
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const router = useRoute();
-  const { quickActionsList } = useQuickActions({ currency });
+  const { quickActionsList } = useQuickActions(quickActionsProps);
 
   const quickActionsData: QuickActionButtonProps[] = useMemo(
     () =>

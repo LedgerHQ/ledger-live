@@ -175,7 +175,7 @@ function View({
 
         {internalCurrency && (
           <FeatureToggle featureId="llmMarketQuickActions">
-            <MarketQuickActions currency={internalCurrency} />
+            <MarketQuickActions currency={internalCurrency} accounts={accounts} />
           </FeatureToggle>
         )}
 

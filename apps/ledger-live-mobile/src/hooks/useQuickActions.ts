@@ -6,6 +6,7 @@ import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { EntryOf } from "~/types/helpers";
@@ -28,17 +29,20 @@ type Actions =
   | "WALLET_CONNECT"
   | "RECOVER";
 
-type Props = { currency?: CryptoOrTokenCurrency };
+export type QuickActionProps = { currency?: CryptoOrTokenCurrency; accounts?: AccountLike[] };
 
-function useQuickActions({ currency }: Props = {}) {
+function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const route = useRoute();
 
   const { isCurrencyAvailable } = useRampCatalog();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const accountsCount: number = useSelector(accountsCountSelector);
-  const hasAccounts = accountsCount > 0;
-  const areAccountsEmpty = useSelector(areAccountsEmptySelector);
+  const allAccountsCount: number = useSelector(accountsCountSelector);
+  const hasAccounts = currency ? !!accounts?.length : allAccountsCount > 0;
+  const areAllAccountsEmpty = useSelector(areAccountsEmptySelector);
+  const hasNoFund = currency
+    ? !!accounts?.every(accounts => accounts.balance.lte(0))
+    : !hasAccounts || areAllAccountsEmpty;
 
   const recoverEntryPoint = useFeature("protectServicesMobile");
   const stakePrograms = useFeature("stakePrograms");
@@ -55,7 +59,7 @@ function useQuickActions({ currency }: Props = {}) {
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
       SEND: {
-        disabled: !hasAccounts || readOnlyModeEnabled || areAccountsEmpty,
+        disabled: readOnlyModeEnabled || hasNoFund,
         route: [
           NavigatorName.SendFunds,
           {
@@ -96,11 +100,7 @@ function useQuickActions({ currency }: Props = {}) {
 
     if (canBeSold) {
       list.SELL = {
-        disabled:
-          isPtxServiceCtaExchangeDrawerDisabled ||
-          !hasAccounts ||
-          readOnlyModeEnabled ||
-          areAccountsEmpty,
+        disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || hasNoFund,
         route: [
           NavigatorName.Exchange,
           {
@@ -113,11 +113,7 @@ function useQuickActions({ currency }: Props = {}) {
     }
 
     list.SWAP = {
-      disabled:
-        isPtxServiceCtaExchangeDrawerDisabled ||
-        !hasAccounts ||
-        readOnlyModeEnabled ||
-        areAccountsEmpty,
+      disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || hasNoFund,
       route: [
         NavigatorName.Swap,
         {
@@ -174,8 +170,7 @@ function useQuickActions({ currency }: Props = {}) {
     return list;
   }, [
     currency,
-    hasAccounts,
-    areAccountsEmpty,
+    hasNoFund,
     isPtxServiceCtaExchangeDrawerDisabled,
     readOnlyModeEnabled,
     route,
