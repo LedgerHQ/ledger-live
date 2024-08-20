@@ -3719,7 +3719,8 @@
       }
     },
     "token": {
-      "frozenStateWarning": "Account assets are frozen!"
+      "frozenStateWarning": "Account assets are frozen!",
+      "transferWarning": "Solana SPL tokens transactions have unique characteristics. To learn more, visit: <0>ledger.com/spl</0>"
     }
   },
   "ethereum": {

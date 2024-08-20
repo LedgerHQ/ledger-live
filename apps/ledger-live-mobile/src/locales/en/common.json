@@ -5914,7 +5914,8 @@
       "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
     },
     "token": {
-      "frozenStateWarning": "Account assets are frozen!"
+      "frozenStateWarning": "Account assets are frozen!",
+      "transferWarning": "Double-check the transaction details on your Ledger device before signing. Solana SPL tokens transactions have unique characteristics. To learn more, visit: <0>ledger.com/spl</0>"
     }
   },
   "near": {
