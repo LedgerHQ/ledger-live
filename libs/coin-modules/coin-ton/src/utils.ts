@@ -21,7 +21,6 @@ import {
 import {
   TonCell,
   TonComment,
-  TonPayloadFormat,
   TonPayloadJettonTransfer,
   TonTransaction,
   Transaction,
@@ -195,12 +194,6 @@ export const getLedgerTonPath = (path: string): number[] => {
   }
   return numPath;
 };
-
-/**
- * Checks if the given payload is a jetton transfer.
- */
-export const isJettonTransfer = (payload: TonPayloadFormat): boolean =>
-  payload.type === "jetton-transfer";
 
 /**
  * Builds the body of a token transfer transaction.

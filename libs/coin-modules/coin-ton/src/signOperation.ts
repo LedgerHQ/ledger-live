@@ -1,10 +1,12 @@
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
-import { Address, beginCell, external, storeMessage } from "@ton/core";
+import { Address, beginCell, external, storeMessage, toNano } from "@ton/core";
 import { WalletContractV4 } from "@ton/ton";
+import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
+import { TOKEN_TRANSFER_MAX_FEE } from "./constants";
 import type { TonSigner } from "./signer";
 import type { TonCell, TonOperation, Transaction } from "./types";
 import { buildTonTransaction, getLedgerTonPath } from "./utils";
@@ -93,8 +95,9 @@ export const buildOptimisticOperation = (
 
   const subAccount = findSubAccountById(account, subAccountId ?? "");
   const tokenTransfer = Boolean(subAccount && isTokenAccount(subAccount));
-
-  const value = tokenTransfer ? fees : amount.plus(fees);
+  const value = tokenTransfer
+    ? BigNumber(toNano(TOKEN_TRANSFER_MAX_FEE).toString())
+    : amount.plus(fees);
 
   const op: TonOperation = {
     id: "",
