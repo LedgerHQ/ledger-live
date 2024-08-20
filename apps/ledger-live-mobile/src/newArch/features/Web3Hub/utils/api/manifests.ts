@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+import VersionNumber from "react-native-version-number";
 import network from "@ledgerhq/live-network/network";
 import { GetNextPageParamFunction, InfiniteData, QueryFunction } from "@tanstack/react-query";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -31,28 +33,65 @@ export const fetchManifestsMock: (
     return list.slice((pageParam - 1) * PAGE_SIZE, pageParam * PAGE_SIZE);
   };
 
-export const fetchManifests: (
+const PLATFORM = Platform.OS === "ios" ? "ios" : "android";
+const LLVersion = VersionNumber.appVersion;
+
+const apiVersions = ["1.0.0", "2.0.0"];
+
+const defaultBranches = ["stable", "soon"];
+
+type FetchManifests = (
   category: string,
   search: string,
-) => QueryFunction<LiveAppManifest[], string[], number> =
-  (category, search) =>
-  async ({ pageParam }) => {
-    const url = new URL(`${URL_ORIGIN}/api/v2/apps`);
-    url.searchParams.set("resultsPerPage", `${PAGE_SIZE}`);
+  allowExperimentalApps: boolean,
+  allowDebugApps: boolean,
+  lang: string,
+) => QueryFunction<LiveAppManifest[], string[], number>;
+
+export const fetchManifests: FetchManifests = (
+  category,
+  search,
+  allowExperimentalApps,
+  allowDebugApps,
+  lang,
+) => {
+  const url = new URL(`${URL_ORIGIN}/api/v2/apps`);
+  url.searchParams.set("llVersion", LLVersion);
+  url.searchParams.set("platform", PLATFORM);
+  url.searchParams.set("private", "false");
+  url.searchParams.set("lang", lang ? lang : "en");
+  apiVersions.forEach(apiVersion => {
+    url.searchParams.append("apiVersion", apiVersion);
+  });
+  const branches = [
+    ...defaultBranches,
+    allowExperimentalApps && "experimental",
+    allowDebugApps && "debug",
+  ];
+  branches.forEach(branch => {
+    if (branch) {
+      url.searchParams.append("branches", branch);
+    }
+  });
+
+  url.searchParams.set("resultsPerPage", `${PAGE_SIZE}`);
+  if (category !== "all") {
+    url.searchParams.set("categories", category);
+  }
+  // TODO: make sure to trim search
+  if (search) {
+    url.searchParams.set("search", search);
+  }
+
+  return async ({ pageParam }) => {
     url.searchParams.set("page", `${pageParam}`);
-    if (category !== "all") {
-      url.searchParams.set("categories", category);
-    }
-    // TODO: make sure to trim search
-    if (search) {
-      url.searchParams.set("search", search);
-    }
 
     const res = await network<LiveAppManifest[]>({
       url: url.toString(),
     });
     return res.data;
   };
+};
 
 export const selectManifests = (data: InfiniteData<LiveAppManifest[], number>) => {
   return data.pages.flat(1);
@@ -78,11 +117,16 @@ export const fetchManifestByIdMock = (manifestId: string) => async () => {
   return manifests.find(mock => mock.id === manifestId);
 };
 
-export const fetchManifestById = (manifestId: string) => async () => {
+export const fetchManifestById = (manifestId: string, lang: string) => {
   const url = new URL(`${URL_ORIGIN}/api/v2/apps/${manifestId}`);
+  url.searchParams.set("llVersion", LLVersion);
+  url.searchParams.set("platform", PLATFORM);
+  url.searchParams.set("lang", lang ? lang : "en");
 
-  const res = await network<LiveAppManifest>({
-    url: url.toString(),
-  });
-  return res.data;
+  return async () => {
+    const res = await network<LiveAppManifest>({
+      url: url.toString(),
+    });
+    return res.data;
+  };
 };
