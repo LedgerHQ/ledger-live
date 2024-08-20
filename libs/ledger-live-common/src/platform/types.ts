@@ -103,6 +103,7 @@ export type LiveAppManifestDapp = {
   provider: DappProviders;
   networks: Array<LiveAppManifestParamsNetwork>;
   nanoApp: string;
+  dependencies?: string[];
 };
 
 export type LiveAppManifest = {

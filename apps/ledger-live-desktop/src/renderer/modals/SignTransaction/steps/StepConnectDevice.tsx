@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useMemo } from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import GenericStepConnectDevice from "./GenericStepConnectDevice";
 import { StepProps } from "../types";
+
+function dependenciesToAppRequests(dependencies?: string[]) {
+  if (!dependencies) {
+    return;
+  }
+
+  return dependencies.map(appName => ({ appName }));
+}
+
 export default function StepConnectDevice({
   account,
   parentAccount,
@@ -10,13 +19,25 @@ export default function StepConnectDevice({
   status,
   transitionTo,
   useApp,
+  dependencies,
   onTransactionError,
   onTransactionSigned,
   manifestId,
   manifestName,
 }: StepProps) {
-  // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
-  const dependencies = (account && [getMainAccount(account, parentAccount)]) || [];
+  const connectDependencies = useMemo(() => {
+    const appRequests = dependenciesToAppRequests(dependencies);
+
+    if (account) {
+      // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
+      return [
+        { currency: getMainAccount(account, parentAccount).currency },
+        ...(appRequests || []),
+      ];
+    }
+    return appRequests;
+  }, [account, dependencies, parentAccount]);
+
   return (
     <>
       <TrackPage category="Sign Transaction Flow" name="Step ConnectDevice" />
@@ -29,7 +50,7 @@ export default function StepConnectDevice({
         transitionTo={transitionTo}
         onTransactionError={onTransactionError}
         onTransactionSigned={onTransactionSigned}
-        dependencies={dependencies}
+        dependencies={connectDependencies}
         manifestId={manifestId}
         manifestName={manifestName}
         requireLatestFirmware

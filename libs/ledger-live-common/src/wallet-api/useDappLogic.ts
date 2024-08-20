@@ -189,6 +189,7 @@ export function useDappLogic({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
+  const dependencies = manifest.dapp?.dependencies;
   const ws = useRef<SmartWebsocket>();
   const { currentAccount, currentParentAccount, setCurrentAccountHist } = useDappAccountLogic({
     manifest,
@@ -427,7 +428,9 @@ export function useDappLogic({
 
           if (address.toLowerCase() === ethTX.from.toLowerCase()) {
             try {
-              const options = nanoApp ? { hwAppId: nanoApp } : undefined;
+              const options = nanoApp
+                ? { hwAppId: nanoApp, dependencies: dependencies }
+                : undefined;
               tracking.dappSendTransactionRequested(manifest);
 
               const signFlowInfos = getWalletAPITransactionSignFlowInfos({

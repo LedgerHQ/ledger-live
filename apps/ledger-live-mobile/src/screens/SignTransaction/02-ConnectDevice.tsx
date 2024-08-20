@@ -16,6 +16,14 @@ import { ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 
+function dependenciesToAppRequests(dependencies?: string[]) {
+  if (!dependencies) {
+    return [];
+  }
+
+  return dependencies.map(appName => ({ appName }));
+}
+
 function ConnectDevice({
   navigation,
   route,
@@ -27,7 +35,7 @@ function ConnectDevice({
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-  const { appName, onSuccess } = route.params;
+  const { appName, dependencies, onSuccess } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
   const { transaction, status } = useBridgeTransaction(() => ({
     account: mainAccount,
@@ -46,10 +54,22 @@ function ConnectDevice({
       transaction,
       status,
       tokenCurrency,
-      dependencies: [mainAccount],
+      dependencies: [
+        { currency: mainAccount.currency },
+        ...dependenciesToAppRequests(dependencies),
+      ],
       requireLatestFirmware: true,
     }),
-    [account, appName, mainAccount, parentAccount, status, tokenCurrency, transaction],
+    [
+      account,
+      appName,
+      dependencies,
+      mainAccount,
+      parentAccount,
+      status,
+      tokenCurrency,
+      transaction,
+    ],
   );
   return transaction ? (
     <SafeAreaView
