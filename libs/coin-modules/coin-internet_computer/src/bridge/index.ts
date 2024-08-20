@@ -8,8 +8,15 @@ import {
 import resolver from "../signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus, ICPSigner } from "../types";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type {
+  Transaction,
+  TransactionStatus,
+  ICPSigner,
+  ICPAccount,
+  ICPAccountRaw,
+  InternetComputerOperation,
+} from "../types";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { prepareTransaction } from "./prepareTransaction";
@@ -18,6 +25,8 @@ import { getAccountShape } from "./bridgeHelpers/account";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
 import { validateAddress } from "./validateAddress";
+import { assignFromAccountRaw } from "./assignFromAccountRaw";
+import { assignToAccountRaw } from "./assignToAccountRaw";
 
 function buildCurrencyBridge(signerContext: SignerContext<ICPSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -34,11 +43,25 @@ function buildCurrencyBridge(signerContext: SignerContext<ICPSigner>): CurrencyB
   };
 }
 
-const sync = makeSync({ getAccountShape });
+const sync = makeSync<
+  Transaction,
+  ICPAccount,
+  TransactionStatus,
+  InternetComputerOperation,
+  ICPAccountRaw
+>({
+  getAccountShape,
+});
 
 function buildAccountBridge(
   signerContext: SignerContext<ICPSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus> {
+): AccountBridge<
+  Transaction,
+  ICPAccount,
+  TransactionStatus,
+  InternetComputerOperation,
+  ICPAccountRaw
+> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -48,6 +71,8 @@ function buildAccountBridge(
     estimateMaxSpendable,
     createTransaction,
     updateTransaction,
+    assignFromAccountRaw,
+    assignToAccountRaw,
     getTransactionStatus,
     prepareTransaction,
     sync,

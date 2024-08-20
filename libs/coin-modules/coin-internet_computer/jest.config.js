@@ -2,6 +2,9 @@ module.exports = {
   passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
+    "!src/errors.ts",
+    "!src/bridge/getTransactionStatus.ts",
+    "!src/types/**/*.ts",
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
