@@ -2,7 +2,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { QuickActionButtonProps, QuickActionList } from "@ledgerhq/native-ui";
+import { Flex, QuickActionButtonProps, QuickActionList } from "@ledgerhq/native-ui";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { track } from "~/analytics";
 import { EntryOf } from "~/types/helpers";
@@ -38,7 +38,16 @@ export const MarketQuickActions = ({ currency }: Props) => {
     [quickActionsList, t, navigation, router.name],
   );
 
-  return <QuickActionList data={quickActionsData} numColumns={5} id="asset_five_columns" />;
+  return (
+    <Flex m={16}>
+      <QuickActionList
+        data={quickActionsData}
+        key={quickActionsData.length}
+        numColumns={quickActionsData.length}
+        id="asset_five_columns"
+      />
+    </Flex>
+  );
 };
 
 const QUICK_ACTIONS = {
