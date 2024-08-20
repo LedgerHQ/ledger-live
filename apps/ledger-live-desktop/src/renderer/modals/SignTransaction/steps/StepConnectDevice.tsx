@@ -3,15 +3,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import GenericStepConnectDevice from "./GenericStepConnectDevice";
 import { StepProps } from "../types";
-import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
-
-function dependenciesToAppRequests(dependencies?: string[]): AppRequest[] | undefined {
-  if (!dependencies) {
-    return;
-  }
-
-  return dependencies.map(appName => ({ appName }));
-}
+import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 
 export default function StepConnectDevice({
   account,
@@ -31,10 +23,7 @@ export default function StepConnectDevice({
 
     if (account) {
       // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
-      return [
-        { currency: getMainAccount(account, parentAccount).currency },
-        ...(appRequests || []),
-      ];
+      return [{ currency: getMainAccount(account, parentAccount).currency }, ...appRequests];
     }
     return appRequests;
   }, [account, dependencies, parentAccount]);

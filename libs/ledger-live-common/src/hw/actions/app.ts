@@ -562,3 +562,11 @@ export const createAction = (
     mapResult,
   };
 };
+
+export function dependenciesToAppRequests(dependencies?: string[]): AppRequest[] {
+  if (!dependencies) {
+    return [];
+  }
+
+  return dependencies.map(appName => ({ appName }));
+}
