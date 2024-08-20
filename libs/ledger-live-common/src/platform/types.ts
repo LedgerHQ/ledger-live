@@ -147,6 +147,7 @@ export const LiveAppManifestDappSchema = z.object({
   provider: DappProvidersSchema,
   networks: z.array(LiveAppManifestParamsNetworkSchema),
   nanoApp: z.string().min(1),
+  dependencies: z.array(z.string()).optional(),
 });
 
 export const LiveAppManifestSchema = z

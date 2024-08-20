@@ -3,8 +3,9 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import GenericStepConnectDevice from "./GenericStepConnectDevice";
 import { StepProps } from "../types";
+import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 
-function dependenciesToAppRequests(dependencies?: string[]) {
+function dependenciesToAppRequests(dependencies?: string[]): AppRequest[] | undefined {
   if (!dependencies) {
     return;
   }
