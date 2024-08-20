@@ -36,6 +36,7 @@ const MemoTagField = ({
   warning,
   error,
   value,
+  disabled = false,
   onChange,
   showLabel = true,
   maxMemoLength,
@@ -73,6 +74,7 @@ const MemoTagField = ({
           error={error}
           value={value}
           spellCheck="false"
+          disabled={disabled}
           ff="Inter"
           maxMemoLength={maxMemoLength}
           autoFocus={autoFocus}

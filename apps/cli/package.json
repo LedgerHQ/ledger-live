@@ -50,6 +50,7 @@
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
+    "@zondax/ledger-live-icp": "1.0.1",
     "asciichart": "1.5.25",
     "bigint-buffer": "*",
     "bignumber.js": "9.1.2",

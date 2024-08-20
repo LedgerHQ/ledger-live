@@ -3,19 +3,19 @@ import {
   formatDeviceAmount,
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
-import { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import { DeviceAction, State } from "@ledgerhq/coin-framework/bot/types";
 import { methodToString } from "../common-logic/utils";
 import type { Transaction } from "../types";
 
 const ignoreSpaces = (s: string) => s.replace(/ /g, "");
 
-export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
+export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = deviceActionFlow({
   steps: [
     {
       title: "Transaction type",
       button: SpeculosButton.RIGHT,
       expectedValue: () => {
-        return methodToString(0);
+        return methodToString("send");
       },
     },
     {
