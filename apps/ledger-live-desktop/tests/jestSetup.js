@@ -68,6 +68,7 @@ jest.mock("src/renderer/analytics/segment", () => ({
   trackPage: jest.fn(),
   start: jest.fn(),
   useTrack: jest.fn(),
+  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
 jest.mock("src/sentry/renderer", () => ({
