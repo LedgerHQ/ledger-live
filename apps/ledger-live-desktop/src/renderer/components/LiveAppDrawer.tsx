@@ -30,6 +30,7 @@ import CompleteExchange, {
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
+import { renderLoading } from "./DeviceAction/rendering";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -156,6 +157,7 @@ export const LiveAppDrawer = () => {
           <DeviceAction
             action={action}
             request={data}
+            Result={() => renderLoading()}
             onResult={result => {
               if ("startExchangeResult" in result) {
                 data.onResult(result.startExchangeResult);
