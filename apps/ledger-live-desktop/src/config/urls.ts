@@ -4,6 +4,7 @@ export const supportLinkByTokenType = {
   trc20: "https://support.ledger.com/article/360013062159-zd",
   asa: "https://support.ledger.com/article/360015896040-zd",
   nfts: "https://support.ledger.com/article/4404389453841-zd",
+  // spl: "Solana spl tokens. TODO: to be defined",
 };
 
 const errors: Record<string, string> = {
@@ -153,6 +154,7 @@ export const urls = {
   },
   solana: {
     staking: "https://support.ledger.com/article/4731749170461-zd",
+    splTokenInfo: "Solana spl tokens link TODO: to be defined",
     recipient_info: "https://support.ledger.com",
     ledgerByFigmentTC:
       "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
