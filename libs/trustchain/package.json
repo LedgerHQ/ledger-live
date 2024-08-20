@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/trustchain",
-  "version": "0.2.1-nightly.0",
+  "version": "0.3.0-nightly.1",
   "description": "Ledger Live trustchain layer",
   "private": true,
   "keywords": [

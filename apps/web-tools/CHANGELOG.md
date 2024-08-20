@@ -1,5 +1,24 @@
 # web-tools
 
+## 0.8.1-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`f8756b2`](https://github.com/LedgerHQ/ledger-live/commit/f8756b29a83048d423d500e16ea3f9789763b90d), [`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
+  - @ledgerhq/live-common@34.8.0-nightly.2
+  - @ledgerhq/errors@6.19.0-nightly.0
+  - @ledgerhq/trustchain@0.3.0-nightly.1
+  - @ledgerhq/coin-framework@0.17.1-nightly.1
+  - @ledgerhq/domain-service@1.2.4-nightly.0
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.1
+  - @ledgerhq/hw-transport@6.31.3-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.0
+  - @ledgerhq/hw-transport-web-ble@6.29.3-nightly.0
+  - @ledgerhq/hw-transport-webhid@6.29.3-nightly.0
+  - @ledgerhq/hw-transport-webusb@6.29.3-nightly.0
+  - @ledgerhq/live-wallet@0.5.1-nightly.1
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.1
+
 ## 0.8.1-nightly.1
 
 ### Patch Changes

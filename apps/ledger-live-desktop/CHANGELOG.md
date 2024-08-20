@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.3
+
+### Patch Changes
+
+- [#7610](https://github.com/LedgerHQ/ledger-live/pull/7610) [`08fd8b4`](https://github.com/LedgerHQ/ledger-live/commit/08fd8b4c2150a32a72f2b943d1ef76724a1e2544) Thanks [@mwiercinska](https://github.com/mwiercinska)! - Add locale and ticker query params for buy/sell
+
+- Updated dependencies [[`f8756b2`](https://github.com/LedgerHQ/ledger-live/commit/f8756b29a83048d423d500e16ea3f9789763b90d), [`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
+  - @ledgerhq/live-common@34.8.0-nightly.2
+  - @ledgerhq/errors@6.19.0-nightly.0
+  - @ledgerhq/trustchain@0.3.0-nightly.1
+  - @ledgerhq/coin-framework@0.17.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.3-nightly.2
+  - @ledgerhq/coin-evm@2.1.5-nightly.1
+  - @ledgerhq/domain-service@1.2.4-nightly.0
+  - @ledgerhq/devices@8.4.3-nightly.0
+  - @ledgerhq/hw-transport@6.31.3-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.4-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.3-nightly.0
+  - @ledgerhq/hw-transport-vault@1.3.3-nightly.0
+  - @ledgerhq/live-network@1.4.1-nightly.1
+  - @ledgerhq/live-wallet@0.5.1-nightly.1
+  - @ledgerhq/live-countervalues@0.2.5-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.1
+  - @ledgerhq/live-nft@0.4.5-nightly.1
+  - @ledgerhq/live-nft-react@0.4.5-nightly.1
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.1
+
 ## 2.86.0-nightly.2
 
 ### Minor Changes

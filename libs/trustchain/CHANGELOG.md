@@ -1,5 +1,21 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.1
+
+### Minor Changes
+
+- [#7603](https://github.com/LedgerHQ/ledger-live/pull/7603) [`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7) Thanks [@thesan](https://github.com/thesan)! - Fix Trustchain error when switching device while logged in
+
+### Patch Changes
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
+  - @ledgerhq/errors@6.19.0-nightly.0
+  - @ledgerhq/hw-transport@6.31.3-nightly.0
+  - @ledgerhq/live-network@1.4.1-nightly.1
+  - @ledgerhq/speculos-transport@0.1.5-nightly.1
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.0
+
 ## 0.2.1-nightly.0
 
 ### Patch Changes

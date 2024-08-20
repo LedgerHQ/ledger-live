@@ -1,5 +1,13 @@
 # @ledgerhq/live-countervalues
 
+## 0.2.5-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.17.1-nightly.1
+  - @ledgerhq/live-network@1.4.1-nightly.1
+
 ## 0.2.5-nightly.0
 
 ### Patch Changes

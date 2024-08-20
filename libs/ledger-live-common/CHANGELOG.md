@@ -1,5 +1,52 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.2
+
+### Patch Changes
+
+- [#7614](https://github.com/LedgerHQ/ledger-live/pull/7614) [`f8756b2`](https://github.com/LedgerHQ/ledger-live/commit/f8756b29a83048d423d500e16ea3f9789763b90d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - add delay to determine if the max amout value is less than 0
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
+  - @ledgerhq/errors@6.19.0-nightly.0
+  - @ledgerhq/coin-framework@0.17.1-nightly.1
+  - @ledgerhq/coin-algorand@0.5.5-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.3-nightly.2
+  - @ledgerhq/coin-cardano@0.1.5-nightly.1
+  - @ledgerhq/coin-evm@2.1.5-nightly.1
+  - @ledgerhq/coin-icon@0.4.2-nightly.1
+  - @ledgerhq/coin-near@0.5.5-nightly.1
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.1
+  - @ledgerhq/coin-solana@0.7.5-nightly.1
+  - @ledgerhq/coin-stellar@0.2.3-nightly.1
+  - @ledgerhq/coin-tezos@0.6.1-nightly.1
+  - @ledgerhq/coin-ton@0.3.13-nightly.2
+  - @ledgerhq/coin-tron@0.0.5-nightly.1
+  - @ledgerhq/coin-xrp@0.5.1-nightly.1
+  - @ledgerhq/device-core@0.3.3-nightly.1
+  - @ledgerhq/devices@8.4.3-nightly.0
+  - @ledgerhq/hw-app-algorand@6.29.3-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.30.3-nightly.0
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.1
+  - @ledgerhq/hw-app-exchange@0.6.0-nightly.1
+  - @ledgerhq/hw-app-icon@1.1.1-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.31.3-nightly.0
+  - @ledgerhq/hw-app-solana@7.2.3-nightly.0
+  - @ledgerhq/hw-app-str@7.0.3-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.5-nightly.1
+  - @ledgerhq/hw-transport@6.31.3-nightly.0
+  - @ledgerhq/live-network@1.4.1-nightly.1
+  - @ledgerhq/live-wallet@0.5.1-nightly.1
+  - @ledgerhq/live-countervalues@0.2.5-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.1
+  - @ledgerhq/live-nft@0.4.5-nightly.1
+  - @ledgerhq/speculos-transport@0.1.5-nightly.1
+  - @ledgerhq/hw-app-btc@10.4.2-nightly.0
+  - @ledgerhq/hw-app-near@6.29.3-nightly.0
+  - @ledgerhq/hw-app-tezos@6.29.3-nightly.0
+  - @ledgerhq/hw-app-trx@6.29.3-nightly.0
+  - @ledgerhq/hw-app-xrp@6.29.3-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.0
+
 ## 34.8.0-nightly.1
 
 ### Minor Changes
