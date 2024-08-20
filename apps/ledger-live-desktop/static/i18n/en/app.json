@@ -6485,13 +6485,26 @@
         }
       },
       "qrCode": {
-        "title": "Synchronize",
-        "hint": "Trying to sync two Ledger Live desktop apps? Click here.",
-        "description": "Scan and synchronize your accounts with another Ledger Live app",
-        "steps": {
-          "step1": "Open the Ledger Live app you want to sync",
-          "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
-          "step3": "Scan QR code until loader hits 100%."
+        "title": "Synchronize Instances",
+        "options": {
+          "mobile": "Mobile",
+          "desktop": "Desktop"
+        },
+        "mobile": {
+          "description": "Scan and synchronize your accounts with another Ledger Live app",
+          "steps": {
+            "step1": "Open the Ledger Live app you want to sync",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+            "step3": "Scan QR code"
+          }
+        },
+        "desktop": {
+          "description": "Synchronize your accounts with another Ledger Live app",
+          "steps": {
+            "step1": "Open the Ledger Live app you want to sync",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Use your Ledger</0>",
+            "step3": "Connect your Ledger"
+          }
         }
       },
       "pinCode": {
