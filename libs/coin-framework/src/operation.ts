@@ -171,6 +171,8 @@ export const OPERATION_TYPE_OUT_FAMILY = [
   "SLASH",
   "LOCK",
   "BURN",
+  "TOP_UP_NEURON",
+  "STAKE_NEURON",
 ];
 export const OPERATION_TYPE_STAKE_FAMILY = [
   "FREEZE",

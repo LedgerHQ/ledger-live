@@ -40,6 +40,7 @@ const internet_computer: CurrenciesData<Transaction> = {
         freshAddressPath: "44'/223'/0'/0/0",
         index: 0,
         name: "Internet Computer 1",
+        nfts: [],
         operationsCount: 1,
         blockHeight: 0,
         pendingOperations: [],
@@ -57,6 +58,7 @@ const internet_computer: CurrenciesData<Transaction> = {
           name: "Not a valid address",
           transaction: fromTransactionRaw({
             family: "internet_computer",
+            type: "send",
             recipient: "novalidaddress",
             fees: getEstimatedFees().toString(),
             amount: "1000",
@@ -72,6 +74,7 @@ const internet_computer: CurrenciesData<Transaction> = {
           name: "Not enough balance",
           transaction: fromTransactionRaw({
             family: "internet_computer",
+            type: "send",
             recipient: ACCOUNT_2,
             fees: getEstimatedFees().toString(),
             amount: (300 * 1e9).toString(),
@@ -87,6 +90,7 @@ const internet_computer: CurrenciesData<Transaction> = {
           name: "Invalid transferID/Memo",
           transaction: fromTransactionRaw({
             family: "internet_computer",
+            type: "send",
             recipient: ACCOUNT_2,
             fees: getEstimatedFees().toString(),
             amount: "1000",
@@ -103,6 +107,7 @@ const internet_computer: CurrenciesData<Transaction> = {
           name: "Amount Required",
           transaction: fromTransactionRaw({
             family: "internet_computer",
+            type: "send",
             recipient: ACCOUNT_2,
             amount: "0",
             fees: getEstimatedFees().toString(),
@@ -118,6 +123,7 @@ const internet_computer: CurrenciesData<Transaction> = {
           name: "New account and sufficient amount",
           transaction: fromTransactionRaw({
             family: "internet_computer",
+            type: "send",
             recipient: ACCOUNT_2,
             amount: "1000",
             fees: getEstimatedFees().toString(),
