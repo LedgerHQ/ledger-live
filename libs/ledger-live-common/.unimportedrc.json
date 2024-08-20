@@ -373,7 +373,6 @@
     "src/walletSync/getEnvironmentParams.ts"
   ],
   "ignoreUnused": [
-    "@dfinity/agent",
     "@ledgerhq/hw-app-eth",
     "@ledgerhq/hw-transport-mocker",
     "@tanstack/react-query",

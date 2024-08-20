@@ -57,11 +57,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show theme debug overlay UI",
   },
-  API_ICP_ENDPOINT: {
-    def: "https://icp.coin.ledger.com/",
-    parser: stringParser,
-    desc: "Rosetta API for ICP",
-  },
   APTOS_API_ENDPOINT: {
     def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,
