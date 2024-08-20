@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
