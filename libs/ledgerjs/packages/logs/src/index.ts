@@ -100,12 +100,16 @@ export class LocalTracer {
   ) {}
 
   trace(message: string, data?: TraceContext) {
-    trace({
-      type: this.type,
-      message,
-      data,
-      context: this.context,
-    });
+    try {
+      trace({
+        type: this.type,
+        message,
+        data,
+        context: this.context,
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   getContext(): TraceContext | undefined {
