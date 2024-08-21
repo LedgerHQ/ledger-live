@@ -919,6 +919,13 @@
     "InvalidMemoICP": {
       "title": "Memo is required to be a number"
     },
+    "InvalidRecipientForTokenTransfer": {
+      "title": "Invalid recipient for token transfer, supported account types for token transfer: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed": {
+      "title": "Sorry, fee estimation failed",
+      "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
+    },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
@@ -927,6 +934,9 @@
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
     },
+    "TonCommentInvalid": {
+      "title": "Comment must not exceed 120 characters without special characters"
+    },
     "TezosUnrevealedAccount": {
       "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     },
@@ -934,6 +944,10 @@
       "title": "Sorry, try again.",
       "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
       "errorCode": "Code: {{errorCode}}"
+    },
+    "TrustchainNotFound": {
+      "title": "Something went wrong while fetching your data",
+      "description": "Please try again or contact Ledger Support."
     }
   },
   "crash": {
@@ -2990,6 +3004,10 @@
         },
         "platformManifest": {
           "title": "Load Platform Manifest"
+        },
+        "mockAppUpdate": {
+          "title": "Mock app update",
+          "description": "Display available app update in My Ledger, it will reinstall the same app version"
         }
       }
     },
@@ -3652,6 +3670,8 @@
         "value": "Memo value"
       },
       "validateMemo": "Validate memo",
+      "comment": "Comment",
+      "validateComment": "Validate comment",
       "quantity": "Quantity"
     },
     "validation": {
@@ -6417,6 +6437,8 @@
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
+    "keepOnDevice": "Keep",
+    "discardOnDevice": "Discard",
     "nftEntryPointButtonLabel": "Set as lockscreen picture",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
@@ -6728,21 +6750,116 @@
       },
       "manageKey": {
         "title": "Manage Key",
-        "description": "Secure or delete your encryption key via another Ledger. "
+        "description": "Secure or delete your encryption key via another Ledger.",
+        "success": "Your devices have been unsynchronized and your key has been deleted",
+        "drawer": {
+          "step1": {
+            "title": "Manage your key",
+            "titleCta": "Delete your key",
+            "descCta": "All your synced data will be deleted."
+          },
+          "step2": {
+            "delete": "Delete",
+            "cancel": "Cancel",
+            "title": "Do you really want to delete your encryption key?",
+            "desc": "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time."
+          }
+        }
+      },
+      "manageInstances": {
+        "title": "Manage synchronized instances",
+        "remove": "Remove"
       },
       "synchronizedInstances": {
         "cta": "Manage now",
         "title": "{{count}} Synchronized Instance",
-        "title_plural": "{{count}} Synchronized Instances"
+        "title_plural": "{{count}} Synchronized Instances",
+        "error": "Instances",
+        "unsecuredError": {
+          "title": "The synchronization isn't secured by this Ledger",
+          "description": "Please connect the Ledger device you used to create your encryption key.",
+          "info": "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
+          "cta": "Connect another Ledger",
+          "ctaDelete": "Delete my encryption key"
+        },
+        "autoRemoveError": {
+          "title": "You can’t remove the current instance",
+          "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
+          "info": "Deleting your encryption key will result in your devices becoming unsynchronized, and all synchronized data will be deleted. However, this will not affect your funds. You can resync your accounts at any time.",
+          "cta": "I understand",
+          "ctaDelete": "Delete my encryption key"
+        },
+        "success": "Your {{member}} is no longer synchronized"
+      },
+      "errors": {
+        "fetching": "Something went wrong while fetching your synchronized instances.",
+        "trustchain": "Unexpected falsy trustchain",
+        "memberCredentials": "Unexpected falsy member credentials",
+        "ledgerSyncUnavailable": "Ledger Sync is currently unavailable. This doesn’t have any impact on your assets."
+      }
+    },
+    "synchronize": {
+      "chooseMethod": {
+        "title": "Choose your sync method",
+        "scan": {
+          "title": "Scan a QR code"
+        },
+        "connectDevice": {
+          "title": "Use your Ledger"
+        }
+      },
+      "qrCode": {
+        "show": {
+          "title": "Show QR",
+          "explanation": {
+            "title": "Scan and synchronize your accounts using another Ledger Live app",
+            "steps": {
+              "step1": "Open the Ledger Live app you want to sync",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0>",
+              "step3": "Scan QR code until loader hits 100%."
+            }
+          }
+        },
+        "scan": {
+          "title": "Scan",
+          "description": "Scan QR code",
+          "explanation": {
+            "title": "Scan and synchronize your accounts using another Ledger Live app",
+            "steps": {
+              "step1": "Open the Ledger Live app you want to sync",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0> <1>></1> <0>Show QR</0>",
+              "step3": "Scan QR code until loader hits 100%."
+            }
+          }
+        },
+        "pinCode": {
+          "title": "Enter your code",
+          "desc": "Type the code displayed on the Ledger Live you want to sync with.",
+          "error": {
+            "title": "Codes do not match",
+            "desc": "Make sure the code you type is the one displayed on the other Ledger Live instance.",
+            "tryAgain": "Try again"
+          }
+        }
       }
     }
   },
   "web3hub": {
-    "manifestsList": {
-      "title": "Explore",
-      "description": "Discover the best of web3 curated by Ledger"
+    "components": {
+      "disclaimer": {
+        "clearSigningEnabled": "Clear signing enabled",
+        "checkbox": "Do not remind me again.",
+        "CTA": "Open {{app}}"
+      },
+      "manifestsList": {
+        "title": "Explore",
+        "description": "Discover the best of web3 curated by Ledger"
+      }
     },
     "main": {
+      "manifestsList": {
+        "title": "Discover"
+      },
       "header": {
         "title": "Explore web3",
         "placeholder": "Search or type a URL"

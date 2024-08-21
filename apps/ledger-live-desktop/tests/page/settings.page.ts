@@ -1,4 +1,5 @@
 import { AppPage } from "tests/page/abstractClasses";
+import { step } from "tests/misc/reporters/step";
 
 export class SettingsPage extends AppPage {
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
@@ -21,10 +22,12 @@ export class SettingsPage extends AppPage {
   private themeChoiceLight = this.page.locator("text='Clair'");
   private versionRow = this.page.getByTestId("version-row");
   private deviceLanguagesDrawer = this.page.getByTestId("device-language-installation-container");
+  private hideEmptyTokenAccountsToggle = this.page.getByTestId("hideEmptyTokenAccounts");
   readonly openLocalManifestFormButton = this.page.getByTestId("settings-open-local-manifest-form");
   readonly exportLocalManifestButton = this.page.getByTestId("settings-export-local-manifest");
   readonly createLocalManifestButton = this.page.getByTestId("create-local-manifest");
 
+  @step("Go to Settings Accounts tab")
   async goToAccountsTab() {
     await this.accountsTab.click();
   }
@@ -75,5 +78,10 @@ export class SettingsPage extends AppPage {
       await this.versionRow.click();
     }
     await this.developerTab.click();
+  }
+
+  @step("Click 'Hide Empty Token Accounts' toggle")
+  async clickHideEmptyTokenAccountsToggle() {
+    await this.hideEmptyTokenAccountsToggle.click();
   }
 }

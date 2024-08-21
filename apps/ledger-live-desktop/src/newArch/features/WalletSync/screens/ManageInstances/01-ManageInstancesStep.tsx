@@ -54,7 +54,7 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
             text={instance.name}
             cta={t("walletSync.manageInstances.remove")}
             onClick={
-              memberCredentials?.pubkey == instance.id
+              memberCredentials?.pubkey === instance.id
                 ? handleAutoRemove
                 : () => handleGoDeleteInstance(instance)
             }
@@ -68,6 +68,7 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
 
 const List = styled(Flex)`
   overflow-y: auto;
+  padding-bottom: 12%;
   max-height: calc(100vh - 12%);
   ::-webkit-scrollbar {
     width: 0;

@@ -1,4 +1,5 @@
 import { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
+import { appConfig } from "../apps/config";
 import { algorandConfig } from "../families/algorand/config";
 import { bitcoinConfig } from "../families/bitcoin/config";
 import { cardanoConfig } from "../families/cardano/config";
@@ -18,10 +19,10 @@ import { solanaConfig } from "../families/solana/config";
 import { stacksConfig } from "../families/stacks/config";
 import { stellarConfig } from "../families/stellar/config";
 import { tezosConfig } from "../families/tezos/config";
+import { tonConfig } from "../families/ton/config";
 import { tronConfig } from "../families/tron/config";
 import { vechainConfig } from "../families/vechain/config";
 import { iconConfig } from "../families/icon/config";
-import { appConfig } from "../apps/config";
 
 const countervaluesConfig: ConfigSchema = {
   config_countervalues_refreshRate: {
@@ -63,4 +64,5 @@ export const liveConfig: ConfigSchema = {
   ...tronConfig,
   ...vechainConfig,
   ...iconConfig,
+  ...tonConfig,
 };

@@ -181,8 +181,6 @@ const InstallSetOfApps = ({
       <TrackScreen category="Restore Applications Start" />
       <Restore
         deviceName={productName}
-        deviceModelId={selectedDevice.modelId}
-        lastSeenDeviceModelId={lastSeenDeviceModelId}
         onConfirm={() => {
           track("button_clicked", { button: "Restore applications" });
           setUserConfirmed(true);

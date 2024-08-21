@@ -11,6 +11,13 @@ export type TezosConfig = {
   node: {
     url: string;
   };
+  fees: {
+    minGasLimit: number;
+    minRevealGasLimit: number;
+    minStorageLimit: number;
+    minFees: number;
+    minEstimatedFees: number;
+  };
 };
 
 export type TezosCoinConfig = CurrencyConfig & TezosConfig;

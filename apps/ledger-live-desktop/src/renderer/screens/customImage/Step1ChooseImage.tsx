@@ -30,6 +30,7 @@ type Props = StepProps & {
   isShowingNftGallery?: boolean;
   setIsShowingNftGallery: (_: boolean) => void;
   loading?: boolean;
+  hasCustomLockScreen?: boolean;
 };
 
 const defaultMediaTypes = ["original", "big", "preview"];
@@ -47,8 +48,15 @@ const extractNftBase64 = (metadata: NFTMetadata) => {
 };
 
 const StepChooseImage: React.FC<Props> = props => {
-  const { loading, setLoading, onResult, onError, isShowingNftGallery, setIsShowingNftGallery } =
-    props;
+  const {
+    loading,
+    setLoading,
+    onResult,
+    onError,
+    isShowingNftGallery,
+    setIsShowingNftGallery,
+    hasCustomLockScreen,
+  } = props;
   const isMounted = useIsMounted();
   const { t } = useTranslation();
   const track = useTrack();
@@ -158,7 +166,7 @@ const StepChooseImage: React.FC<Props> = props => {
               });
             }}
           />
-          {lastSeenCustomImage?.size ? (
+          {hasCustomLockScreen || lastSeenCustomImage?.size ? (
             <Link
               size="medium"
               color="error.c60"

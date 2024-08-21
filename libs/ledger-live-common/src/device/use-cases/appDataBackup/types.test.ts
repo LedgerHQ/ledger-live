@@ -7,7 +7,7 @@ jest.mock("@ledgerhq/device-core", () => {
   };
 });
 
-describe("appStorageTypeGuard", () => {
+describe("isAppStorageType", () => {
   it("should return true for valid AppStorageType", () => {
     const data = {
       appDataInfo: {} as AppStorageInfo,

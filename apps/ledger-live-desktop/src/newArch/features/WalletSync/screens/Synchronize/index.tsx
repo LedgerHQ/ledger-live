@@ -1,20 +1,34 @@
 import { Flex } from "@ledgerhq/react-ui";
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { useDispatch } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { useFlows } from "../../hooks/useFlows";
+import { FlowOptions, useFlows } from "../../hooks/useFlows";
 import SynchronizeModeStep from "./01-SyncModeStep";
 import SynchWithQRCodeStep from "./02-QRCodeStep";
 import PinCodeStep from "./03-PinCodeStep";
 import SyncFinalStep from "./04-SyncFinalStep";
 import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import PinCodeErrorStep from "./05-PinCodeError";
+import { BackProps, BackRef } from "../router";
 
-const SynchronizeWallet = () => {
+const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
   const dispatch = useDispatch();
 
-  const { currentStep, goToNextScene } = useFlows();
+  useImperativeHandle(ref, () => ({
+    goBack,
+  }));
+
+  const { currentStep, goToNextScene, goToPreviousScene, goToWelcomeScreenWalletSync } = useFlows();
   const { onClickTrack } = useWalletSyncAnalytics();
+
+  const goBack = () => {
+    if (currentStep === FlowOptions[Flow.Synchronize].steps[1]) {
+      goToWelcomeScreenWalletSync();
+    } else {
+      goToPreviousScene();
+    }
+  };
 
   const startSyncWithDevice = () => {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
@@ -48,6 +62,10 @@ const SynchronizeWallet = () => {
         return <SynchWithQRCodeStep />;
       case Step.PinCode:
         return <PinCodeStep />;
+
+      case Step.PinCodeError:
+        return <PinCodeErrorStep />;
+
       case Step.Synchronized:
         return <SyncFinalStep />;
     }
@@ -59,12 +77,18 @@ const SynchronizeWallet = () => {
       height="100%"
       paddingX="40px"
       rowGap="48px"
-      alignItems={currentStep === Step.Synchronized ? "center" : undefined}
-      justifyContent={currentStep === Step.Synchronized ? "center" : undefined}
+      alignItems={
+        [Step.Synchronized, Step.PinCodeError].includes(currentStep) ? "center" : undefined
+      }
+      justifyContent={
+        [Step.Synchronized, Step.PinCodeError].includes(currentStep) ? "center" : undefined
+      }
     >
       {getStep()}
     </Flex>
   );
-};
+});
+
+SynchronizeWallet.displayName = "SynchronizeWallet";
 
 export default SynchronizeWallet;

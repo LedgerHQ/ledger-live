@@ -28,6 +28,11 @@ jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
   useFeature: jest.fn(),
 }));
 
+jest.mock("../../../components/FirebaseFeatureFlags", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  FirebaseFeatureFlagsProvider: ({ children }: { children: any }) => children,
+}));
+
 const mockedUseFeature = jest.mocked(useFeature);
 
 const mockedOnChangeTransaction = jest.fn().mockImplementation(t => t);

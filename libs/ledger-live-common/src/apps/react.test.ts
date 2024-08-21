@@ -16,6 +16,7 @@ import { AppType, SortOptions } from "./filtering";
 import { calculateDependencies } from "./polyfill";
 
 calculateDependencies();
+
 const mockedState = initState(
   mockListAppsResult(
     "Bitcoin, Bitcoin Legacy, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred, Aave, Polygon, Binance Smart Chain",

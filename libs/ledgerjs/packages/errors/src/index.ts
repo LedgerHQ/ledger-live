@@ -299,6 +299,9 @@ export const StatusCodes = {
   INVALID_RESTORE_STATE: 0x6643,
   INVALID_CHUNK_LENGTH: 0x6734,
   INVALID_BACKUP_HEADER: 0x684a,
+
+  // Not documented:
+  TRUSTCHAIN_WRONG_SEED: 0xb007,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {

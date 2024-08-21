@@ -58,12 +58,14 @@ export type AccountsUpdateAccountWithUpdaterPayload = {
   updater: (arg0: Account) => Account;
 };
 export type AccountsDeleteAccountPayload = Account;
+export type AccountsReplacePayload = Account[];
 export type AccountsPayload =
   | HandlersPayloads["INIT_ACCOUNTS"]
   | AccountsReorderPayload
   | AccountsImportAccountsPayload
   | AccountsUpdateAccountWithUpdaterPayload
   | AccountsDeleteAccountPayload
+  | AccountsReplacePayload
   | Account;
 
 // === APPSTATE ACTIONS ===
@@ -520,6 +522,14 @@ export type MarketPayload =
   | MarketSetMarketRequestParamsPayload
   | MarketSetCurrentPagePayload
   | MarketImportPayload;
+
+// === WALLETSYNC ACTIONS ===
+export enum WalletSyncActionTypes {
+  WALLET_SYNC_SET_MANAGE_KEY_DRAWER = "WALLET_SYNC_SET_MANAGE_KEY_DRAWER",
+}
+
+export type WalletSyncSetManageKeyDrawerPayload = boolean;
+export type WalletSyncPayload = WalletSyncSetManageKeyDrawerPayload;
 
 // === PAYLOADS ===
 

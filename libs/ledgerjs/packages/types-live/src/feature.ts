@@ -1,6 +1,7 @@
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
+import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
 /**
  * Feature type.
@@ -118,6 +119,7 @@ export type CurrencyFeatures = {
   currencyScroll: DefaultFeature;
   currencyScrollSepolia: DefaultFeature;
   currencyIcon: DefaultFeature;
+  currencyTon: DefaultFeature;
 };
 
 /**
@@ -136,7 +138,6 @@ export type Features = CurrencyFeatures & {
   mockFeature: Feature_MockFeature;
   buySellUi: Feature_BuySellUiManifest;
   buySellShortcut: DefaultFeature;
-  multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   disableNftSend: Feature_DisableNftSend;
   disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
@@ -160,10 +161,10 @@ export type Features = CurrencyFeatures & {
   domainInputResolution: Feature_DomainInputResolution;
   discover: Feature_Discover;
   transactionsAlerts: Feature_TransactionsAlerts;
-  listAppsV2minor1: Feature_ListAppsV2minor1;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
+  ptxSwapLiveAppDemoThree: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   ptxSwapThorswapProvider: Feature_PtxSwapThorswapProvider;
@@ -187,6 +188,7 @@ export type Features = CurrencyFeatures & {
   lldnewArchOrdinals: DefaultFeature;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
+  llmMarketQuickActions: DefaultFeature;
 };
 
 /**
@@ -475,9 +477,17 @@ export type Feature_BuySellUiManifest = Feature<{
   manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "multibuy-v2"
 }>;
 
+export type Feature_LldWalletSync = Feature<{
+  environment: WalletSyncEnvironment;
+  watchConfig: WalletSyncWatchConfig;
+}>;
+export type Feature_LlmWalletSync = Feature<{
+  environment: WalletSyncEnvironment;
+  watchConfig: WalletSyncWatchConfig;
+}>;
+
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
-export type Feature_MultibuyNavigation = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
@@ -486,7 +496,6 @@ export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
 export type Feature_Objkt = DefaultFeature;
-export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
@@ -497,8 +506,6 @@ export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
-export type Feature_LldWalletSync = DefaultFeature;
-export type Feature_LlmWalletSync = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;

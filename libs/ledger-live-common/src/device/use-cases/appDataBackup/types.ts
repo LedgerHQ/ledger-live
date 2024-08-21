@@ -91,3 +91,38 @@ export type BackupAppDataEvent =
  * An error that occurs during the backup process, the error message should be descriptive when thrown.
  */
 export const BackupAppDataError = createCustomErrorClass("BackupAppDataError");
+
+export enum RestoreAppDataEventType {
+  /**
+   * The progress of the ongoing restoring process.
+   */
+  Progress = "progress",
+  /**
+   * The application data is initialized for the restore process.
+   */
+  AppDataInitialized = "appDataInitialized",
+  /**
+   * The application data has been restored.
+   */
+  AppDataRestored = "appDataRestored",
+}
+
+export type RestoreAppDataEvent =
+  | {
+      type: RestoreAppDataEventType.Progress;
+      /**
+       * The progress of the restore process as a number between 0 and 1.
+       */
+      data: number;
+    }
+  | {
+      type: RestoreAppDataEventType.AppDataInitialized;
+    }
+  | {
+      type: RestoreAppDataEventType.AppDataRestored;
+    };
+
+/**
+ * An error that occurs during the restore process, the error message should be descriptive when thrown.
+ */
+export const RestoreAppDataError = createCustomErrorClass("RestoreAppDataError");

@@ -157,6 +157,7 @@ export enum OnboardingType {
   restore = "restore",
   connect = "connect",
   setupNew = "setup new",
+  walletSync = "wallet sync",
 }
 
 export type CurrencySettings = {
@@ -340,6 +341,12 @@ export type MarketState = {
   marketCurrentPage: number;
 };
 
+// === WALLETSYNC STATE ===
+
+export type WalletSyncState = {
+  isManageKeyDrawerOpen: boolean;
+};
+
 // === ROOT STATE ===
 
 export type State = {
@@ -359,4 +366,5 @@ export type State = {
   market: MarketState;
   wallet: WalletState;
   trustchain: TrustchainStore;
+  walletSync: WalletSyncState;
 };

@@ -1,12 +1,12 @@
-import invariant from "invariant";
-import { Observable, defer, of, range, empty } from "rxjs";
-import { catchError, switchMap, concatMap, takeWhile, map } from "rxjs/operators";
-import { log } from "@ledgerhq/logs";
-import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-env";
-import { DerivationMode } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
+import { log } from "@ledgerhq/logs";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { DerivationMode } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import { Observable, defer, empty, of, range } from "rxjs";
+import { catchError, concatMap, map, switchMap, takeWhile } from "rxjs/operators";
 
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
@@ -176,6 +176,9 @@ const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze(
     startsAt: 1,
     tag: "third-party",
   },
+  ton: {
+    overridesDerivation: "44'/607'/0'/0'/<account>'/0'",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
@@ -196,6 +199,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   icon_berlin_testnet: ["icon"],
   vechain: ["vechain"],
   stacks: ["stacks_wallet"],
+  ton: ["ton"],
   ethereum: ["ethM", "ethMM"],
   ethereum_classic: ["ethM", "ethMM", "etcM"],
   solana: ["solanaMain", "solanaSub"],
@@ -329,6 +333,7 @@ const disableBIP44: Record<string, boolean> = {
   internet_computer: true,
   casper: true,
   filecoin: true,
+  ton: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -347,6 +352,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
   vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  ton: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (

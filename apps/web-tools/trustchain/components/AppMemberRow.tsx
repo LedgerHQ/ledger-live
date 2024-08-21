@@ -9,7 +9,6 @@ import {
 import { Actionable } from "./Actionable";
 import { DisplayName } from "./IdentityManager";
 import { useTrustchainSDK } from "../context";
-import { runWithDevice } from "../device";
 
 export function AppMemberRow({
   deviceId,
@@ -32,13 +31,13 @@ export function AppMemberRow({
 
   const action = useCallback(
     (trustchain: Trustchain, memberCredentials: MemberCredentials) =>
-      runWithDevice(deviceId, transport =>
-        sdk.removeMember(transport, trustchain, memberCredentials, member, callbacks),
-      ).then(async trustchain => {
-        setTrustchain(trustchain);
-        await sdk.getMembers(trustchain, memberCredentials).then(setMembers);
-        return member;
-      }),
+      sdk
+        .removeMember(deviceId, trustchain, memberCredentials, member, callbacks)
+        .then(async trustchain => {
+          setTrustchain(trustchain);
+          await sdk.getMembers(trustchain, memberCredentials).then(setMembers);
+          return member;
+        }),
     [deviceId, sdk, member, setTrustchain, setMembers, callbacks],
   );
 
@@ -50,7 +49,7 @@ export function AppMemberRow({
         inputs={trustchain && memberCredentials ? [trustchain, memberCredentials] : null}
         action={action}
         value={member}
-        valueDisplay={member => <DisplayName pubkey={member.id} />}
+        valueDisplay={member => <DisplayName pubkey={member.id} overridesName={member.name} />}
         buttonProps={{
           "data-tooltip-id": "tooltip",
           "data-tooltip-content":

@@ -24,7 +24,11 @@ import {
   enablePlatformDevToolsSelector,
   languageSelector,
 } from "~/renderer/reducers/settings";
-import { transformToBigNumbers, useRedirectToSwapHistory } from "../utils/index";
+import {
+  transformToBigNumbers,
+  useGetSwapTrackingProperties,
+  useRedirectToSwapHistory,
+} from "../utils/index";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
@@ -41,6 +45,8 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/webApp/utils";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useTranslation } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -80,18 +86,19 @@ export type SwapProps = {
 
 export type SwapWebProps = {
   manifest: LiveAppManifest;
+  liveAppUnavailable: () => void;
+  setQuoteState?: (next: CustomSwapQuotesState) => void;
   swapState?: Partial<SwapProps>;
-  liveAppUnavailable(): void;
   isMaxEnabled?: boolean;
   sourceCurrency?: TokenCurrency | CryptoCurrency;
   targetCurrency?: TokenCurrency | CryptoCurrency;
-  setQuoteState: (next: CustomSwapQuotesState) => void;
 };
 let lastGasOptions: GasOptions;
 
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
   Demo1: "swap-live-app-demo-1",
+  Demo3: "swap-live-app-demo-3",
 };
 
 const SwapWebAppWrapper = styled.div`
@@ -116,6 +123,7 @@ const SwapWebView = ({
     },
   } = useTheme();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
   const accounts = useSelector(flattenAccountsSelector);
@@ -127,6 +135,7 @@ const SwapWebView = ({
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const hasSwapState = !!swapState;
   const customPTXHandlers = usePTXCustomHandlers(manifest);
@@ -164,6 +173,7 @@ const SwapWebView = ({
       "custom.setQuote": (quote: {
         params?: {
           amountTo?: number;
+          amountToCounterValue?: { value: number; fiat: string };
           code?: string;
           parameter: { minAmount: string; maxAmount: string };
         };
@@ -172,9 +182,10 @@ const SwapWebView = ({
         const fromUnit = sourceCurrency?.units[0];
 
         if (!quote.params) {
-          setQuoteState({
+          setQuoteState?.({
             amountTo: undefined,
             swapError: undefined,
+            counterValue: undefined,
           });
           return Promise.resolve();
         }
@@ -182,8 +193,9 @@ const SwapWebView = ({
         if (quote.params?.code && fromUnit) {
           switch (quote.params.code) {
             case "minAmountError":
-              setQuoteState({
+              setQuoteState?.({
                 amountTo: undefined,
+                counterValue: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
                   minAmountFromFormatted: formatCurrencyUnit(
                     fromUnit,
@@ -198,8 +210,9 @@ const SwapWebView = ({
               });
               return Promise.resolve();
             case "maxAmountError":
-              setQuoteState({
+              setQuoteState?.({
                 amountTo: undefined,
+                counterValue: undefined,
                 swapError: new SwapExchangeRateAmountTooLow(undefined, {
                   minAmountFromFormatted: formatCurrencyUnit(
                     fromUnit,
@@ -218,7 +231,17 @@ const SwapWebView = ({
 
         if (toUnit && quote?.params?.amountTo) {
           const amountTo = BigNumber(quote?.params?.amountTo).times(10 ** toUnit.magnitude);
-          setQuoteState({ amountTo, swapError: undefined });
+          const counterValue = quote?.params?.amountToCounterValue?.value
+            ? BigNumber(quote.params.amountToCounterValue.value).times(
+                10 ** fiatCurrency.units[0].magnitude,
+              )
+            : undefined;
+
+          setQuoteState?.({
+            amountTo,
+            counterValue: counterValue,
+            swapError: undefined,
+          });
         }
 
         return Promise.resolve();
@@ -285,6 +308,7 @@ const SwapWebView = ({
           feeStrategy: string;
           openDrawer: boolean;
           customFeeConfig: object;
+          SWAP_VERSION: string;
         };
       }): Promise<{
         feesStrategy: string;
@@ -336,6 +360,8 @@ const SwapWebView = ({
         };
 
         if (!params.openDrawer) {
+          // filters out the custom fee config for chains without drawer
+          const config = ["evm", "bitcoin"].includes(transaction.family) ? customFeeConfig : {};
           return {
             feesStrategy: finalTx.feesStrategy,
             estimatedFees: convertToNonAtomicUnit({
@@ -344,7 +370,7 @@ const SwapWebView = ({
             }),
             errors: status.errors,
             warnings: status.warnings,
-            customFeeConfig,
+            customFeeConfig: config,
           };
         }
 
@@ -355,40 +381,57 @@ const SwapWebView = ({
           warnings: object;
           customFeeConfig: object;
         }>(resolve => {
-          setDrawer(FeesDrawerLiveApp, {
-            setTransaction,
-            mainAccount: fromAccount,
-            parentAccount: fromParentAccount,
-            status: status,
-            provider: undefined,
-            disableSlowStrategy: true,
-            transaction: preparedTransaction,
-            onRequestClose: (save: boolean) => {
-              setDrawer(undefined);
-              if (!save) {
-                resolve({
-                  feesStrategy: params.feeStrategy,
-                  estimatedFees: convertToNonAtomicUnit({
-                    amount: statusInit.estimatedFees,
-                    account: mainAccount,
-                  }),
-                  errors: statusInit.errors,
-                  warnings: statusInit.warnings,
-                  customFeeConfig,
-                });
-              }
+          const performClose = (save: boolean) => {
+            track("button_clicked2", {
+              button: save ? "continueNetworkFees" : "closeNetworkFees",
+              page: "quoteSwap",
+              ...swapDefaultTrack,
+              swapVersion: params.SWAP_VERSION,
+              value: finalTx.feesStrategy,
+            });
+            setDrawer(undefined);
+            if (!save) {
               resolve({
-                feesStrategy: finalTx.feesStrategy,
+                feesStrategy: params.feeStrategy,
                 estimatedFees: convertToNonAtomicUnit({
-                  amount: status.estimatedFees,
+                  amount: statusInit.estimatedFees,
                   account: mainAccount,
                 }),
-                errors: status.errors,
-                warnings: status.warnings,
+                errors: statusInit.errors,
+                warnings: statusInit.warnings,
                 customFeeConfig,
               });
+            }
+            resolve({
+              feesStrategy: finalTx.feesStrategy,
+              estimatedFees: convertToNonAtomicUnit({
+                amount: status.estimatedFees,
+                account: mainAccount,
+              }),
+              errors: status.errors,
+              warnings: status.warnings,
+              customFeeConfig,
+            });
+          };
+
+          setDrawer(
+            FeesDrawerLiveApp,
+            {
+              setTransaction,
+              mainAccount: fromAccount,
+              parentAccount: fromParentAccount,
+              status: status,
+              provider: undefined,
+              disableSlowStrategy: true,
+              transaction: preparedTransaction,
+              onRequestClose: (save: boolean) => performClose(save),
             },
-          });
+            {
+              title: t("swap2.form.details.label.fees"),
+              preventBackdropClick: true,
+              onRequestClose: () => performClose(false),
+            },
+          );
         });
       },
     };
@@ -445,8 +488,9 @@ const SwapWebView = ({
 
   useEffect(() => {
     // Determine the new quote state based on network status
-    setQuoteState({
+    setQuoteState?.({
       amountTo: undefined,
+      counterValue: undefined,
       ...{
         swapError: isOffline ? new NetworkDown() : undefined,
       },

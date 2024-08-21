@@ -1,3 +1,4 @@
+import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 
 /**
@@ -11,6 +12,14 @@ export type JWT = {
     };
   };
 };
+
+/**
+ * A function which allow all interactions with the hardware device.
+ */
+export type WithDevice = (
+  deviceId: string,
+  options?: { openTimeoutMs?: number },
+) => <T>(fn: (transport: Transport) => Observable<T>) => Observable<T>;
 
 /**
  * A Trustchain contains the identifier and the contextual data we need to manage members and encrypt/decrypt data.
@@ -68,6 +77,7 @@ export type TrustchainMember = {
 export type TrustchainSDKContext = {
   applicationId: number;
   name: string;
+  apiBaseUrl: string;
 };
 
 /**
@@ -131,7 +141,7 @@ export type AuthCachePolicy = "no-cache" | "refresh" | "cache";
  *
  * import { sdk } from "@ledgerhq/trustchain";
  *
- * sdk.authWithDevice(transport).then(jwt => console.log(jwt));
+ * sdk.getOrCreateTrustchain(deviceId, memberCredentials).then(trustchain => console.log(trustchain));
  */
 export interface TrustchainSDK {
   /**
@@ -153,12 +163,6 @@ export interface TrustchainSDK {
     ignorePermissionsChecks?: boolean,
   ): Promise<T>;
 
-  withDeviceAuth<T>(
-    transport: Transport,
-    f: (jwt: JWT) => Promise<T>,
-    policy?: AuthCachePolicy,
-  ): Promise<T>;
-
   /**
    * This method will either create the required trustchains (root and application) or restore them.
    * The returned trustchain will be initialized on the root level and also will have the branch derivation corresponding to the contextual applicationId.
@@ -166,7 +170,7 @@ export interface TrustchainSDK {
    * The latest jwt is also returned because it was potentially updated during the process.
    */
   getOrCreateTrustchain(
-    transport: Transport,
+    deviceId: string,
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
@@ -192,7 +196,7 @@ export interface TrustchainSDK {
    * remove a member from the application trustchain
    */
   removeMember(
-    transport: Transport,
+    deviceId: string,
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
     member: TrustchainMember,
@@ -222,6 +226,8 @@ export interface TrustchainSDK {
    * decrypt data with the trustchain encryption key
    */
   decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array>;
+
+  invalidateJwt(): void;
 }
 
 export interface TrustchainDeviceCallbacks {

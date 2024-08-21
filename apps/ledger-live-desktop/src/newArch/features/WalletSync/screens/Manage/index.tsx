@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Icons, InfiniteLoader } from "@ledgerhq/react-ui";
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useDispatch } from "react-redux";
@@ -11,6 +11,9 @@ import { useInstances } from "../ManageInstances/useInstances";
 import { useLifeCycle } from "../../hooks/walletSync.hooks";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import { useLedgerSyncInfo } from "../../hooks/useLedgerSyncInfo";
+import { AlertError } from "../../components/AlertError";
+import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
 
 const Separator = () => {
   const { colors } = useTheme();
@@ -20,7 +23,9 @@ const Separator = () => {
 const WalletSyncManage = () => {
   const { t } = useTranslation();
   useLifeCycle();
-  const { instances, isLoading, hasError } = useInstances();
+
+  const { error: ledgerSyncError, isError: isLedgerSyncError } = useLedgerSyncInfo();
+  const { instances, isLoading, hasError, error: membersError } = useInstances();
 
   const dispatch = useDispatch();
 
@@ -56,6 +61,20 @@ const WalletSyncManage = () => {
       testId: "walletSync-manage-backup",
     },
   ];
+  const error = useMemo(() => ledgerSyncError || membersError, [ledgerSyncError, membersError]);
+
+  const disabled = useMemo(() => isLoading || !!error, [isLoading, error]);
+
+  const getTopContent = () => {
+    if (error) {
+      if (isLedgerSyncError) {
+        return <AlertLedgerSyncDown />;
+      }
+      return <AlertError error={error} />;
+    } else {
+      return <Separator />;
+    }
+  };
 
   return (
     <Box height="100%" paddingX="40px">
@@ -66,10 +85,10 @@ const WalletSyncManage = () => {
         </Text>
       </Box>
 
-      <Separator />
+      {getTopContent()}
 
       {Options.map((props, index) => (
-        <Option {...props} key={index} />
+        <Option {...props} key={index} disabled={disabled} />
       ))}
 
       <InstancesRow
@@ -79,11 +98,7 @@ const WalletSyncManage = () => {
         data-testid="walletSync-manage-instances"
         disabled={isLoading || hasError}
       >
-        {hasError ? (
-          <Text fontSize={13.44} color="error.c60">
-            {t("walletSync.error.fetching")}
-          </Text>
-        ) : isLoading ? (
+        {isLoading ? (
           <InfiniteLoader size={16} />
         ) : (
           <Text fontSize={13.44}>
@@ -106,4 +121,5 @@ const InstancesRow = styled(Flex)<{ disabled?: boolean }>`
   &:hover {
     cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
   }
+  opacity: ${p => (p.disabled ? 0.3 : 1)};
 `;

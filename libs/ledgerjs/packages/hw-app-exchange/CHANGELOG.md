@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2
+
+## 0.5.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+
 ## 0.5.1
 
 ### Patch Changes

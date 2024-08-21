@@ -84,6 +84,12 @@ Before executing any test, don’t forget to build the app, do it whenever the s
 pnpm desktop build:testing
 ```
 
+Please do the setup command if not done yet
+
+```
+pnpm desktop test:playwright:setup
+```
+
 ## Run tests
 
 ```

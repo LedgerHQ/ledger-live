@@ -10,6 +10,7 @@ import vechain from "../families/vechain/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import cardano from "@ledgerhq/coin-cardano/transaction";
+import elrond from "@ledgerhq/coin-elrond/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
@@ -19,7 +20,7 @@ import tezos from "@ledgerhq/coin-tezos/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
 import icon from "@ledgerhq/coin-icon/transaction";
-import elrond from "@ledgerhq/coin-elrond/transaction";
+import ton from "@ledgerhq/coin-ton/transaction";
 
 export default {
   casper,
@@ -34,6 +35,7 @@ export default {
   algorand,
   bitcoin,
   cardano,
+  elrond,
   evm,
   near,
   polkadot,
@@ -43,5 +45,5 @@ export default {
   tron,
   xrp,
   icon,
-  elrond,
+  ton,
 };

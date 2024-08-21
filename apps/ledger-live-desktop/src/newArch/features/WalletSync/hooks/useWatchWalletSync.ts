@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import noop from "lodash/noop";
 import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
@@ -28,6 +28,8 @@ import { latestDistantStateSelector } from "~/renderer/reducers/wallet";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
 
@@ -60,6 +62,10 @@ async function save(
 const ctx = { getAccountBridge, bridgeCache, blacklistedTokenIds: [] };
 
 export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
+  const featureWalletSync = useFeature("lldWalletSync");
+  const { cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
+    featureWalletSync?.params?.environment,
+  );
   const trustchainSdk = useTrustchainSdk();
   const getState = useGetState();
   const getCurrentVersion = useCallback(
@@ -83,13 +89,14 @@ export function useCloudSyncSDK(): CloudSyncSDK<Schema> {
   const cloudSyncSDK = useMemo(
     () =>
       new CloudSyncSDK({
+        apiBaseUrl: cloudSyncApiBaseUrl,
         slug: liveSlug,
         schema: walletsync.schema,
         trustchainSdk,
         getCurrentVersion,
         saveNewUpdate,
       }),
-    [trustchainSdk, getCurrentVersion, saveNewUpdate],
+    [cloudSyncApiBaseUrl, trustchainSdk, getCurrentVersion, saveNewUpdate],
   );
 
   return cloudSyncSDK;
@@ -102,6 +109,7 @@ export type WalletSyncUserState = {
 };
 
 export function useWatchWalletSync(): WalletSyncUserState {
+  const featureWalletSync = useFeature("lldWalletSync");
   const saveUpdate = useSaveUpdate();
   const getState = useGetState();
   const memberCredentials = useSelector(memberCredentialsSelector);
@@ -112,16 +120,20 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
   const [visualPending, setVisualPending] = useState(true);
   const [walletSyncError, setWalletSyncError] = useState<Error | null>(null);
-  const [onUserRefresh, setOnUserRefresh] = useState<() => void>(() => noop);
+  const onUserRefreshRef = useRef<() => void>(noop);
   const state = useMemo(
-    () => ({ visualPending, walletSyncError, onUserRefresh }),
-    [visualPending, walletSyncError, onUserRefresh],
+    () => ({ visualPending, walletSyncError, onUserRefresh: onUserRefreshRef.current }),
+    [visualPending, walletSyncError],
   );
 
   // pull and push wallet sync loop
   useEffect(() => {
-    if (!trustchain || !memberCredentials) {
-      setOnUserRefresh(() => noop);
+    const canNotRunWatchLoop = !featureWalletSync?.enabled || !trustchain || !memberCredentials;
+
+    if (canNotRunWatchLoop) {
+      onUserRefreshRef.current = noop;
+      setVisualPending(false);
+      setWalletSyncError(null);
       return;
     }
 
@@ -135,6 +147,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
     const { unsubscribe, onUserRefreshIntent } = walletSyncWatchLoop({
       walletSyncSdk,
+      watchConfig: featureWalletSync?.params?.watchConfig,
       localIncrementUpdate,
       trustchain,
       memberCredentials,
@@ -147,7 +160,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
       onTrustchainRefreshNeeded,
     });
 
-    setOnUserRefresh(() => onUserRefreshIntent);
+    onUserRefreshRef.current = onUserRefreshIntent;
 
     return unsubscribe;
   }, [
@@ -158,6 +171,7 @@ export function useWatchWalletSync(): WalletSyncUserState {
     memberCredentials,
     onTrustchainRefreshNeeded,
     saveUpdate,
+    featureWalletSync,
   ]);
 
   return state;

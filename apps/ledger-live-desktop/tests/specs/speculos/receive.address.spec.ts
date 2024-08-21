@@ -1,6 +1,5 @@
 import { test } from "../../fixtures/common";
 import { Account } from "../../enum/Account";
-import { specs } from "../../utils/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
@@ -18,17 +17,15 @@ const accounts: Account[] = [
 ];
 
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
-for (const [i, account] of accounts.entries()) {
+for (const account of accounts) {
   test.describe("Receive", () => {
     test.use({
       userdata: "speculos-tests-app",
-      testName: `receiveSpeculos_${account.currency.uiName}`,
-      speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosCurrency: account.currency,
     });
 
     test(
-      `[${account.currency.uiName}] Receive`,
+      `[${account.currency.name}] Receive`,
       {
         annotation: {
           type: "TMS",

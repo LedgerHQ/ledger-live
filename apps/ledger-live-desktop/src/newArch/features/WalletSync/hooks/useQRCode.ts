@@ -6,12 +6,21 @@ import { setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { trustchainSelector, memberCredentialsSelector } from "@ledgerhq/trustchain/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKey } from "./type.hooks";
 
 export function useQRCode() {
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const sdk = useTrustchainSdk();
+  const featureWalletSync = useFeature("lldWalletSync");
+  const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
+    featureWalletSync?.params?.environment,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -26,9 +35,9 @@ export function useQRCode() {
     setError(null);
     setIsLoading(true);
     createQRCodeHostInstance({
+      trustchainApiBaseUrl,
       onDisplayQRCode: url => {
         setUrl(url);
-        setIsLoading(false);
       },
       onDisplayDigits: digits => {
         dispatch(setQrCodePinCode(digits));
@@ -41,18 +50,20 @@ export function useQRCode() {
     })
       .catch(e => {
         if (e instanceof InvalidDigitsError) {
-          return;
+          dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
         }
         setError(e);
-        setIsLoading(false);
+        throw e;
       })
       .then(() => {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
+        queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
         setUrl(null);
         dispatch(setQrCodePinCode(null));
         setIsLoading(false);
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
+        setError(null);
       });
-  }, [trustchain, memberCredentials, dispatch, sdk]);
+  }, [trustchain, memberCredentials, trustchainApiBaseUrl, dispatch, sdk, queryClient]);
 
   return {
     url,
