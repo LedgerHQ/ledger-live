@@ -95,7 +95,6 @@ const Fields: Props = ({
           feesStrategy,
         }),
       );
-      if (drawerState.open) setDrawer(undefined);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateTransaction, bridge],

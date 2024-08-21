@@ -387,7 +387,7 @@ const SwapWebView = ({
               page: "quoteSwap",
               ...swapDefaultTrack,
               swapVersion: params.SWAP_VERSION,
-              value: finalTx.feesStrategy,
+              value: finalTx.feesStrategy || "custom",
             });
             setDrawer(undefined);
             if (!save) {
@@ -403,7 +403,8 @@ const SwapWebView = ({
               });
             }
             resolve({
-              feesStrategy: finalTx.feesStrategy,
+              // little hack to make sure we do not return null (for bitcoin for instance)
+              feesStrategy: finalTx.feesStrategy || "custom",
               estimatedFees: convertToNonAtomicUnit({
                 amount: status.estimatedFees,
                 account: mainAccount,
