@@ -167,9 +167,7 @@ export default class TransportNodeHidNoEvents extends Transport {
    * @returns a promise of apdu response
    */
   async exchange(apdu: Buffer): Promise<Buffer> {
-    const tracer = this.tracer.withUpdatedContext({
-      function: "exchange",
-    });
+    const { tracer } = this;
     tracer.trace("Exchanging APDU ...");
 
     const b = await this.exchangeAtomicImpl(async () => {
