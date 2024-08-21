@@ -37,12 +37,9 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const { isCurrencyAvailable } = useRampCatalog();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const allAccountsCount: number = useSelector(accountsCountSelector);
-  const hasAccounts = currency ? !!accounts?.length : allAccountsCount > 0;
-  const areAllAccountsEmpty = useSelector(areAccountsEmptySelector);
-  const hasNoFund = currency
-    ? !!accounts?.every(accounts => accounts.balance.lte(0))
-    : !hasAccounts || areAllAccountsEmpty;
+  const hasAccounts = useSelector(accountsCountSelector) > 0;
+  const hasFunds = !useSelector(areAccountsEmptySelector) && hasAccounts;
+  const hasCurrency = currency ? !!accounts?.some(({ balance }) => balance.gt(0)) : hasFunds;
 
   const recoverEntryPoint = useFeature("protectServicesMobile");
   const stakePrograms = useFeature("stakePrograms");
@@ -59,7 +56,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
       SEND: {
-        disabled: readOnlyModeEnabled || hasNoFund,
+        disabled: readOnlyModeEnabled || !hasCurrency,
         route: [
           NavigatorName.SendFunds,
           {
@@ -82,6 +79,17 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
         ],
         icon: IconsLegacy.ArrowBottomMedium,
       },
+      SWAP: {
+        disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || !hasFunds,
+        route: [
+          NavigatorName.Swap,
+          {
+            screen: ScreenName.SwapTab,
+            params: { currency },
+          },
+        ],
+        icon: IconsLegacy.BuyCryptoMedium,
+      },
     };
 
     if (canBeBought) {
@@ -100,7 +108,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
     if (canBeSold) {
       list.SELL = {
-        disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || hasNoFund,
+        disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || !hasCurrency,
         route: [
           NavigatorName.Exchange,
           {
@@ -111,18 +119,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
         icon: IconsLegacy.MinusMedium,
       };
     }
-
-    list.SWAP = {
-      disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || hasNoFund,
-      route: [
-        NavigatorName.Swap,
-        {
-          screen: ScreenName.SwapTab,
-          params: { currency },
-        },
-      ],
-      icon: IconsLegacy.BuyCryptoMedium,
-    };
 
     if (canBeStaked) {
       list.STAKE = {
@@ -170,7 +166,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     return list;
   }, [
     currency,
-    hasNoFund,
+    hasCurrency,
+    hasFunds,
     isPtxServiceCtaExchangeDrawerDisabled,
     readOnlyModeEnabled,
     route,
