@@ -172,7 +172,7 @@ export default class TransportNodeHidNoEvents extends Transport {
 
     const b = await this.exchangeAtomicImpl(async () => {
       const { channel, packetSize } = this;
-      tracer.trace(`=> ${apdu.toString("hex")}`, { channel, packetSize }, "apdu");
+      tracer.trace(`=> ${apdu.toString("hex")}`, { channel, packetSize });
 
       const framingHelper = hidFraming(channel, packetSize);
 
@@ -192,7 +192,7 @@ export default class TransportNodeHidNoEvents extends Transport {
         acc = framingHelper.reduceResponse(acc, buffer);
       }
 
-      tracer.trace(`<= ${result.toString("hex")}`, { channel, packetSize }, "apdu");
+      tracer.trace(`<= ${result.toString("hex")}`, { channel, packetSize });
       return result;
     });
 
