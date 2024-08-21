@@ -14,7 +14,7 @@ export type ModalsData = {
 };
 
 const modals: MakeModalsType<ModalsData> = {
-  MODAL_EVM_STAKE,
+  MODAL_EVM_STAKE, // Now opens a side-drawer instead of a modal
   MODAL_EVM_EDIT_TRANSACTION: EditTransactionModal,
 };
 

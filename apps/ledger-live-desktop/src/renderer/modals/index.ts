@@ -84,6 +84,7 @@ export type Modals = MakeModalsType<ModalData>;
 
 const modals: Modals = {
   ...globalModals,
+  //  What if one is now a side drawer...?
   ...coinModals,
 };
 
