@@ -21,3 +21,28 @@ This function should guess a conversion of the distant state to the local state.
 ### `similarLocalState(a, b)`
 
 Compare two local state and tells if they are "similar", ignoring possible diff related to Distant<>Local translations or possible change of orders that are acceptable for each module.
+
+## Template
+
+```ts
+type LocalState = ...
+type DistantState = ...
+
+export const emptyState: LocalState = TODO;
+
+export const genState = (index: number): LocalState => {
+  TODO;
+};
+
+export const convertLocalToDistantState = (localState: LocalState): DistantState => {
+  TODO;
+};
+
+export const convertDistantToLocalState = (distantState: DistantState): LocalState => {
+  TODO;
+};
+
+export const similarLocalState = (a: LocalState, b: LocalState) => {
+  TODO;
+};
+```

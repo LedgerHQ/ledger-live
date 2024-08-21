@@ -22,7 +22,7 @@ export type Props = {
   withAppsToReinstall: boolean;
   onDrawerClose: (reinstall?: boolean) => void;
   onRequestClose: () => void;
-  firmware?: FirmwareUpdateContext;
+  firmware: FirmwareUpdateContext;
   stepId: StepId;
   error?: Error | null | undefined;
   deviceModelId: DeviceModelId;
@@ -55,7 +55,7 @@ const UpdateModal = ({
   const [err, setErr] = useState<MaybeError>(error || null);
   const [CLSBackup, setCLSBackup] = useState<string>();
   const [updatedDeviceInfo, setUpdatedDeviceInfo] = useState<DeviceInfo | undefined>(undefined);
-  const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
+  const withFinal = useMemo(() => hasFinalFirmware(firmware.final), [firmware]);
   const [cancel, setCancel] = useState<boolean>(false);
 
   const isDisconnectedDeviceError = err instanceof DisconnectedDevice;
@@ -120,7 +120,7 @@ const UpdateModal = ({
     setUpdatedDeviceInfo,
 
     appsToBeReinstalled: withAppsToReinstall,
-    transitionTo: setStateStepId,
+    transitionTo: setStateStepId, // FIXME: this is a really bad idea that should be reworked, as the steps are determined dynamically, a child might want to transition to a step that doesn't exist
     CLSBackup,
     deviceModelId,
     error: err,

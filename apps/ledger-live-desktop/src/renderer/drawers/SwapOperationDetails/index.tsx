@@ -1,16 +1,17 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
+import { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/providers/swap";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import uniq from "lodash/uniq";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
@@ -108,6 +109,7 @@ const SwapOperationDetails = ({
   mappedSwapOperation: MappedSwapOperation;
   onClose?: () => void;
 }) => {
+  const [providerData, setproviderData] = useState<AdditionalProviderConfig | undefined>(undefined);
   const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
     mappedSwapOperation;
   const fromAccountName = useAccountName(fromAccount);
@@ -127,6 +129,14 @@ const SwapOperationDetails = ({
   const url =
     fromCurrency.type === "CryptoCurrency" &&
     getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
+
+  useEffect(() => {
+    const getProvideData = async () => {
+      const data = await getSwapProvider(provider);
+      setproviderData(data);
+    };
+    getProvideData();
+  }, [provider]);
 
   const openAccount = useCallback(
     (account: Account | SubAccount) => {
@@ -167,12 +177,12 @@ const SwapOperationDetails = ({
         },
       });
     } else {
-      openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main);
+      openURL(providerData!.mainUrl);
     }
     if (onClose) {
       onClose();
     }
-  }, [provider, fromAccount, history, accounts, onClose, language]);
+  }, [provider, fromAccount, history, accounts, onClose, language, providerData]);
 
   return (
     <Box flow={3} px={20} mt={20}>

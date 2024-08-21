@@ -7,12 +7,14 @@ export type OptionProps = {
   description: string;
   onClick?: () => void;
   testId: string;
+  disabled?: boolean;
 };
 
-export const OptionContainer = styled.div`
+const OptionContainer = styled(Flex)<{ disabled?: boolean }>`
   &:hover {
-    cursor: pointer;
+    cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
   }
+  opacity: ${p => (p.disabled ? 0.3 : 1)};
 `;
 
 export const Separator = () => {
@@ -20,8 +22,13 @@ export const Separator = () => {
   return <Box height="1px" width="100%" backgroundColor={colors.opacityDefault.c05} />;
 };
 
-export const Option = ({ label, description, onClick, testId }: OptionProps) => (
-  <OptionContainer onClick={onClick} data-testid={testId}>
+export const Option = ({ label, description, onClick, testId, disabled = false }: OptionProps) => (
+  <OptionContainer
+    onClick={disabled ? undefined : onClick}
+    data-testid={testId}
+    disabled={disabled}
+    flexDirection="column"
+  >
     <Flex>
       <Box paddingY={24} width={304}>
         <Box>

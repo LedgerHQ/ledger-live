@@ -1,10 +1,7 @@
-import { setEnv } from "@ledgerhq/live-env";
 import { createQRCodeHostInstance, createQRCodeCandidateInstance } from ".";
 import WebSocket from "ws";
 import { convertKeyPairToLiveCredentials } from "../sdk";
 import { crypto } from "@ledgerhq/hw-trustchain";
-
-setEnv("TRUSTCHAIN_API", "ws://localhost:1234");
 
 describe("Trustchain QR Code", () => {
   let server;
@@ -55,6 +52,7 @@ describe("Trustchain QR Code", () => {
     );
 
     const hostP = createQRCodeHostInstance({
+      trustchainApiBaseUrl: "ws://localhost:1234",
       onDisplayQRCode,
       onDisplayDigits,
       addMember,

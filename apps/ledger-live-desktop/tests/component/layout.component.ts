@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 import { step } from "../misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 
@@ -51,6 +52,16 @@ export class Layout extends Component {
     await this.drawerMarketButton.click();
   }
 
+  @step("Check if there is a input error visible")
+  async checkInputErrorNotVisible() {
+    await this.inputError.waitFor({ state: "hidden" });
+  }
+
+  @step("synchronize accounts")
+  async syncAccounts() {
+    await this.topbarSynchronizeButton.click();
+  }
+
   @step("Open Accounts")
   async goToAccounts() {
     await this.drawerAccountsButton.click();
@@ -82,8 +93,19 @@ export class Layout extends Component {
     await this.discreetTooltip.waitFor({ state: "hidden" }); // makes sure the tooltip has disappeared to prevent flakiness
   }
 
+  @step("Go to Settings")
   async goToSettings() {
     await this.topbarSettingsButton.click();
+  }
+
+  @step("Check if the error message is the same as expected")
+  async checkErrorMessage(errorMessage: string | null) {
+    if (errorMessage !== null) {
+      await this.inputError.waitFor({ state: "visible" });
+      const errorText: any = await this.inputError.textContent();
+      const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
+      expect(normalize(errorText)).toEqual(normalize(errorMessage));
+    }
   }
 
   async lockApp() {

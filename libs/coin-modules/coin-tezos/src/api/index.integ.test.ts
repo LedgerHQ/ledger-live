@@ -20,6 +20,13 @@ describe("Tezos Api", () => {
       node: {
         url: "https://rpc.ghostnet.teztnets.com",
       },
+      fees: {
+        minGasLimit: 600,
+        minRevealGasLimit: 300,
+        minStorageLimit: 0,
+        minFees: 500,
+        minEstimatedFees: 500,
+      },
     });
   });
 
@@ -78,6 +85,7 @@ describe("Tezos Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction(address, {
+        mode: "send",
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
         amount: BigInt(10),
         fee: BigInt(1),

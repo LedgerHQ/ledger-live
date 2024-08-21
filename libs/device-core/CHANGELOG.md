@@ -1,5 +1,46 @@
 # @ledgerhq/device-core
 
+## 0.3.2
+
+### Patch Changes
+
+- [#7328](https://github.com/LedgerHQ/ledger-live/pull/7328) [`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add and export type guard for AppStorageInfo
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be)]:
+  - @ledgerhq/types-live@6.50.0
+  - @ledgerhq/live-network@1.4.0
+
+## 0.3.2-next.0
+
+### Patch Changes
+
+- [#7328](https://github.com/LedgerHQ/ledger-live/pull/7328) [`a0a36e5`](https://github.com/LedgerHQ/ledger-live/commit/a0a36e5fe86865a5643b38ed8d56e93cbda07e15) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add and export type guard for AppStorageInfo
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be)]:
+  - @ledgerhq/types-live@6.50.0-next.0
+  - @ledgerhq/live-network@1.4.0-next.0
+
+## 0.3.1
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`5451145`](https://github.com/LedgerHQ/ledger-live/commit/54511453591d3702e09ca77559bb0564937b2a65) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - shouldForceFirmwareUpdate: add <1.1.1 condition for europa
+
+- Updated dependencies [[`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f)]:
+  - @ledgerhq/devices@8.4.2
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/types-live@6.49.0
+
+## 0.3.1-hotfix.0
+
+### Patch Changes
+
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`6b2fc93`](https://github.com/LedgerHQ/ledger-live/commit/6b2fc93beb6624fb2d991a6bb69cea3e9a8ef453) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - shouldForceFirmwareUpdate: add <1.1.1 condition for europa
+
+- Updated dependencies [[`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea)]:
+  - @ledgerhq/devices@8.4.2-hotfix.0
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+
 ## 0.3.0
 
 ### Minor Changes

@@ -3,15 +3,8 @@
  */
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
-import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
 import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
-
-const WalletSyncTestApp = () => (
-  <>
-    <div id="modals"></div>
-    <WalletSyncRow />
-  </>
-);
+import { WalletSyncTestApp } from "./shared";
 
 describe("Rendering", () => {
   it("should loads and displays WalletSync Row", async () => {
@@ -32,6 +25,6 @@ describe("Rendering", () => {
       expect(screen.getByRole("button", { name: "Sync your accounts" })).toBeDefined(),
     );
 
-    expect(screen.getByText("Already created a key?")).toBeDefined();
+    expect(screen.getByText("Already synced a Ledger Live app?")).toBeDefined();
   });
 });

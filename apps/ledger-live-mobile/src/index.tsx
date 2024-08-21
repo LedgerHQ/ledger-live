@@ -29,6 +29,7 @@ import {
   savePostOnboardingState,
   saveMarketState,
   saveTrustchainState,
+  saveWalletExportState,
 } from "./db";
 import {
   exportSelector as settingsExportSelector,
@@ -85,9 +86,11 @@ import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import QueuedDrawersContextProvider from "~/newArch/components/QueuedDrawer/QueuedDrawersContextProvider";
+import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { exportMarketSelector } from "./reducers/market";
 import { trustchainStoreSelector } from "@ledgerhq/trustchain/store";
+import { walletSelector } from "~/reducers/wallet";
+import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -106,6 +109,10 @@ const styles = StyleSheet.create({
   },
 });
 
+function walletExportSelector(state: State) {
+  return exportWalletState(walletSelector(state));
+}
+
 function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
@@ -116,7 +123,7 @@ function App() {
   useEffect(() => {
     if (
       !analyticsFF?.enabled ||
-      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints.includes("Portfolio")) ||
+      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints?.includes?.("Portfolio")) ||
       hasSeenAnalyticsOptInPrompt
     )
       return;
@@ -217,6 +224,13 @@ function App() {
     throttle: 500,
     getChangesStats: (a, b) => a.trustchain !== b.trustchain,
     lense: trustchainStoreSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveWalletExportState,
+    throttle: 500,
+    getChangesStats: (a, b) => walletStateExportShouldDiffer(a.wallet, b.wallet),
+    lense: walletExportSelector,
   });
 
   return (

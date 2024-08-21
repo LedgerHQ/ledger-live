@@ -335,7 +335,7 @@
         "label": {
           "provider": "provider",
           "rate": "rate",
-          "fees": "network fees",
+          "fees": "Network Fees",
           "target": "target account"
         },
         "tooltip": {
@@ -1856,7 +1856,8 @@
       "provider": "Provider",
       "payoutNetworkFees": "Payout fees",
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-      "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
+      "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>"
     },
     "swap2": {
       "amountSent": "Amount to send",
@@ -1991,7 +1992,8 @@
       "updateBtn": "Update firmware",
       "installUpdate": "Install update",
       "banner": {
-        "warning": "Update Firmware to {{latestFirmware}} is available",
+        "warning": "OS update available",
+        "version": "Version {{latestFirmware}}",
         "cta": "Go to My Ledger",
         "old": {
           "warning": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
@@ -4084,6 +4086,8 @@
       },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
+      "mockAppUpdate": "Mock app update",
+      "mockAppUpdateDesc": "Display available app update in My Ledger, it will reinstall the same app version",
       "catalogUrl": "Set the catalog apps provider",
       "catalogUrlDesc": "Enter your custom catalog provider URL",
       "enablePlatformDevTools": "Enable platform dev tools",
@@ -5220,6 +5224,10 @@
       "memo": "Memo",
       "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
     },
+    "ton": {
+      "commentPlaceholder": "Optional",
+      "comment": "Comment"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
@@ -5561,6 +5569,13 @@
       "title": "Impossible to calculate amount and fees",
       "description": "Impossible to calculate amount and fees"
     },
+    "InvalidRecipientForTokenTransfer": {
+      "title": "Invalid recipient for token transfer, supported account types for token transfer: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed": {
+      "title": "Sorry, fee estimation failed",
+      "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
@@ -5631,6 +5646,9 @@
       "title": "Rate Expired",
       "description": "The exchange transaction could not be completed as the rate has expired. Please refresh the rates and try your swap again."
     },
+    "PayinExtraIdError": {
+      "message": "Missing required extraId required for swap"
+    },
     "SwapGenericAPIError": {
       "title": "Something went wrong",
       "description": "The exchange transaction did not go through. Please try again or contact support."
@@ -5658,6 +5676,10 @@
     "TransportStatusError": {
       "title": "Something went wrong. Please reconnect your device",
       "description": "{{message}}"
+    },
+    "TrustchainNotFound": {
+      "title": "Something went wrong while fetching your data",
+      "description": "Please try again or contact Ledger Support."
     },
     "DeviceShouldStayInApp": {
       "title": "Please open the {{appName}} app",
@@ -5765,6 +5787,9 @@
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
+    },
+    "TonCommentInvalid": {
+      "title": "Comment must not exceed 120 characters without special characters"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"
@@ -6370,7 +6395,7 @@
       "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
       "cta": "Sync your accounts"
     },
-    "alreadySync": "Already created a key?",
+    "alreadySync": "Already synced a Ledger Live app?",
     "manage": {
       "cta": "Manage",
       "synchronize": {
@@ -6396,7 +6421,8 @@
       "title": "Something went wrong",
       "description": "Please try again later.",
       "cta": "Try again",
-      "fetching": "Something went wrong while fetching your data."
+      "fetching": "Something went wrong while fetching your data.",
+      "ledgerSyncDown": "Ledger Sync is currently unavailable.<br/>This doesn’t have any impact on your assets."
     },
     "unsecuredError": {
       "title": "The synchronization isn't secured by this Ledger",
@@ -6470,7 +6496,11 @@
       },
       "pinCode": {
         "title": "Enter the code",
-        "description": "Type the code displayed on the other Ledger Live you want to sync with."
+        "description": "Type the code displayed on the other Ledger Live you want to sync with.",
+        "error": {
+          "title": "Codes do not match",
+          "description": "Make sure the code you type is the one displayed on the other Ledger Live instance."
+        }
       }
     },
     "manageInstances": {

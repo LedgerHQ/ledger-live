@@ -34,6 +34,15 @@ export default class DummyWalletApp {
     });
   }
 
+  async sendAccountReceive() {
+    return await send({
+      method: "account.receive",
+      params: {
+        accountId: "2d23ca2a-069e-579f-b13d-05bc706c7583",
+      },
+    });
+  }
+
   async expectResponse(id: string, response: Promise<Record<string, unknown>>) {
     await expect(response).resolves.toMatchObject({
       jsonrpc: "2.0",

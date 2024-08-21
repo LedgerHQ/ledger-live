@@ -2,7 +2,7 @@ import React from "react";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import FollowStepsOnDevice from "../DeviceActions/FollowStepsOnDevice";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { useRemoveMembers } from "../../hooks/useRemoveMember";
+import { useRemoveMember } from "LLD/features/WalletSync/hooks/useRemoveMember";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function DeleteInstanceWithTrustchain({ instance, device }: Props) {
-  const { error, userDeviceInteraction, onRetry } = useRemoveMembers({ device, member: instance });
+  const { error, userDeviceInteraction, onRetry } = useRemoveMember({ device, member: instance });
 
   if (error) {
     return <ErrorDisplay error={error} withExportLogs onRetry={onRetry} />;

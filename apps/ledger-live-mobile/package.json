@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.47.0",
+  "version": "3.48.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -67,7 +67,8 @@
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
     "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts",
     "check": "pnpm lint; pnpm typecheck",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "assets:replace": "zx ./scripts/replace-assets.mjs"
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",
@@ -145,6 +146,7 @@
     "expo-keep-awake": "~12.8.2",
     "expo-modules-autolinking": "^1.10.2",
     "expo-modules-core": "^1.11.8",
+    "expo-crypto": "^12.8.1",
     "fuse.js": "^6.4.6",
     "hoist-non-react-statics": "3.3.2",
     "i18next": "20.6.1",
@@ -171,6 +173,7 @@
     "react-native-extra-dimensions-android": "^1.2.5",
     "react-native-fast-crypto": "^2.2.0",
     "react-native-fast-image": "^8.5.11",
+    "react-native-fast-pbkdf2": "^0.3.1",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-get-random-values": "^1.11.0",
     "react-native-haptic-feedback": "^2.0.3",

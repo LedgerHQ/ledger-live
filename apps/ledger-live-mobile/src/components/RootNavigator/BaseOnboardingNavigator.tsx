@@ -18,6 +18,7 @@ import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigato
 import { RootComposite, StackNavigatorProps } from "./types/helpers";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -98,6 +99,11 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.PasswordModifyFlow}
         component={PasswordModifyFlowNavigator}
+      />
+      <Stack.Screen
+        name={NavigatorName.WalletSync}
+        component={WalletSyncNavigator}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

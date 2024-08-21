@@ -927,8 +927,16 @@
       "title" : "Fehler in der Sequenznummer",
       "description" : "Bitte schließe das Fenster und versuche es später noch einmal"
     },
+    "TonCommentInvalid" : {
+      "title" : "Der Kommentar darf eine Länge von 120 Zeichen nicht überschreiten und keine Sonderzeichen enthalten"
+    },
     "TezosUnrevealedAccount" : {
       "title" : "Umtauschen nicht möglich: Erfordert initiales Senden/Delegieren bei Tezos-Konto oder Austausch des Paares."
+    },
+    "CustomError" : {
+      "title" : "Entschuldigung, versuche es noch einmal.",
+      "description" : "Der Server konnte deine Anfrage nicht bearbeiten. Bitte versuche es später noch einmal oder wende dich an den Ledger-Kundenservice.",
+      "errorCode" : "Code: {{errorCode}}"
     }
   },
   "crash" : {
@@ -3647,6 +3655,8 @@
         "value" : "Memo-Wert"
       },
       "validateMemo" : "Memo validieren",
+      "comment" : "Kommentar",
+      "validateComment" : "Kommentar validieren",
       "quantity" : "Menge"
     },
     "validation" : {
@@ -6382,7 +6392,7 @@
   },
   "customImage" : {
     "title" : "Bild für Bildschirmsperre",
-    "replace" : "Ersetzen",
+    "change" : "Ändern",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Aus meiner Bildergalerie auswählen",
@@ -6406,6 +6416,8 @@
     },
     "confirmCrop" : "Ausschnitt bestätigen",
     "confirmContrast" : "Kontrast bestätigen",
+    "keepOnDevice" : "Behalten",
+    "discardOnDevice" : "Verwerfen",
     "nftEntryPointButtonLabel" : "Als Sperrbildschirmbild festlegen",
     "customImage" : "Benutzerdefiniertes Bild",
     "doThisLater" : "Vielleicht später",
@@ -6685,12 +6697,112 @@
     }
   },
   "walletSync" : {
+    "title" : "Ledger Sync",
     "activation" : {
       "screen" : {
         "title" : "Synchronisiere deine Konten auf allen Plattformen",
         "description" : "Dein Ledger-Gerät erzeugt einen Verschlüsselungsschlüssel, mit dem sichergestellt wird, dass deine Daten privat bleiben und nur von dir abgerufen werden können.",
         "mainCta" : "Konten synchronisieren",
         "secondCta" : "Du hast bereits einen Schlüssel erstellt?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "Wähle das Ledger-Gerät, mit dem du deine Sicherheitskopie schützen möchtest",
+      "description" : "Du kannst deine Sicherheitskopie bequem abrufen, indem du dein Ledger-Gerät einfach mit der Ledger Live-Mobil- oder -Desktop-App verbindest."
+    },
+    "deviceAction" : {
+      "title" : "Vorgang fortsetzen auf deiner Ledger {{wording}}",
+      "description" : "Befolge die Anweisungen, die auf dem Trusted Display deines Ledger-Geräts erscheinen."
+    },
+    "success" : {
+      "sync" : "Synchronisierung erfolgreich!",
+      "syncDesc" : "Änderungen bei deinen Konten werden jetzt automatisch in allen Apps und auf allen Plattformen angezeigt.",
+      "activation" : "Es hat geklappt!",
+      "activationDesc" : "Du hast Ledger Sync erfolgreich aktiviert.",
+      "syncAnother" : "Mit einer anderen Ledger Live-App synchronisieren",
+      "close" : "Schließen"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "Synchronisieren",
+        "description" : "Synchronisiere deine App-Daten mit einer anderen Ledger Live-App für ein nahtloses Erlebnis. "
+      },
+      "manageKey" : {
+        "title" : "Schlüssel verwalten",
+        "description" : "Schütze oder lösche deinen Verschlüsselungsschlüssel mit einem anderen Ledger-Gerät.",
+        "success" : "Die Synchronisierung deiner Geräte wurde aufgehoben und dein Schlüssel wurde gelöscht",
+        "drawer" : {
+          "step1" : {
+            "title" : "Deinen Schlüssel verwalten",
+            "titleCta" : "Deinen Schlüssel löschen",
+            "descCta" : "Alle deine synchronisierten Daten werden gelöscht."
+          },
+          "step2" : {
+            "delete" : "Löschen",
+            "cancel" : "Abbrechen",
+            "title" : "Möchtest du deinen Verschlüsselungsschlüssel wirklich löschen?",
+            "desc" : "Wenn du auf „Löschen“ klickst, wird die Synchronisierung deiner Geräte aufgehoben und alle synchronisierten Daten werden gelöscht. Keine Sorge: Dieser Schritt hat keine Folgen für deine Vermögenswerte. Du kannst deine Konten jederzeit neu synchronisieren."
+          }
+        }
+      },
+      "manageInstances" : {
+        "title" : "Synchronisierte Instanzen verwalten",
+        "remove" : "Entfernen"
+      },
+      "synchronizedInstances" : {
+        "cta" : "Jetzt verwalten",
+        "title" : "{{count}} synchronisierte Instanz",
+        "title_plural" : "{{count}} synchronisierte Instanzen",
+        "error" : "Instanzen",
+        "unsecuredError" : {
+          "title" : "Die Synchronisierung wird nicht durch dieses Ledger-Gerät abgesichert",
+          "description" : "Bitte schließe das Ledger-Gerät an, das du zum Erstellen deines Verschlüsselungsschlüssels verwendet hast.",
+          "info" : "Du hast dein Ledger-Gerät verloren? Keine Sorge! Du kannst deinen Schlüssel trotzdem noch löschen. Bei diesem Vorgang werden sowohl deine Daten gelöscht als auch die Synchronisierung aller derzeit synchronisierten Instanzen aufgehoben.",
+          "cta" : "Anderes Ledger-Gerät verbinden",
+          "ctaDelete" : "Meinen Verschlüsselungsschlüssel löschen"
+        },
+        "autoRemoveError" : {
+          "title" : "Du kannst die aktuelle Instanz nicht entfernen",
+          "description" : "Aus Sicherheitsgründen kannst du die Instanz, die du gerade benutzt, nicht entfernen, ohne deinen Verschlüsselungsschlüssel zu löschen.",
+          "info" : "Wenn du jedoch deinen Verschlüsselungsschlüssel löschst, werden deine Geräte nicht mehr synchronisiert, und alle synchronisierten Daten werden gelöscht. Allerdings hat dies keine Auswirkungen auf dein Vermögen. Du kannst deine Konten jederzeit neu synchronisieren.",
+          "cta" : "Verstanden",
+          "ctaDelete" : "Meinen Verschlüsselungsschlüssel löschen"
+        },
+        "success" : "Deine {{member}} ist nicht mehr synchronisiert"
+      },
+      "errors" : {
+        "fetching" : "Beim Abrufen deiner synchronisierten Instanzen ist ein Problem aufgetreten.",
+        "trustchain" : "Unerwartete falsche Trustchain",
+        "memberCredentials" : "Unerwartete falsche Mitgliedszugangsdaten",
+        "ledgerSyncUnavailable" : "Ledger Sync ist derzeit nicht verfügbar. Dies hat keine Auswirkung auf deine Vermögenswerte."
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "Synchronisierungsmethode auswählen",
+        "scan" : {
+          "title" : "QR-Code scannen"
+        },
+        "connectDevice" : {
+          "title" : "Dein Ledger-Gerät verwenden"
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "disclaimer" : {
+      "clearSigningEnabled" : "Clear Signing aktiviert",
+      "checkbox" : "Nicht erneut erinnern.",
+      "CTA" : "{{app}} öffnen"
+    },
+    "manifestsList" : {
+      "title" : "Entdecken",
+      "description" : "Das Beste aus dem Web3 – kuratiert von Ledger"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Web3 kennenlernen",
+        "placeholder" : "Suchen oder eine URL eingeben"
       }
     }
   }

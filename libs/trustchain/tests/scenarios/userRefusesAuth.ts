@@ -1,8 +1,7 @@
-import Transport from "@ledgerhq/hw-transport";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { RecorderConfig, ScenarioOptions, recorderConfigDefaults } from "../test-helpers/types";
 
-export async function scenario(transport: Transport, { sdkForName }: ScenarioOptions) {
+export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions) {
   const sdk1 = sdkForName("Foo");
   const memberCredentials = await sdk1.initMemberCredentials();
   let interactionCounter = 0;
@@ -16,7 +15,7 @@ export async function scenario(transport: Transport, { sdkForName }: ScenarioOpt
       interactionCounter--;
     },
   };
-  await expect(sdk1.getOrCreateTrustchain(transport, memberCredentials, callbacks)).rejects.toThrow(
+  await expect(sdk1.getOrCreateTrustchain(deviceId, memberCredentials, callbacks)).rejects.toThrow(
     UserRefusedOnDevice,
   );
   expect(interactionCounter).toBe(0);

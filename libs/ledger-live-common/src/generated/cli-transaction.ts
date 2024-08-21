@@ -8,6 +8,7 @@ import vechain from "../families/vechain/cli-transaction";
 import { cliTools as algorand } from "../families/algorand/setup";
 import { cliTools as bitcoin } from "../families/bitcoin/setup";
 import { cliTools as cardano } from "../families/cardano/setup";
+import { cliTools as elrond } from "../families/elrond/setup";
 import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
@@ -17,7 +18,7 @@ import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as tron } from "../families/tron/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
 import { cliTools as icon } from "../families/icon/setup";
-import { cliTools as elrond } from "../families/elrond/setup";
+import { cliTools as ton } from "../families/ton/setup";
 
 export default {
   celo,
@@ -30,6 +31,7 @@ export default {
   algorand,
   bitcoin,
   cardano,
+  elrond,
   evm,
   near,
   polkadot,
@@ -39,5 +41,5 @@ export default {
   tron,
   xrp,
   icon,
-  elrond,
+  ton,
 };

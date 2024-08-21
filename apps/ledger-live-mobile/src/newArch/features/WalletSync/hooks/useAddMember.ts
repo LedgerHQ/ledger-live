@@ -1,11 +1,7 @@
 import { memberCredentialsSelector, setTrustchain } from "@ledgerhq/trustchain/store";
 import { useDispatch, useSelector } from "react-redux";
-import { useTrustchainSdk, runWithDevice } from "./useTrustchainSdk";
-import {
-  MemberCredentials,
-  TrustchainResult,
-  TrustchainResultType,
-} from "@ledgerhq/trustchain/types";
+import { useTrustchainSdk } from "./useTrustchainSdk";
+import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
@@ -41,26 +37,27 @@ export function useAddMember({ device }: { device: Device | null }) {
     const addMember = async () => {
       try {
         if (!device) return;
-        await runWithDevice(device.deviceId, async transport => {
-          const trustchainResult = await sdk.getOrCreateTrustchain(
-            transport,
-            memberCredentialsRef.current as MemberCredentials,
-            {
-              onStartRequestUserInteraction: () => {
-                setUserDeviceInteraction(true);
-              },
-              onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
-            },
-          );
-
+        if (!memberCredentialsRef.current) {
+          throw new Error("memberCredentials is not set");
+        }
+        const trustchainResult = await sdk.getOrCreateTrustchain(
+          device.deviceId,
+          memberCredentialsRef.current,
+          {
+            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
+            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+          },
+        );
+        if (trustchainResult) {
           transitionToNextScreen(trustchainResult);
-        });
+        }
       } catch (error) {
         setError(error as Error);
       }
     };
-
-    setTimeout(() => addMember(), 3500);
+    if (device && device.deviceId) {
+      addMember();
+    }
   }, [device, dispatch, sdk, transitionToNextScreen]);
 
   return { error, userDeviceInteraction, onRetry };

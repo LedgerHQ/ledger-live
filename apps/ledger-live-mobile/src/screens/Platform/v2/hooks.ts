@@ -5,6 +5,7 @@ import {
   useDisclaimerRaw,
   useRecentlyUsed,
   DisclaimerRaw,
+  Categories,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
@@ -25,13 +26,13 @@ import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import { NavigationProps } from "./types";
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
-export function useCatalog() {
+export function useCatalog(initialCategory?: Categories["selected"] | null) {
   const recentlyUsedDB = useRecentlyUsedDB();
   const { state: localLiveApps } = useLocalLiveAppContext();
   const allManifests = useManifests();
   const completeManifests = useManifests({ visibility: ["complete"] });
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
-  const categories = useCategories(completeManifests);
+  const categories = useCategories(completeManifests, initialCategory);
   const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
 
   const search = useSearch<AppManifest, TextInput>({

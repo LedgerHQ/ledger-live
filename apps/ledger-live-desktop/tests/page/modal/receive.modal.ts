@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
-import { Token } from "tests/enum/Tokens";
+import { Account } from "tests/enum/Account";
 
 export class ReceiveModal extends Modal {
   private skipDeviceButton = this.page.getByTestId("receive-connect-device-skip-device-button");
@@ -14,10 +14,10 @@ export class ReceiveModal extends Modal {
   private selectAccount = this.page.getByText("Choose a crypto asset");
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
 
-  @step("Select token $0")
-  async selectToken(token: Token) {
+  @step("Select token")
+  async selectToken(SubAccount: Account) {
     await this.selectAccount.click();
-    await this.selectAccountInput.fill(token.tokenName);
+    await this.selectAccountInput.fill(SubAccount.currency.name);
     await this.selectAccountInput.press("Enter");
   }
 

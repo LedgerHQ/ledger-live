@@ -13,6 +13,7 @@ import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
 import type { BleState, MarketState, ProtectState, SettingsState } from "./reducers/types";
 import { TrustchainStore } from "@ledgerhq/trustchain/store";
+import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 
 export type Notifications = {
   announcements: Announcement[];
@@ -281,6 +282,15 @@ export function getTrustchainState(): Promise<TrustchainStore> {
 
 export async function saveTrustchainState(obj: TrustchainStore): Promise<void> {
   await store.save("trustchain", obj);
+}
+
+export async function getWalletExportState(): Promise<ExportedWalletState> {
+  const wallet = (await store.get("wallet")) as ExportedWalletState;
+  return wallet;
+}
+
+export async function saveWalletExportState(obj: ExportedWalletState): Promise<void> {
+  await store.save("wallet", obj);
 }
 
 export async function getProtect(): Promise<ProtectState> {

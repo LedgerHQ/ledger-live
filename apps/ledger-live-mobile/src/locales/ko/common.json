@@ -927,8 +927,16 @@
       "title" : "시퀀스 번호 오류",
       "description" : "창을 닫고 나중에 다시 시도하세요"
     },
+    "TonCommentInvalid" : {
+      "title" : "코멘트는 120자를 초과할 수 없으며, 특수문자를 사용해서는 안 됩니다."
+    },
     "TezosUnrevealedAccount" : {
       "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
+    },
+    "CustomError" : {
+      "title" : "죄송하지만 다시 시도하세요.",
+      "description" : "서버가 요청을 처리할 수 없습니다. 나중에 다시 시도하거나 Ledger 지원 부서에 연락하세요.",
+      "errorCode" : "코드: {{errorCode}}"
     }
   },
   "crash" : {
@@ -3647,6 +3655,8 @@
         "value" : "메모 가치"
       },
       "validateMemo" : "메모 확인",
+      "comment" : "코멘트",
+      "validateComment" : "코멘트 확인",
       "quantity" : "수량"
     },
     "validation" : {
@@ -6382,7 +6392,7 @@
   },
   "customImage" : {
     "title" : "잠금 화면 사진",
-    "replace" : "교체",
+    "change" : "변경",
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "내 사진 갤러리에서 선택",
@@ -6406,6 +6416,8 @@
     },
     "confirmCrop" : "크롭한 이미지를 확인하세요",
     "confirmContrast" : "대비를 확인하세요",
+    "keepOnDevice" : "유지",
+    "discardOnDevice" : "삭제",
     "nftEntryPointButtonLabel" : "잠금 화면 사진으로 설정하기",
     "customImage" : "커스텀 사진",
     "doThisLater" : "다음에 결정하기",
@@ -6685,12 +6697,112 @@
     }
   },
   "walletSync" : {
+    "title" : "Ledger 동기화",
     "activation" : {
       "screen" : {
         "title" : "모든 플랫폼에서 계정을 동기화하세요",
         "description" : "Ledger 장치가 암호화 키를 생성하여 데이터가 비공개로 유지되고 본인만 검색할 수 있도록 합니다.",
         "mainCta" : "계정 동기화",
         "secondCta" : "이미 생성된 키가 있나요?"
+      }
+    },
+    "deviceSelection" : {
+      "title" : "안전한 백업용으로 사용할 Ledger 장치를 선택하세요",
+      "description" : "Ledger 장치를 Ledger Live 모바일 및 데스크탑 앱에 연결하기만 하면 간편하게 백업을 복구할 수 있습니다."
+    },
+    "deviceAction" : {
+      "title" : "Ledger {{wording}}에서 계속하세요",
+      "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
+    },
+    "success" : {
+      "sync" : "동기화 성공!",
+      "syncDesc" : "이제 계정 변경사항이 모든 앱과 플랫폼에 자동으로 표시됩니다.",
+      "activation" : "완료되었습니다!",
+      "activationDesc" : "Ledger 동기화를 성공적으로 활성화했습니다.",
+      "syncAnother" : "다른 Ledger Live 앱과 동기화",
+      "close" : "닫기"
+    },
+    "walletSyncActivated" : {
+      "synchronize" : {
+        "title" : "동기화",
+        "description" : "앱 데이터를 다른 Ledger Live 앱과 동기화하여 매끄러운 사용자 경험을 즐겨보세요. "
+      },
+      "manageKey" : {
+        "title" : "키 관리",
+        "description" : "다른 Ledger 장치를 통해 암호화 키를 보호하거나 삭제하세요.",
+        "success" : "장치가 비동기화되었으며 키가 삭제되었습니다.",
+        "drawer" : {
+          "step1" : {
+            "title" : "키 관리",
+            "titleCta" : "키 삭제하기",
+            "descCta" : "동기화된 모든 데이터가 삭제됩니다."
+          },
+          "step2" : {
+            "delete" : "삭제",
+            "cancel" : "취소",
+            "title" : "암호화 키를 삭제하시겠습니까?",
+            "desc" : "삭제를 클릭하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 비동기화하더라도 자금에는 영향이 없으므로 안심하시기 바랍니다. 언제든지 계정을 다시 동기화할 수 있습니다."
+          }
+        }
+      },
+      "manageInstances" : {
+        "title" : "동기화된 인스턴스 관리",
+        "remove" : "제거"
+      },
+      "synchronizedInstances" : {
+        "cta" : "지금 관리하기",
+        "title" : "{{count}}개의 동기화된 인스턴스",
+        "title_plural" : "{{count}} 동기화된 인스턴스",
+        "error" : "인스턴스",
+        "unsecuredError" : {
+          "title" : "이 Ledger 장치는 동기화를 보호하지 않습니다",
+          "description" : "암호화 키 생성에 사용된 Ledger 장치를 연결하세요.",
+          "info" : "Ledger 장치를 분실한 경우에도 키를 삭제할 수 있으니 걱정마세요! 이 작업을 수행하면 데이터가 동시에 삭제되고 현재 동기화된 모든 인스턴스의 동기화가 중단됩니다.",
+          "cta" : "다른 Ledger 장치 연결하기",
+          "ctaDelete" : "내 암호화 키 삭제"
+        },
+        "autoRemoveError" : {
+          "title" : "현재 인스턴스를 제거할 수 없습니다.",
+          "description" : "보안상의 이유로 암호화 키를 삭제하지 않으면 현재 사용 중인 인스턴스를 제거할 수 없습니다.",
+          "info" : "암호화 키를 삭제하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 그러나 이는 귀하의 자금에 영향을 미치지 않습니다. 언제든지 계정을 다시 동기화할 수 있습니다.",
+          "cta" : "이해합니다",
+          "ctaDelete" : "내 암호화 키 삭제"
+        },
+        "success" : "귀하의 {{member}} 동기화가 중단되었습니다"
+      },
+      "errors" : {
+        "fetching" : "동기화된 인스턴스를 가져오는 중에 문제가 발생했습니다.",
+        "trustchain" : "예상치 못한 허위 트러스트체인",
+        "memberCredentials" : "예상치 못한 허위 회원 인증서",
+        "ledgerSyncUnavailable" : "현재 Ledger 동기화를 사용할 수 없습니다. 이는 귀하의 자산에 아무런 영향을 미치지 않습니다."
+      }
+    },
+    "synchronize" : {
+      "chooseMethod" : {
+        "title" : "동기화 방법 선택",
+        "scan" : {
+          "title" : "QR 코드 스캔"
+        },
+        "connectDevice" : {
+          "title" : "Ledger 장치를 사용하세요"
+        }
+      }
+    }
+  },
+  "web3hub" : {
+    "disclaimer" : {
+      "clearSigningEnabled" : "클리어 서명 활성화",
+      "checkbox" : "추가 알림을 보내지 마세요.",
+      "CTA" : "{{app}} 열기"
+    },
+    "manifestsList" : {
+      "title" : "탐색",
+      "description" : "Ledger가 엄선한 최고의 web3를 만나보세요"
+    },
+    "main" : {
+      "header" : {
+        "title" : "Web3 탐색",
+        "placeholder" : "URL을 검색하거나 입력하세요"
       }
     }
   }

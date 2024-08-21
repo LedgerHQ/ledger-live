@@ -1,16 +1,8 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
-import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
+import { WalletSyncTestApp, mockedSdk, simpleTrustChain, walletSyncActivatedState } from "./shared";
 
 import * as ReactQuery from "@tanstack/react-query";
-import { mockedSdk, simpleTrustChain, walletSyncActivatedState } from "../testHelper/helper";
-
-const WalletSyncTestApp = () => (
-  <>
-    <div id="modals"></div>
-    <WalletSyncRow />
-  </>
-);
 
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({

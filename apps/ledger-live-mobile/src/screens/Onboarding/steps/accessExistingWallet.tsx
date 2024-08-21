@@ -15,6 +15,7 @@ import OnboardingView from "./OnboardingView";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList & BaseNavigatorStackParamList,
@@ -45,18 +46,14 @@ function AccessExistingWallet() {
   }, [navigation]);
 
   const openDrawer = useCallback(() => {
+    dispatch(setOnboardingType(OnboardingType.walletSync));
     setIsDrawerVisible(true);
     logDrawer("Wallet Sync Welcome back", "open");
-  }, []);
+  }, [dispatch]);
 
   const closeDrawer = useCallback(() => {
     setIsDrawerVisible(false);
     logDrawer("Wallet Sync Welcome back", "close");
-  }, []);
-
-  const reopenDrawer = useCallback(() => {
-    setIsDrawerVisible(true);
-    logDrawer("Wallet Sync Welcome back", "reopen");
   }, []);
 
   return (
@@ -109,10 +106,11 @@ function AccessExistingWallet() {
               ]),
         ]}
       />
+
       <ActivationDrawer
+        startingStep={Steps.Activation}
         isOpen={isDrawerVisible}
         handleClose={closeDrawer}
-        reopenDrawer={reopenDrawer}
       />
     </OnboardingView>
   );

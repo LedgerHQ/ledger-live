@@ -1,3 +1,13 @@
+# 2.85.0
+
+This release includes minor bug fixes and security improvements.
+
+# 2.84.1
+
+### 🐛 Fix
+
+Some users reported issues when trying to top up their CL Card. This has been fixed.
+
 # 2.84.0
 
 ### 🗑 Removed features

@@ -402,6 +402,7 @@ function useUiHook(): UiHook {
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,
             appName: options?.hwAppId,
+            dependencies: options?.dependencies,
             onSuccess: ({
               signedOperation,
               transactionSignError,

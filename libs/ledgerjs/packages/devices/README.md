@@ -25,6 +25,12 @@ Logic for all Ledger devices.
 *   [getReducedResult](#getreducedresult)
     *   [Parameters](#parameters-6)
 *   [IIGenericHID](#iigenerichid)
+*   [blue](#blue)
+*   [nanoS](#nanos)
+*   [nanoSP](#nanosp)
+*   [nanoX](#nanox)
+*   [stax](#stax)
+*   [europa](#europa)
 *   [ledgerUSBVendorId](#ledgerusbvendorid)
 *   [getDeviceModel](#getdevicemodel)
     *   [Parameters](#parameters-7)
@@ -139,6 +145,42 @@ The USB product IDs will be defined as MMII, encoding a model (MM) and an interf
     WebUSB : 0x10
 
 Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+### blue
+
+Ledger Blue
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### nanoS
+
+Ledger Nano S
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### nanoSP
+
+Ledger Nano S Plus
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### nanoX
+
+Ledger Nano X
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### stax
+
+Ledger Stax
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### europa
+
+Ledger Flex ("europa" is the internal name)
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
 ### ledgerUSBVendorId
 

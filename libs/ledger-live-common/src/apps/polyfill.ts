@@ -1,8 +1,7 @@
 // polyfill the unfinished support of apps logic
-import uniq from "lodash/uniq";
 import semver from "semver";
 import { listCryptoCurrencies, findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { App, AppType, Application, ApplicationV2 } from "@ledgerhq/types-live";
+import { AppType, ApplicationV2 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 const directDep = {};
 const reverseDep = {};
@@ -18,7 +17,7 @@ export const whitelistDependencies = [
   "Avalanche Test",
 ];
 
-export function declareDep(name: string, dep: string): void {
+function declareDep(name: string, dep: string): void {
   if (whitelistDependencies.includes(name)) {
     return;
   }
@@ -110,19 +109,7 @@ function matchAppNameAndCryptoCurrency(appName: string, crypto: CryptoCurrency) 
   return appName.toLowerCase() === crypto.managerAppName.toLowerCase();
 }
 
-export const polyfillApplication = (app: Application): Application => {
-  const crypto = listCryptoCurrencies(true, true).find(crypto =>
-    matchAppNameAndCryptoCurrency(app.name, crypto),
-  );
-
-  if (crypto && !app.currencyId) {
-    return { ...app, currencyId: crypto.id };
-  }
-
-  return app;
-};
-
-export const getCurrencyIdFromAppName = (
+const getCurrencyIdFromAppName = (
   appName: string,
 ): CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo" | undefined => {
   const crypto =
@@ -187,13 +174,4 @@ export const calculateDependencies = (): void => {
       declareDep(currency.managerAppName + " Test", family.managerAppName);
     }
   });
-};
-
-export const polyfillApp = (app: App): App => {
-  const dependencies = whitelistDependencies.includes(app.name) ? [] : app.dependencies;
-
-  return {
-    ...app,
-    dependencies: uniq(dependencies.concat(getDependencies(app.name, app.version))),
-  };
 };

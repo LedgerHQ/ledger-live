@@ -206,14 +206,11 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 onClick={() => {
                   track("Onboarding - Restore With Recover");
 
-                  if (
-                    deviceModelId &&
-                    [DeviceModelId.nanoX, DeviceModelId.stax].includes(deviceModelId)
-                  ) {
+                  if (deviceModelId === DeviceModelId.nanoS) {
+                    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
+                  } else {
                     setUseCase(UseCase.recover);
                     history.push(`/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`);
-                  } else {
-                    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
                   }
                 }}
               />

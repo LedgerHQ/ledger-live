@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-trx
 
+## 6.29.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2
+
+## 6.29.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+
 ## 6.29.1
 
 ### Patch Changes

@@ -5,6 +5,7 @@ import type {
   AccountsDeleteAccountPayload,
   AccountsImportAccountsPayload,
   AccountsReorderPayload,
+  AccountsReplacePayload,
   AccountsUpdateAccountWithUpdaterPayload,
 } from "./types";
 import { AccountsActionTypes } from "./types";
@@ -51,4 +52,8 @@ export const updateAccount = (payload: Pick<Account, "id"> & Partial<Account>) =
 export const deleteAccount = createAction<AccountsDeleteAccountPayload>(
   AccountsActionTypes.DELETE_ACCOUNT,
 );
+export const replaceAccounts = createAction<AccountsReplacePayload>(
+  AccountsActionTypes.SET_ACCOUNTS,
+);
+
 export const cleanCache = createAction(AccountsActionTypes.CLEAN_CACHE);

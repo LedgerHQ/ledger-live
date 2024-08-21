@@ -1,6 +1,6 @@
 #!/usr/bin/env zx
-import "zx/globals";
 import rimraf from "rimraf";
+import "zx/globals";
 
 const targets = [
   "hw-getAddress.ts",
@@ -25,6 +25,7 @@ const familiesWPackage = [
   "algorand",
   "bitcoin",
   "cardano",
+  "elrond",
   "evm",
   "near",
   "polkadot",
@@ -34,7 +35,7 @@ const familiesWPackage = [
   "tron",
   "xrp",
   "icon",
-  "elrond",
+  "ton"
 ];
 
 cd(path.join(__dirname, "..", "src"));

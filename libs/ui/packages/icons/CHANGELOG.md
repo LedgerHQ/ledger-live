@@ -1,5 +1,29 @@
 # @ledgerhq/icons-ui
 
+## 0.7.2
+
+### Patch Changes
+
+- [#7264](https://github.com/LedgerHQ/ledger-live/pull/7264) [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545) Thanks [@thesan](https://github.com/thesan)! - Fix generated icons attributes case
+
+## 0.7.2-next.0
+
+### Patch Changes
+
+- [#7264](https://github.com/LedgerHQ/ledger-live/pull/7264) [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545) Thanks [@thesan](https://github.com/thesan)! - Fix generated icons attributes case
+
+## 0.7.1
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update Europa icon
+
+## 0.7.1-hotfix.0
+
+### Patch Changes
+
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Update Europa icon
+
 ## 0.7.0
 
 ### Minor Changes
