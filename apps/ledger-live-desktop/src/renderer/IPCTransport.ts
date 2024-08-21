@@ -108,7 +108,7 @@ export class IPCTransport extends Transport {
     { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> {
     const apduHex = apdu.toString("hex");
-    this.tracer.withType("ipc-apdu").trace(`=> ${apduHex}`);
+    this.tracer.trace(`=> ${apduHex}`, undefined, "ipc-apdu");
 
     const responseHex = await rendererRequest(transportExchangeChannel, {
       descriptor: this.id,
@@ -117,7 +117,7 @@ export class IPCTransport extends Transport {
       context: this.tracer.getContext(),
     });
 
-    this.tracer.withType("ipc-apdu").trace(`<= ${responseHex}`);
+    this.tracer.trace(`<= ${responseHex}`, undefined, "ipc-apdu");
     return Buffer.from(responseHex as string, "hex");
   }
 

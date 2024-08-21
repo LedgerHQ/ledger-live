@@ -602,9 +602,7 @@ export default class BleTransport extends Transport {
       .cancelDeviceConnection(id)
       .catch(error => {
         // Only log, ignore if disconnect did not work
-        tracer
-          .withType("ble-error")
-          .trace(`Error while trying to cancel device connection`, { error });
+        tracer.trace(`Error while trying to cancel device connection`, { error }, "ble-error");
       });
     tracer.trace(`Device ${id} disconnected`);
   };
@@ -682,7 +680,7 @@ export default class BleTransport extends Transport {
       function: "exchange",
     });
     tracer.trace("Exchanging APDU ...", { abortTimeoutMs });
-    tracer.withType("apdu").trace(`=> ${message.toString("hex")}`);
+    tracer.trace(`=> ${message.toString("hex")}`, undefined, "apdu");
 
     return this.exchangeAtomicImpl(() => {
       return firstValueFrom(
@@ -697,7 +695,7 @@ export default class BleTransport extends Transport {
         ).pipe(
           abortTimeoutMs ? timeout(abortTimeoutMs, this.rxjsScheduler) : tap(),
           tap(data => {
-            tracer.withType("apdu").trace(`<= ${data.toString("hex")}`);
+            tracer.trace(`<= ${data.toString("hex")}`, undefined, "apdu");
           }),
           catchError(async error => {
             // Currently only 1 reason the exchange has been explicitly aborted (other than job and transport errors): a timeout
@@ -716,7 +714,7 @@ export default class BleTransport extends Transport {
               throw new TransportExchangeTimeoutError("Exchange aborted due to timeout");
             }
 
-            tracer.withType("ble-error").trace(`Error while exchanging APDU`, { error });
+            tracer.trace(`Error while exchanging APDU`, { error }, "ble-error");
 
             if (this.notYetDisconnected) {
               // In such case we will always disconnect because something is bad.
@@ -796,7 +794,7 @@ export default class BleTransport extends Transport {
           ),
         );
       } catch (error: any) {
-        this.tracer.withType("ble-error").trace("Error while inferring MTU", { mtu });
+        this.tracer.trace("Error while inferring MTU", { mtu }, "ble-error");
 
         await BleTransport.disconnectDevice(this.id);
 
@@ -871,7 +869,7 @@ export default class BleTransport extends Transport {
           transactionId,
         );
       }
-      tracer.withType("ble-frame").trace("=> " + buffer.toString("hex"));
+      tracer.trace("=> " + buffer.toString("hex"), undefined, "ble-frame");
     } catch (error: unknown) {
       tracer.trace("Error while writing APDU", { error });
       throw new DisconnectedDeviceDuringOperation(

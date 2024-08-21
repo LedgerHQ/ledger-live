@@ -21,14 +21,12 @@ Utility library that is used by all Ledger libraries to dispatch logs so we can 
     *   [Parameters](#parameters-1)
 *   [LocalTracer](#localtracer)
     *   [Parameters](#parameters-2)
-    *   [withType](#withtype)
-        *   [Parameters](#parameters-3)
     *   [withContext](#withcontext)
-        *   [Parameters](#parameters-4)
+        *   [Parameters](#parameters-3)
     *   [withUpdatedContext](#withupdatedcontext)
-        *   [Parameters](#parameters-5)
+        *   [Parameters](#parameters-4)
 *   [listen](#listen)
-    *   [Parameters](#parameters-6)
+    *   [Parameters](#parameters-5)
 
 ### Log
 
@@ -97,19 +95,6 @@ This is simple for now, but can be improved later.
 *   `` &#x20;
 *   `type`  A given type (not level) for the current local tracer ("hw", "withDevice", etc.)
 *   `context`  Anything representing the context where the log occurred
-
-#### withType
-
-Create a new instance of the LocalTracer with an updated `type`
-
-It does not mutate the calling instance, but returns a new LocalTracer,
-following a simple builder pattern.
-
-##### Parameters
-
-*   `type` **LogType**&#x20;
-
-Returns **[LocalTracer](#localtracer)**&#x20;
 
 #### withContext
 

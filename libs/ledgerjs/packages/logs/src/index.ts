@@ -99,9 +99,9 @@ export class LocalTracer {
     private context?: TraceContext,
   ) {}
 
-  trace(message: string, data?: TraceContext) {
+  trace(message: string, data?: TraceContext, overrideType?: LogType) {
     trace({
-      type: this.type,
+      type: overrideType ?? this.type,
       message,
       data,
       context: this.context,
@@ -126,16 +126,6 @@ export class LocalTracer {
 
   setType(type: LogType) {
     this.type = type;
-  }
-
-  /**
-   * Create a new instance of the LocalTracer with an updated `type`
-   *
-   * It does not mutate the calling instance, but returns a new LocalTracer,
-   * following a simple builder pattern.
-   */
-  withType(type: LogType): LocalTracer {
-    return new LocalTracer(type, this.context);
   }
 
   /**
