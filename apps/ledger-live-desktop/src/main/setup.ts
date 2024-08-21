@@ -3,7 +3,7 @@ import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
 import { app, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer, log } from "@ledgerhq/logs";
 import fs from "fs/promises";
 import updater from "./updater";
 import path from "path";
@@ -29,7 +29,17 @@ ipcMain.on("updater", (e, type) => {
 });
 
 function customStringify(obj: unknown) {
-  const orderedKeys = ["logIndex", "date", "process", "type", "level", "id"];
+  const orderedKeys = [
+    "logIndex",
+    "date",
+    "process",
+    "type",
+    "level",
+    "id",
+    "message",
+    "data",
+    "context",
+  ];
 
   return JSON.stringify(
     obj,
@@ -215,12 +225,18 @@ ipcMain.handle("deactivate-keep-screen-awake", (_ev, id?: number) => {
 
 process.setMaxListeners(0);
 
+let id = 0;
+const doLog = (type: string, message: string, data: unknown) => {
+  InMemoryLogger.getLogger().log({ type, message, date: new Date(), id: (id++).toString(), data });
+};
+
 // In production mode, we do not want Electron's default GUI to show the error. Instead we will output to the console.
 if (!__DEV__) {
   process.on("uncaughtException", function (error) {
     const stack = error.stack ? error.stack : `${error.name}: ${error.message}`;
     const message = "Uncaught Exception:\n" + stack;
     console.error(message);
+    doLog('process.on("uncaughtException")', message, { error });
   });
 }
 

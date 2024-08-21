@@ -1,8 +1,15 @@
+import { dialog } from "electron";
 import { ChildProcess, ForkOptions, fork } from "child_process";
 import forceKill from "tree-kill";
 import { Message } from "~/internal/types";
+import { InMemoryLogger } from "./logger";
 
 export type InternalMessage = { type: string; requestId: string; error: unknown; data: unknown };
+
+let id = 0;
+const doLog = (type: string, message: string, data?: unknown) => {
+  InMemoryLogger.getLogger().log({ type, message, date: new Date(), id: (id++).toString(), data });
+};
 
 class InternalProcess {
   timeout: number;
@@ -68,6 +75,7 @@ class InternalProcess {
   }
 
   start() {
+    doLog("InternalProcess", "start()");
     if (this.process) {
       throw new Error("Internal process is already running !");
     }
@@ -76,6 +84,9 @@ class InternalProcess {
     const pid = this.process.pid;
     console.log(`spawned internal process ${pid}`);
     this.process.on("exit", (code, signal) => {
+      // TODO: show error
+      dialog.showErrorBox("InternalProcess", `exit ${code} ${signal}`);
+      doLog("InternalProcess", 'this.process.on("exit")', { code, signal });
       this.process = null;
       if (code !== null) {
         console.log(`internal process ${pid} gracefully exited with code ${code}`);
@@ -91,6 +102,19 @@ class InternalProcess {
         this.onMessageCallback(message as InternalMessage);
       }
     });
+    this.process.on("error", error => {
+      // TODO: show error
+      dialog.showErrorBox("InternalProcess", "error:\n" + error.toString());
+    });
+    this.process.on("disconnect", () => {
+      // TODO: show error
+      dialog.showErrorBox("InternalProcess", 'on("disconnect")');
+    });
+    this.process.on("close", (code, signal) => {
+      // TODO: show error
+      dialog.showErrorBox("InternalProcess", `on("close")\ncode:${code}\nsignal:${signal}`);
+    });
+
     if (this.messageQueue.length) {
       this.run();
     }

@@ -39,6 +39,11 @@ export function setUserId(id: string) {
   userId = id;
 }
 
+let id = 0;
+const doLog = (type: string, message: string, data: unknown) => {
+  InMemoryLogger.getLogger().log({ type, message, date: new Date(), id: (id++).toString(), data });
+};
+
 ipcMain.handle("set-sentry-tags", (event, tags) => {
   setTags(tags);
   const tagsJSON = JSON.stringify(tags);
@@ -122,6 +127,7 @@ internal.onMessage(message => {
 });
 
 internal.onExit((code, signal, unexpected) => {
+  doLog("internal-lifecycle", "internal.onExit", { code, signal, unexpected });
   if (unexpected) {
     Object.keys(ongoing).forEach(requestId => {
       const event = ongoing[requestId];

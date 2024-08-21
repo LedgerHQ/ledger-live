@@ -328,10 +328,10 @@ export default class Transport {
    *
    * It also handles "unresponsiveness" by emitting "unresponsive" and "responsive" events.
    *
-   * @param f The exchange job, using the transport to run
+   * @param job The exchange job, using the transport to run
    * @returns a Promise resolving with the output of the given job
    */
-  async exchangeAtomicImpl<Output>(f: () => Promise<Output>): Promise<Output> {
+  async exchangeAtomicImpl<Output>(job: () => Promise<Output>): Promise<Output> {
     const tracer = this.tracer.withUpdatedContext({
       function: "exchangeAtomicImpl",
       unresponsiveTimeout: this.unresponsiveTimeout,
@@ -343,6 +343,7 @@ export default class Transport {
         "An action was already pending on the Ledger device. Please deny or reconnect.",
       );
     }
+    tracer.trace("Atomic exchange not busy, proceeding");
 
     // Sets the atomic guard
     let resolveBusy;
@@ -350,6 +351,8 @@ export default class Transport {
       resolveBusy = r;
     });
     this.exchangeBusyPromise = busyPromise;
+
+    tracer.trace("Busy guard set, setting up timeout");
 
     // The device unresponsiveness handler
     let unresponsiveReached = false;
@@ -361,8 +364,11 @@ export default class Transport {
       this.emit("unresponsive");
     }, this.unresponsiveTimeout);
 
+    tracer.trace("Timeout setup, starting exchange job");
+
     try {
-      const res = await f();
+      tracer.trace("Before job f");
+      const res = await job();
 
       if (unresponsiveReached) {
         tracer.trace("Device was unresponsive, emitting responsive");
@@ -370,6 +376,9 @@ export default class Transport {
       }
 
       return res;
+    } catch (e) {
+      tracer.trace("Error during exchangeAtomicImpl", { error: e });
+      throw e;
     } finally {
       tracer.trace("Finalize, clearing busy guard");
 
