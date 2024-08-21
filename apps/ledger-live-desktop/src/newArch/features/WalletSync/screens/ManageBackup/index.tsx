@@ -22,7 +22,7 @@ const WalletSyncManageBackup = forwardRef<BackRef, BackProps>((_props, ref) => {
 
   const goBack = () => {
     if (currentStep === FlowOptions[Flow.ManageBackup].steps[1]) {
-      goToWelcomeScreenWalletSync(true);
+      goToWelcomeScreenWalletSync();
     } else {
       goToPreviousScene();
     }

@@ -11,6 +11,7 @@ const testPathIgnorePatterns = [
   ".yalc",
   "cli/",
   "test-helpers/",
+  "src/.*/shared\\.(ts|tsx)$",
 ];
 
 const moduleNameMapper = {
@@ -76,6 +77,7 @@ module.exports = {
         ...testPathIgnorePatterns,
         "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       ],
+      testMatch: ["**/src/**/*.test.(ts|tsx)"],
     },
     {
       ...commonConfig,

@@ -388,6 +388,10 @@ export class SDK implements TrustchainSDK {
     withDevice: (job: (device: Device) => Promise<StreamTree>) => Promise<StreamTree>,
     member: TrustchainMember,
   ) {
+    const isMemberAlreadyInStreamTree = await isMemberInStreamTree(streamTree, path, member);
+    if (isMemberAlreadyInStreamTree) {
+      return streamTree;
+    }
     const isNewDerivation = !streamTree.getChild(path);
     streamTree = await withDevice(device =>
       streamTree.share(path, device, crypto.from_hex(member.id), member.name, member.permissions),
@@ -490,4 +494,18 @@ function invariant(condition: unknown, message: string): asserts condition {
   if (!condition) {
     throw new Error(message);
   }
+}
+
+async function isMemberInStreamTree(
+  streamTree: StreamTree,
+  path: string,
+  member: TrustchainMember,
+): Promise<boolean> {
+  const child = streamTree.getChild(path);
+  if (!child) {
+    return false;
+  }
+  const resolved = await child.resolve();
+  const members = resolved.getMembersData();
+  return members.some(m => m.id === member.id);
 }

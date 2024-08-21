@@ -174,7 +174,7 @@ function FormLocalManifest({
                   path={path}
                   handleChange={handleChange}
                   multipleChoices={false}
-                  initalValue={value}
+                  initialValue={value}
                 ></FormLiveAppSelector>
               );
             }
@@ -281,7 +281,7 @@ function FormLocalManifest({
                         path={path}
                         handleChange={handleChange}
                         multipleChoices={true}
-                        initalValue={form[key]}
+                        initialValue={form[key]}
                       ></FormLiveAppSelector>
                     );
                   }
@@ -300,7 +300,7 @@ function FormLocalManifest({
                         path={path}
                         handleChange={handleChange}
                         multipleChoices={false}
-                        initalValue={value as string}
+                        initialValue={value as string}
                       ></FormLiveAppSelector>
                     );
                   }

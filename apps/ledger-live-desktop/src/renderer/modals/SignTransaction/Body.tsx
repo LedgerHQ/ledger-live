@@ -30,6 +30,7 @@ export type Params = {
   canEditFees: boolean;
   stepId?: StepId;
   useApp?: string;
+  dependencies?: string[];
   account: AccountLike;
   transactionData: Partial<Transaction>;
   onResult: (signedOperation: SignedOperation) => void;
@@ -223,6 +224,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     manifestId: params.manifestId,
     manifestName: params.manifestName,
     useApp: params.useApp,
+    dependencies: params.dependencies,
     steps,
     errorSteps,
     device,

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { setFlow } from "~/renderer/actions/walletSync";
 
-import { useFlows } from "../../hooks/useFlows";
+import { FlowOptions, useFlows } from "../../hooks/useFlows";
 import CreateOrSynchronizeStep from "./01-CreateOrSynchronizeStep";
 import DeviceActionStep from "./02-DeviceActionStep";
 import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrustchain";
@@ -12,14 +12,27 @@ import ActivationFinalStep from "./04-ActivationFinalStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import ErrorStep from "./05-ActivationOrSyncError";
 import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import { BackRef, BackProps } from "../router";
 
-const WalletSyncActivation = () => {
+const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
   const dispatch = useDispatch();
   const [device, setDevice] = useState<Device | null>(null);
 
-  const { currentStep, goToNextScene } = useFlows();
+  const { currentStep, goToNextScene, goToPreviousScene, goToWelcomeScreenWalletSync } = useFlows();
 
   const { onClickTrack } = useWalletSyncAnalytics();
+
+  useImperativeHandle(ref, () => ({
+    goBack,
+  }));
+
+  const goBack = () => {
+    if (currentStep === FlowOptions[Flow.Activation].steps[1]) {
+      goToWelcomeScreenWalletSync();
+    } else {
+      goToPreviousScene();
+    }
+  };
 
   const goToSync = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
@@ -74,6 +87,6 @@ const WalletSyncActivation = () => {
       {getStep()}
     </Flex>
   );
-};
-
+});
+WalletSyncActivation.displayName = "WalletSyncActivation";
 export default WalletSyncActivation;

@@ -3,12 +3,14 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigatorName, ScreenName } from "~/const";
 import GeneralSettings from "~/screens/Settings/General";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
-
+import { getSdk } from "@ledgerhq/trustchain/index";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import WalletSyncNavigator from "../WalletSyncNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { State } from "~/reducers/types";
+import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { EMPTY } from "rxjs";
 
 const Stack = createStackNavigator<
   BaseNavigatorStackParamList & SettingsNavigatorStackParamList & WalletSyncNavigatorStackParamList
@@ -43,6 +45,14 @@ export function WalletSyncSharedNavigator() {
   );
 }
 
+export const simpleTrustChain = {
+  rootId: "rootId",
+  deviceId: "deviceId",
+  applicationPath: "applicationPath",
+  trustchainId: "trustchainId",
+  walletSyncEncryptionKey: "walletSyncEncryptionKey",
+};
+
 export const INITIAL_TEST = (state: State) => ({
   ...state,
   settings: {
@@ -59,3 +69,13 @@ export const INITIAL_TEST = (state: State) => ({
     },
   },
 });
+
+export const mockedSdk = getSdk(
+  true,
+  {
+    applicationId: 12,
+    name: "LLD Integration",
+    apiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
+  },
+  () => () => EMPTY,
+);
