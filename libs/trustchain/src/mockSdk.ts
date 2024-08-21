@@ -238,4 +238,8 @@ export class MockSDK implements TrustchainSDK {
     assertTrustchain(trustchain);
     return Promise.resolve(applyXor(data));
   }
+
+  invalidateJwt(): void {
+    this.deviceJwtAcquired = false;
+  }
 }

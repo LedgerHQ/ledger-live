@@ -314,6 +314,11 @@ export class SDK implements TrustchainSDK {
     );
   }
 
+  invalidateJwt() {
+    this.jwt = undefined;
+    this.hwDeviceProvider.clearJwt();
+  }
+
   async destroyTrustchain(
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
@@ -321,8 +326,7 @@ export class SDK implements TrustchainSDK {
     await this.withAuth(trustchain, memberCredentials, jwt =>
       this.api.deleteTrustchain(jwt, trustchain.rootId),
     );
-    this.jwt = undefined;
-    this.hwDeviceProvider.clearJwt();
+    this.invalidateJwt();
   }
 
   async encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array> {

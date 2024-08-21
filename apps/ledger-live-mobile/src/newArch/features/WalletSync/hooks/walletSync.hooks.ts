@@ -6,15 +6,18 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
+import { useTrustchainSdk } from "./useTrustchainSdk";
 
 export const useLifeCycle = () => {
   const dispatch = useDispatch();
+  const sdk = useTrustchainSdk();
 
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
 
   function reset() {
     dispatch(resetTrustchainStore());
     navigation.navigate(ScreenName.WalletSyncActivationInit);
+    sdk.invalidateJwt();
   }
 
   const includesErrorActions: { [key: string]: () => void } = {
