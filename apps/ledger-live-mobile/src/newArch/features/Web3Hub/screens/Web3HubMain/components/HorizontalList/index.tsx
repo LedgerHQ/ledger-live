@@ -16,14 +16,14 @@ type Props = {
 
 type PropRenderItem = {
   item: AppManifest;
-  onPressItem?: (manifest: AppManifest) => void;
+  extraData?: (manifest: AppManifest) => void;
 };
 
 const identityFn = (item: AppManifest) => item.id;
 
-const renderItem = ({ item, onPressItem = () => {} }: PropRenderItem) => {
-  return <MinimalAppCard item={item} onPress={onPressItem} />;
-};
+const renderItem = ({ item, extraData: onPressItem = () => {} }: PropRenderItem) => (
+  <MinimalAppCard item={item} onPress={onPressItem} />
+);
 
 export default function HorizontalList({
   title,
