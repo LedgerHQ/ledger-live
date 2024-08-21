@@ -1,5 +1,5 @@
 import { DeriveStakingQuery } from "@polkadot/api-derive/types";
-import { EraIndex, RewardPoint } from "@polkadot/types/interfaces";
+import { EraIndex } from "@polkadot/types/interfaces";
 import {
   SidecarValidators,
   SidecarValidatorsParamAddresses,
@@ -10,6 +10,7 @@ import {
 import getApiPromise from "./apiPromise";
 import { multiIdentities } from "./identities";
 import { ApiPromise } from "@polkadot/api";
+import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";
 
 const QUERY_OPTS = {
   withExposure: false,
@@ -43,8 +44,6 @@ export const fetchValidators = async (
 
   const { index: activeEra } = activeOpt.unwrapOrDefault();
 
-  const rewards = await fetchRewardsPoints(api)(activeEra);
-
   let selected: string[] = [];
   const allIds = allStashes.map(s => s.toString());
   const electedIds = elected.map(s => s.toString());
@@ -76,62 +75,44 @@ export const fetchValidators = async (
       .map(a => a.toString())
       .filter(address => selected.includes(address.toString()));
   }
-
   const [validators, identities] = await Promise.all([
     api.derive.staking.queryMulti(selected, QUERY_OPTS),
     multiIdentities(selected),
   ]);
-  const validatorsCommissions = await getValidatorCommissions(api, electedIds);
+  const validatorsCommissions = await getValidatorCommissions(api, selected);
+  const validatorsExposure = await getValidatorsExposure(api, activeEra, selected);
   const maxNominatorRewardedPerValidator = api.consts?.staking?.maxExposurePageSize.toNumber();
   return validators.map((validator, index) => {
-    let commission = "0";
-    if (electedIds.includes(validator.accountId.toString())) {
-      commission = validatorsCommissions[index];
-    }
+    const commission = validatorsCommissions[validator.accountId.toString()] || "";
+    const exposure = validatorsExposure[validator.accountId.toString()] || null;
     return formatValidator(
       validator,
       identities[index],
-      rewards,
       electedIds,
       commission,
+      exposure,
       maxNominatorRewardedPerValidator,
     );
   });
 };
 
-const fetchRewardsPoints =
-  (api: ApiPromise) =>
-  async (activeEra: EraIndex): Promise<Map<string, RewardPoint>> => {
-    const { individual } = await api.query.staking.erasRewardPoints(activeEra);
-
-    // recast BTreeMap<AccountId,RewardPoint> to Map<String, RewardPoint> because strict equality does not work
-    const rewards = new Map<string, RewardPoint>(
-      [...individual.entries()].map(([k, v]) => [k.toString(), v]),
-    );
-
-    return rewards;
-  };
-
 const formatValidator = (
   validator: DeriveStakingQuery,
   identity: IIdentity,
-  rewards: Map<string, RewardPoint>,
   electedIds: string[],
   commission: string,
+  exposure: SpStakingPagedExposureMetadata | null,
   maxNominatorRewardedPerValidator: number,
 ): IValidator => {
   const validatorId = validator.accountId.toString();
   return {
     accountId: validator.accountId.toString(),
     identity,
-    // own: validator.exposure.own.toString(),
-    own: validator.exposureEraStakers.own.toString(),
-    // total: validator.exposure.total.toString(),
-    total: validator.exposureEraStakers.total.toString(),
-    // nominatorsCount: validator.exposure.others.length,
-    nominatorsCount: validator.exposureEraStakers.others.length,
+    own: exposure?.own?.toString() ?? "0",
+    total: exposure?.total?.toString() ?? "0",
+    nominatorsCount: exposure?.nominatorCount?.toNumber() ?? 0,
     commission,
-    rewardsPoints: rewards.get(validatorId)?.toString() || null,
+    rewardsPoints: null,
     isElected: electedIds.includes(validatorId),
     isOversubscribed: maxNominatorRewardedPerValidator
       ? validator.exposureEraStakers.others.length > Number(maxNominatorRewardedPerValidator)
@@ -139,17 +120,32 @@ const formatValidator = (
   };
 };
 
-async function getValidatorCommissions(api: ApiPromise, selected: string[]): Promise<string[]> {
-  const promises = selected.map(async address => {
-    try {
-      const validatorInfo = await api.query.staking.validators(address);
-      const commission = validatorInfo.commission.toString();
-      return commission;
-    } catch (error) {
-      console.error(`Error fetching commission for validator ${address}:`, error);
-      return "0";
+async function getValidatorCommissions(
+  api: ApiPromise,
+  electedIds: string[],
+): Promise<{ [key: string]: string }> {
+  const validatorInfos = await api.query.staking.validators.multi(electedIds);
+  const commissions: { [key: string]: string } = {};
+  electedIds.forEach((address, index) => {
+    const validatorInfo = validatorInfos[index];
+    const commission = validatorInfo.commission.toString();
+    commissions[address] = commission;
+  });
+  return commissions;
+}
+
+async function getValidatorsExposure(
+  api: ApiPromise,
+  activeEra: EraIndex,
+  electedIds: string[],
+): Promise<{ [key: string]: SpStakingPagedExposureMetadata }> {
+  const queries = electedIds.map(id => [activeEra, id]);
+  const exposures = await api.query.staking.erasStakersOverview.multi(queries);
+  const exposureMap: { [key: string]: SpStakingPagedExposureMetadata } = {};
+  exposures.forEach((exposure, index) => {
+    if (exposure.isSome) {
+      exposureMap[electedIds[index]] = exposure.unwrap();
     }
   });
-  const commissions = await Promise.all(promises);
-  return commissions;
+  return exposureMap;
 }
