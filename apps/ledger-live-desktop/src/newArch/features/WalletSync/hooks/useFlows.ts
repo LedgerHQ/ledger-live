@@ -72,6 +72,7 @@ export const STEPS_WITH_BACK: Step[] = [
   Step.DeleteBackup,
   Step.SynchronizedInstances,
   Step.SynchronizeMode,
+  Step.SynchronizeWithQRCode,
 ];
 
 export const useFlows = () => {
