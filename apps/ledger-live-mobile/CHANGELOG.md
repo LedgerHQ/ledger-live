@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.48.1
+
+### Patch Changes
+
+- Updated dependencies [[`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017)]:
+  - @ledgerhq/live-common@34.7.1
+
 ## 3.48.1-hotfix.0
 
 ### Patch Changes
