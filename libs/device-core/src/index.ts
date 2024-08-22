@@ -40,3 +40,5 @@ export { supportedDeviceModelIds } from "./capabilities/isCustomLockScreenSuppor
 export * from "./customLockScreen/screenSpecs";
 // src/firmwareUpdate/
 export { shouldForceFirmwareUpdate } from "./firmwareUpdate/shouldForceFirmwareUpdate";
+// errors
+export * from "./errors";
