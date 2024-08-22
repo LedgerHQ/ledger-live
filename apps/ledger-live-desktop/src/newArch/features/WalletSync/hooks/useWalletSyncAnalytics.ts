@@ -19,6 +19,8 @@ export enum AnalyticsPage {
   CreateOrSynchronizeTrustChain = "Create or synchronize with trustchain",
   SynchronizationError = "Synchronization error",
   SyncMethod = "Choose sync method",
+  MobileSync = "Mobile sync",
+  DesktopSync = "Desktop sync",
   KeyCreated = "Backup creation success",
   KeyUpdated = "Backup update success",
 

@@ -30,6 +30,7 @@ import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,
 } from "~/renderer/reducers/settings";
+import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 
 const Container = styled.div`
   display: flex;
@@ -85,7 +86,8 @@ const DeviceDashboard = ({
 }: Props) => {
   const { t } = useTranslation();
   const { deviceName } = result;
-  const [state, dispatch] = useAppsRunner(result, exec, appsToRestore);
+  const storage = useAppDataStorageProvider();
+  const [state, dispatch] = useAppsRunner(result, exec, storage, appsToRestore);
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const [appInstallDep, setAppInstallDep] = useState<{ app: App; dependencies: App[] } | undefined>(
     undefined,

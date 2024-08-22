@@ -1,5 +1,5 @@
 import {
-  StorageProvider,
+  StorageProvider as AppDataStorageProvider,
   AppStorageType,
   AppStorageKey,
   isAppStorageType,
@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
  * The storage provider for LLM that implements the StorageProvider interface.
  * This a temporary placement, it could be moved to the appropriate location if needed.
  */
-export class MobileStorageProvider implements StorageProvider<AppStorageType> {
+export class MobileAppDataStorageProvider implements AppDataStorageProvider<AppStorageType> {
   /**
    * Retrieves the value associated with the specified key from storage.
    *

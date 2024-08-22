@@ -22,11 +22,11 @@ test.describe("Settings", () => {
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
       await app.accounts.verifyTokenVisibility(
         Account.ETH_1.accountName,
-        Account.ETH_USDT.currency,
+        Account.ETH_USDT_1.currency,
       );
       await app.accounts.expectTokenBalanceToBeNull(
         Account.ETH_1.accountName,
-        Account.ETH_USDT.currency,
+        Account.ETH_USDT_1.currency,
       );
       await app.layout.goToSettings();
       await app.settings.goToAccountsTab();

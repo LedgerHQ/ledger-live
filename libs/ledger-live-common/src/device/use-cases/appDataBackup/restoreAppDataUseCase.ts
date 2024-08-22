@@ -1,9 +1,9 @@
-import { from, Observable, switchMap } from "rxjs";
+import { from, Observable, of, switchMap } from "rxjs";
 import {
   AppName,
   AppStorageType,
-  RestoreAppDataError,
   RestoreAppDataEvent,
+  RestoreAppDataEventType,
   StorageProvider,
 } from "./types";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -29,7 +29,7 @@ export function restoreAppDataUseCase(
   ).pipe(
     switchMap((appStorage: AppStorageType | null) => {
       if (!appStorage) {
-        throw new RestoreAppDataError("No backed up data found");
+        return of<RestoreAppDataEvent>({ type: RestoreAppDataEventType.NoAppDataToRestore });
       }
       return restoreAppDataFn(appStorage.appData);
     }),

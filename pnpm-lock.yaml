@@ -405,6 +405,9 @@ importers:
       focus-trap:
         specifier: ^6.6.1
         version: 6.9.4
+      framer-motion:
+        specifier: ^11.3.28
+        version: 11.3.28(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
@@ -6496,6 +6499,9 @@ importers:
       embla-carousel-react:
         specifier: 8.0.0-rc17
         version: 8.0.0-rc17(react@18.2.0)
+      framer-motion:
+        specifier: ^11.3.28
+        version: 11.3.28(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-is:
         specifier: ^17.0.2
         version: 17.0.2
@@ -19721,6 +19727,20 @@ packages:
 
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
+
+  framer-motion@11.3.28:
+    resolution: {integrity: sha512-dqhoawipEAjqdv32zbv72sOMJZjol7dROWn7t/FOq23WXJ40O4OUybgnO2ldnuS+3YquSn8xO/KKRavZ+TBVOQ==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
 
   freeport-async@2.0.0:
     resolution: {integrity: sha512-K7od3Uw45AJg00XUmy15+Hae2hOcgKcmN3/EF6Y7i01O0gaqiRx8sUSpsb9+BRNL8RPBrhzPsVfy8q9ADlJuWQ==}
@@ -49769,6 +49789,13 @@ snapshots:
   fp-ts@2.16.5: {}
 
   fraction.js@4.3.7: {}
+
+  framer-motion@11.3.28(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      tslib: 2.6.2
+    optionalDependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
 
   freeport-async@2.0.0: {}
 

@@ -9,15 +9,18 @@ import {
   TrustchainOutdated,
 } from "@ledgerhq/trustchain/errors";
 import { useRestoreTrustchain } from "./useRestoreTrustchain";
+import { useTrustchainSdk } from "./useTrustchainSdk";
 
 export const useLifeCycle = () => {
   const dispatch = useDispatch();
+  const sdk = useTrustchainSdk();
 
   const { refetch: restoreTrustchain } = useRestoreTrustchain();
 
   function reset() {
     dispatch(resetTrustchainStore());
     dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
+    sdk.invalidateJwt();
   }
 
   const includesErrorActions: { [key: string]: () => void } = {
