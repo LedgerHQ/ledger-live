@@ -10,6 +10,7 @@ import PinCodeInput from "../../screens/Synchronize/PinCodeInput";
 import SyncError from "../../screens/Synchronize/SyncError";
 import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
+import UnbackedError from "../../screens/Synchronize/UnbackedError";
 
 type Props = {
   currentStep: Steps;
@@ -25,6 +26,7 @@ type Props = {
   currentOption: Options;
   setOption: (option: Options) => void;
   setCurrentStep: (step: Steps) => void;
+  onCreateKey: () => void;
 };
 
 const ActivationFlow = ({
@@ -36,6 +38,7 @@ const ActivationFlow = ({
   setOption,
   onQrCodeScanned,
   setCurrentStep,
+  onCreateKey,
 }: Props) => {
   const { memberCredentials } = useInitMemberCredentials();
 
@@ -86,6 +89,8 @@ const ActivationFlow = ({
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
 
+      case Steps.UnbackedError:
+        return <UnbackedError create={onCreateKey} />;
       default:
         return null;
     }
