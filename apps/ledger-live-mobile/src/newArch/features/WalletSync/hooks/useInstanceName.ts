@@ -7,9 +7,11 @@ const platformMap: Record<string, string | undefined> = {
   android: "Android",
 };
 
+let deviceName: string;
+
 export function useInstanceName(): string {
   const hash = getEnv("USER_ID").slice(0, 5);
   const os = platformMap[Platform.OS] ?? Platform.OS;
-  const deviceName = getDeviceNameSync() ?? `${os} ${Platform.Version}`;
+  if (!deviceName) deviceName = getDeviceNameSync() ?? `${os} ${Platform.Version}`;
   return `${deviceName} ${hash ? " " + hash : ""}`;
 }
