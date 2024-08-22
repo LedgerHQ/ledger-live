@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network";
@@ -23,7 +22,6 @@ import type {
   SidecarTransactionBroadcast,
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
-  SidecarConstants,
   BlockInfo,
 } from "./sidecar.types";
 import { createRegistryAndExtrinsics } from "./common";
@@ -117,14 +115,7 @@ const fetchControllerAddr = async (addr: string): Promise<string | null> => {
  * @returns {SidecarStakingInfo}
  */
 const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
-  //LIVE-13136: commented for the time being
-  // return node.fetchStakingInfo(addr);
-  const {
-    data,
-  }: {
-    data: SidecarStakingInfo;
-  } = await callSidecar(`/accounts/${addr}/staking-info`);
-  return data;
+  return node.fetchStakingInfo(addr);
 };
 
 /**
@@ -135,14 +126,7 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
  * @returns {Object}
  */
 const fetchConstants = async (): Promise<Record<string, any>> => {
-  //LIVE-13136: commented for the time being
-  // return node.fetchConstants();
-  const {
-    data,
-  }: {
-    data: SidecarConstants;
-  } = await callSidecar(`/runtime/constants`);
-  return data.consts;
+  return node.fetchConstants();
 };
 
 /**

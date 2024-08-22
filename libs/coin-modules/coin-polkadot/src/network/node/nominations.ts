@@ -45,7 +45,6 @@ export const fetchNominations = async (address: string): Promise<SidecarNominati
       }
     } else {
       const pageCount: number = (exposure.toJSON() as any).pageCount ?? 0;
-      console.log("pageCount", pageCount);
       for (let i = 0; i < pageCount; i++) {
         const nominators = (await api.query.staking.erasStakersPaged(activeEra, id, i)).unwrap()
           .others;
