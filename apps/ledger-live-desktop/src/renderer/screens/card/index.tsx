@@ -12,10 +12,9 @@ import useTheme from "~/renderer/hooks/useTheme";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CARD_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import CardPlatformApp from "./CardPlatformApp";
-
-const appId = "card-program";
 
 const LiveAppCard = () => {
   const { state: urlParams, search } = useLocation();
@@ -27,8 +26,8 @@ const LiveAppCard = () => {
   const mockManifest: LiveAppManifest | undefined =
     process.env.MOCK_REMOTE_LIVE_MANIFEST && JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0];
 
-  const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
+  const localManifest = useLocalLiveAppManifest(CARD_APP_ID);
+  const remoteManifest = useRemoteLiveAppManifest(CARD_APP_ID);
   const manifest = localManifest || mockManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
 
