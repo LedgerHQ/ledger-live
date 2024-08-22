@@ -44,7 +44,6 @@ const Fields: Props = ({
 }) => {
   const bridge = getAccountBridge(account);
   const { t } = useTranslation();
-  const { state: drawerState, setDrawer } = React.useContext(context);
   const [coinControlOpened, setCoinControlOpened] = useState(false);
   const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
   const strategies = useFeesStrategy(account, transaction);
