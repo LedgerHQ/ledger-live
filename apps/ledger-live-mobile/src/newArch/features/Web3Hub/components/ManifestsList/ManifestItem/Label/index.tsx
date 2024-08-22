@@ -1,38 +1,34 @@
-import React from "react";
+import React, { ComponentProps } from "react";
 import { Text } from "@ledgerhq/native-ui";
-
-type ItemStyle = {
-  badgeColor: string;
-  borderColor: string;
-  backgroundColor: string;
-};
 
 type Props = {
   text: string;
-  style: ItemStyle;
+  style: Pick<
+    ComponentProps<typeof Text>,
+    "color" | "borderColor" | "backgroundColor" | "borderWidth"
+  >;
 };
 
 const Label: React.FC<Props> = ({ text, style }) => {
-  const { badgeColor, borderColor, backgroundColor } = style;
+  const { color, borderColor, backgroundColor, borderWidth = 1 } = style;
   return (
     <Text
       role="banner"
-      fontSize="9px"
+      fontSize="11px"
       width="auto"
-      paddingX={2}
-      paddingY={1}
-      borderWidth={1}
+      paddingX={3}
+      paddingY={2}
+      borderWidth={borderWidth}
       borderRadius={3}
       borderStyle={"solid"}
       flexGrow={0}
       flexShrink={0}
       overflow={"hidden"}
-      textTransform="uppercase"
-      color={badgeColor}
+      textTransform="capitalize"
+      color={color}
       borderColor={borderColor}
       backgroundColor={backgroundColor}
       fontWeight="semiBold"
-      marginLeft={3}
     >
       {text}
     </Text>
