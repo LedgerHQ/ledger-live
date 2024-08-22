@@ -9,6 +9,7 @@ import { validateRecipient } from "./getTransactionStatus";
 import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
 import { getTransactionData, getTypedTransaction } from "./transaction";
 import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "./types";
+import { getGasOptions } from "./api/gasTracker/ledger";
 
 /**
  * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)
@@ -217,8 +218,16 @@ export const prepareTransaction = async (
         nextBaseFee: transaction.gasOptions?.medium?.nextBaseFee ?? null,
       };
     }
-
-    const gasOption = transaction.gasOptions?.[transaction.feesStrategy as Strategy];
+    let gasOption;
+    if (transaction.gasOptions) {
+      gasOption = transaction.gasOptions?.[transaction.feesStrategy as Strategy];
+    } else {
+      const option = await getGasOptions({
+        currency,
+        options: { useEIP1559: transaction.type === 2 },
+      });
+      gasOption = option?.[transaction.feesStrategy as Strategy];
+    }
     return gasOption || nodeApi.getFeeData(currency, transaction);
   })();
 
