@@ -145,7 +145,8 @@
     "add": "Add",
     "or": "OR",
     "clearAll": "Clear all",
-    "buyLedger": "Buy a Ledger"
+    "buyLedger": "Buy a Ledger",
+    "quote": "Quote"
   },
   "devices": {
     "nanoS": "Nano S",
