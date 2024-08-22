@@ -5,10 +5,8 @@ import {
   SidecarValidatorsParamAddresses,
   SidecarValidatorsParamStatus,
   IValidator,
-  IIdentity,
 } from "../sidecar.types";
 import getApiPromise from "./apiPromise";
-import { multiIdentities } from "./identities";
 import { ApiPromise } from "@polkadot/api";
 import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";
 
@@ -75,19 +73,15 @@ export const fetchValidators = async (
       .map(a => a.toString())
       .filter(address => selected.includes(address.toString()));
   }
-  const [validators, identities] = await Promise.all([
-    api.derive.staking.queryMulti(selected, QUERY_OPTS),
-    multiIdentities(selected),
-  ]);
+  const validators = await api.derive.staking.queryMulti(selected, QUERY_OPTS);
   const validatorsCommissions = await getValidatorCommissions(api, selected);
   const validatorsExposure = await getValidatorsExposure(api, activeEra, selected);
   const maxNominatorRewardedPerValidator = api.consts?.staking?.maxExposurePageSize.toNumber();
-  return validators.map((validator, index) => {
+  return validators.map(validator => {
     const commission = validatorsCommissions[validator.accountId.toString()] || "";
     const exposure = validatorsExposure[validator.accountId.toString()] || null;
     return formatValidator(
       validator,
-      identities[index],
       electedIds,
       commission,
       exposure,
@@ -98,7 +92,6 @@ export const fetchValidators = async (
 
 const formatValidator = (
   validator: DeriveStakingQuery,
-  identity: IIdentity,
   electedIds: string[],
   commission: string,
   exposure: SpStakingPagedExposureMetadata | null,
@@ -107,7 +100,7 @@ const formatValidator = (
   const validatorId = validator.accountId.toString();
   return {
     accountId: validator.accountId.toString(),
-    identity,
+    identity: null,
     own: exposure?.own?.toString() ?? "0",
     total: exposure?.total?.toString() ?? "0",
     nominatorsCount: exposure?.nominatorCount?.toNumber() ?? 0,
