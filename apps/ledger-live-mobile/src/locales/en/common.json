@@ -2286,6 +2286,7 @@
     },
     "quickActions": {
       "buy": "Buy",
+      "sell": "Sell",
       "swap": "Swap",
       "send": "Send",
       "deposit": "Receive",
