@@ -1075,6 +1075,9 @@ importers:
       react-native-config:
         specifier: 1.5.1
         version: 1.5.1(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
+      react-native-device-info:
+        specifier: ^11.1.0
+        version: 11.1.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
       react-native-easy-markdown:
         specifier: ^2.0.0
         version: 2.0.0(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
@@ -25397,6 +25400,11 @@ packages:
   react-native-debugger-open@0.4.3:
     resolution: {integrity: sha512-gYdVWBhQ0a/PbXgCi3T+FU4LS0ucq8QyUhDqtRd3JRr1AOyKSn1RHj+jxtda+LhfyodrIPbZXHRXL0MvZ5FLSA==}
     hasBin: true
+
+  react-native-device-info@11.1.0:
+    resolution: {integrity: sha512-hzXJSObJdezEz0hF7MAJ3tGeoesuQWenXXt9mrQR9Mjb8kXpZ09rqSsZ/quNpJdZpQ3rYiFa3/0GFG5KNn9PBg==}
+    peerDependencies:
+      react-native: '*'
 
   react-native-easy-markdown@2.0.0:
     resolution: {integrity: sha512-vGK41pZj/4lM9q8/Bqox/2qqfJVrSxLugBWDBNLuOqvxpBw/b3q4aUxCpP8nyBWv5BifrD8+OcdhC27bRvEFIw==}
@@ -58451,6 +58459,10 @@ snapshots:
       es6-template: 1.0.4
       minimist: 1.2.8
       semver: 5.7.2
+
+  react-native-device-info@11.1.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0)):
+    dependencies:
+      react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
 
   react-native-easy-markdown@2.0.0(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0)):
     dependencies:
