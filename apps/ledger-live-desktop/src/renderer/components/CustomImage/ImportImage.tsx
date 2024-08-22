@@ -20,7 +20,6 @@ const acceptedMimeTypes = [
   "image/jpeg",
   "image/png",
   "image/bmp",
-  "image/webp",
   "image/tiff",
   "image/heif",
   "image/heic",
