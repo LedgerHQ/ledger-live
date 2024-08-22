@@ -11,7 +11,6 @@ import SelectFeeStrategy, { OnClickType } from "~/renderer/components/SelectFeeS
 import SendFeeMode from "~/renderer/components/SendFeeMode";
 import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
-import { context } from "~/renderer/drawers/Provider";
 import CoinControlModal from "./CoinControlModal";
 import { FeesField } from "./FeesField";
 import { BitcoinFamily } from "./types";
