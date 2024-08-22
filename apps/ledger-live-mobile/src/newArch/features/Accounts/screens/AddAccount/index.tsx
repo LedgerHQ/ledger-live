@@ -30,6 +30,7 @@ function View({
   navigateToQrCodeMethod,
   qrProcess,
   onQrCodeScanned,
+  onCreateKey,
 }: ViewProps) {
   const CustomDrawerHeader = () => <DrawerHeader onClose={onCloseAddAccountDrawer} />;
 
@@ -53,6 +54,7 @@ function View({
           navigateToQrCodeMethod={navigateToQrCodeMethod}
           qrProcess={qrProcess}
           onQrCodeScanned={onQrCodeScanned}
+          onCreateKey={onCreateKey}
         />
       </Flex>
     </QueuedDrawer>

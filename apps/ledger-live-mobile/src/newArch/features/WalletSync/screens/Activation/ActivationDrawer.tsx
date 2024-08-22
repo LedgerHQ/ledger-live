@@ -22,6 +22,7 @@ function View({
   canGoBack,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
+  onCreateKey,
   onQrCodeScanned,
   goBackToPreviousStep,
   handleClose,
@@ -53,6 +54,7 @@ function View({
             setOption={setCurrentOption}
             onQrCodeScanned={onQrCodeScanned}
             setCurrentStep={setCurrentStep}
+            onCreateKey={onCreateKey}
           />
         </Flex>
       </QueuedDrawer>

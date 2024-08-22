@@ -59,6 +59,9 @@ export const useSyncWithQrCode = () => {
         if (e instanceof InvalidDigitsError) {
           setCurrentStep(Steps.SyncError);
           return;
+        } else {
+          setCurrentStep(Steps.UnbackedError);
+          return;
         }
         throw e;
       }
