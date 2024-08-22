@@ -70,8 +70,12 @@ export default function ManifestItem({
   );
 
   const url = useMemo(() => {
+    if (manifest.params && "dappUrl" in manifest.params) {
+      return new URL(manifest.params.dappUrl).origin;
+    }
+
     return new URL(manifest.url).origin;
-  }, [manifest.url]);
+  }, [manifest.params, manifest.url]);
 
   const icon = useMemo(() => {
     // RN tries to load file locally if there is a space in front of the file url
