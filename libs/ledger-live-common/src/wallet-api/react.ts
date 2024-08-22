@@ -77,16 +77,6 @@ export function useWalletAPICurrencies(): WalletAPICurrency[] {
   }, []);
 }
 
-export function useManifestCurrencies(manifest: AppManifest) {
-  return useMemo(() => {
-    const allCurrenciesAndTokens = listCurrencies(true);
-
-    return manifest.currencies === "*"
-      ? allCurrenciesAndTokens
-      : matchCurrencies(allCurrenciesAndTokens, manifest.currencies);
-  }, [manifest.currencies]);
-}
-
 export function useGetAccountIds(
   accounts$: Observable<WalletAPIAccount[]> | undefined,
 ): Map<string, boolean> | undefined {
