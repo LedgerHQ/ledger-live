@@ -104,8 +104,8 @@ export function BottomBar({
   return (
     <Animated.View style={heightStyle}>
       <Animated.View style={opacityStyle}>
-        <Flex flexDirection="row" height={BAR_HEIGHT} paddingY={4} paddingX={4} alignItems="center">
-          <Flex flexDirection="row" flex={1}>
+        <Flex flexDirection="row" height={BAR_HEIGHT} paddingX={4} alignItems="center">
+          <Flex flexDirection="row">
             <IconButton onPress={handleBack} marginRight={4} disabled={!webviewState.canGoBack}>
               <ArrowLeftMedium
                 size={24}
@@ -122,8 +122,15 @@ export function BottomBar({
           </Flex>
 
           {shouldDisplaySelectAccount ? (
-            <SelectAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
-          ) : null}
+            <Flex flex={1} alignItems={"center"}>
+              <SelectAccountButton
+                manifest={manifest}
+                currentAccountHistDb={currentAccountHistDb}
+              />
+            </Flex>
+          ) : (
+            <Flex flex={1} />
+          )}
 
           <IconButton onPress={handleReload} alignSelf="flex-end">
             <ReverseMedium size={24} color="neutral.c100" />
