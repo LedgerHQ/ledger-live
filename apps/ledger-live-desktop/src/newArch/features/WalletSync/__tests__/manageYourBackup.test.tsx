@@ -8,6 +8,7 @@ jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({
     destroyTrustchain: (mockedSdk.destroyTrustchain = jest.fn()),
     getMembers: (mockedSdk.getMembers = jest.fn()),
+    initMemberCredentials: (mockedSdk.initMemberCredentials = jest.fn()),
   }),
 }));
 

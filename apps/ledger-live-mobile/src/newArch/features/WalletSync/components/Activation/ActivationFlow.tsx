@@ -75,6 +75,7 @@ const ActivationFlow = ({
             onQrCodeScanned={handleQrCodeScanned}
             currentOption={currentOption}
             setSelectedOption={setOption}
+            qrCodeValue={qrProcess.url}
           />
         );
 
