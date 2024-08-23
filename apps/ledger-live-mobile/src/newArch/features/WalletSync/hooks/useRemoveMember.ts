@@ -5,37 +5,29 @@ import {
 } from "@ledgerhq/trustchain/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
+import { TrustchainNotAllowed } from "@ledgerhq/trustchain/errors";
 import { TrustchainMember, Trustchain } from "@ledgerhq/trustchain/types";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
+import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
 
 type Props = {
   device: Device | null;
   member: TrustchainMember | null;
 };
 
-export function useRemoveMember({ device, member }: Props) {
+export function useRemoveMember({ device, member }: Props): DrawerProps {
+  const [DrawerProps, setScene] = useFollowInstructionDrawer();
+
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
-  const [error, setError] = useState<Error | null>(null);
-
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
-  const [userDeviceInteraction, setUserDeviceInteraction] = useState(false);
-
-  // eslint-disable-next-line no-console
-  const onRetry = useCallback(() => console.log("onRetry"), []);
-  // () => dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance })),
-
-  const goToDelete = useCallback(
-    () => navigation.navigate(ScreenName.WalletSyncActivated),
-    [navigation],
-  );
 
   // eslint-disable-next-line no-console
   const onResetFlow = useCallback(() => console.log("onResetFlow"), []);
@@ -65,17 +57,22 @@ export function useRemoveMember({ device, member }: Props) {
           memberCredentials,
           member,
           {
-            onStartRequestUserInteraction: () => setUserDeviceInteraction(true),
-            onEndRequestUserInteraction: () => setUserDeviceInteraction(false),
+            onStartRequestUserInteraction: () =>
+              setScene({ kind: SceneKind.DeviceInstructions, device }),
+            onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
           },
         );
 
         transitionToNextScreen(newTrustchain);
       } catch (error) {
-        if (error instanceof Error) setError(error);
+        if (error instanceof TrustchainNotAllowed) {
+          setScene({ kind: SceneKind.KeyError });
+        } else if (error instanceof Error) {
+          setScene({ kind: SceneKind.GenericError, error });
+        }
       }
     },
-    [device, memberCredentials, sdk, transitionToNextScreen, trustchain],
+    [setScene, device, memberCredentials, sdk, transitionToNextScreen, trustchain],
   );
 
   useEffect(() => {
@@ -86,12 +83,7 @@ export function useRemoveMember({ device, member }: Props) {
         removeMember(member);
       }
     }
-  }, [device, member, onResetFlow, onRetry, removeMember]);
+  }, [device, member, onResetFlow, removeMember]);
 
-  return {
-    error,
-    onRetry,
-    userDeviceInteraction,
-    goToDelete,
-  };
+  return DrawerProps;
 }

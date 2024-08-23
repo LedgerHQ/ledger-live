@@ -13,16 +13,11 @@ type Props = {
 };
 
 const DeletionFollowInstructionsDrawer = ({ isOpen, handleClose, device, member }: Props) => {
-  const { error, userDeviceInteraction, goToDelete } = useRemoveMember({ device, member });
-
   return (
     <GenericFollowInstructionsDrawer
+      {...useRemoveMember({ device, member })}
       isOpen={isOpen}
       handleClose={handleClose}
-      device={device}
-      userDeviceInteraction={userDeviceInteraction}
-      error={error}
-      goToDelete={goToDelete}
     />
   );
 };
