@@ -30,8 +30,11 @@ export function createApi(config: PolkadotConfig): Api {
 async function craft(
   address: string,
   transaction: {
+    mode: string;
     recipient: string;
     amount: bigint;
+    fee: bigint;
+    supplement?: unknown;
   },
 ): Promise<string> {
   const extrinsicArg = defaultExtrinsicArg(transaction.amount, transaction.recipient);

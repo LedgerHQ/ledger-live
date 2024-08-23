@@ -30,6 +30,7 @@ import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,
 } from "~/renderer/reducers/settings";
+import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 
 const Container = styled.div`
   display: flex;
@@ -85,11 +86,13 @@ const DeviceDashboard = ({
 }: Props) => {
   const { t } = useTranslation();
   const { deviceName } = result;
-  const [state, dispatch] = useAppsRunner(result, exec, appsToRestore);
+  const storage = useAppDataStorageProvider();
+  const [state, dispatch] = useAppsRunner(result, exec, storage, appsToRestore);
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const [appInstallDep, setAppInstallDep] = useState<{ app: App; dependencies: App[] } | undefined>(
     undefined,
   );
+
   const [appUninstallDep, setAppUninstallDep] = useState<
     { dependents: App[]; app: App } | undefined
   >(undefined);
@@ -165,8 +168,8 @@ const DeviceDashboard = ({
     // Not ideal but we have no concept of device ids so we can consider
     // an empty custom image size an indicator of not having an image set.
     // If this is troublesome we'd have to react by asking the device directly.
-    if (state.customImageBlocks === 0) reduxDispatch(clearLastSeenCustomImage());
-  }, [reduxDispatch, state.customImageBlocks]);
+    if (result.customImageBlocks === 0) reduxDispatch(clearLastSeenCustomImage());
+  }, [reduxDispatch, result.customImageBlocks]);
 
   const disableFirmwareUpdate = state.installQueue.length > 0 || state.uninstallQueue.length > 0;
   return (
@@ -209,6 +212,7 @@ const DeviceDashboard = ({
           device={device}
           deviceName={deviceName}
           isIncomplete={isIncomplete}
+          hasCustomLockScreen={result.customImageBlocks !== 0}
         />
         <ProviderWarning />
         <AppList

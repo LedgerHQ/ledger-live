@@ -32,6 +32,7 @@ import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
 
 const reloadApp = (event: KeyboardEvent) => {
@@ -77,30 +78,32 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
           <FirebaseFeatureFlagsProvider getFeature={getFeature}>
             <ConnectEnvsToSentry />
             <UpdaterProvider>
-              <CountervaluesMarketcap>
-                <CountervaluesProvider initialState={initialCountervalues}>
-                  <ToastProvider>
-                    <AnnouncementProviderWrapper>
-                      <Router>
-                        <PostOnboardingProviderWrapped>
-                          <PlatformAppProviderWrapper>
-                            <DrawerProvider>
-                              <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                                <StorylyProvider>
-                                  <QueryClientProvider client={queryClient}>
-                                    <Default />
-                                    <ReactQueryDevtoolsProvider />
-                                  </QueryClientProvider>
-                                </StorylyProvider>
-                              </NftMetadataProvider>
-                            </DrawerProvider>
-                          </PlatformAppProviderWrapper>
-                        </PostOnboardingProviderWrapped>
-                      </Router>
-                    </AnnouncementProviderWrapper>
-                  </ToastProvider>
-                </CountervaluesProvider>
-              </CountervaluesMarketcap>
+              <AppDataStorageProvider>
+                <CountervaluesMarketcap>
+                  <CountervaluesProvider initialState={initialCountervalues}>
+                    <ToastProvider>
+                      <AnnouncementProviderWrapper>
+                        <Router>
+                          <PostOnboardingProviderWrapped>
+                            <PlatformAppProviderWrapper>
+                              <DrawerProvider>
+                                <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                                  <StorylyProvider>
+                                    <QueryClientProvider client={queryClient}>
+                                      <Default />
+                                      <ReactQueryDevtoolsProvider />
+                                    </QueryClientProvider>
+                                  </StorylyProvider>
+                                </NftMetadataProvider>
+                              </DrawerProvider>
+                            </PlatformAppProviderWrapper>
+                          </PostOnboardingProviderWrapped>
+                        </Router>
+                      </AnnouncementProviderWrapper>
+                    </ToastProvider>
+                  </CountervaluesProvider>
+                </CountervaluesMarketcap>
+              </AppDataStorageProvider>
             </UpdaterProvider>
           </FirebaseFeatureFlagsProvider>
         </FirebaseRemoteConfigProvider>

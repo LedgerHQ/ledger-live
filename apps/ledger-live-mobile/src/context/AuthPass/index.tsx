@@ -13,7 +13,7 @@ import { SkipLockContext } from "~/components/behaviour/SkipLock";
 import type { Privacy, State as GlobalState, AppState as EventState } from "~/reducers/types";
 import AuthScreen from "./AuthScreen";
 import RequestBiometricAuth from "~/components/RequestBiometricAuth";
-import { useQueuedDrawerContext } from "~/newArch/components/QueuedDrawer/QueuedDrawersContext";
+import { useQueuedDrawerContext } from "LLM/components/QueuedDrawer/QueuedDrawersContext";
 
 const mapDispatchToProps = {
   setPrivacy,

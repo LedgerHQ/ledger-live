@@ -21,15 +21,12 @@ describe("restoreAppStorage", () => {
 
   it("should call the send function with correct parameters", async () => {
     const chunk = Buffer.from("106RueduTemple");
-    await restoreAppStorage(transport, chunk);
-    expect(transport.send).toHaveBeenCalledWith(
+    const args = [
       0xe0,
       0x6d,
       0x00,
       0x00,
-      Buffer.from([
-        0x0e, 0x31, 0x30, 0x36, 0x52, 0x75, 0x65, 0x64, 0x75, 0x54, 0x65, 0x6d, 0x70, 0x6c, 0x65,
-      ]),
+      chunk,
       [
         StatusCodes.OK,
         StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT,
@@ -40,7 +37,10 @@ describe("restoreAppStorage", () => {
         StatusCodes.INVALID_CHUNK_LENGTH,
         StatusCodes.INVALID_BACKUP_HEADER,
       ],
-    );
+    ];
+
+    await restoreAppStorage(transport, chunk);
+    expect(transport.send).toHaveBeenCalledWith(...args);
   });
 
   describe("parseResponse", () => {

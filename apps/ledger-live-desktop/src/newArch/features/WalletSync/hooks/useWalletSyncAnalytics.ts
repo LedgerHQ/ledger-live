@@ -19,11 +19,14 @@ export enum AnalyticsPage {
   CreateOrSynchronizeTrustChain = "Create or synchronize with trustchain",
   SynchronizationError = "Synchronization error",
   SyncMethod = "Choose sync method",
+  MobileSync = "Mobile sync",
+  DesktopSync = "Desktop sync",
   KeyCreated = "Backup creation success",
   KeyUpdated = "Backup update success",
 
   SyncWithQR = "Sync with QR code",
   PinCode = "Pin code",
+  PinCodeError = "Pin code error",
 
   SettingsGeneral = "Settings General",
   WalletSyncSettings = "Wallet Sync Settings",
@@ -61,6 +64,7 @@ export const StepMappedToAnalytics: Record<Step, string> = {
   [Step.SynchronizeMode]: AnalyticsPage.SyncMethod,
   [Step.SynchronizeWithQRCode]: AnalyticsPage.SyncWithQR,
   [Step.PinCode]: AnalyticsPage.PinCode,
+  [Step.PinCodeError]: AnalyticsPage.PinCodeError,
   [Step.Synchronized]: AnalyticsPage.KeyUpdated,
 
   //ManageInstances

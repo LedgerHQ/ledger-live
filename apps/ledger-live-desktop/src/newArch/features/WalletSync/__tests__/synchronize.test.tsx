@@ -1,14 +1,6 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
-import WalletSyncRow from "~/renderer/screens/settings/sections/General/WalletSync";
-import { simpleTrustChain, walletSyncActivatedState } from "../testHelper/helper";
-
-const WalletSyncTestApp = () => (
-  <>
-    <div id="modals"></div>
-    <WalletSyncRow />
-  </>
-);
+import { WalletSyncTestApp, simpleTrustChain, walletSyncActivatedState } from "./shared";
 
 jest.mock("../hooks/useQRCode", () => ({
   useQRCode: () => ({

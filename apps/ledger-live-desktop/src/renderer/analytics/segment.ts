@@ -81,10 +81,12 @@ const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const ptxCard = analyticsFeatureFlagMethod("ptxCard");
   const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
   const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
   const ptxSwapLiveAppDemoOne = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoOne")?.enabled;
+  const ptxSwapLiveAppDemoThree = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoThree")?.enabled;
   const ptxSwapThorswapProvider = analyticsFeatureFlagMethod("ptxSwapThorswapProvider")?.enabled;
   const ptxSwapExodusProvider = analyticsFeatureFlagMethod("ptxSwapExodusProvider")?.enabled;
 
@@ -106,9 +108,11 @@ const getPtxAttributes = () => {
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
+    ptxCard,
     ptxSwapMoonpayProviderEnabled,
     ptxSwapLiveAppDemoZero,
     ptxSwapLiveAppDemoOne,
+    ptxSwapLiveAppDemoThree,
     ptxSwapThorswapProvider,
     ptxSwapExodusProvider,
   };

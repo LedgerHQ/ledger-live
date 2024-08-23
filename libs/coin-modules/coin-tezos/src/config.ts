@@ -13,6 +13,7 @@ export type TezosConfig = {
   };
   fees: {
     minGasLimit: number;
+    minRevealGasLimit: number;
     minStorageLimit: number;
     minFees: number;
     minEstimatedFees: number;

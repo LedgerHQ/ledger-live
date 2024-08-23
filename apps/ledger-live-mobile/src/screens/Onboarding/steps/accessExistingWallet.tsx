@@ -4,7 +4,7 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTheme } from "styled-components/native";
-import { setOnboardingType } from "~/actions/settings";
+import { setFromLedgerSyncOnboarding, setOnboardingType } from "~/actions/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -15,6 +15,7 @@ import OnboardingView from "./OnboardingView";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList & BaseNavigatorStackParamList,
@@ -46,19 +47,16 @@ function AccessExistingWallet() {
 
   const openDrawer = useCallback(() => {
     dispatch(setOnboardingType(OnboardingType.walletSync));
+    dispatch(setFromLedgerSyncOnboarding(true));
     setIsDrawerVisible(true);
     logDrawer("Wallet Sync Welcome back", "open");
   }, [dispatch]);
 
   const closeDrawer = useCallback(() => {
     setIsDrawerVisible(false);
+    dispatch(setFromLedgerSyncOnboarding(false));
     logDrawer("Wallet Sync Welcome back", "close");
-  }, []);
-
-  const reopenDrawer = useCallback(() => {
-    setIsDrawerVisible(true);
-    logDrawer("Wallet Sync Welcome back", "reopen");
-  }, []);
+  }, [dispatch]);
 
   return (
     <OnboardingView
@@ -110,10 +108,11 @@ function AccessExistingWallet() {
               ]),
         ]}
       />
+
       <ActivationDrawer
+        startingStep={Steps.Activation}
         isOpen={isDrawerVisible}
         handleClose={closeDrawer}
-        reopenDrawer={reopenDrawer}
       />
     </OnboardingView>
   );

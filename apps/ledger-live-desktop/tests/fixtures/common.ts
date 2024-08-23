@@ -6,10 +6,11 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startSpeculos, stopSpeculos, specs } from "../utils/speculos";
 
 import { Application } from "tests/page";
-import { generateUUID, safeAppendFile } from "tests/utils/fileUtils";
+import { safeAppendFile } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
 import { captureArtifacts } from "tests/utils/allureUtils";
 import { Currency } from "tests/enum/Currency";
+import { randomUUID } from "crypto";
 
 type TestFixtures = {
   lang: string;
@@ -49,7 +50,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   userdataDestinationPath: async ({}, use) => {
-    await use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
+    await use(path.join(__dirname, "../artifacts/userdata", randomUUID()));
   },
   userdataOriginalFile: async ({ userdata }, use) => {
     await use(path.join(__dirname, "../userdata/", `${userdata}.json`));
@@ -94,7 +95,7 @@ export const test = base.extend<TestFixtures>({
       );
       device = await startSpeculos(
         testInfo.title.replace(/ /g, "_"),
-        specs[speculosCurrency.deviceLabel.replace(/ /g, "_")],
+        specs[speculosCurrency.speculosApp.replace(/ /g, "_")],
       );
       setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
     }

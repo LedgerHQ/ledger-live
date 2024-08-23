@@ -145,7 +145,8 @@
     "add": "Add",
     "or": "OR",
     "clearAll": "Clear all",
-    "buyLedger": "Buy a Ledger"
+    "buyLedger": "Buy a Ledger",
+    "quote": "Quote"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -3999,7 +4000,7 @@
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
-      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "walletSyncDesc": "Securely sync your accounts across multiple Ledger Live instances",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -4086,6 +4087,8 @@
       },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
+      "mockAppUpdate": "Mock app update",
+      "mockAppUpdateDesc": "Display available app update in My Ledger, it will reinstall the same app version",
       "catalogUrl": "Set the catalog apps provider",
       "catalogUrlDesc": "Enter your custom catalog provider URL",
       "enablePlatformDevTools": "Enable platform dev tools",
@@ -5567,6 +5570,13 @@
       "title": "Impossible to calculate amount and fees",
       "description": "Impossible to calculate amount and fees"
     },
+    "InvalidRecipientForTokenTransfer": {
+      "title": "Invalid recipient for token transfer, supported account types for token transfer: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed": {
+      "title": "Sorry, fee estimation failed",
+      "description": "Fee estimation failed on the network. Check inputs, transaction most likely to fail"
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
@@ -5667,6 +5677,10 @@
     "TransportStatusError": {
       "title": "Something went wrong. Please reconnect your device",
       "description": "{{message}}"
+    },
+    "TrustchainNotFound": {
+      "title": "Something went wrong while fetching your data",
+      "description": "Please try again or contact Ledger Support."
     },
     "DeviceShouldStayInApp": {
       "title": "Please open the {{appName}} app",
@@ -6382,12 +6396,12 @@
       "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
       "cta": "Sync your accounts"
     },
-    "alreadySync": "Already created a key?",
+    "alreadySync": "Already synced a Ledger Live app?",
     "manage": {
       "cta": "Manage",
       "synchronize": {
         "label": "Synchronize",
-        "description": "Synchronize your app data with another Ledger Live app for a seemless experience."
+        "description": "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "backup": {
         "label": "Manage Key",
@@ -6463,7 +6477,7 @@
         "title": "Choose your sync method",
         "description": "You can choose to sync directly with your Ledger, or by scanning a QR code on Ledger Live.",
         "scan": {
-          "title": "Scan a QR code",
+          "title": "Display QR code",
           "description": "Synchronize by scanning a QR code"
         },
         "connectDevice": {
@@ -6472,18 +6486,35 @@
         }
       },
       "qrCode": {
-        "title": "Synchronize",
-        "hint": "Trying to sync two Ledger Live desktop apps? Click here.",
-        "description": "Scan and synchronize your accounts with another Ledger Live app",
-        "steps": {
-          "step1": "Open the Ledger Live app you want to sync",
-          "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
-          "step3": "Scan QR code until loader hits 100%."
+        "title": "Synchronize Instances",
+        "options": {
+          "mobile": "Mobile",
+          "desktop": "Desktop"
+        },
+        "mobile": {
+          "description": "Scan and synchronize your accounts with another Ledger Live app",
+          "steps": {
+            "step1": "Open the Ledger Live app you want to sync",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+            "step3": "Scan QR code"
+          }
+        },
+        "desktop": {
+          "description": "Synchronize your accounts with another Ledger Live app",
+          "steps": {
+            "step1": "Open the Ledger Live app you want to sync",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Use your Ledger</0>",
+            "step3": "Connect your Ledger"
+          }
         }
       },
       "pinCode": {
         "title": "Enter the code",
-        "description": "Type the code displayed on the other Ledger Live you want to sync with."
+        "description": "Type the code displayed on the other Ledger Live you want to sync with.",
+        "error": {
+          "title": "Codes do not match",
+          "description": "Make sure the code you type is the one displayed on the other Ledger Live instance."
+        }
       }
     },
     "manageInstances": {

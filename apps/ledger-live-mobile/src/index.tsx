@@ -86,7 +86,7 @@ import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import QueuedDrawersContextProvider from "~/newArch/components/QueuedDrawer/QueuedDrawersContextProvider";
+import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { exportMarketSelector } from "./reducers/market";
 import { trustchainStoreSelector } from "@ledgerhq/trustchain/store";
 import { walletSelector } from "~/reducers/wallet";

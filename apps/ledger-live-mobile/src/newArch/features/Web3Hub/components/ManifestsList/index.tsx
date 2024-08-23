@@ -1,8 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React, { ComponentProps, useCallback, useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
@@ -18,8 +17,11 @@ type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
 
 type Props = {
   navigation: NavigationProp;
-  onScroll?: FlashListProps<AppManifest>["onScroll"];
+  onScroll?: ComponentProps<typeof AnimatedFlashList>["onScroll"];
+  title?: string;
+  pt?: number;
   pb?: number;
+  headerComponent?: React.ReactNode;
 };
 
 const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<AppManifest>>(FlashList);
@@ -38,9 +40,15 @@ const renderItem = ({
   return <ManifestItem manifest={item} onPress={extraData} />;
 };
 
-export default function ManifestsList({ navigation, onScroll, pb = 0 }: Props) {
+export default function ManifestsList({
+  navigation,
+  onScroll,
+  title,
+  pt = 0,
+  pb = 0,
+  headerComponent,
+}: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const [selectedCategory, selectCategory] = useState("all");
   const { data, isLoading, onEndReached } = useManifestsListViewModel(selectedCategory);
 
@@ -63,17 +71,18 @@ export default function ManifestsList({ navigation, onScroll, pb = 0 }: Props) {
       <Disclaimer disclaimer={disclaimer} />
       <AnimatedFlashList
         contentContainerStyle={{
-          paddingBottom: pb + insets.bottom,
+          paddingTop: pt,
+          paddingBottom: pb,
         }}
         ListHeaderComponent={
           <>
+            {headerComponent}
             <Text mt={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
-              {t("web3hub.manifestsList.title")}
+              {title ?? t("web3hub.components.manifestsList.title")}
             </Text>
             <Text mt={2} mb={5} numberOfLines={1} variant="body" mx={5} accessibilityRole="header">
-              {t("web3hub.manifestsList.description")}
+              {t("web3hub.components.manifestsList.description")}
             </Text>
-
             <View style={{ height: 32, marginBottom: 2 }}>
               <CategoriesList selectedCategory={selectedCategory} selectCategory={selectCategory} />
             </View>

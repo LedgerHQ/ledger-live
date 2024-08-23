@@ -189,6 +189,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Ton: {
+    currency: getCryptoCurrencyById("ton"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "TON",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -326,4 +334,17 @@ export function verifyAddress(address: string, text: string[]): boolean {
 export function verifyAmount(amount: string, text: string[]): boolean {
   const amountDevice = text[1];
   return amountDevice.includes(amount);
+}
+
+export async function takeScreenshot() {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  try {
+    const response = await axios.get(`http://127.0.0.1:${speculosApiPort}/screenshot`, {
+      responseType: "arraybuffer",
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error downloading speculos screenshot:", error);
+    throw error;
+  }
 }

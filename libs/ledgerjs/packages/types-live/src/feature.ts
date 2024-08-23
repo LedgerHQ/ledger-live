@@ -162,8 +162,10 @@ export type Features = CurrencyFeatures & {
   discover: Feature_Discover;
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
+  ptxCard: DefaultFeature;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
+  ptxSwapLiveAppDemoThree: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   ptxSwapThorswapProvider: Feature_PtxSwapThorswapProvider;
@@ -187,6 +189,7 @@ export type Features = CurrencyFeatures & {
   lldnewArchOrdinals: DefaultFeature;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
+  llmMarketQuickActions: DefaultFeature;
 };
 
 /**

@@ -49,7 +49,7 @@ export async function restoreAppStorageCommit(transport: Transport): Promise<voi
   });
   tracer.trace("Start");
 
-  const apdu: Readonly<APDU> = [...RESTORE_APP_STORAGE_COMMIT, Buffer.from([0x00])];
+  const apdu: Readonly<APDU> = [...RESTORE_APP_STORAGE_COMMIT, Buffer.from([])];
 
   const response = await transport.send(...apdu, RESPONSE_STATUS_SET);
 

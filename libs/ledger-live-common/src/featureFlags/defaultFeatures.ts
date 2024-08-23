@@ -391,7 +391,7 @@ export const DEFAULT_FEATURES: Features = {
   buySellShortcut: {
     enabled: false,
   },
-
+  ptxCard: DEFAULT_FEATURE,
   ptxSwapLiveAppDemoZero: {
     enabled: false,
     params: {
@@ -403,6 +403,13 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       manifest_id: "swap-live-app-demo-1",
+    },
+  },
+
+  ptxSwapLiveAppDemoThree: {
+    enabled: false,
+    params: {
+      manifest_id: "swap-live-app-demo-3",
     },
   },
 
@@ -484,6 +491,7 @@ export const DEFAULT_FEATURES: Features = {
   lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
+  llmMarketQuickActions: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
