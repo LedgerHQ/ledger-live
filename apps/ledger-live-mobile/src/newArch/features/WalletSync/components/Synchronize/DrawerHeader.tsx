@@ -24,7 +24,7 @@ const DrawerHeader: React.FC<Props> = ({ onClose }) => {
     >
       <Flex flex={1} />
       <Text fontSize={16} fontWeight="semiBold" color={colors.neutral.c100}>
-        {t("walletSync.walletSyncActivated.synchronize.title")}
+        {t("walletSync.synchronize.qrCode.title")}
       </Text>
       <Flex flex={1} alignItems="flex-end">
         <TouchableOpacity onPress={onClose}>

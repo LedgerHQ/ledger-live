@@ -37,7 +37,7 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
   const goToSync = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeMode }));
     onClickTrack({
-      button: "Already created a key?",
+      button: "Already synced a Ledger Live app?",
       page: AnalyticsPage.Activation,
       flow: "Wallet Sync",
     });

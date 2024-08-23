@@ -19,7 +19,7 @@ describe("SynchronizeWithQrCode", () => {
       overrideInitialState: INITIAL_TEST,
     });
     await user.press(await screen.findByText(/ledger sync/i));
-    await user.press(await screen.findByText(/already created a key?/i));
+    await user.press(await screen.findByText(/Already synced a Ledger Live app?/i));
     await user.press(await screen.findByText(/scan a qr code/i));
     await user.press(await screen.queryAllByText(/show qr/i)[0]);
     expect(await screen.getByTestId("ws-qr-code-displayed")).toBeVisible();
