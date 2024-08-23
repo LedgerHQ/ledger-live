@@ -4,22 +4,22 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
 const subAccounts: Account[] = [
-  Account.ETH_USDT,
+  Account.ETH_USDT_1,
   Account.XLM_USCD,
   Account.ALGO_USDT_1,
   Account.TRX_USDT,
-  Account.BSC_BUSD,
-  Account.MATIC_DAI,
+  Account.BSC_BUSD_1,
+  Account.MATIC_DAI_1,
 ];
 
 const subAccountReceive: Account[] = [
-  Account.ETH_USDT,
+  Account.ETH_USDT_1,
   Account.ETH_LIDO,
   Account.TRX_USDT,
   Account.TRX_BTT,
-  Account.BSC_BUSD,
+  Account.BSC_BUSD_1,
   Account.BSC_SHIBA,
-  Account.MATIC_DAI,
+  Account.MATIC_DAI_1,
   Account.MATIC_UNI,
 ];
 

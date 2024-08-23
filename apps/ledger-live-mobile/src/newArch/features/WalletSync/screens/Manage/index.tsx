@@ -140,7 +140,7 @@ const WalletSyncManage = () => {
       </InstancesRow>
 
       <ActivationDrawer
-        startingStep={Steps.QrCodeMethod}
+        startingStep={Steps.ChooseSyncMethod}
         isOpen={isSyncDrawerOpen}
         handleClose={closeSyncDrawer}
       />

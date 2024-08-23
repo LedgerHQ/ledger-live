@@ -4000,7 +4000,7 @@
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
-      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "walletSyncDesc": "Securely sync your accounts across multiple Ledger Live instances",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -6401,7 +6401,7 @@
       "cta": "Manage",
       "synchronize": {
         "label": "Synchronize",
-        "description": "Synchronize your app data with another Ledger Live app for a seemless experience."
+        "description": "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "backup": {
         "label": "Manage Key",
@@ -6477,7 +6477,7 @@
         "title": "Choose your sync method",
         "description": "You can choose to sync directly with your Ledger, or by scanning a QR code on Ledger Live.",
         "scan": {
-          "title": "Scan a QR code",
+          "title": "Display QR code",
           "description": "Synchronize by scanning a QR code"
         },
         "connectDevice": {
@@ -6486,13 +6486,26 @@
         }
       },
       "qrCode": {
-        "title": "Synchronize",
-        "hint": "Trying to sync two Ledger Live desktop apps? Click here.",
-        "description": "Scan and synchronize your accounts with another Ledger Live app",
-        "steps": {
-          "step1": "Open the Ledger Live app you want to sync",
-          "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
-          "step3": "Scan QR code until loader hits 100%."
+        "title": "Synchronize Instances",
+        "options": {
+          "mobile": "Mobile",
+          "desktop": "Desktop"
+        },
+        "mobile": {
+          "description": "Scan and synchronize your accounts with another Ledger Live app",
+          "steps": {
+            "step1": "Open the Ledger Live app you want to sync",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+            "step3": "Scan QR code"
+          }
+        },
+        "desktop": {
+          "description": "Synchronize your accounts with another Ledger Live app",
+          "steps": {
+            "step1": "Open the Ledger Live app you want to sync",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Use your Ledger</0>",
+            "step3": "Connect your Ledger"
+          }
         }
       },
       "pinCode": {

@@ -81,7 +81,7 @@ for (const transaction of transactionE2E) {
   });
 }
 
-test.describe("Send token (subAccount) - invalid input", () => {
+test.describe("Send token (subAccount) - invalid address input", () => {
   const tokenTransactionInvalid = {
     transaction: new Transaction(Account.ALGO_USDT_1, Account.ALGO_USDT_2, "0.1", Fee.MEDIUM),
     expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
@@ -93,7 +93,7 @@ test.describe("Send token (subAccount) - invalid input", () => {
   });
 
   test(
-    `Send from ${tokenTransactionInvalid.transaction.accountToDebit.accountName} to ${tokenTransactionInvalid.transaction.accountToCredit.accountName} - invalid input`,
+    `Send from ${tokenTransactionInvalid.transaction.accountToDebit.accountName} to ${tokenTransactionInvalid.transaction.accountToCredit.accountName} - invalid address input`,
     {
       annotation: {
         type: "TMS",
@@ -116,25 +116,69 @@ test.describe("Send token (subAccount) - invalid input", () => {
   );
 });
 
-test.describe("Send token (subAccount) - valid input", () => {
+test.describe("Send token (subAccount) - invalid amount input", () => {
+  const tokenTransactionInvalid = [
+    {
+      transaction: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.MEDIUM),
+      expectedWarningMessage: new RegExp(
+        /You need \d+\.\d+ BNB in your account to pay for transaction fees on the Binance Smart Chain network\. .*/,
+      ),
+    },
+    {
+      transaction: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.MEDIUM),
+      expectedWarningMessage: new RegExp(
+        /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
+      ),
+    },
+  ];
+  for (const transaction of tokenTransactionInvalid) {
+    test.use({
+      userdata: "speculos-2ETH-2BNB",
+      speculosCurrency: transaction.transaction.accountToDebit.currency,
+    });
+    test(
+      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - invalid amount input`,
+      {
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-475",
+        },
+      },
+      async ({ app }) => {
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(
+          transaction.transaction.accountToDebit.accountName,
+        );
+        await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
+        await app.account.clickSend();
+        await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
+        await app.send.clickContinue();
+        await app.send.fillAmount(transaction.transaction.amount);
+        await app.send.checkContinueButtonDisabled();
+        await app.layout.checkWarningMessage(transaction.expectedWarningMessage);
+      },
+    );
+  }
+});
+
+test.describe("Send token (subAccount) - valid address & amount input", () => {
   const tokenTransactionValid = new Transaction(
-    Account.ALGO_USDT_1,
-    Account.ALGO_USDT_3,
-    "0.1",
+    Account.ETH_USDT_1,
+    Account.ETH_USDT_2,
+    "1",
     Fee.MEDIUM,
   );
-
   test.use({
     userdata: "speculos-subAccount",
     speculosCurrency: tokenTransactionValid.accountToDebit.currency,
   });
 
   test(
-    `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid input`,
+    `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & amount input`,
     {
       annotation: {
         type: "TMS",
-        description: "B2CQA-479",
+        description: "B2CQA-479, B2CQA-475",
       },
     },
     async ({ app }) => {
@@ -145,6 +189,9 @@ test.describe("Send token (subAccount) - valid input", () => {
       await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);
       await app.send.checkContinueButtonEnable();
       await app.layout.checkInputErrorNotVisible();
+      await app.send.clickContinue();
+      await app.send.fillAmount(tokenTransactionValid.amount);
+      await app.send.checkContinueButtonEnable();
     },
   );
 });
