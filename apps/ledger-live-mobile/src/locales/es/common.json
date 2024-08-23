@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "Cotización"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -919,6 +920,13 @@
     "InvalidMemoICP" : {
       "title" : "El memo debe ser un número."
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Destinatario no válido para transferencia de tokens. Tipos de cuenta admitidos para la transferencia de tokens: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "El cálculo de tarifas ha fallado",
+      "description" : "La estimación de tarifas falló en la red. Comprueba la información aportada; lo más probable es que la transacción falle"
+    },
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
@@ -937,6 +945,10 @@
       "title" : "Inténtalo de nuevo.",
       "description" : "El servidor no ha podido gestionar tu solicitud. Inténtalo de nuevo o contacta al Soporte de Ledger.",
       "errorCode" : "Código: {{errorCode}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "Se ha producido un error al recuperar tus datos",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger."
     }
   },
   "crash" : {
@@ -2274,6 +2286,7 @@
     },
     "quickActions" : {
       "buy" : "Comprar",
+      "sell" : "Vender",
       "swap" : "Permutar",
       "send" : "Enviar",
       "deposit" : "Recibir",
@@ -2760,7 +2773,7 @@
       "dateFormat" : "Formato de fecha",
       "dateFormatDesc" : "Ajusta el formato de fecha de Ledger Live",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Protege los datos de tus aplicaciones y sincroniza varias instancias de Ledger Live de forma sencilla.",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "region" : "Región",
       "regionDesc" : "Elige tu región para actualizar el formato de fecha, hora y moneda.",
       "password" : "Bloqueo de aplicaciones",
@@ -2993,6 +3006,10 @@
         },
         "platformManifest" : {
           "title" : "Carga el Manifiesto de la plataforma"
+        },
+        "mockAppUpdate" : {
+          "title" : "Actualización ficticia de la aplicación",
+          "description" : "Mostrar actualización de la aplicación disponible en Mi Ledger, se volverá a instalar la misma versión de la aplicación"
         }
       }
     },
@@ -6703,7 +6720,7 @@
         "title" : "Sincroniza tus cuentas en todas las plataformas",
         "description" : "Tu Ledger generará una clave de cifrado, para garantizar la privacidad de tus datos, que solo tú podrás recuperar.",
         "mainCta" : "Sincroniza tus cuentas",
-        "secondCta" : "¿Ya has creado una clave?"
+        "secondCta" : "¿Has sincronizado ya una aplicación Ledger Live?"
       }
     },
     "deviceSelection" : {
@@ -6725,7 +6742,7 @@
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "Sincronizar",
-        "description" : "Sincroniza los datos de tu aplicación con otra aplicación Ledger Live para disfrutar de una experiencia sin fisuras. "
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "manageKey" : {
         "title" : "Administra la clave",
@@ -6786,23 +6803,70 @@
         "connectDevice" : {
           "title" : "Usa tu Ledger"
         }
+      },
+      "qrCode" : {
+        "title" : "Sincronizar instancias",
+        "show" : {
+          "title" : "Mostrar QR",
+          "explanation" : {
+            "title" : "Escanea y sincroniza tus cuentas con otra aplicación Ledger Live",
+            "steps" : {
+              "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
+              "step2" : "Ve a <0>Ajustes</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Sincronizar</0>",
+              "step3" : "Escanear código QR"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "Escanear",
+          "description" : "Escanear código QR",
+          "explanation" : {
+            "title" : "Escanea y sincroniza tus cuentas con otra aplicación Ledger Live",
+            "steps" : {
+              "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
+              "step2" : "Ve a <0>Ajustes</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Sincronizar</0> <1>></1> <0>Mostrar QR</0>.",
+              "step3" : "Escanear código QR"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "Introduce tu código",
+          "desc" : "Escribe el código mostrado en la aplicación Ledger Live con la que quieras sincronizar.",
+          "error" : {
+            "title" : "Los códigos no coinciden",
+            "desc" : "Asegúrate de que el código que escribes es el que se muestra en la otra instancia de Ledger Live.",
+            "tryAgain" : "Inténtalo de nuevo"
+          }
+        }
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "Firma visible activada",
-      "checkbox" : "No recordarme de nuevo.",
-      "CTA" : "Abrir {{app}}"
-    },
-    "manifestsList" : {
-      "title" : "Explorar",
-      "description" : "Descubre lo mejor de la web3 seleccionado por Ledger"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "Firma visible activada",
+        "clearSigningDisabled" : "Firma visible desactivada",
+        "checkbox" : "No recordarme de nuevo.",
+        "CTA" : "Abrir {{app}}"
+      },
+      "manifestsList" : {
+        "title" : "Explorar",
+        "description" : "Descubre lo mejor de la web3 seleccionado por Ledger"
+      },
+      "label" : {
+        "clearSigning" : "firma visible"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "Discover"
+      },
       "header" : {
         "title" : "Explora la web3",
         "placeholder" : "Busca o escribe una URL"
+      },
+      "clearSigning" : {
+        "title" : "Firma visible"
       }
     }
   }
