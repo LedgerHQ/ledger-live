@@ -9,7 +9,7 @@ interface TonAccountState {
   data_hash: string | null;
 }
 
-interface TonMessage {
+export interface TonMessage {
   hash: string;
   source: string | null;
   destination: string | null;

@@ -17,10 +17,12 @@ describe("Transaction functions", () => {
       const { now, lt, hash, in_msg, total_fees, mc_block_seqno } =
         tonTransactionResponse.transactions[0];
 
-      const finalOperation = flatMap(
-        tonTransactionResponse.transactions,
-        mapTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
+      const mappedNewOps = await Promise.all(
+        tonTransactionResponse.transactions.map(tx =>
+          mapTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book, tx, []),
+        ),
       );
+      const finalOperation = mappedNewOps.flatMap(ops => ops);
 
       expect(finalOperation).toEqual([
         {
@@ -45,10 +47,12 @@ describe("Transaction functions", () => {
       const transactions = [{ ...tonTransactionResponse.transactions[0], total_fees: "15" }];
       const { now, lt, hash, in_msg, total_fees, mc_block_seqno, account } = transactions[0];
 
-      const finalOperation = flatMap(
-        transactions,
-        mapTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
+      const mappedNewOps = await Promise.all(
+        transactions.map(tx =>
+          mapTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book, tx, []),
+        ),
       );
+      const finalOperation = mappedNewOps.flatMap(ops => ops);
 
       expect(finalOperation).toEqual([
         {
@@ -99,10 +103,12 @@ describe("Transaction functions", () => {
       }
       const { now, lt, hash, out_msgs, total_fees, mc_block_seqno, account } = transactions[0];
 
-      const finalOperation = flatMap(
-        transactions,
-        mapTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
+      const mappedNewOps = await Promise.all(
+        transactions.map(tx =>
+          mapTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book, tx, []),
+        ),
       );
+      const finalOperation = mappedNewOps.flatMap(ops => ops);
 
       expect(finalOperation).toEqual([
         {
@@ -154,6 +160,7 @@ describe("Transaction functions", () => {
             explorerHash: transaction_hash,
             lt: transaction_lt,
           },
+          contract: "EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA",
         },
       ]);
     });
@@ -195,6 +202,7 @@ describe("Transaction functions", () => {
             explorerHash: transaction_hash,
             lt: transaction_lt,
           },
+          contract: "EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA",
         },
       ]);
     });
