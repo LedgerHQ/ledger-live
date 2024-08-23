@@ -4,18 +4,26 @@ import useManifestsListViewModel from "LLM/features/Web3Hub/components/Manifests
 import Disclaimer, { useDisclaimerViewModel } from "LLM/features/Web3Hub/components/Disclaimer";
 import { MainProps } from "LLM/features/Web3Hub/types";
 import HorizontalList from "../HorizontalList";
+import { track } from "~/analytics";
 
 type Props = {
   title: string;
   categoryId: string;
   navigation: MainProps["navigation"];
+  testID?: string;
 };
 
-const ManifestsCategoryList = ({ title, categoryId, navigation }: Props) => {
+const ManifestsCategoryList = ({ title, categoryId, navigation, testID }: Props) => {
   const { data, isLoading, onEndReached } = useManifestsListViewModel(categoryId);
 
   const goToApp = useCallback(
     (manifestId: string) => {
+      track("web3hub_app_clicked", {
+        component: `ManifestsCategoryList`,
+        page: "Web3HubMain",
+        app: manifestId,
+        category: categoryId,
+      });
       navigation.push(NavigatorName.Web3Hub, {
         screen: ScreenName.Web3HubApp,
         params: {
@@ -23,7 +31,7 @@ const ManifestsCategoryList = ({ title, categoryId, navigation }: Props) => {
         },
       });
     },
-    [navigation],
+    [navigation, categoryId],
   );
 
   const disclaimer = useDisclaimerViewModel(goToApp);
@@ -37,7 +45,7 @@ const ManifestsCategoryList = ({ title, categoryId, navigation }: Props) => {
         onPressItem={disclaimer.onPressItem}
         isLoading={isLoading}
         onEndReached={onEndReached}
-        testID="web3hub-clear-signing-scroll"
+        testID={testID}
       />
     </>
   ) : null;

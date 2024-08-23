@@ -20,6 +20,7 @@ import customTabBar from "../TabBar/CustomTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import { track } from "~/analytics";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -147,6 +148,9 @@ export default function MainNavigator() {
           listeners={({ navigation }) => ({
             tabPress: e => {
               e.preventDefault();
+              track("web3hub_section_clicked", {
+                page: "Home",
+              });
               managerLockAwareCallback(() => {
                 navigation.navigate(NavigatorName.Web3HubTab);
               });

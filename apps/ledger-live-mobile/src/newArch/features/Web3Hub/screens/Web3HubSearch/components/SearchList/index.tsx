@@ -10,6 +10,7 @@ import type { SearchProps } from "LLM/features/Web3Hub/types";
 import { ScreenName } from "~/const";
 import useSearchListViewModel from "./useSearchListViewModel";
 import SearchItem from "./SearchItem";
+import { track } from "~/analytics";
 
 type NavigationProp = SearchProps["navigation"];
 
@@ -42,6 +43,11 @@ export default function SearchList({ navigation, search, onScroll, pt = 0 }: Pro
 
   const goToApp = useCallback(
     (manifestId: string) => {
+      track("web3hub_app_clicked", {
+        component: `SearchList`,
+        page: "Web3HubSearch",
+        app: manifestId,
+      });
       navigation.push(ScreenName.Web3HubApp, {
         manifestId: manifestId,
       });

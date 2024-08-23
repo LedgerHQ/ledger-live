@@ -11,6 +11,7 @@ import BackButton from "LLM/features/Web3Hub/components/BackButton";
 import TabButton from "LLM/features/Web3Hub/components/TabButton";
 import { SearchProps } from "LLM/features/Web3Hub/types";
 import TextInput from "~/components/TextInput";
+import { track } from "~/analytics";
 
 const SEARCH_HEIGHT = 60;
 export const TOTAL_HEADER_HEIGHT = SEARCH_HEIGHT;
@@ -54,6 +55,11 @@ export default function Web3HubSearchHeader({ navigation, onSearch, layoutY }: P
               returnKeyType="done"
               value={search}
               onChangeText={setSearch}
+              onFocus={() => {
+                track("web3hub_search_focus", {
+                  component: `SearchInput`,
+                });
+              }}
             />
           </Flex>
           <TabButton count={2} navigation={navigation} />
