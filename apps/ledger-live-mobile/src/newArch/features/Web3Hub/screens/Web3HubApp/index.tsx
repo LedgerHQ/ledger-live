@@ -33,6 +33,7 @@ export default function Web3HubApp({ navigation, route }: AppProps) {
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
+      <TrackScreen category="Web3Hub" name="Web3HubSearchPage" />
       <Header navigation={navigation} layoutY={layoutY} />
 
       {manifest ? (

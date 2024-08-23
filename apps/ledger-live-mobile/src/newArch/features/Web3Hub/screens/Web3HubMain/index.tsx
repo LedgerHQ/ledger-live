@@ -8,6 +8,7 @@ import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
 import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "~/components/TabBar/shared";
 import Header, { ANIMATION_HEIGHT, TOTAL_HEADER_HEIGHT } from "./components/Header";
 import ManifestsCategoryList from "./components/ManifestsCategoryList";
+import { TrackScreen } from "~/analytics";
 
 const PADDING_BOTTOM = MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM;
 
@@ -19,6 +20,7 @@ export default function Web3HubMain({ navigation }: MainProps) {
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
+      <TrackScreen category="Web3Hub" name="Web3HubMainPage" />
       <Header title={t("web3hub.main.header.title")} navigation={navigation} layoutY={layoutY} />
 
       <View
