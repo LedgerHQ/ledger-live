@@ -84,7 +84,6 @@ export const test = base.extend<TestFixtures>({
     let device: any | undefined;
 
     if (IS_NOT_MOCK && speculosApp) {
-      console.log("speculosCurrency", speculosApp.name);
       // Ensure the portCounter stays within the valid port range
       if (portCounter > MAX_PORT) {
         portCounter = BASE_PORT;

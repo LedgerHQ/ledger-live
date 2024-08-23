@@ -91,5 +91,4 @@ export class SettingsPage extends AppPage {
   async openManageLedgerSync() {
     await this.manageLedgerSyncButton.click();
   }
-
 }

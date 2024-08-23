@@ -59,7 +59,7 @@ export class LedgerSyncDrawer extends Drawer {
   @step("Validate number of synchronized instances")
   async expectNbSyncedInstances(nb: number) {
     const countInstancesText = await this.page.getByText("Synchronized instance").textContent();
-    const nbInstances= await extractNumberFromText(countInstancesText || "");
+    const nbInstances = await extractNumberFromText(countInstancesText || "");
     expect(nbInstances).toBe(nb);
   }
 
@@ -68,5 +68,3 @@ export class LedgerSyncDrawer extends Drawer {
     await expect(this.backupDeletionSuccessText).toBeVisible();
   }
 }
-
-
