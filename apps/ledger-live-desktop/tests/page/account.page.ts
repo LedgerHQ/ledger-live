@@ -13,7 +13,7 @@ export class AccountPage extends AppPage {
   private stakeButtonCosmos = this.page.getByTestId("stake-button-cosmos");
   readonly stakeBanner = this.page.getByTestId("account-stake-banner");
   private stakeBannerButton = this.page.getByTestId("account-stake-banner-button");
-  private receiveButton = this.page.getByTestId("receive-account-action-button");
+  private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
   private sendButton = this.page.getByRole("button", { name: "Send" });
   private accountName = (name: string) => this.page.locator(`text=${name}`);
   private lastOperation = this.page.locator("text=Latest operations");

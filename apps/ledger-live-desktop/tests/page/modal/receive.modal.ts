@@ -12,6 +12,7 @@ export class ReceiveModal extends Modal {
   private receiveAddressValue = (address: string) => this.page.locator(`text=${address}`);
   private addressDisplayedValue = this.page.locator("#address-field");
   private selectAccount = this.page.getByText("Choose a crypto asset");
+  private warningMessage = this.page.locator('div[type="warning"]');
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
 
   @step("Select token")
@@ -35,5 +36,11 @@ export class ReceiveModal extends Modal {
   @step("Verify approve label visibility")
   async expectApproveLabel() {
     await expect(this.approveLabel).toBeVisible();
+  }
+
+  @step("Verify warning message $0")
+  async verifyWarningMessageContent(content: string) {
+    await expect(this.warningMessage).toBeVisible();
+    await expect(this.warningMessage).toContainText(content);
   }
 }
