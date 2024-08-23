@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
+import { BUY_SELL_UI_APP_ID } from "../wallet-api/constants";
 
 /**
  * Default disabled feature.
@@ -384,7 +385,7 @@ export const DEFAULT_FEATURES: Features = {
   buySellUi: {
     enabled: false,
     params: {
-      manifestId: "multibuy-v2", // Update to "buy-sell-ui" after rollout
+      manifestId: BUY_SELL_UI_APP_ID, // Update to "buy-sell-ui" after rollout
     },
   },
 

@@ -13,10 +13,7 @@ import Config from "react-native-config";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import {
-  DEFAULT_MULTIBUY_APP_ID,
-  BUY_SELL_UI_APP_ID,
-} from "@ledgerhq/live-common/wallet-api/constants";
+import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -73,8 +70,8 @@ function getProxyURL(url: string, customBuySellUiAppId?: string) {
   }
 
   const buySellAppIds = customBuySellUiAppId
-    ? [customBuySellUiAppId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
-    : [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
+    ? [customBuySellUiAppId, BUY_SELL_UI_APP_ID]
+    : [BUY_SELL_UI_APP_ID];
 
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
   // Also handles a difference in paths between LLD on LLD /platform/:app_id
@@ -375,29 +372,29 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
     screens: !acceptedTermsOfUse
       ? {}
       : {
-          [NavigatorName.BaseOnboarding]: {
-            screens: {
-              [NavigatorName.Onboarding]: {
-                initialRouteName: ScreenName.OnboardingWelcome,
-                screens: {
-                  [ScreenName.OnboardingBleDevicePairingFlow]: "sync-onboarding",
-                },
+        [NavigatorName.BaseOnboarding]: {
+          screens: {
+            [NavigatorName.Onboarding]: {
+              initialRouteName: ScreenName.OnboardingWelcome,
+              screens: {
+                [ScreenName.OnboardingBleDevicePairingFlow]: "sync-onboarding",
               },
             },
           },
-          [NavigatorName.Base]: {
-            screens: {
-              [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
-              /**
-               * @params ?platform: string
-               * ie: "ledgerlive://discover/protect?theme=light" will open the catalog and the protect dapp with a light theme as parameter
-               */
-              [ScreenName.PlatformApp]: "discover/:platform",
-              [ScreenName.Recover]: "recover/:platform",
-              [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
-            },
+        },
+        [NavigatorName.Base]: {
+          screens: {
+            [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+            /**
+             * @params ?platform: string
+             * ie: "ledgerlive://discover/protect?theme=light" will open the catalog and the protect dapp with a light theme as parameter
+             */
+            [ScreenName.PlatformApp]: "discover/:platform",
+            [ScreenName.Recover]: "recover/:platform",
+            [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
           },
         },
+      },
   },
 });
 
