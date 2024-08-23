@@ -24,7 +24,6 @@ export default function Web3HubSearch({ navigation }: SearchProps) {
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
-      <TrackScreen category="Web3Hub" name="Web3HubSearchPage" />
       <Header navigation={navigation} onSearch={setSearch} layoutY={layoutY} />
       <View
         style={{

@@ -7,6 +7,7 @@ import useCategoriesListViewModel, {
   type useCategoriesListViewModelProps,
 } from "./useCategoriesListViewModel";
 import Badge from "./Badge";
+import { track } from "~/analytics";
 
 const identityFn = (item: Category) => item.id;
 
@@ -21,7 +22,13 @@ const renderItem = ({
 }) => {
   return (
     <Badge
-      onPress={() => extraData?.selectCategory(item.id)}
+      onPress={() => {
+        track("web3hub_category_clicked", {
+          component: `CategoriesList`,
+          category: item.id,
+        });
+        extraData?.selectCategory(item.id);
+      }}
       label={item.name}
       selected={extraData?.selectedCategory === item.id}
     />

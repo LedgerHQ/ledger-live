@@ -5,14 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { TabsProps } from "LLM/features/Web3Hub/types";
 import { ScreenName } from "~/const";
 import Header from "./components/Header";
-import { TrackScreen } from "~/analytics";
 
 const edges = ["top", "bottom", "left", "right"] as const;
 
 export default function Web3HubTabs({ navigation }: TabsProps) {
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
-      <TrackScreen category="Web3Hub" name="Web3HubTabsPage" />
       <Header
         title={"N Tabs"} // Temporary, will probably be changed
         navigation={navigation}

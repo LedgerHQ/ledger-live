@@ -12,6 +12,7 @@ import ManifestItem from "./ManifestItem";
 import CategoriesList from "./CategoriesList";
 import LoadingIndicator from "./LoadingIndicator";
 import useManifestsListViewModel from "./useManifestsListViewModel";
+import { track } from "~/analytics";
 
 type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
 
@@ -52,6 +53,11 @@ export default function ManifestsList({
 
   const goToApp = useCallback(
     (manifestId: string) => {
+      track("web3hub_app_clicked", {
+        component: `ManifestsList`,
+        page: "Web3HubMain",
+        app: manifestId,
+      });
       navigation.push(NavigatorName.Web3Hub, {
         screen: ScreenName.Web3HubApp,
         params: {

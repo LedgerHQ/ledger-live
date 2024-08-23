@@ -21,7 +21,6 @@ export default function Web3HubMain({ navigation }: MainProps) {
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
-      <TrackScreen category="Web3Hub" name="Web3HubMainPage" />
       <Header title={t("web3hub.main.header.title")} navigation={navigation} layoutY={layoutY} />
 
       <View
