@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "Kimlik {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "Teklif"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -919,6 +920,13 @@
     "InvalidMemoICP" : {
       "title" : "Memo bir sayı olmak zorunda"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Token transferi için geçersiz alıcı; token transferi için desteklenen hesap türleri şunlardır: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "Üzgünüz, ücret tahmini başarısız oldu",
+      "description" : "Ağda ücret hesaplama başarısız oldu. Girilen bilgileri kontrol edin, işlem muhtemelen başarısız olacak"
+    },
     "FirmwareNotRecognized" : {
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
@@ -937,6 +945,10 @@
       "title" : "Üzgünüz, tekrar deneyin.",
       "description" : "Sunucu, talebinizi işleme koyamadı. Lütfen daha sonra tekrar deneyin veya Ledger Destek ile iletişime geçin.",
       "errorCode" : "Kod: {{errorCode}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "Verileriniz alınırken bir sorun oluştu",
+      "description" : "Lütfen tekrar deneyin veya Ledger Destek ekibiyle iletişime geçin."
     }
   },
   "crash" : {
@@ -2274,6 +2286,7 @@
     },
     "quickActions" : {
       "buy" : "Satın Al",
+      "sell" : "Sat",
       "swap" : "Takas et",
       "send" : "Gönder",
       "deposit" : "Al",
@@ -2760,7 +2773,7 @@
       "dateFormat" : "Tarih formatı",
       "dateFormatDesc" : "Ledger Live için tarih formatını belirleyin",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Uygulama verilerinizi kolayca güvence altına alın ve birden çok Ledger Live oturumunu senkronize edin.",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "region" : "Bölge",
       "regionDesc" : "Tarih, saat ve para birimi görüntüleme biçimlerini güncellemek için bölgenizi seçin.",
       "password" : "Uygulama kilidi",
@@ -2993,6 +3006,10 @@
         },
         "platformManifest" : {
           "title" : "Platform Manifest Dosyasını Yükleyin"
+        },
+        "mockAppUpdate" : {
+          "title" : "Test uygulama güncellemesi",
+          "description" : "My Ledger'da mevcut uygulama güncellemelerini göster, aynı uygulama sürümü yeniden yüklenecektir"
         }
       }
     },
@@ -6416,8 +6433,8 @@
     },
     "confirmCrop" : "Kırpmayı onayla",
     "confirmContrast" : "Kontrastı onayla",
-    "keepOnDevice" : "Keep",
-    "discardOnDevice" : "Discard",
+    "keepOnDevice" : "Tut",
+    "discardOnDevice" : "At",
     "nftEntryPointButtonLabel" : "Kilitli ekran resmi olarak belirleyin",
     "customImage" : "Özel resim",
     "doThisLater" : "Belki sonra",
@@ -6703,7 +6720,7 @@
         "title" : "Hesaplarınızı tüm platformlar genelinde senkronize edin",
         "description" : "Ledger cihazınız bir şifreleme anahtarı oluşturarak verilerinizin gizli kalmasını ve sadece sizin tarafınızdan alınabilmesini sağlar.",
         "mainCta" : "Hesaplarınızı senkronize edin",
-        "secondCta" : "Zaten bir anahtar oluşturdunuz mu?"
+        "secondCta" : "Bir Ledger Live uygulamasını zaten senkronize ettiniz mi?"
       }
     },
     "deviceSelection" : {
@@ -6725,7 +6742,7 @@
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "Senkronize et",
-        "description" : "Sorunsuz bir deneyim için uygulama verilerini başka bir Ledger Live uygulamasıyla senkronize edin. "
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "manageKey" : {
         "title" : "Anahtarı Yönet",
@@ -6786,23 +6803,70 @@
         "connectDevice" : {
           "title" : "Ledger cihazınızı kullanın"
         }
+      },
+      "qrCode" : {
+        "title" : "Oturumları Senkronize Edin",
+        "show" : {
+          "title" : "Karekodu göster",
+          "explanation" : {
+            "title" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasını kullanarak senkronize edin",
+            "steps" : {
+              "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
+              "step2" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Senkronize Et</0> adımlarını izleyin",
+              "step3" : "Karekodu okutun"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "Tara",
+          "description" : "Karekodu okutun",
+          "explanation" : {
+            "title" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasını kullanarak senkronize edin",
+            "steps" : {
+              "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
+              "step2" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Senkronize Et</0> <1>></1> <0>Karekodu Göster</0> adımlarını izleyin",
+              "step3" : "Karekodu okutun"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "Kodunuzu girin",
+          "desc" : "Senkronize etmek istediğiniz Ledger Live uygulamasında görüntülenen kodu yazın.",
+          "error" : {
+            "title" : "Kodlar eşleşmiyor",
+            "desc" : "Girdiğiniz kodun, diğer Ledger Live oturumunda gösterilen kodla aynı olduğundan emin olun.",
+            "tryAgain" : "Tekrar dene"
+          }
+        }
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "Şeffaf imzalama etkin",
-      "checkbox" : "Tekrar hatırlatma.",
-      "CTA" : "{{app}} uygulamasını aç"
-    },
-    "manifestsList" : {
-      "title" : "Keşfedin",
-      "description" : "Ledger tarafından derlenen, Web3'ün en iyilerini keşfedin"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "Şeffaf imzalama etkin",
+        "clearSigningDisabled" : "Şeffaf imzalama devre dışı",
+        "checkbox" : "Tekrar hatırlatma.",
+        "CTA" : "{{app}} uygulamasını aç"
+      },
+      "manifestsList" : {
+        "title" : "Keşfedin",
+        "description" : "Ledger tarafından derlenen, Web3'ün en iyilerini keşfedin"
+      },
+      "label" : {
+        "clearSigning" : "şeffaf imzalama"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "Keşfet"
+      },
       "header" : {
         "title" : "Web3'ü keşfedin",
         "placeholder" : "Arama yapın veya bir URL yazın"
+      },
+      "clearSigning" : {
+        "title" : "Şeffaf imzalama"
       }
     }
   }
