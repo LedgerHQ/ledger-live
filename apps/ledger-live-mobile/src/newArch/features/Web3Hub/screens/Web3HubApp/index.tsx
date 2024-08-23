@@ -7,6 +7,7 @@ import WebPlatformPlayer from "./components/Web3Player";
 import GenericErrorView from "~/components/GenericErrorView";
 import useWeb3HubAppViewModel from "./useWeb3HubAppViewModel";
 import Header, { TOTAL_HEADER_HEIGHT } from "./components/Header";
+import { TrackScreen } from "~/analytics";
 
 const appManifestNotFoundError = new Error("App not found");
 
@@ -29,6 +30,7 @@ export default function Web3HubApp({ navigation, route }: AppProps) {
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
+      <TrackScreen category="Web3Hub" name="Web3HubSearchPage" />
       <Header
         navigation={navigation}
         layoutY={layoutY}

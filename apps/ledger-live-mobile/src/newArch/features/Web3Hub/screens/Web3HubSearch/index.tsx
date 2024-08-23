@@ -8,6 +8,7 @@ import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
 import SearchList from "./components/SearchList";
 import Header, { TOTAL_HEADER_HEIGHT } from "./components/Header";
 import { Text } from "@ledgerhq/native-ui";
+import { TrackScreen } from "~/analytics";
 
 const edges = ["top", "bottom", "left", "right"] as const;
 
@@ -23,6 +24,7 @@ export default function Web3HubSearch({ navigation }: SearchProps) {
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
+      <TrackScreen category="Web3Hub" name="Web3HubSearchPage" />
       <Header navigation={navigation} onSearch={setSearch} layoutY={layoutY} />
       <View
         style={{
