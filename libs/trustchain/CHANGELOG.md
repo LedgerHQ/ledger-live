@@ -1,5 +1,13 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.2
+
+### Patch Changes
+
+- [#7591](https://github.com/LedgerHQ/ledger-live/pull/7591) [`87c160d`](https://github.com/LedgerHQ/ledger-live/commit/87c160d855b512d5a0394eaee7626e2b8cd431ee) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Trustchain - Prevent duplicate add member
+
+- [#7632](https://github.com/LedgerHQ/ledger-live/pull/7632) [`271f90d`](https://github.com/LedgerHQ/ledger-live/commit/271f90dc0f5b46ddaf136873dc034d4c44045dd0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Fix the getOrCreateTrustchain that wasn't working when another instance destroyed the trustchain
+
 ## 0.3.0-nightly.1
 
 ### Minor Changes

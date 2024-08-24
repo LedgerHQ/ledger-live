@@ -1,5 +1,11 @@
 # @ledgerhq/device-core
 
+## 0.3.3-nightly.2
+
+### Patch Changes
+
+- [#7572](https://github.com/LedgerHQ/ledger-live/pull/7572) [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6) Thanks [@valpinkman](https://github.com/valpinkman)! - Export errors from the lib
+
 ## 0.3.3-nightly.1
 
 ### Patch Changes

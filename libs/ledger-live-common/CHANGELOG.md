@@ -1,5 +1,20 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.3
+
+### Minor Changes
+
+- [#7634](https://github.com/LedgerHQ/ledger-live/pull/7634) [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198) Thanks [@Justkant](https://github.com/Justkant)! - feat: add dependencies support on wallet-api and dapp browser for transaction
+
+- [#7572](https://github.com/LedgerHQ/ledger-live/pull/7572) [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new installAppWithRestore and uninstallAppWithBackup to handle app data restore and backup
+
+### Patch Changes
+
+- Updated dependencies [[`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6), [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198)]:
+  - @ledgerhq/device-core@0.3.3-nightly.2
+  - @ledgerhq/wallet-api-exchange-module@0.7.1-nightly.0
+  - @ledgerhq/live-wallet@0.5.1-nightly.2
+
 ## 34.8.0-nightly.2
 
 ### Patch Changes

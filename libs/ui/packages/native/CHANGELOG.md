@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.23.4-nightly.0
+
+### Patch Changes
+
+- [#7590](https://github.com/LedgerHQ/ledger-live/pull/7590) [`e9bb8b9`](https://github.com/LedgerHQ/ledger-live/commit/e9bb8b969e3c07cb80a9247b8b5830693f35ef84) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Make llm tab selector component size following the size of the biggest label
+
 ## 0.23.3
 
 ### Patch Changes

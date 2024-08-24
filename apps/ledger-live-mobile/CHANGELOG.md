@@ -1,5 +1,49 @@
 # live-mobile
 
+## 3.49.0-nightly.3
+
+### Minor Changes
+
+- [#7634](https://github.com/LedgerHQ/ledger-live/pull/7634) [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198) Thanks [@Justkant](https://github.com/Justkant)! - feat: add dependencies support on wallet-api and dapp browser for transaction
+
+- [#7606](https://github.com/LedgerHQ/ledger-live/pull/7606) [`f839708`](https://github.com/LedgerHQ/ledger-live/commit/f83970899830bb9152323a18355a5f61d4832a13) Thanks [@thesan](https://github.com/thesan)! - Add currency support to quick actions
+
+- [#7572](https://github.com/LedgerHQ/ledger-live/pull/7572) [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6) Thanks [@valpinkman](https://github.com/valpinkman)! - Implement app data backup and restore when installing, uninstalling and updating apps on the device
+
+### Patch Changes
+
+- [#7529](https://github.com/LedgerHQ/ledger-live/pull/7529) [`a409ecc`](https://github.com/LedgerHQ/ledger-live/commit/a409ecceb71d5ffedf0362130c18de99ec594e36) Thanks [@RamyEB](https://github.com/RamyEB)! - Add label clear signing
+
+- [#7626](https://github.com/LedgerHQ/ledger-live/pull/7626) [`aa0126a`](https://github.com/LedgerHQ/ledger-live/commit/aa0126ae3edf0c7604cb9e4027473ba86f151f01) Thanks [@Justkant](https://github.com/Justkant)! - fix: hidden header should show again when searching
+
+- [#7624](https://github.com/LedgerHQ/ledger-live/pull/7624) [`ce45204`](https://github.com/LedgerHQ/ledger-live/commit/ce45204c73294850734461dd110402bc4826ade4) Thanks [@Justkant](https://github.com/Justkant)! - fix: missing query params for web3hub manifests requests
+
+- [#7655](https://github.com/LedgerHQ/ledger-live/pull/7655) [`c358bb7`](https://github.com/LedgerHQ/ledger-live/commit/c358bb720a24a69a0ac813662d77c78af0b55055) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update copy for LedgerSync
+
+- [#7661](https://github.com/LedgerHQ/ledger-live/pull/7661) [`b07279f`](https://github.com/LedgerHQ/ledger-live/commit/b07279feb8fb8939ff880be5460c1ec16f1fee3b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add fromLedgerSyncOnboarding to trigger right onClose action for Activation
+
+- [#7632](https://github.com/LedgerHQ/ledger-live/pull/7632) [`271f90d`](https://github.com/LedgerHQ/ledger-live/commit/271f90dc0f5b46ddaf136873dc034d4c44045dd0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Fix the getOrCreateTrustchain that wasn't working when another instance destroyed the trustchain
+
+- [#7644](https://github.com/LedgerHQ/ledger-live/pull/7644) [`a8971eb`](https://github.com/LedgerHQ/ledger-live/commit/a8971eb98ee1cfe87e1dc4972f96fdb59e46c4e7) Thanks [@Wozacosta](https://github.com/Wozacosta)! - uses main account's unit when displayed fees with no options
+
+- [#7651](https://github.com/LedgerHQ/ledger-live/pull/7651) [`6f781da`](https://github.com/LedgerHQ/ledger-live/commit/6f781daef5bfb736edb7df003f39bdbd132b12aa) Thanks [@thesan](https://github.com/thesan)! - Add more descriptive mobile device name to the trustchain
+
+- [#7663](https://github.com/LedgerHQ/ledger-live/pull/7663) [`1a5bcec`](https://github.com/LedgerHQ/ledger-live/commit/1a5bcecb79d6c29b895f5d2d317a7aec00013acf) Thanks [@valpinkman](https://github.com/valpinkman)! - Avoid running watchloop when LS ff is disabled
+
+- [#7629](https://github.com/LedgerHQ/ledger-live/pull/7629) [`81468af`](https://github.com/LedgerHQ/ledger-live/commit/81468af073af1ccdeb3fdbcf6b2c998cebc68ab5) Thanks [@mwiercinska](https://github.com/mwiercinska)! - add translation for back to quote CTA in WebPTXPlayer
+
+- [#7635](https://github.com/LedgerHQ/ledger-live/pull/7635) [`e85f65b`](https://github.com/LedgerHQ/ledger-live/commit/e85f65b23ccb64599c235d62ff0db67b32dc3257) Thanks [@thesan](https://github.com/thesan)! - Create accounts with the receive market quick action
+
+- [#7648](https://github.com/LedgerHQ/ledger-live/pull/7648) [`3e3e839`](https://github.com/LedgerHQ/ledger-live/commit/3e3e83983ca4d8ef93f535cba391f0f7231ea6e7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix starting step when WS is activated and you want to sync again
+
+- [#7625](https://github.com/LedgerHQ/ledger-live/pull/7625) [`22019d6`](https://github.com/LedgerHQ/ledger-live/commit/22019d6834f3ebbe0798719c0e1abaff3b3ce1dd) Thanks [@Justkant](https://github.com/Justkant)! - fix: freeze when opening a live-app
+
+- Updated dependencies [[`87c160d`](https://github.com/LedgerHQ/ledger-live/commit/87c160d855b512d5a0394eaee7626e2b8cd431ee), [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198), [`e9bb8b9`](https://github.com/LedgerHQ/ledger-live/commit/e9bb8b969e3c07cb80a9247b8b5830693f35ef84), [`271f90d`](https://github.com/LedgerHQ/ledger-live/commit/271f90dc0f5b46ddaf136873dc034d4c44045dd0), [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6)]:
+  - @ledgerhq/trustchain@0.3.0-nightly.2
+  - @ledgerhq/live-common@34.8.0-nightly.3
+  - @ledgerhq/native-ui@0.23.4-nightly.0
+  - @ledgerhq/live-wallet@0.5.1-nightly.2
+
 ## 3.49.0-nightly.2
 
 ### Patch Changes

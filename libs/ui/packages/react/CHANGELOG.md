@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.16.0-nightly.0
+
+### Minor Changes
+
+- [#7633](https://github.com/LedgerHQ/ledger-live/pull/7633) [`e5419de`](https://github.com/LedgerHQ/ledger-live/commit/e5419ded434a3f6a203c0195932b5b846fec0e2c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework QRCode Step in LLD + Add TabSelector in react-ui
+
 ## 0.15.4
 
 ### Patch Changes
