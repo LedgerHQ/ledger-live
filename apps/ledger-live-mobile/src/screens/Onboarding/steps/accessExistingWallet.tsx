@@ -4,7 +4,7 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTheme } from "styled-components/native";
-import { setOnboardingType } from "~/actions/settings";
+import { setFromLedgerSyncOnboarding, setOnboardingType } from "~/actions/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -47,14 +47,16 @@ function AccessExistingWallet() {
 
   const openDrawer = useCallback(() => {
     dispatch(setOnboardingType(OnboardingType.walletSync));
+    dispatch(setFromLedgerSyncOnboarding(true));
     setIsDrawerVisible(true);
     logDrawer("Wallet Sync Welcome back", "open");
   }, [dispatch]);
 
   const closeDrawer = useCallback(() => {
     setIsDrawerVisible(false);
+    dispatch(setFromLedgerSyncOnboarding(false));
     logDrawer("Wallet Sync Welcome back", "close");
-  }, []);
+  }, [dispatch]);
 
   return (
     <OnboardingView
