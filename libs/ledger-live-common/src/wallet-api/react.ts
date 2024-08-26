@@ -15,7 +15,7 @@ import {
   currencyToWalletAPICurrency,
   getAccountIdFromWalletAccountId,
 } from "./converters";
-import { isWalletAPISupportedCurrency, matchCurrencies } from "./helpers";
+import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listCurrencies, findCryptoCurrencyById, findTokenById } from "../currencies";
