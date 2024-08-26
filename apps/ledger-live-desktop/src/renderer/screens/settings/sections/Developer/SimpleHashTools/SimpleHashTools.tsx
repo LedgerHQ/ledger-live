@@ -14,11 +14,11 @@ const SimpleHashTools = () => {
   );
   return (
     <SettingsSectionRow
-      title={t("settings.experimental.features.testSimpleHash.title")}
-      desc={t("settings.experimental.features.testSimpleHash.description")}
+      title={t("settings.developer.debugSimpleHash.testSimpleHash.title")}
+      desc={t("settings.developer.debugSimpleHash.testSimpleHash.description")}
     >
       <Button onClick={onOpenModal} primary>
-        {t("settings.experimental.features.testSimpleHash.cta")}
+        {t("settings.developer.debugSimpleHash.testSimpleHash.cta")}
       </Button>
     </SettingsSectionRow>
   );
