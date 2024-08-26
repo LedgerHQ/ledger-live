@@ -385,7 +385,7 @@ export const DEFAULT_FEATURES: Features = {
   buySellUi: {
     enabled: false,
     params: {
-      manifestId: BUY_SELL_UI_APP_ID, // Update to "buy-sell-ui" after rollout
+      manifestId: BUY_SELL_UI_APP_ID,
     },
   },
 
