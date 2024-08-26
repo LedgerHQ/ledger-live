@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "مُعرّف {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "Quote"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -919,6 +920,13 @@
     "InvalidMemoICP" : {
       "title" : "الملاحظة يجب أن تكون رقماً"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "المستلم لتحويل رمز التوكن غير صالح، أنواع الحساب المدعومة لتحويل رموز التوكن: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "عذراً، فشل تقدير الرسوم",
+      "description" : "فشل تقدير الرسوم على الشبكة. تحقق من المُدخلات، من المرجح أن تفشل المعاملة"
+    },
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
@@ -937,6 +945,19 @@
       "title" : "عذراً، حاول مرة أخرى.",
       "description" : "لم يتمكن الخادم من معالجة طلبك. يرجى إعادة المحاولة مرة أخرى لاحقاً أو التواصل مع دعم Ledger.",
       "errorCode" : "الكود: {{errorCode}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "حدث خطأ ما أثناء جلب بياناتك",
+      "description" : "يرجى إعادة المحاولة مرةً أخرى أو التواصل مع دعم Ledger."
+    },
+    "TonExcessFee" : {
+      "title" : "إنها تشمل تحويل رمز توكن. ستدفع 0.1 TON كرسوم، وأي فائض سيُعاد إليك."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "لا توجد أموال كافية في الحساب الرئيسي (TON) لحساب الرسوم. الحد الأدنى المطلوب للرصيد هو 0.1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "الأموال المتوفرة غير كافية. الحد الأدنى المطلوب للرصيد هو 0.2 TON."
     }
   },
   "crash" : {
@@ -2274,6 +2295,7 @@
     },
     "quickActions" : {
       "buy" : "شراء",
+      "sell" : "بيع",
       "swap" : "مبادلة",
       "send" : "إرسال",
       "deposit" : "تلقي",
@@ -2760,7 +2782,7 @@
       "dateFormat" : "تنسيق التاريخ",
       "dateFormatDesc" : "تعيين تنسيق التاريخ في Ledger Live",
       "walletSync" : "مزامنة Ledger",
-      "walletSyncDesc" : "ببساطة قم بتأمين بيانات التطبيق لديك ومزامنة العديد من حالات Ledger Live.",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "region" : "المنطقة",
       "regionDesc" : "اختر منطقتك لتحديث صِيغ التواريخ والوقت والعملات.",
       "password" : "App lock (قفل التطبيق)",
@@ -2993,6 +3015,10 @@
         },
         "platformManifest" : {
           "title" : "تحميل بيان المنصة"
+        },
+        "mockAppUpdate" : {
+          "title" : "تحديث صوري للتطبيق",
+          "description" : "يعرض التحديث المتاح للتطبيق في My Ledger (جهازي Ledger)، ويقوم بإعادة تثبيت نفس إصدار التطبيق"
         }
       }
     },
@@ -6703,7 +6729,7 @@
         "title" : "قم بمزامنة حساباتك عبر جميع المنصات",
         "description" : "جهازك Ledger سيقوم بإنشاء مفتاح تشفير، مما يضمن أن بياناتك تظل خاصةً وقابلة للاستعادة بواسطتك أنت وحدك.",
         "mainCta" : "مزامنة حساباتك",
-        "secondCta" : "أنشأت مفتاحاً بالفعل؟"
+        "secondCta" : "Already synced a Ledger Live app?"
       }
     },
     "deviceSelection" : {
@@ -6725,7 +6751,7 @@
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "مزامنة",
-        "description" : "قم بمزامنة بيانات التطبيق لديك مع تطبيق Ledger Live آخر من أجل تجربة سلسة. "
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "manageKey" : {
         "title" : "إدارة المفتاح",
@@ -6786,23 +6812,71 @@
         "connectDevice" : {
           "title" : "استخدم جهازك Ledger"
         }
+      },
+      "qrCode" : {
+        "title" : "Synchronize Instances",
+        "show" : {
+          "title" : "عرض كود QR",
+          "explanation" : {
+            "title" : "مسح ومزامنة حساباتك باستخدام تطبيق Ledger Live آخر",
+            "steps" : {
+              "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
+              "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> <1>></1> <0>General (عام)</0> <1>></1> <0> Ledger Sync (مزامنة Ledger)</0> <1>></1> <0>Synchronize (مزامنة)</0>",
+              "step3" : "مسح ضوئي لكود QR"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "مسح ضوئي",
+          "description" : "مسح ضوئي لكود QR",
+          "explanation" : {
+            "title" : "مسح ومزامنة حساباتك باستخدام تطبيق Ledger Live آخر",
+            "steps" : {
+              "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
+              "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> <1>></1> <0>General (عام)</0> <1>></1> <0>Ledger Sync (مزامنة Ledger)</0> <1>></1> <0>Synchronize (مزامنة)</0> <1>></1> <0>Show QR (عرض كود QR)</0>",
+              "step3" : "مسح ضوئي لكود QR"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "أدخِل الكود الخاص بك",
+          "desc" : "اكتب الكود المعروض على تطبيق Ledger Live الذي تريد المزامنة معه.",
+          "error" : {
+            "title" : "الأكواد غير متطابقة",
+            "desc" : "تأكد من أن الكود الذي تكتبه هو نفسه المعروض في حالة Ledger Live الأخرى.",
+            "tryAgain" : "إعادة المحاولة"
+          }
+        }
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "تم تمكين التوقيع بوضوح",
-      "checkbox" : "لاتذكرني مرة أخرى.",
-      "CTA" : "افتح {{app}}"
-    },
-    "manifestsList" : {
-      "title" : "استكشف",
-      "description" : "اكتشف أفضل ما في ويب 3.0 مُنسّقاً بواسطة Ledger"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "تم تمكين التوقيع بوضوح",
+        "clearSigningDisabled" : "تم تعطيل التوقيع بوضوح",
+        "checkbox" : "لاتذكرني مرة أخرى.",
+        "CTA" : "افتح {{app}}"
+      },
+      "manifestsList" : {
+        "title" : "استكشف",
+        "description" : "اكتشف أفضل ما في ويب 3.0 مُنسّقاً بواسطة Ledger"
+      },
+      "label" : {
+        "clearSigning" : "التوقيع بوضوح"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "اكتشف"
+      },
       "header" : {
         "title" : "استكشف ويب 3.0",
         "placeholder" : "ابحث أو اكتب عنوان URL"
+      },
+      "clearSigning" : {
+        "title" : "التوقيع بوضوح",
+        "description" : "التوقيع بوضوح يسمح لك بتوقيع رسالة بدون الكشف عن محتوى الرسالة للتطبيق. هذا مفيد لأسباب متعلقة بالخصوصية والأمان."
       }
     }
   }
