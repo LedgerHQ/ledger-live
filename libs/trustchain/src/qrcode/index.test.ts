@@ -39,6 +39,7 @@ describe("Trustchain QR Code", () => {
     };
     const addMember = jest.fn(() => Promise.resolve(trustchain));
     const memberCredentials = convertKeyPairToLiveCredentials(await crypto.randomKeypair());
+    const memberName = "foo";
 
     let scannedUrlResolve: (url: string) => void;
     const scannedUrlPromise = new Promise<string>(resolve => {
@@ -56,14 +57,18 @@ describe("Trustchain QR Code", () => {
       onDisplayQRCode,
       onDisplayDigits,
       addMember,
+      memberCredentials,
+      memberName,
+      alreadyHasATrustchain: !!trustchain,
     });
 
     const scannedUrl = await scannedUrlPromise;
-    const memberName = "foo";
 
     const candidateP = createQRCodeCandidateInstance({
       memberCredentials,
       memberName,
+      alreadyHasATrustchain: false,
+      addMember,
       scannedUrl,
       onRequestQRCodeInput,
     });

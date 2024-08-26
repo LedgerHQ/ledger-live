@@ -10,6 +10,7 @@ import PinCodeStep from "./03-PinCodeStep";
 import SyncFinalStep from "./04-SyncFinalStep";
 import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
 import PinCodeErrorStep from "./05-PinCodeError";
+import UnbackedErrorStep from "./05-UnbackedError";
 import { BackProps, BackRef } from "../router";
 
 const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
@@ -66,10 +67,15 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
       case Step.PinCodeError:
         return <PinCodeErrorStep />;
 
+      case Step.UnbackedError:
+        return <UnbackedErrorStep />;
+
       case Step.Synchronized:
         return <SyncFinalStep />;
     }
   };
+
+  const centeredItems = [Step.Synchronized, Step.PinCodeError, Step.UnbackedError];
 
   return (
     <Flex
@@ -77,12 +83,8 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
       height="100%"
       paddingX="40px"
       rowGap="48px"
-      alignItems={
-        [Step.Synchronized, Step.PinCodeError].includes(currentStep) ? "center" : undefined
-      }
-      justifyContent={
-        [Step.Synchronized, Step.PinCodeError].includes(currentStep) ? "center" : undefined
-      }
+      alignItems={centeredItems.includes(currentStep) ? "center" : undefined}
+      justifyContent={centeredItems.includes(currentStep) ? "center" : undefined}
     >
       {getStep()}
     </Flex>

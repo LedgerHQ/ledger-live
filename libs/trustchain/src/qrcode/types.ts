@@ -38,6 +38,12 @@ export type Message =
   | {
       version: number;
       publisher: string;
+      message: "TrustchainRequestCredential";
+      payload: Encrypted<Record<string, never>>;
+    }
+  | {
+      version: number;
+      publisher: string;
       message: "TrustchainShareCredential";
       payload: Encrypted<{
         // public key of the member

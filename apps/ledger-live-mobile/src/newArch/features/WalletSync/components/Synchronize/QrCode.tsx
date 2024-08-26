@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import QRCode from "react-native-qrcode-svg";
 import getWindowDimensions from "~/logic/getWindowDimensions";
@@ -12,7 +12,7 @@ const Italic = styled(Text)`
 // Won't work since we don't have inter italic font
 
 type Props = {
-  qrCodeValue: string;
+  qrCodeValue?: string | null;
 };
 
 const QrCode = ({ qrCodeValue }: Props) => {
@@ -79,12 +79,16 @@ const QrCode = ({ qrCodeValue }: Props) => {
         justifyContent={"center"}
         testID="ws-qr-code-displayed"
       >
-        <QRCode
-          value={qrCodeValue}
-          logo={require("~/images/bigSquareLogo.png")}
-          logoSize={65}
-          size={QRCodeSize}
-        />
+        {qrCodeValue ? (
+          <QRCode
+            value={qrCodeValue}
+            logo={require("~/images/bigSquareLogo.png")}
+            logoSize={65}
+            size={QRCodeSize}
+          />
+        ) : (
+          <InfiniteLoader size={65} />
+        )}
       </Flex>
       <BottomContainer steps={steps} />
     </Flex>

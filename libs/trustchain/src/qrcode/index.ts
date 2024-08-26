@@ -3,12 +3,93 @@ import WebSocket from "isomorphic-ws";
 import { MemberCredentials, Trustchain, TrustchainMember } from "../types";
 import { makeCipher, makeMessageCipher } from "./cipher";
 import { Message } from "./types";
-import { InvalidDigitsError } from "../errors";
+import {
+  InvalidDigitsError,
+  NoTrustchainInitialized,
+  TrustchainsAlreadyInitialized,
+} from "../errors";
 import { log } from "@ledgerhq/logs";
 
 const version = 1;
 
 const CLOSE_TIMEOUT = 100; // just enough time for the onerror to appear before onclose
+
+const commonSwitch = async ({
+  data,
+  cipher,
+  addMember,
+  send,
+  publisher,
+  resolve,
+  memberCredentials,
+  memberName,
+  reject,
+  ws,
+  setFinished,
+  alreadyHasATrustchain,
+}) => {
+  switch (data.message) {
+    case "TrustchainShareCredential": {
+      if (!alreadyHasATrustchain) {
+        const payload = {
+          type: "UNEXPECTED_SHARE_CREDENTIAL",
+          message: "unexpected share credential",
+        };
+        send({ version, publisher, message: "Failure", payload });
+        throw new NoTrustchainInitialized("unexpected share credential");
+      }
+      setFinished(true);
+      if (!cipher) {
+        throw new Error("sessionEncryptionKey not set");
+      }
+      const { id, name } = await cipher.decryptMessage(data);
+      const trustchain = await addMember({ id, name, permissions: Permissions.OWNER });
+      const payload = await cipher.encryptMessagePayload({ trustchain });
+      send({ version, publisher, message: "TrustchainAddedMember", payload });
+      resolve();
+      break;
+    }
+
+    case "TrustchainRequestCredential": {
+      if (alreadyHasATrustchain) {
+        const payload = {
+          type: "UNEXPECTED_REQUEST_CREDENTIAL",
+          message: "unexpected request credential",
+        };
+        send({ version, publisher, message: "Failure", payload });
+        throw new TrustchainsAlreadyInitialized("unexpected request credential");
+      }
+      const payload = await cipher.encryptMessagePayload({
+        id: memberCredentials.pubkey,
+        name: memberName,
+      });
+      send({ version, publisher, message: "TrustchainShareCredential", payload });
+      break;
+    }
+    case "TrustchainAddedMember": {
+      setFinished(true);
+      const { trustchain } = await cipher.decryptMessage(data);
+      resolve(trustchain);
+      ws.close();
+      break;
+    }
+    case "Failure": {
+      setFinished(true);
+      log("trustchain/qrcode", "Failure", { data });
+      const error = fromErrorMessage(data.payload);
+      reject(error);
+      ws.close();
+      break;
+    }
+    case "HandshakeChallenge":
+    case "HandshakeCompletionSucceeded":
+    case "InitiateHandshake":
+    case "CompleteHandshakeChallenge":
+      break;
+    default:
+      throw new Error("unexpected message");
+  }
+};
 
 /**
  * establish a channel to be able to add a member to the trustchain after displaying the QR Code
@@ -19,6 +100,9 @@ export async function createQRCodeHostInstance({
   onDisplayQRCode,
   onDisplayDigits,
   addMember,
+  memberCredentials,
+  memberName,
+  alreadyHasATrustchain,
 }: {
   /**
    * the base URL of the trustchain API
@@ -36,7 +120,19 @@ export async function createQRCodeHostInstance({
    * this function will need to using the TrustchainSDK (and use sdk.addMember)
    */
   addMember: (member: TrustchainMember) => Promise<Trustchain>;
-}): Promise<void> {
+  /**
+   * the client credentials of the instance (given by TrustchainSDK)
+   */
+  memberCredentials: MemberCredentials;
+  /**
+   * the name of the member
+   */
+  memberName: string;
+  /**
+   * if the member already has a trustchain, this will be true
+   */
+  alreadyHasATrustchain: boolean;
+}): Promise<Trustchain | void> {
   const ephemeralKey = await crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
   const url = `${trustchainApiBaseUrl.replace("http", "ws")}/v1/qr?host=${publisher}`;
@@ -49,6 +145,7 @@ export async function createQRCodeHostInstance({
   let cipher: ReturnType<typeof makeMessageCipher> | undefined;
   let expectedDigits: string | undefined;
   let finished = false;
+  const setFinished = newValue => (finished = newValue);
 
   onDisplayQRCode(url);
   return new Promise((resolve, reject) => {
@@ -96,30 +193,23 @@ export async function createQRCodeHostInstance({
             send({ version, publisher, message: "HandshakeCompletionSucceeded", payload });
             break;
           }
-          case "TrustchainShareCredential": {
-            finished = true;
-            if (!cipher) {
-              throw new Error("sessionEncryptionKey not set");
-            }
-            const { id, name } = await cipher.decryptMessage(data);
-            const trustchain = await addMember({ id, name, permissions: Permissions.OWNER });
-            const payload = await cipher.encryptMessagePayload({ trustchain });
-            send({ version, publisher, message: "TrustchainAddedMember", payload });
-            resolve();
-            break;
-          }
-          case "Failure": {
-            finished = true;
-            const error = fromErrorMessage(data.payload);
-            reject(error);
-            ws.close();
-            break;
-          }
-          default: {
-            throw new Error("unexpected message");
-          }
         }
+        await commonSwitch({
+          data,
+          cipher,
+          addMember,
+          send,
+          publisher,
+          resolve,
+          memberCredentials,
+          memberName,
+          reject,
+          ws,
+          setFinished,
+          alreadyHasATrustchain,
+        });
       } catch (e) {
+        console.error("socket error", e);
         ws.close();
         reject(e);
       }
@@ -134,6 +224,8 @@ export async function createQRCodeHostInstance({
 export async function createQRCodeCandidateInstance({
   memberCredentials,
   memberName,
+  addMember,
+  alreadyHasATrustchain,
   scannedUrl,
   onRequestQRCodeInput,
 }: {
@@ -145,6 +237,14 @@ export async function createQRCodeCandidateInstance({
    * the name of the member
    */
   memberName: string;
+  /**
+   * if the member already has a trustchain, this will be true
+   */
+  alreadyHasATrustchain: boolean;
+  /**
+   * this function will need to using the TrustchainSDK (and use sdk.addMember)
+   */
+  addMember: (member: TrustchainMember) => Promise<Trustchain>;
   /**
    * the scanned URL that contains the host public key
    */
@@ -160,7 +260,7 @@ export async function createQRCodeCandidateInstance({
     },
     callback: (digits: string) => void,
   ) => void;
-}): Promise<Trustchain> {
+}): Promise<Trustchain | void> {
   const m = scannedUrl.match(/host=([0-9A-Fa-f]+)/);
   if (!m) {
     throw new Error("invalid scannedUrl");
@@ -175,6 +275,7 @@ export async function createQRCodeCandidateInstance({
     ws.send(JSON.stringify(message));
   }
   let finished = false;
+  const setFinished = newValue => (finished = newValue);
 
   return new Promise((resolve, reject) => {
     ws.addEventListener("close", () => {
@@ -197,32 +298,35 @@ export async function createQRCodeCandidateInstance({
             break;
           }
           case "HandshakeCompletionSucceeded": {
-            const payload = await cipher.encryptMessagePayload({
-              id: memberCredentials.pubkey,
-              name: memberName,
-            });
-            send({ version, publisher, message: "TrustchainShareCredential", payload });
+            if (alreadyHasATrustchain) {
+              const payload = await cipher.encryptMessagePayload({});
+              send({ version, publisher, message: "TrustchainRequestCredential", payload });
+            } else {
+              const payload = await cipher.encryptMessagePayload({
+                id: memberCredentials.pubkey,
+                name: memberName,
+              });
+              send({ version, publisher, message: "TrustchainShareCredential", payload });
+            }
             break;
           }
-          case "TrustchainAddedMember": {
-            finished = true;
-            const { trustchain } = await cipher.decryptMessage(data);
-            resolve(trustchain);
-            ws.close();
-            break;
-          }
-          case "Failure": {
-            finished = true;
-            log("trustchain/qrcode", "Failure", { data });
-            const error = fromErrorMessage(data.payload);
-            reject(error);
-            ws.close();
-            break;
-          }
-          default:
-            throw new Error("unexpected message");
         }
+        await commonSwitch({
+          data,
+          cipher,
+          addMember,
+          send,
+          publisher,
+          resolve,
+          memberCredentials,
+          memberName,
+          reject,
+          ws,
+          setFinished,
+          alreadyHasATrustchain,
+        });
       } catch (e) {
+        console.error("socket error", e);
         ws.close();
         reject(e);
       }
@@ -267,6 +371,12 @@ function parseMessage(e): Message {
 function fromErrorMessage(payload: { message: string; type: string }): Error {
   if (payload.type === "HANDSHAKE_COMPLETION_FAILED") {
     throw new InvalidDigitsError(payload.message);
+  }
+  if (payload.type === "UNEXPECTED_SHARE_CREDENTIAL") {
+    throw new NoTrustchainInitialized(payload.message);
+  }
+  if (payload.type === "UNEXPECTED_REQUEST_CREDENTIAL") {
+    throw new TrustchainsAlreadyInitialized(payload.message);
   }
   const error = new Error(payload.message);
   error.name = "TrustchainQRCode-" + payload.type;
