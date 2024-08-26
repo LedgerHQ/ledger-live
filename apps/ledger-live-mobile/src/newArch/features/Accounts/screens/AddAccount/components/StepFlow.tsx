@@ -11,6 +11,7 @@ import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeD
 import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
 import { useInitMemberCredentials } from "LLM/features/WalletSync/hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCode";
+import UnbackedError from "~/newArch/features/WalletSync/screens/Synchronize/UnbackedError";
 
 type Props = {
   currentStep: Steps;
@@ -21,6 +22,7 @@ type Props = {
   currentOption: Options;
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
+  onCreateKey: () => void;
   onQrCodeScanned: () => void;
   qrProcess: {
     url: string | null;
@@ -41,6 +43,7 @@ const StepFlow = ({
   onQrCodeScanned,
   qrProcess,
   setCurrentStep,
+  onCreateKey,
 }: Props) => {
   const { memberCredentials } = useInitMemberCredentials();
 
@@ -94,6 +97,9 @@ const StepFlow = ({
 
       case Steps.SyncError:
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
+
+      case Steps.UnbackedError:
+        return <UnbackedError create={onCreateKey} />;
 
       default:
         return null;

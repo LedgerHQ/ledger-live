@@ -6508,6 +6508,11 @@
           }
         }
       },
+      "unbackedError": {
+        "title": "You need to create your encryption key first",
+        "description": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+        "cta": "Create your encryption key"
+      },
       "pinCode": {
         "title": "Enter the code",
         "description": "Type the code displayed on the other Ledger Live you want to sync with.",
