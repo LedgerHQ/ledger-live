@@ -6,6 +6,7 @@ import { crypto, device } from "@ledgerhq/hw-trustchain";
 import getApi from "./api";
 import { genericWithJWT } from "./auth";
 import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks, WithDevice } from "./types";
+import { TrustchainNotAllowed } from "./errors";
 
 export class HWDeviceProvider {
   /**
@@ -56,22 +57,28 @@ export class HWDeviceProvider {
     try {
       return await lastValueFrom(runWithDevice(transport => from(job(device.apdu(transport)))));
     } catch (error) {
-      if (
-        error instanceof TransportStatusError &&
-        [StatusCodes.USER_REFUSED_ON_DEVICE, StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED].includes(
-          error.statusCode,
-        )
-      ) {
-        throw new UserRefusedOnDevice();
+      if (!(error instanceof TransportStatusError)) {
+        throw error;
       }
-      throw error;
+      switch (error.statusCode) {
+        case StatusCodes.USER_REFUSED_ON_DEVICE:
+        case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
+          throw new UserRefusedOnDevice();
+
+        case StatusCodes.TRUSTCHAIN_WRONG_SEED:
+          this.clearJwt();
+          throw new TrustchainNotAllowed();
+
+        default:
+          throw error;
+      }
     } finally {
       callbacks?.onEndRequestUserInteraction();
     }
   }
 
   public async refreshJwt(deviceId: string, callbacks?: TrustchainDeviceCallbacks): Promise<void> {
-    this.jwt = await this.withJwt(deviceId, this.api.refreshAuth, undefined, callbacks);
+    this.jwt = await this.withJwt(deviceId, this.api.refreshAuth, "cache", callbacks);
   }
 
   public clearJwt() {

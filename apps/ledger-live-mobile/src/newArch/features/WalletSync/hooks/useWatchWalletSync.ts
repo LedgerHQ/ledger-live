@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import noop from "lodash/noop";
 import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
@@ -120,16 +120,18 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
   const [visualPending, setVisualPending] = useState(true);
   const [walletSyncError, setWalletSyncError] = useState<Error | null>(null);
-  const [onUserRefresh, setOnUserRefresh] = useState<() => void>(() => noop);
+  const onUserRefreshRef = useRef<() => void>(noop);
   const state = useMemo(
-    () => ({ visualPending, walletSyncError, onUserRefresh }),
-    [visualPending, walletSyncError, onUserRefresh],
+    () => ({ visualPending, walletSyncError, onUserRefresh: onUserRefreshRef.current }),
+    [visualPending, walletSyncError],
   );
 
   // pull and push wallet sync loop
   useEffect(() => {
-    if (!trustchain || !memberCredentials) {
-      setOnUserRefresh(() => noop);
+    const canNotRunWatchLoop = !featureWalletSync?.enabled || !trustchain || !memberCredentials;
+
+    if (canNotRunWatchLoop) {
+      onUserRefreshRef.current = noop;
       setVisualPending(false);
       setWalletSyncError(null);
       return;
@@ -158,11 +160,11 @@ export function useWatchWalletSync(): WalletSyncUserState {
       onTrustchainRefreshNeeded,
     });
 
-    setOnUserRefresh(() => onUserRefreshIntent);
+    onUserRefreshRef.current = onUserRefreshIntent;
 
     return unsubscribe;
   }, [
-    featureWalletSync?.params?.watchConfig,
+    featureWalletSync,
     getState,
     trustchainSdk,
     walletSyncSdk,

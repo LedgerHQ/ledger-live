@@ -14,6 +14,8 @@ import { config } from "react-transition-group";
 import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import DrawerProvider from "~/renderer/drawers/Provider";
+import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
+import { getFeature } from "./featureFlags";
 
 config.disabled = true;
 
@@ -55,7 +57,9 @@ function render(
             <DrawerProvider>
               <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                 <StyleProvider selectedPalette="dark">
-                  <MemoryRouter>{children}</MemoryRouter>
+                  <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                    <MemoryRouter>{children}</MemoryRouter>
+                  </FirebaseFeatureFlagsProvider>
                 </StyleProvider>
               </NftMetadataProvider>
             </DrawerProvider>
@@ -85,7 +89,9 @@ function renderHook<Result>(
     return (
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
-          <MemoryRouter>{children}</MemoryRouter>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+            <MemoryRouter>{children}</MemoryRouter>
+          </FirebaseFeatureFlagsProvider>
         </Provider>
       </QueryClientProvider>
     );

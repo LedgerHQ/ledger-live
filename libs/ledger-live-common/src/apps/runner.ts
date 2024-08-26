@@ -13,12 +13,20 @@ import type { Exec, State, AppOp, RunnerEvent, Action } from "./types";
 import { reducer, getActionPlan, getNextAppOp } from "./logic";
 import { delay } from "../promise";
 import { getEnv } from "@ledgerhq/live-env";
+import { AppStorageType, StorageProvider } from "../device/use-cases/appDataBackup/types";
 
-export const runAppOp = (
-  { appByName, deviceInfo }: State,
-  appOp: AppOp,
-  exec: Exec,
-): Observable<RunnerEvent> => {
+export const runAppOp = ({
+  state,
+  appOp,
+  exec,
+  storage,
+}: {
+  state: State;
+  appOp: AppOp;
+  exec: Exec;
+  storage?: StorageProvider<AppStorageType>;
+}): Observable<RunnerEvent> => {
+  const { appByName, deviceInfo, deviceModel } = state;
   const app = appByName[appOp.name];
 
   if (!app) {
@@ -42,7 +50,15 @@ export const runAppOp = (
       appOp,
     }), // we need to allow a 1s delay for the action to be achieved without glitch (bug in old firmware when you do things too closely)
     defer(() => delay(getEnv("MANAGER_INSTALL_DELAY"))).pipe(ignoreElements()),
-    defer(() => exec(appOp, deviceInfo.targetId, app)).pipe(
+    defer(() =>
+      exec({
+        appOp,
+        targetId: deviceInfo.targetId,
+        app,
+        modelId: deviceModel.id,
+        ...(storage ? { storage } : {}),
+      }),
+    ).pipe(
       throttleTime(100),
       materialize(),
       map(n => {
@@ -82,6 +98,7 @@ type InlineInstallProgress = {
 export const runAllWithProgress = (
   state: State,
   exec: Exec,
+  storage?: StorageProvider<AppStorageType>,
   precision = 100,
 ): Observable<InlineInstallProgress> => {
   const total = state.uninstallQueue.length + state.installQueue.length;
@@ -92,7 +109,9 @@ export const runAllWithProgress = (
     return p;
   }
 
-  return concat(...getActionPlan(state).map(appOp => runAppOp(state, appOp, exec))).pipe(
+  return concat(
+    ...getActionPlan(state).map(appOp => runAppOp({ state, appOp, exec, storage })),
+  ).pipe(
     map(event => {
       if (event.type === "runError") {
         throw event.error;
@@ -130,7 +149,7 @@ export const runAllWithProgress = (
 };
 // use for CLI, no change of the state over time
 export const runAll = (state: State, exec: Exec): Observable<State> =>
-  concat(...getActionPlan(state).map(appOp => runAppOp(state, appOp, exec))).pipe(
+  concat(...getActionPlan(state).map(appOp => runAppOp({ state, appOp, exec }))).pipe(
     map(
       event =>
         <Action>{
@@ -140,8 +159,16 @@ export const runAll = (state: State, exec: Exec): Observable<State> =>
     ),
     reduce(reducer, state),
   );
-export const runOneAppOp = (state: State, appOp: AppOp, exec: Exec): Observable<State> =>
-  runAppOp(state, appOp, exec).pipe(
+export const runOneAppOp = ({
+  state,
+  appOp,
+  exec,
+}: {
+  state: State;
+  appOp: AppOp;
+  exec: Exec;
+}): Observable<State> =>
+  runAppOp({ state, appOp, exec }).pipe(
     map(
       event =>
         <Action>{
@@ -151,8 +178,8 @@ export const runOneAppOp = (state: State, appOp: AppOp, exec: Exec): Observable<
     ),
     reduce(reducer, state),
   );
-export const runOne = (state: State, exec: Exec): Observable<State> => {
+export const runOne = ({ state, exec }: { state: State; exec: Exec }): Observable<State> => {
   const next = getNextAppOp(state);
   if (!next) return of(state);
-  return runOneAppOp(state, next, exec);
+  return runOneAppOp({ state, appOp: next, exec });
 };

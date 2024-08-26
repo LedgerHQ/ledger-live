@@ -20,7 +20,7 @@ export async function scenario(
 
   const device = await switchDeviceSeed();
 
-  await expect(sdk2.removeMember(device.id, trustchain, member2creds, member1)).rejects.toThrow(
+  await expect(sdk1.removeMember(device.id, trustchain, member2creds, member1)).rejects.toThrow(
     TrustchainNotAllowed,
   );
 

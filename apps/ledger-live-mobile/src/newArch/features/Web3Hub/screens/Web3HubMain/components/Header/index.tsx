@@ -5,9 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { SharedValue } from "react-native-reanimated";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useQueryClient } from "@tanstack/react-query";
 import type { MainProps } from "LLM/features/Web3Hub/types";
-import { queryKey } from "LLM/features/Web3Hub/components/ManifestsList/useManifestsListViewModel";
 import AnimatedBar from "LLM/features/Web3Hub/components/AnimatedBar";
 import TabButton from "LLM/features/Web3Hub/components/TabButton";
 import TextInput from "~/components/TextInput";
@@ -35,13 +33,6 @@ export default function Web3HubMainHeader({ title, navigation, layoutY }: Props)
     });
   }, [navigation]);
 
-  // TODO remove later
-  // Useful for testing the infinite loading and onEndReach working correctly
-  const queryClient = useQueryClient();
-  const clearCache = useCallback(() => {
-    queryClient.resetQueries({ queryKey: queryKey("all") });
-  }, [queryClient]);
-
   return (
     <AnimatedBar
       pt={insets.top}
@@ -52,11 +43,9 @@ export default function Web3HubMainHeader({ title, navigation, layoutY }: Props)
       opacityHeight={TITLE_HEIGHT}
       totalHeight={TOTAL_HEADER_HEIGHT}
       opacityChildren={
-        <TouchableOpacity onPress={clearCache}>
-          <Text mt={5} mb={2} numberOfLines={1} variant="h4" mx={5} accessibilityRole="header">
-            {title}
-          </Text>
-        </TouchableOpacity>
+        <Text mt={5} mb={2} numberOfLines={1} variant="h4" mx={5} accessibilityRole="header">
+          {title}
+        </Text>
       }
     >
       <Flex height={SEARCH_HEIGHT} ml={5} flexDirection="row" alignItems="center">

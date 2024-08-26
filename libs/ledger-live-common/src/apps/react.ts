@@ -12,12 +12,14 @@ import {
 import { runAppOp } from "./runner";
 import { App } from "@ledgerhq/types-live";
 import { useFeatureFlags } from "../featureFlags";
+import { AppStorageType, StorageProvider } from "../device/use-cases/appDataBackup/types";
 
 type UseAppsRunnerResult = [State, (arg0: Action) => void];
 // use for React apps. support dynamic change of the state.
 export const useAppsRunner = (
   listResult: ListAppsResult,
   exec: Exec,
+  storage: StorageProvider<AppStorageType>,
   appsToRestore?: string[],
 ): UseAppsRunnerResult => {
   // $FlowFixMe for ledger-live-mobile older react/flow version
@@ -34,7 +36,7 @@ export const useAppsRunner = (
 
   useEffect(() => {
     if (appOp) {
-      const sub = runAppOp(state, appOp, exec).subscribe(event => {
+      const sub = runAppOp({ state, appOp, exec, storage }).subscribe(event => {
         dispatch({
           type: "onRunnerEvent",
           event,

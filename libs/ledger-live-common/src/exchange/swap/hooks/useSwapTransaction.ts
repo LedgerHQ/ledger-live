@@ -8,7 +8,7 @@ import {
   NotEnoughGasSwap,
 } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
 import { Transaction } from "../../../generated/types";
 import {
@@ -171,10 +171,27 @@ export const useSwapTransaction = ({
     isEnabled,
   });
 
-  // libs/coin-modules/coin-evm/src/prepareTransaction.ts L47
-  // returns 0 if the balance - fees is less than 0
-  const maxAmountLowerThanBallanceError =
-    isMaxEnabled && fromState.amount?.eq(0) ? new NotEnoughBalanceSwap() : undefined;
+  const [maxAmountLowerThanBallanceError, setMaxAmountLowerThanBallanceError] = useState<
+    Error | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const timer = setTimeout(
+      () => {
+        // libs/coin-modules/coin-evm/src/prepareTransaction.ts L47
+        // returns 0 if the balance - fees is less than 0
+        const error =
+          isMaxEnabled && !isMaxLoading && fromState.amount?.eq(0)
+            ? new NotEnoughBalanceSwap()
+            : undefined;
+        setMaxAmountLowerThanBallanceError(error);
+      },
+      isMaxEnabled ? 500 : 0,
+    );
+
+    // Cleanup the timeout if the component unmounts or the dependencies change
+    return () => clearTimeout(timer);
+  }, [isMaxEnabled, isMaxLoading, fromState]);
 
   return {
     ...bridgeTransaction,

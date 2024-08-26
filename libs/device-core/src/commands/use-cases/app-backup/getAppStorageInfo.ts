@@ -45,10 +45,8 @@ export async function getAppStorageInfo(
   });
   tracer.trace("Start");
 
-  const params: Buffer = Buffer.concat([
-    Buffer.from([appName.length]),
-    Buffer.from(appName, "ascii"),
-  ]);
+  const params: Buffer = Buffer.from(appName, "ascii");
+
   const apdu: Readonly<APDU> = [...GET_APP_STORAGE_INFO, params];
 
   const response = await transport.send(...apdu, RESPONSE_STATUS_SET);
@@ -80,7 +78,12 @@ export function parseResponse(data: Buffer): AppStorageInfo {
       let offset = 0;
       const size = data.readUInt32BE(offset); // Len = 4
       offset += 4;
-      const dataVersion = data.subarray(offset, offset + 4).toString(); // Len = 4
+
+      if (size === 0) {
+        return { size, dataVersion: "", hasSettings: false, hasData: false, hash: "" };
+      }
+
+      const dataVersion = data.subarray(offset, offset + 4).toString("hex"); // Len = 4
       offset += 4;
       const properties = data.readUInt16BE(offset);
       offset += 2;
@@ -91,7 +94,7 @@ export function parseResponse(data: Buffer): AppStorageInfo {
        */
       const hasSettings = (properties & 1) === 1;
       const hasData = (properties & 2) === 2;
-      const hash = data.subarray(offset, offset + 32).toString(); // Len = 32
+      const hash = data.subarray(offset, offset + 32).toString("hex"); // Len = 32
 
       return { size, dataVersion, hasSettings, hasData, hash };
     }
