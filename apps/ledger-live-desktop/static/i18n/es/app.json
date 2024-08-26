@@ -145,7 +145,8 @@
     "add" : "Agregar",
     "or" : "O",
     "clearAll" : "Borrar todo",
-    "buyLedger" : "Compra un Ledger"
+    "buyLedger" : "Compra un Ledger",
+    "quote" : "Cotización"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -3979,7 +3980,7 @@
       "stock" : "Indicador de mercado regional",
       "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo.",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Protege los datos de tus aplicaciones y sincroniza varias instancias de Ledger Live de forma sencilla.",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "marketPerformanceWidget" : "Widget de rendimiento del mercado",
       "marketPerformanceWidgetDesc" : "Activa esta opción para ver los principales ganadores y perdedores en los periodos que selecciones en la página del portfolio."
     },
@@ -4066,6 +4067,8 @@
       },
       "experimentalApps" : "Permitir aplicaciones experimentales",
       "experimentalAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales.",
+      "mockAppUpdate" : "Actualización ficticia de la aplicación",
+      "mockAppUpdateDesc" : "Mostrar actualización de la aplicación disponible en Mi Ledger, se volverá a instalar la misma versión de la aplicación",
       "catalogUrl" : "Definir el proveedor del catálogo de aplicaciones",
       "catalogUrlDesc" : "Introduce la URL del proveedor del catálogo personalizado",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
@@ -5544,6 +5547,13 @@
       "title" : "No es posible calcular la cantidad y las tarifas",
       "description" : "No es posible calcular la cantidad y las tarifas"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Destinatario no válido para transferencia de tokens. Tipos de cuenta admitidos para la transferencia de tokens: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "El cálculo de tarifas ha fallado",
+      "description" : "La estimación de tarifas falló en la red. Comprueba la información aportada; lo más probable es que la transacción falle"
+    },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
@@ -5644,6 +5654,10 @@
     "TransportStatusError" : {
       "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo",
       "description" : "{{message}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "Se ha producido un error al recuperar tus datos",
+      "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger."
     },
     "DeviceShouldStayInApp" : {
       "title" : "Abre la aplicación {{appName}}",
@@ -6159,6 +6173,15 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "Estamos sufriendo inconvenientes con nuestra infraestructura de Bitcoin. Inténtalo de nuevo más tarde."
+    },
+    "TonExcessFee" : {
+      "title" : "Representa una transferencia de tokens. Pagarás una tarifa de 0,1 TON y los tokens extra se te devolverán."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "No tienes fondos suficientes en la cuenta principal (TON) para calcular las tarifas. El saldo mínimo requerido es de 0,1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "Fondos insuficientes. El saldo mínimo requerido es de 0,02 TON."
     }
   },
   "cryptoOrg" : {
@@ -6359,12 +6382,12 @@
       "description" : "Tu Ledger generará una clave de cifrado para garantizar la privacidad de tus datos, que solo tú podrás recuperar.",
       "cta" : "Sincroniza tus cuentas"
     },
-    "alreadySync" : "¿Ya has creado una clave?",
+    "alreadySync" : "¿Has sincronizado ya una aplicación Ledger Live?",
     "manage" : {
       "cta" : "Administrar",
       "synchronize" : {
         "label" : "Sincronizar",
-        "description" : "Sincroniza los datos de tu aplicación con otra aplicación Ledger Live para disfrutar de una experiencia perfecta."
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "backup" : {
         "label" : "Administra la clave",
@@ -6440,7 +6463,7 @@
         "title" : "Elige tu método de sincronización",
         "description" : "Puedes realizar la sincronización directamente con tu Ledger o escaneando un código QR desde Ledger Live.",
         "scan" : {
-          "title" : "Escanear un código QR",
+          "title" : "Display QR code",
           "description" : "Sincronizar escaneando un código QR"
         },
         "connectDevice" : {
@@ -6449,18 +6472,35 @@
         }
       },
       "qrCode" : {
-        "title" : "Sincronizar",
-        "hint" : "¿Estás intentando sincronizar dos aplicaciones Ledger Live Desktop? Haz clic aquí.",
-        "description" : "Escanea y sincroniza tus cuentas con otra aplicación Ledger Live",
-        "steps" : {
-          "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
-          "step2" : "Ingresa a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Sincronizar</0> > <0>Mostrar QR</0>",
-          "step3" : "Escanea el código QR hasta que el progreso llegue al 100%"
+        "title" : "Sincronizar instancias",
+        "options" : {
+          "mobile" : "Mobile",
+          "desktop" : "Desktop"
+        },
+        "mobile" : {
+          "description" : "Escanea y sincroniza tus cuentas con otra aplicación Ledger Live",
+          "steps" : {
+            "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
+            "step2" : "Ingresa a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Sincronizar</0> > <0>Mostrar QR</0>",
+            "step3" : "Escanear código QR"
+          }
+        },
+        "desktop" : {
+          "description" : "Sincroniza tus cuentas con otra aplicación Ledger Live",
+          "steps" : {
+            "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
+            "step2" : "Ingresa a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Sincronizar</0> > <0>Usa tu Ledger</0>",
+            "step3" : "Conecta tu Ledger"
+          }
         }
       },
       "pinCode" : {
         "title" : "Ingresa el código",
-        "description" : "Escribe el código mostrado en el otro Ledger Live con el que quieras sincronizarte."
+        "description" : "Escribe el código mostrado en el otro Ledger Live con el que quieras sincronizarte.",
+        "error" : {
+          "title" : "Los códigos no coinciden",
+          "description" : "Asegúrate de que el código que escribes es el que se muestra en la otra instancia de Ledger Live."
+        }
       }
     },
     "manageInstances" : {
