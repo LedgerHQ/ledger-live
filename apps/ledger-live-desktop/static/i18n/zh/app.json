@@ -145,7 +145,8 @@
     "add" : "添加",
     "or" : "或者",
     "clearAll" : "清除所有",
-    "buyLedger" : "购买 Ledger 设备"
+    "buyLedger" : "购买 Ledger 设备",
+    "quote" : "报价"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -3979,7 +3980,7 @@
       "stock" : "区域性市场指标",
       "stockDesc" : "选择西方以蓝色来显示市场增长；或选择东方以红色来显示市场增长。",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "轻松安全保管您的应用程序数据并同步多个 Ledger Live™ 实例。",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "marketPerformanceWidget" : "市场表现小组件",
       "marketPerformanceWidgetDesc" : "启用此功能可在资产组合页面上查看指定时间范围内获利最多和亏损最多的资产。"
     },
@@ -4066,6 +4067,8 @@
       },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
+      "mockAppUpdate" : "Mock 应用程序更新",
+      "mockAppUpdateDesc" : "在“我的 Ledger”中显示可用的应用程序更新，它将重新安装相同版本的应用程序",
       "catalogUrl" : "设置目录应用程序提供商",
       "catalogUrlDesc" : "输入您的自定义目录提供方网址",
       "enablePlatformDevTools" : "启用平台开发工具",
@@ -5544,6 +5547,13 @@
       "title" : "无法计算金额和费用",
       "description" : "无法计算金额和费用"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "代币转账的接收人无效，代币转账支持的账户类型：[f0、f4、0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "抱歉，费用估算失败",
+      "description" : "网络费用估算失败。检查输入，交易最有可能失败"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
@@ -5644,6 +5654,10 @@
     "TransportStatusError" : {
       "title" : "出错了。请重新连接您的设备",
       "description" : "{{message}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "提取您的数据时出现错误",
+      "description" : "请重试或联系 Ledger 客服。"
     },
     "DeviceShouldStayInApp" : {
       "title" : "请打开 {{appName}} 应用程序",
@@ -6159,6 +6173,15 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "我们的比特币基础设施遇到了问题。请稍后重试。"
+    },
+    "TonExcessFee" : {
+      "title" : "这构成了代币转移。您将支付 0.1 TON 的费用，任何超额部分将会退还给您。"
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "主账户 (TON) 资金不足，无法计算费用。所需最低余额为 0.1 TON。"
+    },
+    "TonMinimumRequired" : {
+      "title" : "资金不足。所需最低余额为 0.02 TON。"
     }
   },
   "cryptoOrg" : {
@@ -6359,12 +6382,12 @@
       "description" : "Ledger 设备将生成一个加密密钥，确保您的数据私密性且只有您可以找回。",
       "cta" : "同步您的账户"
     },
-    "alreadySync" : "已创建了密钥？",
+    "alreadySync" : "已与一个 Ledger Live 应用程序同步？",
     "manage" : {
       "cta" : "管理",
       "synchronize" : {
         "label" : "同步",
-        "description" : "在另一个 Ledger Live 应用程序上同步您的应用程序数据，享受顺畅体验。"
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "backup" : {
         "label" : "管理密钥",
@@ -6440,7 +6463,7 @@
         "title" : "选择同步方法",
         "description" : "您可以选择直接与 Ledger 设备同步，或通过扫描 Ledger Live 上的二维码进行同步。",
         "scan" : {
-          "title" : "扫描二维码",
+          "title" : "Display QR code",
           "description" : "通过扫描二维码进行同步"
         },
         "connectDevice" : {
@@ -6449,18 +6472,35 @@
         }
       },
       "qrCode" : {
-        "title" : "同步",
-        "hint" : "想要同步两个 Ledger Live™ 桌面版应用程序？点击此处。",
-        "description" : "扫描您的账户并与另一个 Ledger Live™ 应用程序同步",
-        "steps" : {
-          "step1" : "打开您要同步的 Ledger Live 应用程序",
-          "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>同步</0> > <0>显示二维码</0>",
-          "step3" : "扫描二维码直至加载进度达到 100%。"
+        "title" : "同步实例",
+        "options" : {
+          "mobile" : "手机版",
+          "desktop" : "桌面版"
+        },
+        "mobile" : {
+          "description" : "扫描您的账户并与另一个 Ledger Live™ 应用程序同步",
+          "steps" : {
+            "step1" : "打开您要同步的 Ledger Live 应用程序",
+            "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>同步</0> > <0>显示二维码</0>",
+            "step3" : "扫描二维码"
+          }
+        },
+        "desktop" : {
+          "description" : "将您的账户与另一个 Ledger Live 应用程序同步",
+          "steps" : {
+            "step1" : "打开您要同步的 Ledger Live 应用程序",
+            "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>同步</0> > <0>使用您的 Ledger</0>",
+            "step3" : "连接 Ledger 设备"
+          }
         }
       },
       "pinCode" : {
         "title" : "输入代码",
-        "description" : "输入您要同步的另一个 Ledger Live™ 上显示的代码。"
+        "description" : "输入您要同步的另一个 Ledger Live™ 上显示的代码。",
+        "error" : {
+          "title" : "代码不匹配",
+          "description" : "确保您输入的是另一个 Ledger Live 实例上显示的代码。"
+        }
       }
     },
     "manageInstances" : {
