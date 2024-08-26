@@ -140,9 +140,11 @@ export const useSwapTransaction = ({
 
   const { account: toAccount } = toState;
 
-  const fromAmountError = useFromAmountStatusMessage(bridgeTransaction, ["amount", "gasLimit"]);
-  // treat the gasPrice error as a warning for swap.
-  const fromAmountWarning = useFromAmountStatusMessage(bridgeTransaction, ["gasPrice"]);
+  const fromAmountError = useFromAmountStatusMessage(bridgeTransaction, [
+    "gasPrice",
+    "amount",
+    "gasLimit",
+  ]);
 
   const { isSwapReversable, reverseSwap } = useReverseAccounts({
     accounts,
@@ -216,7 +218,6 @@ export const useSwapTransaction = ({
     setFromAmount,
     toggleMax,
     fromAmountError: maxAmountLowerThanBallanceError || fromAmountError,
-    fromAmountWarning,
     setToAccount,
     setToCurrency,
     setFromAccount,
