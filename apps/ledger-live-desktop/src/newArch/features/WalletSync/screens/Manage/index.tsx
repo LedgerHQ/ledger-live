@@ -24,7 +24,9 @@ const WalletSyncManage = () => {
   const { t } = useTranslation();
   useLifeCycle();
 
-  const { error: ledgerSyncError, isError: isLedgerSyncError } = useLedgerSyncInfo();
+  const {
+    statusQuery: { error: ledgerSyncError, isError: isLedgerSyncError },
+  } = useLedgerSyncInfo();
   const { instances, isLoading, hasError, error: membersError } = useInstances();
 
   const dispatch = useDispatch();
