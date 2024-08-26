@@ -94,7 +94,7 @@ const ton: CurrenciesData<Transaction> = {
           }),
           expectedStatus: {
             errors: {
-              comment: new TonCommentInvalid(),
+              transaction: new TonCommentInvalid(),
             },
             warnings: {},
           },
