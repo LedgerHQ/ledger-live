@@ -1,3 +1,7 @@
+# 2.85.1
+
+Some Windows users reported issues with device interactions. This has been fixed.
+
 # 2.85.0
 
 This release includes minor bug fixes and security improvements.
