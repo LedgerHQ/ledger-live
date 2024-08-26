@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "报价"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -919,6 +920,13 @@
     "InvalidMemoICP" : {
       "title" : "Memo（目的地标签）需要是数字"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "代币转账的接收人无效，代币转账支持的账户类型：[f0、f4、0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "抱歉，费用估算失败",
+      "description" : "网络费用估算失败。检查输入，交易最有可能失败"
+    },
     "FirmwareNotRecognized" : {
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
@@ -937,6 +945,19 @@
       "title" : "抱歉，请重试。",
       "description" : "服务器无法处理您的请求。请稍后再试或联系 Ledger 客服。",
       "errorCode" : "代码：{{errorCode}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "提取您的数据时出现错误",
+      "description" : "请重试或联系 Ledger 客服。"
+    },
+    "TonExcessFee" : {
+      "title" : "这构成了代币转移。您将支付 0.1 TON 的费用，任何超额部分将会退还给您。"
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "主账户 (TON) 资金不足，无法计算费用。所需最低余额为 0.1 TON。"
+    },
+    "TonMinimumRequired" : {
+      "title" : "资金不足。所需最低余额为 0.02 TON。"
     }
   },
   "crash" : {
@@ -2274,6 +2295,7 @@
     },
     "quickActions" : {
       "buy" : "买入",
+      "sell" : "卖出",
       "swap" : "互换",
       "send" : "发送",
       "deposit" : "接收",
@@ -2760,7 +2782,7 @@
       "dateFormat" : "日期格式",
       "dateFormatDesc" : "设置 Ledger Live 的日期格式",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "轻松安全保管您的应用程序数据并同步多个 Ledger Live™ 实例。",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "region" : "地区",
       "regionDesc" : "选择您所在的地区来更新日期、时间和货币的格式。",
       "password" : "应用程序锁",
@@ -2993,6 +3015,10 @@
         },
         "platformManifest" : {
           "title" : "加载平台清单"
+        },
+        "mockAppUpdate" : {
+          "title" : "Mock 应用程序更新",
+          "description" : "在“我的 Ledger”中显示可用的应用程序更新，它将重新安装相同版本的应用程序"
         }
       }
     },
@@ -6703,7 +6729,7 @@
         "title" : "在所有平台上同步您的账户",
         "description" : "Ledger 设备将生成一个加密密钥，确保您的数据私密性且只有您可以找回。",
         "mainCta" : "同步您的账户",
-        "secondCta" : "已创建了密钥？"
+        "secondCta" : "Already synced a Ledger Live app?"
       }
     },
     "deviceSelection" : {
@@ -6725,7 +6751,7 @@
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "同步",
-        "description" : "在另一个 Ledger Live 应用程序上同步您的应用程序数据，享受顺畅体验。 "
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "manageKey" : {
         "title" : "管理密钥",
@@ -6786,23 +6812,71 @@
         "connectDevice" : {
           "title" : "使用 Ledger 设备"
         }
+      },
+      "qrCode" : {
+        "title" : "同步实例",
+        "show" : {
+          "title" : "显示二维码",
+          "explanation" : {
+            "title" : "使用另一个 Ledger Live 应用程序扫描并同步您的账户",
+            "steps" : {
+              "step1" : "打开您要同步的 Ledger Live 应用程序",
+              "step2" : "前往 <0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>同步</0>",
+              "step3" : "Scan QR code"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "扫描",
+          "description" : "扫描二维码",
+          "explanation" : {
+            "title" : "使用另一个 Ledger Live 应用程序扫描并同步您的账户",
+            "steps" : {
+              "step1" : "打开您要同步的 Ledger Live 应用程序",
+              "step2" : "前往<0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>同步</0> <1>></1> <0>显示二维码</0>",
+              "step3" : "Scan QR code"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "输入您的代码",
+          "desc" : "输入您要同步的 Ledger Live 上显示的代码。",
+          "error" : {
+            "title" : "代码不匹配",
+            "desc" : "确保您输入的是另一个 Ledger Live 实例上显示的代码。",
+            "tryAgain" : "请重试"
+          }
+        }
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "透明签名已启用",
-      "checkbox" : "不要再提醒我。",
-      "CTA" : "打开 {{app}}"
-    },
-    "manifestsList" : {
-      "title" : "探索",
-      "description" : "探索 Ledger 精心策划的 web3 最佳体验"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "透明签名已启用",
+        "clearSigningDisabled" : "透明签名已禁用",
+        "checkbox" : "不要再提醒我。",
+        "CTA" : "打开 {{app}}"
+      },
+      "manifestsList" : {
+        "title" : "探索",
+        "description" : "探索 Ledger 精心策划的 web3 最佳体验"
+      },
+      "label" : {
+        "clearSigning" : "透明签名"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "探索"
+      },
       "header" : {
         "title" : "探索 web3",
         "placeholder" : "搜索或输入网址"
+      },
+      "clearSigning" : {
+        "title" : "透明签名",
+        "description" : "透明签名让您可以签署消息，而不会向应用程序透露消息的内容。出于隐私和安全考虑，这项功能很实用。"
       }
     }
   }
