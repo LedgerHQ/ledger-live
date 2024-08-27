@@ -33,11 +33,9 @@ export const Card = ({ title, description, onClick, leftIcon, testId }: CardProp
           </Text>
         </Ellipsis>
         {description && (
-          <Ellipsis>
-            <Text variant="small" color="neutral.c70">
-              {t(description)}
-            </Text>
-          </Ellipsis>
+          <Text variant="small" color="neutral.c70">
+            {t(description)}
+          </Text>
         )}
       </Flex>
     </CardContainer>
