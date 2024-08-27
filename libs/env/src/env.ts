@@ -628,6 +628,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Swap IP",
   },
+  SWAP_SPECULOS: {
+    def: false,
+    parser: boolParser,
+    desc: "bypass app checks on Nano for speculos swap tests",
+  },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,
     parser: intParser,
