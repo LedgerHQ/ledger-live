@@ -52,13 +52,13 @@ export default function FeesDrawerLiveApp({
     (updater: (arg0: Transaction) => Transaction) => {
       setTransactionState(prevTransaction => {
         const updatedTransaction = updater(prevTransaction);
-        setTransaction(updatedTransaction);
         bridge
           .getTransactionStatus(
             mainAccount.type === "TokenAccount" ? parentAccount : mainAccount,
-            transaction,
+            updatedTransaction,
           )
-          .then(setTransactionStatus);
+          .then(setTransactionStatus)
+          .then(status => setTransaction(updatedTransaction));
 
         return updatedTransaction;
       });
