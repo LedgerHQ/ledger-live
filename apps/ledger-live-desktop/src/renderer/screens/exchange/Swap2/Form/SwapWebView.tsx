@@ -106,6 +106,8 @@ const SwapWebAppWrapper = styled.div`
   flex: 1;
 `;
 
+const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
+
 const defaultContentSize: Record<string, number> = {};
 
 const SwapWebView = ({
@@ -337,7 +339,10 @@ const SwapWebView = ({
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
           ...transaction,
           subAccountId,
-          recipient: getAbandonSeedAddress(mainAccount.currency.id),
+          recipient:
+            mainAccount.currency.id === "bitcoin"
+              ? getSegWitAbandonSeedAddress()
+              : getAbandonSeedAddress(mainAccount.currency.id),
           amount: convertToAtomicUnit({
             amount: new BigNumber(params.fromAmount),
             account: fromAccount,
