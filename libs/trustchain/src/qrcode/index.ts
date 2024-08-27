@@ -6,6 +6,7 @@ import { Message } from "./types";
 import {
   InvalidDigitsError,
   NoTrustchainInitialized,
+  QRCodeWSClosed,
   TrustchainAlreadyInitialized,
 } from "../errors";
 import { log } from "@ledgerhq/logs";
@@ -149,11 +150,14 @@ export async function createQRCodeHostInstance({
 
   onDisplayQRCode(url);
   return new Promise((resolve, reject) => {
+    const startedAt = Date.now();
+
     ws.addEventListener("error", reject);
     ws.addEventListener("close", () => {
       if (finished) return;
-      // this error would reflect a protocol error. because otherwise, we would get the "error" event. it shouldn't be visible to user, but we use it to ensure the promise ends.
-      setTimeout(() => reject(new Error("qrcode websocket prematurely closed")), CLOSE_TIMEOUT);
+      // this error would reflect a protocol error. because otherwise, we would get the "error" event.
+      const time = Date.now() - startedAt;
+      reject(new QRCodeWSClosed("qrcode websocket prematurely closed", { time }));
     });
     ws.addEventListener("message", async e => {
       try {
