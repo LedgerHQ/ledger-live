@@ -11,15 +11,11 @@ type Props = {
 };
 
 const FollowInstructionsDrawer = ({ isOpen, handleClose, device }: Props) => {
-  const { error, userDeviceInteraction } = useAddMember({ device });
-
   return (
     <GenericFollowInstructionsDrawer
+      {...useAddMember({ device })}
       isOpen={isOpen}
       handleClose={handleClose}
-      device={device}
-      userDeviceInteraction={userDeviceInteraction}
-      error={error}
     />
   );
 };

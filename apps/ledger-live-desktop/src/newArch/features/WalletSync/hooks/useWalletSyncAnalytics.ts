@@ -27,6 +27,7 @@ export enum AnalyticsPage {
   SyncWithQR = "Sync with QR code",
   PinCode = "Pin code",
   PinCodeError = "Pin code error",
+  UnbackedError = "No trustchain initialized error",
 
   SettingsGeneral = "Settings General",
   WalletSyncSettings = "Wallet Sync Settings",
@@ -66,6 +67,7 @@ export const StepMappedToAnalytics: Record<Step, string> = {
   [Step.PinCode]: AnalyticsPage.PinCode,
   [Step.PinCodeError]: AnalyticsPage.PinCodeError,
   [Step.Synchronized]: AnalyticsPage.KeyUpdated,
+  [Step.UnbackedError]: AnalyticsPage.UnbackedError,
 
   //ManageInstances
   [Step.SynchronizedInstances]: AnalyticsPage.ManageInstances,

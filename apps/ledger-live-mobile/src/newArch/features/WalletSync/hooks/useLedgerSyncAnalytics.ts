@@ -18,6 +18,7 @@ export enum AnalyticsPage {
   SyncWithNoKey = "Sync with no key",
   LedgerSyncActivated = "Ledger Sync activated",
   AutoRemove = "Remove current instance",
+  Unbacked = "Unbacked",
 }
 
 export enum AnalyticsFlow {

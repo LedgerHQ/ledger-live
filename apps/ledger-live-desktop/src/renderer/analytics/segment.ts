@@ -81,6 +81,7 @@ const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const ptxCard = analyticsFeatureFlagMethod("ptxCard");
   const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
   const ptxSwapLiveAppDemoZero = analyticsFeatureFlagMethod("ptxSwapLiveAppDemoZero")?.enabled;
@@ -107,6 +108,7 @@ const getPtxAttributes = () => {
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
+    ptxCard,
     ptxSwapMoonpayProviderEnabled,
     ptxSwapLiveAppDemoZero,
     ptxSwapLiveAppDemoOne,

@@ -2773,7 +2773,7 @@
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
       "walletSync": "Ledger Sync",
-      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "walletSyncDesc": "Securely sync your accounts across multiple Ledger Live instances",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -6726,7 +6726,7 @@
         "title": "Sync your accounts across all platforms",
         "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
         "mainCta": "Sync your accounts",
-        "secondCta": "Already created a key?"
+        "secondCta": "Already synced a Ledger Live app?"
       }
     },
     "deviceSelection": {
@@ -6748,7 +6748,7 @@
     "walletSyncActivated": {
       "synchronize": {
         "title": "Synchronize",
-        "description": "Synchronize your app data with another Ledger Live app for a seamless experience. "
+        "description": "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "manageKey": {
         "title": "Manage Key",
@@ -6811,6 +6811,7 @@
         }
       },
       "qrCode": {
+        "title": "Synchronize Instances",
         "show": {
           "title": "Show QR",
           "explanation": {
@@ -6818,7 +6819,7 @@
             "steps": {
               "step1": "Open the Ledger Live app you want to sync",
               "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0>",
-              "step3": "Scan QR code until loader hits 100%."
+              "step3": "Scan QR code"
             }
           }
         },
@@ -6830,7 +6831,7 @@
             "steps": {
               "step1": "Open the Ledger Live app you want to sync",
               "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0> <1>></1> <0>Show QR</0>",
-              "step3": "Scan QR code until loader hits 100%."
+              "step3": "Scan QR code"
             }
           }
         },
@@ -6842,6 +6843,11 @@
             "desc": "Make sure the code you type is the one displayed on the other Ledger Live instance.",
             "tryAgain": "Try again"
           }
+        },
+        "unbacked": {
+          "title": "You need to create your encryption key first",
+          "desc": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+          "cta": "Create your encryption key"
         }
       }
     }

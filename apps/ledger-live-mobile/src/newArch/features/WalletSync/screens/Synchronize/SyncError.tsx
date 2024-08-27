@@ -15,6 +15,7 @@ export default function SyncError({ tryAgain }: Props) {
       mainButton={{
         label: t("walletSync.synchronize.qrCode.pinCode.error.tryAgain"),
         onPress: tryAgain,
+        outline: true,
       }}
     />
   );

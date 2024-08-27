@@ -17,7 +17,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { waitForTimeOut } from "./waitFor";
 
 export type Spec = {
-  currency: CryptoCurrency;
+  currency?: CryptoCurrency;
   appQuery: {
     model: DeviceModelId;
     appName: string;
@@ -45,6 +45,15 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+
+  LedgerSync: {
+    appQuery: {
+      model: DeviceModelId.nanoX,
+      appName: "Ledger Sync",
+    },
+    dependency: "",
+  },
+
   Dogecoin: {
     currency: getCryptoCurrencyById("dogecoin"),
     appQuery: {
@@ -236,7 +245,7 @@ export async function startSpeculos(
   );
   const deviceParams = {
     ...(appCandidate as AppCandidate),
-    appName: spec.currency.managerAppName,
+    appName: spec.currency ? spec.currency.managerAppName : spec.appQuery.appName,
     seed,
     dependency,
     coinapps,
@@ -334,4 +343,17 @@ export function verifyAddress(address: string, text: string[]): boolean {
 export function verifyAmount(amount: string, text: string[]): boolean {
   const amountDevice = text[1];
   return amountDevice.includes(amount);
+}
+
+export async function takeScreenshot() {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  try {
+    const response = await axios.get(`http://127.0.0.1:${speculosApiPort}/screenshot`, {
+      responseType: "arraybuffer",
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error downloading speculos screenshot:", error);
+    throw error;
+  }
 }

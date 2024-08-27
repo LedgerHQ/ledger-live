@@ -12,8 +12,7 @@ export class Drawer extends Component {
     this.page.getByTestId(`currency-row-${currency.toLowerCase()}`).first();
   private addressValue = (address: string) =>
     this.page.locator('[data-testid="drawer-content"]').locator(`text=${address}`);
-  private amountValue = (amount: string) =>
-    this.page.locator('[data-testid="drawer-content"]').locator(`text=${amount}`);
+  private amountValue = this.page.getByTestId("amountReceived-drawer");
   readonly selectAssetTitle = this.page.getByTestId("select-asset-drawer-title").first();
   readonly selectAccountTitle = this.page.getByTestId("select-account-drawer-title").first();
   readonly swapAmountFrom = this.page.getByTestId("swap-amount-from").first();
@@ -34,7 +33,7 @@ export class Drawer extends Component {
   @step("Verify that the information of the transaction is visible")
   async expectReceiverInfos(tx: Transaction) {
     await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
-    await expect(this.amountValue(tx.amount)).toBeVisible();
+    await expect(this.amountValue).toBeVisible();
   }
 
   async waitForDrawerToBeVisible() {

@@ -11,6 +11,7 @@ type Props = {
   cta?: string;
   onClick?: () => void;
   analyticsPage?: AnalyticsPage;
+  ctaVariant?: "shade" | "main";
 };
 
 const Container = styled(Box)`
@@ -23,7 +24,14 @@ const Container = styled(Box)`
   justify-content: center;
 `;
 
-export const Error = ({ title, description, cta, onClick, analyticsPage }: Props) => {
+export const Error = ({
+  title,
+  description,
+  cta,
+  onClick,
+  analyticsPage,
+  ctaVariant = "shade",
+}: Props) => {
   const { colors } = useTheme();
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
@@ -38,7 +46,7 @@ export const Error = ({ title, description, cta, onClick, analyticsPage }: Props
         {description}
       </Text>
       {cta && onClick && (
-        <ButtonV3 variant="shade" onClick={onClick}>
+        <ButtonV3 variant={ctaVariant} onClick={onClick}>
           {cta}
         </ButtonV3>
       )}

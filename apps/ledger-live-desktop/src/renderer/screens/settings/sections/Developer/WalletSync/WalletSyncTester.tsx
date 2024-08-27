@@ -14,11 +14,11 @@ const WalletSyncTester = () => {
   );
   return (
     <SettingsSectionRow
-      title={t("settings.experimental.features.testWalletSync.title")}
-      desc={t("settings.experimental.features.testWalletSync.description")}
+      title={t("settings.developer.debugWalletSync.title")}
+      desc={t("settings.developer.debugWalletSync.description")}
     >
       <Button onClick={onOpenModal} primary>
-        {t("settings.experimental.features.testWalletSync.cta")}
+        {t("settings.developer.debugWalletSync.cta")}
       </Button>
     </SettingsSectionRow>
   );

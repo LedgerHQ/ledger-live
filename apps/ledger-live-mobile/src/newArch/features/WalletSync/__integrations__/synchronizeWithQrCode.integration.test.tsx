@@ -4,13 +4,23 @@ import { render, screen, waitFor } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSettingsNavigator } from "./shared";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 
-jest.mock("@ledgerhq/trustchain/qrcode/index", () => ({
-  createQRCodeHostInstance: () => ({
-    trustchainApiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
-    onDisplayQRCode: jest.fn().mockImplementation(url => url),
-    onDisplayDigits: jest.fn().mockImplementation(digits => digits),
-    addMember: jest.fn(),
+jest.mock("../hooks/useQRCodeHost", () => ({
+  useQRCodeHost: () => ({
+    setCurrentStep: jest.fn(),
+    currentStep: jest.fn(),
+    currentOption: jest.fn(),
+    url: "ledger.com",
   }),
+}));
+
+jest.mock("@ledgerhq/trustchain/qrcode/index", () => ({
+  createQRCodeHostInstance: () =>
+    Promise.resolve({
+      trustchainApiBaseUrl: getWalletSyncEnvironmentParams("STAGING").trustchainApiBaseUrl,
+      onDisplayQRCode: jest.fn().mockImplementation(url => url),
+      onDisplayDigits: jest.fn().mockImplementation(digits => digits),
+      addMember: jest.fn(),
+    }),
 }));
 
 describe("SynchronizeWithQrCode", () => {
@@ -19,7 +29,7 @@ describe("SynchronizeWithQrCode", () => {
       overrideInitialState: INITIAL_TEST,
     });
     await user.press(await screen.findByText(/ledger sync/i));
-    await user.press(await screen.findByText(/already created a key?/i));
+    await user.press(await screen.findByText(/Already synced a Ledger Live app?/i));
     await user.press(await screen.findByText(/scan a qr code/i));
     await user.press(await screen.queryAllByText(/show qr/i)[0]);
     expect(await screen.getByTestId("ws-qr-code-displayed")).toBeVisible();

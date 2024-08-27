@@ -43,13 +43,14 @@ describe("HttpManagerApiRepository", () => {
     });
 
     expect(networkSpy).toHaveBeenCalledWith({
-      method: "POST",
-      url: "http://managerApiBase.com/get_latest_firmware?livecommonversion=1.2.3&salt=mockedFirmwareSalt",
-      data: {
-        current_se_firmware_final_version: 888,
-        device_version: 123,
-        provider: 12,
-      },
+      method: "GET",
+      url:
+        "http://managerApiBase.com/get_latest_firmware" +
+        "?livecommonversion=1.2.3" +
+        "&salt=mockedFirmwareSalt" +
+        "&current_se_firmware_final_version=888" +
+        "&device_version=123" +
+        "&provider=12",
     });
   });
 
@@ -128,12 +129,12 @@ describe("HttpManagerApiRepository", () => {
     });
 
     expect(networkSpy).toHaveBeenCalledWith({
-      method: "POST",
-      url: "http://managerApiBase.com/get_device_version?livecommonversion=1.2.3",
-      data: {
-        target_id: 123,
-        provider: 12,
-      },
+      method: "GET",
+      url:
+        "http://managerApiBase.com/get_device_version" +
+        "?livecommonversion=1.2.3" +
+        "&provider=12" +
+        "&target_id=123",
     });
   });
 
@@ -190,13 +191,13 @@ describe("HttpManagerApiRepository", () => {
     });
 
     expect(networkSpy).toHaveBeenCalledWith({
-      method: "POST",
-      url: "http://managerApiBase.com/get_osu_version?livecommonversion=1.2.3",
-      data: {
-        device_version: 123,
-        provider: 12,
-        version_name: "mockedVersion-osu",
-      },
+      method: "GET",
+      url:
+        "http://managerApiBase.com/get_osu_version" +
+        "?livecommonversion=1.2.3" +
+        "&device_version=123" +
+        "&version_name=mockedVersion-osu" +
+        "&provider=12",
     });
   });
 
@@ -226,13 +227,13 @@ describe("HttpManagerApiRepository", () => {
     });
 
     expect(networkSpy).toHaveBeenCalledWith({
-      method: "POST",
-      url: "http://managerApiBase.com/get_firmware_version?livecommonversion=1.2.3",
-      data: {
-        device_version: 123,
-        provider: 12,
-        version_name: "mockedVersion",
-      },
+      method: "GET",
+      url:
+        "http://managerApiBase.com/get_firmware_version" +
+        "?livecommonversion=1.2.3" +
+        "&device_version=123" +
+        "&version_name=mockedVersion" +
+        "&provider=12",
     });
   });
 
