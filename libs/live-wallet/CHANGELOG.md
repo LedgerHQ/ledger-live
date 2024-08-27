@@ -1,5 +1,12 @@
 # @ledgerhq/live-wallet
 
+## 0.5.1-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`267526c`](https://github.com/LedgerHQ/ledger-live/commit/267526c3f8cc4863d4947ab3c28ba20dc5593028)]:
+  - @ledgerhq/trustchain@0.3.0-nightly.3
+
 ## 0.5.1-nightly.2
 
 ### Patch Changes

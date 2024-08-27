@@ -1,5 +1,13 @@
 # @ledgerhq/live-cli
 
+## 24.5.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3), [`6ccd01c`](https://github.com/LedgerHQ/ledger-live/commit/6ccd01cd738362db00c9dbc74cd0a77ccc01b206)]:
+  - @ledgerhq/live-common@34.7.2-nightly.0
+  - @ledgerhq/live-wallet@0.5.1-nightly.3
+
 ## 24.5.1
 
 ### Patch Changes

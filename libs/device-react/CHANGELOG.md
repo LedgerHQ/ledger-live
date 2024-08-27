@@ -1,5 +1,12 @@
 # @ledgerhq/device-react
 
+## 0.2.5-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3)]:
+  - @ledgerhq/device-core@0.3.3-nightly.3
+
 ## 0.2.5-nightly.2
 
 ### Patch Changes

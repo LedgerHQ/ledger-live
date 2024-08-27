@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.0
+
+### Minor Changes
+
+- [#7646](https://github.com/LedgerHQ/ledger-live/pull/7646) [`267526c`](https://github.com/LedgerHQ/ledger-live/commit/267526c3f8cc4863d4947ab3c28ba20dc5593028) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Added the synchronization of a trustchain from mobile to desktop by scanning the QR code
+
+### Patch Changes
+
+- [#7677](https://github.com/LedgerHQ/ledger-live/pull/7677) [`3de9eb6`](https://github.com/LedgerHQ/ledger-live/commit/3de9eb6725cd32a5c90c6fedb9cb1dfffb6e4306) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Revamp LedgerSyncDebugger
+
+- [#7656](https://github.com/LedgerHQ/ledger-live/pull/7656) [`6460687`](https://github.com/LedgerHQ/ledger-live/commit/646068770181c5cfd112ab050ca26d871cfce835) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: btc fee drawer can be close on swap live app
+
+- [#7660](https://github.com/LedgerHQ/ledger-live/pull/7660) [`9c584a0`](https://github.com/LedgerHQ/ledger-live/commit/9c584a08063dedc4eb4baeb3b0e719acf98a2087) Thanks [@sergiubreban](https://github.com/sergiubreban)! - removes old manifest id for buy-sell app
+
+- Updated dependencies [[`267526c`](https://github.com/LedgerHQ/ledger-live/commit/267526c3f8cc4863d4947ab3c28ba20dc5593028), [`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3), [`6ccd01c`](https://github.com/LedgerHQ/ledger-live/commit/6ccd01cd738362db00c9dbc74cd0a77ccc01b206)]:
+  - @ledgerhq/trustchain@0.3.0-nightly.3
+  - @ledgerhq/live-common@34.7.2-nightly.0
+  - @ledgerhq/live-wallet@0.5.1-nightly.3
+
 ## 2.85.1
 
 ### Patch Changes

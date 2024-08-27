@@ -1,5 +1,24 @@
 ## 34.5.0-next.4
 
+## 34.7.2-nightly.0
+
+### Patch Changes
+
+- [#7628](https://github.com/LedgerHQ/ledger-live/pull/7628) [`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - chore(BACK-7633): switch app store API endpoints from POST to GET when applicable
+
+  This change will reduce load on the backend service and improve latency for clients.
+
+  Related:
+
+  - https://github.com/LedgerHQ/nano-appstore/releases/tag/v1.7.0
+  - https://github.com/LedgerHQ/tf-aws-production/pull/3546
+
+- [#7669](https://github.com/LedgerHQ/ledger-live/pull/7669) [`6ccd01c`](https://github.com/LedgerHQ/ledger-live/commit/6ccd01cd738362db00c9dbc74cd0a77ccc01b206) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - show gasPrice as error not warning
+
+- Updated dependencies [[`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3)]:
+  - @ledgerhq/device-core@0.3.3-nightly.3
+  - @ledgerhq/live-wallet@0.5.1-nightly.3
+
 ## 34.7.1
 
 ### Patch Changes

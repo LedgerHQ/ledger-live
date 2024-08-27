@@ -1,5 +1,18 @@
 # web-tools
 
+## 0.9.0-nightly.0
+
+### Minor Changes
+
+- [#7646](https://github.com/LedgerHQ/ledger-live/pull/7646) [`267526c`](https://github.com/LedgerHQ/ledger-live/commit/267526c3f8cc4863d4947ab3c28ba20dc5593028) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Added the synchronization of a trustchain from mobile to desktop by scanning the QR code
+
+### Patch Changes
+
+- Updated dependencies [[`267526c`](https://github.com/LedgerHQ/ledger-live/commit/267526c3f8cc4863d4947ab3c28ba20dc5593028), [`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3), [`6ccd01c`](https://github.com/LedgerHQ/ledger-live/commit/6ccd01cd738362db00c9dbc74cd0a77ccc01b206)]:
+  - @ledgerhq/trustchain@0.3.0-nightly.3
+  - @ledgerhq/live-common@34.7.2-nightly.0
+  - @ledgerhq/live-wallet@0.5.1-nightly.3
+
 ## 0.8.1
 
 ### Patch Changes

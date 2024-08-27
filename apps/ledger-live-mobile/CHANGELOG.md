@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.49.0-nightly.0
+
+### Minor Changes
+
+- [#7646](https://github.com/LedgerHQ/ledger-live/pull/7646) [`267526c`](https://github.com/LedgerHQ/ledger-live/commit/267526c3f8cc4863d4947ab3c28ba20dc5593028) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Added the synchronization of a trustchain from mobile to desktop by scanning the QR code
+
+- [#7668](https://github.com/LedgerHQ/ledger-live/pull/7668) [`120c1f8`](https://github.com/LedgerHQ/ledger-live/commit/120c1f815fc170b1278a4da5997eefeddb95c7b5) Thanks [@thesan](https://github.com/thesan)! - Fix "Delete my encryption key" action on wrong seed errors
+
+### Patch Changes
+
+- [#7660](https://github.com/LedgerHQ/ledger-live/pull/7660) [`9c584a0`](https://github.com/LedgerHQ/ledger-live/commit/9c584a08063dedc4eb4baeb3b0e719acf98a2087) Thanks [@sergiubreban](https://github.com/sergiubreban)! - removes old manifest id for buy-sell app
+
+- Updated dependencies [[`267526c`](https://github.com/LedgerHQ/ledger-live/commit/267526c3f8cc4863d4947ab3c28ba20dc5593028), [`94afd9e`](https://github.com/LedgerHQ/ledger-live/commit/94afd9e0742d0e227b1e6ff953edee7a66ad61a3), [`6ccd01c`](https://github.com/LedgerHQ/ledger-live/commit/6ccd01cd738362db00c9dbc74cd0a77ccc01b206)]:
+  - @ledgerhq/trustchain@0.3.0-nightly.3
+  - @ledgerhq/live-common@34.7.2-nightly.0
+  - @ledgerhq/live-wallet@0.5.1-nightly.3
+
 ## 3.48.1
 
 ### Patch Changes
