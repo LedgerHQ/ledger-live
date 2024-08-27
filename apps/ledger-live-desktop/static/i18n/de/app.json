@@ -145,7 +145,8 @@
     "add" : "Hinzufügen",
     "or" : "ODER",
     "clearAll" : "Alle löschen",
-    "buyLedger" : "Ledger-Gerät kaufen"
+    "buyLedger" : "Ledger-Gerät kaufen",
+    "quote" : "Preis"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -3979,7 +3980,7 @@
       "stock" : "Regionaler Marktindikator",
       "stockDesc" : "Wählen Sie Westlich, um Marktsteigerungen in Blau anzuzeigen, oder Östlich, um sie in Rot anzuzeigen.",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Schütze deine App-Daten ganz bequem und synchronisiere mehrere Ledger Live-Instanzen.",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "marketPerformanceWidget" : "Marktperformance-Widget",
       "marketPerformanceWidgetDesc" : "Aktiviere diese Funktion, um auf der Portfolioseite die größten Gewinner und Verlierer über ausgewählte Zeiträume anzuzeigen."
     },
@@ -4005,6 +4006,16 @@
         "placeholder" : "Info des Börsenanbieters im CAL-Format"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "SimpleHash Tools",
+          "description" : "Provides some useful tools using SimpleHash",
+          "cta" : "Open",
+          "tabs" : {
+            "spam" : "Spam Report",
+            "refresh" : "Refresh Metadata",
+            "check" : "Spam Score"
+          }
+        },
         "debugSpamNft" : {
           "report" : "Melden",
           "contractAddress" : "Vertragsadresse",
@@ -4064,8 +4075,38 @@
         },
         "back" : "Zurückgehen"
       },
+      "debugWalletSync" : {
+        "title" : "Ledger Sync Debugger",
+        "description" : "Allows you to launch a specific LedgerSync flow or check current state of LedgerSync",
+        "cta" : "Open",
+        "modal" : {
+          "check" : {
+            "title" : "Checker",
+            "trustchain" : {
+              "name" : "Trustchain ID : ",
+              "emptyId" : "Empty ID",
+              "applicationPath" : "Application path : ",
+              "emptyApplicationPath" : "Empty Application path",
+              "cloudSyncVersion" : "Cloud sync version : ",
+              "lastSyncInfo" : "Last sync info : ",
+              "uniported" : "Non-imported accounts : "
+            },
+            "copied" : "Text copied to clipboard!",
+            "export" : "Export"
+          },
+          "generator" : {
+            "title" : "Generator",
+            "flow" : "Select a Flow",
+            "step" : "Select a Step",
+            "instance" : "Generate Members",
+            "cta" : "Apply"
+          }
+        }
+      },
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
+      "mockAppUpdate" : "Mock-App-Update",
+      "mockAppUpdateDesc" : "Zeigt das verfügbare App-Update unter „My Ledger“ an. Dieselbe App-Version wird erneut installiert.",
       "catalogUrl" : "Anbieter Katalog-Apps festlegen",
       "catalogUrlDesc" : "Geben Sie die benutzerdefinierte URL Ihres Kataloganbieters ein",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
@@ -4228,27 +4269,6 @@
         "enableNetworkLogs" : {
           "title" : "Netzwerklogs aktivieren",
           "description" : "Netzwerklogs in der Konsole aktivieren (Fehlerprotokolle sind immer aktiviert)"
-        },
-        "testWalletSync" : {
-          "title" : "Ledger Sync testen",
-          "description" : "Hiermit kannst du einen speziellen Ledger Sync-Ablauf starten",
-          "cta" : "Testen",
-          "modal" : {
-            "flow" : "Ablauf auswählen",
-            "step" : "Schritt auswählen",
-            "instance" : "Mitglieder generieren",
-            "cta" : "Anwenden"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "SimpleHash-Tools",
-          "description" : "Bietet einige nützliche Tools mit SimpleHash",
-          "cta" : "Öffnen",
-          "tabs" : {
-            "spam" : "Spam-Bericht",
-            "refresh" : "Metadaten aktualisieren",
-            "check" : "Spam-Bewertung"
-          }
         }
       }
     },
@@ -5544,6 +5564,13 @@
       "title" : "Berechnung von Betrag und Gebühren nicht möglich",
       "description" : "Berechnung von Betrag und Gebühren nicht möglich"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Ungültiger Empfänger für Tokenübertragung; unterstützte Kontotypen für Tokenübertragung: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "Sorry, Gebührenschätzung fehlgeschlagen",
+      "description" : "Gebührenschätzung im Netzwerk fehlgeschlagen. Prüfe die Eingabe; die Transaktion schlägt höchstwahrscheinlich fehl"
+    },
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
@@ -5644,6 +5671,10 @@
     "TransportStatusError" : {
       "title" : "Etwas ist schief gelaufen Bitte schließen Sie Ihr Gerät erneut an",
       "description" : "{{message}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "Beim Abrufen deiner Daten ist ein Problem aufgetreten",
+      "description" : "Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice."
     },
     "DeviceShouldStayInApp" : {
       "title" : "Bitte öffnen Sie die {{appName}} App",
@@ -6159,6 +6190,15 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "Bei unserer Bitcoin-Infrastruktur ist ein Problem aufgetreten. Versuche es bitte später noch einmal."
+    },
+    "TonExcessFee" : {
+      "title" : "Hierbei erfolgt eine Tokenübertragung. Du zahlst 0,1 TON Gebühren, und alles, was darüber hinausgeht, wird dir zurückerstattet."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "Unzureichendes Guthaben auf dem Hauptkonto (TON) zur Berechnung der Gebühren. Das erforderliche Mindestguthaben beträgt 0,1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "Unzureichendes Guthaben. Das erforderliche Mindestguthaben beträgt 0,02 TON."
     }
   },
   "cryptoOrg" : {
@@ -6359,12 +6399,12 @@
       "description" : "Dein Ledger-Gerät erzeugt einen Verschlüsselungsschlüssel, mit dem sichergestellt wird, dass deine Daten privat bleiben und nur von dir abgerufen werden können.",
       "cta" : "Konten synchronisieren"
     },
-    "alreadySync" : "Du hast bereits einen Schlüssel erstellt?",
+    "alreadySync" : "Hast du bereits eine Ledger Live-App synchronisiert?",
     "manage" : {
       "cta" : "Verwalten",
       "synchronize" : {
         "label" : "Synchronisieren",
-        "description" : "Synchronisiere deine App-Daten mit einer anderen Ledger Live-App für ein nahtloses Erlebnis."
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "backup" : {
         "label" : "Schlüssel verwalten",
@@ -6440,7 +6480,7 @@
         "title" : "Synchronisierungsmethode auswählen",
         "description" : "Du kannst entweder direkt mit deinem Ledger-Gerät synchronisieren oder in Ledger Live einen QR-Code scannen.",
         "scan" : {
-          "title" : "QR-Code scannen",
+          "title" : "Display QR code",
           "description" : "Synchronisieren durch Scannen eines QR-Codes"
         },
         "connectDevice" : {
@@ -6449,18 +6489,40 @@
         }
       },
       "qrCode" : {
-        "title" : "Synchronisieren",
-        "hint" : "Versuchst du, zwei Ledger Live Desktop-Apps zu synchronisieren? Hier klicken.",
-        "description" : "Scannen und deine Konten mit einer anderen Ledger Live-App synchronisieren",
-        "steps" : {
-          "step1" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
-          "step2" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Synchronize</0> (Synchronisieren) > <0>Show QR</0> (QR-Code anzeigen)",
-          "step3" : "Scanne den QR-Code, bis der Fortschrittsbalken 100 % anzeigt."
+        "title" : "Instanzen synchronisieren",
+        "options" : {
+          "mobile" : "Mobil",
+          "desktop" : "Desktop"
+        },
+        "mobile" : {
+          "description" : "Scannen und deine Konten mit einer anderen Ledger Live-App synchronisieren",
+          "steps" : {
+            "step1" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
+            "step2" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Synchronize</0> (Synchronisieren) > <0>Show QR</0> (QR-Code anzeigen)",
+            "step3" : "QR-Code scannen"
+          }
+        },
+        "desktop" : {
+          "description" : "Deine Konten mit einer anderen Ledger Live-App synchronisieren",
+          "steps" : {
+            "step1" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
+            "step2" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Synchronize</0> (Synchronisieren) > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden)",
+            "step3" : "Ledger-Gerät verbinden"
+          }
         }
+      },
+      "unbackedError" : {
+        "title" : "You need to create your encryption key first",
+        "description" : "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+        "cta" : "Create your encryption key"
       },
       "pinCode" : {
         "title" : "Code eingeben",
-        "description" : "Gib den Code ein, der in der anderen Ledger Live-Instanz angezeigt wird, zu der die Synchronisierung erfolgen soll."
+        "description" : "Gib den Code ein, der in der anderen Ledger Live-Instanz angezeigt wird, zu der die Synchronisierung erfolgen soll.",
+        "error" : {
+          "title" : "Codes stimmen nicht überein",
+          "description" : "Vergewissere dich, dass der eingegebene Code mit demjenigen identisch ist, der in der anderen Ledger Live-Instanz angezeigt wird."
+        }
       }
     },
     "manageInstances" : {
