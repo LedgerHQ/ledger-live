@@ -21,7 +21,7 @@ export class AddAccountModal extends Modal {
   private selectTokenNetwork = (SubAccount: Account) =>
     this.page
       .getByRole("option", {
-        name: `${SubAccount.currency.name} (${SubAccount.currency.ticker}) ${SubAccount.currency.speculosApp}`,
+        name: `${SubAccount.currency.name} (${SubAccount.currency.ticker}) ${SubAccount.currency.speculosApp.name}`,
       })
       .locator("span");
   readonly continueButton = this.page.getByTestId("modal-continue-button");
@@ -38,7 +38,7 @@ export class AddAccountModal extends Modal {
         .locator(
           this.optionWithTextAndFollowingText(
             SubAccount.currency.ticker?.toUpperCase(),
-            SubAccount.currency.speculosApp,
+            SubAccount.currency.speculosApp.name,
           ),
         )
         .click();
@@ -83,7 +83,10 @@ export class AddAccountModal extends Modal {
       await this.selectAccountByScrolling(currency);
       await this.dropdownOptions
         .locator(
-          this.optionWithTextAndFollowingText(currency.ticker?.toUpperCase(), currency.speculosApp),
+          this.optionWithTextAndFollowingText(
+            currency.ticker?.toUpperCase(),
+            currency.speculosApp.name,
+          ),
         )
         .click();
     }

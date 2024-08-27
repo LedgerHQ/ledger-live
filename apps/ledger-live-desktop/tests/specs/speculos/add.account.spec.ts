@@ -24,7 +24,7 @@ for (const currency of currencies) {
   test.describe("Add Accounts", () => {
     test.use({
       userdata: "skip-onboarding",
-      speculosCurrency: currency,
+      speculosApp: currency.speculosApp,
     });
     let firstAccountName = "NO ACCOUNT NAME YET";
 
