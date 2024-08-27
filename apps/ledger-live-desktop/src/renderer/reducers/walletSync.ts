@@ -24,6 +24,8 @@ export enum Step {
   ActivationFinal = "ActivationFinal",
   SynchronizationFinal = "SynchronizationFinal",
   SynchronizationError = "SynchronizationError",
+  AlreadySecuredSameSeed = "AlreadySecuredSameSeed",
+  AlreadySecuredOtherSeed = "AlreadySecuredOtherSeed",
 
   //Synchronize
   SynchronizeMode = "SynchronizeMode",

@@ -12,6 +12,8 @@ import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSync
 import PinCodeErrorStep from "./05-PinCodeError";
 import UnbackedErrorStep from "./05-UnbackedError";
 import { BackProps, BackRef } from "../router";
+import AlreadyCreatedWithSameSeedStep from "./06-ActivationAlreadyCreatedSame";
+import AlreadyCreatedOtherSeedStep from "./07-ActivationAlreadyCreatedOther";
 
 const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
   const dispatch = useDispatch();
@@ -70,12 +72,23 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
       case Step.UnbackedError:
         return <UnbackedErrorStep />;
 
+      case Step.AlreadySecuredSameSeed:
+        return <AlreadyCreatedWithSameSeedStep />;
+      case Step.AlreadySecuredOtherSeed:
+        return <AlreadyCreatedOtherSeedStep />;
+
       case Step.Synchronized:
         return <SyncFinalStep />;
     }
   };
 
-  const centeredItems = [Step.Synchronized, Step.PinCodeError, Step.UnbackedError];
+  const centeredItems = [
+    Step.Synchronized,
+    Step.PinCodeError,
+    Step.UnbackedError,
+    Step.AlreadySecuredSameSeed,
+    Step.AlreadySecuredOtherSeed,
+  ];
 
   return (
     <Flex

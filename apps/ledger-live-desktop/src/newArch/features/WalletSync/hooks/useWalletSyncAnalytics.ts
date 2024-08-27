@@ -13,6 +13,8 @@ export enum AnalyticsPage {
   InstanceRemovalSuccess = "Instance removal success",
   Unsecured = "Remove instance wrong device connected",
   AutoRemove = "Remove current instance",
+  AlreadySecuredSameSeed = "Already secured Ledger with this seed",
+  AlreadySecuredOtherSeed = "Already secured Ledger with another seed",
 
   Activation = "Activate Wallet Sync",
   DeviceActionActivation = "Device Action Activate Wallet Sync",
@@ -60,6 +62,8 @@ export const StepMappedToAnalytics: Record<Step, string> = {
   [Step.ActivationFinal]: AnalyticsPage.KeyCreated,
   [Step.SynchronizationFinal]: AnalyticsPage.KeyUpdated,
   [Step.SynchronizationError]: AnalyticsPage.SynchronizationError,
+  [Step.AlreadySecuredSameSeed]: AnalyticsPage.AlreadySecuredSameSeed,
+  [Step.AlreadySecuredOtherSeed]: AnalyticsPage.AlreadySecuredOtherSeed,
 
   //Synchronize
   [Step.SynchronizeMode]: AnalyticsPage.SyncMethod,

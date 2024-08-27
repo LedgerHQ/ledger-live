@@ -6408,6 +6408,7 @@
   },
   "walletSync": {
     "title": "Ledger Sync",
+    "close": "Close",
     "activate": {
       "title": "Sync your accounts across all platforms",
       "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
@@ -6448,6 +6449,16 @@
       "info": "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
       "cta": "Connect another Ledger",
       "ctaDelete": "Delete my encryption key"
+    },
+    "alredySecureError": {
+      "title": "This app is already secured by this Ledger",
+      "description": "If you are attempting to create a new backup, please connect the Ledger device you used to create your other encryption key.",
+      "cta": "I undestand"
+    },
+    "alredySecureOtherSeedError": {
+      "title": "You can’t use this Ledger to sync",
+      "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
+      "cta": "Delete my encryption key"
     },
     "autoRemoveError": {
       "title": "You can’t remove the current instance",

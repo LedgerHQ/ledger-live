@@ -70,6 +70,7 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
         return <ActivationFinalStep isNewBackup={true} />;
       case Step.SynchronizationFinal:
         return <ActivationFinalStep isNewBackup={false} />;
+
       case Step.SynchronizationError:
         return <ErrorStep />;
     }
