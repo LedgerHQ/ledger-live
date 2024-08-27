@@ -14,6 +14,7 @@ const SUBACCOUNT =
   "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua";
 
 const ton: CurrenciesData<Transaction> = {
+  IgnorePrepareTransactionFields: ["fees"],
   scanAccounts: [
     {
       name: "ton seed 1",
