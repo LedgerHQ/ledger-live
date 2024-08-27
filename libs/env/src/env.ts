@@ -628,7 +628,7 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Swap IP",
   },
-  SWAP_SPECULOS: {
+  SWAP_DISABLE_APPS_INSTALL: {
     def: false,
     parser: boolParser,
     desc: "bypass app checks on Nano for speculos swap tests",

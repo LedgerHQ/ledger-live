@@ -9,7 +9,7 @@ import { createAction as createAppAction } from "./app";
 import { ExchangeType } from "@ledgerhq/live-app-sdk";
 import { getMainAccount } from "../../account";
 import { isExchangeSwap, type Exchange } from "../../exchange/types";
-import { isSpeculosTest } from "../../exchange/swap/utils/isIntegrationTestEnv";
+import { isSwapDisableAppsInstall } from "../../exchange/swap/utils/isIntegrationTestEnv";
 
 export type StartExchangeSuccessResult = {
   nonce: string;
@@ -124,7 +124,7 @@ export const createAction = (
         : null;
 
     const request: AppRequest = useMemo(() => {
-      if (isSpeculosTest()) {
+      if (isSwapDisableAppsInstall()) {
         return {
           appName: "Exchange",
         };
