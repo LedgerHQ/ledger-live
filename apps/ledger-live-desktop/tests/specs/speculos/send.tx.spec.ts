@@ -43,7 +43,7 @@ for (const transaction of transactionE2E) {
   test.describe("Send from 1 account to another", () => {
     test.use({
       userdata: "speculos-tests-app",
-      speculosCurrency: transaction.accountToDebit.currency,
+      speculosApp: transaction.accountToDebit.currency.speculosApp,
     });
 
     test(
@@ -89,7 +89,7 @@ test.describe("Send token (subAccount) - invalid address input", () => {
 
   test.use({
     userdata: "speculos-subAccount",
-    speculosCurrency: tokenTransactionInvalid.transaction.accountToDebit.currency,
+    speculosApp: tokenTransactionInvalid.transaction.accountToDebit.currency.speculosApp,
   });
 
   test(
@@ -134,7 +134,7 @@ test.describe("Send token (subAccount) - invalid amount input", () => {
   for (const transaction of tokenTransactionInvalid) {
     test.use({
       userdata: "speculos-2ETH-2BNB",
-      speculosCurrency: transaction.transaction.accountToDebit.currency,
+      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
     });
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - invalid amount input`,
@@ -170,7 +170,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
   );
   test.use({
     userdata: "speculos-subAccount",
-    speculosCurrency: tokenTransactionValid.accountToDebit.currency,
+    speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
   });
 
   test(
@@ -206,7 +206,7 @@ test.describe("Check invalid address input error", () => {
 
   test.use({
     userdata: "speculos-tests-app",
-    speculosCurrency: transactionInvalidAddress.accountToDebit.currency,
+    speculosApp: transactionInvalidAddress.accountToDebit.currency.speculosApp,
   });
 
   test(
@@ -234,7 +234,7 @@ for (const transaction of transactionsInputsInvalid) {
   test.describe("Check invalid amount input error", () => {
     test.use({
       userdata: "speculos-tests-app",
-      speculosCurrency: transaction.transaction.accountToDebit.currency,
+      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
     });
 
     test(
@@ -272,7 +272,7 @@ test.describe("Verify send max user flow", () => {
 
   test.use({
     userdata: "speculos-tests-app",
-    speculosCurrency: transactionInputValid.accountToDebit.currency,
+    speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
   });
 
   test(

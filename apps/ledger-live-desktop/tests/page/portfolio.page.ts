@@ -16,8 +16,7 @@ export class PortfolioPage extends AppPage {
   private trendTitle = this.marketPerformanceWidget.getByText("1W trend");
   private assetRowElements = this.page.locator("[data-testid^='asset-row-']");
   private showAllButton = this.page.getByText("Show all");
-  private assetRow = (currency: string) =>
-    this.page.getByTestId(`asset-row-${currency.toLowerCase()}`);
+  private assetRow = (asset: string) => this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
 
   @step("Open `Add account` modal")
   async openAddAccountModal() {
@@ -74,8 +73,8 @@ export class PortfolioPage extends AppPage {
   }
 
   @step("Navigate to asset $0")
-  async navigateToAsset(currency: string) {
-    const assetRowLocator = this.assetRow(currency);
+  async navigateToAsset(asset: string) {
+    const assetRowLocator = this.assetRow(asset);
     if (!(await assetRowLocator.isVisible())) {
       await this.showAllButton.click();
     }

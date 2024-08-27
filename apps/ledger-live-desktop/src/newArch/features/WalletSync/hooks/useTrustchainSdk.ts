@@ -1,4 +1,3 @@
-import os from "os";
 import { useMemo } from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { getSdk } from "@ledgerhq/trustchain/index";
@@ -10,12 +9,7 @@ import { walletSyncStateSelector } from "@ledgerhq/live-wallet/store";
 import { TrustchainSDK } from "@ledgerhq/trustchain/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-
-const platformMap: Record<string, string | undefined> = {
-  darwin: "Mac",
-  win32: "Windows",
-  linux: "Linux",
-};
+import { useInstanceName } from "./useInstanceName";
 
 let sdkInstance: TrustchainSDK | null = null;
 
@@ -24,15 +18,13 @@ export function useTrustchainSdk() {
   const { trustchainApiBaseUrl, cloudSyncApiBaseUrl } = getWalletSyncEnvironmentParams(
     featureWalletSync?.params?.environment,
   );
+  const name = useInstanceName();
   const isMockEnv = !!getEnv("MOCK");
 
   const defaultContext = useMemo(() => {
     const applicationId = 16;
-    const platform = os.platform();
-    const hostname = os.hostname();
-    const name = `${platformMap[platform] || platform}${hostname ? " " + hostname : ""}`;
     return { applicationId, name, apiBaseUrl: trustchainApiBaseUrl };
-  }, [trustchainApiBaseUrl]);
+  }, [trustchainApiBaseUrl, name]);
 
   const store = useStore();
   const lifecycle = useMemo(

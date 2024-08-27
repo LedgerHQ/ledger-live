@@ -4026,6 +4026,16 @@
         "placeholder": "Exchange provider's info in CAL format"
       },
       "debugSimpleHash": {
+        "testSimpleHash": {
+          "title": "SimpleHash Tools",
+          "description": "Provides some useful tools using SimpleHash",
+          "cta": "Open",
+          "tabs": {
+            "spam": "Spam Report",
+            "refresh": "Refresh Metadata",
+            "check": "Spam Score"
+          }
+        },
         "debugSpamNft": {
           "report": "Report",
           "contractAddress": "Contract Address",
@@ -4084,6 +4094,34 @@
           }
         },
         "back": "Go back"
+      },
+      "debugWalletSync": {
+        "title": "Ledger Sync Debugger",
+        "description": "Allows you to launch a specific LedgerSync flow or check current state of LedgerSync",
+        "cta": "Open",
+        "modal": {
+          "check": {
+            "title": "Checker",
+            "trustchain": {
+              "name": "Trustchain ID : ",
+              "emptyId": "Empty ID",
+              "applicationPath": "Application path : ",
+              "emptyApplicationPath": "Empty Application path",
+              "cloudSyncVersion": "Cloud sync version : ",
+              "lastSyncInfo": "Last sync info : ",
+              "uniported": "Non-imported accounts : "
+            },
+            "copied": "Text copied to clipboard!",
+            "export": "Export"
+          },
+          "generator": {
+            "title": "Generator",
+            "flow": "Select a Flow",
+            "step": "Select a Step",
+            "instance": "Generate Members",
+            "cta": "Apply"
+          }
+        }
       },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
@@ -4251,27 +4289,6 @@
         "enableNetworkLogs": {
           "title": "Enable network logs",
           "description": "Enable network logs in the console (error logs are always enabled)"
-        },
-        "testWalletSync": {
-          "title": "Test Ledger Sync",
-          "description": "Allows you to launch a specific LedgerSync flow",
-          "cta": "Test",
-          "modal": {
-            "flow": "Select a Flow",
-            "step": "Select a Step",
-            "instance": "Generate Members",
-            "cta": "Apply"
-          }
-        },
-        "testSimpleHash": {
-          "title": "SimpleHash Tools",
-          "description": "Provides some useful tools using SimpleHash",
-          "cta": "Open",
-          "tabs": {
-            "spam": "Spam Report",
-            "refresh": "Refresh Metadata",
-            "check": "Spam Score"
-          }
         }
       }
     },
@@ -6516,6 +6533,11 @@
             "step3": "Connect your Ledger"
           }
         }
+      },
+      "unbackedError": {
+        "title": "You need to create your encryption key first",
+        "description": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+        "cta": "Create your encryption key"
       },
       "pinCode": {
         "title": "Enter the code",

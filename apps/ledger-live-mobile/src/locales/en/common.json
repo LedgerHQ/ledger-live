@@ -6852,6 +6852,11 @@
             "desc": "Make sure the code you type is the one displayed on the other Ledger Live instance.",
             "tryAgain": "Try again"
           }
+        },
+        "unbacked": {
+          "title": "You need to create your encryption key first",
+          "desc": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+          "cta": "Create your encryption key"
         }
       }
     }
