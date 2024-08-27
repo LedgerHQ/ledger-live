@@ -1,117 +1,19 @@
 ## 34.5.0-next.4
 
-## 34.8.0-nightly.3
-
-### Minor Changes
-
-- [#7634](https://github.com/LedgerHQ/ledger-live/pull/7634) [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198) Thanks [@Justkant](https://github.com/Justkant)! - feat: add dependencies support on wallet-api and dapp browser for transaction
-
-- [#7572](https://github.com/LedgerHQ/ledger-live/pull/7572) [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new installAppWithRestore and uninstallAppWithBackup to handle app data restore and backup
+## 34.7.1
 
 ### Patch Changes
 
-- Updated dependencies [[`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6), [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198)]:
-  - @ledgerhq/device-core@0.3.3-nightly.2
-  - @ledgerhq/wallet-api-exchange-module@0.7.1-nightly.0
-  - @ledgerhq/live-wallet@0.5.1-nightly.2
+- [#7642](https://github.com/LedgerHQ/ledger-live/pull/7642) [`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sentry: disable capture of "performance spans", which were not actually in use, but still causing a stop of the internal process on LLD Windows
 
-## 34.8.0-nightly.2
+- Updated dependencies [[`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017)]:
+  - @ledgerhq/coin-bitcoin@0.7.3
 
-### Patch Changes
-
-- [#7614](https://github.com/LedgerHQ/ledger-live/pull/7614) [`f8756b2`](https://github.com/LedgerHQ/ledger-live/commit/f8756b29a83048d423d500e16ea3f9789763b90d) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - add delay to determine if the max amout value is less than 0
-
-- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
-  - @ledgerhq/errors@6.19.0-nightly.0
-  - @ledgerhq/coin-framework@0.17.1-nightly.1
-  - @ledgerhq/coin-algorand@0.5.5-nightly.1
-  - @ledgerhq/coin-bitcoin@0.7.3-nightly.2
-  - @ledgerhq/coin-cardano@0.1.5-nightly.1
-  - @ledgerhq/coin-evm@2.1.5-nightly.1
-  - @ledgerhq/coin-icon@0.4.2-nightly.1
-  - @ledgerhq/coin-near@0.5.5-nightly.1
-  - @ledgerhq/coin-polkadot@1.2.1-nightly.1
-  - @ledgerhq/coin-solana@0.7.5-nightly.1
-  - @ledgerhq/coin-stellar@0.2.3-nightly.1
-  - @ledgerhq/coin-tezos@0.6.1-nightly.1
-  - @ledgerhq/coin-ton@0.3.13-nightly.2
-  - @ledgerhq/coin-tron@0.0.5-nightly.1
-  - @ledgerhq/coin-xrp@0.5.1-nightly.1
-  - @ledgerhq/device-core@0.3.3-nightly.1
-  - @ledgerhq/devices@8.4.3-nightly.0
-  - @ledgerhq/hw-app-algorand@6.29.3-nightly.0
-  - @ledgerhq/hw-app-cosmos@6.30.3-nightly.0
-  - @ledgerhq/hw-app-eth@6.38.1-nightly.1
-  - @ledgerhq/hw-app-exchange@0.6.0-nightly.1
-  - @ledgerhq/hw-app-icon@1.1.1-nightly.0
-  - @ledgerhq/hw-app-polkadot@6.31.3-nightly.0
-  - @ledgerhq/hw-app-solana@7.2.3-nightly.0
-  - @ledgerhq/hw-app-str@7.0.3-nightly.0
-  - @ledgerhq/hw-app-vet@0.2.5-nightly.1
-  - @ledgerhq/hw-transport@6.31.3-nightly.0
-  - @ledgerhq/live-network@1.4.1-nightly.1
-  - @ledgerhq/live-wallet@0.5.1-nightly.1
-  - @ledgerhq/live-countervalues@0.2.5-nightly.1
-  - @ledgerhq/live-countervalues-react@0.2.5-nightly.1
-  - @ledgerhq/live-nft@0.4.5-nightly.1
-  - @ledgerhq/speculos-transport@0.1.5-nightly.1
-  - @ledgerhq/hw-app-btc@10.4.2-nightly.0
-  - @ledgerhq/hw-app-near@6.29.3-nightly.0
-  - @ledgerhq/hw-app-tezos@6.29.3-nightly.0
-  - @ledgerhq/hw-app-trx@6.29.3-nightly.0
-  - @ledgerhq/hw-app-xrp@6.29.3-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.0
-
-## 34.8.0-nightly.1
-
-### Minor Changes
-
-- [#7613](https://github.com/LedgerHQ/ledger-live/pull/7613) [`f0eb405`](https://github.com/LedgerHQ/ledger-live/commit/f0eb405b52de5484ee98ac87e87522b33836224c) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds support for tBTC
-
-- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
+## 34.7.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.0
-  - @ledgerhq/live-env@2.3.0-nightly.0
-  - @ledgerhq/coin-framework@0.17.1-nightly.0
-  - @ledgerhq/coin-algorand@0.5.5-nightly.0
-  - @ledgerhq/coin-bitcoin@0.7.3-nightly.1
-  - @ledgerhq/coin-cardano@0.1.5-nightly.0
-  - @ledgerhq/coin-evm@2.1.5-nightly.0
-  - @ledgerhq/coin-icon@0.4.2-nightly.0
-  - @ledgerhq/coin-near@0.5.5-nightly.0
-  - @ledgerhq/coin-polkadot@1.2.1-nightly.0
-  - @ledgerhq/coin-solana@0.7.5-nightly.0
-  - @ledgerhq/coin-stellar@0.2.3-nightly.0
-  - @ledgerhq/coin-tezos@0.6.1-nightly.0
-  - @ledgerhq/coin-ton@0.3.13-nightly.1
-  - @ledgerhq/coin-tron@0.0.5-nightly.0
-  - @ledgerhq/coin-xrp@0.5.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.38.1-nightly.0
-  - @ledgerhq/hw-app-vet@0.2.5-nightly.0
-  - @ledgerhq/live-countervalues@0.2.5-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.5-nightly.0
-  - @ledgerhq/live-nft@0.4.5-nightly.0
-  - @ledgerhq/live-wallet@0.5.1-nightly.0
-  - @ledgerhq/live-network@1.4.1-nightly.0
-  - @ledgerhq/speculos-transport@0.1.5-nightly.0
-  - @ledgerhq/device-core@0.3.3-nightly.0
-
-## 34.8.0-nightly.0
-
-### Minor Changes
-
-- [#7580](https://github.com/LedgerHQ/ledger-live/pull/7580) [`6417959`](https://github.com/LedgerHQ/ledger-live/commit/641795937e14908ba9632a7b9744563b7e206be7) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Add discover section deep link initial category filter to enable links like `ledgerlive://discover?category=restaking` to load the discover screen with the category pre-selected
-
-### Patch Changes
-
-- [#7586](https://github.com/LedgerHQ/ledger-live/pull/7586) [`94bf322`](https://github.com/LedgerHQ/ledger-live/commit/94bf322023cf497b19399be8abcf54a57ea740d1) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: replace expo-random lib with expo-crypto
-
-- Updated dependencies [[`d2f7d9b`](https://github.com/LedgerHQ/ledger-live/commit/d2f7d9b418c374bd6b87927c1f67d58c118b556d), [`94bf322`](https://github.com/LedgerHQ/ledger-live/commit/94bf322023cf497b19399be8abcf54a57ea740d1)]:
-  - @ledgerhq/coin-bitcoin@0.7.3-nightly.0
-  - @ledgerhq/coin-ton@0.3.13-nightly.0
+- [#7642](https://github.com/LedgerHQ/ledger-live/pull/7642) [`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sentry: disable capture of "performance spans", which were not actually in use, but still causing a stop of the internal process on LLD Windows
 
 ## 34.7.0
 

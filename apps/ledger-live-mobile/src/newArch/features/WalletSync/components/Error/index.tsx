@@ -7,6 +7,7 @@ type Props = {
   mainButton: {
     label: string;
     onPress: () => void;
+    outline: boolean;
   };
 };
 
@@ -26,7 +27,7 @@ export function ErrorComponent({ title, desc, mainButton }: Props) {
         </Text>
       </Flex>
       <Flex mt={8}>
-        <Button type="main" outline onPress={mainButton.onPress}>
+        <Button type="main" outline={mainButton.outline} onPress={mainButton.onPress}>
           {mainButton.label}
         </Button>
       </Flex>

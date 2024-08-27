@@ -3,17 +3,14 @@ import { makeGetAccountShape } from "../../synchronisation";
 
 import { createFixtureAccount, mockSignerContext } from "../fixtures/common.fixtures";
 
-const mockStartSpan = jest.fn().mockReturnValue({
-  finish: jest.fn(),
-});
 describe("synchronisation", () => {
   it("should return a function", () => {
-    const result = makeGetAccountShape(mockSignerContext, mockStartSpan);
+    const result = makeGetAccountShape(mockSignerContext);
     expect(typeof result).toBe("function");
   });
 
   it("should return an account shape with the correct properties", async () => {
-    const getAccountShape = makeGetAccountShape(mockSignerContext, mockStartSpan);
+    const getAccountShape = makeGetAccountShape(mockSignerContext);
     const mockAccount = createFixtureAccount();
     mockAccount.id =
       "js:2:bitcoin:xpub6DM4oxVnZiePFvQMu1RJLQwWUzZQP3UNaLqrGcbJQkAJZYdiRoRivHULWoYN3zBYU4mJRpM3WrGaqo1kS8Q2XFfd9E3QEc9P3MKHwbHz9LB:native_segwit";

@@ -4,7 +4,15 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testUtils";
 import { initialStateWalletSync } from "~/renderer/reducers/walletSync";
-import { WalletSyncTestApp } from "./shared";
+import { WalletSyncTestApp, mockedSdk } from "./shared";
+
+jest.mock("../hooks/useTrustchainSdk", () => ({
+  useTrustchainSdk: () => ({
+    getMembers: (mockedSdk.getMembers = jest.fn()),
+    removeMember: (mockedSdk.removeMember = jest.fn()),
+    initMemberCredentials: (mockedSdk.initMemberCredentials = jest.fn()),
+  }),
+}));
 
 describe("Rendering", () => {
   it("should loads and displays WalletSync Row", async () => {

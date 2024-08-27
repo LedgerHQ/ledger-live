@@ -1,109 +1,18 @@
 # live-mobile
 
-## 3.49.0-nightly.3
-
-### Minor Changes
-
-- [#7634](https://github.com/LedgerHQ/ledger-live/pull/7634) [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198) Thanks [@Justkant](https://github.com/Justkant)! - feat: add dependencies support on wallet-api and dapp browser for transaction
-
-- [#7606](https://github.com/LedgerHQ/ledger-live/pull/7606) [`f839708`](https://github.com/LedgerHQ/ledger-live/commit/f83970899830bb9152323a18355a5f61d4832a13) Thanks [@thesan](https://github.com/thesan)! - Add currency support to quick actions
-
-- [#7572](https://github.com/LedgerHQ/ledger-live/pull/7572) [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6) Thanks [@valpinkman](https://github.com/valpinkman)! - Implement app data backup and restore when installing, uninstalling and updating apps on the device
+## 3.48.1
 
 ### Patch Changes
 
-- [#7529](https://github.com/LedgerHQ/ledger-live/pull/7529) [`a409ecc`](https://github.com/LedgerHQ/ledger-live/commit/a409ecceb71d5ffedf0362130c18de99ec594e36) Thanks [@RamyEB](https://github.com/RamyEB)! - Add label clear signing
+- Updated dependencies [[`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017)]:
+  - @ledgerhq/live-common@34.7.1
 
-- [#7626](https://github.com/LedgerHQ/ledger-live/pull/7626) [`aa0126a`](https://github.com/LedgerHQ/ledger-live/commit/aa0126ae3edf0c7604cb9e4027473ba86f151f01) Thanks [@Justkant](https://github.com/Justkant)! - fix: hidden header should show again when searching
-
-- [#7624](https://github.com/LedgerHQ/ledger-live/pull/7624) [`ce45204`](https://github.com/LedgerHQ/ledger-live/commit/ce45204c73294850734461dd110402bc4826ade4) Thanks [@Justkant](https://github.com/Justkant)! - fix: missing query params for web3hub manifests requests
-
-- [#7655](https://github.com/LedgerHQ/ledger-live/pull/7655) [`c358bb7`](https://github.com/LedgerHQ/ledger-live/commit/c358bb720a24a69a0ac813662d77c78af0b55055) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update copy for LedgerSync
-
-- [#7661](https://github.com/LedgerHQ/ledger-live/pull/7661) [`b07279f`](https://github.com/LedgerHQ/ledger-live/commit/b07279feb8fb8939ff880be5460c1ec16f1fee3b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add fromLedgerSyncOnboarding to trigger right onClose action for Activation
-
-- [#7632](https://github.com/LedgerHQ/ledger-live/pull/7632) [`271f90d`](https://github.com/LedgerHQ/ledger-live/commit/271f90dc0f5b46ddaf136873dc034d4c44045dd0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Fix the getOrCreateTrustchain that wasn't working when another instance destroyed the trustchain
-
-- [#7644](https://github.com/LedgerHQ/ledger-live/pull/7644) [`a8971eb`](https://github.com/LedgerHQ/ledger-live/commit/a8971eb98ee1cfe87e1dc4972f96fdb59e46c4e7) Thanks [@Wozacosta](https://github.com/Wozacosta)! - uses main account's unit when displayed fees with no options
-
-- [#7651](https://github.com/LedgerHQ/ledger-live/pull/7651) [`6f781da`](https://github.com/LedgerHQ/ledger-live/commit/6f781daef5bfb736edb7df003f39bdbd132b12aa) Thanks [@thesan](https://github.com/thesan)! - Add more descriptive mobile device name to the trustchain
-
-- [#7663](https://github.com/LedgerHQ/ledger-live/pull/7663) [`1a5bcec`](https://github.com/LedgerHQ/ledger-live/commit/1a5bcecb79d6c29b895f5d2d317a7aec00013acf) Thanks [@valpinkman](https://github.com/valpinkman)! - Avoid running watchloop when LS ff is disabled
-
-- [#7629](https://github.com/LedgerHQ/ledger-live/pull/7629) [`81468af`](https://github.com/LedgerHQ/ledger-live/commit/81468af073af1ccdeb3fdbcf6b2c998cebc68ab5) Thanks [@mwiercinska](https://github.com/mwiercinska)! - add translation for back to quote CTA in WebPTXPlayer
-
-- [#7635](https://github.com/LedgerHQ/ledger-live/pull/7635) [`e85f65b`](https://github.com/LedgerHQ/ledger-live/commit/e85f65b23ccb64599c235d62ff0db67b32dc3257) Thanks [@thesan](https://github.com/thesan)! - Create accounts with the receive market quick action
-
-- [#7648](https://github.com/LedgerHQ/ledger-live/pull/7648) [`3e3e839`](https://github.com/LedgerHQ/ledger-live/commit/3e3e83983ca4d8ef93f535cba391f0f7231ea6e7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix starting step when WS is activated and you want to sync again
-
-- [#7625](https://github.com/LedgerHQ/ledger-live/pull/7625) [`22019d6`](https://github.com/LedgerHQ/ledger-live/commit/22019d6834f3ebbe0798719c0e1abaff3b3ce1dd) Thanks [@Justkant](https://github.com/Justkant)! - fix: freeze when opening a live-app
-
-- Updated dependencies [[`87c160d`](https://github.com/LedgerHQ/ledger-live/commit/87c160d855b512d5a0394eaee7626e2b8cd431ee), [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198), [`e9bb8b9`](https://github.com/LedgerHQ/ledger-live/commit/e9bb8b969e3c07cb80a9247b8b5830693f35ef84), [`271f90d`](https://github.com/LedgerHQ/ledger-live/commit/271f90dc0f5b46ddaf136873dc034d4c44045dd0), [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6)]:
-  - @ledgerhq/trustchain@0.3.0-nightly.2
-  - @ledgerhq/live-common@34.8.0-nightly.3
-  - @ledgerhq/native-ui@0.23.4-nightly.0
-  - @ledgerhq/live-wallet@0.5.1-nightly.2
-
-## 3.49.0-nightly.2
+## 3.48.1-hotfix.0
 
 ### Patch Changes
 
-- [#7610](https://github.com/LedgerHQ/ledger-live/pull/7610) [`08fd8b4`](https://github.com/LedgerHQ/ledger-live/commit/08fd8b4c2150a32a72f2b943d1ef76724a1e2544) Thanks [@mwiercinska](https://github.com/mwiercinska)! - Add locale and ticker query params for buy/sell
-
-- Updated dependencies [[`f8756b2`](https://github.com/LedgerHQ/ledger-live/commit/f8756b29a83048d423d500e16ea3f9789763b90d), [`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
-  - @ledgerhq/live-common@34.8.0-nightly.2
-  - @ledgerhq/errors@6.19.0-nightly.0
-  - @ledgerhq/trustchain@0.3.0-nightly.1
-  - @ledgerhq/coin-framework@0.17.1-nightly.1
-  - @ledgerhq/coin-evm@2.1.5-nightly.1
-  - @ledgerhq/domain-service@1.2.4-nightly.0
-  - @ledgerhq/devices@8.4.3-nightly.0
-  - @ledgerhq/hw-transport@6.31.3-nightly.0
-  - @ledgerhq/hw-transport-http@6.30.3-nightly.0
-  - @ledgerhq/react-native-hid@6.32.3-nightly.0
-  - @ledgerhq/react-native-hw-transport-ble@6.33.3-nightly.0
-  - @ledgerhq/live-network@1.4.1-nightly.1
-  - @ledgerhq/live-wallet@0.5.1-nightly.1
-  - @ledgerhq/live-countervalues@0.2.5-nightly.1
-  - @ledgerhq/live-countervalues-react@0.2.5-nightly.1
-  - @ledgerhq/live-nft@0.4.5-nightly.1
-  - @ledgerhq/live-nft-react@0.4.5-nightly.1
-  - @ledgerhq/hw-trustchain@0.1.5-nightly.1
-
-## 3.49.0-nightly.1
-
-### Minor Changes
-
-- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
-
-### Patch Changes
-
-- Updated dependencies [[`f0eb405`](https://github.com/LedgerHQ/ledger-live/commit/f0eb405b52de5484ee98ac87e87522b33836224c), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
-  - @ledgerhq/live-common@34.8.0-nightly.1
-  - @ledgerhq/live-env@2.3.0-nightly.0
-  - @ledgerhq/coin-framework@0.17.1-nightly.0
-  - @ledgerhq/coin-evm@2.1.5-nightly.0
-  - @ledgerhq/live-countervalues@0.2.5-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.5-nightly.0
-  - @ledgerhq/live-nft@0.4.5-nightly.0
-  - @ledgerhq/live-nft-react@0.4.5-nightly.0
-  - @ledgerhq/live-wallet@0.5.1-nightly.0
-  - @ledgerhq/hw-trustchain@0.1.5-nightly.0
-  - @ledgerhq/live-network@1.4.1-nightly.0
-  - @ledgerhq/trustchain@0.2.1-nightly.0
-
-## 3.49.0-nightly.0
-
-### Minor Changes
-
-- [#7580](https://github.com/LedgerHQ/ledger-live/pull/7580) [`6417959`](https://github.com/LedgerHQ/ledger-live/commit/641795937e14908ba9632a7b9744563b7e206be7) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Add discover section deep link initial category filter to enable links like `ledgerlive://discover?category=restaking` to load the discover screen with the category pre-selected
-
-### Patch Changes
-
-- [#7586](https://github.com/LedgerHQ/ledger-live/pull/7586) [`94bf322`](https://github.com/LedgerHQ/ledger-live/commit/94bf322023cf497b19399be8abcf54a57ea740d1) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: replace expo-random lib with expo-crypto
-
-- Updated dependencies [[`6417959`](https://github.com/LedgerHQ/ledger-live/commit/641795937e14908ba9632a7b9744563b7e206be7), [`94bf322`](https://github.com/LedgerHQ/ledger-live/commit/94bf322023cf497b19399be8abcf54a57ea740d1)]:
-  - @ledgerhq/live-common@34.8.0-nightly.0
+- Updated dependencies [[`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017)]:
+  - @ledgerhq/live-common@34.7.1-hotfix.0
 
 ## 3.48.0
 

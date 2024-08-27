@@ -428,7 +428,7 @@ const SwapWebView = ({
             },
             {
               title: t("swap2.form.details.label.fees"),
-              preventBackdropClick: true,
+              forceDisableFocusTrap: true,
               onRequestClose: () => performClose(false),
             },
           );

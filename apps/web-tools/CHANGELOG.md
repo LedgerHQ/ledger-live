@@ -1,53 +1,18 @@
 # web-tools
 
-## 0.8.1-nightly.3
+## 0.8.1
 
 ### Patch Changes
 
-- Updated dependencies [[`87c160d`](https://github.com/LedgerHQ/ledger-live/commit/87c160d855b512d5a0394eaee7626e2b8cd431ee), [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198), [`271f90d`](https://github.com/LedgerHQ/ledger-live/commit/271f90dc0f5b46ddaf136873dc034d4c44045dd0), [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6)]:
-  - @ledgerhq/trustchain@0.3.0-nightly.2
-  - @ledgerhq/live-common@34.8.0-nightly.3
-  - @ledgerhq/live-wallet@0.5.1-nightly.2
+- Updated dependencies [[`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017)]:
+  - @ledgerhq/live-common@34.7.1
 
-## 0.8.1-nightly.2
+## 0.8.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`f8756b2`](https://github.com/LedgerHQ/ledger-live/commit/f8756b29a83048d423d500e16ea3f9789763b90d), [`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
-  - @ledgerhq/live-common@34.8.0-nightly.2
-  - @ledgerhq/errors@6.19.0-nightly.0
-  - @ledgerhq/trustchain@0.3.0-nightly.1
-  - @ledgerhq/coin-framework@0.17.1-nightly.1
-  - @ledgerhq/domain-service@1.2.4-nightly.0
-  - @ledgerhq/hw-app-eth@6.38.1-nightly.1
-  - @ledgerhq/hw-transport@6.31.3-nightly.0
-  - @ledgerhq/hw-transport-http@6.30.3-nightly.0
-  - @ledgerhq/hw-transport-web-ble@6.29.3-nightly.0
-  - @ledgerhq/hw-transport-webhid@6.29.3-nightly.0
-  - @ledgerhq/hw-transport-webusb@6.29.3-nightly.0
-  - @ledgerhq/live-wallet@0.5.1-nightly.1
-  - @ledgerhq/hw-trustchain@0.1.5-nightly.1
-
-## 0.8.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`f0eb405`](https://github.com/LedgerHQ/ledger-live/commit/f0eb405b52de5484ee98ac87e87522b33836224c), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
-  - @ledgerhq/live-common@34.8.0-nightly.1
-  - @ledgerhq/cryptoassets@13.4.0-nightly.0
-  - @ledgerhq/live-env@2.3.0-nightly.0
-  - @ledgerhq/coin-framework@0.17.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.38.1-nightly.0
-  - @ledgerhq/live-wallet@0.5.1-nightly.0
-  - @ledgerhq/hw-trustchain@0.1.5-nightly.0
-  - @ledgerhq/trustchain@0.2.1-nightly.0
-
-## 0.8.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`6417959`](https://github.com/LedgerHQ/ledger-live/commit/641795937e14908ba9632a7b9744563b7e206be7), [`94bf322`](https://github.com/LedgerHQ/ledger-live/commit/94bf322023cf497b19399be8abcf54a57ea740d1)]:
-  - @ledgerhq/live-common@34.8.0-nightly.0
+- Updated dependencies [[`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017)]:
+  - @ledgerhq/live-common@34.7.1-hotfix.0
 
 ## 0.8.0
 

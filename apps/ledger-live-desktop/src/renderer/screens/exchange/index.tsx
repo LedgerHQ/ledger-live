@@ -17,7 +17,7 @@ import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import {
-  DEFAULT_MULTIBUY_APP_ID,
+  BUY_SELL_UI_APP_ID,
   INTERNAL_APP_IDS,
   WALLET_API_VERSION,
 } from "@ledgerhq/live-common/wallet-api/constants";
@@ -114,7 +114,7 @@ export type ExchangeComponentParams = {
 const Exchange = ({ match }: RouteComponentProps<ExchangeComponentParams>) => {
   const appId = match?.params?.appId;
   const buySellUiFlag = useFeature("buySellUi");
-  const defaultPlatform = buySellUiFlag?.params?.manifestId || DEFAULT_MULTIBUY_APP_ID;
+  const defaultPlatform = buySellUiFlag?.params?.manifestId || BUY_SELL_UI_APP_ID;
 
   return <LiveAppExchange appId={appId || defaultPlatform} />;
 };

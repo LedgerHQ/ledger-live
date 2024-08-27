@@ -1,30 +1,10 @@
 # @ledgerhq/coin-bitcoin
 
-## 0.7.3-nightly.2
+## 0.7.3
 
 ### Patch Changes
 
-- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
-  - @ledgerhq/errors@6.19.0-nightly.0
-  - @ledgerhq/coin-framework@0.17.1-nightly.1
-  - @ledgerhq/devices@8.4.3-nightly.0
-  - @ledgerhq/live-network@1.4.1-nightly.1
-
-## 0.7.3-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
-  - @ledgerhq/cryptoassets@13.4.0-nightly.0
-  - @ledgerhq/live-env@2.3.0-nightly.0
-  - @ledgerhq/coin-framework@0.17.1-nightly.0
-  - @ledgerhq/live-network@1.4.1-nightly.0
-
-## 0.7.3-nightly.0
-
-### Patch Changes
-
-- [#7536](https://github.com/LedgerHQ/ledger-live/pull/7536) [`d2f7d9b`](https://github.com/LedgerHQ/ledger-live/commit/d2f7d9b418c374bd6b87927c1f67d58c118b556d) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds some unit tests in coin-bitcoin coin-module
+- [#7642](https://github.com/LedgerHQ/ledger-live/pull/7642) [`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sentry: disable capture of "performance spans", which were not actually in use, but still causing a stop of the internal process on LLD Windows
 
 ## 0.7.2
 

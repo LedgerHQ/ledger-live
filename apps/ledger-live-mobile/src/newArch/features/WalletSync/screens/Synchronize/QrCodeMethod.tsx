@@ -15,9 +15,15 @@ interface Props {
   setSelectedOption: (option: OptionsType) => void;
   onQrCodeScanned: (data: string) => void;
   currentOption: Options;
+  qrCodeValue?: string | null;
 }
 
-const QrCodeMethod = ({ setSelectedOption, onQrCodeScanned, currentOption }: Props) => {
+const QrCodeMethod = ({
+  setSelectedOption,
+  onQrCodeScanned,
+  currentOption,
+  qrCodeValue,
+}: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { t } = useTranslation();
 
@@ -44,7 +50,7 @@ const QrCodeMethod = ({ setSelectedOption, onQrCodeScanned, currentOption }: Pro
         return (
           <>
             <TrackScreen category={AnalyticsPage.ShowQRCode} />
-            <QrCode qrCodeValue="ledger.com" />
+            <QrCode qrCodeValue={qrCodeValue} />
           </>
         );
     }

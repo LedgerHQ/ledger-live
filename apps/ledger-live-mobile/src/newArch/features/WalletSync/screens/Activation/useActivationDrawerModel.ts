@@ -7,6 +7,10 @@ import {
 } from "../../hooks/useLedgerSyncAnalytics";
 import { useQRCodeHost } from "../../hooks/useQRCodeHost";
 import { Options } from "LLM/features/WalletSync/types/Activation";
+import { NavigatorName, ScreenName } from "~/const";
+import { useNavigation } from "@react-navigation/native";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 
 type Props = {
   isOpen: boolean;
@@ -14,11 +18,15 @@ type Props = {
   handleClose: () => void;
 };
 
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncActivationProcess>
+>;
+
 const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
   const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
-
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const hasCustomHeader = useMemo(() => currentStep === Steps.QrCodeMethod, [currentStep]);
   const canGoBack = useMemo(
     () => currentStep === Steps.ChooseSyncMethod && startingStep === Steps.Activation,
@@ -61,6 +69,13 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     handleClose();
   };
 
+  const onCreateKey = () => {
+    onClickTrack({ button: AnalyticsButton.CreateYourKey, page: AnalyticsPage.Unbacked });
+    navigation.navigate(NavigatorName.WalletSync, {
+      screen: ScreenName.WalletSyncActivationProcess,
+    });
+  };
+
   const { url, error, isLoading, pinCode } = useQRCodeHost({
     setCurrentStep,
     currentStep,
@@ -82,6 +97,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     currentOption,
     setCurrentOption,
     setCurrentStep,
+    onCreateKey,
   };
 };
 

@@ -13,10 +13,7 @@ import Config from "react-native-config";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import {
-  DEFAULT_MULTIBUY_APP_ID,
-  BUY_SELL_UI_APP_ID,
-} from "@ledgerhq/live-common/wallet-api/constants";
+import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -73,8 +70,8 @@ function getProxyURL(url: string, customBuySellUiAppId?: string) {
   }
 
   const buySellAppIds = customBuySellUiAppId
-    ? [customBuySellUiAppId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
-    : [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
+    ? [customBuySellUiAppId, BUY_SELL_UI_APP_ID]
+    : [BUY_SELL_UI_APP_ID];
 
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
   // Also handles a difference in paths between LLD on LLD /platform/:app_id

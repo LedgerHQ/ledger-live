@@ -267,6 +267,7 @@ const App = () => {
             <AppQRCodeCandidate
               memberCredentials={memberCredentials}
               setTrustchain={setTrustchain}
+              trustchain={trustchain}
             />
           </Expand>
         </Expand>

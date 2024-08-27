@@ -1,109 +1,21 @@
 # ledger-live-desktop
 
-## 2.86.0-nightly.4
-
-### Minor Changes
-
-- [#7634](https://github.com/LedgerHQ/ledger-live/pull/7634) [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198) Thanks [@Justkant](https://github.com/Justkant)! - feat: add dependencies support on wallet-api and dapp browser for transaction
-
-- [#7633](https://github.com/LedgerHQ/ledger-live/pull/7633) [`e5419de`](https://github.com/LedgerHQ/ledger-live/commit/e5419ded434a3f6a203c0195932b5b846fec0e2c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework QRCode Step in LLD + Add TabSelector in react-ui
-
-- [#7572](https://github.com/LedgerHQ/ledger-live/pull/7572) [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6) Thanks [@valpinkman](https://github.com/valpinkman)! - Implement new app data backup and restore when installing, uninstalling or updating app on the device
+## 2.85.1
 
 ### Patch Changes
 
-- [#7664](https://github.com/LedgerHQ/ledger-live/pull/7664) [`f00f598`](https://github.com/LedgerHQ/ledger-live/commit/f00f598e32e7868e41fbd5d5d5822cc897959ff5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove Export account when LedgerSync FF is On
+- [#7642](https://github.com/LedgerHQ/ledger-live/pull/7642) [`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sentry: disable capture of "performance spans", which were not actually in use, but still causing a stop of the internal process on LLD Windows
 
-- [#7632](https://github.com/LedgerHQ/ledger-live/pull/7632) [`271f90d`](https://github.com/LedgerHQ/ledger-live/commit/271f90dc0f5b46ddaf136873dc034d4c44045dd0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Fix the getOrCreateTrustchain that wasn't working when another instance destroyed the trustchain
+- Updated dependencies [[`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017)]:
+  - @ledgerhq/live-common@34.7.1
+  - @ledgerhq/coin-bitcoin@0.7.3
 
-- [#7627](https://github.com/LedgerHQ/ledger-live/pull/7627) [`a442d80`](https://github.com/LedgerHQ/ledger-live/commit/a442d808bcc48a820623260b1501321ede85cb76) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add CTAs on missing screens for LedgerSync
-
-- [#7662](https://github.com/LedgerHQ/ledger-live/pull/7662) [`4485e37`](https://github.com/LedgerHQ/ledger-live/commit/4485e3792b6ad7517a923f220858e667dbc7c97a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add more precise name for LLD Instances
-
-- [#7585](https://github.com/LedgerHQ/ledger-live/pull/7585) [`aadad07`](https://github.com/LedgerHQ/ledger-live/commit/aadad0732479f99bf502378fd74805f5a6f842f4) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: render loader on result for startExchange
-
-- [#7663](https://github.com/LedgerHQ/ledger-live/pull/7663) [`1a5bcec`](https://github.com/LedgerHQ/ledger-live/commit/1a5bcecb79d6c29b895f5d2d317a7aec00013acf) Thanks [@valpinkman](https://github.com/valpinkman)! - Avoid running watchloop when LS ff is disabled
-
-- [#7657](https://github.com/LedgerHQ/ledger-live/pull/7657) [`2359a8e`](https://github.com/LedgerHQ/ledger-live/commit/2359a8e34fbe1a1ac073b6d18d66d2942a5dd817) Thanks [@valpinkman](https://github.com/valpinkman)! - Prevent the use of webp for Custom Lock Screen
-
-- [#7629](https://github.com/LedgerHQ/ledger-live/pull/7629) [`81468af`](https://github.com/LedgerHQ/ledger-live/commit/81468af073af1ccdeb3fdbcf6b2c998cebc68ab5) Thanks [@mwiercinska](https://github.com/mwiercinska)! - add translation for back to quote CTA in WebPTXPlayer
-
-- [#7654](https://github.com/LedgerHQ/ledger-live/pull/7654) [`351cef9`](https://github.com/LedgerHQ/ledger-live/commit/351cef9caa68c1f88d1d709206ad5c3d5f22998b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Minor copy update for LedgerSync
-
-- Updated dependencies [[`87c160d`](https://github.com/LedgerHQ/ledger-live/commit/87c160d855b512d5a0394eaee7626e2b8cd431ee), [`940d807`](https://github.com/LedgerHQ/ledger-live/commit/940d8073f6395cbcc2369f46aa6ad30216b00198), [`e5419de`](https://github.com/LedgerHQ/ledger-live/commit/e5419ded434a3f6a203c0195932b5b846fec0e2c), [`271f90d`](https://github.com/LedgerHQ/ledger-live/commit/271f90dc0f5b46ddaf136873dc034d4c44045dd0), [`c8c273c`](https://github.com/LedgerHQ/ledger-live/commit/c8c273c9a443a75b2fb85b831c8d40cf6ff068c6)]:
-  - @ledgerhq/trustchain@0.3.0-nightly.2
-  - @ledgerhq/live-common@34.8.0-nightly.3
-  - @ledgerhq/react-ui@0.16.0-nightly.0
-  - @ledgerhq/live-wallet@0.5.1-nightly.2
-
-## 2.86.0-nightly.3
+## 2.85.1-hotfix.0
 
 ### Patch Changes
 
-- [#7610](https://github.com/LedgerHQ/ledger-live/pull/7610) [`08fd8b4`](https://github.com/LedgerHQ/ledger-live/commit/08fd8b4c2150a32a72f2b943d1ef76724a1e2544) Thanks [@mwiercinska](https://github.com/mwiercinska)! - Add locale and ticker query params for buy/sell
-
-- Updated dependencies [[`f8756b2`](https://github.com/LedgerHQ/ledger-live/commit/f8756b29a83048d423d500e16ea3f9789763b90d), [`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7)]:
-  - @ledgerhq/live-common@34.8.0-nightly.2
-  - @ledgerhq/errors@6.19.0-nightly.0
-  - @ledgerhq/trustchain@0.3.0-nightly.1
-  - @ledgerhq/coin-framework@0.17.1-nightly.1
-  - @ledgerhq/coin-bitcoin@0.7.3-nightly.2
-  - @ledgerhq/coin-evm@2.1.5-nightly.1
-  - @ledgerhq/domain-service@1.2.4-nightly.0
-  - @ledgerhq/devices@8.4.3-nightly.0
-  - @ledgerhq/hw-transport@6.31.3-nightly.0
-  - @ledgerhq/hw-transport-http@6.30.3-nightly.0
-  - @ledgerhq/hw-transport-node-hid-singleton@6.31.4-nightly.0
-  - @ledgerhq/hw-transport-node-speculos-http@6.29.3-nightly.0
-  - @ledgerhq/hw-transport-vault@1.3.3-nightly.0
-  - @ledgerhq/live-network@1.4.1-nightly.1
-  - @ledgerhq/live-wallet@0.5.1-nightly.1
-  - @ledgerhq/live-countervalues@0.2.5-nightly.1
-  - @ledgerhq/live-countervalues-react@0.2.5-nightly.1
-  - @ledgerhq/live-nft@0.4.5-nightly.1
-  - @ledgerhq/live-nft-react@0.4.5-nightly.1
-  - @ledgerhq/hw-trustchain@0.1.5-nightly.1
-
-## 2.86.0-nightly.2
-
-### Minor Changes
-
-- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
-
-### Patch Changes
-
-- [#7592](https://github.com/LedgerHQ/ledger-live/pull/7592) [`a354886`](https://github.com/LedgerHQ/ledger-live/commit/a354886e05e12b519f89d93cee079bbff3104723) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fixes display of account unit during send
-
-- Updated dependencies [[`f0eb405`](https://github.com/LedgerHQ/ledger-live/commit/f0eb405b52de5484ee98ac87e87522b33836224c), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333)]:
-  - @ledgerhq/live-common@34.8.0-nightly.1
-  - @ledgerhq/live-env@2.3.0-nightly.0
-  - @ledgerhq/coin-framework@0.17.1-nightly.0
-  - @ledgerhq/coin-bitcoin@0.7.3-nightly.1
-  - @ledgerhq/coin-evm@2.1.5-nightly.0
-  - @ledgerhq/live-countervalues@0.2.5-nightly.0
-  - @ledgerhq/live-countervalues-react@0.2.5-nightly.0
-  - @ledgerhq/live-nft@0.4.5-nightly.0
-  - @ledgerhq/live-nft-react@0.4.5-nightly.0
-  - @ledgerhq/live-wallet@0.5.1-nightly.0
-  - @ledgerhq/hw-trustchain@0.1.5-nightly.0
-  - @ledgerhq/live-network@1.4.1-nightly.0
-  - @ledgerhq/trustchain@0.2.1-nightly.0
-
-## 2.85.1-nightly.1
-
-### Patch Changes
-
-- [#7569](https://github.com/LedgerHQ/ledger-live/pull/7569) [`fc6a11a`](https://github.com/LedgerHQ/ledger-live/commit/fc6a11ab619ca6c4ec9e69b5239f99ec28c9e734) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix existing custom lock screen not being recognized in My Ledger ("Add" displayed instead of "Change" and no option to delete the current lock screen picture)
-
-## 2.85.1-nightly.0
-
-### Patch Changes
-
-- [#7602](https://github.com/LedgerHQ/ledger-live/pull/7602) [`e8db656`](https://github.com/LedgerHQ/ledger-live/commit/e8db656c625d0bf6a00ab340af6e3b9d4d79498d) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add demo3 manifest ids
-
-- Updated dependencies [[`d2f7d9b`](https://github.com/LedgerHQ/ledger-live/commit/d2f7d9b418c374bd6b87927c1f67d58c118b556d), [`6417959`](https://github.com/LedgerHQ/ledger-live/commit/641795937e14908ba9632a7b9744563b7e206be7), [`94bf322`](https://github.com/LedgerHQ/ledger-live/commit/94bf322023cf497b19399be8abcf54a57ea740d1)]:
-  - @ledgerhq/coin-bitcoin@0.7.3-nightly.0
-  - @ledgerhq/live-common@34.8.0-nightly.0
+- Updated dependencies [[`22ff55b`](https://github.com/LedgerHQ/ledger-live/commit/22ff55bf74a27fa22701c8b20424732a189ca017)]:
+  - @ledgerhq/live-common@34.7.1-hotfix.0
 
 ## 2.85.0
 
