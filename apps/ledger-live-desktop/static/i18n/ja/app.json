@@ -145,7 +145,8 @@
     "add" : "追加",
     "or" : "または",
     "clearAll" : "全消去",
-    "buyLedger" : "Ledgerを購入する"
+    "buyLedger" : "Ledgerを購入する",
+    "quote" : "見積もり"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -3979,7 +3980,7 @@
       "stock" : "マーケットインジケーターの色分け",
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
       "walletSync" : "Ledger同期",
-      "walletSyncDesc" : "シンプルにアプリのデータを保護し、複数のLedger Liveインスタンスを同期する。",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
       "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },
@@ -4005,6 +4006,16 @@
         "placeholder" : "CAL形式のExchangeプロバイダー情報"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "SimpleHash Tools",
+          "description" : "Provides some useful tools using SimpleHash",
+          "cta" : "Open",
+          "tabs" : {
+            "spam" : "Spam Report",
+            "refresh" : "Refresh Metadata",
+            "check" : "Spam Score"
+          }
+        },
         "debugSpamNft" : {
           "report" : "報告",
           "contractAddress" : "コントラクトアドレス",
@@ -4064,8 +4075,38 @@
         },
         "back" : "戻る"
       },
+      "debugWalletSync" : {
+        "title" : "Ledger Sync Debugger",
+        "description" : "Allows you to launch a specific LedgerSync flow or check current state of LedgerSync",
+        "cta" : "Open",
+        "modal" : {
+          "check" : {
+            "title" : "Checker",
+            "trustchain" : {
+              "name" : "Trustchain ID : ",
+              "emptyId" : "Empty ID",
+              "applicationPath" : "Application path : ",
+              "emptyApplicationPath" : "Empty Application path",
+              "cloudSyncVersion" : "Cloud sync version : ",
+              "lastSyncInfo" : "Last sync info : ",
+              "uniported" : "Non-imported accounts : "
+            },
+            "copied" : "Text copied to clipboard!",
+            "export" : "Export"
+          },
+          "generator" : {
+            "title" : "Generator",
+            "flow" : "Select a Flow",
+            "step" : "Select a Step",
+            "instance" : "Generate Members",
+            "cta" : "Apply"
+          }
+        }
+      },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
+      "mockAppUpdate" : "Mockアプリのアップデート",
+      "mockAppUpdateDesc" : "My Ledgerで利用可能なアプリのアップデートを表示すると、同じバージョンのアプリが再インストールされます。",
       "catalogUrl" : "カタログアプリプロバイダーを設定",
       "catalogUrlDesc" : "カスタムカタログプロバイダーのURLを入力",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
@@ -4228,27 +4269,6 @@
         "enableNetworkLogs" : {
           "title" : "ネットワークログを有効にする",
           "description" : "コンソールでネットワークログを有効にする（エラーログは常に有効になっています）。"
-        },
-        "testWalletSync" : {
-          "title" : "Ledger Syncをテスト",
-          "description" : "特定のLedgerSyncフローを起動できるようになります",
-          "cta" : "テスト",
-          "modal" : {
-            "flow" : "フローを選択",
-            "step" : "ステップを選択",
-            "instance" : "メンバーの生成",
-            "cta" : "適用"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "SimpleHashツール",
-          "description" : "SimpleHashを使用した便利なツールをいくつか利用できます",
-          "cta" : "開く",
-          "tabs" : {
-            "spam" : "スパム報告",
-            "refresh" : "メタデータを更新",
-            "check" : "スパムスコア"
-          }
         }
       }
     },
@@ -5544,6 +5564,13 @@
       "title" : "金額と手数料を算出できません",
       "description" : "金額と手数料を算出できません"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "トークン転送の受取人が無効です。トークン転送でサポートされているアカウントタイプ：[f0、f4、0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "手数料の概算に失敗しました。",
+      "description" : "ネットワーク上で手数料の見積もりに失敗しました。入力を確認してください。トランザクションは失敗する可能性が高いです"
+    },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
@@ -5644,6 +5671,10 @@
     "TransportStatusError" : {
       "title" : "問題が発生しました。デバイスを再接続してください。",
       "description" : "{{message}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "データの取得中に問題が発生しました。",
+      "description" : "もう一度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "DeviceShouldStayInApp" : {
       "title" : "{{appName}} アプリを開いてください。",
@@ -6159,6 +6190,15 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "当社のビットコインインフラストラクチャで問題が発生しています。後でもう一度お試しください。"
+    },
+    "TonExcessFee" : {
+      "title" : "これはトークン転送を構成します。手数料は0.1TONで、それ以上はお客様に返金されます。"
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "メインアカウント（TON）の資金が不足しており、手数料を計算できません。最低必要残高は0.1TONです。"
+    },
+    "TonMinimumRequired" : {
+      "title" : "資金が不足しています。最低必要残高は0.02TONです。"
     }
   },
   "cryptoOrg" : {
@@ -6359,12 +6399,12 @@
       "description" : "Ledgerは暗号化キーを生成してデータのプライバシーを確保し、あなただけが取得可能にします。",
       "cta" : "アカウントを同期する"
     },
-    "alreadySync" : "キーを作成済みですか？",
+    "alreadySync" : "すでにLedger Liveアプリを同期済みですか？",
     "manage" : {
       "cta" : "管理",
       "synchronize" : {
         "label" : "同期する",
-        "description" : "アプリのデータを別のLedger Liveアプリと同期して、シームレスな体験を実現します。"
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "backup" : {
         "label" : "キーの管理",
@@ -6440,7 +6480,7 @@
         "title" : "同期方法を選択",
         "description" : "Ledgerデバイスと直接同期するか、Ledger LiveでQRコードをスキャンして同期するかを選択できます。",
         "scan" : {
-          "title" : "QRコードをスキャン",
+          "title" : "Display QR code",
           "description" : "QRコードをスキャンして同期する"
         },
         "connectDevice" : {
@@ -6449,18 +6489,40 @@
         }
       },
       "qrCode" : {
-        "title" : "同期する",
-        "hint" : "2つのLedger Liveデスクトップアプリを同期しますか？こちらをクリック。",
-        "description" : "アカウントをスキャンして別のLedger Liveアプリと同期します",
-        "steps" : {
-          "step1" : "同期したいLedger Liveアプリを開く",
-          "step2" : "<0>設定 </0>> <0>一般</0> > <0>Ledger Sync</0> > <0>同期</0> > <0>QRを表示</0>に移動",
-          "step3" : "読み込みが100%に達するまでQRコードをスキャンする。"
+        "title" : "インスタンスの同期",
+        "options" : {
+          "mobile" : "モバイル",
+          "desktop" : "デスクトップ"
+        },
+        "mobile" : {
+          "description" : "アカウントをスキャンして別のLedger Liveアプリと同期します",
+          "steps" : {
+            "step1" : "同期したいLedger Liveアプリを開く",
+            "step2" : "<0>設定 </0>> <0>一般</0> > <0>Ledger Sync</0> > <0>同期</0> > <0>QRを表示</0>に移動",
+            "step3" : "QRコードをスキャン"
+          }
+        },
+        "desktop" : {
+          "description" : "アカウントを別のLedger Liveアプリと同期します",
+          "steps" : {
+            "step1" : "同期したいLedger Liveアプリを開く",
+            "step2" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>同期</0> > <0>Ledgerを使用</0>に移動",
+            "step3" : "Ledgerを接続する"
+          }
         }
+      },
+      "unbackedError" : {
+        "title" : "You need to create your encryption key first",
+        "description" : "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+        "cta" : "Create your encryption key"
       },
       "pinCode" : {
         "title" : "コードを入力",
-        "description" : "同期したい他のLedger Liveに表示されているコードを入力します。"
+        "description" : "同期したい他のLedger Liveに表示されているコードを入力します。",
+        "error" : {
+          "title" : "コードが一致しません",
+          "description" : "入力したコードが他のLedger Liveインスタンスに表示されるコードであることを確認してください。"
+        }
       }
     },
     "manageInstances" : {
