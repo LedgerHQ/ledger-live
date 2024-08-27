@@ -7,6 +7,9 @@ export const kadenaConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
+      infra: {
+        API_KADENA_ENDPOINT: "https://estats.testnet.chainweb.com",
+      },
     },
   },
 };

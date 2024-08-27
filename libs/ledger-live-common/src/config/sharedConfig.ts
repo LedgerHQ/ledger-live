@@ -10,11 +10,12 @@ import { multiversxConfig } from "../families/multiversx/config";
 import { evmConfig } from "../families/evm/config";
 import { fileCoinConfig } from "../families/filecoin/config";
 import { hederaConfig } from "../families/hedera/config";
+import { iconConfig } from "../families/icon/config";
 import { internetComputerConfig } from "../families/internet_computer/config";
+import { kadenaConfig } from "../families/kadena/config";
 import { nearConfig } from "../families/near/config";
 import { minaConfig } from "../families/mina/config";
 import { polkadotConfig } from "../families/polkadot/config";
-import { xrpConfig } from "../families/xrp/config";
 import { solanaConfig } from "../families/solana/config";
 import { stacksConfig } from "../families/stacks/config";
 import { stellarConfig } from "../families/stellar/config";
@@ -75,4 +76,5 @@ export const liveConfig: ConfigSchema = {
   ...tonConfig,
   ...suiConfig,
   ...sharedCurrencyConfig,
+  ...kadenaConfig,
 };

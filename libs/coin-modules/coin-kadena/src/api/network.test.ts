@@ -1,5 +1,8 @@
-import { fetchCoinDetailsForAccount, fetchNetworkInfo, getKadenaPactURL } from "./network";
 import BigNumber from "bignumber.js";
+import { fetchCoinDetailsForAccount, fetchNetworkInfo, getKadenaPactURL } from "./network";
+
+// Define the mock base URL for the TON API
+export const API_KADENA_ENDPOINT = "https://estats.testnet.chainweb.com";
 
 test("fetch balances", async () => {
   const address = "k:8ae62e33629660c10e3faf0fe83b675ff5186116bd29a29fe71179480bf4ae76";
@@ -25,5 +28,5 @@ test("fetch network info", async () => {
 
 test("get kadena pact url", () => {
   const url = getKadenaPactURL("0");
-  expect(url).toBe("https://estats.testnet.chainweb.com/chainweb/0.0/testnet04/chain/0/pact");
+  expect(url).toBe(`${API_KADENA_ENDPOINT}/chainweb/0.0/testnet04/chain/0/pact`);
 });

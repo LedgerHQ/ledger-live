@@ -1,5 +1,3 @@
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   defaultUpdateTransaction,
@@ -7,16 +5,18 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAccountShape } from "../js-synchronisation";
-import { buildSignOperation } from "../js-signOperation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { createTransaction, prepareTransaction } from "../js-transaction";
-import getTransactionStatus from "../js-getTransactionStatus";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import broadcast from "../js-broadcast";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../hw-getAddress";
+import broadcast from "../js-broadcast";
+import estimateMaxSpendable from "../js-estimateMaxSpendable";
+import getTransactionStatus from "../js-getTransactionStatus";
+import { buildSignOperation } from "../js-signOperation";
+import { getAccountShape } from "../js-synchronisation";
+import { createTransaction, prepareTransaction } from "../js-transaction";
+import type { Transaction } from "../types";
 
-import { KadenaAddress, KadenaSignature, KadenaSigner } from "../signer";
+import { KadenaSigner } from "../signer";
 
 export function buildCurrencyBridge(signerContext: SignerContext<KadenaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);

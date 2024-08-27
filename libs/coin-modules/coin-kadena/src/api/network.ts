@@ -1,18 +1,17 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { ChainId, ICommandResult, Pact, createClient } from "@kadena/client";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { AxiosResponse, Method } from "axios";
-import { ChainId, ICommandResult, Pact, createClient } from "@kadena/client";
-import { GetInfoResponse, GetTxnsResponse } from "./types";
+import { getCoinConfig } from "../config";
+import { KDA_CHAINWEB_VER, KDA_NETWORK } from "../constants";
 import { PactCommandObject } from "../hw-app-kda/Kadena";
 import { KadenaOperation } from "../types";
-import { KDA_CHAINWEB_VER, KDA_NETWORK } from "../constants";
+import { GetInfoResponse, GetTxnsResponse } from "./types";
 
 const getKadenaURL = (subpath?: string): string => {
-  const baseUrl = getEnv("API_KADENA_ENDPOINT");
-  if (!baseUrl) throw new Error("API indexer base URL not available");
+  const currencyConfig = getCoinConfig();
 
-  return `${baseUrl}${subpath ?? ""}`;
+  return `${currencyConfig.infra.API_KADENA_ENDPOINT}${subpath ?? ""}`;
 };
 
 export const getKadenaPactURL = (chainId: string): string => {
