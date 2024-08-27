@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "Identifiant {{ value }}",
       "times" : "x {{ value }}"
-    }
+    },
+    "quote" : "Prix"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -919,6 +920,13 @@
     "InvalidMemoICP" : {
       "title" : "Le mémo doit être un nombre"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Bénéficiaire invalide pour le transfert de tokens. Types de comptes pris en charge pour le transfert de tokens : [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "Échec de l’estimation des frais",
+      "description" : "Échec de l’estimation des frais sur le réseau. Vérifiez les entrées, la transaction risque de ne pas aboutir."
+    },
     "FirmwareNotRecognized" : {
       "title" : "Fournisseur non valide",
       "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur."
@@ -937,6 +945,19 @@
       "title" : "Veuillez réessayer.",
       "description" : "Le serveur n’a pas pu traiter votre demande. Veuillez réessayer ultérieurement ou contacter l’Assistance Ledger.",
       "errorCode" : "Code : {{errorCode}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "Erreur lors de la récupération de vos données",
+      "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "TonExcessFee" : {
+      "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 TON, et tout excédent vous sera remboursé."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "Fonds insuffisants sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "Fonds insuffisants. Le solde minimum requis est de 0,02 TON."
     }
   },
   "crash" : {
@@ -2274,6 +2295,7 @@
     },
     "quickActions" : {
       "buy" : "Acheter",
+      "sell" : "Vendre",
       "swap" : "Échanger",
       "send" : "Envoyer",
       "deposit" : "Recevoir",
@@ -2760,7 +2782,7 @@
       "dateFormat" : "Format de date",
       "dateFormatDesc" : "Définissez le format de date de Ledger Live.",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Sécurisez vos données Ledger Live en toute simplicité et synchronisez-les avec plusieurs appareils.",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "region" : "Région",
       "regionDesc" : "Choisissez votre région pour personnaliser les formats de date, d’heure et de nombre.",
       "password" : "Verrouillage",
@@ -2993,6 +3015,10 @@
         },
         "platformManifest" : {
           "title" : "Charger un manifest pour Platform"
+        },
+        "mockAppUpdate" : {
+          "title" : "Simuler des mises à jour d’app",
+          "description" : "Permet d’afficher « Mises à jour d’apps disponibles » dans My Ledger, pour réinstaller la même version d’une app."
         }
       }
     },
@@ -6703,7 +6729,7 @@
         "title" : "Synchronisez vos comptes sur toutes les plateformes",
         "description" : "Votre appareil Ledger va générer une clé de chiffrement. Vos données restent privées, et vous seul(e) pouvez les récupérer.",
         "mainCta" : "Synchroniser les comptes",
-        "secondCta" : "Vous avez déjà créé une clé ?"
+        "secondCta" : "Déjà synchronisé avec une application Ledger Live ?"
       }
     },
     "deviceSelection" : {
@@ -6725,7 +6751,7 @@
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "Synchroniser",
-        "description" : "Synchronisez vos données Ledger Live avec celles d’un autre appareil pour une expérience fluide. "
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "manageKey" : {
         "title" : "Gérer votre clé",
@@ -6786,23 +6812,76 @@
         "connectDevice" : {
           "title" : "Utiliser mon wallet Ledger"
         }
+      },
+      "qrCode" : {
+        "title" : "Synchroniser",
+        "show" : {
+          "title" : "Voir le code QR",
+          "explanation" : {
+            "title" : "Scannez et synchronisez vos comptes en utilisant une autre application Ledger Live",
+            "steps" : {
+              "step1" : "Ouvrez l’application Ledger Live à synchroniser",
+              "step2" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchroniser</0>",
+              "step3" : "Scannez le code QR"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "Scanner",
+          "description" : "Scannez le code QR",
+          "explanation" : {
+            "title" : "Scannez et synchronisez vos comptes en utilisant une autre application Ledger Live",
+            "steps" : {
+              "step1" : "Ouvrez l’application Ledger Live à synchroniser",
+              "step2" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchroniser</0> <1>></1> <0>Voir le code QR</0>",
+              "step3" : "Scannez le code QR"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "Saisissez votre code",
+          "desc" : "Saisissez ce code sur l’application Ledger Live que vous voulez synchroniser.",
+          "error" : {
+            "title" : "Les codes ne sont pas identiques",
+            "desc" : "Le code que vous saisissez doit être identique à celui affiché sur l’autre application Ledger Live.",
+            "tryAgain" : "Réessayer"
+          }
+        },
+        "unbacked" : {
+          "title" : "You need to create your encryption key first",
+          "desc" : "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+          "cta" : "Create your encryption key"
+        }
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "Signature en clair activée",
-      "checkbox" : "Ne plus me le rappeler",
-      "CTA" : "Ouvrir {{app}}"
-    },
-    "manifestsList" : {
-      "title" : "Explorer",
-      "description" : "Ledger vous ouvre les portes du Web3"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "Signature en clair activée",
+        "clearSigningDisabled" : "Signature en clair désactivée",
+        "checkbox" : "Ne plus me le rappeler",
+        "CTA" : "Ouvrir {{app}}"
+      },
+      "manifestsList" : {
+        "title" : "Explorer",
+        "description" : "Ledger vous ouvre les portes du Web3"
+      },
+      "label" : {
+        "clearSigning" : "Signature en clair"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "Discover"
+      },
       "header" : {
         "title" : "Explorez le Web3",
         "placeholder" : "Recherchez ou saisissez une URL"
+      },
+      "clearSigning" : {
+        "title" : "Signature en clair",
+        "description" : "La signature en clair vous permet de signer un message dont les termes sont clairement lisibles. Cette fonctionnalité renforce votre sécurité."
       }
     }
   }
