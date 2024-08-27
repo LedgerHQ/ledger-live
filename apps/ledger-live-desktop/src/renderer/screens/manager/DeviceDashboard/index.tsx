@@ -172,6 +172,9 @@ const DeviceDashboard = ({
   }, [reduxDispatch, result.customImageBlocks]);
 
   const disableFirmwareUpdate = state.installQueue.length > 0 || state.uninstallQueue.length > 0;
+
+  const [hasCustomLockScreen, setHasCustomLockScreen] = useState(result.customImageBlocks !== 0);
+
   return (
     <>
       {renderFirmwareUpdateBanner
@@ -212,7 +215,8 @@ const DeviceDashboard = ({
           device={device}
           deviceName={deviceName}
           isIncomplete={isIncomplete}
-          hasCustomLockScreen={result.customImageBlocks !== 0}
+          hasCustomLockScreen={hasCustomLockScreen}
+          setHasCustomLockScreen={setHasCustomLockScreen}
         />
         <ProviderWarning />
         <AppList
