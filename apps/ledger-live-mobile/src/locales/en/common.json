@@ -6737,6 +6737,11 @@
       "title": "Continue on your Ledger {{wording}}",
       "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
     },
+    "loading": {
+      "title": "Hang tight...",
+      "activation": "Your data is being end-to-end encrypted... ",
+      "synch": "We are updating the synched instances..."
+    },
     "success": {
       "sync": "Synchronization successful!",
       "syncDesc": "Changes in your accounts will now automatically appear across all apps and platforms.",

@@ -171,7 +171,7 @@ export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema 
 
   const notificationsEnabled = watchConfig?.notificationsEnabled || false;
   const pollingInterval = watchConfig?.pollingInterval || 10000;
-  const initialTimeout = watchConfig?.initialTimeout || 5000;
+  const initialTimeout = watchConfig?.initialTimeout || 1000;
   const userIntentDebounce = watchConfig?.userIntentDebounce || 1000;
 
   // main loop

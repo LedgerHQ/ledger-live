@@ -35,7 +35,7 @@ export const useSyncWithQrCode = () => {
     setInput(null);
     setInputCallback(null);
     navigation.navigate(NavigatorName.WalletSync, {
-      screen: ScreenName.WalletSyncSuccess,
+      screen: ScreenName.WalletSyncLoading,
       params: {
         created: false,
       },
