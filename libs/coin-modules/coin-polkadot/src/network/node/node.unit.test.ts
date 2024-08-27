@@ -22,7 +22,9 @@ describe("fetchNominations", () => {
           nominators: {
             at: jest.fn(),
           },
-          erasStakersOverview: jest.fn(),
+          erasStakersOverview: {
+            multi: jest.fn(),
+          },
           erasStakersPaged: jest.fn(),
         },
       },
@@ -58,7 +60,7 @@ describe("fetchNominations", () => {
       unwrap: () => ({ targets: mockTargets, submittedIn: "submittedIn" }),
     };
     const mockStashes = [{ toString: () => "stash1" }, { toString: () => "stash2" }];
-    const mockExposure = { isNone: false, toJSON: () => ({ pageCount: 1 }) };
+    const mockExposure = [{ isNone: false, toJSON: () => ({ pageCount: 1 }) }];
     const mockNominators = {
       unwrap: () => ({
         others: [{ who: { toString: () => mockAddress }, value: { toString: () => "100" } }],
@@ -72,7 +74,7 @@ describe("fetchNominations", () => {
     });
     api.query.staking.nominators.at.mockResolvedValue(mockNominationsOpt);
     api.derive.staking.stashes.mockResolvedValue(mockStashes);
-    api.query.staking.erasStakersOverview.mockResolvedValue(mockExposure);
+    api.query.staking.erasStakersOverview.multi.mockResolvedValue(mockExposure);
     api.query.staking.erasStakersPaged.mockResolvedValue(mockNominators);
 
     const result = await fetchNominations(mockAddress);
@@ -98,7 +100,7 @@ describe("fetchNominations", () => {
     });
     api.query.staking.nominators.at.mockResolvedValue(mockNominationsOpt);
     api.derive.staking.stashes.mockResolvedValue(mockStashes);
-    api.query.staking.erasStakersOverview.mockResolvedValue({ isNone: true });
+    api.query.staking.erasStakersOverview.multi.mockResolvedValue([{ isNone: true }]);
 
     const result = await fetchNominations(mockAddress);
 
