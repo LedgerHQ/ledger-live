@@ -12,6 +12,7 @@ import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSync
 import PinCodeErrorStep from "./05-PinCodeError";
 import UnbackedErrorStep from "./05-UnbackedError";
 import { BackProps, BackRef } from "../router";
+import ActivationLoadingStep from "../Activation/04-LoadingStep";
 
 const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
   const dispatch = useDispatch();
@@ -69,6 +70,9 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
 
       case Step.UnbackedError:
         return <UnbackedErrorStep />;
+
+      case Step.SynchronizeLoading:
+        return <ActivationLoadingStep />;
 
       case Step.Synchronized:
         return <SyncFinalStep />;

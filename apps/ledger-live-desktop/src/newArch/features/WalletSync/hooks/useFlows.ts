@@ -23,9 +23,10 @@ export const FlowOptions: Record<
       1: Step.CreateOrSynchronize,
       2: Step.DeviceAction,
       3: Step.CreateOrSynchronizeTrustChain,
-      4: Step.ActivationFinal,
-      5: Step.SynchronizationFinal,
-      6: Step.SynchronizationError,
+      4: Step.ActivationLoading,
+      5: Step.ActivationFinal,
+      6: Step.SynchronizationFinal,
+      7: Step.SynchronizationError,
     },
   },
   [Flow.Synchronize]: {
@@ -33,7 +34,8 @@ export const FlowOptions: Record<
       1: Step.SynchronizeMode,
       2: Step.SynchronizeWithQRCode,
       3: Step.PinCode,
-      4: Step.Synchronized,
+      4: Step.SynchronizeLoading,
+      5: Step.Synchronized,
     },
   },
   [Flow.ManageBackup]: {

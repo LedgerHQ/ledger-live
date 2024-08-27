@@ -24,10 +24,12 @@ export function useAddMember({ device }: { device: Device | null }) {
       dispatch(
         setFlow({
           flow: Flow.Activation,
-          step:
+          step: Step.ActivationLoading,
+          nextStep:
             trustchainResult.type === TrustchainResultType.created
               ? Step.ActivationFinal
               : Step.SynchronizationFinal,
+          hasTrustchainBeenCreated: trustchainResult.type === TrustchainResultType.created,
         }),
       );
     },

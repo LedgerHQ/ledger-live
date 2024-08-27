@@ -8,9 +8,10 @@ import { FlowOptions, useFlows } from "../../hooks/useFlows";
 import CreateOrSynchronizeStep from "./01-CreateOrSynchronizeStep";
 import DeviceActionStep from "./02-DeviceActionStep";
 import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrustchain";
-import ActivationFinalStep from "./04-ActivationFinalStep";
+import LoadingStep from "./04-LoadingStep";
+import ActivationFinalStep from "./05-ActivationFinalStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import ErrorStep from "./05-ActivationOrSyncError";
+import ErrorStep from "./06-ActivationOrSyncError";
 import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
 import { BackRef, BackProps } from "../router";
 
@@ -66,6 +67,8 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
         return <DeviceActionStep goNext={goToActivationOrSynchroWithTrustchain} />;
       case Step.CreateOrSynchronizeTrustChain:
         return <ActivationOrSynchroWithTrustchain device={device} />;
+      case Step.ActivationLoading:
+        return <LoadingStep />;
       case Step.ActivationFinal:
         return <ActivationFinalStep isNewBackup={true} />;
       case Step.SynchronizationFinal:
