@@ -25,6 +25,7 @@ export enum AnalyticsPage {
   DesktopSync = "Sync from a desktop",
   KeyCreated = "Backup creation success",
   KeyUpdated = "Sync apps success",
+  Loading = "Loading",
 
   SyncWithQR = "Sync with QR code",
   PinCode = "Pin code",
@@ -60,6 +61,7 @@ export const StepMappedToAnalytics: Record<Step, string> = {
   [Step.CreateOrSynchronize]: AnalyticsPage.Activation,
   [Step.DeviceAction]: AnalyticsPage.DeviceActionActivation,
   [Step.CreateOrSynchronizeTrustChain]: AnalyticsPage.CreateOrSynchronizeTrustChain,
+  [Step.ActivationLoading]: AnalyticsPage.Loading,
   [Step.ActivationFinal]: AnalyticsPage.KeyCreated,
   [Step.SynchronizationFinal]: AnalyticsPage.KeyUpdated,
   [Step.SynchronizationError]: AnalyticsPage.SynchronizationError,
@@ -69,6 +71,7 @@ export const StepMappedToAnalytics: Record<Step, string> = {
   //Synchronize
   [Step.SynchronizeMode]: AnalyticsPage.SyncMethod,
   [Step.SynchronizeWithQRCode]: AnalyticsPage.SyncWithQR,
+  [Step.SynchronizeLoading]: AnalyticsPage.Loading,
   [Step.PinCode]: AnalyticsPage.PinCode,
   [Step.PinCodeError]: AnalyticsPage.PinCodeError,
   [Step.Synchronized]: AnalyticsPage.KeyUpdated,

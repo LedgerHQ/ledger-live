@@ -129,7 +129,6 @@ export function useWatchWalletSync(): WalletSyncUserState {
   // pull and push wallet sync loop
   useEffect(() => {
     const canNotRunWatchLoop = !featureWalletSync?.enabled || !trustchain || !memberCredentials;
-
     if (canNotRunWatchLoop) {
       onUserRefreshRef.current = noop;
       setVisualPending(false);

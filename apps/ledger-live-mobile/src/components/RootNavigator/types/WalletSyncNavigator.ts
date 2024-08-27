@@ -8,6 +8,10 @@ export type WalletSyncNavigatorStackParamList = {
     created: boolean;
   };
 
+  [ScreenName.WalletSyncLoading]: {
+    created: boolean;
+  };
+
   [ScreenName.WalletSyncActivationProcess]: undefined;
   [ScreenName.WalletSyncActivated]: undefined;
 

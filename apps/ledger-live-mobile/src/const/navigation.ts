@@ -514,6 +514,7 @@ export enum ScreenName {
   WalletSyncActivationInit = "WalletSyncActivationInit",
   WalletSyncActivationProcess = "WalletSyncActivationProcess",
   WalletSyncSuccess = "WalletSyncSuccess",
+  WalletSyncLoading = "WalletSyncLoading",
   WalletSyncActivated = "WalletSyncActivated",
   WalletSyncManageKeyDeleteSuccess = "WalletSyncManageKeyDeleteSuccess",
   WalletSyncUnSynchSuccess = "WalletSyncUnSynchSuccess",
