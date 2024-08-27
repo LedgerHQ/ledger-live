@@ -18,9 +18,7 @@ import resolver from "../hw-getAddress";
 
 import { KadenaAddress, KadenaSignature, KadenaSigner } from "../signer";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<KadenaSigner>,
-): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<KadenaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -57,9 +55,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<KadenaSigner>,
-) {
+export function createBridges(signerContext: SignerContext<KadenaSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

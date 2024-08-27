@@ -8,7 +8,6 @@ import {
 import {
   Connection,
   FetchMiddleware,
-  VersionedMessage,
   PublicKey,
   SignaturesForAddressOptions,
   StakeProgram,
@@ -21,9 +20,6 @@ import {
   Commitment,
   GetLatestBlockhashConfig,
 } from "@solana/web3.js";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import { getEnv } from "@ledgerhq/live-env";
-import { NetworkError } from "@ledgerhq/errors";
 import { Awaited } from "../../logic";
 import { getTokenAccountProgramId } from "../../helpers/token";
 import { SolanaTokenProgram } from "../../types";

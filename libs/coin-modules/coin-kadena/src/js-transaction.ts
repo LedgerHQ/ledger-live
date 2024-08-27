@@ -31,15 +31,12 @@ export const prepareTransaction = async (a: Account, t: Transaction): Promise<Tr
 
     if (validateAddress(recipient) && validateAddress(address)) {
       if (t.useAllAmount) {
-        let fees = t.gasPrice.multipliedBy(t.gasLimit);
+        const fees = t.gasPrice.multipliedBy(t.gasLimit);
 
-        const balance = await fetchCoinDetailsForAccount(address, [
-          t.senderChainId.toString(),
-        ]);
+        const balance = await fetchCoinDetailsForAccount(address, [t.senderChainId.toString()]);
         if (balance[t.senderChainId] === undefined) {
           return { ...t, amount: new BigNumber(0) };
         }
-      
 
         amount = baseUnitToKda(balance[t.senderChainId]).minus(fees);
         return { ...t, amount };
@@ -50,4 +47,3 @@ export const prepareTransaction = async (a: Account, t: Transaction): Promise<Tr
   // log("debug", "[prepareTransaction] finish fn");
   return t;
 };
-

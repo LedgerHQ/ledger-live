@@ -75,34 +75,43 @@ function reconciliatePublicKey(
   throw new Error("publicKey wasn't properly restored");
 }
 
-const rawTxsToOps = (rawTxs: GetTxnsResponse[], accountId: string, address: string): KadenaOperation[] => {
+const rawTxsToOps = (
+  rawTxs: GetTxnsResponse[],
+  accountId: string,
+  address: string,
+): KadenaOperation[] => {
   const ops: KadenaOperation[] = [];
-  let txs = new Map();
+  const txs = new Map();
 
   // Gather ops from the same transaction
-  for (let rawTx of rawTxs) {
+  for (const rawTx of rawTxs) {
     let tmp = [];
 
     if (rawTx.token !== "coin") continue;
 
-    if (txs.has(rawTx.requestKey)) { tmp = txs.get(rawTx.requestKey); }
+    if (txs.has(rawTx.requestKey)) {
+      tmp = txs.get(rawTx.requestKey);
+    }
     tmp.push(rawTx);
 
     txs.set(rawTx.requestKey, tmp);
   }
 
   // Build ops by taking index 0 as fee and index 1 as the actual transaction
-  for (let tx of txs.values()) {
-    let k_op: KadenaOperation = {} as KadenaOperation;
+  for (const tx of txs.values()) {
+    const k_op: KadenaOperation = {} as KadenaOperation;
     k_op.fee = new BigNumber(0);
     k_op.value = new BigNumber(0);
 
     let transaction_op = null;
     let fee_op = null;
 
-    // Find minimal amount value and 
-    for (let op of tx) {
-      if (!transaction_op || (transaction_op && new BigNumber(transaction_op.amount) < new BigNumber(op.amount))) {
+    // Find minimal amount value and
+    for (const op of tx) {
+      if (
+        !transaction_op ||
+        (transaction_op && new BigNumber(transaction_op.amount) < new BigNumber(op.amount))
+      ) {
         transaction_op = op;
         fee_op = fee_op ? fee_op : transaction_op;
       } else {
@@ -110,7 +119,18 @@ const rawTxsToOps = (rawTxs: GetTxnsResponse[], accountId: string, address: stri
       }
     }
 
-    const { requestKey, blockTime, height, amount, fromAccount, toAccount, blockHash, chain, crossChainAccount, crossChainId } = transaction_op;
+    const {
+      requestKey,
+      blockTime,
+      height,
+      amount,
+      fromAccount,
+      toAccount,
+      blockHash,
+      chain,
+      crossChainAccount,
+      crossChainId,
+    } = transaction_op;
     const blockHeight = height;
     const date = new Date(blockTime);
     const value = new BigNumber(amount);
@@ -134,9 +154,9 @@ const rawTxsToOps = (rawTxs: GetTxnsResponse[], accountId: string, address: stri
       senderChainId: chain,
       receiverChainId: crossChainId ?? chain,
     };
-  
+
     ops.push(k_op);
   }
 
   return ops;
-}
+};

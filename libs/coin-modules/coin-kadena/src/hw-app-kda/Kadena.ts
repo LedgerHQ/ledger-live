@@ -16,35 +16,35 @@
  ********************************************************************************/
 
 export interface TransferTxParams {
-  path?: string,
-  namespace?: string,
-  module?: string,
-  recipient: string,
-  amount: string,
-  chainId: number,
-  network: string,
-  gasPrice?: string,
-  gasLimit?: string,
-  creationTime?: number,
-  ttl?: string, // Could be decimal
-  nonce?: string,
+  path?: string;
+  namespace?: string;
+  module?: string;
+  recipient: string;
+  amount: string;
+  chainId: number;
+  network: string;
+  gasPrice?: string;
+  gasLimit?: string;
+  creationTime?: number;
+  ttl?: string; // Could be decimal
+  nonce?: string;
 }
 
 export interface TransferCrossChainTxParams extends TransferTxParams {
-  recipient_chainId: number,
+  recipient_chainId: number;
 }
 
 export interface BuildTransactionResult {
-  pubkey: string,
-  pact_command: PactCommandObject,
-};
+  pubkey: string;
+  pact_command: PactCommandObject;
+}
 
 export interface PactCommandObject {
-  cmd: string,
-  hash: string,
-  sigs: PactCommandSig[],
-};
+  cmd: string;
+  hash: string;
+  sigs: PactCommandSig[];
+}
 
 export interface PactCommandSig {
-  sig: string,
-};
+  sig: string;
+}

@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 
 // TODO: remove this when we have a proper way to handle this
 export const KDA_DECIMALS = 12;
-export const KDA_FEES_BASE = "1.0e-6"
+export const KDA_FEES_BASE = "1.0e-6";
 export const KDA_FEES = BigNumber(KDA_FEES_BASE).times(10 ** KDA_DECIMALS);
 export const KDA_GAS_LIMIT_TRANSFER = BigNumber(2300); // '2300' is the GasLimit indicated for most of the transaction so it should be more than enought
 

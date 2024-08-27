@@ -14,7 +14,7 @@ export const estimateMaxSpendable = async ({
   transaction?: Transaction | null | undefined;
 }): Promise<BigNumber> => {
   if (!transaction) {
-    transaction = createTransaction()
+    transaction = createTransaction();
   }
 
   if (account.type !== "Account") {

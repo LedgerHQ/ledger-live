@@ -10,12 +10,11 @@ export const isNoErrorReturnCode = (code: number): boolean => code === 0x9000;
 export const getPath = (path: string): string =>
   path && path.substring(0, 2) !== "m/" ? `m/${path}` : path;
 
-export const getAddress = (a: Account): Address =>{
-  return  { address: a.freshAddress, derivationPath: a.freshAddressPath };
-}
+export const getAddress = (a: Account): Address => {
+  return { address: a.freshAddress, derivationPath: a.freshAddressPath };
+};
 
 export const validateAddress = (address: string): boolean => {
-
   address = address.startsWith("k:") ? address.substring(2) : address;
   if (!address.match(kdaAddressRegEx)) {
     return false;

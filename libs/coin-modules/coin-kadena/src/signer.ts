@@ -1,4 +1,8 @@
-import { BuildTransactionResult, TransferCrossChainTxParams, TransferTxParams } from "./hw-app-kda/Kadena";
+import {
+  BuildTransactionResult,
+  TransferCrossChainTxParams,
+  TransferTxParams,
+} from "./hw-app-kda/Kadena";
 
 export type KadenaAddress = {
   publicKey: Uint8Array;
@@ -13,4 +17,3 @@ export interface KadenaSigner {
   signTransferCreateTx(params: TransferTxParams): Promise<KadenaSignature>;
   signTransferCrossChainTx(params: TransferCrossChainTxParams): Promise<KadenaSignature>;
 }
-  

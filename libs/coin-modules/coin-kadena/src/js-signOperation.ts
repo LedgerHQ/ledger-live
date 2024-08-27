@@ -35,7 +35,8 @@ export const buildSignOperation =
       async function main() {
         // log("debug", "[signOperation] start fn");
 
-        const { recipient, amount, gasLimit, gasPrice, receiverChainId, senderChainId } = transaction;
+        const { recipient, amount, gasLimit, gasPrice, receiverChainId, senderChainId } =
+          transaction;
         const fees = gasPrice.multipliedBy(gasLimit);
         const { id: accountId } = account;
         const { address, derivationPath } = getAddress(account);

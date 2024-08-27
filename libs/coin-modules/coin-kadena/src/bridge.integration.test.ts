@@ -57,8 +57,8 @@ const kadena: CurrenciesData<Transaction> = {
           },
         },
       ],
-    }
-  ]
+    },
+  ],
 };
 
 export const dataset: DatasetTest<Transaction> = {
