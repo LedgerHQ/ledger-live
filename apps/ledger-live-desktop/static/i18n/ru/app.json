@@ -145,7 +145,8 @@
     "add" : "Добавить",
     "or" : "ИЛИ",
     "clearAll" : "Очистить все",
-    "buyLedger" : "Купить Ledger"
+    "buyLedger" : "Купить Ledger",
+    "quote" : "Курс"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -3979,7 +3980,7 @@
       "stock" : "Индикатор регионального рынка",
       "stockDesc" : "Выберите «Западный», чтобы рост рыночной стоимости отображался синим цветом, либо «Восточный», чтобы рост рыночной стоимости отображался красным цветом.",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Обезопасьте данные и синхронизируйте несколько приложений Ledger Live.",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "marketPerformanceWidget" : "Виджет поведения рынка",
       "marketPerformanceWidgetDesc" : "Данная функция показывает самые прибыльные и убыточные криптоактивы за разные промежутки времени на странице портфеля."
     },
@@ -4005,6 +4006,16 @@
         "placeholder" : "Данные о поставщике обмена в формате CAL"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "SimpleHash Tools",
+          "description" : "Provides some useful tools using SimpleHash",
+          "cta" : "Open",
+          "tabs" : {
+            "spam" : "Spam Report",
+            "refresh" : "Refresh Metadata",
+            "check" : "Spam Score"
+          }
+        },
         "debugSpamNft" : {
           "report" : "Отправить",
           "contractAddress" : "Адрес контракта",
@@ -4064,8 +4075,38 @@
         },
         "back" : "Назад"
       },
+      "debugWalletSync" : {
+        "title" : "Ledger Sync Debugger",
+        "description" : "Allows you to launch a specific LedgerSync flow or check current state of LedgerSync",
+        "cta" : "Open",
+        "modal" : {
+          "check" : {
+            "title" : "Checker",
+            "trustchain" : {
+              "name" : "Trustchain ID : ",
+              "emptyId" : "Empty ID",
+              "applicationPath" : "Application path : ",
+              "emptyApplicationPath" : "Empty Application path",
+              "cloudSyncVersion" : "Cloud sync version : ",
+              "lastSyncInfo" : "Last sync info : ",
+              "uniported" : "Non-imported accounts : "
+            },
+            "copied" : "Text copied to clipboard!",
+            "export" : "Export"
+          },
+          "generator" : {
+            "title" : "Generator",
+            "flow" : "Select a Flow",
+            "step" : "Select a Step",
+            "instance" : "Generate Members",
+            "cta" : "Apply"
+          }
+        }
+      },
       "experimentalApps" : "Разрешить экспериментальные приложения",
       "experimentalAppsDesc" : "Показывать и открывать экспериментальные приложения на платформе.",
+      "mockAppUpdate" : "Фиктивное обновление приложения",
+      "mockAppUpdateDesc" : "Отображать доступное обновление во вкладке «Мой Ledger» для переустановки той же версии приложения.",
       "catalogUrl" : "Сменить оператора Каталога приложений",
       "catalogUrlDesc" : "Введите собственный URL поставщика каталога.",
       "enablePlatformDevTools" : "Включить инструменты разработчика на платформе",
@@ -4228,27 +4269,6 @@
         "enableNetworkLogs" : {
           "title" : "Активация логов сети",
           "description" : "Включить сетевые логи в консоли. Логи ошибок активированы всегда."
-        },
-        "testWalletSync" : {
-          "title" : "Тестирование Ledger Sync",
-          "description" : "Функция позволяет запускать определённые потоки Ledger Sync",
-          "cta" : "Протестировать",
-          "modal" : {
-            "flow" : "Выбрать поток",
-            "step" : "Выбрать шаг",
-            "instance" : "Сгенерировать участников",
-            "cta" : "Применить"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "Инструменты SimpleHash",
-          "description" : "Предоставляют важные функции для NFT",
-          "cta" : "Открыть",
-          "tabs" : {
-            "spam" : "Жалоба на спам",
-            "refresh" : "Обновление метаданных",
-            "check" : "Оценка спама"
-          }
         }
       }
     },
@@ -5544,6 +5564,13 @@
       "title" : "Невозможно рассчитать сумму и комиссию",
       "description" : "Невозможно рассчитать сумму и комиссию"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Некорректный получатель перевода. Поддерживаемые разновидности счетов для отправки: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "К сожалению, при расчёте комиссии произошла ошибка",
+      "description" : "Не удалось рассчитать ориентировочную комиссию сети. Проверьте входные данные. Скорее всего, транзакция завершится неудачей."
+    },
     "NotEnoughBalance" : {
       "title" : "Кажется, у вас недостаточно средств",
       "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
@@ -5644,6 +5671,10 @@
     "TransportStatusError" : {
       "title" : "Что-то пошло не так. Подключите устройство заново",
       "description" : "{{message}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "Что-то пошло не так при получении ваших данных",
+      "description" : "Повторите попытку или обратитесь в Поддержку Ledger."
     },
     "DeviceShouldStayInApp" : {
       "title" : "Откройте приложение {{appName}}",
@@ -6159,6 +6190,15 @@
     },
     "BitcoinInfrastructureError" : {
       "title" : "Какие-то неполадки с нашей Биткойн-инфраструктурой. Попробуйте позже."
+    },
+    "TonExcessFee" : {
+      "title" : "Произойдёт перевод токенов. Комиссия составит 0,1 TON, а любая сумма сверху вернётся на ваш счёт."
+    },
+    "TonNotEnoughBalanceInParentAccount" : {
+      "title" : "Недостаточно средств на основном счету (TON) для расчёта комиссий. Минимальный требуемый баланс — 0,1 TON."
+    },
+    "TonMinimumRequired" : {
+      "title" : "Недостаточно средств. Минимальный требуемый баланс — 0,02 TON."
     }
   },
   "cryptoOrg" : {
@@ -6359,12 +6399,12 @@
       "description" : "Ваш Ledger сгенерирует ключ шифрования, чтобы данные оставались конфиденциальными и были доступны только вам.",
       "cta" : "Синхронизировать"
     },
-    "alreadySync" : "Уже создали ключ?",
+    "alreadySync" : "Уже синхронизировали приложение Ledger Live?",
     "manage" : {
       "cta" : "Настроить",
       "synchronize" : {
         "label" : "Синхронизировать",
-        "description" : "Синхронизируйте данные вашего приложения с другим Ledger Live для комфортного взаимодействия."
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "backup" : {
         "label" : "Управление ключами",
@@ -6440,7 +6480,7 @@
         "title" : "Выберите метод синхронизации",
         "description" : "Вы можете синхронизировать с помощью устройства Ledger или сканировать QR-код в Ledger Live",
         "scan" : {
-          "title" : "Сканировать QR-код",
+          "title" : "Display QR code",
           "description" : "Синхронизировать по QR-коду"
         },
         "connectDevice" : {
@@ -6449,18 +6489,40 @@
         }
       },
       "qrCode" : {
-        "title" : "Синхронизировать",
-        "hint" : "Пытаетесь синхронизировать два приложения Ledger Live для ПК? Нажмите сюда.",
-        "description" : "Сканируйте и синхронизируйте ваши счета с другим приложением Ledger Live",
-        "steps" : {
-          "step1" : "Откройте приложение Ledger Live, которое хотите синхронизировать",
-          "step2" : "Перейдите в <0>«Настройки»</0> > <0>«Общие»</0> > <0>«Ledger Sync»</0> > <0>«Синхронизировать»</0> > <0>«Показать QR»</0>",
-          "step3" : "Cканируйте QR-код камерой смартфона до 100%."
+        "title" : "Синхронизировать элементы",
+        "options" : {
+          "mobile" : "Смартфон",
+          "desktop" : "ПК"
+        },
+        "mobile" : {
+          "description" : "Сканируйте и синхронизируйте ваши счета с другим приложением Ledger Live",
+          "steps" : {
+            "step1" : "Откройте Ledger Live, с которым хотите синхронизироваться",
+            "step2" : "Перейдите в <0>«Настройки»</0> > <0>«Общие»</0> > <0>«Ledger Sync»</0> > <0>«Синхронизировать»</0> > <0>«Показать QR»</0>",
+            "step3" : "Сканируйте QR-код"
+          }
+        },
+        "desktop" : {
+          "description" : "Синхронизируйте ваши счета с другим приложением Ledger Live",
+          "steps" : {
+            "step1" : "Откройте Ledger Live, с которым хотите синхронизироваться",
+            "step2" : "Перейдите в <0>«Настройки»</0> > <0>«Общие»</0> > <0>«Ledger Sync»</0> > <0>«Синхронизировать»</0> > <0>«Использовать Ledger»</0>",
+            "step3" : "Подключение устройства Ledger"
+          }
         }
+      },
+      "unbackedError" : {
+        "title" : "You need to create your encryption key first",
+        "description" : "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+        "cta" : "Create your encryption key"
       },
       "pinCode" : {
         "title" : "Введите код",
-        "description" : "Укажите код из другого приложения Ledger Live, с которым хотите синхронизироваться."
+        "description" : "Укажите код из другого приложения Ledger Live, с которым хотите синхронизироваться.",
+        "error" : {
+          "title" : "Коды не совпадают",
+          "description" : "Убедитесь, что вы ввели код, который отображается в другом Ledger Live."
+        }
       }
     },
     "manageInstances" : {
