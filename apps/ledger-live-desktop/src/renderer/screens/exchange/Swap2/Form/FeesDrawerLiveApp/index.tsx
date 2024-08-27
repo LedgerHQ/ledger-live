@@ -58,12 +58,12 @@ export default function FeesDrawerLiveApp({
             updatedTransaction,
           )
           .then(setTransactionStatus)
-          .then(status => setTransaction(updatedTransaction));
+          .then(_ => setTransaction(updatedTransaction));
 
         return updatedTransaction;
       });
     },
-    [setTransaction, bridge, mainAccount, transaction, parentAccount],
+    [setTransaction, bridge, mainAccount, parentAccount],
   );
 
   const mapStrategies = useCallback(
