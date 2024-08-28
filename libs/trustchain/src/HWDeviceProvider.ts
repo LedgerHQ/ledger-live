@@ -6,7 +6,7 @@ import { crypto, device } from "@ledgerhq/hw-trustchain";
 import getApi from "./api";
 import { genericWithJWT } from "./auth";
 import { AuthCachePolicy, JWT, TrustchainDeviceCallbacks, WithDevice } from "./types";
-import { TrustchainAlreadyInitializedWithOtherSeed } from "./errors";
+import { TrustchainNotAllowed } from "./errors";
 
 export class HWDeviceProvider {
   /**
@@ -67,7 +67,7 @@ export class HWDeviceProvider {
 
         case StatusCodes.TRUSTCHAIN_WRONG_SEED:
           this.clearJwt();
-          throw new TrustchainAlreadyInitializedWithOtherSeed();
+          throw new TrustchainNotAllowed();
 
         default:
           throw error;

@@ -6450,12 +6450,12 @@
       "cta": "Connect another Ledger",
       "ctaDelete": "Delete my encryption key"
     },
-    "alredySecureError": {
+    "alreadySecureError": {
       "title": "This app is already secured by this Ledger",
       "description": "If you are attempting to create a new backup, please connect the Ledger device you used to create your other encryption key.",
-      "cta": "I undestand"
+      "cta": "I understand"
     },
-    "alredySecureOtherSeedError": {
+    "alreadySecureOtherSeedError": {
       "title": "You can’t use this Ledger to sync",
       "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
       "cta": "Delete my encryption key"

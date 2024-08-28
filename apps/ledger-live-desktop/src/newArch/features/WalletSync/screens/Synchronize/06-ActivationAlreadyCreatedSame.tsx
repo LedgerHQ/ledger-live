@@ -31,13 +31,13 @@ export default function AlreadyCreatedWithSameSeedStep() {
   };
   return (
     <Info
-      title={t("walletSync.alredySecureError.title")}
-      description={t("walletSync.alredySecureError.description")}
+      title={t("walletSync.alreadySecureError.title")}
+      description={t("walletSync.alreadySecureError.description")}
       withCta
       onClick={understood}
       onClose={onClose}
       analyticsPage={AnalyticsPage.AlreadySecuredSameSeed}
-      specificCta={t("walletSync.alredySecureError.cta")}
+      specificCta={t("walletSync.alreadySecureError.cta")}
     />
   );
 }

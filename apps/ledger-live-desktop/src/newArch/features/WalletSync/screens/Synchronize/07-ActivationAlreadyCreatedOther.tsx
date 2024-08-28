@@ -32,11 +32,11 @@ export default function AlreadyCreatedOtherSeedStep() {
 
   return (
     <Error
-      title={t("walletSync.alredySecureOtherSeedError.title")}
-      description={t("walletSync.alredySecureOtherSeedError.description")}
+      title={t("walletSync.alreadySecureOtherSeedError.title")}
+      description={t("walletSync.alreadySecureOtherSeedError.description")}
       onClick={deleteKey}
       analyticsPage={AnalyticsPage.AlreadySecuredOtherSeed}
-      cta={t("walletSync.alredySecureOtherSeedError.cta")}
+      cta={t("walletSync.alreadySecureOtherSeedError.cta")}
       ctaVariant="shade"
       onClose={onClose}
     />
