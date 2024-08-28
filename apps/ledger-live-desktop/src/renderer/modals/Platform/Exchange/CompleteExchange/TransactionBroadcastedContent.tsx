@@ -1,28 +1,27 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
 import Box from "~/renderer/components/Box";
 import { Separator } from "~/renderer/screens/exchange/Swap2/Form/Separator";
 import Button from "~/renderer/components/Button";
 import SwapCompleted from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/SwapCompleted";
-import SellCompleted from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/SellCompleted";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import SellCompleted from "~/renderer/screens/exchange/Sell/SellCompleted";
 
 type TransactionBroadcastedContentProps = {
   swapId?: string;
   isSell?: boolean;
   provider: string;
-  sourceCurrency: SwapSelectorStateType["currency"];
-  targetCurrency: SwapSelectorStateType["currency"];
+  sourceCurrency: Currency;
+  targetCurrency?: Currency;
   onViewDetails: (id: string) => void;
 };
 
 export function TransactionBroadcastedContent(props: TransactionBroadcastedContentProps) {
   const { swapId, provider, sourceCurrency, targetCurrency, onViewDetails, isSell } = props;
-  console.log("Got in3", targetCurrency);
-  console.log("Is sell?!?!", isSell);
   const swapDefaultTrack = useGetSwapTrackingProperties();
+
   return (
     <Box height="100%" justifyContent="space-between" paddingTop={62} paddingBottom={15}>
       <TrackPage
@@ -55,7 +54,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
       {isSell && sourceCurrency && (
         <>
           <Box>
-            <SellCompleted provider={provider} sourceCurrency={sourceCurrency.name} />
+            <SellCompleted />
           </Box>
         </>
       )}

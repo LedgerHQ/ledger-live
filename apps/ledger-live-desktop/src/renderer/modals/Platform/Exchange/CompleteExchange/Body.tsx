@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useDispatch } from "react-redux";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
-import { ExchangeSwap, SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { BodyContent, BodyContentProps } from "./BodyContent";
+import { BodyContent } from "./BodyContent";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 import { DisabledTransactionBroadcastError } from "@ledgerhq/errors";
@@ -36,8 +36,8 @@ type ResultsState = {
   isSell?: boolean;
   swapId?: string;
   provider: string;
-  sourceCurrency: SwapSelectorStateType["currency"];
-  targetCurrency?: SwapSelectorStateType["currency"];
+  sourceCurrency: Currency;
+  targetCurrency?: Currency;
 };
 
 export function isCompleteExchangeData(data: unknown): data is Data {
