@@ -3,21 +3,20 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
 import { Info } from "../../components/Info";
 
 export default function AlreadyCreatedWithSameSeedStep() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const understood = () => {
-    dispatch(setFlow({ flow: Flow.WalletSyncActivated, step: Step.WalletSyncActivated }));
+    dispatch(setFlow({ flow: Flow.LedgerSyncActivated, step: Step.LedgerSyncActivated }));
     onClickTrack({
       button: "I Understand",
       page: AnalyticsPage.AlreadySecuredSameSeed,
-      flow: "Wallet Sync",
     });
   };
 
@@ -26,7 +25,6 @@ export default function AlreadyCreatedWithSameSeedStep() {
     onClickTrack({
       button: "Close",
       page: AnalyticsPage.AlreadySecuredSameSeed,
-      flow: "Wallet Sync",
     });
   };
   return (

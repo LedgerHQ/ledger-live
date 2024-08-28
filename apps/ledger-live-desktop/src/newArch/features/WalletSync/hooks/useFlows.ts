@@ -54,9 +54,9 @@ export const FlowOptions: Record<
       7: Step.AutoRemoveInstance,
     },
   },
-  [Flow.WalletSyncActivated]: {
+  [Flow.LedgerSyncActivated]: {
     steps: {
-      1: Step.WalletSyncActivated,
+      1: Step.LedgerSyncActivated,
     },
   },
 };
@@ -99,7 +99,7 @@ export const useFlows = () => {
 
   const goToWelcomeScreenWalletSync = () => {
     if (trustchain?.rootId) {
-      dispatch(setFlow({ flow: Flow.WalletSyncActivated, step: Step.WalletSyncActivated }));
+      dispatch(setFlow({ flow: Flow.LedgerSyncActivated, step: Step.LedgerSyncActivated }));
     } else {
       dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
     }

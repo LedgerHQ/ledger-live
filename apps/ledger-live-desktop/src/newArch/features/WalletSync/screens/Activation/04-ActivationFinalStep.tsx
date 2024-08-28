@@ -4,7 +4,11 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import {
+  AnalyticsPage,
+  useLedgerSyncAnalytics,
+  AnalyticsFlow,
+} from "../../hooks/useLedgerSyncAnalytics";
 
 type Props = {
   isNewBackup: boolean;
@@ -16,14 +20,14 @@ export default function ActivationFinalStep({ isNewBackup }: Props) {
   const title = isNewBackup ? "walletSync.success.backup.title" : "walletSync.success.synch.title";
   const desc = isNewBackup ? "walletSync.success.backup.desc" : "walletSync.success.synch.desc";
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const goToSync = () => {
     dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
     onClickTrack({
       button: "Sync with another Ledger Live",
       page: isNewBackup ? AnalyticsPage.KeyCreated : AnalyticsPage.KeyUpdated,
-      flow: "Wallet Sync",
+      flow: AnalyticsFlow,
     });
   };
 
@@ -32,7 +36,7 @@ export default function ActivationFinalStep({ isNewBackup }: Props) {
     onClickTrack({
       button: "Close",
       page: isNewBackup ? AnalyticsPage.KeyCreated : AnalyticsPage.KeyUpdated,
-      flow: "Wallet Sync",
+      flow: AnalyticsFlow,
     });
   };
   return (

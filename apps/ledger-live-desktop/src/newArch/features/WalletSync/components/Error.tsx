@@ -2,7 +2,7 @@ import { Box, Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import styled, { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { AnalyticsPage } from "../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useTranslation } from "react-i18next";
 
