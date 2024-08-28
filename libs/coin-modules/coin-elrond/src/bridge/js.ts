@@ -23,7 +23,7 @@ import {
 import { ElrondSigner } from "../signer";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import resolver from "../hw-getAddress";
-import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 export function buildCurrencyBridge(signerContext: SignerContext<ElrondSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
