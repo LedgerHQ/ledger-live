@@ -22,13 +22,13 @@ export function ConfirmManageKey({ onClickConfirm, onCancel }: Props) {
 
       <Flex flexDirection="row" justifyContent="space-between">
         <Flex flex={1} mr={2}>
-          <Button onPress={onClickConfirm} type="main" outline testID="delete-trustchain">
-            {t("walletSync.walletSyncActivated.manageKey.drawer.step2.delete")}
+          <Button onPress={onCancel} outline type="main">
+            {t("walletSync.walletSyncActivated.manageKey.drawer.step2.cancel")}
           </Button>
         </Flex>
         <Flex flex={1} ml={2}>
-          <Button onPress={onCancel} type="main">
-            {t("walletSync.walletSyncActivated.manageKey.drawer.step2.cancel")}
+          <Button onPress={onClickConfirm} type="main" testID="delete-trustchain">
+            {t("walletSync.walletSyncActivated.manageKey.drawer.step2.delete")}
           </Button>
         </Flex>
       </Flex>

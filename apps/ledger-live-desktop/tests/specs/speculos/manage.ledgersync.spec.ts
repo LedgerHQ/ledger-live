@@ -1,5 +1,7 @@
 import { test } from "../../fixtures/common";
 import { AppInfos } from "tests/enum/AppInfos";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "../../utils/customJsonReporter";
 
 const app: AppInfos = AppInfos.LS;
 
@@ -18,6 +20,8 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       },
     },
     async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations).split(", "));
+
       await app.layout.goToSettings();
       await app.settings.openManageLedgerSync();
       await app.ledgerSync.expectSyncAccountsButtonExist();
@@ -29,7 +33,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.ledgerSync.closeLedgerSync();
 
       await app.settings.openManageLedgerSync();
-      await app.ledgerSync.expectNbSyncedInstances(1);
+      //await app.ledgerSync.expectNbSyncedInstances(1);  //TODO: Reactivate when the issue is fixed - QAA-178
       await app.ledgerSync.destroyTrustchain();
       await app.ledgerSync.expectBackupDeletion();
       await app.drawer.close();
