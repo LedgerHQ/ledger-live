@@ -96,10 +96,9 @@ export const LiveAppDrawer = () => {
     if (!payload) {
       return null;
     }
+
     const { type, manifest, data } = payload;
-    console.log("In drawer1", type);
-    console.log("In drawer2", manifest);
-    console.log("In drawer3", data);
+
     const action = createAction(connectApp, startExchange);
     switch (type) {
       case "DAPP_INFO":
@@ -158,14 +157,12 @@ export const LiveAppDrawer = () => {
           </>
         );
       case "EXCHANGE_START":
-        console.log("exchange started", data?.onResult.toString());
         return data && isStartExchangeData(data) ? (
           <DeviceAction
             action={action}
             request={data}
             Result={() => renderLoading()}
             onResult={result => {
-              console.log("Result in exchange started", result);
               if ("startExchangeResult" in result) {
                 data.onResult(result.startExchangeResult);
               }
@@ -177,7 +174,6 @@ export const LiveAppDrawer = () => {
           />
         ) : null;
       case "EXCHANGE_COMPLETE":
-        console.log("I am here", data, isCompleteExchangeData(data));
         return data && isCompleteExchangeData(data) ? (
           <CompleteExchange
             data={data}

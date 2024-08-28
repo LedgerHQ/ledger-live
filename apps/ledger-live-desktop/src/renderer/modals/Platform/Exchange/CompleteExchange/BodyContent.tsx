@@ -52,13 +52,11 @@ export type BodyContentProps = {
 };
 
 export const BodyContent = (props: BodyContentProps) => {
-  console.log("BodyContent", props);
   if (props.error) {
     return <ErrorDisplay error={props.error} />;
   }
 
   if (props.result) {
-    console.log("BodyContentResult", props.result);
     return (
       <TransactionBroadcastedContent
         swapId={props.result.swapId}
@@ -72,12 +70,10 @@ export const BodyContent = (props: BodyContentProps) => {
   }
 
   if (props.signedOperation) {
-    console.log("BodyContentSignedOp", props.signedOperation);
     return <BigSpinner size={40} />;
   }
 
   if (props.signRequest) {
-    console.log("BodyContentSignReq", props.signRequest);
     return (
       <DeviceAction
         key="sign"
@@ -93,7 +89,7 @@ export const BodyContent = (props: BodyContentProps) => {
       />
     );
   }
-  console.log("Past everything");
+
   return (
     <DeviceAction
       key="completeExchange"
