@@ -26,8 +26,19 @@ export const TOKEN_TRANSFER_QUERY_ID = 0;
  */
 export const MAX_COMMENT_BYTES = 120;
 
+/**
+ * Operation codes for general transactions.
+ */
+export enum OpCode {
+  Comment = 0,
+  Encrypted = 0x2167da4b,
+}
+
+/**
+ * Operation codes for Jetton transactions.
+ */
 export enum JettonOpCode {
-  Transfer = 0xf8a7ea5,
+  Transfer = 0x0f8a7ea5,
   TransferNotification = 0x7362d09c,
   InternalTransfer = 0x178d4519,
   Excesses = 0xd53276db,

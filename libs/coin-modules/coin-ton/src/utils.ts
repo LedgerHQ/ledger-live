@@ -10,13 +10,13 @@ import {
   toNano,
 } from "@ton/ton";
 import BigNumber from "bignumber.js";
+import { randomBytes } from "crypto";
 import { estimateFee } from "./bridge/bridgeHelpers/api";
 import {
   JettonOpCode,
   MAX_COMMENT_BYTES,
   TOKEN_TRANSFER_FORWARD_AMOUNT,
   TOKEN_TRANSFER_MAX_FEE,
-  TOKEN_TRANSFER_QUERY_ID,
 } from "./constants";
 import {
   TonCell,
@@ -104,7 +104,7 @@ export const buildTonTransaction = (
 
     tonTransaction.payload = {
       type: "jetton-transfer",
-      queryId: BigInt(TOKEN_TRANSFER_QUERY_ID),
+      queryId: generateQueryId(),
       amount: BigInt(amount.toFixed()),
       destination: TonAddress.parse(recipientParsed),
       responseDestination: TonAddress.parse(account.freshAddress),
@@ -238,13 +238,6 @@ function bigintRandom(bytes: number) {
     value = (value << BigInt(8)) + randomBigInt;
   }
   return value;
-}
-
-/**
- * Generates a random byte array of the specified size.
- */
-function randomBytes(size: number) {
-  return self.crypto.getRandomValues(new Uint8Array(size));
 }
 
 /**
