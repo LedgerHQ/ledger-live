@@ -1,8 +1,8 @@
 import { from } from "rxjs";
-import { UnexpectedBootloader } from "@ledgerhq/errors";
+import { StatusCodes, TransportStatusError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { listApps } from "./listApps";
-import ManagerAPI from "../manager/api";
+import ManagerAPI, { ListInstalledAppsEvent } from "../manager/api";
 import { aDeviceInfoBuilder } from "../mock/fixtures/aDeviceInfo";
 import {
   ManagerApiRepository,
@@ -25,10 +25,15 @@ const mockedGetDeviceName = jest.mocked(getDeviceName);
 const mockedListCryptoCurrencies = jest.mocked(listCryptoCurrencies);
 const mockedCurrenciesByMarketCap = jest.mocked(currenciesByMarketcap);
 
+const mockedListInstalledAppEvent: ListInstalledAppsEvent = {
+  type: "result",
+  payload: [],
+};
+
 describe("listApps", () => {
   let mockedManagerApiRepository: ManagerApiRepository;
   let listAppsCommandSpy: jest.SpyInstance;
-  let listInstalledAppsSpy: jest.SpyInstance;
+  let listAppsWithManagerApiSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest
@@ -46,7 +51,9 @@ describe("listApps", () => {
       .spyOn(jest.requireActual("../hw/listApps"), "default")
       .mockReturnValue(Promise.resolve([]));
 
-    listInstalledAppsSpy = jest.spyOn(ManagerAPI, "listInstalledApps").mockReturnValue(from([]));
+    listAppsWithManagerApiSpy = jest
+      .spyOn(ManagerAPI, "listInstalledApps")
+      .mockReturnValue(from([mockedListInstalledAppEvent]));
   });
 
   afterEach(() => {
@@ -150,7 +157,83 @@ describe("listApps", () => {
     jest.advanceTimersByTime(1);
 
     expect(listAppsCommandSpy).toHaveBeenCalled();
-    expect(listInstalledAppsSpy).not.toHaveBeenCalled();
+    expect(listAppsWithManagerApiSpy).not.toHaveBeenCalled();
+  });
+
+  [
+    StatusCodes.CLA_NOT_SUPPORTED,
+    StatusCodes.INS_NOT_SUPPORTED,
+    StatusCodes.UNKNOWN_APDU,
+    0x6e01,
+    0x6d01,
+  ].forEach(statusCode => {
+    it(`should call ManagerAPI.listInstalledApps() if deviceInfo.managerAllowed is true but list apps APDU returns 0x${statusCode.toString(16)}`, done => {
+      const transport = aTransportBuilder();
+      const deviceInfo = aDeviceInfoBuilder({
+        isOSU: false,
+        isBootloader: false,
+        managerAllowed: true,
+        targetId: 0x33200000,
+      });
+
+      listAppsCommandSpy.mockRejectedValue(new TransportStatusError(statusCode));
+
+      listApps({
+        managerDevModeEnabled: false,
+        transport,
+        deviceInfo,
+        managerApiRepository: mockedManagerApiRepository,
+        forceProvider: 1,
+      }).subscribe({
+        complete: () => {
+          try {
+            expect(listAppsCommandSpy).toHaveBeenCalled();
+            expect(listAppsWithManagerApiSpy).toHaveBeenCalled();
+            done();
+          } catch (e) {
+            done(e);
+          }
+        },
+        error: e => {
+          done(e);
+        },
+      });
+      jest.advanceTimersByTime(1);
+    });
+  });
+
+  it("should return an observable that errors if listApps() throws an error that is not a TransportStatusError", done => {
+    const transport = aTransportBuilder();
+    const deviceInfo = aDeviceInfoBuilder({
+      isOSU: false,
+      isBootloader: false,
+      managerAllowed: true,
+      targetId: 0x33200000,
+    });
+
+    listAppsCommandSpy.mockRejectedValue(new Error("listApps failed"));
+
+    listApps({
+      managerDevModeEnabled: false,
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
+    }).subscribe({
+      error: err => {
+        try {
+          expect(err).toEqual(new Error("listApps failed"));
+          done();
+        } catch (e) {
+          done(e);
+        }
+      },
+      complete: () => {
+        done("this observable should not complete");
+      },
+    });
+
+    jest.advanceTimersByTime(1);
   });
 
   it("should call ManagerAPI.listInstalledApps() if deviceInfo.managerAllowed is false", () => {
@@ -172,7 +255,7 @@ describe("listApps", () => {
     jest.advanceTimersByTime(1);
 
     expect(listAppsCommandSpy).not.toHaveBeenCalled();
-    expect(listInstalledAppsSpy).toHaveBeenCalled();
+    expect(listAppsWithManagerApiSpy).toHaveBeenCalled();
   });
 
   it("should return an observable that errors if getDeviceVersion() throws", done => {
