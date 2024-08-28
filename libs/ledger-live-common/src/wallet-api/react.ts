@@ -18,7 +18,12 @@ import {
 import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
-import { listCurrencies, findCryptoCurrencyById, findTokenById } from "../currencies";
+import {
+  listCurrencies,
+  findCryptoCurrencyById,
+  findTokenById,
+  getCryptoCurrencyById,
+} from "../currencies";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamillyAccountGetXPubLogic,
@@ -75,6 +80,16 @@ export function useWalletAPICurrencies(): WalletAPICurrency[] {
       return filtered;
     }, []);
   }, []);
+}
+
+export function useManifestCurrencies(manifest: AppManifest) {
+  return useMemo(() => {
+    return (
+      manifest.dapp?.networks.map(network => {
+        return getCryptoCurrencyById(network.currency);
+      }) ?? []
+    );
+  }, [manifest.dapp?.networks]);
 }
 
 export function useGetAccountIds(

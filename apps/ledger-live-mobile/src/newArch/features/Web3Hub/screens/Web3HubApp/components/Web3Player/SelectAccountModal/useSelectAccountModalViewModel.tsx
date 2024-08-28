@@ -1,8 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import {
+  CurrentAccountHistDB,
+  useManifestCurrencies,
+} from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -25,13 +27,7 @@ export default function useSelectAccountModalViewModel({
 }: Params) {
   const [selectedCurrency, setSelectedCurrency] = useState<CryptoCurrency | undefined>();
 
-  const currencies = useMemo(() => {
-    return (
-      manifest.dapp?.networks.map(network => {
-        return getCryptoCurrencyById(network.currency);
-      }) ?? []
-    );
-  }, [manifest.dapp?.networks]);
+  const currencies = useManifestCurrencies(manifest);
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
   const { setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);

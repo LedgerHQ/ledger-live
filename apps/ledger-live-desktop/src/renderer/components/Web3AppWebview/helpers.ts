@@ -9,14 +9,17 @@ import {
 } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
-import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import {
+  CurrentAccountHistDB,
+  safeGetRefValue,
+  useManifestCurrencies,
+} from "@ledgerhq/live-common/wallet-api/react";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "~/renderer/analytics/segment";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -273,13 +276,7 @@ export function useSelectAccount({
   manifest: LiveAppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
-  const currencies = useMemo(() => {
-    return (
-      manifest.dapp?.networks.map(network => {
-        return getCryptoCurrencyById(network.currency);
-      }) ?? []
-    );
-  }, [manifest.dapp?.networks]);
+  const currencies = useManifestCurrencies(manifest);
   const { setCurrentAccountHist, currentAccount } = useDappCurrentAccount(currentAccountHistDb);
 
   const onSelectAccount = useCallback(() => {

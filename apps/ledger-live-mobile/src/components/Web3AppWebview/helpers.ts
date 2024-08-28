@@ -7,6 +7,7 @@ import {
   useConfig,
   useWalletAPIServer,
   CurrentAccountHistDB,
+  useManifestCurrencies,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
@@ -35,7 +36,6 @@ import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { Linking } from "react-native";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 export function useWebView(
   {
@@ -528,13 +528,7 @@ export function useSelectAccount({
   manifest: AppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
-  const currencies = useMemo(() => {
-    return (
-      manifest.dapp?.networks.map(network => {
-        return getCryptoCurrencyById(network.currency);
-      }) ?? []
-    );
-  }, [manifest.dapp?.networks]);
+  const currencies = useManifestCurrencies(manifest);
   const { setCurrentAccountHist, currentAccount } = useDappCurrentAccount(currentAccountHistDb);
   const navigation = useNavigation();
 
