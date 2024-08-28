@@ -1,9 +1,9 @@
 import { INetworkConfig } from "@elrondnetwork/erdjs/out";
 import { Account } from "@ledgerhq/types-live";
-import { isAmountSpentFromBalance } from "./logic";
-import type { ElrondProtocolTransaction, Transaction } from "./types";
 import { getAccountNonce, getNetworkConfig } from "./api";
 import { GAS_PRICE, HASH_TRANSACTION } from "./constants";
+import { isAmountSpentFromBalance } from "./logic";
+import type { ElrondProtocolTransaction, Transaction } from "./types";
 
 /**
  *
@@ -33,13 +33,10 @@ export const buildTransactionToSign = async (
     sender: address,
     gasPrice: GAS_PRICE,
     gasLimit: transaction.gasLimit || networkConfig.MinGasLimit.valueOf(),
+    ...(transaction.data ? { data: transaction.data } : {}),
     chainID,
     ...HASH_TRANSACTION,
   };
-
-  if (transaction.data) {
-    unsigned.data = transaction.data;
-  }
 
   // Will likely be a call to Elrond SDK
   return JSON.stringify(unsigned);
