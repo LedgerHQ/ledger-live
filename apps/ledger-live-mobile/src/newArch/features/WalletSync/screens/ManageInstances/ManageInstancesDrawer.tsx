@@ -5,7 +5,7 @@ import { TrackScreen } from "~/analytics";
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { ListInstances } from "../../components/ManageInstances/ListInstances";
-import { DeletionError, ErrorReason } from "../../components/ManageInstances/DeletionError";
+import { DeletionError } from "../../components/ManageInstances/DeletionError";
 
 import { HookResult, Scene } from "./useManageInstanceDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
@@ -14,6 +14,7 @@ import {
   AnalyticsPage,
   useLedgerSyncAnalytics,
 } from "../../hooks/useLedgerSyncAnalytics";
+import { ErrorReason } from "../../hooks/useSpecificError";
 
 const ManageInstancesDrawer = ({
   isDrawerVisible,
