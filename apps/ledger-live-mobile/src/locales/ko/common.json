@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "호가"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -919,6 +920,13 @@
     "InvalidMemoICP" : {
       "title" : "메모는 숫자여야 합니다"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "토큰 전송에 대한 수신자가 잘못되었습니다. 토큰 전송에 지원되는 계정 유형: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "죄송합니다, 수수료 추정에 실패했습니다",
+      "description" : "네트워크 수수료 추정 실패. 입력값을 확인하세요. 거래에 실패할 수 있습니다"
+    },
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
@@ -937,6 +945,10 @@
       "title" : "죄송하지만 다시 시도하세요.",
       "description" : "서버가 요청을 처리할 수 없습니다. 나중에 다시 시도하거나 Ledger 지원 부서에 연락하세요.",
       "errorCode" : "코드: {{errorCode}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "데이터를 가져오는 중에 문제가 발생했습니다.",
+      "description" : "다시 시도하거나 Ledger 지원 부서에 문의하세요."
     }
   },
   "crash" : {
@@ -2274,6 +2286,7 @@
     },
     "quickActions" : {
       "buy" : "구매",
+      "sell" : "판매",
       "swap" : "스왑",
       "send" : "전송",
       "deposit" : "수령",
@@ -2760,7 +2773,7 @@
       "dateFormat" : "날짜 형식",
       "dateFormatDesc" : "Ledger Live 날짜 형식 설정",
       "walletSync" : "Ledger 동기화",
-      "walletSyncDesc" : "간단하게 앱 데이터를 보호하고 여러 Ledger Live 인스턴스를 동기화하세요.",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "password" : "앱 잠금",
@@ -2993,6 +3006,10 @@
         },
         "platformManifest" : {
           "title" : "플랫폼 Manifest 불러오기"
+        },
+        "mockAppUpdate" : {
+          "title" : "모의 앱 업데이트",
+          "description" : "내 Ledger에 이용할 수 있는 앱 업데이트를 표시하세요. 같은 앱 버전이 재설치 됩니다"
         }
       }
     },
@@ -6703,7 +6720,7 @@
         "title" : "모든 플랫폼에서 계정을 동기화하세요",
         "description" : "Ledger 장치가 암호화 키를 생성하여 데이터가 비공개로 유지되고 본인만 검색할 수 있도록 합니다.",
         "mainCta" : "계정 동기화",
-        "secondCta" : "이미 생성된 키가 있나요?"
+        "secondCta" : "Already synced a Ledger Live app?"
       }
     },
     "deviceSelection" : {
@@ -6713,6 +6730,11 @@
     "deviceAction" : {
       "title" : "Ledger {{wording}}에서 계속하세요",
       "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
+    },
+    "loading" : {
+      "title" : "조금만 기다려 주세요...",
+      "activation" : "데이터가 전체적으로 암호화되고 있습니다... ",
+      "synch" : "동기화된 인스턴스를 업데이트하는 중입니다..."
     },
     "success" : {
       "sync" : "동기화 성공!",
@@ -6725,7 +6747,7 @@
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "동기화",
-        "description" : "앱 데이터를 다른 Ledger Live 앱과 동기화하여 매끄러운 사용자 경험을 즐겨보세요. "
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "manageKey" : {
         "title" : "키 관리",
@@ -6735,13 +6757,13 @@
           "step1" : {
             "title" : "키 관리",
             "titleCta" : "키 삭제하기",
-            "descCta" : "동기화된 모든 데이터가 삭제됩니다."
+            "descCta" : "All synced accounts will be removed. This won’t affect your local accounts."
           },
           "step2" : {
             "delete" : "삭제",
             "cancel" : "취소",
             "title" : "암호화 키를 삭제하시겠습니까?",
-            "desc" : "삭제를 클릭하면 장치의 동기화가 중단되고 모든 동기화된 데이터가 삭제됩니다. 비동기화하더라도 자금에는 영향이 없으므로 안심하시기 바랍니다. 언제든지 계정을 다시 동기화할 수 있습니다."
+            "desc" : "By clicking delete, your apps will be unsynchronized, and your backup will be deleted. Rest assured, this action does not affect your funds or your accounts in Ledger Live. You may resync your accounts at any time."
           }
         }
       },
@@ -6786,23 +6808,76 @@
         "connectDevice" : {
           "title" : "Ledger 장치를 사용하세요"
         }
+      },
+      "qrCode" : {
+        "title" : "동기화된 인스턴스",
+        "show" : {
+          "title" : "QR 보기",
+          "explanation" : {
+            "title" : "Ledger Live 앱으로 스캔하고 계정을 동기화하세요",
+            "steps" : {
+              "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
+              "step2" : "<0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger 동기화</0> <1>></1> <0>동기화</0>로 차례로 이동합니다",
+              "step3" : "Scan QR code"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "스캔",
+          "description" : "QR 코드 스캔",
+          "explanation" : {
+            "title" : "Ledger Live 앱으로 스캔하고 계정을 동기화하세요",
+            "steps" : {
+              "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
+              "step2" : "<0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger 동기화</0> <1>></1> <0>동기화</0> <1>></1> <0>QR 보기</0>로 차례로 이동하세요",
+              "step3" : "Scan QR code"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "코드 입력",
+          "desc" : "동기화하려는 Ledger Live에 표시된 코드를 입력합니다.",
+          "error" : {
+            "title" : "코드가 일치하지 않습니다",
+            "desc" : "입력한 코드가 다른 Ledger Live 인스턴스에 표시된 코드와 일치하는지 확인해 주세요.",
+            "tryAgain" : "다시 시도하세요"
+          }
+        },
+        "unbacked" : {
+          "title" : "You need to create your encryption key first",
+          "desc" : "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+          "cta" : "Create your encryption key"
+        }
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "클리어 서명 활성화",
-      "checkbox" : "추가 알림을 보내지 마세요.",
-      "CTA" : "{{app}} 열기"
-    },
-    "manifestsList" : {
-      "title" : "탐색",
-      "description" : "Ledger가 엄선한 최고의 web3를 만나보세요"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "클리어 서명 활성화",
+        "clearSigningDisabled" : "클리어 서명 비활성화",
+        "checkbox" : "추가 알림을 보내지 마세요.",
+        "CTA" : "{{app}} 열기"
+      },
+      "manifestsList" : {
+        "title" : "탐색",
+        "description" : "Ledger가 엄선한 최고의 web3를 만나보세요"
+      },
+      "label" : {
+        "clearSigning" : "클리어 서명"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "탐색"
+      },
       "header" : {
         "title" : "Web3 탐색",
         "placeholder" : "URL을 검색하거나 입력하세요"
+      },
+      "clearSigning" : {
+        "title" : "클리어 서명",
+        "description" : "클리어 서명을 사용하면 메시지 내용을 앱에 공개하지 않고 메시지에 서명할 수 있으며, 이는 개인정보 보호와 보안 측면에서 아주 유용합니다."
       }
     }
   }
