@@ -102,7 +102,7 @@ export default function FeesDrawerLiveApp({
           <SendAmountFields
             account={parentAccount || (mainAccount as Account)}
             parentAccount={parentAccount}
-            status={status}
+            status={transactionStatus}
             transaction={transaction}
             onChange={handleSetTransaction}
             updateTransaction={handleUpdateTransaction}
@@ -124,7 +124,7 @@ export default function FeesDrawerLiveApp({
 
       <Box mt={3} mx={3} alignSelf="flex-end">
         <Button
-          disabled={!!transactionStatus.errors?.amount}
+          disabled={Object.keys(transactionStatus.errors).length > 0}
           variant={"main"}
           outline
           borderRadius={48}
