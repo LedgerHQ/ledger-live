@@ -67,13 +67,13 @@ const getMarketWidgetAnalytics = () => {
   return !!marketWidget?.enabled;
 };
 
-const getWalletSyncAttributes = (state: State) => {
+const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
   const walletSync = analyticsFeatureFlagMethod("lldWalletSync");
 
   return {
-    hasWalletSync: !!walletSync?.enabled,
-    walletSyncActivated: !!state.trustchain.trustchain,
+    hasLedgerSync: !!walletSync?.enabled,
+    ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
   };
 };
 
@@ -144,7 +144,7 @@ const extraProperties = (store: ReduxStore) => {
   const accounts = accountsSelector(state);
   const ptxAttributes = getPtxAttributes();
 
-  const walletSyncAtributes = getWalletSyncAttributes(state);
+  const ledgerSyncAtributes = getLedgerSyncAttributes(state);
 
   const deviceInfo = device
     ? {
@@ -199,7 +199,7 @@ const extraProperties = (store: ReduxStore) => {
     modelIdList: devices,
     ...ptxAttributes,
     ...deviceInfo,
-    ...walletSyncAtributes,
+    ...ledgerSyncAtributes,
   };
 };
 
