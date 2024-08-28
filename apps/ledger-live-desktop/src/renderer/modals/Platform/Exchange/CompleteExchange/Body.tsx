@@ -60,12 +60,8 @@ const Root = styled.div`
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
   const dispatch = useDispatch();
   const { onResult, onCancel, swapId, magnitudeAwareRate, ...exchangeParams } = data;
-  console.log("DATA", data);
-  console.log("EXCHANGE", exchangeParams);
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
-
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
-
   // toAccount exists only in swap mode
   const toAccount = "toAccount" in exchange ? exchange.toAccount : undefined;
 
