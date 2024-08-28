@@ -89,7 +89,6 @@ export class SettingsPage extends AppPage {
 
   @step("Open Ledger Sync Manager")
   async openManageLedgerSync() {
-    expect(this.manageLedgerSyncButton).toBeVisible();
     await this.manageLedgerSyncButton.click();
   }
 }
