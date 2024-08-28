@@ -1,9 +1,7 @@
 import BigNumber from "bignumber.js";
 
-export const HASH_TRANSACTION = {
-  version: 2,
-  options: 1,
-};
+export const TRANSACTION_OPTIONS_TX_HASH_SIGN = 0b0001;
+export const TRANSACTION_VERSION_DEFAULT = 2;
 export const METACHAIN_SHARD = 4294967295;
 export const MAX_PAGINATION_SIZE = 50;
 export const GAS = {

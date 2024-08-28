@@ -1,7 +1,11 @@
-import { INetworkConfig } from "@elrondnetwork/erdjs/out";
+import { IGasLimit, INetworkConfig, INonce } from "@elrondnetwork/erdjs";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountNonce, getNetworkConfig } from "./api";
-import { GAS_PRICE, HASH_TRANSACTION } from "./constants";
+import {
+  GAS_PRICE,
+  TRANSACTION_OPTIONS_TX_HASH_SIGN,
+  TRANSACTION_VERSION_DEFAULT,
+} from "./constants";
 import { isAmountSpentFromBalance } from "./logic";
 import type { ElrondProtocolTransaction, Transaction } from "./types";
 
@@ -15,8 +19,8 @@ export const buildTransactionToSign = async (
   account: Account,
   transaction: Transaction,
 ): Promise<string> => {
-  const address = account.freshAddress;
-  const nonce = await getAccountNonce(address);
+  const sender = account.freshAddress;
+  const nonce = await getAccountNonce(sender);
   const networkConfig: INetworkConfig = await getNetworkConfig();
   const chainID = networkConfig.ChainID.valueOf();
 
@@ -26,18 +30,38 @@ export const buildTransactionToSign = async (
       ? transaction.amount.toFixed()
       : "0";
 
-  const unsigned: ElrondProtocolTransaction = {
-    nonce: nonce.valueOf(),
+  return doBuildTransactionToSign({
+    transaction,
+    sender: sender,
+    nonce,
     value,
-    receiver: transaction.recipient,
-    sender: address,
-    gasPrice: GAS_PRICE,
-    gasLimit: transaction.gasLimit || networkConfig.MinGasLimit.valueOf(),
-    ...(transaction.data ? { data: transaction.data } : {}),
+    minGasLimit: networkConfig.MinGasLimit,
     chainID,
-    ...HASH_TRANSACTION,
+  });
+};
+
+export const doBuildTransactionToSign = async (options: {
+  transaction: Transaction;
+  sender: string;
+  nonce: INonce;
+  value: string;
+  minGasLimit: IGasLimit;
+  chainID: string;
+}): Promise<string> => {
+  const gasLimit = options.transaction.gasLimit || options.minGasLimit.valueOf();
+
+  const transaction: ElrondProtocolTransaction = {
+    nonce: options.nonce.valueOf(),
+    value: options.value,
+    receiver: options.transaction.recipient,
+    sender: options.sender,
+    gasPrice: GAS_PRICE,
+    gasLimit: gasLimit,
+    ...(options.transaction.data ? { data: options.transaction.data } : {}),
+    chainID: options.chainID,
+    version: TRANSACTION_VERSION_DEFAULT,
+    options: TRANSACTION_OPTIONS_TX_HASH_SIGN,
   };
 
-  // Will likely be a call to Elrond SDK
-  return JSON.stringify(unsigned);
+  return JSON.stringify(transaction);
 };
