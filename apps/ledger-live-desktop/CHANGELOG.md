@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.1
+
+### Patch Changes
+
+- [#7641](https://github.com/LedgerHQ/ledger-live/pull/7641) [`3b944af`](https://github.com/LedgerHQ/ledger-live/commit/3b944af87a841475b2946942b5e29b571e6ccc63) Thanks [@CremaFR](https://github.com/CremaFR)! - fix btc fee drawer for swaap
+
+- [#7678](https://github.com/LedgerHQ/ledger-live/pull/7678) [`b91295b`](https://github.com/LedgerHQ/ledger-live/commit/b91295b40dcdd8ab4768c49505e60bf51ebfae11) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improve logs export: merge logs from all process in chronological order and ordered keys in JSON. Fix compatibility of internal process logs with LogsViewer tool (timestamp was broken, pname was not used).
+
+- [#7685](https://github.com/LedgerHQ/ledger-live/pull/7685) [`238efb7`](https://github.com/LedgerHQ/ledger-live/commit/238efb7bb2a13f0e494338a9c9247d66c841577f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Copy on manageKey Flow
+
+- [#7680](https://github.com/LedgerHQ/ledger-live/pull/7680) [`714a096`](https://github.com/LedgerHQ/ledger-live/commit/714a096a9310c0f502381f8ec0869c6a662b6ec9) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: uses native segwit empty address to compute btc fees
+
+- Updated dependencies [[`e7db725`](https://github.com/LedgerHQ/ledger-live/commit/e7db72552042ff4dd85bec236f6bd083fa3da533)]:
+  - @ledgerhq/coin-evm@2.2.0-nightly.2
+  - @ledgerhq/live-common@34.7.2-nightly.1
+
 ## 2.86.0-nightly.0
 
 ### Minor Changes

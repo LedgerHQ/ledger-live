@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.2.0-nightly.2
+
+### Minor Changes
+
+- [#7652](https://github.com/LedgerHQ/ledger-live/pull/7652) [`e7db725`](https://github.com/LedgerHQ/ledger-live/commit/e7db72552042ff4dd85bec236f6bd083fa3da533) Thanks [@CremaFR](https://github.com/CremaFR)! - fix evm getFeeData to return requested option value
+
 ## 2.1.5-nightly.1
 
 ### Patch Changes
