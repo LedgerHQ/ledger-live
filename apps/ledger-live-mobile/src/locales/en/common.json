@@ -6880,6 +6880,19 @@
         "title": "Clear signing",
         "description": "Clear signing allows you to sign a message without revealing the content of the message to the app. This is useful for privacy and security reasons."
       }
+    },
+    "app": {
+      "selectAccountModal": {
+        "networkHeader": {
+          "title": "Choose a network"
+        },
+        "accountHeader": {
+          "title": "Choose an account"
+        },
+        "addAccountItem": {
+          "name": "Add an account"
+        }
+      }
     }
   }
 }
