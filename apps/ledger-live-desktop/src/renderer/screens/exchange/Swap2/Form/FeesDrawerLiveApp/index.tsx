@@ -52,18 +52,18 @@ export default function FeesDrawerLiveApp({
     (updater: (arg0: Transaction) => Transaction) => {
       setTransactionState(prevTransaction => {
         const updatedTransaction = updater(prevTransaction);
-        setTransaction(updatedTransaction);
         bridge
           .getTransactionStatus(
             mainAccount.type === "TokenAccount" ? parentAccount : mainAccount,
-            transaction,
+            updatedTransaction,
           )
-          .then(setTransactionStatus);
+          .then(setTransactionStatus)
+          .then(_ => setTransaction(updatedTransaction));
 
         return updatedTransaction;
       });
     },
-    [setTransaction, bridge, mainAccount, transaction, parentAccount],
+    [setTransaction, bridge, mainAccount, parentAccount],
   );
 
   const mapStrategies = useCallback(
