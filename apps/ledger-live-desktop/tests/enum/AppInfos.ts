@@ -3,8 +3,9 @@ import { DeviceLabels } from "./DeviceLabels";
 export class AppInfos {
   constructor(
     public readonly name: string,
-    public readonly sendPattern: DeviceLabels[],
-    public readonly receivePattern: DeviceLabels[],
+    public readonly sendPattern?: DeviceLabels[],
+    public readonly receivePattern?: DeviceLabels[],
+    public readonly lsPattern?: DeviceLabels[],
   ) {}
   static readonly BITCOIN = new AppInfos(
     "Bitcoin",
@@ -123,4 +124,5 @@ export class AppInfos {
     [DeviceLabels.AMOUT, DeviceLabels.TO, DeviceLabels.APPROVE, DeviceLabels.REJECT],
     [DeviceLabels.ADDRESS, DeviceLabels.APPROVE, DeviceLabels.REJECT],
   );
+  static readonly LS = new AppInfos("LedgerSync", [DeviceLabels.LOGIN_LEDGER_SYNC]);
 }

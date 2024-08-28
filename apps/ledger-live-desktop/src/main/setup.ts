@@ -7,8 +7,9 @@ import { log } from "@ledgerhq/logs";
 import fs from "fs/promises";
 import updater from "./updater";
 import path from "path";
+import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
-import { setEnvUnsafe } from "@ledgerhq/live-env";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 
 /**
  * Sets env variables for the main process.
@@ -36,31 +37,26 @@ ipcMain.handle(
   async (_event, path: Electron.SaveDialogReturnValue, rendererLogsStr: string) => {
     if (!path.canceled && path.filePath) {
       const inMemoryLogger = InMemoryLogger.getLogger();
-      const internalLogs = inMemoryLogger.getLogs();
+      const internalLogsChronological = inMemoryLogger.getLogs().reverse(); // The logs are in reverse order.
 
       // The deserialization would have been done internally by electron if `rendererLogs` was passed directly as a JS object/array.
       // But it avoids certain issues with the serialization/deserialization done by electron.
-      let rendererLogs: unknown[] = [];
+      let rendererLogsChronological: Array<{ timestamp: string }> = [];
       try {
-        rendererLogs = JSON.parse(rendererLogsStr) as unknown[];
+        rendererLogsChronological = JSON.parse(rendererLogsStr).reverse(); // The logs are in reverse order.
       } catch (error) {
         console.error("Error while parsing logs from the renderer process", error);
         return;
       }
 
-      console.log(
-        `Saving ${rendererLogs.length} logs from the renderer process and ${internalLogs.length} logs from the internal process`,
+      fs.writeFile(
+        path.filePath,
+        mergeAllLogsJSON(
+          rendererLogsChronological,
+          internalLogsChronological,
+          getEnv("EXPORT_MAX_LOGS"),
+        ),
       );
-
-      // Merging according to a `date` (internal logs) / `timestamp` (most of renderer logs) does not seem necessary.
-      // Simply pushes all the internal logs after the renderer logs.
-      // Note: this is not respecting the `EXPORT_MAX_LOGS` env var, but this is fine.
-      rendererLogs.push(
-        { type: "logs-separator", message: "Logs coming from the internal process" },
-        ...internalLogs,
-      );
-
-      fs.writeFile(path.filePath, JSON.stringify(rendererLogs, null, 2));
     } else {
       console.warn("No path given to save logs");
     }
