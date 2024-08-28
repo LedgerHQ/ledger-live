@@ -9,7 +9,5 @@ export function deleteAppDataUseCaseDI(
   deviceModelId: DeviceModelId,
   storageProvider: StorageProvider<AppStorageType>,
 ): Observable<DeleteAppDataEvent> {
-  return deleteAppDataUseCase(appName, deviceModelId, storageProvider, () =>
-    deleteAppData(appName, deviceModelId, storageProvider),
-  );
+  return deleteAppDataUseCase(() => deleteAppData(appName, deviceModelId, storageProvider));
 }

@@ -1,4 +1,4 @@
-import { catchError, from, Observable, of, switchMap, throwError } from "rxjs";
+import { catchError, from, Observable, of, switchMap } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import {
   AppName,
@@ -18,14 +18,6 @@ export function deleteAppData(
     subscriber.next({ type: DeleteAppDataEventType.AppDataDeleteStarted });
     const sub = from(storageProvider.getItem(`${deviceModelId}-${appName}`))
       .pipe(
-        catchError(e => {
-          if (e instanceof Error) {
-            subscriber.error(e);
-          } else {
-            subscriber.error(new Error("Unknown error"));
-          }
-          return of(null);
-        }),
         switchMap(async item => {
           if (item) {
             try {
@@ -34,12 +26,20 @@ export function deleteAppData(
               subscriber.complete();
             } catch (e: unknown) {
               const message = e instanceof Error ? e.message : "Error deleting app data";
-              throwError(() => new DeleteAppDataError(message));
+              throw new DeleteAppDataError(message);
             }
           } else {
             subscriber.next({ type: DeleteAppDataEventType.NoAppDataToDelete });
             subscriber.complete();
           }
+        }),
+        catchError(e => {
+          if (e instanceof Error || e instanceof DeleteAppDataError) {
+            subscriber.error(e);
+          } else {
+            subscriber.error(new Error("Unknown error"));
+          }
+          return of(null);
         }),
       )
       .subscribe();

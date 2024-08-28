@@ -1,4 +1,4 @@
-import { Observable, firstValueFrom, lastValueFrom } from "rxjs";
+import { Observable } from "rxjs";
 import { deleteAppData } from "./deleteAppData";
 import {
   AppStorageType,
@@ -35,7 +35,7 @@ describe("deleteAppData", () => {
   });
 
   describe("success case", () => {
-    it("should delete the app data by emitting relative events sequentially", async () => {
+    it("should delete the app data by emitting relative events sequentially", done => {
       const deleteObservable: Observable<DeleteAppDataEvent> = deleteAppData(
         appName,
         deviceModelId,
@@ -56,25 +56,25 @@ describe("deleteAppData", () => {
 
       removeItem.mockResolvedValue(undefined);
 
-      // Subscribe to the observable to receive the delete events
-      deleteObservable.subscribe((event: DeleteAppDataEvent) => {
-        events.push(event);
+      deleteObservable.subscribe({
+        next: (event: DeleteAppDataEvent) => events.push(event),
+        complete: () => {
+          expect(events).toHaveLength(2);
+          expect(events[0]).toEqual({
+            type: DeleteAppDataEventType.AppDataDeleteStarted,
+          });
+          expect(events[1]).toEqual({
+            type: DeleteAppDataEventType.AppDataDeleted,
+          });
+          done();
+        },
+        error: (e: Error) => {
+          done(e);
+        },
       });
-
-      const firstValue: DeleteAppDataEvent = await firstValueFrom(deleteObservable);
-      expect(firstValue).toEqual({
-        type: DeleteAppDataEventType.AppDataDeleteStarted,
-      });
-
-      const lastValue: DeleteAppDataEvent = await lastValueFrom(deleteObservable);
-      expect(lastValue).toEqual({
-        type: DeleteAppDataEventType.AppDataDeleted,
-      });
-
-      expect(events).toHaveLength(2);
     });
 
-    it("should emit specific event when there is no app data to delete", async () => {
+    it("should emit specific event when there is no app data to delete", done => {
       const deleteObservable: Observable<DeleteAppDataEvent> = deleteAppData(
         appName,
         deviceModelId,
@@ -84,27 +84,27 @@ describe("deleteAppData", () => {
 
       getItem.mockResolvedValue(null);
 
-      // Subscribe to the observable to receive the delete events
-      deleteObservable.subscribe((event: DeleteAppDataEvent) => {
-        events.push(event);
+      deleteObservable.subscribe({
+        next: (event: DeleteAppDataEvent) => events.push(event),
+        complete: () => {
+          expect(events).toHaveLength(2);
+          expect(events[0]).toEqual({
+            type: DeleteAppDataEventType.AppDataDeleteStarted,
+          });
+          expect(events[1]).toEqual({
+            type: DeleteAppDataEventType.NoAppDataToDelete,
+          });
+          done();
+        },
+        error: (e: Error) => {
+          done(e);
+        },
       });
-
-      const firstValue: DeleteAppDataEvent = await firstValueFrom(deleteObservable);
-      expect(firstValue).toEqual({
-        type: DeleteAppDataEventType.AppDataDeleteStarted,
-      });
-
-      const lastValue: DeleteAppDataEvent = await lastValueFrom(deleteObservable);
-      expect(lastValue).toEqual({
-        type: DeleteAppDataEventType.NoAppDataToDelete,
-      });
-
-      expect(events).toHaveLength(2);
     });
   });
 
   describe("error case", () => {
-    it("should emit an error event when there is an error during the deletion process", async () => {
+    it("should emit an error event when there is an error during the deletion process", done => {
       const deleteObservable: Observable<DeleteAppDataEvent> = deleteAppData(
         appName,
         deviceModelId,
@@ -127,24 +127,28 @@ describe("deleteAppData", () => {
       removeItem.mockRejectedValue(new Error("Failed to delete app data"));
 
       // Subscribe to the observable to receive the delete events
-      deleteObservable.subscribe((event: DeleteAppDataEvent) => {
-        events.push(event);
+      deleteObservable.subscribe({
+        next: (event: DeleteAppDataEvent) => events.push(event),
+        complete: () => {
+          done(new Error("Complete should not be called"));
+        },
+        error: (e: Error) => {
+          try {
+            expect(events).toHaveLength(1);
+            expect(events[0]).toEqual({
+              type: DeleteAppDataEventType.AppDataDeleteStarted,
+            });
+            expect(e).toBeInstanceOf(DeleteAppDataError);
+            expect(e.message).toBe("Failed to delete app data");
+            done();
+          } catch (error) {
+            done(error);
+          }
+        },
       });
-
-      const firstValue: DeleteAppDataEvent = await firstValueFrom(deleteObservable);
-      expect(firstValue).toEqual({
-        type: DeleteAppDataEventType.AppDataDeleteStarted,
-      });
-
-      lastValueFrom(deleteObservable).catch(e => {
-        expect(e).toBeInstanceOf(DeleteAppDataError);
-        expect(e.message).toBe("Failed to delete app data");
-      });
-
-      expect(events).toHaveLength(1);
     });
 
-    it("should emit an error event when there is an error getting the app data from storage", async () => {
+    it("should emit an error event when there is an error getting the app data from storage", done => {
       const deleteObservable: Observable<DeleteAppDataEvent> = deleteAppData(
         appName,
         deviceModelId,
@@ -153,13 +157,29 @@ describe("deleteAppData", () => {
 
       getItem.mockRejectedValue(new Error("Error fetching app data"));
 
-      lastValueFrom(deleteObservable).catch(e => {
-        expect(e).toBeInstanceOf(Error);
-        expect(e.message).toBe("Error fetching app data");
+      const events: DeleteAppDataEvent[] = [];
+
+      deleteObservable.subscribe({
+        next: (event: DeleteAppDataEvent) => events.push(event),
+        complete: () => {
+          done(new Error("Complete should not be called"));
+        },
+        error: (e: Error) => {
+          try {
+            expect(events).toHaveLength(1);
+            expect(events[0]).toEqual({
+              type: DeleteAppDataEventType.AppDataDeleteStarted,
+            });
+            expect(e).toEqual(new Error("Error fetching app data"));
+            done();
+          } catch (error) {
+            done(error);
+          }
+        },
       });
     });
 
-    it("should emit an error event when there is an unkown error getting the app data from storage", async () => {
+    it("should emit an error event when there is an unkown error getting the app data from storage", done => {
       const deleteObservable: Observable<DeleteAppDataEvent> = deleteAppData(
         appName,
         deviceModelId,
@@ -168,9 +188,21 @@ describe("deleteAppData", () => {
 
       getItem.mockRejectedValue(null);
 
-      lastValueFrom(deleteObservable).catch(e => {
-        expect(e).toBeInstanceOf(Error);
-        expect(e.message).toBe("Unknown error");
+      const events: DeleteAppDataEvent[] = [];
+
+      deleteObservable.subscribe({
+        next: (event: DeleteAppDataEvent) => events.push(event),
+        complete: () => {
+          done(new Error("Complete should not be called"));
+        },
+        error: (e: Error) => {
+          try {
+            expect(e).toEqual(new Error("Unknown error"));
+            done();
+          } catch (error) {
+            done(error);
+          }
+        },
       });
     });
   });

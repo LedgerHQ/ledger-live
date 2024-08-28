@@ -958,6 +958,15 @@
     },
     "TonMinimumRequired": {
       "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+    },
+    "BackupAppDataError": {
+      "title": "Error during app data backup"
+    },
+    "RestoreAppDataError": {
+      "title": "Error restoring app data"
+    },
+    "DeleteAppDataError": {
+      "title": "Error deleting app data"
     }
   },
   "crash": {
