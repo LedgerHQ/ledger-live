@@ -8,7 +8,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import {
   SidecarValidatorsParamAddresses,
   SidecarValidatorsParamStatus,
-} from "../network/sidecar.types";
+} from "../network/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { PolkadotAccount, PolkadotValidator, Transaction } from "../types";
 import polkadotAPI from "../network";
