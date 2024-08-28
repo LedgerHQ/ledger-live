@@ -376,6 +376,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
       case 0x01: // sell
       case 0x02: // fund
+        console.log("inside switch!");
         return renderSecureTransferDeviceConfirmation({
           exchangeType: exchangeType === 0x01 ? "sell" : "fund",
           modelId,
@@ -388,6 +389,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (initSwapRequested && !initSwapResult && !initSwapError) {
+    console.log("Init swap requested");
     const { transaction, exchange, exchangeRate } = request as {
       transaction: Transaction;
       exchange: ExchangeSwap;

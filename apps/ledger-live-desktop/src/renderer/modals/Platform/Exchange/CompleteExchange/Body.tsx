@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useDispatch } from "react-redux";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
-import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeSwap, SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -15,6 +15,7 @@ import { DisabledTransactionBroadcastError } from "@ledgerhq/errors";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { getEnv } from "@ledgerhq/live-env";
 import styled from "styled-components";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 
 export type Data = {
   provider: string;
@@ -29,6 +30,14 @@ export type Data = {
   swapId?: string;
   amountExpectedTo?: number;
   magnitudeAwareRate?: BigNumber;
+};
+
+type ResultsState = {
+  isSell?: boolean;
+  swapId?: string;
+  provider: string;
+  sourceCurrency: SwapSelectorStateType["currency"];
+  targetCurrency?: SwapSelectorStateType["currency"];
 };
 
 export function isCompleteExchangeData(data: unknown): data is Data {
@@ -51,6 +60,8 @@ const Root = styled.div`
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
   const dispatch = useDispatch();
   const { onResult, onCancel, swapId, magnitudeAwareRate, ...exchangeParams } = data;
+  console.log("DATA", data);
+  console.log("EXCHANGE", exchangeParams);
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
 
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
@@ -102,7 +113,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
-  const [result, setResult] = useState<BodyContentProps["result"]>();
+  const [result, setResult] = useState<ResultsState>();
 
   const signRequest = useMemo(
     () =>
@@ -163,24 +174,30 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           return onCancel(new DisabledTransactionBroadcastError());
         }
         onResult(operation);
-        // else not swap i.e card and sell we close the drawer
+      } else if (
+        (data.exchangeType === ExchangeType.SELL || data.exchangeType === ExchangeType.SELL_NG) &&
+        sourceCurrency
+      ) {
+        onResult(operation);
+        setResult({ provider, isSell: true, sourceCurrency });
       } else {
+        // else not swap i.e card we close the drawer
         onResult(operation);
         onClose?.();
       }
     },
     [
-      setResult,
+      swapId,
+      toAccount,
+      magnitudeAwareRate,
+      sourceCurrency,
+      targetCurrency,
+      data.exchangeType,
+      updateAccount,
+      provider,
       onResult,
       onCancel,
       onClose,
-      updateAccount,
-      magnitudeAwareRate,
-      provider,
-      sourceCurrency,
-      targetCurrency,
-      swapId,
-      toAccount,
     ],
   );
 

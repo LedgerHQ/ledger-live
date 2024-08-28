@@ -37,10 +37,12 @@ export type BodyContentProps = {
     amountExpectedTo?: number;
   };
   result?: {
-    swapId: string;
+    swapId?: string;
+    // The isSell will probably be replaced with a sellId similar with swapId.
+    isSell?: boolean;
     provider: string;
     sourceCurrency: SwapSelectorStateType["currency"];
-    targetCurrency: SwapSelectorStateType["currency"];
+    targetCurrency?: SwapSelectorStateType["currency"];
   };
   onOperationSigned: (value: SignedOperation) => void;
   onTransactionComplete: (value: Transaction) => void;
@@ -50,14 +52,17 @@ export type BodyContentProps = {
 };
 
 export const BodyContent = (props: BodyContentProps) => {
+  console.log("BodyContent", props);
   if (props.error) {
     return <ErrorDisplay error={props.error} />;
   }
 
   if (props.result) {
+    console.log("BodyContentResult", props.result);
     return (
       <TransactionBroadcastedContent
         swapId={props.result.swapId}
+        isSell={props.result.isSell}
         provider={props.result.provider}
         sourceCurrency={props.result.sourceCurrency}
         targetCurrency={props.result.targetCurrency}
@@ -67,10 +72,12 @@ export const BodyContent = (props: BodyContentProps) => {
   }
 
   if (props.signedOperation) {
+    console.log("BodyContentSignedOp", props.signedOperation);
     return <BigSpinner size={40} />;
   }
 
   if (props.signRequest) {
+    console.log("BodyContentSignReq", props.signRequest);
     return (
       <DeviceAction
         key="sign"
@@ -86,7 +93,7 @@ export const BodyContent = (props: BodyContentProps) => {
       />
     );
   }
-
+  console.log("Past everything");
   return (
     <DeviceAction
       key="completeExchange"

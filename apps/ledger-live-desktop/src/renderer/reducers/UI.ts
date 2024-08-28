@@ -105,6 +105,7 @@ const handlers: UIHandlers = {
     };
   },
   PLATFORM_APP_DRAWER_OPEN: (state, { payload }) => {
+    console.log("Platform app drawer opened", payload);
     return {
       ...state,
       platformAppDrawer: {

@@ -2190,7 +2190,13 @@
   },
   "sell": {
     "title": "Sell",
-    "titleCrypto": "Sell {{currency}}"
+    "titleCrypto": "Sell {{currency}}",
+    "exchangeDrawer": {
+      "completed": {
+        "title": "Transaction broadcast successfully",
+        "description": "Your Sell operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
+      }
+    }
   },
   "receive": {
     "title": "Receive",
