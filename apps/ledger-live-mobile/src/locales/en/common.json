@@ -6758,13 +6758,13 @@
           "step1": {
             "title": "Manage your key",
             "titleCta": "Delete your key",
-            "descCta": "All your synced data will be deleted."
+            "descCta": "All synced accounts will be removed. This won’t affect your local accounts."
           },
           "step2": {
             "delete": "Delete",
             "cancel": "Cancel",
             "title": "Do you really want to delete your encryption key?",
-            "desc": "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time."
+            "desc": "By clicking delete, your apps will be unsynchronized, and your backup will be deleted. Rest assured, this action does not affect your funds or your accounts in Ledger Live. You may resync your accounts at any time."
           }
         }
       },
