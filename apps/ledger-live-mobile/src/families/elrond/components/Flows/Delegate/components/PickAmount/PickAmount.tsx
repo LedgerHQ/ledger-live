@@ -3,11 +3,10 @@ import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } 
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
-import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/estimateMaxSpendable";
 
 import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import type { PickAmountPropsType, RatioType } from "./types";
@@ -47,7 +46,7 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const getMaxSpendable = useCallback(() => {
     const fetchMaxSpendable = async () => {
-      const amount = await estimateMaxSpendable({
+      const amount = await bridge.estimateMaxSpendable({
         account,
         transaction,
         parentAccount: undefined,
