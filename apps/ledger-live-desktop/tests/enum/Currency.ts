@@ -25,7 +25,7 @@ export class Currency {
   static readonly ALGO = new Currency("Algorand", "ALGO", AppInfos.ALGORAND);
   static readonly ATOM = new Currency("Cosmos", "ATOM", AppInfos.COSMOS);
   static readonly XTZ = new Currency("Tezos", "XTZ", AppInfos.TEZOS);
-  static readonly MATIC = new Currency("Polygon", "MATIC", AppInfos.POLYGON);
+  static readonly POL = new Currency("Polygon", "POL", AppInfos.POLYGON);
   static readonly BSC = new Currency("Binance Smart Chain", "BNB", AppInfos.BINANCE_SMART_CHAIN);
   static readonly TON = new Currency("Ton", "TON", AppInfos.TON);
   static readonly ETH_USDT = new Currency("Tether USD", "USDT", AppInfos.ETHEREUM);
@@ -40,6 +40,6 @@ export class Currency {
     AppInfos.BINANCE_SMART_CHAIN,
   );
   static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", AppInfos.BINANCE_SMART_CHAIN);
-  static readonly MATIC_DAI = new Currency("(PoS) Dai Stablecoin", "DAI", AppInfos.POLYGON);
-  static readonly MATIC_UNI = new Currency("Uniswap (PoS)", "UNI", AppInfos.POLYGON);
+  static readonly POL_DAI = new Currency("(PoS) Dai Stablecoin", "DAI", AppInfos.POLYGON);
+  static readonly POL_UNI = new Currency("Uniswap (PoS)", "UNI", AppInfos.POLYGON);
 }
