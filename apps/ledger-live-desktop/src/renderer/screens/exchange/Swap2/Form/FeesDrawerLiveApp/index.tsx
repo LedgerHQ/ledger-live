@@ -9,7 +9,6 @@ import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider } from "@ledgerhq/react-ui";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import ErrorBanner from "~/renderer/components/ErrorBanner";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
