@@ -1,5 +1,40 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.2
+
+### Minor Changes
+
+- [#7684](https://github.com/LedgerHQ/ledger-live/pull/7684) [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: added new env to bypass app requirements to init swaps
+
+### Patch Changes
+
+- [#7679](https://github.com/LedgerHQ/ledger-live/pull/7679) [`54578c3`](https://github.com/LedgerHQ/ledger-live/commit/54578c329baf4434f9c5d9accb8842da00e45630) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix removal of custom lock screen on LLD
+
+- Updated dependencies [[`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a)]:
+  - @ledgerhq/live-env@2.3.0-nightly.1
+  - @ledgerhq/live-wallet@0.5.1-nightly.4
+  - @ledgerhq/coin-framework@0.17.1-nightly.2
+  - @ledgerhq/coin-algorand@0.5.5-nightly.2
+  - @ledgerhq/coin-bitcoin@0.7.4-nightly.0
+  - @ledgerhq/coin-cardano@0.1.5-nightly.2
+  - @ledgerhq/coin-evm@2.2.0-nightly.3
+  - @ledgerhq/coin-icon@0.4.2-nightly.2
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.2
+  - @ledgerhq/coin-solana@0.7.5-nightly.2
+  - @ledgerhq/coin-ton@0.3.13-nightly.3
+  - @ledgerhq/coin-tron@0.0.5-nightly.2
+  - @ledgerhq/live-countervalues@0.2.5-nightly.2
+  - @ledgerhq/live-network@1.4.1-nightly.2
+  - @ledgerhq/live-nft@0.4.5-nightly.2
+  - @ledgerhq/speculos-transport@0.1.5-nightly.2
+  - @ledgerhq/coin-near@0.5.5-nightly.2
+  - @ledgerhq/coin-stellar@0.2.3-nightly.2
+  - @ledgerhq/coin-tezos@0.6.1-nightly.2
+  - @ledgerhq/coin-xrp@0.5.1-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.2
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.2
+  - @ledgerhq/device-core@0.3.3-nightly.4
+
 ## 34.7.2-nightly.1
 
 ### Patch Changes

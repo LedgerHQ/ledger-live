@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.3.0-nightly.1
+
+### Minor Changes
+
+- [#7684](https://github.com/LedgerHQ/ledger-live/pull/7684) [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: added new env to bypass app requirements to init swaps
+
 ## 2.3.0-nightly.0
 
 ### Minor Changes

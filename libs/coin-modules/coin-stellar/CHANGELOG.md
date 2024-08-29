@@ -1,5 +1,13 @@
 # @ledgerhq/coin-stellar
 
+## 0.2.3-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.17.1-nightly.2
+  - @ledgerhq/live-network@1.4.1-nightly.2
+
 ## 0.2.3-nightly.1
 
 ### Patch Changes

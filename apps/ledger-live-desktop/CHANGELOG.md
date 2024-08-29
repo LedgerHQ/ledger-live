@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.2
+
+### Patch Changes
+
+- [#7682](https://github.com/LedgerHQ/ledger-live/pull/7682) [`9f39f91`](https://github.com/LedgerHQ/ledger-live/commit/9f39f9129668c22dc23f15be9304224ac17dce1d) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed swap live app fee drawer error check sync
+
+- [#7694](https://github.com/LedgerHQ/ledger-live/pull/7694) [`6f865fd`](https://github.com/LedgerHQ/ledger-live/commit/6f865fd52119a017ea20fd8f51b6e30ebf00fe68) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: uses correct status for fee drawers and disable button if any error is present
+
+- [#7687](https://github.com/LedgerHQ/ledger-live/pull/7687) [`297ce51`](https://github.com/LedgerHQ/ledger-live/commit/297ce513f496f256efe8f9011734324125f462a5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handling alredy created key with new or same Ledger device
+
+- [#7700](https://github.com/LedgerHQ/ledger-live/pull/7700) [`55f40b1`](https://github.com/LedgerHQ/ledger-live/commit/55f40b1c9bbc91ba7b4aada849c94987546bad75) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update analytics
+
+- [#7679](https://github.com/LedgerHQ/ledger-live/pull/7679) [`54578c3`](https://github.com/LedgerHQ/ledger-live/commit/54578c329baf4434f9c5d9accb8842da00e45630) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix removal of custom lock screen on LLD
+
+- Updated dependencies [[`297ce51`](https://github.com/LedgerHQ/ledger-live/commit/297ce513f496f256efe8f9011734324125f462a5), [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a), [`54578c3`](https://github.com/LedgerHQ/ledger-live/commit/54578c329baf4434f9c5d9accb8842da00e45630)]:
+  - @ledgerhq/trustchain@0.3.0-nightly.4
+  - @ledgerhq/live-common@34.8.0-nightly.2
+  - @ledgerhq/live-env@2.3.0-nightly.1
+  - @ledgerhq/live-wallet@0.5.1-nightly.4
+  - @ledgerhq/coin-framework@0.17.1-nightly.2
+  - @ledgerhq/coin-bitcoin@0.7.4-nightly.0
+  - @ledgerhq/coin-evm@2.2.0-nightly.3
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.2
+  - @ledgerhq/live-countervalues@0.2.5-nightly.2
+  - @ledgerhq/live-network@1.4.1-nightly.2
+  - @ledgerhq/live-nft@0.4.5-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.2
+  - @ledgerhq/live-nft-react@0.4.5-nightly.2
+
 ## 2.86.0-nightly.1
 
 ### Patch Changes

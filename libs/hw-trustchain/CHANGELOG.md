@@ -1,5 +1,12 @@
 # @ledgerhq/live-wallet
 
+## 0.1.5-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a)]:
+  - @ledgerhq/live-env@2.3.0-nightly.1
+
 ## 0.1.5-nightly.1
 
 ### Patch Changes

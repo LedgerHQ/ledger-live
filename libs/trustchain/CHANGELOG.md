@@ -1,5 +1,17 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.4
+
+### Patch Changes
+
+- [#7687](https://github.com/LedgerHQ/ledger-live/pull/7687) [`297ce51`](https://github.com/LedgerHQ/ledger-live/commit/297ce513f496f256efe8f9011734324125f462a5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handling alredy created key with new or same Ledger device
+
+- Updated dependencies [[`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a)]:
+  - @ledgerhq/live-env@2.3.0-nightly.1
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.2
+  - @ledgerhq/live-network@1.4.1-nightly.2
+  - @ledgerhq/speculos-transport@0.1.5-nightly.2
+
 ## 0.3.0-nightly.3
 
 ### Minor Changes
