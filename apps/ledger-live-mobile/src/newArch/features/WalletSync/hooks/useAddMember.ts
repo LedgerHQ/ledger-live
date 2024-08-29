@@ -23,7 +23,7 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
       dispatch(setTrustchain(trustchainResult.trustchain));
-      navigation.navigate(ScreenName.WalletSyncSuccess, {
+      navigation.navigate(ScreenName.WalletSyncLoading, {
         created: trustchainResult.type === TrustchainResultType.created,
       });
     },

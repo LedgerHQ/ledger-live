@@ -18,6 +18,7 @@ import UnbackedErrorStep from "./05-UnbackedError";
 import { BackProps, BackRef } from "../router";
 import AlreadyCreatedWithSameSeedStep from "./06-ActivationAlreadyCreatedSame";
 import AlreadyCreatedOtherSeedStep from "./07-ActivationAlreadyCreatedOther";
+import ActivationLoadingStep from "../Activation/04-LoadingStep";
 
 const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
   const dispatch = useDispatch();
@@ -80,6 +81,8 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
         return <AlreadyCreatedWithSameSeedStep />;
       case Step.AlreadySecuredOtherSeed:
         return <AlreadyCreatedOtherSeedStep />;
+      case Step.SynchronizeLoading:
+        return <ActivationLoadingStep />;
 
       case Step.Synchronized:
         return <SyncFinalStep />;
