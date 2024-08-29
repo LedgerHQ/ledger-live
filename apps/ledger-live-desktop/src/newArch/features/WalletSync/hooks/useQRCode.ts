@@ -4,6 +4,7 @@ import {
   InvalidDigitsError,
   NoTrustchainInitialized,
   QRCodeWSClosed,
+  TrustchainAlreadyInitialized,
 } from "@ledgerhq/trustchain/errors";
 import { MemberCredentials } from "@ledgerhq/trustchain/types";
 import { useDispatch, useSelector } from "react-redux";
@@ -60,7 +61,7 @@ export function useQRCode() {
         },
         memberCredentials,
         memberName,
-        alreadyHasATrustchain: !!trustchain,
+        initialTrustchainId: trustchain?.rootId,
       }),
 
     // Don't use retry here because it always uses a delay despite setting it to 0
@@ -74,6 +75,9 @@ export function useQRCode() {
       }
       if (e instanceof NoTrustchainInitialized) {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
+      }
+      if (e instanceof TrustchainAlreadyInitialized) {
+        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
       }
     },
 

@@ -38,7 +38,7 @@ export function AppQRCodeHost({
       },
       memberCredentials,
       memberName: "WebTools",
-      alreadyHasATrustchain: !!trustchain,
+      initialTrustchainId: trustchain.rootId,
     })
       .catch(e => {
         if (e instanceof InvalidDigitsError) {

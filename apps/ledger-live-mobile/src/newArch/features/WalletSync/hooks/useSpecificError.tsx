@@ -11,12 +11,15 @@ export enum ErrorReason {
   AUTO_REMOVE = "auto-remove",
   SAME_SEED = "same",
   OTHER_SEED = "other",
+  ALREADY_BACKED_SCAN = "already-backed",
+  DIFFERENT_BACKUPS = "different-backups",
+  NO_BACKUP = "no-backup",
 }
 
 export interface ErrorConfig {
   icon: React.ReactNode;
   title: string;
-  description: string;
+  description?: string;
   info?: string;
   cta: string;
   ctaSecondary?: string;
@@ -27,35 +30,33 @@ export interface ErrorConfig {
   secondaryAction?: () => void;
 }
 
-type Props = {
-  tryAgain?: () => void;
-  understood?: () => void;
-  goToDelete?: () => void;
-  cancel?: () => void;
+export type SpecificProps = {
+  primaryAction: () => void;
+  secondaryAction?: () => void;
 };
 
-export function useSpecificError({ tryAgain, understood, goToDelete, cancel }: Props) {
+export function useSpecificError({ primaryAction, secondaryAction }: SpecificProps) {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { t } = useTranslation();
   const { colors } = useTheme();
 
   const onTryAgain = (page: AnalyticsPage) => {
-    tryAgain?.();
     onClickTrack({ button: AnalyticsButton.UseAnother, page });
   };
   const onGoToDelete = (page: AnalyticsPage) => {
-    goToDelete?.();
     onClickTrack({ button: AnalyticsButton.DeleteKey, page });
   };
 
   const onUnderstood = (page: AnalyticsPage) => {
-    understood?.();
     onClickTrack({ button: AnalyticsButton.Understand, page });
   };
 
   const onCancel = (page: AnalyticsPage) => {
-    cancel?.();
     onClickTrack({ button: AnalyticsButton.Cancel, page });
+  };
+
+  const onCreate = (page: AnalyticsPage) => {
+    onClickTrack({ button: AnalyticsButton.CreateYourKey, page });
   };
 
   const errorConfig: Record<ErrorReason, ErrorConfig> = {
@@ -72,8 +73,14 @@ export function useSpecificError({ tryAgain, understood, goToDelete, cancel }: P
       ),
       analyticsPage: AnalyticsPage.RemoveInstanceWrongDevice,
       buttonType: "main" as ButtonProps["type"],
-      primaryAction: () => onTryAgain(AnalyticsPage.RemoveInstanceWrongDevice),
-      secondaryAction: () => onGoToDelete(AnalyticsPage.RemoveInstanceWrongDevice),
+      primaryAction: () => {
+        primaryAction();
+        onTryAgain(AnalyticsPage.RemoveInstanceWrongDevice);
+      },
+      secondaryAction: () => {
+        secondaryAction?.();
+        onGoToDelete(AnalyticsPage.RemoveInstanceWrongDevice);
+      },
     },
     [ErrorReason.AUTO_REMOVE]: {
       icon: <Icons.InformationFill size={"L"} color={colors.primary.c80} />,
@@ -88,8 +95,14 @@ export function useSpecificError({ tryAgain, understood, goToDelete, cancel }: P
       ),
       analyticsPage: AnalyticsPage.AutoRemove,
       buttonType: "main" as ButtonProps["type"],
-      primaryAction: () => onUnderstood(AnalyticsPage.AutoRemove),
-      secondaryAction: () => onGoToDelete(AnalyticsPage.AutoRemove),
+      primaryAction: () => {
+        primaryAction();
+        onUnderstood(AnalyticsPage.AutoRemove);
+      },
+      secondaryAction: () => {
+        secondaryAction?.();
+        onGoToDelete(AnalyticsPage.AutoRemove);
+      },
     },
     [ErrorReason.SAME_SEED]: {
       icon: <Icons.InformationFill size={"L"} color={colors.primary.c80} />,
@@ -99,20 +112,65 @@ export function useSpecificError({ tryAgain, understood, goToDelete, cancel }: P
 
       analyticsPage: AnalyticsPage.SameSeed,
       buttonType: "main" as ButtonProps["type"],
-      primaryAction: () => onUnderstood(AnalyticsPage.SameSeed),
+      primaryAction: () => {
+        primaryAction();
+        onUnderstood(AnalyticsPage.SameSeed);
+      },
     },
     [ErrorReason.OTHER_SEED]: {
       icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
       title: t("walletSync.synchronize.alreadySecureOtherSeedError.title"),
       description: t("walletSync.synchronize.alreadySecureOtherSeedError.description"),
-
       cta: t("walletSync.synchronize.alreadySecureOtherSeedError.cta"),
       ctaSecondary: t("common.cancel"),
       analyticsPage: AnalyticsPage.OtherSeed,
       buttonType: "main" as ButtonProps["type"],
       outline: true,
-      primaryAction: () => onGoToDelete(AnalyticsPage.OtherSeed),
-      secondaryAction: () => onCancel(AnalyticsPage.OtherSeed),
+      primaryAction: () => {
+        primaryAction();
+        onGoToDelete(AnalyticsPage.OtherSeed);
+      },
+      secondaryAction: () => {
+        secondaryAction?.();
+        onCancel(AnalyticsPage.OtherSeed);
+      },
+    },
+    [ErrorReason.ALREADY_BACKED_SCAN]: {
+      icon: <Icons.InformationFill size={"L"} color={colors.primary.c80} />,
+      title: t("walletSync.synchronize.qrCode.alreadyBacked.title"),
+      cta: t("walletSync.synchronize.qrCode.alreadyBacked.cta"),
+      analyticsPage: AnalyticsPage.ScanAttemptWithSameBackup,
+      buttonType: "main" as ButtonProps["type"],
+      primaryAction: () => {
+        primaryAction();
+        onUnderstood(AnalyticsPage.ScanAttemptWithSameBackup);
+      },
+    },
+    [ErrorReason.DIFFERENT_BACKUPS]: {
+      icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
+      title: t("walletSync.synchronize.qrCode.backedWithDifferentSeeds.title"),
+      description: t("walletSync.synchronize.qrCode.backedWithDifferentSeeds.description"),
+      cta: t("walletSync.synchronize.qrCode.backedWithDifferentSeeds.cta"),
+      analyticsPage: AnalyticsPage.ScanAttemptWithDifferentBackups,
+      buttonType: "main" as ButtonProps["type"],
+
+      primaryAction: () => {
+        primaryAction();
+        onGoToDelete(AnalyticsPage.ScanAttemptWithDifferentBackups);
+      },
+    },
+    [ErrorReason.NO_BACKUP]: {
+      icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
+      title: t("walletSync.synchronize.qrCode.unbacked.title"),
+      description: t("walletSync.synchronize.qrCode.unbacked.description"),
+      cta: t("walletSync.synchronize.qrCode.unbacked.cta"),
+      analyticsPage: AnalyticsPage.Unbacked,
+      buttonType: "main" as ButtonProps["type"],
+
+      primaryAction: () => {
+        primaryAction();
+        onCreate(AnalyticsPage.Unbacked);
+      },
     },
   };
 

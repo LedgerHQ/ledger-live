@@ -10,7 +10,8 @@ import PinCodeInput from "../../screens/Synchronize/PinCodeInput";
 import SyncError from "../../screens/Synchronize/SyncError";
 import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
-import UnbackedError from "../../screens/Synchronize/UnbackedError";
+import { SpecificError } from "../Error/SpecificError";
+import { ErrorReason } from "../../hooks/useSpecificError";
 
 type Props = {
   currentStep: Steps;
@@ -91,7 +92,23 @@ const ActivationFlow = ({
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
 
       case Steps.UnbackedError:
-        return <UnbackedError create={onCreateKey} />;
+        return <SpecificError primaryAction={onCreateKey} error={ErrorReason.NO_BACKUP} />;
+
+      case Steps.AlreadyBacked:
+        return (
+          <SpecificError
+            primaryAction={() => setCurrentStep(Steps.QrCodeMethod)}
+            error={ErrorReason.ALREADY_BACKED_SCAN}
+          />
+        );
+
+      case Steps.BackedWithDifferentSeeds:
+        return (
+          <SpecificError
+            primaryAction={() => setCurrentStep(Steps.QrCodeMethod)}
+            error={ErrorReason.DIFFERENT_BACKUPS}
+          />
+        );
       default:
         return null;
     }

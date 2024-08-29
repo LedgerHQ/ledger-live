@@ -22,6 +22,8 @@ export enum AnalyticsPage {
   Unbacked = "Unbacked",
   OtherSeed = "Other seed",
   SameSeed = "Same seed",
+  ScanAttemptWithSameBackup = "Scan attempt with same backup",
+  ScanAttemptWithDifferentBackups = "Scan attempt with different backups",
 }
 
 export enum AnalyticsFlow {

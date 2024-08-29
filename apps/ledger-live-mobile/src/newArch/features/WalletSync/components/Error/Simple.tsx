@@ -3,7 +3,7 @@ import React from "react";
 import styled, { useTheme } from "styled-components/native";
 type Props = {
   title: string;
-  desc: string;
+  desc?: string;
   mainButton: {
     label: string;
     onPress: () => void;
@@ -22,9 +22,11 @@ export function ErrorComponent({ title, desc, mainButton }: Props) {
         <Text variant="h4" color="neutral.c100" textAlign="center" fontWeight="semiBold" mt={7}>
           {title}
         </Text>
-        <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center" mt={6}>
-          {desc}
-        </Text>
+        {desc && (
+          <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center" mt={6}>
+            {desc}
+          </Text>
+        )}
       </Flex>
       <Flex mt={8}>
         <Button type="main" outline={mainButton.outline} onPress={mainButton.onPress}>
