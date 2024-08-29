@@ -21,9 +21,7 @@ const renderItem = ({
 }) => {
   return (
     <Badge
-      onPress={() => {
-        extraData?.selectCategory(item.id);
-      }}
+      onPress={() => extraData?.selectCategory(item.id)}
       label={item.name}
       selected={extraData?.selectedCategory === item.id}
     />
