@@ -359,6 +359,12 @@ const linkingOptions = () => ({
               [ScreenName.GenericLandingPage]: "landing-page",
             },
           },
+
+          [NavigatorName.WalletSync]: {
+            screens: {
+              [ScreenName.LedgerSyncDeepLinkHandler]: "ledgersync",
+            },
+          },
         },
       },
     },

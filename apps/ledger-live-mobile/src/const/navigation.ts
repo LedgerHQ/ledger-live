@@ -520,6 +520,7 @@ export enum ScreenName {
   WalletSyncUnSynchSuccess = "WalletSyncUnSynchSuccess",
   WalletSyncManageInstancesProcess = "WalletSyncManageInstancesProcess",
   WalletSyncManageInstancesSuccess = "WalletSyncManageInstancesSuccess",
+  LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
 
   MockedAddAssetButton = "MockedAddAssetButton",
   GenericLandingPage = "GenericLandingPage",
