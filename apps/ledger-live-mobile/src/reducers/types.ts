@@ -346,6 +346,7 @@ export type MarketState = {
 
 export type WalletSyncState = {
   isManageKeyDrawerOpen: boolean;
+  isActivateDrawerOpen: boolean;
 };
 
 // === ROOT STATE ===
