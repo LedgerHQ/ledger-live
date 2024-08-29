@@ -16,26 +16,31 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Synchronize accounts")
   async syncAccounts() {
+    await expect(this.syncAccountsButton).toBeVisible();
     await this.syncAccountsButton.click();
   }
 
   @step("Close the Ledger Sync drawer")
   async closeLedgerSync() {
+    await expect(this.closeLedgerSyncButton).toBeVisible();
     await this.closeLedgerSyncButton.click();
   }
 
   @step("Open the Manage Key section")
   async manageBackup() {
+    await expect(this.manageBackupButton).toBeVisible();
     await this.manageBackupButton.click();
   }
 
   @step("Click on the 'Delete your data' button")
   async deleteBackup() {
+    await expect(this.deleteBackupButton).toBeVisible();
     await this.deleteBackupButton.click();
   }
 
   @step("Confirm the deletion of the data")
   async confirmBackupDeletion() {
+    await expect(this.confirmBackupDeletionButton).toBeVisible();
     await this.confirmBackupDeletionButton.click();
   }
 
