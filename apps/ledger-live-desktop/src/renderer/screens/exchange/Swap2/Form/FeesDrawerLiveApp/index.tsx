@@ -42,6 +42,12 @@ export default function FeesDrawerLiveApp({
     (transaction: Transaction) => {
       setTransactionState(transaction);
       setTransaction(transaction);
+      bridge
+        .getTransactionStatus(
+          mainAccount.type === "TokenAccount" ? parentAccount : mainAccount,
+          transaction,
+        )
+        .then(setTransactionStatus);
     },
     [setTransaction],
   );
