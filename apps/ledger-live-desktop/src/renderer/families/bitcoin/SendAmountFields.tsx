@@ -68,7 +68,8 @@ const Fields: Props = ({
   }, [account.currency.id, account.id, dispatch, history]);
 
   const { errors } = status;
-  const { gasPrice: messageGas } = errors;
+  const { gasPrice: messageGas, amount: messageAmount } = errors;
+
   /* TODO: How do we set default RBF to be true ? (@gre)
    * Meanwhile, using this trick (please don't kill me)
    */
@@ -180,13 +181,14 @@ const Fields: Props = ({
             mapStrategies={mapStrategies}
             status={status}
           />
-          {messageGas && (
-            <Flex onClick={onBuyClick}>
-              <Alert type="warning">
-                <TranslatedError error={messageGas} />
-              </Alert>
-            </Flex>
-          )}
+          {messageGas ||
+            (messageAmount && (
+              <Flex onClick={onBuyClick}>
+                <Alert type="warning">
+                  <TranslatedError error={messageGas || messageAmount} />
+                </Alert>
+              </Flex>
+            ))}
         </>
       )}
     </>

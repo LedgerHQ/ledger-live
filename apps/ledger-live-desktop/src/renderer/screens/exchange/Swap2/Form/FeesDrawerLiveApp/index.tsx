@@ -116,11 +116,6 @@ export default function FeesDrawerLiveApp({
         )}
       </Box>
       <Divider />
-      {transactionStatus.errors?.amount && (
-        <Box>
-          <ErrorBanner error={transactionStatus.errors?.amount} />
-        </Box>
-      )}
 
       <Box mt={3} mx={3} alignSelf="flex-end">
         <Button
