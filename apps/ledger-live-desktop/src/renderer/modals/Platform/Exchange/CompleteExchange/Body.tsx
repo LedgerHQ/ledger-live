@@ -174,6 +174,9 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         (data.exchangeType === ExchangeType.SELL || data.exchangeType === ExchangeType.SELL_NG) &&
         sourceCurrency
       ) {
+        if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+          return onCancel(new DisabledTransactionBroadcastError());
+        }
         onResult(operation);
         setResult({ provider, isSell: true, sourceCurrency });
       } else {

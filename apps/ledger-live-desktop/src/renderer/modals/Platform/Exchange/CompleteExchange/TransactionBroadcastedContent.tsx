@@ -5,6 +5,7 @@ import { Separator } from "~/renderer/screens/exchange/Swap2/Form/Separator";
 import Button from "~/renderer/components/Button";
 import SwapCompleted from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/SwapCompleted";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
+import { useGetSellTrackingProperties } from "~/renderer/screens/exchange/Sell/utils";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import SellCompleted from "~/renderer/screens/exchange/Sell/SellCompleted";
@@ -21,6 +22,7 @@ type TransactionBroadcastedContentProps = {
 export function TransactionBroadcastedContent(props: TransactionBroadcastedContentProps) {
   const { swapId, provider, sourceCurrency, targetCurrency, onViewDetails, isSell } = props;
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const sellDefaultTrack = useGetSellTrackingProperties();
 
   return (
     <Box height="100%" justifyContent="space-between" paddingTop={62} paddingBottom={15}>
@@ -30,7 +32,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
         sourceCurrency={sourceCurrency?.name}
         targetCurrency={targetCurrency?.name}
         provider={provider}
-        {...swapDefaultTrack}
+        {...(swapId ? swapDefaultTrack : sellDefaultTrack)}
       />
       {swapId && targetCurrency && (
         <>
