@@ -2088,42 +2088,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  pivx: {
-    type: "CryptoCurrency",
-    id: "pivx",
-    coinType: CoinType.PIVX,
-    name: "PivX",
-    managerAppName: "PivX",
-    ticker: "PIVX",
-    scheme: "pivx",
-    color: "#46385d",
-    family: "bitcoin",
-    blockAvgTime: 150,
-    bitcoinLikeInfo: {
-      P2PKH: 30,
-      P2SH: 13,
-      XPUBVersion: 0x022d2533,
-    },
-    units: [
-      {
-        name: "pivx",
-        code: "PIVX",
-        magnitude: 8,
-      },
-      {
-        name: "satoshi",
-        code: "sat",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://chainz.cryptoid.info/pivx/tx.dws?$hash.htm",
-        address: "https://chainz.cryptoid.info/pivx/address.dws?$address.htm",
-      },
-    ],
-    explorerId: "pivx",
-  },
   poa: {
     type: "CryptoCurrency",
     id: "poa",

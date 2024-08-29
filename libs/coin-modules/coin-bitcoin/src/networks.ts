@@ -213,20 +213,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "pivx") {
-    return {
-      identifier: "pivx",
-      P2PKHVersion: Buffer.from([0x1e]),
-      P2SHVersion: Buffer.from([0x0d]),
-      xpubVersion: Buffer.from([0x02, 0x2d, 0x25, 0x33]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "DarkNet Signed Message:\n",
-      usesTimestampedTransaction: false,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
   } else if (networkName === "clubcoin") {
     return {
       identifier: "club",

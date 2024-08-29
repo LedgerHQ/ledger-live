@@ -122,7 +122,6 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "ethereum/erc20/rune",
   "bsc/bep20/inpulsex",
   "ethereum/erc20/acuteanglecoin",
-  "pivx",
   "ethereum/erc20/reserve_rights",
   "ethereum/erc20/wcoin",
   "ethereum/erc20/shipchain",

@@ -19,7 +19,6 @@ import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo", number>> = {
   bitcoin: 1000,
   bitcoin_gold: 1000,
-  pivx: 2000,
   qtum: 4000,
   stratis: 2000,
 };
