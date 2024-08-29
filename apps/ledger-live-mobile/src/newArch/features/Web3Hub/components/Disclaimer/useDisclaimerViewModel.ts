@@ -3,7 +3,6 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { INITIAL_WEB3HUB_STATE, WEB3HUB_STORE_KEY } from "LLM/features/Web3Hub/constants";
 import { Web3HubDB } from "LLM/features/Web3Hub/types";
 import { useDB } from "~/db";
-import { track } from "~/analytics";
 
 const dismissedManifestsSelector = (state: Web3HubDB) => state.dismissedManifests;
 
@@ -52,12 +51,8 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
   );
 
   const toggleCheck = useCallback(() => {
-    track("web3hub_disclaimer_toggle", {
-      component: `Disclaimer`,
-      action: `turn checkbox to ${isChecked ? "off" : "on"}`,
-    });
     setIsChecked(value => !value);
-  }, [isChecked]);
+  }, []);
 
   const onConfirm = useCallback(() => {
     if (disclaimerManifest) {
@@ -76,9 +71,6 @@ export default function useDisclaimerViewModel(goToApp: (manifestId: string) => 
   }, [disclaimerManifest, goToApp, isChecked, setWeb3HubDB]);
 
   const onClose = useCallback(() => {
-    track("web3hub_disclaimer_closed", {
-      component: `Disclaimer`,
-    });
     setDisclaimerOpened(false);
   }, []);
 

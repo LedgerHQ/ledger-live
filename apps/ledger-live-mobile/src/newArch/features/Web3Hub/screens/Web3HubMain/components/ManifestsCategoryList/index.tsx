@@ -4,7 +4,6 @@ import useManifestsListViewModel from "LLM/features/Web3Hub/components/Manifests
 import Disclaimer, { useDisclaimerViewModel } from "LLM/features/Web3Hub/components/Disclaimer";
 import { MainProps } from "LLM/features/Web3Hub/types";
 import HorizontalList from "../HorizontalList";
-import { track } from "~/analytics";
 
 type Props = {
   title: string;
@@ -18,12 +17,6 @@ const ManifestsCategoryList = ({ title, categoryId, navigation, testID }: Props)
 
   const goToApp = useCallback(
     (manifestId: string) => {
-      track("web3hub_app_clicked", {
-        component: `ManifestsCategoryList`,
-        page: "Web3HubMain",
-        app: manifestId,
-        category: categoryId,
-      });
       navigation.push(NavigatorName.Web3Hub, {
         screen: ScreenName.Web3HubApp,
         params: {
@@ -31,7 +24,7 @@ const ManifestsCategoryList = ({ title, categoryId, navigation, testID }: Props)
         },
       });
     },
-    [navigation, categoryId],
+    [navigation],
   );
 
   const disclaimer = useDisclaimerViewModel(goToApp);

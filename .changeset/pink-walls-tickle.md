@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-Analytics improved on Web3Hub
+Setup analytics on Web3Hub

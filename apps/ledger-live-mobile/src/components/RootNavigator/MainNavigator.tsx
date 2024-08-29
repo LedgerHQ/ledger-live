@@ -148,9 +148,6 @@ export default function MainNavigator() {
           listeners={({ navigation }) => ({
             tabPress: e => {
               e.preventDefault();
-              track("web3hub_section_clicked", {
-                page: "Home",
-              });
               managerLockAwareCallback(() => {
                 navigation.navigate(NavigatorName.Web3HubTab);
               });
