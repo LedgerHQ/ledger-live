@@ -11,7 +11,11 @@ import ActivationOrSynchroWithTrustchain from "./03-ActivationOrSynchroWithTrust
 import ActivationFinalStep from "./04-ActivationFinalStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import ErrorStep from "./05-ActivationOrSyncError";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import {
+  AnalyticsPage,
+  useLedgerSyncAnalytics,
+  AnalyticsFlow,
+} from "../../hooks/useLedgerSyncAnalytics";
 import { BackRef, BackProps } from "../router";
 
 const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
@@ -20,7 +24,7 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
 
   const { currentStep, goToNextScene, goToPreviousScene, goToWelcomeScreenWalletSync } = useFlows();
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   useImperativeHandle(ref, () => ({
     goBack,
@@ -39,16 +43,16 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
     onClickTrack({
       button: "Already synced a Ledger Live app?",
       page: AnalyticsPage.Activation,
-      flow: "Wallet Sync",
+      flow: AnalyticsFlow,
     });
   };
 
   const goToCreateBackup = () => {
     goToNextScene();
     onClickTrack({
-      button: "create your backup",
+      button: "Sync your accounts",
       page: AnalyticsPage.Activation,
-      flow: "Wallet Sync",
+      flow: AnalyticsFlow,
     });
   };
 
@@ -70,6 +74,7 @@ const WalletSyncActivation = forwardRef<BackRef, BackProps>((_props, ref) => {
         return <ActivationFinalStep isNewBackup={true} />;
       case Step.SynchronizationFinal:
         return <ActivationFinalStep isNewBackup={false} />;
+
       case Step.SynchronizationError:
         return <ErrorStep />;
     }

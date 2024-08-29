@@ -52,18 +52,18 @@ export default function FeesDrawerLiveApp({
     (updater: (arg0: Transaction) => Transaction) => {
       setTransactionState(prevTransaction => {
         const updatedTransaction = updater(prevTransaction);
-        setTransaction(updatedTransaction);
         bridge
           .getTransactionStatus(
             mainAccount.type === "TokenAccount" ? parentAccount : mainAccount,
-            transaction,
+            updatedTransaction,
           )
-          .then(setTransactionStatus);
+          .then(setTransactionStatus)
+          .then(_ => setTransaction(updatedTransaction));
 
         return updatedTransaction;
       });
     },
-    [setTransaction, bridge, mainAccount, transaction, parentAccount],
+    [setTransaction, bridge, mainAccount, parentAccount],
   );
 
   const mapStrategies = useCallback(
@@ -102,7 +102,7 @@ export default function FeesDrawerLiveApp({
           <SendAmountFields
             account={parentAccount || (mainAccount as Account)}
             parentAccount={parentAccount}
-            status={status}
+            status={transactionStatus}
             transaction={transaction}
             onChange={handleSetTransaction}
             updateTransaction={handleUpdateTransaction}
@@ -124,7 +124,7 @@ export default function FeesDrawerLiveApp({
 
       <Box mt={3} mx={3} alignSelf="flex-end">
         <Button
-          disabled={!!transactionStatus.errors?.amount}
+          disabled={Object.keys(transactionStatus.errors).length > 0}
           variant={"main"}
           outline
           borderRadius={48}

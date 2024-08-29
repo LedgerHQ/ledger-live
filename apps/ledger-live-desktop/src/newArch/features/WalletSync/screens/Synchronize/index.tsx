@@ -8,10 +8,16 @@ import SynchronizeModeStep from "./01-SyncModeStep";
 import SynchWithQRCodeStep from "./02-QRCodeStep";
 import PinCodeStep from "./03-PinCodeStep";
 import SyncFinalStep from "./04-SyncFinalStep";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import {
+  AnalyticsPage,
+  useLedgerSyncAnalytics,
+  AnalyticsFlow,
+} from "../../hooks/useLedgerSyncAnalytics";
 import PinCodeErrorStep from "./05-PinCodeError";
 import UnbackedErrorStep from "./05-UnbackedError";
 import { BackProps, BackRef } from "../router";
+import AlreadyCreatedWithSameSeedStep from "./06-ActivationAlreadyCreatedSame";
+import AlreadyCreatedOtherSeedStep from "./07-ActivationAlreadyCreatedOther";
 
 const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
   const dispatch = useDispatch();
@@ -21,7 +27,7 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
   }));
 
   const { currentStep, goToNextScene, goToPreviousScene, goToWelcomeScreenWalletSync } = useFlows();
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const goBack = () => {
     if (currentStep === FlowOptions[Flow.Synchronize].steps[1]) {
@@ -34,18 +40,18 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
   const startSyncWithDevice = () => {
     dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
     onClickTrack({
-      button: "With your Ledger",
+      button: "Use your Ledger",
       page: AnalyticsPage.SyncMethod,
-      flow: "Wallet Sync",
+      flow: AnalyticsFlow,
     });
   };
 
   const startSyncWithQRcode = () => {
     goToNextScene();
     onClickTrack({
-      button: "Scan a QR code",
+      button: "Display QR code",
       page: AnalyticsPage.SyncMethod,
-      flow: "Wallet Sync",
+      flow: AnalyticsFlow,
     });
   };
 
@@ -70,12 +76,23 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
       case Step.UnbackedError:
         return <UnbackedErrorStep />;
 
+      case Step.AlreadySecuredSameSeed:
+        return <AlreadyCreatedWithSameSeedStep />;
+      case Step.AlreadySecuredOtherSeed:
+        return <AlreadyCreatedOtherSeedStep />;
+
       case Step.Synchronized:
         return <SyncFinalStep />;
     }
   };
 
-  const centeredItems = [Step.Synchronized, Step.PinCodeError, Step.UnbackedError];
+  const centeredItems = [
+    Step.Synchronized,
+    Step.PinCodeError,
+    Step.UnbackedError,
+    Step.AlreadySecuredSameSeed,
+    Step.AlreadySecuredOtherSeed,
+  ];
 
   return (
     <Flex

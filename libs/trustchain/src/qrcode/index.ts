@@ -6,7 +6,7 @@ import { Message } from "./types";
 import {
   InvalidDigitsError,
   NoTrustchainInitialized,
-  TrustchainsAlreadyInitialized,
+  TrustchainAlreadyInitialized,
 } from "../errors";
 import { log } from "@ledgerhq/logs";
 
@@ -57,7 +57,7 @@ const commonSwitch = async ({
           message: "unexpected request credential",
         };
         send({ version, publisher, message: "Failure", payload });
-        throw new TrustchainsAlreadyInitialized("unexpected request credential");
+        throw new TrustchainAlreadyInitialized("unexpected request credential");
       }
       const payload = await cipher.encryptMessagePayload({
         id: memberCredentials.pubkey,
@@ -376,7 +376,7 @@ function fromErrorMessage(payload: { message: string; type: string }): Error {
     throw new NoTrustchainInitialized(payload.message);
   }
   if (payload.type === "UNEXPECTED_REQUEST_CREDENTIAL") {
-    throw new TrustchainsAlreadyInitialized(payload.message);
+    throw new TrustchainAlreadyInitialized(payload.message);
   }
   const error = new Error(payload.message);
   error.name = "TrustchainQRCode-" + payload.type;

@@ -45,8 +45,8 @@ export const mockedSdk = getSdk(
 
 export const walletSyncActivatedState = {
   ...initialStateWalletSync,
-  flow: Flow.WalletSyncActivated,
-  step: Step.WalletSyncActivated,
+  flow: Flow.LedgerSyncActivated,
+  step: Step.LedgerSyncActivated,
 };
 
 export const simpleTrustChain = {

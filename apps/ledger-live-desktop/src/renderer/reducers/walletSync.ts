@@ -7,7 +7,7 @@ export enum Flow {
   Synchronize = "Synchronize",
   ManageInstances = "ManageInstances",
   ManageBackup = "ManageBackup",
-  WalletSyncActivated = "WalletSyncActivated",
+  LedgerSyncActivated = "LedgerSyncActivated",
 }
 
 export enum Step {
@@ -24,6 +24,8 @@ export enum Step {
   ActivationFinal = "ActivationFinal",
   SynchronizationFinal = "SynchronizationFinal",
   SynchronizationError = "SynchronizationError",
+  AlreadySecuredSameSeed = "AlreadySecuredSameSeed",
+  AlreadySecuredOtherSeed = "AlreadySecuredOtherSeed",
 
   //Synchronize
   SynchronizeMode = "SynchronizeMode",
@@ -43,7 +45,7 @@ export enum Step {
   AutoRemoveInstance = "AutoRemoveInstance",
 
   //walletSyncActivated
-  WalletSyncActivated = "WalletSyncActivated",
+  LedgerSyncActivated = "LedgerSyncActivated",
 }
 
 export type WalletSyncState = {

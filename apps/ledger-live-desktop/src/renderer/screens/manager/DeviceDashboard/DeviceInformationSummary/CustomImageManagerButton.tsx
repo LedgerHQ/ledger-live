@@ -11,15 +11,20 @@ type Props = {
   disabled?: boolean;
   deviceModelId: CLSSupportedDeviceModelId;
   hasCustomLockScreen: boolean;
+  setHasCustomLockScreen: (value: boolean) => void;
 };
 
 const CustomImageManagerButton = (props: Props) => {
   const { t } = useTranslation();
-  const { disabled, deviceModelId, hasCustomLockScreen } = props;
+  const { disabled, deviceModelId, hasCustomLockScreen, setHasCustomLockScreen } = props;
 
   const onAdd = useCallback(() => {
-    setDrawer(CustomImage, { deviceModelId, hasCustomLockScreen }, { forceDisableFocusTrap: true });
-  }, [deviceModelId, hasCustomLockScreen]);
+    setDrawer(
+      CustomImage,
+      { deviceModelId, hasCustomLockScreen, setHasCustomLockScreen },
+      { forceDisableFocusTrap: true },
+    );
+  }, [deviceModelId, hasCustomLockScreen, setHasCustomLockScreen]);
 
   return (
     <Flex flexDirection="row" columnGap={3} alignItems="center">
