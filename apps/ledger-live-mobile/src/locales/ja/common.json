@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "見積もり"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -919,6 +920,13 @@
     "InvalidMemoICP" : {
       "title" : "メモは数字で記入してください"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "トークン転送の受取人が無効です。トークン転送でサポートされているアカウントタイプ：[f0、f4、0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "手数料の概算に失敗しました。",
+      "description" : "ネットワーク上で手数料の見積もりに失敗しました。入力を確認してください。トランザクションは失敗する可能性が高いです"
+    },
     "FirmwareNotRecognized" : {
       "title" : "プロバイダーが無効です",
       "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
@@ -937,6 +945,10 @@
       "title" : "再試行してください。",
       "description" : "サーバーはリクエストを処理できませんでした。再試行するか、Ledgerサポートにお問い合わせください。",
       "errorCode" : "コード：{{errorCode}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "データの取得中に問題が発生しました。",
+      "description" : "もう一度お試しいただくか、Ledgerサポートにご連絡ください。"
     }
   },
   "crash" : {
@@ -2274,6 +2286,7 @@
     },
     "quickActions" : {
       "buy" : "購入",
+      "sell" : "売却",
       "swap" : "スワップ",
       "send" : "送付",
       "deposit" : "受け取る",
@@ -2760,7 +2773,7 @@
       "dateFormat" : "日付形式",
       "dateFormatDesc" : "Ledger Liveの日付形式を設定。",
       "walletSync" : "Ledger同期",
-      "walletSyncDesc" : "シンプルにアプリのデータを保護し、複数のLedger Liveインスタンスを同期する。",
+      "walletSyncDesc" : "Securely sync your accounts across multiple Ledger Live instances",
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "password" : "アプリロック",
@@ -2993,6 +3006,10 @@
         },
         "platformManifest" : {
           "title" : "プラットフォームマニフェストを読み込む"
+        },
+        "mockAppUpdate" : {
+          "title" : "Mockアプリのアップデート",
+          "description" : "My Ledgerで利用可能なアプリのアップデートを表示すると、同じバージョンのアプリが再インストールされます。"
         }
       }
     },
@@ -6703,7 +6720,7 @@
         "title" : "すべてのプラットフォーム間でアカウントを同期",
         "description" : "Ledgerは暗号化キーを生成してデータのプライバシーを確保し、あなただけが取得可能にします。",
         "mainCta" : "アカウントを同期する",
-        "secondCta" : "キーを作成済みですか？"
+        "secondCta" : "Already synced a Ledger Live app?"
       }
     },
     "deviceSelection" : {
@@ -6713,6 +6730,11 @@
     "deviceAction" : {
       "title" : "Ledger {{wording}}で続ける",
       "description" : "Ledgerの信頼できるディスプレイに表示される指示に従ってください。"
+    },
+    "loading" : {
+      "title" : "お待ちください...",
+      "activation" : "データがエンドツーエンドで暗号化されています... ",
+      "synch" : "同期されたインスタンスを更新しています..."
     },
     "success" : {
       "sync" : "同期成功！",
@@ -6725,7 +6747,7 @@
     "walletSyncActivated" : {
       "synchronize" : {
         "title" : "同期する",
-        "description" : "アプリのデータを別のLedger Liveアプリと同期して、シームレスな体験を実現します。 "
+        "description" : "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "manageKey" : {
         "title" : "キーの管理",
@@ -6735,13 +6757,13 @@
           "step1" : {
             "title" : "キーの管理",
             "titleCta" : "鍵を削除",
-            "descCta" : "同期されたデータはすべて削除されます。"
+            "descCta" : "All synced accounts will be removed. This won’t affect your local accounts."
           },
           "step2" : {
             "delete" : "削除",
             "cancel" : "キャンセル",
             "title" : "本当に暗号化キーを削除してもよろしいですか？",
-            "desc" : "「削除」をクリックすると、デバイスの同期が解除され、同期されたデータがすべて削除されます。この操作を実行しても資金には影響しませんので、ご安心ください。アカウントはいつでも再同期できます。"
+            "desc" : "By clicking delete, your apps will be unsynchronized, and your backup will be deleted. Rest assured, this action does not affect your funds or your accounts in Ledger Live. You may resync your accounts at any time."
           }
         }
       },
@@ -6786,23 +6808,76 @@
         "connectDevice" : {
           "title" : "Ledgerを使用"
         }
+      },
+      "qrCode" : {
+        "title" : "インスタンスの同期",
+        "show" : {
+          "title" : "QRを表示",
+          "explanation" : {
+            "title" : "別のLedger Liveアプリを使用してアカウントをスキャンして同期します",
+            "steps" : {
+              "step1" : "同期したいLedger Liveアプリを開く",
+              "step2" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>同期</0>に移動",
+              "step3" : "Scan QR code"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "スキャン",
+          "description" : "QRコードをスキャン",
+          "explanation" : {
+            "title" : "別のLedger Liveアプリを使用してアカウントをスキャンして同期します",
+            "steps" : {
+              "step1" : "同期したいLedger Liveアプリを開く",
+              "step2" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>同期</0> <1>></1> <0>QRを表示</0>に移動",
+              "step3" : "Scan QR code"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "コードを入力",
+          "desc" : "同期したいLedger Liveアプリに表示されているコードを入力します。",
+          "error" : {
+            "title" : "コードが一致しません",
+            "desc" : "入力したコードが他のLedger Liveインスタンスに表示されるコードであることを確認してください。",
+            "tryAgain" : "再試行"
+          }
+        },
+        "unbacked" : {
+          "title" : "You need to create your encryption key first",
+          "desc" : "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+          "cta" : "Create your encryption key"
+        }
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "クリア署名有効",
-      "checkbox" : "今後、このメッセージを表示しない。",
-      "CTA" : "{{app}}を開く"
-    },
-    "manifestsList" : {
-      "title" : "探索",
-      "description" : "Ledgerが厳選するWeb3の世界をチェック"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "クリア署名有効",
+        "clearSigningDisabled" : "クリア署名無効",
+        "checkbox" : "今後、このメッセージを表示しない。",
+        "CTA" : "{{app}}を開く"
+      },
+      "manifestsList" : {
+        "title" : "探索",
+        "description" : "Ledgerが厳選するWeb3の世界をチェック"
+      },
+      "label" : {
+        "clearSigning" : "クリア署名"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "アプリ一覧"
+      },
       "header" : {
         "title" : "Web3を探索",
         "placeholder" : "検索またはURLを入力"
+      },
+      "clearSigning" : {
+        "title" : "クリア署名",
+        "description" : "クリア署名を使用すると、メッセージの内容をアプリに公開せずにメッセージに署名できます。これは、プライバシーとセキュリティ上の理由から役立ちます。"
       }
     }
   }
