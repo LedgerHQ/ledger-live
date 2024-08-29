@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ErrorComponent } from "../../components/Error";
+import { ErrorComponent } from "../../components/Error/Simple";
 
 interface Props {
   create: () => void;
