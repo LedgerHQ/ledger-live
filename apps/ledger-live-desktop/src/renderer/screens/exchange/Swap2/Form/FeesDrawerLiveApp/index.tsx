@@ -9,7 +9,6 @@ import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider } from "@ledgerhq/react-ui";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import ErrorBanner from "~/renderer/components/ErrorBanner";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
@@ -116,11 +115,6 @@ export default function FeesDrawerLiveApp({
         )}
       </Box>
       <Divider />
-      {transactionStatus.errors?.amount && (
-        <Box>
-          <ErrorBanner error={transactionStatus.errors?.amount} />
-        </Box>
-      )}
 
       <Box mt={3} mx={3} alignSelf="flex-end">
         <Button
