@@ -37,6 +37,7 @@ export default function FeesDrawerLiveApp({
   const [isOpen, setIsOpen] = useState(true);
   const [transaction, setTransactionState] = useState(initialTransaction);
   const [transactionStatus, setTransactionStatus] = useState(status);
+  const bridge = getAccountBridge(mainAccount, parentAccount);
 
   const handleSetTransaction = useCallback(
     (transaction: Transaction) => {
@@ -49,10 +50,8 @@ export default function FeesDrawerLiveApp({
         )
         .then(setTransactionStatus);
     },
-    [setTransaction],
+    [setTransaction, bridge, mainAccount, parentAccount],
   );
-
-  const bridge = getAccountBridge(mainAccount, parentAccount);
 
   const handleUpdateTransaction = useCallback(
     (updater: (arg0: Transaction) => Transaction) => {
