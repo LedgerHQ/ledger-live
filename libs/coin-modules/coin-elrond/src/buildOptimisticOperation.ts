@@ -65,7 +65,7 @@ export const buildOptimisticOperation = (
     null;
 
   const value =
-    tokenAccount || transaction.mode !== "send"
+    tokenAccount || (transaction.mode !== "send" && transaction.mode != "delegate")
       ? fees
       : transaction.amount.plus(transaction.fees || new BigNumber(0));
 
