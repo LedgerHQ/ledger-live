@@ -3010,8 +3010,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://zcashblockexplorer.com/transactions/$hash",
-        address: "https://zcashblockexplorer.com/address/$address",
+        tx: "https://blockchair.com/zcash/transaction/$hash",
+        address: "https://blockchair.com/zcash/address/$address",
       },
     ],
     explorerId: "zec",

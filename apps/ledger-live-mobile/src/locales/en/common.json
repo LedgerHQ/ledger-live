@@ -958,6 +958,15 @@
     },
     "TonMinimumRequired": {
       "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+    },
+    "BackupAppDataError": {
+      "title": "Error during app data backup"
+    },
+    "RestoreAppDataError": {
+      "title": "Error restoring app data"
+    },
+    "DeleteAppDataError": {
+      "title": "Error deleting app data"
     }
   },
   "crash": {
@@ -6863,6 +6872,16 @@
           "desc": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
           "cta": "Create your encryption key"
         }
+      },
+      "alreadySecureError": {
+        "title": "This app is already secured by this Ledger",
+        "description": "If you are attempting to create a new backup, please connect the Ledger device you used to create your other encryption key.",
+        "cta": "I understand"
+      },
+      "alreadySecureOtherSeedError": {
+        "title": "You can’t use this Ledger to sync",
+        "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
+        "cta": "Delete my encryption key"
       }
     }
   },
