@@ -39,7 +39,7 @@ const FollowInstructions: React.FC<Props> = ({ device }) => {
       </AnimationContainer>
       <Flex justifyContent="center" alignItems="center" flexDirection="column" rowGap={16}>
         <Text fontWeight="semiBold" color="neutral.c100" textAlign="center" fontSize="20px">
-          {t("walletSync.deviceAction.title", { wording: getProductName(DeviceModelId.stax) })}
+          {t("walletSync.deviceAction.title", { wording: getProductName(device.modelId) })}
         </Text>
         <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center" fontSize="14px">
           {t("walletSync.deviceAction.description")}
