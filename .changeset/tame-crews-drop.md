@@ -3,6 +3,7 @@
 "ledger-live-desktop": patch
 "live-mobile": patch
 "@ledgerhq/live-common": patch
+"@ledgerhq/coin-framework": patch
 ---
 
-more cosmos to its own module
+Move Cosmos and Cosmos-based coins to its own module
