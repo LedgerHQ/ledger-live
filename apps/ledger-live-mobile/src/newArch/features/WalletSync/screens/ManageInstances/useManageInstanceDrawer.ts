@@ -9,6 +9,8 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
+import { track } from "~/analytics";
+import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 const messageLog = "Follow Steps on device";
 
@@ -49,9 +51,18 @@ export const useManageInstancesDrawer = (): HookResult => {
   const closeDrawer = useCallback(() => {
     setIsDrawerInstructionsVisible(false);
     logDrawer(messageLog, "close");
-  }, []);
+
+    track("button_clicked", {
+      button: AnalyticsButton.Close,
+      page: scene === Scene.List ? AnalyticsPage.ManageSyncInstances : AnalyticsPage.AutoRemove,
+    });
+  }, [scene]);
 
   const onClickInstance = (instance: TrustchainMember) => {
+    track("button_clicked", {
+      button: AnalyticsButton.RemoveInstance,
+      page: AnalyticsPage.ManageSyncInstances,
+    });
     navigation.navigate(ScreenName.WalletSyncManageInstancesProcess, {
       member: instance,
     });

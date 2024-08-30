@@ -5,6 +5,8 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 
 import { NavigatorName, ScreenName } from "~/const";
+import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
+import { track } from "~/analytics";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -17,6 +19,10 @@ export function WalletSyncManageInstanceDeletionSuccess({ navigation, route }: P
   const { t } = useTranslation();
   const member = route.params?.member.name;
   function close(): void {
+    track("button_clicked", {
+      button: AnalyticsButton.Close,
+      page: AnalyticsPage.RemoveInstanceSuccess,
+    });
     navigation.navigate(NavigatorName.Settings, {
       screen: ScreenName.GeneralSettings,
     });
@@ -31,6 +37,7 @@ export function WalletSyncManageInstanceDeletionSuccess({ navigation, route }: P
         label: t("walletSync.success.close"),
         onPress: close,
       }}
+      analyticsPage={AnalyticsPage.RemoveInstanceSuccess}
     />
   );
 }
