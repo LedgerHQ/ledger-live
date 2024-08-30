@@ -1,7 +1,7 @@
 {
   "entry": [
     "src/account.ts",
-    "src/bridge/js.ts",
+    "src/bridge/index.ts",
     "src/cli.ts",
     "src/deviceTransactionConfig.ts",
     "src/CosmosValidatorsManager.ts",
@@ -24,7 +24,6 @@
   ],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
-    "src/bridge/index.ts",
     "src/broadcast.ts",
     "src/buildOptimisticOperation.ts",
     "src/buildTransaction.ts",
