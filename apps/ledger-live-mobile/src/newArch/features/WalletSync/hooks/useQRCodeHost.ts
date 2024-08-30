@@ -74,7 +74,7 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
         }
         queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
         navigation.navigate(NavigatorName.WalletSync, {
-          screen: ScreenName.WalletSyncSuccess,
+          screen: ScreenName.WalletSyncLoading,
           params: {
             created: false,
           },

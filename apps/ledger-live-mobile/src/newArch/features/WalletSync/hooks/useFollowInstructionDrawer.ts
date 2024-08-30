@@ -12,12 +12,16 @@ export enum SceneKind {
   WrongSeedError,
   KeyError,
   GenericError,
+  AlreadySecuredSameSeed,
+  AlreadySecuredOtherSeed,
 }
 type Scene =
   | { kind: SceneKind.DeviceInstructions; device: Device }
   | { kind: SceneKind.Loader }
   | { kind: SceneKind.WrongSeedError }
   | { kind: SceneKind.KeyError }
+  | { kind: SceneKind.AlreadySecuredSameSeed }
+  | { kind: SceneKind.AlreadySecuredOtherSeed }
   | { kind: SceneKind.GenericError; error: Error };
 
 export type DrawerProps = {

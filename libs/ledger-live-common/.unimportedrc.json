@@ -328,7 +328,10 @@
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/walletSync/getEnvironmentParams.ts",
+    "src/device/use-cases/appDataBackup/deleteAppData.ts",
+    "src/device/use-cases/appDataBackup/deleteAppDataUseCase.ts",
+    "src/device/use-cases/appDataBackup/deleteAppDataUseCaseDI.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-transport-mocker",

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { DeleteBackupStepProps } from "./types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { useWalletSyncAnalytics, AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
+import { useLedgerSyncAnalytics, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useDestroyTrustchain } from "../../hooks/useDestroyTrustchain";
 
@@ -12,7 +12,7 @@ export default function DeleteBackupStep({ cancel }: DeleteBackupStepProps) {
 
   const { deleteMutation } = useDestroyTrustchain();
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const handleDeleteBackup = async () => {
     onClickTrack({ button: "delete", page: AnalyticsPage.ConfirmDeleteBackup });

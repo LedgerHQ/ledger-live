@@ -6,7 +6,7 @@ import styled, { useTheme } from "styled-components";
 import { setFlow } from "~/renderer/actions/walletSync";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 const Container = styled(Box)`
@@ -31,7 +31,7 @@ type Props = {
 export const DeletionError = ({ error }: Props) => {
   const dispatch = useDispatch();
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const tryAgain = () => {
     dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.DeviceActionInstance }));
@@ -39,7 +39,7 @@ export const DeletionError = ({ error }: Props) => {
   };
   const goToDelete = () => {
     dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.ManageBackup }));
-    onClickTrack({ button: "delete backup", page: errorConfig[error].analyticsPage });
+    onClickTrack({ button: "delete key", page: errorConfig[error].analyticsPage });
   };
 
   const understood = () => {

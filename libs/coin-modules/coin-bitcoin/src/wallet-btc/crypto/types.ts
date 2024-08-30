@@ -25,7 +25,6 @@ export type Currency =
   | "dogecoin"
   | "digibyte"
   | "komodo"
-  | "pivx"
   | "zencash"
   | "decred"
   | "bitcoin_testnet";

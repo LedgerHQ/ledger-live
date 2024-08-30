@@ -5,17 +5,17 @@ import { Card } from "../../components/Card";
 import styled, { useTheme } from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import { ManageBackupStepProps } from "./types";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 export default function ManageBackupStep({ goToDeleteBackup }: ManageBackupStepProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const handleGoDeleteBackup = () => {
-    onClickTrack({ button: "delete data", page: AnalyticsPage.ManageBackup });
+    onClickTrack({ button: "Delete backup", page: AnalyticsPage.ManageBackup });
     goToDeleteBackup();
   };
 

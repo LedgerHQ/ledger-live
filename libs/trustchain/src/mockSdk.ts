@@ -93,6 +93,7 @@ export class MockSDK implements TrustchainSDK {
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<TrustchainResult> {
+    this.invalidateJwt();
     assertLiveCredentials(memberCredentials);
     let type = trustchains.has("mock-root-id")
       ? TrustchainResultType.restored

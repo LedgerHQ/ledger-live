@@ -4,7 +4,7 @@ import { Step } from "~/renderer/reducers/walletSync";
 export enum AnalyticsPage {
   ManageBackup = "Manage Backup",
   ConfirmDeleteBackup = "Confirm Delete Backup",
-  BackupDeleted = "Backup Deleted",
+  BackupDeleted = "delete backup success",
   BackupDeletionError = "Backup Deletion Error",
 
   ManageInstances = "Manage synchronized instances",
@@ -13,16 +13,19 @@ export enum AnalyticsPage {
   InstanceRemovalSuccess = "Instance removal success",
   Unsecured = "Remove instance wrong device connected",
   AutoRemove = "Remove current instance",
+  AlreadySecuredSameSeed = "App already secured with this Ledger",
+  AlreadySecuredOtherSeed = "You can’t use this Ledger to Sync",
 
-  Activation = "Activate Wallet Sync",
-  DeviceActionActivation = "Device Action Activate Wallet Sync",
+  Activation = "Activate Ledger Sync",
+  DeviceActionActivation = "Device Action Activate Ledger Sync",
   CreateOrSynchronizeTrustChain = "Create or synchronize with trustchain",
   SynchronizationError = "Synchronization error",
   SyncMethod = "Choose sync method",
-  MobileSync = "Mobile sync",
-  DesktopSync = "Desktop sync",
+  MobileSync = "Sync from a mobile",
+  DesktopSync = "Sync from a desktop",
   KeyCreated = "Backup creation success",
-  KeyUpdated = "Backup update success",
+  KeyUpdated = "Sync apps success",
+  Loading = "Loading",
 
   SyncWithQR = "Sync with QR code",
   PinCode = "Pin code",
@@ -30,21 +33,22 @@ export enum AnalyticsPage {
   UnbackedError = "No trustchain initialized error",
 
   SettingsGeneral = "Settings General",
-  WalletSyncSettings = "Wallet Sync Settings",
+  LedgerSyncSettings = "Ledger Sync Settings",
 }
 
-type Flow = "Wallet Sync";
+export type AnalyticsFlow = "Ledger Sync";
+export const AnalyticsFlow = "Ledger Sync";
 
 type OnClickTrack = {
   button: string;
   page: string;
-  flow?: Flow;
+  flow?: AnalyticsFlow;
 };
 
 type onActionTrack = {
   button: string;
   step: Step;
-  flow: Flow;
+  flow?: AnalyticsFlow;
 };
 
 export const StepMappedToAnalytics: Record<Step, string> = {
@@ -57,13 +61,17 @@ export const StepMappedToAnalytics: Record<Step, string> = {
   [Step.CreateOrSynchronize]: AnalyticsPage.Activation,
   [Step.DeviceAction]: AnalyticsPage.DeviceActionActivation,
   [Step.CreateOrSynchronizeTrustChain]: AnalyticsPage.CreateOrSynchronizeTrustChain,
+  [Step.ActivationLoading]: AnalyticsPage.Loading,
   [Step.ActivationFinal]: AnalyticsPage.KeyCreated,
   [Step.SynchronizationFinal]: AnalyticsPage.KeyUpdated,
   [Step.SynchronizationError]: AnalyticsPage.SynchronizationError,
+  [Step.AlreadySecuredSameSeed]: AnalyticsPage.AlreadySecuredSameSeed,
+  [Step.AlreadySecuredOtherSeed]: AnalyticsPage.AlreadySecuredOtherSeed,
 
   //Synchronize
   [Step.SynchronizeMode]: AnalyticsPage.SyncMethod,
   [Step.SynchronizeWithQRCode]: AnalyticsPage.SyncWithQR,
+  [Step.SynchronizeLoading]: AnalyticsPage.Loading,
   [Step.PinCode]: AnalyticsPage.PinCode,
   [Step.PinCodeError]: AnalyticsPage.PinCodeError,
   [Step.Synchronized]: AnalyticsPage.KeyUpdated,
@@ -78,11 +86,19 @@ export const StepMappedToAnalytics: Record<Step, string> = {
   [Step.InstanceSuccesfullyDeleted]: AnalyticsPage.InstanceRemovalSuccess,
   [Step.InstanceErrorDeletion]: AnalyticsPage.ManageInstances,
 
-  //walletSyncActivated
-  [Step.WalletSyncActivated]: AnalyticsPage.WalletSyncSettings,
+  //LedgerSyncActivated
+  [Step.LedgerSyncActivated]: AnalyticsPage.LedgerSyncSettings,
 };
 
-export function useWalletSyncAnalytics() {
+export const StepsOutsideFlow: Step[] = [
+  Step.LedgerSyncActivated,
+  Step.ManageBackup,
+  Step.AutoRemoveInstance,
+  Step.UnsecuredLedger,
+  Step.BackupDeletionError,
+];
+
+export function useLedgerSyncAnalytics() {
   const onClickTrack = ({ button, page, flow }: OnClickTrack) => {
     track("button_clicked2", { button, page, flow });
   };
