@@ -2,7 +2,7 @@ import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 
 type CosmosConfig = Record<string, ConfigInfo>;
 
-const cosmosConfig: CosmosConfig = {
+export const cosmosConfig: CosmosConfig = {
   config_currency_axelar: {
     type: "object",
     default: {
@@ -160,26 +160,8 @@ const cosmosConfig: CosmosConfig = {
   },
 };
 
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { MissingCoinConfig } from "@ledgerhq/coin-framework/errors";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type CosmosCoinConfig = CurrencyConfig & CosmosConfig;
-
-export type CoinConfig = (currency: CryptoCurrency) => CosmosCoinConfig;
-
-let coinConfig: CoinConfig | undefined;
-
-export const setCoinConfig = (config: CoinConfig): void => {
-  coinConfig = config;
-};
-
-export const getCoinConfig = (currency: CryptoCurrency): CosmosCoinConfig => {
-  if (!coinConfig) {
-    throw new MissingCoinConfig();
-  }
-
-  return coinConfig(currency);
-};
-
-export { cosmosConfig };
+const coinConfig = buildCoinConfig<CosmosCoinConfig>();
+export default coinConfig;

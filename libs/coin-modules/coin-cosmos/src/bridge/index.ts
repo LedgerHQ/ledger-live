@@ -7,8 +7,9 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 
+import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
 import { CosmosAPI } from "../api/Cosmos";
-import { CoinConfig, setCoinConfig } from "../config";
+import cosmosCoinConfig, { CosmosCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import getTransactionStatus from "../getTransactionStatus";
@@ -22,11 +23,7 @@ import {
 } from "../serialization";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape } from "../synchronisation";
-import type {
-  CosmosAccount,
-  Transaction,
-  TransactionStatus,
-} from "../types";
+import type { CosmosAccount, Transaction, TransactionStatus } from "../types";
 import { CosmosSigner } from "../types/signer";
 import { updateTransaction } from "../updateTransaction";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
@@ -78,8 +75,11 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<CosmosSigner>, coinConfig: CoinConfig) {
-  setCoinConfig(coinConfig);
+export function createBridges(
+  signerContext: SignerContext<CosmosSigner>,
+  coinConfig: CoinConfig<CosmosCoinConfig>,
+) {
+  cosmosCoinConfig.setCoinConfig(coinConfig);
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

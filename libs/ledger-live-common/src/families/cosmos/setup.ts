@@ -1,6 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-cosmos/bridge/js";
+import { createBridges } from "@ledgerhq/coin-cosmos/bridge/index";
 import makeCliTools from "@ledgerhq/coin-cosmos/cli";
 import { CosmosCoinConfig } from "@ledgerhq/coin-cosmos/config";
 import cosmosResolver from "@ledgerhq/coin-cosmos/hw-getAddress";
@@ -24,10 +24,13 @@ const createSigner: CreateSigner<CosmosSigner> = (transport: Transport) => {
     getAddress: hwCosmos.getAddress.bind(hwCosmos),
   };
 };
-const getCurrencyConfig = (currency: CryptoCurrency): CosmosCoinConfig => {
-  return getCurrencyConfiguration(currency);
-};
 
+const getCurrencyConfig = (currency?: CryptoCurrency) => {
+  if (!currency) {
+    throw new Error("No currency provided");
+  }
+  return getCurrencyConfiguration<CosmosCoinConfig>(currency);
+};
 const bridge: Bridge<Transaction, CosmosAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
   getCurrencyConfig,

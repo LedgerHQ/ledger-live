@@ -3,7 +3,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
 import cryptoFactory from "../chain/chain";
-import { getCoinConfig } from "../config";
+import cosmosCoinConfig from "../config";
 import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
 import type { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
 
@@ -12,7 +12,7 @@ export const getPreloadStrategy = () => ({
 });
 
 export const preload = async (currency: CryptoCurrency) => {
-  const config = getCoinConfig(currency);
+  const config = cosmosCoinConfig.getCoinConfig(currency);
   const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById(currency.id), {
     endPoint: (config as unknown as CosmosCurrencyConfig).lcd,
   });
@@ -26,13 +26,6 @@ export const preload = async (currency: CryptoCurrency) => {
     config,
   });
 };
-
-// export const preload = async () => {
-//   const superRepresentatives = await getTronSuperRepresentatives();
-//   return {
-//     superRepresentatives,
-//   };
-// };
 
 export const hydrate = (
   data: { validators?: CosmosValidatorItem[]; config: CosmosCurrencyConfig },
@@ -49,20 +42,3 @@ export const hydrate = (
   cosmosValidatorsManager.hydrateValidators(validators);
   setCosmosPreloadData(currency.id, asSafeCosmosPreloadData(data));
 };
-
-// export const hydrate = (data?: { superRepresentatives?: SuperRepresentative[] }) => {
-//   if (!data || !data.superRepresentatives) return;
-
-//   const { superRepresentatives } = data;
-
-//   if (
-//     !superRepresentatives ||
-//     typeof superRepresentatives !== "object" ||
-//     !Array.isArray(superRepresentatives)
-//   )
-//     return;
-
-//   hydrateSuperRepresentatives(superRepresentatives);
-// };
-
-// export c
