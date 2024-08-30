@@ -11,3 +11,5 @@ export const TrustchainAlreadyInitialized = createCustomErrorClass("TrustchainAl
 export const TrustchainAlreadyInitializedWithOtherSeed = createCustomErrorClass(
   "TrustchainAlreadyInitializedWithOtherSeed",
 );
+
+export const QRCodeWSClosed = createCustomErrorClass<{ time: number }>("QRCodeWSClosed");
