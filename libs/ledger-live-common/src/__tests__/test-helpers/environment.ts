@@ -38,7 +38,6 @@ setSupportedCurrencies([
   "dogecoin",
   "digibyte",
   "komodo",
-  "pivx",
   "zencash",
   "decred",
   "tron",

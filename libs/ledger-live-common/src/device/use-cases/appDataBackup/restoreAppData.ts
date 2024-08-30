@@ -1,10 +1,11 @@
 import {
   AppNotFound,
+  UserRefusedOnDevice,
   restoreAppStorage,
   restoreAppStorageCommit,
   restoreAppStorageInit,
 } from "@ledgerhq/device-core";
-import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import { Observable, catchError, from, of, switchMap } from "rxjs";
 import { AppName, RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
 
@@ -50,6 +51,8 @@ export function restoreAppData(
           // Commit the restore process, last step
           await restoreAppStorageCommit(transport);
 
+          // NOTE: DELETE DATA
+
           subscriber.next({
             type: RestoreAppDataEventType.AppDataRestored,
           });
@@ -65,10 +68,13 @@ export function restoreAppData(
           }
 
           // User refused on device
-          if (e instanceof TransportStatusError && e.statusCode === 0x5501) {
+          if (e instanceof UserRefusedOnDevice) {
+            // NOTE: Display a message to the user to retry the restore process
+            // If he does not, we should delete the app data (in another flow)
             subscriber.next({
               type: RestoreAppDataEventType.UserRefused,
             });
+
             subscriber.complete();
             return of(null);
           }

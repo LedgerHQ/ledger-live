@@ -30,6 +30,6 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
     "cross-env": "^7.0.3",
-    "webpack": "5.89.0"
+    "webpack": "5.94.0"
   }
 }

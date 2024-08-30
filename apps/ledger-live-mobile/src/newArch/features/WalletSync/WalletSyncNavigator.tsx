@@ -7,12 +7,14 @@ import { WalletSyncNavigatorStackParamList } from "../../../components/RootNavig
 import WalletSyncActivation from "LLM/features/WalletSync/screens/Activation";
 import { ActivationProcess } from "./screens/Activation/ActivationProcess";
 import { ActivationSuccess } from "./screens/Activation/ActivationSuccess";
+import { ActivationLoading } from "./screens/Activation/ActivationLoading";
 import { useInitMemberCredentials } from "./hooks/useInitMemberCredentials";
 import WalletSyncManage from "./screens/Manage";
 import { useTranslation } from "react-i18next";
 import { WalletSyncManageKeyDeletionSuccess } from "./screens/ManageKey/DeletionSuccess";
 import { ManageInstancesProcess } from "./screens/ManageInstances/ManageInstancesProcess";
 import { WalletSyncManageInstanceDeletionSuccess } from "./screens/ManageInstances/DeletionSuccess";
+import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
@@ -38,6 +40,15 @@ export default function WalletSyncNavigator() {
         options={{
           title: "",
           headerRight: () => null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.WalletSyncLoading}
+        component={ActivationLoading}
+        options={{
+          title: "",
+          headerLeft: () => null,
+          headerRight: () => <NavigationHeaderCloseButton />,
         }}
       />
 

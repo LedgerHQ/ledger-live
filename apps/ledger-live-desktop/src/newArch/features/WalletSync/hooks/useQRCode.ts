@@ -73,7 +73,14 @@ export function useQRCode() {
         if (newTrustchain) {
           dispatch(setTrustchain(newTrustchain));
         }
-        dispatch(setFlow({ flow: Flow.Synchronize, step: Step.Synchronized }));
+        dispatch(
+          setFlow({
+            flow: Flow.Synchronize,
+            step: Step.SynchronizeLoading,
+            nextStep: Step.Synchronized,
+            hasTrustchainBeenCreated: false,
+          }),
+        );
         queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
         setUrl(null);
         dispatch(setQrCodePinCode(null));
