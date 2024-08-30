@@ -36,6 +36,7 @@ const WalletSyncManage = () => {
   const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
 
   const goToSync = () => {
+    manageInstancesHook.checkInstances();
     setIsSyncDrawerOpen(true);
     onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.LedgerSyncActivated });
   };
@@ -48,6 +49,7 @@ const WalletSyncManage = () => {
   };
 
   const goToManageInstances = () => {
+    manageInstancesHook.checkInstances();
     manageInstancesHook.openDrawer();
     onClickTrack({
       button: AnalyticsButton.ManageSynchronizations,

@@ -56,7 +56,7 @@ export const Error = ({
       )}
 
       {onClose && (
-        <Link color={"neutral.c100"} onClick={onClick}>
+        <Link color={"neutral.c100"} onClick={onClose}>
           <Text fontSize={14} variant="paragraph" fontWeight="semiBold" color="neutral.c70">
             {t("walletSync.close")}
           </Text>

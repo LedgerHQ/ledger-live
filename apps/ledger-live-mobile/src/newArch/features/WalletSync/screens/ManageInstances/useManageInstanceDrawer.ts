@@ -28,6 +28,7 @@ export type HookResult = {
   onClickInstance: (instance: TrustchainMember) => void;
   scene: Scene;
   memberCredentials: MemberCredentials | null;
+  checkInstances: () => void;
 };
 
 export const useManageInstancesDrawer = (): HookResult => {
@@ -42,7 +43,6 @@ export const useManageInstancesDrawer = (): HookResult => {
 
   const openDrawer = useCallback(() => {
     setIsDrawerInstructionsVisible(true);
-
     logDrawer(messageLog, "open");
   }, []);
 
@@ -64,6 +64,8 @@ export const useManageInstancesDrawer = (): HookResult => {
 
   const changeScene = (scene: Scene) => setScene(scene);
 
+  const checkInstances = () => memberHook.refetch();
+
   return {
     isDrawerVisible,
     changeScene,
@@ -75,5 +77,6 @@ export const useManageInstancesDrawer = (): HookResult => {
     onClickDelete,
     scene,
     memberCredentials,
+    checkInstances,
   };
 };
