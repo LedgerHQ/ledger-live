@@ -57,11 +57,7 @@ export const buildSignOperation =
         const path = account.freshAddressPath.split("/").map(p => parseInt(p.replace("'", "")));
 
         const { compressed_pk } = await signerContext(deviceId, signer =>
-          signer.getAddressAndPubKey(
-            path,
-            chainInstance.prefix,
-            false,
-          ),
+          signer.getAddressAndPubKey(path, chainInstance.prefix, false),
         );
         const pubKey = Buffer.from(compressed_pk).toString("base64");
 
