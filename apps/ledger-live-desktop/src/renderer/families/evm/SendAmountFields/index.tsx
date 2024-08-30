@@ -25,8 +25,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account);
 
   const { errors } = props.status;
-  const { gasPrice: messageGas } = errors;
-
+  const { gasPrice: messageGas, amount: messageAmount } = errors;
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -112,10 +111,10 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
           <SelectFeeStrategy gasOptions={gasOptions} onClick={onFeeStrategyClick} {...props} />
         </>
       )}
-      {messageGas && (
+      {(messageGas || messageAmount) && (
         <Flex onClick={onBuyClick}>
           <Alert type="warning" data-testid="alert-insufficient-funds-warning">
-            <TranslatedError error={messageGas} />
+            <TranslatedError error={messageGas || messageAmount} />
           </Alert>
         </Flex>
       )}

@@ -142,3 +142,31 @@ export type RestoreAppDataEvent =
  * An error that occurs during the restore process, the error message should be descriptive when thrown.
  */
 export const RestoreAppDataError = createCustomErrorClass("RestoreAppDataError");
+
+export enum DeleteAppDataEventType {
+  AppDataDeleteStarted = "appDataDeleteStarted",
+  /**
+   * The application data has been deleted.
+   */
+  AppDataDeleted = "appDataDeleted",
+  /**
+   * There is no application data to delete.
+   */
+  NoAppDataToDelete = "noAppDataToDelete",
+}
+
+export type DeleteAppDataEvent =
+  | {
+      type: DeleteAppDataEventType.AppDataDeleteStarted;
+    }
+  | {
+      type: DeleteAppDataEventType.AppDataDeleted;
+    }
+  | {
+      type: DeleteAppDataEventType.NoAppDataToDelete;
+    };
+
+/**
+ * An error that occurs during the delete process (local data), the error message should be descriptive when thrown.
+ */
+export const DeleteAppDataError = createCustomErrorClass("DeleteAppDataError");
