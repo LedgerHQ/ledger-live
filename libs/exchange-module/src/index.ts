@@ -154,6 +154,7 @@ export class ExchangeModule extends CustomModule {
     binaryPayload,
     signature,
     feeStrategy,
+    quoteId,
   }: {
     provider: string;
     fromAccountId: string;
@@ -161,6 +162,7 @@ export class ExchangeModule extends CustomModule {
     binaryPayload: Buffer;
     signature: Buffer;
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
+    quoteId: string;
   }): Promise<string> {
     const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
       "custom.exchange.complete",
@@ -172,6 +174,7 @@ export class ExchangeModule extends CustomModule {
         hexBinaryPayload: binaryPayload.toString("hex"),
         hexSignature: signature.toString("hex"),
         feeStrategy,
+        quoteId,
       },
     );
 

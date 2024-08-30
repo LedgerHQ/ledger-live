@@ -61,6 +61,7 @@ export type CompleteExchangeUiRequest = {
   feesStrategy: string;
   exchangeType: number;
   swapId?: string;
+  quoteId?: string;
   amountExpectedTo?: number;
   magnitudeAwareRate?: BigNumber;
 };
@@ -270,6 +271,15 @@ export const handlers = ({
           magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
         }
 
+        // Typeguard, so typescript does not complain,
+        // This check is necessary because TypeScript sometimes fails to correctly infer the union type properties.
+        const quoteOrSwapId =
+          params.exchangeType === "SWAP"
+            ? params.swapId
+            : "quoteId" in params
+              ? params.quoteId
+              : undefined;
+
         return new Promise((resolve, reject) =>
           uiExchangeComplete({
             exchangeParams: {
@@ -280,7 +290,7 @@ export const handlers = ({
               binaryPayload: params.hexBinaryPayload,
               exchange,
               feesStrategy: params.feeStrategy,
-              swapId: params.exchangeType === "SWAP" ? params.swapId : undefined,
+              quoteId: quoteOrSwapId,
               amountExpectedTo,
               magnitudeAwareRate,
             },
