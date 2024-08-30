@@ -7,7 +7,7 @@ import {
   verifyAddress as assertAddressesEquality,
   verifyAmount,
   waitFor,
-} from "tests/utils/speculos";
+} from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "../enum/Account";
 import { expect } from "@playwright/test";
 import { Transaction } from "tests/models/Transaction";
