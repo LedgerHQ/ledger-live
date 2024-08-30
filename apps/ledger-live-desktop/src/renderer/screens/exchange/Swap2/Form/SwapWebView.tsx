@@ -31,7 +31,6 @@ import {
 } from "../utils/index";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
-import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { NetworkDown } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
