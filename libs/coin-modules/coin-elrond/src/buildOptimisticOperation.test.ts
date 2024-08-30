@@ -1,13 +1,12 @@
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { ElrondProtocolTransaction, Transaction } from "./types";
+import { ElrondAccount, ElrondProtocolTransaction, Transaction } from "./types";
 
 describe("buildOptimisticOperation", () => {
   it("should work with mode = send", async () => {
     const account = {
       freshAddress: "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
-    } as Account;
+    } as ElrondAccount;
 
     const transaction = {
       family: "elrond",
@@ -34,7 +33,7 @@ describe("buildOptimisticOperation", () => {
   it("should work with mode = delegate", async () => {
     const account = {
       freshAddress: "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
-    } as Account;
+    } as ElrondAccount;
 
     const transaction = {
       family: "elrond",
@@ -62,7 +61,7 @@ describe("buildOptimisticOperation", () => {
   it("should work with mode = claimRewards", async () => {
     const account = {
       freshAddress: "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
-    } as Account;
+    } as ElrondAccount;
 
     const transaction = {
       family: "elrond",
