@@ -22,7 +22,6 @@ export type CurrencyConfig = {
   [key: string]: unknown;
 };
 
-// export type CoinConfig<T extends CurrencyConfig> = () => T;
 export type CoinConfig<T extends CurrencyConfig> = (currency?: CryptoCurrency) => T;
 
 function buildCoinConfig<T extends CurrencyConfig>() {
