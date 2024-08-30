@@ -93,7 +93,6 @@ export type SwapWebProps = {
   sourceCurrency?: TokenCurrency | CryptoCurrency;
   targetCurrency?: TokenCurrency | CryptoCurrency;
 };
-let lastGasOptions: GasOptions;
 
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
@@ -348,7 +347,6 @@ const SwapWebView = ({
             account: fromAccount,
           }),
           feesStrategy: params.feeStrategy || "medium",
-          gasOptions: lastGasOptions,
           ...transformToBigNumbers(params.customFeeConfig),
         });
         let status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
@@ -360,13 +358,14 @@ const SwapWebView = ({
           status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
           customFeeConfig = transaction && getCustomFeesPerFamily(preparedTransaction);
           finalTx = preparedTransaction;
-          lastGasOptions = preparedTransaction.gasOptions;
           return newTransaction;
         };
 
         if (!params.openDrawer) {
           // filters out the custom fee config for chains without drawer
-          const config = ["evm", "bitcoin"].includes(transaction.family) ? customFeeConfig : {};
+          const config = ["evm", "bitcoin"].includes(transaction.family)
+            ? { hasDrawer: true, ...customFeeConfig }
+            : {};
           return {
             feesStrategy: finalTx.feesStrategy,
             estimatedFees: convertToNonAtomicUnit({
