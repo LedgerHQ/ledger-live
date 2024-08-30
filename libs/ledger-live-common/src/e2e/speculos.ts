@@ -6,15 +6,14 @@ import {
   releaseSpeculosDevice,
   findLatestAppCandidate,
   SpeculosTransport,
-} from "@ledgerhq/live-common/load/speculos";
+} from "../load/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import { getEnv } from "@ledgerhq/live-env";
-import { waitForTimeOut } from "./waitFor";
+import { getCryptoCurrencyById } from "../currencies";
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -356,4 +355,8 @@ export async function takeScreenshot() {
     console.error("Error downloading speculos screenshot:", error);
     throw error;
   }
+}
+
+export async function waitForTimeOut(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
