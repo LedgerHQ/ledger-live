@@ -200,8 +200,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   vechain: ["vechain"],
   stacks: ["stacks_wallet"],
   ton: ["ton"],
-  ethereum: ["ethM", "ethMM"],
-  ethereum_classic: ["ethM", "ethMM", "etcM"],
+  ethereum_classic: ["etcM"],
   solana: ["solanaMain", "solanaSub"],
   solana_devnet: ["solanaMain", "solanaSub"],
   solana_testnet: ["solanaMain", "solanaSub"],
@@ -374,6 +373,11 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
   if (currency.id in legacyDerivations) {
     all = all.concat(legacyDerivations[currency.id] || []);
   }
+
+  if (currency.family === "evm") {
+    all = all.concat(["ethM", "ethMM"]);
+  }
+
   if (currency.forkedFrom) {
     all.push("unsplit");
 
