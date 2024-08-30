@@ -98,7 +98,8 @@
     "patterns": {
       "id": "ID {{ value }}",
       "times": "x{{ value }}"
-    }
+    },
+    "quote": "Quote"
   },
   "errors": {
     "ReplacementTransactionUnderpriced": {
@@ -948,6 +949,15 @@
     "TrustchainNotFound": {
       "title": "Something went wrong while fetching your data",
       "description": "Please try again or contact Ledger Support."
+    },
+    "TonExcessFee": {
+      "title": "It constitutes a token transfer. You will pay 0.1 TON in fees, and any extra will be returned to you."
+    },
+    "TonNotEnoughBalanceInParentAccount": {
+      "title": "Insufficient funds in main account (TON) to calculate fees. The minimum required balance is 0.1 TON."
+    },
+    "TonMinimumRequired": {
+      "title": "Insufficient funds. The minimum required balance is 0.02 TON."
     }
   },
   "crash": {
@@ -2285,6 +2295,7 @@
     },
     "quickActions": {
       "buy": "Buy",
+      "sell": "Sell",
       "swap": "Swap",
       "send": "Send",
       "deposit": "Receive",
@@ -2771,7 +2782,7 @@
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
       "walletSync": "Ledger Sync",
-      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "walletSyncDesc": "Securely sync your accounts across multiple Ledger Live instances",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -6724,7 +6735,7 @@
         "title": "Sync your accounts across all platforms",
         "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
         "mainCta": "Sync your accounts",
-        "secondCta": "Already created a key?"
+        "secondCta": "Already synced a Ledger Live app?"
       }
     },
     "deviceSelection": {
@@ -6734,6 +6745,11 @@
     "deviceAction": {
       "title": "Continue on your Ledger {{wording}}",
       "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
+    },
+    "loading": {
+      "title": "Hang tight...",
+      "activation": "Your data is being end-to-end encrypted... ",
+      "synch": "We are updating the synched instances..."
     },
     "success": {
       "sync": "Synchronization successful!",
@@ -6746,7 +6762,7 @@
     "walletSyncActivated": {
       "synchronize": {
         "title": "Synchronize",
-        "description": "Synchronize your app data with another Ledger Live app for a seamless experience. "
+        "description": "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "manageKey": {
         "title": "Manage Key",
@@ -6756,13 +6772,13 @@
           "step1": {
             "title": "Manage your key",
             "titleCta": "Delete your key",
-            "descCta": "All your synced data will be deleted."
+            "descCta": "All synced accounts will be removed. This won’t affect your local accounts."
           },
           "step2": {
             "delete": "Delete",
             "cancel": "Cancel",
             "title": "Do you really want to delete your encryption key?",
-            "desc": "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time."
+            "desc": "By clicking delete, your apps will be unsynchronized, and your backup will be deleted. Rest assured, this action does not affect your funds or your accounts in Ledger Live. You may resync your accounts at any time."
           }
         }
       },
@@ -6809,6 +6825,7 @@
         }
       },
       "qrCode": {
+        "title": "Synchronize Instances",
         "show": {
           "title": "Show QR",
           "explanation": {
@@ -6816,7 +6833,7 @@
             "steps": {
               "step1": "Open the Ledger Live app you want to sync",
               "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0>",
-              "step3": "Scan QR code until loader hits 100%."
+              "step3": "Scan QR code"
             }
           }
         },
@@ -6828,7 +6845,7 @@
             "steps": {
               "step1": "Open the Ledger Live app you want to sync",
               "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Synchronize</0> <1>></1> <0>Show QR</0>",
-              "step3": "Scan QR code until loader hits 100%."
+              "step3": "Scan QR code"
             }
           }
         },
@@ -6840,7 +6857,22 @@
             "desc": "Make sure the code you type is the one displayed on the other Ledger Live instance.",
             "tryAgain": "Try again"
           }
+        },
+        "unbacked": {
+          "title": "You need to create your encryption key first",
+          "desc": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+          "cta": "Create your encryption key"
         }
+      },
+      "alreadySecureError": {
+        "title": "This app is already secured by this Ledger",
+        "description": "If you are attempting to create a new backup, please connect the Ledger device you used to create your other encryption key.",
+        "cta": "I understand"
+      },
+      "alreadySecureOtherSeedError": {
+        "title": "You can’t use this Ledger to sync",
+        "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
+        "cta": "Delete my encryption key"
       }
     }
   },
@@ -6848,12 +6880,16 @@
     "components": {
       "disclaimer": {
         "clearSigningEnabled": "Clear signing enabled",
+        "clearSigningDisabled": "Clear signing disabled",
         "checkbox": "Do not remind me again.",
         "CTA": "Open {{app}}"
       },
       "manifestsList": {
         "title": "Explore",
         "description": "Discover the best of web3 curated by Ledger"
+      },
+      "label": {
+        "clearSigning": "clear signing"
       }
     },
     "main": {
@@ -6863,6 +6899,10 @@
       "header": {
         "title": "Explore web3",
         "placeholder": "Search or type a URL"
+      },
+      "clearSigning": {
+        "title": "Clear signing",
+        "description": "Clear signing allows you to sign a message without revealing the content of the message to the app. This is useful for privacy and security reasons."
       }
     }
   }

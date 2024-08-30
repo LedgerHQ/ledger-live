@@ -9,6 +9,7 @@ export enum AnalyticsPage {
   SyncWithQrCode = "Sync with QR code",
   PinCode = "Pin code",
   PinCodesDoNotMatch = "Pin codes don't match",
+  Loading = "Loading",
   SettingsGeneral = "Settings General",
   LedgerSyncSettings = "Ledger Sync Settings",
   ManageSyncInstances = "Manage synchronized instances",
@@ -18,6 +19,9 @@ export enum AnalyticsPage {
   SyncWithNoKey = "Sync with no key",
   LedgerSyncActivated = "Ledger Sync activated",
   AutoRemove = "Remove current instance",
+  Unbacked = "Unbacked",
+  OtherSeed = "Other seed",
+  SameSeed = "Same seed",
 }
 
 export enum AnalyticsFlow {

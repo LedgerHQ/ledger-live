@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
-import { InvalidDigitsError } from "@ledgerhq/trustchain/errors";
-import { useSelector } from "react-redux";
-import { trustchainSelector, memberCredentialsSelector } from "@ledgerhq/trustchain/store";
+import { InvalidDigitsError, NoTrustchainInitialized } from "@ledgerhq/trustchain/errors";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  trustchainSelector,
+  memberCredentialsSelector,
+  setTrustchain,
+} from "@ledgerhq/trustchain/store";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { Options, Steps } from "../types/Activation";
 import { useNavigation } from "@react-navigation/native";
@@ -11,6 +15,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { useQueryClient } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
+import { useInstanceName } from "./useInstanceName";
 
 interface Props {
   setCurrentStep: (step: Steps) => void;
@@ -23,11 +28,13 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
   const sdk = useTrustchainSdk();
+  const dispatch = useDispatch();
 
   const featureWalletSync = useFeature("llmWalletSync");
   const { trustchainApiBaseUrl } = getWalletSyncEnvironmentParams(
     featureWalletSync?.params?.environment,
   );
+  const memberName = useInstanceName();
 
   const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState<string | null>(null);
@@ -37,7 +44,7 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
   const navigation = useNavigation();
 
   const startQRCodeProcessing = useCallback(() => {
-    if (!trustchain || !memberCredentials || isLoading) return;
+    if (!memberCredentials || isLoading) return;
 
     setError(null);
     setIsLoading(true);
@@ -45,32 +52,29 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
       trustchainApiBaseUrl,
       onDisplayQRCode: url => {
         setUrl(url);
-
-        //TODO-remove when clearing code, used to test behavior with webTool
-        // eslint-disable-next-line no-console
-        console.log("onDisplayQRCode", url);
       },
       onDisplayDigits: digits => {
         setPinCode(digits);
         setCurrentStep(Steps.PinDisplay);
       },
       addMember: async member => {
-        await sdk.addMember(trustchain, memberCredentials, member);
-        return trustchain;
-      },
-    })
-      .catch(e => {
-        if (e instanceof InvalidDigitsError) {
-          setCurrentStep(Steps.SyncError);
-          return;
+        if (trustchain) {
+          await sdk.addMember(trustchain, memberCredentials, member);
+          return trustchain;
         }
-        setError(e);
-        throw e;
-      })
-      .then(() => {
+        throw new NoTrustchainInitialized();
+      },
+      memberCredentials,
+      memberName,
+      alreadyHasATrustchain: !!trustchain,
+    })
+      .then(newTrustchain => {
+        if (newTrustchain) {
+          dispatch(setTrustchain(newTrustchain));
+        }
         queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
         navigation.navigate(NavigatorName.WalletSync, {
-          screen: ScreenName.WalletSyncSuccess,
+          screen: ScreenName.WalletSyncLoading,
           params: {
             created: false,
           },
@@ -79,16 +83,29 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
         setUrl(null);
         setPinCode(null);
         setIsLoading(false);
+      })
+      .catch(e => {
+        if (e instanceof InvalidDigitsError) {
+          setCurrentStep(Steps.SyncError);
+          return;
+        } else if (e instanceof NoTrustchainInitialized) {
+          setCurrentStep(Steps.UnbackedError);
+          return;
+        }
+        setError(e);
+        throw e;
       });
   }, [
     trustchain,
     memberCredentials,
     isLoading,
     trustchainApiBaseUrl,
+    memberName,
     setCurrentStep,
     sdk,
     queryClient,
     navigation,
+    dispatch,
   ]);
 
   useEffect(() => {

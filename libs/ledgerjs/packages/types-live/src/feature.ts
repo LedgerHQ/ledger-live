@@ -162,6 +162,7 @@ export type Features = CurrencyFeatures & {
   discover: Feature_Discover;
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
+  ptxCard: DefaultFeature;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapLiveAppDemoThree: Feature_PtxSwapLiveAppDemoZero;
@@ -474,7 +475,7 @@ export type Feature_LlmRefreshMarketData = Feature<{
 }>;
 
 export type Feature_BuySellUiManifest = Feature<{
-  manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "multibuy-v2"
+  manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "buy-sell-ui"
 }>;
 
 export type Feature_LldWalletSync = Feature<{

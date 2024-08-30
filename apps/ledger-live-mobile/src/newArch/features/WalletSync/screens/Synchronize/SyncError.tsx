@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ErrorComponent } from "../../components/Error";
+import { ErrorComponent } from "../../components/Error/Simple";
 
 interface Props {
   tryAgain: () => void;
@@ -15,6 +15,7 @@ export default function SyncError({ tryAgain }: Props) {
       mainButton={{
         label: t("walletSync.synchronize.qrCode.pinCode.error.tryAgain"),
         onPress: tryAgain,
+        outline: true,
       }}
     />
   );

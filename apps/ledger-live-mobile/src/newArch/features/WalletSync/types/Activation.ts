@@ -14,4 +14,5 @@ export enum Steps {
   PinDisplay = "PinDisplay",
   PinInput = "PinInput",
   SyncError = "SyncError",
+  UnbackedError = "UnbackedError",
 }

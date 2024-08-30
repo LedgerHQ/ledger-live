@@ -61,6 +61,7 @@ export class Modal extends Component {
     await this.backButton.click();
   }
 
+  @step("Close modal")
   async close() {
     await this.closeButton.click();
   }

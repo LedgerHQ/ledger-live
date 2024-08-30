@@ -263,6 +263,7 @@ export type SettingsState = {
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
+  fromLedgerSyncOnboarding: boolean;
 };
 
 export type NotificationsSettings = {

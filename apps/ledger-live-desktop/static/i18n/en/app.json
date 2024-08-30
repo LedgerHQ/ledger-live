@@ -145,7 +145,8 @@
     "add": "Add",
     "or": "OR",
     "clearAll": "Clear all",
-    "buyLedger": "Buy a Ledger"
+    "buyLedger": "Buy a Ledger",
+    "quote": "Quote"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -3999,7 +4000,7 @@
       "stock": "Regional market indicator",
       "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
       "walletSync": "Ledger Sync",
-      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
+      "walletSyncDesc": "Securely sync your accounts across multiple Ledger Live instances",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -4025,6 +4026,16 @@
         "placeholder": "Exchange provider's info in CAL format"
       },
       "debugSimpleHash": {
+        "testSimpleHash": {
+          "title": "SimpleHash Tools",
+          "description": "Provides some useful tools using SimpleHash",
+          "cta": "Open",
+          "tabs": {
+            "spam": "Spam Report",
+            "refresh": "Refresh Metadata",
+            "check": "Spam Score"
+          }
+        },
         "debugSpamNft": {
           "report": "Report",
           "contractAddress": "Contract Address",
@@ -4083,6 +4094,34 @@
           }
         },
         "back": "Go back"
+      },
+      "debugWalletSync": {
+        "title": "Ledger Sync Debugger",
+        "description": "Allows you to launch a specific LedgerSync flow or check current state of LedgerSync",
+        "cta": "Open",
+        "modal": {
+          "check": {
+            "title": "Checker",
+            "trustchain": {
+              "name": "Trustchain ID : ",
+              "emptyId": "Empty ID",
+              "applicationPath": "Application path : ",
+              "emptyApplicationPath": "Empty Application path",
+              "cloudSyncVersion": "Cloud sync version : ",
+              "lastSyncInfo": "Last sync info : ",
+              "uniported": "Non-imported accounts : "
+            },
+            "copied": "Text copied to clipboard!",
+            "export": "Export"
+          },
+          "generator": {
+            "title": "Generator",
+            "flow": "Select a Flow",
+            "step": "Select a Step",
+            "instance": "Generate Members",
+            "cta": "Apply"
+          }
+        }
       },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
@@ -4250,27 +4289,6 @@
         "enableNetworkLogs": {
           "title": "Enable network logs",
           "description": "Enable network logs in the console (error logs are always enabled)"
-        },
-        "testWalletSync": {
-          "title": "Test Ledger Sync",
-          "description": "Allows you to launch a specific LedgerSync flow",
-          "cta": "Test",
-          "modal": {
-            "flow": "Select a Flow",
-            "step": "Select a Step",
-            "instance": "Generate Members",
-            "cta": "Apply"
-          }
-        },
-        "testSimpleHash": {
-          "title": "SimpleHash Tools",
-          "description": "Provides some useful tools using SimpleHash",
-          "cta": "Open",
-          "tabs": {
-            "spam": "Spam Report",
-            "refresh": "Refresh Metadata",
-            "check": "Spam Score"
-          }
         }
       }
     },
@@ -6195,6 +6213,15 @@
     },
     "BitcoinInfrastructureError": {
       "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
+    },
+    "TonExcessFee": {
+      "title": "It constitutes a token transfer. You will pay 0.1 TON in fees, and any extra will be returned to you."
+    },
+    "TonNotEnoughBalanceInParentAccount": {
+      "title": "Insufficient funds in main account (TON) to calculate fees. The minimum required balance is 0.1 TON."
+    },
+    "TonMinimumRequired": {
+      "title": "Insufficient funds. The minimum required balance is 0.02 TON."
     }
   },
   "cryptoOrg": {
@@ -6390,6 +6417,7 @@
   },
   "walletSync": {
     "title": "Ledger Sync",
+    "close": "Close",
     "activate": {
       "title": "Sync your accounts across all platforms",
       "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
@@ -6400,7 +6428,7 @@
       "cta": "Manage",
       "synchronize": {
         "label": "Synchronize",
-        "description": "Synchronize your app data with another Ledger Live app for a seemless experience."
+        "description": "Synchronize your accounts with another Ledger Live app for a seamless experience."
       },
       "backup": {
         "label": "Manage Key",
@@ -6431,6 +6459,16 @@
       "cta": "Connect another Ledger",
       "ctaDelete": "Delete my encryption key"
     },
+    "alreadySecureError": {
+      "title": "This app is already secured by this Ledger",
+      "description": "If you are attempting to create a new backup, please connect the Ledger device you used to create your other encryption key.",
+      "cta": "I understand"
+    },
+    "alreadySecureOtherSeedError": {
+      "title": "You can’t use this Ledger to sync",
+      "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
+      "cta": "Delete my encryption key"
+    },
     "autoRemoveError": {
       "title": "You can’t remove the current instance",
       "description": "For security reasons, you cannot remove the instance you are currently using without deleting your encryption key.",
@@ -6454,13 +6492,13 @@
       "title": "Manage your key",
       "options": {
         "deleteBackup": {
-          "title": "Delete your data",
-          "description": "All synced data will be deleted."
+          "title": "Delete your backup",
+          "description": "All synced accounts will be removed. This won’t affect your local accounts."
         }
       },
       "deleteBackup": {
         "title": "Do you really want to delete your encryption key?",
-        "description": "By clicking delete, your devices will be unsynchronized and all synchronized data will be deleted. Rest assured that taking this action does not impact your funds. You may resync your accounts at any time.",
+        "description": "By clicking delete, your apps will be unsynchronized, and your backup will be deleted. Rest assured, this action does not affect your funds or your accounts in Ledger Live. You may resync your accounts at any time.",
         "delete": "Delete",
         "cancel": "Cancel"
       },
@@ -6476,7 +6514,7 @@
         "title": "Choose your sync method",
         "description": "You can choose to sync directly with your Ledger, or by scanning a QR code on Ledger Live.",
         "scan": {
-          "title": "Scan a QR code",
+          "title": "Display QR code",
           "description": "Synchronize by scanning a QR code"
         },
         "connectDevice": {
@@ -6485,14 +6523,32 @@
         }
       },
       "qrCode": {
-        "title": "Synchronize",
-        "hint": "Trying to sync two Ledger Live desktop apps? Click here.",
-        "description": "Scan and synchronize your accounts with another Ledger Live app",
-        "steps": {
-          "step1": "Open the Ledger Live app you want to sync",
-          "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
-          "step3": "Scan QR code until loader hits 100%."
+        "title": "Synchronize Instances",
+        "options": {
+          "mobile": "Mobile",
+          "desktop": "Desktop"
+        },
+        "mobile": {
+          "description": "Scan and synchronize your accounts with another Ledger Live app",
+          "steps": {
+            "step1": "Open the Ledger Live app you want to sync",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Show QR</0>",
+            "step3": "Scan QR code"
+          }
+        },
+        "desktop": {
+          "description": "Synchronize your accounts with another Ledger Live app",
+          "steps": {
+            "step1": "Open the Ledger Live app you want to sync",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Synchronize</0> > <0>Use your Ledger</0>",
+            "step3": "Connect your Ledger"
+          }
         }
+      },
+      "unbackedError": {
+        "title": "You need to create your encryption key first",
+        "description": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+        "cta": "Create your encryption key"
       },
       "pinCode": {
         "title": "Enter the code",

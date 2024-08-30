@@ -23,9 +23,10 @@ export const FlowOptions: Record<
       1: Step.CreateOrSynchronize,
       2: Step.DeviceAction,
       3: Step.CreateOrSynchronizeTrustChain,
-      4: Step.ActivationFinal,
-      5: Step.SynchronizationFinal,
-      6: Step.SynchronizationError,
+      4: Step.ActivationLoading,
+      5: Step.ActivationFinal,
+      6: Step.SynchronizationFinal,
+      7: Step.SynchronizationError,
     },
   },
   [Flow.Synchronize]: {
@@ -33,7 +34,8 @@ export const FlowOptions: Record<
       1: Step.SynchronizeMode,
       2: Step.SynchronizeWithQRCode,
       3: Step.PinCode,
-      4: Step.Synchronized,
+      4: Step.SynchronizeLoading,
+      5: Step.Synchronized,
     },
   },
   [Flow.ManageBackup]: {
@@ -54,9 +56,9 @@ export const FlowOptions: Record<
       7: Step.AutoRemoveInstance,
     },
   },
-  [Flow.WalletSyncActivated]: {
+  [Flow.LedgerSyncActivated]: {
     steps: {
-      1: Step.WalletSyncActivated,
+      1: Step.LedgerSyncActivated,
     },
   },
 };
@@ -72,6 +74,7 @@ export const STEPS_WITH_BACK: Step[] = [
   Step.DeleteBackup,
   Step.SynchronizedInstances,
   Step.SynchronizeMode,
+  Step.SynchronizeWithQRCode,
 ];
 
 export const useFlows = () => {
@@ -98,7 +101,7 @@ export const useFlows = () => {
 
   const goToWelcomeScreenWalletSync = () => {
     if (trustchain?.rootId) {
-      dispatch(setFlow({ flow: Flow.WalletSyncActivated, step: Step.WalletSyncActivated }));
+      dispatch(setFlow({ flow: Flow.LedgerSyncActivated, step: Step.LedgerSyncActivated }));
     } else {
       dispatch(setFlow({ flow: Flow.Activation, step: Step.CreateOrSynchronize }));
     }

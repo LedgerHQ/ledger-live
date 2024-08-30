@@ -4,22 +4,22 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 
 const subAccounts: Account[] = [
-  Account.ETH_USDT,
+  Account.ETH_USDT_1,
   Account.XLM_USCD,
   Account.ALGO_USDT_1,
   Account.TRX_USDT,
-  Account.BSC_BUSD,
-  Account.MATIC_DAI,
+  Account.BSC_BUSD_1,
+  Account.MATIC_DAI_1,
 ];
 
 const subAccountReceive: Account[] = [
-  Account.ETH_USDT,
+  Account.ETH_USDT_1,
   Account.ETH_LIDO,
   Account.TRX_USDT,
   Account.TRX_BTT,
-  Account.BSC_BUSD,
+  Account.BSC_BUSD_1,
   Account.BSC_SHIBA,
-  Account.MATIC_DAI,
+  Account.MATIC_DAI_1,
   Account.MATIC_UNI,
 ];
 
@@ -27,11 +27,11 @@ for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
     test.use({
       userdata: "skip-onboarding",
-      speculosCurrency: token.currency,
+      speculosApp: token.currency.speculosApp,
     });
 
     test(
-      `Add Sub Account without parent (${token.currency.speculosApp}) - ${token.currency.ticker}`,
+      `Add Sub Account without parent (${token.currency.speculosApp.name}) - ${token.currency.ticker}`,
       {
         annotation: {
           type: "TMS",
@@ -63,11 +63,11 @@ for (const token of subAccountReceive) {
   test.describe("Add subAccount when parent exists", () => {
     test.use({
       userdata: "speculos-subAccount",
-      speculosCurrency: token.currency,
+      speculosApp: token.currency.speculosApp,
     });
 
     test(
-      `[${token.currency.speculosApp}] Add subAccount when parent exists (${token.currency.ticker})`,
+      `[${token.currency.speculosApp.name}] Add subAccount when parent exists (${token.currency.ticker})`,
       {
         annotation: {
           type: "TMS",
@@ -98,11 +98,11 @@ for (const token of subAccounts) {
   test.describe("Token visible in parent account", () => {
     test.use({
       userdata: "speculos-subAccount",
-      speculosCurrency: token.currency,
+      speculosApp: token.currency.speculosApp,
     });
 
     test(
-      `Token visible in parent account (${token.currency.speculosApp}) - ${token.currency.ticker}`,
+      `Token visible in parent account (${token.currency.speculosApp.name}) - ${token.currency.ticker}`,
       {
         annotation: {
           type: "TMS",

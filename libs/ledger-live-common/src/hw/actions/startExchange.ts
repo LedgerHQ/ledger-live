@@ -9,6 +9,7 @@ import { createAction as createAppAction } from "./app";
 import { ExchangeType } from "@ledgerhq/live-app-sdk";
 import { getMainAccount } from "../../account";
 import { isExchangeSwap, type Exchange } from "../../exchange/types";
+import { isSwapDisableAppsInstall } from "../../exchange/swap/utils/isIntegrationTestEnv";
 
 export type StartExchangeSuccessResult = {
   nonce: string;
@@ -123,6 +124,11 @@ export const createAction = (
         : null;
 
     const request: AppRequest = useMemo(() => {
+      if (isSwapDisableAppsInstall()) {
+        return {
+          appName: "Exchange",
+        };
+      }
       if (!exchange || !mainFromAccount || !mainToAccount) {
         return {
           appName: "Exchange",

@@ -123,6 +123,32 @@ export interface TonAddressBook {
   };
 }
 
+export interface TonJettonTransfer {
+  query_id: string;
+  source: string;
+  destination: string;
+  amount: string;
+  source_wallet: string;
+  jetton_master: string;
+  transaction_hash: string;
+  transaction_lt: string;
+  transaction_now: number;
+  response_destination: string | null;
+  custom_payload: string | null;
+  forward_ton_amount: string | null;
+  forward_payload: string | null;
+}
+
+export interface TonJettonWallet {
+  address: string;
+  balance: string;
+  owner: string;
+  jetton: string;
+  last_transaction_lt: string;
+  code_hash: string;
+  data_hash: string;
+}
+
 export interface TonAccountInfo {
   balance: string;
   last_transaction_lt: string | null;
@@ -166,6 +192,14 @@ export interface TonResponseWalletInfo {
   last_transaction_lt: string | null;
   last_transaction_hash: string | null;
   status: TonAccountStatus;
+}
+
+export interface TonResponseJettonTransfer {
+  jetton_transfers: TonJettonTransfer[];
+}
+
+export interface TonResponseJettonWallets {
+  jetton_wallets: TonJettonWallet[];
 }
 
 export interface TonResponseEstimateFee {

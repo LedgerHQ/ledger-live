@@ -30,7 +30,7 @@ import UpdateDot from "~/renderer/components/Updater/UpdateDot";
 import { Dot } from "~/renderer/components/Dot";
 import Stars from "~/renderer/components/Stars";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { CARD_APP_ID } from "~/renderer/screens/card";
+import { BAANX_APP_ID } from "~/renderer/screens/card/CardPlatformApp";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
@@ -223,7 +223,7 @@ const MainSideBar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const manifest = useRemoteLiveAppManifest(CARD_APP_ID);
+  const manifest = useRemoteLiveAppManifest(BAANX_APP_ID);
   const isCardDisabled = !manifest;
 
   /** redux navigation locked state */

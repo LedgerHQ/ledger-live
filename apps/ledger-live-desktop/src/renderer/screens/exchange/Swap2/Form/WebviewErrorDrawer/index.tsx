@@ -59,7 +59,7 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
         errorCodeSection = (
           <Trans
             mr={2}
-            i18nKey="swap2.webviewErrorDrawer.defaultCode"
+            i18nKey="swap2.webviewErrorDrawer.code"
             values={{
               errorCode: error.cause.swapCode,
             }}

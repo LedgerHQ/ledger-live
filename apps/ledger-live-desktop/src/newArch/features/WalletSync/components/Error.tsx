@@ -1,9 +1,10 @@
-import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
+import { Box, Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import styled, { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { AnalyticsPage } from "../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   title?: string;
@@ -11,6 +12,8 @@ type Props = {
   cta?: string;
   onClick?: () => void;
   analyticsPage?: AnalyticsPage;
+  ctaVariant?: "shade" | "main";
+  onClose?: () => void;
 };
 
 const Container = styled(Box)`
@@ -23,8 +26,17 @@ const Container = styled(Box)`
   justify-content: center;
 `;
 
-export const Error = ({ title, description, cta, onClick, analyticsPage }: Props) => {
+export const Error = ({
+  title,
+  description,
+  cta,
+  onClick,
+  analyticsPage,
+  ctaVariant = "shade",
+  onClose,
+}: Props) => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
       <TrackPage category={String(analyticsPage)} />
@@ -38,9 +50,17 @@ export const Error = ({ title, description, cta, onClick, analyticsPage }: Props
         {description}
       </Text>
       {cta && onClick && (
-        <ButtonV3 variant="shade" onClick={onClick}>
+        <ButtonV3 variant={ctaVariant} onClick={onClick}>
           {cta}
         </ButtonV3>
+      )}
+
+      {onClose && (
+        <Link color={"neutral.c100"} onClick={onClick}>
+          <Text fontSize={14} variant="paragraph" fontWeight="semiBold" color="neutral.c70">
+            {t("walletSync.close")}
+          </Text>
+        </Link>
       )}
     </Flex>
   );

@@ -106,6 +106,8 @@ const SwapWebAppWrapper = styled.div`
   flex: 1;
 `;
 
+const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
+
 const defaultContentSize: Record<string, number> = {};
 
 const SwapWebView = ({
@@ -337,7 +339,10 @@ const SwapWebView = ({
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
           ...transaction,
           subAccountId,
-          recipient: getAbandonSeedAddress(mainAccount.currency.id),
+          recipient:
+            mainAccount.currency.id === "bitcoin"
+              ? getSegWitAbandonSeedAddress()
+              : getAbandonSeedAddress(mainAccount.currency.id),
           amount: convertToAtomicUnit({
             amount: new BigNumber(params.fromAmount),
             account: fromAccount,
@@ -387,7 +392,7 @@ const SwapWebView = ({
               page: "quoteSwap",
               ...swapDefaultTrack,
               swapVersion: params.SWAP_VERSION,
-              value: finalTx.feesStrategy,
+              value: finalTx.feesStrategy || "custom",
             });
             setDrawer(undefined);
             if (!save) {
@@ -403,7 +408,8 @@ const SwapWebView = ({
               });
             }
             resolve({
-              feesStrategy: finalTx.feesStrategy,
+              // little hack to make sure we do not return null (for bitcoin for instance)
+              feesStrategy: finalTx.feesStrategy || "custom",
               estimatedFees: convertToNonAtomicUnit({
                 amount: status.estimatedFees,
                 account: mainAccount,
@@ -428,7 +434,7 @@ const SwapWebView = ({
             },
             {
               title: t("swap2.form.details.label.fees"),
-              preventBackdropClick: true,
+              forceDisableFocusTrap: true,
               onRequestClose: () => performClose(false),
             },
           );

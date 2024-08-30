@@ -30,6 +30,7 @@ import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,
 } from "~/renderer/reducers/settings";
+import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 
 const Container = styled.div`
   display: flex;
@@ -85,7 +86,8 @@ const DeviceDashboard = ({
 }: Props) => {
   const { t } = useTranslation();
   const { deviceName } = result;
-  const [state, dispatch] = useAppsRunner(result, exec, appsToRestore);
+  const storage = useAppDataStorageProvider();
+  const [state, dispatch] = useAppsRunner(result, exec, storage, appsToRestore);
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const [appInstallDep, setAppInstallDep] = useState<{ app: App; dependencies: App[] } | undefined>(
     undefined,
@@ -170,6 +172,9 @@ const DeviceDashboard = ({
   }, [reduxDispatch, result.customImageBlocks]);
 
   const disableFirmwareUpdate = state.installQueue.length > 0 || state.uninstallQueue.length > 0;
+
+  const [hasCustomLockScreen, setHasCustomLockScreen] = useState(result.customImageBlocks !== 0);
+
   return (
     <>
       {renderFirmwareUpdateBanner
@@ -210,7 +215,8 @@ const DeviceDashboard = ({
           device={device}
           deviceName={deviceName}
           isIncomplete={isIncomplete}
-          hasCustomLockScreen={result.customImageBlocks !== 0}
+          hasCustomLockScreen={hasCustomLockScreen}
+          setHasCustomLockScreen={setHasCustomLockScreen}
         />
         <ProviderWarning />
         <AppList

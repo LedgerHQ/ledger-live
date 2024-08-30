@@ -29,7 +29,7 @@ const getItems = (
   const items = [
     {
       key: "spam",
-      label: t("settings.experimental.features.testSimpleHash.tabs.spam"),
+      label: t("settings.developer.debugSimpleHash.testSimpleHash.tabs.spam"),
       value: <SpamReport {...hooks.spam} />,
       onClick: hooks.spam.onClick,
       cta: t("settings.developer.debugSimpleHash.debugSpamNft.report"),
@@ -38,7 +38,7 @@ const getItems = (
     },
     {
       key: "refresh",
-      label: t("settings.experimental.features.testSimpleHash.tabs.refresh"),
+      label: t("settings.developer.debugSimpleHash.testSimpleHash.tabs.refresh"),
       value: <RefreshMetadata {...hooks.refresh} />,
       onClick: hooks.refresh.onClick,
       cta: t("settings.developer.debugSimpleHash.debugRefreshMetadata.refresh"),
@@ -47,7 +47,7 @@ const getItems = (
     },
     {
       key: "check",
-      label: t("settings.experimental.features.testSimpleHash.tabs.check"),
+      label: t("settings.developer.debugSimpleHash.testSimpleHash.tabs.check"),
       value: <SpamScore {...hooks.check} />,
       onClick: hooks.check.onClick,
       cta: t("settings.developer.debugSimpleHash.debugCheckSpamScore.check"),
@@ -84,7 +84,7 @@ const SimpleHashToolsDebugger = () => {
         <ModalBody
           onClose={onClose}
           onBack={undefined}
-          title={<Trans i18nKey="settings.experimental.features.testSimpleHash.title" />}
+          title={<Trans i18nKey="settings.developer.debugSimpleHash.testSimpleHash.title" />}
           noScroll
           render={() => (
             <>

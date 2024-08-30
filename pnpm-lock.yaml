@@ -405,6 +405,9 @@ importers:
       focus-trap:
         specifier: ^6.6.1
         version: 6.9.4
+      framer-motion:
+        specifier: ^11.3.28
+        version: 11.3.28(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
@@ -1075,6 +1078,9 @@ importers:
       react-native-config:
         specifier: 1.5.1
         version: 1.5.1(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
+      react-native-device-info:
+        specifier: ^11.1.0
+        version: 11.1.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
       react-native-easy-markdown:
         specifier: ^2.0.0
         version: 2.0.0(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
@@ -2743,6 +2749,9 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
+      imurmurhash:
+        specifier: ^0.1.4
+        version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2756,6 +2765,9 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
+      '@types/imurmurhash':
+        specifier: ^0.1.4
+        version: 0.1.4
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -6615,6 +6627,9 @@ importers:
       embla-carousel-react:
         specifier: 8.0.0-rc17
         version: 8.0.0-rc17(react@18.2.0)
+      framer-motion:
+        specifier: ^11.3.28
+        version: 11.3.28(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-is:
         specifier: ^17.0.2
         version: 17.0.2
@@ -19853,6 +19868,20 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
+  framer-motion@11.3.28:
+    resolution: {integrity: sha512-dqhoawipEAjqdv32zbv72sOMJZjol7dROWn7t/FOq23WXJ40O4OUybgnO2ldnuS+3YquSn8xO/KKRavZ+TBVOQ==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
   freeport-async@2.0.0:
     resolution: {integrity: sha512-K7od3Uw45AJg00XUmy15+Hae2hOcgKcmN3/EF6Y7i01O0gaqiRx8sUSpsb9+BRNL8RPBrhzPsVfy8q9ADlJuWQ==}
     engines: {node: '>=8'}
@@ -25532,6 +25561,11 @@ packages:
   react-native-debugger-open@0.4.3:
     resolution: {integrity: sha512-gYdVWBhQ0a/PbXgCi3T+FU4LS0ucq8QyUhDqtRd3JRr1AOyKSn1RHj+jxtda+LhfyodrIPbZXHRXL0MvZ5FLSA==}
     hasBin: true
+
+  react-native-device-info@11.1.0:
+    resolution: {integrity: sha512-hzXJSObJdezEz0hF7MAJ3tGeoesuQWenXXt9mrQR9Mjb8kXpZ09rqSsZ/quNpJdZpQ3rYiFa3/0GFG5KNn9PBg==}
+    peerDependencies:
+      react-native: '*'
 
   react-native-easy-markdown@2.0.0:
     resolution: {integrity: sha512-vGK41pZj/4lM9q8/Bqox/2qqfJVrSxLugBWDBNLuOqvxpBw/b3q4aUxCpP8nyBWv5BifrD8+OcdhC27bRvEFIw==}
@@ -49922,6 +49956,13 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
+  framer-motion@11.3.28(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      tslib: 2.6.2
+    optionalDependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
   freeport-async@2.0.0: {}
 
   fresh@0.5.2: {}
@@ -58618,6 +58659,10 @@ snapshots:
       es6-template: 1.0.4
       minimist: 1.2.8
       semver: 5.7.2
+
+  react-native-device-info@11.1.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0)):
+    dependencies:
+      react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
 
   react-native-easy-markdown@2.0.0(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0)):
     dependencies:

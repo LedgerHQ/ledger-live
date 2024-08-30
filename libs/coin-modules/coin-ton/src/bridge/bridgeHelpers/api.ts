@@ -4,8 +4,12 @@ import { getCoinConfig } from "../../config";
 import {
   TonAccountInfo,
   TonFee,
+  TonJettonTransfer,
+  TonJettonWallet,
   TonResponseAccountInfo,
   TonResponseEstimateFee,
+  TonResponseJettonTransfer,
+  TonResponseJettonWallets,
   TonResponseMasterchainInfo,
   TonResponseMessage,
   TonResponseWalletInfo,
@@ -80,6 +84,37 @@ export async function fetchAccountInfo(addr: string): Promise<TonAccountInfo> {
     status: data.status,
     seqno: seqno || 0,
   };
+}
+
+export async function fetchJettonTransactions(
+  addr: string,
+  opts?: {
+    jettonMaster?: string;
+    startLt?: string;
+    endLt?: string;
+  },
+): Promise<TonJettonTransfer[]> {
+  const address = Address.parse(addr);
+  const urlAddr = address.toString({ bounceable: false, urlSafe: true });
+  let url = `/jetton/transfers?address=${urlAddr}&limit=256`;
+  if (opts?.jettonMaster != null) url += `&jetton_master=${opts.jettonMaster}`;
+  if (opts?.startLt != null) url += `&start_lt=${opts.startLt}`;
+  if (opts?.endLt != null) url += `&end_lt=${opts.endLt}`;
+  return (await fetch<TonResponseJettonTransfer>(url)).jetton_transfers;
+}
+
+export async function fetchJettonWallets(opts?: {
+  address?: string;
+  jettonMaster?: string;
+}): Promise<TonJettonWallet[]> {
+  let url = `/jetton/wallets?limit=256`;
+  if (opts?.jettonMaster != null) url += `&jetton_address=${opts.jettonMaster}`;
+  if (opts?.address != null) {
+    const address = Address.parse(opts.address);
+    const urlAddr = address.toString({ bounceable: false, urlSafe: true });
+    url += `&owner_address=${urlAddr}`;
+  }
+  return (await fetch<TonResponseJettonWallets>(url)).jetton_wallets;
 }
 
 export async function estimateFee(

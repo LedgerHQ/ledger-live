@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import semver from "semver";
 import { RouteComponentProps, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import Card from "~/renderer/components/Box/Card";
 import {
   counterValueCurrencySelector,
@@ -15,10 +14,10 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import useTheme from "~/renderer/hooks/useTheme";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
-import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import {
-  DEFAULT_MULTIBUY_APP_ID,
+  BUY_SELL_UI_APP_ID,
   INTERNAL_APP_IDS,
   WALLET_API_VERSION,
 } from "@ledgerhq/live-common/wallet-api/constants";
@@ -26,13 +25,6 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { walletSelector } from "~/renderer/reducers/wallet";
-
-export type DProps = {
-  defaultCurrencyId?: string | null;
-  defaultAccountId?: string | null;
-  defaultTicker?: string | null;
-  rampCatalog: Loadable<RampCatalog>;
-};
 
 type ExchangeState = { account?: string } | undefined;
 
@@ -122,7 +114,7 @@ export type ExchangeComponentParams = {
 const Exchange = ({ match }: RouteComponentProps<ExchangeComponentParams>) => {
   const appId = match?.params?.appId;
   const buySellUiFlag = useFeature("buySellUi");
-  const defaultPlatform = buySellUiFlag?.params?.manifestId || DEFAULT_MULTIBUY_APP_ID;
+  const defaultPlatform = buySellUiFlag?.params?.manifestId || BUY_SELL_UI_APP_ID;
 
   return <LiveAppExchange appId={appId || defaultPlatform} />;
 };

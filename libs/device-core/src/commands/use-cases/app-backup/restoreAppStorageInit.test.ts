@@ -23,12 +23,18 @@ describe("restoreAppStorageInit", () => {
     const appName = "MyApp";
     const backupSize = 1234;
     await restoreAppStorageInit(transport, appName, backupSize);
-    expect(transport.send).toHaveBeenCalledWith(
+
+    const data = Buffer.concat([
+      Buffer.from(backupSize.toString(16).padStart(8, "0"), "hex"), // BACKUP_LEN
+      Buffer.from(appName, "ascii"), // APP_NAME
+    ]);
+
+    const args = [
       0xe0,
       0x6c,
       0x00,
       0x00,
-      Buffer.from([0x09, 0x00, 0x00, 0x04, 0xd2, 0x4d, 0x79, 0x41, 0x70, 0x70]),
+      data,
       [
         StatusCodes.OK,
         StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT,
@@ -38,7 +44,9 @@ describe("restoreAppStorageInit", () => {
         StatusCodes.INVALID_APP_NAME_LENGTH,
         StatusCodes.INVALID_BACKUP_LENGTH,
       ],
-    );
+    ];
+
+    expect(transport.send).toHaveBeenCalledWith(...args);
   });
 
   describe("parseResponse", () => {

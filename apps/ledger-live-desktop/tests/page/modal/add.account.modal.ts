@@ -11,7 +11,6 @@ export class AddAccountModal extends Modal {
   private accountsList = this.page.getByTestId("add-accounts-step-import-accounts-list");
   private stopButton = this.page.getByTestId("add-accounts-import-stop-button");
   private doneButton = this.page.getByTestId("add-accounts-finish-close-button");
-  readonly closeButton = this.page.getByTestId("modal-close-button");
   private infoBox = this.page.getByTestId("add-token-infoBox");
   private successAddLabel = this.page.locator("text=Account added successfully");
   private selectAccountInList = (Currency: Currency) =>
@@ -21,10 +20,9 @@ export class AddAccountModal extends Modal {
   private selectTokenNetwork = (SubAccount: Account) =>
     this.page
       .getByRole("option", {
-        name: `${SubAccount.currency.name} (${SubAccount.currency.ticker}) ${SubAccount.currency.speculosApp}`,
+        name: `${SubAccount.currency.name} (${SubAccount.currency.ticker}) ${SubAccount.currency.speculosApp.name}`,
       })
       .locator("span");
-  readonly continueButton = this.page.getByTestId("modal-continue-button");
 
   @step("Select token")
   async selectToken(SubAccount: Account) {
@@ -38,14 +36,14 @@ export class AddAccountModal extends Modal {
         .locator(
           this.optionWithTextAndFollowingText(
             SubAccount.currency.ticker?.toUpperCase(),
-            SubAccount.currency.speculosApp,
+            SubAccount.currency.speculosApp.name,
           ),
         )
         .click();
     }
     await expect(this.closeButton).toBeVisible();
     await expect(this.infoBox).toBeVisible();
-    await this.continueButton.click();
+    await this.continue();
   }
 
   @step("Select account by scrolling: {0}")
@@ -74,6 +72,7 @@ export class AddAccountModal extends Modal {
     await this.page.mouse.move(0, 0);
   }
 
+  @step("Select currency")
   async selectCurrency(currency: Currency) {
     await this.selectAccount.click();
     await this.selectAccountInput.fill(currency.name);
@@ -83,12 +82,15 @@ export class AddAccountModal extends Modal {
       await this.selectAccountByScrolling(currency);
       await this.dropdownOptions
         .locator(
-          this.optionWithTextAndFollowingText(currency.ticker?.toUpperCase(), currency.speculosApp),
+          this.optionWithTextAndFollowingText(
+            currency.ticker?.toUpperCase(),
+            currency.speculosApp.name,
+          ),
         )
         .click();
     }
     await expect(this.closeButton).toBeVisible();
-    await this.continueButton.click();
+    await this.continue();
     await this.waitForSync();
   }
 

@@ -6,6 +6,7 @@ import SynchronizeWallet from "./Synchronize";
 import WalletSyncManageInstances from "./ManageInstances";
 import WalletSyncActivation from "./Activation";
 import WalletSyncManage from "./Manage";
+import { useInitMemberCredentials } from "../hooks/useInitMemberCredentials";
 
 export interface BackRef {
   goBack: () => void;
@@ -14,13 +15,14 @@ export interface BackRef {
 export interface BackProps {}
 
 export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => {
+  useInitMemberCredentials();
   const walletSyncFlow = useSelector(walletSyncFlowSelector);
 
   switch (walletSyncFlow) {
     default:
     case Flow.Activation:
       return <WalletSyncActivation ref={ref} />;
-    case Flow.WalletSyncActivated:
+    case Flow.LedgerSyncActivated:
       return <WalletSyncManage />;
     case Flow.Synchronize:
       return <SynchronizeWallet ref={ref} />;

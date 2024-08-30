@@ -358,6 +358,7 @@ const OperationD = (props: Props) => {
                     showCode
                     val={amount}
                     fontSize={7}
+                    data-testid="amountReceived-drawer"
                     disableRounding
                   />
                 </ToolTip>

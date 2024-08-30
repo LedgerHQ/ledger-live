@@ -54,9 +54,9 @@ function BackToInternalDomain({
   useEffect(() => {
     (async () => {
       const lastScreen = (await AsyncStorage.getItem("last-screen")) || "";
-      setButtonText(lastScreen === "compare_providers" ? "Quote" : manifest.name);
+      setButtonText(lastScreen === "compare_providers" ? t("common.quote") : manifest.name);
     })();
-  }, [manifest.id, manifest.name]);
+  }, [manifest.id, manifest.name, t]);
 
   const handleBackClick = async () => {
     const manifestId = (await AsyncStorage.getItem("manifest-id")) || "";
