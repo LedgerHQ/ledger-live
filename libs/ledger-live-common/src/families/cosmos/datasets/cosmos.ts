@@ -8,7 +8,6 @@ import {
 import invariant from "invariant";
 import type { CosmosAccount, Transaction } from "@ledgerhq/coin-cosmos/types/index";
 import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
-// import { fromTransactionRaw } from "../transaction";
 import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
 
 const dataset: CurrenciesData<Transaction> = {

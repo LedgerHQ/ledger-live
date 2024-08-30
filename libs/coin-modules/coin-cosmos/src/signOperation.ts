@@ -54,19 +54,15 @@ export const buildSignOperation =
           sequence.toString(),
         );
         const tx = Buffer.from(serializeSignDoc(signDoc));
-        // const app = new CosmosApp(transport);
         const path = account.freshAddressPath.split("/").map(p => parseInt(p.replace("'", "")));
 
-        // const { compressed_pk } = await app.getAddressAndPubKey(path, chainInstance.prefix);
         const { compressed_pk } = await signerContext(deviceId, signer =>
           signer.getAddressAndPubKey(
             path,
             chainInstance.prefix,
-            false, // TODO: check if defaulting to false is good
+            false,
           ),
         );
-        // TODO: is publicKey always compressed?
-        // const compressed_pk = publicKey;
         const pubKey = Buffer.from(compressed_pk).toString("base64");
 
         const { signature: resSignature, return_code } = (await signerContext(

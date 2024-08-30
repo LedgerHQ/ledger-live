@@ -16,11 +16,9 @@ function resolver(signerContext: SignerContext<CosmosSigner>): GetAddressFn {
       );
       return { address, publicKey };
     })) as CosmosAddress;
-    // TODO: compressed convertion like in signOperation.ts ?
-    //         const pubKey = Buffer.from(compressed_pk).toString("base64");
     return {
       address,
-      publicKey, //publicKey.toString("hex"),
+      publicKey,
       path,
     };
   };
