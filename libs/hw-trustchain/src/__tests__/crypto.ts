@@ -27,4 +27,18 @@ describe("Sodium wrapper tester", () => {
     const decrypted = await crypto.decryptUserData(keypair.privateKey, encrypted);
     expect(crypto.to_hex(decrypted)).toBe(crypto.to_hex(data));
   });
+
+  it("should verify truncated signature by padding 0s from the start", async () => {
+    const hash = crypto.from_hex(
+      "19514a2e50bfad4a6de397ebde776191cbb720e8bbfcc3c165385c3664c03341",
+    );
+    const signature = crypto.from_hex(
+      // Here the "S" part of the signature is only 31 bytes long it should be padded with a 0
+      "3043022052a82876fcd4d9d8383ce12a7e4d96bb4c1d9e71e857cd087c092b87cec6baeb021f6b86b9a3bab1e7794ca6ef081c66cb6e6dff06cceddbd23e1f25089e311784",
+    );
+    const issuer = crypto.from_hex(
+      "026e7bf1e015da491674be5796b15d6fabd1f454aad478a6a223934e5a872719e0",
+    );
+    expect(await crypto.verify(hash, signature, issuer)).toBe(true);
+  });
 });
