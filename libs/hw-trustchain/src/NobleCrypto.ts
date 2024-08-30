@@ -53,7 +53,7 @@ export class NobleCryptoSecp256k1 implements Crypto {
     return this.concat(prefix, this.concat(R, S));
   }
 
-  public derDecode(signature: Uint8Array): { R: Uint8Array; S: Uint8Array } {
+  private derDecode(signature: Uint8Array): { R: Uint8Array; S: Uint8Array } {
     const R: Uint8Array = signature.slice(4, 4 + signature[3]);
     const S: Uint8Array = signature.slice(
       6 + signature[3],
