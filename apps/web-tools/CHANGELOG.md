@@ -1,5 +1,33 @@
 # web-tools
 
+## 0.9.0-nightly.3
+
+### Minor Changes
+
+- [#7691](https://github.com/LedgerHQ/ledger-live/pull/7691) [`ce18c9b`](https://github.com/LedgerHQ/ledger-live/commit/ce18c9bde11fbd6cc196091716b1547354063d89) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Added a Loading screen on LLM and LLD when initializing ledger sync while accounts are synchronizing
+
+### Patch Changes
+
+- [#7563](https://github.com/LedgerHQ/ledger-live/pull/7563) [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - remove pivx code
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`ce18c9b`](https://github.com/LedgerHQ/ledger-live/commit/ce18c9bde11fbd6cc196091716b1547354063d89), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`1bcff16`](https://github.com/LedgerHQ/ledger-live/commit/1bcff1673fa0cbc43f43201044d7e9425f8991f1), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`1d1bfd1`](https://github.com/LedgerHQ/ledger-live/commit/1d1bfd164847431c0f4afe7ed8ae6d5df535c9cf)]:
+  - @ledgerhq/types-live@6.50.1-nightly.0
+  - @ledgerhq/errors@6.19.0-nightly.1
+  - @ledgerhq/live-common@34.8.0-nightly.3
+  - @ledgerhq/live-wallet@0.6.0-nightly.5
+  - @ledgerhq/trustchain@0.3.0-nightly.5
+  - @ledgerhq/types-cryptoassets@7.15.1-nightly.0
+  - @ledgerhq/cryptoassets@13.4.0-nightly.1
+  - @ledgerhq/coin-framework@0.17.1-nightly.3
+  - @ledgerhq/domain-service@1.2.4-nightly.1
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.3
+  - @ledgerhq/hw-transport@6.31.3-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.1
+  - @ledgerhq/hw-transport-web-ble@6.29.3-nightly.1
+  - @ledgerhq/hw-transport-webhid@6.29.3-nightly.1
+  - @ledgerhq/hw-transport-webusb@6.29.3-nightly.1
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.3
+
 ## 0.9.0-nightly.2
 
 ### Patch Changes

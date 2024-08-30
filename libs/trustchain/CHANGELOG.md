@@ -1,5 +1,21 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.5
+
+### Minor Changes
+
+- [#7691](https://github.com/LedgerHQ/ledger-live/pull/7691) [`ce18c9b`](https://github.com/LedgerHQ/ledger-live/commit/ce18c9bde11fbd6cc196091716b1547354063d89) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Added a Loading screen on LLM and LLD when initializing ledger sync while accounts are synchronizing
+
+### Patch Changes
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3)]:
+  - @ledgerhq/errors@6.19.0-nightly.1
+  - @ledgerhq/speculos-transport@0.1.5-nightly.3
+  - @ledgerhq/hw-transport@6.31.3-nightly.1
+  - @ledgerhq/live-network@1.4.1-nightly.3
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.3
+  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.1
+
 ## 0.3.0-nightly.4
 
 ### Patch Changes

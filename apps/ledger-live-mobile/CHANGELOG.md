@@ -1,5 +1,43 @@
 # live-mobile
 
+## 3.49.0-nightly.3
+
+### Minor Changes
+
+- [#7691](https://github.com/LedgerHQ/ledger-live/pull/7691) [`ce18c9b`](https://github.com/LedgerHQ/ledger-live/commit/ce18c9bde11fbd6cc196091716b1547354063d89) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Added a Loading screen on LLM and LLD when initializing ledger sync while accounts are synchronizing
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7697](https://github.com/LedgerHQ/ledger-live/pull/7697) [`b1a8c54`](https://github.com/LedgerHQ/ledger-live/commit/b1a8c549b190863ea026426f7cb9db48d8a97083) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - User connects backup to instance with same backup or different backup
+
+- [#7563](https://github.com/LedgerHQ/ledger-live/pull/7563) [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - remove pivx code
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`ce18c9b`](https://github.com/LedgerHQ/ledger-live/commit/ce18c9bde11fbd6cc196091716b1547354063d89), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`1bcff16`](https://github.com/LedgerHQ/ledger-live/commit/1bcff1673fa0cbc43f43201044d7e9425f8991f1), [`1d1bfd1`](https://github.com/LedgerHQ/ledger-live/commit/1d1bfd164847431c0f4afe7ed8ae6d5df535c9cf)]:
+  - @ledgerhq/types-live@6.50.1-nightly.0
+  - @ledgerhq/errors@6.19.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.3
+  - @ledgerhq/live-common@34.8.0-nightly.3
+  - @ledgerhq/live-countervalues@0.2.5-nightly.3
+  - @ledgerhq/native-ui@0.23.4-nightly.1
+  - @ledgerhq/icons-ui@0.7.3-nightly.0
+  - @ledgerhq/live-wallet@0.6.0-nightly.5
+  - @ledgerhq/trustchain@0.3.0-nightly.5
+  - @ledgerhq/types-cryptoassets@7.15.1-nightly.0
+  - @ledgerhq/coin-framework@0.17.1-nightly.3
+  - @ledgerhq/coin-evm@2.2.0-nightly.4
+  - @ledgerhq/domain-service@1.2.4-nightly.1
+  - @ledgerhq/live-nft@0.4.5-nightly.3
+  - @ledgerhq/live-nft-react@0.4.5-nightly.3
+  - @ledgerhq/devices@8.4.3-nightly.1
+  - @ledgerhq/hw-transport@6.31.3-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.1
+  - @ledgerhq/react-native-hid@6.32.3-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.33.3-nightly.1
+  - @ledgerhq/live-network@1.4.1-nightly.3
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.3
+
 ## 3.49.0-nightly.2
 
 ### Patch Changes

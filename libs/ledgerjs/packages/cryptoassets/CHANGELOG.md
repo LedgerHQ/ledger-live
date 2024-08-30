@@ -1,5 +1,13 @@
 # @ledgerhq/cryptoassets
 
+## 13.4.0-nightly.1
+
+### Patch Changes
+
+- [#7563](https://github.com/LedgerHQ/ledger-live/pull/7563) [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - remove pivx code
+
+- [#7708](https://github.com/LedgerHQ/ledger-live/pull/7708) [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - edit zcash explorer links
+
 ## 13.4.0-nightly.0
 
 ### Minor Changes

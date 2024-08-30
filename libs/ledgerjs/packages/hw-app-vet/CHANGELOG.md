@@ -1,5 +1,15 @@
 # @ledgerhq/hw-app-vet
 
+## 0.2.5-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710)]:
+  - @ledgerhq/errors@6.19.0-nightly.1
+  - @ledgerhq/cryptoassets@13.4.0-nightly.1
+  - @ledgerhq/hw-transport@6.31.3-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.1
+
 ## 0.2.5-nightly.1
 
 ### Patch Changes

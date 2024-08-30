@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-network",
-  "version": "1.4.1-nightly.2",
+  "version": "1.4.1-nightly.3",
   "description": "Ledger Live network and cache utilities",
   "keywords": [
     "Ledger"

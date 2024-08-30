@@ -1,5 +1,15 @@
 # @ledgerhq/native-ui
 
+## 0.23.4-nightly.1
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3)]:
+  - @ledgerhq/crypto-icons-ui@1.4.1-nightly.0
+  - @ledgerhq/icons-ui@0.7.3-nightly.0
+
 ## 0.23.4-nightly.0
 
 ### Patch Changes

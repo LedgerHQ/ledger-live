@@ -1,5 +1,62 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.3
+
+### Minor Changes
+
+- [#7698](https://github.com/LedgerHQ/ledger-live/pull/7698) [`1bcff16`](https://github.com/LedgerHQ/ledger-live/commit/1bcff1673fa0cbc43f43201044d7e9425f8991f1) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new use case to delete locally stored app data (llm/lld)
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7563](https://github.com/LedgerHQ/ledger-live/pull/7563) [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - remove pivx code
+
+- [#7693](https://github.com/LedgerHQ/ledger-live/pull/7693) [`1d1bfd1`](https://github.com/LedgerHQ/ledger-live/commit/1d1bfd164847431c0f4afe7ed8ae6d5df535c9cf) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix listApps: fallback to HSM script runner if listApps APDU is not available
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`ce18c9b`](https://github.com/LedgerHQ/ledger-live/commit/ce18c9bde11fbd6cc196091716b1547354063d89), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710)]:
+  - @ledgerhq/errors@6.19.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.3
+  - @ledgerhq/crypto-icons-ui@1.4.1-nightly.0
+  - @ledgerhq/coin-icon@0.4.2-nightly.3
+  - @ledgerhq/coin-ton@0.3.13-nightly.4
+  - @ledgerhq/live-countervalues@0.2.5-nightly.3
+  - @ledgerhq/speculos-transport@0.1.5-nightly.3
+  - @ledgerhq/live-wallet@0.6.0-nightly.5
+  - @ledgerhq/cryptoassets@13.4.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.4-nightly.1
+  - @ledgerhq/coin-framework@0.17.1-nightly.3
+  - @ledgerhq/coin-algorand@0.5.5-nightly.3
+  - @ledgerhq/coin-cardano@0.1.5-nightly.3
+  - @ledgerhq/coin-evm@2.2.0-nightly.4
+  - @ledgerhq/coin-near@0.5.5-nightly.3
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.3
+  - @ledgerhq/coin-solana@0.7.5-nightly.3
+  - @ledgerhq/coin-stellar@0.2.3-nightly.3
+  - @ledgerhq/coin-tezos@0.6.1-nightly.3
+  - @ledgerhq/coin-tron@0.0.5-nightly.3
+  - @ledgerhq/coin-xrp@0.5.1-nightly.3
+  - @ledgerhq/device-core@0.3.3-nightly.5
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.3
+  - @ledgerhq/live-nft@0.4.5-nightly.3
+  - @ledgerhq/devices@8.4.3-nightly.1
+  - @ledgerhq/hw-app-algorand@6.29.3-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.30.3-nightly.1
+  - @ledgerhq/hw-app-exchange@0.6.0-nightly.2
+  - @ledgerhq/hw-app-icon@1.1.1-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.31.3-nightly.1
+  - @ledgerhq/hw-app-solana@7.2.3-nightly.1
+  - @ledgerhq/hw-app-str@7.0.3-nightly.1
+  - @ledgerhq/hw-app-vet@0.2.5-nightly.2
+  - @ledgerhq/hw-transport@6.31.3-nightly.1
+  - @ledgerhq/live-network@1.4.1-nightly.3
+  - @ledgerhq/hw-app-btc@10.4.2-nightly.1
+  - @ledgerhq/hw-app-near@6.29.3-nightly.1
+  - @ledgerhq/hw-app-tezos@6.29.3-nightly.1
+  - @ledgerhq/hw-app-trx@6.29.3-nightly.1
+  - @ledgerhq/hw-app-xrp@6.29.3-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.1
+
 ## 34.8.0-nightly.2
 
 ### Minor Changes

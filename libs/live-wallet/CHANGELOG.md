@@ -1,5 +1,22 @@
 # @ledgerhq/live-wallet
 
+## 0.6.0-nightly.5
+
+### Minor Changes
+
+- [#7691](https://github.com/LedgerHQ/ledger-live/pull/7691) [`ce18c9b`](https://github.com/LedgerHQ/ledger-live/commit/ce18c9bde11fbd6cc196091716b1547354063d89) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Added a Loading screen on LLM and LLD when initializing ledger sync while accounts are synchronizing
+
+### Patch Changes
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`ce18c9b`](https://github.com/LedgerHQ/ledger-live/commit/ce18c9bde11fbd6cc196091716b1547354063d89), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710)]:
+  - @ledgerhq/types-live@6.50.1-nightly.0
+  - @ledgerhq/trustchain@0.3.0-nightly.5
+  - @ledgerhq/types-cryptoassets@7.15.1-nightly.0
+  - @ledgerhq/cryptoassets@13.4.0-nightly.1
+  - @ledgerhq/coin-framework@0.17.1-nightly.3
+  - @ledgerhq/devices@8.4.3-nightly.1
+  - @ledgerhq/live-network@1.4.1-nightly.3
+
 ## 0.5.1-nightly.4
 
 ### Patch Changes

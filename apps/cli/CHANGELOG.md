@@ -1,5 +1,27 @@
 # @ledgerhq/live-cli
 
+## 24.5.2-nightly.3
+
+### Patch Changes
+
+- [#7563](https://github.com/LedgerHQ/ledger-live/pull/7563) [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - remove pivx code
+
+- Updated dependencies [[`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`ce18c9b`](https://github.com/LedgerHQ/ledger-live/commit/ce18c9bde11fbd6cc196091716b1547354063d89), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`1bcff16`](https://github.com/LedgerHQ/ledger-live/commit/1bcff1673fa0cbc43f43201044d7e9425f8991f1), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`1d1bfd1`](https://github.com/LedgerHQ/ledger-live/commit/1d1bfd164847431c0f4afe7ed8ae6d5df535c9cf)]:
+  - @ledgerhq/errors@6.19.0-nightly.1
+  - @ledgerhq/live-common@34.8.0-nightly.3
+  - @ledgerhq/live-countervalues@0.2.5-nightly.3
+  - @ledgerhq/live-wallet@0.6.0-nightly.5
+  - @ledgerhq/cryptoassets@13.4.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.7.4-nightly.1
+  - @ledgerhq/coin-framework@0.17.1-nightly.3
+  - @ledgerhq/hw-transport@6.31.3-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.1
+  - @ledgerhq/hw-transport-node-hid@6.29.4-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.29.3-nightly.1
+  - @ledgerhq/live-network@1.4.1-nightly.3
+  - @ledgerhq/hw-app-btc@10.4.2-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.1
+
 ## 24.5.2-nightly.2
 
 ### Patch Changes
