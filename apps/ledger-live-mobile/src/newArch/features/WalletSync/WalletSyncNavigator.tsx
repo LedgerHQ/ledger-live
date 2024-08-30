@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { WalletSyncManageKeyDeletionSuccess } from "./screens/ManageKey/DeletionSuccess";
 import { ManageInstancesProcess } from "./screens/ManageInstances/ManageInstancesProcess";
 import { WalletSyncManageInstanceDeletionSuccess } from "./screens/ManageInstances/DeletionSuccess";
+import { LedgerSyncDeepLinkHandler } from "./screens/LedgerSyncDeepLinkHandler";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
@@ -97,6 +98,14 @@ export default function WalletSyncNavigator() {
           title: "",
           headerRight: () => null,
           headerLeft: () => null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.LedgerSyncDeepLinkHandler}
+        component={LedgerSyncDeepLinkHandler}
+        options={{
+          title: "",
+          headerRight: () => null,
         }}
       />
     </Stack.Navigator>
