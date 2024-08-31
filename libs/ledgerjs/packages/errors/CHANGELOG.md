@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.19.0-nightly.2
+
+### Patch Changes
+
+- [#7690](https://github.com/LedgerHQ/ledger-live/pull/7690) [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57) Thanks [@thesan](https://github.com/thesan)! - Refresh ledger sync QR code on expiration
+
 ## 6.19.0-nightly.1
 
 ### Patch Changes

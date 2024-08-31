@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-xrp
 
+## 6.29.3-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.3-nightly.2
+
 ## 6.29.3-nightly.1
 
 ### Patch Changes

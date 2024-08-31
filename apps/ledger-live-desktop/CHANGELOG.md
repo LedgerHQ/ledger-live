@@ -1,5 +1,43 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.4
+
+### Minor Changes
+
+- [#7706](https://github.com/LedgerHQ/ledger-live/pull/7706) [`84ea362`](https://github.com/LedgerHQ/ledger-live/commit/84ea362e10ef5885428248c5689ae9ae595e653f) Thanks [@thesan](https://github.com/thesan)! - Create the `/ledgersync` deeplink
+
+### Patch Changes
+
+- [#7715](https://github.com/LedgerHQ/ledger-live/pull/7715) [`f4bb881`](https://github.com/LedgerHQ/ledger-live/commit/f4bb881f79b38d2a1798933a4a5cd713167fad72) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: persistant gasOptions between evm chains creating crashes
+
+- [#7709](https://github.com/LedgerHQ/ledger-live/pull/7709) [`1f74063`](https://github.com/LedgerHQ/ledger-live/commit/1f7406327583cb61944cab18023e966b5ac467aa) Thanks [@CremaFR](https://github.com/CremaFR)! - btc and evm fee drawer display amount errors when editing fees too high
+
+- [#7711](https://github.com/LedgerHQ/ledger-live/pull/7711) [`e5c578b`](https://github.com/LedgerHQ/ledger-live/commit/e5c578b7be3fe0653bc7fced49eb5713b134f741) Thanks [@CremaFR](https://github.com/CremaFR)! - fix setTransaction fee drawer call to check error status
+
+- [#7690](https://github.com/LedgerHQ/ledger-live/pull/7690) [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57) Thanks [@thesan](https://github.com/thesan)! - Refresh ledger sync QR code on expiration
+
+- Updated dependencies [[`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0-nightly.2
+  - @ledgerhq/trustchain@0.3.0-nightly.6
+  - @ledgerhq/coin-framework@0.17.1-nightly.4
+  - @ledgerhq/coin-bitcoin@0.7.4-nightly.2
+  - @ledgerhq/coin-evm@2.2.0-nightly.5
+  - @ledgerhq/domain-service@1.2.4-nightly.2
+  - @ledgerhq/live-common@34.8.0-nightly.4
+  - @ledgerhq/devices@8.4.3-nightly.2
+  - @ledgerhq/hw-transport@6.31.3-nightly.2
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.4-nightly.2
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.3-nightly.2
+  - @ledgerhq/hw-transport-vault@1.3.3-nightly.2
+  - @ledgerhq/live-network@1.4.1-nightly.4
+  - @ledgerhq/live-wallet@0.6.0-nightly.6
+  - @ledgerhq/live-countervalues@0.2.5-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.4
+  - @ledgerhq/live-nft@0.4.5-nightly.4
+  - @ledgerhq/live-nft-react@0.4.5-nightly.4
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.4
+
 ## 2.86.0-nightly.3
 
 ### Minor Changes

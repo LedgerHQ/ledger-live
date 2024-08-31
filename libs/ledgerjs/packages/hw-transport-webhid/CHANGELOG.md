@@ -1,5 +1,14 @@
 # @ledgerhq/hw-transport-webhid
 
+## 6.29.3-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0-nightly.2
+  - @ledgerhq/devices@8.4.3-nightly.2
+  - @ledgerhq/hw-transport@6.31.3-nightly.2
+
 ## 6.29.3-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.6
+
+### Patch Changes
+
+- [#7690](https://github.com/LedgerHQ/ledger-live/pull/7690) [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57) Thanks [@thesan](https://github.com/thesan)! - Refresh ledger sync QR code on expiration
+
+- Updated dependencies [[`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0-nightly.2
+  - @ledgerhq/hw-transport@6.31.3-nightly.2
+  - @ledgerhq/live-network@1.4.1-nightly.4
+  - @ledgerhq/speculos-transport@0.1.5-nightly.4
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.4
+  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.2
+
 ## 0.3.0-nightly.5
 
 ### Minor Changes

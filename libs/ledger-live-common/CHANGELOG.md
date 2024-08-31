@@ -1,5 +1,50 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0-nightly.2
+  - @ledgerhq/coin-framework@0.17.1-nightly.4
+  - @ledgerhq/coin-algorand@0.5.5-nightly.4
+  - @ledgerhq/coin-bitcoin@0.7.4-nightly.2
+  - @ledgerhq/coin-cardano@0.1.5-nightly.4
+  - @ledgerhq/coin-evm@2.2.0-nightly.5
+  - @ledgerhq/coin-icon@0.4.2-nightly.4
+  - @ledgerhq/coin-near@0.5.5-nightly.4
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.4
+  - @ledgerhq/coin-solana@0.7.5-nightly.4
+  - @ledgerhq/coin-stellar@0.2.3-nightly.4
+  - @ledgerhq/coin-tezos@0.6.1-nightly.4
+  - @ledgerhq/coin-ton@0.3.13-nightly.5
+  - @ledgerhq/coin-tron@0.0.5-nightly.4
+  - @ledgerhq/coin-xrp@0.5.1-nightly.4
+  - @ledgerhq/device-core@0.3.3-nightly.6
+  - @ledgerhq/devices@8.4.3-nightly.2
+  - @ledgerhq/hw-app-algorand@6.29.3-nightly.2
+  - @ledgerhq/hw-app-cosmos@6.30.3-nightly.2
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.4
+  - @ledgerhq/hw-app-exchange@0.6.0-nightly.3
+  - @ledgerhq/hw-app-icon@1.1.1-nightly.2
+  - @ledgerhq/hw-app-polkadot@6.31.3-nightly.2
+  - @ledgerhq/hw-app-solana@7.2.3-nightly.2
+  - @ledgerhq/hw-app-str@7.0.3-nightly.2
+  - @ledgerhq/hw-app-vet@0.2.5-nightly.3
+  - @ledgerhq/hw-transport@6.31.3-nightly.2
+  - @ledgerhq/live-network@1.4.1-nightly.4
+  - @ledgerhq/live-wallet@0.6.0-nightly.6
+  - @ledgerhq/live-countervalues@0.2.5-nightly.4
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.4
+  - @ledgerhq/live-nft@0.4.5-nightly.4
+  - @ledgerhq/speculos-transport@0.1.5-nightly.4
+  - @ledgerhq/hw-app-btc@10.4.2-nightly.2
+  - @ledgerhq/hw-app-near@6.29.3-nightly.2
+  - @ledgerhq/hw-app-tezos@6.29.3-nightly.2
+  - @ledgerhq/hw-app-trx@6.29.3-nightly.2
+  - @ledgerhq/hw-app-xrp@6.29.3-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.29.3-nightly.2
+
 ## 34.8.0-nightly.3
 
 ### Minor Changes
