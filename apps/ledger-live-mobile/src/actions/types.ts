@@ -529,10 +529,12 @@ export type MarketPayload =
 // === WALLETSYNC ACTIONS ===
 export enum WalletSyncActionTypes {
   WALLET_SYNC_SET_MANAGE_KEY_DRAWER = "WALLET_SYNC_SET_MANAGE_KEY_DRAWER",
+  LEDGER_SYNC_SET_ACTIVATE_DRAWER = "LEDGER_SYNC_SET_ACTIVATE_DRAWER",
 }
 
 export type WalletSyncSetManageKeyDrawerPayload = boolean;
-export type WalletSyncPayload = WalletSyncSetManageKeyDrawerPayload;
+export type WalletSyncSetActivateDrawer = boolean;
+export type WalletSyncPayload = WalletSyncSetManageKeyDrawerPayload | WalletSyncSetActivateDrawer;
 
 // === PAYLOADS ===
 
