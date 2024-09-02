@@ -145,7 +145,8 @@
     "add" : "Ekle",
     "or" : "VEYA",
     "clearAll" : "Tümünü temizle",
-    "buyLedger" : "Ledger satın alın"
+    "buyLedger" : "Ledger satın alın",
+    "quote" : "Teklif"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -3979,7 +3980,7 @@
       "stock" : "Bölgesel piyasa göstergesi",
       "stockDesc" : "Piyasalardaki artışları maviyle göstermek için Batı, kırmızıyla göstermek için Doğu'yu seçin.",
       "walletSync" : "Ledger Sync",
-      "walletSyncDesc" : "Uygulama verilerinizi kolayca güvence altına alın ve birden çok Ledger Live oturumunu senkronize edin.",
+      "walletSyncDesc" : "Hesaplarınızı birden çok Ledger Live oturumu arasında güvenli bir şekilde senkronize edin",
       "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
       "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
     },
@@ -4005,6 +4006,16 @@
         "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "SimpleHash Araçları",
+          "description" : "SimpleHash kullanan bazı faydalı araçlar sağlar",
+          "cta" : "Aç",
+          "tabs" : {
+            "spam" : "Spam İhbarı",
+            "refresh" : "Metaverileri Yenile",
+            "check" : "Spam Puanı"
+          }
+        },
         "debugSpamNft" : {
           "report" : "İhbar et",
           "contractAddress" : "Sözleşme Adresi",
@@ -4064,8 +4075,38 @@
         },
         "back" : "Geri dön"
       },
+      "debugWalletSync" : {
+        "title" : "Ledger Sync Hata Ayıklayıcısı",
+        "description" : "Belirli bir LedgerSync akışı başlatmanıza veya LedgerSync'in güncel durumunu kontrol etmenize olanak sağlar",
+        "cta" : "Aç",
+        "modal" : {
+          "check" : {
+            "title" : "Denetçi",
+            "trustchain" : {
+              "name" : "Trustchain Kimliği: ",
+              "emptyId" : "Boş Kimlik",
+              "applicationPath" : "Uygulama yolu: ",
+              "emptyApplicationPath" : "Boş Uygulama yolu",
+              "cloudSyncVersion" : "Bulut senkronizasyonu sürümü: ",
+              "lastSyncInfo" : "Son senkronizasyon bilgileri: ",
+              "uniported" : "İçe aktarılmayan hesaplar: "
+            },
+            "copied" : "Metin panoya kopyalandı!",
+            "export" : "Dışa aktar"
+          },
+          "generator" : {
+            "title" : "Oluşturucu",
+            "flow" : "Bir Akış seçin",
+            "step" : "Bir Adım seçin",
+            "instance" : "Üye Oluştur",
+            "cta" : "Uygula"
+          }
+        }
+      },
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
+      "mockAppUpdate" : "Test uygulama güncellemesi",
+      "mockAppUpdateDesc" : "My Ledger'da mevcut uygulama güncellemelerini göster, aynı uygulama sürümü yeniden yüklenecektir",
       "catalogUrl" : "Katalog uygulama sağlayıcısını belirle",
       "catalogUrlDesc" : "Özel katalog sağlayıcınızın URL'sini girin",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştir",
@@ -4228,27 +4269,6 @@
         "enableNetworkLogs" : {
           "title" : "Ağ log'larını etkinleştir",
           "description" : "Konsolda ağ log'larını etkinleştirin (hata log'ları her zaman etkindir)"
-        },
-        "testWalletSync" : {
-          "title" : "Ledger Sync'i Test Edin",
-          "description" : "Belirli bir Ledger Sync akışını başlatmanızı sağlar",
-          "cta" : "Test et",
-          "modal" : {
-            "flow" : "Bir Akış seçin",
-            "step" : "Bir Adım seçin",
-            "instance" : "Üye Oluştur",
-            "cta" : "Uygula"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "SimpleHash Araçları",
-          "description" : "SimpleHash kullanan bazı faydalı araçlar sağlar",
-          "cta" : "Aç",
-          "tabs" : {
-            "spam" : "Spam İhbarı",
-            "refresh" : "Metaverileri Yenile",
-            "check" : "Spam Puanı"
-          }
         }
       }
     },
@@ -5544,6 +5564,13 @@
       "title" : "Miktarı ve ücretleri hesaplamak mümkün değil",
       "description" : "Miktarı ve ücretleri hesaplamak mümkün değil"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "Token transferi için geçersiz alıcı; token transferi için desteklenen hesap türleri şunlardır: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "Üzgünüz, ücret tahmini başarısız oldu",
+      "description" : "Ağda ücret hesaplama başarısız oldu. Girilen bilgileri kontrol edin, işlem muhtemelen başarısız olacak"
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
@@ -5644,6 +5671,10 @@
     "TransportStatusError" : {
       "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
       "description" : "{{message}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "Verileriniz alınırken bir sorun oluştu",
+      "description" : "Lütfen tekrar deneyin veya Ledger Destek ekibiyle iletişime geçin."
     },
     "DeviceShouldStayInApp" : {
       "title" : "Lütfen {{appName}} uygulamasını açın",
@@ -6359,12 +6390,12 @@
       "description" : "Ledger cihazınız bir şifreleme anahtarı oluşturarak verilerinizin gizli kalmasını ve sadece sizin tarafınızdan alınabilmesini sağlar.",
       "cta" : "Hesaplarınızı senkronize edin"
     },
-    "alreadySync" : "Zaten bir anahtar oluşturdunuz mu?",
+    "alreadySync" : "Bir Ledger Live uygulamasını zaten senkronize ettiniz mi?",
     "manage" : {
       "cta" : "Yönet",
       "synchronize" : {
         "label" : "Senkronize et",
-        "description" : "Sorunsuz bir deneyim için uygulama verilerini başka bir Ledger Live uygulamasıyla senkronize edin."
+        "description" : "Sorunsuz bir deneyim için hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin."
       },
       "backup" : {
         "label" : "Anahtarı Yönet",
@@ -6440,7 +6471,7 @@
         "title" : "Senkronizasyon yönteminizi seçin",
         "description" : "Doğrudan Ledger cihazınızla veya Ledger Live'da bir karekodu okutarak senkronize etmeyi seçebilirsiniz.",
         "scan" : {
-          "title" : "Bir karekodu okutun",
+          "title" : "Karekodu görüntüleyin",
           "description" : "Bir karekodu okutarak senkronize edin"
         },
         "connectDevice" : {
@@ -6449,18 +6480,40 @@
         }
       },
       "qrCode" : {
-        "title" : "Senkronize et",
-        "hint" : "İki ayrı Ledger Live masaüstü sürümünü senkronize etmeye mi çalışıyorsunuz? Buraya tıklayın.",
-        "description" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
-        "steps" : {
-          "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-          "step2" : "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronize Et</0> > <0>Karekodu Göster</0> adımlarını izleyin",
-          "step3" : "Yükleyici %100 olana kadar karekodu tarayın."
+        "title" : "Oturumları Senkronize Edin",
+        "options" : {
+          "mobile" : "Mobil",
+          "desktop" : "Masaüstü"
+        },
+        "mobile" : {
+          "description" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
+          "steps" : {
+            "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
+            "step2" : "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronize Et</0> > <0>Karekodu Göster</0> adımlarını izleyin",
+            "step3" : "Karekodu okutun"
+          }
+        },
+        "desktop" : {
+          "description" : "Hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
+          "steps" : {
+            "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
+            "step2" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronize Et</0> > <0>Ledger'ı Kullan</0> adımlarını izleyin",
+            "step3" : "Ledger'ınızı bağlayın"
+          }
         }
+      },
+      "unbackedError" : {
+        "title" : "Önce şifreleme anahtarınızı oluşturmanız gerekiyor",
+        "description" : "Senkronizasyon işleminize devam etmeden önce Ledger Live uygulamalarınızdan birinde bir şifreleme anahtarı oluşturduğunuzdan lütfen emin olun.",
+        "cta" : "Şifreleme anahtarınızı oluşturun"
       },
       "pinCode" : {
         "title" : "Kodu girin",
-        "description" : "Senkronize etmek istediğiniz diğer Ledger Live uygulamasında görüntülenen kodu yazın."
+        "description" : "Senkronize etmek istediğiniz diğer Ledger Live uygulamasında görüntülenen kodu yazın.",
+        "error" : {
+          "title" : "Kodlar eşleşmiyor",
+          "description" : "Girdiğiniz kodun, diğer Ledger Live oturumunda gösterilen kodla aynı olduğundan emin olun."
+        }
       }
     },
     "manageInstances" : {
