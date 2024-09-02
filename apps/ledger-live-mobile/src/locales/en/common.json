@@ -6869,8 +6869,17 @@
         },
         "unbacked": {
           "title": "You need to create your encryption key first",
-          "desc": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+          "description": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
           "cta": "Create your encryption key"
+        },
+        "backedWithDifferentSeeds": {
+          "title": "These apps have different backups",
+          "description": "Delete your encryption key from one of the apps and try again",
+          "cta": "I understand"
+        },
+        "alreadyBacked": {
+          "title": "These apps are already secured by a Ledger",
+          "cta": "I understand"
         }
       },
       "alreadySecureError": {

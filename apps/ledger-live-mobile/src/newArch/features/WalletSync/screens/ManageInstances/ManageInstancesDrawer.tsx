@@ -9,11 +9,6 @@ import { DeletionError } from "../../components/ManageInstances/DeletionError";
 
 import { HookResult, Scene } from "./useManageInstanceDrawer";
 import { useManageKeyDrawer } from "../ManageKey/useManageKeyDrawer";
-import {
-  AnalyticsButton,
-  AnalyticsPage,
-  useLedgerSyncAnalytics,
-} from "../../hooks/useLedgerSyncAnalytics";
 import { ErrorReason } from "../../hooks/useSpecificError";
 
 const ManageInstancesDrawer = ({
@@ -27,13 +22,11 @@ const ManageInstancesDrawer = ({
 }: HookResult) => {
   const { error, isError, isLoading, data } = memberHook;
   const manageKeyHook = useManageKeyDrawer();
-  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const goToManageBackup = useCallback(() => {
     handleClose();
     manageKeyHook.openDrawer();
-    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.AutoRemove });
-  }, [manageKeyHook, onClickTrack, handleClose]);
+  }, [manageKeyHook, handleClose]);
 
   const getScene = () => {
     if (isError) {
@@ -62,8 +55,8 @@ const ManageInstancesDrawer = ({
       return (
         <DeletionError
           error={ErrorReason.AUTO_REMOVE}
-          goToDelete={goToManageBackup}
-          understood={() => changeScene(Scene.List)}
+          primaryAction={() => changeScene(Scene.List)}
+          secondaryAction={goToManageBackup}
         />
       );
     }
