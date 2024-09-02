@@ -97,6 +97,16 @@ runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFla
 
 export const updateSessionId = () => (sessionId = uuid());
 
+const getLedgerSyncAttributes = (state: State) => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const ledgerSync = analyticsFeatureFlagMethod("llmWalletSync");
+
+  return {
+    hasLedgerSync: !!ledgerSync?.enabled,
+    ledgerSyncActivated: !!state.trustchain.trustchain?.rootId,
+  };
+};
+
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
@@ -175,6 +185,8 @@ const extraProperties = async (store: AppStore) => {
   const stakingProvidersCount =
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
+  const ledgerSyncAtributes = getLedgerSyncAttributes(state);
+
   return {
     ...mandatoryProperties,
     appVersion,
@@ -209,6 +221,7 @@ const extraProperties = async (store: AppStore) => {
     staxLockscreen: customImageType || "none",
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
+    ...ledgerSyncAtributes,
   };
 };
 

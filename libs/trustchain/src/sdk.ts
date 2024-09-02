@@ -229,6 +229,8 @@ export class SDK implements TrustchainSDK {
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
+    this.invalidateJwt();
+
     const withJwt: WithJwt = job =>
       this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
     const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);

@@ -8,7 +8,7 @@ import styled from "styled-components/native";
 interface Props {
   icon: React.ReactNode;
   title: string;
-  description: string;
+  description?: string;
   info?: string;
   cta: string;
   ctaSecondary?: string;
@@ -42,24 +42,29 @@ export function DetailedError(props: Props) {
       </Text>
 
       <Flex flexDirection="column" mb={8} rowGap={16}>
-        <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
-          {description}
-        </Text>
-        <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
-          {info}
-        </Text>
+        {description && (
+          <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
+            {description}
+          </Text>
+        )}
+        {info && (
+          <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
+            {info}
+          </Text>
+        )}
       </Flex>
 
       <Flex flexDirection="column" rowGap={24} mb={6} width={"100%"} px={"16px"}>
         <Button type={buttonType} outline={outline} onPress={primaryAction}>
           {cta}
         </Button>
-
-        <Link onPress={secondaryAction}>
-          <Text variant="paragraph" fontWeight="semiBold" color="neutral.c70">
-            {ctaSecondary}
-          </Text>
-        </Link>
+        {ctaSecondary && secondaryAction && (
+          <Link onPress={secondaryAction}>
+            <Text variant="paragraph" fontWeight="semiBold" color="neutral.c70">
+              {ctaSecondary}
+            </Text>
+          </Link>
+        )}
       </Flex>
     </Flex>
   );

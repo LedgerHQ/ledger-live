@@ -5,7 +5,7 @@ import {
   SidecarValidatorsParamAddresses,
   SidecarValidatorsParamStatus,
   IValidator,
-} from "../sidecar.types";
+} from "../types";
 import getApiPromise from "./apiPromise";
 import { ApiPromise } from "@polkadot/api";
 import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";

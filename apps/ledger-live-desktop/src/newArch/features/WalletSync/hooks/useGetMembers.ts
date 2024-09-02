@@ -11,7 +11,7 @@ export function useGetMembers() {
   const sdk = useTrustchainSdk();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
-  const errorHandler = useLifeCycle();
+  const { handleError } = useLifeCycle();
 
   function fetchMembers() {
     if (!memberCredentials) {
@@ -41,9 +41,9 @@ export function useGetMembers() {
 
   useEffect(() => {
     if (isErrorGetMembers) {
-      errorHandler.handleError(getMembersError);
+      handleError(getMembersError);
     }
-  }, [errorHandler, getMembersError, isErrorGetMembers]);
+  }, [handleError, getMembersError, isErrorGetMembers]);
 
   return {
     isMembersLoading: isMembersLoading,

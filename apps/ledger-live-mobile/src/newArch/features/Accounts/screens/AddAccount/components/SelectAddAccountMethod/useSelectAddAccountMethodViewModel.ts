@@ -37,7 +37,7 @@ const useSelectAddAccountMethodViewModel = ({ currency, onClose }: AddAccountScr
   }, []);
 
   const onClickImport = useCallback(() => {
-    trackButtonClick("Import from Desktop");
+    trackButtonClick("Import via another Ledger Live app");
     onClose?.();
     navigation.navigate(NavigatorName.ImportAccounts);
   }, [navigation, trackButtonClick, onClose]);

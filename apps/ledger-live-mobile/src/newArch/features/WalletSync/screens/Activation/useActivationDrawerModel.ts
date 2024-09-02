@@ -70,7 +70,6 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   };
 
   const onCreateKey = () => {
-    onClickTrack({ button: AnalyticsButton.CreateYourKey, page: AnalyticsPage.Unbacked });
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });

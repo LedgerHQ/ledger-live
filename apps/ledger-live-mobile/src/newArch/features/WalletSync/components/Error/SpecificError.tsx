@@ -1,17 +1,15 @@
 import React from "react";
-import { ErrorReason, useSpecificError } from "../../hooks/useSpecificError";
+import { ErrorReason, SpecificProps, useSpecificError } from "../../hooks/useSpecificError";
 import { DetailedError } from "./Detailed";
 
-type Props = {
+export const SpecificError = ({
+  error,
+  primaryAction,
+  secondaryAction,
+}: SpecificProps & {
   error: ErrorReason;
-  cancel?: () => void;
-  understood?: () => void;
-  goToDelete?: () => void;
-  tryAgain?: () => void;
-};
-
-export const SpecificError = ({ error, cancel, goToDelete, understood, tryAgain }: Props) => {
-  const { getErrorConfig } = useSpecificError({ cancel, goToDelete, understood, tryAgain });
+}) => {
+  const { getErrorConfig } = useSpecificError({ primaryAction, secondaryAction });
   const config = getErrorConfig(error);
 
   return <DetailedError {...config} />;

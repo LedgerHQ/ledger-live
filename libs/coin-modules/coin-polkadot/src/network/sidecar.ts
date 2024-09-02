@@ -23,7 +23,7 @@ import type {
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
   BlockInfo,
-} from "./sidecar.types";
+} from "./types";
 import { createRegistryAndExtrinsics } from "./common";
 import node from "./node";
 

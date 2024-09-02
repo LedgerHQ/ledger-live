@@ -44,7 +44,7 @@ export function AppQRCodeCandidate({
           }
           throw new NoTrustchainInitialized();
         },
-        alreadyHasATrustchain: !!trustchain,
+        initialTrustchainId: trustchain?.rootId,
       })
         .then(trustchain => {
           if (trustchain) {

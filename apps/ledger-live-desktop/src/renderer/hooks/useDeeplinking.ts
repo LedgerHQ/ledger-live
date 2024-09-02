@@ -18,6 +18,7 @@ import { Account, SubAccount } from "@ledgerhq/types-live";
 import { useStorylyContext } from "~/storyly/StorylyProvider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "../actions/walletSync";
 
 const getAccountsOrSubAccountsByCurrency = (
   currency: CryptoOrTokenCurrency,
@@ -344,6 +345,11 @@ export function useDeepLinkHandler() {
           break;
         case "post-onboarding": {
           postOnboardingDeeplinkHandler(query.device);
+          break;
+        }
+        case "ledgersync": {
+          navigate("/settings/display");
+          dispatch(setLedgerSyncDrawerVisibility(true));
           break;
         }
         case "portfolio":

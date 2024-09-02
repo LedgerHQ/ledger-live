@@ -59,7 +59,7 @@ describe("Trustchain QR Code", () => {
       addMember,
       memberCredentials,
       memberName,
-      alreadyHasATrustchain: !!trustchain,
+      initialTrustchainId: trustchain.rootId,
     });
 
     const scannedUrl = await scannedUrlPromise;
@@ -67,7 +67,7 @@ describe("Trustchain QR Code", () => {
     const candidateP = createQRCodeCandidateInstance({
       memberCredentials,
       memberName,
-      alreadyHasATrustchain: false,
+      initialTrustchainId: undefined,
       addMember,
       scannedUrl,
       onRequestQRCodeInput,

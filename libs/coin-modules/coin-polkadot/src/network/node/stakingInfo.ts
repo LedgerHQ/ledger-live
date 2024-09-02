@@ -1,4 +1,4 @@
-import { IUnlocking, SidecarStakingInfo } from "../sidecar.types";
+import { IUnlocking, SidecarStakingInfo } from "../types";
 import getApiPromise from "./apiPromise";
 
 // Required to leverage PolkadotJS *type augmentation*

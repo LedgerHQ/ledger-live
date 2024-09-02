@@ -18,7 +18,6 @@ import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import Wallet from "~/renderer/icons/Wallet";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
@@ -142,7 +141,6 @@ export const TopBar = ({
   webviewState,
 }: Props) => {
   const { name, icon } = manifest;
-  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
 
   const {
     shouldDisplayName = true,
@@ -183,7 +181,7 @@ export const TopBar = ({
     webview.goForward();
   }, [webviewAPIRef]);
 
-  const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+  const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
