@@ -145,7 +145,8 @@
     "add" : "إضافة",
     "or" : "أو",
     "clearAll" : "إزالة الكل",
-    "buyLedger" : "شراء Ledger"
+    "buyLedger" : "شراء Ledger",
+    "quote" : "عرض أسعار"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -3979,7 +3980,7 @@
       "stock" : "مؤشر السوق الإقليمي",
       "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر.",
       "walletSync" : "مزامنة Ledger",
-      "walletSyncDesc" : "ببساطة قم بتأمين بيانات التطبيق لديك ومزامنة العديد من حالات Ledger Live.",
+      "walletSyncDesc" : "مزامنة حساباتك بأمان عبر العديد من حالات Ledger Live",
       "marketPerformanceWidget" : "أداة أداء السوق",
       "marketPerformanceWidgetDesc" : "قم بتمكين هذه الميزة لعرض أعلى الرابحين وأعلى الخاسرين خلال الفترات الزمنية المختارة في صفحة المحفظة الاستثمارية."
     },
@@ -4005,6 +4006,16 @@
         "placeholder" : "معلومات مُزوّد التداول بصيغة CAL"
       },
       "debugSimpleHash" : {
+        "testSimpleHash" : {
+          "title" : "أدوات SimpleHash",
+          "description" : "تقدم بعض الأدوات المفيدة باستخدام SimpleHash",
+          "cta" : "فتح",
+          "tabs" : {
+            "spam" : "الإبلاغ كعشوائي",
+            "refresh" : "تحديث البيانات الوصفية",
+            "check" : "مؤشر العشوائية"
+          }
+        },
         "debugSpamNft" : {
           "report" : "إبلاغ",
           "contractAddress" : "عنوان العَقد",
@@ -4064,8 +4075,38 @@
         },
         "back" : "رجوع"
       },
+      "debugWalletSync" : {
+        "title" : "مُصحِّح أخطاء مزامنة Ledger",
+        "description" : "يسمح لك بإطلاق تدفق مزامنة Ledger محدد أو التحقق من الحالة الحالية لمزامنة Ledger",
+        "cta" : "فتح",
+        "modal" : {
+          "check" : {
+            "title" : "المُتحقِّق",
+            "trustchain" : {
+              "name" : "معرّف Trustchain : ",
+              "emptyId" : "معرّف فارغ",
+              "applicationPath" : "مسار التطبيق : ",
+              "emptyApplicationPath" : "مسار تطبيق فارغ",
+              "cloudSyncVersion" : "إصدار مزامنة السحابة : ",
+              "lastSyncInfo" : "معلومات آخر مزامنة : ",
+              "uniported" : "الحسابات غير المستوردة : "
+            },
+            "copied" : "تم نسخ النص إلى ذاكرة النصوص!",
+            "export" : "تصدير"
+          },
+          "generator" : {
+            "title" : "المُنشئ",
+            "flow" : "اختر تدفق",
+            "step" : "اختر خطوة",
+            "instance" : "إنشاء أعضاء",
+            "cta" : "تطبيق"
+          }
+        }
+      },
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
+      "mockAppUpdate" : "تحديث صوري للتطبيق",
+      "mockAppUpdateDesc" : "يعرض التحديث المتاح للتطبيق في My Ledger (جهازي Ledger)، ويقوم بإعادة تثبيت نفس إصدار التطبيق",
       "catalogUrl" : "تعيين مزود تطبيقات الكتالوج",
       "catalogUrlDesc" : "أدخِل رابط URL لمزود الكتالوج المخصص لديك",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
@@ -4228,27 +4269,6 @@
         "enableNetworkLogs" : {
           "title" : "تمكين سجلات الشبكة",
           "description" : "تمكين سجلات الشبكة في وحدة التحكم (سجلات الأخطاء دائماً مُمَكَّنة)"
-        },
-        "testWalletSync" : {
-          "title" : "اختبر مزامنة Ledger",
-          "description" : "يسمح لك بإطلاق تدفق LedgerSync محدد",
-          "cta" : "اختبر",
-          "modal" : {
-            "flow" : "اختر تدفق",
-            "step" : "اختر خطوة",
-            "instance" : "إنشاء أعضاء",
-            "cta" : "تطبيق"
-          }
-        },
-        "testSimpleHash" : {
-          "title" : "أدوات SimpleHash",
-          "description" : "تقدم بعض الأدوات المفيدة باستخدام SimpleHash",
-          "cta" : "فتح",
-          "tabs" : {
-            "spam" : "الإبلاغ كعشوائي",
-            "refresh" : "تحديث البيانات الوصفية",
-            "check" : "مؤشر العشوائية"
-          }
         }
       }
     },
@@ -5544,6 +5564,13 @@
       "title" : "من المستحيل حساب المبلغ والرسوم",
       "description" : "من المستحيل حساب المبلغ والرسوم"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "المستلم لتحويل رمز التوكن غير صالح، أنواع الحساب المدعومة لتحويل رموز التوكن: [f0, f4, 0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "عذراً، فشل تقدير الرسوم",
+      "description" : "فشل تقدير الرسوم على الشبكة. تحقق من المُدخلات، من المرجح أن تفشل المعاملة"
+    },
     "NotEnoughBalance" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
@@ -5644,6 +5671,10 @@
     "TransportStatusError" : {
       "title" : "حدث خطأ ما. يُرجى إعادة توصيل جهازك",
       "description" : "{{message}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "حدث خطأ ما أثناء جلب بياناتك",
+      "description" : "يرجى إعادة المحاولة مرةً أخرى أو التواصل مع دعم Ledger."
     },
     "DeviceShouldStayInApp" : {
       "title" : "يرجى فتح تطبيق {{appName}}",
@@ -6359,12 +6390,12 @@
       "description" : "سيقوم جهازك Ledger بإنشاء مفتاح تشفير، مما يضمن أن بياناتك تظل خاصةً وقابلة للاستعادة بواسطتك أنت وحدك.",
       "cta" : "مزامنة حساباتك"
     },
-    "alreadySync" : "أنشأت مفتاحاً بالفعل؟",
+    "alreadySync" : "قم بمزامنة تطبيق Ledger Live بالفعل؟",
     "manage" : {
       "cta" : "إدارة",
       "synchronize" : {
         "label" : "مزامنة",
-        "description" : "قم بمزامنة بيانات التطبيق لديك مع تطبيق Ledger Live آخر من أجل تجربة سلسة."
+        "description" : "مزامنة حساباتك عن طريق تطبيق Ledger Live آخر من أجل تجربة سلسة."
       },
       "backup" : {
         "label" : "إدارة المفتاح",
@@ -6440,7 +6471,7 @@
         "title" : "اختر طريقة المزامنة التي تريدها",
         "description" : "يمكنك اختيار المزامنة مباشرةً عن طريق جهازك Ledger، أو عن طريق مسح ضوئي لكود QR على Ledger Live.",
         "scan" : {
-          "title" : "مسح ضوئي لكود QR",
+          "title" : "عرض كود QR",
           "description" : "المزامنة عن طريق مسح ضوئي لكود QR"
         },
         "connectDevice" : {
@@ -6449,18 +6480,40 @@
         }
       },
       "qrCode" : {
-        "title" : "مزامنة",
-        "hint" : "هل تحاول مزامنة تطبيقي Ledger Live لسطح المكتب؟ انقر هنا.",
-        "description" : "مسح ومزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
-        "steps" : {
-          "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-          "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Synchronize (مزامنة)</0> > <0>Show QR (إظهار كود QR)</0>",
-          "step3" : "امسح كود QR حتى يصل شريط التحميل إلى %100."
+        "title" : "مزامنة الحالات",
+        "options" : {
+          "mobile" : "الجوّال",
+          "desktop" : "سطح المكتب"
+        },
+        "mobile" : {
+          "description" : "مسح ومزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
+          "steps" : {
+            "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
+            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Synchronize (مزامنة)</0> > <0>Show QR (إظهار كود QR)</0>",
+            "step3" : "مسح ضوئي لكود QR"
+          }
+        },
+        "desktop" : {
+          "description" : "مزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
+          "steps" : {
+            "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
+            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Synchronize (مزامنة)</0> > <0>Use your Ledger (استخدم جهازك Ledger)</0>",
+            "step3" : "توصيل جهازك Ledger"
+          }
         }
+      },
+      "unbackedError" : {
+        "title" : "تحتاج إلى إنشاء مفتاح التشفير الخاص بك أولاً",
+        "description" : "يُرجى التأكد من أنك قد أنشأت مفتاح تشفير على واحد من تطبيقات Ledger Live الخاصة بك قبل متابعة المزامنة.",
+        "cta" : "إنشاء مفتاح التشفير الخاص بك"
       },
       "pinCode" : {
         "title" : "أدخِل الكود",
-        "description" : "اكتب الكود المعروض على Ledger Live الآخر الذي تريد المزامنة معه."
+        "description" : "اكتب الكود المعروض على Ledger Live الآخر الذي تريد المزامنة معه.",
+        "error" : {
+          "title" : "الأكواد غير متطابقة",
+          "description" : "تأكد من أن الكود الذي تكتبه هو نفسه المعروض في حالة Ledger Live الأخرى."
+        }
       }
     },
     "manageInstances" : {
