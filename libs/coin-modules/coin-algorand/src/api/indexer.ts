@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import { BigNumber } from "bignumber.js";
 import {
@@ -7,6 +7,7 @@ import {
   AlgoTransaction,
   AlgoTransactionDetails,
 } from "./indexer.types";
+import { LargeNumberLike } from "crypto";
 
 const LIMIT = 100; // Max nb of transactions per request
 
@@ -14,6 +15,81 @@ const BASE_URL = getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
 const INDEXER_URL = `${BASE_URL}/idx2/v2`;
 
 const fullUrl = (route: string): string => `${INDEXER_URL}${route}?limit=${LIMIT}`;
+
+type ExplorerTransactions = {
+  "current-round": number;
+  "next-token": string;
+  transactions: ExplorerTransaction[];
+};
+
+type ExplorerTransaction = {
+  "application-transaction"?: {
+    accounts: string[];
+    "application-args": string[];
+    "application-id": number;
+    "foreign-apps": unknown[];
+    "foreign-assets": number[];
+    "global-state-schema": {
+      "num-byte-slice": number;
+      "num-uint": number;
+    };
+    "local-state-schema": {
+      "num-byte-slice": number;
+      "num-uint": number;
+    };
+    "on-completion": string;
+  };
+  "asset-transfer-transaction"?: {
+    amount: number;
+    "asset-id": number;
+    "close-amount": number;
+    "close-to"?: string;
+    receiver: string;
+  };
+  "close-rewards": number;
+  "closing-amount": number;
+  "confirmed-round": number;
+  fee: number;
+  "first-valid": number;
+  "genesis-hash": string;
+  "genesis-id": string;
+  "global-state-delta": {
+    key: string;
+    value: {
+      action: number;
+      uint: number;
+      bytes?: string;
+    };
+  }[];
+  id: string;
+  "intra-round-offset": number;
+  "last-valid": number;
+  "local-state-delta": {
+    address: string;
+    delta: {
+      key: string;
+      value: {
+        action: number;
+        uint: number;
+      };
+    }[];
+  }[];
+  note: string;
+  "payment-transaction"?: {
+    amount: number;
+    "close-amount": number;
+    "close-remainder-to"?: string;
+    receiver: string;
+  };
+  "receiver-rewards": number;
+  "round-time": number;
+  sender: string;
+  "sender-rewards": number;
+  signature: {
+    sig: string;
+  };
+  "tx-type": string;
+};
 
 export const getAccountTransactions = async (
   address: string,
@@ -32,8 +108,7 @@ export const getAccountTransactions = async (
     if (nextToken) {
       nextUrl = nextUrl.concat(`&next=${nextToken}`);
     }
-    const { data }: { data: { transactions: any[] } } = await network({
-      method: "GET",
+    const { data }: { data: { transactions: any[] } } = await network<ExplorerTransactions>({
       url: nextUrl,
     });
 
@@ -48,10 +123,11 @@ export const getAccountTransactions = async (
   return mergedTxs;
 };
 
-const parseRawTransaction = (tx: any): AlgoTransaction => {
+const parseRawTransaction = (tx: ExplorerTransaction): AlgoTransaction => {
   let details: AlgoTransactionDetails | undefined = undefined;
   if (tx["tx-type"] === "pay") {
-    const info = tx["payment-transaction"];
+    // If "tx-type" is "pay", we know we received a "payment-transaction"
+    const info = tx["payment-transaction"]!;
     const paymentInfo: AlgoPaymentInfo = {
       amount: new BigNumber(info.amount),
       recipientAddress: info.receiver,
@@ -61,22 +137,23 @@ const parseRawTransaction = (tx: any): AlgoTransaction => {
     };
     details = paymentInfo;
   } else if (tx["tx-type"] === "axfer") {
-    const info = tx["asset-transfer-transaction"];
+    // If "tx-type" is "axfer", we know we received a "asset-transfer-transaction"
+    const info = tx["asset-transfer-transaction"]!;
     const assetTransferInfo: AlgoAssetTransferInfo = {
       assetAmount: new BigNumber(info.amount),
-      assetId: info["asset-id"],
+      assetId: info["asset-id"].toString(),
       assetRecipientAddress: info.receiver,
-      assetSenderAddress: info.sender,
+      assetSenderAddress: tx.sender,
       assetCloseAmount:
         info["close-amount"] === undefined ? undefined : new BigNumber(info["close-amount"]),
-      assetCloseToAddress: tx["close-to"],
+      assetCloseToAddress: info["close-to"],
     };
     details = assetTransferInfo;
   }
 
   return {
     id: tx.id,
-    timestamp: tx["round-time"],
+    timestamp: tx["round-time"].toString(),
     round: tx["confirmed-round"],
     senderAddress: tx.sender,
     senderRewards: new BigNumber(tx["sender-rewards"]),

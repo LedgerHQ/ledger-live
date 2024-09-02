@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import { BigNumber } from "bignumber.js";
 import {
@@ -13,15 +13,25 @@ const NODE_URL = `${BASE_URL}/ps2/v2`;
 
 const fullUrl = (route: string): string => `${NODE_URL}${route}`;
 
+type ExplorerAccount = {
+  assets: {
+    "asset-id": number;
+    amount: number;
+  }[];
+  round: number;
+  address: string;
+  amount: number;
+  "pending-rewards": number;
+};
+
 export const getAccount = async (address: string): Promise<AlgoAccount> => {
-  const { data } = await network({
-    method: "GET",
+  const { data } = await network<ExplorerAccount>({
     url: fullUrl(`/accounts/${address}`),
   });
 
   const assets: AlgoAsset[] = data.assets
     ? // FIXME: what is the type of `a`?
-      data.assets.map((a: any): AlgoAsset => {
+      data.assets.map((a): AlgoAsset => {
         return {
           assetId: a["asset-id"].toString(),
           balance: new BigNumber(a.amount),
@@ -38,9 +48,18 @@ export const getAccount = async (address: string): Promise<AlgoAccount> => {
   };
 };
 
+type ExplorerTransactioParams = {
+  "consensus-version": string;
+  fee: number;
+  "genesis-hash": string;
+  "genesis-id": string;
+  "first-round"?: number;
+  "last-round": number;
+  "min-fee": number;
+};
+
 export const getTransactionParams = async (): Promise<AlgoTransactionParams> => {
-  const { data } = await network({
-    method: "GET",
+  const { data } = await network<ExplorerTransactioParams>({
     url: fullUrl(`/transactions/params`),
   });
 
@@ -54,8 +73,13 @@ export const getTransactionParams = async (): Promise<AlgoTransactionParams> => 
   };
 };
 
+type ExplorerBroadcastReturn = { txId: string; };
+
 export const broadcastTransaction = async (payload: Buffer): Promise<string> => {
-  const { data }: { data: AlgoTransactionBroadcastResponse } = await network({
+  const { data }: { data: AlgoTransactionBroadcastResponse } = await network<
+    ExplorerBroadcastReturn,
+    Buffer
+  >({
     method: "POST",
     url: fullUrl(`/transactions`),
     data: payload,
