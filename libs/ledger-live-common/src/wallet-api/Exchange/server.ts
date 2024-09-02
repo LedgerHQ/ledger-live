@@ -22,6 +22,7 @@ import {
   ExchangeType,
   ExchangeStartSellParams,
   SwapLiveError,
+  ExchangeCompleteSwapParams,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { TrackingAPI } from "./tracking";
@@ -290,6 +291,11 @@ export const handlers = ({
               binaryPayload: params.hexBinaryPayload,
               exchange,
               feesStrategy: params.feeStrategy,
+              // swapId still here for backwards compatibility, we are planning to rename this field to quoteId to align with sell and card
+              swapId:
+                params.exchangeType === "SWAP"
+                  ? (params as ExchangeCompleteSwapParams).swapId
+                  : undefined,
               quoteId: quoteOrSwapId,
               amountExpectedTo,
               magnitudeAwareRate,
