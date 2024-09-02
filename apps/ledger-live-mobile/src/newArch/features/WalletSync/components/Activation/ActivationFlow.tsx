@@ -90,7 +90,12 @@ const ActivationFlow = ({
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
 
       case Steps.UnbackedError:
-        return <SpecificError primaryAction={onCreateKey} error={ErrorReason.NO_BACKUP} />;
+        return (
+          <SpecificError
+            primaryAction={onCreateKey}
+            error={ErrorReason.NO_BACKUP_ONBOARDING_QRCODE}
+          />
+        );
 
       case Steps.AlreadyBacked:
         return (

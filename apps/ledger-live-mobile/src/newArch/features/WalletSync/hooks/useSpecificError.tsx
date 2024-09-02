@@ -14,6 +14,8 @@ export enum ErrorReason {
   ALREADY_BACKED_SCAN = "already-backed",
   DIFFERENT_BACKUPS = "different-backups",
   NO_BACKUP = "no-backup",
+  NO_BACKUP_ONBOARDING_DEVICE = "no-backup-onboarding-device",
+  NO_BACKUP_ONBOARDING_QRCODE = "no-backup-onboarding-qrcode",
 }
 
 export interface ErrorConfig {
@@ -161,6 +163,32 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
     [ErrorReason.NO_BACKUP]: {
       icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
       title: t("walletSync.synchronize.qrCode.unbacked.title"),
+      description: t("walletSync.synchronize.qrCode.unbacked.description"),
+      cta: t("walletSync.synchronize.qrCode.unbacked.cta"),
+      analyticsPage: AnalyticsPage.SyncWithNoKey,
+      buttonType: "main" as ButtonProps["type"],
+      primaryAction: () => {
+        primaryAction();
+        onCreate(AnalyticsPage.SyncWithNoKey);
+      },
+    },
+    [ErrorReason.NO_BACKUP_ONBOARDING_QRCODE]: {
+      icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
+      // title: t("walletSync.synchronize.qrCode.unbacked.title"),
+      title: "FROM ONBOARDING QR CODE",
+      description: t("walletSync.synchronize.qrCode.unbacked.description"),
+      cta: t("walletSync.synchronize.qrCode.unbacked.cta"),
+      analyticsPage: AnalyticsPage.SyncWithNoKey,
+      buttonType: "main" as ButtonProps["type"],
+      primaryAction: () => {
+        primaryAction();
+        onCreate(AnalyticsPage.SyncWithNoKey);
+      },
+    },
+    [ErrorReason.NO_BACKUP_ONBOARDING_DEVICE]: {
+      icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
+      // title: t("walletSync.synchronize.qrCode.unbacked.title"),
+      title: "FROM ONBOARDING DEVICE",
       description: t("walletSync.synchronize.qrCode.unbacked.description"),
       cta: t("walletSync.synchronize.qrCode.unbacked.cta"),
       analyticsPage: AnalyticsPage.SyncWithNoKey,
