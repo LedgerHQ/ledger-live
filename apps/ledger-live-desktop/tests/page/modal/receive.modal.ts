@@ -38,9 +38,19 @@ export class ReceiveModal extends Modal {
     await expect(this.approveLabel).toBeVisible();
   }
 
-  @step("Verify warning message $0")
-  async verifyWarningMessageContent(content: string) {
+  @step("Verify send currency / tokens warning message $1")
+  async verifySendCurrencyTokensWarningMessage(account: Account, specificTokens: string) {
     await expect(this.warningMessage).toBeVisible();
-    await expect(this.warningMessage).toContainText(content);
+    await expect(this.warningMessage)
+      .toContainText(`Please only send ${account.currency.ticker} or ${specificTokens} tokens to ${account.currency.name} accounts. 
+          Sending other crypto assets may result in the permanent loss of funds.`);
+  }
+
+  @step("Verify TRON address activation warning message")
+  async verifyTronAddressActivationWarningMessage() {
+    await expect(this.warningMessage).toBeVisible();
+    await expect(this.warningMessage).toContainText(
+      `You first need to send at least 0.1 TRX to this address to activate it. Learn more`,
+    );
   }
 }
