@@ -6,7 +6,7 @@ import {
   SidecarValidatorsParamStatus,
   IValidator,
   IIdentity,
-} from "../sidecar.types";
+} from "../types";
 import getApiPromise from "./apiPromise";
 import { multiIdentities } from "./identities";
 import { ApiPromise } from "@polkadot/api";

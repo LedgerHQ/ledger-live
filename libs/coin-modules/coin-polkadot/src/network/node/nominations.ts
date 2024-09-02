@@ -1,4 +1,4 @@
-import { SidecarNominations } from "../sidecar.types";
+import { SidecarNominations } from "../types";
 import getApiPromise from "./apiPromise";
 
 export const fetchNominations = async (address: string): Promise<SidecarNominations> => {
