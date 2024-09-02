@@ -1869,8 +1869,8 @@
       "targetAccount": "Target Account"
     },
     "sell": {
-      "notice": "Verify the Sell details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
-      "confirm": "Confirm Sell transaction"
+      "notice": "Verify the details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+      "confirm": "Confirm transaction"
     },
     "fund": {
       "notice": "Verify the Fund details on your device before sending it. The addresses are exchanged securely so you don't have to verify them.",
@@ -2194,7 +2194,7 @@
     "exchangeDrawer": {
       "completed": {
         "title": "Transaction broadcast successfully",
-        "description": "Your Sell operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
+        "description": "Your operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
       }
     }
   },
