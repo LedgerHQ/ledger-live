@@ -1,6 +1,9 @@
 import React from "react";
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
-import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers";
+import {
+  hasMinimumDelegableBalance,
+  randomizeProviders,
+} from "@ledgerhq/live-common/families/elrond/helpers";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 
@@ -9,7 +12,8 @@ import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabAc
 
 import { NavigatorName, ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
+
+import { getCurrentElrondPreloadData } from "@ledgerhq/coin-elrond/preload";
 
 /*
  * Declare the types for the properties and return payload.
@@ -36,7 +40,9 @@ const getMainActions = ({
   /*
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.
    */
-  const validators = useElrondRandomizedValidators();
+  const preloaded = getCurrentElrondPreloadData();
+  const validators = randomizeProviders(preloaded.validators);
+
   const isFirstTimeFlow =
     account.elrondResources && account.elrondResources.delegations.length === 0;
   const screen = isFirstTimeFlow

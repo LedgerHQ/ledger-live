@@ -1,29 +1,28 @@
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { ElrondAccount, Transaction, TransactionStatus } from "../types";
-import { getPreloadStrategy, preload, hydrate } from "../preload";
-import { getTransactionStatus } from "../getTransactionStatus";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { prepareTransaction } from "../prepareTransaction";
-import { sync } from "../synchronisation";
-import { createTransaction } from "../createTransaction";
-import { buildSignOperation } from "../signOperation";
+import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
-import { getAccountShape } from "../synchronisation";
+import { createTransaction } from "../createTransaction";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { getTransactionStatus } from "../getTransactionStatus";
+import resolver from "../hw-getAddress";
+import { getPreloadStrategy, hydrate, preload } from "../preload";
+import { prepareTransaction } from "../prepareTransaction";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "../serialization";
+import { buildSignOperation } from "../signOperation";
 import { ElrondSigner } from "../signer";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
-import resolver from "../hw-getAddress";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { getAccountShape, sync } from "../synchronisation";
+import type { ElrondAccount, Transaction, TransactionStatus } from "../types";
 
 export function buildCurrencyBridge(signerContext: SignerContext<ElrondSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);

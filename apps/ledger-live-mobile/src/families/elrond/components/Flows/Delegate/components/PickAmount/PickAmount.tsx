@@ -58,7 +58,7 @@ const PickAmount = (props: PickAmountPropsType) => {
     };
 
     fetchMaxSpendable();
-  }, [transaction, account]);
+  }, [bridge, transaction, account]);
 
   /*
    * Handle the ration selection callback.
