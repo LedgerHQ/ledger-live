@@ -98,7 +98,8 @@
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
-    }
+    },
+    "quote" : "报价"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -919,6 +920,13 @@
     "InvalidMemoICP" : {
       "title" : "Memo（目的地标签）需要是数字"
     },
+    "InvalidRecipientForTokenTransfer" : {
+      "title" : "代币转账的接收人无效，代币转账支持的账户类型：[f0、f4、0x]"
+    },
+    "FilecoinFeeEstimationFailed" : {
+      "title" : "抱歉，费用估算失败",
+      "description" : "网络费用估算失败。检查输入，交易最有可能失败"
+    },
     "FirmwareNotRecognized" : {
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
@@ -937,6 +945,10 @@
       "title" : "抱歉，请重试。",
       "description" : "服务器无法处理您的请求。请稍后再试或联系 Ledger 客服。",
       "errorCode" : "代码：{{errorCode}}"
+    },
+    "TrustchainNotFound" : {
+      "title" : "提取您的数据时出现错误",
+      "description" : "请重试或联系 Ledger 客服。"
     }
   },
   "crash" : {
@@ -2993,6 +3005,10 @@
         },
         "platformManifest" : {
           "title" : "加载平台清单"
+        },
+        "mockAppUpdate" : {
+          "title" : "Mock 应用程序更新",
+          "description" : "在“我的 Ledger”中显示可用的应用程序更新，它将重新安装相同版本的应用程序"
         }
       }
     },
@@ -6786,23 +6802,75 @@
         "connectDevice" : {
           "title" : "使用 Ledger 设备"
         }
+      },
+      "qrCode" : {
+        "show" : {
+          "title" : "显示二维码",
+          "explanation" : {
+            "title" : "使用另一个 Ledger Live 应用程序扫描并同步您的账户",
+            "steps" : {
+              "step1" : "打开您要同步的 Ledger Live 应用程序",
+              "step2" : "前往 <0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>同步</0>",
+              "step3" : "扫描二维码直至加载进度达到 100%。"
+            }
+          }
+        },
+        "scan" : {
+          "title" : "扫描",
+          "description" : "扫描二维码",
+          "explanation" : {
+            "title" : "使用另一个 Ledger Live 应用程序扫描并同步您的账户",
+            "steps" : {
+              "step1" : "打开您要同步的 Ledger Live 应用程序",
+              "step2" : "前往<0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>同步</0> <1>></1> <0>显示二维码</0>",
+              "step3" : "扫描二维码直至加载进度达到 100%。"
+            }
+          }
+        },
+        "pinCode" : {
+          "title" : "输入您的代码",
+          "desc" : "输入您要同步的 Ledger Live 上显示的代码。",
+          "error" : {
+            "title" : "代码不匹配",
+            "desc" : "确保您输入的是另一个 Ledger Live 实例上显示的代码。",
+            "tryAgain" : "请重试"
+          }
+        },
+        "unbacked" : {
+          "title" : "您需要先创建加密密钥",
+          "desc" : "继续同步之前，请确保已在其中一个 Ledger Live 应用程序上创建了加密密钥。",
+          "cta" : "创建加密密钥"
+        }
       }
     }
   },
   "web3hub" : {
-    "disclaimer" : {
-      "clearSigningEnabled" : "透明签名已启用",
-      "checkbox" : "不要再提醒我。",
-      "CTA" : "打开 {{app}}"
-    },
-    "manifestsList" : {
-      "title" : "探索",
-      "description" : "探索 Ledger 精心策划的 web3 最佳体验"
+    "components" : {
+      "disclaimer" : {
+        "clearSigningEnabled" : "透明签名已启用",
+        "clearSigningDisabled" : "透明签名已禁用",
+        "checkbox" : "不要再提醒我。",
+        "CTA" : "打开 {{app}}"
+      },
+      "manifestsList" : {
+        "title" : "探索",
+        "description" : "探索 Ledger 精心策划的 web3 最佳体验"
+      },
+      "label" : {
+        "clearSigning" : "透明签名"
+      }
     },
     "main" : {
+      "manifestsList" : {
+        "title" : "探索"
+      },
       "header" : {
         "title" : "探索 web3",
         "placeholder" : "搜索或输入网址"
+      },
+      "clearSigning" : {
+        "title" : "透明签名",
+        "description" : "透明签名让您可以签署消息，而不会向应用程序透露消息的内容。出于隐私和安全考虑，这项功能很实用。"
       }
     }
   }
