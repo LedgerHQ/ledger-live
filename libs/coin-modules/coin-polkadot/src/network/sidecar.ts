@@ -26,6 +26,7 @@ import type {
 } from "./types";
 import { createRegistryAndExtrinsics } from "./common";
 import node from "./node";
+import { log } from "@ledgerhq/logs";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -399,17 +400,23 @@ export const getStakingInfo = async (addr: string) => {
  * @returns {PolkadotNomination[}
  */
 const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
-  const nominations = await node.fetchNominations(addr);
+  try {
+    const nominations = await node.fetchNominations(addr);
 
-  if (!nominations) {
+    if (!nominations) {
+      return [];
+    }
+    return nominations.targets.map<PolkadotNomination>(nomination => ({
+      address: nomination.address,
+      value: new BigNumber(nomination.value || 0),
+      status: nomination.status,
+    }));
+  } catch (error) {
+    log("polkadot", `failed to fetch nominations ${addr}`, {
+      error,
+    });
     return [];
   }
-
-  return nominations.targets.map<PolkadotNomination>(nomination => ({
-    address: nomination.address,
-    value: new BigNumber(nomination.value || 0),
-    status: nomination.status,
-  }));
 };
 
 /**

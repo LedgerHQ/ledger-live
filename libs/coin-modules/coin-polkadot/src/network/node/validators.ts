@@ -1,4 +1,3 @@
-import { DeriveStakingQuery } from "@polkadot/api-derive/types";
 import { EraIndex } from "@polkadot/types/interfaces";
 import {
   SidecarValidators,
@@ -9,12 +8,6 @@ import {
 import getApiPromise from "./apiPromise";
 import { ApiPromise } from "@polkadot/api";
 import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";
-
-const QUERY_OPTS = {
-  withExposure: false,
-  withLedger: false,
-  withPrefs: false,
-};
 
 /**
  * Fetch a list of validators with some info and indentity.
@@ -33,11 +26,10 @@ export const fetchValidators = async (
 ): Promise<SidecarValidators> => {
   const api = await getApiPromise();
 
-  const [activeOpt, allStashes, elected, nextElected] = await Promise.all([
+  const [activeOpt, allStashes, elected] = await Promise.all([
     api.query.staking.activeEra(),
     api.derive.staking.stashes(),
     api.query.session.validators(),
-    api.derive.staking.nextElected(),
   ]);
 
   const { index: activeEra } = activeOpt.unwrapOrDefault();
@@ -55,9 +47,6 @@ export const fetchValidators = async (
       selected = waitingIds;
       break;
     }
-    case "nextElected":
-      selected = nextElected.map(s => s.toString());
-      break;
     case "all": {
       const waitingIds = allIds.filter(v => !electedIds.includes(v));
       // Keep order of elected validators
@@ -73,13 +62,13 @@ export const fetchValidators = async (
       .map(a => a.toString())
       .filter(address => selected.includes(address.toString()));
   }
-  const validators = await api.derive.staking.queryMulti(selected, QUERY_OPTS);
+
   const validatorsCommissions = await getValidatorCommissions(api, selected);
   const validatorsExposure = await getValidatorsExposure(api, activeEra, selected);
   const maxNominatorRewardedPerValidator = api.consts?.staking?.maxExposurePageSize.toNumber();
-  return validators.map(validator => {
-    const commission = validatorsCommissions[validator.accountId.toString()] || "";
-    const exposure = validatorsExposure[validator.accountId.toString()] || null;
+  return selected.map(validator => {
+    const commission = validatorsCommissions[validator] || "";
+    const exposure = validatorsExposure[validator] || null;
     return formatValidator(
       validator,
       electedIds,
@@ -91,25 +80,23 @@ export const fetchValidators = async (
 };
 
 const formatValidator = (
-  validator: DeriveStakingQuery,
+  validator: string,
   electedIds: string[],
   commission: string,
   exposure: SpStakingPagedExposureMetadata | null,
   maxNominatorRewardedPerValidator: number,
 ): IValidator => {
-  const validatorId = validator.accountId.toString();
+  const nominatorsCount = exposure?.nominatorCount?.toNumber() ?? 0;
   return {
-    accountId: validator.accountId.toString(),
+    accountId: validator,
     identity: null,
     own: exposure?.own?.toString() ?? "0",
     total: exposure?.total?.toString() ?? "0",
-    nominatorsCount: exposure?.nominatorCount?.toNumber() ?? 0,
+    nominatorsCount,
     commission,
     rewardsPoints: null,
-    isElected: electedIds.includes(validatorId),
-    isOversubscribed: maxNominatorRewardedPerValidator
-      ? validator.exposureEraStakers.others.length > Number(maxNominatorRewardedPerValidator)
-      : false,
+    isElected: electedIds.includes(validator),
+    isOversubscribed: nominatorsCount > maxNominatorRewardedPerValidator,
   };
 };
 
