@@ -173,6 +173,18 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
   },
 };
 
+type CurrencyDataResponse = {
+  id: string;
+  exchange_app_config_serialized: string;
+  exchange_app_signature: string;
+}[];
+
+type CurrencyData = {
+  id: string;
+  config: string;
+  signature: string;
+};
+
 let providerDataCache: Record<string, ProviderConfig & AdditionalProviderConfig> | null = null;
 
 export const getSwapProvider = async (
@@ -211,6 +223,34 @@ export const getProvidersData = async () => {
       "&service_name=swap",
   });
   return transformData(providersData.data);
+};
+
+/**
+ * Retrieves the currency data for a given ID
+ * coins and tokens are litteraly the same on our case but we need to call the correct endpoint.
+ * @param currencyId The unique identifier for the currency.
+ * @param type Specifies the type of currency, either "tokens" or "coins".
+ * @returns A promise that resolves to the currency data including ID, serialized config, and signature.
+ */
+export const findExchangeCurrencyData = async (
+  currencyId: string,
+  type: "tokens" | "coins",
+): Promise<CurrencyData> => {
+  const currencyData = (await network({
+    url:
+      `https://crypto-assets-service.api.ledger.com/v1/${type}` +
+      "?output=id,exchange_app_config_serialized,exchange_app_signature" +
+      `&id=${currencyId}`,
+  })) as { data: CurrencyDataResponse };
+  // throw errors/warning if many currencies fetched with the same ID, can it happen?
+  if (!currencyData.data.length) {
+    throw new Error(`Currency data not found for id ${currencyId}`);
+  }
+  return {
+    id: currencyData.data[0].id,
+    config: currencyData.data[0].exchange_app_config_serialized,
+    signature: currencyData.data[0].exchange_app_signature,
+  } as CurrencyData;
 };
 
 export const getProvidersCDNData = async () => {
