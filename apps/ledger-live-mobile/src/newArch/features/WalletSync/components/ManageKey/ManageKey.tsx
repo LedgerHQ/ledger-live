@@ -4,6 +4,8 @@ import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
+import { TrackScreen } from "~/analytics";
+import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 type Props = {
   onClickDelete: () => void;
@@ -14,6 +16,7 @@ export function ManageKey({ onClickDelete }: Props) {
   const { colors } = useTheme();
   return (
     <Flex pb={4}>
+      <TrackScreen name={AnalyticsPage.ManageBackup} />
       <Text variant="h5" fontWeight="semiBold" color="neutral.c100" mb={4}>
         {t("walletSync.walletSyncActivated.manageKey.drawer.step1.title")}
       </Text>

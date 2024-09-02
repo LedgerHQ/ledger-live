@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { TrustchainMember } from "@ledgerhq/trustchain/types";
 import { TinyCard } from "../TinyCard";
 import { Scene } from "../../screens/ManageInstances/useManageInstanceDrawer";
+import { TrackScreen } from "~/analytics";
+import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 type Props = {
   onClickInstance: (member: TrustchainMember) => void;
@@ -41,6 +43,7 @@ export function ListInstances({ onClickInstance, changeScene, members, currentIn
 
   return (
     <Flex pb={4}>
+      <TrackScreen name={AnalyticsPage.ManageSyncInstances} />
       <Text variant="h5" fontWeight="semiBold" color="neutral.c100" mb={4}>
         {t("walletSync.walletSyncActivated.manageInstances.title")}
       </Text>

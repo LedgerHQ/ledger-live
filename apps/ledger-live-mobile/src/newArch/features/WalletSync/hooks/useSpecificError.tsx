@@ -153,7 +153,6 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       cta: t("walletSync.synchronize.qrCode.backedWithDifferentSeeds.cta"),
       analyticsPage: AnalyticsPage.ScanAttemptWithDifferentBackups,
       buttonType: "main" as ButtonProps["type"],
-
       primaryAction: () => {
         primaryAction();
         onGoToDelete(AnalyticsPage.ScanAttemptWithDifferentBackups);
@@ -164,12 +163,11 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       title: t("walletSync.synchronize.qrCode.unbacked.title"),
       description: t("walletSync.synchronize.qrCode.unbacked.description"),
       cta: t("walletSync.synchronize.qrCode.unbacked.cta"),
-      analyticsPage: AnalyticsPage.Unbacked,
+      analyticsPage: AnalyticsPage.SyncWithNoKey,
       buttonType: "main" as ButtonProps["type"],
-
       primaryAction: () => {
         primaryAction();
-        onCreate(AnalyticsPage.Unbacked);
+        onCreate(AnalyticsPage.SyncWithNoKey);
       },
     },
   };
