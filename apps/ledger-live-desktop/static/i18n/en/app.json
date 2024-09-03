@@ -5695,6 +5695,13 @@
       "title": "Something went wrong. Please reconnect your device",
       "description": "{{message}}"
     },
+    "TrustchainEjected": {
+      "title": "Not Synced anymore"
+    },
+    "TrustchainNotAllowed": {
+      "title": "You are not in sync anymore",
+      "description": "Please try again or contact Ledger Support."
+    },
     "TrustchainNotFound": {
       "title": "Something went wrong while fetching your data",
       "description": "Please try again or contact Ledger Support."
