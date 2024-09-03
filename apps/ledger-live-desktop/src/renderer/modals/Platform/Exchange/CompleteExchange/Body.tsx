@@ -6,7 +6,7 @@ import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { BodyContent } from "./BodyContent";
 import { BigNumber } from "bignumber.js";
@@ -32,8 +32,15 @@ export type Data = {
   magnitudeAwareRate?: BigNumber;
 };
 
+export enum ExchangeModeEnum {
+  Sell = "sell",
+  Swap = "swap",
+}
+
+export type ExchangeMode = "sell" | "swap";
+
 type ResultsState = {
-  isSell?: boolean;
+  mode: ExchangeMode;
   swapId?: string;
   provider: string;
   sourceCurrency: Currency;
@@ -147,44 +154,73 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     [dispatch, exchange, transactionParams, provider],
   );
 
+  const getResultByTransactionType = (
+    isSwapTransaction: "" | CryptoCurrency | TokenCurrency | null | undefined,
+  ) => {
+    return isSwapTransaction
+      ? {
+          swapId,
+          mode: ExchangeModeEnum.Swap,
+          provider,
+          sourceCurrency: sourceCurrency as Currency,
+          targetCurrency: targetCurrency as Currency,
+        }
+      : {
+          provider,
+          mode: ExchangeModeEnum.Sell,
+          sourceCurrency: sourceCurrency as Currency,
+        };
+  };
+
+  const handleSwapTransaction = (operation: Operation, result: ResultsState) => {
+    const newResult = {
+      operation,
+      swapId: swapId as string,
+    };
+
+    updateAccount({
+      result: newResult,
+      magnitudeAwareRate: magnitudeAwareRate as BigNumber,
+    });
+
+    setResult(result);
+
+    onResult(operation);
+  };
+
+  const handleSellTransaction = (operation: Operation, result: ResultsState) => {
+    setResult(result);
+
+    onResult(operation);
+  };
+
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
-      // If swap we save to swap history and keep open the drawer
-      if (swapId && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency) {
-        const newResult = {
-          operation,
-          swapId,
-        };
-        updateAccount({
-          result: newResult,
-          magnitudeAwareRate,
-        });
-        setResult({
-          swapId,
-          provider,
-          sourceCurrency,
-          targetCurrency,
-        });
+      if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+        return onCancel(new DisabledTransactionBroadcastError());
+      }
 
-        if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-          return onCancel(new DisabledTransactionBroadcastError());
-        }
-        onResult(operation);
-      } else if (
+      const isSwapTransaction =
+        swapId && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency;
+
+      const isSellTransaction =
         (data.exchangeType === ExchangeType.SELL || data.exchangeType === ExchangeType.SELL_NG) &&
-        sourceCurrency
-      ) {
-        if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-          return onCancel(new DisabledTransactionBroadcastError());
-        }
-        onResult(operation);
-        setResult({ provider, isSell: true, sourceCurrency });
+        sourceCurrency;
+
+      const result = getResultByTransactionType(isSwapTransaction);
+
+      if (isSwapTransaction) {
+        handleSwapTransaction(operation, result);
+      } else if (isSellTransaction) {
+        handleSellTransaction(operation, result);
       } else {
-        // else not swap i.e card we close the drawer
+        // old platform exchange flow
         onResult(operation);
         onClose?.();
       }
     },
+    // Disabling exhaustive-deps because adding handleSellTransaction and handleSwapTransaction would make it change on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       swapId,
       toAccount,

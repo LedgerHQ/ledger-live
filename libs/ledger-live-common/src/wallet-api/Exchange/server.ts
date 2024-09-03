@@ -22,7 +22,6 @@ import {
   ExchangeType,
   ExchangeStartSellParams,
   SwapLiveError,
-  ExchangeCompleteSwapParams,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { TrackingAPI } from "./tracking";

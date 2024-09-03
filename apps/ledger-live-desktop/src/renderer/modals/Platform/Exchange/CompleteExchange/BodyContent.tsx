@@ -11,6 +11,7 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { TransactionBroadcastedContent } from "./TransactionBroadcastedContent";
+import { ExchangeMode } from "./Body";
 
 const exchangeAction = createAction(completeExchange);
 const sendAction = txCreateAction(connectApp);
@@ -37,8 +38,7 @@ export type BodyContentProps = {
   };
   result?: {
     swapId?: string;
-    // The isSell will probably be replaced with a sellId similar with swapId.
-    isSell?: boolean;
+    mode: ExchangeMode;
     provider: string;
     sourceCurrency: Currency;
     targetCurrency?: Currency;
@@ -59,7 +59,7 @@ export const BodyContent = (props: BodyContentProps) => {
     return (
       <TransactionBroadcastedContent
         swapId={props.result.swapId}
-        isSell={props.result.isSell}
+        mode={props.result.mode}
         provider={props.result.provider}
         sourceCurrency={props.result.sourceCurrency}
         targetCurrency={props.result.targetCurrency}

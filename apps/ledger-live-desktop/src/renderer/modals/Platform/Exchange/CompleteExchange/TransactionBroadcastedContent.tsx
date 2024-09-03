@@ -5,14 +5,14 @@ import { Separator } from "~/renderer/screens/exchange/Swap2/Form/Separator";
 import Button from "~/renderer/components/Button";
 import SwapCompleted from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/SwapCompleted";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
-import { useGetSellTrackingProperties } from "~/renderer/screens/exchange/Sell/utils";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import SellCompleted from "~/renderer/screens/exchange/Sell/SellCompleted";
+import { ExchangeMode, ExchangeModeEnum } from "./Body";
 
 type TransactionBroadcastedContentProps = {
   swapId?: string;
-  isSell?: boolean;
+  mode: ExchangeMode;
   provider: string;
   sourceCurrency: Currency;
   targetCurrency?: Currency;
@@ -20,9 +20,8 @@ type TransactionBroadcastedContentProps = {
 };
 
 export function TransactionBroadcastedContent(props: TransactionBroadcastedContentProps) {
-  const { swapId, provider, sourceCurrency, targetCurrency, onViewDetails, isSell } = props;
+  const { swapId, provider, sourceCurrency, targetCurrency, onViewDetails, mode } = props;
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const sellDefaultTrack = useGetSellTrackingProperties();
 
   return (
     <Box height="100%" justifyContent="space-between" paddingTop={62} paddingBottom={15}>
@@ -32,9 +31,9 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
         sourceCurrency={sourceCurrency?.name}
         targetCurrency={targetCurrency?.name}
         provider={provider}
-        {...(swapId ? swapDefaultTrack : sellDefaultTrack)}
+        {...(mode === ExchangeModeEnum.Swap && swapId && swapDefaultTrack)}
       />
-      {swapId && targetCurrency && (
+      {mode === ExchangeModeEnum.Swap && swapId && targetCurrency && (
         <>
           <Box justifyContent="center" flex={1}>
             <SwapCompleted
@@ -53,7 +52,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
           </Box>
         </>
       )}
-      {isSell && sourceCurrency && (
+      {mode === ExchangeModeEnum.Sell && sourceCurrency && (
         <>
           <Box>
             <SellCompleted />
