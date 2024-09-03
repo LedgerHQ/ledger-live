@@ -45,13 +45,10 @@ export type ExchangeCompleteBaseParams = {
 
 export type ExchangeCompleteFundParams = ExchangeCompleteBaseParams & {
   exchangeType: "FUND";
-  // Optional until we actually implement it
-  quoteId?: string;
 };
 
 export type ExchangeCompleteSellParams = ExchangeCompleteBaseParams & {
   exchangeType: "SELL";
-  quoteId: string;
 };
 
 export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {

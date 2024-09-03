@@ -9,11 +9,10 @@ import { useGetSellTrackingProperties } from "~/renderer/screens/exchange/Sell/u
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import SellCompleted from "~/renderer/screens/exchange/Sell/SellCompleted";
-import { ExchangeMode, ExchangeModeEnum } from "./Body";
 
 type TransactionBroadcastedContentProps = {
   swapId?: string;
-  mode: ExchangeMode;
+  isSell?: boolean;
   provider: string;
   sourceCurrency: Currency;
   targetCurrency?: Currency;
@@ -21,7 +20,7 @@ type TransactionBroadcastedContentProps = {
 };
 
 export function TransactionBroadcastedContent(props: TransactionBroadcastedContentProps) {
-  const { swapId, provider, sourceCurrency, targetCurrency, onViewDetails, mode } = props;
+  const { swapId, provider, sourceCurrency, targetCurrency, onViewDetails, isSell } = props;
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const sellDefaultTrack = useGetSellTrackingProperties();
 
@@ -35,7 +34,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
         provider={provider}
         {...(swapId ? swapDefaultTrack : sellDefaultTrack)}
       />
-      {mode === ExchangeModeEnum.Swap && swapId && targetCurrency && (
+      {swapId && targetCurrency && (
         <>
           <Box justifyContent="center" flex={1}>
             <SwapCompleted
@@ -54,7 +53,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
           </Box>
         </>
       )}
-      {mode === ExchangeModeEnum.Sell && sourceCurrency && (
+      {isSell && sourceCurrency && (
         <>
           <Box>
             <SellCompleted />

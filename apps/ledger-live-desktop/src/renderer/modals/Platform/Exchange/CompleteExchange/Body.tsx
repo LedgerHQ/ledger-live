@@ -32,15 +32,8 @@ export type Data = {
   magnitudeAwareRate?: BigNumber;
 };
 
-export enum ExchangeModeEnum {
-  Sell = "sell",
-  Swap = "swap",
-}
-
-export type ExchangeMode = "sell" | "swap";
-
 type ResultsState = {
-  mode: ExchangeMode;
+  isSell?: boolean;
   swapId?: string;
   provider: string;
   sourceCurrency: Currency;
@@ -156,44 +149,36 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
-      // TODO: swapId && sellId will become quoteId
-
-      const isValidExchangeSDKSwapTx =
-        (ExchangeType.SWAP || ExchangeType.SWAP_NG) &&
-        swapId &&
-        toAccount &&
-        magnitudeAwareRate &&
-        sourceCurrency &&
-        targetCurrency;
-
-      const isValidExchangeSDKSellTx =
-        (data.exchangeType === ExchangeType.SELL || data.exchangeType === ExchangeType.SELL_NG) &&
-        sourceCurrency;
-
-      if (isValidExchangeSDKSellTx || isValidExchangeSDKSwapTx) {
-        if (isValidExchangeSDKSwapTx) {
-          const newResult = {
-            operation,
-            swapId,
-          };
-
-          updateAccount({
-            result: newResult,
-            magnitudeAwareRate,
-          });
-        }
-
-        const result = isValidExchangeSDKSwapTx
-          ? { swapId, provider, sourceCurrency, targetCurrency, mode: ExchangeModeEnum.Swap }
-          : { provider, mode: ExchangeModeEnum.Sell, sourceCurrency };
-
-        setResult(result);
+      // If swap we save to swap history and keep open the drawer
+      if (swapId && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency) {
+        const newResult = {
+          operation,
+          swapId,
+        };
+        updateAccount({
+          result: newResult,
+          magnitudeAwareRate,
+        });
+        setResult({
+          swapId,
+          provider,
+          sourceCurrency,
+          targetCurrency,
+        });
 
         if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
           return onCancel(new DisabledTransactionBroadcastError());
         }
-
         onResult(operation);
+      } else if (
+        (data.exchangeType === ExchangeType.SELL || data.exchangeType === ExchangeType.SELL_NG) &&
+        sourceCurrency
+      ) {
+        if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+          return onCancel(new DisabledTransactionBroadcastError());
+        }
+        onResult(operation);
+        setResult({ provider, isSell: true, sourceCurrency });
       } else {
         // else not swap i.e card we close the drawer
         onResult(operation);
