@@ -3,6 +3,7 @@ import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 export const removeAccount = (payload: Account) => ({
   type: "DB:REMOVE_ACCOUNT",
@@ -10,8 +11,10 @@ export const removeAccount = (payload: Account) => ({
 });
 
 export const initAccounts = (data: [Account, AccountUserData][]) => {
-  const accounts = data.map(data => data[0]);
-  const accountsUserData = data.map(data => data[1]);
+  const accounts = data.map(([account]) => account);
+  const accountsUserData = data
+    .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
+    .map(([, userData]) => userData);
   return {
     type: "INIT_ACCOUNTS",
     payload: {

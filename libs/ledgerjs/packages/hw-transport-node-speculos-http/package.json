@@ -31,7 +31,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "^0.26.1",
+    "axios": "1.7.3",
     "rxjs": "^7.8.1"
   },
   "scripts": {

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import SettingsRow from "~/components/SettingsRow";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -8,20 +8,24 @@ import {
   AnalyticsPage,
   AnalyticsButton,
 } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { trustchainSelector } from "@ledgerhq/trustchain/store";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
+import { activateDrawerSelector } from "~/reducers/walletSync";
+import { setLedgerSyncActivateDrawer } from "~/actions/walletSync";
 
 const WalletSyncRow = () => {
   const { t } = useTranslation();
   const { onClickTrack } = useLedgerSyncAnalytics();
   const navigation = useNavigation();
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+
+  const isDrawerVisible = useSelector(activateDrawerSelector);
+  const dispatch = useDispatch();
 
   const closeDrawer = useCallback(() => {
-    setIsDrawerVisible(false);
-  }, []);
+    dispatch(setLedgerSyncActivateDrawer(false));
+  }, [dispatch]);
   const trustchain = useSelector(trustchainSelector);
 
   const navigateToWalletSyncActivationScreen = useCallback(() => {
@@ -33,9 +37,9 @@ const WalletSyncRow = () => {
         screen: ScreenName.WalletSyncActivated,
       });
     } else {
-      setIsDrawerVisible(true);
+      dispatch(setLedgerSyncActivateDrawer(true));
     }
-  }, [navigation, onClickTrack, trustchain?.rootId]);
+  }, [navigation, onClickTrack, trustchain?.rootId, dispatch]);
 
   return (
     <>

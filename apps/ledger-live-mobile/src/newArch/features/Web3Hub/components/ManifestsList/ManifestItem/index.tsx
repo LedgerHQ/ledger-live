@@ -70,8 +70,12 @@ export default function ManifestItem({
   );
 
   const url = useMemo(() => {
+    if (manifest.params && "dappUrl" in manifest.params) {
+      return new URL(manifest.params.dappUrl).origin;
+    }
+
     return new URL(manifest.url).origin;
-  }, [manifest.url]);
+  }, [manifest.params, manifest.url]);
 
   const icon = useMemo(() => {
     // RN tries to load file locally if there is a space in front of the file url
@@ -86,30 +90,28 @@ export default function ManifestItem({
     <TouchableOpacity disabled={isDisabled} onPress={handlePress}>
       <Flex flexDirection="row" alignItems="center" height={72} paddingX={4} paddingY={2}>
         <AppIcon isDisabled={isDisabled} size={48} name={manifest.name} icon={icon} />
-        <Flex marginX={16} height="100%" flexGrow={1} flexShrink={1} justifyContent={"center"}>
+        <Flex ml={16} height="100%" flexGrow={1} flexShrink={1} justifyContent={"center"}>
           <Flex flexDirection="row" alignItems={"center"} mb={2} columnGap={4}>
-            <Text variant="large" color={color} numberOfLines={1} fontWeight="semiBold">
+            <Text flex={1} variant="large" color={color} numberOfLines={1} fontWeight="semiBold">
               {manifest.name}
             </Text>
-            <Flex flexDirection="row" alignItems={"center"}>
+            <Flex flexDirection="row" alignItems={"center"} columnGap={4}>
               {manifest.branch !== "stable" && (
                 <Label
                   text={t(`platform.catalog.branch.${manifest.branch}`, {
                     defaultValue: manifest.branch,
                   })}
-                  style={{ badgeColor, borderColor, backgroundColor }}
+                  style={{ color: badgeColor, borderColor, backgroundColor }}
                 />
               )}
 
               {clearSigningEnabled && (
                 <Label
-                  text={t(`web3hub.components.label.clearSigning`, {
-                    defaultValue: "Clear Signing",
-                  })}
+                  text={t(`web3hub.components.label.clearSigning`)}
                   style={{
-                    badgeColor: colors.live,
-                    borderColor: colors.live,
-                    backgroundColor: "transparent",
+                    borderWidth: 0,
+                    color: colors.black,
+                    backgroundColor: colors.lightGrey,
                   }}
                 />
               )}

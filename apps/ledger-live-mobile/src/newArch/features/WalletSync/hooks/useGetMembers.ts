@@ -12,7 +12,7 @@ export function useGetMembers() {
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
 
-  const errorHandler = useLifeCycle();
+  const { handleError } = useLifeCycle();
 
   function getMembers() {
     if (!memberCredentials) {
@@ -42,9 +42,9 @@ export function useGetMembers() {
 
   useEffect(() => {
     if (memberHook.isError) {
-      errorHandler.handleError(memberHook.error);
+      handleError(memberHook.error);
     }
-  }, [errorHandler, memberHook.error, memberHook.isError]);
+  }, [handleError, memberHook.error, memberHook.isError]);
 
   return memberHook;
 }

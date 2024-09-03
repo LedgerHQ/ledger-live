@@ -35,7 +35,7 @@ export default function HorizontalList({
 }: Props) {
   return (
     <>
-      <Text mt={2} mb={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
+      <Text mt={5} mb={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
         {title}
       </Text>
       <Box mb={2}>

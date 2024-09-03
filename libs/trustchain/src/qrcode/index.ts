@@ -6,6 +6,7 @@ import { Message } from "./types";
 import {
   InvalidDigitsError,
   NoTrustchainInitialized,
+  QRCodeWSClosed,
   TrustchainAlreadyInitialized,
 } from "../errors";
 import { log } from "@ledgerhq/logs";
@@ -26,11 +27,11 @@ const commonSwitch = async ({
   reject,
   ws,
   setFinished,
-  alreadyHasATrustchain,
+  initialTrustchainId,
 }) => {
   switch (data.message) {
     case "TrustchainShareCredential": {
-      if (!alreadyHasATrustchain) {
+      if (!initialTrustchainId) {
         const payload = {
           type: "UNEXPECTED_SHARE_CREDENTIAL",
           message: "unexpected share credential",
@@ -51,13 +52,13 @@ const commonSwitch = async ({
     }
 
     case "TrustchainRequestCredential": {
-      if (alreadyHasATrustchain) {
+      if (initialTrustchainId) {
         const payload = {
           type: "UNEXPECTED_REQUEST_CREDENTIAL",
-          message: "unexpected request credential",
+          message: initialTrustchainId,
         };
         send({ version, publisher, message: "Failure", payload });
-        throw new TrustchainAlreadyInitialized("unexpected request credential");
+        throw new TrustchainAlreadyInitialized(initialTrustchainId);
       }
       const payload = await cipher.encryptMessagePayload({
         id: memberCredentials.pubkey,
@@ -102,7 +103,7 @@ export async function createQRCodeHostInstance({
   addMember,
   memberCredentials,
   memberName,
-  alreadyHasATrustchain,
+  initialTrustchainId,
 }: {
   /**
    * the base URL of the trustchain API
@@ -129,9 +130,9 @@ export async function createQRCodeHostInstance({
    */
   memberName: string;
   /**
-   * if the member already has a trustchain, this will be true
+   * if the member already has a trustchain, this will be defined
    */
-  alreadyHasATrustchain: boolean;
+  initialTrustchainId?: string;
 }): Promise<Trustchain | void> {
   const ephemeralKey = await crypto.randomKeypair();
   const publisher = crypto.to_hex(ephemeralKey.publicKey);
@@ -149,11 +150,14 @@ export async function createQRCodeHostInstance({
 
   onDisplayQRCode(url);
   return new Promise((resolve, reject) => {
+    const startedAt = Date.now();
+
     ws.addEventListener("error", reject);
     ws.addEventListener("close", () => {
       if (finished) return;
-      // this error would reflect a protocol error. because otherwise, we would get the "error" event. it shouldn't be visible to user, but we use it to ensure the promise ends.
-      setTimeout(() => reject(new Error("qrcode websocket prematurely closed")), CLOSE_TIMEOUT);
+      // this error would reflect a protocol error. because otherwise, we would get the "error" event.
+      const time = Date.now() - startedAt;
+      reject(new QRCodeWSClosed("qrcode websocket prematurely closed", { time }));
     });
     ws.addEventListener("message", async e => {
       try {
@@ -206,7 +210,7 @@ export async function createQRCodeHostInstance({
           reject,
           ws,
           setFinished,
-          alreadyHasATrustchain,
+          initialTrustchainId,
         });
       } catch (e) {
         console.error("socket error", e);
@@ -225,7 +229,7 @@ export async function createQRCodeCandidateInstance({
   memberCredentials,
   memberName,
   addMember,
-  alreadyHasATrustchain,
+  initialTrustchainId,
   scannedUrl,
   onRequestQRCodeInput,
 }: {
@@ -238,9 +242,9 @@ export async function createQRCodeCandidateInstance({
    */
   memberName: string;
   /**
-   * if the member already has a trustchain, this will be true
+   * if the member already has a trustchain, this will be defined
    */
-  alreadyHasATrustchain: boolean;
+  initialTrustchainId?: string;
   /**
    * this function will need to using the TrustchainSDK (and use sdk.addMember)
    */
@@ -298,7 +302,7 @@ export async function createQRCodeCandidateInstance({
             break;
           }
           case "HandshakeCompletionSucceeded": {
-            if (alreadyHasATrustchain) {
+            if (initialTrustchainId) {
               const payload = await cipher.encryptMessagePayload({});
               send({ version, publisher, message: "TrustchainRequestCredential", payload });
             } else {
@@ -323,7 +327,7 @@ export async function createQRCodeCandidateInstance({
           reject,
           ws,
           setFinished,
-          alreadyHasATrustchain,
+          initialTrustchainId,
         });
       } catch (e) {
         console.error("socket error", e);

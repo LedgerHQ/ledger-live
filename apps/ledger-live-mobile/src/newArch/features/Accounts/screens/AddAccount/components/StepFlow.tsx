@@ -11,7 +11,8 @@ import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeD
 import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
 import { useInitMemberCredentials } from "LLM/features/WalletSync/hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCode";
-import UnbackedError from "~/newArch/features/WalletSync/screens/Synchronize/UnbackedError";
+import { SpecificError } from "~/newArch/features/WalletSync/components/Error/SpecificError";
+import { ErrorReason } from "~/newArch/features/WalletSync/hooks/useSpecificError";
 
 type Props = {
   currentStep: Steps;
@@ -99,8 +100,23 @@ const StepFlow = ({
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
 
       case Steps.UnbackedError:
-        return <UnbackedError create={onCreateKey} />;
+        return <SpecificError primaryAction={onCreateKey} error={ErrorReason.NO_BACKUP} />;
 
+      case Steps.AlreadyBacked:
+        return (
+          <SpecificError
+            primaryAction={() => setCurrentStep(Steps.QrCodeMethod)}
+            error={ErrorReason.ALREADY_BACKED_SCAN}
+          />
+        );
+
+      case Steps.BackedWithDifferentSeeds:
+        return (
+          <SpecificError
+            primaryAction={() => setCurrentStep(Steps.QrCodeMethod)}
+            error={ErrorReason.DIFFERENT_BACKUPS}
+          />
+        );
       default:
         return null;
     }

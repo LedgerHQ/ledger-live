@@ -3,11 +3,6 @@ import { track } from "~/analytics";
 import { useQRCodeHost } from "LLM/features/WalletSync/hooks/useQRCodeHost";
 import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
-import {
-  AnalyticsButton,
-  AnalyticsPage,
-  useLedgerSyncAnalytics,
-} from "~/newArch/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { useNavigation } from "@react-navigation/native";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
@@ -26,7 +21,6 @@ const startingStep = Steps.AddAccountMethod;
 const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) => {
   const [currentStep, setCurrentStep] = useState<Steps>(startingStep);
   const [currentOption, setCurrentOption] = useState<Options>(Options.SCAN);
-  const { onClickTrack } = useLedgerSyncAnalytics();
   const navigateToChooseSyncMethod = () => setCurrentStep(Steps.ChooseSyncMethod);
   const navigateToQrCodeMethod = () => setCurrentStep(Steps.QrCodeMethod);
   const navigation = useNavigation<NavigationProps["navigation"]>();
@@ -68,7 +62,6 @@ const useAddAccountViewModel = ({ isOpened, onClose }: AddAccountDrawerProps) =>
   });
 
   const onCreateKey = () => {
-    onClickTrack({ button: AnalyticsButton.CreateYourKey, page: AnalyticsPage.Unbacked });
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });
