@@ -15,6 +15,13 @@ const SIGN_HASH_TX_INS = 0x07;
 const SW_OK = 0x9000;
 const SW_CANCEL = 0x6986;
 
+/**
+ * Elrond API
+ *
+ * @example
+ * import Elrond from "@ledgerhq/hw-app-elrond";
+ * const elrond = new Elrond(transport)
+ */
 export default class Elrond {
   transport: Transport;
 
