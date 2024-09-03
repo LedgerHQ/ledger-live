@@ -30,6 +30,7 @@ jest.mock("../hooks/useGetMembers", () => ({
     data: INSTANCES,
     isError: false,
     error: null,
+    refetch: jest.fn(),
   }),
 }));
 

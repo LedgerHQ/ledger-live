@@ -3,7 +3,7 @@ import { ITuple } from "@polkadot/types/types";
 import { Bytes, Data, Option } from "@polkadot/types";
 import { u8aToString } from "@polkadot/util";
 import { ApiPromise } from "@polkadot/api";
-import { IIdentity } from "../sidecar.types";
+import { IIdentity } from "../types";
 import getApiPromise from "./apiPromise";
 
 export async function multiIdentities(addresses: AccountId[] | string[]): Promise<IIdentity[]> {

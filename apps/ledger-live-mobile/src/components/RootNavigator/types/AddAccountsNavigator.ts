@@ -15,14 +15,14 @@ export type AddAccountsNavigatorParamList = {
     inline?: boolean;
     returnToSwap?: boolean;
     analyticsPropertyFlow?: string;
-    onSuccess?: () => void;
+    onSuccess?: (res: { scannedAccounts: Account[]; selected: Account[] }) => void;
   };
   [ScreenName.AddAccountsAccounts]: {
     currency: CryptoOrTokenCurrency;
     device: Device;
     inline?: boolean;
     returnToSwap?: boolean;
-    onSuccess?: (_?: unknown) => void;
+    onSuccess?: (res: { scannedAccounts: Account[]; selected: Account[] }) => void;
   };
   [ScreenName.AddAccountsSuccess]?: {
     currency: CryptoOrTokenCurrency;

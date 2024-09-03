@@ -31,9 +31,10 @@ const QrCodeMethod = ({
     setSelectedOption(option);
     const button =
       option === Options.SCAN ? AnalyticsButton.ScanQRCode : AnalyticsButton.ShowQRCode;
+    const page = option === Options.SCAN ? AnalyticsPage.ScanQRCode : AnalyticsPage.ShowQRCode;
     onClickTrack({
       button,
-      page: AnalyticsPage.ScanQRCode,
+      page,
     });
   };
 
@@ -42,14 +43,14 @@ const QrCodeMethod = ({
       case Options.SCAN:
         return (
           <>
-            <TrackScreen category={AnalyticsPage.ScanQRCode} />
+            <TrackScreen name={AnalyticsPage.ScanQRCode} />
             <ScanQrCode onQrCodeScanned={onQrCodeScanned} />
           </>
         );
       case Options.SHOW_QR:
         return (
           <>
-            <TrackScreen category={AnalyticsPage.ShowQRCode} />
+            <TrackScreen name={AnalyticsPage.ShowQRCode} />
             <QrCode qrCodeValue={qrCodeValue} />
           </>
         );

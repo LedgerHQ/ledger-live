@@ -13,9 +13,9 @@ import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/nati
 import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import SelectAccountButton from "./SelectAccountButton";
+import { TOTAL_HEADER_HEIGHT } from "../Header";
 
-const BAR_HEIGHT = 60;
-export const TOTAL_HEADER_HEIGHT = BAR_HEIGHT;
+const BAR_HEIGHT = 64;
 const ANIMATION_HEIGHT = TOTAL_HEADER_HEIGHT;
 const LAYOUT_RANGE = [0, ANIMATION_HEIGHT];
 
@@ -82,7 +82,7 @@ export function BottomBar({
     const headerHeight = interpolate(
       layoutY.value,
       LAYOUT_RANGE,
-      [TOTAL_HEADER_HEIGHT, TOTAL_HEADER_HEIGHT - ANIMATION_HEIGHT],
+      [BAR_HEIGHT, BAR_HEIGHT - ANIMATION_HEIGHT],
       Extrapolation.CLAMP,
     );
 
@@ -96,16 +96,16 @@ export function BottomBar({
     if (!layoutY) return {};
 
     return {
-      height: TOTAL_HEADER_HEIGHT,
-      opacity: interpolate(layoutY.value, [0, ANIMATION_HEIGHT], [1, 0], Extrapolation.CLAMP),
+      height: BAR_HEIGHT,
+      opacity: interpolate(layoutY.value, LAYOUT_RANGE, [1, 0], Extrapolation.CLAMP),
     };
   });
 
   return (
     <Animated.View style={heightStyle}>
       <Animated.View style={opacityStyle}>
-        <Flex flexDirection="row" height={BAR_HEIGHT} paddingY={4} paddingX={4} alignItems="center">
-          <Flex flexDirection="row" flex={1}>
+        <Flex flexDirection="row" height={BAR_HEIGHT} paddingX={4} alignItems="center">
+          <Flex flexDirection="row">
             <IconButton onPress={handleBack} marginRight={4} disabled={!webviewState.canGoBack}>
               <ArrowLeftMedium
                 size={24}
@@ -122,8 +122,15 @@ export function BottomBar({
           </Flex>
 
           {shouldDisplaySelectAccount ? (
-            <SelectAccountButton manifest={manifest} currentAccountHistDb={currentAccountHistDb} />
-          ) : null}
+            <Flex flex={1} mx={4} alignItems={"flex-center"}>
+              <SelectAccountButton
+                manifest={manifest}
+                currentAccountHistDb={currentAccountHistDb}
+              />
+            </Flex>
+          ) : (
+            <Flex flex={1} />
+          )}
 
           <IconButton onPress={handleReload} alignSelf="flex-end">
             <ReverseMedium size={24} color="neutral.c100" />

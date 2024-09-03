@@ -6,7 +6,6 @@ import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/Cus
 import { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
-import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { BottomBar } from "./BottomBar";
@@ -17,11 +16,19 @@ type Props = {
   inputs?: Record<string, string | undefined>;
   onScroll?: ComponentProps<typeof Web3AppWebview>["onScroll"];
   layoutY: SharedValue<number>;
+  webviewState: WebviewState;
+  setWebviewState: React.Dispatch<React.SetStateAction<WebviewState>>;
 };
 
-const WebPlatformPlayer = ({ manifest, inputs, onScroll, layoutY }: Props) => {
+const WebPlatformPlayer = ({
+  manifest,
+  inputs,
+  onScroll,
+  layoutY,
+  webviewState,
+  setWebviewState,
+}: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
-  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
   const currentAccountHistDb: CurrentAccountHistDB = useCurrentAccountHistDB();

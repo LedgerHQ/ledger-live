@@ -43,20 +43,20 @@ const GenericFollowInstructionsDrawer = ({
         return (
           <DeletionError
             error={ErrorReason.UNSECURED}
-            tryAgain={handleClose}
-            goToDelete={goToDelete}
+            primaryAction={handleClose}
+            secondaryAction={goToDelete}
           />
         );
 
       case SceneKind.AlreadySecuredSameSeed:
-        return <SpecificError error={ErrorReason.SAME_SEED} understood={handleClose} />;
+        return <SpecificError error={ErrorReason.SAME_SEED} primaryAction={handleClose} />;
 
       case SceneKind.AlreadySecuredOtherSeed:
         return (
           <SpecificError
             error={ErrorReason.OTHER_SEED}
-            cancel={handleClose}
-            goToDelete={goToDelete}
+            secondaryAction={handleClose}
+            primaryAction={goToDelete}
           />
         );
 

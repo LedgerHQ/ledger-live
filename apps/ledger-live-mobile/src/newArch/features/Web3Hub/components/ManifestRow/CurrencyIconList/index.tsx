@@ -54,7 +54,7 @@ export default function CurrencyIconList({ currencies }: Props) {
           justifyContent={"center"}
           marginLeft={-3}
           backgroundColor={colors.card}
-          borderColor={colors.border}
+          borderColor={colors.background}
           borderStyle={"solid"}
           borderWidth={1}
           borderRadius={50}
@@ -75,7 +75,7 @@ export default function CurrencyIconList({ currencies }: Props) {
     }
 
     return list;
-  }, [colors.background, colors.border, colors.card, currencies]);
+  }, [colors.background, colors.card, currencies]);
 
   return <Flex flexDirection={"row"}>{icons}</Flex>;
 }

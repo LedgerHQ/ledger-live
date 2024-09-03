@@ -68,7 +68,7 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
         },
         memberCredentials,
         memberName,
-        alreadyHasATrustchain: !!trustchain,
+        initialTrustchainId: trustchain?.rootId,
       }),
 
     onSuccess: newTrustchain => {

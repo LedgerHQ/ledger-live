@@ -1,7 +1,12 @@
 import { useCallback, useState } from "react";
 import { MemberCredentials, TrustchainMember } from "@ledgerhq/trustchain/types";
 import { createQRCodeCandidateInstance } from "@ledgerhq/trustchain/qrcode/index";
-import { InvalidDigitsError, NoTrustchainInitialized } from "@ledgerhq/trustchain/errors";
+import {
+  InvalidDigitsError,
+  NoTrustchainInitialized,
+  TrustchainAlreadyInitialized,
+  TrustchainAlreadyInitializedWithOtherSeed,
+} from "@ledgerhq/trustchain/errors";
 import { setTrustchain, trustchainSelector } from "@ledgerhq/trustchain/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -61,7 +66,7 @@ export const useSyncWithQrCode = () => {
             }
             throw new NoTrustchainInitialized();
           },
-          alreadyHasATrustchain: !!trustchain,
+          initialTrustchainId: trustchain?.rootId,
         });
         if (newTrustchain) {
           dispatch(setTrustchain(newTrustchain));
@@ -74,6 +79,16 @@ export const useSyncWithQrCode = () => {
           return;
         } else if (e instanceof NoTrustchainInitialized) {
           setCurrentStep(Steps.UnbackedError);
+          return;
+        } else if (e instanceof TrustchainAlreadyInitialized) {
+          if (e.message === trustchain?.rootId) {
+            setCurrentStep(Steps.AlreadyBacked);
+          } else {
+            setCurrentStep(Steps.BackedWithDifferentSeeds);
+          }
+          return;
+        } else if (e instanceof TrustchainAlreadyInitializedWithOtherSeed) {
+          setCurrentStep(Steps.BackedWithDifferentSeeds);
           return;
         }
         throw e;

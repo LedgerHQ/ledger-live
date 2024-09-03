@@ -98,11 +98,7 @@ function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { accounts$, currency, allowAddAccount, onSuccess } = route.params;
   const accountIds = useGetAccountIds(accounts$);
-  const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds)) as {
-    account: AccountLike;
-    subAccount: SubAccount | null;
-    name: string;
-  }[];
+  const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds));
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
       onSuccess && onSuccess(account, parentAccount);
