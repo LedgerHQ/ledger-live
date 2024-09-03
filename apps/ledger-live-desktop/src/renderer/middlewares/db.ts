@@ -40,13 +40,13 @@ function accountsExportSelector(state: State) {
 
 const DBMiddleware: Middleware<{}, State> = store => next => action => {
   if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("DB:")) {
-    console.log(`SAVING ACCOUNTS ${action.type}`)
     const [, type] = action.type.split(":");
     store.dispatch({
       type,
       payload: action.payload,
     });
     const state = store.getState();
+    console.log(`SAVING ACCOUNTS ${action.type}`, state)
     // NOTE: set account here
     setKey("app", "accounts", accountsExportSelector(state));
     // ^ TODO ultimately we'll do same for accounts to drop DB: pattern

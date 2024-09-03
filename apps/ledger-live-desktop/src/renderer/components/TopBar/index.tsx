@@ -32,6 +32,7 @@ import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { setKey, getKey } from "~/renderer/storage";
 import DeviceIllustration from "../DeviceIllustration";
+import { lastSeenDeviceSelector, latestFirmwareSelector } from "~/renderer/reducers/settings";
 
 
 
@@ -85,14 +86,16 @@ const TopBar = () => {
     console.log(`TODO`)
   }
 
-  const [settings, setSettings] = useState(null);
-  useEffect(() => {
-    let res = getKey("app", "settings").then(res => {
-    // let res = getKey("app", "accounts").then(res => {
-      setSettings(res)
-      console.log({settings})
-    });
-  }, [location])
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+
+  // const [settings, setSettings] = useState(null);
+  // useEffect(() => {
+  //   let res = getKey("app", "settings").then(res => {
+  //   // let res = getKey("app", "accounts").then(res => {
+  //     setSettings(res)
+  //     console.log({settings})
+  //   });
+  // }, [location])
 
   
   /* 
@@ -151,8 +154,8 @@ const TopBar = () => {
               isInteractive
               onClick={showDeviceSelector}
             >
-            <DeviceIllustration deviceId={settings?.lastSeenDevice?.modelId} size={20}/>
-                {settings?.lastSeenDevice?.modelId} {settings?.lastSeenDevice?.deviceInfo?.targetId}
+            <DeviceIllustration deviceId={lastSeenDevice?.modelId} size={20}/>
+                {lastSeenDevice?.modelId} {lastSeenDevice?.deviceInfo?.targetId}
             </ItemContainer>
           </Tooltip>
 

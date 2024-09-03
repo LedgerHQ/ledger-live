@@ -162,7 +162,7 @@ async function init() {
   const lastSeenDeviceId = settings?.lastSeenDevice?.deviceInfo?.targetId
   const accountData = await getKey("app", "accounts", []);
   const accountDataWithLastSeenDevice = accountData.filter(account => account.deviceId === lastSeenDeviceId)
-  console.log({accountDataWithLastSeenDevice})
+  console.log({lastSeenDeviceId, accountData, accountDataWithLastSeenDevice})
   if (accountData) {
     const e = initAccounts(accountData, lastSeenDeviceId);
     store.dispatch(e);

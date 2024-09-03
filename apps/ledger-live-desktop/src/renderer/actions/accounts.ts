@@ -12,9 +12,11 @@ export const removeAccount = (payload: Account) => ({
 
 export const initAccounts = (data: [Account, AccountUserData][], lastSeenDeviceId?: string) => {
   console.log(`initAccounts`, {data})
-  const accounts = lastSeenDeviceId ?
-   data.map(([account]) => {return {...account, deviceId: lastSeenDeviceId}})
-   : data.map(([account]) => account) 
+  // const accounts = lastSeenDeviceId ?
+  //  data.map(([account]) => {return {...account, deviceId: lastSeenDeviceId}})
+  //  : data.map(([account]) => account) 
+  
+  const accounts = data.map(([account]) => account) 
   console.log({accounts})
   const accountsUserData = data
     .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
@@ -41,6 +43,7 @@ export const reorderAccounts = (comparator: AccountComparator) => (dispatch: Dis
 
 export const fetchAccounts = () => async (dispatch: Dispatch) => {
   const data = await getKey("app", "accounts", []);
+  console.log({fetchAccountsdata: data})
   if (!data) throw new PasswordIncorrectError("app accounts seems to still be encrypted");
   return dispatch(initAccounts(data));
 };
@@ -55,19 +58,26 @@ export type UpdateAccountWithUpdater = (
   updater: (account: Account) => Account,
 ) => UpdateAccountAction;
 
-export const updateAccountWithUpdater: UpdateAccountWithUpdater = (accountId, updater) => ({
+export const updateAccountWithUpdater: UpdateAccountWithUpdater = (accountId, updater) => {
+  console.log(`updateAccountWithUpdater`)
+  return {
   type: "DB:UPDATE_ACCOUNT",
   payload: { accountId, updater },
-});
+  }
+};
 
 export type UpdateAccount = (account: Partial<Account>) => UpdateAccountAction;
-export const updateAccount: UpdateAccount = payload => ({
+export const updateAccount: UpdateAccount = payload => {
+  console.log(`updateAccount`)
+
+  return {
   type: "DB:UPDATE_ACCOUNT",
   payload: {
     updater: (account: Account) => ({ ...account, ...payload }),
     accountId: payload.id,
   },
-});
+}
+};
 
 export const cleanAccountsCache = () => ({ type: "DB:CLEAN_ACCOUNTS_CACHE" });
 export const cleanFullNodeDisconnect = () => ({

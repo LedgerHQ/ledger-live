@@ -84,8 +84,21 @@ export function getCurrentDevice(state: { devices: DevicesState; settings: Setti
       };
     }
   }
+  console.log("returning currentDevice", { currentDevice: state.devices.currentDevice });
+  // currentDevice returns
+  // {deviceId: '', modelId: 'stax', wired: true}
+  // debugger;
+  // return {
+  //   ...state.devices.currentDevice,
+  //   deviceId: state.settings.lastSeenDevice?.deviceInfo.targetId || "",
+  // }
   return state.devices.currentDevice;
 }
+
+export function getLastSeenDeviceId(state: { settings: SettingsState}) {
+  return  state.settings.lastSeenDevice?.deviceInfo.targetId || "";
+}
+
 export function getDevices(state: { devices: DevicesState }) {
   const envConditions = [
     { condition: getEnv("DEVICE_PROXY_URL"), modelId: DeviceModelId.nanoS },

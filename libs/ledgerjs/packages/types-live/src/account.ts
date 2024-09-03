@@ -139,6 +139,7 @@ export type Account = {
   syncHash?: string | undefined;
   // Array of NFTs computed by diffing NFTOperations ordered from newest to oldest
   nfts?: ProtoNFT[];
+  deviceId?: string;
 };
 
 /**
@@ -200,6 +201,7 @@ export type AccountRaw = {
   swapHistory?: SwapOperationRaw[];
   syncHash?: string | undefined;
   nfts?: ProtoNFTRaw[];
+  deviceId?: string;
 };
 
 /** */
