@@ -701,8 +701,8 @@ importers:
         specifier: 2.15.1
         version: 2.15.1
       axios:
-        specifier: 1.3.4
-        version: 1.3.4
+        specifier: 1.7.3
+        version: 1.7.3
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -751,6 +751,9 @@ importers:
       listr-verbose-renderer:
         specifier: ^0.6.0
         version: 0.6.0
+      nock:
+        specifier: ^13.0.5
+        version: 13.5.4
       prebuild-install:
         specifier: ^7.1.1
         version: 7.1.2
@@ -1937,8 +1940,8 @@ importers:
         specifier: ^2.4.4
         version: 2.4.4
       axios:
-        specifier: 0.26.1
-        version: 0.26.1
+        specifier: 1.7.3
+        version: 1.7.3
       bip32:
         specifier: ^2.0.6
         version: 2.0.6
@@ -2064,8 +2067,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
       axios:
-        specifier: 0.26.1
-        version: 0.26.1
+        specifier: 1.7.3
+        version: 1.7.3
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -2863,8 +2866,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-node-speculos-http
       axios:
-        specifier: ^1.5.0
-        version: 1.6.8
+        specifier: 1.7.3
+        version: 1.7.3
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -2995,8 +2998,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       axios:
-        specifier: ^1.3.4
-        version: 1.6.8
+        specifier: 1.7.3
+        version: 1.7.3
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
@@ -3100,8 +3103,8 @@ importers:
         specifier: workspace:^
         version: link:../env
       axios:
-        specifier: ^1.6.5
-        version: 1.6.8
+        specifier: 1.7.3
+        version: 1.7.3
       crypto-js:
         specifier: 4.2.0
         version: 4.2.0
@@ -3451,8 +3454,8 @@ importers:
         specifier: ^3.2.3
         version: 3.2.5
       axios:
-        specifier: 0.26.1
-        version: 0.26.1
+        specifier: 1.7.3
+        version: 1.7.3
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -3725,8 +3728,8 @@ importers:
   libs/ledgerjs:
     dependencies:
       axios:
-        specifier: ^0.27.2
-        version: 0.27.2
+        specifier: 1.7.3
+        version: 1.7.3
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -3753,8 +3756,8 @@ importers:
   libs/ledgerjs/packages/context-module:
     dependencies:
       axios:
-        specifier: ^1.6.8
-        version: 1.6.8
+        specifier: 1.7.3
+        version: 1.7.3
       ethers:
         specifier: ^5.7.2
         version: 5.7.2
@@ -3787,8 +3790,8 @@ importers:
   libs/ledgerjs/packages/cryptoassets:
     dependencies:
       axios:
-        specifier: ^1.6.0
-        version: 1.6.8
+        specifier: 1.7.3
+        version: 1.7.3
       bs58check:
         specifier: ^2.1.2
         version: 2.1.2
@@ -3998,8 +4001,8 @@ importers:
         specifier: ^20.8.10
         version: 20.12.12
       axios:
-        specifier: ^0.25.0
-        version: 0.25.0
+        specifier: 1.7.3
+        version: 1.7.3
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -4092,8 +4095,8 @@ importers:
         specifier: workspace:^
         version: link:../types-live
       axios:
-        specifier: ^1.3.4
-        version: 1.6.8
+        specifier: 1.7.3
+        version: 1.7.3
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4221,8 +4224,8 @@ importers:
         specifier: ^20.8.10
         version: 20.12.12
       axios:
-        specifier: ^0.26.1
-        version: 0.26.1
+        specifier: 1.7.3
+        version: 1.7.3
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -4390,8 +4393,8 @@ importers:
         specifier: ^20.8.10
         version: 20.12.12
       axios:
-        specifier: ^0.26.1
-        version: 0.26.1
+        specifier: 1.7.3
+        version: 1.7.3
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -4663,8 +4666,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       axios:
-        specifier: ^0.26.1
-        version: 0.26.1
+        specifier: 1.7.3
+        version: 1.7.3
       ws:
         specifier: ^7.5.2
         version: 7.5.10
@@ -4930,8 +4933,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       axios:
-        specifier: ^0.26.1
-        version: 0.26.1
+        specifier: 1.7.3
+        version: 1.7.3
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -5656,8 +5659,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       axios:
-        specifier: 0.26.1
-        version: 0.26.1
+        specifier: 1.7.3
+        version: 1.7.3
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3
@@ -15603,20 +15606,8 @@ packages:
   axios@0.24.0:
     resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
 
-  axios@0.25.0:
-    resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
-
-  axios@0.26.1:
-    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
-
-  axios@0.27.2:
-    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
-
-  axios@1.3.4:
-    resolution: {integrity: sha512-toYm+Bsyl6VC5wSkfkbbNB6ROv7KY93PEBBL6xyDczaIHasAiv4wPqQ/c4RjoQzipxRD2W5g21cOqQulZ7rHwQ==}
-
-  axios@1.6.8:
-    resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
+  axios@1.7.3:
+    resolution: {integrity: sha512-Ar7ND9pU99eJ9GpoGQKhKf58GpUOgnzuaB7ueNQ5BMi0p+LZ5oaEnfF999fAArcTIBwXTCHAmGcHOZJaWPq9Nw==}
 
   axobject-query@3.2.1:
     resolution: {integrity: sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==}
@@ -25109,7 +25100,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -40142,7 +40132,7 @@ snapshots:
   '@stellar/stellar-sdk@11.3.0':
     dependencies:
       '@stellar/stellar-base': 11.0.1
-      axios: 1.6.8
+      axios: 1.7.3
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       randombytes: 2.1.0
@@ -41970,7 +41960,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.56.3(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.6.8
+      axios: 1.7.3
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -42012,7 +42002,7 @@ snapshots:
 
   '@types/axios@0.14.0':
     dependencies:
-      axios: 1.6.8
+      axios: 1.7.3
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -43655,7 +43645,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
       '@zondax/ledger-js': 0.8.2
-      axios: 1.6.8
+      axios: 1.7.3
 
   JSONStream@1.3.5:
     dependencies:
@@ -44258,26 +44248,7 @@ snapshots:
     dependencies:
       follow-redirects: 1.15.6
 
-  axios@0.25.0:
-    dependencies:
-      follow-redirects: 1.15.6
-
-  axios@0.26.1:
-    dependencies:
-      follow-redirects: 1.15.6
-
-  axios@0.27.2:
-    dependencies:
-      follow-redirects: 1.15.6
-      form-data: 4.0.0
-
-  axios@1.3.4:
-    dependencies:
-      follow-redirects: 1.15.6
-      form-data: 4.0.0
-      proxy-from-env: 1.1.0
-
-  axios@1.6.8:
+  axios@1.7.3:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
@@ -61824,7 +61795,7 @@ snapshots:
       '@noble/secp256k1': 1.7.1
       '@tronweb3/google-protobuf': 3.21.2
       aes-js: 3.1.2
-      axios: 1.6.8
+      axios: 1.7.3
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.1.3
       ethers: 6.12.1
