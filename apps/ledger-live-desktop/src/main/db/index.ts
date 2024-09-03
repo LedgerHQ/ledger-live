@@ -61,6 +61,7 @@ async function load(ns: string): Promise<unknown> {
     const fileContent = await readFile(filePath);
     const { data } = JSON.parse(fileContent.toString());
     memoryNamespaces[ns] = data;
+    // debugger;
   } catch (err) {
     if ((err as { code?: string })?.code === "ENOENT") {
       memoryNamespaces[ns] = {};
@@ -73,7 +74,9 @@ async function load(ns: string): Promise<unknown> {
   return memoryNamespaces[ns];
 }
 async function ensureNSLoaded(ns: string) {
+  // console.log(`ensureNSLoaded`)
   if (!memoryNamespaces[ns]) {
+    console.log(`ensureNSLoaded: load`)
     await load(ns);
   }
 }
@@ -83,6 +86,7 @@ async function ensureNSLoaded(ns: string) {
  * to ensure the lock/unlock detection is still valid.
  */
 async function reload() {
+  console.log(`reload`)
   DBPath && init(DBPath);
 }
 
@@ -101,6 +105,7 @@ const encryptedDataPaths = [
  * in `save` to encrypt it back
  */
 async function setEncryptionKey(encryptionKey: string): Promise<void> {
+  console.log(`setEncryptionKey`, encryptionKey)
   const nsToSave = new Set<string>();
 
   for (const [ns, keyPath] of encryptedDataPaths) {
@@ -142,6 +147,7 @@ async function setEncryptionKey(encryptionKey: string): Promise<void> {
   }
 }
 async function removeEncryptionKey() {
+  console.log(`removeEncryptionKey`)
   const nsToSave = new Set<string>();
   for (const [ns, keyPath] of encryptedDataPaths) {
     nsToSave.add(ns);
@@ -157,6 +163,7 @@ async function removeEncryptionKey() {
  * Set a key in the given namespace
  */
 async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
+  console.log(`setkey`, {ns, keyPath})
   await ensureNSLoaded(ns);
   set(memoryNamespaces[ns]!, keyPath, value);
   return save(ns);
@@ -172,6 +179,7 @@ async function getKey<V>(
 ): Promise<V | Record<string, V> | undefined> {
   await ensureNSLoaded(ns);
   if (!keyPath) return (memoryNamespaces[ns] as Record<string, V>) || defaultValue;
+  console.log(`getKey`, keyPath)
   return get(memoryNamespaces[ns], keyPath, defaultValue) as V;
 }
 
@@ -198,6 +206,8 @@ async function hasBeenDecrypted(): Promise<boolean> {
  * Save given namespace to corresponding file, in atomic way
  */
 async function saveToDisk(ns: string) {
+  console.log("saving to disk")
+  // debugger;
   if (!DBPath) throw new NoDBPathGiven();
   await ensureNSLoaded(ns);
 

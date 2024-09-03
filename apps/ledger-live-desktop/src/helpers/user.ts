@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+// NOTE: this one
 import { setKey, getKey } from "~/renderer/storage";
 
 // a user is an anonymous way to identify a same instance of the app

@@ -47,6 +47,7 @@ const Manager = () => {
       });
     }
   }, [result, dispatch]);
+  console.log({resultManager: result})
   const onResult = useCallback((result: Result) => setResult(result), []);
   return (
     <>

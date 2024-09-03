@@ -59,6 +59,7 @@ const Dashboard = ({
     if (!currentDevice && preventResetOnDeviceChange) {
       deviceChangedWhenResetPrevented.current = true;
     }
+    console.log({currentDevice})
 
     // Don't reset now if a drawer is open and reset is prevented,
     // for example, during firmware update or device name change
@@ -95,6 +96,7 @@ const Dashboard = ({
             ),
     [device, result, appsBackupEnabled, storage],
   );
+  console.log({device, deviceInfo})
 
   const appsStoragePercentage = useMemo(() => {
     if (!result) return 0;
