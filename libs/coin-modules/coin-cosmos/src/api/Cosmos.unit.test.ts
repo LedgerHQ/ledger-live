@@ -216,10 +216,8 @@ describe("CosmosApi", () => {
   describe("simulate", () => {
     it("should return gas used when the network call returns gas used", async () => {
       mockAxiosResponse({
-        data: {
-          gas_info: {
-            gas_used: 42000,
-          },
+        gas_info: {
+          gas_used: 42000,
         },
       });
       const gas = await cosmosApi.simulate([]);
