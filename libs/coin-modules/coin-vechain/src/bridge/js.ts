@@ -1,33 +1,66 @@
-import { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import {
+  defaultUpdateTransaction,
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
 import { getTransactionStatus } from "../getTransactionStatus";
-import type { Transaction, TransactionStatus } from "../types";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { prepareTransaction } from "../prepareTransaction";
 import { createTransaction } from "../createTransaction";
-import { sync, scanAccounts } from "../synchronisation";
-import { signOperation } from "../signOperation";
+import { getAccountShape, sync } from "../synchronisation";
+import { buildSignOperation } from "../signOperation";
 import { broadcast } from "../broadcast";
+import resolver from "../hw-getAddress";
+import { setCoinConfig, VeChainCoinConfig } from "../config";
+import type { Transaction } from "../types";
 
-const receive: AccountBridge<Transaction>["receive"] = makeAccountBridgeReceive();
+export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
+  const getAddress = resolver(signerContext);
 
-const currencyBridge: CurrencyBridge = {
-  scanAccounts,
-  preload: async () => Promise.resolve({}),
-  hydrate: (): void => {},
-};
+  const scanAccounts = makeScanAccounts({
+    getAccountShape,
+    getAddressFn: getAddress,
+  });
 
-const accountBridge: AccountBridge<Transaction, Account, TransactionStatus> = {
-  estimateMaxSpendable,
-  createTransaction,
-  updateTransaction: defaultUpdateTransaction,
-  getTransactionStatus,
-  prepareTransaction,
-  sync,
-  receive,
-  signOperation,
-  broadcast,
-};
+  return {
+    preload: async () => Promise.resolve({}),
+    hydrate: () => {},
+    scanAccounts,
+  };
+}
 
-export default { currencyBridge, accountBridge };
+export function buildAccountBridge(
+  signerContext: SignerContext<VechainSigner>,
+): AccountBridge<Transaction> {
+  const getAddress = resolver(signerContext);
+
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext);
+
+  return {
+    estimateMaxSpendable,
+    createTransaction,
+    updateTransaction: defaultUpdateTransaction,
+    getTransactionStatus,
+    prepareTransaction,
+    sync,
+    receive,
+    signOperation,
+    broadcast,
+  };
+}
+
+export function createBridges(
+  signerContext: SignerContext<VechainSigner>,
+  coinConfig: VeChainCoinConfig,
+) {
+  setCoinConfig(coinConfig);
+
+  return {
+    currencyBridge: buildCurrencyBridge(signerContext),
+    accountBridge: buildAccountBridge(signerContext),
+  };
+}
