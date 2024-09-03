@@ -1,6 +1,6 @@
 import type Transport from "@ledgerhq/hw-transport";
-import BIPPath from "bip32-path";
 import { Address } from "@multiversx/sdk-core";
+import BIPPath from "bip32-path";
 
 const CHUNK_SIZE = 150;
 const CURVE_MASK = 0x80;
@@ -15,6 +15,13 @@ const SIGN_HASH_TX_INS = 0x07;
 const SW_OK = 0x9000;
 const SW_CANCEL = 0x6986;
 
+/**
+ * Elrond API
+ *
+ * @example
+ * import Elrond from "@ledgerhq/hw-app-elrond";
+ * const elrond = new Elrond(transport)
+ */
 export default class Elrond {
   transport: Transport;
 
