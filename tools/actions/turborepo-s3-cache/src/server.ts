@@ -63,7 +63,6 @@ async function startServer() {
       const artifactId = req.params.artifactId;
       const filename = `${artifactId}.gz`;
 
-      console.log(req.headers);
       try {
         const upload = new Upload({
           client,
@@ -71,15 +70,12 @@ async function startServer() {
             Bucket: bucket,
             Key: filename,
             Body: req, // req is a readable stream
-            ContentType: req.headers["content-type"],
           },
         });
         upload.on("httpUploadProgress", progress => {
           console.log(progress);
         });
         await upload.done();
-        console.log(upload);
-        console.log(res);
         return res.end();
       } catch (error) {
         console.log(error);
