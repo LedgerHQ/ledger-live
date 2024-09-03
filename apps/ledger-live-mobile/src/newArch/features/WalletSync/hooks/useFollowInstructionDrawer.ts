@@ -11,6 +11,7 @@ export enum SceneKind {
   Loader,
   WrongSeedError,
   KeyError,
+  UnbackedError,
   GenericError,
   AlreadySecuredSameSeed,
   AlreadySecuredOtherSeed,
@@ -22,6 +23,7 @@ type Scene =
   | { kind: SceneKind.KeyError }
   | { kind: SceneKind.AlreadySecuredSameSeed }
   | { kind: SceneKind.AlreadySecuredOtherSeed }
+  | { kind: SceneKind.UnbackedError }
   | { kind: SceneKind.GenericError; error: Error };
 
 export type DrawerProps = {

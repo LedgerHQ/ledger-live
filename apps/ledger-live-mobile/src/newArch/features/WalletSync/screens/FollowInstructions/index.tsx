@@ -62,6 +62,14 @@ const GenericFollowInstructionsDrawer = ({
 
       case SceneKind.GenericError:
         return <GenericErrorView error={scene.error} withDescription withHelp hasExportLogButton />;
+
+      case SceneKind.UnbackedError:
+        return (
+          <SpecificError
+            error={ErrorReason.NO_BACKUP_ONBOARDING_DEVICE}
+            primaryAction={handleClose}
+          />
+        );
     }
   };
 
