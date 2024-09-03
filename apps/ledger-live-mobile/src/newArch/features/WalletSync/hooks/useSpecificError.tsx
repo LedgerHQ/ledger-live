@@ -45,6 +45,11 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
   const onTryAgain = (page: AnalyticsPage) => {
     onClickTrack({ button: AnalyticsButton.UseAnother, page });
   };
+
+  const onTryAnotherLedger = (page: AnalyticsPage) => {
+    onClickTrack({ button: AnalyticsButton.TryAnotherLedger, page });
+  };
+
   const onGoToDelete = (page: AnalyticsPage) => {
     onClickTrack({ button: AnalyticsButton.DeleteKey, page });
   };
@@ -59,6 +64,10 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
 
   const onCreate = (page: AnalyticsPage) => {
     onClickTrack({ button: AnalyticsButton.CreateYourKey, page });
+  };
+
+  const ContinueWihtoutSync = (page: AnalyticsPage) => {
+    onClickTrack({ button: AnalyticsButton.ContinueWihtoutSync, page });
   };
 
   const errorConfig: Record<ErrorReason, ErrorConfig> = {
@@ -178,15 +187,15 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       description: t("walletSync.synchronize.qrCode.unbackedOnboarding.description"),
       cta: t("walletSync.synchronize.qrCode.unbackedOnboarding.cta"),
       ctaSecondary: t("walletSync.synchronize.qrCode.unbackedOnboarding.cancel"),
-      analyticsPage: AnalyticsPage.SyncWithNoKey,
+      analyticsPage: AnalyticsPage.OnBoardingQRCodeNoBackup,
       buttonType: "main" as ButtonProps["type"],
       primaryAction: () => {
         primaryAction();
-        onTryAgain(AnalyticsPage.RemoveInstanceWrongDevice);
+        onTryAgain(AnalyticsPage.OnBoardingQRCodeNoBackup);
       },
       secondaryAction: () => {
         secondaryAction?.();
-        onCancel(AnalyticsPage.OtherSeed);
+        ContinueWihtoutSync(AnalyticsPage.OnBoardingQRCodeNoBackup);
       },
     },
     [ErrorReason.NO_BACKUP_ONBOARDING_DEVICE]: {
@@ -195,15 +204,15 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       description: t("walletSync.synchronize.unbackedOnboarding.description"),
       cta: t("walletSync.synchronize.unbackedOnboarding.cta"),
       ctaSecondary: t("walletSync.synchronize.unbackedOnboarding.cancel"),
-      analyticsPage: AnalyticsPage.SyncWithNoKey,
+      analyticsPage: AnalyticsPage.OnBoardingDeviceNoBackup,
       buttonType: "main" as ButtonProps["type"],
       primaryAction: () => {
         primaryAction();
-        onTryAgain(AnalyticsPage.RemoveInstanceWrongDevice);
+        onTryAnotherLedger(AnalyticsPage.OnBoardingDeviceNoBackup);
       },
       secondaryAction: () => {
         secondaryAction?.();
-        onCancel(AnalyticsPage.OtherSeed);
+        ContinueWihtoutSync(AnalyticsPage.OnBoardingDeviceNoBackup);
       },
     },
   };
