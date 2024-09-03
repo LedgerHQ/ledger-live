@@ -172,6 +172,12 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         };
   };
 
+  const handleTransactionResult = (result: ResultsState, operation: Operation) => {
+    setResult(result);
+
+    onResult(operation);
+  };
+
   const handleSwapTransaction = (operation: Operation, result: ResultsState) => {
     const newResult = {
       operation,
@@ -183,15 +189,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       magnitudeAwareRate: magnitudeAwareRate as BigNumber,
     });
 
-    setResult(result);
-
-    onResult(operation);
+    handleTransactionResult(result, operation);
   };
 
   const handleSellTransaction = (operation: Operation, result: ResultsState) => {
-    setResult(result);
-
-    onResult(operation);
+    handleTransactionResult(result, operation);
   };
 
   const onBroadcastSuccess = useCallback(
