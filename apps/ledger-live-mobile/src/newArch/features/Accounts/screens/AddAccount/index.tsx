@@ -6,6 +6,7 @@ import DrawerHeader from "LLM/features/WalletSync/components/Synchronize/DrawerH
 import { Flex } from "@ledgerhq/native-ui";
 import StepFlow from "./components/StepFlow";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
+import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 
 type ViewProps = ReturnType<typeof useAddAccountViewModel> & AddAccountProps;
 
@@ -21,10 +22,8 @@ function View({
   doesNotHaveAccount,
   currency,
   onCloseAddAccountDrawer,
-  currentStep,
   onGoBack,
   currentOption,
-  setCurrentStep,
   setCurrentOption,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
@@ -32,6 +31,7 @@ function View({
   onQrCodeScanned,
   onCreateKey,
 }: ViewProps) {
+  const { currentStep } = useCurrentStep();
   const CustomDrawerHeader = () => <DrawerHeader onClose={onCloseAddAccountDrawer} />;
 
   return (
@@ -46,8 +46,6 @@ function View({
         <StepFlow
           doesNotHaveAccount={doesNotHaveAccount}
           currency={currency}
-          currentStep={currentStep}
-          setCurrentStep={setCurrentStep}
           setCurrentOption={setCurrentOption}
           currentOption={currentOption}
           navigateToChooseSyncMethod={navigateToChooseSyncMethod}
