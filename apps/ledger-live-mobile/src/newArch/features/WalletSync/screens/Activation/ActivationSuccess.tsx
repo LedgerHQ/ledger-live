@@ -17,6 +17,9 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { setFromLedgerSyncOnboarding } from "~/actions/settings";
 import { AnalyticsButton, AnalyticsFlow, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { track } from "~/analytics";
+import { setLedgerSyncActivateDrawer } from "~/actions/walletSync";
+import { Steps } from "../../types/Activation";
+import { useCurrentStep } from "../../hooks/useCurrentStep";
 
 type Props = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncSuccess>
@@ -30,6 +33,7 @@ export function ActivationSuccess({ navigation, route }: Props) {
   const desc = created ? "walletSync.success.activationDesc" : "walletSync.success.syncDesc";
   const page = created ? AnalyticsPage.BackupCreationSuccess : AnalyticsPage.SyncSuccess;
   const dispatch = useDispatch();
+  const { setCurrentStep } = useCurrentStep();
 
   const navigationOnbarding =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
@@ -40,7 +44,14 @@ export function ActivationSuccess({ navigation, route }: Props) {
       page,
       flow: AnalyticsFlow.LedgerSync,
     });
-    navigation.navigate(ScreenName.WalletSyncActivationProcess);
+    if (isFromLedgerSyncOnboarding) {
+      dispatch(setFromLedgerSyncOnboarding(false));
+    }
+    setCurrentStep(Steps.QrCodeMethod);
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.GeneralSettings,
+    });
+    dispatch(setLedgerSyncActivateDrawer(true));
   }
 
   function close(): void {

@@ -11,14 +11,13 @@ import PinCodeDisplay from "LLM/features/WalletSync/screens/Synchronize/PinCodeD
 import PinCodeInput from "LLM/features/WalletSync/screens/Synchronize/PinCodeInput";
 import { useInitMemberCredentials } from "LLM/features/WalletSync/hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "LLM/features/WalletSync/hooks/useSyncWithQrCode";
-import { SpecificError } from "~/newArch/features/WalletSync/components/Error/SpecificError";
-import { ErrorReason } from "~/newArch/features/WalletSync/hooks/useSpecificError";
+import { SpecificError } from "LLM/features/WalletSync/components/Error/SpecificError";
+import { ErrorReason } from "LLM/features/WalletSync/hooks/useSpecificError";
+import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 
 type Props = {
-  currentStep: Steps;
   currency?: CryptoCurrency | TokenCurrency | null;
   doesNotHaveAccount?: boolean;
-  setCurrentStep: (step: Steps) => void;
   setCurrentOption: (option: Options) => void;
   currentOption: Options;
   navigateToChooseSyncMethod: () => void;
@@ -36,23 +35,22 @@ type Props = {
 const StepFlow = ({
   doesNotHaveAccount,
   currency,
-  currentStep,
   setCurrentOption,
   currentOption,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
   onQrCodeScanned,
   qrProcess,
-  setCurrentStep,
   onCreateKey,
 }: Props) => {
+  const { currentStep, setCurrentStep } = useCurrentStep();
   const { memberCredentials } = useInitMemberCredentials();
 
   const { handleStart, handleSendDigits, inputCallback, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
-    if (memberCredentials) handleStart(data, memberCredentials, setCurrentStep);
+    if (memberCredentials) handleStart(data, memberCredentials);
   };
 
   const handlePinCodeSubmit = (input: string) => {
