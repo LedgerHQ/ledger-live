@@ -1,7 +1,14 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { useSelector } from "react-redux";
 import Activation from ".";
 import { TrackScreen } from "~/analytics";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigatorName, ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "../../screens/Synchronize/QrCodeMethod";
@@ -55,6 +62,8 @@ const ActivationFlow = ({
   };
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const { navigate } =
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const getScene = () => {
     switch (currentStep) {
@@ -98,6 +107,15 @@ const ActivationFlow = ({
           return (
             <SpecificError
               primaryAction={navigateToQrCodeMethod}
+              secondaryAction={() => {
+                navigate(NavigatorName.BaseOnboarding, {
+                  screen: NavigatorName.Onboarding,
+                  params: {
+                    screen: ScreenName.OnboardingPostWelcomeSelection,
+                    params: { userHasDevice: true },
+                  },
+                });
+              }}
               error={ErrorReason.NO_BACKUP_ONBOARDING_QRCODE}
             />
           );

@@ -1,6 +1,13 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigatorName, ScreenName } from "~/const";
 import FollowInstructions from "../../components/FollowInstructions";
 
 import GenericErrorView from "~/components/GenericErrorView";
@@ -23,7 +30,11 @@ const GenericFollowInstructionsDrawer = ({
   goToDelete,
   backToKeyError,
   confirmDeleteKey,
+  onRetry,
 }: Props) => {
+  const { navigate } =
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+
   const getScene = () => {
     switch (scene.kind) {
       case SceneKind.DeviceInstructions:
@@ -67,7 +78,16 @@ const GenericFollowInstructionsDrawer = ({
         return (
           <SpecificError
             error={ErrorReason.NO_BACKUP_ONBOARDING_DEVICE}
-            primaryAction={handleClose}
+            primaryAction={onRetry}
+            secondaryAction={() => {
+              navigate(NavigatorName.BaseOnboarding, {
+                screen: NavigatorName.Onboarding,
+                params: {
+                  screen: ScreenName.OnboardingPostWelcomeSelection,
+                  params: { userHasDevice: true },
+                },
+              });
+            }}
           />
         );
     }
