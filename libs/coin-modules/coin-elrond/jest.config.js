@@ -4,5 +4,5 @@ module.exports = {
   coverageDirectory: "coverage",
   collectCoverageFrom: ["src/**/*.ts"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
 };

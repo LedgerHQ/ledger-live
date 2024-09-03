@@ -799,6 +799,9 @@ importers:
       '@formatjs/intl-relativetimeformat':
         specifier: ^11.1.8
         version: 11.2.12
+      '@ledgerhq/coin-elrond':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-elrond
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-evm
@@ -46585,7 +46588,7 @@ snapshots:
       postcss-modules-scope: 3.1.1(postcss@8.4.38)
       postcss-modules-values: 4.0.0(postcss@8.4.38)
       postcss-value-parser: 4.2.0
-      semver: 7.6.2
+      semver: 7.6.3
     optionalDependencies:
       webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
 
@@ -46598,7 +46601,7 @@ snapshots:
       postcss-modules-scope: 3.1.1(postcss@8.4.38)
       postcss-modules-values: 4.0.0(postcss@8.4.38)
       postcss-value-parser: 4.2.0
-      semver: 7.6.2
+      semver: 7.6.3
     optionalDependencies:
       webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.8)
 
@@ -46611,7 +46614,7 @@ snapshots:
       postcss-modules-scope: 3.1.1(postcss@8.4.38)
       postcss-modules-values: 4.0.0(postcss@8.4.38)
       postcss-value-parser: 4.2.0
-      semver: 7.6.2
+      semver: 7.6.3
     optionalDependencies:
       webpack: 5.94.0
 
