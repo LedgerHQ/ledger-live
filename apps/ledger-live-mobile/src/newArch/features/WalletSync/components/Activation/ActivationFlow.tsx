@@ -1,6 +1,8 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import Activation from ".";
 import { TrackScreen } from "~/analytics";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "../../screens/Synchronize/QrCodeMethod";
 import { Options, Steps } from "../../types/Activation";
@@ -52,6 +54,8 @@ const ActivationFlow = ({
     if (input && inputCallback && nbDigits === input.length) handleSendDigits(inputCallback, input);
   };
 
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
   const getScene = () => {
     switch (currentStep) {
       case Steps.Activation:
@@ -90,12 +94,15 @@ const ActivationFlow = ({
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
 
       case Steps.UnbackedError:
-        return (
-          <SpecificError
-            primaryAction={onCreateKey}
-            error={ErrorReason.NO_BACKUP_ONBOARDING_QRCODE}
-          />
-        );
+        if (!hasCompletedOnboarding) {
+          return (
+            <SpecificError
+              primaryAction={navigateToQrCodeMethod}
+              error={ErrorReason.NO_BACKUP_ONBOARDING_QRCODE}
+            />
+          );
+        }
+        return <SpecificError primaryAction={onCreateKey} error={ErrorReason.NO_BACKUP} />;
 
       case Steps.AlreadyBacked:
         return (
