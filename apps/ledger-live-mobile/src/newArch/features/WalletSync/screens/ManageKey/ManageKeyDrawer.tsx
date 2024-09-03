@@ -1,6 +1,5 @@
 import React from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
-import { TrackScreen } from "~/analytics";
 
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
@@ -16,6 +15,7 @@ const ManageKeyDrawer = ({
   scene,
   onClickDelete,
   onClickConfirm,
+  handleCancel,
 }: HookResult) => {
   const getScene = () => {
     if (deleteMutation.error) {
@@ -40,17 +40,14 @@ const ManageKeyDrawer = ({
       return <ManageKey onClickDelete={onClickDelete} />;
     }
     if (scene === Scene.Confirm) {
-      return <ConfirmManageKey onClickConfirm={onClickConfirm} onCancel={handleClose} />;
+      return <ConfirmManageKey onClickConfirm={onClickConfirm} onCancel={handleCancel} />;
     }
   };
 
   return (
-    <>
-      <TrackScreen />
-      <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>
-        {getScene()}
-      </QueuedDrawer>
-    </>
+    <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>
+      {getScene()}
+    </QueuedDrawer>
   );
 };
 

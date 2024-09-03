@@ -2,7 +2,7 @@ import { allure } from "allure-playwright";
 import { Page, TestInfo } from "@playwright/test";
 import { promisify } from "util";
 import fs from "fs";
-import { takeScreenshot } from "./speculos";
+import { takeScreenshot } from "@ledgerhq/live-common/e2e/speculos";
 
 const readFileAsync = promisify(fs.readFile);
 

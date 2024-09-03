@@ -25,5 +25,9 @@
     "src/test-helpers/bridge-integration-suite.ts",
     "src/config.ts"
   ],
-  "ignoreUnresolved": ["follow-redirects"]
+  "ignoreUnresolved": [
+    "follow-redirects",
+    "form-data",
+    "proxy-from-env"
+  ]
 }
