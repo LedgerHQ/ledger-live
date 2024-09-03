@@ -11,7 +11,7 @@ import { useTheme } from "@react-navigation/native";
 import LText from "~/components/LText";
 import { DataRow, TextValueField } from "~/components/ValidateOnDeviceDataRow";
 import Info from "~/icons/Info";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type FieldProps = {
