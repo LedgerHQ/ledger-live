@@ -64,13 +64,13 @@ describe("CosmosApi", () => {
 
     it("should return the correct account based on type", async () => {
       mockAxiosResponse({
-          account: {
-            "@type": "/cosmos.auth.v1beta1.BaseAccount",
-            account_number: 1,
-            sequence: 0,
-            pub_key: { key: "k", "@type": "type" },
-          },
-      })
+        account: {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          account_number: 1,
+          sequence: 0,
+          pub_key: { key: "k", "@type": "type" },
+        },
+      });
 
       const account = await cosmosApi.getAccount("addr");
       expect(account).toEqual({
@@ -81,21 +81,21 @@ describe("CosmosApi", () => {
       });
 
       mockAxiosResponse({
-          account: {
-            "@type": "/ethermint.types.v1.EthAccount",
-            account_number: 1,
-            sequence: 0,
-            pub_key: { key: "k", "@type": "type" },
+        account: {
+          "@type": "/ethermint.types.v1.EthAccount",
+          account_number: 1,
+          sequence: 0,
+          pub_key: { key: "k", "@type": "type" },
 
-            base_account: {
-              address: "address",
-              pub_key: { key: "k2", "@type": "type2" },
-              account_number: 2,
-              sequence: 3,
-            },
-            code_hash: "codeHash",
+          base_account: {
+            address: "address",
+            pub_key: { key: "k2", "@type": "type2" },
+            account_number: 2,
+            sequence: 3,
           },
-      })
+          code_hash: "codeHash",
+        },
+      });
 
       const ethermintAccount = await cosmosApi.getAccount("addr");
       expect(ethermintAccount).toEqual({
@@ -228,8 +228,8 @@ describe("CosmosApi", () => {
 
     it("should throw an error when the network call does not return gas used", async () => {
       mockAxiosResponse({
-        gas_info: {}
-      })
+        gas_info: {},
+      });
 
       await expect(cosmosApi.simulate([])).rejects.toThrowError();
     });
@@ -601,7 +601,7 @@ describe("CosmosApi", () => {
 
   describe("broadcastTransaction", () => {
     it("should throw a SequenceNumberError exception in case of sequence number error", async () => {
-      mockAxiosResponse({ tx_response: { code: 32 } })
+      mockAxiosResponse({ tx_response: { code: 32 } });
       await expect(
         cosmosApi.broadcast({
           signedOperation: { operation: {} as Operation, signature: "signedOperation" },
