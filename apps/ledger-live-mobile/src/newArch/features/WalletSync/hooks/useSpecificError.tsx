@@ -201,7 +201,6 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
     [ErrorReason.NO_BACKUP_ONBOARDING_DEVICE]: {
       icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
       title: t("walletSync.synchronize.unbackedOnboarding.title"),
-      description: t("walletSync.synchronize.unbackedOnboarding.description"),
       cta: t("walletSync.synchronize.unbackedOnboarding.cta"),
       ctaSecondary: t("walletSync.synchronize.unbackedOnboarding.cancel"),
       analyticsPage: AnalyticsPage.OnBoardingDeviceNoBackup,
