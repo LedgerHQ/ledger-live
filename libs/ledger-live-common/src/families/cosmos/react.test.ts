@@ -1,18 +1,22 @@
 /**
  * @jest-environment jsdom
  */
-import "../../__tests__/test-helpers/dom-polyfill";
 import invariant from "invariant";
-import { renderHook, act } from "@testing-library/react";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import { getCurrentCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
+import preloadedMockData from "@ledgerhq/coin-cosmos/preloadedData.mock";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { setEnv } from "@ledgerhq/live-env";
+import { CurrencyBridge } from "@ledgerhq/types-live";
+import { act, renderHook } from "@testing-library/react";
+import "../../__tests__/test-helpers/dom-polyfill";
 import { getAccountCurrency } from "../../account";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
-import { getCryptoCurrencyById } from "../../currencies";
-import { setEnv } from "@ledgerhq/live-env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
-import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "../../config/sharedConfig";
-import cryptoFactory from "./chain/chain";
+import { getCryptoCurrencyById } from "../../currencies";
+import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
+import * as hooks from "./react";
 import type {
   CosmosAccount,
   CosmosDelegation,
@@ -21,10 +25,6 @@ import type {
   CosmosValidatorItem,
   Transaction,
 } from "./types";
-import { getCurrentCosmosPreloadData } from "./preloadedData";
-import preloadedMockData from "./preloadedData.mock";
-import * as hooks from "./react";
-import { CurrencyBridge } from "@ledgerhq/types-live";
 
 const localCache = {};
 const cache = makeBridgeCacheSystem({

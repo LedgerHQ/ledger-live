@@ -33,7 +33,7 @@ import type {
   TransactionRaw as cosmosTransactionRaw,
   TransactionStatus as cosmosTransactionStatus,
   TransactionStatusRaw as cosmosTransactionStatusRaw,
-} from "../families/cosmos/types";
+} from "@ledgerhq/coin-cosmos/types/index";
 import type {
   Transaction as crypto_orgTransaction,
   TransactionRaw as crypto_orgTransactionRaw,

@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest-mainnet.onomy.io/cosmos/staking/v1beta1/delegations/onomy1v2mp0m7k96dm9qv60fkspcqlzpkzrwnecy8mat","method":"GET"},"response":{"body":{"delegation_responses":[],"pagination":{"next_key":null,"total":"0"}}}}

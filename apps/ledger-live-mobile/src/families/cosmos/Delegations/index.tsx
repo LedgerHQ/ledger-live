@@ -26,7 +26,7 @@ import {
   AccountBannerState,
   getAccountBannerState as getCosmosBannerState,
 } from "@ledgerhq/live-common/families/cosmos/banner";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { AccountLike } from "@ledgerhq/types-live";
