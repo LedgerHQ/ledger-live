@@ -146,7 +146,7 @@ export function Welcome() {
   const {
     analyticsOptInPromptProps,
     isFeatureFlagsAnalyticsPrefDisplayed,
-    openAnalitycsOptInPrompt,
+    openAnalyticsOptInPrompt,
     onSubmit,
   } = useAnalyticsOptInPrompt({
     entryPoint: EntryPoint.onboarding,
@@ -182,7 +182,7 @@ export function Welcome() {
             variant="main"
             onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
-                ? openAnalitycsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
+                ? openAnalyticsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
                 : handleAcceptTermsAndGetStarted();
             }}
             mb="5"
@@ -194,7 +194,7 @@ export function Welcome() {
             variant="main"
             onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
-                ? openAnalitycsOptInPrompt("Onboarding", buyNanoX)
+                ? openAnalyticsOptInPrompt("Onboarding", buyNanoX)
                 : buyNanoX();
             }}
             outline={true}

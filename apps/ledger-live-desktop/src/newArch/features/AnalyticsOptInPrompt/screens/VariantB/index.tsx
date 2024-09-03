@@ -22,7 +22,7 @@ const VariantB = ({ entryPoint, onSubmit, step, setStep }: VariantBProps) => {
   });
   return (
     <>
-      <Flex flexDirection={"column"} mx={"40px"} height={"100%"} pt={"40"}>
+      <Flex flexDirection={"column"} mx={"40px"} height={"100%"} pt={"40"} overflowY={"scroll"}>
         {step === 0 ? (
           <AnalyticsScreen
             handleOpenPrivacyPolicy={handleOpenPrivacyPolicy}
