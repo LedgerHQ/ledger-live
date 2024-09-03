@@ -185,6 +185,22 @@ type CurrencyData = {
   signature: string;
 };
 
+type ProvidersDataResponse = {
+  name: string;
+  signature: string;
+  public_key: string;
+  public_key_curve: string;
+}[];
+
+type ProviderData = {
+  name: string;
+  publicKey: {
+    curve: string;
+    data: Buffer;
+  };
+  signature: Buffer;
+};
+
 let providerDataCache: Record<string, ProviderConfig & AdditionalProviderConfig> | null = null;
 
 export const getSwapProvider = async (
@@ -199,7 +215,7 @@ export const getSwapProvider = async (
   return res[providerName.toLowerCase()];
 };
 
-function transformData(providersData) {
+function transformData(providersData: ProvidersDataResponse): Record<string, ProviderData> {
   const transformed = {};
   providersData.forEach(provider => {
     const key = provider.name.toLowerCase();
@@ -215,14 +231,17 @@ function transformData(providersData) {
   return transformed;
 }
 
-export const getProvidersData = async () => {
-  const providersData = await network({
-    url:
-      "https://crypto-assets-service.api.ledger.com/v1/partners" +
-      "?output=name,signature,public_key,public_key_curve" +
-      "&service_name=swap",
+export const getProvidersData = async (): Promise<Record<string, ProviderData>> => {
+  const { data: providersData } = await network<ProvidersDataResponse>({
+    method: "GET",
+    url: "https://crypto-assets-service.api.ledger.com/v1/partners",
+    params: {
+      output: "name,signature,public_key,public_key_curve",
+      service_name: "swap",
+    },
   });
-  return transformData(providersData.data);
+
+  return transformData(providersData);
 };
 
 /**
@@ -236,20 +255,22 @@ export const findExchangeCurrencyData = async (
   currencyId: string,
   type: "tokens" | "coins",
 ): Promise<CurrencyData> => {
-  const currencyData = (await network({
-    url:
-      `https://crypto-assets-service.api.ledger.com/v1/${type}` +
-      "?output=id,exchange_app_config_serialized,exchange_app_signature" +
-      `&id=${currencyId}`,
-  })) as { data: CurrencyDataResponse };
-  // throw errors/warning if many currencies fetched with the same ID, can it happen?
-  if (!currencyData.data.length) {
+  const { data: currencyData } = await network<CurrencyDataResponse>({
+    method: "GET",
+    url: `https://crypto-assets-service.api.ledger.com/v1/${type}`,
+    params: {
+      output: "id,exchange_app_config_serialized,exchange_app_signature",
+      id: currencyId,
+    },
+  });
+  // TODO: maybe throw errors/warning if many currencies fetched with the same ID.
+  if (!currencyData.length) {
     throw new Error(`Currency data not found for id ${currencyId}`);
   }
   return {
-    id: currencyData.data[0].id,
-    config: currencyData.data[0].exchange_app_config_serialized,
-    signature: currencyData.data[0].exchange_app_signature,
+    id: currencyData[0].id,
+    config: currencyData[0].exchange_app_config_serialized,
+    signature: currencyData[0].exchange_app_signature,
   } as CurrencyData;
 };
 
