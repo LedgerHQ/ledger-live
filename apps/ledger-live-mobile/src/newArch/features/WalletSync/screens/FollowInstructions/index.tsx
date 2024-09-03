@@ -30,7 +30,7 @@ const GenericFollowInstructionsDrawer = ({
   goToDelete,
   backToKeyError,
   confirmDeleteKey,
-  onRetry,
+  retry,
 }: Props) => {
   const { navigate } =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
@@ -78,7 +78,7 @@ const GenericFollowInstructionsDrawer = ({
         return (
           <SpecificError
             error={ErrorReason.NO_BACKUP_ONBOARDING_DEVICE}
-            primaryAction={onRetry}
+            primaryAction={retry}
             secondaryAction={() => {
               navigate(NavigatorName.BaseOnboarding, {
                 screen: NavigatorName.Onboarding,

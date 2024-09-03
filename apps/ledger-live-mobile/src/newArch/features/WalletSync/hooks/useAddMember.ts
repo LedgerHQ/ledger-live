@@ -12,7 +12,7 @@ import {
   TrustchainNotAllowed,
 } from "@ledgerhq/trustchain/errors";
 import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
@@ -22,7 +22,6 @@ import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
-  const [DrawerProps, setScene] = useFollowInstructionDrawer();
   const trustchain = useSelector(trustchainSelector);
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
@@ -42,8 +41,8 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
     [dispatch, navigation],
   );
 
-  useEffect(() => {
-    const addMember = async () => {
+  return useFollowInstructionDrawer(
+    async setScene => {
       try {
         if (!device) return;
         if (!memberCredentialsRef.current) {
@@ -80,11 +79,7 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
           setScene({ kind: SceneKind.GenericError, error });
         }
       }
-    };
-    if (device && device.deviceId) {
-      addMember();
-    }
-  }, [setScene, device, dispatch, sdk, transitionToNextScreen, hasCompletedOnboarding]);
-
-  return DrawerProps;
+    },
+    [device, sdk, transitionToNextScreen, hasCompletedOnboarding],
+  );
 }
