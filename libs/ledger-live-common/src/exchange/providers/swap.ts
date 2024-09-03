@@ -265,7 +265,10 @@ export const findExchangeCurrencyData = async (
   });
   // TODO: maybe throw errors/warning if many currencies fetched with the same ID.
   if (!currencyData.length) {
-    throw new Error(`Currency data not found for id ${currencyId}`);
+    throw new Error(`Exchange, missing configuration for ${currencyId}`);
+  }
+  if (currencyData.length !== 1) {
+    throw new Error(`Exchange, multiple configurations found for ${currencyId}`);
   }
   return {
     id: currencyData[0].id,
