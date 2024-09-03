@@ -59,7 +59,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "0.26.1",
+    "axios": "0.28.0",
     "bech32": "^1.1.3",
     "bignumber.js": "^9.1.2",
     "cosmjs-types": "0.2.1",
