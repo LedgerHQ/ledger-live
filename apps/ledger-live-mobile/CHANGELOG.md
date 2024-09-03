@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.49.0-nightly.5
+
+### Minor Changes
+
+- [#7714](https://github.com/LedgerHQ/ledger-live/pull/7714) [`5ecbe88`](https://github.com/LedgerHQ/ledger-live/commit/5ecbe88474032b724d6c408ab63be08aa567e0fc) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Improve account names module to avoid erasing custom names with the default ones when two instances are pushing around the same time
+
+- [#7702](https://github.com/LedgerHQ/ledger-live/pull/7702) [`248901b`](https://github.com/LedgerHQ/ledger-live/commit/248901b235ea2ace10bebea77453592494636371) Thanks [@Justkant](https://github.com/Justkant)! - feat(web3hub): new bottom modal to select network and account with dapp browser v3
+  Small perf improvement for dapp browser v3 dapps initial load
+  Lots of small visual improvements, polish and bugfixes
+  Update app screen header url
+
+### Patch Changes
+
+- [#7720](https://github.com/LedgerHQ/ledger-live/pull/7720) [`7a5a837`](https://github.com/LedgerHQ/ledger-live/commit/7a5a837fab67939b59b885f1db1978b44c55a1dd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework LedgerSync Analytics
+
+- [#7712](https://github.com/LedgerHQ/ledger-live/pull/7712) [`a84f3d3`](https://github.com/LedgerHQ/ledger-live/commit/a84f3d344e37301dc76f182c0f99b0b01106abfa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handle TrustchainAlreadyInitialized & TrustchainAlreadyInitializedWithOtherSeed on Scan QR
+
+- [#7717](https://github.com/LedgerHQ/ledger-live/pull/7717) [`9a4a3bc`](https://github.com/LedgerHQ/ledger-live/commit/9a4a3bce55a2332ae4bdb13cc2bdbbb97ed7693b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix minor bugs on both LL
+
+- Updated dependencies [[`5ecbe88`](https://github.com/LedgerHQ/ledger-live/commit/5ecbe88474032b724d6c408ab63be08aa567e0fc), [`a84f3d3`](https://github.com/LedgerHQ/ledger-live/commit/a84f3d344e37301dc76f182c0f99b0b01106abfa), [`8e0ac04`](https://github.com/LedgerHQ/ledger-live/commit/8e0ac04ac8cdaaee59633ebdf219e5dcf44a10df), [`531bc03`](https://github.com/LedgerHQ/ledger-live/commit/531bc03228d486e4b18f10df83b7b9bfdbd025b8), [`9d58923`](https://github.com/LedgerHQ/ledger-live/commit/9d5892327b43e219b3b672e7a56e1e2d6413a83b)]:
+  - @ledgerhq/live-wallet@0.6.0-nightly.7
+  - @ledgerhq/trustchain@0.3.0-nightly.7
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.5
+  - @ledgerhq/native-ui@0.23.4-nightly.2
+  - @ledgerhq/live-common@34.8.0-nightly.5
+
 ## 3.49.0-nightly.4
 
 ### Minor Changes

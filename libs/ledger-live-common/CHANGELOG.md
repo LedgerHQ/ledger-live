@@ -1,5 +1,15 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.5
+
+### Patch Changes
+
+- [#7702](https://github.com/LedgerHQ/ledger-live/pull/7702) [`9d58923`](https://github.com/LedgerHQ/ledger-live/commit/9d5892327b43e219b3b672e7a56e1e2d6413a83b) Thanks [@Justkant](https://github.com/Justkant)! - fix: missing deps in useEffect array
+  And cleanup unused code and picomatch dependency
+- Updated dependencies [[`5ecbe88`](https://github.com/LedgerHQ/ledger-live/commit/5ecbe88474032b724d6c408ab63be08aa567e0fc), [`bb1ca23`](https://github.com/LedgerHQ/ledger-live/commit/bb1ca23865c787ef18b7623162487e3045c22ded)]:
+  - @ledgerhq/live-wallet@0.6.0-nightly.7
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.5
+
 ## 34.8.0-nightly.4
 
 ### Patch Changes

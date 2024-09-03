@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.5
+
+### Minor Changes
+
+- [#7714](https://github.com/LedgerHQ/ledger-live/pull/7714) [`5ecbe88`](https://github.com/LedgerHQ/ledger-live/commit/5ecbe88474032b724d6c408ab63be08aa567e0fc) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Improve account names module to avoid erasing custom names with the default ones when two instances are pushing around the same time
+
+### Patch Changes
+
+- [#7712](https://github.com/LedgerHQ/ledger-live/pull/7712) [`a84f3d3`](https://github.com/LedgerHQ/ledger-live/commit/a84f3d344e37301dc76f182c0f99b0b01106abfa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handle TrustchainAlreadyInitialized & TrustchainAlreadyInitializedWithOtherSeed on Scan QR
+
+- [#7717](https://github.com/LedgerHQ/ledger-live/pull/7717) [`9a4a3bc`](https://github.com/LedgerHQ/ledger-live/commit/9a4a3bce55a2332ae4bdb13cc2bdbbb97ed7693b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix minor bugs on both LL
+
+- [#7702](https://github.com/LedgerHQ/ledger-live/pull/7702) [`7430d8e`](https://github.com/LedgerHQ/ledger-live/commit/7430d8e2bb97be33dd2a21c31de8b9984f28a702) Thanks [@Justkant](https://github.com/Justkant)! - perf: improve perf by using the networks instead of listing currencies to match
+
+- Updated dependencies [[`5ecbe88`](https://github.com/LedgerHQ/ledger-live/commit/5ecbe88474032b724d6c408ab63be08aa567e0fc), [`a84f3d3`](https://github.com/LedgerHQ/ledger-live/commit/a84f3d344e37301dc76f182c0f99b0b01106abfa), [`8e0ac04`](https://github.com/LedgerHQ/ledger-live/commit/8e0ac04ac8cdaaee59633ebdf219e5dcf44a10df), [`9d58923`](https://github.com/LedgerHQ/ledger-live/commit/9d5892327b43e219b3b672e7a56e1e2d6413a83b)]:
+  - @ledgerhq/live-wallet@0.6.0-nightly.7
+  - @ledgerhq/trustchain@0.3.0-nightly.7
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.5
+  - @ledgerhq/live-common@34.8.0-nightly.5
+
 ## 2.86.0-nightly.4
 
 ### Minor Changes

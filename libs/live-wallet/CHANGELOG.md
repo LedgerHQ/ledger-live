@@ -1,5 +1,16 @@
 # @ledgerhq/live-wallet
 
+## 0.6.0-nightly.7
+
+### Minor Changes
+
+- [#7714](https://github.com/LedgerHQ/ledger-live/pull/7714) [`5ecbe88`](https://github.com/LedgerHQ/ledger-live/commit/5ecbe88474032b724d6c408ab63be08aa567e0fc) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Improve account names module to avoid erasing custom names with the default ones when two instances are pushing around the same time
+
+### Patch Changes
+
+- Updated dependencies [[`a84f3d3`](https://github.com/LedgerHQ/ledger-live/commit/a84f3d344e37301dc76f182c0f99b0b01106abfa)]:
+  - @ledgerhq/trustchain@0.3.0-nightly.7
+
 ## 0.6.0-nightly.6
 
 ### Patch Changes

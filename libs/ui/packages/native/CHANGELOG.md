@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.23.4-nightly.2
+
+### Patch Changes
+
+- [#7702](https://github.com/LedgerHQ/ledger-live/pull/7702) [`531bc03`](https://github.com/LedgerHQ/ledger-live/commit/531bc03228d486e4b18f10df83b7b9bfdbd025b8) Thanks [@Justkant](https://github.com/Justkant)! - refactor: merge BottomDrawer containerStyle prop
+
 ## 0.23.4-nightly.1
 
 ### Patch Changes

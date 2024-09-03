@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.1.5-nightly.5
+
+### Patch Changes
+
+- [#7719](https://github.com/LedgerHQ/ledger-live/pull/7719) [`8e0ac04`](https://github.com/LedgerHQ/ledger-live/commit/8e0ac04ac8cdaaee59633ebdf219e5dcf44a10df) Thanks [@thesan](https://github.com/thesan)! - Fix the "Expected signature to be an Uint8Array with length 64" error
+
 ## 0.1.5-nightly.4
 
 ### Patch Changes

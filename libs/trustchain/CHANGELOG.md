@@ -1,5 +1,14 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.7
+
+### Patch Changes
+
+- [#7712](https://github.com/LedgerHQ/ledger-live/pull/7712) [`a84f3d3`](https://github.com/LedgerHQ/ledger-live/commit/a84f3d344e37301dc76f182c0f99b0b01106abfa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Handle TrustchainAlreadyInitialized & TrustchainAlreadyInitializedWithOtherSeed on Scan QR
+
+- Updated dependencies [[`8e0ac04`](https://github.com/LedgerHQ/ledger-live/commit/8e0ac04ac8cdaaee59633ebdf219e5dcf44a10df)]:
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.5
+
 ## 0.3.0-nightly.6
 
 ### Patch Changes

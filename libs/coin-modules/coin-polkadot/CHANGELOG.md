@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 1.2.1-nightly.5
+
+### Patch Changes
+
+- [#7695](https://github.com/LedgerHQ/ledger-live/pull/7695) [`bb1ca23`](https://github.com/LedgerHQ/ledger-live/commit/bb1ca23865c787ef18b7623162487e3045c22ded) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Rename network model types
+
 ## 1.2.1-nightly.4
 
 ### Patch Changes

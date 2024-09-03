@@ -1,5 +1,15 @@
 # web-tools
 
+## 0.9.0-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`5ecbe88`](https://github.com/LedgerHQ/ledger-live/commit/5ecbe88474032b724d6c408ab63be08aa567e0fc), [`a84f3d3`](https://github.com/LedgerHQ/ledger-live/commit/a84f3d344e37301dc76f182c0f99b0b01106abfa), [`8e0ac04`](https://github.com/LedgerHQ/ledger-live/commit/8e0ac04ac8cdaaee59633ebdf219e5dcf44a10df), [`9d58923`](https://github.com/LedgerHQ/ledger-live/commit/9d5892327b43e219b3b672e7a56e1e2d6413a83b)]:
+  - @ledgerhq/live-wallet@0.6.0-nightly.7
+  - @ledgerhq/trustchain@0.3.0-nightly.7
+  - @ledgerhq/hw-trustchain@0.1.5-nightly.5
+  - @ledgerhq/live-common@34.8.0-nightly.5
+
 ## 0.9.0-nightly.4
 
 ### Patch Changes
