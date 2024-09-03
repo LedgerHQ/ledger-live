@@ -4253,6 +4253,28 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  etherlink: {
+    type: "CryptoCurrency",
+    id: "etherlink",
+    coinType: CoinType.ETH,
+    name: "Etherlink",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "etherlink",
+    color: "#38FF9C",
+    family: "evm",
+    units: ethereumUnits("XTZ", "XTZ"),
+    ethereumLikeInfo: {
+      chainId: 42793,
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.etherlink.com/tx/$hash",
+        address: "https://explorer.etherlink.com/address/$address",
+        token: "https://explorer.etherlink.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
