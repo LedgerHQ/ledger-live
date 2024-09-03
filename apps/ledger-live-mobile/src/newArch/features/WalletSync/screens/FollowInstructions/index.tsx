@@ -6,8 +6,10 @@ import FollowInstructions from "../../components/FollowInstructions";
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { ConfirmManageKey } from "../../components/ManageKey/Confirm";
-import { DeletionError, ErrorReason } from "../../components/ManageInstances/DeletionError";
+import { DeletionError } from "../../components/ManageInstances/DeletionError";
 import { DrawerProps, SceneKind } from "../../hooks/useFollowInstructionDrawer";
+import { SpecificError } from "../../components/Error/SpecificError";
+import { ErrorReason } from "../../hooks/useSpecificError";
 
 type Props = DrawerProps & {
   isOpen: boolean;
@@ -41,8 +43,20 @@ const GenericFollowInstructionsDrawer = ({
         return (
           <DeletionError
             error={ErrorReason.UNSECURED}
-            tryAgain={handleClose}
-            goToDelete={goToDelete}
+            primaryAction={handleClose}
+            secondaryAction={goToDelete}
+          />
+        );
+
+      case SceneKind.AlreadySecuredSameSeed:
+        return <SpecificError error={ErrorReason.SAME_SEED} primaryAction={handleClose} />;
+
+      case SceneKind.AlreadySecuredOtherSeed:
+        return (
+          <SpecificError
+            error={ErrorReason.OTHER_SEED}
+            secondaryAction={handleClose}
+            primaryAction={goToDelete}
           />
         );
 

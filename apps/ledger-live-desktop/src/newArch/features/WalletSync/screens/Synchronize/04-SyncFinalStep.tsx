@@ -1,7 +1,11 @@
 import React from "react";
 import { Success } from "../../components/Success";
 import { useTranslation } from "react-i18next";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import {
+  AnalyticsPage,
+  useLedgerSyncAnalytics,
+  AnalyticsFlow,
+} from "../../hooks/useLedgerSyncAnalytics";
 import { useDispatch } from "react-redux";
 import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -10,7 +14,7 @@ export default function SyncFinalStep() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const title = "walletSync.success.synch.title";
   const desc = "walletSync.success.synch.desc";
@@ -20,7 +24,7 @@ export default function SyncFinalStep() {
     onClickTrack({
       button: "Close",
       page: AnalyticsPage.KeyUpdated,
-      flow: "Wallet Sync",
+      flow: AnalyticsFlow,
     });
   };
 
@@ -29,7 +33,7 @@ export default function SyncFinalStep() {
     onClickTrack({
       button: "Sync with another Ledger Live",
       page: AnalyticsPage.KeyUpdated,
-      flow: "Wallet Sync",
+      flow: AnalyticsFlow,
     });
   };
 

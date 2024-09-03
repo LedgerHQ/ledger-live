@@ -5701,6 +5701,13 @@
       "title": "Something went wrong. Please reconnect your device",
       "description": "{{message}}"
     },
+    "TrustchainEjected": {
+      "title": "Not Synced anymore"
+    },
+    "TrustchainNotAllowed": {
+      "title": "You are not in sync anymore",
+      "description": "Please try again or contact Ledger Support."
+    },
     "TrustchainNotFound": {
       "title": "Something went wrong while fetching your data",
       "description": "Please try again or contact Ledger Support."
@@ -6219,6 +6226,24 @@
     },
     "BitcoinInfrastructureError": {
       "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
+    },
+    "TonExcessFee": {
+      "title": "It constitutes a token transfer. You will pay 0.1 TON in fees, and any extra will be returned to you."
+    },
+    "TonNotEnoughBalanceInParentAccount": {
+      "title": "Insufficient funds in main account (TON) to calculate fees. The minimum required balance is 0.1 TON."
+    },
+    "TonMinimumRequired": {
+      "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+    },
+    "BackupAppDataError": {
+      "title": "Error during app data backup"
+    },
+    "RestoreAppDataError": {
+      "title": "Error restoring app data"
+    },
+    "DeleteAppDataError": {
+      "title": "Error deleting app data"
     }
   },
   "cryptoOrg": {
@@ -6414,6 +6439,7 @@
   },
   "walletSync": {
     "title": "Ledger Sync",
+    "close": "Close",
     "activate": {
       "title": "Sync your accounts across all platforms",
       "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
@@ -6454,6 +6480,16 @@
       "info": "If you have lost your Ledger, don't worry! You can still delete your key. This action will simultaneously delete your data and unsynchronize all currently synced instances.",
       "cta": "Connect another Ledger",
       "ctaDelete": "Delete my encryption key"
+    },
+    "alreadySecureError": {
+      "title": "This app is already secured by this Ledger",
+      "description": "If you are attempting to create a new backup, please connect the Ledger device you used to create your other encryption key.",
+      "cta": "I understand"
+    },
+    "alreadySecureOtherSeedError": {
+      "title": "You can’t use this Ledger to sync",
+      "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
+      "cta": "Delete my encryption key"
     },
     "autoRemoveError": {
       "title": "You can’t remove the current instance",

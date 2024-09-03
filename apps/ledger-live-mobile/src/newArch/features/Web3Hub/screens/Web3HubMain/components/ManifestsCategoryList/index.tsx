@@ -9,9 +9,10 @@ type Props = {
   title: string;
   categoryId: string;
   navigation: MainProps["navigation"];
+  testID?: string;
 };
 
-const ManifestsCategoryList = ({ title, categoryId, navigation }: Props) => {
+const ManifestsCategoryList = ({ title, categoryId, navigation, testID }: Props) => {
   const { data, isLoading, onEndReached } = useManifestsListViewModel(categoryId);
 
   const goToApp = useCallback(
@@ -37,7 +38,7 @@ const ManifestsCategoryList = ({ title, categoryId, navigation }: Props) => {
         onPressItem={disclaimer.onPressItem}
         isLoading={isLoading}
         onEndReached={onEndReached}
-        testID="web3hub-clear-signing-scroll"
+        testID={testID}
       />
     </>
   ) : null;

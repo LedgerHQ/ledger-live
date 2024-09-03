@@ -93,6 +93,7 @@ export class MockSDK implements TrustchainSDK {
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<TrustchainResult> {
+    this.invalidateJwt();
     assertLiveCredentials(memberCredentials);
     let type = trustchains.has("mock-root-id")
       ? TrustchainResultType.restored
@@ -164,6 +165,7 @@ export class MockSDK implements TrustchainSDK {
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
+    this.invalidateJwt();
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
     assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);
@@ -175,6 +177,12 @@ export class MockSDK implements TrustchainSDK {
       trustchain,
       memberCredentials,
     );
+
+    if (!this.deviceJwtAcquired) {
+      callbacks?.onStartRequestUserInteraction();
+      this.deviceJwtAcquired = true; // simulate device auth interaction
+      callbacks?.onEndRequestUserInteraction();
+    }
 
     callbacks?.onStartRequestUserInteraction();
     // simulate device interaction

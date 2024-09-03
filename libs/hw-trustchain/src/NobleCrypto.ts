@@ -59,7 +59,10 @@ export class NobleCryptoSecp256k1 implements Crypto {
       6 + signature[3],
       6 + signature[3] + signature[5 + signature[3]],
     );
-    return { R: R.slice(R.length - PRIVATE_KEY_SIZE), S: S.slice(S.length - PRIVATE_KEY_SIZE) };
+    return {
+      R: this.enforceLength(R, PRIVATE_KEY_SIZE),
+      S: this.enforceLength(S, PRIVATE_KEY_SIZE),
+    };
   }
 
   async sign(message: Uint8Array, keyPair: KeyPair): Promise<Uint8Array> {
@@ -103,6 +106,19 @@ export class NobleCryptoSecp256k1 implements Crypto {
     c.set(a);
     c.set(b, a.length);
     return c;
+  }
+
+  private enforceLength(buffer: Uint8Array, length: number): Uint8Array {
+    if (buffer.length > length) {
+      return buffer.slice(buffer.length - length); // truncate extra bytes from the start
+    } else if (buffer.length < length) {
+      const padded = new Uint8Array(length);
+      const start = length - buffer.length;
+      padded.set(Array(start).fill(0));
+      padded.set(buffer, start);
+      return padded;
+    }
+    return buffer;
   }
 
   private pad(message: Uint8Array): Uint8Array {

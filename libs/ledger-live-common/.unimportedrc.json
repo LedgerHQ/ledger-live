@@ -71,6 +71,7 @@
     "src/exchange/swap/utils/index.ts",
     "src/exchange/swap/webApp/index.ts",
     "src/e2e/index.ts",
+    "src/e2e/speculos.ts",
     "src/explorer.ts",
     "src/explorers.ts",
     "src/families/algorand/tokens.ts",
@@ -328,7 +329,10 @@
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/walletSync/getEnvironmentParams.ts",
+    "src/device/use-cases/appDataBackup/deleteAppData.ts",
+    "src/device/use-cases/appDataBackup/deleteAppDataUseCase.ts",
+    "src/device/use-cases/appDataBackup/deleteAppDataUseCaseDI.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/hw-transport-mocker",

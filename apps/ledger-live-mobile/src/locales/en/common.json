@@ -946,9 +946,34 @@
       "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
       "errorCode": "Code: {{errorCode}}"
     },
+    "TrustchainEjected": {
+      "title": "Not Synced anymore"
+    },
+    "TrustchainNotAllowed": {
+      "title": "You are not in sync anymore",
+      "description": "Please try again or contact Ledger Support."
+    },
     "TrustchainNotFound": {
       "title": "Something went wrong while fetching your data",
       "description": "Please try again or contact Ledger Support."
+    },
+    "TonExcessFee": {
+      "title": "It constitutes a token transfer. You will pay 0.1 TON in fees, and any extra will be returned to you."
+    },
+    "TonNotEnoughBalanceInParentAccount": {
+      "title": "Insufficient funds in main account (TON) to calculate fees. The minimum required balance is 0.1 TON."
+    },
+    "TonMinimumRequired": {
+      "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+    },
+    "BackupAppDataError": {
+      "title": "Error during app data backup"
+    },
+    "RestoreAppDataError": {
+      "title": "Error restoring app data"
+    },
+    "DeleteAppDataError": {
+      "title": "Error deleting app data"
     }
   },
   "crash": {
@@ -6737,6 +6762,11 @@
       "title": "Continue on your Ledger {{wording}}",
       "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
     },
+    "loading": {
+      "title": "Hang tight...",
+      "activation": "Your data is being end-to-end encrypted... ",
+      "synch": "We are updating the synched instances..."
+    },
     "success": {
       "sync": "Synchronization successful!",
       "syncDesc": "Changes in your accounts will now automatically appear across all apps and platforms.",
@@ -6795,8 +6825,6 @@
       },
       "errors": {
         "fetching": "Something went wrong while fetching your synchronized instances.",
-        "trustchain": "Unexpected falsy trustchain",
-        "memberCredentials": "Unexpected falsy member credentials",
         "ledgerSyncUnavailable": "Ledger Sync is currently unavailable. This doesn’t have any impact on your assets."
       }
     },
@@ -6846,9 +6874,28 @@
         },
         "unbacked": {
           "title": "You need to create your encryption key first",
-          "desc": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
+          "description": "Please make sure you’ve created an encryption key on one of your Ledger Live apps before continuing your synchronization.",
           "cta": "Create your encryption key"
+        },
+        "backedWithDifferentSeeds": {
+          "title": "These apps have different backups",
+          "description": "Delete your encryption key from one of the apps and try again",
+          "cta": "I understand"
+        },
+        "alreadyBacked": {
+          "title": "These apps are already secured by a Ledger",
+          "cta": "I understand"
         }
+      },
+      "alreadySecureError": {
+        "title": "This app is already secured by this Ledger",
+        "description": "If you are attempting to create a new backup, please connect the Ledger device you used to create your other encryption key.",
+        "cta": "I understand"
+      },
+      "alreadySecureOtherSeedError": {
+        "title": "You can’t use this Ledger to sync",
+        "description": "If you still wish to synchronize the two apps, please delete your key and try again.",
+        "cta": "Delete my encryption key"
       }
     }
   },
@@ -6877,8 +6924,20 @@
         "placeholder": "Search or type a URL"
       },
       "clearSigning": {
-        "title": "Clear signing",
-        "description": "Clear signing allows you to sign a message without revealing the content of the message to the app. This is useful for privacy and security reasons."
+        "title": "Clear signing"
+      }
+    },
+    "app": {
+      "selectAccountModal": {
+        "networkHeader": {
+          "title": "Choose a network"
+        },
+        "accountHeader": {
+          "title": "Choose an account"
+        },
+        "addAccountItem": {
+          "name": "Add an account"
+        }
       }
     }
   }

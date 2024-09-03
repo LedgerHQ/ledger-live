@@ -34,7 +34,7 @@ export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions
     member2,
     callbacks,
   );
-  expect(totalInteractionCounter).toBe(4); // there are 2 interactions for trustchain addition
+  expect(totalInteractionCounter).toBe(5); // there are 2 interactions for trustchain addition
 
   // destroy the trustchain
   await sdk1.destroyTrustchain(newTrustchain, member1creds);

@@ -39,7 +39,7 @@ export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions
     sdk1.removeMember(deviceId, trustchain, member1creds, member2, callbacks),
   ).rejects.toThrow(UserRefusedOnDevice);
   expect(interactionCounter).toBe(0);
-  expect(totalInteractionCounter).toBe(2);
+  expect(totalInteractionCounter).toBe(3);
 
   // make sure the member2 is still there
   expect(await sdk2.getMembers(trustchain, member2creds)).toEqual([member1, member2]);

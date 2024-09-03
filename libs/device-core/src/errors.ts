@@ -27,3 +27,5 @@ export const InvalidBackupState = createCustomErrorClass("InvalidBackupState");
 export const InvalidRestoreState = createCustomErrorClass("InvalidRestoreState");
 // 0x6734
 export const InvalidChunkLength = createCustomErrorClass("InvalidChunkLength");
+// 0x5501
+export const UserRefusedOnDevice = createCustomErrorClass("UserRefusedOnDevice");

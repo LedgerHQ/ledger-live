@@ -31,7 +31,7 @@ export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions
     callbacks,
   );
   expect(type2).toBe("restored");
-  expect(totalInteractionCounter).toBe(2); // no more interaction happened
+  expect(totalInteractionCounter).toBe(3); // one more device auth interaction happened
   expect(t1).toEqual(t2);
 
   // verify that a second member can join the trustchain and get the same trustchain
@@ -69,6 +69,6 @@ export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions
     totalInteractionCounter,
   }).toEqual({
     interactionCounter: 0, // total of interaction+- is back at 0
-    totalInteractionCounter: 4,
+    totalInteractionCounter: 5,
   });
 }

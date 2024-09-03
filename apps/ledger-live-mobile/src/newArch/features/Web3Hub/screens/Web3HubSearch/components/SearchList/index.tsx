@@ -28,12 +28,14 @@ const noop = () => {};
 
 const renderItem = ({
   item,
+  index,
   extraData = noop,
 }: {
+  index: number;
   item: AppManifest;
   extraData?: (manifest: AppManifest) => void;
 }) => {
-  return <SearchItem manifest={item} onPress={extraData} />;
+  return <SearchItem isFirst={index === 0} manifest={item} onPress={extraData} />;
 };
 
 export default function SearchList({ navigation, search, onScroll, pt = 0 }: Props) {

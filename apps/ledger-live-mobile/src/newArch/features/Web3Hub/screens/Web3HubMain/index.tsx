@@ -8,6 +8,8 @@ import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";
 import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "~/components/TabBar/shared";
 import Header, { ANIMATION_HEIGHT, TOTAL_HEADER_HEIGHT } from "./components/Header";
 import ManifestsCategoryList from "./components/ManifestsCategoryList";
+import { Text } from "@ledgerhq/native-ui";
+import { TrackScreen } from "~/analytics";
 
 const PADDING_BOTTOM = MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM;
 
@@ -19,6 +21,8 @@ export default function Web3HubMain({ navigation }: MainProps) {
 
   return (
     <SafeAreaView edges={edges} style={{ flex: 1 }}>
+      <TrackScreen category="Web3Hub" page="Main" />
+
       <Header title={t("web3hub.main.header.title")} navigation={navigation} layoutY={layoutY} />
 
       <View
@@ -27,20 +31,32 @@ export default function Web3HubMain({ navigation }: MainProps) {
         }}
       >
         <ManifestsList
-          title={t("web3hub.main.manifestsList.title")}
           navigation={navigation}
           onScroll={scrollHandler}
           pt={TOTAL_HEADER_HEIGHT}
           // Using this padding to keep the view visible under the tab button
           pb={PADDING_BOTTOM}
           headerComponent={
-            <ManifestsCategoryList
-              title={t(`web3hub.main.clearSigning.title`, {
-                defaultValue: "clear Signing",
-              })}
-              navigation={navigation}
-              categoryId={"clear signing"}
-            />
+            <>
+              <ManifestsCategoryList
+                title={t("web3hub.main.clearSigning.title")}
+                navigation={navigation}
+                categoryId={"clear signing"}
+              />
+              <Text mt={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
+                {t("web3hub.main.manifestsList.title")}
+              </Text>
+              <Text
+                mt={2}
+                mb={5}
+                numberOfLines={1}
+                variant="body"
+                mx={5}
+                accessibilityRole="header"
+              >
+                {t("web3hub.components.manifestsList.description")}
+              </Text>
+            </>
           }
         />
       </View>

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Card } from "../../components/Card";
 import styled, { useTheme } from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 type Props = {
   goToQRCode: () => void;

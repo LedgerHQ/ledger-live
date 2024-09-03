@@ -7,7 +7,11 @@ import QRCode from "~/renderer/components/QRCode";
 import { useQRCode } from "../../hooks/useQRCode";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { AnalyticsPage, useWalletSyncAnalytics } from "../../hooks/useWalletSyncAnalytics";
+import {
+  AnalyticsFlow,
+  AnalyticsPage,
+  useLedgerSyncAnalytics,
+} from "../../hooks/useLedgerSyncAnalytics";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 
 const animation = {
@@ -37,7 +41,7 @@ export default function SynchWithQRCodeStep() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { onClickTrack } = useWalletSyncAnalytics();
+  const { onClickTrack } = useLedgerSyncAnalytics();
 
   const handleSelectOption = (option: Options) => {
     controls.start({
@@ -49,6 +53,7 @@ export default function SynchWithQRCodeStep() {
     onClickTrack({
       button: option,
       page: AnalyticsPage.SyncWithQR,
+      flow: AnalyticsFlow,
     });
   };
 

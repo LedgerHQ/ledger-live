@@ -25,7 +25,13 @@ import getApi from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-trustchain/Crypto";
 import { log } from "@ledgerhq/logs";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { TrustchainEjected, TrustchainNotAllowed, TrustchainOutdated } from "./errors";
+import {
+  TrustchainAlreadyInitialized,
+  TrustchainAlreadyInitializedWithOtherSeed,
+  TrustchainEjected,
+  TrustchainNotAllowed,
+  TrustchainOutdated,
+} from "./errors";
 import { HWDeviceProvider } from "./HWDeviceProvider";
 import { genericWithJWT } from "./auth";
 
@@ -97,7 +103,10 @@ export class SDK implements TrustchainSDK {
     memberCredentials: MemberCredentials,
     callbacks?: TrustchainDeviceCallbacks,
     topic?: Uint8Array,
+    currentTrustchainId?: string,
   ): Promise<TrustchainResult> {
+    this.invalidateJwt();
+
     let type = TrustchainResultType.restored;
 
     const withJwt: WithJwt = job =>
@@ -105,6 +114,15 @@ export class SDK implements TrustchainSDK {
     const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
 
     let trustchains = await withJwt(this.api.getTrustchains);
+
+    if (currentTrustchainId) {
+      if (
+        Object.keys(trustchains).length > 0 &&
+        Object.keys(trustchains).find(key => key === currentTrustchainId)
+      ) {
+        throw new TrustchainAlreadyInitialized();
+      } else throw new TrustchainAlreadyInitializedWithOtherSeed();
+    }
 
     if (Object.keys(trustchains).length === 0) {
       log("trustchain", "getOrCreateTrustchain: no trustchain yet, let's create one");
@@ -211,6 +229,8 @@ export class SDK implements TrustchainSDK {
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
+    this.invalidateJwt();
+
     const withJwt: WithJwt = job =>
       this.hwDeviceProvider.withJwt(deviceId, job, "cache", callbacks);
     const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);

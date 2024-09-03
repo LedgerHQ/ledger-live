@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { AnalyticsPage } from "../../hooks/useWalletSyncAnalytics";
+import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import { LogoWrapper } from "../../components/LogoWrapper";
 
 type Props = {

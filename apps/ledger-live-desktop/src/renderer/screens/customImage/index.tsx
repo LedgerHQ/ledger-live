@@ -36,6 +36,7 @@ import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useTrack } from "~/renderer/analytics/segment";
 import DeviceModelPicker from "~/renderer/components/CustomImage/DeviceModelPicker";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
+import RemoveCustomImage from "../manager/DeviceDashboard/DeviceInformationSummary/RemoveCustomImage";
 
 type Props = {
   imageUri?: string;
@@ -44,6 +45,7 @@ type Props = {
   reopenPreviousDrawer?: () => void;
   deviceModelId: DeviceModelId | null;
   hasCustomLockScreen?: boolean;
+  setHasCustomLockScreen?: (value: boolean) => void;
 };
 
 const orderedSteps: Step[] = [
@@ -62,6 +64,7 @@ const CustomImage: React.FC<Props> = props => {
     reopenPreviousDrawer,
     isFromPostOnboardingEntryPoint,
     hasCustomLockScreen,
+    setHasCustomLockScreen,
   } = props;
   const { t } = useTranslation();
   const track = useTrack();
@@ -159,8 +162,9 @@ const CustomImage: React.FC<Props> = props => {
     }, []);
 
   const handleStepTransferResult = useCallback(() => {
+    setHasCustomLockScreen && setHasCustomLockScreen(true);
     setTransferDone(true);
-  }, []);
+  }, [setHasCustomLockScreen]);
 
   const handleError = useCallback(
     (step: Step, error: Error) => {
@@ -236,6 +240,20 @@ const CustomImage: React.FC<Props> = props => {
     <DeviceModelPicker deviceModelId={deviceModelId} onChange={setDeviceModelId} />
   ) : null;
 
+  const [isShowingRemoveCustomImage, setIsShowingRemoveCustomImage] = useState(false);
+  const onClickRemoveCustomImage = useCallback(() => {
+    setIsShowingRemoveCustomImage(true);
+  }, []);
+
+  if (isShowingRemoveCustomImage) {
+    return (
+      <RemoveCustomImage
+        onClose={() => setDrawer()}
+        onRemoved={setHasCustomLockScreen ? () => setHasCustomLockScreen(false) : undefined}
+      />
+    );
+  }
+
   return (
     <Flex
       flexDirection="column"
@@ -271,6 +289,7 @@ const CustomImage: React.FC<Props> = props => {
               isShowingNftGallery={isShowingNftGallery}
               setIsShowingNftGallery={setIsShowingNftGallery}
               hasCustomLockScreen={hasCustomLockScreen}
+              onClickRemoveCustomImage={onClickRemoveCustomImage}
             />
           </FlowStepper.Indexed.Step>
           <FlowStepper.Indexed.Step

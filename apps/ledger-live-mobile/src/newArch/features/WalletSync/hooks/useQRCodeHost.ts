@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/trustchain/qrcode/index";
-import { InvalidDigitsError, NoTrustchainInitialized } from "@ledgerhq/trustchain/errors";
+import {
+  InvalidDigitsError,
+  NoTrustchainInitialized,
+  QRCodeWSClosed,
+} from "@ledgerhq/trustchain/errors";
+import { MemberCredentials } from "@ledgerhq/trustchain/types";
 import { useDispatch, useSelector } from "react-redux";
 import {
   trustchainSelector,
@@ -13,9 +18,11 @@ import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
+
+const MIN_TIME_TO_REFRESH = 30_000;
 
 interface Props {
   setCurrentStep: (step: Steps) => void;
@@ -36,77 +43,68 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
   );
   const memberName = useInstanceName();
 
-  const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState<string | null>(null);
-  const [error, setError] = useState<Error | null>(null);
   const [pinCode, setPinCode] = useState<string | null>(null);
 
   const navigation = useNavigation();
 
-  const startQRCodeProcessing = useCallback(() => {
-    if (!memberCredentials || isLoading) return;
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: (memberCredentials: MemberCredentials) =>
+      createQRCodeHostInstance({
+        trustchainApiBaseUrl,
+        onDisplayQRCode: url => {
+          setUrl(url);
+        },
+        onDisplayDigits: digits => {
+          setPinCode(digits);
+          setCurrentStep(Steps.PinDisplay);
+        },
+        addMember: async member => {
+          if (trustchain) {
+            await sdk.addMember(trustchain, memberCredentials, member);
+            return trustchain;
+          }
+          throw new NoTrustchainInitialized();
+        },
+        memberCredentials,
+        memberName,
+        initialTrustchainId: trustchain?.rootId,
+      }),
 
-    setError(null);
-    setIsLoading(true);
-    createQRCodeHostInstance({
-      trustchainApiBaseUrl,
-      onDisplayQRCode: url => {
-        setUrl(url);
-      },
-      onDisplayDigits: digits => {
-        setPinCode(digits);
-        setCurrentStep(Steps.PinDisplay);
-      },
-      addMember: async member => {
-        if (trustchain) {
-          await sdk.addMember(trustchain, memberCredentials, member);
-          return trustchain;
-        }
-        throw new NoTrustchainInitialized();
-      },
-      memberCredentials,
-      memberName,
-      alreadyHasATrustchain: !!trustchain,
-    })
-      .then(newTrustchain => {
-        if (newTrustchain) {
-          dispatch(setTrustchain(newTrustchain));
-        }
-        queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
-        navigation.navigate(NavigatorName.WalletSync, {
-          screen: ScreenName.WalletSyncSuccess,
-          params: {
-            created: false,
-          },
-        });
-
-        setUrl(null);
-        setPinCode(null);
-        setIsLoading(false);
-      })
-      .catch(e => {
-        if (e instanceof InvalidDigitsError) {
-          setCurrentStep(Steps.SyncError);
-          return;
-        } else if (e instanceof NoTrustchainInitialized) {
-          setCurrentStep(Steps.UnbackedError);
-          return;
-        }
-        setError(e);
-        throw e;
+    onSuccess: newTrustchain => {
+      if (newTrustchain) {
+        dispatch(setTrustchain(newTrustchain));
+      }
+      queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
+      navigation.navigate(NavigatorName.WalletSync, {
+        screen: ScreenName.WalletSyncLoading,
+        params: {
+          created: false,
+        },
       });
-  }, [
-    trustchain,
-    memberCredentials,
-    isLoading,
-    trustchainApiBaseUrl,
-    memberName,
-    setCurrentStep,
-    sdk,
-    queryClient,
-    navigation,
-    dispatch,
-  ]);
+
+      setUrl(null);
+      setPinCode(null);
+    },
+
+    // Don't use retry here because it always uses a delay despite setting it to 0
+    onError: e => {
+      if (e instanceof QRCodeWSClosed) {
+        const { time } = e as unknown as { time: number };
+        if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
+      }
+      if (e instanceof InvalidDigitsError) {
+        setCurrentStep(Steps.SyncError);
+      }
+      if (e instanceof NoTrustchainInitialized) {
+        setCurrentStep(Steps.UnbackedError);
+      }
+    },
+  });
+
+  const startQRCodeProcessing = useCallback(() => {
+    if (memberCredentials) mutate(memberCredentials);
+  }, [mutate, memberCredentials]);
 
   useEffect(() => {
     if (currentStep === Steps.QrCodeMethod && currentOption === Options.SHOW_QR) {
@@ -117,7 +115,7 @@ export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Pr
   return {
     url,
     error,
-    isLoading,
+    isLoading: isPending,
     startQRCodeProcessing,
     pinCode,
   };
