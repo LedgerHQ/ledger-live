@@ -7,6 +7,17 @@ import { CosmosAPI } from "./Cosmos";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
+const mockAxiosResponse = (data: any) => {
+  return mockedNetwork.mockResolvedValue({
+    data,
+    status: 200,
+    headers: {} as any,
+    statusText: "",
+    config: {
+      headers: {} as any,
+    },
+  });
+};
 
 describe("CosmosApi", () => {
   let cosmosApi: CosmosAPI;
@@ -21,20 +32,28 @@ describe("CosmosApi", () => {
 
   describe("getAccount", () => {
     it("should return base_account if available", async () => {
-      mockedNetwork.mockResolvedValue({
-        data: {
-          account: {
-            account_number: 1,
-            sequence: 0,
-            pub_key: { key: "k", "@type": "type" },
-            base_account: {
-              account_number: 2,
-              sequence: 42,
-              pub_key: { key: "k2", "@type": "type2" },
+      mockedNetwork.mockResolvedValue(
+        Promise.resolve({
+          data: {
+            account: {
+              account_number: 1,
+              sequence: 0,
+              pub_key: { key: "k", "@type": "type" },
+              base_account: {
+                account_number: 2,
+                sequence: 42,
+                pub_key: { key: "k2", "@type": "type2" },
+              },
             },
           },
-        },
-      } as AxiosResponse);
+          status: 200,
+          headers: {} as any,
+          statusText: "",
+          config: {
+            headers: {} as any,
+          },
+        }),
+      );
 
       const account = await cosmosApi.getAccount("addr");
       expect(account.accountNumber).toEqual(2);
@@ -44,16 +63,14 @@ describe("CosmosApi", () => {
     });
 
     it("should return the correct account based on type", async () => {
-      mockedNetwork.mockResolvedValue({
-        data: {
+      mockAxiosResponse({
           account: {
             "@type": "/cosmos.auth.v1beta1.BaseAccount",
             account_number: 1,
             sequence: 0,
             pub_key: { key: "k", "@type": "type" },
           },
-        },
-      } as AxiosResponse);
+      })
 
       const account = await cosmosApi.getAccount("addr");
       expect(account).toEqual({
@@ -63,8 +80,7 @@ describe("CosmosApi", () => {
         pubKeyType: "type",
       });
 
-      mockedNetwork.mockResolvedValue({
-        data: {
+      mockAxiosResponse({
           account: {
             "@type": "/ethermint.types.v1.EthAccount",
             account_number: 1,
@@ -79,8 +95,7 @@ describe("CosmosApi", () => {
             },
             code_hash: "codeHash",
           },
-        },
-      } as AxiosResponse);
+      })
 
       const ethermintAccount = await cosmosApi.getAccount("addr");
       expect(ethermintAccount).toEqual({
@@ -144,9 +159,7 @@ describe("CosmosApi", () => {
           total: "1",
         },
       };
-      mockedNetwork.mockResolvedValue({
-        data: getApiResponseSinceSdk041,
-      } as AxiosResponse);
+      mockAxiosResponse(getApiResponseSinceSdk041);
       const cosmosRedelegations = await cosmosApi.getRedelegations("cosmosDelegatorAddress");
       expect(cosmosRedelegations[0].amount).toEqual(new BigNumber(100));
       expect(cosmosRedelegations[0].completionDate).toEqual(new Date("2023-06-04T15:12:58.567Z"));
@@ -180,9 +193,8 @@ describe("CosmosApi", () => {
         ],
         pagination: { next_key: null, total: "1" },
       };
-      mockedNetwork.mockResolvedValue({
-        data: getApiResponseSinceSdk046,
-      } as AxiosResponse);
+
+      mockAxiosResponse(getApiResponseSinceSdk046);
 
       const cosmosRedelegations = await cosmosApi.getRedelegations("cosmosDelegatorAddress");
       expect(cosmosRedelegations[0].amount).toEqual(new BigNumber(100));
@@ -194,9 +206,7 @@ describe("CosmosApi", () => {
     });
 
     it("should return no redelegations if there are none", async () => {
-      mockedNetwork.mockResolvedValue({
-        data: { redelegation_responses: [], pagination: { next_key: null, total: "0" } },
-      } as AxiosResponse);
+      mockAxiosResponse({ redelegation_responses: [], pagination: { next_key: null, total: "0" } });
 
       const cosmosRedelegations = await cosmosApi.getRedelegations("cosmosDelegatorAddress");
       expect(cosmosRedelegations.length).toEqual(0);
@@ -205,21 +215,22 @@ describe("CosmosApi", () => {
 
   describe("simulate", () => {
     it("should return gas used when the network call returns gas used", async () => {
-      mockedNetwork.mockResolvedValue({
+      mockAxiosResponse({
         data: {
           gas_info: {
             gas_used: 42000,
           },
         },
-      } as AxiosResponse);
+      });
       const gas = await cosmosApi.simulate([]);
       expect(gas).toEqual(new BigNumber(42000));
     });
 
     it("should throw an error when the network call does not return gas used", async () => {
-      mockedNetwork.mockResolvedValue({
-        data: { gas_info: {} },
-      } as AxiosResponse);
+      mockAxiosResponse({
+        gas_info: {}
+      })
+
       await expect(cosmosApi.simulate([])).rejects.toThrowError();
     });
 
@@ -590,9 +601,7 @@ describe("CosmosApi", () => {
 
   describe("broadcastTransaction", () => {
     it("should throw a SequenceNumberError exception in case of sequence number error", async () => {
-      mockedNetwork.mockResolvedValue({
-        data: { tx_response: { code: 32 } },
-      } as AxiosResponse);
+      mockAxiosResponse({ tx_response: { code: 32 } })
       await expect(
         cosmosApi.broadcast({
           signedOperation: { operation: {} as Operation, signature: "signedOperation" },
