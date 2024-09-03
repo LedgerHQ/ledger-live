@@ -1,6 +1,5 @@
 import network from "@ledgerhq/live-network/network";
 import { Operation } from "@ledgerhq/types-live";
-import { AxiosResponse } from "axios";
 import BigNumber from "bignumber.js";
 import cryptoFactory from "../chain/chain";
 import { CosmosAPI } from "./Cosmos";
