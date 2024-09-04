@@ -39,6 +39,12 @@ describe("Cosmos delegate flow", () => {
     const usableAmount = testAccount.spendableBalance.minus(COSMOS_MIN_SAFE).minus(COSMOS_MIN_FEES);
     const delegatedAmount = usableAmount.div(100 / delegatedPercent).integerValue();
     const remainingAmount = usableAmount.minus(delegatedAmount);
+    console.log({ usableAmount, delegatedAmount, remainingAmount });
+    console.log({
+      usableAmount: usableAmount.toString(),
+      delegatedAmount: delegatedAmount.toString(),
+      remainingAmount: remainingAmount.toString(),
+    });
 
     await app.stake.selectCurrency(testedCurrency);
     await app.common.selectAccount(testAccount.id);
