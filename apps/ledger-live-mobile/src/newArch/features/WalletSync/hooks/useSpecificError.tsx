@@ -14,6 +14,8 @@ export enum ErrorReason {
   ALREADY_BACKED_SCAN = "already-backed",
   DIFFERENT_BACKUPS = "different-backups",
   NO_BACKUP = "no-backup",
+  NO_BACKUP_ONBOARDING_DEVICE = "no-backup-onboarding-device",
+  NO_BACKUP_ONBOARDING_QRCODE = "no-backup-onboarding-qrcode",
 }
 
 export interface ErrorConfig {
@@ -43,6 +45,11 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
   const onTryAgain = (page: AnalyticsPage) => {
     onClickTrack({ button: AnalyticsButton.UseAnother, page });
   };
+
+  const onTryAnotherLedger = (page: AnalyticsPage) => {
+    onClickTrack({ button: AnalyticsButton.TryAnotherLedger, page });
+  };
+
   const onGoToDelete = (page: AnalyticsPage) => {
     onClickTrack({ button: AnalyticsButton.DeleteKey, page });
   };
@@ -57,6 +64,10 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
 
   const onCreate = (page: AnalyticsPage) => {
     onClickTrack({ button: AnalyticsButton.CreateYourKey, page });
+  };
+
+  const ContinueWihtoutSync = (page: AnalyticsPage) => {
+    onClickTrack({ button: AnalyticsButton.ContinueWihtoutSync, page });
   };
 
   const errorConfig: Record<ErrorReason, ErrorConfig> = {
@@ -168,6 +179,39 @@ export function useSpecificError({ primaryAction, secondaryAction }: SpecificPro
       primaryAction: () => {
         primaryAction();
         onCreate(AnalyticsPage.SyncWithNoKey);
+      },
+    },
+    [ErrorReason.NO_BACKUP_ONBOARDING_QRCODE]: {
+      icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
+      title: t("walletSync.synchronize.qrCode.unbackedOnboarding.title"),
+      description: t("walletSync.synchronize.qrCode.unbackedOnboarding.description"),
+      cta: t("walletSync.synchronize.qrCode.unbackedOnboarding.cta"),
+      ctaSecondary: t("walletSync.synchronize.qrCode.unbackedOnboarding.cancel"),
+      analyticsPage: AnalyticsPage.OnBoardingQRCodeNoBackup,
+      buttonType: "main" as ButtonProps["type"],
+      primaryAction: () => {
+        primaryAction();
+        onTryAgain(AnalyticsPage.OnBoardingQRCodeNoBackup);
+      },
+      secondaryAction: () => {
+        secondaryAction?.();
+        ContinueWihtoutSync(AnalyticsPage.OnBoardingQRCodeNoBackup);
+      },
+    },
+    [ErrorReason.NO_BACKUP_ONBOARDING_DEVICE]: {
+      icon: <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />,
+      title: t("walletSync.synchronize.unbackedOnboarding.title"),
+      cta: t("walletSync.synchronize.unbackedOnboarding.cta"),
+      ctaSecondary: t("walletSync.synchronize.unbackedOnboarding.cancel"),
+      analyticsPage: AnalyticsPage.OnBoardingDeviceNoBackup,
+      buttonType: "main" as ButtonProps["type"],
+      primaryAction: () => {
+        primaryAction();
+        onTryAnotherLedger(AnalyticsPage.OnBoardingDeviceNoBackup);
+      },
+      secondaryAction: () => {
+        secondaryAction?.();
+        ContinueWihtoutSync(AnalyticsPage.OnBoardingDeviceNoBackup);
       },
     },
   };

@@ -10,6 +10,7 @@ import {
   TrustchainResult,
   TrustchainResultType,
   TrustchainLifecycle,
+  GetOrCreateTrustchainCallbacks,
 } from "./types";
 import {
   crypto,
@@ -101,7 +102,7 @@ export class SDK implements TrustchainSDK {
   async getOrCreateTrustchain(
     deviceId: string,
     memberCredentials: MemberCredentials,
-    callbacks?: TrustchainDeviceCallbacks,
+    callbacks?: GetOrCreateTrustchainCallbacks,
     topic?: Uint8Array,
     currentTrustchainId?: string,
   ): Promise<TrustchainResult> {
@@ -114,6 +115,8 @@ export class SDK implements TrustchainSDK {
     const withHw: WithDevice = job => this.hwDeviceProvider.withHw(deviceId, job, callbacks);
 
     let trustchains = await withJwt(this.api.getTrustchains);
+
+    callbacks?.onInitialResponse?.(trustchains);
 
     if (currentTrustchainId) {
       if (

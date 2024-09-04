@@ -6,21 +6,22 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import {
+  NoTrustchainInitialized,
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
   TrustchainNotAllowed,
 } from "@ledgerhq/trustchain/errors";
 import { TrustchainResult, TrustchainResultType } from "@ledgerhq/trustchain/types";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNavigation } from "@react-navigation/native";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
-  const [DrawerProps, setScene] = useFollowInstructionDrawer();
   const trustchain = useSelector(trustchainSelector);
   const dispatch = useDispatch();
   const sdk = useTrustchainSdk();
@@ -28,6 +29,7 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
   const memberCredentialsRef = useRef(memberCredentials);
   const trustchainRef = useRef(trustchain);
   const navigation = useNavigation<StackNavigatorNavigation<WalletSyncNavigatorStackParamList>>();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const transitionToNextScreen = useCallback(
     (trustchainResult: TrustchainResult) => {
@@ -39,8 +41,8 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
     [dispatch, navigation],
   );
 
-  useEffect(() => {
-    const addMember = async () => {
+  return useFollowInstructionDrawer(
+    async setScene => {
       try {
         if (!device) return;
         if (!memberCredentialsRef.current) {
@@ -50,6 +52,10 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
           device.deviceId,
           memberCredentialsRef.current,
           {
+            onInitialResponse: trustchains => {
+              if (hasCompletedOnboarding || Object.keys(trustchains).length > 0) return;
+              else throw new NoTrustchainInitialized();
+            },
             onStartRequestUserInteraction: () =>
               setScene({ kind: SceneKind.DeviceInstructions, device }),
             onEndRequestUserInteraction: () => setScene({ kind: SceneKind.Loader }),
@@ -67,15 +73,13 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
           setScene({ kind: SceneKind.AlreadySecuredSameSeed });
         } else if (error instanceof TrustchainAlreadyInitializedWithOtherSeed) {
           setScene({ kind: SceneKind.AlreadySecuredOtherSeed });
+        } else if (error instanceof NoTrustchainInitialized) {
+          setScene({ kind: SceneKind.UnbackedError });
         } else if (error instanceof Error) {
           setScene({ kind: SceneKind.GenericError, error });
         }
       }
-    };
-    if (device && device.deviceId) {
-      addMember();
-    }
-  }, [setScene, device, dispatch, sdk, transitionToNextScreen]);
-
-  return DrawerProps;
+    },
+    [device, sdk, transitionToNextScreen, hasCompletedOnboarding],
+  );
 }
