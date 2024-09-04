@@ -12,9 +12,9 @@ export default function uninstallAppWithBackup(
   app: ApplicationVersion | App,
   deviceId: DeviceModelId,
   storage: StorageProvider<AppStorageType>,
-  deleteAppDataBackup: boolean = false,
+  skipAppDataBackup: boolean = false,
 ): Observable<any> {
   const backup = backupAppDataUseCaseDI(transport, app.name, deviceId, storage);
   const uninstall = uninstallApp(transport, targetId, app);
-  return deleteAppDataBackup ? uninstall : concat(backup, uninstall);
+  return skipAppDataBackup ? uninstall : concat(backup, uninstall);
 }

@@ -79,7 +79,7 @@ const Dashboard = ({
     () =>
       getEnv("MOCK")
         ? mockExecWithInstalledContext(result?.installed || [])
-        : ({ app, appOp, targetId, deleteAppDataBackup }: ExecArgs) =>
+        : ({ app, appOp, targetId, skipAppDataBackup }: ExecArgs) =>
             withDevice(device.deviceId)(transport =>
               execWithTransport(
                 transport,
@@ -90,7 +90,7 @@ const Dashboard = ({
                 app,
                 modelId: device.modelId,
                 storage,
-                deleteAppDataBackup,
+                skipAppDataBackup,
               }),
             ),
     [device, result, appsBackupEnabled, storage],

@@ -27,7 +27,7 @@ export const initState = (
     currentError: null,
     currentAppOp: null,
     skippedAppOps: [],
-    deleteAppDataBackup: false,
+    skipAppDataBackup: false,
   };
 
   if (appsToRestore) {
@@ -198,7 +198,7 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         installed: [],
-        deleteAppDataBackup: false,
+        skipAppDataBackup: false,
       };
     case "wipe":
       return {
@@ -209,7 +209,7 @@ export const reducer = (state: State, action: Action): State => {
           state.appByName,
           state.installed.map(({ name }) => name),
         ),
-        deleteAppDataBackup: true,
+        skipAppDataBackup: true,
       };
 
     case "updateAll": {
@@ -379,7 +379,7 @@ export const reducer = (state: State, action: Action): State => {
         currentError: null,
         installQueue,
         uninstallQueue,
-        deleteAppDataBackup: true,
+        skipAppDataBackup: true,
       };
     }
   }

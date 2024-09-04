@@ -6,18 +6,8 @@ import {
   restoreAppStorageInit,
 } from "@ledgerhq/device-core";
 import Transport from "@ledgerhq/hw-transport";
-import { Observable, catchError, from, map, of, switchMap } from "rxjs";
-import {
-  AppName,
-  AppStorageType,
-  DeleteAppDataEvent,
-  DeleteAppDataEventType,
-  RestoreAppDataEvent,
-  RestoreAppDataEventType,
-  StorageProvider,
-} from "./types";
-import { deleteAppDataUseCaseDI } from "./deleteAppDataUseCaseDI";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { Observable, catchError, from, of, switchMap } from "rxjs";
+import { AppName, RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
 
 /**
  * Restores the application data for a specific app on a Ledger device.
@@ -30,12 +20,9 @@ import { DeviceModelId } from "@ledgerhq/devices";
 export function restoreAppData(
   transport: Transport,
   appName: AppName,
-  deviceModelId: DeviceModelId,
-  storageProvider: StorageProvider<AppStorageType>,
   appData: string,
-  deleteAppData: typeof deleteAppDataUseCaseDI,
-): Observable<RestoreAppDataEvent | DeleteAppDataEvent> {
-  const obs = new Observable<RestoreAppDataEvent | DeleteAppDataEvent>(subscriber => {
+): Observable<RestoreAppDataEvent> {
+  const obs = new Observable<RestoreAppDataEvent>(subscriber => {
     const chunkData = Buffer.from(appData, "base64");
     const backupSize = chunkData.length;
     const sub = from(restoreAppStorageInit(transport, appName, backupSize))
@@ -67,18 +54,7 @@ export function restoreAppData(
           subscriber.next({
             type: RestoreAppDataEventType.AppDataRestored,
           });
-        }),
-        // Delete the app data from the storage
-        switchMap(() => deleteAppData(appName, deviceModelId, storageProvider)),
-        map(event => {
-          subscriber.next(event);
-          if (
-            event.type === DeleteAppDataEventType.AppDataDeleted ||
-            event.type === DeleteAppDataEventType.NoAppDataToDelete
-          ) {
-            subscriber.complete();
-          }
-          return event;
+          subscriber.complete();
         }),
         catchError(e => {
           // No app data found on the app or the app does not support it

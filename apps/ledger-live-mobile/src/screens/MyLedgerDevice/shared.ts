@@ -19,12 +19,12 @@ export function useApps(
   const enableAppsBackup = useFeature("enableAppsBackup");
 
   const exec: Exec = useCallback(
-    args =>
+    ({ skipAppDataBackup, ...args }) =>
       withDevice(device.deviceId)(transport =>
         execWithTransport(
           transport,
           enableAppsBackup?.enabled,
-        )({ ...args, storage, modelId: device.modelId }),
+        )({ ...args, storage, modelId: device.modelId, skipAppDataBackup }),
       ),
     [device, enableAppsBackup, storage],
   );

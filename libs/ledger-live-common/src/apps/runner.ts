@@ -57,7 +57,7 @@ export const runAppOp = ({
         app,
         modelId: deviceModel.id,
         ...(storage ? { storage } : {}),
-        ...(state.deleteAppDataBackup ? { deleteAppDataBackup: true } : {}),
+        ...(state.skipAppDataBackup ? { skipAppDataBackup: true } : {}),
       }),
     ).pipe(
       throttleTime(100),

@@ -6,7 +6,7 @@ import {
   RestoreAppDataEvent,
   StorageProvider,
 } from "./types";
-import { Observable } from "rxjs";
+import { Observable, switchMap } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { restoreAppDataUseCase } from "./restoreAppDataUseCase";
 import { restoreAppData } from "./restoreAppData";
@@ -28,13 +28,6 @@ export function restoreAppDataUseCaseDI(
   storageProvider: StorageProvider<AppStorageType>,
 ): Observable<RestoreAppDataEvent | DeleteAppDataEvent> {
   return restoreAppDataUseCase(appName, deviceModelId, storageProvider, data =>
-    restoreAppData(
-      transport,
-      appName,
-      deviceModelId,
-      storageProvider,
-      data,
-      deleteAppDataUseCaseDI,
-    ),
-  );
+    restoreAppData(transport, appName, data),
+  ).pipe(switchMap(() => deleteAppDataUseCaseDI(appName, deviceModelId, storageProvider)));
 }
