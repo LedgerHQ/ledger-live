@@ -338,6 +338,7 @@
     "@types/bs58check",
     "@types/pako",
     "@types/qs",
+    "bech32",
     "bip32",
     "bip39",
     "tsx",
