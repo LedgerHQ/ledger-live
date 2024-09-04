@@ -2,6 +2,7 @@
   "entry": [
     "src/index.ts",
     "src/bridge/js.ts",
+    "src/config.ts",
     "src/network/index.ts",
     "src/signer.ts"
   ],
