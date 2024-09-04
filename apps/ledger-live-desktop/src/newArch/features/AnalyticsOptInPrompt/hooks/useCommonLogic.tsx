@@ -30,7 +30,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
 
   const dispatch = useDispatch();
 
-  const [isAnalitycsOptInPromptOpened, setIsAnalitycsOptInPromptOpened] = useState<boolean>(false);
+  const [isAnalyticsOptInPromptOpened, setIsAnalyticsOptInPromptOpened] = useState<boolean>(false);
 
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
   const flow = trackingKeysByFlow?.[entryPoint];
@@ -45,12 +45,12 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     [ABTestingVariants.variantB]: privacyPolicyUrl,
   };
 
-  const openAnalitycsOptInPrompt = useCallback(
+  const openAnalyticsOptInPrompt = useCallback(
     (routePath: string, callBack: () => void) => {
-      setIsAnalitycsOptInPromptOpened(true);
+      setIsAnalyticsOptInPromptOpened(true);
       setNextStep(() => callBack);
     },
-    [setIsAnalitycsOptInPromptOpened],
+    [setIsAnalyticsOptInPromptOpened],
   );
 
   const isEntryPointIncludedInFlagParams = lldAnalyticsOptInPromptFlag?.params?.entryPoints
@@ -71,7 +71,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   );
 
   const onSubmit = () => {
-    setIsAnalitycsOptInPromptOpened(false);
+    setIsAnalyticsOptInPromptOpened(false);
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     if (entryPoint === EntryPoint.onboarding) {
       nextStep?.();
@@ -80,8 +80,8 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   };
 
   const analyticsOptInPromptProps = {
-    onClose: () => setIsAnalitycsOptInPromptOpened(false),
-    isOpened: isAnalitycsOptInPromptOpened,
+    onClose: () => setIsAnalyticsOptInPromptOpened(false),
+    isOpened: isAnalyticsOptInPromptOpened,
     entryPoint: entryPoint,
     variant,
   };
@@ -101,8 +101,8 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   };
 
   return {
-    openAnalitycsOptInPrompt,
-    setIsAnalitycsOptInPromptOpened,
+    openAnalyticsOptInPrompt,
+    setIsAnalyticsOptInPromptOpened,
     onSubmit,
     analyticsOptInPromptProps,
     isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,

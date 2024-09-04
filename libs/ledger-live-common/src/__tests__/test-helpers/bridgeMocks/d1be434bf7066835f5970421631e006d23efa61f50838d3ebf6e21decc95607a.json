@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest-mainnet.onomy.io/cosmos/distribution/v1beta1/delegators/onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v/withdraw_address","method":"GET"},"response":{"body":{"withdraw_address":"onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v"}}}

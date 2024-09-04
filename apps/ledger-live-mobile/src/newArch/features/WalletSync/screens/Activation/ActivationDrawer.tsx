@@ -17,7 +17,6 @@ type Props = {
 
 function View({
   isOpen,
-  currentStep,
   hasCustomHeader,
   canGoBack,
   navigateToChooseSyncMethod,
@@ -30,7 +29,6 @@ function View({
   qrProcess,
   currentOption,
   setCurrentOption,
-  setCurrentStep,
 }: ViewProps) {
   const CustomDrawerHeader = () => <DrawerHeader onClose={handleClose} />;
 
@@ -46,14 +44,12 @@ function View({
       >
         <Flex maxHeight={"90%"}>
           <ActivationFlow
-            currentStep={currentStep}
             navigateToChooseSyncMethod={navigateToChooseSyncMethod}
             navigateToQrCodeMethod={navigateToQrCodeMethod}
             qrProcess={qrProcess}
             currentOption={currentOption}
             setOption={setCurrentOption}
             onQrCodeScanned={onQrCodeScanned}
-            setCurrentStep={setCurrentStep}
             onCreateKey={onCreateKey}
           />
         </Flex>

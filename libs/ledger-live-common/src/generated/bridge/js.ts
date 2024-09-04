@@ -1,6 +1,5 @@
 import casper from "../../families/casper/bridge/js";
 import celo from "../../families/celo/bridge/js";
-import cosmos from "../../families/cosmos/bridge/js";
 import crypto_org from "../../families/crypto_org/bridge/js";
 import elrond from "../../families/elrond/bridge/js";
 import filecoin from "../../families/filecoin/bridge/js";
@@ -11,6 +10,7 @@ import vechain from "../../families/vechain/bridge/js";
 import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as bitcoin } from "../../families/bitcoin/setup";
 import { bridge as cardano } from "../../families/cardano/setup";
+import { bridge as cosmos } from "../../families/cosmos/setup";
 import { bridge as evm } from "../../families/evm/setup";
 import { bridge as near } from "../../families/near/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
@@ -25,7 +25,6 @@ import { bridge as ton } from "../../families/ton/setup";
 export default {
   casper,
   celo,
-  cosmos,
   crypto_org,
   elrond,
   filecoin,
@@ -36,6 +35,7 @@ export default {
   algorand,
   bitcoin,
   cardano,
+  cosmos,
   evm,
   near,
   polkadot,

@@ -2,6 +2,7 @@ import { Box, Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
+import PreventNativeBack from "~/components/PreventNativeBack";
 import SafeAreaView from "~/components/SafeAreaView";
 type Props = {
   title: string;
@@ -22,6 +23,7 @@ export function Success({ title, desc, mainButton, secondaryButton, analyticsPag
   const { colors } = useTheme();
   return (
     <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
+      <PreventNativeBack />
       <TrackScreen name={analyticsPage} />
       <Flex flexDirection="column" alignItems="center" justifyContent="space-between" flex={1}>
         <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap={16}>

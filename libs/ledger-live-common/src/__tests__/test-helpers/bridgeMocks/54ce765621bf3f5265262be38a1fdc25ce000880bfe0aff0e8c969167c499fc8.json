@@ -1,0 +1,1 @@
+{"request":{"url":"https://cosmoshub4.coin.ledger.com/cosmos/staking/v1beta1/delegators/osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw/redelegations","method":"GET"},"response":{"body":{"code":13,"message":"hrp does not match bech32 prefix: expected 'cosmos' got 'osmo': internal logic error","details":[]}}}

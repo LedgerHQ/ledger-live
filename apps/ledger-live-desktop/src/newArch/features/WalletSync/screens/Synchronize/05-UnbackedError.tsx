@@ -1,7 +1,7 @@
 import React from "react";
 import { Error } from "../../components/Error";
 import { useTranslation } from "react-i18next";
-import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
+import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
 import { useDispatch } from "react-redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
@@ -9,7 +9,15 @@ import { Flow, Step } from "~/renderer/reducers/walletSync";
 export default function UnbackedError() {
   const { t } = useTranslation();
 
+  const { onClickTrack } = useLedgerSyncAnalytics();
   const dispatch = useDispatch();
+  const onClick = () => {
+    onClickTrack({
+      button: "Create enctryption key",
+      page: AnalyticsPage.UnbackedError,
+    });
+    dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }));
+  };
 
   return (
     <Error
@@ -17,7 +25,7 @@ export default function UnbackedError() {
       description={t("walletSync.synchronize.unbackedError.description")}
       analyticsPage={AnalyticsPage.UnbackedError}
       cta={t("walletSync.synchronize.unbackedError.cta")}
-      onClick={() => dispatch(setFlow({ flow: Flow.Activation, step: Step.DeviceAction }))}
+      onClick={onClick}
       ctaVariant="main"
     />
   );

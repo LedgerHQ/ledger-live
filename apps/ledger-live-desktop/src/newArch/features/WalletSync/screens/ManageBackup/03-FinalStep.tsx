@@ -4,11 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/react-ui";
 import { Error } from "../../components/Error";
 import { BackupDeletedProps } from "./types";
-import {
-  AnalyticsFlow,
-  AnalyticsPage,
-  useLedgerSyncAnalytics,
-} from "../../hooks/useLedgerSyncAnalytics";
+import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
 import { useDispatch } from "react-redux";
 import { setDrawerVisibility } from "~/renderer/actions/walletSync";
 
@@ -24,7 +20,6 @@ export default function BackupDeleted({ isSuccessful }: BackupDeletedProps) {
     onClickTrack({
       button: "Close",
       page: AnalyticsPage.BackupDeleted,
-      flow: AnalyticsFlow,
     });
   };
 
