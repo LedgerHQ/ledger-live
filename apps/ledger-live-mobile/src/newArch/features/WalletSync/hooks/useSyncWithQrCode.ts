@@ -14,8 +14,10 @@ import { Steps } from "../types/Activation";
 import { NavigatorName, ScreenName } from "~/const";
 import { useInstanceName } from "./useInstanceName";
 import { useTrustchainSdk } from "./useTrustchainSdk";
+import { useCurrentStep } from "./useCurrentStep";
 
 export const useSyncWithQrCode = () => {
+  const { setCurrentStep } = useCurrentStep();
   const [nbDigits, setDigits] = useState<number | null>(null);
   const [input, setInput] = useState<string | null>(null);
   const instanceName = useInstanceName();
@@ -48,11 +50,7 @@ export const useSyncWithQrCode = () => {
   }, [navigation]);
 
   const handleStart = useCallback(
-    async (
-      url: string,
-      memberCredentials: MemberCredentials,
-      setCurrentStep: (step: Steps) => void,
-    ) => {
+    async (url: string, memberCredentials: MemberCredentials) => {
       try {
         const newTrustchain = await createQRCodeCandidateInstance({
           memberCredentials,
@@ -94,7 +92,7 @@ export const useSyncWithQrCode = () => {
         throw e;
       }
     },
-    [instanceName, onRequestQRCodeInput, trustchain, dispatch, onSyncFinished, sdk],
+    [instanceName, onRequestQRCodeInput, trustchain, onSyncFinished, sdk, dispatch, setCurrentStep],
   );
 
   const handleSendDigits = useCallback(

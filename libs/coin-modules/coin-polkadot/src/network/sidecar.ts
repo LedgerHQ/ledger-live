@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import network from "@ledgerhq/live-network";
@@ -23,11 +22,11 @@ import type {
   SidecarTransactionBroadcast,
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
-  SidecarConstants,
   BlockInfo,
 } from "./types";
 import { createRegistryAndExtrinsics } from "./common";
 import node from "./node";
+import { log } from "@ledgerhq/logs";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -117,14 +116,7 @@ const fetchControllerAddr = async (addr: string): Promise<string | null> => {
  * @returns {SidecarStakingInfo}
  */
 const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
-  //LIVE-13136: commented for the time being
-  // return node.fetchStakingInfo(addr);
-  const {
-    data,
-  }: {
-    data: SidecarStakingInfo;
-  } = await callSidecar(`/accounts/${addr}/staking-info`);
-  return data;
+  return node.fetchStakingInfo(addr);
 };
 
 /**
@@ -135,14 +127,7 @@ const fetchStakingInfo = async (addr: string): Promise<SidecarStakingInfo> => {
  * @returns {Object}
  */
 const fetchConstants = async (): Promise<Record<string, any>> => {
-  //LIVE-13136: commented for the time being
-  // return node.fetchConstants();
-  const {
-    data,
-  }: {
-    data: SidecarConstants;
-  } = await callSidecar(`/runtime/constants`);
-  return data.consts;
+  return node.fetchConstants();
 };
 
 /**
@@ -192,24 +177,7 @@ const fetchValidators = async (
   status: SidecarValidatorsParamStatus = "all",
   addresses?: SidecarValidatorsParamAddresses,
 ): Promise<SidecarValidators> => {
-  //LIVE-13136: commented for the time being
-  // return node.fetchValidators(status, addresses);
-  let params = {};
-
-  if (status) {
-    params = { ...params, status };
-  }
-
-  if (addresses && addresses.length) {
-    params = { ...params, addresses: addresses.join(",") };
-  }
-
-  const {
-    data,
-  }: {
-    data: SidecarValidators;
-  } = await callSidecar(`/validators?${querystring.stringify(params)}`);
-  return data;
+  return await node.fetchValidators(status, addresses);
 };
 
 /**
@@ -432,17 +400,23 @@ export const getStakingInfo = async (addr: string) => {
  * @returns {PolkadotNomination[}
  */
 const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
-  const nominations = await node.fetchNominations(addr);
+  try {
+    const nominations = await node.fetchNominations(addr);
 
-  if (!nominations) {
+    if (!nominations) {
+      return [];
+    }
+    return nominations.targets.map<PolkadotNomination>(nomination => ({
+      address: nomination.address,
+      value: new BigNumber(nomination.value || 0),
+      status: nomination.status,
+    }));
+  } catch (error) {
+    log("polkadot", `failed to fetch nominations ${addr}`, {
+      error,
+    });
     return [];
   }
-
-  return nominations.targets.map<PolkadotNomination>(nomination => ({
-    address: nomination.address,
-    value: new BigNumber(nomination.value || 0),
-    status: nomination.status,
-  }));
 };
 
 /**

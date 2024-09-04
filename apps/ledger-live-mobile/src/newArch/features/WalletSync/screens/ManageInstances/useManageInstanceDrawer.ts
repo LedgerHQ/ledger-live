@@ -9,6 +9,8 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { ScreenName } from "~/const";
+import { track } from "~/analytics";
+import { AnalyticsButton, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 const messageLog = "Follow Steps on device";
 
@@ -28,6 +30,7 @@ export type HookResult = {
   onClickInstance: (instance: TrustchainMember) => void;
   scene: Scene;
   memberCredentials: MemberCredentials | null;
+  checkInstances: () => void;
 };
 
 export const useManageInstancesDrawer = (): HookResult => {
@@ -42,16 +45,24 @@ export const useManageInstancesDrawer = (): HookResult => {
 
   const openDrawer = useCallback(() => {
     setIsDrawerInstructionsVisible(true);
-
     logDrawer(messageLog, "open");
   }, []);
 
   const closeDrawer = useCallback(() => {
     setIsDrawerInstructionsVisible(false);
     logDrawer(messageLog, "close");
-  }, []);
+
+    track("button_clicked", {
+      button: AnalyticsButton.Close,
+      page: scene === Scene.List ? AnalyticsPage.ManageSyncInstances : AnalyticsPage.AutoRemove,
+    });
+  }, [scene]);
 
   const onClickInstance = (instance: TrustchainMember) => {
+    track("button_clicked", {
+      button: AnalyticsButton.RemoveInstance,
+      page: AnalyticsPage.ManageSyncInstances,
+    });
     navigation.navigate(ScreenName.WalletSyncManageInstancesProcess, {
       member: instance,
     });
@@ -64,6 +75,8 @@ export const useManageInstancesDrawer = (): HookResult => {
 
   const changeScene = (scene: Scene) => setScene(scene);
 
+  const checkInstances = () => memberHook.refetch();
+
   return {
     isDrawerVisible,
     changeScene,
@@ -75,5 +88,6 @@ export const useManageInstancesDrawer = (): HookResult => {
     onClickDelete,
     scene,
     memberCredentials,
+    checkInstances,
   };
 };

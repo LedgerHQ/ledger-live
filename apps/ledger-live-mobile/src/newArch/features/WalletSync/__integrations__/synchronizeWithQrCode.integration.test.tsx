@@ -6,8 +6,6 @@ import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/get
 
 jest.mock("../hooks/useQRCodeHost", () => ({
   useQRCodeHost: () => ({
-    setCurrentStep: jest.fn(),
-    currentStep: jest.fn(),
     currentOption: jest.fn(),
     url: "ledger.com",
   }),

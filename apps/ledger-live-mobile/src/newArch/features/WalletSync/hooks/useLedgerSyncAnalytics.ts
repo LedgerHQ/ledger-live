@@ -4,6 +4,7 @@ export enum AnalyticsPage {
   ActivateLedgerSync = "Activate Ledger Sync",
   ChooseSyncMethod = "Choose sync method",
   BackupCreationSuccess = "Backup creation success",
+  SyncSuccess = "Sync success",
   ScanQRCode = "Scan QR code",
   ShowQRCode = "Show QR code",
   SyncWithQrCode = "Sync with QR code",
@@ -14,16 +15,19 @@ export enum AnalyticsPage {
   LedgerSyncSettings = "Ledger Sync Settings",
   ManageSyncInstances = "Manage synchronized instances",
   RemoveInstanceWrongDevice = "Remove instance wrong device connected",
-  ManageBackup = "Manage backup",
+  RemoveInstanceSuccess = "Instance removal success",
+  ManageBackup = "Manage key",
   ConfirmDeleteBackup = "Confirm delete backup",
+  DeleteBackupSuccess = "Delete key success",
   SyncWithNoKey = "Sync with no key",
   LedgerSyncActivated = "Ledger Sync activated",
-  AutoRemove = "Remove current instance",
-  Unbacked = "Unbacked",
-  OtherSeed = "Other seed",
-  SameSeed = "Same seed",
+  AutoRemove = "Can’t remove current instance",
+  OtherSeed = "You can’t use this Ledger to Sync",
+  SameSeed = "App already secured with this Ledger",
   ScanAttemptWithSameBackup = "Scan attempt with same backup",
   ScanAttemptWithDifferentBackups = "Scan attempt with different backups",
+  OnBoardingQRCodeNoBackup = "Onboarding no backup detected",
+  OnBoardingDeviceNoBackup = "Onboarding this Ledger does not secure a backup",
 }
 
 export enum AnalyticsFlow {
@@ -32,7 +36,7 @@ export enum AnalyticsFlow {
 
 export enum AnalyticsButton {
   SyncYourAccounts = "Sync your accounts",
-  AlreadyCreatedKey = "Already created key",
+  AlreadyCreatedKey = "Already synced a Ledger Live app",
   Close = "Close",
   UseYourLedger = "Use your Ledger",
   ScanQRCode = "Scan a QR code",
@@ -41,7 +45,7 @@ export enum AnalyticsButton {
   TryAgain = "Try again",
   Synchronize = "Synchronize",
   ManageKey = "Manage key",
-  ManageSynchronizations = "Manage Synchronizations",
+  ManageInstances = "Manage instances",
   RemoveInstance = "Remove instance",
   ConnectAnotherLedger = "Connect another Ledger",
   DeleteKey = "Delete key",
@@ -49,8 +53,10 @@ export enum AnalyticsButton {
   Cancel = "Cancel",
   CreateYourKey = "Create your key",
   LedgerSync = "Ledger Sync",
-  UseAnother = "Connect new ledger",
+  UseAnother = "Connect another ledger",
   Understand = "I understand",
+  TryAnotherLedger = "Try another Ledger",
+  ContinueWihtoutSync = "Continue without sync",
 }
 
 type OnClickTrack = {

@@ -107,18 +107,18 @@ export class MockSDK implements TrustchainSDK {
     trustchains.set(trustchain.rootId, trustchain);
 
     if (!this.deviceJwtAcquired) {
-      callbacks?.onStartRequestUserInteraction();
+      callbacks?.onStartRequestUserInteraction?.();
       this.deviceJwtAcquired = true; // simulate device auth interaction
-      callbacks?.onEndRequestUserInteraction();
+      callbacks?.onEndRequestUserInteraction?.();
     }
 
     const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
     // add itself if not yet here
     if (!currentMembers.some(m => m.id === memberCredentials.pubkey)) {
       if (type === TrustchainResultType.restored) type = TrustchainResultType.updated;
-      callbacks?.onStartRequestUserInteraction();
+      callbacks?.onStartRequestUserInteraction?.();
       // simulate device add interaction
-      callbacks?.onEndRequestUserInteraction();
+      callbacks?.onEndRequestUserInteraction?.();
       currentMembers.push({
         id: memberCredentials.pubkey,
         name: this.context.name,
@@ -165,6 +165,7 @@ export class MockSDK implements TrustchainSDK {
     member: TrustchainMember,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
+    this.invalidateJwt();
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
     assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);
@@ -177,13 +178,19 @@ export class MockSDK implements TrustchainSDK {
       memberCredentials,
     );
 
-    callbacks?.onStartRequestUserInteraction();
-    // simulate device interaction
-    callbacks?.onEndRequestUserInteraction();
+    if (!this.deviceJwtAcquired) {
+      callbacks?.onStartRequestUserInteraction?.();
+      this.deviceJwtAcquired = true; // simulate device auth interaction
+      callbacks?.onEndRequestUserInteraction?.();
+    }
 
-    callbacks?.onStartRequestUserInteraction();
+    callbacks?.onStartRequestUserInteraction?.();
     // simulate device interaction
-    callbacks?.onEndRequestUserInteraction();
+    callbacks?.onEndRequestUserInteraction?.();
+
+    callbacks?.onStartRequestUserInteraction?.();
+    // simulate device interaction
+    callbacks?.onEndRequestUserInteraction?.();
 
     const currentMembers = (trustchainMembers.get(trustchain.rootId) || []).filter(
       m => m.id !== member.id,

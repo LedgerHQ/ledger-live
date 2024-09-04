@@ -36,22 +36,24 @@ const WalletSyncManage = () => {
   const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
 
   const goToSync = () => {
+    manageInstancesHook.checkInstances();
     setIsSyncDrawerOpen(true);
-    onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.LedgerSyncActivated });
+    onClickTrack({ button: AnalyticsButton.Synchronize, page: AnalyticsPage.LedgerSyncSettings });
   };
 
   const closeSyncDrawer = () => setIsSyncDrawerOpen(false);
 
   const goToManageBackup = () => {
     manageKeyHook.openDrawer();
-    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.LedgerSyncActivated });
+    onClickTrack({ button: AnalyticsButton.ManageKey, page: AnalyticsPage.LedgerSyncSettings });
   };
 
   const goToManageInstances = () => {
+    manageInstancesHook.checkInstances();
     manageInstancesHook.openDrawer();
     onClickTrack({
-      button: AnalyticsButton.ManageSynchronizations,
-      page: AnalyticsPage.LedgerSyncActivated,
+      button: AnalyticsButton.ManageInstances,
+      page: AnalyticsPage.LedgerSyncSettings,
     });
   };
 

@@ -79,7 +79,9 @@ export const handlers: WalletHandlers = {
     const accountNames = new Map();
     const starredAccountIds = new Set<string>();
     accountsUserData.forEach(accountUserData => {
-      accountNames.set(accountUserData.id, accountUserData.name);
+      if (accountUserData.name) {
+        accountNames.set(accountUserData.id, accountUserData.name);
+      }
       for (const starredId of accountUserData.starredIds) {
         starredAccountIds.add(starredId);
       }
@@ -119,11 +121,10 @@ export const handlers: WalletHandlers = {
   ADD_ACCOUNTS: (state, { payload: { allAccounts, editedNames } }) => {
     const accountNames = new Map(state.accountNames);
     for (const account of allAccounts) {
-      const name =
-        editedNames.get(account.id) ||
-        accountNames.get(account.id) ||
-        getDefaultAccountName(account);
-      accountNames.set(account.id, name);
+      const name = editedNames.get(account.id) || accountNames.get(account.id);
+      if (name && name !== getDefaultAccountName(account)) {
+        accountNames.set(account.id, name);
+      }
     }
     return { ...state, accountNames };
   },

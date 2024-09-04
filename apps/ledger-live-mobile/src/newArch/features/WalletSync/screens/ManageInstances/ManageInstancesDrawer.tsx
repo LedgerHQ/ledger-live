@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
-import { TrackScreen } from "~/analytics";
 
 import GenericErrorView from "~/components/GenericErrorView";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
@@ -63,12 +62,9 @@ const ManageInstancesDrawer = ({
   };
 
   return (
-    <>
-      <TrackScreen />
-      <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>
-        {getScene()}
-      </QueuedDrawer>
-    </>
+    <QueuedDrawer isRequestingToBeOpened={isDrawerVisible} onClose={handleClose}>
+      {getScene()}
+    </QueuedDrawer>
   );
 };
 

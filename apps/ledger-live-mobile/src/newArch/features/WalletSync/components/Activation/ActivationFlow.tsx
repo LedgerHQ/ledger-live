@@ -1,6 +1,15 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import { useSelector } from "react-redux";
 import Activation from ".";
 import { TrackScreen } from "~/analytics";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigatorName, ScreenName } from "~/const";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import ChooseSyncMethod from "../../screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "../../screens/Synchronize/QrCodeMethod";
 import { Options, Steps } from "../../types/Activation";
@@ -12,9 +21,9 @@ import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
 import { SpecificError } from "../Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
+import { useCurrentStep } from "../../hooks/useCurrentStep";
 
 type Props = {
-  currentStep: Steps;
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
   qrProcess: {
@@ -26,33 +35,35 @@ type Props = {
   onQrCodeScanned: () => void;
   currentOption: Options;
   setOption: (option: Options) => void;
-  setCurrentStep: (step: Steps) => void;
   onCreateKey: () => void;
 };
 
 const ActivationFlow = ({
-  currentStep,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
   qrProcess,
   currentOption,
   setOption,
   onQrCodeScanned,
-  setCurrentStep,
   onCreateKey,
 }: Props) => {
+  const { currentStep, setCurrentStep } = useCurrentStep();
   const { memberCredentials } = useInitMemberCredentials();
 
   const { handleStart, handleSendDigits, inputCallback, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
-    if (memberCredentials) handleStart(data, memberCredentials, setCurrentStep);
+    if (memberCredentials) handleStart(data, memberCredentials);
   };
 
   const handlePinCodeSubmit = (input: string) => {
     if (input && inputCallback && nbDigits === input.length) handleSendDigits(inputCallback, input);
   };
+
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const { navigate } =
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const getScene = () => {
     switch (currentStep) {
@@ -92,6 +103,23 @@ const ActivationFlow = ({
         return <SyncError tryAgain={navigateToQrCodeMethod} />;
 
       case Steps.UnbackedError:
+        if (!hasCompletedOnboarding) {
+          return (
+            <SpecificError
+              primaryAction={navigateToQrCodeMethod}
+              secondaryAction={() => {
+                navigate(NavigatorName.BaseOnboarding, {
+                  screen: NavigatorName.Onboarding,
+                  params: {
+                    screen: ScreenName.OnboardingPostWelcomeSelection,
+                    params: { userHasDevice: true },
+                  },
+                });
+              }}
+              error={ErrorReason.NO_BACKUP_ONBOARDING_QRCODE}
+            />
+          );
+        }
         return <SpecificError primaryAction={onCreateKey} error={ErrorReason.NO_BACKUP} />;
 
       case Steps.AlreadyBacked:

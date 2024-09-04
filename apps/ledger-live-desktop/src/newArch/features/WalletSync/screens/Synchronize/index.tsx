@@ -97,11 +97,13 @@ const SynchronizeWallet = forwardRef<BackRef, BackProps>((_props, ref) => {
     Step.AlreadySecuredOtherSeed,
   ];
 
+  const withoutPaddingItems = [Step.SynchronizeLoading];
+
   return (
     <Flex
       flexDirection="column"
       height="100%"
-      paddingX="40px"
+      paddingX={withoutPaddingItems.includes(currentStep) ? 0 : "40px"}
       rowGap="48px"
       alignItems={centeredItems.includes(currentStep) ? "center" : undefined}
       justifyContent={centeredItems.includes(currentStep) ? "center" : undefined}

@@ -1,5 +1,5 @@
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
+import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";

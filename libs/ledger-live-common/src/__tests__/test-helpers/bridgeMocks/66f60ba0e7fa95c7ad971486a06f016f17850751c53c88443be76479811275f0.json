@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest.core.persistence.one/cosmos/staking/v1beta1/delegators/persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd/unbonding_delegations","method":"GET"},"response":{"body":{"unbonding_responses":[],"pagination":{"next_key":null,"total":"0"}}}}

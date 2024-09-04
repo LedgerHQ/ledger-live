@@ -1,7 +1,7 @@
 import React from "react";
 import Loading from "../../components/LoadingStep";
 import { useTranslation } from "react-i18next";
-import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
+import { AnalyticsFlow, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useLoadingStep } from "../../hooks/useLoadingStep";
 import { walletSyncHasTrustchainBeenCreatedSelector } from "~/renderer/reducers/walletSync";
@@ -18,7 +18,7 @@ export default function ActivationLoadingStep() {
 
   return (
     <>
-      <TrackPage category={String(AnalyticsPage.Loading)} />
+      <TrackPage category={String(AnalyticsPage.Loading)} flow={AnalyticsFlow} />
       <Loading title={t(title)} subtitle={t(subtitle)} />
     </>
   );

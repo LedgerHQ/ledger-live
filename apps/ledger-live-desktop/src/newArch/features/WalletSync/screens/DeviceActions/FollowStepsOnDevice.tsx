@@ -17,9 +17,11 @@ const getProductName = (modelId: DeviceModelId) =>
   getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
 export default function FollowStepsOnDevice({ modelId, isDeviceBlocker }: Props) {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
+  const theme = colors.palette.type;
   const { t } = useTranslation();
   const wording = getProductName(modelId);
+
   return (
     <>
       {isDeviceBlocker ? <DeviceBlocker /> : null}

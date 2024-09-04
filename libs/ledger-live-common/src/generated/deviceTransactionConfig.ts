@@ -1,6 +1,5 @@
 import casper from "../families/casper/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
-import cosmos from "../families/cosmos/deviceTransactionConfig";
 import crypto_org from "../families/crypto_org/deviceTransactionConfig";
 import elrond from "../families/elrond/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
@@ -10,6 +9,7 @@ import stacks from "../families/stacks/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
+import cosmos from "@ledgerhq/coin-cosmos/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
@@ -24,7 +24,6 @@ import ton from "@ledgerhq/coin-ton/deviceTransactionConfig";
 export default {
   casper,
   celo,
-  cosmos,
   crypto_org,
   elrond,
   filecoin,
@@ -34,6 +33,7 @@ export default {
   algorand,
   bitcoin,
   cardano,
+  cosmos,
   evm,
   near,
   polkadot,
@@ -46,7 +46,6 @@ export default {
   ton,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "../families/stacks/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/bridge/deviceTransactionConfig";
@@ -54,7 +53,6 @@ import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from 
 
 export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_casper
-  | ExtraDeviceTransactionField_cosmos
   | ExtraDeviceTransactionField_filecoin
   | ExtraDeviceTransactionField_stacks
   | ExtraDeviceTransactionField_polkadot

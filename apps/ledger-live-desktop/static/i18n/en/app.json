@@ -1869,8 +1869,8 @@
       "targetAccount": "Target Account"
     },
     "sell": {
-      "notice": "Verify the Sell details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
-      "confirm": "Confirm Sell transaction"
+      "notice": "Verify the details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+      "confirm": "Confirm transaction"
     },
     "fund": {
       "notice": "Verify the Fund details on your device before sending it. The addresses are exchanged securely so you don't have to verify them.",
@@ -2190,7 +2190,13 @@
   },
   "sell": {
     "title": "Sell",
-    "titleCrypto": "Sell {{currency}}"
+    "titleCrypto": "Sell {{currency}}",
+    "exchangeDrawer": {
+      "completed": {
+        "title": "Transaction broadcast successfully",
+        "description": "Your operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
+      }
+    }
   },
   "receive": {
     "title": "Receive",
@@ -5694,6 +5700,13 @@
     "TransportStatusError": {
       "title": "Something went wrong. Please reconnect your device",
       "description": "{{message}}"
+    },
+    "TrustchainEjected": {
+      "title": "Not Synced anymore"
+    },
+    "TrustchainNotAllowed": {
+      "title": "You are not in sync anymore",
+      "description": "Please try again or contact Ledger Support."
     },
     "TrustchainNotFound": {
       "title": "Something went wrong while fetching your data",

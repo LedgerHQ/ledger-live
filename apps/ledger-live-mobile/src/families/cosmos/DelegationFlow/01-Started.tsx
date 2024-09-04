@@ -5,7 +5,7 @@ import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "~/const";

@@ -31,12 +31,7 @@ export const DeviceNotOnboarded = createCustomErrorClass("DeviceNotOnboarded");
 export const DeviceAlreadySetup = createCustomErrorClass("DeviceAlreadySetup");
 
 export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");
-export const CosmosRedelegationInProgress = createCustomErrorClass("CosmosRedelegationInProgress");
-export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
-  "CosmosDelegateAllFundsWarning",
-);
-export const CosmosTooManyValidators = createCustomErrorClass("CosmosTooManyValidators");
-export const NotEnoughDelegationBalance = createCustomErrorClass("NotEnoughDelegationBalance");
+
 export const RPCHostRequired = createCustomErrorClass("RPCHostRequired");
 export const RPCHostInvalid = createCustomErrorClass("RPCHostInvalid");
 export const RPCUserRequired = createCustomErrorClass("RPCUserRequired");
@@ -129,6 +124,7 @@ export * from "@ledgerhq/coin-framework/errors";
 export * from "@ledgerhq/coin-algorand/errors";
 export * from "@ledgerhq/coin-bitcoin/errors";
 export * from "@ledgerhq/coin-cardano/errors";
+export * from "@ledgerhq/coin-cosmos/errors";
 export * from "@ledgerhq/coin-evm/errors";
 export * from "@ledgerhq/coin-near/errors";
 export * from "@ledgerhq/coin-polkadot/errors";
