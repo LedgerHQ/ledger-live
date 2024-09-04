@@ -179,6 +179,26 @@ describe("EVM Family", () => {
           });
         });
 
+        it("should return a legacy coin transaction when passing a gasPrice and custom feesStrategy", async () => {
+          // @ts-expect-error - TODO: change type to allow gasPrice?
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            feesStrategy: "custom",
+            gasPrice: new BigNumber(1),
+            maxFeePerGas: new BigNumber(0),
+            maxPriorityFeePerGas: new BigNumber(0),
+          });
+
+          expect(tx).toEqual({
+            ...transaction,
+            gasPrice: new BigNumber(1),
+            feesStrategy: "custom",
+            maxFeePerGas: undefined,
+            maxPriorityFeePerGas: undefined,
+            type: 0,
+          });
+        });
+
         it("should create a coin transaction using all amount in the account", async () => {
           const accountWithBalance = {
             ...account,

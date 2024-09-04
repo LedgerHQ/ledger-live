@@ -212,8 +212,10 @@ export const prepareTransaction = async (
     if (transaction.feesStrategy === "custom") {
       return {
         gasPrice: transaction.gasPrice ?? null,
-        maxFeePerGas: transaction.maxFeePerGas ?? null,
-        maxPriorityFeePerGas: transaction.maxPriorityFeePerGas ?? null,
+        maxFeePerGas: transaction.maxFeePerGas?.isZero() ? null : transaction.maxFeePerGas ?? null,
+        maxPriorityFeePerGas: transaction.maxPriorityFeePerGas?.isZero()
+          ? null
+          : transaction.maxPriorityFeePerGas ?? null,
         nextBaseFee: transaction.gasOptions?.medium?.nextBaseFee ?? null,
       };
     }
