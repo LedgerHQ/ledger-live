@@ -358,6 +358,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   ton: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
+// NOTE: use this ?
 export const getSeedIdentifierDerivation = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode,

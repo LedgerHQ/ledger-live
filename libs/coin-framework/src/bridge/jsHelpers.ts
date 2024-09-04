@@ -423,6 +423,7 @@ export const makeScanAccounts =
       }
 
       async function main() {
+        // TODO: use this one ?
         try {
           let derivationModes: DerivationMode[] = [];
           if (scheme === null || scheme === undefined) {
