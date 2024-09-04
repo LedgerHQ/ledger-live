@@ -4259,7 +4259,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.ETH,
     name: "Etherlink",
     managerAppName: "Ethereum",
-    ticker: "ETH",
+    ticker: "XTZ",
     scheme: "etherlink",
     color: "#38FF9C",
     family: "evm",
