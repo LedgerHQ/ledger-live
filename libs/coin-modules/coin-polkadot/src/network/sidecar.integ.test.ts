@@ -32,7 +32,7 @@ describe("sidecar integration test", () => {
       const result = await getStakingProgress();
 
       expect(result).toEqual({
-        activeEra: 1444,
+        activeEra: expect.any(Number),
         bondingDuration: 28,
         electionClosed: true,
         maxNominatorRewardedPerValidator: 128,
@@ -62,14 +62,14 @@ describe("sidecar integration test", () => {
       const result = await getAccount(address);
 
       expect(result).toMatchObject({
-        balance: BigNumber("85888647171"),
+        balance: expect.any(BigNumber),
         // blockHeight: expect.any(Number),
         controller: "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL",
-        lockedBalance: BigNumber("24812660240"),
+        lockedBalance: expect.any(BigNumber),
         nominations: [],
-        nonce: 24,
+        nonce: expect.any(Number),
         numSlashingSpans: 0,
-        spendableBalance: BigNumber("61075986931"),
+        spendableBalance: expect.any(BigNumber),
         stash: "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL",
         unlockedBalance: BigNumber("0"),
         unlockingBalance: BigNumber("0"),
@@ -86,14 +86,13 @@ describe("sidecar integration test", () => {
         expect.arrayContaining([
           expect.objectContaining({
             address: "111B8CxcmnWbuDLyGvgUmRezDCK1brRZmvUuQ6SrFdMyc3S",
-            commission: "1",
+            commission: BigNumber("1"),
             identity: "",
             isElected: true,
             isOversubscribed: false,
-            nominatorsCount: 0,
-            rewardPoints: expect.any(String),
-            selfBonded: "0",
-            totalBonded: "0",
+            nominatorsCount: expect.any(Number),
+            selfBonded: BigNumber("0"),
+            totalBonded: expect.any(BigNumber),
           }),
         ]),
       );

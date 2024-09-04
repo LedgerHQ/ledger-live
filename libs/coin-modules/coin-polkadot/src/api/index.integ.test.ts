@@ -52,7 +52,7 @@ describe("Polkadot Api", () => {
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
       });
-    });
+    }, 20000);
   });
 
   describe("lastBlock", () => {

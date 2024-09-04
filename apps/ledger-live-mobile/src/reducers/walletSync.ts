@@ -5,12 +5,15 @@ import {
   WalletSyncActionTypes,
   WalletSyncPayload,
   WalletSyncSetActivateDrawer,
+  WalletSyncSetActivateStep,
   WalletSyncSetManageKeyDrawerPayload,
 } from "../actions/types";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
 
 export const INITIAL_STATE: WalletSyncState = {
   isManageKeyDrawerOpen: false,
   isActivateDrawerOpen: false,
+  activateDrawerStep: Steps.Activation,
 };
 
 const handlers: ReducerMap<WalletSyncState, WalletSyncPayload> = {
@@ -22,6 +25,10 @@ const handlers: ReducerMap<WalletSyncState, WalletSyncPayload> = {
     ...state,
     isActivateDrawerOpen: (action as Action<WalletSyncSetActivateDrawer>).payload,
   }),
+  [WalletSyncActionTypes.LEDGER_SYNC_SET_ACTIVATE_STEP]: (state, action) => ({
+    ...state,
+    activateDrawerStep: (action as Action<WalletSyncSetActivateStep>).payload,
+  }),
 };
 
 export const storeSelector = (state: State): WalletSyncState => state.walletSync;
@@ -29,5 +36,7 @@ export const manageKeyDrawerSelector = (state: State): boolean =>
   state.walletSync.isManageKeyDrawerOpen;
 export const activateDrawerSelector = (state: State): boolean =>
   state.walletSync.isActivateDrawerOpen;
+export const activateDrawerStepSelector = (state: State): Steps =>
+  state.walletSync.activateDrawerStep;
 
 export default handleActions<WalletSyncState, WalletSyncPayload>(handlers, INITIAL_STATE);

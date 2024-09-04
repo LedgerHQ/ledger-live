@@ -41,7 +41,7 @@ export interface IIdentity {
 }
 export interface IValidator {
   accountId: string;
-  identity: IIdentity;
+  identity: IIdentity | null;
   own: string;
   total: string;
   nominatorsCount: number;

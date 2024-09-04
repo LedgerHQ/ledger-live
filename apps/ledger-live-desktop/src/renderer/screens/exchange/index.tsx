@@ -99,6 +99,10 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
             locale,
             currencyTicker,
             devMode,
+            ...(localManifest?.providerTestBaseUrl && {
+              providerTestBaseUrl: localManifest?.providerTestBaseUrl,
+            }),
+
             ...Object.fromEntries(searchParams.entries()),
           }}
         />
