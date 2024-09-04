@@ -14,6 +14,7 @@ import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/Activat
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { activateDrawerSelector } from "~/reducers/walletSync";
 import { setLedgerSyncActivateDrawer } from "~/actions/walletSync";
+import { useCurrentStep } from "LLM/features/WalletSync/hooks/useCurrentStep";
 
 const WalletSyncRow = () => {
   const { t } = useTranslation();
@@ -22,10 +23,12 @@ const WalletSyncRow = () => {
 
   const isDrawerVisible = useSelector(activateDrawerSelector);
   const dispatch = useDispatch();
+  const { setCurrentStep } = useCurrentStep();
 
   const closeDrawer = useCallback(() => {
     dispatch(setLedgerSyncActivateDrawer(false));
-  }, [dispatch]);
+    setCurrentStep(Steps.Activation);
+  }, [dispatch, setCurrentStep]);
   const trustchain = useSelector(trustchainSelector);
 
   const navigateToWalletSyncActivationScreen = useCallback(() => {
