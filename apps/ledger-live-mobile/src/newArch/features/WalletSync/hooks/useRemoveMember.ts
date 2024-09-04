@@ -67,6 +67,6 @@ export function useRemoveMember({ device, member }: Props): DrawerProps {
         }
       }
     },
-    [member, device, memberCredentials, sdk, transitionToNextScreen, trustchain],
+    [device, member, memberCredentials, sdk, transitionToNextScreen, !trustchain],
   );
 }

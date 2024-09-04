@@ -63,7 +63,7 @@ export function useFollowInstructionDrawer(
 
   useEffect(() => {
     run(setScene);
-  }, [...deps]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, deps); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { scene, retry, goToDelete, backToKeyError, confirmDeleteKey };
 }
