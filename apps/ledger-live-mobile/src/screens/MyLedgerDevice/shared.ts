@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import type { Exec, ListAppsResult } from "@ledgerhq/live-common/apps/index";
 import { useAppsRunner } from "@ledgerhq/live-common/apps/react";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
+import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   AppStorageType,

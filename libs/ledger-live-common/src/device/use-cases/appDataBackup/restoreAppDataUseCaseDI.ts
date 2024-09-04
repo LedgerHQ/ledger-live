@@ -1,9 +1,16 @@
 import Transport from "@ledgerhq/hw-transport";
-import { AppName, AppStorageType, RestoreAppDataEvent, StorageProvider } from "./types";
+import {
+  AppName,
+  AppStorageType,
+  DeleteAppDataEvent,
+  RestoreAppDataEvent,
+  StorageProvider,
+} from "./types";
 import { Observable } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { restoreAppDataUseCase } from "./restoreAppDataUseCase";
 import { restoreAppData } from "./restoreAppData";
+import { deleteAppDataUseCaseDI } from "./deleteAppDataUseCaseDI";
 
 /**
  * Dependency injection function for the restoreAppDataUseCase.
@@ -19,8 +26,15 @@ export function restoreAppDataUseCaseDI(
   appName: AppName,
   deviceModelId: DeviceModelId,
   storageProvider: StorageProvider<AppStorageType>,
-): Observable<RestoreAppDataEvent> {
+): Observable<RestoreAppDataEvent | DeleteAppDataEvent> {
   return restoreAppDataUseCase(appName, deviceModelId, storageProvider, data =>
-    restoreAppData(transport, appName, data),
+    restoreAppData(
+      transport,
+      appName,
+      deviceModelId,
+      storageProvider,
+      data,
+      deleteAppDataUseCaseDI,
+    ),
   );
 }

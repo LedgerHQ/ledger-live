@@ -1,5 +1,10 @@
 import { Observable, firstValueFrom, of } from "rxjs";
-import { RestoreAppDataError, RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
+import {
+  DeleteAppDataEvent,
+  RestoreAppDataError,
+  RestoreAppDataEvent,
+  RestoreAppDataEventType,
+} from "./types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { restoreAppDataUseCase } from "./restoreAppDataUseCase";
 
@@ -27,7 +32,7 @@ describe("restoreAppDataUseCase", () => {
     ];
     for (const event of expectedEvents) {
       const restoreAppDataFnMock = jest.fn(_ => of(event));
-      const restoreAppDataUseCaseObservable: Observable<RestoreAppDataEvent> =
+      const restoreAppDataUseCaseObservable: Observable<RestoreAppDataEvent | DeleteAppDataEvent> =
         restoreAppDataUseCase(appName, deviceModelId, storageProviderMock, restoreAppDataFnMock);
       const firstValue = await firstValueFrom(restoreAppDataUseCaseObservable);
       expect(firstValue).toEqual(event);
@@ -38,12 +43,8 @@ describe("restoreAppDataUseCase", () => {
     const restoreAppDataFnMock = jest.fn(() => of({} as RestoreAppDataEvent));
     jest.spyOn(storageProviderMock, "getItem").mockResolvedValue(null);
 
-    const restoreAppDataUseCaseObservable: Observable<RestoreAppDataEvent> = restoreAppDataUseCase(
-      appName,
-      deviceModelId,
-      storageProviderMock,
-      restoreAppDataFnMock,
-    );
+    const restoreAppDataUseCaseObservable: Observable<RestoreAppDataEvent | DeleteAppDataEvent> =
+      restoreAppDataUseCase(appName, deviceModelId, storageProviderMock, restoreAppDataFnMock);
 
     await firstValueFrom(restoreAppDataUseCaseObservable).catch(e => {
       expect(e).toBeInstanceOf(RestoreAppDataError);

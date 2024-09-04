@@ -1,7 +1,15 @@
 import Transport from "@ledgerhq/hw-transport";
-import { Observable, firstValueFrom, lastValueFrom } from "rxjs";
-import { RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
+import { Observable } from "rxjs";
+import {
+  AppStorageType,
+  DeleteAppDataEvent,
+  DeleteAppDataEventType,
+  RestoreAppDataEvent,
+  RestoreAppDataEventType,
+  StorageProvider,
+} from "./types";
 import { restoreAppData } from "./restoreAppData";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 jest.mock("@ledgerhq/hw-transport");
 jest.mock("@ledgerhq/device-core", () => ({
@@ -17,77 +25,136 @@ describe("restoreAppData", () => {
   let transport: Transport;
   let appName: string;
   let appData: string;
+  let storageProvider: StorageProvider<AppStorageType>;
+  let deviceModelId: DeviceModelId;
+  let deleteAppData: jest.Mock;
 
   beforeEach(() => {
     // Initialize the transport, app name and app data before each test
     transport = {} as unknown as Transport;
     appName = "MyApp";
     appData = Buffer.from(DECODED_STORED_DATA).toString("base64");
+    deviceModelId = DeviceModelId.stax;
+    storageProvider = {
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+    };
+    deleteAppData = jest.fn().mockImplementation(() => {
+      const obs = new Observable<DeleteAppDataEvent>(subscriber => {
+        subscriber.next({
+          type: DeleteAppDataEventType.AppDataDeleteStarted,
+        });
+        subscriber.next({
+          type: DeleteAppDataEventType.AppDataDeleted,
+        });
+        subscriber.complete();
+      });
+      return obs;
+    });
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should restore the app data by emitting relative events sequentially when data size > 255", async () => {
-    const restoreObservable: Observable<RestoreAppDataEvent> = restoreAppData(
+  it("should restore the app data by emitting relative events sequentially when data size > 255", done => {
+    const restoreObservable: Observable<RestoreAppDataEvent | DeleteAppDataEvent> = restoreAppData(
       transport,
       appName,
+      deviceModelId,
+      storageProvider,
       appData,
+      deleteAppData,
     );
-    const events: RestoreAppDataEvent[] = [];
+    const events: (RestoreAppDataEvent | DeleteAppDataEvent)[] = [];
 
-    // Subscribe to the observable to receive the restore events
-    restoreObservable.subscribe((event: RestoreAppDataEvent) => {
-      events.push(event);
+    // Subscribe to the observable to receive the restore and delete events
+    restoreObservable.subscribe({
+      next: (event: RestoreAppDataEvent | DeleteAppDataEvent) => {
+        events.push(event);
+      },
+      complete: () => {
+        expect(events).toHaveLength(7);
+        expect(events[0]).toEqual({
+          type: RestoreAppDataEventType.AppDataInitialized,
+        });
+        expect(events[1]).toEqual({
+          type: RestoreAppDataEventType.Progress,
+          data: expect.any(Number),
+        });
+        expect(events[2]).toEqual({
+          type: RestoreAppDataEventType.Progress,
+          data: expect.any(Number),
+        });
+        expect(events[3]).toEqual({
+          type: RestoreAppDataEventType.Progress,
+          data: expect.any(Number),
+        });
+        expect(events[4]).toEqual({
+          type: RestoreAppDataEventType.AppDataRestored,
+        });
+        expect(events[5]).toEqual({
+          type: DeleteAppDataEventType.AppDataDeleteStarted,
+        });
+        expect(events[6]).toEqual({
+          type: DeleteAppDataEventType.AppDataDeleted,
+        });
+        done();
+      },
+      error: (e: Error) => {
+        done(e);
+      },
     });
-
-    const firstValue: RestoreAppDataEvent = await firstValueFrom(restoreObservable);
-    expect(firstValue).toEqual({
-      type: RestoreAppDataEventType.AppDataInitialized,
-    });
-
-    const lastValue: RestoreAppDataEvent = await lastValueFrom(restoreObservable);
-    expect(lastValue).toEqual({
-      type: RestoreAppDataEventType.AppDataRestored,
-    });
-
-    expect(events).toContainEqual({
-      type: RestoreAppDataEventType.Progress,
-      data: expect.any(Number),
-    });
-
-    expect(events).toHaveLength(5);
   });
 
-  it("should restore the app data by emitting relative events sequentially when data size < 255", async () => {
-    const restoreObservable: Observable<RestoreAppDataEvent> = restoreAppData(
+  it("should restore the app data by emitting relative events sequentially when data size < 255", done => {
+    const restoreObservable: Observable<RestoreAppDataEvent | DeleteAppDataEvent> = restoreAppData(
       transport,
       appName,
-      "Ledger Flex",
+      deviceModelId,
+      storageProvider,
+      appData,
+      deleteAppData,
     );
-    const events: RestoreAppDataEvent[] = [];
+    const events: (RestoreAppDataEvent | DeleteAppDataEvent)[] = [];
 
     // Subscribe to the observable to receive the restore events
-    restoreObservable.subscribe((event: RestoreAppDataEvent) => {
-      events.push(event);
+    restoreObservable.subscribe({
+      next: (event: RestoreAppDataEvent | DeleteAppDataEvent) => {
+        events.push(event);
+      },
+      complete: () => {
+        expect(events).toHaveLength(7);
+        expect(events[0]).toEqual({
+          type: RestoreAppDataEventType.AppDataInitialized,
+        });
+        expect(events[1]).toEqual({
+          type: RestoreAppDataEventType.Progress,
+          data: expect.any(Number),
+        });
+        expect(events[2]).toEqual({
+          type: RestoreAppDataEventType.Progress,
+          data: expect.any(Number),
+        });
+        expect(events[3]).toEqual({
+          type: RestoreAppDataEventType.Progress,
+          data: expect.any(Number),
+        });
+        expect(events[4]).toEqual({
+          type: RestoreAppDataEventType.AppDataRestored,
+        });
+        expect(events[5]).toEqual({
+          type: DeleteAppDataEventType.AppDataDeleteStarted,
+        });
+        expect(events[6]).toEqual({
+          type: DeleteAppDataEventType.AppDataDeleted,
+        });
+        done();
+      },
+      error: (e: Error) => {
+        done(e);
+      },
     });
-
-    const firstValue: RestoreAppDataEvent = await firstValueFrom(restoreObservable);
-    expect(firstValue).toEqual({
-      type: RestoreAppDataEventType.AppDataInitialized,
-    });
-
-    const lastValue: RestoreAppDataEvent = await lastValueFrom(restoreObservable);
-    expect(lastValue).toEqual({
-      type: RestoreAppDataEventType.AppDataRestored,
-    });
-
-    expect(events).toContainEqual({
-      type: RestoreAppDataEventType.Progress,
-      data: expect.any(Number),
-    });
-
-    expect(events).toHaveLength(3);
   });
 });

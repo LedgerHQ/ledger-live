@@ -101,6 +101,7 @@ const DeviceDashboard = ({
   const reduxDispatch = useDispatch();
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
   const isFirstCustomImageUpdate = useRef<boolean>(true);
+
   useEffect(() => {
     if (isFirstCustomImageUpdate.current) {
       isFirstCustomImageUpdate.current = false;
@@ -111,8 +112,10 @@ const DeviceDashboard = ({
       });
     }
   }, [dispatch, lastSeenCustomImage]);
+
   const { installQueue, uninstallQueue, currentError } = state;
   const jobInProgress = installQueue.length > 0 || uninstallQueue.length > 0;
+
   const distribution = useMemo(() => {
     const newState = installQueue.length
       ? predictOptimisticState(
@@ -124,21 +127,26 @@ const DeviceDashboard = ({
       : state;
     return distribute(newState);
   }, [state, installQueue]);
+
   const onCloseDepsInstallModal = useCallback(
     () => setAppInstallDep(undefined),
     [setAppInstallDep],
   );
+
   const onCloseDepsUninstallModal = useCallback(
     () => setAppUninstallDep(undefined),
     [setAppUninstallDep],
   );
+
   const installState =
     installQueue.length > 0 ? (uninstallQueue.length > 0 ? "update" : "install") : "uninstall";
+
   const onCloseError = useCallback(() => {
     dispatch({
       type: "recover",
     });
   }, [dispatch]);
+
   useEffect(() => {
     if (state.installed.length && !hasInstalledApps) {
       reduxDispatch(setHasInstalledApps(true));

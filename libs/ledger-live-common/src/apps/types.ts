@@ -10,6 +10,7 @@ export type ExecArgs = {
   app: App;
   modelId?: DeviceModelId;
   storage?: StorageProvider<AppStorageType>;
+  deleteAppDataBackup?: boolean;
 };
 
 export type Exec = (args: ExecArgs) => Observable<{
@@ -102,6 +103,7 @@ export type State = {
   recentlyInstalledApps: string[];
   installQueue: string[];
   uninstallQueue: string[];
+  deleteAppDataBackup: boolean;
   skippedAppOps: SkippedAppOp[]; // Nb If an AppOp couldn't be completed, track why.
   updateAllQueue: string[]; // queue saved at the time of a "updateAll" action
   currentAppOp: AppOp | null | undefined;

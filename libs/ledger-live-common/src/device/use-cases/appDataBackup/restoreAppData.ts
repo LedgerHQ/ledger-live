@@ -6,8 +6,18 @@ import {
   restoreAppStorageInit,
 } from "@ledgerhq/device-core";
 import Transport from "@ledgerhq/hw-transport";
-import { Observable, catchError, from, of, switchMap } from "rxjs";
-import { AppName, RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
+import { Observable, catchError, from, map, of, switchMap } from "rxjs";
+import {
+  AppName,
+  AppStorageType,
+  DeleteAppDataEvent,
+  DeleteAppDataEventType,
+  RestoreAppDataEvent,
+  RestoreAppDataEventType,
+  StorageProvider,
+} from "./types";
+import { deleteAppDataUseCaseDI } from "./deleteAppDataUseCaseDI";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 /**
  * Restores the application data for a specific app on a Ledger device.
@@ -20,9 +30,12 @@ import { AppName, RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
 export function restoreAppData(
   transport: Transport,
   appName: AppName,
+  deviceModelId: DeviceModelId,
+  storageProvider: StorageProvider<AppStorageType>,
   appData: string,
-): Observable<RestoreAppDataEvent> {
-  const obs = new Observable<RestoreAppDataEvent>(subscriber => {
+  deleteAppData: typeof deleteAppDataUseCaseDI,
+): Observable<RestoreAppDataEvent | DeleteAppDataEvent> {
+  const obs = new Observable<RestoreAppDataEvent | DeleteAppDataEvent>(subscriber => {
     const chunkData = Buffer.from(appData, "base64");
     const backupSize = chunkData.length;
     const sub = from(restoreAppStorageInit(transport, appName, backupSize))
@@ -51,14 +64,24 @@ export function restoreAppData(
           // Commit the restore process, last step
           await restoreAppStorageCommit(transport);
 
-          // NOTE: DELETE DATA
-
           subscriber.next({
             type: RestoreAppDataEventType.AppDataRestored,
           });
-          subscriber.complete();
+        }),
+        // Delete the app data from the storage
+        switchMap(() => deleteAppData(appName, deviceModelId, storageProvider)),
+        map(event => {
+          subscriber.next(event);
+          if (
+            event.type === DeleteAppDataEventType.AppDataDeleted ||
+            event.type === DeleteAppDataEventType.NoAppDataToDelete
+          ) {
+            subscriber.complete();
+          }
+          return event;
         }),
         catchError(e => {
+          // No app data found on the app or the app does not support it
           if (e instanceof AppNotFound) {
             subscriber.next({
               type: RestoreAppDataEventType.NoAppDataToRestore,

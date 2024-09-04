@@ -2,6 +2,7 @@ import { from, Observable, of, switchMap } from "rxjs";
 import {
   AppName,
   AppStorageType,
+  DeleteAppDataEvent,
   RestoreAppDataEvent,
   RestoreAppDataEventType,
   StorageProvider,
@@ -22,14 +23,16 @@ export function restoreAppDataUseCase(
   appName: AppName,
   deviceModelId: DeviceModelId,
   storageProvider: StorageProvider<AppStorageType>,
-  restoreAppDataFn: (data: string) => Observable<RestoreAppDataEvent>,
-): Observable<RestoreAppDataEvent> {
-  const obs: Observable<RestoreAppDataEvent> = from(
+  restoreAppDataFn: (data: string) => Observable<RestoreAppDataEvent | DeleteAppDataEvent>,
+): Observable<RestoreAppDataEvent | DeleteAppDataEvent> {
+  const obs: Observable<RestoreAppDataEvent | DeleteAppDataEvent> = from(
     storageProvider.getItem(`${deviceModelId}-${appName}`),
   ).pipe(
     switchMap((appStorage: AppStorageType | null) => {
       if (!appStorage) {
-        return of<RestoreAppDataEvent>({ type: RestoreAppDataEventType.NoAppDataToRestore });
+        return of<RestoreAppDataEvent | DeleteAppDataEvent>({
+          type: RestoreAppDataEventType.NoAppDataToRestore,
+        });
       }
       return restoreAppDataFn(appStorage.appData);
     }),
