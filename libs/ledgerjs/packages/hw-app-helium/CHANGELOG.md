@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-helium
 
+## 6.31.3-nightly.3
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
 ## 6.31.3-nightly.2
 
 ### Patch Changes

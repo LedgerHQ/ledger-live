@@ -1,5 +1,43 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.6
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- [#7636](https://github.com/LedgerHQ/ledger-live/pull/7636) [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Move Cosmos and Cosmos-based coins to its own module
+
+- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`93128e3`](https://github.com/LedgerHQ/ledger-live/commit/93128e367e6bff621309334f163198b9c07fb92e), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`c8ac662`](https://github.com/LedgerHQ/ledger-live/commit/c8ac662e6f88349187f802741e14c3d5fb67cddb), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7)]:
+  - @ledgerhq/hw-app-solana@7.2.3-nightly.3
+  - @ledgerhq/cryptoassets@13.4.0-nightly.2
+  - @ledgerhq/hw-app-btc@10.4.2-nightly.3
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.5
+  - @ledgerhq/coin-bitcoin@0.7.4-nightly.3
+  - @ledgerhq/coin-evm@2.2.0-nightly.6
+  - @ledgerhq/live-network@2.0.0-nightly.5
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.6
+  - @ledgerhq/coin-tezos@0.6.1-nightly.5
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.0
+  - @ledgerhq/coin-framework@0.17.1-nightly.5
+  - @ledgerhq/hw-app-exchange@0.6.0-nightly.3
+  - @ledgerhq/speculos-transport@0.1.5-nightly.5
+  - @ledgerhq/coin-algorand@0.5.5-nightly.5
+  - @ledgerhq/coin-cardano@0.1.5-nightly.5
+  - @ledgerhq/coin-icon@0.4.2-nightly.5
+  - @ledgerhq/coin-near@0.5.5-nightly.5
+  - @ledgerhq/coin-solana@0.7.5-nightly.5
+  - @ledgerhq/coin-stellar@0.2.3-nightly.5
+  - @ledgerhq/coin-ton@0.3.13-nightly.6
+  - @ledgerhq/coin-tron@0.0.5-nightly.5
+  - @ledgerhq/coin-xrp@0.5.1-nightly.5
+  - @ledgerhq/hw-app-vet@0.2.5-nightly.4
+  - @ledgerhq/live-countervalues@0.2.5-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.5
+  - @ledgerhq/live-nft@0.4.5-nightly.5
+  - @ledgerhq/live-wallet@0.6.0-nightly.8
+  - @ledgerhq/device-core@0.3.3-nightly.7
+
 ## 34.8.0-nightly.5
 
 ### Patch Changes

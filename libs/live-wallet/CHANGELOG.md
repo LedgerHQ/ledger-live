@@ -1,5 +1,15 @@
 # @ledgerhq/live-wallet
 
+## 0.6.0-nightly.8
+
+### Patch Changes
+
+- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.2
+  - @ledgerhq/live-network@2.0.0-nightly.5
+  - @ledgerhq/coin-framework@0.17.1-nightly.5
+  - @ledgerhq/trustchain@0.3.0-nightly.8
+
 ## 0.6.0-nightly.7
 
 ### Minor Changes

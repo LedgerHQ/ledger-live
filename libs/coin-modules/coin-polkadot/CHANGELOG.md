@@ -1,5 +1,16 @@
 # @ledgerhq/coin-polkadot
 
+## 1.2.1-nightly.6
+
+### Patch Changes
+
+- [#7470](https://github.com/LedgerHQ/ledger-live/pull/7470) [`93128e3`](https://github.com/LedgerHQ/ledger-live/commit/93128e367e6bff621309334f163198b9c07fb92e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - get rid of sidecar fork api and fix validator list for polkadot
+
+- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.2
+  - @ledgerhq/live-network@2.0.0-nightly.5
+  - @ledgerhq/coin-framework@0.17.1-nightly.5
+
 ## 1.2.1-nightly.5
 
 ### Patch Changes

@@ -1,5 +1,34 @@
 # live-mobile
 
+## 3.49.0-nightly.6
+
+### Minor Changes
+
+- [#7729](https://github.com/LedgerHQ/ledger-live/pull/7729) [`f5c8891`](https://github.com/LedgerHQ/ledger-live/commit/f5c88915cd5642e0bdce8ffb3ea1abe32e249f9b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Ledger Sync redirects to Qr code when syncing again after a successful sync
+
+### Patch Changes
+
+- [#7725](https://github.com/LedgerHQ/ledger-live/pull/7725) [`b2c4c51`](https://github.com/LedgerHQ/ledger-live/commit/b2c4c514afe35422c75f5de26c9ae45c67c10b01) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update errors in trad
+
+- [#7666](https://github.com/LedgerHQ/ledger-live/pull/7666) [`32b33b6`](https://github.com/LedgerHQ/ledger-live/commit/32b33b63661f58ae025539bab381a77aa1970c17) Thanks [@RamyEB](https://github.com/RamyEB)! - Setup analytics on Web3Hub
+
+- [#7636](https://github.com/LedgerHQ/ledger-live/pull/7636) [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Move Cosmos and Cosmos-based coins to its own module
+
+- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`c8ac662`](https://github.com/LedgerHQ/ledger-live/commit/c8ac662e6f88349187f802741e14c3d5fb67cddb), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7)]:
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.3
+  - @ledgerhq/coin-evm@2.2.0-nightly.6
+  - @ledgerhq/live-common@34.8.0-nightly.6
+  - @ledgerhq/domain-service@1.2.4-nightly.3
+  - @ledgerhq/live-network@2.0.0-nightly.5
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.0
+  - @ledgerhq/coin-framework@0.17.1-nightly.5
+  - @ledgerhq/live-countervalues@0.2.5-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.5
+  - @ledgerhq/live-nft@0.4.5-nightly.5
+  - @ledgerhq/live-nft-react@0.4.5-nightly.5
+  - @ledgerhq/live-wallet@0.6.0-nightly.8
+  - @ledgerhq/trustchain@0.3.0-nightly.8
+
 ## 3.49.0-nightly.5
 
 ### Minor Changes

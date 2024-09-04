@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.2.0-nightly.6
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.2
+  - @ledgerhq/domain-service@1.2.4-nightly.3
+  - @ledgerhq/live-network@2.0.0-nightly.5
+  - @ledgerhq/evm-tools@1.2.1-nightly.3
+  - @ledgerhq/coin-framework@0.17.1-nightly.5
+
 ## 2.2.0-nightly.5
 
 ### Patch Changes

@@ -1,5 +1,37 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.6
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- [#7725](https://github.com/LedgerHQ/ledger-live/pull/7725) [`b2c4c51`](https://github.com/LedgerHQ/ledger-live/commit/b2c4c514afe35422c75f5de26c9ae45c67c10b01) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update errors in trad
+
+- [#7731](https://github.com/LedgerHQ/ledger-live/pull/7731) [`e1d6d7d`](https://github.com/LedgerHQ/ledger-live/commit/e1d6d7d72059db3db29c8968364c4d348398446b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add vertical scroll inside optin prompt and correct variable name. Fix export account row from settings that was hidden when LS enabled
+
+- [#7736](https://github.com/LedgerHQ/ledger-live/pull/7736) [`644332f`](https://github.com/LedgerHQ/ledger-live/commit/644332f58790fb89375b9ca8a4b58e5f1613c14f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Animation Color
+
+- [#7636](https://github.com/LedgerHQ/ledger-live/pull/7636) [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Move Cosmos and Cosmos-based coins to its own module
+
+- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`c8ac662`](https://github.com/LedgerHQ/ledger-live/commit/c8ac662e6f88349187f802741e14c3d5fb67cddb), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.3-nightly.3
+  - @ledgerhq/hw-transport-http@6.30.3-nightly.3
+  - @ledgerhq/coin-bitcoin@0.7.4-nightly.3
+  - @ledgerhq/coin-evm@2.2.0-nightly.6
+  - @ledgerhq/live-common@34.8.0-nightly.6
+  - @ledgerhq/domain-service@1.2.4-nightly.3
+  - @ledgerhq/live-network@2.0.0-nightly.5
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.0
+  - @ledgerhq/coin-framework@0.17.1-nightly.5
+  - @ledgerhq/hw-transport-vault@1.3.3-nightly.3
+  - @ledgerhq/live-countervalues@0.2.5-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.5
+  - @ledgerhq/live-nft@0.4.5-nightly.5
+  - @ledgerhq/live-nft-react@0.4.5-nightly.5
+  - @ledgerhq/live-wallet@0.6.0-nightly.8
+  - @ledgerhq/trustchain@0.3.0-nightly.8
+
 ## 2.86.0-nightly.5
 
 ### Minor Changes
