@@ -6690,7 +6690,7 @@
         "title": "Manage your preferences",
         "analytics": {
           "title": "Analytics",
-          "description": "To measure Ledger Live’s performance and improve both the app and your experience, we share usage data, including page visits and clicks."
+          "description": "To measure Ledger Live’s performance and improve both app and your experience, I agree to the collection of my data, including page visits and clicks"
         },
         "personalizedExp": {
           "title": "Personalization",
@@ -6700,7 +6700,7 @@
           "notNow": "Not now",
           "accept": "Accept",
           "acceptAll": "Accept All",
-          "confirm": "Share"
+          "confirm": "Validate"
         },
         "infoText": {
           "info": "You can revoke your consent any time in the app settings.",
