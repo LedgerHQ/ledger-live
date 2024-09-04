@@ -79,18 +79,11 @@ export const getAccountShape: GetAccountShape<Account> = async (info, { blacklis
     }
   }
 
+  const newOps = flatMap(newTxs.transactions, mapTxToOps(accountId, address, newTxs.address_book));
   const newJettonOps = flatMap(
     newJettonTxs,
     mapJettonTxToOps(accountId, address, newTxs.address_book),
   );
-
-  const mappedNewOps = await Promise.all(
-    newTxs.transactions.map(tx =>
-      mapTxToOps(accountId, address, newTxs.address_book, tx, newJettonOps),
-    ),
-  );
-  const newOps = mappedNewOps.flatMap(ops => ops);
-
   const operations = shouldSyncFromScratch ? newOps : mergeOps(oldOps, newOps);
   const subAccounts = await getSubAccounts(
     info,

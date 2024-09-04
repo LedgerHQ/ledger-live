@@ -1,21 +1,15 @@
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { Operation } from "@ledgerhq/types-live";
 import { Address, Cell } from "@ton/core";
 import BigNumber from "bignumber.js";
-import { JettonOpCode } from "../../constants";
 import { TonOperation } from "../../types";
 import { addressesAreEqual, isAddressValid } from "../../utils";
-import {
-  fetchJettonTransactions,
-  fetchJettonWallets,
-  fetchTransactions,
-  fetchTransactionsByMessage,
-} from "./api";
+import { fetchJettonTransactions, fetchTransactions } from "./api";
 import {
   TonAddressBook,
   TonJettonTransfer,
-  TonMessage,
   TonTransaction,
   TonTransactionsList,
 } from "./api.types";
@@ -79,157 +73,129 @@ function getFriendlyAddress(addressBook: TonAddressBook, rawAddr?: string | null
   return [Address.parse(rawAddr).toString({ urlSafe: true, bounceable: true })];
 }
 
-export async function mapTxToOps(
+export function mapTxToOps(
   accountId: string,
   addr: string,
   addressBook: TonAddressBook,
-  tx: TonTransaction,
-  jettonOps: TonOperation[],
-): Promise<TonOperation[]> {
-  const ops: TonOperation[] = [];
+): (tx: TonTransaction) => TonOperation[] {
+  return (tx: TonTransaction): TonOperation[] => {
+    const ops: TonOperation[] = [];
 
-  if (tx.out_msgs.length > 1) throw Error(`[ton] txn with > 1 output not expected ${tx}`);
+    if (tx.out_msgs.length > 1) throw Error(`[ton] txn with > 1 output not expected ${tx}`);
 
-  const accountAddr = Address.parse(tx.account).toString({ urlSafe: true, bounceable: false });
+    const accountAddr = Address.parse(tx.account).toString({ urlSafe: true, bounceable: false });
 
-  if (accountAddr !== addr) {
-    throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
-  }
+    if (accountAddr !== addr) throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
 
-  const isReceiving =
-    tx.in_msg &&
-    tx.in_msg.source &&
-    tx.in_msg.source !== "" &&
-    tx.in_msg.value &&
-    tx.in_msg.value !== "0" &&
-    tx.account === tx.in_msg.destination;
+    const isReceiving =
+      tx.in_msg &&
+      tx.in_msg.source &&
+      tx.in_msg.source !== "" &&
+      tx.in_msg.value &&
+      tx.in_msg.value !== "0" &&
+      tx.account === tx.in_msg.destination;
 
-  const isSending =
-    tx.out_msgs.length !== 0 &&
-    tx.out_msgs[0].source &&
-    tx.out_msgs[0].source !== "" &&
-    tx.out_msgs[0].value &&
-    tx.out_msgs[0].value !== "0" &&
-    tx.account === tx.out_msgs[0].source;
+    const isSending =
+      tx.out_msgs.length !== 0 &&
+      tx.out_msgs[0].source &&
+      tx.out_msgs[0].source !== "" &&
+      tx.out_msgs[0].value &&
+      tx.out_msgs[0].value !== "0" &&
+      tx.account === tx.out_msgs[0].source;
 
-  const date = new Date(tx.now * 1000); // now is defined in seconds
-  const hash = tx.in_msg?.hash ?? tx.hash; // this is the hash we know in signature time
-  const hasFailed =
-    tx.description.compute_ph.success === false && tx.description.compute_ph.exit_code !== 0;
+    const date = new Date(tx.now * 1000); // now is defined in seconds
+    const hash = tx.in_msg?.hash ?? tx.hash; // this is the hash we know in signature time
+    const hasFailed =
+      tx.description.compute_ph.success === false && tx.description.compute_ph.exit_code !== 0;
 
-  if (isReceiving) {
-    const opCode = parseInt(tx.in_msg?.opcode ?? "");
-    let subOperations: TonOperation[] | undefined;
-    if (opCode === JettonOpCode.TransferNotification && tx.in_msg?.message_content?.body) {
-      try {
-        const isValid = await validateJettonTransferNotification(addr, addressBook, tx.in_msg);
-        if (!isValid) return [];
-      } catch (e) {
-        // if we can't validate the transfer notification, we don't display it
-        return [];
-      }
-    }
-
-    if (tx.total_fees !== "0") {
-      // these are small amount of fees payed when receiving
-      // we don't want to show them in the charts
-      subOperations = [
-        {
-          id: encodeOperationId(accountId, hash, "NONE"),
-          hash,
-          type: "NONE",
-          value: BigNumber(tx.total_fees),
-          fee: BigNumber(0),
-          blockHeight: tx.mc_block_seqno ?? 1,
-          blockHash: null,
-          hasFailed,
-          accountId,
-          senders: [addr],
-          recipients: [],
-          date,
-          extra: {
-            lt: tx.lt,
-            explorerHash: tx.hash,
-            comment: {
-              isEncrypted: false,
-              text: "",
+    if (isReceiving) {
+      let subOperations: Operation[] | undefined;
+      if (tx.total_fees !== "0") {
+        // these are small amount of fees payed when receiving
+        // we don't want to show them in the charts
+        subOperations = [
+          {
+            id: encodeOperationId(accountId, hash, "NONE"),
+            hash,
+            type: "NONE",
+            value: BigNumber(tx.total_fees),
+            fee: BigNumber(0),
+            blockHeight: tx.mc_block_seqno ?? 1,
+            blockHash: null,
+            hasFailed,
+            accountId,
+            senders: [accountAddr],
+            recipients: [],
+            date,
+            extra: {
+              lt: tx.lt,
+              explorerHash: tx.hash,
+              comment: {
+                isEncrypted: false,
+                text: "",
+              },
             },
           },
-        },
-      ];
-    }
-    ops.push({
-      id: encodeOperationId(accountId, hash, "IN"),
-      hash,
-      type: "IN",
-      value: BigNumber(tx.in_msg?.value ?? 0),
-      fee: BigNumber(tx.total_fees),
-      blockHeight: tx.mc_block_seqno ?? 1,
-      blockHash: null,
-      hasFailed,
-      accountId,
-      senders: getFriendlyAddress(addressBook, tx.in_msg?.source),
-      recipients: [addr],
-      date,
-      extra: {
-        lt: tx.lt,
-        explorerHash: tx.hash,
-        comment: {
-          isEncrypted: tx.in_msg?.message_content?.decoded?.type === "binary_comment",
-          text:
-            tx.in_msg?.message_content?.decoded?.type === "text_comment"
-              ? tx.in_msg.message_content.decoded.comment
-              : "",
-        },
-      },
-      subOperations,
-    });
-  }
-
-  if (isSending) {
-    const opCode = parseInt(tx.out_msgs[0].opcode ?? "");
-    let subOperations: TonOperation[] | undefined;
-    if (opCode === JettonOpCode.Transfer) {
-      try {
-        const transactions = await fetchTransactionsByMessage(tx.out_msgs[0].hash, "in");
-        const jettonSubOp = jettonOps.find(op => op.hash === transactions.transactions[0]?.hash);
-        if (jettonSubOp) {
-          subOperations = [jettonSubOp];
-        }
-      } catch (e) {
-        // if we don't have the transaction, we don't display the related operation
+        ];
       }
+      ops.push({
+        id: encodeOperationId(accountId, hash, "IN"),
+        hash,
+        type: "IN",
+        value: BigNumber(tx.in_msg?.value ?? 0),
+        fee: BigNumber(tx.total_fees),
+        blockHeight: tx.mc_block_seqno ?? 1,
+        blockHash: null,
+        hasFailed,
+        accountId,
+        senders: getFriendlyAddress(addressBook, tx.in_msg?.source),
+        recipients: [accountAddr],
+        date,
+        extra: {
+          lt: tx.lt,
+          explorerHash: tx.hash,
+          comment: {
+            isEncrypted: tx.in_msg?.message_content?.decoded?.type === "binary_comment",
+            text:
+              tx.in_msg?.message_content?.decoded?.type === "text_comment"
+                ? tx.in_msg.message_content.decoded.comment
+                : "",
+          },
+        },
+        subOperations,
+      });
     }
 
-    ops.push({
-      id: encodeOperationId(accountId, hash, "OUT"),
-      hash: tx.out_msgs[0].hash, // this hash matches with in_msg.hash of IN transaction
-      type: "OUT",
-      value: BigNumber(tx.out_msgs[0].value ?? 0),
-      fee: BigNumber(tx.total_fees),
-      blockHeight: tx.mc_block_seqno ?? 1,
-      blockHash: null,
-      hasFailed,
-      accountId,
-      senders: [addr],
-      recipients: getFriendlyAddress(addressBook, tx.out_msgs[0].destination),
-      date,
-      extra: {
-        lt: tx.lt,
-        explorerHash: tx.hash,
-        comment: {
-          isEncrypted: tx.out_msgs[0].message_content?.decoded?.type === "binary_comment",
-          text:
-            tx.out_msgs[0].message_content?.decoded?.type === "text_comment"
-              ? tx.out_msgs[0].message_content.decoded.comment
-              : "",
+    if (isSending) {
+      ops.push({
+        id: encodeOperationId(accountId, hash, "OUT"),
+        hash: tx.out_msgs[0].hash, // this hash matches with in_msg.hash of IN transaction
+        type: "OUT",
+        value: BigNumber(tx.out_msgs[0].value ?? 0),
+        fee: BigNumber(tx.total_fees),
+        blockHeight: tx.mc_block_seqno ?? 1,
+        blockHash: null,
+        hasFailed,
+        accountId,
+        senders: [accountAddr],
+        recipients: getFriendlyAddress(addressBook, tx.out_msgs[0].destination),
+        date,
+        extra: {
+          lt: tx.lt,
+          explorerHash: tx.hash,
+          comment: {
+            isEncrypted: tx.out_msgs[0].message_content?.decoded?.type === "binary_comment",
+            text:
+              tx.out_msgs[0].message_content?.decoded?.type === "text_comment"
+                ? tx.out_msgs[0].message_content.decoded.comment
+                : "",
+          },
         },
-      },
-      subOperations,
-    });
-  }
+      });
+    }
 
-  return ops;
+    return ops;
+  };
 }
 
 export function mapJettonTxToOps(
@@ -288,7 +254,6 @@ export function mapJettonTxToOps(
             text: tx.forward_payload ? decodeForwardPayload(tx.forward_payload) : "",
           },
         },
-        contract: tokenCurrency.contractAddress,
       });
     }
 
@@ -314,7 +279,6 @@ export function mapJettonTxToOps(
             text: tx.forward_payload ? decodeForwardPayload(tx.forward_payload) : "",
           },
         },
-        contract: tokenCurrency.contractAddress,
       });
     }
 
@@ -338,35 +302,4 @@ function decodeForwardPayload(payload: string | null): string {
   // Read the comment
   const comment = slice.loadStringTail();
   return comment;
-}
-
-async function validateJettonTransferNotification(
-  addr: string,
-  addressBook: TonAddressBook,
-  message: TonMessage,
-): Promise<boolean> {
-  const sender = getFriendlyAddress(addressBook, message.source);
-
-  const slice = Cell.fromBase64(message.message_content?.body ?? "").beginParse();
-  const originalBody = slice.clone();
-  const body = originalBody.clone();
-  const op = body.loadUint(32);
-  if (op === JettonOpCode.TransferNotification) {
-    body.skip(64); // skip query_id
-
-    // IMPORTANT: we have to verify the source of this message because it can be faked
-    const jettonWalletData = await fetchJettonWallets({ walletAddress: sender[0] });
-    const jettonMaster = jettonWalletData[0].jetton;
-    const data = await fetchJettonWallets({
-      address: addr,
-      jettonMaster,
-    });
-    const jettonWallet = Address.parse(data[0].address).toString({
-      urlSafe: true,
-      bounceable: true,
-    });
-    // if sender is not our real JettonWallet: this message was faked
-    return jettonWallet === sender[0];
-  }
-  return true;
 }

@@ -19,12 +19,6 @@ import {
   jettonTransaction,
 } from "../fixtures/common.fixtures";
 
-jest.mock("crypto", () => ({
-  randomBytes: jest.fn(() => {
-    return Buffer.from([0, 0, 0, 0]);
-  }),
-}));
-
 describe("TON addresses", () => {
   const addr = {
     raw: "0:074c7194d64e8218f2cfaab8e79b34201adbed0f8fa7f2773e604dd39969b5ff",

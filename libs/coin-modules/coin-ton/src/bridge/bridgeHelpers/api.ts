@@ -104,18 +104,16 @@ export async function fetchJettonTransactions(
 }
 
 export async function fetchJettonWallets(opts?: {
-  jettonMaster?: string; // jetton master
-  walletAddress?: string; // wallet address
-  address?: string; // address of Jetton wallet's owner
+  address?: string;
+  jettonMaster?: string;
 }): Promise<TonJettonWallet[]> {
   let url = `/jetton/wallets?limit=256`;
-  if (opts?.address) {
+  if (opts?.jettonMaster != null) url += `&jetton_address=${opts.jettonMaster}`;
+  if (opts?.address != null) {
     const address = Address.parse(opts.address);
     const urlAddr = address.toString({ bounceable: false, urlSafe: true });
     url += `&owner_address=${urlAddr}`;
   }
-  url += opts?.jettonMaster ? `&jetton_address=${opts.jettonMaster}` : "";
-  url += opts?.walletAddress ? `&address=${opts.walletAddress}` : "";
   return (await fetch<TonResponseJettonWallets>(url)).jetton_wallets;
 }
 
@@ -138,13 +136,4 @@ export async function estimateFee(
 
 export async function broadcastTx(bocBase64: string): Promise<string> {
   return (await send<TonResponseMessage>("/message", { boc: bocBase64 })).message_hash;
-}
-
-export async function fetchTransactionsByMessage(
-  hash: string,
-  direction: "in" | "out",
-): Promise<TonTransactionsList> {
-  const hashHex = Buffer.from(hash, "base64").toString("hex");
-  const url = `/transactionsByMessage?direction=${direction}&msg_hash=${hashHex}&limit=128&offset=0`;
-  return await fetch<TonTransactionsList>(url);
 }
