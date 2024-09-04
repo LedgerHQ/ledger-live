@@ -946,6 +946,13 @@
       "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
       "errorCode": "Code: {{errorCode}}"
     },
+    "TrustchainEjected": {
+      "title": "Not Synced anymore"
+    },
+    "TrustchainNotAllowed": {
+      "title": "You are not in sync anymore",
+      "description": "Please try again or contact Ledger Support."
+    },
     "TrustchainNotFound": {
       "title": "Something went wrong while fetching your data",
       "description": "Please try again or contact Ledger Support."
@@ -6818,8 +6825,6 @@
       },
       "errors": {
         "fetching": "Something went wrong while fetching your synchronized instances.",
-        "trustchain": "Unexpected falsy trustchain",
-        "memberCredentials": "Unexpected falsy member credentials",
         "ledgerSyncUnavailable": "Ledger Sync is currently unavailable. This doesn’t have any impact on your assets."
       }
     },
@@ -6919,8 +6924,7 @@
         "placeholder": "Search or type a URL"
       },
       "clearSigning": {
-        "title": "Clear signing",
-        "description": "Clear signing allows you to sign a message without revealing the content of the message to the app. This is useful for privacy and security reasons."
+        "title": "Clear signing"
       }
     },
     "app": {

@@ -12,9 +12,9 @@ import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { useSyncWithQrCode } from "../../hooks/useSyncWithQrCode";
 import { SpecificError } from "../Error/SpecificError";
 import { ErrorReason } from "../../hooks/useSpecificError";
+import { useCurrentStep } from "../../hooks/useCurrentStep";
 
 type Props = {
-  currentStep: Steps;
   navigateToChooseSyncMethod: () => void;
   navigateToQrCodeMethod: () => void;
   qrProcess: {
@@ -26,28 +26,26 @@ type Props = {
   onQrCodeScanned: () => void;
   currentOption: Options;
   setOption: (option: Options) => void;
-  setCurrentStep: (step: Steps) => void;
   onCreateKey: () => void;
 };
 
 const ActivationFlow = ({
-  currentStep,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
   qrProcess,
   currentOption,
   setOption,
   onQrCodeScanned,
-  setCurrentStep,
   onCreateKey,
 }: Props) => {
+  const { currentStep, setCurrentStep } = useCurrentStep();
   const { memberCredentials } = useInitMemberCredentials();
 
   const { handleStart, handleSendDigits, inputCallback, nbDigits } = useSyncWithQrCode();
 
   const handleQrCodeScanned = (data: string) => {
     onQrCodeScanned();
-    if (memberCredentials) handleStart(data, memberCredentials, setCurrentStep);
+    if (memberCredentials) handleStart(data, memberCredentials);
   };
 
   const handlePinCodeSubmit = (input: string) => {

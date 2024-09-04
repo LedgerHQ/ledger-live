@@ -66,7 +66,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "0.26.1",
+    "axios": "1.7.3",
     "lru-cache": "^7.14.1"
   },
   "devDependencies": {

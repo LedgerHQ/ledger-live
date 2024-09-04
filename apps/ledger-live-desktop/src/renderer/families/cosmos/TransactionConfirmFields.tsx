@@ -73,7 +73,7 @@ export const CosmosDelegateValidatorsField = ({
   const { validators } = transaction;
   const currencyId = mainAccount.currency.id;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
-  const mappedValidators = mapDelegationInfo(validators || [], cosmosValidators, unit);
+  const mappedValidators = mapDelegationInfo(validators || [], cosmosValidators, unit, transaction);
   return mappedValidators && mappedValidators.length > 0 ? (
     <Box justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />

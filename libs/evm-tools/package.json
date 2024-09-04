@@ -47,7 +47,7 @@
   "dependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
-    "axios": "^1.6.5",
+    "axios": "1.7.3",
     "crypto-js": "4.2.0",
     "ethers": "5.7.2"
   },

@@ -5,7 +5,7 @@ import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 export const useDisplayOnPortfolioAnalytics = () => {
   const {
     analyticsOptInPromptProps,
-    setIsAnalitycsOptInPromptOpened,
+    setIsAnalyticsOptInPromptOpened,
     isFeatureFlagsAnalyticsPrefDisplayed,
     onSubmit,
   } = useAnalyticsOptInPrompt({ entryPoint: EntryPoint.portfolio });
@@ -16,8 +16,8 @@ export const useDisplayOnPortfolioAnalytics = () => {
   };
 
   useEffect(() => {
-    if (isFeatureFlagsAnalyticsPrefDisplayed) setIsAnalitycsOptInPromptOpened(true);
-  }, [isFeatureFlagsAnalyticsPrefDisplayed, setIsAnalitycsOptInPromptOpened]);
+    if (isFeatureFlagsAnalyticsPrefDisplayed) setIsAnalyticsOptInPromptOpened(true);
+  }, [isFeatureFlagsAnalyticsPrefDisplayed, setIsAnalyticsOptInPromptOpened]);
 
   return {
     analyticsOptInPromptProps: extendedAnalyticsOptInPromptProps,

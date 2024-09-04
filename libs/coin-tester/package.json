@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
-    "axios": "^1.5.0",
+    "axios": "1.7.3",
     "chalk": "^4.1.2",
     "docker-compose": "^0.24.2",
     "lodash": "^4.17.21",

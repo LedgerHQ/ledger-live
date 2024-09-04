@@ -36,7 +36,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "^1.3.4",
+    "axios": "1.7.3",
     "bignumber.js": "^9.1.2",
     "semver": "^7.3.5"
   },

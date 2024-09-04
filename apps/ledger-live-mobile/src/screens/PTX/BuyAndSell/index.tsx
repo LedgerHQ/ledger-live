@@ -101,6 +101,9 @@ export function BuyAndSellScreen({ route }: Props) {
           locale,
           currencyTicker,
           devMode,
+          ...(localManifest?.providerTestBaseUrl && {
+            providerTestBaseUrl: localManifest?.providerTestBaseUrl,
+          }),
           ...customParams,
           ...Object.fromEntries(searchParams.entries()),
         }}

@@ -69,7 +69,7 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "0.26.1",
+    "axios": "1.7.3",
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
     "ethers": "5.7.2",

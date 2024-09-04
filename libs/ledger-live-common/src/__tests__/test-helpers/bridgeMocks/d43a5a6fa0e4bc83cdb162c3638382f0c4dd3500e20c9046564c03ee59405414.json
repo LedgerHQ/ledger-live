@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest.core.persistence.one/cosmos/distribution/v1beta1/delegators/persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd/withdraw_address","method":"GET"},"response":{"body":{"withdraw_address":"persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd"}}}
