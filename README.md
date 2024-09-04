@@ -78,7 +78,7 @@ pnpm mobile pod
 
 ### Tools
 
-We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [**remote caching**](https://turborepo.org/docs/features/remote-caching).
+We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [**remote caching**](https://turbo.build/repo/docs/core-concepts/remote-caching).
 
 For changelog generation releases and package publishing we rely on the [**changesets**](https://github.com/changesets/changesets) library.
 
