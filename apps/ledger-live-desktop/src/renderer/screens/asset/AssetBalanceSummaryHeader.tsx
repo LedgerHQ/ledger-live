@@ -77,6 +77,7 @@ export default function AssetBalanceSummaryHeader({
 
   const startStakeFlow = useStakeFlow();
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
