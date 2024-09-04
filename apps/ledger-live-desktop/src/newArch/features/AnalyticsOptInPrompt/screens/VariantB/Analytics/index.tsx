@@ -39,7 +39,13 @@ const AnalyticsScreen = ({
   return (
     <>
       <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
-      <Flex flexDirection={"column"} height={"100%"} rowGap={32} pt={paddingTop}>
+      <Flex
+        flexDirection={"column"}
+        height={"100%"}
+        rowGap={32}
+        pt={paddingTop}
+        overflowY={"scroll"}
+      >
         <Header currentTheme={currentTheme} />
         <Body {...bodyProps} handleOpenPrivacyPolicy={() => handleOpenPrivacyPolicy(page)} />
       </Flex>

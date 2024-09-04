@@ -8,16 +8,13 @@ import SectionExport from "./Export";
 import Currencies from "./Currencies";
 import BlacklistedTokens from "./BlacklistedTokens";
 import HiddenNftCollections from "./HiddenNFTCollections";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 export default function SectionAccounts() {
   const { t } = useTranslation();
-
-  const ledgerSyncFF = useFeature("lldWalletSync");
 
   return (
     <Body>
       <TrackPage category="Settings" name="Accounts" />
-      {!ledgerSyncFF?.enabled && <SectionExport />}
+      <SectionExport />
 
       <Row
         title={t("settings.accounts.hideEmptyTokens.title")}

@@ -21,16 +21,16 @@ import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/get
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
+import { useCurrentStep } from "./useCurrentStep";
 
 const MIN_TIME_TO_REFRESH = 30_000;
 
 interface Props {
-  setCurrentStep: (step: Steps) => void;
-  currentStep: Steps;
   currentOption: Options;
 }
 
-export function useQRCodeHost({ setCurrentStep, currentStep, currentOption }: Props) {
+export function useQRCodeHost({ currentOption }: Props) {
+  const { currentStep, setCurrentStep } = useCurrentStep();
   const queryClient = useQueryClient();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
