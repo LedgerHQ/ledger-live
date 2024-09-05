@@ -5,7 +5,6 @@ import {
   useLedgerSyncAnalytics,
   AnalyticsButton,
   AnalyticsPage,
-  AnalyticsFlow,
 } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 type Props = {
@@ -21,7 +20,7 @@ const Actions = ({ onPressSyncAccounts, onPressHasAlreadyCreatedAKey }: Props) =
     onClickTrack({
       button: AnalyticsButton.SyncYourAccounts,
       page: AnalyticsPage.ActivateLedgerSync,
-      flow: AnalyticsFlow.LedgerSync,
+      hasFlow: true,
     });
     onPressSyncAccounts();
   };
@@ -30,7 +29,7 @@ const Actions = ({ onPressSyncAccounts, onPressHasAlreadyCreatedAKey }: Props) =
     onClickTrack({
       button: AnalyticsButton.AlreadyCreatedKey,
       page: AnalyticsPage.ActivateLedgerSync,
-      flow: AnalyticsFlow.LedgerSync,
+      hasFlow: true,
     });
     onPressHasAlreadyCreatedAKey();
   };

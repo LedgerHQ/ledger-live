@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
@@ -17,6 +17,10 @@ import { WalletSyncManageInstanceDeletionSuccess } from "./screens/ManageInstanc
 import { LedgerSyncDeepLinkHandler } from "./screens/LedgerSyncDeepLinkHandler";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import { useClose } from "./hooks/useClose";
+import { track } from "~/analytics";
+import { AnalyticsPage } from "./hooks/useLedgerSyncAnalytics";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { NavigationProp } from "@react-navigation/native";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
@@ -26,6 +30,17 @@ export default function WalletSyncNavigator() {
   const { t } = useTranslation();
   useInitMemberCredentials();
   const close = useClose();
+
+  const onHeaderBackButtonPress = useCallback(
+    (navigation: NavigationProp<ReactNavigation.RootParamList>) => {
+      track("button_clicked", {
+        button: "Back",
+        page: AnalyticsPage.LedgerSyncSettings,
+      });
+      navigation.goBack();
+    },
+    [],
+  );
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -68,10 +83,13 @@ export default function WalletSyncNavigator() {
       <Stack.Screen
         name={ScreenName.WalletSyncActivated}
         component={WalletSyncManage}
-        options={{
+        options={({ navigation }) => ({
           title: t("walletSync.title"),
           headerRight: () => null,
-        }}
+          headerLeft: () => (
+            <NavigationHeaderBackButton onPress={() => onHeaderBackButtonPress(navigation)} />
+          ),
+        })}
       />
 
       <Stack.Screen
