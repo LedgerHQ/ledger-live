@@ -109,6 +109,8 @@ export type BaseNavigatorStackParamList = {
     defaultTicker?: string;
     customDappURL?: string;
     uri?: string;
+    requestId?: string;
+    sessionTopic?: string;
   };
   [NavigatorName.Web3Hub]: NavigatorScreenParams<Web3HubStackParamList>;
   [ScreenName.Recover]: {
