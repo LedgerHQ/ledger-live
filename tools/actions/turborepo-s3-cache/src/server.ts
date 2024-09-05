@@ -7,6 +7,7 @@ import * as path from "path";
 import * as fs from "fs";
 import asyncHandler from "./utils/asyncHandler";
 import { cacheDirectory, absoluteCacheDirectory, portFileName } from "./utils/constants";
+import { PassThrough } from 'stream';
 
 async function startServer() {
   const app = express();
@@ -63,13 +64,32 @@ async function startServer() {
       const artifactId = req.params.artifactId;
       const filename = `${artifactId}.gz`;
 
+      // Create a PassThrough stream to safely pipe the request body
+      const bodyStream = new PassThrough();
+
+      bodyStream.on("data", chunk => {
+        console.log("Chunk received:", chunk);
+      });
+
+      bodyStream.on("end", () => {
+        console.log("Stream ended");
+      });
+
+      bodyStream.on("error", err => {
+        console.error("Stream error:", err);
+      });
+
+      // Pipe the request (req, which is a readable stream) into the PassThrough stream
+      req.pipe(bodyStream);
+
       try {
+        console.log("trying upload");
         const upload = new Upload({
           client,
           params: {
             Bucket: bucket,
             Key: filename,
-            Body: req, // req is a readable stream
+            Body: bodyStream, // req is a readable stream
           },
         });
         upload.on("httpUploadProgress", progress => {
