@@ -9,7 +9,7 @@ const subAccounts: Account[] = [
   Account.ALGO_USDT_1,
   Account.TRX_USDT,
   Account.BSC_BUSD_1,
-  Account.MATIC_DAI_1,
+  Account.POL_DAI_1,
 ];
 
 const subAccountReceive: Account[] = [
@@ -19,8 +19,8 @@ const subAccountReceive: Account[] = [
   Account.TRX_BTT,
   Account.BSC_BUSD_1,
   Account.BSC_SHIBA,
-  Account.MATIC_DAI_1,
-  Account.MATIC_UNI,
+  Account.POL_DAI_1,
+  Account.POL_UNI,
 ];
 
 for (const token of subAccounts) {

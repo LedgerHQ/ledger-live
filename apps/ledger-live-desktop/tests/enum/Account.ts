@@ -193,8 +193,8 @@ export class Account {
     "Tezos 2",
     "tz1g3uEPZ9T3AhUZDTbGW9V43JRfizJmSnPv",
   );
-  static readonly MATIC_1 = new Account(
-    Currency.MATIC,
+  static readonly POL_1 = new Account(
+    Currency.POL,
     "Polygon 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
@@ -277,14 +277,14 @@ export class Account {
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
 
-  static readonly MATIC_DAI_1 = new Account(
-    Currency.MATIC_DAI,
+  static readonly POL_DAI_1 = new Account(
+    Currency.POL_DAI,
     "Polygon 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
 
-  static readonly MATIC_UNI = new Account(
-    Currency.MATIC_UNI,
+  static readonly POL_UNI = new Account(
+    Currency.POL_UNI,
     "Polygon 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
   );
