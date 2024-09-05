@@ -1,4 +1,5 @@
-import { isAddressValid } from "./bridge/bridgeHelpers/addresses";
+import { CLPublicKeyTag } from "casper-js-sdk";
+import { casperAddressFromPubKey, isAddressValid } from "./bridge/bridgeHelpers/addresses";
 
 describe("Casper addresses", () => {
   const pubKeys = {
@@ -27,5 +28,48 @@ describe("Casper addresses", () => {
     expect(isAddressValid(pubKeys.invalidLength)).toBe(false);
     expect(isAddressValid(pubKeys.invalidCharacter)).toBe(false);
     expect(isAddressValid(pubKeys.invalidChecksum)).toBe(false);
+  });
+
+  test("Get the address from the publick key", () => {
+    /**
+     * Extracts the public key and key signature from a given Casper address.
+     *
+     * @param {string} address - The Casper address from which to extract the public key and key signature.
+     * @returns {{ pubkey: Buffer, keySig: CLPublicKeyTag }} An object containing the public key as a Buffer and the key signature as a CLPublicKeyTag.
+     */
+    function casperPubKeyFromAddress(address: string): {
+      pubkey: Buffer;
+      keySig: CLPublicKeyTag;
+    } {
+      const keySig = parseInt(address.slice(0, 2), 10) as CLPublicKeyTag;
+      const pubkeyHex = address.slice(2);
+      const pubkey = Buffer.from(pubkeyHex, "hex");
+      return { pubkey, keySig };
+    }
+
+    expect(
+      casperAddressFromPubKey(
+        casperPubKeyFromAddress(pubKeys.validSecp256k1).pubkey,
+        CLPublicKeyTag.SECP256K1,
+      ),
+    ).toBe(pubKeys.validSecp256k1);
+    expect(
+      casperAddressFromPubKey(
+        casperPubKeyFromAddress(pubKeys.validSecp256k1Checksum).pubkey,
+        CLPublicKeyTag.SECP256K1,
+      ),
+    ).toBe(pubKeys.validSecp256k1Checksum.toLowerCase());
+    expect(
+      casperAddressFromPubKey(
+        casperPubKeyFromAddress(pubKeys.validEd25519).pubkey,
+        CLPublicKeyTag.ED25519,
+      ),
+    ).toBe(pubKeys.validEd25519);
+    expect(
+      casperAddressFromPubKey(
+        casperPubKeyFromAddress(pubKeys.validEd25519Checksum).pubkey,
+        CLPublicKeyTag.ED25519,
+      ),
+    ).toBe(pubKeys.validEd25519Checksum.toLowerCase());
   });
 });
