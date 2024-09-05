@@ -37,6 +37,7 @@ import {
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { useTranslation } from "react-i18next";
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
+import { useLocation } from "react-router";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -99,6 +100,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const { state } = useLocation<{ defaultCurrency?: { id: string } }>();
 
   const customPTXHandlers = usePTXCustomHandlers(manifest);
   const customHandlers = useMemo(
@@ -249,7 +251,13 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     [],
   );
 
-  const hashString = useMemo(() => new URLSearchParams({}).toString(), []);
+  const hashString = useMemo(
+    () =>
+      new URLSearchParams({
+        ...(state?.defaultCurrency?.id ? { from: state?.defaultCurrency?.id } : {}),
+      }).toString(),
+    [state?.defaultCurrency?.id],
+  );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
     console.error("onSwapWebviewError", error);
