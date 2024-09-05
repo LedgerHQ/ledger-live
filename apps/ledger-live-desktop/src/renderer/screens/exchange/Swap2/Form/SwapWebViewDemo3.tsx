@@ -259,7 +259,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     () =>
       new URLSearchParams({
         ...(state?.defaultCurrency?.id ? { from: state?.defaultCurrency?.id } : {}),
-        ...(isOffline ? { offline: "true" } : {}),
+        ...(isOffline ? { isOffline: "true" } : {}),
       }).toString(),
 
     [isOffline, state?.defaultCurrency?.id],
