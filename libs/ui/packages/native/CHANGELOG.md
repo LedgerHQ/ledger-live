@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.24.0-nightly.3
+
+### Minor Changes
+
+- [#7749](https://github.com/LedgerHQ/ledger-live/pull/7749) [`1825bd3`](https://github.com/LedgerHQ/ledger-live/commit/1825bd36642e34e4b4aaeefb1805b04c87a32a22) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Storybook version + centering text in Button
+
 ## 0.23.4-nightly.2
 
 ### Patch Changes

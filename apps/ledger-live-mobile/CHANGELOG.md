@@ -1,5 +1,23 @@
 # live-mobile
 
+## 3.49.0-nightly.7
+
+### Minor Changes
+
+- [#7733](https://github.com/LedgerHQ/ledger-live/pull/7733) [`ef99222`](https://github.com/LedgerHQ/ledger-live/commit/ef99222a5adcd9732d06600bc875309c440e084f) Thanks [@thesan](https://github.com/thesan)! - Handle Ledgersync onboarding errors
+
+### Patch Changes
+
+- [#7748](https://github.com/LedgerHQ/ledger-live/pull/7748) [`f34dd22`](https://github.com/LedgerHQ/ledger-live/commit/f34dd220fc21afb1107854b7d6d167c3e0706001) Thanks [@thesan](https://github.com/thesan)! - Fix extra device action at the end of the remove member flow
+
+- [#7746](https://github.com/LedgerHQ/ledger-live/pull/7746) [`2147bd2`](https://github.com/LedgerHQ/ledger-live/commit/2147bd2fb48cc58809cf6aa3a46e606539f1423d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Copy and fix color on Analytics Opt-in
+
+- Updated dependencies [[`1825bd3`](https://github.com/LedgerHQ/ledger-live/commit/1825bd36642e34e4b4aaeefb1805b04c87a32a22), [`ef99222`](https://github.com/LedgerHQ/ledger-live/commit/ef99222a5adcd9732d06600bc875309c440e084f)]:
+  - @ledgerhq/native-ui@0.24.0-nightly.3
+  - @ledgerhq/trustchain@0.3.0-nightly.9
+  - @ledgerhq/live-wallet@0.6.0-nightly.9
+  - @ledgerhq/live-common@34.8.0-nightly.7
+
 ## 3.49.0-nightly.6
 
 ### Minor Changes

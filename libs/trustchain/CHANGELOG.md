@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-nightly.9
+
+### Patch Changes
+
+- [#7733](https://github.com/LedgerHQ/ledger-live/pull/7733) [`ef99222`](https://github.com/LedgerHQ/ledger-live/commit/ef99222a5adcd9732d06600bc875309c440e084f) Thanks [@thesan](https://github.com/thesan)! - Handle Ledgersync onboarding errors
+
 ## 0.3.0-nightly.8
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-wallet@0.6.0-nightly.9
+
 ## 34.8.0-nightly.6
 
 ### Patch Changes

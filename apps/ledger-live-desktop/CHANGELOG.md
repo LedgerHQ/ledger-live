@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.7
+
+### Minor Changes
+
+- [#7737](https://github.com/LedgerHQ/ledger-live/pull/7737) [`5f88c36`](https://github.com/LedgerHQ/ledger-live/commit/5f88c36e77fb9064fd70bcb59c1763998dfbfc0f) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Ledger Sync - Fix Desktop Analytics
+
+- [#7696](https://github.com/LedgerHQ/ledger-live/pull/7696) [`dd4daf1`](https://github.com/LedgerHQ/ledger-live/commit/dd4daf1a1b5e38d46c2985bf99838c587bbc7ced) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds confirmation message for Sell in LLD
+
+### Patch Changes
+
+- [#7734](https://github.com/LedgerHQ/ledger-live/pull/7734) [`255f035`](https://github.com/LedgerHQ/ledger-live/commit/255f035b8415eb09683f959e37593e1969f5911c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add rare satoshis icons to ui package and a mapping inside LLD to use them
+
+- Updated dependencies [[`ef99222`](https://github.com/LedgerHQ/ledger-live/commit/ef99222a5adcd9732d06600bc875309c440e084f)]:
+  - @ledgerhq/trustchain@0.3.0-nightly.9
+  - @ledgerhq/live-wallet@0.6.0-nightly.9
+  - @ledgerhq/live-common@34.8.0-nightly.7
+
 ## 2.86.0-nightly.6
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/live-cli
 
+## 24.5.2-nightly.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-wallet@0.6.0-nightly.9
+  - @ledgerhq/live-common@34.8.0-nightly.7
+
 ## 24.5.2-nightly.6
 
 ### Patch Changes
