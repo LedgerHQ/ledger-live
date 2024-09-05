@@ -62,13 +62,23 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
 
   const onFeeStrategyClick = useCallback(
     ({ feesStrategy }: { feesStrategy: Strategy }) => {
-      updateTransaction((tx: EvmTransaction) =>
-        bridge.updateTransaction(tx, {
+      updateTransaction((tx: EvmTransaction) => {
+        let gasValues = {};
+
+        // ts tricks to not complain about type0 into type2
+        if (gasOptions && feesStrategy in gasOptions) {
+          gasValues = Object.fromEntries(
+            Object.entries(gasOptions[feesStrategy]).filter(([key]) => key in tx),
+          );
+        }
+
+        return bridge.updateTransaction(tx, {
           feesStrategy,
-        }),
-      );
+          ...gasValues,
+        });
+      });
     },
-    [updateTransaction, bridge],
+    [updateTransaction, bridge, gasOptions],
   );
 
   if (loading) {
