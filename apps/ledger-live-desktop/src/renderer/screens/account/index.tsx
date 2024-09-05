@@ -28,6 +28,7 @@ import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
 import Collections from "~/renderer/screens/nft/Collections";
 import NftCollections from "LLD/features/Collectibles/Nfts/Collections";
+import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
@@ -109,6 +110,9 @@ const AccountPage = ({
 
   const nftReworked = useFeature("lldNftsGalleryNewArch");
   const isNftReworkedEnabled = nftReworked?.enabled;
+
+  const ordinalsFF = useFeature("lldnewArchOrdinals");
+  const isOrdinalsEnabled = ordinalsFF?.enabled;
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
@@ -214,6 +218,9 @@ const AccountPage = ({
             ) : (
               <Collections account={account} />
             )
+          ) : null}
+          {isOrdinalsEnabled && account.type === "Account" && account.currency.id === "bitcoin" ? (
+            <OrdinalsAccount account={account} />
           ) : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList
