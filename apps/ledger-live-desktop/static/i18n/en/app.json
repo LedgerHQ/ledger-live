@@ -6591,5 +6591,15 @@
       "title": "Continue on your Ledger {{wording}}",
       "description": "Follow the instruction which appear on your Ledger’s Trusted Display."
     }
+  },
+  "ordinals": {
+    "rareSats": {
+      "title": "Rare Sats",
+      "table": {
+        "type": "Sat Type / Amount",
+        "year": "Year",
+        "utxo": "UTXO size"
+      }
+    }
   }
 }
