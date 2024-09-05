@@ -180,7 +180,14 @@ describe("EVM Family", () => {
         });
 
         it("should return a legacy coin transaction when passing a gasPrice and custom feesStrategy", async () => {
-          // @ts-expect-error - TODO: change type to allow gasPrice?
+          jest.spyOn(nodeApi, "getFeeData").mockImplementationOnce(async () => ({
+            gasPrice: new BigNumber(1),
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            nextBaseFee: null,
+          }));
+
+          // @ts-expect-error - mixed type0/2
           const tx = await prepareTransaction(account, {
             ...transaction,
             feesStrategy: "custom",
