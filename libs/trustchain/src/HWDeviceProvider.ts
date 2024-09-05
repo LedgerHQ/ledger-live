@@ -52,7 +52,7 @@ export class HWDeviceProvider {
     job: (hw: ApduDevice) => Promise<T>,
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<T> {
-    callbacks?.onStartRequestUserInteraction();
+    callbacks?.onStartRequestUserInteraction?.();
     const runWithDevice = this.withDevice(deviceId);
     try {
       return await lastValueFrom(runWithDevice(transport => from(job(device.apdu(transport)))));
@@ -73,7 +73,7 @@ export class HWDeviceProvider {
           throw error;
       }
     } finally {
-      callbacks?.onEndRequestUserInteraction();
+      callbacks?.onEndRequestUserInteraction?.();
     }
   }
 

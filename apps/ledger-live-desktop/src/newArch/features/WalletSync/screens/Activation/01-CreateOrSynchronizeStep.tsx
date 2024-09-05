@@ -18,7 +18,7 @@ export default function CreateOrSynchronizeStep({ goToCreateBackup, goToSync }: 
 
   return (
     <Flex flexDirection="column" alignSelf="center" justifyContent="center" rowGap="24px">
-      <TrackPage category={AnalyticsPage.Activation} />
+      <TrackPage category={AnalyticsPage.Activation} source={AnalyticsPage.SettingsGeneral} />
       <Flex justifyContent="center" alignItems="center">
         <LogoWrapper>
           <Icons.Mobile color={colors.constant.purple} />

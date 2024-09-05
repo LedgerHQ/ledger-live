@@ -141,6 +141,7 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
           variant={ctaTextType[size]}
           fontWeight={"semiBold"}
           color={textColor}
+          {...(!Icon && { textAlign: "center" })}
         >
           {children}
         </Text>

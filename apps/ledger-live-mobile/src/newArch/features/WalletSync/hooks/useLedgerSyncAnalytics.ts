@@ -26,6 +26,8 @@ export enum AnalyticsPage {
   SameSeed = "App already secured with this Ledger",
   ScanAttemptWithSameBackup = "Scan attempt with same backup",
   ScanAttemptWithDifferentBackups = "Scan attempt with different backups",
+  OnBoardingQRCodeNoBackup = "Onboarding no backup detected",
+  OnBoardingDeviceNoBackup = "Onboarding this Ledger does not secure a backup",
 }
 
 export enum AnalyticsFlow {
@@ -53,6 +55,8 @@ export enum AnalyticsButton {
   LedgerSync = "Ledger Sync",
   UseAnother = "Connect another ledger",
   Understand = "I understand",
+  TryAnotherLedger = "Try another Ledger",
+  ContinueWihtoutSync = "Continue without sync",
 }
 
 type OnClickTrack = {

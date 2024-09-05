@@ -1,0 +1,33 @@
+import React from "react";
+import { Icons } from "@ledgerhq/react-ui";
+
+export const mappingKeysWithIconAndName = {
+  alpha: { icon: <Icons.OrdinalsAlpha />, name: "Alpha" },
+  black_epic: { icon: <Icons.OrdinalsBlackEpic />, name: "Black Epic" },
+  black_legendary: { icon: <Icons.OrdinalsBlackLegendary />, name: "Black Legendary" },
+  black_mythic: { icon: <Icons.OrdinalsBlackMythic />, name: "Black Mythic" },
+  black_rare: { icon: <Icons.OrdinalsBlackRare />, name: "Black Rare" },
+  black_uncommon: { icon: <Icons.OrdinalsBlackUncommon />, name: "Black Uncommon" },
+  block_9: { icon: <Icons.OrdinalsBlock9 />, name: "Block 9" },
+  block_9_450x: { icon: <Icons.OrdinalsBlock9450X />, name: "Block 9 450x" },
+  block_78: { icon: <Icons.OrdinalsBlock78 />, name: "Block 78" },
+  block_286: { icon: <Icons.OrdinalsBlock286 />, name: "Block 286" },
+  block_666: { icon: <Icons.OrdinalsBlock666 />, name: "Block 666" },
+  common: { icon: <Icons.OrdinalsCommon />, name: "Common" },
+  epic: { icon: <Icons.OrdinalsEpic />, name: "Epic" },
+  first_tx: { icon: <Icons.OrdinalsFirstTx />, name: "First Transaction" },
+  hitman: { icon: <Icons.OrdinalsHitman />, name: "Hitman" },
+  jpeg: { icon: <Icons.OrdinalsJpeg />, name: "JPEG" },
+  legacy: { icon: <Icons.OrdinalsLegacy />, name: "Legacy" },
+  legendary: { icon: <Icons.OrdinalsLegendary />, name: "Legendary" },
+  mythic: { icon: <Icons.OrdinalsMythic />, name: "Mythic" },
+  nakamoto: { icon: <Icons.OrdinalsNakamoto />, name: "Nakamoto" },
+  omega: { icon: <Icons.OrdinalsOmega />, name: "Omega" },
+  paliblock: { icon: <Icons.OrdinalsPaliblockPalindrome />, name: "PaliBlock Palindrome" },
+  palindrome: { icon: <Icons.OrdinalsPalindrome />, name: "Palindrome" },
+  palinception: { icon: <Icons.OrdinalsPalinception />, name: "Palinception" },
+  pizza: { icon: <Icons.OrdinalsPizza />, name: "Pizza" },
+  rare: { icon: <Icons.OrdinalsRare />, name: "Rare" },
+  uncommon: { icon: <Icons.OrdinalsUncommon />, name: "Uncommon" },
+  vintage: { icon: <Icons.OrdinalsVintage />, name: "Vintage" },
+};

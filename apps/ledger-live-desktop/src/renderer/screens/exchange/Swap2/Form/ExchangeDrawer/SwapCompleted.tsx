@@ -12,23 +12,13 @@ import { GradientHover } from "~/renderer/drawers/OperationDetails/styledCompone
 import IconCheck from "~/renderer/icons/Check";
 import IconClock from "~/renderer/icons/Clock";
 import { openURL } from "~/renderer/linking";
-import { colors } from "~/renderer/styles/theme";
 import { track } from "~/renderer/analytics/segment";
 import {
   getSwapProvider,
   AdditionalProviderConfig,
 } from "@ledgerhq/live-common/exchange/providers/swap";
+import { IconWrapper, WrapperClock } from "../../../shared/shared-styles";
 
-const IconWrapper = styled(Box)`
-  background: ${colors.lightGreen};
-  color: ${colors.positiveGreen};
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-`;
 const Pill = styled(Text)`
   user-select: text;
   border-radius: 4px;
@@ -58,16 +48,6 @@ const SwapIdWrapper = styled(Box).attrs(p => ({
     color: ${p => p.theme.colors.palette.text.shade100};
   }
 }
-`;
-const WrapperClock = styled(Box).attrs(() => ({
-  bg: "palette.background.paper",
-  color: "palette.text.shade60",
-}))`
-  border-radius: 50%;
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  padding: 2px;
 `;
 
 const SwapCompleted = ({

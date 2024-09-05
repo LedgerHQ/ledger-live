@@ -299,8 +299,8 @@ export const track = (
   }
 
   const eventPropertiesWithoutExtra = {
-    ...properties,
     page: currentRouteNameRef.current,
+    ...properties,
   };
 
   const allProperties = {

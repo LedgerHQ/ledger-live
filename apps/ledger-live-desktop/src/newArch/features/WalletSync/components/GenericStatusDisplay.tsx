@@ -2,7 +2,7 @@ import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
-import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
+import { AnalyticsFlow, AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 
@@ -44,7 +44,7 @@ export const GenericStatusDisplay = ({
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
-      <TrackPage category={String(analyticsPage)} />
+      <TrackPage category={String(analyticsPage)} flow={AnalyticsFlow} />
       <Container>
         {type === "info" ? (
           <Icons.InformationFill size={"L"} color={colors.primary.c60} />
