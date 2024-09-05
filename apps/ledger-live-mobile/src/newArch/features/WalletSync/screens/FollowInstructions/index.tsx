@@ -28,7 +28,7 @@ const GenericFollowInstructionsDrawer = ({
   handleClose,
   scene,
   goToDelete,
-  backToKeyError,
+  backToWrongSeedError,
   confirmDeleteKey,
   retry,
 }: Props) => {
@@ -47,8 +47,10 @@ const GenericFollowInstructionsDrawer = ({
           </Flex>
         );
 
-      case SceneKind.WrongSeedError:
-        return <ConfirmManageKey onClickConfirm={confirmDeleteKey} onCancel={backToKeyError} />;
+      case SceneKind.ConfirmDeleteWrongSeedError:
+        return (
+          <ConfirmManageKey onClickConfirm={confirmDeleteKey} onCancel={backToWrongSeedError} />
+        );
 
       case SceneKind.KeyError:
         return (
