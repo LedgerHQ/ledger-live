@@ -17,6 +17,7 @@ import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-trustchain";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -100,7 +101,7 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
   if (!isFocused) return null;
 
   return (
-    <>
+    <SafeAreaView edges={["top", "left", "right"]} style={{ flex: 1 }}>
       <TrackScreen category="Manager" name="ChooseDevice" />
       {!isHeaderOverridden ? (
         <Flex px={16} pb={8}>
@@ -128,7 +129,7 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
         request={request}
         onError={onError}
       />
-    </>
+    </SafeAreaView>
   );
 };
 

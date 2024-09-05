@@ -16,6 +16,7 @@ import { ManageInstancesProcess } from "./screens/ManageInstances/ManageInstance
 import { WalletSyncManageInstanceDeletionSuccess } from "./screens/ManageInstances/DeletionSuccess";
 import { LedgerSyncDeepLinkHandler } from "./screens/LedgerSyncDeepLinkHandler";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
+import { useClose } from "./hooks/useClose";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
@@ -24,6 +25,7 @@ export default function WalletSyncNavigator() {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   const { t } = useTranslation();
   useInitMemberCredentials();
+  const close = useClose();
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -49,7 +51,7 @@ export default function WalletSyncNavigator() {
         options={{
           title: "",
           headerLeft: () => null,
-          headerRight: () => <NavigationHeaderCloseButton />,
+          headerRight: () => <NavigationHeaderCloseButton onPress={close} />,
         }}
       />
 
