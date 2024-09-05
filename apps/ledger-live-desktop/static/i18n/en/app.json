@@ -5668,14 +5668,14 @@
     },
     "SwapRateExpiredError": {
       "title": "Rate Expired",
-      "description": "The exchange transaction could not be completed as the rate has expired. Please refresh the rates and try your swap again."
+      "description": "Exchange rate expired. Please refresh and try again."
     },
     "PayinExtraIdError": {
       "message": "Missing required extraId required for swap"
     },
     "SwapGenericAPIError": {
       "title": "Something went wrong",
-      "description": "The exchange transaction did not go through. Please try again or contact support."
+      "description": "Transaction failed. Please try again."
     },
     "TimeoutError": {
       "title": "Sorry, server took too long to respond",
@@ -5844,7 +5844,7 @@
       "title": "Priority fee is higher than necessary. You might be overpaying"
     },
     "MaxFeeTooLow": {
-      "title": "Max fee is lower than the recommended value"
+      "title": "Fee is lower than the recommended value"
     },
     "PriorityFeeHigherThanMaxFee": {
       "title": "Max priority fee cannot be higher than max fee"
