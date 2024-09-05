@@ -9,7 +9,7 @@ import { useDestroyTrustchain } from "./useDestroyTrustchain";
 export enum SceneKind {
   DeviceInstructions,
   Loader,
-  WrongSeedError,
+  ConfirmDeleteWrongSeedError,
   KeyError,
   UnbackedError,
   GenericError,
@@ -19,7 +19,7 @@ export enum SceneKind {
 type Scene =
   | { kind: SceneKind.DeviceInstructions; device: Device }
   | { kind: SceneKind.Loader }
-  | { kind: SceneKind.WrongSeedError }
+  | { kind: SceneKind.ConfirmDeleteWrongSeedError }
   | { kind: SceneKind.KeyError }
   | { kind: SceneKind.AlreadySecuredSameSeed }
   | { kind: SceneKind.AlreadySecuredOtherSeed }
@@ -30,7 +30,7 @@ export type DrawerProps = {
   scene: Scene;
   retry: () => void;
   goToDelete: () => void;
-  backToKeyError: () => void;
+  backToWrongSeedError: () => void;
   confirmDeleteKey: () => void;
 };
 
@@ -49,11 +49,11 @@ export function useFollowInstructionDrawer(
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const goToDelete = useCallback(() => {
-    setScene({ kind: SceneKind.WrongSeedError });
+    setScene({ kind: SceneKind.ConfirmDeleteWrongSeedError });
   }, []);
 
-  const backToKeyError = useCallback(() => {
-    setScene({ kind: SceneKind.KeyError });
+  const backToWrongSeedError = useCallback(() => {
+    setScene({ kind: SceneKind.AlreadySecuredOtherSeed });
   }, []);
 
   const confirmDeleteKey = useCallback(async () => {
@@ -65,5 +65,5 @@ export function useFollowInstructionDrawer(
     run(setScene);
   }, deps); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { scene, retry, goToDelete, backToKeyError, confirmDeleteKey };
+  return { scene, retry, goToDelete, backToWrongSeedError, confirmDeleteKey };
 }
