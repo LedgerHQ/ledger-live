@@ -64,6 +64,7 @@ export type TrongridTxType =
   | "UnfreezeBalanceContract"
   | "VoteWitnessContract"
   | "TriggerSmartContract"
+  | "ContractApproval"
   | "WithdrawBalanceContract"
   | "ExchangeTransactionContract"
   | "FreezeBalanceV2Contract"
