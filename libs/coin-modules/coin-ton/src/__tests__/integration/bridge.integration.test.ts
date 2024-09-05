@@ -11,7 +11,7 @@ const ADDRESS = "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4";
 const ADDRESS_2 = "UQAui6M4jOYOezUGfmeONA22Ars9yjd34YIGdAR1Pcpp4sgR";
 const PATH = "44'/607'/0'/0'/0'/0'";
 const SUBACCOUNT =
-  "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua";
+  "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not";
 
 const ton: CurrenciesData<Transaction> = {
   IgnorePrepareTransactionFields: ["fees"],
@@ -154,7 +154,7 @@ const ton: CurrenciesData<Transaction> = {
           name: "Subaccount New account and sufficient amount",
           transaction: fromTransactionRaw({
             family: "ton",
-            recipient: ADDRESS_2,
+            recipient: ADDRESS,
             fees: "10000000",
             amount: "10000000",
             comment: { isEncrypted: false, text: "Valid" },
@@ -170,7 +170,7 @@ const ton: CurrenciesData<Transaction> = {
           name: "Subaccount Send max",
           transaction: fromTransactionRaw({
             family: "ton",
-            recipient: ADDRESS_2,
+            recipient: ADDRESS,
             fees: "10000000",
             amount: "10000000",
             comment: { isEncrypted: false, text: "Valid" },
