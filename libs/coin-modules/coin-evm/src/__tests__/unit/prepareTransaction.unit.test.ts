@@ -582,13 +582,13 @@ describe("EVM Family", () => {
         });
 
         describe("When custom feesStrategy provided", () => {
-          it("should use transaction provided data for fees", async () => {
+          it("should also call getFeeData to determine the gas price and type", async () => {
             const tx = await prepareTransaction(account, {
               ...transaction,
               feesStrategy: "custom",
             });
 
-            expect(nodeApi.getFeeData).toBeCalledTimes(0);
+            expect(nodeApi.getFeeData).toBeCalledTimes(1);
 
             expect(tx).toEqual({
               ...transaction,
