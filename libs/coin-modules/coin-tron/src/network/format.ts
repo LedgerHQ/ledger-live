@@ -17,14 +17,13 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
     let txType: TrongridTxType;
     let tokenId: string | undefined;
     const fee = tx.detail.ret[0].fee || undefined;
-    let bnFee = new BigNumber(fee || 0);
+    const bnFee = new BigNumber(fee || 0);
     let formattedValue;
 
     switch (type) {
       case "Approval":
         txType = "ContractApproval";
         formattedValue = bnFee;
-
         break;
       default:
         txType = "TriggerSmartContract";

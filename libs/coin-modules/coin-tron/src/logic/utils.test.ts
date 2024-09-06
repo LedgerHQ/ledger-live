@@ -1,4 +1,4 @@
-import { Operation, OperationType } from "@ledgerhq/types-live";
+import { OperationType } from "@ledgerhq/types-live";
 import { TrongridTxInfo, TrongridTxType } from "../types";
 import { txInfoToOperation } from "./utils";
 
