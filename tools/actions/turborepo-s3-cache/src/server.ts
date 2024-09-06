@@ -83,7 +83,7 @@ async function startServer() {
       req.pipe(bodyStream);
 
       try {
-        console.log("trying upload");
+        console.log("trying upload:");
         const upload = new Upload({
           client,
           params: {
