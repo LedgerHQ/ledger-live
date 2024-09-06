@@ -893,6 +893,9 @@
     "NearStakingThresholdNotMet": {
       "title": "Amount needs to be at least {{threshold}}"
     },
+    "PinNotSet": {
+      "title": "PIN not set"
+    },
     "PriorityFeeTooLow": {
       "title": "Priority fee is lower than the recommended value"
     },

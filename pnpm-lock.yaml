@@ -134,6 +134,12 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
+      '@ledgerhq/device-core':
+        specifier: workspace:^
+        version: link:../../libs/device-core
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../libs/ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/errors
