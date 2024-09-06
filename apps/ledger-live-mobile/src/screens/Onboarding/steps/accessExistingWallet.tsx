@@ -16,6 +16,10 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
+import {
+  AnalyticsButton,
+  AnalyticsPage,
+} from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList & BaseNavigatorStackParamList,
@@ -87,7 +91,8 @@ function AccessExistingWallet() {
                   title: t("onboarding.welcomeBackStep.walletSync"),
                   event: "button_clicked",
                   eventProperties: {
-                    button: "Sync with WalletSync",
+                    button: AnalyticsButton.SyncWithAnotherLedgerLive,
+                    page: AnalyticsPage.OnboardingAccessExistingWallet,
                   },
                   testID: "Existing Wallet | Wallet Sync",
                   onPress: openDrawer,

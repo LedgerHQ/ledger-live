@@ -44,7 +44,9 @@ const Fields: Props = ({
   const bridge = getAccountBridge(account);
   const { t } = useTranslation();
   const [coinControlOpened, setCoinControlOpened] = useState(false);
-  const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
+  const [isAdvanceMode, setAdvanceMode] = useState(
+    !transaction.feesStrategy || transaction.feesStrategy === "custom",
+  );
   const strategies = useFeesStrategy(account, transaction);
   const onCoinControlOpen = useCallback(() => setCoinControlOpened(true), []);
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);

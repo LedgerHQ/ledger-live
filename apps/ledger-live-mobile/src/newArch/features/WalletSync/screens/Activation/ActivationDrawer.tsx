@@ -37,7 +37,7 @@ function View({
       <TrackScreen />
       <QueuedDrawer
         isRequestingToBeOpened={isOpen}
-        onClose={onCloseDrawer}
+        onClose={hasCustomHeader ? undefined : onCloseDrawer}
         CustomHeader={hasCustomHeader ? CustomDrawerHeader : undefined}
         hasBackButton={canGoBack}
         onBack={goBackToPreviousStep}

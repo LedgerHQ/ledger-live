@@ -11,9 +11,14 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 type AddAccountScreenProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
   onClose?: () => void;
+  setWalletSyncDrawerVisible?: () => void;
 };
 
-const useSelectAddAccountMethodViewModel = ({ currency, onClose }: AddAccountScreenProps) => {
+const useSelectAddAccountMethodViewModel = ({
+  currency,
+  onClose,
+  setWalletSyncDrawerVisible,
+}: AddAccountScreenProps) => {
   const navigation = useNavigation<BaseNavigation>();
   const walletSyncFeatureFlag = useFeature("llmWalletSync");
 
@@ -42,6 +47,11 @@ const useSelectAddAccountMethodViewModel = ({ currency, onClose }: AddAccountScr
     navigation.navigate(NavigatorName.ImportAccounts);
   }, [navigation, trackButtonClick, onClose]);
 
+  const onClickImportLedgerSync = useCallback(() => {
+    trackButtonClick("Import via another Ledger Live app");
+    setWalletSyncDrawerVisible?.();
+  }, [trackButtonClick, setWalletSyncDrawerVisible]);
+
   const onClickAdd = useCallback(() => {
     trackButtonClick("With your Ledger");
     onClose?.();
@@ -53,6 +63,7 @@ const useSelectAddAccountMethodViewModel = ({ currency, onClose }: AddAccountScr
     isReadOnlyModeEnabled,
     onClickAdd,
     onClickImport,
+    onClickImportLedgerSync,
   };
 };
 
