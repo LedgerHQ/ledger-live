@@ -266,12 +266,12 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     () =>
       new URLSearchParams({
         ...(isOffline ? { isOffline: "true" } : {}),
-        ...(state.defaultAccount
+        ...(state?.defaultAccount
           ? {
               fromAccountId: accountToWalletAPIAccount(
                 walletState,
                 state.defaultAccount,
-                state.defaultParentAccount,
+                state?.defaultParentAccount,
               ).id,
             }
           : {}),
