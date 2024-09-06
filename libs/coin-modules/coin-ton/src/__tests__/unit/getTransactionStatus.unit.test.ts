@@ -129,7 +129,7 @@ describe("getTransactionStatus", () => {
         const res = await getTransactionStatus(account, transaction);
         expect(res.errors).toEqual(
           expect.objectContaining({
-            comment: new TonCommentInvalid(),
+            transaction: new TonCommentInvalid(),
           }),
         );
       });

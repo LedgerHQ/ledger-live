@@ -12,7 +12,6 @@ import {
   getLedgerTonPath,
   getTransferExpirationTime,
   isAddressValid,
-  isJettonTransfer,
 } from "../../utils";
 import {
   account,
@@ -109,7 +108,7 @@ describe("TON transfers", () => {
      */
     const isJettonTransfer = (payload: TonPayloadFormat): boolean =>
       payload.type === "jetton-transfer";
-    
+
     expect(isJettonTransfer(commentPayload)).toBe(false);
     expect(isJettonTransfer(transferPayload)).toBe(true);
     expect(isJettonTransfer(nftPayload)).toBe(false);
