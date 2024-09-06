@@ -1,5 +1,33 @@
 # live-mobile
 
+## 3.49.0-nightly.8
+
+### Minor Changes
+
+- [#7751](https://github.com/LedgerHQ/ledger-live/pull/7751) [`5df9941`](https://github.com/LedgerHQ/ledger-live/commit/5df9941cb533825fea15fce3484224fbf04ad13e) Thanks [@Justkant](https://github.com/Justkant)! - feat(LLM): pass some additional params to wallet-connect live-app when receiving a request
+
+### Patch Changes
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7754](https://github.com/LedgerHQ/ledger-live/pull/7754) [`9ad7895`](https://github.com/LedgerHQ/ledger-live/commit/9ad7895e6ef311e4a7c5913b5acb8c041eef715e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix navigation on Drawer when AlreadySecuredOtherSeed error
+
+- [#7753](https://github.com/LedgerHQ/ledger-live/pull/7753) [`d7163a7`](https://github.com/LedgerHQ/ledger-live/commit/d7163a7da9918897b61b5bb76ca750a1253f767c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Ledger sync small navigation fixes
+
+- [#7758](https://github.com/LedgerHQ/ledger-live/pull/7758) [`c4460cf`](https://github.com/LedgerHQ/ledger-live/commit/c4460cf7d1a5c53b3b1ce493731952b3e2bf6102) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Analytics LedgerSync
+
+- Updated dependencies [[`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623)]:
+  - @ledgerhq/coin-evm@2.2.0-nightly.7
+  - @ledgerhq/live-common@34.8.0-nightly.8
+  - @ledgerhq/live-countervalues@0.2.5-nightly.6
+  - @ledgerhq/coin-framework@0.17.1-nightly.6
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.6
+  - @ledgerhq/live-nft@0.4.5-nightly.6
+  - @ledgerhq/live-nft-react@0.4.5-nightly.6
+  - @ledgerhq/live-wallet@0.6.0-nightly.10
+  - @ledgerhq/native-ui@0.24.0-nightly.4
+
 ## 3.49.0-nightly.7
 
 ### Minor Changes

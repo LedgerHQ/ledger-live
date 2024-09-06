@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 2.2.0-nightly.7
+
+### Patch Changes
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- Updated dependencies [[`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.3
+  - @ledgerhq/coin-framework@0.17.1-nightly.6
+  - @ledgerhq/evm-tools@1.2.1-nightly.4
+
 ## 2.2.0-nightly.6
 
 ### Patch Changes

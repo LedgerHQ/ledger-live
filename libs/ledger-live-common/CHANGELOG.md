@@ -1,5 +1,36 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.8
+
+### Patch Changes
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- Updated dependencies [[`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`e6b8cea`](https://github.com/LedgerHQ/ledger-live/commit/e6b8ceac486147f4000aab7f0ae7f89d2ac205b1)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.3
+  - @ledgerhq/crypto-icons-ui@1.4.1-nightly.1
+  - @ledgerhq/coin-evm@2.2.0-nightly.7
+  - @ledgerhq/live-countervalues@0.2.5-nightly.6
+  - @ledgerhq/coin-framework@0.17.1-nightly.6
+  - @ledgerhq/coin-bitcoin@0.8.0-nightly.4
+  - @ledgerhq/coin-algorand@0.5.5-nightly.6
+  - @ledgerhq/coin-cardano@0.1.5-nightly.6
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.1
+  - @ledgerhq/coin-icon@0.4.2-nightly.6
+  - @ledgerhq/coin-near@0.5.5-nightly.6
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.7
+  - @ledgerhq/coin-solana@0.7.5-nightly.6
+  - @ledgerhq/coin-stellar@0.2.3-nightly.6
+  - @ledgerhq/coin-tezos@0.6.1-nightly.6
+  - @ledgerhq/coin-ton@0.3.13-nightly.7
+  - @ledgerhq/coin-tron@0.0.5-nightly.6
+  - @ledgerhq/coin-xrp@0.5.1-nightly.6
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.6
+  - @ledgerhq/hw-app-vet@0.2.5-nightly.5
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.6
+  - @ledgerhq/live-nft@0.4.5-nightly.6
+  - @ledgerhq/live-wallet@0.6.0-nightly.10
+
 ## 34.8.0-nightly.7
 
 ### Patch Changes

@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.8
+
+### Minor Changes
+
+- [#7742](https://github.com/LedgerHQ/ledger-live/pull/7742) [`e6b8cea`](https://github.com/LedgerHQ/ledger-live/commit/e6b8ceac486147f4000aab7f0ae7f89d2ac205b1) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: some issue with btc custom fees when reopening drawer
+
+### Patch Changes
+
+- [#7745](https://github.com/LedgerHQ/ledger-live/pull/7745) [`917045c`](https://github.com/LedgerHQ/ledger-live/commit/917045c9985386d3a5ad879ae9fec0f32322ddaa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLD ORDINALS add dummy table to display inscriptions inside BTC account screen.
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7757](https://github.com/LedgerHQ/ledger-live/pull/7757) [`b606b71`](https://github.com/LedgerHQ/ledger-live/commit/b606b7143873c037c0507a479e2789917db82b48) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - error messages for transaction and fees drawers
+
+- [#7752](https://github.com/LedgerHQ/ledger-live/pull/7752) [`c68c312`](https://github.com/LedgerHQ/ledger-live/commit/c68c3121b93d38567f31682c9a4b191f29db02a0) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Pass through from currency if exists in location to demo 3
+
+- Updated dependencies [[`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`e6b8cea`](https://github.com/LedgerHQ/ledger-live/commit/e6b8ceac486147f4000aab7f0ae7f89d2ac205b1)]:
+  - @ledgerhq/coin-evm@2.2.0-nightly.7
+  - @ledgerhq/live-common@34.8.0-nightly.8
+  - @ledgerhq/live-countervalues@0.2.5-nightly.6
+  - @ledgerhq/coin-framework@0.17.1-nightly.6
+  - @ledgerhq/coin-bitcoin@0.8.0-nightly.4
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.6
+  - @ledgerhq/live-nft@0.4.5-nightly.6
+  - @ledgerhq/live-nft-react@0.4.5-nightly.6
+  - @ledgerhq/live-wallet@0.6.0-nightly.10
+  - @ledgerhq/react-ui@0.16.0-nightly.2
+
 ## 2.86.0-nightly.7
 
 ### Minor Changes

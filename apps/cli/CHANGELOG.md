@@ -1,5 +1,17 @@
 # @ledgerhq/live-cli
 
+## 24.5.2-nightly.8
+
+### Patch Changes
+
+- Updated dependencies [[`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`e6b8cea`](https://github.com/LedgerHQ/ledger-live/commit/e6b8ceac486147f4000aab7f0ae7f89d2ac205b1)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.3
+  - @ledgerhq/live-common@34.8.0-nightly.8
+  - @ledgerhq/live-countervalues@0.2.5-nightly.6
+  - @ledgerhq/coin-framework@0.17.1-nightly.6
+  - @ledgerhq/coin-bitcoin@0.8.0-nightly.4
+  - @ledgerhq/live-wallet@0.6.0-nightly.10
+
 ## 24.5.2-nightly.7
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.8.0-nightly.4
+
+### Minor Changes
+
+- [#7742](https://github.com/LedgerHQ/ledger-live/pull/7742) [`e6b8cea`](https://github.com/LedgerHQ/ledger-live/commit/e6b8ceac486147f4000aab7f0ae7f89d2ac205b1) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: some issue with btc custom fees when reopening drawer
+
+### Patch Changes
+
+- Updated dependencies [[`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.3
+  - @ledgerhq/coin-framework@0.17.1-nightly.6
+
 ## 0.7.4-nightly.3
 
 ### Patch Changes
