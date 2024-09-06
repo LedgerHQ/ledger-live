@@ -1,9 +1,9 @@
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getEnv } from "@ledgerhq/live-env";
-import BigNumber from "bignumber.js";
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
@@ -24,6 +24,11 @@ import {
 } from "~/renderer/reducers/settings";
 import { captureException } from "~/sentry/renderer";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
+import BigNumber from "bignumber.js";
+import {
+  accountToWalletAPIAccount,
+  getAccountIdFromWalletAccountId,
+} from "@ledgerhq/live-common/wallet-api/converters";
 
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
@@ -39,6 +44,8 @@ import { useLocation } from "react-router";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { transformToBigNumbers, useGetSwapTrackingProperties } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -91,7 +98,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
       palette: { type: themeType },
     },
   } = useTheme();
-
+  const walletState = useSelector(walletSelector);
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
@@ -101,7 +108,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const { state } = useLocation<{ defaultCurrency?: { id: string } }>();
+  const { state } = useLocation<{ defaultAccount?: AccountLike; defaultParentAccount?: Account }>();
 
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
@@ -258,11 +265,18 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const hashString = useMemo(
     () =>
       new URLSearchParams({
-        ...(state?.defaultCurrency?.id ? { from: state?.defaultCurrency?.id } : {}),
         ...(isOffline ? { isOffline: "true" } : {}),
+        ...(state?.defaultAccount
+          ? {
+              fromAccountId: accountToWalletAPIAccount(
+                walletState,
+                state.defaultAccount,
+                state?.defaultParentAccount,
+              ).id,
+            }
+          : {}),
       }).toString(),
-
-    [isOffline, state?.defaultCurrency?.id],
+    [isOffline, state?.defaultAccount, state?.defaultParentAccount, walletState],
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
