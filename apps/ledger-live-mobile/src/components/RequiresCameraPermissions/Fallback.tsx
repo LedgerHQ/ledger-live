@@ -15,8 +15,6 @@ type Props = {
   hasNoBackground?: boolean;
 };
 
-const IconSettings = () => <Icon name="settings" size={16} color="neutral.c100" />;
-
 const FallbackCameraBody: React.FC<Props> = ({
   title,
   description,
@@ -26,6 +24,8 @@ const FallbackCameraBody: React.FC<Props> = ({
   hasNoBackground,
 }: Props) => {
   const { colors } = useTheme();
+
+  const IconSettings = () => <Icon name="settings" size={16} color={colors.neutral.c00} />;
 
   return (
     <Flex flex={1} bg={hasNoBackground ? "transparent" : "background.main"} px={6}>
