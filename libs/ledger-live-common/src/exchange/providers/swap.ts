@@ -246,24 +246,18 @@ export const getProvidersData = async (): Promise<Record<string, ProviderData>> 
 
 /**
  * Retrieves the currency data for a given ID
- * coins and tokens are litteraly the same on our case but we need to call the correct endpoint.
  * @param currencyId The unique identifier for the currency.
- * @param type Specifies the type of currency, either "tokens" or "coins".
  * @returns A promise that resolves to the currency data including ID, serialized config, and signature.
  */
-export const findExchangeCurrencyData = async (
-  currencyId: string,
-  type: "tokens" | "coins",
-): Promise<CurrencyData> => {
+export const findExchangeCurrencyData = async (currencyId: string): Promise<CurrencyData> => {
   const { data: currencyData } = await network<CurrencyDataResponse>({
     method: "GET",
-    url: `https://crypto-assets-service.api.ledger.com/v1/${type}`,
+    url: "https://crypto-assets-service.api.ledger.com/v1/currencies",
     params: {
       output: "id,exchange_app_config_serialized,exchange_app_signature",
       id: currencyId,
     },
   });
-  // TODO: maybe throw errors/warning if many currencies fetched with the same ID.
   if (!currencyData.length) {
     throw new Error(`Exchange, missing configuration for ${currencyId}`);
   }

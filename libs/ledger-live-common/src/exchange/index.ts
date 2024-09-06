@@ -3,6 +3,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { getEnv } from "@ledgerhq/live-env";
 import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
 import { findExchangeCurrencyData } from "./providers/swap";
+import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
 const exchangeSupportAppVersions = {
@@ -39,14 +40,22 @@ export const isExchangeSupportedByApp = (appName: string, appVersion: string): b
 export const getCurrencyExchangeConfig = async (
   currency: CryptoCurrency | TokenCurrency,
 ): Promise<ExchangeCurrencyNameAndSignature> => {
-  const type = currency.type === "TokenCurrency" ? "tokens" : "coins";
+  let res;
+  try {
+    res = getEnv("MOCK_EXCHANGE_TEST_CONFIG")
+      ? await findTestExchangeCurrencyConfig(currency.id)
+      : await findExchangeCurrencyData(currency.id);
 
-  const res = getEnv("MOCK_EXCHANGE_TEST_CONFIG")
-    ? await findTestExchangeCurrencyConfig(currency.id)
-    : await findExchangeCurrencyData(currency.id, type);
+    if (!res) {
+      throw new Error("Missing primary config");
+    }
+  } catch (error) {
+    // Fallback to old production config if the primary fetch fails, should be removed when we have a HA CAL
+    res = await findProdExchangeCurrencyConfig(currency.id);
 
-  if (!res) {
-    throw new Error(`Exchange, missing configuration for ${currency.id}`);
+    if (!res) {
+      throw new Error(`Exchange, missing configuration for ${currency.id}`);
+    }
   }
 
   return {
