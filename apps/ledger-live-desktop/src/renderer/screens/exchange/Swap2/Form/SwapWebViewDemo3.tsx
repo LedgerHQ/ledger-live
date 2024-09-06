@@ -278,7 +278,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             }
           : {}),
       }).toString(),
-    [isOffline, state.defaultAccount, state.defaultParentAccount, walletState],
+    [isOffline, state?.defaultAccount, state?.defaultParentAccount, walletState],
   );
 
   const onSwapWebviewError = (error?: SwapLiveError) => {
