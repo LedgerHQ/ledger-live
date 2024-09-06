@@ -95,7 +95,7 @@ export const test = base.extend<TestFixtures>({
       );
       device = await startSpeculos(
         testInfo.title.replace(/ /g, "_"),
-        specs[speculosCurrency.deviceLabel.replace(/ /g, "_")],
+        specs[speculosCurrency.speculosApp.replace(/ /g, "_")],
       );
       setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
     }

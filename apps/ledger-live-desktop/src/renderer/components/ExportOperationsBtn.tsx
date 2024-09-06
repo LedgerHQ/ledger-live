@@ -18,6 +18,7 @@ type Props = {
   openModal: (b: string) => void;
   primary?: boolean;
   accounts: Account[];
+  dataTestId?: string;
 };
 const mapDispatchToProps = {
   openModal,
@@ -28,7 +29,7 @@ const mapStateToProps = createStructuredSelector({
 class ExportOperationsBtn extends Component<Props> {
   openModal = () => this.props.openModal("MODAL_EXPORT_OPERATIONS");
   render() {
-    const { t, primary, accounts } = this.props;
+    const { t, primary, accounts, dataTestId } = this.props;
     if (!accounts.length && !primary) return null;
     return primary ? (
       <Button
@@ -37,6 +38,7 @@ class ExportOperationsBtn extends Component<Props> {
         event="ExportAccountOperations"
         disabled={!accounts.length}
         onClick={this.openModal}
+        data-testid={dataTestId}
       >
         {t("exportOperationsModal.cta")}
       </Button>

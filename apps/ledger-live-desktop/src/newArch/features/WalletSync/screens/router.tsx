@@ -19,11 +19,11 @@ export const WalletSyncRouter = forwardRef<BackRef, BackProps>((_props, ref) => 
   switch (walletSyncFlow) {
     default:
     case Flow.Activation:
-      return <WalletSyncActivation />;
+      return <WalletSyncActivation ref={ref} />;
     case Flow.WalletSyncActivated:
       return <WalletSyncManage />;
     case Flow.Synchronize:
-      return <SynchronizeWallet />;
+      return <SynchronizeWallet ref={ref} />;
     case Flow.ManageBackup:
       return <WalletSyncManageBackup ref={ref} />;
     case Flow.ManageInstances:

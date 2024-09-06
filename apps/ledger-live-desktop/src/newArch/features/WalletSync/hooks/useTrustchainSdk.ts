@@ -25,13 +25,15 @@ export function useTrustchainSdk() {
     featureWalletSync?.params?.environment,
   );
   const isMockEnv = !!getEnv("MOCK");
+
   const defaultContext = useMemo(() => {
     const applicationId = 16;
     const platform = os.platform();
-    const hash = getEnv("USER_ID").slice(0, 5);
-    const name = `${platformMap[platform] || platform}${hash ? " " + hash : ""}`;
+    const hostname = os.hostname();
+    const name = `${platformMap[platform] || platform}${hostname ? " " + hostname : ""}`;
     return { applicationId, name, apiBaseUrl: trustchainApiBaseUrl };
   }, [trustchainApiBaseUrl]);
+
   const store = useStore();
   const lifecycle = useMemo(
     () =>

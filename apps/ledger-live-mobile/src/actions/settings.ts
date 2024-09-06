@@ -69,6 +69,7 @@ import {
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
+  SettingsSetFromLedgerSyncOnboardingPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -279,6 +280,10 @@ export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAna
 
 export const setDismissedContentCard = createAction<SettingsSetDismissedContentCardsPayload>(
   SettingsActionTypes.SET_DISMISSED_CONTENT_CARD,
+);
+
+export const setFromLedgerSyncOnboarding = createAction<SettingsSetFromLedgerSyncOnboardingPayload>(
+  SettingsActionTypes.SET_LEDGER_SYNC_ONBOARDING,
 );
 
 export const clearDismissedContentCards = createAction<SettingsClearDismissedContentCardsPayload>(

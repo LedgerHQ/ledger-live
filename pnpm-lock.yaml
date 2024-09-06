@@ -405,6 +405,9 @@ importers:
       focus-trap:
         specifier: ^6.6.1
         version: 6.9.4
+      framer-motion:
+        specifier: ^11.3.28
+        version: 11.3.28(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
@@ -1075,6 +1078,9 @@ importers:
       react-native-config:
         specifier: 1.5.1
         version: 1.5.1(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
+      react-native-device-info:
+        specifier: ^11.1.0
+        version: 11.1.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
       react-native-easy-markdown:
         specifier: ^2.0.0
         version: 2.0.0(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0))
@@ -3128,11 +3134,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.9
-        version: 1.5.9
+        specifier: ^1.5.10
+        version: 1.5.10
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.10.1
-        version: 1.10.1
+        specifier: ^1.11.0
+        version: 1.11.0
     devDependencies:
       '@types/node':
         specifier: ^20.2.5
@@ -3376,17 +3382,17 @@ importers:
         specifier: workspace:^
         version: link:../speculos-transport
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.9
-        version: 1.5.9
+        specifier: ^1.5.10
+        version: 1.5.10
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.10.1
-        version: 1.10.1
+        specifier: ^1.11.0
+        version: 1.11.0
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.5.10
-        version: 1.5.10(react@18.2.0)(rxjs@7.8.1)
+        specifier: ^1.5.11
+        version: 1.5.11(react@18.2.0)(rxjs@7.8.1)
       '@stacks/network':
         specifier: 6.10.0
         version: 6.10.0
@@ -6502,6 +6508,9 @@ importers:
       embla-carousel-react:
         specifier: 8.0.0-rc17
         version: 8.0.0-rc17(react@18.2.0)
+      framer-motion:
+        specifier: ^11.3.28
+        version: 11.3.28(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-is:
         specifier: ^17.0.2
         version: 17.0.2
@@ -6711,14 +6720,14 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.9
-        version: 1.5.9
+        specifier: ^1.5.10
+        version: 1.5.10
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.3.9
-        version: 1.3.9(react@18.2.0)
+        specifier: ^1.3.10
+        version: 1.3.10(react@18.2.0)
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.1.15
-        version: 1.1.15(react@18.2.0)
+        specifier: ^1.1.16
+        version: 1.1.16(react@18.2.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -10260,19 +10269,19 @@ packages:
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
-  '@ledgerhq/wallet-api-client-react@1.3.9':
-    resolution: {integrity: sha512-9U+D1AxLjv5XfLvyqs1cGRW7iCYrDBvbvPnA3gkn/8v+NPe3HkQUO1zdvFsjoTqcaIsI1BiA8UB0x0vwmQ+uDQ==}
+  '@ledgerhq/wallet-api-client-react@1.3.10':
+    resolution: {integrity: sha512-iIZbaThZ3wfsicf6uYFzsxmy5cwn9weFClm4gg49inCiXcSTvk2BGlg81eHTNfVJqoNiHZNBh19lkqG4XTnL6w==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
 
-  '@ledgerhq/wallet-api-client@1.5.9':
-    resolution: {integrity: sha512-q95okG1R2mDIJc1n7lw06GDWpJmQIDdTrBUxxeeRzzcdEp1ZaVitS8O6tuHfE/Rva88iKhaT7ZMpkaZ3VELKBQ==}
+  '@ledgerhq/wallet-api-client@1.5.10':
+    resolution: {integrity: sha512-cSTdNKBjlzium1tRS2+Q8Ev6T8MM0v8WtOF34+I/+GfkcerA9wR6l4ISGWP9fPneur3r+uGF1k4Y5LPbMN5pdw==}
 
-  '@ledgerhq/wallet-api-core@1.10.1':
-    resolution: {integrity: sha512-T4B092Q5Z7DS4Vl68xqqKDde8cCRsPZOx6ODSkAfMbNIt3ipcS+WiFA3PccCzm7u0H/W0QM+3MgXF38+vBDOnQ==}
+  '@ledgerhq/wallet-api-core@1.11.0':
+    resolution: {integrity: sha512-QB4Inky3HadsB246CMH4t+KWvJ6qLu/M2nDuUZZ5e27XMAVDe/XI2CzndYmRq8rjW8pCfytGdQrdH9aVcBK6Kg==}
 
-  '@ledgerhq/wallet-api-server@1.5.10':
-    resolution: {integrity: sha512-dGorU7R6xr2Jp0M84sO+SMI1dA6DvsU/vloaY7HI/iMfjEU3H1gH3D7EdZMKv9vH/X5Knrw5EtuX7iyXFBRIQw==}
+  '@ledgerhq/wallet-api-server@1.5.11':
+    resolution: {integrity: sha512-BDiUxi+Za19v1aCJtEycLQePiMP7t3KY0yRIbL0QoIUIvKxhoLQuHVc6umIgzU3si4qvqs9foFvIakCm+OqMvA==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -10280,8 +10289,8 @@ packages:
       react:
         optional: true
 
-  '@ledgerhq/wallet-api-simulator@1.1.15':
-    resolution: {integrity: sha512-y2gSC7X7RuRlA397SxP40xtlRb4Dpv5TeiKHtAw/zGswIC//6JIA7ZW8zzri7B44ZA3dLtaCn8HBsCKIJrwLSQ==}
+  '@ledgerhq/wallet-api-simulator@1.1.16':
+    resolution: {integrity: sha512-HtgDB5Gs4YCnvgpMKOTdo7AuDy/RV8l6OmInK3qLGwvLYQ9+ooOhHLbUt31PZbFPds6qL70aKXs1rFLsuYW5+g==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -19728,6 +19737,20 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
+  framer-motion@11.3.28:
+    resolution: {integrity: sha512-dqhoawipEAjqdv32zbv72sOMJZjol7dROWn7t/FOq23WXJ40O4OUybgnO2ldnuS+3YquSn8xO/KKRavZ+TBVOQ==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
   freeport-async@2.0.0:
     resolution: {integrity: sha512-K7od3Uw45AJg00XUmy15+Hae2hOcgKcmN3/EF6Y7i01O0gaqiRx8sUSpsb9+BRNL8RPBrhzPsVfy8q9ADlJuWQ==}
     engines: {node: '>=8'}
@@ -25403,6 +25426,11 @@ packages:
   react-native-debugger-open@0.4.3:
     resolution: {integrity: sha512-gYdVWBhQ0a/PbXgCi3T+FU4LS0ucq8QyUhDqtRd3JRr1AOyKSn1RHj+jxtda+LhfyodrIPbZXHRXL0MvZ5FLSA==}
     hasBin: true
+
+  react-native-device-info@11.1.0:
+    resolution: {integrity: sha512-hzXJSObJdezEz0hF7MAJ3tGeoesuQWenXXt9mrQR9Mjb8kXpZ09rqSsZ/quNpJdZpQ3rYiFa3/0GFG5KNn9PBg==}
+    peerDependencies:
+      react-native: '*'
 
   react-native-easy-markdown@2.0.0:
     resolution: {integrity: sha512-vGK41pZj/4lM9q8/Bqox/2qqfJVrSxLugBWDBNLuOqvxpBw/b3q4aUxCpP8nyBWv5BifrD8+OcdhC27bRvEFIw==}
@@ -35753,39 +35781,39 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@ledgerhq/wallet-api-client-react@1.3.9(react@18.2.0)':
+  '@ledgerhq/wallet-api-client-react@1.3.10(react@18.2.0)':
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.5.9
+      '@ledgerhq/wallet-api-client': 1.5.10
       react: 18.2.0
 
-  '@ledgerhq/wallet-api-client@1.5.9':
+  '@ledgerhq/wallet-api-client@1.5.10':
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
-      '@ledgerhq/wallet-api-core': 1.10.1
+      '@ledgerhq/wallet-api-core': 1.11.0
       bignumber.js: 9.1.2
 
-  '@ledgerhq/wallet-api-core@1.10.1':
+  '@ledgerhq/wallet-api-core@1.11.0':
     dependencies:
       '@ledgerhq/errors': 6.16.4
       bignumber.js: 9.1.2
       uuid: 9.0.1
-      zod: 3.22.4
+      zod: 3.23.8
 
-  '@ledgerhq/wallet-api-server@1.5.10(react@18.2.0)(rxjs@7.8.1)':
+  '@ledgerhq/wallet-api-server@1.5.11(react@18.2.0)(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.10.1
+      '@ledgerhq/wallet-api-core': 1.11.0
       bignumber.js: 9.1.2
       picomatch: 4.0.2
       rxjs: 7.8.1
     optionalDependencies:
       react: 18.2.0
 
-  '@ledgerhq/wallet-api-simulator@1.1.15(react@18.2.0)':
+  '@ledgerhq/wallet-api-simulator@1.1.16(react@18.2.0)':
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
-      '@ledgerhq/wallet-api-client': 1.5.9
-      '@ledgerhq/wallet-api-core': 1.10.1
-      '@ledgerhq/wallet-api-server': 1.5.10(react@18.2.0)(rxjs@7.8.1)
+      '@ledgerhq/wallet-api-client': 1.5.10
+      '@ledgerhq/wallet-api-core': 1.11.0
+      '@ledgerhq/wallet-api-server': 1.5.11(react@18.2.0)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.18.0
     transitivePeerDependencies:
@@ -49776,6 +49804,13 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
+  framer-motion@11.3.28(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      tslib: 2.6.2
+    optionalDependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
   freeport-async@2.0.0: {}
 
   fresh@0.5.2: {}
@@ -58457,6 +58492,10 @@ snapshots:
       es6-template: 1.0.4
       minimist: 1.2.8
       semver: 5.7.2
+
+  react-native-device-info@11.1.0(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0)):
+    dependencies:
+      react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
 
   react-native-easy-markdown@2.0.0(prop-types@15.8.1)(react-native@0.73.6(@babel/core@7.24.3)(react@18.2.0)):
     dependencies:

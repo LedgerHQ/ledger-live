@@ -439,7 +439,7 @@ test("global progress", async () => {
 
   while ((next = getNextAppOp(state))) {
     state = await firstValueFrom(
-      runOneAppOp(state, next, mockExecWithInstalledContext(state.installed)),
+      runOneAppOp({ state, appOp: next, exec: mockExecWithInstalledContext(state.installed) }),
     );
     expect(updateAllProgress(state)).toBe(++i / total);
   }

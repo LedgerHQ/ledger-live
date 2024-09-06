@@ -222,9 +222,7 @@ export class MockSDK implements TrustchainSDK {
     assertLiveCredentials(memberCredentials);
     const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
     if (currentMembers.find(m => m.id === member.id)) {
-      throw new Error(
-        "member already exists. Please set a different context name value for different instances.",
-      );
+      return Promise.resolve();
     }
     currentMembers.push(member);
     trustchainMembers.set(trustchain.rootId, currentMembers);
@@ -239,5 +237,9 @@ export class MockSDK implements TrustchainSDK {
   decryptUserData(trustchain: Trustchain, data: Uint8Array): Promise<Uint8Array> {
     assertTrustchain(trustchain);
     return Promise.resolve(applyXor(data));
+  }
+
+  invalidateJwt(): void {
+    this.deviceJwtAcquired = false;
   }
 }

@@ -45,10 +45,12 @@ export function backupAppDataUseCase(
         }
         case BackupAppDataEventType.AppDataBackedUp:
           // Store the app data
-          await storageProvider.setItem(`${deviceModelId}-${appName}`, {
-            appDataInfo,
-            appData: event.data,
-          });
+          if (appDataInfo) {
+            await storageProvider.setItem(`${deviceModelId}-${appName}`, {
+              appDataInfo,
+              appData: event.data,
+            });
+          }
           // Erase the app data, then return the event
           return { type: BackupAppDataEventType.AppDataBackedUp, data: "" };
         case BackupAppDataEventType.Progress:

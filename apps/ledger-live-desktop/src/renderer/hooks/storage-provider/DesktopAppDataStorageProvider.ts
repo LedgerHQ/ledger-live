@@ -1,5 +1,5 @@
 import {
-  StorageProvider,
+  StorageProvider as AppDataStorageProvider,
   AppStorageType,
   AppStorageKey,
   isAppStorageType,
@@ -10,7 +10,7 @@ import {
  * The storage provider for LLD that implements the StorageProvider interface.
  * This a temporary placement for the DesktopStorageProvider, it could be moved to the appropriate location if needed.
  */
-export class DesktopStorageProvider implements StorageProvider<AppStorageType> {
+export class DesktopAppDataStorageProvider implements AppDataStorageProvider<AppStorageType> {
   /**
    * Retrieves the value associated with the specified key from the storage.
    *

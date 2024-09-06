@@ -1,10 +1,11 @@
 import {
+  AppNotFound,
   restoreAppStorage,
   restoreAppStorageCommit,
   restoreAppStorageInit,
 } from "@ledgerhq/device-core";
-import Transport from "@ledgerhq/hw-transport";
-import { Observable, from, switchMap } from "rxjs";
+import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
+import { Observable, catchError, from, of, switchMap } from "rxjs";
 import { AppName, RestoreAppDataEvent, RestoreAppDataEventType } from "./types";
 
 /**
@@ -53,6 +54,27 @@ export function restoreAppData(
             type: RestoreAppDataEventType.AppDataRestored,
           });
           subscriber.complete();
+        }),
+        catchError(e => {
+          if (e instanceof AppNotFound) {
+            subscriber.next({
+              type: RestoreAppDataEventType.NoAppDataToRestore,
+            });
+            subscriber.complete();
+            return of(null);
+          }
+
+          // User refused on device
+          if (e instanceof TransportStatusError && e.statusCode === 0x5501) {
+            subscriber.next({
+              type: RestoreAppDataEventType.UserRefused,
+            });
+            subscriber.complete();
+            return of(null);
+          }
+
+          subscriber.complete();
+          throw e;
         }),
       )
       .subscribe();
