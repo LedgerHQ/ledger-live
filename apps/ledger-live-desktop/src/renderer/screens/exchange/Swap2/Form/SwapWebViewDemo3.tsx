@@ -1,9 +1,9 @@
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { getEnv } from "@ledgerhq/live-env";
-import BigNumber from "bignumber.js";
+
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
@@ -29,8 +29,6 @@ import {
   accountToWalletAPIAccount,
   getAccountIdFromWalletAccountId,
 } from "@ledgerhq/live-common/wallet-api/converters";
-import { track } from "~/renderer/analytics/segment";
-import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types/transaction";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
