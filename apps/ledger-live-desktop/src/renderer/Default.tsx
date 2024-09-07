@@ -328,7 +328,7 @@ export default function Default() {
                               <Route path="/" exact render={withSuspense(Dashboard)} />
                               <Route path="/settings" render={withSuspense(Settings)} />
                               <Route path="/accounts" render={withSuspense(Accounts)} />
-                              <Route path="/card" render={withSuspense(Card)} />
+                              <Route exact path="/card/:appId?" render={withSuspense(Card)} />
                               <Redirect from="/manager/reload" to="/manager" />
                               <Route path="/manager" render={withSuspense(Manager)} />
                               <Route

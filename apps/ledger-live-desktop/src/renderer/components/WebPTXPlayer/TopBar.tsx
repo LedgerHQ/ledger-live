@@ -143,8 +143,9 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
         flow: flowName,
       });
 
+      const pathname = match.path.replace("/:appId?", "");
       history.replace({
-        pathname: "/exchange",
+        pathname,
         search: `?referrer=isExternal`,
         state: {
           mode: flowName,
@@ -167,12 +168,17 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
       await webview.loadURL(safeUrl);
       webview.clearHistory();
     }
-  }, [localStorage, history, webviewAPIRef, webviewState.url]);
+  }, [localStorage, history, match.path, webviewAPIRef, webviewState.url]);
 
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";
 
-    return lastScreen === "compare_providers" ? t("common.quote") : manifest.name;
+    const screenMap = {
+      compare_providers: t("common.quote"),
+      card: t("card.backToCard"),
+    };
+
+    return screenMap[lastScreen] || manifest.name;
   }, [localStorage, manifest, t]);
 
   const handleReload = useCallback(() => {
