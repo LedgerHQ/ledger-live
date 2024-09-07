@@ -179,6 +179,33 @@ describe("EVM Family", () => {
           });
         });
 
+        it("should return a legacy coin transaction when passing a gasPrice and custom feesStrategy", async () => {
+          jest.spyOn(nodeApi, "getFeeData").mockImplementationOnce(async () => ({
+            gasPrice: new BigNumber(1),
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            nextBaseFee: null,
+          }));
+
+          // @ts-expect-error - mixed type0/2
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            feesStrategy: "custom",
+            gasPrice: new BigNumber(1),
+            maxFeePerGas: new BigNumber(0),
+            maxPriorityFeePerGas: new BigNumber(0),
+          });
+
+          expect(tx).toEqual({
+            ...transaction,
+            gasPrice: new BigNumber(1),
+            feesStrategy: "custom",
+            maxFeePerGas: undefined,
+            maxPriorityFeePerGas: undefined,
+            type: 0,
+          });
+        });
+
         it("should create a coin transaction using all amount in the account", async () => {
           const accountWithBalance = {
             ...account,
@@ -555,13 +582,13 @@ describe("EVM Family", () => {
         });
 
         describe("When custom feesStrategy provided", () => {
-          it("should use transaction provided data for fees", async () => {
+          it("should also call getFeeData to determine the gas price and type", async () => {
             const tx = await prepareTransaction(account, {
               ...transaction,
               feesStrategy: "custom",
             });
 
-            expect(nodeApi.getFeeData).toBeCalledTimes(0);
+            expect(nodeApi.getFeeData).toBeCalledTimes(1);
 
             expect(tx).toEqual({
               ...transaction,

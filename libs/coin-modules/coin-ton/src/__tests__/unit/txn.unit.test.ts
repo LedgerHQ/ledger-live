@@ -134,7 +134,7 @@ describe("Transaction functions", () => {
         mapJettonTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
       );
 
-      const tokenByCurrencyAddress = `${mockAccountId}+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua`;
+      const tokenByCurrencyAddress = `${mockAccountId}+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not`;
       expect(finalOperation).toEqual([
         {
           id: encodeOperationId(tokenByCurrencyAddress, transaction_hash, "IN"),
@@ -175,7 +175,7 @@ describe("Transaction functions", () => {
         mapJettonTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
       );
 
-      const tokenByCurrencyAddress = `${mockAccountId}+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua`;
+      const tokenByCurrencyAddress = `${mockAccountId}+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not`;
       expect(finalOperation).toEqual([
         {
           id: encodeOperationId(tokenByCurrencyAddress, transaction_hash, "OUT"),

@@ -210,10 +210,16 @@ export const prepareTransaction = async (
   // Get the current network status fees
   const feeData: FeeData = await (async (): Promise<FeeData> => {
     if (transaction.feesStrategy === "custom") {
+      const gasOption = await nodeApi.getFeeData(currency, transaction);
+
       return {
-        gasPrice: transaction.gasPrice ?? null,
-        maxFeePerGas: transaction.maxFeePerGas ?? null,
-        maxPriorityFeePerGas: transaction.maxPriorityFeePerGas ?? null,
+        gasPrice: gasOption.gasPrice && transaction.gasPrice ? transaction.gasPrice : null,
+        maxFeePerGas:
+          gasOption.maxFeePerGas && transaction.maxFeePerGas ? transaction.maxFeePerGas : null,
+        maxPriorityFeePerGas:
+          gasOption.maxPriorityFeePerGas && transaction.maxPriorityFeePerGas
+            ? transaction.maxPriorityFeePerGas
+            : null,
         nextBaseFee: transaction.gasOptions?.medium?.nextBaseFee ?? null,
       };
     }

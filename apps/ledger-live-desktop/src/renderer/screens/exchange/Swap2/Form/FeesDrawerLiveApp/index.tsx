@@ -40,29 +40,41 @@ export default function FeesDrawerLiveApp({
 
   const handleSetTransaction = useCallback(
     (transaction: Transaction) => {
-      setTransactionState(transaction);
-      setTransaction(transaction);
+      const account = mainAccount.type === "TokenAccount" ? parentAccount : mainAccount;
       bridge
-        .getTransactionStatus(
-          mainAccount.type === "TokenAccount" ? parentAccount : mainAccount,
-          transaction,
+        .prepareTransaction(account, transaction)
+        .then(preparedTransaction =>
+          bridge.getTransactionStatus(account, preparedTransaction).then(status => {
+            setTransactionStatus(status);
+            setTransactionState(preparedTransaction);
+            setTransaction(preparedTransaction);
+          }),
         )
-        .then(setTransactionStatus);
+        .catch(error => {
+          console.error("Error preparing transaction:", error);
+        });
     },
     [setTransaction, bridge, mainAccount, parentAccount],
   );
 
   const handleUpdateTransaction = useCallback(
     (updater: (arg0: Transaction) => Transaction) => {
+      const account = mainAccount.type === "TokenAccount" ? parentAccount : mainAccount;
       setTransactionState(prevTransaction => {
-        const updatedTransaction = updater(prevTransaction);
+        let updatedTransaction = updater(prevTransaction);
         bridge
-          .getTransactionStatus(
-            mainAccount.type === "TokenAccount" ? parentAccount : mainAccount,
-            updatedTransaction,
+          .prepareTransaction(account, updatedTransaction)
+          .then(preparedTransaction =>
+            bridge.getTransactionStatus(account, preparedTransaction).then(status => {
+              setTransactionStatus(status);
+              setTransaction(preparedTransaction);
+              updatedTransaction = preparedTransaction;
+            }),
           )
-          .then(setTransactionStatus)
-          .then(_ => setTransaction(updatedTransaction));
+          .catch(error => {
+            console.error("Error updating transaction:", error);
+            return prevTransaction;
+          });
 
         return updatedTransaction;
       });

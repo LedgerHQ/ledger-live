@@ -3,17 +3,17 @@
 exports[`ton currency bridge scanAccounts ton seed 1 1`] = `
 [
   {
-    "balance": "933174896",
+    "balance": "916991005",
     "currencyId": "ton",
     "derivationMode": "ton",
     "freshAddress": "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
     "freshAddressPath": "44'/607'/0'/0'/0'/0'",
     "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
     "index": 0,
-    "operationsCount": 6,
+    "operationsCount": 9,
     "pendingOperations": [],
     "seedIdentifier": "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060",
-    "spendableBalance": "933174896",
+    "spendableBalance": "916991005",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -21,14 +21,14 @@ exports[`ton currency bridge scanAccounts ton seed 1 1`] = `
     "xpub": "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060",
   },
   {
-    "balance": "500000",
-    "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua",
-    "operationsCount": 3,
+    "balance": "35000000000",
+    "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not",
+    "operationsCount": 2,
     "parentId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
     "pendingOperations": [],
-    "spendableBalance": "500000",
+    "spendableBalance": "35000000000",
     "swapHistory": [],
-    "tokenId": "ton/jetton/eqbynbo23ywhy_cgary9nk9ftz0ydsg82ptcbstqggoxwiua",
+    "tokenId": "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
     "type": "TokenAccountRaw",
   },
   {
@@ -55,6 +55,31 @@ exports[`ton currency bridge scanAccounts ton seed 1 1`] = `
 exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
 [
   [
+    {
+      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
+      "blockHash": null,
+      "blockHeight": 40170315,
+      "extra": {
+        "comment": {
+          "isEncrypted": false,
+          "text": "",
+        },
+        "explorerHash": "xPDVakqj5a0mcix8dsTNyr4oKD0HWhk0nglfOULUFmQ=",
+        "lt": "48954541000001",
+      },
+      "fee": "2600565",
+      "hasFailed": false,
+      "hash": "8XFt8ApfGhsr/1B6YxFZLpVmWsTttIR4rvtkBusmQvQ=",
+      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton-0J2ClZ4ywxSMQRevw1X0edMaUB874he0oVVmTsN4I7Y=-OUT",
+      "recipients": [
+        "EQDoD37lf61T2vSL1LpF9ws3SCbcvT53_5nuVd7dGHIdxgH6",
+      ],
+      "senders": [
+        "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
+      ],
+      "type": "OUT",
+      "value": "100000000",
+    },
     {
       "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
       "blockHash": null,
@@ -104,6 +129,31 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
       ],
       "type": "IN",
       "value": "21509565",
+    },
+    {
+      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
+      "blockHash": null,
+      "blockHeight": 40170280,
+      "extra": {
+        "comment": {
+          "isEncrypted": false,
+          "text": "",
+        },
+        "explorerHash": "l1j2L+JrLu9MCpAJorHUbp8UtA9aMyQKrQ4zLKO7o8A=",
+        "lt": "48954505000001",
+      },
+      "fee": "2617007",
+      "hasFailed": false,
+      "hash": "a5ldjLyYtquGurSNnSF9Zmp3dEN4vnlermBnmvCxgd4=",
+      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton-a5ldjLyYtquGurSNnSF9Zmp3dEN4vnlermBnmvCxgd4=-IN",
+      "recipients": [
+        "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
+      ],
+      "senders": [
+        "EQDoD37lf61T2vSL1LpF9ws3SCbcvT53_5nuVd7dGHIdxgH6",
+      ],
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
@@ -183,6 +233,31 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
     {
       "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
       "blockHash": null,
+      "blockHeight": 40170325,
+      "extra": {
+        "comment": {
+          "isEncrypted": false,
+          "text": "",
+        },
+        "explorerHash": "t9vXEYLHjR3b40v4hPJQJCZRJDXhdhWiWuhzeKIIY9Y=",
+        "lt": "48954552000001",
+      },
+      "fee": "396410",
+      "hasFailed": false,
+      "hash": "OJbEyEj9+B9yyqkALjMDPHMj2TActki/I5nXxyb0DW4=",
+      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton-OJbEyEj9+B9yyqkALjMDPHMj2TActki/I5nXxyb0DW4=-IN",
+      "recipients": [
+        "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
+      ],
+      "senders": [
+        "EQCGL01uOV1AxfE_-pXqID2wT_dVrZcdGxsUy6GXULR73o_X",
+      ],
+      "type": "IN",
+      "value": "89965561",
+    },
+    {
+      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
+      "blockHash": null,
       "blockHeight": 35650189,
       "extra": {
         "comment": {
@@ -208,21 +283,21 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
   ],
   [
     {
-      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua",
+      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not",
       "blockHash": null,
       "blockHeight": 1,
       "extra": {
         "comment": {
           "isEncrypted": false,
-          "text": "",
+          "text": "Sending NOT",
         },
-        "explorerHash": "Bcr63Sh1uaT08ufACKFaAwCb+XQkGpyLPoghez1J6Fo=",
-        "lt": "46398662000001",
+        "explorerHash": "I3buHLzERZd6whX8lFxllLqTzMWC3WMgFJHrWHffKfI=",
+        "lt": "48954545000001",
       },
       "fee": "0",
       "hasFailed": false,
-      "hash": "Bcr63Sh1uaT08ufACKFaAwCb+XQkGpyLPoghez1J6Fo=",
-      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua-Bcr63Sh1uaT08ufACKFaAwCb+XQkGpyLPoghez1J6Fo=-OUT",
+      "hash": "I3buHLzERZd6whX8lFxllLqTzMWC3WMgFJHrWHffKfI=",
+      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not-I3buHLzERZd6whX8lFxllLqTzMWC3WMgFJHrWHffKfI=-OUT",
       "recipients": [
         "EQB0Y6BtnRS9rIJXpsTHFzhEF83Xa4e5yBDOrPEOah66rJs_",
       ],
@@ -230,10 +305,10 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
         "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
       ],
       "type": "OUT",
-      "value": "1000000",
+      "value": "5000000000",
     },
     {
-      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua",
+      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not",
       "blockHash": null,
       "blockHeight": 1,
       "extra": {
@@ -241,13 +316,13 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
           "isEncrypted": false,
           "text": "",
         },
-        "explorerHash": "gSeyxDKNghbKUl4QAawfuaXzIgPTfAiLQ5EUUx1T+cg=",
-        "lt": "46398624000003",
+        "explorerHash": "XgQwQjYWAOd2o+4chBrfLnjlAf4wVjnnTPcDrmBKAaM=",
+        "lt": "48954497000001",
       },
       "fee": "0",
       "hasFailed": false,
-      "hash": "gSeyxDKNghbKUl4QAawfuaXzIgPTfAiLQ5EUUx1T+cg=",
-      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua-gSeyxDKNghbKUl4QAawfuaXzIgPTfAiLQ5EUUx1T+cg=-IN",
+      "hash": "XgQwQjYWAOd2o+4chBrfLnjlAf4wVjnnTPcDrmBKAaM=",
+      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not-XgQwQjYWAOd2o+4chBrfLnjlAf4wVjnnTPcDrmBKAaM=-IN",
       "recipients": [
         "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
       ],
@@ -255,32 +330,7 @@ exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
         "EQB0Y6BtnRS9rIJXpsTHFzhEF83Xa4e5yBDOrPEOah66rJs_",
       ],
       "type": "IN",
-      "value": "2000000",
-    },
-    {
-      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua",
-      "blockHash": null,
-      "blockHeight": 1,
-      "extra": {
-        "comment": {
-          "isEncrypted": false,
-          "text": "",
-        },
-        "explorerHash": "paL6VAR7c1SWoRKhndZS/l7bA0ffA6d4DPPGcd166TM=",
-        "lt": "46398739000001",
-      },
-      "fee": "0",
-      "hasFailed": false,
-      "hash": "paL6VAR7c1SWoRKhndZS/l7bA0ffA6d4DPPGcd166TM=",
-      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton+ton%2Fjetton%2Feqbynbo23ywhy~!underscore!~cgary9nk9ftz0ydsg82ptcbstqggoxwiua-paL6VAR7c1SWoRKhndZS/l7bA0ffA6d4DPPGcd166TM=-OUT",
-      "recipients": [
-        "EQB0Y6BtnRS9rIJXpsTHFzhEF83Xa4e5yBDOrPEOah66rJs_",
-      ],
-      "senders": [
-        "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
-      ],
-      "type": "OUT",
-      "value": "500000",
+      "value": "40000000000",
     },
   ],
   [],

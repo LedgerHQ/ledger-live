@@ -200,7 +200,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         );
         if (unsubscribed) return;
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(payoutCurrency);
+          await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           await swap.checkPayoutAddress(
@@ -234,7 +234,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         );
         if (unsubscribed) return;
         const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
-          getCurrencyExchangeConfig(refundCurrency);
+          await getCurrencyExchangeConfig(refundCurrency);
         if (unsubscribed) return;
         // NB Floating rates may change the original amountTo so we can pass an override
         // to properly render the amount on the device confirmation steps. Although changelly

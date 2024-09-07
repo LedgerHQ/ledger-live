@@ -111,7 +111,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(payoutCurrency);
+          await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           currentStep = "CHECK_PAYOUT_ADDRESS";
@@ -150,7 +150,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
-          getCurrencyExchangeConfig(refundCurrency);
+          await getCurrencyExchangeConfig(refundCurrency);
         if (unsubscribed) return;
 
         try {

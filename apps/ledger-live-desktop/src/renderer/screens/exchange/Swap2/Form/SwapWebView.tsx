@@ -353,10 +353,9 @@ const SwapWebView = ({
         let finalTx = preparedTransaction;
         let customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
         const setTransaction = async (newTransaction: Transaction): Promise<Transaction> => {
-          const preparedTransaction = await bridge.prepareTransaction(mainAccount, newTransaction);
-          status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
-          customFeeConfig = transaction && getCustomFeesPerFamily(preparedTransaction);
-          finalTx = preparedTransaction;
+          status = await bridge.getTransactionStatus(mainAccount, newTransaction);
+          customFeeConfig = transaction && getCustomFeesPerFamily(newTransaction);
+          finalTx = newTransaction;
           return newTransaction;
         };
 
