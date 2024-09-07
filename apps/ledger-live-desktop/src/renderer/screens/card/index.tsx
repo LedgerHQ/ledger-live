@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, RouteComponentProps } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Card from "~/renderer/components/Box/Card";
 import {
@@ -16,8 +16,10 @@ import { CARD_APP_ID, INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import CardPlatformApp from "./CardPlatformApp";
 
+type CardState = { account?: string } | undefined;
+
 const LiveAppCard = ({ appId }: { appId: string }) => {
-  const { state: urlParams, search } = useLocation<ExchangeState>();
+  const { state: urlParams, search } = useLocation<CardState>();
   const searchParams = new URLSearchParams(search);
   const locale = useSelector(localeSelector);
   const language = useSelector(languageSelector);

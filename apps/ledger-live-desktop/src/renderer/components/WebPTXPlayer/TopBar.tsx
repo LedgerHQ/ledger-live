@@ -173,7 +173,9 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";
 
-    const screenMap = {
+    const screenMap: {
+      [key: string]: string;
+    } = {
       compare_providers: t("common.quote"),
       card: t("card.backToCard"),
     };
