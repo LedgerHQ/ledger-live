@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.7.3-nightly.1
+
+### Patch Changes
+
+- [#7760](https://github.com/LedgerHQ/ledger-live/pull/7760) [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - update satributes icons
+
 ## 0.7.3-nightly.0
 
 ### Patch Changes

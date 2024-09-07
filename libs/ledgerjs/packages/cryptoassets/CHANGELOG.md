@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.4.0-nightly.4
+
+### Patch Changes
+
+- [#7761](https://github.com/LedgerHQ/ledger-live/pull/7761) [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add ton token importer for CAL
+
 ## 13.4.0-nightly.3
 
 ### Patch Changes

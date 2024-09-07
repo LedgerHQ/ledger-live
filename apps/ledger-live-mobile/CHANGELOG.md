@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.49.0-nightly.9
+
+### Patch Changes
+
+- [#7764](https://github.com/LedgerHQ/ledger-live/pull/7764) [`e805a7e`](https://github.com/LedgerHQ/ledger-live/commit/e805a7e40dfc595ebb83ae0365b643eb1ac424ba) Thanks [@themooneer](https://github.com/themooneer)! - Assign the right color to settings icon in Fallback camera permission screen
+
+- Updated dependencies [[`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`5de6b47`](https://github.com/LedgerHQ/ledger-live/commit/5de6b47f4fec831a24ccd58ee95d69b8c2c15d57), [`224e33c`](https://github.com/LedgerHQ/ledger-live/commit/224e33c93d2acd22c82892148b240df004284037), [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb), [`042e1ab`](https://github.com/LedgerHQ/ledger-live/commit/042e1abf2d0bdbdc906cb88e30770d4de1eef356)]:
+  - @ledgerhq/live-common@34.8.0-nightly.9
+  - @ledgerhq/coin-evm@2.2.0-nightly.8
+  - @ledgerhq/icons-ui@0.7.3-nightly.1
+  - @ledgerhq/native-ui@0.24.0-nightly.5
+  - @ledgerhq/coin-framework@0.17.1-nightly.7
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.2
+  - @ledgerhq/live-countervalues@0.2.5-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.7
+  - @ledgerhq/live-nft@0.4.5-nightly.7
+  - @ledgerhq/live-nft-react@0.4.5-nightly.7
+  - @ledgerhq/live-wallet@0.6.0-nightly.11
+
 ## 3.49.0-nightly.8
 
 ### Minor Changes

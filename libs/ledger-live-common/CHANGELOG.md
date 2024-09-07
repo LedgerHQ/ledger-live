@@ -1,5 +1,44 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.9
+
+### Minor Changes
+
+- [#7741](https://github.com/LedgerHQ/ledger-live/pull/7741) [`224e33c`](https://github.com/LedgerHQ/ledger-live/commit/224e33c93d2acd22c82892148b240df004284037) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed bnb custom fee crashes and erased gasLimit
+
+- [#7723](https://github.com/LedgerHQ/ledger-live/pull/7723) [`042e1ab`](https://github.com/LedgerHQ/ledger-live/commit/042e1abf2d0bdbdc906cb88e30770d4de1eef356) Thanks [@CremaFR](https://github.com/CremaFR)! - updated cal fetch to use API calls instead of loading the cal inside LL
+
+### Patch Changes
+
+- [#7761](https://github.com/LedgerHQ/ledger-live/pull/7761) [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add ton token importer for CAL
+
+- [#7728](https://github.com/LedgerHQ/ledger-live/pull/7728) [`5de6b47`](https://github.com/LedgerHQ/ledger-live/commit/5de6b47f4fec831a24ccd58ee95d69b8c2c15d57) Thanks [@ayelenmurano](https://github.com/ayelenmurano)! - adjust the adrres when it is obtained from the public key in Casper Blockchain
+
+- Updated dependencies [[`3de65c8`](https://github.com/LedgerHQ/ledger-live/commit/3de65c89b64bc8ba6f5d29c819753d25146c5303), [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`224e33c`](https://github.com/LedgerHQ/ledger-live/commit/224e33c93d2acd22c82892148b240df004284037), [`c21eddc`](https://github.com/LedgerHQ/ledger-live/commit/c21eddcf11683d018875e0a247ac53a4f4c4a2f4)]:
+  - @ledgerhq/crypto-icons-ui@1.4.1-nightly.2
+  - @ledgerhq/cryptoassets@13.4.0-nightly.4
+  - @ledgerhq/coin-ton@0.3.13-nightly.8
+  - @ledgerhq/coin-evm@2.2.0-nightly.8
+  - @ledgerhq/coin-framework@0.17.1-nightly.7
+  - @ledgerhq/coin-algorand@0.5.5-nightly.7
+  - @ledgerhq/coin-bitcoin@0.8.0-nightly.5
+  - @ledgerhq/coin-cardano@0.1.5-nightly.7
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.2
+  - @ledgerhq/coin-icon@0.4.2-nightly.7
+  - @ledgerhq/coin-near@0.5.5-nightly.7
+  - @ledgerhq/coin-polkadot@1.2.1-nightly.8
+  - @ledgerhq/coin-solana@0.7.5-nightly.7
+  - @ledgerhq/coin-stellar@0.2.3-nightly.7
+  - @ledgerhq/coin-tezos@0.6.1-nightly.7
+  - @ledgerhq/coin-tron@0.0.5-nightly.7
+  - @ledgerhq/coin-xrp@0.5.1-nightly.7
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.7
+  - @ledgerhq/hw-app-vet@0.2.5-nightly.6
+  - @ledgerhq/live-countervalues@0.2.5-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.7
+  - @ledgerhq/live-nft@0.4.5-nightly.7
+  - @ledgerhq/live-wallet@0.6.0-nightly.11
+
 ## 34.8.0-nightly.8
 
 ### Patch Changes

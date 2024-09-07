@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.9
+
+### Minor Changes
+
+- [#7767](https://github.com/LedgerHQ/ledger-live/pull/7767) [`dbc0a9a`](https://github.com/LedgerHQ/ledger-live/commit/dbc0a9ab83f30c225950bdd5189216f7d4735c8e) Thanks [@CremaFR](https://github.com/CremaFR)! - fix fee drawer issues by prepararing tx
+
+### Patch Changes
+
+- [#7763](https://github.com/LedgerHQ/ledger-live/pull/7763) [`0450315`](https://github.com/LedgerHQ/ledger-live/commit/045031517599cd4dd9e2809ab6bc7c57ca9fdf46) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - use account id instead of currency id for sla passthrough
+
+- Updated dependencies [[`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`5de6b47`](https://github.com/LedgerHQ/ledger-live/commit/5de6b47f4fec831a24ccd58ee95d69b8c2c15d57), [`224e33c`](https://github.com/LedgerHQ/ledger-live/commit/224e33c93d2acd22c82892148b240df004284037), [`042e1ab`](https://github.com/LedgerHQ/ledger-live/commit/042e1abf2d0bdbdc906cb88e30770d4de1eef356)]:
+  - @ledgerhq/live-common@34.8.0-nightly.9
+  - @ledgerhq/coin-evm@2.2.0-nightly.8
+  - @ledgerhq/react-ui@0.16.0-nightly.3
+  - @ledgerhq/coin-framework@0.17.1-nightly.7
+  - @ledgerhq/coin-bitcoin@0.8.0-nightly.5
+  - @ledgerhq/coin-cosmos@0.1.1-nightly.2
+  - @ledgerhq/live-countervalues@0.2.5-nightly.7
+  - @ledgerhq/live-countervalues-react@0.2.5-nightly.7
+  - @ledgerhq/live-nft@0.4.5-nightly.7
+  - @ledgerhq/live-nft-react@0.4.5-nightly.7
+  - @ledgerhq/live-wallet@0.6.0-nightly.11
+
 ## 2.86.0-nightly.8
 
 ### Minor Changes

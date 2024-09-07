@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.2.0-nightly.8
+
+### Minor Changes
+
+- [#7741](https://github.com/LedgerHQ/ledger-live/pull/7741) [`224e33c`](https://github.com/LedgerHQ/ledger-live/commit/224e33c93d2acd22c82892148b240df004284037) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed bnb custom fee crashes and erased gasLimit
+
+### Patch Changes
+
+- Updated dependencies [[`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a)]:
+  - @ledgerhq/cryptoassets@13.4.0-nightly.4
+  - @ledgerhq/coin-framework@0.17.1-nightly.7
+  - @ledgerhq/evm-tools@1.2.1-nightly.5
+
 ## 2.2.0-nightly.7
 
 ### Patch Changes

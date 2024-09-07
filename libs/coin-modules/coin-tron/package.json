@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "0.0.5-nightly.6",
+  "version": "0.0.5-nightly.7",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
