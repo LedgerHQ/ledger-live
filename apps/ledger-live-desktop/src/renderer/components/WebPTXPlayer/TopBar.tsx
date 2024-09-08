@@ -200,7 +200,10 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
         if (goToURL) {
           localStorage.setItem("manifest-id", manifestId);
           localStorage.setItem("flow-name", url.searchParams.get("flowName") || "buy");
-          localStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
+          localStorage.setItem(
+            "last-screen",
+            url.searchParams.get("lastScreen") || url.searchParams.get("flowName") || "",
+          );
 
           history.replace(`${match.url}/${manifestId}?goToURL=${goToURL}`);
         }
