@@ -104,7 +104,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
           NavigatorName.Exchange,
           {
             screen: ScreenName.ExchangeBuy,
-            params: { mode: "buy", defaultCurrencyId: currency?.id },
+            params: { defaultCurrencyId: currency?.id },
           },
         ],
         icon: IconsLegacy.PlusMedium,
@@ -118,7 +118,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
           NavigatorName.Exchange,
           {
             screen: ScreenName.ExchangeSell,
-            params: { mode: "sell", defaultCurrencyId: currency?.id },
+            params: { defaultCurrencyId: currency?.id },
           },
         ],
         icon: IconsLegacy.MinusMedium,

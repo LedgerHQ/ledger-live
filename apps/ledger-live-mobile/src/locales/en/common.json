@@ -6254,6 +6254,9 @@
     "webPlatformPlayer": {
       "infoPanel": {
         "website": "website"
+      },
+      "back": {
+        "card": "all cards"
       }
     }
   },

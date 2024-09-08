@@ -10,7 +10,6 @@ export type ExchangeLiveAppNavigatorParamList = {
         defaultTicker?: string;
         goToURL?: string;
         lastScreen?: string;
-        mode?: string;
         name?: string;
         parentId?: string;
         platform?: string;
@@ -27,8 +26,16 @@ export type ExchangeLiveAppNavigatorParamList = {
         goToURL?: string;
         lastScreen?: string;
         platform?: string;
-        mode?: string;
         name?: string;
+        referrer?: string;
+      }
+    | undefined;
+  [ScreenName.Card]:
+    | {
+        goToURL?: string;
+        lastScreen?: string;
+        name?: string;
+        platform?: string;
         referrer?: string;
       }
     | undefined;

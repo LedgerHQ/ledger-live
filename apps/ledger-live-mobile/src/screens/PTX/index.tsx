@@ -16,7 +16,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { WebPTXPlayer } from "~/components/WebPTXPlayer";
 import { ExchangeNavigatorParamList } from "~/components/RootNavigator/types/ExchangeNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const";
+import { ScreenName, NavigatorName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
@@ -27,12 +27,24 @@ import { useSettings } from "~/hooks";
 
 export type Props = StackNavigatorProps<
   ExchangeNavigatorParamList,
-  ScreenName.ExchangeBuy | ScreenName.ExchangeSell
->;
+  ScreenName.ExchangeBuy | ScreenName.ExchangeSell | ScreenName.Card
+> & {
+  config?:
+    | {
+        screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell;
+        navigator: NavigatorName.Exchange;
+        btnText: string;
+      }
+    | {
+        screen: ScreenName.Card;
+        navigator: NavigatorName.Card;
+        btnText: string;
+      };
+};
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 
-export function BuyAndSellScreen({ route }: Props) {
+export function PtxScreen({ route, config }: Props) {
   const accounts = useSelector(accountsSelector);
   const devMode = useEnv("MANAGER_DEV_MODE").toString();
   const { theme } = useTheme();
@@ -55,6 +67,7 @@ export function BuyAndSellScreen({ route }: Props) {
    */
   const customParams = useMemo(() => {
     if (
+      "account" in params &&
       params?.account &&
       manifest?.apiVersion &&
       semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)
@@ -107,6 +120,7 @@ export function BuyAndSellScreen({ route }: Props) {
           ...customParams,
           ...Object.fromEntries(searchParams.entries()),
         }}
+        config={config}
       />
     </>
   ) : (

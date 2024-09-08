@@ -37,14 +37,21 @@ type BackToInternalDomainProps = {
   manifest: AppManifest;
   webviewURL?: string;
   lastMatchingURL?: string | null;
+  config: {
+    screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell | ScreenName.Card;
+    navigator: NavigatorName.Exchange | NavigatorName.Card;
+    btnText: string;
+  };
 };
 
 function BackToInternalDomain({
   manifest,
   webviewURL,
   lastMatchingURL,
+  config,
 }: BackToInternalDomainProps) {
   const { t } = useTranslation();
+  const { screen, navigator, btnText } = config;
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
   const [buttonText, setButtonText] = useState("");
@@ -53,10 +60,9 @@ function BackToInternalDomain({
 
   useEffect(() => {
     (async () => {
-      const lastScreen = (await AsyncStorage.getItem("last-screen")) || "";
-      setButtonText(lastScreen === "compare_providers" ? t("common.quote") : manifest.name);
+      setButtonText(btnText);
     })();
-  }, [manifest.id, manifest.name, t]);
+  }, [btnText, manifest.id, manifest.name, t]);
 
   const handleBackClick = async () => {
     const manifestId = (await AsyncStorage.getItem("manifest-id")) || "";
@@ -71,8 +77,8 @@ function BackToInternalDomain({
         flow: flowName,
       });
 
-      navigation.navigate(NavigatorName.Exchange, {
-        screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
+      navigation.navigate(navigator, {
+        screen: screen,
         params: {
           referrer: "isExternal",
         },
@@ -117,9 +123,29 @@ type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
   disableHeader?: boolean;
+  config?:
+    | {
+        screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell;
+        navigator: NavigatorName.Exchange;
+        btnText: string;
+      }
+    | {
+        screen: ScreenName.Card;
+        navigator: NavigatorName.Card;
+        btnText: string;
+      };
 };
 
-export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
+export const WebPTXPlayer = ({
+  manifest,
+  inputs,
+  disableHeader,
+  config = {
+    screen: ScreenName.ExchangeSell,
+    btnText: manifest.name,
+    navigator: NavigatorName.Exchange,
+  },
+}: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
@@ -153,14 +179,17 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
           const manifestId = url.searchParams.get("goToManifest");
 
           if (manifestId && goToURL) {
-            const flowName = url.searchParams.get("flowName") || "buy";
+            const flowName = url.searchParams.get("flowName");
 
             await AsyncStorage.setItem("manifest-id", manifestId);
-            await AsyncStorage.setItem("flow-name", flowName);
-            await AsyncStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
+            await AsyncStorage.setItem("flow-name", flowName || "buy");
+            await AsyncStorage.setItem(
+              "last-screen",
+              url.searchParams.get("lastScreen") || flowName || "",
+            );
 
-            navigation.navigate(NavigatorName.Exchange, {
-              screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
+            navigation.navigate(config.navigator, {
+              screen: config.screen,
               params: {
                 platform: manifestId,
                 goToURL,
@@ -176,7 +205,7 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
         lastMatchingURL.current = webviewState.url;
       }
     })();
-  }, [isInternalApp, navigation, webviewState.url]);
+  }, [config, isInternalApp, navigation, webviewState.url]);
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -231,12 +260,13 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
               manifest={manifest}
               webviewURL={webviewState?.url}
               lastMatchingURL={lastMatchingURL?.current}
+              config={config}
             />
           ),
         headerTitle: () => null,
       });
     }
-  }, [manifest, navigation, webviewState, isInternalApp, disableHeader, onClose]);
+  }, [config, manifest, navigation, webviewState, isInternalApp, disableHeader, onClose]);
 
   const customHandlers = usePTXCustomHandlers(manifest);
 
