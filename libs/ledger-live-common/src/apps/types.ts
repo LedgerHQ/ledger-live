@@ -4,14 +4,29 @@ import { App, DeviceInfo, FinalFirmware, LanguagePackage } from "@ledgerhq/types
 import type { Observable, Subject } from "rxjs";
 import { AppStorageType, StorageProvider } from "../device/use-cases/appDataBackup/types";
 
+/**
+ * ExecArgs
+ * @param appOp - The app operation to execute (either install or uninstall).
+ * @param targetId - The target ID (device)
+ * @param app - The app to install or uninstall
+ * @param modelId - The device model ID
+ * @param storage - The storage provider for local backup
+ * @param skipAppDataBackup - Whether to skip app data backup
+ */
 export type ExecArgs = {
   appOp: AppOp;
   targetId: string | number;
   app: App;
   modelId?: DeviceModelId;
   storage?: StorageProvider<AppStorageType>;
+  skipAppDataBackup?: boolean;
 };
 
+/**
+ * Exec
+ * @param args - The arguments for the execution
+ * @returns An observable that emits the progress of the execution
+ */
 export type Exec = (args: ExecArgs) => Observable<{
   progress: number;
 }>;
@@ -102,6 +117,7 @@ export type State = {
   recentlyInstalledApps: string[];
   installQueue: string[];
   uninstallQueue: string[];
+  skipAppDataBackup: boolean;
   skippedAppOps: SkippedAppOp[]; // Nb If an AppOp couldn't be completed, track why.
   updateAllQueue: string[]; // queue saved at the time of a "updateAll" action
   currentAppOp: AppOp | null | undefined;

@@ -11,8 +11,25 @@ describe("restoreAppDataUseCase", () => {
   };
   const appName = "MyApp";
   const deviceModelId = DeviceModelId.stax;
+  let restoreAppDataFnMock: jest.Mock;
 
-  it("should transfer the events when backup data found", async () => {
+  it("should transfer the events when backup data found", done => {
+    restoreAppDataFnMock = jest.fn().mockImplementation(() => {
+      return new Observable(subscriber => {
+        subscriber.next({
+          type: RestoreAppDataEventType.AppDataInitialized,
+        });
+        subscriber.next({
+          type: RestoreAppDataEventType.Progress,
+          data: 0.25,
+        });
+        subscriber.next({
+          type: RestoreAppDataEventType.AppDataRestored,
+        });
+        subscriber.complete();
+      });
+    });
+
     const expectedEvents: RestoreAppDataEvent[] = [
       {
         type: RestoreAppDataEventType.AppDataInitialized,
@@ -25,13 +42,31 @@ describe("restoreAppDataUseCase", () => {
         type: RestoreAppDataEventType.AppDataRestored,
       },
     ];
-    for (const event of expectedEvents) {
-      const restoreAppDataFnMock = jest.fn(_ => of(event));
-      const restoreAppDataUseCaseObservable: Observable<RestoreAppDataEvent> =
-        restoreAppDataUseCase(appName, deviceModelId, storageProviderMock, restoreAppDataFnMock);
-      const firstValue = await firstValueFrom(restoreAppDataUseCaseObservable);
-      expect(firstValue).toEqual(event);
-    }
+
+    const events: RestoreAppDataEvent[] = [];
+
+    restoreAppDataUseCase(
+      appName,
+      deviceModelId,
+      storageProviderMock,
+      restoreAppDataFnMock,
+    ).subscribe({
+      next: event => {
+        events.push(event);
+      },
+      complete: () => {
+        try {
+          expect(events).toHaveLength(expectedEvents.length);
+          expect(events).toEqual(expectedEvents);
+          done();
+        } catch (e) {
+          done(e);
+        }
+      },
+      error: (e: Error) => {
+        done(e);
+      },
+    });
   });
 
   it("should throw an error when backup data not found", async () => {
