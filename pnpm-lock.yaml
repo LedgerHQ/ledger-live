@@ -1281,8 +1281,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/test-utils
       '@react-native-community/cli':
-        specifier: 12.3.6
-        version: 12.3.6
+        specifier: 12.3.7
+        version: 12.3.7
       '@react-native-community/cli-platform-android':
         specifier: 12.3.6
         version: 12.3.6
@@ -11714,11 +11714,20 @@ packages:
   '@react-native-community/cli-clean@12.3.6':
     resolution: {integrity: sha512-gUU29ep8xM0BbnZjwz9MyID74KKwutq9x5iv4BCr2im6nly4UMf1B1D+V225wR7VcDGzbgWjaezsJShLLhC5ig==}
 
+  '@react-native-community/cli-clean@12.3.7':
+    resolution: {integrity: sha512-BCYW77QqyxfhiMEBOoHyciJRNV6Rhz1RvclReIKnCA9wAwmoJBeu4Mu+AwiECA2bUITX16fvPt3NwDsSd1jwfQ==}
+
   '@react-native-community/cli-config@12.3.6':
     resolution: {integrity: sha512-JGWSYQ9EAK6m2v0abXwFLEfsqJ1zkhzZ4CV261QZF9MoUNB6h57a274h1MLQR9mG6Tsh38wBUuNfEPUvS1vYew==}
 
+  '@react-native-community/cli-config@12.3.7':
+    resolution: {integrity: sha512-IU2UhO9yj1rEBNhHWGzIXpPDzha4hizLP/PUOrhR4BUf6RVPUWEp+e1PXNGR0qjIf6esu7OC7t6mLOhH0NUJEw==}
+
   '@react-native-community/cli-debugger-ui@12.3.6':
     resolution: {integrity: sha512-SjUKKsx5FmcK9G6Pb6UBFT0s9JexVStK5WInmANw75Hm7YokVvHEgtprQDz2Uvy5znX5g2ujzrkIU//T15KQzA==}
+
+  '@react-native-community/cli-debugger-ui@12.3.7':
+    resolution: {integrity: sha512-UHUFrRdcjWSCdWG9KIp2QjuRIahBQnb9epnQI7JCq6NFbFHYfEI4rI7msjMn+gG8/tSwKTV2PTPuPmZ5wWlE7Q==}
 
   '@react-native-community/cli-debugger-ui@7.0.3':
     resolution: {integrity: sha512-G4SA6jFI0j22o+j+kYP8/7sxzbCDqSp2QiHA/X5E0lsGEd2o9qN2zbIjiFr8b8k+VVAYSUONhoC0+uKuINvmkA==}
@@ -11726,26 +11735,47 @@ packages:
   '@react-native-community/cli-doctor@12.3.6':
     resolution: {integrity: sha512-fvBDv2lTthfw4WOQKkdTop2PlE9GtfrlNnpjB818MhcdEnPjfQw5YaTUcnNEGsvGomdCs1MVRMgYXXwPSN6OvQ==}
 
+  '@react-native-community/cli-doctor@12.3.7':
+    resolution: {integrity: sha512-gCamZztRoAyhciuQPqdz4Xe4t3gOdNsaADNd+rva+Rx8W2PoPeNv60i7/et06wlsn6B6Sh0/hMiAftJbiHDFkg==}
+
   '@react-native-community/cli-hermes@12.3.6':
     resolution: {integrity: sha512-sNGwfOCl8OAIjWCkwuLpP8NZbuO0dhDI/2W7NeOGDzIBsf4/c4MptTrULWtGIH9okVPLSPX0NnRyGQ+mSwWyuQ==}
+
+  '@react-native-community/cli-hermes@12.3.7':
+    resolution: {integrity: sha512-ezzeiSKjRXK2+i1AAe7NhhN9CEHrgtRmTn2MAdBpE++N8fH5EQZgxFcGgGdwGvns2fm9ivyyeVnI5eAYwvM+jg==}
 
   '@react-native-community/cli-platform-android@12.3.6':
     resolution: {integrity: sha512-DeDDAB8lHpuGIAPXeeD9Qu2+/wDTFPo99c8uSW49L0hkmZJixzvvvffbGQAYk32H0TmaI7rzvzH+qzu7z3891g==}
 
+  '@react-native-community/cli-platform-android@12.3.7':
+    resolution: {integrity: sha512-mOltF3cpjNdJb3WSFwEHc1GH4ibCcnOvQ34OdWyblKy9ijuvG5SjNTlYR/UW/CURaDi3OUKAhxQMTY5d27bzGQ==}
+
   '@react-native-community/cli-platform-ios@12.3.6':
     resolution: {integrity: sha512-3eZ0jMCkKUO58wzPWlvAPRqezVKm9EPZyaPyHbRPWU8qw7JqkvnRlWIaYDGpjCJgVW4k2hKsEursLtYKb188tg==}
+
+  '@react-native-community/cli-platform-ios@12.3.7':
+    resolution: {integrity: sha512-2WnVsMH4ORZIhBm/5nCms1NeeKG4KarNC7PMLmrXWXB/bibDcaNsjrJiqnmCUcpTEvTQTokRfoO7Aj6NM0Cqow==}
 
   '@react-native-community/cli-plugin-metro@12.3.6':
     resolution: {integrity: sha512-3jxSBQt4fkS+KtHCPSyB5auIT+KKIrPCv9Dk14FbvOaEh9erUWEm/5PZWmtboW1z7CYeNbFMeXm9fM2xwtVOpg==}
 
+  '@react-native-community/cli-plugin-metro@12.3.7':
+    resolution: {integrity: sha512-ahEw0Vfnv2Nv/jdZ2QDuGjQ9l2SczO4lXjb3ubu5vEYNLyTw3jYsLMK6iES7YQ/ApQmKdG476HU1O9uZdpaYPg==}
+
   '@react-native-community/cli-server-api@12.3.6':
     resolution: {integrity: sha512-80NIMzo8b2W+PL0Jd7NjiJW9mgaT8Y8wsIT/lh6mAvYH7mK0ecDJUYUTAAv79Tbo1iCGPAr3T295DlVtS8s4yQ==}
+
+  '@react-native-community/cli-server-api@12.3.7':
+    resolution: {integrity: sha512-LYETs3CCjrLn1ZU0kYv44TywiIl5IPFHZGeXhAh2TtgOk4mo3kvXxECDil9CdO3bmDra6qyiG61KHvzr8IrHdg==}
 
   '@react-native-community/cli-server-api@7.0.4':
     resolution: {integrity: sha512-NzwLKgshx1aFJad5b972rFowEx8ueHRFFXQFnBbvEuE3KsivDOTIwO0zn7cAO1zpxlFRxUFfcI1Pe4Aymi3xZw==}
 
   '@react-native-community/cli-tools@12.3.6':
     resolution: {integrity: sha512-FPEvZn19UTMMXUp/piwKZSh8cMEfO8G3KDtOwo53O347GTcwNrKjgZGtLSPELBX2gr+YlzEft3CoRv2Qmo83fQ==}
+
+  '@react-native-community/cli-tools@12.3.7':
+    resolution: {integrity: sha512-7NL/1/i+wzd4fBr/FSr3ypR05tiU/Kv9l/M1sL1c6jfcDtWXAL90R161gQkQFK7shIQ8Idp0dQX1rq49tSyfQw==}
 
   '@react-native-community/cli-tools@6.2.1':
     resolution: {integrity: sha512-7RbOkZLT/3YG8CAYYM70ajRKIOgVxK/b4t9KNsPq+2uen99MGezfeglC8s1cs3vBNVVxCo0a2JbXg18bUd8eqA==}
@@ -11758,8 +11788,21 @@ packages:
   '@react-native-community/cli-types@12.3.6':
     resolution: {integrity: sha512-xPqTgcUtZowQ8WKOkI9TLGBwH2bGggOC4d2FFaIRST3gTcjrEeGRNeR5aXCzJFIgItIft8sd7p2oKEdy90+01Q==}
 
+  '@react-native-community/cli-types@12.3.7':
+    resolution: {integrity: sha512-NFtUMyIrNfi3A5C1cjVKDVvYHvvOF7MnOMwdD8jm2NQKewQJrehKBh1eMuykKdqhWyZmuemD4KKhL8f4FxgG0w==}
+
   '@react-native-community/cli@12.3.6':
     resolution: {integrity: sha512-647OSi6xBb8FbwFqX9zsJxOzu685AWtrOUWHfOkbKD+5LOpGORw+GQo0F9rWZnB68rLQyfKUZWJeaD00pGv5fw==}
+    engines: {node: '>=18'}
+    hasBin: true
+    peerDependencies:
+      metro-resolver: '*'
+    peerDependenciesMeta:
+      metro-resolver:
+        optional: true
+
+  '@react-native-community/cli@12.3.7':
+    resolution: {integrity: sha512-7+mOhk+3+X3BjSJZZvYrDJynA00gPYTlvT28ZjiLlbuVGfqfNiBKaxuF7rty+gjjpch4iKGvLhIhSN5cuOsdHQ==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
@@ -13368,7 +13411,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -15674,7 +15717,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -18885,7 +18928,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -19648,8 +19691,8 @@ packages:
     hasBin: true
     peerDependencies:
       expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.10
     peerDependenciesMeta:
       expo-modules-core:
         optional: true
@@ -19664,8 +19707,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.73.6
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -25483,6 +25526,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -25721,7 +25765,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -25748,8 +25792,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 16.9.0
+      react-native: 0.61.2
     peerDependenciesMeta:
       react:
         optional: true
@@ -25759,8 +25803,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -32450,7 +32494,7 @@ snapshots:
     dependencies:
       '@commitlint/top-level': 17.8.1
       '@commitlint/types': 17.8.1
-      fs-extra: 11.1.1
+      fs-extra: 11.2.0
       git-raw-commits: 2.0.11
       minimist: 1.2.8
 
@@ -38056,6 +38100,14 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@react-native-community/cli-clean@12.3.7':
+    dependencies:
+      '@react-native-community/cli-tools': 12.3.7
+      chalk: 4.1.2
+      execa: 5.1.1
+    transitivePeerDependencies:
+      - encoding
+
   '@react-native-community/cli-config@12.3.6':
     dependencies:
       '@react-native-community/cli-tools': 12.3.6
@@ -38067,7 +38119,24 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@react-native-community/cli-config@12.3.7':
+    dependencies:
+      '@react-native-community/cli-tools': 12.3.7
+      chalk: 4.1.2
+      cosmiconfig: 5.2.1
+      deepmerge: 4.3.1
+      glob: 7.2.3
+      joi: 17.12.2
+    transitivePeerDependencies:
+      - encoding
+
   '@react-native-community/cli-debugger-ui@12.3.6':
+    dependencies:
+      serve-static: 1.15.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@react-native-community/cli-debugger-ui@12.3.7':
     dependencies:
       serve-static: 1.15.0
     transitivePeerDependencies:
@@ -38100,6 +38169,27 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@react-native-community/cli-doctor@12.3.7':
+    dependencies:
+      '@react-native-community/cli-config': 12.3.7
+      '@react-native-community/cli-platform-android': 12.3.7
+      '@react-native-community/cli-platform-ios': 12.3.7
+      '@react-native-community/cli-tools': 12.3.7
+      chalk: 4.1.2
+      command-exists: 1.2.9
+      deepmerge: 4.3.1
+      envinfo: 7.11.1
+      execa: 5.1.1
+      hermes-profile-transformer: 0.0.6
+      node-stream-zip: 1.15.0
+      ora: 5.4.1
+      semver: 7.6.3
+      strip-ansi: 5.2.0
+      wcwidth: 1.0.1
+      yaml: 2.4.1
+    transitivePeerDependencies:
+      - encoding
+
   '@react-native-community/cli-hermes@12.3.6':
     dependencies:
       '@react-native-community/cli-platform-android': 12.3.6
@@ -38109,9 +38199,29 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@react-native-community/cli-hermes@12.3.7':
+    dependencies:
+      '@react-native-community/cli-platform-android': 12.3.7
+      '@react-native-community/cli-tools': 12.3.7
+      chalk: 4.1.2
+      hermes-profile-transformer: 0.0.6
+    transitivePeerDependencies:
+      - encoding
+
   '@react-native-community/cli-platform-android@12.3.6':
     dependencies:
       '@react-native-community/cli-tools': 12.3.6
+      chalk: 4.1.2
+      execa: 5.1.1
+      fast-xml-parser: 4.3.6
+      glob: 7.2.3
+      logkitty: 0.7.1
+    transitivePeerDependencies:
+      - encoding
+
+  '@react-native-community/cli-platform-android@12.3.7':
+    dependencies:
+      '@react-native-community/cli-tools': 12.3.7
       chalk: 4.1.2
       execa: 5.1.1
       fast-xml-parser: 4.3.6
@@ -38131,12 +38241,42 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@react-native-community/cli-platform-ios@12.3.7':
+    dependencies:
+      '@react-native-community/cli-tools': 12.3.7
+      chalk: 4.1.2
+      execa: 5.1.1
+      fast-xml-parser: 4.3.6
+      glob: 7.2.3
+      ora: 5.4.1
+    transitivePeerDependencies:
+      - encoding
+
   '@react-native-community/cli-plugin-metro@12.3.6': {}
+
+  '@react-native-community/cli-plugin-metro@12.3.7': {}
 
   '@react-native-community/cli-server-api@12.3.6':
     dependencies:
       '@react-native-community/cli-debugger-ui': 12.3.6
       '@react-native-community/cli-tools': 12.3.6
+      compression: 1.7.4
+      connect: 3.7.0
+      errorhandler: 1.5.1
+      nocache: 3.0.4
+      pretty-format: 26.6.2
+      serve-static: 1.15.0
+      ws: 7.5.10
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - supports-color
+      - utf-8-validate
+
+  '@react-native-community/cli-server-api@12.3.7':
+    dependencies:
+      '@react-native-community/cli-debugger-ui': 12.3.7
+      '@react-native-community/cli-tools': 12.3.7
       compression: 1.7.4
       connect: 3.7.0
       errorhandler: 1.5.1
@@ -38184,6 +38324,22 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@react-native-community/cli-tools@12.3.7':
+    dependencies:
+      appdirsjs: 1.2.7
+      chalk: 4.1.2
+      execa: 5.0.0
+      find-up: 5.0.0
+      mime: 2.6.0
+      node-fetch: 2.7.0
+      open: 6.4.0
+      ora: 5.4.1
+      semver: 7.6.3
+      shell-quote: 1.8.1
+      sudo-prompt: 9.2.1
+    transitivePeerDependencies:
+      - encoding
+
   '@react-native-community/cli-tools@6.2.1':
     dependencies:
       appdirsjs: 1.2.7
@@ -38199,6 +38355,10 @@ snapshots:
       - encoding
 
   '@react-native-community/cli-types@12.3.6':
+    dependencies:
+      joi: 17.12.2
+
+  '@react-native-community/cli-types@12.3.7':
     dependencies:
       joi: 17.12.2
 
@@ -38221,7 +38381,7 @@ snapshots:
       fs-extra: 8.1.0
       graceful-fs: 4.2.11
       prompts: 2.4.2
-      semver: 7.5.4
+      semver: 7.6.3
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -38247,9 +38407,35 @@ snapshots:
       fs-extra: 8.1.0
       graceful-fs: 4.2.11
       prompts: 2.4.2
-      semver: 7.5.4
+      semver: 7.6.3
     optionalDependencies:
       metro-resolver: 0.80.8
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - supports-color
+      - utf-8-validate
+
+  '@react-native-community/cli@12.3.7':
+    dependencies:
+      '@react-native-community/cli-clean': 12.3.7
+      '@react-native-community/cli-config': 12.3.7
+      '@react-native-community/cli-debugger-ui': 12.3.7
+      '@react-native-community/cli-doctor': 12.3.7
+      '@react-native-community/cli-hermes': 12.3.7
+      '@react-native-community/cli-plugin-metro': 12.3.7
+      '@react-native-community/cli-server-api': 12.3.7
+      '@react-native-community/cli-tools': 12.3.7
+      '@react-native-community/cli-types': 12.3.7
+      chalk: 4.1.2
+      commander: 9.5.0
+      deepmerge: 4.3.1
+      execa: 5.1.1
+      find-up: 4.1.0
+      fs-extra: 8.1.0
+      graceful-fs: 4.2.11
+      prompts: 2.4.2
+      semver: 7.6.3
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -40658,7 +40844,7 @@ snapshots:
       '@storybook/react-dom-shim': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@storybook/theming': 7.6.17(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@storybook/types': 7.6.17
-      fs-extra: 11.1.1
+      fs-extra: 11.2.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       remark-external-links: 8.0.0
@@ -41059,7 +41245,7 @@ snapshots:
       es-module-lexer: 1.5.0
       express: 4.19.2
       fork-ts-checker-webpack-plugin: 8.0.0(typescript@5.4.3)(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
-      fs-extra: 11.1.1
+      fs-extra: 11.2.0
       html-webpack-plugin: 5.6.0(webpack@5.94.0(@swc/core@1.4.11)(esbuild@0.19.12))
       magic-string: 0.30.8
       path-browserify: 1.0.1
@@ -41225,7 +41411,7 @@ snapshots:
       execa: 5.1.1
       express: 4.19.2
       find-up: 5.0.0
-      fs-extra: 11.1.1
+      fs-extra: 11.2.0
       get-npm-tarball-url: 2.1.0
       get-port: 5.1.1
       giget: 1.2.3
@@ -41500,7 +41686,7 @@ snapshots:
       file-system-cache: 2.3.0
       find-cache-dir: 3.3.2
       find-up: 5.0.0
-      fs-extra: 11.1.1
+      fs-extra: 11.2.0
       glob: 10.3.12
       handlebars: 4.7.8
       lazy-universal-dotenv: 4.0.0
@@ -41590,7 +41776,7 @@ snapshots:
       compression: 1.7.4
       detect-port: 1.5.1
       express: 4.19.2
-      fs-extra: 11.1.1
+      fs-extra: 11.2.0
       globby: 11.1.0
       ip: 2.0.1
       lodash: 4.17.21
@@ -41704,7 +41890,7 @@ snapshots:
       '@babel/types': 7.24.0
       '@storybook/csf': 0.1.3
       '@storybook/types': 7.6.17
-      fs-extra: 11.1.1
+      fs-extra: 11.2.0
       recast: 0.23.6
       ts-dedent: 2.2.0
     transitivePeerDependencies:
@@ -41873,7 +42059,7 @@ snapshots:
       '@types/node': 18.19.26
       '@types/semver': 7.5.8
       babel-plugin-add-react-displayname: 0.0.5
-      fs-extra: 11.1.1
+      fs-extra: 11.2.0
       magic-string: 0.30.8
       react: 18.2.0
       react-docgen: 7.0.3
@@ -42257,7 +42443,7 @@ snapshots:
       chalk: 4.1.2
       detect-package-manager: 2.0.1
       fetch-retry: 5.0.6
-      fs-extra: 11.1.1
+      fs-extra: 11.2.0
       read-pkg-up: 7.0.1
     transitivePeerDependencies:
       - encoding
@@ -48871,7 +49057,7 @@ snapshots:
       eslint-plugin-jsx-a11y: 6.8.0(eslint@8.57.0)
       eslint-plugin-react: 7.34.1(eslint@8.57.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.57.0)
-      next: 14.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      next: 14.2.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
     optionalDependencies:
       typescript: 5.4.3
     transitivePeerDependencies:
@@ -48892,8 +49078,8 @@ snapshots:
       '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.2.2)
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
+      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
       eslint-plugin-jsx-a11y: 6.8.0(eslint@8.57.0)
       eslint-plugin-react: 7.34.1(eslint@8.57.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.57.0)
@@ -48950,23 +49136,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0):
-    dependencies:
-      debug: 4.3.4
-      enhanced-resolve: 5.16.0
-      eslint: 8.57.0
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0)
-      fast-glob: 3.3.2
-      get-tsconfig: 4.7.5
-      is-core-module: 2.13.1
-      is-glob: 4.0.3
-    transitivePeerDependencies:
-      - '@typescript-eslint/parser'
-      - eslint-import-resolver-node
-      - eslint-import-resolver-webpack
-      - supports-color
-
   eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0):
     dependencies:
       debug: 4.3.4
@@ -49008,17 +49177,6 @@ snapshots:
       '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-    transitivePeerDependencies:
-      - supports-color
-
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0):
-    dependencies:
-      debug: 3.2.7
-    optionalDependencies:
-      '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.2.2)
-      eslint: 8.57.0
-      eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -49106,33 +49264,6 @@ snapshots:
       tsconfig-paths: 3.15.0
     optionalDependencies:
       '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-    transitivePeerDependencies:
-      - eslint-import-resolver-typescript
-      - eslint-import-resolver-webpack
-      - supports-color
-
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.0):
-    dependencies:
-      array-includes: 3.1.8
-      array.prototype.findlastindex: 1.2.5
-      array.prototype.flat: 1.3.2
-      array.prototype.flatmap: 1.3.2
-      debug: 3.2.7
-      doctrine: 2.1.0
-      eslint: 8.57.0
-      eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.2.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0)
-      hasown: 2.0.2
-      is-core-module: 2.13.1
-      is-glob: 4.0.3
-      minimatch: 3.1.2
-      object.fromentries: 2.0.8
-      object.groupby: 1.0.3
-      object.values: 1.2.0
-      semver: 6.3.1
-      tsconfig-paths: 3.15.0
-    optionalDependencies:
-      '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.2.2)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
@@ -49956,12 +50087,12 @@ snapshots:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
 
-  expo-font@11.4.0(67hrxnryf4ycl5nhvln5laaykq):
+  expo-font@11.4.0(hxmq25pkdf6fvmayb5kzqynb3q):
     dependencies:
       expo: 49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       fontfaceobserver: 2.3.0
     optionalDependencies:
-      expo-asset: 8.10.1(tw2cl75ufjodqrrf2cewclqsqi)
+      expo-asset: 8.10.1(expo-constants@14.5.1(expo-modules-core@1.5.11)(expo@49.0.23)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       expo-modules-core: 1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       react: 18.2.0
@@ -50086,7 +50217,7 @@ snapshots:
       expo-asset: 8.10.1(tw2cl75ufjodqrrf2cewclqsqi)
       expo-constants: 14.4.2(expo-modules-core@1.5.11(expo-constants@14.5.1)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(expo@49.0.23(@babel/core@7.24.3)(@expo/metro-config@0.10.7)(expo-modules-core@1.5.11)(glob@7.2.3)(metro-core@0.80.8)(metro@0.80.8)(minimatch@5.1.6)(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0))(react@18.2.0)
       expo-file-system: 15.4.5(tw2cl75ufjodqrrf2cewclqsqi)
-      expo-font: 11.4.0(67hrxnryf4ycl5nhvln5laaykq)
+      expo-font: 11.4.0(hxmq25pkdf6fvmayb5kzqynb3q)
       expo-keep-awake: 12.3.0(tw2cl75ufjodqrrf2cewclqsqi)
       expo-modules-autolinking: 1.5.1(55fu4l7dolnnxrys6pt2pnhfne)
       fbemitter: 3.0.0
@@ -57043,6 +57174,31 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 14.2.3
       '@next/swc-win32-ia32-msvc': 14.2.3
       '@next/swc-win32-x64-msvc': 14.2.3
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-plugin-macros
+
+  next@14.2.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@next/env': 14.2.8
+      '@swc/helpers': 0.5.5
+      busboy: 1.6.0
+      caniuse-lite: 1.0.30001600
+      graceful-fs: 4.2.11
+      postcss: 8.4.31
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      styled-jsx: 5.1.1(react@18.2.0)
+    optionalDependencies:
+      '@next/swc-darwin-arm64': 14.2.8
+      '@next/swc-darwin-x64': 14.2.8
+      '@next/swc-linux-arm64-gnu': 14.2.8
+      '@next/swc-linux-arm64-musl': 14.2.8
+      '@next/swc-linux-x64-gnu': 14.2.8
+      '@next/swc-linux-x64-musl': 14.2.8
+      '@next/swc-win32-arm64-msvc': 14.2.8
+      '@next/swc-win32-ia32-msvc': 14.2.8
+      '@next/swc-win32-x64-msvc': 14.2.8
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
