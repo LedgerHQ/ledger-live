@@ -4,7 +4,7 @@ const exampleName = process.argv[2] || "";
 
 const UPDATE_SNAPSHOTS = process.env["UPDATE_SNAPSHOTS"];
 
-const prepareExample = `pnpm clean:full && pnpm i --filter="${exampleName}-example" && pnpm build`;
+const prepareExample = `pnpm clean:full && echo "DEBUG cleaned" && pnpm i --filter="${exampleName}-example" && echo "DEBUG installed" && pnpm build && echo "DEBUG built"`;
 const runTest = `pnpm concurrently -s=first -k "pnpm --dir examples/${exampleName} serve" "playwright test ${
   UPDATE_SNAPSHOTS ? "--update-snapshots" : ""
 }"`;
