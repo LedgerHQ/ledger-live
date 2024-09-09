@@ -61,8 +61,8 @@ export function EarnInfoDrawer() {
         <Button onPress={closeModal} type="main">
           {t("common.close")}
         </Button>
-        {learnMoreLink && (
-          <Link type="main" size="large" onPress={onLearMorePress}>
+        {!!learnMoreLink && (
+          <Link type="main" size="large" onPress={onLearnMorePress}>
             {t("common.learnMore")}
           </Link>
         )}
