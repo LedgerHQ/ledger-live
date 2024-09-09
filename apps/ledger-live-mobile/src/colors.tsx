@@ -71,8 +71,6 @@ export const lightTheme = {
     translucentGrey: "rgba(153, 153, 153, 0.2)",
     lightLiveBg: "#e3dfff",
 
-    darkGrey: "#333333",
-
     errorBg: "#ff0042",
 
     /* PILLS */
@@ -128,8 +126,6 @@ export const darkTheme = {
     translucentGreen: "rgba(102, 190, 84, 0.2)",
     translucentGrey: "rgba(153, 153, 153, 0.2)",
     lightLiveBg: "#222635",
-
-    darkGrey: "#CCCCCC",
 
     errorBg: "#ff0042",
 
