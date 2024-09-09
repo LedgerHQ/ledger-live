@@ -1,4 +1,4 @@
-import React, { useCallback, useState, memo } from "react";
+import React, { useCallback, useState, memo, useRef } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -52,8 +52,13 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
+  const selectDeviceRef = useRef<(device: Device) => void>();
+  const registerDeviceSelection = useCallback((selectDevice: (device: Device) => void) => {
+    selectDeviceRef.current = selectDevice;
+  }, []);
   const onSelectDevice = useCallback((device: Device) => {
     setDevice(device);
+    selectDeviceRef.current?.(device);
   }, []);
 
   const onClose = () => setDevice(null);
@@ -128,6 +133,7 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
         action={action}
         request={request}
         onError={onError}
+        registerDeviceSelection={registerDeviceSelection}
       />
     </SafeAreaView>
   );
