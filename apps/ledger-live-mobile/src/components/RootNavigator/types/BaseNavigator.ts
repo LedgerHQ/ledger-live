@@ -33,7 +33,7 @@ import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
-import type { ExchangeLiveAppNavigatorParamList } from "./ExchangeLiveAppNavigator";
+import type { PtxLiveAppNavigatorParamList } from "./PtxLiveAppNavigator";
 import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
@@ -219,8 +219,8 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.RequestAccount]: NavigatorScreenParams<RequestAccountNavigatorParamList> & {
     onClose?: () => void;
   };
-  [NavigatorName.Card]: NavigatorScreenParams<ExchangeLiveAppNavigatorParamList> | undefined;
-  [NavigatorName.Exchange]: NavigatorScreenParams<ExchangeLiveAppNavigatorParamList> | undefined;
+  [NavigatorName.Card]: NavigatorScreenParams<PtxLiveAppNavigatorParamList> | undefined;
+  [NavigatorName.Exchange]: NavigatorScreenParams<PtxLiveAppNavigatorParamList> | undefined;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {
     mode?: "buy" | "sell";
   };

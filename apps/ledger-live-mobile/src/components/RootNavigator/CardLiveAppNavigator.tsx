@@ -9,11 +9,11 @@ import styles from "~/navigation/styles";
 import type { StackNavigatorProps } from "./types/helpers";
 import { PtxScreen } from "~/screens/PTX";
 import { useTranslation } from "react-i18next";
-import { ExchangeNavigatorParamList } from "~/components/RootNavigator/types/ExchangeNavigator";
+import { PtxNavigatorParamList } from "~/components/RootNavigator/types/PtxNavigator";
 
-const Stack = createStackNavigator<ExchangeNavigatorParamList>();
+const Stack = createStackNavigator<PtxNavigatorParamList>();
 
-const Card = (_props: StackNavigatorProps<ExchangeNavigatorParamList, ScreenName.Card>) => {
+const Card = (_props: StackNavigatorProps<PtxNavigatorParamList, ScreenName.Card>) => {
   const { t } = useTranslation();
   const defaultPlatform = CARD_APP_ID;
   return (
