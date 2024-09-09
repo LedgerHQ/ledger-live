@@ -66,7 +66,7 @@
     "lint:fix": "pnpm lint --fix",
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
     "typecheck": "tsc --p . --noEmit",
-    "test": "pnpm -w -F ui test:react",
+    "test": "echo 'DEBUG: libs/ui/react package.json test' && pnpm -w -F ui test:react",
     "unimported": "unimported"
   },
   "dependencies": {

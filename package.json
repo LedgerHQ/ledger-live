@@ -50,7 +50,7 @@
     "pre:lld": "pnpm turbo pre-build --no-daemon --filter=./apps/ledger-live-desktop",
     "nightly": "pnpm turbo nightly --no-daemon",
     "nightly:lld": "pnpm turbo nightly --no-daemon --filter=./apps/ledger-live-desktop",
-    "test": "pnpm turbo test --no-daemon --concurrency=50%",
+    "test": "echo 'DEBUG: root package.json test' && pnpm turbo test --no-daemon --concurrency=50%",
     "run:cli": "./apps/cli/bin/index.js",
     "lint": "pnpm turbo lint --no-daemon",
     "lint:fix": "pnpm turbo lint:fix --no-daemon",
