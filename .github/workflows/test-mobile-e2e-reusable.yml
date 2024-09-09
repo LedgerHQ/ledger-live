@@ -1,13 +1,7 @@
-name: "@Mobile • Test App End-2-End"
-run-name: "@Mobile • Test App End-2-End triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+name: "Test Mobile E2E"
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - release
-      - hotfix
+  workflow_call:
   workflow_dispatch:
     inputs:
       ref:
@@ -15,11 +9,15 @@ on:
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
           have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
+        type: string
+        required: false
       login:
         description: The GitHub username that triggered the workflow
+        type: string
         required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
+        type: string
         required: false
       export_to_xray:
         description: Send tests results to Xray
@@ -40,17 +38,13 @@ on:
 # env:
 #   DEBUG_DETOX: true
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
-  cancel-in-progress: true
-
 permissions:
   id-token: write
   contents: read
 
 jobs:
   detox-tests-ios:
-    name: "Ledger Live Mobile - iOS Detox Tests"
+    name: "LLM - iOS Detox Tests"
     runs-on: [m1, ARM64]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -155,7 +149,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
           platform: ios
@@ -292,7 +286,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
           platform: android
@@ -360,12 +354,12 @@ jobs:
   report:
     needs: [detox-tests-android, detox-tests-ios]
     runs-on: ubuntu-latest
-    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         name: prepare status
         id: status
         with:
@@ -439,12 +433,12 @@ jobs:
               summary
             };
 
-            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+            fs.writeFileSync("summary-detox.json", JSON.stringify(output), "utf-8");
       - uses: actions/upload-artifact@v4
         name: upload summary
         with:
-          name: summary.json
-          path: ${{ github.workspace }}/summary.json
+          name: summary-detox.json
+          path: ${{ github.workspace }}/summary-detox.json
 
   report-on-slack:
     runs-on: ubuntu-latest
@@ -452,7 +446,7 @@ jobs:
     if: ${{ failure() && github.event_name == 'push' }}
     steps:
       - name: format message
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         id: message
         with:
           script: |

@@ -1,7 +1,7 @@
-name: "@Mobile • Build App (external)"
-run-name: "@Mobile • Build App (external) triggered by ${{ inputs.login }} ${{ format('on ref {0}', github.ref_name) }}"
+name: "Build Mobile"
 
 on:
+  workflow_call:
   workflow_dispatch:
     inputs:
       ref:
@@ -9,46 +9,47 @@ on:
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
           have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
+        type: string
+        required: false
       login:
         description: The GitHub username that triggered the workflow
+        type: string
         required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
+        type: string
+        required: false
+      prNumber:
+        description: PR number
+        type: string
         required: false
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
-  cancel-in-progress: true
-
 permissions:
+  id-token: write
   contents: read
+  pull-requests: write
 
 jobs:
   build-mobile-app-android:
-    name: "Build Ledger Live Mobile (Android)"
-    runs-on: ubuntu-latest
+    name: "Build LLM | Android"
+    runs-on: [ledger-live-4xlarge]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
-          persist-credentials: false
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
-      - uses: ruby/setup-ruby@v1
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: caches
         with:
-          ruby-version: 3.3.0
-        env:
-          ImageOS: ubuntu20
-      - uses: actions/setup-java@v3
-        with:
-          distribution: "zulu" # See 'Supported distributions' for available options
-          java-version: "17"
-      - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.10
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
@@ -73,7 +74,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build:llm:android
+        run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:
@@ -85,31 +86,66 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
-    runs-on: macos-latest
-    name: "Build Ledger Live Mobile (Mac OS X)"
+    runs-on: [m1, ARM64]
+    name: "Build LLM | iOS"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
-          persist-credentials: false
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
-      - uses: ruby/setup-ruby@v1
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: caches
         with:
-          ruby-version: 3.3.0
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          skip-pod-cache: "false"
+          skip-turbo-cache: "false"
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - name: bundle ios and android js
+        run: |
+          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+          pnpm mobile bundle:ios:prod
+          pnpm mobile bundle:android:prod
+          pnpm mobile gen-metafile
+      - name: Upload mobile metafile
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile.metafile.json
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/mobile.metafile.json
 
   report:
     runs-on: ubuntu-latest
     needs: [build-mobile-app-android, build-mobile-app-ios]
-    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request' ) }}
     steps:
-      - uses: actions/github-script@v6
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: download mobile metafile
+        uses: actions/download-artifact@v4
+        with:
+          name: mobile.metafile.json
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+        if: inputs.prNumber != ''
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          baseBranch: ${{ inputs.base_ref || 'develop' }}
+          prNumber: ${{ inputs.prNumber }}
+          mode: mobile
+      - uses: actions/github-script@v7
         name: get statuses of runs
         id: status
         with:
@@ -200,9 +236,9 @@ jobs:
                 description: "Will regenerate cocoapods lockfile",
               }],
             }
-            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+            fs.writeFileSync("summary-build-mobile.json", JSON.stringify(output), "utf-8");
       - uses: actions/upload-artifact@v4
         name: upload output
         with:
-          path: ${{ github.workspace }}/summary.json
-          name: summary.json
+          path: ${{ github.workspace }}/summary-build-mobile.json
+          name: summary-build-mobile.json
