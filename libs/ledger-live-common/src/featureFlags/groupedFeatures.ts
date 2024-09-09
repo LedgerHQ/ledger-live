@@ -1,6 +1,6 @@
 import { FeatureId } from "@ledgerhq/types-live";
 
-export type GroupedFeature = "europa" | "disableNft";
+export type GroupedFeature = "disableNft";
 
 /** Helper to group several feature flag ids under a common feature flag */
 export const groupedFeatures: Record<
@@ -9,9 +9,6 @@ export const groupedFeatures: Record<
     featureIds: FeatureId[];
   }
 > = {
-  europa: {
-    featureIds: ["supportDeviceEuropa", "deviceInitialApps"],
-  },
   disableNft: {
     featureIds: ["disableNftLedgerMarket", "disableNftRaribleOpensea", "disableNftSend"],
   },

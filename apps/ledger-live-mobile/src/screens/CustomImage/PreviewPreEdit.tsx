@@ -25,7 +25,6 @@ import {
   CLSSupportedDeviceModelId,
   supportedDeviceModelIds,
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
@@ -111,14 +110,6 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     params.deviceModelId ?? DeviceModelId.stax,
   );
 
-  const supportDeviceEuropa = useFeature("supportDeviceEuropa")?.enabled;
-  const supportedAndEnabledDeviceModelIds = supportedDeviceModelIds.filter(() => {
-    const devicesSupported: Record<CLSSupportedDeviceModelId, boolean> = {
-      [DeviceModelId.stax]: true,
-      [DeviceModelId.europa]: Boolean(supportDeviceEuropa),
-    };
-    return devicesSupported[deviceModelId];
-  }, [supportDeviceEuropa]);
   const targetDisplayDimensions = useMemo(
     () => getScreenVisibleAreaDimensions(deviceModelId),
     [deviceModelId],
@@ -373,9 +364,9 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <TrackScreen category={analyticsScreenName} />
-      {!params.deviceModelId && supportDeviceEuropa && (
+      {!params.deviceModelId && (
         <TabContainer>
-          {supportedAndEnabledDeviceModelIds.map(modelId => (
+          {supportedDeviceModelIds.map(modelId => (
             <Tab
               key={modelId}
               onPress={() => onChangeDeviceModelId(modelId)}

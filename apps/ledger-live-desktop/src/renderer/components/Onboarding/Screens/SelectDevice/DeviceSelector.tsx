@@ -1,8 +1,7 @@
-import React, { useMemo } from "react";
+import React from "react";
 import styled from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Flex } from "@ledgerhq/react-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceSelectorOption } from "./DeviceSelectorOption";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 
@@ -13,45 +12,28 @@ const DeviceSelectContainer = styled(Flex).attrs({
   height: "100%",
 })``;
 
-const allDevices = [
-  {
-    id: DeviceModelId.nanoS,
-    enabled: true,
-  },
-  {
-    id: DeviceModelId.nanoSP,
-    enabled: true,
-  },
-  {
-    id: DeviceModelId.nanoX,
-    enabled: true,
-  },
+const allDevicesModelIds = [
+  DeviceModelId.stax,
+  DeviceModelId.europa,
+  DeviceModelId.nanoS,
+  DeviceModelId.nanoSP,
+  DeviceModelId.nanoX,
 ];
+
 interface DeviceSelectorProps {
   onClick: (arg1: DeviceModelId) => void;
 }
 
 export function DeviceSelector({ onClick }: DeviceSelectorProps) {
-  const deviceEuropaSupported = useFeature("supportDeviceEuropa");
-
-  const devices = useMemo(
-    () => [
-      { id: DeviceModelId.stax, enabled: true },
-      ...(deviceEuropaSupported?.enabled ? [{ id: DeviceModelId.europa, enabled: true }] : []),
-      ...allDevices,
-    ],
-    [deviceEuropaSupported],
-  );
-
   return (
     <DeviceSelectContainer>
-      {devices.map(({ id, enabled }, index, arr) => (
+      {allDevicesModelIds.map((deviceModelId, index, arr) => (
         <DeviceSelectorOption
-          id={`device-${id}`}
-          key={id}
-          label={getDeviceModel(id as DeviceModelId).productName}
-          Illu={<DeviceIllustration deviceId={id as DeviceModelId} />}
-          onClick={() => enabled && onClick(id as DeviceModelId)}
+          id={`device-${deviceModelId}`}
+          key={deviceModelId}
+          label={getDeviceModel(deviceModelId).productName}
+          Illu={<DeviceIllustration deviceId={deviceModelId as DeviceModelId} />}
+          onClick={() => onClick(deviceModelId as DeviceModelId)}
           isFirst={index === 0}
           isLast={index === arr.length - 1}
         />
