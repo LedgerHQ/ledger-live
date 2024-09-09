@@ -5,6 +5,22 @@ import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
 import { MustBeVechain } from "./errors";
 
+type CliTools = {
+  options: Array<{
+    name: string;
+    type: any;
+    desc: string;
+  }>;
+  inferTransactions: (
+    transactions: Array<{
+      account: AccountLike;
+      transaction: Transaction;
+      mainAccount: Account;
+    }>,
+    opts: Record<string, any>,
+  ) => Transaction[];
+};
+
 type Clauses = {
   to: string;
   data: string;
@@ -62,7 +78,9 @@ function inferTransactions(
   });
 }
 
-export default {
-  options,
-  inferTransactions,
-};
+export default function makeCliTools(): CliTools {
+  return {
+    options,
+    inferTransactions,
+  };
+}

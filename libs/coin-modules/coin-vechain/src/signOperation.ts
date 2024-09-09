@@ -1,54 +1,54 @@
 import { Observable } from "rxjs";
-import Vet from "@ledgerhq/hw-app-vet";
 import { Transaction as ThorTransaction } from "thor-devkit";
-import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
+import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { buildOptimisticOperation } from "./buildOptimisticOperatioin";
-import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
+import { VechainSigner, VechainSignature } from "./signer";
 
 /**
  * Sign Transaction with Ledger hardware
  */
-export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
-  account,
-  deviceId,
-  transaction,
-}) =>
-  withDevice(deviceId)(
-    transport =>
-      new Observable(o => {
-        async function main() {
-          const unsigned = new ThorTransaction(transaction.body);
+export const buildSignOperation =
+  (signerContext: SignerContext<VechainSigner>): AccountBridge<Transaction>["signOperation"] =>
+  ({
+    account,
+    transaction,
+    deviceId,
+  }: {
+    account: Account;
+    transaction: Transaction;
+    deviceId: DeviceId;
+  }): Observable<SignOperationEvent> =>
+    new Observable(o => {
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+      async function main() {
+        const unsigned = new ThorTransaction(transaction.body);
 
-          // Sign on device
-          const vechainApp = new Vet(transport);
-          o.next({
-            type: "device-signature-requested",
-          });
-          const signature = await vechainApp.signTransaction(
-            account.freshAddressPath,
-            unsigned.encode().toString("hex"),
-          );
+        o.next({
+          type: "device-signature-requested",
+        });
 
-          o.next({ type: "device-signature-granted" });
+        const signature = (await signerContext(deviceId, signer =>
+          signer.signTransaction(account.freshAddressPath, unsigned.encode().toString("hex")),
+        )) as VechainSignature;
 
-          const operation = await buildOptimisticOperation(account, transaction);
+        o.next({ type: "device-signature-granted" });
 
-          o.next({
-            type: "signed",
-            signedOperation: {
-              operation,
-              signature: signature.toString("hex"),
-              rawData: transaction,
-            },
-          });
-        }
+        const operation = await buildOptimisticOperation(account, transaction);
 
-        main().then(
-          () => o.complete(),
-          e => o.error(e),
-        );
-      }),
-  );
+        o.next({
+          type: "signed",
+          signedOperation: {
+            operation,
+            signature: signature.toString("hex"),
+            rawData: transaction,
+          },
+        });
+      }
 
-export default signOperation;
+      main().then(
+        () => o.complete(),
+        e => o.error(e),
+      );
+    });
