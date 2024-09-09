@@ -54,7 +54,7 @@ const LowGasAlertBuyMore = ({
         mode: "buy",
       },
     });
-  }, [account.currency.id, account.id, history, trackingSource]);
+  }, [account.currency.id, account.id, history, dispatch, handleRequestClose, trackingSource]);
 
   if (!isCurrencySupported("BUY", account.currency)) {
     return null;

@@ -2,18 +2,17 @@ import React, { useCallback, useState } from "react";
 import Box from "~/renderer/components/Box";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider, Flex } from "@ledgerhq/react-ui";
-import Alert from "~/renderer/components/Alert";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import TranslatedError from "~/renderer/components/TranslatedError";
-import { useHistory } from "react-router";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import Alert from "~/renderer/components/Alert";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
@@ -61,7 +60,7 @@ export default function FeesDrawerLiveApp({
           console.error("Error preparing transaction:", error);
         });
     },
-    [setTransaction, bridge, mainAccount, parentAccount],
+    [setTransaction, bridge, mainAccount],
   );
 
   const handleUpdateTransaction = useCallback(
@@ -85,7 +84,7 @@ export default function FeesDrawerLiveApp({
         return updatedTransaction;
       });
     },
-    [setTransaction, bridge, mainAccount, parentAccount],
+    [setTransaction, bridge, mainAccount],
   );
 
   const mapStrategies = useCallback(
@@ -142,6 +141,13 @@ export default function FeesDrawerLiveApp({
           gasPriceError={gasPriceError}
           trackingSource={"swap flow"}
         />
+        {amountError && !gasPriceError && (
+          <Flex>
+            <Alert type="warning">
+              <TranslatedError error={amountError} />
+            </Alert>
+          </Flex>
+        )}
       </Box>
       <Divider />
 
