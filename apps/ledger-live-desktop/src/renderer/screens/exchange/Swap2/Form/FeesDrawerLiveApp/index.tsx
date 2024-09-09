@@ -2,17 +2,22 @@ import React, { useCallback, useState } from "react";
 import Box from "~/renderer/components/Box";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { Button, Divider } from "@ledgerhq/react-ui";
+import { Button, Divider, Flex } from "@ledgerhq/react-ui";
+import Alert from "~/renderer/components/Alert";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import { useHistory } from "react-router";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
-  mainAccount: AccountLike;
+  account: AccountLike;
   parentAccount: Account;
   status: SwapTransactionType["status"];
   disableSlowStrategy?: boolean;
@@ -23,7 +28,7 @@ type Props = {
 
 export default function FeesDrawerLiveApp({
   setTransaction,
-  mainAccount,
+  account,
   parentAccount,
   status,
   provider,
@@ -36,15 +41,17 @@ export default function FeesDrawerLiveApp({
   const [isOpen, setIsOpen] = useState(true);
   const [transaction, setTransactionState] = useState(initialTransaction);
   const [transactionStatus, setTransactionStatus] = useState(status);
+  const mainAccount = getMainAccount(account, parentAccount);
+
   const bridge = getAccountBridge(mainAccount, parentAccount);
+  const { amount: amountError, gasPrice: gasPriceError } = transactionStatus.errors;
 
   const handleSetTransaction = useCallback(
     (transaction: Transaction) => {
-      const account = mainAccount.type === "TokenAccount" ? parentAccount : mainAccount;
       bridge
-        .prepareTransaction(account, transaction)
+        .prepareTransaction(mainAccount, transaction)
         .then(preparedTransaction =>
-          bridge.getTransactionStatus(account, preparedTransaction).then(status => {
+          bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
             setTransactionStatus(status);
             setTransactionState(preparedTransaction);
             setTransaction(preparedTransaction);
@@ -59,13 +66,12 @@ export default function FeesDrawerLiveApp({
 
   const handleUpdateTransaction = useCallback(
     (updater: (arg0: Transaction) => Transaction) => {
-      const account = mainAccount.type === "TokenAccount" ? parentAccount : mainAccount;
       setTransactionState(prevTransaction => {
         let updatedTransaction = updater(prevTransaction);
         bridge
-          .prepareTransaction(account, updatedTransaction)
+          .prepareTransaction(mainAccount, updatedTransaction)
           .then(preparedTransaction =>
-            bridge.getTransactionStatus(account, preparedTransaction).then(status => {
+            bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
               setTransactionStatus(status);
               setTransaction(preparedTransaction);
               updatedTransaction = preparedTransaction;
@@ -130,6 +136,12 @@ export default function FeesDrawerLiveApp({
             }}
           />
         )}
+        <LowGasAlertBuyMore
+          account={mainAccount}
+          handleRequestClose={() => handleRequestClose(false)}
+          gasPriceError={gasPriceError}
+          trackingSource={"swap flow"}
+        />
       </Box>
       <Divider />
 

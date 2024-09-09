@@ -5,8 +5,6 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-import BuyButton from "~/renderer/components/BuyButton";
-import { NotEnoughGas } from "@ledgerhq/errors";
 import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import AccountFooter from "../AccountFooter";
@@ -64,13 +62,9 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     const isTerminated = mainAccount.currency.terminated;
     const hasErrors = Object.keys(errors).length;
     const canNext = !bridgePending && !hasErrors && !isTerminated;
-    const { gasPrice } = errors;
     return (
       <>
         <AccountFooter parentAccount={parentAccount} account={account} status={status} />
-        {gasPrice && gasPrice instanceof NotEnoughGas ? (
-          <BuyButton currency={mainAccount.currency} account={mainAccount} />
-        ) : null}
         <Button
           id={"sign-transaction-amount-continue-button"}
           isLoading={bridgePending}
