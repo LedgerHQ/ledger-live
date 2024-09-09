@@ -860,6 +860,9 @@
       "continue": "Continue"
     }
   },
+  "card": {
+    "backToCard": "all cards"
+  },
   "lend": {
     "title": "Lend crypto",
     "tabs": {
