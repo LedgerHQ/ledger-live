@@ -23,7 +23,7 @@ type Props<Req, Stt, Res> = {
   renderOnResult?: (_: Res) => JSX.Element | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
-  registerDeviceSelection?: (selectDevice: (device: Device) => void) => void;
+  registerDeviceSelection?: (onDeviceUpdated: () => void) => void;
 };
 
 export default function DeviceActionModal<Req, Stt, Res>({
@@ -57,9 +57,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
   }, [onClose, result]);
 
   useEffect(() => {
-    registerDeviceSelection?.(() => {
-      setResult(null);
-    });
+    registerDeviceSelection?.(() => setResult(null));
   }, [registerDeviceSelection]);
 
   return (

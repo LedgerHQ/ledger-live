@@ -1,4 +1,4 @@
-import React, { useCallback, useState, memo, useRef } from "react";
+import React, { useCallback, useState, memo } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -13,7 +13,7 @@ import {
   ReactNavigationHeaderOptions,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
-import { useAppDeviceAction } from "~/hooks/deviceActions";
+import { useAppDeviceAction, useSelectDevice } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-trustchain";
@@ -47,21 +47,10 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
 }) => {
   const isFocused = useIsFocused();
   const action = useAppDeviceAction();
-  const [device, setDevice] = useState<Device | null>();
+  const { device, selectDevice, registerDeviceSelection } = useSelectDevice();
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
-
-  const selectDeviceRef = useRef<(device: Device) => void>();
-  const registerDeviceSelection = useCallback((selectDevice: (device: Device) => void) => {
-    selectDeviceRef.current = selectDevice;
-  }, []);
-  const onSelectDevice = useCallback((device: Device) => {
-    setDevice(device);
-    selectDeviceRef.current?.(device);
-  }, []);
-
-  const onClose = () => setDevice(null);
 
   const onResult = useCallback(
     (payload: AppResult) => {
@@ -76,7 +65,7 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
     // and avoids a duplicated error drawers/messages.
     // The only drawback: the user has to select again their device once the bluetooth requirements are respected.
     if (error instanceof BluetoothRequired) {
-      setDevice(undefined);
+      selectDevice(undefined);
     }
   };
 
@@ -121,13 +110,13 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
       ) : null}
       <Flex flex={1} mb={8}>
         <SelectDevice2
-          onSelect={onSelectDevice}
+          onSelect={selectDevice}
           stopBleScanning={!!device || !isFocused}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
       </Flex>
       <DeviceActionModal
-        onClose={onClose}
+        onClose={() => selectDevice(null)}
         device={device}
         onResult={onResult}
         action={action}
