@@ -622,6 +622,63 @@ describe("EIP712", () => {
           "Array of tokens is not supported with a single coin ref",
         );
       });
+
+      it("should order correctly the map", () => {
+        const filters = {
+          fields: [
+            {
+              coin_ref: 1,
+              format: "token",
+              label: "Amount allowance",
+              path: "details.token2",
+              signature:
+                "304402203b28bb137a21a6f08903489c6b158fd54280367d6bb72f87bf3e2f287a92440f02207ecc609b12b363cd0e8cbef7079776dfb363cef2fc11da39750598ee4cda4877",
+            },
+            {
+              coin_ref: 1,
+              format: "amount",
+              label: "Amount allowance",
+              path: "details.amount2",
+              signature:
+                "30440220574f7322c9cd212d295c15d92a48aeb6b490978cb87d61fe8afb71b97053ceb7022016489970af3ff80903a45a966ea07dd9ca1435f6b6da9124e03f3087485d1c5b",
+            },
+            {
+              coin_ref: 0,
+              format: "token",
+              label: "Amount allowance",
+              path: "details.token",
+              signature:
+                "304402203b28bb137a21a6f08903489c6b158fd54280367d6bb72f87bf3e2f287a92440f02207ecc609b12b363cd0e8cbef7079776dfb363cef2fc11da39750598ee4cda4877",
+            },
+            {
+              coin_ref: 0,
+              format: "amount",
+              label: "Amount allowance",
+              path: "details.amount",
+              signature:
+                "30440220574f7322c9cd212d295c15d92a48aeb6b490978cb87d61fe8afb71b97053ceb7022016489970af3ff80903a45a966ea07dd9ca1435f6b6da9124e03f3087485d1c5b",
+            },
+            {
+              format: "raw",
+              label: "Approve to spender",
+              path: "spender",
+              signature:
+                "30450221008eecd0e1f432daf722fd00c54038a4cd4d96624cc117ddfb12c7ed10a59b260d02203d34c811a5918c2654e301a071b624088aa9a0813f19dbfa1c803f3dcec64557",
+            },
+          ],
+        } as any;
+        const message = {
+          message: {
+            details: { token: "0x01", amount: "0x02", token2: "0x03", amount2: "0x04" },
+            spender: "0x05",
+          },
+        } as any;
+
+        expect(getCoinRefTokensMap(filters, false, message)).toEqual({
+          0: { token: "0x01" },
+          1: { token: "0x03" },
+        });
+      });
     });
 
     describe("getAppAndVersion", () => {
@@ -685,10 +742,10 @@ describe("EIP712", () => {
         ).toEqual(Buffer.concat([Buffer.from("7B", "hex"), sigBuffer]));
       });
 
-      it("should should throw if a token hasn't been registered by the device", () => {
-        expect(() =>
+      it("should return the coinRef if a token hasn't been registered by the device (token not in CAL for example)", () => {
+        expect(
           getPayloadForFilterV2("token", 0, { 0: { token: "0x01" } }, displayNameBuffer, sigBuffer),
-        ).toThrow("Missing coinRef");
+        ).toEqual(Buffer.concat([Buffer.from("00", "hex"), sigBuffer]));
       });
 
       it("should return a payload for an amount filter", () => {
@@ -703,8 +760,8 @@ describe("EIP712", () => {
         ).toEqual(Buffer.concat([displayNameBuffer, Buffer.from("7B", "hex"), sigBuffer]));
       });
 
-      it("should should throw if a token hasn't been registered by the device", () => {
-        expect(() =>
+      it("should return the coinRef if a token hasn't been registered by the device (token not in CAL for example)", () => {
+        expect(
           getPayloadForFilterV2(
             "amount",
             0,
@@ -712,7 +769,7 @@ describe("EIP712", () => {
             displayNameBuffer,
             sigBuffer,
           ),
-        ).toThrow("Missing coinRef");
+        ).toEqual(Buffer.concat([displayNameBuffer, Buffer.from("00", "hex"), sigBuffer]));
       });
 
       it("should should throw for an unknown filter format", () => {

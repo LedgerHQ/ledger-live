@@ -255,7 +255,9 @@ export const getCoinRefTokensMap = (
   const coinRefsTokensMap: Record<number, { token: string; coinRefMemorySlot?: number }> = {};
   if (shouldUseV1Filters || !filters) return coinRefsTokensMap;
 
-  const tokenFilters = filters.fields.filter(({ format }) => format === "token");
+  const tokenFilters = filters.fields
+    .filter(({ format }) => format === "token")
+    .sort((a, b) => (a.coin_ref || 0) - (b.coin_ref || 0));
   const tokens = tokenFilters.reduce<{ token: string; coinRef: number }[]>((acc, filter) => {
     const token = getValueFromPath(filter.path, message);
     if (Array.isArray(token)) {
@@ -367,22 +369,19 @@ export const getPayloadForFilterV2 = (
 
     case "token": {
       const { deviceTokenIndex } = coinRefsTokensMap[coinRef!];
-      if (typeof deviceTokenIndex === "undefined") {
-        throw new Error("Missing coinRef");
-      }
 
-      return Buffer.concat([Buffer.from(intAsHexBytes(deviceTokenIndex, 1), "hex"), sigBuffer]);
+      return Buffer.concat([
+        Buffer.from(intAsHexBytes(deviceTokenIndex || coinRef || 0, 1), "hex"),
+        sigBuffer,
+      ]);
     }
 
     case "amount": {
       const { deviceTokenIndex } = coinRefsTokensMap[coinRef!];
-      if (typeof deviceTokenIndex === "undefined") {
-        throw new Error("Missing coinRef");
-      }
 
       return Buffer.concat([
         displayNameBuffer,
-        Buffer.from(intAsHexBytes(deviceTokenIndex, 1), "hex"),
+        Buffer.from(intAsHexBytes(deviceTokenIndex || coinRef || 0, 1), "hex"),
         sigBuffer,
       ]);
     }
