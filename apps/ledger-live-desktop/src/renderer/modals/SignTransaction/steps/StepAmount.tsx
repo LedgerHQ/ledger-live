@@ -10,6 +10,8 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
 import { StepProps } from "../types";
+import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
+import { closeAllModal } from "~/renderer/actions/modals";
 const StepAmount = ({
   account,
   parentAccount,
@@ -23,15 +25,19 @@ const StepAmount = ({
 }: StepProps) => {
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const { gasPrice: gasPriceError } = status.errors;
+
   return (
     <Box flow={4}>
       <TrackPage category="Sign Transaction Flow" name="Step Amount" />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
-      {error || warning ? (
-        <Alert type={error ? "error" : "warning"}>
-          <TranslatedError error={error || warning} />
-        </Alert>
-      ) : null}
+      {error || warning
+        ? !gasPriceError && (
+            <Alert type={error ? "error" : "warning"}>
+              <TranslatedError error={error || warning} />
+            </Alert>
+          )
+        : null}
       {account && transaction && mainAccount && (
         <Fragment key={account.id}>
           <SendAmountFields
@@ -44,6 +50,14 @@ const StepAmount = ({
             updateTransaction={updateTransaction}
           />
         </Fragment>
+      )}
+      {mainAccount && gasPriceError && (
+        <LowGasAlertBuyMore
+          account={mainAccount}
+          handleRequestClose={closeAllModal}
+          gasPriceError={gasPriceError}
+          trackingSource={"sign flow"}
+        />
       )}
     </Box>
   );
