@@ -10,7 +10,6 @@ import {
   getPayloadForFilterV2,
   makeTypeEntryStructBuffer,
 } from "../../src/modules/EIP712/utils";
-import { sign } from "crypto";
 
 const convertTwosComplementToDecimalString = (hex: string, initialValue: string) => {
   if (!initialValue?.startsWith("-")) {
@@ -26,33 +25,44 @@ const convertTwosComplementToDecimalString = (hex: string, initialValue: string)
 describe("EIP712", () => {
   describe("Utils", () => {
     describe("destructTypeFromString", () => {
-      test("'string[]' should return [{name: 'string', bits: undefined}, [null]]", () => {
+      test("'string[]' should return [{name: 'string', size: undefined}, [null]]", () => {
         expect(destructTypeFromString("string[]")).toEqual([
-          { name: "string", bits: undefined },
+          { name: "string", size: undefined },
           [null],
         ]);
       });
 
-      test("'uint8[2][][4]' should return [{name: 'uint', bits: 8}, [2, null, 4]]", () => {
+      test("'uint8[2][][4]' should return [{name: 'uint', size: 8}, [2, null, 4]]", () => {
         expect(destructTypeFromString("uint8[2][][4]")).toEqual([
-          { name: "uint", bits: 8 },
+          { name: "uint", size: 8 },
           [2, null, 4],
         ]);
       });
 
-      test("'bytes64' should return [{ name: 'bytes', bits: 64 }, []]", () => {
-        expect(destructTypeFromString("bytes64")).toEqual([{ name: "bytes", bits: 64 }, []]);
+      test("'bytes64' should return [{ name: 'bytes', size: 64 }, []]", () => {
+        expect(destructTypeFromString("bytes64")).toEqual([{ name: "bytes", size: 64 }, []]);
       });
 
-      test("'bool' should return [{ name: 'bool', bits: undefined }, []]", () => {
-        expect(destructTypeFromString("bool")).toEqual([{ name: "bool", bits: undefined }, []]);
+      test("'bool' should return [{ name: 'bool', size: undefined }, []]", () => {
+        expect(destructTypeFromString("bool")).toEqual([{ name: "bool", size: undefined }, []]);
       });
 
       test("'bool[any]' should not throw and return ['bool', []]", () => {
         expect(destructTypeFromString("bool[any]")).toEqual([
-          { name: "bool", bits: undefined },
+          { name: "bool", size: undefined },
           [],
         ]);
+      });
+
+      test("V2DutchOrder should not be splitted even though it contains a number not related to the size", () => {
+        expect(destructTypeFromString("V2DutchOrder")).toEqual([
+          { name: "V2DutchOrder", size: undefined },
+          [],
+        ]);
+      });
+
+      test("KvnV2 should not be splitted even though it contains a number at the end not related to the size", () => {
+        expect(destructTypeFromString("KvnV2")).toEqual([{ name: "KvnV2", size: undefined }, []]);
       });
 
       test("should not throw with undefined", () => {
