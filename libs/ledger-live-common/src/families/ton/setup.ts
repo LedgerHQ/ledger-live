@@ -2,7 +2,7 @@
 
 import { createBridges } from "@ledgerhq/coin-ton/bridge/js";
 import makeCliTools from "@ledgerhq/coin-ton/cli-transaction";
-import nearResolver from "@ledgerhq/coin-ton/hw-getAddress";
+import tonResolver from "@ledgerhq/coin-ton/hw-getAddress";
 import { signMessage } from "@ledgerhq/coin-ton/hw-signMessage";
 import { TonCoinConfig } from "@ledgerhq/coin-ton/lib/config";
 import { TonSigner } from "@ledgerhq/coin-ton/lib/signer";
@@ -26,7 +26,7 @@ const messageSigner = {
   signMessage,
 };
 
-const resolver: Resolver = createResolver(createSigner, nearResolver);
+const resolver: Resolver = createResolver(createSigner, tonResolver);
 
 const cliTools = makeCliTools();
 

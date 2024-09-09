@@ -3247,6 +3247,9 @@ importers:
       '@ledgerhq/evm-tools':
         specifier: workspace:^
         version: link:../../evm-tools
+      '@ledgerhq/hw-app-vet':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-vet
       '@ledgerhq/live-config':
         specifier: ^3.0.0
         version: 3.0.0
@@ -3299,9 +3302,6 @@ importers:
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
-      '@ledgerhq/hw-app-eth':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-app-eth
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets

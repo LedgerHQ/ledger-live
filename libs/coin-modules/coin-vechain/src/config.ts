@@ -1,15 +1,15 @@
 import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-framework/config";
 import { MissingCoinConfig } from "@ledgerhq/coin-framework/errors";
 
-export type VeChainCoinConfig = CurrencyConfig;
+export type VechainCoinConfig = () => CurrencyConfig
 
-let coinConfig: CoinConfig<VeChainCoinConfig> | undefined;
+let coinConfig: CoinConfig<CurrencyConfig> | undefined;
 
-export function setCoinConfig(config: CoinConfig<VeChainCoinConfig>): void {
+export function setCoinConfig(config: CoinConfig<CurrencyConfig>): void {
   coinConfig = config;
 }
 
-export function getCoinConfig(): VeChainCoinConfig {
+export function getCoinConfig(): CurrencyConfig {
   if (!coinConfig) {
     throw new MissingCoinConfig();
   }

@@ -134,3 +134,4 @@ export * from "@ledgerhq/coin-solana/errors";
 export * from "@ledgerhq/coin-stacks/errors";
 export * from "@ledgerhq/coin-stellar/errors";
 export * from "@ledgerhq/coin-tezos/errors";
+export * from "@ledgerhq/coin-vechain/errors";

@@ -64,6 +64,7 @@
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
+    "@ledgerhq/hw-app-vet": "workspace:^",
     "@ledgerhq/live-config": "^3.0.0",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -83,7 +84,6 @@
   },
   "devDependencies": {
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@types/bluebird": "^3.5.42",

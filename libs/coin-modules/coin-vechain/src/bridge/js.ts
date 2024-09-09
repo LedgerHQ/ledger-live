@@ -14,8 +14,10 @@ import { getAccountShape, sync } from "../synchronisation";
 import { buildSignOperation } from "../signOperation";
 import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
-import { setCoinConfig, VeChainCoinConfig } from "../config";
+import { VechainCoinConfig, setCoinConfig } from "../config";
+import { VechainSigner } from "../signer";
 import type { Transaction } from "../types";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/lib/config";
 
 export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -55,7 +57,7 @@ export function buildAccountBridge(
 
 export function createBridges(
   signerContext: SignerContext<VechainSigner>,
-  coinConfig: VeChainCoinConfig,
+  coinConfig: VechainCoinConfig,
 ) {
   setCoinConfig(coinConfig);
 
