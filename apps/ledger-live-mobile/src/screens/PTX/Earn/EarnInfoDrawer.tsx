@@ -30,7 +30,7 @@ export function EarnInfoDrawer() {
     }
   }, [openModal, message, messageTitle, modalOpened]);
 
-  const onLearMorePress = useCallback(() => {
+  const onLearnMorePress = useCallback(() => {
     if (learnMoreLink) {
       Linking.openURL(learnMoreLink);
     }
