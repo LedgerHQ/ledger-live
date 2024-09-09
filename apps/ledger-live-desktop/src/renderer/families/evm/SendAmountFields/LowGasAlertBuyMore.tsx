@@ -31,8 +31,6 @@ type LowGasAlertBuyMoreProps = {
  *    trackingSource={"swap | send or whatever"}s
  * />
  *
- * Note: The component only renders if the currency is supported for "buy" actions
- * and if there's a valid error passed.
  */
 const LowGasAlertBuyMore = ({
   account,
@@ -56,13 +54,9 @@ const LowGasAlertBuyMore = ({
     });
   }, [account.currency.id, account.id, history, dispatch, handleRequestClose, trackingSource]);
 
-  if (!isCurrencySupported("BUY", account.currency)) {
-    return null;
-  }
-
   if (!gasPriceError) return null;
   return (
-    <Flex onClick={onBuyClick}>
+    <Flex onClick={isCurrencySupported("BUY", account.currency) ? onBuyClick : undefined}>
       <Alert type="warning">
         <TranslatedError error={gasPriceError} />
       </Alert>
