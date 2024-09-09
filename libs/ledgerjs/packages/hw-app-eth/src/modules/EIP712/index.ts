@@ -124,7 +124,7 @@ const makeRecursiveFieldStructImplem = ({
         value: {
           data,
           type: typeDescription?.name || "",
-          sizeInBits: typeDescription?.bits,
+          sizeInBits: typeDescription?.size,
         },
       });
     }

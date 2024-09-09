@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef, useContext } from "react";
 import { useSelector } from "react-redux";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
+import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { ExecArgs, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { distribute, initState } from "@ledgerhq/live-common/apps/logic";
@@ -79,7 +79,7 @@ const Dashboard = ({
     () =>
       getEnv("MOCK")
         ? mockExecWithInstalledContext(result?.installed || [])
-        : ({ app, appOp, targetId }: ExecArgs) =>
+        : ({ app, appOp, targetId, skipAppDataBackup }: ExecArgs) =>
             withDevice(device.deviceId)(transport =>
               execWithTransport(
                 transport,
@@ -90,6 +90,7 @@ const Dashboard = ({
                 app,
                 modelId: device.modelId,
                 storage,
+                skipAppDataBackup,
               }),
             ),
     [device, result, appsBackupEnabled, storage],

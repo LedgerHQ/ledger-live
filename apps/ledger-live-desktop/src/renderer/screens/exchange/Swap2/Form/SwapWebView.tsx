@@ -460,6 +460,8 @@ const SwapWebView = ({
       hasError: swapState?.error ? "true" : undefined, // append param only if error is true
       isMaxEnabled: isMaxEnabled,
       loading: swapState?.loading,
+      fromParentAccountId: swapState?.fromParentAccountId,
+      swapApiBase: process.env.SWAP_API_BASE,
       networkFees: swapState?.estimatedFees,
       networkFeesCurrency: fromCurrency,
       provider: swapState?.provider,

@@ -51,14 +51,13 @@ export function restoreAppData(
           // Commit the restore process, last step
           await restoreAppStorageCommit(transport);
 
-          // NOTE: DELETE DATA
-
           subscriber.next({
             type: RestoreAppDataEventType.AppDataRestored,
           });
           subscriber.complete();
         }),
         catchError(e => {
+          // No app data found on the app or the app does not support it
           if (e instanceof AppNotFound) {
             subscriber.next({
               type: RestoreAppDataEventType.NoAppDataToRestore,
