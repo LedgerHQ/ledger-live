@@ -1,33 +1,73 @@
 import React from "react";
 import { Icons } from "@ledgerhq/react-ui";
+import { IconProps } from "../../types/Collection";
 
 export const mappingKeysWithIconAndName = {
-  alpha: { icon: <Icons.OrdinalsAlpha />, name: "Alpha" },
-  black_epic: { icon: <Icons.OrdinalsBlackEpic />, name: "Black Epic" },
-  black_legendary: { icon: <Icons.OrdinalsBlackLegendary />, name: "Black Legendary" },
-  black_mythic: { icon: <Icons.OrdinalsBlackMythic />, name: "Black Mythic" },
-  black_rare: { icon: <Icons.OrdinalsBlackRare />, name: "Black Rare" },
-  black_uncommon: { icon: <Icons.OrdinalsBlackUncommon />, name: "Black Uncommon" },
-  block_9: { icon: <Icons.OrdinalsBlock9 />, name: "Block 9" },
-  block_9_450x: { icon: <Icons.OrdinalsBlock9450X />, name: "Block 9 450x" },
-  block_78: { icon: <Icons.OrdinalsBlock78 />, name: "Block 78" },
-  block_286: { icon: <Icons.OrdinalsBlock286 />, name: "Block 286" },
-  block_666: { icon: <Icons.OrdinalsBlock666 />, name: "Block 666" },
-  common: { icon: <Icons.OrdinalsCommon />, name: "Common" },
-  epic: { icon: <Icons.OrdinalsEpic />, name: "Epic" },
-  first_tx: { icon: <Icons.OrdinalsFirstTx />, name: "First Transaction" },
-  hitman: { icon: <Icons.OrdinalsHitman />, name: "Hitman" },
-  jpeg: { icon: <Icons.OrdinalsJpeg />, name: "JPEG" },
-  legacy: { icon: <Icons.OrdinalsLegacy />, name: "Legacy" },
-  legendary: { icon: <Icons.OrdinalsLegendary />, name: "Legendary" },
-  mythic: { icon: <Icons.OrdinalsMythic />, name: "Mythic" },
-  nakamoto: { icon: <Icons.OrdinalsNakamoto />, name: "Nakamoto" },
-  omega: { icon: <Icons.OrdinalsOmega />, name: "Omega" },
-  paliblock: { icon: <Icons.OrdinalsPaliblockPalindrome />, name: "PaliBlock Palindrome" },
-  palindrome: { icon: <Icons.OrdinalsPalindrome />, name: "Palindrome" },
-  palinception: { icon: <Icons.OrdinalsPalinception />, name: "Palinception" },
-  pizza: { icon: <Icons.OrdinalsPizza />, name: "Pizza" },
-  rare: { icon: <Icons.OrdinalsRare />, name: "Rare" },
-  uncommon: { icon: <Icons.OrdinalsUncommon />, name: "Uncommon" },
-  vintage: { icon: <Icons.OrdinalsVintage />, name: "Vintage" },
+  alpha: { icon: (props: IconProps) => <Icons.OrdinalsAlpha {...props} />, name: "Alpha" },
+  black_epic: {
+    icon: (props: IconProps) => <Icons.OrdinalsBlackEpic {...props} />,
+    name: "Black Epic",
+  },
+  black_legendary: {
+    icon: (props: IconProps) => <Icons.OrdinalsBlackLegendary {...props} />,
+    name: "Black Legendary",
+  },
+  black_mythic: {
+    icon: (props: IconProps) => <Icons.OrdinalsBlackMythic {...props} />,
+    name: "Black Mythic",
+  },
+  black_rare: {
+    icon: (props: IconProps) => <Icons.OrdinalsBlackRare {...props} />,
+    name: "Black Rare",
+  },
+  black_uncommon: {
+    icon: (props: IconProps) => <Icons.OrdinalsBlackUncommon {...props} />,
+    name: "Black Uncommon",
+  },
+  block_9: { icon: (props: IconProps) => <Icons.OrdinalsBlock9 {...props} />, name: "Block 9" },
+  block_9_450x: {
+    icon: (props: IconProps) => <Icons.OrdinalsBlock9450X {...props} />,
+    name: "Block 9 450x",
+  },
+  block_78: { icon: (props: IconProps) => <Icons.OrdinalsBlock78 {...props} />, name: "Block 78" },
+  block_286: {
+    icon: (props: IconProps) => <Icons.OrdinalsBlock286 {...props} />,
+    name: "Block 286",
+  },
+  block_666: {
+    icon: (props: IconProps) => <Icons.OrdinalsBlock666 {...props} />,
+    name: "Block 666",
+  },
+  common: { icon: (props: IconProps) => <Icons.OrdinalsCommon {...props} />, name: "Common" },
+  epic: { icon: (props: IconProps) => <Icons.OrdinalsEpic {...props} />, name: "Epic" },
+  first_tx: {
+    icon: (props: IconProps) => <Icons.OrdinalsFirstTx {...props} />,
+    name: "First Transaction",
+  },
+  hitman: { icon: (props: IconProps) => <Icons.OrdinalsHitman {...props} />, name: "Hitman" },
+  jpeg: { icon: (props: IconProps) => <Icons.OrdinalsJpeg {...props} />, name: "JPEG" },
+  legacy: { icon: (props: IconProps) => <Icons.OrdinalsLegacy {...props} />, name: "Legacy" },
+  legendary: {
+    icon: (props: IconProps) => <Icons.OrdinalsLegendary {...props} />,
+    name: "Legendary",
+  },
+  mythic: { icon: (props: IconProps) => <Icons.OrdinalsMythic {...props} />, name: "Mythic" },
+  nakamoto: { icon: (props: IconProps) => <Icons.OrdinalsNakamoto {...props} />, name: "Nakamoto" },
+  omega: { icon: (props: IconProps) => <Icons.OrdinalsOmega {...props} />, name: "Omega" },
+  paliblock: {
+    icon: (props: IconProps) => <Icons.OrdinalsPaliblockPalindrome {...props} />,
+    name: "PaliBlock Palindrome",
+  },
+  palindrome: {
+    icon: (props: IconProps) => <Icons.OrdinalsPalindrome {...props} />,
+    name: "Palindrome",
+  },
+  palinception: {
+    icon: (props: IconProps) => <Icons.OrdinalsPalinception {...props} />,
+    name: "Palinception",
+  },
+  pizza: { icon: (props: IconProps) => <Icons.OrdinalsPizza {...props} />, name: "Pizza" },
+  rare: { icon: (props: IconProps) => <Icons.OrdinalsRare {...props} />, name: "Rare" },
+  uncommon: { icon: (props: IconProps) => <Icons.OrdinalsUncommon {...props} />, name: "Uncommon" },
+  vintage: { icon: (props: IconProps) => <Icons.OrdinalsVintage {...props} />, name: "Vintage" },
 };

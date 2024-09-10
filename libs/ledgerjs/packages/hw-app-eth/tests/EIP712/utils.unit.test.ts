@@ -10,7 +10,6 @@ import {
   getPayloadForFilterV2,
   makeTypeEntryStructBuffer,
 } from "../../src/modules/EIP712/utils";
-import { sign } from "crypto";
 
 const convertTwosComplementToDecimalString = (hex: string, initialValue: string) => {
   if (!initialValue?.startsWith("-")) {
@@ -26,33 +25,44 @@ const convertTwosComplementToDecimalString = (hex: string, initialValue: string)
 describe("EIP712", () => {
   describe("Utils", () => {
     describe("destructTypeFromString", () => {
-      test("'string[]' should return [{name: 'string', bits: undefined}, [null]]", () => {
+      test("'string[]' should return [{name: 'string', size: undefined}, [null]]", () => {
         expect(destructTypeFromString("string[]")).toEqual([
-          { name: "string", bits: undefined },
+          { name: "string", size: undefined },
           [null],
         ]);
       });
 
-      test("'uint8[2][][4]' should return [{name: 'uint', bits: 8}, [2, null, 4]]", () => {
+      test("'uint8[2][][4]' should return [{name: 'uint', size: 8}, [2, null, 4]]", () => {
         expect(destructTypeFromString("uint8[2][][4]")).toEqual([
-          { name: "uint", bits: 8 },
+          { name: "uint", size: 8 },
           [2, null, 4],
         ]);
       });
 
-      test("'bytes64' should return [{ name: 'bytes', bits: 64 }, []]", () => {
-        expect(destructTypeFromString("bytes64")).toEqual([{ name: "bytes", bits: 64 }, []]);
+      test("'bytes64' should return [{ name: 'bytes', size: 64 }, []]", () => {
+        expect(destructTypeFromString("bytes64")).toEqual([{ name: "bytes", size: 64 }, []]);
       });
 
-      test("'bool' should return [{ name: 'bool', bits: undefined }, []]", () => {
-        expect(destructTypeFromString("bool")).toEqual([{ name: "bool", bits: undefined }, []]);
+      test("'bool' should return [{ name: 'bool', size: undefined }, []]", () => {
+        expect(destructTypeFromString("bool")).toEqual([{ name: "bool", size: undefined }, []]);
       });
 
       test("'bool[any]' should not throw and return ['bool', []]", () => {
         expect(destructTypeFromString("bool[any]")).toEqual([
-          { name: "bool", bits: undefined },
+          { name: "bool", size: undefined },
           [],
         ]);
+      });
+
+      test("V2DutchOrder should not be splitted even though it contains a number not related to the size", () => {
+        expect(destructTypeFromString("V2DutchOrder")).toEqual([
+          { name: "V2DutchOrder", size: undefined },
+          [],
+        ]);
+      });
+
+      test("KvnV2 should not be splitted even though it contains a number at the end not related to the size", () => {
+        expect(destructTypeFromString("KvnV2")).toEqual([{ name: "KvnV2", size: undefined }, []]);
       });
 
       test("should not throw with undefined", () => {
@@ -612,6 +622,63 @@ describe("EIP712", () => {
           "Array of tokens is not supported with a single coin ref",
         );
       });
+
+      it("should order correctly the map", () => {
+        const filters = {
+          fields: [
+            {
+              coin_ref: 1,
+              format: "token",
+              label: "Amount allowance",
+              path: "details.token2",
+              signature:
+                "304402203b28bb137a21a6f08903489c6b158fd54280367d6bb72f87bf3e2f287a92440f02207ecc609b12b363cd0e8cbef7079776dfb363cef2fc11da39750598ee4cda4877",
+            },
+            {
+              coin_ref: 1,
+              format: "amount",
+              label: "Amount allowance",
+              path: "details.amount2",
+              signature:
+                "30440220574f7322c9cd212d295c15d92a48aeb6b490978cb87d61fe8afb71b97053ceb7022016489970af3ff80903a45a966ea07dd9ca1435f6b6da9124e03f3087485d1c5b",
+            },
+            {
+              coin_ref: 0,
+              format: "token",
+              label: "Amount allowance",
+              path: "details.token",
+              signature:
+                "304402203b28bb137a21a6f08903489c6b158fd54280367d6bb72f87bf3e2f287a92440f02207ecc609b12b363cd0e8cbef7079776dfb363cef2fc11da39750598ee4cda4877",
+            },
+            {
+              coin_ref: 0,
+              format: "amount",
+              label: "Amount allowance",
+              path: "details.amount",
+              signature:
+                "30440220574f7322c9cd212d295c15d92a48aeb6b490978cb87d61fe8afb71b97053ceb7022016489970af3ff80903a45a966ea07dd9ca1435f6b6da9124e03f3087485d1c5b",
+            },
+            {
+              format: "raw",
+              label: "Approve to spender",
+              path: "spender",
+              signature:
+                "30450221008eecd0e1f432daf722fd00c54038a4cd4d96624cc117ddfb12c7ed10a59b260d02203d34c811a5918c2654e301a071b624088aa9a0813f19dbfa1c803f3dcec64557",
+            },
+          ],
+        } as any;
+        const message = {
+          message: {
+            details: { token: "0x01", amount: "0x02", token2: "0x03", amount2: "0x04" },
+            spender: "0x05",
+          },
+        } as any;
+
+        expect(getCoinRefTokensMap(filters, false, message)).toEqual({
+          0: { token: "0x01" },
+          1: { token: "0x03" },
+        });
+      });
     });
 
     describe("getAppAndVersion", () => {
@@ -675,10 +742,10 @@ describe("EIP712", () => {
         ).toEqual(Buffer.concat([Buffer.from("7B", "hex"), sigBuffer]));
       });
 
-      it("should should throw if a token hasn't been registered by the device", () => {
-        expect(() =>
+      it("should return the coinRef if a token hasn't been registered by the device (token not in CAL for example)", () => {
+        expect(
           getPayloadForFilterV2("token", 0, { 0: { token: "0x01" } }, displayNameBuffer, sigBuffer),
-        ).toThrow("Missing coinRef");
+        ).toEqual(Buffer.concat([Buffer.from("00", "hex"), sigBuffer]));
       });
 
       it("should return a payload for an amount filter", () => {
@@ -693,8 +760,8 @@ describe("EIP712", () => {
         ).toEqual(Buffer.concat([displayNameBuffer, Buffer.from("7B", "hex"), sigBuffer]));
       });
 
-      it("should should throw if a token hasn't been registered by the device", () => {
-        expect(() =>
+      it("should return the coinRef if a token hasn't been registered by the device (token not in CAL for example)", () => {
+        expect(
           getPayloadForFilterV2(
             "amount",
             0,
@@ -702,7 +769,7 @@ describe("EIP712", () => {
             displayNameBuffer,
             sigBuffer,
           ),
-        ).toThrow("Missing coinRef");
+        ).toEqual(Buffer.concat([displayNameBuffer, Buffer.from("00", "hex"), sigBuffer]));
       });
 
       it("should should throw for an unknown filter format", () => {

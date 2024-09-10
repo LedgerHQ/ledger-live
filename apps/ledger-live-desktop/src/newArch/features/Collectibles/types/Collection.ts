@@ -42,6 +42,7 @@ export type TableHeaderActionsProps = {
 export enum TableHeaderTitleKey {
   NFTCollections = "NFT.collections.title",
   Inscriptions = "Inscriptions",
+  RareSats = "ordinals.rareSats.title",
 }
 
 export type TableHeaderProps = {
