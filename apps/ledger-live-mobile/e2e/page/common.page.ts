@@ -11,6 +11,8 @@ import { expect } from "detox";
 import DeviceAction from "../models/DeviceAction";
 import * as bridge from "../bridge/server";
 
+import { launchSpeculos, deleteSpeculos } from "../helpers";
+
 export default class CommonPage {
   searchBarId = "common-search-field";
   searchBar = () => getElementById(this.searchBarId);
@@ -68,5 +70,16 @@ export default class CommonPage {
     await waitForElementById(this.pluggedDeviceRow(nano));
     await tapById(this.pluggedDeviceRow(nano));
     await new DeviceAction(nano).accessManager();
+  }
+
+  async addSpeculos(nanoApp: string) {
+    const proxyAddress = await launchSpeculos(nanoApp);
+    await bridge.addKnownSpeculos(proxyAddress);
+    return proxyAddress;
+  }
+
+  async removeSpeculos(proxyAddress: string) {
+    await deleteSpeculos(proxyAddress);
+    await bridge.removeKnownSpeculos(proxyAddress);
   }
 }
