@@ -1,16 +1,24 @@
-import Vet from "@ledgerhq/hw-app-vet";
+import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import eip55 from "eip55";
-import type { Resolver } from "../../hw/getAddress/types";
+import { VechainSigner } from "./signer";
+import { GetAddressFn } from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
+import { GetAddressOptions } from "@ledgerhq/coin-framework/lib/derivation";
 
-const resolver: Resolver = async (transport, { path, verify, askChainCode }) => {
-  const vet = new Vet(transport);
-  const r = await vet.getAddress(path, verify, askChainCode || false);
-  const address = eip55.encode(r.address);
-  return {
-    path,
-    address,
-    publicKey: r.publicKey,
-    chainCode: r.chainCode,
+const resolver = (signerContext: SignerContext<VechainSigner>): GetAddressFn => {
+  return async (deviceId: string, { path, verify }: GetAddressOptions) => {
+    const sig = await signerContext(deviceId, async signer => {
+      return await signer.getAddress(path, verify, false); // Note: Do we need to check askChainCode or false?
+    });
+
+    if (!sig.address || !sig.publicKey.length)
+      throw Error(`[vechain] Response is empty ${sig.address} ${sig.publicKey}`);
+  
+    const address = eip55.encode(sig.address)
+    return {
+      address,
+      publicKey: sig.publicKey,
+      path,
+    };
   };
 };
 
