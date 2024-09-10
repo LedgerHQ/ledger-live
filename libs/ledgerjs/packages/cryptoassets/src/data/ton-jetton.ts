@@ -4,7 +4,6 @@ export type TonJettonToken = [
   string, // ticker
   number, // magntude
   boolean, // delisted
-  boolean, // enableCountervalues
 ];
 
 import tokens from "./ton-jetton.json";

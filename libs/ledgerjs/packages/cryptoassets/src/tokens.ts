@@ -536,14 +536,9 @@ function convertCasperTokens([
   };
 }
 
-export function convertJettonToken([
-  address,
-  name,
-  ticker,
-  magnitude,
-  delisted,
-  enableCountervalues,
-]: TonJettonToken): TokenCurrency | undefined {
+export function convertJettonToken([address, name, ticker, magnitude, delisted]: TonJettonToken):
+  | TokenCurrency
+  | undefined {
   const parentCurrency = findCryptoCurrencyById("ton");
 
   if (!parentCurrency) {
@@ -559,7 +554,7 @@ export function convertJettonToken([
     name,
     ticker,
     delisted,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     units: [
       {
         name,

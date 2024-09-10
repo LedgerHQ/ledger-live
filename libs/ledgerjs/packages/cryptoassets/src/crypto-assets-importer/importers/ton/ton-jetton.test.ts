@@ -35,7 +35,6 @@ describe("import ton Jetton tokens", () => {
   string, // ticker
   number, // magntude
   boolean, // delisted
-  boolean, // enableCountervalues
 ];
 
 import tokens from "./ton-jetton.json";
@@ -62,7 +61,7 @@ export default tokens as TonJettonToken[];
       1,
       "ton-jetton.json",
       JSON.stringify([
-        ["EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs", "USDT", "USDT", 6, false, true],
+        ["EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs", "USDT", "USDT", 6, false],
       ]),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(

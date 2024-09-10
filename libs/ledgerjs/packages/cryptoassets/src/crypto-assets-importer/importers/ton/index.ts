@@ -8,7 +8,6 @@ type TonJettonToken = [
   string, // ticker
   number, // magntude
   boolean, // delisted
-  boolean, // enableCountervalues
 ];
 
 export const importTonJettonTokens = async (outputDir: string) => {
@@ -27,7 +26,6 @@ export const importTonJettonTokens = async (outputDir: string) => {
       token.ticker,
       token.decimals,
       token.delisted,
-      true,
     ]);
 
     const filePath = path.join(outputDir, "ton-jetton");
@@ -44,7 +42,6 @@ export const importTonJettonTokens = async (outputDir: string) => {
   string, // ticker
   number, // magntude
   boolean, // delisted
-  boolean, // enableCountervalues
 ];
 
 import tokens from "./ton-jetton.json";
