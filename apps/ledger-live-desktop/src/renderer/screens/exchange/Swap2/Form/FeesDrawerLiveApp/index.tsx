@@ -124,6 +124,7 @@ export default function FeesDrawerLiveApp({
             updateTransaction={handleUpdateTransaction}
             mapStrategies={mapStrategies}
             disableSlowStrategy={disableSlowStrategy}
+            disableEditGasLimit={true}
             trackProperties={{
               page: "Swap quotes",
               ...swapDefaultTrack,
