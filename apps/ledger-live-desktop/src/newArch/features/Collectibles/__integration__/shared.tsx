@@ -6,6 +6,8 @@ import NFTGallery from "../Nfts/screens/Gallery";
 import NftCollection from "../Nfts/screens/Collection";
 import NftCollections from "../Nfts/Collections";
 import { account } from "./mockedAccount";
+import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
+import { MockedbtcAccount } from "./mockedBTCAccount";
 
 const NftCollectionNavigation = () => (
   <Switch>
@@ -31,3 +33,9 @@ export const NoNftCollectionTest = withRouter(() => (
     <NftCollections account={genAccount("mockethereum")} />
   </>
 ));
+
+export const BitcoinPage = () => (
+  <Switch>
+    <Route path="/" render={() => <OrdinalsAccount account={MockedbtcAccount} />} />
+  </Switch>
+);

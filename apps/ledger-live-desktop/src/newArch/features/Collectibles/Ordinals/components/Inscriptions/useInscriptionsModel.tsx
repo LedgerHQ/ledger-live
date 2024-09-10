@@ -1,32 +1,36 @@
 import { useEffect, useMemo, useState } from "react";
-import { Account } from "@ledgerhq/types-live";
-import { InscriptionsItemProps } from "./index";
-import { mockedItems as InscriptionsMocked } from "LLD/features/Collectibles/__integration__/mockedInscriptions";
+import { SimpleHashNft } from "@ledgerhq/live-nft/api/types";
+import { getInscriptionsData } from "./helpers";
+import { InscriptionsItemProps } from "LLD/features/Collectibles/types/Inscriptions";
+
 type Props = {
-  account: Account;
+  inscriptions: SimpleHashNft[];
 };
 
-export const useInscriptionsModel = ({ account }: Props) => {
+export const useInscriptionsModel = ({ inscriptions }: Props) => {
   const [displayShowMore, setDisplayShowMore] = useState(false);
   const [displayedObjects, setDisplayedObjects] = useState<InscriptionsItemProps[]>([]);
 
-  const mockedItems: InscriptionsItemProps[] = useMemo(() => [...InscriptionsMocked], []);
+  const items: InscriptionsItemProps[] = useMemo(
+    () => getInscriptionsData(inscriptions),
+    [inscriptions],
+  );
 
   useEffect(() => {
-    if (mockedItems.length > 3) setDisplayShowMore(true);
-    setDisplayedObjects(mockedItems.slice(0, 3));
-  }, [mockedItems]);
+    if (items.length > 3) setDisplayShowMore(true);
+    setDisplayedObjects(items.slice(0, 3));
+  }, [items]);
 
   const onShowMore = () => {
     setDisplayedObjects(prevDisplayedObjects => {
       const newDisplayedObjects = [
         ...prevDisplayedObjects,
-        ...mockedItems.slice(prevDisplayedObjects.length, prevDisplayedObjects.length + 3),
+        ...items.slice(prevDisplayedObjects.length, prevDisplayedObjects.length + 3),
       ];
-      if (newDisplayedObjects.length === mockedItems.length) setDisplayShowMore(false);
+      if (newDisplayedObjects.length === items.length) setDisplayShowMore(false);
       return newDisplayedObjects;
     });
   };
 
-  return { account, displayedObjects, displayShowMore, onShowMore };
+  return { inscriptions: displayedObjects, displayShowMore, onShowMore };
 };
