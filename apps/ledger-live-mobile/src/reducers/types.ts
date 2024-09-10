@@ -333,7 +333,7 @@ export type NftState = {
 
 export type NftGalleryChainFiltersState = Pick<
   Record<CryptoCurrencyId, boolean>,
-  "polygon" | "ethereum"
+  "polygon" | "ethereum" | "arbitrum" | "base" | "optimism"
 >;
 
 // === MARKET STATE ===

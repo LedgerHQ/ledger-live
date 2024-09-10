@@ -13,6 +13,9 @@ export const INITIAL_STATE: NftState = {
   galleryChainFilters: {
     ethereum: true,
     polygon: true,
+    arbitrum: true,
+    optimism: true,
+    base: true,
   },
 };
 
