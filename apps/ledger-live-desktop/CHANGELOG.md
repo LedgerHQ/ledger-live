@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.86.0-nightly.10
+
+### Minor Changes
+
+- [#7776](https://github.com/LedgerHQ/ledger-live/pull/7776) [`3eafc83`](https://github.com/LedgerHQ/ledger-live/commit/3eafc83ced804fa63e1521e7defb3a0ce3e45a2f) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: remove error from btc fee drawer
+
+### Patch Changes
+
+- [#7756](https://github.com/LedgerHQ/ledger-live/pull/7756) [`1503fd7`](https://github.com/LedgerHQ/ledger-live/commit/1503fd772a040e1208802ab0d4e4469aba6e5005) Thanks [@LucasWerey](https://github.com/LucasWerey)! - add the ui of rare sats table for ordinals
+
+- [#7766](https://github.com/LedgerHQ/ledger-live/pull/7766) [`77f9a5e`](https://github.com/LedgerHQ/ledger-live/commit/77f9a5e1b15d7ab0d3ff87ce328cbff84ae9c386) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add forgetten param demo 3 to live app
+
+- [#7744](https://github.com/LedgerHQ/ledger-live/pull/7744) [`fcd8d52`](https://github.com/LedgerHQ/ledger-live/commit/fcd8d5272176a4acec4e396ed313d3578e1c5b86) Thanks [@valpinkman](https://github.com/valpinkman)! - Delete local app data when uninstalling apps
+
+- Updated dependencies [[`fcd8d52`](https://github.com/LedgerHQ/ledger-live/commit/fcd8d5272176a4acec4e396ed313d3578e1c5b86)]:
+  - @ledgerhq/live-common@34.8.0-nightly.10
+  - @ledgerhq/coin-evm@2.2.0-nightly.8
+
 ## 2.86.0-nightly.9
 
 ### Minor Changes

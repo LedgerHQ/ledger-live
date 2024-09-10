@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-eth
 
+## 6.38.1-nightly.8
+
+### Patch Changes
+
+- [#7775](https://github.com/LedgerHQ/ledger-live/pull/7775) [`9a732c6`](https://github.com/LedgerHQ/ledger-live/commit/9a732c6d0b6e61b39f00d46c3af240640b4883e8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix `destructTypeFromString` not splitting types correctly when they contained a number and weren't native types (Struct with numbers in the name)
+
+- [#7779](https://github.com/LedgerHQ/ledger-live/pull/7779) [`9abf63b`](https://github.com/LedgerHQ/ledger-live/commit/9abf63b51a159fe6c501a6b50d1e33c1551834e8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Allow token to not be provided to the device (might not be existing in CAL) when providing filters V2 for the EIP-712 messages
+
 ## 6.38.1-nightly.7
 
 ### Patch Changes

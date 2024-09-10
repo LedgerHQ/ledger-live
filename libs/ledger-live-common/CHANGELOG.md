@@ -1,5 +1,17 @@
 ## 34.5.0-next.4
 
+## 34.8.0-nightly.10
+
+### Minor Changes
+
+- [#7744](https://github.com/LedgerHQ/ledger-live/pull/7744) [`fcd8d52`](https://github.com/LedgerHQ/ledger-live/commit/fcd8d5272176a4acec4e396ed313d3578e1c5b86) Thanks [@valpinkman](https://github.com/valpinkman)! - Delete local app data when uninstalling apps
+
+### Patch Changes
+
+- Updated dependencies [[`9a732c6`](https://github.com/LedgerHQ/ledger-live/commit/9a732c6d0b6e61b39f00d46c3af240640b4883e8), [`9abf63b`](https://github.com/LedgerHQ/ledger-live/commit/9abf63b51a159fe6c501a6b50d1e33c1551834e8)]:
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.8
+  - @ledgerhq/coin-evm@2.2.0-nightly.8
+
 ## 34.8.0-nightly.9
 
 ### Minor Changes

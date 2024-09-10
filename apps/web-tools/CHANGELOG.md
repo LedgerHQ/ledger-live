@@ -1,5 +1,17 @@
 # web-tools
 
+## 0.9.0-nightly.10
+
+### Minor Changes
+
+- [#7777](https://github.com/LedgerHQ/ledger-live/pull/7777) [`2f7277a`](https://github.com/LedgerHQ/ledger-live/commit/2f7277a29fb2417cb5ee85d2778d86c65678a02f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Next & react version to latest to ensure to be up to date with security fixes
+
+### Patch Changes
+
+- Updated dependencies [[`fcd8d52`](https://github.com/LedgerHQ/ledger-live/commit/fcd8d5272176a4acec4e396ed313d3578e1c5b86), [`9a732c6`](https://github.com/LedgerHQ/ledger-live/commit/9a732c6d0b6e61b39f00d46c3af240640b4883e8), [`9abf63b`](https://github.com/LedgerHQ/ledger-live/commit/9abf63b51a159fe6c501a6b50d1e33c1551834e8)]:
+  - @ledgerhq/live-common@34.8.0-nightly.10
+  - @ledgerhq/hw-app-eth@6.38.1-nightly.8
+
 ## 0.9.0-nightly.9
 
 ### Patch Changes

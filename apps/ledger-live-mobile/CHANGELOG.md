@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.49.0-nightly.10
+
+### Patch Changes
+
+- [#7744](https://github.com/LedgerHQ/ledger-live/pull/7744) [`7e81505`](https://github.com/LedgerHQ/ledger-live/commit/7e815054bf47f31b0ec23e2cbed7e076b980725b) Thanks [@valpinkman](https://github.com/valpinkman)! - Delete local app data when uninstalling apps
+
+- Updated dependencies [[`fcd8d52`](https://github.com/LedgerHQ/ledger-live/commit/fcd8d5272176a4acec4e396ed313d3578e1c5b86)]:
+  - @ledgerhq/live-common@34.8.0-nightly.10
+  - @ledgerhq/coin-evm@2.2.0-nightly.8
+
 ## 3.49.0-nightly.9
 
 ### Patch Changes
