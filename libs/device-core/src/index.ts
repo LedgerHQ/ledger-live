@@ -5,6 +5,7 @@ export type {
   OsuFirmware,
   FirmwareUpdateContextEntity,
 } from "./managerApi/entities/FirmwareUpdateContextEntity";
+export type { ReinstallConfigArgs } from "./commands/entities/ReinstallConfigEntity";
 export type { ManagerApiRepository } from "./managerApi/repositories/ManagerApiRepository";
 export { HttpManagerApiRepository } from "./managerApi/repositories/HttpManagerApiRepository";
 export { StubManagerApiRepository } from "./managerApi/repositories/StubManagerApiRepository";
@@ -42,3 +43,5 @@ export * from "./customLockScreen/screenSpecs";
 export { shouldForceFirmwareUpdate } from "./firmwareUpdate/shouldForceFirmwareUpdate";
 // errors
 export * from "./errors";
+// src/commands/consent/
+export { reinstallConfigurationConsent } from "./commands/use-cases/consent/reinstallConfigurationConsent";
