@@ -1,13 +1,19 @@
 import { AppPage } from "tests/page/abstractClasses";
 import { waitFor } from "../utils/waitFor";
+import { step } from "tests/misc/reporters/step";
+import { ElectronApplication, expect } from "@playwright/test";
+import { capitalizeFirstLetter } from "tests/utils/textParserUtils";
 
 export class SwapPage extends AppPage {
-  private swapMenuButton = this.page.getByTestId("drawer-swap-button"); // TODO: Should this be here?
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
 
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
+  private originCurrencyDropdown = this.page.getByTestId("origin-currency-dropdown");
+  private originCurrencyAmount = this.page.getByTestId("origin-currency-amount-value");
   private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
+  private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
+  private feesValue = this.page.getByTestId("fees-value");
   private fromCurrencyDropdownAddAccountButton = this.page.getByText("Add account");
   private reverseSwapPairButton = this.page.getByTestId("swap-reverse-pair-button");
   private addDestinationAccountButton = this.page.getByTestId("add-destination-account-button");
@@ -42,10 +48,6 @@ export class SwapPage extends AppPage {
   readonly swapId = this.page.getByTestId("swap-id");
   private seeDetailsButton = this.page.locator('button:has-text("See details")');
   readonly detailsSwapId = this.page.getByTestId("details-swap-id").first();
-
-  async navigate() {
-    await this.swapMenuButton.click();
-  }
 
   async waitForSwapFormToLoad() {
     await this.maxSpendableToggle.waitFor({ state: "visible" });
@@ -112,6 +114,7 @@ export class SwapPage extends AppPage {
     await this.customFeeTextbox.fill(amount);
   }
 
+  @step("Select exchange quote $0 with rate $1")
   async selectExchangeQuote(
     providerName: "changelly" | "cic" | "oneinch" | "paraswap",
     exchangeType: "fixed" | "float",
@@ -121,6 +124,12 @@ export class SwapPage extends AppPage {
 
   async waitForExchangeToBeAvailable() {
     return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
+  }
+
+  @step("Click Exchange button")
+  async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByText(`Swap with ${capitalizeFirstLetter(provider)}`).click();
   }
 
   async confirmExchange() {
@@ -139,6 +148,42 @@ export class SwapPage extends AppPage {
   async waitForExchangeDetails() {
     await this.detailsSwapId.waitFor({ state: "visible" });
     return this.detailsSwapId.innerText();
+  }
+
+  @step("Select account to swap from: $0")
+  async selectAccountToSwapFrom(accountToSwapFrom: string) {
+    await this.originCurrencyDropdown.click();
+    await this.dropdownOptions.locator(this.optionWithText(accountToSwapFrom)).click();
+    const selectedAccountFrom = this.originCurrencyDropdown.locator(this.dropdownSelectedValue);
+    await expect(selectedAccountFrom).toHaveText(accountToSwapFrom);
+    await this.waitForPageLoadState();
+  }
+
+  @step("Fill in amount: $0")
+  async fillInOriginAmount(originAmount: string) {
+    await this.originCurrencyAmount.fill(originAmount);
+  }
+
+  @step("Select currency to swap to: $0")
+  async selectCurrencyToSwapTo(currencyToSwapTo: string) {
+    await this.waitForPageDomContentLoadedState();
+    await expect(this.destinationCurrencyDropdown).toBeEnabled();
+    await this.destinationCurrencyDropdown.click();
+    await this.page.keyboard.type(currencyToSwapTo);
+    await this.dropdownOptions.locator(this.optionWithText(currencyToSwapTo)).first().click();
+    const selectedCurrencyTo = this.destinationCurrencyDropdown.locator(this.dropdownSelectedValue);
+    await expect(selectedCurrencyTo).toHaveText(currencyToSwapTo);
+  }
+
+  @step("Retrieve destination currency amount value")
+  async getDestinationCurrencyAmountValue() {
+    return await this.destinationCurrencyAmount.inputValue();
+  }
+
+  @step("Retrieve fees amount value")
+  async getFeesValue() {
+    const text = await this.feesValue.textContent();
+    return text ? text?.split(" ")[0] : "";
   }
 
   // TODO: pull this function out into a utility function so we can use it elsewhere

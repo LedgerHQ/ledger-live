@@ -147,7 +147,7 @@ test.describe.parallel("Swap", () => {
     });
 
     await test.step("Open Swap Page", async () => {
-      await swapPage.navigate();
+      await layout.goToSwap();
       await swapPage.waitForSwapFormToLoad();
       await expect.soft(page).toHaveScreenshot("open-swap-page.png");
     });
