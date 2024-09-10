@@ -52,6 +52,8 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
+  const onClose = () => selectDevice(null);
+
   const onResult = useCallback(
     (payload: AppResult) => {
       goToFollowInstructions(payload.device);
@@ -116,7 +118,7 @@ const WalletSyncActivationDeviceSelection: React.FC<ChooseDeviceProps> = ({
         />
       </Flex>
       <DeviceActionModal
-        onClose={() => selectDevice(null)}
+        onClose={onClose}
         device={device}
         onResult={onResult}
         action={action}
