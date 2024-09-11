@@ -14,6 +14,7 @@ const accounts: Account[] = [
   Account.BCH_1,
   Account.ATOM_1,
   Account.XTZ_1,
+  Account.BSC_1,
 ];
 
 //Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
@@ -29,7 +30,7 @@ for (const account of accounts) {
       {
         annotation: {
           type: "TMS",
-          description: "B2CQA-249, B2CQA-651",
+          description: "B2CQA-249, B2CQA-651, B2CQA-652",
         },
       },
       async ({ app }) => {
@@ -38,8 +39,18 @@ for (const account of accounts) {
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.accountName);
         await app.account.expectAccountVisibility(account.accountName);
-
         await app.account.clickReceive();
+        switch (account) {
+          case Account.TRX_1:
+            await app.receive.verifySendCurrencyTokensWarningMessage(account, "TRC10/TRC20");
+            break;
+          case Account.ETH_1:
+            await app.receive.verifySendCurrencyTokensWarningMessage(account, "Ethereum");
+            break;
+          case Account.BSC_1:
+            await app.receive.verifySendCurrencyTokensWarningMessage(account, "BEP20");
+            break;
+        }
         await app.modal.continue();
         await app.receive.expectValidReceiveAddress(account.address);
 
@@ -49,3 +60,30 @@ for (const account of accounts) {
     );
   });
 }
+
+test.describe("Receive", () => {
+  const account = Account.TRX_2;
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: account.currency.speculosApp,
+  });
+  test(
+    `${account.currency.ticker} empty balance Receive displays address activation warning message`,
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-1551",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations).split(", "));
+
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(account.accountName);
+      await app.account.expectAccountVisibility(account.accountName);
+      await app.account.clickReceive();
+      await app.modal.continue();
+      await app.receive.verifyTronAddressActivationWarningMessage();
+    },
+  );
+});
