@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.86.0-next.1
+
+### Patch Changes
+
+- [#7793](https://github.com/LedgerHQ/ledger-live/pull/7793) [`c76dfe4`](https://github.com/LedgerHQ/ledger-live/commit/c76dfe4102c5dbf9fb2c5a23ff8555d2741a053d) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Fixes View Details button for the Swap Live App
+
 ## 2.86.0-next.0
 
 ### Minor Changes
