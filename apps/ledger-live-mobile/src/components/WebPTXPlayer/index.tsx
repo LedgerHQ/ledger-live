@@ -62,7 +62,7 @@ function BackToInternalDomain({
     (async () => {
       setButtonText(btnText);
     })();
-  }, [btnText, manifest.id, manifest.name, t]);
+  }, [btnText]);
 
   const handleBackClick = async () => {
     const manifestId = (await AsyncStorage.getItem("manifest-id")) || "";

@@ -13,24 +13,23 @@ import { PtxNavigatorParamList } from "~/components/RootNavigator/types/PtxNavig
 
 const Stack = createStackNavigator<PtxNavigatorParamList>();
 
-const Card = (_props: StackNavigatorProps<PtxNavigatorParamList, ScreenName.Card>) => {
+const Card = (props: StackNavigatorProps<PtxNavigatorParamList, ScreenName.Card>) => {
   const { t } = useTranslation();
-  const defaultPlatform = CARD_APP_ID;
   return (
     <PtxScreen
-      {..._props}
+      {...props}
       config={{
         screen: ScreenName.Card,
         navigator: NavigatorName.Card,
         btnText: t("browseWeb3.webPlatformPlayer.back.card"),
       }}
       route={{
-        ..._props.route,
+        ...props.route,
         params: {
-          goToURL: _props.route.params?.goToURL,
-          lastScreen: _props.route.params?.lastScreen,
-          platform: _props.route.params?.platform || defaultPlatform,
-          referrer: _props.route.params?.referrer,
+          goToURL: props.route.params?.goToURL,
+          lastScreen: props.route.params?.lastScreen,
+          platform: props.route.params?.platform || CARD_APP_ID,
+          referrer: props.route.params?.referrer,
         },
       }}
     />

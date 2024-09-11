@@ -17,7 +17,7 @@ const Stack = createStackNavigator<PtxLiveAppNavigatorParamList>();
 const createExchangeScreen =
   (screenName: ScreenName.ExchangeBuy | ScreenName.ExchangeSell) =>
   (
-    _props: StackNavigatorProps<
+    props: StackNavigatorProps<
       PtxLiveAppNavigatorParamList,
       ScreenName.ExchangeBuy | ScreenName.ExchangeSell
     >,
@@ -28,23 +28,23 @@ const createExchangeScreen =
 
     return (
       <PtxScreen
-        {..._props}
+        {...props}
         config={{
           screen: screenName,
           navigator: NavigatorName.Exchange,
           btnText: t("common.quote"),
         }}
         route={{
-          ..._props.route,
+          ...props.route,
           params: {
-            account: _props.route.params?.defaultAccountId,
-            currency: _props.route.params?.currency
-              ? findCryptoCurrencyByKeyword(_props.route.params?.currency)?.id
-              : _props.route.params?.defaultCurrencyId,
-            goToURL: _props.route.params?.goToURL,
-            lastScreen: _props.route.params?.lastScreen,
-            platform: _props.route.params?.platform || defaultPlatform,
-            referrer: _props.route.params?.referrer,
+            account: props.route.params?.defaultAccountId,
+            currency: props.route.params?.currency
+              ? findCryptoCurrencyByKeyword(props.route.params?.currency)?.id
+              : props.route.params?.defaultCurrencyId,
+            goToURL: props.route.params?.goToURL,
+            lastScreen: props.route.params?.lastScreen,
+            platform: props.route.params?.platform || defaultPlatform,
+            referrer: props.route.params?.referrer,
           },
         }}
       />
